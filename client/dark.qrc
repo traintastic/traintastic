@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/dark">
+        <file alias="run.svg">gfx/dark/run.svg</file>
+        <file alias="stop.svg">gfx/dark/stop.svg</file>
+    </qresource>
+</RCC>

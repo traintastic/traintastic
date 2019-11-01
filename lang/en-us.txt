@@ -1,0 +1,8 @@
+## Traintastic language file: English (US)
+
+language:en-us=English
+languaga:nl-nl=Dutch
+
+settings:localhost_only=Localhost only
+settings:port=Port
+#settings:default_world=

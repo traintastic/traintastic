@@ -1,0 +1,7 @@
+## Traintastic language file: Dutch (NL)
+
+language:en-us=Engels
+language:nl-nl=Nederlands
+
+settings:localhost_only=Alleen localhost
+settings:port=Poort
