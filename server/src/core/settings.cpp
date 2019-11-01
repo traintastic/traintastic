@@ -32,10 +32,10 @@ const std::string Settings::id{Settings::classId};
 Settings::Settings(const std::filesystem::path& filename) :
   Object{},
   m_filename{filename},
-  localhostOnly{this, "localhost_only", true, PropertyFlags::AccessWCC},
-  port{this, "port", defaultPort, PropertyFlags::AccessWCC},
-  discoverable{this, "discoverable", true, PropertyFlags::AccessWWW},
-  defaultWorld{this, "default_world", "", PropertyFlags::AccessWWW}
+  localhostOnly{this, "localhost_only", true, PropertyFlags::AccessWCC, [this](const bool&){ save(); }},
+  port{this, "port", defaultPort, PropertyFlags::AccessWCC, [this](const uint16_t&){ save(); }},
+  discoverable{this, "discoverable", true, PropertyFlags::AccessWWW, [this](const bool&){ save(); }},
+  defaultWorld{this, "default_world", "", PropertyFlags::AccessWWW, [this](const std::string&){ save(); }}
 {
   m_interfaceItems.add(localhostOnly);
   m_interfaceItems.add(port);

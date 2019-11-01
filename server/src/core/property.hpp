@@ -54,8 +54,8 @@ class Property : public AbstractProperty
       m_onChanged = onChanged;
     }
 
-    Property(Object* object, const std::string& name, const T& value, PropertyFlags flags, OnSet onSet) :
-      Property(object, name, value, flags)
+    Property(Object* object, const std::string& name, const T& value, PropertyFlags flags, OnChanged onChanged, OnSet onSet) :
+      Property(object, name, value, flags, onChanged)
     {
       m_onSet = onSet;
     }
@@ -71,6 +71,8 @@ class Property : public AbstractProperty
       if(isWriteable() && (!m_onSet || m_onSet(value)) && m_value != value)
       {
         m_value = value;
+        if(m_onChanged)
+          m_onChanged(m_value);
         changed();
       }
     }
