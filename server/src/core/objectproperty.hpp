@@ -95,10 +95,21 @@ class ObjectProperty : public AbstractProperty
       return *m_value;
     }
 
+    inline operator bool()
+    {
+      return m_value.operator bool();
+    }
+
     ObjectProperty<T>& operator =(const std::shared_ptr<T>& value)
     {
       setValue(value);
       return *this;
+    }
+
+    std::string enumName() const final
+    {
+      assert(false);
+      return "";
     }
 
     bool toBool() const final
@@ -126,22 +137,27 @@ class ObjectProperty : public AbstractProperty
       return std::dynamic_pointer_cast<Object>(m_value);
     }
 
+    nlohmann::json toJSON() const final
+    {
+      throw conversion_error();
+    }
+
     void fromBool(bool value) final
     {
       throw conversion_error();
     }
 
-    void fromInt64(int64_t value) final
+    void fromInt64(int64_t) final
     {
       throw conversion_error();
     }
 
-    void fromDouble(double value) final
+    void fromDouble(double) final
     {
       throw conversion_error();
     }
 
-    void fromString(const std::string& value) final
+    void fromString(const std::string&) final
     {
       throw conversion_error();
     }
@@ -158,6 +174,11 @@ class ObjectProperty : public AbstractProperty
       }
       else
         setValue(nullptr);
+    }
+
+    void fromJSON(const nlohmann::json&) final
+    {
+      throw conversion_error();
     }
 };
 

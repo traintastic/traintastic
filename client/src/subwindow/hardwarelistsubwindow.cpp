@@ -32,6 +32,7 @@ HardwareListSubWindow::HardwareListSubWindow(QWidget* parent) :
   QMdiSubWindow(parent)
 {
   setWindowTitle(tr("Hardware"));
+  //setWindowIcon(QIcon(":/dark/hardware.svg"));
   setWidget(new HardwareWidget(this));
 
   QSettings settings;

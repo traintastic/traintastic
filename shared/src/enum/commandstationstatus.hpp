@@ -28,7 +28,10 @@
 
 enum class CommandStationStatus : uint8_t
 {
-  Unknown = 0,
+  Offline = 0,
+  Initializing = 1,
+  Online = 2,
+  Error = 255,
 };
 
 template<>

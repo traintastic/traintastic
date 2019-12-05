@@ -23,14 +23,9 @@
 #ifndef SERVER_ENUM_XPRESSNETCOMMANDSTATION_HPP
 #define SERVER_ENUM_XPRESSNETCOMMANDSTATION_HPP
 
+#include <enum/xpressnetcommandstation.hpp>
 #include <nlohmann/json.hpp>
 #include "../lua/enum.hpp"
-
-enum class XpressNetCommandStation
-{
-  Custom = 0,
-  Roco10764 = 1,
-};
 
 NLOHMANN_JSON_SERIALIZE_ENUM(XpressNetCommandStation,
 {

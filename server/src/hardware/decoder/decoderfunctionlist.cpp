@@ -24,8 +24,8 @@
 
 using Hardware::DecoderFunction;
 
-DecoderFunctionList::DecoderFunctionList(const std::string& _id) :
-  ObjectList<DecoderFunction>(_id)
+DecoderFunctionList::DecoderFunctionList(const std::weak_ptr<World>& world, const std::string& _id) :
+  ObjectList<DecoderFunction>(world, _id)
 {
 }
 

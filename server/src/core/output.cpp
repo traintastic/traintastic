@@ -20,9 +20,9 @@
 
 #include "output.hpp"
 
-Output::Output(const std::string& _id) :
-  IdObject{_id},
-  value{this, "value", false, PropertyFlags::AccessWWW}
+Output::Output(const std::weak_ptr<World> world, const std::string& _id) :
+  IdObject{world, _id},
+  value{this, "value", false, PropertyFlags::AccessWWW, std::bind(&Output::valueChanged, this, std::placeholders::_1), std::bind(&Output::setValue, this, std::placeholders::_1)}
 {
   m_interfaceItems.add(value);
 }

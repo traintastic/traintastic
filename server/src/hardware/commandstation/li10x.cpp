@@ -21,22 +21,31 @@
  */
 
 #include "li10x.hpp"
+#include "../../core/world.hpp"
 
 namespace Hardware::CommandStation {
 
-LI10x::LI10x(const std::string& _id) :
-  CommandStation(_id),
-  m_xpressnet{std::make_shared<Protocol::XpressNet>()},
+LI10x::LI10x(const std::weak_ptr<World>& world, const std::string& _id) :
+  CommandStation(world, _id),
   port{this, "port", "", PropertyFlags::AccessWCC},
-  baudrate{this, "baudrate", 9600, PropertyFlags::AccessWCC}
+  baudrate{this, "baudrate", 9600, PropertyFlags::AccessWCC},
+  xpressnet{this, "xpressnet", std::make_shared<Protocol::XpressNet>(world, world.lock()->getUniqueId("xpressnet"), std::bind(&LI10x::send, this, std::placeholders::_1)), PropertyFlags::AccessRRR}
 {
+  name = "LI10x";
+
   m_interfaceItems.add(port);
   m_interfaceItems.add(baudrate);
+  m_interfaceItems.add(xpressnet);
 }
 
 bool LI10x::isDecoderSupported(Decoder& decoder) const
 {
-  return m_xpressnet->isDecoderSupported(decoder);
+  return xpressnet->isDecoderSupported(decoder);
+}
+
+void LI10x::send(const void* msg)
+{
+  // TODO
 }
 
 }

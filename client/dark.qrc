@@ -2,5 +2,9 @@
     <qresource prefix="/dark">
         <file alias="run.svg">gfx/dark/run.svg</file>
         <file alias="stop.svg">gfx/dark/stop.svg</file>
+        <file alias="edit.svg">gfx/dark/edit.svg</file>
+        <file alias="hardware.svg">gfx/dark/hardware.svg</file>
+        <file alias="add.svg">gfx/dark/add.svg</file>
+        <file alias="delete.svg">gfx/dark/delete.svg</file>
     </qresource>
 </RCC>

@@ -30,7 +30,7 @@
 using nlohmann::json;
 
 WorldList::WorldList(const std::filesystem::path& path) :
-  IdObject("world_list"),
+  Object(),
   m_path{path}
 {
   buildIndex();

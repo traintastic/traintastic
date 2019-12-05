@@ -32,8 +32,9 @@ class DecoderList : public ObjectList<Hardware::Decoder>
 {
   public:
     CLASS_ID("decoder_list")
+    CREATE(DecoderList)
 
-    DecoderList(const std::string& _id);
+    DecoderList(const std::weak_ptr<World>& world, const std::string& _id);
 
     TableModelPtr getModel() final;
 };

@@ -39,7 +39,10 @@ SOURCES += \
     src/network/property.cpp \
     src/network/interfaceitems.cpp \
     src/network/interfaceitem.cpp \
-    src/widget/propertycheckbox.cpp
+    src/widget/propertycheckbox.cpp \
+    src/widget/propertylineedit.cpp \
+    src/widget/propertyspinbox.cpp \
+    src/widget/propertydirectioncontrol.cpp
 
 HEADERS += \
     src/mainwindow.hpp \
@@ -68,7 +71,11 @@ HEADERS += \
     src/network/property.hpp \
     src/network/interfaceitems.hpp \
     src/network/interfaceitem.hpp \
-    src/widget/propertycheckbox.hpp
+    src/widget/propertycheckbox.hpp \
+    src/network/abstractproperty.hpp \
+    src/widget/propertylineedit.hpp \
+    src/widget/propertyspinbox.hpp \
+    src/widget/propertydirectioncontrol.hpp
 
 RESOURCES += \
     dark.qrc

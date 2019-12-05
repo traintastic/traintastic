@@ -24,26 +24,38 @@
 #define SERVER_HARDWARE_COMMANDSTATION_COMMANDSTATION_HPP
 
 #include "../../core/idobject.hpp"
+#include "../../core/objectproperty.hpp"
 #include "../../enum/commandstationstatus.hpp"
+#include <enum/decoderprotocol.hpp>
+
+class DecoderList;
 
 namespace Hardware {
   class Decoder;
+  enum class DecoderChangeFlags;
 }
 
 namespace Hardware::CommandStation {
 
 class CommandStation : public IdObject
 {
+  friend class ::Hardware::Decoder;
+
   protected:
+    virtual bool setOnline(bool& value) = 0;
     virtual bool isDecoderSupported(Decoder& decoder) const = 0;
-    //void decoderSpeedStepChanged(Decoder& decoder);
-    //void decoderFunctionChanged(DecoderFunction& function);
+    virtual void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) = 0;
+
+    const std::shared_ptr<Decoder>& getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress) const;
 
   public:
-    Property<CommandStationStatus> status;
-    //ObjectProperty<DecoderList> decoders;
+    CommandStation(const std::weak_ptr<World>& world, const std::string& _id);
 
-    CommandStation(const std::string& _id);
+    Property<std::string> name;
+    Property<bool> online;
+    Property<CommandStationStatus> status;
+    ObjectProperty<DecoderList> decoders;
+    Property<std::string> notes;
 };
 
 }

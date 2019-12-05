@@ -24,6 +24,7 @@
 #define SERVER_HARDWARE_COMMANDSTATION_LI10X_HPP
 
 #include "commandstation.hpp"
+#include "../../core/objectproperty.hpp"
 #include "protocol/xpressnet.hpp"
 
 namespace Hardware::CommandStation {
@@ -31,9 +32,9 @@ namespace Hardware::CommandStation {
 class LI10x : public CommandStation
 {
   protected:
-    std::shared_ptr<Protocol::XpressNet> m_xpressnet;
-
     bool isDecoderSupported(Decoder& decoder) const final;
+
+    void send(const void* msg);
 
   public:
     CLASS_ID("hardware.command_station.li10x")
@@ -41,9 +42,9 @@ class LI10x : public CommandStation
     Property<std::string> port;
     Property<uint32_t> baudrate;
     //Property<bool> useCTS;
-    //ObjectProperty<XpressNet> xpressnet;
+    ObjectProperty<Protocol::XpressNet> xpressnet;
 
-    LI10x(const std::string& _id);
+    LI10x(const std::weak_ptr<World>& world, const std::string& _id);
 };
 
 }

@@ -33,6 +33,8 @@
 #include <QApplication>
 #include "dialog/connectdialog.hpp"
 #include "network/client.hpp"
+#include "network/object.hpp"
+#include "network/property.hpp"
 #include "subwindow/hardwarelistsubwindow.hpp"
 #include "subwindow/serversettingssubwindow.hpp"
 #include "subwindow/serverconsolesubwindow.hpp"
@@ -77,13 +79,14 @@ MainWindow::MainWindow(QWidget* parent) :
     actFullScreen->setShortcut(Qt::Key_F11);
 
     menu = menuBar()->addMenu(tr("Objects"));
-    m_actionHardware = menu->addAction(tr("Hardware") + "...", this, &MainWindow::showHardware);
+    m_actionHardware = menu->addAction(QIcon(":/dark/hardware.svg"), tr("Hardware") + "...", this, &MainWindow::showHardware);
 
     menu = menuBar()->addMenu(tr("Tools"));
     menu->addAction(tr("Client settings") + "...");
     menu->addSeparator();
     m_actionServerSettings = menu->addAction(tr("Server settings") + "...", this, &MainWindow::showServerSettings);
     m_actionServerConsole = menu->addAction(tr("Server console") + "...", this, &MainWindow::showServerConsole);
+    m_actionServerConsole->setShortcut(Qt::Key_F12);
 
     menu = menuBar()->addMenu(tr("Help"));
     menu->addAction(tr("Help"));
@@ -93,10 +96,19 @@ MainWindow::MainWindow(QWidget* parent) :
   }
 
   QToolBar* toolbar = new QToolBar();
-  m_actionModeRun = toolbar->addAction(QIcon(":/dark/run.svg"), tr("Run"));
-  m_actionModeStop = toolbar->addAction(QIcon(":/dark/stop.svg"), tr("Stop"));
-  m_actionModeEdit = toolbar->addAction(tr("Edit"));
+  m_actionGroupMode = new QActionGroup(this);
+  m_actionGroupMode->setExclusive(true);
+  m_actionModeRun = toolbar->addAction(QIcon(":/dark/run.svg"), tr("Run"), [this](){ setMode(TraintasticMode::Run); });
+  m_actionModeRun->setCheckable(true);
+  m_actionGroupMode->addAction(m_actionModeRun);
+  m_actionModeStop = toolbar->addAction(QIcon(":/dark/stop.svg"), tr("Stop"), [this](){ setMode(TraintasticMode::Stop); });
+  m_actionModeStop->setCheckable(true);
+  m_actionGroupMode->addAction(m_actionModeStop);
+  m_actionModeEdit = toolbar->addAction(QIcon(":/dark/edit.svg"), tr("Edit"), [this](){ setMode(TraintasticMode::Edit); });
+  m_actionModeEdit->setCheckable(true);
+  m_actionGroupMode->addAction(m_actionModeEdit);
   toolbar->addSeparator();
+  toolbar->addAction(m_actionHardware);
 
   QVBoxLayout* l = new QVBoxLayout();
   l->setMargin(0);
@@ -116,9 +128,9 @@ MainWindow::MainWindow(QWidget* parent) :
     setWindowState(static_cast<Qt::WindowState>(settings.value(SETTING_WINDOWSTATE).toInt()));
   actFullScreen->setChecked(isFullScreen());
 
-  connect(Client::instance, &Client::stateChanged, this, &MainWindow::updateActionEnabled);
+  connect(Client::instance, &Client::stateChanged, this, &MainWindow::clientStateChanged);
 
-  updateActionEnabled();
+  clientStateChanged();
 }
 
 MainWindow::~MainWindow()
@@ -143,6 +155,15 @@ void MainWindow::closeEvent(QCloseEvent* event)
   settings.setValue(SETTING_GEOMETRY, saveGeometry());
   settings.setValue(SETTING_WINDOWSTATE, static_cast<int>(windowState()));
   QMainWindow::closeEvent(event);
+}
+
+void MainWindow::setMode(TraintasticMode value)
+{
+  Client& client = *Client::instance;
+  if(client.state() == Client::State::Connected && client.traintastic())
+    client.traintastic()->getProperty("mode")->setValueInt64(static_cast<int64_t>(value));
+  else
+    updateModeActions();
 }
 
 void MainWindow::newWorld()
@@ -193,7 +214,7 @@ void MainWindow::showHardware()
     m_mdiSubWindow.hardwareList = new HardwareListSubWindow();
     m_mdiArea->addSubWindow(m_mdiSubWindow.hardwareList);
     m_mdiSubWindow.hardwareList->setAttribute(Qt::WA_DeleteOnClose);
-    connect(m_mdiSubWindow.hardwareList, &QMdiSubWindow::destroyed, [=](QObject*){ m_mdiSubWindow.hardwareList = nullptr; });
+    connect(m_mdiSubWindow.hardwareList, &QMdiSubWindow::destroyed, [this](QObject*){ m_mdiSubWindow.hardwareList = nullptr; });
     m_mdiSubWindow.hardwareList->show();
   }
   else
@@ -207,7 +228,7 @@ void MainWindow::showServerSettings()
     m_mdiSubWindow.serverSettings = new ServerSettingsSubWindow();
     m_mdiArea->addSubWindow(m_mdiSubWindow.serverSettings);
     m_mdiSubWindow.serverSettings->setAttribute(Qt::WA_DeleteOnClose);
-    connect(m_mdiSubWindow.serverSettings, &QMdiSubWindow::destroyed, [=](QObject*){ m_mdiSubWindow.serverSettings = nullptr; });
+    connect(m_mdiSubWindow.serverSettings, &QMdiSubWindow::destroyed, [this](QObject*){ m_mdiSubWindow.serverSettings = nullptr; });
     m_mdiSubWindow.serverSettings->show();
   }
   else
@@ -221,7 +242,7 @@ void MainWindow::showServerConsole()
     m_mdiSubWindow.serverConsole = new ServerConsoleSubWindow();
     m_mdiArea->addSubWindow(m_mdiSubWindow.serverConsole);
     m_mdiSubWindow.serverConsole->setAttribute(Qt::WA_DeleteOnClose);
-    connect(m_mdiSubWindow.serverConsole, &QMdiSubWindow::destroyed, [=](QObject*){ m_mdiSubWindow.serverConsole = nullptr; });
+    connect(m_mdiSubWindow.serverConsole, &QMdiSubWindow::destroyed, [this](QObject*){ m_mdiSubWindow.serverConsole = nullptr; });
     m_mdiSubWindow.serverConsole->show();
   }
   else
@@ -243,11 +264,12 @@ void MainWindow::showAbout()
     " GNU General Public License for more details.</p>");
 }
 
-void MainWindow::updateActionEnabled()
+void MainWindow::clientStateChanged()
 {
   Client& client = *Client::instance;
   const bool connected = client.state() == Client::State::Connected;
 
+  m_mdiArea->setEnabled(connected);
   m_actionConnectToServer->setEnabled(client.isDisconnected());
   m_actionConnectToServer->setVisible(!connected);
   m_actionDisconnectFromServer->setVisible(connected);
@@ -259,10 +281,42 @@ void MainWindow::updateActionEnabled()
   m_actionHardware->setEnabled(connected);
   m_actionServerSettings->setEnabled(connected);
   m_actionServerConsole->setEnabled(connected);
-  m_actionModeRun->setEnabled(false);
-  m_actionModeStop->setEnabled(false);
-  m_actionModeEdit->setEnabled(false);
+
+  if(connected)
+    connect(client.traintastic()->getProperty("mode"), &Property::valueChanged, this, &MainWindow::updateModeActions);
+
+  updateModeActions();
 
   //if(client.state() == Client::State::SocketError)
   //  statusBar()->showMessage(client.errorString());
+}
+
+void MainWindow::updateModeActions()
+{
+  Client& client = *Client::instance;
+  const bool connected = client.state() == Client::State::Connected;
+  const TraintasticMode mode = connected ? static_cast<TraintasticMode>(client.traintastic()->getProperty("mode")->toInt64()) : TraintasticMode::Stop;
+
+  m_actionModeRun->setEnabled(connected && mode != TraintasticMode::Edit);
+  m_actionModeStop->setEnabled(connected);
+  m_actionModeEdit->setEnabled(connected && mode != TraintasticMode::Run);
+
+  switch(mode)
+  {
+    case TraintasticMode::Run:
+      m_actionModeRun->setChecked(true);
+      break;
+
+    case TraintasticMode::Stop:
+      m_actionModeStop->setChecked(true);
+      break;
+
+    case TraintasticMode::Edit:
+      m_actionModeEdit->setChecked(true);
+      break;
+
+    default:
+      Q_ASSERT(false);
+      break;
+  }
 }

@@ -39,6 +39,8 @@ class TableWidget : public QTableView
   public:
     TableWidget(QWidget* parent = nullptr);
 
+    QString getRowObjectId(int row) const;
+
     void setTableModel(const TableModelPtr& model);
 };
 

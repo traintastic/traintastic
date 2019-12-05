@@ -39,3 +39,4 @@
 .directory
 .build*
 build*
+CMakeLists.txt.*

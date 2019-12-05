@@ -27,6 +27,7 @@
 #include "propertytypetraits.hpp"
 #include "to.hpp"
 #include <functional>
+#include <enum/enum.hpp>
 
 template<typename T>
 class Property : public AbstractProperty
@@ -51,16 +52,22 @@ class Property : public AbstractProperty
     Property(Object* object, const std::string& name, const T& value, PropertyFlags flags, OnChanged onChanged) :
       Property(object, name, value, flags)
     {
-      m_onChanged = onChanged;
+      m_onChanged = std::move(onChanged);
     }
 
     Property(Object* object, const std::string& name, const T& value, PropertyFlags flags, OnChanged onChanged, OnSet onSet) :
       Property(object, name, value, flags, onChanged)
     {
-      m_onSet = onSet;
+      m_onSet = std::move(onSet);
     }
 
-    T value() const
+    Property(Object* object, const std::string& name, const T& value, PropertyFlags flags, nullptr_t, OnSet onSet) :
+      Property(object, name, value, flags)
+    {
+      m_onSet = std::move(onSet);
+    }
+
+    const T& value() const
     {
       return m_value;
     }
@@ -68,16 +75,22 @@ class Property : public AbstractProperty
     void setValue(T value)
     {
       assert(isWriteable());
-      if(isWriteable() && (!m_onSet || m_onSet(value)) && m_value != value)
+      if(m_value == value)
+        return;
+      else if(!isWriteable())
+        throw not_writable_error();
+      else if(!m_onSet || m_onSet(value))
       {
         m_value = value;
         if(m_onChanged)
           m_onChanged(m_value);
         changed();
       }
+      else
+        throw invalid_value_error();
     }
 
-    operator T() const
+    operator const T&() const
     {
       return m_value;
     }
@@ -86,6 +99,15 @@ class Property : public AbstractProperty
     {
       setValue(value);
       return *this;
+    }
+
+    std::string enumName() const final
+    {
+      if constexpr(std::is_enum_v<T>)
+        return EnumName<T>::value;
+
+      assert(false);
+      return "";
     }
 
     bool toBool() const final
@@ -113,6 +135,11 @@ class Property : public AbstractProperty
       throw conversion_error();
     }
 
+    nlohmann::json toJSON() const final
+    {
+      return m_value;
+    }
+
     void fromBool(bool value) final
     {
       setValue(to<T>(value));
@@ -136,6 +163,32 @@ class Property : public AbstractProperty
     void fromObject(const ObjectPtr& value) final
     {
       throw conversion_error();
+    }
+
+    void fromJSON(const nlohmann::json& value) final
+    {
+      switch(value.type())
+      {
+        case nlohmann::json::value_t::boolean:
+          fromBool(value);
+          break;
+
+        case nlohmann::json::value_t::number_integer:
+        case nlohmann::json::value_t::number_unsigned:
+          fromInt64(value);
+          break;
+
+        case nlohmann::json::value_t::number_float:
+          fromDouble(value);
+          break;
+
+        case nlohmann::json::value_t::string:
+          fromString(value);
+          break;
+
+        default:
+          throw std::runtime_error("unsupported JSON type");
+      }
     }
 };
 

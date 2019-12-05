@@ -63,6 +63,8 @@ class TableModel : public QAbstractTableModel
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const final;
     QVariant data(const QModelIndex& index, int role) const final;
 
+    QString getRowObjectId(int row) const;
+
     void setRegion(int columnMin, int columnMax, int rowMin, int rowMax);
 };
 

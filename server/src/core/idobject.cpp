@@ -19,10 +19,34 @@
  */
 
 #include "idobject.hpp"
+#include "traintastic.hpp"
+#include "world.hpp"
 
-IdObject::IdObject(const std::string& _id) :
+IdObject::IdObject(const std::weak_ptr<World> world, const std::string& _id) :
   Object{},
-  id{this, "id", _id, PropertyFlags::AccessWCC}
+  m_world{world},
+  id{this, "id", _id, PropertyFlags::AccessWCC, nullptr, [this](std::string& value)
+    {
+      auto& m = Traintastic::instance->world->m_objects;
+      if(m.find(value) != m.end())
+        return false;
+      auto n = m.extract(id);
+      n.key() = value;
+      m.insert(std::move(n));
+      return true;
+    }}
 {
   m_interfaceItems.add(id);
+}
+
+IdObject::~IdObject()
+{
+  if(auto world = m_world.lock())
+    world->m_objects.erase(id);
+}
+
+void IdObject::addToWorld()
+{
+  if(auto world = m_world.lock())
+    world->m_objects.emplace(id, weak_from_this());
 }

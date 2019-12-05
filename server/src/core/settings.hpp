@@ -38,7 +38,7 @@ class Settings : public Object
     void save();
 
   public:
-    CLASS_ID("settings");
+    CLASS_ID("settings")
 
     static constexpr uint16_t defaultPort = 5740; //!< unoffical, not (yet) assigned by IANA
 
@@ -46,6 +46,7 @@ class Settings : public Object
     Property<uint16_t> port;
     Property<bool> discoverable;
     Property<std::string> defaultWorld;
+    Property<bool> autoSaveWorldOnExit;
 
     Settings(const std::filesystem::path& filename);
 };

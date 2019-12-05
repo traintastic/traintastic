@@ -25,8 +25,8 @@
 
 using Hardware::CommandStation::CommandStation;
 
-CommandStationList::CommandStationList(const std::string& _id) :
-  ObjectList<CommandStation>(_id)
+CommandStationList::CommandStationList(const std::weak_ptr<World>& world, const std::string& _id) :
+  ObjectList<CommandStation>(world, _id)
 {
 }
 

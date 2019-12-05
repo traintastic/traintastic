@@ -29,10 +29,11 @@ enum class PropertyType : uint8_t
 {
   Invalid = 0,
   Boolean = 1,
-  Integer = 2,
-  Float = 3,
-  String = 4,
-  Object = 5,
+  Enum = 2,
+  Integer = 3,
+  Float = 4,
+  String = 5,
+  Object = 6,
 };
 
 #endif

@@ -29,6 +29,8 @@
 template<typename T>
 class ObjectListTableModel : public TableModel
 {
+  friend class ObjectList<T>;
+
   protected:
     ObjectList<T>& m_list;
 

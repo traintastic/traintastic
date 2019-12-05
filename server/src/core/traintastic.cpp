@@ -36,7 +36,7 @@ using nlohmann::json;
 
 const std::string Traintastic::id{Traintastic::classId};
 
-std::unique_ptr<Traintastic> Traintastic::instance;
+std::shared_ptr<Traintastic> Traintastic::instance;
 
 Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   Object{},
@@ -45,11 +45,25 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_acceptor{m_ioContext},
   m_socketTCP{m_ioContext},
   m_socketUDP{m_ioContext},
+  mode{this, "mode", TraintasticMode::Stop, PropertyFlags::AccessWWW,
+    [this](const TraintasticMode& value)
+    {
+      assert(world);
+      console->info(id, "Mode changed to <TODO> " + std::to_string((int)value));
+      //world->modeChanged(value);
+    },
+    [this](TraintasticMode& newValue)
+    {
+      return
+        (mode == TraintasticMode::Stop) ||
+        (newValue == TraintasticMode::Stop);
+    }},
   console{this, "console", std::make_shared<Console>(), PropertyFlags::AccessRRR},
   settings{this, "settings", nullptr, PropertyFlags::AccessRRR},
   world{this, "world", nullptr, PropertyFlags::AccessRRR},
   worldList{this, "world_list", nullptr, PropertyFlags::AccessRRR}
 {
+  m_interfaceItems.add(mode);
   m_interfaceItems.add(console);
   m_interfaceItems.add(settings);
   m_interfaceItems.add(world);
@@ -97,6 +111,12 @@ bool Traintastic::run()
 void Traintastic::shutdown()
 {
   console->notice(id, "Shutting down");
+  
+  if(mode == TraintasticMode::Run)
+    mode = TraintasticMode::Stop;
+    
+  if(settings->autoSaveWorldOnExit)
+    world->save();
 
   m_ioContext.stop();
 }
@@ -167,7 +187,7 @@ bool Traintastic::stop()
 
 void Traintastic::newWorld()
 {
-  world = std::make_shared<World>();
+  world = World::create();
   console->notice(id, "Created new world");
 }
 
@@ -183,7 +203,7 @@ void Traintastic::loadWorld(const std::filesystem::path& path)
 {
   try
   {
-    world = std::make_shared<World>(path / "traintastic.json");
+    world = World::load(path / "traintastic.json");
   }
   catch(const std::exception& e)
   {
@@ -193,6 +213,8 @@ void Traintastic::loadWorld(const std::filesystem::path& path)
 
 void Traintastic::saveWorld()
 {
+  assert(world);
+  world->save();
 }
 
 void Traintastic::clientGone(const std::shared_ptr<Client>& client)

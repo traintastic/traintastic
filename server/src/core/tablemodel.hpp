@@ -95,6 +95,8 @@ class TableModel : public Object
 
     TableModel();
 
+    //const std::string& getId() const final { throw false; }
+
     const std::vector<std::string>& columnHeaders() const { return m_columnHeaders; }
     uint32_t columnCount() const { return m_columnHeaders.size(); }
     uint32_t rowCount() const { return m_rowCount; }

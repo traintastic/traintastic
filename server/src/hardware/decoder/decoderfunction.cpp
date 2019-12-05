@@ -19,17 +19,31 @@
  */
 
 #include "decoderfunction.hpp"
+#include "decoder.hpp"
+#include "decoderchangeflags.hpp"
 
 namespace Hardware {
 
 const std::shared_ptr<DecoderFunction> DecoderFunction::null;
 
-DecoderFunction::DecoderFunction(const std::string& _id) :
-  Output(_id),
+DecoderFunction::DecoderFunction(const std::weak_ptr<World>& world, const std::string& _id) :
+  Output(world, _id),
+  m_decoder{nullptr},
   number{this, "number", 0, PropertyFlags::AccessWCC},
   momentary{this, "momentary", false, PropertyFlags::AccessWCC}
 {
   m_interfaceItems.add(number);
+  m_interfaceItems.add(momentary);
+}
+
+bool DecoderFunction::setValue(bool& value)
+{
+  return m_decoder;
+}
+
+void DecoderFunction::valueChanged(bool)
+{
+  m_decoder->changed(DecoderChangeFlags::FunctionValue, number);
 }
 
 }

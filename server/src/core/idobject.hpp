@@ -26,12 +26,28 @@
 #include "object.hpp"
 #include "property.hpp"
 
+#define CREATE(T) \
+  static std::shared_ptr<T> create(const std::weak_ptr<World>& world, const std::string& _id) \
+  { \
+    auto obj = std::make_shared<T>(world, _id); \
+    obj->addToWorld(); \
+    return obj; \
+  }
+
+class World;
+
 class IdObject : public Object
 {
+  protected:
+    std::weak_ptr<World> m_world;
+
+    IdObject(const std::weak_ptr<World> world, const std::string& _id);
+    void addToWorld();
+
   public:
     Property<std::string> id;
 
-    IdObject(const std::string& _id);
+    ~IdObject() override;
 };
 
 #endif

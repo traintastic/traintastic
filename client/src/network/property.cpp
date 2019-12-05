@@ -24,8 +24,7 @@
 #include "client.hpp"
 
 Property::Property(Object& object, const QString& name, PropertyType type, const QVariant& value) :
-  InterfaceItem(object, name),
-  m_type{type},
+  AbstractProperty(object, name, type),
   m_value{value}
 {
 }
@@ -33,6 +32,11 @@ Property::Property(Object& object, const QString& name, PropertyType type, const
 void Property::setValueBool(bool value)
 {
   Client::instance->setPropertyBool(*this, value);
+}
+
+void Property::setValueInt(int value)
+{
+  Client::instance->setPropertyInt64(*this, value);
 }
 
 void Property::setValueInt64(int64_t value)

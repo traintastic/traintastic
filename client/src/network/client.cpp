@@ -101,8 +101,10 @@ int Client::getObject(const QString& id, std::function<void(const ObjectPtr&, Me
     {
       ObjectPtr object;
       if(!message->isError())
+      {
         object = readObject(*message);
-      m_objects[object->handle()] = object.data();
+        m_objects[object->handle()] = object.data();
+      }
       callback(object, message->errorCode());
     });
   return request->requestId();
@@ -167,8 +169,10 @@ int Client::getTableModel(const QString& id, std::function<void(const TableModel
     {
       TableModelPtr tableModel;
       if(!message->isError())
+      {
         tableModel = readTableModel(*message);
-      m_tableModels[tableModel->handle()] = tableModel.data();
+        m_tableModels[tableModel->handle()] = tableModel.data();
+      }
       callback(tableModel, message->errorCode());
     });
   return request->requestId();
@@ -239,6 +243,7 @@ ObjectPtr Client::readObject(const Message& message)
               value = message.read<bool>();
               break;
 
+            case PropertyType::Enum:
             case PropertyType::Integer:
               value = message.read<qint64>();
               break;
@@ -259,9 +264,14 @@ ObjectPtr Client::readObject(const Message& message)
               break;
           }
 
-          Q_ASSERT(value.isValid());
+    //      Q_ASSERT(value.isValid());
           if(Q_LIKELY(value.isValid()))
-            obj->m_interfaceItems.add(*new Property(*obj, name, propertyType, value));
+          {
+            Property* p = new Property(*obj, name, propertyType, value);
+            if(propertyType == PropertyType::Enum)
+              p->m_enumName = QString::fromLatin1(message.read<QByteArray>());
+            obj->m_interfaceItems.add(*p);
+          }
           break;
         }
       }
@@ -330,13 +340,32 @@ void Client::processMessage(const std::shared_ptr<Message> message)
                 break;
               }
               case PropertyType::Integer:
+              case PropertyType::Enum:
+              {
+                const qlonglong value = message->read<qlonglong>();
+                property->m_value = value;
+                emit property->valueChanged();
+                emit property->valueChangedInt64(value);
+                if(value >= std::numeric_limits<int>::min() && value <= std::numeric_limits<int>::max())
+                  emit property->valueChangedInt(static_cast<int>(value));
                 break;
-
+              }
               case PropertyType::Float:
+              {
+                const double value = message->read<double>();
+                property->m_value = value;
+                emit property->valueChanged();
+                emit property->valueChangedDouble(value);
                 break;
-
+              }
               case PropertyType::String:
+              {
+                const QString value = QString::fromUtf8(message->read<QByteArray>());
+                property->m_value = value;
+                emit property->valueChanged();
+                emit property->valueChangedString(value);
                 break;
+              }
             }
           }
         }
@@ -405,7 +434,16 @@ void Client::socketConnected()
             if(message && message->isResponse() && !message->isError())
             {
               message->read(m_sessionUUID);
-              setState(State::Connected);
+
+              getObject("traintastic",
+                [this](const ObjectPtr& object, Message::ErrorCode errorCode)
+                {
+                  if(object && errorCode == Message::ErrorCode::None)
+                  {
+                    m_traintastic = object;
+                    setState(State::Connected);
+                  }
+                });
             }
             else
             {

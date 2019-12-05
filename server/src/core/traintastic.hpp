@@ -31,6 +31,7 @@
 #include "object.hpp"
 #include "objectproperty.hpp"
 #include "console.hpp"
+#include <enum/traintasticmode.hpp>
 
 class Client;
 class Message;
@@ -58,7 +59,6 @@ class Traintastic : public Object
     void newWorld();
     void loadWorld(const boost::uuids::uuid& uuid);
     void loadWorld(const std::filesystem::path& path);
-
     void saveWorld();
 
     void doReceive();
@@ -72,8 +72,9 @@ class Traintastic : public Object
     CLASS_ID("traintastic");
 
     static const std::string id;
-    static std::unique_ptr<Traintastic> instance;
+    static std::shared_ptr<Traintastic> instance;
 
+    Property<TraintasticMode> mode;
     ObjectProperty<Console> console;
     ObjectProperty<Settings> settings;
     ObjectProperty<World> world;
@@ -81,6 +82,10 @@ class Traintastic : public Object
 
     Traintastic(const std::filesystem::path& dataDir);
     ~Traintastic() final;
+
+    boost::asio::io_context& ioContext() { return m_ioContext; }
+
+    //const std::string& getId() const final { return id; }
 
     bool run();
     void shutdown();

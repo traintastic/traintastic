@@ -19,24 +19,92 @@
  */
 
 #include "decoder.hpp"
+#include "decoderlist.hpp"
+#include "decoderlisttablemodel.hpp"
+#include "decoderchangeflags.hpp"
 #include "decoderfunction.hpp"
+#include "decoderfunctionlist.hpp"
+#include "../commandstation/commandstation.hpp"
 
 namespace Hardware {
 
-Decoder::Decoder(const std::string& _id) :
-  IdObject(_id),
+const std::shared_ptr<Decoder> Decoder::null;
+
+Decoder::Decoder(const std::weak_ptr<World>& world, const std::string& _id) :
+  IdObject(world, _id),
+  name{this, "name", "", PropertyFlags::AccessWCC},
+  commandStation{this, "command_station", nullptr, PropertyFlags::AccessWCC,
+    [this](const std::shared_ptr<CommandStation::CommandStation>& value)
+    {
+      std::shared_ptr<Decoder> decoder = std::dynamic_pointer_cast<Decoder>(shared_from_this());
+      assert(decoder);
+
+      //if(value)
+      // TODO: check compatible??
+
+      if(commandStation)
+        commandStation->decoders->remove(decoder);
+
+      if(value)
+        value->decoders->add(decoder);
+
+      return true;
+    }},
   protocol{this, "protocol", DecoderProtocol::None, PropertyFlags::AccessWCC},
   address{this, "address", 0, PropertyFlags::AccessWCC},
-  emergencyStop{this, "emergency_stop", false, PropertyFlags::AccessRWW},
-  direction{this, "direction", Direction::Forward, PropertyFlags::AccessWWW},
-  speedSteps{this, "speed_steps", 255, PropertyFlags::AccessWCC},
-  speedStep{this, "speed_step", 0, PropertyFlags::AccessRRW}
+  longAddress{this, "long_address", false, PropertyFlags::AccessWCC},
+  emergencyStop{this, "emergency_stop", false, PropertyFlags::AccessRWW,
+    [this](const bool&)
+    {
+      changed(DecoderChangeFlags::EmergencyStop);
+    }},
+  direction{this, "direction", Direction::Forward, PropertyFlags::AccessWWW,
+    [this](const Direction&)
+    {
+      changed(DecoderChangeFlags::Direction);
+    }},
+  speedSteps{this, "speed_steps", 255, PropertyFlags::AccessWCC,
+    [this](const uint8_t&)
+    {
+      changed(DecoderChangeFlags::SpeedSteps);
+    }},
+  speedStep{this, "speed_step", 0, PropertyFlags::AccessRRW,
+    [this](const uint8_t&)
+    {
+      changed(DecoderChangeFlags::SpeedStep);
+    },
+    [this](uint8_t& value)
+    {
+      return (value <= speedSteps);
+    }},
+  functions{this, "functions", std::make_shared<DecoderFunctionList>(world, _id + "_functions"), PropertyFlags::AccessRRR},
+  notes{this, "notes", "", PropertyFlags::AccessWWW}
 {
+  m_interfaceItems.add(name);
+  m_interfaceItems.add(commandStation);
+  m_interfaceItems.add(protocol);
+  m_interfaceItems.add(address);
+  m_interfaceItems.add(emergencyStop);
+  m_interfaceItems.add(direction);
+  m_interfaceItems.add(speedSteps);
+  m_interfaceItems.add(speedStep);
+  m_interfaceItems.add(functions);
+  m_interfaceItems.add(notes);
 }
 
 const std::shared_ptr<DecoderFunction>& Decoder::getFunction(uint32_t number) const
 {
+  for(auto& f : *functions)
+    if(f->number == number)
+      return f;
+
   return DecoderFunction::null;
+}
+
+void Decoder::changed(DecoderChangeFlags changes, uint32_t functionNumber)
+{
+  if(commandStation)
+    commandStation->decoderChanged(*this, changes, functionNumber);
 }
 
 }

@@ -29,12 +29,18 @@
 
 NLOHMANN_JSON_SERIALIZE_ENUM(CommandStationStatus,
 {
-  {CommandStationStatus::Unknown, "unknown"},
+  {CommandStationStatus::Offline, "offline"},
+  {CommandStationStatus::Initializing, "initializing"},
+  {CommandStationStatus::Online, "online"},
+  {CommandStationStatus::Error, "error"},
 })
 
-LUA_ENUM(CommandStationStatus, 1,
+LUA_ENUM(CommandStationStatus, 4,
 {
-  {CommandStationStatus::Unknown, "UNKNOWN"},
+  {CommandStationStatus::Offline, "OFFLINE"},
+  {CommandStationStatus::Initializing, "INITIALIZING"},
+  {CommandStationStatus::Online, "ONLINE"},
+  {CommandStationStatus::Error, "ERROR"},
 })
 
 #endif

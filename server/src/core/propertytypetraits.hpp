@@ -31,10 +31,11 @@ struct property_type
 {
   static constexpr PropertyType value =
     std::is_same<T, bool>::value ? PropertyType::Boolean : (
+    std::is_enum<T>::value ? PropertyType::Enum : (
     std::is_integral<T>::value ? PropertyType::Integer : (
     std::is_floating_point<T>::value ? PropertyType::Float : (
     std::is_same<T, std::string>::value ? PropertyType::String : (
-    PropertyType::Invalid))));
+    PropertyType::Invalid)))));
 };
 
 #endif

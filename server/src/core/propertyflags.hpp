@@ -47,6 +47,10 @@ enum class PropertyFlags : uint32_t
   NoStore = 1 << 6,
   Store = 2 << 6,
   StoreState = 3 << 6,
+
+
+
+  TODO = AccessWWW,
 };
 
 constexpr PropertyFlags operator| (const PropertyFlags& lhs, const PropertyFlags& rhs)

@@ -23,14 +23,15 @@
 #ifndef SERVER_CORE_CONSOLE_HPP
 #define SERVER_CORE_CONSOLE_HPP
 
-#include "idobject.hpp"
+#include "object.hpp"
+#include "property.hpp"
 #include "table.hpp"
 #include <memory>
 #include <vector>
 
 class ConsoleTableModel;
 
-class Console : public IdObject, public Table
+class Console : public Object, public Table
 {
   friend class ConsoleTableModel;
 

@@ -26,7 +26,7 @@
 #include <cstdint>
 #include "enum.hpp"
 
-enum class XpressNetCommandStation : uin16_t
+enum class XpressNetCommandStation : uint16_t
 {
   Custom = 0,
   Roco10764 = 1,

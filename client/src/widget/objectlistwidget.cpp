@@ -32,6 +32,9 @@
 #include "../network/utils.hpp"
 #include "../widget/alertwidget.hpp"
 
+
+#include "objecteditwidget.hpp"
+
 ObjectListWidget::ObjectListWidget(const QString& id, QWidget* parent) :
   QWidget(parent),
   m_id{id},
@@ -66,6 +69,7 @@ ObjectListWidget::ObjectListWidget(const QString& id, QWidget* parent) :
               m_requestId = Client::invalidRequestId;
 
               m_tableWidget->setTableModel(tableModel);
+              connect(m_tableWidget, &TableWidget::doubleClicked, this, &ObjectListWidget::tableDoubleClicked);
 
               delete spinner;
             }
@@ -86,24 +90,29 @@ ObjectListWidget::~ObjectListWidget()
 void ObjectListWidget::addActionAdd()
 {
   Q_ASSERT(!m_actionAdd);
-  m_actionAdd = m_toolbar->addAction(tr("Add"));
+  m_actionAdd = m_toolbar->addAction(QIcon(":/dark/add.svg"), tr("Add"));
 }
 
 void ObjectListWidget::addActionEdit()
 {
   Q_ASSERT(!m_actionEdit);
-  m_actionEdit = m_toolbar->addAction(tr("Edit"));
+  m_actionEdit = m_toolbar->addAction(QIcon(":/dark/edit.svg"), tr("Edit"));
   m_actionEdit->setEnabled(false);
 }
 
 void ObjectListWidget::addActionDelete()
 {
   Q_ASSERT(!m_actionDelete);
-  m_actionDelete = m_toolbar->addAction(tr("Delete"));
+  m_actionDelete = m_toolbar->addAction(QIcon(":/dark/delete.svg"), tr("Delete"));
   m_actionDelete->setEnabled(false);
 }
 
-
+void ObjectListWidget::tableDoubleClicked(const QModelIndex& index)
+{
+  const QString id = m_tableWidget->getRowObjectId(index.row());
+  if(!id.isEmpty())
+    (new ObjectEditWidget(id))->show();
+}
 
 
 

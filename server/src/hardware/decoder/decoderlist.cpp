@@ -21,15 +21,16 @@
  */
 
 #include "decoderlist.hpp"
+#include "decoderlisttablemodel.hpp"
 
 using Hardware::Decoder;
 
-DecoderList::DecoderList(const std::string& _id) :
-  ObjectList<Decoder>(_id)
+DecoderList::DecoderList(const std::weak_ptr<World>& world, const std::string& _id) :
+  ObjectList<Decoder>(world, _id)
 {
 }
 
 TableModelPtr DecoderList::getModel()
 {
-  return nullptr;
+  return std::make_shared<DecoderListTableModel>(*this);
 }

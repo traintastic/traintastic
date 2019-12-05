@@ -15,12 +15,20 @@ find_library(USBXPRESSNET_LIB usbxpressnet)
 #endif()
 
 file(GLOB SOURCES
+  "src/*.hpp"
   "src/*.cpp"
+  "src/core/*.hpp"
   "src/core/*.cpp"
+  "src/enum/*.hpp"
+  "src/hardware/commandstation/*.hpp"
   "src/hardware/commandstation/*.cpp"
+  "src/hardware/commandstation/protocol/*.hpp"
   "src/hardware/commandstation/protocol/*.cpp"
+  "src/hardware/decoder/*.hpp"
   "src/hardware/decoder/*.cpp"
+  "src/lua/*.hpp"
   "src/lua/*.cpp"
+  "src/utils/*.hpp"
   "thirdparty/boost/libs/program_options/src/*.cpp")
 
 add_executable(traintastic-server ${SOURCES})

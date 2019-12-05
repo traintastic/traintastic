@@ -57,6 +57,11 @@ QVariant TableModel::data(const QModelIndex& index, int role) const
   return QVariant{};
 }
 
+QString TableModel::getRowObjectId(int row) const
+{
+  return m_texts.value(ColumnRow(0, row));
+}
+
 void TableModel::setRegion(int columnMin, int columnMax, int rowMin, int rowMax)
 {
   if(m_region.columnMin != columnMin ||

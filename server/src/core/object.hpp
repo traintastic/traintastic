@@ -56,6 +56,7 @@ class Object : public std::enable_shared_from_this<Object>
     }
 
     virtual const std::string_view& getClassId() const = 0;
+    //virtual const std::string& getId() const = 0;
 
     const InterfaceItems& interfaceItems() const { return m_interfaceItems; }
 

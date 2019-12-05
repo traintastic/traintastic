@@ -23,46 +23,40 @@
 #ifndef CLIENT_NETWORK_PROPERTY_HPP
 #define CLIENT_NETWORK_PROPERTY_HPP
 
-#include "interfaceitem.hpp"
+#include "abstractproperty.hpp"
 #include <QVariant>
-#include <enum/propertytype.hpp>
 //#include "objectptr.hpp"
 
 class Object;
 
-class Property : public InterfaceItem
+class Property : public AbstractProperty
 {
   Q_OBJECT
 
   friend class Client;
 
   protected:
-    const PropertyType m_type;
     QVariant m_value;
+    QString m_enumName;
 
   public:
     explicit Property(Object& object, const QString& name, PropertyType type, const QVariant& value);
 
-    PropertyType type() const { return m_type; }
+    const QString& enumName() const final { Q_ASSERT(!m_enumName.isEmpty()); return m_enumName; }
 
-    bool toBool() const { return m_value.toBool(); }
-    int64_t toInt64() const { return m_value.toLongLong(); }
-    double toDouble() const { return m_value.toDouble(); }
-    QString toString() const { return m_value.toString(); }
-    QVariant toVariant() const { return m_value; }
-
-  signals:
-    void valueChanged();
-    void valueChangedBool(bool newValue);
-    void valueChangedInt64(int64_t newValue);
-    void valueChangedDouble(double newValue);
-    void valueChangedString(const QString& newValue);
+    bool toBool() const final { return m_value.toBool(); }
+    int toInt() const final { return m_value.toInt(); }
+    int64_t toInt64() const final { return m_value.toLongLong(); }
+    double toDouble() const final { return m_value.toDouble(); }
+    QString toString() const final { return m_value.toString(); }
+    QVariant toVariant() const final { return m_value; }
 
   public slots:
-    void setValueBool(bool value);
-    void setValueInt64(int64_t value);
-    void setValueDouble(double value);
-    void setValueString(const QString& value);
+    void setValueBool(bool value) final;
+    void setValueInt(int value) final;
+    void setValueInt64(int64_t value) final;
+    void setValueDouble(double value) final;
+    void setValueString(const QString& value) final;
 };
 
 #endif

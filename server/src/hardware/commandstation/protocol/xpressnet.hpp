@@ -23,20 +23,24 @@
 #ifndef SERVER_HARDWARE_COMMANDSTATION_PROTOCOL_XPRESSNET_HPP
 #define SERVER_HARDWARE_COMMANDSTATION_PROTOCOL_XPRESSNET_HPP
 
-#include "../../../core/object.hpp"
+#include "../../../core/idobject.hpp"
 #include "../../../core/property.hpp"
 #include "../../../enum/xpressnetcommandstation.hpp"
-#include "../../decoder/decoder.hpp"
 
-namespace Hardware::CommandStation::Protocol {
+namespace Hardware {
 
-class XpressNet : public Object
+class Decoder;
+enum class DecoderChangeFlags;
+
+namespace CommandStation::Protocol {
+
+class XpressNet : public IdObject
 {
   protected:
     static constexpr uint16_t addressMin = 1;
     static constexpr uint16_t addressMax = 9999;
 
-    static uint8_t calcChecksum(const void* cmd);
+    std::function<void(const void*)> m_send;
 
     void sendEmergencyStop(const Decoder& decoder);
     void sendSpeedAndDirectionInstruction(const Decoder& decoder);
@@ -50,16 +54,18 @@ class XpressNet : public Object
   public:
     CLASS_ID("hardware.command_station.protocol.xpressnet")
 
+    static uint8_t calcChecksum(const void* cmd);
+
     Property<XpressNetCommandStation> commandStation;
     Property<bool> useFunctionStateCommands;
 
-    XpressNet();
+    XpressNet(const std::weak_ptr<World>& world, const std::string& id, std::function<void(const void*)>&& send);
 
     bool isDecoderSupported(const Decoder& decoder) const;
 
-    void decoderChanged(const Decoder& decoder, Decoder::ChangeFlags changes, uint32_t functionNumber);
+    void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 };
 
-}
+} }
 
 #endif

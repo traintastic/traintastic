@@ -91,7 +91,7 @@ std::string to_string(const Console::Level& value)
 }
 
 Console::Console() :
-  IdObject("console"),
+  Object(),
   count{this, "count", 1000, PropertyFlags::AccessWWW}
 {
   m_interfaceItems.add(count);

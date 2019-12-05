@@ -66,6 +66,7 @@ class Client : public QObject
     } m_readBuffer;
     QMap<uint16_t, std::function<void(const std::shared_ptr<Message>&)>> m_requestCallback;
     QUuid m_sessionUUID;
+    ObjectPtr m_traintastic;
     QMap<Handle, Object*> m_objects;
     QMap<Handle, TableModel*> m_tableModels;
 
@@ -102,6 +103,8 @@ class Client : public QObject
     void disconnectFromHost();
 
     void cancelRequest(int requestId);
+
+    const ObjectPtr& traintastic() const { return m_traintastic; }
 
     int getObject(const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
     void releaseObject(Object* object);

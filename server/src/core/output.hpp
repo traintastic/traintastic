@@ -27,10 +27,14 @@
 
 class Output : public IdObject
 {
+  protected:
+    virtual void valueChanged(bool value) {}
+    virtual bool setValue(bool& value) { return true; }
+
   public:
     Property<bool> value;
 
-    Output(const std::string& _id);
+    Output(const std::weak_ptr<World> world, const std::string& _id);
 };
 
 #endif

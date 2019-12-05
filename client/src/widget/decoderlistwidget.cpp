@@ -25,4 +25,7 @@
 DecoderListWidget::DecoderListWidget(const QString& id, QWidget* parent) :
   ObjectListWidget(id, parent)
 {
+  addActionAdd();
+  addActionEdit();
+  addActionDelete();
 }

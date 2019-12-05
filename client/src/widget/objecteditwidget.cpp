@@ -29,6 +29,11 @@
 #include "../network/utils.hpp"
 #include "../widget/alertwidget.hpp"
 #include "../widget/propertycheckbox.hpp"
+#include "../widget/propertyspinbox.hpp"
+#include "../widget/propertylineedit.hpp"
+#include "../widget/propertydirectioncontrol.hpp"
+
+#include <enum/direction.hpp>
 
 ObjectEditWidget::ObjectEditWidget(const QString& id, QWidget* parent) :
   QWidget(parent),
@@ -70,6 +75,20 @@ void ObjectEditWidget::buildForm()
 
       if(property->type() == PropertyType::Boolean)
         w = new PropertyCheckBox(*property);
+      else if(property->type() == PropertyType::Integer)
+        w = new PropertySpinBox(*property);
+      else if(property->type() == PropertyType::String)
+        w = new PropertyLineEdit(*property);
+      else if(property->type() == PropertyType::Enum)
+      {
+        if(property->enumName() == EnumName<Direction>::value)
+        {
+          w = new PropertyDirectionControl(*property);
+        }
+
+        //else
+        //  w = dropdown
+      }
 
       l->addRow(property->displayName(), w);
     }

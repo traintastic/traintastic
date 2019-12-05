@@ -25,8 +25,10 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
+#include <enum/traintasticmode.hpp>
 
 class QMdiArea;
+class QActionGroup;
 class HardwareListSubWindow;
 class ServerSettingsSubWindow;
 class ServerConsoleSubWindow;
@@ -53,13 +55,14 @@ class MainWindow : public QMainWindow
     QAction* m_actionHardware;
     QAction* m_actionServerSettings;
     QAction* m_actionServerConsole;
+    QActionGroup* m_actionGroupMode;
     QAction* m_actionModeRun;
     QAction* m_actionModeStop;
     QAction* m_actionModeEdit;
     QByteArray m_beforeFullScreenGeometry;
 
     void closeEvent(QCloseEvent* event) final;
-    void updateActionEnabled();
+    void setMode(TraintasticMode value);
 
   protected slots:
     void disconnectFromServer();
@@ -73,6 +76,8 @@ class MainWindow : public QMainWindow
     void showServerSettings();
     void showServerConsole();
     void showAbout();
+    void clientStateChanged();
+    void updateModeActions();
 
   public:
     MainWindow(QWidget *parent = nullptr);

@@ -147,7 +147,7 @@ int main(int argc, char* argv[])
 
   try
   {
-    Traintastic::instance = std::make_unique<Traintastic>(options.dataDir);
+    Traintastic::instance = std::make_shared<Traintastic>(options.dataDir);
     status = Traintastic::instance->run() ? EXIT_SUCCESS : EXIT_FAILURE;
     Traintastic::instance.reset();
   }

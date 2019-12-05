@@ -24,20 +24,32 @@
 #define SERVER_HARDWARE_DECODER_DECODERFUNCTION_HPP
 
 #include "../../core/output.hpp"
+#include "../../core/objectproperty.hpp"
+#include "../commandstation/commandstation.hpp"
 
 namespace Hardware {
 
+class Decoder;
+
 class DecoderFunction : public Output
 {
+  public://protected:
+    Decoder* m_decoder;
+
+  protected:
+    bool setValue(bool& value) final;
+    void valueChanged(bool) final;
+
   public:
     CLASS_ID("hardware.decoder_function")
+    CREATE(DecoderFunction)
 
     static const std::shared_ptr<DecoderFunction> null;
 
+    DecoderFunction(const std::weak_ptr<World>& world, const std::string& _id);
+
     Property<uint8_t> number;
     Property<bool> momentary;
-
-    DecoderFunction(const std::string& _id);
 };
 
 }

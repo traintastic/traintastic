@@ -35,6 +35,11 @@ TableWidget::TableWidget(QWidget* parent) :
   horizontalHeader()->setDefaultSectionSize(fontMetrics().height());
 }
 
+QString TableWidget::getRowObjectId(int row) const
+{
+  return m_model ? m_model->getRowObjectId(row) : "";
+}
+
 void TableWidget::setTableModel(const TableModelPtr& model)
 {
   Q_ASSERT(!m_model);

@@ -23,7 +23,7 @@
 #ifndef SERVER_CORE_WORLDLIST_HPP
 #define SERVER_CORE_WORLDLIST_HPP
 
-#include "idobject.hpp"
+#include "object.hpp"
 #include "table.hpp"
 #include "stdfilesystem.hpp"
 //#include <memory>
@@ -32,7 +32,7 @@
 
 class WorldListTableModel;
 
-class WorldList : public IdObject, public Table
+class WorldList : public Object, public Table
 {
   friend class WorldListTableModel;
 

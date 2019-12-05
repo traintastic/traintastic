@@ -68,72 +68,21 @@ class AbstractProperty : public InterfaceItem
       return m_type;
     }
 
+    virtual std::string enumName() const = 0; // TODO: const std::string_view& ??
+
     virtual bool toBool() const = 0;
     virtual int64_t toInt64() const = 0;
     virtual double toDouble() const = 0;
     virtual std::string toString() const = 0;
     virtual ObjectPtr toObject() const = 0;
+    virtual nlohmann::json toJSON() const = 0;
 
     virtual void fromBool(bool value) = 0;
     virtual void fromInt64(int64_t value) = 0;
     virtual void fromDouble(double value) = 0;
     virtual void fromString(const std::string& value) = 0;
     virtual void fromObject(const ObjectPtr& value) = 0;
-
-    nlohmann::json toJSON() const
-    {
-      switch(type())
-      {
-        case PropertyType::Boolean:
-          return toBool();
-
-        case PropertyType::Integer:
-          return toInt64();
-
-        case PropertyType::Float:
-          return toDouble();
-
-        case PropertyType::String:
-          return toString();
-
-        // TODO: case nlohmann::json::value_t::object:
-        // TODO: case nlohmann::json::value_t::array:
-
-        default:
-          throw std::runtime_error("unsupported type");
-      }
-    }
-
-    void fromJSON(const nlohmann::json& value)
-    {
-      switch(value.type())
-      {
-        // TODO: case nlohmann::json::value_t::null:
-
-        case nlohmann::json::value_t::boolean:
-          fromBool(value);
-          break;
-
-        case nlohmann::json::value_t::number_integer:
-        case nlohmann::json::value_t::number_unsigned:
-          fromInt64(value);
-          break;
-
-        case nlohmann::json::value_t::number_float:
-          fromDouble(value);
-          break;
-
-        case nlohmann::json::value_t::string:
-          fromString(value);
-          break;
-
-        // TODO: case nlohmann::json::value_t::object:
-        // TODO: case nlohmann::json::value_t::array:
-
-        default:
-          throw std::runtime_error("unsupported JSON type");
-      }
-    }
+    virtual void fromJSON(const nlohmann::json& value) = 0;
 };
 
 #endif

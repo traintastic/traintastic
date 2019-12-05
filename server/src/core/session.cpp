@@ -28,10 +28,15 @@
 #include <enum/interfaceitemtype.hpp>
 #include "tablemodel.hpp"
 #include "world.hpp"
+#include "idobject.hpp"
+
+
+
 
 #include "settings.hpp"
 
 #include "../hardware/commandstation/commandstationlist.hpp"
+#include "../hardware/decoder/decoderlist.hpp"
 
 #include <iostream>
 
@@ -51,13 +56,16 @@ bool Session::processMessage(const Message& message)
       std::string id;
       message.read(id);
 
-      ObjectPtr obj;
-      if(id == "console")
-        obj = Traintastic::instance->console.toObject();
-      else if(id == "settings")
-        obj = Traintastic::instance->settings.toObject();
-      else if(id == "command_station_list")
-        obj = Traintastic::instance->world->commandStationList;
+      ObjectPtr obj = Traintastic::instance->world->getObject(id);
+      if(!obj)
+      {
+        if(id == Traintastic::id)
+          obj = Traintastic::instance;
+        else if(id == "console")
+          obj = Traintastic::instance->console.toObject();
+        else if(id == "settings")
+          obj = Traintastic::instance->settings.toObject();
+      }
 
       if(obj)
       {
@@ -162,23 +170,31 @@ bool Session::processMessage(const Message& message)
       {
         if(AbstractProperty* property = object->getProperty(message.read<std::string>()))
         {
-          switch(message.read<PropertyType>())
+          try
           {
-            case PropertyType::Boolean:
-              property->fromBool(message.read<bool>());
-              break;
+            switch(message.read<PropertyType>())
+            {
+              case PropertyType::Boolean:
+                property->fromBool(message.read<bool>());
+                break;
 
-            case PropertyType::Integer:
-              property->fromInt64(message.read<int64_t>());
-              break;
+              case PropertyType::Integer:
+                property->fromInt64(message.read<int64_t>());
+                break;
 
-            case PropertyType::Float:
-              property->fromDouble(message.read<double>());
-              break;
+              case PropertyType::Float:
+                property->fromDouble(message.read<double>());
+                break;
 
-            case PropertyType::String:
-              property->fromString(message.read<std::string>());
-              break;
+              case PropertyType::String:
+                property->fromString(message.read<std::string>());
+                break;
+            }
+          }
+          catch(const std::exception&)
+          {
+            // set property failed, send changed event with current value:
+            objectPropertyChanged(*object, *property);
           }
         }
       }
@@ -233,6 +249,8 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
     {
       InterfaceItem& item = it.second;
 
+      // TODO: if(item. internal)
+
       message.writeBlock(); // item
       message.write(item.name());
 
@@ -244,6 +262,11 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
         {
           case PropertyType::Boolean:
             message.write(property->toBool());
+            break;
+
+          case PropertyType::Enum:
+            message.write(property->toInt64());
+            message.write(property->enumName());
             break;
 
           case PropertyType::Integer:
@@ -258,6 +281,16 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
             message.write(property->toString());
             break;
 
+          case PropertyType::Object:
+          {
+            ObjectPtr obj = property->toObject();
+   // TODO:         assert(!obj || dynamic_cast<IdObject*>(obj.get()));
+            if(IdObject* idObj = dynamic_cast<IdObject*>(obj.get()))
+              message.write<std::string>(idObj->id);
+            else
+              message.write<std::string>("");
+            break;
+          }
           default:
             assert(false);
             break;
@@ -302,6 +335,7 @@ void Session::objectPropertyChanged(Object& object, AbstractProperty& property)
       event->write(property.toBool());
       break;
 
+    case PropertyType::Enum:
     case PropertyType::Integer:
       event->write(property.toInt64());
       break;

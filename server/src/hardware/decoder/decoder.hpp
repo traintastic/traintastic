@@ -25,51 +25,51 @@
 
 #include <type_traits>
 #include "../../core/idobject.hpp"
+#include "../../core/objectproperty.hpp"
 #include "../../enum/decoderprotocol.hpp"
 #include "../../enum/direction.hpp"
+#include "decoderfunctionlist.hpp"
+
+class DecoderFunctionList;
 
 namespace Hardware {
 
+enum class DecoderChangeFlags;
 class DecoderFunction;
+
+namespace CommandStation {
+  class CommandStation;
+}
 
 class Decoder : public IdObject
 {
-  public:
-    enum class ChangeFlags
-    {
-      EmergencyStop = 1 << 0,
-      Direction = 1 << 1,
-      SpeedStep = 1 << 2,
-      SpeedSteps = 1 << 3,
-      FunctionValue = 1 << 4,
-      FunctionMomentary = 1 << 5,
-    };
+  friend class DecoderFunction;
+
+  protected:
+    void changed(DecoderChangeFlags changes, uint32_t functionNumber = 0);
 
   public:
     CLASS_ID("hardware.decoder")
+    CREATE(Decoder)
 
-    //ObjectProperty<CommandStation::CommandStation> commandStation;
+    static const std::shared_ptr<Decoder> null;
+
+    Decoder(const std::weak_ptr<World>& world, const std::string& _id);
+
+    Property<std::string> name;
+    ObjectProperty<CommandStation::CommandStation> commandStation;
     Property<DecoderProtocol> protocol;
     Property<uint16_t> address;
+    Property<bool> longAddress;
     Property<bool> emergencyStop;
     Property<Direction> direction;
     Property<uint8_t> speedSteps;
     Property<uint8_t> speedStep;
-
-    Decoder(const std::string& _id);
+    ObjectProperty<DecoderFunctionList> functions;
+    Property<std::string> notes;
 
     const std::shared_ptr<DecoderFunction>& getFunction(uint32_t number) const;
 };
-
-constexpr Decoder::ChangeFlags operator| (const Decoder::ChangeFlags& lhs, const Decoder::ChangeFlags& rhs)
-{
-  return static_cast<Decoder::ChangeFlags>(static_cast<std::underlying_type_t<Decoder::ChangeFlags>>(lhs) | static_cast<std::underlying_type_t<Decoder::ChangeFlags>>(rhs));
-}
-
-constexpr bool has(const Decoder::ChangeFlags& value, const Decoder::ChangeFlags& mask)
-{
-  return (static_cast<std::underlying_type_t<Decoder::ChangeFlags>>(value) & static_cast<std::underlying_type_t<Decoder::ChangeFlags>>(mask)) != 0;
-}
 
 }
 

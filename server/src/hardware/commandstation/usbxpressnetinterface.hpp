@@ -24,25 +24,40 @@
 #define SERVER_HARDWARE_COMMANDSTATION_USBXPRESSNETINTERFACE_HPP
 
 #include "commandstation.hpp"
-#include "protocol/xpressnet.hpp"
+#include "../../core/objectproperty.hpp"
 #include <usbxpressnet.h>
 
 namespace Hardware::CommandStation {
 
+namespace Protocol {
+  class XpressNet;
+}
+
 class USBXpressNetInterface : public CommandStation
 {
   protected:
-    std::shared_ptr<Protocol::XpressNet> m_xpressnet;
+    static const uint8_t addressMin = 1;
+    static const uint8_t addressMax = 31;
+
     usbxpressnet_handle m_handle;
+
+    bool setOnline(bool& value) final;
+    bool isDecoderSupported(Decoder& decoder) const final;
+    void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
+
+    void send(const void* msg);
 
   public:
     CLASS_ID("hardware.command_station.usb_xpressnet_interface")
+    CREATE(USBXpressNetInterface)
+
+    USBXpressNetInterface(const std::weak_ptr<World>& world, const std::string& _id);
 
     Property<std::string> serial;
-    //ObjectProperty<XpressNet> xpressnet;
+    Property<uint8_t> address;
+    ObjectProperty<Protocol::XpressNet> xpressnet;
 
-    USBXpressNetInterface(const std::string& _id);
-    ~USBXpressNetInterface() override;
+    ~USBXpressNetInterface() final;
 };
 
 }

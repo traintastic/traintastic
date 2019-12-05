@@ -35,12 +35,14 @@ Settings::Settings(const std::filesystem::path& filename) :
   localhostOnly{this, "localhost_only", true, PropertyFlags::AccessWCC, [this](const bool&){ save(); }},
   port{this, "port", defaultPort, PropertyFlags::AccessWCC, [this](const uint16_t&){ save(); }},
   discoverable{this, "discoverable", true, PropertyFlags::AccessWWW, [this](const bool&){ save(); }},
-  defaultWorld{this, "default_world", "", PropertyFlags::AccessWWW, [this](const std::string&){ save(); }}
+  defaultWorld{this, "default_world", "", PropertyFlags::AccessWWW, [this](const std::string&){ save(); }},
+  autoSaveWorldOnExit{this, "auto_save_world_on_exit", false, PropertyFlags::AccessWWW, [this](const bool&){ save(); }}
 {
   m_interfaceItems.add(localhostOnly);
   m_interfaceItems.add(port);
   m_interfaceItems.add(discoverable);
   m_interfaceItems.add(defaultWorld);
+  m_interfaceItems.add(autoSaveWorldOnExit);
 
   load();
 }

@@ -26,11 +26,14 @@
 using Hardware::CommandStation::CommandStation;
 
 constexpr uint32_t columnId = 0;
+constexpr uint32_t columnName = 1;
+constexpr uint32_t columnOnline = 2;
+constexpr uint32_t columnStatus = 3;
 
 CommandStationListTableModel::CommandStationListTableModel(CommandStationList& list) :
   ObjectListTableModel<CommandStation>(list)
 {
-  setColumnHeaders({"Id"});
+  setColumnHeaders({"Id", "Name", "Online", "Status"});
 }
 
 std::string CommandStationListTableModel::getText(uint32_t column, uint32_t row) const
@@ -43,6 +46,15 @@ std::string CommandStationListTableModel::getText(uint32_t column, uint32_t row)
     {
       case columnId:
         return cs.id;
+
+      case columnName:
+        return cs.name;
+
+      case columnOnline:
+        return cs.online ? "\u2022" : "";
+
+      case columnStatus:
+        return "?";
 
       default:
         assert(false);

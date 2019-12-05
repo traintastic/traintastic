@@ -36,17 +36,39 @@ class ObjectList : public IdObject, public Table
 
   static_assert(std::is_base_of<IdObject, T>::value);
 
+  public:
+    using Items = std::vector<std::shared_ptr<T>>;
+    using const_iterator = typename Items::const_iterator;
+
   protected:
-    std::vector<std::shared_ptr<T>> m_items;
+    Items m_items;
     std::vector<ObjectListTableModel<T>*> m_models;
 
+    void rowCountChanged()
+    {
+      const auto size = m_items.size();
+      length = size;
+      for(auto& model : m_models)
+        model->setRowCount(size);
+    }
+
   public:
+
     Property<uint32_t> length;
 
-    ObjectList(const std::string& _id) :
-      IdObject{_id},
+    ObjectList(const std::weak_ptr<World>& world, const std::string& _id) :
+      IdObject{world, _id},
       length{this, "length", 0, PropertyFlags::AccessRRR}
     {
+    }
+
+    inline const_iterator begin() const noexcept { return m_items.begin(); }
+    inline const_iterator end() const noexcept { return m_items.end(); }
+
+    ObjectPtr getObject(uint32_t index)
+    {
+      assert(index < m_items.size());
+      return std::static_pointer_cast<Object>(m_items[index]);
     }
 
     const std::shared_ptr<T>& operator[](uint32_t index)
@@ -58,10 +80,17 @@ class ObjectList : public IdObject, public Table
     void add(const std::shared_ptr<T>& object)
     {
       m_items.push_back(object);
-      const auto size = m_items.size();
-      length = size;
-      for(auto& model : m_models)
-        model->setRowCount(size);
+      rowCountChanged();
+    }
+
+    void remove(const std::shared_ptr<T>& object)
+    {
+      auto it = std::find(m_items.begin(), m_items.end(), object);
+      if(it != m_items.end())
+      {
+        m_items.erase(it);
+        rowCountChanged();
+      }
     }
 };
 

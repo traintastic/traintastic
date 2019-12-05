@@ -31,8 +31,9 @@ class CommandStationList : public ObjectList<Hardware::CommandStation::CommandSt
 {
   public:
     CLASS_ID("command_station_list")
+    CREATE(CommandStationList)
 
-    CommandStationList(const std::string& _id);
+    CommandStationList(const std::weak_ptr<World>& world, const std::string& _id);
 
     TableModelPtr getModel() final;
 };

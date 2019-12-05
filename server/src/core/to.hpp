@@ -28,6 +28,24 @@
 #include <stdexcept>
 #include <cmath>
 
+class not_writable_error : public std::runtime_error
+{
+  public:
+    not_writable_error() :
+      std::runtime_error("not writable error")
+    {
+    }
+};
+
+class invalid_value_error : public std::runtime_error
+{
+  public:
+    invalid_value_error() :
+      std::runtime_error("invalid value error")
+    {
+    }
+};
+
 class conversion_error : public std::runtime_error
 {
   public:
@@ -49,9 +67,16 @@ class out_of_range_error : public std::runtime_error
 template<typename To, typename From>
 To to(const From& value)
 {
-  if constexpr(std::is_same<To, From>::value)
+  if constexpr(std::is_same_v<To, From>)
     return value;
-  else if constexpr(!std::is_same<To, bool>::value && std::is_integral<To>::value && !std::is_same<From, bool>::value && std::is_integral<From>::value)
+  else if constexpr(std::is_integral_v<To> && std::is_enum_v<From>)
+    return static_cast<To>(value);
+  else if constexpr(std::is_enum_v<To> && std::is_integral_v<From>)
+  {
+    // TODO: test if enum value is valid !!
+    return static_cast<To>(value);
+  }
+  else if constexpr(!std::is_same_v<To, bool> && std::is_integral_v<To> && !std::is_same_v<From, bool> && std::is_integral_v<From>)
   {
     if constexpr(std::numeric_limits<To>::min() <= std::numeric_limits<From>::min() && std::numeric_limits<To>::max() >= std::numeric_limits<From>::max())
       return value;
@@ -60,14 +85,18 @@ To to(const From& value)
     else
       throw out_of_range_error();
   }
-  else if constexpr(std::is_floating_point<To>::value && (std::is_integral<From>::value || std::is_floating_point<From>::value))
+  else if constexpr(std::is_floating_point_v<To> && (std::is_integral_v<From> || std::is_floating_point_v<From>))
     return value;
-  else if constexpr(std::is_integral<To>::value && std::is_floating_point<From>::value)
+  else if constexpr(std::is_integral_v<To> && std::is_floating_point_v<From>)
   {
     if(value >= std::numeric_limits<To>::min() && value <= std::numeric_limits<To>::max())
       return static_cast<To>(std::round(value));
     else
       throw out_of_range_error();
+  }
+  else if constexpr(std::is_same_v<To, std::string> && std::is_integral_v<From> && !std::is_same_v<From, bool>)
+  {
+    return std::to_string(value);
   }
 
   throw conversion_error();

@@ -21,7 +21,15 @@
  */
 
 #include "xpressnet.hpp"
+#include "../commandstation.hpp"
+#include "../../decoder/decoder.hpp"
+#include "../../decoder/decoderchangeflags.hpp"
 #include "../../decoder/decoderfunction.hpp"
+
+
+
+#include "../../../core/traintastic.hpp"
+
 
 namespace Hardware::CommandStation::Protocol {
 
@@ -33,6 +41,19 @@ inline void addressLowHigh(uint16_t address, uint8_t& addressLow, uint8_t& addre
   else
     addressHigh = (0xC0 | address >> 8);
 }
+
+struct EmergencyStopLocomotive
+{
+  const uint8_t headerByte = 0x92;
+  uint8_t addressHigh;
+  uint8_t addressLow;
+  uint8_t checksum;
+
+  EmergencyStopLocomotive(uint16_t address)
+  {
+    addressLowHigh(address, addressLow, addressHigh);
+  }
+} __attribute__((packed));
 
 struct SpeedAndDirectionInstruction
 {
@@ -83,11 +104,13 @@ struct SetFunctionStateGroup
   }
 } __attribute__((packed));
 
-XpressNet::XpressNet() :
-  Object(),
+XpressNet::XpressNet(const std::weak_ptr<World>& world, const std::string& id, std::function<void(const void*)>&& send) :
+  IdObject(world, id),
+  m_send{std::move(send)},
   commandStation{this, "command_station", XpressNetCommandStation::Custom, PropertyFlags::AccessWCC},
   useFunctionStateCommands{this, "use_function_state_commands", false, PropertyFlags::AccessWCC}
 {
+  assert(m_send);
   m_interfaceItems.add(commandStation);
   m_interfaceItems.add(useFunctionStateCommands);
 }
@@ -100,15 +123,15 @@ bool XpressNet::isDecoderSupported(const Decoder& decoder) const
     decoder.address <= addressMax;
 }
 
-void XpressNet::decoderChanged(const Decoder& decoder, Decoder::ChangeFlags changes, uint32_t functionNumber)
+void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
-  using CF = Decoder::ChangeFlags;
+  Traintastic::instance->console->debug(id, "XpressNet::decoderChanged");
 
-  if(changes == CF::EmergencyStop)
+  /*if(changes == DecoderChangeFlags::EmergencyStop && decoder.emergencyStop)
     sendEmergencyStop(decoder);
-  else if(has(changes, CF::EmergencyStop | CF::Direction | CF::SpeedStep | CF::SpeedSteps))
+  else*/ if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Direction | DecoderChangeFlags::SpeedStep | DecoderChangeFlags::SpeedSteps))
     sendSpeedAndDirectionInstruction(decoder);
-  else if(has(changes, CF::FunctionValue))
+  else if(has(changes, DecoderChangeFlags::FunctionValue))
   {
     if(functionNumber <= 4)
       sendFunctionInstructionGroup1(decoder);
@@ -119,7 +142,7 @@ void XpressNet::decoderChanged(const Decoder& decoder, Decoder::ChangeFlags chan
     else
       ; // console warning
   }
-  else if(has(changes, CF::FunctionMomentary))
+  else if(has(changes, DecoderChangeFlags::FunctionMomentary))
   {
 
   }
@@ -130,23 +153,30 @@ uint8_t XpressNet::calcChecksum(const void* cmd)
   const uint8_t* p = static_cast<const uint8_t*>(cmd);
   const int length = p[0] & 0x0f;
   uint8_t checksum = p[0];
-  for(int i = 1; i < length; i++)
+  for(int i = 1; i <= length; i++)
     checksum ^= p[i];
   return checksum;
 }
 
 void XpressNet::sendEmergencyStop(const Decoder& decoder)
 {
+  Traintastic::instance->console->debug(id, "XpressNet::sendEmergencyStop");
+
+  EmergencyStopLocomotive cmd(decoder.address);
+  cmd.checksum = calcChecksum(&cmd);
+  m_send(&cmd);
 }
 
 void XpressNet::sendSpeedAndDirectionInstruction(const Decoder& decoder)
 {
+  Traintastic::instance->console->debug(id, "XpressNet::sendSpeedAndDirectionInstruction");
+
   SpeedAndDirectionInstruction cmd(decoder.address);
 
+  assert(decoder.speedStep <= decoder.speedSteps);
   switch(decoder.speedSteps)
   {
     case 14:
-      assert(decoder.speedStep <= 14);
       cmd.identification = 0x10;
       if(decoder.emergencyStop)
         cmd.speedAndDirection = 0x01;
@@ -155,7 +185,6 @@ void XpressNet::sendSpeedAndDirectionInstruction(const Decoder& decoder)
       break;
 
     case 27:
-      assert(decoder.speedStep <= 27);
       cmd.identification = 0x11;
       if(decoder.emergencyStop)
         cmd.speedAndDirection = 0x01;
@@ -167,7 +196,6 @@ void XpressNet::sendSpeedAndDirectionInstruction(const Decoder& decoder)
       break;
 
     case 28:
-      assert(decoder.speedStep <= 28);
       cmd.identification = 0x12;
       if(decoder.emergencyStop)
         cmd.speedAndDirection = 0x01;
@@ -178,8 +206,7 @@ void XpressNet::sendSpeedAndDirectionInstruction(const Decoder& decoder)
       }
       break;
 
-    case 128:
-      assert(decoder.speedStep <= 126);
+    case 126:
       cmd.identification = 0x13;
       if(decoder.emergencyStop)
         cmd.speedAndDirection = 0x01;
@@ -193,7 +220,7 @@ void XpressNet::sendSpeedAndDirectionInstruction(const Decoder& decoder)
 
   cmd.checksum = calcChecksum(&cmd);
 
-  //send(cmd);
+  m_send(&cmd);
 }
 
 void XpressNet::sendFunctionInstructionGroup1(const Decoder& decoder)
@@ -215,7 +242,7 @@ void XpressNet::sendFunctionInstructionGroup1(const Decoder& decoder)
 
   cmd.checksum = calcChecksum(&cmd);
 
-  //send(cmd);
+  m_send(&cmd);
 }
 
 void XpressNet::sendFunctionInstructionGroup2(const Decoder& decoder)
@@ -232,7 +259,7 @@ void XpressNet::sendFunctionInstructionGroup2(const Decoder& decoder)
 
   cmd.checksum = calcChecksum(&cmd);
 
-  //send(cmd);
+  m_send(&cmd);
 }
 
 void XpressNet::sendFunctionInstructionGroup3(const Decoder& decoder)
@@ -249,7 +276,7 @@ void XpressNet::sendFunctionInstructionGroup3(const Decoder& decoder)
 
   cmd.checksum = calcChecksum(&cmd);
 
-  //send(cmd);
+  m_send(&cmd);
 }
 
 void XpressNet::sendSetFunctionStateGroup1(const Decoder& decoder)
@@ -271,7 +298,7 @@ void XpressNet::sendSetFunctionStateGroup1(const Decoder& decoder)
 
   cmd.checksum = calcChecksum(&cmd);
 
-  //send(cmd);
+  m_send(&cmd);
 }
 
 void XpressNet::sendSetFunctionStateGroup2(const Decoder& decoder)
@@ -288,7 +315,7 @@ void XpressNet::sendSetFunctionStateGroup2(const Decoder& decoder)
 
   cmd.checksum = calcChecksum(&cmd);
 
-  //send(cmd);
+  m_send(&cmd);
 }
 
 void XpressNet::sendSetFunctionStateGroup3(const Decoder& decoder)
@@ -305,7 +332,7 @@ void XpressNet::sendSetFunctionStateGroup3(const Decoder& decoder)
 
   cmd.checksum = calcChecksum(&cmd);
 
-  //send(cmd);
+  m_send(&cmd);
 }
 
 }
