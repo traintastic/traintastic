@@ -28,9 +28,9 @@
 #include "../../core/objectproperty.hpp"
 #include "protocol/xpressnet.hpp"
 
-namespace Hardware::CommandStation {
-
 struct z21_lan_header;
+
+namespace Hardware::CommandStation {
 
 class Z21 : public CommandStation
 {
@@ -46,6 +46,7 @@ class Z21 : public CommandStation
 
     void receive();
     void send(const z21_lan_header* msg);
+    inline void send(const z21_lan_header& msg) { send(&msg); }
 
   public:
     CLASS_ID("hardware.command_station.z21")
@@ -55,6 +56,11 @@ class Z21 : public CommandStation
 
     Property<std::string> hostname;
     Property<uint16_t> port;
+    Property<uint32_t> serialNumber;
+    Property<std::string> hardwareType;
+    Property<std::string> firmwareVersion;
+    Property<bool> emergencyStop;
+    Property<bool> trackVoltageOff;
 };
 
 }

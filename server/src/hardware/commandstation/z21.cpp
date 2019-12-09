@@ -26,6 +26,7 @@
 #include "../../core/eventloop.hpp"
 #include "../decoder/decoderchangeflags.hpp"
 #include "protocol/xpressnet.hpp"
+#include "protocol/z21.hpp"
 #include "../../utils/to_hex.hpp"
 
 
@@ -38,8 +39,7 @@
 
 namespace Hardware::CommandStation {
 
-#define Z21_HEADER_X 0x40
-#define Z21_LAN_X_LOCO_INFO 0xEF
+
 
 #define SET_ADDRESS \
   if(decoder.longAddress) \
@@ -53,50 +53,7 @@ namespace Hardware::CommandStation {
     cmd.addressLow = decoder.address; \
   }
 
-struct z21_lan_header
-{
-  uint16_t dataLen; // LE
-  uint16_t header;  // LE
-} __attribute__((packed));
 
-struct z21_lan_x : z21_lan_header
-{
-  uint8_t xheader;
-} __attribute__((packed));
-
-struct z21_lan_x_loco_info : z21_lan_x
-{
-  uint8_t addressHigh;
-  uint8_t addressLow;
-  uint8_t db2;
-  uint8_t speedAndDirection;
-  uint8_t db4;
-  uint8_t f5f12;
-  uint8_t f13f20;
-  uint8_t f21f28;
-} __attribute__((packed));
-
-struct z21_lan_x_set_loco_drive : z21_lan_header
-{
-  uint8_t xheader = 0xe4;
-  uint8_t db0;
-  uint8_t addressHigh;
-  uint8_t addressLow;
-  uint8_t speedAndDirection = 0;
-  uint8_t checksum;
-} __attribute__((packed));
-static_assert(sizeof(z21_lan_x_set_loco_drive) == 0x0a);
-
-struct z21_lan_x_set_loco_function : z21_lan_header
-{
-  uint8_t xheader = 0xe4;
-  uint8_t db0 = 0xf8;
-  uint8_t addressHigh;
-  uint8_t addressLow;
-  uint8_t db3;
-  uint8_t checksum;
-} __attribute__((packed));
-static_assert(sizeof(z21_lan_x_set_loco_function) == 0x0a);
 
 
 
@@ -105,12 +62,34 @@ Z21::Z21(const std::weak_ptr<World>& world, const std::string& _id) :
   CommandStation(world, _id),
   m_socket{Traintastic::instance->ioContext()},
   hostname{this, "hostname", "", PropertyFlags::AccessWCC},
-  port{this, "port", 21105, PropertyFlags::AccessWCC}
+  port{this, "port", 21105, PropertyFlags::AccessWCC},
+  serialNumber{this, "serial_number", 0, PropertyFlags::AccessRRR},
+  hardwareType{this, "hardware_type", "", PropertyFlags::AccessRRR},
+  firmwareVersion{this, "firmware_version", "", PropertyFlags::AccessRRR},
+  emergencyStop{this, "emergency_stop", false, PropertyFlags::TODO,
+    [this](bool value)
+    {
+      if(value)
+        send(z21_lan_x_set_stop());
+    }},
+  trackVoltageOff{this, "track_voltage_off", false, PropertyFlags::TODO,
+    [this](bool value)
+    {
+      if(value)
+        send(z21_lan_x_set_track_power_off());
+      else
+        send(z21_lan_x_set_track_power_on());
+    }}
 {
   name = "Z21";
 
   m_interfaceItems.add(hostname);
   m_interfaceItems.add(port);
+  m_interfaceItems.add(serialNumber);
+  m_interfaceItems.add(hardwareType);
+  m_interfaceItems.add(firmwareVersion);
+  m_interfaceItems.add(emergencyStop);
+  m_interfaceItems.add(trackVoltageOff);
 }
 
 bool Z21::isDecoderSupported(Decoder& decoder) const
@@ -129,7 +108,7 @@ void Z21::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uin
   {
     z21_lan_x_set_loco_drive cmd;
     cmd.dataLen = sizeof(cmd);
-    cmd.header = Z21_HEADER_X;
+    cmd.header = Z21_LAN_X;
     SET_ADDRESS;
 
     assert(decoder.speedStep <= decoder.speedSteps);
@@ -180,7 +159,7 @@ void Z21::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uin
       {
         z21_lan_x_set_loco_function cmd;
         cmd.dataLen = sizeof(cmd);
-        cmd.header = Z21_HEADER_X;
+        cmd.header = Z21_LAN_X;
         SET_ADDRESS;
         cmd.db3 = (f->value ? 0x40 : 0x00) | static_cast<uint8_t>(functionNumber);
         cmd.checksum = XpressNet::calcChecksum(&cmd.xheader);
@@ -216,6 +195,9 @@ bool Z21::setOnline(bool& value)
       return false;
     }
     // try to communicate with Z21
+    send(z21_lan_get_serial_number());
+    send(z21_lan_get_hwinfo());
+    send(z21_lan_systemstate_getdata());
   }
   else if(m_socket.is_open() && !value)
   {
@@ -236,7 +218,53 @@ void Z21::receive()
           const z21_lan_header* cmd = reinterpret_cast<const z21_lan_header*>(m_receiveBuffer.data());
           switch(cmd->header)
           {
-            case Z21_HEADER_X:
+            case Z21_LAN_GET_SERIAL_NUMBER:
+            {
+              EventLoop::call(
+                [this, value=static_cast<const z21_lan_get_serial_number_reply*>(cmd)->serialNumber]()
+                {
+                  serialNumber = value;
+                });
+              break;
+            }
+            case Z21_LAN_GET_HWINFO:
+            {
+              const z21_lan_get_hwinfo_reply* reply = static_cast<const z21_lan_get_hwinfo_reply*>(cmd);
+
+              std::string hwType;
+              switch(reply->hardwareType)
+              {
+                case Z21_HWT_Z21_OLD:
+                  hwType = "Black Z21 (hardware variant from 2012)";
+                  break;
+                case Z21_HWT_Z21_NEW:
+                  hwType = "Black Z21 (hardware variant from 2013)";
+                  break;
+                case Z21_HWT_SMARTRAIL:
+                  hwType = "SmartRail (from 2012)";
+                  break;
+                case Z21_HWT_z21_SMALL:
+                  hwType = "White Z21 (starter set variant from 2013)";
+                  break;
+                case Z21_HWT_z21_START :
+                  hwType = "Z21 start (starter set variant from 2016)";
+                  break;
+                default:
+                  hwType = "0x" + to_hex(reply->hardwareType);
+                  break;
+              }
+
+              const std::string fwVersion = std::to_string((reply->firmwareVersion >> 8) & 0xFF) + "." + std::to_string(reply->firmwareVersion & 0xFF);
+
+              EventLoop::call(
+                [this, hwType, fwVersion]()
+                {
+                  hardwareType = hwType;
+                  firmwareVersion = fwVersion;
+                });
+              break;
+            }
+            case Z21_LAN_X:
             {
               // TODO check XOR
               const uint8_t xheader = static_cast<const z21_lan_x*>(cmd)->xheader;
@@ -263,14 +291,49 @@ void Z21::receive()
                       if(decoder)
                       {
                         decoder->direction = direction;
+                        if((speedStepMode == 0 && decoder->speedSteps == 14) ||
+                           (speedStepMode == 2 && decoder->speedSteps == 28) ||
+                           (speedStepMode == 4 && decoder->speedSteps == 126))
+                          decoder->speedStep = speedStep;
+
+                        for(auto& function : *decoder->functions)
+                        {
+                          const uint8_t number = function->number;
+                          if(number <= 28)
+                            function->value = functions & (1 << number);
+                        }
                       }
                     });
                   break;
                 }
+                case Z21_LAN_X_BC:
+                {
+
+                  break;
+                }
+                case Z21_LAN_X_BC_STOPPED:
+                  EventLoop::call(
+                    [this]()
+                    {
+                      emergencyStop = true;
+                    });
+                  break;
+
                 default:
                   EventLoop::call([this, xheader](){ Traintastic::instance->console->debug(id, "unknown xheader 0x" + to_hex(xheader)); });
                   break;
               }
+              break;
+            }
+            case Z21_LAN_SYSTEMSTATE_DATACHANGED:
+            {
+              const z21_lan_systemstate_datachanged state = *reinterpret_cast<const z21_lan_systemstate_datachanged*>(m_receiveBuffer.data());
+              EventLoop::call(
+                [this, state]()
+                {
+                  emergencyStop = state.centralState & Z21_CENTRALSTATE_EMERGENCYSTOP;
+                  trackVoltageOff = state.centralState & Z21_CENTRALSTATE_TRACKVOLTAGEOFF;
+                });
               break;
             }
             default:
