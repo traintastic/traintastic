@@ -22,6 +22,8 @@
 
 #include "objecteditwidget.hpp"
 #include <QFormLayout>
+#include <QVBoxLayout>
+#include <QTabWidget>
 #include <QtWaitingSpinner/waitingspinnerwidget.h>
 #include "../network/client.hpp"
 #include "../network/object.hpp"
@@ -31,6 +33,7 @@
 #include "../widget/propertycheckbox.hpp"
 #include "../widget/propertyspinbox.hpp"
 #include "../widget/propertylineedit.hpp"
+#include "../widget/propertytextedit.hpp"
 #include "../widget/propertydirectioncontrol.hpp"
 
 #include <enum/direction.hpp>
@@ -39,8 +42,6 @@ ObjectEditWidget::ObjectEditWidget(const QString& id, QWidget* parent) :
   QWidget(parent),
   m_id{id}
 {
-  setLayout(new QFormLayout());
-
   auto* spinner = new WaitingSpinnerWidget(this, true, false);
   spinner->start();
 
@@ -66,7 +67,7 @@ ObjectEditWidget::~ObjectEditWidget()
 
 void ObjectEditWidget::buildForm()
 {
-  QFormLayout* l = static_cast<QFormLayout*>(this->layout());
+  QMap<QString, QWidget*> tabs;
 
   for(auto item : m_object->interfaceItems())
     if(Property* property = dynamic_cast<Property*>(item))
@@ -78,7 +79,18 @@ void ObjectEditWidget::buildForm()
       else if(property->type() == PropertyType::Integer)
         w = new PropertySpinBox(*property);
       else if(property->type() == PropertyType::String)
-        w = new PropertyLineEdit(*property);
+      {
+        if(property->name() == "notes")
+        {
+          PropertyTextEdit* edit = new PropertyTextEdit(*property);
+          edit->setPlaceholderText(property->displayName());
+          Q_ASSERT(!tabs.contains("notes"));
+          tabs.insert("notes", edit);
+          continue;
+        }
+        else
+          w = new PropertyLineEdit(*property);
+      }
       else if(property->type() == PropertyType::Enum)
       {
         if(property->enumName() == EnumName<Direction>::value)
@@ -90,6 +102,34 @@ void ObjectEditWidget::buildForm()
         //  w = dropdown
       }
 
-      l->addRow(property->displayName(), w);
+      QWidget* tabWidget;
+      QString tab = "general"; // TODO: get sttribute
+      if(!tabs.contains(tab))
+      {
+        tabWidget = new QWidget();
+        tabWidget->setLayout(new QFormLayout());
+        tabs.insert(tab, tabWidget);
+      }
+      else
+        tabWidget = tabs[tab];
+
+      static_cast<QFormLayout*>(tabWidget->layout())->addRow(property->displayName(), w);
     }
+
+  if(tabs.count() > 1)
+  {
+    QTabWidget* tabWidget = new QTabWidget();
+    for(auto it = tabs.constBegin(); it != tabs.constEnd(); it++)
+      tabWidget->addTab(it.value(), it.key());
+    QVBoxLayout* l = new QVBoxLayout();
+    l->setMargin(0);
+    l->addWidget(tabWidget);
+    setLayout(l);
+  }
+  else if(tabs.count() == 1)
+  {
+    QWidget* w = tabs.first();
+    setLayout(w->layout());
+    delete w;
+  }
 }
