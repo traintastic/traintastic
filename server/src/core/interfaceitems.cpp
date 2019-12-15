@@ -23,7 +23,14 @@
 #include "interfaceitems.hpp"
 #include "interfaceitem.hpp"
 
+InterfaceItem* InterfaceItems::find(const std::string& name) const
+{
+  auto it = m_items.find(name);
+  return (it != m_items.end()) ? &it->second : nullptr;
+}
+
 void InterfaceItems::add(InterfaceItem& item)
 {
-  emplace(item.name(), item);
+  m_items.emplace(item.name(), item);
+  m_itemOrder.push_back(item.name());
 }

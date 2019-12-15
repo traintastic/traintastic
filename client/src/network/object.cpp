@@ -38,10 +38,10 @@ Object::~Object()
 
 const Property* Object::getProperty(const QString& name) const
 {
-  return dynamic_cast<Property*>(m_interfaceItems.value(name, nullptr));
+  return dynamic_cast<Property*>(m_interfaceItems.find(name));
 }
 
 Property* Object::getProperty(const QString& name)
 {
-  return dynamic_cast<Property*>(m_interfaceItems.value(name, nullptr));
+  return dynamic_cast<Property*>(m_interfaceItems.find(name));
 }

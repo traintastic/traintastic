@@ -34,8 +34,7 @@ Object::~Object()
 
 InterfaceItem* Object::getItem(const std::string& name)
 {
-  auto it = m_interfaceItems.find(name);
-  return (it != m_interfaceItems.end()) ? &it->second : nullptr;
+  return m_interfaceItems.find(name);
 }
 
 //AbstractMethod* Object::getMethod(const std::string& name)

@@ -24,12 +24,21 @@
 #define CLIENT_NETWORK_INTERFACEITEMS_HPP
 
 #include <QMap>
+#include <QStringList>
 
 class InterfaceItem;
 
-class InterfaceItems : public QMap<QString, InterfaceItem*>
+class InterfaceItems
 {
+  protected:
+    QMap<QString, InterfaceItem*> m_items;
+    QStringList m_itemOrder;
+
   public:
+    const QStringList& names() const { return m_itemOrder; }
+
+    inline InterfaceItem* find(const QString& name) const { return m_items.value(name, nullptr); }
+
     void add(InterfaceItem& item);
 };
 

@@ -69,8 +69,8 @@ void ObjectEditWidget::buildForm()
 {
   QMap<QString, QWidget*> tabs;
 
-  for(auto item : m_object->interfaceItems())
-    if(Property* property = dynamic_cast<Property*>(item))
+  for(const QString& name : m_object->interfaceItems().names())
+    if(Property* property = m_object->getProperty(name))
     {
       QWidget* w = nullptr;
 

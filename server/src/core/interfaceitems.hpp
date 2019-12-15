@@ -23,15 +23,30 @@
 #ifndef SERVER_CORE_INTERFACEITEMS_HPP
 #define SERVER_CORE_INTERFACEITEMS_HPP
 
-#include <map>
+#include <unordered_map>
+#include <list>
 #include <string>
 
 class InterfaceItem;
 
-class InterfaceItems : public std::map<std::string, InterfaceItem&>
+class InterfaceItems
 {
+  protected:
+    std::unordered_map<std::string, InterfaceItem&> m_items;
+    std::list<std::string> m_itemOrder;
+
   public:
+    using const_iterator = std::unordered_map<std::string, InterfaceItem&>::const_iterator;
+
+    inline const_iterator begin() const { return m_items.cbegin(); }
+    inline const_iterator end() const { return m_items.cend(); }
+
+    const std::list<std::string>& names() const { return m_itemOrder; }
+
+    InterfaceItem* find(const std::string& name) const;
     void add(InterfaceItem& item);
+
+    inline InterfaceItem& operator[](const std::string& name) const { return m_items.at(name); }
 };
 
 #endif

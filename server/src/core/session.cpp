@@ -245,14 +245,15 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
     message.write(object->getClassId());
 
     message.writeBlock(); // items
-    for(auto& it : object->interfaceItems())
+    const InterfaceItems& interfaceItems = object->interfaceItems();
+    for(const std::string& name : interfaceItems.names())
     {
-      InterfaceItem& item = it.second;
+      InterfaceItem& item = interfaceItems[name];
 
       // TODO: if(item. internal)
 
       message.writeBlock(); // item
-      message.write(item.name());
+      message.write(name);
 
       if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&item))
       {

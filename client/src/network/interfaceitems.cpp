@@ -25,5 +25,6 @@
 
 void InterfaceItems::add(InterfaceItem& item)
 {
-  insert(item.name(), &item);
+  m_items.insert(item.name(), &item);
+  m_itemOrder.append(item.name());
 }
