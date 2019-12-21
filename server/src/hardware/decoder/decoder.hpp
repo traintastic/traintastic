@@ -46,6 +46,7 @@ class Decoder : public IdObject
   friend class DecoderFunction;
 
   protected:
+    void modeChanged(TraintasticMode mode) final;
     void changed(DecoderChangeFlags changes, uint32_t functionNumber = 0);
 
   public:

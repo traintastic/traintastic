@@ -1,5 +1,5 @@
 /**
- * client/src/widget/objectlistwidget.hpp
+ * shared/src/enum/valuetype.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,42 +20,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CLIENT_WIDGET_OBJECTLISTWIDGET_HPP
-#define CLIENT_WIDGET_OBJECTLISTWIDGET_HPP
+#ifndef SHARED_ENUM_VALUETYPE_HPP
+#define SHARED_ENUM_VALUETYPE_HPP
 
-#include <QWidget>
-#include "../network/objectptr.hpp"
+#include <cstdint>
 
-class QToolBar;
-class TableWidget;
-
-class ObjectListWidget : public QWidget
+enum class ValueType : uint8_t
 {
-  Q_OBJECT
-
-  protected:
-    const QString m_id;
-    int m_requestId;
-    ObjectPtr m_object;
-    QToolBar* m_toolbar;
-    QAction* m_actionAdd;
-    QAction* m_actionEdit;
-    QAction* m_actionDelete;
-    TableWidget* m_tableWidget;
-
-    void addActionAdd();
-    void addActionEdit();
-    void addActionDelete();
-
-  protected slots:
-    void tableDoubleClicked(const QModelIndex& index);
-
-  public:
-    explicit ObjectListWidget(const QString& id, QWidget* parent = nullptr);
-    ~ObjectListWidget() override;
-
-  //signals:
-  //  void rowDoubleClicked(const QString& id);
+  Invalid = 0,
+  Boolean = 1,
+  Enum = 2,
+  Integer = 3,
+  Float = 4,
+  String = 5,
+  Object = 6,
 };
 
 #endif

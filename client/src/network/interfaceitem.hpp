@@ -24,6 +24,9 @@
 #define CLIENT_NETWORK_INTERFACEITEM_HPP
 
 #include <QObject>
+#include <QMap>
+#include <QVariant>
+#include <enum/attributename.hpp>
 
 class Object;
 
@@ -31,14 +34,30 @@ class InterfaceItem : public QObject
 {
   Q_OBJECT
 
+  friend class Client;
+
   protected:
     const QString m_name;
+    QMap<AttributeName, QVariant> m_attributes;
 
   public:
     explicit InterfaceItem(Object& object, const QString& name);
 
     const QString& name() const { return m_name; }
     const QString& displayName() const { return m_name; }
+
+    QVariant getAttribute(AttributeName name, const QVariant& default_) const;
+    bool getAttributeBool(AttributeName name, bool default_) const;
+    qint64 getAttributeInt64(AttributeName name, qint64 default_) const;
+
+    template<typename T>
+    T getAttributeEnum(AttributeName name, T default_) const
+    {
+      return static_cast<T>(getAttributeInt64(name, static_cast<qint64>(default_)));
+    }
+
+  signals:
+    void attributeChanged(AttributeName name, const QVariant& value);
 };
 
 #endif

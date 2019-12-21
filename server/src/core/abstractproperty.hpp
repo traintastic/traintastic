@@ -24,7 +24,7 @@
 #define SERVER_CORE_ABSTRACTPROPERTY_HPP
 
 #include "interfaceitem.hpp"
-#include <enum/propertytype.hpp>
+#include <enum/valuetype.hpp>
 #include "propertyflags.hpp"
 #include "objectptr.hpp"
 #include <cassert>
@@ -33,18 +33,18 @@
 class AbstractProperty : public InterfaceItem
 {
   protected:
-    const PropertyType m_type;
+    const ValueType m_type;
     PropertyFlags m_flags;
 
     void changed();
 
   public:
-    AbstractProperty(Object& object, const std::string& name, PropertyType type, PropertyFlags flags) :
+    AbstractProperty(Object& object, const std::string& name, ValueType type, PropertyFlags flags) :
       InterfaceItem{object, name},
       m_type{type},
       m_flags{flags}
     {
-      assert(type != PropertyType::Invalid);
+      assert(type != ValueType::Invalid);
       assert(is_access_valid(flags) && is_store_valid(flags));
     }
 
@@ -63,7 +63,7 @@ class AbstractProperty : public InterfaceItem
       return true;//!is_empty(m_flags & PropertyFlags::WriteOnly);
     }
 
-    PropertyType type() const
+    ValueType type() const
     {
       return m_type;
     }

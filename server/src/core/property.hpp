@@ -24,7 +24,7 @@
 #define SERVER_CORE_PROPERTY_HPP
 
 #include "abstractproperty.hpp"
-#include "propertytypetraits.hpp"
+#include "valuetypetraits.hpp"
 #include "to.hpp"
 #include <functional>
 #include <enum/enum.hpp>
@@ -43,7 +43,7 @@ class Property : public AbstractProperty
 
   public:
     Property(Object* object, const std::string& name, const T& value, PropertyFlags flags) :
-      AbstractProperty(*object, name, property_type<T>::value, flags),
+      AbstractProperty(*object, name, value_type<T>::value, flags),
       m_value{value}
     {
       //static_assert(property_type<T>::value != PropertyType::Invalid);
@@ -88,6 +88,15 @@ class Property : public AbstractProperty
       }
       else
         throw invalid_value_error();
+    }
+
+    void setValueInternal(T value)
+    {
+      if(m_value != value)
+      {
+        m_value = value;
+        changed();
+      }
     }
 
     operator const T&() const

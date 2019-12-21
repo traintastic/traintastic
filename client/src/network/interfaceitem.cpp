@@ -28,3 +28,18 @@ InterfaceItem::InterfaceItem(Object& object, const QString& name) :
   m_name{name}
 {
 }
+
+QVariant InterfaceItem::getAttribute(AttributeName name, const QVariant& default_) const
+{
+  return m_attributes.value(name, default_);
+}
+
+bool InterfaceItem::getAttributeBool(AttributeName name, bool default_) const
+{
+  return m_attributes.value(name, default_).toBool();
+}
+
+qint64 InterfaceItem::getAttributeInt64(AttributeName name, qint64 default_) const
+{
+  return m_attributes.value(name, default_).toLongLong();
+}

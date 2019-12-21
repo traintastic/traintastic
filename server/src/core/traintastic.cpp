@@ -50,7 +50,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
     {
       assert(world);
       console->info(id, "Mode changed to <TODO> " + std::to_string((int)value));
-      //world->modeChanged(value);
+      world->modeChanged(value);
     },
     [this](TraintasticMode& newValue)
     {

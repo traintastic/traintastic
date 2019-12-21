@@ -103,6 +103,14 @@ ObjectPtr World::getObject(const std::string& _id) const
     return ObjectPtr();
 }
 
+void World::modeChanged(TraintasticMode mode)
+{
+  Traintastic::instance->console->debug(id, "World::modeChanged");
+
+  for(auto& it : m_objects)
+    it.second.lock()->modeChanged(mode);
+}
+
 void World::load()
 {
   std::ifstream file(m_filename);
@@ -218,7 +226,7 @@ void World::save()
       for(auto& item : object->interfaceItems())
         if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&item.second))
         {
-          if(property->type() == PropertyType::Object)
+          if(property->type() == ValueType::Object)
           {
             if(IdObject* idObject = dynamic_cast<IdObject*>(property->toObject().get()))
               objectData[property->name()] = idObject->id.toJSON();

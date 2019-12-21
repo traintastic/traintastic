@@ -34,21 +34,36 @@ PropertyDirectionControl::PropertyDirectionControl(Property& property, QWidget* 
 {
   Q_ASSERT(property.enumName() == EnumName<Direction>::value);
 
-  QHBoxLayout* l = new QHBoxLayout();
+  setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
+  setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
 
   m_reverse->setArrowType(Qt::LeftArrow);
-  //m_reverse->setCheckable(true);
-
   m_forward->setArrowType(Qt::RightArrow);
-  //m_forward->setCheckable(true);
 
+  QHBoxLayout* l = new QHBoxLayout();
   l->addWidget(m_reverse);
   l->addWidget(m_forward);
-
   setLayout(l);
 
   setValue(m_property.toInt64());
   connect(&m_property, &Property::valueChangedInt64, this, &PropertyDirectionControl::setValue);
+  connect(&m_property, &Property::attributeChanged,
+    [this](AttributeName name, const QVariant& value)
+    {
+      switch(name)
+      {
+        case AttributeName::Enabled:
+          setEnabled(value.toBool());
+          break;
+
+        case AttributeName::Visible:
+          setVisible(value.toBool());
+          break;
+
+        default:
+          break;
+      }
+    });
   connect(m_reverse, &QToolButton::clicked, this, &PropertyDirectionControl::buttonClicked);
   connect(m_forward, &QToolButton::clicked, this, &PropertyDirectionControl::buttonClicked);
 }

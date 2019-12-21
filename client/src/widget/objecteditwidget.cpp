@@ -35,8 +35,24 @@
 #include "../widget/propertylineedit.hpp"
 #include "../widget/propertytextedit.hpp"
 #include "../widget/propertydirectioncontrol.hpp"
+#include <enum/category.hpp>
 
 #include <enum/direction.hpp>
+
+
+QString toString(Category value)
+{
+  switch(value)
+  {
+    case Category::General: return "General";
+    case Category::Info: return "Info";
+    case Category::Notes: return "Notes";
+    case Category::Status: return "Status";
+  }
+  return "?";
+}
+
+
 
 ObjectEditWidget::ObjectEditWidget(const QString& id, QWidget* parent) :
   QWidget(parent),
@@ -67,31 +83,34 @@ ObjectEditWidget::~ObjectEditWidget()
 
 void ObjectEditWidget::buildForm()
 {
-  QMap<QString, QWidget*> tabs;
+  QMap<Category, QWidget*> tabs;
+  QList<Category> tabOrder;
 
   for(const QString& name : m_object->interfaceItems().names())
     if(Property* property = m_object->getProperty(name))
     {
+      Category category = property->getAttributeEnum<Category>(AttributeName::Category, Category::General);
       QWidget* w = nullptr;
 
-      if(property->type() == PropertyType::Boolean)
+      if(property->type() == ValueType::Boolean)
         w = new PropertyCheckBox(*property);
-      else if(property->type() == PropertyType::Integer)
+      else if(property->type() == ValueType::Integer)
         w = new PropertySpinBox(*property);
-      else if(property->type() == PropertyType::String)
+      else if(property->type() == ValueType::String)
       {
-        if(property->name() == "notes")
+        if(category == Category::Notes && property->name() == "notes")
         {
           PropertyTextEdit* edit = new PropertyTextEdit(*property);
           edit->setPlaceholderText(property->displayName());
-          Q_ASSERT(!tabs.contains("notes"));
-          tabs.insert("notes", edit);
+          Q_ASSERT(!tabs.contains(category));
+          tabs.insert(category, edit);
+          tabOrder.append(category);
           continue;
         }
         else
           w = new PropertyLineEdit(*property);
       }
-      else if(property->type() == PropertyType::Enum)
+      else if(property->type() == ValueType::Enum)
       {
         if(property->enumName() == EnumName<Direction>::value)
         {
@@ -103,15 +122,15 @@ void ObjectEditWidget::buildForm()
       }
 
       QWidget* tabWidget;
-      QString tab = "general"; // TODO: get sttribute
-      if(!tabs.contains(tab))
+      if(!tabs.contains(category))
       {
         tabWidget = new QWidget();
         tabWidget->setLayout(new QFormLayout());
-        tabs.insert(tab, tabWidget);
+        tabs.insert(category, tabWidget);
+        tabOrder.append(category);
       }
       else
-        tabWidget = tabs[tab];
+        tabWidget = tabs[category];
 
       static_cast<QFormLayout*>(tabWidget->layout())->addRow(property->displayName(), w);
     }
@@ -119,8 +138,8 @@ void ObjectEditWidget::buildForm()
   if(tabs.count() > 1)
   {
     QTabWidget* tabWidget = new QTabWidget();
-    for(auto it = tabs.constBegin(); it != tabs.constEnd(); it++)
-      tabWidget->addTab(it.value(), it.key());
+    for(Category category : tabOrder)
+      tabWidget->addTab(tabs.value(category), toString(category));
     QVBoxLayout* l = new QVBoxLayout();
     l->setMargin(0);
     l->addWidget(tabWidget);

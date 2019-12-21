@@ -37,6 +37,7 @@
 class World : public Object
 {
   friend class IdObject;
+  friend class Traintastic;
 
   protected:
     static const std::string id;
@@ -47,6 +48,7 @@ class World : public Object
     boost::uuids::uuid m_uuid;
     std::unordered_map<std::string, std::weak_ptr<Object>> m_objects;
 
+    void modeChanged(TraintasticMode mode);
     void load();
 
   public:

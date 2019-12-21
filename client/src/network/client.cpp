@@ -29,7 +29,7 @@
 #include "property.hpp"
 #include "tablemodel.hpp"
 #include <enum/interfaceitemtype.hpp>
-#include <enum/propertytype.hpp>
+#include <enum/valuetype.hpp>
 
 Client* Client::instance = nullptr;
 
@@ -125,7 +125,7 @@ void Client::setPropertyBool(Property& property, bool value)
   auto event = Message::newEvent(Message::Command::ObjectSetProperty);
   event->write(static_cast<Object*>(property.parent())->m_handle);
   event->write(property.name().toLatin1());
-  event->write(PropertyType::Boolean);
+  event->write(ValueType::Boolean);
   event->write(value);
   send(event);
 }
@@ -135,7 +135,7 @@ void Client::setPropertyInt64(Property& property, int64_t value)
   auto event = Message::newEvent(Message::Command::ObjectSetProperty);
   event->write(static_cast<Object*>(property.parent())->m_handle);
   event->write(property.name().toLatin1());
-  event->write(PropertyType::Integer);
+  event->write(ValueType::Integer);
   event->write(value);
   send(event);
 }
@@ -145,7 +145,7 @@ void Client::setPropertyDouble(Property& property, double value)
   auto event = Message::newEvent(Message::Command::ObjectSetProperty);
   event->write(static_cast<Object*>(property.parent())->m_handle);
   event->write(property.name().toLatin1());
-  event->write(PropertyType::Float);
+  event->write(ValueType::Float);
   event->write(value);
   send(event);
 }
@@ -155,7 +155,7 @@ void Client::setPropertyString(Property& property, const QString& value)
   auto event = Message::newEvent(Message::Command::ObjectSetProperty);
   event->write(static_cast<Object*>(property.parent())->m_handle);
   event->write(property.name().toLatin1());
-  event->write(PropertyType::String);
+  event->write(ValueType::String);
   event->write(value.toUtf8());
   send(event);
 }
@@ -229,51 +229,95 @@ ObjectPtr Client::readObject(const Message& message)
     while(!message.endOfBlock())
     {
       message.readBlock(); // item
+      InterfaceItem* item = nullptr;
       const QString name = QString::fromLatin1(message.read<QByteArray>());
       const InterfaceItemType type = message.read<InterfaceItemType>();
       switch(type)
       {
         case InterfaceItemType::Property:
         {
-          const PropertyType propertyType = message.read<PropertyType>();
+          const ValueType type = message.read<ValueType>();
           QVariant value;
-          switch(propertyType)
+          switch(type)
           {
-            case PropertyType::Boolean:
+            case ValueType::Boolean:
               value = message.read<bool>();
               break;
 
-            case PropertyType::Enum:
-            case PropertyType::Integer:
+            case ValueType::Enum:
+            case ValueType::Integer:
               value = message.read<qint64>();
               break;
 
-            case PropertyType::Float:
+            case ValueType::Float:
               value = message.read<double>();
               break;
 
-            case PropertyType::String:
+            case ValueType::String:
               value = QString::fromUtf8(message.read<QByteArray>());
               break;
 
-            case PropertyType::Object:
+            case ValueType::Object:
               // TODO
               break;
 
-            case PropertyType::Invalid:
+            case ValueType::Invalid:
               break;
           }
 
     //      Q_ASSERT(value.isValid());
           if(Q_LIKELY(value.isValid()))
           {
-            Property* p = new Property(*obj, name, propertyType, value);
-            if(propertyType == PropertyType::Enum)
+            Property* p = new Property(*obj, name, type, value);
+            if(type == ValueType::Enum)
               p->m_enumName = QString::fromLatin1(message.read<QByteArray>());
-            obj->m_interfaceItems.add(*p);
+            item = p;
           }
           break;
         }
+      }
+
+      if(Q_LIKELY(item))
+      {
+        message.readBlock(); // attributes
+        while(!message.endOfBlock())
+        {
+          message.readBlock(); // item
+          const AttributeName attributeName = message.read<AttributeName>();
+          QVariant value;
+          switch(message.read<ValueType>())
+          {
+            case ValueType::Boolean:
+              value = message.read<bool>();
+              break;
+
+            case ValueType::Enum:
+            case ValueType::Integer:
+              value = message.read<qint64>();
+              break;
+
+            case ValueType::Float:
+              value = message.read<double>();
+              break;
+
+            case ValueType::String:
+              value = QString::fromUtf8(message.read<QByteArray>());
+              break;
+
+            case ValueType::Object:
+            case ValueType::Invalid:
+              Q_ASSERT(false);
+              break;
+          }
+
+          if(Q_LIKELY(value.isValid()))
+            item->m_attributes[attributeName] = value;
+
+          message.readBlockEnd(); // end attribute
+        }
+        message.readBlockEnd(); // end attributes
+
+        obj->m_interfaceItems.add(*item);
       }
       message.readBlockEnd(); // end item
     }
@@ -329,9 +373,9 @@ void Client::processMessage(const std::shared_ptr<Message> message)
         {
           if(Property* property = object->getProperty(QString::fromLatin1(message->read<QByteArray>())))
           {
-            switch(message->read<PropertyType>())
+            switch(message->read<ValueType>())
             {
-              case PropertyType::Boolean:
+              case ValueType::Boolean:
               {
                 const bool value = message->read<bool>();
                 property->m_value = value;
@@ -339,8 +383,8 @@ void Client::processMessage(const std::shared_ptr<Message> message)
                 emit property->valueChangedBool(value);
                 break;
               }
-              case PropertyType::Integer:
-              case PropertyType::Enum:
+              case ValueType::Integer:
+              case ValueType::Enum:
               {
                 const qlonglong value = message->read<qlonglong>();
                 property->m_value = value;
@@ -350,7 +394,7 @@ void Client::processMessage(const std::shared_ptr<Message> message)
                   emit property->valueChangedInt(static_cast<int>(value));
                 break;
               }
-              case PropertyType::Float:
+              case ValueType::Float:
               {
                 const double value = message->read<double>();
                 property->m_value = value;
@@ -358,7 +402,7 @@ void Client::processMessage(const std::shared_ptr<Message> message)
                 emit property->valueChangedDouble(value);
                 break;
               }
-              case PropertyType::String:
+              case ValueType::String:
               {
                 const QString value = QString::fromUtf8(message->read<QByteArray>());
                 property->m_value = value;
@@ -366,6 +410,42 @@ void Client::processMessage(const std::shared_ptr<Message> message)
                 emit property->valueChangedString(value);
                 break;
               }
+            }
+          }
+        }
+        break;
+
+      case Message::Command::ObjectAttributeChanged:
+        if(Object* object = m_objects.value(message->read<Handle>(), nullptr))
+        {
+          if(Property* property = object->getProperty(QString::fromLatin1(message->read<QByteArray>())))
+          {
+            AttributeName attributeName = message->read<AttributeName>();
+            QVariant value;
+            switch(message->read<ValueType>())
+            {
+              case ValueType::Boolean:
+                value = message->read<bool>();
+                break;
+
+              case ValueType::Integer:
+              case ValueType::Enum:
+                value = message->read<qlonglong>();
+                break;
+
+              case ValueType::Float:
+                value = message->read<double>();
+                break;
+
+              case ValueType::String:
+                value = QString::fromUtf8(message->read<QByteArray>());
+                break;
+            }
+
+            if(Q_LIKELY(value.isValid()))
+            {
+              property->m_attributes[attributeName] = value;
+              emit property->attributeChanged(attributeName, value);
             }
           }
         }

@@ -36,7 +36,8 @@ IdObject::IdObject(const std::weak_ptr<World> world, const std::string& _id) :
       return true;
     }}
 {
-  m_interfaceItems.add(id);
+  m_interfaceItems.add(id)
+    .addAttributeEnabled(false);
 }
 
 IdObject::~IdObject()
@@ -49,4 +50,9 @@ void IdObject::addToWorld()
 {
   if(auto world = m_world.lock())
     world->m_objects.emplace(id, weak_from_this());
+}
+
+void IdObject::modeChanged(TraintasticMode mode)
+{
+  id.setAttributeEnabled(mode == TraintasticMode::Edit);
 }

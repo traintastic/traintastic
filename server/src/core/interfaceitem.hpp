@@ -23,15 +23,36 @@
 #ifndef SERVER_CORE_INTERFACEITEM_HPP
 #define SERVER_CORE_INTERFACEITEM_HPP
 
+#include <unordered_map>
 #include <string>
+#include <memory>
+#include "attribute.hpp"
+#include <enum/category.hpp>
 
 class Object;
 
 class InterfaceItem
 {
+  public:
+    using Attributes = std::unordered_map<AttributeName, std::unique_ptr<AbstractAttribute>>;
+
   protected:
     Object& m_object;
     const std::string m_name;
+    Attributes m_attributes;
+
+    template<typename T>
+    InterfaceItem& addAttribute(AttributeName name, const T& value)
+    {
+      m_attributes.emplace(name, std::make_unique<Attribute<T>>(*this, name, value));
+      return *this;
+    }
+
+    template<typename T>
+    void setAttribute(AttributeName name, const T& value)
+    {
+      static_cast<Attribute<T>*>(m_attributes[name].get())->setValue(value);
+    }
 
   public:
     InterfaceItem(Object& object, const std::string& name) :
@@ -53,6 +74,17 @@ class InterfaceItem
     {
       return m_name;
     }
+
+    const Attributes& attributes() const
+    {
+      return m_attributes;
+    }
+
+    inline InterfaceItem& addAttributeCategory(Category value) { return addAttribute(AttributeName::Category, value); }
+    inline InterfaceItem& addAttributeEnabled(bool value) { return addAttribute(AttributeName::Enabled, value); }
+    inline InterfaceItem& addAttributeVisible(bool value) { return addAttribute(AttributeName::Visible, value); }
+
+    inline void setAttributeEnabled(bool value) { setAttribute(AttributeName::Enabled, value); }
 };
 
 #endif

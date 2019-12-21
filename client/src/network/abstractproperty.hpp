@@ -24,7 +24,7 @@
 #define CLIENT_NETWORK_ABSTRACTPROPERTY_HPP
 
 #include "interfaceitem.hpp"
-#include <enum/propertytype.hpp>
+#include <enum/valuetype.hpp>
 
 class Object;
 
@@ -33,16 +33,16 @@ class AbstractProperty : public InterfaceItem
   Q_OBJECT
 
   protected:
-    const PropertyType m_type;
+    const ValueType m_type;
 
   public:
-    explicit AbstractProperty(Object& object, const QString& name, PropertyType type) :
+    explicit AbstractProperty(Object& object, const QString& name, ValueType type) :
       InterfaceItem(object, name),
       m_type{type}
     {
     }
 
-    PropertyType type() const { return m_type; }
+    ValueType type() const { return m_type; }
 
     virtual const QString& enumName() const = 0;
 

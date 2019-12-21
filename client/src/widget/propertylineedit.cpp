@@ -27,8 +27,27 @@ PropertyLineEdit::PropertyLineEdit(Property& property, QWidget* parent) :
   QLineEdit(parent),
   m_property{property}
 {
-  Q_ASSERT(m_property.type() == PropertyType::String);
+  Q_ASSERT(m_property.type() == ValueType::String);
+  setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
+  setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
   setText(m_property.toString());
   connect(&m_property, &Property::valueChangedString, this, &PropertyLineEdit::setText);
+  connect(&m_property, &Property::attributeChanged,
+    [this](AttributeName name, const QVariant& value)
+    {
+      switch(name)
+      {
+        case AttributeName::Enabled:
+          setEnabled(value.toBool());
+          break;
+
+        case AttributeName::Visible:
+          setVisible(value.toBool());
+          break;
+
+        default:
+          break;
+      }
+    });
   connect(this, &PropertyLineEdit::textEdited, &m_property, &Property::setValueString);
 }

@@ -33,7 +33,7 @@
 #include "../widget/alertwidget.hpp"
 
 
-#include "objecteditwidget.hpp"
+#include "../mainwindow.hpp"
 
 ObjectListWidget::ObjectListWidget(const QString& id, QWidget* parent) :
   QWidget(parent),
@@ -111,7 +111,7 @@ void ObjectListWidget::tableDoubleClicked(const QModelIndex& index)
 {
   const QString id = m_tableWidget->getRowObjectId(index.row());
   if(!id.isEmpty())
-    (new ObjectEditWidget(id))->show();
+    MainWindow::instance->showObjectEdit(id);//emit rowDoubleClicked(id);
 }
 
 

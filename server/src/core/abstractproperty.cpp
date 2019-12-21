@@ -29,5 +29,5 @@ void AbstractProperty::changed()
 {
   std::cout << "AbstractProperty::changed" << std::endl;
 
-  m_object.propertyChanged(m_object, *this);
+  m_object.propertyChanged(*this);
 }

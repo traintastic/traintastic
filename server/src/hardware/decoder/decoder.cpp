@@ -81,13 +81,20 @@ Decoder::Decoder(const std::weak_ptr<World>& world, const std::string& _id) :
   notes{this, "notes", "", PropertyFlags::AccessWWW}
 {
   m_interfaceItems.add(name);
-  m_interfaceItems.add(commandStation);
-  m_interfaceItems.add(protocol);
-  m_interfaceItems.add(address);
-  m_interfaceItems.add(emergencyStop);
-  m_interfaceItems.add(direction);
-  m_interfaceItems.add(speedSteps);
-  m_interfaceItems.add(speedStep);
+  m_interfaceItems.add(commandStation)
+    .addAttributeEnabled(false);
+  m_interfaceItems.add(protocol)
+    .addAttributeEnabled(false);
+  m_interfaceItems.add(address)
+    .addAttributeEnabled(false);
+  m_interfaceItems.add(emergencyStop)
+    .addAttributeEnabled(false);
+  m_interfaceItems.add(direction)
+    .addAttributeEnabled(false);
+  m_interfaceItems.add(speedSteps)
+    .addAttributeEnabled(false);
+  m_interfaceItems.add(speedStep)
+    .addAttributeEnabled(false);
   m_interfaceItems.add(functions);
   m_interfaceItems.add(notes);
 }
@@ -99,6 +106,20 @@ const std::shared_ptr<DecoderFunction>& Decoder::getFunction(uint32_t number) co
       return f;
 
   return DecoderFunction::null;
+}
+
+void Decoder::modeChanged(TraintasticMode mode)
+{
+  IdObject::modeChanged(mode);
+
+  commandStation.setAttributeEnabled(mode == TraintasticMode::Edit);
+  protocol.setAttributeEnabled(mode == TraintasticMode::Edit);
+  address.setAttributeEnabled(mode == TraintasticMode::Edit);
+  speedSteps.setAttributeEnabled(mode == TraintasticMode::Edit);
+  speedStep.setAttributeEnabled(mode == TraintasticMode::Run);
+
+  if(mode == TraintasticMode::Edit)
+    speedStep = 0;
 }
 
 void Decoder::changed(DecoderChangeFlags changes, uint32_t functionNumber)

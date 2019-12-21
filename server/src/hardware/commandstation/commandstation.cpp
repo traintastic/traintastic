@@ -40,7 +40,8 @@ CommandStation::CommandStation(const std::weak_ptr<World>& world, const std::str
   m_interfaceItems.add(online);
   m_interfaceItems.add(status);
   m_interfaceItems.add(decoders);
-  m_interfaceItems.add(notes);
+  m_interfaceItems.add(notes)
+    .addAttributeCategory(Category::Notes);
 }
 
 const std::shared_ptr<Decoder>& CommandStation::getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress) const

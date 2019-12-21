@@ -25,10 +25,12 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
+#include <QMap>
 #include <enum/traintasticmode.hpp>
 
 class QMdiArea;
 class QActionGroup;
+class ObjectEditSubWindow;
 class HardwareListSubWindow;
 class ServerSettingsSubWindow;
 class ServerConsoleSubWindow;
@@ -41,6 +43,7 @@ class MainWindow : public QMainWindow
     QMdiArea* m_mdiArea;
     struct
     {
+      QMap<QString, ObjectEditSubWindow*> objectEdit;
       HardwareListSubWindow* hardwareList = nullptr;
       ServerSettingsSubWindow* serverSettings = nullptr;
       ServerConsoleSubWindow* serverConsole = nullptr;
@@ -73,6 +76,7 @@ class MainWindow : public QMainWindow
     void exportWorld();
     void toggleFullScreen();
     void showHardware();
+
     void showServerSettings();
     void showServerConsole();
     void showAbout();
@@ -80,11 +84,14 @@ class MainWindow : public QMainWindow
     void updateModeActions();
 
   public:
+    inline static MainWindow* instance = nullptr;
+
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
 
   public slots:
     void connectToServer();
+    void showObjectEdit(const QString& id);
 };
 
 #endif

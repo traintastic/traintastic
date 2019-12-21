@@ -1,5 +1,5 @@
 /**
- * shared/src/enum/propertytype.hpp
+ * server/src/core/valuetypetraits.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,20 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SHARED_ENUM_PROPERTYTYPE_HPP
-#define SHARED_ENUM_PROPERTYTYPE_HPP
+#ifndef SERVER_CORE_VALUETYPETRAITS_HPP
+#define SERVER_CORE_VALUETYPETRAITS_HPP
 
-#include <cstdint>
+#include <enum/valuetype.hpp>
+#include "objectptr.hpp"
 
-enum class PropertyType : uint8_t
+template<typename T>
+struct value_type
 {
-  Invalid = 0,
-  Boolean = 1,
-  Enum = 2,
-  Integer = 3,
-  Float = 4,
-  String = 5,
-  Object = 6,
+  static constexpr ValueType value =
+    std::is_same_v<T, bool> ? ValueType::Boolean : (
+    std::is_enum_v<T> ? ValueType::Enum : (
+    std::is_integral_v<T> ? ValueType::Integer : (
+    std::is_floating_point_v<T> ? ValueType::Float : (
+    std::is_same_v<T, std::string> ? ValueType::String : (
+    ValueType::Invalid)))));
 };
+
+template<typename T>
+inline constexpr ValueType value_type_v = value_type<T>::value;
 
 #endif

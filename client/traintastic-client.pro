@@ -43,7 +43,8 @@ SOURCES += \
     src/widget/propertylineedit.cpp \
     src/widget/propertyspinbox.cpp \
     src/widget/propertydirectioncontrol.cpp \
-    src/widget/propertytextedit.cpp
+    src/widget/propertytextedit.cpp \
+    src/subwindow/objecteditsubwindow.cpp
 
 HEADERS += \
     src/mainwindow.hpp \
@@ -77,7 +78,8 @@ HEADERS += \
     src/widget/propertylineedit.hpp \
     src/widget/propertyspinbox.hpp \
     src/widget/propertydirectioncontrol.hpp \
-    src/widget/propertytextedit.hpp
+    src/widget/propertytextedit.hpp \
+    src/subwindow/objecteditsubwindow.hpp
 
 RESOURCES += \
     dark.qrc

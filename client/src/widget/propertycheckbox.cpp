@@ -23,12 +23,62 @@
 #include "propertycheckbox.hpp"
 #include "../network/property.hpp"
 
+class InternalUpdateHolder
+{
+  private:
+    bool& m_value;
+
+  public:
+    inline InternalUpdateHolder(bool& value) :
+      m_value{value}
+    {
+      Q_ASSERT(!m_value);
+      m_value = true;
+    }
+
+    inline ~InternalUpdateHolder()
+    {
+      Q_ASSERT(m_value);
+      m_value = false;
+    }
+};
+
 PropertyCheckBox::PropertyCheckBox(Property& property, QWidget* parent) :
   QCheckBox(parent),
-  m_property{property}
+  m_property{property},
+  m_internalUpdate{false}
 {
-  Q_ASSERT(m_property.type() == PropertyType::Boolean);
+  Q_ASSERT(m_property.type() == ValueType::Boolean);
+  setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
+  setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
   setChecked(m_property.toBool());
-  connect(&m_property, &Property::valueChangedBool, this, &PropertyCheckBox::setChecked);
-  connect(this, &PropertyCheckBox::toggled, &m_property, &Property::setValueBool);
+  connect(&m_property, &Property::valueChangedBool,
+    [this](bool value)
+    {
+      InternalUpdateHolder hold(m_internalUpdate);
+      setChecked(value);
+    });
+  connect(&m_property, &Property::attributeChanged,
+    [this](AttributeName name, const QVariant& value)
+    {
+      switch(name)
+      {
+        case AttributeName::Enabled:
+          setEnabled(value.toBool());
+          break;
+
+        case AttributeName::Visible:
+          setVisible(value.toBool());
+          break;
+
+        default:
+          break;
+      }
+    });
+  connect(this, &PropertyCheckBox::toggled,
+    [this](bool value)
+    {
+      if(!m_internalUpdate)
+        m_property.setValueBool(value);
+    });
 }

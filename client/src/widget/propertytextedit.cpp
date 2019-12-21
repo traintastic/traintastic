@@ -27,8 +27,25 @@ PropertyTextEdit::PropertyTextEdit(Property& property, QWidget* parent) :
   QTextEdit(parent),
   m_property{property}
 {
-  Q_ASSERT(m_property.type() == PropertyType::String);
+  Q_ASSERT(m_property.type() == ValueType::String);
   setPlainText(m_property.toString());
   connect(&m_property, &Property::valueChangedString, this, &PropertyTextEdit::setPlainText);
+  connect(&m_property, &Property::attributeChanged,
+    [this](AttributeName name, const QVariant& value)
+    {
+      switch(name)
+      {
+        case AttributeName::Enabled:
+          setEnabled(value.toBool());
+          break;
+
+        case AttributeName::Visible:
+          setVisible(value.toBool());
+          break;
+
+        default:
+          break;
+      }
+    });
   connect(this, &PropertyTextEdit::textChanged, [this](){ m_property.setValueString(toPlainText()); });
 }

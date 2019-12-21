@@ -27,9 +27,28 @@ PropertySpinBox::PropertySpinBox(AbstractProperty& property, QWidget* parent) :
   QSpinBox(parent),
   m_property{property}
 {
-  Q_ASSERT(m_property.type() == PropertyType::Integer);
+  Q_ASSERT(m_property.type() == ValueType::Integer);
+  setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
+  setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
   setRange(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
   setValue(m_property.toInt());
   connect(&m_property, &AbstractProperty::valueChangedInt, this, &PropertySpinBox::setValue);
+  connect(&m_property, &AbstractProperty::attributeChanged,
+    [this](AttributeName name, const QVariant& value)
+    {
+      switch(name)
+      {
+        case AttributeName::Enabled:
+          setEnabled(value.toBool());
+          break;
+
+        case AttributeName::Visible:
+          setVisible(value.toBool());
+          break;
+
+        default:
+          break;
+      }
+    });
   connect(this, QOverload<int>::of(&PropertySpinBox::valueChanged), &m_property, &AbstractProperty::setValueInt);
 }

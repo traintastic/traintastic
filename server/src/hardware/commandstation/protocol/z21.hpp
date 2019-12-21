@@ -39,14 +39,16 @@
     #define Z21_LAN_X_UNKNOWN_COMMAND 0x82
   #define Z21_LAN_X_BC_STOPPED 0x81
   #define Z21_LAN_X_LOCO_INFO 0xEF
+#define Z21_LAN_SET_BROADCASTFLAGS 0x50
+#define Z21_LAN_GET_BROADCASTFLAGS 0x51
 #define Z21_LAN_SYSTEMSTATE_DATACHANGED 0x84
 #define Z21_LAN_SYSTEMSTATE_GETDATA 0x85
 
 #define Z21_HWT_Z21_OLD 0x00000200 //!< „black Z21” (hardware variant from 2012)
 #define Z21_HWT_Z21_NEW 0x00000201 //!<  „black Z21”(hardware variant from 2013)
 #define Z21_HWT_SMARTRAIL 0x00000202 //!< SmartRail (from 2012)
-#define Z21_HWT_z21_SMALL 0x00000203 //!< „white z21” starter set variant (from 2013)
-#define Z21_HWT_z21_START 0x00000204 //!< „z21 start” starter set variant (from 2016)
+#define Z21_HWT_Z21_SMALL 0x00000203 //!< „white z21” starter set variant (from 2013)
+#define Z21_HWT_Z21_START 0x00000204 //!< „z21 start” starter set variant (from 2016)
 
 #define Z21_CENTRALSTATE_EMERGENCYSTOP 0x01 //!< The emergency stop is switched on
 #define Z21_CENTRALSTATE_TRACKVOLTAGEOFF 0x02 //!< The track voltage is switched off
@@ -153,6 +155,23 @@ struct z21_lan_x_set_track_power_on : z21_lan_x
   }
 } __attribute__((packed));
 
+struct z21_lan_x_get_loco_info : z21_lan_x
+{
+  uint8_t db0;
+  uint8_t addressHigh;
+  uint8_t addressLow;
+  uint8_t checksum;
+
+  z21_lan_x_get_loco_info() :
+    db0{0xF0}
+  {
+    dataLen = sizeof(z21_lan_x_get_loco_info);
+    header = Z21_LAN_X;
+    xheader = 0xE3;
+  }
+} __attribute__((packed));
+//static_assert(sizeof(z21_lan_x_get_loco_info) == 0x07);
+
 struct z21_lan_x_loco_info : z21_lan_x
 {
   uint8_t addressHigh;
@@ -196,6 +215,29 @@ struct z21_lan_systemstate_getdata : z21_lan_header
   }
 } __attribute__((packed));
 static_assert(sizeof(z21_lan_systemstate_getdata) == 0x04);
+
+struct z21_lan_set_broadcastflags : z21_lan_header
+{
+  uint32_t broadcastFlags; // LE
+
+  z21_lan_set_broadcastflags(uint32_t _broadcastFlags = 0) :
+    broadcastFlags{_broadcastFlags}
+  {
+    dataLen = sizeof(z21_lan_set_broadcastflags);
+    header = Z21_LAN_SET_BROADCASTFLAGS;
+  }
+} __attribute__((packed));
+static_assert(sizeof(z21_lan_set_broadcastflags) == 0x08);
+
+struct z21_lan_get_broadcastflags : z21_lan_header
+{
+  z21_lan_get_broadcastflags()
+  {
+    dataLen = sizeof(z21_lan_get_broadcastflags);
+    header = Z21_LAN_GET_BROADCASTFLAGS;
+  }
+} __attribute__((packed));
+static_assert(sizeof(z21_lan_get_broadcastflags) == 0x04);
 
 struct z21_lan_systemstate_datachanged : z21_lan_header
 {

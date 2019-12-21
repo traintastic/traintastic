@@ -26,6 +26,7 @@
 #include "objectptr.hpp"
 #include <boost/signals2/signal.hpp>
 #include "interfaceitems.hpp"
+#include <enum/traintasticmode.hpp>
 
 #define CLASS_ID(id) \
   public: \
@@ -34,17 +35,23 @@
 
 class AbstractMethod;
 class AbstractProperty;
+class AbstractAttribute;
 
 class Object : public std::enable_shared_from_this<Object>
 {
+  friend class World;
+
   protected:
     InterfaceItems m_interfaceItems;
 
     //void log(LogLevel level, const std::string& message) const;
     //inline void logError(const std::string& message) const { log(LogLevel::Error, message); }
 
+    virtual void modeChanged(TraintasticMode) {}
+
   public:
-    boost::signals2::signal<void (Object& object, AbstractProperty&)> propertyChanged;
+    boost::signals2::signal<void (AbstractProperty&)> propertyChanged;
+    boost::signals2::signal<void (AbstractAttribute&)> attributeChanged;
 
     Object();
     virtual ~Object();

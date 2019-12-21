@@ -59,12 +59,14 @@ class Message
       ReleaseObject = 15,
       ObjectSetProperty = 16,
       ObjectPropertyChanged = 17,
-      GetTableModel = 18,
-      ReleaseTableModel = 19,
-      TableModelColumnHeadersChanged = 20,
-      TableModelRowCountChanged = 21,
-      TableModelSetRegion = 22,
-      TableModelUpdateRegion = 23,
+      ObjectAttributeChanged = 18,
+
+      GetTableModel = 19,
+      ReleaseTableModel = 20,
+      TableModelColumnHeadersChanged = 21,
+      TableModelRowCountChanged = 22,
+      TableModelSetRegion = 23,
+      TableModelUpdateRegion = 24,
 
       Discover = 255,
     };

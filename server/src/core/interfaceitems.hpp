@@ -44,7 +44,9 @@ class InterfaceItems
     const std::list<std::string>& names() const { return m_itemOrder; }
 
     InterfaceItem* find(const std::string& name) const;
-    void add(InterfaceItem& item);
+
+    InterfaceItem& add(InterfaceItem& item);
+    InterfaceItem& insertBefore(InterfaceItem& item, const InterfaceItem& before);
 
     inline InterfaceItem& operator[](const std::string& name) const { return m_items.at(name); }
 };

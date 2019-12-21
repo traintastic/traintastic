@@ -25,6 +25,7 @@
 #include "traintastic.hpp"
 #include "client.hpp"
 #include "abstractproperty.hpp"
+#include "abstractattribute.hpp"
 #include <enum/interfaceitemtype.hpp>
 #include "tablemodel.hpp"
 #include "world.hpp"
@@ -162,6 +163,8 @@ bool Session::processMessage(const Message& message)
       Handle handle = message.read<Handle>();
       Traintastic::instance->console->debug(m_client->m_id, "ReleaseObject: " + std::to_string(handle));
       m_handles.removeHandle(handle);
+      m_propertyChanged.erase(handle);
+      m_attributeChanged.erase(handle);
       break;
     }
     case Message::Command::ObjectSetProperty:
@@ -172,21 +175,21 @@ bool Session::processMessage(const Message& message)
         {
           try
           {
-            switch(message.read<PropertyType>())
+            switch(message.read<ValueType>())
             {
-              case PropertyType::Boolean:
+              case ValueType::Boolean:
                 property->fromBool(message.read<bool>());
                 break;
 
-              case PropertyType::Integer:
+              case ValueType::Integer:
                 property->fromInt64(message.read<int64_t>());
                 break;
 
-              case PropertyType::Float:
+              case ValueType::Float:
                 property->fromDouble(message.read<double>());
                 break;
 
-              case PropertyType::String:
+              case ValueType::String:
                 property->fromString(message.read<std::string>());
                 break;
             }
@@ -194,7 +197,7 @@ bool Session::processMessage(const Message& message)
           catch(const std::exception&)
           {
             // set property failed, send changed event with current value:
-            objectPropertyChanged(*object, *property);
+            objectPropertyChanged(*property);
           }
         }
       }
@@ -239,7 +242,8 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
 
     handle = m_handles.addItem(object);
 
-    m_propertyChanged.emplace(handle, object->propertyChanged.connect(std::bind(&Session::objectPropertyChanged, this, std::placeholders::_1, std::placeholders::_2)));
+    m_propertyChanged.emplace(handle, object->propertyChanged.connect(std::bind(&Session::objectPropertyChanged, this, std::placeholders::_1)));
+    m_attributeChanged.emplace(handle, object->attributeChanged.connect(std::bind(&Session::objectAttributeChanged, this, std::placeholders::_1)));
 
     message.write(handle);
     message.write(object->getClassId());
@@ -261,28 +265,28 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
         message.write(property->type());
         switch(property->type())
         {
-          case PropertyType::Boolean:
+          case ValueType::Boolean:
             message.write(property->toBool());
             break;
 
-          case PropertyType::Enum:
+          case ValueType::Enum:
             message.write(property->toInt64());
             message.write(property->enumName());
             break;
 
-          case PropertyType::Integer:
+          case ValueType::Integer:
             message.write(property->toInt64());
             break;
 
-          case PropertyType::Float:
+          case ValueType::Float:
             message.write(property->toDouble());
             break;
 
-          case PropertyType::String:
+          case ValueType::String:
             message.write(property->toString());
             break;
 
-          case PropertyType::Object:
+          case ValueType::Object:
           {
             ObjectPtr obj = property->toObject();
    // TODO:         assert(!obj || dynamic_cast<IdObject*>(obj.get()));
@@ -298,6 +302,41 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
         }
       }
 
+      message.writeBlock(); // attributes
+
+      for(const auto& it : item.attributes())
+      {
+        const AbstractAttribute& attribute = *it.second;
+        message.writeBlock(); // attribute
+        message.write(attribute.name());
+        message.write(attribute.type());
+        switch(attribute.type())
+        {
+          case ValueType::Boolean:
+            message.write(attribute.toBool());
+            break;
+
+          case ValueType::Enum:
+          case ValueType::Integer:
+            message.write(attribute.toInt64());
+            break;
+
+          case ValueType::Float:
+            message.write(attribute.toDouble());
+            break;
+
+          case ValueType::String:
+            message.write(attribute.toString());
+            break;
+
+          default:
+            assert(false);
+            break;
+        }
+        message.writeBlockEnd(); // end attribute
+      }
+
+      message.writeBlockEnd(); // end attributes
       message.writeBlockEnd(); // end item
     }
     message.writeBlockEnd(); // end items
@@ -322,31 +361,62 @@ void Session::writeTableModel(Message& message, const TableModelPtr& model)
   message.writeBlockEnd(); // end model
 }
 
-void Session::objectPropertyChanged(Object& object, AbstractProperty& property)
+void Session::objectPropertyChanged(AbstractProperty& property)
 {
   std::cout << "objectPropertyChanged " << property.name() << std::endl;
 
   auto event = Message::newEvent(Message::Command::ObjectPropertyChanged);
-  event->write(m_handles.getHandle(object.shared_from_this()));
+  event->write(m_handles.getHandle(property.object().shared_from_this()));
   event->write(property.name());
   event->write(property.type());
   switch(property.type())
   {
-    case PropertyType::Boolean:
+    case ValueType::Boolean:
       event->write(property.toBool());
       break;
 
-    case PropertyType::Enum:
-    case PropertyType::Integer:
+    case ValueType::Enum:
+    case ValueType::Integer:
       event->write(property.toInt64());
       break;
 
-    case PropertyType::Float:
+    case ValueType::Float:
       event->write(property.toDouble());
       break;
 
-    case PropertyType::String:
+    case ValueType::String:
       event->write(property.toString());
+      break;
+  }
+  m_client->sendMessage(std::move(event));
+}
+
+void Session::objectAttributeChanged(AbstractAttribute& attribute)
+{
+  std::cout << "objectAttributeChanged " << attribute.item().name() << "." << (int)attribute.name() << std::endl;
+
+  auto event = Message::newEvent(Message::Command::ObjectAttributeChanged);
+  event->write(m_handles.getHandle(attribute.item().object().shared_from_this()));
+  event->write(attribute.item().name());
+  event->write(attribute.name());
+  event->write(attribute.type());
+  switch(attribute.type())
+  {
+    case ValueType::Boolean:
+      event->write(attribute.toBool());
+      break;
+
+    case ValueType::Enum:
+    case ValueType::Integer:
+      //event->write(attribute.toInt64());
+      break;
+
+    case ValueType::Float:
+      //event->write(attribute.toDouble());
+      break;
+
+    case ValueType::String:
+      //event->write(attribute.toString());
       break;
   }
   m_client->sendMessage(std::move(event));

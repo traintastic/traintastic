@@ -1,5 +1,5 @@
 /**
- * server/src/core/propertytypetraits.hpp
+ * shared/src/enum/propertytype.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,22 +20,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_CORE_PROPERTYTYPETRAITS_HPP
-#define SERVER_CORE_PROPERTYTYPETRAITS_HPP
 
-#include <enum/propertytype.hpp>
-#include "objectptr.hpp"
+#ifndef SHARED_ENUM_ATTIRBUTE_HPP
+#define SHARED_ENUM_ATTIRBUTE_HPP
 
-template<typename T>
-struct property_type
+#include <cstdint>
+
+enum class AttributeName : uint16_t
 {
-  static constexpr PropertyType value =
-    std::is_same<T, bool>::value ? PropertyType::Boolean : (
-    std::is_enum<T>::value ? PropertyType::Enum : (
-    std::is_integral<T>::value ? PropertyType::Integer : (
-    std::is_floating_point<T>::value ? PropertyType::Float : (
-    std::is_same<T, std::string>::value ? PropertyType::String : (
-    PropertyType::Invalid)))));
+  Visible = 0,
+  Enabled = 1,
+  Min = 2,
+  Max = 3,
+  Category = 4,
 };
 
 #endif

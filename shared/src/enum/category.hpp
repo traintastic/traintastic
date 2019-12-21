@@ -1,5 +1,5 @@
 /**
- * client/src/widget/objectlistwidget.hpp
+ * shared/src/enum/category.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,42 +20,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CLIENT_WIDGET_OBJECTLISTWIDGET_HPP
-#define CLIENT_WIDGET_OBJECTLISTWIDGET_HPP
 
-#include <QWidget>
-#include "../network/objectptr.hpp"
+#ifndef SHARED_ENUM_CATEGORY_HPP
+#define SHARED_ENUM_CATEGORY_HPP
 
-class QToolBar;
-class TableWidget;
+#include <cstdint>
 
-class ObjectListWidget : public QWidget
+enum class Category : uint16_t
 {
-  Q_OBJECT
-
-  protected:
-    const QString m_id;
-    int m_requestId;
-    ObjectPtr m_object;
-    QToolBar* m_toolbar;
-    QAction* m_actionAdd;
-    QAction* m_actionEdit;
-    QAction* m_actionDelete;
-    TableWidget* m_tableWidget;
-
-    void addActionAdd();
-    void addActionEdit();
-    void addActionDelete();
-
-  protected slots:
-    void tableDoubleClicked(const QModelIndex& index);
-
-  public:
-    explicit ObjectListWidget(const QString& id, QWidget* parent = nullptr);
-    ~ObjectListWidget() override;
-
-  //signals:
-  //  void rowDoubleClicked(const QString& id);
+  General = 0,
+  Notes = 1,
+  Status = 2,
+  Info = 3,
 };
 
 #endif

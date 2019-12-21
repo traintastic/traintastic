@@ -63,33 +63,43 @@ Z21::Z21(const std::weak_ptr<World>& world, const std::string& _id) :
   m_socket{Traintastic::instance->ioContext()},
   hostname{this, "hostname", "", PropertyFlags::AccessWCC},
   port{this, "port", 21105, PropertyFlags::AccessWCC},
-  serialNumber{this, "serial_number", 0, PropertyFlags::AccessRRR},
+  serialNumber{this, "serial_number", "", PropertyFlags::AccessRRR},
   hardwareType{this, "hardware_type", "", PropertyFlags::AccessRRR},
   firmwareVersion{this, "firmware_version", "", PropertyFlags::AccessRRR},
   emergencyStop{this, "emergency_stop", false, PropertyFlags::TODO,
     [this](bool value)
     {
-      if(value)
+      if(online && value)
         send(z21_lan_x_set_stop());
     }},
   trackVoltageOff{this, "track_voltage_off", false, PropertyFlags::TODO,
     [this](bool value)
     {
-      if(value)
-        send(z21_lan_x_set_track_power_off());
-      else
-        send(z21_lan_x_set_track_power_on());
+      if(online)
+      {
+        if(value)
+          send(z21_lan_x_set_track_power_off());
+        else
+          send(z21_lan_x_set_track_power_on());
+      }
     }}
 {
   name = "Z21";
 
-  m_interfaceItems.add(hostname);
-  m_interfaceItems.add(port);
-  m_interfaceItems.add(serialNumber);
-  m_interfaceItems.add(hardwareType);
-  m_interfaceItems.add(firmwareVersion);
-  m_interfaceItems.add(emergencyStop);
-  m_interfaceItems.add(trackVoltageOff);
+  m_interfaceItems.insertBefore(hostname, notes)
+    .addAttributeEnabled(true);
+  m_interfaceItems.insertBefore(port, notes)
+    .addAttributeEnabled(true);
+  m_interfaceItems.insertBefore(serialNumber, notes)
+    .addAttributeCategory(Category::Info);
+  m_interfaceItems.insertBefore(hardwareType, notes)
+    .addAttributeCategory(Category::Info);
+  m_interfaceItems.insertBefore(firmwareVersion, notes)
+    .addAttributeCategory(Category::Info);
+  m_interfaceItems.insertBefore(emergencyStop, notes)
+    .addAttributeEnabled(false);
+  m_interfaceItems.insertBefore(trackVoltageOff, notes)
+    .addAttributeEnabled(false);
 }
 
 bool Z21::isDecoderSupported(Decoder& decoder) const
@@ -194,13 +204,41 @@ bool Z21::setOnline(bool& value)
       Traintastic::instance->console->error(id, "socket.bind: " + ec.message());
       return false;
     }
+
+    receive();
+
+    send(z21_lan_set_broadcastflags(/*0x00010000 |*/ 0x00000100 | 0x00000001));
+
     // try to communicate with Z21
+    send(z21_lan_get_broadcastflags());
     send(z21_lan_get_serial_number());
     send(z21_lan_get_hwinfo());
     send(z21_lan_systemstate_getdata());
+/*
+    for(auto& decoder : decoders)
+    {
+      z21_lan_x_get_loco_info cmd;
+      send(cmd);
+    }
+*/
+    hostname.setAttributeEnabled(false);
+    port.setAttributeEnabled(false);
+    emergencyStop.setAttributeEnabled(true);
+    trackVoltageOff.setAttributeEnabled(true);
   }
   else if(m_socket.is_open() && !value)
   {
+    send(z21_lan_logoff());
+
+    serialNumber = "";
+    hardwareType = "";
+    firmwareVersion = "";
+
+    hostname.setAttributeEnabled(true);
+    port.setAttributeEnabled(true);
+    emergencyStop.setAttributeEnabled(false);
+    trackVoltageOff.setAttributeEnabled(false);
+
     m_socket.close();
   }
   return true;
@@ -221,9 +259,9 @@ void Z21::receive()
             case Z21_LAN_GET_SERIAL_NUMBER:
             {
               EventLoop::call(
-                [this, value=static_cast<const z21_lan_get_serial_number_reply*>(cmd)->serialNumber]()
+                [this, value=std::to_string(static_cast<const z21_lan_get_serial_number_reply*>(cmd)->serialNumber)]()
                 {
-                  serialNumber = value;
+                  serialNumber.setValueInternal(value);
                 });
               break;
             }
@@ -243,10 +281,10 @@ void Z21::receive()
                 case Z21_HWT_SMARTRAIL:
                   hwType = "SmartRail (from 2012)";
                   break;
-                case Z21_HWT_z21_SMALL:
+                case Z21_HWT_Z21_SMALL:
                   hwType = "White Z21 (starter set variant from 2013)";
                   break;
-                case Z21_HWT_z21_START :
+                case Z21_HWT_Z21_START :
                   hwType = "Z21 start (starter set variant from 2016)";
                   break;
                 default:
@@ -259,8 +297,8 @@ void Z21::receive()
               EventLoop::call(
                 [this, hwType, fwVersion]()
                 {
-                  hardwareType = hwType;
-                  firmwareVersion = fwVersion;
+                  hardwareType.setValueInternal(hwType);
+                  firmwareVersion.setValueInternal(fwVersion);
                 });
               break;
             }
@@ -294,13 +332,13 @@ void Z21::receive()
                         if((speedStepMode == 0 && decoder->speedSteps == 14) ||
                            (speedStepMode == 2 && decoder->speedSteps == 28) ||
                            (speedStepMode == 4 && decoder->speedSteps == 126))
-                          decoder->speedStep = speedStep;
+                          decoder->speedStep.setValueInternal(speedStep);
 
                         for(auto& function : *decoder->functions)
                         {
                           const uint8_t number = function->number;
                           if(number <= 28)
-                            function->value = functions & (1 << number);
+                            function->value.setValueInternal(functions & (1 << number));
                         }
                       }
                     });
@@ -315,7 +353,7 @@ void Z21::receive()
                   EventLoop::call(
                     [this]()
                     {
-                      emergencyStop = true;
+                      emergencyStop.setValueInternal(true);
                     });
                   break;
 
@@ -331,8 +369,8 @@ void Z21::receive()
               EventLoop::call(
                 [this, state]()
                 {
-                  emergencyStop = state.centralState & Z21_CENTRALSTATE_EMERGENCYSTOP;
-                  trackVoltageOff = state.centralState & Z21_CENTRALSTATE_TRACKVOLTAGEOFF;
+                  emergencyStop.setValueInternal(state.centralState & Z21_CENTRALSTATE_EMERGENCYSTOP);
+                  trackVoltageOff.setValueInternal(state.centralState & Z21_CENTRALSTATE_TRACKVOLTAGEOFF);
                 });
               break;
             }

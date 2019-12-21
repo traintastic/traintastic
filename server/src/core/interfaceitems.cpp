@@ -22,6 +22,7 @@
 
 #include "interfaceitems.hpp"
 #include "interfaceitem.hpp"
+#include <algorithm>
 
 InterfaceItem* InterfaceItems::find(const std::string& name) const
 {
@@ -29,8 +30,16 @@ InterfaceItem* InterfaceItems::find(const std::string& name) const
   return (it != m_items.end()) ? &it->second : nullptr;
 }
 
-void InterfaceItems::add(InterfaceItem& item)
+InterfaceItem& InterfaceItems::add(InterfaceItem& item)
 {
   m_items.emplace(item.name(), item);
   m_itemOrder.push_back(item.name());
+  return item;
+}
+
+InterfaceItem& InterfaceItems::insertBefore(InterfaceItem& item, const InterfaceItem& before)
+{
+  m_items.emplace(item.name(), item);
+  m_itemOrder.insert(std::find(m_itemOrder.begin(), m_itemOrder.end(), before.name()), item.name());
+  return item;
 }

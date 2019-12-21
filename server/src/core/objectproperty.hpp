@@ -39,7 +39,7 @@ class ObjectProperty : public AbstractProperty
 
   public:
     ObjectProperty(Object* object, const std::string& name, const std::shared_ptr<T>& value, PropertyFlags flags) :
-      AbstractProperty(*object, name, PropertyType::Object, flags),
+      AbstractProperty(*object, name, ValueType::Object, flags),
       m_value{value}
     {
     }

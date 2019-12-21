@@ -25,6 +25,7 @@
 
 #include "object.hpp"
 #include "property.hpp"
+#include <enum/traintasticmode.hpp>
 
 #define CREATE(T) \
   static std::shared_ptr<T> create(const std::weak_ptr<World>& world, const std::string& _id) \
@@ -43,6 +44,7 @@ class IdObject : public Object
 
     IdObject(const std::weak_ptr<World> world, const std::string& _id);
     void addToWorld();
+    void modeChanged(TraintasticMode mode) override;
 
   public:
     Property<std::string> id;

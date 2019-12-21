@@ -36,6 +36,7 @@
 #include "network/object.hpp"
 #include "network/property.hpp"
 #include "subwindow/hardwarelistsubwindow.hpp"
+#include "subwindow/objecteditsubwindow.hpp"
 #include "subwindow/serversettingssubwindow.hpp"
 #include "subwindow/serverconsolesubwindow.hpp"
 
@@ -47,6 +48,8 @@ MainWindow::MainWindow(QWidget* parent) :
   QMainWindow(parent),
   m_mdiArea{new QMdiArea()}
 {
+  instance = this;
+
   setWindowTitle("Traintastic");
 
   QAction* actFullScreen;
@@ -205,6 +208,21 @@ void MainWindow::toggleFullScreen()
     else
       showMaximized();
  }
+}
+
+void MainWindow::showObjectEdit(const QString& id)
+{
+  if(!m_mdiSubWindow.objectEdit.contains(id))
+  {
+    ObjectEditSubWindow* window = new ObjectEditSubWindow(id);
+    m_mdiArea->addSubWindow(window);
+    window->setAttribute(Qt::WA_DeleteOnClose);
+    connect(window, &QMdiSubWindow::destroyed, [this, id](QObject*){ m_mdiSubWindow.objectEdit.remove(id); });
+    window->show();
+    m_mdiSubWindow.objectEdit[id] = window;
+  }
+  else
+    m_mdiArea->setActiveSubWindow(m_mdiSubWindow.objectEdit[id]);
 }
 
 void MainWindow::showHardware()

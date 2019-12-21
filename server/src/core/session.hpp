@@ -33,6 +33,7 @@
 
 class Client;
 class AbstractProperty;
+class AbstractAttribute;
 
 class Session : public std::enable_shared_from_this<Session>
 {
@@ -46,13 +47,15 @@ class Session : public std::enable_shared_from_this<Session>
     boost::uuids::uuid m_uuid;
     Handles m_handles;
     std::unordered_map<Handle, boost::signals2::connection> m_propertyChanged;
+    std::unordered_map<Handle, boost::signals2::connection> m_attributeChanged;
 
     bool processMessage(const Message& message);
 
     void writeObject(Message& message, const ObjectPtr& object);
     void writeTableModel(Message& message, const TableModelPtr& model);
 
-    void objectPropertyChanged(Object& object, AbstractProperty& property);
+    void objectPropertyChanged(AbstractProperty& property);
+    void objectAttributeChanged(AbstractAttribute& attribute);
 
   public:
     Session(const std::shared_ptr<Client>& client);

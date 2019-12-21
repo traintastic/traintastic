@@ -56,7 +56,7 @@ class Z21 : public CommandStation
 
     Property<std::string> hostname;
     Property<uint16_t> port;
-    Property<uint32_t> serialNumber;
+    Property<std::string> serialNumber;
     Property<std::string> hardwareType;
     Property<std::string> firmwareVersion;
     Property<bool> emergencyStop;

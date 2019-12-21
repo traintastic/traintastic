@@ -31,6 +31,7 @@ class PropertyCheckBox : public QCheckBox
 {
   protected:
     Property& m_property;
+    bool m_internalUpdate;
 
   public:
     PropertyCheckBox(Property& property, QWidget* parent = nullptr);
