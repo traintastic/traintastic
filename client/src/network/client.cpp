@@ -49,6 +49,7 @@ Client::Client() :
 
 Client::~Client()
 {
+  instance = nullptr;
 }
 
 bool Client::isDisconnected() const

@@ -33,7 +33,8 @@ Object::Object(Handle handle, const QString& classId) :
 
 Object::~Object()
 {
-  Client::instance->releaseObject(this);
+  if(Client::instance)
+    Client::instance->releaseObject(this);
 }
 
 const Property* Object::getProperty(const QString& name) const
