@@ -1,0 +1,54 @@
+/**
+ * server/src/lua/script.hpp
+ *
+ * This file is part of the traintastic source code.
+ *
+ * Copyright (C) 2020 Reinder Feenstra
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+#ifndef SERVER_LUA_SCRIPT_HPP
+#define SERVER_LUA_SCRIPT_HPP
+
+#include "../core/idobject.hpp"
+#include "sandbox.hpp"
+
+namespace Lua {
+
+class Script : public IdObject
+{
+  protected:
+    SandboxPtr m_sandbox;
+
+    void modeChanged(TraintasticMode mode) final;
+    void init();
+    void fini();
+    bool pcall(lua_State* L, int nargs = 0, int nresults = 0);
+
+  public:
+    CLASS_ID("lua.script")
+    CREATE(Script)
+
+    Script(const std::weak_ptr<World>& world, const std::string& _id);
+
+    Property<std::string> name;
+    Property<bool> enabled;
+    Property<std::string> code;
+};
+
+}
+
+#endif

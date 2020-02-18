@@ -1,4 +1,26 @@
 /**
+ * server/src/hardware/commandstation/protocol/xpressnet.cpp
+ *
+ * This file is part of the traintastic source code.
+ *
+ * Copyright (C) 2020 Reinder Feenstra
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+/**
  * hardware/protocol/xpressnet.cpp - XpressNet protocol
  *
  * This file is part of the traintastic-server source code
@@ -19,7 +41,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
+#if 0
 #include "xpressnet.hpp"
 #include "../commandstation.hpp"
 #include "../../decoder/decoder.hpp"
@@ -104,11 +126,27 @@ struct SetFunctionStateGroup
   }
 } __attribute__((packed));
 
+struct RocoSetFunctionStateF13F20
+{
+  const uint8_t headerByte = 0xE4;
+  const uint8_t identification = 0xF3;
+  uint8_t addressHigh;
+  uint8_t addressLow;
+  uint8_t state = 0x00;
+  uint8_t checksum;
+
+  RocoSetFunctionStateF13F20(uint16_t address)
+  {
+    addressLowHigh(address, addressLow, addressHigh);
+  }
+} __attribute__((packed));
+
 XpressNet::XpressNet(const std::weak_ptr<World>& world, const std::string& id, std::function<void(const void*)>&& send) :
   IdObject(world, id),
   m_send{std::move(send)},
-  commandStation{this, "command_station", XpressNetCommandStation::Custom, PropertyFlags::AccessWCC},
-  useFunctionStateCommands{this, "use_function_state_commands", false, PropertyFlags::AccessWCC}
+  commandStation{this, "command_station", XpressNetCommandStation::Custom, PropertyFlags::ReadWrite},
+  useFunctionStateCommands{this, "use_function_state_commands", false, PropertyFlags::ReadWrite},
+  useRocoF13F20Command{this, "use_roco_f13_f20_command", false, PropertyFlags::ReadWrite}
 {
   assert(m_send);
   m_interfaceItems.add(commandStation);
@@ -123,30 +161,6 @@ bool XpressNet::isDecoderSupported(const Decoder& decoder) const
     decoder.address <= addressMax;
 }
 
-void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
-{
-  Traintastic::instance->console->debug(id, "XpressNet::decoderChanged");
-
-  /*if(changes == DecoderChangeFlags::EmergencyStop && decoder.emergencyStop)
-    sendEmergencyStop(decoder);
-  else*/ if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Direction | DecoderChangeFlags::SpeedStep | DecoderChangeFlags::SpeedSteps))
-    sendSpeedAndDirectionInstruction(decoder);
-  else if(has(changes, DecoderChangeFlags::FunctionValue))
-  {
-    if(functionNumber <= 4)
-      sendFunctionInstructionGroup1(decoder);
-    else if(functionNumber <= 8)
-      sendFunctionInstructionGroup2(decoder);
-    else if(functionNumber <= 12)
-      sendFunctionInstructionGroup3(decoder);
-    else
-      ; // console warning
-  }
-  else if(has(changes, DecoderChangeFlags::FunctionMomentary))
-  {
-
-  }
-}
 
 uint8_t XpressNet::calcChecksum(const void* cmd)
 {
@@ -335,4 +349,22 @@ void XpressNet::sendSetFunctionStateGroup3(const Decoder& decoder)
   m_send(&cmd);
 }
 
+void XpressNet::sendRocoSetFunctionStateF13F20(const Decoder& decoder)
+{
+  RocoSetFunctionStateF13F20 cmd(decoder.address);
+
+  // F13 .. F20:
+  for(uint32_t i = 13; i <= 20; i++)
+  {
+    const std::shared_ptr<DecoderFunction>& f = decoder.getFunction(i);
+    if(f && f->value)
+      cmd.state |= 1 << (i - 13);
+  }
+
+  cmd.checksum = calcChecksum(&cmd);
+
+  m_send(&cmd);
 }
+
+}
+#endif

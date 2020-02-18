@@ -52,7 +52,7 @@ class Message
       //SaveWorld = 8,
       //ImportWorld = 9,
       //ExportWorld = 10,
-      //CreateObject = 11,
+      CreateObject = 11,
       //DeleteObject = 12,
       //IsObject = 13,
       GetObject = 14,
@@ -86,6 +86,7 @@ class Message
       InvalidSession = 3,
       UnknownObject = 4,
       ObjectNotTable = 5,
+      UnknownClassId = 6,
 
 
       /*

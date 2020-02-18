@@ -23,8 +23,8 @@
 #include "property.hpp"
 #include "client.hpp"
 
-Property::Property(Object& object, const QString& name, ValueType type, const QVariant& value) :
-  AbstractProperty(object, name, type),
+Property::Property(Object& object, const QString& name, ValueType type, PropertyFlags flags, const QVariant& value) :
+  AbstractProperty(object, name, type, flags),
   m_value{value}
 {
 }

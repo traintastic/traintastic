@@ -1,0 +1,9 @@
+## Traintastic language file: German (DE)
+
+#language:en-us=
+#languaga:nl-nl=
+language:de-de=Deutsch
+
+#settings:localhost_only=
+#settings:port=
+#settings:default_world=

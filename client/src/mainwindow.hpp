@@ -27,11 +27,14 @@
 #include <QMainWindow>
 #include <QMap>
 #include <enum/traintasticmode.hpp>
+#include "network/objectptr.hpp"
 
 class QMdiArea;
+class QMdiSubWindow;
 class QActionGroup;
 class ObjectEditSubWindow;
 class HardwareListSubWindow;
+class LuaScriptsSubWindow;
 class ServerSettingsSubWindow;
 class ServerConsoleSubWindow;
 
@@ -41,13 +44,7 @@ class MainWindow : public QMainWindow
 
   protected:
     QMdiArea* m_mdiArea;
-    struct
-    {
-      QMap<QString, ObjectEditSubWindow*> objectEdit;
-      HardwareListSubWindow* hardwareList = nullptr;
-      ServerSettingsSubWindow* serverSettings = nullptr;
-      ServerConsoleSubWindow* serverConsole = nullptr;
-    } m_mdiSubWindow;
+    QMap<QString, QMdiSubWindow*> m_mdiSubWindows;
     QAction* m_actionConnectToServer;
     QAction* m_actionDisconnectFromServer;
     QAction* m_actionNewWorld;
@@ -55,7 +52,8 @@ class MainWindow : public QMainWindow
     QAction* m_actionSaveWorld;
     QAction* m_actionImportWorld;
     QAction* m_actionExportWorld;
-    QAction* m_actionHardware;
+    QMenu* m_menuHardware;
+    QAction* m_actionLua;
     QAction* m_actionServerSettings;
     QAction* m_actionServerConsole;
     QActionGroup* m_actionGroupMode;
@@ -75,10 +73,6 @@ class MainWindow : public QMainWindow
     void importWorld();
     void exportWorld();
     void toggleFullScreen();
-    void showHardware();
-
-    void showServerSettings();
-    void showServerConsole();
     void showAbout();
     void clientStateChanged();
     void updateModeActions();
@@ -91,7 +85,8 @@ class MainWindow : public QMainWindow
 
   public slots:
     void connectToServer();
-    void showObjectEdit(const QString& id);
+    void showObject(const ObjectPtr& object);
+    void showObject(const QString& id);
 };
 
 #endif

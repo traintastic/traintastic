@@ -24,6 +24,7 @@
 #include "decoderchangeflags.hpp"
 #include "decoderfunction.hpp"
 #include "decoderfunctionlist.hpp"
+#include "../../core/world.hpp"
 #include "../commandstation/commandstation.hpp"
 
 namespace Hardware {
@@ -32,8 +33,8 @@ const std::shared_ptr<Decoder> Decoder::null;
 
 Decoder::Decoder(const std::weak_ptr<World>& world, const std::string& _id) :
   IdObject(world, _id),
-  name{this, "name", "", PropertyFlags::AccessWCC},
-  commandStation{this, "command_station", nullptr, PropertyFlags::AccessWCC,
+  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
+  commandStation{this, "command_station", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](const std::shared_ptr<CommandStation::CommandStation>& value)
     {
       std::shared_ptr<Decoder> decoder = std::dynamic_pointer_cast<Decoder>(shared_from_this());
@@ -50,25 +51,25 @@ Decoder::Decoder(const std::weak_ptr<World>& world, const std::string& _id) :
 
       return true;
     }},
-  protocol{this, "protocol", DecoderProtocol::None, PropertyFlags::AccessWCC},
-  address{this, "address", 0, PropertyFlags::AccessWCC},
-  longAddress{this, "long_address", false, PropertyFlags::AccessWCC},
-  emergencyStop{this, "emergency_stop", false, PropertyFlags::AccessRWW,
+  protocol{this, "protocol", DecoderProtocol::None, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  address{this, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  longAddress{this, "long_address", false, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  emergencyStop{this, "emergency_stop", false, PropertyFlags::ReadWrite,
     [this](const bool&)
     {
       changed(DecoderChangeFlags::EmergencyStop);
     }},
-  direction{this, "direction", Direction::Forward, PropertyFlags::AccessWWW,
+  direction{this, "direction", Direction::Forward, PropertyFlags::ReadWrite,
     [this](const Direction&)
     {
       changed(DecoderChangeFlags::Direction);
     }},
-  speedSteps{this, "speed_steps", 255, PropertyFlags::AccessWCC,
+  speedSteps{this, "speed_steps", 255, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](const uint8_t&)
     {
       changed(DecoderChangeFlags::SpeedSteps);
     }},
-  speedStep{this, "speed_step", 0, PropertyFlags::AccessRRW,
+  speedStep{this, "speed_step", 0, PropertyFlags::ReadWrite,
     [this](const uint8_t&)
     {
       changed(DecoderChangeFlags::SpeedStep);
@@ -77,9 +78,11 @@ Decoder::Decoder(const std::weak_ptr<World>& world, const std::string& _id) :
     {
       return (value <= speedSteps);
     }},
-  functions{this, "functions", std::make_shared<DecoderFunctionList>(world, _id + "_functions"), PropertyFlags::AccessRRR},
-  notes{this, "notes", "", PropertyFlags::AccessWWW}
+  functions{this, "functions", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
+  notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
+  functions.setValueInternal(std::make_shared<DecoderFunctionList>(*this, functions.name()));
+
   m_interfaceItems.add(name);
   m_interfaceItems.add(commandStation)
     .addAttributeEnabled(false);
@@ -99,6 +102,14 @@ Decoder::Decoder(const std::weak_ptr<World>& world, const std::string& _id) :
   m_interfaceItems.add(notes);
 }
 
+void Decoder::addToWorld()
+{
+  IdObject::addToWorld();
+
+  if(auto world = m_world.lock())
+    world->decoders->add(shared_ptr<Decoder>());
+}
+
 const std::shared_ptr<DecoderFunction>& Decoder::getFunction(uint32_t number) const
 {
   for(auto& f : *functions)
@@ -115,6 +126,7 @@ void Decoder::modeChanged(TraintasticMode mode)
   commandStation.setAttributeEnabled(mode == TraintasticMode::Edit);
   protocol.setAttributeEnabled(mode == TraintasticMode::Edit);
   address.setAttributeEnabled(mode == TraintasticMode::Edit);
+  direction.setAttributeEnabled(mode != TraintasticMode::Edit);
   speedSteps.setAttributeEnabled(mode == TraintasticMode::Edit);
   speedStep.setAttributeEnabled(mode == TraintasticMode::Run);
 

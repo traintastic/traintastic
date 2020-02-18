@@ -27,6 +27,8 @@
 #include <nlohmann/json.hpp>
 #include "../lua/enum.hpp"
 
+inline constexpr std::array<XpressNetCommandStation, 2> XpressNetCommandStationValues{{XpressNetCommandStation::Custom, XpressNetCommandStation::Roco10764}};
+
 NLOHMANN_JSON_SERIALIZE_ENUM(XpressNetCommandStation,
 {
   {XpressNetCommandStation::Custom, "custom"},

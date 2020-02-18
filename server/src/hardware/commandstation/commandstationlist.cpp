@@ -25,12 +25,17 @@
 
 using Hardware::CommandStation::CommandStation;
 
-CommandStationList::CommandStationList(const std::weak_ptr<World>& world, const std::string& _id) :
-  ObjectList<CommandStation>(world, _id)
+CommandStationList::CommandStationList(Object& parent, const std::string& parentPropertyName) :
+  ObjectList<CommandStation>(parent, parentPropertyName)
 {
 }
 
 TableModelPtr CommandStationList::getModel()
 {
   return std::make_shared<CommandStationListTableModel>(*this);
+}
+
+bool CommandStationList::isListedProperty(const std::string& name)
+{
+  return CommandStationListTableModel::isListedProperty(name);
 }

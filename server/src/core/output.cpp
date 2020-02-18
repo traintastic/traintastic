@@ -22,7 +22,7 @@
 
 Output::Output(const std::weak_ptr<World> world, const std::string& _id) :
   IdObject{world, _id},
-  value{this, "value", false, PropertyFlags::AccessWWW, std::bind(&Output::valueChanged, this, std::placeholders::_1), std::bind(&Output::setValue, this, std::placeholders::_1)}
+  value{this, "value", false, PropertyFlags::ReadWrite, std::bind(&Output::valueChanged, this, std::placeholders::_1), std::bind(&Output::setValue, this, std::placeholders::_1)}
 {
   m_interfaceItems.add(value);
 }

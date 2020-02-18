@@ -26,7 +26,8 @@
 #include "commandstation.hpp"
 #include <boost/asio.hpp>
 #include "../../core/objectproperty.hpp"
-#include "protocol/xpressnet.hpp"
+//#include "protocol/xpressnet.hpp"
+#include "../protocol/loconet.hpp"
 
 struct z21_lan_header;
 
@@ -41,7 +42,9 @@ class Z21 : public CommandStation
     std::array<uint8_t,64> m_receiveBuffer;
 
     bool setOnline(bool& value) final;
-    bool isDecoderSupported(Decoder& decoder) const final;
+    //bool isDecoderSupported(Decoder& decoder) const final;
+    void emergencyStopChanged(bool value) final;
+    void trackVoltageOffChanged(bool value) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     void receive();
@@ -56,11 +59,24 @@ class Z21 : public CommandStation
 
     Property<std::string> hostname;
     Property<uint16_t> port;
+    ObjectProperty<::Protocol::LocoNet> loconet;
     Property<std::string> serialNumber;
     Property<std::string> hardwareType;
     Property<std::string> firmwareVersion;
-    Property<bool> emergencyStop;
-    Property<bool> trackVoltageOff;
+    Property<float> mainCurrent;
+    Property<float> progCurrent;
+    Property<float> filteredMainCurrent;
+    Property<float> temperature;
+    Property<float> supplyVoltage;
+    Property<float> vccVoltage;
+    //Property<bool> emergencyStop;
+    //Property<bool> trackVoltageOff;
+    Property<bool> shortCircuit;
+    Property<bool> programmingModeActive;
+    Property<bool> highTemperature;
+    Property<bool> powerLost;
+    Property<bool> shortCircutInternal;
+    Property<bool> shortCircutExternal;
 };
 
 }

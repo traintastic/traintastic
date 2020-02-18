@@ -49,6 +49,7 @@ class DecoderFunction : public Output
     DecoderFunction(const std::weak_ptr<World>& world, const std::string& _id);
 
     Property<uint8_t> number;
+    Property<std::string> name;
     Property<bool> momentary;
 };
 

@@ -40,7 +40,7 @@ class Property : public AbstractProperty
     QString m_enumName;
 
   public:
-    explicit Property(Object& object, const QString& name, ValueType type, const QVariant& value);
+    explicit Property(Object& object, const QString& name, ValueType type, PropertyFlags flags, const QVariant& value);
 
     const QString& enumName() const final { Q_ASSERT(!m_enumName.isEmpty()); return m_enumName; }
 

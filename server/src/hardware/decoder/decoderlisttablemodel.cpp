@@ -29,6 +29,14 @@ constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
 constexpr uint32_t columnAddress = 2;
 
+bool DecoderListTableModel::isListedProperty(const std::string& name)
+{
+  return
+    name == "id" ||
+    name == "name" ||
+    name == "address";
+}
+
 DecoderListTableModel::DecoderListTableModel(DecoderList& list) :
   ObjectListTableModel<Decoder>(list)
 {
@@ -59,4 +67,14 @@ std::string DecoderListTableModel::getText(uint32_t column, uint32_t row) const
   }
 
   return "";
+}
+
+void DecoderListTableModel::propertyChanged(AbstractProperty& property, uint32_t row)
+{
+  if(property.name() == "id")
+    changed(row, columnId);
+  else if(property.name() == "name")
+    changed(row, columnName);
+  else if(property.name() == "address")
+    changed(row, columnAddress);
 }

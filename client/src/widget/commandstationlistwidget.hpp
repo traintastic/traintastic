@@ -30,7 +30,7 @@ class CommandStationListWidget : public ObjectListWidget
   Q_OBJECT
 
   public:
-    CommandStationListWidget(const QString& id, QWidget* parent = nullptr);
+    CommandStationListWidget(const ObjectPtr& object, QWidget* parent = nullptr);
 };
 
 #endif

@@ -55,8 +55,6 @@ class Decoder : public IdObject
 
     static const std::shared_ptr<Decoder> null;
 
-    Decoder(const std::weak_ptr<World>& world, const std::string& _id);
-
     Property<std::string> name;
     ObjectProperty<CommandStation::CommandStation> commandStation;
     Property<DecoderProtocol> protocol;
@@ -69,6 +67,9 @@ class Decoder : public IdObject
     ObjectProperty<DecoderFunctionList> functions;
     Property<std::string> notes;
 
+    Decoder(const std::weak_ptr<World>& world, const std::string& _id);
+
+    void addToWorld() final;
     const std::shared_ptr<DecoderFunction>& getFunction(uint32_t number) const;
 };
 

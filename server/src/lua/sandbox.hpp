@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,13 +24,22 @@
 #define SERVER_LUA_SANDBOX_HPP
 
 #include <lua.hpp>
-
-#define LUA_SANDBOX "_sandbox"
+#include <memory>
 
 namespace Lua {
 
-lua_State* newSandbox();
-void closeSandbox(lua_State* L);
+using SandboxPtr = std::unique_ptr<lua_State, void(*)(lua_State*)>;
+
+class Sandbox
+{
+  private:
+    static void close(lua_State* L);
+
+  public:
+    static SandboxPtr create();
+    static int getGlobal(lua_State* L, const char* name);
+    static int pcall(lua_State* L, int nargs = 0, int nresults = 0, int errfunc = 0);
+};
 
 }
 

@@ -25,6 +25,7 @@
 
 #include "interfaceitem.hpp"
 #include <enum/valuetype.hpp>
+#include <enum/propertyflags.hpp>
 
 class Object;
 
@@ -34,24 +35,29 @@ class AbstractProperty : public InterfaceItem
 
   protected:
     const ValueType m_type;
+    const PropertyFlags m_flags;
 
   public:
-    explicit AbstractProperty(Object& object, const QString& name, ValueType type) :
+    explicit AbstractProperty(Object& object, const QString& name, ValueType type, PropertyFlags flags) :
       InterfaceItem(object, name),
-      m_type{type}
+      m_type{type},
+      m_flags{flags}
     {
     }
 
     ValueType type() const { return m_type; }
+    PropertyFlags flags() const { return m_flags; }
 
-    virtual const QString& enumName() const = 0;
+    bool isWritable() const { return (m_flags & PropertyFlagsAccessMask) == PropertyFlags::ReadWrite; }
 
-    virtual bool toBool() const = 0;
-    virtual int toInt() const = 0;
-    virtual int64_t toInt64() const = 0;
-    virtual double toDouble() const = 0;
-    virtual QString toString() const = 0;
-    virtual QVariant toVariant() const = 0;
+    virtual const QString& enumName() const       { Q_ASSERT(false); return ""; }
+
+    virtual bool toBool() const            { Q_ASSERT(false); return false; }
+    virtual int toInt() const              { Q_ASSERT(false); return 0; }
+    virtual int64_t toInt64() const        { Q_ASSERT(false); return 0; }
+    virtual double toDouble() const        { Q_ASSERT(false); return 0; }
+    virtual QString toString() const       { Q_ASSERT(false); return ""; }
+    virtual QVariant toVariant() const     { Q_ASSERT(false); return QVariant(); }
 
   signals:
     void valueChanged();
@@ -62,11 +68,11 @@ class AbstractProperty : public InterfaceItem
     void valueChangedString(const QString& newValue);
 
   public slots:
-    virtual void setValueBool(bool value) = 0;
-    virtual void setValueInt(int value) = 0;
-    virtual void setValueInt64(int64_t value) = 0;
-    virtual void setValueDouble(double value) = 0;
-    virtual void setValueString(const QString& value) = 0;
+    virtual void setValueBool(bool value)      { Q_ASSERT(value != value); }
+    virtual void setValueInt(int value)          { Q_ASSERT(value != value); }
+    virtual void setValueInt64(int64_t value)          { Q_ASSERT(value != value); }
+    virtual void setValueDouble(double value)              { Q_ASSERT(value != value); }
+    virtual void setValueString(const QString& value)  { Q_ASSERT(value != value); }
 };
 
 #endif

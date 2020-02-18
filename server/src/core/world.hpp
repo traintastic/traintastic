@@ -29,8 +29,11 @@
 #include "stdfilesystem.hpp"
 #include <unordered_map>
 #include <boost/uuid/uuid.hpp>
+#include <nlohmann/json.hpp>
 #include "../hardware/commandstation/commandstationlist.hpp"
 #include "../hardware/decoder/decoderlist.hpp"
+#include "../hardware/input/inputlist.hpp"
+#include "../lua/scriptlist.hpp"
 //class CommandStationList;
 //class DecoderList;
 
@@ -51,6 +54,8 @@ class World : public Object
     void modeChanged(TraintasticMode mode);
     void load();
 
+    nlohmann::json saveObject(const ObjectPtr& object);
+
   public:
     CLASS_ID("world")
 
@@ -60,6 +65,8 @@ class World : public Object
     Property<std::string> name;
     ObjectProperty<CommandStationList> commandStations;
     ObjectProperty<DecoderList> decoders;
+    ObjectProperty<InputList> inputs;
+    ObjectProperty<Lua::ScriptList> luaScripts;
 
     World(); // Don't use directly, use: create()
     World(const std::filesystem::path& filename); // Don't use directly, use: load()
@@ -67,6 +74,7 @@ class World : public Object
     const boost::uuids::uuid& uuid() const { return m_uuid; }
 
     std::string getUniqueId(const std::string& prefix) const;
+    ObjectPtr createObject(const std::string& classId, const std::string& _id = "");
     bool isObject(const std::string& _id) const;
     ObjectPtr getObject(const std::string& _id) const;
 

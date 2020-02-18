@@ -92,7 +92,7 @@ std::string to_string(const Console::Level& value)
 
 Console::Console() :
   Object(),
-  count{this, "count", 1000, PropertyFlags::AccessWWW}
+  count{this, "count", 1000, PropertyFlags::ReadWrite}
 {
   m_interfaceItems.add(count);
 }

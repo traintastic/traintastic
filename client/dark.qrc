@@ -6,5 +6,6 @@
         <file alias="hardware.svg">gfx/dark/hardware.svg</file>
         <file alias="add.svg">gfx/dark/add.svg</file>
         <file alias="delete.svg">gfx/dark/delete.svg</file>
+        <file alias="lua.svg">gfx/dark/lua.svg</file>
     </qresource>
 </RCC>

@@ -42,8 +42,12 @@ class CommandStation : public IdObject
   friend class ::Hardware::Decoder;
 
   protected:
+    void modeChanged(TraintasticMode mode) override;
+
     virtual bool setOnline(bool& value) = 0;
-    virtual bool isDecoderSupported(Decoder& decoder) const = 0;
+    virtual void emergencyStopChanged(bool value) = 0;
+    virtual void trackVoltageOffChanged(bool value) = 0;
+    //virtual bool isDecoderSupported(Decoder& decoder) const = 0;
     virtual void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) = 0;
 
     const std::shared_ptr<Decoder>& getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress) const;
@@ -53,7 +57,8 @@ class CommandStation : public IdObject
 
     Property<std::string> name;
     Property<bool> online;
-    Property<CommandStationStatus> status;
+    Property<bool> emergencyStop;
+    Property<bool> trackVoltageOff;
     ObjectProperty<DecoderList> decoders;
     Property<std::string> notes;
 };

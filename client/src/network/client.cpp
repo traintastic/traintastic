@@ -27,9 +27,11 @@
 #include <message.hpp>
 #include "object.hpp"
 #include "property.hpp"
+#include "objectproperty.hpp"
 #include "tablemodel.hpp"
 #include <enum/interfaceitemtype.hpp>
-#include <enum/valuetype.hpp>
+//#include <enum/valuetype.hpp>
+//#include <enum/propertyflags.hpp>
 
 Client* Client::instance = nullptr;
 
@@ -93,6 +95,22 @@ void Client::cancelRequest(int requestId)
     m_requestCallback.erase(it);
 }
 
+int Client::createObject(const QString& classId, const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+{
+  std::unique_ptr<Message> request{Message::newRequest(Message::Command::CreateObject)};
+  request->write(classId.toLatin1());
+  request->write(id.toLatin1());
+  send(request,
+    [this, callback](const std::shared_ptr<Message> message)
+    {
+      ObjectPtr object;
+      if(!message->isError())
+        object = readObject(*message);
+      callback(object, message->errorCode());
+    });
+  return request->requestId();
+}
+
 int Client::getObject(const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
 {
   std::unique_ptr<Message> request{Message::newRequest(Message::Command::GetObject)};
@@ -102,10 +120,7 @@ int Client::getObject(const QString& id, std::function<void(const ObjectPtr&, Me
     {
       ObjectPtr object;
       if(!message->isError())
-      {
         object = readObject(*message);
-        m_objects[object->handle()] = object.data();
-      }
       callback(object, message->errorCode());
     });
   return request->requestId();
@@ -161,10 +176,10 @@ void Client::setPropertyString(Property& property, const QString& value)
   send(event);
 }
 
-int Client::getTableModel(const QString& id, std::function<void(const TableModelPtr&, Message::ErrorCode)> callback)
+int Client::getTableModel(const ObjectPtr& object, std::function<void(const TableModelPtr&, Message::ErrorCode)> callback)
 {
   std::unique_ptr<Message> request{Message::newRequest(Message::Command::GetTableModel)};
-  request->write(id.toLatin1());
+  request->write(object->handle());
   send(request,
     [this, callback](const std::shared_ptr<Message> message)
     {
@@ -220,11 +235,12 @@ ObjectPtr Client::readObject(const Message& message)
 
   const Handle handle = message.read<Handle>();
 
-  ObjectPtr obj; // get object by handle
+  ObjectPtr obj = m_objects.value(handle).lock(); // try get object by handle
   if(!obj)
   {
     const QString classId = QString::fromLatin1(message.read<QByteArray>());
     obj = QSharedPointer<Object>::create(handle, classId);
+    m_objects[handle] = obj;
 
     message.readBlock(); // items
     while(!message.endOfBlock())
@@ -237,6 +253,7 @@ ObjectPtr Client::readObject(const Message& message)
       {
         case InterfaceItemType::Property:
         {
+          const PropertyFlags flags = message.read<PropertyFlags>();
           const ValueType type = message.read<ValueType>();
           QVariant value;
           switch(type)
@@ -259,7 +276,7 @@ ObjectPtr Client::readObject(const Message& message)
               break;
 
             case ValueType::Object:
-              // TODO
+              value = QString::fromLatin1(message.read<QByteArray>());
               break;
 
             case ValueType::Invalid:
@@ -269,10 +286,17 @@ ObjectPtr Client::readObject(const Message& message)
     //      Q_ASSERT(value.isValid());
           if(Q_LIKELY(value.isValid()))
           {
-            Property* p = new Property(*obj, name, type, value);
-            if(type == ValueType::Enum)
-              p->m_enumName = QString::fromLatin1(message.read<QByteArray>());
-            item = p;
+            if(type == ValueType::Object)
+            {
+              item = new ObjectProperty(*obj, name, flags, value.toString());
+            }
+            else
+            {
+              Property* p = new Property(*obj, name, type, flags, value);
+              if(type == ValueType::Enum)
+                p->m_enumName = QString::fromLatin1(message.read<QByteArray>());
+              item = p;
+            }
           }
           break;
         }
@@ -370,16 +394,16 @@ void Client::processMessage(const std::shared_ptr<Message> message)
     switch(message->command())
     {
       case Message::Command::ObjectPropertyChanged:
-        if(Object* object = m_objects.value(message->read<Handle>(), nullptr))
+        if(ObjectPtr object = m_objects.value(message->read<Handle>()).lock())
         {
-          if(Property* property = object->getProperty(QString::fromLatin1(message->read<QByteArray>())))
+          if(AbstractProperty* property = object->getProperty(QString::fromLatin1(message->read<QByteArray>())))
           {
             switch(message->read<ValueType>())
             {
               case ValueType::Boolean:
               {
                 const bool value = message->read<bool>();
-                property->m_value = value;
+                static_cast<Property*>(property)->m_value = value;
                 emit property->valueChanged();
                 emit property->valueChangedBool(value);
                 break;
@@ -388,7 +412,7 @@ void Client::processMessage(const std::shared_ptr<Message> message)
               case ValueType::Enum:
               {
                 const qlonglong value = message->read<qlonglong>();
-                property->m_value = value;
+                static_cast<Property*>(property)->m_value = value;
                 emit property->valueChanged();
                 emit property->valueChangedInt64(value);
                 if(value >= std::numeric_limits<int>::min() && value <= std::numeric_limits<int>::max())
@@ -398,7 +422,7 @@ void Client::processMessage(const std::shared_ptr<Message> message)
               case ValueType::Float:
               {
                 const double value = message->read<double>();
-                property->m_value = value;
+                static_cast<Property*>(property)->m_value = value;
                 emit property->valueChanged();
                 emit property->valueChangedDouble(value);
                 break;
@@ -406,20 +430,28 @@ void Client::processMessage(const std::shared_ptr<Message> message)
               case ValueType::String:
               {
                 const QString value = QString::fromUtf8(message->read<QByteArray>());
-                property->m_value = value;
+                static_cast<Property*>(property)->m_value = value;
                 emit property->valueChanged();
                 emit property->valueChangedString(value);
                 break;
               }
+              case ValueType::Object:
+              {
+                Q_ASSERT(false); // TODO
+                break;
+              }
+              case ValueType::Invalid:
+                Q_ASSERT(false);
+                break;
             }
           }
         }
         break;
 
       case Message::Command::ObjectAttributeChanged:
-        if(Object* object = m_objects.value(message->read<Handle>(), nullptr))
+        if(ObjectPtr object = m_objects.value(message->read<Handle>()).lock())
         {
-          if(Property* property = object->getProperty(QString::fromLatin1(message->read<QByteArray>())))
+          if(InterfaceItem* item = object->getInterfaceItem(QString::fromLatin1(message->read<QByteArray>())))
           {
             AttributeName attributeName = message->read<AttributeName>();
             QVariant value;
@@ -441,12 +473,17 @@ void Client::processMessage(const std::shared_ptr<Message> message)
               case ValueType::String:
                 value = QString::fromUtf8(message->read<QByteArray>());
                 break;
+
+              case ValueType::Object:
+              case ValueType::Invalid:
+                Q_ASSERT(false);
+                break;
             }
 
             if(Q_LIKELY(value.isValid()))
             {
-              property->m_attributes[attributeName] = value;
-              emit property->attributeChanged(attributeName, value);
+              item->m_attributes[attributeName] = value;
+              emit item->attributeChanged(attributeName, value);
             }
           }
         }

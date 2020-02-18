@@ -23,6 +23,7 @@
 #include "object.hpp"
 //#include "abstractmethod.hpp"
 #include "abstractproperty.hpp"
+#include "traintastic.hpp"
 
 Object::Object()
 {
@@ -46,10 +47,17 @@ AbstractProperty* Object::getProperty(const std::string& name)
 {
   return dynamic_cast<AbstractProperty*>(getItem(name));
 }
+/*
+void Object::log(Console::Level level, const std::string& id, const std::string& message) const
+{
+  Traintastic::instance->console->log(level, id, message);
+}
+*/
 
-//void Object::log(LogLevel level, const std::string& message) const
-//{
-//  auto p = m_instance.lock();
-//  if(p)
-//    p->consoleLog(level, message);
-//}
+void Object::modeChanged(TraintasticMode mode)
+{
+  for(auto& it : m_interfaceItems)
+    if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&it.second))
+      if(contains(property->flags(), PropertyFlags::SubObject))
+        property->toObject()->modeChanged(mode);
+}

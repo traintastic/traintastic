@@ -30,6 +30,15 @@ constexpr uint32_t columnName = 1;
 constexpr uint32_t columnOnline = 2;
 constexpr uint32_t columnStatus = 3;
 
+bool CommandStationListTableModel::isListedProperty(const std::string& name)
+{
+  return
+    name == "id" ||
+    name == "name" ||
+    name == "online" ||
+    name == "status";
+}
+
 CommandStationListTableModel::CommandStationListTableModel(CommandStationList& list) :
   ObjectListTableModel<CommandStation>(list)
 {
@@ -63,4 +72,16 @@ std::string CommandStationListTableModel::getText(uint32_t column, uint32_t row)
   }
 
   return "";
+}
+
+void CommandStationListTableModel::propertyChanged(AbstractProperty& property, uint32_t row)
+{
+  if(property.name() == "id")
+    changed(row, columnId);
+  else if(property.name() == "name")
+    changed(row, columnName);
+  else if(property.name() == "online")
+    changed(row, columnOnline);
+  else if(property.name() == "status")
+    changed(row, columnStatus);
 }

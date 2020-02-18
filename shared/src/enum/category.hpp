@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
 #ifndef SHARED_ENUM_CATEGORY_HPP
 #define SHARED_ENUM_CATEGORY_HPP
 
@@ -29,9 +28,9 @@
 enum class Category : uint16_t
 {
   General = 0,
-  Notes = 1,
+  Info = 1,
   Status = 2,
-  Info = 3,
+  XpressNet = 3,
 };
 
 #endif

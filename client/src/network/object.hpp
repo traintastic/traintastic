@@ -27,7 +27,7 @@
 #include "handle.hpp"
 #include "interfaceitems.hpp"
 
-class Property;
+class AbstractProperty;
 
 class Object : public QObject
 {
@@ -51,8 +51,11 @@ class Object : public QObject
 
     const InterfaceItems& interfaceItems() const { return m_interfaceItems; }
 
-    const Property* getProperty(const QString& name) const;
-    Property* getProperty(const QString& name);
+    const InterfaceItem* getInterfaceItem(const QString& name) const;
+    InterfaceItem* getInterfaceItem(const QString& name);
+
+    const AbstractProperty* getProperty(const QString& name) const;
+    AbstractProperty* getProperty(const QString& name);
 };
 
 

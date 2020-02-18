@@ -32,8 +32,9 @@
 #include "../network/utils.hpp"
 #include "../widget/alertwidget.hpp"
 
-ServerConsoleWidget::ServerConsoleWidget(QWidget* parent) :
+ServerConsoleWidget::ServerConsoleWidget(const ObjectPtr& object, QWidget* parent) :
   QWidget(parent),
+  m_object{object},
   m_tableWidget{new TableWidget()}
 {
   QVBoxLayout* layout = new QVBoxLayout();
@@ -45,29 +46,15 @@ ServerConsoleWidget::ServerConsoleWidget(QWidget* parent) :
   auto* spinner = new WaitingSpinnerWidget(this, true, false);
   spinner->start();
 
-  m_requestId = Client::instance->getObject(objectId,
-    [this, spinner](const ObjectPtr& object, Message::ErrorCode ec)
+  m_requestId = Client::instance->getTableModel(object,
+    [this, spinner](const TableModelPtr& tableModel, Message::ErrorCode ec)
     {
-      m_requestId = Client::invalidRequestId;
-      if(object)
+      if(tableModel)
       {
-        m_object = object;
-
-        m_requestId = Client::instance->getTableModel(objectId,
-          [this, spinner](const TableModelPtr& tableModel, Message::ErrorCode ec)
-          {
-            if(tableModel)
-            {
-              m_requestId = Client::invalidRequestId;
-
-              m_tableWidget->setTableModel(tableModel);
-
-              delete spinner;
-            }
-            else
-              static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(errorCodeToText(ec)));
-          });
-        }
+        m_requestId = Client::invalidRequestId;
+        m_tableWidget->setTableModel(tableModel);
+        delete spinner;
+      }
       else
         static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(errorCodeToText(ec)));
     });

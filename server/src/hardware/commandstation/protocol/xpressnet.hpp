@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_HARDWARE_COMMANDSTATION_PROTOCOL_XPRESSNET_HPP
+#if 0//ndef SERVER_HARDWARE_COMMANDSTATION_PROTOCOL_XPRESSNET_HPP
 #define SERVER_HARDWARE_COMMANDSTATION_PROTOCOL_XPRESSNET_HPP
 
 #include "../../../core/idobject.hpp"
@@ -33,6 +33,8 @@ class Decoder;
 enum class DecoderChangeFlags;
 
 namespace CommandStation::Protocol {
+
+
 
 class XpressNet : public IdObject
 {
@@ -51,6 +53,8 @@ class XpressNet : public IdObject
     void sendSetFunctionStateGroup2(const Decoder& decoder);
     void sendSetFunctionStateGroup3(const Decoder& decoder);
 
+    void sendRocoSetFunctionStateF13F20(const Decoder& decoder);
+
   public:
     CLASS_ID("hardware.command_station.protocol.xpressnet")
 
@@ -58,6 +62,7 @@ class XpressNet : public IdObject
 
     Property<XpressNetCommandStation> commandStation;
     Property<bool> useFunctionStateCommands;
+    Property<bool> useRocoF13F20Command;
 
     XpressNet(const std::weak_ptr<World>& world, const std::string& id, std::function<void(const void*)>&& send);
 

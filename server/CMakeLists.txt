@@ -14,6 +14,10 @@ find_library(USBXPRESSNET_LIB usbxpressnet)
 #  message(FATAL_ERROR "usbxpressnet library not found")
 #endif()
 
+set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
+set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
+
+
 file(GLOB SOURCES
   "src/*.hpp"
   "src/*.cpp"
@@ -22,10 +26,12 @@ file(GLOB SOURCES
   "src/enum/*.hpp"
   "src/hardware/commandstation/*.hpp"
   "src/hardware/commandstation/*.cpp"
-  "src/hardware/commandstation/protocol/*.hpp"
-  "src/hardware/commandstation/protocol/*.cpp"
   "src/hardware/decoder/*.hpp"
   "src/hardware/decoder/*.cpp"
+  "src/hardware/input/*.hpp"
+  "src/hardware/input/*.cpp"
+  "src/hardware/protocol/*.hpp"
+  "src/hardware/protocol/*.cpp"
   "src/lua/*.hpp"
   "src/lua/*.cpp"
   "src/utils/*.hpp"

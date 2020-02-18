@@ -88,6 +88,8 @@ class TableModel : public Object
     void setColumnHeaders(const std::vector<std::string>& values);
     void setRowCount(uint32_t value);
 
+    void changed(uint32_t row, uint32_t column);
+
   public:
     std::function<void(const TableModelPtr&)> columnHeadersChanged;
     std::function<void(const TableModelPtr&)> rowCountChanged;

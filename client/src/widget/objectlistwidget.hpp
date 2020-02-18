@@ -47,11 +47,13 @@ class ObjectListWidget : public QWidget
     void addActionEdit();
     void addActionDelete();
 
+    virtual void add() { Q_ASSERT(false); }
+
   protected slots:
     void tableDoubleClicked(const QModelIndex& index);
 
   public:
-    explicit ObjectListWidget(const QString& id, QWidget* parent = nullptr);
+    explicit ObjectListWidget(const ObjectPtr& object, QWidget* parent = nullptr);
     ~ObjectListWidget() override;
 
   //signals:

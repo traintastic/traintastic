@@ -35,9 +35,9 @@
 
 #include "../mainwindow.hpp"
 
-ObjectListWidget::ObjectListWidget(const QString& id, QWidget* parent) :
+ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
   QWidget(parent),
-  m_id{id},
+  m_object{object},
   m_toolbar{new QToolBar()},
   m_actionAdd{nullptr},
   m_actionEdit{nullptr},
@@ -53,30 +53,18 @@ ObjectListWidget::ObjectListWidget(const QString& id, QWidget* parent) :
   auto* spinner = new WaitingSpinnerWidget(this, true, false);
   spinner->start();
 
-  m_requestId = Client::instance->getObject(m_id,
-    [this, spinner](const ObjectPtr& object, Message::ErrorCode ec)
+  m_requestId = Client::instance->getTableModel(m_object,
+    [this, spinner](const TableModelPtr& tableModel, Message::ErrorCode ec)
     {
-      m_requestId = Client::invalidRequestId;
-      if(object)
+      if(tableModel)
       {
-        m_object = object;
+        m_requestId = Client::invalidRequestId;
 
-        m_requestId = Client::instance->getTableModel(m_id,
-          [this, spinner](const TableModelPtr& tableModel, Message::ErrorCode ec)
-          {
-            if(tableModel)
-            {
-              m_requestId = Client::invalidRequestId;
+        m_tableWidget->setTableModel(tableModel);
+        connect(m_tableWidget, &TableWidget::doubleClicked, this, &ObjectListWidget::tableDoubleClicked);
 
-              m_tableWidget->setTableModel(tableModel);
-              connect(m_tableWidget, &TableWidget::doubleClicked, this, &ObjectListWidget::tableDoubleClicked);
-
-              delete spinner;
-            }
-            else
-              static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(errorCodeToText(ec)));
-          });
-        }
+        delete spinner;
+      }
       else
         static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(errorCodeToText(ec)));
     });
@@ -90,7 +78,7 @@ ObjectListWidget::~ObjectListWidget()
 void ObjectListWidget::addActionAdd()
 {
   Q_ASSERT(!m_actionAdd);
-  m_actionAdd = m_toolbar->addAction(QIcon(":/dark/add.svg"), tr("Add"));
+  m_actionAdd = m_toolbar->addAction(QIcon(":/dark/add.svg"), tr("Add"), [this](){ add(); });
 }
 
 void ObjectListWidget::addActionEdit()
@@ -111,7 +99,7 @@ void ObjectListWidget::tableDoubleClicked(const QModelIndex& index)
 {
   const QString id = m_tableWidget->getRowObjectId(index.row());
   if(!id.isEmpty())
-    MainWindow::instance->showObjectEdit(id);//emit rowDoubleClicked(id);
+    MainWindow::instance->showObject(id);//emit rowDoubleClicked(id);
 }
 
 

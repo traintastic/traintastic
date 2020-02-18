@@ -33,8 +33,8 @@
 
 
 
-#include "lua/sandbox.hpp"
-lua_State* L = Lua::newSandbox();
+//#include "lua/sandbox.hpp"
+//lua_State* L = Lua::newSandbox();
 
 
 

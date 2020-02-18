@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -68,6 +68,7 @@ struct Enum
   {
     *static_cast<T*>(lua_newuserdata(L, sizeof(value))) = value;
     luaL_getmetatable(L, EnumName<T>::value);
+    assert(lua_istable(L, -1)); // is enum registered?
     lua_setmetatable(L, -2);
   }
 

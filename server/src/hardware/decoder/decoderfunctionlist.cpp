@@ -24,12 +24,17 @@
 
 using Hardware::DecoderFunction;
 
-DecoderFunctionList::DecoderFunctionList(const std::weak_ptr<World>& world, const std::string& _id) :
-  ObjectList<DecoderFunction>(world, _id)
+DecoderFunctionList::DecoderFunctionList(Object& parent, const std::string& parentPropertyName) :
+  ObjectList<DecoderFunction>(parent, parentPropertyName)
 {
 }
 
 TableModelPtr DecoderFunctionList::getModel()
 {
   return nullptr;
+}
+
+bool DecoderFunctionList::isListedProperty(const std::string& name)
+{
+  return false;//DecoderFunctionListTableModel::isListedProperty(name);
 }

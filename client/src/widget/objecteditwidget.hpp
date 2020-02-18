@@ -31,13 +31,14 @@ class ObjectEditWidget : public QWidget
   Q_OBJECT
 
   protected:
-    const QString m_id;
+    //const QString m_id;
     int m_requestId;
     ObjectPtr m_object;
 
     virtual void buildForm();
 
   public:
+    explicit ObjectEditWidget(const ObjectPtr& object, QWidget* parent = nullptr);
     explicit ObjectEditWidget(const QString& id, QWidget* parent = nullptr);
     ~ObjectEditWidget() override;
 };

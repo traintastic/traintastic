@@ -29,10 +29,12 @@ const std::shared_ptr<DecoderFunction> DecoderFunction::null;
 DecoderFunction::DecoderFunction(const std::weak_ptr<World>& world, const std::string& _id) :
   Output(world, _id),
   m_decoder{nullptr},
-  number{this, "number", 0, PropertyFlags::AccessWCC},
-  momentary{this, "momentary", false, PropertyFlags::AccessWCC}
+  number{this, "number", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
+  momentary{this, "momentary", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   m_interfaceItems.add(number);
+  m_interfaceItems.add(name);
   m_interfaceItems.add(momentary);
 }
 

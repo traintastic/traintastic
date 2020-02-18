@@ -21,6 +21,7 @@
  */
 
 #include "session.hpp"
+#include <boost/algorithm/string.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include "traintastic.hpp"
 #include "client.hpp"
@@ -30,6 +31,7 @@
 #include "tablemodel.hpp"
 #include "world.hpp"
 #include "idobject.hpp"
+#include "subobject.hpp"
 
 
 
@@ -51,14 +53,51 @@ bool Session::processMessage(const Message& message)
 {
   switch(message.command())
   {
+    case Message::Command::CreateObject:
+    {
+      std::string classId;
+      std::string id;
+      message.read(classId);
+      message.read(id);
+
+      Traintastic::instance->console->debug(m_client->m_id, "CreateObject: " + classId);
+
+      ObjectPtr obj = Traintastic::instance->world->createObject(classId, id);
+      if(obj)
+      {
+        auto response = Message::newResponse(message.command(), message.requestId());
+        writeObject(*response, obj);
+        m_client->sendMessage(std::move(response));
+      }
+      else
+        m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::UnknownClassId));
+
+      return true;
+    }
     case Message::Command::GetObject:
-    case Message::Command::GetTableModel:
     {
       std::string id;
       message.read(id);
 
-      ObjectPtr obj = Traintastic::instance->world->getObject(id);
-      if(!obj)
+      std::vector<std::string> ids;
+      boost::split(ids, id, [](char c){ return c == '.'; });
+      auto it = ids.cbegin();
+
+      ObjectPtr obj = Traintastic::instance->world->getObject(*it);
+      if(obj)
+      {
+        it++;
+        while(obj && it != ids.cend())
+        {
+          AbstractProperty* property = obj->getProperty(*it);
+          if(property && property->type() == ValueType::Object)
+            obj = property->toObject();
+          else
+            obj = nullptr;
+          it++;
+        }
+      }
+      else
       {
         if(id == Traintastic::id)
           obj = Traintastic::instance;
@@ -70,86 +109,10 @@ bool Session::processMessage(const Message& message)
 
       if(obj)
       {
-        switch(message.command())
-        {
-          case Message::Command::GetObject:
-          {
-            Traintastic::instance->console->debug(m_client->m_id, "GetObject: " + id);
-            auto response = Message::newResponse(message.command(), message.requestId());
-            writeObject(*response, obj);
-            m_client->sendMessage(std::move(response));
-            break;
-          }
-          case Message::Command::GetTableModel:
-          {
-            if(Table* table = dynamic_cast<Table*>(obj.get()))
-            {
-              TableModelPtr model = table->getModel();
-              assert(model);
-              Traintastic::instance->console->debug(m_client->m_id, "GetTableModel: " + id);
-              auto response = Message::newResponse(message.command(), message.requestId());
-              writeTableModel(*response, model);
-              m_client->sendMessage(std::move(response));
-
-              model->columnHeadersChanged = [this](const TableModelPtr& model)
-                {
-                  auto event = Message::newEvent(Message::Command::TableModelColumnHeadersChanged);
-                  event->write(m_handles.getHandle(std::dynamic_pointer_cast<Object>(model)));
-                  event->write(model->columnCount());
-                  for(const std::string& text : model->columnHeaders())
-                    event->write(text);
-                  m_client->sendMessage(std::move(event));
-                };
-
-              model->rowCountChanged = [this](const TableModelPtr& model)
-                {
-                  auto event = Message::newEvent(Message::Command::TableModelRowCountChanged);
-                  event->write(m_handles.getHandle(std::dynamic_pointer_cast<Object>(model)));
-                  event->write(model->rowCount());
-                  m_client->sendMessage(std::move(event));
-                };
-
-              model->updateRegion = [this](const TableModelPtr& model, const TableModel::Region& region)
-                {
-                  std::cout << "updateRegion " << region.columnMin << " " << region.columnMax << " " << region.rowMin << " " << region.rowMax << std::endl;
-
-                  auto event = Message::newEvent(Message::Command::TableModelUpdateRegion);
-                  event->write(m_handles.getHandle(std::dynamic_pointer_cast<Object>(model)));
-                  event->write(region.columnMin);
-                  event->write(region.columnMax);
-                  event->write(region.rowMin);
-                  event->write(region.rowMax);
-
-                  for(uint32_t row = region.rowMin; row <= region.rowMax; row++)
-                    for(uint32_t column = region.columnMin; column <= region.columnMax; column++)
-                      event->write(model->getText(column, row));
-
-                  m_client->sendMessage(std::move(event));
-                };
-  /*
-                void TableModel::sendRegion(uint32_t columnMin, uint32_t columnMax, uint32_t rowMin, uint32_t rowMax)
-{
-  auto event = Message::newEvent(Message::Command::TableModelUpdateRegion);
-  event->write(m_handle);
-
-  for(uint32_t row = rowMin; row <= rowMax; row++)
-    for(uint32_t column = columnMin; column <= columnMax; column++)
-    {
-
-
-    }
-}
-*/
-
-            }
-            else
-              m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::ObjectNotTable));
-            break;
-          }
-          default:
-            assert(false);
-            return false;
-        }
+        Traintastic::instance->console->debug(m_client->m_id, "GetObject: " + id);
+        auto response = Message::newResponse(message.command(), message.requestId());
+        writeObject(*response, obj);
+        m_client->sendMessage(std::move(response));
       }
       else
       {
@@ -202,6 +165,61 @@ bool Session::processMessage(const Message& message)
         }
       }
       break;
+    }
+    case Message::Command::GetTableModel:
+    {
+      if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
+      {
+        if(Table* table = dynamic_cast<Table*>(object.get()))
+        {
+          TableModelPtr model = table->getModel();
+          assert(model);
+          //Traintastic::instance->console->debug(m_client->m_id, "GetTableModel: " + id);
+          auto response = Message::newResponse(message.command(), message.requestId());
+          writeTableModel(*response, model);
+          m_client->sendMessage(std::move(response));
+
+          model->columnHeadersChanged = [this](const TableModelPtr& model)
+            {
+              auto event = Message::newEvent(Message::Command::TableModelColumnHeadersChanged);
+              event->write(m_handles.getHandle(std::dynamic_pointer_cast<Object>(model)));
+              event->write(model->columnCount());
+              for(const std::string& text : model->columnHeaders())
+                event->write(text);
+              m_client->sendMessage(std::move(event));
+            };
+
+          model->rowCountChanged = [this](const TableModelPtr& model)
+            {
+              auto event = Message::newEvent(Message::Command::TableModelRowCountChanged);
+              event->write(m_handles.getHandle(std::dynamic_pointer_cast<Object>(model)));
+              event->write(model->rowCount());
+              m_client->sendMessage(std::move(event));
+            };
+
+          model->updateRegion = [this](const TableModelPtr& model, const TableModel::Region& region)
+            {
+              std::cout << "updateRegion " << region.columnMin << " " << region.columnMax << " " << region.rowMin << " " << region.rowMax << std::endl;
+
+              auto event = Message::newEvent(Message::Command::TableModelUpdateRegion);
+              event->write(m_handles.getHandle(std::dynamic_pointer_cast<Object>(model)));
+              event->write(region.columnMin);
+              event->write(region.columnMax);
+              event->write(region.rowMin);
+              event->write(region.rowMax);
+
+              for(uint32_t row = region.rowMin; row <= region.rowMax; row++)
+                for(uint32_t column = region.columnMin; column <= region.columnMax; column++)
+                  event->write(model->getText(column, row));
+
+              m_client->sendMessage(std::move(event));
+            };
+
+          return true;
+        }
+      }
+      m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::ObjectNotTable));
+      return true;
     }
     case Message::Command::ReleaseTableModel:
     {
@@ -262,6 +280,7 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
       if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&item))
       {
         message.write(InterfaceItemType::Property);
+        message.write(property->flags());
         message.write(property->type());
         switch(property->type())
         {
@@ -289,11 +308,15 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
           case ValueType::Object:
           {
             ObjectPtr obj = property->toObject();
-   // TODO:         assert(!obj || dynamic_cast<IdObject*>(obj.get()));
             if(IdObject* idObj = dynamic_cast<IdObject*>(obj.get()))
               message.write<std::string>(idObj->id);
+            else if(SubObject* subObj = dynamic_cast<SubObject*>(obj.get()))
+              message.write<std::string>(subObj->id());
             else
+            {
+     //         assert(false);
               message.write<std::string>("");
+            }
             break;
           }
           default:

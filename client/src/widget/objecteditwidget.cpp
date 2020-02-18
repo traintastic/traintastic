@@ -28,13 +28,17 @@
 #include "../network/client.hpp"
 #include "../network/object.hpp"
 #include "../network/property.hpp"
+#include "../network/objectproperty.hpp"
 #include "../network/utils.hpp"
-#include "../widget/alertwidget.hpp"
-#include "../widget/propertycheckbox.hpp"
-#include "../widget/propertyspinbox.hpp"
-#include "../widget/propertylineedit.hpp"
-#include "../widget/propertytextedit.hpp"
-#include "../widget/propertydirectioncontrol.hpp"
+#include "alertwidget.hpp"
+#include "propertycheckbox.hpp"
+#include "propertycombobox.hpp"
+#include "propertyspinbox.hpp"
+#include "propertylineedit.hpp"
+#include "propertytextedit.hpp"
+#include "propertydirectioncontrol.hpp"
+#include "propertyvaluelabel.hpp"
+#include "createwidget.hpp"
 #include <enum/category.hpp>
 
 #include <enum/direction.hpp>
@@ -46,22 +50,30 @@ QString toString(Category value)
   {
     case Category::General: return "General";
     case Category::Info: return "Info";
-    case Category::Notes: return "Notes";
     case Category::Status: return "Status";
+    case Category::XpressNet: return "XpressNet";
   }
   return "?";
 }
 
 
+ObjectEditWidget::ObjectEditWidget(const ObjectPtr& object, QWidget* parent) :
+  QWidget(parent),
+  m_requestId{Client::invalidRequestId},
+  m_object{object}
+{
+  buildForm();
+}
 
 ObjectEditWidget::ObjectEditWidget(const QString& id, QWidget* parent) :
-  QWidget(parent),
-  m_id{id}
+  QWidget(parent)
 {
+  setWindowTitle(id);
+
   auto* spinner = new WaitingSpinnerWidget(this, true, false);
   spinner->start();
 
-  m_requestId = Client::instance->getObject(m_id,
+  m_requestId = Client::instance->getObject(id,
     [this, spinner](const ObjectPtr& object, Message::ErrorCode ec)
     {
       m_requestId = Client::invalidRequestId;
@@ -83,72 +95,113 @@ ObjectEditWidget::~ObjectEditWidget()
 
 void ObjectEditWidget::buildForm()
 {
-  QMap<Category, QWidget*> tabs;
-  QList<Category> tabOrder;
-
-  for(const QString& name : m_object->interfaceItems().names())
-    if(Property* property = m_object->getProperty(name))
-    {
-      Category category = property->getAttributeEnum<Category>(AttributeName::Category, Category::General);
-      QWidget* w = nullptr;
-
-      if(property->type() == ValueType::Boolean)
-        w = new PropertyCheckBox(*property);
-      else if(property->type() == ValueType::Integer)
-        w = new PropertySpinBox(*property);
-      else if(property->type() == ValueType::String)
-      {
-        if(category == Category::Notes && property->name() == "notes")
-        {
-          PropertyTextEdit* edit = new PropertyTextEdit(*property);
-          edit->setPlaceholderText(property->displayName());
-          Q_ASSERT(!tabs.contains(category));
-          tabs.insert(category, edit);
-          tabOrder.append(category);
-          continue;
-        }
-        else
-          w = new PropertyLineEdit(*property);
-      }
-      else if(property->type() == ValueType::Enum)
-      {
-        if(property->enumName() == EnumName<Direction>::value)
-        {
-          w = new PropertyDirectionControl(*property);
-        }
-
-        //else
-        //  w = dropdown
-      }
-
-      QWidget* tabWidget;
-      if(!tabs.contains(category))
-      {
-        tabWidget = new QWidget();
-        tabWidget->setLayout(new QFormLayout());
-        tabs.insert(category, tabWidget);
-        tabOrder.append(category);
-      }
-      else
-        tabWidget = tabs[category];
-
-      static_cast<QFormLayout*>(tabWidget->layout())->addRow(property->displayName(), w);
-    }
-
-  if(tabs.count() > 1)
+  if(AbstractProperty* id = m_object->getProperty("id"))
   {
-    QTabWidget* tabWidget = new QTabWidget();
-    for(Category category : tabOrder)
-      tabWidget->addTab(tabs.value(category), toString(category));
+    connect(id, &AbstractProperty::valueChangedString, this, &ObjectEditWidget::setWindowTitle);
+    setWindowTitle(id->toString());
+  }
+
+  if(QWidget* widget = createWidgetIfCustom(m_object))
+  {
     QVBoxLayout* l = new QVBoxLayout();
     l->setMargin(0);
-    l->addWidget(tabWidget);
+    l->addWidget(widget);
     setLayout(l);
   }
-  else if(tabs.count() == 1)
+  else
   {
-    QWidget* w = tabs.first();
-    setLayout(w->layout());
-    delete w;
+    QList<QWidget*> tabs;
+    QMap<Category, QWidget*> categoryTabs;
+
+    for(const QString& name : m_object->interfaceItems().names())
+      if(AbstractProperty* baseProperty = m_object->getProperty(name))
+      {
+        if(!baseProperty->getAttributeBool(AttributeName::ObjectEditor, true))
+          continue;
+
+        if(baseProperty->type() == ValueType::Object)
+        {
+          ObjectProperty* property = static_cast<ObjectProperty*>(baseProperty);
+          if(contains(baseProperty->flags(), PropertyFlags::SubObject))
+          {
+            QWidget* w = new ObjectEditWidget(property->objectId());
+            w->setWindowTitle(property->displayName());
+            tabs.append(w);
+            continue;
+          }
+        }
+        else
+        {
+          Property* property = static_cast<Property*>(baseProperty);
+          Category category = property->getAttributeEnum<Category>(AttributeName::Category, Category::General);
+          QWidget* w = nullptr;
+
+          if(!property->isWritable())
+            w = new PropertyValueLabel(*property);
+          else if(property->type() == ValueType::Boolean)
+            w = new PropertyCheckBox(*property);
+          else if(property->type() == ValueType::Integer)
+            w = new PropertySpinBox(*property);
+          else if(property->type() == ValueType::String)
+          {
+            if(property->name() == "notes")
+            {
+              PropertyTextEdit* edit = new PropertyTextEdit(*property);
+              edit->setWindowTitle(property->displayName());
+              edit->setPlaceholderText(property->displayName());
+              tabs.append(edit);
+              continue;
+            }
+            else if(property->name() == "code")
+            {
+              PropertyTextEdit* edit = new PropertyTextEdit(*property);
+              edit->setWindowTitle(property->displayName());
+              edit->setPlaceholderText(property->displayName());
+              tabs.append(edit);
+              continue;
+            }
+            else
+              w = new PropertyLineEdit(*property);
+          }
+          else if(property->type() == ValueType::Enum)
+          {
+            if(property->enumName() == EnumName<Direction>::value)
+              w = new PropertyDirectionControl(*property);
+            else
+              w = new PropertyComboBox(*property);
+          }
+
+          QWidget* tabWidget;
+          if(!categoryTabs.contains(category))
+          {
+            tabWidget = new QWidget();
+            tabWidget->setWindowTitle(toString(category));
+            tabWidget->setLayout(new QFormLayout());
+            tabs.append(tabWidget);
+            categoryTabs.insert(category, tabWidget);
+          }
+          else
+            tabWidget = categoryTabs[category];
+
+          static_cast<QFormLayout*>(tabWidget->layout())->addRow(property->displayName(), w);
+        }
+      }
+
+    if(tabs.count() > 1)
+    {
+      QTabWidget* tabWidget = new QTabWidget();
+      for(auto* tab : tabs)
+        tabWidget->addTab(tab, tab->windowTitle());
+      QVBoxLayout* l = new QVBoxLayout();
+      l->setMargin(0);
+      l->addWidget(tabWidget);
+      setLayout(l);
+    }
+    else if(tabs.count() == 1)
+    {
+      QWidget* w = tabs.first();
+      setLayout(w->layout());
+      delete w;
+    }
   }
 }

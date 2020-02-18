@@ -37,12 +37,22 @@ Object::~Object()
     Client::instance->releaseObject(this);
 }
 
-const Property* Object::getProperty(const QString& name) const
+const InterfaceItem* Object::getInterfaceItem(const QString& name) const
 {
-  return dynamic_cast<Property*>(m_interfaceItems.find(name));
+  return m_interfaceItems.find(name);
 }
 
-Property* Object::getProperty(const QString& name)
+InterfaceItem* Object::getInterfaceItem(const QString& name)
 {
-  return dynamic_cast<Property*>(m_interfaceItems.find(name));
+  return m_interfaceItems.find(name);
+}
+
+const AbstractProperty* Object::getProperty(const QString& name) const
+{
+  return dynamic_cast<AbstractProperty*>(m_interfaceItems.find(name));
+}
+
+AbstractProperty* Object::getProperty(const QString& name)
+{
+  return dynamic_cast<AbstractProperty*>(m_interfaceItems.find(name));
 }

@@ -39,7 +39,7 @@ class ServerConsoleWidget : public QWidget
     TableWidget* m_tableWidget;
 
   public:
-    ServerConsoleWidget(QWidget* parent = nullptr);
+    ServerConsoleWidget(const ObjectPtr& object, QWidget* parent = nullptr);
     ~ServerConsoleWidget() final;
 };
 

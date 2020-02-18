@@ -23,6 +23,7 @@
 #ifndef SERVER_CORE_OBJECTLIST_HPP
 #define SERVER_CORE_OBJECTLIST_HPP
 
+#include "subobject.hpp"
 #include "idobject.hpp"
 #include "table.hpp"
 
@@ -30,7 +31,7 @@ template<typename T>
 class ObjectListTableModel;
 
 template<typename T>
-class ObjectList : public IdObject, public Table
+class ObjectList : public SubObject, public Table
 {
   friend class ObjectListTableModel<T>;
 
@@ -42,23 +43,25 @@ class ObjectList : public IdObject, public Table
 
   protected:
     Items m_items;
+    std::unordered_map<Object*, boost::signals2::connection> m_propertyChanged;
     std::vector<ObjectListTableModel<T>*> m_models;
+
+    virtual bool isListedProperty(const std::string& name) = 0;
 
     void rowCountChanged()
     {
       const auto size = m_items.size();
-      length = size;
+      length.setValueInternal(size);
       for(auto& model : m_models)
         model->setRowCount(size);
     }
 
   public:
-
     Property<uint32_t> length;
 
-    ObjectList(const std::weak_ptr<World>& world, const std::string& _id) :
-      IdObject{world, _id},
-      length{this, "length", 0, PropertyFlags::AccessRRR}
+    ObjectList(Object& parent, const std::string& parentPropertyName) :
+      SubObject{parent, parentPropertyName},
+      length{this, "length", 0, PropertyFlags::ReadOnly}
     {
     }
 
@@ -80,6 +83,22 @@ class ObjectList : public IdObject, public Table
     void add(const std::shared_ptr<T>& object)
     {
       m_items.push_back(object);
+      m_propertyChanged.emplace(object.get(), object->propertyChanged.connect(
+        [this](AbstractProperty& property)
+        {
+          if(!m_models.empty() && isListedProperty(property.name()))
+          {
+            ObjectPtr object = property.object().shared_from_this();
+            const uint32_t rows = m_items.size();
+            for(int row = 0; row < rows; row++)
+              if(m_items[row] == object)
+              {
+                for(auto& model : m_models)
+                  model->propertyChanged(property, row);
+                break;
+              }
+          }
+        }));
       rowCountChanged();
     }
 
@@ -88,6 +107,7 @@ class ObjectList : public IdObject, public Table
       auto it = std::find(m_items.begin(), m_items.end(), object);
       if(it != m_items.end())
       {
+        m_propertyChanged.erase(object.get());
         m_items.erase(it);
         rowCountChanged();
       }

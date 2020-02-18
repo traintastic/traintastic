@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@
 
 #include "interfaceitem.hpp"
 #include <enum/valuetype.hpp>
-#include "propertyflags.hpp"
+#include <enum/propertyflags.hpp>
 #include "objectptr.hpp"
 #include <cassert>
 #include <nlohmann/json.hpp>
@@ -34,7 +34,7 @@ class AbstractProperty : public InterfaceItem
 {
   protected:
     const ValueType m_type;
-    PropertyFlags m_flags;
+    const PropertyFlags m_flags;
 
     void changed();
 
@@ -45,22 +45,23 @@ class AbstractProperty : public InterfaceItem
       m_flags{flags}
     {
       assert(type != ValueType::Invalid);
-      assert(is_access_valid(flags) && is_store_valid(flags));
-    }
-
-    bool isConstant() const
-    {
-      return false;//!is_empty(m_flags & PropertyFlags::Constant);
-    }
-
-    bool isReadable() const
-    {
-      return true;//!is_empty(m_flags & (PropertyFlags::Constant | PropertyFlags::ReadOnly));
+      assert(is_access_valid(flags));
+      assert(is_store_valid(flags));
     }
 
     bool isWriteable() const
     {
-      return true;//!is_empty(m_flags & PropertyFlags::WriteOnly);
+      return (m_flags & PropertyFlagsAccessMask) == PropertyFlags::ReadWrite;
+    }
+    
+    bool isStoreable() const
+    {
+      return (m_flags & PropertyFlagsStoreMask) == PropertyFlags::Store;
+    }
+
+    PropertyFlags flags() const
+    {
+      return m_flags;
     }
 
     ValueType type() const

@@ -67,7 +67,7 @@ class Client : public QObject
     QMap<uint16_t, std::function<void(const std::shared_ptr<Message>&)>> m_requestCallback;
     QUuid m_sessionUUID;
     ObjectPtr m_traintastic;
-    QMap<Handle, Object*> m_objects;
+    QMap<Handle, QWeakPointer<Object>> m_objects;
     QMap<Handle, TableModel*> m_tableModels;
 
     void setState(State state);
@@ -106,6 +106,7 @@ class Client : public QObject
 
     const ObjectPtr& traintastic() const { return m_traintastic; }
 
+    int createObject(const QString& classId, const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
     int getObject(const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
     void releaseObject(Object* object);
 
@@ -114,7 +115,7 @@ class Client : public QObject
     void setPropertyDouble(Property& property, double value);
     void setPropertyString(Property& property, const QString& value);
 
-    int getTableModel(const QString& id, std::function<void(const TableModelPtr&, Message::ErrorCode)> callback);
+    int getTableModel(const ObjectPtr& object, std::function<void(const TableModelPtr&, Message::ErrorCode)> callback);
     void releaseTableModel(TableModel* tableModel);
     void setTableModelRegion(TableModel* tableModel, int columnMin, int columnMax, int rowMin, int rowMax);
 

@@ -29,11 +29,13 @@
 
 class CommandStationList : public ObjectList<Hardware::CommandStation::CommandStation>
 {
+  protected:
+    bool isListedProperty(const std::string& name) final;
+
   public:
     CLASS_ID("command_station_list")
-    CREATE(CommandStationList)
 
-    CommandStationList(const std::weak_ptr<World>& world, const std::string& _id);
+    CommandStationList(Object& parent, const std::string& parentPropertyName);
 
     TableModelPtr getModel() final;
 };

@@ -32,8 +32,13 @@ class DecoderListTableModel : public ObjectListTableModel<Hardware::Decoder>
 {
   friend class DecoderList;
 
+  protected:
+    void propertyChanged(AbstractProperty& property, uint32_t row) final;
+
   public:
     CLASS_ID("decoder_list_table_model")
+
+    static bool isListedProperty(const std::string& name);
 
     DecoderListTableModel(DecoderList& commandStationList);
 

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -68,7 +68,27 @@ class ObjectProperty : public AbstractProperty
     void setValue(const std::shared_ptr<T>& value)
     {
       assert(isWriteable());
-      if(isWriteable() && m_value != value)
+      if(m_value == value)
+        return;
+      else if(!isWriteable())
+        throw not_writable_error();
+      else if(!m_onSet || m_onSet(value))
+      {
+        m_value = value;
+        changed();
+      }
+      else
+        throw invalid_value_error();
+      /*
+      assert(isWriteable());
+      if(isWriteable() && (!m_onSet || m_onSet(value)))
+        setValueInternal(value);
+        */
+    }
+    
+    void setValueInternal(const std::shared_ptr<T>& value)
+    {
+      if(m_value != value)
       {
         m_value = value;
         changed();

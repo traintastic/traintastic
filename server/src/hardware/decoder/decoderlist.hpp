@@ -30,11 +30,13 @@
 
 class DecoderList : public ObjectList<Hardware::Decoder>
 {
+  protected:
+    bool isListedProperty(const std::string& name) final;
+
   public:
     CLASS_ID("decoder_list")
-    CREATE(DecoderList)
 
-    DecoderList(const std::weak_ptr<World>& world, const std::string& _id);
+    DecoderList(Object& parent, const std::string& parentPropertyName);
 
     TableModelPtr getModel() final;
 };

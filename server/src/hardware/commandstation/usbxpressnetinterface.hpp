@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,14 +24,10 @@
 #define SERVER_HARDWARE_COMMANDSTATION_USBXPRESSNETINTERFACE_HPP
 
 #include "commandstation.hpp"
-#include "../../core/objectproperty.hpp"
+#include "../protocol/xpressnet.hpp"
 #include <usbxpressnet.h>
 
 namespace Hardware::CommandStation {
-
-namespace Protocol {
-  class XpressNet;
-}
 
 class USBXpressNetInterface : public CommandStation
 {
@@ -42,21 +38,21 @@ class USBXpressNetInterface : public CommandStation
     usbxpressnet_handle m_handle;
 
     bool setOnline(bool& value) final;
-    bool isDecoderSupported(Decoder& decoder) const final;
+    void emergencyStopChanged(bool value) final;
+    void trackVoltageOffChanged(bool value) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
-    void send(const void* msg);
+    bool send(const Protocol::XpressNet::Message& msg);
 
   public:
     CLASS_ID("hardware.command_station.usb_xpressnet_interface")
     CREATE(USBXpressNetInterface)
 
-    USBXpressNetInterface(const std::weak_ptr<World>& world, const std::string& _id);
-
     Property<std::string> serial;
     Property<uint8_t> address;
-    ObjectProperty<Protocol::XpressNet> xpressnet;
+    ObjectProperty<::Protocol::XpressNet> xpressnet;
 
+    USBXpressNetInterface(const std::weak_ptr<World>& world, const std::string& _id);
     ~USBXpressNetInterface() final;
 };
 

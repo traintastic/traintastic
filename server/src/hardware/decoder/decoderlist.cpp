@@ -25,12 +25,17 @@
 
 using Hardware::Decoder;
 
-DecoderList::DecoderList(const std::weak_ptr<World>& world, const std::string& _id) :
-  ObjectList<Decoder>(world, _id)
+DecoderList::DecoderList(Object& parent, const std::string& parentPropertyName) :
+  ObjectList<Decoder>(parent, parentPropertyName)
 {
 }
 
 TableModelPtr DecoderList::getModel()
 {
   return std::make_shared<DecoderListTableModel>(*this);
+}
+
+bool DecoderList::isListedProperty(const std::string& name)
+{
+  return DecoderListTableModel::isListedProperty(name);
 }

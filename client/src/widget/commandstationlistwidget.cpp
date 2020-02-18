@@ -22,8 +22,8 @@
 
 #include "commandstationlistwidget.hpp"
 
-CommandStationListWidget::CommandStationListWidget(const QString& id, QWidget* parent) :
-  ObjectListWidget(id, parent)
+CommandStationListWidget::CommandStationListWidget(const ObjectPtr& object, QWidget* parent) :
+  ObjectListWidget(object, parent)
 {
   addActionAdd();
   addActionEdit();

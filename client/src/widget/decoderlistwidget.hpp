@@ -29,8 +29,11 @@ class DecoderListWidget : public ObjectListWidget
 {
   Q_OBJECT
 
+  protected:
+    void add() final;
+
   public:
-    DecoderListWidget(const QString& id, QWidget* parent = nullptr);
+    DecoderListWidget(const ObjectPtr& object, QWidget* parent = nullptr);
 };
 
 #endif

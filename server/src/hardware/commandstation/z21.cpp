@@ -25,8 +25,9 @@
 #include "../../core/world.hpp"
 #include "../../core/eventloop.hpp"
 #include "../decoder/decoderchangeflags.hpp"
-#include "protocol/xpressnet.hpp"
-#include "protocol/z21.hpp"
+#include "../protocol/xpressnet.hpp"
+
+#include "../protocol/z21.hpp"
 #include "../../utils/to_hex.hpp"
 
 
@@ -61,47 +62,87 @@ namespace Hardware::CommandStation {
 Z21::Z21(const std::weak_ptr<World>& world, const std::string& _id) :
   CommandStation(world, _id),
   m_socket{Traintastic::instance->ioContext()},
-  hostname{this, "hostname", "", PropertyFlags::AccessWCC},
-  port{this, "port", 21105, PropertyFlags::AccessWCC},
-  serialNumber{this, "serial_number", "", PropertyFlags::AccessRRR},
-  hardwareType{this, "hardware_type", "", PropertyFlags::AccessRRR},
-  firmwareVersion{this, "firmware_version", "", PropertyFlags::AccessRRR},
-  emergencyStop{this, "emergency_stop", false, PropertyFlags::TODO,
-    [this](bool value)
-    {
-      if(online && value)
-        send(z21_lan_x_set_stop());
-    }},
-  trackVoltageOff{this, "track_voltage_off", false, PropertyFlags::TODO,
-    [this](bool value)
-    {
-      if(online)
-      {
-        if(value)
-          send(z21_lan_x_set_track_power_off());
-        else
-          send(z21_lan_x_set_track_power_on());
-      }
-    }}
+  hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
+  loconet{this, "loconet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
+  port{this, "port", 21105, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  serialNumber{this, "serial_number", "", PropertyFlags::ReadOnly},
+  hardwareType{this, "hardware_type", "", PropertyFlags::ReadOnly},
+  mainCurrent{this, "main_current", std::numeric_limits<float>::quiet_NaN(), PropertyFlags::ReadOnly},
+  progCurrent{this, "prog_current", std::numeric_limits<float>::quiet_NaN(), PropertyFlags::ReadOnly},
+  filteredMainCurrent{this, "filtered_main_current", std::numeric_limits<float>::quiet_NaN(), PropertyFlags::ReadOnly},
+  temperature{this, "temperature", std::numeric_limits<float>::quiet_NaN(), PropertyFlags::ReadOnly},
+  supplyVoltage{this, "supply_voltage", std::numeric_limits<float>::quiet_NaN(), PropertyFlags::ReadOnly},
+  vccVoltage{this, "vcc_voltage", std::numeric_limits<float>::quiet_NaN(), PropertyFlags::ReadOnly},
+  firmwareVersion{this, "firmware_version", "", PropertyFlags::ReadOnly},
+  shortCircuit{this, "short_circuit", false, PropertyFlags::ReadOnly},
+  programmingModeActive{this, "programming_mode_active", false, PropertyFlags::ReadOnly},
+  highTemperature{this, "high_temperature", false, PropertyFlags::ReadOnly},
+  powerLost{this, "power_lost", false, PropertyFlags::ReadOnly},
+  shortCircutInternal{this, "short_circut_internal", false, PropertyFlags::ReadOnly},
+  shortCircutExternal{this, "short_circut_external", false, PropertyFlags::ReadOnly}
 {
   name = "Z21";
+  loconet.setValueInternal(std::make_shared<::Protocol::LocoNet>(*this, loconet.name(),
+    [/*this*/](const ::Protocol::LocoNet::Message& /*msg*/)
+    {
+      return false;
+    }));
 
   m_interfaceItems.insertBefore(hostname, notes)
     .addAttributeEnabled(true);
   m_interfaceItems.insertBefore(port, notes)
     .addAttributeEnabled(true);
+  m_interfaceItems.insertBefore(loconet, notes);
   m_interfaceItems.insertBefore(serialNumber, notes)
     .addAttributeCategory(Category::Info);
   m_interfaceItems.insertBefore(hardwareType, notes)
     .addAttributeCategory(Category::Info);
   m_interfaceItems.insertBefore(firmwareVersion, notes)
     .addAttributeCategory(Category::Info);
-  m_interfaceItems.insertBefore(emergencyStop, notes)
-    .addAttributeEnabled(false);
-  m_interfaceItems.insertBefore(trackVoltageOff, notes)
-    .addAttributeEnabled(false);
+  m_interfaceItems.insertBefore(mainCurrent, notes)
+    .addAttributeCategory(Category::Info);
+  m_interfaceItems.insertBefore(progCurrent, notes)
+    .addAttributeCategory(Category::Info);
+  m_interfaceItems.insertBefore(filteredMainCurrent, notes)
+    .addAttributeCategory(Category::Info);
+  m_interfaceItems.insertBefore(temperature, notes)
+    .addAttributeCategory(Category::Info);
+  m_interfaceItems.insertBefore(supplyVoltage, notes)
+    .addAttributeCategory(Category::Info);
+  m_interfaceItems.insertBefore(vccVoltage, notes)
+    .addAttributeCategory(Category::Info);
+  m_interfaceItems.insertBefore(shortCircuit, notes)
+    .addAttributeCategory(Category::Info);
+  m_interfaceItems.insertBefore(programmingModeActive, notes)
+    .addAttributeCategory(Category::Info);
+  m_interfaceItems.insertBefore(highTemperature, notes)
+    .addAttributeCategory(Category::Info);
+  m_interfaceItems.insertBefore(powerLost, notes)
+    .addAttributeCategory(Category::Info);
+  m_interfaceItems.insertBefore(shortCircutInternal, notes)
+    .addAttributeCategory(Category::Info);
+  m_interfaceItems.insertBefore(shortCircutExternal, notes)
+    .addAttributeCategory(Category::Info);
 }
 
+void Z21::emergencyStopChanged(bool value)
+{
+  if(online && value)
+    send(z21_lan_x_set_stop());
+}
+
+void Z21::trackVoltageOffChanged(bool value)
+{
+  if(online)
+  {
+    if(value)
+      send(z21_lan_x_set_track_power_off());
+    else
+      send(z21_lan_x_set_track_power_on());
+  }
+}
+
+/*
 bool Z21::isDecoderSupported(Decoder& decoder) const
 {
   return
@@ -109,11 +150,9 @@ bool Z21::isDecoderSupported(Decoder& decoder) const
     decoder.address >= 1 &&
     decoder.address <= (decoder.longAddress ? 9999 : 127);
 }
-
+*/
 void Z21::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
-  using Protocol::XpressNet;
-
   if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Direction | DecoderChangeFlags::SpeedStep | DecoderChangeFlags::SpeedSteps))
   {
     z21_lan_x_set_loco_drive cmd;
@@ -158,7 +197,7 @@ void Z21::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uin
     if(decoder.direction == Direction::Forward)
       cmd.speedAndDirection |= 0x80;
 
-    cmd.checksum = XpressNet::calcChecksum(&cmd.xheader);
+    cmd.checksum = Protocol::XpressNet::calcChecksum(&cmd.xheader);
     send(&cmd);
   }
   else if(has(changes, DecoderChangeFlags::FunctionValue))
@@ -172,7 +211,7 @@ void Z21::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uin
         cmd.header = Z21_LAN_X;
         SET_ADDRESS;
         cmd.db3 = (f->value ? 0x40 : 0x00) | static_cast<uint8_t>(functionNumber);
-        cmd.checksum = XpressNet::calcChecksum(&cmd.xheader);
+        cmd.checksum = Protocol::XpressNet::calcChecksum(&cmd.xheader);
         send(&cmd);
       }
     }
@@ -207,37 +246,30 @@ bool Z21::setOnline(bool& value)
 
     receive();
 
-    send(z21_lan_set_broadcastflags(/*0x00010000 |*/ 0x00000100 | 0x00000001));
+    send(z21_lan_set_broadcastflags(0x07000000 | /*0x00010000 |*/ 0x00000100 | 0x00000001));
 
     // try to communicate with Z21
-    send(z21_lan_get_broadcastflags());
+
     send(z21_lan_get_serial_number());
     send(z21_lan_get_hwinfo());
+    send(z21_lan_get_broadcastflags());
     send(z21_lan_systemstate_getdata());
-/*
-    for(auto& decoder : decoders)
-    {
-      z21_lan_x_get_loco_info cmd;
-      send(cmd);
-    }
-*/
+    for(auto& decoder : *decoders)
+      send(z21_lan_x_get_loco_info(decoder->address, decoder->longAddress));
+
     hostname.setAttributeEnabled(false);
     port.setAttributeEnabled(false);
-    emergencyStop.setAttributeEnabled(true);
-    trackVoltageOff.setAttributeEnabled(true);
   }
   else if(m_socket.is_open() && !value)
   {
     send(z21_lan_logoff());
 
-    serialNumber = "";
-    hardwareType = "";
-    firmwareVersion = "";
+    serialNumber.setValueInternal("");
+    hardwareType.setValueInternal("");
+    firmwareVersion.setValueInternal("");
 
     hostname.setAttributeEnabled(true);
     port.setAttributeEnabled(true);
-    emergencyStop.setAttributeEnabled(false);
-    trackVoltageOff.setAttributeEnabled(false);
 
     m_socket.close();
   }
@@ -366,16 +398,83 @@ void Z21::receive()
             case Z21_LAN_SYSTEMSTATE_DATACHANGED:
             {
               const z21_lan_systemstate_datachanged state = *reinterpret_cast<const z21_lan_systemstate_datachanged*>(m_receiveBuffer.data());
-              EventLoop::call(
+              /*EventLoop::call(
                 [this, state]()
                 {
+                  mainCurrent.setValueInternal(state.mainCurrent / 1e3); //!< Current on the main track in mA
+                  progCurrent.setValueInternal(state.progCurrent / 1e3); //!< Current on programming track in mA;
+                  filteredMainCurrent.setValueInternal(state.filteredMainCurrent / 1e3); //!< Smoothed current on the main track in mA
+                  temperature.setValueInternal(state.temperature); //!< Command station internal temperature in °C
+                  supplyVoltage.setValueInternal(state.supplyVoltage / 1e3); //!< Supply voltage in mV
+                  vccVoltage.setValueInternal(state.vccVoltage / 1e3); //!< Internal voltage, identical to track voltage in mV
                   emergencyStop.setValueInternal(state.centralState & Z21_CENTRALSTATE_EMERGENCYSTOP);
                   trackVoltageOff.setValueInternal(state.centralState & Z21_CENTRALSTATE_TRACKVOLTAGEOFF);
-                });
+                  shortCircuit.setValueInternal(state.centralState & Z21_CENTRALSTATE_SHORTCIRCUIT);
+                  programmingModeActive.setValueInternal(state.centralState & Z21_CENTRALSTATE_PROGRAMMINGMODEACTIVE);
+                  highTemperature.setValueInternal(state.centralStateEx & Z21_CENTRALSTATEEX_HIGHTEMPERATURE);
+                  powerLost.setValueInternal(state.centralStateEx & Z21_CENTRALSTATEEX_POWERLOST);
+                  shortCircutInternal.setValueInternal(state.centralStateEx & Z21_CENTRALSTATEEX_SHORTCIRCUITEXTERNAL);
+                  shortCircutExternal.setValueInternal(state.centralStateEx & Z21_CENTRALSTATEEX_SHORTCIRCUITINTERNAL);
+                });*/
               break;
             }
+            case Z21_LAN_LOCONET_Z21_RX:
+            //case Z21_LAN_LOCONET_Z21_TX:
+            //case Z21_LAN_LOCONET_Z21_LAN:
+              loconet->receive(*reinterpret_cast<const ::Protocol::LocoNet::Message*>(m_receiveBuffer.data() + sizeof(z21_lan_header)));
+              break;
+/*
+
+              using LocoNet = Protocol::LocoNet;
+
+              const LocoNet::Header* message = reinterpret_cast<const LocoNet::Header*>(m_receiveBuffer.data() + sizeof(z21_lan_header));
+
+              switch(message->opCode)
+              {
+                case LocoNet::OPC_INPUT_REP:
+                {
+                  const LocoNet::InputRep* inputRep = static_cast<const LocoNet::InputRep*>(message);
+
+                  //if(debugEnabled)
+                  {
+                    const std::string message = "loconet rx OPC_INPUT_REP:"
+                      " address=" + std::to_string(inputRep->address()) +
+                      " input="  + (inputRep->isAuxInput() ? "aux" : "switch") +
+                      " value=" + (inputRep->value() ? "high" : "low");
+                    EventLoop::call([this, message](){ Traintastic::instance->console->debug(id, message); });
+                  }
+
+
+                  break;
+                }
+
+
+                default:
+                  //if(debugEnabled)
+                  {
+                    std::string message = "unknown loconet message: ";
+                    for(int i = 4; i < cmd->dataLen; i++)
+                      message += to_hex(reinterpret_cast<const uint8_t*>(cmd)[i]);
+                    EventLoop::call([this, message](){ Traintastic::instance->console->debug(id, message); });
+                  }
+                  break;
+              }
+
+
+  */
+
             default:
-              EventLoop::call([this, header=cmd->header](){ Traintastic::instance->console->debug(id, "unknown header 0x" + to_hex(header)); });
+              //if(debugEnabled)
+              {
+                std::string message = "unknown message: dataLen=0x" + to_hex(cmd->dataLen) + ", header=0x" + to_hex(cmd->header);
+                if(cmd->dataLen > 4)
+                {
+                  message += ", data=";
+                  for(int i = 4; i < cmd->dataLen; i++)
+                    message += to_hex(reinterpret_cast<const uint8_t*>(cmd)[i]);
+                }
+                EventLoop::call([this, message](){ Traintastic::instance->console->debug(id, message); });
+              }
               break;
           }
         }

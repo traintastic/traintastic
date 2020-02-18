@@ -32,8 +32,13 @@ class CommandStationListTableModel : public ObjectListTableModel<Hardware::Comma
 {
   friend class CommandStationList;
 
+  protected:
+    void propertyChanged(AbstractProperty& property, uint32_t row) final;
+
   public:
     CLASS_ID("command_station_list_table_model")
+
+    static bool isListedProperty(const std::string& name);
 
     CommandStationListTableModel(CommandStationList& commandStationList);
 

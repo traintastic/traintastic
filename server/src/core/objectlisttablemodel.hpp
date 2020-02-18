@@ -36,6 +36,7 @@ class ObjectListTableModel : public TableModel
 
     const T& getItem(uint32_t row) const { return *m_list.m_items[row]; }
     //T& getItem(uint32_t row) { return *m_list.m_items[row]; }
+    virtual void propertyChanged(AbstractProperty& property, uint32_t row) = 0;
 
   public:
     ObjectListTableModel(ObjectList<T>& list) :

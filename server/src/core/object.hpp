@@ -44,10 +44,10 @@ class Object : public std::enable_shared_from_this<Object>
   protected:
     InterfaceItems m_interfaceItems;
 
-    //void log(LogLevel level, const std::string& message) const;
-    //inline void logError(const std::string& message) const { log(LogLevel::Error, message); }
+    //void log(Console::Level level, const std::string& id, const std::string& message) const;
+    //inline void logError(const std::string& id, const std::string& message) const { log(Console::Level::Error, message); }
 
-    virtual void modeChanged(TraintasticMode) {}
+    virtual void modeChanged(TraintasticMode mode);
 
   public:
     boost::signals2::signal<void (AbstractProperty&)> propertyChanged;

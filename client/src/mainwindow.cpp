@@ -35,10 +35,12 @@
 #include "network/client.hpp"
 #include "network/object.hpp"
 #include "network/property.hpp"
-#include "subwindow/hardwarelistsubwindow.hpp"
 #include "subwindow/objecteditsubwindow.hpp"
-#include "subwindow/serversettingssubwindow.hpp"
-#include "subwindow/serverconsolesubwindow.hpp"
+#include "subwindow/objectsubwindow.hpp"
+
+
+#include <QDesktopServices>
+
 
 #define SETTING_PREFIX "mainwindow/"
 #define SETTING_GEOMETRY SETTING_PREFIX "geometry"
@@ -50,13 +52,14 @@ MainWindow::MainWindow(QWidget* parent) :
 {
   instance = this;
 
-  setWindowTitle("Traintastic");
+  setWindowTitle("Traintastic v" + QApplication::applicationVersion());
 
   QAction* actFullScreen;
 
   m_mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   m_mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
+  // build the main menu
   {
     setMenuBar(new QMenuBar());
     QMenu* menu;
@@ -82,19 +85,23 @@ MainWindow::MainWindow(QWidget* parent) :
     actFullScreen->setShortcut(Qt::Key_F11);
 
     menu = menuBar()->addMenu(tr("Objects"));
-    m_actionHardware = menu->addAction(QIcon(":/dark/hardware.svg"), tr("Hardware") + "...", this, &MainWindow::showHardware);
+    m_menuHardware = menu->addMenu(QIcon(":/dark/hardware.svg"), tr("Hardware"));
+    m_menuHardware->addAction(tr("Command stations") + "...", [this](){ showObject("world.command_stations"); });
+    m_menuHardware->addAction(tr("Decoders") + "...", [this](){ showObject("world.decoders"); });
+    m_menuHardware->addAction(tr("Inputs") + "...", [this](){ showObject("world.inputs"); });
+    m_actionLua = menu->addAction(QIcon(":/dark/lua.svg"),tr("Lua scripts") + "...", [this](){ showObject("world.lua_scripts"); });
 
     menu = menuBar()->addMenu(tr("Tools"));
-    menu->addAction(tr("Client settings") + "...");
+    menu->addAction(tr("Client settings") + "...")->setEnabled(false);
     menu->addSeparator();
-    m_actionServerSettings = menu->addAction(tr("Server settings") + "...", this, &MainWindow::showServerSettings);
-    m_actionServerConsole = menu->addAction(tr("Server console") + "...", this, &MainWindow::showServerConsole);
+    m_actionServerSettings = menu->addAction(tr("Server settings") + "...", this, [this](){ showObject("traintastic.settings"); });
+    m_actionServerConsole = menu->addAction(tr("Server console") + "...", this, [this](){ showObject("traintastic.console"); });
     m_actionServerConsole->setShortcut(Qt::Key_F12);
 
     menu = menuBar()->addMenu(tr("Help"));
-    menu->addAction(tr("Help"));
-    menu->addSeparator();
-    menu->addAction(tr("About Qt") + "...", qApp, &QApplication::aboutQt);
+    menu->addAction(tr("Help"), [this](){ QDesktopServices::openUrl("https://traintastic.org/doc?version=" + QApplication::applicationVersion()); })->setShortcut(Qt::Key_F1);
+    //menu->addSeparator();
+    //menu->addAction(tr("About Qt") + "...", qApp, &QApplication::aboutQt);
     menu->addAction(tr("About") + "...", this, &MainWindow::showAbout);
   }
 
@@ -110,8 +117,9 @@ MainWindow::MainWindow(QWidget* parent) :
   m_actionModeEdit = toolbar->addAction(QIcon(":/dark/edit.svg"), tr("Edit"), [this](){ setMode(TraintasticMode::Edit); });
   m_actionModeEdit->setCheckable(true);
   m_actionGroupMode->addAction(m_actionModeEdit);
-  toolbar->addSeparator();
-  toolbar->addAction(m_actionHardware);
+  //toolbar->addSeparator();
+  //toolbar->addAction(m_actionHardware);
+  //toolbar->addAction(m_actionLua);
 
   QVBoxLayout* l = new QVBoxLayout();
   l->setMargin(0);
@@ -209,7 +217,7 @@ void MainWindow::toggleFullScreen()
       showMaximized();
  }
 }
-
+/*
 void MainWindow::showObjectEdit(const QString& id)
 {
   if(!m_mdiSubWindow.objectEdit.contains(id))
@@ -225,53 +233,58 @@ void MainWindow::showObjectEdit(const QString& id)
     m_mdiArea->setActiveSubWindow(m_mdiSubWindow.objectEdit[id]);
 }
 
-void MainWindow::showHardware()
+void MainWindow::showObjectEdit(const ObjectPtr& object)
 {
-  if(!m_mdiSubWindow.hardwareList)
+  const QString& id = object->getProperty("id")->toString();
+  if(!m_mdiSubWindow.objectEdit.contains(id))
   {
-    m_mdiSubWindow.hardwareList = new HardwareListSubWindow();
-    m_mdiArea->addSubWindow(m_mdiSubWindow.hardwareList);
-    m_mdiSubWindow.hardwareList->setAttribute(Qt::WA_DeleteOnClose);
-    connect(m_mdiSubWindow.hardwareList, &QMdiSubWindow::destroyed, [this](QObject*){ m_mdiSubWindow.hardwareList = nullptr; });
-    m_mdiSubWindow.hardwareList->show();
+    ObjectEditSubWindow* window = new ObjectEditSubWindow(object);
+    m_mdiArea->addSubWindow(window);
+    window->setAttribute(Qt::WA_DeleteOnClose);
+    connect(window, &QMdiSubWindow::destroyed, [this, id](QObject*){ m_mdiSubWindow.objectEdit.remove(id); });
+    window->show();
+    m_mdiSubWindow.objectEdit[id] = window;
   }
   else
-    m_mdiArea->setActiveSubWindow(m_mdiSubWindow.hardwareList);
+    m_mdiArea->setActiveSubWindow(m_mdiSubWindow.objectEdit[id]);
+}
+*/
+void MainWindow::showObject(const ObjectPtr& object)
+{
+  const QString& id = object->getProperty("id")->toString();
+  if(!m_mdiSubWindows.contains(id))
+  {
+    QMdiSubWindow* window = new ObjectSubWindow(object);
+    m_mdiSubWindows[id] = window;
+    m_mdiArea->addSubWindow(window);
+    window->setAttribute(Qt::WA_DeleteOnClose);
+    connect(window, &QMdiSubWindow::destroyed, [this, id](QObject*){ m_mdiSubWindows.remove(id); });
+    window->show();
+  }
+  else
+    m_mdiArea->setActiveSubWindow(m_mdiSubWindows[id]);
 }
 
-void MainWindow::showServerSettings()
+void MainWindow::showObject(const QString& id)
 {
-  if(!m_mdiSubWindow.serverSettings)
+  if(!m_mdiSubWindows.contains(id))
   {
-    m_mdiSubWindow.serverSettings = new ServerSettingsSubWindow();
-    m_mdiArea->addSubWindow(m_mdiSubWindow.serverSettings);
-    m_mdiSubWindow.serverSettings->setAttribute(Qt::WA_DeleteOnClose);
-    connect(m_mdiSubWindow.serverSettings, &QMdiSubWindow::destroyed, [this](QObject*){ m_mdiSubWindow.serverSettings = nullptr; });
-    m_mdiSubWindow.serverSettings->show();
+    QMdiSubWindow* window = new ObjectSubWindow(id);
+    m_mdiSubWindows[id] = window;
+    m_mdiArea->addSubWindow(window);
+    window->setAttribute(Qt::WA_DeleteOnClose);
+    connect(window, &QMdiSubWindow::destroyed, [this, id](QObject*){ m_mdiSubWindows.remove(id); });
+    window->show();
   }
   else
-    m_mdiArea->setActiveSubWindow(m_mdiSubWindow.serverSettings);
-}
-
-void MainWindow::showServerConsole()
-{
-  if(!m_mdiSubWindow.serverConsole)
-  {
-    m_mdiSubWindow.serverConsole = new ServerConsoleSubWindow();
-    m_mdiArea->addSubWindow(m_mdiSubWindow.serverConsole);
-    m_mdiSubWindow.serverConsole->setAttribute(Qt::WA_DeleteOnClose);
-    connect(m_mdiSubWindow.serverConsole, &QMdiSubWindow::destroyed, [this](QObject*){ m_mdiSubWindow.serverConsole = nullptr; });
-    m_mdiSubWindow.serverConsole->show();
-  }
-  else
-    m_mdiArea->setActiveSubWindow(m_mdiSubWindow.serverConsole);
+    m_mdiArea->setActiveSubWindow(m_mdiSubWindows[id]);
 }
 
 void MainWindow::showAbout()
 {
   QMessageBox::about(this, tr("About Traintastic"),
     "<h2>Traintastic <small>v" + QApplication::applicationVersion() + "</small></h2>"
-    "<p>Copyright &copy; 2019 Reinder Feenstra</p>"
+    "<p>Copyright &copy; 2019-2020 Reinder Feenstra</p>"
     "<p>This program is free software; you can redistribute it and/or"
     " modify it under the terms of the GNU General Public License"
     " as published by the Free Software Foundation; either version 2"
@@ -296,7 +309,8 @@ void MainWindow::clientStateChanged()
   m_actionSaveWorld->setEnabled(connected && false);
   m_actionImportWorld->setEnabled(connected);
   m_actionExportWorld->setEnabled(connected);
-  m_actionHardware->setEnabled(connected);
+  m_menuHardware->setEnabled(connected);
+  m_actionLua->setEnabled(connected);
   m_actionServerSettings->setEnabled(connected);
   m_actionServerConsole->setEnabled(connected);
 

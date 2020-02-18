@@ -73,3 +73,12 @@ void TableModel::setRowCount(uint32_t value)
       rowCountChanged(shared_ptr<TableModel>());
   }
 }
+
+void TableModel::changed(uint32_t row, uint32_t column)
+{
+  if(updateRegion)
+  {
+    Region region{column, column, row, row};
+    updateRegion(shared_ptr<TableModel>(), region);
+  }
+}

@@ -30,24 +30,55 @@ namespace Hardware::CommandStation {
 
 CommandStation::CommandStation(const std::weak_ptr<World>& world, const std::string& _id) :
   IdObject(world, _id),
-  name{this, "name", "", PropertyFlags::AccessWCC},
-  online{this, "online", false, PropertyFlags::TODO, nullptr, std::bind(&CommandStation::setOnline, this, std::placeholders::_1)},
-  status{this, "status", CommandStationStatus::Offline, PropertyFlags::AccessRRR},
-  decoders{this, "decoders", std::make_shared<DecoderList>(world, world.lock()->getUniqueId("decoders")), PropertyFlags::TODO},
-  notes{this, "notes", "", PropertyFlags::AccessWWW}
+  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
+  online{this, "online", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
+    [this](bool value)
+    {
+      emergencyStop.setAttributeEnabled(value);
+      trackVoltageOff.setAttributeEnabled(value);
+    },
+    std::bind(&CommandStation::setOnline, this, std::placeholders::_1)},
+  //status{this, "status", CommandStationStatus::Offline, PropertyFlags::ReadOnly},
+  emergencyStop{this, "emergency_stop", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
+    [this](bool value)
+    {
+      emergencyStopChanged(value);
+    }},
+  trackVoltageOff{this, "track_voltage_off", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
+    [this](bool value)
+    {
+      trackVoltageOffChanged(value);
+    }},
+  decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
+  notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
-  m_interfaceItems.add(name);
+  decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
+
+  m_interfaceItems.add(name)
+    .addAttributeEnabled(false);
   m_interfaceItems.add(online);
-  m_interfaceItems.add(status);
+  m_interfaceItems.insertBefore(emergencyStop, notes)
+    .addAttributeEnabled(false)
+    .addAttributeObjectEditor(false);
+  m_interfaceItems.insertBefore(trackVoltageOff, notes)
+    .addAttributeEnabled(false)
+    .addAttributeObjectEditor(false);
   m_interfaceItems.add(decoders);
-  m_interfaceItems.add(notes)
-    .addAttributeCategory(Category::Notes);
+  m_interfaceItems.add(notes);
+}
+
+void CommandStation::modeChanged(TraintasticMode mode)
+{
+  IdObject::modeChanged(mode);
+
+  name.setAttributeEnabled(mode == TraintasticMode::Edit);
 }
 
 const std::shared_ptr<Decoder>& CommandStation::getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress) const
 {
-
-
+  auto it = std::find_if(decoders->begin(), decoders->end(), [=](auto& decoder){ return decoder->protocol == protocol && decoder->address == address && decoder->longAddress == longAddress; });
+  if(it != decoders->end())
+    return *it;
   return Decoder::null;
 }
 

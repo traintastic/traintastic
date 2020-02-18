@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,9 +21,13 @@
  */
 
 #include "sandbox.hpp"
+#include <utils/str.hpp>
+#include "../enum/traintasticmode.hpp"
 #include "../enum/decoderprotocol.hpp"
 #include "../enum/direction.hpp"
 // TODO: #include "object.hpp"
+
+#define LUA_SANDBOX "_sandbox"
 
 #define ADD_GLOBAL_TO_SANDBOX(x) \
   lua_pushliteral(L, x); \
@@ -32,7 +36,12 @@
 
 namespace Lua {
 
-lua_State* newSandbox()
+void Sandbox::close(lua_State* L)
+{
+  lua_close(L);
+}
+
+SandboxPtr Sandbox::create()
 {
   lua_State* L = luaL_newstate();
 
@@ -42,6 +51,7 @@ lua_State* newSandbox()
   lua_call(L, 1, 0);
 
   // register types:
+  Enum<TraintasticMode>::registerType(L);
   Enum<DecoderProtocol>::registerType(L);
   Enum<Direction>::registerType(L);
   // TODO: Object::registerType(L);
@@ -57,6 +67,7 @@ lua_State* newSandbox()
 
   // add enum values:
   lua_newtable(L);
+  Enum<TraintasticMode>::registerValues(L);
   Enum<DecoderProtocol>::registerValues(L);
   Enum<Direction>::registerValues(L);
   ReadOnlyTable::setMetatable(L, -1);
@@ -69,12 +80,41 @@ lua_State* newSandbox()
 
   lua_setglobal(L, LUA_SANDBOX);
 
-  return L;
+  return SandboxPtr(L, close);
 }
 
-void closeSandbox(lua_State* L)
+int Sandbox::getGlobal(lua_State* L, const char* name)
 {
-  lua_close(L);
+  lua_getglobal(L, LUA_SANDBOX); // get the sandbox
+  lua_pushstring(L, name);
+  const int type = lua_gettable(L, -2); // get item
+  lua_insert(L, lua_gettop(L) - 1); // swap item and sandbox on the stack
+  lua_pop(L, 1); // remove sandbox from the stack
+  return type;
+}
+
+int Sandbox::pcall(lua_State* L, int nargs, int nresults, int errfunc)
+{
+  // check if the function has _ENV as first upvalue
+  // if so, replace it by the sandbox
+  // NOTE: functions which don't use any globals, don't have an _ENV !!
+  assert(lua_isfunction(L, -(1 + nargs)));
+  const char* name = lua_getupvalue(L, -(1 + nargs), 1);
+  if(name)
+    lua_pop(L, 1); // remove upvalue from stack
+  if(name && strcmp(name, "_ENV") == 0)
+  {
+    lua_getglobal(L, LUA_SANDBOX); // get the sandbox
+    assert(lua_istable(L, -1));
+    if(!lua_setupvalue(L, -(2 + nargs), 1)) // change _ENV to the sandbox
+    {
+      assert(false); // should never happen
+      lua_pop(L, 2 + nargs); // clear stack
+      lua_pushliteral(L, "Internal error @ " __FILE__ ":" STR(__LINE__));
+      return LUA_ERRRUN;
+    }
+  }
+  return lua_pcall(L, nargs, nresults, errfunc);
 }
 
 }

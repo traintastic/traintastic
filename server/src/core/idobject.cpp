@@ -25,7 +25,8 @@
 IdObject::IdObject(const std::weak_ptr<World> world, const std::string& _id) :
   Object{},
   m_world{world},
-  id{this, "id", _id, PropertyFlags::AccessWCC, nullptr, [this](std::string& value)
+  id{this, "id", _id, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
+    [this](std::string& value)
     {
       auto& m = Traintastic::instance->world->m_objects;
       if(m.find(value) != m.end())
@@ -54,5 +55,7 @@ void IdObject::addToWorld()
 
 void IdObject::modeChanged(TraintasticMode mode)
 {
+  Object::modeChanged(mode);
+
   id.setAttributeEnabled(mode == TraintasticMode::Edit);
 }

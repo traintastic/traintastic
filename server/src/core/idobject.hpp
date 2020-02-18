@@ -43,7 +43,7 @@ class IdObject : public Object
     std::weak_ptr<World> m_world;
 
     IdObject(const std::weak_ptr<World> world, const std::string& _id);
-    void addToWorld();
+    virtual void addToWorld();
     void modeChanged(TraintasticMode mode) override;
 
   public:

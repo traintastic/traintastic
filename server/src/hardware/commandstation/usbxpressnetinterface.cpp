@@ -1,7 +1,7 @@
 /**
  * Traintastic
  *
- * Copyright (C) 2019 Reinder Feenstra <reinderfeenstra@gmail.com>
+ * Copyright (C) 2019-2020 Reinder Feenstra <reinderfeenstra@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,7 +19,6 @@
  */
 
 #include "usbxpressnetinterface.hpp"
-#include "protocol/xpressnet.hpp"
 #include "../../core/traintastic.hpp"
 #include "../../core/world.hpp"
 
@@ -28,15 +27,16 @@ namespace Hardware::CommandStation {
 USBXpressNetInterface::USBXpressNetInterface(const std::weak_ptr<World>& world, const std::string& _id) :
   CommandStation(world, _id),
   m_handle{nullptr},
-  serial{this, "serial", "", PropertyFlags::AccessWCC},
-  address{this, "address", 31, PropertyFlags::TODO},
-  xpressnet{this, "xpressnet", std::make_shared<Protocol::XpressNet>(world, world.lock()->getUniqueId("xpressnet"), std::bind(&USBXpressNetInterface::send, this, std::placeholders::_1)), PropertyFlags::AccessRRR}
+  serial{this, "serial", "", PropertyFlags::ReadWrite},
+  address{this, "address", 31, PropertyFlags::ReadWrite},
+  xpressnet{this, "xpressnet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "USB XpressNet interface";
+  xpressnet.setValueInternal(std::make_shared<::Protocol::XpressNet>(*this, xpressnet.name(), std::bind(&USBXpressNetInterface::send, this, std::placeholders::_1)));
 
-  m_interfaceItems.add(serial);
-  m_interfaceItems.add(address);
-  m_interfaceItems.add(xpressnet);
+  m_interfaceItems.insertBefore(serial, notes);
+  m_interfaceItems.insertBefore(address, notes);
+  m_interfaceItems.insertBefore(xpressnet, notes);
 
   usbxpressnet_init();
 }
@@ -49,16 +49,6 @@ USBXpressNetInterface::~USBXpressNetInterface()
     usbxpressnet_close(m_handle);
   }
   usbxpressnet_fini();
-}
-
-bool USBXpressNetInterface::isDecoderSupported(Decoder& decoder) const
-{
-  return xpressnet->isDecoderSupported(decoder);
-}
-
-void USBXpressNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
-{
-  xpressnet->decoderChanged(decoder, changes, functionNumber);
 }
 
 bool USBXpressNetInterface::setOnline(bool& value)
@@ -94,11 +84,33 @@ bool USBXpressNetInterface::setOnline(bool& value)
   return true;
 }
 
-void USBXpressNetInterface::send(const void* msg)
+void USBXpressNetInterface::emergencyStopChanged(bool value)
 {
+
+}
+
+void USBXpressNetInterface::trackVoltageOffChanged(bool value)
+{
+}
+
+void USBXpressNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
+{
+  if(online)
+    xpressnet->decoderChanged(decoder, changes, functionNumber);
+}
+
+bool USBXpressNetInterface::send(const Protocol::XpressNet::Message& msg)
+{
+  assert(Protocol::XpressNet::isChecksumValid(msg));
+  if(!m_handle)
+    return false;
   usbxpressnet_status status;
-  if(m_handle && (status = usbxpressnet_send_message(m_handle, msg)) != USBXPRESSNET_STATUS_SUCCESS)
+  if((status = usbxpressnet_send_message(m_handle, &msg)) != USBXPRESSNET_STATUS_SUCCESS)
+  {
     Traintastic::instance->console->critical(id, std::string("usbxpressnet_send_message: ") + usbxpressnet_status_str(status));
+    return false;
+  }
+  return true;
 }
 
 }
