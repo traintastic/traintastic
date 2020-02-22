@@ -26,6 +26,7 @@
 #include <type_traits>
 #include <string>
 #include "enum.hpp"
+#include "object.hpp"
 
 namespace Lua {
 
@@ -50,6 +51,8 @@ void push(lua_State* L, const T& value)
     lua_pushnumber(L, value);
   else if constexpr(std::is_same_v<T, std::string>)
     lua_pushlstring(L, value.data(), value.size());
+  else if constexpr(std::is_same_v<T, ObjectPtr>)
+    Object::push(L, value);
   else
     static_assert(sizeof(T) != sizeof(T), "don't know how to push type");
 }

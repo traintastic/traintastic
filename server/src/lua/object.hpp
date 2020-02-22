@@ -1,9 +1,9 @@
 /**
- * server/src/lua/traintastic.hpp
+ * server/src/lua/object.hpp - Lua object wrapper
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,19 +20,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_LUA_TRAINTASTIC_HPP
-#define SERVER_LUA_TRAINTASTIC_HPP
+#ifndef SERVER_LUA_OBJECT_HPP
+#define SERVER_LUA_OBJECT_HPP
 
 #include <lua.hpp>
+#include <memory>
+#include "../core/objectptr.hpp"
 
 namespace Lua {
 
-struct Traintastic
+class Object
 {
-  static int get_object(lua_State* L);
+  private:
+    static int __gc(lua_State* L);
+    static int __index(lua_State* L);
+
+  public:
+    static constexpr char const* metaTableName = "object";
+
+    static ObjectPtr check(lua_State* L, int index);
+    static ObjectPtr test(lua_State* L, int index);
+
+    static void push(lua_State* L, const ObjectPtr& value);
+
+    static void registerType(lua_State* L);
 };
 
 }
 
 #endif
-

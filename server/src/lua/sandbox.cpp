@@ -21,11 +21,14 @@
  */
 
 #include "sandbox.hpp"
+#include "push.hpp"
+#include "object.hpp"
+#include "console.hpp"
 #include <utils/str.hpp>
+#include "../core/world.hpp"
 #include "../enum/traintasticmode.hpp"
 #include "../enum/decoderprotocol.hpp"
 #include "../enum/direction.hpp"
-// TODO: #include "object.hpp"
 
 #define LUA_SANDBOX "_sandbox"
 
@@ -38,10 +41,11 @@ namespace Lua {
 
 void Sandbox::close(lua_State* L)
 {
+  delete *static_cast<StateData**>(lua_getextraspace(L)); // free state data
   lua_close(L);
 }
 
-SandboxPtr Sandbox::create()
+SandboxPtr Sandbox::create(Script& script)
 {
   lua_State* L = luaL_newstate();
 
@@ -50,11 +54,14 @@ SandboxPtr Sandbox::create()
   lua_pushliteral(L, "");
   lua_call(L, 1, 0);
 
+  // create state data:
+  *static_cast<StateData**>(lua_getextraspace(L)) = new StateData(script);
+
   // register types:
   Enum<TraintasticMode>::registerType(L);
   Enum<DecoderProtocol>::registerType(L);
   Enum<Direction>::registerType(L);
-  // TODO: Object::registerType(L);
+  Object::registerType(L);
 
   // setup sandbox:
   lua_newtable(L);
@@ -64,6 +71,18 @@ SandboxPtr Sandbox::create()
   ADD_GLOBAL_TO_SANDBOX("type")
   ADD_GLOBAL_TO_SANDBOX("pairs")
   ADD_GLOBAL_TO_SANDBOX("ipairs")
+
+  // set VERSION:
+  lua_pushliteral(L, STR(VERSION));
+  lua_setfield(L, -2, "VERSION");
+
+  // add world:
+  push(L, std::static_pointer_cast<::Object>(script.world().lock()));
+  lua_setfield(L, -2, "world");
+
+  // add console:
+  Console::push(L);
+  lua_setfield(L, -2, "console");
 
   // add enum values:
   lua_newtable(L);
@@ -81,6 +100,11 @@ SandboxPtr Sandbox::create()
   lua_setglobal(L, LUA_SANDBOX);
 
   return SandboxPtr(L, close);
+}
+
+Sandbox::StateData& Sandbox::getStateData(lua_State* L)
+{
+  return **static_cast<StateData**>(lua_getextraspace(L));
 }
 
 int Sandbox::getGlobal(lua_State* L, const char* name)

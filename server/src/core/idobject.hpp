@@ -50,6 +50,8 @@ class IdObject : public Object
     Property<std::string> id;
 
     ~IdObject() override;
+
+    const std::weak_ptr<World>& world() const { return m_world; }
 };
 
 #endif

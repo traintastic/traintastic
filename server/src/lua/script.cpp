@@ -82,7 +82,8 @@ void Script::modeChanged(TraintasticMode mode)
 void Script::init()
 {
   assert(!m_sandbox);
-  if((m_sandbox = Sandbox::create()))
+  auto world = m_world.lock();
+  if(world && (m_sandbox = Sandbox::create(*this)))
   {
     lua_State* L = m_sandbox.get();
     const int error = luaL_loadbuffer(L, code.value().c_str(), code.value().size(), "=") || Sandbox::pcall(L, 0, LUA_MULTRET);

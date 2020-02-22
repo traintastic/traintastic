@@ -23,10 +23,12 @@
 #ifndef SERVER_LUA_SANDBOX_HPP
 #define SERVER_LUA_SANDBOX_HPP
 
-#include <lua.hpp>
 #include <memory>
+#include <lua.hpp>
 
 namespace Lua {
+
+class Script;
 
 using SandboxPtr = std::unique_ptr<lua_State, void(*)(lua_State*)>;
 
@@ -36,7 +38,25 @@ class Sandbox
     static void close(lua_State* L);
 
   public:
-    static SandboxPtr create();
+    class StateData
+    {
+      private:
+        Script& m_script;
+
+      public:
+        StateData(Script& script) :
+          m_script{script}
+        {
+        }
+
+        inline Script& script() const
+        {
+          return m_script;
+        }
+    };
+
+    static SandboxPtr create(Script& script);
+    static StateData& getStateData(lua_State* L);
     static int getGlobal(lua_State* L, const char* name);
     static int pcall(lua_State* L, int nargs = 0, int nresults = 0, int errfunc = 0);
 };
