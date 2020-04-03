@@ -20,12 +20,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_LUA_PUSH_HPP
-#define SERVER_LUA_PUSH_HPP
+#ifndef TRAINTASTIC_SERVER_LUA_PUSH_HPP
+#define TRAINTASTIC_SERVER_LUA_PUSH_HPP
 
 #include <type_traits>
 #include <string>
 #include "enum.hpp"
+#include "set.hpp"
 #include "object.hpp"
 
 namespace Lua {
@@ -33,7 +34,9 @@ namespace Lua {
 template<typename T>
 void push(lua_State* L, const T& value)
 {
-  if constexpr(std::is_enum_v<T>)
+  if constexpr(is_set_v<T>)
+    Set<T>::push(L, value);
+  else if constexpr(std::is_enum_v<T>)
     Enum<T>::push(L, value);
   else if constexpr(std::is_same_v<T, bool>)
     lua_pushboolean(L, value);

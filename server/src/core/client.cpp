@@ -141,6 +141,7 @@ void Client::processMessage(const std::shared_ptr<Message> message)
       Traintastic::instance->console->notice(m_id, "Created new session");
       auto response = Message::newResponse(message->command(), message->requestId());
       response->write(m_session->uuid());
+      m_session->writeObject(*response, Traintastic::instance);
       sendMessage(std::move(response));
       return;
     }
@@ -161,7 +162,7 @@ void Client::processMessage(const std::shared_ptr<Message> message)
     Traintastic::instance->console->debug(m_id, "Received invalid command: " + std::to_string(static_cast<uint8_t>(message->command())));
 
 
-    usleep(10*1000*1000);
+    //usleep(10*1000*1000);
 
 
     sendMessage(Message::newErrorResponse(message->command(), message->requestId(), Message::ErrorCode::InvalidCommand));

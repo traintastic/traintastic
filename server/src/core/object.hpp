@@ -20,13 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_CORE_OBJECT_HPP
-#define SERVER_CORE_OBJECT_HPP
+#ifndef TRAINTASTIC_SERVER_CORE_OBJECT_HPP
+#define TRAINTASTIC_SERVER_CORE_OBJECT_HPP
 
 #include "objectptr.hpp"
 #include <boost/signals2/signal.hpp>
 #include "interfaceitems.hpp"
-#include <enum/traintasticmode.hpp>
+#include <enum/worldevent.hpp>
+#include <set/worldstate.hpp>
 
 #define CLASS_ID(id) \
   public: \
@@ -47,7 +48,7 @@ class Object : public std::enable_shared_from_this<Object>
     //void log(Console::Level level, const std::string& id, const std::string& message) const;
     //inline void logError(const std::string& id, const std::string& message) const { log(Console::Level::Error, message); }
 
-    virtual void modeChanged(TraintasticMode mode);
+    virtual void worldEvent(WorldState state, WorldEvent event);
 
   public:
     boost::signals2::signal<void (AbstractProperty&)> propertyChanged;
@@ -68,7 +69,7 @@ class Object : public std::enable_shared_from_this<Object>
     const InterfaceItems& interfaceItems() const { return m_interfaceItems; }
 
     InterfaceItem* getItem(const std::string& name);
-    //AbstractMethod* getMethod(const std::string& name);
+    AbstractMethod* getMethod(const std::string& name);
     AbstractProperty* getProperty(const std::string& name);
 };
 

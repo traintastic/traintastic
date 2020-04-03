@@ -22,11 +22,27 @@
 
 #include "interfaceitem.hpp"
 #include "object.hpp"
+#include <locale/locale.hpp>
 
 InterfaceItem::InterfaceItem(Object& object, const QString& name) :
   QObject(&object),
   m_name{name}
 {
+}
+
+const Object& InterfaceItem::object() const
+{
+  return *static_cast<Object*>(parent());
+}
+
+Object& InterfaceItem::object()
+{
+  return *static_cast<Object*>(parent());
+}
+
+QString InterfaceItem::displayName() const
+{
+  return Locale::tr(QString(object().classId()).append(':').append(name()));
 }
 
 QVariant InterfaceItem::getAttribute(AttributeName name, const QVariant& default_) const

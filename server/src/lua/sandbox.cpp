@@ -23,12 +23,15 @@
 #include "sandbox.hpp"
 #include "push.hpp"
 #include "object.hpp"
+#include "method.hpp"
 #include "console.hpp"
 #include <utils/str.hpp>
 #include "../core/world.hpp"
 #include "../enum/traintasticmode.hpp"
 #include "../enum/decoderprotocol.hpp"
 #include "../enum/direction.hpp"
+#include "../enum/worldevent.hpp"
+#include "../set/worldstate.hpp"
 
 #define LUA_SANDBOX "_sandbox"
 
@@ -61,7 +64,10 @@ SandboxPtr Sandbox::create(Script& script)
   Enum<TraintasticMode>::registerType(L);
   Enum<DecoderProtocol>::registerType(L);
   Enum<Direction>::registerType(L);
+  Enum<WorldEvent>::registerType(L);
+  Set<WorldState>::registerType(L);
   Object::registerType(L);
+  Method::registerType(L);
 
   // setup sandbox:
   lua_newtable(L);
@@ -84,13 +90,26 @@ SandboxPtr Sandbox::create(Script& script)
   Console::push(L);
   lua_setfield(L, -2, "console");
 
+
+push(L, script.world().lock()->getObject("dec_br211"));
+lua_setfield(L, -2, "dec");
+
+
+
   // add enum values:
   lua_newtable(L);
   Enum<TraintasticMode>::registerValues(L);
   Enum<DecoderProtocol>::registerValues(L);
   Enum<Direction>::registerValues(L);
+  Enum<WorldEvent>::registerValues(L);
   ReadOnlyTable::setMetatable(L, -1);
   lua_setfield(L, -2, "enum");
+
+  // add set values:
+  lua_newtable(L);
+  Set<WorldState>::registerValues(L);
+  ReadOnlyTable::setMetatable(L, -1);
+  lua_setfield(L, -2, "set");
 
   // let global _G point to itself:
   lua_pushliteral(L, "_G");

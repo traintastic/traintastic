@@ -20,13 +20,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_ENUM_TRAINTASTICMODE_HPP
-#define SERVER_ENUM_TRAINTASTICMODE_HPP
+#ifndef TRAINTASTIC_SERVER_ENUM_TRAINTASTICMODE_HPP
+#define TRAINTASTIC_SERVER_ENUM_TRAINTASTICMODE_HPP
 
 #include <enum/traintasticmode.hpp>
-#include "../lua/enum.hpp"
+#include "../lua/enumvalues.hpp"
 
-LUA_ENUM(TraintasticMode, 3,
+LUA_ENUM_VALUES(TraintasticMode, 3,
 {
   {TraintasticMode::Stop, "STOP"},
   {TraintasticMode::Run, "RUN"},

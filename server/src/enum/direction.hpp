@@ -20,12 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_ENUM_DIRECTION_HPP
-#define SERVER_ENUM_DIRECTION_HPP
+#ifndef TRAINTASTIC_SERVER_ENUM_DIRECTION_HPP
+#define TRAINTASTIC_SERVER_ENUM_DIRECTION_HPP
 
 #include <enum/direction.hpp>
 #include <nlohmann/json.hpp>
-#include "../lua/enum.hpp"
+#include "../lua/enumvalues.hpp"
 
 NLOHMANN_JSON_SERIALIZE_ENUM(Direction,
 {
@@ -33,7 +33,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(Direction,
   {Direction::Reverse, "reverse"},
 })
 
-LUA_ENUM(Direction, 2,
+LUA_ENUM_VALUES(Direction, 2,
 {
   {Direction::Forward, "FORWARD"},
   {Direction::Reverse, "REVERSE"},

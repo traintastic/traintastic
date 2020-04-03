@@ -42,7 +42,11 @@ bool CommandStationListTableModel::isListedProperty(const std::string& name)
 CommandStationListTableModel::CommandStationListTableModel(CommandStationList& list) :
   ObjectListTableModel<CommandStation>(list)
 {
-  setColumnHeaders({"Id", "Name", "Online", "Status"});
+  setColumnHeaders({
+    "hardware.command_station:id",
+    "hardware.command_station:name",
+    "hardware.command_station:online",
+    "hardware.command_station:status"});
 }
 
 std::string CommandStationListTableModel::getText(uint32_t column, uint32_t row) const

@@ -20,21 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CLIENT_NETWORK_TABLEMODEL_HPP
-#define CLIENT_NETWORK_TABLEMODEL_HPP
+#ifndef TRAINTASTIC_CLIENT_NETWORK_TABLEMODEL_HPP
+#define TRAINTASTIC_CLIENT_NETWORK_TABLEMODEL_HPP
 
 #include <QAbstractTableModel>
+#include <QSharedPointer>
 #include "handle.hpp"
+
+class Connection;
 
 class TableModel : public QAbstractTableModel
 {
   Q_OBJECT
 
-  friend class Client;
+  friend class Connection;
 
   protected:
     using ColumnRow = std::pair<uint32_t, uint32_t>;
 
+    QSharedPointer<Connection> m_connection;
     Handle m_handle;
     const QString m_classId;
     QVector<QString> m_columnHeaders;
@@ -52,7 +56,7 @@ class TableModel : public QAbstractTableModel
     void setRowCount(int value);
 
   public:
-    explicit TableModel(Handle handle, const QString& classId, QObject* parent = nullptr);
+    explicit TableModel(const QSharedPointer<Connection>& connection, Handle handle, const QString& classId, QObject* parent = nullptr);
     ~TableModel() final;
 
     Handle handle() const { return m_handle; }

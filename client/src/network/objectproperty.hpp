@@ -20,13 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CLIENT_NETWORK_OBJECTPROPERTY_HPP
-#define CLIENT_NETWORK_OBJECTPROPERTY_HPP
+#ifndef TRAINTASTIC_CLIENT_NETWORK_OBJECTPROPERTY_HPP
+#define TRAINTASTIC_CLIENT_NETWORK_OBJECTPROPERTY_HPP
 
 #include "abstractproperty.hpp"
 
 class ObjectProperty : public AbstractProperty
 {
+  friend class Connection;
+
   protected:
     QString m_id;
 

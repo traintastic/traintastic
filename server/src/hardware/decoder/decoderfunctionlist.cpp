@@ -21,20 +21,52 @@
  */
 
 #include "decoderfunctionlist.hpp"
+#include "decoderfunctionlisttablemodel.hpp"
+#include "decoder.hpp"
+#include "../../core/world.hpp"
 
+using Hardware::Decoder;
 using Hardware::DecoderFunction;
 
 DecoderFunctionList::DecoderFunctionList(Object& parent, const std::string& parentPropertyName) :
-  ObjectList<DecoderFunction>(parent, parentPropertyName)
+  ObjectList<DecoderFunction>(parent, parentPropertyName),
+  add_{*this, "add",
+    [this]()
+    {
+      Decoder& decoder = static_cast<Decoder&>(this->parent());
+      auto world = decoder.world().lock();
+      if(!world)
+        return std::shared_ptr<DecoderFunction>();
+      uint8_t number = 0;
+      if(!m_items.empty())
+      {
+        for(const auto& function : m_items)
+          number = std::max(number, function->number.value());
+        number++;
+      }
+
+      std::string id = decoder.id.value() + "_f" + std::to_string(number);
+      if(world->isObject(id))
+        id = world->getUniqueId(id);
+
+      auto function = DecoderFunction::create(decoder, id);
+      function->name = "F" + std::to_string(number);
+      function->number = number;
+      add(function);
+
+      return function;
+    }}
 {
+  m_interfaceItems.add(add_)
+    .addAttributeEnabled(false);
 }
 
 TableModelPtr DecoderFunctionList::getModel()
 {
-  return nullptr;
+  return std::make_shared<DecoderFunctionListTableModel>(*this);
 }
 
 bool DecoderFunctionList::isListedProperty(const std::string& name)
 {
-  return false;//DecoderFunctionListTableModel::isListedProperty(name);
+  return DecoderFunctionListTableModel::isListedProperty(name);
 }

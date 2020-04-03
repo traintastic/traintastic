@@ -67,11 +67,11 @@ CommandStation::CommandStation(const std::weak_ptr<World>& world, const std::str
   m_interfaceItems.add(notes);
 }
 
-void CommandStation::modeChanged(TraintasticMode mode)
+void CommandStation::worldEvent(WorldState state, WorldEvent event)
 {
-  IdObject::modeChanged(mode);
+  IdObject::worldEvent(state, event);
 
-  name.setAttributeEnabled(mode == TraintasticMode::Edit);
+  name.setAttributeEnabled(contains(state, WorldState::Edit));
 }
 
 const std::shared_ptr<Decoder>& CommandStation::getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress) const

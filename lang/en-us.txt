@@ -1,8 +1,117 @@
 ## Traintastic language file: English (US)
 
-language:en-us=English
-languaga:nl-nl=Dutch
+:address=Address
+:command_station=Command station
+:emergency_stop=Emergency stop
+:id=Id
+:name=Name
+:notes=Notes
 
+clock:day=Day
+clock:hour=Hour
+clock:minute=Minute
+clock:month=Month
+clock:multiplier=Multiplier
+clock:year=Year
+
+decoder_function_list:add=Add
+
+hardware.command_station.li10x:baudrate=Baudrate
+hardware.command_station.li10x:decoders=Decoders
+hardware.command_station.li10x:online=Online
+hardware.command_station.li10x:port=Port
+hardware.command_station.li10x:xpressnet=XpressNet
+
+hardware.command_station.z21:decoders=Decoders
+hardware.command_station.z21:filtered_main_current=Filtered main current
+hardware.command_station.z21:firmware_version=Firmware version
+hardware.command_station.z21:hardware_type=Hardware type
+hardware.command_station.z21:high_temperature=High temperature
+hardware.command_station.z21:hostname=Hostname
+hardware.command_station.z21:loconet=Loconet
+hardware.command_station.z21:main_current=Main current
+hardware.command_station.z21:online=Online
+hardware.command_station.z21:port=Port
+hardware.command_station.z21:power_lost=Power lost
+hardware.command_station.z21:prog_current=Prog current
+hardware.command_station.z21:programming_mode_active=Programming mode active
+hardware.command_station.z21:serial_number=Serial number
+hardware.command_station.z21:short_circuit=Short circuit
+hardware.command_station.z21:short_circut_external=Short circut external
+hardware.command_station.z21:short_circut_internal=Short circut internal
+hardware.command_station.z21:supply_voltage=Supply voltage
+hardware.command_station.z21:temperature=Temperature
+hardware.command_station.z21:vcc_voltage=VCC voltage
+
+hardware.command_station:online=Online
+hardware.command_station:status=Status
+
+hardware.decoder:direction=Direction
+hardware.decoder:functions=Functions
+hardware.decoder:protocol=Protocol
+hardware.decoder:speed_step=Speed step
+hardware.decoder:speed_steps=Speed steps
+
+hardware.decoder_function:id=Id
+hardware.decoder_function:momentary=Momentary
+hardware.decoder_function:number=Number
+hardware.decoder_function:value=Value
+
+hardware.decoder_function_list:f_hash=F#
+
+language:de-de=German
+language:en-us=English (US)
+language:nl-nl=Dutch
+
+lua.script:active=Active
+lua.script:code=Code
+
+protocol.loconet:debug_log=Debug log
+
+protocol.xpressnet:use_emergency_stop_locomotive_command=Use short emergency stop locomotive command
+protocol.xpressnet:use_function_state_commands=Use function state commands
+protocol.xpressnet:use_roco_f13_f20_command=Use Roco F13-F20 command
+
+qtapp.connect_dialog:connect=Connect
+qtapp.connect_dialog:connect_to_server=Connect to server
+qtapp.connect_dialog:connected=Connected
+qtapp.connect_dialog:connecting=Connecting
+qtapp.connect_dialog:password=Password
+qtapp.connect_dialog:server=Server
+qtapp.connect_dialog:username=Username
+
+qtapp.mainmenu:about=About
+qtapp.mainmenu:connect_to_server=Connect to server
+qtapp.mainmenu:disconnect_from_server=Disconnect from server
+qtapp.mainmenu:export_world=Export world
+qtapp.mainmenu:file=File
+qtapp.mainmenu:fullscreen=Fullscreen
+qtapp.mainmenu:hardware=Hardware
+qtapp.mainmenu:help=Help
+qtapp.mainmenu:import_world=Import world
+qtapp.mainmenu:load_world=Load world
+qtapp.mainmenu:new_world=New world
+qtapp.mainmenu:objects=Objects
+qtapp.mainmenu:objects=Objects
+qtapp.mainmenu:quit=Quit
+qtapp.mainmenu:save_world=Save world
+qtapp.mainmenu:server_console=Server console
+qtapp.mainmenu:server_settings=Server settings
+qtapp.mainmenu:settings=Settings
+qtapp.mainmenu:tools=Tools
+qtapp.mainmenu:view=View
+
+settings:default_world=Default world
 settings:localhost_only=Localhost only
 settings:port=Port
-#settings:default_world=
+
+world:clock=Clock
+world:command_stations=Command stations
+world:decoders=Decoders
+world:edit=Edit world
+world:emergency_stop=Emergency stop
+world:inputs=Inputs
+world:lua_scripts=Lua scripts
+world:scale=Scale
+world:track_power_off=Track power off
+world:track_power_on=Track power on

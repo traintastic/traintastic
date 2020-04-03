@@ -20,45 +20,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_LUA_ENUM_HPP
-#define SERVER_LUA_ENUM_HPP
+#ifndef TRAINTASTIC_SERVER_LUA_ENUM_HPP
+#define TRAINTASTIC_SERVER_LUA_ENUM_HPP
 
 #include <type_traits>
+#include <string_view>
 #include <enum/enum.hpp>
 #include <lua.hpp>
-#include <frozen/map.h>
+#include "enumvalues.hpp"
 #include "readonlytable.hpp"
 
-#define LUA_ENUM(_type, _size, ...) \
-  namespace Lua { \
-    template<> \
-    struct EnumValues<_type> \
-    { \
-      static constexpr frozen::map<_type, const char*, _size> value = { __VA_ARGS__ }; \
-    }; \
-  }
-
 namespace Lua {
-
-template<typename T>
-struct EnumValues
-{
-  static_assert(sizeof(T) != sizeof(T), "template specialization required");
-};
 
 template<typename T>
 struct Enum
 {
   static_assert(std::is_enum<T>::value);
+  static_assert(sizeof(T) <= sizeof(lua_Integer));
 
   static T check(lua_State* L, int index)
   {
-    return *static_cast<T*>(luaL_checkudata(L, index, EnumName<T>::value));
+    return *static_cast<const T*>(luaL_checkudata(L, index, EnumName<T>::value));
   }
 
   static bool test(lua_State* L, int index, T& value)
   {
-    T* data = static_cast<T*>(luaL_testudata(L, index, EnumName<T>::value));
+    const T* data = static_cast<const T*>(luaL_testudata(L, index, EnumName<T>::value));
     if(data)
       value = *data;
     return data;
@@ -66,16 +53,10 @@ struct Enum
 
   static void push(lua_State* L, T value)
   {
-    *static_cast<T*>(lua_newuserdata(L, sizeof(value))) = value;
-    luaL_getmetatable(L, EnumName<T>::value);
-    assert(lua_istable(L, -1)); // is enum registered?
-    lua_setmetatable(L, -2);
-  }
-
-  static int __eq(lua_State* L)
-  {
-    lua_pushboolean(L, check(L, 1) == check(L, 2));
-    return 1;
+    lua_getglobal(L, EnumName<T>::value); // get tabel with all enum values: key=int, value=userdata enum
+    lua_rawgeti(L, -1, static_cast<lua_Integer>(value)); // get userdata by key
+    lua_insert(L, lua_gettop(L) - 1); // swap table and userdata
+    lua_pop(L, 1); // remove table
   }
 
   static int __tostring(lua_State* L)
@@ -90,11 +71,20 @@ struct Enum
   static void registerType(lua_State* L)
   {
     luaL_newmetatable(L, EnumName<T>::value);
-    lua_pushcfunction(L, __eq);
-    lua_setfield(L, -2, "__eq");
     lua_pushcfunction(L, __tostring);
     lua_setfield(L, -2, "__tostring");
-    lua_pop(L, 1);
+
+    lua_createtable(L, 0, EnumValues<T>::value.size());
+    for(auto& it : EnumValues<T>::value)
+    {
+      *static_cast<T*>(lua_newuserdata(L, sizeof(T))) = it.first;
+      lua_pushvalue(L, -4); // copy metatable
+      lua_setmetatable(L, -2);
+      lua_rawseti(L, -2, static_cast<lua_Integer>(it.first));
+    }
+    lua_setglobal(L, EnumName<T>::value);
+
+    lua_pop(L, 1); // remove metatable from stack
   }
 
   static void registerValues(lua_State* L)

@@ -22,12 +22,11 @@
 
 #include "serverconsolewidget.hpp"
 #include <QVBoxLayout>
-//#include <QToolBar>
 #include <QTableView>
 #include <QtWaitingSpinner/waitingspinnerwidget.h>
 #include "tablewidget.hpp"
-#include "../network/client.hpp"
-//#include "../network/object.hpp"
+#include "../network/connection.hpp"
+#include "../network/object.hpp"
 #include "../network/tablemodel.hpp"
 #include "../network/utils.hpp"
 #include "../widget/alertwidget.hpp"
@@ -39,19 +38,18 @@ ServerConsoleWidget::ServerConsoleWidget(const ObjectPtr& object, QWidget* paren
 {
   QVBoxLayout* layout = new QVBoxLayout();
   layout->setMargin(0);
-  //layout->addWidget(new QToolBar());
   layout->addWidget(m_tableWidget);
   setLayout(layout);
 
   auto* spinner = new WaitingSpinnerWidget(this, true, false);
   spinner->start();
 
-  m_requestId = Client::instance->getTableModel(object,
+  m_requestId = m_object->connection()->getTableModel(object,
     [this, spinner](const TableModelPtr& tableModel, Message::ErrorCode ec)
     {
       if(tableModel)
       {
-        m_requestId = Client::invalidRequestId;
+        m_requestId = Connection::invalidRequestId;
         m_tableWidget->setTableModel(tableModel);
         delete spinner;
       }
@@ -62,5 +60,5 @@ ServerConsoleWidget::ServerConsoleWidget(const ObjectPtr& object, QWidget* paren
 
 ServerConsoleWidget::~ServerConsoleWidget()
 {
-  Client::instance->cancelRequest(m_requestId);
+  m_object->connection()->cancelRequest(m_requestId);
 }

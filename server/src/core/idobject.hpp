@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_CORE_IDOBJECT_HPP
-#define SERVER_CORE_IDOBJECT_HPP
+#ifndef TRAINTASTIC_SERVER_CORE_IDOBJECT_HPP
+#define TRAINTASTIC_SERVER_CORE_IDOBJECT_HPP
 
 #include "object.hpp"
 #include "property.hpp"
@@ -44,7 +44,7 @@ class IdObject : public Object
 
     IdObject(const std::weak_ptr<World> world, const std::string& _id);
     virtual void addToWorld();
-    void modeChanged(TraintasticMode mode) override;
+    void worldEvent(WorldState state, WorldEvent event) override;
 
   public:
     Property<std::string> id;

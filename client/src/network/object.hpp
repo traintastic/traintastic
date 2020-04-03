@@ -20,31 +20,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CLIENT_NETWORK_OBJECT_HPP
-#define CLIENT_NETWORK_OBJECT_HPP
+#ifndef TRAINTASTIC_CLIENT_NETWORK_OBJECT_HPP
+#define TRAINTASTIC_CLIENT_NETWORK_OBJECT_HPP
 
 #include <QObject>
+#include <QSharedPointer>
 #include "handle.hpp"
 #include "interfaceitems.hpp"
 
+class Connection;
 class AbstractProperty;
+class Method;
 
 class Object : public QObject
 {
   Q_OBJECT
 
-  friend class Client;
+  friend class Connection;
 
   protected:
+    QSharedPointer<Connection> m_connection;
     Handle m_handle;
     const QString m_classId;
     InterfaceItems m_interfaceItems;
 
   public:
-    explicit Object(Handle handle, const QString& classId);
+    explicit Object(const QSharedPointer<Connection>& connection, Handle handle, const QString& classId);
     Object(const Object& copy) = delete;
     ~Object() final;
 
+    const QSharedPointer<Connection>& connection() const { return m_connection; }
     Handle handle() const { return m_handle; }
 
     const QString& classId() const { return m_classId; }
@@ -56,7 +61,9 @@ class Object : public QObject
 
     const AbstractProperty* getProperty(const QString& name) const;
     AbstractProperty* getProperty(const QString& name);
-};
 
+    const Method* getMethod(const QString& name) const;
+    Method* getMethod(const QString& name);
+};
 
 #endif

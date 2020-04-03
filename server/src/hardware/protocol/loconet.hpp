@@ -22,8 +22,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_HARDWARE_PROTOCOL_LOCONET_HPP
-#define SERVER_HARDWARE_PROTOCOL_LOCONET_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_HPP
 
 #include "../../core/subobject.hpp"
 #include "../../core/property.hpp"

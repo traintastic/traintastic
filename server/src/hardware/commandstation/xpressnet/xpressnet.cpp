@@ -102,9 +102,9 @@ XpressNet::XpressNet(const std::weak_ptr<World>& world, const std::string& _id) 
     .addAttributeEnabled(false);
 }
 
-void XpressNet::modeChanged(TraintasticMode mode)
+void XpressNet::worldEvent(WorldState state, WorldEvent event)
 {
-  CommandStation::modeChanged(mode);
+  CommandStation::worldEvent(state, event);
 
   commandStation.setAttributeEnabled(mode == TraintasticMode::Edit);
   useEmergencyStopLocomotiveCommand.setAttributeEnabled(mode == TraintasticMode::Edit);
@@ -164,7 +164,7 @@ void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags change
           decoder.direction,
           decoder.speedStep));
         break;
-        
+
       default:
         Traintastic::instance->console->warning(id, std::to_string(decoder.speedSteps) + " speed steps not supported");
         break;

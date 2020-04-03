@@ -20,12 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_ENUM_XPRESSNETCOMMANDSTATION_HPP
-#define SERVER_ENUM_XPRESSNETCOMMANDSTATION_HPP
+#ifndef TRAINTASTIC_SERVER_ENUM_XPRESSNETCOMMANDSTATION_HPP
+#define TRAINTASTIC_SERVER_ENUM_XPRESSNETCOMMANDSTATION_HPP
 
 #include <enum/xpressnetcommandstation.hpp>
 #include <nlohmann/json.hpp>
-#include "../lua/enum.hpp"
+#include "../lua/enumvalues.hpp"
 
 inline constexpr std::array<XpressNetCommandStation, 2> XpressNetCommandStationValues{{XpressNetCommandStation::Custom, XpressNetCommandStation::Roco10764}};
 
@@ -35,7 +35,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(XpressNetCommandStation,
   {XpressNetCommandStation::Roco10764, "roco_10764"},
 })
 
-LUA_ENUM(XpressNetCommandStation, 2,
+LUA_ENUM_VALUES(XpressNetCommandStation, 2,
 {
   {XpressNetCommandStation::Custom, "CUSTOM"},
   {XpressNetCommandStation::Roco10764, "ROCO_10764"},

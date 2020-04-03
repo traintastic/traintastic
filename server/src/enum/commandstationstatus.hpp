@@ -20,12 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_ENUM_COMMANDSTATIONSTATUS_HPP
-#define SERVER_ENUM_COMMANDSTATIONSTATUS_HPP
+#ifndef TRAINTASTIC_SERVER_ENUM_COMMANDSTATIONSTATUS_HPP
+#define TRAINTASTIC_SERVER_ENUM_COMMANDSTATIONSTATUS_HPP
 
 #include <nlohmann/json.hpp>
-#include "../lua/enum.hpp"
 #include <enum/commandstationstatus.hpp>
+#include "../lua/enumvalues.hpp"
 
 NLOHMANN_JSON_SERIALIZE_ENUM(CommandStationStatus,
 {
@@ -35,7 +35,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(CommandStationStatus,
   {CommandStationStatus::Error, "error"},
 })
 
-LUA_ENUM(CommandStationStatus, 4,
+LUA_ENUM_VALUES(CommandStationStatus, 4,
 {
   {CommandStationStatus::Offline, "OFFLINE"},
   {CommandStationStatus::Initializing, "INITIALIZING"},

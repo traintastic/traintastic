@@ -25,58 +25,71 @@
 #include "../core/traintastic.hpp"
 #include <enum/traintasticmode.hpp>
 
+
+
+#include "../enum/worldevent.hpp"
+#include "../set/worldstate.hpp"
+
+
+
 namespace Lua {
 
 Script::Script(const std::weak_ptr<World>& world, const std::string& _id) :
   IdObject(world, _id),
   m_sandbox{nullptr, nullptr},
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
-  enabled{this, "enabled", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
+  active{this, "active", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](bool value)
     {
       if(!value && m_sandbox)
-      {
-        assert(Traintastic::instance->mode != TraintasticMode::Run);
         fini();
-      }
-      else if(value && Traintastic::instance->mode == TraintasticMode::Stop)
-      {
-        assert(!m_sandbox);
-        init();  
-      }
+      else if(value && !m_sandbox)
+        init();
     }},
   code{this, "code", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   m_interfaceItems.add(name);
-  m_interfaceItems.add(enabled)
-    .addAttributeEnabled(false);
+  m_interfaceItems.add(active);
+ //   .addAttributeEnabled(false);
   m_interfaceItems.add(code)
     .addAttributeEnabled(false);
 }
 
-void Script::modeChanged(TraintasticMode mode)
+void Script::worldEvent(WorldState state, WorldEvent event)
 {
-  IdObject::modeChanged(mode);
+  IdObject::worldEvent(state, event);
 
-  enabled.setAttributeEnabled(mode != TraintasticMode::Run);
-  code.setAttributeEnabled(mode == TraintasticMode::Edit);
+  //enabled.setAttributeEnabled(mode != TraintasticMode::Run);
+  code.setAttributeEnabled(!active && contains(state, WorldState::Edit));
 
-  if(enabled)
+  if(active)
   {
-    if(mode == TraintasticMode::Edit && m_sandbox)
+    /*if(mode == TraintasticMode::Edit && m_sandbox)
       fini();
     else if(mode == TraintasticMode::Stop && !m_sandbox)
       init();
-    else if(m_sandbox)
+    else*/ if(m_sandbox)
     {
       lua_State* L = m_sandbox.get();
-      if(Sandbox::getGlobal(L, "mode_changed") == LUA_TFUNCTION)
+      //if(Sandbox::getGlobal(L, "mode_changed") == LUA_TFUNCTION)
+     // {
+       // push(L, mode);
+       // pcall(L, 1);
+     // }
+
+
+      if(Sandbox::getGlobal(L, "world_event") == LUA_TFUNCTION)
       {
-        push(L, mode);
-        pcall(L, 1);
-      }     
+        push(L, state);
+        push(L, event);
+        pcall(L, 2);
+      }
+
+
+
+
     }
-  } 
+  }
 }
 
 void Script::init()

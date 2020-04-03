@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CLIENT_WIDGET_TABLEWIDGET_HPP
-#define CLIENT_WIDGET_TABLEWIDGET_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_TABLEWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_TABLEWIDGET_HPP
 
 #include <QTableView>
 #include "../network/tablemodelptr.hpp"

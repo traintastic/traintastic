@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_CORE_TRAINTASTIC_HPP
-#define SERVER_CORE_TRAINTASTIC_HPP
+#ifndef TRAINTASTIC_SERVER_CORE_TRAINTASTIC_HPP
+#define TRAINTASTIC_SERVER_CORE_TRAINTASTIC_HPP
 
 #include <memory>
 #include <list>
@@ -30,8 +30,9 @@
 #include <boost/uuid/uuid.hpp>
 #include "object.hpp"
 #include "objectproperty.hpp"
+#include "method.hpp"
 #include "console.hpp"
-#include <enum/traintasticmode.hpp>
+//#include <enum/traintasticmode.hpp>
 
 class Client;
 class Message;
@@ -56,7 +57,6 @@ class Traintastic : public Object
     bool start();
     bool stop();
 
-    void newWorld();
     void loadWorld(const boost::uuids::uuid& uuid);
     void loadWorld(const std::filesystem::path& path);
     void saveWorld();
@@ -74,11 +74,12 @@ class Traintastic : public Object
     static const std::string id;
     static std::shared_ptr<Traintastic> instance;
 
-    Property<TraintasticMode> mode;
+    //Property<TraintasticMode> mode;
     ObjectProperty<Console> console;
     ObjectProperty<Settings> settings;
     ObjectProperty<World> world;
     ObjectProperty<WorldList> worldList;
+    Method<void()> newWorld;
 
     Traintastic(const std::filesystem::path& dataDir);
     ~Traintastic() final;

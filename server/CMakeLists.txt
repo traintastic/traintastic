@@ -21,6 +21,8 @@ set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-point
 file(GLOB SOURCES
   "src/*.hpp"
   "src/*.cpp"
+  "src/clock/*.hpp"
+  "src/clock/*.cpp"
   "src/core/*.hpp"
   "src/core/*.cpp"
   "src/enum/*.hpp"

@@ -23,29 +23,32 @@
 #include "objectsubwindow.hpp"
 #include <QVBoxLayout>
 #include <QtWaitingSpinner/waitingspinnerwidget.h>
-#include "../network/client.hpp"
+#include "../network/connection.hpp"
+#include "../network/object.hpp"
 #include "../network/utils.hpp"
 #include "../widget/alertwidget.hpp"
 #include "../widget/createwidget.hpp"
 
 ObjectSubWindow::ObjectSubWindow(const ObjectPtr& object, QWidget* parent) :
   QMdiSubWindow(parent),
-  m_requestId{Client::invalidRequestId}
+  m_connection{object->connection()},
+  m_requestId{Connection::invalidRequestId}
 {
   setObject(object);
 }
 
-ObjectSubWindow::ObjectSubWindow(const QString& id, QWidget* parent) :
+ObjectSubWindow::ObjectSubWindow(const QSharedPointer<Connection>& connection, const QString& id, QWidget* parent) :
   QMdiSubWindow(parent),
-  m_requestId{Client::invalidRequestId}
+  m_connection{connection},
+  m_requestId{Connection::invalidRequestId}
 {
   auto* spinner = new WaitingSpinnerWidget(this, true, false);
   spinner->start();
 
-  m_requestId = Client::instance->getObject(id,
+  m_requestId = m_connection->getObject(id,
     [this, spinner](const ObjectPtr& object, Message::ErrorCode ec)
     {
-      m_requestId = Client::invalidRequestId;
+      m_requestId = Connection::invalidRequestId;
       if(object)
         setObject(object);
       else
@@ -56,7 +59,7 @@ ObjectSubWindow::ObjectSubWindow(const QString& id, QWidget* parent) :
 
 ObjectSubWindow::~ObjectSubWindow()
 {
-  Client::instance->cancelRequest(m_requestId);
+  m_connection->cancelRequest(m_requestId);
 }
 
 void ObjectSubWindow::setObject(const ObjectPtr& object)

@@ -45,29 +45,36 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_acceptor{m_ioContext},
   m_socketTCP{m_ioContext},
   m_socketUDP{m_ioContext},
-  mode{this, "mode", TraintasticMode::Stop, PropertyFlags::ReadWrite,
+  /*mode{this, "mode", TraintasticMode::Stop, PropertyFlags::ReadWrite,
     [this](const TraintasticMode& value)
     {
       assert(world);
       console->info(id, "Mode changed to <TODO> " + std::to_string((int)value));
-      world->modeChanged(value);
+      //world->modeChanged(value);
     },
     [this](TraintasticMode& newValue)
     {
       return
         (mode == TraintasticMode::Stop) ||
         (newValue == TraintasticMode::Stop);
-    }},
+    }},*/
   console{this, "console", std::make_shared<Console>(), PropertyFlags::ReadOnly},
   settings{this, "settings", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
   world{this, "world", nullptr, PropertyFlags::ReadWrite},
-  worldList{this, "world_list", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/}
+  worldList{this, "world_list", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
+  newWorld{*this, "new_world",
+    [this]()
+    {
+      world = World::create();
+      console->notice(id, "Created new world");
+    }}
 {
-  m_interfaceItems.add(mode);
+  //m_interfaceItems.add(mode);
   m_interfaceItems.add(console);
   m_interfaceItems.add(settings);
   m_interfaceItems.add(world);
   m_interfaceItems.add(worldList);
+  m_interfaceItems.add(newWorld);
 }
 
 Traintastic::~Traintastic()
@@ -96,8 +103,6 @@ bool Traintastic::run()
     if(!uuid.is_nil())
       loadWorld(uuid);
   }
-  else
-    newWorld();
 
   if(!start())
     return false;
@@ -111,11 +116,11 @@ bool Traintastic::run()
 void Traintastic::shutdown()
 {
   console->notice(id, "Shutting down");
-  
-  if(mode == TraintasticMode::Run)
-    mode = TraintasticMode::Stop;
-    
-  if(settings->autoSaveWorldOnExit)
+
+  //if(mode == TraintasticMode::Run)
+  //  mode = TraintasticMode::Stop;
+
+  if(settings->autoSaveWorldOnExit && world)
     world->save();
 
   m_ioContext.stop();
@@ -183,12 +188,6 @@ bool Traintastic::stop()
 {
   m_acceptor.close();
   return true;
-}
-
-void Traintastic::newWorld()
-{
-  world = World::create();
-  console->notice(id, "Created new world");
 }
 
 void Traintastic::loadWorld(const boost::uuids::uuid& uuid)

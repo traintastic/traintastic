@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_HARDWARE_INPUT_LOCONETINPUT_HPP
-#define SERVER_HARDWARE_INPUT_LOCONETINPUT_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_LOCONETINPUT_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INPUT_LOCONETINPUT_HPP
 
 #include "input.hpp"
 #include "../../core/objectproperty.hpp"
@@ -32,7 +32,7 @@ class LocoNetInput : public Input
   friend class Protocol::LocoNet;
 
   protected:
-    void modeChanged(TraintasticMode mode) final;
+    void worldEvent(WorldState state, WorldEvent event) final;
 
     inline void valueChanged(bool _value) { Input::valueChanged(_value); }
 

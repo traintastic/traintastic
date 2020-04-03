@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_HARDWARE_PROTOCOL_XPRESSNET_HPP
-#define SERVER_HARDWARE_PROTOCOL_XPRESSNET_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_HPP
 
 #include "../../core/subobject.hpp"
 #include "../../core/property.hpp"
@@ -335,7 +335,7 @@ class XpressNet : public SubObject
 
     std::function<bool(const Message&)> m_send;
 
-    void modeChanged(TraintasticMode mode) final;
+    void worldEvent(WorldState state, WorldEvent event) final;
 
   public:
     CLASS_ID("protocol.xpressnet")

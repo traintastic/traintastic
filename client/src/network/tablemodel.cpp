@@ -21,10 +21,11 @@
  */
 
 #include "tablemodel.hpp"
-#include "client.hpp"
+#include "connection.hpp"
 
-TableModel::TableModel(Handle handle, const QString& classId, QObject* parent) :
+TableModel::TableModel(const QSharedPointer<Connection>& connection, Handle handle, const QString& classId, QObject* parent) :
   QAbstractTableModel(parent),
+  m_connection{connection},
   m_handle{handle},
   m_classId{classId},
   m_rowCount{0}
@@ -33,7 +34,7 @@ TableModel::TableModel(Handle handle, const QString& classId, QObject* parent) :
 
 TableModel::~TableModel()
 {
-  Client::instance->releaseTableModel(this);
+  m_connection->releaseTableModel(this);
 }
 
 QVariant TableModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -74,7 +75,7 @@ void TableModel::setRegion(int columnMin, int columnMax, int rowMin, int rowMax)
     m_region.rowMin = rowMin;
     m_region.rowMax = rowMax;
 
-    Client::instance->setTableModelRegion(this, m_region.columnMin, m_region.columnMax, m_region.rowMin, m_region.rowMax);
+    m_connection->setTableModelRegion(this, m_region.columnMin, m_region.columnMax, m_region.rowMin, m_region.rowMax);
   }
 }
 

@@ -24,6 +24,8 @@
 #include "readonlytable.hpp"
 #include "sandbox.hpp"
 #include "script.hpp"
+#include "object.hpp"
+#include "method.hpp"
 #include "../core/traintastic.hpp"
 
 namespace Lua {
@@ -64,7 +66,45 @@ int Console::log(lua_State* L, ::Console::Level level)
   {
     if(i != 1)
       message += " ";
-    message += luaL_checkstring(L, i);
+    if(level == ::Console::Level::Debug)
+    {
+      switch(lua_type(L, i))
+      {
+        case LUA_TBOOLEAN:
+          message += lua_toboolean(L, i) ? "true" : "false";
+          break;
+
+        case LUA_TNUMBER:
+        case LUA_TSTRING:
+          message += lua_tostring(L, i);
+          break;
+
+        case LUA_TUSERDATA:
+          if(ObjectPtr object = Object::test(L, i))
+            message += object->getClassId();
+          else if(Method::test(L, i))
+            message += "method";
+          else
+          {
+            lua_getglobal(L, "tostring");
+            assert(lua_isfunction(L, -1));
+            lua_pushvalue(L, i);
+            if(lua_pcall(L, 1, 1, 0) == LUA_OK && lua_isstring(L, -1))
+              message += lua_tostring(L, -1);
+            else
+              message += luaL_typename(L, i);
+            lua_pop(L, 1);
+          }
+          break;
+
+        default:
+          message += luaL_typename(L, i);
+          break;
+      }
+
+    }
+    else
+      message += luaL_checkstring(L, i);
   }
 
   log(L, level, message);

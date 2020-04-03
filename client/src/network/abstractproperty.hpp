@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CLIENT_NETWORK_ABSTRACTPROPERTY_HPP
-#define CLIENT_NETWORK_ABSTRACTPROPERTY_HPP
+#ifndef TRAINTASTIC_CLIENT_NETWORK_ABSTRACTPROPERTY_HPP
+#define TRAINTASTIC_CLIENT_NETWORK_ABSTRACTPROPERTY_HPP
 
 #include "interfaceitem.hpp"
 #include <enum/valuetype.hpp>
@@ -32,6 +32,9 @@ class Object;
 class AbstractProperty : public InterfaceItem
 {
   Q_OBJECT
+
+  private:
+    inline static const QString enumNameEmpty;
 
   protected:
     const ValueType m_type;
@@ -50,7 +53,7 @@ class AbstractProperty : public InterfaceItem
 
     bool isWritable() const { return (m_flags & PropertyFlagsAccessMask) == PropertyFlags::ReadWrite; }
 
-    virtual const QString& enumName() const       { Q_ASSERT(false); return ""; }
+    virtual const QString& enumName() const       { Q_ASSERT(false); return enumNameEmpty; }
 
     virtual bool toBool() const            { Q_ASSERT(false); return false; }
     virtual int toInt() const              { Q_ASSERT(false); return 0; }

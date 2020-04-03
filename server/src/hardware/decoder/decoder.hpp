@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_HARDWARE_DECODER_DECODER_HPP
-#define SERVER_HARDWARE_DECODER_DECODER_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODER_HPP
 
 #include <type_traits>
 #include "../../core/idobject.hpp"
@@ -46,7 +46,7 @@ class Decoder : public IdObject
   friend class DecoderFunction;
 
   protected:
-    void modeChanged(TraintasticMode mode) final;
+    void worldEvent(WorldState state, WorldEvent event) final;
     void changed(DecoderChangeFlags changes, uint32_t functionNumber = 0);
 
   public:

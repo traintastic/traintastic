@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_OPTIONS_HPP
-#define SERVER_OPTIONS_HPP
+#ifndef TRAINTASTIC_SERVER_OPTIONS_HPP
+#define TRAINTASTIC_SERVER_OPTIONS_HPP
 
 #include <boost/program_options.hpp>
 #include <boost/preprocessor/stringize.hpp>

@@ -50,9 +50,12 @@ LocoNetInput::LocoNetInput(const std::weak_ptr<World> world, const std::string& 
     .addAttributeEnabled(false);
 }
 
-void LocoNetInput::modeChanged(TraintasticMode mode)
+void LocoNetInput::worldEvent(WorldState state, WorldEvent event)
 {
-  Input::modeChanged(mode);
-  loconet.setAttributeEnabled(mode == TraintasticMode::Edit);
-  address.setAttributeEnabled(mode == TraintasticMode::Edit);
+  Input::worldEvent(state, event);
+
+  const bool editable = contains(state, WorldState::Edit);
+
+  loconet.setAttributeEnabled(editable);
+  address.setAttributeEnabled(editable);
 }

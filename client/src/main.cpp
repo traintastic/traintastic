@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,12 +20,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "mainwindow.hpp"
 #include <QApplication>
 #ifdef Q_OS_WINDOWS
   #include <QSettings>
 #endif
-#include "network/client.hpp"
+#include "mainwindow.hpp"
+//#include "network/client.hpp"
+
+
+
+#include <locale/locale.hpp>
+
 
 int main(int argc, char* argv[])
 {
@@ -40,13 +45,16 @@ int main(int argc, char* argv[])
 
   QApplication app(argc, argv);
 
-  Client client;
-  Client::instance = &client;
+  //Client client;
+  //Client::instance = &client;
+
+  Locale::instance = new Locale("/home/reinder/Dropbox/traintastic/traintastic/lang/en-us.txt");
+
 
   MainWindow mw;
   mw.show();
 
-  if(client.state() != Client::State::Connected)
+  if(!mw.connection())
     mw.connectToServer();
 
   return app.exec();

@@ -97,6 +97,11 @@ Console::Console() :
   m_interfaceItems.add(count);
 }
 
+void Console::log(Level level, std::string_view id, const std::string& message)
+{
+  log(level, std::string(id), message);
+}
+
 void Console::log(Level level, const std::string& id, const std::string& message)
 {
   const auto now = std::chrono::system_clock::now();

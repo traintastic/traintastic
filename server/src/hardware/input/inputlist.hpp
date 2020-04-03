@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_HARDWARE_INPUT_INPUTLIST_HPP
-#define SERVER_HARDWARE_INPUT_INPUTLIST_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
 
 #include "../../core/objectlist.hpp"
 #include "inputlist.hpp"

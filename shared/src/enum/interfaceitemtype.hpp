@@ -20,14 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SHARED_ENUM_INTERFACEITEMTYPE_HPP
-#define SHARED_ENUM_INTERFACEITEMTYPE_HPP
+#ifndef TRAINTASTIC_SHARED_ENUM_INTERFACEITEMTYPE_HPP
+#define TRAINTASTIC_SHARED_ENUM_INTERFACEITEMTYPE_HPP
 
 #include <cstdint>
 
 enum class InterfaceItemType : uint8_t
 {
   Property = 1,
+  Method = 2,
 };
 
 #endif

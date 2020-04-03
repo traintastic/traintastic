@@ -22,7 +22,7 @@
 
 #include "decoderlistwidget.hpp"
 #include <QMessageBox>
-#include "../network/client.hpp"
+#include "../network/connection.hpp"
 #include "../network/object.hpp"
 #include "../network/property.hpp"
 #include "../network/utils.hpp"
@@ -31,19 +31,19 @@
 DecoderListWidget::DecoderListWidget(const ObjectPtr& object, QWidget* parent) :
   ObjectListWidget(object, parent)
 {
-  addActionAdd();
+  //addActionAdd();
   addActionEdit();
   addActionDelete();
 }
 
 void DecoderListWidget::add()
 {
-  Client::instance->createObject("hardware.decoder", "",
+  /*m_object->connection()->createObject("hardware.decoder", "",
     [this](const ObjectPtr& object, Message::ErrorCode ec)
     {
       if(object)
         MainWindow::instance->showObject(object);
       else
         QMessageBox::critical(this, tr("Add failed"), errorCodeToText(ec));
-    });
+    });*/
 }

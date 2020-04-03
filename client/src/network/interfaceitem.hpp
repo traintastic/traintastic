@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CLIENT_NETWORK_INTERFACEITEM_HPP
-#define CLIENT_NETWORK_INTERFACEITEM_HPP
+#ifndef TRAINTASTIC_CLIENT_NETWORK_INTERFACEITEM_HPP
+#define TRAINTASTIC_CLIENT_NETWORK_INTERFACEITEM_HPP
 
 #include <QObject>
 #include <QMap>
@@ -34,7 +34,7 @@ class InterfaceItem : public QObject
 {
   Q_OBJECT
 
-  friend class Client;
+  friend class Connection;
 
   protected:
     const QString m_name;
@@ -43,8 +43,10 @@ class InterfaceItem : public QObject
   public:
     explicit InterfaceItem(Object& object, const QString& name);
 
+    const Object& object() const;
+    Object& object();
     const QString& name() const { return m_name; }
-    const QString& displayName() const { return m_name; }
+    QString displayName() const;
 
     QVariant getAttribute(AttributeName name, const QVariant& default_) const;
     bool getAttributeBool(AttributeName name, bool default_) const;

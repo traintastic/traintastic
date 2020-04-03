@@ -53,9 +53,9 @@ void IdObject::addToWorld()
     world->m_objects.emplace(id, weak_from_this());
 }
 
-void IdObject::modeChanged(TraintasticMode mode)
+void IdObject::worldEvent(WorldState state, WorldEvent event)
 {
-  Object::modeChanged(mode);
+  Object::worldEvent(state, event);
 
-  id.setAttributeEnabled(mode == TraintasticMode::Edit);
+  id.setAttributeEnabled(contains(state, WorldState::Edit));
 }

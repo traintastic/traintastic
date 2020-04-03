@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_HARDWARE_DECODER_DECODERFUNCTION_HPP
-#define SERVER_HARDWARE_DECODER_DECODERFUNCTION_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERFUNCTION_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERFUNCTION_HPP
 
 #include "../../core/output.hpp"
 #include "../../core/objectproperty.hpp"
@@ -33,20 +33,21 @@ class Decoder;
 
 class DecoderFunction : public Output
 {
-  public://protected:
-    Decoder* m_decoder;
-
   protected:
+    Decoder& m_decoder;
+
+   // void addToWorld() final { Output::addToWorld(); }
+
     bool setValue(bool& value) final;
     void valueChanged(bool) final;
 
   public:
     CLASS_ID("hardware.decoder_function")
-    CREATE(DecoderFunction)
 
     static const std::shared_ptr<DecoderFunction> null;
+    static std::shared_ptr<DecoderFunction> create(Decoder& decoder, const std::string& _id);
 
-    DecoderFunction(const std::weak_ptr<World>& world, const std::string& _id);
+    DecoderFunction(Decoder& decoder, const std::string& _id);
 
     Property<uint8_t> number;
     Property<std::string> name;

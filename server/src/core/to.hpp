@@ -20,13 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_CORE_TO_HPP
-#define SERVER_CORE_TO_HPP
+#ifndef TRAINTASTIC_SERVER_CORE_TO_HPP
+#define TRAINTASTIC_SERVER_CORE_TO_HPP
 
 #include <type_traits>
 #include <limits>
 #include <stdexcept>
 #include <cmath>
+#include <nlohmann/json.hpp>
 
 class not_writable_error : public std::runtime_error
 {
@@ -98,6 +99,12 @@ To to(const From& value)
   {
     return std::to_string(value);
   }
+  else if constexpr(std::is_same_v<From, nlohmann::json>)
+  {
+  //  if constexpr(std::is_same_v<To, bool>)
+      return value;//.get<To>();
+  }
+
 
   throw conversion_error();
 }

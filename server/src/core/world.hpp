@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_CORE_WORLD_HPP
-#define SERVER_CORE_WORLD_HPP
+#ifndef TRAINTASTIC_SERVER_CORE_WORLD_HPP
+#define TRAINTASTIC_SERVER_CORE_WORLD_HPP
 
 #include "object.hpp"
 #include "property.hpp"
@@ -30,6 +30,10 @@
 #include <unordered_map>
 #include <boost/uuid/uuid.hpp>
 #include <nlohmann/json.hpp>
+#include <enum/worldevent.hpp>
+#include <enum/worldscale.hpp>
+#include <set/worldstate.hpp>
+#include "../clock/clock.hpp"
 #include "../hardware/commandstation/commandstationlist.hpp"
 #include "../hardware/decoder/decoderlist.hpp"
 #include "../hardware/input/inputlist.hpp"
@@ -43,15 +47,13 @@ class World : public Object
   friend class Traintastic;
 
   protected:
-    static const std::string id;
-
     static void init(const std::shared_ptr<World>& world);
 
     std::filesystem::path m_filename;
     boost::uuids::uuid m_uuid;
     std::unordered_map<std::string, std::weak_ptr<Object>> m_objects;
 
-    void modeChanged(TraintasticMode mode);
+    void event(WorldEvent event);
     void load();
 
     nlohmann::json saveObject(const ObjectPtr& object);
@@ -63,10 +65,20 @@ class World : public Object
     static std::shared_ptr<World> load(const std::filesystem::path& filename);
 
     Property<std::string> name;
+    Property<WorldScale> scale;
+
     ObjectProperty<CommandStationList> commandStations;
     ObjectProperty<DecoderList> decoders;
     ObjectProperty<InputList> inputs;
+    ObjectProperty<Clock> clock;
     ObjectProperty<Lua::ScriptList> luaScripts;
+
+    Property<WorldState> state;
+    Method<void()> emergencyStop;
+    Method<void()> trackPowerOff;
+    Method<void()> trackPowerOn;
+
+    Method<void()> save;
 
     World(); // Don't use directly, use: create()
     World(const std::filesystem::path& filename); // Don't use directly, use: load()
@@ -77,8 +89,6 @@ class World : public Object
     ObjectPtr createObject(const std::string& classId, const std::string& _id = "");
     bool isObject(const std::string& _id) const;
     ObjectPtr getObject(const std::string& _id) const;
-
-    void save();
 };
 
 #endif

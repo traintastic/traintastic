@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CLIENT_WIDGET_OBJECTLISTWIDGET_HPP
-#define CLIENT_WIDGET_OBJECTLISTWIDGET_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_OBJECTLISTWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_OBJECTLISTWIDGET_HPP
 
 #include <QWidget>
 #include "../network/objectptr.hpp"
@@ -36,6 +36,7 @@ class ObjectListWidget : public QWidget
   protected:
     const QString m_id;
     int m_requestId;
+    int m_requestIdAdd;
     ObjectPtr m_object;
     QToolBar* m_toolbar;
     QAction* m_actionAdd;
@@ -43,7 +44,6 @@ class ObjectListWidget : public QWidget
     QAction* m_actionDelete;
     TableWidget* m_tableWidget;
 
-    void addActionAdd();
     void addActionEdit();
     void addActionDelete();
 

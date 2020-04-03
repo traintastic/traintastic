@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SHARED_MESSAGE_HPP
-#define SHARED_MESSAGE_HPP
+#ifndef TRAINTASTIC_SHARED_MESSAGE_HPP
+#define TRAINTASTIC_SHARED_MESSAGE_HPP
 
 #include <vector>
 #include <string>
@@ -60,6 +60,7 @@ class Message
       ObjectSetProperty = 16,
       ObjectPropertyChanged = 17,
       ObjectAttributeChanged = 18,
+      ObjectCallMethod = 25,
 
       GetTableModel = 19,
       ReleaseTableModel = 20,
@@ -82,11 +83,12 @@ class Message
     {
       None = 0,
       InvalidCommand = 1,
-      AuthenticationFailed = 2,
-      InvalidSession = 3,
-      UnknownObject = 4,
-      ObjectNotTable = 5,
-      UnknownClassId = 6,
+      Failed = 2,
+      AuthenticationFailed = 3,
+      InvalidSession = 4,
+      UnknownObject = 5,
+      ObjectNotTable = 6,
+      UnknownClassId = 7,
 
 
       /*

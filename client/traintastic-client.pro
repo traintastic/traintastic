@@ -19,8 +19,8 @@ SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
     src/dialog/connectdialog.cpp \
-    src/network/client.cpp \
     src/network/object.cpp \
+    ../shared/src/locale/locale.cpp \
     thirdparty/QtWaitingSpinner/waitingspinnerwidget.cpp \
     src/widget/alertwidget.cpp \
     src/network/utils.cpp \
@@ -46,14 +46,18 @@ SOURCES += \
     src/widget/propertycombobox.cpp \
     src/widget/inputlistwidget.cpp \
     src/subwindow/objectsubwindow.cpp \
-    src/widget/createwidget.cpp
+    src/widget/createwidget.cpp \
+    src/widget/decoderfunctionlistwidget.cpp \
+    src/network/connection.cpp \
+    src/mdiarea.cpp \
+    src/network/method.cpp
 
 HEADERS += \
     src/mainwindow.hpp \
     src/dialog/connectdialog.hpp \
-    src/network/client.hpp \
     src/network/object.hpp \
     ../shared/src/message.hpp \
+    ../shared/src/locale/locale.hpp \
     thirdparty/QtWaitingSpinner/waitingspinnerwidget.h \
     src/widget/alertwidget.hpp \
     src/network/utils.hpp \
@@ -83,7 +87,11 @@ HEADERS += \
     src/widget/propertycombobox.hpp \
     src/widget/inputlistwidget.hpp \
     src/subwindow/objectsubwindow.hpp \
-    src/widget/createwidget.hpp
+    src/widget/createwidget.hpp \
+    src/widget/decoderfunctionlistwidget.hpp \
+    src/network/connection.hpp \
+    src/mdiarea.hpp \
+    src/network/method.hpp
 
 RESOURCES += \
     dark.qrc

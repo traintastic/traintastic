@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_HARDWARE_COMMANDSTATION_COMMANDSTATION_HPP
-#define SERVER_HARDWARE_COMMANDSTATION_COMMANDSTATION_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_COMMANDSTATION_COMMANDSTATION_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_COMMANDSTATION_COMMANDSTATION_HPP
 
 #include "../../core/idobject.hpp"
 #include "../../core/objectproperty.hpp"
@@ -42,7 +42,7 @@ class CommandStation : public IdObject
   friend class ::Hardware::Decoder;
 
   protected:
-    void modeChanged(TraintasticMode mode) override;
+    void worldEvent(WorldState state, WorldEvent event) override;
 
     virtual bool setOnline(bool& value) = 0;
     virtual void emergencyStopChanged(bool value) = 0;

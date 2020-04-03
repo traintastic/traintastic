@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "client.hpp"
+#include "connection.hpp"
 #include <QTcpSocket>
 #include <QUrl>
 #include <QCryptographicHash>
@@ -28,48 +28,52 @@
 #include "object.hpp"
 #include "property.hpp"
 #include "objectproperty.hpp"
+#include "method.hpp"
 #include "tablemodel.hpp"
 #include <enum/interfaceitemtype.hpp>
+#include <locale/locale.hpp>
 //#include <enum/valuetype.hpp>
 //#include <enum/propertyflags.hpp>
 
-Client* Client::instance = nullptr;
+//Client* Client::instance = nullptr;
 
-Client::Client() :
+Connection::Connection() :
   QObject(),
   m_socket{new QTcpSocket(this)},
-  m_state{State::Disconnected}
+  m_state{State::Disconnected},
+  m_worldProperty{nullptr},
+  m_worldRequestId{invalidRequestId}
 {
-  connect(m_socket, &QTcpSocket::connected, this, &Client::socketConnected);
-  connect(m_socket, &QTcpSocket::disconnected, this, &Client::socketDisconnected);
-  connect(m_socket, static_cast<void(QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &Client::socketError);
+  connect(m_socket, &QTcpSocket::connected, this, &Connection::socketConnected);
+  connect(m_socket, &QTcpSocket::disconnected, this, &Connection::socketDisconnected);
+  connect(m_socket, static_cast<void(QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &Connection::socketError);
 
   m_socket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
 
-  connect(m_socket, &QTcpSocket::readyRead, this, &Client::socketReadyRead);
+  connect(m_socket, &QTcpSocket::readyRead, this, &Connection::socketReadyRead);
 }
 
-Client::~Client()
+Connection::~Connection()
 {
-  instance = nullptr;
+ // instance = nullptr;
 }
 
-bool Client::isDisconnected() const
+bool Connection::isDisconnected() const
 {
   return m_state != State::Connected && m_state != State::Connecting && m_state != State::Disconnecting;
 }
 
-Client::SocketError Client::error() const
+Connection::SocketError Connection::error() const
 {
   return m_socket->error();
 }
 
-QString Client::errorString() const
+QString Connection::errorString() const
 {
   return m_socket->errorString();
 }
 
-void Client::connectToHost(const QUrl& url, const QString& username, const QString& password)
+void Connection::connectToHost(const QUrl& url, const QString& username, const QString& password)
 {  
   m_username = username;
   if(password.isEmpty())
@@ -80,12 +84,12 @@ void Client::connectToHost(const QUrl& url, const QString& username, const QStri
   m_socket->connectToHost(url.host(), static_cast<quint16>(url.port(defaultPort)));
 }
 
-void Client::disconnectFromHost()
+void Connection::disconnectFromHost()
 {
   m_socket->disconnectFromHost();
 }
 
-void Client::cancelRequest(int requestId)
+void Connection::cancelRequest(int requestId)
 {
   if(requestId < std::numeric_limits<uint16_t>::min() || requestId > std::numeric_limits<uint16_t>::max())
     return;
@@ -94,8 +98,8 @@ void Client::cancelRequest(int requestId)
   if(it != m_requestCallback.end())
     m_requestCallback.erase(it);
 }
-
-int Client::createObject(const QString& classId, const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+/*
+int Connection::createObject(const QString& classId, const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
 {
   std::unique_ptr<Message> request{Message::newRequest(Message::Command::CreateObject)};
   request->write(classId.toLatin1());
@@ -110,8 +114,8 @@ int Client::createObject(const QString& classId, const QString& id, std::functio
     });
   return request->requestId();
 }
-
-int Client::getObject(const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+*/
+int Connection::getObject(const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
 {
   std::unique_ptr<Message> request{Message::newRequest(Message::Command::GetObject)};
   request->write(id.toLatin1());
@@ -126,7 +130,7 @@ int Client::getObject(const QString& id, std::function<void(const ObjectPtr&, Me
   return request->requestId();
 }
 
-void Client::releaseObject(Object* object)
+void Connection::releaseObject(Object* object)
 {
   Q_ASSERT(object);
   m_objects.remove(object->handle());
@@ -136,7 +140,7 @@ void Client::releaseObject(Object* object)
   object->m_handle = invalidHandle;
 }
 
-void Client::setPropertyBool(Property& property, bool value)
+void Connection::setPropertyBool(Property& property, bool value)
 {
   auto event = Message::newEvent(Message::Command::ObjectSetProperty);
   event->write(static_cast<Object*>(property.parent())->m_handle);
@@ -146,7 +150,7 @@ void Client::setPropertyBool(Property& property, bool value)
   send(event);
 }
 
-void Client::setPropertyInt64(Property& property, int64_t value)
+void Connection::setPropertyInt64(Property& property, int64_t value)
 {
   auto event = Message::newEvent(Message::Command::ObjectSetProperty);
   event->write(static_cast<Object*>(property.parent())->m_handle);
@@ -156,7 +160,7 @@ void Client::setPropertyInt64(Property& property, int64_t value)
   send(event);
 }
 
-void Client::setPropertyDouble(Property& property, double value)
+void Connection::setPropertyDouble(Property& property, double value)
 {
   auto event = Message::newEvent(Message::Command::ObjectSetProperty);
   event->write(static_cast<Object*>(property.parent())->m_handle);
@@ -166,7 +170,7 @@ void Client::setPropertyDouble(Property& property, double value)
   send(event);
 }
 
-void Client::setPropertyString(Property& property, const QString& value)
+void Connection::setPropertyString(Property& property, const QString& value)
 {
   auto event = Message::newEvent(Message::Command::ObjectSetProperty);
   event->write(static_cast<Object*>(property.parent())->m_handle);
@@ -176,7 +180,35 @@ void Client::setPropertyString(Property& property, const QString& value)
   send(event);
 }
 
-int Client::getTableModel(const ObjectPtr& object, std::function<void(const TableModelPtr&, Message::ErrorCode)> callback)
+void Connection::callMethod(Method& method)
+{
+  auto event = Message::newEvent(Message::Command::ObjectCallMethod);
+  event->write(method.object().handle());
+  event->write(method.name().toLatin1());
+  event->write(ValueType::Invalid); // no result
+  event->write<uint8_t>(0); // no arguments
+  send(event);
+}
+
+int Connection::callMethod(Method& method, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+{
+  auto request = Message::newRequest(Message::Command::ObjectCallMethod);
+  request->write(method.object().handle());
+  request->write(method.name().toLatin1());
+  request->write(ValueType::Object); // object result
+  request->write<uint8_t>(0); // no arguments
+  send(request,
+    [this, callback](const std::shared_ptr<Message> message)
+    {
+      ObjectPtr object;
+      if(!message->isError())
+        object = readObject(*message);
+      callback(object, message->errorCode());
+    });
+  return request->requestId();
+}
+
+int Connection::getTableModel(const ObjectPtr& object, std::function<void(const TableModelPtr&, Message::ErrorCode)> callback)
 {
   std::unique_ptr<Message> request{Message::newRequest(Message::Command::GetTableModel)};
   request->write(object->handle());
@@ -194,7 +226,7 @@ int Client::getTableModel(const ObjectPtr& object, std::function<void(const Tabl
   return request->requestId();
 }
 
-void Client::releaseTableModel(TableModel* tableModel)
+void Connection::releaseTableModel(TableModel* tableModel)
 {
   Q_ASSERT(tableModel);
   m_tableModels.remove(tableModel->handle());
@@ -204,7 +236,7 @@ void Client::releaseTableModel(TableModel* tableModel)
   tableModel->m_handle = invalidHandle;
 }
 
-void Client::setTableModelRegion(TableModel* tableModel, int columnMin, int columnMax, int rowMin, int rowMax)
+void Connection::setTableModelRegion(TableModel* tableModel, int columnMin, int columnMax, int rowMin, int rowMax)
 {
   auto event = Message::newEvent(Message::Command::TableModelSetRegion);
   event->write(tableModel->handle());
@@ -215,13 +247,13 @@ void Client::setTableModelRegion(TableModel* tableModel, int columnMin, int colu
   send(event);
 }
 
-void Client::send(std::unique_ptr<Message>& message)
+void Connection::send(std::unique_ptr<Message>& message)
 {
   Q_ASSERT(!message->isRequest());
   m_socket->write(static_cast<const char*>(**message), message->size());
 }
 
-void Client::send(std::unique_ptr<Message>& message, std::function<void(const std::shared_ptr<Message>&)> callback)
+void Connection::send(std::unique_ptr<Message>& message, std::function<void(const std::shared_ptr<Message>&)> callback)
 {
   Q_ASSERT(message->isRequest());
   Q_ASSERT(!m_requestCallback.contains(message->requestId()));
@@ -229,7 +261,7 @@ void Client::send(std::unique_ptr<Message>& message, std::function<void(const st
   m_socket->write(static_cast<const char*>(**message), message->size());
 }
 
-ObjectPtr Client::readObject(const Message& message)
+ObjectPtr Connection::readObject(const Message& message)
 {
   message.readBlock(); // object
 
@@ -239,7 +271,7 @@ ObjectPtr Client::readObject(const Message& message)
   if(!obj)
   {
     const QString classId = QString::fromLatin1(message.read<QByteArray>());
-    obj = QSharedPointer<Object>::create(handle, classId);
+    obj = QSharedPointer<Object>::create(sharedFromThis(), handle, classId);
     m_objects[handle] = obj;
 
     message.readBlock(); // items
@@ -300,6 +332,16 @@ ObjectPtr Client::readObject(const Message& message)
           }
           break;
         }
+        case InterfaceItemType::Method:
+        {
+          const ValueType resultType = message.read<ValueType>();
+          const uint8_t argumentCount = message.read<uint8_t>();
+          QVector<ValueType> argumentTypes;
+          for(uint8_t i = 0; i < argumentCount; i++)
+            argumentTypes.append(message.read<ValueType>());
+          item = new Method(*obj, name, resultType, argumentTypes);
+          break;
+        }
       }
 
       if(Q_LIKELY(item))
@@ -354,22 +396,50 @@ ObjectPtr Client::readObject(const Message& message)
   return obj;
 }
 
-TableModelPtr Client::readTableModel(const Message& message)
+TableModelPtr Connection::readTableModel(const Message& message)
 {
   message.readBlock(); // model
   const Handle handle = message.read<Handle>();
   const QString classId = QString::fromLatin1(message.read<QByteArray>());
-  TableModelPtr tableModel = TableModelPtr::create(handle, classId);
+  TableModelPtr tableModel = TableModelPtr::create(sharedFromThis(), handle, classId);
   const int columnCount = message.read<int>();
   for(int i = 0; i < columnCount; i++)
-    tableModel->m_columnHeaders.push_back(QString::fromUtf8(message.read<QByteArray>()));
+    tableModel->m_columnHeaders.push_back(Locale::tr(QString::fromLatin1(message.read<QByteArray>())));
   Q_ASSERT(tableModel->m_columnHeaders.size() == columnCount);
   message.read(tableModel->m_rowCount);
   message.readBlockEnd(); // end model
   return tableModel;
 }
 
-void Client::setState(State state)
+void Connection::getWorld()
+{
+  if(m_worldRequestId != invalidRequestId)
+    cancelRequest(m_worldRequestId);
+
+  if(m_worldProperty->objectId().isEmpty())
+    setWorld(nullptr);
+  else
+    m_worldRequestId = getObject(m_worldProperty->objectId(),
+      [this](const ObjectPtr& object, Message::ErrorCode ec)
+      {
+        m_worldRequestId = invalidRequestId;
+        setWorld(object);
+        // TODO: show error??
+        if(m_state == State::Connecting)
+          setState(State::Connected);
+      });
+}
+
+void Connection::setWorld(const ObjectPtr& world)
+{
+  if(m_world != world)
+  {
+    m_world = world;
+    emit worldChanged();
+  }
+}
+
+void Connection::setState(State state)
 {
   if(m_state != state)
   {
@@ -378,7 +448,7 @@ void Client::setState(State state)
   }
 }
 
-void Client::processMessage(const std::shared_ptr<Message> message)
+void Connection::processMessage(const std::shared_ptr<Message> message)
 {
   if(message->isResponse())
   {
@@ -437,7 +507,9 @@ void Client::processMessage(const std::shared_ptr<Message> message)
               }
               case ValueType::Object:
               {
-                Q_ASSERT(false); // TODO
+                const QString id = QString::fromLatin1(message->read<QByteArray>());
+                static_cast<ObjectProperty*>(property)->m_id = id;
+                emit property->valueChanged();
                 break;
               }
               case ValueType::Invalid:
@@ -535,7 +607,7 @@ void Client::processMessage(const std::shared_ptr<Message> message)
   }
 }
 
-void Client::socketConnected()
+void Connection::socketConnected()
 {
   std::unique_ptr<Message> request{Message::newRequest(Message::Command::Login)};
   request->write(m_username.toUtf8());
@@ -552,16 +624,66 @@ void Client::socketConnected()
             if(message && message->isResponse() && !message->isError())
             {
               message->read(m_sessionUUID);
+              m_traintastic = readObject(*message);
+              m_worldProperty = dynamic_cast<ObjectProperty*>(m_traintastic->getProperty("world"));
+              connect(m_worldProperty, &ObjectProperty::valueChanged,
+                [this]()
+                {
+                  getWorld();
+                  /*if(!m_worldProperty->objectId().isEmpty())
+                  {
+                    if(m_worldRequestId != invalidRequestId)
+                      cancelRequest(m_worldRequestId);
 
+                    m_worldRequestId = getObject(m_worldProperty->objectId(),
+                      [this](const ObjectPtr& object, Message::ErrorCode ec)
+                      {
+                        m_worldRequestId = invalidRequestId;
+                        setWorld(object);
+                        // TODO: show error??
+                      });
+                  }
+                  else
+                    setWorld(nullptr);*/
+                });
+
+              if(!m_worldProperty->objectId().isEmpty())
+                getWorld();
+              else
+                setState(State::Connected);
+
+
+/*
               getObject("traintastic",
                 [this](const ObjectPtr& object, Message::ErrorCode errorCode)
                 {
                   if(object && errorCode == Message::ErrorCode::None)
                   {
                     m_traintastic = object;
+                    m_worldProperty = object->getProperty("world");
+                    if(!m_worldProperty)
+                    {
+                      Q_ASSERT(false);
+                      disconnectFromServer();
+                    }
+                    m_worldProperty->getObject(
+                      [this](const ObjectPtr& object, Message::ErrorCode ec)
+                      {
+                        if(!ec)
+                        {
+                          if(object)
+                        }
+
+                      });
+
+
+
+
+
                     setState(State::Connected);
                   }
                 });
+                */
             }
             else
             {
@@ -578,17 +700,17 @@ void Client::socketConnected()
     });
 }
 
-void Client::socketDisconnected()
+void Connection::socketDisconnected()
 {
   setState(State::Disconnected);
 }
 
-void Client::socketError(QAbstractSocket::SocketError)
+void Connection::socketError(QAbstractSocket::SocketError)
 {
   setState(State::SocketError);
 }
 
-void Client::socketReadyRead()
+void Connection::socketReadyRead()
 {
   while(m_socket->bytesAvailable() != 0)
   {

@@ -21,7 +21,8 @@
  */
 
 #include "property.hpp"
-#include "client.hpp"
+#include "connection.hpp"
+#include "object.hpp"
 
 Property::Property(Object& object, const QString& name, ValueType type, PropertyFlags flags, const QVariant& value) :
   AbstractProperty(object, name, type, flags),
@@ -31,25 +32,25 @@ Property::Property(Object& object, const QString& name, ValueType type, Property
 
 void Property::setValueBool(bool value)
 {
-  Client::instance->setPropertyBool(*this, value);
+  object().connection()->setPropertyBool(*this, value);
 }
 
 void Property::setValueInt(int value)
 {
-  Client::instance->setPropertyInt64(*this, value);
+  object().connection()->setPropertyInt64(*this, value);
 }
 
 void Property::setValueInt64(int64_t value)
 {
-  Client::instance->setPropertyInt64(*this, value);
+  object().connection()->setPropertyInt64(*this, value);
 }
 
 void Property::setValueDouble(double value)
 {
-  Client::instance->setPropertyDouble(*this, value);
+  object().connection()->setPropertyDouble(*this, value);
 }
 
 void Property::setValueString(const QString& value)
 {
-  Client::instance->setPropertyString(*this, value);
+  object().connection()->setPropertyString(*this, value);
 }

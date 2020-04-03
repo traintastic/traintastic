@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_LUA_SANDBOX_HPP
-#define SERVER_LUA_SANDBOX_HPP
+#ifndef TRAINTASTIC_SERVER_LUA_SANDBOX_HPP
+#define TRAINTASTIC_SERVER_LUA_SANDBOX_HPP
 
 #include <memory>
 #include <lua.hpp>

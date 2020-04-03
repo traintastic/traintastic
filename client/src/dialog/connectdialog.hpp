@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CLIENT_DIALOG_CONNECTDIALOG_HPP
-#define CLIENT_DIALOG_CONNECTDIALOG_HPP
+#ifndef TRAINTASTIC_CLIENT_DIALOG_CONNECTDIALOG_HPP
+#define TRAINTASTIC_CLIENT_DIALOG_CONNECTDIALOG_HPP
 
 #include <QDialog>
 #include <QTimer>
@@ -34,6 +34,7 @@ class QComboBox;
 class QLineEdit;
 class QLabel;
 class QPushButton;
+class Connection;
 
 class ConnectDialog : public QDialog
 {
@@ -42,6 +43,7 @@ class ConnectDialog : public QDialog
 
     static constexpr int defaultTTL = 3;
 
+    QSharedPointer<Connection> m_connection;
     QUdpSocket* m_udpSocket;
     Servers m_servers;
     QTimer m_broadcastTimer;
@@ -52,7 +54,6 @@ class ConnectDialog : public QDialog
     QPushButton* m_connect;
     QUrl m_url;
 
-    void closeEvent(QCloseEvent*) final;
     void setControlsEnabled(bool value);
 
   protected slots:
@@ -66,6 +67,7 @@ class ConnectDialog : public QDialog
   public:
     ConnectDialog(QWidget* parent = nullptr);
 
+    const QSharedPointer<Connection>& connection() { return m_connection; }
 };
 
 #endif

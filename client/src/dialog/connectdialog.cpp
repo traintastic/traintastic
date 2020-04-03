@@ -30,18 +30,20 @@
 #include <QPushButton>
 #include <QUrl>
 #include <QTimer>
-#include "../network/client.hpp"
+#include "../network/connection.hpp"
+#include <locale/locale.hpp>
 
 ConnectDialog::ConnectDialog(QWidget* parent) :
   QDialog(parent, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
+  m_connection{QSharedPointer<Connection>::create()},
   m_udpSocket{new QUdpSocket(this)},
   m_server{new QComboBox()},
   m_username{new QLineEdit()},
   m_password{new QLineEdit()},
   m_status{new QLabel()},
-  m_connect{new QPushButton(tr("Connect"))}
+  m_connect{new QPushButton(Locale::tr("qtapp.connect_dialog:connect"))}
 {
-  setWindowTitle(tr("Connect to server"));
+  setWindowTitle(Locale::tr("qtapp.connect_dialog:connect_to_server"));
 
   //m_udpSocket->bind(QHostAddress::Any);
 
@@ -57,9 +59,9 @@ ConnectDialog::ConnectDialog(QWidget* parent) :
 
   QFormLayout* formLayout = new QFormLayout();
   formLayout->setMargin(0);
-  formLayout->addRow(tr("Server"), m_server);
-  formLayout->addRow(tr("Username"), m_username);
-  formLayout->addRow(tr("Password"), m_password);
+  formLayout->addRow(Locale::tr("qtapp.connect_dialog:server"), m_server);
+  formLayout->addRow(Locale::tr("qtapp.connect_dialog:username"), m_username);
+  formLayout->addRow(Locale::tr("qtapp.connect_dialog:password"), m_password);
 
   QVBoxLayout* layout = new QVBoxLayout();
   layout->setMargin(0);
@@ -72,17 +74,12 @@ ConnectDialog::ConnectDialog(QWidget* parent) :
   //setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
   connect(m_udpSocket, &QUdpSocket::readyRead, this, &ConnectDialog::socketReadyRead);
   connect(&m_broadcastTimer, &QTimer::timeout, this, &ConnectDialog::broadcast);
-  connect(Client::instance, &Client::stateChanged, this, &ConnectDialog::stateChanged);
+  connect(m_connection.data(), &Connection::stateChanged, this, &ConnectDialog::stateChanged);
   connect(m_server, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &ConnectDialog::serverIndexChanged);
   connect(m_server, &QComboBox::currentTextChanged, this, &ConnectDialog::serverTextChanged);
   connect(m_connect, &QPushButton::clicked, this, &ConnectDialog::connectClick);
   m_broadcastTimer.start(1000);
   broadcast();
-}
-
-void ConnectDialog::closeEvent(QCloseEvent*)
-{
-  deleteLater();
 }
 
 void ConnectDialog::setControlsEnabled(bool value)
@@ -118,7 +115,7 @@ void ConnectDialog::broadcast()
       if(!addressEntry.broadcast().isNull())
       {
         auto message = Message::newRequest(Message::Command::Discover);
-        m_udpSocket->writeDatagram(reinterpret_cast<const char*>(**message), message->size(), addressEntry.broadcast(), Client::defaultPort);
+        m_udpSocket->writeDatagram(reinterpret_cast<const char*>(**message), message->size(), addressEntry.broadcast(), Connection::defaultPort);
       }
 }
 
@@ -144,7 +141,7 @@ void ConnectDialog::socketReadyRead()
       if(it == m_servers.end())
       {
         m_servers[url] = {name, defaultTTL};
-        m_server->addItem(url.host() + (url.port() != Client::defaultPort ? ":" + QString::number(url.port()) : "") + " (" + name + ")", url);
+        m_server->addItem(url.host() + (url.port() != Connection::defaultPort ? ":" + QString::number(url.port()) : "") + " (" + name + ")", url);
       }
       else
         it->second = defaultTTL;
@@ -154,36 +151,36 @@ void ConnectDialog::socketReadyRead()
 
 void ConnectDialog::stateChanged()
 {
-  switch(Client::instance->state())
+  switch(m_connection->state())
   {
-    case Client::State::Disconnected:
+    case Connection::State::Disconnected:
       m_status->setText("");
       break;
 
-    case Client::State::Disconnecting:
-      m_status->setText(tr("Disconnecting"));
+    case Connection::State::Disconnecting:
+      m_status->setText(Locale::tr("qtapp.connect_dialog:disconnecting"));
       break;
 
-    case Client::State::Connecting:
-      m_status->setText(tr("Connecting"));
+    case Connection::State::Connecting:
+      m_status->setText(Locale::tr("qtapp.connect_dialog:connecting"));
       break;
 
-    case Client::State::Connected:
-      m_status->setText(tr("Connected"));
-      QTimer::singleShot(300, this, &ConnectDialog::close);
+    case Connection::State::Connected:
+      m_status->setText(Locale::tr("qtapp.connect_dialog:connected"));
+      QTimer::singleShot(300, this, &ConnectDialog::accept);
       break;
 
-    case Client::State::SocketError:
-      m_status->setText(Client::instance->errorString());
+    case Connection::State::SocketError:
+      m_status->setText(m_connection->errorString());
       setControlsEnabled(true);
       break;
 
-    case Client::State::ErrorAuthenticationFailed:
-      m_status->setText(tr("Authentication failed"));
+    case Connection::State::ErrorAuthenticationFailed:
+      m_status->setText(Locale::tr("qtapp.connect_dialog:authentication_failed"));
       break;
 
-    case Client::State::ErrorNewSessionFailed:
-      m_status->setText(tr("Create session failed"));
+    case Connection::State::ErrorNewSessionFailed:
+      m_status->setText(Locale::tr("qtapp.connect_dialog:create_session_failed"));
       break;
   }
 }
@@ -204,5 +201,5 @@ void ConnectDialog::serverTextChanged(const QString& text)
 void ConnectDialog::connectClick()
 {
   setControlsEnabled(false);
-  Client::instance->connectToHost(m_url, m_username->text(), m_password->text());
+  m_connection->connectToHost(m_url, m_username->text(), m_password->text());
 }

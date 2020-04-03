@@ -21,11 +21,13 @@
  */
 
 #include "object.hpp"
-#include "client.hpp"
+#include "connection.hpp"
 #include "property.hpp"
+#include "method.hpp"
 
-Object::Object(Handle handle, const QString& classId) :
+Object::Object(const QSharedPointer<Connection>& connection, Handle handle, const QString& classId) :
   QObject(nullptr),
+  m_connection{connection},
   m_handle{handle},
   m_classId{classId}
 {
@@ -33,8 +35,8 @@ Object::Object(Handle handle, const QString& classId) :
 
 Object::~Object()
 {
-  if(Client::instance)
-    Client::instance->releaseObject(this);
+  if(m_connection)
+    m_connection->releaseObject(this);
 }
 
 const InterfaceItem* Object::getInterfaceItem(const QString& name) const
@@ -55,4 +57,14 @@ const AbstractProperty* Object::getProperty(const QString& name) const
 AbstractProperty* Object::getProperty(const QString& name)
 {
   return dynamic_cast<AbstractProperty*>(m_interfaceItems.find(name));
+}
+
+const Method* Object::getMethod(const QString& name) const
+{
+  return dynamic_cast<const Method*>(m_interfaceItems.find(name));
+}
+
+Method* Object::getMethod(const QString& name)
+{
+  return dynamic_cast<Method*>(m_interfaceItems.find(name));
 }

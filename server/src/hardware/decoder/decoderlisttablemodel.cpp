@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,7 +40,10 @@ bool DecoderListTableModel::isListedProperty(const std::string& name)
 DecoderListTableModel::DecoderListTableModel(DecoderList& list) :
   ObjectListTableModel<Decoder>(list)
 {
-  setColumnHeaders({"Id", "Name", "Address"});
+  setColumnHeaders({
+    "hardware.decoder:id",
+    "hardware.decoder:name",
+    "hardware.decoder:address"});
 }
 
 std::string DecoderListTableModel::getText(uint32_t column, uint32_t row) const

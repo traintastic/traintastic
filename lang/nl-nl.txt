@@ -1,7 +1,90 @@
 ## Traintastic language file: Dutch (NL)
 
-language:en-us=Engels
+:address=Adres
+:command_station=Centrale
+:emergency_stop=Noodstop
+:id=Id
+:name=Naam
+:notes=Notities
+
+clock:day=Dag
+clock:hour=Uur
+clock:minute=Minut
+clock:month=Maand
+clock:multiplier=Vermenigvuldiger
+clock:year=Jaar
+
+hardware.command_station.li10x:baudrate=Baudrate
+hardware.command_station.li10x:decoders=Decoders
+hardware.command_station.li10x:online=Online
+hardware.command_station.li10x:port=Poort
+hardware.command_station.li10x:xpressnet=XpressNet
+
+hardware.decoder:direction=Richting
+hardware.decoder:functions=Functies
+hardware.decoder:protocol=Protocol
+hardware.decoder:speed_step=Snelheid stap
+hardware.decoder:speed_steps=Snelheid stappen
+
+#hardware.decoder_function:momentary=Momentary
+hardware.decoder_function:number=Nummer
+hardware.decoder_function:value=Waarde
+
+language:de-de=Duits
+language:en-us=Engels (VS)
 language:nl-nl=Nederlands
+
+lua.script:active=Actief
+lua.script:code=Code
+
+protocol.xpressnet:command_station=Centrale
+protocol.xpressnet:use_emergency_stop_locomotive_command=Gebruik kort locomotief noodstop commando
+protocol.xpressnet:use_function_state_commands=Gebruik functie status commandos
+protocol.xpressnet:use_roco_f13_f20_command=Gebruik Roco F13-F20 commando
+
+qtapp.connect_dialog:connect=Verbind
+qtapp.connect_dialog:connect_to_server=Verbind met server
+qtapp.connect_dialog:connected=Verbonden
+qtapp.connect_dialog:connecting=Bezig met verbinden
+qtapp.connect_dialog:password=Wachtwoord
+qtapp.connect_dialog:server=Server
+qtapp.connect_dialog:username=Gebruikersnaam
+
+qtapp.mainmenu:about=Over
+qtapp.mainmenu:settings=Instellingen
+qtapp.mainmenu:connect_to_server=Verbind met server
+qtapp.mainmenu:disconnect_from_server=Verbreek verbinding met server
+qtapp.mainmenu:export_world=Wereld exporteren
+qtapp.mainmenu:file=Bestand
+qtapp.mainmenu:fullscreen=Volledigscherm
+qtapp.mainmenu:hardware=Hardware
+qtapp.mainmenu:help=Help
+qtapp.mainmenu:import_world=Wereld importeren
+qtapp.mainmenu:load_world=Wereld laden
+qtapp.mainmenu:new_world=Nieuwe wereld
+qtapp.mainmenu:objects=Objecten
+qtapp.mainmenu:quit=Afsluiten
+qtapp.mainmenu:save_world=Wereld opslaan
+qtapp.mainmenu:server_console=Server console
+qtapp.mainmenu:server_settings=Server instellingen
+qtapp.mainmenu:tools=Extra
+qtapp.mainmenu:view=Beeld
 
 settings:localhost_only=Alleen localhost
 settings:port=Poort
+
+world:clock=Klok
+world:command_stations=Centrales
+world:decoders=Decoders
+world:inputs=Ingangen
+world:lua_scripts=Lua scripts
+world:scale=Schaal
+world:track_power_off=Railspanning uit
+world:track_power_on=Railspanning aan
+
+
+
+
+hardware.decoder_function_list:f_hash=F#
+
+

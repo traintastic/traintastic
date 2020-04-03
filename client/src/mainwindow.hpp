@@ -20,18 +20,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CLIENT_MAINWINDOW_HPP
-#define CLIENT_MAINWINDOW_HPP
-#define MAINWINDOW_HPP
+#ifndef TRAINTASTIC_CLIENT_MAINWINDOW_HPP
+#define TRAINTASTIC_CLIENT_MAINWINDOW_HPP
 
 #include <QMainWindow>
 #include <QMap>
 #include <enum/traintasticmode.hpp>
 #include "network/objectptr.hpp"
 
-class QMdiArea;
+class MdiArea;
 class QMdiSubWindow;
 class QActionGroup;
+class Connection;
+class AbstractProperty;
 class ObjectEditSubWindow;
 class HardwareListSubWindow;
 class LuaScriptsSubWindow;
@@ -43,7 +44,9 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
   protected:
-    QMdiArea* m_mdiArea;
+    QSharedPointer<Connection> m_connection;
+    ObjectPtr m_world;
+    MdiArea* m_mdiArea;
     QMap<QString, QMdiSubWindow*> m_mdiSubWindows;
     QAction* m_actionConnectToServer;
     QAction* m_actionDisconnectFromServer;
@@ -52,14 +55,13 @@ class MainWindow : public QMainWindow
     QAction* m_actionSaveWorld;
     QAction* m_actionImportWorld;
     QAction* m_actionExportWorld;
-    QMenu* m_menuHardware;
-    QAction* m_actionLua;
+    QMenu* m_menuObjects;
     QAction* m_actionServerSettings;
     QAction* m_actionServerConsole;
-    QActionGroup* m_actionGroupMode;
-    QAction* m_actionModeRun;
-    QAction* m_actionModeStop;
-    QAction* m_actionModeEdit;
+    QAction* m_actionTrackPowerOff;
+    QAction* m_actionTrackPowerOn;
+    QAction* m_actionEmergencyStop;
+    QAction* m_actionEdit;
     QByteArray m_beforeFullScreenGeometry;
 
     void closeEvent(QCloseEvent* event) final;
@@ -67,21 +69,22 @@ class MainWindow : public QMainWindow
 
   protected slots:
     void disconnectFromServer();
-    void newWorld();
     void loadWorld();
-    void saveWorld();
     void importWorld();
     void exportWorld();
     void toggleFullScreen();
     void showAbout();
     void clientStateChanged();
-    void updateModeActions();
+    void updateActions();
+    //void updateModeActions();
 
   public:
     inline static MainWindow* instance = nullptr;
 
     MainWindow(QWidget *parent = nullptr);
-    ~MainWindow() override;
+    ~MainWindow() final;
+
+    const QSharedPointer<Connection>& connection() { return m_connection; }
 
   public slots:
     void connectToServer();

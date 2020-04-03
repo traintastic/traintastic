@@ -20,12 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_ENUM_DECODERPROTOCOL_HPP
-#define SERVER_ENUM_DECODERPROTOCOL_HPP
+#ifndef TRAINTASTIC_SERVER_ENUM_DECODERPROTOCOL_HPP
+#define TRAINTASTIC_SERVER_ENUM_DECODERPROTOCOL_HPP
 
 #include <nlohmann/json.hpp>
-#include "../lua/enum.hpp"
 #include <enum/decoderprotocol.hpp>
+#include "../lua/enumvalues.hpp"
 
 NLOHMANN_JSON_SERIALIZE_ENUM(DecoderProtocol,
 {
@@ -34,7 +34,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(DecoderProtocol,
   {DecoderProtocol::Custom, "custom"},
 })
 
-LUA_ENUM(DecoderProtocol, 3,
+LUA_ENUM_VALUES(DecoderProtocol, 3,
 {
   {DecoderProtocol::None, "NONE"},
   {DecoderProtocol::DCC, "DCC"},

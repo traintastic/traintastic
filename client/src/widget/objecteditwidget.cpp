@@ -25,7 +25,7 @@
 #include <QVBoxLayout>
 #include <QTabWidget>
 #include <QtWaitingSpinner/waitingspinnerwidget.h>
-#include "../network/client.hpp"
+#include "../network/connection.hpp"
 #include "../network/object.hpp"
 #include "../network/property.hpp"
 #include "../network/objectproperty.hpp"
@@ -39,6 +39,7 @@
 #include "propertydirectioncontrol.hpp"
 #include "propertyvaluelabel.hpp"
 #include "createwidget.hpp"
+#include "../mainwindow.hpp"
 #include <enum/category.hpp>
 
 #include <enum/direction.hpp>
@@ -59,7 +60,7 @@ QString toString(Category value)
 
 ObjectEditWidget::ObjectEditWidget(const ObjectPtr& object, QWidget* parent) :
   QWidget(parent),
-  m_requestId{Client::invalidRequestId},
+  m_requestId{Connection::invalidRequestId},
   m_object{object}
 {
   buildForm();
@@ -73,10 +74,10 @@ ObjectEditWidget::ObjectEditWidget(const QString& id, QWidget* parent) :
   auto* spinner = new WaitingSpinnerWidget(this, true, false);
   spinner->start();
 
-  m_requestId = Client::instance->getObject(id,
+  m_requestId = MainWindow::instance->connection()->getObject(id,
     [this, spinner](const ObjectPtr& object, Message::ErrorCode ec)
     {
-      m_requestId = Client::invalidRequestId;
+      m_requestId = Connection::invalidRequestId;
       if(object)
       {
         m_object = object;
@@ -90,7 +91,7 @@ ObjectEditWidget::ObjectEditWidget(const QString& id, QWidget* parent) :
 
 ObjectEditWidget::~ObjectEditWidget()
 {
-  Client::instance->cancelRequest(m_requestId);
+  m_object->connection()->cancelRequest(m_requestId);
 }
 
 void ObjectEditWidget::buildForm()

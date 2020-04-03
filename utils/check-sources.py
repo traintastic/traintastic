@@ -26,7 +26,7 @@ def check_license(text, filepath, fix=False):
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) ''' + str(datetime.datetime.now().year) + ''' Reinder Feenstra
+ * Copyright (C) 2019-''' + str(datetime.datetime.now().year) + ''' Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,7 +52,7 @@ def check_license(text, filepath, fix=False):
 
 
 def check_include_guard(text, filepath, fix=False):
-    guard = filepath.replace(os.sep, '_').replace('.', '_').upper().replace('_SRC_', '_')
+    guard = 'TRAINTASTIC_' + filepath.replace(os.sep, '_').replace('.', '_').upper().replace('_SRC_', '_')
     m = re.search(r'^([^#]*)#ifndef ([0-9A-Z_]+)\n#define \2\n', text, re.MULTILINE)
     if m is None:
         print_error('can\'t find include guard', filepath)

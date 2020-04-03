@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_CORE_ABSTRACTPROPERTY_HPP
-#define SERVER_CORE_ABSTRACTPROPERTY_HPP
+#ifndef TRAINTASTIC_SERVER_CORE_ABSTRACTPROPERTY_HPP
+#define TRAINTASTIC_SERVER_CORE_ABSTRACTPROPERTY_HPP
 
 #include "interfaceitem.hpp"
 #include <enum/valuetype.hpp>
@@ -53,7 +53,7 @@ class AbstractProperty : public InterfaceItem
     {
       return (m_flags & PropertyFlagsAccessMask) == PropertyFlags::ReadWrite;
     }
-    
+
     bool isStoreable() const
     {
       return (m_flags & PropertyFlagsStoreMask) == PropertyFlags::Store;
@@ -69,7 +69,8 @@ class AbstractProperty : public InterfaceItem
       return m_type;
     }
 
-    virtual std::string enumName() const = 0; // TODO: const std::string_view& ??
+    virtual std::string_view enumName() const = 0;
+    virtual std::string_view setName() const = 0;
 
     virtual bool toBool() const = 0;
     virtual int64_t toInt64() const = 0;

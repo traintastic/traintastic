@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_CORE_OBJECTPROPERTY_HPP
-#define SERVER_CORE_OBJECTPROPERTY_HPP
+#ifndef TRAINTASTIC_SERVER_CORE_OBJECTPROPERTY_HPP
+#define TRAINTASTIC_SERVER_CORE_OBJECTPROPERTY_HPP
 
 #include "abstractproperty.hpp"
 #include "to.hpp"
@@ -85,7 +85,7 @@ class ObjectProperty : public AbstractProperty
         setValueInternal(value);
         */
     }
-    
+
     void setValueInternal(const std::shared_ptr<T>& value)
     {
       if(m_value != value)
@@ -126,7 +126,13 @@ class ObjectProperty : public AbstractProperty
       return *this;
     }
 
-    std::string enumName() const final
+    std::string_view enumName() const final
+    {
+      assert(false);
+      return "";
+    }
+
+    std::string_view setName() const final
     {
       assert(false);
       return "";

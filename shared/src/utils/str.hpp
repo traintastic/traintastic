@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SHARED_UTILS_STR_HPP
-#define SHARED_UTILS_STR_HPP
+#ifndef TRAINTASTIC_SHARED_UTILS_STR_HPP
+#define TRAINTASTIC_SHARED_UTILS_STR_HPP
 
 #define STR(x) _STR(x)
 #define _STR(x) #x

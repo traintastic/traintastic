@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_CORE_PROPERTY_HPP
-#define SERVER_CORE_PROPERTY_HPP
+#ifndef TRAINTASTIC_SERVER_CORE_PROPERTY_HPP
+#define TRAINTASTIC_SERVER_CORE_PROPERTY_HPP
 
 #include "abstractproperty.hpp"
 #include "valuetypetraits.hpp"
@@ -40,6 +40,11 @@ class Property : public AbstractProperty
     T m_value;
     OnChanged m_onChanged;
     OnSet m_onSet;
+
+    /*void loadValue(const nlohmann::json& value) final
+    {
+      m_value = to<T>(value);
+    }*/
 
   public:
     Property(Object* object, const std::string& name, const T& value, PropertyFlags flags) :
@@ -110,10 +115,19 @@ class Property : public AbstractProperty
       return *this;
     }
 
-    std::string enumName() const final
+    std::string_view enumName() const final
     {
-      if constexpr(std::is_enum_v<T>)
+      if constexpr(std::is_enum_v<T> && !is_set_v<T>)
         return EnumName<T>::value;
+
+      assert(false);
+      return "";
+    }
+
+    std::string_view setName() const final
+    {
+      if constexpr(is_set_v<T>)
+        return set_name_v<T>;
 
       assert(false);
       return "";
@@ -176,6 +190,8 @@ class Property : public AbstractProperty
 
     void fromJSON(const nlohmann::json& value) final
     {
+      setValue(to<T>(value));
+    /*
       switch(value.type())
       {
         case nlohmann::json::value_t::boolean:
@@ -198,6 +214,7 @@ class Property : public AbstractProperty
         default:
           throw std::runtime_error("unsupported JSON type");
       }
+      */
     }
 };
 

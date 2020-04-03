@@ -26,9 +26,16 @@ namespace Hardware {
 
 const std::shared_ptr<DecoderFunction> DecoderFunction::null;
 
-DecoderFunction::DecoderFunction(const std::weak_ptr<World>& world, const std::string& _id) :
-  Output(world, _id),
-  m_decoder{nullptr},
+std::shared_ptr<DecoderFunction> DecoderFunction::create(Decoder& decoder, const std::string& _id)
+{
+  auto obj = std::make_shared<DecoderFunction>(decoder, _id);
+  obj->addToWorld();
+  return obj;
+}
+
+DecoderFunction::DecoderFunction(Decoder& decoder, const std::string& _id) :
+  Output(decoder.world(), _id),
+  m_decoder{decoder},
   number{this, "number", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
   momentary{this, "momentary", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -40,12 +47,12 @@ DecoderFunction::DecoderFunction(const std::weak_ptr<World>& world, const std::s
 
 bool DecoderFunction::setValue(bool& value)
 {
-  return m_decoder;
+  return true;//m_decoder;
 }
 
 void DecoderFunction::valueChanged(bool)
 {
-  m_decoder->changed(DecoderChangeFlags::FunctionValue, number);
+  m_decoder.changed(DecoderChangeFlags::FunctionValue, number);
 }
 
 }

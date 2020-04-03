@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CLIENT_NETWORK_CLIENT_HPP
-#define CLIENT_NETWORK_CLIENT_HPP
+#ifndef TRAINTASTIC_CLIENT_NETWORK_CONNECTION_HPP
+#define TRAINTASTIC_CLIENT_NETWORK_CONNECTION_HPP
 
 #include <QObject>
 #include <QAbstractSocket>
@@ -34,8 +34,10 @@
 
 class QTcpSocket;
 class Property;
+class ObjectProperty;
+class Method;
 
-class Client : public QObject
+class Connection : public QObject, public QEnableSharedFromThis<Connection>
 {
   Q_OBJECT
 
@@ -67,6 +69,9 @@ class Client : public QObject
     QMap<uint16_t, std::function<void(const std::shared_ptr<Message>&)>> m_requestCallback;
     QUuid m_sessionUUID;
     ObjectPtr m_traintastic;
+    ObjectProperty* m_worldProperty;
+    int m_worldRequestId;
+    ObjectPtr m_world;
     QMap<Handle, QWeakPointer<Object>> m_objects;
     QMap<Handle, TableModel*> m_tableModels;
 
@@ -78,6 +83,9 @@ class Client : public QObject
     ObjectPtr readObject(const Message &message);
     TableModelPtr readTableModel(const Message& message);
 
+    void getWorld();
+    void setWorld(const ObjectPtr& world);
+
   protected slots:
     void socketConnected();
     void socketDisconnected();
@@ -88,10 +96,10 @@ class Client : public QObject
     static const quint16 defaultPort = 5740;
     static constexpr int invalidRequestId = -1;
 
-    static Client* instance;
+    //static Client* instance;
 
-    Client();
-    ~Client();
+    Connection();
+    ~Connection();
 
     inline bool isConnected() const { return m_state == State::Connected; }
     bool isDisconnected() const;
@@ -105,9 +113,10 @@ class Client : public QObject
     void cancelRequest(int requestId);
 
     const ObjectPtr& traintastic() const { return m_traintastic; }
+    const ObjectPtr& world() const { return m_world; }
 
-    int createObject(const QString& classId, const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
-    int getObject(const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
+    //[[nodiscard]] int createObject(const QString& classId, const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
+    [[nodiscard]] int getObject(const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
     void releaseObject(Object* object);
 
     void setPropertyBool(Property& property, bool value);
@@ -115,12 +124,16 @@ class Client : public QObject
     void setPropertyDouble(Property& property, double value);
     void setPropertyString(Property& property, const QString& value);
 
-    int getTableModel(const ObjectPtr& object, std::function<void(const TableModelPtr&, Message::ErrorCode)> callback);
+    void callMethod(Method& method);
+    [[nodiscard]] int callMethod(Method& method, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
+
+    [[nodiscard]] int getTableModel(const ObjectPtr& object, std::function<void(const TableModelPtr&, Message::ErrorCode)> callback);
     void releaseTableModel(TableModel* tableModel);
     void setTableModelRegion(TableModel* tableModel, int columnMin, int columnMax, int rowMin, int rowMax);
 
   signals:
     void stateChanged();
+    void worldChanged();
 };
 
 #endif

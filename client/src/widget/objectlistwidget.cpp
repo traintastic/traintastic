@@ -26,9 +26,10 @@
 #include <QTableView>
 #include <QtWaitingSpinner/waitingspinnerwidget.h>
 #include "tablewidget.hpp"
-#include "../network/client.hpp"
-//#include "../network/object.hpp"
+#include "../network/connection.hpp"
+#include "../network/object.hpp"
 #include "../network/tablemodel.hpp"
+#include "../network/method.hpp"
 #include "../network/utils.hpp"
 #include "../widget/alertwidget.hpp"
 
@@ -53,12 +54,12 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
   auto* spinner = new WaitingSpinnerWidget(this, true, false);
   spinner->start();
 
-  m_requestId = Client::instance->getTableModel(m_object,
+  m_requestId = m_object->connection()->getTableModel(m_object,
     [this, spinner](const TableModelPtr& tableModel, Message::ErrorCode ec)
     {
       if(tableModel)
       {
-        m_requestId = Client::invalidRequestId;
+        m_requestId = Connection::invalidRequestId;
 
         m_tableWidget->setTableModel(tableModel);
         connect(m_tableWidget, &TableWidget::doubleClicked, this, &ObjectListWidget::tableDoubleClicked);
@@ -68,17 +69,36 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
       else
         static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(errorCodeToText(ec)));
     });
+
+  if(Method* method = m_object->getMethod("add"))
+  {
+    m_actionAdd = m_toolbar->addAction(QIcon(":/dark/add.svg"), method->displayName(),
+      [this, method]()
+      {
+        if(m_requestIdAdd != Connection::invalidRequestId)
+          m_object->connection()->cancelRequest(m_requestIdAdd);
+
+        m_requestIdAdd = method->call(
+          [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+          {
+            m_requestIdAdd = Connection::invalidRequestId;
+
+            if(object)
+            {
+              MainWindow::instance->showObject(object);
+            }
+
+            // TODO: show error
+
+
+          });
+      });
+  }
 }
 
 ObjectListWidget::~ObjectListWidget()
 {
-  Client::instance->cancelRequest(m_requestId);
-}
-
-void ObjectListWidget::addActionAdd()
-{
-  Q_ASSERT(!m_actionAdd);
-  m_actionAdd = m_toolbar->addAction(QIcon(":/dark/add.svg"), tr("Add"), [this](){ add(); });
+  m_object->connection()->cancelRequest(m_requestId);
 }
 
 void ObjectListWidget::addActionEdit()

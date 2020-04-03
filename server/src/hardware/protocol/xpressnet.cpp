@@ -91,14 +91,16 @@ XpressNet::XpressNet(Object& parent, const std::string& parentPropertyName, std:
     .addAttributeEnabled(false);
 }
 
-void XpressNet::modeChanged(TraintasticMode mode)
+void XpressNet::worldEvent(WorldState state, WorldEvent event)
 {
-  SubObject::modeChanged(mode);
+  SubObject::worldEvent(state, event);
 
-  commandStation.setAttributeEnabled(mode == TraintasticMode::Edit);
-  useEmergencyStopLocomotiveCommand.setAttributeEnabled(mode == TraintasticMode::Edit);
-  useFunctionStateCommands.setAttributeEnabled(mode == TraintasticMode::Edit);
-  useRocoF13F20Command.setAttributeEnabled(mode == TraintasticMode::Edit);
+  const bool editable = contains(state, WorldState::Edit);
+
+  commandStation.setAttributeEnabled(editable);
+  useEmergencyStopLocomotiveCommand.setAttributeEnabled(editable);
+  useFunctionStateCommands.setAttributeEnabled(editable);
+  useRocoF13F20Command.setAttributeEnabled(editable);
 }
 
 void XpressNet::decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderChangeFlags changes, uint32_t functionNumber)

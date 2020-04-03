@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_CORE_CONSOLE_HPP
-#define SERVER_CORE_CONSOLE_HPP
+#ifndef TRAINTASTIC_SERVER_CORE_CONSOLE_HPP
+#define TRAINTASTIC_SERVER_CORE_CONSOLE_HPP
 
 #include "object.hpp"
 #include "property.hpp"
@@ -67,14 +67,22 @@ class Console : public Object, public Table
 
     Console();
 
+    void log(Level level, std::string_view id, const std::string& message);
     void log(Level level, const std::string& id, const std::string& message);
 
+    inline void debug(std::string_view id, const std::string& message) { log(Level::Debug, id, message); }
     inline void debug(const std::string& id, const std::string& message) { log(Level::Debug, id, message); }
+    inline void info(std::string_view id, const std::string& message) { log(Level::Info, id, message); }
     inline void info(const std::string& id, const std::string& message) { log(Level::Info, id, message); }
+    inline void notice(std::string_view id, const std::string& message) { log(Level::Notice, id, message); }
     inline void notice(const std::string& id, const std::string& message) { log(Level::Notice, id, message); }
+    inline void warning(std::string_view id, const std::string& message) { log(Level::Warning, id, message); }
     inline void warning(const std::string& id, const std::string& message) { log(Level::Warning, id, message); }
+    inline void error(std::string_view id, const std::string& message) { log(Level::Error, id, message); }
     inline void error(const std::string& id, const std::string& message) { log(Level::Error, id, message); }
+    inline void critical(std::string_view id, const std::string& message) { log(Level::Critical, id, message); }
     inline void critical(const std::string& id, const std::string& message) { log(Level::Critical, id, message); }
+    inline void fatal(std::string_view id, const std::string& message) { log(Level::Fatal, id, message); }
     inline void fatal(const std::string& id, const std::string& message) { log(Level::Fatal, id, message); }
 
     TableModelPtr getModel() final;

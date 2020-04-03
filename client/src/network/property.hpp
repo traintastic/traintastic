@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CLIENT_NETWORK_PROPERTY_HPP
-#define CLIENT_NETWORK_PROPERTY_HPP
+#ifndef TRAINTASTIC_CLIENT_NETWORK_PROPERTY_HPP
+#define TRAINTASTIC_CLIENT_NETWORK_PROPERTY_HPP
 
 #include "abstractproperty.hpp"
 #include <QVariant>
@@ -33,7 +33,7 @@ class Property : public AbstractProperty
 {
   Q_OBJECT
 
-  friend class Client;
+  friend class Connection;
 
   protected:
     QVariant m_value;

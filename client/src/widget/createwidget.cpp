@@ -22,8 +22,10 @@
 
 #include "createwidget.hpp"
 #include "commandstationlistwidget.hpp"
+#include "decoderfunctionlistwidget.hpp"
 #include "decoderlistwidget.hpp"
 #include "inputlistwidget.hpp"
+#include "luascriptlistwidget.hpp"
 #include "objecteditwidget.hpp"
 #include "serverconsolewidget.hpp"
 #include "../network/object.hpp"
@@ -34,10 +36,14 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
 
   if(classId == "command_station_list")
     return new CommandStationListWidget(object, parent);
-  else if(classId == "decoder_list")
+  else if(classId == "decoder_function_list")
     return new DecoderListWidget(object, parent);
+  else if(classId == "decoder_list")
+    return new DecoderFunctionListWidget(object, parent);
   else if(classId == "input_list")
     return new InputListWidget(object, parent);
+  else if(classId == "lua.script_list")
+    return new LuaScriptListWidget(object, parent);
   else if(classId == "console")
     return new ServerConsoleWidget(object, parent);
   else

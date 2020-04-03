@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_CORE_WORLDLIST_HPP
-#define SERVER_CORE_WORLDLIST_HPP
+#ifndef TRAINTASTIC_SERVER_CORE_WORLDLIST_HPP
+#define TRAINTASTIC_SERVER_CORE_WORLDLIST_HPP
 
 #include "object.hpp"
 #include "table.hpp"

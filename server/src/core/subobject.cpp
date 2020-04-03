@@ -22,6 +22,7 @@
 
 #include "subobject.hpp"
 #include "idobject.hpp"
+#include "world.hpp"
 
 SubObject::SubObject(Object &parent, const std::string &parentPropertyName) :
   Object(),
@@ -37,9 +38,12 @@ std::string SubObject::id() const
     value = object->id;
   else if(SubObject* object = dynamic_cast<SubObject*>(&m_parent))
     value = object->id();
+  else if(dynamic_cast<World*>(&m_parent))
+    value = World::classId;
   else
     assert(false);
-  value += "." + m_parentPropertyName;
+  value += ".";
+  value += m_parentPropertyName;
   return value;
 
 }

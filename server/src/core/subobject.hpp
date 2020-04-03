@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_CORE_SUBOBJECT_HPP
-#define SERVER_CORE_SUBOBJECT_HPP
+#ifndef TRAINTASTIC_SERVER_CORE_SUBOBJECT_HPP
+#define TRAINTASTIC_SERVER_CORE_SUBOBJECT_HPP
 
 #include "object.hpp"
 
@@ -34,6 +34,7 @@ class SubObject : public Object
   public:
     SubObject(Object& parent, const std::string& parentPropertyName);
 
+    Object& parent() const { return m_parent; }
     std::string id() const;
 };
 

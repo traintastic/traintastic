@@ -23,7 +23,6 @@
 #include "mainwindow.hpp"
 #include <QMenuBar>
 #include <QStatusBar>
-#include <QMdiArea>
 #include <QMdiSubWindow>
 #include <QVBoxLayout>
 #include <QToolBar>
@@ -31,24 +30,38 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QApplication>
+#include "mdiarea.hpp"
 #include "dialog/connectdialog.hpp"
-#include "network/client.hpp"
+#include "network/connection.hpp"
 #include "network/object.hpp"
 #include "network/property.hpp"
-#include "subwindow/objecteditsubwindow.hpp"
+#include "network/method.hpp"
+//#include "subwindow/objecteditsubwindow.hpp"
 #include "subwindow/objectsubwindow.hpp"
 
 
 #include <QDesktopServices>
-
+#include <locale/locale.hpp>
 
 #define SETTING_PREFIX "mainwindow/"
 #define SETTING_GEOMETRY SETTING_PREFIX "geometry"
 #define SETTING_WINDOWSTATE SETTING_PREFIX "windowstate"
 
+static void setMenuEnabled(QMenu* menu, bool enabled)
+{
+  menu->setEnabled(enabled);
+  for(QAction* action : menu->actions())
+  {
+    if(action->menu())
+      setMenuEnabled(action->menu(), enabled);
+    action->setEnabled(enabled);
+  }
+}
+
+
 MainWindow::MainWindow(QWidget* parent) :
   QMainWindow(parent),
-  m_mdiArea{new QMdiArea()}
+  m_mdiArea{new MdiArea()}
 {
   instance = this;
 
@@ -66,57 +79,108 @@ MainWindow::MainWindow(QWidget* parent) :
     //QMenu* subMenu;
     //QAction* act;
 
-    menu = menuBar()->addMenu(tr("File"));
-    m_actionConnectToServer = menu->addAction(tr("Connect to server") + "...", this, &MainWindow::connectToServer);
-    m_actionDisconnectFromServer = menu->addAction(tr("Disconnect from server"), this, &MainWindow::disconnectFromServer);
+    menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:file"));
+    m_actionConnectToServer = menu->addAction(Locale::tr("qtapp.mainmenu:connect_to_server") + "...", this, &MainWindow::connectToServer);
+    m_actionDisconnectFromServer = menu->addAction(Locale::tr("qtapp.mainmenu:disconnect_from_server"), this, &MainWindow::disconnectFromServer);
     menu->addSeparator();
-    m_actionNewWorld = menu->addAction(tr("New world"), this, &MainWindow::newWorld);
-    m_actionLoadWorld = menu->addAction(tr("Load world") + "...", this, &MainWindow::loadWorld);
-    m_actionSaveWorld = menu->addAction(tr("Save world"), this, &MainWindow::saveWorld);
+    m_actionNewWorld = menu->addAction(QIcon(":/dark/world_new.svg"), Locale::tr("qtapp.mainmenu:new_world"),
+      [this]()
+      {
+        if(m_connection)
+          if(const ObjectPtr& traintastic = m_connection->traintastic())
+            if(Method* method = traintastic->getMethod("new_world"))
+              method->call();
+      });
+    m_actionLoadWorld = menu->addAction(QIcon(":/dark/world_load.svg"), Locale::tr("qtapp.mainmenu:load_world") + "...", this, &MainWindow::loadWorld);
+    m_actionSaveWorld = menu->addAction(QIcon(":/dark/world_save.svg"), Locale::tr("qtapp.mainmenu:save_world"),
+      [this]()
+      {
+        if(m_world)
+          if(Method* method = m_world->getMethod("save"))
+            method->call();
+      });
     menu->addSeparator();
-    m_actionImportWorld = menu->addAction(tr("Import world") + "...", this, &MainWindow::importWorld);
-    m_actionExportWorld = menu->addAction(tr("Export world") + "...", this, &MainWindow::exportWorld);
+    m_actionImportWorld = menu->addAction(QIcon(":/dark/world_import.svg"), Locale::tr("qtapp.mainmenu:import_world") + "...", this, &MainWindow::importWorld);
+    m_actionExportWorld = menu->addAction(QIcon(":/dark/world_export.svg"), Locale::tr("qtapp.mainmenu:export_world") + "...", this, &MainWindow::exportWorld);
     menu->addSeparator();
-    menu->addAction(tr("Quit"), this, &MainWindow::close);
+    menu->addAction(Locale::tr("qtapp.mainmenu:quit"), this, &MainWindow::close);
 
-    menu = menuBar()->addMenu(tr("View"));
-    actFullScreen = menu->addAction(tr("Fullscreen"), this, &MainWindow::toggleFullScreen);
+    menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:view"));
+    actFullScreen = menu->addAction(Locale::tr("qtapp.mainmenu:fullscreen"), this, &MainWindow::toggleFullScreen);
     actFullScreen->setCheckable(true);
     actFullScreen->setShortcut(Qt::Key_F11);
 
-    menu = menuBar()->addMenu(tr("Objects"));
-    m_menuHardware = menu->addMenu(QIcon(":/dark/hardware.svg"), tr("Hardware"));
-    m_menuHardware->addAction(tr("Command stations") + "...", [this](){ showObject("world.command_stations"); });
-    m_menuHardware->addAction(tr("Decoders") + "...", [this](){ showObject("world.decoders"); });
-    m_menuHardware->addAction(tr("Inputs") + "...", [this](){ showObject("world.inputs"); });
-    m_actionLua = menu->addAction(QIcon(":/dark/lua.svg"),tr("Lua scripts") + "...", [this](){ showObject("world.lua_scripts"); });
+    m_menuObjects = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:objects"));
+    menu = m_menuObjects->addMenu(QIcon(":/dark/hardware.svg"), Locale::tr("qtapp.mainmenu:hardware"));
+    menu->addAction(Locale::tr("world:command_stations") + "...", [this](){ showObject("world.command_stations"); });
+    menu->addAction(Locale::tr("world:decoders") + "...", [this](){ showObject("world.decoders"); });
+    menu->addAction(Locale::tr("world:inputs") + "...", [this](){ showObject("world.inputs"); });
+    m_menuObjects->addAction(Locale::tr("world:clock") + "...", [this](){ showObject("world.clock"); });
+    m_menuObjects->addAction(QIcon(":/dark/lua.svg"), Locale::tr("world:lua_scripts") + "...", [this](){ showObject("world.lua_scripts"); });
 
-    menu = menuBar()->addMenu(tr("Tools"));
-    menu->addAction(tr("Client settings") + "...")->setEnabled(false);
+    menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:tools"));
+    menu->addAction(Locale::tr("qtapp.mainmenu:settings") + "...")->setEnabled(false);
     menu->addSeparator();
-    m_actionServerSettings = menu->addAction(tr("Server settings") + "...", this, [this](){ showObject("traintastic.settings"); });
-    m_actionServerConsole = menu->addAction(tr("Server console") + "...", this, [this](){ showObject("traintastic.console"); });
+    m_actionServerSettings = menu->addAction(Locale::tr("qtapp.mainmenu:server_settings") + "...", this, [this](){ showObject("traintastic.settings"); });
+    m_actionServerConsole = menu->addAction(Locale::tr("qtapp.mainmenu:server_console") + "...", this, [this](){ showObject("traintastic.console"); });
     m_actionServerConsole->setShortcut(Qt::Key_F12);
 
-    menu = menuBar()->addMenu(tr("Help"));
-    menu->addAction(tr("Help"), [this](){ QDesktopServices::openUrl("https://traintastic.org/doc?version=" + QApplication::applicationVersion()); })->setShortcut(Qt::Key_F1);
+    menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:help"));
+    menu->addAction(Locale::tr("qtapp.mainmenu:help"), [](){ QDesktopServices::openUrl("https://traintastic.org/manual?version=" + QApplication::applicationVersion()); })->setShortcut(Qt::Key_F1);
     //menu->addSeparator();
-    //menu->addAction(tr("About Qt") + "...", qApp, &QApplication::aboutQt);
-    menu->addAction(tr("About") + "...", this, &MainWindow::showAbout);
+    //menu->addAction(Locale::tr("qtapp.mainmenu:about_qt") + "...", qApp, &QApplication::aboutQt);
+    menu->addAction(Locale::tr("qtapp.mainmenu:about") + "...", this, &MainWindow::showAbout);
   }
 
   QToolBar* toolbar = new QToolBar();
-  m_actionGroupMode = new QActionGroup(this);
-  m_actionGroupMode->setExclusive(true);
-  m_actionModeRun = toolbar->addAction(QIcon(":/dark/run.svg"), tr("Run"), [this](){ setMode(TraintasticMode::Run); });
-  m_actionModeRun->setCheckable(true);
-  m_actionGroupMode->addAction(m_actionModeRun);
-  m_actionModeStop = toolbar->addAction(QIcon(":/dark/stop.svg"), tr("Stop"), [this](){ setMode(TraintasticMode::Stop); });
-  m_actionModeStop->setCheckable(true);
-  m_actionGroupMode->addAction(m_actionModeStop);
-  m_actionModeEdit = toolbar->addAction(QIcon(":/dark/edit.svg"), tr("Edit"), [this](){ setMode(TraintasticMode::Edit); });
-  m_actionModeEdit->setCheckable(true);
-  m_actionGroupMode->addAction(m_actionModeEdit);
+  m_actionEmergencyStop = toolbar->addAction(QIcon(":/dark/emergency_stop.svg"), Locale::tr("world:emergency_stop"),
+    [this]()
+    {
+     if(m_world)
+       if(Method* method = m_world->getMethod("emergency_stop"))
+         method->call();
+    });
+  toolbar->addSeparator();
+  m_actionTrackPowerOff = toolbar->addAction(QIcon(":/dark/track_power_off.svg"), Locale::tr("world:track_power_off"),
+    [this]()
+    {
+     if(m_world)
+       if(Method* method = m_world->getMethod("track_power_off"))
+         method->call();
+    });
+  m_actionTrackPowerOn = toolbar->addAction(QIcon(":/dark/track_power_on.svg"), Locale::tr("world:track_power_on"),
+    [this]()
+    {
+     if(m_world)
+       if(Method* method = m_world->getMethod("track_power_on"))
+         method->call();
+    });
+  toolbar->addSeparator();
+
+
+  //m_actionGroupMode = new QActionGroup(this);
+  //m_actionGroupMode->setExclusive(true);
+  //m_actionModeRun = toolbar->addAction(QIcon(":/dark/run.svg"), tr("Run"), [this](){ setMode(TraintasticMode::Run); });
+  //m_actionModeRun->setCheckable(true);
+  //m_actionGroupMode->addAction(m_actionModeRun);
+  //m_actionModeStop = toolbar->addAction(QIcon(":/dark/stop.svg"), tr("Stop"), [this](){ setMode(TraintasticMode::Stop); });
+  //m_actionModeStop->setCheckable(true);
+  //m_actionGroupMode->addAction(m_actionModeStop);
+
+  QWidget* spacer = new QWidget(this);
+  spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+  spacer->show();
+  toolbar->addWidget(spacer);
+
+  m_actionEdit = toolbar->addAction(QIcon(":/dark/edit.svg"), Locale::tr("world:edit"),
+    [this](bool checked)
+    {
+      if(m_world)
+        if(AbstractProperty* property = m_world->getProperty("edit"))
+          property->setValueBool(checked);
+    });
+  m_actionEdit->setCheckable(true);
+  //m_actionGroupMode->addAction(m_actionModeEdit);
   //toolbar->addSeparator();
   //toolbar->addAction(m_actionHardware);
   //toolbar->addAction(m_actionLua);
@@ -139,7 +203,7 @@ MainWindow::MainWindow(QWidget* parent) :
     setWindowState(static_cast<Qt::WindowState>(settings.value(SETTING_WINDOWSTATE).toInt()));
   actFullScreen->setChecked(isFullScreen());
 
-  connect(Client::instance, &Client::stateChanged, this, &MainWindow::clientStateChanged);
+  //connect(Client::instance, &Client::stateChanged, this, &MainWindow::clientStateChanged);
 
   clientStateChanged();
 }
@@ -150,14 +214,32 @@ MainWindow::~MainWindow()
 
 void MainWindow::connectToServer()
 {
-  ConnectDialog* d = new ConnectDialog(this);
-  d->setModal(true);
-  d->show();
+  if(m_connection)
+    return;
+
+  std::unique_ptr<ConnectDialog> d = std::make_unique<ConnectDialog>(this);
+  if(d->exec() == QDialog::Accepted)
+  {
+    m_connection = d->connection();
+    connect(m_connection.data(), &Connection::worldChanged,
+      [this]()
+      {
+        m_world = m_connection->world();
+        updateActions();
+      });
+    clientStateChanged();
+  }
 }
 
 void MainWindow::disconnectFromServer()
 {
-  Client::instance->disconnectFromHost();
+  if(!m_connection)
+    return;
+
+  m_world.clear();
+  m_connection->disconnectFromHost();
+  m_connection.clear();
+  clientStateChanged();
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -168,24 +250,18 @@ void MainWindow::closeEvent(QCloseEvent* event)
   QMainWindow::closeEvent(event);
 }
 
-void MainWindow::setMode(TraintasticMode value)
+/*void MainWindow::setMode(TraintasticMode value)
 {
-  Client& client = *Client::instance;
-  if(client.state() == Client::State::Connected && client.traintastic())
-    client.traintastic()->getProperty("mode")->setValueInt64(static_cast<int64_t>(value));
+  if(!m_connection)
+    return;
+
+  if(m_connection->state() == Connection::State::Connected && m_connection->traintastic())
+    m_connection->traintastic()->getProperty("mode")->setValueInt64(static_cast<int64_t>(value));
   else
     updateModeActions();
-}
-
-void MainWindow::newWorld()
-{
-}
+}*/
 
 void MainWindow::loadWorld()
-{
-}
-
-void MainWindow::saveWorld()
 {
 }
 
@@ -269,7 +345,7 @@ void MainWindow::showObject(const QString& id)
 {
   if(!m_mdiSubWindows.contains(id))
   {
-    QMdiSubWindow* window = new ObjectSubWindow(id);
+    QMdiSubWindow* window = new ObjectSubWindow(m_connection, id);
     m_mdiSubWindows[id] = window;
     m_mdiArea->addSubWindow(window);
     window->setAttribute(Qt::WA_DeleteOnClose);
@@ -297,41 +373,72 @@ void MainWindow::showAbout()
 
 void MainWindow::clientStateChanged()
 {
-  Client& client = *Client::instance;
-  const bool connected = client.state() == Client::State::Connected;
+  const bool connected = m_connection && m_connection->state() == Connection::State::Connected;
 
   m_mdiArea->setEnabled(connected);
-  m_actionConnectToServer->setEnabled(client.isDisconnected());
-  m_actionConnectToServer->setVisible(!connected);
-  m_actionDisconnectFromServer->setVisible(connected);
-  m_actionNewWorld->setEnabled(connected);
-  m_actionLoadWorld->setEnabled(connected);
-  m_actionSaveWorld->setEnabled(connected && false);
-  m_actionImportWorld->setEnabled(connected);
-  m_actionExportWorld->setEnabled(connected);
-  m_menuHardware->setEnabled(connected);
-  m_actionLua->setEnabled(connected);
-  m_actionServerSettings->setEnabled(connected);
-  m_actionServerConsole->setEnabled(connected);
 
-  if(connected)
-    connect(client.traintastic()->getProperty("mode"), &Property::valueChanged, this, &MainWindow::updateModeActions);
+  //if(connected)
+  //  connect(m_connection->traintastic()->getProperty("mode"), &Property::valueChanged, this, &MainWindow::updateModeActions);
 
-  updateModeActions();
+  updateActions();
 
   //if(client.state() == Client::State::SocketError)
   //  statusBar()->showMessage(client.errorString());
 }
 
-void MainWindow::updateModeActions()
+void MainWindow::updateActions()
 {
-  Client& client = *Client::instance;
-  const bool connected = client.state() == Client::State::Connected;
-  const TraintasticMode mode = connected ? static_cast<TraintasticMode>(client.traintastic()->getProperty("mode")->toInt64()) : TraintasticMode::Stop;
+  const bool connected = m_connection && m_connection->state() == Connection::State::Connected;
+  const bool haveWorld = connected && m_connection->world();
 
-  m_actionModeRun->setEnabled(connected && mode != TraintasticMode::Edit);
-  m_actionModeStop->setEnabled(connected);
-  m_actionModeEdit->setEnabled(connected && mode != TraintasticMode::Run);
+  m_actionConnectToServer->setEnabled(!m_connection);
+  m_actionConnectToServer->setVisible(!connected);
+  m_actionDisconnectFromServer->setVisible(connected);
+  m_actionNewWorld->setEnabled(connected);
+  m_actionLoadWorld->setEnabled(connected);
+  m_actionSaveWorld->setEnabled(haveWorld);
+  m_actionImportWorld->setEnabled(haveWorld);
+  m_actionExportWorld->setEnabled(haveWorld);
+
+  m_actionServerSettings->setEnabled(connected);
+  m_actionServerConsole->setEnabled(connected);
+
+  m_actionTrackPowerOff->setEnabled(haveWorld);
+  m_actionTrackPowerOn->setEnabled(haveWorld);
+  m_actionEmergencyStop->setEnabled(haveWorld);
+  m_actionEdit->setEnabled(haveWorld);
+  if(!haveWorld)
+    m_actionEdit->setChecked(false);
+
+  setMenuEnabled(m_menuObjects, haveWorld);
+
+  //m_menuHardware->setEnabled(haveWorld);
+  //m_action
+  //m_actionLua->setEnabled(haveWorld);
+
+  if(connected && !haveWorld)
+  {
+    m_mdiArea->addBackgroundAction(m_actionNewWorld);
+    m_mdiArea->addBackgroundAction(m_actionLoadWorld);
+  }
+  else
+  {
+    m_mdiArea->removeBackgroundAction(m_actionNewWorld);
+    m_mdiArea->removeBackgroundAction(m_actionLoadWorld);
+  }
+
+
+  //updateModeActions();
+}
+
+//void MainWindow::updateModeActions()
+/*
+  const bool haveWorld = m_connection && m_connection->state() == Connection::State::Connected && m_connection->world();
+  const TraintasticMode mode = /*haveWorld ? static_cast<TraintasticMode>(m_connection->traintastic()->getProperty("mode")->toInt64()) :*//* TraintasticMode::Stop;
+
+  //m_actionModeRun->setEnabled(haveWorld && mode != TraintasticMode::Edit);
+  //m_actionModeStop->setEnabled(haveWorld);
+  //m_actionModeEdit->setEnabled(haveWorld && mode != TraintasticMode::Run);
 
   switch(mode)
   {
@@ -350,5 +457,5 @@ void MainWindow::updateModeActions()
     default:
       Q_ASSERT(false);
       break;
-  }
-}
+  }*/
+

@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_LUA_OBJECT_HPP
-#define SERVER_LUA_OBJECT_HPP
+#ifndef TRAINTASTIC_SERVER_LUA_OBJECT_HPP
+#define TRAINTASTIC_SERVER_LUA_OBJECT_HPP
 
 #include <lua.hpp>
 #include <memory>
@@ -34,6 +34,7 @@ class Object
   private:
     static int __gc(lua_State* L);
     static int __index(lua_State* L);
+    static int __newindex(lua_State* L);
 
   public:
     static constexpr char const* metaTableName = "object";

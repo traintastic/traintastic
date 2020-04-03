@@ -119,19 +119,21 @@ const std::shared_ptr<DecoderFunction>& Decoder::getFunction(uint32_t number) co
   return DecoderFunction::null;
 }
 
-void Decoder::modeChanged(TraintasticMode mode)
+void Decoder::worldEvent(WorldState state, WorldEvent event)
 {
-  IdObject::modeChanged(mode);
+  IdObject::worldEvent(state, event);
 
-  commandStation.setAttributeEnabled(mode == TraintasticMode::Edit);
-  protocol.setAttributeEnabled(mode == TraintasticMode::Edit);
-  address.setAttributeEnabled(mode == TraintasticMode::Edit);
-  direction.setAttributeEnabled(mode != TraintasticMode::Edit);
-  speedSteps.setAttributeEnabled(mode == TraintasticMode::Edit);
-  speedStep.setAttributeEnabled(mode == TraintasticMode::Run);
+  const bool editable = contains(state, WorldState::Edit) && emergencyStop;
 
-  if(mode == TraintasticMode::Edit)
-    speedStep = 0;
+  commandStation.setAttributeEnabled(editable);
+  protocol.setAttributeEnabled(editable);
+  address.setAttributeEnabled(editable);
+  //direction.setAttributeEnabled(mode != TraintasticMode::Edit);
+  speedSteps.setAttributeEnabled(editable);
+  //speedStep.setAttributeEnabled(mode == TraintasticMode::Run);
+
+  //if(edit)
+  //  speedStep = 0;
 }
 
 void Decoder::changed(DecoderChangeFlags changes, uint32_t functionNumber)

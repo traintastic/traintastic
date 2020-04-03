@@ -21,14 +21,14 @@
  */
 
 #include "luascriptlistwidget.hpp"
-#include "../network/client.hpp"
+#include "../network/connection.hpp"
 
 LuaScriptListWidget::LuaScriptListWidget(const ObjectPtr& object, QWidget* parent) :
   ObjectListWidget(object, parent)
 {
-  addActionAdd();
-  addActionEdit();
-  addActionDelete();
+  //addActionAdd();
+  //addActionEdit();
+  //addActionDelete();
 }
 
 void LuaScriptListWidget::add()

@@ -20,13 +20,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_ENUM_ENUM_HPP
-#define SERVER_ENUM_ENUM_HPP
+#ifndef TRAINTASTIC_SERVER_ENUM_ENUM_HPP
+#define TRAINTASTIC_SERVER_ENUM_ENUM_HPP
 
 template<typename T>
 struct is_enum
 {
   static constexpr bool value = false;
 };
+
+template<typename T>
+inline constexpr bool is_enum_v = is_enum<T>::value;
 
 #endif

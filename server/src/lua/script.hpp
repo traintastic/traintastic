@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_LUA_SCRIPT_HPP
-#define SERVER_LUA_SCRIPT_HPP
+#ifndef TRAINTASTIC_SERVER_LUA_SCRIPT_HPP
+#define TRAINTASTIC_SERVER_LUA_SCRIPT_HPP
 
 #include "../core/idobject.hpp"
 #include "sandbox.hpp"
@@ -33,7 +33,7 @@ class Script : public IdObject
   protected:
     SandboxPtr m_sandbox;
 
-    void modeChanged(TraintasticMode mode) final;
+    void worldEvent(WorldState state, WorldEvent event) final;
     void init();
     void fini();
     bool pcall(lua_State* L, int nargs = 0, int nresults = 0);
@@ -45,7 +45,7 @@ class Script : public IdObject
     Script(const std::weak_ptr<World>& world, const std::string& _id);
 
     Property<std::string> name;
-    Property<bool> enabled;
+    Property<bool> active;
     Property<std::string> code;
 };
 

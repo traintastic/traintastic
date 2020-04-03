@@ -40,7 +40,7 @@
 
 using nlohmann::json;
 
-const std::string World::id{World::classId};
+//const std::string World::id{World::classId};
 
 std::shared_ptr<World> World::create()
 {
@@ -62,6 +62,7 @@ void World::init(const std::shared_ptr<World>& world)
   world->commandStations.setValueInternal(std::make_shared<CommandStationList>(*world, world->commandStations.name()));
   world->decoders.setValueInternal(std::make_shared<DecoderList>(*world, world->decoders.name()));
   world->inputs.setValueInternal(std::make_shared<InputList>(*world, world->inputs.name()));
+  world->clock.setValueInternal(std::make_shared<Clock>(*world, world->clock.name()));
   world->luaScripts.setValueInternal(std::make_shared<Lua::ScriptList>(*world, world->luaScripts.name()));
 }
 
@@ -69,16 +70,71 @@ World::World() :
   Object(),
   m_uuid{boost::uuids::random_generator()()},
   name{this, "name", "", PropertyFlags::ReadWrite},
+  scale{this, "scale", WorldScale::H0, PropertyFlags::ReadWrite},
   commandStations{this, "command_stations", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
-  luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject}
+  clock{this, "clock", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
+  luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
+  state{this, "state", WorldState::TrackPowerOff, PropertyFlags::ReadOnly},
+  emergencyStop{*this, "emergency_stop",
+    [this]()
+    {
+      Traintastic::instance->console->notice(classId, "Emergency stop");
+      event(WorldEvent::EmergencyStop);
+    }},
+  trackPowerOff{*this, "track_power_off",
+    [this]()
+    {
+      Traintastic::instance->console->notice(classId, "Track power: off");
+      state.setValueInternal(state.value() + WorldState::TrackPowerOff);
+      event(WorldEvent::TrackPowerOff);
+    }},
+  trackPowerOn{*this, "track_power_on",
+    [this]()
+    {
+      Traintastic::instance->console->notice(classId, "Track power: on");
+      state.setValueInternal(state.value() - WorldState::TrackPowerOff);
+      event(WorldEvent::TrackPowerOn);
+    }},
+  save{*this, "save",
+    [this]()
+    {
+      json objects = json::array();
+      for(auto& it : m_objects)
+        if(ObjectPtr object = it.second.lock())
+          objects.push_back(saveObject(object));
+
+      json world;
+      world["uuid"] = to_string(m_uuid);
+      world[name.name()] = name.value();
+      world["objects"] = objects;
+
+      std::ofstream file(m_filename);
+      if(file.is_open())
+      {
+        file << world.dump(2);
+        Traintastic::instance->console->notice(classId, "Saved world " + name.value());
+      }
+      else
+        Traintastic::instance->console->critical(classId, "Can't write to world file");
+    }}
 {
   m_interfaceItems.add(name);
+  m_interfaceItems.add(scale);
+
   m_interfaceItems.add(commandStations);
   m_interfaceItems.add(decoders);
   m_interfaceItems.add(inputs);
+  m_interfaceItems.add(clock);
   m_interfaceItems.add(luaScripts);
+
+  m_interfaceItems.add(state);
+  m_interfaceItems.add(emergencyStop);
+  m_interfaceItems.add(trackPowerOff);
+  m_interfaceItems.add(trackPowerOn);
+
+  m_interfaceItems.add(save);
 }
 
 World::World(const std::filesystem::path& filename) :
@@ -110,7 +166,7 @@ ObjectPtr World::createObject(const std::string& classId, const std::string& _id
 
 bool World::isObject(const std::string& _id) const
 {
-  return m_objects.find(_id) != m_objects.end() || _id == id || _id == Traintastic::id;
+  return m_objects.find(_id) != m_objects.end() || _id == classId || _id == Traintastic::id;
 }
 
 ObjectPtr World::getObject(const std::string& _id) const
@@ -118,20 +174,19 @@ ObjectPtr World::getObject(const std::string& _id) const
   auto it = m_objects.find(_id);
   if(it != m_objects.end())
     return it->second.lock();
-  else if(_id == id)
+  else if(_id == classId)
     return std::const_pointer_cast<Object>(shared_from_this());
-  else if(_id == Traintastic::id)
+  else if(_id == Traintastic::classId)
     return Traintastic::instance;
   else
     return ObjectPtr();
 }
 
-void World::modeChanged(TraintasticMode mode)
+void World::event(WorldEvent event)
 {
-  Traintastic::instance->console->debug(id, "World::modeChanged");
-
+  const WorldState st = state;
   for(auto& it : m_objects)
-    it.second.lock()->modeChanged(mode);
+    it.second.lock()->worldEvent(st, event);
 }
 
 void World::load()
@@ -155,11 +210,11 @@ void World::load()
 
     std::weak_ptr<World> w = shared_ptr<World>();
 
-#if 0
+#if 1
     auto cs = Hardware::CommandStation::Z21::create(w, "cs1");
     //cs->hostname = "192.168.1.2";
     cs->hostname = "192.168.16.254";
-
+/*
     for(int i = 1; i <= 16; i++)
     {
       auto input = LocoNetInput::create(w, "ln_in_" + std::to_string(i));
@@ -167,10 +222,10 @@ void World::load()
       input->address = i;
       input->name = "LocoNet input #" + std::to_string(i);
     }
-
+*/
 
 #else
-  #if 0
+  #if 1
     auto cs = Hardware::CommandStation::LI10x::create(w, "cs1");
     cs->port = "/dev/ttyUSB0";
   #else
@@ -213,21 +268,21 @@ void World::load()
       dec->address = 3302;
       dec->longAddress = true;
       dec->speedSteps = 126;
-
+/*
       {
-        auto f = Hardware::DecoderFunction::create(w, "dec_g2000_f0");
+        auto f = Hardware::DecoderFunction::create(*dec, "dec_g2000_f0");
         f->number = 0;
         dec->functions->add(f);
         f->m_decoder = dec.get();
       }
 
       {
-        auto f = Hardware::DecoderFunction::create(w, "dec_g2000_f2");
+        auto f = Hardware::DecoderFunction::create(*dec, "dec_g2000_f2");
         f->number = 2;
         f->momentary = true;
         dec->functions->add(f);
         f->m_decoder = dec.get();
-      }
+      }*/
     }
     {
       auto dec = Hardware::Decoder::create(w, "dec_br211");
@@ -237,6 +292,22 @@ void World::load()
       dec->address = 3311;
       dec->longAddress = true;
       dec->speedSteps = 126;
+/*
+      {
+        auto f = Hardware::DecoderFunction::create(*dec, "dec_br211_f0");
+        f->number = 0;
+        f->name = "Light";
+        dec->functions->add(f);
+        f->m_decoder = dec.get();
+      }
+
+      {
+        auto f = Hardware::DecoderFunction::create(w, "dec_br211_f1");
+        f->number = 1;
+        f->name = "Sound";
+        dec->functions->add(f);
+        f->m_decoder = dec.get();
+      }*/
     }
 
     //cs->online = true;
@@ -247,8 +318,33 @@ void World::load()
     {
       auto script = Lua::Script::create(w, getUniqueId("script"));
       script->name = "test";
-      script->enabled = true;
-      script->code = "function init()\n\nend\n\nfunction mode_changed(mode)\n\nend\n";
+      //script->enabled = true;
+      script->code =
+        "console.debug(enum)\n"
+        "console.debug(enum.world_event)\n"
+        "console.debug(enum.world_event.TRACK_POWER_ON)\n"
+        ""
+        "function init()\n"
+        "  console.info(VERSION)\n"
+        "  --console.debug(world)\n"
+        "  console.notice(world.name)\n"
+        "  --console.debug(dec)\n"
+        "  --console.debug(dec.functions)\n"
+        "  --console.debug(dec.functions.add)\n"
+        "  console.debug(dec.functions.add())\n"
+        "end\n"
+        "\n"
+        "function mode_changed(mode)\n"
+        "  console.warning(mode)\n"
+        "  local f = console.debug(dec.functions.add())\n"
+        "  f.name ='test'\n"
+        "end\n"
+        "\n"
+        "function state_changed(state, event)\n"
+        "  console.debug(state)\n"
+        "  console.debug(event)\n"
+        "  console.debug(event == enum.world_event.TRACK_POWER_ON)\n"
+        "end\n";
       luaScripts->add(script);
     }
 
@@ -258,32 +354,10 @@ void World::load()
 
 
 
-    Traintastic::instance->console->notice(id, "Loaded world " + name.value());
+    Traintastic::instance->console->notice(classId, "Loaded world " + name.value());
   }
   else
     throw std::runtime_error("Can't open file");
-}
-
-void World::save()
-{
-  json objects = json::array();
-  for(auto& it : m_objects)
-    if(ObjectPtr object = it.second.lock())
-      objects.push_back(saveObject(object));
-
-  json world;
-  world["uuid"] = to_string(m_uuid);
-  world[name.name()] = name.value();
-  world["objects"] = objects;
-
-  std::ofstream file(m_filename);
-  if(file.is_open())
-  {
-    file << world.dump(2);
-    Traintastic::instance->console->notice(id, "Saved world " + name.value());
-  }
-  else
-    Traintastic::instance->console->critical(id, "Can't write to world file");
 }
 
 json World::saveObject(const ObjectPtr& object)

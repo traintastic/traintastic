@@ -21,10 +21,11 @@
  */
 
 
-#ifndef SERVER_HARDWARE_DECODER_DECODERFUNCTIONLIST_HPP
-#define SERVER_HARDWARE_DECODER_DECODERFUNCTIONLIST_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERFUNCTIONLIST_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERFUNCTIONLIST_HPP
 
 #include "../../core/objectlist.hpp"
+#include "../../core/method.hpp"
 #include "decoderfunction.hpp"
 
 class DecoderFunctionList : public ObjectList<Hardware::DecoderFunction>
@@ -34,6 +35,8 @@ class DecoderFunctionList : public ObjectList<Hardware::DecoderFunction>
 
   public:
     CLASS_ID("decoder_function_list")
+
+    Method<std::shared_ptr<Hardware::DecoderFunction>()> add_;
 
     DecoderFunctionList(Object& parent, const std::string& parentPropertyName);
 

@@ -21,8 +21,8 @@
  */
 
 
-#ifndef SHARED_ENUM_ENUM_HPP
-#define SHARED_ENUM_ENUM_HPP
+#ifndef TRAINTASTIC_SHARED_ENUM_ENUM_HPP
+#define TRAINTASTIC_SHARED_ENUM_ENUM_HPP
 
 template<typename T>
 struct EnumName

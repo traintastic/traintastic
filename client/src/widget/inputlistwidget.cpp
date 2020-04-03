@@ -25,7 +25,7 @@
 InputListWidget::InputListWidget(const ObjectPtr& object, QWidget* parent) :
   ObjectListWidget(object, parent)
 {
-  addActionAdd();
+  //addActionAdd();
   addActionEdit();
   addActionDelete();
 }

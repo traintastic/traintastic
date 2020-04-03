@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SHARED_ENUM_DIRECTION_HPP
-#define SHARED_ENUM_DIRECTION_HPP
+#ifndef TRAINTASTIC_SHARED_ENUM_DIRECTION_HPP
+#define TRAINTASTIC_SHARED_ENUM_DIRECTION_HPP
 
 #include <cstdint>
 #include "enum.hpp"

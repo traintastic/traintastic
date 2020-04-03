@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_HARDWARE_COMMANDSTATION_XPRESSNET_XPRESSNET_HPP
-#define SERVER_HARDWARE_COMMANDSTATION_XPRESSNET_XPRESSNET_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_COMMANDSTATION_XPRESSNET_XPRESSNET_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_COMMANDSTATION_XPRESSNET_XPRESSNET_HPP
 
 #include "../commandstation.hpp"
 #include "../../protocol/xpressnet.hpp"
@@ -34,7 +34,7 @@ class XpressNet : public CommandStation
   protected:
     static bool getFunctionValue(const Decoder& decoder, uint32_t number);
 
-    void modeChanged(TraintasticMode mode) override;
+    void worldEvent(WorldState state, WorldEvent event) override;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) override;
 
     virtual void send(const Protocol::XpressNet::Message& msg) = 0;

@@ -20,22 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CLIENT_SUBWINDOW_OBJECTSUBWINDOW_HPP
-#define CLIENT_SUBWINDOW_OBJECTSUBWINDOW_HPP
+#ifndef TRAINTASTIC_CLIENT_SUBWINDOW_OBJECTSUBWINDOW_HPP
+#define TRAINTASTIC_CLIENT_SUBWINDOW_OBJECTSUBWINDOW_HPP
 
 #include <QMdiSubWindow>
 #include "../network/objectptr.hpp"
 
+class Connection;
+
 class ObjectSubWindow : public QMdiSubWindow
 {
   protected:
+    QSharedPointer<Connection> m_connection;
     int m_requestId;
 
     void setObject(const ObjectPtr& object);
 
   public:
     ObjectSubWindow(const ObjectPtr& object, QWidget* parent = nullptr);
-    ObjectSubWindow(const QString& id, QWidget* parent = nullptr);
+    ObjectSubWindow(const QSharedPointer<Connection>& connection, const QString& id, QWidget* parent = nullptr);
     ~ObjectSubWindow() final;
 };
 

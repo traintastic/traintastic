@@ -166,6 +166,94 @@ bool Session::processMessage(const Message& message)
       }
       break;
     }
+    case Message::Command::ObjectCallMethod:
+    {
+      if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
+      {
+        if(AbstractMethod* method = object->getMethod(message.read<std::string>()))
+        {
+          const ValueType resultType = message.read<ValueType>();
+          const uint8_t argumentCount = message.read<uint8_t>();
+
+          std::vector<AbstractMethod::Argument> args;
+          for(uint8_t i = 0; i < argumentCount; i++)
+          {
+            switch(message.read<ValueType>())
+            {
+              case ValueType::Boolean:
+                args.push_back(message.read<bool>());
+                break;
+
+              case ValueType::Integer:
+                args.push_back(message.read<int64_t>());
+                break;
+
+              case ValueType::Float:
+                args.push_back(message.read<double>());
+                break;
+
+              case ValueType::String:
+                args.push_back(message.read<std::string>());
+                break;
+
+              default:
+                assert(false);
+                break;
+            }
+          }
+
+          try
+          {
+            AbstractMethod::Result result = method->call(args);
+
+            if(message.isRequest())
+            {
+              auto response = Message::newResponse(message.command(), message.requestId());
+
+              switch(resultType)
+              {
+                case ValueType::Boolean:
+                  response->write(std::get<bool>(result));
+                  break;
+
+                case ValueType::Integer:
+                  response->write(std::get<int64_t>(result));
+                  break;
+
+                case ValueType::Float:
+                  response->write(std::get<double>(result));
+                  break;
+
+                case ValueType::String:
+                  response->write(std::get<std::string>(result));
+                  break;
+
+                case ValueType::Object:
+                  writeObject(*response, std::get<ObjectPtr>(result));
+                  break;
+
+                /*default:
+                  assert(false);
+                  break;*/
+              }
+
+              m_client->sendMessage(std::move(response));
+              return true;
+            }
+          }
+          catch(const std::exception& e)
+          {
+            std::cerr << e.what() << '\n';
+            if(message.isRequest())
+            {
+              m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::Failed));
+              return true;
+            }
+          }
+        }
+      }
+      break;
+    }
     case Message::Command::GetTableModel:
     {
       if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
@@ -308,21 +396,41 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
           case ValueType::Object:
           {
             ObjectPtr obj = property->toObject();
-            if(IdObject* idObj = dynamic_cast<IdObject*>(obj.get()))
-              message.write<std::string>(idObj->id);
-            else if(SubObject* subObj = dynamic_cast<SubObject*>(obj.get()))
-              message.write<std::string>(subObj->id());
-            else
+            if(obj)
             {
-     //         assert(false);
-              message.write<std::string>("");
+              if(IdObject* idObj = dynamic_cast<IdObject*>(obj.get()))
+                message.write<std::string>(idObj->id);
+              else if(SubObject* subObj = dynamic_cast<SubObject*>(obj.get()))
+                message.write<std::string>(subObj->id());
+              else if(dynamic_cast<World*>(obj.get()))
+                message.write<std::string_view>(World::classId);
+              else
+              {
+                //assert(false);
+                message.write<std::string>("");
+              }
             }
+            else
+              message.write<std::string>("");
             break;
           }
+          case ValueType::Set:
+            message.write(property->toInt64());
+            message.write(property->setName());
+            break;
+
           default:
             assert(false);
             break;
         }
+      }
+      else if(const AbstractMethod* method = dynamic_cast<const AbstractMethod*>(&item))
+      {
+        message.write(InterfaceItemType::Method);
+        message.write(method->resultType());
+        message.write(static_cast<uint8_t>(method->argumentCount()));
+        for(auto type : method->argumentTypes())
+          message.write(type);
       }
 
       message.writeBlock(); // attributes
@@ -400,6 +508,7 @@ void Session::objectPropertyChanged(AbstractProperty& property)
 
     case ValueType::Enum:
     case ValueType::Integer:
+    case ValueType::Set:
       event->write(property.toInt64());
       break;
 
@@ -410,6 +519,28 @@ void Session::objectPropertyChanged(AbstractProperty& property)
     case ValueType::String:
       event->write(property.toString());
       break;
+
+    case ValueType::Object:
+    {
+      ObjectPtr obj = property.toObject();
+      if(obj)
+      {
+        if(IdObject* idObj = dynamic_cast<IdObject*>(obj.get()))
+          event->write<std::string>(idObj->id);
+        else if(SubObject* subObj = dynamic_cast<SubObject*>(obj.get()))
+          event->write<std::string>(subObj->id());
+        else if(dynamic_cast<World*>(obj.get()))
+          event->write<std::string_view>(World::classId);
+        else
+        {
+          assert(false);
+          event->write<std::string_view>("");
+        }
+      }
+      else
+        event->write<std::string_view>("");
+      break;
+    }
   }
   m_client->sendMessage(std::move(event));
 }

@@ -7,5 +7,13 @@
         <file alias="add.svg">gfx/dark/add.svg</file>
         <file alias="delete.svg">gfx/dark/delete.svg</file>
         <file alias="lua.svg">gfx/dark/lua.svg</file>
+        <file alias="emergency_stop.svg">gfx/dark/emergency_stop.svg</file>
+        <file alias="track_power_off.svg">gfx/dark/track_power_off.svg</file>
+        <file alias="track_power_on.svg">gfx/dark/track_power_on.svg</file>
+        <file alias="world_new.svg">gfx/dark/world_new.svg</file>
+        <file alias="world_load.svg">gfx/dark/world_load.svg</file>
+        <file alias="world_save.svg">gfx/dark/world_save.svg</file>
+        <file alias="world_import.svg">gfx/dark/world_import.svg</file>
+        <file alias="world_export.svg">gfx/dark/world_export.svg</file>
     </qresource>
 </RCC>

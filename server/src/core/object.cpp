@@ -38,10 +38,10 @@ InterfaceItem* Object::getItem(const std::string& name)
   return m_interfaceItems.find(name);
 }
 
-//AbstractMethod* Object::getMethod(const std::string& name)
-//{
-//  return dynamic_cast<AbstractMethod*>(getItem(name));
-//}
+AbstractMethod* Object::getMethod(const std::string& name)
+{
+  return dynamic_cast<AbstractMethod*>(getItem(name));
+}
 
 AbstractProperty* Object::getProperty(const std::string& name)
 {
@@ -54,10 +54,10 @@ void Object::log(Console::Level level, const std::string& id, const std::string&
 }
 */
 
-void Object::modeChanged(TraintasticMode mode)
+void Object::worldEvent(WorldState state, WorldEvent event)
 {
   for(auto& it : m_interfaceItems)
     if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&it.second))
       if(contains(property->flags(), PropertyFlags::SubObject))
-        property->toObject()->modeChanged(mode);
+        property->toObject()->worldEvent(state, event);
 }
