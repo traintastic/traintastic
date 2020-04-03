@@ -225,6 +225,13 @@ void MainWindow::connectToServer()
       [this]()
       {
         m_world = m_connection->world();
+
+        if(m_world)
+        {
+          if(AbstractProperty* edit = m_world->getProperty("edit"))
+            connect(edit, &AbstractProperty::valueChangedBool, m_actionEdit, &QAction::setChecked);
+        }
+
         updateActions();
       });
     clientStateChanged();

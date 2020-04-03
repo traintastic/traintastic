@@ -97,6 +97,22 @@ World::World() :
       state.setValueInternal(state.value() - WorldState::TrackPowerOff);
       event(WorldEvent::TrackPowerOn);
     }},
+  edit{this, "edit", false, PropertyFlags::ReadWrite,
+    [this](bool value)
+    {
+      if(value)
+      {
+        Traintastic::instance->console->notice(classId, "Edit mode: enabled");
+        state.setValueInternal(state.value() + WorldState::Edit);
+        event(WorldEvent::EditEnabled);
+      }
+      else
+      {
+        Traintastic::instance->console->notice(classId, "Edit mode: disabled");
+        state.setValueInternal(state.value() - WorldState::Edit);
+        event(WorldEvent::EditDisabled);
+      }
+    }},
   save{*this, "save",
     [this]()
     {
@@ -133,6 +149,7 @@ World::World() :
   m_interfaceItems.add(emergencyStop);
   m_interfaceItems.add(trackPowerOff);
   m_interfaceItems.add(trackPowerOn);
+  m_interfaceItems.add(edit);
 
   m_interfaceItems.add(save);
 }

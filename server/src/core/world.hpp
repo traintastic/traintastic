@@ -77,6 +77,7 @@ class World : public Object
     Method<void()> emergencyStop;
     Method<void()> trackPowerOff;
     Method<void()> trackPowerOn;
+    Property<bool> edit;
 
     Method<void()> save;
 
