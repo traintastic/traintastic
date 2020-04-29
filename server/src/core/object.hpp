@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,6 +56,12 @@ class Object : public std::enable_shared_from_this<Object>
 
     Object();
     virtual ~Object();
+
+    template <typename Derived>
+    inline std::shared_ptr<const Derived> shared_ptr() const
+    {
+      return std::static_pointer_cast<const Derived>(shared_from_this());
+    }
 
     template <typename Derived>
     std::shared_ptr<Derived> shared_ptr()

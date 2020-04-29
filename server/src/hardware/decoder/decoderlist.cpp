@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,17 +22,49 @@
 
 #include "decoderlist.hpp"
 #include "decoderlisttablemodel.hpp"
+#include "../commandstation/commandstation.hpp"
+#include "../../core/world.hpp"
+#include "../../utils/getworld.hpp"
 
 using Hardware::Decoder;
+using Hardware::CommandStation::CommandStation;
 
-DecoderList::DecoderList(Object& parent, const std::string& parentPropertyName) :
-  ObjectList<Decoder>(parent, parentPropertyName)
+DecoderList::DecoderList(Object& _parent, const std::string& parentPropertyName) :
+  ObjectList<Decoder>(_parent, parentPropertyName),
+  add{*this, "add",
+    [this]()
+    {
+      auto world = getWorld(&this->parent());
+      if(!world)
+        return std::shared_ptr<Decoder>();
+      auto decoder = Decoder::create(world, world->getUniqueId("decoder"));
+      //addObject(decoder);
+      if(auto* cs = dynamic_cast<CommandStation*>(&this->parent()))
+        decoder->commandStation = cs->shared_ptr<CommandStation>();
+      //else if(world->commandStations->length() == 1)
+      //  decoder->commandStation = cs->shared_ptr<CommandStation>();
+      return decoder;
+    }}
 {
+  auto world = getWorld(&_parent);
+  const bool editable = world && contains(world->state.value(), WorldState::Edit);
+
+  m_interfaceItems.add(add)
+    .addAttributeEnabled(editable);
 }
 
 TableModelPtr DecoderList::getModel()
 {
   return std::make_shared<DecoderListTableModel>(*this);
+}
+
+void DecoderList::worldEvent(WorldState state, WorldEvent event)
+{
+  ObjectList<Hardware::Decoder>::worldEvent(state, event);
+
+  const bool editable = contains(state, WorldState::Edit);
+
+  add.setAttributeEnabled(editable);
 }
 
 bool DecoderList::isListedProperty(const std::string& name)

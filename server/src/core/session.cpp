@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,7 +53,7 @@ bool Session::processMessage(const Message& message)
 {
   switch(message.command())
   {
-    case Message::Command::CreateObject:
+    /*case Message::Command::CreateObject:
     {
       std::string classId;
       std::string id;
@@ -73,7 +73,7 @@ bool Session::processMessage(const Message& message)
         m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::UnknownClassId));
 
       return true;
-    }
+    }*/
     case Message::Command::GetObject:
     {
       std::string id;

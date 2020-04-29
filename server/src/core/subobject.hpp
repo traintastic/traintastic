@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,7 +32,7 @@ class SubObject : public Object
     const std::string& m_parentPropertyName;
 
   public:
-    SubObject(Object& parent, const std::string& parentPropertyName);
+    SubObject(Object& _parent, const std::string& parentPropertyName);
 
     Object& parent() const { return m_parent; }
     std::string id() const;

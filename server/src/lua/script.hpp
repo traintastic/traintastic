@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +33,9 @@ class Script : public IdObject
   protected:
     SandboxPtr m_sandbox;
 
+    void addToWorld() final;
     void worldEvent(WorldState state, WorldEvent event) final;
+
     void init();
     void fini();
     bool pcall(lua_State* L, int nargs = 0, int nresults = 0);
@@ -42,7 +44,7 @@ class Script : public IdObject
     CLASS_ID("lua.script")
     CREATE(Script)
 
-    Script(const std::weak_ptr<World>& world, const std::string& _id);
+    Script(const std::weak_ptr<World>& world, std::string_view _id);
 
     Property<std::string> name;
     Property<bool> active;

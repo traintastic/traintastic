@@ -1,7 +1,7 @@
 /**
  * Traintastic
  *
- * Copyright (C) 2019 Reinder Feenstra <reinderfeenstra@gmail.com>
+ * Copyright (C) 2019-2020 Reinder Feenstra <reinderfeenstra@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,28 +21,46 @@
 #include "decoderfunction.hpp"
 #include "decoder.hpp"
 #include "decoderchangeflags.hpp"
+#include "../../core/world.hpp"
 
 namespace Hardware {
 
 const std::shared_ptr<DecoderFunction> DecoderFunction::null;
 
-std::shared_ptr<DecoderFunction> DecoderFunction::create(Decoder& decoder, const std::string& _id)
+std::shared_ptr<DecoderFunction> DecoderFunction::create(Decoder& decoder, std::string_view _id)
 {
   auto obj = std::make_shared<DecoderFunction>(decoder, _id);
   obj->addToWorld();
   return obj;
 }
 
-DecoderFunction::DecoderFunction(Decoder& decoder, const std::string& _id) :
+DecoderFunction::DecoderFunction(Decoder& decoder, std::string_view _id) :
   Output(decoder.world(), _id),
   m_decoder{decoder},
   number{this, "number", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
   momentary{this, "momentary", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
-  m_interfaceItems.add(number);
-  m_interfaceItems.add(name);
-  m_interfaceItems.add(momentary);
+  auto w = decoder.world().lock();
+  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+
+  m_interfaceItems.add(number)
+    .addAttributeEnabled(editable);
+  m_interfaceItems.add(name)
+    .addAttributeEnabled(editable);
+  m_interfaceItems.add(momentary)
+    .addAttributeEnabled(editable);
+}
+
+void DecoderFunction::worldEvent(WorldState state, WorldEvent event)
+{
+  IdObject::worldEvent(state, event);
+
+  const bool editable = contains(state, WorldState::Edit);
+
+  number.setAttributeEnabled(editable);
+  name.setAttributeEnabled(editable);
+  momentary.setAttributeEnabled(editable);
 }
 
 bool DecoderFunction::setValue(bool& value)

@@ -40,3 +40,5 @@
 .build*
 build*
 CMakeLists.txt.*
+*~*
+.vscode

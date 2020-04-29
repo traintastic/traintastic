@@ -22,9 +22,9 @@
 
 #include "jsonutils.hpp"
 #include "../core/abstractproperty.hpp"
-
+/*
 void JSONUtils::loadPropertyValue(AbstractProperty& property, const nlohmann::json& value)
 {
 
 
-}
+}*/

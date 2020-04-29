@@ -39,7 +39,7 @@ class Clock : public SubObject
 
     Property<uint16_t> multiplier;
 
-    Clock(Object& parent, const std::string& parentPropertyName);
+    Clock(Object& _parent, const std::string& parentPropertyName);
 };
 
 #endif

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,8 +43,8 @@ bool LocoNet::isChecksumValid(const Message& msg)
   return calcChecksum(msg) == *(reinterpret_cast<const uint8_t*>(&msg) + msg.size() - 1);
 }
 
-LocoNet::LocoNet(Object& parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send) :
-  SubObject(parent, parentPropertyName),
+LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send) :
+  SubObject(_parent, parentPropertyName),
   m_send{std::move(send)},
   m_debugLog{true/*false*/},
   debugLog{this, "debug_log", m_debugLog, PropertyFlags::ReadWrite | PropertyFlags::Store}

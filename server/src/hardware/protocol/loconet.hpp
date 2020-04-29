@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * Portions Copyright (C) Digitrax Inc.
  *
@@ -43,7 +43,7 @@ class LocoNet : public SubObject
 
     static uint8_t calcChecksum(const Message& msg);
     static bool isChecksumValid(const Message& msg);
-		
+
     enum OpCode : uint8_t
     {
       // 2 byte message opcodes:
@@ -173,10 +173,10 @@ class LocoNet : public SubObject
 
   public:
     CLASS_ID("protocol.loconet")
-    
+
     Property<bool> debugLog;
 
-    LocoNet(Object& parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send);
+    LocoNet(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send);
 
     bool send(const Message& msg) { return m_send(msg); }
     void receive(const Message& msg);

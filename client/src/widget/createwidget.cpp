@@ -42,6 +42,8 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
     return new DecoderFunctionListWidget(object, parent);
   else if(classId == "input_list")
     return new InputListWidget(object, parent);
+  else if(classId == "controller_list")
+    return new ObjectListWidget(object, parent);
   else if(classId == "lua.script_list")
     return new LuaScriptListWidget(object, parent);
   else if(classId == "console")

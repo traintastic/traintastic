@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,13 +22,15 @@
 
 #include "commandstationlisttablemodel.hpp"
 #include "commandstationlist.hpp"
+#include "../../utils/utf8.hpp"
 
 using Hardware::CommandStation::CommandStation;
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
 constexpr uint32_t columnOnline = 2;
-constexpr uint32_t columnStatus = 3;
+constexpr uint32_t columnEmergencyStop = 3;
+constexpr uint32_t columnTrackPower = 4;
 
 bool CommandStationListTableModel::isListedProperty(const std::string& name)
 {
@@ -36,7 +38,8 @@ bool CommandStationListTableModel::isListedProperty(const std::string& name)
     name == "id" ||
     name == "name" ||
     name == "online" ||
-    name == "status";
+    name == "emergency_stop" ||
+    name == "track_voltage_off";
 }
 
 CommandStationListTableModel::CommandStationListTableModel(CommandStationList& list) :
@@ -46,7 +49,8 @@ CommandStationListTableModel::CommandStationListTableModel(CommandStationList& l
     "hardware.command_station:id",
     "hardware.command_station:name",
     "hardware.command_station:online",
-    "hardware.command_station:status"});
+    "hardware.command_station:emergency_stop",
+    "hardware.command_station:track_power"});
 }
 
 std::string CommandStationListTableModel::getText(uint32_t column, uint32_t row) const
@@ -66,8 +70,11 @@ std::string CommandStationListTableModel::getText(uint32_t column, uint32_t row)
       case columnOnline:
         return cs.online ? "\u2022" : "";
 
-      case columnStatus:
-        return "?";
+      case columnEmergencyStop:
+        return cs.emergencyStop ? "\u2022" : "";
+
+      case columnTrackPower:
+        return cs.trackVoltageOff ? UTF8_BALLOT_X : UTF8_CHECKMARK;
 
       default:
         assert(false);
@@ -86,6 +93,8 @@ void CommandStationListTableModel::propertyChanged(AbstractProperty& property, u
     changed(row, columnName);
   else if(property.name() == "online")
     changed(row, columnOnline);
-  else if(property.name() == "status")
-    changed(row, columnStatus);
+  else if(property.name() == "emergency_stop")
+    changed(row, columnEmergencyStop);
+  else if(property.name() == "track_voltage_off")
+    changed(row, columnTrackPower);
 }

@@ -52,7 +52,7 @@ class USBXpressNetInterface : public CommandStation
     Property<uint8_t> address;
     ObjectProperty<::Protocol::XpressNet> xpressnet;
 
-    USBXpressNetInterface(const std::weak_ptr<World>& world, const std::string& _id);
+    USBXpressNetInterface(const std::weak_ptr<World>& world, std::string_view _id);
     ~USBXpressNetInterface() final;
 };
 

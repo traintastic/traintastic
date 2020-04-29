@@ -26,6 +26,7 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include "traintastic.hpp"
+#include "worldsaver.hpp"
 
 
 
@@ -36,6 +37,7 @@
 
 #include "../hardware/input/loconetinput.hpp"
 #include "../hardware/decoder/decoder.hpp"
+#include "../hardware/controller/z21app.hpp"
 
 
 using nlohmann::json;
@@ -62,6 +64,7 @@ void World::init(const std::shared_ptr<World>& world)
   world->commandStations.setValueInternal(std::make_shared<CommandStationList>(*world, world->commandStations.name()));
   world->decoders.setValueInternal(std::make_shared<DecoderList>(*world, world->decoders.name()));
   world->inputs.setValueInternal(std::make_shared<InputList>(*world, world->inputs.name()));
+  world->controllers.setValueInternal(std::make_shared<ControllerList>(*world, world->controllers.name()));
   world->clock.setValueInternal(std::make_shared<Clock>(*world, world->clock.name()));
   world->luaScripts.setValueInternal(std::make_shared<Lua::ScriptList>(*world, world->luaScripts.name()));
 }
@@ -74,6 +77,7 @@ World::World() :
   commandStations{this, "command_stations", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
+  controllers{this, "controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   clock{this, "clock", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   state{this, "state", WorldState::TrackPowerOff, PropertyFlags::ReadOnly},
@@ -116,6 +120,18 @@ World::World() :
   save{*this, "save",
     [this]()
     {
+      try
+      {
+        WorldSaver saver(*this);
+        Traintastic::instance->console->notice(classId, "Saved world " + name.value());
+      }
+      catch(const std::exception& e)
+      {
+        Traintastic::instance->console->critical(classId, std::string("Saving world failed: ").append(e.what()));
+      }
+
+
+/*
       json objects = json::array();
       for(auto& it : m_objects)
         if(ObjectPtr object = it.second.lock())
@@ -134,6 +150,7 @@ World::World() :
       }
       else
         Traintastic::instance->console->critical(classId, "Can't write to world file");
+        */
     }}
 {
   m_interfaceItems.add(name);
@@ -142,6 +159,7 @@ World::World() :
   m_interfaceItems.add(commandStations);
   m_interfaceItems.add(decoders);
   m_interfaceItems.add(inputs);
+  m_interfaceItems.add(controllers);
   m_interfaceItems.add(clock);
   m_interfaceItems.add(luaScripts);
 
@@ -172,14 +190,14 @@ std::string World::getUniqueId(const std::string& prefix) const
 
   return id;
 }
-
-ObjectPtr World::createObject(const std::string& classId, const std::string& _id)
+/*
+ObjectPtr World::createObject(const std::string& classId, std::string_view _id)
 {
   if(classId == Hardware::Decoder::classId)
     return std::dynamic_pointer_cast<Object>(Hardware::Decoder::create(shared_ptr<World>(), getUniqueId("decoder")));
   else
     return ObjectPtr();
-}
+}*/
 
 bool World::isObject(const std::string& _id) const
 {
@@ -202,6 +220,7 @@ ObjectPtr World::getObject(const std::string& _id) const
 void World::event(WorldEvent event)
 {
   const WorldState st = state;
+  worldEvent(st, event);
   for(auto& it : m_objects)
     it.second.lock()->worldEvent(st, event);
 }
@@ -211,9 +230,12 @@ void World::load()
   std::ifstream file(m_filename);
   if(file.is_open())
   {
-    json world = json::parse(file);
-    m_uuid = boost::uuids::string_generator()(std::string(world["uuid"]));
-    name = world[name.name()];
+    json data = json::parse(file);
+    m_uuid = boost::uuids::string_generator()(std::string(data["uuid"]));
+    name = data[name.name()];
+
+    json objects = data["objects"];
+
 
 
 
@@ -227,7 +249,7 @@ void World::load()
 
     std::weak_ptr<World> w = shared_ptr<World>();
 
-#if 1
+#if 0
     auto cs = Hardware::CommandStation::Z21::create(w, "cs1");
     //cs->hostname = "192.168.1.2";
     cs->hostname = "192.168.16.254";
@@ -250,7 +272,7 @@ void World::load()
   #endif
     cs->xpressnet->commandStation = XpressNetCommandStation::Roco10764;
 #endif
-    commandStations->add(cs);
+    commandStations->addObject(cs);
 
 
     {
@@ -309,22 +331,22 @@ void World::load()
       dec->address = 3311;
       dec->longAddress = true;
       dec->speedSteps = 126;
+
+      for(int i = 0; i <= 20; i++)
+        dec->functions->add();
 /*
       {
-        auto f = Hardware::DecoderFunction::create(*dec, "dec_br211_f0");
+        auto f = dec->functions->add();
         f->number = 0;
         f->name = "Light";
-        dec->functions->add(f);
-        f->m_decoder = dec.get();
       }
 
       {
-        auto f = Hardware::DecoderFunction::create(w, "dec_br211_f1");
+        auto f = dec->functions->add();
         f->number = 1;
         f->name = "Sound";
-        dec->functions->add(f);
-        f->m_decoder = dec.get();
-      }*/
+      }
+      */
     }
 
     //cs->online = true;
@@ -362,11 +384,16 @@ void World::load()
         "  console.debug(event)\n"
         "  console.debug(event == enum.world_event.TRACK_POWER_ON)\n"
         "end\n";
-      luaScripts->add(script);
+      luaScripts->addObject(script);
     }
 
 
-
+    {
+      auto z21app = Hardware::Controller::Z21App::create(w, "z21app");
+      z21app->commandStation = cs;
+      z21app->active = true;
+      controllers->addObject(z21app);
+    }
 
 
 
@@ -382,6 +409,9 @@ json World::saveObject(const ObjectPtr& object)
   json objectData;
 
   objectData["class_id"] = object->getClassId();
+
+  if(Hardware::DecoderFunction* function = dynamic_cast<Hardware::DecoderFunction*>(object.get()))
+    objectData["decoder"] = function->decoder().id.toJSON();
 
   for(auto& item : object->interfaceItems())
     if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&item.second))

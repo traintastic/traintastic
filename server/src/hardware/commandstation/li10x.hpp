@@ -60,7 +60,7 @@ class LI10x : public CommandStation
     //Property<bool> useCTS;
     ObjectProperty<::Protocol::XpressNet> xpressnet;
 
-    LI10x(const std::weak_ptr<World>& world, const std::string& _id);
+    LI10x(const std::weak_ptr<World>& world, std::string_view _id);
 };
 
 }

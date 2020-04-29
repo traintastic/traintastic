@@ -66,5 +66,6 @@ void ObjectSubWindow::setObject(const ObjectPtr& object)
 {
   setWidget(createWidget(object));
   connect(widget(), &QWidget::windowTitleChanged, this, &ObjectSubWindow::setWindowTitle);
-  setWindowTitle(widget()->windowTitle());
+  if(!widget()->windowTitle().isEmpty())
+    setWindowTitle(widget()->windowTitle());
 }

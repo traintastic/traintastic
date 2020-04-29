@@ -28,6 +28,8 @@ file(GLOB SOURCES
   "src/enum/*.hpp"
   "src/hardware/commandstation/*.hpp"
   "src/hardware/commandstation/*.cpp"
+  "src/hardware/controller/*.hpp"
+  "src/hardware/controller/*.cpp"
   "src/hardware/decoder/*.hpp"
   "src/hardware/decoder/*.cpp"
   "src/hardware/input/*.hpp"
@@ -37,6 +39,7 @@ file(GLOB SOURCES
   "src/lua/*.hpp"
   "src/lua/*.cpp"
   "src/utils/*.hpp"
+  "src/utils/*.cpp"
   "thirdparty/boost/libs/program_options/src/*.cpp")
 
 add_executable(traintastic-server ${SOURCES})

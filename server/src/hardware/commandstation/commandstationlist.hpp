@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,7 +35,7 @@ class CommandStationList : public ObjectList<Hardware::CommandStation::CommandSt
   public:
     CLASS_ID("command_station_list")
 
-    CommandStationList(Object& parent, const std::string& parentPropertyName);
+    CommandStationList(Object& _parent, const std::string& parentPropertyName);
 
     TableModelPtr getModel() final;
 };

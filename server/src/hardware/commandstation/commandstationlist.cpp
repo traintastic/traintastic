@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,8 +25,8 @@
 
 using Hardware::CommandStation::CommandStation;
 
-CommandStationList::CommandStationList(Object& parent, const std::string& parentPropertyName) :
-  ObjectList<CommandStation>(parent, parentPropertyName)
+CommandStationList::CommandStationList(Object& _parent, const std::string& parentPropertyName) :
+  ObjectList<CommandStation>(_parent, parentPropertyName)
 {
 }
 

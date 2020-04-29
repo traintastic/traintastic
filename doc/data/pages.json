@@ -1,0 +1,56 @@
+{
+  "id": "index",
+  "md_file": "index.md",
+  "sub_pages": [
+    {
+      "id": "installation",
+      "md_file": "installation.md"
+    },
+    {
+      "id": "getting_started",
+      "md_file": "gettingstarted.md"
+    },
+    {
+      "id": "hardware",
+      "md_file": "hardware.md",
+      "sub_pages": [
+        {
+          "id": "command_stations",
+          "md_file": "commandstations.md",
+          "sub_pages": [
+            {
+              "id": "dr5000",
+              "md_file": "dr5000.md"
+            },
+            {
+              "id": "intellibox",
+              "md_file": "intellibox.md"
+            },
+            {
+              "id": "z21",
+              "md_file": "z21.md"
+            }
+          ]
+        },
+        {
+          "id": "decoder",
+          "md_file": "decoder.md",
+          "sub_pages": [
+            {
+              "id": "function",
+              "md_file": "decoderfunction.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lua",
+      "md_file": "lua.md"
+    },
+    {
+      "id": "command_line_options",
+      "md_file": "commandlineoptions.md"
+    }
+  ]
+}

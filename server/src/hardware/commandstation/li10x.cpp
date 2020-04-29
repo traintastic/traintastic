@@ -27,7 +27,7 @@
 
 namespace Hardware::CommandStation {
 
-LI10x::LI10x(const std::weak_ptr<World>& world, const std::string& _id) :
+LI10x::LI10x(const std::weak_ptr<World>& world, std::string_view _id) :
   CommandStation(world, _id),
   m_serialPort{Traintastic::instance->ioContext()},
   port{this, "port", "", PropertyFlags::ReadWrite},
@@ -61,15 +61,29 @@ bool LI10x::setOnline(bool& value)
 
 void LI10x::emergencyStopChanged(bool value)
 {
+  CommandStation::emergencyStopChanged(value);
 
+  if(value)
+    send(Protocol::XpressNet::EmergencyStop());
+  else if(!trackVoltageOff)
+    send(Protocol::XpressNet::NormalOperationResumed());
 }
 
 void LI10x::trackVoltageOffChanged(bool value)
 {
+  CommandStation::trackVoltageOffChanged(value);
+
+  if(!value)
+    send(Protocol::XpressNet::NormalOperationResumed());
+  else
+    send(Protocol::XpressNet::TrackPowerOff());
+
 }
 
 void LI10x::decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderChangeFlags changes, uint32_t functionNumber)
 {
+  CommandStation::decoderChanged(decoder, changes, functionNumber);
+
   if(online)
     xpressnet->decoderChanged(decoder, changes, functionNumber);
 }

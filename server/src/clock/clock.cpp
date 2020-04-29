@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,8 +22,8 @@
 
 #include "clock.hpp"
 
-Clock::Clock(Object& parent, const std::string& parentPropertyName) :
-  SubObject(parent, parentPropertyName),
+Clock::Clock(Object& _parent, const std::string& parentPropertyName) :
+  SubObject(_parent, parentPropertyName),
   year{this, "year", 2020, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
   month{this, "month", 1, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
   day{this, "day", 1, PropertyFlags::ReadWrite | PropertyFlags::StoreState},

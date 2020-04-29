@@ -1,0 +1,162 @@
+{
+  "columns": [
+    {
+      "label": {
+        "en-us": "Command station",
+        "nl-nl": "Centrale"
+      }
+    },
+    {
+      "label": {
+        "en-us": "Interface"
+      }
+    },
+    {
+      "label": {
+        "en-us": "Features",
+      },
+      "columns": [
+        {
+          "label": {
+            "en-us": "Decoder control"
+          }
+        },
+        {
+          "label": {
+            "en-us": "Decoder programming"
+          }
+        },
+        {
+          "label": "S88"
+        }
+      ]
+    },
+    {
+      "label": {
+        "en-us": "Operating system",
+      },
+      "columns": [
+        {
+          "label": "Windows"
+        },
+        {
+          "label": "Linux"
+        }
+      ]
+    }
+  ],
+  "rows": [
+    [
+      {
+        "text": "Digikeijs DR5000"
+      },
+      {
+        "text": "LAN/Z21"
+      },
+      {
+        "icon": "checkmark_green"
+      },
+      {
+        "icon": "x_red"
+      },
+      {
+        "icon": "checkmark_green"
+      },
+      {
+        "icon": "checkmark_green"
+      }
+    ],
+    [
+      {
+        "text": "Roco 10764"
+      },
+      {
+        "text": "XpressNet"
+      },
+      {
+        "icon": "checkmark_green"
+      },
+      {
+        "icon": "x_red"
+      },
+      {
+        "label": "-"
+      },
+      {
+        "icon": "checkmark_green"
+      },
+      {
+        "icon": "checkmark_green"
+      }
+    ],
+    [
+      {
+        "text": "Roco/Fleischmann Z21"
+      },
+      {
+        "text": "LAN/Z21"
+      },
+      {
+        "icon": "checkmark_green"
+      },
+      {
+        "icon": "x_red"
+      },
+      {
+        "icon": "checkmark_green"
+      },
+      {
+        "icon": "checkmark_green"
+      }
+    ],
+    [
+      {
+        "text": "Uhlenbrock Intellibox (IB)"
+      },
+      [
+        {
+          "text": {
+            "en-us": "Serial/P50X",
+            "nl-nl": "Serieel/P50X"
+          }
+        },
+        {
+          "text": "Loconet"
+        }
+      ],
+      {
+        "icon": "checkmark_green"
+      },
+      {
+        "icon": "x_red"
+      },
+      [
+        {
+          "icon": "checkmark_green"
+        },
+        {
+          "icon": "questionmark_blue"
+        }
+      ]
+      [
+        {
+          "icon": "checkmark_green"
+        },
+        {
+        }
+      ],
+      [
+        {
+          "icon": "checkmark_green"
+        },
+        {
+        }
+      ]
+    ]
+  ],
+  "footnotes": {
+   "1": ""
+
+
+  }
+}

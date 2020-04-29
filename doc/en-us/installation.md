@@ -1,5 +1,5 @@
-= Installation
+# Installation
 
-== Windows
+## Windows
 
-== Linux
+## Linux

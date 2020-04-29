@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,6 +36,8 @@ class DecoderFunction : public Output
   protected:
     Decoder& m_decoder;
 
+    void worldEvent(WorldState state, WorldEvent event) final;
+
    // void addToWorld() final { Output::addToWorld(); }
 
     bool setValue(bool& value) final;
@@ -45,13 +47,15 @@ class DecoderFunction : public Output
     CLASS_ID("hardware.decoder_function")
 
     static const std::shared_ptr<DecoderFunction> null;
-    static std::shared_ptr<DecoderFunction> create(Decoder& decoder, const std::string& _id);
+    static std::shared_ptr<DecoderFunction> create(Decoder& decoder, std::string_view _id);
 
-    DecoderFunction(Decoder& decoder, const std::string& _id);
+    DecoderFunction(Decoder& decoder, std::string_view _id);
 
     Property<uint8_t> number;
     Property<std::string> name;
     Property<bool> momentary;
+
+    Decoder& decoder() { return m_decoder; }
 };
 
 }

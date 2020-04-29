@@ -93,6 +93,13 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
 
           });
       });
+    m_actionAdd->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
+    connect(method, &Method::attributeChanged,
+      [this](AttributeName name, QVariant value)
+      {
+        if(name == AttributeName::Enabled)
+          m_actionAdd->setEnabled(value.toBool());
+      });
   }
 }
 

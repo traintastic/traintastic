@@ -29,7 +29,7 @@ class AbstractProperty;
 
 struct JSONUtils
 {
-  void loadPropertyValue(AbstractProperty& property, const nlohmann::json& value)
+  //void loadPropertyValue(AbstractProperty& property, const nlohmann::json& value)
 };
 
 #endif

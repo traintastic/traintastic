@@ -1,7 +1,7 @@
 /**
  * Traintastic
  *
- * Copyright (C) 2019 Reinder Feenstra <reinderfeenstra@gmail.com>
+ * Copyright (C) 2019-2020 Reinder Feenstra <reinderfeenstra@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@
 
 #include "output.hpp"
 
-Output::Output(const std::weak_ptr<World> world, const std::string& _id) :
+Output::Output(const std::weak_ptr<World> world, std::string_view _id) :
   IdObject{world, _id},
   value{this, "value", false, PropertyFlags::ReadWrite, std::bind(&Output::valueChanged, this, std::placeholders::_1), std::bind(&Output::setValue, this, std::placeholders::_1)}
 {

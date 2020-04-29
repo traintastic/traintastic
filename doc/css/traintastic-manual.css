@@ -1,0 +1,15 @@
+body {
+  background: #DCDCDC;
+}
+
+div#body {
+  max-width: 1200px;
+  margin: 0 auto 0 auto;
+}
+
+div#content {
+  border-left: #BEBEBE 1px solid;
+  border-right: #BEBEBE 1px solid;
+  background: white;
+  padding: 1em;
+}

@@ -14,6 +14,8 @@ clock:month=Maand
 clock:multiplier=Vermenigvuldiger
 clock:year=Jaar
 
+decoder_function_list:add=Functie toevoegen
+
 hardware.command_station.li10x:baudrate=Baudrate
 hardware.command_station.li10x:decoders=Decoders
 hardware.command_station.li10x:online=Online

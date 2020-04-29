@@ -24,7 +24,7 @@
 
 namespace Hardware::CommandStation {
 
-USBXpressNetInterface::USBXpressNetInterface(const std::weak_ptr<World>& world, const std::string& _id) :
+USBXpressNetInterface::USBXpressNetInterface(const std::weak_ptr<World>& world, std::string_view _id) :
   CommandStation(world, _id),
   m_handle{nullptr},
   serial{this, "serial", "", PropertyFlags::ReadWrite},

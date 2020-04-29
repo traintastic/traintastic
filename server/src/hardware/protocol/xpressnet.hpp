@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -345,7 +345,7 @@ class XpressNet : public SubObject
     Property<bool> useFunctionStateCommands;
     Property<bool> useRocoF13F20Command;
 
-    XpressNet(Object& parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send);
+    XpressNet(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send);
 
     bool send(const Message& msg) { return m_send(msg); }
     void receive(const Message& msg);

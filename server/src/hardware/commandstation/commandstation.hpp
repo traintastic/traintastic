@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,7 @@
 #include <enum/decoderprotocol.hpp>
 
 class DecoderList;
+class ControllerList;
 
 namespace Hardware {
   class Decoder;
@@ -42,25 +43,27 @@ class CommandStation : public IdObject
   friend class ::Hardware::Decoder;
 
   protected:
+    void addToWorld() final;
     void worldEvent(WorldState state, WorldEvent event) override;
 
     virtual bool setOnline(bool& value) = 0;
-    virtual void emergencyStopChanged(bool value) = 0;
-    virtual void trackVoltageOffChanged(bool value) = 0;
+    virtual void emergencyStopChanged(bool value);
+    virtual void trackVoltageOffChanged(bool value);
     //virtual bool isDecoderSupported(Decoder& decoder) const = 0;
-    virtual void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) = 0;
-
-    const std::shared_ptr<Decoder>& getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress) const;
+    virtual void decoderChanged(const Hardware::Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 
   public:
-    CommandStation(const std::weak_ptr<World>& world, const std::string& _id);
+    CommandStation(const std::weak_ptr<World>& world, std::string_view _id);
 
     Property<std::string> name;
     Property<bool> online;
     Property<bool> emergencyStop;
     Property<bool> trackVoltageOff;
     ObjectProperty<DecoderList> decoders;
+    ObjectProperty<ControllerList> controllers;
     Property<std::string> notes;
+
+    const std::shared_ptr<Hardware::Decoder>& getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress) const;
 };
 
 }

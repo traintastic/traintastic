@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_LUA_SCRIPTLIST_HPP
 
 #include "../core/objectlist.hpp"
+#include "../core/method.hpp"
 #include "script.hpp"
 
 namespace Lua {
@@ -36,7 +37,9 @@ class ScriptList : public ObjectList<Script>
   public:
     CLASS_ID("lua.script_list")
 
-    ScriptList(Object& parent, const std::string& parentPropertyName);
+    ::Method<std::shared_ptr<Script>()> add;
+
+    ScriptList(Object& _parent, const std::string& parentPropertyName);
 
     TableModelPtr getModel() final;
 };

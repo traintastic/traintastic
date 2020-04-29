@@ -28,7 +28,7 @@
 
 namespace Hardware::CommandStation {
 
-XpressNet::XpressNet(const std::weak_ptr<World>& world, const std::string& _id) :
+XpressNet::XpressNet(const std::weak_ptr<World>& world, std::string_view _id) :
   CommandStation(world, _id),
   /*emergencyStop{this, "emergency_stop", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
     [this](bool value)

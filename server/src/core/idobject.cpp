@@ -1,7 +1,7 @@
 /**
  * Traintastic
  *
- * Copyright (C) 2019 Reinder Feenstra <reinderfeenstra@gmail.com>
+ * Copyright (C) 2019-2020 Reinder Feenstra <reinderfeenstra@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,12 +20,13 @@
 
 #include "idobject.hpp"
 #include "traintastic.hpp"
+#include "console.hpp"
 #include "world.hpp"
 
-IdObject::IdObject(const std::weak_ptr<World> world, const std::string& _id) :
+IdObject::IdObject(const std::weak_ptr<World>& world, std::string_view _id) :
   Object{},
   m_world{world},
-  id{this, "id", _id, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
+  id{this, "id", std::string(_id.data(), _id.size()), PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
     [this](std::string& value)
     {
       auto& m = Traintastic::instance->world->m_objects;
@@ -37,8 +38,11 @@ IdObject::IdObject(const std::weak_ptr<World> world, const std::string& _id) :
       return true;
     }}
 {
+  auto w = world.lock();
+  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+
   m_interfaceItems.add(id)
-    .addAttributeEnabled(false);
+    .addAttributeEnabled(editable);
 }
 
 IdObject::~IdObject()
@@ -58,4 +62,39 @@ void IdObject::worldEvent(WorldState state, WorldEvent event)
   Object::worldEvent(state, event);
 
   id.setAttributeEnabled(contains(state, WorldState::Edit));
+}
+
+void IdObject::logDebug(const std::string& message)
+{
+  Traintastic::instance->console->debug(id, message);
+}
+
+void IdObject::logInfo(const std::string& message)
+{
+  Traintastic::instance->console->info(id, message);
+}
+
+void IdObject::logNotice(const std::string& message)
+{
+  Traintastic::instance->console->notice(id, message);
+}
+
+void IdObject::logWarning(const std::string& message)
+{
+  Traintastic::instance->console->warning(id, message);
+}
+
+void IdObject::logError(const std::string& message)
+{
+  Traintastic::instance->console->error(id, message);
+}
+
+void IdObject::logCritical(const std::string& message)
+{
+  Traintastic::instance->console->critical(id, message);
+}
+
+void IdObject::logFatal(const std::string& message)
+{
+  Traintastic::instance->console->fatal(id, message);
 }

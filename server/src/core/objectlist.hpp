@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -59,8 +59,8 @@ class ObjectList : public SubObject, public Table
   public:
     Property<uint32_t> length;
 
-    ObjectList(Object& parent, const std::string& parentPropertyName) :
-      SubObject{parent, parentPropertyName},
+    ObjectList(Object& _parent, const std::string& parentPropertyName) :
+      SubObject{_parent, parentPropertyName},
       length{this, "length", 0, PropertyFlags::ReadOnly}
     {
     }
@@ -80,7 +80,7 @@ class ObjectList : public SubObject, public Table
       return m_items[index];
     }
 
-    void add(const std::shared_ptr<T>& object)
+    void addObject(const std::shared_ptr<T>& object)
     {
       m_items.push_back(object);
       m_propertyChanged.emplace(object.get(), object->propertyChanged.connect(
@@ -102,7 +102,7 @@ class ObjectList : public SubObject, public Table
       rowCountChanged();
     }
 
-    void remove(const std::shared_ptr<T>& object)
+    void removeObject(const std::shared_ptr<T>& object)
     {
       auto it = std::find(m_items.begin(), m_items.end(), object);
       if(it != m_items.end())

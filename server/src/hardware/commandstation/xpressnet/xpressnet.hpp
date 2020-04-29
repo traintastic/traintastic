@@ -46,7 +46,7 @@ class XpressNet : public CommandStation
     Property<bool> useFunctionStateCommands;
     Property<bool> useRocoF13F20Command;
 
-    XpressNet(const std::weak_ptr<World>& world, const std::string& _id);
+    XpressNet(const std::weak_ptr<World>& world, std::string_view _id);
 };
 
 }

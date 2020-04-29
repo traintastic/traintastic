@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,13 +24,14 @@
 #include "decoderfunctionlisttablemodel.hpp"
 #include "decoder.hpp"
 #include "../../core/world.hpp"
+#include "../../utils/getworld.hpp"
 
 using Hardware::Decoder;
 using Hardware::DecoderFunction;
 
-DecoderFunctionList::DecoderFunctionList(Object& parent, const std::string& parentPropertyName) :
-  ObjectList<DecoderFunction>(parent, parentPropertyName),
-  add_{*this, "add",
+DecoderFunctionList::DecoderFunctionList(Object& _parent, const std::string& parentPropertyName) :
+  ObjectList<DecoderFunction>(_parent, parentPropertyName),
+  add{*this, "add",
     [this]()
     {
       Decoder& decoder = static_cast<Decoder&>(this->parent());
@@ -52,18 +53,30 @@ DecoderFunctionList::DecoderFunctionList(Object& parent, const std::string& pare
       auto function = DecoderFunction::create(decoder, id);
       function->name = "F" + std::to_string(number);
       function->number = number;
-      add(function);
+      addObject(function);
 
       return function;
     }}
 {
-  m_interfaceItems.add(add_)
-    .addAttributeEnabled(false);
+  auto world = getWorld(&_parent);
+  const bool editable = world && contains(world->state.value(), WorldState::Edit);
+
+  m_interfaceItems.add(add)
+    .addAttributeEnabled(editable);
 }
 
 TableModelPtr DecoderFunctionList::getModel()
 {
   return std::make_shared<DecoderFunctionListTableModel>(*this);
+}
+
+void DecoderFunctionList::worldEvent(WorldState state, WorldEvent event)
+{
+  ObjectList<Hardware::DecoderFunction>::worldEvent(state, event);
+
+  const bool editable = contains(state, WorldState::Edit);
+
+  add.setAttributeEnabled(editable);
 }
 
 bool DecoderFunctionList::isListedProperty(const std::string& name)

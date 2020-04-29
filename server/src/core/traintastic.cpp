@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@
 #include "client.hpp"
 #include "world.hpp"
 #include "worldlist.hpp"
+#include "worldloader.hpp"
 
 using nlohmann::json;
 
@@ -202,7 +203,8 @@ void Traintastic::loadWorld(const std::filesystem::path& path)
 {
   try
   {
-    world = World::load(path / "traintastic.json");
+    world = WorldLoader(path / "traintastic.json").world();
+    //World::load(path / "traintastic.json");
   }
   catch(const std::exception& e)
   {

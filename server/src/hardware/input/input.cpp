@@ -24,7 +24,7 @@
 #include "../../core/world.hpp"
 #include "inputlisttablemodel.hpp"
 
-Input::Input(const std::weak_ptr<World> world, const std::string& _id) :
+Input::Input(const std::weak_ptr<World> world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
   value{this, "value", false, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
@@ -38,7 +38,7 @@ void Input::addToWorld()
   IdObject::addToWorld();
 
   if(auto world = m_world.lock())
-    world->inputs->add(shared_ptr<Input>());
+    world->inputs->addObject(shared_ptr<Input>());
 }
 
 void Input::valueChanged(bool _value)

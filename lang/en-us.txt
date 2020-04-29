@@ -2,10 +2,12 @@
 
 :address=Address
 :command_station=Command station
+:controllers=Controllers
 :emergency_stop=Emergency stop
 :id=Id
 :name=Name
 :notes=Notes
+:track_power=Track power
 
 clock:day=Day
 clock:hour=Hour
@@ -14,7 +16,9 @@ clock:month=Month
 clock:multiplier=Multiplier
 clock:year=Year
 
-decoder_function_list:add=Add
+decoder_function_list:add=Add function
+
+decoder_list:add=Add
 
 hardware.command_station.li10x:baudrate=Baudrate
 hardware.command_station.li10x:decoders=Decoders
@@ -45,6 +49,11 @@ hardware.command_station.z21:vcc_voltage=VCC voltage
 
 hardware.command_station:online=Online
 hardware.command_station:status=Status
+
+hardware.controller.z21_app:active=Active
+hardware.controller.z21_app:port=Port
+
+hardware.controller:active=Active
 
 hardware.decoder:direction=Direction
 hardware.decoder:functions=Functions

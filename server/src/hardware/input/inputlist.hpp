@@ -35,7 +35,7 @@ class InputList : public ObjectList<Input>
   public:
     CLASS_ID("input_list")
 
-    InputList(Object& parent, const std::string& parentPropertyName);
+    InputList(Object& _parent, const std::string& parentPropertyName);
 
     TableModelPtr getModel() final;
 };

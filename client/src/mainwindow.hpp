@@ -65,7 +65,7 @@ class MainWindow : public QMainWindow
     QByteArray m_beforeFullScreenGeometry;
 
     void closeEvent(QCloseEvent* event) final;
-    void setMode(TraintasticMode value);
+    void worldChanged();
 
   protected slots:
     void disconnectFromServer();
@@ -89,7 +89,7 @@ class MainWindow : public QMainWindow
   public slots:
     void connectToServer();
     void showObject(const ObjectPtr& object);
-    void showObject(const QString& id);
+    void showObject(const QString& id, const QString& title = "");
 };
 
 #endif

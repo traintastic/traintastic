@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,7 +28,7 @@
 #include <enum/traintasticmode.hpp>
 
 #define CREATE(T) \
-  static std::shared_ptr<T> create(const std::weak_ptr<World>& world, const std::string& _id) \
+  static std::shared_ptr<T> create(const std::weak_ptr<World>& world, std::string_view _id) \
   { \
     auto obj = std::make_shared<T>(world, _id); \
     obj->addToWorld(); \
@@ -42,9 +42,17 @@ class IdObject : public Object
   protected:
     std::weak_ptr<World> m_world;
 
-    IdObject(const std::weak_ptr<World> world, const std::string& _id);
+    IdObject(const std::weak_ptr<World>& world, std::string_view _id);
     virtual void addToWorld();
     void worldEvent(WorldState state, WorldEvent event) override;
+
+    void logDebug(const std::string& message);
+    void logInfo(const std::string& message);
+    void logNotice(const std::string& message);
+    void logWarning(const std::string& message);
+    void logError(const std::string& message);
+    void logCritical(const std::string& message);
+    void logFatal(const std::string& message);
 
   public:
     Property<std::string> id;

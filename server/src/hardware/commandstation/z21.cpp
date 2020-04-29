@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code
  *
- * Copyright (C) 2019 Reinder Feenstra <reinderfeenstra@gmail.com>
+ * Copyright (C) 2019-2020 Reinder Feenstra <reinderfeenstra@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -59,7 +59,7 @@ namespace Hardware::CommandStation {
 
 
 
-Z21::Z21(const std::weak_ptr<World>& world, const std::string& _id) :
+Z21::Z21(const std::weak_ptr<World>& world, std::string_view _id) :
   CommandStation(world, _id),
   m_socket{Traintastic::instance->ioContext()},
   hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
@@ -244,13 +244,13 @@ bool Z21::setOnline(bool& value)
       return false;
     }
 
-    receive();
+    receive(); // start receiving messages
 
     send(z21_lan_set_broadcastflags(0x07000000 | /*0x00010000 |*/ 0x00000100 | 0x00000001));
 
     // try to communicate with Z21
 
-    send(z21_lan_get_serial_number());
+    send(Protocol::Z21::LanGetSerialNumber());
     send(z21_lan_get_hwinfo());
     send(z21_lan_get_broadcastflags());
     send(z21_lan_systemstate_getdata());
@@ -285,18 +285,24 @@ void Z21::receive()
       {
         if((bytesReceived >= sizeof(z21_lan_header)))
         {
+          bool unknownMessage = false;
+          const Protocol::Z21::Message* message = reinterpret_cast<const Protocol::Z21::Message*>(m_receiveBuffer.data());
           const z21_lan_header* cmd = reinterpret_cast<const z21_lan_header*>(m_receiveBuffer.data());
           switch(cmd->header)
           {
             case Z21_LAN_GET_SERIAL_NUMBER:
-            {
-              EventLoop::call(
-                [this, value=std::to_string(static_cast<const z21_lan_get_serial_number_reply*>(cmd)->serialNumber)]()
-                {
-                  serialNumber.setValueInternal(value);
-                });
+              if(message->dataLen() == sizeof(Protocol::Z21::LanGetSerialNumberReply))
+              {
+                EventLoop::call(
+                  [this, value=std::to_string(static_cast<const Protocol::Z21::LanGetSerialNumberReply*>(message)->serialNumber())]()
+                  {
+                    serialNumber.setValueInternal(value);
+                  });
+              }
+              else
+                unknownMessage = true;
               break;
-            }
+
             case Z21_LAN_GET_HWINFO:
             {
               const z21_lan_get_hwinfo_reply* reply = static_cast<const z21_lan_get_hwinfo_reply*>(cmd);
@@ -485,16 +491,42 @@ void Z21::receive()
     });
 }
 
-void Z21::send(const z21_lan_header* data)
+void Z21::send(const Protocol::Z21::Message& message)
 {
-  Traintastic::instance->console->debug(id, "z21_lan_header->dataLen = " + std::to_string(data->dataLen));
+  // TODO async
 
-  m_socket.async_send_to(boost::asio::buffer(data, data->dataLen), m_remoteEndpoint,
+    // TODO: add to queue, send async
+
+  boost::system::error_code ec;
+  m_socket.send_to(boost::asio::buffer(&message, message.dataLen()), m_remoteEndpoint, 0, ec);
+  if(ec)
+     logError("socket.send_to: " + ec.message());
+/*
+  m_socket.send_to(boost::asio:buffer(&message, message.dataLen()), 0, m_remoteEndpoint);,
     [this](const boost::system::error_code& ec, std::size_t)
     {
       if(ec)
          EventLoop::call([this, ec](){ Traintastic::instance->console->error(id, "socket.async_send_to: " + ec.message()); });
-    });
+    });*/
+}
+
+void Z21::send(const z21_lan_header* data)
+{
+  Traintastic::instance->console->debug(id, "z21_lan_header->dataLen = " + std::to_string(data->dataLen));
+
+  boost::system::error_code ec;
+  m_socket.send_to(boost::asio::buffer(data, data->dataLen), m_remoteEndpoint, 0, ec);
+  if(ec)
+     logError("socket.send_to: " + ec.message());
+
+
+  //m_socket.send_to(boost::asio::buffer(data, data->dataLen), 0, m_remoteEndpoint);
+  /*,
+    [this](const boost::system::error_code& ec, std::size_t)
+    {
+      if(ec)
+         EventLoop::call([this, ec](){ Traintastic::instance->console->error(id, "socket.async_send_to: " + ec.message()); });
+    });*/
 }
 
 }

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,20 +21,16 @@
  */
 
 #include "script.hpp"
+#include "scriptlist.hpp"
+#include "scriptlisttablemodel.hpp"
 #include "push.hpp"
-#include "../core/traintastic.hpp"
-#include <enum/traintasticmode.hpp>
-
-
-
+#include "../core/world.hpp"
 #include "../enum/worldevent.hpp"
 #include "../set/worldstate.hpp"
 
-
-
 namespace Lua {
 
-Script::Script(const std::weak_ptr<World>& world, const std::string& _id) :
+Script::Script(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
   m_sandbox{nullptr, nullptr},
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
@@ -48,46 +44,37 @@ Script::Script(const std::weak_ptr<World>& world, const std::string& _id) :
     }},
   code{this, "code", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
+  auto w = world.lock();
+  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+
   m_interfaceItems.add(name);
   m_interfaceItems.add(active);
- //   .addAttributeEnabled(false);
   m_interfaceItems.add(code)
-    .addAttributeEnabled(false);
+    .addAttributeEnabled(!active && editable);
+}
+
+void Script::addToWorld()
+{
+  IdObject::addToWorld();
+
+  if(auto world = m_world.lock())
+    world->luaScripts->addObject(shared_ptr<Script>());
 }
 
 void Script::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);
 
-  //enabled.setAttributeEnabled(mode != TraintasticMode::Run);
   code.setAttributeEnabled(!active && contains(state, WorldState::Edit));
 
-  if(active)
+  if(active && m_sandbox)
   {
-    /*if(mode == TraintasticMode::Edit && m_sandbox)
-      fini();
-    else if(mode == TraintasticMode::Stop && !m_sandbox)
-      init();
-    else*/ if(m_sandbox)
+    lua_State* L = m_sandbox.get();
+    if(Sandbox::getGlobal(L, "world_event") == LUA_TFUNCTION)
     {
-      lua_State* L = m_sandbox.get();
-      //if(Sandbox::getGlobal(L, "mode_changed") == LUA_TFUNCTION)
-     // {
-       // push(L, mode);
-       // pcall(L, 1);
-     // }
-
-
-      if(Sandbox::getGlobal(L, "world_event") == LUA_TFUNCTION)
-      {
-        push(L, state);
-        push(L, event);
-        pcall(L, 2);
-      }
-
-
-
-
+      push(L, state);
+      push(L, event);
+      pcall(L, 2);
     }
   }
 }
@@ -100,20 +87,20 @@ void Script::init()
   {
     lua_State* L = m_sandbox.get();
     const int error = luaL_loadbuffer(L, code.value().c_str(), code.value().size(), "=") || Sandbox::pcall(L, 0, LUA_MULTRET);
-    if(error == 0)
+    if(error == LUA_OK)
     {
       if(Sandbox::getGlobal(L, "init") == LUA_TFUNCTION)
         pcall(L);
     }
     else
     {
-      Traintastic::instance->console->fatal(id, lua_tostring(L, -1));
+      logFatal(lua_tostring(L, -1));
       lua_pop(L, 1); // pop error message from the stack
       fini();
     }
   }
   else
-    Traintastic::instance->console->fatal(id, "Creating lua state failed");
+    logFatal("Creating lua state failed");
 }
 
 void Script::fini()
@@ -124,17 +111,13 @@ void Script::fini()
 
 bool Script::pcall(lua_State* L, int nargs, int nresults)
 {
-  const bool success = Sandbox::pcall(L, nargs, nresults) == 0;
+  const bool success = Sandbox::pcall(L, nargs, nresults) == LUA_OK;
   if(!success)
   {
-    Traintastic::instance->console->critical(id, lua_tostring(L, -1));
+    logCritical(lua_tostring(L, -1));
     lua_pop(L, 1); // pop error message from the stack
   }
   return success;
 }
-
-
-
-
 
 }

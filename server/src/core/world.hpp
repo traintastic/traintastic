@@ -37,14 +37,19 @@
 #include "../hardware/commandstation/commandstationlist.hpp"
 #include "../hardware/decoder/decoderlist.hpp"
 #include "../hardware/input/inputlist.hpp"
+#include "../hardware/controller/controllerlist.hpp"
 #include "../lua/scriptlist.hpp"
 //class CommandStationList;
 //class DecoderList;
+
+class WorldLoader;
 
 class World : public Object
 {
   friend class IdObject;
   friend class Traintastic;
+  friend class WorldLoader;
+  friend class WorldSaver;
 
   protected:
     static void init(const std::shared_ptr<World>& world);
@@ -70,6 +75,7 @@ class World : public Object
     ObjectProperty<CommandStationList> commandStations;
     ObjectProperty<DecoderList> decoders;
     ObjectProperty<InputList> inputs;
+    ObjectProperty<ControllerList> controllers;
     ObjectProperty<Clock> clock;
     ObjectProperty<Lua::ScriptList> luaScripts;
 
@@ -87,8 +93,8 @@ class World : public Object
     const boost::uuids::uuid& uuid() const { return m_uuid; }
 
     std::string getUniqueId(const std::string& prefix) const;
-    ObjectPtr createObject(const std::string& classId, const std::string& _id = "");
-    bool isObject(const std::string& _id) const;
+    //ObjectPtr createObject(const std::string& classId, std::string_view _id = "");
+    bool isObject(const std::string&_id) const;
     ObjectPtr getObject(const std::string& _id) const;
 };
 

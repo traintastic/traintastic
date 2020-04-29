@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,12 +22,28 @@
 
 #include "scriptlist.hpp"
 #include "scriptlisttablemodel.hpp"
+#include "../utils/getworld.hpp"
 
 namespace Lua {
 
-ScriptList::ScriptList(Object& parent, const std::string& parentPropertyName) :
-  ObjectList<Script>(parent, parentPropertyName)
+ScriptList::ScriptList(Object& _parent, const std::string& parentPropertyName) :
+  ObjectList<Script>(_parent, parentPropertyName),
+  add{*this, "add",
+    [this]()
+    {
+      auto world = getWorld(&this->parent());
+      if(!world)
+        return std::shared_ptr<Script>();
+      auto script = Script::create(world, world->getUniqueId("script"));
+      addObject(script);
+      return script;
+    }}
 {
+  auto world = getWorld(&_parent);
+  const bool editable = world && contains(world->state.value(), WorldState::Edit);
+
+  m_interfaceItems.add(add)
+    .addAttributeEnabled(editable);
 }
 
 TableModelPtr ScriptList::getModel()

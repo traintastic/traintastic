@@ -23,8 +23,8 @@
 #include "inputlist.hpp"
 #include "inputlisttablemodel.hpp"
 
-InputList::InputList(Object& parent, const std::string& parentPropertyName) :
-  ObjectList<Input>(parent, parentPropertyName)
+InputList::InputList(Object& _parent, const std::string& parentPropertyName) :
+  ObjectList<Input>(_parent, parentPropertyName)
 {
 }
 

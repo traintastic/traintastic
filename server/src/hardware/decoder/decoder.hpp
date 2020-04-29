@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,6 +47,7 @@ class Decoder : public IdObject
 
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
+    void setEditable(bool value);
     void changed(DecoderChangeFlags changes, uint32_t functionNumber = 0);
 
   public:
@@ -67,7 +68,7 @@ class Decoder : public IdObject
     ObjectProperty<DecoderFunctionList> functions;
     Property<std::string> notes;
 
-    Decoder(const std::weak_ptr<World>& world, const std::string& _id);
+    Decoder(const std::weak_ptr<World>& world, std::string_view _id);
 
     void addToWorld() final;
     const std::shared_ptr<DecoderFunction>& getFunction(uint32_t number) const;

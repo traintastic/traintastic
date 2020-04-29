@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,10 @@
 
 struct z21_lan_header;
 
+namespace Protocol::Z21 {
+  class Message;
+}
+
 namespace Hardware::CommandStation {
 
 class Z21 : public CommandStation
@@ -48,6 +52,7 @@ class Z21 : public CommandStation
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     void receive();
+    void send(const Protocol::Z21::Message& message);
     void send(const z21_lan_header* msg);
     inline void send(const z21_lan_header& msg) { send(&msg); }
 
@@ -55,7 +60,7 @@ class Z21 : public CommandStation
     CLASS_ID("hardware.command_station.z21")
     CREATE(Z21)
 
-    Z21(const std::weak_ptr<World>& world, const std::string& _id);
+    Z21(const std::weak_ptr<World>& world, std::string_view _id);
 
     Property<std::string> hostname;
     Property<uint16_t> port;

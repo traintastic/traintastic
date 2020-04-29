@@ -42,6 +42,7 @@
 
 #include <QDesktopServices>
 #include <locale/locale.hpp>
+#include <codename.hpp>
 
 #define SETTING_PREFIX "mainwindow/"
 #define SETTING_GEOMETRY SETTING_PREFIX "geometry"
@@ -91,7 +92,9 @@ MainWindow::MainWindow(QWidget* parent) :
             if(Method* method = traintastic->getMethod("new_world"))
               method->call();
       });
+    m_actionNewWorld->setShortcut(QKeySequence::New);
     m_actionLoadWorld = menu->addAction(QIcon(":/dark/world_load.svg"), Locale::tr("qtapp.mainmenu:load_world") + "...", this, &MainWindow::loadWorld);
+    m_actionLoadWorld->setShortcut(QKeySequence::Open);
     m_actionSaveWorld = menu->addAction(QIcon(":/dark/world_save.svg"), Locale::tr("qtapp.mainmenu:save_world"),
       [this]()
       {
@@ -99,11 +102,12 @@ MainWindow::MainWindow(QWidget* parent) :
           if(Method* method = m_world->getMethod("save"))
             method->call();
       });
+    m_actionSaveWorld->setShortcut(QKeySequence::Save);
     menu->addSeparator();
     m_actionImportWorld = menu->addAction(QIcon(":/dark/world_import.svg"), Locale::tr("qtapp.mainmenu:import_world") + "...", this, &MainWindow::importWorld);
     m_actionExportWorld = menu->addAction(QIcon(":/dark/world_export.svg"), Locale::tr("qtapp.mainmenu:export_world") + "...", this, &MainWindow::exportWorld);
     menu->addSeparator();
-    menu->addAction(Locale::tr("qtapp.mainmenu:quit"), this, &MainWindow::close);
+    menu->addAction(Locale::tr("qtapp.mainmenu:quit"), this, &MainWindow::close)->setShortcut(QKeySequence::Quit);
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:view"));
     actFullScreen = menu->addAction(Locale::tr("qtapp.mainmenu:fullscreen"), this, &MainWindow::toggleFullScreen);
@@ -112,11 +116,12 @@ MainWindow::MainWindow(QWidget* parent) :
 
     m_menuObjects = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:objects"));
     menu = m_menuObjects->addMenu(QIcon(":/dark/hardware.svg"), Locale::tr("qtapp.mainmenu:hardware"));
-    menu->addAction(Locale::tr("world:command_stations") + "...", [this](){ showObject("world.command_stations"); });
-    menu->addAction(Locale::tr("world:decoders") + "...", [this](){ showObject("world.decoders"); });
-    menu->addAction(Locale::tr("world:inputs") + "...", [this](){ showObject("world.inputs"); });
+    menu->addAction(Locale::tr("world:command_stations") + "...", [this](){ showObject("world.command_stations", Locale::tr("world:command_stations")); });
+    menu->addAction(Locale::tr("world:decoders") + "...", [this](){ showObject("world.decoders", Locale::tr("world:decoders")); });
+    menu->addAction(Locale::tr("world:inputs") + "...", [this](){ showObject("world.inputs", Locale::tr("world:inputs")); });
+    menu->addAction(Locale::tr("world:controllers") + "...", [this](){ showObject("world.controllers", Locale::tr("world:controllers")); });
     m_menuObjects->addAction(Locale::tr("world:clock") + "...", [this](){ showObject("world.clock"); });
-    m_menuObjects->addAction(QIcon(":/dark/lua.svg"), Locale::tr("world:lua_scripts") + "...", [this](){ showObject("world.lua_scripts"); });
+    m_menuObjects->addAction(QIcon(":/dark/lua.svg"), Locale::tr("world:lua_scripts") + "...", [this](){ showObject("world.lua_scripts", Locale::tr("world:lua_scripts")); });
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:tools"));
     menu->addAction(Locale::tr("qtapp.mainmenu:settings") + "...")->setEnabled(false);
@@ -126,7 +131,7 @@ MainWindow::MainWindow(QWidget* parent) :
     m_actionServerConsole->setShortcut(Qt::Key_F12);
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:help"));
-    menu->addAction(Locale::tr("qtapp.mainmenu:help"), [](){ QDesktopServices::openUrl("https://traintastic.org/manual?version=" + QApplication::applicationVersion()); })->setShortcut(Qt::Key_F1);
+    menu->addAction(Locale::tr("qtapp.mainmenu:help"), [](){ QDesktopServices::openUrl("https://traintastic.org/manual?version=" + QApplication::applicationVersion()); })->setShortcut(QKeySequence::HelpContents);
     //menu->addSeparator();
     //menu->addAction(Locale::tr("qtapp.mainmenu:about_qt") + "...", qApp, &QApplication::aboutQt);
     menu->addAction(Locale::tr("qtapp.mainmenu:about") + "...", this, &MainWindow::showAbout);
@@ -224,16 +229,10 @@ void MainWindow::connectToServer()
     connect(m_connection.data(), &Connection::worldChanged,
       [this]()
       {
-        m_world = m_connection->world();
-
-        if(m_world)
-        {
-          if(AbstractProperty* edit = m_world->getProperty("edit"))
-            connect(edit, &AbstractProperty::valueChangedBool, m_actionEdit, &QAction::setChecked);
-        }
-
+        worldChanged();
         updateActions();
       });
+    worldChanged();
     clientStateChanged();
   }
 }
@@ -257,16 +256,16 @@ void MainWindow::closeEvent(QCloseEvent* event)
   QMainWindow::closeEvent(event);
 }
 
-/*void MainWindow::setMode(TraintasticMode value)
+void MainWindow::worldChanged()
 {
-  if(!m_connection)
-    return;
+  m_world = m_connection->world();
 
-  if(m_connection->state() == Connection::State::Connected && m_connection->traintastic())
-    m_connection->traintastic()->getProperty("mode")->setValueInt64(static_cast<int64_t>(value));
-  else
-    updateModeActions();
-}*/
+  if(m_world)
+  {
+    if(AbstractProperty* edit = m_world->getProperty("edit"))
+      connect(edit, &AbstractProperty::valueChangedBool, m_actionEdit, &QAction::setChecked);
+  }
+}
 
 void MainWindow::loadWorld()
 {
@@ -348,11 +347,13 @@ void MainWindow::showObject(const ObjectPtr& object)
     m_mdiArea->setActiveSubWindow(m_mdiSubWindows[id]);
 }
 
-void MainWindow::showObject(const QString& id)
+void MainWindow::showObject(const QString& id, const QString& title)
 {
   if(!m_mdiSubWindows.contains(id))
   {
     QMdiSubWindow* window = new ObjectSubWindow(m_connection, id);
+    if(!title.isEmpty())
+      window->setWindowTitle(title);
     m_mdiSubWindows[id] = window;
     m_mdiArea->addSubWindow(window);
     window->setAttribute(Qt::WA_DeleteOnClose);
@@ -366,7 +367,7 @@ void MainWindow::showObject(const QString& id)
 void MainWindow::showAbout()
 {
   QMessageBox::about(this, tr("About Traintastic"),
-    "<h2>Traintastic <small>v" + QApplication::applicationVersion() + "</small></h2>"
+    "<h2>Traintastic v" + QApplication::applicationVersion() + " <small>" TRAINTASTIC_CODENAME "</small></h2>"
     "<p>Copyright &copy; 2019-2020 Reinder Feenstra</p>"
     "<p>This program is free software; you can redistribute it and/or"
     " modify it under the terms of the GNU General Public License"

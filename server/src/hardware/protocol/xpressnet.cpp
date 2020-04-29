@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,8 +47,8 @@ bool XpressNet::isChecksumValid(const Message& msg)
   return calcChecksum(msg) == *(reinterpret_cast<const uint8_t*>(&msg) + msg.dataSize() + 1);
 }
 
-XpressNet::XpressNet(Object& parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send) :
-  SubObject(parent, parentPropertyName),
+XpressNet::XpressNet(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send) :
+  SubObject(_parent, parentPropertyName),
   m_send{std::move(send)},
   commandStation{this, "command_station", XpressNetCommandStation::Custom, PropertyFlags::ReadWrite,
     [this](XpressNetCommandStation value)
