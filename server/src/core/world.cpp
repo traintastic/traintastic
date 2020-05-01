@@ -29,8 +29,9 @@
 #include "worldsaver.hpp"
 
 
-
-#include "../hardware/commandstation/usbxpressnetinterface.hpp"
+#ifndef DISABLE_USB_XPRESSNET_INTERFACE
+  #include "../hardware/commandstation/usbxpressnetinterface.hpp"
+#endif
 #include "../hardware/commandstation/li10x.hpp"
 #include "../hardware/commandstation/z21.hpp"
 #include "../core/objectlisttablemodel.hpp"
@@ -66,7 +67,9 @@ void World::init(const std::shared_ptr<World>& world)
   world->inputs.setValueInternal(std::make_shared<InputList>(*world, world->inputs.name()));
   world->controllers.setValueInternal(std::make_shared<ControllerList>(*world, world->controllers.name()));
   world->clock.setValueInternal(std::make_shared<Clock>(*world, world->clock.name()));
+#ifndef DISABLE_LUA_SCRIPTING
   world->luaScripts.setValueInternal(std::make_shared<Lua::ScriptList>(*world, world->luaScripts.name()));
+#endif
 }
 
 World::World() :
@@ -79,7 +82,9 @@ World::World() :
   inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   controllers{this, "controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   clock{this, "clock", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
+#ifndef DISABLE_LUA_SCRIPTING
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
+#endif
   state{this, "state", WorldState::TrackPowerOff, PropertyFlags::ReadOnly},
   emergencyStop{*this, "emergency_stop",
     [this]()
@@ -161,7 +166,9 @@ World::World() :
   m_interfaceItems.add(inputs);
   m_interfaceItems.add(controllers);
   m_interfaceItems.add(clock);
+#ifndef DISABLE_LUA_SCRIPTING
   m_interfaceItems.add(luaScripts);
+#endif
 
   m_interfaceItems.add(state);
   m_interfaceItems.add(emergencyStop);
@@ -353,7 +360,7 @@ void World::load()
 
 
 
-
+#ifndef DISABLE_LUA_SCRIPTING
     {
       auto script = Lua::Script::create(w, getUniqueId("script"));
       script->name = "test";
@@ -386,7 +393,7 @@ void World::load()
         "end\n";
       luaScripts->addObject(script);
     }
-
+#endif
 
     {
       auto z21app = Hardware::Controller::Z21App::create(w, "z21app");

@@ -25,7 +25,7 @@
 
 #include "../../core/output.hpp"
 #include "../../core/objectproperty.hpp"
-#include "../commandstation/commandstation.hpp"
+//#include "../commandstation/commandstation.hpp"
 
 namespace Hardware {
 

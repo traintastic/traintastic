@@ -58,7 +58,7 @@ class Object : public std::enable_shared_from_this<Object>
     virtual ~Object();
 
     template <typename Derived>
-    inline std::shared_ptr<const Derived> shared_ptr() const
+    inline std::shared_ptr<const Derived> shared_ptr_c() const
     {
       return std::static_pointer_cast<const Derived>(shared_from_this());
     }

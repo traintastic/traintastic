@@ -96,7 +96,7 @@ void CommandStation::worldEvent(WorldState state, WorldEvent event)
 
 const std::shared_ptr<Hardware::Decoder>& CommandStation::getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress) const
 {
-  auto it = std::find_if(decoders->begin(), decoders->end(), [=](auto& decoder){ return decoder->protocol == protocol && decoder->address == address && decoder->longAddress == longAddress; });
+  auto it = std::find_if(decoders->begin(), decoders->end(), [=](auto& decoder){ return decoder->protocol.value() == protocol && decoder->address.value() == address && decoder->longAddress == longAddress; });
   if(it != decoders->end())
     return *it;
   return Decoder::null;

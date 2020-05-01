@@ -27,14 +27,11 @@
 #include "../../core/idobject.hpp"
 #include "../../core/property.hpp"
 #include "../../core/objectproperty.hpp"
+#include "../../core/commandstationproperty.hpp"
 
 namespace Hardware {
   class Decoder;
   enum class DecoderChangeFlags;
-
-  namespace CommandStation {
-    class CommandStation;
-  }
 }
 
 namespace Hardware::Controller {
@@ -55,7 +52,7 @@ class Controller : public IdObject
 
   public:
     Property<std::string> name;
-    ObjectProperty<CommandStation::CommandStation> commandStation;
+    CommandStationProperty commandStation;
     Property<bool> active;
     Property<std::string> notes;
 

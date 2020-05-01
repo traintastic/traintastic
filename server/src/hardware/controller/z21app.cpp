@@ -117,7 +117,7 @@ void Z21App::decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderC
   //logDebug("loco info: speedStep=" + std::to_string(decoder.speedStep.value()));
 
   EventLoop::call(
-    [this, dec=decoder.shared_ptr<const Hardware::Decoder>()]()
+    [this, dec=decoder.shared_ptr_c<const Hardware::Decoder>()]()
     {
       broadcastLocoInfo(*dec);
     });

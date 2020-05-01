@@ -112,11 +112,11 @@ void Console::log(Level level, const std::string& id, const std::string& message
   ss << std::put_time(std::localtime(&tm), "%F %T") << '.' << std::setfill('0') << std::setw(6) << us.count() << ' ' << level << ' ' << id << ": " << message << std::endl;
 
   m_logs.push_back({
-    .time_s = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count(),
-    .time_us = static_cast<uint32_t>(us.count()),
-    .level = level,
-    .id = id,
-    .message = message});
+    /*.time_s =*/ std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count(),
+    /*.time_us =*/ static_cast<uint32_t>(us.count()),
+    /*.level =*/ level,
+    /*.id =*/ id,
+    /*.message =*/ message});
 
   for(auto& model : m_models)
     model->logAdded();

@@ -95,7 +95,7 @@ bool Traintastic::run()
     {
       uuid = boost::uuids::string_generator()(settings->defaultWorld.value());
     }
-    catch(const std::exception& e)
+    catch(const std::exception&)
     {
       uuid = boost::uuids::nil_generator()();
       console->error(id, "Invalid default world uuid");

@@ -101,17 +101,27 @@ class Message
       Unknown = 63
     };
 
+#ifdef _MSC_VER
+  #pragma pack(push, 1)
+#endif
     struct Header
     {
       Command command;
-      struct
+      struct Flags
       {
         uint8_t errorCode : 6;
         uint8_t type : 2;
       } flags;
       uint16_t requestId;
       uint32_t dataSize;
-    } __attribute__((packed));
+    } 
+#ifdef __GNUC__
+    __attribute__((packed))
+#endif
+    ;
+#ifdef _MSC_VER
+  #pragma pack(pop)
+#endif
     static_assert(sizeof(Header) == 8);
 
   private:
@@ -285,7 +295,7 @@ class Message
       if constexpr(std::is_same_v<T,std::string_view> || std::is_same_v<T,std::string>)
       {
         m_data.resize(oldSize + sizeof(Length) + value.size());
-        *reinterpret_cast<Length*>(m_data.data() + oldSize) = value.size();
+        *reinterpret_cast<Length*>(m_data.data() + oldSize) = static_cast<Length>(value.size());
         memcpy(m_data.data() + oldSize + sizeof(Length), value.data(), value.size());
       }
       else if constexpr(std::is_trivially_copyable_v<T>)
@@ -296,7 +306,7 @@ class Message
       else
         static_assert(sizeof(T) != sizeof(T));
 
-      header().dataSize = m_data.size() - sizeof(Header);
+      header().dataSize = static_cast<uint32_t>(m_data.size() - sizeof(Header));
     }
 
     void writeBlock()

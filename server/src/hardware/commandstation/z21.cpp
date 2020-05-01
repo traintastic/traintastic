@@ -151,6 +151,10 @@ bool Z21::isDecoderSupported(Decoder& decoder) const
     decoder.address <= (decoder.longAddress ? 9999 : 127);
 }
 */
+
+
+
+
 void Z21::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Direction | DecoderChangeFlags::SpeedStep | DecoderChangeFlags::SpeedSteps))
@@ -194,7 +198,7 @@ void Z21::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uin
         return;
     }
 
-    if(decoder.direction == Direction::Forward)
+    if(decoder.direction.value() == Direction::Forward)
       cmd.speedAndDirection |= 0x80;
 
     cmd.checksum = Protocol::XpressNet::calcChecksum(&cmd.xheader);

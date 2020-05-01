@@ -33,12 +33,6 @@
 
 
 
-//#include "lua/sandbox.hpp"
-//lua_State* L = Lua::newSandbox();
-
-
-
-
 
 #ifdef __unix__
 void signalHandler(int signum)

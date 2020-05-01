@@ -44,7 +44,7 @@ class ObjectListTableModel : public TableModel
       m_list{list}
     {
       m_list.m_models.push_back(this);
-      setRowCount(m_list.m_items.size());
+      setRowCount(static_cast<uint32_t>(m_list.m_items.size()));
     }
 
     ~ObjectListTableModel() override

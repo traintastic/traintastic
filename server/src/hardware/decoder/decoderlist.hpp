@@ -25,7 +25,6 @@
 #define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERLIST_HPP
 
 #include "../../core/objectlist.hpp"
-#include "decoderlist.hpp"
 #include "decoder.hpp"
 
 class DecoderList : public ObjectList<Hardware::Decoder>

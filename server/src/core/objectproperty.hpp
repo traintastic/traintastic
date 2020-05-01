@@ -23,12 +23,12 @@
 #ifndef TRAINTASTIC_SERVER_CORE_OBJECTPROPERTY_HPP
 #define TRAINTASTIC_SERVER_CORE_OBJECTPROPERTY_HPP
 
-#include "abstractproperty.hpp"
+#include "abstractobjectproperty.hpp"
 #include "to.hpp"
 #include <functional>
 
 template<class T>
-class ObjectProperty : public AbstractProperty
+class ObjectProperty : public AbstractObjectProperty
 {
   public:
     using OnSet = std::function<bool(const std::shared_ptr<T>& value)>;
@@ -39,7 +39,7 @@ class ObjectProperty : public AbstractProperty
 
   public:
     ObjectProperty(Object* object, const std::string& name, const std::shared_ptr<T>& value, PropertyFlags flags) :
-      AbstractProperty(*object, name, ValueType::Object, flags),
+      AbstractObjectProperty(object, name, flags),
       m_value{value}
     {
     }
@@ -126,85 +126,22 @@ class ObjectProperty : public AbstractProperty
       return *this;
     }
 
-    std::string_view enumName() const final
-    {
-      assert(false);
-      return "";
-    }
-
-    std::string_view setName() const final
-    {
-      assert(false);
-      return "";
-    }
-
-    bool toBool() const final
-    {
-      throw conversion_error();
-    }
-
-    int64_t toInt64() const final
-    {
-      throw conversion_error();
-    }
-
-    double toDouble() const final
-    {
-      throw conversion_error();
-    }
-
-    std::string toString() const final
-    {
-      throw conversion_error();
-    }
-
     ObjectPtr toObject() const final
     {
       return std::dynamic_pointer_cast<Object>(m_value);
-    }
-
-    nlohmann::json toJSON() const final
-    {
-      throw conversion_error();
-    }
-
-    void fromBool(bool value) final
-    {
-      throw conversion_error();
-    }
-
-    void fromInt64(int64_t) final
-    {
-      throw conversion_error();
-    }
-
-    void fromDouble(double) final
-    {
-      throw conversion_error();
-    }
-
-    void fromString(const std::string&) final
-    {
-      throw conversion_error();
     }
 
     void fromObject(const ObjectPtr& value) final
     {
       if(value)
       {
-        std::shared_ptr<T> v = std::dynamic_pointer_cast<T>(value);
-        if(v)
+        if(std::shared_ptr<T> v = std::dynamic_pointer_cast<T>(value))
           setValue(v);
         else
           throw conversion_error();
       }
       else
         setValue(nullptr);
-    }
-
-    void fromJSON(const nlohmann::json&) final
-    {
-      throw conversion_error();
     }
 };
 

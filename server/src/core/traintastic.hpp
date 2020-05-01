@@ -32,13 +32,12 @@
 #include "objectproperty.hpp"
 #include "method.hpp"
 #include "console.hpp"
-//#include <enum/traintasticmode.hpp>
+#include "settings.hpp"
+#include "world.hpp"
+#include "worldlist.hpp"
 
 class Client;
 class Message;
-class Settings;
-class World;
-class WorldList;
 
 class Traintastic : public Object
 {

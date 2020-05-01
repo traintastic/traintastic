@@ -26,20 +26,15 @@
 #include <type_traits>
 #include "../../core/idobject.hpp"
 #include "../../core/objectproperty.hpp"
+#include "../../core/commandstationproperty.hpp"
 #include "../../enum/decoderprotocol.hpp"
 #include "../../enum/direction.hpp"
 #include "decoderfunctionlist.hpp"
-
-class DecoderFunctionList;
 
 namespace Hardware {
 
 enum class DecoderChangeFlags;
 class DecoderFunction;
-
-namespace CommandStation {
-  class CommandStation;
-}
 
 class Decoder : public IdObject
 {
@@ -57,7 +52,7 @@ class Decoder : public IdObject
     static const std::shared_ptr<Decoder> null;
 
     Property<std::string> name;
-    ObjectProperty<CommandStation::CommandStation> commandStation;
+    CommandStationProperty commandStation;
     Property<DecoderProtocol> protocol;
     Property<uint16_t> address;
     Property<bool> longAddress;

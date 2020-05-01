@@ -26,10 +26,8 @@
 #include "../../core/idobject.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../enum/commandstationstatus.hpp"
-#include <enum/decoderprotocol.hpp>
-
-class DecoderList;
-class ControllerList;
+#include "../decoder/decoderlist.hpp"
+#include "../controller/controllerlist.hpp"
 
 namespace Hardware {
   class Decoder;
@@ -69,4 +67,3 @@ class CommandStation : public IdObject
 }
 
 #endif
-

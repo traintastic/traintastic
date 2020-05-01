@@ -28,6 +28,7 @@
 #include <cassert>
 #include <enum/direction.hpp>
 #include "../../utils/endian.hpp"
+#include "../../utils/packed.hpp"
 
 namespace Hardware {
   class Decoder;
@@ -165,6 +166,8 @@ enum LocoMode : uint8_t
   Motorola = 1,
 };
 
+PRAGMA_PACK_PUSH_1
+
 class Message
 {
   protected:
@@ -187,7 +190,7 @@ class Message
     {
       return static_cast<Header>(le_to_host(m_header));
     }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(Message) == 4);
 
 class LanGetSerialNumber : public Message
@@ -197,7 +200,7 @@ class LanGetSerialNumber : public Message
       Message(sizeof(LanGetSerialNumber), LAN_GET_SERIAL_NUMBER)
     {
     }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanGetSerialNumber) == 4);
 
 class LanGetSerialNumberReply : public Message
@@ -221,7 +224,7 @@ class LanGetSerialNumberReply : public Message
     {
       m_serialNumber = host_to_le(value);
     }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanGetSerialNumberReply) == 8);
 
 
@@ -236,7 +239,7 @@ class LanLogoff : public Message
     Message(sizeof(LanLogoff), LAN_LOGOFF)
   {
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanLogoff) == 4);
 
 
@@ -262,7 +265,7 @@ class LanGetLocoMode : public Message
     {
       m_address = host_to_be(value);
     }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanGetLocoMode) == 6);
 
 class LanGetLocoModeReply : public Message
@@ -297,7 +300,7 @@ class LanGetLocoModeReply : public Message
     {
       m_mode = value;
     }
-} __attribute__((packed));;
+} ATTRIBUTE_PACKED;;
 static_assert(sizeof(LanGetLocoModeReply) == 7);
 
 class LanSetLocoMode : public Message
@@ -332,9 +335,10 @@ class LanSetLocoMode : public Message
     {
       m_mode = value;
     }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanSetLocoMode) == 7);
 
+PRAGMA_PACK_POP
 
 
 
@@ -390,11 +394,13 @@ static_assert(sizeof(LanSetLocoMode) == 7);
 #define Z21_CENTRALSTATEEX_SHORTCIRCUITEXTERNAL 0x04 //!< Short circuit at the external booster output
 #define Z21_CENTRALSTATEEX_SHORTCIRCUITINTERNAL 0x08 //!< Short circuit at the main track or programming track
 
+PRAGMA_PACK_PUSH_1
+
 struct z21_lan_header
 {
   uint16_t dataLen; // LE
   uint16_t header;  // LE
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(z21_lan_header) == 0x04);
 
 
@@ -405,7 +411,7 @@ struct z21_lan_get_hwinfo : z21_lan_header
     dataLen = sizeof(z21_lan_get_hwinfo);
     header = Z21_LAN_GET_HWINFO;
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(z21_lan_get_hwinfo) == 0x04);
 
 struct z21_lan_get_hwinfo_reply : z21_lan_header
@@ -420,7 +426,7 @@ struct z21_lan_get_hwinfo_reply : z21_lan_header
     dataLen = sizeof(z21_lan_get_hwinfo_reply);
     header = Z21_LAN_GET_HWINFO;
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(z21_lan_get_hwinfo_reply) == 0x0C);
 
 struct z21_lan_logoff : z21_lan_header
@@ -430,7 +436,7 @@ struct z21_lan_logoff : z21_lan_header
     dataLen = sizeof(z21_lan_logoff);
     header = Z21_LAN_LOGOFF;
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(z21_lan_logoff) == 0x04);
 
 struct z21_lan_x : z21_lan_header
@@ -454,7 +460,7 @@ struct z21_lan_x : z21_lan_header
   {
     calcChecksum(xheader & 0x0F);
   }
-};// __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(z21_lan_x) == 0x05);
 
 
@@ -470,7 +476,7 @@ struct z21_lan_x_get_firmware_version : z21_lan_x
     dataLen = sizeof(z21_lan_x_get_firmware_version);
     xheader = 0xF1;
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(z21_lan_x_get_firmware_version) == 7);
 
 struct z21_lan_x_get_firmware_version_reply : z21_lan_x
@@ -534,7 +540,7 @@ struct z21_lan_x_set_stop : z21_lan_x
     dataLen = sizeof(z21_lan_x_set_stop);
     xheader = Z21_LAN_X_SET_STOP;
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(z21_lan_x_set_stop) == 0x06);
 
 struct z21_lan_x_bc_stopped : z21_lan_x
@@ -621,7 +627,7 @@ struct z21_lan_x_set_track_power_off : z21_lan_x
     header = Z21_LAN_X;
     xheader = 0x21;
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 
 
 struct z21_lan_x_set_track_power_on : z21_lan_x
@@ -634,7 +640,7 @@ struct z21_lan_x_set_track_power_on : z21_lan_x
     dataLen = sizeof(z21_lan_x_set_track_power_off);
     xheader = 0x21;
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(z21_lan_x_set_track_power_off) == 0x07);
 
 struct z21_lan_x_get_loco_info : z21_lan_x
@@ -673,7 +679,7 @@ struct z21_lan_x_get_loco_info : z21_lan_x
   {
     checksum = xheader ^ db0 ^ addressHigh ^ addressLow;
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(z21_lan_x_get_loco_info) == 0x09);
 
 struct z21_lan_x_loco_info : z21_lan_x
@@ -851,7 +857,7 @@ struct z21_lan_x_loco_info : z21_lan_x
     for(uint8_t* db = &addressHigh; db < &checksum; db++)
       checksum ^= *db;
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 
 struct z21_lan_x_set_loco_drive : z21_lan_header
 {
@@ -914,7 +920,7 @@ struct z21_lan_x_set_loco_drive : z21_lan_header
   {
     Protocol::Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(z21_lan_x_set_loco_drive) == 0x0a);
 
 struct z21_lan_x_set_loco_function : z21_lan_header
@@ -953,7 +959,7 @@ struct z21_lan_x_set_loco_function : z21_lan_header
   {
     return db3 & 0x3F;
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(z21_lan_x_set_loco_function) == 0x0a);
 
 struct z21_lan_systemstate_getdata : z21_lan_header
@@ -963,7 +969,7 @@ struct z21_lan_systemstate_getdata : z21_lan_header
     dataLen = sizeof(z21_lan_systemstate_getdata);
     header = Z21_LAN_SYSTEMSTATE_GETDATA;
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(z21_lan_systemstate_getdata) == 0x04);
 
 struct z21_lan_set_broadcastflags : z21_lan_header
@@ -976,7 +982,7 @@ struct z21_lan_set_broadcastflags : z21_lan_header
     dataLen = sizeof(z21_lan_set_broadcastflags);
     header = Z21_LAN_SET_BROADCASTFLAGS;
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(z21_lan_set_broadcastflags) == 0x08);
 
 struct z21_lan_get_broadcastflags : z21_lan_header
@@ -986,7 +992,7 @@ struct z21_lan_get_broadcastflags : z21_lan_header
     dataLen = sizeof(z21_lan_get_broadcastflags);
     header = Z21_LAN_GET_BROADCASTFLAGS;
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(z21_lan_get_broadcastflags) == 0x04);
 
 struct z21_lan_systemstate_datachanged : z21_lan_header
@@ -1007,10 +1013,10 @@ struct z21_lan_systemstate_datachanged : z21_lan_header
     dataLen = sizeof(z21_lan_systemstate_datachanged);
     header = Z21_LAN_SYSTEMSTATE_DATACHANGED;
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(z21_lan_systemstate_datachanged) == 0x14);
 
-
+PRAGMA_PACK_POP
 
 
 inline bool operator ==(const z21_lan_header& lhs, const z21_lan_header& rhs)

@@ -82,13 +82,13 @@ To to(const From& value)
     if constexpr(std::numeric_limits<To>::min() <= std::numeric_limits<From>::min() && std::numeric_limits<To>::max() >= std::numeric_limits<From>::max())
       return value;
     else if(value >= std::numeric_limits<To>::min() && value <= std::numeric_limits<To>::max())
-      return value;
+      return static_cast<To>(value);
     else
       throw out_of_range_error();
   }
   else if constexpr(std::is_floating_point_v<To> && (std::is_integral_v<From> || std::is_floating_point_v<From>))
     return value;
-  else if constexpr(std::is_integral_v<To> && std::is_floating_point_v<From>)
+  else if constexpr(!std::is_same_v<To, bool> && std::is_integral_v<To> && std::is_floating_point_v<From>)
   {
     if(value >= std::numeric_limits<To>::min() && value <= std::numeric_limits<To>::max())
       return static_cast<To>(std::round(value));
@@ -108,5 +108,7 @@ To to(const From& value)
 
   throw conversion_error();
 }
+
+
 
 #endif

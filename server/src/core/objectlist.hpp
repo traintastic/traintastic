@@ -51,9 +51,9 @@ class ObjectList : public SubObject, public Table
     void rowCountChanged()
     {
       const auto size = m_items.size();
-      length.setValueInternal(size);
+      length.setValueInternal(static_cast<uint32_t>(size));
       for(auto& model : m_models)
-        model->setRowCount(size);
+        model->setRowCount(static_cast<uint32_t>(size));
     }
 
   public:
@@ -89,8 +89,8 @@ class ObjectList : public SubObject, public Table
           if(!m_models.empty() && isListedProperty(property.name()))
           {
             ObjectPtr object = property.object().shared_from_this();
-            const uint32_t rows = m_items.size();
-            for(int row = 0; row < rows; row++)
+            const uint32_t rows = static_cast<uint32_t>(m_items.size());
+            for(uint32_t row = 0; row < rows; row++)
               if(m_items[row] == object)
               {
                 for(auto& model : m_models)

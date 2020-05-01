@@ -25,7 +25,9 @@
 
 #include <nlohmann/json.hpp>
 #include <enum/commandstationstatus.hpp>
-#include "../lua/enumvalues.hpp"
+#ifndef DISABLE_LUA_SCRIPTING
+  #include "../lua/enumvalues.hpp"
+#endif
 
 NLOHMANN_JSON_SERIALIZE_ENUM(CommandStationStatus,
 {
@@ -35,6 +37,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(CommandStationStatus,
   {CommandStationStatus::Error, "error"},
 })
 
+#ifndef DISABLE_LUA_SCRIPTING
 LUA_ENUM_VALUES(CommandStationStatus, 4,
 {
   {CommandStationStatus::Offline, "OFFLINE"},
@@ -42,5 +45,6 @@ LUA_ENUM_VALUES(CommandStationStatus, 4,
   {CommandStationStatus::Online, "ONLINE"},
   {CommandStationStatus::Error, "ERROR"},
 })
+#endif
 
 #endif

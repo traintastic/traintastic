@@ -38,7 +38,10 @@
 #include "../hardware/decoder/decoderlist.hpp"
 #include "../hardware/input/inputlist.hpp"
 #include "../hardware/controller/controllerlist.hpp"
-#include "../lua/scriptlist.hpp"
+#ifndef DISABLE_LUA_SCRIPTING
+  #include "../lua/scriptlist.hpp"
+#endif
+
 //class CommandStationList;
 //class DecoderList;
 
@@ -77,7 +80,9 @@ class World : public Object
     ObjectProperty<InputList> inputs;
     ObjectProperty<ControllerList> controllers;
     ObjectProperty<Clock> clock;
+#ifndef DISABLE_LUA_SCRIPTING
     ObjectProperty<Lua::ScriptList> luaScripts;
+#endif
 
     Property<WorldState> state;
     Method<void()> emergencyStop;

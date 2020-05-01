@@ -43,6 +43,10 @@
 
 #include <iostream>
 
+#ifdef GetObject
+  #undef GetObject // GetObject is defined by a winapi header
+#endif
+
 Session::Session(const std::shared_ptr<Client>& client) :
   m_client{client},
   m_uuid{boost::uuids::random_generator()()}

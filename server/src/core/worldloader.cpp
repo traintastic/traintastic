@@ -4,12 +4,16 @@
 #include "world.hpp"
 
 #include "../hardware/commandstation/li10x.hpp"
-#include "../hardware/commandstation/usbxpressnetinterface.hpp"
+#ifndef DISABLE_USB_XPRESSNET_INTERFACE
+  #include "../hardware/commandstation/usbxpressnetinterface.hpp"
+#endif
 #include "../hardware/commandstation/z21.hpp"
 #include "../hardware/controller/z21app.hpp"
 #include "../hardware/decoder/decoder.hpp"
 #include "../hardware/decoder/decoderfunction.hpp"
-#include "../lua/script.hpp"
+#ifndef DISABLE_LUA_SCRIPTING
+  #include "../lua/script.hpp"
+#endif
 
 using nlohmann::json;
 
@@ -56,16 +60,20 @@ void WorldLoader::createObject(ObjectData& objectData)
   // TODO some kind of class list !!
   if(classId == Hardware::CommandStation::LI10x::classId)
     objectData.object = Hardware::CommandStation::LI10x::create(m_world, id);
+#ifndef DISABLE_USB_XPRESSNET_INTERFACE
   else if(classId == Hardware::CommandStation::USBXpressNetInterface::classId)
     objectData.object = Hardware::CommandStation::USBXpressNetInterface::create(m_world, id);
+#endif
   else if(classId == Hardware::CommandStation::Z21::classId)
     objectData.object = Hardware::CommandStation::Z21::create(m_world, id);
   else if(classId == Hardware::Controller::Z21App::classId)
     objectData.object = Hardware::Controller::Z21App::create(m_world, id);
   else if(classId == Hardware::Decoder::classId)
     objectData.object = Hardware::Decoder::create(m_world, id);
+#ifndef DISABLE_LUA_SCRIPTING
   else if(classId == Lua::Script::classId)
     objectData.object = Lua::Script::create(m_world, id);
+#endif
   else if(classId == Hardware::DecoderFunction::classId)
   {
     //objectData.object = Hardware::Decoder::create(m_world, id);

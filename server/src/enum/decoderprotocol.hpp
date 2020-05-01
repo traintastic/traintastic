@@ -25,7 +25,9 @@
 
 #include <nlohmann/json.hpp>
 #include <enum/decoderprotocol.hpp>
-#include "../lua/enumvalues.hpp"
+#ifndef DISABLE_LUA_SCRIPTING
+  #include "../lua/enumvalues.hpp"
+#endif
 
 NLOHMANN_JSON_SERIALIZE_ENUM(DecoderProtocol,
 {
@@ -34,11 +36,13 @@ NLOHMANN_JSON_SERIALIZE_ENUM(DecoderProtocol,
   {DecoderProtocol::Custom, "CUSTOM"},
 })
 
+#ifndef DISABLE_LUA_SCRIPTING
 LUA_ENUM_VALUES(DecoderProtocol, 3,
 {
   {DecoderProtocol::None, "NONE"},
   {DecoderProtocol::DCC, "DCC"},
   {DecoderProtocol::Custom, "CUSTOM"},
 })
+#endif
 
 #endif

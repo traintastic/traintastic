@@ -2,21 +2,22 @@ cmake_minimum_required(VERSION 3.9)
 project(traintastic-server VERSION 0.1.0 DESCRIPTION "Traintastic server")
 include(GNUInstallDirs)
 
-#find_package(PkgConfig REQUIRED)
-find_package(Lua 5.3 REQUIRED)
-#pkg_check_modules(USBXPRESSNET REQUIRED IMPORTED_TARGET usbxpressnet)
+add_executable(traintastic-server)
 
-find_path(USBXPRESSNET_INCLUDE_DIR usbxpressnet.h)
-#message(${USBXPRESSNET_INCLUDE_DIR})
-find_library(USBXPRESSNET_LIB usbxpressnet)
-#message(${USBXPRESSNET_LIB})
-#if(NOT USBXPRESSNET_LIB)
-#  message(FATAL_ERROR "usbxpressnet library not found")
-#endif()
+add_definitions(
+  -DVERSION=${PROJECT_VERSION}
+  -DBOOST_ALL_NO_LIB
+  -DBOOST_ERROR_CODE_HEADER_ONLY
+  -DBOOST_CHRONO_HEADER_ONLY
+  -DBOOST_ASIO_HEADER_ONLY
+  -DBOOST_SYSTEM_NO_DEPRECATED)
 
-set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
-set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
+set_target_properties(traintastic-server PROPERTIES CXX_STANDARD 17)
 
+target_include_directories(traintastic-server PRIVATE
+  ../shared/src/
+  thirdparty
+  thirdparty/boost)
 
 file(GLOB SOURCES
   "src/*.hpp"
@@ -36,34 +37,60 @@ file(GLOB SOURCES
   "src/hardware/input/*.cpp"
   "src/hardware/protocol/*.hpp"
   "src/hardware/protocol/*.cpp"
-  "src/lua/*.hpp"
-  "src/lua/*.cpp"
   "src/utils/*.hpp"
   "src/utils/*.cpp"
   "thirdparty/boost/libs/program_options/src/*.cpp")
 
-add_executable(traintastic-server ${SOURCES})
+### PLATFORM ###
 
-add_definitions(
-  -DVERSION=${PROJECT_VERSION}
-  -DBOOST_ALL_NO_LIB
-  -DBOOST_ERROR_CODE_HEADER_ONLY
-  -DBOOST_CHRONO_HEADER_ONLY
-  -DBOOST_ASIO_HEADER_ONLY
-  -DBOOST_SYSTEM_NO_DEPRECATED)
+if(WIN32)
+  add_definitions(-D_WIN32_WINNT=0x0601)
+  target_link_libraries(traintastic-server bcrypt)
+endif()
 
-target_include_directories(traintastic-server PRIVATE
-  ../shared/src/
-  thirdparty
-  thirdparty/boost
-  ${LUA_INCLUDE_DIR}
-  ${USBXPRESSNET_INCLUDE_DIR})
+### COMPILER ###
 
-target_link_libraries(traintastic-server
-  pthread
-  stdc++fs
-  ${LUA_LIBRARIES}
-  ${USBXPRESSNET_LIB})
-#  PkgConfig::USBXPRESSNET)
+if (MSVC)
 
-set_target_properties(traintastic-server PROPERTIES CXX_STANDARD 17)
+else()
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
+  set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
+
+  target_link_libraries(traintastic-server pthread stdc++fs)
+endif()
+
+### OPTIONS ###
+
+option(ENABLE_LUA_SCRIPTING "Lua scripting support" ON)
+message(STATUS "Lua scripting support: ${ENABLE_LUA_SCRIPTING}")
+if(ENABLE_LUA_SCRIPTING)
+  find_package(Lua 5.3 REQUIRED)
+  file(GLOB SOURCES "src/lua/*.hpp" "src/lua/*.cpp")
+  target_include_directories(traintastic-server PRIVATE ${LUA_INCLUDE_DIR})
+  target_link_libraries(traintastic-server ${LUA_LIBRARIES})
+else()
+  add_definitions(-DDISABLE_LUA_SCRIPTING)
+endif()
+
+option(ENABLE_USB_XPRESSNET_INTERFACE "USB XpressNet interface support" ON)
+message(STATUS "USB XpressNet interface support: ${ENABLE_USB_XPRESSNET_INTERFACE}")
+if(ENABLE_USB_XPRESSNET_INTERFACE)
+  #pkg_check_modules(USBXPRESSNET REQUIRED IMPORTED_TARGET usbxpressnet)
+  find_path(USBXPRESSNET_INCLUDE_DIR usbxpressnet.h)
+  #message(${USBXPRESSNET_INCLUDE_DIR})
+  find_library(USBXPRESSNET_LIB usbxpressnet)
+  #message(${USBXPRESSNET_LIB})
+  #if(NOT USBXPRESSNET_LIB)
+  #  message(FATAL_ERROR "usbxpressnet library not found")
+  #endif()
+
+  target_include_directories(traintastic-server PRIVATE ${USBXPRESSNET_INCLUDE_DIR})
+  target_link_libraries(traintastic-server ${USBXPRESSNET_LIB})
+else()
+  add_definitions(-DDISABLE_USB_XPRESSNET_INTERFACE)
+  list(FILTER SOURCES EXCLUDE REGEX ".*usbxpressnetinterface\.(hpp|cpp)$")
+endif()
+
+### OPTIONS END ###
+
+target_sources(traintastic-server PRIVATE ${SOURCES})

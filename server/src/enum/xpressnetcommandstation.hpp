@@ -25,7 +25,9 @@
 
 #include <enum/xpressnetcommandstation.hpp>
 #include <nlohmann/json.hpp>
-#include "../lua/enumvalues.hpp"
+#ifndef DISABLE_LUA_SCRIPTING
+  #include "../lua/enumvalues.hpp"
+#endif
 
 inline constexpr std::array<XpressNetCommandStation, 2> XpressNetCommandStationValues{{XpressNetCommandStation::Custom, XpressNetCommandStation::Roco10764}};
 
@@ -35,10 +37,12 @@ NLOHMANN_JSON_SERIALIZE_ENUM(XpressNetCommandStation,
   {XpressNetCommandStation::Roco10764, "roco_10764"},
 })
 
+#ifndef DISABLE_LUA_SCRIPTING
 LUA_ENUM_VALUES(XpressNetCommandStation, 2,
 {
   {XpressNetCommandStation::Custom, "CUSTOM"},
   {XpressNetCommandStation::Roco10764, "ROCO_10764"},
 })
+#endif
 
 #endif

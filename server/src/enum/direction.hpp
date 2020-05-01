@@ -25,7 +25,9 @@
 
 #include <enum/direction.hpp>
 #include <nlohmann/json.hpp>
-#include "../lua/enumvalues.hpp"
+#ifndef DISABLE_LUA_SCRIPTING
+  #include "../lua/enumvalues.hpp"
+#endif
 
 NLOHMANN_JSON_SERIALIZE_ENUM(Direction,
 {
@@ -33,10 +35,12 @@ NLOHMANN_JSON_SERIALIZE_ENUM(Direction,
   {Direction::Reverse, "reverse"},
 })
 
+#ifndef DISABLE_LUA_SCRIPTING
 LUA_ENUM_VALUES(Direction, 2,
 {
   {Direction::Forward, "FORWARD"},
   {Direction::Reverse, "REVERSE"},
 })
+#endif
 
 #endif

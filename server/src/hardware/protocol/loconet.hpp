@@ -125,7 +125,7 @@ class LocoNet : public SubObject
 
       inline uint16_t address() const
       {
-        return in1 & 0x7F + static_cast<uint16_t>(in2 & 0x0F) << 7;
+        return (in1 & 0x7F) | (static_cast<uint16_t>(in2 & 0x0F) << 7);
       }
 
       inline bool isSwitchInput() const

@@ -24,8 +24,11 @@
 #define TRAINTASTIC_SERVER_ENUM_WORLDEVENT_HPP
 
 #include <enum/worldevent.hpp>
-#include "../lua/enumvalues.hpp"
+#ifndef DISABLE_LUA_SCRIPTING
+  #include "../lua/enumvalues.hpp"
+#endif
 
+#ifndef DISABLE_LUA_SCRIPTING
 LUA_ENUM_VALUES(WorldEvent, 7,
 {
   {WorldEvent::Stop, "STOP"},
@@ -36,5 +39,6 @@ LUA_ENUM_VALUES(WorldEvent, 7,
   {WorldEvent::TrackPowerOn, "TRACK_POWER_ON"},
   {WorldEvent::EmergencyStop, "EMERGENCY_STOP"},
 })
+#endif
 
 #endif

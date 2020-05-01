@@ -100,7 +100,7 @@ class TableModel : public Object
     //const std::string& getId() const final { throw false; }
 
     const std::vector<std::string>& columnHeaders() const { return m_columnHeaders; }
-    uint32_t columnCount() const { return m_columnHeaders.size(); }
+    uint32_t columnCount() const { return static_cast<uint32_t>(m_columnHeaders.size()); }
     uint32_t rowCount() const { return m_rowCount; }
 
     virtual std::string getText(uint32_t column, uint32_t row) const = 0;
