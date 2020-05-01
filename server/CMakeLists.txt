@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.9)
 project(traintastic-server VERSION 0.1.0 DESCRIPTION "Traintastic server")
 include(GNUInstallDirs)
 
-add_executable(traintastic-server)
+add_executable(traintastic-server src/main.cpp src/options.hpp)
 
 add_definitions(
   -DVERSION=${PROJECT_VERSION}
@@ -20,8 +20,6 @@ target_include_directories(traintastic-server PRIVATE
   thirdparty/boost)
 
 file(GLOB SOURCES
-  "src/*.hpp"
-  "src/*.cpp"
   "src/clock/*.hpp"
   "src/clock/*.cpp"
   "src/core/*.hpp"
@@ -65,7 +63,8 @@ option(ENABLE_LUA_SCRIPTING "Lua scripting support" ON)
 message(STATUS "Lua scripting support: ${ENABLE_LUA_SCRIPTING}")
 if(ENABLE_LUA_SCRIPTING)
   find_package(Lua 5.3 REQUIRED)
-  file(GLOB SOURCES "src/lua/*.hpp" "src/lua/*.cpp")
+  file(GLOB SOURCES_LUA "src/lua/*.hpp" "src/lua/*.cpp")
+  list(APPEND SOURCES ${SOURCES_LUA})
   target_include_directories(traintastic-server PRIVATE ${LUA_INCLUDE_DIR})
   target_link_libraries(traintastic-server ${LUA_LIBRARIES})
 else()

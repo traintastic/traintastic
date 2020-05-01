@@ -27,7 +27,6 @@
 #include "console.hpp"
 #include <utils/str.hpp>
 #include "../core/world.hpp"
-#include "../enum/traintasticmode.hpp"
 #include "../enum/decoderprotocol.hpp"
 #include "../enum/direction.hpp"
 #include "../enum/worldevent.hpp"
@@ -61,7 +60,6 @@ SandboxPtr Sandbox::create(Script& script)
   *static_cast<StateData**>(lua_getextraspace(L)) = new StateData(script);
 
   // register types:
-  Enum<TraintasticMode>::registerType(L);
   Enum<DecoderProtocol>::registerType(L);
   Enum<Direction>::registerType(L);
   Enum<WorldEvent>::registerType(L);
@@ -90,15 +88,8 @@ SandboxPtr Sandbox::create(Script& script)
   Console::push(L);
   lua_setfield(L, -2, "console");
 
-
-push(L, script.world().lock()->getObject("dec_br211"));
-lua_setfield(L, -2, "dec");
-
-
-
   // add enum values:
   lua_newtable(L);
-  Enum<TraintasticMode>::registerValues(L);
   Enum<DecoderProtocol>::registerValues(L);
   Enum<Direction>::registerValues(L);
   Enum<WorldEvent>::registerValues(L);
