@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9)
-project(traintastic-server VERSION 0.1.0 DESCRIPTION "Traintastic server")
+project(traintastic-server VERSION 0.0.1 DESCRIPTION "Traintastic server")
 include(GNUInstallDirs)
 
 add_executable(traintastic-server src/main.cpp src/options.hpp)

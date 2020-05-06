@@ -25,6 +25,7 @@
 
 #include <boost/program_options.hpp>
 #include <boost/preprocessor/stringize.hpp>
+#include <codename.hpp>
 
 struct Options
 {
@@ -66,7 +67,7 @@ struct Options
 
       if(vm.count("version"))
       {
-        std::cout << BOOST_PP_STRINGIZE(VERSION) << std::endl;
+        std::cout << BOOST_PP_STRINGIZE(VERSION) << " " << TRAINTASTIC_CODENAME << std::endl;
         exit(EXIT_SUCCESS);
       }
 

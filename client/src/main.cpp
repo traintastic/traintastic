@@ -23,6 +23,7 @@
 #include <QApplication>
 #ifdef Q_OS_WINDOWS
   #include <QSettings>
+  #include <QStandardPaths>
 #endif
 #include "mainwindow.hpp"
 //#include "network/client.hpp"
@@ -37,7 +38,7 @@ int main(int argc, char* argv[])
   QApplication::setOrganizationName("Traintastic");
   QApplication::setOrganizationDomain("traintastic.org");
   QApplication::setApplicationName("traintastic-client");
-  QApplication::setApplicationVersion("0.1.0");
+  QApplication::setApplicationVersion("0.0.1");
 
 #ifdef Q_OS_WINDOWS
   QSettings::setDefaultFormat(QSettings::IniFormat);
@@ -48,8 +49,12 @@ int main(int argc, char* argv[])
   //Client client;
   //Client::instance = &client;
 
-  Locale::instance = new Locale("/home/reinder/Dropbox/traintastic/traintastic/lang/en-us.txt");
-
+#ifdef Q_OS_WINDOWS
+  QString localePath = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "traintastic\\client\\lang", QStandardPaths::LocateDirectory);
+#else
+  QString localePath = "/home/reinder/Dropbox/traintastic/traintastic/lang";
+#endif
+  Locale::instance = new Locale(localePath.toStdString() + "/en-us.txt");
 
   MainWindow mw;
   mw.show();
