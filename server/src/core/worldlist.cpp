@@ -33,6 +33,9 @@ WorldList::WorldList(const std::filesystem::path& path) :
   Object(),
   m_path{path}
 {
+  if(!std::filesystem::is_directory(m_path))
+    std::filesystem::create_directories(m_path);
+
   buildIndex();
 }
 

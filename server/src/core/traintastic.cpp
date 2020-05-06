@@ -70,6 +70,9 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
       console->notice(id, "Created new world");
     }}
 {
+  if(!std::filesystem::is_directory(m_dataDir))
+    std::filesystem::create_directories(m_dataDir);
+
   //m_interfaceItems.add(mode);
   m_interfaceItems.add(console);
   m_interfaceItems.add(settings);
