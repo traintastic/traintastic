@@ -39,15 +39,6 @@ struct Options
 
   Options(int argc , char* argv[])
   {
-#ifdef __unix__
-    const char* home = getenv("HOME");
-    if(home)
-    {
-      dataDir += home;
-      dataDir += "/.config/traintastic-server";
-    }
-#endif
-
     boost::program_options::options_description desc{"Options for traintastic-server"};
     desc.add_options()
       ("help,h", "display this help text and exit")

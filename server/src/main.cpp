@@ -1,7 +1,9 @@
 /**
- * Traintastic
+ * server/src/main.cpp
  *
- * Copyright (C) 2019-2020 Reinder Feenstra <reinderfeenstra@gmail.com>
+ * This file is part of the traintastic source code.
+ *
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,14 +27,10 @@
 #include "options.hpp"
 #include "core/eventloop.hpp"
 #include "core/traintastic.hpp"
-
-
-
-
-
-
-
-
+#ifdef WIN32
+  #include <windows.h>
+  #include <shlobj.h>
+#endif
 
 #ifdef __unix__
 void signalHandler(int signum)
@@ -70,6 +68,22 @@ int main(int argc, char* argv[])
 
   // parse command line options:
   const Options options(argc, argv);
+
+  std::filesystem::path dataDir{options.dataDir};
+  if(dataDir.empty())
+  {
+#ifdef __unix__
+    if(const char* home = getenv("HOME"))
+      dataDir += std::filesystem::path(home) / ".config" / "traintastic-server";
+#elif defined(WIN32)
+    PWSTR localAppDataPath = nullptr;
+    HRESULT r = SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, nullptr, &localAppDataPath);
+    if(r == S_OK)
+      dataDir = std::filesystem::path(localAppDataPath) / "traintastic-server";
+    if(localAppDataPath)
+      CoTaskMemFree(localAppDataPath);
+#endif
+  }
 
 #ifdef __unix__
 /*
@@ -141,7 +155,7 @@ int main(int argc, char* argv[])
 
   try
   {
-    Traintastic::instance = std::make_shared<Traintastic>(options.dataDir);
+    Traintastic::instance = std::make_shared<Traintastic>(dataDir);
     status = Traintastic::instance->run() ? EXIT_SUCCESS : EXIT_FAILURE;
     Traintastic::instance.reset();
   }
