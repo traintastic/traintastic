@@ -56,6 +56,7 @@ class MainWindow : public QMainWindow
     QAction* m_actionImportWorld;
     QAction* m_actionExportWorld;
     QMenu* m_menuObjects;
+    QAction* m_actionLuaScript;
     QAction* m_actionServerSettings;
     QAction* m_actionServerConsole;
     QAction* m_actionTrackPowerOff;

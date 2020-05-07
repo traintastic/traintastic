@@ -121,7 +121,7 @@ MainWindow::MainWindow(QWidget* parent) :
     menu->addAction(Locale::tr("world:inputs") + "...", [this](){ showObject("world.inputs", Locale::tr("world:inputs")); });
     menu->addAction(Locale::tr("world:controllers") + "...", [this](){ showObject("world.controllers", Locale::tr("world:controllers")); });
     m_menuObjects->addAction(Locale::tr("world:clock") + "...", [this](){ showObject("world.clock"); });
-    m_menuObjects->addAction(QIcon(":/dark/lua.svg"), Locale::tr("world:lua_scripts") + "...", [this](){ showObject("world.lua_scripts", Locale::tr("world:lua_scripts")); });
+    m_actionLuaScript = m_menuObjects->addAction(QIcon(":/dark/lua.svg"), Locale::tr("world:lua_scripts") + "...", [this](){ showObject("world.lua_scripts", Locale::tr("world:lua_scripts")); });
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:tools"));
     menu->addAction(Locale::tr("qtapp.mainmenu:settings") + "...")->setEnabled(false);
@@ -419,6 +419,8 @@ void MainWindow::updateActions()
     m_actionEdit->setChecked(false);
 
   setMenuEnabled(m_menuObjects, haveWorld);
+  if(haveWorld && !m_connection->world()->hasProperty("lua_scripts"))
+    m_actionLuaScript->setEnabled(false);
 
   //m_menuHardware->setEnabled(haveWorld);
   //m_action

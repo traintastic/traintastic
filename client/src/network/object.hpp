@@ -59,6 +59,7 @@ class Object : public QObject
     const InterfaceItem* getInterfaceItem(const QString& name) const;
     InterfaceItem* getInterfaceItem(const QString& name);
 
+    inline bool hasProperty(const QString& name) const { return getProperty(name); }
     const AbstractProperty* getProperty(const QString& name) const;
     AbstractProperty* getProperty(const QString& name);
 
