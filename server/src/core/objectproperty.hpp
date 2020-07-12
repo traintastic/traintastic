@@ -143,6 +143,19 @@ class ObjectProperty : public AbstractObjectProperty
       else
         setValue(nullptr);
     }
+
+    void load(const ObjectPtr& value) final
+    {
+      if(value)
+      {
+        if(std::shared_ptr<T> v = std::dynamic_pointer_cast<T>(value))
+          m_value = v;
+        else
+          throw conversion_error();
+      }
+      else
+        m_value.reset();
+    }
 };
 
 #endif

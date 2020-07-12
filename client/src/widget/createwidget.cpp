@@ -48,6 +48,8 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
     return new LuaScriptListWidget(object, parent);
   else if(classId == "console")
     return new ServerConsoleWidget(object, parent);
+  else if(classId == "world_list")
+    return new ObjectListWidget(object, parent);
   else
     return nullptr;
 }

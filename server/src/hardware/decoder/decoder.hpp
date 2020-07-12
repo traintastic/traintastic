@@ -42,7 +42,8 @@ class Decoder : public IdObject
 
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
-    void setEditable(bool value);
+    void updateEditable();
+    void updateEditable(bool editable);
     void changed(DecoderChangeFlags changes, uint32_t functionNumber = 0);
 
   public:
@@ -67,6 +68,8 @@ class Decoder : public IdObject
 
     void addToWorld() final;
     const std::shared_ptr<DecoderFunction>& getFunction(uint32_t number) const;
+    bool getFunctionValue(uint32_t number) const;
+    void setFunctionValue(uint32_t number, bool value);
 };
 
 }

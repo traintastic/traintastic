@@ -22,17 +22,52 @@
 
 #include "commandstationlist.hpp"
 #include "commandstationlisttablemodel.hpp"
+#include "create.hpp"
+#include "../../core/world.hpp"
+#include "../../utils/getworld.hpp"
 
 using Hardware::CommandStation::CommandStation;
 
 CommandStationList::CommandStationList(Object& _parent, const std::string& parentPropertyName) :
-  ObjectList<CommandStation>(_parent, parentPropertyName)
+  ObjectList<CommandStation>(_parent, parentPropertyName),
+  add{*this, "add",
+    [this](std::string_view classId)
+    {
+      auto world = getWorld(this);
+      if(!world)
+        return std::shared_ptr<CommandStation>();
+      return Hardware::CommandStation::create(world, classId, world->getUniqueId("cs"));
+    }},
+  remove{*this, "remove",
+    [this](const std::shared_ptr<CommandStation>& object)
+    {
+      if(containsObject(object))
+        object->destroy();
+      assert(!containsObject(object));
+    }}
 {
-}
+  auto world = getWorld(&_parent);
+  const bool editable = world && contains(world->state.value(), WorldState::Edit);
+
+  m_interfaceItems.add(add)
+    .addAttributeEnabled(editable);
+  m_interfaceItems.add(remove)
+    .addAttributeEnabled(editable);
+  }
 
 TableModelPtr CommandStationList::getModel()
 {
   return std::make_shared<CommandStationListTableModel>(*this);
+}
+
+void CommandStationList::worldEvent(WorldState state, WorldEvent event)
+{
+  ObjectList<CommandStation>::worldEvent(state, event);
+
+  const bool editable = contains(state, WorldState::Edit);
+
+  add.setAttributeEnabled(editable);
+  remove.setAttributeEnabled(editable);
 }
 
 bool CommandStationList::isListedProperty(const std::string& name)

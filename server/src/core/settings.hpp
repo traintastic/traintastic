@@ -37,6 +37,10 @@ class Settings : public Object
     void load();
     void save();
 
+    void logDebug(const std::string& message);
+    void logInfo(const std::string& message);
+    void logWarning(const std::string& message);
+
   public:
     CLASS_ID("settings")
 

@@ -47,10 +47,16 @@ IdObject::IdObject(const std::weak_ptr<World>& world, std::string_view _id) :
 
 IdObject::~IdObject()
 {
+  assert(m_world.expired());
+}
+/*
+void IdObject::destroy()
+{
   if(auto world = m_world.lock())
     world->m_objects.erase(id);
+  m_world.reset();
 }
-
+*/
 void IdObject::addToWorld()
 {
   if(auto world = m_world.lock())

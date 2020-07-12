@@ -72,7 +72,7 @@ void Client::doReadHeader()
           if(m_readBuffer.message->command() != Message::Command::Ping)
             EventLoop::call(&Client::processMessage, this, m_readBuffer.message);
           else
-            ; // TODO: ping hier replyen
+            {} // TODO: ping hier replyen
           m_readBuffer.message.reset();
           doReadHeader();
         }
@@ -98,7 +98,7 @@ void Client::doReadData()
           if(m_readBuffer.message->command() != Message::Command::Ping)
             EventLoop::call(&Client::processMessage, this, m_readBuffer.message);
           else
-            ; // TODO: ping hier replyen
+          {} // TODO: ping hier replyen
           m_readBuffer.message.reset();
           doReadHeader();
         }

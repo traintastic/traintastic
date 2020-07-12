@@ -1,162 +1,224 @@
 {
   "columns": [
     {
+      "id": "man",
+      "label": {
+        "en-us": "Manufacturer",
+        "nl-nl": "Fabrikant"
+      }
+    },
+    {
+      "id": "cs",
       "label": {
         "en-us": "Command station",
         "nl-nl": "Centrale"
       }
     },
     {
+      "id": "if",
       "label": {
         "en-us": "Interface"
       }
     },
     {
-      "label": {
-        "en-us": "Features",
+      "id": "windows",
+      "label": "Windows"
+    },
+    {
+      "id": "linux",
+      "label": "Linux"
+    }
+  ],
+  "rows": [
+    {
+      "man": {
+        "text": "Digikeijs"
       },
-      "columns": [
+      "cs": {
+        "text": "DR5000",
+        "url": "dr5000"
+      },
+      "if": [
         {
-          "label": {
-            "en-us": "Decoder control"
-          }
+          "text": "USB/LocoNet"
         },
         {
-          "label": {
-            "en-us": "Decoder programming"
-          }
+          "text": "USB/XpressNet"
         },
         {
-          "label": "S88"
+          "text": "LocoNet",
+          "url": "loconet"
+        },
+        {
+          "text": "LAN/Z21"
+        }
+      ],
+      "windows": [
+        {
+          "icon": "check"
+        },
+        {
+          "icon": "question"
+        },
+        {
+          "icon": "question"
+        },
+        {
+          "icon": "check"
+        }
+      ],
+      "linux": [
+        {
+          "icon": "check"
+        },
+        {
+          "icon": "question"
+        },
+        {
+          "icon": "question"
+        },
+        {
+          "icon": "check"
         }
       ]
     },
     {
-      "label": {
-        "en-us": "Operating system",
+      "man": {
+        "text": "Fleischmann"
       },
-      "columns": [
+      "cs": {
+        "text": "TwinCenter",
+        "url": "intellibox"
+      },
+      "if": [
         {
-          "label": "Windows"
+          "text": {
+            "en-us": "Serial/P50x",
+            "nl-nl": "Serieel/P50x"
+          }
         },
         {
-          "label": "Linux"
+          "text": "LocoNet",
+          "url": "loconet"
+        }
+      ],
+      "windows": [
+        {
+          "icon": "check"
+        },
+        {
+          "icon": "question",
+          "footnote": 2
+        }
+      ],
+      "linux": [
+        {
+          "icon": "check"
+        },
+        {
+          "icon": "question",
+          "footnote": 2
+        }
+      ]
+    },
+    {
+      "man": {
+        "text": "Fleischmann"
+      },
+      "cs": {
+        "text": "Z21",
+        "url": "z21"
+      },
+      "if": {
+        "text": "LAN/Z21"
+      },
+      "windows": {
+        "icon": "check"
+      },
+      "linux": {
+        "icon": "check"
+      }
+    },
+    {
+      "man": {
+        "text": "Roco"
+      },
+      "cs": {
+        "text": "10764"
+      },
+      "if": {
+        "text": "XpressNet",
+        "url": "xpressnet"
+      },
+      "windows": {
+        "icon": "question",
+        "footnote": 1
+      },
+      "linux": {
+        "icon": "question",
+        "footnote": 1
+      }
+    },
+    {
+      "man": {
+        "text": "Roco"
+      },
+      "cs": {
+        "text": "Z21",
+        "url": "z21"
+      },
+      "if": {
+        "text": "LAN/Z21"
+      },
+      "windows": {
+        "icon": "check"
+      },
+      "linux": {
+        "icon": "check"
+      }
+    },
+    {
+      "man": {
+        "text": "Uhlenbrock"
+      },
+      "cs": {
+        "text": "Intellibox (65000)",
+        "url": "intellibox"
+      },
+      "if": [
+        {
+          "text": {
+            "en-us": "Serial/P50x",
+            "nl-nl": "Serieel/P50x"
+          }
+        },
+        {
+          "text": "LocoNet",
+          "url": "loconet"
+        }
+      ],
+      "windows": [
+        {
+          "icon": "check"
+        },
+        {
+          "icon": "question",
+          "footnote": 2
+        }
+      ],
+      "linux": [
+        {
+          "icon": "check"
+        },
+        {
+          "icon": "question",
+          "footnote": 2
         }
       ]
     }
   ],
-  "rows": [
-    [
-      {
-        "text": "Digikeijs DR5000"
-      },
-      {
-        "text": "LAN/Z21"
-      },
-      {
-        "icon": "checkmark_green"
-      },
-      {
-        "icon": "x_red"
-      },
-      {
-        "icon": "checkmark_green"
-      },
-      {
-        "icon": "checkmark_green"
-      }
-    ],
-    [
-      {
-        "text": "Roco 10764"
-      },
-      {
-        "text": "XpressNet"
-      },
-      {
-        "icon": "checkmark_green"
-      },
-      {
-        "icon": "x_red"
-      },
-      {
-        "label": "-"
-      },
-      {
-        "icon": "checkmark_green"
-      },
-      {
-        "icon": "checkmark_green"
-      }
-    ],
-    [
-      {
-        "text": "Roco/Fleischmann Z21"
-      },
-      {
-        "text": "LAN/Z21"
-      },
-      {
-        "icon": "checkmark_green"
-      },
-      {
-        "icon": "x_red"
-      },
-      {
-        "icon": "checkmark_green"
-      },
-      {
-        "icon": "checkmark_green"
-      }
-    ],
-    [
-      {
-        "text": "Uhlenbrock Intellibox (IB)"
-      },
-      [
-        {
-          "text": {
-            "en-us": "Serial/P50X",
-            "nl-nl": "Serieel/P50X"
-          }
-        },
-        {
-          "text": "Loconet"
-        }
-      ],
-      {
-        "icon": "checkmark_green"
-      },
-      {
-        "icon": "x_red"
-      },
-      [
-        {
-          "icon": "checkmark_green"
-        },
-        {
-          "icon": "questionmark_blue"
-        }
-      ]
-      [
-        {
-          "icon": "checkmark_green"
-        },
-        {
-        }
-      ],
-      [
-        {
-          "icon": "checkmark_green"
-        },
-        {
-        }
-      ]
-    ]
-  ],
   "footnotes": {
-   "1": ""
-
-
+   "1": "Depends on the used XpressNet interface",
+   "2": "Depends on the used LocoNet interface"
   }
 }

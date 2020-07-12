@@ -27,11 +27,15 @@
 #include "../network/objectptr.hpp"
 
 class QToolBar;
+class QToolButton;
 class TableWidget;
 
 class ObjectListWidget : public QWidget
 {
   Q_OBJECT
+
+  private:
+    QToolButton* m_buttonAdd;
 
   protected:
     const QString m_id;

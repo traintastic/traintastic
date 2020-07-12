@@ -43,20 +43,10 @@
 
 using nlohmann::json;
 
-//const std::string World::id{World::classId};
-
 std::shared_ptr<World> World::create()
 {
-  auto world = std::make_shared<World>();
+  auto world = std::make_shared<World>(Private());
   init(world);
-  return world;
-}
-
-std::shared_ptr<World> World::load(const std::filesystem::path& filename)
-{
-  auto world = std::make_shared<World>(filename);
-  init(world);
-  world->load();
   return world;
 }
 
@@ -72,7 +62,7 @@ void World::init(const std::shared_ptr<World>& world)
 #endif
 }
 
-World::World() :
+World::World(Private) :
   Object(),
   m_uuid{boost::uuids::random_generator()()},
   name{this, "name", "", PropertyFlags::ReadWrite},
@@ -134,30 +124,10 @@ World::World() :
       {
         Traintastic::instance->console->critical(classId, std::string("Saving world failed: ").append(e.what()));
       }
-
-
-/*
-      json objects = json::array();
-      for(auto& it : m_objects)
-        if(ObjectPtr object = it.second.lock())
-          objects.push_back(saveObject(object));
-
-      json world;
-      world["uuid"] = to_string(m_uuid);
-      world[name.name()] = name.value();
-      world["objects"] = objects;
-
-      std::ofstream file(m_filename);
-      if(file.is_open())
-      {
-        file << world.dump(2);
-        Traintastic::instance->console->notice(classId, "Saved world " + name.value());
-      }
-      else
-        Traintastic::instance->console->critical(classId, "Can't write to world file");
-        */
     }}
 {
+  m_filename = Traintastic::instance->worldDir() / to_string(m_uuid) / filename;
+
   m_interfaceItems.add(name);
   m_interfaceItems.add(scale);
 
@@ -179,12 +149,6 @@ World::World() :
   m_interfaceItems.add(save);
 }
 
-World::World(const std::filesystem::path& filename) :
-  World()
-{
-  m_filename = filename;
-}
-
 std::string World::getUniqueId(const std::string& prefix) const
 {
   std::string id;
@@ -197,14 +161,6 @@ std::string World::getUniqueId(const std::string& prefix) const
 
   return id;
 }
-/*
-ObjectPtr World::createObject(const std::string& classId, std::string_view _id)
-{
-  if(classId == Hardware::Decoder::classId)
-    return std::dynamic_pointer_cast<Object>(Hardware::Decoder::create(shared_ptr<World>(), getUniqueId("decoder")));
-  else
-    return ObjectPtr();
-}*/
 
 bool World::isObject(const std::string& _id) const
 {
@@ -218,8 +174,6 @@ ObjectPtr World::getObject(const std::string& _id) const
     return it->second.lock();
   else if(_id == classId)
     return std::const_pointer_cast<Object>(shared_from_this());
-  else if(_id == Traintastic::classId)
-    return Traintastic::instance;
   else
     return ObjectPtr();
 }

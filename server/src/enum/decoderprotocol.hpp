@@ -31,7 +31,7 @@
 
 NLOHMANN_JSON_SERIALIZE_ENUM(DecoderProtocol,
 {
-  {DecoderProtocol::None, "NONE"},
+  {DecoderProtocol::Auto, "AUTO"},
   {DecoderProtocol::DCC, "DCC"},
   {DecoderProtocol::Custom, "CUSTOM"},
 })
@@ -39,7 +39,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(DecoderProtocol,
 #ifndef DISABLE_LUA_SCRIPTING
 LUA_ENUM_VALUES(DecoderProtocol, 3,
 {
-  {DecoderProtocol::None, "NONE"},
+  {DecoderProtocol::Auto, "AUTO"},
   {DecoderProtocol::DCC, "DCC"},
   {DecoderProtocol::Custom, "CUSTOM"},
 })

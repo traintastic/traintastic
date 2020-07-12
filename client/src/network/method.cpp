@@ -40,3 +40,8 @@ int Method::call(std::function<void(const ObjectPtr&, Message::ErrorCode)> callb
 {
   return object().connection()->callMethod(*this, std::move(callback));
 }
+
+int Method::call(const QString& arg, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+{
+  return object().connection()->callMethod(*this, arg, std::move(callback));
+}

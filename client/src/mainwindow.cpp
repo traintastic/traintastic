@@ -32,6 +32,7 @@
 #include <QApplication>
 #include "mdiarea.hpp"
 #include "dialog/connectdialog.hpp"
+#include "dialog/worldlistdialog.hpp"
 #include "network/connection.hpp"
 #include "network/object.hpp"
 #include "network/property.hpp"
@@ -269,6 +270,52 @@ void MainWindow::worldChanged()
 
 void MainWindow::loadWorld()
 {
+  if(!m_connection)
+    return;
+
+  std::unique_ptr<WorldListDialog> d = std::make_unique<WorldListDialog>(m_connection, this);
+  if(d->exec() == QDialog::Accepted)
+  {
+    d->uuid();
+
+
+    /*
+    m_connection = d->connection();
+    connect(m_connection.data(), &Connection::worldChanged,
+      [this]()
+      {
+        worldChanged();
+        updateActions();
+      });
+    worldChanged();
+    clientStateChanged();*/
+  }
+  /*
+  {
+
+
+
+
+
+
+
+
+    WorldListDialog* window = new WorldListDialog(m_connection, this);
+    window->setAttribute(Qt::WA_DeleteOnClose);
+    window->showModal();
+    //if(!title.isEmpty())
+    //  window->setWindowTitle(title);
+    //m_mdiSubWindows[id] = window;
+    //m_mdiArea->addSubWindow(window);
+    //window->setAttribute(Qt::WA_DeleteOnClose);
+    //connect(window, &QMdiSubWindow::destroyed, [this, id](QObject*){ m_mdiSubWindows.remove(id); });
+   // window->show();
+
+
+   // if(const ObjectPtr& traintastic = m_connection->traintastic())
+     // if(Method* method = traintastic->getMethod("new_world"))
+       // method->call();
+  }*/
 }
 
 void MainWindow::importWorld()
@@ -405,8 +452,8 @@ void MainWindow::updateActions()
   m_actionNewWorld->setEnabled(connected);
   m_actionLoadWorld->setEnabled(connected);
   m_actionSaveWorld->setEnabled(haveWorld);
-  m_actionImportWorld->setEnabled(haveWorld);
-  m_actionExportWorld->setEnabled(haveWorld);
+  m_actionImportWorld->setEnabled(haveWorld    && false);
+  m_actionExportWorld->setEnabled(haveWorld    && false);
 
   m_actionServerSettings->setEnabled(connected);
   m_actionServerConsole->setEnabled(connected);
@@ -415,8 +462,7 @@ void MainWindow::updateActions()
   m_actionTrackPowerOn->setEnabled(haveWorld);
   m_actionEmergencyStop->setEnabled(haveWorld);
   m_actionEdit->setEnabled(haveWorld);
-  if(!haveWorld)
-    m_actionEdit->setChecked(false);
+  m_actionEdit->setChecked(haveWorld && m_connection->world()->getProperty("edit")->toBool());
 
   setMenuEnabled(m_menuObjects, haveWorld);
   if(haveWorld && !m_connection->world()->hasProperty("lua_scripts"))

@@ -30,10 +30,14 @@
 class CommandStationList : public ObjectList<Hardware::CommandStation::CommandStation>
 {
   protected:
+    void worldEvent(WorldState state, WorldEvent event) final;
     bool isListedProperty(const std::string& name) final;
 
   public:
     CLASS_ID("command_station_list")
+
+    Method<std::shared_ptr<Hardware::CommandStation::CommandStation>(std::string_view classId)> add;
+    Method<void(const std::shared_ptr<Hardware::CommandStation::CommandStation>&)> remove;
 
     CommandStationList(Object& _parent, const std::string& parentPropertyName);
 

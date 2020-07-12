@@ -1,14 +1,32 @@
+/**
+ * server/src/core/worldloader.cpp
+ *
+ * This file is part of the traintastic source code.
+ *
+ * Copyright (C) 2019-2020 Reinder Feenstra
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 #include "worldloader.hpp"
 #include <fstream>
 #include <boost/uuid/string_generator.hpp>
 #include "world.hpp"
 
-#include "../hardware/commandstation/li10x.hpp"
-#ifndef DISABLE_USB_XPRESSNET_INTERFACE
-  #include "../hardware/commandstation/usbxpressnetinterface.hpp"
-#endif
-#include "../hardware/commandstation/z21.hpp"
-#include "../hardware/controller/z21app.hpp"
+#include "../hardware/commandstation/create.hpp"
+#include "../hardware/controller/create.hpp"
 #include "../hardware/decoder/decoder.hpp"
 #include "../hardware/decoder/decoderfunction.hpp"
 #ifndef DISABLE_LUA_SCRIPTING
@@ -50,6 +68,17 @@ WorldLoader::WorldLoader(const std::filesystem::path& filename) :
       loadObject(it.second);
 }
 
+const ObjectPtr& WorldLoader::getObject(std::string_view id)
+{
+  if(auto it = m_objects.find(std::string(id)); it != m_objects.end())
+  {
+    if(!it->second.object)
+      createObject(it->second);
+    return it->second.object;
+  }
+  return ObjectPtrNull;
+}
+
 void WorldLoader::createObject(ObjectData& objectData)
 {
   assert(!objectData.object);
@@ -57,27 +86,22 @@ void WorldLoader::createObject(ObjectData& objectData)
   std::string_view classId = objectData.json["class_id"];
   std::string_view id = objectData.json["id"];
 
-  // TODO some kind of class list !!
-  if(classId == Hardware::CommandStation::LI10x::classId)
-    objectData.object = Hardware::CommandStation::LI10x::create(m_world, id);
-#ifndef DISABLE_USB_XPRESSNET_INTERFACE
-  else if(classId == Hardware::CommandStation::USBXpressNetInterface::classId)
-    objectData.object = Hardware::CommandStation::USBXpressNetInterface::create(m_world, id);
-#endif
-  else if(classId == Hardware::CommandStation::Z21::classId)
-    objectData.object = Hardware::CommandStation::Z21::create(m_world, id);
-  else if(classId == Hardware::Controller::Z21App::classId)
-    objectData.object = Hardware::Controller::Z21App::create(m_world, id);
+  if(classId.substr(0, Hardware::CommandStation::classIdPrefix.size()) == Hardware::CommandStation::classIdPrefix)
+    objectData.object = Hardware::CommandStation::create(m_world, classId, id);
+  else if(classId.substr(0, Hardware::Controller::classIdPrefix.size()) == Hardware::Controller::classIdPrefix)
+    objectData.object = Hardware::Controller::create(m_world, classId, id);
   else if(classId == Hardware::Decoder::classId)
     objectData.object = Hardware::Decoder::create(m_world, id);
+  else if(classId == Hardware::DecoderFunction::classId)
+  {
+    const std::string_view decoderId = objectData.json["decoder"];
+    if(std::shared_ptr<Hardware::Decoder> decoder = std::dynamic_pointer_cast<Hardware::Decoder>(getObject(decoderId)))
+      objectData.object = Hardware::DecoderFunction::create(*decoder, id);
+  }
 #ifndef DISABLE_LUA_SCRIPTING
   else if(classId == Lua::Script::classId)
     objectData.object = Lua::Script::create(m_world, id);
 #endif
-  else if(classId == Hardware::DecoderFunction::classId)
-  {
-    //objectData.object = Hardware::Decoder::create(m_world, id);
-  }
 
   if(!objectData.object)
     {};//m_objects.insert(id, object);
@@ -87,18 +111,42 @@ void WorldLoader::loadObject(ObjectData& objectData)
 {
   /*assert*/if(!objectData.object)return;
   assert(!objectData.loaded);
+  loadObject(*objectData.object, objectData.json);
+  objectData.loaded = true;
+}
 
-  Object& object = *objectData.object;
-  for(auto& [name, value] : objectData.json.items())
+void WorldLoader::loadObject(Object& object, const json& data)
+{
+  if(AbstractObjectList* list = dynamic_cast<AbstractObjectList*>(&object))
+  {
+    json objects = data.value("objects", json::array());
+    std::vector<ObjectPtr> items;
+    items.reserve(objects.size());
+    for(auto& [_, id] : objects.items())
+      if(ObjectPtr item = getObject(id))
+        items.emplace_back(std::move(item));
+    list->setItems(items);
+  }
+
+  for(auto& [name, value] : data.items())
     if(AbstractProperty* property = object.getProperty(name))
       if(property->type() == ValueType::Object)
       {
-        //hier voor objecten wat anders doen
+        if(contains(property->flags(), PropertyFlags::SubObject))
+        {
+          loadObject(*property->toObject(), value);
+        }
+        else
+        {
+          if(value.is_string())
+            property->load(getObject(value));
+          else if(value.is_null())
+            property->load(ObjectPtr());
+        }
       }
       else
-        property->fromJSON(value);
+        property->load(value);
 
-  objectData.loaded = true;
   //objectData.object->loaded();
 }
 

@@ -38,8 +38,12 @@ class Method : public InterfaceItem
   public:
     Method(Object& object, const QString& name, ValueType resultType, const QVector<ValueType>& argumentTypes);
 
+    ValueType resultType() const { return m_resultType; }
+    const QVector<ValueType>& argumentTypes() const { return m_argumentTypes; }
+
     void call();
     [[nodiscard]] int call(std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
+    [[nodiscard]] int call(const QString& arg, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
 };
 
 #endif

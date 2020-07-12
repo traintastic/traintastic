@@ -36,8 +36,16 @@
 
 #include "../mainwindow.hpp"
 
+
+
+#include <QMenu>
+#include <QToolButton>
+
+
+
 ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
   QWidget(parent),
+  m_buttonAdd{nullptr},
   m_object{object},
   m_toolbar{new QToolBar()},
   m_actionAdd{nullptr},
@@ -70,36 +78,106 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
         static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(errorCodeToText(ec)));
     });
 
-  if(Method* method = m_object->getMethod("add"))
+  if(Method* method = m_object->getMethod("add");
+     method && method->resultType() == ValueType::Object)
   {
-    m_actionAdd = m_toolbar->addAction(QIcon(":/dark/add.svg"), method->displayName(),
-      [this, method]()
-      {
-        if(m_requestIdAdd != Connection::invalidRequestId)
-          m_object->connection()->cancelRequest(m_requestIdAdd);
+    if(method->argumentTypes().size() == 0) // Add method witout argument
+    {
+      m_actionAdd = m_toolbar->addAction(QIcon(":/dark/add.svg"), method->displayName(),
+        [this, method]()
+        {
+          if(m_requestIdAdd != Connection::invalidRequestId)
+            m_object->connection()->cancelRequest(m_requestIdAdd);
 
-        m_requestIdAdd = method->call(
-          [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
-          {
-            m_requestIdAdd = Connection::invalidRequestId;
-
-            if(object)
+          m_requestIdAdd = method->call(
+            [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
             {
-              MainWindow::instance->showObject(object);
-            }
+              m_requestIdAdd = Connection::invalidRequestId;
+              if(object)
+              {
+                MainWindow::instance->showObject(object);
+              }
+              // TODO: show error
+            });
+        });
+      m_actionAdd->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
+      connect(method, &Method::attributeChanged,
+        [this](AttributeName name, QVariant value)
+        {
+          if(name == AttributeName::Enabled)
+            m_actionAdd->setEnabled(value.toBool());
+        });
+    }
+    else if(method->argumentTypes().size() == 1 && method->argumentTypes()[0] == ValueType::String)
+    {
+      m_buttonAdd = new QToolButton(m_toolbar);
+      m_buttonAdd->setIcon(QIcon(":/dark/add.svg"));
+      m_buttonAdd->setText(method->displayName());
+      m_buttonAdd->setPopupMode(QToolButton::InstantPopup);
 
-            // TODO: show error
+      QMenu* menu = new QMenu(m_buttonAdd);
+      menu->addAction("li10x");
+      menu->addAction("z21");
+      menu->addAction("loconet_serial",
+        [this, method]()
+        {
+          if(m_requestIdAdd != Connection::invalidRequestId)
+            m_object->connection()->cancelRequest(m_requestIdAdd);
+
+          m_requestIdAdd = method->call("hardware.command_station.loconet_serial",
+            [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+            {
+              m_requestIdAdd = Connection::invalidRequestId;
+              if(object)
+              {
+                MainWindow::instance->showObject(object);
+              }
+              // TODO: show error
+            });
+        });
+      m_buttonAdd->setMenu(menu);
+
+      m_toolbar->addWidget(m_buttonAdd);
 
 
-          });
-      });
-    m_actionAdd->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
-    connect(method, &Method::attributeChanged,
-      [this](AttributeName name, QVariant value)
-      {
-        if(name == AttributeName::Enabled)
-          m_actionAdd->setEnabled(value.toBool());
-      });
+            /*
+            m_requestIdAdd = method->call("hardware.command_station.li10x",
+              [this](const ObjectPtr& object, Message::ErrorCode /*ec*//*)
+              {
+                m_requestIdAdd = Connection::invalidRequestId;
+
+                if(object)
+                {
+                  MainWindow::instance->showObject(object);
+                }
+
+                // TODO: show error
+
+
+              });
+
+            */
+
+
+      m_buttonAdd->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
+      connect(method, &Method::attributeChanged,
+        [this](AttributeName name, QVariant value)
+        {
+          if(name == AttributeName::Enabled)
+            m_buttonAdd->setEnabled(value.toBool());
+        });
+    }
+    else
+      Q_ASSERT(false); // unsupported method prototype
+  }
+
+  m_actionEdit = m_toolbar->addAction(QIcon(":/dark/edit.svg"), tr("Edit"));
+  m_actionEdit->setEnabled(false);
+
+  if(Method* method = m_object->getMethod("remove"))
+  {
+    m_actionDelete = m_toolbar->addAction(QIcon(":/dark/delete.svg"), method->displayName());
+    //m_actionDelete->setEnabled(false);
   }
 }
 
@@ -110,16 +188,13 @@ ObjectListWidget::~ObjectListWidget()
 
 void ObjectListWidget::addActionEdit()
 {
-  Q_ASSERT(!m_actionEdit);
-  m_actionEdit = m_toolbar->addAction(QIcon(":/dark/edit.svg"), tr("Edit"));
-  m_actionEdit->setEnabled(false);
+ // Q_ASSERT(!m_actionEdit);
+
 }
 
 void ObjectListWidget::addActionDelete()
 {
-  Q_ASSERT(!m_actionDelete);
-  m_actionDelete = m_toolbar->addAction(QIcon(":/dark/delete.svg"), tr("Delete"));
-  m_actionDelete->setEnabled(false);
+ // Q_ASSERT(!m_actionDelete);
 }
 
 void ObjectListWidget::tableDoubleClicked(const QModelIndex& index)

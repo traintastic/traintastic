@@ -42,12 +42,14 @@ class Object : public std::enable_shared_from_this<Object>
 {
   friend class World;
 
+  private:
+    bool m_dying; // TODO: atomic??
+
   protected:
     InterfaceItems m_interfaceItems;
 
-    //void log(Console::Level level, const std::string& id, const std::string& message) const;
-    //inline void logError(const std::string& id, const std::string& message) const { log(Console::Level::Error, message); }
-
+    inline bool dying() const noexcept { return m_dying; }
+    virtual void destroying() {}
     virtual void worldEvent(WorldState state, WorldEvent event);
 
   public:
@@ -56,6 +58,8 @@ class Object : public std::enable_shared_from_this<Object>
 
     Object();
     virtual ~Object();
+
+    void destroy();
 
     template <typename Derived>
     inline std::shared_ptr<const Derived> shared_ptr_c() const

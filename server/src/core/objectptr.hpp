@@ -30,4 +30,6 @@ class Object;
 using ObjectPtr = std::shared_ptr<Object>;
 using ObjectPtrWeak = std::weak_ptr<Object>;
 
+inline static const ObjectPtr ObjectPtrNull;
+
 #endif

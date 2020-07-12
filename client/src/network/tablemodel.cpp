@@ -60,7 +60,11 @@ QVariant TableModel::data(const QModelIndex& index, int role) const
 
 QString TableModel::getRowObjectId(int row) const
 {
-  return m_texts.value(ColumnRow(0, row));
+  // TODO: rename to get row id and get it from the server
+  if(m_classId == "world_list_table_model")
+    return m_texts.value(ColumnRow(1, row));
+  else
+    return m_texts.value(ColumnRow(0, row));
 }
 
 void TableModel::setRegion(int columnMin, int columnMax, int rowMin, int rowMax)

@@ -94,7 +94,7 @@ bool LI10x::start()
   m_serialPort.open(port, ec);
   if(ec)
   {
-    Traintastic::instance->console->error(id, "open: " + ec.message());
+    logError("open: " + ec.message());
     return false;
   }
 
@@ -122,7 +122,7 @@ bool LI10x::send(const Protocol::XpressNet::Message& msg)
   m_serialPort.write_some(boost::asio::buffer(static_cast<const void*>(&msg), msg.size()), ec); // TODO async
   if(ec)
   {
-    Traintastic::instance->console->error(id, "write_some: " + ec.message());
+    logError("write_some: " + ec.message());
     return false;
   }
   return true;
@@ -144,7 +144,7 @@ void LI10x::receive(std::unique_ptr<uint8_t[]> message)
         EventLoop::call(
           [this]()
           {
-            Traintastic::instance->console->debug(id, "receive: Normal operation resumed");
+            logDebug("receive: Normal operation resumed");
             emergencyStop.setValueInternal(false);
             trackVoltageOff.setValueInternal(false);
           });
@@ -154,7 +154,7 @@ void LI10x::receive(std::unique_ptr<uint8_t[]> message)
         EventLoop::call(
           [this]()
           {
-            Traintastic::instance->console->debug(id, "receive: Track power Off");
+            logDebug("receive: Track power Off");
             trackVoltageOff.setValueInternal(true);
           });
       }
@@ -170,7 +170,7 @@ void LI10x::receive(std::unique_ptr<uint8_t[]> message)
         EventLoop::call(
           [this]()
           {
-            Traintastic::instance->console->debug(id, "receive: Emergency Stop");
+            logDebug("receive: Emergency Stop");
             emergencyStop.setValueInternal(true);
           });
       }
@@ -214,7 +214,7 @@ void LI10x::read()
         read();
       }
       else
-        EventLoop::call([this, ec](){ Traintastic::instance->console->error(id, "async_read_some: " + ec.message()); });
+        EventLoop::call([this, ec](){ logError("async_read_some: " + ec.message()); });
     });
 }
 

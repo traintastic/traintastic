@@ -25,7 +25,7 @@
 #include <nlohmann/json.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include "traintastic.hpp"
-//#include "worldlisttablemodel.hpp"
+#include "worldlisttablemodel.hpp"
 
 using nlohmann::json;
 
@@ -99,5 +99,5 @@ void WorldList::buildIndex()
 
 TableModelPtr WorldList::getModel()
 {
-  return nullptr;
+  return std::make_shared<WorldListTableModel>(*this);
 }

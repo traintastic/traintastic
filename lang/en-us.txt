@@ -8,6 +8,12 @@
 :name=Name
 :notes=Notes
 :track_power=Track power
+:online=Online
+:port=Port
+:xpressnet=XpressNet
+:loconet=LocoNet
+:baudrate=Baudrate
+:decoders=Decoders
 
 clock:day=Day
 clock:hour=Hour
@@ -20,22 +26,12 @@ decoder_function_list:add=Add function
 
 decoder_list:add=Add
 
-hardware.command_station.li10x:baudrate=Baudrate
-hardware.command_station.li10x:decoders=Decoders
-hardware.command_station.li10x:online=Online
-hardware.command_station.li10x:port=Port
-hardware.command_station.li10x:xpressnet=XpressNet
-
-hardware.command_station.z21:decoders=Decoders
 hardware.command_station.z21:filtered_main_current=Filtered main current
 hardware.command_station.z21:firmware_version=Firmware version
 hardware.command_station.z21:hardware_type=Hardware type
 hardware.command_station.z21:high_temperature=High temperature
 hardware.command_station.z21:hostname=Hostname
-hardware.command_station.z21:loconet=Loconet
 hardware.command_station.z21:main_current=Main current
-hardware.command_station.z21:online=Online
-hardware.command_station.z21:port=Port
 hardware.command_station.z21:power_lost=Power lost
 hardware.command_station.z21:prog_current=Prog current
 hardware.command_station.z21:programming_mode_active=Programming mode active
@@ -47,11 +43,7 @@ hardware.command_station.z21:supply_voltage=Supply voltage
 hardware.command_station.z21:temperature=Temperature
 hardware.command_station.z21:vcc_voltage=VCC voltage
 
-hardware.command_station:online=Online
-hardware.command_station:status=Status
-
 hardware.controller.z21_app:active=Active
-hardware.controller.z21_app:port=Port
 
 hardware.controller:active=Active
 
@@ -109,6 +101,11 @@ qtapp.mainmenu:server_settings=Server settings
 qtapp.mainmenu:settings=Settings
 qtapp.mainmenu:tools=Tools
 qtapp.mainmenu:view=View
+
+qtapp.world_list_dialog:world_list=World list
+qtapp.world_list_dialog:load=Load
+qtapp.world_list_dialog:cancel=Cancel
+world_list:uuid=UUID
 
 settings:default_world=Default world
 settings:localhost_only=Localhost only

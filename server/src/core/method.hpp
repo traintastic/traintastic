@@ -25,17 +25,27 @@
 
 #include "abstractmethod.hpp"
 #include <functional>
+#include "valuetypetraits.hpp"
 #include "../utils/is_shared_ptr.hpp"
 
 template<class T>
 class Method;
-
+//*
 template<class... A>
 struct args
 {
   static constexpr std::size_t count = sizeof...(A);
-  static constexpr std::array<ValueType, count> types = {};
+  static constexpr std::array<ValueType, count> types = {{value_type_v<A...>}};
 };
+//*/
+/*
+template<class A1>
+struct args
+{
+  static constexpr std::size_t count = 1;
+  static constexpr std::array<ValueType, count> types = {value_type_v<A1>};
+};
+//*/
 
 template<class R, class... A>
 class Method<R(A...)> : public AbstractMethod
@@ -62,7 +72,10 @@ class Method<R(A...)> : public AbstractMethod
 
     std::vector<ValueType> argumentTypes() const final
     {
-      return std::vector<ValueType>(args<A...>::types.begin(), args<A...>::types.end());
+      if constexpr(sizeof...(A) == 0)
+        return {};
+      else
+        return std::vector<ValueType>(args<A...>::types.begin(), args<A...>::types.end());
     }
 
     ValueType resultType() const final
@@ -81,11 +94,20 @@ class Method<R(A...)> : public AbstractMethod
     {
       if constexpr(std::is_same_v<R, void>)
       {
-        m_function(/* some magic here */);
+        if constexpr(sizeof...(A) == 0)
+          m_function(/* some magic here */);
+        else if constexpr(sizeof...(A) == 1)
+          assert(false);
+        //  m_function(args[0]);
         return Result();
       }
       else
-        return m_function(/* and here */);
+      {
+        if constexpr(sizeof...(A) == 0)
+          return m_function(/* and here */);
+        else if constexpr(sizeof...(A) == 1)
+          return m_function(std::get<std::string>(args[0]));
+      }
     }
 };
 

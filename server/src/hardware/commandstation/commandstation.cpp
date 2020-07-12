@@ -58,14 +58,17 @@ CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_vi
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
   controllers.setValueInternal(std::make_shared<ControllerList>(*this, controllers.name()));
 
+  auto w = world.lock();
+  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+
   m_interfaceItems.add(name)
-    .addAttributeEnabled(false);
+    .addAttributeEnabled(editable);
   m_interfaceItems.add(online);
   m_interfaceItems.insertBefore(emergencyStop, notes)
-    .addAttributeEnabled(false)
+    .addAttributeEnabled(editable)
     .addAttributeObjectEditor(false);
   m_interfaceItems.insertBefore(trackVoltageOff, notes)
-    .addAttributeEnabled(false)
+    .addAttributeEnabled(editable)
     .addAttributeObjectEditor(false);
   m_interfaceItems.add(decoders);
   m_interfaceItems.add(controllers);

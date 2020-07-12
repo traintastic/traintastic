@@ -73,7 +73,6 @@ class Traintastic : public Object
     static const std::string id;
     static std::shared_ptr<Traintastic> instance;
 
-    //Property<TraintasticMode> mode;
     ObjectProperty<Console> console;
     ObjectProperty<Settings> settings;
     ObjectProperty<World> world;
@@ -85,7 +84,8 @@ class Traintastic : public Object
 
     boost::asio::io_context& ioContext() { return m_ioContext; }
 
-    //const std::string& getId() const final { return id; }
+    const std::filesystem::path& dataDir() const { return m_dataDir; }
+    std::filesystem::path worldDir() const { return m_dataDir / "world"; }
 
     bool run();
     void shutdown();

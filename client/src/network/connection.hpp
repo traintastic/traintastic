@@ -126,6 +126,7 @@ class Connection : public QObject, public QEnableSharedFromThis<Connection>
 
     void callMethod(Method& method);
     [[nodiscard]] int callMethod(Method& method, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
+    [[nodiscard]] int callMethod(Method& method, const QString& arg, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
 
     [[nodiscard]] int getTableModel(const ObjectPtr& object, std::function<void(const TableModelPtr&, Message::ErrorCode)> callback);
     void releaseTableModel(TableModel* tableModel);

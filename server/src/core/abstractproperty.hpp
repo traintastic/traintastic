@@ -84,7 +84,9 @@ class AbstractProperty : public InterfaceItem
     virtual void fromDouble(double value) = 0;
     virtual void fromString(const std::string& value) = 0;
     virtual void fromObject(const ObjectPtr& value) = 0;
-    virtual void fromJSON(const nlohmann::json& value) = 0;
+
+    virtual void load(const nlohmann::json& value) = 0;
+    virtual void load(const ObjectPtr& value) = 0;
 };
 
 #endif

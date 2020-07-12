@@ -41,6 +41,28 @@
               "md_file": "decoderfunction.md"
             }
           ]
+        },
+        {
+          "id": "loconet",
+          "md_file": "loconet.md"
+        },
+        {
+          "id": "xpressnet",
+          "md_file": "xpressnet.md",
+          "sub_pages": [
+            {
+              "id": "li10x",
+              "md_file": "li10x.md"
+            },
+            {
+              "id": "s88xpressnetli",
+              "md_file": "s88xpressnetli.md"
+            },
+            {
+              "id": "usbxpressnetinterface",
+              "md_file": "usbxpressnetinterface.md"
+            }
+          ]
         }
       ]
     },

@@ -63,6 +63,8 @@ class CommandStationProperty : public AbstractObjectProperty
 
     ObjectPtr toObject() const final;
     void fromObject(const ObjectPtr& value) final;
+
+    void load(const ObjectPtr& value) final;
 };
 
 #endif

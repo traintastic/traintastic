@@ -107,7 +107,7 @@ void XpressNet::decoderChanged(const Hardware::Decoder& decoder, Hardware::Decod
 {
   using namespace Hardware;
 
-  Traintastic::instance->console->debug(id(), "XpressNet::decoderChanged");
+  logDebug("XpressNet::decoderChanged");
 
   if(useEmergencyStopLocomotiveCommand && changes == DecoderChangeFlags::EmergencyStop && decoder.emergencyStop)
     send(EmergencyStopLocomotive(
@@ -124,7 +124,7 @@ void XpressNet::decoderChanged(const Hardware::Decoder& decoder, Hardware::Decod
           decoder.emergencyStop,
           decoder.direction,
           decoder.speedStep,
-          getFunctionValue(decoder, 0)));
+          decoder.getFunctionValue(0)));
         break;
 
       case 27:
@@ -156,7 +156,7 @@ void XpressNet::decoderChanged(const Hardware::Decoder& decoder, Hardware::Decod
         break;
 
       default:
-        Traintastic::instance->console->warning(id(), std::to_string(decoder.speedSteps) + " speed steps not supported");
+        logWarning(std::to_string(decoder.speedSteps) + " speed steps not supported");
         break;
     }
   }
@@ -166,48 +166,42 @@ void XpressNet::decoderChanged(const Hardware::Decoder& decoder, Hardware::Decod
       send(FunctionInstructionGroup1(
         decoder.address,
         decoder.longAddress,
-        getFunctionValue(decoder, 0),
-        getFunctionValue(decoder, 1),
-        getFunctionValue(decoder, 2),
-        getFunctionValue(decoder, 3),
-        getFunctionValue(decoder, 4)));
+        decoder.getFunctionValue(0),
+        decoder.getFunctionValue(1),
+        decoder.getFunctionValue(2),
+        decoder.getFunctionValue(3),
+        decoder.getFunctionValue(4)));
     else if(functionNumber <= 8)
       send(FunctionInstructionGroup2(
         decoder.address,
         decoder.longAddress,
-        getFunctionValue(decoder, 5),
-        getFunctionValue(decoder, 6),
-        getFunctionValue(decoder, 7),
-        getFunctionValue(decoder, 8)));
+        decoder.getFunctionValue(5),
+        decoder.getFunctionValue(6),
+        decoder.getFunctionValue(7),
+        decoder.getFunctionValue(8)));
     else if(functionNumber <= 12)
       send(FunctionInstructionGroup3(
         decoder.address,
         decoder.longAddress,
-        getFunctionValue(decoder, 9),
-        getFunctionValue(decoder, 10),
-        getFunctionValue(decoder, 11),
-        getFunctionValue(decoder, 12)));
+        decoder.getFunctionValue(9),
+        decoder.getFunctionValue(10),
+        decoder.getFunctionValue(11),
+        decoder.getFunctionValue(12)));
     else if(useRocoF13F20Command && functionNumber <= 20)
       send(RocoFunctionInstructionF13F20(
         decoder.address,
         decoder.longAddress,
-        getFunctionValue(decoder, 13),
-        getFunctionValue(decoder, 14),
-        getFunctionValue(decoder, 15),
-        getFunctionValue(decoder, 16),
-        getFunctionValue(decoder, 17),
-        getFunctionValue(decoder, 18),
-        getFunctionValue(decoder, 19),
-        getFunctionValue(decoder, 20)));
+        decoder.getFunctionValue(13),
+        decoder.getFunctionValue(14),
+        decoder.getFunctionValue(15),
+        decoder.getFunctionValue(16),
+        decoder.getFunctionValue(17),
+        decoder.getFunctionValue(18),
+        decoder.getFunctionValue(19),
+        decoder.getFunctionValue(20)));
     else
-      Traintastic::instance->console->warning(id(), "Function F" + std::to_string(functionNumber) + " not supported");
+      logWarning("Function F" + std::to_string(functionNumber) + " not supported");
   }
-}
-
-bool XpressNet::getFunctionValue(const Hardware::Decoder& decoder, uint32_t number)
-{
-  const auto& f = decoder.getFunction(number);
-  return f && f->value;
 }
 
 }

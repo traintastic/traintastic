@@ -1,3 +1,25 @@
+/**
+ * server/src/core/commandstationproperty.cpp
+ *
+ * This file is part of the traintastic source code.
+ *
+ * Copyright (C) 2019-2020 Reinder Feenstra
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 #include "commandstationproperty.hpp"
 #include "../hardware/commandstation/commandstation.hpp"
 
@@ -86,12 +108,12 @@ CommandStationProperty& CommandStationProperty::operator =(const std::shared_ptr
   return *this;
 }
 
-ObjectPtr CommandStationProperty::toObject() const 
+ObjectPtr CommandStationProperty::toObject() const
 {
   return std::dynamic_pointer_cast<Object>(m_value);
 }
 
-void CommandStationProperty::fromObject(const ObjectPtr& value) 
+void CommandStationProperty::fromObject(const ObjectPtr& value)
 {
   if(value)
   {
@@ -102,4 +124,17 @@ void CommandStationProperty::fromObject(const ObjectPtr& value)
   }
   else
     setValue(nullptr);
+}
+
+void CommandStationProperty::load(const ObjectPtr& value)
+{
+  if(value)
+  {
+    if(std::shared_ptr<T> v = std::dynamic_pointer_cast<T>(value))
+      m_value = v;
+    else
+      throw conversion_error();
+  }
+  else
+    m_value.reset();
 }

@@ -21,16 +21,26 @@
  */
 
 #include "object.hpp"
-//#include "abstractmethod.hpp"
+#include "abstractmethod.hpp"
 #include "abstractproperty.hpp"
-#include "traintastic.hpp"
 
-Object::Object()
+Object::Object() :
+  m_dying{false}
 {
 }
 
 Object::~Object()
 {
+}
+
+void Object::destroy()
+{
+  assert(!m_dying);
+  if(!m_dying)
+  {
+    m_dying = true;
+    destroying();
+  }
 }
 
 InterfaceItem* Object::getItem(const std::string& name)
@@ -47,12 +57,6 @@ AbstractProperty* Object::getProperty(const std::string& name)
 {
   return dynamic_cast<AbstractProperty*>(getItem(name));
 }
-/*
-void Object::log(Console::Level level, const std::string& id, const std::string& message) const
-{
-  Traintastic::instance->console->log(level, id, message);
-}
-*/
 
 void Object::worldEvent(WorldState state, WorldEvent event)
 {

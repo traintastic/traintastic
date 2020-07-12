@@ -61,7 +61,7 @@ class CommandStation : public IdObject
     ObjectProperty<ControllerList> controllers;
     Property<std::string> notes;
 
-    const std::shared_ptr<Hardware::Decoder>& getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress) const;
+    const std::shared_ptr<Hardware::Decoder>& getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress = false) const;
 };
 
 }

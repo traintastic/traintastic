@@ -23,15 +23,14 @@
 #ifndef TRAINTASTIC_SERVER_CORE_OBJECTLIST_HPP
 #define TRAINTASTIC_SERVER_CORE_OBJECTLIST_HPP
 
-#include "subobject.hpp"
+#include "abstractobjectlist.hpp"
 #include "idobject.hpp"
-#include "table.hpp"
 
 template<typename T>
 class ObjectListTableModel;
 
 template<typename T>
-class ObjectList : public SubObject, public Table
+class ObjectList : public AbstractObjectList
 {
   friend class ObjectListTableModel<T>;
 
@@ -45,6 +44,25 @@ class ObjectList : public SubObject, public Table
     Items m_items;
     std::unordered_map<Object*, boost::signals2::connection> m_propertyChanged;
     std::vector<ObjectListTableModel<T>*> m_models;
+
+    std::vector<ObjectPtr> getItems() const
+    {
+      std::vector<ObjectPtr> items;
+      items.reserve(m_items.size());
+      for(auto& item : m_items)
+        items.emplace_back(std::move(std::static_pointer_cast<Object>(item)));
+      return items;
+    }
+
+    void setItems(const std::vector<ObjectPtr>& items)
+    {
+      m_items.clear();
+      m_items.reserve(items.size());
+      for(auto& item : items)
+        if(std::shared_ptr<T> t = std::dynamic_pointer_cast<T>(item))
+          m_items.emplace_back(std::move(t));
+      rowCountChanged();
+    }
 
     virtual bool isListedProperty(const std::string& name) = 0;
 
@@ -60,7 +78,7 @@ class ObjectList : public SubObject, public Table
     Property<uint32_t> length;
 
     ObjectList(Object& _parent, const std::string& parentPropertyName) :
-      SubObject{_parent, parentPropertyName},
+      AbstractObjectList{_parent, parentPropertyName},
       length{this, "length", 0, PropertyFlags::ReadOnly}
     {
     }
@@ -78,6 +96,11 @@ class ObjectList : public SubObject, public Table
     {
       assert(index < m_items.size());
       return m_items[index];
+    }
+
+    bool containsObject(const std::shared_ptr<T>& object)
+    {
+      return std::find(m_items.begin(), m_items.end(), object) != m_items.end();
     }
 
     void addObject(const std::shared_ptr<T>& object)

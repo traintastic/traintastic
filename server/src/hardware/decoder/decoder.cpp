@@ -1,7 +1,9 @@
 /**
- * Traintastic
+ * server/src/hardware/decoder/decoder.cpp
  *
- * Copyright (C) 2019-2020 Reinder Feenstra <reinderfeenstra@gmail.com>
+ * This file is part of the traintastic source code.
+ *
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +31,9 @@
 
 namespace Hardware {
 
+//constexpr uint16_t addressDCCMin = 1;
+constexpr uint16_t addressDCCShortMax = 127;
+
 const std::shared_ptr<Decoder> Decoder::null;
 
 Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
@@ -51,8 +56,21 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
 
       return true;
     }},
-  protocol{this, "protocol", DecoderProtocol::None, PropertyFlags::ReadWrite | PropertyFlags::Store},
-  address{this, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  protocol{this, "protocol", DecoderProtocol::Auto, PropertyFlags::ReadWrite | PropertyFlags::Store,
+    [this](const DecoderProtocol&)
+    {
+      updateEditable();
+    }},
+  address{this, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store,
+    [this](const uint16_t& value)
+    {
+      if(protocol == DecoderProtocol::DCC)
+      {
+        if(value > addressDCCShortMax)
+          longAddress = true;
+        updateEditable();
+      }
+    }},
   longAddress{this, "long_address", false, PropertyFlags::ReadWrite | PropertyFlags::Store},
   emergencyStop{this, "emergency_stop", false, PropertyFlags::ReadWrite,
     [this](const bool&)
@@ -73,14 +91,7 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
     [this](const uint8_t& value)
     {
       changed(DecoderChangeFlags::SpeedStep);
-
-      if(value == 0)
-      {
-        auto w = m_world.lock();
-        setEditable(w && contains(w->state.value(), WorldState::Edit));
-      }
-      else
-        setEditable(false);
+      updateEditable();
     },
     [this](uint8_t& value)
     {
@@ -91,24 +102,28 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
 {
   functions.setValueInternal(std::make_shared<DecoderFunctionList>(*this, functions.name()));
 
-  auto w = world.lock();
-  const bool editable = w && contains(w->state.value(), WorldState::Edit) && speedStep == 0;
+  //auto w = world.lock();
+//  const bool editable = w && contains(w->state.value(), WorldState::Edit) && speedStep == 0;
 
   m_interfaceItems.add(name)
-    .addAttributeEnabled(editable);
+    .addAttributeEnabled(false);
   m_interfaceItems.add(commandStation)
-    .addAttributeEnabled(editable);
+    .addAttributeEnabled(false);
   m_interfaceItems.add(protocol)
-    .addAttributeEnabled(editable);
+    .addAttributeEnabled(false);
   m_interfaceItems.add(address)
-    .addAttributeEnabled(editable);
+    .addAttributeEnabled(false);
+  m_interfaceItems.add(longAddress)
+    .addAttributeEnabled(false);
   m_interfaceItems.add(emergencyStop);
   m_interfaceItems.add(direction);
   m_interfaceItems.add(speedSteps)
-    .addAttributeEnabled(editable);
+    .addAttributeEnabled(false);
   m_interfaceItems.add(speedStep);
   m_interfaceItems.add(functions);
   m_interfaceItems.add(notes);
+
+  updateEditable();
 }
 
 void Decoder::addToWorld()
@@ -128,19 +143,40 @@ const std::shared_ptr<DecoderFunction>& Decoder::getFunction(uint32_t number) co
   return DecoderFunction::null;
 }
 
+bool Decoder::getFunctionValue(uint32_t number) const
+{
+  const auto& f = getFunction(number);
+  return f && f->value;
+}
+
+void Decoder::setFunctionValue(uint32_t number, bool value)
+{
+  const auto& f = getFunction(number);
+  if(f)
+    f->value.setValueInternal(value);
+}
+
 void Decoder::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);
-  setEditable(contains(state, WorldState::Edit) && speedStep == 0);
+  updateEditable(contains(state, WorldState::Edit));
 }
 
-void Decoder::setEditable(bool value)
+void Decoder::updateEditable()
 {
-  commandStation.setAttributeEnabled(value);
-  commandStation.setAttributeEnabled(value);
-  protocol.setAttributeEnabled(value);
-  address.setAttributeEnabled(value);
-  speedSteps.setAttributeEnabled(value);
+  auto w = m_world.lock();
+  updateEditable(w && contains(w->state.value(), WorldState::Edit));
+}
+
+void Decoder::updateEditable(bool editable)
+{
+  const bool stopped = editable && speedStep == 0;
+  name.setAttributeEnabled(editable);
+  commandStation.setAttributeEnabled(stopped);
+  protocol.setAttributeEnabled(stopped);
+  address.setAttributeEnabled(stopped);
+  longAddress.setAttributeEnabled(stopped && protocol == DecoderProtocol::DCC && address < addressDCCShortMax);
+  speedSteps.setAttributeEnabled(stopped);
 }
 
 void Decoder::changed(DecoderChangeFlags changes, uint32_t functionNumber)

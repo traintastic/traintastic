@@ -64,7 +64,7 @@ bool Session::processMessage(const Message& message)
       message.read(classId);
       message.read(id);
 
-      Traintastic::instance->console->debug(m_client->m_id, "CreateObject: " + classId);
+      logDebug(m_client->m_id, "CreateObject: " + classId);
 
       ObjectPtr obj = Traintastic::instance->world->createObject(classId, id);
       if(obj)
@@ -87,28 +87,19 @@ bool Session::processMessage(const Message& message)
       boost::split(ids, id, [](char c){ return c == '.'; });
       auto it = ids.cbegin();
 
-      ObjectPtr obj = Traintastic::instance->world->getObject(*it);
-      if(obj)
+      ObjectPtr obj;
+      if(*it == Traintastic::classId)
+        obj = Traintastic::instance;
+      else if(Traintastic::instance->world)
+        obj = Traintastic::instance->world->getObject(*it);
+
+      while(obj && ++it != ids.cend())
       {
-        it++;
-        while(obj && it != ids.cend())
-        {
-          AbstractProperty* property = obj->getProperty(*it);
-          if(property && property->type() == ValueType::Object)
-            obj = property->toObject();
-          else
-            obj = nullptr;
-          it++;
-        }
-      }
-      else
-      {
-        if(id == Traintastic::id)
-          obj = Traintastic::instance;
-        else if(id == "console")
-          obj = Traintastic::instance->console.toObject();
-        else if(id == "settings")
-          obj = Traintastic::instance->settings.toObject();
+        AbstractProperty* property = obj->getProperty(*it);
+        if(property && property->type() == ValueType::Object)
+          obj = property->toObject();
+        else
+          obj = nullptr;
       }
 
       if(obj)
@@ -266,7 +257,7 @@ bool Session::processMessage(const Message& message)
         {
           TableModelPtr model = table->getModel();
           assert(model);
-          //Traintastic::instance->console->debug(m_client->m_id, "GetTableModel: " + id);
+          //logDebug(m_client->m_id, "GetTableModel: " + id);
           auto response = Message::newResponse(message.command(), message.requestId());
           writeTableModel(*response, model);
           m_client->sendMessage(std::move(response));

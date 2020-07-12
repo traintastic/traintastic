@@ -54,6 +54,9 @@ class World : public Object
   friend class WorldLoader;
   friend class WorldSaver;
 
+  private:
+    struct Private {};
+
   protected:
     static void init(const std::shared_ptr<World>& world);
 
@@ -69,8 +72,10 @@ class World : public Object
   public:
     CLASS_ID("world")
 
+    static constexpr std::string_view filename = "traintastic.json";
+
     static std::shared_ptr<World> create();
-    static std::shared_ptr<World> load(const std::filesystem::path& filename);
+    //static std::shared_ptr<World> load(const std::filesystem::path& filename);
 
     Property<std::string> name;
     Property<WorldScale> scale;
@@ -92,8 +97,7 @@ class World : public Object
 
     Method<void()> save;
 
-    World(); // Don't use directly, use: create()
-    World(const std::filesystem::path& filename); // Don't use directly, use: load()
+    World(Private);
 
     const boost::uuids::uuid& uuid() const { return m_uuid; }
 

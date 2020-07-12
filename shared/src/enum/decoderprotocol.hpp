@@ -28,7 +28,7 @@
 
 enum class DecoderProtocol : uint8_t
 {
-  None = 0,
+  Auto = 0,
   DCC = 1,
   Motorola = 2,
   MFX = 3,

@@ -1,3 +1,25 @@
+/**
+ * server/src/core/worldsaver.cpp
+ *
+ * This file is part of the traintastic source code.
+ *
+ * Copyright (C) 2019-2020 Reinder Feenstra
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 #include "worldsaver.hpp"
 #include <fstream>
 #include <boost/uuid/uuid_io.hpp>
@@ -18,6 +40,11 @@ WorldSaver::WorldSaver(const World& world)
   data[world.scale.name()] = world.scale.value();
   data["objects"] = objects;
 
+  std::filesystem::path dir = std::filesystem::path(world.m_filename).remove_filename();
+  std::string s = dir.string();
+  if(!std::filesystem::is_directory(dir))
+    std::filesystem::create_directories(dir);
+
   std::ofstream file(world.m_filename);
   if(file.is_open())
   {
@@ -35,7 +62,17 @@ json WorldSaver::saveObject(const ObjectPtr& object)
 
   objectData["class_id"] = object->getClassId();
 
-  if(Hardware::DecoderFunction* function = dynamic_cast<Hardware::DecoderFunction*>(object.get()))
+  if(AbstractObjectList* list = dynamic_cast<AbstractObjectList*>(object.get()))
+  {
+    json objects = json::array();
+    for(auto& item: list->getItems())
+      if(IdObject* idObject = dynamic_cast<IdObject*>(item.get()))
+        objects.push_back(idObject->id);
+      else
+        assert(false);
+    objectData["objects"] = objects;
+  }
+  else if(Hardware::DecoderFunction* function = dynamic_cast<Hardware::DecoderFunction*>(object.get()))
     objectData["decoder"] = function->decoder().id.toJSON();
 
   for(auto& item : object->interfaceItems())

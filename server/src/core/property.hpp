@@ -188,9 +188,9 @@ class Property : public AbstractProperty
       throw conversion_error();
     }
 
-    void fromJSON(const nlohmann::json& value) final
+    void load(const nlohmann::json& value) final
     {
-      setValue(to<T>(value));
+      m_value = to<T>(value);
     /*
       switch(value.type())
       {
@@ -216,6 +216,12 @@ class Property : public AbstractProperty
       }
       */
     }
+
+    void load(const ObjectPtr& value) final
+    {
+      throw conversion_error();
+    }
+
 };
 
 #endif

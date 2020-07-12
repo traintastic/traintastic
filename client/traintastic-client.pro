@@ -50,7 +50,8 @@ SOURCES += \
     src/widget/decoderfunctionlistwidget.cpp \
     src/network/connection.cpp \
     src/mdiarea.cpp \
-    src/network/method.cpp
+    src/network/method.cpp \
+    src/dialog/worldlistdialog.cpp
 
 HEADERS += \
     src/mainwindow.hpp \
@@ -91,7 +92,8 @@ HEADERS += \
     src/widget/decoderfunctionlistwidget.hpp \
     src/network/connection.hpp \
     src/mdiarea.hpp \
-    src/network/method.hpp
+    src/network/method.hpp \
+    src/dialog/worldlistdialog.hpp
 
 RESOURCES += \
     dark.qrc

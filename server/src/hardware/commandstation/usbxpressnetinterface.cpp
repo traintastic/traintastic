@@ -58,21 +58,21 @@ bool USBXpressNetInterface::setOnline(bool& value)
     usbxpressnet_status status = usbxpressnet_open(!serial.value().empty() ? serial.value().c_str() : nullptr, &m_handle);
     if(status != USBXPRESSNET_STATUS_SUCCESS)
     {
-      Traintastic::instance->console->error(id, std::string("usbxpressnet_open: ") + usbxpressnet_status_str(status));
+      logError(std::string("usbxpressnet_open: ") + usbxpressnet_status_str(status));
       return false;
     }
 
     status = usbxpressnet_reset(m_handle);
     if(status != USBXPRESSNET_STATUS_SUCCESS)
     {
-      Traintastic::instance->console->error(id, std::string("usbxpressnet_reset: ") + usbxpressnet_status_str(status));
+      logError(std::string("usbxpressnet_reset: ") + usbxpressnet_status_str(status));
       return false;
     }
 
     status = usbxpressnet_set_mode(m_handle, USBXPRESSNET_MODE_DEVICE, address);
     if(status != USBXPRESSNET_STATUS_SUCCESS)
     {
-      Traintastic::instance->console->error(id, std::string("usbxpressnet_set_mode: ") + usbxpressnet_status_str(status));
+      logError(std::string("usbxpressnet_set_mode: ") + usbxpressnet_status_str(status));
       return false;
     }
   }

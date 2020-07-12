@@ -174,7 +174,7 @@ uint8_t XpressNet::calcChecksum(const void* cmd)
 
 void XpressNet::sendEmergencyStop(const Decoder& decoder)
 {
-  Traintastic::instance->console->debug(id, "XpressNet::sendEmergencyStop");
+  logDebug(id, "XpressNet::sendEmergencyStop");
 
   EmergencyStopLocomotive cmd(decoder.address);
   cmd.checksum = calcChecksum(&cmd);
@@ -183,7 +183,7 @@ void XpressNet::sendEmergencyStop(const Decoder& decoder)
 
 void XpressNet::sendSpeedAndDirectionInstruction(const Decoder& decoder)
 {
-  Traintastic::instance->console->debug(id, "XpressNet::sendSpeedAndDirectionInstruction");
+  logDebug(id, "XpressNet::sendSpeedAndDirectionInstruction");
 
   SpeedAndDirectionInstruction cmd(decoder.address);
 

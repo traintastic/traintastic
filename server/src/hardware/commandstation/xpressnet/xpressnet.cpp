@@ -117,7 +117,7 @@ void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags change
   if(!online)
     return;
 
-  Traintastic::instance->console->debug(id, "XpressNet::decoderChanged");
+  logDebug(id, "XpressNet::decoderChanged");
 
   if(useEmergencyStopLocomotiveCommand && changes == DecoderChangeFlags::EmergencyStop && decoder.emergencyStop)
     send(EmergencyStopLocomotive(
@@ -166,7 +166,7 @@ void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags change
         break;
 
       default:
-        Traintastic::instance->console->warning(id, std::to_string(decoder.speedSteps) + " speed steps not supported");
+        logWarning((id, std::to_string(decoder.speedSteps) + " speed steps not supported");
         break;
     }
   }
@@ -210,7 +210,7 @@ void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags change
         getFunctionValue(decoder, 19),
         getFunctionValue(decoder, 20)));
     else
-      Traintastic::instance->console->warning(id, "Function F" + std::to_string(functionNumber) + " not supported");
+      logWarning((id, "Function F" + std::to_string(functionNumber) + " not supported");
   }
 }
 

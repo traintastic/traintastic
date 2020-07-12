@@ -68,6 +68,8 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
     {
       world = World::create();
       console->notice(id, "Created new world");
+      world->trackPowerOff();
+      world->edit = true;
     }}
 {
   if(!std::filesystem::is_directory(m_dataDir))

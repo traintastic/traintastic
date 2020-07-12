@@ -23,6 +23,7 @@
 #include "subobject.hpp"
 #include "idobject.hpp"
 #include "world.hpp"
+#include "traintastic.hpp"
 
 SubObject::SubObject(Object& _parent, const std::string& parentPropertyName) :
   Object(),
@@ -45,5 +46,39 @@ std::string SubObject::id() const
   value += ".";
   value += m_parentPropertyName;
   return value;
+}
 
+void SubObject::logDebug(const std::string& message)
+{
+  Traintastic::instance->console->debug(id(), message);
+}
+
+void SubObject::logInfo(const std::string& message)
+{
+  Traintastic::instance->console->info(id(), message);
+}
+
+void SubObject::logNotice(const std::string& message)
+{
+  Traintastic::instance->console->notice(id(), message);
+}
+
+void SubObject::logWarning(const std::string& message)
+{
+  Traintastic::instance->console->warning(id(), message);
+}
+
+void SubObject::logError(const std::string& message)
+{
+  Traintastic::instance->console->error(id(), message);
+}
+
+void SubObject::logCritical(const std::string& message)
+{
+  Traintastic::instance->console->critical(id(), message);
+}
+
+void SubObject::logFatal(const std::string& message)
+{
+  Traintastic::instance->console->fatal(id(), message);
 }

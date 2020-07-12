@@ -51,6 +51,12 @@ endif()
 if (MSVC)
 
 else()
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -Wshadow -pedantic")
+
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra")
+
+  message(STATUS "CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
+
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
   set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
 

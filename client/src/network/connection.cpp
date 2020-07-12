@@ -208,6 +208,26 @@ int Connection::callMethod(Method& method, std::function<void(const ObjectPtr&, 
   return request->requestId();
 }
 
+int Connection::callMethod(Method& method, const QString& arg, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+{
+  auto request = Message::newRequest(Message::Command::ObjectCallMethod);
+  request->write(method.object().handle());
+  request->write(method.name().toLatin1());
+  request->write(ValueType::Object); // object result
+  request->write<uint8_t>(1); // 1 argument
+  request->write(ValueType::String);
+  request->write(arg.toUtf8());
+  send(request,
+    [this, callback](const std::shared_ptr<Message> message)
+    {
+      ObjectPtr object;
+      if(!message->isError())
+        object = readObject(*message);
+      callback(object, message->errorCode());
+    });
+  return request->requestId();
+}
+
 int Connection::getTableModel(const ObjectPtr& object, std::function<void(const TableModelPtr&, Message::ErrorCode)> callback)
 {
   std::unique_ptr<Message> request{Message::newRequest(Message::Command::GetTableModel)};

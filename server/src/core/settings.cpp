@@ -58,14 +58,14 @@ void Settings::load()
     {
       AbstractProperty* property = getProperty(name);
       if(property)
-        property->fromJSON(value);
+        property->load(value);
       else
-        Traintastic::instance->console->warning(id, "Setting `" + name + "` doesn't exist");
+        logWarning("Setting `" + name + "` doesn't exist");
     }
-    Traintastic::instance->console->info(id, "Loaded settings");
+    logInfo("Loaded settings");
   }
   else
-    Traintastic::instance->console->info(id, "Settings file not found, using defaults");
+    logInfo("Settings file not found, using defaults");
 }
 
 void Settings::save()
@@ -83,4 +83,19 @@ void Settings::save()
   }
   else
     Traintastic::instance->console->critical(id, "Can't write to settings file");
+}
+
+void Settings::logDebug(const std::string& message)
+{
+  Traintastic::instance->console->debug(id, message);
+}
+
+void Settings::logInfo(const std::string& message)
+{
+  Traintastic::instance->console->info(id, message);
+}
+
+void Settings::logWarning(const std::string& message)
+{
+  Traintastic::instance->console->warning(id, message);
 }

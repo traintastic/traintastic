@@ -70,7 +70,7 @@ struct Set
 
   static void push(lua_State* L, T value)
   {
-    lua_getglobal(L, set_name_v<T>); // get tabel with all values: key=int, value=set asuserdata
+    lua_getglobal(L, set_name_v<T>); // get tabel with all values: key=int, value=set as userdata
     lua_rawgeti(L, -1, static_cast<lua_Integer>(value)); // get userdata
     if(lua_isnil(L, -1)) // value not in table
     {
@@ -81,7 +81,6 @@ struct Set
       // add it to the table
       lua_pushvalue(L, -1); // copy set userdata on stack
       lua_rawseti(L, -1, static_cast<lua_Integer>(value));
-
     }
     else // value in table
     {
@@ -139,8 +138,6 @@ struct Set
     lua_setfield(L, -2, "__bor");
     lua_pushcfunction(L, __bnot);
     lua_setfield(L, -2, "__bnot");
-    //lua_pushcfunction(L, __eq);
-    //lua_setfield(L, -2, "__eq");
     lua_pushcfunction(L, __tostring);
     lua_setfield(L, -2, "__tostring");
     lua_pop(L, 1);

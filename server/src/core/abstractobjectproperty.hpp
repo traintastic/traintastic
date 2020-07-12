@@ -90,7 +90,7 @@ class AbstractObjectProperty : public AbstractProperty
       throw conversion_error();
     }
 
-    void fromJSON(const nlohmann::json&) final
+    void load(const nlohmann::json&) final
     {
       throw conversion_error();
     }

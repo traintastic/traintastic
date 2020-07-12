@@ -38,7 +38,7 @@ struct value_type
     std::is_enum_v<T> ? ValueType::Enum : (
     std::is_integral_v<T> ? ValueType::Integer : (
     std::is_floating_point_v<T> ? ValueType::Float : (
-    std::is_same_v<T, std::string> ? ValueType::String : (
+    (std::is_same_v<T, std::string> || std::is_same_v<T, std::string_view>)  ? ValueType::String : (
     ValueType::Invalid))))));
 };
 /*

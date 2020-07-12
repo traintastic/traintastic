@@ -26,7 +26,7 @@
 template<typename T>
 std::string to_hex(T value, size_t length = sizeof(T) * 2)
 {
-  static const char* digits = "0123456789abcdef";
+  static const char* digits = "0123456789ABCDEF";
   std::string s(length, '0');
   for(size_t i = 0, j = length - 1; i < length; i++, j--)
     s[j] = digits[(value >> (i * 4)) & 0xf];

@@ -1,0 +1,276 @@
+{
+  "columns": [
+    {
+      "id": "man",
+      "label": {
+        "en-us": "Manufacturer",
+        "nl-nl": "Fabrikant"
+      }
+    },
+    {
+      "id": "cs",
+      "label": {
+        "en-us": "Command station",
+        "nl-nl": "Centrale"
+      }
+    },
+    {
+      "id": "if",
+      "label": {
+        "en-us": "Interface"
+      }
+    },
+    {
+      "label": {
+        "en-us": "Features"
+      },
+      "columns": [
+        {
+          "id": "decoder_control",
+          "label": {
+            "en-us": "Decoder control"
+          }
+        },
+        {
+          "id": "decoder_programming",
+          "label": {
+            "en-us": "Decoder programming",
+            "nl-nl": "Decoder programeren"
+          }
+        },
+        {
+          "id": "s88",
+          "label": "S88"
+        }
+      ]
+    },
+    {
+      "label": {
+        "en-us": "Operating system"
+      },
+      "columns": [
+        {
+          "id": "windows",
+          "label": "Windows"
+        },
+        {
+          "id": "linux",
+          "label": "Linux"
+        }
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "man": {
+        "text": "Digikeijs"
+      },
+      "cs": {
+        "text": "DR5000",
+        "url": "dr5000"
+      },
+      "if": [
+        {
+          "text": "USB/LocoNet"
+        },
+        {
+          "text": "USB/XpressNet"
+        },
+        {
+          "text": "LocoNet",
+          "url": "loconet"
+        },
+        {
+          "text": "LAN/Z21"
+        }
+      ],
+      "decoder_control": [
+        {
+          "icon": "check"
+        },
+        {
+          "icon": "check"
+        },
+        {
+          "icon": "check"
+        },
+        {
+          "icon": "check"
+        }
+      ],
+      "decoder_programming": [
+        {
+          "icon": "times"
+        },
+        {
+          "icon": "times"
+        },
+        {
+          "icon": "times"
+        },
+        {
+          "icon": "times"
+        }
+      ],
+      "s88": [
+        {
+        },
+        {
+        },
+        {
+        },
+        {
+        }
+      ],
+      "windows": [
+        {
+          "icon": "question"
+        },
+        {
+          "icon": "question"
+        },
+        {
+          "icon": "question"
+        },
+        {
+          "icon": "check"
+        }
+      ],
+      "linux": [
+        {
+          "icon": "question"
+        },
+        {
+          "icon": "question"
+        },
+        {
+          "icon": "question"
+        },
+        {
+          "icon": "check"
+        }
+      ]
+    },
+    {
+      "man": {
+        "text": "Roco"
+      },
+      "cs": {
+        "text": "10764"
+      },
+      "if": {
+        "text": "XpressNet",
+        "url": "xpressnet"
+      },
+      "decoder_control": {
+        "icon": "check"
+      },
+      "decoder_programming": {
+        "icon": "times"
+      },
+      "s88": {
+      },
+      "windows": {
+        "icon": "question",
+        "footnote": 1
+      },
+      "linux": {
+        "icon": "question",
+        "footnote": 1
+      }
+    },
+    {
+      "man": {
+        "text": "Roco"
+      },
+      "cs": {
+        "text": "Z21",
+        "url": "z21"
+      },
+      "if": {
+        "text": "LAN/Z21"
+      },
+      "decoder_control": {
+        "icon": "check"
+      },
+      "decoder_programming": {
+        "icon": "times"
+      },
+      "s88": {
+      },
+      "windows": {
+        "icon": "check"
+      },
+      "linux": {
+        "icon": "check"
+      }
+    },
+    {
+      "man": {
+        "text": "Uhlenbrock"
+      },
+      "cs": {
+        "text": "Intellibox (65000)",
+        "url": "intellibox"
+      },
+      "if": [
+        {
+          "text": {
+            "en-us": "Serial/P50x",
+            "nl-nl": "Serieel/P50x"
+          }
+        },
+        {
+          "text": "LocoNet",
+          "url": "loconet"
+        }
+      ],
+      "decoder_control": [
+        {
+          "icon": "check"
+        },
+        {
+          "icon": "check"
+        }
+      ],
+      "decoder_programming": [
+        {
+          "icon": "times"
+        },
+        {
+          "icon": "times"
+        }
+      ],
+      "s88": [
+        {
+          "icon": "check"
+        },
+        {
+          "icon": "question"
+        }
+      ],
+      "windows": [
+        {
+          "icon": "check"
+        },
+        {
+          "icon": "question",
+          "footnote": 2
+        }
+      ],
+      "linux": [
+        {
+          "icon": "check"
+        },
+        {
+          "icon": "question",
+          "footnote": 2
+        }
+      ]
+    }
+  ],
+  "footnotes": {
+   "1": "Depends on the used XpressNet interface",
+   "2": "Depends on the used LocoNet interface"
+  }
+}

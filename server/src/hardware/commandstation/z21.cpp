@@ -232,19 +232,19 @@ bool Z21::setOnline(bool& value)
     m_remoteEndpoint.address(boost::asio::ip::make_address(hostname, ec));
     if(ec)
     {
-      Traintastic::instance->console->error(id, "make_address: " + ec.message());
+      logError("make_address: " + ec.message());
       return false;
     }
 
     if(m_socket.open(boost::asio::ip::udp::v4(), ec))
     {
-      Traintastic::instance->console->error(id, "socket.open: " + ec.message());
+      logError("socket.open: " + ec.message());
       return false;
     }
     else if(m_socket.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::address_v4::any(), port), ec))
     {
       m_socket.close();
-      Traintastic::instance->console->error(id, "socket.bind: " + ec.message());
+      logError("socket.bind: " + ec.message());
       return false;
     }
 
@@ -400,7 +400,7 @@ void Z21::receive()
                   break;
 
                 default:
-                  EventLoop::call([this, xheader](){ Traintastic::instance->console->debug(id, "unknown xheader 0x" + to_hex(xheader)); });
+                  EventLoop::call([this, xheader](){ logDebug("unknown xheader 0x" + to_hex(xheader)); });
                   break;
               }
               break;
@@ -451,7 +451,7 @@ void Z21::receive()
                       " address=" + std::to_string(inputRep->address()) +
                       " input="  + (inputRep->isAuxInput() ? "aux" : "switch") +
                       " value=" + (inputRep->value() ? "high" : "low");
-                    EventLoop::call([this, message](){ Traintastic::instance->console->debug(id, message); });
+                    EventLoop::call([this, message](){ logDebug(id, message); });
                   }
 
 
@@ -465,7 +465,7 @@ void Z21::receive()
                     std::string message = "unknown loconet message: ";
                     for(int i = 4; i < cmd->dataLen; i++)
                       message += to_hex(reinterpret_cast<const uint8_t*>(cmd)[i]);
-                    EventLoop::call([this, message](){ Traintastic::instance->console->debug(id, message); });
+                    EventLoop::call([this, message](){ logDebug(id, message); });
                   }
                   break;
               }
@@ -483,7 +483,7 @@ void Z21::receive()
                   for(int i = 4; i < cmd->dataLen; i++)
                     message += to_hex(reinterpret_cast<const uint8_t*>(cmd)[i]);
                 }
-                EventLoop::call([this, message](){ Traintastic::instance->console->debug(id, message); });
+                EventLoop::call([this, message](){ logDebug(message); });
               }
               break;
           }
@@ -491,7 +491,7 @@ void Z21::receive()
         receive();
       }
       else
-        EventLoop::call([this, ec](){ Traintastic::instance->console->error(id, "socket.async_receive_from: " + ec.message()); });
+        EventLoop::call([this, ec](){ logError("socket.async_receive_from: " + ec.message()); });
     });
 }
 
@@ -510,13 +510,13 @@ void Z21::send(const Protocol::Z21::Message& message)
     [this](const boost::system::error_code& ec, std::size_t)
     {
       if(ec)
-         EventLoop::call([this, ec](){ Traintastic::instance->console->error(id, "socket.async_send_to: " + ec.message()); });
+         EventLoop::call([this, ec](){ logError(id, "socket.async_send_to: " + ec.message()); });
     });*/
 }
 
 void Z21::send(const z21_lan_header* data)
 {
-  Traintastic::instance->console->debug(id, "z21_lan_header->dataLen = " + std::to_string(data->dataLen));
+  logDebug("z21_lan_header->dataLen = " + std::to_string(data->dataLen));
 
   boost::system::error_code ec;
   m_socket.send_to(boost::asio::buffer(data, data->dataLen), m_remoteEndpoint, 0, ec);
@@ -529,7 +529,7 @@ void Z21::send(const z21_lan_header* data)
     [this](const boost::system::error_code& ec, std::size_t)
     {
       if(ec)
-         EventLoop::call([this, ec](){ Traintastic::instance->console->error(id, "socket.async_send_to: " + ec.message()); });
+         EventLoop::call([this, ec](){ logError(id, "socket.async_send_to: " + ec.message()); });
     });*/
 }
 
