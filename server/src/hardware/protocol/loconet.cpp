@@ -22,7 +22,7 @@
 
 #include "loconet.hpp"
 #include <thread>
-#include <chrono> 
+#include <chrono>
 #include "../../core/eventloop.hpp"
 #include "../../core/traintastic.hpp"
 #include "../commandstation/commandstation.hpp"
@@ -106,6 +106,16 @@ std::string to_string(const LocoNet::Message& message, bool raw = false)
       s.append(" f8=").append(locoSnd.f8() ? "on" : "off");
       break;
     }
+    case LocoNet::OPC_LOCO_F9F12:
+    {
+      const LocoNet::LocoF9F12& locoF9F12 = static_cast<const LocoNet::LocoF9F12&>(message);
+      s.append(" slot=").append(std::to_string(locoF9F12.slot));
+      s.append(" f9=").append(locoF9F12.f9() ? "on" : "off");
+      s.append(" f10=").append(locoF9F12.f10() ? "on" : "off");
+      s.append(" f11=").append(locoF9F12.f11() ? "on" : "off");
+      s.append(" f12=").append(locoF9F12.f12() ? "on" : "off");
+      break;
+    }
     case LocoNet::OPC_INPUT_REP:
     {
       const LocoNet::InputRep& inputRep = static_cast<const LocoNet::InputRep&>(message);
@@ -168,11 +178,6 @@ std::string to_string(const LocoNet::Message& message, bool raw = false)
   }
 
   return s;
-}
-
-constexpr bool isLongAddress(uint16_t address)
-{
-  return address > 127;
 }
 
 void updateDecoderSpeed(const std::shared_ptr<Hardware::Decoder>& decoder, uint8_t speed)
@@ -246,9 +251,9 @@ bool LocoNet::send(const Message& message)
   return m_send(message);
 }
 
-void LocoNet::send(uint16_t address, SlotMessage& message)
+void LocoNet::send(uint16_t address, Message& message, uint8_t& slot)
 {
-  if((message.slot = m_slots.getSlot(address)) != SLOT_UNKNOWN)
+  if((slot = m_slots.getSlot(address)) != SLOT_UNKNOWN)
   {
     updateChecksum(message);
     send(message);
@@ -317,7 +322,7 @@ void LocoNet::receive(const Message& message)
             updateDecoderSpeed(decoder, locoSpd.speed);
         });
       break;
-        
+
     case OPC_LOCO_DIRF:
       EventLoop::call(
         [this, locoDirF=*static_cast<const LocoDirF*>(&message)]()
@@ -348,6 +353,20 @@ void LocoNet::receive(const Message& message)
         });
       break;
 
+    case OPC_LOCO_F9F12:
+      EventLoop::call(
+        [this, locoF9F12=*static_cast<const LocoF9F12*>(&message)]()
+        {
+          if(auto decoder = getDecoder(locoF9F12.slot))
+          {
+            decoder->setFunctionValue(9, locoF9F12.f9());
+            decoder->setFunctionValue(10, locoF9F12.f10());
+            decoder->setFunctionValue(11, locoF9F12.f11());
+            decoder->setFunctionValue(12, locoF9F12.f12());
+          }
+        });
+      break;
+
     case OPC_INPUT_REP:
       EventLoop::call(
         [this, inputRep=*static_cast<const InputRep*>(&message)]()
@@ -370,7 +389,7 @@ void LocoNet::receive(const Message& message)
             else
               m_queryLocoSlots = SLOT_UNKNOWN; // done
           }
-          
+
           if(slotReadData.isBusy() || slotReadData.isActive())
           {
             m_slots.set(slotReadData.address(), slotReadData.slot);
@@ -410,7 +429,8 @@ void LocoNet::decoderChanged(const Hardware::Decoder& decoder, Hardware::Decoder
     LocoSpd message{static_cast<uint8_t>(decoder.emergencyStop ? 1 : (decoder.speedStep > 0 ? 1 + decoder.speedStep : 0))};
     send(decoder.address, message);
   }
-  else if(has(changes, DecoderChangeFlags::FunctionValue | DecoderChangeFlags::Direction))
+
+  if(has(changes, DecoderChangeFlags::FunctionValue | DecoderChangeFlags::Direction))
   {
     if(functionNumber <= 4 || has(changes, DecoderChangeFlags::Direction))
     {
@@ -430,6 +450,28 @@ void LocoNet::decoderChanged(const Hardware::Decoder& decoder, Hardware::Decoder
         decoder.getFunctionValue(6),
         decoder.getFunctionValue(7),
         decoder.getFunctionValue(8)};
+      send(decoder.address, message);
+    }
+    else if(functionNumber <= 12)
+    {
+      LocoF9F12 message{
+        decoder.getFunctionValue(9),
+        decoder.getFunctionValue(10),
+        decoder.getFunctionValue(11),
+        decoder.getFunctionValue(12)};
+      send(decoder.address, message);
+    }
+    else if(functionNumber <= 20)
+    {
+      LocoF13F20 message{
+        decoder.getFunctionValue(13),
+        decoder.getFunctionValue(14),
+        decoder.getFunctionValue(15),
+        decoder.getFunctionValue(16),
+        decoder.getFunctionValue(17),
+        decoder.getFunctionValue(18),
+        decoder.getFunctionValue(19),
+        decoder.getFunctionValue(20)};
       send(decoder.address, message);
     }
     else

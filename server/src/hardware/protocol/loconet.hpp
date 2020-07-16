@@ -26,11 +26,6 @@
  * LocoNet is a registered trademark of DigiTrax, Inc.
  */
 
-/**
- * OPC_MULTI_SENSE and OPC_MULTI_SENSE_LONG message format
- * based on reverse engineering, see loconet.md
- */
-
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_HPP
 
@@ -54,6 +49,12 @@ namespace Protocol {
 class LocoNet : public SubObject
 {
   //friend class LocoNetInput;
+
+  protected:
+    static constexpr bool isLongAddress(uint16_t address)
+    {
+      return address > 127;
+    }
 
   public:
     struct Message;
@@ -84,10 +85,24 @@ class LocoNet : public SubObject
     static constexpr uint8_t SL_F2 = 0x02;
     static constexpr uint8_t SL_F1 = 0x01;
 
-    static constexpr uint8_t SL_F8 = 0x08;
-    static constexpr uint8_t SL_F7 = 0x04;
-    static constexpr uint8_t SL_F6 = 0x02;
     static constexpr uint8_t SL_F5 = 0x01;
+    static constexpr uint8_t SL_F6 = 0x02;
+    static constexpr uint8_t SL_F7 = 0x04;
+    static constexpr uint8_t SL_F8 = 0x08;
+
+    static constexpr uint8_t SL_F9 = 0x01;
+    static constexpr uint8_t SL_F10 = 0x02;
+    static constexpr uint8_t SL_F11 = 0x04;
+    static constexpr uint8_t SL_F12 = 0x08;
+
+    static constexpr uint8_t SL_F13 = 0x01;
+    static constexpr uint8_t SL_F14 = 0x02;
+    static constexpr uint8_t SL_F15 = 0x04;
+    static constexpr uint8_t SL_F16 = 0x08;
+    static constexpr uint8_t SL_F17 = 0x10;
+    static constexpr uint8_t SL_F18 = 0x20;
+    static constexpr uint8_t SL_F19 = 0x40;
+    static constexpr uint8_t SL_F20 = 0x80;
 
     static constexpr uint8_t MULTI_SENSE_TYPE_MASK = 0xE0;
     static constexpr uint8_t MULTI_SENSE_TYPE_TRANSPONDER_GONE = 0x00;
@@ -106,6 +121,7 @@ class LocoNet : public SubObject
       OPC_LOCO_SPD = 0xA0,
       OPC_LOCO_DIRF = 0xA1,
       OPC_LOCO_SND = 0xA2,
+      OPC_LOCO_F9F12 = 0xA3, // based on reverse engineering, see loconet.md
       OPC_SW_REQ = 0xB0,
       OPC_SW_REP = 0xB1,
       OPC_INPUT_REP = 0xB2,
@@ -121,10 +137,11 @@ class LocoNet : public SubObject
       OPC_LOCO_ADR = 0xBF,
 
       // 6 byte message opcodes:
-      OPC_MULTI_SENSE = 0xD0,
+      OPC_MULTI_SENSE = 0xD0, // based on reverse engineering, see loconet.md
+      OPC_D4 = 0xD4,// based on reverse engineering, probably used for multiple sub commands, see loconet.md
 
       // variable byte message opcodes:
-      OPC_MULTI_SENSE_LONG = 0XE0,
+      OPC_MULTI_SENSE_LONG = 0XE0, // based on reverse engineering, see loconet.md
       OPC_PEER_XFER = 0xE5,
       OPC_SL_RD_DATA = 0xE7,
       OPC_IMM_PACKET = 0xED,
@@ -161,8 +178,7 @@ class LocoNet : public SubObject
             return reinterpret_cast<const uint8_t*>(this)[1];
 
           default:
-            //assert(false);
-            return 0;
+            return 0; // invalid opcode
         }
       }
     };
@@ -367,7 +383,7 @@ class LocoNet : public SubObject
       uint8_t checksum;
 
       LocoSnd(bool f5, bool f6, bool f7, bool f8) :
-        SlotMessage{OPC_LOCO_DIRF, SLOT_UNKNOWN},
+        SlotMessage{OPC_LOCO_SND, SLOT_UNKNOWN},
         snd{0}
       {
         if(f5)
@@ -436,6 +452,80 @@ class LocoNet : public SubObject
     };
     static_assert(sizeof(LocoSnd) == 4);
 
+    struct LocoF9F12 : SlotMessage
+    {
+      uint8_t function;
+      uint8_t checksum;
+
+      LocoF9F12(bool f9, bool f10, bool f11, bool f12) :
+        SlotMessage{OPC_LOCO_F9F12, SLOT_UNKNOWN},
+        function{0}
+      {
+        if(f9)
+          function |= SL_F9;
+        if(f10)
+          function |= SL_F10;
+        if(f11)
+          function |= SL_F11;
+        if(f12)
+          function |= SL_F12;
+
+        checksum = calcChecksum(*this);
+      }
+
+      inline bool f9() const
+      {
+        return function & SL_F9;
+      }
+
+      inline void setF9(bool value)
+      {
+        if(value)
+          function |= SL_F9;
+        else
+          function &= ~SL_F9;
+      }
+
+      inline bool f10() const
+      {
+        return function & SL_F10;
+      }
+
+      inline void setF10(bool value)
+      {
+        if(value)
+          function |= SL_F10;
+        else
+          function &= ~SL_F10;
+      }
+
+      inline bool f11() const
+      {
+        return function & SL_F7;
+      }
+
+      inline void setF11(bool value)
+      {
+        if(value)
+          function |= SL_F11;
+        else
+          function &= ~SL_F11;
+      }
+
+      inline bool f12() const
+      {
+        return function & SL_F8;
+      }
+
+      inline void setF12(bool value)
+      {
+        if(value)
+          function |= SL_F12;
+        else
+          function &= ~SL_F12;
+      }
+    };
+    static_assert(sizeof(LocoF9F12) == 4);
 
     /*
 
@@ -493,7 +583,7 @@ class LocoNet : public SubObject
       uint8_t data2;
       uint8_t checksum;
 
-      RequestSlotData(uint8_t _slot) : 
+      RequestSlotData(uint8_t _slot) :
         Message(OPC_RQ_SL_DATA),
         slot{_slot},
         data2{0}
@@ -527,6 +617,43 @@ class LocoNet : public SubObject
       }
     };
     static_assert(sizeof(MultiSense) == 6);
+
+    struct LocoF13F20 : Message
+    {
+      uint8_t data1;
+      uint8_t slot;
+      uint8_t data3;
+      uint8_t function;
+      uint8_t checksum;
+
+      LocoF13F20(bool f13, bool f14, bool f15, bool f16, bool f17, bool f18, bool f19, bool f20) :
+        Message(OPC_D4),
+        data1{0x20},
+        slot{SLOT_UNKNOWN},
+        data3{0x08},
+        function{0}
+      {
+        if(f13)
+          function |= SL_F13;
+        if(f14)
+          function |= SL_F14;
+        if(f15)
+          function |= SL_F15;
+        if(f16)
+          function |= SL_F16;
+        if(f17)
+          function |= SL_F17;
+        if(f18)
+          function |= SL_F18;
+        if(f19)
+          function |= SL_F19;
+        if(f20)
+          function |= SL_F20;
+
+        checksum = calcChecksum(*this);
+      }
+    };
+    static_assert(sizeof(LocoF13F20) == 6);
 
     struct MultiSenseTransponder : MultiSense
     {
@@ -792,7 +919,153 @@ class LocoNet : public SubObject
       }
     };
     static_assert(sizeof(SlotReadData) == 14);
+/*
+    struct ImmediatePacket : Message
+    {
+      uint8_t len;
+      uint8_t header;
+      uint8_t reps;
+      uint8_t dhi;
+      uint8_t im[5];
+      uint8_t checksum;
 
+      ImmediatePacket() :
+        Message(OPC_IMM_PACKET),
+        len{11},
+        header{0x7F},
+        reps{0},
+        dhi{0},
+        im{0, 0, 0, 0, 0}
+      {
+      }
+
+      void setIMCount(uint8_t value)
+      {
+        assert(value <= 5);
+        reps = (reps & 0x8F) | ((value & 0x07) << 4);
+      }
+
+      void updateDHI()
+      {
+        dhi = 0x20 |
+          (im[0] & 0x40) >> 7 |
+          (im[1] & 0x40) >> 6 |
+          (im[2] & 0x40) >> 5 |
+          (im[3] & 0x40) >> 4 |
+          (im[4] & 0x40) >> 3;
+      }
+    };
+    static_assert(sizeof(ImmediatePacket) == 11);
+
+    struct ImmediatePacketLoco : ImmediatePacket
+    {
+      ImmediatePacketLoco(uint16_t address, uint8_t repeatCount) :
+        ImmediatePacket()
+      {
+        assert(repeatCount <= 7);
+        reps = repeatCount & 0x07;
+
+        if(isLongAddress(address))
+        {
+          im[0] = 0xC0 | ((address >> 8) & 0x3F);
+          im[1] = address & 0xFF;
+        }
+        else
+          im[0] = address & 0x7F;
+      }
+    };
+    static_assert(sizeof(ImmediatePacketLoco) == sizeof(ImmediatePacket));
+
+    struct ImmediatePacketF9F12 : ImmediatePacketLoco
+    {
+      ImmediatePacketF9F12(uint16_t address, bool f9, bool f10, bool f11, bool f12, uint8_t repeatCount = 2) :
+        ImmediatePacketLoco(address, repeatCount)
+      {
+        const uint8_t offset = (im[0] & 0x80) ? 2 : 1;
+
+        im[offset] = 0xB0; // Function group two instruction: F9-F12
+        if(f9)
+          im[offset] |= 0x01;
+        if(f10)
+          im[offset] |= 0x02;
+        if(f11)
+          im[offset] |= 0x04;
+        if(f12)
+          im[offset] |= 0x08;
+
+        setIMCount(offset + 1);
+        updateDHI();
+        checksum = calcChecksum(*this);
+      }
+    };
+    static_assert(sizeof(ImmediatePacketF9F12) == sizeof(ImmediatePacketLoco));
+
+    struct ImmediatePacketF13F20 : ImmediatePacketLoco
+    {
+      ImmediatePacketF13F20(uint16_t address, bool f13, bool f14, bool f15, bool f16, bool f17, bool f18, bool f19, bool f20, uint8_t repeatCount = 2) :
+        ImmediatePacketLoco(address, repeatCount)
+      {
+        uint8_t offset = (im[0] & 0x80) ? 2 : 1;
+
+        im[offset++] = 0xDE; // Feature Expansion Instruction: F13-F20 function control
+
+        if(f13)
+          im[offset] |= 0x01;
+        if(f14)
+          im[offset] |= 0x02;
+        if(f15)
+          im[offset] |= 0x04;
+        if(f16)
+          im[offset] |= 0x08;
+        if(f17)
+          im[offset] |= 0x10;
+        if(f18)
+          im[offset] |= 0x20;
+        if(f19)
+          im[offset] |= 0x40;
+        if(f20)
+          im[offset] |= 0x80;
+
+        setIMCount(offset + 1);
+        updateDHI();
+        checksum = calcChecksum(*this);
+      }
+    };
+    static_assert(sizeof(ImmediatePacketF13F20) == sizeof(ImmediatePacketLoco));
+
+    struct ImmediatePacketF21F28 : ImmediatePacketLoco
+    {
+      ImmediatePacketF21F28(uint16_t address, bool f21, bool f22, bool f23, bool f24, bool f25, bool f26, bool f27, bool f28, uint8_t repeatCount = 2) :
+        ImmediatePacketLoco(address, repeatCount)
+      {
+        uint8_t offset = (im[0] & 0x80) ? 2 : 1;
+
+        im[offset++] = 0xDF; // Feature Expansion Instruction: F20-F28 function control
+
+        if(f21)
+          im[offset] |= 0x01;
+        if(f22)
+          im[offset] |= 0x02;
+        if(f23)
+          im[offset] |= 0x04;
+        if(f24)
+          im[offset] |= 0x08;
+        if(f25)
+          im[offset] |= 0x10;
+        if(f26)
+          im[offset] |= 0x20;
+        if(f27)
+          im[offset] |= 0x40;
+        if(f28)
+          im[offset] |= 0x80;
+
+        setIMCount(offset + 1);
+        updateDHI();
+        checksum = calcChecksum(*this);
+      }
+    };
+    static_assert(sizeof(ImmediatePacketF21F28) == sizeof(ImmediatePacketLoco));
+*/
   protected:
     class Slots
     {
@@ -835,6 +1108,13 @@ class LocoNet : public SubObject
 
     std::shared_ptr<Hardware::Decoder> getDecoder(uint8_t slot, bool request = true);
 
+    void send(uint16_t address, Message& message, uint8_t& slot);
+    template<typename T>
+    inline void send(uint16_t address, T& message)
+    {
+      send(address, message, message.slot);
+    }
+
   public://protected:
     bool isInputAddressAvailable(uint16_t address);
     bool addInput(const std::shared_ptr<LocoNetInput>& input);
@@ -849,7 +1129,6 @@ class LocoNet : public SubObject
     LocoNet(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send);
 
     bool send(const Message& message);
-    void send(uint16_t address, SlotMessage& message);
     void receive(const Message& message);
 
     void decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderChangeFlags changes, uint32_t functionNumber);
@@ -860,6 +1139,3 @@ class LocoNet : public SubObject
 }
 
 #endif
-
-
-
