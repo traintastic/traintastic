@@ -25,6 +25,8 @@
 #include "../../core/traintastic.hpp"
 #include "../../core/eventloop.hpp"
 
+using namespace Protocol::LocoNet;
+
 namespace Hardware::CommandStation {
 
 LocoNetSerial::LocoNetSerial(const std::weak_ptr<World>& world, std::string_view _id) :
@@ -64,7 +66,7 @@ LocoNetSerial::LocoNetSerial(const std::weak_ptr<World>& world, std::string_view
   loconet{this, "loconet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "LocoNet (serial)";
-  loconet.setValueInternal(std::make_shared<::Protocol::LocoNet>(*this, loconet.name(), std::bind(&LocoNetSerial::send, this, std::placeholders::_1)));
+  loconet.setValueInternal(std::make_shared<LocoNet>(*this, loconet.name(), std::bind(&LocoNetSerial::send, this, std::placeholders::_1)));
 
   port.addAttributeEnabled(!online);
   interface.addAttributeEnabled(!online);
@@ -103,9 +105,9 @@ void LocoNetSerial::emergencyStopChanged(bool value)
   CommandStation::emergencyStopChanged(value);
 
   if(value)
-    send(Protocol::LocoNet::Idle());
+    send(Idle());
   else if(!trackVoltageOff)
-    send(Protocol::LocoNet::GlobalPowerOn());
+    send(GlobalPowerOn());
 }
 
 void LocoNetSerial::trackVoltageOffChanged(bool value)
@@ -113,9 +115,9 @@ void LocoNetSerial::trackVoltageOffChanged(bool value)
   CommandStation::trackVoltageOffChanged(value);
 
   if(!value)
-    send(Protocol::LocoNet::GlobalPowerOn());
+    send(GlobalPowerOn());
   else
-    send(Protocol::LocoNet::GlobalPowerOff());
+    send(GlobalPowerOff());
 }
 
 void LocoNetSerial::decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderChangeFlags changes, uint32_t functionNumber)

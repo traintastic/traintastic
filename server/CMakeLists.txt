@@ -35,6 +35,8 @@ file(GLOB SOURCES
   "src/hardware/input/*.cpp"
   "src/hardware/protocol/*.hpp"
   "src/hardware/protocol/*.cpp"
+  "src/hardware/protocol/loconet/*.hpp"
+  "src/hardware/protocol/loconet/*.cpp"
   "src/utils/*.hpp"
   "src/utils/*.cpp"
   "thirdparty/boost/libs/program_options/src/*.cpp")

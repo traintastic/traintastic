@@ -82,7 +82,7 @@ Z21::Z21(const std::weak_ptr<World>& world, std::string_view _id) :
   shortCircutExternal{this, "short_circut_external", false, PropertyFlags::ReadOnly}
 {
   name = "Z21";
-  loconet.setValueInternal(std::make_shared<::Protocol::LocoNet>(*this, loconet.name(),
+  loconet.setValueInternal(std::make_shared<::Protocol::LocoNet::LocoNet>(*this, loconet.name(),
     [/*this*/](const ::Protocol::LocoNet::Message& /*msg*/)
     {
       return false;

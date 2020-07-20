@@ -23,195 +23,26 @@
 #include "loconet.hpp"
 #include <thread>
 #include <chrono>
-#include "../../core/eventloop.hpp"
-#include "../../core/traintastic.hpp"
-#include "../commandstation/commandstation.hpp"
-#include "../input/loconetinput.hpp"
-#include "../../utils/to_hex.hpp"
+#include "../../../core/eventloop.hpp"
+#include "../../../core/traintastic.hpp"
+#include "../../commandstation/commandstation.hpp"
+#include "../../input/loconetinput.hpp"
 
-namespace Protocol {
-
-static std::string to_string(LocoNet::OpCode value)
-{
-  switch(value)
-  {
-    case LocoNet::OPC_BUSY: return "OPC_BUSY";
-    case LocoNet::OPC_GPOFF: return "OPC_GPOFFqqq";
-    case LocoNet::OPC_GPON: return "OPC_GPON";
-    case LocoNet::OPC_IDLE: return "OPC_IDLE";
-    case LocoNet::OPC_LOCO_SPD: return "OPC_LOCO_SPD";
-    case LocoNet::OPC_LOCO_DIRF: return "OPC_LOCO_DIRF";
-    case LocoNet::OPC_LOCO_SND: return "OPC_LOCO_SND";
-    case LocoNet::OPC_SW_REQ: return "OPC_SW_REQ";
-    case LocoNet::OPC_SW_REP: return "OPC_SW_REP";
-    case LocoNet::OPC_INPUT_REP: return "OPC_INPUT_REP";
-    case LocoNet::OPC_LONG_ACK: return "OPC_LONG_ACK";
-    case LocoNet::OPC_SLOT_STAT1: return "OPC_SLOT_STAT1";
-    case LocoNet::OPC_CONSIST_FUNC: return "OPC_CONSIST_FUNC";
-    case LocoNet::OPC_UNLINK_SLOTS: return "OPC_UNLINK_SLOTS";
-    case LocoNet::OPC_LINK_SLOTS: return "OPC_LINK_SLOTS";
-    case LocoNet::OPC_MOVE_SLOTS: return "OPC_MOVE_SLOTS";
-    case LocoNet::OPC_RQ_SL_DATA: return "OPC_RQ_SL_DATA";
-    case LocoNet::OPC_SW_STATE: return "OPC_SW_STATE";
-    case LocoNet::OPC_SW_ACK: return "OPC_SW_ACK";
-    case LocoNet::OPC_LOCO_ADR: return "OPC_LOCO_ADR";
-    case LocoNet::OPC_MULTI_SENSE: return "OPC_MULTI_SENSE";
-    case LocoNet::OPC_PEER_XFER: return "OPC_PEER_XFER";
-    case LocoNet::OPC_SL_RD_DATA: return "OPC_SL_RD_DATA";
-    case LocoNet::OPC_IMM_PACKET: return "OPC_IMM_PACKET";
-    case LocoNet::OPC_WR_SL_DATA: return "OPC_WR_SL_DATA";
-  }
-
-  return to_hex(value);
-}
-
-std::string to_string(const LocoNet::Message& message, bool raw = false)
-{
-  std::string s{to_string(message.opCode)};
-
-  switch(message.opCode)
-  {
-    case LocoNet::OPC_GPON:
-    case LocoNet::OPC_GPOFF:
-    case LocoNet::OPC_IDLE:
-    case LocoNet::OPC_BUSY:
-      break;
-
-    case LocoNet::OPC_LOCO_SPD:
-    {
-      const LocoNet::LocoSpd& locoSpd = static_cast<const LocoNet::LocoSpd&>(message);
-      s.append(" slot=").append(std::to_string(locoSpd.slot));
-      s.append(" speed=").append(std::to_string(locoSpd.speed));
-      break;
-    }
-    case LocoNet::OPC_LOCO_DIRF:
-    {
-      const LocoNet::LocoDirF& locoDirF = static_cast<const LocoNet::LocoDirF&>(message);
-      s.append(" slot=").append(std::to_string(locoDirF.slot));
-      s.append(" dir=").append(locoDirF.direction() == Direction::Forward ? "fwd" : "rev");
-      s.append(" f0=").append(locoDirF.f0() ? "on" : "off");
-      s.append(" f1=").append(locoDirF.f1() ? "on" : "off");
-      s.append(" f2=").append(locoDirF.f2() ? "on" : "off");
-      s.append(" f3=").append(locoDirF.f3() ? "on" : "off");
-      s.append(" f4=").append(locoDirF.f4() ? "on" : "off");
-      break;
-    }
-    case LocoNet::OPC_LOCO_SND:
-    {
-      const LocoNet::LocoSnd& locoSnd = static_cast<const LocoNet::LocoSnd&>(message);
-      s.append(" slot=").append(std::to_string(locoSnd.slot));
-      s.append(" f5=").append(locoSnd.f5() ? "on" : "off");
-      s.append(" f6=").append(locoSnd.f6() ? "on" : "off");
-      s.append(" f7=").append(locoSnd.f7() ? "on" : "off");
-      s.append(" f8=").append(locoSnd.f8() ? "on" : "off");
-      break;
-    }
-    case LocoNet::OPC_LOCO_F9F12:
-    {
-      const LocoNet::LocoF9F12& locoF9F12 = static_cast<const LocoNet::LocoF9F12&>(message);
-      s.append(" slot=").append(std::to_string(locoF9F12.slot));
-      s.append(" f9=").append(locoF9F12.f9() ? "on" : "off");
-      s.append(" f10=").append(locoF9F12.f10() ? "on" : "off");
-      s.append(" f11=").append(locoF9F12.f11() ? "on" : "off");
-      s.append(" f12=").append(locoF9F12.f12() ? "on" : "off");
-      break;
-    }
-    case LocoNet::OPC_INPUT_REP:
-    {
-      const LocoNet::InputRep& inputRep = static_cast<const LocoNet::InputRep&>(message);
-      s.append(" address=").append(std::to_string(inputRep.address()));
-      s.append(" input=").append(inputRep.isAuxInput() ? "aux" : "switch");
-      s.append(" value=").append(inputRep.value() ? "high" : "low");
-      break;
-    }
-    case LocoNet::OPC_RQ_SL_DATA:
-    {
-      const LocoNet::RequestSlotData& requestSlotData = static_cast<const LocoNet::RequestSlotData&>(message);
-      s.append(" slot=").append(std::to_string(requestSlotData.slot));
-      break;
-    }
-    case LocoNet::OPC_MULTI_SENSE:
-    {
-      const LocoNet::MultiSense& multiSense = static_cast<const LocoNet::MultiSense&>(message);
-      if(multiSense.isTransponder())
-      {
-        const LocoNet::MultiSenseTransponder& multiSenseTransponder = static_cast<const LocoNet::MultiSenseTransponder&>(multiSense);
-        s.append(multiSenseTransponder.isPresent() ? " present" : " absent");
-        s.append(" sensorAddress=").append(std::to_string(multiSenseTransponder.sensorAddress()));
-        s.append(" transponderAddress=").append(std::to_string(multiSenseTransponder.transponderAddress()));
-      }
-      else
-        raw = true;
-      break;
-    }
-    case LocoNet::OPC_MULTI_SENSE_LONG:
-    {
-      const LocoNet::MultiSenseLong& multiSense = static_cast<const LocoNet::MultiSenseLong&>(message);
-      if(multiSense.isTransponder())
-      {
-        const LocoNet::MultiSenseLongTransponder& multiSenseTransponder = static_cast<const LocoNet::MultiSenseLongTransponder&>(multiSense);
-        s.append(multiSenseTransponder.isPresent() ? " present" : " absent");
-        s.append(" sensorAddress=").append(std::to_string(multiSenseTransponder.sensorAddress()));
-        s.append(" transponderAddress=").append(std::to_string(multiSenseTransponder.transponderAddress()));
-        s.append(" transponderDirection=").append(multiSenseTransponder.transponderDirection() == Direction::Forward ? "fwd" : "rev");
-      }
-      else
-        raw = true;
-      break;
-    }
-    default:
-      raw = true;
-      break;
-  }
-
-  if(raw)
-  {
-    s.append(" [");
-    const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&message);
-    for(int i = 0; i < message.size(); i++)
-    {
-      if(i != 0)
-        s.append(" ");
-      s.append(to_hex(bytes[i]));
-    }
-    s.append("]");
-  }
-
-  return s;
-}
+namespace Protocol::LocoNet {
 
 void updateDecoderSpeed(const std::shared_ptr<Hardware::Decoder>& decoder, uint8_t speed)
 {
-  decoder->emergencyStop.setValueInternal(speed == LocoNet::SPEED_ESTOP);
+  decoder->emergencyStop.setValueInternal(speed == SPEED_ESTOP);
 
-  if(speed == LocoNet::SPEED_STOP || speed == LocoNet::SPEED_ESTOP)
+  if(speed == SPEED_STOP || speed == SPEED_ESTOP)
     decoder->speedStep.setValueInternal(0);
   else
-    decoder->speedStep.setValueInternal(((speed - 1) * decoder->speedSteps) / (LocoNet::SPEED_MAX - 1));
-}
-
-uint8_t LocoNet::calcChecksum(const Message& msg)
-{
-  const uint8_t* p = reinterpret_cast<const uint8_t*>(&msg);
-  const int size = msg.size() - 1;
-  uint8_t checksum = 0xFF;
-  for(int i = 0; i < size; i++)
-    checksum ^= p[i];
-  return checksum;
-}
-
-void LocoNet::updateChecksum(Message& msg)
-{
-  reinterpret_cast<uint8_t*>(&msg)[msg.size() - 1] = calcChecksum(msg);
-}
-
-bool LocoNet::isChecksumValid(const Message& msg)
-{
-  return calcChecksum(msg) == reinterpret_cast<const uint8_t*>(&msg)[msg.size() - 1];
+    decoder->speedStep.setValueInternal(((speed - 1) * decoder->speedSteps) / (SPEED_MAX - 1));
 }
 
 LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send) :
   SubObject(_parent, parentPropertyName),
+  m_commandStation{dynamic_cast<Hardware::CommandStation::CommandStation*>(&_parent)},
   m_send{std::move(send)},
   m_debugLog{true/*false*/},
   m_queryLocoSlots{SLOT_UNKNOWN},
@@ -288,10 +119,10 @@ void LocoNet::receive(const Message& message)
       EventLoop::call(
         [this]()
         {
-          if(auto cs = std::dynamic_pointer_cast<Hardware::CommandStation::CommandStation>(parent().shared_from_this()))
+          if(m_commandStation)
           {
-            cs->emergencyStop.setValueInternal(false);
-            cs->trackVoltageOff.setValueInternal(false);
+            m_commandStation->emergencyStop.setValueInternal(false);
+            m_commandStation->trackVoltageOff.setValueInternal(false);
           }
         });
       break;
@@ -300,8 +131,8 @@ void LocoNet::receive(const Message& message)
       EventLoop::call(
         [this]()
         {
-          if(auto cs = std::dynamic_pointer_cast<Hardware::CommandStation::CommandStation>(parent().shared_from_this()))
-            cs->trackVoltageOff.setValueInternal(true);
+          if(m_commandStation)
+            m_commandStation->trackVoltageOff.setValueInternal(true);
         });
       break;
 
@@ -309,8 +140,8 @@ void LocoNet::receive(const Message& message)
       EventLoop::call(
         [this]()
         {
-          if(auto cs = std::dynamic_pointer_cast<Hardware::CommandStation::CommandStation>(parent().shared_from_this()))
-            cs->emergencyStop.setValueInternal(true);
+          if(m_commandStation)
+            m_commandStation->emergencyStop.setValueInternal(true);
         });
       break;
 
@@ -461,17 +292,35 @@ void LocoNet::decoderChanged(const Hardware::Decoder& decoder, Hardware::Decoder
         decoder.getFunctionValue(12)};
       send(decoder.address, message);
     }
-    else if(functionNumber <= 20)
+    else if(functionNumber <= 19)
     {
-      LocoF13F20 message{
+      LocoF13F19 message{
         decoder.getFunctionValue(13),
         decoder.getFunctionValue(14),
         decoder.getFunctionValue(15),
         decoder.getFunctionValue(16),
         decoder.getFunctionValue(17),
         decoder.getFunctionValue(18),
-        decoder.getFunctionValue(19),
-        decoder.getFunctionValue(20)};
+        decoder.getFunctionValue(19)};
+      send(decoder.address, message);
+    }
+    else if(functionNumber == 20 || functionNumber == 28)
+    {
+      LocoF20F28 message{
+        decoder.getFunctionValue(20),
+        decoder.getFunctionValue(28)};
+      send(decoder.address, message);
+    }
+    else if(functionNumber <= 27)
+    {
+      LocoF21F27 message{
+        decoder.getFunctionValue(21),
+        decoder.getFunctionValue(22),
+        decoder.getFunctionValue(23),
+        decoder.getFunctionValue(24),
+        decoder.getFunctionValue(25),
+        decoder.getFunctionValue(26),
+        decoder.getFunctionValue(27)};
       send(decoder.address, message);
     }
     else
@@ -490,14 +339,14 @@ std::shared_ptr<Hardware::Decoder> LocoNet::getDecoder(uint8_t slot, bool reques
   if(slot < SLOT_LOCO_MIN || slot > SLOT_LOCO_MAX)
     return nullptr;
 
-  if(auto cs = std::dynamic_pointer_cast<Hardware::CommandStation::CommandStation>(parent().shared_from_this()))
+  if(m_commandStation)
   {
     const uint16_t address = m_slots.getAddress(slot);
     if(address != 0)
     {
-      auto decoder = cs->getDecoder(DecoderProtocol::DCC, address, isLongAddress(address));
+      auto decoder = m_commandStation->getDecoder(DecoderProtocol::DCC, address, isLongAddress(address));
       if(!decoder)
-        decoder = cs->getDecoder(DecoderProtocol::Auto, address);
+        decoder = m_commandStation->getDecoder(DecoderProtocol::Auto, address);
       return decoder;
     }
     else if(request)

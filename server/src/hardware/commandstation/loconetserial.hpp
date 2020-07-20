@@ -24,7 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_COMMANDSTATION_LOCONETSERIAL_HPP
 
 #include "commandstation.hpp"
-#include "../protocol/loconet.hpp"
+#include "../protocol/loconet/loconet.hpp"
 #include "../../enum/loconetserialinterface.hpp"
 #include "../../enum/serialflowcontrol.hpp"
 #include <boost/asio/serial_port.hpp>
@@ -56,7 +56,7 @@ class LocoNetSerial : public CommandStation
     Property<LocoNetSerialInterface> interface;
     Property<uint32_t> baudrate;
     Property<SerialFlowControl> flowControl;
-    ObjectProperty<::Protocol::LocoNet> loconet;
+    ObjectProperty<::Protocol::LocoNet::LocoNet> loconet;
 
     LocoNetSerial(const std::weak_ptr<World>& world, std::string_view _id);
 };

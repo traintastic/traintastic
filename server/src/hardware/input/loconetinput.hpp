@@ -25,11 +25,11 @@
 
 #include "input.hpp"
 #include "../../core/objectproperty.hpp"
-#include "../protocol/loconet.hpp"
+#include "../protocol/loconet/loconet.hpp"
 
 class LocoNetInput : public Input
 {
-  friend class Protocol::LocoNet;
+  friend class Protocol::LocoNet::LocoNet;
 
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
@@ -40,7 +40,7 @@ class LocoNetInput : public Input
     CLASS_ID("input.loconet")
     CREATE(LocoNetInput)
 
-    ObjectProperty<Protocol::LocoNet> loconet;
+    ObjectProperty<Protocol::LocoNet::LocoNet> loconet;
     Property<uint16_t> address;
 
     LocoNetInput(const std::weak_ptr<World> world, std::string_view _id);
