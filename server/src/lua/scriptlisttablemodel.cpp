@@ -79,4 +79,4 @@ void ScriptListTableModel::propertyChanged(AbstractProperty& property, uint32_t 
     changed(row, columnActive);
 }
 
-};
+}

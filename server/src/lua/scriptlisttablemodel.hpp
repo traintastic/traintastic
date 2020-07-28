@@ -47,6 +47,6 @@ class ScriptListTableModel : public ObjectListTableModel<Script>
     std::string getText(uint32_t column, uint32_t row) const final;
 };
 
-};
+}
 
 #endif

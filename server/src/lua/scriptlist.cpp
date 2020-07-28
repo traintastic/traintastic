@@ -56,4 +56,4 @@ bool ScriptList::isListedProperty(const std::string& name)
   return ScriptListTableModel::isListedProperty(name);
 }
 
-};
+}
