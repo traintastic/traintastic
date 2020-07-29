@@ -23,7 +23,7 @@
 #include "create.hpp"
 #include "li10x.hpp"
 #include "loconetserial.hpp"
-#ifndef DISABLE_USBXPRESSNET_INTERFACE
+#ifndef DISABLE_USB_XPRESSNET_INTERFACE
   #include "usbxpressnetinterface.hpp"
 #endif
 #include "z21.hpp"
@@ -35,7 +35,7 @@ const std::vector<std::string_view>& classList()
   static std::vector<std::string_view> list({
     LI10x::classId,
     LocoNetSerial::classId,
-#ifndef DISABLE_USBXPRESSNET_INTERFACE
+#ifndef DISABLE_USB_XPRESSNET_INTERFACE
     USBXpressNetInterface::classId,
 #endif
     Z21::classId,
@@ -49,7 +49,7 @@ std::shared_ptr<CommandStation> create(const std::weak_ptr<World>& world, std::s
     return LI10x::create(world, id);
   else if(classId == LocoNetSerial::classId)
     return LocoNetSerial::create(world, id);
-#ifndef DISABLE_USBXPRESSNET_INTERFACE
+#ifndef DISABLE_USB_XPRESSNET_INTERFACE
   else if(classId == USBXpressNetInterface::classId)
     return USBXpressNetInterface::create(world, id);
 #endif
