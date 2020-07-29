@@ -1,5 +1,5 @@
 /**
- * server/src/core/world.hpp
+ * server/src/world/world.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,13 +20,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_CORE_WORLD_HPP
-#define TRAINTASTIC_SERVER_CORE_WORLD_HPP
+#ifndef TRAINTASTIC_SERVER_WORLD_WORLD_HPP
+#define TRAINTASTIC_SERVER_WORLD_WORLD_HPP
 
-#include "object.hpp"
-#include "property.hpp"
-#include "objectproperty.hpp"
-#include "stdfilesystem.hpp"
+#include "../core/object.hpp"
+#include "../core/property.hpp"
+#include "../core/objectproperty.hpp"
+#include "../core/stdfilesystem.hpp"
 #include <unordered_map>
 #include <boost/uuid/uuid.hpp>
 #include <nlohmann/json.hpp>

@@ -21,7 +21,7 @@
  */
 
 #include "vehicle.hpp"
-#include "../core/world.hpp"
+#include "../world/world.hpp"
 
 Vehicle::Vehicle(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),

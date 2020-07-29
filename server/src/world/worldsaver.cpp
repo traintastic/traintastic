@@ -1,5 +1,5 @@
 /**
- * server/src/core/worldsaver.cpp
+ * server/src/world/worldsaver.cpp
  *
  * This file is part of the traintastic source code.
  *

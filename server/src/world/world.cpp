@@ -1,5 +1,5 @@
 /**
- * server/src/core/world.cpp
+ * server/src/world/world.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -25,21 +25,9 @@
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#include "traintastic.hpp"
 #include "worldsaver.hpp"
-
-
-#ifndef DISABLE_USB_XPRESSNET_INTERFACE
-  #include "../hardware/commandstation/usbxpressnetinterface.hpp"
-#endif
-#include "../hardware/commandstation/li10x.hpp"
-#include "../hardware/commandstation/z21.hpp"
+#include "../core/traintastic.hpp"
 #include "../core/objectlisttablemodel.hpp"
-
-#include "../hardware/input/loconetinput.hpp"
-#include "../hardware/decoder/decoder.hpp"
-//#include "../hardware/controller/z21app.hpp"
-
 
 using nlohmann::json;
 

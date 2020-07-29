@@ -24,7 +24,7 @@
 #include "controllerlist.hpp"
 #include "controllerlisttablemodel.hpp"
 #include "../commandstation/commandstation.hpp"
-#include "../../utils/getworld.hpp"
+#include "../../world/getworld.hpp"
 
 Controller::Controller(const std::weak_ptr<World>& _world, std::string_view _id) :
   IdObject(_world, _id),

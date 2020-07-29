@@ -23,8 +23,7 @@
 #include "decoderfunctionlist.hpp"
 #include "decoderfunctionlisttablemodel.hpp"
 #include "decoder.hpp"
-#include "../../core/world.hpp"
-#include "../../utils/getworld.hpp"
+#include "../../world/getworld.hpp"
 
 using Hardware::Decoder;
 using Hardware::DecoderFunction;

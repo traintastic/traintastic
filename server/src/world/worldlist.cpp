@@ -1,5 +1,5 @@
 /**
- * server/src/core/worldlist.cpp
+ * server/src/world/worldlist.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -24,7 +24,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <boost/uuid/string_generator.hpp>
-#include "traintastic.hpp"
+#include "../core/traintastic.hpp"
 #include "worldlisttablemodel.hpp"
 
 using nlohmann::json;

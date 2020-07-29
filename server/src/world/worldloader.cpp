@@ -1,5 +1,5 @@
 /**
- * server/src/core/worldloader.cpp
+ * server/src/world/worldloader.cpp
  *
  * This file is part of the traintastic source code.
  *

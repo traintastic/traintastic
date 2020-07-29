@@ -1,5 +1,5 @@
 /**
- * server/src/core/worldsaver.hpp
+ * server/src/world/worldloader.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,26 +20,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef WORLDSAVER_HPP
-#define WOLRDSAVER_HPP
+#ifndef TRAINTASTIC_SERVER_WORLD_WORLDLOADER_HPP
+#define TRAINTASTIC_SERVER_WORLD_WORLDLOADER_HPP
 
-//#include <memory>
-//#include <string>
-//#include <unordered_map>
+#include <memory>
+#include <string>
+#include <unordered_map>
 #include <nlohmann/json.hpp>
-#include "objectptr.hpp"
-//#include "stdfilesystem.hpp"
+#include "../core/stdfilesystem.hpp"
+#include "../core/objectptr.hpp"
 
-//class Object;
+class Object;
 class World;
 
-class WorldSaver
+class WorldLoader
 {
   private:
-    nlohmann::json saveObject(const ObjectPtr& object);
+    struct ObjectData
+    {
+      nlohmann::json json;
+      std::shared_ptr<Object> object;
+      bool loaded;
+    };
+
+    std::shared_ptr<World> m_world;
+    std::unordered_map<std::string, ObjectData> m_objects;
+
+    const ObjectPtr& getObject(std::string_view id);
+    void createObject(ObjectData& objectData);
+    void loadObject(ObjectData& objectData);
+    void loadObject(Object& object, const nlohmann::json& data);
 
   public:
-    WorldSaver(const World& world);
+    WorldLoader(const std::filesystem::path& filename);
+
+    std::shared_ptr<World> world() { return m_world; }
 };
+
 
 #endif

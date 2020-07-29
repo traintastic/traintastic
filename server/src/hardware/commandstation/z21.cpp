@@ -22,7 +22,7 @@
 
 #include "z21.hpp"
 #include "../../core/traintastic.hpp"
-#include "../../core/world.hpp"
+#include "../../world/world.hpp"
 #include "../../core/eventloop.hpp"
 #include "../decoder/decoderchangeflags.hpp"
 #include "../protocol/xpressnet.hpp"

@@ -21,7 +21,7 @@
  */
 
 #include "input.hpp"
-#include "../../core/world.hpp"
+#include "../../world/world.hpp"
 #include "inputlisttablemodel.hpp"
 
 Input::Input(const std::weak_ptr<World> world, std::string_view _id) :

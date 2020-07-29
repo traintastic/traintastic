@@ -1,5 +1,5 @@
 /**
- * server/src/core/worldlist.hpp
+ * server/src/world/worldlist.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,13 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_CORE_WORLDLIST_HPP
-#define TRAINTASTIC_SERVER_CORE_WORLDLIST_HPP
+#ifndef TRAINTASTIC_SERVER_WORLD_WORLDLIST_HPP
+#define TRAINTASTIC_SERVER_WORLD_WORLDLIST_HPP
 
-#include "object.hpp"
-#include "table.hpp"
-#include "stdfilesystem.hpp"
-//#include <memory>
+#include "../core/object.hpp"
+#include "../core/table.hpp"
+#include "../core/stdfilesystem.hpp"
 #include <vector>
 #include <boost/uuid/uuid.hpp>
 

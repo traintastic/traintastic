@@ -26,7 +26,7 @@
 #include "decoderchangeflags.hpp"
 #include "decoderfunction.hpp"
 #include "decoderfunctionlist.hpp"
-#include "../../core/world.hpp"
+#include "../../world/world.hpp"
 #include "../commandstation/commandstation.hpp"
 
 namespace Hardware {

@@ -24,7 +24,7 @@
 #include "scriptlist.hpp"
 #include "scriptlisttablemodel.hpp"
 #include "push.hpp"
-#include "../core/world.hpp"
+#include "../world/world.hpp"
 #include "../enum/worldevent.hpp"
 #include "../set/worldstate.hpp"
 

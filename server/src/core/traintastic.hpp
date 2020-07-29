@@ -33,8 +33,8 @@
 #include "method.hpp"
 #include "console.hpp"
 #include "settings.hpp"
-#include "world.hpp"
-#include "worldlist.hpp"
+#include "../world/world.hpp"
+#include "../world/worldlist.hpp"
 
 class Client;
 class Message;

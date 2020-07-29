@@ -1,5 +1,5 @@
 /**
- * server/src/core/worldlisttablemodel.hpp
+ * server/src/utils/getworld.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,26 +20,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_CORE_WORLDLISTTABLEMODEL_HPP
-#define TRAINTASTIC_SERVER_CORE_WORLDLISTTABLEMODEL_HPP
+#ifndef TRAINTASTIC_SERVER_WORLD_GETWORLD_HPP
+#define TRAINTASTIC_SERVER_WORLD_GETWORLD_HPP
 
-#include "tablemodel.hpp"
-#include "worldlist.hpp"
+#include "world.hpp"
 
-class WorldList;
-
-class WorldListTableModel : public TableModel
-{
-  protected:
-    WorldList& m_worldList;
-
-  public:
-    CLASS_ID("world_list_table_model")
-
-    WorldListTableModel(WorldList& worldList);
-    ~WorldListTableModel() final;
-
-    std::string getText(uint32_t column, uint32_t row) const final;
-};
+std::shared_ptr<World> getWorld(Object* object);
 
 #endif

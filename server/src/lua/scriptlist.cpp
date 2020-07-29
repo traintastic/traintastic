@@ -22,7 +22,7 @@
 
 #include "scriptlist.hpp"
 #include "scriptlisttablemodel.hpp"
-#include "../utils/getworld.hpp"
+#include "../world/getworld.hpp"
 
 namespace Lua {
 

@@ -22,7 +22,7 @@
 
 #include "subobject.hpp"
 #include "idobject.hpp"
-#include "world.hpp"
+#include "../world/world.hpp"
 #include "traintastic.hpp"
 
 SubObject::SubObject(Object& _parent, const std::string& parentPropertyName) :

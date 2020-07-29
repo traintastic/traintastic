@@ -1,5 +1,5 @@
 /**
- * server/src/core/worldlisttablemodel.cpp
+ * server/src/world/worldlisttablemodel.cpp
  *
  * This file is part of the traintastic source code
  *

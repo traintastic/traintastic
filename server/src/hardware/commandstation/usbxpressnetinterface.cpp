@@ -20,15 +20,15 @@
 
 #include "usbxpressnetinterface.hpp"
 #include "../../core/traintastic.hpp"
-#include "../../core/world.hpp"
+#include "../../world/world.hpp"
 
 namespace Hardware::CommandStation {
 
 USBXpressNetInterface::USBXpressNetInterface(const std::weak_ptr<World>& world, std::string_view _id) :
   CommandStation(world, _id),
   m_handle{nullptr},
-  serial{this, "serial", "", PropertyFlags::ReadWrite},
-  address{this, "address", 31, PropertyFlags::ReadWrite},
+  serial{this, "serial", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
+  address{this, "address", 31, PropertyFlags::ReadWrite | PropertyFlags::Store},
   xpressnet{this, "xpressnet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "USB XpressNet interface";

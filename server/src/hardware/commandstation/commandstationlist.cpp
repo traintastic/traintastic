@@ -23,8 +23,8 @@
 #include "commandstationlist.hpp"
 #include "commandstationlisttablemodel.hpp"
 #include "create.hpp"
-#include "../../core/world.hpp"
-#include "../../utils/getworld.hpp"
+#include "../../world/world.hpp"
+#include "../../world/getworld.hpp"
 
 using Hardware::CommandStation::CommandStation;
 

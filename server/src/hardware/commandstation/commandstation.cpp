@@ -24,7 +24,7 @@
 #include "commandstationlist.hpp"
 #include "commandstationlisttablemodel.hpp"
 #include <functional>
-#include "../../core/world.hpp"
+#include "../../world/world.hpp"
 #include "../decoder/decoder.hpp"
 #include "../decoder/decoderlist.hpp"
 

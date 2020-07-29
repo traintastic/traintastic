@@ -26,7 +26,7 @@
 #include "method.hpp"
 #include "console.hpp"
 #include <traintastic/utils/str.hpp>
-#include "../core/world.hpp"
+#include "../world/world.hpp"
 #include "../enum/decoderprotocol.hpp"
 #include "../enum/direction.hpp"
 #include "../enum/worldevent.hpp"

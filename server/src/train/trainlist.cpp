@@ -22,8 +22,8 @@
 
 #include "trainlist.hpp"
 #include "trainlisttablemodel.hpp"
-#include "../core/world.hpp"
-#include "../utils/getworld.hpp"
+#include "../world/world.hpp"
+#include "../world/getworld.hpp"
 
 TrainList::TrainList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<Train>(_parent, parentPropertyName),

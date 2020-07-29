@@ -45,6 +45,8 @@ file(GLOB SOURCES
   "src/vehicle/rail/*.cpp"
   "src/utils/*.hpp"
   "src/utils/*.cpp"
+  "src/world/*.hpp"
+  "src/world/*.cpp"
   "thirdparty/boost/libs/program_options/src/*.cpp")
 
 ### PLATFORM ###

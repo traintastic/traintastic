@@ -29,7 +29,7 @@
 #include "abstractattribute.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
 #include "tablemodel.hpp"
-#include "world.hpp"
+#include "../world/world.hpp"
 #include "idobject.hpp"
 #include "subobject.hpp"
 

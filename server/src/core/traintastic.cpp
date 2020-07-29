@@ -29,9 +29,9 @@
 #include "eventloop.hpp"
 #include "settings.hpp"
 #include "client.hpp"
-#include "world.hpp"
-#include "worldlist.hpp"
-#include "worldloader.hpp"
+#include "../world/world.hpp"
+#include "../world/worldlist.hpp"
+#include "../world/worldloader.hpp"
 
 using nlohmann::json;
 
@@ -46,19 +46,6 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_acceptor{m_ioContext},
   m_socketTCP{m_ioContext},
   m_socketUDP{m_ioContext},
-  /*mode{this, "mode", TraintasticMode::Stop, PropertyFlags::ReadWrite,
-    [this](const TraintasticMode& value)
-    {
-      assert(world);
-      console->info(id, "Mode changed to <TODO> " + std::to_string((int)value));
-      //world->modeChanged(value);
-    },
-    [this](TraintasticMode& newValue)
-    {
-      return
-        (mode == TraintasticMode::Stop) ||
-        (newValue == TraintasticMode::Stop);
-    }},*/
   console{this, "console", std::make_shared<Console>(), PropertyFlags::ReadOnly},
   settings{this, "settings", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
   world{this, "world", nullptr, PropertyFlags::ReadWrite},
@@ -75,7 +62,6 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   if(!std::filesystem::is_directory(m_dataDir))
     std::filesystem::create_directories(m_dataDir);
 
-  //m_interfaceItems.add(mode);
   m_interfaceItems.add(console);
   m_interfaceItems.add(settings);
   m_interfaceItems.add(world);

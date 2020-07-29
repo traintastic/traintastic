@@ -21,7 +21,7 @@
 #include "idobject.hpp"
 #include "traintastic.hpp"
 #include "console.hpp"
-#include "world.hpp"
+#include "../world/world.hpp"
 
 IdObject::IdObject(const std::weak_ptr<World>& world, std::string_view _id) :
   Object{},

@@ -23,8 +23,7 @@
 #include "decoderlist.hpp"
 #include "decoderlisttablemodel.hpp"
 #include "../commandstation/commandstation.hpp"
-#include "../../core/world.hpp"
-#include "../../utils/getworld.hpp"
+#include "../../world/getworld.hpp"
 
 using Hardware::Decoder;
 using Hardware::CommandStation::CommandStation;

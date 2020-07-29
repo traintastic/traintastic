@@ -21,7 +21,7 @@
 #include "decoderfunction.hpp"
 #include "decoder.hpp"
 #include "decoderchangeflags.hpp"
-#include "../../core/world.hpp"
+#include "../../world/world.hpp"
 
 namespace Hardware {
 
