@@ -34,8 +34,6 @@ namespace Hardware {
   enum class DecoderChangeFlags;
 }
 
-namespace Hardware::Controller {
-
 class Controller : public IdObject
 {
   friend class Hardware::CommandStation::CommandStation;
@@ -58,7 +56,5 @@ class Controller : public IdObject
 
     Controller(const std::weak_ptr<World>& _world, std::string_view _id);
 };
-
-}
 
 #endif

@@ -24,7 +24,7 @@
 #define TRAINTASTIC_SERVER_ENUM_COMMANDSTATIONSTATUS_HPP
 
 #include <nlohmann/json.hpp>
-#include <enum/commandstationstatus.hpp>
+#include <traintastic/enum/commandstationstatus.hpp>
 #ifndef DISABLE_LUA_SCRIPTING
   #include "../lua/enumvalues.hpp"
 #endif

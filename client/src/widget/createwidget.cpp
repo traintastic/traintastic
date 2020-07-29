@@ -27,7 +27,6 @@
 #include "inputlistwidget.hpp"
 #include "luascriptlistwidget.hpp"
 #include "objecteditwidget.hpp"
-#include "serverconsolewidget.hpp"
 #include "../network/object.hpp"
 
 QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
@@ -44,10 +43,10 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
     return new InputListWidget(object, parent);
   else if(classId == "controller_list")
     return new ObjectListWidget(object, parent);
+  else if(classId == "rail_vehicle_list")
+    return new ObjectListWidget(object, parent);
   else if(classId == "lua.script_list")
     return new LuaScriptListWidget(object, parent);
-  else if(classId == "console")
-    return new ServerConsoleWidget(object, parent);
   else if(classId == "world_list")
     return new ObjectListWidget(object, parent);
   else
@@ -58,6 +57,8 @@ QWidget* createWidget(const ObjectPtr& object, QWidget* parent)
 {
   if(QWidget* widget = createWidgetIfCustom(object, parent))
     return widget;
+  else if(object->classId().startsWith("list."))
+    return new ObjectListWidget(object, parent);
   else
     return new ObjectEditWidget(object, parent);
 }

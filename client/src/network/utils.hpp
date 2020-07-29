@@ -23,7 +23,7 @@
 #ifndef TRAINTASTIC_CLIENT_NETWORK_UTILS_HPP
 #define TRAINTASTIC_CLIENT_NETWORK_UTILS_HPP
 
-#include <message.hpp>
+#include <traintastic/network/message.hpp>
 
 QString errorCodeToText(Message::ErrorCode ec);
 

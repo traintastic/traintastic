@@ -23,8 +23,6 @@
 #include "controllerlisttablemodel.hpp"
 #include "controllerlist.hpp"
 
-using Hardware::Controller::Controller;
-
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
 constexpr uint32_t columnActive = 2;

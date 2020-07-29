@@ -24,8 +24,8 @@
 #define TRAINTASTIC_CLIENT_NETWORK_ABSTRACTPROPERTY_HPP
 
 #include "interfaceitem.hpp"
-#include <enum/valuetype.hpp>
-#include <enum/propertyflags.hpp>
+#include <traintastic/enum/valuetype.hpp>
+#include <traintastic/enum/propertyflags.hpp>
 
 class Object;
 

@@ -22,7 +22,7 @@
 
 #include "interfaceitem.hpp"
 #include "object.hpp"
-#include <locale/locale.hpp>
+#include <traintastic/locale/locale.hpp>
 
 InterfaceItem::InterfaceItem(Object& object, const QString& name) :
   QObject(&object),

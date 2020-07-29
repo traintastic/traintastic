@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QMap>
 #include <QVariant>
-#include <enum/attributename.hpp>
+#include <traintastic/enum/attributename.hpp>
 
 class Object;
 

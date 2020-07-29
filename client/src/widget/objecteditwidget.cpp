@@ -40,9 +40,9 @@
 #include "propertyvaluelabel.hpp"
 #include "createwidget.hpp"
 #include "../mainwindow.hpp"
-#include <enum/category.hpp>
+#include <traintastic/enum/category.hpp>
 
-#include <enum/direction.hpp>
+#include <traintastic/enum/direction.hpp>
 
 
 QString toString(Category value)

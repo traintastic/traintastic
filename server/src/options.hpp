@@ -25,7 +25,7 @@
 
 #include <boost/program_options.hpp>
 #include <boost/preprocessor/stringize.hpp>
-#include <codename.hpp>
+#include <traintastic/codename.hpp>
 
 struct Options
 {

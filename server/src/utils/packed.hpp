@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
 #ifndef TRAINTASTIC_SERVER_UTILS_PACKED_HPP
 #define TRAINTASTIC_SERVER_UTILS_PACKED_HPP
 

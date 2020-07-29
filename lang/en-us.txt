@@ -121,3 +121,18 @@ world:lua_scripts=Lua scripts
 world:scale=Scale
 world:track_power_off=Track power off
 world:track_power_on=Track power on
+world:rail_vehicles=Rail vehicles
+
+
+console:message=Message
+console:time=Time
+console:level=Level
+console:object=Object
+
+world:trains=Trains
+list.train:add=Create train
+train:lob=LOB
+train:speed=Speed
+train:speedMax=Maximum speed
+train:throttle_speed=Throttle speed
+train:weight=Weight

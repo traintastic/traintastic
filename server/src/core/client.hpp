@@ -37,7 +37,7 @@
 //#include <chrono>
 //#include <cmath>
 #include "objectptr.hpp"
-#include <message.hpp>
+#include <traintastic/network/message.hpp>
 
 class Traintastic;
 class Session;

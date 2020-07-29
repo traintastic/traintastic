@@ -24,7 +24,7 @@
 #include "../network/property.hpp"
 #include <QHBoxLayout>
 #include <QToolButton>
-#include <enum/direction.hpp>
+#include <traintastic/enum/direction.hpp>
 
 PropertyDirectionControl::PropertyDirectionControl(Property& property, QWidget* parent) :
   QWidget(parent),

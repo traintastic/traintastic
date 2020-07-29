@@ -135,6 +135,41 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
               // TODO: show error
             });
         });
+      menu->addAction("locomotive",
+        [this, method]()
+        {
+          if(m_requestIdAdd != Connection::invalidRequestId)
+            m_object->connection()->cancelRequest(m_requestIdAdd);
+
+          m_requestIdAdd = method->call("vehicle.rail.locomotive",
+            [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+            {
+              m_requestIdAdd = Connection::invalidRequestId;
+              if(object)
+              {
+                MainWindow::instance->showObject(object);
+              }
+              // TODO: show error
+            });
+        });
+      menu->addAction("locomotive",
+        [this, method]()
+        {
+          if(m_requestIdAdd != Connection::invalidRequestId)
+            m_object->connection()->cancelRequest(m_requestIdAdd);
+
+          m_requestIdAdd = method->call("vehicle.rail.freight_car",
+            [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+            {
+              m_requestIdAdd = Connection::invalidRequestId;
+              if(object)
+              {
+                MainWindow::instance->showObject(object);
+              }
+              // TODO: show error
+            });
+        });
+
       m_buttonAdd->setMenu(menu);
 
       m_toolbar->addWidget(m_buttonAdd);

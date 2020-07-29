@@ -25,9 +25,9 @@
 
 #include "interfaceitem.hpp"
 #include <QVector>
-#include <enum/valuetype.hpp>
+#include <traintastic/enum/valuetype.hpp>
 #include "objectptr.hpp"
-#include <message.hpp>
+#include <traintastic/network/message.hpp>
 
 class Method : public InterfaceItem
 {

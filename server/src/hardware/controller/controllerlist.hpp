@@ -25,15 +25,19 @@
 #define TRAINTASTIC_SERVER_HARDWARE_CONTROLLER_CONTROLLERLIST_HPP
 
 #include "../../core/objectlist.hpp"
+#include "../../core/method.hpp"
 #include "controller.hpp"
 
-class ControllerList : public ObjectList<Hardware::Controller::Controller>
+class ControllerList : public ObjectList<Controller>
 {
   protected:
+    void worldEvent(WorldState state, WorldEvent event) final;
     bool isListedProperty(const std::string& name) final;
 
   public:
     CLASS_ID("controller_list")
+
+    Method<std::shared_ptr<Controller>()> add;
 
     ControllerList(Object& _parent, const std::string& parentPropertyName);
 

@@ -249,6 +249,22 @@ void LocoNet::receive(const Message& message)
   }
 }
 
+void LocoNet::emergencyStopChanged(bool value)
+{
+  if(value)
+    send(Idle());
+  else if(m_commandStation && !m_commandStation->trackVoltageOff)
+    send(GlobalPowerOn());
+}
+
+void LocoNet::trackVoltageOffChanged(bool value)
+{
+  if(!value)
+    send(GlobalPowerOn());
+  else
+    send(GlobalPowerOff());
+}
+
 void LocoNet::decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderChangeFlags changes, uint32_t functionNumber)
 {
   using namespace Hardware;

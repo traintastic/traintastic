@@ -23,7 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_ENUM_WORLDEVENT_HPP
 #define TRAINTASTIC_SERVER_ENUM_WORLDEVENT_HPP
 
-#include <enum/worldevent.hpp>
+#include <traintastic/enum/worldevent.hpp>
 #ifndef DISABLE_LUA_SCRIPTING
   #include "../lua/enumvalues.hpp"
 #endif

@@ -22,17 +22,47 @@
 
 #include "controllerlist.hpp"
 #include "controllerlisttablemodel.hpp"
+#include "controllers.hpp"
+#include "../commandstation/commandstation.hpp"
+#include "../../utils/getworld.hpp"
 
-using Hardware::Controller::Controller;
+using Hardware::CommandStation::CommandStation;
 
 ControllerList::ControllerList(Object& _parent, const std::string& parentPropertyName) :
-  ObjectList<Controller>(_parent, parentPropertyName)
+  ObjectList<Controller>(_parent, parentPropertyName),
+  add{*this, "add",
+  [this]()
+  {
+    auto world = getWorld(&this->parent());
+    if(!world)
+      return std::shared_ptr<Controller>();
+    auto controller = Controllers::create(world, "hardware.controller.wlanmaus", world->getUniqueId("controller"));
+    if(auto* cs = dynamic_cast<CommandStation*>(&this->parent()))
+      controller->commandStation = cs->shared_ptr<CommandStation>();
+    //else if(world->commandStations->length() == 1)
+    //  decoder->commandStation = cs->shared_ptr<CommandStation>();
+    return controller;
+  }}
 {
+  auto world = getWorld(&_parent);
+  const bool editable = world && contains(world->state.value(), WorldState::Edit);
+
+  m_interfaceItems.add(add)
+    .addAttributeEnabled(editable);
 }
 
 TableModelPtr ControllerList::getModel()
 {
   return std::make_shared<ControllerListTableModel>(*this);
+}
+
+void ControllerList::worldEvent(WorldState state, WorldEvent event)
+{
+  ObjectList<Controller>::worldEvent(state, event);
+
+  const bool editable = contains(state, WorldState::Edit);
+
+  add.setAttributeEnabled(editable);
 }
 
 bool ControllerList::isListedProperty(const std::string& name)

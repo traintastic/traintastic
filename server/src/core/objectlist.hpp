@@ -111,10 +111,10 @@ class ObjectList : public AbstractObjectList
         {
           if(!m_models.empty() && isListedProperty(property.name()))
           {
-            ObjectPtr object = property.object().shared_from_this();
+            ObjectPtr obj = property.object().shared_from_this();
             const uint32_t rows = static_cast<uint32_t>(m_items.size());
             for(uint32_t row = 0; row < rows; row++)
-              if(m_items[row] == object)
+              if(m_items[row] == obj)
               {
                 for(auto& model : m_models)
                   model->propertyChanged(property, row);

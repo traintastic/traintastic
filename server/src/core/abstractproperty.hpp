@@ -24,8 +24,8 @@
 #define TRAINTASTIC_SERVER_CORE_ABSTRACTPROPERTY_HPP
 
 #include "interfaceitem.hpp"
-#include <enum/valuetype.hpp>
-#include <enum/propertyflags.hpp>
+#include <traintastic/enum/valuetype.hpp>
+#include <traintastic/enum/propertyflags.hpp>
 #include "objectptr.hpp"
 #include <cassert>
 #include <nlohmann/json.hpp>

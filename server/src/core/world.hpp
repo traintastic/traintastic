@@ -30,20 +30,19 @@
 #include <unordered_map>
 #include <boost/uuid/uuid.hpp>
 #include <nlohmann/json.hpp>
-#include <enum/worldevent.hpp>
-#include <enum/worldscale.hpp>
-#include <set/worldstate.hpp>
+#include <traintastic/enum/worldevent.hpp>
+#include <traintastic/enum/worldscale.hpp>
+#include <traintastic/set/worldstate.hpp>
 #include "../clock/clock.hpp"
 #include "../hardware/commandstation/commandstationlist.hpp"
 #include "../hardware/decoder/decoderlist.hpp"
 #include "../hardware/input/inputlist.hpp"
 #include "../hardware/controller/controllerlist.hpp"
+#include "../train/trainlist.hpp"
+#include "../vehicle/rail/railvehiclelist.hpp"
 #ifndef DISABLE_LUA_SCRIPTING
   #include "../lua/scriptlist.hpp"
 #endif
-
-//class CommandStationList;
-//class DecoderList;
 
 class WorldLoader;
 
@@ -65,7 +64,7 @@ class World : public Object
     std::unordered_map<std::string, std::weak_ptr<Object>> m_objects;
 
     void event(WorldEvent event);
-    void load();
+    //void load();
 
     nlohmann::json saveObject(const ObjectPtr& object);
 
@@ -85,6 +84,8 @@ class World : public Object
     ObjectProperty<InputList> inputs;
     ObjectProperty<ControllerList> controllers;
     ObjectProperty<Clock> clock;
+    ObjectProperty<TrainList> trains;
+    ObjectProperty<RailVehicleList> railVehicles;
 #ifndef DISABLE_LUA_SCRIPTING
     ObjectProperty<Lua::ScriptList> luaScripts;
 #endif

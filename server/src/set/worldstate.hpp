@@ -23,7 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_SET_WORLDSTATE_HPP
 #define TRAINTASTIC_SERVER_SET_WORLDSTATE_HPP
 
-#include <set/worldstate.hpp>
+#include <traintastic/set/worldstate.hpp>
 #include "../lua/set.hpp"
 
 LUA_SET(WorldState, 3,

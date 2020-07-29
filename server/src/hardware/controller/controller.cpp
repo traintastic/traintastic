@@ -26,13 +26,11 @@
 #include "../commandstation/commandstation.hpp"
 #include "../../utils/getworld.hpp"
 
-namespace Hardware::Controller {
-
 Controller::Controller(const std::weak_ptr<World>& _world, std::string_view _id) :
   IdObject(_world, _id),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
   commandStation{this, "command_station", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](const std::shared_ptr<CommandStation::CommandStation>& value)
+    [this](const std::shared_ptr<Hardware::CommandStation::CommandStation>& value)
     {
       std::shared_ptr<Controller> controller = shared_ptr<Controller>();
       assert(controller);
@@ -74,6 +72,4 @@ void Controller::worldEvent(WorldState state, WorldEvent event)
   const bool editable = contains(state, WorldState::Edit);
 
   commandStation.setAttributeEnabled(editable);
-}
-
 }

@@ -27,7 +27,7 @@
 #include "valuetypetraits.hpp"
 #include "to.hpp"
 #include <functional>
-#include <enum/enum.hpp>
+#include <traintastic/enum/enum.hpp>
 
 template<typename T>
 class Property : public AbstractProperty
@@ -109,7 +109,7 @@ class Property : public AbstractProperty
       return m_value;
     }
 
-    Property<T>& operator =(const T& value)
+    Property<T>& operator =(const T& value) // REMOVE !!!!!!
     {
       setValue(value);
       return *this;

@@ -24,14 +24,14 @@
 #include <QTcpSocket>
 #include <QUrl>
 #include <QCryptographicHash>
-#include <message.hpp>
+#include <traintastic/network/message.hpp>
 #include "object.hpp"
 #include "property.hpp"
 #include "objectproperty.hpp"
 #include "method.hpp"
 #include "tablemodel.hpp"
-#include <enum/interfaceitemtype.hpp>
-#include <locale/locale.hpp>
+#include <traintastic/enum/interfaceitemtype.hpp>
+#include <traintastic/locale/locale.hpp>
 //#include <enum/valuetype.hpp>
 //#include <enum/propertyflags.hpp>
 

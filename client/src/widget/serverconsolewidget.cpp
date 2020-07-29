@@ -23,6 +23,7 @@
 #include "serverconsolewidget.hpp"
 #include <QVBoxLayout>
 #include <QTableView>
+#include <QHeaderView>
 #include <QtWaitingSpinner/waitingspinnerwidget.h>
 #include "tablewidget.hpp"
 #include "../network/connection.hpp"
@@ -30,10 +31,10 @@
 #include "../network/tablemodel.hpp"
 #include "../network/utils.hpp"
 #include "../widget/alertwidget.hpp"
+#include "../mainwindow.hpp"
 
-ServerConsoleWidget::ServerConsoleWidget(const ObjectPtr& object, QWidget* parent) :
+ServerConsoleWidget::ServerConsoleWidget(QWidget* parent) :
   QWidget(parent),
-  m_object{object},
   m_tableWidget{new TableWidget()}
 {
   QVBoxLayout* layout = new QVBoxLayout();
@@ -44,17 +45,27 @@ ServerConsoleWidget::ServerConsoleWidget(const ObjectPtr& object, QWidget* paren
   auto* spinner = new WaitingSpinnerWidget(this, true, false);
   spinner->start();
 
-  m_requestId = m_object->connection()->getTableModel(object,
-    [this, spinner](const TableModelPtr& tableModel, Message::ErrorCode ec)
+  m_requestId = MainWindow::instance->connection()->getObject(objectId,
+    [this, spinner](const ObjectPtr& object, Message::ErrorCode ec)
     {
-      if(tableModel)
+      m_requestId = Connection::invalidRequestId;
+      if(object)
       {
-        m_requestId = Connection::invalidRequestId;
-        m_tableWidget->setTableModel(tableModel);
-        delete spinner;
+        m_object = object;
+        m_requestId = m_object->connection()->getTableModel(object,
+          [this, spinner](const TableModelPtr& tableModel, Message::ErrorCode ec)
+          {
+            if(tableModel)
+            {
+              m_requestId = Connection::invalidRequestId;
+              m_tableWidget->setTableModel(tableModel);
+              m_tableWidget->horizontalHeader()->setStretchLastSection(true);
+              delete spinner;
+            }
+            else
+              static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(errorCodeToText(ec)));
+          });
       }
-      else
-        static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(errorCodeToText(ec)));
     });
 }
 

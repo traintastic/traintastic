@@ -33,8 +33,8 @@ LocoNetSerial::LocoNetSerial(const std::weak_ptr<World>& world, std::string_view
   CommandStation(world, _id),
   m_serialPort{Traintastic::instance->ioContext()},
   m_readBufferOffset{0},
-  port{this, "port", "/dev/ttyUSB0", PropertyFlags::ReadWrite},
-  interface{this, "interface", LocoNetSerialInterface::Custom, PropertyFlags::ReadWrite,
+  port{this, "port", "/dev/ttyUSB0", PropertyFlags::ReadWrite | PropertyFlags::Store},
+  interface{this, "interface", LocoNetSerialInterface::Custom, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](LocoNetSerialInterface value)
     {
       switch(value)
@@ -53,12 +53,12 @@ LocoNetSerial::LocoNetSerial(const std::weak_ptr<World>& world, std::string_view
           break;
       }
     }},
-  baudrate{this, "baudrate", 19200, PropertyFlags::ReadWrite,
+  baudrate{this, "baudrate", 19200, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](uint32_t)
     {
       interface = LocoNetSerialInterface::Custom;
     }},
-  flowControl{this, "flow_control", SerialFlowControl::None, PropertyFlags::ReadWrite,
+  flowControl{this, "flow_control", SerialFlowControl::None, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](SerialFlowControl)
     {
       interface = LocoNetSerialInterface::Custom;
@@ -104,20 +104,16 @@ void LocoNetSerial::emergencyStopChanged(bool value)
 {
   CommandStation::emergencyStopChanged(value);
 
-  if(value)
-    send(Idle());
-  else if(!trackVoltageOff)
-    send(GlobalPowerOn());
+  if(online)
+    loconet->emergencyStopChanged(value);
 }
 
 void LocoNetSerial::trackVoltageOffChanged(bool value)
 {
   CommandStation::trackVoltageOffChanged(value);
 
-  if(!value)
-    send(GlobalPowerOn());
-  else
-    send(GlobalPowerOff());
+  if(online)
+    loconet->trackVoltageOffChanged(value);
 }
 
 void LocoNetSerial::decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderChangeFlags changes, uint32_t functionNumber)

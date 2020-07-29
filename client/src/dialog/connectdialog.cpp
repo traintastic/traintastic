@@ -31,7 +31,7 @@
 #include <QUrl>
 #include <QTimer>
 #include "../network/connection.hpp"
-#include <locale/locale.hpp>
+#include <traintastic/locale/locale.hpp>
 
 ConnectDialog::ConnectDialog(QWidget* parent) :
   QDialog(parent, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),

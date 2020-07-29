@@ -32,14 +32,14 @@ class TableWidget;
 class ServerConsoleWidget : public QWidget
 {
   protected:
-    static constexpr char const* objectId = "console";
+    static constexpr char const* objectId = "traintastic.console";
 
     int m_requestId;
     ObjectPtr m_object;
     TableWidget* m_tableWidget;
 
   public:
-    ServerConsoleWidget(const ObjectPtr& object, QWidget* parent = nullptr);
+    ServerConsoleWidget(QWidget* parent = nullptr);
     ~ServerConsoleWidget() final;
 };
 

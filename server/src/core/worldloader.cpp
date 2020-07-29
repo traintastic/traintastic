@@ -24,11 +24,13 @@
 #include <fstream>
 #include <boost/uuid/string_generator.hpp>
 #include "world.hpp"
+#include "../utils/string.hpp"
 
 #include "../hardware/commandstation/create.hpp"
-#include "../hardware/controller/create.hpp"
+#include "../hardware/controller/controllers.hpp"
 #include "../hardware/decoder/decoder.hpp"
 #include "../hardware/decoder/decoderfunction.hpp"
+#include "../vehicle/rail/railvehicles.hpp"
 #ifndef DISABLE_LUA_SCRIPTING
   #include "../lua/script.hpp"
 #endif
@@ -86,10 +88,10 @@ void WorldLoader::createObject(ObjectData& objectData)
   std::string_view classId = objectData.json["class_id"];
   std::string_view id = objectData.json["id"];
 
-  if(classId.substr(0, Hardware::CommandStation::classIdPrefix.size()) == Hardware::CommandStation::classIdPrefix)
+  if(startsWith(classId, Hardware::CommandStation::classIdPrefix))
     objectData.object = Hardware::CommandStation::create(m_world, classId, id);
-  else if(classId.substr(0, Hardware::Controller::classIdPrefix.size()) == Hardware::Controller::classIdPrefix)
-    objectData.object = Hardware::Controller::create(m_world, classId, id);
+  else if(startsWith(classId, Controllers::classIdPrefix))
+    objectData.object = Controllers::create(m_world, classId, id);
   else if(classId == Hardware::Decoder::classId)
     objectData.object = Hardware::Decoder::create(m_world, id);
   else if(classId == Hardware::DecoderFunction::classId)
@@ -98,6 +100,8 @@ void WorldLoader::createObject(ObjectData& objectData)
     if(std::shared_ptr<Hardware::Decoder> decoder = std::dynamic_pointer_cast<Hardware::Decoder>(getObject(decoderId)))
       objectData.object = Hardware::DecoderFunction::create(*decoder, id);
   }
+  else if(startsWith(classId, RailVehicles::classIdPrefix))
+    objectData.object = RailVehicles::create(m_world, classId, id);
 #ifndef DISABLE_LUA_SCRIPTING
   else if(classId == Lua::Script::classId)
     objectData.object = Lua::Script::create(m_world, id);

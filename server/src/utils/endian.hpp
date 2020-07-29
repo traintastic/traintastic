@@ -20,7 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
+#ifndef TRAINTASTIC_SERVER_UTILS_ENDIAN_HPP
+#define TRAINTASTIC_SERVER_UTILS_ENDIAN_HPP
 
 #include <type_traits>
 #ifndef  _MSC_VER
@@ -111,3 +112,5 @@ constexpr T be_to_host(T value)
   else
     static_assert(sizeof(T) != sizeof(T));
 }
+
+#endif

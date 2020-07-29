@@ -24,7 +24,7 @@
 #define TRAINTASTIC_SERVER_LUA_SET_HPP
 
 #include <type_traits>
-#include <set/set.hpp>
+#include <traintastic/set/set.hpp>
 #include <lua.hpp>
 #include <frozen/map.h>
 #include "readonlytable.hpp"

@@ -23,7 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_ENUM_XPRESSNETCOMMANDSTATION_HPP
 #define TRAINTASTIC_SERVER_ENUM_XPRESSNETCOMMANDSTATION_HPP
 
-#include <enum/xpressnetcommandstation.hpp>
+#include <traintastic/enum/xpressnetcommandstation.hpp>
 #include <nlohmann/json.hpp>
 #ifndef DISABLE_LUA_SCRIPTING
   #include "../lua/enumvalues.hpp"

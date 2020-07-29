@@ -23,7 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_ENUM_LOCONETCOMMANDSTATION_HPP
 #define TRAINTASTIC_SERVER_ENUM_LOCONETCOMMANDSTATION_HPP
 
-#include <enum/loconetcommandstation.hpp>
+#include <traintastic/enum/loconetcommandstation.hpp>
 #include <nlohmann/json.hpp>
 #ifndef DISABLE_LUA_SCRIPTING
   #include "../lua/enumvalues.hpp"

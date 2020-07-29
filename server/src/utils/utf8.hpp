@@ -20,10 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
-
+#ifndef TRAINTASTIC_SERVER_UTILS_UTF8_HPP
+#define TRAINTASTIC_SERVER_UTILS_UTF8_HPP
 
 #define UTF8_CHECKMARK "\u2713"
 #define UTF8_BALLOT_X "\u2717"
 
-
+#endif

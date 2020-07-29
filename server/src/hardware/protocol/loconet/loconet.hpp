@@ -32,7 +32,7 @@
 #include <vector>
 #include "../../../core/subobject.hpp"
 #include "../../../core/property.hpp"
-#include <enum/direction.hpp>
+#include <traintastic/enum/direction.hpp>
 #include "../../../enum/loconetcommandstation.hpp"
 //#include <cstdint>
 //#include <cassert>
@@ -128,6 +128,8 @@ class LocoNet : public SubObject
     bool send(const Message& message);
     void receive(const Message& message);
 
+    void emergencyStopChanged(bool value);
+    void trackVoltageOffChanged(bool value);
     void decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderChangeFlags changes, uint32_t functionNumber);
 
     void queryLocoSlots();

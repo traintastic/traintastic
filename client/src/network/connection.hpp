@@ -27,7 +27,7 @@
 #include <QAbstractSocket>
 #include <QMap>
 #include <QUuid>
-#include <message.hpp>
+#include <traintastic/network/message.hpp>
 #include "handle.hpp"
 #include "objectptr.hpp"
 #include "tablemodelptr.hpp"

@@ -25,7 +25,7 @@
 
 #include "object.hpp"
 #include "property.hpp"
-#include <enum/traintasticmode.hpp>
+#include <traintastic/enum/traintasticmode.hpp>
 
 #define CREATE(T) \
   static std::shared_ptr<T> create(const std::weak_ptr<World>& world, std::string_view _id) \

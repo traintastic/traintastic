@@ -23,6 +23,8 @@
 #ifndef TRAINTASTIC_SERVER_UTILS_TO_HEX_HPP
 #define TRAINTASTIC_SERVER_UTILS_TO_HEX_HPP
 
+#include <string>
+
 template<typename T>
 std::string to_hex(T value, size_t length = sizeof(T) * 2)
 {

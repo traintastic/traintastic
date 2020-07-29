@@ -20,7 +20,7 @@ SOURCES += \
     src/mainwindow.cpp \
     src/dialog/connectdialog.cpp \
     src/network/object.cpp \
-    ../shared/src/locale/locale.cpp \
+    ../shared/src/traintastic/locale/locale.cpp \
     thirdparty/QtWaitingSpinner/waitingspinnerwidget.cpp \
     src/widget/alertwidget.cpp \
     src/network/utils.cpp \
@@ -57,8 +57,8 @@ HEADERS += \
     src/mainwindow.hpp \
     src/dialog/connectdialog.hpp \
     src/network/object.hpp \
-    ../shared/src/message.hpp \
-    ../shared/src/locale/locale.hpp \
+    ../shared/src/traintastic/message.hpp \
+    ../shared/src/traintastic/locale/locale.hpp \
     thirdparty/QtWaitingSpinner/waitingspinnerwidget.h \
     src/widget/alertwidget.hpp \
     src/network/utils.hpp \

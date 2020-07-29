@@ -30,6 +30,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QApplication>
+#include <QSplitter>
 #include "mdiarea.hpp"
 #include "dialog/connectdialog.hpp"
 #include "dialog/worldlistdialog.hpp"
@@ -39,11 +40,12 @@
 #include "network/method.hpp"
 //#include "subwindow/objecteditsubwindow.hpp"
 #include "subwindow/objectsubwindow.hpp"
+#include "widget/serverconsolewidget.hpp"
 
 
 #include <QDesktopServices>
-#include <locale/locale.hpp>
-#include <codename.hpp>
+#include <traintastic/locale/locale.hpp>
+#include <traintastic/codename.hpp>
 
 #define SETTING_PREFIX "mainwindow/"
 #define SETTING_GEOMETRY SETTING_PREFIX "geometry"
@@ -63,11 +65,13 @@ static void setMenuEnabled(QMenu* menu, bool enabled)
 
 MainWindow::MainWindow(QWidget* parent) :
   QMainWindow(parent),
-  m_mdiArea{new MdiArea()}
+  m_splitter{new QSplitter(Qt::Vertical, this)},
+  m_mdiArea{new MdiArea(m_splitter)},
+  m_serverConsole{nullptr}
 {
   instance = this;
 
-  setWindowTitle("Traintastic v" + QApplication::applicationVersion());
+  updateWindowTitle();
 
   QAction* actFullScreen;
 
@@ -121,14 +125,17 @@ MainWindow::MainWindow(QWidget* parent) :
     menu->addAction(Locale::tr("world:decoders") + "...", [this](){ showObject("world.decoders", Locale::tr("world:decoders")); });
     menu->addAction(Locale::tr("world:inputs") + "...", [this](){ showObject("world.inputs", Locale::tr("world:inputs")); });
     menu->addAction(Locale::tr("world:controllers") + "...", [this](){ showObject("world.controllers", Locale::tr("world:controllers")); });
-    m_menuObjects->addAction(Locale::tr("world:clock") + "...", [this](){ showObject("world.clock"); });
+    m_menuObjects->addAction(Locale::tr("world:clock") + "...", [this](){ showObject("world.clock", Locale::tr("world:clock")); });
+    m_menuObjects->addAction(Locale::tr("world:trains") + "...", [this](){ showObject("world.trains", Locale::tr("world:trains")); });
+    m_menuObjects->addAction(Locale::tr("world:rail_vehicles") + "...", [this](){ showObject("world.rail_vehicles", Locale::tr("world:rail_vehicles")); });
     m_actionLuaScript = m_menuObjects->addAction(QIcon(":/dark/lua.svg"), Locale::tr("world:lua_scripts") + "...", [this](){ showObject("world.lua_scripts", Locale::tr("world:lua_scripts")); });
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:tools"));
     menu->addAction(Locale::tr("qtapp.mainmenu:settings") + "...")->setEnabled(false);
     menu->addSeparator();
-    m_actionServerSettings = menu->addAction(Locale::tr("qtapp.mainmenu:server_settings") + "...", this, [this](){ showObject("traintastic.settings"); });
-    m_actionServerConsole = menu->addAction(Locale::tr("qtapp.mainmenu:server_console") + "...", this, [this](){ showObject("traintastic.console"); });
+    m_actionServerSettings = menu->addAction(Locale::tr("qtapp.mainmenu:server_settings") + "...", this, [this](){ showObject("traintastic.settings", Locale::tr("qtapp.mainmenu:server_settings")); });
+    m_actionServerConsole = menu->addAction(Locale::tr("qtapp.mainmenu:server_console") + "...", this, &MainWindow::toggleConsole);//[this](){ showObject("traintastic.console"); });
+    m_actionServerConsole->setCheckable(true);
     m_actionServerConsole->setShortcut(Qt::Key_F12);
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:help"));
@@ -198,8 +205,10 @@ MainWindow::MainWindow(QWidget* parent) :
 
   QWidget* w = new QWidget();
   w->setLayout(l);
+  m_splitter->addWidget(w);
+  m_splitter->setCollapsible(0, false);
 
-  setCentralWidget(w);
+  setCentralWidget(m_splitter);
   setStatusBar(new QStatusBar());
 
   QSettings settings;
@@ -266,6 +275,16 @@ void MainWindow::worldChanged()
     if(AbstractProperty* edit = m_world->getProperty("edit"))
       connect(edit, &AbstractProperty::valueChangedBool, m_actionEdit, &QAction::setChecked);
   }
+
+  updateWindowTitle();
+}
+
+void MainWindow::updateWindowTitle()
+{
+  QString title = "Traintastic v" + QApplication::applicationVersion();
+  if(m_world)
+    title = m_world->getProperty("name")->toString() + " - " + title;
+  setWindowTitle(title);
 }
 
 void MainWindow::loadWorld()
@@ -344,8 +363,25 @@ void MainWindow::toggleFullScreen()
       restoreGeometry(m_beforeFullScreenGeometry);
     else
       showMaximized();
- }
+  }
 }
+
+void MainWindow::toggleConsole()
+{
+  if(m_serverConsole)
+  {
+    delete m_serverConsole;
+    m_serverConsole = nullptr;
+    m_actionServerConsole->setChecked(false);
+  }
+  else
+  {
+    m_serverConsole = new ServerConsoleWidget(m_splitter);
+    m_splitter->addWidget(m_serverConsole);
+    m_actionServerConsole->setChecked(false);
+  }
+}
+
 /*
 void MainWindow::showObjectEdit(const QString& id)
 {

@@ -27,7 +27,7 @@
 #include <string>
 #include <memory>
 #include "attribute.hpp"
-#include <enum/category.hpp>
+#include <traintastic/enum/category.hpp>
 
 class Object;
 

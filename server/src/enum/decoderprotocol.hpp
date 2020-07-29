@@ -24,7 +24,7 @@
 #define TRAINTASTIC_SERVER_ENUM_DECODERPROTOCOL_HPP
 
 #include <nlohmann/json.hpp>
-#include <enum/decoderprotocol.hpp>
+#include <traintastic/enum/decoderprotocol.hpp>
 #ifndef DISABLE_LUA_SCRIPTING
   #include "../lua/enumvalues.hpp"
 #endif

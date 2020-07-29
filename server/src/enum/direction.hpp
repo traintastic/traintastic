@@ -23,7 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_ENUM_DIRECTION_HPP
 #define TRAINTASTIC_SERVER_ENUM_DIRECTION_HPP
 
-#include <enum/direction.hpp>
+#include <traintastic/enum/direction.hpp>
 #include <nlohmann/json.hpp>
 #ifndef DISABLE_LUA_SCRIPTING
   #include "../lua/enumvalues.hpp"

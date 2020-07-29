@@ -38,7 +38,7 @@
 
 #include "../hardware/input/loconetinput.hpp"
 #include "../hardware/decoder/decoder.hpp"
-#include "../hardware/controller/z21app.hpp"
+//#include "../hardware/controller/z21app.hpp"
 
 
 using nlohmann::json;
@@ -57,6 +57,8 @@ void World::init(const std::shared_ptr<World>& world)
   world->inputs.setValueInternal(std::make_shared<InputList>(*world, world->inputs.name()));
   world->controllers.setValueInternal(std::make_shared<ControllerList>(*world, world->controllers.name()));
   world->clock.setValueInternal(std::make_shared<Clock>(*world, world->clock.name()));
+  world->trains.setValueInternal(std::make_shared<TrainList>(*world, world->trains.name()));
+  world->railVehicles.setValueInternal(std::make_shared<RailVehicleList>(*world, world->railVehicles.name()));
 #ifndef DISABLE_LUA_SCRIPTING
   world->luaScripts.setValueInternal(std::make_shared<Lua::ScriptList>(*world, world->luaScripts.name()));
 #endif
@@ -72,6 +74,8 @@ World::World(Private) :
   inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   controllers{this, "controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   clock{this, "clock", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
+  trains{this, "trains", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
+  railVehicles{this, "rail_vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
 #ifndef DISABLE_LUA_SCRIPTING
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
 #endif
@@ -136,6 +140,8 @@ World::World(Private) :
   m_interfaceItems.add(inputs);
   m_interfaceItems.add(controllers);
   m_interfaceItems.add(clock);
+  m_interfaceItems.add(trains);
+  m_interfaceItems.add(railVehicles);
 #ifndef DISABLE_LUA_SCRIPTING
   m_interfaceItems.add(luaScripts);
 #endif
@@ -185,7 +191,7 @@ void World::event(WorldEvent event)
   for(auto& it : m_objects)
     it.second.lock()->worldEvent(st, event);
 }
-
+/*
 void World::load()
 {
   std::ifstream file(m_filename);
@@ -214,7 +220,7 @@ void World::load()
     auto cs = Hardware::CommandStation::Z21::create(w, "cs1");
     //cs->hostname = "192.168.1.2";
     cs->hostname = "192.168.16.254";
-/*
+/ *
     for(int i = 1; i <= 16; i++)
     {
       auto input = LocoNetInput::create(w, "ln_in_" + std::to_string(i));
@@ -222,7 +228,7 @@ void World::load()
       input->address = i;
       input->name = "LocoNet input #" + std::to_string(i);
     }
-*/
+* /
 
 #else
   #if 1
@@ -268,7 +274,7 @@ void World::load()
       dec->address = 3302;
       dec->longAddress = true;
       dec->speedSteps = 126;
-/*
+/ *
       {
         auto f = Hardware::DecoderFunction::create(*dec, "dec_g2000_f0");
         f->number = 0;
@@ -282,7 +288,7 @@ void World::load()
         f->momentary = true;
         dec->functions->add(f);
         f->m_decoder = dec.get();
-      }*/
+      }* /
     }
     {
       auto dec = Hardware::Decoder::create(w, "dec_br211");
@@ -295,7 +301,7 @@ void World::load()
 
       for(int i = 0; i <= 20; i++)
         dec->functions->add();
-/*
+/ *
       {
         auto f = dec->functions->add();
         f->number = 0;
@@ -307,7 +313,7 @@ void World::load()
         f->number = 1;
         f->name = "Sound";
       }
-      */
+      * /
     }
 
     //cs->online = true;
@@ -364,7 +370,7 @@ void World::load()
   else
     throw std::runtime_error("Can't open file");
 }
-
+*/
 json World::saveObject(const ObjectPtr& object)
 {
   json objectData;

@@ -30,7 +30,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_MESSAGES_HPP
 
 #include <string>
-#include <enum/direction.hpp>
+#include <traintastic/enum/direction.hpp>
 #include "opcode.hpp"
 
 namespace Protocol::LocoNet {

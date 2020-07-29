@@ -37,6 +37,12 @@ file(GLOB SOURCES
   "src/hardware/protocol/*.cpp"
   "src/hardware/protocol/loconet/*.hpp"
   "src/hardware/protocol/loconet/*.cpp"
+  "src/train/*.hpp"
+  "src/train/*.cpp"
+  "src/vehicle/*.hpp"
+  "src/vehicle/*.cpp"
+  "src/vehicle/rail/*.hpp"
+  "src/vehicle/rail/*.cpp"
   "src/utils/*.hpp"
   "src/utils/*.cpp"
   "thirdparty/boost/libs/program_options/src/*.cpp")
@@ -50,12 +56,12 @@ endif()
 
 ### COMPILER ###
 
-if (MSVC)
+if(MSVC)
 
 else()
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -Wshadow -pedantic")
 
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -pedantic")
 
   message(STATUS "CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
 

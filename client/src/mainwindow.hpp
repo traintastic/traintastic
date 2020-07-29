@@ -25,10 +25,10 @@
 
 #include <QMainWindow>
 #include <QMap>
-#include <enum/traintasticmode.hpp>
 #include "network/objectptr.hpp"
 
 class MdiArea;
+class QSplitter;
 class QMdiSubWindow;
 class QActionGroup;
 class Connection;
@@ -37,7 +37,7 @@ class ObjectEditSubWindow;
 class HardwareListSubWindow;
 class LuaScriptsSubWindow;
 class ServerSettingsSubWindow;
-class ServerConsoleSubWindow;
+class ServerConsoleWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -46,7 +46,9 @@ class MainWindow : public QMainWindow
   protected:
     QSharedPointer<Connection> m_connection;
     ObjectPtr m_world;
+    QSplitter* m_splitter;
     MdiArea* m_mdiArea;
+    ServerConsoleWidget* m_serverConsole;
     QMap<QString, QMdiSubWindow*> m_mdiSubWindows;
     QAction* m_actionConnectToServer;
     QAction* m_actionDisconnectFromServer;
@@ -67,6 +69,7 @@ class MainWindow : public QMainWindow
 
     void closeEvent(QCloseEvent* event) final;
     void worldChanged();
+    void updateWindowTitle();
 
   protected slots:
     void disconnectFromServer();
@@ -74,6 +77,7 @@ class MainWindow : public QMainWindow
     void importWorld();
     void exportWorld();
     void toggleFullScreen();
+    void toggleConsole();
     void showAbout();
     void clientStateChanged();
     void updateActions();

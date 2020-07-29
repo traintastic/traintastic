@@ -15,6 +15,16 @@ WeightProperty
 
 
 
+# RailVehicle
+- id
+- name
+- lob
+- weight
+- decoder
+- decoder2
+
+
+
 
 
 # task thread
@@ -35,6 +45,9 @@ WeightProperty
   task.detach();
 
 
+# usb xpressnet
+
+adm2484 iso rs485
 
 
 

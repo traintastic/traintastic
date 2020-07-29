@@ -35,7 +35,7 @@ ConsoleTableModel::ConsoleTableModel(Console& console) :
   m_console{console}
 {
   m_console.m_models.push_back(this);
-  setColumnHeaders({"Time", "Level", "Object", "Message"});
+  setColumnHeaders({"console:time", "console:level", "console:object", "console:message"});
   setRowCount(static_cast<uint32_t>(m_console.m_logs.size()));
 }
 

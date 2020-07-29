@@ -23,7 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_ENUM_LOCONETSERIALINTERFACE_HPP
 #define TRAINTASTIC_SERVER_ENUM_LOCONETSERIALINTERFACE_HPP
 
-#include <enum/loconetserialinterface.hpp>
+#include <traintastic/enum/loconetserialinterface.hpp>
 #include <nlohmann/json.hpp>
 #ifndef DISABLE_LUA_SCRIPTING
   #include "../lua/enumvalues.hpp"

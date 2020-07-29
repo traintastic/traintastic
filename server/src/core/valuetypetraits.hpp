@@ -23,8 +23,8 @@
 #ifndef TRAINTASTIC_SERVER_CORE_VALUETYPETRAITS_HPP
 #define TRAINTASTIC_SERVER_CORE_VALUETYPETRAITS_HPP
 
-#include <enum/valuetype.hpp>
-#include <set/set.hpp>
+#include <traintastic/enum/valuetype.hpp>
+#include <traintastic/set/set.hpp>
 //#include "../utils/is_shared_ptr.hpp"
 
 //class Object;

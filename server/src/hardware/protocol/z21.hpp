@@ -26,7 +26,7 @@
 #include <cstdint>
 #include <cstring>
 #include <cassert>
-#include <enum/direction.hpp>
+#include <traintastic/enum/direction.hpp>
 #include "../../utils/endian.hpp"
 #include "../../utils/packed.hpp"
 
@@ -300,7 +300,7 @@ class LanGetLocoModeReply : public Message
     {
       m_mode = value;
     }
-} ATTRIBUTE_PACKED;;
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanGetLocoModeReply) == 7);
 
 class LanSetLocoMode : public Message

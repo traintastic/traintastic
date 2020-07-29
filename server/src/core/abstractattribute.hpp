@@ -24,8 +24,8 @@
 #define TRAINTASTIC_SERVER_CORE_ABSTRACTATTRIBUTE_HPP
 
 #include <string>
-#include <enum/attributename.hpp>
-#include <enum/valuetype.hpp>
+#include <traintastic/enum/attributename.hpp>
+#include <traintastic/enum/valuetype.hpp>
 
 class InterfaceItem;
 

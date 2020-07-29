@@ -27,7 +27,7 @@
 #include "client.hpp"
 #include "abstractproperty.hpp"
 #include "abstractattribute.hpp"
-#include <enum/interfaceitemtype.hpp>
+#include <traintastic/enum/interfaceitemtype.hpp>
 #include "tablemodel.hpp"
 #include "world.hpp"
 #include "idobject.hpp"

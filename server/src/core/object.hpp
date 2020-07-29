@@ -26,8 +26,8 @@
 #include "objectptr.hpp"
 #include <boost/signals2/signal.hpp>
 #include "interfaceitems.hpp"
-#include <enum/worldevent.hpp>
-#include <set/worldstate.hpp>
+#include <traintastic/enum/worldevent.hpp>
+#include <traintastic/set/worldstate.hpp>
 
 #define CLASS_ID(id) \
   public: \

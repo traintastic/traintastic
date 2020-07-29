@@ -26,7 +26,7 @@
 #include <memory>
 #include <boost/uuid/uuid.hpp>
 #include <boost/signals2/connection.hpp>
-#include <message.hpp>
+#include <traintastic/network/message.hpp>
 #include "handlelist.hpp"
 #include "objectptr.hpp"
 #include "tablemodelptr.hpp"

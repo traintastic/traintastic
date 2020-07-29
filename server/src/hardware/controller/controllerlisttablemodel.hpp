@@ -28,7 +28,7 @@
 
 class ControllerList;
 
-class ControllerListTableModel : public ObjectListTableModel<Hardware::Controller::Controller>
+class ControllerListTableModel : public ObjectListTableModel<Controller>
 {
   friend class ControllerList;
 

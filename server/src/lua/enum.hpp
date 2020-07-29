@@ -25,7 +25,7 @@
 
 #include <type_traits>
 #include <string_view>
-#include <enum/enum.hpp>
+#include <traintastic/enum/enum.hpp>
 #include <lua.hpp>
 #include "enumvalues.hpp"
 #include "readonlytable.hpp"

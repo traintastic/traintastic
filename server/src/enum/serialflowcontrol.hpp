@@ -23,7 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_ENUM_SERIALFLOWCONTROL_HPP
 #define TRAINTASTIC_SERVER_ENUM_SERIALFLOWCONTROL_HPP
 
-#include <enum/serialflowcontrol.hpp>
+#include <traintastic/enum/serialflowcontrol.hpp>
 #include <nlohmann/json.hpp>
 #ifndef DISABLE_LUA_SCRIPTING
   #include "../lua/enumvalues.hpp"
