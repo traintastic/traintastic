@@ -78,7 +78,7 @@ bool LocoNet::send(const Message& message)
 {
   if(m_debugLog)
     logDebug("tx: " + to_string(message));
-  assert(isChecksumValid(message));
+  assert(isValid(message));
   return m_send(message);
 }
 
@@ -108,7 +108,7 @@ void LocoNet::receive(const Message& message)
 {
   // NOTE: this function is called async!
 
-  assert(isChecksumValid(message));
+  assert(isValid(message));
 
   if(m_debugLog)
     EventLoop::call([this, log="rx: " + to_string(message)](){ logDebug(log); });

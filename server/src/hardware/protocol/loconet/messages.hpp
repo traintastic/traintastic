@@ -40,6 +40,7 @@ struct Message;
 uint8_t calcChecksum(const Message& msmessageg);
 void updateChecksum(Message& message);
 bool isChecksumValid(const Message& message);
+bool isValid(const Message& message);
 std::string to_string(const Message& message, bool raw = false);
 
 constexpr uint8_t SLOT_LOCO_MIN = 1;

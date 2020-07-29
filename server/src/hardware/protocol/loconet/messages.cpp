@@ -45,6 +45,17 @@ bool isChecksumValid(const Message& message)
   return calcChecksum(message) == reinterpret_cast<const uint8_t*>(&message)[message.size() - 1];
 }
 
+bool isValid(const Message& message)
+{
+  const uint8_t size = message.size();
+  if(size == 0 || !isChecksumValid(message))
+    return false;
+  for(uint8_t i = 1; i < size; i++) // bit 7 must be unset (except opcode)
+    if(reinterpret_cast<const uint8_t*>(&message)[i] & 0x80)
+      return false;
+  return true;
+}
+
 std::string to_string(const Message& message, bool raw)
 {
   std::string s;

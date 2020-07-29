@@ -186,7 +186,7 @@ void LocoNetSerial::read()
           const Protocol::LocoNet::Message* message = reinterpret_cast<const Protocol::LocoNet::Message*>(pos);
 
           size_t drop = 0;
-          while((message->size() == 0 || (message->size() <= bytesTransferred && !Protocol::LocoNet::isChecksumValid(*message))) && drop < bytesTransferred)
+          while((message->size() == 0 || (message->size() <= bytesTransferred && !Protocol::LocoNet::isValid(*message))) && drop < bytesTransferred)
           {
             drop++;
             pos++;
