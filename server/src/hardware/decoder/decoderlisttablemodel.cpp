@@ -23,8 +23,6 @@
 #include "decoderlisttablemodel.hpp"
 #include "decoderlist.hpp"
 
-using Hardware::Decoder;
-
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
 constexpr uint32_t columnAddress = 2;
@@ -41,9 +39,9 @@ DecoderListTableModel::DecoderListTableModel(DecoderList& list) :
   ObjectListTableModel<Decoder>(list)
 {
   setColumnHeaders({
-    "hardware.decoder:id",
-    "hardware.decoder:name",
-    "hardware.decoder:address"});
+    "decoder:id",
+    "decoder:name",
+    "decoder:address"});
 }
 
 std::string DecoderListTableModel::getText(uint32_t column, uint32_t row) const

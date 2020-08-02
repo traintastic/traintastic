@@ -23,7 +23,7 @@
 #include "messages.hpp"
 #include "../../../utils/to_hex.hpp"
 
-namespace Protocol::LocoNet {
+namespace LocoNet {
 
 uint8_t calcChecksum(const Message& message)
 {

@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "z21.hpp"
+#include "rocoz21.hpp"
 #include "../../core/traintastic.hpp"
 #include "../../world/world.hpp"
 #include "../../core/eventloop.hpp"
@@ -38,7 +38,7 @@
 
 
 
-namespace Hardware::CommandStation {
+
 
 
 
@@ -59,7 +59,7 @@ namespace Hardware::CommandStation {
 
 
 
-Z21::Z21(const std::weak_ptr<World>& world, std::string_view _id) :
+RocoZ21::RocoZ21(const std::weak_ptr<World>& world, std::string_view _id) :
   CommandStation(world, _id),
   m_socket{Traintastic::instance->ioContext()},
   hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
@@ -82,8 +82,8 @@ Z21::Z21(const std::weak_ptr<World>& world, std::string_view _id) :
   shortCircutExternal{this, "short_circut_external", false, PropertyFlags::ReadOnly}
 {
   name = "Z21";
-  loconet.setValueInternal(std::make_shared<::Protocol::LocoNet::LocoNet>(*this, loconet.name(),
-    [/*this*/](const ::Protocol::LocoNet::Message& /*msg*/)
+  loconet.setValueInternal(std::make_shared<LocoNet::LocoNet>(*this, loconet.name(),
+    [/*this*/](const ::LocoNet::Message& /*msg*/)
     {
       return false;
     }));
@@ -125,13 +125,13 @@ Z21::Z21(const std::weak_ptr<World>& world, std::string_view _id) :
     .addAttributeCategory(Category::Info);
 }
 
-void Z21::emergencyStopChanged(bool value)
+void RocoZ21::emergencyStopChanged(bool value)
 {
   if(online && value)
     send(z21_lan_x_set_stop());
 }
 
-void Z21::trackVoltageOffChanged(bool value)
+void RocoZ21::trackVoltageOffChanged(bool value)
 {
   if(online)
   {
@@ -143,7 +143,7 @@ void Z21::trackVoltageOffChanged(bool value)
 }
 
 /*
-bool Z21::isDecoderSupported(Decoder& decoder) const
+bool RocoZ21::isDecoderSupported(Decoder& decoder) const
 {
   return
     decoder.protocol == DecoderProtocol::DCC &&
@@ -155,7 +155,7 @@ bool Z21::isDecoderSupported(Decoder& decoder) const
 
 
 
-void Z21::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
+void RocoZ21::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Direction | DecoderChangeFlags::SpeedStep | DecoderChangeFlags::SpeedSteps))
   {
@@ -201,7 +201,7 @@ void Z21::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uin
     if(decoder.direction.value() == Direction::Forward)
       cmd.speedAndDirection |= 0x80;
 
-    cmd.checksum = Protocol::XpressNet::calcChecksum(&cmd.xheader);
+    cmd.checksum = XpressNet::calcChecksum(&cmd.xheader);
     send(&cmd);
   }
   else if(has(changes, DecoderChangeFlags::FunctionValue))
@@ -215,14 +215,14 @@ void Z21::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uin
         cmd.header = Z21_LAN_X;
         SET_ADDRESS;
         cmd.db3 = (f->value ? 0x40 : 0x00) | static_cast<uint8_t>(functionNumber);
-        cmd.checksum = Protocol::XpressNet::calcChecksum(&cmd.xheader);
+        cmd.checksum = XpressNet::calcChecksum(&cmd.xheader);
         send(&cmd);
       }
     }
   }
 }
 
-bool Z21::setOnline(bool& value)
+bool RocoZ21::setOnline(bool& value)
 {
   if(!m_socket.is_open() && value)
   {
@@ -254,7 +254,7 @@ bool Z21::setOnline(bool& value)
 
     // try to communicate with Z21
 
-    send(Protocol::Z21::LanGetSerialNumber());
+    send(Z21::LanGetSerialNumber());
     send(z21_lan_get_hwinfo());
     send(z21_lan_get_broadcastflags());
     send(z21_lan_systemstate_getdata());
@@ -280,7 +280,7 @@ bool Z21::setOnline(bool& value)
   return true;
 }
 
-void Z21::receive()
+void RocoZ21::receive()
 {
   m_socket.async_receive_from(boost::asio::buffer(m_receiveBuffer), m_receiveEndpoint,
     [this](const boost::system::error_code& ec, std::size_t bytesReceived)
@@ -290,15 +290,15 @@ void Z21::receive()
         if((bytesReceived >= sizeof(z21_lan_header)))
         {
           bool unknownMessage = false;
-          const Protocol::Z21::Message* message = reinterpret_cast<const Protocol::Z21::Message*>(m_receiveBuffer.data());
+          const Z21::Message* message = reinterpret_cast<const Z21::Message*>(m_receiveBuffer.data());
           const z21_lan_header* cmd = reinterpret_cast<const z21_lan_header*>(m_receiveBuffer.data());
           switch(cmd->header)
           {
             case Z21_LAN_GET_SERIAL_NUMBER:
-              if(message->dataLen() == sizeof(Protocol::Z21::LanGetSerialNumberReply))
+              if(message->dataLen() == sizeof(Z21::LanGetSerialNumberReply))
               {
                 EventLoop::call(
-                  [this, value=std::to_string(static_cast<const Protocol::Z21::LanGetSerialNumberReply*>(message)->serialNumber())]()
+                  [this, value=std::to_string(static_cast<const Z21::LanGetSerialNumberReply*>(message)->serialNumber())]()
                   {
                     serialNumber.setValueInternal(value);
                   });
@@ -431,11 +431,11 @@ void Z21::receive()
             case Z21_LAN_LOCONET_Z21_RX:
             //case Z21_LAN_LOCONET_Z21_TX:
             //case Z21_LAN_LOCONET_Z21_LAN:
-              loconet->receive(*reinterpret_cast<const ::Protocol::LocoNet::Message*>(m_receiveBuffer.data() + sizeof(z21_lan_header)));
+              loconet->receive(*reinterpret_cast<const ::LocoNet::Message*>(m_receiveBuffer.data() + sizeof(z21_lan_header)));
               break;
 /*
 
-              using LocoNet = Protocol::LocoNet;
+              using LocoNet = LocoNet;
 
               const LocoNet::Header* message = reinterpret_cast<const LocoNet::Header*>(m_receiveBuffer.data() + sizeof(z21_lan_header));
 
@@ -495,7 +495,7 @@ void Z21::receive()
     });
 }
 
-void Z21::send(const Protocol::Z21::Message& message)
+void RocoZ21::send(const Z21::Message& message)
 {
   // TODO async
 
@@ -514,7 +514,7 @@ void Z21::send(const Protocol::Z21::Message& message)
     });*/
 }
 
-void Z21::send(const z21_lan_header* data)
+void RocoZ21::send(const z21_lan_header* data)
 {
   logDebug("z21_lan_header->dataLen = " + std::to_string(data->dataLen));
 
@@ -531,6 +531,4 @@ void Z21::send(const z21_lan_header* data)
       if(ec)
          EventLoop::call([this, ec](){ logError(id, "socket.async_send_to: " + ec.message()); });
     });*/
-}
-
 }

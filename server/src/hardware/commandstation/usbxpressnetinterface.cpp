@@ -22,8 +22,6 @@
 #include "../../core/traintastic.hpp"
 #include "../../world/world.hpp"
 
-namespace Hardware::CommandStation {
-
 USBXpressNetInterface::USBXpressNetInterface(const std::weak_ptr<World>& world, std::string_view _id) :
   CommandStation(world, _id),
   m_handle{nullptr},
@@ -32,7 +30,7 @@ USBXpressNetInterface::USBXpressNetInterface(const std::weak_ptr<World>& world, 
   xpressnet{this, "xpressnet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "USB XpressNet interface";
-  xpressnet.setValueInternal(std::make_shared<::Protocol::XpressNet>(*this, xpressnet.name(), std::bind(&USBXpressNetInterface::send, this, std::placeholders::_1)));
+  xpressnet.setValueInternal(std::make_shared<XpressNet>(*this, xpressnet.name(), std::bind(&USBXpressNetInterface::send, this, std::placeholders::_1)));
 
   m_interfaceItems.insertBefore(serial, notes);
   m_interfaceItems.insertBefore(address, notes);
@@ -99,9 +97,9 @@ void USBXpressNetInterface::decoderChanged(const Decoder& decoder, DecoderChange
     xpressnet->decoderChanged(decoder, changes, functionNumber);
 }
 
-bool USBXpressNetInterface::send(const Protocol::XpressNet::Message& msg)
+bool USBXpressNetInterface::send(const XpressNet::Message& msg)
 {
-  assert(Protocol::XpressNet::isChecksumValid(msg));
+  assert(XpressNet::isChecksumValid(msg));
   if(!m_handle)
     return false;
   usbxpressnet_status status;
@@ -111,6 +109,4 @@ bool USBXpressNetInterface::send(const Protocol::XpressNet::Message& msg)
     return false;
   }
   return true;
-}
-
 }

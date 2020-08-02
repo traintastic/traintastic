@@ -24,8 +24,6 @@
 #include "commandstationlist.hpp"
 #include "../../utils/utf8.hpp"
 
-using Hardware::CommandStation::CommandStation;
-
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
 constexpr uint32_t columnOnline = 2;
@@ -46,11 +44,11 @@ CommandStationListTableModel::CommandStationListTableModel(CommandStationList& l
   ObjectListTableModel<CommandStation>(list)
 {
   setColumnHeaders({
-    "hardware.command_station:id",
-    "hardware.command_station:name",
-    "hardware.command_station:online",
-    "hardware.command_station:emergency_stop",
-    "hardware.command_station:track_power"});
+    "command_station:id",
+    "command_station:name",
+    "command_station:online",
+    "command_station:emergency_stop",
+    "command_station:track_power"});
 }
 
 std::string CommandStationListTableModel::getText(uint32_t column, uint32_t row) const

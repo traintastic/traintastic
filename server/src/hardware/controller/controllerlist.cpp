@@ -26,8 +26,6 @@
 #include "../commandstation/commandstation.hpp"
 #include "../../world/getworld.hpp"
 
-using Hardware::CommandStation::CommandStation;
-
 ControllerList::ControllerList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<Controller>(_parent, parentPropertyName),
   add{*this, "add",
@@ -36,7 +34,7 @@ ControllerList::ControllerList(Object& _parent, const std::string& parentPropert
     auto world = getWorld(&this->parent());
     if(!world)
       return std::shared_ptr<Controller>();
-    auto controller = Controllers::create(world, "hardware.controller.wlanmaus", world->getUniqueId("controller"));
+    auto controller = Controllers::create(world, "controller.wlanmaus", world->getUniqueId("controller"));
     if(auto* cs = dynamic_cast<CommandStation*>(&this->parent()))
       controller->commandStation = cs->shared_ptr<CommandStation>();
     //else if(world->commandStations->length() == 1)

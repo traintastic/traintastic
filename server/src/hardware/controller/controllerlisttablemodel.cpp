@@ -39,9 +39,9 @@ ControllerListTableModel::ControllerListTableModel(ControllerList& list) :
   ObjectListTableModel<Controller>(list)
 {
   setColumnHeaders({
-    "hardware.controller:id",
-    "hardware.controller:name",
-    "hardware.controller:active"});
+    "controller:id",
+    "controller:name",
+    "controller:active"});
 }
 
 std::string ControllerListTableModel::getText(uint32_t column, uint32_t row) const

@@ -30,7 +30,7 @@
 
 struct z21_lan_header;
 
-namespace Protocol::Z21 {
+namespace Z21 {
   enum BroadcastFlags : uint32_t;
   class Message;
 }
@@ -40,7 +40,7 @@ class WLANmaus : public Controller
   protected:
     struct Client
     {
-      Protocol::Z21::BroadcastFlags broadcastFlags = static_cast<Protocol::Z21::BroadcastFlags>(0);
+      Z21::BroadcastFlags broadcastFlags = static_cast<Z21::BroadcastFlags>(0);
       std::set<uint16_t> locoInfo;
     };
 
@@ -48,7 +48,7 @@ class WLANmaus : public Controller
     boost::asio::ip::udp::endpoint m_receiveEndpoint;
     std::array<uint8_t,64> m_receiveBuffer;
     std::map<boost::asio::ip::udp::endpoint, Client> m_clients;
-    Hardware::Decoder* m_blockLocoInfo;
+    Decoder* m_blockLocoInfo;
 
     constexpr uint16_t locoInfoKey(uint16_t address, bool longAddress)
     {
@@ -62,15 +62,15 @@ class WLANmaus : public Controller
 
     void emergencyStopChanged(bool value) final;
     void trackPowerChanged(bool value) final;
-    void decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderChangeFlags, uint32_t) final;
+    void decoderChanged(const Decoder& decoder, DecoderChangeFlags, uint32_t) final;
 
     void receive();
     /*[[deprecated]]*/ void sendTo(const z21_lan_header& msg, const boost::asio::ip::udp::endpoint& endpoint);
-    void sendTo(const Protocol::Z21::Message& message, const boost::asio::ip::udp::endpoint& endpoint);
-    void broadcastLocoInfo(const Hardware::Decoder& decoder);
+    void sendTo(const Z21::Message& message, const boost::asio::ip::udp::endpoint& endpoint);
+    void broadcastLocoInfo(const Decoder& decoder);
 
   public:
-    CLASS_ID("hardware.controller.wlanmaus")
+    CLASS_ID("controller.wlanmaus")
     CREATE(WLANmaus);
 
     Property<uint16_t> port;

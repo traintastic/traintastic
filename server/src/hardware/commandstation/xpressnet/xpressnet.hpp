@@ -27,7 +27,7 @@
 #include "../../protocol/xpressnet.hpp"
 #include "../../../enum/xpressnetcommandstation.hpp"
 
-namespace Hardware::CommandStation {
+namespace CommandStation {
 
 class XpressNet : public CommandStation
 {

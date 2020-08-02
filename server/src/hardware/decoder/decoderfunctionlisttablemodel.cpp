@@ -23,8 +23,6 @@
 #include "decoderfunctionlisttablemodel.hpp"
 #include "decoderfunctionlist.hpp"
 
-using Hardware::DecoderFunction;
-
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnNumber = 1;
 constexpr uint32_t columnName = 2;
@@ -40,7 +38,10 @@ bool DecoderFunctionListTableModel::isListedProperty(const std::string& name)
 DecoderFunctionListTableModel::DecoderFunctionListTableModel(DecoderFunctionList& list) :
   ObjectListTableModel<DecoderFunction>(list)
 {
-  setColumnHeaders({"hardware.decoder_function:id", "hardware.decoder_function_list:f_hash", "hardware.decoder_function:name"});
+  setColumnHeaders({
+    "decoder_function:id",
+    "decoder_function_list:f_hash",
+    "decoder_function:name"});
 }
 
 std::string DecoderFunctionListTableModel::getText(uint32_t column, uint32_t row) const

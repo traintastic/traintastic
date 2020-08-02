@@ -32,7 +32,7 @@
 #include <cstdint>
 #include <string_view>
 
-namespace Protocol::LocoNet {
+namespace LocoNet {
 
 enum OpCode : uint8_t
 {

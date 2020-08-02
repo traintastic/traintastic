@@ -26,7 +26,7 @@
 #include "../../core/objectlist.hpp"
 #include "commandstation.hpp"
 
-class CommandStationList : public ObjectList<Hardware::CommandStation::CommandStation>
+class CommandStationList : public ObjectList<CommandStation>
 {
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
@@ -35,8 +35,8 @@ class CommandStationList : public ObjectList<Hardware::CommandStation::CommandSt
   public:
     CLASS_ID("command_station_list")
 
-    Method<std::shared_ptr<Hardware::CommandStation::CommandStation>(std::string_view classId)> add;
-    Method<void(const std::shared_ptr<Hardware::CommandStation::CommandStation>&)> remove;
+    Method<std::shared_ptr<CommandStation>(std::string_view classId)> add;
+    Method<void(const std::shared_ptr<CommandStation>&)> remove;
 
     CommandStationList(Object& _parent, const std::string& parentPropertyName);
 

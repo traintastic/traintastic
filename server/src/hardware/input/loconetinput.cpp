@@ -22,12 +22,10 @@
 
 #include "loconetinput.hpp"
 
-using namespace Protocol::LocoNet;
-
 LocoNetInput::LocoNetInput(const std::weak_ptr<World> world, std::string_view _id) :
   Input(world, _id),
   loconet{this, "loconet", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](const std::shared_ptr<LocoNet>& value)
+    [this](const std::shared_ptr<LocoNet::LocoNet>& value)
     {
       if(!value || value->addInput(shared_ptr<LocoNetInput>()))
       {

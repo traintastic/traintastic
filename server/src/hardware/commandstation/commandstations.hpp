@@ -25,14 +25,13 @@
 
 #include "commandstation.hpp"
 
-namespace Hardware::CommandStation {
+struct CommandStations
+{
+  static constexpr std::string_view classIdPrefix = "command_station.";
 
-static constexpr std::string_view classIdPrefix = "hardware.command_station.";
+  static const std::vector<std::string_view>& classList();
 
-const std::vector<std::string_view>& classList();
-
-std::shared_ptr<CommandStation> create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id);
-
-}
+  static std::shared_ptr<CommandStation> create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id);
+};
 
 #endif

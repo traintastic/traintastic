@@ -29,16 +29,12 @@
 #include "../decoder/decoderlist.hpp"
 #include "../controller/controllerlist.hpp"
 
-namespace Hardware {
-  class Decoder;
-  enum class DecoderChangeFlags;
-}
-
-namespace Hardware::CommandStation {
+class Decoder;
+enum class DecoderChangeFlags;
 
 class CommandStation : public IdObject
 {
-  friend class ::Hardware::Decoder;
+  friend class ::Decoder;
 
   protected:
     void addToWorld() final;
@@ -48,7 +44,7 @@ class CommandStation : public IdObject
     virtual void emergencyStopChanged(bool value);
     virtual void trackVoltageOffChanged(bool value);
     //virtual bool isDecoderSupported(Decoder& decoder) const = 0;
-    virtual void decoderChanged(const Hardware::Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
+    virtual void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 
   public:
     CommandStation(const std::weak_ptr<World>& world, std::string_view _id);
@@ -61,9 +57,7 @@ class CommandStation : public IdObject
     ObjectProperty<ControllerList> controllers;
     Property<std::string> notes;
 
-    const std::shared_ptr<Hardware::Decoder>& getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress = false) const;
+    const std::shared_ptr<Decoder>& getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress = false) const;
 };
-
-}
 
 #endif

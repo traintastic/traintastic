@@ -31,8 +31,6 @@
 #include "../../enum/direction.hpp"
 #include "decoderfunctionlist.hpp"
 
-namespace Hardware {
-
 enum class DecoderChangeFlags;
 class DecoderFunction;
 
@@ -47,7 +45,7 @@ class Decoder : public IdObject
     void changed(DecoderChangeFlags changes, uint32_t functionNumber = 0);
 
   public:
-    CLASS_ID("hardware.decoder")
+    CLASS_ID("decoder")
     CREATE(Decoder)
 
     static const std::shared_ptr<Decoder> null;
@@ -71,7 +69,5 @@ class Decoder : public IdObject
     bool getFunctionValue(uint32_t number) const;
     void setFunctionValue(uint32_t number, bool value);
 };
-
-}
 
 #endif

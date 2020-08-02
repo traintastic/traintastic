@@ -30,11 +30,9 @@
 #include "../../utils/endian.hpp"
 #include "../../utils/packed.hpp"
 
-namespace Hardware {
-  class Decoder;
-}
+class Decoder;
 
-namespace Protocol::Z21 {
+namespace Z21 {
 
 namespace Utils {
 
@@ -421,7 +419,7 @@ struct z21_lan_get_hwinfo_reply : z21_lan_header
 
   z21_lan_get_hwinfo_reply(uint32_t _hardwareType = 0, uint8_t _firmwareVersionMajor = 0, uint8_t _firmwareVersionMinor = 0) :
     hardwareType{host_to_le(_hardwareType)},
-    firmwareVersion{host_to_le(static_cast<uint32_t>(Protocol::Z21::Utils::toBCD(_firmwareVersionMajor)) << 8 | Protocol::Z21::Utils::toBCD(_firmwareVersionMinor))}
+    firmwareVersion{host_to_le(static_cast<uint32_t>(Z21::Utils::toBCD(_firmwareVersionMajor)) << 8 | Z21::Utils::toBCD(_firmwareVersionMinor))}
   {
     dataLen = sizeof(z21_lan_get_hwinfo_reply);
     header = Z21_LAN_GET_HWINFO;
@@ -502,24 +500,24 @@ struct z21_lan_x_get_firmware_version_reply : z21_lan_x
 
   inline uint8_t versionMajor() const
   {
-    return Protocol::Z21::Utils::fromBCD(majorBCD);
+    return Z21::Utils::fromBCD(majorBCD);
   }
 
   inline uint8_t versionMinor() const
   {
-    return Protocol::Z21::Utils::fromBCD(minorBCD);
+    return Z21::Utils::fromBCD(minorBCD);
   }
 
   inline void setVersionMajor(uint8_t value)
   {
     assert(value < 100);
-    majorBCD = Protocol::Z21::Utils::toBCD(value);
+    majorBCD = Z21::Utils::toBCD(value);
   }
 
   inline void setVersionMinor(uint8_t value)
   {
     assert(value < 100);
-    minorBCD = Protocol::Z21::Utils::toBCD(value);
+    minorBCD = Z21::Utils::toBCD(value);
   }
 };
 static_assert(sizeof(z21_lan_x_get_firmware_version_reply) == 9);
@@ -709,7 +707,7 @@ struct z21_lan_x_loco_info : z21_lan_x
     xheader = 0xEF;
   }
 
-  z21_lan_x_loco_info(const Hardware::Decoder& decoder);
+  z21_lan_x_loco_info(const Decoder& decoder);
 
   inline uint16_t address() const
   {
@@ -764,32 +762,32 @@ struct z21_lan_x_loco_info : z21_lan_x
 
   inline Direction direction() const
   {
-    return Protocol::Z21::Utils::getDirection(speedAndDirection);
+    return Z21::Utils::getDirection(speedAndDirection);
   }
 
   inline void setDirection(Direction value)
   {
-    Protocol::Z21::Utils::setDirection(speedAndDirection, value);
+    Z21::Utils::setDirection(speedAndDirection, value);
   }
 
   inline bool isEmergencyStop() const
   {
-    return Protocol::Z21::Utils::isEmergencyStop(speedAndDirection, speedSteps());
+    return Z21::Utils::isEmergencyStop(speedAndDirection, speedSteps());
   }
 
   inline void setEmergencyStop()
   {
-    Protocol::Z21::Utils::setEmergencyStop(speedAndDirection);
+    Z21::Utils::setEmergencyStop(speedAndDirection);
   }
 
   inline uint8_t speedStep() const
   {
-    return Protocol::Z21::Utils::getSpeedStep(speedAndDirection, speedSteps());
+    return Z21::Utils::getSpeedStep(speedAndDirection, speedSteps());
   }
 
   inline void setSpeedStep(uint8_t value)
   {
-    Protocol::Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
+    Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
   }
 
   bool getFunction(uint8_t index)
@@ -893,32 +891,32 @@ struct z21_lan_x_set_loco_drive : z21_lan_header
 
   inline Direction direction() const
   {
-    return Protocol::Z21::Utils::getDirection(speedAndDirection);
+    return Z21::Utils::getDirection(speedAndDirection);
   }
 
   inline void setDirection(Direction value)
   {
-    Protocol::Z21::Utils::setDirection(speedAndDirection, value);
+    Z21::Utils::setDirection(speedAndDirection, value);
   }
 
   inline bool isEmergencyStop() const
   {
-    return Protocol::Z21::Utils::isEmergencyStop(speedAndDirection, speedSteps());
+    return Z21::Utils::isEmergencyStop(speedAndDirection, speedSteps());
   }
 
   inline void setEmergencyStop()
   {
-    Protocol::Z21::Utils::setEmergencyStop(speedAndDirection);
+    Z21::Utils::setEmergencyStop(speedAndDirection);
   }
 
   inline uint8_t speedStep() const
   {
-    return Protocol::Z21::Utils::getSpeedStep(speedAndDirection, speedSteps());
+    return Z21::Utils::getSpeedStep(speedAndDirection, speedSteps());
   }
 
   inline void setSpeedStep(uint8_t value)
   {
-    Protocol::Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
+    Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(z21_lan_x_set_loco_drive) == 0x0a);
@@ -974,7 +972,7 @@ static_assert(sizeof(z21_lan_systemstate_getdata) == 0x04);
 
 struct z21_lan_set_broadcastflags : z21_lan_header
 {
-  Protocol::Z21::BroadcastFlags broadcastFlags; // LE
+  Z21::BroadcastFlags broadcastFlags; // LE
 
   z21_lan_set_broadcastflags(uint32_t _broadcastFlags = 0) :
     broadcastFlags{_broadcastFlags}
@@ -1028,7 +1026,7 @@ inline bool operator ==(const z21_lan_header& lhs, const z21_lan_header& rhs)
 
 
 
-inline bool operator ==(const Protocol::Z21::Message& lhs, const Protocol::Z21::Message& rhs)
+inline bool operator ==(const Z21::Message& lhs, const Z21::Message& rhs)
 {
   return lhs.dataLen() == rhs.dataLen() && std::memcmp(&lhs, &rhs, lhs.dataLen()) == 0;
 }

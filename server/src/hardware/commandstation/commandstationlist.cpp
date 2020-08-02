@@ -22,11 +22,9 @@
 
 #include "commandstationlist.hpp"
 #include "commandstationlisttablemodel.hpp"
-#include "create.hpp"
+#include "commandstations.hpp"
 #include "../../world/world.hpp"
 #include "../../world/getworld.hpp"
-
-using Hardware::CommandStation::CommandStation;
 
 CommandStationList::CommandStationList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<CommandStation>(_parent, parentPropertyName),
@@ -36,7 +34,7 @@ CommandStationList::CommandStationList(Object& _parent, const std::string& paren
       auto world = getWorld(this);
       if(!world)
         return std::shared_ptr<CommandStation>();
-      return Hardware::CommandStation::create(world, classId, world->getUniqueId("cs"));
+      return CommandStations::create(world, classId, world->getUniqueId("cs"));
     }},
   remove{*this, "remove",
     [this](const std::shared_ptr<CommandStation>& object)

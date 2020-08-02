@@ -29,8 +29,6 @@
 #include "../../enum/serialflowcontrol.hpp"
 #include <boost/asio/serial_port.hpp>
 
-namespace Hardware::CommandStation {
-
 class LocoNetSerial : public CommandStation
 {
   protected:
@@ -45,22 +43,21 @@ class LocoNetSerial : public CommandStation
 
     bool start();
     void stop();
-    bool send(const Protocol::LocoNet::Message& msg);
+    bool send(const LocoNet::Message& msg);
     void read();
 
   public:
-    CLASS_ID("hardware.command_station.loconet_serial")
+    CLASS_ID("command_station.loconet_serial")
     CREATE(LocoNetSerial)
 
     Property<std::string> port;
     Property<LocoNetSerialInterface> interface;
     Property<uint32_t> baudrate;
     Property<SerialFlowControl> flowControl;
-    ObjectProperty<::Protocol::LocoNet::LocoNet> loconet;
+    ObjectProperty<LocoNet::LocoNet> loconet;
 
     LocoNetSerial(const std::weak_ptr<World>& world, std::string_view _id);
 };
 
-}
 
 #endif

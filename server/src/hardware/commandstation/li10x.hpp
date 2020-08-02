@@ -29,8 +29,6 @@
 //#include "../../core/objectproperty.hpp"
 //#include "protocol/xpressnet.hpp"
 
-namespace Hardware::CommandStation {
-
 class LI10x : public CommandStation
 {
   protected:
@@ -47,22 +45,20 @@ class LI10x : public CommandStation
 
     bool start();
     void stop();
-    bool send(const Protocol::XpressNet::Message& msg);
+    bool send(const XpressNet::Message& msg);
     void receive(std::unique_ptr<uint8_t[]> message);
     void read();
 
   public:
-    CLASS_ID("hardware.command_station.li10x")
+    CLASS_ID("command_station.li10x")
     CREATE(LI10x)
 
     Property<std::string> port;
     Property<uint32_t> baudrate;
     //Property<bool> useCTS;
-    ObjectProperty<::Protocol::XpressNet> xpressnet;
+    ObjectProperty<XpressNet> xpressnet;
 
     LI10x(const std::weak_ptr<World>& world, std::string_view _id);
 };
-
-}
 
 #endif

@@ -39,16 +39,11 @@
 #include "../../../hardware/decoder/decoderchangeflags.hpp"
 #include "messages.hpp"
 
-namespace Hardware {
-  namespace CommandStation {
-    class CommandStation;
-  }
-  class Decoder;
-}
-
+class CommandStation;
+class Decoder;
 class LocoNetInput;
 
-namespace Protocol::LocoNet {
+namespace LocoNet {
 
 class LocoNet : public SubObject
 {
@@ -95,7 +90,7 @@ class LocoNet : public SubObject
         }
     };
 
-    Hardware::CommandStation::CommandStation* m_commandStation; // valid if parent is command station, else nullptr
+    CommandStation* m_commandStation; // valid if parent is command station, else nullptr
     std::function<bool(const Message&)> m_send;
     std::atomic_bool m_debugLog;
     Slots m_slots;
@@ -103,7 +98,7 @@ class LocoNet : public SubObject
     uint8_t m_queryLocoSlots;
     std::unordered_map<uint16_t, std::shared_ptr<LocoNetInput>> m_inputs;
 
-    std::shared_ptr<Hardware::Decoder> getDecoder(uint8_t slot, bool request = true);
+    std::shared_ptr<Decoder> getDecoder(uint8_t slot, bool request = true);
 
     void send(uint16_t address, Message& message, uint8_t& slot);
     template<typename T>
@@ -130,7 +125,7 @@ class LocoNet : public SubObject
 
     void emergencyStopChanged(bool value);
     void trackVoltageOffChanged(bool value);
-    void decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderChangeFlags changes, uint32_t functionNumber);
+    void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 
     void queryLocoSlots();
 };

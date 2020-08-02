@@ -27,8 +27,6 @@
 #include "../protocol/xpressnet.hpp"
 #include <usbxpressnet.h>
 
-namespace Hardware::CommandStation {
-
 class USBXpressNetInterface : public CommandStation
 {
   protected:
@@ -42,20 +40,18 @@ class USBXpressNetInterface : public CommandStation
     void trackVoltageOffChanged(bool value) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
-    bool send(const Protocol::XpressNet::Message& msg);
+    bool send(const XpressNet::Message& msg);
 
   public:
-    CLASS_ID("hardware.command_station.usb_xpressnet_interface")
+    CLASS_ID("command_station.usb_xpressnet_interface")
     CREATE(USBXpressNetInterface)
 
     Property<std::string> serial;
     Property<uint8_t> address;
-    ObjectProperty<::Protocol::XpressNet> xpressnet;
+    ObjectProperty<::XpressNet> xpressnet;
 
     USBXpressNetInterface(const std::weak_ptr<World>& world, std::string_view _id);
     ~USBXpressNetInterface() final;
 };
-
-}
 
 #endif

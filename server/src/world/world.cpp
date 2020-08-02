@@ -205,7 +205,7 @@ void World::load()
     std::weak_ptr<World> w = shared_ptr<World>();
 
 #if 0
-    auto cs = Hardware::CommandStation::Z21::create(w, "cs1");
+    auto cs = Z21::create(w, "cs1");
     //cs->hostname = "192.168.1.2";
     cs->hostname = "192.168.16.254";
 / *
@@ -220,10 +220,10 @@ void World::load()
 
 #else
   #if 1
-    auto cs = Hardware::CommandStation::LI10x::create(w, "cs1");
+    auto cs = LI10x::create(w, "cs1");
     cs->port = "/dev/ttyUSB0";
   #else
-    auto cs = Hardware::CommandStation::USBXpressNetInterface::create(w, "cs1");
+    auto cs = USBXpressNetInterface::create(w, "cs1");
   #endif
     cs->xpressnet->commandStation = XpressNetCommandStation::Roco10764;
 #endif
@@ -231,7 +231,7 @@ void World::load()
 
 
     {
-      auto dec = Hardware::Decoder::create(w, "dec_acts6701");
+      auto dec = Decoder::create(w, "dec_acts6701");
       dec->name = "ACTS 6701";
       dec->commandStation = cs;
       dec->protocol = DecoderProtocol::DCC;
@@ -239,7 +239,7 @@ void World::load()
       dec->speedSteps = 126;
     }
     {
-      auto dec = Hardware::Decoder::create(w, "dec_acts6703");
+      auto dec = Decoder::create(w, "dec_acts6703");
       dec->name = "ACTS 6703";
       dec->commandStation = cs;
       dec->protocol = DecoderProtocol::DCC;
@@ -247,7 +247,7 @@ void World::load()
       dec->speedSteps = 126;
     }
     {
-      auto dec = Hardware::Decoder::create(w, "dec_acts6705");
+      auto dec = Decoder::create(w, "dec_acts6705");
       dec->name = "ACTS 6705";
       dec->commandStation = cs;
       dec->protocol = DecoderProtocol::DCC;
@@ -255,7 +255,7 @@ void World::load()
       dec->speedSteps = 126;
     }
     {
-      auto dec = Hardware::Decoder::create(w, "dec_g2000");
+      auto dec = Decoder::create(w, "dec_g2000");
       dec->name = "G2000";
       dec->commandStation = cs;
       dec->protocol = DecoderProtocol::DCC;
@@ -264,14 +264,14 @@ void World::load()
       dec->speedSteps = 126;
 / *
       {
-        auto f = Hardware::DecoderFunction::create(*dec, "dec_g2000_f0");
+        auto f = DecoderFunction::create(*dec, "dec_g2000_f0");
         f->number = 0;
         dec->functions->add(f);
         f->m_decoder = dec.get();
       }
 
       {
-        auto f = Hardware::DecoderFunction::create(*dec, "dec_g2000_f2");
+        auto f = DecoderFunction::create(*dec, "dec_g2000_f2");
         f->number = 2;
         f->momentary = true;
         dec->functions->add(f);
@@ -279,7 +279,7 @@ void World::load()
       }* /
     }
     {
-      auto dec = Hardware::Decoder::create(w, "dec_br211");
+      auto dec = Decoder::create(w, "dec_br211");
       dec->name = "BR211";
       dec->commandStation = cs;
       dec->protocol = DecoderProtocol::DCC;
@@ -344,7 +344,7 @@ void World::load()
 #endif
 
     {
-      auto z21app = Hardware::Controller::Z21App::create(w, "z21app");
+      auto z21app = Controller::Z21App::create(w, "z21app");
       z21app->commandStation = cs;
       z21app->active = true;
       controllers->addObject(z21app);
@@ -365,7 +365,7 @@ json World::saveObject(const ObjectPtr& object)
 
   objectData["class_id"] = object->getClassId();
 
-  if(Hardware::DecoderFunction* function = dynamic_cast<Hardware::DecoderFunction*>(object.get()))
+  if(DecoderFunction* function = dynamic_cast<DecoderFunction*>(object.get()))
     objectData["decoder"] = function->decoder().id.toJSON();
 
   for(auto& item : object->interfaceItems())

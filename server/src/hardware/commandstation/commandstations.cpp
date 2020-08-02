@@ -20,17 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "create.hpp"
+#include "commandstations.hpp"
 #include "li10x.hpp"
 #include "loconetserial.hpp"
 #ifndef DISABLE_USB_XPRESSNET_INTERFACE
   #include "usbxpressnetinterface.hpp"
 #endif
-#include "z21.hpp"
+#include "rocoz21.hpp"
 
-namespace Hardware::CommandStation {
-
-const std::vector<std::string_view>& classList()
+const std::vector<std::string_view>& CommandStations::classList()
 {
   static std::vector<std::string_view> list({
     LI10x::classId,
@@ -38,12 +36,12 @@ const std::vector<std::string_view>& classList()
 #ifndef DISABLE_USB_XPRESSNET_INTERFACE
     USBXpressNetInterface::classId,
 #endif
-    Z21::classId,
+    RocoZ21::classId,
   });
   return list;
 }
 
-std::shared_ptr<CommandStation> create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id)
+std::shared_ptr<CommandStation> CommandStations::create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id)
 {
   if(classId == LI10x::classId)
     return LI10x::create(world, id);
@@ -53,10 +51,8 @@ std::shared_ptr<CommandStation> create(const std::weak_ptr<World>& world, std::s
   else if(classId == USBXpressNetInterface::classId)
     return USBXpressNetInterface::create(world, id);
 #endif
-  else if(classId == Z21::classId)
-    return Z21::create(world, id);
+  else if(classId == RocoZ21::classId)
+    return RocoZ21::create(world, id);
   else
     return std::shared_ptr<CommandStation>();
-}
-
 }

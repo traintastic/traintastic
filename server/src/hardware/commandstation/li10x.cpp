@@ -25,8 +25,6 @@
 #include "../../core/traintastic.hpp"
 #include "../../core/eventloop.hpp"
 
-namespace Hardware::CommandStation {
-
 LI10x::LI10x(const std::weak_ptr<World>& world, std::string_view _id) :
   CommandStation(world, _id),
   m_serialPort{Traintastic::instance->ioContext()},
@@ -35,7 +33,7 @@ LI10x::LI10x(const std::weak_ptr<World>& world, std::string_view _id) :
   xpressnet{this, "xpressnet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "LI10x";
-  xpressnet.setValueInternal(std::make_shared<::Protocol::XpressNet>(*this, xpressnet.name(), std::bind(&LI10x::send, this, std::placeholders::_1)));
+  xpressnet.setValueInternal(std::make_shared<XpressNet>(*this, xpressnet.name(), std::bind(&LI10x::send, this, std::placeholders::_1)));
 
   m_interfaceItems.insertBefore(port, notes);
   m_interfaceItems.insertBefore(baudrate, notes);
@@ -64,9 +62,9 @@ void LI10x::emergencyStopChanged(bool value)
   CommandStation::emergencyStopChanged(value);
 
   if(value)
-    send(Protocol::XpressNet::EmergencyStop());
+    send(XpressNet::EmergencyStop());
   else if(!trackVoltageOff)
-    send(Protocol::XpressNet::NormalOperationResumed());
+    send(XpressNet::NormalOperationResumed());
 }
 
 void LI10x::trackVoltageOffChanged(bool value)
@@ -74,13 +72,13 @@ void LI10x::trackVoltageOffChanged(bool value)
   CommandStation::trackVoltageOffChanged(value);
 
   if(!value)
-    send(Protocol::XpressNet::NormalOperationResumed());
+    send(XpressNet::NormalOperationResumed());
   else
-    send(Protocol::XpressNet::TrackPowerOff());
+    send(XpressNet::TrackPowerOff());
 
 }
 
-void LI10x::decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderChangeFlags changes, uint32_t functionNumber)
+void LI10x::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   CommandStation::decoderChanged(decoder, changes, functionNumber);
 
@@ -113,9 +111,9 @@ void LI10x::stop()
   m_serialPort.close();
 }
 
-bool LI10x::send(const Protocol::XpressNet::Message& msg)
+bool LI10x::send(const XpressNet::Message& msg)
 {
-  assert(Protocol::XpressNet::isChecksumValid(msg));
+  assert(XpressNet::isChecksumValid(msg));
   if(!m_serialPort.is_open())
     return false;
   boost::system::error_code ec;
@@ -216,6 +214,4 @@ void LI10x::read()
       else
         EventLoop::call([this, ec](){ logError("async_read_some: " + ec.message()); });
     });
-}
-
 }

@@ -24,8 +24,6 @@
 #include "../../core/traintastic.hpp"
 #include "../decoder/decoder.hpp"
 
-namespace Protocol {
-
 uint8_t XpressNet::calcChecksum(const void* msg)
 {
   assert(msg);
@@ -103,10 +101,8 @@ void XpressNet::worldEvent(WorldState state, WorldEvent event)
   useRocoF13F20Command.setAttributeEnabled(editable);
 }
 
-void XpressNet::decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderChangeFlags changes, uint32_t functionNumber)
+void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
-  using namespace Hardware;
-
   logDebug("XpressNet::decoderChanged");
 
   if(useEmergencyStopLocomotiveCommand && changes == DecoderChangeFlags::EmergencyStop && decoder.emergencyStop)
@@ -202,6 +198,4 @@ void XpressNet::decoderChanged(const Hardware::Decoder& decoder, Hardware::Decod
     else
       logWarning("Function F" + std::to_string(functionNumber) + " not supported");
   }
-}
-
 }

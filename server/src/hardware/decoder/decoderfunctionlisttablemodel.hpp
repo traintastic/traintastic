@@ -28,7 +28,7 @@
 
 class DecoderFunctionList;
 
-class DecoderFunctionListTableModel : public ObjectListTableModel<Hardware::DecoderFunction>
+class DecoderFunctionListTableModel : public ObjectListTableModel<DecoderFunction>
 {
   friend class DecoderList;
 

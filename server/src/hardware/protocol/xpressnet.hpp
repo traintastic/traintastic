@@ -29,11 +29,7 @@
 #include "../../enum/xpressnetcommandstation.hpp"
 #include "../../hardware/decoder/decoderchangeflags.hpp"
 
-namespace Hardware {
-  class Decoder;
-}
-
-namespace Protocol {
+class Decoder;
 
 class XpressNet : public SubObject
 {
@@ -331,7 +327,7 @@ class XpressNet : public SubObject
     };
 
   protected:
-    static bool getFunctionValue(const Hardware::Decoder& decoder, uint32_t number);
+    static bool getFunctionValue(const Decoder& decoder, uint32_t number);
 
     std::function<bool(const Message&)> m_send;
 
@@ -350,9 +346,7 @@ class XpressNet : public SubObject
     bool send(const Message& msg) { return m_send(msg); }
     void receive(const Message& msg);
 
-    void decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderChangeFlags changes, uint32_t functionNumber);
+    void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 };
-
-}
 
 #endif

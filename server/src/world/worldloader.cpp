@@ -26,7 +26,7 @@
 #include "world.hpp"
 #include "../utils/string.hpp"
 
-#include "../hardware/commandstation/create.hpp"
+#include "../hardware/commandstation/commandstations.hpp"
 #include "../hardware/controller/controllers.hpp"
 #include "../hardware/decoder/decoder.hpp"
 #include "../hardware/decoder/decoderfunction.hpp"
@@ -88,17 +88,17 @@ void WorldLoader::createObject(ObjectData& objectData)
   std::string_view classId = objectData.json["class_id"];
   std::string_view id = objectData.json["id"];
 
-  if(startsWith(classId, Hardware::CommandStation::classIdPrefix))
-    objectData.object = Hardware::CommandStation::create(m_world, classId, id);
+  if(startsWith(classId, CommandStations::classIdPrefix))
+    objectData.object = CommandStations::create(m_world, classId, id);
   else if(startsWith(classId, Controllers::classIdPrefix))
     objectData.object = Controllers::create(m_world, classId, id);
-  else if(classId == Hardware::Decoder::classId)
-    objectData.object = Hardware::Decoder::create(m_world, id);
-  else if(classId == Hardware::DecoderFunction::classId)
+  else if(classId == Decoder::classId)
+    objectData.object = Decoder::create(m_world, id);
+  else if(classId == DecoderFunction::classId)
   {
     const std::string_view decoderId = objectData.json["decoder"];
-    if(std::shared_ptr<Hardware::Decoder> decoder = std::dynamic_pointer_cast<Hardware::Decoder>(getObject(decoderId)))
-      objectData.object = Hardware::DecoderFunction::create(*decoder, id);
+    if(std::shared_ptr<Decoder> decoder = std::dynamic_pointer_cast<Decoder>(getObject(decoderId)))
+      objectData.object = DecoderFunction::create(*decoder, id);
   }
   else if(startsWith(classId, RailVehicles::classIdPrefix))
     objectData.object = RailVehicles::create(m_world, classId, id);

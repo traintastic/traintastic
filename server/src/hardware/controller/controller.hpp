@@ -29,14 +29,12 @@
 #include "../../core/objectproperty.hpp"
 #include "../../core/commandstationproperty.hpp"
 
-namespace Hardware {
-  class Decoder;
-  enum class DecoderChangeFlags;
-}
+class Decoder;
+enum class DecoderChangeFlags;
 
 class Controller : public IdObject
 {
-  friend class Hardware::CommandStation::CommandStation;
+  friend class CommandStation;
 
   protected:
     void addToWorld() final;
@@ -46,7 +44,7 @@ class Controller : public IdObject
 
     virtual void emergencyStopChanged(bool value) = 0;
     virtual void trackPowerChanged(bool value) = 0;
-    virtual void decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderChangeFlags changes, uint32_t functionNumber) = 0;
+    virtual void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) = 0;
 
   public:
     Property<std::string> name;

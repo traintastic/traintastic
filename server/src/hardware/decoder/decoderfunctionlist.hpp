@@ -28,7 +28,7 @@
 #include "../../core/method.hpp"
 #include "decoderfunction.hpp"
 
-class DecoderFunctionList : public ObjectList<Hardware::DecoderFunction>
+class DecoderFunctionList : public ObjectList<DecoderFunction>
 {
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
@@ -37,7 +37,7 @@ class DecoderFunctionList : public ObjectList<Hardware::DecoderFunction>
   public:
     CLASS_ID("decoder_function_list")
 
-    Method<std::shared_ptr<Hardware::DecoderFunction>()> add;
+    Method<std::shared_ptr<DecoderFunction>()> add;
 
     DecoderFunctionList(Object& _parent, const std::string& parentPropertyName);
 

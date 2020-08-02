@@ -28,8 +28,6 @@
 #include "../decoder/decoder.hpp"
 #include "../decoder/decoderlist.hpp"
 
-namespace Hardware::CommandStation {
-
 CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
@@ -97,7 +95,7 @@ void CommandStation::worldEvent(WorldState state, WorldEvent event)
     trackVoltageOff = false;
 }
 
-const std::shared_ptr<Hardware::Decoder>& CommandStation::getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress) const
+const std::shared_ptr<::Decoder>& CommandStation::getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress) const
 {
   auto it = std::find_if(decoders->begin(), decoders->end(), [=](auto& decoder){ return decoder->protocol.value() == protocol && decoder->address.value() == address && decoder->longAddress == longAddress; });
   if(it != decoders->end())
@@ -117,11 +115,8 @@ void CommandStation::trackVoltageOffChanged(bool value)
     controller->trackPowerChanged(!value);
 }
 
-void CommandStation::decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderChangeFlags changes, uint32_t functionNumber)
+void CommandStation::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   for(auto& controller : *controllers)
     controller->decoderChanged(decoder, changes, functionNumber);
-}
-
-
 }

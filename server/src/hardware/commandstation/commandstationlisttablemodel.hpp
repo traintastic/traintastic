@@ -28,7 +28,7 @@
 
 class CommandStationList;
 
-class CommandStationListTableModel : public ObjectListTableModel<Hardware::CommandStation::CommandStation>
+class CommandStationListTableModel : public ObjectListTableModel<CommandStation>
 {
   friend class CommandStationList;
 

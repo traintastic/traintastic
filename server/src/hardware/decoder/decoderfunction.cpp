@@ -23,8 +23,6 @@
 #include "decoderchangeflags.hpp"
 #include "../../world/world.hpp"
 
-namespace Hardware {
-
 const std::shared_ptr<DecoderFunction> DecoderFunction::null;
 
 std::shared_ptr<DecoderFunction> DecoderFunction::create(Decoder& decoder, std::string_view _id)
@@ -38,8 +36,7 @@ DecoderFunction::DecoderFunction(Decoder& decoder, std::string_view _id) :
   Output(decoder.world(), _id),
   m_decoder{decoder},
   number{this, "number", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
-  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
-  momentary{this, "momentary", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   auto w = decoder.world().lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
@@ -47,8 +44,6 @@ DecoderFunction::DecoderFunction(Decoder& decoder, std::string_view _id) :
   m_interfaceItems.add(number)
     .addAttributeEnabled(editable);
   m_interfaceItems.add(name)
-    .addAttributeEnabled(editable);
-  m_interfaceItems.add(momentary)
     .addAttributeEnabled(editable);
 }
 
@@ -60,7 +55,6 @@ void DecoderFunction::worldEvent(WorldState state, WorldEvent event)
 
   number.setAttributeEnabled(editable);
   name.setAttributeEnabled(editable);
-  momentary.setAttributeEnabled(editable);
 }
 
 bool DecoderFunction::setValue(bool& value)
@@ -71,6 +65,4 @@ bool DecoderFunction::setValue(bool& value)
 void DecoderFunction::valueChanged(bool)
 {
   m_decoder.changed(DecoderChangeFlags::FunctionValue, number);
-}
-
 }

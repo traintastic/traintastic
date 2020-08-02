@@ -26,7 +26,7 @@
 #include "../../decoder/decoderlist.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 
-namespace Hardware::CommandStation {
+namespace CommandStation {
 
 XpressNet::XpressNet(const std::weak_ptr<World>& world, std::string_view _id) :
   CommandStation(world, _id),

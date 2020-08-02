@@ -27,7 +27,7 @@
 
 struct Controllers
 {
-  static constexpr std::string_view classIdPrefix = "hardware.controller.";
+  static constexpr std::string_view classIdPrefix = "controller.";
 
   static const std::vector<std::string_view>& classList();
 

@@ -56,7 +56,7 @@ class XpressNet : public IdObject
     void sendRocoSetFunctionStateF13F20(const Decoder& decoder);
 
   public:
-    CLASS_ID("hardware.command_station.protocol.xpressnet")
+    CLASS_ID("command_station.protocol.xpressnet")
 
     static uint8_t calcChecksum(const void* cmd);
 

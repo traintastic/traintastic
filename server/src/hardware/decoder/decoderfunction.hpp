@@ -25,9 +25,6 @@
 
 #include "../../core/output.hpp"
 #include "../../core/objectproperty.hpp"
-//#include "../commandstation/commandstation.hpp"
-
-namespace Hardware {
 
 class Decoder;
 
@@ -44,7 +41,7 @@ class DecoderFunction : public Output
     void valueChanged(bool) final;
 
   public:
-    CLASS_ID("hardware.decoder_function")
+    CLASS_ID("decoder_function")
 
     static const std::shared_ptr<DecoderFunction> null;
     static std::shared_ptr<DecoderFunction> create(Decoder& decoder, std::string_view _id);
@@ -53,11 +50,8 @@ class DecoderFunction : public Output
 
     Property<uint8_t> number;
     Property<std::string> name;
-    Property<bool> momentary;
 
     Decoder& decoder() { return m_decoder; }
 };
-
-}
 
 #endif

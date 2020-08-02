@@ -25,10 +25,6 @@
 #include "../../core/traintastic.hpp"
 #include "../../core/eventloop.hpp"
 
-using namespace Protocol::LocoNet;
-
-namespace Hardware::CommandStation {
-
 LocoNetSerial::LocoNetSerial(const std::weak_ptr<World>& world, std::string_view _id) :
   CommandStation(world, _id),
   m_serialPort{Traintastic::instance->ioContext()},
@@ -66,7 +62,7 @@ LocoNetSerial::LocoNetSerial(const std::weak_ptr<World>& world, std::string_view
   loconet{this, "loconet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "LocoNet (serial)";
-  loconet.setValueInternal(std::make_shared<LocoNet>(*this, loconet.name(), std::bind(&LocoNetSerial::send, this, std::placeholders::_1)));
+  loconet.setValueInternal(std::make_shared<LocoNet::LocoNet>(*this, loconet.name(), std::bind(&LocoNetSerial::send, this, std::placeholders::_1)));
 
   port.addAttributeEnabled(!online);
   interface.addAttributeEnabled(!online);
@@ -116,7 +112,7 @@ void LocoNetSerial::trackVoltageOffChanged(bool value)
     loconet->trackVoltageOffChanged(value);
 }
 
-void LocoNetSerial::decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderChangeFlags changes, uint32_t functionNumber)
+void LocoNetSerial::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   CommandStation::decoderChanged(decoder, changes, functionNumber);
 
@@ -157,7 +153,7 @@ void LocoNetSerial::stop()
   m_serialPort.close();
 }
 
-bool LocoNetSerial::send(const Protocol::LocoNet::Message& message)
+bool LocoNetSerial::send(const LocoNet::Message& message)
 {
   if(!m_serialPort.is_open())
     return false;
@@ -183,15 +179,15 @@ void LocoNetSerial::read()
 
         while(bytesTransferred > 1)
         {
-          const Protocol::LocoNet::Message* message = reinterpret_cast<const Protocol::LocoNet::Message*>(pos);
+          const LocoNet::Message* message = reinterpret_cast<const LocoNet::Message*>(pos);
 
           size_t drop = 0;
-          while((message->size() == 0 || (message->size() <= bytesTransferred && !Protocol::LocoNet::isValid(*message))) && drop < bytesTransferred)
+          while((message->size() == 0 || (message->size() <= bytesTransferred && !LocoNet::isValid(*message))) && drop < bytesTransferred)
           {
             drop++;
             pos++;
             bytesTransferred--;
-            message = reinterpret_cast<const Protocol::LocoNet::Message*>(pos);
+            message = reinterpret_cast<const LocoNet::Message*>(pos);
           }
 
           if(drop != 0)
@@ -226,6 +222,4 @@ void LocoNetSerial::read()
             online = false;
           });
     });
-}
-
 }

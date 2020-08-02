@@ -26,40 +26,38 @@
 #include "abstractobjectproperty.hpp"
 #include <functional>
 
-namespace Hardware::CommandStation {
-  class CommandStation;
-}
+class CommandStation;
 
-//! workaround for ObjectProperty<Hardware::CommandStation::CommandStation>
+//! workaround for ObjectProperty<CommandStation>
 class CommandStationProperty : public AbstractObjectProperty
 {
   public:
-    using OnSet = std::function<bool(const std::shared_ptr<Hardware::CommandStation::CommandStation>& value)>;
+    using OnSet = std::function<bool(const std::shared_ptr<CommandStation>& value)>;
 
   protected:
-    std::shared_ptr<Hardware::CommandStation::CommandStation> m_value;
+    std::shared_ptr<CommandStation> m_value;
     OnSet m_onSet;
 
   public:
-    CommandStationProperty(Object* object, const std::string& name, const std::shared_ptr<Hardware::CommandStation::CommandStation>& value, PropertyFlags flags);
+    CommandStationProperty(Object* object, const std::string& name, const std::shared_ptr<CommandStation>& value, PropertyFlags flags);
     CommandStationProperty(Object* object, const std::string& name, nullptr_t, PropertyFlags flags);
-    CommandStationProperty(Object* object, const std::string& name, const std::shared_ptr<Hardware::CommandStation::CommandStation>& value, PropertyFlags flags, OnSet onSet);
+    CommandStationProperty(Object* object, const std::string& name, const std::shared_ptr<CommandStation>& value, PropertyFlags flags, OnSet onSet);
     CommandStationProperty(Object* object, const std::string& name, nullptr_t, PropertyFlags flags, OnSet onSet);
 
-    const std::shared_ptr<Hardware::CommandStation::CommandStation>& value() const;
+    const std::shared_ptr<CommandStation>& value() const;
 
-    void setValue(const std::shared_ptr<Hardware::CommandStation::CommandStation>& value);
-    void setValueInternal(const std::shared_ptr<Hardware::CommandStation::CommandStation>& value);
+    void setValue(const std::shared_ptr<CommandStation>& value);
+    void setValueInternal(const std::shared_ptr<CommandStation>& value);
 
-    const Hardware::CommandStation::CommandStation* operator ->() const;
-    Hardware::CommandStation::CommandStation* operator ->();
+    const CommandStation* operator ->() const;
+    CommandStation* operator ->();
 
-    const Hardware::CommandStation::CommandStation& operator *() const;
-    Hardware::CommandStation::CommandStation& operator *();
+    const CommandStation& operator *() const;
+    CommandStation& operator *();
 
     operator bool();
 
-    CommandStationProperty& operator =(const std::shared_ptr<Hardware::CommandStation::CommandStation>& value);
+    CommandStationProperty& operator =(const std::shared_ptr<CommandStation>& value);
 
     ObjectPtr toObject() const final;
     void fromObject(const ObjectPtr& value) final;

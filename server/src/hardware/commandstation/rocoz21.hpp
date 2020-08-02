@@ -26,18 +26,15 @@
 #include "commandstation.hpp"
 #include <boost/asio.hpp>
 #include "../../core/objectproperty.hpp"
-//#include "protocol/xpressnet.hpp"
 #include "../protocol/loconet/loconet.hpp"
 
 struct z21_lan_header;
 
-namespace Protocol::Z21 {
+namespace Z21 {
   class Message;
 }
 
-namespace Hardware::CommandStation {
-
-class Z21 : public CommandStation
+class RocoZ21 : public CommandStation
 {
   protected:
     boost::asio::ip::udp::socket m_socket;
@@ -52,19 +49,19 @@ class Z21 : public CommandStation
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     void receive();
-    void send(const Protocol::Z21::Message& message);
+    void send(const Z21::Message& message);
     void send(const z21_lan_header* msg);
     inline void send(const z21_lan_header& msg) { send(&msg); }
 
   public:
-    CLASS_ID("hardware.command_station.z21")
-    CREATE(Z21)
+    CLASS_ID("command_station.z21")
+    CREATE(RocoZ21)
 
-    Z21(const std::weak_ptr<World>& world, std::string_view _id);
+    RocoZ21(const std::weak_ptr<World>& world, std::string_view _id);
 
     Property<std::string> hostname;
     Property<uint16_t> port;
-    ObjectProperty<::Protocol::LocoNet::LocoNet> loconet;
+    ObjectProperty<LocoNet::LocoNet> loconet;
     Property<std::string> serialNumber;
     Property<std::string> hardwareType;
     Property<std::string> firmwareVersion;
@@ -83,7 +80,5 @@ class Z21 : public CommandStation
     Property<bool> shortCircutInternal;
     Property<bool> shortCircutExternal;
 };
-
-}
 
 #endif

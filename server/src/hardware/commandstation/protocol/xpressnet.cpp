@@ -53,7 +53,7 @@
 #include "../../../core/traintastic.hpp"
 
 
-namespace Hardware::CommandStation::Protocol {
+namespace Protocol {
 
 inline void addressLowHigh(uint16_t address, uint8_t& addressLow, uint8_t& addressHigh)
 {

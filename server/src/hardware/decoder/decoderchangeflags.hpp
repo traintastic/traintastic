@@ -23,8 +23,6 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERCHANGEFLAGS_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERCHANGEFLAGS_HPP
 
-namespace Hardware {
-
 enum class DecoderChangeFlags
 {
   EmergencyStop = 1 << 0,
@@ -43,8 +41,6 @@ constexpr DecoderChangeFlags operator| (const DecoderChangeFlags& lhs, const Dec
 constexpr bool has(const DecoderChangeFlags& value, const DecoderChangeFlags& mask)
 {
   return (static_cast<std::underlying_type_t<DecoderChangeFlags>>(value) & static_cast<std::underlying_type_t<DecoderChangeFlags>>(mask)) != 0;
-}
-
 }
 
 #endif

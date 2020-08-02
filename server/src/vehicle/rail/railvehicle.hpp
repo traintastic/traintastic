@@ -36,7 +36,7 @@ class RailVehicle : public Vehicle
     void addToWorld() override;
 
   public:
-    ObjectProperty<Hardware::Decoder> decoder;
+    ObjectProperty<Decoder> decoder;
     LengthProperty lob;
     WeightProperty weight;
 

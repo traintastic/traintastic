@@ -29,7 +29,7 @@
 
 class LocoNetInput : public Input
 {
-  friend class Protocol::LocoNet::LocoNet;
+  friend class LocoNet::LocoNet;
 
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
@@ -40,7 +40,7 @@ class LocoNetInput : public Input
     CLASS_ID("input.loconet")
     CREATE(LocoNetInput)
 
-    ObjectProperty<Protocol::LocoNet::LocoNet> loconet;
+    ObjectProperty<LocoNet::LocoNet> loconet;
     Property<uint16_t> address;
 
     LocoNetInput(const std::weak_ptr<World> world, std::string_view _id);

@@ -72,7 +72,7 @@ json WorldSaver::saveObject(const ObjectPtr& object)
         assert(false);
     objectData["objects"] = objects;
   }
-  else if(Hardware::DecoderFunction* function = dynamic_cast<Hardware::DecoderFunction*>(object.get()))
+  else if(DecoderFunction* function = dynamic_cast<DecoderFunction*>(object.get()))
     objectData["decoder"] = function->decoder().id.toJSON();
 
   for(auto& item : object->interfaceItems())

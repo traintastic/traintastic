@@ -23,7 +23,7 @@
 #include "commandstationproperty.hpp"
 #include "../hardware/commandstation/commandstation.hpp"
 
-using T = Hardware::CommandStation::CommandStation;
+using T = CommandStation;
 
 CommandStationProperty::CommandStationProperty(Object* object, const std::string& name, const std::shared_ptr<T>& value, PropertyFlags flags) :
   AbstractObjectProperty(object, name, flags),

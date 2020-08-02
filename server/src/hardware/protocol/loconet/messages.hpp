@@ -33,7 +33,7 @@
 #include <traintastic/enum/direction.hpp>
 #include "opcode.hpp"
 
-namespace Protocol::LocoNet {
+namespace LocoNet {
 
 struct Message;
 

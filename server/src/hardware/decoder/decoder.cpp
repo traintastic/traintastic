@@ -29,8 +29,6 @@
 #include "../../world/world.hpp"
 #include "../commandstation/commandstation.hpp"
 
-namespace Hardware {
-
 //constexpr uint16_t addressDCCMin = 1;
 constexpr uint16_t addressDCCShortMax = 127;
 
@@ -40,7 +38,7 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
   commandStation{this, "command_station", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](const std::shared_ptr<CommandStation::CommandStation>& value)
+    [this](const std::shared_ptr<CommandStation>& value)
     {
       std::shared_ptr<Decoder> decoder = std::dynamic_pointer_cast<Decoder>(shared_from_this());
       assert(decoder);
@@ -183,6 +181,4 @@ void Decoder::changed(DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(commandStation)
     commandStation->decoderChanged(*this, changes, functionNumber);
-}
-
 }

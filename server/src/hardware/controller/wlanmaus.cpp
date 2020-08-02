@@ -77,14 +77,14 @@ void WLANmaus::emergencyStopChanged(bool value)
   {
     const z21_lan_x_bc_stopped message;
     for(auto it : m_clients)
-      if(it.second.broadcastFlags & Protocol::Z21::PowerLocoTurnout)
+      if(it.second.broadcastFlags & Z21::PowerLocoTurnout)
         sendTo(message, it.first);
   }
   else if(commandStation && !commandStation->trackVoltageOff) // send z21_lan_x_bc_track_power_on if power is on
   {
     const z21_lan_x_bc_track_power_on message;
     for(auto it : m_clients)
-      if(it.second.broadcastFlags & Protocol::Z21::PowerLocoTurnout)
+      if(it.second.broadcastFlags & Z21::PowerLocoTurnout)
         sendTo(message, it.first);
   }
 }
@@ -95,19 +95,19 @@ void WLANmaus::trackPowerChanged(bool value)
   {
     const z21_lan_x_bc_track_power_on message;
     for(auto it : m_clients)
-      if(it.second.broadcastFlags & Protocol::Z21::PowerLocoTurnout)
+      if(it.second.broadcastFlags & Z21::PowerLocoTurnout)
         sendTo(message, it.first);
   }
   else
   {
     const z21_lan_x_bc_track_power_off message;
     for(auto it : m_clients)
-      if(it.second.broadcastFlags & Protocol::Z21::PowerLocoTurnout)
+      if(it.second.broadcastFlags & Z21::PowerLocoTurnout)
         sendTo(message, it.first);
   }
 }
 
-void WLANmaus::decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderChangeFlags, uint32_t)
+void WLANmaus::decoderChanged(const Decoder& decoder, DecoderChangeFlags, uint32_t)
 {
   if(&decoder == m_blockLocoInfo)
     return;
@@ -115,7 +115,7 @@ void WLANmaus::decoderChanged(const Hardware::Decoder& decoder, Hardware::Decode
   //logDebug("loco info: speedStep=" + std::to_string(decoder.speedStep.value()));
 
   EventLoop::call(
-    [this, dec=decoder.shared_ptr_c<const Hardware::Decoder>()]()
+    [this, dec=decoder.shared_ptr_c<const Decoder>()]()
     {
       broadcastLocoInfo(*dec);
     });
@@ -128,14 +128,14 @@ void WLANmaus::receive()
     {
       if(!ec)
       {
-        if((bytesReceived >= sizeof(Protocol::Z21::Message)))
+        if((bytesReceived >= sizeof(Z21::Message)))
         {
           bool unknownMessage = false;
-          const Protocol::Z21::Message* message = reinterpret_cast<const Protocol::Z21::Message*>(m_receiveBuffer.data());
+          const Z21::Message* message = reinterpret_cast<const Z21::Message*>(m_receiveBuffer.data());
           /*[[deprecated]]*/ const z21_lan_header* cmd = reinterpret_cast<const z21_lan_header*>(m_receiveBuffer.data());
           switch(message->header())
           {
-            case Protocol::Z21::LAN_X:
+            case Z21::LAN_X:
             {
               // TODO check XOR
               const uint8_t xheader = static_cast<const z21_lan_x*>(cmd)->xheader;
@@ -315,22 +315,22 @@ void WLANmaus::receive()
               }
               break;
             }
-            case Protocol::Z21::LAN_GET_LOCO_MODE:
-              if(message->dataLen() == sizeof(Protocol::Z21::LanGetLocoMode))
+            case Z21::LAN_GET_LOCO_MODE:
+              if(message->dataLen() == sizeof(Z21::LanGetLocoMode))
               {
                 // TODO: reply without invoking event loop
                 EventLoop::call(
-                  [this, address=static_cast<const Protocol::Z21::LanGetLocoMode*>(message)->address(), endpoint=m_receiveEndpoint]()
+                  [this, address=static_cast<const Z21::LanGetLocoMode*>(message)->address(), endpoint=m_receiveEndpoint]()
                   {
-                    sendTo(Protocol::Z21::LanGetLocoModeReply(address, Protocol::Z21::LocoMode::DCC), endpoint);
+                    sendTo(Z21::LanGetLocoModeReply(address, Z21::LocoMode::DCC), endpoint);
                   });
               }
               else
                 unknownMessage = true;
               break;
 
-            case Protocol::Z21::LAN_SET_LOCO_MODE:
-              if(message->dataLen() == sizeof(Protocol::Z21::LanSetLocoMode))
+            case Z21::LAN_SET_LOCO_MODE:
+              if(message->dataLen() == sizeof(Z21::LanSetLocoMode))
               {
                 // ignore, we always report DCC
               }
@@ -338,20 +338,20 @@ void WLANmaus::receive()
                 unknownMessage = true;
               break;
 
-            case Protocol::Z21::LAN_GET_SERIAL_NUMBER:
-              if(message->dataLen() == sizeof(Protocol::Z21::LanGetSerialNumber))
+            case Z21::LAN_GET_SERIAL_NUMBER:
+              if(message->dataLen() == sizeof(Z21::LanGetSerialNumber))
               {
                 EventLoop::call(
                   [this, endpoint=m_receiveEndpoint]()
                   {
-                    sendTo(Protocol::Z21::LanGetSerialNumberReply(123456789), endpoint);
+                    sendTo(Z21::LanGetSerialNumberReply(123456789), endpoint);
                   });
               }
               else
                 unknownMessage = true;
               break;
 
-            case Protocol::Z21::LAN_GET_HWINFO:
+            case Z21::LAN_GET_HWINFO:
               if(cmd->dataLen == sizeof(z21_lan_get_hwinfo))
               {
                 EventLoop::call(
@@ -364,7 +364,7 @@ void WLANmaus::receive()
                 unknownMessage = true;
               break;
 
-            case Protocol::Z21::LAN_SET_BROADCASTFLAGS:
+            case Z21::LAN_SET_BROADCASTFLAGS:
               if(message->dataLen() == sizeof(z21_lan_set_broadcastflags))
               {
                 EventLoop::call(
@@ -377,7 +377,7 @@ void WLANmaus::receive()
                 unknownMessage = true;
               break;
 
-            case Protocol::Z21::LAN_SYSTEMSTATE_GETDATA:
+            case Z21::LAN_SYSTEMSTATE_GETDATA:
               if(message->dataLen() == sizeof(z21_lan_systemstate_getdata))
               {
                 EventLoop::call(
@@ -397,8 +397,8 @@ void WLANmaus::receive()
                 unknownMessage = true;
               break;
 
-            case Protocol::Z21::LAN_LOGOFF:
-              if(message->dataLen() == sizeof(Protocol::Z21::LanLogoff))
+            case Z21::LAN_LOGOFF:
+              if(message->dataLen() == sizeof(Z21::LanLogoff))
               {
                 EventLoop::call(
                   [this, endpoint=m_receiveEndpoint]()
@@ -456,7 +456,7 @@ void WLANmaus::sendTo(const z21_lan_header& msg, const boost::asio::ip::udp::end
     */
 }
 
-void WLANmaus::sendTo(const Protocol::Z21::Message& message, const boost::asio::ip::udp::endpoint& endpoint)
+void WLANmaus::sendTo(const Z21::Message& message, const boost::asio::ip::udp::endpoint& endpoint)
 {
   // TODO: add to queue, send async
 
@@ -474,7 +474,7 @@ void WLANmaus::sendTo(const Protocol::Z21::Message& message, const boost::asio::
     */
 }
 
-void WLANmaus::broadcastLocoInfo(const Hardware::Decoder& decoder)
+void WLANmaus::broadcastLocoInfo(const Decoder& decoder)
 {
   const uint16_t key = locoInfoKey(decoder.address, decoder.longAddress);
   const z21_lan_x_loco_info message(decoder);
@@ -482,7 +482,7 @@ void WLANmaus::broadcastLocoInfo(const Hardware::Decoder& decoder)
 //logDebug("z21_lan_x_loco_info.speedAndDirection=" + std::to_string(message.speedAndDirection));
 
   for(auto it : m_clients)
-    if(it.second.broadcastFlags & Protocol::Z21::PowerLocoTurnout)
+    if(it.second.broadcastFlags & Z21::PowerLocoTurnout)
       if(it.second.locoInfo.count(key))
         sendTo(message, it.first);
 }

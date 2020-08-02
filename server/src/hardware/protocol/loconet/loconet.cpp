@@ -28,9 +28,9 @@
 #include "../../commandstation/commandstation.hpp"
 #include "../../input/loconetinput.hpp"
 
-namespace Protocol::LocoNet {
+namespace LocoNet {
 
-void updateDecoderSpeed(const std::shared_ptr<Hardware::Decoder>& decoder, uint8_t speed)
+void updateDecoderSpeed(const std::shared_ptr<Decoder>& decoder, uint8_t speed)
 {
   decoder->emergencyStop.setValueInternal(speed == SPEED_ESTOP);
 
@@ -42,7 +42,7 @@ void updateDecoderSpeed(const std::shared_ptr<Hardware::Decoder>& decoder, uint8
 
 LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send) :
   SubObject(_parent, parentPropertyName),
-  m_commandStation{dynamic_cast<Hardware::CommandStation::CommandStation*>(&_parent)},
+  m_commandStation{dynamic_cast<CommandStation*>(&_parent)},
   m_send{std::move(send)},
   m_debugLog{true/*false*/},
   m_queryLocoSlots{SLOT_UNKNOWN},
@@ -265,10 +265,8 @@ void LocoNet::trackVoltageOffChanged(bool value)
     send(GlobalPowerOff());
 }
 
-void LocoNet::decoderChanged(const Hardware::Decoder& decoder, Hardware::DecoderChangeFlags changes, uint32_t functionNumber)
+void LocoNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
-  using namespace Hardware;
-
   logDebug("LocoNet::decoderChanged");
 
   if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::SpeedStep))
@@ -350,7 +348,7 @@ void LocoNet::queryLocoSlots()
   send(RequestSlotData(m_queryLocoSlots));
 }
 
-std::shared_ptr<Hardware::Decoder> LocoNet::getDecoder(uint8_t slot, bool request)
+std::shared_ptr<Decoder> LocoNet::getDecoder(uint8_t slot, bool request)
 {
   if(slot < SLOT_LOCO_MIN || slot > SLOT_LOCO_MAX)
     return nullptr;

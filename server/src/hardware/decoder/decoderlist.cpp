@@ -25,9 +25,6 @@
 #include "../commandstation/commandstation.hpp"
 #include "../../world/getworld.hpp"
 
-using Hardware::Decoder;
-using Hardware::CommandStation::CommandStation;
-
 DecoderList::DecoderList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<Decoder>(_parent, parentPropertyName),
   add{*this, "add",
@@ -59,7 +56,7 @@ TableModelPtr DecoderList::getModel()
 
 void DecoderList::worldEvent(WorldState state, WorldEvent event)
 {
-  ObjectList<Hardware::Decoder>::worldEvent(state, event);
+  ObjectList<Decoder>::worldEvent(state, event);
 
   const bool editable = contains(state, WorldState::Edit);
 
