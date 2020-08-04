@@ -29,6 +29,7 @@
 #include "../../enum/xpressnetcommandstation.hpp"
 #include "../../hardware/decoder/decoderchangeflags.hpp"
 
+class CommandStation;
 class Decoder;
 
 class XpressNet : public SubObject
@@ -44,9 +45,14 @@ class XpressNet : public SubObject
     {
       uint8_t header;
 
+      uint8_t identification() const
+      {
+        return header & 0xF0;
+      }
+
       uint8_t dataSize() const
       {
-        return header & 0x0f;
+        return header & 0x0F;
       }
 
       uint8_t size() const
@@ -329,7 +335,9 @@ class XpressNet : public SubObject
   protected:
     static bool getFunctionValue(const Decoder& decoder, uint32_t number);
 
+    CommandStation* const m_commandStation; // valid if parent is command station, else nullptr
     std::function<bool(const Message&)> m_send;
+    std::atomic_bool m_debugLog;
 
     void worldEvent(WorldState state, WorldEvent event) final;
 
@@ -340,13 +348,23 @@ class XpressNet : public SubObject
     Property<bool> useEmergencyStopLocomotiveCommand;
     Property<bool> useFunctionStateCommands;
     Property<bool> useRocoF13F20Command;
+    Property<bool> debugLog;
 
     XpressNet(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send);
 
     bool send(const Message& msg) { return m_send(msg); }
     void receive(const Message& msg);
 
+    void emergencyStopChanged(bool value);
+    void trackVoltageOffChanged(bool value);
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 };
+
+inline bool operator ==(const XpressNet::Message& lhs, const XpressNet::Message& rhs)
+{
+  return lhs.size() == rhs.size() && std::memcmp(&lhs, &rhs, lhs.size()) == 0;
+}
+
+std::string to_string(const XpressNet::Message& message, bool raw = false);
 
 #endif

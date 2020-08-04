@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/commandstation/loconetserial.hpp
+ * server/src/hardware/commandstation/xpressnetserial.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,35 +20,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_COMMANDSTATION_LOCONETSERIAL_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_COMMANDSTATION_LOCONETSERIAL_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_COMMANDSTATION_LI10X_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_COMMANDSTATION_LI10X_HPP
 
 #include "serialcommandstation.hpp"
-#include "../protocol/loconet/loconet.hpp"
-#include "../../enum/loconetserialinterface.hpp"
-//#include "../../enum/serialflowcontrol.hpp"
+#include "../../enum/xpressnetserialinterface.hpp"
+#include "../protocol/xpressnet.hpp"
 //#include <boost/asio/serial_port.hpp>
+//#include "../../core/objectproperty.hpp"
+//#include "protocol/xpressnet.hpp"
 
-class LocoNetSerial : public SerialCommandStation
+class XpressNetSerial : public SerialCommandStation
 {
   protected:
+    //boost::asio::serial_port m_serialPort;
+    //std::array<uint8_t, 32> m_readBuffer;
+    //std::unique_ptr<uint8_t[]> m_readMessage;
+    //uint8_t m_readMessageTodo;
+    //uint8_t m_readMessagePos;
+
+    //bool setOnline(bool& value) final;
     void emergencyStopChanged(bool value) final;
     void trackVoltageOffChanged(bool value) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     bool start();
     void stop();
-    bool send(const LocoNet::Message& msg);
-    void read() final;
+    bool send(const XpressNet::Message& msg);
+    void receive(std::unique_ptr<uint8_t[]> message);
+    void read();
 
   public:
-    CLASS_ID("command_station.loconet_serial")
-    CREATE(LocoNetSerial)
+    CLASS_ID("command_station.xpressnet_serial")
+    CREATE(XpressNetSerial)
 
-    Property<LocoNetSerialInterface> interface;
-    ObjectProperty<LocoNet::LocoNet> loconet;
+    Property<XpressNetSerialInterface> interface;
+    ObjectProperty<XpressNet> xpressnet;
 
-    LocoNetSerial(const std::weak_ptr<World>& world, std::string_view _id);
+    XpressNetSerial(const std::weak_ptr<World>& world, std::string_view _id);
 };
 
 #endif

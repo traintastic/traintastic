@@ -22,7 +22,9 @@
 
 #include "xpressnet.hpp"
 #include "../../core/traintastic.hpp"
+#include "../../core/eventloop.hpp"
 #include "../decoder/decoder.hpp"
+#include "../../utils/to_hex.hpp"
 
 uint8_t XpressNet::calcChecksum(const void* msg)
 {
@@ -47,8 +49,10 @@ bool XpressNet::isChecksumValid(const Message& msg)
 
 XpressNet::XpressNet(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send) :
   SubObject(_parent, parentPropertyName),
+  m_commandStation{dynamic_cast<CommandStation*>(&_parent)},
   m_send{std::move(send)},
-  commandStation{this, "command_station", XpressNetCommandStation::Custom, PropertyFlags::ReadWrite,
+  m_debugLog{true},
+  commandStation{this, "command_station", XpressNetCommandStation::Custom, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](XpressNetCommandStation value)
     {
       switch(value)
@@ -63,20 +67,25 @@ XpressNet::XpressNet(Object& _parent, const std::string& parentPropertyName, std
           break;
       }
     }},
-  useEmergencyStopLocomotiveCommand{this, "use_emergency_stop_locomotive_command", false, PropertyFlags::ReadWrite,
+  useEmergencyStopLocomotiveCommand{this, "use_emergency_stop_locomotive_command", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](bool)
     {
       commandStation = XpressNetCommandStation::Custom;
     }},
-  useFunctionStateCommands{this, "use_function_state_commands", false, PropertyFlags::ReadWrite,
+  useFunctionStateCommands{this, "use_function_state_commands", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](bool)
     {
       commandStation = XpressNetCommandStation::Custom;
     }},
-  useRocoF13F20Command{this, "use_roco_f13_f20_command", false, PropertyFlags::ReadWrite,
+  useRocoF13F20Command{this, "use_roco_f13_f20_command", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](bool)
     {
       commandStation = XpressNetCommandStation::Custom;
+    }},
+  debugLog{this, "debug_log", m_debugLog, PropertyFlags::ReadWrite | PropertyFlags::Store,
+   [this](bool value)
+    {
+      m_debugLog = value;
     }}
 {
   m_interfaceItems.add(commandStation)
@@ -99,6 +108,69 @@ void XpressNet::worldEvent(WorldState state, WorldEvent event)
   useEmergencyStopLocomotiveCommand.setAttributeEnabled(editable);
   useFunctionStateCommands.setAttributeEnabled(editable);
   useRocoF13F20Command.setAttributeEnabled(editable);
+}
+
+void XpressNet::receive(const Message& message)
+{
+  // NOTE: this runs outside the event loop !!!
+
+  assert(isChecksumValid(message));
+
+  if(m_debugLog)
+    EventLoop::call([this, log="rx: " + to_string(message)](){ logDebug(log); });
+
+  if(m_commandStation)
+  {
+    switch(message.identification())
+    {
+      case 0x60:
+        if(message == NormalOperationResumed())
+        {
+          EventLoop::call(
+            [cs=m_commandStation->shared_ptr<CommandStation>()]()
+            {
+              cs->emergencyStop.setValueInternal(false);
+              cs->trackVoltageOff.setValueInternal(false);
+            });
+        }
+        else if(message == TrackPowerOff())
+        {
+          EventLoop::call(
+            [cs=m_commandStation->shared_ptr<CommandStation>()]()
+            {
+              cs->trackVoltageOff.setValueInternal(true);
+            });
+        }
+        break;
+
+      case 0x80:
+        if(message == EmergencyStop())
+        {
+          EventLoop::call(
+            [cs=m_commandStation->shared_ptr<CommandStation>()]()
+            {
+              cs->emergencyStop.setValueInternal(true);
+            });
+        }
+        break;
+    }
+  }
+}
+
+void XpressNet::emergencyStopChanged(bool value)
+{
+  if(value)
+    send(EmergencyStop());
+  else if(m_commandStation && !m_commandStation->trackVoltageOff)
+    send(NormalOperationResumed());
+}
+
+void XpressNet::trackVoltageOffChanged(bool value)
+{
+  if(!value)
+    send(NormalOperationResumed());
+  else
+    send(TrackPowerOff());
 }
 
 void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
@@ -198,4 +270,32 @@ void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags change
     else
       logWarning("Function F" + std::to_string(functionNumber) + " not supported");
   }
+}
+
+
+std::string to_string(const XpressNet::Message& message, bool raw)
+{
+  std::string s;
+
+  switch(message.identification())
+  {
+    default:
+      raw = true;
+      break;
+  }
+
+  if(raw)
+  {
+    s.append("[");
+    const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&message);
+    for(int i = 0; i < message.size(); i++)
+    {
+      if(i != 0)
+        s.append(" ");
+      s.append(to_hex(bytes[i]));
+    }
+    s.append("]");
+  }
+
+  return s;
 }

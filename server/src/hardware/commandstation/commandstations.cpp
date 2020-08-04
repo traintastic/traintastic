@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/commandstation/create.cpp
+ * server/src/hardware/commandstation/commandstations.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -21,21 +21,21 @@
  */
 
 #include "commandstations.hpp"
-#include "li10x.hpp"
 #include "loconetserial.hpp"
 #ifndef DISABLE_USB_XPRESSNET_INTERFACE
   #include "usbxpressnetinterface.hpp"
 #endif
+#include "xpressnetserial.hpp"
 #include "rocoz21.hpp"
 
 const std::vector<std::string_view>& CommandStations::classList()
 {
   static std::vector<std::string_view> list({
-    LI10x::classId,
     LocoNetSerial::classId,
 #ifndef DISABLE_USB_XPRESSNET_INTERFACE
     USBXpressNetInterface::classId,
 #endif
+    XpressNetSerial::classId,
     RocoZ21::classId,
   });
   return list;
@@ -43,14 +43,14 @@ const std::vector<std::string_view>& CommandStations::classList()
 
 std::shared_ptr<CommandStation> CommandStations::create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id)
 {
-  if(classId == LI10x::classId)
-    return LI10x::create(world, id);
-  else if(classId == LocoNetSerial::classId)
+  if(classId == LocoNetSerial::classId)
     return LocoNetSerial::create(world, id);
 #ifndef DISABLE_USB_XPRESSNET_INTERFACE
   else if(classId == USBXpressNetInterface::classId)
     return USBXpressNetInterface::create(world, id);
 #endif
+  else if(classId == XpressNetSerial::classId)
+    return XpressNetSerial::create(world, id);
   else if(classId == RocoZ21::classId)
     return RocoZ21::create(world, id);
   else

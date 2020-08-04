@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/commandstation/li10x.hpp
+ * server/src/hardware/commandstation/serialcommandstation.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,45 +20,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_COMMANDSTATION_LI10X_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_COMMANDSTATION_LI10X_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_COMMANDSTATION_SERIALCOMMANDSTATION_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_COMMANDSTATION_SERIALCOMMANDSTATION_HPP
 
 #include "commandstation.hpp"
-#include "../protocol/xpressnet.hpp"
+#include "../../enum/serialflowcontrol.hpp"
 #include <boost/asio/serial_port.hpp>
-//#include "../../core/objectproperty.hpp"
-//#include "protocol/xpressnet.hpp"
 
-class LI10x : public CommandStation
+class SerialCommandStation : public CommandStation
 {
   protected:
     boost::asio::serial_port m_serialPort;
-    std::array<uint8_t, 32> m_readBuffer;
-    std::unique_ptr<uint8_t[]> m_readMessage;
-    uint8_t m_readMessageTodo;
-    uint8_t m_readMessagePos;
+    std::array<uint8_t, 1024> m_readBuffer;
+    uint16_t m_readBufferOffset;
 
     bool setOnline(bool& value) final;
-    void emergencyStopChanged(bool value) final;
-    void trackVoltageOffChanged(bool value) final;
-    void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     bool start();
     void stop();
-    bool send(const XpressNet::Message& msg);
-    void receive(std::unique_ptr<uint8_t[]> message);
-    void read();
+    virtual void read() = 0;
 
   public:
-    CLASS_ID("command_station.li10x")
-    CREATE(LI10x)
-
     Property<std::string> port;
     Property<uint32_t> baudrate;
-    //Property<bool> useCTS;
-    ObjectProperty<XpressNet> xpressnet;
+    Property<SerialFlowControl> flowControl;
 
-    LI10x(const std::weak_ptr<World>& world, std::string_view _id);
+    SerialCommandStation(const std::weak_ptr<World>& world, std::string_view _id);
 };
 
 #endif

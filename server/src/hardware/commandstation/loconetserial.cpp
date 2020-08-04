@@ -26,10 +26,7 @@
 #include "../../core/eventloop.hpp"
 
 LocoNetSerial::LocoNetSerial(const std::weak_ptr<World>& world, std::string_view _id) :
-  CommandStation(world, _id),
-  m_serialPort{Traintastic::instance->ioContext()},
-  m_readBufferOffset{0},
-  port{this, "port", "/dev/ttyUSB0", PropertyFlags::ReadWrite | PropertyFlags::Store},
+  SerialCommandStation(world, _id),
   interface{this, "interface", LocoNetSerialInterface::Custom, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](LocoNetSerialInterface value)
     {
@@ -49,33 +46,17 @@ LocoNetSerial::LocoNetSerial(const std::weak_ptr<World>& world, std::string_view
           break;
       }
     }},
-  baudrate{this, "baudrate", 19200, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](uint32_t)
-    {
-      interface = LocoNetSerialInterface::Custom;
-    }},
-  flowControl{this, "flow_control", SerialFlowControl::None, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](SerialFlowControl)
-    {
-      interface = LocoNetSerialInterface::Custom;
-    }},
   loconet{this, "loconet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "LocoNet (serial)";
   loconet.setValueInternal(std::make_shared<LocoNet::LocoNet>(*this, loconet.name(), std::bind(&LocoNetSerial::send, this, std::placeholders::_1)));
 
-  port.addAttributeEnabled(!online);
   interface.addAttributeEnabled(!online);
-  baudrate.addAttributeEnabled(!online);
-  flowControl.addAttributeEnabled(!online);
 
-  m_interfaceItems.insertBefore(port, notes);
-  m_interfaceItems.insertBefore(interface, notes);
-  m_interfaceItems.insertBefore(baudrate, notes);
-  m_interfaceItems.insertBefore(flowControl, notes);
+  m_interfaceItems.insertBefore(interface, baudrate);
   m_interfaceItems.insertBefore(loconet, notes);
 }
-
+/*
 bool LocoNetSerial::setOnline(bool& value)
 {
   if(!m_serialPort.is_open() && value)
@@ -94,7 +75,7 @@ bool LocoNetSerial::setOnline(bool& value)
     stop();
 
   return true;
-}
+}*/
 
 void LocoNetSerial::emergencyStopChanged(bool value)
 {
@@ -118,39 +99,6 @@ void LocoNetSerial::decoderChanged(const Decoder& decoder, DecoderChangeFlags ch
 
   if(online)
     loconet->decoderChanged(decoder, changes, functionNumber);
-}
-
-bool LocoNetSerial::start()
-{
-  boost::system::error_code ec;
-  m_serialPort.open(port, ec);
-  if(ec)
-  {
-    logError("open: " + ec.message());
-    return false;
-  }
-
-  m_serialPort.set_option(boost::asio::serial_port_base::baud_rate(baudrate));
-  m_serialPort.set_option(boost::asio::serial_port_base::character_size(8));
-  m_serialPort.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
-  m_serialPort.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
-  switch(flowControl)
-  {
-    case SerialFlowControl::None:
-      m_serialPort.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none));
-      break;
-
-    case SerialFlowControl::Hardware:
-      m_serialPort.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::hardware));
-      break;
-  }
-  return true;
-}
-
-void LocoNetSerial::stop()
-{
-  // TODO: send power off cmd??
-  m_serialPort.close();
 }
 
 bool LocoNetSerial::send(const LocoNet::Message& message)

@@ -90,7 +90,7 @@ class LocoNet : public SubObject
         }
     };
 
-    CommandStation* m_commandStation; // valid if parent is command station, else nullptr
+    CommandStation* const m_commandStation; // valid if parent is command station, else nullptr
     std::function<bool(const Message&)> m_send;
     std::atomic_bool m_debugLog;
     Slots m_slots;
