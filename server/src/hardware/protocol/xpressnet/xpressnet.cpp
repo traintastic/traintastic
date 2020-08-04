@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/xpressnet.cpp
+ * server/src/hardware/protocol/xpressnet/xpressnet.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -21,31 +21,11 @@
  */
 
 #include "xpressnet.hpp"
-#include "../../core/traintastic.hpp"
-#include "../../core/eventloop.hpp"
-#include "../decoder/decoder.hpp"
-#include "../../utils/to_hex.hpp"
+#include "../../../core/traintastic.hpp"
+#include "../../../core/eventloop.hpp"
+#include "../../decoder/decoder.hpp"
 
-uint8_t XpressNet::calcChecksum(const void* msg)
-{
-  assert(msg);
-  return calcChecksum(*reinterpret_cast<const Message*>(msg));
-}
-
-uint8_t XpressNet::calcChecksum(const Message& msg)
-{
-  const uint8_t* p = reinterpret_cast<const uint8_t*>(&msg);
-  const int dataSize = msg.dataSize();
-  uint8_t checksum = p[0];
-  for(int i = 1; i <= dataSize; i++)
-    checksum ^= p[i];
-  return checksum;
-}
-
-bool XpressNet::isChecksumValid(const Message& msg)
-{
-  return calcChecksum(msg) == *(reinterpret_cast<const uint8_t*>(&msg) + msg.dataSize() + 1);
-}
+namespace XpressNet {
 
 XpressNet::XpressNet(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send) :
   SubObject(_parent, parentPropertyName),
@@ -272,30 +252,4 @@ void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags change
   }
 }
 
-
-std::string to_string(const XpressNet::Message& message, bool raw)
-{
-  std::string s;
-
-  switch(message.identification())
-  {
-    default:
-      raw = true;
-      break;
-  }
-
-  if(raw)
-  {
-    s.append("[");
-    const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&message);
-    for(int i = 0; i < message.size(); i++)
-    {
-      if(i != 0)
-        s.append(" ");
-      s.append(to_hex(bytes[i]));
-    }
-    s.append("]");
-  }
-
-  return s;
 }

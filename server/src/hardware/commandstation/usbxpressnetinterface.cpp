@@ -30,7 +30,7 @@ USBXpressNetInterface::USBXpressNetInterface(const std::weak_ptr<World>& world, 
   xpressnet{this, "xpressnet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "USB XpressNet interface";
-  xpressnet.setValueInternal(std::make_shared<XpressNet>(*this, xpressnet.name(), std::bind(&USBXpressNetInterface::send, this, std::placeholders::_1)));
+  xpressnet.setValueInternal(std::make_shared<XpressNet::XpressNet>(*this, xpressnet.name(), std::bind(&USBXpressNetInterface::send, this, std::placeholders::_1)));
 
   m_interfaceItems.insertBefore(serial, notes);
   m_interfaceItems.insertBefore(address, notes);

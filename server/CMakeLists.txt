@@ -37,6 +37,8 @@ file(GLOB SOURCES
   "src/hardware/protocol/*.cpp"
   "src/hardware/protocol/loconet/*.hpp"
   "src/hardware/protocol/loconet/*.cpp"
+  "src/hardware/protocol/xpressnet/*.hpp"
+  "src/hardware/protocol/xpressnet/*.cpp"
   "src/train/*.hpp"
   "src/train/*.cpp"
   "src/vehicle/*.hpp"

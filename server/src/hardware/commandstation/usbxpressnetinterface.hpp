@@ -24,7 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_COMMANDSTATION_USBXPRESSNETINTERFACE_HPP
 
 #include "commandstation.hpp"
-#include "../protocol/xpressnet.hpp"
+#include "../protocol/xpressnet/xpressnet.hpp"
 #include <usbxpressnet.h>
 
 class USBXpressNetInterface : public CommandStation
@@ -48,7 +48,7 @@ class USBXpressNetInterface : public CommandStation
 
     Property<std::string> serial;
     Property<uint8_t> address;
-    ObjectProperty<::XpressNet> xpressnet;
+    ObjectProperty<XpressNet::XpressNet> xpressnet;
 
     USBXpressNetInterface(const std::weak_ptr<World>& world, std::string_view _id);
     ~USBXpressNetInterface() final;

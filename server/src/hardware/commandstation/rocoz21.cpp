@@ -25,8 +25,7 @@
 #include "../../world/world.hpp"
 #include "../../core/eventloop.hpp"
 #include "../decoder/decoderchangeflags.hpp"
-#include "../protocol/xpressnet.hpp"
-
+#include "../protocol/xpressnet/messages.hpp"
 #include "../protocol/z21.hpp"
 #include "../../utils/to_hex.hpp"
 
@@ -201,7 +200,7 @@ void RocoZ21::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes,
     if(decoder.direction.value() == Direction::Forward)
       cmd.speedAndDirection |= 0x80;
 
-    cmd.checksum = XpressNet::calcChecksum(&cmd.xheader);
+    cmd.checksum = XpressNet::calcChecksum(*reinterpret_cast<const XpressNet::Message*>(&cmd.xheader));
     send(&cmd);
   }
   else if(has(changes, DecoderChangeFlags::FunctionValue))
@@ -215,7 +214,7 @@ void RocoZ21::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes,
         cmd.header = Z21_LAN_X;
         SET_ADDRESS;
         cmd.db3 = (f->value ? 0x40 : 0x00) | static_cast<uint8_t>(functionNumber);
-        cmd.checksum = XpressNet::calcChecksum(&cmd.xheader);
+        cmd.checksum = XpressNet::calcChecksum(*reinterpret_cast<const XpressNet::Message*>(&cmd.xheader));
         send(&cmd);
       }
     }

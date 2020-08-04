@@ -55,29 +55,12 @@ XpressNetSerial::XpressNetSerial(const std::weak_ptr<World>& world, std::string_
   xpressnet{this, "xpressnet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "XpressNet (serial)";
-  xpressnet.setValueInternal(std::make_shared<XpressNet>(*this, xpressnet.name(), std::bind(&XpressNetSerial::send, this, std::placeholders::_1)));
+  xpressnet.setValueInternal(std::make_shared<XpressNet::XpressNet>(*this, xpressnet.name(), std::bind(&XpressNetSerial::send, this, std::placeholders::_1)));
 
   m_interfaceItems.insertBefore(interface, baudrate);
   m_interfaceItems.insertBefore(xpressnet, notes);
 }
-/*
-bool XpressNetSerial::setOnline(bool& value)
-{
-  if(!m_serialPort.is_open() && value)
-  {
-    if(!start())
-    {
-      value = false;
-      return false;
-    }
-    read();
-  }
-  else if(m_serialPort.is_open() && !value)
-    stop();
 
-  return true;
-}
-*/
 void XpressNetSerial::emergencyStopChanged(bool value)
 {
   CommandStation::emergencyStopChanged(value);
@@ -101,32 +84,7 @@ void XpressNetSerial::decoderChanged(const Decoder& decoder, DecoderChangeFlags 
   if(online)
     xpressnet->decoderChanged(decoder, changes, functionNumber);
 }
-/*
-bool XpressNetSerial::start()
-{
-  boost::system::error_code ec;
-  m_serialPort.open(port, ec);
-  if(ec)
-  {
-    logError("open: " + ec.message());
-    return false;
-  }
 
-  m_serialPort.set_option(boost::asio::serial_port_base::baud_rate(baudrate));
-  m_serialPort.set_option(boost::asio::serial_port_base::character_size(8));
-  m_serialPort.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
-  m_serialPort.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
-  m_serialPort.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::hardware));
-
-  return true;
-}
-
-void XpressNetSerial::stop()
-{
-  // send bus off cmd
-  m_serialPort.close();
-}
-*/
 bool XpressNetSerial::send(const XpressNet::Message& msg)
 {
   assert(XpressNet::isChecksumValid(msg));
