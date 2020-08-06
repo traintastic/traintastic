@@ -21,6 +21,7 @@
  */
 
 #include "loconetinput.hpp"
+#include "../../core/attributes.hpp"
 
 LocoNetInput::LocoNetInput(const std::weak_ptr<World> world, std::string_view _id) :
   Input(world, _id),
@@ -44,10 +45,10 @@ LocoNetInput::LocoNetInput(const std::weak_ptr<World> world, std::string_view _i
         return false;
     }}
 {
-  m_interfaceItems.add(loconet)
-    .addAttributeEnabled(false);
-  m_interfaceItems.add(address)
-    .addAttributeEnabled(false);
+  Attributes::addEnabled(loconet, false);
+  m_interfaceItems.add(loconet);
+  Attributes::addEnabled(address, false);
+  m_interfaceItems.add(address);
 }
 
 void LocoNetInput::worldEvent(WorldState state, WorldEvent event)

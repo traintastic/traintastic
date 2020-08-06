@@ -45,8 +45,8 @@ class InterfaceItems
 
     InterfaceItem* find(const std::string& name) const;
 
-    InterfaceItem& add(InterfaceItem& item);
-    InterfaceItem& insertBefore(InterfaceItem& item, const InterfaceItem& before);
+    void add(InterfaceItem& item);
+    void insertBefore(InterfaceItem& item, const InterfaceItem& before);
 
     inline InterfaceItem& operator[](const std::string& name) const { return m_items.at(name); }
 };

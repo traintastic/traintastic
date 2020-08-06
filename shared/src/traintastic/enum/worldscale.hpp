@@ -41,4 +41,13 @@ struct EnumName<WorldScale>
   static constexpr char const* value = "world_scale";
 };
 
+ENUM_VALUES(WorldScale, 5,
+{
+  {WorldScale::H0, "h0"},
+  {WorldScale::N, "n"},
+  {WorldScale::TT, "tt"},
+  {WorldScale::Z, "z"},
+  {WorldScale::Custom, "custom"},
+})
+
 #endif

@@ -24,8 +24,30 @@
 #ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_ENUM_HPP
 #define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_ENUM_HPP
 
+#include <frozen/map.h>
+
+#define ENUM_NAME(_type, _name) \
+  template<> \
+  struct EnumName<_type> \
+  { \
+    static constexpr char const* value = _name; \
+  };
+
+#define ENUM_VALUES(_type, _size, ...) \
+  template<> \
+  struct EnumValues<_type> \
+  { \
+    static constexpr frozen::map<_type, const char*, _size> value = { __VA_ARGS__ }; \
+  };
+
 template<typename T>
 struct EnumName
+{
+  static_assert(sizeof(T) != sizeof(T), "template specialization required");
+};
+
+template<typename T>
+struct EnumValues
 {
   static_assert(sizeof(T) != sizeof(T), "template specialization required");
 };

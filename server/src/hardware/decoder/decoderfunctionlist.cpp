@@ -24,6 +24,7 @@
 #include "decoderfunctionlisttablemodel.hpp"
 #include "decoder.hpp"
 #include "../../world/getworld.hpp"
+#include "../../core/attributes.hpp"
 
 DecoderFunctionList::DecoderFunctionList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<DecoderFunction>(_parent, parentPropertyName),
@@ -57,8 +58,8 @@ DecoderFunctionList::DecoderFunctionList(Object& _parent, const std::string& par
   auto world = getWorld(&_parent);
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
 
-  m_interfaceItems.add(add)
-    .addAttributeEnabled(editable);
+  Attributes::addEnabled(add, editable);
+  m_interfaceItems.add(add);
 }
 
 TableModelPtr DecoderFunctionList::getModel()

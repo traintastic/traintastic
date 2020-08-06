@@ -41,4 +41,13 @@ struct EnumName<XpressNetSerialInterface>
   static constexpr char const* value = "xpressnet_serial_interface";
 };
 
+ENUM_VALUES(XpressNetSerialInterface, 5,
+{
+  {XpressNetSerialInterface::Custom, "custom"},
+  {XpressNetSerialInterface::LenzLI100, "lenz_li100"},
+  {XpressNetSerialInterface::LenzLI100F, "lenz_li100f"},
+  {XpressNetSerialInterface::LenzLI101F, "lenz_li101f"},
+  {XpressNetSerialInterface::RoSoftS88XPressNetLI, "rosoft_s88xpressnetli"},
+})
+
 #endif

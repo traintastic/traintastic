@@ -31,7 +31,7 @@
 #include <boost/uuid/uuid.hpp>
 #include <nlohmann/json.hpp>
 #include <traintastic/enum/worldevent.hpp>
-#include <traintastic/enum/worldscale.hpp>
+#include "../enum/worldscale.hpp"
 #include <traintastic/set/worldstate.hpp>
 #include "../clock/clock.hpp"
 #include "../hardware/commandstation/commandstationlist.hpp"

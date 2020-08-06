@@ -31,22 +31,15 @@
 
 inline constexpr std::array<LocoNetSerialInterface, 3> LocoNetSerialInterfaceValues{{
   LocoNetSerialInterface::Custom,
-  LocoNetSerialInterface::DigiKeijsDR5000,
+  LocoNetSerialInterface::DigikeijsDR5000,
   LocoNetSerialInterface::RoSoftLocoNetInterface,
 }};
-
-NLOHMANN_JSON_SERIALIZE_ENUM(LocoNetSerialInterface,
-{
-  {LocoNetSerialInterface::Custom, "custom"},
-  {LocoNetSerialInterface::DigiKeijsDR5000, "digikeijs_dr5000"},
-  {LocoNetSerialInterface::RoSoftLocoNetInterface, "rosoft_loconet_interface"},
-})
 
 #ifndef DISABLE_LUA_SCRIPTING
 LUA_ENUM_VALUES(LocoNetSerialInterface, 3,
 {
   {LocoNetSerialInterface::Custom, "CUSTOM"},
-  {LocoNetSerialInterface::DigiKeijsDR5000, "DIGIKEIJS_DR5000"},
+  {LocoNetSerialInterface::DigikeijsDR5000, "DIGIKEIJS_DR5000"},
   {LocoNetSerialInterface::RoSoftLocoNetInterface, "ROSOFT_LOCONET_INTERFACE"},
 })
 #endif

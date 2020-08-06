@@ -24,6 +24,7 @@
 #include "../../core/traintastic.hpp"
 #include "../../world/world.hpp"
 #include "../../core/eventloop.hpp"
+#include "../../core/attributes.hpp"
 #include "../decoder/decoderchangeflags.hpp"
 #include "../protocol/xpressnet/messages.hpp"
 #include "../protocol/z21.hpp"
@@ -87,41 +88,41 @@ RocoZ21::RocoZ21(const std::weak_ptr<World>& world, std::string_view _id) :
       return false;
     }));
 
-  m_interfaceItems.insertBefore(hostname, notes)
-    .addAttributeEnabled(true);
-  m_interfaceItems.insertBefore(port, notes)
-    .addAttributeEnabled(true);
+  Attributes::addEnabled(hostname, true);
+  m_interfaceItems.insertBefore(hostname, notes);
+  Attributes::addEnabled(port, true);
+  m_interfaceItems.insertBefore(port, notes);
   m_interfaceItems.insertBefore(loconet, notes);
-  m_interfaceItems.insertBefore(serialNumber, notes)
-    .addAttributeCategory(Category::Info);
-  m_interfaceItems.insertBefore(hardwareType, notes)
-    .addAttributeCategory(Category::Info);
-  m_interfaceItems.insertBefore(firmwareVersion, notes)
-    .addAttributeCategory(Category::Info);
-  m_interfaceItems.insertBefore(mainCurrent, notes)
-    .addAttributeCategory(Category::Info);
-  m_interfaceItems.insertBefore(progCurrent, notes)
-    .addAttributeCategory(Category::Info);
-  m_interfaceItems.insertBefore(filteredMainCurrent, notes)
-    .addAttributeCategory(Category::Info);
-  m_interfaceItems.insertBefore(temperature, notes)
-    .addAttributeCategory(Category::Info);
-  m_interfaceItems.insertBefore(supplyVoltage, notes)
-    .addAttributeCategory(Category::Info);
-  m_interfaceItems.insertBefore(vccVoltage, notes)
-    .addAttributeCategory(Category::Info);
-  m_interfaceItems.insertBefore(shortCircuit, notes)
-    .addAttributeCategory(Category::Info);
-  m_interfaceItems.insertBefore(programmingModeActive, notes)
-    .addAttributeCategory(Category::Info);
-  m_interfaceItems.insertBefore(highTemperature, notes)
-    .addAttributeCategory(Category::Info);
-  m_interfaceItems.insertBefore(powerLost, notes)
-    .addAttributeCategory(Category::Info);
-  m_interfaceItems.insertBefore(shortCircutInternal, notes)
-    .addAttributeCategory(Category::Info);
-  m_interfaceItems.insertBefore(shortCircutExternal, notes)
-    .addAttributeCategory(Category::Info);
+  Attributes::addCategory(serialNumber, Category::Info);
+  m_interfaceItems.insertBefore(serialNumber, notes);
+  Attributes::addCategory(hardwareType, Category::Info);
+  m_interfaceItems.insertBefore(hardwareType, notes);
+  Attributes::addCategory(firmwareVersion, Category::Info);
+  m_interfaceItems.insertBefore(firmwareVersion, notes);
+  Attributes::addCategory(mainCurrent, Category::Info);
+  m_interfaceItems.insertBefore(mainCurrent, notes);
+  Attributes::addCategory(progCurrent, Category::Info);
+  m_interfaceItems.insertBefore(progCurrent, notes);
+  Attributes::addCategory(filteredMainCurrent, Category::Info);
+  m_interfaceItems.insertBefore(filteredMainCurrent, notes);
+  Attributes::addCategory(temperature, Category::Info);
+  m_interfaceItems.insertBefore(temperature, notes);
+  Attributes::addCategory(firmwareVersion, Category::Info);
+  m_interfaceItems.insertBefore(supplyVoltage, notes);
+  Attributes::addCategory(vccVoltage, Category::Info);
+  m_interfaceItems.insertBefore(vccVoltage, notes);
+  Attributes::addCategory(firmwareVersion, Category::Info);
+  m_interfaceItems.insertBefore(shortCircuit, notes);
+  Attributes::addCategory(programmingModeActive, Category::Info);
+  m_interfaceItems.insertBefore(programmingModeActive, notes);
+  Attributes::addCategory(highTemperature, Category::Info);
+  m_interfaceItems.insertBefore(highTemperature, notes);
+  Attributes::addCategory(powerLost, Category::Info);
+  m_interfaceItems.insertBefore(powerLost, notes);
+  Attributes::addCategory(shortCircutInternal, Category::Info);
+  m_interfaceItems.insertBefore(shortCircutInternal, notes);
+  Attributes::addCategory(shortCircutExternal, Category::Info);
+  m_interfaceItems.insertBefore(shortCircutExternal, notes);
 }
 
 void RocoZ21::emergencyStopChanged(bool value)

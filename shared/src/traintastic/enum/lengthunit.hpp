@@ -41,4 +41,14 @@ struct EnumName<LengthUnit>
   static constexpr char const* value = "length_unit";
 };
 
+ENUM_VALUES(LengthUnit, 6,
+{
+  {LengthUnit::Meter, "m"},
+  {LengthUnit::CentiMeter, "cm"},
+  {LengthUnit::MilliMeter, "mm"},
+  {LengthUnit::Yard, "yd"},
+  {LengthUnit::Foot, "ft"},
+  {LengthUnit::Inch, "in"},
+})
+
 #endif

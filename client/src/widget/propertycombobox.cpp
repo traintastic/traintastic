@@ -22,21 +22,25 @@
 
 #include "propertycombobox.hpp"
 #include "../network/property.hpp"
+#include "../utils/internalupdateholder.hpp"
+#include "../utils/translateenum.hpp"
 
 PropertyComboBox::PropertyComboBox(Property& property, QWidget* parent) :
   QComboBox(parent),
-  m_property{property}
+  m_property{property},
+  m_internalUpdate{false}
 {
   Q_ASSERT(m_property.type() == ValueType::Enum);
   setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
   setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
-  //setChecked(m_property.toBool());
-  //connect(&m_property, &Property::valueChangedBool,
-  //  [this](bool value)
-  //  {
-  //    InternalUpdateHolder hold(m_internalUpdate);
-  //    setChecked(value);
-  //  });
+
+  connect(&m_property, &Property::valueChangedInt64,
+    [this](qint64 value)
+    {
+      InternalUpdateHolder hold(m_internalUpdate);
+      if(int index = findData(value); index != -1)
+        setCurrentIndex(index);
+    });
   connect(&m_property, &Property::attributeChanged,
     [this](AttributeName name, const QVariant& value)
     {
@@ -50,14 +54,43 @@ PropertyComboBox::PropertyComboBox(Property& property, QWidget* parent) :
           setVisible(value.toBool());
           break;
 
+        case AttributeName::Values:
+          updateValues();
+          break;
+
         default:
           break;
       }
     });
-  //connect(this, &PropertyCheckBox::toggled,
-  //  [this](bool value)
-  //  {
-  //    if(!m_internalUpdate)
-  //      m_property.setValueBool(value);
-  //  });
+  connect(this, static_cast<void(PropertyComboBox::*)(int)>(&PropertyComboBox::currentIndexChanged),
+    [this](int)
+    {
+      if(!m_internalUpdate)
+        if(QVariant v = currentData(); v.canConvert<int>())
+          m_property.setValueInt(v.toInt());
+    });
+
+  updateValues();
+}
+
+void PropertyComboBox::updateValues()
+{
+  Q_ASSERT(m_property.type() == ValueType::Enum);
+
+  QVariant values = m_property.getAttribute(AttributeName::Values, QVariant());
+  if(Q_LIKELY(values.isValid()))
+  {
+    InternalUpdateHolder hold(m_internalUpdate);//QSignalBlocker block(this);
+    clear();
+    if(Q_LIKELY(values.userType() == QMetaType::QVariantList))
+    {
+      for(QVariant& v : values.toList())
+      {
+        const qint64 value = v.toLongLong();
+        addItem(translateEnum(m_property.enumName(), value), value);
+        if(m_property.toInt64() == value)
+          setCurrentIndex(count() - 1);
+      }
+    }
+  }
 }

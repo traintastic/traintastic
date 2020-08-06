@@ -38,6 +38,8 @@ class SerialCommandStation : public CommandStation
 
     bool start();
     void stop();
+
+    virtual void started() {}
     virtual void read() = 0;
 
   public:

@@ -22,6 +22,7 @@
 #include "decoder.hpp"
 #include "decoderchangeflags.hpp"
 #include "../../world/world.hpp"
+#include "../../core/attributes.hpp"
 
 const std::shared_ptr<DecoderFunction> DecoderFunction::null;
 
@@ -41,10 +42,10 @@ DecoderFunction::DecoderFunction(Decoder& decoder, std::string_view _id) :
   auto w = decoder.world().lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
-  m_interfaceItems.add(number)
-    .addAttributeEnabled(editable);
-  m_interfaceItems.add(name)
-    .addAttributeEnabled(editable);
+  Attributes::addEnabled(number, editable);
+  m_interfaceItems.add(number);
+  Attributes::addEnabled(name, editable);
+  m_interfaceItems.add(name);
 }
 
 void DecoderFunction::worldEvent(WorldState state, WorldEvent event)

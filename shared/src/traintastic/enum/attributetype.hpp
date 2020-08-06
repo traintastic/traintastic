@@ -1,9 +1,9 @@
 /**
- * shared/src/enum/commandstationstatus.hpp
+ * shared/src/traintastic/enum/attributetype.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,32 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_COMMANDSTATIONSTATUS_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_COMMANDSTATIONSTATUS_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_ATTRIBUTETYPE_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_ATTRIBUTETYPE_HPP
 
 #include <cstdint>
-#include "enum.hpp"
 
-enum class CommandStationStatus : uint8_t
+enum class AttributeType : uint8_t
 {
-  Offline = 0,
-  Initializing = 1,
-  Online = 2,
-  Error = 255,
+  Value = 1,
+  Values = 2,
 };
-
-template<>
-struct EnumName<CommandStationStatus>
-{
-  static constexpr char const* value = "command_station_status";
-};
-
-ENUM_VALUES(CommandStationStatus, 4,
-{
-  {CommandStationStatus::Offline, "offline"},
-  {CommandStationStatus::Initializing, "initializing"},
-  {CommandStationStatus::Online, "online"},
-  {CommandStationStatus::Error, "error"},
-})
 
 #endif

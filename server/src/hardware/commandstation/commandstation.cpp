@@ -27,6 +27,7 @@
 #include "../../world/world.hpp"
 #include "../decoder/decoder.hpp"
 #include "../decoder/decoderlist.hpp"
+#include "../../core/attributes.hpp"
 
 CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
@@ -59,17 +60,21 @@ CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_vi
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
-  m_interfaceItems.add(name)
-    .addAttributeEnabled(editable);
+  Attributes::addEnabled(name, editable);
+  m_interfaceItems.add(name);
+
   m_interfaceItems.add(online);
-  m_interfaceItems.insertBefore(emergencyStop, notes)
-    .addAttributeEnabled(editable)
-    .addAttributeObjectEditor(false);
-  m_interfaceItems.insertBefore(trackVoltageOff, notes)
-    .addAttributeEnabled(editable)
-    .addAttributeObjectEditor(false);
+
+  Attributes::addObjectEditor(emergencyStop, false);
+  m_interfaceItems.insertBefore(emergencyStop, notes);
+
+  Attributes::addObjectEditor(trackVoltageOff, false);
+  m_interfaceItems.insertBefore(trackVoltageOff, notes);
+
   m_interfaceItems.add(decoders);
+
   m_interfaceItems.add(controllers);
+
   m_interfaceItems.add(notes);
 }
 

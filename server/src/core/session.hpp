@@ -39,6 +39,9 @@ class Session : public std::enable_shared_from_this<Session>
 {
   friend class Client;
 
+  private:
+    static void writeAttribute(Message& message , const AbstractAttribute& attribute);
+
   protected:
     using Handle = uint32_t;
     using Handles = HandleList<Handle, ObjectPtr>;

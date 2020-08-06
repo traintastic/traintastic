@@ -25,6 +25,7 @@
 #include "commandstations.hpp"
 #include "../../world/world.hpp"
 #include "../../world/getworld.hpp"
+#include "../../core/attributes.hpp"
 
 CommandStationList::CommandStationList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<CommandStation>(_parent, parentPropertyName),
@@ -47,11 +48,12 @@ CommandStationList::CommandStationList(Object& _parent, const std::string& paren
   auto world = getWorld(&_parent);
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
 
-  m_interfaceItems.add(add)
-    .addAttributeEnabled(editable);
-  m_interfaceItems.add(remove)
-    .addAttributeEnabled(editable);
-  }
+  Attributes::addEnabled(add, editable);
+  m_interfaceItems.add(add);
+
+  Attributes::addEnabled(remove, editable);
+  m_interfaceItems.add(remove);
+}
 
 TableModelPtr CommandStationList::getModel()
 {

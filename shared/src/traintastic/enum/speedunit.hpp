@@ -38,4 +38,11 @@ struct EnumName<SpeedUnit>
   static constexpr char const* value = "speed_unit";
 };
 
+ENUM_VALUES(SpeedUnit, 3,
+{
+  {SpeedUnit::MeterPerSecond, "mps"},
+  {SpeedUnit::KiloMeterPerHour, "kmph"},
+  {SpeedUnit::MilePerHour, "mph"},
+})
+
 #endif

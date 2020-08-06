@@ -23,6 +23,7 @@
 #include "scriptlist.hpp"
 #include "scriptlisttablemodel.hpp"
 #include "../world/getworld.hpp"
+#include "../core/attributes.hpp"
 
 namespace Lua {
 
@@ -42,8 +43,8 @@ ScriptList::ScriptList(Object& _parent, const std::string& parentPropertyName) :
   auto world = getWorld(&_parent);
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
 
-  m_interfaceItems.add(add)
-    .addAttributeEnabled(editable);
+  Attributes::addEnabled(add, editable);
+  m_interfaceItems.add(add);
 }
 
 TableModelPtr ScriptList::getModel()

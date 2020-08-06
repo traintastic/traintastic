@@ -24,6 +24,7 @@
 #include "../../world/world.hpp"
 #include "../../core/traintastic.hpp"
 #include "../../core/eventloop.hpp"
+#include "../../core/attributes.hpp"
 
 XpressNetSerial::XpressNetSerial(const std::weak_ptr<World>& world, std::string_view _id) :
   SerialCommandStation(world, _id),
@@ -57,6 +58,7 @@ XpressNetSerial::XpressNetSerial(const std::weak_ptr<World>& world, std::string_
   name = "XpressNet (serial)";
   xpressnet.setValueInternal(std::make_shared<XpressNet::XpressNet>(*this, xpressnet.name(), std::bind(&XpressNetSerial::send, this, std::placeholders::_1)));
 
+  Attributes::addValues(interface, XpressNetSerialInterfaceValues);
   m_interfaceItems.insertBefore(interface, baudrate);
   m_interfaceItems.insertBefore(xpressnet, notes);
 }

@@ -29,14 +29,17 @@
 enum class LocoNetSerialInterface : uint16_t
 {
   Custom = 0,
-  DigiKeijsDR5000 = 1,
+  DigikeijsDR5000 = 1,
   RoSoftLocoNetInterface = 2,
 };
 
-template<>
-struct EnumName<LocoNetSerialInterface>
+ENUM_NAME(LocoNetSerialInterface, "loconet_serial_interface")
+
+ENUM_VALUES(LocoNetSerialInterface, 3,
 {
-  static constexpr char const* value = "loconet_serial_interface";
-};
+  {LocoNetSerialInterface::Custom, "custom"},
+  {LocoNetSerialInterface::DigikeijsDR5000, "digikeijs_dr5000"},
+  {LocoNetSerialInterface::RoSoftLocoNetInterface, "rosoft_loconet_interface"},
+})
 
 #endif

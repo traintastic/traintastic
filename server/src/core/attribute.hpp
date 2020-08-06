@@ -23,21 +23,22 @@
 #ifndef TRAINTASTIC_SERVER_CORE_ATTRIBUTE_HPP
 #define TRAINTASTIC_SERVER_CORE_ATTRIBUTE_HPP
 
-#include "abstractattribute.hpp"
+#include "abstractvalueattribute.hpp"
 #include "to.hpp"
 #include "valuetypetraits.hpp"
 
 template<typename T>
-class Attribute : public AbstractAttribute
+class Attribute : public AbstractValueAttribute
 {
   protected:
     T m_value;
 
   public:
     Attribute(InterfaceItem& item, AttributeName name, const T& value) :
-      AbstractAttribute{item, name, value_type_v<T>},
+      AbstractValueAttribute{item, name, value_type_v<T>},
       m_value{value}
     {
+      static_assert(value_type_v<T> != ValueType::Invalid);
     }
 
     bool toBool() const final

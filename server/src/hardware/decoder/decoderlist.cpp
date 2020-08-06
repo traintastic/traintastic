@@ -24,6 +24,7 @@
 #include "decoderlisttablemodel.hpp"
 #include "../commandstation/commandstation.hpp"
 #include "../../world/getworld.hpp"
+#include "../../core/attributes.hpp"
 
 DecoderList::DecoderList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<Decoder>(_parent, parentPropertyName),
@@ -45,8 +46,8 @@ DecoderList::DecoderList(Object& _parent, const std::string& parentPropertyName)
   auto world = getWorld(&_parent);
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
 
-  m_interfaceItems.add(add)
-    .addAttributeEnabled(editable);
+  Attributes::addEnabled(add, editable);
+  m_interfaceItems.add(add);
 }
 
 TableModelPtr DecoderList::getModel()

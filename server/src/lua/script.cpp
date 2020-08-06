@@ -27,6 +27,7 @@
 #include "../world/world.hpp"
 #include "../enum/worldevent.hpp"
 #include "../set/worldstate.hpp"
+#include "../core/attributes.hpp"
 
 namespace Lua {
 
@@ -49,8 +50,8 @@ Script::Script(const std::weak_ptr<World>& world, std::string_view _id) :
 
   m_interfaceItems.add(name);
   m_interfaceItems.add(active);
-  m_interfaceItems.add(code)
-    .addAttributeEnabled(!active && editable);
+  Attributes::addEnabled(code, !active && editable);
+  m_interfaceItems.add(code);
 }
 
 void Script::addToWorld()

@@ -13,6 +13,7 @@ greaterThan(QT_MINOR_VERSION, 11): { # >= 5.12
 
 INCLUDEPATH += \
   ../shared/src \
+  ../server/thirdparty \
   thirdparty
 
 SOURCES += \
@@ -51,7 +52,8 @@ SOURCES += \
     src/network/connection.cpp \
     src/mdiarea.cpp \
     src/network/method.cpp \
-    src/dialog/worldlistdialog.cpp
+    src/dialog/worldlistdialog.cpp \
+    src/utils/translateenum.cpp
 
 HEADERS += \
     src/mainwindow.hpp \
@@ -93,7 +95,9 @@ HEADERS += \
     src/network/connection.hpp \
     src/mdiarea.hpp \
     src/network/method.hpp \
-    src/dialog/worldlistdialog.hpp
+    src/dialog/worldlistdialog.hpp \
+    src/utils/translateenum.hpp \
+    src/utils/internalupdateholder.hpp
 
 RESOURCES += \
     dark.qrc

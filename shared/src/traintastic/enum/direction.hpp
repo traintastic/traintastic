@@ -38,4 +38,10 @@ struct EnumName<Direction>
   static constexpr char const* value = "direction";
 };
 
+ENUM_VALUES(Direction, 2,
+{
+  {Direction::Forward, "forward"},
+  {Direction::Reverse, "reverse"},
+})
+
 #endif

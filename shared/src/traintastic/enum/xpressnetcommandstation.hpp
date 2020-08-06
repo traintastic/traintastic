@@ -30,6 +30,7 @@ enum class XpressNetCommandStation : uint16_t
 {
   Custom = 0,
   Roco10764 = 1,
+  DigikeijsDR5000 = 2,
 };
 
 template<>
@@ -37,5 +38,12 @@ struct EnumName<XpressNetCommandStation>
 {
   static constexpr char const* value = "xpressnet_command_station";
 };
+
+ENUM_VALUES(XpressNetCommandStation, 3,
+{
+  {XpressNetCommandStation::Custom, "custom"},
+  {XpressNetCommandStation::Roco10764, "roco_10764"},
+  {XpressNetCommandStation::DigikeijsDR5000, "digikeijs_dr5000"},
+})
 
 #endif

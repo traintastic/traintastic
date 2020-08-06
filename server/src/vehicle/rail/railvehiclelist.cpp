@@ -23,8 +23,8 @@
 #include "railvehiclelist.hpp"
 #include "railvehiclelisttablemodel.hpp"
 #include "railvehicles.hpp"
-#include "../../world/world.hpp"
 #include "../../world/getworld.hpp"
+#include "../../core/attributes.hpp"
 
 RailVehicleList::RailVehicleList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<RailVehicle>(_parent, parentPropertyName),
@@ -40,8 +40,8 @@ RailVehicleList::RailVehicleList(Object& _parent, const std::string& parentPrope
   auto world = getWorld(&_parent);
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
 
-  m_interfaceItems.add(add)
-    .addAttributeEnabled(editable);
+  Attributes::addEnabled(add, editable);
+  m_interfaceItems.add(add);
 }
 
 TableModelPtr RailVehicleList::getModel()

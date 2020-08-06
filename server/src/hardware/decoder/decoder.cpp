@@ -28,6 +28,7 @@
 #include "decoderfunctionlist.hpp"
 #include "../../world/world.hpp"
 #include "../commandstation/commandstation.hpp"
+#include "../../core/attributes.hpp"
 
 //constexpr uint16_t addressDCCMin = 1;
 constexpr uint16_t addressDCCShortMax = 127;
@@ -103,20 +104,22 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
   //auto w = world.lock();
 //  const bool editable = w && contains(w->state.value(), WorldState::Edit) && speedStep == 0;
 
-  m_interfaceItems.add(name)
-    .addAttributeEnabled(false);
-  m_interfaceItems.add(commandStation)
-    .addAttributeEnabled(false);
-  m_interfaceItems.add(protocol)
-    .addAttributeEnabled(false);
-  m_interfaceItems.add(address)
-    .addAttributeEnabled(false);
-  m_interfaceItems.add(longAddress)
-    .addAttributeEnabled(false);
+  Attributes::addEnabled(name, false);
+  m_interfaceItems.add(name);
+  Attributes::addEnabled(commandStation, false);
+  m_interfaceItems.add(commandStation);
+  Attributes::addEnabled(protocol, false);
+  Attributes::addValues(protocol, DecoderProtocolValues);
+  m_interfaceItems.add(protocol);
+  Attributes::addEnabled(address, false);
+  m_interfaceItems.add(address);
+  Attributes::addEnabled(longAddress, false);
+  m_interfaceItems.add(longAddress);
   m_interfaceItems.add(emergencyStop);
+  Attributes::addValues(direction, DirectionValues);
   m_interfaceItems.add(direction);
-  m_interfaceItems.add(speedSteps)
-    .addAttributeEnabled(false);
+  Attributes::addEnabled(speedSteps, false);
+  m_interfaceItems.add(speedSteps);
   m_interfaceItems.add(speedStep);
   m_interfaceItems.add(functions);
   m_interfaceItems.add(notes);

@@ -32,6 +32,8 @@ hardware.decoder:speed_steps=Snelheid stappen
 hardware.decoder_function:number=Nummer
 hardware.decoder_function:value=Waarde
 
+hardware.decoder_function_list:f_hash=F#
+
 language:de-de=Duits
 language:en-us=Engels (VS)
 language:nl-nl=Nederlands
@@ -53,7 +55,6 @@ qtapp.connect_dialog:server=Server
 qtapp.connect_dialog:username=Gebruikersnaam
 
 qtapp.mainmenu:about=Over
-qtapp.mainmenu:settings=Instellingen
 qtapp.mainmenu:connect_to_server=Verbind met server
 qtapp.mainmenu:disconnect_from_server=Verbreek verbinding met server
 qtapp.mainmenu:export_world=Wereld exporteren
@@ -69,6 +70,7 @@ qtapp.mainmenu:quit=Afsluiten
 qtapp.mainmenu:save_world=Wereld opslaan
 qtapp.mainmenu:server_console=Server console
 qtapp.mainmenu:server_settings=Server instellingen
+qtapp.mainmenu:settings=Instellingen
 qtapp.mainmenu:tools=Extra
 qtapp.mainmenu:view=Beeld
 
@@ -83,10 +85,3 @@ world:lua_scripts=Lua scripts
 world:scale=Schaal
 world:track_power_off=Railspanning uit
 world:track_power_on=Railspanning aan
-
-
-
-
-hardware.decoder_function_list:f_hash=F#
-
-

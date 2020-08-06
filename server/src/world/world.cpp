@@ -28,6 +28,7 @@
 #include "worldsaver.hpp"
 #include "../core/traintastic.hpp"
 #include "../core/objectlisttablemodel.hpp"
+#include "../core/attributes.hpp"
 
 using nlohmann::json;
 
@@ -121,6 +122,7 @@ World::World(Private) :
   m_filename = Traintastic::instance->worldDir() / to_string(m_uuid) / filename;
 
   m_interfaceItems.add(name);
+  Attributes::addValues(scale, WorldScaleValues);
   m_interfaceItems.add(scale);
 
   m_interfaceItems.add(commandStations);

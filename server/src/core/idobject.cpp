@@ -21,7 +21,8 @@
 #include "idobject.hpp"
 #include "traintastic.hpp"
 #include "console.hpp"
-#include "../world/world.hpp"
+#include "../world/getworld.hpp"
+#include "attributes.hpp"
 
 IdObject::IdObject(const std::weak_ptr<World>& world, std::string_view _id) :
   Object{},
@@ -29,7 +30,10 @@ IdObject::IdObject(const std::weak_ptr<World>& world, std::string_view _id) :
   id{this, "id", std::string(_id.data(), _id.size()), PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
     [this](std::string& value)
     {
-      auto& m = Traintastic::instance->world->m_objects;
+      auto w = getWorld(this);
+      if(!w)
+        return false;
+      auto& m = w->m_objects;
       if(m.find(value) != m.end())
         return false;
       auto n = m.extract(id);
@@ -41,8 +45,8 @@ IdObject::IdObject(const std::weak_ptr<World>& world, std::string_view _id) :
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
-  m_interfaceItems.add(id)
-    .addAttributeEnabled(editable);
+  Attributes::addEnabled(id, editable);
+  m_interfaceItems.add(id);
 }
 
 IdObject::~IdObject()

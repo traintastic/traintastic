@@ -27,7 +27,7 @@
 #include <limits>
 #include <stdexcept>
 #include <cmath>
-#include <nlohmann/json.hpp>
+#include "../utils/json.hpp"
 
 class not_writable_error : public std::runtime_error
 {
@@ -101,10 +101,15 @@ To to(const From& value)
   }
   else if constexpr(std::is_same_v<From, nlohmann::json>)
   {
-  //  if constexpr(std::is_same_v<To, bool>)
-      return value;//.get<To>();
+    if constexpr(std::is_enum_v<To>)
+    {
+      To e;
+      from_json(value, e);
+      return e;
+    }
+    else
+      return value;
   }
-
 
   throw conversion_error();
 }

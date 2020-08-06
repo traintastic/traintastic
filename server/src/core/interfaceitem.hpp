@@ -27,12 +27,15 @@
 #include <string>
 #include <memory>
 #include "attribute.hpp"
+#include "arrayattribute.hpp"
 #include <traintastic/enum/category.hpp>
 
 class Object;
 
 class InterfaceItem
 {
+  friend struct Attributes;
+
   public:
     using Attributes = std::unordered_map<AttributeName, std::unique_ptr<AbstractAttribute>>;
 
@@ -42,10 +45,15 @@ class InterfaceItem
     Attributes m_attributes;
 
     template<typename T>
-    InterfaceItem& addAttribute(AttributeName name, const T& value)
+    void addAttribute(AttributeName name, const T& value)
     {
       m_attributes.emplace(name, std::make_unique<Attribute<T>>(*this, name, value));
-      return *this;
+    }
+
+    template<typename T, size_t N>
+    void addAttribute(AttributeName name, const std::array<T, N>& values)
+    {
+      m_attributes.emplace(name, std::make_unique<ArrayAttribute<T, N>>(*this, name, values));
     }
 
     template<typename T>
@@ -79,15 +87,6 @@ class InterfaceItem
     {
       return m_attributes;
     }
-
-    inline InterfaceItem& addAttributeCategory(Category value) { return addAttribute(AttributeName::Category, value); }
-    inline InterfaceItem& addAttributeEnabled(bool value) { return addAttribute(AttributeName::Enabled, value); }
-    inline InterfaceItem& addAttributeVisible(bool value) { return addAttribute(AttributeName::Visible, value); }
-    inline InterfaceItem& addAttributeObjectEditor(bool value) { return addAttribute(AttributeName::ObjectEditor, value); }
-    inline InterfaceItem& addAttributeSubObject(bool value) { return addAttribute(AttributeName::SubObject, value); }
-
-    template<typename T, std::size_t N>
-    inline InterfaceItem& addAttributeValues(const std::array<T, N>& values) { return addAttribute(AttributeName::Values, values); }
 
     inline void setAttributeEnabled(bool value) { setAttribute(AttributeName::Enabled, value); }
 };

@@ -24,7 +24,6 @@
 #define TRAINTASTIC_SERVER_ENUM_XPRESSNETSERIALINTERFACE_HPP
 
 #include <traintastic/enum/xpressnetserialinterface.hpp>
-#include <nlohmann/json.hpp>
 
 inline constexpr std::array<XpressNetSerialInterface, 5> XpressNetSerialInterfaceValues{{
   XpressNetSerialInterface::Custom,
@@ -33,14 +32,5 @@ inline constexpr std::array<XpressNetSerialInterface, 5> XpressNetSerialInterfac
   XpressNetSerialInterface::LenzLI101F,
   XpressNetSerialInterface::RoSoftS88XPressNetLI,
 }};
-
-NLOHMANN_JSON_SERIALIZE_ENUM(XpressNetSerialInterface,
-{
-  {XpressNetSerialInterface::Custom, "custom"},
-  {XpressNetSerialInterface::LenzLI100, "lenz_li100"},
-  {XpressNetSerialInterface::LenzLI100F, "lenz_li100f"},
-  {XpressNetSerialInterface::LenzLI101F, "lenz_li101f"},
-  {XpressNetSerialInterface::RoSoftS88XPressNetLI, "rosoft_s88xpressnetli"},
-})
 
 #endif

@@ -29,12 +29,11 @@
   #include "../lua/enumvalues.hpp"
 #endif
 
-NLOHMANN_JSON_SERIALIZE_ENUM(DecoderProtocol,
-{
-  {DecoderProtocol::Auto, "AUTO"},
-  {DecoderProtocol::DCC, "DCC"},
-  {DecoderProtocol::Custom, "CUSTOM"},
-})
+inline constexpr std::array<DecoderProtocol, 3> DecoderProtocolValues{{
+  DecoderProtocol::Auto,
+  DecoderProtocol::DCC,
+  DecoderProtocol::Custom,
+}};
 
 #ifndef DISABLE_LUA_SCRIPTING
 LUA_ENUM_VALUES(DecoderProtocol, 3,

@@ -24,22 +24,39 @@
 #include "interfaceitem.hpp"
 #include <algorithm>
 
+#ifndef NDEBUG
+#include "abstractproperty.hpp"
+
+static void check(const InterfaceItem& item)
+{
+  if(const AbstractProperty* property = dynamic_cast<const AbstractProperty*>(&item))
+  {
+    if(property->type() == ValueType::Enum)
+      assert(property->attributes().find(AttributeName::Values) != property->attributes().cend()); // enum property must have a Values attribute
+  }
+}
+#endif
+
 InterfaceItem* InterfaceItems::find(const std::string& name) const
 {
   auto it = m_items.find(name);
   return (it != m_items.end()) ? &it->second : nullptr;
 }
 
-InterfaceItem& InterfaceItems::add(InterfaceItem& item)
+void InterfaceItems::add(InterfaceItem& item)
 {
+#ifndef NDEBUG
+  check(item);
+#endif
   m_items.emplace(item.name(), item);
   m_itemOrder.push_back(item.name());
-  return item;
 }
 
-InterfaceItem& InterfaceItems::insertBefore(InterfaceItem& item, const InterfaceItem& before)
+void InterfaceItems::insertBefore(InterfaceItem& item, const InterfaceItem& before)
 {
+#ifndef NDEBUG
+  check(item);
+#endif
   m_items.emplace(item.name(), item);
   m_itemOrder.insert(std::find(m_itemOrder.begin(), m_itemOrder.end(), before.name()), item.name());
-  return item;
 }

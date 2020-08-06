@@ -24,6 +24,7 @@
 #include "../../../core/traintastic.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../decoder/decoder.hpp"
+#include "../../../core/attributes.hpp"
 
 namespace XpressNet {
 
@@ -42,21 +43,28 @@ XpressNet::XpressNet(Object& _parent, const std::string& parentPropertyName, std
 
         case XpressNetCommandStation::Roco10764:
           useEmergencyStopLocomotiveCommand.setValueInternal(false);
-          useFunctionStateCommands.setValueInternal(false);
+          //useFunctionStateCommands.setValueInternal(false);
+          useRocoF13F20Command.setValueInternal(true);
+          break;
+
+        case XpressNetCommandStation::DigikeijsDR5000:
+          useEmergencyStopLocomotiveCommand.setValueInternal(false); // ?????
+          //useFunctionStateCommands.setValueInternal(false);
           useRocoF13F20Command.setValueInternal(true);
           break;
       }
+      // TODO: updateEnabled();
     }},
   useEmergencyStopLocomotiveCommand{this, "use_emergency_stop_locomotive_command", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](bool)
     {
       commandStation = XpressNetCommandStation::Custom;
     }},
-  useFunctionStateCommands{this, "use_function_state_commands", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](bool)
-    {
-      commandStation = XpressNetCommandStation::Custom;
-    }},
+  //useFunctionStateCommands{this, "use_function_state_commands", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
+  //  [this](bool)
+  //  {
+  //    commandStation = XpressNetCommandStation::Custom;
+  //  }},
   useRocoF13F20Command{this, "use_roco_f13_f20_command", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](bool)
     {
@@ -68,14 +76,15 @@ XpressNet::XpressNet(Object& _parent, const std::string& parentPropertyName, std
       m_debugLog = value;
     }}
 {
-  m_interfaceItems.add(commandStation)
-    .addAttributeEnabled(false);
-  m_interfaceItems.add(useEmergencyStopLocomotiveCommand)
-    .addAttributeEnabled(false);
-  m_interfaceItems.add(useFunctionStateCommands)
-    .addAttributeEnabled(false);
-  m_interfaceItems.add(useRocoF13F20Command)
-    .addAttributeEnabled(false);
+  Attributes::addEnabled(commandStation, false);
+  Attributes::addValues(commandStation, XpressNetCommandStationValues);
+  m_interfaceItems.add(commandStation);
+  Attributes::addEnabled(useEmergencyStopLocomotiveCommand, false);
+  m_interfaceItems.add(useEmergencyStopLocomotiveCommand);
+  //Attributes::addEnabled(useFunctionStateCommands, false);
+  //m_interfaceItems.add(useFunctionStateCommands);
+  Attributes::addEnabled(useRocoF13F20Command, false);
+  m_interfaceItems.add(useRocoF13F20Command);
 }
 
 void XpressNet::worldEvent(WorldState state, WorldEvent event)
@@ -86,7 +95,7 @@ void XpressNet::worldEvent(WorldState state, WorldEvent event)
 
   commandStation.setAttributeEnabled(editable);
   useEmergencyStopLocomotiveCommand.setAttributeEnabled(editable);
-  useFunctionStateCommands.setAttributeEnabled(editable);
+  //useFunctionStateCommands.setAttributeEnabled(editable);
   useRocoF13F20Command.setAttributeEnabled(editable);
 }
 

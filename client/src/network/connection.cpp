@@ -31,6 +31,7 @@
 #include "method.hpp"
 #include "tablemodel.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
+#include <traintastic/enum/attributetype.hpp>
 #include <traintastic/locale/locale.hpp>
 //#include <enum/valuetype.hpp>
 //#include <enum/propertyflags.hpp>
@@ -371,35 +372,87 @@ ObjectPtr Connection::readObject(const Message& message)
         {
           message.readBlock(); // item
           const AttributeName attributeName = message.read<AttributeName>();
-          QVariant value;
-          switch(message.read<ValueType>())
+          const ValueType type = message.read<ValueType>();
+
+          switch(message.read<AttributeType>())
           {
-            case ValueType::Boolean:
-              value = message.read<bool>();
-              break;
+            case AttributeType::Value:
+            {
+              QVariant value;
+              switch(type)
+              {
+                case ValueType::Boolean:
+                  value = message.read<bool>();
+                  break;
 
-            case ValueType::Enum:
-            case ValueType::Integer:
-              value = message.read<qint64>();
-              break;
+                case ValueType::Enum:
+                case ValueType::Integer:
+                  value = message.read<qint64>();
+                  break;
 
-            case ValueType::Float:
-              value = message.read<double>();
-              break;
+                case ValueType::Float:
+                  value = message.read<double>();
+                  break;
 
-            case ValueType::String:
-              value = QString::fromUtf8(message.read<QByteArray>());
-              break;
+                case ValueType::String:
+                  value = QString::fromUtf8(message.read<QByteArray>());
+                  break;
 
-            case ValueType::Object:
-            case ValueType::Invalid:
+                case ValueType::Object:
+                case ValueType::Invalid:
+                default:
+                  Q_ASSERT(false);
+                  break;
+              }
+              if(Q_LIKELY(value.isValid()))
+                item->m_attributes[attributeName] = value;
+              break;
+            }
+            case AttributeType::Values:
+            {
+              const int length = message.read<int>(); // read uint32_t as int, Qt uses int for length
+              QList<QVariant> values;
+              switch(type)
+              {
+                case ValueType::Boolean:
+                {
+                  for(int i = 0; i < length; i++)
+                    values.append(message.read<bool>());
+                  break;
+                }
+                case ValueType::Enum:
+                case ValueType::Integer:
+                {
+                  for(int i = 0; i < length; i++)
+                    values.append(message.read<qint64>());
+                  break;
+                }
+                case ValueType::Float:
+                {
+                  for(int i = 0; i < length; i++)
+                    values.append(message.read<double>());
+                  break;
+                }
+                case ValueType::String:
+                {
+                  for(int i = 0; i < length; i++)
+                    values.append(QString::fromUtf8(message.read<QByteArray>()));
+                  break;
+                }
+                case ValueType::Object:
+                case ValueType::Invalid:
+                default:
+                  Q_ASSERT(false);
+                  break;
+              }
+              if(Q_LIKELY(values.length() == length))
+                item->m_attributes[attributeName] = values;
+              break;
+            }
+
+            default:
               Q_ASSERT(false);
-              break;
           }
-
-          if(Q_LIKELY(value.isValid()))
-            item->m_attributes[attributeName] = value;
-
           message.readBlockEnd(); // end attribute
         }
         message.readBlockEnd(); // end attributes

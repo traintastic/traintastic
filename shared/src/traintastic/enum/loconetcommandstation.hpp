@@ -25,18 +25,22 @@
 
 #include <cstdint>
 #include "enum.hpp"
+#include <frozen/map.h>
 
 enum class LocoNetCommandStation : uint16_t
 {
   Custom = 0,
   UhlenbrockIntellibox = 1,
-  DigiKeijsDR5000 = 2,
+  DigikeijsDR5000 = 2,
 };
 
-template<>
-struct EnumName<LocoNetCommandStation>
+ENUM_NAME(LocoNetCommandStation, "loconet_command_station")
+
+ENUM_VALUES(LocoNetCommandStation, 3,
 {
-  static constexpr char const* value = "loconet_command_station";
-};
+  {LocoNetCommandStation::Custom, "custom"},
+  {LocoNetCommandStation::UhlenbrockIntellibox, "uhlenbrock_intellibox"},
+  {LocoNetCommandStation::DigikeijsDR5000, "digikeijs_dr5000"},
+})
 
 #endif

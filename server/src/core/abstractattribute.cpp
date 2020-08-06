@@ -24,10 +24,10 @@
 #include "interfaceitem.hpp"
 #include "object.hpp"
 
-AbstractAttribute::AbstractAttribute(InterfaceItem& item, AttributeName name, ValueType type) :
-  m_item{item},
-  m_name{name},
-  m_type{type}
+AbstractAttribute::AbstractAttribute(InterfaceItem& _item, AttributeName _name, ValueType _type) :
+  m_item{_item},
+  m_name{_name},
+  m_type{_type}
 {
 }
 

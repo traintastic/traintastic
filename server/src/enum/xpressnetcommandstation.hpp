@@ -24,18 +24,15 @@
 #define TRAINTASTIC_SERVER_ENUM_XPRESSNETCOMMANDSTATION_HPP
 
 #include <traintastic/enum/xpressnetcommandstation.hpp>
-#include <nlohmann/json.hpp>
 #ifndef DISABLE_LUA_SCRIPTING
   #include "../lua/enumvalues.hpp"
 #endif
 
-inline constexpr std::array<XpressNetCommandStation, 2> XpressNetCommandStationValues{{XpressNetCommandStation::Custom, XpressNetCommandStation::Roco10764}};
-
-NLOHMANN_JSON_SERIALIZE_ENUM(XpressNetCommandStation,
-{
-  {XpressNetCommandStation::Custom, "custom"},
-  {XpressNetCommandStation::Roco10764, "roco_10764"},
-})
+inline constexpr std::array<XpressNetCommandStation, 3> XpressNetCommandStationValues{{
+  XpressNetCommandStation::Custom,
+  XpressNetCommandStation::Roco10764,
+  XpressNetCommandStation::DigikeijsDR5000,
+}};
 
 #ifndef DISABLE_LUA_SCRIPTING
 LUA_ENUM_VALUES(XpressNetCommandStation, 2,

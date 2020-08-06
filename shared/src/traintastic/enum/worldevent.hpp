@@ -43,4 +43,15 @@ struct EnumName<WorldEvent>
   static constexpr char const* value = "world_event";
 };
 
+ENUM_VALUES(WorldEvent, 7,
+{
+  {WorldEvent::Stop, "stop"},
+  {WorldEvent::Run, "run"},
+  {WorldEvent::EditDisabled, "edit_disabled"},
+  {WorldEvent::EditEnabled, "edit_enabled"},
+  {WorldEvent::TrackPowerOff, "track_power_off"},
+  {WorldEvent::TrackPowerOn, "track_power_on"},
+  {WorldEvent::EmergencyStop, "emergency_stop"},
+})
+
 #endif

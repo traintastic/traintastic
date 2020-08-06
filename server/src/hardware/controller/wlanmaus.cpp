@@ -27,6 +27,7 @@
 #include "../decoder/decoder.hpp"
 #include "../protocol/z21.hpp"
 #include "../../utils/to_hex.hpp"
+#include "../../core/attributes.hpp"
 
 WLANmaus::WLANmaus(const std::weak_ptr<World> world, std::string_view _id) :
   Controller(world, _id),
@@ -34,8 +35,8 @@ WLANmaus::WLANmaus(const std::weak_ptr<World> world, std::string_view _id) :
   m_blockLocoInfo{nullptr},
   port{this, "port", 21105, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
-  m_interfaceItems.add(port)
-    .addAttributeEnabled(!active);
+  Attributes::addEnabled(port, !active);
+  m_interfaceItems.add(port);
 }
 
 bool WLANmaus::setActive(bool& value)

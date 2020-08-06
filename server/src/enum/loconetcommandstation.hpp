@@ -31,23 +31,16 @@
 
 inline constexpr std::array<LocoNetCommandStation, 3> LocoNetCommandStationValues{{
   LocoNetCommandStation::Custom,
-  LocoNetCommandStation::DigiKeijsDR5000,
+  LocoNetCommandStation::DigikeijsDR5000,
   LocoNetCommandStation::UhlenbrockIntellibox,
 }};
-
-NLOHMANN_JSON_SERIALIZE_ENUM(LocoNetCommandStation,
-{
-  {LocoNetCommandStation::Custom, "custom"},
-  {LocoNetCommandStation::UhlenbrockIntellibox, "uhlenbrock_intellibox"},
-  {LocoNetCommandStation::DigiKeijsDR5000, "digikeijs_dr5000"},
-})
 
 #ifndef DISABLE_LUA_SCRIPTING
 LUA_ENUM_VALUES(LocoNetCommandStation, 3,
 {
   {LocoNetCommandStation::Custom, "CUSTOM"},
   {LocoNetCommandStation::UhlenbrockIntellibox, "UHLENBROCK_INTELLIBOX"},
-  {LocoNetCommandStation::DigiKeijsDR5000, "DIGIKEIJS_DR5000"},
+  {LocoNetCommandStation::DigikeijsDR5000, "DIGIKEIJS_DR5000"},
 })
 #endif
 

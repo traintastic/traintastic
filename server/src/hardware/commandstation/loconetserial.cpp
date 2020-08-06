@@ -21,9 +21,9 @@
  */
 
 #include "loconetserial.hpp"
-//#include "../../world/world.hpp"
 #include "../../core/traintastic.hpp"
 #include "../../core/eventloop.hpp"
+#include "../../core/attributes.hpp"
 
 LocoNetSerial::LocoNetSerial(const std::weak_ptr<World>& world, std::string_view _id) :
   SerialCommandStation(world, _id),
@@ -35,7 +35,7 @@ LocoNetSerial::LocoNetSerial(const std::weak_ptr<World>& world, std::string_view
         case LocoNetSerialInterface::Custom:
           break;
 
-        case LocoNetSerialInterface::DigiKeijsDR5000:
+        case LocoNetSerialInterface::DigikeijsDR5000:
           baudrate = 115200;
           flowControl = SerialFlowControl::Hardware;
           break;
@@ -51,31 +51,11 @@ LocoNetSerial::LocoNetSerial(const std::weak_ptr<World>& world, std::string_view
   name = "LocoNet (serial)";
   loconet.setValueInternal(std::make_shared<LocoNet::LocoNet>(*this, loconet.name(), std::bind(&LocoNetSerial::send, this, std::placeholders::_1)));
 
-  interface.addAttributeEnabled(!online);
-
+  Attributes::addEnabled(interface, !online);
+  Attributes::addValues(interface, LocoNetSerialInterfaceValues);
   m_interfaceItems.insertBefore(interface, baudrate);
   m_interfaceItems.insertBefore(loconet, notes);
 }
-/*
-bool LocoNetSerial::setOnline(bool& value)
-{
-  if(!m_serialPort.is_open() && value)
-  {
-    if(!start())
-    {
-      value = false;
-      return false;
-    }
-    m_readBufferOffset = 0;
-    read();
-
-    loconet->queryLocoSlots();
-  }
-  else if(m_serialPort.is_open() && !value)
-    stop();
-
-  return true;
-}*/
 
 void LocoNetSerial::emergencyStopChanged(bool value)
 {
@@ -113,6 +93,11 @@ bool LocoNetSerial::send(const LocoNet::Message& message)
     return false;
   }
   return true;
+}
+
+void LocoNetSerial::started()
+{
+  loconet->queryLocoSlots();
 }
 
 void LocoNetSerial::read()

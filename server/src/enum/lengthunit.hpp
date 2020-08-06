@@ -24,16 +24,6 @@
 #define TRAINTASTIC_SERVER_ENUM_LENGTHUNIT_HPP
 
 #include <traintastic/enum/lengthunit.hpp>
-#include <nlohmann/json.hpp>
-
-NLOHMANN_JSON_SERIALIZE_ENUM(LengthUnit,
-{
-  {LengthUnit::Meter, "m"},
-  {LengthUnit::CentiMeter, "cm"},
-  {LengthUnit::MilliMeter, "mm"},
-  {LengthUnit::Yard, "yd"},
-  {LengthUnit::Foot, "ft"},
-  {LengthUnit::Inch, "in"},
-})
+//#include <nlohmann/json.hpp>
 
 #endif

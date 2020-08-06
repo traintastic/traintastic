@@ -26,8 +26,10 @@
 #include "traintastic.hpp"
 #include "client.hpp"
 #include "abstractproperty.hpp"
-#include "abstractattribute.hpp"
+#include "abstractvalueattribute.hpp"
+#include "abstractvaluesattribute.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
+#include <traintastic/enum/attributetype.hpp>
 #include "tablemodel.hpp"
 #include "../world/world.hpp"
 #include "idobject.hpp"
@@ -434,31 +436,7 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
       {
         const AbstractAttribute& attribute = *it.second;
         message.writeBlock(); // attribute
-        message.write(attribute.name());
-        message.write(attribute.type());
-        switch(attribute.type())
-        {
-          case ValueType::Boolean:
-            message.write(attribute.toBool());
-            break;
-
-          case ValueType::Enum:
-          case ValueType::Integer:
-            message.write(attribute.toInt64());
-            break;
-
-          case ValueType::Float:
-            message.write(attribute.toDouble());
-            break;
-
-          case ValueType::String:
-            message.write(attribute.toString());
-            break;
-
-          default:
-            assert(false);
-            break;
-        }
+        writeAttribute(message, attribute);
         message.writeBlockEnd(); // end attribute
       }
 
@@ -547,6 +525,8 @@ void Session::objectAttributeChanged(AbstractAttribute& attribute)
   auto event = Message::newEvent(Message::Command::ObjectAttributeChanged);
   event->write(m_handles.getHandle(attribute.item().object().shared_from_this()));
   event->write(attribute.item().name());
+  writeAttribute(*event, attribute);
+  /*
   event->write(attribute.name());
   event->write(attribute.type());
   switch(attribute.type())
@@ -568,5 +548,74 @@ void Session::objectAttributeChanged(AbstractAttribute& attribute)
       //event->write(attribute.toString());
       break;
   }
+  */
   m_client->sendMessage(std::move(event));
+}
+
+void Session::writeAttribute(Message& message , const AbstractAttribute& attribute)
+{
+  message.write(attribute.name());
+  message.write(attribute.type());
+  if(const AbstractValueAttribute* valueAttribute = dynamic_cast<const AbstractValueAttribute*>(&attribute))
+  {
+    message.write(AttributeType::Value);
+    switch(attribute.type())
+    {
+      case ValueType::Boolean:
+        message.write(valueAttribute->toBool());
+        break;
+
+      case ValueType::Enum:
+      case ValueType::Integer:
+        message.write(valueAttribute->toInt64());
+        break;
+
+      case ValueType::Float:
+        message.write(valueAttribute->toDouble());
+        break;
+
+      case ValueType::String:
+        message.write(valueAttribute->toString());
+        break;
+
+      default:
+        assert(false);
+        break;
+    }
+  }
+  else if(const AbstractValuesAttribute* valuesAttributes = dynamic_cast<const AbstractValuesAttribute*>(&attribute))
+  {
+    const uint32_t length = valuesAttributes->length();
+    message.write(AttributeType::Values);
+    message.write(length);
+    switch(attribute.type())
+    {
+      case ValueType::Boolean:
+        for(uint32_t i = 0; i < length; i++)
+          message.write(valuesAttributes->getBool(i));
+        break;
+
+      case ValueType::Enum:
+      case ValueType::Integer:
+        for(uint32_t i = 0; i < length; i++)
+          message.write(valuesAttributes->getInt64(i));
+        break;
+
+      case ValueType::Float:
+        for(uint32_t i = 0; i < length; i++)
+          message.write(valuesAttributes->getDouble(i));
+        break;
+
+      case ValueType::String:
+        for(uint32_t i = 0; i < length; i++)
+          message.write(valuesAttributes->getString(i));
+        break;
+
+      default:
+        assert(false);
+        break;
+    }
+  }
+  else
+    assert(false);
 }

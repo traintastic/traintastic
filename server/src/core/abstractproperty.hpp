@@ -28,7 +28,7 @@
 #include <traintastic/enum/propertyflags.hpp>
 #include "objectptr.hpp"
 #include <cassert>
-#include <nlohmann/json.hpp>
+#include "../utils/json.hpp"
 
 class AbstractProperty : public InterfaceItem
 {

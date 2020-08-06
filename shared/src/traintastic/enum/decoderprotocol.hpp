@@ -30,10 +30,10 @@ enum class DecoderProtocol : uint8_t
 {
   Auto = 0,
   DCC = 1,
-  Motorola = 2,
-  MFX = 3,
-  Selectrix = 4,
-  FMZ = 5,
+  //Motorola = 2,
+  //MFX = 3,
+  //Selectrix = 4,
+  //FMZ = 5,
   Custom = 255,
 };
 
@@ -42,5 +42,12 @@ struct EnumName<DecoderProtocol>
 {
   static constexpr char const* value = "decoder_protocol";
 };
+
+ENUM_VALUES(DecoderProtocol, 3,
+{
+  {DecoderProtocol::Auto, "AUTO"},
+  {DecoderProtocol::DCC, "DCC"},
+  {DecoderProtocol::Custom, "CUSTOM"},
+})
 
 #endif

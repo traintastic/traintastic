@@ -31,16 +31,12 @@ template<typename T>
 class VectorAttribute : public AbstractAttribute
 {
   protected:
-    std::vector<T> m_value;
+    std::vector<T> m_values;
 
   public:
-
-
-//dsjfnkjdnvjkdnkvjf
-
-    Attribute(InterfaceItem& item, AttributeName name, const T& value) :
+    VectorAttribute(InterfaceItem& item, AttributeName name, const T& values) :
       AbstractAttribute{item, name, value_type_v<T>},
-      m_value{value}
+      m_value{values}
     {
     }
 

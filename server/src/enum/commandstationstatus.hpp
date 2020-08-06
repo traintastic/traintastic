@@ -29,14 +29,6 @@
   #include "../lua/enumvalues.hpp"
 #endif
 
-NLOHMANN_JSON_SERIALIZE_ENUM(CommandStationStatus,
-{
-  {CommandStationStatus::Offline, "offline"},
-  {CommandStationStatus::Initializing, "initializing"},
-  {CommandStationStatus::Online, "online"},
-  {CommandStationStatus::Error, "error"},
-})
-
 #ifndef DISABLE_LUA_SCRIPTING
 LUA_ENUM_VALUES(CommandStationStatus, 4,
 {

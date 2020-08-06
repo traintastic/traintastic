@@ -165,7 +165,7 @@ class UnitProperty : public AbstractProperty//InterfaceItem
     void load(const nlohmann::json& value) final
     {
       m_value = to<T>(value["value"]);
-      m_unit = value["unit"];
+      from_json(value["unit"], m_unit);
     }
 
     void load(const ObjectPtr& value) final

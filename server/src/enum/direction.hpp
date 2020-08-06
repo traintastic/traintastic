@@ -29,11 +29,11 @@
   #include "../lua/enumvalues.hpp"
 #endif
 
-NLOHMANN_JSON_SERIALIZE_ENUM(Direction,
-{
-  {Direction::Forward, "forward"},
-  {Direction::Reverse, "reverse"},
-})
+inline constexpr std::array<Direction, 2> DirectionValues{{
+  Direction::Forward,
+  Direction::Reverse,
+}};
+
 
 #ifndef DISABLE_LUA_SCRIPTING
 LUA_ENUM_VALUES(Direction, 2,

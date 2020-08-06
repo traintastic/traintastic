@@ -34,12 +34,6 @@ inline constexpr std::array<SerialFlowControl, 2> SerialFlowControlValues{{
   SerialFlowControl::Hardware,
 }};
 
-NLOHMANN_JSON_SERIALIZE_ENUM(SerialFlowControl,
-{
-  {SerialFlowControl::None, "none"},
-  {SerialFlowControl::Hardware, "hardware"},
-})
-
 #ifndef DISABLE_LUA_SCRIPTING
 LUA_ENUM_VALUES(SerialFlowControl, 2,
 {

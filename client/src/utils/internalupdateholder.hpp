@@ -1,9 +1,9 @@
 /**
- * shared/src/enum/commandstationstatus.hpp
+ * client/src/utils/internalupdateholder.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,32 +20,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_COMMANDSTATIONSTATUS_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_COMMANDSTATIONSTATUS_HPP
+#ifndef TRAINTASTIC_CLIENT_UTILS_INTERNALUPDATEHOLDER_HPP
+#define TRAINTASTIC_CLIENT_UTILS_INTERNALUPDATEHOLDER_HPP
 
-#include <cstdint>
-#include "enum.hpp"
-
-enum class CommandStationStatus : uint8_t
+class InternalUpdateHolder
 {
-  Offline = 0,
-  Initializing = 1,
-  Online = 2,
-  Error = 255,
+  private:
+    bool& m_value;
+
+  public:
+    inline InternalUpdateHolder(bool& value) :
+      m_value{value}
+    {
+      Q_ASSERT(!m_value);
+      m_value = true;
+    }
+
+    inline ~InternalUpdateHolder()
+    {
+      Q_ASSERT(m_value);
+      m_value = false;
+    }
 };
-
-template<>
-struct EnumName<CommandStationStatus>
-{
-  static constexpr char const* value = "command_station_status";
-};
-
-ENUM_VALUES(CommandStationStatus, 4,
-{
-  {CommandStationStatus::Offline, "offline"},
-  {CommandStationStatus::Initializing, "initializing"},
-  {CommandStationStatus::Online, "online"},
-  {CommandStationStatus::Error, "error"},
-})
 
 #endif

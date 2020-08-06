@@ -26,8 +26,6 @@
 #include "serialcommandstation.hpp"
 #include "../protocol/loconet/loconet.hpp"
 #include "../../enum/loconetserialinterface.hpp"
-//#include "../../enum/serialflowcontrol.hpp"
-//#include <boost/asio/serial_port.hpp>
 
 class LocoNetSerial : public SerialCommandStation
 {
@@ -39,6 +37,7 @@ class LocoNetSerial : public SerialCommandStation
     bool start();
     void stop();
     bool send(const LocoNet::Message& msg);
+    void started() final;
     void read() final;
 
   public:

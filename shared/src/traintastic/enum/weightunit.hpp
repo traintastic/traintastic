@@ -39,4 +39,12 @@ struct EnumName<WeightUnit>
   static constexpr char const* value = "weight_unit";
 };
 
+ENUM_VALUES(WeightUnit, 4,
+{
+  {WeightUnit::KiloGram, "kg"},
+  {WeightUnit::Ton, "ton"},
+  {WeightUnit::ShortTons, "short_tons"},
+  {WeightUnit::LongTons, "long_tons"},
+})
+
 #endif

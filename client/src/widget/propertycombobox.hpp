@@ -29,8 +29,13 @@ class Property;
 
 class PropertyComboBox : public QComboBox
 {
+  Q_OBJECT
+
   protected:
     Property& m_property;
+    bool m_internalUpdate;
+
+    void updateValues();
 
   public:
     PropertyComboBox(Property& property, QWidget* parent = nullptr);

@@ -22,26 +22,7 @@
 
 #include "propertycheckbox.hpp"
 #include "../network/property.hpp"
-
-class InternalUpdateHolder
-{
-  private:
-    bool& m_value;
-
-  public:
-    inline InternalUpdateHolder(bool& value) :
-      m_value{value}
-    {
-      Q_ASSERT(!m_value);
-      m_value = true;
-    }
-
-    inline ~InternalUpdateHolder()
-    {
-      Q_ASSERT(m_value);
-      m_value = false;
-    }
-};
+#include "../utils/internalupdateholder.hpp"
 
 PropertyCheckBox::PropertyCheckBox(Property& property, QWidget* parent) :
   QCheckBox(parent),

@@ -50,7 +50,7 @@ class XpressNet : public SubObject
 
     Property<XpressNetCommandStation> commandStation;
     Property<bool> useEmergencyStopLocomotiveCommand;
-    Property<bool> useFunctionStateCommands;
+    //Property<bool> useFunctionStateCommands;
     Property<bool> useRocoF13F20Command;
     Property<bool> debugLog;
 

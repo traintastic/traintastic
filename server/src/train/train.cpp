@@ -23,6 +23,7 @@
 #include "train.hpp"
 #include "../world/world.hpp"
 #include "trainlisttablemodel.hpp"
+#include "../core/attributes.hpp"
 
 Train::Train(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
@@ -37,13 +38,14 @@ Train::Train(const std::weak_ptr<World>& world, std::string_view _id) :
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
-  m_interfaceItems.add(name)
-    .addAttributeEnabled(editable);
+  Attributes::addEnabled(name, editable);
+  m_interfaceItems.add(name);
   m_interfaceItems.add(lob);
+  Attributes::addValues(direction, DirectionValues);
   m_interfaceItems.add(direction);
   m_interfaceItems.add(speed);
-  m_interfaceItems.add(speedMax)
-    .addAttributeEnabled(editable);
+  Attributes::addEnabled(speedMax, editable);
+  m_interfaceItems.add(speedMax);
   m_interfaceItems.add(throttleSpeed);
   m_interfaceItems.add(weight);
 }

@@ -24,7 +24,20 @@ WeightProperty
 - decoder2
 
 
+# train
+- trothlle speed
+- weight simulation: 0=off, 1=real, 2=half
 
+# netwerk
+enum als string over netwerk?? nummers zijn dan alleen intern, niet in json/netwerk
+
+# controller usb xpressnet interface
+- allow estop
+- allow power off
+- mode:
+  - direct: multimaus decoder addr == decoder addr
+  - virtual decoder: multimaus decoder addr = assigend decoder addr
+  - virtual maus: multimaus addr = assigend decoder addr
 
 
 # task thread

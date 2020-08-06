@@ -23,6 +23,7 @@
 #include "serialcommandstation.hpp"
 #include "../../core/traintastic.hpp"
 #include "../../core/eventloop.hpp"
+#include "../../core/attributes.hpp"
 
 SerialCommandStation::SerialCommandStation(const std::weak_ptr<World>& world, std::string_view _id) :
   CommandStation(world, _id),
@@ -40,12 +41,12 @@ SerialCommandStation::SerialCommandStation(const std::weak_ptr<World>& world, st
       //interface = LocoNetSerialInterface::Custom;
     }}
 {
-  port.addAttributeEnabled(!online);
-  baudrate.addAttributeEnabled(!online);
-  flowControl.addAttributeEnabled(!online);
-
+  Attributes::addEnabled(port, !online);
   m_interfaceItems.insertBefore(port, notes);
+  Attributes::addEnabled(baudrate, !online);
   m_interfaceItems.insertBefore(baudrate, notes);
+  Attributes::addEnabled(flowControl, !online);
+  Attributes::addValues(flowControl, SerialFlowControlValues);
   m_interfaceItems.insertBefore(flowControl, notes);
 }
 
@@ -60,8 +61,6 @@ bool SerialCommandStation::setOnline(bool& value)
     }
     m_readBufferOffset = 0;
     read();
-
-    //loconet->queryLocoSlots();
   }
   else if(m_serialPort.is_open() && !value)
     stop();

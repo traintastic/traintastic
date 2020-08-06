@@ -27,6 +27,7 @@
 #include "../../../core/traintastic.hpp"
 #include "../../commandstation/commandstation.hpp"
 #include "../../input/loconetinput.hpp"
+#include "../../../core/attributes.hpp"
 
 namespace LocoNet {
 
@@ -44,9 +45,9 @@ LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::fu
   SubObject(_parent, parentPropertyName),
   m_commandStation{dynamic_cast<CommandStation*>(&_parent)},
   m_send{std::move(send)},
-  m_debugLog{true/*false*/},
+  m_debugLog{false},
   m_queryLocoSlots{SLOT_UNKNOWN},
-  commandStation{this, "command_station", LocoNetCommandStation::Custom, PropertyFlags::ReadWrite,
+  commandStation{this, "command_station", LocoNetCommandStation::Custom, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](LocoNetCommandStation value)
     {
       switch(value)
@@ -54,7 +55,7 @@ LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::fu
         case LocoNetCommandStation::Custom:
           break;
 
-        case LocoNetCommandStation::DigiKeijsDR5000:
+        case LocoNetCommandStation::DigikeijsDR5000:
           break;
 
         case LocoNetCommandStation::UhlenbrockIntellibox:
@@ -69,8 +70,9 @@ LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::fu
 {
   assert(m_send);
 
-  m_interfaceItems.add(commandStation)
-    .addAttributeEnabled(false);
+  Attributes::addEnabled(commandStation, m_commandStation && !m_commandStation->online);
+  Attributes::addValues(commandStation, LocoNetCommandStationValues);
+  m_interfaceItems.add(commandStation);
   m_interfaceItems.add(debugLog);
 }
 
