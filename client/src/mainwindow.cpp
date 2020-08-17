@@ -231,7 +231,8 @@ MainWindow::MainWindow(QWidget* parent) :
 
 MainWindow::~MainWindow()
 {
-  m_mdiArea->closeAllSubWindows(); // cleanup windows first, else destroyed lambda will be executed -> SIGSEGV
+  for(QMdiSubWindow* window : m_mdiSubWindows)
+    disconnect(window, &QMdiSubWindow::destroyed, nullptr, nullptr);
 }
 
 void MainWindow::connectToServer()
