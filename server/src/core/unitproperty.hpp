@@ -132,8 +132,8 @@ class UnitProperty : public AbstractProperty//InterfaceItem
     nlohmann::json toJSON() const final
     {
       nlohmann::json v;
-      v["value"] = m_value;
-      v["unit"] = m_unit;
+      v["value"] = to<nlohmann::json>(m_value);
+      v["unit"] = to<nlohmann::json>(m_unit);
       return v;//{"value" = m_value, "unit" = m_unit};
     }
 

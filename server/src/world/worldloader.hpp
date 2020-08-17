@@ -26,9 +26,9 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include <nlohmann/json.hpp>
 #include "../core/stdfilesystem.hpp"
 #include "../core/objectptr.hpp"
+#include "../utils/json.hpp"
 
 class Object;
 class World;

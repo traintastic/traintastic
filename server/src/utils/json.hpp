@@ -28,9 +28,9 @@
 #include <traintastic/set/set.hpp>
 
 template<typename BasicJsonType, typename EnumType>
-inline void to_json(const BasicJsonType& j, const EnumType& e, typename std::enable_if_t<std::is_enum_v<EnumType> && !is_set_v<EnumType>>* = nullptr)
+inline void to_json(BasicJsonType& j, EnumType e, typename std::enable_if_t<std::is_enum_v<EnumType> && !is_set_v<EnumType>>* = nullptr)
 {
-  e = EnumValues<EnumType>::value.at(e);
+  j = EnumValues<EnumType>::value.at(e);
 }
 
 template<typename BasicJsonType, typename EnumType>
@@ -46,7 +46,7 @@ inline void from_json(const BasicJsonType& j, EnumType& e, typename std::enable_
 }
 
 template<typename BasicJsonType, typename EnumType>
-inline void to_json(const BasicJsonType& j, const EnumType& e, typename std::enable_if_t<is_set_v<EnumType>>* = nullptr)
+inline void to_json(BasicJsonType& j, const EnumType& e, typename std::enable_if_t<is_set_v<EnumType>>* = nullptr)
 {
   assert(false);
 }

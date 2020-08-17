@@ -36,8 +36,8 @@ WorldSaver::WorldSaver(const World& world)
 
   json data;
   data["uuid"] = to_string(world.m_uuid);
-  data[world.name.name()] = world.name.value();
-  data[world.scale.name()] = world.scale.value();
+  data[world.name.name()] = world.name.toJSON();
+  data[world.scale.name()] = world.scale.toJSON();
   data["objects"] = objects;
 
   std::filesystem::path dir = std::filesystem::path(world.m_filename).remove_filename();

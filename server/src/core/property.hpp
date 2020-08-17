@@ -160,7 +160,7 @@ class Property : public AbstractProperty
 
     nlohmann::json toJSON() const final
     {
-      return m_value;
+      return to<nlohmann::json>(m_value);
     }
 
     void fromBool(bool value) final
@@ -191,30 +191,6 @@ class Property : public AbstractProperty
     void load(const nlohmann::json& value) final
     {
       m_value = to<T>(value);
-    /*
-      switch(value.type())
-      {
-        case nlohmann::json::value_t::boolean:
-          fromBool(value);
-          break;
-
-        case nlohmann::json::value_t::number_integer:
-        case nlohmann::json::value_t::number_unsigned:
-          fromInt64(value);
-          break;
-
-        case nlohmann::json::value_t::number_float:
-          fromDouble(value);
-          break;
-
-        case nlohmann::json::value_t::string:
-          fromString(value);
-          break;
-
-        default:
-          throw std::runtime_error("unsupported JSON type");
-      }
-      */
     }
 
     void load(const ObjectPtr& value) final

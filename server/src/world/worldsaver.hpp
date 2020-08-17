@@ -23,8 +23,8 @@
 #ifndef TRAINTASTIC_SERVER_WORLD_WORLDSAVER_HPP
 #define TRAINTASTIC_SERVER_WORLD_WORLDSAVER_HPP
 
-#include <nlohmann/json.hpp>
 #include "../core/objectptr.hpp"
+#include "../utils/json.hpp"
 
 class World;
 

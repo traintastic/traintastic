@@ -22,7 +22,6 @@
 
 #include "worldlist.hpp"
 #include <fstream>
-#include <nlohmann/json.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include "../core/traintastic.hpp"
 #include "worldlisttablemodel.hpp"

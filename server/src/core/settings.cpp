@@ -22,7 +22,6 @@
 
 #include "settings.hpp"
 #include <fstream>
-#include <nlohmann/json.hpp>
 #include "traintastic.hpp"
 
 using nlohmann::json;

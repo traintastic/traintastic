@@ -110,6 +110,17 @@ To to(const From& value)
     else
       return value;
   }
+  else if constexpr(std::is_same_v<To, nlohmann::json>)
+  {
+    if constexpr(std::is_enum_v<From>)
+    {
+      To json;
+      to_json(json, value);
+      return json;
+    }
+    else
+      return value;
+  }
 
   throw conversion_error();
 }

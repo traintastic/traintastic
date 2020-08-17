@@ -29,7 +29,6 @@
 #include "../core/stdfilesystem.hpp"
 #include <unordered_map>
 #include <boost/uuid/uuid.hpp>
-#include <nlohmann/json.hpp>
 #include <traintastic/enum/worldevent.hpp>
 #include "../enum/worldscale.hpp"
 #include <traintastic/set/worldstate.hpp>
