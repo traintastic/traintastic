@@ -26,6 +26,8 @@
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <traintastic/codename.hpp>
+#include <traintastic/utils/str.hpp>
 #include "eventloop.hpp"
 #include "settings.hpp"
 #include "client.hpp"
@@ -76,6 +78,8 @@ Traintastic::~Traintastic()
 
 bool Traintastic::run()
 {
+  console->info(id, "v" STR(VERSION) " " TRAINTASTIC_CODENAME);
+
   settings = std::make_shared<Settings>(m_dataDir / "settings.json");
   worldList = std::make_shared<WorldList>(m_dataDir / "world");
 

@@ -60,13 +60,14 @@ void Object::push(lua_State* L, const ObjectPtr& value)
 {
   if(value)
   {
-    lua_rawgetp(L, LUA_REGISTRYINDEX, metaTableName);
+    lua_getglobal(L, metaTableName);
     lua_rawgetp(L, -1, value.get());
-    if(lua_isnil(L, -1))
+    if(lua_isnil(L, -1)) // object not in table
     {
+      lua_pop(L, 1); // remove nil
       *static_cast<ObjectPtrWeak**>(lua_newuserdata(L, sizeof(ObjectPtrWeak*))) = new ObjectPtrWeak(value);
       luaL_setmetatable(L, metaTableName);
-      lua_pushvalue(L, -1); // copy ud
+      lua_pushvalue(L, -1); // copy userdata on stack
       lua_rawsetp(L, -3, value.get()); // add object to table
     }
     lua_insert(L, lua_gettop(L) - 1); // swap table and userdata
@@ -78,7 +79,7 @@ void Object::push(lua_State* L, const ObjectPtr& value)
 
 void Object::registerType(lua_State* L)
 {
-  // meata rable for object userdata:
+  // metatable for object userdata:
   luaL_newmetatable(L, metaTableName);
   lua_pushcfunction(L, __gc);
   lua_setfield(L, -2, "__gc");
@@ -95,7 +96,7 @@ void Object::registerType(lua_State* L)
   lua_pushliteral(L, "v");
   lua_rawset(L, -3);
   lua_setmetatable(L, -2);
-  lua_rawsetp(L, LUA_REGISTRYINDEX, metaTableName);
+  lua_setglobal(L, metaTableName);
 }
 
 int Object::__gc(lua_State* L)

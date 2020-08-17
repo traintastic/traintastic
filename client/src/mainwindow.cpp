@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@
 #include <QSplitter>
 #include "mdiarea.hpp"
 #include "dialog/connectdialog.hpp"
+#include "dialog/settingsdialog.hpp"
 #include "dialog/worldlistdialog.hpp"
 #include "network/connection.hpp"
 #include "network/object.hpp"
@@ -131,7 +132,12 @@ MainWindow::MainWindow(QWidget* parent) :
     m_actionLuaScript = m_menuObjects->addAction(QIcon(":/dark/lua.svg"), Locale::tr("world:lua_scripts") + "...", [this](){ showObject("world.lua_scripts", Locale::tr("world:lua_scripts")); });
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:tools"));
-    menu->addAction(Locale::tr("qtapp.mainmenu:settings") + "...")->setEnabled(false);
+    menu->addAction(Locale::tr("qtapp.mainmenu:settings") + "...",
+      [this]()
+      {
+        std::unique_ptr<SettingsDialog> d = std::make_unique<SettingsDialog>(this);
+        d->exec();
+      });
     menu->addSeparator();
     m_actionServerSettings = menu->addAction(Locale::tr("qtapp.mainmenu:server_settings") + "...", this, [this](){ showObject("traintastic.settings", Locale::tr("qtapp.mainmenu:server_settings")); });
     m_actionServerConsole = menu->addAction(Locale::tr("qtapp.mainmenu:server_console") + "...", this, &MainWindow::toggleConsole);//[this](){ showObject("traintastic.console"); });
@@ -225,6 +231,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
 MainWindow::~MainWindow()
 {
+  m_mdiArea->closeAllSubWindows(); // cleanup windows first, else destroyed lambda will be executed -> SIGSEGV
 }
 
 void MainWindow::connectToServer()
@@ -440,7 +447,11 @@ void MainWindow::showObject(const QString& id, const QString& title)
     m_mdiSubWindows[id] = window;
     m_mdiArea->addSubWindow(window);
     window->setAttribute(Qt::WA_DeleteOnClose);
-    connect(window, &QMdiSubWindow::destroyed, [this, id](QObject*){ m_mdiSubWindows.remove(id); });
+    connect(window, &QMdiSubWindow::destroyed,
+      [this, id](QObject*)
+      {
+        m_mdiSubWindows.remove(id);
+      });
     window->show();
   }
   else

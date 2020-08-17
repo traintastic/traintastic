@@ -24,6 +24,8 @@
 #define TRAINTASTIC_SERVER_LUA_SCRIPT_HPP
 
 #include "../core/idobject.hpp"
+#include "../core/method.hpp"
+#include "../enum/luascriptstate.hpp"
 #include "sandbox.hpp"
 
 namespace Lua {
@@ -36,8 +38,11 @@ class Script : public IdObject
     void addToWorld() final;
     void worldEvent(WorldState state, WorldEvent event) final;
 
-    void init();
-    void fini();
+    void updateEnabled();
+    void setState(LuaScriptState value);
+
+    void startSandbox();
+    void stopSandbox();
     bool pcall(lua_State* L, int nargs = 0, int nresults = 0);
 
   public:
@@ -47,8 +52,11 @@ class Script : public IdObject
     Script(const std::weak_ptr<World>& world, std::string_view _id);
 
     Property<std::string> name;
-    Property<bool> active;
+    Property<LuaScriptState> state;
     Property<std::string> code;
+    Property<std::string> error;
+    ::Method<void()> start;
+    ::Method<void()> stop;
 };
 
 }

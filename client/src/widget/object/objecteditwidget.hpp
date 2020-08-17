@@ -1,5 +1,5 @@
 /**
- * server/src/enum/enum.hpp
+ * client/src/widget/objecteditwidget.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,16 +20,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_ENUM_ENUM_HPP
-#define TRAINTASTIC_SERVER_ENUM_ENUM_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_OBJECT_OBJECTEDITWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_OBJECT_OBJECTEDITWIDGET_HPP
 
-template<typename T>
-struct is_enum
+#include "abstracteditwidget.hpp"
+
+class ObjectEditWidget : public AbstractEditWidget
 {
-  static constexpr bool value = false;
-};
+  Q_OBJECT
 
-template<typename T>
-inline constexpr bool is_enum_v = is_enum<T>::value;
+  protected:
+    void buildForm() final;
+
+  public:
+    explicit ObjectEditWidget(const ObjectPtr& object, QWidget* parent = nullptr);
+    explicit ObjectEditWidget(const QString& id, QWidget* parent = nullptr);
+};
 
 #endif

@@ -24,21 +24,5 @@
 #define TRAINTASTIC_SERVER_ENUM_WORLDEVENT_HPP
 
 #include <traintastic/enum/worldevent.hpp>
-#ifndef DISABLE_LUA_SCRIPTING
-  #include "../lua/enumvalues.hpp"
-#endif
-
-#ifndef DISABLE_LUA_SCRIPTING
-LUA_ENUM_VALUES(WorldEvent, 7,
-{
-  {WorldEvent::Stop, "STOP"},
-  {WorldEvent::Run, "RUN"},
-  {WorldEvent::EditDisabled, "EDIT_DISABLED"},
-  {WorldEvent::EditEnabled, "EDIT_ENABLED"},
-  {WorldEvent::TrackPowerOff, "TRACK_POWER_OFF"},
-  {WorldEvent::TrackPowerOn, "TRACK_POWER_ON"},
-  {WorldEvent::EmergencyStop, "EMERGENCY_STOP"},
-})
-#endif
 
 #endif

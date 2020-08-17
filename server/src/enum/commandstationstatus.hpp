@@ -23,20 +23,6 @@
 #ifndef TRAINTASTIC_SERVER_ENUM_COMMANDSTATIONSTATUS_HPP
 #define TRAINTASTIC_SERVER_ENUM_COMMANDSTATIONSTATUS_HPP
 
-#include <nlohmann/json.hpp>
 #include <traintastic/enum/commandstationstatus.hpp>
-#ifndef DISABLE_LUA_SCRIPTING
-  #include "../lua/enumvalues.hpp"
-#endif
-
-#ifndef DISABLE_LUA_SCRIPTING
-LUA_ENUM_VALUES(CommandStationStatus, 4,
-{
-  {CommandStationStatus::Offline, "OFFLINE"},
-  {CommandStationStatus::Initializing, "INITIALIZING"},
-  {CommandStationStatus::Online, "ONLINE"},
-  {CommandStationStatus::Error, "ERROR"},
-})
-#endif
 
 #endif

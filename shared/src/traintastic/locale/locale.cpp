@@ -28,11 +28,12 @@
 
 const Locale* Locale::instance = nullptr;
 
-Locale::Locale(std::string_view filename, Locale* fallback) :
-  m_fallback{fallback}
+Locale::Locale(std::string _filename, Locale* fallback) :
+  m_fallback{fallback},
+  filename{std::move(_filename)}
 {
   // read file into string:
-  std::ifstream file{std::string(filename), std::ios::binary | std::ios::ate};
+  std::ifstream file{filename, std::ios::binary | std::ios::ate};
   if(file.is_open())
   {
     auto size = file.tellg();

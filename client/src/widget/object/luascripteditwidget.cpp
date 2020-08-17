@@ -1,0 +1,112 @@
+/**
+ * client/src/widget/object/luascripteditwidget.cpp
+ *
+ * This file is part of the traintastic source code.
+ *
+ * Copyright (C) 2019-2020 Reinder Feenstra
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+#include "luascripteditwidget.hpp"
+#include <QFormLayout>
+#include <QToolBar>
+#include <QPlainTextEdit>
+#include <traintastic/locale/locale.hpp>
+#include "../../network/object.hpp"
+#include "../../network/property.hpp"
+#include "../../network/method.hpp"
+#include "../propertylineedit.hpp"
+#include "../propertyluacodeedit.hpp"
+#include "../../utils/geticonforclassid.hpp"
+
+LuaScriptEditWidget::LuaScriptEditWidget(const ObjectPtr& object, QWidget* parent) :
+  AbstractEditWidget(object, parent),
+  m_propertyState{nullptr},
+  m_methodStart{nullptr},
+  m_methodStop{nullptr},
+  m_start{nullptr},
+  m_stop{nullptr}
+{
+  buildForm();
+}
+
+LuaScriptEditWidget::LuaScriptEditWidget(const QString& id, QWidget* parent) :
+  AbstractEditWidget(id, parent),
+  m_propertyState{nullptr},
+  m_methodStart{nullptr},
+  m_methodStop{nullptr},
+  m_start{nullptr},
+  m_stop{nullptr}
+{
+}
+
+void LuaScriptEditWidget::buildForm()
+{
+  setIdAsWindowTitle();
+  setWindowIcon(getIconForClassId(m_object->classId()));
+
+  m_propertyState = dynamic_cast<Property*>(m_object->getProperty("state"));
+  m_methodStart = m_object->getMethod("start");
+  m_methodStop = m_object->getMethod("stop");
+
+  if(Q_UNLIKELY(!m_propertyState || !m_methodStart || !m_methodStop))
+    return;
+
+  QVBoxLayout* l = new QVBoxLayout();
+
+  QFormLayout* form = new QFormLayout();
+
+  for(const QString& name : {"id", "name"})
+    if(Property* property = dynamic_cast<Property*>(m_object->getProperty(name)))
+      form->addRow(property->displayName(), new PropertyLineEdit(*property, this));
+
+  QToolBar* toolbar = new QToolBar(this);
+  m_start = toolbar->addAction(QIcon(":/dark/run.svg"), m_methodStart->displayName(),
+    [this]()
+    {
+      m_methodStart->call();
+    });
+  m_start->setEnabled(m_methodStart->getAttributeBool(AttributeName::Enabled, true));
+  connect(m_methodStart, &Method::attributeChanged,
+    [this](AttributeName name, const QVariant& value)
+    {
+      if(name == AttributeName::Enabled)
+        m_start->setEnabled(value.toBool());
+    });
+
+  m_stop = toolbar->addAction(QIcon(":/dark/stop.svg"), m_methodStop->displayName(),
+    [this]()
+    {
+      m_methodStop->call();
+    });
+  m_stop->setEnabled(m_methodStop->getAttributeBool(AttributeName::Enabled, true));
+  connect(m_methodStop, &Method::attributeChanged,
+    [this](AttributeName name, const QVariant& value)
+    {
+      if(name == AttributeName::Enabled)
+        m_stop->setEnabled(value.toBool());
+    });
+
+  toolbar->addSeparator();
+  l->addLayout(form);
+
+  l->addWidget(toolbar);
+
+  if(Property* property = dynamic_cast<Property*>(m_object->getProperty("code")))
+    l->addWidget(new PropertyLuaCodeEdit(*property, this));
+
+  setLayout(l);
+}

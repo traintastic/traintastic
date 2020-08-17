@@ -23,25 +23,12 @@
 #ifndef TRAINTASTIC_SERVER_ENUM_DECODERPROTOCOL_HPP
 #define TRAINTASTIC_SERVER_ENUM_DECODERPROTOCOL_HPP
 
-#include <nlohmann/json.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
-#ifndef DISABLE_LUA_SCRIPTING
-  #include "../lua/enumvalues.hpp"
-#endif
 
 inline constexpr std::array<DecoderProtocol, 3> DecoderProtocolValues{{
   DecoderProtocol::Auto,
   DecoderProtocol::DCC,
   DecoderProtocol::Custom,
 }};
-
-#ifndef DISABLE_LUA_SCRIPTING
-LUA_ENUM_VALUES(DecoderProtocol, 3,
-{
-  {DecoderProtocol::Auto, "AUTO"},
-  {DecoderProtocol::DCC, "DCC"},
-  {DecoderProtocol::Custom, "CUSTOM"},
-})
-#endif
 
 #endif

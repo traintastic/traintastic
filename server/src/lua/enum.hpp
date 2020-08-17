@@ -27,15 +27,15 @@
 #include <string_view>
 #include <traintastic/enum/enum.hpp>
 #include <lua.hpp>
-#include "enumvalues.hpp"
 #include "readonlytable.hpp"
+#include "../utils/toupper.hpp"
 
 namespace Lua {
 
 template<typename T>
 struct Enum
 {
-  static_assert(std::is_enum<T>::value);
+  static_assert(std::is_enum_v<T>);
   static_assert(sizeof(T) <= sizeof(lua_Integer));
 
   static T check(lua_State* L, int index)
@@ -63,7 +63,7 @@ struct Enum
   {
     lua_pushstring(L, EnumName<T>::value);
     lua_pushliteral(L, ".");
-    lua_pushstring(L, EnumValues<T>::value.find(check(L, 1))->second);
+    lua_pushstring(L, toUpper(EnumValues<T>::value.find(check(L, 1))->second).c_str());
     lua_concat(L, 3);
     return 1;
   }
@@ -74,12 +74,13 @@ struct Enum
     lua_pushcfunction(L, __tostring);
     lua_setfield(L, -2, "__tostring");
 
-    lua_createtable(L, 0, EnumValues<T>::value.size());
+    lua_createtable(L, EnumValues<T>::value.size(), 0);
     for(auto& it : EnumValues<T>::value)
     {
       *static_cast<T*>(lua_newuserdata(L, sizeof(T))) = it.first;
-      lua_pushvalue(L, -4); // copy metatable
+      lua_pushvalue(L, -3); // copy metatable
       lua_setmetatable(L, -2);
+      check(L, -1);
       lua_rawseti(L, -2, static_cast<lua_Integer>(it.first));
     }
     lua_setglobal(L, EnumName<T>::value);
@@ -94,7 +95,7 @@ struct Enum
     for(auto& it : EnumValues<T>::value)
     {
       push(L, it.first);
-      lua_setfield(L, -2, it.second);
+      lua_setfield(L, -2, toUpper(it.second).c_str());
     }
     ReadOnlyTable::setMetatable(L, -1);
     lua_setfield(L, -2, EnumName<T>::value);

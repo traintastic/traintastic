@@ -26,6 +26,7 @@
 #include "method.hpp"
 #include "console.hpp"
 #include <traintastic/utils/str.hpp>
+#include <traintastic/codename.hpp>
 #include "../world/world.hpp"
 #include "../enum/decoderprotocol.hpp"
 #include "../enum/direction.hpp"
@@ -77,8 +78,12 @@ SandboxPtr Sandbox::create(Script& script)
   ADD_GLOBAL_TO_SANDBOX("ipairs")
 
   // set VERSION:
-  lua_pushliteral(L, STR(VERSION));
+  lua_pushstring(L, STR(VERSION));
   lua_setfield(L, -2, "VERSION");
+
+  // set CODENAME
+  lua_pushstring(L, TRAINTASTIC_CODENAME);
+  lua_setfield(L, -2, "CODENAME");
 
   // add world:
   push(L, std::static_pointer_cast<::Object>(script.world().lock()));

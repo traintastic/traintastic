@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -60,6 +60,7 @@ class TableModel : public QAbstractTableModel
     ~TableModel() final;
 
     Handle handle() const { return m_handle; }
+    const QString& classId() const { return m_classId; }
 
     int columnCount(const QModelIndex& parent = QModelIndex()) const final { Q_UNUSED(parent); return m_columnHeaders.size(); }
     int rowCount(const QModelIndex& parent = QModelIndex()) const final { Q_UNUSED(parent); return m_rowCount; }

@@ -27,20 +27,20 @@ namespace Lua {
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
-constexpr uint32_t columnActive = 2;
+constexpr uint32_t columnState = 2;
 
 bool ScriptListTableModel::isListedProperty(const std::string& name)
 {
   return
     name == "id" ||
     name == "name" ||
-    name == "active";
+    name == "state";
 }
 
 ScriptListTableModel::ScriptListTableModel(ScriptList& list) :
   ObjectListTableModel<Script>(list)
 {
-  setColumnHeaders({"lua_script:id", "lua_script:name", "lua_script:active"});
+  setColumnHeaders({"lua_script:id", "lua_script:name", "lua_script:state"});
 }
 
 std::string ScriptListTableModel::getText(uint32_t column, uint32_t row) const
@@ -57,8 +57,22 @@ std::string ScriptListTableModel::getText(uint32_t column, uint32_t row) const
       case columnName:
         return script.name;
 
-      case columnActive:
-        return script.active  ? "\u2713" : "\u00D7";
+      case columnState:
+        switch(script.state)
+        {
+          case LuaScriptState::Stopped:
+            return "stopped";
+
+          case LuaScriptState::Running:
+            return "running";
+
+          case LuaScriptState::Error:
+            return "Error";
+
+          default:
+            assert(false);
+            return "";
+        }
 
       default:
         assert(false);
@@ -75,8 +89,8 @@ void ScriptListTableModel::propertyChanged(AbstractProperty& property, uint32_t 
     changed(row, columnId);
   else if(property.name() == "name")
     changed(row, columnName);
-  else if(property.name() == "active")
-    changed(row, columnActive);
+  else if(property.name() == "state")
+    changed(row, columnState);
 }
 
 }

@@ -31,7 +31,6 @@ SOURCES += \
     src/widget/objectlistwidget.cpp \
     src/widget/decoderlistwidget.cpp \
     src/widget/commandstationlistwidget.cpp \
-    src/widget/objecteditwidget.cpp \
     src/widget/serversettingswidget.cpp \
     src/network/property.cpp \
     src/network/interfaceitems.cpp \
@@ -53,7 +52,15 @@ SOURCES += \
     src/mdiarea.cpp \
     src/network/method.cpp \
     src/dialog/worldlistdialog.cpp \
-    src/utils/translateenum.cpp
+    src/utils/translateenum.cpp \
+    src/widget/object/abstracteditwidget.cpp \
+    src/widget/object/luascripteditwidget.cpp \
+    src/widget/object/objecteditwidget.cpp \
+    src/widget/propertyluacodeedit.cpp \
+    src/dialog/settingsdialog.cpp \
+    src/utils/getlocalepath.cpp \
+    src/utils/geticonforclassid.cpp \
+    src/widget/propertyobjectedit.cpp
 
 HEADERS += \
     src/mainwindow.hpp \
@@ -73,7 +80,6 @@ HEADERS += \
     src/widget/objectlistwidget.hpp \
     src/widget/commandstationlistwidget.hpp \
     src/widget/decoderlistwidget.hpp \
-    src/widget/objecteditwidget.hpp \
     src/widget/serversettingswidget.hpp \
     src/network/property.hpp \
     src/network/interfaceitems.hpp \
@@ -97,7 +103,15 @@ HEADERS += \
     src/network/method.hpp \
     src/dialog/worldlistdialog.hpp \
     src/utils/translateenum.hpp \
-    src/utils/internalupdateholder.hpp
+    src/utils/internalupdateholder.hpp \
+    src/widget/object/abstracteditwidget.hpp \
+    src/widget/object/objecteditwidget.hpp \
+    src/widget/object/luascripteditwidget.hpp \
+    src/widget/propertyluacodeedit.hpp \
+    src/dialog/settingsdialog.hpp \
+    src/utils/getlocalepath.hpp \
+    src/utils/geticonforclassid.hpp \
+    src/widget/propertyobjectedit.hpp
 
 RESOURCES += \
     dark.qrc

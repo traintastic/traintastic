@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -598,8 +598,94 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
         {
           if(InterfaceItem* item = object->getInterfaceItem(QString::fromLatin1(message->read<QByteArray>())))
           {
-            AttributeName attributeName = message->read<AttributeName>();
-            QVariant value;
+            AttributeName attributeName = message->read<AttributeName>();        
+            const ValueType type = message->read<ValueType>();
+            switch(message->read<AttributeType>())
+            {
+              case AttributeType::Value:
+              {
+                QVariant value;
+                switch(type)
+                {
+                  case ValueType::Boolean:
+                    value = message->read<bool>();
+                    break;
+
+                  case ValueType::Integer:
+                  case ValueType::Enum:
+                    value = message->read<qlonglong>();
+                    break;
+
+                  case ValueType::Float:
+                    value = message->read<double>();
+                    break;
+
+                  case ValueType::String:
+                    value = QString::fromUtf8(message->read<QByteArray>());
+                    break;
+
+                  case ValueType::Object:
+                  case ValueType::Invalid:
+                    Q_ASSERT(false);
+                    break;
+                }
+
+                if(Q_LIKELY(value.isValid()))
+                {
+                  item->m_attributes[attributeName] = value;
+                  emit item->attributeChanged(attributeName, value);
+                }
+                break;
+              }
+              case AttributeType::Values:
+              {
+                const int length = message->read<int>(); // read uint32_t as int, Qt uses int for length
+                QList<QVariant> values;
+                switch(type)
+                {
+                  case ValueType::Boolean:
+                  {
+                    for(int i = 0; i < length; i++)
+                      values.append(message->read<bool>());
+                    break;
+                  }
+                  case ValueType::Enum:
+                  case ValueType::Integer:
+                  {
+                    for(int i = 0; i < length; i++)
+                      values.append(message->read<qint64>());
+                    break;
+                  }
+                  case ValueType::Float:
+                  {
+                    for(int i = 0; i < length; i++)
+                      values.append(message->read<double>());
+                    break;
+                  }
+                  case ValueType::String:
+                  {
+                    for(int i = 0; i < length; i++)
+                      values.append(QString::fromUtf8(message->read<QByteArray>()));
+                    break;
+                  }
+                  case ValueType::Object:
+                  case ValueType::Invalid:
+                    Q_ASSERT(false);
+                    break;
+                }
+                if(Q_LIKELY(values.length() == length))
+                {
+                  item->m_attributes[attributeName] = values;
+                  emit item->attributeChanged(attributeName, values);
+                }
+                break;
+              }
+
+              default:
+                Q_ASSERT(false);
+            }
+
+            /*
             switch(message->read<ValueType>())
             {
               case ValueType::Boolean:
@@ -630,6 +716,7 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
               item->m_attributes[attributeName] = value;
               emit item->attributeChanged(attributeName, value);
             }
+            */
           }
         }
         break;

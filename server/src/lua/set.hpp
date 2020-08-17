@@ -71,22 +71,18 @@ struct Set
   static void push(lua_State* L, T value)
   {
     lua_getglobal(L, set_name_v<T>); // get tabel with all values: key=int, value=set as userdata
+    assert(lua_type(L, -1) == LUA_TTABLE);
     lua_rawgeti(L, -1, static_cast<lua_Integer>(value)); // get userdata
     if(lua_isnil(L, -1)) // value not in table
     {
-      // create new value:
+      lua_pop(L, 1); // remove nil
       *static_cast<T*>(lua_newuserdata(L, sizeof(value))) = value;
       luaL_setmetatable(L, set_name_v<T>);
-
-      // add it to the table
       lua_pushvalue(L, -1); // copy set userdata on stack
-      lua_rawseti(L, -1, static_cast<lua_Integer>(value));
+      lua_rawseti(L, -3, static_cast<lua_Integer>(value)); // add set value to table
     }
-    else // value in table
-    {
-      lua_insert(L, lua_gettop(L) - 1); // swap global and userdata
-      lua_pop(L, 1); // remove global
-    }
+    lua_insert(L, lua_gettop(L) - 1); // swap tabel and userdata
+    lua_pop(L, 1); // remove tabel
   }
 
   static int __band(lua_State* L)
@@ -131,6 +127,7 @@ struct Set
 
   static void registerType(lua_State* L)
   {
+    // meta table for set userdata:
     luaL_newmetatable(L, set_name_v<T>);
     lua_pushcfunction(L, __band);
     lua_setfield(L, -2, "__band");
@@ -141,6 +138,15 @@ struct Set
     lua_pushcfunction(L, __tostring);
     lua_setfield(L, -2, "__tostring");
     lua_pop(L, 1);
+
+    // weak table for set userdata:
+    lua_newtable(L);
+    lua_newtable(L); // metatable
+    lua_pushliteral(L, "__mode");
+    lua_pushliteral(L, "v");
+    lua_rawset(L, -3);
+    lua_setmetatable(L, -2);
+    lua_setglobal(L, set_name_v<T>);
   }
 
   static void registerValues(lua_State* L)

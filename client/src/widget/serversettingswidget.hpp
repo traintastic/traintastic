@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,7 +23,7 @@
 #ifndef TRAINTASTIC_CLIENT_WIDGET_SERVERSETTINGSWIDGET_HPP
 #define TRAINTASTIC_CLIENT_WIDGET_SERVERSETTINGSWIDGET_HPP
 
-#include "objecteditwidget.hpp"
+#include "object/objecteditwidget.hpp"
 
 class ServerSettingsWidget : public ObjectEditWidget
 {

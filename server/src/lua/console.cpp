@@ -28,6 +28,11 @@
 #include "method.hpp"
 #include "../core/traintastic.hpp"
 
+
+
+
+#include "enum.hpp"
+
 namespace Lua {
 
 void Console::push(lua_State* L)

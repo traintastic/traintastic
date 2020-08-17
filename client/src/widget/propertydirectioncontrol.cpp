@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,6 +41,7 @@ PropertyDirectionControl::PropertyDirectionControl(Property& property, QWidget* 
   m_forward->setArrowType(Qt::RightArrow);
 
   QHBoxLayout* l = new QHBoxLayout();
+  l->setMargin(0);
   l->addWidget(m_reverse);
   l->addWidget(m_forward);
   setLayout(l);

@@ -1,5 +1,5 @@
 /**
- * server/src/lua/enumvalues.hpp
+ * shared/src/traintastic/enum/luascriptstate.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,31 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_LUA_ENUMVALUES_HPP
-#define TRAINTASTIC_SERVER_LUA_ENUMVALUES_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_LUASCRIPTSTATE_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_LUASCRIPTSTATE_HPP
 
-#include <frozen/map.h>
+#include <cstdint>
 
-#define LUA_ENUM_VALUES(_type, _size, ...) \
-  namespace Lua { \
-    template<> \
-    struct EnumValues<_type> \
-    { \
-      static constexpr frozen::map<_type, const char*, _size> value = { __VA_ARGS__ }; \
-    }; \
-  }
-
-namespace Lua {
-
-template<typename T>
-struct EnumValues
+enum class LuaScriptState
 {
-  static_assert(sizeof(T) != sizeof(T), "template specialization required");
+  Stopped = 0,
+  Running = 1,
+  Error = 2,
 };
 
-template<typename T>
-constexpr auto EnumValues_v = EnumValues<T>::value;
+template<>
+struct EnumName<LuaScriptState>
+{
+  static constexpr char const* value = "lua_script_state";
+};
 
-}
+ENUM_VALUES(LuaScriptState, 3,
+{
+  {LuaScriptState::Stopped, "stopped"},
+  {LuaScriptState::Running, "running"},
+  {LuaScriptState::Error, "error"},
+})
 
 #endif

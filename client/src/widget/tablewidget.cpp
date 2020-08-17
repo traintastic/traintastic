@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "tablewidget.hpp"
 #include <QHeaderView>
 #include <QScrollBar>
+#include <QSettings>
 #include "../network/tablemodel.hpp"
 
 TableWidget::TableWidget(QWidget* parent) :
@@ -35,6 +36,17 @@ TableWidget::TableWidget(QWidget* parent) :
   horizontalHeader()->setDefaultSectionSize(fontMetrics().height());
 }
 
+TableWidget::~TableWidget()
+{
+  if(m_model)
+  {
+    QList<QVariant> columnSizes;
+    for(int i = 0; i < m_model->columnCount(); i++)
+      columnSizes.append(columnWidth(i));
+    QSettings().setValue(m_model->classId() + "/column_sizes", columnSizes);
+  }
+}
+
 QString TableWidget::getRowObjectId(int row) const
 {
   return m_model ? m_model->getRowObjectId(row) : "";
@@ -45,6 +57,11 @@ void TableWidget::setTableModel(const TableModelPtr& model)
   Q_ASSERT(!m_model);
   m_model = model;
   setModel(m_model.data());
+
+  const int defaultWidth = fontMetrics().averageCharWidth() * 10;
+  QList<QVariant> columnSizes = QSettings().value(m_model->classId() + "/column_sizes").toList();
+  for(int i = 0; i < m_model->columnCount(); i++)
+    setColumnWidth(i, i < columnSizes.count() ? columnSizes[i].toInt() : defaultWidth);
 
   connect(m_model.data(), &TableModel::modelReset, this, &TableWidget::updateRegion);
   connect(horizontalScrollBar(), &QScrollBar::rangeChanged, this, &TableWidget::updateRegion);

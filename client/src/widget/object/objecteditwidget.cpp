@@ -1,9 +1,9 @@
 /**
- * client/src/widget/objecteditwidget.cpp
+ * client/src/widget/object/objecteditwidget.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,29 +21,30 @@
  */
 
 #include "objecteditwidget.hpp"
+
 #include <QFormLayout>
 #include <QVBoxLayout>
-#include <QTabWidget>
-#include <QtWaitingSpinner/waitingspinnerwidget.h>
-#include "../network/connection.hpp"
-#include "../network/object.hpp"
-#include "../network/property.hpp"
-#include "../network/objectproperty.hpp"
-#include "../network/utils.hpp"
-#include "alertwidget.hpp"
-#include "propertycheckbox.hpp"
-#include "propertycombobox.hpp"
-#include "propertyspinbox.hpp"
-#include "propertylineedit.hpp"
-#include "propertytextedit.hpp"
-#include "propertydirectioncontrol.hpp"
-#include "propertyvaluelabel.hpp"
-#include "createwidget.hpp"
-#include "../mainwindow.hpp"
+//#include <QTabWidget>
+//#include <QtWaitingSpinner/waitingspinnerwidget.h>
+//#include "../../network/connection.hpp"
+#include "../../network/object.hpp"
+#include "../../network/property.hpp"
+#include "../../network/objectproperty.hpp"
+//#include "../../network/utils.hpp"
+//#include "../alertwidget.hpp"
+#include "../propertycheckbox.hpp"
+#include "../propertycombobox.hpp"
+#include "../propertyspinbox.hpp"
+#include "../propertylineedit.hpp"
+#include "../propertytextedit.hpp"
+#include "../propertyobjectedit.hpp"
+#include "../propertydirectioncontrol.hpp"
+#include "../propertyvaluelabel.hpp"
+#include "../createwidget.hpp"
+#include "../../utils/geticonforclassid.hpp"
+//#include "../../mainwindow.hpp"
 #include <traintastic/enum/category.hpp>
-
 #include <traintastic/enum/direction.hpp>
-
 
 QString toString(Category value)
 {
@@ -57,50 +58,21 @@ QString toString(Category value)
   return "?";
 }
 
-
 ObjectEditWidget::ObjectEditWidget(const ObjectPtr& object, QWidget* parent) :
-  QWidget(parent),
-  m_requestId{Connection::invalidRequestId},
-  m_object{object}
+  AbstractEditWidget(object, parent)
 {
   buildForm();
 }
 
 ObjectEditWidget::ObjectEditWidget(const QString& id, QWidget* parent) :
-  QWidget(parent)
+  AbstractEditWidget(id, parent)
 {
-  setWindowTitle(id);
-
-  auto* spinner = new WaitingSpinnerWidget(this, true, false);
-  spinner->start();
-
-  m_requestId = MainWindow::instance->connection()->getObject(id,
-    [this, spinner](const ObjectPtr& object, Message::ErrorCode ec)
-    {
-      m_requestId = Connection::invalidRequestId;
-      if(object)
-      {
-        m_object = object;
-        buildForm();
-      }
-      else
-        static_cast<QFormLayout*>(this->layout())->addRow(AlertWidget::error(errorCodeToText(ec)));
-      delete spinner;
-    });
-}
-
-ObjectEditWidget::~ObjectEditWidget()
-{
-  m_object->connection()->cancelRequest(m_requestId);
 }
 
 void ObjectEditWidget::buildForm()
 {
-  if(AbstractProperty* id = m_object->getProperty("id"))
-  {
-    connect(id, &AbstractProperty::valueChangedString, this, &ObjectEditWidget::setWindowTitle);
-    setWindowTitle(id->toString());
-  }
+  setIdAsWindowTitle();
+  setWindowIcon(getIconForClassId(m_object->classId()));
 
   if(QWidget* widget = createWidgetIfCustom(m_object))
   {
@@ -115,10 +87,13 @@ void ObjectEditWidget::buildForm()
     QMap<Category, QWidget*> categoryTabs;
 
     for(const QString& name : m_object->interfaceItems().names())
+    {
       if(AbstractProperty* baseProperty = m_object->getProperty(name))
       {
         if(!baseProperty->getAttributeBool(AttributeName::ObjectEditor, true))
           continue;
+
+        QWidget* w = nullptr;
 
         if(baseProperty->type() == ValueType::Object)
         {
@@ -130,13 +105,14 @@ void ObjectEditWidget::buildForm()
             tabs.append(w);
             continue;
           }
+          else
+          {
+            w = new PropertyObjectEdit(*property);
+          }
         }
         else
         {
           Property* property = static_cast<Property*>(baseProperty);
-          Category category = property->getAttributeEnum<Category>(AttributeName::Category, Category::General);
-          QWidget* w = nullptr;
-
           if(!property->isWritable())
             w = new PropertyValueLabel(*property);
           else if(property->type() == ValueType::Boolean)
@@ -171,22 +147,24 @@ void ObjectEditWidget::buildForm()
             else
               w = new PropertyComboBox(*property);
           }
-
-          QWidget* tabWidget;
-          if(!categoryTabs.contains(category))
-          {
-            tabWidget = new QWidget();
-            tabWidget->setWindowTitle(toString(category));
-            tabWidget->setLayout(new QFormLayout());
-            tabs.append(tabWidget);
-            categoryTabs.insert(category, tabWidget);
-          }
-          else
-            tabWidget = categoryTabs[category];
-
-          static_cast<QFormLayout*>(tabWidget->layout())->addRow(property->displayName(), w);
         }
+
+        Category category = baseProperty->getAttributeEnum<Category>(AttributeName::Category, Category::General);
+        QWidget* tabWidget;
+        if(!categoryTabs.contains(category))
+        {
+          tabWidget = new QWidget();
+          tabWidget->setWindowTitle(toString(category));
+          tabWidget->setLayout(new QFormLayout());
+          tabs.append(tabWidget);
+          categoryTabs.insert(category, tabWidget);
+        }
+        else
+          tabWidget = categoryTabs[category];
+
+        static_cast<QFormLayout*>(tabWidget->layout())->addRow(baseProperty->displayName(), w);
       }
+    }
 
     if(tabs.count() > 1)
     {

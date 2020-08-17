@@ -24,24 +24,11 @@
 #define TRAINTASTIC_SERVER_ENUM_LOCONETSERIALINTERFACE_HPP
 
 #include <traintastic/enum/loconetserialinterface.hpp>
-#include <nlohmann/json.hpp>
-#ifndef DISABLE_LUA_SCRIPTING
-  #include "../lua/enumvalues.hpp"
-#endif
 
 inline constexpr std::array<LocoNetSerialInterface, 3> LocoNetSerialInterfaceValues{{
   LocoNetSerialInterface::Custom,
   LocoNetSerialInterface::DigikeijsDR5000,
   LocoNetSerialInterface::RoSoftLocoNetInterface,
 }};
-
-#ifndef DISABLE_LUA_SCRIPTING
-LUA_ENUM_VALUES(LocoNetSerialInterface, 3,
-{
-  {LocoNetSerialInterface::Custom, "CUSTOM"},
-  {LocoNetSerialInterface::DigikeijsDR5000, "DIGIKEIJS_DR5000"},
-  {LocoNetSerialInterface::RoSoftLocoNetInterface, "ROSOFT_LOCONET_INTERFACE"},
-})
-#endif
 
 #endif

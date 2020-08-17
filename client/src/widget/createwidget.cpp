@@ -26,7 +26,8 @@
 #include "decoderlistwidget.hpp"
 #include "inputlistwidget.hpp"
 #include "luascriptlistwidget.hpp"
-#include "objecteditwidget.hpp"
+#include "object/luascripteditwidget.hpp"
+#include "object/objecteditwidget.hpp"
 #include "../network/object.hpp"
 
 QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
@@ -34,21 +35,23 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
   const QString& classId = object->classId();
 
   if(classId == "command_station_list")
-    return new CommandStationListWidget(object, parent);
+    return new CommandStationListWidget(object, parent); // todo remove
   else if(classId == "decoder_function_list")
-    return new DecoderListWidget(object, parent);
+    return new DecoderListWidget(object, parent); // todo remove
   else if(classId == "decoder_list")
-    return new DecoderFunctionListWidget(object, parent);
+    return new DecoderFunctionListWidget(object, parent); // todo remove
   else if(classId == "input_list")
-    return new InputListWidget(object, parent);
+    return new InputListWidget(object, parent); // todo remove
   else if(classId == "controller_list")
-    return new ObjectListWidget(object, parent);
+    return new ObjectListWidget(object, parent); // todo remove
   else if(classId == "rail_vehicle_list")
-    return new ObjectListWidget(object, parent);
+    return new ObjectListWidget(object, parent); // todo remove
   else if(classId == "lua.script_list")
-    return new LuaScriptListWidget(object, parent);
+    return new LuaScriptListWidget(object, parent); // todo remove
   else if(classId == "world_list")
     return new ObjectListWidget(object, parent);
+  else if(classId == "lua.script")
+    return new LuaScriptEditWidget(object, parent);
   else
     return nullptr;
 }

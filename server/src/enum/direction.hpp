@@ -24,23 +24,10 @@
 #define TRAINTASTIC_SERVER_ENUM_DIRECTION_HPP
 
 #include <traintastic/enum/direction.hpp>
-#include <nlohmann/json.hpp>
-#ifndef DISABLE_LUA_SCRIPTING
-  #include "../lua/enumvalues.hpp"
-#endif
 
 inline constexpr std::array<Direction, 2> DirectionValues{{
   Direction::Forward,
   Direction::Reverse,
 }};
-
-
-#ifndef DISABLE_LUA_SCRIPTING
-LUA_ENUM_VALUES(Direction, 2,
-{
-  {Direction::Forward, "FORWARD"},
-  {Direction::Reverse, "REVERSE"},
-})
-#endif
 
 #endif

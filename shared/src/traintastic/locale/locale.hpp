@@ -46,7 +46,9 @@ class Locale
     inline static std::string_view tr(std::string_view id) { return instance ? instance->translate(id) : id; };
 #endif
 
-    Locale(std::string_view filename, Locale* fallback = nullptr);
+    const std::string filename;
+
+    Locale(std::string _filename, Locale* fallback = nullptr);
 
 #ifdef QT_CORE_LIB
     QString translate(const QString& id) const;

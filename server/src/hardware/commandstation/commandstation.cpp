@@ -65,9 +65,11 @@ CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_vi
 
   m_interfaceItems.add(online);
 
+  Attributes::addEnabled(emergencyStop, online);
   Attributes::addObjectEditor(emergencyStop, false);
   m_interfaceItems.insertBefore(emergencyStop, notes);
 
+  Attributes::addEnabled(trackVoltageOff, online);
   Attributes::addObjectEditor(trackVoltageOff, false);
   m_interfaceItems.insertBefore(trackVoltageOff, notes);
 

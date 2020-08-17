@@ -24,22 +24,11 @@
 #define TRAINTASTIC_SERVER_ENUM_XPRESSNETCOMMANDSTATION_HPP
 
 #include <traintastic/enum/xpressnetcommandstation.hpp>
-#ifndef DISABLE_LUA_SCRIPTING
-  #include "../lua/enumvalues.hpp"
-#endif
 
 inline constexpr std::array<XpressNetCommandStation, 3> XpressNetCommandStationValues{{
   XpressNetCommandStation::Custom,
   XpressNetCommandStation::Roco10764,
   XpressNetCommandStation::DigikeijsDR5000,
 }};
-
-#ifndef DISABLE_LUA_SCRIPTING
-LUA_ENUM_VALUES(XpressNetCommandStation, 2,
-{
-  {XpressNetCommandStation::Custom, "CUSTOM"},
-  {XpressNetCommandStation::Roco10764, "ROCO_10764"},
-})
-#endif
 
 #endif

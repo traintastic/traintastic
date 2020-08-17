@@ -24,22 +24,10 @@
 #define TRAINTASTIC_SERVER_ENUM_SERIALFLOWCONTROL_HPP
 
 #include <traintastic/enum/serialflowcontrol.hpp>
-#include <nlohmann/json.hpp>
-#ifndef DISABLE_LUA_SCRIPTING
-  #include "../lua/enumvalues.hpp"
-#endif
 
 inline constexpr std::array<SerialFlowControl, 2> SerialFlowControlValues{{
   SerialFlowControl::None,
   SerialFlowControl::Hardware,
 }};
-
-#ifndef DISABLE_LUA_SCRIPTING
-LUA_ENUM_VALUES(SerialFlowControl, 2,
-{
-  {SerialFlowControl::None, "NONE"},
-  {SerialFlowControl::Hardware, "HARDWARE"},
-})
-#endif
 
 #endif

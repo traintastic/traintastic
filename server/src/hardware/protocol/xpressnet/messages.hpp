@@ -25,6 +25,7 @@
 
 #include <cstdint>
 #include <cassert>
+#include <cstring>
 #include <string>
 #include "../../../enum/direction.hpp"
 

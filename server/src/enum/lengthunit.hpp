@@ -24,6 +24,5 @@
 #define TRAINTASTIC_SERVER_ENUM_LENGTHUNIT_HPP
 
 #include <traintastic/enum/lengthunit.hpp>
-//#include <nlohmann/json.hpp>
 
 #endif

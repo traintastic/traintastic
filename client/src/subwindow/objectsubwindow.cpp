@@ -22,6 +22,7 @@
 
 #include "objectsubwindow.hpp"
 #include <QVBoxLayout>
+#include <QSettings>
 #include <QtWaitingSpinner/waitingspinnerwidget.h>
 #include "../network/connection.hpp"
 #include "../network/object.hpp"
@@ -60,12 +61,33 @@ ObjectSubWindow::ObjectSubWindow(const QSharedPointer<Connection>& connection, c
 ObjectSubWindow::~ObjectSubWindow()
 {
   m_connection->cancelRequest(m_requestId);
+
+  if(!m_classId.isEmpty())
+    QSettings().setValue("subwindow/" + m_classId + "/size", size());
 }
 
 void ObjectSubWindow::setObject(const ObjectPtr& object)
 {
+  m_classId = object->classId();
   setWidget(createWidget(object));
   connect(widget(), &QWidget::windowTitleChanged, this, &ObjectSubWindow::setWindowTitle);
   if(!widget()->windowTitle().isEmpty())
     setWindowTitle(widget()->windowTitle());
+  setSizeFromSettings();
+}
+
+void ObjectSubWindow::showEvent(QShowEvent*)
+{
+  setSizeFromSettings();
+}
+
+void ObjectSubWindow::setSizeFromSettings()
+{
+  if(m_classId.isEmpty())
+    return;
+  QSize sz = QSettings().value("subwindow/" + m_classId + "/size", QSize()).toSize();
+  if(sz.isValid())
+    resize(sz);
+  else
+    resize(400, 300);
 }

@@ -33,8 +33,13 @@ class ObjectSubWindow : public QMdiSubWindow
   protected:
     QSharedPointer<Connection> m_connection;
     int m_requestId;
+    QString m_classId;
 
     void setObject(const ObjectPtr& object);
+
+    void showEvent(QShowEvent*) override;
+
+    void setSizeFromSettings();
 
   public:
     ObjectSubWindow(const ObjectPtr& object, QWidget* parent = nullptr);
