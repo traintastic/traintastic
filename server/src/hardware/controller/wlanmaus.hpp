@@ -49,6 +49,7 @@ class WLANmaus : public Controller
     std::array<uint8_t,64> m_receiveBuffer;
     std::map<boost::asio::ip::udp::endpoint, Client> m_clients;
     Decoder* m_blockLocoInfo;
+    std::atomic_bool m_debugLog;
 
     constexpr uint16_t locoInfoKey(uint16_t address, bool longAddress)
     {
@@ -65,7 +66,6 @@ class WLANmaus : public Controller
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags, uint32_t) final;
 
     void receive();
-    /*[[deprecated]]*/ void sendTo(const z21_lan_header& msg, const boost::asio::ip::udp::endpoint& endpoint);
     void sendTo(const Z21::Message& message, const boost::asio::ip::udp::endpoint& endpoint);
     void broadcastLocoInfo(const Decoder& decoder);
 
@@ -74,6 +74,7 @@ class WLANmaus : public Controller
     CREATE(WLANmaus);
 
     Property<uint16_t> port;
+    Property<bool> debugLog;
 
     WLANmaus(const std::weak_ptr<World> world, std::string_view _id);
 };

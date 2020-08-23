@@ -27,7 +27,7 @@
 #include "../../core/attributes.hpp"
 #include "../decoder/decoderchangeflags.hpp"
 #include "../protocol/xpressnet/messages.hpp"
-#include "../protocol/z21.hpp"
+#include "../protocol/z21/messages.hpp"
 #include "../../utils/to_hex.hpp"
 
 
@@ -128,7 +128,7 @@ RocoZ21::RocoZ21(const std::weak_ptr<World>& world, std::string_view _id) :
 void RocoZ21::emergencyStopChanged(bool value)
 {
   if(online && value)
-    send(z21_lan_x_set_stop());
+    send(Z21::LanXSetStop());
 }
 
 void RocoZ21::trackVoltageOffChanged(bool value)
@@ -136,9 +136,9 @@ void RocoZ21::trackVoltageOffChanged(bool value)
   if(online)
   {
     if(value)
-      send(z21_lan_x_set_track_power_off());
+      send(Z21::LanXSetTrackPowerOff());
     else
-      send(z21_lan_x_set_track_power_on());
+      send(Z21::LanXSetTrackPowerOn());
   }
 }
 
@@ -159,9 +159,9 @@ void RocoZ21::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes,
 {
   if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Direction | DecoderChangeFlags::SpeedStep | DecoderChangeFlags::SpeedSteps))
   {
-    z21_lan_x_set_loco_drive cmd;
-    cmd.dataLen = sizeof(cmd);
-    cmd.header = Z21_LAN_X;
+    Z21::LanXSetLocoDrive cmd;
+    //cmd.dataLen = sizeof(cmd);
+    //cmd.header = Z21::LAN_X;
     SET_ADDRESS;
 
     assert(decoder.speedStep <= decoder.speedSteps);
@@ -202,7 +202,7 @@ void RocoZ21::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes,
       cmd.speedAndDirection |= 0x80;
 
     cmd.checksum = XpressNet::calcChecksum(*reinterpret_cast<const XpressNet::Message*>(&cmd.xheader));
-    send(&cmd);
+    send(cmd);
   }
   else if(has(changes, DecoderChangeFlags::FunctionValue))
   {
@@ -210,13 +210,13 @@ void RocoZ21::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes,
     {
       if(const auto& f = decoder.getFunction(functionNumber))
       {
-        z21_lan_x_set_loco_function cmd;
-        cmd.dataLen = sizeof(cmd);
-        cmd.header = Z21_LAN_X;
+        Z21::LanXSetLocoFunction cmd;
+        //cmd.dataLen = sizeof(cmd);
+        //cmd.header = Z21_LAN_X;
         SET_ADDRESS;
         cmd.db3 = (f->value ? 0x40 : 0x00) | static_cast<uint8_t>(functionNumber);
         cmd.checksum = XpressNet::calcChecksum(*reinterpret_cast<const XpressNet::Message*>(&cmd.xheader));
-        send(&cmd);
+        send(cmd);
       }
     }
   }
@@ -250,23 +250,23 @@ bool RocoZ21::setOnline(bool& value)
 
     receive(); // start receiving messages
 
-    send(z21_lan_set_broadcastflags(0x07000000 | /*0x00010000 |*/ 0x00000100 | 0x00000001));
+    send(Z21::LanSetBroadcastFlags(0x07000000 | /*0x00010000 |*/ 0x00000100 | 0x00000001));
 
     // try to communicate with Z21
 
     send(Z21::LanGetSerialNumber());
-    send(z21_lan_get_hwinfo());
-    send(z21_lan_get_broadcastflags());
-    send(z21_lan_systemstate_getdata());
+    send(Z21::LanGetHardwareInfo());
+    send(Z21::LanGetBroadcastFlags());
+    send(Z21::LanSystemStateGetData());
     for(auto& decoder : *decoders)
-      send(z21_lan_x_get_loco_info(decoder->address, decoder->longAddress));
+      send(Z21::LanXGetLocoInfo(decoder->address, decoder->longAddress));
 
     hostname.setAttributeEnabled(false);
     port.setAttributeEnabled(false);
   }
   else if(m_socket.is_open() && !value)
   {
-    send(z21_lan_logoff());
+    send(Z21::LanLogoff());
 
     serialNumber.setValueInternal("");
     hardwareType.setValueInternal("");
@@ -287,14 +287,14 @@ void RocoZ21::receive()
     {
       if(!ec)
       {
-        if((bytesReceived >= sizeof(z21_lan_header)))
+        if((bytesReceived >= sizeof(Z21::Message)))
         {
           bool unknownMessage = false;
           const Z21::Message* message = reinterpret_cast<const Z21::Message*>(m_receiveBuffer.data());
-          const z21_lan_header* cmd = reinterpret_cast<const z21_lan_header*>(m_receiveBuffer.data());
-          switch(cmd->header)
+          //const z21_lan_header* cmd = reinterpret_cast<const z21_lan_header*>(m_receiveBuffer.data());
+          switch(message->header())
           {
-            case Z21_LAN_GET_SERIAL_NUMBER:
+            case Z21::LAN_GET_SERIAL_NUMBER:
               if(message->dataLen() == sizeof(Z21::LanGetSerialNumberReply))
               {
                 EventLoop::call(
@@ -307,34 +307,34 @@ void RocoZ21::receive()
                 unknownMessage = true;
               break;
 
-            case Z21_LAN_GET_HWINFO:
+            case Z21::LAN_GET_HWINFO:
             {
-              const z21_lan_get_hwinfo_reply* reply = static_cast<const z21_lan_get_hwinfo_reply*>(cmd);
+              const Z21::LanGetHardwareInfoReply* reply = static_cast<const Z21::LanGetHardwareInfoReply*>(message);
 
               std::string hwType;
-              switch(reply->hardwareType)
+              switch(reply->hardwareType())
               {
-                case Z21_HWT_Z21_OLD:
+                case Z21::HWT_Z21_OLD:
                   hwType = "Black Z21 (hardware variant from 2012)";
                   break;
-                case Z21_HWT_Z21_NEW:
+                case Z21::HWT_Z21_NEW:
                   hwType = "Black Z21 (hardware variant from 2013)";
                   break;
-                case Z21_HWT_SMARTRAIL:
+                case Z21::HWT_SMARTRAIL:
                   hwType = "SmartRail (from 2012)";
                   break;
-                case Z21_HWT_Z21_SMALL:
+                case Z21::HWT_Z21_SMALL:
                   hwType = "White Z21 (starter set variant from 2013)";
                   break;
-                case Z21_HWT_Z21_START :
+                case Z21::HWT_Z21_START :
                   hwType = "Z21 start (starter set variant from 2016)";
                   break;
                 default:
-                  hwType = "0x" + to_hex(reply->hardwareType);
+                  hwType = "0x" + to_hex(reply->hardwareType());
                   break;
               }
 
-              const std::string fwVersion = std::to_string((reply->firmwareVersion >> 8) & 0xFF) + "." + std::to_string(reply->firmwareVersion & 0xFF);
+              const std::string fwVersion = std::to_string(reply->firmwareVersionMajor()) + "." + std::to_string(reply->firmwareVersionMinor());
 
               EventLoop::call(
                 [this, hwType, fwVersion]()
@@ -344,15 +344,15 @@ void RocoZ21::receive()
                 });
               break;
             }
-            case Z21_LAN_X:
+            case Z21::LAN_X:
             {
               // TODO check XOR
-              const uint8_t xheader = static_cast<const z21_lan_x*>(cmd)->xheader;
+              const uint8_t xheader = static_cast<const Z21::LanX*>(message)->xheader;
               switch(xheader)
               {
-                case Z21_LAN_X_LOCO_INFO:
+                case Z21::LAN_X_LOCO_INFO:
                 {
-                  const z21_lan_x_loco_info* info = static_cast<const z21_lan_x_loco_info*>(cmd);
+                  const Z21::LanXLocoInfo* info = static_cast<const Z21::LanXLocoInfo*>(message);
                   const uint16_t address = (static_cast<uint16_t>(info->addressHigh) << 8) | info->addressLow;
                   const uint8_t speedStepMode = info->db2 & 0x07;
                   const Direction direction = (info->speedAndDirection & 0x80) ? Direction::Forward : Direction::Reverse;
@@ -386,12 +386,12 @@ void RocoZ21::receive()
                     });
                   break;
                 }
-                case Z21_LAN_X_BC:
+                case Z21::LAN_X_BC:
                 {
 
                   break;
                 }
-                case Z21_LAN_X_BC_STOPPED:
+                case Z21::LAN_X_BC_STOPPED:
                   EventLoop::call(
                     [this]()
                     {
@@ -405,9 +405,9 @@ void RocoZ21::receive()
               }
               break;
             }
-            case Z21_LAN_SYSTEMSTATE_DATACHANGED:
+            case Z21::LAN_SYSTEMSTATE_DATACHANGED:
             {
-              const z21_lan_systemstate_datachanged state = *reinterpret_cast<const z21_lan_systemstate_datachanged*>(m_receiveBuffer.data());
+              const Z21::LanSystemStateDataChanged state = *reinterpret_cast<const Z21::LanSystemStateDataChanged*>(m_receiveBuffer.data());
               /*EventLoop::call(
                 [this, state]()
                 {
@@ -428,10 +428,10 @@ void RocoZ21::receive()
                 });*/
               break;
             }
-            case Z21_LAN_LOCONET_Z21_RX:
+            case Z21::LAN_LOCONET_Z21_RX:
             //case Z21_LAN_LOCONET_Z21_TX:
             //case Z21_LAN_LOCONET_Z21_LAN:
-              loconet->receive(*reinterpret_cast<const ::LocoNet::Message*>(m_receiveBuffer.data() + sizeof(z21_lan_header)));
+              loconet->receive(*reinterpret_cast<const ::LocoNet::Message*>(m_receiveBuffer.data() + sizeof(Z21::Message)));
               break;
 /*
 
@@ -476,14 +476,14 @@ void RocoZ21::receive()
             default:
               //if(debugEnabled)
               {
-                std::string message = "unknown message: dataLen=0x" + to_hex(cmd->dataLen) + ", header=0x" + to_hex(cmd->header);
-                if(cmd->dataLen > 4)
+                std::string log = "unknown message: dataLen=0x" + to_hex(message->dataLen()) + ", header=0x" + to_hex(message->header());
+                if(message->dataLen() > 4)
                 {
-                  message += ", data=";
-                  for(int i = 4; i < cmd->dataLen; i++)
-                    message += to_hex(reinterpret_cast<const uint8_t*>(cmd)[i]);
+                  log += ", data=";
+                  for(int i = sizeof(Z21::Message); i < message->dataLen(); i++)
+                    log += to_hex(reinterpret_cast<const uint8_t*>(message)[i]);
                 }
-                EventLoop::call([this, message](){ logDebug(message); });
+                EventLoop::call([this, log](){ logDebug(log); });
               }
               break;
           }
@@ -507,25 +507,6 @@ void RocoZ21::send(const Z21::Message& message)
      logError("socket.send_to: " + ec.message());
 /*
   m_socket.send_to(boost::asio:buffer(&message, message.dataLen()), 0, m_remoteEndpoint);,
-    [this](const boost::system::error_code& ec, std::size_t)
-    {
-      if(ec)
-         EventLoop::call([this, ec](){ logError(id, "socket.async_send_to: " + ec.message()); });
-    });*/
-}
-
-void RocoZ21::send(const z21_lan_header* data)
-{
-  logDebug("z21_lan_header->dataLen = " + std::to_string(data->dataLen));
-
-  boost::system::error_code ec;
-  m_socket.send_to(boost::asio::buffer(data, data->dataLen), m_remoteEndpoint, 0, ec);
-  if(ec)
-     logError("socket.send_to: " + ec.message());
-
-
-  //m_socket.send_to(boost::asio::buffer(data, data->dataLen), 0, m_remoteEndpoint);
-  /*,
     [this](const boost::system::error_code& ec, std::size_t)
     {
       if(ec)

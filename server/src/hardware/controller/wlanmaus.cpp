@@ -25,18 +25,32 @@
 #include "../../core/eventloop.hpp"
 #include "../commandstation/commandstation.hpp"
 #include "../decoder/decoder.hpp"
-#include "../protocol/z21.hpp"
+#include "../protocol/z21/messages.hpp"
 #include "../../utils/to_hex.hpp"
 #include "../../core/attributes.hpp"
+
+static std::string to_string(const boost::asio::ip::udp::endpoint& endpoint)
+{
+  std::stringstream ss;
+  ss << endpoint;
+  return ss.str();
+}
 
 WLANmaus::WLANmaus(const std::weak_ptr<World> world, std::string_view _id) :
   Controller(world, _id),
   m_socket{Traintastic::instance->ioContext()},
   m_blockLocoInfo{nullptr},
-  port{this, "port", 21105, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  m_debugLog{false},
+  port{this, "port", 21105, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  debugLog{this, "debug_log", m_debugLog, PropertyFlags::ReadWrite | PropertyFlags::Store,
+   [this](bool value)
+    {
+      m_debugLog = value;
+    }}
 {
   Attributes::addEnabled(port, !active);
   m_interfaceItems.add(port);
+  m_interfaceItems.add(debugLog);
 }
 
 bool WLANmaus::setActive(bool& value)
@@ -76,17 +90,15 @@ void WLANmaus::emergencyStopChanged(bool value)
 {
   if(value)
   {
-    const z21_lan_x_bc_stopped message;
     for(auto it : m_clients)
       if(it.second.broadcastFlags & Z21::PowerLocoTurnout)
-        sendTo(message, it.first);
+        sendTo(Z21::LanXBCStopped(), it.first);
   }
   else if(commandStation && !commandStation->trackVoltageOff) // send z21_lan_x_bc_track_power_on if power is on
   {
-    const z21_lan_x_bc_track_power_on message;
     for(auto it : m_clients)
       if(it.second.broadcastFlags & Z21::PowerLocoTurnout)
-        sendTo(message, it.first);
+        sendTo(Z21::LanXBCTrackPowerOn(), it.first);
   }
 }
 
@@ -94,17 +106,15 @@ void WLANmaus::trackPowerChanged(bool value)
 {
   if(value)
   {
-    const z21_lan_x_bc_track_power_on message;
     for(auto it : m_clients)
       if(it.second.broadcastFlags & Z21::PowerLocoTurnout)
-        sendTo(message, it.first);
+        sendTo(Z21::LanXBCTrackPowerOn(), it.first);
   }
   else
   {
-    const z21_lan_x_bc_track_power_off message;
     for(auto it : m_clients)
       if(it.second.broadcastFlags & Z21::PowerLocoTurnout)
-        sendTo(message, it.first);
+        sendTo(Z21::LanXBCTrackPowerOff(), it.first);
   }
 }
 
@@ -133,22 +143,29 @@ void WLANmaus::receive()
         {
           bool unknownMessage = false;
           const Z21::Message* message = reinterpret_cast<const Z21::Message*>(m_receiveBuffer.data());
-          /*[[deprecated]]*/ const z21_lan_header* cmd = reinterpret_cast<const z21_lan_header*>(m_receiveBuffer.data());
+
+          if(m_debugLog)
+            EventLoop::call(
+              [this, log=to_string(m_receiveEndpoint) + " rx: " + Z21::to_string(*message)]()
+              {
+                logDebug(log);
+              });
+
           switch(message->header())
           {
             case Z21::LAN_X:
             {
               // TODO check XOR
-              const uint8_t xheader = static_cast<const z21_lan_x*>(cmd)->xheader;
+              const uint8_t xheader = static_cast<const Z21::LanX*>(message)->xheader;
               switch(xheader)
               {
                 case 0x21:
-                  if(*cmd == z21_lan_x_get_status())
+                  if(*message == Z21::LanXGetStatus())
                   {
                     EventLoop::call(
                       [this, endpoint=m_receiveEndpoint]()
                       {
-                        z21_lan_x_status_changed response;
+                        Z21::LanXStatusChanged response;
 
                         if(!commandStation || commandStation->emergencyStop)
                           response.db1 |= Z21_CENTRALSTATE_EMERGENCYSTOP;
@@ -160,7 +177,7 @@ void WLANmaus::receive()
                         sendTo(response, endpoint);
                       });
                   }
-                  else if(*cmd == z21_lan_x_set_track_power_on())
+                  else if(*message == Z21::LanXSetTrackPowerOn())
                   {
                     EventLoop::call(
                       [this, endpoint=m_receiveEndpoint]()
@@ -170,11 +187,11 @@ void WLANmaus::receive()
                           commandStation->emergencyStop = false;
                           commandStation->trackVoltageOff = false;
                           if(!commandStation->trackVoltageOff)
-                            sendTo(z21_lan_x_bc_track_power_on(), endpoint);
+                            sendTo(Z21::LanXBCTrackPowerOn(), endpoint);
                         }
                       });
                   }
-                  else if(*cmd == z21_lan_x_set_track_power_off())
+                  else if(*message == Z21::LanXSetTrackPowerOff())
                   {
                     EventLoop::call(
                       [this, endpoint=m_receiveEndpoint]()
@@ -183,7 +200,7 @@ void WLANmaus::receive()
                         {
                           commandStation->trackVoltageOff = true;
                           if(commandStation->trackVoltageOff)
-                            sendTo(z21_lan_x_bc_track_power_off(), endpoint);
+                            sendTo(Z21::LanXBCTrackPowerOff(), endpoint);
                         }
                       });
                   }
@@ -192,7 +209,7 @@ void WLANmaus::receive()
                   break;
 
                 case 0x80:
-                  if(*cmd == z21_lan_x_set_stop())
+                  if(*message == Z21::LanXSetStop())
                   {
                     EventLoop::call(
                       [this, endpoint=m_receiveEndpoint]()
@@ -201,7 +218,7 @@ void WLANmaus::receive()
                         {
                           commandStation->emergencyStop = true;
                           if(commandStation->emergencyStop)
-                            sendTo(z21_lan_x_bc_stopped(), endpoint);
+                            sendTo(Z21::LanXBCStopped(), endpoint);
                         }
                       });
                   }
@@ -210,7 +227,7 @@ void WLANmaus::receive()
                   break;
 
                 case 0xE3:
-                  if(const z21_lan_x_get_loco_info* r = static_cast<const z21_lan_x_get_loco_info*>(cmd);
+                  if(const Z21::LanXGetLocoInfo* r = static_cast<const Z21::LanXGetLocoInfo*>(message);
                       r->db0 == 0xF0)
                   {
                     EventLoop::call(
@@ -227,7 +244,7 @@ void WLANmaus::receive()
     //                        logDebug("m_clients[endpoint].broadcastFlags = " + std::to_string(m_clients[endpoint].broadcastFlags));
       //                      logDebug("m_clients[endpoint].locoInfo.size() = " + std::to_string(m_clients[endpoint].locoInfo.size()));
         //                    logDebug("m_clients.size() = " + std::to_string(m_clients.size()));
-                            sendTo(z21_lan_x_loco_info(*decoder), endpoint);
+                            sendTo(Z21::LanXLocoInfo(*decoder), endpoint);
                           }
                       });
                   }
@@ -236,7 +253,7 @@ void WLANmaus::receive()
                   break;
 
                 case 0xE4:
-                  if(const z21_lan_x_set_loco_drive* r = static_cast<const z21_lan_x_set_loco_drive*>(cmd);
+                  if(const Z21::LanXSetLocoDrive* r = static_cast<const Z21::LanXSetLocoDrive*>(message);
                       r->db0 >= 0x10 && r->db0 <= 0x13)
                   {
                     EventLoop::call(
@@ -265,9 +282,9 @@ void WLANmaus::receive()
                           logInfo("Unknown loco address: " + std::to_string(request.address()));
                       });
                   }
-                  else if(const z21_lan_x_set_loco_function* r = static_cast<const z21_lan_x_set_loco_function*>(cmd);
+                  else if(const Z21::LanXSetLocoFunction* r = static_cast<const Z21::LanXSetLocoFunction*>(message);
                           r->db0 == 0xF8 &&
-                          r->switchType() != z21_lan_x_set_loco_function::SwitchType::Invalid)
+                          r->switchType() != Z21::LanXSetLocoFunction::SwitchType::Invalid)
                   {
                     EventLoop::call(
                       [this, request=*r]()
@@ -277,19 +294,19 @@ void WLANmaus::receive()
                             if(auto function = decoder->getFunction(request.functionIndex()))
                               switch(request.switchType())
                               {
-                                case z21_lan_x_set_loco_function::SwitchType::Off:
+                                case Z21::LanXSetLocoFunction::SwitchType::Off:
                                   function->value = false;
                                   break;
 
-                                case z21_lan_x_set_loco_function::SwitchType::On:
+                                case Z21::LanXSetLocoFunction::SwitchType::On:
                                   function->value = true;
                                   break;
 
-                                case z21_lan_x_set_loco_function::SwitchType::Toggle:
+                                case Z21::LanXSetLocoFunction::SwitchType::Toggle:
                                   function->value = !function->value;
                                   break;
 
-                                case z21_lan_x_set_loco_function::SwitchType::Invalid:
+                                case Z21::LanXSetLocoFunction::SwitchType::Invalid:
                                   assert(false);
                                   break;
                               }
@@ -298,12 +315,12 @@ void WLANmaus::receive()
                   break;
 
                 case 0xF1:
-                  if(*cmd == z21_lan_x_get_firmware_version())
+                  if(*message == Z21::LanXGetFirmwareVersion())
                   {
                     EventLoop::call(
                       [this, endpoint=m_receiveEndpoint]()
                       {
-                        sendTo(z21_lan_x_get_firmware_version_reply(1, 30), endpoint);
+                        sendTo(Z21::LanXGetFirmwareVersionReply(1, 30), endpoint);
                       });
                   }
                   else
@@ -353,12 +370,12 @@ void WLANmaus::receive()
               break;
 
             case Z21::LAN_GET_HWINFO:
-              if(cmd->dataLen == sizeof(z21_lan_get_hwinfo))
+              if(message->dataLen() == sizeof(Z21::LanGetHardwareInfo))
               {
                 EventLoop::call(
                   [this, endpoint=m_receiveEndpoint]()
                   {
-                    sendTo(z21_lan_get_hwinfo_reply(Z21_HWT_Z21_START, 1, 30), endpoint);
+                    sendTo(Z21::LanGetHardwareInfoReply(Z21::HWT_Z21_START, 1, 30), endpoint);
                   });
               }
               else
@@ -366,12 +383,15 @@ void WLANmaus::receive()
               break;
 
             case Z21::LAN_SET_BROADCASTFLAGS:
-              if(message->dataLen() == sizeof(z21_lan_set_broadcastflags))
+              if(message->dataLen() == sizeof(Z21::LanSetBroadcastFlags))
               {
                 EventLoop::call(
-                  [this, request=*static_cast<const z21_lan_set_broadcastflags*>(cmd), endpoint=m_receiveEndpoint]()
+                  [this, broadcastFlags=static_cast<const Z21::LanSetBroadcastFlags*>(message)->broadcastFlags(), endpoint=m_receiveEndpoint]()
                   {
-                    m_clients[endpoint].broadcastFlags = request.broadcastFlags;
+                    if(debugLog)
+                      logDebug(to_string(endpoint) + " LAN_SET_BROADCASTFLAGS 0x" + to_hex(broadcastFlags));
+
+                    m_clients[endpoint].broadcastFlags = broadcastFlags;
                   });
               }
               else
@@ -379,12 +399,15 @@ void WLANmaus::receive()
               break;
 
             case Z21::LAN_SYSTEMSTATE_GETDATA:
-              if(message->dataLen() == sizeof(z21_lan_systemstate_getdata))
+              if(message->dataLen() == sizeof(Z21::LanSystemStateGetData))
               {
                 EventLoop::call(
                   [this, endpoint=m_receiveEndpoint]()
                   {
-                    z21_lan_systemstate_datachanged response;
+                    if(debugLog)
+                      logDebug(to_string(endpoint) + " LAN_SYSTEMSTATE_GETDATA");
+
+                    Z21::LanSystemStateDataChanged response;
 
                     if(!commandStation || commandStation->emergencyStop)
                       response.centralState |= Z21_CENTRALSTATE_EMERGENCYSTOP;
@@ -404,6 +427,8 @@ void WLANmaus::receive()
                 EventLoop::call(
                   [this, endpoint=m_receiveEndpoint]()
                   {
+                    if(debugLog)
+                      logDebug(to_string(endpoint) + " LAN_LOGOFF");
                     m_clients.erase(endpoint);
                   });
               }
@@ -416,17 +441,17 @@ void WLANmaus::receive()
               break;
           }
 
-          if(unknownMessage /*&& debugEnabled*/)
+          /*if(unknownMessage && debugLog)
           {
-            std::string message = "unknown message: dataLen=0x" + to_hex(cmd->dataLen) + ", header=0x" + to_hex(cmd->header);
-            if(cmd->dataLen > 4)
+            std::string log = "unknown message: dataLen=0x" + to_hex(message->dataLen()) + ", header=0x" + to_hex(message->header());
+            if(message->dataLen() > 4)
             {
-              message += ", data=";
-              for(int i = 4; i < cmd->dataLen; i++)
-                message += to_hex(reinterpret_cast<const uint8_t*>(cmd)[i]);
+              log += ", data=";
+              for(int i = sizeof(Z21::Message); i < message->dataLen(); i++)
+                log += to_hex(reinterpret_cast<const uint8_t*>(message)[i]);
             }
-            EventLoop::call([this, message](){ logDebug(message); });
-          }
+            EventLoop::call([this, log](){ logDebug(log); });
+          }*/
         }
         receive();
       }
@@ -439,26 +464,11 @@ void WLANmaus::receive()
     });
 }
 
-void WLANmaus::sendTo(const z21_lan_header& msg, const boost::asio::ip::udp::endpoint& endpoint)
-{
-  // TODO: add to queue, send async
-
-  boost::system::error_code ec;
-  m_socket.send_to(boost::asio::buffer(&msg, msg.dataLen), endpoint, 0, ec);
-  if(ec)
-     EventLoop::call([this, ec](){ logError("socket.send_to: " + ec.message()); });
-/*
-  m_socket.async_send_to(boost::asio::buffer(&msg, msg.dataLen), endpoint,
-    [this](const boost::system::error_code& ec, std::size_t)
-    {
-      if(ec)
-         EventLoop::call([this, ec](){ logError("socket.async_send_to: " + ec.message()); });
-    });
-    */
-}
-
 void WLANmaus::sendTo(const Z21::Message& message, const boost::asio::ip::udp::endpoint& endpoint)
 {
+  if(debugLog)
+    logDebug(to_string(endpoint) + " tx: " + Z21::to_string(message));
+
   // TODO: add to queue, send async
 
   boost::system::error_code ec;
@@ -478,7 +488,7 @@ void WLANmaus::sendTo(const Z21::Message& message, const boost::asio::ip::udp::e
 void WLANmaus::broadcastLocoInfo(const Decoder& decoder)
 {
   const uint16_t key = locoInfoKey(decoder.address, decoder.longAddress);
-  const z21_lan_x_loco_info message(decoder);
+  const Z21::LanXLocoInfo message(decoder);
 
 //logDebug("z21_lan_x_loco_info.speedAndDirection=" + std::to_string(message.speedAndDirection));
 
