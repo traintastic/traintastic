@@ -27,6 +27,7 @@
 #endif
 #include "xpressnetserial.hpp"
 #include "rocoz21.hpp"
+#include "virtualcommandstation.hpp"
 
 const std::vector<std::string_view>& CommandStations::classList()
 {
@@ -37,6 +38,7 @@ const std::vector<std::string_view>& CommandStations::classList()
 #endif
     XpressNetSerial::classId,
     RocoZ21::classId,
+    VirtualCommandStation::classId,
   });
   return list;
 }
@@ -53,6 +55,8 @@ std::shared_ptr<CommandStation> CommandStations::create(const std::weak_ptr<Worl
     return XpressNetSerial::create(world, id);
   else if(classId == RocoZ21::classId)
     return RocoZ21::create(world, id);
+  else if(classId == VirtualCommandStation::classId)
+    return VirtualCommandStation::create(world, id);
   else
     return std::shared_ptr<CommandStation>();
 }
