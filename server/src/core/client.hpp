@@ -50,6 +50,7 @@ class Client : public std::enable_shared_from_this<Client>
     using ObjectHandle = uint32_t;
 
     Traintastic& m_server;
+    boost::asio::io_service::strand m_strand;
     boost::asio::ip::tcp::socket m_socket;
     const std::string m_id;
     struct
@@ -57,6 +58,7 @@ class Client : public std::enable_shared_from_this<Client>
       Message::Header header;
       std::shared_ptr<Message> message;
     } m_readBuffer;
+    std::mutex m_writeQueueMutex;
     std::queue<std::unique_ptr<Message>> m_writeQueue;
     bool m_authenticated;
     std::shared_ptr<Session> m_session;
