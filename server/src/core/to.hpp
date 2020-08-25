@@ -87,7 +87,7 @@ To to(const From& value)
       throw out_of_range_error();
   }
   else if constexpr(std::is_floating_point_v<To> && (std::is_integral_v<From> || std::is_floating_point_v<From>))
-    return value;
+    return static_cast<To>(value);
   else if constexpr(!std::is_same_v<To, bool> && std::is_integral_v<To> && std::is_floating_point_v<From>)
   {
     if(value >= std::numeric_limits<To>::min() && value <= std::numeric_limits<To>::max())
