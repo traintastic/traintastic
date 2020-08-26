@@ -25,6 +25,7 @@
 
 #include "abstractmethod.hpp"
 #include <functional>
+#include <tuple>
 #include "valuetypetraits.hpp"
 #include "../utils/is_shared_ptr.hpp"
 
@@ -50,13 +51,17 @@ struct args
 template<class R, class... A>
 class Method<R(A...)> : public AbstractMethod
 {
+  private:
+    template<std::size_t N>
+    using getArgumentType = typename std::tuple_element<N, std::tuple<A...>>::type;
+
   protected:
     std::function<R(A...)> m_function;
 
   public:
     Method(Object& object, const std::string& name, std::function<R(A...)> function) :
       AbstractMethod(object, name),
-      m_function{function}
+      m_function{std::move(function)}
     {
     }
 
@@ -97,7 +102,14 @@ class Method<R(A...)> : public AbstractMethod
         if constexpr(sizeof...(A) == 0)
           m_function(/* some magic here */);
         else if constexpr(sizeof...(A) == 1)
-          assert(false);
+        {
+          if constexpr(std::is_same_v<getArgumentType<0, A...>, std::string>)
+            m_function(std::get<std::string>(args[0]));
+          else
+            assert(false);
+        }
+        else
+          static_assert(sizeof(R) != sizeof(R));
         //  m_function(args[0]);
         return Result();
       }
@@ -107,6 +119,8 @@ class Method<R(A...)> : public AbstractMethod
           return m_function(/* and here */);
         else if constexpr(sizeof...(A) == 1)
           return m_function(std::get<std::string>(args[0]));
+        else
+          static_assert(sizeof(R) != sizeof(R));
       }
     }
 };
