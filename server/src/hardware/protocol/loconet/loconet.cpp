@@ -79,7 +79,7 @@ LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::fu
 bool LocoNet::send(const Message& message)
 {
   if(m_debugLog)
-    logDebug("tx: " + to_string(message));
+    logDebug("tx: " + toString(message));
   assert(isValid(message));
   return m_send(message);
 }
@@ -113,7 +113,7 @@ void LocoNet::receive(const Message& message)
   assert(isValid(message));
 
   if(m_debugLog)
-    EventLoop::call([this, log="rx: " + to_string(message)](){ logDebug(log); });
+    EventLoop::call([this, log="rx: " + toString(message)](){ logDebug(log); });
 
   switch(message.opCode)
   {

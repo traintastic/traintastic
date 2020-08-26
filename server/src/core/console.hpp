@@ -88,6 +88,6 @@ class Console : public Object, public Table
     TableModelPtr getModel() final;
 };
 
-std::string to_string(const Console::Level& value);
+std::string toString(const Console::Level& value);
 
 #endif

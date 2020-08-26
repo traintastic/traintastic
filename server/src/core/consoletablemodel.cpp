@@ -66,7 +66,7 @@ std::string ConsoleTableModel::getText(uint32_t column, uint32_t row) const
         return s;
       }
       case columnLevel:
-        return to_string(log.level);
+        return toString(log.level);
 
       case columnId:
         return log.id;

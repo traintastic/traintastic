@@ -106,7 +106,7 @@ void XpressNet::receive(const Message& message)
   assert(isChecksumValid(message));
 
   if(m_debugLog)
-    EventLoop::call([this, log="rx: " + to_string(message)](){ logDebug(log); });
+    EventLoop::call([this, log="rx: " + toString(message)](){ logDebug(log); });
 
   if(m_commandStation)
   {

@@ -22,11 +22,11 @@
 
 #include "messages.hpp"
 #include "../../decoder/decoder.hpp"
-#include "../../../utils/to_hex.hpp"
+#include "../../../utils/tohex.hpp"
 
 namespace Z21 {
 
-static std::string_view to_string(Header header)
+static std::string_view toString(Header header)
 {
   switch(header)
   {
@@ -44,13 +44,13 @@ static std::string_view to_string(Header header)
   return {};
 }
 
-std::string to_string(const Message& message, bool raw)
+std::string toString(const Message& message, bool raw)
 {
   std::string s;
-  if(std::string_view sv = to_string(message.header()); !sv.empty())
+  if(std::string_view sv = toString(message.header()); !sv.empty())
     s = sv;
   else
-    s = to_hex(message.header());
+    s = toHex(message.header());
 
   switch(message.header())
   {
@@ -92,14 +92,14 @@ std::string to_string(const Message& message, bool raw)
       if(message.dataLen() == sizeof(Z21::LanGetBroadcastFlags))
         s = "LAN_GET_BROADCASTFLAGS";
       //else if(message.dataLen() == sizeof(Z21::LanGetBroadcastFlagsReply))
-      //  s = "LAN_GET_BROADCASTFLAGS flags=0x" + to_hex(static_cast<const LanGetBroadcastFlagsReply&>(message).broadcastFlags()));
+      //  s = "LAN_GET_BROADCASTFLAGS flags=0x" + toHex(static_cast<const LanGetBroadcastFlagsReply&>(message).broadcastFlags()));
       else
         raw = true;
       break;
 
     case Z21::LAN_SET_BROADCASTFLAGS:
       if(message.dataLen() == sizeof(Z21::LanSetBroadcastFlags))
-        s = "LAN_SET_BROADCASTFLAGS flags=0x" + to_hex(static_cast<const LanSetBroadcastFlags&>(message).broadcastFlags());
+        s = "LAN_SET_BROADCASTFLAGS flags=0x" + toHex(static_cast<const LanSetBroadcastFlags&>(message).broadcastFlags());
       else
         raw = true;
       break;
@@ -117,7 +117,7 @@ std::string to_string(const Message& message, bool raw)
     {
       if(i != sizeof(Message))
         s.append(" ");
-      s.append(to_hex(bytes[i]));
+      s.append(toHex(bytes[i]));
     }
     s.append("]");
   }

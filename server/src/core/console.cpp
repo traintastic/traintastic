@@ -61,7 +61,7 @@ std::ostream& operator<<(std::ostream& out, const Console::Level& value)
   return out;
 }
 
-std::string to_string(const Console::Level& value)
+std::string toString(const Console::Level& value)
 {
   switch(value)
   {

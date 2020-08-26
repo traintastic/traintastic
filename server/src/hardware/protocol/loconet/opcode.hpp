@@ -73,7 +73,7 @@ enum OpCode : uint8_t
   OPC_WR_SL_DATA = 0xEF,
 };
 
-constexpr std::string_view to_string(OpCode value)
+constexpr std::string_view toString(OpCode value)
 {
   switch(value)
   {

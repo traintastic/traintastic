@@ -21,7 +21,7 @@
  */
 
 #include "messages.hpp"
-#include "../../../utils/to_hex.hpp"
+#include "../../../utils/tohex.hpp"
 
 namespace XpressNet {
 
@@ -40,7 +40,7 @@ bool isChecksumValid(const Message& msg)
   return calcChecksum(msg) == *(reinterpret_cast<const uint8_t*>(&msg) + msg.dataSize() + 1);
 }
 
-std::string to_string(const Message& message, bool raw)
+std::string toString(const Message& message, bool raw)
 {
   std::string s;
 
@@ -59,7 +59,7 @@ std::string to_string(const Message& message, bool raw)
     {
       if(i != 0)
         s.append(" ");
-      s.append(to_hex(bytes[i]));
+      s.append(toHex(bytes[i]));
     }
     s.append("]");
   }

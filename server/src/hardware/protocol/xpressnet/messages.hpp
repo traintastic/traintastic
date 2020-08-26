@@ -35,7 +35,7 @@ struct Message;
 
 uint8_t calcChecksum(const Message& msg);
 bool isChecksumValid(const Message& msg);
-std::string to_string(const Message& message, bool raw = false);
+std::string toString(const Message& message, bool raw = false);
 
 struct Message
 {

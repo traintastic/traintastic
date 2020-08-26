@@ -37,7 +37,7 @@ namespace Z21 {
 
 struct Message;
 
-std::string to_string(const Message& message, bool raw = false);
+std::string toString(const Message& message, bool raw = false);
 
 enum Header : uint16_t
 {

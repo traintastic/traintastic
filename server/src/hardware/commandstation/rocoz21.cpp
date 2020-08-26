@@ -28,7 +28,7 @@
 #include "../decoder/decoderchangeflags.hpp"
 #include "../protocol/xpressnet/messages.hpp"
 #include "../protocol/z21/messages.hpp"
-#include "../../utils/to_hex.hpp"
+#include "../../utils/tohex.hpp"
 
 
 
@@ -330,7 +330,7 @@ void RocoZ21::receive()
                   hwType = "Z21 start (starter set variant from 2016)";
                   break;
                 default:
-                  hwType = "0x" + to_hex(reply->hardwareType());
+                  hwType = "0x" + toHex(reply->hardwareType());
                   break;
               }
 
@@ -400,7 +400,7 @@ void RocoZ21::receive()
                   break;
 
                 default:
-                  EventLoop::call([this, xheader](){ logDebug("unknown xheader 0x" + to_hex(xheader)); });
+                  EventLoop::call([this, xheader](){ logDebug("unknown xheader 0x" + toHex(xheader)); });
                   break;
               }
               break;
@@ -464,7 +464,7 @@ void RocoZ21::receive()
                   {
                     std::string message = "unknown loconet message: ";
                     for(int i = 4; i < cmd->dataLen; i++)
-                      message += to_hex(reinterpret_cast<const uint8_t*>(cmd)[i]);
+                      message += toHex(reinterpret_cast<const uint8_t*>(cmd)[i]);
                     EventLoop::call([this, message](){ logDebug(id, message); });
                   }
                   break;
@@ -476,12 +476,12 @@ void RocoZ21::receive()
             default:
               //if(debugEnabled)
               {
-                std::string log = "unknown message: dataLen=0x" + to_hex(message->dataLen()) + ", header=0x" + to_hex(message->header());
+                std::string log = "unknown message: dataLen=0x" + toHex(message->dataLen()) + ", header=0x" + toHex(message->header());
                 if(message->dataLen() > 4)
                 {
                   log += ", data=";
                   for(int i = sizeof(Z21::Message); i < message->dataLen(); i++)
-                    log += to_hex(reinterpret_cast<const uint8_t*>(message)[i]);
+                    log += toHex(reinterpret_cast<const uint8_t*>(message)[i]);
                 }
                 EventLoop::call([this, log](){ logDebug(log); });
               }

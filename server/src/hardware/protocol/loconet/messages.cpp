@@ -21,7 +21,7 @@
  */
 
 #include "messages.hpp"
-#include "../../../utils/to_hex.hpp"
+#include "../../../utils/tohex.hpp"
 
 namespace LocoNet {
 
@@ -56,13 +56,13 @@ bool isValid(const Message& message)
   return true;
 }
 
-std::string to_string(const Message& message, bool raw)
+std::string toString(const Message& message, bool raw)
 {
   std::string s;
-  if(std::string_view sv = to_string(message.opCode); !sv.empty())
+  if(std::string_view sv = toString(message.opCode); !sv.empty())
     s = sv;
   else
-    s = to_hex(message.opCode);
+    s = toHex(message.opCode);
 
   switch(message.opCode)
   {
@@ -217,7 +217,7 @@ std::string to_string(const Message& message, bool raw)
     {
       if(i != 0)
         s.append(" ");
-      s.append(to_hex(bytes[i]));
+      s.append(toHex(bytes[i]));
     }
     s.append("]");
   }

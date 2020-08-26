@@ -26,10 +26,10 @@
 #include "../commandstation/commandstation.hpp"
 #include "../decoder/decoder.hpp"
 #include "../protocol/z21/messages.hpp"
-#include "../../utils/to_hex.hpp"
+#include "../../utils/tohex.hpp"
 #include "../../core/attributes.hpp"
 
-static std::string to_string(const boost::asio::ip::udp::endpoint& endpoint)
+static std::string toString(const boost::asio::ip::udp::endpoint& endpoint)
 {
   std::stringstream ss;
   ss << endpoint;
@@ -146,7 +146,7 @@ void WLANmaus::receive()
 
           if(m_debugLog)
             EventLoop::call(
-              [this, log=to_string(m_receiveEndpoint) + " rx: " + Z21::to_string(*message)]()
+              [this, log=toString(m_receiveEndpoint) + " rx: " + Z21::toString(*message)]()
               {
                 logDebug(log);
               });
@@ -389,7 +389,7 @@ void WLANmaus::receive()
                   [this, broadcastFlags=static_cast<const Z21::LanSetBroadcastFlags*>(message)->broadcastFlags(), endpoint=m_receiveEndpoint]()
                   {
                     if(debugLog)
-                      logDebug(to_string(endpoint) + " LAN_SET_BROADCASTFLAGS 0x" + to_hex(broadcastFlags));
+                      logDebug(toString(endpoint) + " LAN_SET_BROADCASTFLAGS 0x" + toHex(broadcastFlags));
 
                     m_clients[endpoint].broadcastFlags = broadcastFlags;
                   });
@@ -405,7 +405,7 @@ void WLANmaus::receive()
                   [this, endpoint=m_receiveEndpoint]()
                   {
                     if(debugLog)
-                      logDebug(to_string(endpoint) + " LAN_SYSTEMSTATE_GETDATA");
+                      logDebug(toString(endpoint) + " LAN_SYSTEMSTATE_GETDATA");
 
                     Z21::LanSystemStateDataChanged response;
 
@@ -428,7 +428,7 @@ void WLANmaus::receive()
                   [this, endpoint=m_receiveEndpoint]()
                   {
                     if(debugLog)
-                      logDebug(to_string(endpoint) + " LAN_LOGOFF");
+                      logDebug(toString(endpoint) + " LAN_LOGOFF");
                     m_clients.erase(endpoint);
                   });
               }
@@ -443,12 +443,12 @@ void WLANmaus::receive()
 
           /*if(unknownMessage && debugLog)
           {
-            std::string log = "unknown message: dataLen=0x" + to_hex(message->dataLen()) + ", header=0x" + to_hex(message->header());
+            std::string log = "unknown message: dataLen=0x" + toHex(message->dataLen()) + ", header=0x" + toHex(message->header());
             if(message->dataLen() > 4)
             {
               log += ", data=";
               for(int i = sizeof(Z21::Message); i < message->dataLen(); i++)
-                log += to_hex(reinterpret_cast<const uint8_t*>(message)[i]);
+                log += toHex(reinterpret_cast<const uint8_t*>(message)[i]);
             }
             EventLoop::call([this, log](){ logDebug(log); });
           }*/
@@ -467,7 +467,7 @@ void WLANmaus::receive()
 void WLANmaus::sendTo(const Z21::Message& message, const boost::asio::ip::udp::endpoint& endpoint)
 {
   if(debugLog)
-    logDebug(to_string(endpoint) + " tx: " + Z21::to_string(message));
+    logDebug(toString(endpoint) + " tx: " + Z21::toString(message));
 
   // TODO: add to queue, send async
 

@@ -1,5 +1,5 @@
 /**
- * server/src/utils/to_hex.hpp
+ * server/src/utils/tohex.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,13 +20,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_UTILS_TO_HEX_HPP
-#define TRAINTASTIC_SERVER_UTILS_TO_HEX_HPP
+#ifndef TRAINTASTIC_SERVER_UTILS_TOHEX_HPP
+#define TRAINTASTIC_SERVER_UTILS_TOHEX_HPP
 
 #include <string>
 
 template<typename T>
-std::string to_hex(T value, size_t length = sizeof(T) * 2)
+std::string toHex(T value, size_t length = sizeof(T) * 2)
 {
   static const char* digits = "0123456789ABCDEF";
   std::string s(length, '0');
