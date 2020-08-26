@@ -303,19 +303,9 @@ void MainWindow::loadWorld()
   std::unique_ptr<WorldListDialog> d = std::make_unique<WorldListDialog>(m_connection, this);
   if(d->exec() == QDialog::Accepted)
   {
-    d->uuid();
-
-
-    /*
-    m_connection = d->connection();
-    connect(m_connection.data(), &Connection::worldChanged,
-      [this]()
-      {
-        worldChanged();
-        updateActions();
-      });
-    worldChanged();
-    clientStateChanged();*/
+    Method* method = m_connection->traintastic()->getMethod("load_world");
+    if(Q_LIKELY(method))
+      method->call(d->uuid());
   }
   /*
   {

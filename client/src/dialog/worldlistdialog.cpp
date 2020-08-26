@@ -47,7 +47,7 @@ WorldListDialog::WorldListDialog(const QSharedPointer<Connection>& connection, Q
   m_buttons->button(QDialogButtonBox::Open)->setEnabled(false);
   connect(m_buttons->button(QDialogButtonBox::Open), &QPushButton::clicked, [this]()
     {
-
+      m_uuid = m_tableWidget->getRowObjectId(m_tableWidget->selectionModel()->selectedIndexes().first().row());
       accept();
     });
   m_buttons->button(QDialogButtonBox::Cancel)->setText(Locale::tr("qtapp.world_list_dialog:cancel"));

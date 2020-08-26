@@ -36,6 +36,11 @@ void Method::call()
   object().connection()->callMethod(*this);
 }
 
+void Method::call(const QString& arg)
+{
+  object().connection()->callMethod(*this, arg);
+}
+
 int Method::call(std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
 {
   return object().connection()->callMethod(*this, std::move(callback));

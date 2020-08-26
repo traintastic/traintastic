@@ -58,6 +58,23 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
       console->notice(id, "Created new world");
       world->trackPowerOff();
       world->edit = true;
+    }},
+  loadWorld{*this, "load_world",
+    [this](const std::string& _uuid)
+    {
+      boost::uuids::uuid uuid;
+      try
+      {
+        uuid = boost::uuids::string_generator()(_uuid);
+      }
+      catch(const std::exception&)
+      {
+        uuid = boost::uuids::nil_generator()();
+        console->error(id, "Invalid default world uuid");
+      }
+
+      if(!uuid.is_nil())
+        load(uuid);
     }}
 {
   if(!std::filesystem::is_directory(m_dataDir))
@@ -68,6 +85,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_interfaceItems.add(world);
   m_interfaceItems.add(worldList);
   m_interfaceItems.add(newWorld);
+  m_interfaceItems.add(loadWorld);
 }
 
 Traintastic::~Traintastic()
@@ -83,21 +101,7 @@ bool Traintastic::run()
   worldList = std::make_shared<WorldList>(m_dataDir / "world");
 
   if(!settings->defaultWorld.value().empty())
-  {
-    boost::uuids::uuid uuid;
-    try
-    {
-      uuid = boost::uuids::string_generator()(settings->defaultWorld.value());
-    }
-    catch(const std::exception&)
-    {
-      uuid = boost::uuids::nil_generator()();
-      console->error(id, "Invalid default world uuid");
-    }
-
-    if(!uuid.is_nil())
-      loadWorld(uuid);
-  }
+    loadWorld(settings->defaultWorld.value());
 
   if(!start())
     return false;
@@ -185,31 +189,24 @@ bool Traintastic::stop()
   return true;
 }
 
-void Traintastic::loadWorld(const boost::uuids::uuid& uuid)
+void Traintastic::load(const boost::uuids::uuid& uuid)
 {
   if(const WorldList::WorldInfo* info = worldList->find(uuid))
-    loadWorld(info->path);
+    load(info->path);
   else
     console->error(id, "World " + to_string(uuid) + " doesn't exist");
 }
 
-void Traintastic::loadWorld(const std::filesystem::path& path)
+void Traintastic::load(const std::filesystem::path& path)
 {
   try
   {
     world = WorldLoader(path / "traintastic.json").world();
-    //World::load(path / "traintastic.json");
   }
   catch(const std::exception& e)
   {
     console->critical(id, std::string("Loading world failed: ") + e.what());
   }
-}
-
-void Traintastic::saveWorld()
-{
-  assert(world);
-  world->save();
 }
 
 void Traintastic::clientGone(const std::shared_ptr<Client>& client)

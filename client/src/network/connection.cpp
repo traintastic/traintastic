@@ -191,6 +191,18 @@ void Connection::callMethod(Method& method)
   send(event);
 }
 
+void Connection::callMethod(Method& method, const QString& arg)
+{
+  auto event = Message::newEvent(Message::Command::ObjectCallMethod);
+  event->write(method.object().handle());
+  event->write(method.name().toLatin1());
+  event->write(ValueType::Invalid); // no result
+  event->write<uint8_t>(1); // 1 argument
+  event->write(ValueType::String);
+  event->write(arg.toUtf8());
+  send(event);
+}
+
 int Connection::callMethod(Method& method, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
 {
   auto request = Message::newRequest(Message::Command::ObjectCallMethod);

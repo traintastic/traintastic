@@ -56,9 +56,8 @@ class Traintastic : public Object
     bool start();
     bool stop();
 
-    void loadWorld(const boost::uuids::uuid& uuid);
-    void loadWorld(const std::filesystem::path& path);
-    void saveWorld();
+    void load(const boost::uuids::uuid& uuid);
+    void load(const std::filesystem::path& path);
 
     void doReceive();
     std::unique_ptr<Message> processMessage(const Message& message);
@@ -78,6 +77,7 @@ class Traintastic : public Object
     ObjectProperty<World> world;
     ObjectProperty<WorldList> worldList;
     Method<void()> newWorld;
+    Method<void(std::string)> loadWorld;
 
     Traintastic(const std::filesystem::path& dataDir);
     ~Traintastic() final;

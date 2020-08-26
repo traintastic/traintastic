@@ -42,6 +42,7 @@ class Method : public InterfaceItem
     const QVector<ValueType>& argumentTypes() const { return m_argumentTypes; }
 
     void call();
+    void call(const QString& arg);
     [[nodiscard]] int call(std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
     [[nodiscard]] int call(const QString& arg, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
 };
