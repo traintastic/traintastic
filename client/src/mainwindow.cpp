@@ -307,32 +307,6 @@ void MainWindow::loadWorld()
     if(Q_LIKELY(method))
       method->call(d->uuid());
   }
-  /*
-  {
-
-
-
-
-
-
-
-
-    WorldListDialog* window = new WorldListDialog(m_connection, this);
-    window->setAttribute(Qt::WA_DeleteOnClose);
-    window->showModal();
-    //if(!title.isEmpty())
-    //  window->setWindowTitle(title);
-    //m_mdiSubWindows[id] = window;
-    //m_mdiArea->addSubWindow(window);
-    //window->setAttribute(Qt::WA_DeleteOnClose);
-    //connect(window, &QMdiSubWindow::destroyed, [this, id](QObject*){ m_mdiSubWindows.remove(id); });
-   // window->show();
-
-
-   // if(const ObjectPtr& traintastic = m_connection->traintastic())
-     // if(Method* method = traintastic->getMethod("new_world"))
-       // method->call();
-  }*/
 }
 
 void MainWindow::importWorld()
