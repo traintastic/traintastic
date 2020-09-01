@@ -63,7 +63,6 @@ class World : public Object
     std::unordered_map<std::string, std::weak_ptr<Object>> m_objects;
 
     void event(WorldEvent event);
-    //void load();
 
     nlohmann::json saveObject(const ObjectPtr& object);
 
@@ -73,7 +72,6 @@ class World : public Object
     static constexpr std::string_view filename = "traintastic.json";
 
     static std::shared_ptr<World> create();
-    //static std::shared_ptr<World> load(const std::filesystem::path& filename);
 
     Property<std::string> name;
     Property<WorldScale> scale;
@@ -102,7 +100,6 @@ class World : public Object
     const boost::uuids::uuid& uuid() const { return m_uuid; }
 
     std::string getUniqueId(const std::string& prefix) const;
-    //ObjectPtr createObject(const std::string& classId, std::string_view _id = "");
     bool isObject(const std::string&_id) const;
     ObjectPtr getObject(const std::string& _id) const;
 };
