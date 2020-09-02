@@ -21,17 +21,6 @@
  */
 
 #include "railvehicles.hpp"
-#include "locomotive.hpp"
-#include "freightcar.hpp"
-
-const std::vector<std::string_view>& RailVehicles::classList()
-{
-  static std::vector<std::string_view> list({
-    Locomotive::classId,
-    FreightCar::classId,
-  });
-  return list;
-}
 
 std::shared_ptr<RailVehicle> RailVehicles::create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id)
 {

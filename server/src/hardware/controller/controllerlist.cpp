@@ -30,23 +30,24 @@
 ControllerList::ControllerList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<Controller>(_parent, parentPropertyName),
   add{*this, "add",
-  [this]()
-  {
-    auto world = getWorld(&this->parent());
-    if(!world)
-      return std::shared_ptr<Controller>();
-    auto controller = Controllers::create(world, "controller.wlanmaus", world->getUniqueId("controller"));
-    if(auto* cs = dynamic_cast<CommandStation*>(&this->parent()))
-      controller->commandStation = cs->shared_ptr<CommandStation>();
-    //else if(world->commandStations->length() == 1)
-    //  decoder->commandStation = cs->shared_ptr<CommandStation>();
-    return controller;
-  }}
+    [this](std::string_view classId)
+    {
+      auto world = getWorld(&this->parent());
+      if(!world)
+        return std::shared_ptr<Controller>();
+      auto controller = Controllers::create(world, classId, world->getUniqueId("controller"));
+      if(auto* cs = dynamic_cast<CommandStation*>(&this->parent()))
+        controller->commandStation = cs->shared_ptr<CommandStation>();
+      //else if(world->commandStations->length() == 1)
+      //  decoder->commandStation = cs->shared_ptr<CommandStation>();
+      return controller;
+    }}
 {
   auto world = getWorld(&_parent);
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
 
   Attributes::addEnabled(add, editable);
+  Attributes::addClassList(add, Controllers::classList);
   m_interfaceItems.add(add);
 }
 

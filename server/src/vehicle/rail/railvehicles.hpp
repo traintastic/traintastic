@@ -24,12 +24,19 @@
 #define TRAINTASTIC_SERVER_VEHICLE_RAIL_RAILVEHICLES_HPP
 
 #include "railvehicle.hpp"
+#include "../../utils/makearray.hpp"
+
+#include "locomotive.hpp"
+#include "freightcar.hpp"
 
 struct RailVehicles
 {
   static constexpr std::string_view classIdPrefix = "vehicle.rail.";
 
-  static const std::vector<std::string_view>& classList();
+  static constexpr auto classList = makeArray(
+    Locomotive::classId,
+    FreightCar::classId
+  );
 
   static std::shared_ptr<RailVehicle> create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id);
 };

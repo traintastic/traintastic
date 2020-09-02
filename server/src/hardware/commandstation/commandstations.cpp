@@ -21,27 +21,6 @@
  */
 
 #include "commandstations.hpp"
-#include "loconetserial.hpp"
-#ifndef DISABLE_USB_XPRESSNET_INTERFACE
-  #include "usbxpressnetinterface.hpp"
-#endif
-#include "xpressnetserial.hpp"
-#include "rocoz21.hpp"
-#include "virtualcommandstation.hpp"
-
-const std::vector<std::string_view>& CommandStations::classList()
-{
-  static std::vector<std::string_view> list({
-    LocoNetSerial::classId,
-#ifndef DISABLE_USB_XPRESSNET_INTERFACE
-    USBXpressNetInterface::classId,
-#endif
-    XpressNetSerial::classId,
-    RocoZ21::classId,
-    VirtualCommandStation::classId,
-  });
-  return list;
-}
 
 std::shared_ptr<CommandStation> CommandStations::create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id)
 {

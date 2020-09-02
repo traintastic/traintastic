@@ -32,6 +32,12 @@ struct Attributes
     item.addAttribute(AttributeName::Category, value);
   }
 
+  template<size_t N>
+  static inline void addClassList(InterfaceItem& item, const std::array<std::string_view, N>& classList)
+  {
+    item.addAttribute(AttributeName::ClassList, classList);
+  }
+
   static inline void addEnabled(InterfaceItem& item, bool value)
   {
     item.addAttribute(AttributeName::Enabled, value);

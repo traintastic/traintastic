@@ -24,12 +24,17 @@
 #define TRAINTASTIC_SERVER_HARDWARE_CONTROLLER_CONTROLLERS_HPP
 
 #include "controller.hpp"
+#include "../../utils/makearray.hpp"
+
+#include "wlanmaus.hpp"
 
 struct Controllers
 {
   static constexpr std::string_view classIdPrefix = "controller.";
 
-  static const std::vector<std::string_view>& classList();
+  static constexpr auto classList = makeArray(
+    WLANmaus::classId
+  );
 
   static std::shared_ptr<Controller> create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id);
 };

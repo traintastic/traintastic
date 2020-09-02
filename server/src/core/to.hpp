@@ -99,6 +99,10 @@ To to(const From& value)
   {
     return std::to_string(value);
   }
+  else if constexpr(std::is_same_v<To, std::string> && std::is_same_v<From, std::string_view>)
+  {
+    return std::string(value);
+  }
   else if constexpr(std::is_same_v<From, nlohmann::json>)
   {
     if constexpr(std::is_enum_v<To>)

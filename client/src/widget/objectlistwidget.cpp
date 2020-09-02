@@ -25,6 +25,7 @@
 #include <QToolBar>
 #include <QTableView>
 #include <QtWaitingSpinner/waitingspinnerwidget.h>
+#include <traintastic/locale/locale.hpp>
 #include "tablewidget.hpp"
 #include "../network/connection.hpp"
 #include "../network/object.hpp"
@@ -116,83 +117,34 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
       m_buttonAdd->setPopupMode(QToolButton::InstantPopup);
 
       QMenu* menu = new QMenu(m_buttonAdd);
-      menu->addAction("li10x");
-      menu->addAction("z21");
-      menu->addAction("loconet_serial",
-        [this, method]()
-        {
-          if(m_requestIdAdd != Connection::invalidRequestId)
-            m_object->connection()->cancelRequest(m_requestIdAdd);
 
-          m_requestIdAdd = method->call("hardware.command_station.loconet_serial",
-            [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
-            {
-              m_requestIdAdd = Connection::invalidRequestId;
-              if(object)
-              {
-                MainWindow::instance->showObject(object);
-              }
-              // TODO: show error
-            });
-        });
-      menu->addAction("locomotive",
-        [this, method]()
-        {
-          if(m_requestIdAdd != Connection::invalidRequestId)
-            m_object->connection()->cancelRequest(m_requestIdAdd);
+      QStringList classList = method->getAttribute(AttributeName::ClassList, QVariant()).toStringList();
+      for(const QString& classId : classList)
+      {
+        QAction* action = menu->addAction(Locale::tr("class_id:" + classId));
+        action->setData(classId);
+        connect(action, &QAction::triggered, this,
+          [this, method, action]()
+          {
+            if(m_requestIdAdd != Connection::invalidRequestId)
+              m_object->connection()->cancelRequest(m_requestIdAdd);
 
-          m_requestIdAdd = method->call("vehicle.rail.locomotive",
-            [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
-            {
-              m_requestIdAdd = Connection::invalidRequestId;
-              if(object)
-              {
-                MainWindow::instance->showObject(object);
-              }
-              // TODO: show error
-            });
-        });
-      menu->addAction("locomotive",
-        [this, method]()
-        {
-          if(m_requestIdAdd != Connection::invalidRequestId)
-            m_object->connection()->cancelRequest(m_requestIdAdd);
-
-          m_requestIdAdd = method->call("vehicle.rail.freight_car",
-            [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
-            {
-              m_requestIdAdd = Connection::invalidRequestId;
-              if(object)
-              {
-                MainWindow::instance->showObject(object);
-              }
-              // TODO: show error
-            });
-        });
-
-      m_buttonAdd->setMenu(menu);
-
-      m_toolbar->addWidget(m_buttonAdd);
-
-
-            /*
-            m_requestIdAdd = method->call("hardware.command_station.li10x",
-              [this](const ObjectPtr& object, Message::ErrorCode /*ec*//*)
+            m_requestIdAdd = method->call(action->data().toString(),
+              [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
               {
                 m_requestIdAdd = Connection::invalidRequestId;
-
                 if(object)
                 {
                   MainWindow::instance->showObject(object);
                 }
-
                 // TODO: show error
-
-
               });
+          });
+      }
 
-            */
+      m_buttonAdd->setMenu(menu);
 
+      m_toolbar->addWidget(m_buttonAdd);
 
       m_buttonAdd->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
       connect(method, &Method::attributeChanged,

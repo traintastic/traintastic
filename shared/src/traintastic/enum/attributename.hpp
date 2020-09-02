@@ -35,6 +35,7 @@ enum class AttributeName : uint16_t
   ObjectEditor = 5,
   Values = 6,
   SubObject = 7,
+  ClassList = 8,
 };
 
 #endif

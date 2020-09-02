@@ -37,7 +37,7 @@ class ControllerList : public ObjectList<Controller>
   public:
     CLASS_ID("controller_list")
 
-    Method<std::shared_ptr<Controller>()> add;
+    Method<std::shared_ptr<Controller>(std::string_view)> add;
 
     ControllerList(Object& _parent, const std::string& parentPropertyName);
 

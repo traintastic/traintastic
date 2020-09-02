@@ -41,6 +41,7 @@ RailVehicleList::RailVehicleList(Object& _parent, const std::string& parentPrope
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
 
   Attributes::addEnabled(add, editable);
+  Attributes::addClassList(add, RailVehicles::classList);
   m_interfaceItems.add(add);
 }
 

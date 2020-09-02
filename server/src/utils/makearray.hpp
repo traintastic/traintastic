@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/controller/controllers.cpp
+ * server/src/utils/makearray.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,12 +20,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "controllers.hpp"
+#ifndef TRAINTASTIC_SERVER_UTILS_MAKEARRAY_HPP
+#define TRAINTASTIC_SERVER_UTILS_MAKEARRAY_HPP
 
-std::shared_ptr<Controller> Controllers::create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id)
+#include <array>
+#include <type_traits>
+#include <utility>
+
+template<typename T, typename... Ts>
+constexpr std::array<std::decay_t<T>, 1 + sizeof...(Ts)> makeArray(T&& t, Ts&&... ts) noexcept(noexcept(std::is_nothrow_constructible<std::array<std::decay_t<T>, 1 + sizeof... (Ts)>, T&&, Ts&&...>::value))
 {
-  if(classId == WLANmaus::classId)
-    return WLANmaus::create(world, id);
-  else
-    return std::shared_ptr<Controller>();
+  return {{std::forward<T>(t), std::forward<Ts>(ts)...}};
 }
+
+#endif

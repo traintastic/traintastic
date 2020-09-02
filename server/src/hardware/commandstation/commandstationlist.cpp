@@ -49,6 +49,7 @@ CommandStationList::CommandStationList(Object& _parent, const std::string& paren
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
 
   Attributes::addEnabled(add, editable);
+  Attributes::addClassList(add, CommandStations::classList);
   m_interfaceItems.add(add);
 
   Attributes::addEnabled(remove, editable);
