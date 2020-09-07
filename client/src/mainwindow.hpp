@@ -79,7 +79,7 @@ class MainWindow : public QMainWindow
     void toggleFullScreen();
     void toggleConsole();
     void showAbout();
-    void clientStateChanged();
+    void connectionStateChanged();
     void updateActions();
     //void updateModeActions();
 

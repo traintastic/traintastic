@@ -224,9 +224,7 @@ MainWindow::MainWindow(QWidget* parent) :
     setWindowState(static_cast<Qt::WindowState>(settings.value(SETTING_WINDOWSTATE).toInt()));
   actFullScreen->setChecked(isFullScreen());
 
-  //connect(Client::instance, &Client::stateChanged, this, &MainWindow::clientStateChanged);
-
-  clientStateChanged();
+  connectionStateChanged();
 }
 
 MainWindow::~MainWindow()
@@ -250,20 +248,16 @@ void MainWindow::connectToServer()
         worldChanged();
         updateActions();
       });
+    connect(m_connection.data(), &Connection::stateChanged, this, &MainWindow::connectionStateChanged);
     worldChanged();
-    clientStateChanged();
+    connectionStateChanged();
   }
 }
 
 void MainWindow::disconnectFromServer()
 {
-  if(!m_connection)
-    return;
-
-  m_world.clear();
-  m_connection->disconnectFromHost();
-  m_connection.clear();
-  clientStateChanged();
+  if(m_connection)
+    m_connection->disconnectFromHost();
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -276,7 +270,13 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 void MainWindow::worldChanged()
 {
-  m_world = m_connection->world();
+  if(m_world)
+    m_mdiArea->closeAllSubWindows();
+
+  if(m_connection)
+    m_world = m_connection->world();
+  else
+    m_world.clear();
 
   if(m_world)
   {
@@ -442,14 +442,15 @@ void MainWindow::showAbout()
     " GNU General Public License for more details.</p>");
 }
 
-void MainWindow::clientStateChanged()
+void MainWindow::connectionStateChanged()
 {
-  const bool connected = m_connection && m_connection->state() == Connection::State::Connected;
+  m_mdiArea->setEnabled(m_connection && m_connection->state() == Connection::State::Connected);
 
-  m_mdiArea->setEnabled(connected);
-
-  //if(connected)
-  //  connect(m_connection->traintastic()->getProperty("mode"), &Property::valueChanged, this, &MainWindow::updateModeActions);
+  if(m_connection && m_connection->state() == Connection::State::Disconnected)
+  {
+    m_connection.clear();
+    worldChanged();
+  }
 
   updateActions();
 
