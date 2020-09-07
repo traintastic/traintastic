@@ -395,7 +395,11 @@ void MainWindow::showObject(const ObjectPtr& object)
     m_mdiSubWindows[id] = window;
     m_mdiArea->addSubWindow(window);
     window->setAttribute(Qt::WA_DeleteOnClose);
-    connect(window, &QMdiSubWindow::destroyed, [this, id](QObject*){ m_mdiSubWindows.remove(id); });
+    connect(window, &QMdiSubWindow::destroyed, this,
+      [this, id](QObject*)
+      {
+        m_mdiSubWindows.remove(id);
+      });
     window->show();
   }
   else
@@ -412,7 +416,7 @@ void MainWindow::showObject(const QString& id, const QString& title)
     m_mdiSubWindows[id] = window;
     m_mdiArea->addSubWindow(window);
     window->setAttribute(Qt::WA_DeleteOnClose);
-    connect(window, &QMdiSubWindow::destroyed,
+    connect(window, &QMdiSubWindow::destroyed, this,
       [this, id](QObject*)
       {
         m_mdiSubWindows.remove(id);
