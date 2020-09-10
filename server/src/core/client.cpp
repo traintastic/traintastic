@@ -43,13 +43,10 @@ Client::Client(Traintastic& server, const std::string& id, boost::asio::ip::tcp:
 
 Client::~Client()
 {
-  try
-  {
-    m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
-  }
-  catch(...)
-  {
-  }
+  boost::system::error_code ec;
+  m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+  if(ec)
+    Traintastic::instance->console->info(m_id, ec.message());
   m_socket.close();
 }
 
