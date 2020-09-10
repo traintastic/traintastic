@@ -51,6 +51,7 @@ class Settings : public Object
     Property<bool> discoverable;
     Property<std::string> defaultWorld;
     Property<bool> autoSaveWorldOnExit;
+    Property<bool> allowClientServerShutdown;
 
     Settings(const std::filesystem::path& filename);
 };

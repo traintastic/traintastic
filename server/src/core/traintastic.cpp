@@ -30,6 +30,7 @@
 #include "eventloop.hpp"
 #include "settings.hpp"
 #include "client.hpp"
+#include "attributes.hpp"
 #include "../world/world.hpp"
 #include "../world/worldlist.hpp"
 #include "../world/worldloader.hpp"
@@ -75,6 +76,12 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
 
       if(!uuid.is_nil())
         load(uuid);
+    }},
+  shutdown{*this, "shutdown",
+    [this]()
+    {
+      if(settings->allowClientServerShutdown)
+        exit();
     }}
 {
   if(!std::filesystem::is_directory(m_dataDir))
@@ -86,6 +93,8 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_interfaceItems.add(worldList);
   m_interfaceItems.add(newWorld);
   m_interfaceItems.add(loadWorld);
+  Attributes::addEnabled(shutdown, false);
+  m_interfaceItems.add(shutdown);
 }
 
 Traintastic::~Traintastic()
@@ -98,6 +107,8 @@ bool Traintastic::run()
   console->info(id, "v" STR(VERSION) " " TRAINTASTIC_CODENAME);
 
   settings = std::make_shared<Settings>(m_dataDir / "settings.json");
+  Attributes::setEnabled(shutdown, settings->allowClientServerShutdown);
+
   worldList = std::make_shared<WorldList>(m_dataDir / "world");
 
   if(!settings->defaultWorld.value().empty())

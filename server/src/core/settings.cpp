@@ -35,13 +35,15 @@ Settings::Settings(const std::filesystem::path& filename) :
   port{this, "port", defaultPort, PropertyFlags::ReadWrite, [this](const uint16_t&){ save(); }},
   discoverable{this, "discoverable", true, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
   defaultWorld{this, "default_world", "", PropertyFlags::ReadWrite, [this](const std::string&){ save(); }},
-  autoSaveWorldOnExit{this, "auto_save_world_on_exit", false, PropertyFlags::ReadWrite, [this](const bool&){ save(); }}
+  autoSaveWorldOnExit{this, "auto_save_world_on_exit", false, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
+  allowClientServerShutdown{this, "allow_client_server_shutdown", false, PropertyFlags::ReadWrite, [this](const bool&){ save(); }}
 {
   m_interfaceItems.add(localhostOnly);
   m_interfaceItems.add(port);
   m_interfaceItems.add(discoverable);
   m_interfaceItems.add(defaultWorld);
   m_interfaceItems.add(autoSaveWorldOnExit);
+  m_interfaceItems.add(allowClientServerShutdown);
 
   load();
 }

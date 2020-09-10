@@ -78,6 +78,7 @@ class Traintastic : public Object
     ObjectProperty<WorldList> worldList;
     Method<void()> newWorld;
     Method<void(std::string)> loadWorld;
+    Method<void()> shutdown;
 
     Traintastic(const std::filesystem::path& dataDir);
     ~Traintastic() final;

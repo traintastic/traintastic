@@ -119,6 +119,9 @@ MainWindow::MainWindow(QWidget* parent) :
     actFullScreen = menu->addAction(Locale::tr("qtapp.mainmenu:fullscreen"), this, &MainWindow::toggleFullScreen);
     actFullScreen->setCheckable(true);
     actFullScreen->setShortcut(Qt::Key_F11);
+    m_actionServerConsole = menu->addAction(Locale::tr("qtapp.mainmenu:server_console") + "...", this, &MainWindow::toggleConsole);//[this](){ showObject("traintastic.console"); });
+    m_actionServerConsole->setCheckable(true);
+    m_actionServerConsole->setShortcut(Qt::Key_F12);
 
     m_menuObjects = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:objects"));
     menu = m_menuObjects->addMenu(QIcon(":/dark/hardware.svg"), Locale::tr("qtapp.mainmenu:hardware"));
@@ -139,10 +142,35 @@ MainWindow::MainWindow(QWidget* parent) :
         d->exec();
       });
     menu->addSeparator();
-    m_actionServerSettings = menu->addAction(Locale::tr("qtapp.mainmenu:server_settings") + "...", this, [this](){ showObject("traintastic.settings", Locale::tr("qtapp.mainmenu:server_settings")); });
-    m_actionServerConsole = menu->addAction(Locale::tr("qtapp.mainmenu:server_console") + "...", this, &MainWindow::toggleConsole);//[this](){ showObject("traintastic.console"); });
-    m_actionServerConsole->setCheckable(true);
-    m_actionServerConsole->setShortcut(Qt::Key_F12);
+    m_menuServer = menu->addMenu(Locale::tr("qtapp.mainmenu:server"));
+    m_actionServerSettings = m_menuServer->addAction(Locale::tr("qtapp.mainmenu:server_settings") + "...", this,
+      [this]()
+      {
+        showObject("traintastic.settings", Locale::tr("qtapp.mainmenu:server_settings"));
+      });
+    m_menuServer->addSeparator();
+    m_actionServerRestart = m_menuServer->addAction(Locale::tr("qtapp.mainmenu:restart_server"), this,
+      [this]()
+      {
+        if(QMessageBox::question(this, Locale::tr("qtapp.mainmenu:restart_server"), Locale::tr("qtapp.mainmenu:restart_server_question"), Locale::tr("qtapp.message_box:yes"), Locale::tr("qtapp.message_box:no"), "", 0, 1) != 0)
+          return;
+
+        if(m_connection)
+          if(const ObjectPtr& traintastic = m_connection->traintastic())
+            if(Method* method = traintastic->getMethod("restart"))
+              method->call();
+      });
+    m_actionServerShutdown = m_menuServer->addAction(Locale::tr("qtapp.mainmenu:shutdown_server"), this,
+      [this]()
+      {
+        if(QMessageBox::question(this, Locale::tr("qtapp.mainmenu:shutdown_server"), Locale::tr("qtapp.mainmenu:shutdown_server_question"), Locale::tr("qtapp.message_box:yes"), Locale::tr("qtapp.message_box:no"), "", 0, 1) != 0)
+          return;
+
+        if(m_connection)
+          if(const ObjectPtr& traintastic = m_connection->traintastic())
+            if(Method* method = traintastic->getMethod("shutdown"))
+              method->call();
+      });
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:help"));
     menu->addAction(Locale::tr("qtapp.mainmenu:help"), [](){ QDesktopServices::openUrl("https://traintastic.org/manual?version=" + QApplication::applicationVersion()); })->setShortcut(QKeySequence::HelpContents);
@@ -463,6 +491,7 @@ void MainWindow::updateActions()
   const bool connected = m_connection && m_connection->state() == Connection::State::Connected;
   const bool haveWorld = connected && m_connection->world();
 
+
   m_actionConnectToServer->setEnabled(!m_connection);
   m_actionConnectToServer->setVisible(!connected);
   m_actionDisconnectFromServer->setVisible(connected);
@@ -472,8 +501,17 @@ void MainWindow::updateActions()
   m_actionImportWorld->setEnabled(haveWorld    && false);
   m_actionExportWorld->setEnabled(haveWorld    && false);
 
-  m_actionServerSettings->setEnabled(connected);
   m_actionServerConsole->setEnabled(connected);
+  m_menuServer->setEnabled(haveWorld);
+  m_actionServerSettings->setEnabled(connected);
+  if(connected)
+  {
+    Method* m;
+    m = m_connection->traintastic()->getMethod("restart");
+    m_actionServerRestart->setEnabled(m && m->getAttributeBool(AttributeName::Enabled, false));
+    m = m_connection->traintastic()->getMethod("shutdown");
+    m_actionServerShutdown->setEnabled(m && m->getAttributeBool(AttributeName::Enabled, false));
+  }
 
   m_actionTrackPowerOff->setEnabled(haveWorld);
   m_actionTrackPowerOn->setEnabled(haveWorld);
