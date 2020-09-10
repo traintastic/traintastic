@@ -88,7 +88,7 @@ class Traintastic : public Object
     std::filesystem::path worldDir() const { return m_dataDir / "world"; }
 
     bool run();
-    void shutdown();
+    void exit();
 };
 
 #endif

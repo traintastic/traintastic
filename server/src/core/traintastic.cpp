@@ -112,7 +112,7 @@ bool Traintastic::run()
   return true;
 }
 
-void Traintastic::shutdown()
+void Traintastic::exit()
 {
   console->notice(id, "Shutting down");
 

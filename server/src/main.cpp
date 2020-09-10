@@ -47,7 +47,7 @@ void signalHandler(int signum)
         [signum]()
         {
           Traintastic::instance->console->notice(Traintastic::id, std::string("Received signal: ") + strsignal(signum));
-          Traintastic::instance->shutdown();
+          Traintastic::instance->exit();
         });
       break;
     }
@@ -156,8 +156,13 @@ int main(int argc, char* argv[])
   try
   {
     Traintastic::instance = std::make_shared<Traintastic>(dataDir);
+    std::cerr << "before run" << std::endl;
     status = Traintastic::instance->run() ? EXIT_SUCCESS : EXIT_FAILURE;
+    std::cerr << "after run" << std::endl;
+    std::cerr << Traintastic::instance.use_count() << std::endl;
     Traintastic::instance.reset();
+    std::cerr << Traintastic::instance.use_count() << std::endl;
+    std::cerr << "after reset" << std::endl;
   }
   catch(const std::exception& e)
   {
