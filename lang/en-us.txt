@@ -156,7 +156,18 @@ world:trains=Trains
 
 world_list:uuid=UUID
 
+class_id:command_station.loconet_serial=LocoNet (serial)
+class_id:command_station.usb_xpressnet_interface=USB XpressNet interface
+class_id:command_station.xpressnet_serial=XpressNet (serial)
+class_id:command_station.z21=Z21
+class_id:command_station.virtual=Virtual
 
-#! Garbage
-#! Garbage
-train:speedMax=Maximum speed
+qtapp.mainmenu:server=Server
+qtapp.mainmenu:restart_server=Restart server
+qtapp.mainmenu:restart_server_question=Are you sure you want to restart the server?
+qtapp.mainmenu:shutdown_server=Shutdown server
+qtapp.mainmenu:shutdown_server_question=Are you sure you want to shutdown the server?
+qtapp.settings:language=Language
+
+qtapp.message_box:no=No
+qtapp.message_box:yes=Yes
