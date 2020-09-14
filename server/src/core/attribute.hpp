@@ -61,6 +61,11 @@ class Attribute : public AbstractValueAttribute
       return to<std::string>(m_value);
     }
 
+    inline T value() const
+    {
+      return m_value;
+    }
+
     void setValue(const T& value)
     {
       if(m_value != value)

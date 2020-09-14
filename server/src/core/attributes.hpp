@@ -43,6 +43,11 @@ struct Attributes
     item.addAttribute(AttributeName::Enabled, value);
   }
 
+  static inline bool getEnabled(const InterfaceItem& item)
+  {
+    return item.getAttribute<bool>(AttributeName::Enabled);
+  }
+
   static inline void setEnabled(InterfaceItem& item, bool value)
   {
     item.setAttribute(AttributeName::Enabled, value);

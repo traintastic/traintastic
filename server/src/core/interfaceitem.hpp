@@ -57,6 +57,13 @@ class InterfaceItem
     }
 
     template<typename T>
+    T getAttribute(AttributeName name) const
+    {
+      assert(m_attributes.find(name) != m_attributes.end());
+      return static_cast<const Attribute<T>*>(m_attributes.at(name).get())->value();
+    }
+
+    template<typename T>
     void setAttribute(AttributeName name, const T& value)
     {
       assert(m_attributes.find(name) != m_attributes.end());
