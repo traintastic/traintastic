@@ -60,8 +60,10 @@ ConnectDialog::ConnectDialog(QWidget* parent) :
   QFormLayout* formLayout = new QFormLayout();
   formLayout->setMargin(0);
   formLayout->addRow(Locale::tr("qtapp.connect_dialog:server"), m_server);
+/*
   formLayout->addRow(Locale::tr("qtapp.connect_dialog:username"), m_username);
   formLayout->addRow(Locale::tr("qtapp.connect_dialog:password"), m_password);
+*/
 
   QVBoxLayout* layout = new QVBoxLayout();
   layout->setMargin(0);
