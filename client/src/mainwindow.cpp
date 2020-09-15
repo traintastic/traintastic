@@ -378,7 +378,7 @@ void MainWindow::toggleConsole()
   {
     m_serverConsole = new ServerConsoleWidget(m_splitter);
     m_splitter->addWidget(m_serverConsole);
-    m_actionServerConsole->setChecked(false);
+    m_actionServerConsole->setChecked(true);
   }
 }
 
@@ -472,11 +472,24 @@ void MainWindow::showAbout()
 
 void MainWindow::connectionStateChanged()
 {
-  m_mdiArea->setEnabled(m_connection && m_connection->state() == Connection::State::Connected);
+  const bool connected = m_connection && m_connection->state() == Connection::State::Connected;
+
+  m_mdiArea->setEnabled(connected);
+
+  if(connected && m_actionServerConsole->isChecked() && !m_serverConsole)
+  {
+    m_serverConsole = new ServerConsoleWidget(m_splitter);
+    m_splitter->addWidget(m_serverConsole);
+  }
 
   if(m_connection && m_connection->state() == Connection::State::Disconnected)
   {
     m_connection.clear();
+    if(m_serverConsole)
+    {
+      delete m_serverConsole;
+      m_serverConsole = nullptr;
+    }
     worldChanged();
   }
 
