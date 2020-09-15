@@ -43,11 +43,8 @@ Client::Client(Traintastic& server, const std::string& id, boost::asio::ip::tcp:
 
 Client::~Client()
 {
-  boost::system::error_code ec;
-  m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-  if(ec)
-    Traintastic::instance->console->info(m_id, ec.message());
-  m_socket.close();
+  Traintastic::instance->console->debug(m_id, "~Client");
+  stop();
 }
 
 void Client::start()
@@ -57,6 +54,20 @@ void Client::start()
     {
       doReadHeader();
     });
+}
+
+void Client::stop()
+{
+  m_session.reset();
+
+  if(!m_socket.is_open())
+    return;
+
+  boost::system::error_code ec;
+  m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+  if(ec)
+    Traintastic::instance->console->error(m_id, ec.message());
+  m_socket.close();
 }
 
 void Client::doReadHeader()
@@ -84,7 +95,7 @@ void Client::doReadHeader()
           }
           else if(e == boost::asio::error::eof || e == boost::asio::error::connection_aborted || e == boost::asio::error::connection_reset)
             connectionLost();
-          else
+          else if(e != boost::asio::error::operation_aborted)
             connectionError("readheader", e.message());
         }));
 }
@@ -108,7 +119,7 @@ void Client::doReadData()
           }
           else if(ec == boost::asio::error::eof || ec == boost::asio::error::connection_aborted || ec == boost::asio::error::connection_reset)
             connectionLost();
-          else
+          else if(ec != boost::asio::error::operation_aborted)
             connectionError("readdata", ec.message());
         }));
 }
@@ -126,7 +137,7 @@ void Client::doWrite()
           if(!m_writeQueue.empty())
             doWrite();
         }
-        else
+        else if(ec != boost::asio::error::operation_aborted)
           connectionError("write", ec.message());
       }));
 }
@@ -287,5 +298,6 @@ void Client::connectionError(const std::string& where, const std::string& what)
 
 void Client::disconnect()
 {
+  stop();
   m_server.clientGone(shared_from_this());
 }

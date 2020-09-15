@@ -43,7 +43,16 @@ class Traintastic : public Object
 {
   friend class Client;
 
+  public:
+    enum RunStatus
+    {
+      ExitSuccess = 0,
+      Restart = 1,
+      ExitFailure = 2,
+    };
+
   private:
+    bool m_restart;
     const std::filesystem::path m_dataDir;
     boost::asio::io_context m_ioContext;
     boost::asio::ip::tcp::acceptor m_acceptor;
@@ -54,7 +63,7 @@ class Traintastic : public Object
     std::list<std::shared_ptr<Client>> m_clients;
 
     bool start();
-    bool stop();
+    void stop();
 
     void load(const boost::uuids::uuid& uuid);
     void load(const std::filesystem::path& path);
@@ -78,6 +87,7 @@ class Traintastic : public Object
     ObjectProperty<WorldList> worldList;
     Method<void()> newWorld;
     Method<void(std::string)> loadWorld;
+    Method<void()> restart;
     Method<void()> shutdown;
 
     Traintastic(const std::filesystem::path& dataDir);
@@ -88,7 +98,7 @@ class Traintastic : public Object
     const std::filesystem::path& dataDir() const { return m_dataDir; }
     std::filesystem::path worldDir() const { return m_dataDir / "world"; }
 
-    bool run();
+    RunStatus run();
     void exit();
 };
 

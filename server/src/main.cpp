@@ -64,8 +64,6 @@ void signalHandler(int signum)
 
 int main(int argc, char* argv[])
 {
-  int status = EXIT_SUCCESS;
-
   // parse command line options:
   const Options options(argc, argv);
 
@@ -151,26 +149,43 @@ int main(int argc, char* argv[])
   signal(SIGQUIT, signalHandler);
 #endif
 
-  EventLoop::start();
+  int status = EXIT_SUCCESS;
+  bool restart = false;
 
-  try
+  do
   {
-    Traintastic::instance = std::make_shared<Traintastic>(dataDir);
-    std::cerr << "before run" << std::endl;
-    status = Traintastic::instance->run() ? EXIT_SUCCESS : EXIT_FAILURE;
-    std::cerr << "after run" << std::endl;
-    std::cerr << Traintastic::instance.use_count() << std::endl;
-    Traintastic::instance.reset();
-    std::cerr << Traintastic::instance.use_count() << std::endl;
-    std::cerr << "after reset" << std::endl;
-  }
-  catch(const std::exception& e)
-  {
-    std::cerr << e.what() << std::endl;
-    status = EXIT_FAILURE;
-  }
+    restart = false;
 
-  EventLoop::stop();
+    EventLoop::start();
+
+    try
+    {
+      Traintastic::instance = std::make_shared<Traintastic>(dataDir);
+
+      switch(Traintastic::instance->run())
+      {
+        case Traintastic::ExitSuccess:
+          status = EXIT_SUCCESS;
+          break;
+
+        case Traintastic::Restart:
+          restart = true;
+          break;
+
+        case Traintastic::ExitFailure:
+          status = EXIT_FAILURE;
+          break;
+      }
+    }
+    catch(const std::exception& e)
+    {
+      std::cerr << e.what() << std::endl;
+      status = EXIT_FAILURE;
+    }
+
+    EventLoop::stop();
+  }
+  while(restart);
 
   return status;
 }

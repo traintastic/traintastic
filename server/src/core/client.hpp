@@ -81,6 +81,7 @@ class Client : public std::enable_shared_from_this<Client>
     virtual ~Client();
 
     void start();
+    void stop();
 };
 
 #endif

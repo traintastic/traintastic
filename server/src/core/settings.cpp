@@ -36,6 +36,7 @@ Settings::Settings(const std::filesystem::path& filename) :
   discoverable{this, "discoverable", true, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
   defaultWorld{this, "default_world", "", PropertyFlags::ReadWrite, [this](const std::string&){ save(); }},
   autoSaveWorldOnExit{this, "auto_save_world_on_exit", false, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
+  allowClientServerRestart{this, "allow_client_server_restart", false, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
   allowClientServerShutdown{this, "allow_client_server_shutdown", false, PropertyFlags::ReadWrite, [this](const bool&){ save(); }}
 {
   m_interfaceItems.add(localhostOnly);
@@ -43,6 +44,7 @@ Settings::Settings(const std::filesystem::path& filename) :
   m_interfaceItems.add(discoverable);
   m_interfaceItems.add(defaultWorld);
   m_interfaceItems.add(autoSaveWorldOnExit);
+  m_interfaceItems.add(allowClientServerRestart);
   m_interfaceItems.add(allowClientServerShutdown);
 
   load();

@@ -43,6 +43,7 @@ std::shared_ptr<Traintastic> Traintastic::instance;
 
 Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   Object{},
+  m_restart{false},
   m_dataDir{std::filesystem::absolute(dataDir)},
   m_ioContext{},
   m_acceptor{m_ioContext},
@@ -77,10 +78,19 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
       if(!uuid.is_nil())
         load(uuid);
     }},
+  restart{*this, "restart",
+    [this]()
+    {
+      if(Attributes::getEnabled(restart))
+      {
+        m_restart = true;
+        exit();
+      }
+    }},
   shutdown{*this, "shutdown",
     [this]()
     {
-      if(settings->allowClientServerShutdown)
+      if(Attributes::getEnabled(shutdown))
         exit();
     }}
 {
@@ -93,6 +103,8 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_interfaceItems.add(worldList);
   m_interfaceItems.add(newWorld);
   m_interfaceItems.add(loadWorld);
+  Attributes::addEnabled(restart, false);
+  m_interfaceItems.add(restart);
   Attributes::addEnabled(shutdown, false);
   m_interfaceItems.add(shutdown);
 }
@@ -102,11 +114,12 @@ Traintastic::~Traintastic()
   assert(m_ioContext.stopped());
 }
 
-bool Traintastic::run()
+Traintastic::RunStatus Traintastic::run()
 {
   console->info(id, "v" STR(VERSION) " " TRAINTASTIC_CODENAME);
 
   settings = std::make_shared<Settings>(m_dataDir / "settings.json");
+  Attributes::setEnabled(restart, settings->allowClientServerRestart);
   Attributes::setEnabled(shutdown, settings->allowClientServerShutdown);
 
   worldList = std::make_shared<WorldList>(m_dataDir / "world");
@@ -115,23 +128,25 @@ bool Traintastic::run()
     loadWorld(settings->defaultWorld.value());
 
   if(!start())
-    return false;
+    return ExitFailure;
 
   auto work = std::make_shared<boost::asio::io_service::work>(m_ioContext);
   m_ioContext.run();
 
-  return true;
+  return m_restart ? Restart : ExitSuccess;
 }
 
 void Traintastic::exit()
 {
-  console->notice(id, "Shutting down");
-
-  //if(mode == TraintasticMode::Run)
-  //  mode = TraintasticMode::Stop;
+  if(m_restart)
+    console->notice(id, "Restarting");
+  else
+    console->notice(id, "Shutting down");
 
   if(settings->autoSaveWorldOnExit && world)
     world->save();
+
+  stop();
 
   m_ioContext.stop();
 }
@@ -139,15 +154,23 @@ void Traintastic::exit()
 bool Traintastic::start()
 {
   boost::system::error_code ec;
+  boost::asio::ip::tcp::endpoint endpoint(settings->localhostOnly ? boost::asio::ip::address_v4::loopback() : boost::asio::ip::address_v4::any(), settings->port);
 
-  m_acceptor.open(boost::asio::ip::tcp::v4(), ec);
+  m_acceptor.open(endpoint.protocol(), ec);
   if(ec)
   {
     console->fatal(id, ec.message());
     return false;
   }
 
-  m_acceptor.bind(boost::asio::ip::tcp::endpoint(settings->localhostOnly ? boost::asio::ip::address_v4::loopback() : boost::asio::ip::address_v4::any(), settings->port), ec);
+  m_acceptor.set_option(boost::asio::socket_base::reuse_address(true), ec);
+  if(ec)
+  {
+    console->fatal(id, ec.message());
+    return false;
+  }
+
+  m_acceptor.bind(endpoint, ec);
   if(ec)
   {
     console->fatal(id, ec.message());
@@ -166,6 +189,13 @@ bool Traintastic::start()
     if(settings->port == Settings::defaultPort)
     {
       m_socketUDP.open(boost::asio::ip::udp::v4(), ec);
+      if(ec)
+      {
+        console->fatal(id, ec.message());
+        return false;
+      }
+
+      m_socketUDP.set_option(boost::asio::socket_base::reuse_address(true), ec);
       if(ec)
       {
         console->fatal(id, ec.message());
@@ -194,10 +224,21 @@ bool Traintastic::start()
   return true;
 }
 
-bool Traintastic::stop()
+void Traintastic::stop()
 {
+  for(auto& client : m_clients)
+  {
+    client->stop();
+    client.reset();
+  }
+
+  boost::system::error_code ec;
+  m_acceptor.cancel(ec);
+  if(ec)
+    console->error(id, ec.message());
   m_acceptor.close();
-  return true;
+
+  m_socketUDP.close();
 }
 
 void Traintastic::load(const boost::uuids::uuid& uuid)
