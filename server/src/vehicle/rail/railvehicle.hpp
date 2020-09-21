@@ -34,6 +34,7 @@ class RailVehicle : public Vehicle
     RailVehicle(const std::weak_ptr<World>& world, std::string_view _id);
 
     void addToWorld() override;
+    void worldEvent(WorldState state, WorldEvent event) override;
 
   public:
     ObjectProperty<Decoder> decoder;
@@ -41,6 +42,8 @@ class RailVehicle : public Vehicle
     WeightProperty weight;
 
     /**
+     * \brief Get total weight in metric ton.
+     *
      * \return Total weight in metric ton.
      */
     virtual double totalWeight() const;

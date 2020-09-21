@@ -21,8 +21,9 @@
  */
 
 #include "railvehicle.hpp"
-#include "../../world/world.hpp"
 #include "railvehiclelisttablemodel.hpp"
+#include "../../world/world.hpp"
+#include "../../core/attributes.hpp"
 
 RailVehicle::RailVehicle(const std::weak_ptr<World>& world, std::string_view _id) :
   Vehicle(world, _id),
@@ -30,8 +31,14 @@ RailVehicle::RailVehicle(const std::weak_ptr<World>& world, std::string_view _id
   lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
+  auto w = world.lock();
+  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+
+  Attributes::addEnabled(decoder, editable);
   m_interfaceItems.add(decoder);
+  Attributes::addEnabled(lob, editable);
   m_interfaceItems.add(lob);
+  Attributes::addEnabled(weight, editable);
   m_interfaceItems.add(weight);
 }
 
@@ -41,6 +48,17 @@ void RailVehicle::addToWorld()
 
   if(auto world = m_world.lock())
     world->railVehicles->addObject(shared_ptr<RailVehicle>());
+}
+
+void RailVehicle::worldEvent(WorldState state, WorldEvent event)
+{
+  Vehicle::worldEvent(state, event);
+
+  const bool editable = contains(state, WorldState::Edit);
+
+  decoder.setAttributeEnabled(editable);
+  lob.setAttributeEnabled(editable);
+  weight.setAttributeEnabled(editable);
 }
 
 double RailVehicle::totalWeight() const
