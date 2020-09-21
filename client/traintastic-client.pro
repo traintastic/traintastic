@@ -22,6 +22,8 @@ SOURCES += \
     src/dialog/connectdialog.cpp \
     src/network/object.cpp \
     ../shared/src/traintastic/locale/locale.cpp \
+    src/network/unitproperty.cpp \
+    src/widget/unitpropertyedit.cpp \
     thirdparty/QtWaitingSpinner/waitingspinnerwidget.cpp \
     src/widget/alertwidget.cpp \
     src/network/utils.cpp \
@@ -52,7 +54,6 @@ SOURCES += \
     src/mdiarea.cpp \
     src/network/method.cpp \
     src/dialog/worldlistdialog.cpp \
-    src/utils/translateenum.cpp \
     src/widget/object/abstracteditwidget.cpp \
     src/widget/object/luascripteditwidget.cpp \
     src/widget/object/objecteditwidget.cpp \
@@ -60,7 +61,8 @@ SOURCES += \
     src/dialog/settingsdialog.cpp \
     src/utils/getlocalepath.cpp \
     src/utils/geticonforclassid.cpp \
-    src/widget/propertyobjectedit.cpp
+    src/widget/propertyobjectedit.cpp \
+    src/utils/enum.cpp
 
 HEADERS += \
     src/mainwindow.hpp \
@@ -68,6 +70,8 @@ HEADERS += \
     src/network/object.hpp \
     ../shared/src/traintastic/message.hpp \
     ../shared/src/traintastic/locale/locale.hpp \
+    src/network/unitproperty.hpp \
+    src/widget/unitpropertyedit.hpp \
     thirdparty/QtWaitingSpinner/waitingspinnerwidget.h \
     src/widget/alertwidget.hpp \
     src/network/utils.hpp \
@@ -102,7 +106,6 @@ HEADERS += \
     src/mdiarea.hpp \
     src/network/method.hpp \
     src/dialog/worldlistdialog.hpp \
-    src/utils/translateenum.hpp \
     src/utils/internalupdateholder.hpp \
     src/widget/object/abstracteditwidget.hpp \
     src/widget/object/objecteditwidget.hpp \
@@ -111,7 +114,8 @@ HEADERS += \
     src/dialog/settingsdialog.hpp \
     src/utils/getlocalepath.hpp \
     src/utils/geticonforclassid.hpp \
-    src/widget/propertyobjectedit.hpp
+    src/widget/propertyobjectedit.hpp \
+    src/utils/enum.hpp
 
 RESOURCES += \
     dark.qrc
