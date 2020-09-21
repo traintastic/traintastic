@@ -99,6 +99,10 @@ To to(const From& value)
   {
     return std::to_string(value);
   }
+  else if constexpr(std::is_same_v<From, std::string> && std::is_same_v<To, float>)
+    return std::stof(value);
+  else if constexpr(std::is_same_v<From, std::string> && std::is_same_v<To, double>)
+    return std::stod(value);
   else if constexpr(std::is_same_v<To, std::string> && std::is_same_v<From, std::string_view>)
   {
     return std::string(value);
