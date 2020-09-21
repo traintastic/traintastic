@@ -1,5 +1,5 @@
 /**
- * client/src/utils/translateenum.hpp
+ * client/src/network/unitproperty.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,12 +20,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "unitproperty.hpp"
+#include "connection.hpp"
+#include "object.hpp"
 
-#ifndef TRAINTASTIC_CLIENT_UTILS_TRANSLATEENUM_HPP
-#define TRAINTASTIC_CLIENT_UTILS_TRANSLATEENUM_HPP
+UnitProperty::UnitProperty(Object& object, const QString& name, ValueType type, PropertyFlags flags, const QVariant& value, const QString& unitName, qint64 unitValue) :
+  Property(object, name, type, flags, value),
+  m_unitName{unitName},
+  m_unitValue{unitValue}
+{
+  m_unitValue = m_unitValue;
+}
 
-#include <QString>
-
-QString translateEnum(const QString& enumName, qint64 value);
-
-#endif
+void UnitProperty::setUnitValue(qint64 value)
+{
+  object().connection()->setUnitPropertyUnit(*this, value);
+}

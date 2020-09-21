@@ -30,6 +30,7 @@
 #include "../../network/object.hpp"
 #include "../../network/property.hpp"
 #include "../../network/objectproperty.hpp"
+#include "../../network/unitproperty.hpp"
 //#include "../../network/utils.hpp"
 //#include "../alertwidget.hpp"
 #include "../propertycheckbox.hpp"
@@ -40,6 +41,7 @@
 #include "../propertyobjectedit.hpp"
 #include "../propertydirectioncontrol.hpp"
 #include "../propertyvaluelabel.hpp"
+#include "../unitpropertyedit.hpp"
 #include "../createwidget.hpp"
 #include "../../utils/geticonforclassid.hpp"
 //#include "../../mainwindow.hpp"
@@ -113,7 +115,9 @@ void ObjectEditWidget::buildForm()
         else
         {
           Property* property = static_cast<Property*>(baseProperty);
-          if(!property->isWritable())
+          if(UnitProperty* unitProperty = dynamic_cast<UnitProperty*>(property))
+            w = new UnitPropertyEdit(*unitProperty);
+          else if(!property->isWritable())
             w = new PropertyValueLabel(*property);
           else if(property->type() == ValueType::Boolean)
             w = new PropertyCheckBox(*property);

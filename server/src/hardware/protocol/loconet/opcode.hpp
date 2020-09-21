@@ -63,7 +63,7 @@ enum OpCode : uint8_t
 
   // 6 byte message opcodes:
   OPC_MULTI_SENSE = 0xD0, // based on reverse engineering, see loconet.md
-  OPC_D4 = 0xD4,// based on reverse engineering, probably used for multiple sub commands, see loconet.md
+  OPC_D4 = 0xD4, // based on reverse engineering, probably used for multiple sub commands, see loconet.md
 
   // variable byte message opcodes:
   OPC_MULTI_SENSE_LONG = 0XE0, // based on reverse engineering, see loconet.md

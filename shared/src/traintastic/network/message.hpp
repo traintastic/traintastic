@@ -58,6 +58,7 @@ class Message
       GetObject = 14,
       ReleaseObject = 15,
       ObjectSetProperty = 16,
+      ObjectSetUnitPropertyUnit = 26,
       ObjectPropertyChanged = 17,
       ObjectAttributeChanged = 18,
       ObjectCallMethod = 25,
@@ -114,7 +115,7 @@ class Message
       } flags;
       uint16_t requestId;
       uint32_t dataSize;
-    } 
+    }
 #ifdef __GNUC__
     __attribute__((packed))
 #endif

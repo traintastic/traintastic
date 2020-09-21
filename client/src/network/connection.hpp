@@ -35,6 +35,7 @@
 class QTcpSocket;
 class Property;
 class ObjectProperty;
+class UnitProperty;
 class Method;
 
 class Connection : public QObject, public QEnableSharedFromThis<Connection>
@@ -123,6 +124,8 @@ class Connection : public QObject, public QEnableSharedFromThis<Connection>
     void setPropertyInt64(Property& property, int64_t value);
     void setPropertyDouble(Property& property, double value);
     void setPropertyString(Property& property, const QString& value);
+
+    void setUnitPropertyUnit(UnitProperty& property, int64_t value);
 
     void callMethod(Method& method);
     void callMethod(Method& method, const QString& arg);

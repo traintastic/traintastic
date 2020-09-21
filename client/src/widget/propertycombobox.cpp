@@ -23,7 +23,7 @@
 #include "propertycombobox.hpp"
 #include "../network/property.hpp"
 #include "../utils/internalupdateholder.hpp"
-#include "../utils/translateenum.hpp"
+#include "../utils/enum.hpp"
 
 PropertyComboBox::PropertyComboBox(Property& property, QWidget* parent) :
   QComboBox(parent),

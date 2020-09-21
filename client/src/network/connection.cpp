@@ -27,6 +27,7 @@
 #include <traintastic/network/message.hpp>
 #include "object.hpp"
 #include "property.hpp"
+#include "unitproperty.hpp"
 #include "objectproperty.hpp"
 #include "method.hpp"
 #include "tablemodel.hpp"
@@ -181,6 +182,15 @@ void Connection::setPropertyString(Property& property, const QString& value)
   send(event);
 }
 
+void Connection::setUnitPropertyUnit(UnitProperty& property, int64_t value)
+{
+  auto event = Message::newEvent(Message::Command::ObjectSetUnitPropertyUnit);
+  event->write(static_cast<Object*>(property.parent())->m_handle);
+  event->write(property.name().toLatin1());
+  event->write(value);
+  send(event);
+}
+
 void Connection::callMethod(Method& method)
 {
   auto event = Message::newEvent(Message::Command::ObjectCallMethod);
@@ -317,11 +327,12 @@ ObjectPtr Connection::readObject(const Message& message)
       switch(type)
       {
         case InterfaceItemType::Property:
+        case InterfaceItemType::UnitProperty:
         {
           const PropertyFlags flags = message.read<PropertyFlags>();
-          const ValueType type = message.read<ValueType>();
+          const ValueType valueType = message.read<ValueType>();
           QVariant value;
-          switch(type)
+          switch(valueType)
           {
             case ValueType::Boolean:
               value = message.read<bool>();
@@ -348,17 +359,25 @@ ObjectPtr Connection::readObject(const Message& message)
               break;
           }
 
+
+
     //      Q_ASSERT(value.isValid());
           if(Q_LIKELY(value.isValid()))
           {
-            if(type == ValueType::Object)
+            if(type == InterfaceItemType::UnitProperty)
+            {
+              QString unitName = QString::fromLatin1(message.read<QByteArray>());
+              qint64 unitValue = message.read<qint64>();
+              item = new UnitProperty(*obj, name, valueType, flags, value, unitName, unitValue);
+            }
+            else if(valueType == ValueType::Object)
             {
               item = new ObjectProperty(*obj, name, flags, value.toString());
             }
             else
             {
-              Property* p = new Property(*obj, name, type, flags, value);
-              if(type == ValueType::Enum)
+              Property* p = new Property(*obj, name, valueType, flags, value);
+              if(valueType == ValueType::Enum)
                 p->m_enumName = QString::fromLatin1(message.read<QByteArray>());
               item = p;
             }
@@ -553,7 +572,8 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
         {
           if(AbstractProperty* property = object->getProperty(QString::fromLatin1(message->read<QByteArray>())))
           {
-            switch(message->read<ValueType>())
+            const ValueType valueType = message->read<ValueType>();
+            switch(valueType)
             {
               case ValueType::Boolean:
               {
@@ -568,6 +588,9 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
               {
                 const qlonglong value = message->read<qlonglong>();
                 static_cast<Property*>(property)->m_value = value;
+                if(valueType == ValueType::Integer)
+                  if(UnitProperty* unitProperty = dynamic_cast<UnitProperty*>(property))
+                    unitProperty->m_unitValue = message->read<qint64>();
                 emit property->valueChanged();
                 emit property->valueChangedInt64(value);
                 if(value >= std::numeric_limits<int>::min() && value <= std::numeric_limits<int>::max())
@@ -578,6 +601,8 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
               {
                 const double value = message->read<double>();
                 static_cast<Property*>(property)->m_value = value;
+                if(UnitProperty* unitProperty = dynamic_cast<UnitProperty*>(property))
+                  unitProperty->m_unitValue = message->read<qint64>();
                 emit property->valueChanged();
                 emit property->valueChangedDouble(value);
                 break;

@@ -26,6 +26,7 @@
 #include "traintastic.hpp"
 #include "client.hpp"
 #include "abstractproperty.hpp"
+#include "abstractunitproperty.hpp"
 #include "abstractvalueattribute.hpp"
 #include "abstractvaluesattribute.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
@@ -157,6 +158,25 @@ bool Session::processMessage(const Message& message)
           catch(const std::exception&)
           {
             // set property failed, send changed event with current value:
+            objectPropertyChanged(*property);
+          }
+        }
+      }
+      break;
+    }
+    case Message::Command::ObjectSetUnitPropertyUnit:
+    {
+      if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
+      {
+        if(AbstractUnitProperty* property = dynamic_cast<AbstractUnitProperty*>(object->getProperty(message.read<std::string>())))
+        {
+          try
+          {
+            property->setUnitValue(message.read<int64_t>());
+          }
+          catch(const std::exception&)
+          {
+            // set unit property unit failed, send changed event with current value:
             objectPropertyChanged(*property);
           }
         }
@@ -364,7 +384,11 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
 
       if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&item))
       {
-        message.write(InterfaceItemType::Property);
+        AbstractUnitProperty* unitProperty = dynamic_cast<AbstractUnitProperty*>(property);
+        if(unitProperty)
+          message.write(InterfaceItemType::UnitProperty);
+        else
+          message.write(InterfaceItemType::Property);
         message.write(property->flags());
         message.write(property->type());
         switch(property->type())
@@ -419,6 +443,12 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
           default:
             assert(false);
             break;
+        }
+
+        if(unitProperty)
+        {
+          message.write(unitProperty->unitName());
+          message.write(unitProperty->unitValue());
         }
       }
       else if(const AbstractMethod* method = dynamic_cast<const AbstractMethod*>(&item))
@@ -515,6 +545,10 @@ void Session::objectPropertyChanged(AbstractProperty& property)
       break;
     }
   }
+
+  if(AbstractUnitProperty* unitProperty = dynamic_cast<AbstractUnitProperty*>(&property))
+    event->write(unitProperty->unitValue());
+
   m_client->sendMessage(std::move(event));
 }
 

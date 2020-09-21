@@ -20,16 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
 #ifndef TRAINTASTIC_SERVER_CORE_UNITPROPERTY_HPP
 #define TRAINTASTIC_SERVER_CORE_UNITPROPERTY_HPP
 
-#include "abstractproperty.hpp"//"interfaceitem.hpp"
+#include "abstractunitproperty.hpp"
 #include "valuetypetraits.hpp"
 #include "to.hpp"
 
 template<typename T, typename Unit>
-class UnitProperty : public AbstractProperty//InterfaceItem
+class UnitProperty : public AbstractUnitProperty
 {
   static_assert(value_type<T>::value == ValueType::Integer || value_type<T>::value == ValueType::Float);
 
@@ -39,7 +38,7 @@ class UnitProperty : public AbstractProperty//InterfaceItem
 
   public:
     UnitProperty(Object& object, const std::string& name, T value, Unit unit, PropertyFlags flags) :
-      AbstractProperty(object, name, value_type<T>::value, flags),//InterfaceItem(object, name),
+      AbstractUnitProperty(object, name, value_type<T>::value, flags),
       m_value{value},
       m_unit{unit}
     {
@@ -82,31 +81,34 @@ class UnitProperty : public AbstractProperty//InterfaceItem
       return m_unit;
     }
 
-    std::string_view unitEnumName() const
+    void setUnit(Unit value)
     {
-      return EnumName<T>::value;
+      if(m_unit == value)
+        return;
+
+      m_value = convertUnit(m_value, m_unit, value);
+      m_unit = value;
+      changed();
+    }
+
+    std::string_view unitName() const final
+    {
+      return EnumName<Unit>::value;
+    }
+
+    int64_t unitValue() const final
+    {
+      return to<int64_t>(m_unit);
+    }
+
+    void setUnitValue(int64_t value)
+    {
+      setUnit(to<Unit>(value));
     }
 
     inline T getValue(Unit _unit) const
     {
       return convertUnit(m_value, m_unit, _unit);
-    }
-
-    std::string_view enumName() const final
-    {
-      assert(false);
-      return "";
-    }
-
-    std::string_view setName() const final
-    {
-      assert(false);
-      return "";
-    }
-
-    bool toBool() const final
-    {
-      throw conversion_error();
     }
 
     int64_t toInt64() const final
@@ -124,22 +126,12 @@ class UnitProperty : public AbstractProperty//InterfaceItem
       return to<std::string>(m_value);
     }
 
-    ObjectPtr toObject() const final
-    {
-      throw conversion_error();
-    }
-
     nlohmann::json toJSON() const final
     {
       nlohmann::json v;
       v["value"] = to<nlohmann::json>(m_value);
       v["unit"] = to<nlohmann::json>(m_unit);
-      return v;//{"value" = m_value, "unit" = m_unit};
-    }
-
-    void fromBool(bool value) final
-    {
-      throw conversion_error();
+      return v;
     }
 
     void fromInt64(int64_t value) final
@@ -157,20 +149,10 @@ class UnitProperty : public AbstractProperty//InterfaceItem
       setValue(to<T>(value));
     }
 
-    void fromObject(const ObjectPtr& value) final
-    {
-      throw conversion_error();
-    }
-
     void load(const nlohmann::json& value) final
     {
       m_value = to<T>(value["value"]);
       from_json(value["unit"], m_unit);
-    }
-
-    void load(const ObjectPtr& value) final
-    {
-      throw conversion_error();
     }
 };
 

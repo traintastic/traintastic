@@ -1,9 +1,9 @@
 /**
- * shared/src/enum/interfaceitemtype.hpp
+ * client/src/widget/unitpropertyedit.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,16 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_INTERFACEITEMTYPE_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_INTERFACEITEMTYPE_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_UNITPROPERTYEDIT_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_UNITPROPERTYEDIT_HPP
 
-#include <cstdint>
+#include <QWidget>
 
-enum class InterfaceItemType : uint8_t
+class UnitProperty;
+class QLineEdit;
+class QComboBox;
+
+class UnitPropertyEdit : public QWidget
 {
-  Property = 1,
-  Method = 2,
-  UnitProperty = 3,
+  Q_OBJECT
+
+  protected:
+    UnitProperty& m_property;
+    QLineEdit* m_valueLineEdit;
+    QComboBox* m_unitComboBox;
+
+  public:
+    explicit UnitPropertyEdit(UnitProperty& property, QWidget* parent = nullptr);
 };
 
 #endif

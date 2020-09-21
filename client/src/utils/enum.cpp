@@ -1,5 +1,5 @@
 /**
- * client/src/utils/translateenum.cpp
+ * client/src/utils/enum.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "translateenum.hpp"
+#include "enum.hpp"
 #include <traintastic/locale/locale.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
 #include <traintastic/enum/direction.hpp>
@@ -33,6 +33,24 @@
 #include <traintastic/enum/worldscale.hpp>
 #include <traintastic/enum/xpressnetcommandstation.hpp>
 #include <traintastic/enum/xpressnetserialinterface.hpp>
+
+#define GET_ENUM_VALUES(_type) \
+  if(enumName == EnumName<_type>::value) \
+  { \
+    for(auto it : EnumValues<_type>::value) \
+      values.append(static_cast<qint64>(it.first)); \
+  } \
+  else
+
+QVector<qint64> enumValues(const QString& enumName)
+{
+  QVector<qint64> values;
+  GET_ENUM_VALUES(LengthUnit)
+  GET_ENUM_VALUES(SpeedUnit)
+  GET_ENUM_VALUES(WeightUnit)
+  {} // fix final else
+  return values;
+}
 
 #define TRANSLATE_ENUM(_type) \
   if(enumName == EnumName<_type>::value) \

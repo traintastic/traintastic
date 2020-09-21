@@ -1,9 +1,9 @@
 /**
- * shared/src/enum/interfaceitemtype.hpp
+ * client/src/network/unitproperty.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,16 +20,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_INTERFACEITEMTYPE_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_INTERFACEITEMTYPE_HPP
+#ifndef TRAINTASTIC_CLIENT_NETWORK_UNITPROPERTY_HPP
+#define TRAINTASTIC_CLIENT_NETWORK_UNITPROPERTY_HPP
 
-#include <cstdint>
+#include "property.hpp"
 
-enum class InterfaceItemType : uint8_t
+class UnitProperty : public Property
 {
-  Property = 1,
-  Method = 2,
-  UnitProperty = 3,
+  Q_OBJECT
+
+  friend class Connection;
+
+  protected:
+    QVariant m_value;
+    const QString m_unitName;
+    qint64 m_unitValue;
+
+  public:
+    UnitProperty(Object& object, const QString& name, ValueType type, PropertyFlags flags, const QVariant& value, const QString& unitName, qint64 unitValue);
+
+    const QString& unitName() const { return m_unitName; }
+    qint64 unitValue() const { return m_unitValue; }
+
+    void setUnitValue(qint64 value);
+
+    //template<typename T>
+    //T unit() const { return static_cast<T>(m_unitValue); }
 };
 
 #endif
