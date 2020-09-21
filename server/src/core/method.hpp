@@ -48,12 +48,13 @@ struct args
 };
 //*/
 
+template<std::size_t N, class... A>
+using getArgumentType = typename std::tuple_element<N, std::tuple<A...>>::type;
+
 template<class R, class... A>
 class Method<R(A...)> : public AbstractMethod
 {
   private:
-    template<std::size_t N>
-    using getArgumentType = typename std::tuple_element<N, std::tuple<A...>>::type;
 
   protected:
     std::function<R(A...)> m_function;
