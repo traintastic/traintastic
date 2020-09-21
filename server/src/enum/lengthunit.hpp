@@ -24,5 +24,75 @@
 #define TRAINTASTIC_SERVER_ENUM_LENGTHUNIT_HPP
 
 #include <traintastic/enum/lengthunit.hpp>
+#include "../core/convertunit.hpp"
+
+template<>
+constexpr double convertUnit(double value, LengthUnit from, LengthUnit to)
+{
+  constexpr double ratioCentiMeter = 0.01;
+  constexpr double ratioMilliMeter = 0.001;
+  constexpr double ratioYard = 0.9144;
+  constexpr double ratioFoot = 0.3048;
+  constexpr double ratioInch = 0.0254;
+
+  if(from == to)
+    return value;
+
+  // convert <from> to m:
+  switch(from)
+  {
+    case LengthUnit::Meter:
+      break;
+
+    case LengthUnit::CentiMeter:
+      value *= ratioCentiMeter;
+      break;
+
+    case LengthUnit::MilliMeter:
+      value *= ratioMilliMeter;
+      break;
+
+    case LengthUnit::Yard:
+      value *= ratioYard;
+      break;
+
+    case LengthUnit::Foot:
+      value *= ratioFoot;
+      break;
+
+    case LengthUnit::Inch:
+      value *= ratioInch;
+      break;
+  }
+
+  // convert m to <to>:
+  switch(to)
+  {
+    case LengthUnit::Meter:
+      break;
+
+    case LengthUnit::CentiMeter:
+      value /= ratioCentiMeter;
+      break;
+
+    case LengthUnit::MilliMeter:
+      value /= ratioMilliMeter;
+      break;
+
+    case LengthUnit::Yard:
+      value /= ratioYard;
+      break;
+
+    case LengthUnit::Foot:
+      value /= ratioFoot;
+      break;
+
+    case LengthUnit::Inch:
+      value /= ratioInch;
+      break;
+  }
+
+  return value;
+}
 
 #endif
