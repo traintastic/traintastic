@@ -61,7 +61,7 @@ class UnitProperty : public AbstractUnitProperty
         m_value = value;
         //if(m_onChanged)
         //  m_onChanged(m_value);
-        //changed();
+        changed();
       }
       //else
       //  throw invalid_value_error();
