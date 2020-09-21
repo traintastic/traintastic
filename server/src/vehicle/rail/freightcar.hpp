@@ -27,6 +27,9 @@
 
 class FreightCar : public RailVehicle
 {
+  protected:
+    void worldEvent(WorldState state, WorldEvent event) final;
+
   public:
     CLASS_ID("vehicle.rail.freight_car")
     CREATE(FreightCar)

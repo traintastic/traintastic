@@ -21,15 +21,30 @@
  */
 
 #include "freightcar.hpp"
+#include "../../world/world.hpp"
+#include "../../core/attributes.hpp"
 
 FreightCar::FreightCar(const std::weak_ptr<World>& world, std::string_view _id) :
   RailVehicle(world, _id),
   cargoWeight{*this, "cargo_weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
+  auto w = world.lock();
+  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+
+  Attributes::addEnabled(cargoWeight, editable);
   m_interfaceItems.add(cargoWeight);
 }
 
 double FreightCar::totalWeight() const
 {
   return RailVehicle::totalWeight() + cargoWeight.getValue(WeightUnit::Ton);
+}
+
+void FreightCar::worldEvent(WorldState state, WorldEvent event)
+{
+  RailVehicle::worldEvent(state, event);
+
+  const bool editable = contains(state, WorldState::Edit);
+
+  cargoWeight.setAttributeEnabled(editable);
 }
