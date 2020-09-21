@@ -33,11 +33,7 @@ enum class WeightUnit
   LongTons = 3,
 };
 
-template<>
-struct EnumName<WeightUnit>
-{
-  static constexpr char const* value = "weight_unit";
-};
+ENUM_NAME(WeightUnit, "weight_unit")
 
 ENUM_VALUES(WeightUnit, 4,
 {
