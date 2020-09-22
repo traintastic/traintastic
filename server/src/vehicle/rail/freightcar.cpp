@@ -32,7 +32,7 @@ FreightCar::FreightCar(const std::weak_ptr<World>& world, std::string_view _id) 
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
   Attributes::addEnabled(cargoWeight, editable);
-  m_interfaceItems.add(cargoWeight);
+  m_interfaceItems.insertBefore(cargoWeight, totalWeight);
 }
 
 double FreightCar::calcTotalWeight(WeightUnit unit) const

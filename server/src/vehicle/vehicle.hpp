@@ -34,6 +34,7 @@ class Vehicle : public IdObject
 
   public:
     Property<std::string> name;
+    Property<std::string> notes;
 };
 
 #endif

@@ -26,13 +26,15 @@
 
 Vehicle::Vehicle(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
-  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
+  notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
+  m_interfaceItems.add(notes);
 }
 
 void Vehicle::worldEvent(WorldState state, WorldEvent event)
