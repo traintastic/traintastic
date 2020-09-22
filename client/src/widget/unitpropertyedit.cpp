@@ -69,6 +69,7 @@ UnitPropertyEdit::UnitPropertyEdit(UnitProperty& property, QWidget *parent) :
   QHBoxLayout* l = new QHBoxLayout();
   l->setMargin(0);
 
+  m_valueLineEdit->setReadOnly(!m_property.isWritable());
   l->addWidget(m_valueLineEdit, 1);
   connect(m_valueLineEdit, &QLineEdit::textEdited, &m_property, &Property::setValueString);
 
