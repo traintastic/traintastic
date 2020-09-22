@@ -33,7 +33,8 @@ Train::Train(const std::weak_ptr<World>& world, std::string_view _id) :
   speed{*this, "speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
   speedMax{*this, "speedMax", 120, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::Store},
   throttleSpeed{*this, "throttle_speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
-  weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadOnly | PropertyFlags::Store}
+  weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadOnly | PropertyFlags::Store},
+  notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
@@ -48,6 +49,7 @@ Train::Train(const std::weak_ptr<World>& world, std::string_view _id) :
   m_interfaceItems.add(speedMax);
   m_interfaceItems.add(throttleSpeed);
   m_interfaceItems.add(weight);
+  m_interfaceItems.add(notes);
 }
 
 void Train::addToWorld()

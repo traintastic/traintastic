@@ -46,6 +46,7 @@ class Train : public IdObject
     SpeedProperty speedMax;
     SpeedProperty throttleSpeed;
     WeightProperty weight;
+    Property<std::string> notes;
 
     Train(const std::weak_ptr<World>& world, std::string_view _id);
 };
