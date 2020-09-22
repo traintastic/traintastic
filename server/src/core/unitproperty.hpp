@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_CORE_UNITPROPERTY_HPP
 
 #include "abstractunitproperty.hpp"
+#include <functional>
 #include "valuetypetraits.hpp"
 #include "to.hpp"
 
@@ -32,9 +33,13 @@ class UnitProperty : public AbstractUnitProperty
 {
   static_assert(value_type<T>::value == ValueType::Integer || value_type<T>::value == ValueType::Float);
 
+  public:
+    using OnChanged = std::function<void(T value, Unit unit)>;
+
   protected:
     T m_value;
     Unit m_unit;
+    OnChanged m_onChanged;
 
   public:
     UnitProperty(Object& object, const std::string& name, T value, Unit unit, PropertyFlags flags) :
@@ -42,6 +47,12 @@ class UnitProperty : public AbstractUnitProperty
       m_value{value},
       m_unit{unit}
     {
+    }
+
+    UnitProperty(Object& object, const std::string& name, T value, Unit unit, PropertyFlags flags, OnChanged onChanged) :
+      UnitProperty(object, name, value, unit, flags)
+    {
+      m_onChanged = std::move(onChanged);
     }
 
     inline T value() const
@@ -59,8 +70,8 @@ class UnitProperty : public AbstractUnitProperty
       else //if(!m_onSet || m_onSet(value))
       {
         m_value = value;
-        //if(m_onChanged)
-        //  m_onChanged(m_value);
+        if(m_onChanged)
+          m_onChanged(m_value, m_unit);
         changed();
       }
       //else
@@ -72,6 +83,16 @@ class UnitProperty : public AbstractUnitProperty
       if(m_value != value)
       {
         m_value = value;
+        changed();
+      }
+    }
+
+    void setValueInternal(T value, Unit unit)
+    {
+      if(m_value != value || m_unit != unit)
+      {
+        m_value = value;
+        m_unit = unit;
         changed();
       }
     }
@@ -88,6 +109,8 @@ class UnitProperty : public AbstractUnitProperty
 
       m_value = convertUnit(m_value, m_unit, value);
       m_unit = value;
+      if(m_onChanged)
+        m_onChanged(m_value, m_unit);
       changed();
     }
 
