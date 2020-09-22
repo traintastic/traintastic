@@ -30,6 +30,8 @@ class FreightCar : public RailVehicle
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
 
+    double calcTotalWeight(WeightUnit unit) const override;
+
   public:
     CLASS_ID("vehicle.rail.freight_car")
     CREATE(FreightCar)
@@ -37,8 +39,6 @@ class FreightCar : public RailVehicle
     WeightProperty cargoWeight;
 
     FreightCar(const std::weak_ptr<World>& world, std::string_view _id);
-
-    double totalWeight() const override;
 };
 
 #endif

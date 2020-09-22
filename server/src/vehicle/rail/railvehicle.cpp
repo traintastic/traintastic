@@ -29,7 +29,8 @@ RailVehicle::RailVehicle(const std::weak_ptr<World>& world, std::string_view _id
   Vehicle(world, _id),
   decoder{this, "decoder", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store},
   lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
-  weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](double, WeightUnit){ updateTotalWeight(); }},
+  totalWeight{*this, "total_weight", 0, WeightUnit::Ton, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
 {
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
@@ -40,6 +41,7 @@ RailVehicle::RailVehicle(const std::weak_ptr<World>& world, std::string_view _id
   m_interfaceItems.add(lob);
   Attributes::addEnabled(weight, editable);
   m_interfaceItems.add(weight);
+  m_interfaceItems.add(totalWeight);
 }
 
 void RailVehicle::addToWorld()
@@ -61,7 +63,12 @@ void RailVehicle::worldEvent(WorldState state, WorldEvent event)
   weight.setAttributeEnabled(editable);
 }
 
-double RailVehicle::totalWeight() const
+double RailVehicle::calcTotalWeight(WeightUnit unit) const
 {
-  return weight.getValue(WeightUnit::Ton);
+  return weight.getValue(unit);
+}
+
+void RailVehicle::updateTotalWeight()
+{
+  totalWeight.setValueInternal(calcTotalWeight(totalWeight.unit()));
 }

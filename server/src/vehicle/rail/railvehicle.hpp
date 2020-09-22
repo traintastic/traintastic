@@ -36,17 +36,14 @@ class RailVehicle : public Vehicle
     void addToWorld() override;
     void worldEvent(WorldState state, WorldEvent event) override;
 
+    virtual double calcTotalWeight(WeightUnit unit) const;
+    void updateTotalWeight();
+
   public:
     ObjectProperty<Decoder> decoder;
     LengthProperty lob;
     WeightProperty weight;
-
-    /**
-     * \brief Get total weight in metric ton.
-     *
-     * \return Total weight in metric ton.
-     */
-    virtual double totalWeight() const;
+    WeightProperty totalWeight;
 };
 
 #endif

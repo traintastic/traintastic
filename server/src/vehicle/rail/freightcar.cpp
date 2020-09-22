@@ -26,7 +26,7 @@
 
 FreightCar::FreightCar(const std::weak_ptr<World>& world, std::string_view _id) :
   RailVehicle(world, _id),
-  cargoWeight{*this, "cargo_weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  cargoWeight{*this, "cargo_weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](double, WeightUnit){ updateTotalWeight(); }}
 {
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
@@ -35,9 +35,9 @@ FreightCar::FreightCar(const std::weak_ptr<World>& world, std::string_view _id) 
   m_interfaceItems.add(cargoWeight);
 }
 
-double FreightCar::totalWeight() const
+double FreightCar::calcTotalWeight(WeightUnit unit) const
 {
-  return RailVehicle::totalWeight() + cargoWeight.getValue(WeightUnit::Ton);
+  return RailVehicle::calcTotalWeight(unit) + cargoWeight.getValue(unit);
 }
 
 void FreightCar::worldEvent(WorldState state, WorldEvent event)
