@@ -31,7 +31,7 @@ Train::Train(const std::weak_ptr<World>& world, std::string_view _id) :
   lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadOnly | PropertyFlags::Store},
   direction{this, "direction", Direction::Forward, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
   speed{*this, "speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
-  speedMax{*this, "speedMax", 120, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  speedMax{*this, "speed_max", 120, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::Store},
   throttleSpeed{*this, "throttle_speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadOnly | PropertyFlags::Store},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
