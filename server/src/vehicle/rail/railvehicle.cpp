@@ -29,6 +29,7 @@ RailVehicle::RailVehicle(const std::weak_ptr<World>& world, std::string_view _id
   Vehicle(world, _id),
   decoder{this, "decoder", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store},
   lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  speedMax{*this, "speed_max", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::Store},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](double, WeightUnit){ updateTotalWeight(); }},
   totalWeight{*this, "total_weight", 0, WeightUnit::Ton, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
 {
@@ -39,6 +40,8 @@ RailVehicle::RailVehicle(const std::weak_ptr<World>& world, std::string_view _id
   m_interfaceItems.insertBefore(decoder, notes);
   Attributes::addEnabled(lob, editable);
   m_interfaceItems.insertBefore(lob, notes);
+  Attributes::addEnabled(speedMax, editable);
+  m_interfaceItems.insertBefore(speedMax, notes);
   Attributes::addEnabled(weight, editable);
   m_interfaceItems.insertBefore(weight, notes);
   m_interfaceItems.insertBefore(totalWeight, notes);
@@ -60,6 +63,7 @@ void RailVehicle::worldEvent(WorldState state, WorldEvent event)
 
   decoder.setAttributeEnabled(editable);
   lob.setAttributeEnabled(editable);
+  speedMax.setAttributeEnabled(editable);
   weight.setAttributeEnabled(editable);
 }
 
