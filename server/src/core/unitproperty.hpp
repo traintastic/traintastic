@@ -179,4 +179,10 @@ class UnitProperty : public AbstractUnitProperty
     }
 };
 
+template<typename T, typename Unit>
+std::string toString(const UnitProperty<T, Unit>& property)
+{
+  return std::to_string(property.value()).append(" $").append(EnumName<Unit>::value).append(":").append(EnumValues<Unit>::value.at(property.unit())).append("$");
+}
+
 #endif
