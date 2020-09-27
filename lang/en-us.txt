@@ -171,3 +171,44 @@ qtapp.settings:language=Language
 
 qtapp.message_box:no=No
 qtapp.message_box:yes=Yes
+
+
+rail_vehicle_list:add=Add
+class_id:vehicle.rail.locomotive=Locomotive
+class_id:vehicle.rail.freight_car=Freight car
+vehicle.rail.freight_car:decoder=Decoder
+length_unit:m=m
+vehicle.rail.freight_car:lob=LOB
+weight_unit:kg=kg
+vehicle.rail.freight_car:weight=Weight
+vehicle.rail.freight_car:cargo_weight=Cargo weight
+
+length_unit:cm=cm
+length_unit:mm=mm
+length_unit:yd=yd
+length_unit:ft=ft
+length_unit:in=in
+weight_unit:ton=ton
+weight_unit:short_tons=Short tons
+weight_unit:long_tons=Long tons
+
+vehicle.rail.freight_car:total_weight=Total weight
+train:direction=Direction
+speed_unit:mps=m/s
+speed_unit:kmph=km/h
+speed_unit:mph=mph
+train:speed_max=Maximum speed
+
+
+rail_vehicle_list:type=Type
+rail_vehicle:lob=LOB
+vehicle.rail.locomotive:decoder=Decoder
+vehicle.rail.locomotive:train=Train
+vehicle.rail.locomotive:lob=LOB
+vehicle.rail.locomotive:speed_max=Maximum speed
+vehicle.rail.locomotive:weight=Weight
+vehicle.rail.locomotive:total_weight=Total weight
+decoder_protocol:AUTO=Auto
+decoder_protocol:DCC=DCC
+decoder_protocol:CUSTOM=Custom
+
