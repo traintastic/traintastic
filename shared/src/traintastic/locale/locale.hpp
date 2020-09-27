@@ -52,6 +52,7 @@ class Locale
 
 #ifdef QT_CORE_LIB
     QString translate(const QString& id) const;
+    QString parse(const QString& text) const;
 #else
     std::string_view translate(std::string_view id) const;
 #endif

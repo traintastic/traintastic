@@ -24,6 +24,7 @@
 #include <fstream>
 #ifdef QT_CORE_LIB
   #include <QDebug>
+  #include <QRegularExpression>
 #endif
 
 const Locale* Locale::instance = nullptr;
@@ -87,6 +88,16 @@ QString Locale::translate(const QString& id) const
     qWarning() << "Locale: Missing translation for" << id;
     return id;
   }
+}
+
+QString Locale::parse(const QString& text) const
+{
+  static QRegularExpression re("\\$([a-z0-9:\\._]+)\\$");
+  QRegularExpressionMatch m = re.match(text);
+  if(m.hasMatch())
+    return QString(text).replace(m.capturedStart(), m.capturedLength(), translate(m.captured(1)));
+  else
+    return text;
 }
 #else
 std::string_view Locale::translate(std::string_view id) const

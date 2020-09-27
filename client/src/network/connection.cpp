@@ -790,7 +790,7 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
             for(index.first = columnMin; index.first <= columnMax; index.first++)
             {
               message->read(data);
-              model->m_texts[index] = QString::fromUtf8(data);
+              model->m_texts[index] = Locale::instance->parse(QString::fromUtf8(data));
             }
 
           model->endResetModel();
