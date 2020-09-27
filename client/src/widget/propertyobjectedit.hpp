@@ -37,6 +37,7 @@ class PropertyObjectEdit : public QWidget
     ObjectProperty& m_property;
     QLineEdit* m_lineEdit;
     QToolButton* m_changeButton;
+    QToolButton* m_editButton;
 
   public:
     explicit PropertyObjectEdit(ObjectProperty& property, QWidget* parent = nullptr);

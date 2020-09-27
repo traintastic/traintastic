@@ -31,7 +31,8 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
   QWidget(parent),
   m_property{property},
   m_lineEdit{new QLineEdit(m_property.objectId(), this)},
-  m_changeButton{new QToolButton(this)}
+  m_changeButton{m_property.isWritable() ? new QToolButton(this) : nullptr},
+  m_editButton{new QToolButton(this)}
 {
   bool enabled = m_property.getAttributeBool(AttributeName::Enabled, true);
   bool visible = m_property.getAttributeBool(AttributeName::Visible, true);
@@ -42,17 +43,25 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
       {
         case AttributeName::Enabled:
           m_lineEdit->setEnabled(value.toBool());
-          m_changeButton->setEnabled(value.toBool());
+          if(m_changeButton)
+            m_changeButton->setEnabled(value.toBool());
           break;
 
         case AttributeName::Visible:
           m_lineEdit->setVisible(value.toBool());
-          m_changeButton->setVisible(value.toBool());
+          if(m_changeButton)
+            m_changeButton->setVisible(value.toBool());
           break;
 
         default:
           break;
       }
+    });
+  connect(&m_property, &ObjectProperty::valueChanged,
+    [this]()
+    {
+      m_editButton->setEnabled(!m_property.objectId().isEmpty());
+      m_lineEdit->setText(m_property.objectId());
     });
 
   QHBoxLayout* l = new QHBoxLayout();
@@ -63,21 +72,28 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
   m_lineEdit->setReadOnly(true);
   l->addWidget(m_lineEdit, 1);
 
-  m_changeButton->setEnabled(enabled);
-  m_changeButton->setVisible(visible);
-  m_changeButton->setText("...");
-  l->addWidget(m_changeButton);
+  if(m_changeButton)
+  {
+    m_changeButton->setEnabled(enabled);
+    m_changeButton->setVisible(visible);
+    m_changeButton->setText("...");
+    connect(m_changeButton, &QToolButton::clicked,
+      [/*this*/]()
+      {
 
-  QToolButton* edit = new QToolButton(this);
-  edit->setIcon(QIcon(":/dark/edit.svg"));
-  edit->setEnabled(!m_property.objectId().isEmpty());
-  connect(edit, &QToolButton::clicked,
+      });
+    l->addWidget(m_changeButton);
+  }
+
+  m_editButton->setIcon(QIcon(":/dark/edit.svg"));
+  m_editButton->setEnabled(!m_property.objectId().isEmpty());
+  connect(m_editButton, &QToolButton::clicked,
     [this]()
     {
       if(!m_property.objectId().isEmpty())
         MainWindow::instance->showObject(m_property.objectId());
     });
-  l->addWidget(edit);
+  l->addWidget(m_editButton);
 
   setLayout(l);
 }
