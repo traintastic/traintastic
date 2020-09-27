@@ -28,6 +28,7 @@
 RailVehicle::RailVehicle(const std::weak_ptr<World>& world, std::string_view _id) :
   Vehicle(world, _id),
   decoder{this, "decoder", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  train{this, "train", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store},
   lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
   speedMax{*this, "speed_max", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::Store},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](double, WeightUnit){ updateTotalWeight(); }},
@@ -38,6 +39,7 @@ RailVehicle::RailVehicle(const std::weak_ptr<World>& world, std::string_view _id
 
   Attributes::addEnabled(decoder, editable);
   m_interfaceItems.insertBefore(decoder, notes);
+  m_interfaceItems.insertBefore(train, notes);
   Attributes::addEnabled(lob, editable);
   m_interfaceItems.insertBefore(lob, notes);
   Attributes::addEnabled(speedMax, editable);

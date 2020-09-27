@@ -34,8 +34,11 @@ Train::Train(const std::weak_ptr<World>& world, std::string_view _id) :
   speedMax{*this, "speed_max", 120, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::Store},
   throttleSpeed{*this, "throttle_speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadOnly | PropertyFlags::Store},
+  vehicles{this, "vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
+  vehicles.setValueInternal(std::make_shared<RailVehicleList>(*this, vehicles.name()));
+
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
@@ -43,12 +46,16 @@ Train::Train(const std::weak_ptr<World>& world, std::string_view _id) :
   m_interfaceItems.add(name);
   m_interfaceItems.add(lob);
   Attributes::addValues(direction, DirectionValues);
+  Attributes::addObjectEditor(direction, false);
   m_interfaceItems.add(direction);
+  Attributes::addObjectEditor(speed, false);
   m_interfaceItems.add(speed);
   Attributes::addEnabled(speedMax, editable);
   m_interfaceItems.add(speedMax);
+  Attributes::addObjectEditor(throttleSpeed, false);
   m_interfaceItems.add(throttleSpeed);
   m_interfaceItems.add(weight);
+  m_interfaceItems.add(vehicles);
   m_interfaceItems.add(notes);
 }
 

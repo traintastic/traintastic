@@ -28,6 +28,7 @@
 #include "../core/speedproperty.hpp"
 #include "../core/weightproperty.hpp"
 #include "../enum/direction.hpp"
+#include "../vehicle/rail/railvehiclelist.hpp"
 
 class Train : public IdObject
 {
@@ -46,6 +47,7 @@ class Train : public IdObject
     SpeedProperty speedMax;
     SpeedProperty throttleSpeed;
     WeightProperty weight;
+    ObjectProperty<RailVehicleList> vehicles;
     Property<std::string> notes;
 
     Train(const std::weak_ptr<World>& world, std::string_view _id);
