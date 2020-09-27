@@ -25,18 +25,21 @@
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
+constexpr uint32_t columnType = 2;
+constexpr uint32_t columnLOB = 3;
 
 bool RailVehicleListTableModel::isListedProperty(const std::string& name)
 {
   return
     name == "id" ||
-    name == "name";
+    name == "name" ||
+    name == "lob";
 }
 
 RailVehicleListTableModel::RailVehicleListTableModel(RailVehicleList& list) :
   ObjectListTableModel<RailVehicle>(list)
 {
-  setColumnHeaders({"vehicle:id", "vehicle:name"});
+  setColumnHeaders({"vehicle:id", "vehicle:name", "rail_vehicle_list:type", "rail_vehicle:lob"});
 }
 
 std::string RailVehicleListTableModel::getText(uint32_t column, uint32_t row) const
@@ -53,6 +56,12 @@ std::string RailVehicleListTableModel::getText(uint32_t column, uint32_t row) co
       case columnName:
         return vehicle.name;
 
+      case columnType:
+        return std::string("$class_id:").append(vehicle.getClassId()).append("$");
+
+      case columnLOB:
+        return toString(vehicle.lob);
+
       default:
         assert(false);
         break;
@@ -68,4 +77,6 @@ void RailVehicleListTableModel::propertyChanged(AbstractProperty& property, uint
     changed(row, columnId);
   else if(property.name() == "name")
     changed(row, columnName);
+  else if(property.name() == "lob")
+    changed(row, columnLOB);
 }
