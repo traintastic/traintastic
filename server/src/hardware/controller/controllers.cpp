@@ -26,6 +26,10 @@ std::shared_ptr<Controller> Controllers::create(const std::weak_ptr<World>& worl
 {
   if(classId == WLANmaus::classId)
     return WLANmaus::create(world, id);
+#ifdef USB_XPRESSNET
+  else if(classId == USBXpressNetController::classId)
+    return USBXpressNetController::create(world, id);
+#endif
   else
     return std::shared_ptr<Controller>();
 }

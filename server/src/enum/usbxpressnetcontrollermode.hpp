@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/controller/controllers.hpp
+ * server/src/enum/usbxpressnetcontrollermode.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,29 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_CONTROLLER_CONTROLLERS_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_CONTROLLER_CONTROLLERS_HPP
+#ifndef TRAINTASTIC_SERVER_ENUM_USBXPRESSNETCONTROLLERMODE_HPP
+#define TRAINTASTIC_SERVER_ENUM_USBXPRESSNETCONTROLLERMODE_HPP
 
-#include "controller.hpp"
-#include "../../utils/makearray.hpp"
+#include <traintastic/enum/usbxpressnetcontrollermode.hpp>
 
-#include "wlanmaus.hpp"
-#ifdef USB_XPRESSNET
-  #include "usbxpressnetcontroller.hpp"
-#endif
-
-struct Controllers
-{
-  static constexpr std::string_view classIdPrefix = "controller.";
-
-  static constexpr auto classList = makeArray(
-#ifdef USB_XPRESSNET
-    USBXpressNetController::classId,
-#endif
-    WLANmaus::classId
-  );
-
-  static std::shared_ptr<Controller> create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id);
-};
+inline constexpr std::array<USBXpressNetControllerMode, 2> USBXpressNetControllerModeValues{{
+  USBXpressNetControllerMode::Direct,
+  USBXpressNetControllerMode::Virtual,
+}};
 
 #endif

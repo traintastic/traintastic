@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/controller/controllers.hpp
+ * shared/src/enum/usbxpressnetcontrollermode.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,29 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_CONTROLLER_CONTROLLERS_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_CONTROLLER_CONTROLLERS_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_USBXPRESSNETCONROLLERMODE_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_USBXPRESSNETCONROLLERMODE_HPP
 
-#include "controller.hpp"
-#include "../../utils/makearray.hpp"
+#include <cstdint>
+#include "enum.hpp"
+#include <frozen/map.h>
 
-#include "wlanmaus.hpp"
-#ifdef USB_XPRESSNET
-  #include "usbxpressnetcontroller.hpp"
-#endif
-
-struct Controllers
+enum class USBXpressNetControllerMode : uint8_t
 {
-  static constexpr std::string_view classIdPrefix = "controller.";
-
-  static constexpr auto classList = makeArray(
-#ifdef USB_XPRESSNET
-    USBXpressNetController::classId,
-#endif
-    WLANmaus::classId
-  );
-
-  static std::shared_ptr<Controller> create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id);
+  Direct = 0,
+  Virtual = 1,
 };
+
+ENUM_NAME(USBXpressNetControllerMode, "usb_xpressnet_controller_mode")
+
+ENUM_VALUES(USBXpressNetControllerMode, 2,
+{
+  {USBXpressNetControllerMode::Direct, "direct"},
+  {USBXpressNetControllerMode::Virtual, "virtual"},
+})
 
 #endif

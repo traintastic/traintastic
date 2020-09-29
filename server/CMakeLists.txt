@@ -69,8 +69,8 @@ else()
 
   message(STATUS "CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
 
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
-  set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
+  #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
+  #set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
 
   target_link_libraries(traintastic-server pthread stdc++fs)
 endif()
@@ -89,8 +89,8 @@ else()
   add_definitions(-DDISABLE_LUA_SCRIPTING)
 endif()
 
-option(ENABLE_USB_XPRESSNET_INTERFACE "USB XpressNet interface support" ON)
-message(STATUS "USB XpressNet interface support: ${ENABLE_USB_XPRESSNET_INTERFACE}")
+option(USB_XPRESSNET "USB XpressNet interface/controller support" ON)
+message(STATUS "USB XpressNet interface/controller support: ${USB_XPRESSNET}")
 if(ENABLE_USB_XPRESSNET_INTERFACE)
   #pkg_check_modules(USBXPRESSNET REQUIRED IMPORTED_TARGET usbxpressnet)
   find_path(USBXPRESSNET_INCLUDE_DIR usbxpressnet.h)
@@ -101,11 +101,11 @@ if(ENABLE_USB_XPRESSNET_INTERFACE)
   #  message(FATAL_ERROR "usbxpressnet library not found")
   #endif()
 
+  add_definitions(-DUSB_XPRESSNET)
   target_include_directories(traintastic-server PRIVATE ${USBXPRESSNET_INCLUDE_DIR})
   target_link_libraries(traintastic-server ${USBXPRESSNET_LIB})
 else()
-  add_definitions(-DDISABLE_USB_XPRESSNET_INTERFACE)
-  list(FILTER SOURCES EXCLUDE REGEX ".*usbxpressnetinterface\.(hpp|cpp)$")
+  list(FILTER SOURCES EXCLUDE REGEX ".*usbxpressnet(interface|controller)\.(hpp|cpp)$")
 endif()
 
 ### OPTIONS END ###
