@@ -418,19 +418,7 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
           {
             ObjectPtr obj = property->toObject();
             if(obj)
-            {
-              if(IdObject* idObj = dynamic_cast<IdObject*>(obj.get()))
-                message.write<std::string>(idObj->id);
-              else if(SubObject* subObj = dynamic_cast<SubObject*>(obj.get()))
-                message.write<std::string>(subObj->id());
-              else if(dynamic_cast<World*>(obj.get()))
-                message.write<std::string_view>(World::classId);
-              else
-              {
-                //assert(false);
-                message.write<std::string>("");
-              }
-            }
+              message.write(obj->getObjectId());
             else
               message.write<std::string>("");
             break;
@@ -527,19 +515,7 @@ void Session::objectPropertyChanged(AbstractProperty& property)
     {
       ObjectPtr obj = property.toObject();
       if(obj)
-      {
-        if(IdObject* idObj = dynamic_cast<IdObject*>(obj.get()))
-          event->write<std::string>(idObj->id);
-        else if(SubObject* subObj = dynamic_cast<SubObject*>(obj.get()))
-          event->write<std::string>(subObj->id());
-        else if(dynamic_cast<World*>(obj.get()))
-          event->write<std::string_view>(World::classId);
-        else
-        {
-          assert(false);
-          event->write<std::string_view>("");
-        }
-      }
+        event->write(obj->getObjectId());
       else
         event->write<std::string_view>("");
       break;

@@ -69,6 +69,7 @@ class World : public Object
   public:
     CLASS_ID("world")
 
+    static constexpr std::string_view id = classId;
     static constexpr std::string_view filename = "traintastic.json";
 
     static std::shared_ptr<World> create();
@@ -96,6 +97,8 @@ class World : public Object
     Method<void()> save;
 
     World(Private);
+
+    std::string getObjectId() const final { return std::string(classId); }
 
     const boost::uuids::uuid& uuid() const { return m_uuid; }
 

@@ -92,7 +92,7 @@ json WorldSaver::saveObject(const ObjectPtr& object)
             if((property->flags() & PropertyFlags::SubObject) == PropertyFlags::SubObject)
               objectData[property->name()] = saveObject(value);
             else
-              objectData[property->name()] = subObject->id();
+              objectData[property->name()] = subObject->getObjectId();
           }
         }
         else

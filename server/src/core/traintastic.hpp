@@ -78,7 +78,8 @@ class Traintastic : public Object
   public:
     CLASS_ID("traintastic");
 
-    static const std::string id;
+    static constexpr std::string_view id = classId;
+
     static std::shared_ptr<Traintastic> instance;
 
     ObjectProperty<Console> console;
@@ -92,6 +93,8 @@ class Traintastic : public Object
 
     Traintastic(const std::filesystem::path& dataDir);
     ~Traintastic() final;
+
+    std::string getObjectId() const final { return std::string(id); }
 
     boost::asio::io_context& ioContext() { return m_ioContext; }
 

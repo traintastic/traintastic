@@ -31,20 +31,11 @@ class SubObject : public Object
     Object& m_parent;
     const std::string& m_parentPropertyName;
 
-  protected:
-    void logDebug(const std::string& message);
-    void logInfo(const std::string& message);
-    void logNotice(const std::string& message);
-    void logWarning(const std::string& message);
-    void logError(const std::string& message);
-    void logCritical(const std::string& message);
-    void logFatal(const std::string& message);
-
   public:
     SubObject(Object& _parent, const std::string& parentPropertyName);
 
     Object& parent() const { return m_parent; }
-    std::string id() const;
+    std::string getObjectId() const final;
 };
 
 #endif

@@ -37,8 +37,6 @@
 
 using nlohmann::json;
 
-const std::string Traintastic::id{Traintastic::classId};
-
 std::shared_ptr<Traintastic> Traintastic::instance;
 
 Traintastic::Traintastic(const std::filesystem::path& dataDir) :
@@ -57,7 +55,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
     [this]()
     {
       world = World::create();
-      console->notice(id, "Created new world");
+      logNotice("Created new world");
       world->trackPowerOff();
       world->edit = true;
     }},
@@ -72,7 +70,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
       catch(const std::exception&)
       {
         uuid = boost::uuids::nil_generator()();
-        console->error(id, "Invalid default world uuid");
+        logError("Invalid default world uuid");
       }
 
       if(!uuid.is_nil())
@@ -116,7 +114,7 @@ Traintastic::~Traintastic()
 
 Traintastic::RunStatus Traintastic::run()
 {
-  console->info(id, "v" STR(VERSION) " " TRAINTASTIC_CODENAME);
+  logInfo("v" STR(VERSION) " " TRAINTASTIC_CODENAME);
 
   settings = std::make_shared<Settings>(m_dataDir / "settings.json");
   Attributes::setEnabled(restart, settings->allowClientServerRestart);
@@ -139,9 +137,9 @@ Traintastic::RunStatus Traintastic::run()
 void Traintastic::exit()
 {
   if(m_restart)
-    console->notice(id, "Restarting");
+    logNotice("Restarting");
   else
-    console->notice(id, "Shutting down");
+    logNotice("Shutting down");
 
   if(settings->autoSaveWorldOnExit && world)
     world->save();
@@ -159,28 +157,28 @@ bool Traintastic::start()
   m_acceptor.open(endpoint.protocol(), ec);
   if(ec)
   {
-    console->fatal(id, ec.message());
+    logFatal(ec.message());
     return false;
   }
 
   m_acceptor.set_option(boost::asio::socket_base::reuse_address(true), ec);
   if(ec)
   {
-    console->fatal(id, ec.message());
+    logFatal(ec.message());
     return false;
   }
 
   m_acceptor.bind(endpoint, ec);
   if(ec)
   {
-    console->fatal(id, ec.message());
+    logFatal(ec.message());
     return false;
   }
 
   m_acceptor.listen(5, ec);
   if(ec)
   {
-    console->fatal(id, ec.message());
+    logFatal(ec.message());
     return false;
   }
 
@@ -191,34 +189,34 @@ bool Traintastic::start()
       m_socketUDP.open(boost::asio::ip::udp::v4(), ec);
       if(ec)
       {
-        console->fatal(id, ec.message());
+        logFatal(ec.message());
         return false;
       }
 
       m_socketUDP.set_option(boost::asio::socket_base::reuse_address(true), ec);
       if(ec)
       {
-        console->fatal(id, ec.message());
+        logFatal(ec.message());
         return false;
       }
 
       m_socketUDP.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::address_v4::any(), Settings::defaultPort), ec);
       if(ec)
       {
-        console->fatal(id, "bind: " + ec.message());
+        logFatal("bind: " + ec.message());
         return false;
       }
 
-      console->notice(id, "Discovery enabled");
+      logNotice("Discovery enabled");
       doReceive();
     }
     else
-      console->warning(id, std::string("Discovery disabled, only allowed on port ") + std::to_string(Settings::defaultPort));
+      logWarning(std::string("Discovery disabled, only allowed on port ") + std::to_string(Settings::defaultPort));
   }
   else
-    console->notice(id, "Discovery disabled");
+    logNotice("Discovery disabled");
 
-  console->notice(id, std::string("Listening at ") + m_acceptor.local_endpoint().address().to_string() + ":" + std::to_string(m_acceptor.local_endpoint().port()));
+  logNotice(std::string("Listening at ") + m_acceptor.local_endpoint().address().to_string() + ":" + std::to_string(m_acceptor.local_endpoint().port()));
   doAccept();
 
   return true;
@@ -235,7 +233,7 @@ void Traintastic::stop()
   boost::system::error_code ec;
   m_acceptor.cancel(ec);
   if(ec)
-    console->error(id, ec.message());
+    logError(ec.message());
   m_acceptor.close();
 
   m_socketUDP.close();
@@ -246,7 +244,7 @@ void Traintastic::load(const boost::uuids::uuid& uuid)
   if(const WorldList::WorldInfo* info = worldList->find(uuid))
     load(info->path);
   else
-    console->error(id, "World " + to_string(uuid) + " doesn't exist");
+    logError("World " + to_string(uuid) + " doesn't exist");
 }
 
 void Traintastic::load(const std::filesystem::path& path)
@@ -257,7 +255,7 @@ void Traintastic::load(const std::filesystem::path& path)
   }
   catch(const std::exception& e)
   {
-    console->critical(id, std::string("Loading world failed: ") + e.what());
+    logCritical(std::string("Loading world failed: ") + e.what());
   }
 }
 
@@ -296,7 +294,7 @@ void Traintastic::doReceive()
         doReceive();
       }
       else
-        console->error(id, ec.message());
+        logError(ec.message());
     });
 }
 
@@ -331,11 +329,11 @@ void Traintastic::doAccept()
             }
             catch(const std::exception& e)
             {
-              console->critical(id, e.what());
+              logCritical(e.what());
             }
           }
           else
-            console->error(id, ec.message());
+            logError(ec.message());
         });
     });
 }

@@ -52,6 +52,14 @@ class Object : public std::enable_shared_from_this<Object>
     virtual void destroying() {}
     virtual void worldEvent(WorldState state, WorldEvent event);
 
+    void logDebug(const std::string& message);
+    void logInfo(const std::string& message);
+    void logNotice(const std::string& message);
+    void logWarning(const std::string& message);
+    void logError(const std::string& message);
+    void logCritical(const std::string& message);
+    void logFatal(const std::string& message);
+
   public:
     boost::signals2::signal<void (AbstractProperty&)> propertyChanged;
     boost::signals2::signal<void (AbstractAttribute&)> attributeChanged;
@@ -74,7 +82,7 @@ class Object : public std::enable_shared_from_this<Object>
     }
 
     virtual const std::string_view& getClassId() const = 0;
-    //virtual const std::string& getId() const = 0;
+    virtual std::string getObjectId() const = 0;
 
     const InterfaceItems& interfaceItems() const { return m_interfaceItems; }
 

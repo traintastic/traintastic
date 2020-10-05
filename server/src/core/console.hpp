@@ -63,9 +63,13 @@ class Console : public Object, public Table
   public:
     CLASS_ID("console");
 
+    static constexpr std::string_view id = classId;
+
     Property<uint32_t> count;
 
     Console();
+
+    std::string getObjectId() const final { return std::string(id); }
 
     void log(Level level, std::string_view id, const std::string& message);
     void log(Level level, const std::string& id, const std::string& message);

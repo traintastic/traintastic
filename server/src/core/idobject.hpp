@@ -46,19 +46,12 @@ class IdObject : public Object
     virtual void addToWorld();
     void worldEvent(WorldState state, WorldEvent event) override;
 
-    void logDebug(const std::string& message);
-    void logInfo(const std::string& message);
-    void logNotice(const std::string& message);
-    void logWarning(const std::string& message);
-    void logError(const std::string& message);
-    void logCritical(const std::string& message);
-    void logFatal(const std::string& message);
-
   public:
     Property<std::string> id;
 
     ~IdObject() override;
 
+    std::string getObjectId() const final { return id.value(); }
     const std::weak_ptr<World>& world() const { return m_world; }
 };
 

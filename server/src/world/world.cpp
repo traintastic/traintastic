@@ -160,7 +160,7 @@ std::string World::getUniqueId(const std::string& prefix) const
 
 bool World::isObject(const std::string& _id) const
 {
-  return m_objects.find(_id) != m_objects.end() || _id == classId || _id == Traintastic::id;
+  return m_objects.find(_id) != m_objects.end() || _id == id || _id == Traintastic::id;
 }
 
 ObjectPtr World::getObject(const std::string& _id) const
@@ -387,7 +387,7 @@ json World::saveObject(const ObjectPtr& object)
             if((property->flags() & PropertyFlags::SubObject) == PropertyFlags::SubObject)
               objectData[property->name()] = saveObject(value);
             else
-              objectData[property->name()] = subObject->id();
+              objectData[property->name()] = subObject->getObjectId();
           }
         }
         else

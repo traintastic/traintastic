@@ -21,9 +21,6 @@
  */
 
 #include "subobject.hpp"
-#include "idobject.hpp"
-#include "../world/world.hpp"
-#include "traintastic.hpp"
 
 SubObject::SubObject(Object& _parent, const std::string& parentPropertyName) :
   Object(),
@@ -32,53 +29,10 @@ SubObject::SubObject(Object& _parent, const std::string& parentPropertyName) :
 {
 }
 
-std::string SubObject::id() const
+std::string SubObject::getObjectId() const
 {
-  std::string value;
-  if(IdObject* object = dynamic_cast<IdObject*>(&m_parent))
-    value = object->id;
-  else if(SubObject* object = dynamic_cast<SubObject*>(&m_parent))
-    value = object->id();
-  else if(dynamic_cast<World*>(&m_parent))
-    value = World::classId;
-  else
-    assert(false);
+  std::string value(std::move(m_parent.getObjectId()));
   value += ".";
   value += m_parentPropertyName;
   return value;
-}
-
-void SubObject::logDebug(const std::string& message)
-{
-  Traintastic::instance->console->debug(id(), message);
-}
-
-void SubObject::logInfo(const std::string& message)
-{
-  Traintastic::instance->console->info(id(), message);
-}
-
-void SubObject::logNotice(const std::string& message)
-{
-  Traintastic::instance->console->notice(id(), message);
-}
-
-void SubObject::logWarning(const std::string& message)
-{
-  Traintastic::instance->console->warning(id(), message);
-}
-
-void SubObject::logError(const std::string& message)
-{
-  Traintastic::instance->console->error(id(), message);
-}
-
-void SubObject::logCritical(const std::string& message)
-{
-  Traintastic::instance->console->critical(id(), message);
-}
-
-void SubObject::logFatal(const std::string& message)
-{
-  Traintastic::instance->console->fatal(id(), message);
 }

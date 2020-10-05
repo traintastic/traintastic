@@ -23,6 +23,7 @@
 #include "object.hpp"
 #include "abstractmethod.hpp"
 #include "abstractproperty.hpp"
+#include "traintastic.hpp"
 
 Object::Object() :
   m_dying{false}
@@ -64,4 +65,39 @@ void Object::worldEvent(WorldState state, WorldEvent event)
     if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&it.second))
       if(contains(property->flags(), PropertyFlags::SubObject))
         property->toObject()->worldEvent(state, event);
+}
+
+void Object::logDebug(const std::string& message)
+{
+  Traintastic::instance->console->debug(getObjectId(), message);
+}
+
+void Object::logInfo(const std::string& message)
+{
+  Traintastic::instance->console->info(getObjectId(), message);
+}
+
+void Object::logNotice(const std::string& message)
+{
+  Traintastic::instance->console->notice(getObjectId(), message);
+}
+
+void Object::logWarning(const std::string& message)
+{
+  Traintastic::instance->console->warning(getObjectId(), message);
+}
+
+void Object::logError(const std::string& message)
+{
+  Traintastic::instance->console->error(getObjectId(), message);
+}
+
+void Object::logCritical(const std::string& message)
+{
+  Traintastic::instance->console->critical(getObjectId(), message);
+}
+
+void Object::logFatal(const std::string& message)
+{
+  Traintastic::instance->console->fatal(getObjectId(), message);
 }

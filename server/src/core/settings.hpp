@@ -30,20 +30,15 @@
 class Settings : public Object
 {
   protected:
-    static const std::string id;
-
     const std::filesystem::path m_filename;
 
     void load();
     void save();
 
-    void logDebug(const std::string& message);
-    void logInfo(const std::string& message);
-    void logWarning(const std::string& message);
-
   public:
     CLASS_ID("settings")
 
+    static constexpr std::string_view id = classId;
     static constexpr uint16_t defaultPort = 5740; //!< unoffical, not (yet) assigned by IANA
 
     Property<bool> localhostOnly;
@@ -55,6 +50,8 @@ class Settings : public Object
     Property<bool> allowClientServerShutdown;
 
     Settings(const std::filesystem::path& filename);
+
+    std::string getObjectId() const final { return std::string(id); }
 };
 
 #endif

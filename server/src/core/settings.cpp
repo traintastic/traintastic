@@ -22,11 +22,9 @@
 
 #include "settings.hpp"
 #include <fstream>
-#include "traintastic.hpp"
+//#include "traintastic.hpp"
 
 using nlohmann::json;
-
-const std::string Settings::id{Settings::classId};
 
 Settings::Settings(const std::filesystem::path& filename) :
   Object{},
@@ -55,7 +53,7 @@ void Settings::load()
   std::ifstream file(m_filename);
   if(file.is_open())
   {
-    Traintastic::instance->console->debug(id, "Settings file: " + m_filename.string());
+    logDebug("Settings file: " + m_filename.string());
     json settings = json::parse(file);
     for(auto& [name, value] : settings.items())
     {
@@ -82,23 +80,8 @@ void Settings::save()
   if(file.is_open())
   {
     file << settings.dump(2);
-    Traintastic::instance->console->notice(id, "Saved settings");
+    logNotice("Saved settings");
   }
   else
-    Traintastic::instance->console->critical(id, "Can't write to settings file");
-}
-
-void Settings::logDebug(const std::string& message)
-{
-  Traintastic::instance->console->debug(id, message);
-}
-
-void Settings::logInfo(const std::string& message)
-{
-  Traintastic::instance->console->info(id, message);
-}
-
-void Settings::logWarning(const std::string& message)
-{
-  Traintastic::instance->console->warning(id, message);
+    logCritical("Can't write to settings file");
 }

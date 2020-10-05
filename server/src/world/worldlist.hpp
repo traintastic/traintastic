@@ -56,7 +56,11 @@ class WorldList : public Object, public Table
   public:
     CLASS_ID("world_list");
 
+    static constexpr std::string_view id = classId;
+
     WorldList(const std::filesystem::path& path);
+
+    std::string getObjectId() const final { return std::string(id); }
 
     const WorldInfo* find(const boost::uuids::uuid& uuid);
 

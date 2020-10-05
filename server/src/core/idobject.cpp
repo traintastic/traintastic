@@ -73,38 +73,3 @@ void IdObject::worldEvent(WorldState state, WorldEvent event)
 
   id.setAttributeEnabled(contains(state, WorldState::Edit));
 }
-
-void IdObject::logDebug(const std::string& message)
-{
-  Traintastic::instance->console->debug(id, message);
-}
-
-void IdObject::logInfo(const std::string& message)
-{
-  Traintastic::instance->console->info(id, message);
-}
-
-void IdObject::logNotice(const std::string& message)
-{
-  Traintastic::instance->console->notice(id, message);
-}
-
-void IdObject::logWarning(const std::string& message)
-{
-  Traintastic::instance->console->warning(id, message);
-}
-
-void IdObject::logError(const std::string& message)
-{
-  Traintastic::instance->console->error(id, message);
-}
-
-void IdObject::logCritical(const std::string& message)
-{
-  Traintastic::instance->console->critical(id, message);
-}
-
-void IdObject::logFatal(const std::string& message)
-{
-  Traintastic::instance->console->fatal(id, message);
-}
