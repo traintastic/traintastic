@@ -36,6 +36,7 @@ class ObjectProperty : public AbstractProperty
     ObjectProperty(Object& object, const QString& name, PropertyFlags flags, const QString& id);
 
     const QString& objectId() const { return m_id; }
+    void setByObjectId(const QString& value);
 };
 
 #endif

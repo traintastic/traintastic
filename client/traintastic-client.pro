@@ -62,7 +62,8 @@ SOURCES += \
     src/utils/getlocalepath.cpp \
     src/utils/geticonforclassid.cpp \
     src/widget/propertyobjectedit.cpp \
-    src/utils/enum.cpp
+    src/utils/enum.cpp \
+    src/dialog/objectselectlistdialog.cpp
 
 HEADERS += \
     src/mainwindow.hpp \
@@ -115,7 +116,8 @@ HEADERS += \
     src/utils/getlocalepath.hpp \
     src/utils/geticonforclassid.hpp \
     src/widget/propertyobjectedit.hpp \
-    src/utils/enum.hpp
+    src/utils/enum.hpp \
+    src/dialog/objectselectlistdialog.hpp
 
 RESOURCES += \
     dark.qrc

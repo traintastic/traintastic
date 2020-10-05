@@ -21,7 +21,10 @@
  */
 
 #include "propertyobjectedit.hpp"
+#include <memory>
 #include "../network/objectproperty.hpp"
+#include "../network/object.hpp"
+#include "../dialog/objectselectlistdialog.hpp"
 #include "../mainwindow.hpp"
 #include <QHBoxLayout>
 #include <QLineEdit>
@@ -31,7 +34,7 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
   QWidget(parent),
   m_property{property},
   m_lineEdit{new QLineEdit(m_property.objectId(), this)},
-  m_changeButton{m_property.isWritable() ? new QToolButton(this) : nullptr},
+  m_changeButton{m_property.isWritable() && m_property.hasAttribute(AttributeName::ObjectList) ? new QToolButton(this) : nullptr},
   m_editButton{new QToolButton(this)}
 {
   bool enabled = m_property.getAttributeBool(AttributeName::Enabled, true);
@@ -78,9 +81,9 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
     m_changeButton->setVisible(visible);
     m_changeButton->setText("...");
     connect(m_changeButton, &QToolButton::clicked,
-      [/*this*/]()
+      [this]()
       {
-
+        std::make_unique<ObjectSelectListDialog>(m_property, this)->exec();
       });
     l->addWidget(m_changeButton);
   }

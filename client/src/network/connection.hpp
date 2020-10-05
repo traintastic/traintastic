@@ -127,6 +127,8 @@ class Connection : public QObject, public QEnableSharedFromThis<Connection>
 
     void setUnitPropertyUnit(UnitProperty& property, int64_t value);
 
+    void setObjectPropertyById(const ObjectProperty& property, const QString& value);
+
     void callMethod(Method& method);
     void callMethod(Method& method, const QString& arg);
     [[nodiscard]] int callMethod(Method& method, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);

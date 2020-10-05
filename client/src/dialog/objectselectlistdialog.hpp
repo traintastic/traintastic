@@ -1,9 +1,9 @@
 /**
- * client/src/network/objectproperty.cpp
+ * client/src/dialog/objectselectlistdialog.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,17 +20,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "objectproperty.hpp"
-#include "object.hpp"
-#include "connection.hpp"
+#ifndef TRAINTASTIC_CLIENT_DIALOG_OBJECTSELECTLISTDIALOG_HPP
+#define TRAINTASTIC_CLIENT_DIALOG_OBJECTSELECTLISTDIALOG_HPP
 
-ObjectProperty::ObjectProperty(Object& object, const QString& name, PropertyFlags flags, const QString& id) :
-  AbstractProperty(object, name, ValueType::Object, flags),
-  m_id{id}
-{
-}
+#include <QDialog>
+#include "../network/objectproperty.hpp"
+#include "../network/objectptr.hpp"
 
-void ObjectProperty::setByObjectId(const QString& value)
+class QDialogButtonBox;
+class TableWidget;
+class Connection;
+
+class ObjectSelectListDialog : public QDialog
 {
-  object().connection()->setObjectPropertyById(*this, value);
-}
+  Q_OBJECT
+
+  protected:
+    ObjectProperty& m_property;
+    ObjectPtr m_object;
+    int m_requestId;
+    QDialogButtonBox* m_buttons;
+    TableWidget* m_tableWidget;
+
+  public:
+    ObjectSelectListDialog(ObjectProperty& property, QWidget* parent);
+    //~ObjectSelectListDialog() final = default;
+};
+
+#endif

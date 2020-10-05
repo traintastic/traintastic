@@ -45,6 +45,11 @@ QString InterfaceItem::displayName() const
   return Locale::tr(QString(object().classId()).append(':').append(name()));
 }
 
+bool InterfaceItem::hasAttribute(AttributeName name) const
+{
+  return m_attributes.contains(name);
+}
+
 QVariant InterfaceItem::getAttribute(AttributeName name, const QVariant& default_) const
 {
   return m_attributes.value(name, default_);

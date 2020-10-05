@@ -48,6 +48,7 @@ class InterfaceItem : public QObject
     const QString& name() const { return m_name; }
     QString displayName() const;
 
+    bool hasAttribute(AttributeName name) const;
     QVariant getAttribute(AttributeName name, const QVariant& default_) const;
     bool getAttributeBool(AttributeName name, bool default_) const;
     qint64 getAttributeInt64(AttributeName name, qint64 default_) const;

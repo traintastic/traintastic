@@ -191,6 +191,15 @@ void Connection::setUnitPropertyUnit(UnitProperty& property, int64_t value)
   send(event);
 }
 
+void Connection::setObjectPropertyById(const ObjectProperty& property, const QString& value)
+{
+  auto event = Message::newEvent(Message::Command::ObjectSetObjectPropertyById);
+  event->write(static_cast<Object*>(property.parent())->m_handle);
+  event->write(property.name().toLatin1());
+  event->write(value.toLatin1());
+  send(event);
+}
+
 void Connection::callMethod(Method& method)
 {
   auto event = Message::newEvent(Message::Command::ObjectCallMethod);
