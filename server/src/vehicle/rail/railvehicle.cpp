@@ -38,6 +38,7 @@ RailVehicle::RailVehicle(const std::weak_ptr<World>& world, std::string_view _id
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
   Attributes::addEnabled(decoder, editable);
+  Attributes::addObjectList(decoder, w->decoders);
   m_interfaceItems.insertBefore(decoder, notes);
   m_interfaceItems.insertBefore(train, notes);
   Attributes::addEnabled(lob, editable);

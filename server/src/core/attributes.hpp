@@ -63,6 +63,14 @@ struct Attributes
     item.addAttribute(AttributeName::ObjectEditor, value);
   }
 
+  static inline void addObjectList(InterfaceItem& item, const AbstractObjectProperty& property)
+  {
+    std::string id(property.object().getObjectId());
+    id.append(".");
+    id.append(property.name());
+    item.addAttribute(AttributeName::ObjectList, id);
+  }
+
   template<typename T, size_t N>
   static inline void addValues(Property<T>& property, const std::array<T, N>& values)
   {

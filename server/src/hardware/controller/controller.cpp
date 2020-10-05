@@ -53,6 +53,7 @@ Controller::Controller(const std::weak_ptr<World>& _world, std::string_view _id)
 
   m_interfaceItems.add(name);
   Attributes::addEnabled(commandStation, editable);
+  Attributes::addObjectList(commandStation, world->commandStations);
   m_interfaceItems.add(commandStation);
   m_interfaceItems.add(active);
   m_interfaceItems.add(notes);

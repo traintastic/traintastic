@@ -59,6 +59,7 @@ class Message
       ReleaseObject = 15,
       ObjectSetProperty = 16,
       ObjectSetUnitPropertyUnit = 26,
+      ObjectSetObjectPropertyById = 27,
       ObjectPropertyChanged = 17,
       ObjectAttributeChanged = 18,
       ObjectCallMethod = 25,

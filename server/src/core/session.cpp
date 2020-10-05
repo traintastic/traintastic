@@ -183,6 +183,34 @@ bool Session::processMessage(const Message& message)
       }
       break;
     }
+    case Message::Command::ObjectSetObjectPropertyById:
+    {
+      if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
+      {
+        if(AbstractObjectProperty* property = dynamic_cast<AbstractObjectProperty*>(object->getProperty(message.read<std::string>())))
+        {
+          try
+          {
+            const std::string id = message.read<std::string>();
+            if(!id.empty())
+            {
+              if(ObjectPtr value = Traintastic::instance->world->getObject(id))
+                property->fromObject(value);
+              else
+                throw std::runtime_error("");
+            }
+            else
+              property->fromObject(nullptr);
+          }
+          catch(const std::exception&)
+          {
+            // set object property failed, send changed event with current value:
+            objectPropertyChanged(*property);
+          }
+        }
+      }
+      break;
+    }
     case Message::Command::ObjectCallMethod:
     {
       if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))

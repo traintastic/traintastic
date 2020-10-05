@@ -101,12 +101,13 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
 {
   functions.setValueInternal(std::make_shared<DecoderFunctionList>(*this, functions.name()));
 
-  //auto w = world.lock();
+  auto w = world.lock();
 //  const bool editable = w && contains(w->state.value(), WorldState::Edit) && speedStep == 0;
 
   Attributes::addEnabled(name, false);
   m_interfaceItems.add(name);
   Attributes::addEnabled(commandStation, false);
+  Attributes::addObjectList(commandStation, w->commandStations);
   m_interfaceItems.add(commandStation);
   Attributes::addEnabled(protocol, false);
   Attributes::addValues(protocol, DecoderProtocolValues);
