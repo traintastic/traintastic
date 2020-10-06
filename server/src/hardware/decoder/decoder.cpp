@@ -56,8 +56,10 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
       return true;
     }},
   protocol{this, "protocol", DecoderProtocol::Auto, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](const DecoderProtocol&)
+    [this](const DecoderProtocol& value)
     {
+      if(value == DecoderProtocol::DCC && address > addressDCCShortMax)
+        longAddress = true;
       updateEditable();
     }},
   address{this, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store,
