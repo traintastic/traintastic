@@ -114,6 +114,7 @@ std::string toString(const Message& message, bool raw)
     case OPC_INPUT_REP:
     {
       const InputRep& inputRep = static_cast<const InputRep&>(message);
+      s.append(" fullAddress=").append(std::to_string(inputRep.fullAddress()));
       s.append(" address=").append(std::to_string(inputRep.address()));
       s.append(" input=").append(inputRep.isAuxInput() ? "aux" : "switch");
       s.append(" value=").append(inputRep.value() ? "high" : "low");

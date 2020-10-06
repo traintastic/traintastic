@@ -504,6 +504,11 @@ struct InputRep : Message
   {
   }
 
+  inline uint16_t fullAddress() const
+  {
+    return (address() << 1) | (isSwitchInput() ? 1 : 0);
+  }
+
   inline uint16_t address() const
   {
     return (in1 & 0x7F) | (static_cast<uint16_t>(in2 & 0x0F) << 7);
