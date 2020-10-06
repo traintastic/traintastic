@@ -77,6 +77,7 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
     [this](const bool&)
     {
       changed(DecoderChangeFlags::EmergencyStop);
+      updateEditable();
     }},
   direction{this, "direction", Direction::Forward, PropertyFlags::ReadWrite,
     [this](const Direction&)
