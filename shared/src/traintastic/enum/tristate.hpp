@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/inpu/inpulist.hpp
+ * shared/src/enum/tristate.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,28 +20,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_TRISTATE_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_TRISTATE_HPP
 
-#include "../../core/objectlist.hpp"
-#include "../../core/method.hpp"
-#include "inputlist.hpp"
-#include "input.hpp"
+#include <cstdint>
+#include "enum.hpp"
 
-class InputList : public ObjectList<Input>
+enum class TriState : uint8_t
 {
-  protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
-
-  public:
-    CLASS_ID("input_list")
-
-    Method<std::shared_ptr<Input>(std::string_view)> add;
-
-    InputList(Object& _parent, const std::string& parentPropertyName);
-
-    TableModelPtr getModel() final;
+  Undefined = 0,
+  False = 1,
+  True = 2,
 };
+
+ENUM_NAME(TriState, "tri_state")
+
+ENUM_VALUES(TriState, 3,
+{
+  {TriState::Undefined, "undefined"},
+  {TriState::False, "false"},
+  {TriState::True, "true"},
+})
+
+constexpr TriState toTriState(bool value)
+{
+  return value ? TriState::True : TriState::False;
+}
+
+constexpr TriState operator!(TriState value)
+{
+  switch(value)
+  {
+    case TriState::False:
+      return TriState::True;
+    case TriState::True:
+      return TriState::False;
+    default:
+      return TriState::Undefined;
+  }
+}
 
 #endif

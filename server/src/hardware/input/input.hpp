@@ -24,17 +24,19 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUT_HPP
 
 #include "../../core/idobject.hpp"
+#include "../../enum/tristate.hpp"
 
 class Input : public IdObject
 {
   protected:
     void addToWorld() override;
+    void worldEvent(WorldState state, WorldEvent event) override;
 
-    void valueChanged(bool _value);
+    void valueChanged(TriState _value);
 
   public:
     Property<std::string> name;
-    Property<bool> value;
+    Property<TriState> value;
 
     Input(const std::weak_ptr<World> world, std::string_view _id);
 };

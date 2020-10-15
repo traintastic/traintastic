@@ -28,7 +28,9 @@
 #include "luascriptlistwidget.hpp"
 #include "object/luascripteditwidget.hpp"
 #include "object/objecteditwidget.hpp"
+#include "inputmonitorwidget.hpp"
 #include "../network/object.hpp"
+#include "../network/inputmonitor.hpp"
 
 QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
 {
@@ -62,6 +64,8 @@ QWidget* createWidget(const ObjectPtr& object, QWidget* parent)
     return widget;
   else if(object->classId().startsWith("list."))
     return new ObjectListWidget(object, parent);
+  else if(auto inputMonitor = std::dynamic_pointer_cast<InputMonitor>(object))
+    return new InputMonitorWidget(inputMonitor, parent);
   else
     return new ObjectEditWidget(object, parent);
 }

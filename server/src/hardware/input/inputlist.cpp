@@ -22,15 +22,41 @@
 
 #include "inputlist.hpp"
 #include "inputlisttablemodel.hpp"
+#include "inputs.hpp"
+#include "../../world/getworld.hpp"
+#include "../../core/attributes.hpp"
 
 InputList::InputList(Object& _parent, const std::string& parentPropertyName) :
-  ObjectList<Input>(_parent, parentPropertyName)
+  ObjectList<Input>(_parent, parentPropertyName),
+  add{*this, "add",
+    [this](std::string_view classId)
+    {
+      auto world = getWorld(&this->parent());
+      if(!world)
+        return std::shared_ptr<Input>();
+      return Inputs::create(world, classId, world->getUniqueId("input"));
+    }}
 {
+  auto w = getWorld(&_parent);
+  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+
+  Attributes::addEnabled(add, editable);
+  Attributes::addClassList(add, Inputs::classList);
+  m_interfaceItems.add(add);
 }
 
 TableModelPtr InputList::getModel()
 {
   return std::make_shared<InputListTableModel>(*this);
+}
+
+void InputList::worldEvent(WorldState state, WorldEvent event)
+{
+  ObjectList<Input>::worldEvent(state, event);
+
+  const bool editable = contains(state, WorldState::Edit);
+
+  add.setAttributeEnabled(editable);
 }
 
 bool InputList::isListedProperty(const std::string& name)

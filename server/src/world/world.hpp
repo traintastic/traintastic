@@ -37,6 +37,7 @@
 #include "../hardware/decoder/decoderlist.hpp"
 #include "../hardware/input/inputlist.hpp"
 #include "../hardware/controller/controllerlist.hpp"
+#include "../hardware/protocol/loconet/loconetlist.hpp"
 #include "../train/trainlist.hpp"
 #include "../vehicle/rail/railvehiclelist.hpp"
 #ifndef DISABLE_LUA_SCRIPTING
@@ -81,6 +82,7 @@ class World : public Object
     ObjectProperty<DecoderList> decoders;
     ObjectProperty<InputList> inputs;
     ObjectProperty<ControllerList> controllers;
+    ObjectProperty<LocoNetList> loconets;
     ObjectProperty<Clock> clock;
     ObjectProperty<TrainList> trains;
     ObjectProperty<RailVehicleList> railVehicles;

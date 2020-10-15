@@ -37,6 +37,7 @@ class Property;
 class ObjectProperty;
 class UnitProperty;
 class Method;
+class InputMonitor;
 
 class Connection : public QObject, public QEnableSharedFromThis<Connection>
 {
@@ -73,7 +74,7 @@ class Connection : public QObject, public QEnableSharedFromThis<Connection>
     ObjectProperty* m_worldProperty;
     int m_worldRequestId;
     ObjectPtr m_world;
-    QMap<Handle, QWeakPointer<Object>> m_objects;
+    QMap<Handle, std::weak_ptr<Object>> m_objects;
     QMap<Handle, TableModel*> m_tableModels;
 
     void setState(State state);
@@ -137,6 +138,8 @@ class Connection : public QObject, public QEnableSharedFromThis<Connection>
     [[nodiscard]] int getTableModel(const ObjectPtr& object, std::function<void(const TableModelPtr&, Message::ErrorCode)> callback);
     void releaseTableModel(TableModel* tableModel);
     void setTableModelRegion(TableModel* tableModel, int columnMin, int columnMax, int rowMin, int rowMax);
+
+    [[nodiscard]] int getInputMonitorInputInfo(InputMonitor& object);
 
   signals:
     void stateChanged();

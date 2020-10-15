@@ -20,6 +20,7 @@ SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
     src/dialog/connectdialog.cpp \
+    src/network/inputmonitor.cpp \
     src/network/object.cpp \
     ../shared/src/traintastic/locale/locale.cpp \
     src/network/unitproperty.cpp \
@@ -63,11 +64,15 @@ SOURCES += \
     src/utils/geticonforclassid.cpp \
     src/widget/propertyobjectedit.cpp \
     src/utils/enum.cpp \
-    src/dialog/objectselectlistdialog.cpp
+    src/dialog/objectselectlistdialog.cpp \
+    src/widget/inputmonitorwidget.cpp \
+    src/widget/ledwidget.cpp \
+    src/widget/methodpushbutton.cpp
 
 HEADERS += \
     src/mainwindow.hpp \
     src/dialog/connectdialog.hpp \
+    src/network/inputmonitor.hpp \
     src/network/object.hpp \
     ../shared/src/traintastic/message.hpp \
     ../shared/src/traintastic/locale/locale.hpp \
@@ -117,7 +122,10 @@ HEADERS += \
     src/utils/geticonforclassid.hpp \
     src/widget/propertyobjectedit.hpp \
     src/utils/enum.hpp \
-    src/dialog/objectselectlistdialog.hpp
+    src/dialog/objectselectlistdialog.hpp \
+    src/widget/inputmonitorwidget.hpp \
+    src/widget/ledwidget.hpp \
+    src/widget/methodpushbutton.hpp
 
 RESOURCES += \
     dark.qrc

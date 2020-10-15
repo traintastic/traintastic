@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/inpu/inpulist.hpp
+ * server/src/hardware/protocol/loconet/loconetinputmonitor.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,28 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_LOCONETINPUTMONITOR_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_LOCONETINPUTMONITOR_HPP
 
-#include "../../core/objectlist.hpp"
-#include "../../core/method.hpp"
-#include "inputlist.hpp"
-#include "input.hpp"
+#include "../../input/inputmonitor.hpp"
 
-class InputList : public ObjectList<Input>
+namespace LocoNet {
+  class LocoNet;
+}
+
+class LocoNetInputMonitor final : public InputMonitor
 {
   protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
+    std::shared_ptr<LocoNet::LocoNet> m_loconet;
 
   public:
-    CLASS_ID("input_list")
+    CLASS_ID("input_monitor.loconet")
 
-    Method<std::shared_ptr<Input>(std::string_view)> add;
+    LocoNetInputMonitor(std::shared_ptr<LocoNet::LocoNet> loconet);
+    ~LocoNetInputMonitor() final;
 
-    InputList(Object& _parent, const std::string& parentPropertyName);
+    std::string getObjectId() const final { return ""; }
 
-    TableModelPtr getModel() final;
+    std::vector<InputInfo> getInputInfo() const final;
 };
 
 #endif

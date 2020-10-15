@@ -23,13 +23,19 @@
 #include "input.hpp"
 #include "../../world/world.hpp"
 #include "inputlisttablemodel.hpp"
+#include "../../core/attributes.hpp"
 
 Input::Input(const std::weak_ptr<World> world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
-  value{this, "value", false, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
+  value{this, "value", TriState::Undefined, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
 {
+  auto w = world.lock();
+  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+
+  Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
+  Attributes::addValues(value, TriStateValues);
   m_interfaceItems.add(value);
 }
 
@@ -41,7 +47,16 @@ void Input::addToWorld()
     world->inputs->addObject(shared_ptr<Input>());
 }
 
-void Input::valueChanged(bool _value)
+void Input::worldEvent(WorldState state, WorldEvent event)
+{
+  IdObject::worldEvent(state, event);
+
+  const bool editable = contains(state, WorldState::Edit);
+
+  name.setAttributeEnabled(editable);
+}
+
+void Input::valueChanged(TriState _value)
 {
   // todo: delay in ms for 0->1 || 1->0
   value.setValueInternal(_value);

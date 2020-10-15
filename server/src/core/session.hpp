@@ -27,6 +27,7 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/signals2/connection.hpp>
 #include <traintastic/network/message.hpp>
+#include <traintastic/enum/tristate.hpp>
 #include "handlelist.hpp"
 #include "objectptr.hpp"
 #include "tablemodelptr.hpp"
@@ -34,6 +35,7 @@
 class Client;
 class AbstractProperty;
 class AbstractAttribute;
+class InputMonitor;
 
 class Session : public std::enable_shared_from_this<Session>
 {
@@ -59,6 +61,9 @@ class Session : public std::enable_shared_from_this<Session>
 
     void objectPropertyChanged(AbstractProperty& property);
     void objectAttributeChanged(AbstractAttribute& attribute);
+
+    void inputMonitorInputIdChanged(InputMonitor& inputMonitor, uint32_t address, const std::string& id);
+    void inputMonitorInputValueChanged(InputMonitor& inputMonitor, uint32_t address, TriState value);
 
   public:
     Session(const std::shared_ptr<Client>& client);

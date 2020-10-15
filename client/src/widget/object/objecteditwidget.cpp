@@ -31,6 +31,7 @@
 #include "../../network/property.hpp"
 #include "../../network/objectproperty.hpp"
 #include "../../network/unitproperty.hpp"
+#include "../../network/method.hpp"
 //#include "../../network/utils.hpp"
 //#include "../alertwidget.hpp"
 #include "../propertycheckbox.hpp"
@@ -41,6 +42,7 @@
 #include "../propertyobjectedit.hpp"
 #include "../propertydirectioncontrol.hpp"
 #include "../propertyvaluelabel.hpp"
+#include "../methodpushbutton.hpp"
 #include "../unitpropertyedit.hpp"
 #include "../createwidget.hpp"
 #include "../../utils/geticonforclassid.hpp"
@@ -90,70 +92,77 @@ void ObjectEditWidget::buildForm()
 
     for(const QString& name : m_object->interfaceItems().names())
     {
-      if(AbstractProperty* baseProperty = m_object->getProperty(name))
+      if(InterfaceItem* item = m_object->getInterfaceItem(name))
       {
-        if(!baseProperty->getAttributeBool(AttributeName::ObjectEditor, true))
-          continue;
-
         QWidget* w = nullptr;
 
-        if(baseProperty->type() == ValueType::Object)
+        if(AbstractProperty* baseProperty = dynamic_cast<AbstractProperty*>(item))
         {
-          ObjectProperty* property = static_cast<ObjectProperty*>(baseProperty);
-          if(contains(baseProperty->flags(), PropertyFlags::SubObject))
-          {
-            QWidget* w = new ObjectEditWidget(property->objectId());
-            w->setWindowTitle(property->displayName());
-            tabs.append(w);
+          if(!baseProperty->getAttributeBool(AttributeName::ObjectEditor, true))
             continue;
+
+          if(baseProperty->type() == ValueType::Object)
+          {
+            ObjectProperty* property = static_cast<ObjectProperty*>(baseProperty);
+            if(contains(baseProperty->flags(), PropertyFlags::SubObject))
+            {
+              QWidget* w = new ObjectEditWidget(property->objectId());
+              w->setWindowTitle(property->displayName());
+              tabs.append(w);
+              continue;
+            }
+            else
+            {
+              w = new PropertyObjectEdit(*property);
+            }
           }
           else
           {
-            w = new PropertyObjectEdit(*property);
+            Property* property = static_cast<Property*>(baseProperty);
+            if(UnitProperty* unitProperty = dynamic_cast<UnitProperty*>(property))
+              w = new UnitPropertyEdit(*unitProperty);
+            else if(!property->isWritable())
+              w = new PropertyValueLabel(*property);
+            else if(property->type() == ValueType::Boolean)
+              w = new PropertyCheckBox(*property);
+            else if(property->type() == ValueType::Integer)
+              w = new PropertySpinBox(*property);
+            else if(property->type() == ValueType::String)
+            {
+              if(property->name() == "notes")
+              {
+                PropertyTextEdit* edit = new PropertyTextEdit(*property);
+                edit->setWindowTitle(property->displayName());
+                edit->setPlaceholderText(property->displayName());
+                tabs.append(edit);
+                continue;
+              }
+              else if(property->name() == "code")
+              {
+                PropertyTextEdit* edit = new PropertyTextEdit(*property);
+                edit->setWindowTitle(property->displayName());
+                edit->setPlaceholderText(property->displayName());
+                tabs.append(edit);
+                continue;
+              }
+              else
+                w = new PropertyLineEdit(*property);
+            }
+            else if(property->type() == ValueType::Enum)
+            {
+              if(property->enumName() == EnumName<Direction>::value)
+                w = new PropertyDirectionControl(*property);
+              else
+                w = new PropertyComboBox(*property);
+            }
           }
         }
-        else
+        else if(Method* method = dynamic_cast<Method*>(item))
         {
-          Property* property = static_cast<Property*>(baseProperty);
-          if(UnitProperty* unitProperty = dynamic_cast<UnitProperty*>(property))
-            w = new UnitPropertyEdit(*unitProperty);
-          else if(!property->isWritable())
-            w = new PropertyValueLabel(*property);
-          else if(property->type() == ValueType::Boolean)
-            w = new PropertyCheckBox(*property);
-          else if(property->type() == ValueType::Integer)
-            w = new PropertySpinBox(*property);
-          else if(property->type() == ValueType::String)
-          {
-            if(property->name() == "notes")
-            {
-              PropertyTextEdit* edit = new PropertyTextEdit(*property);
-              edit->setWindowTitle(property->displayName());
-              edit->setPlaceholderText(property->displayName());
-              tabs.append(edit);
-              continue;
-            }
-            else if(property->name() == "code")
-            {
-              PropertyTextEdit* edit = new PropertyTextEdit(*property);
-              edit->setWindowTitle(property->displayName());
-              edit->setPlaceholderText(property->displayName());
-              tabs.append(edit);
-              continue;
-            }
-            else
-              w = new PropertyLineEdit(*property);
-          }
-          else if(property->type() == ValueType::Enum)
-          {
-            if(property->enumName() == EnumName<Direction>::value)
-              w = new PropertyDirectionControl(*property);
-            else
-              w = new PropertyComboBox(*property);
-          }
+          w = new MethodPushButton(*method, this);
         }
 
-        Category category = baseProperty->getAttributeEnum<Category>(AttributeName::Category, Category::General);
+        Category category = item->getAttributeEnum<Category>(AttributeName::Category, Category::General);
         QWidget* tabWidget;
         if(!categoryTabs.contains(category))
         {
@@ -166,7 +175,7 @@ void ObjectEditWidget::buildForm()
         else
           tabWidget = categoryTabs[category];
 
-        static_cast<QFormLayout*>(tabWidget->layout())->addRow(baseProperty->displayName(), w);
+        static_cast<QFormLayout*>(tabWidget->layout())->addRow(item->displayName(), w);
       }
     }
 

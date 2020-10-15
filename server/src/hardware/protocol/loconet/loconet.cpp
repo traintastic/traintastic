@@ -28,6 +28,8 @@
 #include "../../commandstation/commandstation.hpp"
 #include "../../input/loconetinput.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../world/getworld.hpp"
+#include "loconetlisttablemodel.hpp"
 
 namespace LocoNet {
 
@@ -41,7 +43,15 @@ void updateDecoderSpeed(const std::shared_ptr<Decoder>& decoder, uint8_t speed)
     decoder->speedStep.setValueInternal(((speed - 1) * decoder->speedSteps) / (SPEED_MAX - 1));
 }
 
-LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send) :
+std::shared_ptr<LocoNet> LocoNet::create(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send)
+{
+  std::shared_ptr<LocoNet> object{std::make_shared<LocoNet>(_parent, parentPropertyName, std::move(send), Private())};
+  if(auto w = getWorld(&_parent))
+    w->loconets->addObject(object);
+  return object;
+}
+
+LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send, Private) :
   SubObject(_parent, parentPropertyName),
   m_commandStation{dynamic_cast<CommandStation*>(&_parent)},
   m_send{std::move(send)},
@@ -66,6 +76,11 @@ LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::fu
    [this](bool value)
     {
       m_debugLog = value;
+    }},
+  inputMonitor{*this, "input_monitor",
+    [this]()
+    {
+      return std::make_shared<LocoNetInputMonitor>(shared_ptr<LocoNet>());
     }}
 {
   assert(m_send);
@@ -74,6 +89,7 @@ LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::fu
   Attributes::addValues(commandStation, LocoNetCommandStationValues);
   m_interfaceItems.add(commandStation);
   m_interfaceItems.add(debugLog);
+  m_interfaceItems.add(inputMonitor);
 }
 
 bool LocoNet::send(const Message& message)
@@ -204,9 +220,14 @@ void LocoNet::receive(const Message& message)
       EventLoop::call(
         [this, inputRep=*static_cast<const InputRep*>(&message)]()
         {
-          auto it = m_inputs.find(1 + inputRep.address());
+          const uint16_t address = 1 + inputRep.fullAddress();
+          auto it = m_inputs.find(address);
           if(it != m_inputs.end())
-            it->second->valueChanged(inputRep.value());
+            it->second->valueChanged(toTriState(inputRep.value()));
+
+          for(auto* inputMonitor : m_inputMonitors)
+            if(inputMonitor->inputValueChanged)
+              inputMonitor->inputValueChanged(*inputMonitor, address, toTriState(inputRep.value()));
         });
       break;
 
@@ -372,14 +393,28 @@ std::shared_ptr<Decoder> LocoNet::getDecoder(uint8_t slot, bool request)
   return nullptr;
 }
 
-bool LocoNet::isInputAddressAvailable(uint16_t address)
+bool LocoNet::isInputAddressAvailable(uint16_t address) const
 {
   return m_inputs.find(address) == m_inputs.end();
 }
 
+bool LocoNet::changeInputAddress(const LocoNetInput& input, uint16_t newAddress)
+{
+  assert(input.loconet.value().get() == this);
+
+  if(!isInputAddressAvailable(newAddress))
+    return false;
+
+  auto node = m_inputs.extract(input.address); // old address
+  node.key() = newAddress;
+  m_inputs.insert(std::move(node));
+
+  return true;
+}
+
 bool LocoNet::addInput(const std::shared_ptr<LocoNetInput>& input)
 {
-  assert(input->loconet.value().get() == this);
+  assert(input);
   if(isInputAddressAvailable(input->address))
   {
     m_inputs.insert({input->address, input});
@@ -391,7 +426,7 @@ bool LocoNet::addInput(const std::shared_ptr<LocoNetInput>& input)
 
 void LocoNet::removeInput(const std::shared_ptr<LocoNetInput>& input)
 {
-  assert(input->loconet.value().get() == this);
+  assert(input && input->loconet.value().get() == this);
   m_inputs.erase(m_inputs.find(input->address));
 }
 

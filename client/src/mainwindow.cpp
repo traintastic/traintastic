@@ -304,7 +304,7 @@ void MainWindow::worldChanged()
   if(m_connection)
     m_world = m_connection->world();
   else
-    m_world.clear();
+    m_world.reset();
 
   if(m_world)
   {
@@ -416,11 +416,14 @@ void MainWindow::showObjectEdit(const ObjectPtr& object)
 */
 void MainWindow::showObject(const ObjectPtr& object)
 {
-  const QString& id = object->getProperty("id")->toString();
-  if(!m_mdiSubWindows.contains(id))
+  QString id;
+  if(auto* property = object->getProperty("id"))
+    id = property->toString();
+  if(id.isEmpty() || !m_mdiSubWindows.contains(id))
   {
     QMdiSubWindow* window = new ObjectSubWindow(object);
-    m_mdiSubWindows[id] = window;
+    if(!id.isEmpty())
+      m_mdiSubWindows[id] = window;
     m_mdiArea->addSubWindow(window);
     window->setAttribute(Qt::WA_DeleteOnClose);
     connect(window, &QMdiSubWindow::destroyed, this,

@@ -31,6 +31,7 @@
 #include "objectproperty.hpp"
 #include "method.hpp"
 #include "tablemodel.hpp"
+#include "inputmonitor.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
 #include <traintastic/enum/attributetype.hpp>
 #include <traintastic/locale/locale.hpp>
@@ -299,6 +300,37 @@ void Connection::setTableModelRegion(TableModel* tableModel, int columnMin, int 
   send(event);
 }
 
+int Connection::getInputMonitorInputInfo(InputMonitor& inputMonitor)
+{
+  auto request = Message::newRequest(Message::Command::InputMonitorGetInputInfo);
+  request->write(inputMonitor.handle());
+  send(request,
+    [&inputMonitor](const std::shared_ptr<Message> message)
+    {
+      uint32_t count = message->read<uint32_t>();
+      while(count > 0)
+      {
+        const uint32_t address = message->read<uint32_t>();
+        const QString id = QString::fromUtf8(message->read<QByteArray>());
+        const TriState value = message->read<TriState>();
+        emit inputMonitor.inputIdChanged(address, id);
+        emit inputMonitor.inputValueChanged(address, value);
+        count--;
+      }
+
+/*
+      TableModelPtr tableModel;
+      if(!message->isError())
+      {
+        tableModel = readTableModel(*message);
+        m_tableModels[tableModel->handle()] = tableModel.data();
+      }
+      callback(tableModel, message->errorCode());
+*/
+    });
+  return request->requestId();
+}
+
 void Connection::send(std::unique_ptr<Message>& message)
 {
   Q_ASSERT(!message->isRequest());
@@ -323,7 +355,10 @@ ObjectPtr Connection::readObject(const Message& message)
   if(!obj)
   {
     const QString classId = QString::fromLatin1(message.read<QByteArray>());
-    obj = QSharedPointer<Object>::create(sharedFromThis(), handle, classId);
+    if(classId.startsWith(InputMonitor::classIdPrefix))
+      obj = std::make_shared<InputMonitor>(sharedFromThis(), handle, classId);
+    else
+      obj = std::make_shared<Object>(sharedFromThis(), handle, classId);
     m_objects[handle] = obj;
 
     message.readBlock(); // items
@@ -803,6 +838,24 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
             }
 
           model->endResetModel();
+        }
+        break;
+
+      case Message::Command::InputMonitorInputIdChanged:
+        if(auto inputMonitor = std::dynamic_pointer_cast<InputMonitor>(m_objects.value(message->read<Handle>()).lock()))
+        {
+          const uint32_t address = message->read<uint32_t>();
+          const QString id = QString::fromUtf8(message->read<QByteArray>());
+          emit inputMonitor->inputIdChanged(address, id);
+        }
+        break;
+
+      case Message::Command::InputMonitorInputValueChanged:
+        if(auto inputMonitor = std::dynamic_pointer_cast<InputMonitor>(m_objects.value(message->read<Handle>()).lock()))
+        {
+          const uint32_t address = message->read<uint32_t>();
+          const TriState value = message->read<TriState>();
+          emit inputMonitor->inputValueChanged(address, value);
         }
         break;
 

@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/inpu/inpulist.hpp
+ * client/src/network/inputmonitor.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,28 +20,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
+#ifndef TRAINTASTIC_CLIENT_NETWORK_INPUTMONITOR_HPP
+#define TRAINTASTIC_CLIENT_NETWORK_INPUTMONITOR_HPP
 
-#include "../../core/objectlist.hpp"
-#include "../../core/method.hpp"
-#include "inputlist.hpp"
-#include "input.hpp"
+#include "object.hpp"
+#include <traintastic/enum/tristate.hpp>
 
-class InputList : public ObjectList<Input>
+class InputMonitor final : public Object
 {
-  protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
+  Q_OBJECT
+
+  private:
+    int m_requestId;
 
   public:
-    CLASS_ID("input_list")
+    inline static const QString classIdPrefix = QStringLiteral("input_monitor.");
 
-    Method<std::shared_ptr<Input>(std::string_view)> add;
+    InputMonitor(const QSharedPointer<Connection>& connection, Handle handle, const QString& classId);
+    ~InputMonitor() final;
 
-    InputList(Object& _parent, const std::string& parentPropertyName);
+    void refresh();
 
-    TableModelPtr getModel() final;
+  signals:
+    void inputIdChanged(uint32_t address, QString id);
+    void inputValueChanged(uint32_t address, TriState value);
 };
 
 #endif

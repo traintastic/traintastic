@@ -115,7 +115,7 @@ class ObjectProperty : public AbstractObjectProperty
       return *m_value;
     }
 
-    inline operator bool()
+    inline operator bool() const
     {
       return m_value.operator bool();
     }

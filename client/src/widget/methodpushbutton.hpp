@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/inpu/inpulist.hpp
+ * client/src/widget/methodpushbutton.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,28 +20,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_METHODPUSHBUTTON_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_METHODPUSHBUTTON_HPP
 
-#include "../../core/objectlist.hpp"
-#include "../../core/method.hpp"
-#include "inputlist.hpp"
-#include "input.hpp"
+#include <QPushButton>
 
-class InputList : public ObjectList<Input>
+class Method;
+
+class MethodPushButton : public QPushButton
 {
   protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
+    Method& m_method;
+    int m_requestId;
 
   public:
-    CLASS_ID("input_list")
-
-    Method<std::shared_ptr<Input>(std::string_view)> add;
-
-    InputList(Object& _parent, const std::string& parentPropertyName);
-
-    TableModelPtr getModel() final;
+    MethodPushButton(Method& method, QWidget* parent);
 };
 
 #endif

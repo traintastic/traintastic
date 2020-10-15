@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/inpu/inpulist.hpp
+ * client/src/widget/ledwidget.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,28 +20,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_LEDWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_LEDWIDGET_HPP
 
-#include "../../core/objectlist.hpp"
-#include "../../core/method.hpp"
-#include "inputlist.hpp"
-#include "input.hpp"
+#include <QWidget>
 
-class InputList : public ObjectList<Input>
+class LEDWidget : public QWidget
 {
+  public:
+    enum State {
+      Undefined,
+      Off,
+      On,
+    };
+
   protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
+    bool m_enabled;
+    State m_state;
+    QString m_text;
+
+    void paintEvent(QPaintEvent*) final;
 
   public:
-    CLASS_ID("input_list")
+    explicit LEDWidget(QWidget *parent = nullptr);
 
-    Method<std::shared_ptr<Input>(std::string_view)> add;
+    bool enabled() const { return m_enabled; }
+    void setEnabled(bool value);
 
-    InputList(Object& _parent, const std::string& parentPropertyName);
+    State state() const { return m_state; }
+    void setState(State value);
 
-    TableModelPtr getModel() final;
+    QString text() const { return m_text; }
+    void setText(const QString& value);
 };
 
 #endif

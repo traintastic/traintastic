@@ -32,22 +32,31 @@
 #include <vector>
 #include "../../../core/subobject.hpp"
 #include "../../../core/property.hpp"
+#include "../../../core/method.hpp"
 #include <traintastic/enum/direction.hpp>
 #include "../../../enum/loconetcommandstation.hpp"
 //#include <cstdint>
 //#include <cassert>
 #include "../../../hardware/decoder/decoderchangeflags.hpp"
 #include "messages.hpp"
+#include "loconetinputmonitor.hpp"
 
 class CommandStation;
 class Decoder;
 class LocoNetInput;
+class LocoNetInputMonitor;
 
 namespace LocoNet {
 
 class LocoNet : public SubObject
 {
   //friend class LocoNetInput;
+  friend class ::LocoNetInputMonitor;
+
+  private:
+    struct Private
+    {
+    };
 
   protected:
     static constexpr bool isLongAddress(uint16_t address)
@@ -97,6 +106,7 @@ class LocoNet : public SubObject
     std::unordered_map<uint16_t, std::vector<std::byte>> m_slotRequests;
     uint8_t m_queryLocoSlots;
     std::unordered_map<uint16_t, std::shared_ptr<LocoNetInput>> m_inputs;
+    std::vector<LocoNetInputMonitor*> m_inputMonitors;
 
     std::shared_ptr<Decoder> getDecoder(uint8_t slot, bool request = true);
 
@@ -108,7 +118,8 @@ class LocoNet : public SubObject
     }
 
   public://protected:
-    bool isInputAddressAvailable(uint16_t address);
+    bool isInputAddressAvailable(uint16_t address) const;
+    bool changeInputAddress(const LocoNetInput& input, uint16_t newAddress);
     bool addInput(const std::shared_ptr<LocoNetInput>& input);
     void removeInput(const std::shared_ptr<LocoNetInput>& input);
 
@@ -117,8 +128,11 @@ class LocoNet : public SubObject
 
     Property<LocoNetCommandStation> commandStation;
     Property<bool> debugLog;
+    Method<std::shared_ptr<LocoNetInputMonitor>()> inputMonitor;
 
-    LocoNet(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send);
+    static std::shared_ptr<LocoNet> create(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send);
+
+    LocoNet(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send, Private);
 
     bool send(const Message& message);
     void receive(const Message& message);

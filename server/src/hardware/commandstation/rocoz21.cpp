@@ -82,7 +82,7 @@ RocoZ21::RocoZ21(const std::weak_ptr<World>& world, std::string_view _id) :
   shortCircutExternal{this, "short_circut_external", false, PropertyFlags::ReadOnly}
 {
   name = "Z21";
-  loconet.setValueInternal(std::make_shared<LocoNet::LocoNet>(*this, loconet.name(),
+  loconet.setValueInternal(LocoNet::LocoNet::create(*this, loconet.name(),
     [/*this*/](const ::LocoNet::Message& /*msg*/)
     {
       return false;

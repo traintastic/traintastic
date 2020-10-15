@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/inpu/inpulist.hpp
+ * server/src/hardware/protocol/loconet/loconetlisttablemodel.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,28 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_LOCONETLISTTABLEMODEL_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_LOCONETLISTTABLEMODEL_HPP
 
-#include "../../core/objectlist.hpp"
-#include "../../core/method.hpp"
-#include "inputlist.hpp"
-#include "input.hpp"
+#include "../../../core/objectlisttablemodel.hpp"
+#include "loconet.hpp"
 
-class InputList : public ObjectList<Input>
+class LocoNetList;
+
+class LocoNetListTableModel : public ObjectListTableModel<LocoNet::LocoNet>
 {
+  friend class LocoNetList;
+
   protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
+    void propertyChanged(AbstractProperty& property, uint32_t row) final;
 
   public:
-    CLASS_ID("input_list")
+    CLASS_ID("loconet_list_table_model")
 
-    Method<std::shared_ptr<Input>(std::string_view)> add;
+    static bool isListedProperty(const std::string& name);
 
-    InputList(Object& _parent, const std::string& parentPropertyName);
+    LocoNetListTableModel(LocoNetList& list);
 
-    TableModelPtr getModel() final;
+    std::string getText(uint32_t column, uint32_t row) const final;
 };
 
 #endif

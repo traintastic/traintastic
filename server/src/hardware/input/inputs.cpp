@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/inpu/inpulist.hpp
+ * server/src/hardware/input/inputs.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,28 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
+#include "inputs.hpp"
 
-#include "../../core/objectlist.hpp"
-#include "../../core/method.hpp"
-#include "inputlist.hpp"
-#include "input.hpp"
-
-class InputList : public ObjectList<Input>
+std::shared_ptr<Input> Inputs::create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id)
 {
-  protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
-
-  public:
-    CLASS_ID("input_list")
-
-    Method<std::shared_ptr<Input>(std::string_view)> add;
-
-    InputList(Object& _parent, const std::string& parentPropertyName);
-
-    TableModelPtr getModel() final;
-};
-
-#endif
+  if(classId == LocoNetInput::classId)
+    return LocoNetInput::create(world, id);
+  else
+    return std::shared_ptr<Input>();
+}

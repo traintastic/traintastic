@@ -35,6 +35,7 @@
 #include "../world/world.hpp"
 #include "idobject.hpp"
 #include "subobject.hpp"
+#include "../hardware/input/inputmonitor.hpp"
 
 
 
@@ -194,7 +195,22 @@ bool Session::processMessage(const Message& message)
             const std::string id = message.read<std::string>();
             if(!id.empty())
             {
-              if(ObjectPtr value = Traintastic::instance->world->getObject(id))
+              // TODO: move to function??
+              std::vector<std::string> ids;
+              boost::split(ids, id, [](char c){ return c == '.'; });
+              auto it = ids.cbegin();
+
+              ObjectPtr value = Traintastic::instance->world->getObject(*it);
+              while(value && ++it != ids.cend())
+              {
+                AbstractProperty* property = value->getProperty(*it);
+                if(property && property->type() == ValueType::Object)
+                  value = property->toObject();
+                else
+                  value = nullptr;
+              }
+
+              if(value)
                 property->fromObject(value);
               else
                 throw std::runtime_error("");
@@ -376,6 +392,24 @@ bool Session::processMessage(const Message& message)
       }
       break;
     }
+    case Message::Command::InputMonitorGetInputInfo:
+    {
+      auto inputMonitor = std::dynamic_pointer_cast<InputMonitor>(m_handles.getItem(message.read<Handle>()));
+      if(inputMonitor)
+      {
+        auto inputInfo = inputMonitor->getInputInfo();
+        auto response = Message::newResponse(message.command(), message.requestId());
+        response->write<uint32_t>(inputInfo.size());
+        for(auto& info : inputInfo)
+        {
+          response->write(info.address);
+          response->write(info.id);
+          response->write(info.value);
+        }
+        m_client->sendMessage(std::move(response));
+      }
+      break;
+    }
     default:
       break;
   }
@@ -395,6 +429,12 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
 
     m_propertyChanged.emplace(handle, object->propertyChanged.connect(std::bind(&Session::objectPropertyChanged, this, std::placeholders::_1)));
     m_attributeChanged.emplace(handle, object->attributeChanged.connect(std::bind(&Session::objectAttributeChanged, this, std::placeholders::_1)));
+
+    if(auto* inputMonitor = dynamic_cast<InputMonitor*>(object.get()))
+    {
+      inputMonitor->inputIdChanged = std::bind(&Session::inputMonitorInputIdChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+      inputMonitor->inputValueChanged = std::bind(&Session::inputMonitorInputValueChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    }
 
     message.write(handle);
     message.write(object->getClassId());
@@ -656,4 +696,22 @@ void Session::writeAttribute(Message& message , const AbstractAttribute& attribu
   }
   else
     assert(false);
+}
+
+void Session::inputMonitorInputIdChanged(InputMonitor& inputMonitor, uint32_t address, const std::string& id)
+{
+  auto event = Message::newEvent(Message::Command::InputMonitorInputIdChanged);
+  event->write(m_handles.getHandle(inputMonitor.shared_from_this()));
+  event->write(address);
+  event->write(id);
+  m_client->sendMessage(std::move(event));
+}
+
+void Session::inputMonitorInputValueChanged(InputMonitor& inputMonitor, uint32_t address, TriState value)
+{
+  auto event = Message::newEvent(Message::Command::InputMonitorInputValueChanged);
+  event->write(m_handles.getHandle(inputMonitor.shared_from_this()));
+  event->write(address);
+  event->write(value);
+  m_client->sendMessage(std::move(event));
 }

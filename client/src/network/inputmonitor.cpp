@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/inpu/inpulist.hpp
+ * client/src/network/inputmonitor.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,28 +20,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
+#include "inputmonitor.hpp"
+#include "connection.hpp"
 
-#include "../../core/objectlist.hpp"
-#include "../../core/method.hpp"
-#include "inputlist.hpp"
-#include "input.hpp"
-
-class InputList : public ObjectList<Input>
+InputMonitor::InputMonitor(const QSharedPointer<Connection>& connection, Handle handle, const QString& classId) :
+  Object(connection, handle, classId),
+  m_requestId{Connection::invalidRequestId}
 {
-  protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
+}
 
-  public:
-    CLASS_ID("input_list")
+InputMonitor::~InputMonitor()
+{
+  if(m_requestId != Connection::invalidRequestId)
+    m_connection->cancelRequest(m_requestId);
+}
 
-    Method<std::shared_ptr<Input>(std::string_view)> add;
-
-    InputList(Object& _parent, const std::string& parentPropertyName);
-
-    TableModelPtr getModel() final;
-};
-
-#endif
+void InputMonitor::refresh()
+{
+  if(m_requestId != Connection::invalidRequestId)
+    m_connection->cancelRequest(m_requestId);
+  m_requestId = m_connection->getInputMonitorInputInfo(*this);
+}

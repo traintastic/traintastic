@@ -71,6 +71,10 @@ class Message
       TableModelSetRegion = 23,
       TableModelUpdateRegion = 24,
 
+      InputMonitorGetInputInfo = 30,
+      InputMonitorInputIdChanged = 31,
+      InputMonitorInputValueChanged = 32,
+
       Discover = 255,
     };
 

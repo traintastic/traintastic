@@ -25,6 +25,7 @@
 
 #include "abstractobjectlist.hpp"
 #include "idobject.hpp"
+#include "subobject.hpp"
 
 template<typename T>
 class ObjectListTableModel;
@@ -34,7 +35,7 @@ class ObjectList : public AbstractObjectList
 {
   friend class ObjectListTableModel<T>;
 
-  static_assert(std::is_base_of<IdObject, T>::value);
+  static_assert(std::is_base_of_v<IdObject, T> || std::is_base_of_v<SubObject, T>);
 
   public:
     using Items = std::vector<std::shared_ptr<T>>;

@@ -23,10 +23,10 @@
 #ifndef TRAINTASTIC_CLIENT_NETWORK_OBJECTPTR_HPP
 #define TRAINTASTIC_CLIENT_NETWORK_OBJECTPTR_HPP
 
-#include <QSharedPointer>
+#include <memory>
 
 class Object;
 
-using ObjectPtr = QSharedPointer<Object>;
+using ObjectPtr = std::shared_ptr<Object>;
 
 #endif

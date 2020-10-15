@@ -53,6 +53,13 @@ struct Attributes
     item.setAttribute(AttributeName::Enabled, value);
   }
 
+  template<typename T>
+  static inline void addMinMax(Property<T>& property, T min, T max)
+  {
+    property.addAttribute(AttributeName::Min, min);
+    property.addAttribute(AttributeName::Max, max);
+  }
+
   static inline void addVisible(InterfaceItem& item, bool value)
   {
     item.addAttribute(AttributeName::Visible, value);

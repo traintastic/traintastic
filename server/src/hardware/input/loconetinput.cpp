@@ -22,6 +22,7 @@
 
 #include "loconetinput.hpp"
 #include "../../core/attributes.hpp"
+#include "../../world/world.hpp"
 
 LocoNetInput::LocoNetInput(const std::weak_ptr<World> world, std::string_view _id) :
   Input(world, _id),
@@ -36,18 +37,23 @@ LocoNetInput::LocoNetInput(const std::weak_ptr<World> world, std::string_view _i
       }
       return false;
     }},
-  address{this, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
+  address{this, "address", addressMin, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
     [this](const uint16_t& value)
     {
       if(loconet)
-        return loconet->isInputAddressAvailable(value);
+        return loconet->changeInputAddress(*this, value);
       else
-        return false;
+        return true;
     }}
 {
-  Attributes::addEnabled(loconet, false);
+  auto w = world.lock();
+  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+
+  Attributes::addEnabled(loconet, editable);
+  Attributes::addObjectList(loconet, w->loconets);
   m_interfaceItems.add(loconet);
-  Attributes::addEnabled(address, false);
+  Attributes::addEnabled(address, editable);
+  Attributes::addMinMax(address, addressMin, addressMax);
   m_interfaceItems.add(address);
 }
 

@@ -34,11 +34,14 @@ class LocoNetInput : public Input
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
 
-    inline void valueChanged(bool _value) { Input::valueChanged(_value); }
+    inline void valueChanged(TriState _value) { Input::valueChanged(_value); }
 
   public:
     CLASS_ID("input.loconet")
     CREATE(LocoNetInput)
+
+    static constexpr uint16_t addressMin = 1;
+    static constexpr uint16_t addressMax = 4096;
 
     ObjectProperty<LocoNet::LocoNet> loconet;
     Property<uint16_t> address;

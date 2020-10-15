@@ -77,31 +77,31 @@ constexpr std::string_view toString(OpCode value)
 {
   switch(value)
   {
-    case LocoNet::OPC_BUSY: return "OPC_BUSY";
-    case LocoNet::OPC_GPOFF: return "OPC_GPOFFqqq";
-    case LocoNet::OPC_GPON: return "OPC_GPON";
-    case LocoNet::OPC_IDLE: return "OPC_IDLE";
-    case LocoNet::OPC_LOCO_SPD: return "OPC_LOCO_SPD";
-    case LocoNet::OPC_LOCO_DIRF: return "OPC_LOCO_DIRF";
-    case LocoNet::OPC_LOCO_SND: return "OPC_LOCO_SND";
-    case LocoNet::OPC_SW_REQ: return "OPC_SW_REQ";
-    case LocoNet::OPC_SW_REP: return "OPC_SW_REP";
-    case LocoNet::OPC_INPUT_REP: return "OPC_INPUT_REP";
-    case LocoNet::OPC_LONG_ACK: return "OPC_LONG_ACK";
-    case LocoNet::OPC_SLOT_STAT1: return "OPC_SLOT_STAT1";
-    case LocoNet::OPC_CONSIST_FUNC: return "OPC_CONSIST_FUNC";
-    case LocoNet::OPC_UNLINK_SLOTS: return "OPC_UNLINK_SLOTS";
-    case LocoNet::OPC_LINK_SLOTS: return "OPC_LINK_SLOTS";
-    case LocoNet::OPC_MOVE_SLOTS: return "OPC_MOVE_SLOTS";
-    case LocoNet::OPC_RQ_SL_DATA: return "OPC_RQ_SL_DATA";
-    case LocoNet::OPC_SW_STATE: return "OPC_SW_STATE";
-    case LocoNet::OPC_SW_ACK: return "OPC_SW_ACK";
-    case LocoNet::OPC_LOCO_ADR: return "OPC_LOCO_ADR";
-    case LocoNet::OPC_MULTI_SENSE: return "OPC_MULTI_SENSE";
-    case LocoNet::OPC_PEER_XFER: return "OPC_PEER_XFER";
-    case LocoNet::OPC_SL_RD_DATA: return "OPC_SL_RD_DATA";
-    case LocoNet::OPC_IMM_PACKET: return "OPC_IMM_PACKET";
-    case LocoNet::OPC_WR_SL_DATA: return "OPC_WR_SL_DATA";
+    case OPC_BUSY: return "OPC_BUSY";
+    case OPC_GPOFF: return "OPC_GPOFFqqq";
+    case OPC_GPON: return "OPC_GPON";
+    case OPC_IDLE: return "OPC_IDLE";
+    case OPC_LOCO_SPD: return "OPC_LOCO_SPD";
+    case OPC_LOCO_DIRF: return "OPC_LOCO_DIRF";
+    case OPC_LOCO_SND: return "OPC_LOCO_SND";
+    case OPC_SW_REQ: return "OPC_SW_REQ";
+    case OPC_SW_REP: return "OPC_SW_REP";
+    case OPC_INPUT_REP: return "OPC_INPUT_REP";
+    case OPC_LONG_ACK: return "OPC_LONG_ACK";
+    case OPC_SLOT_STAT1: return "OPC_SLOT_STAT1";
+    case OPC_CONSIST_FUNC: return "OPC_CONSIST_FUNC";
+    case OPC_UNLINK_SLOTS: return "OPC_UNLINK_SLOTS";
+    case OPC_LINK_SLOTS: return "OPC_LINK_SLOTS";
+    case OPC_MOVE_SLOTS: return "OPC_MOVE_SLOTS";
+    case OPC_RQ_SL_DATA: return "OPC_RQ_SL_DATA";
+    case OPC_SW_STATE: return "OPC_SW_STATE";
+    case OPC_SW_ACK: return "OPC_SW_ACK";
+    case OPC_LOCO_ADR: return "OPC_LOCO_ADR";
+    case OPC_MULTI_SENSE: return "OPC_MULTI_SENSE";
+    case OPC_PEER_XFER: return "OPC_PEER_XFER";
+    case OPC_SL_RD_DATA: return "OPC_SL_RD_DATA";
+    case OPC_IMM_PACKET: return "OPC_IMM_PACKET";
+    case OPC_WR_SL_DATA: return "OPC_WR_SL_DATA";
   }
 
   return {};

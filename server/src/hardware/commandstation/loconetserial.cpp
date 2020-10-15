@@ -49,7 +49,7 @@ LocoNetSerial::LocoNetSerial(const std::weak_ptr<World>& world, std::string_view
   loconet{this, "loconet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "LocoNet (serial)";
-  loconet.setValueInternal(std::make_shared<LocoNet::LocoNet>(*this, loconet.name(), std::bind(&LocoNetSerial::send, this, std::placeholders::_1)));
+  loconet.setValueInternal(LocoNet::LocoNet::create(*this, loconet.name(), std::bind(&LocoNetSerial::send, this, std::placeholders::_1)));
 
   Attributes::addEnabled(interface, !online);
   Attributes::addValues(interface, LocoNetSerialInterfaceValues);

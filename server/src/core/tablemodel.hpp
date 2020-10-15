@@ -40,9 +40,9 @@ class TableModel : public Object
 
 
       Region() :
-        columnMin{0},
+        columnMin{1},
         columnMax{0},
-        rowMin{0},
+        rowMin{1},
         rowMax{0}
       {
       }
@@ -76,6 +76,11 @@ class TableModel : public Object
           this->columnMax <= rhs.columnMax &&
           this->rowMin >= rhs.rowMin &&
           this->rowMax <= rhs.rowMax;
+      }
+
+      bool isValid() const
+      {
+        return columnMax >= columnMin && rowMax >= rowMin;
       }
     };
 

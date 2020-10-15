@@ -46,8 +46,8 @@ class Object : public QObject
 
   public:
     explicit Object(const QSharedPointer<Connection>& connection, Handle handle, const QString& classId);
-    Object(const Object& copy) = delete;
-    ~Object() final;
+    Object(const Object&) = delete;
+    ~Object() override;
 
     const QSharedPointer<Connection>& connection() const { return m_connection; }
     Handle handle() const { return m_handle; }

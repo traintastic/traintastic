@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/inpu/inpulist.hpp
+ * client/src/widget/inputmonitorwidget.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,28 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_INPUTMONITORWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_INPUTMONITORWIDGET_HPP
 
-#include "../../core/objectlist.hpp"
-#include "../../core/method.hpp"
-#include "inputlist.hpp"
-#include "input.hpp"
+#include <QWidget>
+#include <memory>
+#include <unordered_map>
 
-class InputList : public ObjectList<Input>
+class InputMonitor;
+class LEDWidget;
+
+class InputMonitorWidget : public QWidget
 {
   protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
+    std::shared_ptr<InputMonitor> m_object;
+    std::unordered_map<uint32_t, LEDWidget*> m_leds;
+
+    LEDWidget* getLED(uint32_t address);
 
   public:
-    CLASS_ID("input_list")
-
-    Method<std::shared_ptr<Input>(std::string_view)> add;
-
-    InputList(Object& _parent, const std::string& parentPropertyName);
-
-    TableModelPtr getModel() final;
+    InputMonitorWidget(std::shared_ptr<InputMonitor> object, QWidget* parent = nullptr);
 };
 
 #endif
