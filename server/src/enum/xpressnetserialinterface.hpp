@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_ENUM_XPRESSNETSERIALINTERFACE_HPP
 
 #include <traintastic/enum/xpressnetserialinterface.hpp>
+#include <array>
 
 inline constexpr std::array<XpressNetSerialInterface, 5> XpressNetSerialInterfaceValues{{
   XpressNetSerialInterface::Custom,

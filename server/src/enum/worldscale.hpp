@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_ENUM_WORLDSCALE_HPP
 
 #include <traintastic/enum/worldscale.hpp>
+#include <array>
 
 inline constexpr std::array<WorldScale, 5> WorldScaleValues{{
   WorldScale::H0,

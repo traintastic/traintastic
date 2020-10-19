@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_ENUM_LOCONETSERIALINTERFACE_HPP
 
 #include <traintastic/enum/loconetserialinterface.hpp>
+#include <array>
 
 inline constexpr std::array<LocoNetSerialInterface, 3> LocoNetSerialInterfaceValues{{
   LocoNetSerialInterface::Custom,

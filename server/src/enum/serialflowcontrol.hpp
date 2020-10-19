@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_ENUM_SERIALFLOWCONTROL_HPP
 
 #include <traintastic/enum/serialflowcontrol.hpp>
+#include <array>
 
 inline constexpr std::array<SerialFlowControl, 2> SerialFlowControlValues{{
   SerialFlowControl::None,

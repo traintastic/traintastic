@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_ENUM_XPRESSNETCOMMANDSTATION_HPP
 
 #include <traintastic/enum/xpressnetcommandstation.hpp>
+#include <array>
 
 inline constexpr std::array<XpressNetCommandStation, 3> XpressNetCommandStationValues{{
   XpressNetCommandStation::Custom,

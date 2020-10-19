@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_ENUM_DIRECTION_HPP
 
 #include <traintastic/enum/direction.hpp>
+#include <array>
 
 inline constexpr std::array<Direction, 2> DirectionValues{{
   Direction::Forward,

@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_ENUM_DECODERPROTOCOL_HPP
 
 #include <traintastic/enum/decoderprotocol.hpp>
+#include <array>
 
 inline constexpr std::array<DecoderProtocol, 3> DecoderProtocolValues{{
   DecoderProtocol::Auto,

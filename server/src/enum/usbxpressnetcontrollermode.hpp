@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_ENUM_USBXPRESSNETCONTROLLERMODE_HPP
 
 #include <traintastic/enum/usbxpressnetcontrollermode.hpp>
+#include <array>
 
 inline constexpr std::array<USBXpressNetControllerMode, 2> USBXpressNetControllerModeValues{{
   USBXpressNetControllerMode::Direct,

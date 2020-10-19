@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_ENUM_LOCONETCOMMANDSTATION_HPP
 
 #include <traintastic/enum/loconetcommandstation.hpp>
+#include <array>
 
 inline constexpr std::array<LocoNetCommandStation, 3> LocoNetCommandStationValues{{
   LocoNetCommandStation::Custom,

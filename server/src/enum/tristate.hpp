@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_ENUM_TRISTATE_HPP
 
 #include <traintastic/enum/tristate.hpp>
+#include <array>
 
 inline constexpr std::array<TriState, 3> TriStateValues{{
   TriState::Undefined,

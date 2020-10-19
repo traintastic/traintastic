@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_ENUM_LUASCRIPTSTATE_HPP
 
 #include <traintastic/enum/luascriptstate.hpp>
+#include <array>
 
 inline constexpr std::array<LuaScriptState, 5> LuaScriptStateValues{{
   LuaScriptState::Stopped,
