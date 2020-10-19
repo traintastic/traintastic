@@ -63,6 +63,10 @@
               "md_file": "usbxpressnetinterface.md"
             }
           ]
+        },
+        {
+          "id": "input_monitor",
+          "md_file": "inputmonitor.md"
         }
       ]
     },
