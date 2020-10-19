@@ -22,6 +22,7 @@
 
 #include "worldloader.hpp"
 #include <fstream>
+#include <boost/algorithm/string.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include "world.hpp"
 #include "../utils/string.hpp"
@@ -30,6 +31,7 @@
 #include "../hardware/controller/controllers.hpp"
 #include "../hardware/decoder/decoder.hpp"
 #include "../hardware/decoder/decoderfunction.hpp"
+#include "../hardware/input/inputs.hpp"
 #include "../vehicle/rail/railvehicles.hpp"
 #ifndef DISABLE_LUA_SCRIPTING
   #include "../lua/script.hpp"
@@ -70,15 +72,30 @@ WorldLoader::WorldLoader(const std::filesystem::path& filename) :
       loadObject(it.second);
 }
 
-const ObjectPtr& WorldLoader::getObject(std::string_view id)
+ObjectPtr WorldLoader::getObject(std::string_view id)
 {
-  if(auto it = m_objects.find(std::string(id)); it != m_objects.end())
+  std::vector<std::string> ids;
+  boost::split(ids, id, [](char c){ return c == '.'; });
+  auto itId = ids.cbegin();
+
+  ObjectPtr obj;
+  if(auto it = m_objects.find(*itId); it != m_objects.end())
   {
     if(!it->second.object)
       createObject(it->second);
-    return it->second.object;
+    obj = it->second.object;
   }
-  return ObjectPtrNull;
+
+  while(obj && ++itId != ids.cend())
+  {
+    AbstractProperty* property = obj->getProperty(*itId);
+    if(property && property->type() == ValueType::Object)
+      obj = property->toObject();
+    else
+      obj = nullptr;
+  }
+
+  return obj;
 }
 
 void WorldLoader::createObject(ObjectData& objectData)
@@ -100,6 +117,8 @@ void WorldLoader::createObject(ObjectData& objectData)
     if(std::shared_ptr<Decoder> decoder = std::dynamic_pointer_cast<Decoder>(getObject(decoderId)))
       objectData.object = DecoderFunction::create(*decoder, id);
   }
+  else if(startsWith(classId, Inputs::classIdPrefix))
+    objectData.object = Inputs::create(m_world, classId, id);
   else if(startsWith(classId, RailVehicles::classIdPrefix))
     objectData.object = RailVehicles::create(m_world, classId, id);
 #ifndef DISABLE_LUA_SCRIPTING

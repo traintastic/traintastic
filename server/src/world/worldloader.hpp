@@ -46,7 +46,7 @@ class WorldLoader
     std::shared_ptr<World> m_world;
     std::unordered_map<std::string, ObjectData> m_objects;
 
-    const ObjectPtr& getObject(std::string_view id);
+    ObjectPtr getObject(std::string_view id);
     void createObject(ObjectData& objectData);
     void loadObject(ObjectData& objectData);
     void loadObject(Object& object, const nlohmann::json& data);
