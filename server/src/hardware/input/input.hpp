@@ -31,8 +31,9 @@ class Input : public IdObject
   protected:
     void addToWorld() override;
     void worldEvent(WorldState state, WorldEvent event) override;
+    virtual void valueChanged(TriState _value) {}
 
-    void valueChanged(TriState _value);
+    void updateValue(TriState _value);
 
   public:
     Property<std::string> name;

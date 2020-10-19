@@ -66,3 +66,15 @@ void LocoNetInput::worldEvent(WorldState state, WorldEvent event)
   loconet.setAttributeEnabled(editable);
   address.setAttributeEnabled(editable);
 }
+
+void LocoNetInput::idChanged(const std::string& id)
+{
+  if(loconet)
+    loconet->inputMonitorIdChanged(address, id);
+}
+
+void LocoNetInput::valueChanged(TriState _value)
+{
+  if(loconet)
+    loconet->inputMonitorValueChanged(address, _value);
+}

@@ -45,6 +45,7 @@ class IdObject : public Object
     IdObject(const std::weak_ptr<World>& world, std::string_view _id);
     virtual void addToWorld();
     void worldEvent(WorldState state, WorldEvent event) override;
+    virtual void idChanged(const std::string& id) {}
 
   public:
     Property<std::string> id;

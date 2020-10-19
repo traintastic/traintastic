@@ -33,8 +33,10 @@ class LocoNetInput : public Input
 
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
+    void idChanged(const std::string& id) final;
+    void valueChanged(TriState _value) final;
 
-    inline void valueChanged(TriState _value) { Input::valueChanged(_value); }
+    inline void updateValue(TriState _value) { Input::updateValue(_value); }
 
   public:
     CLASS_ID("input.loconet")

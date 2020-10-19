@@ -223,11 +223,9 @@ void LocoNet::receive(const Message& message)
           const uint16_t address = 1 + inputRep.fullAddress();
           auto it = m_inputs.find(address);
           if(it != m_inputs.end())
-            it->second->valueChanged(toTriState(inputRep.value()));
-
-          for(auto* inputMonitor : m_inputMonitors)
-            if(inputMonitor->inputValueChanged)
-              inputMonitor->inputValueChanged(*inputMonitor, address, toTriState(inputRep.value()));
+            it->second->updateValue(toTriState(inputRep.value()));
+          else
+            inputMonitorValueChanged(address, toTriState(inputRep.value()));
         });
       break;
 
@@ -408,6 +406,8 @@ bool LocoNet::changeInputAddress(const LocoNetInput& input, uint16_t newAddress)
   auto node = m_inputs.extract(input.address); // old address
   node.key() = newAddress;
   m_inputs.insert(std::move(node));
+  inputMonitorIdChanged(input.address, {});
+  inputMonitorIdChanged(newAddress, input.id.value());
 
   return true;
 }
@@ -418,6 +418,7 @@ bool LocoNet::addInput(const std::shared_ptr<LocoNetInput>& input)
   if(isInputAddressAvailable(input->address))
   {
     m_inputs.insert({input->address, input});
+    inputMonitorIdChanged(input->address, input->id.value());
     return true;
   }
   else
@@ -427,7 +428,23 @@ bool LocoNet::addInput(const std::shared_ptr<LocoNetInput>& input)
 void LocoNet::removeInput(const std::shared_ptr<LocoNetInput>& input)
 {
   assert(input && input->loconet.value().get() == this);
+  const uint16_t address = input->address;
   m_inputs.erase(m_inputs.find(input->address));
+  inputMonitorIdChanged(address, {});
+}
+
+void LocoNet::inputMonitorIdChanged(const uint32_t address, const std::string_view value)
+{
+  for(auto* inputMonitor : m_inputMonitors)
+    if(inputMonitor->inputIdChanged)
+      inputMonitor->inputIdChanged(*inputMonitor, address, value);
+}
+
+void LocoNet::inputMonitorValueChanged(const uint32_t address, const TriState value)
+{
+  for(auto* inputMonitor : m_inputMonitors)
+    if(inputMonitor->inputValueChanged)
+      inputMonitor->inputValueChanged(*inputMonitor, address, value);
 }
 
 }

@@ -122,6 +122,8 @@ class LocoNet : public SubObject
     bool changeInputAddress(const LocoNetInput& input, uint16_t newAddress);
     bool addInput(const std::shared_ptr<LocoNetInput>& input);
     void removeInput(const std::shared_ptr<LocoNetInput>& input);
+    void inputMonitorIdChanged(uint32_t address, std::string_view value);
+    void inputMonitorValueChanged(uint32_t address, TriState value);
 
   public:
     CLASS_ID("protocol.loconet")

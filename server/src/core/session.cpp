@@ -698,7 +698,7 @@ void Session::writeAttribute(Message& message , const AbstractAttribute& attribu
     assert(false);
 }
 
-void Session::inputMonitorInputIdChanged(InputMonitor& inputMonitor, uint32_t address, const std::string& id)
+void Session::inputMonitorInputIdChanged(InputMonitor& inputMonitor, const uint32_t address, const std::string_view id)
 {
   auto event = Message::newEvent(Message::Command::InputMonitorInputIdChanged);
   event->write(m_handles.getHandle(inputMonitor.shared_from_this()));
@@ -707,7 +707,7 @@ void Session::inputMonitorInputIdChanged(InputMonitor& inputMonitor, uint32_t ad
   m_client->sendMessage(std::move(event));
 }
 
-void Session::inputMonitorInputValueChanged(InputMonitor& inputMonitor, uint32_t address, TriState value)
+void Session::inputMonitorInputValueChanged(InputMonitor& inputMonitor, const uint32_t address, const TriState value)
 {
   auto event = Message::newEvent(Message::Command::InputMonitorInputValueChanged);
   event->write(m_handles.getHandle(inputMonitor.shared_from_this()));

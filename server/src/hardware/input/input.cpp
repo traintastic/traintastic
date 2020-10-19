@@ -28,7 +28,11 @@
 Input::Input(const std::weak_ptr<World> world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
-  value{this, "value", TriState::Undefined, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
+  value{this, "value", TriState::Undefined, PropertyFlags::ReadOnly | PropertyFlags::StoreState,
+    [this](TriState _value)
+    {
+      valueChanged(_value);
+    }}
 {
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
@@ -56,7 +60,7 @@ void Input::worldEvent(WorldState state, WorldEvent event)
   name.setAttributeEnabled(editable);
 }
 
-void Input::valueChanged(TriState _value)
+void Input::updateValue(TriState _value)
 {
   // todo: delay in ms for 0->1 || 1->0
   value.setValueInternal(_value);

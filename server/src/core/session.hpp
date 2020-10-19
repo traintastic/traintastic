@@ -62,7 +62,7 @@ class Session : public std::enable_shared_from_this<Session>
     void objectPropertyChanged(AbstractProperty& property);
     void objectAttributeChanged(AbstractAttribute& attribute);
 
-    void inputMonitorInputIdChanged(InputMonitor& inputMonitor, uint32_t address, const std::string& id);
+    void inputMonitorInputIdChanged(InputMonitor& inputMonitor, uint32_t address, std::string_view id);
     void inputMonitorInputValueChanged(InputMonitor& inputMonitor, uint32_t address, TriState value);
 
   public:

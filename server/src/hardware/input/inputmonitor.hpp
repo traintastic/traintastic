@@ -31,7 +31,7 @@
 class InputMonitor : public Object
 {
   public:
-    std::function<void(InputMonitor&, uint32_t, const std::string&)> inputIdChanged;
+    std::function<void(InputMonitor&, uint32_t, std::string_view)> inputIdChanged;
     std::function<void(InputMonitor&, uint32_t, TriState)> inputValueChanged;
 
     struct InputInfo
