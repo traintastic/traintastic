@@ -40,11 +40,13 @@
 #include "../../../hardware/decoder/decoderchangeflags.hpp"
 #include "messages.hpp"
 #include "loconetinputmonitor.hpp"
+#include "loconetoutputkeyboard.hpp"
 
 class CommandStation;
 class Decoder;
 class LocoNetInput;
 class LocoNetInputMonitor;
+class LocoNetOutput;
 
 namespace LocoNet {
 
@@ -52,6 +54,7 @@ class LocoNet : public SubObject
 {
   //friend class LocoNetInput;
   friend class ::LocoNetInputMonitor;
+  friend class ::LocoNetOutputKeyboard;
 
   private:
     struct Private
@@ -107,6 +110,8 @@ class LocoNet : public SubObject
     uint8_t m_queryLocoSlots;
     std::unordered_map<uint16_t, std::shared_ptr<LocoNetInput>> m_inputs;
     std::vector<LocoNetInputMonitor*> m_inputMonitors;
+    std::unordered_map<uint16_t, std::shared_ptr<LocoNetOutput>> m_outputs;
+    std::vector<LocoNetOutputKeyboard*> m_outputKeyboards;
 
     std::shared_ptr<Decoder> getDecoder(uint8_t slot, bool request = true);
 
@@ -125,12 +130,20 @@ class LocoNet : public SubObject
     void inputMonitorIdChanged(uint32_t address, std::string_view value);
     void inputMonitorValueChanged(uint32_t address, TriState value);
 
+    [[nodiscard]] bool isOutputAddressAvailable(uint16_t address) const;
+    [[nodiscard]] bool changeOutputAddress(LocoNetOutput& output, uint16_t newAddress);
+    [[nodiscard]] bool addOutput(LocoNetOutput& output);
+    void removeOutput(LocoNetOutput& output);
+    void outputKeyboardIdChanged(uint32_t address, std::string_view value);
+    void outputKeyboardValueChanged(uint32_t address, TriState value);
+
   public:
     CLASS_ID("protocol.loconet")
 
     Property<LocoNetCommandStation> commandStation;
     Property<bool> debugLog;
     Method<std::shared_ptr<LocoNetInputMonitor>()> inputMonitor;
+    Method<std::shared_ptr<LocoNetOutputKeyboard>()> outputKeyboard;
 
     static std::shared_ptr<LocoNet> create(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send);
 

@@ -27,6 +27,7 @@
 #include "../../../core/traintastic.hpp"
 #include "../../commandstation/commandstation.hpp"
 #include "../../input/loconetinput.hpp"
+#include "../../output/loconetoutput.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../world/getworld.hpp"
 #include "loconetlisttablemodel.hpp"
@@ -81,6 +82,11 @@ LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::fu
     [this]()
     {
       return std::make_shared<LocoNetInputMonitor>(shared_ptr<LocoNet>());
+    }},
+  outputKeyboard{*this, "output_keyboard",
+    [this]()
+    {
+      return std::make_shared<LocoNetOutputKeyboard>(shared_ptr<LocoNet>());
     }}
 {
   assert(m_send);
@@ -90,6 +96,7 @@ LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::fu
   m_interfaceItems.add(commandStation);
   m_interfaceItems.add(debugLog);
   m_interfaceItems.add(inputMonitor);
+  m_interfaceItems.add(outputKeyboard);
 }
 
 bool LocoNet::send(const Message& message)
@@ -226,6 +233,19 @@ void LocoNet::receive(const Message& message)
             it->second->updateValue(toTriState(inputRep.value()));
           else
             inputMonitorValueChanged(address, toTriState(inputRep.value()));
+        });
+      break;
+
+    case OPC_SW_REQ:
+      EventLoop::call(
+        [this, switchRequest=*static_cast<const SwitchRequest*>(&message)]()
+        {
+          const uint16_t address = 1 + switchRequest.fullAddress();
+          auto it = m_outputs.find(address);
+          if(it != m_outputs.end())
+            it->second->updateValue(toTriState(switchRequest.on()));
+          else
+            outputKeyboardValueChanged(address, toTriState(switchRequest.on()));
         });
       break;
 
@@ -445,6 +465,67 @@ void LocoNet::inputMonitorValueChanged(const uint32_t address, const TriState va
   for(auto* inputMonitor : m_inputMonitors)
     if(inputMonitor->inputValueChanged)
       inputMonitor->inputValueChanged(*inputMonitor, address, value);
+}
+
+bool LocoNet::isOutputAddressAvailable(uint16_t address) const
+{
+  return m_outputs.find(address) == m_outputs.end();
+}
+
+bool LocoNet::changeOutputAddress(LocoNetOutput& output, uint16_t newAddress)
+{
+  assert(output.loconet.value().get() == this);
+
+  if(!isOutputAddressAvailable(newAddress))
+    return false;
+
+  auto node = m_outputs.extract(output.address); // old address
+  node.key() = newAddress;
+  m_outputs.insert(std::move(node));
+  outputKeyboardIdChanged(output.address, {});
+  outputKeyboardIdChanged(newAddress, output.id.value());
+  output.value.setValueInternal(TriState::Undefined);
+  // TODO: request state!
+
+  return true;
+}
+
+bool LocoNet::addOutput(LocoNetOutput& output)
+{
+  if(isOutputAddressAvailable(output.address))
+  {
+    m_outputs.insert({output.address, output.shared_ptr<LocoNetOutput>()});
+    outputKeyboardIdChanged(output.address, output.id.value());
+    output.value.setValueInternal(TriState::Undefined);
+    return true;
+  }
+  else
+    return false;
+}
+
+void LocoNet::removeOutput(LocoNetOutput& output)
+{
+  assert(output.loconet.value().get() == this);
+  const uint16_t address = output.address;
+  auto it = m_outputs.find(output.address);
+  if(it != m_outputs.end() && it->second.get() == &output)
+    m_outputs.erase(it);
+  output.value.setValueInternal(TriState::Undefined);
+  outputKeyboardIdChanged(address, {});
+}
+
+void LocoNet::outputKeyboardIdChanged(const uint32_t address, const std::string_view value)
+{
+  for(auto* outputKeyboard : m_outputKeyboards)
+    if(outputKeyboard->outputIdChanged)
+      outputKeyboard->outputIdChanged(*outputKeyboard, address, value);
+}
+
+void LocoNet::outputKeyboardValueChanged(const uint32_t address, const TriState value)
+{
+  for(auto* outputKeyboard : m_outputKeyboards)
+    if(outputKeyboard->outputValueChanged)
+      outputKeyboard->outputValueChanged(*outputKeyboard, address, value);
 }
 
 }

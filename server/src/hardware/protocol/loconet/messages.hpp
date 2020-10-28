@@ -94,6 +94,9 @@ constexpr uint8_t SL_F25 = 0x10;
 constexpr uint8_t SL_F26 = 0x20;
 constexpr uint8_t SL_F27 = 0x40;
 
+constexpr uint8_t SW2_ON = 0x10;
+constexpr uint8_t SW2_DIR = 0x20;
+
 constexpr uint8_t MULTI_SENSE_TYPE_MASK = 0xE0;
 constexpr uint8_t MULTI_SENSE_TYPE_TRANSPONDER_GONE = 0x00;
 constexpr uint8_t MULTI_SENSE_TYPE_TRANSPONDER_PRESENT = 0x20;
@@ -531,7 +534,85 @@ struct InputRep : Message
 };
 static_assert(sizeof(InputRep) == 4);
 
+struct SwitchRequest : Message
+{
+  uint8_t sw1;
+  uint8_t sw2;
+  uint8_t checksum;
 
+  SwitchRequest() :
+    Message{OPC_SW_REQ},
+    sw1{0},
+    sw2{0},
+    checksum{0}
+  {
+  }
+
+  SwitchRequest(uint16_t _address, bool _dir, bool _on) :
+    SwitchRequest()
+  {
+    setAddress(_address);
+    setDir(_dir);
+    setOn(_on);
+    updateChecksum(*this);
+  }
+
+  SwitchRequest(uint16_t _fullAddress, bool _on) :
+    SwitchRequest()
+  {
+    setFullAddress(_fullAddress);
+    setOn(_on);
+    updateChecksum(*this);
+  }
+
+  inline uint16_t fullAddress() const
+  {
+    return (address() << 1) | (dir() ? 1 : 0);
+  }
+
+  inline void setFullAddress(uint16_t value)
+  {
+    setAddress(value >> 1);
+    setDir(value & 0x1);
+  }
+
+  inline uint16_t address() const
+  {
+    return (sw1 & 0x7F) | (static_cast<uint16_t>(sw2 & 0x0F) << 7);
+  }
+
+  inline void setAddress(uint16_t value)
+  {
+    sw1 = value & 0x7F;
+    sw2 = (sw2 & 0x30) | ((value >> 7) & 0x0F);
+  }
+
+  inline bool dir() const
+  {
+    return sw2 & SW2_DIR;
+  }
+
+  inline void setDir(bool value)
+  {
+    if(value)
+      sw2 |= SW2_DIR;
+    else
+      sw2 &= ~SW2_DIR;
+  }
+
+  inline bool on() const
+  {
+    return sw2 & SW2_ON;
+  }
+
+  inline void setOn(bool value)
+  {
+    if(value)
+      sw2 |= SW2_ON;
+    else
+      sw2 &= ~SW2_ON;
+  }
+};
 
 struct RequestSlotData : Message
 {

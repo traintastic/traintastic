@@ -120,6 +120,15 @@ std::string toString(const Message& message, bool raw)
       s.append(" value=").append(inputRep.value() ? "high" : "low");
       break;
     }
+    case OPC_SW_REQ:
+    {
+      const SwitchRequest& switchRequest = static_cast<const SwitchRequest&>(message);
+      s.append(" fullAddress=").append(std::to_string(switchRequest.fullAddress()));
+      s.append(" address=").append(std::to_string(switchRequest.address()));
+      s.append(" dir=").append(switchRequest.dir() ? "closed/green" : "thrown/red");
+      s.append(" on=").append(switchRequest.on() ? "high" : "low");
+      break;
+    }
     case OPC_RQ_SL_DATA:
     {
       const RequestSlotData& requestSlotData = static_cast<const RequestSlotData&>(message);
