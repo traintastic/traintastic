@@ -415,7 +415,7 @@ bool Session::processMessage(const Message& message)
       auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(m_handles.getItem(message.read<Handle>()));
       if(outputKeyboard)
       {
-        auto outputInfo = outputKeyboard->getInputInfo();
+        auto outputInfo = outputKeyboard->getOutputInfo();
         auto response = Message::newResponse(message.command(), message.requestId());
         response->write<uint32_t>(outputInfo.size());
         for(auto& info : outputInfo)
