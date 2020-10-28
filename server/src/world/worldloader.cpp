@@ -66,10 +66,14 @@ WorldLoader::WorldLoader(const std::filesystem::path& filename) :
     if(!it.second.object)
       createObject(it.second);
 
-  // and finally load their data
+  // and load their data
   for(auto& it : m_objects)
     if(!it.second.loaded)
       loadObject(it.second);
+
+  // and finally notify loading is completed
+  for(auto& it : m_objects)
+    it.second.object->loaded();
 }
 
 ObjectPtr WorldLoader::getObject(std::string_view id)

@@ -57,6 +57,19 @@ LocoNetInput::LocoNetInput(const std::weak_ptr<World> world, std::string_view _i
   m_interfaceItems.add(address);
 }
 
+void LocoNetInput::loaded()
+{
+  Input::loaded();
+  if(loconet)
+  {
+    if(!loconet->addInput(*this))
+    {
+      logCritical("address in use (" + loconet->getObjectId() + ")");
+      loconet.setValueInternal(nullptr);
+    }
+  }
+}
+
 void LocoNetInput::worldEvent(WorldState state, WorldEvent event)
 {
   Input::worldEvent(state, event);

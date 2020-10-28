@@ -41,6 +41,7 @@ class AbstractAttribute;
 class Object : public std::enable_shared_from_this<Object>
 {
   friend class World;
+  friend class WorldLoader;
 
   private:
     bool m_dying; // TODO: atomic??
@@ -50,6 +51,7 @@ class Object : public std::enable_shared_from_this<Object>
 
     inline bool dying() const noexcept { return m_dying; }
     virtual void destroying() {}
+    virtual void loaded() {}
     virtual void worldEvent(WorldState state, WorldEvent event);
 
     void logDebug(const std::string& message);
