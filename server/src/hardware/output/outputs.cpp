@@ -1,7 +1,9 @@
 /**
- * Traintastic
+ * server/src/hardware/output/outputs.cpp
  *
- * Copyright (C) 2019-2020 Reinder Feenstra <reinderfeenstra@gmail.com>
+ * This file is part of the traintastic source code.
+ *
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,11 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "output.hpp"
+#include "outputs.hpp"
 
-Output::Output(const std::weak_ptr<World> world, std::string_view _id) :
-  IdObject{world, _id},
-  value{this, "value", false, PropertyFlags::ReadWrite, std::bind(&Output::valueChanged, this, std::placeholders::_1), std::bind(&Output::setValue, this, std::placeholders::_1)}
+std::shared_ptr<Output> Outputs::create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id)
 {
-  m_interfaceItems.add(value);
+  if(classId == LocoNetOutput::classId)
+    return LocoNetOutput::create(world, id);
+  else
+    return std::shared_ptr<Output>();
 }

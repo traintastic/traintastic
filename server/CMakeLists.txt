@@ -33,6 +33,8 @@ file(GLOB SOURCES
   "src/hardware/decoder/*.cpp"
   "src/hardware/input/*.hpp"
   "src/hardware/input/*.cpp"
+  "src/hardware/output/*.hpp"
+  "src/hardware/output/*.cpp"
   "src/hardware/protocol/loconet/*.hpp"
   "src/hardware/protocol/loconet/*.cpp"
   "src/hardware/protocol/xpressnet/*.hpp"

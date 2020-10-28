@@ -75,6 +75,11 @@ class Message
       InputMonitorInputIdChanged = 31,
       InputMonitorInputValueChanged = 32,
 
+      OutputKeyboardGetOutputInfo = 33,
+      OutputKeyboardSetOutputValue = 34,
+      OutputKeyboardOutputIdChanged = 35,
+      OutputKeyboardOutputValueChanged = 36,
+
       Discover = 255,
     };
 

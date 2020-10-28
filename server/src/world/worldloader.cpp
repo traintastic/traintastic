@@ -32,6 +32,7 @@
 #include "../hardware/decoder/decoder.hpp"
 #include "../hardware/decoder/decoderfunction.hpp"
 #include "../hardware/input/inputs.hpp"
+#include "../hardware/output/outputs.hpp"
 #include "../vehicle/rail/railvehicles.hpp"
 #ifndef DISABLE_LUA_SCRIPTING
   #include "../lua/script.hpp"
@@ -123,6 +124,8 @@ void WorldLoader::createObject(ObjectData& objectData)
   }
   else if(startsWith(classId, Inputs::classIdPrefix))
     objectData.object = Inputs::create(m_world, classId, id);
+  else if(startsWith(classId, Outputs::classIdPrefix))
+    objectData.object = Outputs::create(m_world, classId, id);
   else if(startsWith(classId, RailVehicles::classIdPrefix))
     objectData.object = RailVehicles::create(m_world, classId, id);
 #ifndef DISABLE_LUA_SCRIPTING

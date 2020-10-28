@@ -36,6 +36,7 @@ class Client;
 class AbstractProperty;
 class AbstractAttribute;
 class InputMonitor;
+class OutputKeyboard;
 
 class Session : public std::enable_shared_from_this<Session>
 {
@@ -64,6 +65,9 @@ class Session : public std::enable_shared_from_this<Session>
 
     void inputMonitorInputIdChanged(InputMonitor& inputMonitor, uint32_t address, std::string_view id);
     void inputMonitorInputValueChanged(InputMonitor& inputMonitor, uint32_t address, TriState value);
+
+    void outputKeyboardOutputIdChanged(OutputKeyboard& outputKeyboard, uint32_t address, std::string_view id);
+    void outputKeyboardOutputValueChanged(OutputKeyboard& outputKeyboard, uint32_t address, TriState value);
 
   public:
     Session(const std::shared_ptr<Client>& client);

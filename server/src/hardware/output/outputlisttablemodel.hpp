@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/decoder/decoderfunction.hpp
+ * server/src/hardware/output/outputlisttablemodel.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,36 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERFUNCTION_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERFUNCTION_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_OUTPUTLISTTABLEMODEL_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_OUTPUTLISTTABLEMODEL_HPP
 
-#include "../../core/idobject.hpp"
-#include "../../core/objectproperty.hpp"
+#include "../../core/objectlisttablemodel.hpp"
+#include "output.hpp"
 
-class Decoder;
+class OutputList;
 
-class DecoderFunction : public IdObject
+class OutputListTableModel : public ObjectListTableModel<Output>
 {
+  friend class OutputList;
+
   protected:
-    Decoder& m_decoder;
-
-    void worldEvent(WorldState state, WorldEvent event) final;
-
-   // void addToWorld() final { Output::addToWorld(); }
+    void propertyChanged(AbstractProperty& property, uint32_t row) final;
 
   public:
-    CLASS_ID("decoder_function")
+    CLASS_ID("output_list_table_model")
 
-    static const std::shared_ptr<DecoderFunction> null;
-    static std::shared_ptr<DecoderFunction> create(Decoder& decoder, std::string_view _id);
+    static bool isListedProperty(const std::string& name);
 
-    Property<uint8_t> number;
-    Property<std::string> name;
-    Property<bool> value;
+    OutputListTableModel(OutputList& list);
 
-    DecoderFunction(Decoder& decoder, std::string_view _id);
-
-    Decoder& decoder() { return m_decoder; }
+    std::string getText(uint32_t column, uint32_t row) const final;
 };
 
 #endif

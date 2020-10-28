@@ -1,7 +1,9 @@
 /**
- * Traintastic
+ * server/src/hardware/output/output.cpp
  *
- * Copyright (C) 2019-2020 Reinder Feenstra <reinderfeenstra@gmail.com>
+ * This file is part of the traintastic source code.
+ *
+ * Copyright (C) 2019-2020 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,48 +20,52 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "decoderfunction.hpp"
-#include "decoder.hpp"
-#include "decoderchangeflags.hpp"
+#include "output.hpp"
 #include "../../world/world.hpp"
+#include "outputlisttablemodel.hpp"
 #include "../../core/attributes.hpp"
 
-const std::shared_ptr<DecoderFunction> DecoderFunction::null;
-
-std::shared_ptr<DecoderFunction> DecoderFunction::create(Decoder& decoder, std::string_view _id)
-{
-  auto obj = std::make_shared<DecoderFunction>(decoder, _id);
-  obj->addToWorld();
-  return obj;
-}
-
-DecoderFunction::DecoderFunction(Decoder& decoder, std::string_view _id) :
-  IdObject(decoder.world(), _id),
-  m_decoder{decoder},
-  number{this, "number", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
+Output::Output(const std::weak_ptr<World> world, std::string_view _id) :
+  IdObject(world, _id),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
-  value{this, "value", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
-    [this](bool)
+  value{this, "value", TriState::Undefined, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
+    [this](TriState _value)
     {
-      m_decoder.changed(DecoderChangeFlags::FunctionValue, number);
+      valueChanged(_value);
+    },
+    [this](TriState& value) -> bool
+    {
+      return setValue(value);
     }}
 {
-  auto w = decoder.world().lock();
+  auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
-  Attributes::addEnabled(number, editable);
-  m_interfaceItems.add(number);
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
+  Attributes::addValues(value, TriStateValues);
   m_interfaceItems.add(value);
 }
 
-void DecoderFunction::worldEvent(WorldState state, WorldEvent event)
+void Output::addToWorld()
+{
+  IdObject::addToWorld();
+
+  if(auto world = m_world.lock())
+    world->outputs->addObject(shared_ptr<Output>());
+}
+
+void Output::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);
 
   const bool editable = contains(state, WorldState::Edit);
 
-  number.setAttributeEnabled(editable);
   name.setAttributeEnabled(editable);
+}
+
+void Output::updateValue(TriState _value)
+{
+  value.setValueInternal(_value);
+  valueChanged(value);
 }

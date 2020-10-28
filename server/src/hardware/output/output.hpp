@@ -1,5 +1,5 @@
 /**
- * server/src/core/output.hpp
+ * server/src/hardware/output/output.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,19 +20,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_CORE_OUTPUT_HPP
-#define TRAINTASTIC_SERVER_CORE_OUTPUT_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_OUTPUT_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_OUTPUT_HPP
 
-#include "idobject.hpp"
+#include "../../core/idobject.hpp"
+#include "../../enum/tristate.hpp"
 
 class Output : public IdObject
 {
   protected:
-    virtual void valueChanged(bool value) {}
-    virtual bool setValue(bool& value) { return true; }
+    void addToWorld() override;
+    void worldEvent(WorldState state, WorldEvent event) override;
+    virtual void valueChanged(TriState _value) {}
+    virtual bool setValue(TriState& _value) { return true; }
+    void updateValue(TriState _value);
 
   public:
-    Property<bool> value;
+    Property<std::string> name;
+    Property<TriState> value;
 
     Output(const std::weak_ptr<World> world, std::string_view _id);
 };

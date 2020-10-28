@@ -410,6 +410,35 @@ bool Session::processMessage(const Message& message)
       }
       break;
     }
+    case Message::Command::OutputKeyboardGetOutputInfo:
+    {
+      auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(m_handles.getItem(message.read<Handle>()));
+      if(outputKeyboard)
+      {
+        auto outputInfo = outputKeyboard->getInputInfo();
+        auto response = Message::newResponse(message.command(), message.requestId());
+        response->write<uint32_t>(outputInfo.size());
+        for(auto& info : outputInfo)
+        {
+          response->write(info.address);
+          response->write(info.id);
+          response->write(info.value);
+        }
+        m_client->sendMessage(std::move(response));
+      }
+      break;
+    }
+    case Message::Command::OutputKeyboardSetOutputValue:
+    {
+      auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(m_handles.getItem(message.read<Handle>()));
+      if(outputKeyboard)
+      {
+        const uint32_t address = message.read<uint32_t>();
+        const bool value = message.read<bool>();
+        outputKeyboard->setOutputValue(address, value);
+      }
+      break;
+    }
     default:
       break;
   }
@@ -434,6 +463,11 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
     {
       inputMonitor->inputIdChanged = std::bind(&Session::inputMonitorInputIdChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
       inputMonitor->inputValueChanged = std::bind(&Session::inputMonitorInputValueChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    }
+    else if(auto* outputKeyboard = dynamic_cast<OutputKeyboard*>(object.get()))
+    {
+      outputKeyboard->outputIdChanged = std::bind(&Session::outputKeyboardOutputIdChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+      outputKeyboard->outputValueChanged = std::bind(&Session::outputKeyboardOutputValueChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     }
 
     message.write(handle);
@@ -711,6 +745,24 @@ void Session::inputMonitorInputValueChanged(InputMonitor& inputMonitor, const ui
 {
   auto event = Message::newEvent(Message::Command::InputMonitorInputValueChanged);
   event->write(m_handles.getHandle(inputMonitor.shared_from_this()));
+  event->write(address);
+  event->write(value);
+  m_client->sendMessage(std::move(event));
+}
+
+void Session::outputKeyboardOutputIdChanged(OutputKeyboard& outputKeyboard, const uint32_t address, const std::string_view id)
+{
+  auto event = Message::newEvent(Message::Command::OutputKeyboardOutputIdChanged);
+  event->write(m_handles.getHandle(outputKeyboard.shared_from_this()));
+  event->write(address);
+  event->write(id);
+  m_client->sendMessage(std::move(event));
+}
+
+void Session::outputKeyboardOutputValueChanged(OutputKeyboard& outputKeyboard, const uint32_t address, const TriState value)
+{
+  auto event = Message::newEvent(Message::Command::OutputKeyboardOutputValueChanged);
+  event->write(m_handles.getHandle(outputKeyboard.shared_from_this()));
   event->write(address);
   event->write(value);
   m_client->sendMessage(std::move(event));

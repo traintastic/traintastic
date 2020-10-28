@@ -36,6 +36,7 @@
 #include "../hardware/commandstation/commandstationlist.hpp"
 #include "../hardware/decoder/decoderlist.hpp"
 #include "../hardware/input/inputlist.hpp"
+#include "../hardware/output/outputlist.hpp"
 #include "../hardware/controller/controllerlist.hpp"
 #include "../hardware/protocol/loconet/loconetlist.hpp"
 #include "../train/trainlist.hpp"
@@ -81,6 +82,7 @@ class World : public Object
     ObjectProperty<CommandStationList> commandStations;
     ObjectProperty<DecoderList> decoders;
     ObjectProperty<InputList> inputs;
+    ObjectProperty<OutputList> outputs;
     ObjectProperty<ControllerList> controllers;
     ObjectProperty<LocoNetList> loconets;
     ObjectProperty<Clock> clock;

@@ -44,6 +44,7 @@ void World::init(const std::shared_ptr<World>& world)
   world->commandStations.setValueInternal(std::make_shared<CommandStationList>(*world, world->commandStations.name()));
   world->decoders.setValueInternal(std::make_shared<DecoderList>(*world, world->decoders.name()));
   world->inputs.setValueInternal(std::make_shared<InputList>(*world, world->inputs.name()));
+  world->outputs.setValueInternal(std::make_shared<OutputList>(*world, world->outputs.name()));
   world->controllers.setValueInternal(std::make_shared<ControllerList>(*world, world->controllers.name()));
   world->loconets.setValueInternal(std::make_shared<LocoNetList>(*world, world->loconets.name()));
   world->clock.setValueInternal(std::make_shared<Clock>(*world, world->clock.name()));
@@ -62,6 +63,7 @@ World::World(Private) :
   commandStations{this, "command_stations", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
+  outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   controllers{this, "controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   loconets{this, "loconets", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   clock{this, "clock", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
@@ -130,6 +132,7 @@ World::World(Private) :
   m_interfaceItems.add(commandStations);
   m_interfaceItems.add(decoders);
   m_interfaceItems.add(inputs);
+  m_interfaceItems.add(outputs);
   m_interfaceItems.add(controllers);
   m_interfaceItems.add(loconets);
   m_interfaceItems.add(clock);
