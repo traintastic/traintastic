@@ -29,8 +29,10 @@
 #include "object/luascripteditwidget.hpp"
 #include "object/objecteditwidget.hpp"
 #include "inputmonitorwidget.hpp"
+#include "outputkeyboardwidget.hpp"
 #include "../network/object.hpp"
 #include "../network/inputmonitor.hpp"
+#include "../network/outputkeyboard.hpp"
 
 QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
 {
@@ -66,6 +68,8 @@ QWidget* createWidget(const ObjectPtr& object, QWidget* parent)
     return new ObjectListWidget(object, parent);
   else if(auto inputMonitor = std::dynamic_pointer_cast<InputMonitor>(object))
     return new InputMonitorWidget(inputMonitor, parent);
+  else if(auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(object))
+    return new OutputKeyboardWidget(outputKeyboard, parent);
   else
     return new ObjectEditWidget(object, parent);
 }

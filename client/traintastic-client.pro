@@ -67,7 +67,9 @@ SOURCES += \
     src/dialog/objectselectlistdialog.cpp \
     src/widget/inputmonitorwidget.cpp \
     src/widget/ledwidget.cpp \
-    src/widget/methodpushbutton.cpp
+    src/widget/methodpushbutton.cpp \
+    src/widget/outputkeyboardwidget.cpp \
+    src/network/outputkeyboard.cpp
 
 HEADERS += \
     src/mainwindow.hpp \
@@ -125,7 +127,9 @@ HEADERS += \
     src/dialog/objectselectlistdialog.hpp \
     src/widget/inputmonitorwidget.hpp \
     src/widget/ledwidget.hpp \
-    src/widget/methodpushbutton.hpp
+    src/widget/methodpushbutton.hpp \
+    src/widget/outputkeyboardwidget.hpp \
+    src/network/outputkeyboard.hpp
 
 RESOURCES += \
     dark.qrc

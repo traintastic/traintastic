@@ -27,6 +27,8 @@
 
 class LEDWidget : public QWidget
 {
+  Q_OBJECT
+
   public:
     enum State {
       Undefined,
@@ -34,15 +36,27 @@ class LEDWidget : public QWidget
       On,
     };
 
+    struct Colors
+    {
+      QColor undefined;
+      QColor off;
+      QColor on;
+      QColor border;
+    };
+
   protected:
+    const Colors& m_colors;
+    bool m_mouseLeftButtonPressed;
     bool m_enabled;
     State m_state;
     QString m_text;
 
+    void mousePressEvent(QMouseEvent* event) final;
+    void mouseReleaseEvent(QMouseEvent* event) final;
     void paintEvent(QPaintEvent*) final;
 
   public:
-    explicit LEDWidget(QWidget *parent = nullptr);
+    explicit LEDWidget(const Colors& colors, QWidget *parent = nullptr);
 
     bool enabled() const { return m_enabled; }
     void setEnabled(bool value);
@@ -52,6 +66,9 @@ class LEDWidget : public QWidget
 
     QString text() const { return m_text; }
     void setText(const QString& value);
+
+   signals:
+     void clicked();
 };
 
 #endif

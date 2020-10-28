@@ -38,6 +38,7 @@ class ObjectProperty;
 class UnitProperty;
 class Method;
 class InputMonitor;
+class OutputKeyboard;
 
 class Connection : public QObject, public QEnableSharedFromThis<Connection>
 {
@@ -140,6 +141,9 @@ class Connection : public QObject, public QEnableSharedFromThis<Connection>
     void setTableModelRegion(TableModel* tableModel, int columnMin, int columnMax, int rowMin, int rowMax);
 
     [[nodiscard]] int getInputMonitorInputInfo(InputMonitor& object);
+
+    [[nodiscard]] int getOutputKeyboardOutputInfo(OutputKeyboard& object);
+    void setOutputKeyboardOutputValue(OutputKeyboard& object, uint32_t address, bool value);
 
   signals:
     void stateChanged();

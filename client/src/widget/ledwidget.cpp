@@ -21,11 +21,14 @@
  */
 
 #include "ledwidget.hpp"
+#include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
 
-LEDWidget::LEDWidget(QWidget* parent) :
+LEDWidget::LEDWidget(const Colors& colors, QWidget* parent) :
   QWidget(parent),
+  m_colors{colors},
+  m_mouseLeftButtonPressed{false},
   m_enabled{true},
   m_state{State::Undefined}
 {
@@ -60,6 +63,22 @@ void LEDWidget::setText(const QString& value)
   }
 }
 
+void LEDWidget::mousePressEvent(QMouseEvent* event)
+{
+  if(event->button() == Qt::LeftButton)
+    m_mouseLeftButtonPressed = true;
+}
+
+void LEDWidget::mouseReleaseEvent(QMouseEvent* event)
+{
+  if(m_mouseLeftButtonPressed && event->button() == Qt::LeftButton)
+  {
+    m_mouseLeftButtonPressed = false;
+    if(rect().contains(event->localPos().toPoint())) // test if mouse release in widget
+      emit clicked();
+  }
+}
+
 void LEDWidget::paintEvent(QPaintEvent*)
 {
   const int marginV = (height() - minimumHeight()) / 2;
@@ -87,16 +106,16 @@ void LEDWidget::paintEvent(QPaintEvent*)
       break;
 
     case State::Off:
-      painter.fillPath(path, QColor(0x20, 0x20, 0x20));//painter.fillPath(path, QColor(0x70, 0x80, 0x90));
+      painter.fillPath(path, m_colors.off);// QColor(0x20, 0x20, 0x20));//painter.fillPath(path, QColor(0x70, 0x80, 0x90));
       break;
 
     case State::On:
-      painter.fillPath(path, QColor(0x00, 0xBF, 0xFF));
+      painter.fillPath(path, m_colors.on);//QColor(0x00, 0xBF, 0xFF));
       break;
   }
 
   QPen pen = painter.pen();
-  pen.setColor(Qt::black);
+  pen.setColor(m_colors.border);
   pen.setWidth(2);
   painter.setPen(pen);
   painter.drawPath(path);

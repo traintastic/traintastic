@@ -32,6 +32,7 @@
 #include "method.hpp"
 #include "tablemodel.hpp"
 #include "inputmonitor.hpp"
+#include "outputkeyboard.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
 #include <traintastic/enum/attributetype.hpp>
 #include <traintastic/locale/locale.hpp>
@@ -77,7 +78,7 @@ QString Connection::errorString() const
 }
 
 void Connection::connectToHost(const QUrl& url, const QString& username, const QString& password)
-{  
+{
   m_username = username;
   if(password.isEmpty())
     m_password.clear();
@@ -331,6 +332,36 @@ int Connection::getInputMonitorInputInfo(InputMonitor& inputMonitor)
   return request->requestId();
 }
 
+int Connection::getOutputKeyboardOutputInfo(OutputKeyboard& object)
+{
+  auto request = Message::newRequest(Message::Command::OutputKeyboardGetOutputInfo);
+  request->write(object.handle());
+  send(request,
+    [&object](const std::shared_ptr<Message> message)
+    {
+      uint32_t count = message->read<uint32_t>();
+      while(count > 0)
+      {
+        const uint32_t address = message->read<uint32_t>();
+        const QString id = QString::fromUtf8(message->read<QByteArray>());
+        const TriState value = message->read<TriState>();
+        emit object.outputIdChanged(address, id);
+        emit object.outputValueChanged(address, value);
+        count--;
+      }
+    });
+  return request->requestId();
+}
+
+void Connection::setOutputKeyboardOutputValue(OutputKeyboard& object, uint32_t address, bool value)
+{
+  auto event = Message::newEvent(Message::Command::OutputKeyboardSetOutputValue);
+  event->write(object.handle());
+  event->write(address);
+  event->write(value);
+  send(event);
+}
+
 void Connection::send(std::unique_ptr<Message>& message)
 {
   Q_ASSERT(!message->isRequest());
@@ -357,6 +388,8 @@ ObjectPtr Connection::readObject(const Message& message)
     const QString classId = QString::fromLatin1(message.read<QByteArray>());
     if(classId.startsWith(InputMonitor::classIdPrefix))
       obj = std::make_shared<InputMonitor>(sharedFromThis(), handle, classId);
+    else if(classId.startsWith(OutputKeyboard::classIdPrefix))
+      obj = std::make_shared<OutputKeyboard>(sharedFromThis(), handle, classId);
     else
       obj = std::make_shared<Object>(sharedFromThis(), handle, classId);
     m_objects[handle] = obj;
@@ -679,7 +712,7 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
         {
           if(InterfaceItem* item = object->getInterfaceItem(QString::fromLatin1(message->read<QByteArray>())))
           {
-            AttributeName attributeName = message->read<AttributeName>();        
+            AttributeName attributeName = message->read<AttributeName>();
             const ValueType type = message->read<ValueType>();
             switch(message->read<AttributeType>())
             {
@@ -856,6 +889,24 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
           const uint32_t address = message->read<uint32_t>();
           const TriState value = message->read<TriState>();
           emit inputMonitor->inputValueChanged(address, value);
+        }
+        break;
+
+      case Message::Command::OutputKeyboardOutputIdChanged:
+        if(auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(m_objects.value(message->read<Handle>()).lock()))
+        {
+          const uint32_t address = message->read<uint32_t>();
+          const QString id = QString::fromUtf8(message->read<QByteArray>());
+          emit outputKeyboard->outputIdChanged(address, id);
+        }
+        break;
+
+      case Message::Command::OutputKeyboardOutputValueChanged:
+        if(auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(m_objects.value(message->read<Handle>()).lock()))
+        {
+          const uint32_t address = message->read<uint32_t>();
+          const TriState value = message->read<TriState>();
+          emit outputKeyboard->outputValueChanged(address, value);
         }
         break;
 

@@ -1,5 +1,5 @@
 /**
- * client/src/widget/inputmonitorwidget.cpp
+ * client/src/widget/outputkeyboardwidget.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,17 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "inputmonitorwidget.hpp"
+#include "outputkeyboardwidget.hpp"
 #include <QGridLayout>
 #include "ledwidget.hpp"
-#include "../network/inputmonitor.hpp"
+#include "../network/outputkeyboard.hpp"
 
-static const LEDWidget::Colors colors = {
+static const LEDWidget::Colors colorsGreen = {
   QColor(),
   QColor(0x20, 0x20, 0x20),
-  QColor(0x00, 0xBF, 0xFF),
-  Qt::black
+  QColor(0x20, 0xFF, 0x20),
+  QColor(0x20, 0x80, 0x20)
 };
+
+static const LEDWidget::Colors colorsRed = {
+  QColor(),
+  QColor(0x20, 0x20, 0x20),
+  QColor(0xFF, 0x20, 0x20),
+  QColor(0x80, 0x20, 0x20)
+};
+
 
 constexpr LEDWidget::State toState(TriState value)
 {
@@ -47,30 +55,35 @@ constexpr LEDWidget::State toState(TriState value)
 }
 
 
-InputMonitorWidget::InputMonitorWidget(std::shared_ptr<InputMonitor> object, QWidget* parent) :
+OutputKeyboardWidget::OutputKeyboardWidget(std::shared_ptr<OutputKeyboard> object, QWidget* parent) :
   QWidget(parent),
   m_object{std::move(object)}
 {
   QGridLayout* grid = new QGridLayout();
 
-  for(int i = 1; i <= 128; i++)
+  for(int i = 0; i < 128; i++)
   {
-    auto* led = new LEDWidget(colors, this);
+    auto* led = new LEDWidget((i & 1) ? colorsGreen : colorsRed, this);
     led->setEnabled(false);
-    led->setText(QString::number(i));
-    grid->addWidget(led, (i - 1) / 16, (i - 1) % 16);
-    m_leds.emplace(i, led);
+    led->setText(QString::number(1 + i));
+    connect(led, &LEDWidget::clicked, this,
+      [this, address=1 + i]()
+      {
+        m_object->outputSetValue(address, qobject_cast<LEDWidget*>(sender())->state() == LEDWidget::State::Off);
+      });
+    grid->addWidget(led, ((i / 32) * 2) + (i % 2), (i / 2) % 16);
+    m_leds.emplace(1 + i, led);
   }
 
   setLayout(grid);
 
-  connect(m_object.get(), &InputMonitor::inputIdChanged, this,
+  connect(m_object.get(), &OutputKeyboard::outputIdChanged, this,
     [this](uint32_t address, QString id)
     {
       if(auto* led = getLED(address))
         led->setEnabled(!id.isEmpty());
     });
-  connect(m_object.get(), &InputMonitor::inputValueChanged, this,
+  connect(m_object.get(), &OutputKeyboard::outputValueChanged, this,
     [this](uint32_t address, TriState value)
     {
       if(auto* led = getLED(address))
@@ -80,7 +93,7 @@ InputMonitorWidget::InputMonitorWidget(std::shared_ptr<InputMonitor> object, QWi
   m_object->refresh();
 }
 
-LEDWidget* InputMonitorWidget::getLED(uint32_t address)
+LEDWidget* OutputKeyboardWidget::getLED(uint32_t address)
 {
   auto it = m_leds.find(address);
   return it != m_leds.end() ? it->second : nullptr;
