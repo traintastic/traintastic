@@ -416,7 +416,7 @@ bool LocoNet::isInputAddressAvailable(uint16_t address) const
   return m_inputs.find(address) == m_inputs.end();
 }
 
-bool LocoNet::changeInputAddress(const LocoNetInput& input, uint16_t newAddress)
+bool LocoNet::changeInputAddress(LocoNetInput& input, uint16_t newAddress)
 {
   assert(input.loconet.value().get() == this);
 
@@ -428,28 +428,33 @@ bool LocoNet::changeInputAddress(const LocoNetInput& input, uint16_t newAddress)
   m_inputs.insert(std::move(node));
   inputMonitorIdChanged(input.address, {});
   inputMonitorIdChanged(newAddress, input.id.value());
+  input.updateValue(TriState::Undefined);
 
   return true;
 }
 
-bool LocoNet::addInput(const std::shared_ptr<LocoNetInput>& input)
+bool LocoNet::addInput(LocoNetInput& input)
 {
-  assert(input);
-  if(isInputAddressAvailable(input->address))
+  if(isInputAddressAvailable(input.address))
   {
-    m_inputs.insert({input->address, input});
-    inputMonitorIdChanged(input->address, input->id.value());
+    m_inputs.insert({input.address, input.shared_ptr<LocoNetInput>()});
+    inputMonitorIdChanged(input.address, input.id.value());
+    input.updateValue(TriState::Undefined);
+    // TODO: request state!
     return true;
   }
   else
     return false;
 }
 
-void LocoNet::removeInput(const std::shared_ptr<LocoNetInput>& input)
+void LocoNet::removeInput(LocoNetInput& input)
 {
-  assert(input && input->loconet.value().get() == this);
-  const uint16_t address = input->address;
-  m_inputs.erase(m_inputs.find(input->address));
+  assert(input.loconet.value().get() == this);
+  const uint16_t address = input.address;
+  auto it = m_inputs.find(input.address);
+  if(it != m_inputs.end() && it->second.get() == &input)
+    m_inputs.erase(it);
+  input.updateValue(TriState::Undefined);
   inputMonitorIdChanged(address, {});
 }
 

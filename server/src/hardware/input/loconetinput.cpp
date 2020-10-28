@@ -29,10 +29,10 @@ LocoNetInput::LocoNetInput(const std::weak_ptr<World> world, std::string_view _i
   loconet{this, "loconet", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](const std::shared_ptr<LocoNet::LocoNet>& value)
     {
-      if(!value || value->addInput(shared_ptr<LocoNetInput>()))
+      if(!value || value->addInput(*this))
       {
         if(loconet.value())
-          loconet->removeInput(shared_ptr<LocoNetInput>());
+          loconet->removeInput(*this);
         return true;
       }
       return false;
@@ -42,8 +42,7 @@ LocoNetInput::LocoNetInput(const std::weak_ptr<World> world, std::string_view _i
     {
       if(loconet)
         return loconet->changeInputAddress(*this, value);
-      else
-        return true;
+      return true;
     }}
 {
   auto w = world.lock();

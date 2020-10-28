@@ -123,10 +123,10 @@ class LocoNet : public SubObject
     }
 
   public://protected:
-    bool isInputAddressAvailable(uint16_t address) const;
-    bool changeInputAddress(const LocoNetInput& input, uint16_t newAddress);
-    bool addInput(const std::shared_ptr<LocoNetInput>& input);
-    void removeInput(const std::shared_ptr<LocoNetInput>& input);
+    [[nodiscard]] bool isInputAddressAvailable(uint16_t address) const;
+    [[nodiscard]] bool changeInputAddress(LocoNetInput& input, uint16_t newAddress);
+    [[nodiscard]] bool addInput(LocoNetInput& input);
+    void removeInput(LocoNetInput& input);
     void inputMonitorIdChanged(uint32_t address, std::string_view value);
     void inputMonitorValueChanged(uint32_t address, TriState value);
 
