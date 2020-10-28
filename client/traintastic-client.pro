@@ -69,7 +69,10 @@ SOURCES += \
     src/widget/ledwidget.cpp \
     src/widget/methodpushbutton.cpp \
     src/widget/outputkeyboardwidget.cpp \
-    src/network/outputkeyboard.cpp
+    src/network/outputkeyboard.cpp \
+    src/style/abstractstyle.cpp \
+    src/style/materialdarkstyle.cpp \
+    src/style/materiallightstyle.cpp
 
 HEADERS += \
     src/mainwindow.hpp \
@@ -129,7 +132,10 @@ HEADERS += \
     src/widget/ledwidget.hpp \
     src/widget/methodpushbutton.hpp \
     src/widget/outputkeyboardwidget.hpp \
-    src/network/outputkeyboard.hpp
+    src/network/outputkeyboard.hpp \
+    src/style/abstractstyle.hpp \
+    src/style/materialdarkstyle.hpp \
+    src/style/materiallightstyle.hpp
 
 RESOURCES += \
     dark.qrc

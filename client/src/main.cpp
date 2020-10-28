@@ -30,6 +30,8 @@
 //#include "network/client.hpp"
 
 
+#include "style/materialdarkstyle.hpp"
+#include "style/materiallightstyle.hpp"
 
 #include <traintastic/locale/locale.hpp>
 
@@ -40,6 +42,9 @@ int main(int argc, char* argv[])
   QApplication::setOrganizationDomain("traintastic.org");
   QApplication::setApplicationName("traintastic-client");
   QApplication::setApplicationVersion("0.0.1");
+
+  //QApplication::setStyle(new MaterialDarkStyle());
+  //QApplication::setStyle(new MaterialLightStyle());
 
 #ifdef Q_OS_WINDOWS
   QSettings::setDefaultFormat(QSettings::IniFormat);
