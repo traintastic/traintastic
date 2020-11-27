@@ -28,12 +28,13 @@
 #include <traintastic/enum/traintasticmode.hpp>
 
 #define CREATE(T) \
-  static std::shared_ptr<T> create(const std::weak_ptr<World>& world, std::string_view _id) \
-  { \
-    auto obj = std::make_shared<T>(world, _id); \
-    obj->addToWorld(); \
-    return obj; \
-  }
+  public: \
+    static std::shared_ptr<T> create(const std::weak_ptr<World>& world, std::string_view _id) \
+    { \
+      auto obj = std::make_shared<T>(world, _id); \
+      obj->addToWorld(); \
+      return obj; \
+    }
 
 class World;
 
