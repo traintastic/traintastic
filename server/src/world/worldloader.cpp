@@ -27,6 +27,7 @@
 #include "world.hpp"
 #include "../utils/string.hpp"
 
+#include "../board/board.hpp"
 #include "../hardware/commandstation/commandstations.hpp"
 #include "../hardware/controller/controllers.hpp"
 #include "../hardware/decoder/decoder.hpp"
@@ -129,6 +130,8 @@ void WorldLoader::createObject(ObjectData& objectData)
     objectData.object = Inputs::create(m_world, classId, id);
   else if(startsWith(classId, Outputs::classIdPrefix))
     objectData.object = Outputs::create(m_world, classId, id);
+  else if(classId == Board::classId)
+    objectData.object = Board::create(m_world, id);
   else if(startsWith(classId, RailVehicles::classIdPrefix))
     objectData.object = RailVehicles::create(m_world, classId, id);
 #ifndef DISABLE_LUA_SCRIPTING

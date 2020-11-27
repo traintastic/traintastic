@@ -33,6 +33,7 @@
 #include "../enum/worldscale.hpp"
 #include <traintastic/set/worldstate.hpp>
 #include "../clock/clock.hpp"
+#include "../board/boardlist.hpp"
 #include "../hardware/commandstation/commandstationlist.hpp"
 #include "../hardware/decoder/decoderlist.hpp"
 #include "../hardware/input/inputlist.hpp"
@@ -85,6 +86,7 @@ class World : public Object
     ObjectProperty<OutputList> outputs;
     ObjectProperty<ControllerList> controllers;
     ObjectProperty<LocoNetList> loconets;
+    ObjectProperty<BoardList> boards;
     ObjectProperty<Clock> clock;
     ObjectProperty<TrainList> trains;
     ObjectProperty<RailVehicleList> railVehicles;

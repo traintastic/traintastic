@@ -20,6 +20,8 @@ target_include_directories(traintastic-server PRIVATE
   thirdparty/boost)
 
 file(GLOB SOURCES
+  "src/board/*.hpp"
+  "src/board/*.cpp"
   "src/clock/*.hpp"
   "src/clock/*.cpp"
   "src/core/*.hpp"
