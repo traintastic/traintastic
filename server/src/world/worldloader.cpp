@@ -74,7 +74,10 @@ WorldLoader::WorldLoader(const std::filesystem::path& filename) :
 
   // and finally notify loading is completed
   for(auto& it : m_objects)
+  {
+    assert(it.second.object);
     it.second.object->loaded();
+  }
 }
 
 ObjectPtr WorldLoader::getObject(std::string_view id)
@@ -132,6 +135,8 @@ void WorldLoader::createObject(ObjectData& objectData)
   else if(classId == Lua::Script::classId)
     objectData.object = Lua::Script::create(m_world, id);
 #endif
+  else
+    assert(false);
 
   if(!objectData.object)
     {};//m_objects.insert(id, object);
