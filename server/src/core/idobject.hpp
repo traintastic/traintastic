@@ -36,6 +36,10 @@
       return obj; \
     }
 
+#define DEFAULT_ID(id) \
+   public: \
+    static constexpr std::string_view defaultId = id;
+
 class World;
 
 class IdObject : public Object
