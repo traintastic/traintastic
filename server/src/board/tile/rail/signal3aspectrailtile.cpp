@@ -1,5 +1,5 @@
 /**
- * server/src/board/tile/tiles.cpp
+ * server/src/board/tile/rail/signal3aspectrailtile.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,23 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "tiles.hpp"
-#include "../../utils/ifclassidcreate.hpp"
+#include "signal3aspectrailtile.hpp"
 
-std::shared_ptr<Tile> Tiles::create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id)
+Signal3AspectRailTile::Signal3AspectRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
+  SignalRailTile(world, _id, TileId::RailSignal3Aspect)
 {
-  IF_CLASSID_CREATE(StraightRailTile)
-  IF_CLASSID_CREATE(Curve45RailTile)
-  IF_CLASSID_CREATE(Curve90RailTile)
-  IF_CLASSID_CREATE(Cross45RailTile)
-  IF_CLASSID_CREATE(Cross90RailTile)
-  IF_CLASSID_CREATE(TurnoutLeftRailTile)
-  IF_CLASSID_CREATE(TurnoutRightRailTile)
-  IF_CLASSID_CREATE(TurnoutWyeRailTile)
-  IF_CLASSID_CREATE(Turnout3WayRailTile)
-  IF_CLASSID_CREATE(TurnoutSingleSlipRailTile)
-  IF_CLASSID_CREATE(TurnoutDoubleSlipRailTile)
-  IF_CLASSID_CREATE(Signal2AspectRailTile)
-  IF_CLASSID_CREATE(Signal3AspectRailTile)
-  return std::shared_ptr<Tile>();
 }
