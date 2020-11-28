@@ -30,6 +30,13 @@
 #include "rail/curve90railtile.hpp"
 #include "rail/cross45railtile.hpp"
 #include "rail/cross90railtile.hpp"
+#include "rail/turnoutleftrailtile.hpp"
+#include "rail/turnoutrightrailtile.hpp"
+#include "rail/turnoutwyerailtile.hpp"
+#include "rail/turnout3wayrailtile.hpp"
+#include "rail/turnoutsinglesliprailtile.hpp"
+#include "rail/turnoutdoublesliprailtile.hpp"
+
 struct Tiles
 {
   static constexpr std::string_view classIdPrefix = "board_tile.";
@@ -39,7 +46,13 @@ struct Tiles
     Curve45RailTile::classId,
     Curve90RailTile::classId,
     Cross45RailTile::classId,
-    Cross90RailTile::classId
+    Cross90RailTile::classId,
+    TurnoutLeftRailTile::classId,
+    TurnoutRightRailTile::classId,
+    TurnoutWyeRailTile::classId,
+    Turnout3WayRailTile::classId,
+    TurnoutSingleSlipRailTile::classId,
+    TurnoutDoubleSlipRailTile::classId
   );
 
   static std::shared_ptr<Tile> create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id = {});

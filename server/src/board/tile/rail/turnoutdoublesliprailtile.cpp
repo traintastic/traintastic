@@ -1,5 +1,5 @@
 /**
- * server/src/board/tile/tiles.cpp
+ * server/src/board/tile/rail/turnoutdoublesliprailtile.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,21 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "tiles.hpp"
-#include "../../utils/ifclassidcreate.hpp"
+#include "turnoutdoublesliprailtile.hpp"
 
-std::shared_ptr<Tile> Tiles::create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id)
+TurnoutDoubleSlipRailTile::TurnoutDoubleSlipRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
+  TurnoutRailTile(world, _id, TileId::RailTurnoutDoubleSlip)
 {
-  IF_CLASSID_CREATE(StraightRailTile)
-  IF_CLASSID_CREATE(Curve45RailTile)
-  IF_CLASSID_CREATE(Curve90RailTile)
-  IF_CLASSID_CREATE(Cross45RailTile)
-  IF_CLASSID_CREATE(Cross90RailTile)
-  IF_CLASSID_CREATE(TurnoutLeftRailTile)
-  IF_CLASSID_CREATE(TurnoutRightRailTile)
-  IF_CLASSID_CREATE(TurnoutWyeRailTile)
-  IF_CLASSID_CREATE(Turnout3WayRailTile)
-  IF_CLASSID_CREATE(TurnoutSingleSlipRailTile)
-  IF_CLASSID_CREATE(TurnoutDoubleSlipRailTile)
-  return std::shared_ptr<Tile>();
 }

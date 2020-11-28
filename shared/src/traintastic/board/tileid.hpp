@@ -33,6 +33,12 @@ enum class TileId : uint16_t // 10 bit
   RailCurve90 = 3,
   RailCross45 = 4,
   RailCross90 = 5,
+  RailTurnoutLeft = 6,
+  RailTurnoutRight = 7,
+  RailTurnoutWye = 8,
+  RailTurnout3Way = 9,
+  RailTurnoutSingleSlip = 10,
+  RailTurnoutDoubleSlip = 11,
 
   ReservedForFutureExpension = 1023
 };
