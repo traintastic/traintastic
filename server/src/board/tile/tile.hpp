@@ -1,5 +1,5 @@
 /**
- * server/src/board/board.hpp
+ * server/src/board/tile/tile.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,38 +20,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_BOARD_BOARD_HPP
-#define TRAINTASTIC_SERVER_BOARD_BOARD_HPP
+#ifndef TRAINTASTIC_SERVER_BOARD_TILE_TILE_HPP
+#define TRAINTASTIC_SERVER_BOARD_TILE_TILE_HPP
 
-#include "../core/idobject.hpp"
-#include <unordered_map>
-#include "../core/method.hpp"
+#include "../../core/idobject.hpp"
+#include <traintastic/board/tiledata.hpp>
 #include <traintastic/board/tilelocation.hpp>
-#include <traintastic/board/tilerotate.hpp>
 
-class Tile;
-
-class Board : public IdObject
+class Tile : public IdObject
 {
-  public:
-    using TileMap = std::unordered_map<TileLocation, std::shared_ptr<Tile>, TileLocationHash>;
+  friend class Board;
 
   protected:
-    TileMap m_tiles;
+    TileLocation m_location;
+    TileDataLong m_data;
 
-    void addToWorld() final;
-    void worldEvent(WorldState state, WorldEvent event) override;
+    Tile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
 
   public:
-    CLASS_ID("board")
-    CREATE(Board)
+    static constexpr std::string_view defaultId = "tile";
 
-    Property<std::string> name;
-    Method<bool(int16_t, int16_t, TileRotate, std::string_view)> addTile;
-
-    Board(const std::weak_ptr<World>& world, std::string_view _id);
-
-    const TileMap& tileMap() const { return m_tiles; }
+    const TileLocation& location() const { return m_location; }
+    const TileDataLong& data() const { return m_data; }
 };
 
 #endif

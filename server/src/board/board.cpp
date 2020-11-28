@@ -22,12 +22,28 @@
 
 #include "board.hpp"
 #include "boardlisttablemodel.hpp"
+#include "tile/tiles.hpp"
 #include "../world/world.hpp"
 #include "../core/attributes.hpp"
 
 Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
-  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
+  addTile{*this, "add_tile",
+    [this](int16_t x, int16_t y, TileRotate rotate, std::string_view classId)
+    {
+      const TileLocation l{x, y};
+      auto w = m_world.lock();
+      if(!w || m_tiles.find(l) != m_tiles.end())
+        return false;
+      auto tile = Tiles::create(w, classId);
+      if(!tile)
+        return false;
+      tile->m_location = l;
+      tile->m_data.setRotate(rotate);
+      m_tiles[l] = tile;
+      return true;
+    }}
 {
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
@@ -42,6 +58,8 @@ void Board::addToWorld()
 
   if(auto world = m_world.lock())
     world->boards->addObject(shared_ptr<Board>());
+
+}
 
 void Board::worldEvent(WorldState state, WorldEvent event)
 {

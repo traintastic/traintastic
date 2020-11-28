@@ -22,6 +22,8 @@ target_include_directories(traintastic-server PRIVATE
 file(GLOB SOURCES
   "src/board/*.hpp"
   "src/board/*.cpp"
+  "src/board/tile/*.hpp"
+  "src/board/tile/*.cpp"
   "src/clock/*.hpp"
   "src/clock/*.cpp"
   "src/core/*.hpp"
