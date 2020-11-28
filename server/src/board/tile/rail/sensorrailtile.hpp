@@ -1,5 +1,5 @@
 /**
- * shared/src/traintastic/board/tileid.hpp
+ * server/src/board/tile/rail/sensorrailtile.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,32 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_BOARD_TILEID_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_BOARD_TILEID_HPP
+#ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_SENSORRAILTILE_HPP
+#define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_SENSORRAILTILE_HPP
 
-#include <cstdint>
+#include "straightrailtile.hpp"
+#include "../../../core/objectproperty.hpp"
+#include "../../../hardware/input/input.hpp"
 
-enum class TileId : uint16_t // 10 bit
+class SensorRailTile : public StraightRailTile
 {
-  None = 0,
-  RailStraight = 1,
-  RailCurve45 = 2,
-  RailCurve90 = 3,
-  RailCross45 = 4,
-  RailCross90 = 5,
-  RailTurnoutLeft = 6,
-  RailTurnoutRight = 7,
-  RailTurnoutWye = 8,
-  RailTurnout3Way = 9,
-  RailTurnoutSingleSlip = 10,
-  RailTurnoutDoubleSlip = 11,
-  RailSignal2Aspect = 12,
-  RailSignal3Aspect = 13,
-  RailBufferStop = 14,
-  RailSensor = 15,
-  RailBlock = 16,
+  CLASS_ID("board_tile.rail.sensor")
+  DEFAULT_ID("sensor")
+  CREATE(SensorRailTile)
 
-  ReservedForFutureExpension = 1023
+  protected:
+    void worldEvent(WorldState state, WorldEvent event) override;
+
+  public:
+    ObjectProperty<Input> input;
+
+    SensorRailTile(const std::weak_ptr<World>& world, std::string_view _id);
 };
 
 #endif

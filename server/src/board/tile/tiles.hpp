@@ -39,6 +39,8 @@
 #include "rail/signal2aspectrailtile.hpp"
 #include "rail/signal3aspectrailtile.hpp"
 #include "rail/bufferstoprailtile.hpp"
+#include "rail/sensorrailtile.hpp"
+#include "rail/blockrailtile.hpp"
 
 struct Tiles
 {
@@ -58,7 +60,9 @@ struct Tiles
     TurnoutDoubleSlipRailTile::classId,
     Signal2AspectRailTile::classId,
     Signal3AspectRailTile::classId,
-    BufferStopRailTile::classId
+    BufferStopRailTile::classId,
+    SensorRailTile::classId,
+    BlockRailTile::classId
   );
 
   static std::shared_ptr<Tile> create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id = {});

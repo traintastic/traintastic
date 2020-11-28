@@ -1,5 +1,5 @@
 /**
- * shared/src/traintastic/board/tileid.hpp
+ * server/src/board/tile/rail/sensorrailtile.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,32 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_BOARD_TILEID_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_BOARD_TILEID_HPP
+#include "sensorrailtile.hpp"
+#include "../../../world/world.hpp"
+#include "../../../core/attributes.hpp"
 
-#include <cstdint>
-
-enum class TileId : uint16_t // 10 bit
+SensorRailTile::SensorRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
+  StraightRailTile(world, _id, TileId::RailSensor),
+  input{this, "input", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
-  None = 0,
-  RailStraight = 1,
-  RailCurve45 = 2,
-  RailCurve90 = 3,
-  RailCross45 = 4,
-  RailCross90 = 5,
-  RailTurnoutLeft = 6,
-  RailTurnoutRight = 7,
-  RailTurnoutWye = 8,
-  RailTurnout3Way = 9,
-  RailTurnoutSingleSlip = 10,
-  RailTurnoutDoubleSlip = 11,
-  RailSignal2Aspect = 12,
-  RailSignal3Aspect = 13,
-  RailBufferStop = 14,
-  RailSensor = 15,
-  RailBlock = 16,
+  auto w = world.lock();
+  const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
-  ReservedForFutureExpension = 1023
-};
+  Attributes::addEnabled(input, editable);
+  Attributes::addObjectList(input, w->inputs);
+  m_interfaceItems.add(input);
+}
 
-#endif
+void SensorRailTile::worldEvent(WorldState state, WorldEvent event)
+{
+  StraightRailTile::worldEvent(state, event);
+
+  input.setAttributeEnabled(contains(state, WorldState::Edit));
+}

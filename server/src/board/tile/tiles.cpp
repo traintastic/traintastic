@@ -39,5 +39,7 @@ std::shared_ptr<Tile> Tiles::create(const std::weak_ptr<World>& world, std::stri
   IF_CLASSID_CREATE(Signal2AspectRailTile)
   IF_CLASSID_CREATE(Signal3AspectRailTile)
   IF_CLASSID_CREATE(BufferStopRailTile)
+  IF_CLASSID_CREATE(SensorRailTile)
+  IF_CLASSID_CREATE(BlockRailTile)
   return std::shared_ptr<Tile>();
 }
