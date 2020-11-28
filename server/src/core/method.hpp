@@ -36,7 +36,7 @@ template<class... A>
 struct args
 {
   static constexpr std::size_t count = sizeof...(A);
-  static constexpr std::array<ValueType, count> types = {{value_type_v<A...>}};
+  static constexpr std::array<ValueType, count> types = {{value_type_v<A>...}};
 };
 //*/
 /*
@@ -120,6 +120,12 @@ class Method<R(A...)> : public AbstractMethod
           return m_function(/* and here */);
         else if constexpr(sizeof...(A) == 1)
           return m_function(std::get<std::string>(args[0]));
+        else if constexpr(sizeof...(A) == 4)
+          return m_function(
+            std::get<int64_t/*getArgumentType<0, A...>*/>(args[0]),
+            std::get<int64_t/*getArgumentType<1, A...>*/>(args[1]),
+            static_cast<getArgumentType<2, A...>>(std::get<int64_t/*getArgumentType<1, A...>*/>(args[2])),
+            std::get<std::string/*getArgumentType<2, A...>*/>(args[3]));
         else
           static_assert(sizeof(R) != sizeof(R));
       }
