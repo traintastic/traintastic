@@ -28,6 +28,11 @@
 enum class TileId : uint16_t // 10 bit
 {
   None = 0,
+  RailStraight = 1,
+  RailCurve45 = 2,
+  RailCurve90 = 3,
+  RailCross45 = 4,
+  RailCross90 = 5,
 
   ReservedForFutureExpension = 1023
 };

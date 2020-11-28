@@ -1,5 +1,5 @@
 /**
- * server/src/board/tile/tiles.hpp
+ * server/src/board/tile/rail/cross45railtile.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,29 +20,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_BOARD_TILE_TILES_HPP
-#define TRAINTASTIC_SERVER_BOARD_TILE_TILES_HPP
+#ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_CROSS45RAILTILE_HPP
+#define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_CROSS45RAILTILE_HPP
 
-#include "tile.hpp"
-#include "../../utils/makearray.hpp"
-#include "rail/straightrailtile.hpp"
-#include "rail/curve45railtile.hpp"
-#include "rail/curve90railtile.hpp"
-#include "rail/cross45railtile.hpp"
-#include "rail/cross90railtile.hpp"
-struct Tiles
+#include "railtile.hpp"
+
+class Cross45RailTile : public RailTile
 {
-  static constexpr std::string_view classIdPrefix = "board_tile.";
+  public:
+    CLASS_ID("board_tile.rail.cross_45")
+    CREATE(Cross45RailTile)
 
-  static constexpr auto classList = makeArray(
-    StraightRailTile::classId,
-    Curve45RailTile::classId,
-    Curve90RailTile::classId,
-    Cross45RailTile::classId,
-    Cross90RailTile::classId
-  );
-
-  static std::shared_ptr<Tile> create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id = {});
+    Cross45RailTile(const std::weak_ptr<World>& world, std::string_view _id);
 };
 
 #endif

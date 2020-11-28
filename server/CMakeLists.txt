@@ -24,6 +24,8 @@ file(GLOB SOURCES
   "src/board/*.cpp"
   "src/board/tile/*.hpp"
   "src/board/tile/*.cpp"
+  "src/board/tile/rail/*.hpp"
+  "src/board/tile/rail/*.cpp"
   "src/clock/*.hpp"
   "src/clock/*.cpp"
   "src/core/*.hpp"
