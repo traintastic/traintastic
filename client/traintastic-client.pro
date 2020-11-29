@@ -72,7 +72,8 @@ SOURCES += \
     src/network/outputkeyboard.cpp \
     src/style/abstractstyle.cpp \
     src/style/materialdarkstyle.cpp \
-    src/style/materiallightstyle.cpp
+    src/style/materiallightstyle.cpp \
+    src/network/board.cpp
 
 HEADERS += \
     src/mainwindow.hpp \
@@ -135,7 +136,8 @@ HEADERS += \
     src/network/outputkeyboard.hpp \
     src/style/abstractstyle.hpp \
     src/style/materialdarkstyle.hpp \
-    src/style/materiallightstyle.hpp
+    src/style/materiallightstyle.hpp \
+    src/network/board.hpp
 
 RESOURCES += \
     dark.qrc

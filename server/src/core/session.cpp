@@ -36,6 +36,8 @@
 #include "idobject.hpp"
 #include "subobject.hpp"
 #include "../hardware/input/inputmonitor.hpp"
+#include "../board/board.hpp"
+#include "../board/tile/tile.hpp"
 
 
 
@@ -436,6 +438,25 @@ bool Session::processMessage(const Message& message)
         const uint32_t address = message.read<uint32_t>();
         const bool value = message.read<bool>();
         outputKeyboard->setOutputValue(address, value);
+      }
+      break;
+    }
+    case Message::Command::BoardGetTileData:
+    {
+      auto board = std::dynamic_pointer_cast<Board>(m_handles.getItem(message.read<Handle>()));
+      if(board)
+      {
+        auto response = Message::newResponse(message.command(), message.requestId());
+        for(auto& it : board->tileMap())
+        {
+          const Tile& tile = *(it.second);
+          response->write(tile.location());
+          if(tile.data().isLong())
+            response->write(tile.data());
+          else
+            response->write<TileData>(tile.data());
+        }
+        m_client->sendMessage(std::move(response));
       }
       break;
     }

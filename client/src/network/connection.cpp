@@ -33,6 +33,7 @@
 #include "tablemodel.hpp"
 #include "inputmonitor.hpp"
 #include "outputkeyboard.hpp"
+#include "board.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
 #include <traintastic/enum/attributetype.hpp>
 #include <traintastic/locale/locale.hpp>
@@ -362,6 +363,18 @@ void Connection::setOutputKeyboardOutputValue(OutputKeyboard& object, uint32_t a
   send(event);
 }
 
+int Connection::getTileData(Board& object)
+{
+  auto request = Message::newRequest(Message::Command::BoardGetTileData);
+  request->write(object.handle());
+  send(request,
+    [&object](const std::shared_ptr<Message> message)
+    {
+      object.getTileDataResponse(*message);
+    });
+  return request->requestId();
+}
+
 void Connection::send(std::unique_ptr<Message>& message)
 {
   Q_ASSERT(!message->isRequest());
@@ -390,6 +403,8 @@ ObjectPtr Connection::readObject(const Message& message)
       obj = std::make_shared<InputMonitor>(sharedFromThis(), handle, classId);
     else if(classId.startsWith(OutputKeyboard::classIdPrefix))
       obj = std::make_shared<OutputKeyboard>(sharedFromThis(), handle, classId);
+    else if(classId == Board::classId)
+      obj = std::make_shared<Board>(sharedFromThis(), handle, classId);
     else
       obj = std::make_shared<Object>(sharedFromThis(), handle, classId);
     m_objects[handle] = obj;

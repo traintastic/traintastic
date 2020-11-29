@@ -80,6 +80,8 @@ class Message
       OutputKeyboardOutputIdChanged = 35,
       OutputKeyboardOutputValueChanged = 36,
 
+      BoardGetTileData = 37,
+
       Discover = 255,
     };
 
@@ -219,6 +221,8 @@ class Message
     void* data() { return m_data.data() + sizeof(Header); }
     uint32_t dataSize() const { return header().dataSize; }
 
+    const void* current() const { return m_data.data() + sizeof(Header) + m_readPosition; }
+
     template<typename T>
     void read(T& value) const
     {
@@ -272,6 +276,11 @@ class Message
     {
       assert(!m_block.empty());
       return m_readPosition == m_block.top();
+    }
+
+    bool endOfMessage() const
+    {
+      return m_readPosition == dataSize();
     }
 
     uint32_t readBlock() const

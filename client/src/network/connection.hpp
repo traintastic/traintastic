@@ -39,6 +39,7 @@ class UnitProperty;
 class Method;
 class InputMonitor;
 class OutputKeyboard;
+class Board;
 
 class Connection : public QObject, public QEnableSharedFromThis<Connection>
 {
@@ -144,6 +145,8 @@ class Connection : public QObject, public QEnableSharedFromThis<Connection>
 
     [[nodiscard]] int getOutputKeyboardOutputInfo(OutputKeyboard& object);
     void setOutputKeyboardOutputValue(OutputKeyboard& object, uint32_t address, bool value);
+
+    [[nodiscard]] int getTileData(Board& object);
 
   signals:
     void stateChanged();
