@@ -1,0 +1,24 @@
+name: Client (ubuntu)
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install packages
+      run: sudo apt install qt5-default
+
+    - name: Create build directory
+      run: mkdir -p ${{runner.workspace}}/build
+
+    - name: Run QMake
+      working-directory: ${{runner.workspace}}/build
+      run: qmake $GITHUB_WORKSPACE/client/traintastic-client.pro CONFIG+="release" DESTDIR=${{runner.workspace}}/build
+
+    - name: Build
+      working-directory: ${{runner.workspace}}/build
+      run: make
