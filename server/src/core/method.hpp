@@ -26,30 +26,57 @@
 #include "abstractmethod.hpp"
 #include <functional>
 #include <tuple>
+#include <limits>
 #include "valuetypetraits.hpp"
 #include "../utils/is_shared_ptr.hpp"
 
 template<class T>
 class Method;
-//*
+
 template<class... A>
 struct args
 {
   static constexpr std::size_t count = sizeof...(A);
   static constexpr std::array<ValueType, count> types = {{value_type_v<A>...}};
 };
-//*/
-/*
-template<class A1>
-struct args
-{
-  static constexpr std::size_t count = 1;
-  static constexpr std::array<ValueType, count> types = {value_type_v<A1>};
-};
-//*/
 
 template<std::size_t N, class... A>
 using getArgumentType = typename std::tuple_element<N, std::tuple<A...>>::type;
+
+template<std::size_t N, class... A>
+auto getArgument(const AbstractMethod::Argument& value)
+{
+  using T = std::remove_const_t<std::remove_reference_t<getArgumentType<N, A...>>>;
+
+  if constexpr(std::is_same_v<T, bool>)
+    return std::get<bool>(value);
+  else if constexpr(std::is_enum_v<T>)
+    return static_cast<T>(std::get<int64_t>(value)); // TODO: test if enum value is valid
+  else if constexpr(std::is_integral_v<T>)
+  {
+    const int64_t r = std::get<int64_t>(value);
+    if(r >= std::numeric_limits<T>::min() && r <= std::numeric_limits<T>::max())
+      return static_cast<T>(r);
+    else
+      throw AbstractMethod::OutOfRangeArgumentError(N);
+  }
+  else if constexpr(std::is_floating_point_v<T>)
+    return static_cast<T>(std::get<double>(value));
+  else if constexpr(std::is_same_v<T, std::string> || std::is_same_v<T, std::string_view>)
+    return std::get<std::string>(value);
+  else if constexpr(is_shared_ptr_v<T>)
+  {
+    ObjectPtr obj = std::get<ObjectPtr>(value);
+    if(!obj)
+      return T();
+    else if(auto r = std::dynamic_pointer_cast<typename T::element_type>(obj))
+      return r;
+    else
+      throw AbstractMethod::InvalidObjectArgumentError(N);
+  }
+  else
+    static_assert(sizeof(T) != sizeof(T));
+}
 
 template<class R, class... A>
 class Method<R(A...)> : public AbstractMethod
@@ -98,34 +125,58 @@ class Method<R(A...)> : public AbstractMethod
 
     Result call(const std::vector<Argument>& args) final
     {
+      if(args.size() != argumentCount())
+        throw InvalidNumberOfArgumentsError();
+
       if constexpr(std::is_same_v<R, void>)
       {
         if constexpr(sizeof...(A) == 0)
-          m_function(/* some magic here */);
+          m_function();
         else if constexpr(sizeof...(A) == 1)
-        {
-          if constexpr(std::is_same_v<getArgumentType<0, A...>, std::string>)
-            m_function(std::get<std::string>(args[0]));
-          else
-            assert(false);
-        }
+          m_function(
+            getArgument<0, A...>(args[0]));
+        else if constexpr(sizeof...(A) == 2)
+          m_function(
+            getArgument<0, A...>(args[0]),
+            getArgument<1, A...>(args[1]));
+        else if constexpr(sizeof...(A) == 3)
+          m_function(
+            getArgument<0, A...>(args[0]),
+            getArgument<1, A...>(args[1]),
+            getArgument<2, A...>(args[2]));
+        else if constexpr(sizeof...(A) == 4)
+          m_function(
+            getArgument<0, A...>(args[0]),
+            getArgument<1, A...>(args[1]),
+            getArgument<2, A...>(args[2]),
+            getArgument<3, A...>(args[3]));
         else
           static_assert(sizeof(R) != sizeof(R));
-        //  m_function(args[0]);
+
         return Result();
       }
       else
       {
         if constexpr(sizeof...(A) == 0)
-          return m_function(/* and here */);
+          return m_function();
         else if constexpr(sizeof...(A) == 1)
-          return m_function(std::get<std::string>(args[0]));
+          return m_function(
+            getArgument<0, A...>(args[0]));
+        else if constexpr(sizeof...(A) == 2)
+          return m_function(
+            getArgument<0, A...>(args[0]),
+            getArgument<1, A...>(args[1]));
+        else if constexpr(sizeof...(A) == 3)
+          return m_function(
+            getArgument<0, A...>(args[0]),
+            getArgument<1, A...>(args[1]),
+            getArgument<2, A...>(args[2]));
         else if constexpr(sizeof...(A) == 4)
           return m_function(
-            std::get<int64_t/*getArgumentType<0, A...>*/>(args[0]),
-            std::get<int64_t/*getArgumentType<1, A...>*/>(args[1]),
-            static_cast<getArgumentType<2, A...>>(std::get<int64_t/*getArgumentType<1, A...>*/>(args[2])),
-            std::get<std::string/*getArgumentType<2, A...>*/>(args[3]));
+            getArgument<0, A...>(args[0]),
+            getArgument<1, A...>(args[1]),
+            getArgument<2, A...>(args[2]),
+            getArgument<3, A...>(args[3]));
         else
           static_assert(sizeof(R) != sizeof(R));
       }

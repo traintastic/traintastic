@@ -26,11 +26,71 @@
 #include "interfaceitem.hpp"
 #include <vector>
 #include <variant>
+#include <stdexcept>
 #include "objectptr.hpp"
 
 class AbstractMethod : public InterfaceItem
 {
   public:
+    class MethodCallError : public std::runtime_error
+    {
+      public:
+        MethodCallError(const std::string& what) :
+          std::runtime_error(what)
+        {
+        }
+
+        MethodCallError(const char* what) :
+          std::runtime_error(what)
+        {
+        }
+    };
+
+    class InvalidNumberOfArgumentsError : public MethodCallError
+    {
+      public:
+        InvalidNumberOfArgumentsError() :
+          MethodCallError("invalid number of arguments")
+        {
+        }
+    };
+
+    class ArgumentError : public MethodCallError
+    {
+      public:
+        const size_t index;
+
+        ArgumentError(size_t _index, const std::string& what) :
+          MethodCallError(what),
+          index{_index}
+        {
+        }
+
+        ArgumentError(size_t _index, const char* what) :
+          MethodCallError(what),
+          index{_index}
+        {
+        }
+    };
+
+    class OutOfRangeArgumentError : public ArgumentError
+    {
+      public:
+        OutOfRangeArgumentError(size_t _index) :
+          ArgumentError(_index, "argument: out of range")
+        {
+        }
+    };
+
+    class InvalidObjectArgumentError : public ArgumentError
+    {
+      public:
+        InvalidObjectArgumentError(size_t _index) :
+          ArgumentError(_index, "argument: invalid object")
+        {
+        }
+    };
+
     using Argument = std::variant<bool, int64_t, double, std::string, ObjectPtr>;
     using Result = std::variant<std::monostate, bool, int64_t, double, std::string, ObjectPtr>;
 
