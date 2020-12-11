@@ -127,8 +127,7 @@ bool Session::processMessage(const Message& message)
       Handle handle = message.read<Handle>();
       Traintastic::instance->console->debug(m_client->m_id, "ReleaseObject: " + std::to_string(handle));
       m_handles.removeHandle(handle);
-      m_propertyChanged.erase(handle);
-      m_attributeChanged.erase(handle);
+      m_objectSignals.erase(handle);
       break;
     }
     case Message::Command::ObjectSetProperty:
@@ -479,8 +478,8 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
 
     handle = m_handles.addItem(object);
 
-    m_propertyChanged.emplace(handle, object->propertyChanged.connect(std::bind(&Session::objectPropertyChanged, this, std::placeholders::_1)));
-    m_attributeChanged.emplace(handle, object->attributeChanged.connect(std::bind(&Session::objectAttributeChanged, this, std::placeholders::_1)));
+    m_objectSignals.emplace(handle, object->propertyChanged.connect(std::bind(&Session::objectPropertyChanged, this, std::placeholders::_1)));
+    m_objectSignals.emplace(handle, object->attributeChanged.connect(std::bind(&Session::objectAttributeChanged, this, std::placeholders::_1)));
 
     if(auto* inputMonitor = dynamic_cast<InputMonitor*>(object.get()))
     {

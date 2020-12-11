@@ -52,8 +52,7 @@ class Session : public std::enable_shared_from_this<Session>
     std::shared_ptr<Client> m_client;
     boost::uuids::uuid m_uuid;
     Handles m_handles;
-    std::unordered_map<Handle, boost::signals2::connection> m_propertyChanged;
-    std::unordered_map<Handle, boost::signals2::connection> m_attributeChanged;
+    std::unordered_multimap<Handle, boost::signals2::connection> m_objectSignals;
 
     bool processMessage(const Message& message);
 
