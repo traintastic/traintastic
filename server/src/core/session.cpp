@@ -247,7 +247,9 @@ bool Session::processMessage(const Message& message)
                 args.push_back(message.read<bool>());
                 break;
 
+              case ValueType::Enum:
               case ValueType::Integer:
+              case ValueType::Set:
                 args.push_back(message.read<int64_t>());
                 break;
 
