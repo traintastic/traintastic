@@ -150,6 +150,13 @@ class Method<R(A...)> : public AbstractMethod
             getArgument<1, A...>(args[1]),
             getArgument<2, A...>(args[2]),
             getArgument<3, A...>(args[3]));
+        else if constexpr(sizeof...(A) == 5)
+          m_function(
+            getArgument<0, A...>(args[0]),
+            getArgument<1, A...>(args[1]),
+            getArgument<2, A...>(args[2]),
+            getArgument<3, A...>(args[3]),
+            getArgument<4, A...>(args[4]));
         else
           static_assert(sizeof(R) != sizeof(R));
 
@@ -177,6 +184,13 @@ class Method<R(A...)> : public AbstractMethod
             getArgument<1, A...>(args[1]),
             getArgument<2, A...>(args[2]),
             getArgument<3, A...>(args[3]));
+        else if constexpr(sizeof...(A) == 5)
+          return m_function(
+            getArgument<0, A...>(args[0]),
+            getArgument<1, A...>(args[1]),
+            getArgument<2, A...>(args[2]),
+            getArgument<3, A...>(args[3]),
+            getArgument<4, A...>(args[4]));
         else
           static_assert(sizeof(R) != sizeof(R));
       }
