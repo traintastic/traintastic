@@ -59,4 +59,14 @@ constexpr bool isDiagonal(TileRotate value)
   return (static_cast<std::underlying_type_t<TileRotate>>(value) & 1);
 }
 
+constexpr uint16_t toDeg(TileRotate value)
+{
+  return static_cast<uint16_t>(value) * 45;
+}
+
+constexpr TileRotate fromDeg(uint16_t value)
+{
+  return static_cast<TileRotate>((value / 45) % 8);
+}
+
 #endif
