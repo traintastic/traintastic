@@ -23,7 +23,7 @@
 #include "blockrailtile.hpp"
 
 BlockRailTile::BlockRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
-  RailTile(world, _id, TileId::None)
+  RailTile(world, _id, TileId::RailBlock)
 {
   m_data.setSize(5, 1);
 }
