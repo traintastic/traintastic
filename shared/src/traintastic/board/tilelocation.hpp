@@ -34,6 +34,11 @@ struct TileLocation
   {
     return x == other.x && y == other.y;
   }
+
+  bool operator !=(const TileLocation& other) const
+  {
+    return x != other.x || y != other.y;
+  }
 };
 
 struct TileLocationHash
