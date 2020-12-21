@@ -43,6 +43,12 @@ constexpr TileRotate operator +(TileRotate lhs, TileRotate rhs)
   return static_cast<TileRotate>((static_cast<std::underlying_type_t<TileRotate>>(lhs) + static_cast<std::underlying_type_t<TileRotate>>(rhs)) % 8);
 }
 
+constexpr TileRotate& operator +=(TileRotate& lhs, TileRotate rhs)
+{
+  lhs = lhs + rhs;
+  return lhs;
+}
+
 constexpr TileRotate operator -(TileRotate lhs, TileRotate rhs)
 {
   return static_cast<TileRotate>((static_cast<std::underlying_type_t<TileRotate>>(lhs) + 8 - static_cast<std::underlying_type_t<TileRotate>>(rhs)) % 8);
