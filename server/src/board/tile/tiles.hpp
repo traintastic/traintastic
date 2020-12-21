@@ -65,7 +65,7 @@ struct Tiles
     BlockRailTile::classId
   );
 
-  static std::shared_ptr<Tile> create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id = {});
+  static std::shared_ptr<Tile> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = {});
 };
 
 #endif
