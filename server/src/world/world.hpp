@@ -108,7 +108,7 @@ class World : public Object
 
     const boost::uuids::uuid& uuid() const { return m_uuid; }
 
-    std::string getUniqueId(const std::string& prefix) const;
+    std::string getUniqueId(std::string_view prefix) const;
     bool isObject(const std::string&_id) const;
     ObjectPtr getObject(const std::string& _id) const;
 };

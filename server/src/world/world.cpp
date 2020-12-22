@@ -154,13 +154,15 @@ World::World(Private) :
   m_interfaceItems.add(save);
 }
 
-std::string World::getUniqueId(const std::string& prefix) const
+std::string World::getUniqueId(std::string_view prefix) const
 {
-  std::string id;
+  std::string id{prefix};
+  id.append("_");
   uint32_t number = 0;
   do
   {
-    id = prefix + "_" + std::to_string(++number);
+    id.resize(prefix.size() + 1);
+    id.append(std::to_string(++number));
   }
   while(isObject(id));
 
