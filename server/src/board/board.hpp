@@ -34,6 +34,8 @@ struct TileDataLong;
 
 class Board : public IdObject
 {
+  friend class WorldLoader;
+
   public:
     using TileMap = std::unordered_map<TileLocation, std::shared_ptr<Tile>, TileLocationHash>;
 

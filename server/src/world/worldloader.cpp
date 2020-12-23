@@ -28,6 +28,7 @@
 #include "../utils/string.hpp"
 
 #include "../board/board.hpp"
+#include "../board/tile/tiles.hpp"
 #include "../hardware/commandstation/commandstations.hpp"
 #include "../hardware/controller/controllers.hpp"
 #include "../hardware/decoder/decoder.hpp"
@@ -132,6 +133,15 @@ void WorldLoader::createObject(ObjectData& objectData)
     objectData.object = Outputs::create(m_world, classId, id);
   else if(classId == Board::classId)
     objectData.object = Board::create(m_world, id);
+  else if(startsWith(classId, Tiles::classIdPrefix))
+  {
+    auto tile = Tiles::create(m_world, classId, id);
+    tile->m_location.x = objectData.json["x"];
+    tile->m_location.y = objectData.json["y"];
+    tile->m_data.setRotate(fromDeg(objectData.json["rotate"]));
+    tile->m_data.setSize(objectData.json.value("width", 1), objectData.json.value("height", 1));
+    objectData.object = tile;
+  }
   else if(startsWith(classId, RailVehicles::classIdPrefix))
     objectData.object = RailVehicles::create(m_world, classId, id);
 #ifndef DISABLE_LUA_SCRIPTING
@@ -164,6 +174,29 @@ void WorldLoader::loadObject(Object& object, const json& data)
       if(ObjectPtr item = getObject(id))
         items.emplace_back(std::move(item));
     list->setItems(items);
+  }
+  else if(Board* board = dynamic_cast<Board*>(&object))
+  {
+    json objects = data.value("tiles", json::array());
+    std::vector<ObjectPtr> items;
+    board->m_tiles.reserve(objects.size());
+    for(auto& [_, id] : objects.items())
+      if(auto tile = std::dynamic_pointer_cast<Tile>(getObject(id)))
+      {
+        if(tile->data().width() > 1 || tile->data().height() > 1)
+        {
+          const int16_t x2 = tile->location().x + tile->data().width();
+          const int16_t y2 = tile->location().y + tile->data().height();
+          for(int16_t x = tile->location().x; x < x2; x++)
+            for(int16_t y = tile->location().y; y < y2; y++)
+              board->m_tiles.emplace(TileLocation{x, y}, tile);
+        }
+        else
+        {
+          const TileLocation l = tile->location();
+          board->m_tiles.emplace(l, std::move(tile));
+        }
+      }
   }
 
   for(auto& [name, value] : data.items())

@@ -24,6 +24,7 @@
 #include <fstream>
 #include <boost/uuid/uuid_io.hpp>
 #include "world.hpp"
+#include "../board/tile/tile.hpp"
 
 using nlohmann::json;
 
@@ -74,6 +75,24 @@ json WorldSaver::saveObject(const ObjectPtr& object)
   }
   else if(DecoderFunction* function = dynamic_cast<DecoderFunction*>(object.get()))
     objectData["decoder"] = function->decoder().id.toJSON();
+  else if(Board* board = dynamic_cast<Board*>(object.get()))
+  {
+    json tiles = json::array();
+    for(const auto& it : board->tileMap())
+      if(it.first == it.second->location())
+        tiles.push_back(it.second->id);
+    objectData["tiles"] = tiles;
+  }
+  else if(Tile* tile = dynamic_cast<Tile*>(object.get()))
+  {
+    objectData["x"] = tile->location().x;
+    objectData["y"] = tile->location().y;
+    objectData["rotate"] = toDeg(tile->data().rotate());
+    if(uint8_t height = tile->data().height(); height > 1)
+      objectData["height"] = height;
+    if(uint8_t width = tile->data().width(); width > 1)
+      objectData["width"] = width;
+  }
 
   for(auto& item : object->interfaceItems())
     if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&item.second))

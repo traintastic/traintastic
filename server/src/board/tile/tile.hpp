@@ -30,6 +30,7 @@
 class Tile : public IdObject
 {
   friend class Board;
+  friend class WorldLoader;
 
   protected:
     TileLocation m_location;
