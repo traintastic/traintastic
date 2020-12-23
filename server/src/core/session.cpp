@@ -451,6 +451,8 @@ bool Session::processMessage(const Message& message)
         for(auto& it : board->tileMap())
         {
           const Tile& tile = *(it.second);
+          if(it.first != tile.location()) // only tiles at origin
+            continue;
           response->write(tile.location());
           if(tile.data().isLong())
             response->write(tile.data());
