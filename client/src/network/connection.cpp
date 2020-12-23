@@ -925,6 +925,11 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
         }
         break;
 
+      case Message::Command::BoardTileDataChanged:
+        if(auto board = std::dynamic_pointer_cast<Board>(m_objects.value(message->read<Handle>()).lock()))
+          board->processMessage(*message);
+        break;
+
       default:
         Q_ASSERT(false);
         break;

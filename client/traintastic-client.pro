@@ -73,7 +73,10 @@ SOURCES += \
     src/style/abstractstyle.cpp \
     src/style/materialdarkstyle.cpp \
     src/style/materiallightstyle.cpp \
-    src/network/board.cpp
+    src/network/board.cpp \
+    src/board/tile.cpp \
+    src/board/boardareawidget.cpp \
+    src/board/boardwidget.cpp
 
 HEADERS += \
     src/mainwindow.hpp \
@@ -137,7 +140,12 @@ HEADERS += \
     src/style/abstractstyle.hpp \
     src/style/materialdarkstyle.hpp \
     src/style/materiallightstyle.hpp \
-    src/network/board.hpp
+    src/network/board.hpp \
+    src/board/tile.hpp \
+    src/board/boardareawidget.hpp \
+    src/board/boardwidget.hpp \
+    src/utils/rectf.hpp \
+    src/network/callmethod.hpp
 
 RESOURCES += \
     dark.qrc

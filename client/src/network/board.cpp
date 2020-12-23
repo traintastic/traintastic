@@ -22,7 +22,7 @@
 
 #include "board.hpp"
 #include "connection.hpp"
-#include <traintastic/network/message.hpp>
+#include "callmethod.hpp"
 
 Board::Board(const QSharedPointer<Connection>& connection, Handle handle, const QString& classId) :
   Object(connection, handle, classId),
@@ -42,6 +42,16 @@ void Board::getTileData()
   m_getTileDataRequestId = m_connection->getTileData(*this);
 }
 
+int Board::addTile(int16_t x, int16_t y, TileRotate rotate, const QString& id, bool replace, std::function<void(const bool&, Message::ErrorCode)> callback)
+{
+  return callMethod(*m_connection, *getMethod("add_tile"), std::move(callback), x, y, rotate, id, replace);
+}
+
+int Board::deleteTile(int16_t x, int16_t y, std::function<void(const bool&, Message::ErrorCode)> callback)
+{
+  return callMethod(*m_connection, *getMethod("delete_tile"), std::move(callback), x, y);
+}
+
 void Board::getTileDataResponse(const Message& response)
 {
   m_getTileDataRequestId = Connection::invalidRequestId;
@@ -56,4 +66,31 @@ void Board::getTileDataResponse(const Message& response)
   }
 
   emit tileDataChanged();
+}
+
+void Board::processMessage(const Message& message)
+{
+  switch(message.command())
+  {
+    case Message::Command::BoardTileDataChanged:
+    {
+      TileLocation l = message.read<TileLocation>();
+      const TileData* data = static_cast<const TileData*>(message.current());
+      if(!data->operator bool()) // no tile
+      {
+        auto it = m_tileData.find(l);
+        if(it != m_tileData.end())
+          m_tileData.erase(it);
+      }
+      else if(data->isLong())
+        m_tileData[l] = message.read<TileDataLong>();
+      else
+        m_tileData[l] = message.read<TileData>();
+      emit tileDataChanged();
+      break;
+    }
+    default:
+      Q_ASSERT(false);
+      break;
+  }
 }

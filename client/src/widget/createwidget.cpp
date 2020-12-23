@@ -30,9 +30,11 @@
 #include "object/objecteditwidget.hpp"
 #include "inputmonitorwidget.hpp"
 #include "outputkeyboardwidget.hpp"
+#include "../board/boardwidget.hpp"
 #include "../network/object.hpp"
 #include "../network/inputmonitor.hpp"
 #include "../network/outputkeyboard.hpp"
+#include "../network/board.hpp"
 
 QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
 {
@@ -70,6 +72,8 @@ QWidget* createWidget(const ObjectPtr& object, QWidget* parent)
     return new InputMonitorWidget(inputMonitor, parent);
   else if(auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(object))
     return new OutputKeyboardWidget(outputKeyboard, parent);
+  else if(auto board = std::dynamic_pointer_cast<Board>(object))
+    return new BoardWidget(board, parent);
   else
     return new ObjectEditWidget(object, parent);
 }

@@ -15,5 +15,27 @@
         <file alias="world_save.svg">gfx/dark/world_save.svg</file>
         <file alias="world_import.svg">gfx/dark/world_import.svg</file>
         <file alias="world_export.svg">gfx/dark/world_export.svg</file>
+        <file alias="board_tile.rail.straight.svg">gfx/dark/board_tile.rail.straight.svg</file>
+        <file alias="board_tile.rail.curve_45.svg">gfx/dark/board_tile.rail.curve_45.svg</file>
+        <file alias="board_tile.rail.curve_90.svg">gfx/dark/board_tile.rail.curve_90.svg</file>
+        <file alias="board_tile.rail.cross_45.svg">gfx/dark/board_tile.rail.cross_45.svg</file>
+        <file alias="board_tile.rail.cross_90.svg">gfx/dark/board_tile.rail.cross_90.svg</file>
+        <file alias="board_tile.rail.turnout_right.svg">gfx/dark/board_tile.rail.turnout_right.svg</file>
+        <file alias="board_tile.rail.turnout_wye.svg">gfx/dark/board_tile.rail.turnout_wye.svg</file>
+        <file alias="board_tile.rail.turnout_3way.svg">gfx/dark/board_tile.rail.turnout_3way.svg</file>
+        <file alias="board_tile.rail.turnout_left.svg">gfx/dark/board_tile.rail.turnout_left.svg</file>
+        <file alias="board_tile.rail.turnout_doubleslip.svg">gfx/dark/board_tile.rail.turnout_doubleslip.svg</file>
+        <file alias="board_tile.rail.turnout_singleslip.svg">gfx/dark/board_tile.rail.turnout_singleslip.svg</file>
+        <file alias="board_tile.rail.buffer_stop.svg">gfx/dark/board_tile.rail.buffer_stop.svg</file>
+        <file alias="zoom_in.svg">gfx/dark/zoom_in.svg</file>
+        <file alias="zoom_out.svg">gfx/dark/zoom_out.svg</file>
+        <file alias="board_tile.rail.signal_2_aspect.svg">gfx/dark/board_tile.rail.signal_2aspect.svg</file>
+        <file alias="board_tile.rail.signal_3_aspect.svg">gfx/dark/board_tile.rail.signal_3aspect.svg</file>
+        <file alias="board_tile.rail.block.svg">gfx/dark/board_tile.rail.block.svg</file>
+        <file alias="grid_none.svg">gfx/dark/grid_none.svg</file>
+        <file alias="grid_dot.svg">gfx/dark/grid_dot.svg</file>
+        <file alias="grid_line.svg">gfx/dark/grid_line.svg</file>
+        <file alias="move_tile.svg">gfx/dark/move_tile.svg</file>
+        <file alias="mouse.svg">gfx/dark/mouse.svg</file>
     </qresource>
 </RCC>

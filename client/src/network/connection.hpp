@@ -81,8 +81,6 @@ class Connection : public QObject, public QEnableSharedFromThis<Connection>
 
     void setState(State state);
     void processMessage(const std::shared_ptr<Message> message);
-    void send(std::unique_ptr<Message>& message);
-    void send(std::unique_ptr<Message>& message, std::function<void(const std::shared_ptr<Message>&)> callback);
 
     ObjectPtr readObject(const Message &message);
     TableModelPtr readTableModel(const Message& message);
@@ -113,6 +111,9 @@ class Connection : public QObject, public QEnableSharedFromThis<Connection>
 
     void connectToHost(const QUrl& url, const QString& username, const QString& password);
     void disconnectFromHost();
+
+    void send(std::unique_ptr<Message>& message);
+    void send(std::unique_ptr<Message>& message, std::function<void(const std::shared_ptr<Message>&)> callback);
 
     void cancelRequest(int requestId);
 

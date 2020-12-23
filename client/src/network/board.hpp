@@ -24,10 +24,12 @@
 #define TRAINTASTIC_CLIENT_NETWORK_BOARD_HPP
 
 #include "object.hpp"
+#include <QString>
 #include <unordered_map>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/board/tilelocation.hpp>
 #include <traintastic/board/tiledata.hpp>
+#include <traintastic/network/message.hpp>
 
 class Connection;
 class Message;
@@ -46,6 +48,7 @@ class Board final : public Object
     int m_getTileDataRequestId;
 
     void getTileDataResponse(const Message& response);
+    void processMessage(const Message& message);
 
   public:
     inline static const QString classId = QStringLiteral("board");
@@ -55,6 +58,9 @@ class Board final : public Object
 
     void getTileData();
     const TileDataMap& tileData() const { return m_tileData; }
+
+    int addTile(int16_t x, int16_t y, TileRotate rotate, const QString& id, bool replace, std::function<void(const bool&, Message::ErrorCode)> callback);
+    int deleteTile(int16_t x, int16_t y, std::function<void(const bool&, Message::ErrorCode)> callback);
 
   signals:
     void tileDataChanged();
