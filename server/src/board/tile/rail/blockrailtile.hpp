@@ -31,6 +31,9 @@ class BlockRailTile : public RailTile
   DEFAULT_ID("block")
   CREATE(BlockRailTile)
 
+  protected:
+    void setRotate(TileRotate value) final;
+
   public:
     BlockRailTile(const std::weak_ptr<World>& world, std::string_view _id);
 };

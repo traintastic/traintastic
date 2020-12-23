@@ -37,6 +37,8 @@ class Tile : public IdObject
 
     Tile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
 
+    virtual void setRotate(TileRotate value) { m_data.setRotate(value); }
+
   public:
     static constexpr std::string_view defaultId = "tile";
 

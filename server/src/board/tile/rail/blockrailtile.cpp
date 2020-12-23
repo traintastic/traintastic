@@ -25,5 +25,17 @@
 BlockRailTile::BlockRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
   RailTile(world, _id, TileId::RailBlock)
 {
-  m_data.setSize(5, 1);
+  m_data.setSize(1, 5);
+}
+
+void BlockRailTile::setRotate(TileRotate value)
+{
+  if(value == m_data.rotate())
+    return;
+
+  if(value == TileRotate::Deg0 || value == TileRotate::Deg90)
+  {
+    RailTile::setRotate(value);
+    m_data.setSize(m_data.height(), m_data.width());
+  }
 }
