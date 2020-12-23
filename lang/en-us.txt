@@ -15,6 +15,31 @@
 :track_power=Track power
 :xpressnet=XpressNet
 
+class_id:board_tile.rail.block=Block
+class_id:board_tile.rail.buffer_stop=Buffer stop
+class_id:board_tile.rail.cross_45=Crossover 45°
+class_id:board_tile.rail.cross_90=Crossover 90°
+class_id:board_tile.rail.curve_45=Curved track 45°
+class_id:board_tile.rail.curve_90=Curved track 90°
+class_id:board_tile.rail.signal_2aspect=Signal 2 aspect
+class_id:board_tile.rail.signal_3aspect=Signal 3 aspect
+class_id:board_tile.rail.straight=Straight track
+class_id:board_tile.rail.turnout_3way=Turnout 3-way
+class_id:board_tile.rail.turnout_doubleslip=Double slip
+class_id:board_tile.rail.turnout_left=Turnout left
+class_id:board_tile.rail.turnout_right=Turnout right
+class_id:board_tile.rail.turnout_singleslip=Single slip
+class_id:board_tile.rail.turnout_wye=Turnout wye
+class_id:command_station.loconet_serial=LocoNet (serial)
+class_id:command_station.usb_xpressnet_interface=USB XpressNet interface
+class_id:command_station.virtual=Virtual
+class_id:command_station.xpressnet_serial=XpressNet (serial)
+class_id:command_station.z21=Z21
+class_id:controller.usb_xpressnet_controller=USB XpressNet controller
+class_id:controller.wlanmaus=WLANmaus
+class_id:vehicle.rail.freight_car=Freight car
+class_id:vehicle.rail.locomotive=Locomotive
+
 clock:day=Day
 clock:hour=Hour
 clock:minute=Minute
@@ -73,9 +98,22 @@ decoder_function_list:f_hash=F#
 
 decoder_list:add=Add
 
+decoder_protocol:auto=Auto
+decoder_protocol:custom=Custom
+decoder_protocol:dcc=DCC
+
 language:de-de=German
 language:en-us=English (US)
 language:nl-nl=Dutch
+
+length_unit:cm=cm
+length_unit:ft=ft
+length_unit:in=in
+length_unit:m=m
+length_unit:mm=mm
+length_unit:yd=yd
+
+list.board:add=Create new board
 
 list.train:add=Create train
 
@@ -91,6 +129,8 @@ lua.script:active=Active
 lua.script:code=Code
 
 protocol.loconet:debug_log=Debug log
+protocol.loconet:input_monitor=Input monitor
+protocol.loconet:output_keyboard=Output keyboard
 
 protocol.xpressnet:use_emergency_stop_locomotive_command=Use short emergency stop locomotive command
 protocol.xpressnet:use_function_state_commands=Use function state commands
@@ -118,16 +158,42 @@ qtapp.mainmenu:new_world=New world
 qtapp.mainmenu:objects=Objects
 qtapp.mainmenu:objects=Objects
 qtapp.mainmenu:quit=Quit
+qtapp.mainmenu:restart_server=Restart server
+qtapp.mainmenu:restart_server_question=Are you sure you want to restart the server?
 qtapp.mainmenu:save_world=Save world
+qtapp.mainmenu:server=Server
 qtapp.mainmenu:server_console=Server console
 qtapp.mainmenu:server_settings=Server settings
 qtapp.mainmenu:settings=Settings
+qtapp.mainmenu:shutdown_server=Shutdown server
+qtapp.mainmenu:shutdown_server_question=Are you sure you want to shutdown the server?
 qtapp.mainmenu:tools=Tools
 qtapp.mainmenu:view=View
+
+qtapp.message_box:no=No
+qtapp.message_box:yes=Yes
+
+qtapp.object_select_list_dialog:cancel=Cancel
+qtapp.object_select_list_dialog:ok=Ok
+qtapp.object_select_list_dialog:select_object=Select object
+
+qtapp.settings:language=Language
 
 qtapp.world_list_dialog:cancel=Cancel
 qtapp.world_list_dialog:load=Load
 qtapp.world_list_dialog:world_list=World list
+
+qtapp:grid=Grid
+qtapp:grid_dot=Dot
+qtapp:grid_line=Line
+qtapp:grid_none=None
+qtapp:zoom_in=Zoom in
+qtapp:zoom_out=Zoom out
+
+rail_vehicle:lob=LOB
+
+rail_vehicle_list:add=Add
+rail_vehicle_list:type=Type
 
 serial_flow_control:hardware=Hardware
 serial_flow_control:none=None
@@ -136,11 +202,36 @@ settings:default_world=Default world
 settings:localhost_only=Localhost only
 settings:port=Port
 
+speed_unit:kmph=km/h
+speed_unit:mph=mph
+speed_unit:mps=m/s
+
+train:direction=Direction
 train:lob=LOB
 train:speed=Speed
+train:speed_max=Maximum speed
 train:throttle_speed=Throttle speed
 train:weight=Weight
 
+vehicle.rail.freight_car:cargo_weight=Cargo weight
+vehicle.rail.freight_car:decoder=Decoder
+vehicle.rail.freight_car:lob=LOB
+vehicle.rail.freight_car:total_weight=Total weight
+vehicle.rail.freight_car:weight=Weight
+
+vehicle.rail.locomotive:decoder=Decoder
+vehicle.rail.locomotive:lob=LOB
+vehicle.rail.locomotive:speed_max=Maximum speed
+vehicle.rail.locomotive:total_weight=Total weight
+vehicle.rail.locomotive:train=Train
+vehicle.rail.locomotive:weight=Weight
+
+weight_unit:kg=kg
+weight_unit:long_tons=Long tons
+weight_unit:short_tons=Short tons
+weight_unit:ton=ton
+
+world:boards=Boards
 world:clock=Clock
 world:command_stations=Command stations
 world:decoders=Decoders
@@ -148,6 +239,7 @@ world:edit=Edit world
 world:emergency_stop=Emergency stop
 world:inputs=Inputs
 world:lua_scripts=Lua scripts
+world:outputs=Outputs
 world:rail_vehicles=Rail vehicles
 world:scale=Scale
 world:track_power_off=Track power off
@@ -155,60 +247,3 @@ world:track_power_on=Track power on
 world:trains=Trains
 
 world_list:uuid=UUID
-
-class_id:command_station.loconet_serial=LocoNet (serial)
-class_id:command_station.usb_xpressnet_interface=USB XpressNet interface
-class_id:command_station.xpressnet_serial=XpressNet (serial)
-class_id:command_station.z21=Z21
-class_id:command_station.virtual=Virtual
-
-qtapp.mainmenu:server=Server
-qtapp.mainmenu:restart_server=Restart server
-qtapp.mainmenu:restart_server_question=Are you sure you want to restart the server?
-qtapp.mainmenu:shutdown_server=Shutdown server
-qtapp.mainmenu:shutdown_server_question=Are you sure you want to shutdown the server?
-qtapp.settings:language=Language
-
-qtapp.message_box:no=No
-qtapp.message_box:yes=Yes
-
-
-rail_vehicle_list:add=Add
-class_id:vehicle.rail.locomotive=Locomotive
-class_id:vehicle.rail.freight_car=Freight car
-vehicle.rail.freight_car:decoder=Decoder
-length_unit:m=m
-vehicle.rail.freight_car:lob=LOB
-weight_unit:kg=kg
-vehicle.rail.freight_car:weight=Weight
-vehicle.rail.freight_car:cargo_weight=Cargo weight
-
-length_unit:cm=cm
-length_unit:mm=mm
-length_unit:yd=yd
-length_unit:ft=ft
-length_unit:in=in
-weight_unit:ton=ton
-weight_unit:short_tons=Short tons
-weight_unit:long_tons=Long tons
-
-vehicle.rail.freight_car:total_weight=Total weight
-train:direction=Direction
-speed_unit:mps=m/s
-speed_unit:kmph=km/h
-speed_unit:mph=mph
-train:speed_max=Maximum speed
-
-
-rail_vehicle_list:type=Type
-rail_vehicle:lob=LOB
-vehicle.rail.locomotive:decoder=Decoder
-vehicle.rail.locomotive:train=Train
-vehicle.rail.locomotive:lob=LOB
-vehicle.rail.locomotive:speed_max=Maximum speed
-vehicle.rail.locomotive:weight=Weight
-vehicle.rail.locomotive:total_weight=Total weight
-decoder_protocol:AUTO=Auto
-decoder_protocol:DCC=DCC
-decoder_protocol:CUSTOM=Custom
-
