@@ -30,18 +30,55 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
   addTile{*this, "add_tile",
-    [this](int16_t x, int16_t y, TileRotate rotate, std::string_view classId)
+    [this](int16_t x, int16_t y, TileRotate rotate, std::string_view classId, bool replace)
     {
       const TileLocation l{x, y};
       auto w = m_world.lock();
-      if(!w || m_tiles.find(l) != m_tiles.end())
+      if(!w)
         return false;
+
+      if(auto it = m_tiles.find(l); it != m_tiles.end())
+        if(!replace || !deleteTile(x, y))
+          return false;
+
       auto tile = Tiles::create(w, classId);
       if(!tile)
         return false;
+
       tile->m_location = l;
-      tile->m_data.setRotate(rotate);
-      m_tiles[l] = tile;
+      tile->setRotate(rotate);
+
+      const int16_t x2 = tile->location().x + tile->data().width();
+      const int16_t y2 = tile->location().y + tile->data().height();
+      if(tile->location().x < sizeMin || x2 >= sizeMax ||
+          tile->location().y < sizeMin || y2 >= sizeMax)
+      {
+        tile->destroy();
+        return false;
+      }
+      for(int16_t x = tile->location().x; x < x2; x++)
+        for(int16_t y = tile->location().y; y < y2; y++)
+          m_tiles[TileLocation{x, y}] = tile;
+
+      tileDataChanged(*this, tile->location(), tile->data());
+      return true;
+    }},
+  deleteTile{*this, "delete_tile",
+    [this](int16_t x, int16_t y)
+    {
+      const TileLocation l{x, y};
+      auto it = m_tiles.find(l);
+      if(it != m_tiles.end())
+      {
+        auto tile = it->second;
+        const int16_t x2 = tile->location().x + tile->data().width();
+        const int16_t y2 = tile->location().y + tile->data().height();
+        for(int16_t x = tile->location().x; x < x2; x++)
+          for(int16_t y = tile->location().y; y < y2; y++)
+            m_tiles.erase(TileLocation{x, y});
+        tileDataChanged(*this, tile->location(), TileDataLong());
+        tile->destroy();
+      }
       return true;
     }}
 {
@@ -50,6 +87,10 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
 
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
+  Attributes::addEnabled(addTile, editable);
+  m_interfaceItems.add(addTile);
+  Attributes::addEnabled(deleteTile, editable);
+  m_interfaceItems.add(deleteTile);
 }
 
 void Board::addToWorld()
@@ -58,12 +99,15 @@ void Board::addToWorld()
 
   if(auto world = m_world.lock())
     world->boards->addObject(shared_ptr<Board>());
-
 }
 
 void Board::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);
 
-  name.setAttributeEnabled(contains(state, WorldState::Edit));
+  const bool editable = contains(state, WorldState::Edit);
+
+  name.setAttributeEnabled(editable);
+  addTile.setAttributeEnabled(editable);
+  deleteTile.setAttributeEnabled(editable);
 }

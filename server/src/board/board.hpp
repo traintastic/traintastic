@@ -30,6 +30,7 @@
 #include <traintastic/board/tilerotate.hpp>
 
 class Tile;
+struct TileDataLong;
 
 class Board : public IdObject
 {
@@ -37,6 +38,9 @@ class Board : public IdObject
     using TileMap = std::unordered_map<TileLocation, std::shared_ptr<Tile>, TileLocationHash>;
 
   protected:
+    static constexpr int16_t sizeMax = 1000;
+    static constexpr int16_t sizeMin = -sizeMax;
+
     TileMap m_tiles;
 
     void addToWorld() final;
@@ -47,7 +51,10 @@ class Board : public IdObject
     CREATE(Board)
 
     Property<std::string> name;
-    Method<bool(int16_t, int16_t, TileRotate, std::string_view)> addTile;
+    Method<bool(int16_t, int16_t, TileRotate, std::string_view, bool)> addTile;
+    Method<bool(int16_t, int16_t)> deleteTile;
+
+    boost::signals2::signal<void (Board&, const TileLocation&, const TileDataLong&)> tileDataChanged;
 
     Board(const std::weak_ptr<World>& world, std::string_view _id);
 
