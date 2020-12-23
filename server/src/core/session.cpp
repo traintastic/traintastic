@@ -491,6 +491,10 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
       outputKeyboard->outputIdChanged = std::bind(&Session::outputKeyboardOutputIdChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
       outputKeyboard->outputValueChanged = std::bind(&Session::outputKeyboardOutputValueChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     }
+    else if(auto* board = dynamic_cast<Board*>(object.get()))
+    {
+      m_objectSignals.emplace(handle, board->tileDataChanged.connect(std::bind(&Session::boardTileDataChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+    }
 
     message.write(handle);
     message.write(object->getClassId());
@@ -787,5 +791,17 @@ void Session::outputKeyboardOutputValueChanged(OutputKeyboard& outputKeyboard, c
   event->write(m_handles.getHandle(outputKeyboard.shared_from_this()));
   event->write(address);
   event->write(value);
+  m_client->sendMessage(std::move(event));
+}
+
+void Session::boardTileDataChanged(Board& board, const TileLocation& location, const TileDataLong& data)
+{
+  auto event = Message::newEvent(Message::Command::BoardTileDataChanged);
+  event->write(m_handles.getHandle(board.shared_from_this()));
+  event->write(location);
+  if(data.isLong())
+    event->write(data);
+  else
+    event->write<TileData>(data);
   m_client->sendMessage(std::move(event));
 }

@@ -37,6 +37,9 @@ class AbstractProperty;
 class AbstractAttribute;
 class InputMonitor;
 class OutputKeyboard;
+class Board;
+struct TileLocation;
+struct TileDataLong;
 
 class Session : public std::enable_shared_from_this<Session>
 {
@@ -67,6 +70,8 @@ class Session : public std::enable_shared_from_this<Session>
 
     void outputKeyboardOutputIdChanged(OutputKeyboard& outputKeyboard, uint32_t address, std::string_view id);
     void outputKeyboardOutputValueChanged(OutputKeyboard& outputKeyboard, uint32_t address, TriState value);
+
+    void boardTileDataChanged(Board& board, const TileLocation& location, const TileDataLong& data);
 
   public:
     Session(const std::shared_ptr<Client>& client);

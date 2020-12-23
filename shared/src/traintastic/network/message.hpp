@@ -81,6 +81,7 @@ class Message
       OutputKeyboardOutputValueChanged = 36,
 
       BoardGetTileData = 37,
+      BoardTileDataChanged = 38,
 
       Discover = 255,
     };
