@@ -14,7 +14,7 @@ def format_lang_file(filename):
         else:
             break
 
-    r = re.compile(r'^(#|)(([a-z0-9_\.:]*):([a-z0-9_-]+))=(.*)$')
+    r = re.compile(r'^(#|)(([a-z0-9_\.:]*):([a-z0-9_\.-]+))=(.*)$')
     strings = []
     garbage = ''
     for line in lines:
