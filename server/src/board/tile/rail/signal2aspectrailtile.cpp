@@ -23,6 +23,6 @@
 #include "signal2aspectrailtile.hpp"
 
 Signal2AspectRailTile::Signal2AspectRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
-  SignalRailTile(world, _id, TileId::RailSignal3Aspect)
+  SignalRailTile(world, _id, TileId::RailSignal2Aspect)
 {
 }
