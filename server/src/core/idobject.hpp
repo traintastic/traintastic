@@ -48,6 +48,7 @@ class IdObject : public Object
     std::weak_ptr<World> m_world;
 
     IdObject(const std::weak_ptr<World>& world, std::string_view _id);
+    void destroying() override;
     virtual void addToWorld();
     void worldEvent(WorldState state, WorldEvent event) override;
     virtual void idChanged(const std::string& id) {}

@@ -57,14 +57,15 @@ IdObject::~IdObject()
 {
   assert(m_world.expired());
 }
-/*
-void IdObject::destroy()
+
+void IdObject::destroying()
 {
   if(auto world = m_world.lock())
     world->m_objects.erase(id);
   m_world.reset();
+  Object::destroying();
 }
-*/
+
 void IdObject::addToWorld()
 {
   if(auto world = m_world.lock())
