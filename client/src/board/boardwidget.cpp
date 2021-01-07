@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,7 +41,7 @@ struct TileInfo
   uint8_t rotates;
 };
 
-const std::array<TileInfo, 22> tileInfo = {
+const std::array<TileInfo, 26> tileInfo = {
   TileInfo{QStringLiteral("board_tile.rail.straight"), 0xFF},
   TileInfo{QStringLiteral("board_tile.rail.buffer_stop"), 0xFF},
   TileInfo{QStringLiteral(""), 0},
@@ -51,8 +51,12 @@ const std::array<TileInfo, 22> tileInfo = {
   TileInfo{QStringLiteral("board_tile.rail.cross_45"), 0x03},
   TileInfo{QStringLiteral("board_tile.rail.cross_90"), 0x03},
   TileInfo{QStringLiteral(""), 0},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_left"), 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_right"), 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.turnout_left_45"), 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.turnout_left_90"), 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.turnout_left_curved"), 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.turnout_right_45"), 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.turnout_right_90"), 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.turnout_right_curved"), 0xFF},
   TileInfo{QStringLiteral("board_tile.rail.turnout_wye"), 0xFF},
   TileInfo{QStringLiteral("board_tile.rail.turnout_3way"), 0xFF},
   TileInfo{QStringLiteral("board_tile.rail.turnout_singleslip"), 0xFF},

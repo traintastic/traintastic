@@ -1,9 +1,9 @@
 /**
- * shared/src/traintastic/board/tileid.hpp
+ * server/src/board/tile/rail/turnoutleftcurvedrailtile.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,36 +20,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_BOARD_TILEID_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_BOARD_TILEID_HPP
+#ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUTLEFTCURVEDRAILTILE_HPP
+#define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUTLEFTCURVEDRAILTILE_HPP
 
-#include <cstdint>
+#include "turnoutleftrailtile.hpp"
 
-enum class TileId : uint16_t // 10 bit
+class TurnoutLeftCurvedRailTile : public TurnoutLeftRailTile
 {
-  None = 0,
-  RailStraight = 1,
-  RailCurve45 = 2,
-  RailCurve90 = 3,
-  RailCross45 = 4,
-  RailCross90 = 5,
-  RailTurnoutLeft45 = 6,
-  RailTurnoutRight45 = 7,
-  RailTurnoutWye = 8,
-  RailTurnout3Way = 9,
-  RailTurnoutSingleSlip = 10,
-  RailTurnoutDoubleSlip = 11,
-  RailSignal2Aspect = 12,
-  RailSignal3Aspect = 13,
-  RailBufferStop = 14,
-  RailSensor = 15,
-  RailBlock = 16,
-  RailTurnoutLeft90 = 17,
-  RailTurnoutRight90 = 18,
-  RailTurnoutLeftCurved = 19,
-  RailTurnoutRightCurved = 20,
+  CLASS_ID("board_tile.rail.turnout_left_curved")
+  CREATE(TurnoutLeftCurvedRailTile)
 
-  ReservedForFutureExpension = 1023
+  public:
+    TurnoutLeftCurvedRailTile(const std::weak_ptr<World>& world, std::string_view _id);
 };
 
 #endif

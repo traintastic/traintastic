@@ -27,11 +27,8 @@
 
 class TurnoutRightRailTile : public TurnoutRailTile
 {
-  public:
-    CLASS_ID("board_tile.rail.turnout_right")
-    CREATE(TurnoutRightRailTile)
-
-    TurnoutRightRailTile(const std::weak_ptr<World>& world, std::string_view _id);
+  protected:
+    TurnoutRightRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
 };
 
 #endif

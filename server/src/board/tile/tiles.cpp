@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,8 +31,12 @@ std::shared_ptr<Tile> Tiles::create(const std::shared_ptr<World>& world, std::st
   IF_CLASSID_CREATE(Curve90RailTile)
   IF_CLASSID_CREATE(Cross45RailTile)
   IF_CLASSID_CREATE(Cross90RailTile)
-  IF_CLASSID_CREATE(TurnoutLeftRailTile)
-  IF_CLASSID_CREATE(TurnoutRightRailTile)
+  IF_CLASSID_CREATE(TurnoutLeft45RailTile)
+  IF_CLASSID_CREATE(TurnoutLeft90RailTile)
+  IF_CLASSID_CREATE(TurnoutLeftCurvedRailTile)
+  IF_CLASSID_CREATE(TurnoutRight45RailTile)
+  IF_CLASSID_CREATE(TurnoutRight90RailTile)
+  IF_CLASSID_CREATE(TurnoutRightCurvedRailTile)
   IF_CLASSID_CREATE(TurnoutWyeRailTile)
   IF_CLASSID_CREATE(Turnout3WayRailTile)
   IF_CLASSID_CREATE(TurnoutSingleSlipRailTile)

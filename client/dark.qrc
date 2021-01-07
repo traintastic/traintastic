@@ -20,10 +20,14 @@
         <file alias="board_tile.rail.curve_90.svg">gfx/dark/board_tile.rail.curve_90.svg</file>
         <file alias="board_tile.rail.cross_45.svg">gfx/dark/board_tile.rail.cross_45.svg</file>
         <file alias="board_tile.rail.cross_90.svg">gfx/dark/board_tile.rail.cross_90.svg</file>
-        <file alias="board_tile.rail.turnout_right.svg">gfx/dark/board_tile.rail.turnout_right.svg</file>
+        <file alias="board_tile.rail.turnout_right_45.svg">gfx/dark/board_tile.rail.turnout_right_45.svg</file>
+        <file alias="board_tile.rail.turnout_right_90.svg">gfx/dark/board_tile.rail.turnout_right_90.svg</file>
+        <file alias="board_tile.rail.turnout_right_curved.svg">gfx/dark/board_tile.rail.turnout_right_curved.svg</file>
         <file alias="board_tile.rail.turnout_wye.svg">gfx/dark/board_tile.rail.turnout_wye.svg</file>
         <file alias="board_tile.rail.turnout_3way.svg">gfx/dark/board_tile.rail.turnout_3way.svg</file>
-        <file alias="board_tile.rail.turnout_left.svg">gfx/dark/board_tile.rail.turnout_left.svg</file>
+        <file alias="board_tile.rail.turnout_left_45.svg">gfx/dark/board_tile.rail.turnout_left_45.svg</file>
+        <file alias="board_tile.rail.turnout_left_90.svg">gfx/dark/board_tile.rail.turnout_left_90.svg</file>
+        <file alias="board_tile.rail.turnout_left_curved.svg">gfx/dark/board_tile.rail.turnout_left_curved.svg</file>
         <file alias="board_tile.rail.turnout_doubleslip.svg">gfx/dark/board_tile.rail.turnout_doubleslip.svg</file>
         <file alias="board_tile.rail.turnout_singleslip.svg">gfx/dark/board_tile.rail.turnout_singleslip.svg</file>
         <file alias="board_tile.rail.buffer_stop.svg">gfx/dark/board_tile.rail.buffer_stop.svg</file>

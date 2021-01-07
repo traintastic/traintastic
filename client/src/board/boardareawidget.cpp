@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -260,20 +260,40 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           Tile::drawStraight(painter, r, a + TileRotate::Deg90);
           break;
 
-        case TileId::RailTurnoutLeft:
+        case TileId::RailTurnoutLeft45:
           painter.setPen(trackPen);
-          Tile::drawStraight(painter, r, it.second.rotate());
-          Tile::drawCurve45(painter, r, it.second.rotate());
-          painter.setPen(turnoutStatePen);
-          Tile::drawCurve45(painter, r.adjusted(2, 2, -2, -2), it.second.rotate());
+          Tile::drawStraight(painter, r, a);
+          Tile::drawCurve45(painter, r, a);
           break;
 
-        case TileId::RailTurnoutRight:
+        case TileId::RailTurnoutLeft90:
           painter.setPen(trackPen);
-          Tile::drawStraight(painter, r, it.second.rotate());
-          Tile::drawCurve45(painter, r, it.second.rotate() + TileRotate::Deg225);
-          painter.setPen(turnoutStatePen);
-          Tile::drawStraight(painter, r.adjusted(2, 2, -2, -2), it.second.rotate());
+          Tile::drawStraight(painter, r, a);
+          Tile::drawCurve90(painter, r, a);
+          break;
+
+        case TileId::RailTurnoutLeftCurved:
+          painter.setPen(trackPen);
+          Tile::drawCurve45(painter, r, a);
+          Tile::drawCurve90(painter, r, a);
+          break;
+
+        case TileId::RailTurnoutRight45:
+          painter.setPen(trackPen);
+          Tile::drawStraight(painter, r, a);
+          Tile::drawCurve45(painter, r, a + TileRotate::Deg225);
+          break;
+
+        case TileId::RailTurnoutRight90:
+          painter.setPen(trackPen);
+          Tile::drawStraight(painter, r, a);
+          Tile::drawCurve90(painter, r, a + TileRotate::Deg270);
+          break;
+
+        case TileId::RailTurnoutRightCurved:
+          painter.setPen(trackPen);
+          Tile::drawCurve45(painter, r, a + TileRotate::Deg225);
+          Tile::drawCurve90(painter, r, a + TileRotate::Deg270);
           break;
 
         case TileId::RailTurnoutWye:

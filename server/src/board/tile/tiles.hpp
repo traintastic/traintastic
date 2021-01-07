@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,8 +30,12 @@
 #include "rail/curve90railtile.hpp"
 #include "rail/cross45railtile.hpp"
 #include "rail/cross90railtile.hpp"
-#include "rail/turnoutleftrailtile.hpp"
-#include "rail/turnoutrightrailtile.hpp"
+#include "rail/turnoutleft45railtile.hpp"
+#include "rail/turnoutleft90railtile.hpp"
+#include "rail/turnoutleftcurvedrailtile.hpp"
+#include "rail/turnoutright45railtile.hpp"
+#include "rail/turnoutright90railtile.hpp"
+#include "rail/turnoutrightcurvedrailtile.hpp"
 #include "rail/turnoutwyerailtile.hpp"
 #include "rail/turnout3wayrailtile.hpp"
 #include "rail/turnoutsinglesliprailtile.hpp"
@@ -52,8 +56,12 @@ struct Tiles
     Curve90RailTile::classId,
     Cross45RailTile::classId,
     Cross90RailTile::classId,
-    TurnoutLeftRailTile::classId,
-    TurnoutRightRailTile::classId,
+    TurnoutLeft45RailTile::classId,
+    TurnoutLeft90RailTile::classId,
+    TurnoutLeftCurvedRailTile::classId,
+    TurnoutRight45RailTile::classId,
+    TurnoutRight90RailTile::classId,
+    TurnoutRightCurvedRailTile::classId,
     TurnoutWyeRailTile::classId,
     Turnout3WayRailTile::classId,
     TurnoutSingleSlipRailTile::classId,
