@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,13 +24,21 @@
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_SIGNALRAILTILE_HPP
 
 #include "straightrailtile.hpp"
+#include "../../../core/method.hpp"
+#include "../../../enum/signalaspect.hpp"
 
 class SignalRailTile : public StraightRailTile
 {
   DEFAULT_ID("signal")
 
-  public:
+  protected:
     SignalRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
+
+    virtual void doNextAspect(bool reverse) = 0;
+
+  public:
+    Property<SignalAspect> aspect;
+    Method<void(bool)> nextAspect;
 };
 
 #endif

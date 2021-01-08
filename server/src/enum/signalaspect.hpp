@@ -1,5 +1,5 @@
 /**
- * server/src/board/tile/rail/signalrailtile.cpp
+ * server/src/enum/signalaspect.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,16 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "signalrailtile.hpp"
-#include "../../../core/attributes.hpp"
+#ifndef TRAINTASTIC_SERVER_ENUM_SIGNALASPECT_HPP
+#define TRAINTASTIC_SERVER_ENUM_SIGNALASPECT_HPP
 
-SignalRailTile::SignalRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId) :
-  StraightRailTile(world, _id, tileId),
-  aspect{this, "aspect", SignalAspect::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
-  nextAspect{*this, "next_aspect", [this](bool reverse){ doNextAspect(reverse); }}
-{
-  Attributes::addObjectEditor(aspect, false);
+#include <traintastic/enum/signalaspect.hpp>
 
-  m_interfaceItems.add(aspect);
-  m_interfaceItems.add(nextAspect);
-}
+#endif

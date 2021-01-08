@@ -1,5 +1,5 @@
 /**
- * server/src/board/tile/rail/signalrailtile.cpp
+ * shared/src/traintastic/enum/signalaspect.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,16 +20,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "signalrailtile.hpp"
-#include "../../../core/attributes.hpp"
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_SIGNALASPECT_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_SIGNALASPECT_HPP
 
-SignalRailTile::SignalRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId) :
-  StraightRailTile(world, _id, tileId),
-  aspect{this, "aspect", SignalAspect::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
-  nextAspect{*this, "next_aspect", [this](bool reverse){ doNextAspect(reverse); }}
+#include <cstdint>
+#include "enum.hpp"
+
+enum class SignalAspect : uint8_t
 {
-  Attributes::addObjectEditor(aspect, false);
+  Unknown = 0,
+  Stop = 1,
+  Proceed = 2,
+  ProceedReducedSpeed = 3,
+};
 
-  m_interfaceItems.add(aspect);
-  m_interfaceItems.add(nextAspect);
-}
+template<>
+struct EnumName<SignalAspect>
+{
+  static constexpr char const* value = "signal_aspect";
+};
+
+ENUM_VALUES(SignalAspect, 4,
+{
+  {SignalAspect::Unknown, "unknown"},
+  {SignalAspect::Stop, "stop"},
+  {SignalAspect::Proceed, "proceed"},
+  {SignalAspect::ProceedReducedSpeed, "proceed_reduced_speed"},
+})
+
+#endif

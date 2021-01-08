@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,8 +21,17 @@
  */
 
 #include "signal2aspectrailtile.hpp"
+#include "../../../core/attributes.hpp"
+#include "../../../utils/makearray.hpp"
 
 Signal2AspectRailTile::Signal2AspectRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
   SignalRailTile(world, _id, TileId::RailSignal2Aspect)
 {
+  Attributes::addValues(aspect, makeArray(SignalAspect::Stop, SignalAspect::Proceed, SignalAspect::Unknown));
+  m_interfaceItems.add(aspect);
+}
+
+void Signal2AspectRailTile::doNextAspect(bool)
+{
+  aspect = (aspect == SignalAspect::Stop) ? SignalAspect::Proceed : SignalAspect::Stop;
 }

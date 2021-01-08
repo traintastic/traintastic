@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,8 +21,38 @@
  */
 
 #include "signal3aspectrailtile.hpp"
+#include "../../../core/attributes.hpp"
+#include "../../../utils/makearray.hpp"
 
 Signal3AspectRailTile::Signal3AspectRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
   SignalRailTile(world, _id, TileId::RailSignal3Aspect)
 {
+  Attributes::addValues(aspect, makeArray(SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed, SignalAspect::Unknown));
+  m_interfaceItems.add(aspect);
+}
+
+void Signal3AspectRailTile::doNextAspect(bool reverse)
+{
+  switch(aspect)
+  {
+    case SignalAspect::Unknown:
+      aspect = SignalAspect::Stop;
+      break;
+
+    case SignalAspect::Stop:
+      aspect = reverse ? SignalAspect::Proceed : SignalAspect::ProceedReducedSpeed;
+      break;
+
+    case SignalAspect::ProceedReducedSpeed:
+      aspect = reverse ? SignalAspect::Stop : SignalAspect::Proceed;
+      break;
+
+    case SignalAspect::Proceed:
+      aspect = reverse ? SignalAspect::ProceedReducedSpeed : SignalAspect::Stop;
+      break;
+
+    default:
+      assert(false);
+      break;
+  }
 }
