@@ -1,9 +1,9 @@
 /**
- * server/src/board/tile/rail/turnoutrailtile.hpp
+ * shared/src/traintastic/enum/turnoutposition.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,25 +20,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUTRAILTILE_HPP
-#define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUTRAILTILE_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_TURNOUTPOSITION_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_TURNOUTPOSITION_HPP
 
-#include "railtile.hpp"
-#include "../../../core/method.hpp"
-#include "../../../enum/turnoutposition.hpp"
+#include <cstdint>
+#include "enum.hpp"
 
-class TurnoutRailTile : public RailTile
+enum class TurnoutPosition : uint8_t
 {
-  DEFAULT_ID("turnout")
-
-  protected:
-    TurnoutRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
-
-    virtual void doNextPosition(bool reverse) = 0;
-
-  public:
-    Property<TurnoutPosition> position;
-    Method<void(bool)> nextPosition;
+  Unknown = 0,
+  Straight = 1,
+  Left = 2,
+  Right = 3,
+  Crossed = 4,
+  Diverged = 5,
 };
+
+template<>
+struct EnumName<TurnoutPosition>
+{
+  static constexpr char const* value = "turnout_position";
+};
+
+ENUM_VALUES(TurnoutPosition, 6,
+{
+  {TurnoutPosition::Unknown, "unknown"},
+  {TurnoutPosition::Straight, "straight"},
+  {TurnoutPosition::Left, "left"},
+  {TurnoutPosition::Right, "right"},
+  {TurnoutPosition::Crossed, "crossed"},
+  {TurnoutPosition::Diverged, "diverged"}
+})
 
 #endif

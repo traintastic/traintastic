@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,8 +21,17 @@
  */
 
 #include "turnoutrightrailtile.hpp"
+#include "../../../core/attributes.hpp"
+#include "../../../utils/makearray.hpp"
 
 TurnoutRightRailTile::TurnoutRightRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId) :
   TurnoutRailTile(world, _id, tileId)
 {
+  Attributes::addValues(position, makeArray(TurnoutPosition::Straight, TurnoutPosition::Right, TurnoutPosition::Unknown));
+  m_interfaceItems.add(position);
+}
+
+void TurnoutRightRailTile::doNextPosition(bool)
+{
+  position = (position == TurnoutPosition::Straight) ? TurnoutPosition::Right : TurnoutPosition::Straight;
 }

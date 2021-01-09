@@ -1,9 +1,9 @@
 /**
- * server/src/board/tile/rail/turnoutrailtile.hpp
+ * server/src/enum/turnoutposition.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,25 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUTRAILTILE_HPP
-#define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUTRAILTILE_HPP
+#ifndef TRAINTASTIC_SERVER_ENUM_TURNOUTPOSITION_HPP
+#define TRAINTASTIC_SERVER_ENUM_TURNOUTPOSITION_HPP
 
-#include "railtile.hpp"
-#include "../../../core/method.hpp"
-#include "../../../enum/turnoutposition.hpp"
-
-class TurnoutRailTile : public RailTile
-{
-  DEFAULT_ID("turnout")
-
-  protected:
-    TurnoutRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
-
-    virtual void doNextPosition(bool reverse) = 0;
-
-  public:
-    Property<TurnoutPosition> position;
-    Method<void(bool)> nextPosition;
-};
+#include <traintastic/enum/turnoutposition.hpp>
 
 #endif

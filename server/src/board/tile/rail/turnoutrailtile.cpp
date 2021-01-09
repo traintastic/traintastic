@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,8 +21,14 @@
  */
 
 #include "turnoutrailtile.hpp"
+#include "../../../core/attributes.hpp"
 
 TurnoutRailTile::TurnoutRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId) :
-  RailTile(world, _id, tileId)
+  RailTile(world, _id, tileId),
+  position{this, "position", TurnoutPosition::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
+  nextPosition{*this, "next_position", [this](bool reverse){ doNextPosition(reverse); }}
 {
+  Attributes::addObjectEditor(position, false);
+
+  m_interfaceItems.add(nextPosition);
 }

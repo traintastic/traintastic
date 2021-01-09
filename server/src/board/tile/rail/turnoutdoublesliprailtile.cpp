@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,8 +21,17 @@
  */
 
 #include "turnoutdoublesliprailtile.hpp"
+#include "../../../core/attributes.hpp"
+#include "../../../utils/makearray.hpp"
 
 TurnoutDoubleSlipRailTile::TurnoutDoubleSlipRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
   TurnoutRailTile(world, _id, TileId::RailTurnoutDoubleSlip)
 {
+  Attributes::addValues(position, makeArray(TurnoutPosition::Crossed, TurnoutPosition::Diverged, TurnoutPosition::Unknown));
+  m_interfaceItems.add(position);
+}
+
+void TurnoutDoubleSlipRailTile::doNextPosition(bool)
+{
+  position = (position == TurnoutPosition::Crossed) ? TurnoutPosition::Diverged : TurnoutPosition::Crossed;
 }

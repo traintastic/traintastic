@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,9 @@
 
 class TurnoutSingleSlipRailTile : public TurnoutRailTile
 {
+  protected:
+    void doNextPosition(bool reverse) final;
+
   public:
     CLASS_ID("board_tile.rail.turnout_singleslip")
     CREATE(TurnoutSingleSlipRailTile)
