@@ -34,9 +34,12 @@ class SignalRailTile : public StraightRailTile
   protected:
     SignalRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
 
+    void worldEvent(WorldState state, WorldEvent event) override;
+
     virtual void doNextAspect(bool reverse) = 0;
 
   public:
+    Property<std::string> name;
     Property<SignalAspect> aspect;
     Method<void(bool)> nextAspect;
 };

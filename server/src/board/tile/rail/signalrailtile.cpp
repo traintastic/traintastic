@@ -22,13 +22,29 @@
 
 #include "signalrailtile.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../world/getworld.hpp"
 
 SignalRailTile::SignalRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId) :
   StraightRailTile(world, _id, tileId),
+  name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store},
   aspect{this, "aspect", SignalAspect::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
   nextAspect{*this, "next_aspect", [this](bool reverse){ doNextAspect(reverse); }}
 {
+  auto w = world.lock();
+  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+
+  Attributes::addEnabled(name, editable);
+  m_interfaceItems.add(name);
   Attributes::addObjectEditor(aspect, false);
 
   m_interfaceItems.add(nextAspect);
+}
+
+void SignalRailTile::worldEvent(WorldState state, WorldEvent event)
+{
+  StraightRailTile::worldEvent(state, event);
+
+  const bool editable = contains(state, WorldState::Edit);
+
+  name.setAttributeEnabled(editable);
 }
