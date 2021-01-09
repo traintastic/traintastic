@@ -94,13 +94,13 @@ void ObjectEditWidget::buildForm()
     {
       if(InterfaceItem* item = m_object->getInterfaceItem(name))
       {
+        if(!item->getAttributeBool(AttributeName::ObjectEditor, true))
+          continue;
+
         QWidget* w = nullptr;
 
         if(AbstractProperty* baseProperty = dynamic_cast<AbstractProperty*>(item))
         {
-          if(!baseProperty->getAttributeBool(AttributeName::ObjectEditor, true))
-            continue;
-
           if(baseProperty->type() == ValueType::Object)
           {
             ObjectProperty* property = static_cast<ObjectProperty*>(baseProperty);
