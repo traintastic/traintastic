@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,9 +34,12 @@ class TurnoutRailTile : public RailTile
   protected:
     TurnoutRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
 
+    void worldEvent(WorldState state, WorldEvent event) override;
+
     virtual void doNextPosition(bool reverse) = 0;
 
   public:
+    Property<std::string> name;
     Property<TurnoutPosition> position;
     Method<void(bool)> nextPosition;
 };

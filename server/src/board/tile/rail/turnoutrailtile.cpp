@@ -22,13 +22,29 @@
 
 #include "turnoutrailtile.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../world/world.hpp"
 
 TurnoutRailTile::TurnoutRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId) :
   RailTile(world, _id, tileId),
+  name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store},
   position{this, "position", TurnoutPosition::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
   nextPosition{*this, "next_position", [this](bool reverse){ doNextPosition(reverse); }}
 {
+  auto w = world.lock();
+  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+
+  Attributes::addEnabled(name, editable);
+  m_interfaceItems.add(name);
   Attributes::addObjectEditor(position, false);
   Attributes::addObjectEditor(nextPosition, false);
   m_interfaceItems.add(nextPosition);
+}
+
+void TurnoutRailTile::worldEvent(WorldState state, WorldEvent event)
+{
+  RailTile::worldEvent(state, event);
+
+  const bool editable = contains(state, WorldState::Edit);
+
+  name.setAttributeEnabled(editable);
 }
