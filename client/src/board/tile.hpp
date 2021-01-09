@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 
 #include <QPainter>
 #include <traintastic/board/tilerotate.hpp>
+#include <traintastic/enum/signalaspect.hpp>
 
 struct Tile
 {
@@ -38,8 +39,8 @@ struct Tile
 
   static void drawBufferStop(QPainter& painter, const QRectF& r, TileRotate rotate);
 
-  static void drawSignal2Aspect(QPainter& painter, QRectF r, TileRotate rotate);
-  static void drawSignal3Aspect(QPainter& painter, QRectF r, TileRotate rotate);
+  static void drawSignal2Aspect(QPainter& painter, QRectF r, TileRotate rotate, SignalAspect aspect);
+  static void drawSignal3Aspect(QPainter& painter, QRectF r, TileRotate rotate, SignalAspect aspect);
 };
 
 #endif

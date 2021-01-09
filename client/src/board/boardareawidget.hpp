@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,8 @@
 
 #include <QWidget>
 #include <traintastic/board/tilelocation.hpp>
+#include <traintastic/enum/signalaspect.hpp>
+#include <traintastic/enum/turnoutposition.hpp>
 
 class BoardWidget;
 
@@ -53,6 +55,8 @@ class BoardAreaWidget : public QWidget
     TileLocation m_mouseMoveTileLocation;
 
     int getTileSize() const { return 25 + m_zoomLevel * 5; }
+    TurnoutPosition getTurnoutPosition(const TileLocation& l) const;
+    SignalAspect getSignalAspect(const TileLocation& l) const;
     TileLocation pointToTileLocation(const QPoint& p);
 
     void keyPressEvent(QKeyEvent* event) final;

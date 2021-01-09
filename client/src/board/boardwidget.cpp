@@ -34,6 +34,7 @@
 #include "../network/board.hpp"
 #include "../network/connection.hpp"
 #include "../network/property.hpp"
+#include "../network/callmethod.hpp"
 
 struct TileInfo
 {
@@ -152,6 +153,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   m_editActionMove = m_editActions->addAction(m_toolbarEdit->addAction(QIcon(":/dark/move_tile.svg"), Locale::tr("board:move_tile")));
   m_editActionMove->setCheckable(true);
   m_editActionMove->setData(-1);
+  m_editActionMove->setEnabled(false); // todo: implement
 
   m_editActionDelete = m_editActions->addAction(m_toolbarEdit->addAction(QIcon(":/dark/delete.svg"), Locale::tr("board:delete_tile")));
   m_editActionDelete->setCheckable(true);
@@ -305,6 +307,26 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
           [this](const bool& r, Message::ErrorCode ec)
           {
           });
+    }
+  }
+  else
+  {
+    auto it = m_object->tileData().find({x, y});
+    if(it != m_object->tileData().end())
+    {
+      if(ObjectPtr obj = m_object->getTileObject({x, y}))
+      {
+        if(isRailTurnout(it->second.id()))
+        {
+          if(auto* m = obj->getMethod("next_position"))
+            callMethod(*m, nullptr, false);
+        }
+        else if(isRailSignal(it->second.id()))
+        {
+          if(auto* m = obj->getMethod("next_aspect"))
+            callMethod(*m, nullptr, false);
+        }
+      }
     }
   }
 }

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -204,7 +204,7 @@ void Tile::drawBufferStop(QPainter& painter, const QRectF& r, TileRotate rotate)
   }
 }
 
-void Tile::drawSignal2Aspect(QPainter& painter, QRectF r, TileRotate rotate)
+void Tile::drawSignal2Aspect(QPainter& painter, QRectF r, TileRotate rotate, SignalAspect aspect)
 {
   painter.save();
   painter.translate(r.center());
@@ -229,17 +229,26 @@ void Tile::drawSignal2Aspect(QPainter& painter, QRectF r, TileRotate rotate)
   painter.drawPath(path);
 
   painter.setPen(Qt::NoPen);
+  switch(aspect)
+  {
+    case SignalAspect::Stop:
+      painter.setBrush(signalRed);
+      painter.drawEllipse(QPointF{r.center().x(), r.center().y() - lampRadius}, lampRadius, lampRadius);
+      break;
 
-  painter.setBrush(signalRed);
-  painter.drawEllipse(QPointF{r.center().x(), r.center().y() - lampRadius}, lampRadius, lampRadius);
+    case SignalAspect::Proceed:
+      painter.setBrush(signalGreen);
+      painter.drawEllipse(QPointF{r.center().x(), r.center().y() + lampRadius}, lampRadius, lampRadius);
+      break;
 
-  painter.setBrush(signalGreen);
-  painter.drawEllipse(QPointF{r.center().x(), r.center().y() + lampRadius}, lampRadius, lampRadius);
+    default:
+      break;
+  }
 
   painter.restore();
 }
 
-void Tile::drawSignal3Aspect(QPainter& painter, QRectF r, TileRotate rotate)
+void Tile::drawSignal3Aspect(QPainter& painter, QRectF r, TileRotate rotate, SignalAspect aspect)
 {
   painter.save();
   painter.translate(r.center());
@@ -264,15 +273,26 @@ void Tile::drawSignal3Aspect(QPainter& painter, QRectF r, TileRotate rotate)
   painter.drawPath(path);
 
   painter.setPen(Qt::NoPen);
+  switch(aspect)
+  {
+    case SignalAspect::Stop:
+      painter.setBrush(signalRed);
+      painter.drawEllipse(QPointF{r.center().x(), r.center().y() - 2 * lampRadius}, lampRadius, lampRadius);
+      break;
 
-  painter.setBrush(signalRed);
-  painter.drawEllipse(QPointF{r.center().x(), r.center().y() - 2 * lampRadius}, lampRadius, lampRadius);
+    case SignalAspect::ProceedReducedSpeed:
+      painter.setBrush(signalYellow);
+      painter.drawEllipse(r.center(), lampRadius, lampRadius);
+      break;
 
-  painter.setBrush(signalYellow);
-  painter.drawEllipse(r.center(), lampRadius, lampRadius);
+    case SignalAspect::Proceed:
+      painter.setBrush(signalGreen);
+      painter.drawEllipse(QPointF{r.center().x(), r.center().y() + 2 * lampRadius}, lampRadius, lampRadius);
+      break;
 
-  painter.setBrush(signalGreen);
-  painter.drawEllipse(QPointF{r.center().x(), r.center().y() + 2 * lampRadius}, lampRadius, lampRadius);
+    default:
+      break;
+  }
 
   painter.restore();
 }

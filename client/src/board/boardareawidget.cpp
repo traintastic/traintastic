@@ -29,6 +29,7 @@
 #include "boardwidget.hpp"
 #include "tile.hpp"
 #include "../network/board.hpp"
+#include "../network/abstractproperty.hpp"
 #include "../utils/rectf.hpp"
 
 QRect rectToViewport(const QRect& r, const int gridSize)
@@ -96,6 +97,22 @@ void BoardAreaWidget::setZoomLevel(int value)
     update();
     emit zoomLevelChanged(m_zoomLevel);
   }
+}
+
+TurnoutPosition BoardAreaWidget::getTurnoutPosition(const TileLocation& l) const
+{
+  if(ObjectPtr object = m_board.board().getTileObject(l))
+    if(const auto* p = object->getProperty("position"))
+      return p->toEnum<TurnoutPosition>();
+  return TurnoutPosition::Unknown;
+}
+
+SignalAspect BoardAreaWidget::getSignalAspect(const TileLocation& l) const
+{
+  if(ObjectPtr object = m_board.board().getTileObject(l))
+    if(const auto* p = object->getProperty("aspect"))
+      return p->toEnum<SignalAspect>();
+  return SignalAspect::Unknown;
 }
 
 TileLocation BoardAreaWidget::pointToTileLocation(const QPoint& p)
@@ -184,6 +201,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
   const int tileSize = getTileSize();
   const int gridSize = tileSize - 1;
   const int trackWidth = tileSize / 5;
+  const int switchMargin = tileSize / 10;
   const QPen trackPen(trackColor, trackWidth, Qt::SolidLine, Qt::FlatCap);
   const QPen turnoutStatePen(Qt::blue, (trackWidth + 1) / 2, Qt::SolidLine, Qt::FlatCap);
   const QPen blockPen{trackColor};
@@ -264,44 +282,147 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           painter.setPen(trackPen);
           Tile::drawStraight(painter, r, a);
           Tile::drawCurve45(painter, r, a);
+
+          painter.setPen(turnoutStatePen);
+          switch(getTurnoutPosition(it.first))
+          {
+            case TurnoutPosition::Straight:
+              Tile::drawStraight(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a);
+              break;
+
+            case TurnoutPosition::Left:
+              Tile::drawCurve45(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a);
+              break;
+
+            default:
+              break;
+          }
           break;
 
         case TileId::RailTurnoutLeft90:
           painter.setPen(trackPen);
           Tile::drawStraight(painter, r, a);
           Tile::drawCurve90(painter, r, a);
+
+          painter.setPen(turnoutStatePen);
+          switch(getTurnoutPosition(it.first))
+          {
+            case TurnoutPosition::Straight:
+              Tile::drawStraight(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a);
+              break;
+
+            case TurnoutPosition::Left:
+              Tile::drawCurve90(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a);
+              break;
+
+            default:
+              break;
+          }
           break;
 
         case TileId::RailTurnoutLeftCurved:
           painter.setPen(trackPen);
           Tile::drawCurve45(painter, r, a);
           Tile::drawCurve90(painter, r, a);
+
+          painter.setPen(turnoutStatePen);
+          switch(getTurnoutPosition(it.first))
+          {
+            case TurnoutPosition::Straight:
+              Tile::drawCurve45(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a);
+              break;
+
+            case TurnoutPosition::Left:
+              Tile::drawCurve90(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a);
+              break;
+
+            default:
+              break;
+          }
           break;
 
         case TileId::RailTurnoutRight45:
           painter.setPen(trackPen);
           Tile::drawStraight(painter, r, a);
           Tile::drawCurve45(painter, r, a + TileRotate::Deg225);
+
+          painter.setPen(turnoutStatePen);
+          switch(getTurnoutPosition(it.first))
+          {
+            case TurnoutPosition::Straight:
+              Tile::drawStraight(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a);
+              break;
+
+            case TurnoutPosition::Right:
+              Tile::drawCurve45(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a + TileRotate::Deg225);
+              break;
+
+            default:
+              break;
+          }
           break;
 
         case TileId::RailTurnoutRight90:
           painter.setPen(trackPen);
           Tile::drawStraight(painter, r, a);
           Tile::drawCurve90(painter, r, a + TileRotate::Deg270);
+
+          painter.setPen(turnoutStatePen);
+          switch(getTurnoutPosition(it.first))
+          {
+            case TurnoutPosition::Straight:
+              Tile::drawStraight(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a);
+              break;
+
+            case TurnoutPosition::Right:
+              Tile::drawCurve90(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a + TileRotate::Deg270);
+              break;
+
+            default:
+              break;
+          }
           break;
 
         case TileId::RailTurnoutRightCurved:
           painter.setPen(trackPen);
           Tile::drawCurve45(painter, r, a + TileRotate::Deg225);
           Tile::drawCurve90(painter, r, a + TileRotate::Deg270);
+
+          painter.setPen(turnoutStatePen);
+          switch(getTurnoutPosition(it.first))
+          {
+            case TurnoutPosition::Straight:
+              Tile::drawCurve45(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a + TileRotate::Deg225);
+              break;
+
+            case TurnoutPosition::Right:
+              Tile::drawCurve90(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a + TileRotate::Deg270);
+              break;
+
+            default:
+              break;
+          }
           break;
 
         case TileId::RailTurnoutWye:
           painter.setPen(trackPen);
           Tile::drawCurve45(painter, r, it.second.rotate());
           Tile::drawCurve45(painter, r, it.second.rotate() + TileRotate::Deg225);
+
           painter.setPen(turnoutStatePen);
-          Tile::drawCurve45(painter, r.adjusted(2, 2, -2, -2), it.second.rotate() + TileRotate::Deg225);
+          switch(getTurnoutPosition(it.first))
+          {
+            case TurnoutPosition::Left:
+              Tile::drawCurve45(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), it.second.rotate());
+              break;
+
+            case TurnoutPosition::Right:
+              Tile::drawCurve45(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), it.second.rotate() + TileRotate::Deg225);
+              break;
+
+            default:
+              break;
+          }
           break;
 
         case TileId::RailTurnout3Way:
@@ -309,8 +430,25 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           Tile::drawStraight(painter, r, a);
           Tile::drawCurve45(painter, r, a);
           Tile::drawCurve45(painter, r, a + TileRotate::Deg225);
+
           painter.setPen(turnoutStatePen);
-          Tile::drawCurve45(painter, r.adjusted(2, 2, -2, -2), a + TileRotate::Deg225);
+          switch(getTurnoutPosition(it.first))
+          {
+            case TurnoutPosition::Straight:
+              Tile::drawStraight(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a);
+              break;
+
+            case TurnoutPosition::Left:
+              Tile::drawCurve45(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), it.second.rotate());
+              break;
+
+            case TurnoutPosition::Right:
+              Tile::drawCurve45(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), it.second.rotate() + TileRotate::Deg225);
+              break;
+
+            default:
+              break;
+          }
           break;
 
         case TileId::RailTurnoutSingleSlip:
@@ -318,8 +456,22 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           Tile::drawStraight(painter, r, a);
           Tile::drawStraight(painter, r, a - TileRotate::Deg45);
           Tile::drawCurve45(painter, r, a);
+
           painter.setPen(turnoutStatePen);
-          Tile::drawCurve45(painter, r.adjusted(2, 2, -2, -2), a);
+          switch(getTurnoutPosition(it.first))
+          {
+            case TurnoutPosition::Crossed:
+              Tile::drawStraight(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a);
+              Tile::drawStraight(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a - TileRotate::Deg45);
+              break;
+
+            case TurnoutPosition::Diverged:
+              Tile::drawCurve45(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a);
+              break;
+
+            default:
+              break;
+          }
           break;
 
         case TileId::RailTurnoutDoubleSlip:
@@ -328,9 +480,23 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           Tile::drawStraight(painter, r, a - TileRotate::Deg45);
           Tile::drawCurve45(painter, r, a);
           Tile::drawCurve45(painter, r, a + TileRotate::Deg180);
+
           painter.setPen(turnoutStatePen);
-          Tile::drawCurve45(painter, r.adjusted(2, 2, -2, -2), a);
-          Tile::drawCurve45(painter, r.adjusted(2, 2, -2, -2), a + TileRotate::Deg180);
+          switch(getTurnoutPosition(it.first))
+          {
+            case TurnoutPosition::Crossed:
+              Tile::drawStraight(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a);
+              Tile::drawStraight(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a - TileRotate::Deg45);
+              break;
+
+            case TurnoutPosition::Diverged:
+              Tile::drawCurve45(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a);
+              Tile::drawCurve45(painter, r.adjusted(switchMargin, switchMargin, -switchMargin, -switchMargin), a + TileRotate::Deg180);
+              break;
+
+            default:
+              break;
+          }
           break;
 
         case TileId::RailSensor:
@@ -354,13 +520,13 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
         case TileId::RailSignal2Aspect:
           painter.setPen(trackPen);
           Tile::drawStraight(painter, r, a);
-          Tile::drawSignal2Aspect(painter, r, a);
+          Tile::drawSignal2Aspect(painter, r, a, getSignalAspect(it.first));
           break;
 
         case TileId::RailSignal3Aspect:
           painter.setPen(trackPen);
           Tile::drawStraight(painter, r, a);
-          Tile::drawSignal3Aspect(painter, r, a);
+          Tile::drawSignal3Aspect(painter, r, a, getSignalAspect(it.first));
           break;
 
         case TileId::RailBlock:
