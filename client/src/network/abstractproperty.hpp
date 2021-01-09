@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -61,6 +61,13 @@ class AbstractProperty : public InterfaceItem
     virtual double toDouble() const        { Q_ASSERT(false); return 0; }
     virtual QString toString() const       { Q_ASSERT(false); return ""; }
     virtual QVariant toVariant() const     { Q_ASSERT(false); return QVariant(); }
+
+    template<typename T>
+    T toEnum() const
+    {
+      static_assert(std::is_enum_v<T>);
+      return static_cast<T>(toInt64());
+    }
 
   signals:
     void valueChanged();
