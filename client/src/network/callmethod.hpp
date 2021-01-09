@@ -72,13 +72,8 @@ int callMethod(Connection& connection, Method& method, std::function<void(const 
   auto request = Message::newRequest(Message::Command::ObjectCallMethod);
   request->write(method.object().handle());
   request->write(method.name().toLatin1());
-  if constexpr(std::is_same_v<R, void>)
-    request->write(ValueType::Invalid);
-  else
-  {
-    static_assert(value_type_v<R> != ValueType::Invalid);
-    request->write(value_type_v<R>);
-  }
+  static_assert(value_type_v<R> != ValueType::Invalid);
+  request->write(value_type_v<R>);
   request->write<uint8_t>(sizeof...(A)); // N arguments
 
   writeArguments(*request, args...);
@@ -104,6 +99,40 @@ int callMethod(Connection& connection, Method& method, std::function<void(const 
     });
 
   return request->requestId();
+}
+
+template<class... A>
+int callMethod(Method& method, std::function<void(Message::ErrorCode)> callback, A... args)
+{
+  auto request = Message::newRequest(Message::Command::ObjectCallMethod);
+  request->write(method.object().handle());
+  request->write(method.name().toLatin1());
+  request->write(ValueType::Invalid);
+  request->write<uint8_t>(sizeof...(A)); // N arguments
+
+  writeArguments(*request, args...);
+
+  method.object().connection()->send(request,
+    [callback=std::move(callback)](const std::shared_ptr<Message> message)
+    {
+      callback(message->errorCode());
+    });
+
+  return request->requestId();
+}
+
+template<class... A>
+void callMethod(Method& method, std::nullptr_t, A... args)
+{
+  auto event = Message::newEvent(Message::Command::ObjectCallMethod);
+  event->write(method.object().handle());
+  event->write(method.name().toLatin1());
+  event->write(ValueType::Invalid);
+  event->write<uint8_t>(sizeof...(A)); // N arguments
+
+  writeArguments(*event, args...);
+
+  method.object().connection()->send(event);
 }
 
 #endif
