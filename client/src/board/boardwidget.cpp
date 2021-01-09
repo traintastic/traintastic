@@ -31,6 +31,7 @@
 #include <QLabel>
 #include <QApplication>
 #include <traintastic/locale/locale.hpp>
+#include "../mainwindow.hpp"
 #include "../network/board.hpp"
 #include "../network/connection.hpp"
 #include "../network/property.hpp"
@@ -285,10 +286,17 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
   if(m_toolbarEdit->isVisible()) // edit mode
   {
     QAction* act = m_editActions->checkedAction();
-    if(!act || act == m_editActionNone)
+    if(!act)
       return;
 
-    if(act == m_editActionMove)
+    if(act == m_editActionNone)
+    {
+      auto it = m_object->tileData().find({x, y});
+      if(it != m_object->tileData().end())
+        if(ObjectPtr obj = m_object->getTileObject({x, y}))
+          MainWindow::instance->showObject(obj);
+    }
+    else if(act == m_editActionMove)
     {
     }
     else if(act == m_editActionDelete)
