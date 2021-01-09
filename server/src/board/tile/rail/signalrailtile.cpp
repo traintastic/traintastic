@@ -30,6 +30,5 @@ SignalRailTile::SignalRailTile(const std::weak_ptr<World>& world, std::string_vi
 {
   Attributes::addObjectEditor(aspect, false);
 
-  m_interfaceItems.add(aspect);
   m_interfaceItems.add(nextAspect);
 }
