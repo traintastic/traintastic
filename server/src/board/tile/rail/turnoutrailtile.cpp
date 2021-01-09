@@ -29,6 +29,6 @@ TurnoutRailTile::TurnoutRailTile(const std::weak_ptr<World>& world, std::string_
   nextPosition{*this, "next_position", [this](bool reverse){ doNextPosition(reverse); }}
 {
   Attributes::addObjectEditor(position, false);
-
+  Attributes::addObjectEditor(nextPosition, false);
   m_interfaceItems.add(nextPosition);
 }
