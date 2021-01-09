@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,7 +34,7 @@ class Tile : public IdObject
 
   protected:
     TileLocation m_location;
-    TileDataLong m_data;
+    TileData m_data;
 
     Tile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
 
@@ -44,7 +44,7 @@ class Tile : public IdObject
     static constexpr std::string_view defaultId = "tile";
 
     const TileLocation& location() const { return m_location; }
-    const TileDataLong& data() const { return m_data; }
+    const TileData& data() const { return m_data; }
 };
 
 #endif

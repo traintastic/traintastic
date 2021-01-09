@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -51,5 +51,67 @@ enum class TileId : uint16_t // 10 bit
 
   ReservedForFutureExpension = 1023
 };
+
+constexpr bool isRailTurnout(TileId id)
+{
+  switch(id)
+  {
+    case TileId::RailTurnoutLeft45:
+    case TileId::RailTurnoutLeft90:
+    case TileId::RailTurnoutLeftCurved:
+    case TileId::RailTurnoutRight45:
+    case TileId::RailTurnoutRight90:
+    case TileId::RailTurnoutRightCurved:
+    case TileId::RailTurnoutWye:
+    case TileId::RailTurnout3Way:
+    case TileId::RailTurnoutSingleSlip:
+    case TileId::RailTurnoutDoubleSlip:
+      return true;
+
+    default:
+      break;
+  }
+  return false;
+}
+
+constexpr bool isRailSignal(TileId id)
+{
+  switch(id)
+  {
+    case TileId::RailSignal2Aspect:
+    case TileId::RailSignal3Aspect:
+      return true;
+
+    default:
+      break;
+  }
+  return false;
+}
+
+constexpr bool isActive(TileId id)
+{
+  switch(id)
+  {
+    case TileId::RailTurnoutLeft45:
+    case TileId::RailTurnoutLeft90:
+    case TileId::RailTurnoutLeftCurved:
+    case TileId::RailTurnoutRight45:
+    case TileId::RailTurnoutRight90:
+    case TileId::RailTurnoutRightCurved:
+    case TileId::RailTurnoutWye:
+    case TileId::RailTurnout3Way:
+    case TileId::RailTurnoutSingleSlip:
+    case TileId::RailTurnoutDoubleSlip:
+    case TileId::RailSignal2Aspect:
+    case TileId::RailSignal3Aspect:
+    case TileId::RailSensor:
+    case TileId::RailBlock:
+      return true;
+
+    default:
+      break;
+  }
+  return false;
+}
 
 #endif

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -76,7 +76,7 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
         for(int16_t x = tile->location().x; x < x2; x++)
           for(int16_t y = tile->location().y; y < y2; y++)
             m_tiles.erase(TileLocation{x, y});
-        tileDataChanged(*this, tile->location(), TileDataLong());
+        tileDataChanged(*this, tile->location(), TileData());
         tile->destroy();
       }
       return true;

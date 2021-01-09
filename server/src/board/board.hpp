@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@
 #include <traintastic/board/tilerotate.hpp>
 
 class Tile;
-struct TileDataLong;
+struct TileData;
 
 class Board : public IdObject
 {
@@ -56,11 +56,19 @@ class Board : public IdObject
     Method<bool(int16_t, int16_t, TileRotate, std::string_view, bool)> addTile;
     Method<bool(int16_t, int16_t)> deleteTile;
 
-    boost::signals2::signal<void (Board&, const TileLocation&, const TileDataLong&)> tileDataChanged;
+    boost::signals2::signal<void (Board&, const TileLocation&, const TileData&)> tileDataChanged;
 
     Board(const std::weak_ptr<World>& world, std::string_view _id);
 
     const TileMap& tileMap() const { return m_tiles; }
+
+    std::shared_ptr<Tile> getTile(TileLocation l) const
+    {
+      if(auto it = m_tiles.find(l); it != m_tiles.end())
+        return it->second;
+      else
+        return std::shared_ptr<Tile>();
+    }
 };
 
 #endif

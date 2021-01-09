@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -454,10 +454,10 @@ bool Session::processMessage(const Message& message)
           if(it.first != tile.location()) // only tiles at origin
             continue;
           response->write(tile.location());
-          if(tile.data().isLong())
-            response->write(tile.data());
-          else
-            response->write<TileData>(tile.data());
+          response->write(tile.data());
+          assert(tile.data().isActive() == isActive(tile.data().id()));
+          if(tile.data().isActive())
+            writeObject(*response, it.second);
         }
         m_client->sendMessage(std::move(response));
       }
@@ -796,14 +796,18 @@ void Session::outputKeyboardOutputValueChanged(OutputKeyboard& outputKeyboard, c
   m_client->sendMessage(std::move(event));
 }
 
-void Session::boardTileDataChanged(Board& board, const TileLocation& location, const TileDataLong& data)
+void Session::boardTileDataChanged(Board& board, const TileLocation& location, const TileData& data)
 {
   auto event = Message::newEvent(Message::Command::BoardTileDataChanged);
   event->write(m_handles.getHandle(board.shared_from_this()));
   event->write(location);
-  if(data.isLong())
-    event->write(data);
-  else
-    event->write<TileData>(data);
+  event->write(data);
+  assert(data.isActive() == isActive(data.id()));
+  if(data.isActive())
+  {
+    auto tile = board.getTile(location);
+    assert(tile);
+    writeObject(*event, tile);
+  }
   m_client->sendMessage(std::move(event));
 }

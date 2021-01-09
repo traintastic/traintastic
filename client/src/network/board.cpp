@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -59,10 +59,10 @@ void Board::getTileDataResponse(const Message& response)
   while(!response.endOfMessage())
   {
     TileLocation l = response.read<TileLocation>();
-    if(static_cast<const TileData*>(response.current())->isLong())
-      m_tileData.emplace(l, response.read<TileDataLong>());
-    else
-      m_tileData.emplace(l, response.read<TileData>());
+    TileData data = response.read<TileData>();
+    m_tileData.emplace(l, data);
+    if(data.isActive())
+      m_tileObjects.emplace(l, m_connection->readObject(response));
   }
 
   emit tileDataChanged();
@@ -75,17 +75,25 @@ void Board::processMessage(const Message& message)
     case Message::Command::BoardTileDataChanged:
     {
       TileLocation l = message.read<TileLocation>();
-      const TileData* data = static_cast<const TileData*>(message.current());
-      if(!data->operator bool()) // no tile
+      TileData data = message.read<TileData>();
+      if(!data) // no tile
       {
         auto it = m_tileData.find(l);
         if(it != m_tileData.end())
           m_tileData.erase(it);
       }
-      else if(data->isLong())
-        m_tileData[l] = message.read<TileDataLong>();
       else
-        m_tileData[l] = message.read<TileData>();
+        m_tileData[l] = data;
+
+      if(data.isPassive())
+      {
+        auto it = m_tileObjects.find(l);
+        if(it != m_tileObjects.end())
+          m_tileObjects.erase(it);
+      }
+      else
+        m_tileObjects[l] = m_connection->readObject(message);
+
       emit tileDataChanged();
       break;
     }
