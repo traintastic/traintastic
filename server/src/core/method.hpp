@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -76,6 +76,15 @@ auto getArgument(const AbstractMethod::Argument& value)
   }
   else
     static_assert(sizeof(T) != sizeof(T));
+}
+
+template<class T>
+constexpr AbstractMethod::Result toResult(const T& value)
+{
+  if constexpr(std::is_enum_v<T>)
+    return static_cast<int64_t>(value);
+  else
+    return value;
 }
 
 template<class R, class... A>
@@ -165,32 +174,32 @@ class Method<R(A...)> : public AbstractMethod
       else
       {
         if constexpr(sizeof...(A) == 0)
-          return m_function();
+          return toResult(m_function());
         else if constexpr(sizeof...(A) == 1)
-          return m_function(
-            getArgument<0, A...>(args[0]));
+          return toResult(m_function(
+            getArgument<0, A...>(args[0])));
         else if constexpr(sizeof...(A) == 2)
-          return m_function(
+          return toResult(m_function(
             getArgument<0, A...>(args[0]),
-            getArgument<1, A...>(args[1]));
+            getArgument<1, A...>(args[1])));
         else if constexpr(sizeof...(A) == 3)
-          return m_function(
+          return toResult(m_function(
             getArgument<0, A...>(args[0]),
             getArgument<1, A...>(args[1]),
-            getArgument<2, A...>(args[2]));
+            getArgument<2, A...>(args[2])));
         else if constexpr(sizeof...(A) == 4)
-          return m_function(
+          return toResult(m_function(
             getArgument<0, A...>(args[0]),
             getArgument<1, A...>(args[1]),
             getArgument<2, A...>(args[2]),
-            getArgument<3, A...>(args[3]));
+            getArgument<3, A...>(args[3])));
         else if constexpr(sizeof...(A) == 5)
-          return m_function(
+          return toResult(m_function(
             getArgument<0, A...>(args[0]),
             getArgument<1, A...>(args[1]),
             getArgument<2, A...>(args[2]),
             getArgument<3, A...>(args[3]),
-            getArgument<4, A...>(args[4]));
+            getArgument<4, A...>(args[4])));
         else
           static_assert(sizeof(R) != sizeof(R));
       }
