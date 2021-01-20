@@ -63,13 +63,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source 
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE/server \
-                 -G "${{matrix.config.generator}}" \
-                 -A ${{matrix.config.arch}} \
-                 ${{matrix.config.toolset}} \
-                 -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
-                 -DUSB_XPRESSNET=OFF \
-                 -DENABLE_LUA_SCRIPTING=OFF
+      run: cmake $GITHUB_WORKSPACE/server -G "${{matrix.config.generator}}" -A ${{matrix.config.arch}} ${{matrix.config.toolset}} -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUSB_XPRESSNET=OFF -DENABLE_LUA_SCRIPTING=OFF
 
     # Ubuntu only:
     - name: Configure CMake
@@ -79,10 +73,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source 
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE/server \
-                 -G "${{matrix.config.generator}}" \
-                 -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
-                 -DUSB_XPRESSNET=OFF
+      run: cmake $GITHUB_WORKSPACE/server -G "${{matrix.config.generator}}" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUSB_XPRESSNET=OFF
 
     # All:
     - name: Build
