@@ -1,4 +1,4 @@
-name: Server
+name: Build
 
 on: [push]
 
@@ -7,8 +7,8 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  build:
-    name: ${{matrix.config.name}}
+  build-server:
+    name: server ${{matrix.config.name}}
     runs-on: ${{matrix.config.os}}
     strategy:
       fail-fast: false
@@ -60,8 +60,8 @@ jobs:
       if: startswith(matrix.config.os, 'windows')
       shell: bash
       working-directory: ${{runner.workspace}}/server/build
-      # Note the current convention is to use the -S and -B options here to specify source 
-      # and build directories, but this is only available with CMake 3.13 and higher.  
+      # Note the current convention is to use the -S and -B options here to specify source
+      # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
       run: cmake $GITHUB_WORKSPACE/server -G "${{matrix.config.generator}}" -A ${{matrix.config.arch}} ${{matrix.config.toolset}} -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUSB_XPRESSNET=OFF -DENABLE_LUA_SCRIPTING=OFF
 
@@ -70,8 +70,8 @@ jobs:
       if: startswith(matrix.config.os, 'ubuntu')
       shell: bash
       working-directory: ${{runner.workspace}}/server/build
-      # Note the current convention is to use the -S and -B options here to specify source 
-      # and build directories, but this is only available with CMake 3.13 and higher.  
+      # Note the current convention is to use the -S and -B options here to specify source
+      # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
       run: cmake $GITHUB_WORKSPACE/server -G "${{matrix.config.generator}}" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUSB_XPRESSNET=OFF
 
