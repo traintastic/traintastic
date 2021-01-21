@@ -15,13 +15,6 @@ jobs:
       matrix:
         config:
         - {
-            name: "windows_x64_msvc",
-            os: windows-latest,
-            generator: "Visual Studio 16 2019",
-            arch: "x64",
-            toolset: ""
-          }
-        - {
             name: "windows_x64_clang",
             os: windows-latest,
             generator: "Visual Studio 16 2019",
