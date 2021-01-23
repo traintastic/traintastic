@@ -66,7 +66,7 @@ jobs:
     - name: Build
       if: startswith(matrix.config.os, 'windows')
       shell: cmd
-      working-directory: ${{runner.workspace}}/build
+      #working-directory: ${{runner.workspace}}/build
       run: |
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         qmake --version
