@@ -57,7 +57,7 @@ jobs:
     - name: Run QMake
       shell: bash
       working-directory: ${{runner.workspace}}/build
-      run: qmake $GITHUB_WORKSPACE/client/traintastic-client.pro CONFIG+="release" DESTDIR=${{runner.workspace}}/build
+      run: qmake ${{runner.workspace}}/client/traintastic-client.pro CONFIG+="release" DESTDIR=${{runner.workspace}}/build
 
     # Ubuntu only:
     - name: Build
