@@ -54,22 +54,21 @@ jobs:
       shell: bash
       run: mkdir -p ${{runner.workspace}}/build
 
-    - name: Run QMake
-      shell: bash
-      working-directory: ${{runner.workspace}}/build
-      run: qmake ${{runner.workspace}}/client/traintastic-client.pro CONFIG+="release" DESTDIR=${{runner.workspace}}/build
-
     # Ubuntu only:
     - name: Build
       if: startswith(matrix.config.os, 'ubuntu')
       working-directory: ${{runner.workspace}}/build
-      run: make
+      run: |
+        qmake $GITHUB_WORKSPACE/client/traintastic-client.pro CONFIG+="release" DESTDIR=${{runner.workspace}}/build
+        make
 
     # Windows only:
     - name: Build
       if: startswith(matrix.config.os, 'windows')
       working-directory: ${{runner.workspace}}/build
-      run: jom -j %NUMBER_OF_PROCESSORS% -f Makefile
+      run: |
+        qmake %GITHUB_WORKSPACE%/client/traintastic-client.pro CONFIG+="release" DESTDIR=${{runner.workspace}}/build
+        jom -j %NUMBER_OF_PROCESSORS% -f Makefile
 
     # Windows only:
     - name: windeployqt
