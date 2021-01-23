@@ -10,6 +10,9 @@ jobs:
       fail-fast: false
       matrix:
         config:
+        - name: "windows_x64_msvc"
+          os: windows-latest
+
         - name: "ubuntu_18.04"
           os: ubuntu-18.04
 
@@ -20,6 +23,22 @@ jobs:
     # All:
     - name: Checkout
       uses: actions/checkout@v2
+
+    # Windows only:
+    - name: Cache Qt
+      if: startswith(matrix.config.os, 'windows')
+      id: cache-qt
+      uses: actions/cache@v1
+      with:
+        path: ../Qt
+        key: ${{runner.os}}-QtCache
+
+    # Windows only:
+    - name: Install Qt
+      if: startswith(matrix.config.os, 'windows')
+      uses: jurplel/install-qt-action@v2
+      with:
+        cached: ${{steps.cache-qt.outputs.cache-hit}}
 
     # Ubuntu only:
     - name: apt update
@@ -32,15 +51,31 @@ jobs:
       run: sudo apt install qt5-default
 
     - name: Create build directory
+      shell: bash
       run: mkdir -p ${{runner.workspace}}/build
 
     - name: Run QMake
+      shell: bash
       working-directory: ${{runner.workspace}}/build
       run: qmake $GITHUB_WORKSPACE/client/traintastic-client.pro CONFIG+="release" DESTDIR=${{runner.workspace}}/build
 
+    # Ubuntu only:
     - name: Build
+      if: startswith(matrix.config.os, 'ubuntu')
       working-directory: ${{runner.workspace}}/build
       run: make
+
+    # Windows only:
+    - name: Build
+      if: startswith(matrix.config.os, 'windows')
+      working-directory: ${{runner.workspace}}/build
+      run: jom -j %NUMBER_OF_PROCESSORS% -f Makefile
+
+    # Windows only:
+    - name: windeployqt
+      if: startswith(matrix.config.os, 'windows')
+      working-directory: ${{runner.workspace}}/build
+      run: windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw traintastic-client.exe
 
   build-server:
     name: server ${{matrix.config.name}}
