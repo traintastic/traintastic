@@ -67,15 +67,11 @@ jobs:
       if: startswith(matrix.config.os, 'windows')
       working-directory: ${{runner.workspace}}/build
       run: |
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         qmake --version
         qmake %GITHUB_WORKSPACE%/client/traintastic-client.pro CONFIG+="release" DESTDIR=${{runner.workspace}}/build
         jom -j %NUMBER_OF_PROCESSORS% -f Makefile
-
-    # Windows only:
-    - name: windeployqt
-      if: startswith(matrix.config.os, 'windows')
-      working-directory: ${{runner.workspace}}/build
-      run: windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw traintastic-client.exe
+        windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw traintastic-client.exe
 
   build-server:
     name: server ${{matrix.config.name}}
