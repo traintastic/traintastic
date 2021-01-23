@@ -3,6 +3,45 @@ name: Build
 on: [push]
 
 jobs:
+  build-client:
+    name: client ${{matrix.config.name}}
+    runs-on: ${{matrix.config.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - name: "ubuntu_18.04"
+          os: ubuntu-18.04
+
+        - name: "ubuntu_20.04"
+          os: ubuntu-20.04
+
+    steps:
+    # All:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Ubuntu only:
+    - name: apt update
+      if: startswith(matrix.config.os, 'ubuntu')
+      run: sudo apt update
+
+    # Ubuntu only:
+    - name: Install packages
+      if: startswith(matrix.config.os, 'ubuntu')
+      run: sudo apt install qt5-default
+
+    - name: Create build directory
+      run: mkdir -p ${{runner.workspace}}/build
+
+    - name: Run QMake
+      working-directory: ${{runner.workspace}}/build
+      run: qmake $GITHUB_WORKSPACE/client/traintastic-client.pro CONFIG+="release" DESTDIR=${{runner.workspace}}/build
+
+    - name: Build
+      working-directory: ${{runner.workspace}}/build
+      run: make
+
   build-server:
     name: server ${{matrix.config.name}}
     runs-on: ${{matrix.config.os}}
