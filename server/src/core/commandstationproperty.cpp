@@ -31,7 +31,7 @@ CommandStationProperty::CommandStationProperty(Object* object, const std::string
 {
 }
 
-CommandStationProperty::CommandStationProperty(Object* object, const std::string& name, nullptr_t, PropertyFlags flags) :
+CommandStationProperty::CommandStationProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags) :
   CommandStationProperty(object, name, std::shared_ptr<T>(), flags)
 {
 }
@@ -42,7 +42,7 @@ CommandStationProperty::CommandStationProperty(Object* object, const std::string
   m_onSet = onSet;
 }
 
-CommandStationProperty::CommandStationProperty(Object* object, const std::string& name, nullptr_t, PropertyFlags flags, OnSet onSet) :
+CommandStationProperty::CommandStationProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags, OnSet onSet) :
   CommandStationProperty(object, name, std::shared_ptr<T>(), flags, onSet)
 {
 }

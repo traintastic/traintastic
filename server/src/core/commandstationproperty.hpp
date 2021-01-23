@@ -40,9 +40,9 @@ class CommandStationProperty : public AbstractObjectProperty
 
   public:
     CommandStationProperty(Object* object, const std::string& name, const std::shared_ptr<CommandStation>& value, PropertyFlags flags);
-    CommandStationProperty(Object* object, const std::string& name, nullptr_t, PropertyFlags flags);
+    CommandStationProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags);
     CommandStationProperty(Object* object, const std::string& name, const std::shared_ptr<CommandStation>& value, PropertyFlags flags, OnSet onSet);
-    CommandStationProperty(Object* object, const std::string& name, nullptr_t, PropertyFlags flags, OnSet onSet);
+    CommandStationProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags, OnSet onSet);
 
     const std::shared_ptr<CommandStation>& value() const;
 

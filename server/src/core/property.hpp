@@ -66,7 +66,7 @@ class Property : public AbstractProperty
       m_onSet = std::move(onSet);
     }
 
-    Property(Object* object, const std::string& name, const T& value, PropertyFlags flags, nullptr_t, OnSet onSet) :
+    Property(Object* object, const std::string& name, const T& value, PropertyFlags flags, std::nullptr_t, OnSet onSet) :
       Property(object, name, value, flags)
     {
       m_onSet = std::move(onSet);

@@ -31,7 +31,7 @@ TrainProperty::TrainProperty(Object* object, const std::string& name, const std:
 {
 }
 
-TrainProperty::TrainProperty(Object* object, const std::string& name, nullptr_t, PropertyFlags flags) :
+TrainProperty::TrainProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags) :
   TrainProperty(object, name, std::shared_ptr<T>(), flags)
 {
 }
@@ -42,7 +42,7 @@ TrainProperty::TrainProperty(Object* object, const std::string& name, const std:
   m_onSet = onSet;
 }
 
-TrainProperty::TrainProperty(Object* object, const std::string& name, nullptr_t, PropertyFlags flags, OnSet onSet) :
+TrainProperty::TrainProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags, OnSet onSet) :
   TrainProperty(object, name, std::shared_ptr<T>(), flags, onSet)
 {
 }

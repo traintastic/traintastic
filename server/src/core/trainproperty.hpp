@@ -40,9 +40,9 @@ class TrainProperty : public AbstractObjectProperty
 
   public:
     TrainProperty(Object* object, const std::string& name, const std::shared_ptr<Train>& value, PropertyFlags flags);
-    TrainProperty(Object* object, const std::string& name, nullptr_t, PropertyFlags flags);
+    TrainProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags);
     TrainProperty(Object* object, const std::string& name, const std::shared_ptr<Train>& value, PropertyFlags flags, OnSet onSet);
-    TrainProperty(Object* object, const std::string& name, nullptr_t, PropertyFlags flags, OnSet onSet);
+    TrainProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags, OnSet onSet);
 
     const std::shared_ptr<Train>& value() const;
 

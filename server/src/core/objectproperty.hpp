@@ -44,7 +44,7 @@ class ObjectProperty : public AbstractObjectProperty
     {
     }
 
-    ObjectProperty(Object* object, const std::string& name, nullptr_t, PropertyFlags flags) :
+    ObjectProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags) :
       ObjectProperty(object, name, std::shared_ptr<T>(), flags)
     {
     }
@@ -55,7 +55,7 @@ class ObjectProperty : public AbstractObjectProperty
       m_onSet = onSet;
     }
 
-    ObjectProperty(Object* object, const std::string& name, nullptr_t, PropertyFlags flags, OnSet onSet) :
+    ObjectProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags, OnSet onSet) :
       ObjectProperty(object, name, std::shared_ptr<T>(), flags, onSet)
     {
     }
