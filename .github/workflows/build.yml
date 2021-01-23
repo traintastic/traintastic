@@ -2,10 +2,6 @@ name: Build
 
 on: [push]
 
-env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: Release
-
 jobs:
   build-server:
     name: server ${{matrix.config.name}}
@@ -14,23 +10,26 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - {
-            name: "windows_x64_clang",
-            os: windows-latest,
-            generator: "Visual Studio 16 2019",
-            arch: "x64",
-            toolset: "-T ClangCL"
-          }
-        - {
-            name: "ubuntu_18.04",
-            os: ubuntu-18.04,
-            generator: "Unix Makefiles"
-          }
-        - {
-            name: "ubuntu_20.04",
-            os: ubuntu-20.04,
-            generator: "Unix Makefiles"
-          }
+        - name: "windows_x64_clang"
+          os: windows-latest
+          generator: "Visual Studio 16 2019"
+          arch: "-A x64"
+          toolset: "-T ClangCL"
+          defines: "-DENABLE_LUA_SCRIPTING=OFF"
+
+        - name: "ubuntu_18.04"
+          os: ubuntu-18.04
+          generator: "Unix Makefiles"
+          arch: ""
+          toolset: ""
+          defines: ""
+
+        - name: "ubuntu_20.04"
+          os: ubuntu-20.04
+          generator: "Unix Makefiles"
+          arch: ""
+          toolset: ""
+          defines: ""
 
     steps:
     # All:
@@ -48,25 +47,14 @@ jobs:
       # We'll use this as our working directory for all subsequent commands
       run: cmake -E make_directory ${{runner.workspace}}/server/build
 
-    # Windows only:
+    # All:
     - name: Configure CMake
-      if: startswith(matrix.config.os, 'windows')
       shell: bash
       working-directory: ${{runner.workspace}}/server/build
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE/server -G "${{matrix.config.generator}}" -A ${{matrix.config.arch}} ${{matrix.config.toolset}} -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUSB_XPRESSNET=OFF -DENABLE_LUA_SCRIPTING=OFF
-
-    # Ubuntu only:
-    - name: Configure CMake
-      if: startswith(matrix.config.os, 'ubuntu')
-      shell: bash
-      working-directory: ${{runner.workspace}}/server/build
-      # Note the current convention is to use the -S and -B options here to specify source
-      # and build directories, but this is only available with CMake 3.13 and higher.
-      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE/server -G "${{matrix.config.generator}}" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUSB_XPRESSNET=OFF
+      run: cmake $GITHUB_WORKSPACE/server -G "${{matrix.config.generator}}" ${{matrix.config.arch}} ${{matrix.config.toolset}} -DCMAKE_BUILD_TYPE=Release -DUSB_XPRESSNET=OFF ${{matrix.config.defines}}
 
     # All:
     - name: Build
