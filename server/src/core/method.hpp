@@ -79,7 +79,7 @@ auto getArgument(const AbstractMethod::Argument& value)
 }
 
 template<class T>
-constexpr AbstractMethod::Result toResult(const T& value)
+inline AbstractMethod::Result toResult(const T& value)
 {
   if constexpr(std::is_enum_v<T>)
     return static_cast<int64_t>(value);
