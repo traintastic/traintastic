@@ -176,7 +176,7 @@ jobs:
     - name: Build installer
       shell: cmd
       run: |
-        "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" %GITHUB_WORKSPACE%/package/innosetup/traintastic.iss /Ftraintastic-setup-${{ci.base_ref_slug}}-${{ci.sha_short}}.exe
+        "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" %GITHUB_WORKSPACE%/package/innosetup/traintastic.iss /Ftraintastic-setup-%CI_BASE_REF_SLUG%-%CI_SHA_SHORT%.exe
 
     - name: Deploy to website
       uses: easingthemes/ssh-deploy@v2.1.5
@@ -187,4 +187,4 @@ jobs:
           REMOTE_HOST: ${{secrets.REMOTE_HOST}}
           REMOTE_PORT: ${{secrets.REMOTE_PORT}}
           REMOTE_USER: ${{secrets.REMOTE_USER}}
-          TARGET: ${{secrets.REMOTE_TARGET}}/traintastic/${{ci.base_ref_slug}}/${{github.run_number}}
+          TARGET: ${{secrets.REMOTE_TARGET}}/traintastic/${{env.CI_BASE_REF_SLUG}}/${{github.run_number}}
