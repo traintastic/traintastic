@@ -176,7 +176,7 @@ jobs:
     - name: Build installer
       shell: cmd
       run: |
-        "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" %GITHUB_WORKSPACE%/package/innosetup/traintastic.iss /Ftraintastic-setup-%CI_REF_SLUG%-%CI_SHA_SHORT%
+        "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" %GITHUB_WORKSPACE%/package/innosetup/traintastic.iss /Ftraintastic-setup-%CI_REF_NAME_SLUG%-%CI_SHA_SHORT%
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
@@ -206,4 +206,4 @@ jobs:
           REMOTE_HOST: ${{secrets.REMOTE_HOST}}
           REMOTE_PORT: ${{secrets.REMOTE_PORT}}
           REMOTE_USER: ${{secrets.REMOTE_USER}}
-          TARGET: ${{secrets.REMOTE_TARGET}}/traintastic/${{env.CI_REF_SLUG}}/${{github.run_number}}
+          TARGET: ${{secrets.REMOTE_TARGET}}/traintastic/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
