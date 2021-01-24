@@ -176,15 +176,34 @@ jobs:
     - name: Build installer
       shell: cmd
       run: |
-        "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" %GITHUB_WORKSPACE%/package/innosetup/traintastic.iss /Ftraintastic-setup-%CI_BASE_REF_SLUG%-%CI_SHA_SHORT%.exe
+        "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" %GITHUB_WORKSPACE%/package/innosetup/traintastic.iss /Ftraintastic-setup-%CI_REF_SLUG%-%CI_SHA_SHORT%
 
-    - name: Deploy to website
-      uses: easingthemes/ssh-deploy@v2.1.5
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: package-innosetup
+        path: ${{github.workspace}}/package/innosetup/output
+
+  deploy:
+    name: Deploy to website
+    runs-on: ubuntu-20.04
+    needs: [package-innosetup]
+
+    steps:
+    - uses: FranzDiebold/github-env-vars-action@v2
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: package-innosetup
+        path: dist
+
+    - uses: easingthemes/ssh-deploy@v2.1.5
       env:
           SSH_PRIVATE_KEY: ${{secrets.SERVER_SSH_KEY}}
           ARGS: "-rltgoDzvO"
-          SOURCE: "${{github.workspace}}/package/innosetup/output/*.exe"
+          SOURCE: "dist"
           REMOTE_HOST: ${{secrets.REMOTE_HOST}}
           REMOTE_PORT: ${{secrets.REMOTE_PORT}}
           REMOTE_USER: ${{secrets.REMOTE_USER}}
-          TARGET: ${{secrets.REMOTE_TARGET}}/traintastic/${{env.CI_BASE_REF_SLUG}}/${{github.run_number}}
+          TARGET: ${{secrets.REMOTE_TARGET}}/traintastic/${{env.CI_REF_SLUG}}/${{github.run_number}}
