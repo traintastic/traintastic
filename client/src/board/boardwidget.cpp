@@ -21,6 +21,7 @@
  */
 
 #include "boardwidget.hpp"
+#include <array>
 #include <QVBoxLayout>
 #include <QToolBar>
 #include <QToolButton>

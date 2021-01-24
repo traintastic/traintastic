@@ -22,6 +22,7 @@
 
 #include "tile.hpp"
 #include <cmath>
+#include <QPainterPath>
 #include "../utils/rectf.hpp"
 
 void Tile::drawStraight(QPainter& painter, const QRectF& r, TileRotate rotate)
