@@ -156,6 +156,8 @@ jobs:
     needs: [build-client, build-server]
 
     steps:
+    - uses: FranzDiebold/github-env-vars-action@v2
+
     - name: Checkout
       uses: actions/checkout@v2
 
@@ -174,4 +176,15 @@ jobs:
     - name: Build installer
       shell: cmd
       run: |
-        "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" %GITHUB_WORKSPACE%/package/innosetup/traintastic.iss
+        "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" %GITHUB_WORKSPACE%/package/innosetup/traintastic.iss /Ftraintastic-setup-${{ci.base_ref_slug}}-${{ci.sha_short}}.exe
+
+    - name: Deploy to website
+      uses: easingthemes/ssh-deploy@v2.1.5
+      env:
+          SSH_PRIVATE_KEY: ${{secrets.SERVER_SSH_KEY}}
+          ARGS: "-rltgoDzvO"
+          SOURCE: "${{github.workspace}}/package/innosetup/output/*.exe"
+          REMOTE_HOST: ${{secrets.REMOTE_HOST}}
+          REMOTE_PORT: ${{secrets.REMOTE_PORT}}
+          REMOTE_USER: ${{secrets.REMOTE_USER}}
+          TARGET: ${{secrets.REMOTE_TARGET}}/traintastic/${{ci.base_ref_slug}}/${{github.run_number}}
