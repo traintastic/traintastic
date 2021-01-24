@@ -74,6 +74,14 @@ jobs:
         nmake
         windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw ${{runner.workspace}}/build/traintastic-client.exe
 
+    # Windows only:
+    - name: Upload artifact
+      if: startswith(matrix.config.os, 'windows')
+      uses: actions/upload-artifact@v2
+      with:
+        name: traintastic-client
+        path: ${{runner.workspace}}/build
+
   build-server:
     name: server ${{matrix.config.name}}
     runs-on: ${{matrix.config.os}}
@@ -133,3 +141,33 @@ jobs:
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config $BUILD_TYPE
+
+    # Windows only:
+    - name: Upload artifact
+      if: startswith(matrix.config.os, 'windows')
+      uses: actions/upload-artifact@v2
+      with:
+        name: traintastic-server
+        path: ${{runner.workspace}}/server/build/Release
+
+  package-innosetup:
+    name: package innosetup
+    runs-on: windows-latest
+    needs: [build-client, build-server]
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Download artifacts 1/2
+      uses: actions/download-artifact@v2
+      with:
+        name: traintastic-client
+        
+    - name: Download artifacts 2/2
+      uses: actions/download-artifact@v2
+      with:
+        name: traintastic-server          
+    
+    - name: Build installer
+      run: "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "%GITHUB_WORKSPACE%/package/innosetup/traintastic.iscc"
