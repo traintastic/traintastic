@@ -163,13 +163,13 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: traintastic-client
-        path: ${{runner.workspace}}/build-client
+        path: ${{github.workspace}}/build-client
 
     - name: Download artifacts 2/2
       uses: actions/download-artifact@v2
       with:
         name: traintastic-server
-        path: ${{runner.workspace}}/build-server/Release
+        path: ${{github.workspace}}/build-server/Release
 
     - name: Build installer
       shell: cmd
