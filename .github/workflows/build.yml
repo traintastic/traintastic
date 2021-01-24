@@ -170,5 +170,6 @@ jobs:
         name: traintastic-server          
     
     - name: Build installer
+      shell: cmd
       run: |
         "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" %GITHUB_WORKSPACE%/package/innosetup/traintastic.iss
