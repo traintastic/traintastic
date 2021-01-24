@@ -22,6 +22,7 @@
 
 #include "alertwidget.hpp"
 #include <QPainter>
+#include <QPainterPath>
 
 AlertWidget* AlertWidget::error(const QString& text, QWidget* parent)
 {
