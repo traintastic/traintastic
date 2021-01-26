@@ -206,4 +206,4 @@ jobs:
           REMOTE_HOST: ${{secrets.REMOTE_HOST}}
           REMOTE_PORT: ${{secrets.REMOTE_PORT}}
           REMOTE_USER: ${{secrets.REMOTE_USER}}
-          TARGET: ${{secrets.REMOTE_TARGET}}/traintastic/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
+          TARGET: ${{secrets.REMOTE_TARGET}}/traintastic/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}/
