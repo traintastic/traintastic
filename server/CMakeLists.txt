@@ -119,3 +119,25 @@ endif()
 ### OPTIONS END ###
 
 target_sources(traintastic-server PRIVATE ${SOURCES})
+
+### INSTALL ###
+
+install(TARGETS traintastic-server
+    COMPONENT traintastic-server
+    RUNTIME DESTINATION "/opt/traintastic/bin/"
+)
+
+### DEB package ###
+
+if(NOT DEBIAN_PACKAGE_VERSION_EXTRA)
+  set(DEBIAN_PACKAGE_VERSION_EXTRA "${PROJECT_VERSION_EXTRA}")
+endif()
+
+set(CPACK_GENERATOR "DEB")
+set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}${DEBIAN_PACKAGE_VERSION_EXTRA}")
+set(CPACK_DEBIAN_PACKAGE_SECTION "misc")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Reinder Feenstra")
+set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://traintastic.org")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+
+include(CPack)
