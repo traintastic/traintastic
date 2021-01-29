@@ -101,14 +101,14 @@ jobs:
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
-          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~bionic~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
+          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~bionic~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
 
         - name: "ubuntu_20.04"
           os: ubuntu-20.04
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
-          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~focal~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
+          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~focal~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -192,7 +192,7 @@ jobs:
     - name: Build installer
       shell: cmd
       run: |
-        "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" %GITHUB_WORKSPACE%/package/innosetup/traintastic.iss /Ftraintastic-setup-%CI_REF_NAME_SLUG%-%CI_SHA_SHORT%
+        "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" %GITHUB_WORKSPACE%/package/innosetup/traintastic.iss /Ftraintastic-setup-%CI_REF_NAME_SLUG%-${{github.run_number}}-%CI_SHA_SHORT%
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
