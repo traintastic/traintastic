@@ -101,16 +101,18 @@ jobs:
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
-          defines: ""
+          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~bionic~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
 
         - name: "ubuntu_20.04"
           os: ubuntu-20.04
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
-          defines: ""
+          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~focal~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
 
     steps:
+    - uses: FranzDiebold/github-env-vars-action@v2
+
     # All:
     - name: Checkout
       uses: actions/checkout@v2
@@ -142,6 +144,12 @@ jobs:
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config Release
 
+    # Ubuntu only:
+    - name: Build debian package
+      if: startswith(matrix.config.os, 'ubuntu')
+      working-directory: ${{runner.workspace}}/server/build
+      run: cpack
+
     # Windows only:
     - name: Upload artifact
       if: startswith(matrix.config.os, 'windows')
@@ -149,6 +157,14 @@ jobs:
       with:
         name: traintastic-server
         path: ${{runner.workspace}}/server/build/Release
+
+    # Ubuntu only:
+    - name: Upload artifact
+      if: startswith(matrix.config.os, 'ubuntu')
+      uses: actions/upload-artifact@v2
+      with:
+        name: traintastic-server-deb
+        path: ${{runner.workspace}}/server/build/*.deb
 
   package-innosetup:
     name: package innosetup
@@ -187,15 +203,21 @@ jobs:
   deploy:
     name: Deploy to website
     runs-on: ubuntu-20.04
-    needs: [package-innosetup]
+    needs: [package-innosetup, build-server]
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
 
-    - name: Download artifacts
+    - name: Download artifacts 1/2
       uses: actions/download-artifact@v2
       with:
         name: package-innosetup
+        path: dist
+
+    - name: Download artifacts 2/2
+      uses: actions/download-artifact@v2
+      with:
+        name: traintastic-server-deb
         path: dist
 
     - uses: easingthemes/ssh-deploy@v2.1.5
