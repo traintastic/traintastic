@@ -141,6 +141,8 @@ protocol.loconet:debug_log=Debug log
 protocol.loconet:input_monitor=Input monitor
 protocol.loconet:output_keyboard=Output keyboard
 
+protocol.xpressnet:debug_log=Debug log
+protocol.xpressnet:input_monitor=Input monitor
 protocol.xpressnet:use_emergency_stop_locomotive_command=Use short emergency stop locomotive command
 protocol.xpressnet:use_function_state_commands=Use function state commands
 protocol.xpressnet:use_roco_f13_f20_command=Use Roco F13-F20 command
@@ -256,6 +258,10 @@ world:track_power_on=Track power on
 world:trains=Trains
 
 world_list:uuid=UUID
+
+xpressnet_command_station:custom=Custom
+xpressnet_command_station:digikeijs_dr5000=Digikeijs DR5000
+xpressnet_command_station:roco_10764=Roco 10764
 
 xpressnet_serial_interface:custom=Custom
 xpressnet_serial_interface:lenz_li100=Lenz LI100

@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/input/input.hpp
+ * server/src/hardware/protocol/xpressnet/xpressnetinputmonitor.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,28 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUT_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUT_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_XPRESSNETINPUTMONITOR_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_XPRESSNETINPUTMONITOR_HPP
 
-#include "../../core/idobject.hpp"
-#include "../../enum/tristate.hpp"
+#include "../../input/inputmonitor.hpp"
 
-class Input : public IdObject
+namespace XpressNet {
+  class XpressNet;
+}
+
+class XpressNetInputMonitor final : public InputMonitor
 {
-  DEFAULT_ID("input")
-
   protected:
-    void addToWorld() override;
-    void worldEvent(WorldState state, WorldEvent event) override;
-    virtual void valueChanged(TriState _value) {}
-
-    void updateValue(TriState _value);
+    std::shared_ptr<XpressNet::XpressNet> m_xpressnet;
 
   public:
-    Property<std::string> name;
-    Property<TriState> value;
+    CLASS_ID("input_monitor.xpressnet")
 
-    Input(const std::weak_ptr<World> world, std::string_view _id);
+    XpressNetInputMonitor(std::shared_ptr<XpressNet::XpressNet> xpressnet);
+    ~XpressNetInputMonitor() final;
+
+    std::string getObjectId() const final { return ""; }
+
+    std::vector<InputInfo> getInputInfo() const final;
 };
 
 #endif

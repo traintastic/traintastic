@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,11 +21,12 @@
  */
 
 #include "inputs.hpp"
+#include "../../utils/ifclassidcreate.hpp"
+#include "../../world/world.hpp"
 
-std::shared_ptr<Input> Inputs::create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id)
+std::shared_ptr<Input> Inputs::create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id)
 {
-  if(classId == LocoNetInput::classId)
-    return LocoNetInput::create(world, id);
-  else
-    return std::shared_ptr<Input>();
+  IF_CLASSID_CREATE(LocoNetInput)
+  IF_CLASSID_CREATE(XpressNetInput)
+  return std::shared_ptr<Input>();
 }

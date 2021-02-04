@@ -47,6 +47,7 @@ void World::init(const std::shared_ptr<World>& world)
   world->outputs.setValueInternal(std::make_shared<OutputList>(*world, world->outputs.name()));
   world->controllers.setValueInternal(std::make_shared<ControllerList>(*world, world->controllers.name()));
   world->loconets.setValueInternal(std::make_shared<LocoNetList>(*world, world->loconets.name()));
+  world->xpressnets.setValueInternal(std::make_shared<XpressNetList>(*world, world->xpressnets.name()));
   world->boards.setValueInternal(std::make_shared<BoardList>(*world, world->boards.name()));
   world->clock.setValueInternal(std::make_shared<Clock>(*world, world->clock.name()));
   world->trains.setValueInternal(std::make_shared<TrainList>(*world, world->trains.name()));
@@ -67,6 +68,7 @@ World::World(Private) :
   outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   controllers{this, "controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   loconets{this, "loconets", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
+  xpressnets{this, "xpressnets", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   boards{this, "boards", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   clock{this, "clock", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
   trains{this, "trains", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
@@ -137,6 +139,7 @@ World::World(Private) :
   m_interfaceItems.add(outputs);
   m_interfaceItems.add(controllers);
   m_interfaceItems.add(loconets);
+  m_interfaceItems.add(xpressnets);
   m_interfaceItems.add(boards);
   m_interfaceItems.add(clock);
   m_interfaceItems.add(trains);

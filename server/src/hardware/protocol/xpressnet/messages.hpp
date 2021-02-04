@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,8 @@
 #include "../../../enum/direction.hpp"
 
 namespace XpressNet {
+
+constexpr uint8_t idFeedbackBroadcast = 0x40;
 
 struct Message;
 
@@ -102,6 +104,50 @@ struct EmergencyStop : Message
   }
 };
 static_assert(sizeof(EmergencyStop) == 3);
+
+struct FeedbackBroadcast : Message
+{
+  struct Pair
+  {
+    enum class Type
+    {
+      AccessoryDecoderWithoutFeedback = 0,
+      AccessoryDecoderWithFeedback = 1,
+      FeedbackModule = 2,
+      ReservedForFutureUse = 3,
+    };
+
+    uint8_t address;
+    uint8_t data;
+
+    constexpr Type type() const
+    {
+      return static_cast<Type>((data & 0x60) >> 5);
+    }
+
+    constexpr bool isHighNibble() const
+    {
+      return (data & 0x10);
+    }
+
+    constexpr uint8_t statusNibble() const
+    {
+      return (data & 0x0F);
+    }
+  };
+  static_assert(sizeof(Pair) == 2);
+
+  constexpr uint8_t pairCount() const
+  {
+    return dataSize() / sizeof(Pair);
+  }
+
+  const Pair& pair(uint8_t index) const
+  {
+    assert(index < pairCount());
+    return *(reinterpret_cast<const Pair*>(&header + sizeof(header)) + index);
+  }
+};
 
 struct EmergencyStopLocomotive : Message
 {

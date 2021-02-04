@@ -40,6 +40,7 @@
 #include "../hardware/output/outputlist.hpp"
 #include "../hardware/controller/controllerlist.hpp"
 #include "../hardware/protocol/loconet/loconetlist.hpp"
+#include "../hardware/protocol/xpressnet/xpressnetlist.hpp"
 #include "../train/trainlist.hpp"
 #include "../vehicle/rail/railvehiclelist.hpp"
 #ifndef DISABLE_LUA_SCRIPTING
@@ -86,6 +87,7 @@ class World : public Object
     ObjectProperty<OutputList> outputs;
     ObjectProperty<ControllerList> controllers;
     ObjectProperty<LocoNetList> loconets;
+    ObjectProperty<XpressNetList> xpressnets;
     ObjectProperty<BoardList> boards;
     ObjectProperty<Clock> clock;
     ObjectProperty<TrainList> trains;

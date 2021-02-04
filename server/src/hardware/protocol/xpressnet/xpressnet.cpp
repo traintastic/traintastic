@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 #include "../../../core/eventloop.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../input/xpressnetinput.hpp"
 
 namespace XpressNet {
 
@@ -74,6 +75,11 @@ XpressNet::XpressNet(Object& _parent, const std::string& parentPropertyName, std
    [this](bool value)
     {
       m_debugLog = value;
+    }},
+  inputMonitor{*this, "input_monitor",
+    [this]()
+    {
+      return std::make_shared<XpressNetInputMonitor>(shared_ptr<XpressNet>());
     }}
 {
   Attributes::addEnabled(commandStation, false);
@@ -85,6 +91,8 @@ XpressNet::XpressNet(Object& _parent, const std::string& parentPropertyName, std
   //m_interfaceItems.add(useFunctionStateCommands);
   Attributes::addEnabled(useRocoF13F20Command, false);
   m_interfaceItems.add(useRocoF13F20Command);
+  m_interfaceItems.add(debugLog);
+  m_interfaceItems.add(inputMonitor);
 }
 
 void XpressNet::worldEvent(WorldState state, WorldEvent event)
@@ -112,6 +120,33 @@ void XpressNet::receive(const Message& message)
   {
     switch(message.identification())
     {
+      case idFeedbackBroadcast:
+      {
+        const FeedbackBroadcast* fb = static_cast<const FeedbackBroadcast*>(&message);
+
+        for(uint8_t i = 0; i < fb->pairCount(); i++)
+        {
+          const FeedbackBroadcast::Pair& p = fb->pair(i);
+          if(p.type() == FeedbackBroadcast::Pair::Type::FeedbackModule)
+          {
+            const uint16_t baseAddress = 1 + (static_cast<uint16_t>(p.address) << 3) + (p.isHighNibble() ? 4 : 0);
+            EventLoop::call(
+              [this, baseAddress, status=p.statusNibble()]()
+              {
+                for(uint16_t i = 0; i < 4; i++)
+                {
+                  TriState v = toTriState((status & (1 << i)) != 0);
+                  auto it = m_inputs.find(baseAddress + i);
+                  if(it != m_inputs.end())
+                    it->second->updateValue(v);
+                  else
+                    inputMonitorValueChanged(baseAddress + i, v);
+                }
+              });
+          }
+        }
+        break;
+      }
       case 0x60:
         if(message == NormalOperationResumed())
         {
@@ -259,6 +294,67 @@ void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags change
     else
       logWarning("Function F" + std::to_string(functionNumber) + " not supported");
   }
+}
+
+bool XpressNet::isInputAddressAvailable(uint16_t address) const
+{
+  return m_inputs.find(address) == m_inputs.end();
+}
+
+bool XpressNet::changeInputAddress(XpressNetInput& input, uint16_t newAddress)
+{
+  assert(input.xpressnet.value().get() == this);
+
+  if(!isInputAddressAvailable(newAddress))
+    return false;
+
+  auto node = m_inputs.extract(input.address); // old address
+  node.key() = newAddress;
+  m_inputs.insert(std::move(node));
+  inputMonitorIdChanged(input.address, {});
+  inputMonitorIdChanged(newAddress, input.id.value());
+  input.updateValue(TriState::Undefined);
+
+  return true;
+}
+
+bool XpressNet::addInput(XpressNetInput& input)
+{
+  if(isInputAddressAvailable(input.address))
+  {
+    m_inputs.insert({input.address, input.shared_ptr<XpressNetInput>()});
+    inputMonitorIdChanged(input.address, input.id.value());
+    input.updateValue(TriState::Undefined);
+    // TODO: request state!
+    return true;
+  }
+  else
+    return false;
+}
+
+void XpressNet::removeInput(XpressNetInput& input)
+{
+  assert(input.xpressnet.value().get() == this);
+  const uint16_t address = input.address;
+  auto it = m_inputs.find(input.address);
+  if(it != m_inputs.end() && it->second.get() == &input)
+    m_inputs.erase(it);
+  input.updateValue(TriState::Undefined);
+  inputMonitorIdChanged(address, {});
+}
+
+void XpressNet::inputMonitorIdChanged(const uint32_t address, const std::string_view value)
+{
+  for(auto* inputMonitor : m_inputMonitors)
+    if(inputMonitor->inputIdChanged)
+      inputMonitor->inputIdChanged(*inputMonitor, address, value);
+}
+
+void XpressNet::inputMonitorValueChanged(const uint32_t address, const TriState value)
+{
+  for(auto* inputMonitor : m_inputMonitors)
+    if(inputMonitor->inputValueChanged)
+      inputMonitor->inputValueChanged(*inputMonitor, address, value);
 }
 
 }

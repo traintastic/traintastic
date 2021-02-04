@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/input/input.hpp
+ * server/src/hardware/protocol/xpressnet/xpressnetlist.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,28 +20,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUT_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUT_HPP
+#include "xpressnetlist.hpp"
+#include "xpressnetlisttablemodel.hpp"
 
-#include "../../core/idobject.hpp"
-#include "../../enum/tristate.hpp"
-
-class Input : public IdObject
+XpressNetList::XpressNetList(Object& _parent, const std::string& parentPropertyName) :
+  ObjectList<XpressNet::XpressNet>(_parent, parentPropertyName)
 {
-  DEFAULT_ID("input")
+}
 
-  protected:
-    void addToWorld() override;
-    void worldEvent(WorldState state, WorldEvent event) override;
-    virtual void valueChanged(TriState _value) {}
+TableModelPtr XpressNetList::getModel()
+{
+  return std::make_shared<XpressNetListTableModel>(*this);
+}
 
-    void updateValue(TriState _value);
-
-  public:
-    Property<std::string> name;
-    Property<TriState> value;
-
-    Input(const std::weak_ptr<World> world, std::string_view _id);
-};
-
-#endif
+bool XpressNetList::isListedProperty(const std::string& name)
+{
+  return XpressNetListTableModel::isListedProperty(name);
+}
