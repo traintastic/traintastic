@@ -76,7 +76,8 @@ SOURCES += \
     src/network/board.cpp \
     src/board/tile.cpp \
     src/board/boardareawidget.cpp \
-    src/board/boardwidget.cpp
+    src/board/boardwidget.cpp \
+    src/widget/interfaceitemnamelabel.cpp
 
 HEADERS += \
     src/mainwindow.hpp \
@@ -145,7 +146,8 @@ HEADERS += \
     src/board/boardareawidget.hpp \
     src/board/boardwidget.hpp \
     src/utils/rectf.hpp \
-    src/network/callmethod.hpp
+    src/network/callmethod.hpp \
+    src/widget/interfaceitemnamelabel.hpp
 
 RESOURCES += \
     dark.qrc

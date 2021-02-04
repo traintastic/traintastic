@@ -34,6 +34,7 @@
 #include "../../network/method.hpp"
 //#include "../../network/utils.hpp"
 //#include "../alertwidget.hpp"
+#include "../interfaceitemnamelabel.hpp"
 #include "../propertycheckbox.hpp"
 #include "../propertycombobox.hpp"
 #include "../propertyspinbox.hpp"
@@ -175,7 +176,7 @@ void ObjectEditWidget::buildForm()
         else
           tabWidget = categoryTabs[category];
 
-        static_cast<QFormLayout*>(tabWidget->layout())->addRow(item->displayName(), w);
+        static_cast<QFormLayout*>(tabWidget->layout())->addRow(new InterfaceItemNameLabel(*item, this), w);
       }
     }
 
