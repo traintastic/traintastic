@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,12 +29,21 @@
 
 class XpressNetSerial : public SerialCommandStation
 {
+  private:
+    void updateEnabled();
+    void updateVisible();
+
   protected:
+    void loaded() final;
+    void worldEvent(WorldState state, WorldEvent event) final;
+
     void emergencyStopChanged(bool value) final;
     void trackVoltageOffChanged(bool value) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     bool send(const XpressNet::Message& msg);
+    void stop() final;
+    void started() final;
     void read() final;
 
   public:
@@ -43,6 +52,8 @@ class XpressNetSerial : public SerialCommandStation
 
     Property<XpressNetSerialInterface> interface;
     ObjectProperty<XpressNet::XpressNet> xpressnet;
+    Property<uint8_t> s88StartAddress;
+    Property<uint8_t> s88ModuleCount;
 
     XpressNetSerial(const std::weak_ptr<World>& world, std::string_view _id);
 };

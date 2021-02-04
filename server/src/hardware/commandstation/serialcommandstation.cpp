@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,6 +50,19 @@ SerialCommandStation::SerialCommandStation(const std::weak_ptr<World>& world, st
   m_interfaceItems.insertBefore(flowControl, notes);
 }
 
+void SerialCommandStation::loaded()
+{
+  CommandStation::loaded();
+  updateEnabled();
+}
+
+void SerialCommandStation::worldEvent(WorldState state, WorldEvent event)
+{
+  CommandStation::worldEvent(state, event);
+  if(event == WorldEvent::EditEnabled || event == WorldEvent::EditDisabled)
+    updateEnabled();
+}
+
 bool SerialCommandStation::setOnline(bool& value)
 {
   if(!m_serialPort.is_open() && value)
@@ -61,6 +74,7 @@ bool SerialCommandStation::setOnline(bool& value)
     }
     m_readBufferOffset = 0;
     read();
+    started();
   }
   else if(m_serialPort.is_open() && !value)
     stop();
@@ -99,4 +113,14 @@ void SerialCommandStation::stop()
 {
   // TODO: send power off cmd??
   m_serialPort.close();
+}
+
+void SerialCommandStation::updateEnabled()
+{
+  auto w = m_world.lock();
+  bool enabled = w && contains(w->state.value(), WorldState::Edit) && !online;
+
+  Attributes::setEnabled(port, enabled);
+  Attributes::setEnabled(baudrate, enabled);
+  Attributes::setEnabled(flowControl, enabled);
 }

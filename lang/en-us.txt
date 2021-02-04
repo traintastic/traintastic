@@ -54,6 +54,11 @@ clock:year=Year
 command_station.loconet_serial:flow_control=Flow control
 command_station.loconet_serial:interface=Interface
 
+command_station.xpressnet_serial:flow_control=Flow control
+command_station.xpressnet_serial:interface=Interface
+command_station.xpressnet_serial:s88_module_count=S88 module count
+command_station.xpressnet_serial:s88_start_address=S88 start address
+
 command_station.z21:filtered_main_current=Filtered main current
 command_station.z21:firmware_version=Firmware version
 command_station.z21:hardware_type=Hardware type
@@ -251,3 +256,9 @@ world:track_power_on=Track power on
 world:trains=Trains
 
 world_list:uuid=UUID
+
+xpressnet_serial_interface:custom=Custom
+xpressnet_serial_interface:lenz_li100=Lenz LI100
+xpressnet_serial_interface:lenz_li100f=Lenz LI100F
+xpressnet_serial_interface:lenz_li101f=Lenz LI101F
+xpressnet_serial_interface:rosoft_s88xpressnetli=RoSoft s88XpressNetLI

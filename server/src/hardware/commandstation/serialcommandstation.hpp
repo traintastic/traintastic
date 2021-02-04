@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,15 +29,21 @@
 
 class SerialCommandStation : public CommandStation
 {
+  private:
+    void updateEnabled();
+
   protected:
     boost::asio::serial_port m_serialPort;
     std::array<uint8_t, 1024> m_readBuffer;
     uint16_t m_readBufferOffset;
 
+    void loaded() override;
+    void worldEvent(WorldState state, WorldEvent event) override;
+
     bool setOnline(bool& value) final;
 
     bool start();
-    void stop();
+    virtual void stop();
 
     virtual void started() {}
     virtual void read() = 0;

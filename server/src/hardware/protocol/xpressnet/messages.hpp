@@ -41,17 +41,26 @@ struct Message
 {
   uint8_t header;
 
-  uint8_t identification() const
+  Message()
+  {
+  }
+
+  Message(uint8_t _header) :
+    header{_header}
+  {
+  }
+
+  constexpr uint8_t identification() const
   {
     return header & 0xF0;
   }
 
-  uint8_t dataSize() const
+  constexpr uint8_t dataSize() const
   {
     return header & 0x0F;
   }
 
-  uint8_t size() const
+  constexpr uint8_t size() const
   {
     return 2 + dataSize();
   }
@@ -327,6 +336,51 @@ struct RocoFunctionInstructionF13F20 : LocomotiveInstruction
     checksum = calcChecksum(*this);
   }
 };
+
+namespace RoSoftS88XpressNetLI
+{
+  struct S88StartAddress : Message
+  {
+    static constexpr uint8_t startAddressMin = 0;
+    static constexpr uint8_t startAddressMax = 127;
+    static constexpr uint8_t startAddressDefault = 64;
+    static constexpr uint8_t startAddressGet = 0xFF;
+
+    uint8_t data1;
+    uint8_t startAddress;
+    uint8_t checksum;
+
+    S88StartAddress(uint8_t _startAddress = startAddressGet) :
+      Message(0xF2),
+      data1{0xF1},
+      startAddress{_startAddress}
+    {
+      assert((startAddress >= startAddressMin && startAddress <= startAddressMax) || startAddress == startAddressGet);
+      checksum = calcChecksum(*this);
+    }
+  };
+
+  struct S88ModuleCount : Message
+  {
+    static constexpr uint8_t moduleCountMin = 1;
+    static constexpr uint8_t moduleCountMax = 32;
+    static constexpr uint8_t moduleCountDefault = 2;
+    static constexpr uint8_t moduleCountGet = 0xFF;
+
+    uint8_t data1;
+    uint8_t moduleCount;
+    uint8_t checksum;
+
+    S88ModuleCount(uint8_t _moduleCount = moduleCountGet) :
+      Message(0xF2),
+      data1{0xF2},
+      moduleCount{_moduleCount}
+    {
+      assert((moduleCount >= moduleCountMin && moduleCount <= moduleCountMax) || moduleCount == moduleCountGet);
+      checksum = calcChecksum(*this);
+    }
+  };
+}
 
 }
 

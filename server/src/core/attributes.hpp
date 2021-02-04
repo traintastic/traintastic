@@ -25,6 +25,7 @@
 
 #include "interfaceitem.hpp"
 #include "abstractobjectproperty.hpp"
+#include "property.hpp"
 
 struct Attributes
 {
@@ -64,6 +65,11 @@ struct Attributes
   static inline void addVisible(InterfaceItem& item, bool value)
   {
     item.addAttribute(AttributeName::Visible, value);
+  }
+
+  static inline void setVisible(InterfaceItem& item, bool value)
+  {
+    item.setAttribute(AttributeName::Visible, value);
   }
 
   static inline void addObjectEditor(InterfaceItem& item, bool value)
