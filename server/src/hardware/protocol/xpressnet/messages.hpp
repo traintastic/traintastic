@@ -275,8 +275,8 @@ struct FunctionInstructionGroup : LocomotiveInstruction
   FunctionInstructionGroup(uint16_t address, bool longAddress, uint8_t group) :
     LocomotiveInstruction(address, longAddress)
   {
-    assert(group >= 1 && group <= 3);
-    identification = 0x1F + group;
+    assert(group >= 1 && group <= 5);
+    identification = (group == 5) ? 0x28 : (0x1F + group);
   }
 };
 
@@ -331,6 +331,58 @@ struct FunctionInstructionGroup3 : FunctionInstructionGroup
       functions |= 0x04;
     if(f12)
       functions |= 0x08;
+
+    checksum = calcChecksum(*this);
+  }
+};
+
+struct FunctionInstructionGroup4 : FunctionInstructionGroup
+{
+  FunctionInstructionGroup4(uint16_t address, bool longAddress, bool f13, bool f14, bool f15, bool f16, bool f17, bool f18, bool f19, bool f20) :
+    FunctionInstructionGroup(address, longAddress, 4)
+  {
+    if(f13)
+      functions |= 0x01;
+    if(f14)
+      functions |= 0x02;
+    if(f15)
+      functions |= 0x04;
+    if(f16)
+      functions |= 0x08;
+    if(f17)
+      functions |= 0x10;
+    if(f18)
+      functions |= 0x20;
+    if(f19)
+      functions |= 0x40;
+    if(f20)
+      functions |= 0x80;
+
+    checksum = calcChecksum(*this);
+  }
+};
+
+struct FunctionInstructionGroup5 : FunctionInstructionGroup
+{
+  FunctionInstructionGroup5(uint16_t address, bool longAddress, bool f21, bool f22, bool f23, bool f24, bool f25, bool f26, bool f27, bool f28) :
+    FunctionInstructionGroup(address, longAddress, 5)
+  {
+    if(f21)
+      functions |= 0x01;
+    if(f22)
+      functions |= 0x02;
+    if(f23)
+      functions |= 0x04;
+    if(f24)
+      functions |= 0x08;
+    if(f25)
+      functions |= 0x10;
+    if(f26)
+      functions |= 0x20;
+    if(f27)
+      functions |= 0x40;
+    if(f28)
+      functions |= 0x80;
 
     checksum = calcChecksum(*this);
   }

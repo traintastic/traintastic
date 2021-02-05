@@ -279,18 +279,45 @@ void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags change
         decoder.getFunctionValue(10),
         decoder.getFunctionValue(11),
         decoder.getFunctionValue(12)));
-    else if(useRocoF13F20Command && functionNumber <= 20)
-      send(RocoFunctionInstructionF13F20(
+    else if(functionNumber <= 20)
+    {
+      if(useRocoF13F20Command)
+        send(RocoFunctionInstructionF13F20(
+          decoder.address,
+          decoder.longAddress,
+          decoder.getFunctionValue(13),
+          decoder.getFunctionValue(14),
+          decoder.getFunctionValue(15),
+          decoder.getFunctionValue(16),
+          decoder.getFunctionValue(17),
+          decoder.getFunctionValue(18),
+          decoder.getFunctionValue(19),
+          decoder.getFunctionValue(20)));
+      else
+        send(FunctionInstructionGroup4(
+          decoder.address,
+          decoder.longAddress,
+          decoder.getFunctionValue(13),
+          decoder.getFunctionValue(14),
+          decoder.getFunctionValue(15),
+          decoder.getFunctionValue(16),
+          decoder.getFunctionValue(17),
+          decoder.getFunctionValue(18),
+          decoder.getFunctionValue(19),
+          decoder.getFunctionValue(20)));
+    }
+    else if(functionNumber <= 28)
+      send(FunctionInstructionGroup5(
         decoder.address,
         decoder.longAddress,
-        decoder.getFunctionValue(13),
-        decoder.getFunctionValue(14),
-        decoder.getFunctionValue(15),
-        decoder.getFunctionValue(16),
-        decoder.getFunctionValue(17),
-        decoder.getFunctionValue(18),
-        decoder.getFunctionValue(19),
-        decoder.getFunctionValue(20)));
+        decoder.getFunctionValue(21),
+        decoder.getFunctionValue(22),
+        decoder.getFunctionValue(23),
+        decoder.getFunctionValue(24),
+        decoder.getFunctionValue(25),
+        decoder.getFunctionValue(26),
+        decoder.getFunctionValue(27),
+        decoder.getFunctionValue(28)));
     else
       logWarning("Function F" + std::to_string(functionNumber) + " not supported");
   }
