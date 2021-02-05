@@ -404,36 +404,39 @@ struct setFunctionStateGroup : LocomotiveInstruction
 } __attribute__((packed));
 */
 
-struct RocoFunctionInstructionF13F20 : LocomotiveInstruction
+namespace RocoMultiMAUS
 {
-  uint8_t functions = 0x00;
-  uint8_t checksum;
-
-  RocoFunctionInstructionF13F20(uint16_t address, bool longAddress, bool f13, bool f14, bool f15, bool f16, bool f17, bool f18, bool f19, bool f20) :
-    LocomotiveInstruction(address, longAddress)
+  struct FunctionInstructionF13F20 : LocomotiveInstruction
   {
-    identification = 0xF3;
+    uint8_t functions = 0x00;
+    uint8_t checksum;
 
-    if(f13)
-      functions |= 0x01;
-    if(f14)
-      functions |= 0x02;
-    if(f15)
-      functions |= 0x04;
-    if(f16)
-      functions |= 0x08;
-    if(f17)
-      functions |= 0x10;
-    if(f18)
-      functions |= 0x20;
-    if(f19)
-      functions |= 0x40;
-    if(f20)
-      functions |= 0x80;
+    FunctionInstructionF13F20(uint16_t address, bool longAddress, bool f13, bool f14, bool f15, bool f16, bool f17, bool f18, bool f19, bool f20) :
+      LocomotiveInstruction(address, longAddress)
+    {
+      identification = 0xF3;
 
-    checksum = calcChecksum(*this);
-  }
-};
+      if(f13)
+        functions |= 0x01;
+      if(f14)
+        functions |= 0x02;
+      if(f15)
+        functions |= 0x04;
+      if(f16)
+        functions |= 0x08;
+      if(f17)
+        functions |= 0x10;
+      if(f18)
+        functions |= 0x20;
+      if(f19)
+        functions |= 0x40;
+      if(f20)
+        functions |= 0x80;
+
+      checksum = calcChecksum(*this);
+    }
+  };
+}
 
 namespace RoSoftS88XpressNetLI
 {

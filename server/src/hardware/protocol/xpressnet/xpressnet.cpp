@@ -282,7 +282,7 @@ void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags change
     else if(functionNumber <= 20)
     {
       if(useRocoF13F20Command)
-        send(RocoFunctionInstructionF13F20(
+        send(RocoMultiMAUS::FunctionInstructionF13F20(
           decoder.address,
           decoder.longAddress,
           decoder.getFunctionValue(13),
