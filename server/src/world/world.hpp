@@ -63,6 +63,7 @@ class World : public Object
     static void init(const std::shared_ptr<World>& world);
 
     std::filesystem::path m_filename;
+    std::filesystem::path m_filenameState;
     boost::uuids::uuid m_uuid;
     std::unordered_map<std::string, std::weak_ptr<Object>> m_objects;
 
@@ -75,6 +76,7 @@ class World : public Object
 
     static constexpr std::string_view id = classId;
     static constexpr std::string_view filename = "traintastic.json";
+    static constexpr std::string_view filenameState = "traintastic.state.json";
 
     static std::shared_ptr<World> create();
 

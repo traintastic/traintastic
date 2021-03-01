@@ -59,6 +59,11 @@ class AbstractProperty : public InterfaceItem
       return (m_flags & PropertyFlagsStoreMask) == PropertyFlags::Store;
     }
 
+    bool isStateStoreable() const
+    {
+      return (m_flags & PropertyFlagsStoreMask) == PropertyFlags::StoreState;
+    }
+
     PropertyFlags flags() const
     {
       return m_flags;

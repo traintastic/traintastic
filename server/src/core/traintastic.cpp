@@ -251,7 +251,7 @@ void Traintastic::load(const std::filesystem::path& path)
 {
   try
   {
-    world = WorldLoader(path / "traintastic.json").world();
+    world = WorldLoader(path).world();
   }
   catch(const std::exception& e)
   {

@@ -30,36 +30,34 @@ using nlohmann::json;
 
 WorldSaver::WorldSaver(const World& world)
 {
-  json objects = json::array();
-  for(auto& it : world.m_objects)
-    if(ObjectPtr object = it.second.lock())
-      objects.push_back(saveObject(object));
-
   json data;
-  data["uuid"] = to_string(world.m_uuid);
+  json state;
+
+  data["uuid"] = state["uuid"] = to_string(world.m_uuid);
+
   data[world.name.name()] = world.name.toJSON();
   data[world.scale.name()] = world.scale.toJSON();
-  data["objects"] = objects;
 
-  std::filesystem::path dir = std::filesystem::path(world.m_filename).remove_filename();
-  std::string s = dir.string();
-  if(!std::filesystem::is_directory(dir))
-    std::filesystem::create_directories(dir);
-
-  std::ofstream file(world.m_filename);
-  if(file.is_open())
   {
-    file << data.dump(2);
-    //Traintastic::instance->console->notice(classId, "Saved world " + name.value());
+    json objects = json::array();
+    json states = json::object();
+
+    for(auto& it : world.m_objects)
+      if(ObjectPtr object = it.second.lock())
+        objects.push_back(saveObject(object, states));
+
+    data["objects"] = objects;
+    state["states"] = states;
   }
-  else
-    throw std::runtime_error("file not open");
-    //Traintastic::instance->console->critical(classId, "Can't write to world file");
+
+  saveToDisk(data, world.m_filename);
+  saveToDisk(state, world.m_filenameState);
 }
 
-json WorldSaver::saveObject(const ObjectPtr& object)
+json WorldSaver::saveObject(const ObjectPtr& object, json& states)
 {
-  json objectData;
+  json objectData = json::object();
+  json objectState = json::object();
 
   objectData["class_id"] = object->getClassId();
 
@@ -97,29 +95,55 @@ json WorldSaver::saveObject(const ObjectPtr& object)
   for(auto& item : object->interfaceItems())
     if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&item.second))
     {
-      if(!property->isStoreable())
-        continue;
-
-      if(property->type() == ValueType::Object)
+      if(property->isStoreable())
       {
-        if(ObjectPtr value = property->toObject())
+        if(property->type() == ValueType::Object)
         {
-          if(IdObject* idObject = dynamic_cast<IdObject*>(value.get()))
-            objectData[property->name()] = idObject->id.toJSON();
-          else if(SubObject* subObject = dynamic_cast<SubObject*>(value.get()))
+          if(ObjectPtr value = property->toObject())
           {
-            if((property->flags() & PropertyFlags::SubObject) == PropertyFlags::SubObject)
-              objectData[property->name()] = saveObject(value);
-            else
-              objectData[property->name()] = subObject->getObjectId();
+            if(IdObject* idObject = dynamic_cast<IdObject*>(value.get()))
+              objectData[property->name()] = idObject->id.toJSON();
+            else if(SubObject* subObject = dynamic_cast<SubObject*>(value.get()))
+            {
+              if((property->flags() & PropertyFlags::SubObject) == PropertyFlags::SubObject)
+                objectData[property->name()] = saveObject(value, states);
+              else
+                objectData[property->name()] = subObject->getObjectId();
+            }
           }
+          else
+            objectData[property->name()] = nullptr;
         }
         else
-          objectData[property->name()] = nullptr;
+          objectData[property->name()] = property->toJSON();
       }
-      else
-        objectData[property->name()] = property->toJSON();
+      else if(property->isStateStoreable())
+      {
+        assert(property->type() != ValueType::Object);
+        objectState[property->name()] = property->toJSON();
+      }
     }
 
+  if(!objectState.empty())
+    states[object->getObjectId()] = objectState;
+
   return objectData;
+}
+
+void WorldSaver::saveToDisk(const json& data, const std::filesystem::path& filename)
+{
+  std::filesystem::path dir = std::filesystem::path(filename).remove_filename();
+  std::string s = dir.string();
+  if(!std::filesystem::is_directory(dir))
+    std::filesystem::create_directories(dir);
+
+  std::ofstream file(filename);
+  if(file.is_open())
+  {
+    file << data.dump(2);
+    //Traintastic::instance->console->notice(classId, "Saved world " + name.value());
+  }
+  else
+    throw std::runtime_error("file not open");
+    //Traintastic::instance->console->critical(classId, "Can't write to world file");
 }

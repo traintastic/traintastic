@@ -52,7 +52,7 @@ class WorldLoader
     void loadObject(Object& object, const nlohmann::json& data);
 
   public:
-    WorldLoader(const std::filesystem::path& filename);
+    WorldLoader(const std::filesystem::path& path);
 
     std::shared_ptr<World> world() { return m_world; }
 };

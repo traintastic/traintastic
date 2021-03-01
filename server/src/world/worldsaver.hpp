@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_WORLD_WORLDSAVER_HPP
 
 #include "../core/objectptr.hpp"
+#include "../core/stdfilesystem.hpp"
 #include "../utils/json.hpp"
 
 class World;
@@ -31,7 +32,8 @@ class World;
 class WorldSaver
 {
   private:
-    nlohmann::json saveObject(const ObjectPtr& object);
+    nlohmann::json saveObject(const ObjectPtr& object, nlohmann::json& states);
+    void saveToDisk(const nlohmann::json& data, const std::filesystem::path& filename);
 
   public:
     WorldSaver(const World& world);
