@@ -503,7 +503,7 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
 
     message.writeBlock(); // items
     const InterfaceItems& interfaceItems = object->interfaceItems();
-    for(const std::string& name : interfaceItems.names())
+    for(const auto& name : interfaceItems.names())
     {
       InterfaceItem& item = interfaceItems[name];
 
@@ -760,7 +760,7 @@ void Session::writeAttribute(Message& message , const AbstractAttribute& attribu
     assert(false);
 }
 
-void Session::inputMonitorInputIdChanged(InputMonitor& inputMonitor, const uint32_t address, const std::string_view id)
+void Session::inputMonitorInputIdChanged(InputMonitor& inputMonitor, const uint32_t address, std::string_view id)
 {
   auto event = Message::newEvent(Message::Command::InputMonitorInputIdChanged);
   event->write(m_handles.getHandle(inputMonitor.shared_from_this()));
@@ -778,7 +778,7 @@ void Session::inputMonitorInputValueChanged(InputMonitor& inputMonitor, const ui
   m_client->sendMessage(std::move(event));
 }
 
-void Session::outputKeyboardOutputIdChanged(OutputKeyboard& outputKeyboard, const uint32_t address, const std::string_view id)
+void Session::outputKeyboardOutputIdChanged(OutputKeyboard& outputKeyboard, const uint32_t address, std::string_view id)
 {
   auto event = Message::newEvent(Message::Command::OutputKeyboardOutputIdChanged);
   event->write(m_handles.getHandle(outputKeyboard.shared_from_this()));

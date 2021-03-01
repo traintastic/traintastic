@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,30 +25,30 @@
 
 #include <unordered_map>
 #include <list>
-#include <string>
+#include <string_view>
 
 class InterfaceItem;
 
 class InterfaceItems
 {
   protected:
-    std::unordered_map<std::string, InterfaceItem&> m_items;
-    std::list<std::string> m_itemOrder;
+    std::unordered_map<std::string_view, InterfaceItem&> m_items;
+    std::list<std::string_view> m_itemOrder;
 
   public:
-    using const_iterator = std::unordered_map<std::string, InterfaceItem&>::const_iterator;
+    using const_iterator = std::unordered_map<std::string_view, InterfaceItem&>::const_iterator;
 
     inline const_iterator begin() const { return m_items.cbegin(); }
     inline const_iterator end() const { return m_items.cend(); }
 
-    const std::list<std::string>& names() const { return m_itemOrder; }
+    const std::list<std::string_view>& names() const { return m_itemOrder; }
 
-    InterfaceItem* find(const std::string& name) const;
+    InterfaceItem* find(std::string_view name) const;
 
     void add(InterfaceItem& item);
     void insertBefore(InterfaceItem& item, const InterfaceItem& before);
 
-    inline InterfaceItem& operator[](const std::string& name) const { return m_items.at(name); }
+    inline InterfaceItem& operator[](std::string_view name) const { return m_items.at(name); }
 };
 
 #endif

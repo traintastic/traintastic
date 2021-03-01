@@ -370,7 +370,7 @@ void XpressNet::removeInput(XpressNetInput& input)
   inputMonitorIdChanged(address, {});
 }
 
-void XpressNet::inputMonitorIdChanged(const uint32_t address, const std::string_view value)
+void XpressNet::inputMonitorIdChanged(const uint32_t address, std::string_view value)
 {
   for(auto* inputMonitor : m_inputMonitors)
     if(inputMonitor->inputIdChanged)

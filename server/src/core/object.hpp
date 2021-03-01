@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,7 +32,7 @@
 #define CLASS_ID(id) \
   public: \
     static constexpr std::string_view classId = id; \
-    const std::string_view& getClassId() const override { return classId; }
+    std::string_view getClassId() const override { return classId; }
 
 class AbstractMethod;
 class AbstractProperty;
@@ -83,14 +83,14 @@ class Object : public std::enable_shared_from_this<Object>
       return std::static_pointer_cast<Derived>(shared_from_this());
     }
 
-    virtual const std::string_view& getClassId() const = 0;
+    virtual std::string_view getClassId() const = 0;
     virtual std::string getObjectId() const = 0;
 
     const InterfaceItems& interfaceItems() const { return m_interfaceItems; }
 
-    InterfaceItem* getItem(const std::string& name);
-    AbstractMethod* getMethod(const std::string& name);
-    AbstractProperty* getProperty(const std::string& name);
+    InterfaceItem* getItem(std::string_view name);
+    AbstractMethod* getMethod(std::string_view name);
+    AbstractProperty* getProperty(std::string_view name);
 };
 
 #endif

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,17 +44,17 @@ void Object::destroy()
   }
 }
 
-InterfaceItem* Object::getItem(const std::string& name)
+InterfaceItem* Object::getItem(std::string_view name)
 {
   return m_interfaceItems.find(name);
 }
 
-AbstractMethod* Object::getMethod(const std::string& name)
+AbstractMethod* Object::getMethod(std::string_view name)
 {
   return dynamic_cast<AbstractMethod*>(getItem(name));
 }
 
-AbstractProperty* Object::getProperty(const std::string& name)
+AbstractProperty* Object::getProperty(std::string_view name)
 {
   return dynamic_cast<AbstractProperty*>(getItem(name));
 }

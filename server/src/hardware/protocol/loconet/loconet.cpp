@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -458,7 +458,7 @@ void LocoNet::removeInput(LocoNetInput& input)
   inputMonitorIdChanged(address, {});
 }
 
-void LocoNet::inputMonitorIdChanged(const uint32_t address, const std::string_view value)
+void LocoNet::inputMonitorIdChanged(const uint32_t address, std::string_view value)
 {
   for(auto* inputMonitor : m_inputMonitors)
     if(inputMonitor->inputIdChanged)
@@ -519,7 +519,7 @@ void LocoNet::removeOutput(LocoNetOutput& output)
   outputKeyboardIdChanged(address, {});
 }
 
-void LocoNet::outputKeyboardIdChanged(const uint32_t address, const std::string_view value)
+void LocoNet::outputKeyboardIdChanged(const uint32_t address, std::string_view value)
 {
   for(auto* outputKeyboard : m_outputKeyboards)
     if(outputKeyboard->outputIdChanged)

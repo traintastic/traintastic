@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "object.hpp"
 #include "push.hpp"
 #include "check.hpp"
+#include "to.hpp"
 #include "method.hpp"
 #include "../core/object.hpp"
 #include "../core/abstractproperty.hpp"
@@ -108,7 +109,7 @@ int Object::__gc(lua_State* L)
 int Object::__index(lua_State* L)
 {
   ObjectPtr object{check(L, 1)};
-  const std::string name{lua_tostring(L, 2)};
+  std::string_view name{to<std::string_view>(L, 2)};
 
   if(InterfaceItem* item = object->getItem(name))
   {
