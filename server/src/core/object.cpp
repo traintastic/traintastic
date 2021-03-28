@@ -24,6 +24,7 @@
 #include "abstractmethod.hpp"
 #include "abstractproperty.hpp"
 #include "traintastic.hpp"
+#include "../world/worldloader.hpp"
 
 Object::Object() :
   m_dying{false}
@@ -57,6 +58,29 @@ AbstractMethod* Object::getMethod(std::string_view name)
 AbstractProperty* Object::getProperty(std::string_view name)
 {
   return dynamic_cast<AbstractProperty*>(getItem(name));
+}
+
+void Object::load(WorldLoader& loader, const nlohmann::json& data)
+{
+  for(auto& [name, value] : data.items())
+    if(AbstractProperty* property = getProperty(name))
+      if(property->type() == ValueType::Object)
+      {
+        if(contains(property->flags(), PropertyFlags::SubObject))
+        {
+          //loadObject(*property->toObject(), value);
+          property->toObject()->load(loader, value);
+        }
+        else
+        {
+          if(value.is_string())
+            property->load(loader.getObject(value));
+          else if(value.is_null())
+            property->load(ObjectPtr());
+        }
+      }
+      else
+        property->load(value);
 }
 
 void Object::worldEvent(WorldState state, WorldEvent event)

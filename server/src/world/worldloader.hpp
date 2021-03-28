@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,15 +46,15 @@ class WorldLoader
     std::shared_ptr<World> m_world;
     std::unordered_map<std::string, ObjectData> m_objects;
 
-    ObjectPtr getObject(std::string_view id);
     void createObject(ObjectData& objectData);
     void loadObject(ObjectData& objectData);
-    void loadObject(Object& object, const nlohmann::json& data);
 
   public:
     WorldLoader(const std::filesystem::path& path);
 
     std::shared_ptr<World> world() { return m_world; }
+
+    ObjectPtr getObject(std::string_view id);
 };
 
 

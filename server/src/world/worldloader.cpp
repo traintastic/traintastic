@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -176,71 +176,7 @@ void WorldLoader::loadObject(ObjectData& objectData)
 {
   /*assert*/if(!objectData.object)return;
   assert(!objectData.loaded);
-  loadObject(*objectData.object, objectData.json);
+  objectData.object->load(*this, objectData.json);
   objectData.loaded = true;
 }
 
-void WorldLoader::loadObject(Object& object, const json& data)
-{
-  if(AbstractObjectList* list = dynamic_cast<AbstractObjectList*>(&object))
-  {
-    json objects = data.value("objects", json::array());
-    std::vector<ObjectPtr> items;
-    items.reserve(objects.size());
-    for(auto& [_, id] : objects.items())
-      if(ObjectPtr item = getObject(id))
-        items.emplace_back(std::move(item));
-    list->setItems(items);
-  }
-  else if(Board* board = dynamic_cast<Board*>(&object))
-  {
-    json objects = data.value("tiles", json::array());
-    std::vector<ObjectPtr> items;
-    board->m_tiles.reserve(objects.size());
-    for(auto& [_, id] : objects.items())
-      if(auto tile = std::dynamic_pointer_cast<Tile>(getObject(id)))
-      {
-        if(tile->data().width() > 1 || tile->data().height() > 1)
-        {
-          const int16_t x2 = tile->location().x + tile->data().width();
-          const int16_t y2 = tile->location().y + tile->data().height();
-          for(int16_t x = tile->location().x; x < x2; x++)
-            for(int16_t y = tile->location().y; y < y2; y++)
-              board->m_tiles.emplace(TileLocation{x, y}, tile);
-        }
-        else
-        {
-          const TileLocation l = tile->location();
-          board->m_tiles.emplace(l, std::move(tile));
-        }
-      }
-  }
-
-  for(auto& [name, value] : data.items())
-    if(AbstractProperty* property = object.getProperty(name))
-      if(property->type() == ValueType::Object)
-      {
-        if(contains(property->flags(), PropertyFlags::SubObject))
-        {
-          loadObject(*property->toObject(), value);
-        }
-        else
-        {
-          if(value.is_string())
-            property->load(getObject(value));
-          else if(value.is_null())
-            property->load(ObjectPtr());
-        }
-      }
-      else
-        property->load(value);
-
-  //objectData.object->loaded();
-}
-
-/*
-std::shared_ptr<Object> WorldLoader::getObject(std::string_view id)
-{
-
-}
-*/

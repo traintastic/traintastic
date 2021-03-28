@@ -24,6 +24,7 @@
 #include "boardlisttablemodel.hpp"
 #include "tile/tiles.hpp"
 #include "../world/world.hpp"
+#include "../world/worldloader.hpp"
 #include "../core/attributes.hpp"
 
 Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
@@ -99,6 +100,32 @@ void Board::addToWorld()
 
   if(auto world = m_world.lock())
     world->boards->addObject(shared_ptr<Board>());
+}
+
+void Board::load(WorldLoader& loader, const nlohmann::json& data)
+{
+  IdObject::load(loader, data);
+
+  nlohmann::json objects = data.value("tiles", nlohmann::json::array());
+  std::vector<ObjectPtr> items;
+  m_tiles.reserve(objects.size());
+  for(auto& [_, id] : objects.items())
+    if(auto tile = std::dynamic_pointer_cast<Tile>(loader.getObject(id)))
+    {
+      if(tile->data().width() > 1 || tile->data().height() > 1)
+      {
+        const int16_t x2 = tile->location().x + tile->data().width();
+        const int16_t y2 = tile->location().y + tile->data().height();
+        for(int16_t x = tile->location().x; x < x2; x++)
+          for(int16_t y = tile->location().y; y < y2; y++)
+            m_tiles.emplace(TileLocation{x, y}, tile);
+      }
+      else
+      {
+        const TileLocation l = tile->location();
+        m_tiles.emplace(l, std::move(tile));
+      }
+    }
 }
 
 void Board::worldEvent(WorldState state, WorldEvent event)

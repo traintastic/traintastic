@@ -25,6 +25,7 @@
 
 #include "objectptr.hpp"
 #include <boost/signals2/signal.hpp>
+#include <nlohmann/json.hpp>
 #include "interfaceitems.hpp"
 #include <traintastic/enum/worldevent.hpp>
 #include <traintastic/set/worldstate.hpp>
@@ -37,6 +38,7 @@
 class AbstractMethod;
 class AbstractProperty;
 class AbstractAttribute;
+class WorldLoader;
 
 class Object : public std::enable_shared_from_this<Object>
 {
@@ -51,6 +53,7 @@ class Object : public std::enable_shared_from_this<Object>
 
     inline bool dying() const noexcept { return m_dying; }
     virtual void destroying() {}
+    virtual void load(WorldLoader& loader, const nlohmann::json& data);
     virtual void loaded() {}
     virtual void worldEvent(WorldState state, WorldEvent event);
 

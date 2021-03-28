@@ -34,8 +34,6 @@ struct TileData;
 
 class Board : public IdObject
 {
-  friend class WorldLoader;
-
   public:
     using TileMap = std::unordered_map<TileLocation, std::shared_ptr<Tile>, TileLocationHash>;
 
@@ -46,6 +44,7 @@ class Board : public IdObject
     TileMap m_tiles;
 
     void addToWorld() final;
+    void load(WorldLoader& loader, const nlohmann::json& data) final;
     void worldEvent(WorldState state, WorldEvent event) override;
 
   public:

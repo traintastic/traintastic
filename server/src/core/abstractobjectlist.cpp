@@ -1,9 +1,9 @@
 /**
- * server/src/core/abstractobjectlist.hpp
+ * server/src/core/abstractobjectlist.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,26 +20,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_CORE_ABSTRACTOBJECTLIST_HPP
-#define TRAINTASTIC_SERVER_CORE_ABSTRACTOBJECTLIST_HPP
+#include "abstractobjectlist.hpp"
+#include "../world/worldloader.hpp"
 
-#include "subobject.hpp"
-#include "table.hpp"
-
-class WorldSaver;
-
-class AbstractObjectList : public SubObject, public Table
+AbstractObjectList::AbstractObjectList(Object& _parent, const std::string& parentPropertyName) :
+  SubObject{_parent, parentPropertyName}
 {
-  friend class WorldSaver;
+}
 
-  protected:
-    void load(WorldLoader& loader, const nlohmann::json& data) override;
+void AbstractObjectList::load(WorldLoader& loader, const nlohmann::json& data)
+{
+  SubObject::load(loader, data);
 
-    virtual std::vector<ObjectPtr> getItems() const = 0;
-    virtual void setItems(const std::vector<ObjectPtr>& items) = 0;
-
-  public:
-    AbstractObjectList(Object& _parent, const std::string& parentPropertyName);
-};
-
-#endif
+  nlohmann::json objects = data.value("objects", nlohmann::json::array());
+  std::vector<ObjectPtr> items;
+  items.reserve(objects.size());
+  for(auto& [_, id] : objects.items())
+    if(ObjectPtr item = loader.getObject(id))
+      items.emplace_back(std::move(item));
+  setItems(items);
+}
