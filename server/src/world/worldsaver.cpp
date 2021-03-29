@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,14 +24,14 @@
 #include <fstream>
 #include <boost/uuid/uuid_io.hpp>
 #include "world.hpp"
-#include "../board/tile/tile.hpp"
 
 using nlohmann::json;
 
 WorldSaver::WorldSaver(const World& world)
 {
-  json data;
-  json state;
+  m_states = json::object();
+  json data = json::object();
+  json state = json::object();
 
   data["uuid"] = state["uuid"] = to_string(world.m_uuid);
 
@@ -40,92 +40,28 @@ WorldSaver::WorldSaver(const World& world)
 
   {
     json objects = json::array();
-    json states = json::object();
 
     for(auto& it : world.m_objects)
       if(ObjectPtr object = it.second.lock())
-        objects.push_back(saveObject(object, states));
+        objects.push_back(saveObject(object));
 
     data["objects"] = objects;
-    state["states"] = states;
+    state["states"] = m_states;
   }
 
   saveToDisk(data, world.m_filename);
   saveToDisk(state, world.m_filenameState);
 }
 
-json WorldSaver::saveObject(const ObjectPtr& object, json& states)
+json WorldSaver::saveObject(const ObjectPtr& object)
 {
   json objectData = json::object();
   json objectState = json::object();
 
-  objectData["class_id"] = object->getClassId();
-
-  if(AbstractObjectList* list = dynamic_cast<AbstractObjectList*>(object.get()))
-  {
-    json objects = json::array();
-    for(auto& item: list->getItems())
-      if(IdObject* idObject = dynamic_cast<IdObject*>(item.get()))
-        objects.push_back(idObject->id);
-      else
-        assert(false);
-    objectData["objects"] = objects;
-  }
-  else if(DecoderFunction* function = dynamic_cast<DecoderFunction*>(object.get()))
-    objectData["decoder"] = function->decoder().id.toJSON();
-  else if(Board* board = dynamic_cast<Board*>(object.get()))
-  {
-    json tiles = json::array();
-    for(const auto& it : board->tileMap())
-      if(it.first == it.second->location())
-        tiles.push_back(it.second->id);
-    objectData["tiles"] = tiles;
-  }
-  else if(Tile* tile = dynamic_cast<Tile*>(object.get()))
-  {
-    objectData["x"] = tile->location().x;
-    objectData["y"] = tile->location().y;
-    objectData["rotate"] = toDeg(tile->data().rotate());
-    if(uint8_t height = tile->data().height(); height > 1)
-      objectData["height"] = height;
-    if(uint8_t width = tile->data().width(); width > 1)
-      objectData["width"] = width;
-  }
-
-  for(auto& item : object->interfaceItems())
-    if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&item.second))
-    {
-      if(property->isStoreable())
-      {
-        if(property->type() == ValueType::Object)
-        {
-          if(ObjectPtr value = property->toObject())
-          {
-            if(IdObject* idObject = dynamic_cast<IdObject*>(value.get()))
-              objectData[property->name()] = idObject->id.toJSON();
-            else if(SubObject* subObject = dynamic_cast<SubObject*>(value.get()))
-            {
-              if((property->flags() & PropertyFlags::SubObject) == PropertyFlags::SubObject)
-                objectData[property->name()] = saveObject(value, states);
-              else
-                objectData[property->name()] = subObject->getObjectId();
-            }
-          }
-          else
-            objectData[property->name()] = nullptr;
-        }
-        else
-          objectData[property->name()] = property->toJSON();
-      }
-      else if(property->isStateStoreable())
-      {
-        assert(property->type() != ValueType::Object);
-        objectState[property->name()] = property->toJSON();
-      }
-    }
+  object->save(*this, objectData, objectState);
 
   if(!objectState.empty())
-    states[object->getObjectId()] = objectState;
+    m_states[object->getObjectId()] = objectState;
 
   return objectData;
 }

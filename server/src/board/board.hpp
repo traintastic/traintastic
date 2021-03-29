@@ -45,6 +45,7 @@ class Board : public IdObject
 
     void addToWorld() final;
     void load(WorldLoader& loader, const nlohmann::json& data) final;
+    void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const final;
     void worldEvent(WorldState state, WorldEvent event) override;
 
   public:

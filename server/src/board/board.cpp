@@ -128,6 +128,17 @@ void Board::load(WorldLoader& loader, const nlohmann::json& data)
     }
 }
 
+void Board::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const
+{
+  IdObject::save(saver, data, state);
+
+  nlohmann::json tiles = nlohmann::json::array();
+  for(const auto& it : m_tiles)
+    if(it.first == it.second->location())
+      tiles.push_back(it.second->id);
+  data["tiles"] = tiles;
+}
+
 void Board::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);

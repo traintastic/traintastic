@@ -34,6 +34,7 @@ class AbstractObjectList : public SubObject, public Table
 
   protected:
     void load(WorldLoader& loader, const nlohmann::json& data) override;
+    void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
 
     virtual std::vector<ObjectPtr> getItems() const = 0;
     virtual void setItems(const std::vector<ObjectPtr>& items) = 0;

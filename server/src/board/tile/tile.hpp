@@ -38,6 +38,8 @@ class Tile : public IdObject
 
     Tile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
 
+    void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
+
     virtual void setRotate(TileRotate value) { m_data.setRotate(value); }
 
   public:

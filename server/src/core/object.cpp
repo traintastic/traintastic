@@ -25,6 +25,7 @@
 #include "abstractproperty.hpp"
 #include "traintastic.hpp"
 #include "../world/worldloader.hpp"
+#include "../world/worldsaver.hpp"
 
 Object::Object() :
   m_dying{false}
@@ -81,6 +82,43 @@ void Object::load(WorldLoader& loader, const nlohmann::json& data)
       }
       else
         property->load(value);
+}
+
+void Object::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const
+{
+  data["class_id"] = getClassId();
+
+  for(auto& item : interfaceItems())
+    if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&item.second))
+    {
+      if(property->isStoreable())
+      {
+        if(property->type() == ValueType::Object)
+        {
+          if(ObjectPtr value = property->toObject())
+          {
+            if(IdObject* idObject = dynamic_cast<IdObject*>(value.get()))
+              data[property->name()] = idObject->id.toJSON();
+            else if(SubObject* subObject = dynamic_cast<SubObject*>(value.get()))
+            {
+              if((property->flags() & PropertyFlags::SubObject) == PropertyFlags::SubObject)
+                data[property->name()] = saver.saveObject(value);
+              else
+                data[property->name()] = subObject->getObjectId();
+            }
+          }
+          else
+            data[property->name()] = nullptr;
+        }
+        else
+          data[property->name()] = property->toJSON();
+      }
+      else if(property->isStateStoreable())
+      {
+        assert(property->type() != ValueType::Object);
+        state[property->name()] = property->toJSON();
+      }
+    }
 }
 
 void Object::worldEvent(WorldState state, WorldEvent event)

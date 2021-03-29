@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@ class DecoderFunction : public IdObject
   protected:
     Decoder& m_decoder;
 
+    void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
     void worldEvent(WorldState state, WorldEvent event) final;
 
    // void addToWorld() final { Output::addToWorld(); }

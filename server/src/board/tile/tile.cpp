@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,4 +26,17 @@ Tile::Tile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileI
   IdObject(world, _id),
   m_data{tileId}
 {
+}
+
+void Tile::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const
+{
+  IdObject::save(saver, data, state);
+
+  data["x"] = m_location.x;
+  data["y"] = m_location.y;
+  data["rotate"] = toDeg(m_data.rotate());
+  if(uint8_t height = m_data.height(); height > 1)
+    data["height"] = height;
+  if(uint8_t width = m_data.width(); width > 1)
+    data["width"] = width;
 }

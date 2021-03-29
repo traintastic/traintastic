@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,11 +32,14 @@ class World;
 class WorldSaver
 {
   private:
-    nlohmann::json saveObject(const ObjectPtr& object, nlohmann::json& states);
+    nlohmann::json m_states;
+
     void saveToDisk(const nlohmann::json& data, const std::filesystem::path& filename);
 
   public:
     WorldSaver(const World& world);
+
+    nlohmann::json saveObject(const ObjectPtr& object);
 };
 
 #endif

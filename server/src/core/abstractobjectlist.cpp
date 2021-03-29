@@ -21,6 +21,7 @@
  */
 
 #include "abstractobjectlist.hpp"
+#include "../core/idobject.hpp"
 #include "../world/worldloader.hpp"
 
 AbstractObjectList::AbstractObjectList(Object& _parent, const std::string& parentPropertyName) :
@@ -39,4 +40,17 @@ void AbstractObjectList::load(WorldLoader& loader, const nlohmann::json& data)
     if(ObjectPtr item = loader.getObject(id))
       items.emplace_back(std::move(item));
   setItems(items);
+}
+
+void AbstractObjectList::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const
+{
+  SubObject::save(saver, data, state);
+
+  nlohmann::json objects = nlohmann::json::array();
+  for(auto& item: getItems())
+    if(IdObject* idObject = dynamic_cast<IdObject*>(item.get()))
+      objects.push_back(idObject->id);
+    else
+      assert(false);
+  data["objects"] = objects;
 }

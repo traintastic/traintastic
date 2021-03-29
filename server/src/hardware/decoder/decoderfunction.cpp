@@ -1,7 +1,7 @@
 /**
- * Traintastic
+ * server/src/hardware/decoder/decoderfunction.cpp
  *
- * Copyright (C) 2019-2020 Reinder Feenstra <reinderfeenstra@gmail.com>
+ * Copyright (C) 2019-2021 Reinder Feenstra <reinderfeenstra@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,6 +52,13 @@ DecoderFunction::DecoderFunction(Decoder& decoder, std::string_view _id) :
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
   m_interfaceItems.add(value);
+}
+
+void DecoderFunction::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const
+{
+  IdObject::save(saver, data, state);
+
+  data["decoder"] = m_decoder.id.toJSON();
 }
 
 void DecoderFunction::worldEvent(WorldState state, WorldEvent event)
