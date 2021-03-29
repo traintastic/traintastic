@@ -45,6 +45,12 @@ WorldSaver::WorldSaver(const World& world)
       if(ObjectPtr object = it.second.lock())
         objects.push_back(saveObject(object));
 
+    std::sort(objects.begin(), objects.end(),
+      [](const json& a, const json& b)
+      {
+        return (a["id"] < b["id"]);
+      });
+
     data["objects"] = objects;
     state["states"] = m_states;
   }
