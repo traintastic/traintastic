@@ -45,14 +45,30 @@ using nlohmann::json;
 WorldLoader::WorldLoader(const std::filesystem::path& path) :
   m_world{World::create()}
 {
+  m_states = json::object();
+
   m_world->m_filename = path / World::filename;
   m_world->m_filenameState = path / World::filenameState;
 
-  std::ifstream file(m_world->m_filename);
-  if(!file.is_open())
-    throw std::runtime_error("can't open " + m_world->m_filename .string());
+  json data;
 
-  json data = json::parse(file);
+  // load file(s):
+  {
+    std::ifstream file(m_world->m_filename);
+    if(!file.is_open())
+      throw std::runtime_error("can't open " + m_world->m_filename .string());
+    data = json::parse(file);
+
+    std::ifstream stateFile(m_world->m_filenameState);
+    if(stateFile.is_open())
+    {
+      json state = json::parse(stateFile);
+      if(state["uuid"] == data["uuid"])
+        m_states = state["states"];
+      else
+      {} /// @todo log warning
+    }
+  }
 
   m_world->m_uuid = boost::uuids::string_generator()(std::string(data["uuid"]));
   m_world->name = data[m_world->name.name()];
@@ -71,25 +87,10 @@ WorldLoader::WorldLoader(const std::filesystem::path& path) :
     if(!it.second.object)
       createObject(it.second);
 
-  // and load their data
+  // and load their data/state
   for(auto& it : m_objects)
     if(!it.second.loaded)
       loadObject(it.second);
-
-  // and load their state data
-  {
-    std::ifstream stateFile(m_world->m_filenameState);
-    if(stateFile.is_open())
-    {
-      json state = json::parse(stateFile);
-      if(state["uuid"] == data["uuid"])
-        for(auto& [id, values] : state["states"].items())
-          if(ObjectPtr object = getObject(id))
-            for(auto& [name, value] : values.items())
-              if(AbstractProperty* property = object->getProperty(name))
-                property->load(value);
-    }
-  }
 
   // and finally notify loading is completed
   for(auto& it : m_objects)
@@ -123,6 +124,11 @@ ObjectPtr WorldLoader::getObject(std::string_view id)
   }
 
   return obj;
+}
+
+json WorldLoader::getState(const std::string& id) const
+{
+  return m_states.value(id, json::object());
 }
 
 void WorldLoader::createObject(ObjectData& objectData)
