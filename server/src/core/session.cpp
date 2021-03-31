@@ -242,7 +242,23 @@ bool Session::processMessage(const Message& message)
                 break;
 
               case ValueType::String:
-                args.push_back(message.read<std::string>());
+              {
+                std::string arg = message.read<std::string>();
+                if(i < method->argumentCount() && method->argumentTypes()[i] == ValueType::Object)
+                {
+                  if(arg.empty())
+                    args.push_back(ObjectPtr());
+                  else if(ObjectPtr obj = Traintastic::instance->world->getObjectByPath(arg))
+                    args.push_back(obj);
+                  else
+                    args.push_back(arg);
+                }
+                else
+                  args.push_back(arg);
+                break;
+              }
+              case ValueType::Object:
+                args.push_back(m_handles.getItem(message.read<Handle>()));
                 break;
 
               default:
