@@ -25,9 +25,8 @@
 
 #include <traintastic/enum/valuetype.hpp>
 #include <traintastic/set/set.hpp>
-//#include "../utils/is_shared_ptr.hpp"
 
-//class Object;
+class Object;
 
 template<class T>
 struct value_type
@@ -41,13 +40,19 @@ struct value_type
     (std::is_same_v<T, std::string> || std::is_same_v<T, std::string_view>)  ? ValueType::String : (
     ValueType::Invalid))))));
 };
-/*
+
 template<class T>
 struct value_type<std::shared_ptr<T>>
 {
-  static constexpr ValueType value = std::is_base_of_v<T, Object> ? ValueType::Object : ValueType::Invalid;
+  static constexpr ValueType value = std::is_base_of_v<Object, T> ? ValueType::Object : ValueType::Invalid;
 };
-*/
+
+template<class T>
+struct value_type<const std::shared_ptr<T>&>
+{
+  static constexpr ValueType value = std::is_base_of_v<Object, T> ? ValueType::Object : ValueType::Invalid;
+};
+
 template<typename T>
 inline constexpr ValueType value_type_v = value_type<T>::value;
 
