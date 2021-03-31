@@ -196,23 +196,8 @@ bool Session::processMessage(const Message& message)
             const std::string id = message.read<std::string>();
             if(!id.empty())
             {
-              // TODO: move to function??
-              std::vector<std::string> ids;
-              boost::split(ids, id, [](char c){ return c == '.'; });
-              auto it = ids.cbegin();
-
-              ObjectPtr value = Traintastic::instance->world->getObject(*it);
-              while(value && ++it != ids.cend())
-              {
-                AbstractProperty* property = value->getProperty(*it);
-                if(property && property->type() == ValueType::Object)
-                  value = property->toObject();
-                else
-                  value = nullptr;
-              }
-
-              if(value)
-                property->fromObject(value);
+              if(ObjectPtr obj = Traintastic::instance->world->getObjectByPath(id))
+                property->fromObject(obj);
               else
                 throw std::runtime_error("");
             }

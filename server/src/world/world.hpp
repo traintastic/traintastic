@@ -113,6 +113,7 @@ class World : public Object
     std::string getUniqueId(std::string_view prefix) const;
     bool isObject(const std::string&_id) const;
     ObjectPtr getObject(const std::string& _id) const;
+    ObjectPtr getObjectByPath(std::string_view path) const;
 };
 
 #endif

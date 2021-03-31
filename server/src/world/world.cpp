@@ -22,6 +22,7 @@
 
 #include "world.hpp"
 #include <fstream>
+#include <boost/algorithm/string.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -187,6 +188,24 @@ ObjectPtr World::getObject(const std::string& _id) const
     return std::const_pointer_cast<Object>(shared_from_this());
   else
     return ObjectPtr();
+}
+
+ObjectPtr World::getObjectByPath(std::string_view path) const
+{
+  std::vector<std::string> ids;
+  boost::split(ids, path, [](char c){ return c == '.'; });
+  auto it = ids.cbegin();
+
+  ObjectPtr obj = getObject(*it);
+  while(obj && ++it != ids.cend())
+  {
+    AbstractProperty* property = obj->getProperty(*it);
+    if(property && property->type() == ValueType::Object)
+      obj = property->toObject();
+    else
+      obj.reset();
+  }
+  return obj;
 }
 
 void World::event(WorldEvent event)
