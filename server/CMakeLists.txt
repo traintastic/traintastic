@@ -50,6 +50,8 @@ file(GLOB SOURCES
   "src/hardware/input/*.cpp"
   "src/hardware/output/*.hpp"
   "src/hardware/output/*.cpp"
+  "src/hardware/output/map/*.hpp"
+  "src/hardware/output/map/*.cpp"
   "src/hardware/protocol/loconet/*.hpp"
   "src/hardware/protocol/loconet/*.cpp"
   "src/hardware/protocol/xpressnet/*.hpp"
@@ -158,6 +160,20 @@ include(CTest)
 include(Catch)
 target_include_directories(traintastic-server-test PRIVATE thirdparty/catch2)
 catch_discover_tests(traintastic-server-test)
+
+### Doxygen ###
+
+find_package(Doxygen OPTIONAL_COMPONENTS dot mscgen dia)
+
+if(DOXYGEN_FOUND)
+  doxygen_add_docs(doxygen
+  ${SOURCES})
+    #[filesOrDirs...]
+    #[ALL]
+    #[USE_STAMP_FILE]
+    #[WORKING_DIRECTORY dir]
+    #[COMMENT comment])
+endif()
 
 ### DEB package ###
 

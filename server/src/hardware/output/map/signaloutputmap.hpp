@@ -1,9 +1,9 @@
 /**
- * server/src/enum/signalaspect.hpp
+ * server/src/hardware/output/map/signaloutputmap.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,14 +20,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_ENUM_SIGNALASPECT_HPP
-#define TRAINTASTIC_SERVER_ENUM_SIGNALASPECT_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_SIGNALOUTPUTMAP_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_SIGNALOUTPUTMAP_HPP
 
-#include <traintastic/enum/signalaspect.hpp>
+#include "outputmapbase.hpp"
+#include "signaloutputmapitem.hpp"
 
-constexpr bool isRequiredSignalAspect(SignalAspect aspect)
+class SignalOutputMap : public OutputMapBase<SignalAspect, SignalOutputMapItem>
 {
-  return (aspect == SignalAspect::Stop) || (aspect == SignalAspect::Proceed);
-}
+  CLASS_ID("output_map.signal")
+
+  public:
+    SignalOutputMap(Object& _parent, const std::string& parentPropertyName, std::initializer_list<SignalAspect> aspects);
+};
 
 #endif

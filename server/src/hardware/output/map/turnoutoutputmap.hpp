@@ -1,9 +1,9 @@
 /**
- * server/src/enum/signalaspect.hpp
+ * server/src/hardware/output/map/turnoutoutputmap.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,14 +20,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_ENUM_SIGNALASPECT_HPP
-#define TRAINTASTIC_SERVER_ENUM_SIGNALASPECT_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_TURNOUTOUTPUTMAP_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_TURNOUTOUTPUTMAP_HPP
 
-#include <traintastic/enum/signalaspect.hpp>
+#include "outputmapbase.hpp"
+#include "turnoutoutputmapitem.hpp"
 
-constexpr bool isRequiredSignalAspect(SignalAspect aspect)
+class TurnoutOutputMap : public OutputMapBase<TurnoutPosition, TurnoutOutputMapItem>
 {
-  return (aspect == SignalAspect::Stop) || (aspect == SignalAspect::Proceed);
-}
+  CLASS_ID("output_map.turnout")
+
+  public:
+    TurnoutOutputMap(Object& _parent, const std::string& parentPropertyName, std::initializer_list<TurnoutPosition> positions);
+};
 
 #endif

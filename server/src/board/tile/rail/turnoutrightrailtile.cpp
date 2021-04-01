@@ -27,6 +27,8 @@
 TurnoutRightRailTile::TurnoutRightRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId) :
   TurnoutRailTile(world, _id, tileId)
 {
+  outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Right}));
+
   Attributes::addValues(position, makeArray(TurnoutPosition::Straight, TurnoutPosition::Right, TurnoutPosition::Unknown));
   m_interfaceItems.add(position);
 }

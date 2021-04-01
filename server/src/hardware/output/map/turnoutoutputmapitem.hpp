@@ -1,9 +1,9 @@
 /**
- * server/src/board/tile/rail/turnoutrailtile.hpp
+ * server/src/hardware/output/map/turnoutoutputmapitem.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,31 +20,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUTRAILTILE_HPP
-#define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUTRAILTILE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_TURNOUTOUTPUTMAPITEM_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_TURNOUTOUTPUTMAPITEM_HPP
 
-#include "railtile.hpp"
-#include "../../../core/objectproperty.hpp"
-#include "../../../core/method.hpp"
+#include "outputmapitembase.hpp"
 #include "../../../enum/turnoutposition.hpp"
-#include "../../../hardware/output/map/turnoutoutputmap.hpp"
 
-class TurnoutRailTile : public RailTile
+class TurnoutOutputMapItem : public OutputMapItemBase<TurnoutPosition>
 {
-  DEFAULT_ID("turnout")
-
-  protected:
-    TurnoutRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
-
-    void worldEvent(WorldState state, WorldEvent event) override;
-
-    virtual void doNextPosition(bool reverse) = 0;
+  CLASS_ID("output_map_item.turnout")
 
   public:
-    Property<std::string> name;
-    Property<TurnoutPosition> position;
-    ObjectProperty<TurnoutOutputMap> outputMap;
-    Method<void(bool)> nextPosition;
+    TurnoutOutputMapItem(Object& map, TurnoutPosition position);
 };
 
 #endif

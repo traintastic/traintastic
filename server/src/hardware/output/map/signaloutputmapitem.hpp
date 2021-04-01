@@ -1,9 +1,9 @@
 /**
- * server/src/board/tile/rail/signalrailtile.hpp
+ * server/src/hardware/output/map/signaloutputmapitem.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,31 +20,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_SIGNALRAILTILE_HPP
-#define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_SIGNALRAILTILE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_SIGNALOUTPUTMAPITEM_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_SIGNALOUTPUTMAPITEM_HPP
 
-#include "straightrailtile.hpp"
-#include "../../../core/method.hpp"
+#include "outputmapitembase.hpp"
+#include "../../../core/property.hpp"
 #include "../../../enum/signalaspect.hpp"
-#include "../../../core/objectproperty.hpp"
-#include "../../../hardware/output/map/signaloutputmap.hpp"
 
-class SignalRailTile : public StraightRailTile
+class SignalOutputMapItem : public OutputMapItemBase<SignalAspect>
 {
-  DEFAULT_ID("signal")
-
-  protected:
-    SignalRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
-
-    void worldEvent(WorldState state, WorldEvent event) override;
-
-    virtual void doNextAspect(bool reverse) = 0;
+  CLASS_ID("output_map_item.signal")
 
   public:
-    Property<std::string> name;
-    Property<SignalAspect> aspect;
-    ObjectProperty<SignalOutputMap> outputMap;
-    Method<void(bool)> nextAspect;
+    SignalOutputMapItem(Object& map, SignalAspect aspect);
 };
 
 #endif

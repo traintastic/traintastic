@@ -1,9 +1,9 @@
 /**
- * server/src/board/tile/rail/turnoutrailtile.hpp
+ * server/src/hardware/output/map/outputmapoutputaction.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,31 +20,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUTRAILTILE_HPP
-#define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUTRAILTILE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_OUTPUTMAPOUTPUTACTION_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_OUTPUTMAPOUTPUTACTION_HPP
 
-#include "railtile.hpp"
-#include "../../../core/objectproperty.hpp"
-#include "../../../core/method.hpp"
-#include "../../../enum/turnoutposition.hpp"
-#include "../../../hardware/output/map/turnoutoutputmap.hpp"
+#include "../../../core/object.hpp"
+#include "../../../enum/outputaction.hpp"
+#include "../output.hpp"
 
-class TurnoutRailTile : public RailTile
+class OutputMapOutputAction : public Object
 {
-  DEFAULT_ID("turnout")
+  CLASS_ID("output_map_output_action")
+
+  friend class OutputMapItem;
 
   protected:
-    TurnoutRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
+    Object& m_parent;
+    std::shared_ptr<Output> m_output;
 
+    void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
     void worldEvent(WorldState state, WorldEvent event) override;
 
-    virtual void doNextPosition(bool reverse) = 0;
-
   public:
-    Property<std::string> name;
-    Property<TurnoutPosition> position;
-    ObjectProperty<TurnoutOutputMap> outputMap;
-    Method<void(bool)> nextPosition;
+    Property<OutputAction> action;
+
+    OutputMapOutputAction(Object& _parent, std::shared_ptr<Output> _output);
+
+    std::string getObjectId() const final;
+
+    const std::shared_ptr<Output>& output() const { return m_output; }
+
+    void execute();
 };
 
 #endif

@@ -1,9 +1,9 @@
 /**
- * server/src/board/tile/rail/turnoutleftrailtile.cpp
+ * server/src/hardware/output/map/signaloutputmapitem.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,20 +20,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "turnoutleftrailtile.hpp"
+#include "signaloutputmapitem.hpp"
 #include "../../../core/attributes.hpp"
-#include "../../../utils/makearray.hpp"
 
-TurnoutLeftRailTile::TurnoutLeftRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId) :
-  TurnoutRailTile(world, _id, tileId)
+SignalOutputMapItem::SignalOutputMapItem(Object& map, SignalAspect aspect) :
+  OutputMapItemBase(map, aspect)
 {
-  outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Left}));
-
-  Attributes::addValues(position, makeArray(TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Unknown));
-  m_interfaceItems.add(position);
-}
-
-void TurnoutLeftRailTile::doNextPosition(bool)
-{
-  position = (position == TurnoutPosition::Straight) ? TurnoutPosition::Left : TurnoutPosition::Straight;
+  Attributes::setEnabled(use, !isRequiredSignalAspect(aspect));
 }

@@ -1,9 +1,9 @@
 /**
- * server/src/enum/signalaspect.hpp
+ * shared/src/traintastic/enum/outputaction.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,14 +20,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_ENUM_SIGNALASPECT_HPP
-#define TRAINTASTIC_SERVER_ENUM_SIGNALASPECT_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_OUTPUTACTION_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_OUTPUTACTION_HPP
 
-#include <traintastic/enum/signalaspect.hpp>
+#include <cstdint>
+#include "enum.hpp"
 
-constexpr bool isRequiredSignalAspect(SignalAspect aspect)
+enum class OutputAction : uint8_t
 {
-  return (aspect == SignalAspect::Stop) || (aspect == SignalAspect::Proceed);
-}
+  None = 0,
+  Off = 1,
+  On = 2,
+  Pulse = 3,
+};
+
+template<>
+struct EnumName<OutputAction>
+{
+  static constexpr char const* value = "output_action";
+};
+
+ENUM_VALUES(OutputAction, 4,
+{
+  {OutputAction::None, "none"},
+  {OutputAction::Off, "off"},
+  {OutputAction::On, "on"},
+  {OutputAction::Pulse, "pulse"},
+})
 
 #endif

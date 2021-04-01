@@ -1,9 +1,9 @@
 /**
- * server/src/enum/signalaspect.hpp
+ * server/src/hardware/output/map/turnoutoutputmapitem.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,14 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_ENUM_SIGNALASPECT_HPP
-#define TRAINTASTIC_SERVER_ENUM_SIGNALASPECT_HPP
+#include "turnoutoutputmapitem.hpp"
 
-#include <traintastic/enum/signalaspect.hpp>
-
-constexpr bool isRequiredSignalAspect(SignalAspect aspect)
+TurnoutOutputMapItem::TurnoutOutputMapItem(Object& map, TurnoutPosition position) :
+  OutputMapItemBase(map, position)
 {
-  return (aspect == SignalAspect::Stop) || (aspect == SignalAspect::Proceed);
 }
-
-#endif

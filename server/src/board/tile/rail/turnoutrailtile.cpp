@@ -27,7 +27,12 @@
 TurnoutRailTile::TurnoutRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId) :
   RailTile(world, _id, tileId),
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store},
-  position{this, "position", TurnoutPosition::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
+  position{this, "position", TurnoutPosition::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
+    [this](TurnoutPosition value)
+    {
+      (*outputMap)[value]->execute();
+    }},
+  outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   nextPosition{*this, "next_position", [this](bool reverse){ doNextPosition(reverse); }}
 {
   auto w = world.lock();
@@ -36,6 +41,7 @@ TurnoutRailTile::TurnoutRailTile(const std::weak_ptr<World>& world, std::string_
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
   Attributes::addObjectEditor(position, false);
+  m_interfaceItems.add(outputMap);
   Attributes::addObjectEditor(nextPosition, false);
   m_interfaceItems.add(nextPosition);
 }

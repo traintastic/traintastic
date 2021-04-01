@@ -27,7 +27,12 @@
 SignalRailTile::SignalRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId) :
   StraightRailTile(world, _id, tileId),
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store},
-  aspect{this, "aspect", SignalAspect::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
+  aspect{this, "aspect", SignalAspect::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
+    [this](SignalAspect value)
+    {
+      (*outputMap)[value]->execute();
+    }},
+  outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   nextAspect{*this, "next_aspect", [this](bool reverse){ doNextAspect(reverse); }}
 {
   auto w = world.lock();
@@ -36,6 +41,7 @@ SignalRailTile::SignalRailTile(const std::weak_ptr<World>& world, std::string_vi
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
   Attributes::addObjectEditor(aspect, false);
+  m_interfaceItems.add(outputMap);
   Attributes::addObjectEditor(nextAspect, false);
   m_interfaceItems.add(nextAspect);
 }

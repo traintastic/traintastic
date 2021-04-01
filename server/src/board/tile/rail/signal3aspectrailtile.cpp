@@ -27,6 +27,8 @@
 Signal3AspectRailTile::Signal3AspectRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
   SignalRailTile(world, _id, TileId::RailSignal3Aspect)
 {
+  outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed}));
+
   Attributes::addValues(aspect, makeArray(SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed, SignalAspect::Unknown));
   m_interfaceItems.add(aspect);
 }
