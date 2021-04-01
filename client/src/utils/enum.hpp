@@ -26,7 +26,10 @@
 #include <QVector>
 #include <QString>
 
+class AbstractProperty;
+
 QVector<qint64> enumValues(const QString& enumName);
 QString translateEnum(const QString& enumName, qint64 value);
+QString translateEnum(const AbstractProperty& property);
 
 #endif

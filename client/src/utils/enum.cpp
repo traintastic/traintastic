@@ -21,6 +21,7 @@
  */
 
 #include "enum.hpp"
+#include "../network/abstractproperty.hpp"
 #include <traintastic/locale/locale.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
 #include <traintastic/enum/direction.hpp>
@@ -71,4 +72,10 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(XpressNetCommandStation)
   TRANSLATE_ENUM(XpressNetSerialInterface)
   return enumName + "@" + QString::number(value);
+}
+
+QString translateEnum(const AbstractProperty& property)
+{
+  Q_ASSERT(property.type() == ValueType::Enum);
+  return translateEnum(property.enumName(), property.toInt64());
 }
