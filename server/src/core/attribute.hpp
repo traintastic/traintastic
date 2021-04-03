@@ -25,7 +25,7 @@
 
 #include "abstractvalueattribute.hpp"
 #include "to.hpp"
-#include "valuetypetraits.hpp"
+#include <traintastic/utils/valuetypetraits.hpp>
 
 template<typename T>
 class Attribute : public AbstractValueAttribute

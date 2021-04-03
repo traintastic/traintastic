@@ -1,9 +1,9 @@
 /**
- * server/src/core/valuetypetraits.hpp
+ * shared/src/traintastic/utils/valuetypetraits.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,11 +20,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_CORE_VALUETYPETRAITS_HPP
-#define TRAINTASTIC_SERVER_CORE_VALUETYPETRAITS_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_UTILS_VALUETYPETRAITS_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_UTILS_VALUETYPETRAITS_HPP
 
-#include <traintastic/enum/valuetype.hpp>
-#include <traintastic/set/set.hpp>
+#include "../enum/valuetype.hpp"
+#include "../set/set.hpp"
 
 class Object;
 
@@ -37,7 +37,11 @@ struct value_type
     std::is_enum_v<T> ? ValueType::Enum : (
     std::is_integral_v<T> ? ValueType::Integer : (
     std::is_floating_point_v<T> ? ValueType::Float : (
-    (std::is_same_v<T, std::string> || std::is_same_v<T, std::string_view>)  ? ValueType::String : (
+#ifdef QT_CORE_LIB
+    std::is_same_v<T, QString> ? ValueType::String : (
+#else
+    (std::is_same_v<T, std::string> || std::is_same_v<T, std::string_view>) ? ValueType::String : (
+#endif
     ValueType::Invalid))))));
 };
 

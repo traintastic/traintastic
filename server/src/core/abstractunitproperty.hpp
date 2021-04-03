@@ -24,7 +24,7 @@
 #define TRAINTASTIC_SERVER_CORE_ABSTRACTUNITPROPERTY_HPP
 
 #include "abstractproperty.hpp"
-#include "valuetypetraits.hpp"
+#include <traintastic/utils/valuetypetraits.hpp>
 #include "to.hpp"
 
 class AbstractUnitProperty : public AbstractProperty

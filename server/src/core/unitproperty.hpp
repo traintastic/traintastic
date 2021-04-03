@@ -25,7 +25,7 @@
 
 #include "abstractunitproperty.hpp"
 #include <functional>
-#include "valuetypetraits.hpp"
+#include <traintastic/utils/valuetypetraits.hpp>
 #include "to.hpp"
 
 template<typename T, typename Unit>

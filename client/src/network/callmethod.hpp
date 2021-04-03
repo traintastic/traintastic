@@ -26,26 +26,7 @@
 #include "connection.hpp"
 #include "method.hpp"
 #include <traintastic/network/message.hpp>
-
-
-// TODO: share with server
-#include <type_traits>
-
-template<class T>
-struct value_type
-{
-  static constexpr ValueType value =
-    std::is_same_v<T, bool> ? ValueType::Boolean : (
-    std::is_enum_v<T> ? ValueType::Enum : (
-    std::is_integral_v<T> ? ValueType::Integer : (
-    std::is_floating_point_v<T> ? ValueType::Float : (
-    std::is_same_v<T, QString> ? ValueType::String : (
-    ValueType::Invalid)))));
-};
-
-template<typename T>
-inline constexpr ValueType value_type_v = value_type<T>::value;
-
+#include <traintastic/utils/valuetypetraits.hpp>
 
 template<class T, class... A>
 inline void writeArguments(Message& message, const T& value, A... others)

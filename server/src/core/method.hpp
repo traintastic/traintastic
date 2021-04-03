@@ -27,7 +27,7 @@
 #include <functional>
 #include <tuple>
 #include <limits>
-#include "valuetypetraits.hpp"
+#include <traintastic/utils/valuetypetraits.hpp>
 #include "../utils/is_shared_ptr.hpp"
 
 template<class T>
