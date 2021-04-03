@@ -11,6 +11,7 @@
 :name=Name
 :notes=Notes
 :online=Online
+:output_map=Output mapping
 :port=Port
 :track_power=Track power
 :xpressnet=XpressNet
@@ -21,7 +22,10 @@ class_id:board_tile.rail.cross_45=Crossover 45°
 class_id:board_tile.rail.cross_90=Crossover 90°
 class_id:board_tile.rail.curve_45=Curved track 45°
 class_id:board_tile.rail.curve_90=Curved track 90°
+class_id:board_tile.rail.sensor=Sensor
+class_id:board_tile.rail.signal_2_aspect=Signal (2 aspects)
 class_id:board_tile.rail.signal_2aspect=Signal 2 aspect
+class_id:board_tile.rail.signal_3_aspect=Signal (3 aspects)
 class_id:board_tile.rail.signal_3aspect=Signal 3 aspect
 class_id:board_tile.rail.straight=Straight track
 class_id:board_tile.rail.turnout_3way=Turnout 3-way
@@ -141,6 +145,14 @@ output_action:none=None
 output_action:off=Off
 output_action:on=On
 output_action:pulse=Pulse
+
+output_map.signal:key=Aspect
+
+output_map.turnout:key=Position
+
+output_map:add_output=Add output
+output_map:remove_output=Remove output
+output_map:use=Use
 
 protocol.loconet:debug_log=Debug log
 protocol.loconet:input_monitor=Input monitor
@@ -270,6 +282,7 @@ world:track_power_off=Track power off
 world:track_power_on=Track power on
 world:trains=Trains
 
+world_list:default=Default
 world_list:uuid=UUID
 
 xpressnet_command_station:custom=Custom
