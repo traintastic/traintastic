@@ -77,7 +77,10 @@ SOURCES += \
     src/board/tile.cpp \
     src/board/boardareawidget.cpp \
     src/board/boardwidget.cpp \
-    src/widget/interfaceitemnamelabel.cpp
+    src/network/outputmap.cpp \
+    src/widget/outputmapwidget.cpp \
+    src/widget/interfaceitemnamelabel.cpp \
+    src/widget/outputmapoutputactionwidget.cpp
 
 HEADERS += \
     src/mainwindow.hpp \
@@ -147,7 +150,10 @@ HEADERS += \
     src/board/boardwidget.hpp \
     src/utils/rectf.hpp \
     src/network/callmethod.hpp \
-    src/widget/interfaceitemnamelabel.hpp
+    src/network/outputmap.hpp \
+    src/widget/outputmapwidget.hpp \
+    src/widget/interfaceitemnamelabel.hpp \
+    src/widget/outputmapoutputactionwidget.hpp
 
 RESOURCES += \
     dark.qrc

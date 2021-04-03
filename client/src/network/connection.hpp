@@ -40,6 +40,7 @@ class Method;
 class InputMonitor;
 class OutputKeyboard;
 class Board;
+class OutputMap;
 
 class Connection : public QObject, public QEnableSharedFromThis<Connection>
 {
@@ -48,6 +49,7 @@ class Connection : public QObject, public QEnableSharedFromThis<Connection>
   template<typename R>
   friend R getResult(Connection&, const Message&);
   friend class Board;
+  friend class OutputMap;
 
   public:
     enum class State

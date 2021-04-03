@@ -33,6 +33,7 @@
 #include "tablemodel.hpp"
 #include "inputmonitor.hpp"
 #include "outputkeyboard.hpp"
+#include "outputmap.hpp"
 #include "board.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
 #include <traintastic/enum/attributetype.hpp>
@@ -403,6 +404,8 @@ ObjectPtr Connection::readObject(const Message& message)
       obj = std::make_shared<InputMonitor>(sharedFromThis(), handle, classId);
     else if(classId.startsWith(OutputKeyboard::classIdPrefix))
       obj = std::make_shared<OutputKeyboard>(sharedFromThis(), handle, classId);
+    else if(classId.startsWith(OutputMap::classIdPrefix))
+      obj = std::make_shared<OutputMap>(sharedFromThis(), handle, classId);
     else if(classId == Board::classId)
       obj = std::make_shared<Board>(sharedFromThis(), handle, classId);
     else
@@ -928,6 +931,11 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
       case Message::Command::BoardTileDataChanged:
         if(auto board = std::dynamic_pointer_cast<Board>(m_objects.value(message->read<Handle>()).lock()))
           board->processMessage(*message);
+        break;
+
+      case Message::Command::OutputMapOutputsChanged:
+        if(auto outputMap = std::dynamic_pointer_cast<OutputMap>(m_objects.value(message->read<Handle>()).lock()))
+          outputMap->processMessage(*message);
         break;
 
       default:

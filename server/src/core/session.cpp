@@ -36,6 +36,8 @@
 #include "idobject.hpp"
 #include "subobject.hpp"
 #include "../hardware/input/inputmonitor.hpp"
+#include "../hardware/output/map/outputmap.hpp"
+#include "../hardware/output/map/outputmapitem.hpp"
 #include "../board/board.hpp"
 #include "../board/tile/tile.hpp"
 
@@ -464,6 +466,28 @@ bool Session::processMessage(const Message& message)
       }
       break;
     }
+    case Message::Command::OutputMapGetItems:
+    {
+      if(auto outputMap = std::dynamic_pointer_cast<OutputMap>(m_handles.getItem(message.read<Handle>())))
+      {
+        auto response = Message::newResponse(message.command(), message.requestId());
+        for(auto& item : outputMap->items())
+          writeObject(*response, item);
+        m_client->sendMessage(std::move(response));
+      }
+      break;
+    }
+    case Message::Command::OutputMapGetOutputs:
+    {
+      if(auto outputMap = std::dynamic_pointer_cast<OutputMap>(m_handles.getItem(message.read<Handle>())))
+      {
+        auto response = Message::newResponse(message.command(), message.requestId());
+        for(auto& item : outputMap->outputs())
+          writeObject(*response, item);
+        m_client->sendMessage(std::move(response));
+      }
+      break;
+    }
     default:
       break;
   }
@@ -497,6 +521,10 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
     else if(auto* board = dynamic_cast<Board*>(object.get()))
     {
       m_objectSignals.emplace(handle, board->tileDataChanged.connect(std::bind(&Session::boardTileDataChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+    }
+    else if(auto* outputMap = dynamic_cast<OutputMap*>(object.get()))
+    {
+      m_objectSignals.emplace(handle, outputMap->outputsChanged.connect(std::bind(&Session::outputMapOutputsChanged, this, std::placeholders::_1)));
     }
 
     message.write(handle);
@@ -810,5 +838,14 @@ void Session::boardTileDataChanged(Board& board, const TileLocation& location, c
     assert(tile);
     writeObject(*event, tile);
   }
+  m_client->sendMessage(std::move(event));
+}
+
+void Session::outputMapOutputsChanged(OutputMap& outputMap)
+{
+  auto event = Message::newEvent(Message::Command::OutputMapOutputsChanged);
+  event->write(m_handles.getHandle(outputMap.shared_from_this()));
+  for(auto& item : outputMap.outputs())
+    writeObject(*event, item);
   m_client->sendMessage(std::move(event));
 }
