@@ -137,6 +137,11 @@ loconet_serial_interface:rosoft_loconet_interface=RoSoft LocoNet interface
 lua.script:active=Active
 lua.script:code=Code
 
+output_action:none=None
+output_action:off=Off
+output_action:on=On
+output_action:pulse=Pulse
+
 protocol.loconet:debug_log=Debug log
 protocol.loconet:input_monitor=Input monitor
 protocol.loconet:output_keyboard=Output keyboard
@@ -213,6 +218,10 @@ settings:default_world=Default world
 settings:localhost_only=Localhost only
 settings:port=Port
 
+signal_aspect:proceed=Proceed
+signal_aspect:proceed_reduced_speed=Proceed, reduced speed
+signal_aspect:stop=Stop
+
 speed_unit:kmph=km/h
 speed_unit:mph=mph
 speed_unit:mps=m/s
@@ -223,6 +232,10 @@ train:speed=Speed
 train:speed_max=Maximum speed
 train:throttle_speed=Throttle speed
 train:weight=Weight
+
+turnout_position:left=Left
+turnout_position:right=Right
+turnout_position:straight=Straight
 
 vehicle.rail.freight_car:cargo_weight=Cargo weight
 vehicle.rail.freight_car:decoder=Decoder

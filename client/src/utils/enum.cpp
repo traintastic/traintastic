@@ -28,8 +28,11 @@
 #include <traintastic/enum/lengthunit.hpp>
 #include <traintastic/enum/loconetcommandstation.hpp>
 #include <traintastic/enum/loconetserialinterface.hpp>
+#include <traintastic/enum/outputaction.hpp>
 #include <traintastic/enum/serialflowcontrol.hpp>
+#include <traintastic/enum/signalaspect.hpp>
 #include <traintastic/enum/speedunit.hpp>
+#include <traintastic/enum/turnoutposition.hpp>
 #include <traintastic/enum/weightunit.hpp>
 #include <traintastic/enum/worldscale.hpp>
 #include <traintastic/enum/xpressnetcommandstation.hpp>
@@ -65,8 +68,11 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(LengthUnit)
   TRANSLATE_ENUM(LocoNetCommandStation)
   TRANSLATE_ENUM(LocoNetSerialInterface)
+  TRANSLATE_ENUM(OutputAction)
   TRANSLATE_ENUM(SerialFlowControl)
+  TRANSLATE_ENUM(SignalAspect)
   TRANSLATE_ENUM(SpeedUnit)
+  TRANSLATE_ENUM(TurnoutPosition)
   TRANSLATE_ENUM(WeightUnit)
   TRANSLATE_ENUM(WorldScale)
   TRANSLATE_ENUM(XpressNetCommandStation)
