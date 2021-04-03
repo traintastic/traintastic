@@ -45,6 +45,8 @@ class Connection : public QObject, public QEnableSharedFromThis<Connection>
 {
   Q_OBJECT
 
+  template<typename R>
+  friend R getResult(Connection&, const Message&);
   friend class Board;
 
   public:
