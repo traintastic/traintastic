@@ -25,16 +25,29 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QtWaitingSpinner/waitingspinnerwidget.h>
+#include "../network/callmethod.hpp"
 #include "../network/connection.hpp"
 #include "../network/object.hpp"
+#include "../network/method.hpp"
+#include "../network/objectproperty.hpp"
 #include "../network/utils.hpp"
 #include "../widget/tablewidget.hpp"
 #include "../widget/alertwidget.hpp"
 #include <traintastic/locale/locale.hpp>
 
+ObjectSelectListDialog::ObjectSelectListDialog(Method& method, QWidget* parent) :
+  ObjectSelectListDialog(static_cast<InterfaceItem&>(method), parent)
+{
+}
+
 ObjectSelectListDialog::ObjectSelectListDialog(ObjectProperty& property, QWidget* parent) :
+  ObjectSelectListDialog(static_cast<InterfaceItem&>(property), parent)
+{
+}
+
+ObjectSelectListDialog::ObjectSelectListDialog(InterfaceItem& item, QWidget* parent) :
   QDialog(parent, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
-  m_property{property},
+  m_item{item},
   m_buttons{new QDialogButtonBox(this)},
   m_tableWidget{new TableWidget()}
 {
@@ -46,8 +59,7 @@ ObjectSelectListDialog::ObjectSelectListDialog(ObjectProperty& property, QWidget
   connect(m_buttons->button(QDialogButtonBox::Ok), &QPushButton::clicked, this,
     [this]()
     {
-      m_property.setByObjectId(m_tableWidget->getRowObjectId(m_tableWidget->selectionModel()->selectedIndexes().first().row()));
-      accept();
+      acceptRow(m_tableWidget->selectionModel()->selectedIndexes().first().row());
     });
   m_buttons->button(QDialogButtonBox::Cancel)->setText(Locale::tr("qtapp.object_select_list_dialog:cancel"));
   connect(m_buttons->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &ObjectSelectListDialog::reject);
@@ -62,14 +74,14 @@ ObjectSelectListDialog::ObjectSelectListDialog(ObjectProperty& property, QWidget
   auto* spinner = new WaitingSpinnerWidget(this, true, false);
   spinner->start();
 
-  m_requestId = m_property.object().connection()->getObject(m_property.getAttribute(AttributeName::ObjectList, QVariant()).toString(),
+  m_requestId = m_item.object().connection()->getObject(m_item.getAttribute(AttributeName::ObjectList, QVariant()).toString(),
     [this, spinner](const ObjectPtr& object, Message::ErrorCode ec)
     {
       if(object)
       {
         m_object = object;
 
-        m_requestId = m_property.object().connection()->getTableModel(m_object,
+        m_requestId = m_item.object().connection()->getTableModel(m_object,
           [this, spinner](const TableModelPtr& tableModel, Message::ErrorCode ec)
           {
             if(tableModel)
@@ -86,8 +98,7 @@ ObjectSelectListDialog::ObjectSelectListDialog(ObjectProperty& property, QWidget
               connect(m_tableWidget, &TableWidget::doubleClicked,
                 [this](const QModelIndex& index)
                 {
-                  m_property.setByObjectId(m_tableWidget->getRowObjectId(index.row()));
-                  accept();
+                  acceptRow(index.row());
                 });
 
               delete spinner;
@@ -99,4 +110,16 @@ ObjectSelectListDialog::ObjectSelectListDialog(ObjectProperty& property, QWidget
       else
         static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(errorCodeToText(ec)));
     });
+}
+
+void ObjectSelectListDialog::acceptRow(int row)
+{
+  const QString id{m_tableWidget->getRowObjectId(row)};
+
+  if(auto* p = dynamic_cast<ObjectProperty*>(&m_item))
+    p->setByObjectId(id);
+  else if(auto* m = dynamic_cast<Method*>(&m_item))
+    callMethod(*m, nullptr, id);
+
+  accept();
 }

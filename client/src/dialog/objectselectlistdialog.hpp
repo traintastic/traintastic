@@ -24,25 +24,32 @@
 #define TRAINTASTIC_CLIENT_DIALOG_OBJECTSELECTLISTDIALOG_HPP
 
 #include <QDialog>
-#include "../network/objectproperty.hpp"
 #include "../network/objectptr.hpp"
 
 class QDialogButtonBox;
 class TableWidget;
 class Connection;
+class InterfaceItem;
+class Method;
+class ObjectProperty;
 
 class ObjectSelectListDialog : public QDialog
 {
   Q_OBJECT
 
   protected:
-    ObjectProperty& m_property;
+    InterfaceItem& m_item;
     ObjectPtr m_object;
     int m_requestId;
     QDialogButtonBox* m_buttons;
     TableWidget* m_tableWidget;
 
+    ObjectSelectListDialog(InterfaceItem& item, QWidget* parent);
+
+    void acceptRow(int row);
+
   public:
+    ObjectSelectListDialog(Method& method, QWidget* parent);
     ObjectSelectListDialog(ObjectProperty& property, QWidget* parent);
     //~ObjectSelectListDialog() final = default;
 };
