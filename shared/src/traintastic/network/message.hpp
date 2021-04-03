@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -82,6 +82,10 @@ class Message
 
       BoardGetTileData = 37,
       BoardTileDataChanged = 38,
+
+      OutputMapGetItems = 39,
+      OutputMapGetOutputs = 40,
+      OutputMapOutputsChanged = 41,
 
       Discover = 255,
     };
@@ -343,5 +347,10 @@ class Message
       m_block.pop();
     }
 };
+
+constexpr bool operator!(Message::ErrorCode ec)
+{
+  return ec == Message::ErrorCode::None;
+}
 
 #endif
