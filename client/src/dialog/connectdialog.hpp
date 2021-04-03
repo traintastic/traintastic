@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_CLIENT_DIALOG_CONNECTDIALOG_HPP
 
 #include <QDialog>
+#include <memory>
 #include <QTimer>
 #include <QMap>
 #include <QPair>
@@ -43,7 +44,7 @@ class ConnectDialog : public QDialog
 
     static constexpr int defaultTTL = 3;
 
-    QSharedPointer<Connection> m_connection;
+    std::shared_ptr<Connection> m_connection;
     QUdpSocket* m_udpSocket;
     Servers m_servers;
     QTimer m_broadcastTimer;
@@ -67,7 +68,7 @@ class ConnectDialog : public QDialog
   public:
     ConnectDialog(QWidget* parent = nullptr);
 
-    const QSharedPointer<Connection>& connection() { return m_connection; }
+    const std::shared_ptr<Connection>& connection() { return m_connection; }
 };
 
 #endif

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,9 +38,9 @@ ObjectSubWindow::ObjectSubWindow(const ObjectPtr& object, QWidget* parent) :
   setObject(object);
 }
 
-ObjectSubWindow::ObjectSubWindow(const QSharedPointer<Connection>& connection, const QString& id, QWidget* parent) :
+ObjectSubWindow::ObjectSubWindow(std::shared_ptr<Connection> connection, const QString& id, QWidget* parent) :
   QMdiSubWindow(parent),
-  m_connection{connection},
+  m_connection{std::move(connection)},
   m_requestId{Connection::invalidRequestId}
 {
   auto* spinner = new WaitingSpinnerWidget(this, true, false);

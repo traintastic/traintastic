@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@ class Connection;
 class ObjectSubWindow : public QMdiSubWindow
 {
   protected:
-    QSharedPointer<Connection> m_connection;
+    std::shared_ptr<Connection> m_connection;
     int m_requestId;
     QString m_classId;
 
@@ -43,7 +43,7 @@ class ObjectSubWindow : public QMdiSubWindow
 
   public:
     ObjectSubWindow(const ObjectPtr& object, QWidget* parent = nullptr);
-    ObjectSubWindow(const QSharedPointer<Connection>& connection, const QString& id, QWidget* parent = nullptr);
+    ObjectSubWindow(std::shared_ptr<Connection> connection, const QString& id, QWidget* parent = nullptr);
     ~ObjectSubWindow() final;
 };
 

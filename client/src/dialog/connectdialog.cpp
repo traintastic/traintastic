@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,7 +35,7 @@
 
 ConnectDialog::ConnectDialog(QWidget* parent) :
   QDialog(parent, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
-  m_connection{QSharedPointer<Connection>::create()},
+  m_connection{std::make_shared<Connection>()},
   m_udpSocket{new QUdpSocket(this)},
   m_server{new QComboBox()},
   m_username{new QLineEdit()},
@@ -76,7 +76,7 @@ ConnectDialog::ConnectDialog(QWidget* parent) :
   //setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
   connect(m_udpSocket, &QUdpSocket::readyRead, this, &ConnectDialog::socketReadyRead);
   connect(&m_broadcastTimer, &QTimer::timeout, this, &ConnectDialog::broadcast);
-  connect(m_connection.data(), &Connection::stateChanged, this, &ConnectDialog::stateChanged);
+  connect(m_connection.get(), &Connection::stateChanged, this, &ConnectDialog::stateChanged);
   connect(m_server, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &ConnectDialog::serverIndexChanged);
   connect(m_server, &QComboBox::currentTextChanged, this, &ConnectDialog::serverTextChanged);
   connect(m_connect, &QPushButton::clicked, this, &ConnectDialog::connectClick);

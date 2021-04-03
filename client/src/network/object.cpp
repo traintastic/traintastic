@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,9 +25,9 @@
 #include "property.hpp"
 #include "method.hpp"
 
-Object::Object(const QSharedPointer<Connection>& connection, Handle handle, const QString& classId) :
+Object::Object(std::shared_ptr<Connection> connection, Handle handle, const QString& classId) :
   QObject(nullptr),
-  m_connection{connection},
+  m_connection{std::move(connection)},
   m_handle{handle},
   m_classId{classId}
 {

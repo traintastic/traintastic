@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,7 @@
 #define TRAINTASTIC_CLIENT_NETWORK_OBJECT_HPP
 
 #include <QObject>
-#include <QSharedPointer>
+#include <memory>
 #include "handle.hpp"
 #include "interfaceitems.hpp"
 
@@ -39,17 +39,17 @@ class Object : public QObject
   friend class Connection;
 
   protected:
-    QSharedPointer<Connection> m_connection;
+    std::shared_ptr<Connection> m_connection;
     Handle m_handle;
     const QString m_classId;
     InterfaceItems m_interfaceItems;
 
   public:
-    explicit Object(const QSharedPointer<Connection>& connection, Handle handle, const QString& classId);
+    explicit Object(std::shared_ptr<Connection> connection, Handle handle, const QString& classId);
     Object(const Object&) = delete;
     ~Object() override;
 
-    const QSharedPointer<Connection>& connection() const { return m_connection; }
+    const std::shared_ptr<Connection>& connection() const { return m_connection; }
     Handle handle() const { return m_handle; }
 
     const QString& classId() const { return m_classId; }

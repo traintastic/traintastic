@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,7 @@
 #define TRAINTASTIC_CLIENT_NETWORK_TABLEMODEL_HPP
 
 #include <QAbstractTableModel>
-#include <QSharedPointer>
+#include <memory>
 #include "handle.hpp"
 
 class Connection;
@@ -38,7 +38,7 @@ class TableModel : public QAbstractTableModel
   protected:
     using ColumnRow = std::pair<uint32_t, uint32_t>;
 
-    QSharedPointer<Connection> m_connection;
+    std::shared_ptr<Connection> m_connection;
     Handle m_handle;
     const QString m_classId;
     QVector<QString> m_columnHeaders;
@@ -56,7 +56,7 @@ class TableModel : public QAbstractTableModel
     void setRowCount(int value);
 
   public:
-    explicit TableModel(const QSharedPointer<Connection>& connection, Handle handle, const QString& classId, QObject* parent = nullptr);
+    explicit TableModel(std::shared_ptr<Connection> connection, Handle handle, const QString& classId, QObject* parent = nullptr);
     ~TableModel() final;
 
     Handle handle() const { return m_handle; }

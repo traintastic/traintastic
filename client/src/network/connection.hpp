@@ -24,6 +24,7 @@
 #define TRAINTASTIC_CLIENT_NETWORK_CONNECTION_HPP
 
 #include <QObject>
+#include <memory>
 #include <QAbstractSocket>
 #include <QMap>
 #include <QUuid>
@@ -42,7 +43,7 @@ class OutputKeyboard;
 class Board;
 class OutputMap;
 
-class Connection : public QObject, public QEnableSharedFromThis<Connection>
+class Connection : public QObject, public std::enable_shared_from_this<Connection>
 {
   Q_OBJECT
 

@@ -53,7 +53,7 @@ class OutputMap final : public Object
   public:
     inline static const QString classIdPrefix = QStringLiteral("output_map.");
 
-    OutputMap(const QSharedPointer<Connection>& connection, Handle handle, const QString& classId);
+    OutputMap(std::shared_ptr<Connection> connection, Handle handle, const QString& classId);
     ~OutputMap() final;
 
     const Items& items() const { return m_items; }

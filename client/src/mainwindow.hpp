@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,7 +44,7 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
   protected:
-    QSharedPointer<Connection> m_connection;
+    std::shared_ptr<Connection> m_connection;
     ObjectPtr m_world;
     QSplitter* m_splitter;
     MdiArea* m_mdiArea;
@@ -92,7 +92,7 @@ class MainWindow : public QMainWindow
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow() final;
 
-    const QSharedPointer<Connection>& connection() { return m_connection; }
+    const std::shared_ptr<Connection>& connection() { return m_connection; }
 
   public slots:
     void connectToServer();

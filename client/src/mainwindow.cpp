@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -272,13 +272,13 @@ void MainWindow::connectToServer()
   if(d->exec() == QDialog::Accepted)
   {
     m_connection = d->connection();
-    connect(m_connection.data(), &Connection::worldChanged,
+    connect(m_connection.get(), &Connection::worldChanged,
       [this]()
       {
         worldChanged();
         updateActions();
       });
-    connect(m_connection.data(), &Connection::stateChanged, this, &MainWindow::connectionStateChanged);
+    connect(m_connection.get(), &Connection::stateChanged, this, &MainWindow::connectionStateChanged);
     worldChanged();
     connectionStateChanged();
   }
@@ -489,7 +489,7 @@ void MainWindow::connectionStateChanged()
 
   if(m_connection && m_connection->state() == Connection::State::Disconnected)
   {
-    m_connection.clear();
+    m_connection.reset();
     if(m_serverConsole)
     {
       delete m_serverConsole;

@@ -23,8 +23,8 @@
 #include "outputmap.hpp"
 #include "connection.hpp"
 
-OutputMap::OutputMap(const QSharedPointer<Connection>& connection, Handle handle, const QString& classId) :
-  Object(connection, handle, classId),
+OutputMap::OutputMap(std::shared_ptr<Connection> connection, Handle handle, const QString& classId) :
+  Object(std::move(connection), handle, classId),
   m_getItemsRequestId{Connection::invalidRequestId},
   m_getOutputsRequestId{Connection::invalidRequestId}
 {

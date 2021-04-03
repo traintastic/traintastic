@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,10 +23,10 @@
 #ifndef TRAINTASTIC_CLIENT_NETWORK_TABLEMODELPTR_HPP
 #define TRAINTASTIC_CLIENT_NETWORK_TABLEMODELPTR_HPP
 
-#include <QSharedPointer>
+#include <memory>
 
 class TableModel;
 
-using TableModelPtr = QSharedPointer<TableModel>;
+using TableModelPtr = std::shared_ptr<TableModel>;
 
 #endif

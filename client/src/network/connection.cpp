@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -275,7 +275,7 @@ int Connection::getTableModel(const ObjectPtr& object, std::function<void(const 
       if(!message->isError())
       {
         tableModel = readTableModel(*message);
-        m_tableModels[tableModel->handle()] = tableModel.data();
+        m_tableModels[tableModel->handle()] = tableModel.get();
       }
       callback(tableModel, message->errorCode());
     });
@@ -401,15 +401,15 @@ ObjectPtr Connection::readObject(const Message& message)
   {
     const QString classId = QString::fromLatin1(message.read<QByteArray>());
     if(classId.startsWith(InputMonitor::classIdPrefix))
-      obj = std::make_shared<InputMonitor>(sharedFromThis(), handle, classId);
+      obj = std::make_shared<InputMonitor>(shared_from_this(), handle, classId);
     else if(classId.startsWith(OutputKeyboard::classIdPrefix))
-      obj = std::make_shared<OutputKeyboard>(sharedFromThis(), handle, classId);
+      obj = std::make_shared<OutputKeyboard>(shared_from_this(), handle, classId);
     else if(classId.startsWith(OutputMap::classIdPrefix))
-      obj = std::make_shared<OutputMap>(sharedFromThis(), handle, classId);
+      obj = std::make_shared<OutputMap>(shared_from_this(), handle, classId);
     else if(classId == Board::classId)
-      obj = std::make_shared<Board>(sharedFromThis(), handle, classId);
+      obj = std::make_shared<Board>(shared_from_this(), handle, classId);
     else
-      obj = std::make_shared<Object>(sharedFromThis(), handle, classId);
+      obj = std::make_shared<Object>(shared_from_this(), handle, classId);
     m_objects[handle] = obj;
 
     message.readBlock(); // items
@@ -600,7 +600,7 @@ TableModelPtr Connection::readTableModel(const Message& message)
   message.readBlock(); // model
   const Handle handle = message.read<Handle>();
   const QString classId = QString::fromLatin1(message.read<QByteArray>());
-  TableModelPtr tableModel = TableModelPtr::create(sharedFromThis(), handle, classId);
+  TableModelPtr tableModel = std::make_shared<TableModel>(shared_from_this(), handle, classId);
   const int columnCount = message.read<int>();
   for(int i = 0; i < columnCount; i++)
     tableModel->m_columnHeaders.push_back(Locale::tr(QString::fromLatin1(message.read<QByteArray>())));
