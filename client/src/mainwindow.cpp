@@ -175,7 +175,7 @@ MainWindow::MainWindow(QWidget* parent) :
       });
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:help"));
-    menu->addAction(Locale::tr("qtapp.mainmenu:help"), [](){ QDesktopServices::openUrl("https://traintastic.org/manual?version=" + QApplication::applicationVersion()); })->setShortcut(QKeySequence::HelpContents);
+    menu->addAction(Locale::tr("qtapp.mainmenu:help"), [](){ QDesktopServices::openUrl("https://traintastic.org/manual?version=" + QApplication::applicationVersion() + "&codename=" TRAINTASTIC_CODENAME); })->setShortcut(QKeySequence::HelpContents);
     //menu->addSeparator();
     //menu->addAction(Locale::tr("qtapp.mainmenu:about_qt") + "...", qApp, &QApplication::aboutQt);
     menu->addAction(Locale::tr("qtapp.mainmenu:about") + "...", this, &MainWindow::showAbout);
