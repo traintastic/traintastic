@@ -108,7 +108,7 @@ int callMethodR(Method& method, std::function<void(const R&, Message::ErrorCode)
     {
       R r;
       if(!message->isError())
-        r = getResult<R>(c, *message);
+        r = getResult<R>(*c, *message);
       callback(r, message->errorCode());
     });
 
