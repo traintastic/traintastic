@@ -34,9 +34,9 @@
 #include "../widget/alertwidget.hpp"
 #include <traintastic/locale/locale.hpp>
 
-WorldListDialog::WorldListDialog(const QSharedPointer<Connection>& connection, QWidget* parent) :
+WorldListDialog::WorldListDialog(std::shared_ptr<Connection> connection, QWidget* parent) :
   QDialog(parent, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
-  m_connection{connection},
+  m_connection{std::move(connection)},
   m_buttons{new QDialogButtonBox(this)},
   m_tableWidget{new TableWidget()}
 {

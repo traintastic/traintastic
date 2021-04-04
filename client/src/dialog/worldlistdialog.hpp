@@ -35,7 +35,7 @@ class WorldListDialog final : public QDialog
   Q_OBJECT
 
   protected:
-    QSharedPointer<Connection> m_connection;
+    std::shared_ptr<Connection> m_connection;
     int m_requestId;
     ObjectPtr m_object;
     QDialogButtonBox* m_buttons; // TODO: m_buttonLoad;
@@ -43,7 +43,7 @@ class WorldListDialog final : public QDialog
     QString m_uuid;
 
   public:
-    explicit WorldListDialog(const QSharedPointer<Connection>& connection, QWidget* parent = nullptr);
+    explicit WorldListDialog(std::shared_ptr<Connection> connection, QWidget* parent = nullptr);
     ~WorldListDialog() final;
 
     QString uuid() const { return m_uuid; }
