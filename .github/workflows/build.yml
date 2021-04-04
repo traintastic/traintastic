@@ -94,7 +94,7 @@ jobs:
           generator: "Visual Studio 16 2019"
           arch: "-A x64"
           toolset: "-T ClangCL"
-          defines: "-DENABLE_LUA_SCRIPTING=OFF"
+          defines: ""
 
         - name: "ubuntu_18.04"
           os: ubuntu-18.04
