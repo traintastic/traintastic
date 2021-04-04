@@ -23,6 +23,12 @@ jobs:
     # All:
     - name: Checkout
       uses: actions/checkout@v2
+      with:
+        lfs: true
+    
+    # All:
+    - name: Checkout LFS objects
+      run: git lfs checkout
 
     # Windows only:
     - name: Cache Qt
@@ -120,6 +126,12 @@ jobs:
     # All:
     - name: Checkout
       uses: actions/checkout@v2
+      with:
+        lfs: true
+        
+    # All:
+    - name: Checkout LFS objects
+      run: git lfs checkout
 
     # Ubuntu only:
     - name: Install packages
@@ -186,6 +198,11 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v2
+      with:
+        lfs: true
+
+    - name: Checkout LFS objects
+      run: git lfs checkout
 
     - name: Download artifacts 1/2
       uses: actions/download-artifact@v2
