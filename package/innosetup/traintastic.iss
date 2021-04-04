@@ -49,6 +49,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 ; Server
 Source: "..\..\build-server\Release\{#ServerExeName}"; DestDir: "{app}\server"; Flags: ignoreversion; Components: server
+Source: "..\..\server\thirdparty\lua5.3\bin\win64\lua53.dll"; DestDir: "{app}\server"; Flags: ignoreversion; Components: server
 ; Client
 Source: "..\..\build-client\{#ClientExeName}"; DestDir: "{app}\client"; Flags: ignoreversion; Components: client
 Source: "..\..\build-client\*.dll"; DestDir: "{app}\client"; Flags: ignoreversion; Components: client

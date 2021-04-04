@@ -104,7 +104,21 @@ endif()
 option(ENABLE_LUA_SCRIPTING "Lua scripting support" ON)
 message(STATUS "Lua scripting support: ${ENABLE_LUA_SCRIPTING}")
 if(ENABLE_LUA_SCRIPTING)
-  find_package(Lua 5.3 REQUIRED)
+  if(WIN32)
+    set(LUA_INCLUDE_DIR "thirdparty/lua5.3/include")
+    set(LUA_LIBRARIES lua53)
+
+    add_custom_command(TARGET traintastic-server PRE_LINK
+      COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.def" /out:lua53.lib /machine:x64)
+    add_custom_command(TARGET traintastic-server-test PRE_LINK
+      COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.def" /out:lua53.lib /machine:x64)
+    
+    # copy lua53.dll to build directory, to be able to run the tests:
+    add_custom_command(TARGET traintastic-server-test POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.dll" .)
+  else()
+    find_package(Lua 5.3 REQUIRED)
+  endif()
 
   file(GLOB SOURCES_LUA "src/lua/*.hpp" "src/lua/*.cpp")
   list(APPEND SOURCES ${SOURCES_LUA})
