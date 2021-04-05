@@ -77,27 +77,7 @@ World::World(Private) :
 #ifndef DISABLE_LUA_SCRIPTING
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
 #endif
-  state{this, "state", WorldState::TrackPowerOff, PropertyFlags::ReadOnly},
-  emergencyStop{*this, "emergency_stop",
-    [this]()
-    {
-      Traintastic::instance->console->notice(classId, "Emergency stop");
-      event(WorldEvent::EmergencyStop);
-    }},
-  trackPowerOff{*this, "track_power_off",
-    [this]()
-    {
-      Traintastic::instance->console->notice(classId, "Track power: off");
-      state.setValueInternal(state.value() + WorldState::TrackPowerOff);
-      event(WorldEvent::TrackPowerOff);
-    }},
-  trackPowerOn{*this, "track_power_on",
-    [this]()
-    {
-      Traintastic::instance->console->notice(classId, "Track power: on");
-      state.setValueInternal(state.value() - WorldState::TrackPowerOff);
-      event(WorldEvent::TrackPowerOn);
-    }},
+  state{this, "state", WorldState(), PropertyFlags::ReadOnly},
   edit{this, "edit", false, PropertyFlags::ReadWrite,
     [this](bool value)
     {
@@ -112,6 +92,65 @@ World::World(Private) :
         Traintastic::instance->console->notice(classId, "Edit mode: disabled");
         state.setValueInternal(state.value() - WorldState::Edit);
         event(WorldEvent::EditDisabled);
+      }
+    }},
+  offline{*this, "offline",
+    [this]()
+    {
+      Traintastic::instance->console->notice(classId, "Offline");
+      state.setValueInternal(state.value() - WorldState::Online);
+      event(WorldEvent::Offline);
+    }},
+  online{*this, "online",
+    [this]()
+    {
+      Traintastic::instance->console->notice(classId, "Online");
+      state.setValueInternal(state.value() + WorldState::Online);
+      event(WorldEvent::Online);
+    }},
+  powerOff{*this, "power_off",
+    [this]()
+    {
+      Traintastic::instance->console->notice(classId, "Power: off");
+      state.setValueInternal(state.value() - WorldState::PowerOn);
+      event(WorldEvent::PowerOff);
+    }},
+  powerOn{*this, "power_on",
+    [this]()
+    {
+      Traintastic::instance->console->notice(classId, "Power: on");
+      state.setValueInternal(state.value() + WorldState::PowerOn);
+      event(WorldEvent::PowerOn);
+    }},
+  run{*this, "run",
+    [this]()
+    {
+      Traintastic::instance->console->notice(classId, "Run");
+      state.setValueInternal(state.value() + WorldState::Run);
+      event(WorldEvent::Run);
+    }},
+  stop{*this, "stop",
+    [this]()
+    {
+      Traintastic::instance->console->notice(classId, "Stop");
+      state.setValueInternal(state.value() - WorldState::Run);
+      event(WorldEvent::Stop);
+    }},
+
+  mute{this, "mute", false, PropertyFlags::ReadWrite,
+    [this](bool value)
+    {
+      if(value)
+      {
+        Traintastic::instance->console->notice(classId, "Mute: enabled");
+        state.setValueInternal(state.value() + WorldState::Mute);
+        event(WorldEvent::MuteEnabled);
+      }
+      else
+      {
+        Traintastic::instance->console->notice(classId, "Mute: disabled");
+        state.setValueInternal(state.value() - WorldState::Mute);
+        event(WorldEvent::MuteDisabled);
       }
     }},
   save{*this, "save",
@@ -151,10 +190,14 @@ World::World(Private) :
 #endif
 
   m_interfaceItems.add(state);
-  m_interfaceItems.add(emergencyStop);
-  m_interfaceItems.add(trackPowerOff);
-  m_interfaceItems.add(trackPowerOn);
   m_interfaceItems.add(edit);
+  m_interfaceItems.add(offline);
+  m_interfaceItems.add(online);
+  m_interfaceItems.add(powerOff);
+  m_interfaceItems.add(powerOn);
+  m_interfaceItems.add(stop);
+  m_interfaceItems.add(run);
+  m_interfaceItems.add(mute);
 
   m_interfaceItems.add(save);
 }

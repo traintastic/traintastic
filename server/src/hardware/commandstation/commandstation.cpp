@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -94,12 +94,41 @@ void CommandStation::worldEvent(WorldState state, WorldEvent event)
 
   name.setAttributeEnabled(contains(state, WorldState::Edit));
 
-  if(event == WorldEvent::EmergencyStop)
-    emergencyStop = true;
-  else if(event == WorldEvent::TrackPowerOff)
-    trackVoltageOff = true;
-  else if(event == WorldEvent::TrackPowerOn)
-    trackVoltageOff = false;
+  try
+  {
+    switch(event)
+    {
+      case WorldEvent::Offline:
+        online = false;
+        break;
+
+      case WorldEvent::Online:
+        online = true;
+        break;
+
+      case WorldEvent::PowerOff:
+        trackVoltageOff = true;
+        break;
+
+      case WorldEvent::PowerOn:
+        trackVoltageOff = false;
+        break;
+
+      case WorldEvent::Stop:
+        emergencyStop = true;
+        break;
+
+      case WorldEvent::Run:
+        emergencyStop = false;
+        break;
+
+      default:
+        break;
+    }
+  }
+  catch(...)
+  {
+  }
 }
 
 const std::shared_ptr<::Decoder>& CommandStation::getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress) const

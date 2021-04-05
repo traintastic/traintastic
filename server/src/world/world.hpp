@@ -97,10 +97,14 @@ class World : public Object
 #endif
 
     Property<WorldState> state;
-    Method<void()> emergencyStop;
-    Method<void()> trackPowerOff;
-    Method<void()> trackPowerOn;
     Property<bool> edit;
+    Method<void()> offline;
+    Method<void()> online;
+    Method<void()> powerOff;
+    Method<void()> powerOn;
+    Method<void()> run;
+    Method<void()> stop;
+    Property<bool> mute;
 
     Method<void()> save;
 

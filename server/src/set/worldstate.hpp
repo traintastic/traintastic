@@ -26,11 +26,13 @@
 #include <traintastic/set/worldstate.hpp>
 #include "../lua/set.hpp"
 
-LUA_SET(WorldState, 3,
+LUA_SET(WorldState, 5,
 {
-  {WorldState::Run, "RUN"},
   {WorldState::Edit, "EDIT"},
-  {WorldState::TrackPowerOff, "TRACK_POWER_OFF"},
+  {WorldState::Online, "ONLINE"},
+  {WorldState::PowerOn, "POWER_ON"},
+  {WorldState::Run, "RUN"},
+  {WorldState::Mute, "MUTE"},
 })
 
 #endif

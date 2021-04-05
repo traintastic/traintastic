@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,9 +28,11 @@
 
 enum class WorldState : uint32_t
 {
-  Run = 1 << 0,
-  Edit = 1 << 1,
-  TrackPowerOff = 1 << 2,
+  Edit = 1 << 0,
+  Online = 1 << 1,
+  PowerOn = 1 << 2,
+  Run = 1 << 3,
+  Mute = 1 << 4,
 };
 
 template<>
@@ -45,7 +47,12 @@ struct set_name<WorldState>
 template<>
 struct set_mask<WorldState>
 {
-  static constexpr WorldState value = WorldState::Run | WorldState::Edit | WorldState::TrackPowerOff;
+  static constexpr WorldState value =
+    WorldState::Edit |
+    WorldState::Online |
+    WorldState::PowerOn |
+    WorldState::Run |
+    WorldState::Mute;
 };
 
 #endif

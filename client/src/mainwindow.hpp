@@ -31,6 +31,7 @@ class MdiArea;
 class QSplitter;
 class QMdiSubWindow;
 class QActionGroup;
+class QToolButton;
 class Connection;
 class AbstractProperty;
 class ObjectEditSubWindow;
@@ -64,10 +65,18 @@ class MainWindow : public QMainWindow
     QAction* m_actionServerRestart;
     QAction* m_actionServerShutdown;
     QAction* m_actionServerConsole;
-    QAction* m_actionTrackPowerOff;
-    QAction* m_actionTrackPowerOn;
-    QAction* m_actionEmergencyStop;
-    QAction* m_actionEdit;
+    // Main toolbar:
+    QToolButton* m_worldOnlineOfflineToolButton;
+    QAction* m_worldOnlineAction;
+    QAction* m_worldOfflineAction;
+    QToolButton* m_worldPowerOnOffToolButton;
+    QAction* m_worldPowerOnAction;
+    QAction* m_worldPowerOffAction;
+    QAction* m_worldStopAction;
+    QAction* m_worldRunAction;
+    QAction* m_worldMuteAction;
+    QAction* m_worldEditAction;
+
     QByteArray m_beforeFullScreenGeometry;
 
     void closeEvent(QCloseEvent* event) final;
@@ -84,6 +93,7 @@ class MainWindow : public QMainWindow
     void showAbout();
     void connectionStateChanged();
     void updateActions();
+    void worldStateChanged(int64_t value);
     //void updateModeActions();
 
   public:

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,15 +26,18 @@
 #include <cstdint>
 #include "enum.hpp"
 
-enum class WorldEvent : uint8_t
+enum class WorldEvent : uint64_t
 {
-  Stop = 0,
-  Run = 1,
-  EditDisabled = 2,
-  EditEnabled = 3,
-  TrackPowerOff = 4,
-  TrackPowerOn = 5,
-  EmergencyStop = 6,
+  EditDisabled = 0,
+  EditEnabled = 1,
+  Offline = 2,
+  Online = 3,
+  PowerOff = 4,
+  PowerOn = 5,
+  Stop = 6,
+  Run = 7,
+  MuteDisabled = 8,
+  MuteEnabled = 9,
 };
 
 template<>
@@ -43,15 +46,18 @@ struct EnumName<WorldEvent>
   static constexpr char const* value = "world_event";
 };
 
-ENUM_VALUES(WorldEvent, 7,
+ENUM_VALUES(WorldEvent, 10,
 {
-  {WorldEvent::Stop, "stop"},
-  {WorldEvent::Run, "run"},
   {WorldEvent::EditDisabled, "edit_disabled"},
   {WorldEvent::EditEnabled, "edit_enabled"},
-  {WorldEvent::TrackPowerOff, "track_power_off"},
-  {WorldEvent::TrackPowerOn, "track_power_on"},
-  {WorldEvent::EmergencyStop, "emergency_stop"},
+  {WorldEvent::Offline, "offline"},
+  {WorldEvent::Online, "online"},
+  {WorldEvent::PowerOff, "power_off"},
+  {WorldEvent::PowerOn, "power_on"},
+  {WorldEvent::Stop, "stop"},
+  {WorldEvent::Run, "run"},
+  {WorldEvent::MuteDisabled, "mute_disabled"},
+  {WorldEvent::MuteEnabled, "mute_enabled"},
 })
 
 #endif
