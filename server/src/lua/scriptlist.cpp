@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,6 +50,15 @@ ScriptList::ScriptList(Object& _parent, const std::string& parentPropertyName) :
 TableModelPtr ScriptList::getModel()
 {
   return std::make_shared<ScriptListTableModel>(*this);
+}
+
+void ScriptList::worldEvent(WorldState state, WorldEvent event)
+{
+  ObjectList<Script>::worldEvent(state, event);
+
+  const bool editable = contains(state, WorldState::Edit);
+
+  Attributes::setEnabled(add, editable);
 }
 
 bool ScriptList::isListedProperty(const std::string& name)
