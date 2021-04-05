@@ -32,7 +32,7 @@
 CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
-  online{this, "online", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
+  online{this, "online", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
     [this](bool value)
     {
       emergencyStop.setAttributeEnabled(value);
@@ -40,12 +40,12 @@ CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_vi
     },
     std::bind(&CommandStation::setOnline, this, std::placeholders::_1)},
   //status{this, "status", CommandStationStatus::Offline, PropertyFlags::ReadOnly},
-  emergencyStop{this, "emergency_stop", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
+  emergencyStop{this, "emergency_stop", true, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
     [this](bool value)
     {
       emergencyStopChanged(value);
     }},
-  trackVoltageOff{this, "track_voltage_off", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
+  trackVoltageOff{this, "track_voltage_off", true, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
     [this](bool value)
     {
       trackVoltageOffChanged(value);
