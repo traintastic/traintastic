@@ -41,5 +41,10 @@
         <file alias="grid_line.svg">gfx/dark/grid_line.svg</file>
         <file alias="move_tile.svg">gfx/dark/move_tile.svg</file>
         <file alias="mouse.svg">gfx/dark/mouse.svg</file>
+        <file alias="power_off.svg">gfx/dark/power_off.svg</file>
+        <file alias="power_on.svg">gfx/dark/power_on.svg</file>
+        <file alias="online.svg">gfx/dark/online.svg</file>
+        <file alias="offline.svg">gfx/dark/offline.svg</file>
+        <file alias="mute.svg">gfx/dark/mute.svg</file>
     </qresource>
 </RCC>
