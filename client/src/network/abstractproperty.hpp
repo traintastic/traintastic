@@ -26,6 +26,7 @@
 #include "interfaceitem.hpp"
 #include <traintastic/enum/valuetype.hpp>
 #include <traintastic/enum/propertyflags.hpp>
+#include <traintastic/set/set.hpp>
 
 class Object;
 
@@ -34,7 +35,7 @@ class AbstractProperty : public InterfaceItem
   Q_OBJECT
 
   private:
-    inline static const QString enumNameEmpty;
+    inline static const QString enumOrSetNameEmpty;
 
   protected:
     const ValueType m_type;
@@ -53,7 +54,8 @@ class AbstractProperty : public InterfaceItem
 
     bool isWritable() const { return (m_flags & PropertyFlagsAccessMask) == PropertyFlags::ReadWrite; }
 
-    virtual const QString& enumName() const       { Q_ASSERT(false); return enumNameEmpty; }
+    virtual const QString& enumName() const { Q_ASSERT(false); return enumOrSetNameEmpty; }
+    virtual const QString& setName() const  { Q_ASSERT(false); return enumOrSetNameEmpty; }
 
     virtual bool toBool() const            { Q_ASSERT(false); return false; }
     virtual int toInt() const              { Q_ASSERT(false); return 0; }
@@ -66,6 +68,13 @@ class AbstractProperty : public InterfaceItem
     T toEnum() const
     {
       static_assert(std::is_enum_v<T>);
+      return static_cast<T>(toInt64());
+    }
+
+    template<typename T>
+    T toSet() const
+    {
+      static_assert(is_set_v<T>);
       return static_cast<T>(toInt64());
     }
 

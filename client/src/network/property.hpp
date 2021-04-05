@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,12 +37,24 @@ class Property : public AbstractProperty
 
   protected:
     QVariant m_value;
-    QString m_enumName;
+    QString m_enumOrSetName;
 
   public:
     explicit Property(Object& object, const QString& name, ValueType type, PropertyFlags flags, const QVariant& value);
 
-    const QString& enumName() const final { Q_ASSERT(!m_enumName.isEmpty()); return m_enumName; }
+    const QString& enumName() const final
+    {
+      Q_ASSERT(type() == ValueType::Enum);
+      Q_ASSERT(!m_enumOrSetName.isEmpty());
+      return m_enumOrSetName;
+    }
+
+    const QString& setName() const final
+    {
+      Q_ASSERT(type() == ValueType::Set);
+      Q_ASSERT(!m_enumOrSetName.isEmpty());
+      return m_enumOrSetName;
+    }
 
     bool toBool() const final { return m_value.toBool(); }
     int toInt() const final { return m_value.toInt(); }

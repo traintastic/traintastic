@@ -435,6 +435,7 @@ ObjectPtr Connection::readObject(const Message& message)
 
             case ValueType::Enum:
             case ValueType::Integer:
+            case ValueType::Set:
               value = message.read<qint64>();
               break;
 
@@ -472,8 +473,8 @@ ObjectPtr Connection::readObject(const Message& message)
             else
             {
               Property* p = new Property(*obj, name, valueType, flags, value);
-              if(valueType == ValueType::Enum)
-                p->m_enumName = QString::fromLatin1(message.read<QByteArray>());
+              if(valueType == ValueType::Enum || valueType == ValueType::Set)
+                p->m_enumOrSetName = QString::fromLatin1(message.read<QByteArray>());
               item = p;
             }
           }
@@ -680,6 +681,7 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
               }
               case ValueType::Integer:
               case ValueType::Enum:
+              case ValueType::Set:
               {
                 const qlonglong value = message->read<qlonglong>();
                 static_cast<Property*>(property)->m_value = value;
@@ -757,6 +759,7 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
                     break;
 
                   case ValueType::Object:
+                  case ValueType::Set:
                   case ValueType::Invalid:
                     Q_ASSERT(false);
                     break;
@@ -801,6 +804,7 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
                     break;
                   }
                   case ValueType::Object:
+                  case ValueType::Set:
                   case ValueType::Invalid:
                     Q_ASSERT(false);
                     break;
