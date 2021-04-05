@@ -59,6 +59,14 @@ AbstractProperty* Object::getProperty(const QString& name)
   return dynamic_cast<AbstractProperty*>(m_interfaceItems.find(name));
 }
 
+void Object::setPropertyValue(const QString& name, bool value)
+{
+  if(AbstractProperty* property = getProperty(name))
+    property->setValueBool(value);
+  else
+    Q_ASSERT(false);
+}
+
 const Method* Object::getMethod(const QString& name) const
 {
   return dynamic_cast<const Method*>(m_interfaceItems.find(name));
@@ -67,4 +75,12 @@ const Method* Object::getMethod(const QString& name) const
 Method* Object::getMethod(const QString& name)
 {
   return dynamic_cast<Method*>(m_interfaceItems.find(name));
+}
+
+void Object::callMethod(const QString& name)
+{
+  if(Method* method = getMethod(name))
+    method->call();
+  else
+    Q_ASSERT(false);
 }

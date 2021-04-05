@@ -44,12 +44,12 @@ void Board::getTileData()
 
 int Board::addTile(int16_t x, int16_t y, TileRotate rotate, const QString& id, bool replace, std::function<void(const bool&, Message::ErrorCode)> callback)
 {
-  return callMethod(*m_connection, *getMethod("add_tile"), std::move(callback), x, y, rotate, id, replace);
+  return ::callMethod(*m_connection, *getMethod("add_tile"), std::move(callback), x, y, rotate, id, replace);
 }
 
 int Board::deleteTile(int16_t x, int16_t y, std::function<void(const bool&, Message::ErrorCode)> callback)
 {
-  return callMethod(*m_connection, *getMethod("delete_tile"), std::move(callback), x, y);
+  return ::callMethod(*m_connection, *getMethod("delete_tile"), std::move(callback), x, y);
 }
 
 void Board::getTileDataResponse(const Message& response)

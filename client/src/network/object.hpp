@@ -63,8 +63,12 @@ class Object : public QObject
     const AbstractProperty* getProperty(const QString& name) const;
     AbstractProperty* getProperty(const QString& name);
 
+    void setPropertyValue(const QString& name, bool value);
+
     const Method* getMethod(const QString& name) const;
     Method* getMethod(const QString& name);
+
+    void callMethod(const QString& name);
 };
 
 #endif
