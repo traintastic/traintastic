@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -94,7 +94,7 @@ void WLANmaus::emergencyStopChanged(bool value)
       if(it.second.broadcastFlags & Z21::PowerLocoTurnout)
         sendTo(Z21::LanXBCStopped(), it.first);
   }
-  else if(commandStation && !commandStation->trackVoltageOff) // send z21_lan_x_bc_track_power_on if power is on
+  else if(commandStation && commandStation->powerOn) // send z21_lan_x_bc_track_power_on if power is on
   {
     for(auto it : m_clients)
       if(it.second.broadcastFlags & Z21::PowerLocoTurnout)
@@ -102,7 +102,7 @@ void WLANmaus::emergencyStopChanged(bool value)
   }
 }
 
-void WLANmaus::trackPowerChanged(bool value)
+void WLANmaus::powerOnChanged(bool value)
 {
   if(value)
   {
@@ -169,7 +169,7 @@ void WLANmaus::receive()
 
                         if(!commandStation || commandStation->emergencyStop)
                           response.db1 |= Z21_CENTRALSTATE_EMERGENCYSTOP;
-                        if(!commandStation || commandStation->trackVoltageOff)
+                        if(!commandStation || !commandStation->powerOn)
                           response.db1 |= Z21_CENTRALSTATE_TRACKVOLTAGEOFF;
 
                         response.calcChecksum();
@@ -185,8 +185,8 @@ void WLANmaus::receive()
                         if(commandStation)
                         {
                           commandStation->emergencyStop = false;
-                          commandStation->trackVoltageOff = false;
-                          if(!commandStation->trackVoltageOff)
+                          commandStation->powerOn = true;
+                          if(commandStation->powerOn)
                             sendTo(Z21::LanXBCTrackPowerOn(), endpoint);
                         }
                       });
@@ -198,8 +198,8 @@ void WLANmaus::receive()
                       {
                         if(commandStation)
                         {
-                          commandStation->trackVoltageOff = true;
-                          if(commandStation->trackVoltageOff)
+                          commandStation->powerOn = false;
+                          if(!commandStation->powerOn)
                             sendTo(Z21::LanXBCTrackPowerOff(), endpoint);
                         }
                       });
@@ -411,7 +411,7 @@ void WLANmaus::receive()
 
                     if(!commandStation || commandStation->emergencyStop)
                       response.centralState |= Z21_CENTRALSTATE_EMERGENCYSTOP;
-                    if(!commandStation || commandStation->trackVoltageOff)
+                    if(!commandStation || !commandStation->powerOn)
                       response.centralState |= Z21_CENTRALSTATE_TRACKVOLTAGEOFF;
 
                     sendTo(response, endpoint);

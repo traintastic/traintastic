@@ -154,7 +154,7 @@ void XpressNet::receive(const Message& message)
             [cs=m_commandStation->shared_ptr<CommandStation>()]()
             {
               cs->emergencyStop.setValueInternal(false);
-              cs->trackVoltageOff.setValueInternal(false);
+              cs->powerOn.setValueInternal(true);
             });
         }
         else if(message == TrackPowerOff())
@@ -162,7 +162,7 @@ void XpressNet::receive(const Message& message)
           EventLoop::call(
             [cs=m_commandStation->shared_ptr<CommandStation>()]()
             {
-              cs->trackVoltageOff.setValueInternal(true);
+              cs->powerOn.setValueInternal(false);
             });
         }
         break;
@@ -185,13 +185,13 @@ void XpressNet::emergencyStopChanged(bool value)
 {
   if(value)
     send(EmergencyStop());
-  else if(m_commandStation && !m_commandStation->trackVoltageOff)
+  else if(m_commandStation && m_commandStation->powerOn)
     send(NormalOperationResumed());
 }
 
-void XpressNet::trackVoltageOffChanged(bool value)
+void XpressNet::powerOnChanged(bool value)
 {
-  if(!value)
+  if(value)
     send(NormalOperationResumed());
   else
     send(TrackPowerOff());

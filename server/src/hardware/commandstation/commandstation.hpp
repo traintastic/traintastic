@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,7 +42,7 @@ class CommandStation : public IdObject
 
     virtual bool setOnline(bool& value) = 0;
     virtual void emergencyStopChanged(bool value);
-    virtual void trackVoltageOffChanged(bool value);
+    virtual void powerOnChanged(bool value);
     //virtual bool isDecoderSupported(Decoder& decoder) const = 0;
     virtual void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 
@@ -52,7 +52,7 @@ class CommandStation : public IdObject
     Property<std::string> name;
     Property<bool> online;
     Property<bool> emergencyStop;
-    Property<bool> trackVoltageOff;
+    Property<bool> powerOn;
     ObjectProperty<DecoderList> decoders;
     ObjectProperty<ControllerList> controllers;
     Property<std::string> notes;

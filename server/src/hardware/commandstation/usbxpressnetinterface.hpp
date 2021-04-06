@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,7 +37,7 @@ class USBXpressNetInterface : public CommandStation
 
     bool setOnline(bool& value) final;
     void emergencyStopChanged(bool value) final;
-    void trackVoltageOffChanged(bool value) final;
+    void powerOnChanged(bool value) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     bool send(const XpressNet::Message& msg);

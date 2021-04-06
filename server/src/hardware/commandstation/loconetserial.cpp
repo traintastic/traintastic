@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code
  *
- * Copyright (C) 2019-2020 Reinder Feenstra <reinderfeenstra@gmail.com>
+ * Copyright (C) 2019-2021 Reinder Feenstra <reinderfeenstra@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -65,12 +65,12 @@ void LocoNetSerial::emergencyStopChanged(bool value)
     loconet->emergencyStopChanged(value);
 }
 
-void LocoNetSerial::trackVoltageOffChanged(bool value)
+void LocoNetSerial::powerOnChanged(bool value)
 {
-  CommandStation::trackVoltageOffChanged(value);
+  CommandStation::powerOnChanged(value);
 
   if(online)
-    loconet->trackVoltageOffChanged(value);
+    loconet->powerOnChanged(value);
 }
 
 void LocoNetSerial::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)

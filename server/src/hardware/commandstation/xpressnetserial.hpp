@@ -38,7 +38,7 @@ class XpressNetSerial : public SerialCommandStation
     void worldEvent(WorldState state, WorldEvent event) final;
 
     void emergencyStopChanged(bool value) final;
-    void trackVoltageOffChanged(bool value) final;
+    void powerOnChanged(bool value) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     bool send(const XpressNet::Message& msg);

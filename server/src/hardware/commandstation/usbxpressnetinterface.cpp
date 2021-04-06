@@ -1,7 +1,7 @@
 /**
- * Traintastic
+ * server/src/hardware/commandstation/usbxpressnetinterface.cpp
  *
- * Copyright (C) 2019-2020 Reinder Feenstra <reinderfeenstra@gmail.com>
+ * Copyright (C) 2019-2021 Reinder Feenstra <reinderfeenstra@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -87,7 +87,7 @@ void USBXpressNetInterface::emergencyStopChanged(bool value)
 
 }
 
-void USBXpressNetInterface::trackVoltageOffChanged(bool value)
+void USBXpressNetInterface::powerOnChanged(bool value)
 {
 }
 

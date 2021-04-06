@@ -1,9 +1,9 @@
 /**
- * hardware/commandstation/z21.cpp
+ * server/src/hardware/commandstation/rocoz21.cpp
  *
  * This file is part of the traintastic source code
  *
- * Copyright (C) 2019-2020 Reinder Feenstra <reinderfeenstra@gmail.com>
+ * Copyright (C) 2019-2021 Reinder Feenstra <reinderfeenstra@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -131,14 +131,14 @@ void RocoZ21::emergencyStopChanged(bool value)
     send(Z21::LanXSetStop());
 }
 
-void RocoZ21::trackVoltageOffChanged(bool value)
+void RocoZ21::powerOnChanged(bool value)
 {
   if(online)
   {
     if(value)
-      send(Z21::LanXSetTrackPowerOff());
-    else
       send(Z21::LanXSetTrackPowerOn());
+    else
+      send(Z21::LanXSetTrackPowerOff());
   }
 }
 

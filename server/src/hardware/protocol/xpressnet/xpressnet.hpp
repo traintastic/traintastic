@@ -69,7 +69,7 @@ class XpressNet : public SubObject
     void receive(const Message& msg);
 
     void emergencyStopChanged(bool value);
-    void trackVoltageOffChanged(bool value);
+    void powerOnChanged(bool value);
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 
     [[nodiscard]] bool isInputAddressAvailable(uint16_t address) const;

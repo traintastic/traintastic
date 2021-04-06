@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,7 +43,7 @@ class Controller : public IdObject
     virtual bool setActive(bool& value) = 0;
 
     virtual void emergencyStopChanged(bool value) = 0;
-    virtual void trackPowerChanged(bool value) = 0;
+    virtual void powerOnChanged(bool value) = 0;
     virtual void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) = 0;
 
   public:

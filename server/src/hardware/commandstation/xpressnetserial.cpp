@@ -101,12 +101,12 @@ void XpressNetSerial::emergencyStopChanged(bool value)
     xpressnet->emergencyStopChanged(value);
 }
 
-void XpressNetSerial::trackVoltageOffChanged(bool value)
+void XpressNetSerial::powerOnChanged(bool value)
 {
-  CommandStation::trackVoltageOffChanged(value);
+  CommandStation::powerOnChanged(value);
 
   if(online)
-    xpressnet->trackVoltageOffChanged(value);
+    xpressnet->powerOnChanged(value);
 }
 
 void XpressNetSerial::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)

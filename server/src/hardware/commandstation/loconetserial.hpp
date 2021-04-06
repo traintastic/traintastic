@@ -31,7 +31,7 @@ class LocoNetSerial : public SerialCommandStation
 {
   protected:
     void emergencyStopChanged(bool value) final;
-    void trackVoltageOffChanged(bool value) final;
+    void powerOnChanged(bool value) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     bool start();

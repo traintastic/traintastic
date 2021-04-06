@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -72,7 +72,7 @@ std::string CommandStationListTableModel::getText(uint32_t column, uint32_t row)
         return cs.emergencyStop ? "\u2022" : "";
 
       case columnTrackPower:
-        return cs.trackVoltageOff ? UTF8_BALLOT_X : UTF8_CHECKMARK;
+        return cs.powerOn ? UTF8_CHECKMARK : UTF8_BALLOT_X;
 
       default:
         assert(false);

@@ -36,7 +36,7 @@ CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_vi
     [this](bool value)
     {
       emergencyStop.setAttributeEnabled(value);
-      trackVoltageOff.setAttributeEnabled(value);
+      powerOn.setAttributeEnabled(value);
     },
     std::bind(&CommandStation::setOnline, this, std::placeholders::_1)},
   //status{this, "status", CommandStationStatus::Offline, PropertyFlags::ReadOnly},
@@ -45,10 +45,10 @@ CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_vi
     {
       emergencyStopChanged(value);
     }},
-  trackVoltageOff{this, "track_voltage_off", true, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
+  powerOn{this, "power_on", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
     [this](bool value)
     {
-      trackVoltageOffChanged(value);
+      powerOnChanged(value);
     }},
   decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   controllers{this, "controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
@@ -69,9 +69,9 @@ CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_vi
   Attributes::addObjectEditor(emergencyStop, false);
   m_interfaceItems.insertBefore(emergencyStop, notes);
 
-  Attributes::addEnabled(trackVoltageOff, online);
-  Attributes::addObjectEditor(trackVoltageOff, false);
-  m_interfaceItems.insertBefore(trackVoltageOff, notes);
+  Attributes::addEnabled(powerOn, online);
+  Attributes::addObjectEditor(powerOn, false);
+  m_interfaceItems.insertBefore(powerOn, notes);
 
   m_interfaceItems.add(decoders);
 
@@ -107,11 +107,11 @@ void CommandStation::worldEvent(WorldState state, WorldEvent event)
         break;
 
       case WorldEvent::PowerOff:
-        trackVoltageOff = true;
+        powerOn = false;
         break;
 
       case WorldEvent::PowerOn:
-        trackVoltageOff = false;
+        powerOn = true;
         break;
 
       case WorldEvent::Stop:
@@ -145,10 +145,10 @@ void CommandStation::emergencyStopChanged(bool value)
     controller->emergencyStopChanged(value);
 }
 
-void CommandStation::trackVoltageOffChanged(bool value)
+void CommandStation::powerOnChanged(bool value)
 {
   for(auto& controller : *controllers)
-    controller->trackPowerChanged(!value);
+    controller->powerOnChanged(value);
 }
 
 void CommandStation::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)

@@ -147,7 +147,7 @@ void LocoNet::receive(const Message& message)
           if(m_commandStation)
           {
             m_commandStation->emergencyStop.setValueInternal(false);
-            m_commandStation->trackVoltageOff.setValueInternal(false);
+            m_commandStation->powerOn.setValueInternal(true);
           }
         });
       break;
@@ -157,7 +157,7 @@ void LocoNet::receive(const Message& message)
         [this]()
         {
           if(m_commandStation)
-            m_commandStation->trackVoltageOff.setValueInternal(true);
+            m_commandStation->powerOn.setValueInternal(false);
         });
       break;
 
@@ -294,13 +294,13 @@ void LocoNet::emergencyStopChanged(bool value)
 {
   if(value)
     send(Idle());
-  else if(m_commandStation && !m_commandStation->trackVoltageOff)
+  else if(m_commandStation && m_commandStation->powerOn)
     send(GlobalPowerOn());
 }
 
-void LocoNet::trackVoltageOffChanged(bool value)
+void LocoNet::powerOnChanged(bool value)
 {
-  if(!value)
+  if(value)
     send(GlobalPowerOn());
   else
     send(GlobalPowerOff());
