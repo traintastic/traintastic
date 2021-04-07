@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -85,6 +85,18 @@ struct Set
     lua_pop(L, 1); // remove tabel
   }
 
+  static int __add(lua_State* L)
+  {
+    push(L, check(L, 1) + check(L, 2));
+    return 1;
+  }
+
+  static int __sub(lua_State* L)
+  {
+    push(L, check(L, 1) - check(L, 2));
+    return 1;
+  }
+
   static int __band(lua_State* L)
   {
     push(L, check(L, 1) & check(L, 2));
@@ -129,6 +141,10 @@ struct Set
   {
     // meta table for set userdata:
     luaL_newmetatable(L, set_name_v<T>);
+    lua_pushcfunction(L, __add);
+    lua_setfield(L, -2, "__add");
+    lua_pushcfunction(L, __sub);
+    lua_setfield(L, -2, "__sub");
     lua_pushcfunction(L, __band);
     lua_setfield(L, -2, "__band");
     lua_pushcfunction(L, __bor);
