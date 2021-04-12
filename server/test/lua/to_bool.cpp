@@ -49,6 +49,7 @@ TEMPLATE_TEST_CASE("Lua::to<>", "[lua][lua-to]", bool)
   lua_pop(L, 1);
 
   INFO("0.5")
+  lua_pushnumber(L, 0.5);
   REQUIRE_FALSE(Lua::to<TestType>(L, -1));
   REQUIRE_TRY_TO_FAIL();
   lua_pop(L, 1);
