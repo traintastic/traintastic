@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,6 +54,7 @@ struct Enum
   static void push(lua_State* L, T value)
   {
     lua_getglobal(L, EnumName<T>::value); // get tabel with all enum values: key=int, value=userdata enum
+    assert(lua_istable(L, -1)); // check if enum is registered
     lua_rawgeti(L, -1, static_cast<lua_Integer>(value)); // get userdata by key
     lua_insert(L, lua_gettop(L) - 1); // swap table and userdata
     lua_pop(L, 1); // remove table
