@@ -21,10 +21,11 @@ def check_license(text, filepath, fix=False):
     m = re.search(r'^/\*\*\n.+\n \*/\n\n', text, re.DOTALL)
     if m is None:
         if fix:
+            is_test = (os.path.sep + 'test' + os.path.sep) in filepath
             text = '''/**
  * ''' + filepath + '''
  *
- * This file is part of the traintastic source code.
+ * This file is part of the traintastic ''' + ('test suite' if is_test else 'source code') + '''.
  *
  * Copyright (C) ''' + str(datetime.datetime.now().year) + ''' Reinder Feenstra
  *
@@ -92,6 +93,7 @@ if __name__ == "__main__":
     SOURCE_DIRS = [
         os.path.join('client', 'src'),
         os.path.join('server', 'src'),
+        os.path.join('server', 'test'),
         os.path.join('shared', 'src')]
 
     fix = True
