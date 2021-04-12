@@ -27,6 +27,7 @@
 #include <type_traits>
 #include <string>
 #include <string_view>
+#include "enum.hpp"
 
 namespace Lua {
 
@@ -47,6 +48,10 @@ bool to(lua_State* L, int index, T& value)
       value = lua_toboolean(L, index);
       return true;
     }
+  }
+  else if constexpr(std::is_enum_v<T>)
+  {
+    return Enum<T>::test(L, index, value);
   }
   else if constexpr(std::is_integral_v<T>)
   {
@@ -118,6 +123,11 @@ T to(lua_State* L, int index)
   if constexpr(std::is_same_v<T, bool>)
   {
     return lua_isboolean(L, index) && lua_toboolean(L, index);
+  }
+  else if constexpr(std::is_enum_v<T>)
+  {
+    T v;
+    return Enum<T>::test(L, index, v) ? v : EnumValues<T>::value.begin()->first;
   }
   else if constexpr(std::is_integral_v<T> || std::is_floating_point_v<T>)
   {
