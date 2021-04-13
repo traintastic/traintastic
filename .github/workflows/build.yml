@@ -164,7 +164,7 @@ jobs:
     - name: Run tests
       if: matrix.target == 'traintastic-server-test'
       working-directory: ${{runner.workspace}}/server/build
-      run: ctest
+      run: ctest --output-on-failure
 
     # Ubuntu only:
     - name: Build debian package
