@@ -1,7 +1,7 @@
 /**
- * server/test/lua/panicToException.hpp
+ * server/test/lua/protect.cpp
  *
- * This file is part of the traintastic test code.
+ * This file is part of the traintastic test suite.
  *
  * Copyright (C) 2021 Reinder Feenstra
  *
@@ -20,24 +20,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_TEST_LUA_PANICTOEXCEPTION_HPP
-#define TRAINTASTIC_SERVER_TEST_LUA_PANICTOEXCEPTION_HPP
-
-#include <exception>
+#include <csetjmp>
 #include <lua.hpp>
 
-class LuaPanicException : public std::runtime_error
-{
-  public:
-    LuaPanicException(lua_State* L) :
-      std::runtime_error(lua_tostring(L, -1))
-    {
-    }
-};
+inline static jmp_buf protectPanicJump;
 
-inline int panicToException(lua_State* L)
+inline int protectPanic(lua_State*)
 {
-  throw LuaPanicException(L);
+  longjmp(protectPanicJump, 1); // will never return
 }
 
-#endif
+template<auto Func, class... Args>
+bool protect(lua_State* L, Args... args)
+{
+  auto* oldPanic = lua_atpanic(L, protectPanic);
+
+  bool success = true;
+  if(setjmp(protectPanicJump) == 0)
+    Func(L, args...);
+  else
+    success = false;
+
+  lua_atpanic(L, oldPanic);
+
+  return success;
+}

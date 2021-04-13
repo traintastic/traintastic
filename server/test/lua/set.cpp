@@ -21,7 +21,7 @@
  */
 
 #include <catch2/catch.hpp>
-#include "panicToException.hpp"
+#include "protect.hpp"
 #include "../../src/lua/set.hpp"
 #include "../../src/utils/toupper.hpp"
 
@@ -33,8 +33,6 @@ static lua_State* createState()
 {
   lua_State* L = luaL_newstate();
 
-  lua_atpanic(L, panicToException);
-
   Lua::Set<T>::registerType(L);
 
   lua_createtable(L, 0, 1);
@@ -43,6 +41,46 @@ static lua_State* createState()
 
   return L;
 }
+
+/*
+static jmp_buf arith_fail_panic_jump;
+
+/ * custom panic handler * /
+static int arith_fail_atpanic(lua_State *lua)
+{
+    longjmp(arith_fail_panic_jump, 1); // will never return
+    //return 0;
+}
+
+bool arith_fail(lua_State* L, int op)
+{
+  lua_atpanic(L, arith_fail_atpanic);
+
+  if(setjmp(arith_fail_panic_jump) == 0)
+  {
+    lua_arith(L, op);
+    return false;
+  }
+  else
+    return true;
+*/
+
+/*
+
+  try
+  {
+    lua_arith(L, op);
+  }
+  catch(const LuaPanicException& e)
+  {
+    return true;
+  }
+  catch(...)
+  {
+  }
+  return false;
+*/
+//}
 
 TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 {
@@ -76,7 +114,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 
     Lua::Set<TestType>::push(L, firstKey);
     Lua::Set<TestType>::push(L, lastKey);
-    lua_arith(L, LUA_OPADD);
+    REQUIRE(protect<lua_arith>(L, LUA_OPADD));
 
     Lua::Set<TestType>::push(L, firstKey + lastKey);
 
@@ -92,7 +130,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 
     Lua::Set<TestType>::push(L, mask);
     Lua::Set<TestType>::push(L, lastKey);
-    lua_arith(L, LUA_OPSUB);
+    REQUIRE(protect<lua_arith>(L, LUA_OPSUB));
 
     Lua::Set<TestType>::push(L, mask - lastKey);
 
@@ -108,7 +146,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 
     Lua::Set<TestType>::push(L, mask);
     Lua::Set<TestType>::push(L, lastKey);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPMUL), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPMUL));
 
     lua_close(L);
   }
@@ -120,7 +158,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 
     Lua::Set<TestType>::push(L, mask);
     Lua::Set<TestType>::push(L, lastKey);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPMOD), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPMOD));
 
     lua_close(L);
   }
@@ -132,7 +170,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 
     Lua::Set<TestType>::push(L, mask);
     lua_pushnumber(L, 2.);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPPOW), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPPOW));
 
     lua_close(L);
   }
@@ -144,7 +182,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 
     Lua::Set<TestType>::push(L, mask);
     Lua::Set<TestType>::push(L, lastKey);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPDIV), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPDIV));
 
     lua_close(L);
   }
@@ -156,7 +194,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 
     Lua::Set<TestType>::push(L, mask);
     Lua::Set<TestType>::push(L, lastKey);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPIDIV), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPIDIV));
 
     lua_close(L);
   }
@@ -168,7 +206,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 
     Lua::Set<TestType>::push(L, firstKey);
     Lua::Set<TestType>::push(L, lastKey);
-    lua_arith(L, LUA_OPBAND);
+    REQUIRE(protect<lua_arith>(L, LUA_OPBAND));
 
     Lua::Set<TestType>::push(L, firstKey & lastKey);
 
@@ -184,7 +222,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 
     Lua::Set<TestType>::push(L, firstKey);
     Lua::Set<TestType>::push(L, lastKey);
-    lua_arith(L, LUA_OPBOR);
+    REQUIRE(protect<lua_arith>(L, LUA_OPBOR));
 
     Lua::Set<TestType>::push(L, firstKey | lastKey);
 
@@ -200,7 +238,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 
     Lua::Set<TestType>::push(L, firstKey);
     Lua::Set<TestType>::push(L, lastKey);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPBXOR), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPBXOR));
 
     lua_close(L);
   }
@@ -212,7 +250,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 
     Lua::Set<TestType>::push(L, firstKey);
     lua_pushinteger(L, 1);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPSHL), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPSHL));
 
     lua_close(L);
   }
@@ -224,7 +262,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 
     Lua::Set<TestType>::push(L, firstKey);
     lua_pushinteger(L, 1);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPSHR), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPSHR));
 
     lua_close(L);
   }
@@ -235,7 +273,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
     lua_State* L = createState<TestType>();
 
     Lua::Set<TestType>::push(L, firstKey);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPUNM), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPUNM));
 
     lua_close(L);
   }
@@ -246,7 +284,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
     lua_State* L = createState<TestType>();
 
     Lua::Set<TestType>::push(L, firstKey);
-    lua_arith(L, LUA_OPBNOT);
+    REQUIRE(protect<lua_arith>(L, LUA_OPBNOT));
 
     Lua::Set<TestType>::push(L, ~firstKey);
 

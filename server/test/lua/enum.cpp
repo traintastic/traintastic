@@ -21,7 +21,7 @@
  */
 
 #include <catch2/catch.hpp>
-#include "panicToException.hpp"
+#include "protect.hpp"
 #include "../../src/lua/enum.hpp"
 #include "../../src/utils/toupper.hpp"
 
@@ -34,8 +34,6 @@ template<class T>
 static lua_State* createState()
 {
   lua_State* L = luaL_newstate();
-
-  lua_atpanic(L, panicToException);
 
   Lua::Enum<T>::registerType(L);
 
@@ -99,7 +97,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
 
     Lua::Enum<TestType>::push(L, firstKey);
     Lua::Enum<TestType>::push(L, lastKey);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPADD), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPADD));
 
     lua_close(L);
   }
@@ -111,7 +109,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
 
     Lua::Enum<TestType>::push(L, firstKey);
     Lua::Enum<TestType>::push(L, lastKey);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPSUB), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPSUB));
 
     lua_close(L);
   }
@@ -123,7 +121,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
 
     Lua::Enum<TestType>::push(L, firstKey);
     Lua::Enum<TestType>::push(L, lastKey);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPMUL), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPMUL));
 
     lua_close(L);
   }
@@ -135,7 +133,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
 
     Lua::Enum<TestType>::push(L, firstKey);
     Lua::Enum<TestType>::push(L, lastKey);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPMOD), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPMOD));
 
     lua_close(L);
   }
@@ -147,7 +145,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
 
     Lua::Enum<TestType>::push(L, firstKey);
     lua_pushnumber(L, 2.);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPPOW), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPPOW));
 
     lua_close(L);
   }
@@ -159,7 +157,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
 
     Lua::Enum<TestType>::push(L, firstKey);
     Lua::Enum<TestType>::push(L, lastKey);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPDIV), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPDIV));
 
     lua_close(L);
   }
@@ -171,7 +169,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
 
     Lua::Enum<TestType>::push(L, firstKey);
     Lua::Enum<TestType>::push(L, lastKey);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPIDIV), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPIDIV));
 
     lua_close(L);
   }
@@ -183,7 +181,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
 
     Lua::Enum<TestType>::push(L, firstKey);
     Lua::Enum<TestType>::push(L, lastKey);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPBAND), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPBAND));
 
     lua_close(L);
   }
@@ -195,7 +193,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
 
     Lua::Enum<TestType>::push(L, firstKey);
     Lua::Enum<TestType>::push(L, lastKey);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPBOR), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPBOR));
 
     lua_close(L);
   }
@@ -207,7 +205,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
 
     Lua::Enum<TestType>::push(L, firstKey);
     Lua::Enum<TestType>::push(L, lastKey);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPBXOR), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPBXOR));
 
     lua_close(L);
   }
@@ -219,7 +217,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
 
     Lua::Enum<TestType>::push(L, firstKey);
     lua_pushinteger(L, 1);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPSHL), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPSHL));
 
     lua_close(L);
   }
@@ -231,7 +229,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
 
     Lua::Enum<TestType>::push(L, firstKey);
     lua_pushinteger(L, 1);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPSHR), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPSHR));
 
     lua_close(L);
   }
@@ -242,7 +240,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
     lua_State* L = createState<TestType>();
 
     Lua::Enum<TestType>::push(L, firstKey);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPUNM), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPUNM));
 
     lua_close(L);
   }
@@ -253,7 +251,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
     lua_State* L = createState<TestType>();
 
     Lua::Enum<TestType>::push(L, firstKey);
-    REQUIRE_THROWS_AS(lua_arith(L, LUA_OPBNOT), LuaPanicException);
+    REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPBNOT));
 
     lua_close(L);
   }
