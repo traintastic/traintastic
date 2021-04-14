@@ -89,7 +89,7 @@ jobs:
         path: ${{runner.workspace}}/build
 
   build-server:
-    name: ${{matrix.target}} ${{matrix.config.name}}
+    name: ${{matrix.target.name}} ${{matrix.config.name}}
     runs-on: ${{matrix.config.os}}
     strategy:
       fail-fast: false
@@ -156,7 +156,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE/server -G "${{matrix.config.generator}}" ${{matrix.config.arch}} ${{matrix.config.toolset}} -DCMAKE_BUILD_TYPE=${{matrix.target.build_type}} -DUSB_XPRESSNET=OFF ${{matrix.config.defines}} {{matrix.config.defines}}
+      run: cmake $GITHUB_WORKSPACE/server -G "${{matrix.config.generator}}" ${{matrix.config.arch}} ${{matrix.config.toolset}} -DCMAKE_BUILD_TYPE=${{matrix.target.build_type}} -DUSB_XPRESSNET=OFF ${{matrix.config.defines}} ${{matrix.target.defines}}
 
     # All:
     - name: Build
