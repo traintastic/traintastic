@@ -1,5 +1,5 @@
 /**
- * server/test/lua/protect.cpp
+ * server/test/lua/protect.hpp
  *
  * This file is part of the traintastic test suite.
  *
@@ -19,6 +19,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
+#ifndef TRAINTASTIC_SERVER_TEST_LUA_PROTECT_HPP
+#define TRAINTASTIC_SERVER_TEST_LUA_PROTECT_HPP
 
 #include <csetjmp>
 #include <lua.hpp>
@@ -45,3 +48,5 @@ bool protect(lua_State* L, Args... args)
 
   return success;
 }
+
+#endif
