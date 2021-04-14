@@ -42,46 +42,6 @@ static lua_State* createState()
   return L;
 }
 
-/*
-static jmp_buf arith_fail_panic_jump;
-
-/ * custom panic handler * /
-static int arith_fail_atpanic(lua_State *lua)
-{
-    longjmp(arith_fail_panic_jump, 1); // will never return
-    //return 0;
-}
-
-bool arith_fail(lua_State* L, int op)
-{
-  lua_atpanic(L, arith_fail_atpanic);
-
-  if(setjmp(arith_fail_panic_jump) == 0)
-  {
-    lua_arith(L, op);
-    return false;
-  }
-  else
-    return true;
-*/
-
-/*
-
-  try
-  {
-    lua_arith(L, op);
-  }
-  catch(const LuaPanicException& e)
-  {
-    return true;
-  }
-  catch(...)
-  {
-  }
-  return false;
-*/
-//}
-
 TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 {
   const TestType mask = set_mask_v<TestType>;
