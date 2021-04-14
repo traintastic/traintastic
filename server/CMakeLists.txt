@@ -4,6 +4,8 @@ include(GNUInstallDirs)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
+include(code-coverage)
+
 add_executable(traintastic-server src/main.cpp src/options.hpp)
 add_executable(traintastic-server-test test/main.cpp)
 
@@ -77,8 +79,8 @@ file(GLOB TEST_SOURCES
 
 if(WIN32)
   add_definitions(-D_WIN32_WINNT=0x0601)
-  target_link_libraries(traintastic-server bcrypt)
-  target_link_libraries(traintastic-server-test bcrypt)
+  target_link_libraries(traintastic-server PRIVATE bcrypt)
+  target_link_libraries(traintastic-server-test PRIVATE bcrypt)
 endif()
 
 ### COMPILER ###
@@ -95,8 +97,8 @@ else()
   #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
   #set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
 
-  target_link_libraries(traintastic-server pthread stdc++fs)
-  target_link_libraries(traintastic-server-test pthread stdc++fs)
+  target_link_libraries(traintastic-server PRIVATE pthread stdc++fs)
+  target_link_libraries(traintastic-server-test PRIVATE pthread stdc++fs)
 endif()
 
 ### OPTIONS ###
@@ -112,7 +114,7 @@ if(ENABLE_LUA_SCRIPTING)
       COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.def" /out:lua53.lib /machine:x64)
     add_custom_command(TARGET traintastic-server-test PRE_LINK
       COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.def" /out:lua53.lib /machine:x64)
-    
+
     # copy lua53.dll to build directory, to be able to run the tests:
     add_custom_command(TARGET traintastic-server-test POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.dll" .)
@@ -123,12 +125,12 @@ if(ENABLE_LUA_SCRIPTING)
   file(GLOB SOURCES_LUA "src/lua/*.hpp" "src/lua/*.cpp")
   list(APPEND SOURCES ${SOURCES_LUA})
   target_include_directories(traintastic-server PRIVATE ${LUA_INCLUDE_DIR})
-  target_link_libraries(traintastic-server ${LUA_LIBRARIES})
+  target_link_libraries(traintastic-server PRIVATE ${LUA_LIBRARIES})
 
   file(GLOB TEST_SOURCES_LUA "test/lua/*.cpp")
   list(APPEND TEST_SOURCES ${TEST_SOURCES_LUA})
   target_include_directories(traintastic-server-test PRIVATE ${LUA_INCLUDE_DIR})
-  target_link_libraries(traintastic-server-test ${LUA_LIBRARIES})
+  target_link_libraries(traintastic-server-test PRIVATE ${LUA_LIBRARIES})
 else()
   add_definitions(-DDISABLE_LUA_SCRIPTING)
 endif()
@@ -148,10 +150,10 @@ if(ENABLE_USB_XPRESSNET_INTERFACE)
   add_definitions(-DUSB_XPRESSNET)
 
   target_include_directories(traintastic-server PRIVATE ${USBXPRESSNET_INCLUDE_DIR})
-  target_link_libraries(traintastic-server ${USBXPRESSNET_LIB})
+  target_link_libraries(traintastic-server PRIVATE ${USBXPRESSNET_LIB})
 
   target_include_directories(traintastic-server-test PRIVATE ${USBXPRESSNET_INCLUDE_DIR})
-  target_link_libraries(traintastic-server-test ${USBXPRESSNET_LIB})
+  target_link_libraries(traintastic-server-test PRIVATE ${USBXPRESSNET_LIB})
 else()
   list(FILTER SOURCES EXCLUDE REGEX ".*usbxpressnet(interface|controller)\.(hpp|cpp)$")
 endif()
@@ -160,6 +162,10 @@ endif()
 
 target_sources(traintastic-server PRIVATE ${SOURCES})
 target_sources(traintastic-server-test PRIVATE ${TEST_SOURCES} ${SOURCES})
+
+### CODE COVERAGE ###
+
+target_code_coverage(traintastic-server-test AUTO EXCLUDE "${PROJECT_SOURCE_DIR}/test/*" "${PROJECT_SOURCE_DIR}/thirdparty/*")
 
 ### INSTALL ###
 

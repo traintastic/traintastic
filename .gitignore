@@ -42,3 +42,4 @@ build*
 CMakeLists.txt.*
 *~*
 .vscode
+*.gcov
