@@ -45,6 +45,7 @@ static lua_State* createState()
 TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 {
   const TestType mask = set_mask_v<TestType>;
+  const TestType emptySet = static_cast<TestType>(0);
   const TestType firstKey = Lua::set_values_v<TestType>.begin()->first;
   const TestType lastKey = Lua::set_values_v<TestType>.rbegin()->first;
 
@@ -64,6 +65,50 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
       REQUIRE(lua_rawequal(L, -1, -2) == 1);
     }
 
+    lua_close(L);
+  }
+
+  {
+    INFO("tostring")
+
+    lua_State* L = createState<TestType>();
+
+    // load Lua baselib (for tostring function):
+    lua_pushcfunction(L, luaopen_base);
+    lua_pushliteral(L, "");
+    lua_call(L, 1, 0);
+
+    // empty set
+    lua_getglobal(L, "tostring");
+    Lua::Set<TestType>::push(L, emptySet);
+    REQUIRE(lua_pcall(L, 1, 1, 0) == LUA_OK);
+    REQUIRE(lua_tostring(L, -1) == std::string(set_name_v<TestType>).append("()"));
+
+    // set with single value
+    for(auto& it : Lua::set_values_v<TestType>)
+    {
+      lua_getglobal(L, "tostring");
+      Lua::Set<TestType>::push(L, it.first);
+      REQUIRE(lua_pcall(L, 1, 1, 0) == LUA_OK);
+      REQUIRE(lua_tostring(L, -1) == std::string(set_name_v<TestType>).append("(").append(toUpper(it.second)).append(")"));
+    }
+
+    // set all values
+    lua_getglobal(L, "tostring");
+    Lua::Set<TestType>::push(L, mask);
+    REQUIRE(lua_pcall(L, 1, 1, 0) == LUA_OK);
+    {
+      std::string r = std::string(set_name_v<TestType>);
+      r.append("(");
+      for(auto& it : Lua::set_values_v<TestType>)
+      {
+        if(it != *Lua::set_values_v<TestType>.begin())
+          r.append(" ");
+        r.append(toUpper(it.second));
+      }
+      r.append(")");
+      REQUIRE(lua_tostring(L, -1) == r);
+    }
     lua_close(L);
   }
 
