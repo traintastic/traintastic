@@ -89,7 +89,7 @@ jobs:
         path: ${{runner.workspace}}/build
 
   build-server:
-    name: ${{matrix.target.name}} ${{matrix.config.name}}
+    name: server ${{matrix.config.name}}
     runs-on: ${{matrix.config.os}}
     strategy:
       fail-fast: false
@@ -100,30 +100,60 @@ jobs:
           generator: "Visual Studio 16 2019"
           arch: "-A x64"
           toolset: "-T ClangCL"
+          target: traintastic-server
+          build_type: Release
           defines: ""
+          ccov: false
+
+        - name: "windows_x64_clang (test)"
+          os: windows-latest
+          generator: "Visual Studio 16 2019"
+          arch: "-A x64"
+          toolset: "-T ClangCL"
+          target: traintastic-server-test
+          build_type: Release
+          defines: ""
+          ccov: false
 
         - name: "ubuntu_18.04"
           os: ubuntu-18.04
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
+          target: traintastic-server
+          build_type: Release
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~bionic~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
+          ccov: false
+
+        - name: "ubuntu_18.04 (test)"
+          os: ubuntu-18.04
+          generator: "Unix Makefiles"
+          arch: ""
+          toolset: ""
+          target: traintastic-server-test
+          build_type: Release
+          defines: ""
+          ccov: false
 
         - name: "ubuntu_20.04"
           os: ubuntu-20.04
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
-          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~focal~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
-
-        target:
-        - name: traintastic-server
+          target: traintastic-server
           build_type: Release
-          defines: ""
+          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~focal~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
+          ccov: false
 
-        - name: traintastic-server-test
+        - name: "ubuntu_20.04 (test+ccov)"
+          os: ubuntu-20.04
+          generator: "Unix Makefiles"
+          arch: ""
+          toolset: ""
+          target: traintastic-server-test
           build_type: Debug
           defines: "-DCODE_COVERAGE=ON"
+          ccov: true
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -156,36 +186,30 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE/server -G "${{matrix.config.generator}}" ${{matrix.config.arch}} ${{matrix.config.toolset}} -DCMAKE_BUILD_TYPE=${{matrix.target.build_type}} -DUSB_XPRESSNET=OFF ${{matrix.config.defines}} ${{matrix.target.defines}}
+      run: cmake $GITHUB_WORKSPACE/server -G "${{matrix.config.generator}}" ${{matrix.config.arch}} ${{matrix.config.toolset}} -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}} -DUSB_XPRESSNET=OFF ${{matrix.config.defines}}
 
     # All:
     - name: Build
       working-directory: ${{runner.workspace}}/server/build
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: cmake --build . --config ${{matrix.target.build_type}} --target ${{matrix.target.name}}
+      run: cmake --build . --config ${{matrix.config.build_type}} --target ${{matrix.config.target}}
 
     # All:
     - name: Run tests
-      if: matrix.target.name == 'traintastic-server-test'
+      if: matrix.config.target == 'traintastic-server-test'
       working-directory: ${{runner.workspace}}/server/build
       run: ctest --output-on-failure
 
-    # Code coverage:
-    - name: Code coverage
-      if: matrix.config.os == 'ubuntu_20.04' && matrix.target.name == 'traintastic-server-test'
-      working-directory: ${{runner.workspace}}/server/build
-      run: make ccov
-
     # Ubuntu only:
     - name: Build debian package
-      if: startswith(matrix.config.os, 'ubuntu') && matrix.target.name == 'traintastic-server'
+      if: startswith(matrix.config.os, 'ubuntu') && matrix.config.target == 'traintastic-server'
       working-directory: ${{runner.workspace}}/server/build
       run: cpack
 
     # Windows only:
     - name: Upload artifact
-      if: startswith(matrix.config.os, 'windows') && matrix.target.name == 'traintastic-server'
+      if: startswith(matrix.config.os, 'windows') && matrix.config.target == 'traintastic-server'
       uses: actions/upload-artifact@v2
       with:
         name: traintastic-server
@@ -193,15 +217,20 @@ jobs:
 
     # Ubuntu only:
     - name: Upload artifact
-      if: startswith(matrix.config.os, 'ubuntu') && matrix.target.name == 'traintastic-server'
+      if: startswith(matrix.config.os, 'ubuntu') && matrix.config.target == 'traintastic-server'
       uses: actions/upload-artifact@v2
       with:
         name: traintastic-server-deb
         path: ${{runner.workspace}}/server/build/*.deb
 
     # Code coverage:
-    - name: Upload code coverage artifact
-      if: matrix.config.os == 'ubuntu_20.04' && matrix.target.name == 'traintastic-server-test'
+    - name: Code coverage
+      if: matrix.config.ccov
+      working-directory: ${{runner.workspace}}/server/build
+      run: make ccov
+
+    - name: "Code coverage: upload artifact"
+      if: matrix.config.ccov
       uses: actions/upload-artifact@v2
       with:
         name: traintastic-server-test-code-coverage
