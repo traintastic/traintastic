@@ -26,6 +26,7 @@
 #include <lua.hpp>
 #include <type_traits>
 #include <cmath>
+#include "error.hpp"
 
 namespace Lua {
 
@@ -39,19 +40,18 @@ T check(lua_State* L, int index)
   }
   else if constexpr(std::is_integral_v<T>)
   {
-    if constexpr(std::numeric_limits<T>::min() < LUA_MININTEGER ||
-        std::numeric_limits<T>::max() > LUA_MAXINTEGER)
-      return std::round(luaL_checknumber(L, index));
-
     const lua_Integer value = luaL_checkinteger(L, index);
-    if constexpr(std::numeric_limits<T>::min() >= LUA_MININTEGER &&
-        std::numeric_limits<T>::max() <= LUA_MAXINTEGER)
+    if constexpr(std::is_unsigned_v<T> && sizeof(T) >= sizeof(value))
+    {
+      if(value >= 0)
+        return static_cast<T>(value);
+    }
+    else if constexpr(std::numeric_limits<T>::min() <= LUA_MININTEGER && std::numeric_limits<T>::max() >= LUA_MAXINTEGER)
       return value;
     else if(value >= std::numeric_limits<T>::min() && value <= std::numeric_limits<T>::max())
       return value;
 
-    luaL_argerror(L, index, "out of range");
-    abort(); // never happens, luaL_error doesn't return
+    errorArgumentOutOfRange(L, index);
   }
   else if constexpr(std::is_floating_point_v<T>)
     return luaL_checknumber(L, index);
