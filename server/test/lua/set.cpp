@@ -31,7 +31,7 @@
 template<class T>
 static lua_State* createState()
 {
-  lua_State* L = luaL_newstate();
+  lua_State* L = newStateWithProtect();
 
   Lua::Set<T>::registerType(L);
 
@@ -65,7 +65,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
       REQUIRE(lua_rawequal(L, -1, -2) == 1);
     }
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -109,7 +109,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
       r.append(")");
       REQUIRE(lua_tostring(L, -1) == r);
     }
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -125,7 +125,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 
     REQUIRE(lua_rawequal(L, -1, -2) == 1);
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -141,7 +141,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 
     REQUIRE(lua_rawequal(L, -1, -2) == 1);
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -153,7 +153,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
     Lua::Set<TestType>::push(L, lastKey);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPMUL));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -165,7 +165,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
     Lua::Set<TestType>::push(L, lastKey);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPMOD));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -177,7 +177,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
     lua_pushnumber(L, 2.);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPPOW));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -189,7 +189,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
     Lua::Set<TestType>::push(L, lastKey);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPDIV));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -201,7 +201,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
     Lua::Set<TestType>::push(L, lastKey);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPIDIV));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -217,7 +217,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 
     REQUIRE(lua_rawequal(L, -1, -2) == 1);
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -233,7 +233,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 
     REQUIRE(lua_rawequal(L, -1, -2) == 1);
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -245,7 +245,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
     Lua::Set<TestType>::push(L, lastKey);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPBXOR));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -257,7 +257,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
     lua_pushinteger(L, 1);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPSHL));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -269,7 +269,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
     lua_pushinteger(L, 1);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPSHR));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -280,7 +280,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
     Lua::Set<TestType>::push(L, firstKey);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPUNM));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -295,6 +295,6 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
 
     REQUIRE(lua_rawequal(L, -1, -2) == 1);
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 }

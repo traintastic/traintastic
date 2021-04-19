@@ -26,11 +26,22 @@
 #include <csetjmp>
 #include <lua.hpp>
 
-inline static jmp_buf protectPanicJump;
-
-inline int protectPanic(lua_State*)
+inline lua_State* newStateWithProtect()
 {
-  longjmp(protectPanicJump, 1); // will never return
+  lua_State* L = luaL_newstate();
+  *static_cast<void**>(lua_getextraspace(L)) = malloc(sizeof(jmp_buf));
+  return L;
+}
+
+inline void closeStateWithProtect(lua_State* L)
+{
+  free(*static_cast<void**>(lua_getextraspace(L)));
+  lua_close(L);
+}
+
+inline int protectPanic(lua_State* L)
+{
+  longjmp(*static_cast<jmp_buf*>(*static_cast<void**>(lua_getextraspace(L))), 1); // will never return
 }
 
 template<auto Func, class... Args>
@@ -39,8 +50,24 @@ bool protect(lua_State* L, Args... args)
   auto* oldPanic = lua_atpanic(L, protectPanic);
 
   bool success = true;
-  if(setjmp(protectPanicJump) == 0)
+  if(setjmp(*static_cast<jmp_buf*>(*static_cast<void**>(lua_getextraspace(L)))) == 0)
     Func(L, args...);
+  else
+    success = false;
+
+  lua_atpanic(L, oldPanic);
+
+  return success;
+}
+
+template<auto Func, class R, class... Args>
+bool protect(R& result, lua_State* L, Args... args)
+{
+  auto* oldPanic = lua_atpanic(L, protectPanic);
+
+  bool success = true;
+  if(setjmp(*static_cast<jmp_buf*>(*static_cast<void**>(lua_getextraspace(L)))) == 0)
+    result = Func(L, args...);
   else
     success = false;
 

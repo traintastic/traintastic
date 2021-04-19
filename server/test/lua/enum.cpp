@@ -33,7 +33,7 @@
 template<class T>
 static lua_State* createState()
 {
-  lua_State* L = luaL_newstate();
+  lua_State* L = newStateWithProtect();
 
   Lua::Enum<T>::registerType(L);
 
@@ -65,7 +65,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
       REQUIRE(lua_rawequal(L, -1, -2) == 1);
     }
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -87,7 +87,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
       REQUIRE(lua_tostring(L, -1) == std::string(EnumName<TestType>::value).append(".").append(toUpper(it.second)));
     }
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -99,7 +99,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
     Lua::Enum<TestType>::push(L, lastKey);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPADD));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -111,7 +111,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
     Lua::Enum<TestType>::push(L, lastKey);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPSUB));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -123,7 +123,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
     Lua::Enum<TestType>::push(L, lastKey);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPMUL));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -135,7 +135,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
     Lua::Enum<TestType>::push(L, lastKey);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPMOD));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -147,7 +147,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
     lua_pushnumber(L, 2.);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPPOW));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -159,7 +159,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
     Lua::Enum<TestType>::push(L, lastKey);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPDIV));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -171,7 +171,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
     Lua::Enum<TestType>::push(L, lastKey);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPIDIV));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -183,7 +183,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
     Lua::Enum<TestType>::push(L, lastKey);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPBAND));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -195,7 +195,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
     Lua::Enum<TestType>::push(L, lastKey);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPBOR));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -207,7 +207,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
     Lua::Enum<TestType>::push(L, lastKey);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPBXOR));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -219,7 +219,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
     lua_pushinteger(L, 1);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPSHL));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -231,7 +231,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
     lua_pushinteger(L, 1);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPSHR));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -242,7 +242,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
     Lua::Enum<TestType>::push(L, firstKey);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPUNM));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 
   {
@@ -253,6 +253,6 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
     Lua::Enum<TestType>::push(L, firstKey);
     REQUIRE_FALSE(protect<lua_arith>(L, LUA_OPBNOT));
 
-    lua_close(L);
+    closeStateWithProtect(L);
   }
 }
