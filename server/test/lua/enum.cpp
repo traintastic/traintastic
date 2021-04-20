@@ -23,6 +23,7 @@
 #include <catch2/catch.hpp>
 #include "protect.hpp"
 #include "../../src/lua/enum.hpp"
+#include "../../src/lua/readonlytable.hpp"
 #include "../../src/utils/toupper.hpp"
 
 // Enums:
@@ -35,6 +36,7 @@ static lua_State* createState()
 {
   lua_State* L = newStateWithProtect();
 
+  Lua::ReadOnlyTable::registerType(L);
   Lua::Enum<T>::registerType(L);
 
   lua_createtable(L, 0, 1);
