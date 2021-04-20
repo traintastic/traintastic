@@ -55,8 +55,12 @@ T check(lua_State* L, int index)
   }
   else if constexpr(std::is_floating_point_v<T>)
     return luaL_checknumber(L, index);
-  else if constexpr(std::is_same_v<T, std::string>)
-    return luaL_checkstring(L, index);
+  else if constexpr(std::is_same_v<T, std::string> || std::is_same_v<T, std::string_view>)
+  {
+    size_t l;
+    const char* s = luaL_checklstring(L, index, &l);
+    return T{s, l};
+  }
   //else if constexpr(std::is_same_v<T, ObjectPtr>)
    // Object::push(L, value);
   else
