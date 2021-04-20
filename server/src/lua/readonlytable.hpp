@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_LUA_READONLYTABLE_HPP
 
 #include <lua.hpp>
+#include "error.hpp"
 
 namespace Lua {
 
@@ -39,7 +40,7 @@ struct ReadOnlyTable
 
   static int __newindex(lua_State* L)
   {
-    return luaL_error(L, "table is readonly");
+    errorTableIsReadOnly(L);
   }
 
   static void registerType(lua_State* L)

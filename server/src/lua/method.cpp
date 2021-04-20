@@ -22,6 +22,7 @@
 
 #include "method.hpp"
 #include "push.hpp"
+#include "error.hpp"
 #include "../core/abstractmethod.hpp"
 #include "../core/object.hpp"
 
@@ -45,8 +46,7 @@ AbstractMethod& Method::check(lua_State* L, int index)
   if(!data.object.expired())
     return data.method;
 
-  luaL_error(L, "dead method");
-  abort(); // never happens, luaL_error doesn't return
+  errorDeadMethod(L);
 }
 
 AbstractMethod* Method::test(lua_State* L, int index)
@@ -57,8 +57,7 @@ AbstractMethod* Method::test(lua_State* L, int index)
   else if(!(**data).object.expired())
     return &(**data).method;
 
-  luaL_error(L, "dead method");
-  abort(); // never happens, luaL_error doesn't return
+  errorDeadMethod(L);
 }
 
 void Method::push(lua_State* L, AbstractMethod& value)
@@ -90,7 +89,7 @@ int Method::__call(lua_State* L)
   const int argc = static_cast<int>(method.argumentCount());
 
   if(lua_gettop(L) - 1 != argc)
-    return luaL_error(L, "expected %d arguments, got %d", argc, lua_gettop(L) - 1);
+    errorExpectedNArgumentsGotN(L, argc, lua_gettop(L) - 1);
 
   std::vector<AbstractMethod::Argument> args;
   args.reserve(argc);
@@ -133,7 +132,7 @@ int Method::__call(lua_State* L)
   }
   catch(const std::exception& e)
   {
-    return luaL_error(L, "exceptiop: %s", e.what());
+    errorException(L, e);
   }
 }
 

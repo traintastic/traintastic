@@ -25,6 +25,7 @@
 #include "check.hpp"
 #include "to.hpp"
 #include "method.hpp"
+#include "error.hpp"
 #include "../core/object.hpp"
 #include "../core/abstractproperty.hpp"
 #include "../core/abstractmethod.hpp"
@@ -37,10 +38,7 @@ ObjectPtr Object::check(lua_State* L, int index)
   if(ObjectPtr object = data.lock())
     return object;
   else
-  {
-    luaL_error(L, "dead object");
-    abort(); // never happens, luaL_error doesn't return
-  }
+    errorDeadObject(L);
 }
 
 ObjectPtr Object::test(lua_State* L, int index)
@@ -51,10 +49,7 @@ ObjectPtr Object::test(lua_State* L, int index)
   else if(ObjectPtr object = (**data).lock())
     return object;
   else
-  {
-    luaL_error(L, "dead object");
-    abort(); // never happens, luaL_error doesn't return
-  }
+    errorDeadObject(L);
 }
 
 void Object::push(lua_State* L, const ObjectPtr& value)
@@ -173,7 +168,7 @@ int Object::__newindex(lua_State* L)
     // TODO: test scriptable
 
     if(!property->isWriteable())
-      return luaL_error(L, "can't set read only property");
+      errorCantSetReadOnlyProperty(L);
 
     try
     {
@@ -201,17 +196,17 @@ int Object::__newindex(lua_State* L)
 
         default:
           assert(false);
-          return luaL_error(L, "internal error");
+          errorInternal(L);
       }
       return 0;
     }
     catch(const std::exception& e)
     {
-      return luaL_error(L, "%s", e.what());
+      errorException(L, e);
     }
   }
 
-  return luaL_error(L, "can't set non existing property");
+  errorCantSetNonExistingProperty(L);
 }
 
 }
