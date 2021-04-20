@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_LUA_READONLYTABLE_HPP
 #define TRAINTASTIC_SERVER_LUA_READONLYTABLE_HPP
 
+#include <cassert>
 #include <lua.hpp>
 #include "error.hpp"
 
@@ -35,6 +36,7 @@ struct ReadOnlyTable
   static void setMetatable(lua_State* L, int index)
   {
     luaL_getmetatable(L, metatableName);
+    assert(lua_istable(L, -1)); // is type registered?
     lua_setmetatable(L, index < 0 ? index - 1 : index);
   }
 
