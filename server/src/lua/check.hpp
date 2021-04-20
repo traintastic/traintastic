@@ -27,6 +27,7 @@
 #include <type_traits>
 #include <cmath>
 #include "error.hpp"
+#include "enum.hpp"
 
 namespace Lua {
 
@@ -37,6 +38,10 @@ T check(lua_State* L, int index)
   {
     luaL_checktype(L, index, LUA_TBOOLEAN);
     return lua_toboolean(L, index);
+  }
+  else if constexpr(std::is_enum_v<T>)
+  {
+    return Enum<T>::check(L, index);
   }
   else if constexpr(std::is_integral_v<T>)
   {
