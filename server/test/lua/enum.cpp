@@ -22,6 +22,7 @@
 
 #include <catch2/catch.hpp>
 #include "protect.hpp"
+#include "run.hpp"
 #include "../../src/lua/enum.hpp"
 #include "../../src/lua/readonlytable.hpp"
 #include "../../src/utils/toupper.hpp"
@@ -52,6 +53,37 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
   const TestType lastKey = EnumValues<TestType>::value.rbegin()->first;
 
   {
+    INFO("write to enum.*")
+
+    lua_State* L = createState<TestType>();
+
+    // existing keys
+    for(auto& it : EnumValues<TestType>::value)
+    {
+      std::string code;
+      code.assign("enum.").append(EnumName<TestType>::value).append(".").append(toUpper(it.second)).append(" = nil");
+      REQUIRE_FALSE(run(L, code.c_str()));
+      REQUIRE(lua_tostring(L, -1) == std::string_view{":1: table is readonly"});
+    }
+
+    // non existing keys
+    {
+      std::string code;
+      code.assign("enum.").append(EnumName<TestType>::value).append(".non_existing_key = nil");
+      REQUIRE_FALSE(run(L, code));
+      REQUIRE(lua_tostring(L, -1) == std::string_view{":1: table is readonly"});
+    }
+    {
+      std::string code;
+      code.assign("enum.").append(EnumName<TestType>::value).append("[42] = nil");
+      REQUIRE_FALSE(run(L, code));
+      REQUIRE(lua_tostring(L, -1) == std::string_view{":1: table is readonly"});
+    }
+
+    closeStateWithProtect(L);
+  }
+
+  {
     INFO("single value")
 
     lua_State* L = createState<TestType>();
@@ -60,7 +92,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", DecoderProtocol, Direction,
     {
       std::string code;
       code.assign("return enum.").append(EnumName<TestType>::value).append(".").append(toUpper(it.second));
-      REQUIRE(luaL_dostring(L, code.c_str()) == LUA_OK);
+      REQUIRE(run(L, code));
 
       Lua::Enum<TestType>::push(L, it.first);
 

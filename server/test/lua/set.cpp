@@ -22,6 +22,7 @@
 
 #include <catch2/catch.hpp>
 #include "protect.hpp"
+#include "run.hpp"
 #include "../../src/lua/set.hpp"
 #include "../../src/lua/readonlytable.hpp"
 #include "../../src/utils/toupper.hpp"
@@ -52,6 +53,37 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
   const TestType lastKey = Lua::set_values_v<TestType>.rbegin()->first;
 
   {
+    INFO("write to set.*")
+
+    lua_State* L = createState<TestType>();
+
+    // existing keys
+    for(auto& it : Lua::set_values_v<TestType>)
+    {
+      std::string code;
+      code.assign("set.").append(set_name_v<TestType>).append(".").append(toUpper(it.second)).append(" = nil");
+      REQUIRE_FALSE(run(L, code.c_str()));
+      REQUIRE(lua_tostring(L, -1) == std::string_view{":1: table is readonly"});
+    }
+
+    // non existing keys
+    {
+      std::string code;
+      code.assign("set.").append(set_name_v<TestType>).append(".non_existing_key = nil");
+      REQUIRE_FALSE(run(L, code));
+      REQUIRE(lua_tostring(L, -1) == std::string_view{":1: table is readonly"});
+    }
+    {
+      std::string code;
+      code.assign("set.").append(set_name_v<TestType>).append("[42] = nil");
+      REQUIRE_FALSE(run(L, code));
+      REQUIRE(lua_tostring(L, -1) == std::string_view{":1: table is readonly"});
+    }
+
+    closeStateWithProtect(L);
+  }
+
+  {
     INFO("single value")
 
     lua_State* L = createState<TestType>();
@@ -60,7 +92,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
     {
       std::string code;
       code.assign("return set.").append(set_name_v<TestType>).append(".").append(toUpper(it.second));
-      REQUIRE(luaL_dostring(L, code.c_str()) == LUA_OK);
+      REQUIRE(run(L, code));
 
       Lua::Set<TestType>::push(L, it.first);
 
