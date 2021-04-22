@@ -35,7 +35,6 @@ static lua_State* createState()
 {
   lua_State* L = newStateWithProtect();
 
-  Lua::ReadOnlyTable::registerType(L);
   Lua::Set<T>::registerType(L);
 
   lua_createtable(L, 0, 1);

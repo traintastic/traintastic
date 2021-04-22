@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,29 +29,33 @@
 
 namespace Lua {
 
-struct ReadOnlyTable
+class ReadOnlyTable
 {
-  static constexpr const char* metatableName = "read_only_table";
+  private:
+    static int __newindex(lua_State* L)
+    {
+      errorTableIsReadOnly(L);
+    }
 
-  static void setMetatable(lua_State* L, int index)
-  {
-    luaL_getmetatable(L, metatableName);
-    assert(lua_istable(L, -1)); // is type registered?
-    lua_setmetatable(L, index < 0 ? index - 1 : index);
-  }
-
-  static int __newindex(lua_State* L)
-  {
-    errorTableIsReadOnly(L);
-  }
-
-  static void registerType(lua_State* L)
-  {
-    luaL_newmetatable(L, metatableName);
-    lua_pushcfunction(L, __newindex);
-    lua_setfield(L, -2, "__newindex");
-    lua_pop(L, 1);
-  }
+  public:
+    static void wrap(lua_State* L, int index)
+    {
+      assert(lua_istable(L, index));
+      lua_newtable(L); // create wrapper table
+      lua_newtable(L); // metatable for wrapper table
+      if(index < 0)
+        index -= 2; // correct index if relative
+      lua_pushvalue(L, index); // copy source table (ref)
+      lua_setfield(L, -2, "__index");
+      lua_pushcfunction(L, __newindex);
+      lua_setfield(L, -2, "__newindex");
+      lua_pushboolean(L, 0);
+      lua_setfield(L, -2, "__metatable");
+      lua_setmetatable(L, -2); // set metatable @ wrapper table
+      if(index < 0)
+        index++; // correct index if relative
+      lua_replace(L, index); // replace source table by wrapper table
+    }
 };
 
 }

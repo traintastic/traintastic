@@ -98,13 +98,13 @@ SandboxPtr Sandbox::create(Script& script)
   Enum<DecoderProtocol>::registerValues(L);
   Enum<Direction>::registerValues(L);
   Enum<WorldEvent>::registerValues(L);
-  ReadOnlyTable::setMetatable(L, -1);
+  ReadOnlyTable::wrap(L, -1);
   lua_setfield(L, -2, "enum");
 
   // add set values:
   lua_newtable(L);
   Set<WorldState>::registerValues(L);
-  ReadOnlyTable::setMetatable(L, -1);
+  ReadOnlyTable::wrap(L, -1);
   lua_setfield(L, -2, "set");
 
   // let global _G point to itself:

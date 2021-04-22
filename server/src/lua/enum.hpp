@@ -98,7 +98,7 @@ struct Enum
       push(L, it.first);
       lua_setfield(L, -2, toUpper(it.second).c_str());
     }
-    ReadOnlyTable::setMetatable(L, -1);
+    ReadOnlyTable::wrap(L, -1);
     lua_setfield(L, -2, EnumName<T>::value);
   }
 };

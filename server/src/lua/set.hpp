@@ -174,7 +174,7 @@ struct Set
       push(L, it.first);
       lua_setfield(L, -2, it.second);
     }
-    ReadOnlyTable::setMetatable(L, -1);
+    ReadOnlyTable::wrap(L, -1);
     lua_setfield(L, -2, set_name_v<T>);
   }
 };

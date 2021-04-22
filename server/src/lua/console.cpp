@@ -54,7 +54,7 @@ void Console::push(lua_State* L)
   lua_pushcfunction(L, fatal);
   lua_setfield(L, -2, "fatal");
 
-  ReadOnlyTable::setMetatable(L, -1);
+  ReadOnlyTable::wrap(L, -1);
 }
 
 void Console::log(lua_State* L, ::Console::Level level, const std::string& message)
