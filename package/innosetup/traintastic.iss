@@ -59,6 +59,11 @@ Source: "..\..\build-client\imageformats\*.dll"; DestDir: "{app}\client\imagefor
 Source: "..\..\build-client\platforms\*.dll"; DestDir: "{app}\client\platforms"; Flags: ignoreversion; Components: client
 Source: "..\..\build-client\styles\*.dll"; DestDir: "{app}\client\styles"; Flags: ignoreversion; Components: client
 Source: "..\..\lang\*.txt"; DestDir: "{commonappdata}\traintastic\client\lang"; Flags: ignoreversion; Components: client
+; VC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
+Source: "..\..\build-client\vc_redist.x64.exe"; DestDir: {tmp}; Flags: dontcopy
+
+[Run]
+Filename: "{tmp}\vc_redist.x64.exe"; StatusMsg: "Installing VC++ redistributables..."; Parameters: "/quiet"; Check: VC2017RedistNeedsInstall; Flags: waituntilterminated; Components: client
 
 [Icons]
 ; Server
@@ -68,3 +73,25 @@ Name: "{autodesktop}\{#Name} server"; Filename: "{app}\server\{#ServerExeName}";
 Name: "{autoprograms}\{#Name}\{#Name} client"; Filename: "{app}\client\{#ClientExeName}"; Components: client
 Name: "{autodesktop}\{#Name} client"; Filename: "{app}\client\{#ClientExeName}"; Tasks: desktopicon; Components: client
 
+[Code]
+function VC2017RedistNeedsInstall: Boolean;
+var 
+  Version: String;
+begin
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE,
+       'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Version', Version) then
+  begin
+    // Is the installed version at least 14.14 ? 
+    Log('VC Redist Version check : found ' + Version);
+    Result := (CompareStr(Version, 'v14.14.26429.03')<0);
+  end
+  else 
+  begin
+    // Not even an old version installed
+    Result := True;
+  end;
+  if (Result) then
+  begin
+    ExtractTemporaryFile('vc_redist.x64.exe');
+  end;
+end;
