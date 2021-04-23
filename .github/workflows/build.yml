@@ -73,12 +73,6 @@ jobs:
       if: startswith(matrix.config.os, 'ubuntu')
       run: sudo apt install qt5-default
 
-    # Windows only:
-    - name: Setup Microsoft Visual Studio 2019 Environment
-      if: startswith(matrix.config.os, 'windows')
-      shell: cmd
-      run: call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-
     # All:
     - name: Create Build Environment
       run: cmake -E make_directory ${{runner.workspace}}/client/build
@@ -99,7 +93,9 @@ jobs:
     - name: Run windeployqt
       if: startswith(matrix.config.os, 'windows')
       shell: cmd
-      run: windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw ${{runner.workspace}}/client/build/${{matrix.config.build_type}}/traintastic-client.exe
+      run: |
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw ${{runner.workspace}}/client/build/${{matrix.config.build_type}}/traintastic-client.exe
 
     # Ubuntu only:
     - name: Build debian package
