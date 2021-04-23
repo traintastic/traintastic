@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +28,7 @@
 #include <cmath>
 #include "error.hpp"
 #include "enum.hpp"
+#include "set.hpp"
 
 namespace Lua {
 
@@ -38,6 +39,10 @@ T check(lua_State* L, int index)
   {
     luaL_checktype(L, index, LUA_TBOOLEAN);
     return lua_toboolean(L, index);
+  }
+  else if constexpr(is_set_v<T>)
+  {
+    return Set<T>::check(L, index);
   }
   else if constexpr(std::is_enum_v<T>)
   {

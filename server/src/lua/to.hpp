@@ -28,6 +28,7 @@
 #include <string>
 #include <string_view>
 #include "enum.hpp"
+#include "set.hpp"
 
 namespace Lua {
 
@@ -48,6 +49,10 @@ bool to(lua_State* L, int index, T& value)
       value = lua_toboolean(L, index);
       return true;
     }
+  }
+  else if constexpr(is_set_v<T>)
+  {
+    return Set<T>::test(L, index, value);
   }
   else if constexpr(std::is_enum_v<T>)
   {
@@ -123,6 +128,11 @@ T to(lua_State* L, int index)
   if constexpr(std::is_same_v<T, bool>)
   {
     return lua_isboolean(L, index) && lua_toboolean(L, index);
+  }
+  else if constexpr(is_set_v<T>)
+  {
+    T v;
+    return Set<T>::test(L, index, v) ? v : T();
   }
   else if constexpr(std::is_enum_v<T>)
   {
