@@ -22,11 +22,13 @@ set_target_properties(traintastic-server-test PROPERTIES CXX_STANDARD 17)
 
 target_include_directories(traintastic-server PRIVATE
   ../shared/src/
+  ../shared/thirdparty
   thirdparty
   thirdparty/boost)
 
 target_include_directories(traintastic-server-test PRIVATE
   ../shared/src/
+  ../shared/thirdparty
   thirdparty
   thirdparty/boost)
 
