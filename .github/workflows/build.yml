@@ -12,12 +12,27 @@ jobs:
         config:
         - name: "windows_x64_msvc"
           os: windows-latest
+          generator: "Visual Studio 16 2019"
+          arch: "-A x64"
+          target: traintastic-client
+          build_type: Release
+          defines: ""
 
         - name: "ubuntu_18.04"
           os: ubuntu-18.04
+          generator: "Unix Makefiles"
+          arch: ""
+          target: traintastic-client
+          build_type: Release
+          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~bionic~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
 
         - name: "ubuntu_20.04"
           os: ubuntu-20.04
+          generator: "Unix Makefiles"
+          arch: ""
+          target: traintastic-client
+          build_type: Release
+          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~focal~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
 
     steps:
     # All:
@@ -56,29 +71,39 @@ jobs:
       if: startswith(matrix.config.os, 'ubuntu')
       run: sudo apt install qt5-default
 
-    - name: Create build directory
-      shell: bash
-      run: mkdir -p ${{runner.workspace}}/build
-
-    # Ubuntu only:
-    - name: Build
-      if: startswith(matrix.config.os, 'ubuntu')
-      working-directory: ${{runner.workspace}}/build
-      run: |
-        qmake $GITHUB_WORKSPACE/client/traintastic-client.pro CONFIG+="release" DESTDIR=${{runner.workspace}}/build
-        make
-
     # Windows only:
-    - name: Build
+    - name: Setup Microsoft Visual Studio 2019 Environment
       if: startswith(matrix.config.os, 'windows')
       shell: cmd
-      #working-directory: ${{runner.workspace}}/build
-      run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        qmake --version
-        qmake %GITHUB_WORKSPACE%/client/traintastic-client.pro CONFIG+="release" DESTDIR=${{runner.workspace}}/build
-        nmake
-        windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw ${{runner.workspace}}/build/traintastic-client.exe
+      run: call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+
+    # All:
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{runner.workspace}}/client/build
+
+    # All:
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{runner.workspace}}/client/build
+      run: cmake $GITHUB_WORKSPACE/client -G "${{matrix.config.generator}}" ${{matrix.config.arch}} -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}} ${{matrix.config.defines}}
+
+    # All:
+    - name: Build
+      working-directory: ${{runner.workspace}}/client/build
+      shell: bash
+      run: cmake --build . --config ${{matrix.config.build_type}} --target ${{matrix.config.target}}
+
+    # Windows only:
+    - name: Run windeployqt
+      if: startswith(matrix.config.os, 'windows')
+      shell: cmd
+      run: windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw ${{runner.workspace}}/build/traintastic-client.exe
+
+    # Ubuntu only:
+    - name: Build debian package
+      if: startswith(matrix.config.os, 'ubuntu') && matrix.config.target == 'traintastic-client'
+      working-directory: ${{runner.workspace}}/client/build
+      run: cpack
 
     # Windows only:
     - name: Upload artifact
@@ -87,6 +112,14 @@ jobs:
       with:
         name: traintastic-client
         path: ${{runner.workspace}}/build
+
+    # Ubuntu only:
+    - name: Upload artifact
+      if: startswith(matrix.config.os, 'ubuntu') && matrix.config.target == 'traintastic-client'
+      uses: actions/upload-artifact@v2
+      with:
+        name: traintastic-client-deb
+        path: ${{runner.workspace}}/client/build/*.deb
 
   build-server:
     name: server ${{matrix.config.name}}
@@ -278,24 +311,30 @@ jobs:
   deploy:
     name: Deploy to website
     runs-on: ubuntu-20.04
-    needs: [package-innosetup, build-server]
+    needs: [package-innosetup, build-server, build-client]
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
 
-    - name: Download artifacts 1/3
+    - name: Download artifacts 1/4
       uses: actions/download-artifact@v2
       with:
         name: package-innosetup
         path: dist
 
-    - name: Download artifacts 2/3
+    - name: Download artifacts 2/4
+      uses: actions/download-artifact@v2
+      with:
+        name: traintastic-client-deb
+        path: dist
+
+    - name: Download artifacts 3/4
       uses: actions/download-artifact@v2
       with:
         name: traintastic-server-deb
         path: dist
 
-    - name: Download artifacts 3/3
+    - name: Download artifacts 4/4
       uses: actions/download-artifact@v2
       with:
         name: traintastic-server-test-code-coverage
