@@ -99,7 +99,7 @@ jobs:
     - name: Run windeployqt
       if: startswith(matrix.config.os, 'windows')
       shell: cmd
-      run: windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw ${{runner.workspace}}/build/${{matrix.config.build_type}}/traintastic-client.exe
+      run: windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw ${{runner.workspace}}/client/build/${{matrix.config.build_type}}/traintastic-client.exe
 
     # Ubuntu only:
     - name: Build debian package
@@ -113,7 +113,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: traintastic-client
-        path: ${{runner.workspace}}/build/${{matrix.config.build_type}}
+        path: ${{runner.workspace}}/client/build/${{matrix.config.build_type}}
 
     # Ubuntu only:
     - name: Upload artifact
