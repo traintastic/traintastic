@@ -16,6 +16,7 @@ jobs:
           arch: "-A x64"
           target: traintastic-client
           build_type: Release
+          build_deb: false
           defines: ""
 
         - name: "ubuntu_18.04"
@@ -24,6 +25,7 @@ jobs:
           arch: ""
           target: traintastic-client
           build_type: Release
+          build_deb: true
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~bionic~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
 
         - name: "ubuntu_20.04"
@@ -32,8 +34,18 @@ jobs:
           arch: ""
           target: traintastic-client
           build_type: Release
+          build_deb: true
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~focal~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
-
+          
+        - name: "raspberrypios_10_arm64"
+          os: [self-hosted, ARM64, RaspberryPi]
+          generator: "Unix Makefiles"
+          arch: ""
+          target: traintastic-client
+          build_type: Release
+          build_deb: true
+          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
+          
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
 
@@ -99,7 +111,7 @@ jobs:
 
     # Ubuntu only:
     - name: Build debian package
-      if: startswith(matrix.config.os, 'ubuntu') && matrix.config.target == 'traintastic-client'
+      if: build_deb && matrix.config.target == 'traintastic-client'
       working-directory: ${{runner.workspace}}/client/build
       run: cpack
 
@@ -111,9 +123,9 @@ jobs:
         name: traintastic-client
         path: ${{runner.workspace}}/client/build/${{matrix.config.build_type}}
 
-    # Ubuntu only:
-    - name: Upload artifact
-      if: startswith(matrix.config.os, 'ubuntu') && matrix.config.target == 'traintastic-client'
+    # Linux only:
+    - name: Upload debian package artifact
+      if: build_deb && matrix.config.target == 'traintastic-client'
       uses: actions/upload-artifact@v2
       with:
         name: traintastic-client-deb
