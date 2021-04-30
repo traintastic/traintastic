@@ -111,7 +111,7 @@ jobs:
 
     # Ubuntu only:
     - name: Build debian package
-      if: build_deb && matrix.config.target == 'traintastic-client'
+      if: matrix.config.build_deb && matrix.config.target == 'traintastic-client'
       working-directory: ${{runner.workspace}}/client/build
       run: cpack
 
@@ -125,7 +125,7 @@ jobs:
 
     # Linux only:
     - name: Upload debian package artifact
-      if: build_deb && matrix.config.target == 'traintastic-client'
+      if: matrix.config.build_deb && matrix.config.target == 'traintastic-client'
       uses: actions/upload-artifact@v2
       with:
         name: traintastic-client-deb
