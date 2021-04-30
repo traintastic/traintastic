@@ -109,7 +109,7 @@ jobs:
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw ${{runner.workspace}}/client/build/${{matrix.config.build_type}}/traintastic-client.exe
 
-    # Ubuntu only:
+    # Linux only:
     - name: Build debian package
       if: matrix.config.build_deb && matrix.config.target == 'traintastic-client'
       working-directory: ${{runner.workspace}}/client/build
@@ -155,6 +155,7 @@ jobs:
           toolset: "-T ClangCL"
           target: traintastic-server-test
           build_type: Release
+          build_deb: false
           defines: ""
           ccov: false
 
@@ -165,6 +166,7 @@ jobs:
           toolset: ""
           target: traintastic-server
           build_type: Release
+          build_deb: true
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~bionic~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
           ccov: false
 
@@ -175,6 +177,7 @@ jobs:
           toolset: ""
           target: traintastic-server-test
           build_type: Release
+          build_deb: true
           defines: ""
           ccov: false
 
@@ -185,6 +188,7 @@ jobs:
           toolset: ""
           target: traintastic-server
           build_type: Release
+          build_deb: true
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~focal~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
           ccov: false
 
@@ -195,8 +199,20 @@ jobs:
           toolset: ""
           target: traintastic-server-test
           build_type: Debug
+          build_deb: true
           defines: "-DCODE_COVERAGE=ON"
           ccov: true
+          
+        - name: "raspberrypios_10_arm64"
+          os: [self-hosted, ARM64, RaspberryPi]
+          generator: "Unix Makefiles"
+          arch: ""
+          toolset: ""
+          target: traintastic-server
+          build_type: Release
+          build_deb: true
+          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
+          ccov: false
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -244,9 +260,9 @@ jobs:
       working-directory: ${{runner.workspace}}/server/build
       run: ctest --output-on-failure
 
-    # Ubuntu only:
+    # Linux only:
     - name: Build debian package
-      if: startswith(matrix.config.os, 'ubuntu') && matrix.config.target == 'traintastic-server'
+      if: matrix.config.build_deb && matrix.config.target == 'traintastic-server'
       working-directory: ${{runner.workspace}}/server/build
       run: cpack
 
@@ -258,9 +274,9 @@ jobs:
         name: traintastic-server
         path: ${{runner.workspace}}/server/build/Release
 
-    # Ubuntu only:
-    - name: Upload artifact
-      if: startswith(matrix.config.os, 'ubuntu') && matrix.config.target == 'traintastic-server'
+    # Linux only:
+    - name: Upload debian package artifact
+      if: matrix.config.build_deb && matrix.config.target == 'traintastic-server'
       uses: actions/upload-artifact@v2
       with:
         name: traintastic-server-deb
