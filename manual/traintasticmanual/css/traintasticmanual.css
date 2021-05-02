@@ -1,0 +1,153 @@
+
+#layout
+{
+  position: relative;
+  right: 0;
+  padding-right: 0;
+}
+
+#main
+{
+  margin-right: 16em;
+}
+
+/** TOC **********************************************************************/
+
+#toc
+{
+  border-left: solid 2px #bbb;
+  padding-left: 1.5em;
+  color: #444;
+  position: fixed;
+  right: 0;
+  top: 1.5em;
+  width: 15em;
+}
+
+#toc span.title
+{
+  font-size: 110%;
+  font-weight: bold;
+  display: inline-block;
+}
+
+#toc ul
+{
+  margin: 1em 0;
+  padding: 0;
+  list-style-type: none;
+  font-size: 90%;
+}
+
+#toc ul:last-child
+{
+  margin-bottom: 0;
+}
+
+#toc ul ul
+{
+  margin: 0;
+  padding-left: 1em;
+  font-size: 90%;
+}
+
+#toc a
+{
+  color: #888;
+  text-decoration: none;
+}
+
+#toc a:hover
+{
+  text-decoration: underline;
+}
+
+#toc a:hover,
+#toc a.selected
+{
+  color: #000;
+}
+
+/** CONTENT ******************************************************************/
+
+.content
+{
+  margin: 0 auto;
+  padding: 0 2em;
+  max-width: 1000px;
+  margin-bottom: 50px;
+  line-height: 1.6em;
+}
+
+.content .center
+{
+  text-align: center;
+}
+
+.content .dim
+{
+  color: #888;
+}
+
+.content p.large
+{
+  font-size: 120%;
+}
+
+.content p.small
+{
+  font-size: 80%;
+}
+
+.content h1:not(:first-child)
+{
+  margin-top : 5em;
+}
+
+.content h1.title
+{
+  font-size: 400%;
+  text-align: center;
+  margin-bottom: 0.5em;
+}
+
+.content h2.title
+{
+  font-size: 250%;
+  text-align: center;
+  color: #444;
+  margin-top: 0.5em;
+}
+
+.content h2,
+.content h3,
+.content h4
+{
+  margin: 1.5em 0 0.5em 0;
+}
+
+.content table
+{
+  border-collapse: collapse;
+}
+
+.content table thead tr
+{
+  background: #f4f4f4;
+}
+
+.content table thead th
+{
+  border-bottom : solid 1px #888;
+}
+
+.content table tbody tr:nth-child(even)
+{
+  background: #f4f4f4;
+}
+
+.content table th,
+.content table td
+{
+  padding: 0 0.75em;
+}

@@ -1,2 +1,0 @@
-# RoSoft s88xPressNetLI
-
