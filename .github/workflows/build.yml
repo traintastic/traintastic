@@ -314,7 +314,7 @@ jobs:
       run: sudo pip3 install pycmarkgfm
       
     - name: Build manual
-      working-directory: ${{runner.workspace}}/manual
+      working-directory: ${{github.workspace}}/manual
       run: ./builddoc.py html-single-page --output-dir build --version 0.0.1-$CI_REF_NAME_SLUG-${{github.run_number}}-$CI_SHA_SHORT
 
     - name: Upload artifact
