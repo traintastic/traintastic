@@ -295,6 +295,34 @@ jobs:
         name: traintastic-server-test-code-coverage
         path: ${{runner.workspace}}/server/build/ccov/*
 
+  build-manual:
+    name: manual
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: FranzDiebold/github-env-vars-action@v2
+
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        lfs: true
+
+    - name: Checkout LFS objects
+      run: git lfs checkout
+
+    - name: Install python packages
+      run: sudo pip3 install pycmarkgfm
+      
+    - name: Build manual
+      working-directory: ${{runner.workspace}}/manual
+      run: ./builddoc.py html-single-page --output-dir build --version 0.0.1-$CI_REF_NAME_SLUG-${{github.run_number}}-$CI_SHA_SHORT
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: traintastic-manual
+        path: ${{runner.workspace}}/manual/build/*
+
   package-innosetup:
     name: package innosetup
     runs-on: windows-latest
@@ -337,35 +365,41 @@ jobs:
   deploy:
     name: Deploy to website
     runs-on: ubuntu-20.04
-    needs: [package-innosetup, build-server, build-client]
+    needs: [package-innosetup, build-server, build-client, build-manual]
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
 
-    - name: Download artifacts 1/4
+    - name: Download artifacts 1/5
       uses: actions/download-artifact@v2
       with:
         name: package-innosetup
         path: dist
 
-    - name: Download artifacts 2/4
+    - name: Download artifacts 2/5
       uses: actions/download-artifact@v2
       with:
         name: traintastic-client-deb
         path: dist
 
-    - name: Download artifacts 3/4
+    - name: Download artifacts 3/5
       uses: actions/download-artifact@v2
       with:
         name: traintastic-server-deb
         path: dist
 
-    - name: Download artifacts 4/4
+    - name: Download artifacts 4/5
       uses: actions/download-artifact@v2
       with:
         name: traintastic-server-test-code-coverage
         path: dist/ccov
 
+    - name: Download artifacts 5/5
+      uses: actions/download-artifact@v2
+      with:
+        name: traintastic-manual
+        path: dist/manual
+    
     - uses: easingthemes/ssh-deploy@v2.1.5
       env:
           SSH_PRIVATE_KEY: ${{secrets.SERVER_SSH_KEY}}
