@@ -33,7 +33,7 @@
 #include "../network/connection.hpp"
 #include <traintastic/locale/locale.hpp>
 
-ConnectDialog::ConnectDialog(QWidget* parent) :
+ConnectDialog::ConnectDialog(QWidget* parent, const QString& url) :
   QDialog(parent, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
   m_connection{std::make_shared<Connection>()},
   m_udpSocket{new QUdpSocket(this)},
@@ -80,6 +80,13 @@ ConnectDialog::ConnectDialog(QWidget* parent) :
   connect(m_server, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &ConnectDialog::serverIndexChanged);
   connect(m_server, &QComboBox::currentTextChanged, this, &ConnectDialog::serverTextChanged);
   connect(m_connect, &QPushButton::clicked, this, &ConnectDialog::connectClick);
+
+  if(!url.isEmpty())
+  {
+    m_server->setCurrentText(url);
+    QTimer::singleShot(100, this, &ConnectDialog::connectClick);
+  }
+
   m_broadcastTimer.start(1000);
   broadcast();
 }
@@ -202,6 +209,9 @@ void ConnectDialog::serverTextChanged(const QString& text)
 
 void ConnectDialog::connectClick()
 {
+  if(!m_url.isValid())
+    return;
+
   setControlsEnabled(false);
   m_connection->connectToHost(m_url, m_username->text(), m_password->text());
 }

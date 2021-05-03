@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,6 +39,7 @@
 struct Options
 {
   bool fullscreen;
+  QString connectTo;
 };
 
 void parseOptions(QCoreApplication& app, Options& options)
@@ -51,9 +52,13 @@ void parseOptions(QCoreApplication& app, Options& options)
   QCommandLineOption fullscreen("fullscreen", "Start application fullscreen.");
   parser.addOption(fullscreen);
 
+  QCommandLineOption connect({"c", "connect"}, "Connect to server.", "hostname[:port]");
+  parser.addOption(connect);
+
   parser.process(app);
 
   options.fullscreen = parser.isSet(fullscreen);
+  options.connectTo = parser.value(connect);
 }
 
 int main(int argc, char* argv[])
@@ -84,7 +89,7 @@ int main(int argc, char* argv[])
     mw.show();
 
   if(!mw.connection())
-    mw.connectToServer();
+    mw.connectToServer(options.connectTo);
 
   return app.exec();
 }

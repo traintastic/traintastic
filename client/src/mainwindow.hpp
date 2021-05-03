@@ -107,7 +107,7 @@ class MainWindow : public QMainWindow
     const std::shared_ptr<Connection>& connection() { return m_connection; }
 
   public slots:
-    void connectToServer();
+    void connectToServer(const QString& url = QString());
     void showObject(const ObjectPtr& object);
     void showObject(const QString& id, const QString& title = "");
 };

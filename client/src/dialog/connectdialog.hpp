@@ -66,7 +66,7 @@ class ConnectDialog : public QDialog
     void connectClick();
 
   public:
-    ConnectDialog(QWidget* parent = nullptr);
+    ConnectDialog(QWidget* parent = nullptr, const QString& url = QString());
 
     const std::shared_ptr<Connection>& connection() { return m_connection; }
 };

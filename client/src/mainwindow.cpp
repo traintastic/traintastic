@@ -88,7 +88,7 @@ MainWindow::MainWindow(QWidget* parent) :
     //QAction* act;
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:file"));
-    m_actionConnectToServer = menu->addAction(Locale::tr("qtapp.mainmenu:connect_to_server") + "...", this, &MainWindow::connectToServer);
+    m_actionConnectToServer = menu->addAction(Locale::tr("qtapp.mainmenu:connect_to_server") + "...", this, [this](){ MainWindow::connectToServer(); });
     m_actionDisconnectFromServer = menu->addAction(Locale::tr("qtapp.mainmenu:disconnect_from_server"), this, &MainWindow::disconnectFromServer);
     menu->addSeparator();
     m_actionNewWorld = menu->addAction(QIcon(":/dark/world_new.svg"), Locale::tr("qtapp.mainmenu:new_world"),
@@ -314,12 +314,12 @@ MainWindow::~MainWindow()
     disconnect(window, &QMdiSubWindow::destroyed, nullptr, nullptr);
 }
 
-void MainWindow::connectToServer()
+void MainWindow::connectToServer(const QString& url)
 {
   if(m_connection)
     return;
 
-  std::unique_ptr<ConnectDialog> d = std::make_unique<ConnectDialog>(this);
+  std::unique_ptr<ConnectDialog> d = std::make_unique<ConnectDialog>(this, url);
   if(d->exec() == QDialog::Accepted)
   {
     m_connection = d->connection();

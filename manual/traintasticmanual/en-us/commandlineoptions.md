@@ -5,11 +5,12 @@ These options are mainly useful for PCs only used to control the layout.
 
 ## Client {#command-line-options-client}
 
-| Short      | Long           | Description                   |
-| ---------- | -------------- | ----------------------------- |
-| `-h`       | `--help`       | Displays help text.           |
-| `-v`       | `--version`    | Displays version information. |
-|            | `--fullscreen` | Start application fullscreen. |
+| Short                  | Long                          | Description                   |
+| ---------------------- | ----------------------------- | ----------------------------- |
+| `-h`                   | `--help`                      | Displays help text.           |
+| `-v`                   | `--version`                   | Displays version information. |
+|                        | `--fullscreen`                | Start application fullscreen. |
+| `-c <hostname[:port]>` | `--connect <hostname[:port]>` | Connect to server.            |
 
 ## Server {#command-line-options-server}
 
