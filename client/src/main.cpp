@@ -25,6 +25,7 @@
   #include <QSettings>
   //#include <QStandardPaths>
 #endif
+#include <QCommandLineParser>
 #include "mainwindow.hpp"
 #include "utils/getlocalepath.hpp"
 //#include "network/client.hpp"
@@ -35,6 +36,25 @@
 
 #include <traintastic/locale/locale.hpp>
 
+struct Options
+{
+  bool fullscreen;
+};
+
+void parseOptions(QCoreApplication& app, Options& options)
+{
+  QCommandLineParser parser;
+  parser.setApplicationDescription("Traintastic client");
+  parser.addHelpOption();
+  parser.addVersionOption();
+
+  QCommandLineOption fullscreen("fullscreen", "Start application fullscreen.");
+  parser.addOption(fullscreen);
+
+  parser.process(app);
+
+  options.fullscreen = parser.isSet(fullscreen);
+}
 
 int main(int argc, char* argv[])
 {
@@ -52,14 +72,16 @@ int main(int argc, char* argv[])
 
   QApplication app(argc, argv);
 
-  //Client client;
-  //Client::instance = &client;
-
+  Options options;
+  parseOptions(app, options);
 
   Locale::instance = new Locale(getLocalePath().toStdString() + "/en-us.txt");
 
   MainWindow mw;
-  mw.show();
+  if(options.fullscreen)
+    mw.showFullScreen();
+  else
+    mw.show();
 
   if(!mw.connection())
     mw.connectToServer();

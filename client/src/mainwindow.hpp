@@ -60,6 +60,7 @@ class MainWindow : public QMainWindow
     QAction* m_actionExportWorld;
     QMenu* m_menuObjects;
     QAction* m_actionLuaScript;
+    QAction* m_actionFullScreen;
     QMenu* m_menuServer;
     QAction* m_actionServerSettings;
     QAction* m_actionServerRestart;
@@ -80,6 +81,7 @@ class MainWindow : public QMainWindow
     QByteArray m_beforeFullScreenGeometry;
 
     void closeEvent(QCloseEvent* event) final;
+    void changeEvent(QEvent* event) final;
     void worldChanged();
     void updateWindowTitle();
 

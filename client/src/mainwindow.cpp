@@ -77,7 +77,6 @@ MainWindow::MainWindow(QWidget* parent) :
   updateWindowTitle();
 
   QMenu* menu;
-  QAction* actFullScreen;
 
   m_mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   m_mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -118,9 +117,9 @@ MainWindow::MainWindow(QWidget* parent) :
     menu->addAction(Locale::tr("qtapp.mainmenu:quit"), this, &MainWindow::close)->setShortcut(QKeySequence::Quit);
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:view"));
-    actFullScreen = menu->addAction(Locale::tr("qtapp.mainmenu:fullscreen"), this, &MainWindow::toggleFullScreen);
-    actFullScreen->setCheckable(true);
-    actFullScreen->setShortcut(Qt::Key_F11);
+    m_actionFullScreen = menu->addAction(Locale::tr("qtapp.mainmenu:fullscreen"), this, &MainWindow::toggleFullScreen);
+    m_actionFullScreen->setCheckable(true);
+    m_actionFullScreen->setShortcut(Qt::Key_F11);
     m_actionServerConsole = menu->addAction(Locale::tr("qtapp.mainmenu:server_console") + "...", this, &MainWindow::toggleConsole);//[this](){ showObject("traintastic.console"); });
     m_actionServerConsole->setCheckable(true);
     m_actionServerConsole->setShortcut(Qt::Key_F12);
@@ -304,7 +303,7 @@ MainWindow::MainWindow(QWidget* parent) :
     restoreGeometry(settings.value(SETTING_GEOMETRY).toByteArray());
   if(settings.contains(SETTING_WINDOWSTATE))
     setWindowState(static_cast<Qt::WindowState>(settings.value(SETTING_WINDOWSTATE).toInt()));
-  actFullScreen->setChecked(isFullScreen());
+  m_actionFullScreen->setChecked(isFullScreen());
 
   connectionStateChanged();
 }
@@ -348,6 +347,12 @@ void MainWindow::closeEvent(QCloseEvent* event)
   settings.setValue(SETTING_GEOMETRY, saveGeometry());
   settings.setValue(SETTING_WINDOWSTATE, static_cast<int>(windowState()));
   QMainWindow::closeEvent(event);
+}
+
+void MainWindow::changeEvent(QEvent* event)
+{
+  if(event->type() == QEvent::WindowStateChange)
+    m_actionFullScreen->setChecked(isFullScreen());
 }
 
 void MainWindow::worldChanged()

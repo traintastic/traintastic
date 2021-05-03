@@ -1,10 +1,15 @@
 # Command line options {#command-line-options}
 
-TODO
+The client and server both support various command line options to contol how the applications start and where data is stored.
+These options are mainly useful for PCs only used to control the layout.
 
 ## Client {#command-line-options-client}
 
-TODO
+| Short      | Long           | Description                   |
+| ---------- | -------------- | ----------------------------- |
+| `-h`       | `--help`       | Displays help text.           |
+| `-v`       | `--version`    | Displays version information. |
+|            | `--fullscreen` | Start application fullscreen. |
 
 ## Server {#command-line-options-server}
 
