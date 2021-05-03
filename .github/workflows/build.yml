@@ -321,7 +321,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: traintastic-manual
-        path: ${{runner.workspace}}/manual/build/*
+        path: ${{github.workspace}}/manual/build/*
 
   package-innosetup:
     name: package innosetup
