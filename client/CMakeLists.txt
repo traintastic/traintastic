@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.9)
-project(traintastic-client VERSION 0.0.1 DESCRIPTION "Traintastic client")
+include(../shared/version.cmake)
+project(traintastic-client VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic client")
 include(GNUInstallDirs)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -9,11 +10,14 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+configure_file(../shared/src/traintastic/version.hpp.in version.hpp)
+
 add_executable(traintastic-client dark.qrc)
 
 add_definitions(-DQT_DEPRECATED_WARNINGS)
 
 target_include_directories(traintastic-client PRIVATE
+  ${CMAKE_CURRENT_BINARY_DIR}
   ../shared/src
   ../shared/thirdparty
   thirdparty)

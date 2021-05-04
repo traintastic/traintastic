@@ -24,7 +24,7 @@
 #define TRAINTASTIC_SERVER_OPTIONS_HPP
 
 #include <boost/program_options.hpp>
-#include <boost/preprocessor/stringize.hpp>
+#include <version.hpp>
 #include <traintastic/codename.hpp>
 
 struct Options
@@ -67,7 +67,7 @@ struct Options
 
       if(vm.count("version"))
       {
-        std::cout << BOOST_PP_STRINGIZE(VERSION) << " " << TRAINTASTIC_CODENAME << std::endl;
+        std::cout << TRAINTASTIC_VERSION << " " << TRAINTASTIC_CODENAME << std::endl;
         exit(EXIT_SUCCESS);
       }
 

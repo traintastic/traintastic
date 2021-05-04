@@ -26,6 +26,7 @@
   //#include <QStandardPaths>
 #endif
 #include <QCommandLineParser>
+#include <version.hpp>
 #include "mainwindow.hpp"
 #include "utils/getlocalepath.hpp"
 //#include "network/client.hpp"
@@ -66,7 +67,7 @@ int main(int argc, char* argv[])
   QApplication::setOrganizationName("Traintastic");
   QApplication::setOrganizationDomain("traintastic.org");
   QApplication::setApplicationName("traintastic-client");
-  QApplication::setApplicationVersion("0.0.1");
+  QApplication::setApplicationVersion(TRAINTASTIC_VERSION);
 
   //QApplication::setStyle(new MaterialDarkStyle());
   //QApplication::setStyle(new MaterialLightStyle());

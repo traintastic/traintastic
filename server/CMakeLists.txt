@@ -1,16 +1,18 @@
 cmake_minimum_required(VERSION 3.9)
-project(traintastic-server VERSION 0.0.1 DESCRIPTION "Traintastic server")
+include(../shared/version.cmake)
+project(traintastic-server VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic server")
 include(GNUInstallDirs)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 include(code-coverage)
 
+configure_file(../shared/src/traintastic/version.hpp.in version.hpp)
+
 add_executable(traintastic-server src/main.cpp src/options.hpp)
 add_executable(traintastic-server-test test/main.cpp)
 
 add_definitions(
-  -DVERSION=${PROJECT_VERSION}
   -DBOOST_ALL_NO_LIB
   -DBOOST_ERROR_CODE_HEADER_ONLY
   -DBOOST_CHRONO_HEADER_ONLY
@@ -21,12 +23,14 @@ set_target_properties(traintastic-server PROPERTIES CXX_STANDARD 17)
 set_target_properties(traintastic-server-test PROPERTIES CXX_STANDARD 17)
 
 target_include_directories(traintastic-server PRIVATE
+  ${CMAKE_CURRENT_BINARY_DIR}
   ../shared/src/
   ../shared/thirdparty
   thirdparty
   thirdparty/boost)
 
 target_include_directories(traintastic-server-test PRIVATE
+  ${CMAKE_CURRENT_BINARY_DIR}
   ../shared/src/
   ../shared/thirdparty
   thirdparty
