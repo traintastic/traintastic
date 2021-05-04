@@ -527,7 +527,7 @@ void MainWindow::showAbout()
 {
   QMessageBox::about(this, tr("About Traintastic"),
     "<h2>Traintastic v" + QApplication::applicationVersion() + " <small>" TRAINTASTIC_CODENAME "</small></h2>"
-    "<p>Copyright &copy; 2019-2020 Reinder Feenstra</p>"
+    "<p>Copyright &copy; 2019-2021 Reinder Feenstra</p>"
     "<p>This program is free software; you can redistribute it and/or"
     " modify it under the terms of the GNU General Public License"
     " as published by the Free Software Foundation; either version 2"
