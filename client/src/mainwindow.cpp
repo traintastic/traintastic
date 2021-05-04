@@ -74,6 +74,7 @@ MainWindow::MainWindow(QWidget* parent) :
 {
   instance = this;
 
+  setWindowIcon(QIcon(":/appicon.svg"));
   updateWindowTitle();
 
   QMenu* menu;
