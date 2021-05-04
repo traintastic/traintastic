@@ -151,3 +151,24 @@
 {
   padding: 0 0.75em;
 }
+
+.content img
+{
+  max-width: 100%;
+  height: auto;
+}
+
+/** MEDIA BREAKPOINTS ********************************************************/
+
+@media screen and (max-width: 991px)
+{
+  #main
+  {
+    margin-right: 0;
+  }
+
+  #toc
+  {
+    display: none;
+  }
+}
