@@ -85,6 +85,7 @@ file(GLOB TEST_SOURCES
 
 if(WIN32)
   add_definitions(-D_WIN32_WINNT=0x0601)
+  target_sources(traintastic-server PRIVATE src/version.rc)
   target_link_libraries(traintastic-server PRIVATE bcrypt)
   target_link_libraries(traintastic-server-test PRIVATE bcrypt)
 endif()

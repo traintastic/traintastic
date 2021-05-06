@@ -1,0 +1,38 @@
+#include <winver.h>
+#include <version.hpp>
+#include <traintastic/codename.hpp>
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     TRAINTASTIC_VERSION_MAJOR, TRAINTASTIC_VERSION_MINOR, TRAINTASTIC_VERSION_PATCH, 0
+PRODUCTVERSION  TRAINTASTIC_VERSION_MAJOR, TRAINTASTIC_VERSION_MINOR, TRAINTASTIC_VERSION_PATCH, 0
+FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+#ifdef DEBUG
+  FILEFLAGS        VS_FF_DEBUG
+#else
+  FILEFLAGS        0x0L
+#endif
+FILEOS          VOS_NT_WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName",      "Traintastic"
+            VALUE "FileDescription",  "Traintastic client application"
+            VALUE "FileVersion",      TRAINTASTIC_VERSION " " TRAINTASTIC_CODENAME
+            VALUE "InternalName",     "traintastic-client"
+            VALUE "LegalCopyright",   "Copyright (c) 2019-2021 Reinder Feenstra"
+            VALUE "OriginalFilename", "traintastic-client.exe"
+            VALUE "ProductName",      "Traintastic client"
+            VALUE "ProductVersion",   TRAINTASTIC_VERSION " " TRAINTASTIC_CODENAME
+            VALUE "Website",          "https://traintastic.org"
+        END
+    END
+
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
