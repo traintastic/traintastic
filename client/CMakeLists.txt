@@ -53,6 +53,12 @@ target_sources(traintastic-client PRIVATE ${SOURCES})
 
 target_link_libraries(traintastic-client PRIVATE Qt5::Widgets Qt5::Network)
 
+### PLATFORM ###
+
+if(WIN32)
+  target_sources(traintastic-client PRIVATE gfx/appicon.rc)
+endif()
+
 ### INSTALL ###
 
 install(TARGETS traintastic-client
