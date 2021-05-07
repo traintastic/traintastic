@@ -66,6 +66,12 @@ install(TARGETS traintastic-client
     RUNTIME DESTINATION "/opt/traintastic/bin/"
 )
 
+### BUILD TYPE ###
+
+if (CMAKE_BUILD_TYPE EQUAL "Release")
+  add_definitions(-DQT_NO_DEBUG_OUTPUT)
+endif()
+
 ### DEB package ###
 
 if(NOT DEBIAN_PACKAGE_VERSION_EXTRA)
