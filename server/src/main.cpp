@@ -30,6 +30,8 @@
 #ifdef WIN32
   #include <windows.h>
   #include <shlobj.h>
+  #include "os/windows/consolewindow.hpp"
+  #include "os/windows/trayicon.hpp"
 #endif
 
 #ifdef __unix__
@@ -147,6 +149,9 @@ int main(int argc, char* argv[])
   // setup signal handlers:
   signal(SIGINT, signalHandler);
   signal(SIGQUIT, signalHandler);
+#elif defined(WIN32)
+  if(options.tray)
+    Windows::setConsoleWindowVisible(false);
 #endif
 
   int status = EXIT_SUCCESS;
@@ -157,6 +162,10 @@ int main(int argc, char* argv[])
     restart = false;
 
     EventLoop::start();
+#ifdef WIN32
+    if(options.tray)
+      Windows::TrayIcon::add();
+#endif
 
     try
     {
@@ -183,6 +192,10 @@ int main(int argc, char* argv[])
       status = EXIT_FAILURE;
     }
 
+#ifdef WIN32
+    if(options.tray)
+      Windows::TrayIcon::remove();
+#endif
     EventLoop::stop();
   }
   while(restart);

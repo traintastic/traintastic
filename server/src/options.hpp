@@ -29,6 +29,9 @@
 
 struct Options
 {
+#ifdef WIN32
+  bool tray;
+#endif
 #ifdef __unix__
   bool daemonize;
   std::string user;
@@ -44,6 +47,9 @@ struct Options
     desc.add_options()
       ("help,h", "display this help text and exit")
       ("version,v", "output version information and exit")
+#ifdef WIN32
+      ("tray", "run as system tray application")
+#endif
 #ifdef __unix__
       ("daemonize,d", "daemonize")
       ("user,u", boost::program_options::value<std::string>(&user), "run as user")
@@ -70,6 +76,10 @@ struct Options
         std::cout << TRAINTASTIC_VERSION << " " << TRAINTASTIC_CODENAME << std::endl;
         exit(EXIT_SUCCESS);
       }
+
+#ifdef WIN32
+      tray = vm.count("tray");
+#endif
 
 #ifdef __unix__
       daemonize = vm.count("daemonize");

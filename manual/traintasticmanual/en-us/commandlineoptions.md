@@ -19,3 +19,4 @@ These options are mainly useful for PCs only used to control the layout.
 |  `-h`      | `--help`         | Display help text and exit          |
 |  `-v`      | `--version`      | Output version information and exit |
 |  `-D path` | `--datadir path` | Data directory                      |
+|            | `--tray`         | Run application in system tray (windows only) |

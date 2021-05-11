@@ -67,8 +67,8 @@ Filename: "{tmp}\vc_redist.x64.exe"; StatusMsg: "Installing VC++ redistributable
 
 [Icons]
 ; Server
-Name: "{autoprograms}\{#Name}\{#Name} server"; Filename: "{app}\server\{#ServerExeName}"; Components: server
-Name: "{autodesktop}\{#Name} server"; Filename: "{app}\server\{#ServerExeName}"; Tasks: desktopicon; Components: server
+Name: "{autoprograms}\{#Name}\{#Name} server"; Filename: "{app}\server\{#ServerExeName}"; Parameters: "--tray"; Components: server
+Name: "{autodesktop}\{#Name} server"; Filename: "{app}\server\{#ServerExeName}"; Parameters: "--tray"; Tasks: desktopicon; Components: server
 ; Client
 Name: "{autoprograms}\{#Name}\{#Name} client"; Filename: "{app}\client\{#ClientExeName}"; Components: client
 Name: "{autodesktop}\{#Name} client"; Filename: "{app}\client\{#ClientExeName}"; Tasks: desktopicon; Components: client

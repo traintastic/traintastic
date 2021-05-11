@@ -29,6 +29,12 @@
 #include <cmath>
 #include "../utils/json.hpp"
 
+#ifdef WIN32
+  // undef min/max macro's
+  #undef min
+  #undef max
+#endif
+
 class not_writable_error : public std::runtime_error
 {
   public:
