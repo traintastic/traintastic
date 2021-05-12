@@ -51,12 +51,10 @@ Locale::Locale(std::string _filename, Locale* fallback) :
         while(*(++p) != '\n'); // seek end of line
         p++;
       }
-      else if(*p == '\n')
+      else if(*p == '\n' || *p == '\r')
         p++; // next line
       else
       {
-
-
         auto start = p;
         while(*(++p) != '='); // seek =
         std::string_view id{start, static_cast<size_t>(p - start)};
