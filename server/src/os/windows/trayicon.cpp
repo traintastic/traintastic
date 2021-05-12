@@ -79,6 +79,14 @@ void TrayIcon::run()
   notifyIconData.uFlags = NIF_ICON | NIF_MESSAGE;
   notifyIconData.uCallbackMessage = WM_NOTIFYICON_CALLBACK; 
   notifyIconData.hIcon = static_cast<HICON>(LoadImageA(GetModuleHandleA(nullptr), "APPICON", IMAGE_ICON, 0, 0, LR_DEFAULTSIZE));
+  
+  const std::string_view infoTitle{"Traintastic server"};
+  const std::string_view infoMessage{"Traintastic server is running in the system tray."};
+  std::strncpy(notifyIconData.szInfoTitle, infoTitle.data(), std::min(infoTitle.size(), sizeof(notifyIconData.szInfoTitle) - 1));
+  std::strncpy(notifyIconData.szInfo, infoMessage.data(), std::min(infoMessage.size(), sizeof(notifyIconData.szInfo) - 1));
+  notifyIconData.dwInfoFlags = NIIF_INFO | NIIF_LARGE_ICON;
+  notifyIconData.uFlags |= NIF_INFO;
+  
   Shell_NotifyIcon(NIM_ADD, &notifyIconData);
 
   // message loop:
