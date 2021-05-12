@@ -57,6 +57,7 @@ target_link_libraries(traintastic-client PRIVATE Qt5::Widgets Qt5::Network)
 
 if(WIN32)
   target_sources(traintastic-client PRIVATE ../shared/gfx/appicon.rc src/version.rc)
+  set_property(TARGET traintastic-client PROPERTY WIN32_EXECUTABLE true)
 endif()
 
 ### INSTALL ###
