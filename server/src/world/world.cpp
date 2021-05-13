@@ -61,24 +61,24 @@ void World::init(const std::shared_ptr<World>& world)
 World::World(Private) :
   Object(),
   m_uuid{boost::uuids::random_generator()()},
-  name{this, "name", "", PropertyFlags::ReadWrite},
-  scale{this, "scale", WorldScale::H0, PropertyFlags::ReadWrite},
-  commandStations{this, "command_stations", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
-  decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
-  inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
-  outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
-  controllers{this, "controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
-  loconets{this, "loconets", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
-  xpressnets{this, "xpressnets", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
-  boards{this, "boards", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
-  clock{this, "clock", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
-  trains{this, "trains", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
-  railVehicles{this, "rail_vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
+  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
+  scale{this, "scale", WorldScale::H0, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  commandStations{this, "command_stations", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  controllers{this, "controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  loconets{this, "loconets", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  xpressnets{this, "xpressnets", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  boards{this, "boards", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  clock{this, "clock", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  trains{this, "trains", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  railVehicles{this, "rail_vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
 #ifndef DISABLE_LUA_SCRIPTING
-  luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject},
+  luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
 #endif
-  state{this, "state", WorldState(), PropertyFlags::ReadOnly},
-  edit{this, "edit", false, PropertyFlags::ReadWrite,
+  state{this, "state", WorldState(), PropertyFlags::ReadOnly | PropertyFlags::NoStore},
+  edit{this, "edit", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
     [this](bool value)
     {
       if(value)
@@ -136,8 +136,7 @@ World::World(Private) :
       state.setValueInternal(state.value() - WorldState::Run);
       event(WorldEvent::Stop);
     }},
-
-  mute{this, "mute", false, PropertyFlags::ReadWrite,
+  mute{this, "mute", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
     [this](bool value)
     {
       if(value)
