@@ -33,10 +33,15 @@ WorldSaver::WorldSaver(const World& world)
   json data = json::object();
   json state = json::object();
 
-  data["uuid"] = state["uuid"] = to_string(world.m_uuid);
+  {
+    json worldState = json::object();
+    world.Object::save(*this, data, worldState);
+    if(!worldState.empty())
+      m_states[world.getObjectId()] = worldState;
+    data.erase("class_id");
+  }
 
-  data[world.name.name()] = world.name.toJSON();
-  data[world.scale.name()] = world.scale.toJSON();
+  data["uuid"] = state["uuid"] = to_string(world.m_uuid);
 
   {
     json objects = json::array();

@@ -71,9 +71,9 @@ WorldLoader::WorldLoader(const std::filesystem::path& path) :
   }
 
   m_world->m_uuid = boost::uuids::string_generator()(std::string(data["uuid"]));
-  m_world->name = data[m_world->name.name()];
 
   // create a list of all objects
+  m_objects.insert({m_world->getObjectId(), {data, m_world, false}});
   for(json object : data["objects"])
   {
     if(auto it = object.find("id"); it != object.end())
