@@ -48,19 +48,19 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 ; Server
-Source: "..\..\build-server\Release\{#ServerExeName}"; DestDir: "{app}\server"; Flags: ignoreversion; Components: server
+Source: "..\..\server\build\{#ServerExeName}"; DestDir: "{app}\server"; Flags: ignoreversion; Components: server
 Source: "..\..\server\thirdparty\lua5.3\bin\win64\lua53.dll"; DestDir: "{app}\server"; Flags: ignoreversion; Components: server
 ; Client
-Source: "..\..\build-client\{#ClientExeName}"; DestDir: "{app}\client"; Flags: ignoreversion; Components: client
-Source: "..\..\build-client\*.dll"; DestDir: "{app}\client"; Flags: ignoreversion; Components: client
-Source: "..\..\build-client\bearer\*.dll"; DestDir: "{app}\client\bearer"; Flags: ignoreversion; Components: client
-Source: "..\..\build-client\iconengines\*.dll"; DestDir: "{app}\client\iconengines"; Flags: ignoreversion; Components: client
-Source: "..\..\build-client\imageformats\*.dll"; DestDir: "{app}\client\imageformats"; Flags: ignoreversion; Components: client
-Source: "..\..\build-client\platforms\*.dll"; DestDir: "{app}\client\platforms"; Flags: ignoreversion; Components: client
-Source: "..\..\build-client\styles\*.dll"; DestDir: "{app}\client\styles"; Flags: ignoreversion; Components: client
+Source: "..\..\client\build\Release\{#ClientExeName}"; DestDir: "{app}\client"; Flags: ignoreversion; Components: client
+Source: "..\..\client\build\Release\*.dll"; DestDir: "{app}\client"; Flags: ignoreversion; Components: client
+Source: "..\..\client\build\Release\bearer\*.dll"; DestDir: "{app}\client\bearer"; Flags: ignoreversion; Components: client
+Source: "..\..\client\build\Release\iconengines\*.dll"; DestDir: "{app}\client\iconengines"; Flags: ignoreversion; Components: client
+Source: "..\..\client\build\Release\imageformats\*.dll"; DestDir: "{app}\client\imageformats"; Flags: ignoreversion; Components: client
+Source: "..\..\client\build\Release\platforms\*.dll"; DestDir: "{app}\client\platforms"; Flags: ignoreversion; Components: client
+Source: "..\..\client\build\Release\styles\*.dll"; DestDir: "{app}\client\styles"; Flags: ignoreversion; Components: client
 Source: "..\..\lang\*.txt"; DestDir: "{commonappdata}\traintastic\client\lang"; Flags: ignoreversion; Components: client
 ; VC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
-Source: "..\..\build-client\vc_redist.x64.exe"; DestDir: {tmp}; Flags: dontcopy
+Source: "..\..\client\build\Release\vc_redist.x64.exe"; DestDir: {tmp}; Flags: dontcopy
 
 [Run]
 Filename: "{tmp}\vc_redist.x64.exe"; StatusMsg: "Installing VC++ redistributables..."; Parameters: "/quiet"; Check: VC2017RedistNeedsInstall; Flags: waituntilterminated; Components: client
@@ -75,17 +75,17 @@ Name: "{autodesktop}\{#Name} client"; Filename: "{app}\client\{#ClientExeName}";
 
 [Code]
 function VC2017RedistNeedsInstall: Boolean;
-var 
+var
   Version: String;
 begin
   if RegQueryStringValue(HKEY_LOCAL_MACHINE,
        'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Version', Version) then
   begin
-    // Is the installed version at least 14.14 ? 
+    // Is the installed version at least 14.14 ?
     Log('VC Redist Version check : found ' + Version);
     Result := (CompareStr(Version, 'v14.14.26429.03')<0);
   end
-  else 
+  else
   begin
     // Not even an old version installed
     Result := True;

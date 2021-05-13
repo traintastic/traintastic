@@ -36,7 +36,7 @@ jobs:
           build_type: Release
           build_deb: true
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~focal~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
-          
+
         - name: "raspberrypios_10_arm64"
           os: [self-hosted, ARM64, RaspberryPi]
           generator: "Unix Makefiles"
@@ -45,7 +45,7 @@ jobs:
           build_type: Release
           build_deb: true
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
-          
+
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
 
@@ -87,17 +87,17 @@ jobs:
 
     # All:
     - name: Create Build Environment
-      run: cmake -E make_directory ${{runner.workspace}}/client/build
+      run: cmake -E make_directory ${{github.workspace}}/client/build
 
     # All:
     - name: Configure CMake
       shell: bash
-      working-directory: ${{runner.workspace}}/client/build
+      working-directory: ${{github.workspace}}/client/build
       run: cmake $GITHUB_WORKSPACE/client -G "${{matrix.config.generator}}" ${{matrix.config.arch}} -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}} ${{matrix.config.defines}}
 
     # All:
     - name: Build
-      working-directory: ${{runner.workspace}}/client/build
+      working-directory: ${{github.workspace}}/client/build
       shell: bash
       run: cmake --build . --config ${{matrix.config.build_type}} --target ${{matrix.config.target}}
 
@@ -107,12 +107,12 @@ jobs:
       shell: cmd
       run: |
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw ${{runner.workspace}}/client/build/${{matrix.config.build_type}}/traintastic-client.exe
+        windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw ${{github.workspace}}/client/build/${{matrix.config.build_type}}/traintastic-client.exe
 
     # Linux only:
     - name: Build debian package
       if: matrix.config.build_deb && matrix.config.target == 'traintastic-client'
-      working-directory: ${{runner.workspace}}/client/build
+      working-directory: ${{github.workspace}}/client/build
       run: cpack
 
     # Windows only:
@@ -121,7 +121,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: traintastic-client
-        path: ${{runner.workspace}}/client/build/${{matrix.config.build_type}}
+        path: ${{github.workspace}}/client/build/${{matrix.config.build_type}}
 
     # Linux only:
     - name: Upload debian package artifact
@@ -129,7 +129,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: traintastic-client-deb
-        path: ${{runner.workspace}}/client/build/*.deb
+        path: ${{github.workspace}}/client/build/*.deb
 
   build-server:
     name: server ${{matrix.config.name}}
@@ -202,7 +202,7 @@ jobs:
           build_deb: true
           defines: "-DCODE_COVERAGE=ON"
           ccov: true
-          
+
         - name: "raspberrypios_10_arm64"
           os: [self-hosted, ARM64, RaspberryPi]
           generator: "Unix Makefiles"
@@ -236,12 +236,12 @@ jobs:
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
       # We'll use this as our working directory for all subsequent commands
-      run: cmake -E make_directory ${{runner.workspace}}/server/build
+      run: cmake -E make_directory ${{github.workspace}}/server/build
 
     # All:
     - name: Configure CMake
       shell: bash
-      working-directory: ${{runner.workspace}}/server/build
+      working-directory: ${{github.workspace}}/server/build
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
@@ -249,7 +249,7 @@ jobs:
 
     # All:
     - name: Build
-      working-directory: ${{runner.workspace}}/server/build
+      working-directory: ${{github.workspace}}/server/build
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config ${{matrix.config.build_type}} --target ${{matrix.config.target}}
@@ -257,13 +257,13 @@ jobs:
     # All:
     - name: Run tests
       if: matrix.config.target == 'traintastic-server-test'
-      working-directory: ${{runner.workspace}}/server/build
+      working-directory: ${{github.workspace}}/server/build
       run: ctest --output-on-failure
 
     # Linux only:
     - name: Build debian package
       if: matrix.config.build_deb && matrix.config.target == 'traintastic-server'
-      working-directory: ${{runner.workspace}}/server/build
+      working-directory: ${{github.workspace}}/server/build
       run: cpack
 
     # Windows only:
@@ -272,7 +272,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: traintastic-server
-        path: ${{runner.workspace}}/server/build/Release
+        path: ${{github.workspace}}/server/build/Release
 
     # Linux only:
     - name: Upload debian package artifact
@@ -280,12 +280,12 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: traintastic-server-deb
-        path: ${{runner.workspace}}/server/build/*.deb
+        path: ${{github.workspace}}/server/build/*.deb
 
     # Code coverage:
     - name: Code coverage
       if: matrix.config.ccov
-      working-directory: ${{runner.workspace}}/server/build
+      working-directory: ${{github.workspace}}/server/build
       run: make ccov
 
     - name: "Code coverage: upload artifact"
@@ -293,7 +293,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: traintastic-server-test-code-coverage
-        path: ${{runner.workspace}}/server/build/ccov/*
+        path: ${{github.workspace}}/server/build/ccov/*
 
   build-manual:
     name: manual
@@ -312,7 +312,7 @@ jobs:
 
     - name: Install python packages
       run: sudo pip3 install pycmarkgfm
-      
+
     - name: Build manual
       working-directory: ${{github.workspace}}/manual
       run: ./builddoc.py html-single-page --output-dir build --version 0.0.1-$CI_REF_NAME_SLUG-${{github.run_number}}-$CI_SHA_SHORT
@@ -343,13 +343,13 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: traintastic-client
-        path: ${{github.workspace}}/build-client
+        path: ${{github.workspace}}/client/build/Release
 
     - name: Download artifacts 2/2
       uses: actions/download-artifact@v2
       with:
         name: traintastic-server
-        path: ${{github.workspace}}/build-server/Release
+        path: ${{github.workspace}}/server/build
 
     - name: Build installer
       shell: cmd
@@ -374,37 +374,37 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: package-innosetup
-        path: dist
+        path: ${{github.workspace}}/dist
 
     - name: Download artifacts 2/5
       uses: actions/download-artifact@v2
       with:
         name: traintastic-client-deb
-        path: dist
+        path: ${{github.workspace}}/dist
 
     - name: Download artifacts 3/5
       uses: actions/download-artifact@v2
       with:
         name: traintastic-server-deb
-        path: dist
+        path: ${{github.workspace}}/dist
 
     - name: Download artifacts 4/5
       uses: actions/download-artifact@v2
       with:
         name: traintastic-server-test-code-coverage
-        path: dist/ccov
+        path: ${{github.workspace}}/dist/ccov
 
     - name: Download artifacts 5/5
       uses: actions/download-artifact@v2
       with:
         name: traintastic-manual
-        path: dist/manual
-    
+        path: ${{github.workspace}}/dist/manual
+
     - uses: easingthemes/ssh-deploy@v2.1.5
       env:
           SSH_PRIVATE_KEY: ${{secrets.SERVER_SSH_KEY}}
           ARGS: "-rltgoDzvO"
-          SOURCE: "dist/*"
+          SOURCE: "${{github.workspace}}/dist/*"
           REMOTE_HOST: ${{secrets.REMOTE_HOST}}
           REMOTE_PORT: ${{secrets.REMOTE_PORT}}
           REMOTE_USER: ${{secrets.REMOTE_USER}}
