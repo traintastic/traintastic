@@ -107,6 +107,7 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
   auto w = world.lock();
 //  const bool editable = w && contains(w->state.value(), WorldState::Edit) && speedStep == 0;
 
+  Attributes::addDisplayName(name, "object:name");
   Attributes::addEnabled(name, false);
   m_interfaceItems.add(name);
   Attributes::addEnabled(commandStation, false);
@@ -126,6 +127,7 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
   m_interfaceItems.add(speedSteps);
   m_interfaceItems.add(speedStep);
   m_interfaceItems.add(functions);
+  Attributes::addDisplayName(notes, "object:notes");
   m_interfaceItems.add(notes);
 
   updateEditable();

@@ -38,6 +38,7 @@ TurnoutRailTile::TurnoutRailTile(const std::weak_ptr<World>& world, std::string_
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
+  Attributes::addDisplayName(name, "object:name");
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
   Attributes::addObjectEditor(position, false);

@@ -170,6 +170,7 @@ World::World(Private) :
   m_filename = Traintastic::instance->worldDir() / to_string(m_uuid) / filename;
   m_filenameState = Traintastic::instance->worldDir() / to_string(m_uuid) / filenameState;
 
+  Attributes::addDisplayName(name, "object:name");
   m_interfaceItems.add(name);
   Attributes::addValues(scale, WorldScaleValues);
   m_interfaceItems.add(scale);

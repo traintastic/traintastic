@@ -51,11 +51,13 @@ Controller::Controller(const std::weak_ptr<World>& _world, std::string_view _id)
   auto world = _world.lock();
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
 
+  Attributes::addDisplayName(name, "object:name");
   m_interfaceItems.add(name);
   Attributes::addEnabled(commandStation, editable);
   Attributes::addObjectList(commandStation, world->commandStations);
   m_interfaceItems.add(commandStation);
   m_interfaceItems.add(active);
+  Attributes::addDisplayName(notes, "object:notes");
   m_interfaceItems.add(notes);
 }
 

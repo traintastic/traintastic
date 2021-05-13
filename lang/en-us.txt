@@ -6,10 +6,7 @@
 :controllers=Controllers
 :decoders=Decoders
 :emergency_stop=Emergency stop
-:id=Id
 :loconet=LocoNet
-:name=Name
-:notes=Notes
 :online=Online
 :output_map=Output mapping
 :port=Port
@@ -140,6 +137,10 @@ loconet_serial_interface:rosoft_loconet_interface=RoSoft LocoNet interface
 
 lua.script:active=Active
 lua.script:code=Code
+
+object:id=Id
+object:name=Name
+object:notes=Notes
 
 output_action:none=None
 output_action:off=Off

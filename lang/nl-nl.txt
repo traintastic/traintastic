@@ -3,9 +3,6 @@
 :address=Adres
 :command_station=Centrale
 :emergency_stop=Noodstop
-:id=Id
-:name=Naam
-:notes=Notities
 
 clock:day=Dag
 clock:hour=Uur
@@ -40,6 +37,10 @@ language:nl-nl=Nederlands
 
 lua.script:active=Actief
 lua.script:code=Code
+
+object:id=Id
+object:name=Naam
+object:notes=Notities
 
 protocol.xpressnet:command_station=Centrale
 protocol.xpressnet:use_emergency_stop_locomotive_command=Gebruik kort locomotief noodstop commando

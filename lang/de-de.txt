@@ -4,6 +4,10 @@ language:de-de=Deutsch
 language:en-us=Englisch (USA)
 language:nl-nl=Niederländisch
 
+object:id=Id
+object:name=Name
+object:notes=Notizen
+
 qtapp.mainmenu:file=Datei
 qtapp.mainmenu:new_world=Neue Welt
 

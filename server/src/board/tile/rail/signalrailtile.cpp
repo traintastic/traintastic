@@ -38,6 +38,7 @@ SignalRailTile::SignalRailTile(const std::weak_ptr<World>& world, std::string_vi
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
+  Attributes::addDisplayName(name, "object:name");
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
   Attributes::addObjectEditor(aspect, false);

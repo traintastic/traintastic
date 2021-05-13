@@ -49,6 +49,7 @@ DecoderFunction::DecoderFunction(Decoder& decoder, std::string_view _id) :
 
   Attributes::addEnabled(number, editable);
   m_interfaceItems.add(number);
+  Attributes::addDisplayName(name, "object:name");
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
   m_interfaceItems.add(value);

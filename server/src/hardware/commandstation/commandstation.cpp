@@ -60,6 +60,7 @@ CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_vi
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
+  Attributes::addDisplayName(name, "object:name");
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
 
@@ -77,6 +78,7 @@ CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_vi
 
   m_interfaceItems.add(controllers);
 
+  Attributes::addDisplayName(notes, "object:notes");
   m_interfaceItems.add(notes);
 }
 

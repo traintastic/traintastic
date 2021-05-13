@@ -42,6 +42,7 @@ Train::Train(const std::weak_ptr<World>& world, std::string_view _id) :
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
+  Attributes::addDisplayName(name, "object:name");
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
   m_interfaceItems.add(lob);
@@ -56,6 +57,7 @@ Train::Train(const std::weak_ptr<World>& world, std::string_view _id) :
   m_interfaceItems.add(throttleSpeed);
   m_interfaceItems.add(weight);
   m_interfaceItems.add(vehicles);
+  Attributes::addDisplayName(notes, "object:notes");
   m_interfaceItems.add(notes);
 }
 
