@@ -37,6 +37,7 @@ enum class AttributeName : uint16_t
   SubObject = 7,
   ClassList = 8,
   ObjectList = 9,
+  DisplayName = 10,
 };
 
 #endif

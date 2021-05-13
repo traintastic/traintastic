@@ -42,7 +42,12 @@ Object& InterfaceItem::object()
 
 QString InterfaceItem::displayName() const
 {
-  return Locale::tr(QString(object().classId()).append(':').append(name()));
+  QString id;
+  if(QVariant attr = getAttribute(AttributeName::DisplayName, QVariant()); attr.isValid())
+    id = attr.toString();
+  else
+    id = QString(object().classId()).append(':').append(name());
+  return Locale::tr(id);
 }
 
 bool InterfaceItem::hasAttribute(AttributeName name) const

@@ -40,6 +40,11 @@ struct Attributes
     item.addAttribute(AttributeName::ClassList, classList);
   }
 
+  static inline void addDisplayName(InterfaceItem& item, std::string_view value)
+  {
+    item.addAttribute(AttributeName::DisplayName, value);
+  }
+
   static inline void addEnabled(InterfaceItem& item, bool value)
   {
     item.addAttribute(AttributeName::Enabled, value);
