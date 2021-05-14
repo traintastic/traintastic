@@ -66,7 +66,6 @@ ConnectDialog::ConnectDialog(QWidget* parent, const QString& url) :
 */
 
   QVBoxLayout* layout = new QVBoxLayout();
-  layout->setMargin(0);
   layout->addLayout(formLayout);
   layout->addWidget(m_status);
   layout->addWidget(m_connect, 0, Qt::AlignCenter);
