@@ -43,3 +43,4 @@ CMakeLists.txt.*
 *~*
 .vscode
 *.gcov
+*.pyc
