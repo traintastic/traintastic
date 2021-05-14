@@ -15,6 +15,12 @@
         "markdown": "gettingstarted/installation.md"
       },
       {
+        "markdown": "gettingstarted/start-server.md"
+      },
+      {
+        "markdown": "gettingstarted/start-client.md"
+      },
+      {
         "markdown": "gettingstarted/world.md"
       },
       {
