@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,8 +28,13 @@
 #include "../enum/worldevent.hpp"
 #include "../set/worldstate.hpp"
 #include "../core/attributes.hpp"
+#include "../world/worldloader.hpp"
+#include "../world/worldsaver.hpp"
 
 namespace Lua {
+
+constexpr std::string_view scripts = "scripts";
+constexpr std::string_view dotLua = ".lua";
 
 Script::Script(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
@@ -44,7 +49,7 @@ Script::Script(const std::weak_ptr<World>& world, std::string_view _id) :
         init();
     }},*/
   state{this, "state", LuaScriptState::Stopped, PropertyFlags::ReadOnly | PropertyFlags::Store},
-  code{this, "code", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
+  code{this, "code", "", PropertyFlags::ReadWrite | PropertyFlags::NoStore},
   error{this, "error", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore},
   start{*this, "start",
     [this]()
@@ -72,6 +77,27 @@ Script::Script(const std::weak_ptr<World>& world, std::string_view _id) :
   m_interfaceItems.add(stop);
 
   updateEnabled();
+}
+
+void Script::load(WorldLoader& loader, const nlohmann::json& data)
+{
+  IdObject::load(loader, data);
+
+  m_basename = id;
+  std::string s;
+  if(loader.readFile(std::filesystem::path(scripts) / m_basename += dotLua, s))
+    code.load(s);
+}
+
+void Script::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const
+{
+  IdObject::save(saver, data, state);
+
+  if(!m_basename.empty() && m_basename != id.value())
+    saver.deleteFile(std::filesystem::path(scripts) / m_basename += dotLua);
+
+  m_basename = id;
+  saver.writeFile(std::filesystem::path(scripts) / m_basename += dotLua, code);
 }
 
 void Script::addToWorld()

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,9 +32,14 @@ namespace Lua {
 
 class Script : public IdObject
 {
+  private:
+    mutable std::string m_basename; //!< filename on disk for script
+
   protected:
     SandboxPtr m_sandbox;
 
+    void load(WorldLoader& loader, const nlohmann::json& data) final;
+    void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const final;
     void addToWorld() final;
     void worldEvent(WorldState state, WorldEvent event) final;
 
