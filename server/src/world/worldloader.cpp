@@ -43,6 +43,7 @@
 using nlohmann::json;
 
 WorldLoader::WorldLoader(const std::filesystem::path& path) :
+  m_path{path},
   m_world{World::create()}
 {
   m_states = json::object();
@@ -186,3 +187,14 @@ void WorldLoader::loadObject(ObjectData& objectData)
   objectData.loaded = true;
 }
 
+bool WorldLoader::readFile(const std::filesystem::path& filename, std::string& data)
+{
+  std::ifstream file(m_path / filename, std::ios::in | std::ios::binary | std::ios::ate);
+  if(!file.is_open())
+    return false;
+  const size_t size = file.tellg();
+  data.resize(size);
+  file.seekg(std::ios::beg);
+  file.read(data.data(), size);
+  return true;
+}

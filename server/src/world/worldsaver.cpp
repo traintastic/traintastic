@@ -24,10 +24,12 @@
 #include <fstream>
 #include <boost/uuid/uuid_io.hpp>
 #include "world.hpp"
+#include "../utils/sha1.hpp"
 
 using nlohmann::json;
 
-WorldSaver::WorldSaver(const World& world)
+WorldSaver::WorldSaver(const World& world) :
+  m_path{std::filesystem::path(world.m_filename).remove_filename()}
 {
   m_states = json::object();
   json data = json::object();
@@ -62,6 +64,8 @@ WorldSaver::WorldSaver(const World& world)
 
   saveToDisk(data, world.m_filename);
   saveToDisk(state, world.m_filenameState);
+  deleteFiles();
+  writeFiles();
 }
 
 json WorldSaver::saveObject(const ObjectPtr& object)
@@ -77,6 +81,32 @@ json WorldSaver::saveObject(const ObjectPtr& object)
   return objectData;
 }
 
+void WorldSaver::deleteFile(std::filesystem::path filename)
+{
+  m_deleteFiles.emplace_back(std::move(filename));
+}
+
+void WorldSaver::writeFile(std::filesystem::path filename, std::string data)
+{
+  m_writeFiles.push_back({std::move(filename), std::move(data)});
+}
+
+void WorldSaver::deleteFiles()
+{
+  for(const auto& filename : m_deleteFiles)
+  {
+    std::error_code ec;
+    std::filesystem::remove(m_path / filename, ec);
+    //! \todo report error if removal fails of existing file
+  }
+}
+
+void WorldSaver::writeFiles()
+{
+  for(const auto& file : m_writeFiles)
+    saveToDisk(file.second, m_path / file.first);
+}
+
 void WorldSaver::saveToDisk(const json& data, const std::filesystem::path& filename)
 {
   std::filesystem::path dir = std::filesystem::path(filename).remove_filename();
@@ -88,6 +118,29 @@ void WorldSaver::saveToDisk(const json& data, const std::filesystem::path& filen
   if(file.is_open())
   {
     file << data.dump(2);
+    //Traintastic::instance->console->notice(classId, "Saved world " + name.value());
+  }
+  else
+    throw std::runtime_error("file not open");
+    //Traintastic::instance->console->critical(classId, "Can't write to world file");
+}
+
+void WorldSaver::saveToDisk(const std::string& data, const std::filesystem::path& filename)
+{
+  if(std::filesystem::exists(filename) &&
+      std::filesystem::file_size(filename) == data.size() &&
+      Sha1::of(filename) == Sha1::of(data))
+    return;
+
+  std::filesystem::path dir = std::filesystem::path(filename).remove_filename();
+  std::string s = dir.string();
+  if(!std::filesystem::is_directory(dir))
+    std::filesystem::create_directories(dir);
+
+  std::ofstream file(filename);
+  if(file.is_open())
+  {
+    file << data;
     //Traintastic::instance->console->notice(classId, "Saved world " + name.value());
   }
   else

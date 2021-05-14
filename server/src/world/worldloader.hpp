@@ -43,6 +43,7 @@ class WorldLoader
       bool loaded;
     };
 
+    const std::filesystem::path& m_path;
     std::shared_ptr<World> m_world;
     std::unordered_map<std::string, ObjectData> m_objects;
     nlohmann::json m_states;
@@ -57,6 +58,8 @@ class WorldLoader
 
     ObjectPtr getObject(std::string_view id);
     nlohmann::json getState(const std::string& id) const;
+
+    bool readFile(const std::filesystem::path& filename, std::string& data);
 };
 
 #endif

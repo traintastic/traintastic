@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_WORLD_WORLDSAVER_HPP
 #define TRAINTASTIC_SERVER_WORLD_WORLDSAVER_HPP
 
+#include <list>
 #include "../core/objectptr.hpp"
 #include "../core/stdfilesystem.hpp"
 #include "../utils/json.hpp"
@@ -33,13 +34,22 @@ class WorldSaver
 {
   private:
     nlohmann::json m_states;
+    const std::filesystem::path m_path;
+    std::list<std::filesystem::path> m_deleteFiles;
+    std::list<std::pair<std::filesystem::path, std::string>> m_writeFiles;
 
+    void deleteFiles();
+    void writeFiles();
     void saveToDisk(const nlohmann::json& data, const std::filesystem::path& filename);
+    void saveToDisk(const std::string& data, const std::filesystem::path& filename);
 
   public:
     WorldSaver(const World& world);
 
     nlohmann::json saveObject(const ObjectPtr& object);
+
+    void deleteFile(std::filesystem::path filename);
+    void writeFile(std::filesystem::path filename, std::string data);
 };
 
 #endif
