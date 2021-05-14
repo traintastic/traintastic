@@ -26,6 +26,7 @@
   //#include <QStandardPaths>
 #endif
 #include <QCommandLineParser>
+#include <QSettings>
 #include <version.hpp>
 #include "mainwindow.hpp"
 #include "utils/getlocalepath.hpp"
@@ -81,7 +82,15 @@ int main(int argc, char* argv[])
   Options options;
   parseOptions(app, options);
 
-  Locale::instance = new Locale(getLocalePath().toStdString() + "/en-us.txt");
+  // language:
+  const QString languageDefault = "en-us";
+  QString language = QSettings().value("language", languageDefault).toString();
+
+  Locale* fallback = nullptr;
+  if(language != languageDefault)
+    fallback = new Locale(getLocalePath().toStdString() + "/" + languageDefault.toStdString() + ".txt");
+
+  Locale::instance = new Locale(getLocalePath().toStdString() + "/" + language.toStdString() + ".txt", fallback);
 
   MainWindow mw;
   if(options.fullscreen)

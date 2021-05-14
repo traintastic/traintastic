@@ -24,6 +24,7 @@
 #include <QFormLayout>
 #include <QComboBox>
 #include <QDirIterator>
+#include <QSettings>
 #include <traintastic/locale/locale.hpp>
 #include "../utils/getlocalepath.hpp"
 
@@ -56,11 +57,16 @@ SettingsDialog::SettingsDialog(QWidget* parent) :
     const QString label = getLanguageName(filename);
     if(!label.isEmpty())
     {
-      cb->addItem(label, filename);
+      cb->addItem(label, QFileInfo(filename).baseName());
       if(filename.toStdString() == Locale::instance->filename)
         cb->setCurrentIndex(cb->count() - 1);
     }
   }
+  connect(cb, QOverload<int>::of(&QComboBox::currentIndexChanged),
+    [cb](int index)
+    {
+      QSettings().setValue("language", cb->itemData(index));
+    });
   form->addRow(Locale::tr("qtapp.settings:language"), cb);
 
   setLayout(form);
