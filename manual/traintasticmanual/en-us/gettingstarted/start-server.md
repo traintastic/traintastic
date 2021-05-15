@@ -7,6 +7,8 @@ Traintastic server runs as backgroud process, a Traintastic icon will appear in 
 A Windows notification is displayed when it is running in the background.
 Traintastic server can be quit by clicking on the Traintastic icon and selecting *Quit* from the popup menu.
 
+![](../../gfx/en-us/start/start-traintastic-server-windows.png "Traintastic server tray icon and notification")
+
 **Linux:** TODO
 
 When Traintastic server is running proceed to [start Traintastic client](start-client.md).
