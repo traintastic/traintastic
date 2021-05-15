@@ -21,4 +21,12 @@ class HTMLBuilder(Builder):
         # set target="_blank" for external links:
         html = re.sub(r'<a([^>]+href="http(s|)://)', r'<a target="_blank"\1', html)
 
+        # change img title attribute to figcaption
+        html = re.sub(r'(<img[^>]+)title="([^">]*)"([^>]*>)',
+            lambda m:
+                '<figure>' +
+                m.group(1) + m.group(3) +
+                '<figcaption>' + m.group(2) + '</figcaption></figure>',
+                html)
+
         return html

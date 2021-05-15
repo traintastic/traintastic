@@ -158,6 +158,17 @@
   height: auto;
 }
 
+.content figure
+{
+  margin-left: 0;
+}
+
+.content figcaption
+{
+  line-height: 80%;
+  font-size: 80%;
+}
+
 /** MEDIA BREAKPOINTS ********************************************************/
 
 @media screen and (max-width: 991px)
