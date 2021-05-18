@@ -146,14 +146,22 @@ MainWindow::MainWindow(QWidget* parent) :
       [this]()
       {
         if(Q_LIKELY(m_world))
+        {
           m_world->callMethod("stop");
+          if(AbstractProperty* p = m_world->getProperty("state"))
+            m_worldStopAction->setChecked(!contains(p->toSet<WorldState>(), WorldState::Run)); // make sure checked matches current world state
+        }
       });
     m_worldStopAction->setCheckable(true);
     m_worldRunAction = m_menuWorld->addAction(QIcon(":/dark/run.svg"), Locale::tr("world:run"),
       [this]()
       {
         if(Q_LIKELY(m_world))
+        {
           m_world->callMethod("run");
+          if(AbstractProperty* p = m_world->getProperty("state"))
+            m_worldRunAction->setChecked(contains(p->toSet<WorldState>(), WorldState::Run)); // make sure checked matches current world state
+        }
       });
     m_worldRunAction->setCheckable(true);
     m_menuWorld->addSeparator();
