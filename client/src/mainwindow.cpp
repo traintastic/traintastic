@@ -44,6 +44,7 @@
 //#include "subwindow/objecteditsubwindow.hpp"
 #include "subwindow/objectsubwindow.hpp"
 #include "widget/serverconsolewidget.hpp"
+#include "utils/menu.hpp"
 
 
 #include <QDesktopServices>
@@ -53,18 +54,6 @@
 #define SETTING_PREFIX "mainwindow/"
 #define SETTING_GEOMETRY SETTING_PREFIX "geometry"
 #define SETTING_WINDOWSTATE SETTING_PREFIX "windowstate"
-
-static void setMenuEnabled(QMenu* menu, bool enabled)
-{
-  menu->setEnabled(enabled);
-  for(QAction* action : menu->actions())
-  {
-    if(action->menu())
-      setMenuEnabled(action->menu(), enabled);
-    action->setEnabled(enabled);
-  }
-}
-
 
 MainWindow::MainWindow(QWidget* parent) :
   QMainWindow(parent),
@@ -124,6 +113,65 @@ MainWindow::MainWindow(QWidget* parent) :
     m_actionServerConsole = menu->addAction(Locale::tr("qtapp.mainmenu:server_console") + "...", this, &MainWindow::toggleConsole);//[this](){ showObject("traintastic.console"); });
     m_actionServerConsole->setCheckable(true);
     m_actionServerConsole->setShortcut(Qt::Key_F12);
+
+    m_menuWorld = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:world"));
+    m_menuConnection = m_menuWorld->addMenu(Locale::tr("qtapp.mainmenu:connection"));
+    m_worldOnlineAction = m_menuConnection->addAction(QIcon(":/dark/online.svg"), Locale::tr("world:online"),
+      [this]()
+      {
+        if(Q_LIKELY(m_world))
+          m_world->callMethod("online");
+      });
+    m_worldOfflineAction = m_menuConnection->addAction(QIcon(":/dark/offline.svg"), Locale::tr("world:offline"),
+      [this]()
+      {
+        if(Q_LIKELY(m_world))
+          m_world->callMethod("offline");
+      });
+    m_menuPower = m_menuWorld->addMenu(Locale::tr("qtapp.mainmenu:power"));
+    m_worldPowerOnAction = m_menuPower->addAction(QIcon(":/dark/power_on.svg"), Locale::tr("world:power_on"),
+      [this]()
+      {
+        if(Q_LIKELY(m_world))
+          m_world->callMethod("power_on");
+      });
+    m_worldPowerOffAction = m_menuPower->addAction(QIcon(":/dark/power_off.svg"), Locale::tr("world:power_off"),
+      [this]()
+      {
+        if(Q_LIKELY(m_world))
+          m_world->callMethod("power_off");
+      });
+    m_menuWorld->addSeparator();
+    m_worldStopAction = m_menuWorld->addAction(QIcon(":/dark/stop.svg"), Locale::tr("world:stop"),
+      [this]()
+      {
+        if(Q_LIKELY(m_world))
+          m_world->callMethod("stop");
+      });
+    m_worldStopAction->setCheckable(true);
+    m_worldRunAction = m_menuWorld->addAction(QIcon(":/dark/run.svg"), Locale::tr("world:run"),
+      [this]()
+      {
+        if(Q_LIKELY(m_world))
+          m_world->callMethod("run");
+      });
+    m_worldRunAction->setCheckable(true);
+    m_menuWorld->addSeparator();
+    m_worldMuteAction = m_menuWorld->addAction(QIcon(":/dark/mute.svg"), Locale::tr("world:mute"),
+      [this](bool checked)
+      {
+        if(Q_LIKELY(m_world))
+          m_world->setPropertyValue("mute", checked);
+      });
+    m_worldMuteAction->setCheckable(true);
+    m_worldEditAction = m_menuWorld->addAction(QIcon(":/dark/edit.svg"), Locale::tr("world:edit"),
+      [this](bool checked)
+      {
+        if(m_world)
+          if(AbstractProperty* property = m_world->getProperty("edit"))
+            property->setValueBool(checked);
+      });
+    m_worldEditAction->setCheckable(true);
 
     m_menuObjects = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:objects"));
     menu = m_menuObjects->addMenu(QIcon(":/dark/hardware.svg"), Locale::tr("qtapp.mainmenu:hardware"));
@@ -197,20 +245,7 @@ MainWindow::MainWindow(QWidget* parent) :
         if(auto* state = m_world->getProperty("state"))
           m_world->callMethod(contains(state->toSet<WorldState>(), WorldState::Online) ? "offline" : "online");
     });
-  menu = new QMenu(this);
-  m_worldOnlineAction = menu->addAction(QIcon(":/dark/online.svg"), Locale::tr("world:online"),
-    [this]()
-    {
-      if(Q_LIKELY(m_world))
-        m_world->callMethod("online");
-    });
-  m_worldOfflineAction = menu->addAction(QIcon(":/dark/offline.svg"), Locale::tr("world:offline"),
-    [this]()
-    {
-      if(Q_LIKELY(m_world))
-        m_world->callMethod("offline");
-    });
-  m_worldOnlineOfflineToolButton->setMenu(menu);
+  m_worldOnlineOfflineToolButton->setMenu(createMenu(this, {m_worldOnlineAction, m_worldOfflineAction}));
   toolbar->addWidget(m_worldOnlineOfflineToolButton);
 
   // Power on/off:
@@ -225,66 +260,21 @@ MainWindow::MainWindow(QWidget* parent) :
         if(auto* state = m_world->getProperty("state"))
           m_world->callMethod(contains(state->toSet<WorldState>(), WorldState::PowerOn) ? "power_off" : "power_on");
     });
-  menu = new QMenu(this);
-  m_worldPowerOnAction = menu->addAction(QIcon(":/dark/power_on.svg"), Locale::tr("world:power_on"),
-    [this]()
-    {
-      if(Q_LIKELY(m_world))
-        m_world->callMethod("power_on");
-    });
-  m_worldPowerOffAction = menu->addAction(QIcon(":/dark/power_off.svg"), Locale::tr("world:power_off"),
-    [this]()
-    {
-      if(Q_LIKELY(m_world))
-        m_world->callMethod("power_off");
-    });
-  m_worldPowerOnOffToolButton->setMenu(menu);
+  m_worldPowerOnOffToolButton->setMenu(createMenu(this, {m_worldPowerOnAction, m_worldPowerOffAction}));
   toolbar->addWidget(m_worldPowerOnOffToolButton);
 
   toolbar->addSeparator();
-
-  m_worldStopAction = toolbar->addAction(QIcon(":/dark/stop.svg"), Locale::tr("world:stop"),
-    [this]()
-    {
-      if(Q_LIKELY(m_world))
-        m_world->callMethod("stop");
-    });
-  m_worldStopAction->setCheckable(true);
-  m_worldRunAction = toolbar->addAction(QIcon(":/dark/run.svg"), Locale::tr("world:run"),
-    [this]()
-    {
-      if(Q_LIKELY(m_world))
-        m_world->callMethod("run");
-    });
-  m_worldRunAction->setCheckable(true);
-
+  toolbar->addAction(m_worldStopAction);
+  toolbar->addAction(m_worldRunAction);
   toolbar->addSeparator();
-
-  m_worldMuteAction = toolbar->addAction(QIcon(":/dark/mute.svg"), Locale::tr("world:mute"),
-    [this](bool checked)
-    {
-      if(Q_LIKELY(m_world))
-        m_world->setPropertyValue("mute", checked);
-    });
-  m_worldMuteAction->setCheckable(true);
+  toolbar->addAction(m_worldMuteAction);
 
   QWidget* spacer = new QWidget(this);
   spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
   spacer->show();
   toolbar->addWidget(spacer);
 
-  m_worldEditAction = toolbar->addAction(QIcon(":/dark/edit.svg"), Locale::tr("world:edit"),
-    [this](bool checked)
-    {
-      if(m_world)
-        if(AbstractProperty* property = m_world->getProperty("edit"))
-          property->setValueBool(checked);
-    });
-  m_worldEditAction->setCheckable(true);
-  //m_actionGroupMode->addAction(m_actionModeEdit);
-  //toolbar->addSeparator();
-  //toolbar->addAction(m_actionHardware);
-  //toolbar->addAction(m_actionLua);
+  toolbar->addAction(m_worldEditAction);
 
   QVBoxLayout* l = new QVBoxLayout();
   l->setMargin(0);
@@ -595,16 +585,9 @@ void MainWindow::updateActions()
     m_actionServerShutdown->setEnabled(m && m->getAttributeBool(AttributeName::Enabled, false));
   }
 
+  setMenuEnabled(m_menuWorld, haveWorld);
   m_worldOnlineOfflineToolButton->setEnabled(haveWorld);
-  m_worldOnlineAction->setEnabled(haveWorld);
-  m_worldOfflineAction->setEnabled(haveWorld);
   m_worldPowerOnOffToolButton->setEnabled(haveWorld);
-  m_worldPowerOnAction->setEnabled(haveWorld);
-  m_worldPowerOffAction->setEnabled(haveWorld);
-  m_worldRunAction->setEnabled(haveWorld);
-  m_worldStopAction->setEnabled(haveWorld);
-  m_worldMuteAction->setEnabled(haveWorld);
-  m_worldEditAction->setEnabled(haveWorld);
   worldStateChanged(haveWorld ? m_connection->world()->getProperty("state")->toInt64() : 0);
 
   setMenuEnabled(m_menuObjects, haveWorld);
@@ -627,8 +610,13 @@ void MainWindow::worldStateChanged(int64_t value)
 {
   const WorldState state = static_cast<WorldState>(value);
 
-  m_worldOnlineOfflineToolButton->setIcon(QIcon(contains(state, WorldState::Online) ? ":/dark/online.svg" : ":/dark/offline.svg"));
-  m_worldPowerOnOffToolButton->setIcon(QIcon(contains(state, WorldState::PowerOn) ? ":/dark/power_on.svg" : ":/dark/power_off.svg"));
+  QIcon connectionIcon(contains(state, WorldState::Online) ? ":/dark/online.svg" : ":/dark/offline.svg");
+  QIcon powerIcon(contains(state, WorldState::PowerOn) ? ":/dark/power_on.svg" : ":/dark/power_off.svg");
+
+  m_menuConnection->setIcon(connectionIcon);
+  m_worldOnlineOfflineToolButton->setIcon(connectionIcon);
+  m_menuPower->setIcon(powerIcon);
+  m_worldPowerOnOffToolButton->setIcon(powerIcon);
   m_worldStopAction->setChecked(!contains(state, WorldState::Run));
   m_worldRunAction->setChecked(contains(state, WorldState::Run));
   m_worldMuteAction->setChecked(contains(state, WorldState::Mute));

@@ -175,6 +175,7 @@ qtapp.connect_dialog:username=Username
 
 qtapp.mainmenu:about=About
 qtapp.mainmenu:connect_to_server=Connect to server
+qtapp.mainmenu:connection=Connection
 qtapp.mainmenu:disconnect_from_server=Disconnect from server
 qtapp.mainmenu:export_world=Export world
 qtapp.mainmenu:file=File
@@ -186,6 +187,7 @@ qtapp.mainmenu:load_world=Load world
 qtapp.mainmenu:new_world=New world
 qtapp.mainmenu:objects=Objects
 qtapp.mainmenu:objects=Objects
+qtapp.mainmenu:power=Power
 qtapp.mainmenu:quit=Quit
 qtapp.mainmenu:restart_server=Restart server
 qtapp.mainmenu:restart_server_question=Are you sure you want to restart the server?
@@ -198,6 +200,7 @@ qtapp.mainmenu:shutdown_server=Shutdown server
 qtapp.mainmenu:shutdown_server_question=Are you sure you want to shutdown the server?
 qtapp.mainmenu:tools=Tools
 qtapp.mainmenu:view=View
+qtapp.mainmenu:world=World
 
 qtapp.message_box:no=No
 qtapp.message_box:yes=Yes

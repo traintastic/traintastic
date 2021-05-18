@@ -51,6 +51,7 @@ class MainWindow : public QMainWindow
     MdiArea* m_mdiArea;
     ServerConsoleWidget* m_serverConsole;
     QMap<QString, QMdiSubWindow*> m_mdiSubWindows;
+    // Main menu:
     QAction* m_actionConnectToServer;
     QAction* m_actionDisconnectFromServer;
     QAction* m_actionNewWorld;
@@ -58,6 +59,17 @@ class MainWindow : public QMainWindow
     QAction* m_actionSaveWorld;
     QAction* m_actionImportWorld;
     QAction* m_actionExportWorld;
+    QMenu* m_menuWorld;
+    QMenu* m_menuConnection;
+    QAction* m_worldOnlineAction;
+    QAction* m_worldOfflineAction;
+    QMenu* m_menuPower;
+    QAction* m_worldPowerOnAction;
+    QAction* m_worldPowerOffAction;
+    QAction* m_worldStopAction;
+    QAction* m_worldRunAction;
+    QAction* m_worldMuteAction;
+    QAction* m_worldEditAction;
     QMenu* m_menuObjects;
     QAction* m_actionLuaScript;
     QAction* m_actionFullScreen;
@@ -68,15 +80,7 @@ class MainWindow : public QMainWindow
     QAction* m_actionServerConsole;
     // Main toolbar:
     QToolButton* m_worldOnlineOfflineToolButton;
-    QAction* m_worldOnlineAction;
-    QAction* m_worldOfflineAction;
     QToolButton* m_worldPowerOnOffToolButton;
-    QAction* m_worldPowerOnAction;
-    QAction* m_worldPowerOffAction;
-    QAction* m_worldStopAction;
-    QAction* m_worldRunAction;
-    QAction* m_worldMuteAction;
-    QAction* m_worldEditAction;
 
     QByteArray m_beforeFullScreenGeometry;
 
