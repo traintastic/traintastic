@@ -25,6 +25,7 @@
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <version.hpp>
 #include <traintastic/codename.hpp>
 #include <traintastic/utils/str.hpp>
 #include "eventloop.hpp"
@@ -113,7 +114,7 @@ Traintastic::~Traintastic()
 
 Traintastic::RunStatus Traintastic::run()
 {
-  logInfo("v" STR(VERSION) " " TRAINTASTIC_CODENAME);
+  logInfo("v" TRAINTASTIC_VERSION " " TRAINTASTIC_CODENAME);
 
   settings = std::make_shared<Settings>(m_dataDir / "settings.json");
   Attributes::setEnabled(restart, settings->allowClientServerRestart);
