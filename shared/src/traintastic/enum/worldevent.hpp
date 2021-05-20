@@ -36,8 +36,10 @@ enum class WorldEvent : uint64_t
   PowerOn = 5,
   Stop = 6,
   Run = 7,
-  MuteDisabled = 8,
-  MuteEnabled = 9,
+  Unmute = 8,
+  Mute = 9,
+  NoSmoke = 10,
+  Smoke = 11,
 };
 
 template<>
@@ -46,7 +48,7 @@ struct EnumName<WorldEvent>
   static constexpr char const* value = "world_event";
 };
 
-ENUM_VALUES(WorldEvent, 10,
+ENUM_VALUES(WorldEvent, 12,
 {
   {WorldEvent::EditDisabled, "edit_disabled"},
   {WorldEvent::EditEnabled, "edit_enabled"},
@@ -56,8 +58,10 @@ ENUM_VALUES(WorldEvent, 10,
   {WorldEvent::PowerOn, "power_on"},
   {WorldEvent::Stop, "stop"},
   {WorldEvent::Run, "run"},
-  {WorldEvent::MuteDisabled, "mute_disabled"},
-  {WorldEvent::MuteEnabled, "mute_enabled"},
+  {WorldEvent::Unmute, "unmute"},
+  {WorldEvent::Mute, "mute"},
+  {WorldEvent::NoSmoke, "no_smoke"},
+  {WorldEvent::Smoke, "smoke"},
 })
 
 #endif

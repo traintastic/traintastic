@@ -141,15 +141,31 @@ World::World(Private) :
     {
       if(value)
       {
-        Traintastic::instance->console->notice(classId, "Mute: enabled");
+        Traintastic::instance->console->notice(classId, "Mute");
         state.setValueInternal(state.value() + WorldState::Mute);
-        event(WorldEvent::MuteEnabled);
+        event(WorldEvent::Mute);
       }
       else
       {
-        Traintastic::instance->console->notice(classId, "Mute: disabled");
+        Traintastic::instance->console->notice(classId, "Unmute");
         state.setValueInternal(state.value() - WorldState::Mute);
-        event(WorldEvent::MuteDisabled);
+        event(WorldEvent::Unmute);
+      }
+    }},
+  noSmoke{this, "no_smoke", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
+    [this](bool value)
+    {
+      if(value)
+      {
+        Traintastic::instance->console->notice(classId, "No smoke");
+        state.setValueInternal(state.value() + WorldState::NoSmoke);
+        event(WorldEvent::NoSmoke);
+      }
+      else
+      {
+        Traintastic::instance->console->notice(classId, "Smoke");
+        state.setValueInternal(state.value() - WorldState::NoSmoke);
+        event(WorldEvent::Smoke);
       }
     }},
   save{*this, "save",
@@ -198,6 +214,7 @@ World::World(Private) :
   m_interfaceItems.add(stop);
   m_interfaceItems.add(run);
   m_interfaceItems.add(mute);
+  m_interfaceItems.add(noSmoke);
 
   m_interfaceItems.add(save);
 }

@@ -172,6 +172,13 @@ MainWindow::MainWindow(QWidget* parent) :
           m_world->setPropertyValue("mute", checked);
       });
     m_worldMuteAction->setCheckable(true);
+    m_worldNoSmokeAction = m_menuWorld->addAction(QIcon(":/dark/no_smoke.svg"), Locale::tr("world:no_smoke"),
+      [this](bool checked)
+      {
+        if(Q_LIKELY(m_world))
+          m_world->setPropertyValue("no_smoke", checked);
+      });
+    m_worldNoSmokeAction->setCheckable(true);
     m_worldEditAction = m_menuWorld->addAction(QIcon(":/dark/edit.svg"), Locale::tr("world:edit"),
       [this](bool checked)
       {
@@ -276,6 +283,7 @@ MainWindow::MainWindow(QWidget* parent) :
   toolbar->addAction(m_worldRunAction);
   toolbar->addSeparator();
   toolbar->addAction(m_worldMuteAction);
+  toolbar->addAction(m_worldNoSmokeAction);
 
   QWidget* spacer = new QWidget(this);
   spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -628,5 +636,6 @@ void MainWindow::worldStateChanged(int64_t value)
   m_worldStopAction->setChecked(!contains(state, WorldState::Run));
   m_worldRunAction->setChecked(contains(state, WorldState::Run));
   m_worldMuteAction->setChecked(contains(state, WorldState::Mute));
+  m_worldNoSmokeAction->setChecked(contains(state, WorldState::NoSmoke));
   m_worldEditAction->setChecked(contains(state, WorldState::Edit));
 }

@@ -46,5 +46,6 @@
         <file alias="online.svg">gfx/dark/online.svg</file>
         <file alias="offline.svg">gfx/dark/offline.svg</file>
         <file alias="mute.svg">gfx/dark/mute.svg</file>
+        <file alias="no_smoke.svg">gfx/dark/no_smoke.svg</file>
     </qresource>
 </RCC>

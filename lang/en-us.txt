@@ -282,6 +282,7 @@ world:emergency_stop=Emergency stop
 world:inputs=Inputs
 world:lua_scripts=Lua scripts
 world:mute=Mute
+world:no_smoke=No smoke
 world:offline=Disconnect
 world:online=Connect
 world:outputs=Outputs

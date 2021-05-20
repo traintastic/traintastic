@@ -33,6 +33,7 @@ enum class WorldState : uint32_t
   PowerOn = 1 << 2,
   Run = 1 << 3,
   Mute = 1 << 4,
+  NoSmoke = 1 << 5,
 };
 
 template<>
@@ -52,7 +53,8 @@ struct set_mask<WorldState>
     WorldState::Online |
     WorldState::PowerOn |
     WorldState::Run |
-    WorldState::Mute;
+    WorldState::Mute |
+    WorldState::NoSmoke;
 };
 
 #endif

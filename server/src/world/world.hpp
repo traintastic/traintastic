@@ -105,6 +105,7 @@ class World : public Object
     Method<void()> run;
     Method<void()> stop;
     Property<bool> mute;
+    Property<bool> noSmoke;
 
     Method<void()> save;
 
