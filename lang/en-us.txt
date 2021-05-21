@@ -198,6 +198,7 @@ qtapp.mainmenu:server_settings=Server settings
 qtapp.mainmenu:settings=Settings
 qtapp.mainmenu:shutdown_server=Shutdown server
 qtapp.mainmenu:shutdown_server_question=Are you sure you want to shutdown the server?
+qtapp.mainmenu:toolbar=Toolbar
 qtapp.mainmenu:tools=Tools
 qtapp.mainmenu:view=View
 qtapp.mainmenu:world=World

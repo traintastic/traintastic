@@ -54,12 +54,14 @@
 #define SETTING_PREFIX "mainwindow/"
 #define SETTING_GEOMETRY SETTING_PREFIX "geometry"
 #define SETTING_WINDOWSTATE SETTING_PREFIX "windowstate"
+#define SETTING_VIEW_TOOLBAR SETTING_PREFIX "view_toolbar"
 
 MainWindow::MainWindow(QWidget* parent) :
   QMainWindow(parent),
   m_splitter{new QSplitter(Qt::Vertical, this)},
   m_mdiArea{new MdiArea(m_splitter)},
-  m_serverConsole{nullptr}
+  m_serverConsole{nullptr},
+  m_toolbar{new QToolBar(this)}
 {
   instance = this;
 
@@ -110,6 +112,8 @@ MainWindow::MainWindow(QWidget* parent) :
     m_actionFullScreen = menu->addAction(Locale::tr("qtapp.mainmenu:fullscreen"), this, &MainWindow::toggleFullScreen);
     m_actionFullScreen->setCheckable(true);
     m_actionFullScreen->setShortcut(Qt::Key_F11);
+    m_actionViewToolbar = menu->addAction(Locale::tr("qtapp.mainmenu:toolbar"), m_toolbar, &QToolBar::setVisible);
+    m_actionViewToolbar->setCheckable(true);
     m_actionServerConsole = menu->addAction(Locale::tr("qtapp.mainmenu:server_console") + "...", this, &MainWindow::toggleConsole);//[this](){ showObject("traintastic.console"); });
     m_actionServerConsole->setCheckable(true);
     m_actionServerConsole->setShortcut(Qt::Key_F12);
@@ -248,8 +252,6 @@ MainWindow::MainWindow(QWidget* parent) :
     menu->addAction(Locale::tr("qtapp.mainmenu:about") + "...", this, &MainWindow::showAbout);
   }
 
-  QToolBar* toolbar = new QToolBar(this);
-
   // Online/offline:
   m_worldOnlineOfflineToolButton = new QToolButton(this);
   m_worldOnlineOfflineToolButton->setIcon(QIcon(":/dark/offline.svg"));
@@ -263,7 +265,7 @@ MainWindow::MainWindow(QWidget* parent) :
           m_world->callMethod(contains(state->toSet<WorldState>(), WorldState::Online) ? "offline" : "online");
     });
   m_worldOnlineOfflineToolButton->setMenu(createMenu(this, {m_worldOnlineAction, m_worldOfflineAction}));
-  toolbar->addWidget(m_worldOnlineOfflineToolButton);
+  m_toolbar->addWidget(m_worldOnlineOfflineToolButton);
 
   // Power on/off:
   m_worldPowerOnOffToolButton = new QToolButton(this);
@@ -278,25 +280,25 @@ MainWindow::MainWindow(QWidget* parent) :
           m_world->callMethod(contains(state->toSet<WorldState>(), WorldState::PowerOn) ? "power_off" : "power_on");
     });
   m_worldPowerOnOffToolButton->setMenu(createMenu(this, {m_worldPowerOnAction, m_worldPowerOffAction}));
-  toolbar->addWidget(m_worldPowerOnOffToolButton);
+  m_toolbar->addWidget(m_worldPowerOnOffToolButton);
 
-  toolbar->addSeparator();
-  toolbar->addAction(m_worldStopAction);
-  toolbar->addAction(m_worldRunAction);
-  toolbar->addSeparator();
-  toolbar->addAction(m_worldMuteAction);
-  toolbar->addAction(m_worldNoSmokeAction);
+  m_toolbar->addSeparator();
+  m_toolbar->addAction(m_worldStopAction);
+  m_toolbar->addAction(m_worldRunAction);
+  m_toolbar->addSeparator();
+  m_toolbar->addAction(m_worldMuteAction);
+  m_toolbar->addAction(m_worldNoSmokeAction);
 
   QWidget* spacer = new QWidget(this);
   spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
   spacer->show();
-  toolbar->addWidget(spacer);
+  m_toolbar->addWidget(spacer);
 
-  toolbar->addAction(m_worldEditAction);
+  m_toolbar->addAction(m_worldEditAction);
 
   QVBoxLayout* l = new QVBoxLayout();
   l->setMargin(0);
-  l->addWidget(toolbar);
+  l->addWidget(m_toolbar);
   l->addWidget(m_mdiArea);
 
   QWidget* w = new QWidget();
@@ -313,6 +315,9 @@ MainWindow::MainWindow(QWidget* parent) :
   if(settings.contains(SETTING_WINDOWSTATE))
     setWindowState(static_cast<Qt::WindowState>(settings.value(SETTING_WINDOWSTATE).toInt()));
   m_actionFullScreen->setChecked(isFullScreen());
+
+  m_actionViewToolbar->setChecked(settings.value(SETTING_VIEW_TOOLBAR, true).toBool());
+  m_toolbar->setVisible(m_actionViewToolbar->isChecked());
 
   connectionStateChanged();
 }
@@ -355,6 +360,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
   QSettings settings;
   settings.setValue(SETTING_GEOMETRY, saveGeometry());
   settings.setValue(SETTING_WINDOWSTATE, static_cast<int>(windowState()));
+  settings.setValue(SETTING_VIEW_TOOLBAR, m_toolbar->isVisible());
   QMainWindow::closeEvent(event);
 }
 

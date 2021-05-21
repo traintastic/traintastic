@@ -74,12 +74,14 @@ class MainWindow : public QMainWindow
     QMenu* m_menuObjects;
     QAction* m_actionLuaScript;
     QAction* m_actionFullScreen;
+    QAction* m_actionViewToolbar;
     QMenu* m_menuServer;
     QAction* m_actionServerSettings;
     QAction* m_actionServerRestart;
     QAction* m_actionServerShutdown;
     QAction* m_actionServerConsole;
     // Main toolbar:
+    QToolBar* m_toolbar;
     QToolButton* m_worldOnlineOfflineToolButton;
     QToolButton* m_worldPowerOnOffToolButton;
 
