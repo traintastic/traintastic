@@ -28,8 +28,8 @@
 
 inline constexpr std::array<WorldScale, 5> WorldScaleValues{{
   WorldScale::H0,
-  WorldScale::N,
   WorldScale::TT,
+  WorldScale::N,
   WorldScale::Z,
   WorldScale::Custom,
 }};
