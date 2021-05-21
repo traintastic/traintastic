@@ -25,7 +25,6 @@
 
 #include "object.hpp"
 #include "property.hpp"
-#include <traintastic/enum/traintasticmode.hpp>
 
 #define CREATE(T) \
   public: \
