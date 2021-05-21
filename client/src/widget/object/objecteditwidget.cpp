@@ -38,6 +38,7 @@
 #include "../propertycheckbox.hpp"
 #include "../propertycombobox.hpp"
 #include "../propertyspinbox.hpp"
+#include "../propertydoublespinbox.hpp"
 #include "../propertylineedit.hpp"
 #include "../propertytextedit.hpp"
 #include "../propertyobjectedit.hpp"
@@ -128,6 +129,8 @@ void ObjectEditWidget::buildForm()
               w = new PropertyCheckBox(*property);
             else if(property->type() == ValueType::Integer)
               w = new PropertySpinBox(*property);
+            else if(property->type() == ValueType::Float)
+              w = new PropertyDoubleSpinBox(*property);
             else if(property->type() == ValueType::String)
             {
               if(property->name() == "notes")
