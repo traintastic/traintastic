@@ -187,6 +187,8 @@ MainWindow::MainWindow(QWidget* parent) :
             property->setValueBool(checked);
       });
     m_worldEditAction->setCheckable(true);
+    m_menuWorld->addSeparator();
+    m_menuWorld->addAction(QIcon(":/dark/world.svg"), Locale::tr("qtapp.mainmenu:world_properties"), [this](){ showObject("world", Locale::tr("qtapp.mainmenu:world_properties")); });
 
     m_menuObjects = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:objects"));
     menu = m_menuObjects->addMenu(QIcon(":/dark/hardware.svg"), Locale::tr("qtapp.mainmenu:hardware"));

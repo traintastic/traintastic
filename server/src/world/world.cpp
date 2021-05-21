@@ -187,35 +187,59 @@ World::World(Private) :
 
   Attributes::addDisplayName(name, "object:name");
   m_interfaceItems.add(name);
+  Attributes::addEnabled(scale, false);
   Attributes::addValues(scale, WorldScaleValues);
   m_interfaceItems.add(scale);
 
+  Attributes::addObjectEditor(commandStations, false);
   m_interfaceItems.add(commandStations);
+  Attributes::addObjectEditor(decoders, false);
   m_interfaceItems.add(decoders);
+  Attributes::addObjectEditor(inputs, false);
   m_interfaceItems.add(inputs);
+  Attributes::addObjectEditor(outputs, false);
   m_interfaceItems.add(outputs);
+  Attributes::addObjectEditor(controllers, false);
   m_interfaceItems.add(controllers);
+  Attributes::addObjectEditor(loconets, false);
   m_interfaceItems.add(loconets);
+  Attributes::addObjectEditor(xpressnets, false);
   m_interfaceItems.add(xpressnets);
+  Attributes::addObjectEditor(boards, false);
   m_interfaceItems.add(boards);
+  Attributes::addObjectEditor(clock, false);
   m_interfaceItems.add(clock);
+  Attributes::addObjectEditor(trains, false);
   m_interfaceItems.add(trains);
+  Attributes::addObjectEditor(railVehicles, false);
   m_interfaceItems.add(railVehicles);
 #ifndef DISABLE_LUA_SCRIPTING
+  Attributes::addObjectEditor(luaScripts, false);
   m_interfaceItems.add(luaScripts);
 #endif
 
+  Attributes::addObjectEditor(state, false);
   m_interfaceItems.add(state);
+  Attributes::addObjectEditor(edit, false);
   m_interfaceItems.add(edit);
+  Attributes::addObjectEditor(offline, false);
   m_interfaceItems.add(offline);
+  Attributes::addObjectEditor(online, false);
   m_interfaceItems.add(online);
+  Attributes::addObjectEditor(powerOff, false);
   m_interfaceItems.add(powerOff);
+  Attributes::addObjectEditor(powerOn, false);
   m_interfaceItems.add(powerOn);
+  Attributes::addObjectEditor(stop, false);
   m_interfaceItems.add(stop);
+  Attributes::addObjectEditor(run, false);
   m_interfaceItems.add(run);
+  Attributes::addObjectEditor(mute, false);
   m_interfaceItems.add(mute);
+  Attributes::addObjectEditor(noSmoke, false);
   m_interfaceItems.add(noSmoke);
 
+  Attributes::addObjectEditor(save, false);
   m_interfaceItems.add(save);
 }
 
@@ -266,6 +290,16 @@ ObjectPtr World::getObjectByPath(std::string_view path) const
       obj.reset();
   }
   return obj;
+}
+
+void World::worldEvent(WorldState state, WorldEvent event)
+{
+  Object::worldEvent(state, event);
+
+  const bool edit = contains(state, WorldState::Edit);
+  const bool run = contains(state, WorldState::Run);
+
+  Attributes::setEnabled(scale, edit && !run);
 }
 
 void World::event(WorldEvent event)

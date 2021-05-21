@@ -201,6 +201,7 @@ qtapp.mainmenu:shutdown_server_question=Are you sure you want to shutdown the se
 qtapp.mainmenu:tools=Tools
 qtapp.mainmenu:view=View
 qtapp.mainmenu:world=World
+qtapp.mainmenu:world_properties=World properties
 
 qtapp.message_box:no=No
 qtapp.message_box:yes=Yes
@@ -298,6 +299,12 @@ world:trains=Trains
 
 world_list:default=Default
 world_list:uuid=UUID
+
+world_scale:custom=Custom
+world_scale:h0=H0 (1:87)
+world_scale:n=N (1:160)
+world_scale:tt=TT (1:120)
+world_scale:z=Z (1:220)
 
 xpressnet_command_station:custom=Custom
 xpressnet_command_station:digikeijs_dr5000=Digikeijs DR5000

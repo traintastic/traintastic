@@ -67,6 +67,7 @@ class World : public Object
     boost::uuids::uuid m_uuid;
     std::unordered_map<std::string, std::weak_ptr<Object>> m_objects;
 
+    void worldEvent(WorldState state, WorldEvent event) final;
     void event(WorldEvent event);
 
   public:
