@@ -34,4 +34,23 @@ inline constexpr std::array<WorldScale, 5> WorldScaleValues{{
   WorldScale::Custom,
 }};
 
+constexpr double getScaleRatio(WorldScale value)
+{
+  switch(value)
+  {
+    case WorldScale::H0:
+      return 87;
+
+    case WorldScale::TT:
+      return 120;
+
+    case WorldScale::N:
+      return 160;
+
+    case WorldScale::Z:
+      return 220;
+  }
+  return 0;
+}
+
 #endif

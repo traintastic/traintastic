@@ -62,7 +62,8 @@ World::World(Private) :
   Object(),
   m_uuid{boost::uuids::random_generator()()},
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
-  scale{this, "scale", WorldScale::H0, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  scale{this, "scale", WorldScale::H0, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](WorldScale value){ updateScaleRatio(); }},
+  scaleRatio{this, "scale_ratio", 87, PropertyFlags::ReadWrite | PropertyFlags::Store},
   commandStations{this, "command_stations", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
@@ -190,6 +191,10 @@ World::World(Private) :
   Attributes::addEnabled(scale, false);
   Attributes::addValues(scale, WorldScaleValues);
   m_interfaceItems.add(scale);
+  Attributes::addEnabled(scaleRatio, false);
+  Attributes::addMinMax(scaleRatio, 1., 1000.);
+  Attributes::addVisible(scaleRatio, false);
+  m_interfaceItems.add(scaleRatio);
 
   Attributes::addObjectEditor(commandStations, false);
   m_interfaceItems.add(commandStations);
@@ -292,6 +297,12 @@ ObjectPtr World::getObjectByPath(std::string_view path) const
   return obj;
 }
 
+void World::loaded()
+{
+  updateScaleRatio();
+  Object::loaded();
+}
+
 void World::worldEvent(WorldState state, WorldEvent event)
 {
   Object::worldEvent(state, event);
@@ -300,6 +311,7 @@ void World::worldEvent(WorldState state, WorldEvent event)
   const bool run = contains(state, WorldState::Run);
 
   Attributes::setEnabled(scale, edit && !run);
+  Attributes::setEnabled(scaleRatio, edit && !run);
 }
 
 void World::event(WorldEvent event)
@@ -308,4 +320,15 @@ void World::event(WorldEvent event)
   worldEvent(st, event);
   for(auto& it : m_objects)
     it.second.lock()->worldEvent(st, event);
+}
+
+void World::updateScaleRatio()
+{
+  if(scale != WorldScale::Custom)
+  {
+    scaleRatio.setValueInternal(getScaleRatio(scale));
+    Attributes::setVisible(scaleRatio, false);
+  }
+  else
+    Attributes::setVisible(scaleRatio, true);
 }

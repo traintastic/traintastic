@@ -59,6 +59,8 @@ class World : public Object
   private:
     struct Private {};
 
+    void updateScaleRatio();
+
   protected:
     static void init(const std::shared_ptr<World>& world);
 
@@ -67,6 +69,7 @@ class World : public Object
     boost::uuids::uuid m_uuid;
     std::unordered_map<std::string, std::weak_ptr<Object>> m_objects;
 
+    void loaded() final;
     void worldEvent(WorldState state, WorldEvent event) final;
     void event(WorldEvent event);
 
@@ -81,6 +84,7 @@ class World : public Object
 
     Property<std::string> name;
     Property<WorldScale> scale;
+    Property<double> scaleRatio;
 
     ObjectProperty<CommandStationList> commandStations;
     ObjectProperty<DecoderList> decoders;
