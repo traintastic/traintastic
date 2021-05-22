@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,7 +28,7 @@
 PropertyComboBox::PropertyComboBox(Property& property, QWidget* parent) :
   QComboBox(parent),
   m_property{property},
-  m_internalUpdate{false}
+  m_internalUpdate{0}
 {
   Q_ASSERT(m_property.type() == ValueType::Enum);
   setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
@@ -65,7 +65,7 @@ PropertyComboBox::PropertyComboBox(Property& property, QWidget* parent) :
   connect(this, static_cast<void(PropertyComboBox::*)(int)>(&PropertyComboBox::currentIndexChanged),
     [this](int)
     {
-      if(!m_internalUpdate)
+      if(m_internalUpdate == 0)
         if(QVariant v = currentData(); v.canConvert<int>())
           m_property.setValueInt(v.toInt());
     });

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,20 +26,19 @@
 class InternalUpdateHolder
 {
   private:
-    bool& m_value;
+    size_t& m_value;
 
   public:
-    inline InternalUpdateHolder(bool& value) :
+    inline InternalUpdateHolder(size_t& value) :
       m_value{value}
     {
-      Q_ASSERT(!m_value);
-      m_value = true;
+      m_value++;
     }
 
     inline ~InternalUpdateHolder()
     {
-      Q_ASSERT(m_value);
-      m_value = false;
+      Q_ASSERT(m_value > 0);
+      m_value--;
     }
 };
 

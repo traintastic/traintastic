@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +27,7 @@
 PropertyCheckBox::PropertyCheckBox(Property& property, QWidget* parent) :
   QCheckBox(parent),
   m_property{property},
-  m_internalUpdate{false}
+  m_internalUpdate{0}
 {
   Q_ASSERT(m_property.type() == ValueType::Boolean);
   setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
@@ -59,7 +59,7 @@ PropertyCheckBox::PropertyCheckBox(Property& property, QWidget* parent) :
   connect(this, &PropertyCheckBox::toggled,
     [this](bool value)
     {
-      if(!m_internalUpdate)
+      if(m_internalUpdate == 0)
         m_property.setValueBool(value);
     });
 }
