@@ -1,5 +1,7 @@
 # Traintastic
 
+[![Build](https://github.com/traintastic/traintastic/actions/workflows/build.yml/badge.svg)](https://github.com/traintastic/traintastic/actions/workflows/build.yml)
+
 *Free and open source model railway control software*
 
 ## What is Traintastic?
