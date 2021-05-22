@@ -261,6 +261,7 @@ void Traintastic::load(const std::filesystem::path& path)
 
 void Traintastic::clientGone(const std::shared_ptr<Client>& client)
 {
+  m_clients.erase(std::find(m_clients.begin(), m_clients.end(), client));
 }
 
 void Traintastic::doReceive()
