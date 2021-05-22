@@ -94,9 +94,9 @@ void Client::doReadHeader()
               doReadData();
           }
           else if(e == boost::asio::error::eof || e == boost::asio::error::connection_aborted || e == boost::asio::error::connection_reset)
-            connectionLost();
+            EventLoop::call(&Client::connectionLost, this);
           else if(e != boost::asio::error::operation_aborted)
-            connectionError("readheader", e.message());
+            EventLoop::call(&Client::connectionError, this, "readheader", e);
         }));
 }
 
@@ -118,9 +118,9 @@ void Client::doReadData()
             doReadHeader();
           }
           else if(ec == boost::asio::error::eof || ec == boost::asio::error::connection_aborted || ec == boost::asio::error::connection_reset)
-            connectionLost();
+            EventLoop::call(&Client::connectionLost, this);
           else if(ec != boost::asio::error::operation_aborted)
-            connectionError("readdata", ec.message());
+            EventLoop::call(&Client::connectionError, this, "readdata", ec);
         }));
 }
 
@@ -138,7 +138,7 @@ void Client::doWrite()
             doWrite();
         }
         else if(ec != boost::asio::error::operation_aborted)
-          connectionError("write", ec.message());
+          EventLoop::call(&Client::connectionError, this, "write", ec);
       }));
 }
 
@@ -290,9 +290,9 @@ void Client::connectionLost()
   disconnect();
 }
 
-void Client::connectionError(const std::string& where, const std::string& what)
+void Client::connectionError(std::string_view where, boost::system::error_code ec)
 {
-  m_server.console->error(m_id, what + " [" + where + "]");
+  m_server.console->error(m_id, ec.message().append(" [").append(where).append("]"));
   disconnect();
 }
 

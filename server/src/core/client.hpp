@@ -73,7 +73,7 @@ class Client : public std::enable_shared_from_this<Client>
     void sendMessage(std::unique_ptr<Message> message);
 
     void connectionLost();
-    void connectionError(const std::string& where, const std::string& what);
+    void connectionError(std::string_view where, boost::system::error_code ec);
     void disconnect();
 
   public:
