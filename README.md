@@ -1,6 +1,6 @@
 # Traintastic
 
-[![Build](https://github.com/traintastic/traintastic/actions/workflows/build.yml/badge.svg)](https://github.com/traintastic/traintastic/actions/workflows/build.yml)
+[![Build](https://github.com/traintastic/traintastic/actions/workflows/build.yml/badge.svg)](https://github.com/traintastic/traintastic/actions/workflows/build.yml) ![GitHub](https://img.shields.io/github/license/traintastic/traintastic)
 
 *Free and open source model railway control software*
 
