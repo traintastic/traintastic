@@ -389,6 +389,15 @@ void LocoNet::queryLocoSlots()
   send(RequestSlotData(m_queryLocoSlots));
 }
 
+uint16_t LocoNet::getUnusedInputAddress() const
+{
+  const auto end = m_inputs.cend();
+  for(uint16_t address = LocoNetInput::addressMin; address < LocoNetInput::addressMax; address++)
+    if(m_inputs.find(address) == end)
+      return address;
+  return LocoNetInput::addressInvalid;
+}
+
 uint16_t LocoNet::getUnusedOutputAddress() const
 {
   const auto end = m_outputs.cend();

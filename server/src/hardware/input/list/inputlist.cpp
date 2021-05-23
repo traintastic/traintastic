@@ -34,7 +34,17 @@ InputList::InputList(Object& _parent, const std::string& parentPropertyName) :
       auto world = getWorld(&this->parent());
       if(!world)
         return std::shared_ptr<Input>();
-      return Inputs::create(world, classId, world->getUniqueId("input"));
+      auto input = Inputs::create(world, classId, world->getUniqueId("input"));
+      if(auto locoNetInput = std::dynamic_pointer_cast<LocoNetInput>(input); locoNetInput && world->loconets->length == 1)
+      {
+        auto& loconet = world->loconets->operator[](0);
+        if(uint16_t address = loconet->getUnusedInputAddress(); address != LocoNetInput::addressInvalid)
+        {
+          locoNetInput->address = address;
+          locoNetInput->loconet = loconet;
+        }
+      }
+      return input;
     }}
 {
   auto w = getWorld(&_parent);

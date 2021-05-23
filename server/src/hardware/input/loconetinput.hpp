@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,6 +43,7 @@ class LocoNetInput : public Input
     CLASS_ID("input.loconet")
     CREATE(LocoNetInput)
 
+    static constexpr uint16_t addressInvalid = 0;
     static constexpr uint16_t addressMin = 1;
     static constexpr uint16_t addressMax = 4096;
 

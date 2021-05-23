@@ -158,6 +158,7 @@ class LocoNet : public SubObject
 
     void queryLocoSlots();
 
+    uint16_t getUnusedInputAddress() const;
     uint16_t getUnusedOutputAddress() const;
 };
 
