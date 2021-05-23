@@ -27,7 +27,7 @@
 
 Output::Output(const std::weak_ptr<World> world, std::string_view _id) :
   IdObject(world, _id),
-  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
+  name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store},
   value{this, "value", TriState::Undefined, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
     [this](TriState _value)
     {
