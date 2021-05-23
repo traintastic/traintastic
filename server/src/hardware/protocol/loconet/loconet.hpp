@@ -39,8 +39,8 @@
 //#include <cassert>
 #include "../../../hardware/decoder/decoderchangeflags.hpp"
 #include "messages.hpp"
-#include "loconetinputmonitor.hpp"
-#include "loconetoutputkeyboard.hpp"
+#include "../../input/monitor/loconetinputmonitor.hpp"
+#include "../../output/keyboard/loconetoutputkeyboard.hpp"
 
 class CommandStation;
 class Decoder;

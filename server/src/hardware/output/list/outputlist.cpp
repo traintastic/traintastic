@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/inpu/inpulist.cpp
+ * server/src/hardware/output/list/outputlist.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -22,9 +22,9 @@
 
 #include "outputlist.hpp"
 #include "outputlisttablemodel.hpp"
-#include "outputs.hpp"
-#include "../../world/getworld.hpp"
-#include "../../core/attributes.hpp"
+#include "../outputs.hpp"
+#include "../../../world/getworld.hpp"
+#include "../../../core/attributes.hpp"
 
 OutputList::OutputList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<Output>(_parent, parentPropertyName),

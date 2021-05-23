@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/inpu/inpulist.hpp
+ * server/src/hardware/output/keyboard/loconetoutputkeyboard.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,28 +20,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTLIST_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_KEYBOARD_LOCONETOUTPUTKEYBOARD_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_KEYBOARD_LOCONETOUTPUTKEYBOARD_HPP
 
-#include "../../core/objectlist.hpp"
-#include "../../core/method.hpp"
-#include "inputlist.hpp"
-#include "input.hpp"
+#include "outputkeyboard.hpp"
 
-class InputList : public ObjectList<Input>
+namespace LocoNet {
+  class LocoNet;
+}
+
+class LocoNetOutputKeyboard final : public OutputKeyboard
 {
   protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
+    std::shared_ptr<LocoNet::LocoNet> m_loconet;
 
   public:
-    CLASS_ID("input_list")
+    CLASS_ID("output_keyboard.loconet")
 
-    Method<std::shared_ptr<Input>(std::string_view)> add;
+    LocoNetOutputKeyboard(std::shared_ptr<LocoNet::LocoNet> loconet);
+    ~LocoNetOutputKeyboard() final;
 
-    InputList(Object& _parent, const std::string& parentPropertyName);
+    std::string getObjectId() const final { return ""; }
 
-    TableModelPtr getModel() final;
+    std::vector<OutputInfo> getOutputInfo() const final;
+    void setOutputValue(uint32_t address, bool value) final;
 };
 
 #endif

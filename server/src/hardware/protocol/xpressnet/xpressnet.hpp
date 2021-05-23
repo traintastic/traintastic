@@ -29,7 +29,7 @@
 #include "../../../enum/xpressnetcommandstation.hpp"
 #include "../../../hardware/decoder/decoderchangeflags.hpp"
 #include "messages.hpp"
-#include "xpressnetinputmonitor.hpp"
+#include "../../input/monitor/xpressnetinputmonitor.hpp"
 
 class CommandStation;
 class Decoder;

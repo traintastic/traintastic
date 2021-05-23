@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/output/outputlisttablemodel.hpp
+ * server/src/hardware/output/list/outputlist.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,29 +20,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_OUTPUTLISTTABLEMODEL_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_OUTPUTLISTTABLEMODEL_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_LIST_OUTPUTLIST_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_LIST_OUTPUTLIST_HPP
 
-#include "../../core/objectlisttablemodel.hpp"
-#include "output.hpp"
+#include "../../../core/objectlist.hpp"
+#include "../../../core/method.hpp"
+#include "../output.hpp"
 
-class OutputList;
-
-class OutputListTableModel : public ObjectListTableModel<Output>
+class OutputList : public ObjectList<Output>
 {
-  friend class OutputList;
-
   protected:
-    void propertyChanged(AbstractProperty& property, uint32_t row) final;
+    void worldEvent(WorldState state, WorldEvent event) final;
+    bool isListedProperty(const std::string& name) final;
 
   public:
-    CLASS_ID("output_list_table_model")
+    CLASS_ID("list.output")
 
-    static bool isListedProperty(const std::string& name);
+    Method<std::shared_ptr<Output>(std::string_view)> add;
 
-    OutputListTableModel(OutputList& list);
+    OutputList(Object& _parent, const std::string& parentPropertyName);
 
-    std::string getText(uint32_t column, uint32_t row) const final;
+    TableModelPtr getModel() final;
 };
 
 #endif

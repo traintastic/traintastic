@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/inpu/outputlist.hpp
+ * server/src/hardware/input/list/inpulist.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,26 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_OUTPUTLIST_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_OUTPUTLIST_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_LIST_INPUTLIST_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INPUT_LIST_INPUTLIST_HPP
 
-#include "../../core/objectlist.hpp"
-#include "../../core/method.hpp"
-#include "outputlist.hpp"
-#include "output.hpp"
+#include "../../../core/objectlist.hpp"
+#include "../../../core/method.hpp"
+#include "../input.hpp"
 
-class OutputList : public ObjectList<Output>
+class InputList : public ObjectList<Input>
 {
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
     bool isListedProperty(const std::string& name) final;
 
   public:
-    CLASS_ID("list.output")
+    CLASS_ID("input_list")
 
-    Method<std::shared_ptr<Output>(std::string_view)> add;
+    Method<std::shared_ptr<Input>(std::string_view)> add;
 
-    OutputList(Object& _parent, const std::string& parentPropertyName);
+    InputList(Object& _parent, const std::string& parentPropertyName);
 
     TableModelPtr getModel() final;
 };

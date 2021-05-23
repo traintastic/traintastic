@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/inpu/inpulist.cpp
+ * server/src/hardware/input/list/inputlist.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,9 +22,9 @@
 
 #include "inputlist.hpp"
 #include "inputlisttablemodel.hpp"
-#include "inputs.hpp"
-#include "../../world/getworld.hpp"
-#include "../../core/attributes.hpp"
+#include "../inputs.hpp"
+#include "../../../world/getworld.hpp"
+#include "../../../core/attributes.hpp"
 
 InputList::InputList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<Input>(_parent, parentPropertyName),

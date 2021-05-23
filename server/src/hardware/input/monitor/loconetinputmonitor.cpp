@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/xpressnet/xpressnetinputmonitor.cpp
+ * server/src/hardware/input/monitor/loconetinputmonitor.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,31 +20,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "xpressnetinputmonitor.hpp"
-#include "xpressnet.hpp"
-#include "../../input/xpressnetinput.hpp"
+#include "loconetinputmonitor.hpp"
+#include "../../protocol/loconet/loconet.hpp"
+#include "../loconetinput.hpp"
 
-XpressNetInputMonitor::XpressNetInputMonitor(std::shared_ptr<XpressNet::XpressNet> xpressnet) :
+LocoNetInputMonitor::LocoNetInputMonitor(std::shared_ptr<LocoNet::LocoNet> loconet) :
   InputMonitor(),
-  m_xpressnet{std::move(xpressnet)}
+  m_loconet{std::move(loconet)}
 {
-  addressMin.setValueInternal(XpressNetInput::addressMin);
-  addressMax.setValueInternal(XpressNetInput::addressMax);
-  m_xpressnet->m_inputMonitors.emplace_back(this);
+  addressMin.setValueInternal(LocoNetInput::addressMin);
+  addressMax.setValueInternal(LocoNetInput::addressMax);
+  m_loconet->m_inputMonitors.emplace_back(this);
 }
 
-XpressNetInputMonitor::~XpressNetInputMonitor()
+LocoNetInputMonitor::~LocoNetInputMonitor()
 {
-  if(auto it = std::find(m_xpressnet->m_inputMonitors.begin(), m_xpressnet->m_inputMonitors.end(), this); it != m_xpressnet->m_inputMonitors.end())
-    m_xpressnet->m_inputMonitors.erase(it);
+  if(auto it = std::find(m_loconet->m_inputMonitors.begin(), m_loconet->m_inputMonitors.end(), this); it != m_loconet->m_inputMonitors.end())
+    m_loconet->m_inputMonitors.erase(it);
 }
 
-std::vector<InputMonitor::InputInfo> XpressNetInputMonitor::getInputInfo() const
+std::vector<InputMonitor::InputInfo> LocoNetInputMonitor::getInputInfo() const
 {
   std::vector<InputInfo> inputInfo;
-  for(auto it : m_xpressnet->m_inputs)
+  for(auto it : m_loconet->m_inputs)
   {
-    XpressNetInput& input = *(it.second);
+    LocoNetInput& input = *(it.second);
     InputInfo info(input.address, input.id, input.value);
     inputInfo.push_back(info);
   }

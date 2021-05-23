@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/input/inputlisttablemodel.cpp
+ * server/src/hardware/output/list/outputlisttablemodel.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,52 +20,52 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "inputlisttablemodel.hpp"
-#include "inputlist.hpp"
-#include "loconetinput.hpp"
+#include "outputlisttablemodel.hpp"
+#include "outputlist.hpp"
+#include "../loconetoutput.hpp"
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
 constexpr uint32_t columnBus = 2;
 constexpr uint32_t columnAddress = 3;
 
-bool InputListTableModel::isListedProperty(const std::string& name)
+bool OutputListTableModel::isListedProperty(const std::string& name)
 {
   return
     name == "id" ||
     name == "name";
 }
 
-InputListTableModel::InputListTableModel(InputList& list) :
-  ObjectListTableModel<Input>(list)
+OutputListTableModel::OutputListTableModel(OutputList& list) :
+  ObjectListTableModel<Output>(list)
 {
-  setColumnHeaders({"Id", "Name", "input_list:bus", "input_list:address"});
+  setColumnHeaders({"Id", "Name", "output_list:bus", "output_list:address"});
 }
 
-std::string InputListTableModel::getText(uint32_t column, uint32_t row) const
+std::string OutputListTableModel::getText(uint32_t column, uint32_t row) const
 {
   if(row < rowCount())
   {
-    const Input& input = getItem(row);
-    const LocoNetInput* inputLocoNet = dynamic_cast<const LocoNetInput*>(&input);
+    const Output& output = getItem(row);
+    const LocoNetOutput* outputLocoNet = dynamic_cast<const LocoNetOutput*>(&output);
 
     switch(column)
     {
       case columnId:
-        return input.id;
+        return output.id;
 
       case columnName:
-        return input.name;
+        return output.name;
 
-      case columnBus: // virtual method @ Input ??
-        if(inputLocoNet && inputLocoNet->loconet)
-          return inputLocoNet->loconet->getObjectId();
+      case columnBus: // virtual method @ Output ??
+        if(outputLocoNet && outputLocoNet->loconet)
+          return outputLocoNet->loconet->getObjectId();
         else
           return "";
 
-      case columnAddress: // virtual method @ Input ??
-        if(inputLocoNet)
-          return std::to_string(inputLocoNet->address);
+      case columnAddress: // virtual method @ Output ??
+        if(outputLocoNet)
+          return std::to_string(outputLocoNet->address);
         else
           return "";
 
@@ -78,7 +78,7 @@ std::string InputListTableModel::getText(uint32_t column, uint32_t row) const
   return "";
 }
 
-void InputListTableModel::propertyChanged(AbstractProperty& property, uint32_t row)
+void OutputListTableModel::propertyChanged(AbstractProperty& property, uint32_t row)
 {
   if(property.name() == "id")
     changed(row, columnId);

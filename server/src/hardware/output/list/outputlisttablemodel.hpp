@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/loconet/loconetinputmonitor.hpp
+ * server/src/hardware/output/list/outputlisttablemodel.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,29 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_LOCONETINPUTMONITOR_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_LOCONETINPUTMONITOR_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_LIST_OUTPUTLISTTABLEMODEL_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_LIST_OUTPUTLISTTABLEMODEL_HPP
 
-#include "../../input/inputmonitor.hpp"
+#include "../../../core/objectlisttablemodel.hpp"
+#include "../output.hpp"
 
-namespace LocoNet {
-  class LocoNet;
-}
+class OutputList;
 
-class LocoNetInputMonitor final : public InputMonitor
+class OutputListTableModel : public ObjectListTableModel<Output>
 {
+  friend class OutputList;
+
   protected:
-    std::shared_ptr<LocoNet::LocoNet> m_loconet;
+    void propertyChanged(AbstractProperty& property, uint32_t row) final;
 
   public:
-    CLASS_ID("input_monitor.loconet")
+    CLASS_ID("output_list_table_model")
 
-    LocoNetInputMonitor(std::shared_ptr<LocoNet::LocoNet> loconet);
-    ~LocoNetInputMonitor() final;
+    static bool isListedProperty(const std::string& name);
 
-    std::string getObjectId() const final { return ""; }
+    OutputListTableModel(OutputList& list);
 
-    std::vector<InputInfo> getInputInfo() const final;
+    std::string getText(uint32_t column, uint32_t row) const final;
 };
 
 #endif

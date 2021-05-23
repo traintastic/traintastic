@@ -35,7 +35,7 @@
 #include "../world/world.hpp"
 #include "idobject.hpp"
 #include "subobject.hpp"
-#include "../hardware/input/inputmonitor.hpp"
+#include "../hardware/input/monitor/inputmonitor.hpp"
 #include "../hardware/output/map/outputmap.hpp"
 #include "../hardware/output/map/outputmapitem.hpp"
 #include "../board/board.hpp"

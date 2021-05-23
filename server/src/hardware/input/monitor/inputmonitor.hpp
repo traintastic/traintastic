@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/input/inputmonitor.hpp
+ * server/src/hardware/input/monitor/inputmonitor.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,13 +20,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTMONITOR_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTMONITOR_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_MONITOR_INPUTMONITOR_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INPUT_MONITOR_INPUTMONITOR_HPP
 
-#include "../../core/object.hpp"
+#include "../../../core/object.hpp"
 #include <vector>
-#include "../../core/property.hpp"
-#include "../../enum/tristate.hpp"
+#include "../../../core/property.hpp"
+#include "../../../enum/tristate.hpp"
 
 class InputMonitor : public Object
 {

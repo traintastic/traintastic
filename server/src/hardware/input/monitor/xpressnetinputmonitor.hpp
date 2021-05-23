@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/xpressnet/xpressnetinputmonitor.hpp
+ * server/src/hardware/input/monitor/xpressnetinputmonitor.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,10 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_XPRESSNETINPUTMONITOR_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_XPRESSNETINPUTMONITOR_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_MONITOR_XPRESSNETINPUTMONITOR_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INPUT_MONITOR_XPRESSNETINPUTMONITOR_HPP
 
-#include "../../input/inputmonitor.hpp"
+#include "inputmonitor.hpp"
 
 namespace XpressNet {
   class XpressNet;
