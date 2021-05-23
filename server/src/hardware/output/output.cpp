@@ -44,6 +44,7 @@ Output::Output(const std::weak_ptr<World> world, std::string_view _id) :
   Attributes::addDisplayName(name, "object:name");
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
+  Attributes::addObjectEditor(value, false);
   Attributes::addValues(value, TriStateValues);
   m_interfaceItems.add(value);
 }
