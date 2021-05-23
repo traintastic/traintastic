@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,7 +34,17 @@ OutputList::OutputList(Object& _parent, const std::string& parentPropertyName) :
       auto world = getWorld(&this->parent());
       if(!world)
         return std::shared_ptr<Output>();
-      return Outputs::create(world, classId, world->getUniqueId("output"));
+      auto output = Outputs::create(world, classId, world->getUniqueId("output"));
+      if(auto locoNetOutput = std::dynamic_pointer_cast<LocoNetOutput>(output); locoNetOutput && world->loconets->length == 1)
+      {
+        auto& loconet = world->loconets->operator[](0);
+        if(uint16_t address = loconet->getUnusedOutputAddress(); address != LocoNetOutput::addressInvalid)
+        {
+          locoNetOutput->address = address;
+          locoNetOutput->loconet = loconet;
+        }
+      }
+      return output;
     }}
 {
   auto w = getWorld(&_parent);

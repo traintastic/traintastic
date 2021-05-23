@@ -157,6 +157,8 @@ class LocoNet : public SubObject
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 
     void queryLocoSlots();
+
+    uint16_t getUnusedOutputAddress() const;
 };
 
 }

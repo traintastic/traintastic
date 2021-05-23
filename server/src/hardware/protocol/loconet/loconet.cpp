@@ -389,6 +389,15 @@ void LocoNet::queryLocoSlots()
   send(RequestSlotData(m_queryLocoSlots));
 }
 
+uint16_t LocoNet::getUnusedOutputAddress() const
+{
+  const auto end = m_outputs.cend();
+  for(uint16_t address = LocoNetOutput::addressMin; address < LocoNetOutput::addressMax; address++)
+    if(m_outputs.find(address) == end)
+      return address;
+  return LocoNetOutput::addressInvalid;
+}
+
 std::shared_ptr<Decoder> LocoNet::getDecoder(uint8_t slot, bool request)
 {
   if(slot < SLOT_LOCO_MIN || slot > SLOT_LOCO_MAX)
