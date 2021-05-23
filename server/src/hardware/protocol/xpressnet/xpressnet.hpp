@@ -73,6 +73,7 @@ class XpressNet : public SubObject
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 
     [[nodiscard]] bool isInputAddressAvailable(uint16_t address) const;
+    uint16_t getUnusedInputAddress() const;
     [[nodiscard]] bool changeInputAddress(XpressNetInput& input, uint16_t newAddress);
     [[nodiscard]] bool addInput(XpressNetInput& input);
     void removeInput(XpressNetInput& input);

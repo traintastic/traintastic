@@ -328,6 +328,15 @@ bool XpressNet::isInputAddressAvailable(uint16_t address) const
   return m_inputs.find(address) == m_inputs.end();
 }
 
+uint16_t XpressNet::getUnusedInputAddress() const
+{
+  const auto end = m_inputs.cend();
+  for(uint16_t address = XpressNetInput::addressMin; address < XpressNetInput::addressMax; address++)
+    if(m_inputs.find(address) == end)
+      return address;
+  return XpressNetInput::addressInvalid;
+}
+
 bool XpressNet::changeInputAddress(XpressNetInput& input, uint16_t newAddress)
 {
   assert(input.xpressnet.value().get() == this);

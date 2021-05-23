@@ -43,6 +43,7 @@ class XpressNetInput : public Input
     CLASS_ID("input.xpressnet")
     CREATE(XpressNetInput)
 
+    static constexpr uint16_t addressInvalid = 0;
     static constexpr uint16_t addressMin = 1;
     static constexpr uint16_t addressMax = 2048;
 

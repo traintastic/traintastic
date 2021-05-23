@@ -44,6 +44,15 @@ InputList::InputList(Object& _parent, const std::string& parentPropertyName) :
           locoNetInput->loconet = loconet;
         }
       }
+      else if(auto xpressNetInput = std::dynamic_pointer_cast<XpressNetInput>(input); xpressNetInput && world->xpressnets->length == 1)
+      {
+        auto& xpressnet = world->xpressnets->operator[](0);
+        if(uint16_t address = xpressnet->getUnusedInputAddress(); address != XpressNetInput::addressInvalid)
+        {
+          xpressNetInput->address = address;
+          xpressNetInput->xpressnet = xpressnet;
+        }
+      }
       return input;
     }}
 {
