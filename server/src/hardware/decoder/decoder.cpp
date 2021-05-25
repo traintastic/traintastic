@@ -105,6 +105,10 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
   functions.setValueInternal(std::make_shared<DecoderFunctionList>(*this, functions.name()));
 
   auto w = world.lock();
+
+  m_worldMute = contains(w->state.value(), WorldState::Mute);
+  m_worldNoSmoke = contains(w->state.value(), WorldState::NoSmoke);
+
 //  const bool editable = w && contains(w->state.value(), WorldState::Edit) && speedStep == 0;
 
   Attributes::addDisplayName(name, "object:name");
@@ -150,10 +154,36 @@ const std::shared_ptr<DecoderFunction>& Decoder::getFunction(uint32_t number) co
   return DecoderFunction::null;
 }
 
+const std::shared_ptr<DecoderFunction>& Decoder::getFunction(DecoderFunctionType type) const
+{
+  for(auto& f : *functions)
+    if(f->type == type)
+      return f;
+
+  return DecoderFunction::null;
+}
+
 bool Decoder::getFunctionValue(uint32_t number) const
 {
   const auto& f = getFunction(number);
-  return f && f->value;
+  if(!f)
+    return false;
+
+  // Apply mute/noSmoke world states:
+  if(m_worldMute)
+  {
+    if(f->type == DecoderFunctionType::Mute)
+      return true;
+    else if(f->type == DecoderFunctionType::Sound && !getFunction(DecoderFunctionType::Mute))
+      return false;
+  }
+  if(m_worldNoSmoke)
+  {
+    if(f->type == DecoderFunctionType::Smoke)
+      return false;
+  }
+
+  return f->value;
 }
 
 void Decoder::setFunctionValue(uint32_t number, bool value)
@@ -167,6 +197,36 @@ void Decoder::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);
   updateEditable(contains(state, WorldState::Edit));
+
+  // Handle mute/noSmoke world states:
+  m_worldMute = contains(state, WorldState::Mute);
+  m_worldNoSmoke = contains(state, WorldState::NoSmoke);
+
+  if(event == WorldEvent::Mute || event == WorldEvent::Unmute)
+  {
+    bool hasMute = false;
+
+    for(auto& f : *functions)
+      if(f->type == DecoderFunctionType::Mute)
+      {
+        if(!f->value)
+          changed(DecoderChangeFlags::FunctionValue, f->number);
+        hasMute = true;
+      }
+
+    if(!hasMute)
+    {
+      for(auto& f : *functions)
+        if(f->type == DecoderFunctionType::Sound && f->value)
+          changed(DecoderChangeFlags::FunctionValue, f->number);
+    }
+  }
+  else if(event == WorldEvent::NoSmoke || event == WorldEvent::Smoke)
+  {
+    for(auto& f : *functions)
+      if(f->type == DecoderFunctionType::Smoke && f->value)
+        changed(DecoderChangeFlags::FunctionValue, f->number);
+  }
 }
 
 void Decoder::updateEditable()

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,6 +38,10 @@ class Decoder : public IdObject
 {
   friend class DecoderFunction;
 
+  private:
+    bool m_worldMute;
+    bool m_worldNoSmoke;
+
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
     void updateEditable();
@@ -66,6 +70,7 @@ class Decoder : public IdObject
 
     void addToWorld() final;
     const std::shared_ptr<DecoderFunction>& getFunction(uint32_t number) const;
+    const std::shared_ptr<DecoderFunction>& getFunction(DecoderFunctionType type) const;
     bool getFunctionValue(uint32_t number) const;
     void setFunctionValue(uint32_t number, bool value);
 };
