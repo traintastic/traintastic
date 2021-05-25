@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "enum.hpp"
 #include "../network/abstractproperty.hpp"
 #include <traintastic/locale/locale.hpp>
+#include <traintastic/enum/decoderfunctiontype.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/lengthunit.hpp>
@@ -63,6 +64,7 @@ QVector<qint64> enumValues(const QString& enumName)
 
 QString translateEnum(const QString& enumName, qint64 value)
 {
+  TRANSLATE_ENUM(DecoderFunctionType)
   TRANSLATE_ENUM(DecoderProtocol)
   TRANSLATE_ENUM(Direction)
   TRANSLATE_ENUM(LengthUnit)

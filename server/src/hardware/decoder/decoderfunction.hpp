@@ -25,6 +25,7 @@
 
 #include "../../core/idobject.hpp"
 #include "../../core/objectproperty.hpp"
+#include "../../enum/decoderfunctiontype.hpp"
 
 class Decoder;
 
@@ -46,6 +47,7 @@ class DecoderFunction : public IdObject
 
     Property<uint8_t> number;
     Property<std::string> name;
+    Property<DecoderFunctionType> type;
     Property<bool> value;
 
     DecoderFunction(Decoder& decoder, std::string_view _id);

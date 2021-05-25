@@ -38,6 +38,7 @@ DecoderFunction::DecoderFunction(Decoder& decoder, std::string_view _id) :
   m_decoder{decoder},
   number{this, "number", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
+  type{this, "type", DecoderFunctionType::OnOff, PropertyFlags::ReadWrite | PropertyFlags::Store},
   value{this, "value", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
     [this](bool)
     {
@@ -52,6 +53,9 @@ DecoderFunction::DecoderFunction(Decoder& decoder, std::string_view _id) :
   Attributes::addDisplayName(name, "object:name");
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
+  Attributes::addEnabled(type, editable);
+  Attributes::addValues(type, decoderFunctionTypeValues);
+  m_interfaceItems.add(type);
   m_interfaceItems.add(value);
 }
 
@@ -70,4 +74,5 @@ void DecoderFunction::worldEvent(WorldState state, WorldEvent event)
 
   number.setAttributeEnabled(editable);
   name.setAttributeEnabled(editable);
+  type.setAttributeEnabled(editable);
 }
