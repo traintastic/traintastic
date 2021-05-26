@@ -29,7 +29,7 @@ InterfaceItemNameLabel::InterfaceItemNameLabel(InterfaceItem& item, QWidget* par
 {
   setVisible(m_item.getAttributeBool(AttributeName::Visible, true));
   setText(m_item.displayName());
-  connect(&m_item, &InterfaceItem::attributeChanged,
+  connect(&m_item, &InterfaceItem::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
       switch(name)

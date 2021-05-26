@@ -90,12 +90,12 @@ ObjectSelectListDialog::ObjectSelectListDialog(InterfaceItem& item, QWidget* par
 
               m_tableWidget->setTableModel(tableModel);
               m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-              connect(m_tableWidget->selectionModel(), &QItemSelectionModel::selectionChanged,
+              connect(m_tableWidget->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                 [this](const QItemSelection&, const QItemSelection&)
                 {
                   m_buttons->button(QDialogButtonBox::Ok)->setEnabled(m_tableWidget->selectionModel()->selectedRows().count() == 1);
                 });
-              connect(m_tableWidget, &TableWidget::doubleClicked,
+              connect(m_tableWidget, &TableWidget::doubleClicked, this,
                 [this](const QModelIndex& index)
                 {
                   acceptRow(index.row());

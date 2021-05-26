@@ -35,7 +35,7 @@ UnitPropertyEdit::UnitPropertyEdit(UnitProperty& property, QWidget *parent) :
 {
   setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
   setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
-  connect(&m_property, &UnitProperty::attributeChanged,
+  connect(&m_property, &UnitProperty::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
       switch(name)
@@ -52,7 +52,7 @@ UnitPropertyEdit::UnitPropertyEdit(UnitProperty& property, QWidget *parent) :
           break;
       }
     });
-  connect(&m_property, &UnitProperty::valueChanged,
+  connect(&m_property, &UnitProperty::valueChanged, this,
     [this]()
     {
       m_valueLineEdit->setText(m_property.toString());
@@ -80,7 +80,7 @@ UnitPropertyEdit::UnitPropertyEdit(UnitProperty& property, QWidget *parent) :
       m_unitComboBox->setCurrentIndex(m_unitComboBox->count() - 1);
   }
   l->addWidget(m_unitComboBox);
-  connect(m_unitComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+  connect(m_unitComboBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
     [this](int)
     {
       if(QVariant v = m_unitComboBox->currentData(); v.canConvert<qint64>())

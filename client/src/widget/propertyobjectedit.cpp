@@ -39,7 +39,7 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
 {
   bool enabled = m_property.getAttributeBool(AttributeName::Enabled, true);
   bool visible = m_property.getAttributeBool(AttributeName::Visible, true);
-  connect(&m_property, &ObjectProperty::attributeChanged,
+  connect(&m_property, &ObjectProperty::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
       switch(name)
@@ -60,7 +60,7 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
           break;
       }
     });
-  connect(&m_property, &ObjectProperty::valueChanged,
+  connect(&m_property, &ObjectProperty::valueChanged, this,
     [this]()
     {
       m_editButton->setEnabled(!m_property.objectId().isEmpty());
@@ -80,7 +80,7 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
     m_changeButton->setEnabled(enabled);
     m_changeButton->setVisible(visible);
     m_changeButton->setText("...");
-    connect(m_changeButton, &QToolButton::clicked,
+    connect(m_changeButton, &QToolButton::clicked, this,
       [this]()
       {
         std::make_unique<ObjectSelectListDialog>(m_property, this)->exec();
@@ -90,7 +90,7 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
 
   m_editButton->setIcon(QIcon(":/dark/edit.svg"));
   m_editButton->setEnabled(!m_property.objectId().isEmpty());
-  connect(m_editButton, &QToolButton::clicked,
+  connect(m_editButton, &QToolButton::clicked, this,
     [this]()
     {
       if(!m_property.objectId().isEmpty())

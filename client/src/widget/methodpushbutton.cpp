@@ -32,7 +32,7 @@ MethodPushButton::MethodPushButton(Method& method, QWidget* parent) :
 {
   setEnabled(m_method.getAttributeBool(AttributeName::Enabled, true));
   setVisible(m_method.getAttributeBool(AttributeName::Visible, true));
-  connect(&m_method, &Method::attributeChanged,
+  connect(&m_method, &Method::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
       switch(name)

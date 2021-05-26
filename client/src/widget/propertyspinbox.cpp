@@ -33,7 +33,7 @@ PropertySpinBox::PropertySpinBox(AbstractProperty& property, QWidget* parent) :
   setRange(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
   setValue(m_property.toInt());
   connect(&m_property, &AbstractProperty::valueChangedInt, this, &PropertySpinBox::setValue);
-  connect(&m_property, &AbstractProperty::attributeChanged,
+  connect(&m_property, &AbstractProperty::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
       switch(name)

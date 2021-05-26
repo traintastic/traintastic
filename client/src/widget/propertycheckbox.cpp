@@ -33,13 +33,13 @@ PropertyCheckBox::PropertyCheckBox(Property& property, QWidget* parent) :
   setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
   setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
   setChecked(m_property.toBool());
-  connect(&m_property, &Property::valueChangedBool,
+  connect(&m_property, &Property::valueChangedBool, this,
     [this](bool value)
     {
       InternalUpdateHolder hold(m_internalUpdate);
       setChecked(value);
     });
-  connect(&m_property, &Property::attributeChanged,
+  connect(&m_property, &Property::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
       switch(name)

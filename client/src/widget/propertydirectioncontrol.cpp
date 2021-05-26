@@ -48,7 +48,7 @@ PropertyDirectionControl::PropertyDirectionControl(Property& property, QWidget* 
 
   setValue(m_property.toInt64());
   connect(&m_property, &Property::valueChangedInt64, this, &PropertyDirectionControl::setValue);
-  connect(&m_property, &Property::attributeChanged,
+  connect(&m_property, &Property::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
       switch(name)

@@ -62,7 +62,7 @@ SettingsDialog::SettingsDialog(QWidget* parent) :
         cb->setCurrentIndex(cb->count() - 1);
     }
   }
-  connect(cb, QOverload<int>::of(&QComboBox::currentIndexChanged),
+  connect(cb, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
     [cb](int index)
     {
       QSettings().setValue("language", cb->itemData(index));

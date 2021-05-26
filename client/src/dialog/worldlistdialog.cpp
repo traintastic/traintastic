@@ -45,7 +45,8 @@ WorldListDialog::WorldListDialog(std::shared_ptr<Connection> connection, QWidget
   m_buttons->setStandardButtons(QDialogButtonBox::Open | QDialogButtonBox::Cancel);
   m_buttons->button(QDialogButtonBox::Open)->setText(Locale::tr("qtapp.world_list_dialog:load"));
   m_buttons->button(QDialogButtonBox::Open)->setEnabled(false);
-  connect(m_buttons->button(QDialogButtonBox::Open), &QPushButton::clicked, [this]()
+  connect(m_buttons->button(QDialogButtonBox::Open), &QPushButton::clicked, this,
+    [this]()
     {
       m_uuid = m_tableWidget->getRowObjectId(m_tableWidget->selectionModel()->selectedIndexes().first().row());
       accept();
@@ -79,12 +80,12 @@ WorldListDialog::WorldListDialog(std::shared_ptr<Connection> connection, QWidget
 
               m_tableWidget->setTableModel(tableModel);
               m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-              connect(m_tableWidget->selectionModel(), &QItemSelectionModel::selectionChanged,
+              connect(m_tableWidget->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                 [this](const QItemSelection&, const QItemSelection&)
                 {
                   m_buttons->button(QDialogButtonBox::Open)->setEnabled(m_tableWidget->selectionModel()->selectedRows().count() == 1);
                 });
-              connect(m_tableWidget, &TableWidget::doubleClicked,
+              connect(m_tableWidget, &TableWidget::doubleClicked, this,
                 [this](const QModelIndex& index)
                 {
                   m_uuid = m_tableWidget->getRowObjectId(index.row());

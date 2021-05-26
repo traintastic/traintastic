@@ -33,7 +33,7 @@ PropertyDoubleSpinBox::PropertyDoubleSpinBox(AbstractProperty& property, QWidget
   setRange(-std::numeric_limits<double>::max(), std::numeric_limits<double>::max());
   setValue(m_property.toDouble());
   connect(&m_property, &AbstractProperty::valueChangedDouble, this, &PropertyDoubleSpinBox::setValue);
-  connect(&m_property, &AbstractProperty::attributeChanged,
+  connect(&m_property, &AbstractProperty::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
       switch(name)

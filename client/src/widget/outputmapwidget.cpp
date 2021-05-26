@@ -55,7 +55,7 @@ OutputMapWidget::OutputMapWidget(std::shared_ptr<OutputMap> object, QWidget* par
         std::make_unique<ObjectSelectListDialog>(*method, this)->exec();
       });
     act->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
-    connect(method, &Method::attributeChanged,
+    connect(method, &Method::attributeChanged, this,
       [this, act](AttributeName name, QVariant value)
       {
         if(name == AttributeName::Enabled)

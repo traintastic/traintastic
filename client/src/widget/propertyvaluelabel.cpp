@@ -30,12 +30,12 @@ PropertyValueLabel::PropertyValueLabel(Property& property, QWidget* parent) :
   setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
   setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
   setText(m_property.toString());
-  connect(&m_property, &Property::valueChanged,
+  connect(&m_property, &Property::valueChanged, this,
     [this]()
     {
       setText(m_property.toString());
     });
-  connect(&m_property, &Property::attributeChanged,
+  connect(&m_property, &Property::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
       switch(name)

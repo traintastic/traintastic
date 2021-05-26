@@ -80,7 +80,7 @@ void LuaScriptEditWidget::buildForm()
       m_methodStart->call();
     });
   m_start->setEnabled(m_methodStart->getAttributeBool(AttributeName::Enabled, true));
-  connect(m_methodStart, &Method::attributeChanged,
+  connect(m_methodStart, &Method::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
       if(name == AttributeName::Enabled)
@@ -93,7 +93,7 @@ void LuaScriptEditWidget::buildForm()
       m_methodStop->call();
     });
   m_stop->setEnabled(m_methodStop->getAttributeBool(AttributeName::Enabled, true));
-  connect(m_methodStop, &Method::attributeChanged,
+  connect(m_methodStop, &Method::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
       if(name == AttributeName::Enabled)

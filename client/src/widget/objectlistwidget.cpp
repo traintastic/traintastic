@@ -102,7 +102,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
             });
         });
       m_actionAdd->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
-      connect(method, &Method::attributeChanged,
+      connect(method, &Method::attributeChanged, this,
         [this](AttributeName name, QVariant value)
         {
           if(name == AttributeName::Enabled)
@@ -147,7 +147,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
       m_toolbar->addWidget(m_buttonAdd);
 
       m_buttonAdd->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
-      connect(method, &Method::attributeChanged,
+      connect(method, &Method::attributeChanged, this,
         [this](AttributeName name, QVariant value)
         {
           if(name == AttributeName::Enabled)

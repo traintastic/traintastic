@@ -175,7 +175,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
         {
           actions[0]->setCheckable(true);
           m_toolbarEdit->addAction(m_editActions->addAction(actions[0]));
-          connect(actions[0], &QAction::triggered,
+          connect(actions[0], &QAction::triggered, this,
             [this, action=actions[0]]()
             {
               validRotate(m_editRotate, tileInfo[action->data().toInt()].rotates);
@@ -190,7 +190,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
           for(auto subAction : actions)
           {
             m->addAction(subAction);
-            connect(subAction, &QAction::triggered,
+            connect(subAction, &QAction::triggered, this,
               [this, action, subAction]()
               {
                 action->setIcon(subAction->icon());
@@ -236,12 +236,12 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
 
   m_object->getTileData();
 
-  connect(m_object.get(), &Board::tileDataChanged, [this](){ m_boardArea->update(); });
+  connect(m_object.get(), &Board::tileDataChanged, this, [this](){ m_boardArea->update(); });
   connect(m_boardArea, &BoardAreaWidget::gridChanged, this, &BoardWidget::gridChanged);
   connect(m_boardArea, &BoardAreaWidget::zoomLevelChanged, this, &BoardWidget::zoomLevelChanged);
   connect(m_boardArea, &BoardAreaWidget::tileClicked, this, &BoardWidget::tileClicked);
   connect(m_boardArea, &BoardAreaWidget::rightClicked, this, &BoardWidget::rightClicked);
-  connect(m_boardArea, &BoardAreaWidget::mouseTileLocationChanged,
+  connect(m_boardArea, &BoardAreaWidget::mouseTileLocationChanged, this,
     [this](int16_t x, int16_t y)
     {
       m_statusBarCoords->setText(QString::number(x) + ", " + QString::number(y));

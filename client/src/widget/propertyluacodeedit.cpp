@@ -37,13 +37,13 @@ PropertyLuaCodeEdit::PropertyLuaCodeEdit(Property& property, QWidget* parent) :
   setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
   new Highlighter(document());
   setPlainText(m_property.toString());
-  connect(&m_property, &Property::valueChangedString,
+  connect(&m_property, &Property::valueChangedString, this,
     [this](const QString& value)
     {
       if(toPlainText() != value)
         setPlainText(value);
     });
-  connect(&m_property, &Property::attributeChanged,
+  connect(&m_property, &Property::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
       switch(name)

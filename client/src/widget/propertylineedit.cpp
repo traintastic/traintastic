@@ -32,7 +32,7 @@ PropertyLineEdit::PropertyLineEdit(Property& property, QWidget* parent) :
   setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
   setText(m_property.toString());
   connect(&m_property, &Property::valueChangedString, this, &PropertyLineEdit::setText);
-  connect(&m_property, &Property::attributeChanged,
+  connect(&m_property, &Property::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
       switch(name)

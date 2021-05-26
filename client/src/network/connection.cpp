@@ -1000,7 +1000,7 @@ void Connection::socketConnected()
               message->read(m_sessionUUID);
               m_traintastic = readObject(*message);
               m_worldProperty = dynamic_cast<ObjectProperty*>(m_traintastic->getProperty("world"));
-              connect(m_worldProperty, &ObjectProperty::valueChanged,
+              connect(m_worldProperty, &ObjectProperty::valueChanged, this,
                 [this]()
                 {
                   getWorld();

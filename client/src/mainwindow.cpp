@@ -257,7 +257,7 @@ MainWindow::MainWindow(QWidget* parent) :
   m_worldOnlineOfflineToolButton->setIcon(QIcon(":/dark/offline.svg"));
   m_worldOnlineOfflineToolButton->setToolTip(Locale::tr("qtapp:toggle_offline_online"));
   m_worldOnlineOfflineToolButton->setPopupMode(QToolButton::MenuButtonPopup);
-  connect(m_worldOnlineOfflineToolButton, &QToolButton::clicked,
+  connect(m_worldOnlineOfflineToolButton, &QToolButton::clicked, this,
     [this]()
     {
       if(Q_LIKELY(m_world))
@@ -272,7 +272,7 @@ MainWindow::MainWindow(QWidget* parent) :
   m_worldPowerOnOffToolButton->setIcon(QIcon(":/dark/power_off.svg"));
   m_worldPowerOnOffToolButton->setToolTip(Locale::tr("qtapp:toggle_power"));
   m_worldPowerOnOffToolButton->setPopupMode(QToolButton::MenuButtonPopup);
-  connect(m_worldPowerOnOffToolButton, &QToolButton::clicked,
+  connect(m_worldPowerOnOffToolButton, &QToolButton::clicked, this,
     [this]()
     {
       if(Q_LIKELY(m_world))
@@ -337,7 +337,7 @@ void MainWindow::connectToServer(const QString& url)
   if(d->exec() == QDialog::Accepted)
   {
     m_connection = d->connection();
-    connect(m_connection.get(), &Connection::worldChanged,
+    connect(m_connection.get(), &Connection::worldChanged, this,
       [this]()
       {
         worldChanged();

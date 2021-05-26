@@ -30,7 +30,7 @@ PropertyTextEdit::PropertyTextEdit(Property& property, QWidget* parent) :
   Q_ASSERT(m_property.type() == ValueType::String);
   setPlainText(m_property.toString());
   connect(&m_property, &Property::valueChangedString, this, &PropertyTextEdit::setPlainText);
-  connect(&m_property, &Property::attributeChanged,
+  connect(&m_property, &Property::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
       switch(name)
