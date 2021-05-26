@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,6 +50,8 @@ DecoderFunctionList::DecoderFunctionList(Object& _parent, const std::string& par
       auto function = DecoderFunction::create(decoder, id);
       function->name = "F" + std::to_string(number);
       function->number = number;
+      if(number == 0) // F0 is (almost) always the light function
+        function->type = DecoderFunctionType::Light;
       addObject(function);
 
       return function;
