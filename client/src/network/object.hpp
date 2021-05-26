@@ -47,7 +47,6 @@ class Object : public QObject
   public:
     explicit Object(std::shared_ptr<Connection> connection, Handle handle, const QString& classId);
     Object(const Object&) = delete;
-    ~Object() override;
 
     const std::shared_ptr<Connection>& connection() const { return m_connection; }
     Handle handle() const { return m_handle; }

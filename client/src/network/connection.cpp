@@ -136,16 +136,6 @@ int Connection::getObject(const QString& id, std::function<void(const ObjectPtr&
   return request->requestId();
 }
 
-void Connection::releaseObject(Object* object)
-{
-  Q_ASSERT(object);
-  m_objects.remove(object->handle());
-  auto event = Message::newEvent(Message::Command::ReleaseObject, sizeof(object->m_handle));
-  event->write(object->m_handle);
-  send(event);
-  object->m_handle = invalidHandle;
-}
-
 void Connection::setPropertyBool(Property& property, bool value)
 {
   auto event = Message::newEvent(Message::Command::ObjectSetProperty);
@@ -399,18 +389,51 @@ ObjectPtr Connection::readObject(const Message& message)
   ObjectPtr obj = m_objects.value(handle).lock(); // try get object by handle
   if(!obj)
   {
-    const QString classId = QString::fromLatin1(message.read<QByteArray>());
-    if(classId.startsWith(InputMonitor::classIdPrefix))
-      obj = std::make_shared<InputMonitor>(shared_from_this(), handle, classId);
-    else if(classId.startsWith(OutputKeyboard::classIdPrefix))
-      obj = std::make_shared<OutputKeyboard>(shared_from_this(), handle, classId);
-    else if(classId.startsWith(OutputMap::classIdPrefix))
-      obj = std::make_shared<OutputMap>(shared_from_this(), handle, classId);
-    else if(classId == Board::classId)
-      obj = std::make_shared<Board>(shared_from_this(), handle, classId);
-    else
-      obj = std::make_shared<Object>(shared_from_this(), handle, classId);
+    {
+      Object* p;
+
+      if(auto it = m_requestForRelease.find(handle); it != m_requestForRelease.end())
+      {
+        // object not yet released, reuse it.
+        p = it->second.release();
+        m_requestForRelease.erase(it);
+        m_handleCounter[handle]++;
+      }
+      else
+      {
+        const QString classId = QString::fromLatin1(message.read<QByteArray>());
+        if(classId.startsWith(InputMonitor::classIdPrefix))
+          p = new InputMonitor(shared_from_this(), handle, classId);
+        else if(classId.startsWith(OutputKeyboard::classIdPrefix))
+          p = new OutputKeyboard(shared_from_this(), handle, classId);
+        else if(classId.startsWith(OutputMap::classIdPrefix))
+          p = new OutputMap(shared_from_this(), handle, classId);
+        else if(classId == Board::classId)
+          p = new Board(shared_from_this(), handle, classId);
+        else
+          p = new Object(shared_from_this(), handle, classId);
+
+        m_handleCounter[handle] = 1;
+      }
+
+      obj = std::shared_ptr<Object>(p,
+        [this](Object* object)
+        {
+          // try to release object, if it succeeds the server send a ReleaseObject message else nothing
+          // release will fail if handle counters don't match, which means that the is a handle "on the wire"
+          m_objects.remove(handle);
+          m_requestForRelease.emplace(object->m_handle, std::unique_ptr<Object>(object));
+
+          auto event = Message::newEvent(Message::Command::ReleaseObject, sizeof(object->m_handle));
+          event->write(object->m_handle);
+          event->write(m_handleCounter[object->m_handle]);
+          send(event);
+        });
+    }
     m_objects[handle] = obj;
+
+    if(m_handleCounter[handle] > 1) // object was still in memory
+      return obj;
 
     message.readBlock(); // items
     while(!message.endOfBlock())
@@ -590,6 +613,8 @@ ObjectPtr Connection::readObject(const Message& message)
     }
     message.readBlockEnd(); // end items
   }
+  else
+    m_handleCounter[handle]++;
 
   message.readBlockEnd(); // end object
 
@@ -663,6 +688,13 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
   {
     switch(message->command())
     {
+      case Message::Command::ReleaseObject:
+      {
+        Handle handle = message->read<Handle>();
+        m_handleCounter.erase(handle);
+        m_requestForRelease.erase(handle);
+        break;
+      }
       case Message::Command::ObjectPropertyChanged:
         if(ObjectPtr object = m_objects.value(message->read<Handle>()).lock())
         {

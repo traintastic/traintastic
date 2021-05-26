@@ -33,12 +33,6 @@ Object::Object(std::shared_ptr<Connection> connection, Handle handle, const QStr
 {
 }
 
-Object::~Object()
-{
-  if(m_connection)
-    m_connection->releaseObject(this);
-}
-
 const InterfaceItem* Object::getInterfaceItem(const QString& name) const
 {
   return m_interfaceItems.find(name);

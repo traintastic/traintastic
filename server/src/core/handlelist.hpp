@@ -37,6 +37,7 @@ class HandleList
     Handle m_nextHandle;
     std::unordered_map<Handle, Titem> m_handleToItem;
     std::unordered_map<Titem, Handle> m_itemToHandle;
+    std::unordered_map<Handle, uint32_t> m_handleCounter;
 
   public:
     static const Handle invalidHandle = 0;
@@ -52,6 +53,12 @@ class HandleList
       return it != m_handleToItem.end() ? it->second : nullptr;
     }
 
+    uint32_t getCounter(Handle handle)
+    {
+      auto it = m_handleCounter.find(handle);
+      return it != m_handleCounter.end() ? it->second : 0;
+    }
+
     Handle addItem(const Titem& item)
     {
       if(!item)
@@ -62,6 +69,7 @@ class HandleList
       {
         Handle handle = m_nextHandle;
         m_handleToItem.emplace(handle, item);
+        m_handleCounter.emplace(handle, 1);
         m_itemToHandle.emplace(item, handle);
         assert(m_handleToItem.size() == m_itemToHandle.size());
         if(++m_nextHandle == invalidHandle)
@@ -69,7 +77,10 @@ class HandleList
         return handle;
       }
       else
+      {
+        m_handleCounter[it->second]++;
         return it->second;
+      }
     }
 
     Handle getHandle(const Titem& item)
@@ -78,7 +89,10 @@ class HandleList
       {
         auto it = m_itemToHandle.find(item);
         if(it != m_itemToHandle.end())
+        {
+          m_handleCounter[it->second]++;
           return it->second;
+        }
       }
       return invalidHandle;
     }
@@ -90,6 +104,7 @@ class HandleList
       {
         m_itemToHandle.erase(it->second);
         m_handleToItem.erase(it);
+        m_handleCounter.erase(handle);
         assert(m_handleToItem.size() == m_itemToHandle.size());
       }
     }
@@ -100,6 +115,7 @@ class HandleList
       if(it != m_itemToHandle.end())
       {
         m_handleToItem.erase(it->second);
+        m_handleCounter.erase(it->second);
         m_itemToHandle.erase(it);
         assert(m_handleToItem.size() == m_itemToHandle.size());
       }

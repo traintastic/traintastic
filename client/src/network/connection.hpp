@@ -84,6 +84,8 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
     int m_worldRequestId;
     ObjectPtr m_world;
     QMap<Handle, std::weak_ptr<Object>> m_objects;
+    std::unordered_map<Handle, uint32_t> m_handleCounter;
+    std::unordered_map<Handle, std::unique_ptr<Object>> m_requestForRelease;
     QMap<Handle, TableModel*> m_tableModels;
 
     void setState(State state);

@@ -126,10 +126,20 @@ bool Session::processMessage(const Message& message)
     }
     case Message::Command::ReleaseObject:
     {
-      Handle handle = message.read<Handle>();
-      Traintastic::instance->console->debug(m_client->m_id, "ReleaseObject: " + std::to_string(handle));
-      m_handles.removeHandle(handle);
-      m_objectSignals.erase(handle);
+      // client counter value must match server counter value,
+      // to make sure no handles are "on the wire"
+      //
+      const Handle handle = message.read<Handle>();
+      const uint32_t counter = message.read<uint32_t>();
+      if(counter == m_handles.getCounter(handle))
+      {
+        m_handles.removeHandle(handle);
+        m_objectSignals.erase(handle);
+
+        auto event = Message::newEvent(message.command(), sizeof(Handle));
+        event->write(handle);
+        m_client->sendMessage(std::move(event));
+      }
       break;
     }
     case Message::Command::ObjectSetProperty:
