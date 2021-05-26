@@ -14,7 +14,7 @@ configure_file(../shared/src/traintastic/version.hpp.in version.hpp)
 
 add_executable(traintastic-client
   gfx/common.qrc
-  dark.qrc)
+  gfx/dark/dark.qrc)
 
 add_definitions(-DQT_DEPRECATED_WARNINGS)
 
