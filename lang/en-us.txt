@@ -107,6 +107,8 @@ decoder_function:value=Value
 decoder_function_list:add=Add function
 decoder_function_list:f_hash=F#
 
+decoder_function_type:always_off=Always off
+decoder_function_type:always_on=Always on
 decoder_function_type:light=Light
 decoder_function_type:momentary=Momentary
 decoder_function_type:mute=Mute

@@ -31,10 +31,14 @@ class Decoder;
 
 class DecoderFunction : public IdObject
 {
+  private:
+    void typeChanged();
+
   protected:
     Decoder& m_decoder;
 
     void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
+    void loaded() override;
     void worldEvent(WorldState state, WorldEvent event) final;
 
    // void addToWorld() final { Output::addToWorld(); }

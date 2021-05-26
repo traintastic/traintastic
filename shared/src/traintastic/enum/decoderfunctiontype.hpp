@@ -34,11 +34,13 @@ enum class DecoderFunctionType : uint8_t
   Sound = 3,
   Mute = 4,
   Smoke = 5,
+  AlwaysOff = 6,
+  AlwaysOn = 7,
 };
 
 ENUM_NAME(DecoderFunctionType, "decoder_function_type")
 
-ENUM_VALUES(DecoderFunctionType, 6,
+ENUM_VALUES(DecoderFunctionType, 8,
 {
   {DecoderFunctionType::OnOff, "on_off"},
   {DecoderFunctionType::Momentary, "momentary"},
@@ -46,6 +48,8 @@ ENUM_VALUES(DecoderFunctionType, 6,
   {DecoderFunctionType::Sound, "sound"},
   {DecoderFunctionType::Mute, "mute"},
   {DecoderFunctionType::Smoke, "smoke"},
+  {DecoderFunctionType::AlwaysOff, "always_off"},
+  {DecoderFunctionType::AlwaysOn, "always_on"},
 })
 
 #endif

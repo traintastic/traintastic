@@ -38,7 +38,11 @@ DecoderFunction::DecoderFunction(Decoder& decoder, std::string_view _id) :
   m_decoder{decoder},
   number{this, "number", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
-  type{this, "type", DecoderFunctionType::OnOff, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  type{this, "type", DecoderFunctionType::OnOff, PropertyFlags::ReadWrite | PropertyFlags::Store,
+    [this](DecoderFunctionType)
+    {
+      typeChanged();
+    }},
   value{this, "value", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
     [this](bool)
     {
@@ -56,6 +60,7 @@ DecoderFunction::DecoderFunction(Decoder& decoder, std::string_view _id) :
   Attributes::addEnabled(type, editable);
   Attributes::addValues(type, decoderFunctionTypeValues);
   m_interfaceItems.add(type);
+  Attributes::addEnabled(value, true);
   m_interfaceItems.add(value);
 }
 
@@ -64,6 +69,12 @@ void DecoderFunction::save(WorldSaver& saver, nlohmann::json& data, nlohmann::js
   IdObject::save(saver, data, state);
 
   data["decoder"] = m_decoder.id.toJSON();
+}
+
+void DecoderFunction::loaded()
+{
+  IdObject::loaded();
+  typeChanged();
 }
 
 void DecoderFunction::worldEvent(WorldState state, WorldEvent event)
@@ -75,4 +86,19 @@ void DecoderFunction::worldEvent(WorldState state, WorldEvent event)
   number.setAttributeEnabled(editable);
   name.setAttributeEnabled(editable);
   type.setAttributeEnabled(editable);
+}
+
+void DecoderFunction::typeChanged()
+{
+  switch(type)
+  {
+    case DecoderFunctionType::AlwaysOff:
+      value = false;
+      break;
+
+    case DecoderFunctionType::AlwaysOn:
+      value = true;
+      break;
+  }
+  Attributes::setEnabled(value, !isAlwaysOffOrOn(type));
 }

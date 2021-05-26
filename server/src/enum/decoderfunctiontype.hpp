@@ -26,13 +26,34 @@
 #include <traintastic/enum/decoderfunctiontype.hpp>
 #include <array>
 
-inline constexpr std::array<DecoderFunctionType, 6> decoderFunctionTypeValues{{
+inline constexpr std::array<DecoderFunctionType, 8> decoderFunctionTypeValues{{
   DecoderFunctionType::OnOff,
   DecoderFunctionType::Momentary,
   DecoderFunctionType::Light,
   DecoderFunctionType::Sound,
   DecoderFunctionType::Mute,
   DecoderFunctionType::Smoke,
+  DecoderFunctionType::AlwaysOff,
+  DecoderFunctionType::AlwaysOn,
 }};
+
+constexpr bool isAlwaysOffOrOn(DecoderFunctionType type)
+{
+  switch(type)
+  {
+    case DecoderFunctionType::AlwaysOff:
+    case DecoderFunctionType::AlwaysOn:
+      return true;
+
+    case DecoderFunctionType::OnOff:
+    case DecoderFunctionType::Momentary:
+    case DecoderFunctionType::Light:
+    case DecoderFunctionType::Sound:
+    case DecoderFunctionType::Mute:
+    case DecoderFunctionType::Smoke:
+      break;
+  }
+  return false;
+}
 
 #endif
