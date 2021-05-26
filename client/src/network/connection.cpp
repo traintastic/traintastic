@@ -421,7 +421,7 @@ ObjectPtr Connection::readObject(const Message& message)
         {
           // try to release object, if it succeeds the server send a ReleaseObject message else nothing
           // release will fail if handle counters don't match, which means that the is a handle "on the wire"
-          m_objects.remove(handle);
+          m_objects.remove(object->m_handle);
           m_requestForRelease.emplace(object->m_handle, std::unique_ptr<Object>(object));
 
           auto event = Message::newEvent(Message::Command::ReleaseObject, sizeof(object->m_handle));
