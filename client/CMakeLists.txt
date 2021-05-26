@@ -67,6 +67,9 @@ install(TARGETS traintastic-client
     RUNTIME DESTINATION "/opt/traintastic/bin/"
 )
 
+file(GLOB LANG_FILES "../lang/*.txt")
+install(FILES ${LANG_FILES} DESTINATION "/opt/traintastic/lang")
+
 ### BUILD TYPE ###
 
 if (CMAKE_BUILD_TYPE EQUAL "Release")
