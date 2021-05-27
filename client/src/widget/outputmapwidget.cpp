@@ -33,6 +33,7 @@
 #include "../network/method.hpp"
 #include "../network/property.hpp"
 #include "../utils/enum.hpp"
+#include "../theme/theme.hpp"
 
 constexpr int columnCountNonOutput = 2;
 constexpr int columnUse = 0;
@@ -49,7 +50,7 @@ OutputMapWidget::OutputMapWidget(std::shared_ptr<OutputMap> object, QWidget* par
   QToolBar* tb = new QToolBar(this);
   if(auto* method = m_object->getMethod("add_output"))
   {
-    QAction* act = tb->addAction(QIcon(":/dark/add.svg"), method->displayName(),
+    QAction* act = tb->addAction(Theme::getIcon("add"), method->displayName(),
       [this, method]()
       {
         std::make_unique<ObjectSelectListDialog>(*method, this)->exec();

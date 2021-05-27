@@ -33,6 +33,7 @@
 #include "../network/method.hpp"
 #include "../network/utils.hpp"
 #include "../widget/alertwidget.hpp"
+#include "../theme/theme.hpp"
 
 
 #include "../mainwindow.hpp"
@@ -84,7 +85,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
   {
     if(method->argumentTypes().size() == 0) // Add method witout argument
     {
-      m_actionAdd = m_toolbar->addAction(QIcon(":/dark/add.svg"), method->displayName(),
+      m_actionAdd = m_toolbar->addAction(Theme::getIcon("add"), method->displayName(),
         [this, method]()
         {
           if(m_requestIdAdd != Connection::invalidRequestId)
@@ -112,7 +113,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
     else if(method->argumentTypes().size() == 1 && method->argumentTypes()[0] == ValueType::String)
     {
       m_buttonAdd = new QToolButton(m_toolbar);
-      m_buttonAdd->setIcon(QIcon(":/dark/add.svg"));
+      m_buttonAdd->setIcon(Theme::getIcon("add"));
       m_buttonAdd->setText(method->displayName());
       m_buttonAdd->setPopupMode(QToolButton::InstantPopup);
 
@@ -158,12 +159,12 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
       Q_ASSERT(false); // unsupported method prototype
   }
 
-  m_actionEdit = m_toolbar->addAction(QIcon(":/dark/edit.svg"), tr("Edit"));
+  m_actionEdit = m_toolbar->addAction(Theme::getIcon("edit"), tr("Edit"));
   m_actionEdit->setEnabled(false);
 
   if(Method* method = m_object->getMethod("remove"))
   {
-    m_actionDelete = m_toolbar->addAction(QIcon(":/dark/delete.svg"), method->displayName());
+    m_actionDelete = m_toolbar->addAction(Theme::getIcon("delete"), method->displayName());
     //m_actionDelete->setEnabled(false);
   }
 }

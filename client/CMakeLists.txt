@@ -14,7 +14,8 @@ configure_file(../shared/src/traintastic/version.hpp.in version.hpp)
 
 add_executable(traintastic-client
   gfx/common.qrc
-  gfx/dark/dark.qrc)
+  gfx/dark/dark.qrc
+  gfx/light/light.qrc)
 
 add_definitions(-DQT_DEPRECATED_WARNINGS)
 
@@ -37,6 +38,8 @@ file(GLOB SOURCES
   "src/style/*.cpp"
   "src/subwindow/*.hpp"
   "src/subwindow/*.cpp"
+  "src/theme/*.hpp"
+  "src/theme/*.cpp"
   "src/utils/*.hpp"
   "src/utils/*.cpp"
   "src/widget/*.hpp"

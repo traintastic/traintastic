@@ -1,0 +1,40 @@
+<RCC>
+    <qresource prefix="/light">
+        <file>run.svg</file>
+        <file>stop.svg</file>
+        <file>edit.svg</file>
+        <file>hardware.svg</file>
+        <file>add.svg</file>
+        <file>delete.svg</file>
+        <file>lua.svg</file>
+        <file>board_tile.rail.straight.svg</file>
+        <file>board_tile.rail.curve_45.svg</file>
+        <file>board_tile.rail.curve_90.svg</file>
+        <file>board_tile.rail.cross_45.svg</file>
+        <file>board_tile.rail.cross_90.svg</file>
+        <file>board_tile.rail.turnout_right_45.svg</file>
+        <file>board_tile.rail.turnout_right_90.svg</file>
+        <file>board_tile.rail.turnout_right_curved.svg</file>
+        <file>board_tile.rail.turnout_wye.svg</file>
+        <file>board_tile.rail.turnout_3way.svg</file>
+        <file>board_tile.rail.turnout_left_45.svg</file>
+        <file>board_tile.rail.turnout_left_90.svg</file>
+        <file>board_tile.rail.turnout_left_curved.svg</file>
+        <file>board_tile.rail.turnout_doubleslip.svg</file>
+        <file>board_tile.rail.turnout_singleslip.svg</file>
+        <file>board_tile.rail.buffer_stop.svg</file>
+        <file>zoom_in.svg</file>
+        <file>zoom_out.svg</file>
+        <file>board_tile.rail.signal_2aspect.svg</file>
+        <file>board_tile.rail.signal_3aspect.svg</file>
+        <file>board_tile.rail.block.svg</file>
+        <file>move_tile.svg</file>
+        <file>mouse.svg</file>
+        <file>power_off.svg</file>
+        <file>power_on.svg</file>
+        <file>online.svg</file>
+        <file>offline.svg</file>
+        <file>mute.svg</file>
+        <file>no_smoke.svg</file>
+    </qresource>
+</RCC>

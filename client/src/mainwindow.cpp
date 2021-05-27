@@ -45,6 +45,7 @@
 #include "subwindow/objectsubwindow.hpp"
 #include "widget/serverconsolewidget.hpp"
 #include "utils/menu.hpp"
+#include "theme/theme.hpp"
 
 
 #include <QDesktopServices>
@@ -65,7 +66,7 @@ MainWindow::MainWindow(QWidget* parent) :
 {
   instance = this;
 
-  setWindowIcon(QIcon(":/appicon.svg"));
+  setWindowIcon(Theme::getIcon("appicon"));
   updateWindowTitle();
 
   QMenu* menu;
@@ -83,7 +84,7 @@ MainWindow::MainWindow(QWidget* parent) :
     m_actionConnectToServer = menu->addAction(Locale::tr("qtapp.mainmenu:connect_to_server") + "...", this, [this](){ MainWindow::connectToServer(); });
     m_actionDisconnectFromServer = menu->addAction(Locale::tr("qtapp.mainmenu:disconnect_from_server"), this, &MainWindow::disconnectFromServer);
     menu->addSeparator();
-    m_actionNewWorld = menu->addAction(QIcon(":/dark/world_new.svg"), Locale::tr("qtapp.mainmenu:new_world"),
+    m_actionNewWorld = menu->addAction(Theme::getIcon("world_new"), Locale::tr("qtapp.mainmenu:new_world"),
       [this]()
       {
         if(m_connection)
@@ -92,9 +93,9 @@ MainWindow::MainWindow(QWidget* parent) :
               method->call();
       });
     m_actionNewWorld->setShortcut(QKeySequence::New);
-    m_actionLoadWorld = menu->addAction(QIcon(":/dark/world_load.svg"), Locale::tr("qtapp.mainmenu:load_world") + "...", this, &MainWindow::loadWorld);
+    m_actionLoadWorld = menu->addAction(Theme::getIcon("world_load"), Locale::tr("qtapp.mainmenu:load_world") + "...", this, &MainWindow::loadWorld);
     m_actionLoadWorld->setShortcut(QKeySequence::Open);
-    m_actionSaveWorld = menu->addAction(QIcon(":/dark/world_save.svg"), Locale::tr("qtapp.mainmenu:save_world"),
+    m_actionSaveWorld = menu->addAction(Theme::getIcon("world_save"), Locale::tr("qtapp.mainmenu:save_world"),
       [this]()
       {
         if(m_world)
@@ -103,8 +104,8 @@ MainWindow::MainWindow(QWidget* parent) :
       });
     m_actionSaveWorld->setShortcut(QKeySequence::Save);
     menu->addSeparator();
-    m_actionImportWorld = menu->addAction(QIcon(":/dark/world_import.svg"), Locale::tr("qtapp.mainmenu:import_world") + "...", this, &MainWindow::importWorld);
-    m_actionExportWorld = menu->addAction(QIcon(":/dark/world_export.svg"), Locale::tr("qtapp.mainmenu:export_world") + "...", this, &MainWindow::exportWorld);
+    m_actionImportWorld = menu->addAction(Theme::getIcon("world_import"), Locale::tr("qtapp.mainmenu:import_world") + "...", this, &MainWindow::importWorld);
+    m_actionExportWorld = menu->addAction(Theme::getIcon("world_export"), Locale::tr("qtapp.mainmenu:export_world") + "...", this, &MainWindow::exportWorld);
     menu->addSeparator();
     menu->addAction(Locale::tr("qtapp.mainmenu:quit"), this, &MainWindow::close)->setShortcut(QKeySequence::Quit);
 
@@ -120,33 +121,33 @@ MainWindow::MainWindow(QWidget* parent) :
 
     m_menuWorld = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:world"));
     m_menuConnection = m_menuWorld->addMenu(Locale::tr("qtapp.mainmenu:connection"));
-    m_worldOnlineAction = m_menuConnection->addAction(QIcon(":/dark/online.svg"), Locale::tr("world:online"),
+    m_worldOnlineAction = m_menuConnection->addAction(Theme::getIcon("online"), Locale::tr("world:online"),
       [this]()
       {
         if(Q_LIKELY(m_world))
           m_world->callMethod("online");
       });
-    m_worldOfflineAction = m_menuConnection->addAction(QIcon(":/dark/offline.svg"), Locale::tr("world:offline"),
+    m_worldOfflineAction = m_menuConnection->addAction(Theme::getIcon("offline"), Locale::tr("world:offline"),
       [this]()
       {
         if(Q_LIKELY(m_world))
           m_world->callMethod("offline");
       });
     m_menuPower = m_menuWorld->addMenu(Locale::tr("qtapp.mainmenu:power"));
-    m_worldPowerOnAction = m_menuPower->addAction(QIcon(":/dark/power_on.svg"), Locale::tr("world:power_on"),
+    m_worldPowerOnAction = m_menuPower->addAction(Theme::getIcon("power_on"), Locale::tr("world:power_on"),
       [this]()
       {
         if(Q_LIKELY(m_world))
           m_world->callMethod("power_on");
       });
-    m_worldPowerOffAction = m_menuPower->addAction(QIcon(":/dark/power_off.svg"), Locale::tr("world:power_off"),
+    m_worldPowerOffAction = m_menuPower->addAction(Theme::getIcon("power_off"), Locale::tr("world:power_off"),
       [this]()
       {
         if(Q_LIKELY(m_world))
           m_world->callMethod("power_off");
       });
     m_menuWorld->addSeparator();
-    m_worldStopAction = m_menuWorld->addAction(QIcon(":/dark/stop.svg"), Locale::tr("world:stop"),
+    m_worldStopAction = m_menuWorld->addAction(Theme::getIcon("stop"), Locale::tr("world:stop"),
       [this]()
       {
         if(Q_LIKELY(m_world))
@@ -157,7 +158,7 @@ MainWindow::MainWindow(QWidget* parent) :
         }
       });
     m_worldStopAction->setCheckable(true);
-    m_worldRunAction = m_menuWorld->addAction(QIcon(":/dark/run.svg"), Locale::tr("world:run"),
+    m_worldRunAction = m_menuWorld->addAction(Theme::getIcon("run"), Locale::tr("world:run"),
       [this]()
       {
         if(Q_LIKELY(m_world))
@@ -169,21 +170,21 @@ MainWindow::MainWindow(QWidget* parent) :
       });
     m_worldRunAction->setCheckable(true);
     m_menuWorld->addSeparator();
-    m_worldMuteAction = m_menuWorld->addAction(QIcon(":/dark/mute.svg"), Locale::tr("world:mute"),
+    m_worldMuteAction = m_menuWorld->addAction(Theme::getIcon("mute"), Locale::tr("world:mute"),
       [this](bool checked)
       {
         if(Q_LIKELY(m_world))
           m_world->setPropertyValue("mute", checked);
       });
     m_worldMuteAction->setCheckable(true);
-    m_worldNoSmokeAction = m_menuWorld->addAction(QIcon(":/dark/no_smoke.svg"), Locale::tr("world:no_smoke"),
+    m_worldNoSmokeAction = m_menuWorld->addAction(Theme::getIcon("no_smoke"), Locale::tr("world:no_smoke"),
       [this](bool checked)
       {
         if(Q_LIKELY(m_world))
           m_world->setPropertyValue("no_smoke", checked);
       });
     m_worldNoSmokeAction->setCheckable(true);
-    m_worldEditAction = m_menuWorld->addAction(QIcon(":/dark/edit.svg"), Locale::tr("world:edit"),
+    m_worldEditAction = m_menuWorld->addAction(Theme::getIcon("edit"), Locale::tr("world:edit"),
       [this](bool checked)
       {
         if(m_world)
@@ -192,10 +193,10 @@ MainWindow::MainWindow(QWidget* parent) :
       });
     m_worldEditAction->setCheckable(true);
     m_menuWorld->addSeparator();
-    m_menuWorld->addAction(QIcon(":/dark/world.svg"), Locale::tr("qtapp.mainmenu:world_properties"), [this](){ showObject("world", Locale::tr("qtapp.mainmenu:world_properties")); });
+    m_menuWorld->addAction(Theme::getIcon("world"), Locale::tr("qtapp.mainmenu:world_properties"), [this](){ showObject("world", Locale::tr("qtapp.mainmenu:world_properties")); });
 
     m_menuObjects = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:objects"));
-    menu = m_menuObjects->addMenu(QIcon(":/dark/hardware.svg"), Locale::tr("qtapp.mainmenu:hardware"));
+    menu = m_menuObjects->addMenu(Theme::getIcon("hardware"), Locale::tr("qtapp.mainmenu:hardware"));
     menu->addAction(Locale::tr("world:command_stations") + "...", [this](){ showObject("world.command_stations", Locale::tr("world:command_stations")); });
     menu->addAction(Locale::tr("world:decoders") + "...", [this](){ showObject("world.decoders", Locale::tr("world:decoders")); });
     menu->addAction(Locale::tr("world:inputs") + "...", [this](){ showObject("world.inputs", Locale::tr("world:inputs")); });
@@ -205,7 +206,7 @@ MainWindow::MainWindow(QWidget* parent) :
     m_menuObjects->addAction(Locale::tr("world:clock") + "...", [this](){ showObject("world.clock", Locale::tr("world:clock")); });
     m_menuObjects->addAction(Locale::tr("world:trains") + "...", [this](){ showObject("world.trains", Locale::tr("world:trains")); });
     m_menuObjects->addAction(Locale::tr("world:rail_vehicles") + "...", [this](){ showObject("world.rail_vehicles", Locale::tr("world:rail_vehicles")); });
-    m_actionLuaScript = m_menuObjects->addAction(QIcon(":/dark/lua.svg"), Locale::tr("world:lua_scripts") + "...", [this](){ showObject("world.lua_scripts", Locale::tr("world:lua_scripts")); });
+    m_actionLuaScript = m_menuObjects->addAction(Theme::getIcon("lua"), Locale::tr("world:lua_scripts") + "...", [this](){ showObject("world.lua_scripts", Locale::tr("world:lua_scripts")); });
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:tools"));
     menu->addAction(Locale::tr("qtapp.mainmenu:settings") + "...",
@@ -254,7 +255,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
   // Online/offline:
   m_worldOnlineOfflineToolButton = new QToolButton(this);
-  m_worldOnlineOfflineToolButton->setIcon(QIcon(":/dark/offline.svg"));
+  m_worldOnlineOfflineToolButton->setIcon(Theme::getIcon("offline"));
   m_worldOnlineOfflineToolButton->setToolTip(Locale::tr("qtapp:toggle_offline_online"));
   m_worldOnlineOfflineToolButton->setPopupMode(QToolButton::MenuButtonPopup);
   connect(m_worldOnlineOfflineToolButton, &QToolButton::clicked, this,
@@ -269,7 +270,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
   // Power on/off:
   m_worldPowerOnOffToolButton = new QToolButton(this);
-  m_worldPowerOnOffToolButton->setIcon(QIcon(":/dark/power_off.svg"));
+  m_worldPowerOnOffToolButton->setIcon(Theme::getIcon("power_off"));
   m_worldPowerOnOffToolButton->setToolTip(Locale::tr("qtapp:toggle_power"));
   m_worldPowerOnOffToolButton->setPopupMode(QToolButton::MenuButtonPopup);
   connect(m_worldPowerOnOffToolButton, &QToolButton::clicked, this,
@@ -634,8 +635,8 @@ void MainWindow::worldStateChanged(int64_t value)
 {
   const WorldState state = static_cast<WorldState>(value);
 
-  QIcon connectionIcon(contains(state, WorldState::Online) ? ":/dark/online.svg" : ":/dark/offline.svg");
-  QIcon powerIcon(contains(state, WorldState::PowerOn) ? ":/dark/power_on.svg" : ":/dark/power_off.svg");
+  QIcon connectionIcon = Theme::getIcon(contains(state, WorldState::Online) ? "online" : "offline");
+  QIcon powerIcon = Theme::getIcon(contains(state, WorldState::PowerOn) ? "power_on" : "power_off");
 
   m_menuConnection->setIcon(connectionIcon);
   m_worldOnlineOfflineToolButton->setIcon(connectionIcon);

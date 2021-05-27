@@ -30,7 +30,7 @@
 #include "../../network/method.hpp"
 #include "../propertylineedit.hpp"
 #include "../propertyluacodeedit.hpp"
-#include "../../utils/geticonforclassid.hpp"
+#include "../../theme/theme.hpp"
 
 LuaScriptEditWidget::LuaScriptEditWidget(const ObjectPtr& object, QWidget* parent) :
   AbstractEditWidget(object, parent),
@@ -56,7 +56,7 @@ LuaScriptEditWidget::LuaScriptEditWidget(const QString& id, QWidget* parent) :
 void LuaScriptEditWidget::buildForm()
 {
   setIdAsWindowTitle();
-  setWindowIcon(getIconForClassId(m_object->classId()));
+  setWindowIcon(Theme::getIconForClassId(m_object->classId()));
 
   m_propertyState = dynamic_cast<Property*>(m_object->getProperty("state"));
   m_methodStart = m_object->getMethod("start");
@@ -74,7 +74,7 @@ void LuaScriptEditWidget::buildForm()
       form->addRow(property->displayName(), new PropertyLineEdit(*property, this));
 
   QToolBar* toolbar = new QToolBar(this);
-  m_start = toolbar->addAction(QIcon(":/dark/run.svg"), m_methodStart->displayName(),
+  m_start = toolbar->addAction(Theme::getIcon("run"), m_methodStart->displayName(),
     [this]()
     {
       m_methodStart->call();
@@ -87,7 +87,7 @@ void LuaScriptEditWidget::buildForm()
         m_start->setEnabled(value.toBool());
     });
 
-  m_stop = toolbar->addAction(QIcon(":/dark/stop.svg"), m_methodStop->displayName(),
+  m_stop = toolbar->addAction(Theme::getIcon("stop"), m_methodStop->displayName(),
     [this]()
     {
       m_methodStop->call();

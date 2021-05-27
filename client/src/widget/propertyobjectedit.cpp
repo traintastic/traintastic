@@ -26,6 +26,7 @@
 #include "../network/object.hpp"
 #include "../dialog/objectselectlistdialog.hpp"
 #include "../mainwindow.hpp"
+#include "../theme/theme.hpp"
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QToolButton>
@@ -88,7 +89,7 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
     l->addWidget(m_changeButton);
   }
 
-  m_editButton->setIcon(QIcon(":/dark/edit.svg"));
+  m_editButton->setIcon(Theme::getIcon("edit"));
   m_editButton->setEnabled(!m_property.objectId().isEmpty());
   connect(m_editButton, &QToolButton::clicked, this,
     [this]()

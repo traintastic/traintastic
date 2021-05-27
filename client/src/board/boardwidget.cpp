@@ -37,6 +37,7 @@
 #include "../network/connection.hpp"
 #include "../network/property.hpp"
 #include "../network/callmethod.hpp"
+#include "../theme/theme.hpp"
 
 struct TileInfo
 {
@@ -105,7 +106,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   QToolBar* toolbar = new QToolBar(this);
   l->addWidget(toolbar);
 
-  toolbar->addAction(/*QIcon(":/dark/properties.svg"),*/ Locale::tr("qtapp:board_properties"),
+  toolbar->addAction(/*Theme::getIcon("properties"),*/ Locale::tr("qtapp:board_properties"),
     []()
     {
       // TODO
@@ -113,28 +114,28 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
 
   toolbar->addSeparator();
 
-  m_actionZoomIn = toolbar->addAction(QIcon(":/dark/zoom_in.svg"), Locale::tr("qtapp:zoom_in"), m_boardArea, &BoardAreaWidget::zoomIn);
-  m_actionZoomOut = toolbar->addAction(QIcon(":/dark/zoom_out.svg"), Locale::tr("qtapp:zoom_out"), m_boardArea, &BoardAreaWidget::zoomOut);
+  m_actionZoomIn = toolbar->addAction(Theme::getIcon("zoom_in"), Locale::tr("qtapp:zoom_in"), m_boardArea, &BoardAreaWidget::zoomIn);
+  m_actionZoomOut = toolbar->addAction(Theme::getIcon("zoom_out"), Locale::tr("qtapp:zoom_out"), m_boardArea, &BoardAreaWidget::zoomOut);
 
   toolbar->addSeparator();
 
   m_toolButtonGrid = new QToolButton(this);
-  m_toolButtonGrid->setIcon(QIcon(":/dark/grid_dot.svg"));
+  m_toolButtonGrid->setIcon(Theme::getIcon("grid_dot"));
   m_toolButtonGrid->setToolTip(Locale::tr("qtapp:grid"));
   m_toolButtonGrid->setPopupMode(QToolButton::MenuButtonPopup);
   connect(m_toolButtonGrid, &QToolButton::pressed, m_toolButtonGrid, &QToolButton::showMenu);
   m = new QMenu(this);
-  m_actionGridNone = m->addAction(QIcon(":/dark/grid_none.svg"), Locale::tr("qtapp:grid_none"),
+  m_actionGridNone = m->addAction(Theme::getIcon("grid_none"), Locale::tr("qtapp:grid_none"),
     [this]()
     {
       m_boardArea->setGrid(BoardAreaWidget::Grid::None);
     });
-  m_actionGridDot = m->addAction(QIcon(":/dark/grid_dot.svg"), Locale::tr("qtapp:grid_dot"),
+  m_actionGridDot = m->addAction(Theme::getIcon("grid_dot"), Locale::tr("qtapp:grid_dot"),
     [this]()
     {
       m_boardArea->setGrid(BoardAreaWidget::Grid::Dot);
     });
-  m_actionGridLine = m->addAction(QIcon(":/dark/grid_line.svg"), Locale::tr("qtapp:grid_line"),
+  m_actionGridLine = m->addAction(Theme::getIcon("grid_line"), Locale::tr("qtapp:grid_line"),
     [this]()
     {
       m_boardArea->setGrid(BoardAreaWidget::Grid::Line);
@@ -148,16 +149,16 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
 
   m_editActions->setExclusive(true);
 
-  m_editActionNone = m_editActions->addAction(m_toolbarEdit->addAction(QIcon(":/dark/mouse.svg"), ""));
+  m_editActionNone = m_editActions->addAction(m_toolbarEdit->addAction(Theme::getIcon("mouse"), ""));
   m_editActionNone->setCheckable(true);
   m_editActionNone->setData(-1);
 
-  m_editActionMove = m_editActions->addAction(m_toolbarEdit->addAction(QIcon(":/dark/move_tile.svg"), Locale::tr("board:move_tile")));
+  m_editActionMove = m_editActions->addAction(m_toolbarEdit->addAction(Theme::getIcon("move_tile"), Locale::tr("board:move_tile")));
   m_editActionMove->setCheckable(true);
   m_editActionMove->setData(-1);
   m_editActionMove->setEnabled(false); // todo: implement
 
-  m_editActionDelete = m_editActions->addAction(m_toolbarEdit->addAction(QIcon(":/dark/delete.svg"), Locale::tr("board:delete_tile")));
+  m_editActionDelete = m_editActions->addAction(m_toolbarEdit->addAction(Theme::getIcon("delete"), Locale::tr("board:delete_tile")));
   m_editActionDelete->setCheckable(true);
   m_editActionDelete->setData(-1);
 
@@ -210,7 +211,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
       }
       else
       {
-        QAction* act = new QAction(QIcon(QString(":/dark/").append(info.classId).append(".svg")), Locale::tr(QString("class_id:").append(info.classId)));
+        QAction* act = new QAction(QIcon(QString(":/dark/").append(info.classId).append("")), Locale::tr(QString("class_id:").append(info.classId)));
         act->setData(static_cast<qint64>(i));
         actions.append(act);
       }

@@ -1,9 +1,9 @@
 /**
- * client/src/utils/geticonforclassid.hpp
+ * client/src/theme/theme.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,11 +20,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_UTILS_GETICONFORCLASSID_HPP
-#define TRAINTASTIC_CLIENT_UTILS_GETICONFORCLASSID_HPP
+#ifndef TRAINTASTIC_CLIENT_THEME_THEME_HPP
+#define TRAINTASTIC_CLIENT_THEME_THEME_HPP
 
+#include <array>
+#include <QString>
 #include <QIcon>
 
-QIcon getIconForClassId(const QString& classId);
+class Theme
+{
+  public:
+    enum class IconSet
+    {
+      Light,
+      Dark,
+    };
+
+  private:
+    Theme() = delete;
+
+    static IconSet s_iconSet;
+
+    static const std::array<const QString*, 3>& getIconPaths();
+
+  public:
+    static void setIconSet(IconSet value);
+
+    static QIcon getIcon(const QString& id);
+    static QIcon getIconForClassId(const QString& classId);
+};
 
 #endif

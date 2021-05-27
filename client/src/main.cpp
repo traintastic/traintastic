@@ -35,7 +35,7 @@
 
 #include "style/materialdarkstyle.hpp"
 #include "style/materiallightstyle.hpp"
-
+#include "theme/theme.hpp"
 #include <traintastic/locale/locale.hpp>
 
 struct Options
@@ -91,6 +91,10 @@ int main(int argc, char* argv[])
     fallback = new Locale(getLocalePath().toStdString() + "/" + languageDefault.toStdString() + ".txt");
 
   Locale::instance = new Locale(getLocalePath().toStdString() + "/" + language.toStdString() + ".txt", fallback);
+
+  // Auto select icon set based on background color lightness:
+  const qreal backgroundLightness = QApplication::style()->standardPalette().window().color().lightnessF();
+  Theme::setIconSet(backgroundLightness < 0.5 ? Theme::IconSet::Dark : Theme::IconSet::Light);
 
   MainWindow mw;
   if(options.fullscreen)

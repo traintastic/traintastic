@@ -47,7 +47,7 @@
 #include "../methodpushbutton.hpp"
 #include "../unitpropertyedit.hpp"
 #include "../createwidget.hpp"
-#include "../../utils/geticonforclassid.hpp"
+#include "../../theme/theme.hpp"
 //#include "../../mainwindow.hpp"
 #include <traintastic/enum/category.hpp>
 #include <traintastic/enum/direction.hpp>
@@ -78,7 +78,7 @@ ObjectEditWidget::ObjectEditWidget(const QString& id, QWidget* parent) :
 void ObjectEditWidget::buildForm()
 {
   setIdAsWindowTitle();
-  setWindowIcon(getIconForClassId(m_object->classId()));
+  setWindowIcon(Theme::getIconForClassId(m_object->classId()));
 
   if(QWidget* widget = createWidgetIfCustom(m_object))
   {
