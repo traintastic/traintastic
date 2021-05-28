@@ -26,6 +26,8 @@ std::shared_ptr<CommandStation> CommandStations::create(const std::weak_ptr<Worl
 {
   if(classId == LocoNetSerial::classId)
     return LocoNetSerial::create(world, id);
+  else if(classId == LocoNetTCPBinary::classId)
+    return LocoNetTCPBinary::create(world, id);
 #ifdef USB_XPRESSNET
   else if(classId == USBXpressNetInterface::classId)
     return USBXpressNetInterface::create(world, id);

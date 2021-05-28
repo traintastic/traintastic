@@ -27,6 +27,7 @@
 #include "../../utils/makearray.hpp"
 
 #include "loconetserial.hpp"
+#include "loconettcpbinary.hpp"
 #ifdef USB_XPRESSNET
   #include "usbxpressnetinterface.hpp"
 #endif
@@ -40,6 +41,7 @@ struct CommandStations
 
   static constexpr auto classList = makeArray(
     LocoNetSerial::classId,
+    LocoNetTCPBinary::classId,
 #ifdef USB_XPRESSNET
     USBXpressNetInterface::classId,
 #endif
