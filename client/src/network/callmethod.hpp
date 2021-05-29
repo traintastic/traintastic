@@ -25,6 +25,7 @@
 
 #include "connection.hpp"
 #include "method.hpp"
+#include "object.hpp"
 #include <traintastic/network/message.hpp>
 #include <traintastic/utils/valuetypetraits.hpp>
 

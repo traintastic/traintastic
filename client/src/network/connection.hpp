@@ -25,6 +25,7 @@
 
 #include <QObject>
 #include <memory>
+#include <unordered_map>
 #include <QAbstractSocket>
 #include <QMap>
 #include <QUuid>
