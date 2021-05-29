@@ -23,7 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_CORE_STDFILESYSTEM_HPP
 #define TRAINTASTIC_SERVER_CORE_STDFILESYSTEM_HPP
 
-#if defined(__GNUC__) && __GNUC__ < 8
+#if defined(__GNUC__) && __GNUC__ < 8 && !defined(__APPLE__)
   #include <experimental/filesystem>
   namespace std {
     namespace filesystem = experimental::filesystem::v1;
