@@ -113,8 +113,13 @@ else()
   #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
   #set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
 
-  target_link_libraries(traintastic-server PRIVATE pthread stdc++fs)
-  target_link_libraries(traintastic-server-test PRIVATE pthread stdc++fs)
+  target_link_libraries(traintastic-server PRIVATE pthread)
+  target_link_libraries(traintastic-server-test PRIVATE pthread)
+  
+  if(NOT APPLE)
+    target_link_libraries(traintastic-server PRIVATE stdc++fs)
+    target_link_libraries(traintastic-server-test PRIVATE stdc++fs)
+  endif()
 endif()
 
 ### OPTIONS ###
