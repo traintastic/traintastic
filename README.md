@@ -46,6 +46,7 @@ Note: When cloning the source from git, git-lfs is required.
 - Run CMake:
   - Windows: `cmake ../ -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=Release`
   - Linux: `cmake ../ -DCMAKE_BUILD_TYPE=Release`
+  - macOS: `cmake ../ -DCMAKE_BUILD_TYPE=Release -DQt5_DIR=/path/to/Qt/5.15.2/clang_64/lib/cmake/Qt5
 - Build traintastic-client: `cmake --build . --config Release`
 
 
@@ -57,6 +58,7 @@ Note: When cloning the source from git, git-lfs is required.
 - Configure CMake:
   - Windows: `cmake ../ -G "Visual Studio 16 2019" -A x64 -T ClangCL -DCMAKE_BUILD_TYPE=Release -DUSB_XPRESSNET=OFF`
   - Linux: `cmake ../ -DCMAKE_BUILD_TYPE=Release -DUSB_XPRESSNET=OFF`
+  - macOS: `cmake ../ -DCMAKE_BUILD_TYPE=Release -DUSB_XPRESSNET=OFF -DENABLE_LUA_SCRIPTING=OFF`
 - Build traintastic-server: `cmake --build . --config Release --target traintastic-server`
 
 
