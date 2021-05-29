@@ -24,8 +24,17 @@
 #define TRAINTASTIC_SERVER_UTILS_ENDIAN_HPP
 
 #include <type_traits>
-#ifndef  _MSC_VER
+#ifdef _MSC_VER
+  #define bswap_16(x) _byteswap_ushort(x)
+  #define bswap_32(x) _byteswap_ulong(x)
+  #define bswap_64(x) _byteswap_uint64(x)
+#elif defined(__linux__)
   #include <byteswap.h>
+#elif defined(__APPLE__)
+  #include <libkern/OSByteOrder.h>
+  #define bswap_16(x) OSSwapInt16(x)
+  #define bswap_32(x) OSSwapInt32(x)
+  #define bswap_64(x) OSSwapInt64(x)
 #endif
 
 constexpr bool is_big_endian = false;
@@ -36,23 +45,11 @@ inline T byte_swap(T value)
 {
   static_assert(std::is_integral_v<T> || std::is_enum_v<T>);
   if constexpr(sizeof(T) == 2)
-#ifdef  _MSC_VER
-    return _byteswap_ushort(value);
-#else
     return bswap_16(value);
-#endif
   else if constexpr(sizeof(T) == 4)
-#ifdef  _MSC_VER
-    return _byteswap_ulong(value);
-#else
     return bswap_32(value);
-#endif
   else if constexpr(sizeof(T) == 8)
-#ifdef  _MSC_VER
-    return _byteswap_uint64(value);
-#else
     return bswap_64(value);
-#endif
   else
     static_assert(sizeof(T) != sizeof(T));
 }
