@@ -57,7 +57,7 @@ class Object : public std::enable_shared_from_this<Object>
     virtual void destroying() {}
     virtual void load(WorldLoader& loader, const nlohmann::json& data);
     virtual void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const;
-    virtual void loaded() {}
+    virtual void loaded();
     virtual void worldEvent(WorldState state, WorldEvent event);
 
     void logDebug(const std::string& message);

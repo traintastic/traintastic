@@ -127,6 +127,14 @@ void Object::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state
     }
 }
 
+void Object::loaded()
+{
+  for(auto& it : m_interfaceItems)
+    if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&it.second))
+      if(contains(property->flags(), PropertyFlags::SubObject))
+        property->toObject()->loaded();
+}
+
 void Object::worldEvent(WorldState state, WorldEvent event)
 {
   for(auto& it : m_interfaceItems)
