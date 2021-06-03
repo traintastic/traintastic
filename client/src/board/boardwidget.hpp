@@ -59,6 +59,8 @@ class BoardWidget : public QWidget
     QAction* m_editActionDelete;
     TileRotate m_editRotate;
 
+    void actionSelected(const TileInfo* tile);
+
   protected slots:
     void worldEditChanged(bool value);
     void gridChanged(BoardAreaWidget::Grid value);

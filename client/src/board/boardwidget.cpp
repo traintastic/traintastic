@@ -42,36 +42,36 @@
 struct TileInfo
 {
   QString classId;
+  TileId id;
   uint8_t rotates;
 };
 
-const std::array<TileInfo, 26> tileInfo = {
-  TileInfo{QStringLiteral("board_tile.rail.straight"), 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.buffer_stop"), 0xFF},
-  TileInfo{QStringLiteral(""), 0},
-  TileInfo{QStringLiteral("board_tile.rail.curve_45"), 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.curve_90"), 0xFF},
-  TileInfo{QStringLiteral(""), 0},
-  TileInfo{QStringLiteral("board_tile.rail.cross_45"), 0x03},
-  TileInfo{QStringLiteral("board_tile.rail.cross_90"), 0x03},
-  TileInfo{QStringLiteral(""), 0},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_left_45"), 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_left_90"), 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_left_curved"), 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_right_45"), 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_right_90"), 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_right_curved"), 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_wye"), 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_3way"), 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_singleslip"), 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_doubleslip"), 0xFF},
-  TileInfo{QStringLiteral(""), 0},
-  TileInfo{QStringLiteral("board_tile.rail.block"), 0x05},
-  TileInfo{QStringLiteral("board_tile.rail.sensor"), 0xFF},
-  TileInfo{QStringLiteral(""), 0},
-  TileInfo{QStringLiteral("board_tile.rail.signal_2_aspect"), 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.signal_3_aspect"), 0xFF},
-  TileInfo{QStringLiteral(""), 0}
+const std::array<TileInfo, 25> tileInfo = {
+  TileInfo{QStringLiteral("board_tile.rail.straight"), TileId::RailStraight, 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.buffer_stop"), TileId::RailBufferStop, 0xFF},
+  TileInfo{QStringLiteral(""), TileId::None, 0},
+  TileInfo{QStringLiteral("board_tile.rail.curve_45"), TileId::RailCurve45, 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.curve_90"), TileId::RailCurve90, 0xFF},
+  TileInfo{QStringLiteral(""), TileId::None, 0},
+  TileInfo{QStringLiteral("board_tile.rail.cross_45"), TileId::RailCross45, 0x03},
+  TileInfo{QStringLiteral("board_tile.rail.cross_90"), TileId::RailCross90, 0x03},
+  TileInfo{QStringLiteral(""), TileId::None, 0},
+  TileInfo{QStringLiteral("board_tile.rail.turnout_left_45"), TileId::RailTurnoutLeft45, 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.turnout_left_90"), TileId::RailTurnoutLeft90, 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.turnout_left_curved"), TileId::RailTurnoutLeftCurved, 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.turnout_right_45"), TileId::RailTurnoutRight45, 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.turnout_right_90"), TileId::RailTurnoutRight90, 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.turnout_right_curved"), TileId::RailTurnoutRightCurved, 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.turnout_wye"), TileId::RailTurnoutWye, 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.turnout_3way"), TileId::RailTurnout3Way, 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.turnout_singleslip"), TileId::RailTurnoutSingleSlip, 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.turnout_doubleslip"), TileId::RailTurnoutDoubleSlip, 0xFF},
+  TileInfo{QStringLiteral(""), TileId::None, 0},
+  TileInfo{QStringLiteral("board_tile.rail.block"), TileId::RailBlock, 0x05},
+  TileInfo{QStringLiteral("board_tile.rail.sensor"), TileId::RailSensor, 0xFF},
+  TileInfo{QStringLiteral(""), TileId::None, 0},
+  TileInfo{QStringLiteral("board_tile.rail.signal_2_aspect"), TileId::RailSignal2Aspect, 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.signal_3_aspect"), TileId::RailSignal3Aspect, 0xFF}
 };
 
 inline void validRotate(TileRotate& rotate, uint8_t rotates)
@@ -149,16 +149,28 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
 
   m_editActions->setExclusive(true);
 
-  m_editActionNone = m_editActions->addAction(m_toolbarEdit->addAction(Theme::getIcon("mouse"), ""));
+  m_editActionNone = m_editActions->addAction(m_toolbarEdit->addAction(Theme::getIcon("mouse"), "", this,
+    [this]()
+    {
+      actionSelected(nullptr);
+    }));
   m_editActionNone->setCheckable(true);
   m_editActionNone->setData(-1);
 
-  m_editActionMove = m_editActions->addAction(m_toolbarEdit->addAction(Theme::getIcon("move_tile"), Locale::tr("board:move_tile")));
+  m_editActionMove = m_editActions->addAction(m_toolbarEdit->addAction(Theme::getIcon("move_tile"), Locale::tr("board:move_tile"), this,
+    [this]()
+    {
+      actionSelected(nullptr);
+    }));
   m_editActionMove->setCheckable(true);
   m_editActionMove->setData(-1);
   m_editActionMove->setEnabled(false); // todo: implement
 
-  m_editActionDelete = m_editActions->addAction(m_toolbarEdit->addAction(Theme::getIcon("delete"), Locale::tr("board:delete_tile")));
+  m_editActionDelete = m_editActions->addAction(m_toolbarEdit->addAction(Theme::getIcon("delete"), Locale::tr("board:delete_tile"), this,
+    [this]()
+    {
+      actionSelected(nullptr);
+    }));
   m_editActionDelete->setCheckable(true);
   m_editActionDelete->setData(-1);
 
@@ -179,7 +191,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
           connect(actions[0], &QAction::triggered, this,
             [this, action=actions[0]]()
             {
-              validRotate(m_editRotate, tileInfo[action->data().toInt()].rotates);
+              actionSelected(&tileInfo[action->data().toInt()]);
             });
         }
         else // > 1
@@ -198,7 +210,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
                 action->setText(subAction->text());
                 action->setData(subAction->data());
                 action->setChecked(true);
-                validRotate(m_editRotate, tileInfo[subAction->data().toInt()].rotates);
+                actionSelected(&tileInfo[subAction->data().toInt()]);
               });
           }
           action->setIcon(actions[0]->icon());
@@ -206,6 +218,11 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
           action->setData(actions[0]->data());
           action->setMenu(m);
           action->setCheckable(true);
+          connect(action, &QAction::triggered, this,
+            [this, action]()
+            {
+              actionSelected(&tileInfo[action->data().toInt()]);
+            });
         }
         actions.clear();
       }
@@ -348,5 +365,18 @@ void BoardWidget::rightClicked()
     {
       m_editRotate += TileRotate::Deg45;
       validRotate(m_editRotate, tileInfo[index].rotates);
+      m_boardArea->setMouseMoveTileRotate(m_editRotate);
     }
+}
+
+void BoardWidget::actionSelected(const TileInfo* tileInfo)
+{
+  if(tileInfo)
+  {
+    validRotate(m_editRotate, tileInfo->rotates);
+    m_boardArea->setMouseMoveTileRotate(m_editRotate);
+    m_boardArea->setMouseMoveTileId(tileInfo->id);
+  }
+  else
+    m_boardArea->setMouseMoveTileId(TileId::None);
 }

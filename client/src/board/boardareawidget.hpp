@@ -24,7 +24,9 @@
 #define TRAINTASTIC_CLIENT_BOARD_BOARDAREAWIDGET_HPP
 
 #include <QWidget>
+#include <traintastic/board/tileid.hpp>
 #include <traintastic/board/tilelocation.hpp>
+#include <traintastic/board/tilerotate.hpp>
 #include <traintastic/enum/signalaspect.hpp>
 #include <traintastic/enum/turnoutposition.hpp>
 
@@ -52,7 +54,9 @@ class BoardAreaWidget : public QWidget
     bool m_mouseRightButtonPressed;
     QPoint m_mouseRightButtonPressedPoint;
 
+    TileId m_mouseMoveTileId;
     TileLocation m_mouseMoveTileLocation;
+    TileRotate m_mouseMoveTileRotate;
 
     int getTileSize() const { return 25 + m_zoomLevel * 5; }
     TurnoutPosition getTurnoutPosition(const TileLocation& l) const;
@@ -75,6 +79,9 @@ class BoardAreaWidget : public QWidget
     Grid grid() const { return m_grid; }
     void nextGrid();
     int zoomLevel() const { return m_zoomLevel; }
+
+    void setMouseMoveTileId(TileId id);
+    void setMouseMoveTileRotate(TileRotate rotate);
 
   public slots:
     void setGrid(Grid value);
