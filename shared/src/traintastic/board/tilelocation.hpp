@@ -24,11 +24,19 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_BOARD_TILELOCATION_HPP
 
 #include <functional>
+#include <limits>
 
 struct TileLocation
 {
+  static const TileLocation invalid;
+
   int16_t x;
   int16_t y;
+
+  bool isValid() const
+  {
+    return *this != invalid;
+  }
 
   bool operator ==(const TileLocation& other) const
   {
@@ -40,6 +48,8 @@ struct TileLocation
     return x != other.x || y != other.y;
   }
 };
+
+inline const TileLocation TileLocation::invalid{std::numeric_limits<int16_t>::min(), std::numeric_limits<int16_t>::min()};
 
 struct TileLocationHash
 {

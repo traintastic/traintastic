@@ -262,7 +262,10 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   connect(m_boardArea, &BoardAreaWidget::mouseTileLocationChanged, this,
     [this](int16_t x, int16_t y)
     {
-      m_statusBarCoords->setText(QString::number(x) + ", " + QString::number(y));
+      if(TileLocation{x, y}.isValid())
+        m_statusBarCoords->setText(QString::number(x) + ", " + QString::number(y));
+      else
+        m_statusBarCoords->setText("");
     });
 
   gridChanged(m_boardArea->grid());

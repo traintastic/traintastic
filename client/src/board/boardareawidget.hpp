@@ -63,6 +63,7 @@ class BoardAreaWidget : public QWidget
     SignalAspect getSignalAspect(const TileLocation& l) const;
     TileLocation pointToTileLocation(const QPoint& p);
 
+    void leaveEvent(QEvent *event) final;
     void keyPressEvent(QKeyEvent* event) final;
     void mousePressEvent(QMouseEvent* event) final;
     void mouseReleaseEvent(QMouseEvent* event) final;

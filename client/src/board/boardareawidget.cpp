@@ -139,6 +139,15 @@ TileLocation BoardAreaWidget::pointToTileLocation(const QPoint& p)
   return TileLocation{static_cast<int16_t>(p.x() / pxPerTile), static_cast<int16_t>(p.y() / pxPerTile)};
 }
 
+void BoardAreaWidget::leaveEvent(QEvent* event)
+{
+  m_mouseMoveTileLocation = TileLocation::invalid;
+  emit mouseTileLocationChanged(m_mouseMoveTileLocation.x, m_mouseMoveTileLocation.y);
+  if(m_mouseMoveTileId != TileId::None)
+    update();
+  QWidget::leaveEvent(event);
+}
+
 void BoardAreaWidget::keyPressEvent(QKeyEvent* event)
 {
   if(event->key() == Qt::Key_G && event->modifiers() == Qt::ControlModifier)
@@ -313,7 +322,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
   painter.restore();
 
-  if(m_mouseMoveTileId != TileId::None)
+  if(m_mouseMoveTileId != TileId::None && m_mouseMoveTileLocation.isValid())
   {
     const QRectF r = tileRect(m_mouseMoveTileLocation, 1, 1, tileSize);
     painter.fillRect(r, backgroundColor50);
