@@ -25,8 +25,8 @@
         <file>board_tile.rail.buffer_stop.svg</file>
         <file>zoom_in.svg</file>
         <file>zoom_out.svg</file>
-        <file>board_tile.rail.signal_2aspect.svg</file>
-        <file>board_tile.rail.signal_3aspect.svg</file>
+        <file>board_tile.rail.signal_2_aspect.svg</file>
+        <file>board_tile.rail.signal_3_aspect.svg</file>
         <file>board_tile.rail.block.svg</file>
         <file>move_tile.svg</file>
         <file>mouse.svg</file>

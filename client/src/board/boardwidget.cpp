@@ -46,7 +46,7 @@ struct TileInfo
   uint8_t rotates;
 };
 
-const std::array<TileInfo, 25> tileInfo = {
+const std::array<TileInfo, 26> tileInfo = {
   TileInfo{QStringLiteral("board_tile.rail.straight"), TileId::RailStraight, 0xFF},
   TileInfo{QStringLiteral("board_tile.rail.buffer_stop"), TileId::RailBufferStop, 0xFF},
   TileInfo{QStringLiteral(""), TileId::None, 0},
@@ -71,7 +71,8 @@ const std::array<TileInfo, 25> tileInfo = {
   TileInfo{QStringLiteral("board_tile.rail.sensor"), TileId::RailSensor, 0xFF},
   TileInfo{QStringLiteral(""), TileId::None, 0},
   TileInfo{QStringLiteral("board_tile.rail.signal_2_aspect"), TileId::RailSignal2Aspect, 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.signal_3_aspect"), TileId::RailSignal3Aspect, 0xFF}
+  TileInfo{QStringLiteral("board_tile.rail.signal_3_aspect"), TileId::RailSignal3Aspect, 0xFF},
+  TileInfo{QStringLiteral(""), TileId::None, 0}
 };
 
 inline void validRotate(TileRotate& rotate, uint8_t rotates)
@@ -228,7 +229,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
       }
       else
       {
-        QAction* act = new QAction(QIcon(QString(":/dark/").append(info.classId).append("")), Locale::tr(QString("class_id:").append(info.classId)));
+        QAction* act = new QAction(Theme::getIcon(info.classId), Locale::tr(QString("class_id:").append(info.classId)));
         act->setData(static_cast<qint64>(i));
         actions.append(act);
       }
