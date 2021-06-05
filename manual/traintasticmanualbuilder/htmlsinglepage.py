@@ -142,4 +142,7 @@ class HTMLSinglePageBuilder(HTMLBuilder):
         # replace .md links by #id:
         html = re.sub(r'href="([^"]+\.md)"', lambda m: 'href="' + self._md2id[m.group(1)] + '"', html)
 
+        # replace .md#id links by #id:
+        html = re.sub(r'href="[^"]+\.md(#[^"]+)"', lambda m: 'href="' + m.group(1) + '"', html)
+
         self._output_text_file(self._language + '.html', html)

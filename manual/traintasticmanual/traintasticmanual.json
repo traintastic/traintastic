@@ -30,7 +30,12 @@
   },
   {
     "type": "chapter",
-    "markdown": "trainsandvehicles.md"
+    "markdown": "trainsandvehicles.md",
+    "pages": [
+      {
+        "markdown": "object/decoderfunction.md"
+      }
+    ]
   },
   {
     "type": "chapter",
