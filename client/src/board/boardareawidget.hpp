@@ -29,6 +29,7 @@
 #include <traintastic/board/tilerotate.hpp>
 #include <traintastic/enum/signalaspect.hpp>
 #include <traintastic/enum/turnoutposition.hpp>
+#include "../network/abstractproperty.hpp"
 
 class BoardWidget;
 
@@ -45,7 +46,13 @@ class BoardAreaWidget : public QWidget
     };
 
   protected:
+    static constexpr int boardMargin = 1; // tile
+
     BoardWidget& m_board;
+    AbstractProperty* m_boardLeft;
+    AbstractProperty* m_boardTop;
+    AbstractProperty* m_boardRight;
+    AbstractProperty* m_boardBottom;
     Grid m_grid;
     int m_zoomLevel;
 
@@ -57,6 +64,11 @@ class BoardAreaWidget : public QWidget
     TileId m_mouseMoveTileId;
     TileLocation m_mouseMoveTileLocation;
     TileRotate m_mouseMoveTileRotate;
+
+    inline int boardLeft() const { return Q_LIKELY(m_boardLeft) ? m_boardLeft->toInt() - boardMargin : 0; }
+    inline int boardTop() const { return Q_LIKELY(m_boardTop) ? m_boardTop->toInt() - boardMargin: 0; }
+    inline int boardRight() const { return Q_LIKELY(m_boardRight) ? m_boardRight->toInt() + boardMargin: 0; }
+    inline int boardBottom() const { return Q_LIKELY(m_boardBottom) ? m_boardBottom->toInt() + boardMargin: 0; }
 
     int getTileSize() const { return 25 + m_zoomLevel * 5; }
     TurnoutPosition getTurnoutPosition(const TileLocation& l) const;
@@ -70,6 +82,9 @@ class BoardAreaWidget : public QWidget
     void mouseMoveEvent(QMouseEvent* event) final;
     void wheelEvent(QWheelEvent* event) final;
     void paintEvent(QPaintEvent* event) final;
+
+  protected slots:
+    void updateMinimumSize();
 
   public:
     static constexpr int zoomLevelMin = 0;

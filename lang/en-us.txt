@@ -13,6 +13,8 @@
 :track_power=Track power
 :xpressnet=XpressNet
 
+board:resize_to_contents=Resize to contents
+
 class_id:board_tile.rail.block=Block
 class_id:board_tile.rail.buffer_stop=Buffer stop
 class_id:board_tile.rail.cross_45=Crossover 45°

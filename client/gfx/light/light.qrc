@@ -36,5 +36,6 @@
         <file>offline.svg</file>
         <file>mute.svg</file>
         <file>no_smoke.svg</file>
+        <file>resize_to_contents.svg</file>
     </qresource>
 </RCC>

@@ -48,5 +48,6 @@
         <file>mute.svg</file>
         <file>no_smoke.svg</file>
         <file>world.svg</file>
+        <file>resize_to_contents.svg</file>
     </qresource>
 </RCC>

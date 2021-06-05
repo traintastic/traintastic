@@ -30,6 +30,10 @@
 Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
+  left{this, "left", 0, PropertyFlags::ReadOnly | PropertyFlags::Store},
+  top{this, "top", 0, PropertyFlags::ReadOnly | PropertyFlags::Store},
+  right{this, "right", 0, PropertyFlags::ReadOnly | PropertyFlags::Store},
+  bottom{this, "bottom", 0, PropertyFlags::ReadOnly | PropertyFlags::Store},
   addTile{*this, "add_tile",
     [this](int16_t x, int16_t y, TileRotate rotate, std::string_view classId, bool replace)
     {
@@ -62,6 +66,7 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
           m_tiles[TileLocation{x, y}] = tile;
 
       tileDataChanged(*this, tile->location(), tile->data());
+      updateSize();
       return true;
     }},
   deleteTile{*this, "delete_tile",
@@ -79,8 +84,14 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
             m_tiles.erase(TileLocation{x, y});
         tileDataChanged(*this, tile->location(), TileData());
         tile->destroy();
+        updateSize();
       }
       return true;
+    }},
+  resizeToContents{*this, "resize_to_contents",
+    [this]()
+    {
+      updateSize(true);
     }}
 {
   auto w = world.lock();
@@ -89,10 +100,15 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
   Attributes::addDisplayName(name, "object:name");
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
+  m_interfaceItems.add(left);
+  m_interfaceItems.add(top);
+  m_interfaceItems.add(right);
+  m_interfaceItems.add(bottom);
   Attributes::addEnabled(addTile, editable);
   m_interfaceItems.add(addTile);
   Attributes::addEnabled(deleteTile, editable);
   m_interfaceItems.add(deleteTile);
+  m_interfaceItems.add(resizeToContents);
 }
 
 void Board::addToWorld()
@@ -149,4 +165,54 @@ void Board::worldEvent(WorldState state, WorldEvent event)
   name.setAttributeEnabled(editable);
   addTile.setAttributeEnabled(editable);
   deleteTile.setAttributeEnabled(editable);
+}
+
+void Board::updateSize(bool allowShrink)
+{
+  if(!m_tiles.empty())
+  {
+    auto it = m_tiles.cbegin();
+    int16_t xMin = it->first.x;
+    int16_t xMax = it->first.x;
+    int16_t yMin = it->first.y;
+    int16_t yMax = it->first.y;
+
+    while(++it != m_tiles.cend())
+    {
+      if(it->first.x < xMin)
+        xMin = it->first.x;
+      else if(it->first.x > xMax)
+        xMax = it->first.x;
+
+      if(it->first.y < yMin)
+        yMin = it->first.y;
+      else if(it->first.y > yMax)
+        yMax = it->first.y;
+    }
+
+    xMin = std::clamp(xMin, sizeMin, sizeMax);
+    yMin = std::clamp(yMin, sizeMin, sizeMax);
+    xMax = std::clamp(xMax, sizeMin, sizeMax);
+    yMax = std::clamp(yMax, sizeMin, sizeMax);
+
+    if(!allowShrink)
+    {
+      xMin = std::min(xMin, left.value());
+      yMin = std::min(yMin, top.value());
+      xMax = std::max(xMax, right.value());
+      yMax = std::max(yMax, bottom.value());
+    }
+
+    left.setValueInternal(xMin);
+    top.setValueInternal(yMin);
+    right.setValueInternal(xMax);
+    bottom.setValueInternal(yMax);
+  }
+  else
+  {
+    left.setValueInternal(0);
+    top.setValueInternal(0);
+    right.setValueInternal(0);
+    bottom.setValueInternal(0);
+  }
 }

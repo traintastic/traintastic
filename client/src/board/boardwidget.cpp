@@ -234,10 +234,19 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
       }
     }
   }
+  m_toolbarEdit->addSeparator();
+  m_toolbarEdit->addAction(Theme::getIcon("resize_to_contents"), Locale::tr("board:resize_to_contents"), this,
+    [this]()
+    {
+      if(Q_LIKELY(m_object))
+        m_object->callMethod("resize_to_contents");
+    });
+
 
   m_editActions->actions().first()->setChecked(true);
 
   QScrollArea* sa = new QScrollArea(this);
+  sa->setWidgetResizable(true);
   sa->setWidget(m_boardArea);
   l->addWidget(sa);
 

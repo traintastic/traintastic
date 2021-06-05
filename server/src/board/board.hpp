@@ -37,6 +37,9 @@ class Board : public IdObject
   public:
     using TileMap = std::unordered_map<TileLocation, std::shared_ptr<Tile>, TileLocationHash>;
 
+  private:
+    void updateSize(bool allowShrink = false);
+
   protected:
     static constexpr int16_t sizeMax = 1000;
     static constexpr int16_t sizeMin = -sizeMax;
@@ -53,8 +56,13 @@ class Board : public IdObject
     CREATE(Board)
 
     Property<std::string> name;
+    Property<int16_t> left;
+    Property<int16_t> top;
+    Property<int16_t> right;
+    Property<int16_t> bottom;
     Method<bool(int16_t, int16_t, TileRotate, std::string_view, bool)> addTile;
     Method<bool(int16_t, int16_t)> deleteTile;
+    Method<void()> resizeToContents;
 
     boost::signals2::signal<void (Board&, const TileLocation&, const TileData&)> tileDataChanged;
 
