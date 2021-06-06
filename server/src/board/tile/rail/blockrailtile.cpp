@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,11 +21,30 @@
  */
 
 #include "blockrailtile.hpp"
+#include "../../../world/world.hpp"
+#include "../../../core/attributes.hpp"
 
 BlockRailTile::BlockRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
-  RailTile(world, _id, TileId::RailBlock)
+  RailTile(world, _id, TileId::RailBlock),
+  name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   m_data.setSize(1, 5);
+
+  auto w = world.lock();
+  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+
+  Attributes::addEnabled(name, editable);
+  Attributes::addDisplayName(name, "object:name");
+  m_interfaceItems.add(name);
+}
+
+void BlockRailTile::worldEvent(WorldState state, WorldEvent event)
+{
+  RailTile::worldEvent(state, event);
+
+  const bool editable = contains(state, WorldState::Edit);
+
+  name.setAttributeEnabled(editable);
 }
 
 void BlockRailTile::setRotate(TileRotate value)
