@@ -36,6 +36,7 @@
 #include "../network/board.hpp"
 #include "../network/connection.hpp"
 #include "../network/property.hpp"
+#include "../network/method.hpp"
 #include "../network/callmethod.hpp"
 #include "../theme/theme.hpp"
 
@@ -174,6 +175,22 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
     }));
   m_editActionDelete->setCheckable(true);
   m_editActionDelete->setData(-1);
+  if(auto* m = m_object->getMethod("delete_tile"))
+  {
+    m_editActionDelete->setEnabled(m->getAttributeBool(AttributeName::Enabled, true));
+    connect(m, &Method::attributeChanged, this,
+      [this](AttributeName name, const QVariant& value)
+      {
+        if(name == AttributeName::Enabled)
+        {
+          m_editActionDelete->setEnabled(value.toBool());
+          if(!m_editActionDelete->isEnabled() && m_editActionDelete->isChecked())
+            m_editActionNone->setChecked(true);
+        }
+      });
+  }
+  else
+    m_editActionDelete->setEnabled(false);
 
   m_toolbarEdit->addSeparator();
   {
@@ -194,10 +211,12 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
             {
               actionSelected(&tileInfo[action->data().toInt()]);
             });
+          m_addActions.append(actions[0]);
         }
         else // > 1
         {
           QAction* action = m_editActions->addAction(m_toolbarEdit->addAction(""));
+          m_addActions.append(action);
           if(auto* tb = dynamic_cast<QToolButton*>(m_toolbarEdit->widgetForAction(action)))
             tb->setPopupMode(QToolButton::MenuButtonPopup);
           QMenu* m = new QMenu(this);
@@ -234,15 +253,51 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
         actions.append(act);
       }
     }
+
+    if(auto* m = m_object->getMethod("add_tile"))
+    {
+      const bool v = m->getAttributeBool(AttributeName::Enabled, true);
+      for(QAction* act : m_addActions)
+        act->setEnabled(v);
+
+      connect(m, &Method::attributeChanged, this,
+        [this](AttributeName name, const QVariant& value)
+        {
+          if(name == AttributeName::Enabled)
+          {
+            const bool v = value.toBool();
+            for(QAction* act : m_addActions)
+            {
+              act->setEnabled(v);
+              if(!v && act->isChecked())
+                m_editActionNone->setChecked(true);
+            }
+          }
+        });
+    }
+    else
+      for(QAction* act : m_addActions)
+        act->setEnabled(false);
   }
   m_toolbarEdit->addSeparator();
-  m_toolbarEdit->addAction(Theme::getIcon("resize_to_contents"), Locale::tr("board:resize_to_contents"), this,
+  m_editActionResizeToContents = m_toolbarEdit->addAction(Theme::getIcon("resize_to_contents"), Locale::tr("board:resize_to_contents"), this,
     [this]()
     {
       if(Q_LIKELY(m_object))
         m_object->callMethod("resize_to_contents");
     });
-
+  if(auto* m = m_object->getMethod("resize_to_contents"))
+  {
+    m_editActionResizeToContents->setEnabled(m->getAttributeBool(AttributeName::Enabled, true));
+    connect(m, &Method::attributeChanged, this,
+      [this](AttributeName name, const QVariant& value)
+      {
+        if(name == AttributeName::Enabled)
+          m_editActionResizeToContents->setEnabled(value.toBool());
+      });
+  }
+  else
+    m_editActionResizeToContents->setEnabled(false);
 
   m_editActions->actions().first()->setChecked(true);
 

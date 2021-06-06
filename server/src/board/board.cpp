@@ -96,6 +96,7 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
 {
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool stopped = w && !contains(w->state.value(), WorldState::Run);
 
   Attributes::addDisplayName(name, "object:name");
   Attributes::addEnabled(name, editable);
@@ -104,10 +105,11 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
   m_interfaceItems.add(top);
   m_interfaceItems.add(right);
   m_interfaceItems.add(bottom);
-  Attributes::addEnabled(addTile, editable);
+  Attributes::addEnabled(addTile, editable && stopped);
   m_interfaceItems.add(addTile);
-  Attributes::addEnabled(deleteTile, editable);
+  Attributes::addEnabled(deleteTile, editable && stopped);
   m_interfaceItems.add(deleteTile);
+  Attributes::addEnabled(resizeToContents, editable);
   m_interfaceItems.add(resizeToContents);
 }
 
@@ -161,10 +163,12 @@ void Board::worldEvent(WorldState state, WorldEvent event)
   IdObject::worldEvent(state, event);
 
   const bool editable = contains(state, WorldState::Edit);
+  const bool stopped = !contains(state, WorldState::Run);
 
   name.setAttributeEnabled(editable);
-  addTile.setAttributeEnabled(editable);
-  deleteTile.setAttributeEnabled(editable);
+  addTile.setAttributeEnabled(editable && stopped);
+  deleteTile.setAttributeEnabled(editable && stopped);
+  resizeToContents.setAttributeEnabled(editable);
 }
 
 void Board::updateSize(bool allowShrink)

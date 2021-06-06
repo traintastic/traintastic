@@ -53,10 +53,12 @@ class BoardWidget : public QWidget
     QAction* m_actionGridDot;
     QAction* m_actionGridLine;
     QToolBar* m_toolbarEdit;
+    QVector<QAction*> m_addActions; // all tile add actions
     QActionGroup* m_editActions;
     QAction* m_editActionNone;
     QAction* m_editActionMove;
     QAction* m_editActionDelete;
+    QAction* m_editActionResizeToContents;
     TileRotate m_editRotate;
 
     void actionSelected(const TileInfo* tile);
