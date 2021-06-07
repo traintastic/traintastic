@@ -64,13 +64,7 @@ class Board final : public Object
 
     const TileObjectMap& tileObjects() const { return m_tileObjects; }
 
-    ObjectPtr getTileObject(TileLocation l) const
-    {
-      if(auto it = m_tileObjects.find(l); it != m_tileObjects.end())
-        return it->second;
-      else
-        return ObjectPtr();
-    }
+    ObjectPtr getTileObject(TileLocation l) const;
 
     int addTile(int16_t x, int16_t y, TileRotate rotate, const QString& id, bool replace, std::function<void(const bool&, Message::ErrorCode)> callback);
     int deleteTile(int16_t x, int16_t y, std::function<void(const bool&, Message::ErrorCode)> callback);

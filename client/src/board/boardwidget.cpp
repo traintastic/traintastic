@@ -378,10 +378,8 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
 
     if(act == m_editActionNone)
     {
-      auto it = m_object->tileData().find({x, y});
-      if(it != m_object->tileData().end())
-        if(ObjectPtr obj = m_object->getTileObject({x, y}))
-          MainWindow::instance->showObject(obj);
+      if(ObjectPtr obj = m_object->getTileObject({x, y}))
+        MainWindow::instance->showObject(obj);
     }
     else if(act == m_editActionMove)
     {

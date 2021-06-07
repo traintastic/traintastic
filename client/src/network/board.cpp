@@ -42,6 +42,22 @@ void Board::getTileData()
   m_getTileDataRequestId = m_connection->getTileData(*this);
 }
 
+ObjectPtr Board::getTileObject(TileLocation l) const
+{
+  auto itObject = m_tileObjects.find(l);
+
+  if(itObject == m_tileObjects.end())
+    for(const auto& itData : m_tileData)
+      if(l.x >= itData.first.x && l.x < itData.first.x + itData.second.width() &&
+          l.y >= itData.first.y && l.y < itData.first.y + itData.second.height())
+        itObject = m_tileObjects.find(itData.first);
+
+  if(itObject != m_tileObjects.end())
+    return itObject->second;
+  else
+    return ObjectPtr();
+}
+
 int Board::addTile(int16_t x, int16_t y, TileRotate rotate, const QString& id, bool replace, std::function<void(const bool&, Message::ErrorCode)> callback)
 {
   return ::callMethod(*m_connection, *getMethod("add_tile"), std::move(callback), x, y, rotate, id, replace);
