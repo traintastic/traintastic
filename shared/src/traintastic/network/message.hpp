@@ -115,7 +115,7 @@ class Message
       InvalidProperty = 3,
       InvalidValue = 4,
 */
-
+      Other = 62,
       Unknown = 63
     };
 
@@ -168,8 +168,17 @@ class Message
 
     static std::unique_ptr<Message> newErrorResponse(Command command, uint16_t requestId, ErrorCode errorCode)
     {
+      assert(errorCode != ErrorCode::None && errorCode != ErrorCode::Other);
       std::unique_ptr<Message> message = std::make_unique<Message>(command, Type::Response, requestId);
       message->header().flags.errorCode = static_cast<uint8_t>(errorCode);
+      return message;
+    }
+
+    static std::unique_ptr<Message> newErrorResponse(Command command, uint16_t requestId, std::string_view error)
+    {
+      std::unique_ptr<Message> message = std::make_unique<Message>(command, Type::Response, requestId);
+      message->header().flags.errorCode = static_cast<uint8_t>(ErrorCode::Other);
+      message->write(error);
       return message;
     }
 
