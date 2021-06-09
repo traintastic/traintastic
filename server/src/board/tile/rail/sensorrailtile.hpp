@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,11 +33,20 @@ class SensorRailTile : public StraightRailTile
   DEFAULT_ID("sensor")
   CREATE(SensorRailTile)
 
+  private:
+    boost::signals2::connection m_inputPropertyChanged;
+
+    void inputPropertyChanged(AbstractProperty& property);
+
   protected:
+    void loaded() override;
     void worldEvent(WorldState state, WorldEvent event) override;
 
   public:
+    Property<std::string> name;
     ObjectProperty<Input> input;
+    Property<bool> invert;
+    Property<TriState> state;
 
     SensorRailTile(const std::weak_ptr<World>& world, std::string_view _id);
 };
