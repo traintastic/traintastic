@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -58,6 +58,48 @@ constexpr TriState operator!(TriState value)
     default:
       return TriState::Undefined;
   }
+}
+
+constexpr TriState operator||(TriState lhs, TriState rhs)
+{
+  if(lhs == TriState::True || rhs == TriState::True)
+    return TriState::True;
+  else if(lhs == TriState::False && rhs == TriState::False)
+    return TriState::False;
+  else
+    return TriState::Undefined;
+}
+
+constexpr TriState operator||(TriState lhs, bool shr)
+{
+  return lhs || toTriState(shr);
+}
+
+constexpr TriState operator&&(TriState lhs, TriState rhs)
+{
+  if(lhs == TriState::False || rhs == TriState::False)
+    return TriState::False;
+  else if(lhs == TriState::True && rhs == TriState::True)
+    return TriState::True;
+  else
+    return TriState::Undefined;
+}
+
+constexpr TriState operator&&(TriState lhs, bool shr)
+{
+  return lhs && toTriState(shr);
+}
+
+constexpr TriState operator^(TriState lhs, TriState shr)
+{
+  if(lhs == TriState::Undefined || shr == TriState::Undefined)
+    return TriState::Undefined;
+  return lhs == shr ? TriState::False : TriState::True;
+}
+
+constexpr TriState operator^(TriState lhs, bool shr)
+{
+  return lhs ^ toTriState(shr);
 }
 
 #endif
