@@ -139,6 +139,14 @@ TurnoutPosition BoardAreaWidget::getTurnoutPosition(const TileLocation& l) const
   return TurnoutPosition::Unknown;
 }
 
+TriState BoardAreaWidget::getSensorState(const TileLocation& l) const
+{
+  if(ObjectPtr object = m_board.board().getTileObject(l))
+    if(const auto* p = object->getProperty("state"))
+      return p->toEnum<TriState>();
+  return TriState::Undefined;
+}
+
 SignalAspect BoardAreaWidget::getSignalAspect(const TileLocation& l) const
 {
   if(ObjectPtr object = m_board.board().getTileObject(l))
@@ -318,7 +326,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           break;
 
         case TileId::RailSensor:
-          tilePainter.drawSensor(id, r, a); // TODO: add state
+          tilePainter.drawSensor(id, r, a, getSensorState(it.first));
           break;
 
         case TileId::RailSignal2Aspect:

@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_CLIENT_BOARD_TILEPAINTER_HPP
 #define TRAINTASTIC_CLIENT_BOARD_TILEPAINTER_HPP
 
+#include <array>
 #include <vector>
 #include <QPainter>
 #include <traintastic/board/tileid.hpp>
@@ -34,12 +35,11 @@
 class TilePainter
 {
   private:
-
-
     inline static const QColor trackColor{0xC0, 0xC0, 0xC0};
     inline static const QColor signalRed{192, 0, 0};
     inline static const QColor signalYellow{192, 192, 32};
     inline static const QColor signalGreen{0, 192, 0};
+    inline static const std::array<QColor, 3> sensorStateColor = {{QColor{0x10, 0x10, 0x10}, QColor{0x40, 0x40, 0x40}, QColor{0x00, 0xBF, 0xFF}}};
     inline static const QBrush blockBrushFree{QColor{0x66, 0xC6, 0x66}};
     inline static const QBrush blockBrushOccupied{QColor{0xC6, 0x66, 0x66}};
     inline static const QBrush blockBrushUnknown{QColor{0x66, 0x66, 0x66}};
@@ -56,6 +56,12 @@ class TilePainter
     inline void setTurnoutStatePen() { m_painter.setPen(m_turnoutStatePen); }
     inline QRectF turnoutStateRect(const QRectF& r) { return r.adjusted(m_turnoutMargin, m_turnoutMargin, -m_turnoutMargin, -m_turnoutMargin); }
 
+    inline QColor sensorStateToColor(TriState value) const
+    {
+      assert(static_cast<uint8_t>(value) < sensorStateColor.size());
+      return sensorStateColor[static_cast<uint8_t>(value)];
+    }
+
     void setBlockStateBrush(TriState value);
 
     void drawStraight(const QRectF& r, TileRotate rotate);
@@ -63,6 +69,8 @@ class TilePainter
     void drawCurve90(QRectF r, TileRotate rotate);
 
     void drawBufferStop(const QRectF& r, TileRotate rotate);
+
+    void drawLED(const QRectF& r, const QColor& color, const QColor& borderColor);
 
     void drawSignal2Aspect(QRectF r, TileRotate rotate, SignalAspect aspect);
     void drawSignal3Aspect(QRectF r, TileRotate rotate, SignalAspect aspect);

@@ -28,6 +28,7 @@
 #include <traintastic/board/tilelocation.hpp>
 #include <traintastic/board/tilerotate.hpp>
 #include <traintastic/enum/signalaspect.hpp>
+#include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/turnoutposition.hpp>
 #include "../network/abstractproperty.hpp"
 
@@ -72,6 +73,7 @@ class BoardAreaWidget : public QWidget
 
     int getTileSize() const { return 25 + m_zoomLevel * 5; }
     TurnoutPosition getTurnoutPosition(const TileLocation& l) const;
+    TriState getSensorState(const TileLocation& l) const;
     SignalAspect getSignalAspect(const TileLocation& l) const;
     TileLocation pointToTileLocation(const QPoint& p);
 

@@ -108,20 +108,13 @@ void TilePainter::drawSensor(TileId id, const QRectF& r, TileRotate rotate, TriS
   switch(id)
   {
     case TileId::RailSensor:
+    {
       setTrackPen();
       drawStraight(r, rotate);
-      //drawLED(r, state);
-/*
-  m_painter.setPen(Qt::NoPen);
-  m_painter.setBrush(m_trackPen.brush());
-  int sz = r.width() / 4;
-  m_painter.drawEllipse(r.adjusted(+sz, +sz, -sz, -sz));
-  //m_painter.setBrush(a == TileRotate::Deg0 ? Qt::red : Qt::darkGreen); // TODO: draw state
-  sz += m_trackWidth / 2;
-  m_painter.drawEllipse(r.adjusted(+sz, +sz, -sz, -sz));
-*/
+      const qreal sz = r.width() / 4;
+      drawLED(r.adjusted(sz, sz, -sz, -sz), sensorStateToColor(state), trackColor);
       break;
-
+    }
     default:
       break;
   }
@@ -636,6 +629,18 @@ void TilePainter::drawSignal2Aspect(QRectF r, TileRotate rotate, SignalAspect as
   }
 
   m_painter.restore();
+}
+
+void TilePainter::drawLED(const QRectF& r, const QColor& color, const QColor& borderColor)
+{
+  if(borderColor.isValid())
+    m_painter.setPen(borderColor);
+  else
+    m_painter.setPen(Qt::NoPen);
+
+  m_painter.setBrush(color);
+
+  m_painter.drawEllipse(r);
 }
 
 void TilePainter::drawSignal3Aspect(QRectF r, TileRotate rotate, SignalAspect aspect)
