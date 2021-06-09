@@ -134,11 +134,6 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
     [[nodiscard]] int getObject(const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
     void releaseObject(Object* object);
 
-    void setPropertyBool(Property& property, bool value);
-    void setPropertyInt64(Property& property, int64_t value);
-    void setPropertyDouble(Property& property, double value);
-    void setPropertyString(Property& property, const QString& value);
-
     void setUnitPropertyUnit(UnitProperty& property, int64_t value);
 
     void setObjectPropertyById(const ObjectProperty& property, const QString& value);

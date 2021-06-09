@@ -63,6 +63,11 @@ class Property : public AbstractProperty
     QString toString() const final { return m_value.toString(); }
     QVariant toVariant() const final { return m_value; }
 
+    [[nodiscard]] int setValueBool(bool value, std::function<void(const QString& error)> callback) final;
+    [[nodiscard]] int setValueInt64(int64_t value, std::function<void(const QString& error)> callback) final;
+    [[nodiscard]] int setValueDouble(double value, std::function<void(const QString& error)> callback) final;
+    [[nodiscard]] int setValueString(const QString& value, std::function<void(const QString& error)> callback) final;
+
   public slots:
     void setValueBool(bool value) final;
     void setValueInt(int value) final;

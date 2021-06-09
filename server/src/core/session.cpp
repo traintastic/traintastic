@@ -144,35 +144,40 @@ bool Session::processMessage(const Message& message)
     }
     case Message::Command::ObjectSetProperty:
     {
-      if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
+      if(message.isRequest() || message.isEvent())
       {
-        if(AbstractProperty* property = object->getProperty(message.read<std::string>()))
+        if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
         {
-          try
+          if(AbstractProperty* property = object->getProperty(message.read<std::string>()))
           {
-            switch(message.read<ValueType>())
+            try
             {
-              case ValueType::Boolean:
-                property->fromBool(message.read<bool>());
-                break;
+              switch(message.read<ValueType>())
+              {
+                case ValueType::Boolean:
+                  property->fromBool(message.read<bool>());
+                  break;
 
-              case ValueType::Integer:
-                property->fromInt64(message.read<int64_t>());
-                break;
+                case ValueType::Integer:
+                  property->fromInt64(message.read<int64_t>());
+                  break;
 
-              case ValueType::Float:
-                property->fromDouble(message.read<double>());
-                break;
+                case ValueType::Float:
+                  property->fromDouble(message.read<double>());
+                  break;
 
-              case ValueType::String:
-                property->fromString(message.read<std::string>());
-                break;
+                case ValueType::String:
+                  property->fromString(message.read<std::string>());
+                  break;
+              }
             }
-          }
-          catch(const std::exception&)
-          {
-            // set property failed, send changed event with current value:
-            objectPropertyChanged(*property);
+            catch(const std::exception& e) // set property failed
+            {
+              if(message.isRequest()) // send error response
+                m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), e.what()));
+              else // send changed event with current value:
+                objectPropertyChanged(*property);
+            }
           }
         }
       }

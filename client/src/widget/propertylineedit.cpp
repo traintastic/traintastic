@@ -21,17 +21,27 @@
  */
 
 #include "propertylineedit.hpp"
+#include <QToolTip>
 #include "../network/property.hpp"
+#include "../network/object.hpp"
+#include "../network/connection.hpp"
+#include <traintastic/locale/locale.hpp>
 
 PropertyLineEdit::PropertyLineEdit(Property& property, QWidget* parent) :
   QLineEdit(parent),
-  m_property{property}
+  m_property{property},
+  m_requestId{Connection::invalidRequestId}
 {
   Q_ASSERT(m_property.type() == ValueType::String);
   setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
   setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
   setText(m_property.toString());
-  connect(&m_property, &Property::valueChangedString, this, &PropertyLineEdit::setText);
+  connect(&m_property, &Property::valueChangedString, this,
+    [this](const QString& value)
+    {
+      if(!hasFocus())
+        setText(value);
+    });
   connect(&m_property, &Property::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
@@ -49,5 +59,42 @@ PropertyLineEdit::PropertyLineEdit(Property& property, QWidget* parent) :
           break;
       }
     });
-  connect(this, &PropertyLineEdit::textEdited, &m_property, &Property::setValueString);
+  connect(this, &PropertyLineEdit::textEdited, this,
+    [this](const QString& value)
+    {
+      cancelRequest();
+      m_requestId = m_property.setValueString(value,
+        [this](const QString& error)
+        {
+          showError(error);
+        });
+    });
+}
+
+PropertyLineEdit::~PropertyLineEdit()
+{
+  cancelRequest();
+}
+
+void PropertyLineEdit::cancelRequest()
+{
+  if(m_requestId == Connection::invalidRequestId)
+    return;
+  m_property.object().connection()->cancelRequest(m_requestId);
+  m_requestId = Connection::invalidRequestId;
+}
+
+void PropertyLineEdit::showError(const QString& error)
+{
+  // TODO: replace by a proper error tip
+  if(!error.isEmpty())
+    QToolTip::showText(mapToGlobal(rect().bottomLeft()), Locale::tr(error));
+  else
+    QToolTip::hideText();
+}
+
+void PropertyLineEdit::focusOutEvent(QFocusEvent* event)
+{
+  QLineEdit::focusOutEvent(event);
+  setText(m_property.toString());
 }

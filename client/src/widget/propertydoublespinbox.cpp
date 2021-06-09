@@ -50,5 +50,5 @@ PropertyDoubleSpinBox::PropertyDoubleSpinBox(AbstractProperty& property, QWidget
           break;
       }
     });
-  connect(this, QOverload<double>::of(&PropertyDoubleSpinBox::valueChanged), &m_property, &AbstractProperty::setValueDouble);
+  connect(this, QOverload<double>::of(&PropertyDoubleSpinBox::valueChanged), &m_property, QOverload<double>::of(&AbstractProperty::setValueDouble));
 }

@@ -29,11 +29,19 @@ class Property;
 
 class PropertyLineEdit : public QLineEdit
 {
-  protected:
+  private:
     Property& m_property;
+    int m_requestId;
+
+    void cancelRequest();
+    void showError(const QString& error);
+
+  protected:
+    void focusOutEvent(QFocusEvent* event);
 
   public:
     PropertyLineEdit(Property& property, QWidget* parent = nullptr);
+    ~PropertyLineEdit() override;
 };
 
 #endif

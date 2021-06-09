@@ -136,46 +136,6 @@ int Connection::getObject(const QString& id, std::function<void(const ObjectPtr&
   return request->requestId();
 }
 
-void Connection::setPropertyBool(Property& property, bool value)
-{
-  auto event = Message::newEvent(Message::Command::ObjectSetProperty);
-  event->write(static_cast<Object*>(property.parent())->m_handle);
-  event->write(property.name().toLatin1());
-  event->write(ValueType::Boolean);
-  event->write(value);
-  send(event);
-}
-
-void Connection::setPropertyInt64(Property& property, int64_t value)
-{
-  auto event = Message::newEvent(Message::Command::ObjectSetProperty);
-  event->write(static_cast<Object*>(property.parent())->m_handle);
-  event->write(property.name().toLatin1());
-  event->write(ValueType::Integer);
-  event->write(value);
-  send(event);
-}
-
-void Connection::setPropertyDouble(Property& property, double value)
-{
-  auto event = Message::newEvent(Message::Command::ObjectSetProperty);
-  event->write(static_cast<Object*>(property.parent())->m_handle);
-  event->write(property.name().toLatin1());
-  event->write(ValueType::Float);
-  event->write(value);
-  send(event);
-}
-
-void Connection::setPropertyString(Property& property, const QString& value)
-{
-  auto event = Message::newEvent(Message::Command::ObjectSetProperty);
-  event->write(static_cast<Object*>(property.parent())->m_handle);
-  event->write(property.name().toLatin1());
-  event->write(ValueType::String);
-  event->write(value.toUtf8());
-  send(event);
-}
-
 void Connection::setUnitPropertyUnit(UnitProperty& property, int64_t value)
 {
   auto event = Message::newEvent(Message::Command::ObjectSetUnitPropertyUnit);

@@ -71,7 +71,7 @@ UnitPropertyEdit::UnitPropertyEdit(UnitProperty& property, QWidget *parent) :
 
   m_valueLineEdit->setReadOnly(!m_property.isWritable());
   l->addWidget(m_valueLineEdit, 1);
-  connect(m_valueLineEdit, &QLineEdit::textEdited, &m_property, &Property::setValueString);
+  connect(m_valueLineEdit, &QLineEdit::textEdited, &m_property, QOverload<const QString&>::of(&AbstractProperty::setValueString));
 
   for(qint64 value : enumValues(m_property.unitName()))
   {
