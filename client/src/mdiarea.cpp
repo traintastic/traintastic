@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "mdiarea.hpp"
 #include <QPushButton>
 #include <QAction>
+#include <QResizeEvent>
 
 MdiArea::MdiArea(QWidget* parent) :
   QMdiArea(parent)
@@ -31,22 +32,45 @@ MdiArea::MdiArea(QWidget* parent) :
 
 void MdiArea::addBackgroundAction(QAction* action)
 {
-  if(m_backgroudnActionButtons.contains(action))
-    return;
-
   QPushButton* button = new QPushButton(action->icon(), action->text(), this);
   connect(button, &QPushButton::clicked, action, &QAction::trigger);
-  //button->setIconSize({72, 72});
   button->setMinimumSize(100, 100);
-  button->move(30 + 120 * children().count(), 20);
   button->show();
-  m_backgroudnActionButtons.insert(action, button);
+  m_backgroundActionButtons.emplace_back(action, button);
+
+  updateButtonPositions();
 }
 
 void MdiArea::removeBackgroundAction(QAction* action)
 {
-  QPushButton* button = m_backgroudnActionButtons.value(action, nullptr);
-  if(button)
-    delete button;
+  auto it = std::find_if(m_backgroundActionButtons.begin(), m_backgroundActionButtons.end(), [action](const auto& it) { return it.first == action; });
+  if(it != m_backgroundActionButtons.end())
+  {
+    delete it->second;
+    m_backgroundActionButtons.erase(it);
+    updateButtonPositions();
+  }
 }
 
+void MdiArea::resizeEvent(QResizeEvent* event)
+{
+  QMdiArea::resizeEvent(event);
+  if(event->size().width() != event->oldSize().width())
+    updateButtonPositions();
+}
+
+void MdiArea::updateButtonPositions()
+{
+  const int buttonMargin = 20;
+
+  int totalWidth = -buttonMargin;
+  for(const auto& it : m_backgroundActionButtons)
+    totalWidth += it.second->width() + buttonMargin;
+
+  int x = (width() - totalWidth) / 2;
+  for(const auto& it : m_backgroundActionButtons)
+  {
+    it.second->move(x, buttonMargin);
+    x += it.second->width() + buttonMargin;
+  }
+}
