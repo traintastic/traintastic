@@ -50,11 +50,11 @@ file(GLOB SOURCES
   "thirdparty/QtWaitingSpinner/*.hpp"
   "thirdparty/QtWaitingSpinner/*.cpp")
 
-find_package(Qt5 COMPONENTS Widgets Network REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Network Svg REQUIRED)
 
 target_sources(traintastic-client PRIVATE ${SOURCES})
 
-target_link_libraries(traintastic-client PRIVATE Qt5::Widgets Qt5::Network)
+target_link_libraries(traintastic-client PRIVATE Qt5::Widgets Qt5::Network Qt5::Svg)
 
 ### PLATFORM ###
 
