@@ -83,7 +83,7 @@ jobs:
     # Ubuntu only:
     - name: Install packages
       if: startswith(matrix.config.os, 'ubuntu')
-      run: sudo apt install qt5-default
+      run: sudo apt install qt5-default libqt5svg5-dev
 
     # All:
     - name: Create Build Environment
