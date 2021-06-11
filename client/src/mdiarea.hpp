@@ -27,15 +27,18 @@
 #include <list>
 
 class QPushButton;
+class QSvgRenderer;
 
 class MdiArea : public QMdiArea
 {
   private:
     std::list<std::pair<QAction*, QPushButton*>> m_backgroundActionButtons;
+    QSvgRenderer* m_backgroundImage;
 
     void updateButtonPositions();
 
   protected:
+    void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
 
   public:

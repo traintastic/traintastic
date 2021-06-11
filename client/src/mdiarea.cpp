@@ -24,9 +24,12 @@
 #include <QPushButton>
 #include <QAction>
 #include <QResizeEvent>
+#include <QPainter>
+#include <QSvgRenderer>
 
 MdiArea::MdiArea(QWidget* parent) :
-  QMdiArea(parent)
+  QMdiArea(parent),
+  m_backgroundImage{new QSvgRenderer(QStringLiteral(":/backgroundimage.svg"), this)}
 {
 }
 
@@ -50,6 +53,18 @@ void MdiArea::removeBackgroundAction(QAction* action)
     m_backgroundActionButtons.erase(it);
     updateButtonPositions();
   }
+}
+
+void MdiArea::paintEvent(QPaintEvent* event)
+{
+  QMdiArea::paintEvent(event);
+
+  // paint Traintastic logo on background:
+  const QSize sz = viewport()->size();
+  const qreal n = qMax(64., qMin(sz.width(), sz.height()) / 1.5);
+
+  QPainter painter(viewport());
+  m_backgroundImage->render(&painter, QRectF((sz.width() - n) / 2, (sz.height() - n) / 2, n, n));
 }
 
 void MdiArea::resizeEvent(QResizeEvent* event)

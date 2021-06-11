@@ -1,5 +1,6 @@
 <RCC>
     <qresource>
         <file>appicon.svg</file>
+        <file>backgroundimage.svg</file>
     </qresource>
 </RCC>
