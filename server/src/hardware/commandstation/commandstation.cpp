@@ -114,6 +114,8 @@ void CommandStation::worldEvent(WorldState state, WorldEvent event)
 
       case WorldEvent::PowerOn:
         powerOn = true;
+        if(!emergencyStop)
+          restoreSpeed();
         break;
 
       case WorldEvent::Stop:
@@ -122,6 +124,8 @@ void CommandStation::worldEvent(WorldState state, WorldEvent event)
 
       case WorldEvent::Run:
         emergencyStop = false;
+        if(powerOn)
+          restoreSpeed();
         break;
 
       default:
@@ -157,4 +161,12 @@ void CommandStation::decoderChanged(const Decoder& decoder, DecoderChangeFlags c
 {
   for(auto& controller : *controllers)
     controller->decoderChanged(decoder, changes, functionNumber);
+}
+
+//! \brief restore speed of all decoders that are not (emergency) stopped
+void CommandStation::restoreSpeed()
+{
+  for(const auto& decoder : *decoders)
+    if(!decoder->emergencyStop && decoder->speedStep > 0)
+      decoderChanged(*decoder, DecoderChangeFlags::SpeedStep, 0);
 }

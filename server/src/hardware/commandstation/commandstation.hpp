@@ -46,6 +46,8 @@ class CommandStation : public IdObject
     //virtual bool isDecoderSupported(Decoder& decoder) const = 0;
     virtual void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 
+    void restoreSpeed();
+
   public:
     CommandStation(const std::weak_ptr<World>& world, std::string_view _id);
 
