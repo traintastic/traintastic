@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -78,7 +78,7 @@ constexpr std::string_view toString(OpCode value)
   switch(value)
   {
     case OPC_BUSY: return "OPC_BUSY";
-    case OPC_GPOFF: return "OPC_GPOFFqqq";
+    case OPC_GPOFF: return "OPC_GPOFF";
     case OPC_GPON: return "OPC_GPON";
     case OPC_IDLE: return "OPC_IDLE";
     case OPC_LOCO_SPD: return "OPC_LOCO_SPD";
