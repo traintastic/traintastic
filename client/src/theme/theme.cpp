@@ -38,15 +38,12 @@ void Theme::setIconSet(IconSet value)
   s_iconSet = value;
 }
 
-QIcon Theme::getIcon(const QString& id)
+QIcon Theme::getIcon(const QString& idOff, const QString& idOn)
 {
-  for(auto path : getIconPaths())
-  {
-    QString icon = *path + id + iconExtension;
-    if(QFile::exists(icon))
-      return QIcon(icon);
-  }
-  return QIcon();
+  QIcon icon;
+  icon.addFile(getIconFile(idOff), QSize(), QIcon::Normal, QIcon::Off);
+  icon.addFile(getIconFile(idOn), QSize(), QIcon::Normal, QIcon::On);
+  return icon;
 }
 
 QIcon Theme::getIconForClassId(const QString& classId)
@@ -69,4 +66,15 @@ const std::array<const QString*, 3>& Theme::getIconPaths()
   }
   assert(false);
   return iconPathsLight;
+}
+
+QString Theme::getIconFile(const QString& id)
+{
+  for(auto path : getIconPaths())
+  {
+    QString file = *path + id + iconExtension;
+    if(QFile::exists(file))
+      return file;
+  }
+  return QString();
 }

@@ -57,6 +57,19 @@
 #define SETTING_WINDOWSTATE SETTING_PREFIX "windowstate"
 #define SETTING_VIEW_TOOLBAR SETTING_PREFIX "view_toolbar"
 
+inline static void setWorldMute(const ObjectPtr& world, bool value)
+{
+  if(Q_LIKELY(world))
+    world->setPropertyValue("mute", value);
+}
+
+inline static void setWorldNoSmoke(const ObjectPtr& world, bool value)
+{
+  if(Q_LIKELY(world))
+    world->setPropertyValue("no_smoke", value);
+}
+
+
 MainWindow::MainWindow(QWidget* parent) :
   QMainWindow(parent),
   m_splitter{new QSplitter(Qt::Vertical, this)},
@@ -170,20 +183,18 @@ MainWindow::MainWindow(QWidget* parent) :
       });
     m_worldRunAction->setCheckable(true);
     m_menuWorld->addSeparator();
-    m_worldMuteAction = m_menuWorld->addAction(Theme::getIcon("mute"), Locale::tr("world:mute"),
+    m_worldMuteMenuAction = m_menuWorld->addAction(Theme::getIcon("mute"), Locale::tr("world:mute"),
       [this](bool checked)
       {
-        if(Q_LIKELY(m_world))
-          m_world->setPropertyValue("mute", checked);
+        setWorldMute(m_world, checked);
       });
-    m_worldMuteAction->setCheckable(true);
-    m_worldNoSmokeAction = m_menuWorld->addAction(Theme::getIcon("no_smoke"), Locale::tr("world:no_smoke"),
+    m_worldMuteMenuAction->setCheckable(true);
+    m_worldNoSmokeMenuAction = m_menuWorld->addAction(Theme::getIcon("no_smoke"), Locale::tr("world:no_smoke"),
       [this](bool checked)
       {
-        if(Q_LIKELY(m_world))
-          m_world->setPropertyValue("no_smoke", checked);
+        setWorldNoSmoke(m_world, checked);
       });
-    m_worldNoSmokeAction->setCheckable(true);
+    m_worldNoSmokeMenuAction->setCheckable(true);
     m_worldEditAction = m_menuWorld->addAction(Theme::getIcon("edit"), Locale::tr("world:edit"),
       [this](bool checked)
       {
@@ -287,8 +298,18 @@ MainWindow::MainWindow(QWidget* parent) :
   m_toolbar->addAction(m_worldStopAction);
   m_toolbar->addAction(m_worldRunAction);
   m_toolbar->addSeparator();
-  m_toolbar->addAction(m_worldMuteAction);
-  m_toolbar->addAction(m_worldNoSmokeAction);
+  m_worldMuteToolbarAction = m_toolbar->addAction(Theme::getIcon("unmute", "mute"), Locale::tr("qtapp:toggle_mute"),
+    [this](bool checked)
+    {
+      setWorldMute(m_world, checked);
+    });
+  m_worldMuteToolbarAction->setCheckable(true);
+  m_worldNoSmokeToolbarAction = m_toolbar->addAction(Theme::getIcon("smoke", "no_smoke"), Locale::tr("qtapp:toggle_smoke"),
+    [this](bool checked)
+    {
+      setWorldNoSmoke(m_world, checked);
+    });
+  m_worldNoSmokeToolbarAction->setCheckable(true);
 
   QWidget* spacer = new QWidget(this);
   spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -644,7 +665,9 @@ void MainWindow::worldStateChanged(int64_t value)
   m_worldPowerOnOffToolButton->setIcon(powerIcon);
   m_worldStopAction->setChecked(!contains(state, WorldState::Run));
   m_worldRunAction->setChecked(contains(state, WorldState::Run));
-  m_worldMuteAction->setChecked(contains(state, WorldState::Mute));
-  m_worldNoSmokeAction->setChecked(contains(state, WorldState::NoSmoke));
+  m_worldMuteMenuAction->setChecked(contains(state, WorldState::Mute));
+  m_worldMuteToolbarAction->setChecked(contains(state, WorldState::Mute));
+  m_worldNoSmokeMenuAction->setChecked(contains(state, WorldState::NoSmoke));
+  m_worldNoSmokeToolbarAction->setChecked(contains(state, WorldState::NoSmoke));
   m_worldEditAction->setChecked(contains(state, WorldState::Edit));
 }

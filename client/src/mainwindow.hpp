@@ -68,8 +68,8 @@ class MainWindow : public QMainWindow
     QAction* m_worldPowerOffAction;
     QAction* m_worldStopAction;
     QAction* m_worldRunAction;
-    QAction* m_worldMuteAction;
-    QAction* m_worldNoSmokeAction;
+    QAction* m_worldMuteMenuAction;
+    QAction* m_worldNoSmokeMenuAction;
     QAction* m_worldEditAction;
     QMenu* m_menuObjects;
     QAction* m_actionLuaScript;
@@ -84,6 +84,8 @@ class MainWindow : public QMainWindow
     QToolBar* m_toolbar;
     QToolButton* m_worldOnlineOfflineToolButton;
     QToolButton* m_worldPowerOnOffToolButton;
+    QAction* m_worldMuteToolbarAction;
+    QAction* m_worldNoSmokeToolbarAction;
 
     QByteArray m_beforeFullScreenGeometry;
 
