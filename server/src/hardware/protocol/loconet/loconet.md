@@ -67,6 +67,48 @@ leave dir A = E0 09 00 0F 19 6F 40 00 2F
 leave dir B = E0 09 00 0F 19 6F 00 00 6F
 
 
+## Uhlenbrock 68610 - LISSY receiver
 
+### ???
+```2021-06-19 22:18:51.856532 [debug]    cs_1.loconet: rx: OPC_PEER_XFER [E5 0F 00 49 4B 24 00 00 00 00 00 00 00 78 4B]```
+```2021-06-19 22:18:59.502691 [debug]    cs_1.loconet: rx: OPC_IMM_PACKET [ED 0F 01 05 00 21 33 7F 7F 00 00 7F 7F 00 0B]```
 
+### LNCV programming on??
+```2021-06-19 22:19:32.454136 [debug]    cs_1.loconet: rx: OPC_IMM_PACKET [ED 0F 01 05 00 21 41 4D 1A 00 00 01 00 00 2F]```
+```2021-06-19 22:19:32.470128 [debug]    cs_1.loconet: rx: OPC_PEER_XFER [E5 0F 05 49 4B 1F 01 4D 1A 00 00 01 00 00 5A]```
 
+### LNCV 0 -> 5
+```2021-06-19 21:17:57.749146 [debug]    cs_1.loconet: rx: OPC_IMM_PACKET [ED 0F 01 05 00 20 01 4D 1A 00 00 05 00 00 6A]```
+```2021-06-19 21:17:57.764779 [debug]    cs_1.loconet: rx: OPC_LONG_ACK [B4 6D 7F 59]```
+
+### LNCV 0 -> 1
+```2021-06-19 21:18:34.123620 [debug]    cs_1.loconet: rx: OPC_IMM_PACKET [ED 0F 01 05 00 20 01 4D 1A 00 00 01 00 00 6E]```
+
+### LNCV 1 -> 2
+```2021-06-19 21:21:37.568839 [debug]    cs_1.loconet: rx: OPC_IMM_PACKET [ED 0F 01 05 00 20 01 4D 1A 01 00 02 00 00 6C]```
+```2021-06-19 21:21:37.584419 [debug]    cs_1.loconet: rx: OPC_LONG_ACK [B4 6D 7F 59]```
+
+### LNCV 2 -> 1
+```2021-06-19 21:23:07.769809 [debug]    cs_1.loconet: rx: OPC_IMM_PACKET [ED 0F 01 05 00 20 01 4D 1A 02 00 01 00 00 6C]```
+```2021-06-19 21:23:07.785617 [debug]    cs_1.loconet: rx: OPC_LONG_ACK [B4 6D 7F 59]```
+
+### LNCV 15 -> 1
+```2021-06-19 21:25:23.255584 [debug]    cs_1.loconet: rx: OPC_IMM_PACKET [ED 0F 01 05 00 20 01 4D 1A 0F 00 01 00 00 61]```
+```2021-06-19 21:25:23.271245 [debug]    cs_1.loconet: rx: OPC_LONG_ACK [B4 6D 7F 59]```
+
+### LNCV programming off??
+```2021-06-19 21:40:20.590313 [debug]    cs_1.loconet: rx: OPC_PEER_XFER [E5 0F 01 05 00 21 03 7F 7F 00 00 01 00 40 72]```
+
+### LNCV write
+```
+LNCV  0 -> 5 : OPC_IMM_PACKET [ED 0F 01 05 00 20 01 4D 1A 00 00 05 00 00 6A]
+LNCV  0 -> 1 : OPC_IMM_PACKET [ED 0F 01 05 00 20 01 4D 1A 00 00 01 00 00 6E]
+LNCV  1 -> 2 : OPC_IMM_PACKET [ED 0F 01 05 00 20 01 4D 1A 01 00 02 00 00 6C]
+LNCV  2 -> 1 : OPC_IMM_PACKET [ED 0F 01 05 00 20 01 4D 1A 02 00 01 00 00 6C]
+LNCV 15 -> 1 : OPC_IMM_PACKET [ED 0F 01 05 00 20 01 4D 1A 0F 00 01 00 00 61]
+                               ^^ ^^ ?? ?? ?? ?? ?? ?? ?? ^^ ^^^^^ ^^^^^ ^^
+                              OPC  |                      LN value not   chk
+                              IMM len                     CV u16   used? sum
+                                                          u8 big
+                                                             endian
+```
