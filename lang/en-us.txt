@@ -233,8 +233,10 @@ qtapp:grid=Grid
 qtapp:grid_dot=Dot
 qtapp:grid_line=Line
 qtapp:grid_none=None
+qtapp:toggle_mute=Toggle mute
 qtapp:toggle_offline_online=Toggle connection
 qtapp:toggle_power=Toggle power
+qtapp:toggle_smoke=Toggle smoke
 qtapp:zoom_in=Zoom in
 qtapp:zoom_out=Zoom out
 
