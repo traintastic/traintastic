@@ -72,6 +72,7 @@ class Decoder : public IdObject
     const std::shared_ptr<DecoderFunction>& getFunction(uint32_t number) const;
     const std::shared_ptr<DecoderFunction>& getFunction(DecoderFunctionType type) const;
     bool getFunctionValue(uint32_t number) const;
+    bool getFunctionValue(const std::shared_ptr<DecoderFunction>& function) const;
     void setFunctionValue(uint32_t number, bool value);
 };
 

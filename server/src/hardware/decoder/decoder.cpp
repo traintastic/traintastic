@@ -165,31 +165,37 @@ const std::shared_ptr<DecoderFunction>& Decoder::getFunction(DecoderFunctionType
 
 bool Decoder::getFunctionValue(uint32_t number) const
 {
-  const auto& f = getFunction(number);
-  if(!f)
+  return getFunctionValue(getFunction(number));
+}
+
+bool Decoder::getFunctionValue(const std::shared_ptr<DecoderFunction>& function) const
+{
+  if(!function)
     return false;
+
+  assert(this == &function->decoder());
 
   // Apply mute/noSmoke world states:
   if(m_worldMute)
   {
-    if(f->type == DecoderFunctionType::Mute)
+    if(function->type == DecoderFunctionType::Mute)
       return true;
-    else if(f->type == DecoderFunctionType::Sound && !getFunction(DecoderFunctionType::Mute))
+    else if(function->type == DecoderFunctionType::Sound && !getFunction(DecoderFunctionType::Mute))
       return false;
   }
   if(m_worldNoSmoke)
   {
-    if(f->type == DecoderFunctionType::Smoke)
+    if(function->type == DecoderFunctionType::Smoke)
       return false;
   }
 
-  return f->value;
+  return function->value;
 }
 
 void Decoder::setFunctionValue(uint32_t number, bool value)
 {
   const auto& f = getFunction(number);
-  if(f)
+  if(f && getFunctionValue(f) != value)
     f->value.setValueInternal(value);
 }
 
