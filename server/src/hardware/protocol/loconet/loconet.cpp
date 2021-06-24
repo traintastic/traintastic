@@ -421,6 +421,13 @@ uint16_t LocoNet::getUnusedOutputAddress() const
   return LocoNetOutput::addressInvalid;
 }
 
+void LocoNet::loaded()
+{
+  SubObject::loaded();
+
+  m_debugLogRXTX = debugLogRXTX;
+}
+
 std::shared_ptr<Decoder> LocoNet::getDecoder(uint8_t slot, bool request)
 {
   if(slot < SLOT_LOCO_MIN || slot > SLOT_LOCO_MAX)

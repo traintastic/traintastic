@@ -113,6 +113,8 @@ class LocoNet : public SubObject
     std::unordered_map<uint16_t, std::shared_ptr<LocoNetOutput>> m_outputs;
     std::vector<LocoNetOutputKeyboard*> m_outputKeyboards;
 
+    void loaded() override;
+
     std::shared_ptr<Decoder> getDecoder(uint8_t slot, bool request = true);
 
     void send(uint16_t address, Message& message, uint8_t& slot);
