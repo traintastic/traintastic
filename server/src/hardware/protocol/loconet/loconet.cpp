@@ -56,7 +56,7 @@ LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::fu
   SubObject(_parent, parentPropertyName),
   m_commandStation{dynamic_cast<CommandStation*>(&_parent)},
   m_send{std::move(send)},
-  m_debugLog{false},
+  m_debugLogRXTX{false},
   m_queryLocoSlots{SLOT_UNKNOWN},
   commandStation{this, "command_station", LocoNetCommandStation::Custom, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](LocoNetCommandStation value)
@@ -73,10 +73,12 @@ LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::fu
           break;
       }
     }},
-  debugLog{this, "debug_log", m_debugLog, PropertyFlags::ReadWrite | PropertyFlags::Store,
-   [this](bool value)
+  debugLogInput{this, "debug_log_input", false, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  debugLogOutput{this, "debug_log_output", false, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  debugLogRXTX{this, "debug_log_rx_tx", m_debugLogRXTX, PropertyFlags::ReadWrite | PropertyFlags::Store,
+    [this](bool value)
     {
-      m_debugLog = value;
+      m_debugLogRXTX = value;
     }},
   inputMonitor{*this, "input_monitor",
     [this]()
@@ -94,14 +96,19 @@ LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::fu
   Attributes::addEnabled(commandStation, m_commandStation && !m_commandStation->online);
   Attributes::addValues(commandStation, LocoNetCommandStationValues);
   m_interfaceItems.add(commandStation);
-  m_interfaceItems.add(debugLog);
+  //Attributes::addGroup(debugLogInput);
+  m_interfaceItems.add(debugLogInput);
+  //Attributes::addGroup(debugLogOuput);
+  m_interfaceItems.add(debugLogOutput);
+  //Attributes::addGroup(debugLogRXTX);
+  m_interfaceItems.add(debugLogRXTX);
   m_interfaceItems.add(inputMonitor);
   m_interfaceItems.add(outputKeyboard);
 }
 
 bool LocoNet::send(const Message& message)
 {
-  if(m_debugLog)
+  if(m_debugLogRXTX)
     logDebug("tx: " + toString(message));
   assert(isValid(message));
   return m_send(message);
@@ -135,7 +142,7 @@ void LocoNet::receive(const Message& message)
 
   assert(isValid(message));
 
-  if(m_debugLog)
+  if(m_debugLogRXTX)
     EventLoop::call([this, log="rx: " + toString(message)](){ logDebug(log); });
 
   switch(message.opCode)
@@ -228,6 +235,10 @@ void LocoNet::receive(const Message& message)
         [this, inputRep=*static_cast<const InputRep*>(&message)]()
         {
           const uint16_t address = 1 + inputRep.fullAddress();
+
+          if(debugLogInput)
+            logDebug(std::string("input ").append(std::to_string(address)).append(" = ").append(inputRep.value() ? "1" : "0"));
+
           auto it = m_inputs.find(address);
           if(it != m_inputs.end())
             it->second->updateValue(toTriState(inputRep.value()));
@@ -241,6 +252,10 @@ void LocoNet::receive(const Message& message)
         [this, switchRequest=*static_cast<const SwitchRequest*>(&message)]()
         {
           const uint16_t address = 1 + switchRequest.fullAddress();
+
+          if(debugLogOutput)
+            logDebug(std::string("output ").append(std::to_string(address)).append(" = ").append(switchRequest.on() ? "on" : "off"));
+
           auto it = m_outputs.find(address);
           if(it != m_outputs.end())
             it->second->updateValue(toTriState(switchRequest.on()));
@@ -308,11 +323,10 @@ void LocoNet::powerOnChanged(bool value)
 
 void LocoNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
-  logDebug("LocoNet::decoderChanged");
-
   if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::SpeedStep))
   {
-    LocoSpd message{static_cast<uint8_t>(decoder.emergencyStop ? 1 : (decoder.speedStep > 0 ? 1 + decoder.speedStep : 0))};
+    const bool emergencyStop = decoder.emergencyStop || (m_commandStation && m_commandStation->emergencyStop);
+    LocoSpd message{static_cast<uint8_t>(emergencyStop ? 1 : (decoder.speedStep > 0 ? 1 + decoder.speedStep : 0))};
     send(decoder.address, message);
   }
 

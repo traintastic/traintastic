@@ -104,7 +104,7 @@ class LocoNet : public SubObject
 
     CommandStation* const m_commandStation; // valid if parent is command station, else nullptr
     std::function<bool(const Message&)> m_send;
-    std::atomic_bool m_debugLog;
+    std::atomic_bool m_debugLogRXTX;
     Slots m_slots;
     std::unordered_map<uint16_t, std::vector<std::byte>> m_slotRequests;
     uint8_t m_queryLocoSlots;
@@ -141,7 +141,9 @@ class LocoNet : public SubObject
     CLASS_ID("protocol.loconet")
 
     Property<LocoNetCommandStation> commandStation;
-    Property<bool> debugLog;
+    Property<bool> debugLogInput;
+    Property<bool> debugLogOutput;
+    Property<bool> debugLogRXTX;
     Method<std::shared_ptr<LocoNetInputMonitor>()> inputMonitor;
     Method<std::shared_ptr<LocoNetOutputKeyboard>()> outputKeyboard;
 
