@@ -32,6 +32,8 @@ file(GLOB SOURCES
   "src/board/*.cpp"
   "src/dialog/*.hpp"
   "src/dialog/*.cpp"
+  "src/misc/*.hpp"
+  "src/misc/*.cpp"
   "src/network/*.hpp"
   "src/network/*.cpp"
   "src/style/*.hpp"
