@@ -75,6 +75,18 @@ constexpr TriState operator||(TriState lhs, bool shr)
   return lhs || toTriState(shr);
 }
 
+constexpr TriState& operator|=(TriState& lhs, TriState shr)
+{
+  lhs = lhs || shr;
+  return lhs;
+}
+
+constexpr TriState& operator|=(TriState& lhs, bool shr)
+{
+  lhs |= toTriState(shr);
+  return lhs;
+}
+
 constexpr TriState operator&&(TriState lhs, TriState rhs)
 {
   if(lhs == TriState::False || rhs == TriState::False)
