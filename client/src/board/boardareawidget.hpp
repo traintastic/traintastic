@@ -27,10 +27,12 @@
 #include <traintastic/board/tileid.hpp>
 #include <traintastic/board/tilelocation.hpp>
 #include <traintastic/board/tilerotate.hpp>
+#include <traintastic/enum/blockstate.hpp>
 #include <traintastic/enum/signalaspect.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/turnoutposition.hpp>
 #include "../network/abstractproperty.hpp"
+#include "../network/objectptr.hpp"
 
 class BoardWidget;
 
@@ -103,6 +105,7 @@ class BoardAreaWidget : public QWidget
     void setMouseMoveTileRotate(TileRotate rotate);
 
   public slots:
+    void tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& object);
     void setGrid(Grid value);
     void setZoomLevel(int value);
     void zoomIn() { setZoomLevel(zoomLevel() + 1); }

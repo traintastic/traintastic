@@ -71,6 +71,7 @@ class Board final : public Object
 
   signals:
     void tileDataChanged();
+    void tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& object);
 };
 
 #endif

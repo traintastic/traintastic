@@ -78,7 +78,7 @@ void Board::getTileDataResponse(const Message& response)
     TileData data = response.read<TileData>();
     m_tileData.emplace(l, data);
     if(data.isActive())
-      m_tileObjects.emplace(l, m_connection->readObject(response));
+      emit tileObjectAdded(l.x, l.y, m_tileObjects.emplace(l, m_connection->readObject(response)).first->second);
   }
 
   emit tileDataChanged();
@@ -108,7 +108,10 @@ void Board::processMessage(const Message& message)
           m_tileObjects.erase(it);
       }
       else
+      {
         m_tileObjects[l] = m_connection->readObject(message);
+        emit tileObjectAdded(l.x, l.y, m_tileObjects[l]);
+      }
 
       emit tileDataChanged();
       break;

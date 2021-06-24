@@ -42,9 +42,16 @@ QRect rectToViewport(const QRect& r, const int gridSize)
   return viewport;
 }
 
-constexpr QRectF tileRect(const int x, const int y, const int w, const int h, const int tileSize)
+// excludes grid/border
+constexpr QRectF drawTileRect(const int x, const int y, const int w, const int h, const int tileSize)
 {
   return QRectF(x * (tileSize - 1), y * (tileSize - 1), 1 + w * (tileSize - 1), 1 + h * (tileSize - 1));
+}
+
+// includes grid/border
+constexpr QRect updateTileRect(const int x, const int y, const int w, const int h, const int tileSize)
+{
+  return QRect(x * (tileSize - 1) - 1, y * (tileSize - 1) - 1, 3 + w * (tileSize - 1), 3 + h * (tileSize - 1));
 }
 
 
@@ -72,7 +79,32 @@ BoardAreaWidget::BoardAreaWidget(BoardWidget& board, QWidget* parent) :
   if(Q_LIKELY(m_boardBottom))
     connect(m_boardBottom, &AbstractProperty::valueChanged, this, &BoardAreaWidget::updateMinimumSize);
 
+  for(const auto& [l, object] : m_board.board().tileObjects())
+    tileObjectAdded(l.x, l.y, object);
+
   updateMinimumSize();
+}
+
+void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& object)
+{
+  const TileLocation l{x, y};
+  AbstractProperty* property;
+
+  if((property = object->getProperty("state")) ||       // block or sensor
+      (property = object->getProperty("position")) ||   // turnout
+      (property = object->getProperty("aspect")))       // signal
+    connect(property, &AbstractProperty::valueChanged, this,
+      [this, l]()
+      {
+        try
+        {
+          const TileData& tileData = m_board.board().tileData().at(l);
+          update(updateTileRect(l.x - boardLeft(), l.y - boardTop(), tileData.width(), tileData.height(), getTileSize()));
+        }
+        catch(...)
+        {
+        }
+      });
 }
 
 void BoardAreaWidget::setGrid(Grid value)
@@ -226,13 +258,20 @@ void BoardAreaWidget::mouseMoveEvent(QMouseEvent* event)
 {
   if(hasMouseTracking())
   {
-    TileLocation tl = pointToTileLocation(event->pos());
+    const TileLocation tl = pointToTileLocation(event->pos());
     if(m_mouseMoveTileLocation != tl)
     {
+      const TileLocation old = m_mouseMoveTileLocation;
       m_mouseMoveTileLocation = tl;
       emit mouseTileLocationChanged(tl.x, tl.y);
       if(m_mouseMoveTileId != TileId::None)
-        update();
+      {
+        const int width = 1;  // currently always 1
+        const int height = 1; // currently always 1
+        const int tileSize = getTileSize();
+        update(updateTileRect(old.x, old.y, width, height, tileSize));
+        update(updateTileRect(tl.x, tl.y, width, height, tileSize));
+      }
     }
   }
   QWidget::mouseMoveEvent(event);
@@ -308,7 +347,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
       const TileRotate a = it.second.rotate();
       painter.setBrush(Qt::NoBrush);
 
-      const QRectF r = tileRect(it.first.x - tileOriginX, it.first.y - tileOriginY, it.second.width(), it.second.height(), tileSize);
+      const QRectF r = drawTileRect(it.first.x - tileOriginX, it.first.y - tileOriginY, it.second.width(), it.second.height(), tileSize);
       switch(id)
       {
         case TileId::RailStraight:
@@ -356,7 +395,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
   if(m_mouseMoveTileId != TileId::None && m_mouseMoveTileLocation.isValid())
   {
-    const QRectF r = tileRect(m_mouseMoveTileLocation.x - tileOriginX, m_mouseMoveTileLocation.y - tileOriginY, 1, 1, tileSize);
+    const QRectF r = drawTileRect(m_mouseMoveTileLocation.x - tileOriginX, m_mouseMoveTileLocation.y - tileOriginY, 1, 1, tileSize);
     painter.fillRect(r, backgroundColor50);
     painter.setPen(gridColorHighlight);
     painter.drawRect(r.adjusted(-0.5, -0.5, 0.5, 0.5));

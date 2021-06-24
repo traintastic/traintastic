@@ -320,6 +320,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   m_object->getTileData();
 
   connect(m_object.get(), &Board::tileDataChanged, this, [this](){ m_boardArea->update(); });
+  connect(m_object.get(), &Board::tileObjectAdded, m_boardArea, &BoardAreaWidget::tileObjectAdded);
   connect(m_boardArea, &BoardAreaWidget::gridChanged, this, &BoardWidget::gridChanged);
   connect(m_boardArea, &BoardAreaWidget::zoomLevelChanged, this, &BoardWidget::zoomLevelChanged);
   connect(m_boardArea, &BoardAreaWidget::tileClicked, this, &BoardWidget::tileClicked);
