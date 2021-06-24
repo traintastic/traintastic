@@ -26,7 +26,8 @@
 
 BlockRailTile::BlockRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
   RailTile(world, _id, TileId::RailBlock),
-  name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  state{this, "state", BlockState::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
 {
   m_data.setSize(1, 5);
 
@@ -36,6 +37,8 @@ BlockRailTile::BlockRailTile(const std::weak_ptr<World>& world, std::string_view
   Attributes::addEnabled(name, editable);
   Attributes::addDisplayName(name, "object:name");
   m_interfaceItems.add(name);
+  Attributes::addValues(state, blockStateValues);
+  m_interfaceItems.add(state);
 }
 
 void BlockRailTile::worldEvent(WorldState state, WorldEvent event)

@@ -1,9 +1,9 @@
 /**
- * server/src/board/tile/rail/blockrailtile.hpp
+ * server/src/enum/blockstate.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,27 +20,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_BLOCKRAILTILE_HPP
-#define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_BLOCKRAILTILE_HPP
+#ifndef TRAINTASTIC_SERVER_ENUM_BLOCKSTATE_HPP
+#define TRAINTASTIC_SERVER_ENUM_BLOCKSTATE_HPP
 
-#include "railtile.hpp"
-#include "../../../enum/blockstate.hpp"
+#include <traintastic/enum/blockstate.hpp>
+#include <array>
 
-class BlockRailTile : public RailTile
-{
-  CLASS_ID("board_tile.rail.block")
-  DEFAULT_ID("block")
-  CREATE(BlockRailTile)
-
-  protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
-    void setRotate(TileRotate value) final;
-
-  public:
-    Property<std::string> name;
-    Property<BlockState> state;
-
-    BlockRailTile(const std::weak_ptr<World>& world, std::string_view _id);
-};
+inline constexpr std::array<BlockState, 3> blockStateValues{{
+  BlockState::Unknown,
+  BlockState::Occupied,
+  BlockState::Free,
+}};
 
 #endif

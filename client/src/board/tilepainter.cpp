@@ -373,7 +373,7 @@ void TilePainter::drawSignal(TileId id, const QRectF& r, TileRotate rotate, Sign
   }
 }
 
-void TilePainter::drawBlock(TileId id, const QRectF& r, TileRotate rotate, TriState state, const std::vector<TriState> subStates)
+void TilePainter::drawBlock(TileId id, const QRectF& r, TileRotate rotate, BlockState state, const std::vector<BlockState> subStates)
 {
   switch(id)
   {
@@ -389,19 +389,19 @@ void TilePainter::drawBlock(TileId id, const QRectF& r, TileRotate rotate, TriSt
 
 //=============================================================================
 
-void TilePainter::setBlockStateBrush(TriState value)
+void TilePainter::setBlockStateBrush(BlockState value)
 {
   switch(value)
   {
-    case TriState::False:
+    case BlockState::Occupied:
       m_painter.setBrush(blockBrushOccupied);
       break;
 
-    case TriState::True:
+    case BlockState::Free:
       m_painter.setBrush(blockBrushFree);
       break;
 
-    case TriState::Undefined:
+    case BlockState::Unknown:
       m_painter.setBrush(blockBrushUnknown);
       break;
   }
@@ -692,7 +692,7 @@ void TilePainter::drawSignal3Aspect(QRectF r, TileRotate rotate, SignalAspect as
   m_painter.restore();
 }
 
-void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, TriState state, const std::vector<TriState> subStates)
+void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, BlockState state, const std::vector<BlockState> subStates)
 {
   setTrackPen();
 
@@ -710,7 +710,7 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, TriState sta
       const qreal height = block.height() / subStates.size();
       const qreal width = qRound(block.width() / 5);
       qreal top = block.top();
-      for(TriState subState : subStates)
+      for(BlockState subState : subStates)
       {
         setBlockStateBrush(subState);
         m_painter.drawRect(QRectF(block.left(), qRound(top) - 0.5, width, qRound(top + height) - qRound(top)));
@@ -733,7 +733,7 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, TriState sta
       const qreal height = qRound(block.height() / 5);
       const qreal top = block.bottom() - height;
       double left = block.left();
-      for(TriState subState : subStates)
+      for(BlockState subState : subStates)
       {
         setBlockStateBrush(subState);
         m_painter.drawRect(QRectF(qRound(left) - 0.5, top, qRound(left + width) - qRound(left), height));
