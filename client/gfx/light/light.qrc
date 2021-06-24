@@ -39,5 +39,8 @@
         <file>resize_to_contents.svg</file>
         <file>unmute.svg</file>
         <file>smoke.svg</file>
+        <file>remove.svg</file>
+        <file>down.svg</file>
+        <file>up.svg</file>
     </qresource>
 </RCC>

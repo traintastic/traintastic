@@ -27,8 +27,11 @@
 BlockRailTile::BlockRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
   RailTile(world, _id, TileId::RailBlock),
   name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  inputMap{this, "input_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   state{this, "state", BlockState::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
 {
+  inputMap.setValueInternal(std::make_shared<BlockInputMap>(*this, inputMap.name()));
+
   m_data.setSize(1, 5);
 
   auto w = world.lock();
@@ -37,8 +40,36 @@ BlockRailTile::BlockRailTile(const std::weak_ptr<World>& world, std::string_view
   Attributes::addEnabled(name, editable);
   Attributes::addDisplayName(name, "object:name");
   m_interfaceItems.add(name);
+  m_interfaceItems.add(inputMap);
   Attributes::addValues(state, blockStateValues);
   m_interfaceItems.add(state);
+}
+
+void BlockRailTile::updateState()
+{
+  if(!inputMap->items.empty())
+  {
+    TriState value = TriState::False;
+    for(const auto& item : inputMap->items)
+      value |= item->value();
+
+    switch(value)
+    {
+      case TriState::Undefined:
+        state.setValueInternal(BlockState::Unknown);
+        break;
+
+      case TriState::True:
+        state.setValueInternal(BlockState::Occupied);
+        break;
+
+      case TriState::False:
+        state.setValueInternal(BlockState::Free);
+        break;
+    }
+  }
+  else
+    state.setValueInternal(BlockState::Unknown);
 }
 
 void BlockRailTile::worldEvent(WorldState state, WorldEvent event)

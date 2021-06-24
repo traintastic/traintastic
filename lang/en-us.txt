@@ -13,7 +13,12 @@
 :track_power=Track power
 :xpressnet=XpressNet
 
+block_input_type:occupy_detector=Occupy detector
+block_input_type:reed_switch=Reed switch
+
 board:resize_to_contents=Resize to contents
+
+board_tile.rail.block:input_map=Sensors
 
 class_id:board_tile.rail.block=Block
 class_id:board_tile.rail.buffer_stop=Buffer stop
@@ -123,6 +128,13 @@ decoder_list:add=Add
 decoder_protocol:auto=Auto
 decoder_protocol:custom=Custom
 decoder_protocol:dcc=DCC
+
+input_map.block:add=Add sensor
+input_map.block:remove=Remove sensor
+
+input_map_item.block:input=Input
+input_map_item.block:invert=Invert
+input_map_item.block:type=Type
 
 language:de-de=German
 language:en-us=English (US)

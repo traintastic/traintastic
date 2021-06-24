@@ -24,7 +24,11 @@
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_BLOCKRAILTILE_HPP
 
 #include "railtile.hpp"
+#include "../../../core/objectproperty.hpp"
 #include "../../../enum/blockstate.hpp"
+#include "../../../hardware/input/map/blockinputmap.hpp"
+
+class BlockInputMapItem;
 
 class BlockRailTile : public RailTile
 {
@@ -38,9 +42,12 @@ class BlockRailTile : public RailTile
 
   public:
     Property<std::string> name;
+    ObjectProperty<BlockInputMap> inputMap;
     Property<BlockState> state;
 
     BlockRailTile(const std::weak_ptr<World>& world, std::string_view _id);
+
+    void updateState();
 };
 
 #endif

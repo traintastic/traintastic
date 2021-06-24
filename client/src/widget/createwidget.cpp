@@ -28,6 +28,7 @@
 #include "luascriptlistwidget.hpp"
 #include "object/luascripteditwidget.hpp"
 #include "object/objecteditwidget.hpp"
+#include "object/blockinputmapwidget.hpp"
 #include "inputmonitorwidget.hpp"
 #include "outputkeyboardwidget.hpp"
 #include "outputmapwidget.hpp"
@@ -61,6 +62,8 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
     return new LuaScriptEditWidget(object, parent);
   else if(auto outputMap = std::dynamic_pointer_cast<OutputMap>(object))
     return new OutputMapWidget(outputMap, parent);
+  else if(classId == "input_map.block")
+    return new BlockInputMapWidget(object, parent);
   else
     return nullptr;
 }

@@ -58,6 +58,8 @@ file(GLOB SOURCES
   "src/hardware/input/*.cpp"
   "src/hardware/input/list/*.hpp"
   "src/hardware/input/list/*.cpp"
+  "src/hardware/input/map/*.hpp"
+  "src/hardware/input/map/*.cpp"
   "src/hardware/input/monitor/*.hpp"
   "src/hardware/input/monitor/*.cpp"
   "src/hardware/output/*.hpp"
@@ -115,7 +117,7 @@ else()
 
   target_link_libraries(traintastic-server PRIVATE pthread)
   target_link_libraries(traintastic-server-test PRIVATE pthread)
-  
+
   if(NOT APPLE)
     target_link_libraries(traintastic-server PRIVATE stdc++fs)
     target_link_libraries(traintastic-server-test PRIVATE stdc++fs)
