@@ -30,6 +30,7 @@ enum class InterfaceItemType : uint8_t
   Property = 1,
   Method = 2,
   UnitProperty = 3,
+  VectorProperty = 4,
 };
 
 #endif

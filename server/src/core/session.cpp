@@ -27,6 +27,7 @@
 #include "client.hpp"
 #include "abstractproperty.hpp"
 #include "abstractunitproperty.hpp"
+#include "abstractvectorproperty.hpp"
 #include "abstractvalueattribute.hpp"
 #include "abstractvaluesattribute.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
@@ -103,9 +104,23 @@ bool Session::processMessage(const Message& message)
 
       while(obj && ++it != ids.cend())
       {
-        AbstractProperty* property = obj->getProperty(*it);
-        if(property && property->type() == ValueType::Object)
+        if(AbstractProperty* property = obj->getProperty(*it); property && property->type() == ValueType::Object)
           obj = property->toObject();
+        else if(AbstractVectorProperty* vectorProperty = obj->getVectorProperty(*it); vectorProperty && vectorProperty->type() == ValueType::Object)
+        {
+          obj = nullptr;
+          const size_t size = vectorProperty->size();
+          for(size_t i = 0; i < size; i++)
+          {
+            ObjectPtr v = vectorProperty->getObject(i);
+            if(id == v->getObjectId())
+            {
+              obj = v;
+              it++;
+              break;
+            }
+          }
+        }
         else
           obj = nullptr;
       }
@@ -556,62 +571,49 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
       message.writeBlock(); // item
       message.write(name);
 
-      if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&item))
+      if(BaseProperty* baseProperty = dynamic_cast<BaseProperty*>(&item))
       {
-        AbstractUnitProperty* unitProperty = dynamic_cast<AbstractUnitProperty*>(property);
-        if(unitProperty)
-          message.write(InterfaceItemType::UnitProperty);
+        AbstractProperty* property = nullptr;
+        AbstractUnitProperty* unitProperty = nullptr;
+        AbstractVectorProperty* vectorProperty = nullptr;
+
+        if((property = dynamic_cast<AbstractProperty*>(baseProperty)))
+        {
+          if((unitProperty = dynamic_cast<AbstractUnitProperty*>(property)))
+            message.write(InterfaceItemType::UnitProperty);
+          else
+            message.write(InterfaceItemType::Property);
+        }
+        else if((vectorProperty = dynamic_cast<AbstractVectorProperty*>(baseProperty)))
+          message.write(InterfaceItemType::VectorProperty);
         else
-          message.write(InterfaceItemType::Property);
-        message.write(property->flags());
-        message.write(property->type());
-        switch(property->type())
         {
-          case ValueType::Boolean:
-            message.write(property->toBool());
-            break;
+          assert(false);
+          continue;
+        }
 
-          case ValueType::Enum:
-            message.write(property->toInt64());
-            message.write(property->enumName());
-            break;
+        message.write(baseProperty->flags());
+        message.write(baseProperty->type());
 
-          case ValueType::Integer:
-            message.write(property->toInt64());
-            break;
+        if(baseProperty->type() == ValueType::Enum)
+          message.write(property->enumName());
+        else if(baseProperty->type() == ValueType::Set)
+          message.write(property->setName());
 
-          case ValueType::Float:
-            message.write(property->toDouble());
-            break;
+        if(property)
+        {
+          writePropertyValue(message, *property);
 
-          case ValueType::String:
-            message.write(property->toString());
-            break;
-
-          case ValueType::Object:
+          if(unitProperty)
           {
-            ObjectPtr obj = property->toObject();
-            if(obj)
-              message.write(obj->getObjectId());
-            else
-              message.write<std::string>("");
-            break;
+            message.write(unitProperty->unitName());
+            message.write(unitProperty->unitValue());
           }
-          case ValueType::Set:
-            message.write(property->toInt64());
-            message.write(property->setName());
-            break;
-
-          default:
-            assert(false);
-            break;
         }
-
-        if(unitProperty)
-        {
-          message.write(unitProperty->unitName());
-          message.write(unitProperty->unitValue());
-        }
+        else if(vectorProperty)
+          writeVectorPropertyValue(message, *vectorProperty);
+        else
+          assert(false);
       }
       else if(const AbstractMethod* method = dynamic_cast<const AbstractMethod*>(&item))
       {
@@ -657,82 +659,103 @@ void Session::writeTableModel(Message& message, const TableModelPtr& model)
   message.writeBlockEnd(); // end model
 }
 
-void Session::objectPropertyChanged(AbstractProperty& property)
+void Session::objectPropertyChanged(BaseProperty& baseProperty)
 {
-  std::cout << "objectPropertyChanged " << property.name() << std::endl;
-
   auto event = Message::newEvent(Message::Command::ObjectPropertyChanged);
-  event->write(m_handles.getHandle(property.object().shared_from_this()));
-  event->write(property.name());
-  event->write(property.type());
+  event->write(m_handles.getHandle(baseProperty.object().shared_from_this()));
+  event->write(baseProperty.name());
+  event->write(baseProperty.type());
+  if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&baseProperty))
+  {
+    writePropertyValue(*event, *property);
+
+    if(AbstractUnitProperty* unitProperty = dynamic_cast<AbstractUnitProperty*>(property))
+      event->write(unitProperty->unitValue());
+  }
+  else if(AbstractVectorProperty* vectorProperty = dynamic_cast<AbstractVectorProperty*>(&baseProperty))
+    writeVectorPropertyValue(*event, *vectorProperty);
+  else
+    assert(false);
+
+  m_client->sendMessage(std::move(event));
+}
+
+void Session::writePropertyValue(Message& message , const AbstractProperty& property)
+{
   switch(property.type())
   {
     case ValueType::Boolean:
-      event->write(property.toBool());
+      message.write(property.toBool());
       break;
 
     case ValueType::Enum:
     case ValueType::Integer:
     case ValueType::Set:
-      event->write(property.toInt64());
+      message.write(property.toInt64());
       break;
 
     case ValueType::Float:
-      event->write(property.toDouble());
+      message.write(property.toDouble());
       break;
 
     case ValueType::String:
-      event->write(property.toString());
+      message.write(property.toString());
       break;
 
     case ValueType::Object:
-    {
-      ObjectPtr obj = property.toObject();
-      if(obj)
-        event->write(obj->getObjectId());
+      if(ObjectPtr obj = property.toObject())
+        message.write(obj->getObjectId());
       else
-        event->write<std::string_view>("");
+        message.write<std::string_view>("");
       break;
-    }
   }
-
-  if(AbstractUnitProperty* unitProperty = dynamic_cast<AbstractUnitProperty*>(&property))
-    event->write(unitProperty->unitValue());
-
-  m_client->sendMessage(std::move(event));
 }
 
-void Session::objectAttributeChanged(AbstractAttribute& attribute)
+void Session::writeVectorPropertyValue(Message& message , const AbstractVectorProperty& vectorProperty)
 {
-  std::cout << "objectAttributeChanged " << attribute.item().name() << "." << (int)attribute.name() << std::endl;
+  const size_t size = vectorProperty.size();
+  message.write(static_cast<uint32_t>(size));
 
-  auto event = Message::newEvent(Message::Command::ObjectAttributeChanged);
-  event->write(m_handles.getHandle(attribute.item().object().shared_from_this()));
-  event->write(attribute.item().name());
-  writeAttribute(*event, attribute);
-  /*
-  event->write(attribute.name());
-  event->write(attribute.type());
-  switch(attribute.type())
+  switch(vectorProperty.type())
   {
     case ValueType::Boolean:
-      event->write(attribute.toBool());
+      for(size_t i = 0; i < size; i++)
+        message.write(vectorProperty.getBool(i));
       break;
 
     case ValueType::Enum:
     case ValueType::Integer:
-      //event->write(attribute.toInt64());
+    case ValueType::Set:
+      for(size_t i = 0; i < size; i++)
+        message.write(vectorProperty.getInt64(i));
       break;
 
     case ValueType::Float:
-      //event->write(attribute.toDouble());
+      for(size_t i = 0; i < size; i++)
+        message.write(vectorProperty.getDouble(i));
       break;
 
     case ValueType::String:
-      //event->write(attribute.toString());
+      for(size_t i = 0; i < size; i++)
+        message.write(vectorProperty.getString(i));
+      break;
+
+    case ValueType::Object:
+      for(size_t i = 0; i < size; i++)
+        if(ObjectPtr obj = vectorProperty.getObject(i))
+          message.write(obj->getObjectId());
+        else
+          message.write<std::string>("");
       break;
   }
-  */
+}
+
+void Session::objectAttributeChanged(AbstractAttribute& attribute)
+{
+  auto event = Message::newEvent(Message::Command::ObjectAttributeChanged);
+  event->write(m_handles.getHandle(attribute.item().object().shared_from_this()));
+  event->write(attribute.item().name());
+  writeAttribute(*event, attribute);
   m_client->sendMessage(std::move(event));
 }
 

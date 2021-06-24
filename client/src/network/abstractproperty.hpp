@@ -23,40 +23,20 @@
 #ifndef TRAINTASTIC_CLIENT_NETWORK_ABSTRACTPROPERTY_HPP
 #define TRAINTASTIC_CLIENT_NETWORK_ABSTRACTPROPERTY_HPP
 
-#include "interfaceitem.hpp"
-#include <traintastic/enum/valuetype.hpp>
-#include <traintastic/enum/propertyflags.hpp>
+#include "baseproperty.hpp"
 #include <traintastic/set/set.hpp>
 
-class Object;
-
-class AbstractProperty : public InterfaceItem
+class AbstractProperty : public BaseProperty
 {
   Q_OBJECT
 
-  private:
-    inline static const QString enumOrSetNameEmpty;
-
   protected:
-    const ValueType m_type;
-    const PropertyFlags m_flags;
-
-  public:
     explicit AbstractProperty(Object& object, const QString& name, ValueType type, PropertyFlags flags) :
-      InterfaceItem(object, name),
-      m_type{type},
-      m_flags{flags}
+      BaseProperty(object, name, type, flags)
     {
     }
 
-    ValueType type() const { return m_type; }
-    PropertyFlags flags() const { return m_flags; }
-
-    bool isWritable() const { return (m_flags & PropertyFlagsAccessMask) == PropertyFlags::ReadWrite; }
-
-    virtual const QString& enumName() const { Q_ASSERT(false); return enumOrSetNameEmpty; }
-    virtual const QString& setName() const  { Q_ASSERT(false); return enumOrSetNameEmpty; }
-
+  public:
     virtual bool toBool() const            { Q_ASSERT(false); return false; }
     virtual int toInt() const              { Q_ASSERT(false); return 0; }
     virtual int64_t toInt64() const        { Q_ASSERT(false); return 0; }

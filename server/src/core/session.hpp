@@ -33,7 +33,9 @@
 #include "tablemodelptr.hpp"
 
 class Client;
+class BaseProperty;
 class AbstractProperty;
+class AbstractVectorProperty;
 class AbstractAttribute;
 class InputMonitor;
 class OutputKeyboard;
@@ -47,7 +49,9 @@ class Session : public std::enable_shared_from_this<Session>
   friend class Client;
 
   private:
-    static void writeAttribute(Message& message , const AbstractAttribute& attribute);
+    static void writePropertyValue(Message& message, const AbstractProperty& property);
+    static void writeVectorPropertyValue(Message& message, const AbstractVectorProperty& vectorProperty);
+    static void writeAttribute(Message& message, const AbstractAttribute& attribute);
 
   protected:
     using Handle = uint32_t;
@@ -63,7 +67,7 @@ class Session : public std::enable_shared_from_this<Session>
     void writeObject(Message& message, const ObjectPtr& object);
     void writeTableModel(Message& message, const TableModelPtr& model);
 
-    void objectPropertyChanged(AbstractProperty& property);
+    void objectPropertyChanged(BaseProperty& property);
     void objectAttributeChanged(AbstractAttribute& attribute);
 
     void inputMonitorInputIdChanged(InputMonitor& inputMonitor, uint32_t address, std::string_view id);

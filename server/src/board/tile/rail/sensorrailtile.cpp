@@ -85,9 +85,9 @@ void SensorRailTile::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(invert, editable);
 }
 
-void SensorRailTile::inputPropertyChanged(AbstractProperty& property)
+void SensorRailTile::inputPropertyChanged(BaseProperty& property)
 {
   assert(input);
-  if(&property == static_cast<AbstractProperty*>(&input->value))
+  if(&property == static_cast<BaseProperty*>(&input->value))
     state.setValueInternal(input->value.value() ^ invert.value());
 }

@@ -78,7 +78,7 @@ std::string InputListTableModel::getText(uint32_t column, uint32_t row) const
   return "";
 }
 
-void InputListTableModel::propertyChanged(AbstractProperty& property, uint32_t row)
+void InputListTableModel::propertyChanged(BaseProperty& property, uint32_t row)
 {
   if(property.name() == "id")
     changed(row, columnId);

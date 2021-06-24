@@ -30,6 +30,7 @@
 
 class Connection;
 class AbstractProperty;
+class AbstractVectorProperty;
 class Method;
 
 class Object : public QObject
@@ -61,6 +62,10 @@ class Object : public QObject
     inline bool hasProperty(const QString& name) const { return getProperty(name); }
     const AbstractProperty* getProperty(const QString& name) const;
     AbstractProperty* getProperty(const QString& name);
+
+    inline bool hasVectorProperty(const QString& name) const { return getVectorProperty(name); }
+    const AbstractVectorProperty* getVectorProperty(const QString& name) const;
+    AbstractVectorProperty* getVectorProperty(const QString& name);
 
     void setPropertyValue(const QString& name, bool value);
 

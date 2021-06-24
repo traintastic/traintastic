@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -108,7 +108,7 @@ class ObjectList : public AbstractObjectList
     {
       m_items.push_back(object);
       m_propertyChanged.emplace(object.get(), object->propertyChanged.connect(
-        [this](AbstractProperty& property)
+        [this](BaseProperty& property)
         {
           if(!m_models.empty() && isListedProperty(property.name()))
           {

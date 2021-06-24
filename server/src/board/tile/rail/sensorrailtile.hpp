@@ -36,7 +36,7 @@ class SensorRailTile : public StraightRailTile
   private:
     boost::signals2::connection m_inputPropertyChanged;
 
-    void inputPropertyChanged(AbstractProperty& property);
+    void inputPropertyChanged(BaseProperty& property);
 
   protected:
     void loaded() override;

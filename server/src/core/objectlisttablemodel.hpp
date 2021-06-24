@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,7 +36,7 @@ class ObjectListTableModel : public TableModel
 
     const T& getItem(uint32_t row) const { return *m_list.m_items[row]; }
     //T& getItem(uint32_t row) { return *m_list.m_items[row]; }
-    virtual void propertyChanged(AbstractProperty& property, uint32_t row) = 0;
+    virtual void propertyChanged(BaseProperty& property, uint32_t row) = 0;
 
   public:
     ObjectListTableModel(ObjectList<T>& list) :

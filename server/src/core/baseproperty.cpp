@@ -1,9 +1,9 @@
 /**
- * server/src/core/abstractproperty.cpp
+ * server/src/core/baseproperty.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,10 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "abstractproperty.hpp"
+#include "baseproperty.hpp"
 #include "object.hpp"
 
-void AbstractProperty::changed()
+void BaseProperty::changed()
 {
   m_object.propertyChanged(*this);
 }

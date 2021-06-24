@@ -78,7 +78,7 @@ std::string OutputListTableModel::getText(uint32_t column, uint32_t row) const
   return "";
 }
 
-void OutputListTableModel::propertyChanged(AbstractProperty& property, uint32_t row)
+void OutputListTableModel::propertyChanged(BaseProperty& property, uint32_t row)
 {
   if(property.name() == "id")
     changed(row, columnId);

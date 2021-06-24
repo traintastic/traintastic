@@ -29,6 +29,8 @@
 #include "property.hpp"
 #include "unitproperty.hpp"
 #include "objectproperty.hpp"
+#include "vectorproperty.hpp"
+#include "objectvectorproperty.hpp"
 #include "method.hpp"
 #include "tablemodel.hpp"
 #include "inputmonitor.hpp"
@@ -42,6 +44,93 @@
 //#include <enum/propertyflags.hpp>
 
 //Client* Client::instance = nullptr;
+
+
+inline static QVariant readValue(const Message& message, const ValueType valueType)
+{
+  switch(valueType)
+  {
+    case ValueType::Boolean:
+      return message.read<bool>();
+
+    case ValueType::Enum:
+    case ValueType::Integer:
+    case ValueType::Set:
+      return message.read<qint64>();
+
+    case ValueType::Float:
+      return message.read<double>();
+
+    case ValueType::String:
+      return QString::fromUtf8(message.read<QByteArray>());
+
+    case ValueType::Object:
+      return QString::fromLatin1(message.read<QByteArray>());
+
+    case ValueType::Invalid:
+      break;
+  }
+
+  Q_ASSERT(false);
+  return QVariant();
+}
+
+inline static QList<QVariant> readArray(const Message& message, const ValueType valueType, const int length)
+{
+  Q_ASSERT(length >= 0);
+
+  QList<QVariant> values;
+  values.reserve(length);
+
+  switch(valueType)
+  {
+    case ValueType::Boolean:
+      for(int i = 0; i < length; i++)
+        values.append(message.read<bool>());
+      break;
+
+    case ValueType::Enum:
+    case ValueType::Integer:
+    case ValueType::Set:
+      for(int i = 0; i < length; i++)
+        values.append(message.read<qint64>());
+      break;
+
+    case ValueType::Float:
+      for(int i = 0; i < length; i++)
+        values.append(message.read<double>());
+      break;
+
+    case ValueType::String:
+      for(int i = 0; i < length; i++)
+        values.append(QString::fromUtf8(message.read<QByteArray>()));
+      break;
+
+    case ValueType::Object:
+    case ValueType::Invalid:
+      break;
+  }
+
+  Q_ASSERT(values.size() == length);
+
+  return values;
+}
+
+inline static QStringList readObjectIdArray(const Message& message, const int length)
+{
+  Q_ASSERT(length >= 0);
+
+  QStringList values;
+  values.reserve(length);
+
+  for(int i = 0; i < length; i++)
+    values.append(QString::fromLatin1(message.read<QByteArray>()));
+
+  Q_ASSERT(values.size() == length);
+
+  return values;
+}
+
 
 Connection::Connection() :
   QObject(),
@@ -406,59 +495,56 @@ ObjectPtr Connection::readObject(const Message& message)
       {
         case InterfaceItemType::Property:
         case InterfaceItemType::UnitProperty:
+        case InterfaceItemType::VectorProperty:
         {
           const PropertyFlags flags = message.read<PropertyFlags>();
           const ValueType valueType = message.read<ValueType>();
-          QVariant value;
-          switch(valueType)
+
+          QString enumOrSetName;
+          if(valueType == ValueType::Enum || valueType == ValueType::Set)
+            enumOrSetName = QString::fromLatin1(message.read<QByteArray>());
+
+          if(type == InterfaceItemType::VectorProperty)
           {
-            case ValueType::Boolean:
-              value = message.read<bool>();
-              break;
+            const int length = message.read<int>(); // read uint32_t as int, Qt uses int for length
 
-            case ValueType::Enum:
-            case ValueType::Integer:
-            case ValueType::Set:
-              value = message.read<qint64>();
-              break;
-
-            case ValueType::Float:
-              value = message.read<double>();
-              break;
-
-            case ValueType::String:
-              value = QString::fromUtf8(message.read<QByteArray>());
-              break;
-
-            case ValueType::Object:
-              value = QString::fromLatin1(message.read<QByteArray>());
-              break;
-
-            case ValueType::Invalid:
-              break;
-          }
-
-
-
-    //      Q_ASSERT(value.isValid());
-          if(Q_LIKELY(value.isValid()))
-          {
-            if(type == InterfaceItemType::UnitProperty)
+            if(valueType == ValueType::Object)
             {
-              QString unitName = QString::fromLatin1(message.read<QByteArray>());
-              qint64 unitValue = message.read<qint64>();
-              item = new UnitProperty(*obj, name, valueType, flags, value, unitName, unitValue);
-            }
-            else if(valueType == ValueType::Object)
-            {
-              item = new ObjectProperty(*obj, name, flags, value.toString());
+              item = new ObjectVectorProperty(*obj, name, flags, readObjectIdArray(message, length));
             }
             else
             {
-              Property* p = new Property(*obj, name, valueType, flags, value);
+              VectorProperty* p = new VectorProperty(*obj, name, valueType, flags, readArray(message, valueType, length));
               if(valueType == ValueType::Enum || valueType == ValueType::Set)
-                p->m_enumOrSetName = QString::fromLatin1(message.read<QByteArray>());
+                p->m_enumOrSetName = enumOrSetName;
               item = p;
+            }
+          }
+          else
+          {
+            Q_ASSERT(type == InterfaceItemType::Property || type == InterfaceItemType::UnitProperty);
+
+            QVariant value = readValue(message, valueType);
+
+            if(Q_LIKELY(value.isValid()))
+            {
+              if(type == InterfaceItemType::UnitProperty)
+              {
+                QString unitName = QString::fromLatin1(message.read<QByteArray>());
+                qint64 unitValue = message.read<qint64>();
+                item = new UnitProperty(*obj, name, valueType, flags, value, unitName, unitValue);
+              }
+              else if(valueType == ValueType::Object)
+              {
+                item = new ObjectProperty(*obj, name, flags, value.toString());
+              }
+              else
+              {
+                Property* p = new Property(*obj, name, valueType, flags, value);
+                if(valueType == ValueType::Enum || valueType == ValueType::Set)
+                  p->m_enumOrSetName = enumOrSetName;
+                item = p;
+              }
             }
           }
           break;
@@ -521,40 +607,7 @@ ObjectPtr Connection::readObject(const Message& message)
             case AttributeType::Values:
             {
               const int length = message.read<int>(); // read uint32_t as int, Qt uses int for length
-              QList<QVariant> values;
-              switch(type)
-              {
-                case ValueType::Boolean:
-                {
-                  for(int i = 0; i < length; i++)
-                    values.append(message.read<bool>());
-                  break;
-                }
-                case ValueType::Enum:
-                case ValueType::Integer:
-                {
-                  for(int i = 0; i < length; i++)
-                    values.append(message.read<qint64>());
-                  break;
-                }
-                case ValueType::Float:
-                {
-                  for(int i = 0; i < length; i++)
-                    values.append(message.read<double>());
-                  break;
-                }
-                case ValueType::String:
-                {
-                  for(int i = 0; i < length; i++)
-                    values.append(QString::fromUtf8(message.read<QByteArray>()));
-                  break;
-                }
-                case ValueType::Object:
-                case ValueType::Invalid:
-                default:
-                  Q_ASSERT(false);
-                  break;
-              }
+              QList<QVariant> values = readArray(message, type, length);
               if(Q_LIKELY(values.length() == length))
                 item->m_attributes[attributeName] = values;
               break;
@@ -658,9 +711,11 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
       case Message::Command::ObjectPropertyChanged:
         if(ObjectPtr object = m_objects.value(message->read<Handle>()).lock())
         {
-          if(AbstractProperty* property = object->getProperty(QString::fromLatin1(message->read<QByteArray>())))
+          const QString name = QString::fromLatin1(message->read<QByteArray>());
+          const ValueType valueType = message->read<ValueType>();
+
+          if(AbstractProperty* property = object->getProperty(name))
           {
-            const ValueType valueType = message->read<ValueType>();
             switch(valueType)
             {
               case ValueType::Boolean:
@@ -715,6 +770,17 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
                 Q_ASSERT(false);
                 break;
             }
+          }
+          else if(AbstractVectorProperty* vectorProperty = object->getVectorProperty(name))
+          {
+            const int length = message->read<int>(); // read uint32_t as int, Qt uses int for length
+
+            if(valueType == ValueType::Object)
+              static_cast<ObjectVectorProperty*>(vectorProperty)->m_ids = readObjectIdArray(*message, length);
+            else
+              static_cast<VectorProperty*>(vectorProperty)->m_values = readArray(*message, valueType, length);
+
+            emit vectorProperty->valueChanged();
           }
         }
         break;

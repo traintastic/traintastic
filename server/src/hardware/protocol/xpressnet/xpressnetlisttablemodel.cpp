@@ -56,7 +56,7 @@ std::string XpressNetListTableModel::getText(uint32_t column, uint32_t row) cons
   return "";
 }
 
-void XpressNetListTableModel::propertyChanged(AbstractProperty& property, uint32_t row)
+void XpressNetListTableModel::propertyChanged(BaseProperty& property, uint32_t row)
 {
   if(property.name() == "id")
     changed(row, columnId);

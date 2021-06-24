@@ -33,7 +33,7 @@ class InputListTableModel : public ObjectListTableModel<Input>
   friend class InputList;
 
   protected:
-    void propertyChanged(AbstractProperty& property, uint32_t row) final;
+    void propertyChanged(BaseProperty& property, uint32_t row) final;
 
   public:
     CLASS_ID("input_list_table_model")

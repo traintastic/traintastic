@@ -36,7 +36,9 @@
     std::string_view getClassId() const override { return classId; }
 
 class AbstractMethod;
+class BaseProperty;
 class AbstractProperty;
+class AbstractVectorProperty;
 class AbstractAttribute;
 class WorldLoader;
 class WorldSaver;
@@ -69,7 +71,7 @@ class Object : public std::enable_shared_from_this<Object>
     void logFatal(const std::string& message);
 
   public:
-    boost::signals2::signal<void (AbstractProperty&)> propertyChanged;
+    boost::signals2::signal<void (BaseProperty&)> propertyChanged;
     boost::signals2::signal<void (AbstractAttribute&)> attributeChanged;
 
     Object();
@@ -97,6 +99,7 @@ class Object : public std::enable_shared_from_this<Object>
     InterfaceItem* getItem(std::string_view name);
     AbstractMethod* getMethod(std::string_view name);
     AbstractProperty* getProperty(std::string_view name);
+    AbstractVectorProperty* getVectorProperty(std::string_view name);
 };
 
 #endif

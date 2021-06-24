@@ -83,7 +83,7 @@ std::string CommandStationListTableModel::getText(uint32_t column, uint32_t row)
   return "";
 }
 
-void CommandStationListTableModel::propertyChanged(AbstractProperty& property, uint32_t row)
+void CommandStationListTableModel::propertyChanged(BaseProperty& property, uint32_t row)
 {
   if(property.name() == "id")
     changed(row, columnId);

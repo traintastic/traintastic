@@ -33,7 +33,7 @@ class OutputListTableModel : public ObjectListTableModel<Output>
   friend class OutputList;
 
   protected:
-    void propertyChanged(AbstractProperty& property, uint32_t row) final;
+    void propertyChanged(BaseProperty& property, uint32_t row) final;
 
   public:
     CLASS_ID("output_list_table_model")

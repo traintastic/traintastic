@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@ class BoardList;
 class BoardListTableModel : public ObjectListTableModel<Board>
 {
   protected:
-    void propertyChanged(AbstractProperty& property, uint32_t row) final;
+    void propertyChanged(BaseProperty& property, uint32_t row) final;
 
   public:
     CLASS_ID("table_model.board_list")

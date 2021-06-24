@@ -33,7 +33,7 @@ class XpressNetListTableModel : public ObjectListTableModel<XpressNet::XpressNet
   friend class XpressNetList;
 
   protected:
-    void propertyChanged(AbstractProperty& property, uint32_t row) final;
+    void propertyChanged(BaseProperty& property, uint32_t row) final;
 
   public:
     CLASS_ID("xpressnet_list_table_model")

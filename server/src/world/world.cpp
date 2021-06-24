@@ -30,6 +30,7 @@
 #include "../core/traintastic.hpp"
 #include "../core/objectlisttablemodel.hpp"
 #include "../core/attributes.hpp"
+#include "../core/abstractvectorproperty.hpp"
 
 using nlohmann::json;
 
@@ -288,9 +289,23 @@ ObjectPtr World::getObjectByPath(std::string_view path) const
   ObjectPtr obj = getObject(*it);
   while(obj && ++it != ids.cend())
   {
-    AbstractProperty* property = obj->getProperty(*it);
-    if(property && property->type() == ValueType::Object)
+    if(AbstractProperty* property = obj->getProperty(*it); property && property->type() == ValueType::Object)
       obj = property->toObject();
+    else if(AbstractVectorProperty* vectorProperty = obj->getVectorProperty(*it); vectorProperty && vectorProperty->type() == ValueType::Object)
+    {
+      obj.reset();
+      const size_t size = vectorProperty->size();
+      for(size_t i = 0; i < size; i++)
+      {
+        ObjectPtr v = vectorProperty->getObject(i);
+        if(path == v->getObjectId())
+        {
+          obj = v;
+          it++;
+          break;
+        }
+      }
+    }
     else
       obj.reset();
   }

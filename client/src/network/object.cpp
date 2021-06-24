@@ -23,6 +23,7 @@
 #include "object.hpp"
 #include "connection.hpp"
 #include "property.hpp"
+#include "abstractvectorproperty.hpp"
 #include "method.hpp"
 
 Object::Object(std::shared_ptr<Connection> connection, Handle handle, const QString& classId) :
@@ -51,6 +52,16 @@ const AbstractProperty* Object::getProperty(const QString& name) const
 AbstractProperty* Object::getProperty(const QString& name)
 {
   return dynamic_cast<AbstractProperty*>(m_interfaceItems.find(name));
+}
+
+const AbstractVectorProperty* Object::getVectorProperty(const QString& name) const
+{
+  return dynamic_cast<AbstractVectorProperty*>(m_interfaceItems.find(name));
+}
+
+AbstractVectorProperty* Object::getVectorProperty(const QString& name)
+{
+  return dynamic_cast<AbstractVectorProperty*>(m_interfaceItems.find(name));
 }
 
 void Object::setPropertyValue(const QString& name, bool value)
