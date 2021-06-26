@@ -58,13 +58,14 @@ class OutputMapBase : public OutputMap
 
     void outputAdded(const std::shared_ptr<Output>& output) final
     {
-      for(auto it : m_items)
-        it.second->m_outputActions.emplace_back(new OutputMapOutputAction(*this, output));
+      for(const auto& it : m_items)
+        it.second->addOutput(output);
     }
 
     void outputRemoved(const std::shared_ptr<Output>& output) final
     {
-      assert(false); /// @todo
+      for(const auto& it : m_items)
+        it.second->removeOutput(output);
     }
 
   public:

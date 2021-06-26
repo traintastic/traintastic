@@ -28,12 +28,18 @@
 #include <QTableWidget>
 #include "../network/outputmap.hpp"
 
+class Method;
+class MethodAction;
+
 class OutputMapWidget : public QWidget
 {
   Q_OBJECT
 
   protected:
     std::shared_ptr<OutputMap> m_object;
+    Method* m_methodAdd;
+    Method* m_methodRemove;
+    MethodAction* m_actionRemove;
     QTableWidget* m_table;
 
   protected slots:

@@ -76,3 +76,18 @@ void OutputMapItem::worldEvent(WorldState state, WorldEvent event)
   for(auto& action : m_outputActions)
     action->worldEvent(state, event);
 }
+
+void OutputMapItem::addOutput(const std::shared_ptr<Output>& output)
+{
+  m_outputActions.emplace_back(new OutputMapOutputAction(m_map, output));
+}
+
+void OutputMapItem::removeOutput(const std::shared_ptr<Output>& output)
+{
+  auto it = std::find_if(m_outputActions.begin(), m_outputActions.end(), [output](const auto& it){ return it->output() == output; });
+  if(it != m_outputActions.end())
+  {
+    (*it)->destroy();
+    m_outputActions.erase(it);
+  }
+}

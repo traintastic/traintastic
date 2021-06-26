@@ -26,6 +26,7 @@
 #include "../../../core/object.hpp"
 #include <vector>
 
+class Output;
 class OutputMapOutputAction;
 
 class OutputMapItem : public Object
@@ -40,6 +41,9 @@ class OutputMapItem : public Object
     void load(WorldLoader& loader, const nlohmann::json& data) override;
     void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
     void worldEvent(WorldState state, WorldEvent event) override;
+
+    void addOutput(const std::shared_ptr<Output>& output);
+    void removeOutput(const std::shared_ptr<Output>& output);
 
   public:
     OutputMapItem(Object& map);

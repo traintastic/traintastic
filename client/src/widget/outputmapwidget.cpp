@@ -30,10 +30,12 @@
 #include "propertycheckbox.hpp"
 #include "outputmapoutputactionwidget.hpp"
 #include "../dialog/objectselectlistdialog.hpp"
+#include "../network/callmethod.hpp"
 #include "../network/method.hpp"
 #include "../network/property.hpp"
 #include "../utils/enum.hpp"
 #include "../theme/theme.hpp"
+#include "../misc/methodaction.hpp"
 
 constexpr int columnCountNonOutput = 2;
 constexpr int columnUse = 0;
@@ -47,32 +49,43 @@ OutputMapWidget::OutputMapWidget(std::shared_ptr<OutputMap> object, QWidget* par
 {
   QVBoxLayout* l = new QVBoxLayout();
 
-  QToolBar* tb = new QToolBar(this);
-  if(auto* method = m_object->getMethod("add_output"))
+  QToolBar* toolbar = new QToolBar(this);
+
+  if((m_methodAdd = m_object->getMethod("add_output")))
+    toolbar->addAction(new MethodAction(Theme::getIcon("add"), *m_methodAdd,
+      [this]()
+      {
+        std::make_unique<ObjectSelectListDialog>(*m_methodAdd, this)->exec();
+      }, toolbar));
+
+  if((m_methodRemove = m_object->getMethod("remove_output")))
   {
-    QAction* act = tb->addAction(Theme::getIcon("add"), method->displayName(),
-      [this, method]()
+    m_actionRemove = new MethodAction(Theme::getIcon("remove"), *m_methodRemove,
+      [this]()
       {
-        std::make_unique<ObjectSelectListDialog>(*method, this)->exec();
-      });
-    act->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
-    connect(method, &Method::attributeChanged, this,
-      [this, act](AttributeName name, QVariant value)
-      {
-        if(name == AttributeName::Enabled)
-          act->setEnabled(value.toBool());
-      });
+        const int index = m_table->currentColumn() - columnOutputFirst;
+        if(index >= 0)
+          callMethod(*m_methodRemove, nullptr, m_object->outputs()[index]);
+      }, toolbar);
+    m_actionRemove->setForceDisabled(true);
+    toolbar->addAction(m_actionRemove);
   }
 
-  /// @todo remove output
-
-  l->addWidget(tb);
+  l->addWidget(toolbar);
 
   m_table->setColumnCount(columnCountNonOutput);
   m_table->setRowCount(0);
   m_table->setHorizontalHeaderLabels({Locale::tr("output_map:use"), Locale::tr(m_object->classId() + ":key")});
   m_table->verticalHeader()->setVisible(false);
   m_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  m_table->setSelectionMode(QAbstractItemView::SingleSelection);
+  m_table->setSelectionBehavior(QAbstractItemView::SelectColumns);
+  connect(m_table, &QTableWidget::itemSelectionChanged, this,
+    [this]()
+    {
+      m_actionRemove->setForceDisabled(m_table->currentColumn() < columnOutputFirst);
+    });
+
   l->addWidget(m_table);
 
   setLayout(l);
