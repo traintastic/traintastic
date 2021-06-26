@@ -26,6 +26,8 @@
 #include "straightrailtile.hpp"
 #include "../../../core/objectproperty.hpp"
 #include "../../../hardware/input/input.hpp"
+#include "../../../enum/sensortype.hpp"
+#include "../../../enum/sensorstate.hpp"
 
 class SensorRailTile : public StraightRailTile
 {
@@ -45,8 +47,9 @@ class SensorRailTile : public StraightRailTile
   public:
     Property<std::string> name;
     ObjectProperty<Input> input;
+    Property<SensorType> type;
     Property<bool> invert;
-    Property<TriState> state;
+    Property<SensorState> state;
 
     SensorRailTile(const std::weak_ptr<World>& world, std::string_view _id);
 };

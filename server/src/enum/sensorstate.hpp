@@ -1,5 +1,5 @@
 /**
- * shared/src/traintastic/enum/blockinputtype.hpp
+ * server/src/enum/sensorstate.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,28 +20,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_BLOCKINPUTTYPE_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_BLOCKINPUTTYPE_HPP
+#ifndef TRAINTASTIC_SERVER_ENUM_SENSORSTATE_HPP
+#define TRAINTASTIC_SERVER_ENUM_SENSORSTATE_HPP
 
-#include <cstdint>
-#include "enum.hpp"
+#include <traintastic/enum/sensorstate.hpp>
+#include <array>
 
-enum class BlockInputType : uint8_t
-{
-  OccupyDetector = 0,
-  ReedSwitch = 1,
-};
-
-template<>
-struct EnumName<BlockInputType>
-{
-  static constexpr char const* value = "block_input_type";
-};
-
-ENUM_VALUES(BlockInputType, 2,
-{
-  {BlockInputType::OccupyDetector, "occupy_detector"},
-  {BlockInputType::ReedSwitch, "reed_switch"},
-})
+inline constexpr std::array<SensorState, 5> sensorStateValues{{
+  SensorState::Unknown,
+  SensorState::Occupied,
+  SensorState::Free,
+  SensorState::Idle,
+  SensorState::Triggered,
+}};
 
 #endif

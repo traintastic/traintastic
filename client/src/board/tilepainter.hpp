@@ -29,6 +29,7 @@
 #include <traintastic/board/tileid.hpp>
 #include <traintastic/board/tilerotate.hpp>
 #include <traintastic/enum/blockstate.hpp>
+#include <traintastic/enum/sensorstate.hpp>
 #include <traintastic/enum/signalaspect.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/turnoutposition.hpp>
@@ -40,10 +41,14 @@ class TilePainter
     inline static const QColor signalRed{192, 0, 0};
     inline static const QColor signalYellow{192, 192, 32};
     inline static const QColor signalGreen{0, 192, 0};
-    inline static const std::array<QColor, 3> sensorStateColor = {{QColor{0x10, 0x10, 0x10}, QColor{0x40, 0x40, 0x40}, QColor{0x00, 0xBF, 0xFF}}};
     inline static const QBrush blockBrushFree{QColor{0x66, 0xC6, 0x66}};
     inline static const QBrush blockBrushOccupied{QColor{0xC6, 0x66, 0x66}};
     inline static const QBrush blockBrushUnknown{QColor{0x66, 0x66, 0x66}};
+    inline static const QColor sensorColorFree{0x66, 0xC6, 0x66};
+    inline static const QColor sensorColorOccupied{0xC6, 0x66, 0x66};
+    inline static const QColor sensorColorIdle{0x40, 0x40, 0x40};
+    inline static const QColor sensorColorTriggered{0x00, 0xBF, 0xFF};
+    inline static const QColor sensorColorUnknown{0x10, 0x10, 0x10};
     inline static const QPen blockPen{trackColor};
 
     const int m_trackWidth;
@@ -57,12 +62,7 @@ class TilePainter
     inline void setTurnoutStatePen() { m_painter.setPen(m_turnoutStatePen); }
     inline QRectF turnoutStateRect(const QRectF& r) { return r.adjusted(m_turnoutMargin, m_turnoutMargin, -m_turnoutMargin, -m_turnoutMargin); }
 
-    inline QColor sensorStateToColor(TriState value) const
-    {
-      assert(static_cast<uint8_t>(value) < sensorStateColor.size());
-      return sensorStateColor[static_cast<uint8_t>(value)];
-    }
-
+    QColor sensorStateToColor(SensorState value) const;
     void setBlockStateBrush(BlockState value);
 
     void drawStraight(const QRectF& r, TileRotate rotate);
@@ -76,16 +76,16 @@ class TilePainter
     void drawSignal2Aspect(QRectF r, TileRotate rotate, SignalAspect aspect);
     void drawSignal3Aspect(QRectF r, TileRotate rotate, SignalAspect aspect);
 
-    void drawRailBlock(const QRectF& r, TileRotate rotate, BlockState state = BlockState::Unknown, const std::vector<BlockState> subStates = {});
+    void drawRailBlock(const QRectF& r, TileRotate rotate, BlockState state = BlockState::Unknown, const std::vector<SensorState> subStates = {});
 
   public:
     TilePainter(QPainter& painter, int tileSize);
 
     void draw(TileId id, const QRectF& r, TileRotate rotate);
-    void drawSensor(TileId id, const QRectF& r, TileRotate rotate, TriState state = TriState::Undefined);
+    void drawSensor(TileId id, const QRectF& r, TileRotate rotate, SensorState state = SensorState::Unknown);
     void drawTurnout(TileId id, const QRectF& r, TileRotate rotate, TurnoutPosition position = TurnoutPosition::Unknown);
     void drawSignal(TileId id, const QRectF& r, TileRotate rotate, SignalAspect aspect = SignalAspect::Unknown);
-    void drawBlock(TileId id, const QRectF& r, TileRotate rotate, BlockState state = BlockState::Unknown, const std::vector<BlockState> subStates = {});
+    void drawBlock(TileId id, const QRectF& r, TileRotate rotate, BlockState state = BlockState::Unknown, const std::vector<SensorState> subStates = {});
 };
 
 #endif

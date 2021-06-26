@@ -179,12 +179,12 @@ BlockState BoardAreaWidget::getBlockState(const TileLocation& l) const
   return BlockState::Unknown;
 }
 
-TriState BoardAreaWidget::getSensorState(const TileLocation& l) const
+SensorState BoardAreaWidget::getSensorState(const TileLocation& l) const
 {
   if(ObjectPtr object = m_board.board().getTileObject(l))
     if(const auto* p = object->getProperty("state"))
-      return p->toEnum<TriState>();
-  return TriState::Undefined;
+      return p->toEnum<SensorState>();
+  return SensorState::Unknown;
 }
 
 SignalAspect BoardAreaWidget::getSignalAspect(const TileLocation& l) const

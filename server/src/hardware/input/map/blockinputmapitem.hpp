@@ -26,7 +26,8 @@
 #include "inputmapitem.hpp"
 #include "../../../core/objectproperty.hpp"
 #include "../input.hpp"
-#include "../../../enum/blockinputtype.hpp"
+#include "../../../enum/sensortype.hpp"
+#include "../../../enum/sensorstate.hpp"
 
 class BlockInputMap;
 
@@ -38,10 +39,10 @@ class BlockInputMapItem : public InputMapItem
     BlockInputMap& m_parent;
     const uint32_t m_itemId;
     boost::signals2::connection m_inputPropertyChanged;
-    TriState m_value;
+    SensorState m_value;
 
     void inputPropertyChanged(BaseProperty& property);
-    void setValue(TriState value);
+    void setValue(SensorState value);
 
   protected:
     void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const final;
@@ -51,14 +52,14 @@ class BlockInputMapItem : public InputMapItem
   public:
     Property<std::string> name;
     ObjectProperty<Input> input;
-    Property<BlockInputType> type;
+    Property<SensorType> type;
     Property<bool> invert;
 
     BlockInputMapItem(BlockInputMap& parent, uint32_t itemId);
 
     std::string getObjectId() const final;
     uint32_t itemId() const { return m_itemId; }
-    TriState value() const { return m_value; }
+    SensorState value() const { return m_value; }
 };
 
 #endif

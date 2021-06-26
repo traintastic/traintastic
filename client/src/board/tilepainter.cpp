@@ -103,7 +103,7 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate)
   }
 }
 
-void TilePainter::drawSensor(TileId id, const QRectF& r, TileRotate rotate, TriState state)
+void TilePainter::drawSensor(TileId id, const QRectF& r, TileRotate rotate, SensorState state)
 {
   switch(id)
   {
@@ -373,7 +373,7 @@ void TilePainter::drawSignal(TileId id, const QRectF& r, TileRotate rotate, Sign
   }
 }
 
-void TilePainter::drawBlock(TileId id, const QRectF& r, TileRotate rotate, BlockState state, const std::vector<BlockState> subStates)
+void TilePainter::drawBlock(TileId id, const QRectF& r, TileRotate rotate, BlockState state, const std::vector<SensorState> subStates)
 {
   switch(id)
   {
@@ -388,6 +388,29 @@ void TilePainter::drawBlock(TileId id, const QRectF& r, TileRotate rotate, Block
 }
 
 //=============================================================================
+
+QColor TilePainter::sensorStateToColor(SensorState value) const
+{
+  switch(value)
+  {
+    case SensorState::Occupied:
+      return sensorColorOccupied;
+
+    case SensorState::Free:
+      return sensorColorFree;
+
+    case SensorState::Idle:
+      return sensorColorIdle;
+
+    case SensorState::Triggered:
+      return sensorColorTriggered;
+
+    case SensorState::Unknown:
+      return sensorColorUnknown;
+  }
+  assert(false);
+  return QColor();
+}
 
 void TilePainter::setBlockStateBrush(BlockState value)
 {
@@ -692,7 +715,7 @@ void TilePainter::drawSignal3Aspect(QRectF r, TileRotate rotate, SignalAspect as
   m_painter.restore();
 }
 
-void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, BlockState state, const std::vector<BlockState> subStates)
+void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, BlockState state, const std::vector<SensorState> subStates)
 {
   setTrackPen();
 
@@ -710,9 +733,9 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, BlockState s
       const qreal height = block.height() / subStates.size();
       const qreal width = qRound(block.width() / 5);
       qreal top = block.top();
-      for(BlockState subState : subStates)
+      for(SensorState subState : subStates)
       {
-        setBlockStateBrush(subState);
+        m_painter.setBrush(sensorStateToColor(subState));
         m_painter.drawRect(QRectF(block.left(), qRound(top) - 0.5, width, qRound(top + height) - qRound(top)));
         top += height;
       }
@@ -733,9 +756,9 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, BlockState s
       const qreal height = qRound(block.height() / 5);
       const qreal top = block.bottom() - height;
       double left = block.left();
-      for(BlockState subState : subStates)
+      for(const auto& subState : subStates)
       {
-        setBlockStateBrush(subState);
+        m_painter.setBrush(sensorStateToColor(subState));
         m_painter.drawRect(QRectF(qRound(left) - 0.5, top, qRound(left + width) - qRound(left), height));
         left += width;
       }

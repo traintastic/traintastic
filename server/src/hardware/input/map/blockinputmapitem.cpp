@@ -25,6 +25,7 @@
 #include "../../../core/attributes.hpp"
 #include "../../../world/getworld.hpp"
 #include "../../../utils/displayname.hpp"
+#include "../../../utils/sensor.hpp"
 
 BlockInputMapItem::BlockInputMapItem(BlockInputMap& parent, uint32_t itemId) :
   InputMapItem(),
@@ -43,11 +44,11 @@ BlockInputMapItem::BlockInputMapItem(BlockInputMap& parent, uint32_t itemId) :
         inputPropertyChanged(input->value);
       }
       else
-        setValue(TriState::Undefined);
+        setValue(SensorState::Unknown);
 
       return true;
     }},
-  type{this, "type", BlockInputType::OccupyDetector, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  type{this, "type", SensorType::OccupyDetector, PropertyFlags::ReadWrite | PropertyFlags::Store},
   invert{this, "invert", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](bool)
     {
@@ -66,7 +67,7 @@ BlockInputMapItem::BlockInputMapItem(BlockInputMap& parent, uint32_t itemId) :
   Attributes::addObjectList(input, w->inputs);
   m_interfaceItems.add(input);
   Attributes::addEnabled(type, false/*editable && stopped*/);
-  Attributes::addValues(type, blockInputTypeValues);
+  Attributes::addValues(type, sensorTypeValues);
   m_interfaceItems.add(type);
   Attributes::addEnabled(invert, editable && stopped);
   m_interfaceItems.add(invert);
@@ -108,10 +109,10 @@ void BlockInputMapItem::inputPropertyChanged(BaseProperty& property)
 {
   assert(input);
   if(&property == static_cast<BaseProperty*>(&input->value))
-    setValue(TriState::False/*input->value.value()*/ ^ invert.value());
+    setValue(toSensorState(type, input->value.value() ^ invert.value()));
 }
 
-void BlockInputMapItem::setValue(TriState value)
+void BlockInputMapItem::setValue(SensorState value)
 {
   if(m_value != value)
   {

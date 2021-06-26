@@ -23,7 +23,6 @@
 #include "enum.hpp"
 #include "../network/abstractproperty.hpp"
 #include <traintastic/locale/locale.hpp>
-#include <traintastic/enum/blockinputtype.hpp>
 #include <traintastic/enum/decoderfunctiontype.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
 #include <traintastic/enum/direction.hpp>
@@ -31,6 +30,7 @@
 #include <traintastic/enum/loconetcommandstation.hpp>
 #include <traintastic/enum/loconetserialinterface.hpp>
 #include <traintastic/enum/outputaction.hpp>
+#include <traintastic/enum/sensortype.hpp>
 #include <traintastic/enum/serialflowcontrol.hpp>
 #include <traintastic/enum/signalaspect.hpp>
 #include <traintastic/enum/speedunit.hpp>
@@ -65,7 +65,6 @@ QVector<qint64> enumValues(const QString& enumName)
 
 QString translateEnum(const QString& enumName, qint64 value)
 {
-  TRANSLATE_ENUM(BlockInputType)
   TRANSLATE_ENUM(DecoderFunctionType)
   TRANSLATE_ENUM(DecoderProtocol)
   TRANSLATE_ENUM(Direction)
@@ -73,6 +72,7 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(LocoNetCommandStation)
   TRANSLATE_ENUM(LocoNetSerialInterface)
   TRANSLATE_ENUM(OutputAction)
+  TRANSLATE_ENUM(SensorType)
   TRANSLATE_ENUM(SerialFlowControl)
   TRANSLATE_ENUM(SignalAspect)
   TRANSLATE_ENUM(SpeedUnit)

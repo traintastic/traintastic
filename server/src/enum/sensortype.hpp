@@ -1,5 +1,5 @@
 /**
- * server/src/enum/blockinputtype.hpp
+ * server/src/enum/sensortype.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,15 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_ENUM_BLOCKINPUTTYPE_HPP
-#define TRAINTASTIC_SERVER_ENUM_BLOCKINPUTTYPE_HPP
+#ifndef TRAINTASTIC_SERVER_ENUM_SENSORTYPE_HPP
+#define TRAINTASTIC_SERVER_ENUM_SENSORTYPE_HPP
 
-#include <traintastic/enum/blockinputtype.hpp>
+#include <traintastic/enum/sensortype.hpp>
 #include <array>
 
-inline constexpr std::array<BlockInputType, 2> blockInputTypeValues{{
-  BlockInputType::OccupyDetector,
-  BlockInputType::ReedSwitch,
+inline constexpr std::array<SensorType, 2> sensorTypeValues{{
+  SensorType::OccupyDetector,
+  SensorType::ReedSwitch,
 }};
 
 #endif

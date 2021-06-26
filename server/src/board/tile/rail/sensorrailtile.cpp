@@ -23,6 +23,7 @@
 #include "sensorrailtile.hpp"
 #include "../../../world/world.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../utils/sensor.hpp"
 
 SensorRailTile::SensorRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
   StraightRailTile(world, _id, TileId::RailSensor),
@@ -39,9 +40,15 @@ SensorRailTile::SensorRailTile(const std::weak_ptr<World>& world, std::string_vi
         inputPropertyChanged(input->value);
       }
       else
-        state.setValueInternal(TriState::Undefined);
+        state.setValueInternal(SensorState::Unknown);
 
       return true;
+    }},
+  type{this, "type", SensorType::OccupyDetector, PropertyFlags::ReadWrite | PropertyFlags::Store,
+    [this](SensorType)
+    {
+      if(input)
+        inputPropertyChanged(input->value);
     }},
   invert{this, "invert", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](bool)
@@ -49,7 +56,7 @@ SensorRailTile::SensorRailTile(const std::weak_ptr<World>& world, std::string_vi
       if(input)
         inputPropertyChanged(input->value);
     }},
-  state{this, "state", TriState::Undefined, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
+  state{this, "state", SensorState::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
 {
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
@@ -60,9 +67,12 @@ SensorRailTile::SensorRailTile(const std::weak_ptr<World>& world, std::string_vi
   Attributes::addEnabled(input, editable);
   Attributes::addObjectList(input, w->inputs);
   m_interfaceItems.add(input);
+  Attributes::addEnabled(type, editable);
+  Attributes::addValues(type, sensorTypeValues);
+  m_interfaceItems.add(type);
   Attributes::addEnabled(invert, editable);
   m_interfaceItems.add(invert);
-  Attributes::addValues(state, TriStateValues);
+  Attributes::addValues(state, sensorStateValues);
   m_interfaceItems.add(state);
 }
 
@@ -82,6 +92,7 @@ void SensorRailTile::worldEvent(WorldState state, WorldEvent event)
 
   Attributes::setEnabled(name, editable);
   Attributes::setEnabled(input, editable);
+  Attributes::setEnabled(type, editable);
   Attributes::setEnabled(invert, editable);
 }
 
@@ -89,5 +100,5 @@ void SensorRailTile::inputPropertyChanged(BaseProperty& property)
 {
   assert(input);
   if(&property == static_cast<BaseProperty*>(&input->value))
-    state.setValueInternal(input->value.value() ^ invert.value());
+    state.setValueInternal(toSensorState(type, input->value.value() ^ invert.value()));
 }

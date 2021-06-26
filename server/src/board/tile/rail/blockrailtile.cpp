@@ -49,27 +49,30 @@ void BlockRailTile::updateState()
 {
   if(!inputMap->items.empty())
   {
-    TriState value = TriState::False;
+    bool allFree = true;
+
     for(const auto& item : inputMap->items)
-      value |= item->value();
-
-    switch(value)
     {
-      case TriState::Undefined:
-        state.setValueInternal(BlockState::Unknown);
-        break;
-
-      case TriState::True:
+      if(item->value() == SensorState::Occupied)
+      {
         state.setValueInternal(BlockState::Occupied);
+        return;
+      }
+      else if(item->value() != SensorState::Free)
+      {
+        allFree = false;
         break;
+      }
+    }
 
-      case TriState::False:
-        state.setValueInternal(BlockState::Free);
-        break;
+    if(allFree)
+    {
+      state.setValueInternal(BlockState::Free);
+      return;
     }
   }
-  else
-    state.setValueInternal(BlockState::Unknown);
+
+  state.setValueInternal(BlockState::Unknown);
 }
 
 void BlockRailTile::worldEvent(WorldState state, WorldEvent event)
