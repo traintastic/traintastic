@@ -25,24 +25,38 @@
 
 MethodAction::MethodAction(Method& method, QObject* parent) :
   QAction(parent),
-  m_method{method}
+  m_method{method},
+  m_forceDisabled{false}
 {
   init();
 }
 
 MethodAction::MethodAction(const QIcon &icon, Method& method, QObject* parent) :
   QAction(icon, QString(), parent),
-  m_method{method}
+  m_method{method},
+  m_forceDisabled{false}
 {
   init();
 }
 
 MethodAction::MethodAction(const QIcon &icon, Method& method, std::function<void()> triggered, QObject* parent) :
   QAction(icon, QString(), parent),
-  m_method{method}
+  m_method{method},
+  m_forceDisabled{false}
 {
   init(false);
   connect(this, &QAction::triggered, std::move(triggered));
+}
+
+bool MethodAction::forceDisabled() const
+{
+  return m_forceDisabled;
+}
+
+void MethodAction::setForceDisabled(bool value)
+{
+  m_forceDisabled = value;
+  setEnabled(!m_forceDisabled && m_method.getAttributeBool(AttributeName::Enabled, true));
 }
 
 void MethodAction::init(bool connectTriggeredSignalToMethodIfCompatible)
@@ -55,7 +69,7 @@ void MethodAction::init(bool connectTriggeredSignalToMethodIfCompatible)
     [this](AttributeName name, const QVariant& value)
     {
       if(name == AttributeName::Enabled)
-        setEnabled(value.toBool());
+        setEnabled(!m_forceDisabled && value.toBool());
       else if(name == AttributeName::Visible)
         setVisible(value.toBool());
       else if(name == AttributeName::DisplayName)

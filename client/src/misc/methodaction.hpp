@@ -40,6 +40,7 @@ class MethodAction : public QAction
 {
   private:
     Method& m_method;
+    bool m_forceDisabled;
 
     void init(bool connectTriggeredSignalToMethodIfCompatible = true);
 
@@ -47,6 +48,9 @@ class MethodAction : public QAction
     MethodAction(Method& method, QObject* parent = nullptr);
     MethodAction(const QIcon &icon, Method& method, QObject* parent = nullptr);
     MethodAction(const QIcon &icon, Method& method, std::function<void()> triggered, QObject* parent = nullptr);
+
+    bool forceDisabled() const;
+    void setForceDisabled(bool value);
 };
 
 #endif
