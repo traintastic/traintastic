@@ -31,16 +31,18 @@ SensorRailTile::SensorRailTile(const std::weak_ptr<World>& world, std::string_vi
   input{this, "input", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](const std::shared_ptr<Input>& value)
     {
+      if(value)
+        inputPropertyChanged(input->value);
+      else
+        state.setValueInternal(SensorState::Unknown);
+    },
+    [this](const std::shared_ptr<Input>& value)
+    {
       if(input)
         input->propertyChanged.disconnect(m_inputPropertyChanged);
 
       if(value)
-      {
         m_inputPropertyChanged = value->propertyChanged.connect(std::bind(&SensorRailTile::inputPropertyChanged, this, std::placeholders::_1));
-        inputPropertyChanged(input->value);
-      }
-      else
-        state.setValueInternal(SensorState::Unknown);
 
       return true;
     }},

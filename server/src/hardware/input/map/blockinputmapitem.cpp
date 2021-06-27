@@ -35,16 +35,18 @@ BlockInputMapItem::BlockInputMapItem(BlockInputMap& parent, uint32_t itemId) :
   input{this, "input", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](const std::shared_ptr<Input>& value)
     {
+      if(value)
+        inputPropertyChanged(input->value);
+      else
+        setValue(SensorState::Unknown);
+    },
+    [this](const std::shared_ptr<Input>& value)
+    {
       if(input)
         input->propertyChanged.disconnect(m_inputPropertyChanged);
 
       if(value)
-      {
         m_inputPropertyChanged = value->propertyChanged.connect(std::bind(&BlockInputMapItem::inputPropertyChanged, this, std::placeholders::_1));
-        inputPropertyChanged(input->value);
-      }
-      else
-        setValue(SensorState::Unknown);
 
       return true;
     }},
