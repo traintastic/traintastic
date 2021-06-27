@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,10 +31,12 @@ template<class T>
 class ObjectProperty : public AbstractObjectProperty
 {
   public:
+    using OnChanged = std::function<void(const std::shared_ptr<T>& value)>;
     using OnSet = std::function<bool(const std::shared_ptr<T>& value)>;
 
   protected:
     std::shared_ptr<T> m_value;
+    OnChanged m_onChanged;
     OnSet m_onSet;
 
   public:
@@ -46,6 +48,18 @@ class ObjectProperty : public AbstractObjectProperty
 
     ObjectProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags) :
       ObjectProperty(object, name, std::shared_ptr<T>(), flags)
+    {
+    }
+
+    ObjectProperty(Object* object, const std::string& name, const std::shared_ptr<T>& value, PropertyFlags flags, OnChanged onChanged, OnSet onSet) :
+      ObjectProperty(object, name, value, flags)
+    {
+      m_onChanged = onChanged;
+      m_onSet = onSet;
+    }
+
+    ObjectProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags, OnChanged onChanged, OnSet onSet) :
+      ObjectProperty(object, name, std::shared_ptr<T>(), flags, onChanged, onSet)
     {
     }
 
