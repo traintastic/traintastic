@@ -49,6 +49,8 @@ class AbstractVectorProperty : public BaseProperty
     virtual void setDouble(size_t index, double value) = 0;
     virtual void setString(size_t index, const std::string& value) = 0;
     virtual void setObject(size_t index, const ObjectPtr& value) = 0;
+
+    virtual void load(const nlohmann::json& values) = 0;
 };
 
 #endif

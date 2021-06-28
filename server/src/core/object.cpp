@@ -111,15 +111,19 @@ void Object::load(WorldLoader& loader, const nlohmann::json& data)
         }
       }
       else
-        assert(false);//  vectorProperty->load(value);
+        vectorProperty->load(value);
     }
   }
 
   // state values (optional):
   nlohmann::json state = loader.getState(getObjectId());
   for(auto& [name, value] : state.items())
+  {
     if(AbstractProperty* property = getProperty(name))
       property->load(value);
+    else if(AbstractVectorProperty* vectorProperty = getVectorProperty(name))
+      vectorProperty->load(value);
+  }
 }
 
 void Object::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const

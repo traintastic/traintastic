@@ -596,9 +596,9 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
         message.write(baseProperty->type());
 
         if(baseProperty->type() == ValueType::Enum)
-          message.write(property->enumName());
+          message.write(baseProperty->enumName());
         else if(baseProperty->type() == ValueType::Set)
-          message.write(property->setName());
+          message.write(baseProperty->setName());
 
         if(property)
         {

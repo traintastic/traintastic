@@ -89,6 +89,11 @@ class AbstractObjectVectorProperty : public AbstractVectorProperty
     {
       throw conversion_error();
     }
+
+    void load(const nlohmann::json&) final
+    {
+      throw conversion_error();
+    }
 };
 
 #endif

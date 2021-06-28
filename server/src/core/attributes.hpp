@@ -26,6 +26,7 @@
 #include "interfaceitem.hpp"
 #include "abstractobjectproperty.hpp"
 #include "property.hpp"
+#include "vectorproperty.hpp"
 
 struct Attributes
 {
@@ -96,7 +97,11 @@ struct Attributes
     property.addAttribute(AttributeName::Values, values);
   }
 
-
+  template<class T, size_t N>
+  static inline void addValues(VectorProperty<T>& property, const std::array<T, N>& values)
+  {
+    property.addAttribute(AttributeName::Values, values);
+  }
 //inline InterfaceItem& addAttributeSubObject(bool value) { return addAttribute(AttributeName::SubObject, value); }
 /*
 template<typename T, std::size_t N>
