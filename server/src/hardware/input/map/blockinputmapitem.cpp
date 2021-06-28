@@ -26,6 +26,7 @@
 #include "../../../world/getworld.hpp"
 #include "../../../utils/displayname.hpp"
 #include "../../../utils/sensor.hpp"
+#include "../../../board/tile/rail/blockrailtile.hpp"
 
 BlockInputMapItem::BlockInputMapItem(BlockInputMap& parent, uint32_t itemId) :
   InputMapItem(),
@@ -119,6 +120,6 @@ void BlockInputMapItem::setValue(SensorState value)
   if(m_value != value)
   {
     m_value = value;
-    m_parent.itemValueChanged(*this);
+    static_cast<BlockRailTile&>(m_parent.parent()).inputItemValueChanged(*this);
   }
 }

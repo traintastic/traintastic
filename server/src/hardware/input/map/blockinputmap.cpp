@@ -23,7 +23,6 @@
 #include "blockinputmap.hpp"
 #include "../../../world/getworld.hpp"
 #include "../../../core/attributes.hpp"
-#include "../../../board/tile/rail/blockrailtile.hpp"
 
 BlockInputMap::BlockInputMap(Object& _parent, const std::string& parentPropertyName) :
   InputMap(_parent, parentPropertyName),
@@ -67,11 +66,6 @@ BlockInputMap::BlockInputMap(Object& _parent, const std::string& parentPropertyN
   m_interfaceItems.add(moveUp);
   Attributes::addEnabled(moveDown, false/*editable*/);
   m_interfaceItems.add(moveDown);
-}
-
-void BlockInputMap::itemValueChanged(BlockInputMapItem& item)
-{
-  static_cast<BlockRailTile&>(parent()).updateState();
 }
 
 void BlockInputMap::load(WorldLoader& loader, const nlohmann::json& data)

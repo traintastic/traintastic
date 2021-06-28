@@ -77,6 +77,7 @@ class BoardAreaWidget : public QWidget
     int getTileSize() const { return 25 + m_zoomLevel * 5; }
     TurnoutPosition getTurnoutPosition(const TileLocation& l) const;
     BlockState getBlockState(const TileLocation& l) const;
+    std::vector<SensorState> getBlockSensorStates(const TileLocation& l) const;
     SensorState getSensorState(const TileLocation& l) const;
     SignalAspect getSignalAspect(const TileLocation& l) const;
     TileLocation pointToTileLocation(const QPoint& p);

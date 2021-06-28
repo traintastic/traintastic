@@ -25,6 +25,7 @@
 
 #include "railtile.hpp"
 #include "../../../core/objectproperty.hpp"
+#include "../../../core/vectorproperty.hpp"
 #include "../../../enum/blockstate.hpp"
 #include "../../../hardware/input/map/blockinputmap.hpp"
 
@@ -40,14 +41,17 @@ class BlockRailTile : public RailTile
     void worldEvent(WorldState state, WorldEvent event) final;
     void setRotate(TileRotate value) final;
 
+    void updateState();
+
   public:
     Property<std::string> name;
     ObjectProperty<BlockInputMap> inputMap;
     Property<BlockState> state;
+    VectorProperty<SensorState> sensorStates;
 
     BlockRailTile(const std::weak_ptr<World>& world, std::string_view _id);
 
-    void updateState();
+    void inputItemValueChanged(BlockInputMapItem& item);
 };
 
 #endif

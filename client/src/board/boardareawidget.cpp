@@ -30,6 +30,7 @@
 #include "tilepainter.hpp"
 #include "../network/board.hpp"
 #include "../network/abstractproperty.hpp"
+#include "../network/abstractvectorproperty.hpp"
 #include "../utils/rectf.hpp"
 
 QRect rectToViewport(const QRect& r, const int gridSize)
@@ -177,6 +178,20 @@ BlockState BoardAreaWidget::getBlockState(const TileLocation& l) const
     if(const auto* p = object->getProperty("state"))
       return p->toEnum<BlockState>();
   return BlockState::Unknown;
+}
+
+std::vector<SensorState> BoardAreaWidget::getBlockSensorStates(const TileLocation& l) const
+{
+  if(ObjectPtr object = m_board.board().getTileObject(l))
+    if(const auto* p = object->getVectorProperty("sensor_states"))
+    {
+      const int size = p->size();
+      std::vector<SensorState> sensorStates(static_cast<size_t>(size));
+      for(int i = 0; i < size; i++)
+        sensorStates[i] = p->getEnum<SensorState>(i);
+      return sensorStates;
+    }
+  return {};
 }
 
 SensorState BoardAreaWidget::getSensorState(const TileLocation& l) const
@@ -382,7 +397,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           break;
 
         case TileId::RailBlock:
-          tilePainter.drawBlock(id, r, a, getBlockState(it.first));
+          tilePainter.drawBlock(id, r, a, getBlockState(it.first), getBlockSensorStates(it.first));
           break;
 
         case TileId::None:

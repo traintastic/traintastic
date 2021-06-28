@@ -28,7 +28,8 @@ BlockRailTile::BlockRailTile(const std::weak_ptr<World>& world, std::string_view
   RailTile(world, _id, TileId::RailBlock),
   name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store},
   inputMap{this, "input_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
-  state{this, "state", BlockState::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
+  state{this, "state", BlockState::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState},
+  sensorStates{*this, "sensor_states", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
 {
   inputMap.setValueInternal(std::make_shared<BlockInputMap>(*this, inputMap.name()));
 
@@ -43,6 +44,24 @@ BlockRailTile::BlockRailTile(const std::weak_ptr<World>& world, std::string_view
   m_interfaceItems.add(inputMap);
   Attributes::addValues(state, blockStateValues);
   m_interfaceItems.add(state);
+  Attributes::addValues(sensorStates, sensorStateValues);
+  m_interfaceItems.add(sensorStates);
+}
+
+void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
+{
+  if(inputMap->items.size() != sensorStates.size())
+  {
+    std::vector<SensorState> values;
+    values.reserve(inputMap->items.size());
+    for(const auto& item : inputMap->items)
+      values.emplace_back(item->value());
+    sensorStates.setValuesInternal(values);
+  }
+  else
+    sensorStates.setValueInternal(inputMap->items.indexOf(item), item.value());
+
+  updateState();
 }
 
 void BlockRailTile::updateState()
