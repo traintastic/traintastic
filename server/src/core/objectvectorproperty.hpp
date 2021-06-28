@@ -60,6 +60,25 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
       return m_values;
     }
 
+    size_t indexOf(const T* value) const
+    {
+      const size_t sz = size();
+      for(size_t i = 0; i < sz; i++)
+        if(m_values[i].get() == value)
+          return i;
+      return sz;
+    }
+
+    inline size_t indexOf(const T& value) const
+    {
+      return indexOf(&value);
+    }
+
+    inline size_t indexOf(const std::shared_ptr<T>& value) const
+    {
+      return indexOf(value.get());
+    }
+
     inline size_t size() const final
     {
       return m_values.size();
