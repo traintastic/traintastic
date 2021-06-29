@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,14 +54,11 @@ void TableModel::setRegion(const Region& value)
   }
 }
 
-void TableModel::setColumnHeaders(const std::vector<std::string>& values)
+void TableModel::setColumnHeaders(std::initializer_list<std::string_view> values)
 {
-  if(m_columnHeaders != values)
-  {
-    m_columnHeaders = values;
-    if(columnHeadersChanged)
-      columnHeadersChanged(shared_ptr<TableModel>());
-  }
+  m_columnHeaders = values;
+  if(columnHeadersChanged)
+    columnHeadersChanged(shared_ptr<TableModel>());
 }
 
 void TableModel::setRowCount(uint32_t value)

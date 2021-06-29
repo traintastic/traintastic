@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -85,12 +85,12 @@ class TableModel : public Object
     };
 
   private:
-    std::vector<std::string> m_columnHeaders;
+    std::vector<std::string_view> m_columnHeaders;
     uint32_t m_rowCount;
     Region m_region;
 
   protected:
-    void setColumnHeaders(const std::vector<std::string>& values);
+    void setColumnHeaders(std::initializer_list<std::string_view> values);
     void setRowCount(uint32_t value);
 
     void changed(uint32_t row, uint32_t column);
@@ -104,7 +104,7 @@ class TableModel : public Object
 
     std::string getObjectId() const final { assert(false); return {}; }
 
-    const std::vector<std::string>& columnHeaders() const { return m_columnHeaders; }
+    const std::vector<std::string_view>& columnHeaders() const { return m_columnHeaders; }
     uint32_t columnCount() const { return static_cast<uint32_t>(m_columnHeaders.size()); }
     uint32_t rowCount() const { return m_rowCount; }
 

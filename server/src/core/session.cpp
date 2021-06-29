@@ -369,7 +369,7 @@ bool Session::processMessage(const Message& message)
               auto event = Message::newEvent(Message::Command::TableModelColumnHeadersChanged);
               event->write(m_handles.getHandle(std::dynamic_pointer_cast<Object>(model)));
               event->write(model->columnCount());
-              for(const std::string& text : model->columnHeaders())
+              for(const auto& text : model->columnHeaders())
                 event->write(text);
               m_client->sendMessage(std::move(event));
             };
@@ -658,7 +658,7 @@ void Session::writeTableModel(Message& message, const TableModelPtr& model)
   message.write(handle);
   message.write(model->getClassId());
   message.write(model->columnCount());
-  for(const std::string& text : model->columnHeaders())
+  for(const auto& text : model->columnHeaders())
     message.write(text);
   message.write(model->rowCount());
   message.writeBlockEnd(); // end model
