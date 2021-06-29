@@ -31,6 +31,7 @@
 #include "../core/objectlisttablemodel.hpp"
 #include "../core/attributes.hpp"
 #include "../core/abstractvectorproperty.hpp"
+#include "../utils/displayname.hpp"
 
 using nlohmann::json;
 
@@ -187,7 +188,7 @@ World::World(Private) :
   m_filename = Traintastic::instance->worldDir() / to_string(m_uuid) / filename;
   m_filenameState = Traintastic::instance->worldDir() / to_string(m_uuid) / filenameState;
 
-  Attributes::addDisplayName(name, "object:name");
+  Attributes::addDisplayName(name, DisplayName::Object::name);
   m_interfaceItems.add(name);
   Attributes::addEnabled(scale, false);
   Attributes::addValues(scale, WorldScaleValues);

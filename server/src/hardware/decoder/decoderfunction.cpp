@@ -23,6 +23,7 @@
 #include "decoderchangeflags.hpp"
 #include "../../world/world.hpp"
 #include "../../core/attributes.hpp"
+#include "../../utils/displayname.hpp"
 
 const std::shared_ptr<DecoderFunction> DecoderFunction::null;
 
@@ -54,7 +55,7 @@ DecoderFunction::DecoderFunction(Decoder& decoder, std::string_view _id) :
 
   Attributes::addEnabled(number, editable);
   m_interfaceItems.add(number);
-  Attributes::addDisplayName(name, "object:name");
+  Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
   Attributes::addEnabled(type, editable);

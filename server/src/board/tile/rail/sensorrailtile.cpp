@@ -24,6 +24,7 @@
 #include "../../../world/world.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../utils/sensor.hpp"
+#include "../../../utils/displayname.hpp"
 
 SensorRailTile::SensorRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
   StraightRailTile(world, _id, TileId::RailSensor),
@@ -64,7 +65,7 @@ SensorRailTile::SensorRailTile(const std::weak_ptr<World>& world, std::string_vi
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
   Attributes::addEnabled(name, editable);
-  Attributes::addDisplayName(name, "object:name");
+  Attributes::addDisplayName(name, DisplayName::Object::name);
   m_interfaceItems.add(name);
   Attributes::addEnabled(input, editable);
   Attributes::addObjectList(input, w->inputs);

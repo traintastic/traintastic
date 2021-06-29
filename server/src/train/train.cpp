@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #include "../world/world.hpp"
 #include "trainlisttablemodel.hpp"
 #include "../core/attributes.hpp"
+#include "../utils/displayname.hpp"
 
 Train::Train(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
@@ -42,7 +43,7 @@ Train::Train(const std::weak_ptr<World>& world, std::string_view _id) :
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
-  Attributes::addDisplayName(name, "object:name");
+  Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
   m_interfaceItems.add(lob);
@@ -57,7 +58,7 @@ Train::Train(const std::weak_ptr<World>& world, std::string_view _id) :
   m_interfaceItems.add(throttleSpeed);
   m_interfaceItems.add(weight);
   m_interfaceItems.add(vehicles);
-  Attributes::addDisplayName(notes, "object:notes");
+  Attributes::addDisplayName(notes, DisplayName::Object::notes);
   m_interfaceItems.add(notes);
 }
 

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,7 @@
 #include "../../world/world.hpp"
 #include "../commandstation/commandstation.hpp"
 #include "../../core/attributes.hpp"
+#include "../../utils/displayname.hpp"
 
 //constexpr uint16_t addressDCCMin = 1;
 constexpr uint16_t addressDCCShortMax = 127;
@@ -111,7 +112,7 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
 
 //  const bool editable = w && contains(w->state.value(), WorldState::Edit) && speedStep == 0;
 
-  Attributes::addDisplayName(name, "object:name");
+  Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, false);
   m_interfaceItems.add(name);
   Attributes::addEnabled(commandStation, false);
@@ -131,7 +132,7 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
   m_interfaceItems.add(speedSteps);
   m_interfaceItems.add(speedStep);
   m_interfaceItems.add(functions);
-  Attributes::addDisplayName(notes, "object:notes");
+  Attributes::addDisplayName(notes, DisplayName::Object::notes);
   m_interfaceItems.add(notes);
 
   updateEditable();

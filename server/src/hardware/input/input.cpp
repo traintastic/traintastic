@@ -24,6 +24,7 @@
 #include "../../world/world.hpp"
 #include "list/inputlisttablemodel.hpp"
 #include "../../core/attributes.hpp"
+#include "../../utils/displayname.hpp"
 
 Input::Input(const std::weak_ptr<World> world, std::string_view _id) :
   IdObject(world, _id),
@@ -33,7 +34,7 @@ Input::Input(const std::weak_ptr<World> world, std::string_view _id) :
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
-  Attributes::addDisplayName(name, "object:name");
+  Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
   Attributes::addObjectEditor(value, false);

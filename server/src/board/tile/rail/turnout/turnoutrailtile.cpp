@@ -23,6 +23,7 @@
 #include "turnoutrailtile.hpp"
 #include "../../../../core/attributes.hpp"
 #include "../../../../world/world.hpp"
+#include "../../../../utils/displayname.hpp"
 
 TurnoutRailTile::TurnoutRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId) :
   RailTile(world, _id, tileId),
@@ -38,7 +39,7 @@ TurnoutRailTile::TurnoutRailTile(const std::weak_ptr<World>& world, std::string_
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
-  Attributes::addDisplayName(name, "object:name");
+  Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
   Attributes::addObjectEditor(position, false);

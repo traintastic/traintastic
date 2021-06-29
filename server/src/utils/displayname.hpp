@@ -31,6 +31,7 @@ namespace DisplayName
   {
     constexpr std::string_view id = "object:id";
     constexpr std::string_view name = "object:name";
+    constexpr std::string_view notes = "object:notes";
   }
 }
 

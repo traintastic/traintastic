@@ -23,6 +23,7 @@
 #include "console.hpp"
 #include "../world/getworld.hpp"
 #include "attributes.hpp"
+#include "../utils/displayname.hpp"
 
 IdObject::IdObject(const std::weak_ptr<World>& world, std::string_view _id) :
   Object{},
@@ -49,7 +50,7 @@ IdObject::IdObject(const std::weak_ptr<World>& world, std::string_view _id) :
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
-  Attributes::addDisplayName(id, "object:id");
+  Attributes::addDisplayName(id, DisplayName::Object::id);
   Attributes::addEnabled(id, editable);
   m_interfaceItems.add(id);
 }

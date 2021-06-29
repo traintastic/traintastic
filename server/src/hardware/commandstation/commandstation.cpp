@@ -28,6 +28,7 @@
 #include "../decoder/decoder.hpp"
 #include "../decoder/decoderlist.hpp"
 #include "../../core/attributes.hpp"
+#include "../../utils/displayname.hpp"
 
 CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
@@ -60,7 +61,7 @@ CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_vi
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
-  Attributes::addDisplayName(name, "object:name");
+  Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
 
@@ -78,7 +79,7 @@ CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_vi
 
   m_interfaceItems.add(controllers);
 
-  Attributes::addDisplayName(notes, "object:notes");
+  Attributes::addDisplayName(notes, DisplayName::Object::notes);
   m_interfaceItems.add(notes);
 }
 

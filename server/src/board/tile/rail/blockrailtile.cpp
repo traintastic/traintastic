@@ -23,6 +23,7 @@
 #include "blockrailtile.hpp"
 #include "../../../world/world.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../utils/displayname.hpp"
 
 BlockRailTile::BlockRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
   RailTile(world, _id, TileId::RailBlock),
@@ -39,7 +40,7 @@ BlockRailTile::BlockRailTile(const std::weak_ptr<World>& world, std::string_view
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
   Attributes::addEnabled(name, editable);
-  Attributes::addDisplayName(name, "object:name");
+  Attributes::addDisplayName(name, DisplayName::Object::name);
   m_interfaceItems.add(name);
   m_interfaceItems.add(inputMap);
   Attributes::addValues(state, blockStateValues);

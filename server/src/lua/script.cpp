@@ -30,6 +30,7 @@
 #include "../core/attributes.hpp"
 #include "../world/worldloader.hpp"
 #include "../world/worldsaver.hpp"
+#include "../utils/displayname.hpp"
 
 namespace Lua {
 
@@ -64,6 +65,7 @@ Script::Script(const std::weak_ptr<World>& world, std::string_view _id) :
         stopSandbox();
     }}
 {
+  Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, false);
   m_interfaceItems.add(name);
   Attributes::addValues(state, LuaScriptStateValues);

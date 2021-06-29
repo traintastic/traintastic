@@ -26,6 +26,7 @@
 #include "../commandstation/commandstation.hpp"
 #include "../../world/getworld.hpp"
 #include "../../core/attributes.hpp"
+#include "../../utils/displayname.hpp"
 
 Controller::Controller(const std::weak_ptr<World>& _world, std::string_view _id) :
   IdObject(_world, _id),
@@ -51,13 +52,13 @@ Controller::Controller(const std::weak_ptr<World>& _world, std::string_view _id)
   auto world = _world.lock();
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
 
-  Attributes::addDisplayName(name, "object:name");
+  Attributes::addDisplayName(name, DisplayName::Object::name);
   m_interfaceItems.add(name);
   Attributes::addEnabled(commandStation, editable);
   Attributes::addObjectList(commandStation, world->commandStations);
   m_interfaceItems.add(commandStation);
   m_interfaceItems.add(active);
-  Attributes::addDisplayName(notes, "object:notes");
+  Attributes::addDisplayName(notes, DisplayName::Object::notes);
   m_interfaceItems.add(notes);
 }
 

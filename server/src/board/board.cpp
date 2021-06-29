@@ -26,6 +26,7 @@
 #include "../world/world.hpp"
 #include "../world/worldloader.hpp"
 #include "../core/attributes.hpp"
+#include "../utils/displayname.hpp"
 
 Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
@@ -98,7 +99,7 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
   const bool stopped = w && !contains(w->state.value(), WorldState::Run);
 
-  Attributes::addDisplayName(name, "object:name");
+  Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
   m_interfaceItems.add(left);
