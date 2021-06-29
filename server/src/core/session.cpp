@@ -443,6 +443,7 @@ bool Session::processMessage(const Message& message)
           response->write(info.value);
         }
         m_client->sendMessage(std::move(response));
+        return true;
       }
       break;
     }
@@ -461,6 +462,7 @@ bool Session::processMessage(const Message& message)
           response->write(info.value);
         }
         m_client->sendMessage(std::move(response));
+        return true;
       }
       break;
     }
@@ -493,6 +495,7 @@ bool Session::processMessage(const Message& message)
             writeObject(*response, it.second);
         }
         m_client->sendMessage(std::move(response));
+        return true;
       }
       break;
     }
@@ -504,6 +507,7 @@ bool Session::processMessage(const Message& message)
         for(auto& item : outputMap->items())
           writeObject(*response, item);
         m_client->sendMessage(std::move(response));
+        return true;
       }
       break;
     }
@@ -515,6 +519,7 @@ bool Session::processMessage(const Message& message)
         for(auto& item : outputMap->outputs())
           writeObject(*response, item);
         m_client->sendMessage(std::move(response));
+        return true;
       }
       break;
     }
