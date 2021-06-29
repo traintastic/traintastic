@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,8 @@
 
 std::shared_ptr<CommandStation> CommandStations::create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id)
 {
+  if(classId == DCCPlusPlusSerial::classId)
+    return DCCPlusPlusSerial::create(world, id);
   if(classId == LocoNetSerial::classId)
     return LocoNetSerial::create(world, id);
   else if(classId == LocoNetTCPBinary::classId)
