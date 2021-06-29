@@ -22,6 +22,7 @@
 
 #include "loconetlisttablemodel.hpp"
 #include "loconetlist.hpp"
+#include "../../../utils/displayname.hpp"
 
 constexpr uint32_t columnId = 0;
 
@@ -33,7 +34,9 @@ bool LocoNetListTableModel::isListedProperty(const std::string& name)
 LocoNetListTableModel::LocoNetListTableModel(LocoNetList& list) :
   ObjectListTableModel<LocoNet::LocoNet>(list)
 {
-  setColumnHeaders({"id"});
+  setColumnHeaders({
+    DisplayName::Object::id,
+    });
 }
 
 std::string LocoNetListTableModel::getText(uint32_t column, uint32_t row) const

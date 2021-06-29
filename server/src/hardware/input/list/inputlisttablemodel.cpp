@@ -23,6 +23,7 @@
 #include "inputlisttablemodel.hpp"
 #include "inputlist.hpp"
 #include "../loconetinput.hpp"
+#include "../../../utils/displayname.hpp"
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
@@ -39,7 +40,12 @@ bool InputListTableModel::isListedProperty(const std::string& name)
 InputListTableModel::InputListTableModel(InputList& list) :
   ObjectListTableModel<Input>(list)
 {
-  setColumnHeaders({"Id", "Name", "input_list:bus", "input_list:address"});
+  setColumnHeaders({
+    DisplayName::Object::id,
+    DisplayName::Object::name,
+    "input_list:bus",
+    "input_list:address",
+    });
 }
 
 std::string InputListTableModel::getText(uint32_t column, uint32_t row) const

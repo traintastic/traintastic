@@ -22,6 +22,7 @@
 
 #include "railvehiclelisttablemodel.hpp"
 #include "railvehiclelist.hpp"
+#include "../../utils/displayname.hpp"
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
@@ -39,7 +40,12 @@ bool RailVehicleListTableModel::isListedProperty(const std::string& name)
 RailVehicleListTableModel::RailVehicleListTableModel(RailVehicleList& list) :
   ObjectListTableModel<RailVehicle>(list)
 {
-  setColumnHeaders({"vehicle:id", "vehicle:name", "rail_vehicle_list:type", "rail_vehicle:lob"});
+  setColumnHeaders({
+    DisplayName::Object::id,
+    DisplayName::Object::name,
+    "rail_vehicle_list:type",
+    "rail_vehicle:lob",
+    });
 }
 
 std::string RailVehicleListTableModel::getText(uint32_t column, uint32_t row) const

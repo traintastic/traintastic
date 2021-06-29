@@ -23,6 +23,7 @@
 #include "outputlisttablemodel.hpp"
 #include "outputlist.hpp"
 #include "../loconetoutput.hpp"
+#include "../../../utils/displayname.hpp"
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
@@ -39,7 +40,12 @@ bool OutputListTableModel::isListedProperty(const std::string& name)
 OutputListTableModel::OutputListTableModel(OutputList& list) :
   ObjectListTableModel<Output>(list)
 {
-  setColumnHeaders({"Id", "Name", "output_list:bus", "output_list:address"});
+  setColumnHeaders({
+    DisplayName::Object::id,
+    DisplayName::Object::name,
+    "output_list:bus",
+    "output_list:address",
+    });
 }
 
 std::string OutputListTableModel::getText(uint32_t column, uint32_t row) const

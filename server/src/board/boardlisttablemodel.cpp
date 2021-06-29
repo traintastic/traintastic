@@ -22,6 +22,7 @@
 
 #include "boardlisttablemodel.hpp"
 #include "boardlist.hpp"
+#include "../utils/displayname.hpp"
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
@@ -36,7 +37,10 @@ bool BoardListTableModel::isListedProperty(const std::string& name)
 BoardListTableModel::BoardListTableModel(BoardList& list) :
   ObjectListTableModel<Board>(list)
 {
-  setColumnHeaders({"board:id", "board:name"});
+  setColumnHeaders({
+    DisplayName::Object::id,
+    DisplayName::Object::name,
+    });
 }
 
 std::string BoardListTableModel::getText(uint32_t column, uint32_t row) const

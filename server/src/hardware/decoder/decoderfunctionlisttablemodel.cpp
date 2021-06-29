@@ -22,6 +22,7 @@
 
 #include "decoderfunctionlisttablemodel.hpp"
 #include "decoderfunctionlist.hpp"
+#include "../../utils/displayname.hpp"
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnNumber = 1;
@@ -39,9 +40,10 @@ DecoderFunctionListTableModel::DecoderFunctionListTableModel(DecoderFunctionList
   ObjectListTableModel<DecoderFunction>(list)
 {
   setColumnHeaders({
-    "decoder_function:id",
+    DisplayName::Object::id,
     "decoder_function_list:f_hash",
-    "decoder_function:name"});
+    DisplayName::Object::name,
+    });
 }
 
 std::string DecoderFunctionListTableModel::getText(uint32_t column, uint32_t row) const

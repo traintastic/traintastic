@@ -22,6 +22,7 @@
 
 #include "scriptlisttablemodel.hpp"
 #include "scriptlist.hpp"
+#include "../utils/displayname.hpp"
 
 namespace Lua {
 
@@ -40,7 +41,11 @@ bool ScriptListTableModel::isListedProperty(const std::string& name)
 ScriptListTableModel::ScriptListTableModel(ScriptList& list) :
   ObjectListTableModel<Script>(list)
 {
-  setColumnHeaders({"lua_script:id", "lua_script:name", "lua_script:state"});
+  setColumnHeaders({
+    DisplayName::Object::id,
+    DisplayName::Object::name,
+    "lua_script:state",
+    });
 }
 
 std::string ScriptListTableModel::getText(uint32_t column, uint32_t row) const

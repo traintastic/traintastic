@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,7 +35,12 @@ ConsoleTableModel::ConsoleTableModel(Console& console) :
   m_console{console}
 {
   m_console.m_models.push_back(this);
-  setColumnHeaders({"console:time", "console:level", "console:object", "console:message"});
+  setColumnHeaders({
+    "console:time",
+    "console:level",
+    "console:object",
+    "console:message",
+    });
   setRowCount(static_cast<uint32_t>(m_console.m_logs.size()));
 }
 

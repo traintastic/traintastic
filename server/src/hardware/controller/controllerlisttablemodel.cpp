@@ -22,6 +22,7 @@
 
 #include "controllerlisttablemodel.hpp"
 #include "controllerlist.hpp"
+#include "../../utils/displayname.hpp"
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
@@ -39,9 +40,10 @@ ControllerListTableModel::ControllerListTableModel(ControllerList& list) :
   ObjectListTableModel<Controller>(list)
 {
   setColumnHeaders({
-    "controller:id",
-    "controller:name",
-    "controller:active"});
+    DisplayName::Object::id,
+    DisplayName::Object::name,
+    "controller:active",
+    });
 }
 
 std::string ControllerListTableModel::getText(uint32_t column, uint32_t row) const

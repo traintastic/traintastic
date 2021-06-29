@@ -22,6 +22,7 @@
 
 #include "trainlisttablemodel.hpp"
 #include "trainlist.hpp"
+#include "../utils/displayname.hpp"
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
@@ -36,7 +37,10 @@ bool TrainListTableModel::isListedProperty(const std::string& name)
 TrainListTableModel::TrainListTableModel(TrainList& list) :
   ObjectListTableModel<Train>(list)
 {
-  setColumnHeaders({"train:id", "train:name"});
+  setColumnHeaders({
+    DisplayName::Object::id,
+    DisplayName::Object::name,
+    });
 }
 
 std::string TrainListTableModel::getText(uint32_t column, uint32_t row) const

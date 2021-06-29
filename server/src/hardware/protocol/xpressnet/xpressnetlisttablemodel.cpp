@@ -22,6 +22,7 @@
 
 #include "xpressnetlisttablemodel.hpp"
 #include "xpressnetlist.hpp"
+#include "../../../utils/displayname.hpp"
 
 constexpr uint32_t columnId = 0;
 
@@ -33,7 +34,9 @@ bool XpressNetListTableModel::isListedProperty(const std::string& name)
 XpressNetListTableModel::XpressNetListTableModel(XpressNetList& list) :
   ObjectListTableModel<XpressNet::XpressNet>(list)
 {
-  setColumnHeaders({"id"});
+  setColumnHeaders({
+    DisplayName::Object::id
+    });
 }
 
 std::string XpressNetListTableModel::getText(uint32_t column, uint32_t row) const

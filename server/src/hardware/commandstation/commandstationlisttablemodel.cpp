@@ -23,6 +23,7 @@
 #include "commandstationlisttablemodel.hpp"
 #include "commandstationlist.hpp"
 #include "../../utils/utf8.hpp"
+#include "../../utils/displayname.hpp"
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
@@ -44,11 +45,12 @@ CommandStationListTableModel::CommandStationListTableModel(CommandStationList& l
   ObjectListTableModel<CommandStation>(list)
 {
   setColumnHeaders({
-    "command_station:id",
-    "command_station:name",
+    DisplayName::Object::id,
+    DisplayName::Object::name,
     "command_station:online",
     "command_station:emergency_stop",
-    "command_station:track_power"});
+    "command_station:track_power",
+    });
 }
 
 std::string CommandStationListTableModel::getText(uint32_t column, uint32_t row) const

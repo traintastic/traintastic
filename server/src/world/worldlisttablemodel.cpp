@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "worldlisttablemodel.hpp"
 #include "worldlist.hpp"
 #include <boost/uuid/uuid_io.hpp>
+#include "../utils/displayname.hpp"
 
 constexpr uint32_t columnName = 0;
 constexpr uint32_t columnUUID = 1;
@@ -35,8 +36,9 @@ WorldListTableModel::WorldListTableModel(WorldList& worldList) :
   setRowCount(static_cast<uint32_t>(m_worldList.m_items.size()));
 
   setColumnHeaders({
-    "world_list:name",
-    "world_list:uuid"});
+    DisplayName::Object::name,
+    "world_list:uuid",
+    });
 }
 
 WorldListTableModel::~WorldListTableModel()
