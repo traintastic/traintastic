@@ -634,6 +634,8 @@ void MainWindow::updateActions()
   setMenuEnabled(m_menuWorld, haveWorld);
   m_worldOnlineOfflineToolButton->setEnabled(haveWorld);
   m_worldPowerOnOffToolButton->setEnabled(haveWorld);
+  m_worldMuteToolbarAction->setEnabled(haveWorld);
+  m_worldNoSmokeToolbarAction->setEnabled(haveWorld);
   worldStateChanged(haveWorld ? m_connection->world()->getProperty("state")->toInt64() : 0);
 
   setMenuEnabled(m_menuObjects, haveWorld);
