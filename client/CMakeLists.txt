@@ -36,6 +36,8 @@ file(GLOB SOURCES
   "src/misc/*.cpp"
   "src/network/*.hpp"
   "src/network/*.cpp"
+  "src/settings/*.hpp"
+  "src/settings/*.cpp"
   "src/style/*.hpp"
   "src/style/*.cpp"
   "src/subwindow/*.hpp"

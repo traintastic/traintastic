@@ -32,6 +32,7 @@
 #include "../network/abstractproperty.hpp"
 #include "../network/abstractvectorproperty.hpp"
 #include "../utils/rectf.hpp"
+#include "../settings/boardsettings.hpp"
 
 QRect rectToViewport(const QRect& r, const int gridSize)
 {
@@ -79,6 +80,8 @@ BoardAreaWidget::BoardAreaWidget(BoardWidget& board, QWidget* parent) :
     connect(m_boardRight, &AbstractProperty::valueChanged, this, &BoardAreaWidget::updateMinimumSize);
   if(Q_LIKELY(m_boardBottom))
     connect(m_boardBottom, &AbstractProperty::valueChanged, this, &BoardAreaWidget::updateMinimumSize);
+
+  connect(&BoardSettings::instance(), &SettingsBase::changed, this, qOverload<>(&QWidget::update));
 
   for(const auto& [l, object] : m_board.board().tileObjects())
     tileObjectAdded(l.x, l.y, object);
@@ -308,6 +311,7 @@ void BoardAreaWidget::wheelEvent(QWheelEvent* event)
 
 void BoardAreaWidget::paintEvent(QPaintEvent* event)
 {
+  const bool showBlockSensorStates = BoardSettings::instance().showBlockSensorStates();
   const QColor backgroundColor{0x10, 0x10, 0x10};
   const QColor backgroundColor50{0x10, 0x10, 0x10, 0x80};
   const QColor gridColor{0x40, 0x40, 0x40};
@@ -397,7 +401,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           break;
 
         case TileId::RailBlock:
-          tilePainter.drawBlock(id, r, a, getBlockState(it.first), getBlockSensorStates(it.first));
+          tilePainter.drawBlock(id, r, a, getBlockState(it.first), showBlockSensorStates ? getBlockSensorStates(it.first) : std::vector<SensorState>());
           break;
 
         case TileId::None:

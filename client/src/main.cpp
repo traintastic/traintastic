@@ -26,13 +26,11 @@
   //#include <QStandardPaths>
 #endif
 #include <QCommandLineParser>
-#include <QSettings>
 #include <version.hpp>
 #include "mainwindow.hpp"
 #include "utils/getlocalepath.hpp"
 //#include "network/client.hpp"
-
-
+#include "settings/generalsettings.hpp"
 #include "style/materialdarkstyle.hpp"
 #include "style/materiallightstyle.hpp"
 #include "theme/theme.hpp"
@@ -83,12 +81,11 @@ int main(int argc, char* argv[])
   parseOptions(app, options);
 
   // language:
-  const QString languageDefault = "en-us";
-  QString language = QSettings().value("language", languageDefault).toString();
+  const QString language = GeneralSettings::instance().language();
 
   Locale* fallback = nullptr;
-  if(language != languageDefault)
-    fallback = new Locale(getLocalePath().toStdString() + "/" + languageDefault.toStdString() + ".txt");
+  if(language != GeneralSettings::languageDefault)
+    fallback = new Locale(getLocalePath().toStdString() + "/" + GeneralSettings::languageDefault.toStdString() + ".txt");
 
   Locale::instance = new Locale(getLocalePath().toStdString() + "/" + language.toStdString() + ".txt", fallback);
 

@@ -1,9 +1,9 @@
 /**
- * client/src/dialog/settingsdialog.hpp
+ * client/src/settings/boardsettingswidget.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,15 +20,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_DIALOG_SETTINGSDIALOG_HPP
-#define TRAINTASTIC_CLIENT_DIALOG_SETTINGSDIALOG_HPP
+#ifndef TRAINTASTIC_CLIENT_SETTINGS_BOARDSETTINGSWIDGET_HPP
+#define TRAINTASTIC_CLIENT_SETTINGS_BOARDSETTINGSWIDGET_HPP
 
-#include <QDialog>
+#include "settingsbasewidget.hpp"
 
-class SettingsDialog : public QDialog
+class BoardSettingsWidget : public SettingsBaseWidget
 {
   public:
-    SettingsDialog(QWidget* parent = nullptr);
+    BoardSettingsWidget(QWidget* parent = nullptr);
+
+    QString title() const final { return QStringLiteral("qtapp.settings:board"); }
 };
 
 #endif

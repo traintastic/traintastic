@@ -1,9 +1,9 @@
 /**
- * client/src/dialog/settingsdialog.cpp
+ * client/src/settings/generalsettingswidget.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,12 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "settingsdialog.hpp"
-#include <QFormLayout>
+#include "generalsettingswidget.hpp"
 #include <QComboBox>
+#include <QDir>
 #include <QDirIterator>
-#include <QSettings>
 #include <traintastic/locale/locale.hpp>
+#include "generalsettings.hpp"
 #include "../utils/getlocalepath.hpp"
 
 static QString getLanguageName(const QString& filename)
@@ -41,33 +41,34 @@ static QString getLanguageName(const QString& filename)
   return "";
 }
 
-SettingsDialog::SettingsDialog(QWidget* parent) :
-  QDialog(parent, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
+GeneralSettingsWidget::GeneralSettingsWidget(QWidget* parent) :
+  SettingsBaseWidget(parent)
 {
-  setWindowTitle(Locale::tr("qtapp.mainmenu:settings"));
-
-  QFormLayout* form = new QFormLayout();
+  GeneralSettings& s = GeneralSettings::instance();
 
   // language:
-  QComboBox* cb = new QComboBox(this);
-  QDirIterator it(getLocalePath(), {"*.txt"}, QDir::Files | QDir::Readable);
-  while(it.hasNext())
   {
-    const QString filename = it.next();
-    const QString label = getLanguageName(filename);
-    if(!label.isEmpty())
+    QComboBox* cb = new QComboBox(this);
+    QDirIterator it(getLocalePath(), {"*.txt"}, QDir::Files | QDir::Readable);
+    while(it.hasNext())
     {
-      cb->addItem(label, QFileInfo(filename).baseName());
-      if(filename.toStdString() == Locale::instance->filename)
-        cb->setCurrentIndex(cb->count() - 1);
+      const QString filename = it.next();
+      const QString label = getLanguageName(filename);
+      if(!label.isEmpty())
+      {
+        cb->addItem(label, QFileInfo(filename).baseName());
+        if(filename.toStdString() == Locale::instance->filename)
+          cb->setCurrentIndex(cb->count() - 1);
+      }
     }
+    connect(cb, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+      [cb](int index)
+      {
+        GeneralSettings::instance().setLanguage(cb->itemData(index).toString());
+      });
+    add("qtapp.settings.general:language", cb);
   }
-  connect(cb, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-    [cb](int index)
-    {
-      QSettings().setValue("language", cb->itemData(index));
-    });
-  form->addRow(Locale::tr("qtapp.settings:language"), cb);
 
-  setLayout(form);
+
+  done();
 }

@@ -235,7 +235,12 @@ qtapp.object_select_list_dialog:cancel=Cancel
 qtapp.object_select_list_dialog:ok=Ok
 qtapp.object_select_list_dialog:select_object=Select object
 
-qtapp.settings:language=Language
+qtapp.settings.board:show_block_sensor_states=Show block sensor states
+
+qtapp.settings.general:language=Language
+
+qtapp.settings:board=Board
+qtapp.settings:general=General
 
 qtapp.world_list_dialog:cancel=Cancel
 qtapp.world_list_dialog:load=Load

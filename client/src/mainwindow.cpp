@@ -35,7 +35,7 @@
 #include <traintastic/set/worldstate.hpp>
 #include "mdiarea.hpp"
 #include "dialog/connectdialog.hpp"
-#include "dialog/settingsdialog.hpp"
+#include "settings/settingsdialog.hpp"
 #include "dialog/worldlistdialog.hpp"
 #include "network/connection.hpp"
 #include "network/object.hpp"
