@@ -16,9 +16,17 @@
 block_input_type:occupy_detector=Occupy detector
 block_input_type:reed_switch=Reed switch
 
+board:delete_tile=Delete tile
+board:move_tile=Move tile
 board:resize_to_contents=Resize to contents
 
 board_tile.rail.block:input_map=Sensors
+board_tile.rail.block:state=State
+
+board_tile.rail.sensor:input=Input
+board_tile.rail.sensor:invert=Invert
+board_tile.rail.sensor:state=State
+board_tile.rail.sensor:type=Type
 
 class_id:board_tile.rail.block=Block
 class_id:board_tile.rail.buffer_stop=Buffer stop
@@ -130,6 +138,8 @@ decoder_protocol:custom=Custom
 decoder_protocol:dcc=DCC
 
 input_map.block:add=Add sensor
+input_map.block:move_down=Move down
+input_map.block:move_up=Move up
 input_map.block:remove=Remove sensor
 
 input_map_item.block:input=Input
@@ -261,6 +271,9 @@ rail_vehicle:lob=LOB
 
 rail_vehicle_list:add=Add
 rail_vehicle_list:type=Type
+
+sensor_type:occupy_detector=Occupy detector
+sensor_type:reed_switch=Reed switch
 
 serial_flow_control:hardware=Hardware
 serial_flow_control:none=None
