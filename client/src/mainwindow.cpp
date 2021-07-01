@@ -620,7 +620,7 @@ void MainWindow::updateActions()
   m_actionExportWorld->setEnabled(haveWorld    && false);
 
   m_actionServerConsole->setEnabled(connected);
-  m_menuServer->setEnabled(haveWorld);
+  m_menuServer->setEnabled(connected);
   m_actionServerSettings->setEnabled(connected);
   if(connected)
   {
