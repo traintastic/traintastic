@@ -40,6 +40,7 @@ SettingsDialog::SettingsDialog(QWidget* parent) :
   add(new BoardSettingsWidget(this));
 
   QHBoxLayout* l = new QHBoxLayout();
+  m_menu->addStretch();
   l->addLayout(m_menu);
   l->addWidget(m_stack);
   setLayout(l);
