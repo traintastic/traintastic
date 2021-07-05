@@ -24,13 +24,14 @@
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QComboBox>
+#include "lineeditwithfocusoutsignal.hpp"
 #include "../network/unitproperty.hpp"
 #include "../utils/enum.hpp"
 
 UnitPropertyEdit::UnitPropertyEdit(UnitProperty& property, QWidget *parent) :
   QWidget(parent),
   m_property{property},
-  m_valueLineEdit{new QLineEdit(m_property.toString(), this)},
+  m_valueLineEdit{new LineEditWithFocusOutSignal(m_property.toString(), this)},
   m_unitComboBox{new QComboBox(this)}
 {
   setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
@@ -55,7 +56,8 @@ UnitPropertyEdit::UnitPropertyEdit(UnitProperty& property, QWidget *parent) :
   connect(&m_property, &UnitProperty::valueChanged, this,
     [this]()
     {
-      m_valueLineEdit->setText(m_property.toString());
+      if(!m_valueLineEdit->hasFocus())
+        m_valueLineEdit->setText(m_property.toString());
 
       const qint64 unit = m_property.unitValue();
       for(int i = 0; i < m_unitComboBox->count(); i++)
@@ -72,6 +74,11 @@ UnitPropertyEdit::UnitPropertyEdit(UnitProperty& property, QWidget *parent) :
   m_valueLineEdit->setReadOnly(!m_property.isWritable());
   l->addWidget(m_valueLineEdit, 1);
   connect(m_valueLineEdit, &QLineEdit::textEdited, &m_property, QOverload<const QString&>::of(&AbstractProperty::setValueString));
+  connect(m_valueLineEdit, &LineEditWithFocusOutSignal::focusOut, this,
+    [this]()
+    {
+      m_valueLineEdit->setText(m_property.toString());
+    });
 
   for(qint64 value : enumValues(m_property.unitName()))
   {

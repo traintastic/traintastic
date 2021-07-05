@@ -1,9 +1,9 @@
 /**
- * client/src/widget/unitpropertyedit.hpp
+ * client/src/widget/lineeditwithfocusoutsignal.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,26 +20,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_UNITPROPERTYEDIT_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_UNITPROPERTYEDIT_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_LINEEDITWITHFOCUSOUTSIGNAL_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_LINEEDITWITHFOCUSOUTSIGNAL_HPP
 
-#include <QWidget>
+#include <QLineEdit>
 
-class UnitProperty;
-class QComboBox;
-class LineEditWithFocusOutSignal;
-
-class UnitPropertyEdit : public QWidget
+class LineEditWithFocusOutSignal : public QLineEdit
 {
   Q_OBJECT
 
   protected:
-    UnitProperty& m_property;
-    LineEditWithFocusOutSignal* m_valueLineEdit;
-    QComboBox* m_unitComboBox;
+    void focusOutEvent(QFocusEvent* event) final
+    {
+      QLineEdit::focusOutEvent(event);
+      emit focusOut();
+    }
 
   public:
-    explicit UnitPropertyEdit(UnitProperty& property, QWidget* parent = nullptr);
+    explicit LineEditWithFocusOutSignal(const QString& text, QWidget* parent = nullptr) :
+      QLineEdit(text, parent)
+    {
+    }
+
+  signals:
+    void focusOut();
 };
 
 #endif
