@@ -311,7 +311,7 @@ void BoardAreaWidget::wheelEvent(QWheelEvent* event)
 
 void BoardAreaWidget::paintEvent(QPaintEvent* event)
 {
-  const bool showBlockSensorStates = BoardSettings::instance().showBlockSensorStates();
+  const bool showBlockSensorStates = BoardSettings::instance().showBlockSensorStates;
   const QColor backgroundColor{0x10, 0x10, 0x10};
   const QColor backgroundColor50{0x10, 0x10, 0x10, 0x80};
   const QColor gridColor{0x40, 0x40, 0x40};

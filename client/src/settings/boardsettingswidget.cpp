@@ -23,12 +23,12 @@
 #include "boardsettingswidget.hpp"
 #include "boardsettings.hpp"
 
-BoardSettingsWidget::BoardSettingsWidget(QWidget* parent) :
-  SettingsBaseWidget(parent)
+BoardSettingsWidget::BoardSettingsWidget(QWidget* parent)
+  : SettingsBaseWidget("qtapp.settings.board", parent)
 {
   BoardSettings& s = BoardSettings::instance();
 
-  addOnOffSetting("qtapp.settings.board:show_block_sensor_states", s, &BoardSettings::showBlockSensorStates, &BoardSettings::setShowBlockSensorStates);
+  addSetting(s.showBlockSensorStates);
 
   done();
 }

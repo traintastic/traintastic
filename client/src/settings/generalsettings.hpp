@@ -24,32 +24,25 @@
 #define TRAINTASTIC_CLIENT_SETTINGS_GENERALSETTINGS_HPP
 
 #include "settingsbase.hpp"
+#include "setting.hpp"
 
 class GeneralSettings  : public SettingsBase
 {
   private:
-    struct Key
-    {
-      inline static const QString language = QStringLiteral("language");
-      inline static const QString windowState = QStringLiteral("windowState");
-    };
-
-    GeneralSettings() :
-      SettingsBase("general_") // "general" is special in Qt!!
+    GeneralSettings()
+      : SettingsBase("general_") // "general" is special in Qt!!
+      , language{*this, "language", "en-us"}
     {
     }
 
   public:
-    inline static const QString languageDefault = QStringLiteral("en-us");
-
     static GeneralSettings& instance()
     {
       static GeneralSettings settings;
       return settings;
     }
 
-    QString language() const { return get(Key::language, languageDefault); }
-    void setLanguage(const QString& value) { set(Key::language, value); }
+    Setting<QString> language;
 };
 
 #endif

@@ -24,24 +24,27 @@
 #define TRAINTASTIC_CLIENT_SETTINGS_SETTINGSBASEWIDGET_HPP
 
 #include <QScrollArea>
-#include <functional>
-
-class BaseSettings;
+#include "setting.hpp"
 
 class SettingsBaseWidget : public QScrollArea
 {
   private:
-    void addOnOffSetting(const QString& displayName, std::function<bool()> getter, std::function<void(bool)> setter);
+    const QString m_trPrefix;
+
+    void addSettingOnOff(Setting<bool>& setting);
 
   protected:
-    SettingsBaseWidget(QWidget* parent = nullptr);
+    SettingsBaseWidget(QString trPrefix, QWidget* parent = nullptr);
 
-    void add(const QString& displayName, QWidget* widget);
+    void add(const QString& settingName, QWidget* widget);
 
     template<class T>
-    inline void addOnOffSetting(const QString& displayName, T& object, bool(T::*getter)() const, void(T::*setter)(bool))
+    inline void addSetting(Setting<T>& setting)
     {
-      addOnOffSetting(displayName, std::bind(getter, &object), std::bind(setter, &object, std::placeholders::_1));
+      if constexpr(std::is_same_v<T, bool>)
+        addSettingOnOff(setting);
+      else
+        static_assert(sizeof(T) != sizeof(T));
     }
 
     void done();

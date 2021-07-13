@@ -24,17 +24,14 @@
 #define TRAINTASTIC_CLIENT_SETTINGS_BOARDSETTINGS_HPP
 
 #include "settingsbase.hpp"
+#include "setting.hpp"
 
 class BoardSettings : public SettingsBase
 {
   private:
-    struct Key
-    {
-      inline static const QString showBlockSensorStates = QStringLiteral("showBlockSensorStates");
-    };
-
-    BoardSettings() :
-      SettingsBase("board")
+    BoardSettings()
+      : SettingsBase("board")
+      , showBlockSensorStates{*this, "show_block_sensor_states", true}
     {
     }
 
@@ -45,8 +42,7 @@ class BoardSettings : public SettingsBase
       return settings;
     }
 
-    bool showBlockSensorStates() const { return get(Key::showBlockSensorStates, true); }
-    void setShowBlockSensorStates(bool value) { set(Key::showBlockSensorStates, value); }
+    Setting<bool> showBlockSensorStates;
 };
 
 #endif

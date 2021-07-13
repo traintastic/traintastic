@@ -81,11 +81,12 @@ int main(int argc, char* argv[])
   parseOptions(app, options);
 
   // language:
-  const QString language = GeneralSettings::instance().language();
+  const QString languageDefault = GeneralSettings::instance().language.defaultValue();
+  const QString language = GeneralSettings::instance().language;
 
   Locale* fallback = nullptr;
-  if(language != GeneralSettings::languageDefault)
-    fallback = new Locale(getLocalePath().toStdString() + "/" + GeneralSettings::languageDefault.toStdString() + ".txt");
+  if(language != languageDefault)
+    fallback = new Locale(getLocalePath().toStdString() + "/" + languageDefault.toStdString() + ".txt");
 
   Locale::instance = new Locale(getLocalePath().toStdString() + "/" + language.toStdString() + ".txt", fallback);
 

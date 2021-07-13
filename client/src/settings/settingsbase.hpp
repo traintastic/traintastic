@@ -30,15 +30,11 @@ class SettingsBase : public QObject
 {
   Q_OBJECT
 
+  template<class T>
+  friend class Setting;
+
   private:
     QSettings m_settings;
-
-  protected:
-    SettingsBase(const QString& group) :
-      QObject()
-    {
-      m_settings.beginGroup(group);
-    }
 
     template<class T>
     inline T get(const QString& key, const T& defaultValue) const
@@ -55,6 +51,15 @@ class SettingsBase : public QObject
         emit changed();
       }
     }
+
+  protected:
+    SettingsBase(const QString& group)
+      : QObject()
+    {
+      m_settings.beginGroup(group);
+    }
+
+    SettingsBase(const SettingsBase&) = delete;
 
   signals:
     void changed();

@@ -27,8 +27,9 @@
 #include <QCheckBox>
 #include <traintastic/locale/locale.hpp>
 
-SettingsBaseWidget::SettingsBaseWidget(QWidget* parent) :
-  QScrollArea(parent)
+SettingsBaseWidget::SettingsBaseWidget(QString trPrefix, QWidget* parent)
+  : QScrollArea(parent)
+  , m_trPrefix{std::move(trPrefix)}
 {
   setMinimumSize(400, 400);
   setWidgetResizable(true);
@@ -37,21 +38,21 @@ SettingsBaseWidget::SettingsBaseWidget(QWidget* parent) :
   widget()->show();
 }
 
-void SettingsBaseWidget::add(const QString& displayName, QWidget* widget)
+void SettingsBaseWidget::add(const QString& settingName, QWidget* widget)
 {
   QHBoxLayout* l = new QHBoxLayout();
-  l->addWidget(new QLabel(Locale::tr(displayName), this->widget()));
+  l->addWidget(new QLabel(Locale::tr(m_trPrefix + ":" + settingName), this->widget()));
   l->addStretch();
   l->addWidget(widget);
   static_cast<QVBoxLayout*>(this->widget()->layout())->addLayout(l);
 }
 
-void SettingsBaseWidget::addOnOffSetting(const QString& displayName, std::function<bool()> getter, std::function<void(bool)> setter)
+void SettingsBaseWidget::addSettingOnOff(Setting<bool>& setting)
 {
   QCheckBox* cb = new QCheckBox(widget());
-  cb->setChecked(getter());
-  connect(cb, &QCheckBox::toggled, setter);
-  add(displayName, cb);
+  cb->setChecked(setting.value());
+  connect(cb, &QCheckBox::toggled, [&setting](bool value){ setting.setValue(value); });
+  add(setting.name(), cb);
 }
 
 void SettingsBaseWidget::done()

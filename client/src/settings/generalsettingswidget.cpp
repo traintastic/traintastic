@@ -41,8 +41,8 @@ static QString getLanguageName(const QString& filename)
   return "";
 }
 
-GeneralSettingsWidget::GeneralSettingsWidget(QWidget* parent) :
-  SettingsBaseWidget(parent)
+GeneralSettingsWidget::GeneralSettingsWidget(QWidget* parent)
+  : SettingsBaseWidget("qtapp.settings.general", parent)
 {
   GeneralSettings& s = GeneralSettings::instance();
 
@@ -64,9 +64,9 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget* parent) :
     connect(cb, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
       [cb](int index)
       {
-        GeneralSettings::instance().setLanguage(cb->itemData(index).toString());
+        GeneralSettings::instance().language.setValue(cb->itemData(index).toString());
       });
-    add("qtapp.settings.general:language", cb);
+    add(GeneralSettings::instance().language.name(), cb);
   }
 
 
