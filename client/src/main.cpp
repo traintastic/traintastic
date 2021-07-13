@@ -31,6 +31,7 @@
 #include "utils/getlocalepath.hpp"
 //#include "network/client.hpp"
 #include "settings/generalsettings.hpp"
+#include "settings/developersettings.hpp"
 #include "style/materialdarkstyle.hpp"
 #include "style/materiallightstyle.hpp"
 #include "theme/theme.hpp"
@@ -85,7 +86,7 @@ int main(int argc, char* argv[])
   const QString language = GeneralSettings::instance().language;
 
   Locale* fallback = nullptr;
-  if(language != languageDefault)
+  if(language != languageDefault && DeveloperSettings::instance().dontLoadFallbackLanguage)
     fallback = new Locale(getLocalePath().toStdString() + "/" + languageDefault.toStdString() + ".txt");
 
   Locale::instance = new Locale(getLocalePath().toStdString() + "/" + language.toStdString() + ".txt", fallback);

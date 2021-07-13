@@ -28,6 +28,7 @@
 #include <traintastic/locale/locale.hpp>
 #include "generalsettingswidget.hpp"
 #include "boardsettingswidget.hpp"
+#include "developersettingswidget.hpp"
 
 SettingsDialog::SettingsDialog(QWidget* parent) :
   QDialog(parent, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
@@ -38,6 +39,7 @@ SettingsDialog::SettingsDialog(QWidget* parent) :
 
   add(new GeneralSettingsWidget(this));
   add(new BoardSettingsWidget(this));
+  add(new DeveloperSettingsWidget(this));
 
   QHBoxLayout* l = new QHBoxLayout();
   m_menu->addStretch();
