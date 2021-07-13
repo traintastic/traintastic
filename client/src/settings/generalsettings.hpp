@@ -35,7 +35,7 @@ class GeneralSettings  : public SettingsBase
     };
 
     GeneralSettings() :
-      SettingsBase("general")
+      SettingsBase("general_") // "general" is special in Qt!!
     {
     }
 
