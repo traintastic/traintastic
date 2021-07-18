@@ -81,9 +81,10 @@ void LEDWidget::mouseReleaseEvent(QMouseEvent* event)
 
 void LEDWidget::paintEvent(QPaintEvent*)
 {
-  const int marginV = (height() - minimumHeight()) / 2;
-  const int ledHeight = minimumHeight() / 3;
-  const int ledWidth = fontMetrics().averageCharWidth() * 3;
+  const double scale = qMax(1.0, qMin(static_cast<double>(height()) / minimumHeight(), static_cast<double>(width()) / minimumWidth()));
+  const int marginV = (height() - minimumHeight() * scale) / 2;
+  const int ledHeight = minimumHeight() * scale / 3;
+  const int ledWidth = fontMetrics().averageCharWidth() * scale * 3;
   const int ledLeft = (width() - ledWidth) / 2;
   const int ledRadius = ledHeight / 2;
 
@@ -94,6 +95,9 @@ void LEDWidget::paintEvent(QPaintEvent*)
   {
     const QRect textRect = rect().adjusted(0, marginV + minimumHeight() / 2, 0, -marginV);
     painter.setPen(palette().color(m_enabled ? QPalette::Normal : QPalette::Disabled, QPalette::WindowText));
+    QFont font = painter.font();
+    font.setPointSize(font.pointSize() * scale);
+    painter.setFont(font);
     painter.drawText(textRect, Qt::AlignCenter | Qt::AlignBaseline, m_text);
   }
 
