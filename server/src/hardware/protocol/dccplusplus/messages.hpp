@@ -201,6 +201,18 @@ namespace Ex {
       .append(activate ? " 1" : " 0")
       .append(">\n");
   }
+
+  inline std::string_view setSpeedSteps(uint8_t value)
+  {
+    switch(value)
+    {
+      case 28:
+        return "<D SPEED28>\n";
+      case 128:
+        return "<D SPEED128>\n";
+    }
+    return "";
+  }
 }
 
 }

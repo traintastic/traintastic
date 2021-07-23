@@ -34,6 +34,7 @@ class DCCPlusPlusSerial : public SerialCommandStation
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     bool send(std::string_view message);
+    void started() final;
     void read() final;
 
   public:

@@ -21,6 +21,7 @@
  */
 
 #include "dccplusplusserial.hpp"
+#include "../protocol/dccplusplus/messages.hpp"
 #include "../../core/eventloop.hpp"
 
 DCCPlusPlusSerial::DCCPlusPlusSerial(const std::weak_ptr<World>& world, std::string_view _id) :
@@ -77,6 +78,11 @@ bool DCCPlusPlusSerial::send(std::string_view message)
     }
   }
   return true;
+}
+
+void DCCPlusPlusSerial::started()
+{
+  send(DCCPlusPlus::Ex::setSpeedSteps(dccPlusPlus->speedSteps));
 }
 
 void DCCPlusPlusSerial::read()

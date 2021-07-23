@@ -48,6 +48,7 @@ class DCCPlusPlus : public SubObject
 
   public:
     Property<bool> useEx;
+    Property<uint8_t> speedSteps;
     Property<bool> debugLogRXTX;
 
     DCCPlusPlus(Object& _parent, const std::string& parentPropertyName, std::function<bool(std::string_view)> send);

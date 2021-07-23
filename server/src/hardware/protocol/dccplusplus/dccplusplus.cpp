@@ -30,12 +30,19 @@
 
 namespace DCCPlusPlus {
 
+constexpr std::array<uint8_t, 2> speedStepValues{28, 128};
+
 DCCPlusPlus::DCCPlusPlus(Object& _parent, const std::string& parentPropertyName, std::function<bool(std::string_view)> send) :
   SubObject(_parent, parentPropertyName),
   m_commandStation{dynamic_cast<CommandStation*>(&_parent)},
   m_send{std::move(send)},
   m_debugLogRXTX{false},
   useEx{this, "use_ex", true, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  speedSteps{this, "speed_steps", 128, PropertyFlags::ReadWrite | PropertyFlags::Store,
+    [this](uint8_t value)
+    {
+      this->send(Ex::setSpeedSteps(value));
+    }},
   debugLogRXTX{this, "debug_log", m_debugLogRXTX, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](bool value)
     {
@@ -44,10 +51,10 @@ DCCPlusPlus::DCCPlusPlus(Object& _parent, const std::string& parentPropertyName,
 {
   assert(m_send);
 
-  //! \todo 28/128 speed steps
-
   Attributes::addEnabled(useEx, false); // disable for now, only ex is currently supported
   m_interfaceItems.add(useEx);
+  Attributes::addValues(speedSteps, speedStepValues);
+  m_interfaceItems.add(speedSteps);
   m_interfaceItems.add(debugLogRXTX);
 }
 
