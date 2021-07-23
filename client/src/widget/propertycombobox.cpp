@@ -30,7 +30,7 @@ PropertyComboBox::PropertyComboBox(Property& property, QWidget* parent) :
   m_property{property},
   m_internalUpdate{0}
 {
-  Q_ASSERT(m_property.type() == ValueType::Enum);
+  Q_ASSERT(m_property.type() == ValueType::Enum || m_property.type() == ValueType::Integer);
   setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
   setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
 
@@ -75,8 +75,6 @@ PropertyComboBox::PropertyComboBox(Property& property, QWidget* parent) :
 
 void PropertyComboBox::updateValues()
 {
-  Q_ASSERT(m_property.type() == ValueType::Enum);
-
   QVariant values = m_property.getAttribute(AttributeName::Values, QVariant());
   if(Q_LIKELY(values.isValid()))
   {
@@ -84,12 +82,27 @@ void PropertyComboBox::updateValues()
     clear();
     if(Q_LIKELY(values.userType() == QMetaType::QVariantList))
     {
-      for(QVariant& v : values.toList())
+      switch(m_property.type())
       {
-        const qint64 value = v.toLongLong();
-        addItem(translateEnum(m_property.enumName(), value), value);
-        if(m_property.toInt64() == value)
-          setCurrentIndex(count() - 1);
+        case ValueType::Integer:
+          for(QVariant& v : values.toList())
+          {
+            const qint64 value = v.toLongLong();
+            addItem(QString::number(value), value);
+            if(m_property.toInt64() == value)
+              setCurrentIndex(count() - 1);
+          }
+          break;
+
+        case ValueType::Enum:
+          for(QVariant& v : values.toList())
+          {
+            const qint64 value = v.toLongLong();
+            addItem(translateEnum(m_property.enumName(), value), value);
+            if(m_property.toInt64() == value)
+              setCurrentIndex(count() - 1);
+          }
+          break;
       }
     }
   }

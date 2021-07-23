@@ -128,7 +128,12 @@ void ObjectEditWidget::buildForm()
             else if(property->type() == ValueType::Boolean)
               w = new PropertyCheckBox(*property);
             else if(property->type() == ValueType::Integer)
-              w = new PropertySpinBox(*property);
+            {
+              if(property->hasAttribute(AttributeName::Values) && !property->hasAttribute(AttributeName::Min) && !property->hasAttribute(AttributeName::Max))
+                w = new PropertyComboBox(*property);
+              else
+                w = new PropertySpinBox(*property);
+            }
             else if(property->type() == ValueType::Float)
               w = new PropertyDoubleSpinBox(*property);
             else if(property->type() == ValueType::String)
