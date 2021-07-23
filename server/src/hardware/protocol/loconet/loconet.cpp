@@ -39,9 +39,9 @@ void updateDecoderSpeed(const std::shared_ptr<Decoder>& decoder, uint8_t speed)
   decoder->emergencyStop.setValueInternal(speed == SPEED_ESTOP);
 
   if(speed == SPEED_STOP || speed == SPEED_ESTOP)
-    decoder->speedStep.setValueInternal(0);
+    decoder->throttle.setValueInternal(Decoder::throttleStop);
   else
-    decoder->speedStep.setValueInternal(((speed - 1) * decoder->speedSteps) / (SPEED_MAX - 1));
+    decoder->throttle.setValueInternal(Decoder::speedStepToThrottle(speed - 1, SPEED_MAX - 1));
 }
 
 std::shared_ptr<LocoNet> LocoNet::create(Object& _parent, const std::string& parentPropertyName, std::function<bool(const Message&)> send)
@@ -323,10 +323,11 @@ void LocoNet::powerOnChanged(bool value)
 
 void LocoNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
-  if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::SpeedStep))
+  if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Throttle))
   {
     const bool emergencyStop = decoder.emergencyStop || (m_commandStation && m_commandStation->emergencyStop);
-    LocoSpd message{static_cast<uint8_t>(emergencyStop ? 1 : (decoder.speedStep > 0 ? 1 + decoder.speedStep : 0))};
+    const uint8_t speedStep = Decoder::throttleToSpeedStep(decoder.throttle, SPEED_MAX - 1);
+    LocoSpd message{static_cast<uint8_t>(emergencyStop ? SPEED_ESTOP : (speedStep > 0 ? 1 + speedStep : SPEED_STOP))};
     send(decoder.address, message);
   }
 

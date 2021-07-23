@@ -271,10 +271,7 @@ void WLANmaus::receive()
                           //m_blockLocoInfo = decoder.get();
                           decoder->direction = request.direction();
                           decoder->emergencyStop = request.isEmergencyStop();
-                          if(decoder->speedSteps == request.speedSteps())
-                            decoder->speedStep = request.speedStep();
-                          else
-                            decoder->speedStep = std::round(decoder->speedSteps * request.speedStep() / static_cast<float>(request.speedSteps()));
+                          decoder->throttle = Decoder::speedStepToThrottle(request.speedStep(), request.speedSteps());
                           //broadcastLocoInfo(*decoder);
                           //m_blockLocoInfo = nullptr;
                         }

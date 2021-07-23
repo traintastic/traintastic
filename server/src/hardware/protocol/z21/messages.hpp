@@ -789,7 +789,9 @@ struct LanXLocoInfo : LanX
     {
       case 14:  db2 |= db2_speed_steps_14;  break;
       case 28:  db2 |= db2_speed_steps_28;  break;
-      case 126: db2 |= db2_speed_steps_128; break;
+      case 126:
+      case 128:
+      default:  db2 |= db2_speed_steps_128; break;
     }
   }
 

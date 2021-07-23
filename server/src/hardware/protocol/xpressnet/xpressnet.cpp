@@ -205,7 +205,7 @@ void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags change
     send(EmergencyStopLocomotive(
           decoder.address,
           decoder.longAddress));
-  else if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Direction | DecoderChangeFlags::SpeedStep | DecoderChangeFlags::SpeedSteps))
+  else if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Direction | DecoderChangeFlags::Throttle | DecoderChangeFlags::SpeedSteps))
   {
     switch(decoder.speedSteps)
     {
@@ -215,7 +215,7 @@ void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags change
           decoder.longAddress,
           decoder.emergencyStop,
           decoder.direction,
-          decoder.speedStep,
+          Decoder::throttleToSpeedStep(decoder.throttle, 14),
           decoder.getFunctionValue(0)));
         break;
 
@@ -225,7 +225,7 @@ void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags change
           decoder.longAddress,
           decoder.emergencyStop,
           decoder.direction,
-          decoder.speedStep));
+          Decoder::throttleToSpeedStep(decoder.throttle, 27)));
         break;
 
       case 28:
@@ -234,21 +234,18 @@ void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags change
           decoder.longAddress,
           decoder.emergencyStop,
           decoder.direction,
-          decoder.speedStep));
+          Decoder::throttleToSpeedStep(decoder.throttle, 28)));
         break;
 
       case 126:
       case 128:
+      default:
         send(SpeedAndDirectionInstruction128(
           decoder.address,
           decoder.longAddress,
           decoder.emergencyStop,
           decoder.direction,
-          decoder.speedStep));
-        break;
-
-      default:
-        logWarning(std::to_string(decoder.speedSteps) + " speed steps not supported");
+          Decoder::throttleToSpeedStep(decoder.throttle, 126)));
         break;
     }
   }

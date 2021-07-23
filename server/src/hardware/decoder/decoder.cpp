@@ -30,6 +30,7 @@
 #include "../commandstation/commandstation.hpp"
 #include "../../core/attributes.hpp"
 #include "../../utils/displayname.hpp"
+#include "../../utils/almostzero.hpp"
 
 //constexpr uint16_t addressDCCMin = 1;
 constexpr uint16_t addressDCCShortMax = 127;
@@ -90,15 +91,11 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
     {
       changed(DecoderChangeFlags::SpeedSteps);
     }},
-  speedStep{this, "speed_step", 0, PropertyFlags::ReadWrite,
-    [this](const uint8_t& value)
+  throttle{this, "throttle", throttleMin, PropertyFlags::ReadWrite,
+    [this](const double& value)
     {
-      changed(DecoderChangeFlags::SpeedStep);
+      changed(DecoderChangeFlags::Throttle);
       updateEditable();
-    },
-    [this](uint8_t& value)
-    {
-      return (value <= speedSteps);
     }},
   functions{this, "functions", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -130,7 +127,8 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
   m_interfaceItems.add(direction);
   Attributes::addEnabled(speedSteps, false);
   m_interfaceItems.add(speedSteps);
-  m_interfaceItems.add(speedStep);
+  Attributes::addMinMax(throttle, throttleMin, throttleMax);
+  m_interfaceItems.add(throttle);
   m_interfaceItems.add(functions);
   Attributes::addDisplayName(notes, DisplayName::Object::notes);
   m_interfaceItems.add(notes);
@@ -244,7 +242,7 @@ void Decoder::updateEditable()
 
 void Decoder::updateEditable(bool editable)
 {
-  const bool stopped = editable && speedStep == 0;
+  const bool stopped = editable && almostZero(throttle.value());
   name.setAttributeEnabled(editable);
   commandStation.setAttributeEnabled(stopped);
   protocol.setAttributeEnabled(stopped);

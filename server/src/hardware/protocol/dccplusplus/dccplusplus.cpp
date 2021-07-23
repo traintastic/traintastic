@@ -44,6 +44,8 @@ DCCPlusPlus::DCCPlusPlus(Object& _parent, const std::string& parentPropertyName,
 {
   assert(m_send);
 
+  //! \todo 28/128 speed steps
+
   Attributes::addEnabled(useEx, false); // disable for now, only ex is currently supported
   m_interfaceItems.add(useEx);
   m_interfaceItems.add(debugLogRXTX);
@@ -98,11 +100,8 @@ void DCCPlusPlus::decoderChanged(const Decoder& decoder, DecoderChangeFlags chan
 {
   //! \todo check protocol and long address
 
-  if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::SpeedStep | DecoderChangeFlags::Direction))
-  {
-    //! \todo 28/128 speed steps
-    send(Ex::setLocoSpeedAndDirection(decoder.address, decoder.speedStep, decoder.emergencyStop, decoder.direction));
-  }
+  if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Throttle | DecoderChangeFlags::Direction))
+    send(Ex::setLocoSpeedAndDirection(decoder.address, Decoder::throttleToSpeedStep(decoder.throttle, 126), decoder.emergencyStop, decoder.direction));
 
   if(has(changes, DecoderChangeFlags::FunctionValue))
   {

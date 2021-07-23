@@ -157,45 +157,50 @@ bool RocoZ21::isDecoderSupported(Decoder& decoder) const
 
 void RocoZ21::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
-  if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Direction | DecoderChangeFlags::SpeedStep | DecoderChangeFlags::SpeedSteps))
+  if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Direction | DecoderChangeFlags::Throttle | DecoderChangeFlags::SpeedSteps))
   {
     Z21::LanXSetLocoDrive cmd;
     //cmd.dataLen = sizeof(cmd);
     //cmd.header = Z21::LAN_X;
     SET_ADDRESS;
 
-    assert(decoder.speedStep <= decoder.speedSteps);
     switch(decoder.speedSteps)
     {
       case 14:
+      {
+        const uint8_t speedStep = Decoder::throttleToSpeedStep(decoder.throttle, 14);
         cmd.db0 = 0x10;
         if(decoder.emergencyStop)
           cmd.speedAndDirection = 0x01;
-        else if(decoder.speedStep > 0)
-          cmd.speedAndDirection = decoder.speedStep + 1;
+        else if(speedStep > 0)
+          cmd.speedAndDirection = speedStep + 1;
         break;
-
+      }
       case 28:
+      {
+        uint8_t speedStep = Decoder::throttleToSpeedStep(decoder.throttle, 28);
         cmd.db0 = 0x12;
         if(decoder.emergencyStop)
           cmd.speedAndDirection = 0x01;
-        else if(decoder.speedStep > 0)
+        else if(speedStep > 0)
         {
-          const uint8_t speedStep = decoder.speedStep + 1;
+          speedStep++;
           cmd.speedAndDirection = ((speedStep & 0x01) << 4) | (speedStep >> 1);
         }
         break;
-
+      }
       case 126:
+      case 128:
+      default:
+      {
+        const uint8_t speedStep = Decoder::throttleToSpeedStep(decoder.throttle, 126);
         cmd.db0 = 0x13;
         if(decoder.emergencyStop)
           cmd.speedAndDirection = 0x01;
-        else if(decoder.speedStep > 0)
-          cmd.speedAndDirection = decoder.speedStep + 1;
+        else if(speedStep > 0)
+          cmd.speedAndDirection = speedStep + 1;
         break;
-
-      default:
-        return;
+      }
     }
 
     if(decoder.direction.value() == Direction::Forward)
@@ -371,10 +376,20 @@ void RocoZ21::receive()
                       if(decoder)
                       {
                         decoder->direction = direction;
-                        if((speedStepMode == 0 && decoder->speedSteps == 14) ||
-                           (speedStepMode == 2 && decoder->speedSteps == 28) ||
-                           (speedStepMode == 4 && decoder->speedSteps == 126))
-                          decoder->speedStep.setValueInternal(speedStep);
+                        switch(speedStepMode)
+                        {
+                          case 0:
+                            decoder->throttle.setValueInternal(Decoder::speedStepToThrottle(speedStep, 14));
+                            break;
+
+                          case 2:
+                            decoder->throttle.setValueInternal(Decoder::speedStepToThrottle(speedStep, 28));
+                            break;
+
+                          case 4:
+                            decoder->throttle.setValueInternal(Decoder::speedStepToThrottle(speedStep, 126));
+                            break;
+                        }
 
                         for(auto& function : *decoder->functions)
                         {

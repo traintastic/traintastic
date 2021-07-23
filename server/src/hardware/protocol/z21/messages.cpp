@@ -134,7 +134,7 @@ LanXLocoInfo::LanXLocoInfo(const Decoder& decoder) :
   if(decoder.emergencyStop)
     setEmergencyStop();
   else
-    setSpeedStep(decoder.speedStep);
+    setSpeedStep(Decoder::throttleToSpeedStep(decoder.throttle, speedSteps()));
   for(auto function : *decoder.functions)
     setFunction(function->number, function->value);
   calcChecksum();

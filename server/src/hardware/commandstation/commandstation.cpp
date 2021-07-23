@@ -29,6 +29,7 @@
 #include "../decoder/decoderlist.hpp"
 #include "../../core/attributes.hpp"
 #include "../../utils/displayname.hpp"
+#include "../../utils/almostzero.hpp"
 
 CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
@@ -168,6 +169,6 @@ void CommandStation::decoderChanged(const Decoder& decoder, DecoderChangeFlags c
 void CommandStation::restoreSpeed()
 {
   for(const auto& decoder : *decoders)
-    if(!decoder->emergencyStop && decoder->speedStep > 0)
-      decoderChanged(*decoder, DecoderChangeFlags::SpeedStep, 0);
+    if(!decoder->emergencyStop && !almostZero(decoder->throttle.value()))
+      decoderChanged(*decoder, DecoderChangeFlags::Throttle, 0);
 }

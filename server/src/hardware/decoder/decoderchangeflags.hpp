@@ -27,7 +27,7 @@ enum class DecoderChangeFlags
 {
   EmergencyStop = 1 << 0,
   Direction = 1 << 1,
-  SpeedStep = 1 << 2,
+  Throttle = 1 << 2,
   SpeedSteps = 1 << 3,
   FunctionValue = 1 << 4,
   FunctionMomentary = 1 << 5,
