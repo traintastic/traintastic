@@ -35,6 +35,7 @@
 #include "tablemodelptr.hpp"
 
 class QTcpSocket;
+class ServerLogTableModel;
 class Property;
 class ObjectProperty;
 class UnitProperty;
@@ -84,6 +85,7 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
     ObjectProperty* m_worldProperty;
     int m_worldRequestId;
     ObjectPtr m_world;
+    ServerLogTableModel* m_serverLogTableModel;
     QMap<Handle, std::weak_ptr<Object>> m_objects;
     std::unordered_map<Handle, uint32_t> m_handleCounter;
     std::unordered_map<Handle, std::unique_ptr<Object>> m_requestForRelease;
@@ -129,6 +131,8 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
 
     const ObjectPtr& traintastic() const { return m_traintastic; }
     const ObjectPtr& world() const { return m_world; }
+
+    void serverLog(ServerLogTableModel& model, bool enable);
 
     //[[nodiscard]] int createObject(const QString& classId, const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
     [[nodiscard]] int getObject(const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);

@@ -25,7 +25,7 @@
 
 #include <list>
 #include "../core/objectptr.hpp"
-#include "../core/stdfilesystem.hpp"
+#include <traintastic/utils/stdfilesystem.hpp>
 #include "../utils/json.hpp"
 
 class World;

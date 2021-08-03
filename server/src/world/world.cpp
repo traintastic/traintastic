@@ -31,6 +31,7 @@
 #include "../core/objectlisttablemodel.hpp"
 #include "../core/attributes.hpp"
 #include "../core/abstractvectorproperty.hpp"
+#include "../log/log.hpp"
 #include "../utils/displayname.hpp"
 
 using nlohmann::json;
@@ -86,13 +87,13 @@ World::World(Private) :
     {
       if(value)
       {
-        Traintastic::instance->console->notice(classId, "Edit mode: enabled");
+        Log::log(*this, LogMessage::N1010_EDIT_MODE_ENABLED);
         state.setValueInternal(state.value() + WorldState::Edit);
         event(WorldEvent::EditEnabled);
       }
       else
       {
-        Traintastic::instance->console->notice(classId, "Edit mode: disabled");
+        Log::log(*this, LogMessage::N1011_EDIT_MODE_DISABLED);
         state.setValueInternal(state.value() - WorldState::Edit);
         event(WorldEvent::EditDisabled);
       }
@@ -100,42 +101,42 @@ World::World(Private) :
   offline{*this, "offline",
     [this]()
     {
-      Traintastic::instance->console->notice(classId, "Offline");
+      Log::log(*this, LogMessage::N1013_COMMUNICATION_DISABLED);
       state.setValueInternal(state.value() - WorldState::Online);
       event(WorldEvent::Offline);
     }},
   online{*this, "online",
     [this]()
     {
-      Traintastic::instance->console->notice(classId, "Online");
+      Log::log(*this, LogMessage::N1012_COMMUNICATION_ENABLED);
       state.setValueInternal(state.value() + WorldState::Online);
       event(WorldEvent::Online);
     }},
   powerOff{*this, "power_off",
     [this]()
     {
-      Traintastic::instance->console->notice(classId, "Power: off");
+      Log::log(*this, LogMessage::N1014_POWER_ON);
       state.setValueInternal(state.value() - WorldState::PowerOn);
       event(WorldEvent::PowerOff);
     }},
   powerOn{*this, "power_on",
     [this]()
     {
-      Traintastic::instance->console->notice(classId, "Power: on");
+      Log::log(*this, LogMessage::N1015_POWER_OFF);
       state.setValueInternal(state.value() + WorldState::PowerOn);
       event(WorldEvent::PowerOn);
     }},
   run{*this, "run",
     [this]()
     {
-      Traintastic::instance->console->notice(classId, "Run");
+      Log::log(*this, LogMessage::N1016_RUNNING);
       state.setValueInternal(state.value() + WorldState::Run);
       event(WorldEvent::Run);
     }},
   stop{*this, "stop",
     [this]()
     {
-      Traintastic::instance->console->notice(classId, "Stop");
+      Log::log(*this, LogMessage::N1017_STOPPED);
       state.setValueInternal(state.value() - WorldState::Run);
       event(WorldEvent::Stop);
     }},
@@ -144,13 +145,13 @@ World::World(Private) :
     {
       if(value)
       {
-        Traintastic::instance->console->notice(classId, "Mute");
+        Log::log(*this, LogMessage::N1018_MUTE_ENABLED);
         state.setValueInternal(state.value() + WorldState::Mute);
         event(WorldEvent::Mute);
       }
       else
       {
-        Traintastic::instance->console->notice(classId, "Unmute");
+        Log::log(*this, LogMessage::N1019_MUTE_DISABLED);
         state.setValueInternal(state.value() - WorldState::Mute);
         event(WorldEvent::Unmute);
       }
@@ -160,13 +161,13 @@ World::World(Private) :
     {
       if(value)
       {
-        Traintastic::instance->console->notice(classId, "No smoke");
+        Log::log(*this, LogMessage::N1021_SMOKE_DISABLED);
         state.setValueInternal(state.value() + WorldState::NoSmoke);
         event(WorldEvent::NoSmoke);
       }
       else
       {
-        Traintastic::instance->console->notice(classId, "Smoke");
+        Log::log(*this, LogMessage::N1020_SMOKE_ENABLED);
         state.setValueInternal(state.value() - WorldState::NoSmoke);
         event(WorldEvent::Smoke);
       }
@@ -177,11 +178,11 @@ World::World(Private) :
       try
       {
         WorldSaver saver(*this);
-        Traintastic::instance->console->notice(classId, "Saved world " + name.value());
+        Log::log(*this, LogMessage::N1022_SAVED_WORLD_X, name.value());
       }
       catch(const std::exception& e)
       {
-        Traintastic::instance->console->critical(classId, std::string("Saving world failed: ").append(e.what()));
+        Log::log(*this, LogMessage::C1005_SAVING_WORLD_FAILED_X, e);
       }
     }}
 {

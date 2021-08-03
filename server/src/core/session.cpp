@@ -36,6 +36,8 @@
 #include "../world/world.hpp"
 #include "idobject.hpp"
 #include "subobject.hpp"
+#include "../log/log.hpp"
+#include "../log/memorylogger.hpp"
 #include "../hardware/input/monitor/inputmonitor.hpp"
 #include "../hardware/output/map/outputmap.hpp"
 #include "../hardware/output/map/outputmapitem.hpp"
@@ -72,8 +74,6 @@ bool Session::processMessage(const Message& message)
       std::string id;
       message.read(classId);
       message.read(id);
-
-      logDebug(m_client->m_id, "CreateObject: " + classId);
 
       ObjectPtr obj = Traintastic::instance->world->createObject(classId, id);
       if(obj)
@@ -127,16 +127,13 @@ bool Session::processMessage(const Message& message)
 
       if(obj)
       {
-        Traintastic::instance->console->debug(m_client->m_id, "GetObject: " + id);
         auto response = Message::newResponse(message.command(), message.requestId());
         writeObject(*response, obj);
         m_client->sendMessage(std::move(response));
       }
       else
-      {
-        Traintastic::instance->console->debug(m_client->m_id, "UnknownObject: " + id);
         m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::UnknownObject));
-      }
+
       return true;
     }
     case Message::Command::ReleaseObject:
@@ -359,7 +356,6 @@ bool Session::processMessage(const Message& message)
         {
           TableModelPtr model = table->getModel();
           assert(model);
-          //logDebug(m_client->m_id, "GetTableModel: " + id);
           auto response = Message::newResponse(message.command(), message.requestId());
           writeTableModel(*response, model);
           m_client->sendMessage(std::move(response));
@@ -407,12 +403,9 @@ bool Session::processMessage(const Message& message)
       return true;
     }
     case Message::Command::ReleaseTableModel:
-    {
-      Handle handle = message.read<Handle>();
-      Traintastic::instance->console->debug(m_client->m_id, "ReleaseTableModel: " + std::to_string(handle));
-      m_handles.removeHandle(handle);
+      m_handles.removeHandle(message.read<Handle>());
       break;
-    }
+
     case Message::Command::TableModelSetRegion:
     {
       TableModelPtr model = std::dynamic_pointer_cast<TableModel>(m_handles.getItem(message.read<Handle>()));
@@ -523,6 +516,19 @@ bool Session::processMessage(const Message& message)
       }
       break;
     }
+    case Message::Command::ServerLog:
+      if(message.read<bool>())
+      {
+        if(auto* logger = Log::getMemoryLogger())
+        {
+          m_memoryLoggerChanged = logger->changed.connect(std::bind(&Session::memoryLoggerChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+          memoryLoggerChanged(*logger, logger->size(), 0);
+        }
+      }
+      else // disable
+        m_memoryLoggerChanged.disconnect();
+      break;
+
     default:
       break;
   }
@@ -662,6 +668,28 @@ void Session::writeTableModel(Message& message, const TableModelPtr& model)
     message.write(text);
   message.write(model->rowCount());
   message.writeBlockEnd(); // end model
+}
+
+void Session::memoryLoggerChanged(const MemoryLogger& logger, const uint32_t added, const uint32_t removed)
+{
+  auto event = Message::newEvent(Message::Command::ServerLog);
+  event->write(removed);
+  event->write(added);
+
+  const uint32_t size = logger.size();
+  for(uint32_t i = size - added; i < size; i++)
+  {
+    const auto& log = logger[i];
+    event->write((std::chrono::duration_cast<std::chrono::microseconds>(log.time.time_since_epoch())).count());
+    event->write(log.objectId);
+    event->write(log.message);
+    const size_t argc = log.args ? std::min<size_t>(log.args->size(), std::numeric_limits<uint8_t>::max()) : 0;
+    event->write(static_cast<uint8_t>(argc));
+    for(size_t i = 0; i < argc; i++)
+      event->write(log.args->at(i));
+  }
+
+  m_client->sendMessage(std::move(event));
 }
 
 void Session::objectPropertyChanged(BaseProperty& baseProperty)

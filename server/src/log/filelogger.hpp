@@ -1,9 +1,9 @@
 /**
- * client/src/widget/serverconsolewidget.hpp
+ * server/src/log/filelogger.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,27 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_SERVERCONSOLEWIDGET_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_SERVERCONSOLEWIDGET_HPP
+#ifndef TRAINTASTIC_SERVER_LOG_FILELOGGER_HPP
+#define TRAINTASTIC_SERVER_LOG_FILELOGGER_HPP
 
-#include <QWidget>
-#include "../network/objectptr.hpp"
-#include "../network/tablemodelptr.hpp"
+#include "logger.hpp"
+#include <fstream>
+#include <traintastic/utils/stdfilesystem.hpp>
 
-class TableWidget;
-
-class ServerConsoleWidget : public QWidget
+class FileLogger : public Logger
 {
-  protected:
-    static constexpr char const* objectId = "traintastic.console";
+  private:
+    std::ofstream m_file;
 
-    int m_requestId;
-    ObjectPtr m_object;
-    TableWidget* m_tableWidget;
+    void write(const std::chrono::system_clock::time_point& time, std::string_view objectId, LogMessage code, std::string_view message);
 
   public:
-    ServerConsoleWidget(QWidget* parent = nullptr);
-    ~ServerConsoleWidget() final;
+    FileLogger(const std::filesystem::path& filename);
+
+    void log(const std::chrono::system_clock::time_point& time, std::string_view objectId, LogMessage message) final;
+    void log(const std::chrono::system_clock::time_point& time, std::string_view objectId, LogMessage message, const std::vector<std::string>& args) final;
 };
 
 #endif

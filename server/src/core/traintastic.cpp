@@ -35,6 +35,7 @@
 #include "../world/world.hpp"
 #include "../world/worldlist.hpp"
 #include "../world/worldloader.hpp"
+#include "../log/log.hpp"
 
 using nlohmann::json;
 
@@ -48,7 +49,6 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_acceptor{m_ioContext},
   m_socketTCP{m_ioContext},
   m_socketUDP{m_ioContext},
-  console{this, "console", std::make_shared<Console>(), PropertyFlags::ReadOnly},
   settings{this, "settings", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
   world{this, "world", nullptr, PropertyFlags::ReadWrite},
   worldList{this, "world_list", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
@@ -56,7 +56,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
     [this]()
     {
       world = World::create();
-      logNotice("Created new world");
+      Log::log(*this, LogMessage::N1002_CREATED_NEW_WORLD);
       world->edit = true;
     }},
   loadWorld{*this, "load_world",
@@ -70,7 +70,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
       catch(const std::exception&)
       {
         uuid = boost::uuids::nil_generator()();
-        logError("Invalid default world uuid");
+        Log::log(*this, LogMessage::E1001_INVALID_WORLD_UUID_X, _uuid);
       }
 
       if(!uuid.is_nil())
@@ -95,7 +95,6 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   if(!std::filesystem::is_directory(m_dataDir))
     std::filesystem::create_directories(m_dataDir);
 
-  m_interfaceItems.add(console);
   m_interfaceItems.add(settings);
   m_interfaceItems.add(world);
   m_interfaceItems.add(worldList);
@@ -114,9 +113,9 @@ Traintastic::~Traintastic()
 
 Traintastic::RunStatus Traintastic::run()
 {
-  logInfo("v" TRAINTASTIC_VERSION " " TRAINTASTIC_CODENAME);
+  Log::log(*this, LogMessage::I1001_TRAINTASTIC_VX_X, std::string_view{TRAINTASTIC_VERSION}, std::string_view{TRAINTASTIC_CODENAME});
 
-  settings = std::make_shared<Settings>(m_dataDir / "settings.json");
+  settings = std::make_shared<Settings>(m_dataDir);
   Attributes::setEnabled(restart, settings->allowClientServerRestart);
   Attributes::setEnabled(shutdown, settings->allowClientServerShutdown);
 
@@ -137,9 +136,9 @@ Traintastic::RunStatus Traintastic::run()
 void Traintastic::exit()
 {
   if(m_restart)
-    logNotice("Restarting");
+    Log::log(*this, LogMessage::N1003_RESTARTING);
   else
-    logNotice("Shutting down");
+    Log::log(*this, LogMessage::N1004_SHUTTING_DOWN);
 
   if(settings->autoSaveWorldOnExit && world)
     world->save();
@@ -157,28 +156,28 @@ bool Traintastic::start()
   m_acceptor.open(endpoint.protocol(), ec);
   if(ec)
   {
-    logFatal(ec.message());
+    Log::log(*this, LogMessage::F1001_OPENING_TCP_SOCKET_FAILED_X, ec.message());
     return false;
   }
 
   m_acceptor.set_option(boost::asio::socket_base::reuse_address(true), ec);
   if(ec)
   {
-    logFatal(ec.message());
+    Log::log(*this, LogMessage::F1002_TCP_SOCKET_ADDRESS_REUSE_FAILED_X, ec.message());
     return false;
   }
 
   m_acceptor.bind(endpoint, ec);
   if(ec)
   {
-    logFatal(ec.message());
+    Log::log(*this, LogMessage::F1003_BINDING_TCP_SOCKET_FAILED_X, ec.message());
     return false;
   }
 
   m_acceptor.listen(5, ec);
   if(ec)
   {
-    logFatal(ec.message());
+    Log::log(*this, LogMessage::F1004_TCP_SOCKET_LISTEN_FAILED_X, ec.message());
     return false;
   }
 
@@ -189,34 +188,34 @@ bool Traintastic::start()
       m_socketUDP.open(boost::asio::ip::udp::v4(), ec);
       if(ec)
       {
-        logFatal(ec.message());
+        Log::log(*this, LogMessage::F1005_OPENING_UDP_SOCKET_FAILED_X, ec.message());
         return false;
       }
 
       m_socketUDP.set_option(boost::asio::socket_base::reuse_address(true), ec);
       if(ec)
       {
-        logFatal(ec.message());
+        Log::log(*this, LogMessage::F1006_UDP_SOCKET_ADDRESS_REUSE_FAILED_X, ec.message());
         return false;
       }
 
       m_socketUDP.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::address_v4::any(), Settings::defaultPort), ec);
       if(ec)
       {
-        logFatal("bind: " + ec.message());
+        Log::log(*this, LogMessage::F1007_BINDING_UDP_SOCKET_FAILED_X, ec.message());
         return false;
       }
 
-      logNotice("Discovery enabled");
+      Log::log(*this, LogMessage::N1005_DISCOVERY_ENABLED);
       doReceive();
     }
     else
-      logWarning(std::string("Discovery disabled, only allowed on port ") + std::to_string(Settings::defaultPort));
+      Log::log(*this, LogMessage::W1001_DISCOVERY_DISABLED_ONLY_ALLOWED_ON_PORT_X, Settings::defaultPort);
   }
   else
-    logNotice("Discovery disabled");
+    Log::log(*this, LogMessage::N1006_DISCOVERY_DISABLED);
 
-  logNotice(std::string("Listening at ") + m_acceptor.local_endpoint().address().to_string() + ":" + std::to_string(m_acceptor.local_endpoint().port()));
+  Log::log(*this, LogMessage::N1007_LISTENING_AT_X_X, m_acceptor.local_endpoint().address().to_string(), m_acceptor.local_endpoint().port());
   doAccept();
 
   return true;
@@ -233,7 +232,7 @@ void Traintastic::stop()
   boost::system::error_code ec;
   m_acceptor.cancel(ec);
   if(ec)
-    logError(ec.message());
+    Log::log(*this, LogMessage::E1008_SOCKET_ACCEPTOR_CANCEL_FAILED_X, ec);
   m_acceptor.close();
 
   m_socketUDP.close();
@@ -244,7 +243,7 @@ void Traintastic::load(const boost::uuids::uuid& uuid)
   if(const WorldList::WorldInfo* info = worldList->find(uuid))
     load(info->path);
   else
-    logError("World " + to_string(uuid) + " doesn't exist");
+    Log::log(*this, LogMessage::E1002_WORLD_X_DOESNT_EXIST, to_string(uuid));
 }
 
 void Traintastic::load(const std::filesystem::path& path)
@@ -255,7 +254,7 @@ void Traintastic::load(const std::filesystem::path& path)
   }
   catch(const std::exception& e)
   {
-    logCritical(std::string("Loading world failed: ") + e.what());
+    Log::log(*this, LogMessage::C1001_LOADING_WORLD_FAILED_X, e.what());
   }
 }
 
@@ -295,7 +294,7 @@ void Traintastic::doReceive()
         doReceive();
       }
       else
-        logError(ec.message());
+        Log::log(*this, LogMessage::E1003_UDP_RECEIVE_ERROR_X, ec.message());
     });
 }
 
@@ -330,11 +329,11 @@ void Traintastic::doAccept()
             }
             catch(const std::exception& e)
             {
-              logCritical(e.what());
+              Log::log(*this, LogMessage::C1002_CREATING_CLIENT_FAILED_X, e.what());
             }
           }
           else
-            logError(ec.message());
+            Log::log(*this, LogMessage::E1004_TCP_ACCEPT_ERROR_X, ec.message());
         });
     });
 }

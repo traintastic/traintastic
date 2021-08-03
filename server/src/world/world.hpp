@@ -26,7 +26,7 @@
 #include "../core/object.hpp"
 #include "../core/property.hpp"
 #include "../core/objectproperty.hpp"
-#include "../core/stdfilesystem.hpp"
+#include <traintastic/utils/stdfilesystem.hpp>
 #include <unordered_map>
 #include <boost/uuid/uuid.hpp>
 #include <traintastic/enum/worldevent.hpp>

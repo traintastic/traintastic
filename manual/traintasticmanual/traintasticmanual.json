@@ -101,5 +101,32 @@
   {
     "type": "appendix",
     "markdown": "xpressnet.md"
+  },
+  {
+    "type": "appendix",
+    "markdown": "messages.md",
+    "pages": [
+      {
+        "markdown": "messages/fatal.md"
+      },
+      {
+        "markdown": "messages/critical.md"
+      },
+      {
+        "markdown": "messages/error.md"
+      },
+      {
+        "markdown": "messages/warning.md"
+      },
+      {
+        "markdown": "messages/notice.md"
+      },
+      {
+        "markdown": "messages/info.md"
+      },
+      {
+        "markdown": "messages/debug.md"
+      }
+    ]
   }
 ]

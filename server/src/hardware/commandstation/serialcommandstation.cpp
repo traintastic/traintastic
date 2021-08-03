@@ -24,6 +24,7 @@
 #include "../../core/traintastic.hpp"
 #include "../../core/eventloop.hpp"
 #include "../../core/attributes.hpp"
+#include "../../log/log.hpp"
 
 SerialCommandStation::SerialCommandStation(const std::weak_ptr<World>& world, std::string_view _id) :
   CommandStation(world, _id),
@@ -88,7 +89,7 @@ bool SerialCommandStation::start()
   m_serialPort.open(port, ec);
   if(ec)
   {
-    logError("open: " + ec.message());
+    Log::log(*this, LogMessage::E2010_SERIAL_PORT_OPEN_FAILED_X, ec);
     return false;
   }
 

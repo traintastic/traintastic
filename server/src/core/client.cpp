@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,7 @@
 #include "traintastic.hpp"
 #include "eventloop.hpp"
 #include "session.hpp"
+#include "../log/log.hpp"
 
 Client::Client(Traintastic& server, const std::string& id, boost::asio::ip::tcp::socket socket) :
   m_server{server},
@@ -38,12 +39,11 @@ Client::Client(Traintastic& server, const std::string& id, boost::asio::ip::tcp:
   m_socket.set_option(boost::asio::socket_base::linger(true, 0));
   m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
 
-  Traintastic::instance->console->info(id, "Connected");
+  Log::log(m_id, LogMessage::I1003_CLIENT_CONNECTED);
 }
 
 Client::~Client()
 {
-  Traintastic::instance->console->debug(m_id, "~Client");
   stop();
 }
 
@@ -66,7 +66,7 @@ void Client::stop()
   boost::system::error_code ec;
   m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
   if(ec)
-    Traintastic::instance->console->error(m_id, ec.message());
+    Log::log(m_id, LogMessage::E1005_SOCKET_SHUTDOWN_FAILED_X, ec);
   m_socket.close();
 }
 
@@ -76,9 +76,9 @@ void Client::doReadHeader()
   boost::asio::async_read(m_socket,
     boost::asio::buffer(&m_readBuffer.header, sizeof(m_readBuffer.header)),
       m_strand.wrap(
-        [this, self](const boost::system::error_code& e, std::size_t)
+        [this, self](const boost::system::error_code& ec, std::size_t)
         {
-          if(!e)
+          if(!ec)
           {
             m_readBuffer.message.reset(new Message(m_readBuffer.header));
             if(m_readBuffer.message->dataSize() == 0)
@@ -93,10 +93,15 @@ void Client::doReadHeader()
             else
               doReadData();
           }
-          else if(e == boost::asio::error::eof || e == boost::asio::error::connection_aborted || e == boost::asio::error::connection_reset)
+          else if(ec == boost::asio::error::eof || ec == boost::asio::error::connection_aborted || ec == boost::asio::error::connection_reset)
             EventLoop::call(&Client::connectionLost, this);
-          else if(e != boost::asio::error::operation_aborted)
-            EventLoop::call(&Client::connectionError, this, "readheader", e);
+          else if(ec != boost::asio::error::operation_aborted)
+            EventLoop::call(
+              [self, ec]()
+              {
+                Log::log(self->m_id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
+                self->disconnect();
+              });
         }));
 }
 
@@ -120,7 +125,12 @@ void Client::doReadData()
           else if(ec == boost::asio::error::eof || ec == boost::asio::error::connection_aborted || ec == boost::asio::error::connection_reset)
             EventLoop::call(&Client::connectionLost, this);
           else if(ec != boost::asio::error::operation_aborted)
-            EventLoop::call(&Client::connectionError, this, "readdata", ec);
+            EventLoop::call(
+              [self, ec]()
+              {
+                Log::log(self->m_id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
+                self->disconnect();
+              });
         }));
 }
 
@@ -138,7 +148,12 @@ void Client::doWrite()
             doWrite();
         }
         else if(ec != boost::asio::error::operation_aborted)
-          EventLoop::call(&Client::connectionError, this, "write", ec);
+          EventLoop::call(
+            [self, ec]()
+            {
+              Log::log(self->m_id, LogMessage::E1006_SOCKET_WRITE_FAILED_X, ec);
+              self->disconnect();
+            });
       }));
 }
 
@@ -154,7 +169,6 @@ void Client::processMessage(const std::shared_ptr<Message> message)
     if(message->command() == Message::Command::NewSession && message->type() == Message::Type::Request)
     {
       m_session = std::make_shared<Session>(shared_from_this());
-      Traintastic::instance->console->notice(m_id, "Created new session");
       auto response = Message::newResponse(message->command(), message->requestId());
       response->write(m_session->uuid());
       m_session->writeObject(*response, Traintastic::instance);
@@ -167,7 +181,6 @@ void Client::processMessage(const std::shared_ptr<Message> message)
     if(message->command() == Message::Command::Login && message->type() == Message::Type::Request)
     {
       m_authenticated = true; // oke for now, login can be added later :)
-      Traintastic::instance->console->notice(m_id, "Logged in anonymously");
       sendMessage(Message::newResponse(message->command(), message->requestId()));
       return;
     }
@@ -175,15 +188,9 @@ void Client::processMessage(const std::shared_ptr<Message> message)
 
   if(message->type() == Message::Type::Request)
   {
-    Traintastic::instance->console->debug(m_id, "Received invalid command: " + std::to_string(static_cast<uint8_t>(message->command())));
-
-
-    //usleep(10*1000*1000);
-
-
+    //assert(false);
     sendMessage(Message::newErrorResponse(message->command(), message->requestId(), Message::ErrorCode::InvalidCommand));
   }
-
 
 /*
   switch(message.command())
@@ -286,13 +293,7 @@ void Client::sendMessage(std::unique_ptr<Message> message)
 
 void Client::connectionLost()
 {
-  m_server.console->info(m_id, "Connection lost");
-  disconnect();
-}
-
-void Client::connectionError(std::string_view where, boost::system::error_code ec)
-{
-  m_server.console->error(m_id, ec.message().append(" [").append(where).append("]"));
+  Log::log(m_id, LogMessage::I1004_CONNECTION_LOST);
   disconnect();
 }
 

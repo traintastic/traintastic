@@ -38,7 +38,7 @@ class ObjectEditSubWindow;
 class HardwareListSubWindow;
 class LuaScriptsSubWindow;
 class ServerSettingsSubWindow;
-class ServerConsoleWidget;
+class ServerLogWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -49,7 +49,7 @@ class MainWindow : public QMainWindow
     ObjectPtr m_world;
     QSplitter* m_splitter;
     MdiArea* m_mdiArea;
-    ServerConsoleWidget* m_serverConsole;
+    ServerLogWidget* m_serverLog;
     QMap<QString, QMdiSubWindow*> m_mdiSubWindows;
     // Main menu:
     QAction* m_actionConnectToServer;
@@ -79,7 +79,7 @@ class MainWindow : public QMainWindow
     QAction* m_actionServerSettings;
     QAction* m_actionServerRestart;
     QAction* m_actionServerShutdown;
-    QAction* m_actionServerConsole;
+    QAction* m_actionServerLog;
     // Main toolbar:
     QToolBar* m_toolbar;
     QToolButton* m_worldOnlineOfflineToolButton;
@@ -100,7 +100,7 @@ class MainWindow : public QMainWindow
     void importWorld();
     void exportWorld();
     void toggleFullScreen();
-    void toggleConsole();
+    void toggleServerLog();
     void showAbout();
     void connectionStateChanged();
     void updateActions();

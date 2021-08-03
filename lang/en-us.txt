@@ -95,11 +95,6 @@ command_station.z21:vcc_voltage=VCC voltage
 command_station_list:add=Add
 command_station_list:remove=Remove
 
-console:level=Level
-console:message=Message
-console:object=Object
-console:time=Time
-
 controller.z21_app:active=Active
 
 controller:active=Active
@@ -172,6 +167,94 @@ loconet_serial_interface:rosoft_loconet_interface=RoSoft LocoNet interface
 lua.script:active=Active
 lua.script:code=Code
 
+message:C1001=Loading world failed (%1)
+message:C1002=Creating client failed (%1)
+message:C1003=Can't write to settings file (%1)
+message:C1004=Reading world failed (%1) (%2)
+message:C1005=Saving world failed (%1)
+message:C2001=Address already used at #%1
+message:C2002=DCC++ only supports the DCC protocol
+message:C2003=DCC++ doesn't support DCC long addresses below 128
+message:C9999=%1
+message:D2001=TX: %1
+message:D2002=RX: %1
+message:D2003=Unknown xHeader 0x%1
+message:D2004=%1 TX: %2
+message:D2005=%1 RX: %2
+message:D2006=Unknown message: %1
+message:D2007=Input %1 = %2
+message:D2008=Output %1 = %1
+message:D2009=Slot %1 = %2
+message:D2010=Slot %1 = Free
+message:D9999=%1
+message:E1001=Invalid world UUID: %1
+message:E1002=World %1 doesn't exist
+message:E1003=UDP receive error (%1)
+message:E1004=TCP accept error (%1)
+message:E1005=Socket shutdown failed (%1)
+message:E1006=Socket write failed (%1)
+message:E1007=Socket read failed (%1)
+message:E1008=Socket acceptor cancel failed (%1)
+message:E2001=Serial write failed (%1)
+message:E2002=Serial read failed (%1)
+message:E2003=Make address failed (%1)
+message:E2004=Socket open failed (%1)
+message:E2005=Socket connect failed (%1)
+message:E2006=Socket bind failed (%1)
+message:E2007=Socket write failed (%1)
+message:E2008=Socket read failed (%1)
+message:E2009=Socket receive failed (%1)
+message:E2010=Serial port open failed (%1)
+message:E2011=Socket send failed (%1)
+message:E9999=%1
+message:F1001=Opening TCP socket failed (%1)
+message:F1002=TCP socket address reuse failed (%1)
+message:F1003=Binding TCP socket failed (%1)
+message:F1004=TCP socket listen failed (%1)
+message:F1005=Opening UDP socket failed (%1)
+message:F1006=UDP socket address reuse failed (%1)
+message:F1007=Binding udp socket failed (%1)
+message:F9001=Creating ua state failed
+message:F9002=Running script failed (%1)
+message:F9003=Calling function failed (%1)
+message:F9999=%1
+message:I1001=Traintastic v%1 %2
+message:I1002=Settings file not found, using defaults
+message:I1003=Client connected
+message:I1004=Connection lost
+message:I1005=Building world index
+message:I2001=Unknown loco address: %1
+message:I9999=%1
+message:N1001=Received signal: %1
+message:N1002=Created new world
+message:N1003=Restaring
+message:N1004=Shutting down
+message:N1005=Discovery enabled
+message:N1006=Discovery disabled
+message:N1007=Listening at %1:%2
+message:N1008=Loaded settings
+message:N1009=Saved settings
+message:N1010=Edit mode: enabled
+message:N1011=Edit mode: disabled
+message:N1012=Communication: enabled
+message:N1013=Communication: disabled
+message:N1014=Power: on
+message:N1015=Power: off
+message:N1016=Running
+message:N1017=Stopped
+message:N1018=Mute: enabled
+message:N1019=Mute: disabled
+message:N1020=Smoke: enabled
+message:N1021=Smoke: disabled
+message:N1022=Saved world: %1
+message:N9999=%1
+message:W1001=Discovery disabled, only allowed on port %1
+message:W1002=Setting %1 doesnt exist
+message:W2001=Received malformed data dropped %1 bytes
+message:W2002=Command station doesn't support functions above F%1
+message:W2003=Command station doesn't support %1 speedsteps using %2
+message:W9999=%1
+
 object:id=Id
 object:name=Name
 object:notes=Notes
@@ -227,7 +310,7 @@ qtapp.mainmenu:restart_server=Restart server
 qtapp.mainmenu:restart_server_question=Are you sure you want to restart the server?
 qtapp.mainmenu:save_world=Save world
 qtapp.mainmenu:server=Server
-qtapp.mainmenu:server_console=Server console
+qtapp.mainmenu:server_log=Server log
 qtapp.mainmenu:server_settings=Server settings
 qtapp.mainmenu:settings=Settings
 qtapp.mainmenu:shutdown_server=Shutdown server
@@ -277,6 +360,11 @@ sensor_type:reed_switch=Reed switch
 
 serial_flow_control:hardware=Hardware
 serial_flow_control:none=None
+
+server_log:code=Code
+server_log:message=Message
+server_log:object=Object
+server_log:time=Time
 
 settings:default_world=Default world
 settings:localhost_only=Localhost only

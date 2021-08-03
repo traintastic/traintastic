@@ -1,9 +1,9 @@
 /**
- * server/src/core/stdfilesystem.hpp
+ * shared/src/traintastic/utils/standardpaths.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,16 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_CORE_STDFILESYSTEM_HPP
-#define TRAINTASTIC_SERVER_CORE_STDFILESYSTEM_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_UTILS_STANDARDPATHS_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_UTILS_STANDARDPATHS_HPP
 
-#if defined(__GNUC__) && __GNUC__ < 8 && !defined(__APPLE__)
-  #include <experimental/filesystem>
-  namespace std {
-    namespace filesystem = experimental::filesystem::v1;
-  }
-#else
-  #include <filesystem>
+#include "stdfilesystem.hpp"
+
+#ifdef WIN32
+std::filesystem::path getLocalAppDataPath();
 #endif
+
+std::filesystem::path getLocalePath();
 
 #endif

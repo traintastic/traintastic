@@ -43,7 +43,7 @@
 #include "network/method.hpp"
 //#include "subwindow/objecteditsubwindow.hpp"
 #include "subwindow/objectsubwindow.hpp"
-#include "widget/serverconsolewidget.hpp"
+#include "widget/serverlogwidget.hpp"
 #include "utils/menu.hpp"
 #include "theme/theme.hpp"
 
@@ -74,7 +74,7 @@ MainWindow::MainWindow(QWidget* parent) :
   QMainWindow(parent),
   m_splitter{new QSplitter(Qt::Vertical, this)},
   m_mdiArea{new MdiArea(m_splitter)},
-  m_serverConsole{nullptr},
+  m_serverLog{nullptr},
   m_toolbar{new QToolBar(this)}
 {
   instance = this;
@@ -128,9 +128,9 @@ MainWindow::MainWindow(QWidget* parent) :
     m_actionFullScreen->setShortcut(Qt::Key_F11);
     m_actionViewToolbar = menu->addAction(Locale::tr("qtapp.mainmenu:toolbar"), m_toolbar, &QToolBar::setVisible);
     m_actionViewToolbar->setCheckable(true);
-    m_actionServerConsole = menu->addAction(Locale::tr("qtapp.mainmenu:server_console") + "...", this, &MainWindow::toggleConsole);//[this](){ showObject("traintastic.console"); });
-    m_actionServerConsole->setCheckable(true);
-    m_actionServerConsole->setShortcut(Qt::Key_F12);
+    m_actionServerLog = menu->addAction(Locale::tr("qtapp.mainmenu:server_log") + "...", this, &MainWindow::toggleServerLog);
+    m_actionServerLog->setCheckable(true);
+    m_actionServerLog->setShortcut(Qt::Key_F12);
 
     m_menuWorld = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:world"));
     m_menuConnection = m_menuWorld->addMenu(Locale::tr("qtapp.mainmenu:connection"));
@@ -468,19 +468,19 @@ void MainWindow::toggleFullScreen()
   }
 }
 
-void MainWindow::toggleConsole()
+void MainWindow::toggleServerLog()
 {
-  if(m_serverConsole)
+  if(m_serverLog)
   {
-    delete m_serverConsole;
-    m_serverConsole = nullptr;
-    m_actionServerConsole->setChecked(false);
+    delete m_serverLog;
+    m_serverLog = nullptr;
+    m_actionServerLog->setChecked(false);
   }
   else
   {
-    m_serverConsole = new ServerConsoleWidget(m_splitter);
-    m_splitter->addWidget(m_serverConsole);
-    m_actionServerConsole->setChecked(true);
+    m_serverLog = new ServerLogWidget(connection(), m_splitter);
+    m_splitter->addWidget(m_serverLog);
+    m_actionServerLog->setChecked(true);
   }
 }
 
@@ -581,19 +581,19 @@ void MainWindow::connectionStateChanged()
 
   m_mdiArea->setEnabled(connected);
 
-  if(connected && m_actionServerConsole->isChecked() && !m_serverConsole)
+  if(connected && m_actionServerLog->isChecked() && !m_serverLog)
   {
-    m_serverConsole = new ServerConsoleWidget(m_splitter);
-    m_splitter->addWidget(m_serverConsole);
+    m_serverLog = new ServerLogWidget(m_connection, m_splitter);
+    m_splitter->addWidget(m_serverLog);
   }
 
   if(m_connection && m_connection->state() == Connection::State::Disconnected)
   {
     m_connection.reset();
-    if(m_serverConsole)
+    if(m_serverLog)
     {
-      delete m_serverConsole;
-      m_serverConsole = nullptr;
+      delete m_serverLog;
+      m_serverLog = nullptr;
     }
     worldChanged();
   }
@@ -619,7 +619,7 @@ void MainWindow::updateActions()
   m_actionImportWorld->setEnabled(haveWorld    && false);
   m_actionExportWorld->setEnabled(haveWorld    && false);
 
-  m_actionServerConsole->setEnabled(connected);
+  m_actionServerLog->setEnabled(connected);
   m_menuServer->setEnabled(connected);
   m_actionServerSettings->setEnabled(connected);
   if(connected)

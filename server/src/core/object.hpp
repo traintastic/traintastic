@@ -62,14 +62,6 @@ class Object : public std::enable_shared_from_this<Object>
     virtual void loaded();
     virtual void worldEvent(WorldState state, WorldEvent event);
 
-    void logDebug(const std::string& message);
-    void logInfo(const std::string& message);
-    void logNotice(const std::string& message);
-    void logWarning(const std::string& message);
-    void logError(const std::string& message);
-    void logCritical(const std::string& message);
-    void logFatal(const std::string& message);
-
   public:
     boost::signals2::signal<void (BaseProperty&)> propertyChanged;
     boost::signals2::signal<void (AbstractAttribute&)> attributeChanged;

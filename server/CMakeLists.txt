@@ -82,6 +82,8 @@ file(GLOB SOURCES
   "src/hardware/protocol/xpressnet/*.cpp"
   "src/hardware/protocol/z21/*.hpp"
   "src/hardware/protocol/z21/*.cpp"
+  "src/log/*.hpp"
+  "src/log/*.cpp"
   "src/train/*.hpp"
   "src/train/*.cpp"
   "src/vehicle/*.hpp"
@@ -92,6 +94,8 @@ file(GLOB SOURCES
   "src/utils/*.cpp"
   "src/world/*.hpp"
   "src/world/*.cpp"
+  "../shared/src/traintastic/locale/locale.cpp"
+  "../shared/src/traintastic/utils/standardpaths.cpp"
   "thirdparty/boost/libs/program_options/src/*.cpp")
 
 file(GLOB TEST_SOURCES

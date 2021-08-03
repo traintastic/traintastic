@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,9 +27,10 @@
 #include "options.hpp"
 #include "core/eventloop.hpp"
 #include "core/traintastic.hpp"
+#include "log/log.hpp"
+#include <traintastic/locale/locale.hpp>
+#include <traintastic/utils/standardpaths.hpp>
 #ifdef WIN32
-  #include <windows.h>
-  #include <shlobj.h>
   #include "os/windows/consolewindow.hpp"
   #include "os/windows/trayicon.hpp"
 #endif
@@ -48,18 +49,11 @@ void signalHandler(int signum)
       EventLoop::call(
         [signum]()
         {
-          Traintastic::instance->console->notice(Traintastic::id, std::string("Received signal: ") + strsignal(signum));
+          Log::log(*Traintastic::instance, LogMessage::N1001_RECEIVED_SIGNAL_X, std::string_view{strsignal(signum)});
           Traintastic::instance->exit();
         });
       break;
     }
-    default:
-      EventLoop::call(
-        [signum]()
-        {
-          Traintastic::instance->console->warning(Traintastic::id, std::string("Received unknown signal: ") + strsignal(signum));
-        });
-      break;
   }
 }
 #endif
@@ -76,14 +70,13 @@ int main(int argc, char* argv[])
     if(const char* home = getenv("HOME"))
       dataDir += std::filesystem::path(home) / ".config" / "traintastic-server";
 #elif defined(WIN32)
-    PWSTR localAppDataPath = nullptr;
-    HRESULT r = SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, nullptr, &localAppDataPath);
-    if(r == S_OK)
-      dataDir = std::filesystem::path(localAppDataPath) / "traintastic-server";
-    if(localAppDataPath)
-      CoTaskMemFree(localAppDataPath);
+    dataDir = getLocalAppDataPath() / "traintastic" / "server";
 #endif
   }
+
+  Locale::instance = new Locale(getLocalePath() / "en-us.txt");
+
+  bool enableConsoleLogger = true;
 
 #ifdef __unix__
 /*
@@ -151,8 +144,14 @@ int main(int argc, char* argv[])
   signal(SIGQUIT, signalHandler);
 #elif defined(WIN32)
   if(options.tray)
+  {
     Windows::setConsoleWindowVisible(false);
+    enableConsoleLogger = false;
+  }
 #endif
+
+  if(enableConsoleLogger)
+    Log::enableConsoleLogger();
 
   int status = EXIT_SUCCESS;
   bool restart = false;
@@ -160,6 +159,20 @@ int main(int argc, char* argv[])
   do
   {
     restart = false;
+
+    {
+      const auto settings = Settings::getPreStartSettings(dataDir);
+
+      if(settings.memoryLoggerSize > 0)
+        Log::enableMemoryLogger(settings.memoryLoggerSize);
+      else
+        Log::disableMemoryLogger();
+
+      if(settings.enableFileLogger)
+        Log::enableFileLogger(dataDir / "log" / "traintastic.txt");
+      else
+        Log::disableFileLogger();
+    }
 
     EventLoop::start();
 #ifdef WIN32

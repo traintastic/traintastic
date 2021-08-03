@@ -25,6 +25,7 @@
 #include <QUrl>
 #include <QCryptographicHash>
 #include <traintastic/network/message.hpp>
+#include "serverlogtablemodel.hpp"
 #include "object.hpp"
 #include "property.hpp"
 #include "unitproperty.hpp"
@@ -138,6 +139,7 @@ Connection::Connection() :
   m_state{State::Disconnected},
   m_worldProperty{nullptr},
   m_worldRequestId{invalidRequestId}
+  , m_serverLogTableModel{nullptr}
 {
   connect(m_socket, &QTcpSocket::connected, this, &Connection::socketConnected);
   connect(m_socket, &QTcpSocket::disconnected, this, &Connection::socketDisconnected);
@@ -193,6 +195,17 @@ void Connection::cancelRequest(int requestId)
   if(it != m_requestCallback.end())
     m_requestCallback.erase(it);
 }
+
+void Connection::serverLog(ServerLogTableModel& model, bool enable)
+{
+  assert(enable || m_serverLogTableModel == &model);
+  m_serverLogTableModel = enable ? &model : nullptr;
+
+  std::unique_ptr<Message> request{Message::newEvent(Message::Command::ServerLog)};
+  request->write(enable);
+  send(request);
+}
+
 /*
 int Connection::createObject(const QString& classId, const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
 {
@@ -701,6 +714,11 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
   {
     switch(message->command())
     {
+      case Message::Command::ServerLog:
+        if(m_serverLogTableModel)
+          m_serverLogTableModel->processMessage(*message);
+        break;
+
       case Message::Command::ReleaseObject:
       {
         Handle handle = message->read<Handle>();

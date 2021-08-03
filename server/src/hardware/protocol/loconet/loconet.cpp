@@ -31,6 +31,7 @@
 #include "../../../core/attributes.hpp"
 #include "../../../world/getworld.hpp"
 #include "loconetlisttablemodel.hpp"
+#include "../../../log/log.hpp"
 
 namespace LocoNet {
 
@@ -109,7 +110,7 @@ LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::fu
 bool LocoNet::send(const Message& message)
 {
   if(m_debugLogRXTX)
-    logDebug("tx: " + toString(message));
+    Log::log(*this, LogMessage::D2001_TX_X, message);
   assert(isValid(message));
   return m_send(message);
 }
@@ -143,7 +144,7 @@ void LocoNet::receive(const Message& message)
   assert(isValid(message));
 
   if(m_debugLogRXTX)
-    EventLoop::call([this, log="rx: " + toString(message)](){ logDebug(log); });
+    EventLoop::call([this, msg=toString(message)](){ Log::log(*this, LogMessage::D2002_RX_X, msg); });
 
   switch(message.opCode)
   {
@@ -237,7 +238,7 @@ void LocoNet::receive(const Message& message)
           const uint16_t address = 1 + inputRep.fullAddress();
 
           if(debugLogInput)
-            logDebug(std::string("input ").append(std::to_string(address)).append(" = ").append(inputRep.value() ? "1" : "0"));
+            Log::log(*this, LogMessage::D2007_INPUT_X_IS_X, address, inputRep.value() ? std::string_view{"1"} : std::string_view{"0"});
 
           auto it = m_inputs.find(address);
           if(it != m_inputs.end())
@@ -254,7 +255,7 @@ void LocoNet::receive(const Message& message)
           const uint16_t address = 1 + switchRequest.fullAddress();
 
           if(debugLogOutput)
-            logDebug(std::string("output ").append(std::to_string(address)).append(" = ").append(switchRequest.on() ? "on" : "off"));
+            Log::log(*this, LogMessage::D2008_OUTPUT_X_IS_X, address, switchRequest.on() ? std::string_view{"1"} : std::string_view{"0"});
 
           auto it = m_outputs.find(address);
           if(it != m_outputs.end())
@@ -281,7 +282,7 @@ void LocoNet::receive(const Message& message)
           {
             m_slots.set(slotReadData.address(), slotReadData.slot);
 
-            logDebug("slot " + std::to_string(slotReadData.slot) + " = " + std::to_string(slotReadData.address()));
+            Log::log(*this, LogMessage::D2009_SLOT_X_IS_X, slotReadData.slot, slotReadData.address());
 
             if(auto decoder = getDecoder(slotReadData.slot, false))
             {
@@ -299,7 +300,7 @@ void LocoNet::receive(const Message& message)
             }
           }
           else
-            logDebug("slot " + std::to_string(slotReadData.slot) + " = FREE");
+            Log::log(*this, LogMessage::D2010_SLOT_X_IS_FREE, slotReadData.slot);
         });
       break;
   }
@@ -393,8 +394,6 @@ void LocoNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes,
         decoder.getFunctionValue(27)};
       send(decoder.address, message);
     }
-    else
-      logWarning("Function F" + std::to_string(functionNumber) + " not supported");
   }
 }
 

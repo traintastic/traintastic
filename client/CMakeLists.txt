@@ -51,6 +51,7 @@ file(GLOB SOURCES
   "src/widget/object/*.hpp"
   "src/widget/object/*.cpp"
   "../shared/src/traintastic/locale/locale.cpp"
+  "../shared/src/traintastic/utils/standardpaths.cpp"
   "thirdparty/QtWaitingSpinner/*.hpp"
   "thirdparty/QtWaitingSpinner/*.cpp")
 
@@ -65,6 +66,17 @@ target_link_libraries(traintastic-client PRIVATE Qt5::Widgets Qt5::Network Qt5::
 if(WIN32)
   target_sources(traintastic-client PRIVATE ../shared/gfx/appicon.rc src/version.rc)
   set_property(TARGET traintastic-client PROPERTY WIN32_EXECUTABLE true)
+endif()
+
+### COMPILER ###
+
+if(MSVC)
+
+else()
+
+  if(NOT APPLE)
+    target_link_libraries(traintastic-client PRIVATE stdc++fs)
+  endif()
 endif()
 
 ### INSTALL ###

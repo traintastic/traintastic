@@ -13,7 +13,7 @@ class HTMLBuilder(Builder):
             html = pycmarkgfm.gfm_to_html(md.read())
 
         # parse id
-        html = re.sub(r'<h([1-6])([^>]*)>([^>]*) {#([a-z0-9-]+)}</h\1>', r'<h\1\2 id="\4">\3</h\1>', html)
+        html = re.sub(r'<h([1-6])([^>]*)>(.*) {#([a-z0-9-]+)}</h\1>', r'<h\1\2 id="\4">\3</h\1>', html)
 
         # replace -> by
         html = re.sub(r'-&gt;', '\u2794', html)

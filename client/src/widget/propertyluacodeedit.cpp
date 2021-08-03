@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -182,7 +182,7 @@ PropertyLuaCodeEdit::Highlighter::Highlighter(QTextDocument* parent) :
     m_rules.append(Rule(regex, Qt::magenta));
 
   const auto globals = {
-    QStringLiteral("\\bconsole(?=\\.)"),
+    QStringLiteral("\\log(?=\\.)"),
     QStringLiteral("\\bworld(?=\\.)"),
     QStringLiteral("\\bset(?=\\.)"),
     QStringLiteral("\\benum(?=\\.)"),

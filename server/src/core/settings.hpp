@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,12 +24,26 @@
 #define TRAINTASTIC_SERVER_CORE_SETTINGS_HPP
 
 #include "object.hpp"
-#include "stdfilesystem.hpp"
+#include <traintastic/utils/stdfilesystem.hpp>
 #include "property.hpp"
 
 class Settings : public Object
 {
-  protected:
+  private:
+    static constexpr std::string_view filename = "settings.json";
+
+    struct Name
+    {
+      static constexpr const char* memoryLoggerSize = "memory_logger_size";
+      static constexpr const char* enableFileLogger = "enable_file_logger";
+    };
+
+    struct Default
+    {
+      static constexpr uint32_t memoryLoggerSize = 1000;
+      static constexpr bool enableFileLogger = false;
+    };
+
     const std::filesystem::path m_filename;
 
     void load();
@@ -38,8 +52,16 @@ class Settings : public Object
   public:
     CLASS_ID("settings")
 
+    struct PreStart
+    {
+      uint32_t memoryLoggerSize = Default::memoryLoggerSize;
+      bool enableFileLogger = Default::enableFileLogger;
+    };
+
     static constexpr std::string_view id = classId;
     static constexpr uint16_t defaultPort = 5740; //!< unoffical, not (yet) assigned by IANA
+
+    static PreStart getPreStartSettings(const std::filesystem::path& path);
 
     Property<bool> localhostOnly;
     Property<uint16_t> port;
@@ -48,8 +70,10 @@ class Settings : public Object
     Property<bool> autoSaveWorldOnExit;
     Property<bool> allowClientServerRestart;
     Property<bool> allowClientServerShutdown;
+    Property<uint32_t> memoryLoggerSize;
+    Property<bool> enableFileLogger;
 
-    Settings(const std::filesystem::path& filename);
+    Settings(const std::filesystem::path& path);
 
     std::string getObjectId() const final { return std::string(id); }
 };

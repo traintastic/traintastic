@@ -24,7 +24,7 @@
 #include "push.hpp"
 #include "object.hpp"
 #include "method.hpp"
-#include "console.hpp"
+#include "log.hpp"
 #include <traintastic/utils/str.hpp>
 #include <traintastic/codename.hpp>
 #include "../world/world.hpp"
@@ -89,9 +89,9 @@ SandboxPtr Sandbox::create(Script& script)
   push(L, std::static_pointer_cast<::Object>(script.world().lock()));
   lua_setfield(L, -2, "world");
 
-  // add console:
-  Console::push(L);
-  lua_setfield(L, -2, "console");
+  // add logger:
+  Log::push(L);
+  lua_setfield(L, -2, "log");
 
   // add enum values:
   lua_newtable(L);

@@ -24,6 +24,7 @@
 #include "../../core/traintastic.hpp"
 #include "../../core/eventloop.hpp"
 #include "../../core/attributes.hpp"
+#include "../../log/log.hpp"
 
 LocoNetTCPBinary::LocoNetTCPBinary(const std::weak_ptr<World>& world, std::string_view _id) :
   CommandStation(world, _id),
@@ -53,14 +54,14 @@ bool LocoNetTCPBinary::setOnline(bool& value)
     endpoint.address(boost::asio::ip::make_address(hostname, ec));
     if(ec)
     {
-      logError("make_address: " + ec.message());
+      Log::log(*this, LogMessage::E2003_MAKE_ADDRESS_FAILED_X, ec);
       return false;
     }
 
     m_socket.connect(endpoint, ec);
     if(ec)
     {
-      logError("connect: " + ec.message());
+      Log::log(*this, LogMessage::E2005_SOCKET_CONNECT_FAILED_X, ec);
       return false;
     }
 
@@ -134,7 +135,7 @@ void LocoNetTCPBinary::receive()
             EventLoop::call(
               [this, drop]()
               {
-                logWarning("received malformed data, dropped " + std::to_string(drop) + " byte(s)");
+                Log::log(*this, LogMessage::W2001_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES, drop);
               });
           }
           else if(message->size() <= bytesTransferred)
@@ -157,7 +158,7 @@ void LocoNetTCPBinary::receive()
         EventLoop::call(
           [this, ec]()
           {
-            logError("async_read_some: " + ec.message());
+            Log::log(*this, LogMessage::E2008_SOCKET_READ_FAILED_X, ec);
             online = false;
           });
     });
@@ -177,7 +178,7 @@ bool LocoNetTCPBinary::send(const LocoNet::Message& message)
     todo -= m_socket.write_some(boost::asio::buffer(static_cast<const void*>(&message), message.size()), ec);
     if(ec)
     {
-      logError("write: " + ec.message());
+      Log::log(*this, LogMessage::E2007_SOCKET_WRITE_FAILED_X, ec);
       return false;
     }
   }

@@ -28,7 +28,6 @@
 #include <QCommandLineParser>
 #include <version.hpp>
 #include "mainwindow.hpp"
-#include "utils/getlocalepath.hpp"
 //#include "network/client.hpp"
 #include "settings/generalsettings.hpp"
 #include "settings/developersettings.hpp"
@@ -36,6 +35,7 @@
 #include "style/materiallightstyle.hpp"
 #include "theme/theme.hpp"
 #include <traintastic/locale/locale.hpp>
+#include <traintastic/utils/standardpaths.hpp>
 
 struct Options
 {
@@ -87,9 +87,9 @@ int main(int argc, char* argv[])
 
   Locale* fallback = nullptr;
   if(language != languageDefault && DeveloperSettings::instance().dontLoadFallbackLanguage)
-    fallback = new Locale(getLocalePath().toStdString() + "/" + languageDefault.toStdString() + ".txt");
+    fallback = new Locale(getLocalePath() / languageDefault.toStdString().append(".txt"));
 
-  Locale::instance = new Locale(getLocalePath().toStdString() + "/" + language.toStdString() + ".txt", fallback);
+  Locale::instance = new Locale(getLocalePath() / language.toStdString().append(".txt"), fallback);
 
   // Auto select icon set based on background color lightness:
   const qreal backgroundLightness = QApplication::style()->standardPalette().window().color().lightnessF();

@@ -24,6 +24,7 @@
 #include "../../core/traintastic.hpp"
 #include "../../core/eventloop.hpp"
 #include "../../core/attributes.hpp"
+#include "../../log/log.hpp"
 
 LocoNetSerial::LocoNetSerial(const std::weak_ptr<World>& world, std::string_view _id) :
   SerialCommandStation(world, _id),
@@ -89,7 +90,7 @@ bool LocoNetSerial::send(const LocoNet::Message& message)
   m_serialPort.write_some(boost::asio::buffer(static_cast<const void*>(&message), message.size()), ec); // TODO async
   if(ec)
   {
-    logError("write_some: " + ec.message());
+    Log::log(*this, LogMessage::E2001_SERIAL_WRITE_FAILED_X, ec);
     return false;
   }
   return true;
@@ -128,7 +129,7 @@ void LocoNetSerial::read()
             EventLoop::call(
               [this, drop]()
               {
-                logWarning("received malformed data, dropped " + std::to_string(drop) + " byte(s)");
+                Log::log(*this, LogMessage::W2001_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES, drop);
               });
           }
           else if(message->size() <= bytesTransferred)
@@ -151,7 +152,7 @@ void LocoNetSerial::read()
         EventLoop::call(
           [this, ec]()
           {
-            logError("async_read_some: " + ec.message());
+            Log::log(*this, LogMessage::E2002_SERIAL_READ_FAILED_X, ec);
             online = false;
           });
     });

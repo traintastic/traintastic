@@ -57,21 +57,21 @@ bool USBXpressNetController::setActive(bool& value)
     usbxpressnet_status status = usbxpressnet_open(!serial.value().empty() ? serial.value().c_str() : nullptr, &m_handle);
     if(status != USBXPRESSNET_STATUS_SUCCESS)
     {
-      logError(std::string("usbxpressnet_open: ") + usbxpressnet_status_str(status));
+      // \todo Log::log(*this, LogMessage::E0001_X, std::string("usbxpressnet_open: ") + usbxpressnet_status_str(status));
       return false;
     }
 
     status = usbxpressnet_reset(m_handle);
     if(status != USBXPRESSNET_STATUS_SUCCESS)
     {
-      logError(std::string("usbxpressnet_reset: ") + usbxpressnet_status_str(status));
+      // \todo Log::log(*this, LogMessage::E0001_X, std::string("usbxpressnet_reset: ") + usbxpressnet_status_str(status));
       return false;
     }
 
     status = usbxpressnet_set_mode(m_handle, USBXPRESSNET_MODE_STATION, 0);
     if(status != USBXPRESSNET_STATUS_SUCCESS)
     {
-      logError(std::string("usbxpressnet_set_mode: ") + usbxpressnet_status_str(status));
+      // \todo Log::log(*this, LogMessage::E0001_X, std::string("usbxpressnet_set_mode: ") + usbxpressnet_status_str(status));
       return false;
     }
   }

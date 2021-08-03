@@ -23,6 +23,7 @@
 #include "loconetinput.hpp"
 #include "../../core/attributes.hpp"
 #include "../../world/world.hpp"
+#include "../../log/log.hpp"
 
 LocoNetInput::LocoNetInput(const std::weak_ptr<World> world, std::string_view _id) :
   Input(world, _id),
@@ -63,7 +64,7 @@ void LocoNetInput::loaded()
   {
     if(!loconet->addInput(*this))
     {
-      logCritical("address in use (" + loconet->getObjectId() + ")");
+      Log::log(*this, LogMessage::C2001_ADDRESS_ALREADY_USED_AT_X, *loconet);
       loconet.setValueInternal(nullptr);
     }
   }

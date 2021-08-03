@@ -26,6 +26,7 @@
 #include "../../decoder/decoder.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../input/xpressnetinput.hpp"
+#include "../../../log/log.hpp"
 
 namespace XpressNet {
 
@@ -114,7 +115,7 @@ void XpressNet::receive(const Message& message)
   assert(isChecksumValid(message));
 
   if(m_debugLog)
-    EventLoop::call([this, log="rx: " + toString(message)](){ logDebug(log); });
+    EventLoop::call([this, data=toString(message)](){ Log::log(*this, LogMessage::D2002_RX_X, data); });
 
   if(m_commandStation)
   {
@@ -199,8 +200,6 @@ void XpressNet::powerOnChanged(bool value)
 
 void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
-  logDebug("XpressNet::decoderChanged");
-
   if(useEmergencyStopLocomotiveCommand && changes == DecoderChangeFlags::EmergencyStop && decoder.emergencyStop)
     send(EmergencyStopLocomotive(
           decoder.address,
@@ -315,8 +314,6 @@ void XpressNet::decoderChanged(const Decoder& decoder, DecoderChangeFlags change
         decoder.getFunctionValue(26),
         decoder.getFunctionValue(27),
         decoder.getFunctionValue(28)));
-    else
-      logWarning("Function F" + std::to_string(functionNumber) + " not supported");
   }
 }
 

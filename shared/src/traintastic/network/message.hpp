@@ -46,7 +46,7 @@ class Message
       Login = 2,
       NewSession = 3,
       //RestoreSession = 4,
-      //NewWorld = 5,
+      ServerLog = 5,
       //GetWorldList = 6,
       //LoadWorld = 7,
       //SaveWorld = 8,

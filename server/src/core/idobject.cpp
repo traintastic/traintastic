@@ -1,7 +1,7 @@
 /**
  * Traintastic
  *
- * Copyright (C) 2019-2020 Reinder Feenstra <reinderfeenstra@gmail.com>
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,6 @@
 
 #include "idobject.hpp"
 #include "traintastic.hpp"
-#include "console.hpp"
 #include "../world/getworld.hpp"
 #include "attributes.hpp"
 #include "../utils/displayname.hpp"

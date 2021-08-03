@@ -24,6 +24,7 @@
 #include <fstream>
 #include <boost/uuid/string_generator.hpp>
 #include "../core/traintastic.hpp"
+#include "../log/log.hpp"
 #include "worldlisttablemodel.hpp"
 
 using nlohmann::json;
@@ -49,8 +50,7 @@ const WorldList::WorldInfo* WorldList::find(const boost::uuids::uuid& uuid)
 
 void WorldList::buildIndex()
 {
-  auto& console = *Traintastic::instance->console;
-  console.info(Traintastic::id, "Building world index");
+  Log::log(*Traintastic::instance, LogMessage::I1005_BUILDING_WORLD_INDEX);
 
   m_items.clear();
 
@@ -84,7 +84,7 @@ void WorldList::buildIndex()
         }
         catch(const std::exception& e)
         {
-          console.critical(Traintastic::id, std::string(e.what()) + " (" + worldFile.string() + ")");
+          Log::log(*Traintastic::instance, LogMessage::C1004_READING_WORLD_FAILED_X_X, e, worldFile);
         }
       }
     }

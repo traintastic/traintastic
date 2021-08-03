@@ -33,6 +33,7 @@
 #include "tablemodelptr.hpp"
 
 class Client;
+class MemoryLogger;
 class BaseProperty;
 class AbstractProperty;
 class AbstractVectorProperty;
@@ -53,6 +54,8 @@ class Session : public std::enable_shared_from_this<Session>
     static void writeVectorPropertyValue(Message& message, const AbstractVectorProperty& vectorProperty);
     static void writeAttribute(Message& message, const AbstractAttribute& attribute);
 
+    boost::signals2::connection m_memoryLoggerChanged;
+
   protected:
     using Handle = uint32_t;
     using Handles = HandleList<Handle, ObjectPtr>;
@@ -66,6 +69,8 @@ class Session : public std::enable_shared_from_this<Session>
 
     void writeObject(Message& message, const ObjectPtr& object);
     void writeTableModel(Message& message, const TableModelPtr& model);
+
+    void memoryLoggerChanged(const MemoryLogger& logger, uint32_t added, uint32_t removed);
 
     void objectPropertyChanged(BaseProperty& property);
     void objectAttributeChanged(AbstractAttribute& attribute);

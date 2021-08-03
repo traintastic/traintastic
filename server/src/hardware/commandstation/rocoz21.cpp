@@ -29,6 +29,7 @@
 #include "../protocol/xpressnet/messages.hpp"
 #include "../protocol/z21/messages.hpp"
 #include "../../utils/tohex.hpp"
+#include "../../log/log.hpp"
 
 
 
@@ -237,19 +238,19 @@ bool RocoZ21::setOnline(bool& value)
     m_remoteEndpoint.address(boost::asio::ip::make_address(hostname, ec));
     if(ec)
     {
-      logError("make_address: " + ec.message());
+      Log::log(*this, LogMessage::E2003_MAKE_ADDRESS_FAILED_X, ec);
       return false;
     }
 
     if(m_socket.open(boost::asio::ip::udp::v4(), ec))
     {
-      logError("socket.open: " + ec.message());
+      Log::log(*this, LogMessage::E2004_SOCKET_OPEN_FAILED_X, ec);
       return false;
     }
     else if(m_socket.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::address_v4::any(), port), ec))
     {
       m_socket.close();
-      logError("socket.bind: " + ec.message());
+      Log::log(*this, LogMessage::E2006_SOCKET_BIND_FAILED_X, ec);
       return false;
     }
 
@@ -415,7 +416,7 @@ void RocoZ21::receive()
                   break;
 
                 default:
-                  EventLoop::call([this, xheader](){ logDebug("unknown xheader 0x" + toHex(xheader)); });
+                  EventLoop::call([this, xheader](){ Log::log(*this, LogMessage::D2003_UNKNOWN_XHEADER_0XX, toHex(xheader)); });
                   break;
               }
               break;
@@ -466,7 +467,6 @@ void RocoZ21::receive()
                       " address=" + std::to_string(inputRep->address()) +
                       " input="  + (inputRep->isAuxInput() ? "aux" : "switch") +
                       " value=" + (inputRep->value() ? "high" : "low");
-                    EventLoop::call([this, message](){ logDebug(id, message); });
                   }
 
 
@@ -480,7 +480,6 @@ void RocoZ21::receive()
                     std::string message = "unknown loconet message: ";
                     for(int i = 4; i < cmd->dataLen; i++)
                       message += toHex(reinterpret_cast<const uint8_t*>(cmd)[i]);
-                    EventLoop::call([this, message](){ logDebug(id, message); });
                   }
                   break;
               }
@@ -491,14 +490,14 @@ void RocoZ21::receive()
             default:
               //if(debugEnabled)
               {
-                std::string log = "unknown message: dataLen=0x" + toHex(message->dataLen()) + ", header=0x" + toHex(message->header());
+                std::string data = "dataLen=0x" + toHex(message->dataLen()) + ", header=0x" + toHex(message->header());
                 if(message->dataLen() > 4)
                 {
-                  log += ", data=";
+                  data += ", data=";
                   for(int i = sizeof(Z21::Message); i < message->dataLen(); i++)
-                    log += toHex(reinterpret_cast<const uint8_t*>(message)[i]);
+                    data += toHex(reinterpret_cast<const uint8_t*>(message)[i]);
                 }
-                EventLoop::call([this, log](){ logDebug(log); });
+                EventLoop::call([this, data](){ Log::log(*this, LogMessage::D2006_UNKNOWN_MESSAGE_X, data); });
               }
               break;
           }
@@ -506,7 +505,7 @@ void RocoZ21::receive()
         receive();
       }
       else
-        EventLoop::call([this, ec](){ logError("socket.async_receive_from: " + ec.message()); });
+        EventLoop::call([this, ec](){ Log::log(*this, LogMessage::E2009_SOCKET_RECEIVE_FAILED_X, ec); });
     });
 }
 
@@ -519,12 +518,12 @@ void RocoZ21::send(const Z21::Message& message)
   boost::system::error_code ec;
   m_socket.send_to(boost::asio::buffer(&message, message.dataLen()), m_remoteEndpoint, 0, ec);
   if(ec)
-     logError("socket.send_to: " + ec.message());
+     Log::log(*this, LogMessage::E2011_SOCKET_SEND_FAILED_X, ec);
 /*
   m_socket.send_to(boost::asio:buffer(&message, message.dataLen()), 0, m_remoteEndpoint);,
     [this](const boost::system::error_code& ec, std::size_t)
     {
       if(ec)
-         EventLoop::call([this, ec](){ logError(id, "socket.async_send_to: " + ec.message()); });
+         EventLoop::call([this, ec](){ Log::log(*this, LogMessage::E2011_SOCKET_SEND_FAILED_X, ec); });
     });*/
 }

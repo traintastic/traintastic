@@ -31,6 +31,7 @@
 #include "../world/worldloader.hpp"
 #include "../world/worldsaver.hpp"
 #include "../utils/displayname.hpp"
+#include "../log/log.hpp"
 
 namespace Lua {
 
@@ -169,7 +170,7 @@ void Script::startSandbox()
     {
       error.setValueInternal(lua_tostring(L, -1));
       setState(LuaScriptState::Error);
-      logFatal(error);
+      Log::log(*this, LogMessage::F9002_RUNNING_SCRIPT_FAILED_X, error.value());
       lua_pop(L, 1); // pop error message from the stack
       stopSandbox();
     }
@@ -178,7 +179,7 @@ void Script::startSandbox()
   {
     error.setValueInternal("creating lua state failed");
     setState(LuaScriptState::Error);
-    logFatal(error);
+    Log::log(*this, LogMessage::F9001_CREATING_LUA_STATE_FAILED);
   }
 }
 
@@ -195,7 +196,7 @@ bool Script::pcall(lua_State* L, int nargs, int nresults)
   const bool success = Sandbox::pcall(L, nargs, nresults) == LUA_OK;
   if(!success)
   {
-    logCritical(lua_tostring(L, -1));
+    Log::log(*this, LogMessage::F9003_CALLING_FUNCTION_FAILED_X, lua_tostring(L, -1));
     lua_pop(L, 1); // pop error message from the stack
   }
   return success;

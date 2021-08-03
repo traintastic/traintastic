@@ -1,9 +1,9 @@
 /**
- * server/src/lua/console.cpp - Lua console wrapper
+ * server/src/lua/log.cpp - Lua log wrapper
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,22 +20,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "console.hpp"
+#include "log.hpp"
 #include "readonlytable.hpp"
 #include "sandbox.hpp"
 #include "script.hpp"
 #include "object.hpp"
 #include "method.hpp"
-#include "../core/traintastic.hpp"
-
-
-
-
-#include "enum.hpp"
+#include "../log/log.hpp"
 
 namespace Lua {
 
-void Console::push(lua_State* L)
+void Log::push(lua_State* L)
 {
   lua_createtable(L, 0, 7);
 
@@ -57,12 +52,7 @@ void Console::push(lua_State* L)
   ReadOnlyTable::wrap(L, -1);
 }
 
-void Console::log(lua_State* L, ::Console::Level level, const std::string& message)
-{
-  Traintastic::instance->console->log(level, Sandbox::getStateData(L).script().id, message);
-}
-
-int Console::log(lua_State* L, ::Console::Level level)
+int Log::log(lua_State* L, LogMessage code)
 {
   const int top = lua_gettop(L);
 
@@ -71,7 +61,7 @@ int Console::log(lua_State* L, ::Console::Level level)
   {
     if(i != 1)
       message += " ";
-    if(level == ::Console::Level::Debug)
+    if(code == LogMessage::D9999_X)
     {
       switch(lua_type(L, i))
       {
@@ -106,13 +96,12 @@ int Console::log(lua_State* L, ::Console::Level level)
           message += luaL_typename(L, i);
           break;
       }
-
     }
     else
       message += luaL_checkstring(L, i);
   }
 
-  log(L, level, message);
+  ::Log::log(Sandbox::getStateData(L).script(), code, message);
 
   return 0;
 }

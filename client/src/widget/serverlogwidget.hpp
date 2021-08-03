@@ -1,9 +1,9 @@
 /**
- * server/src/core/consoletablemodel.hpp
+ * client/src/widget/serverlogwidget.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,29 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_CORE_CONSOLETABLEMODEL_HPP
-#define TRAINTASTIC_SERVER_CORE_CONSOLETABLEMODEL_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_SERVERLOGWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_SERVERLOGWIDGET_HPP
 
-#include "tablemodel.hpp"
+#include <QTableView>
+#include <memory>
 
-class Console;
+class Connection;
+class ServerLogTableModel;
 
-class ConsoleTableModel : public TableModel
+class ServerLogWidget final : public QTableView
 {
-  friend class Console;
+  private:
+    inline static QString settingColumSizes = QStringLiteral("server_log/column_sizes");
 
-  protected:
-    Console& m_console;
-
-    void logAdded();
+    ServerLogTableModel* m_model;
 
   public:
-    CLASS_ID("console_table_model")
-
-    ConsoleTableModel(Console& console);
-    ~ConsoleTableModel() final;
-
-    std::string getText(uint32_t column, uint32_t row) const final;
+    ServerLogWidget(std::shared_ptr<Connection> connection, QWidget* parent = nullptr);
+    ~ServerLogWidget() final;
 };
 
 #endif

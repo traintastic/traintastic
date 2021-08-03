@@ -23,6 +23,7 @@
 #include "dccplusplusserial.hpp"
 #include "../protocol/dccplusplus/messages.hpp"
 #include "../../core/eventloop.hpp"
+#include "../../log/log.hpp"
 
 DCCPlusPlusSerial::DCCPlusPlusSerial(const std::weak_ptr<World>& world, std::string_view _id) :
   SerialCommandStation(world, _id),
@@ -73,7 +74,7 @@ bool DCCPlusPlusSerial::send(std::string_view message)
     todo -= m_serialPort.write_some(boost::asio::buffer(message.data(), message.size()), ec);
     if(ec)
     {
-      logError("write: " + ec.message());
+      Log::log(*this, LogMessage::E2001_SERIAL_WRITE_FAILED_X, ec);
       return false;
     }
   }
@@ -119,7 +120,7 @@ void DCCPlusPlusSerial::read()
         EventLoop::call(
           [this, ec]()
           {
-            logError("async_read_some: " + ec.message());
+            Log::log(*this, LogMessage::E2002_SERIAL_READ_FAILED_X, ec);
             online = false;
           });
     });

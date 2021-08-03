@@ -26,7 +26,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include "../core/stdfilesystem.hpp"
+#include <traintastic/utils/stdfilesystem.hpp>
 #include "../core/objectptr.hpp"
 #include "../utils/json.hpp"
 

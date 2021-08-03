@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "loconetoutput.hpp"
 #include "../../core/attributes.hpp"
 #include "../../world/world.hpp"
+#include "../../log/log.hpp"
 
 LocoNetOutput::LocoNetOutput(const std::weak_ptr<World> world, std::string_view _id) :
   Output(world, _id),
@@ -63,7 +64,7 @@ void LocoNetOutput::loaded()
   {
     if(!loconet->addOutput(*this))
     {
-      logCritical("address in use (" + loconet->getObjectId() + ")");
+      Log::log(*this, LogMessage::C2001_ADDRESS_ALREADY_USED_AT_X, *loconet);
       loconet.setValueInternal(nullptr);
     }
   }

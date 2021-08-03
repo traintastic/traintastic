@@ -54,5 +54,12 @@
         <file>remove.svg</file>
         <file>down.svg</file>
         <file>up.svg</file>
+        <file>log.critical.svg</file>
+        <file>log.debug.svg</file>
+        <file>log.error.svg</file>
+        <file>log.fatal.svg</file>
+        <file>log.info.svg</file>
+        <file>log.notice.svg</file>
+        <file>log.warning.svg</file>
     </qresource>
 </RCC>

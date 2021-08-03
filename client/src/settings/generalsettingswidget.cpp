@@ -26,7 +26,7 @@
 #include <QDirIterator>
 #include <traintastic/locale/locale.hpp>
 #include "generalsettings.hpp"
-#include "../utils/getlocalepath.hpp"
+#include <traintastic/utils/standardpaths.hpp>
 
 static QString getLanguageName(const QString& filename)
 {
@@ -49,7 +49,7 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget* parent)
   // language:
   {
     QComboBox* cb = new QComboBox(this);
-    QDirIterator it(getLocalePath(), {"*.txt"}, QDir::Files | QDir::Readable);
+    QDirIterator it(QString::fromStdString(getLocalePath().string()), {"*.txt"}, QDir::Files | QDir::Readable);
     while(it.hasNext())
     {
       const QString filename = it.next();

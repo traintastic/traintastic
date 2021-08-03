@@ -28,6 +28,7 @@
 #include "../protocol/z21/messages.hpp"
 #include "../../utils/tohex.hpp"
 #include "../../core/attributes.hpp"
+#include "../../log/log.hpp"
 
 static std::string toString(const boost::asio::ip::udp::endpoint& endpoint)
 {
@@ -61,13 +62,13 @@ bool WLANmaus::setActive(bool& value)
 
     if(m_socket.open(boost::asio::ip::udp::v4(), ec))
     {
-      logError("socket.open: " + ec.message());
+      Log::log(*this, LogMessage::E2004_SOCKET_OPEN_FAILED_X, ec);
       return false;
     }
     else if(m_socket.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::address_v4::any(), port), ec))
     {
       m_socket.close();
-      logError("socket.bind: " + ec.message());
+      Log::log(*this, LogMessage::E2006_SOCKET_BIND_FAILED_X, ec);
       return false;
     }
 
@@ -123,8 +124,6 @@ void WLANmaus::decoderChanged(const Decoder& decoder, DecoderChangeFlags, uint32
   if(&decoder == m_blockLocoInfo)
     return;
 
-  //logDebug("loco info: speedStep=" + std::to_string(decoder.speedStep.value()));
-
   EventLoop::call(
     [this, dec=decoder.shared_ptr_c<const Decoder>()]()
     {
@@ -146,9 +145,9 @@ void WLANmaus::receive()
 
           if(m_debugLog)
             EventLoop::call(
-              [this, log=toString(m_receiveEndpoint) + " rx: " + Z21::toString(*message)]()
+              [this, src=toString(m_receiveEndpoint), data=Z21::toString(*message)]()
               {
-                logDebug(log);
+                Log::log(*this, LogMessage::D2005_X_RX_X, src, data);
               });
 
           switch(message->header())
@@ -236,14 +235,7 @@ void WLANmaus::receive()
                         if(commandStation)
                           if(auto decoder = commandStation->getDecoder(DecoderProtocol::DCC, request.address(), request.isLongAddress()))
                           {
-//std::stringstream ss;
-//ss << endpoint;
-//
-  //                          logDebug("locoinfo endpoint=" + ss.str());
                             m_clients[endpoint].locoInfo.insert(locoInfoKey(request.address(), request.isLongAddress()));
-    //                        logDebug("m_clients[endpoint].broadcastFlags = " + std::to_string(m_clients[endpoint].broadcastFlags));
-      //                      logDebug("m_clients[endpoint].locoInfo.size() = " + std::to_string(m_clients[endpoint].locoInfo.size()));
-        //                    logDebug("m_clients.size() = " + std::to_string(m_clients.size()));
                             sendTo(Z21::LanXLocoInfo(*decoder), endpoint);
                           }
                       });
@@ -264,10 +256,6 @@ void WLANmaus::receive()
 
                         if(auto decoder = commandStation->getDecoder(DecoderProtocol::DCC, request.address(), request.isLongAddress()))
                         {
-                          //logDebug("loco drive: speedStep=" + std::to_string(decoder->speedStep.value()));
-                       //   logDebug("z21_lan_x_set_loco_drive.speedAndDirection=" + std::to_string(request.speedAndDirection));
-
-
                           //m_blockLocoInfo = decoder.get();
                           decoder->direction = request.direction();
                           decoder->emergencyStop = request.isEmergencyStop();
@@ -276,7 +264,7 @@ void WLANmaus::receive()
                           //m_blockLocoInfo = nullptr;
                         }
                         else
-                          logInfo("Unknown loco address: " + std::to_string(request.address()));
+                          Log::log(*this, LogMessage::I2001_UNKNOWN_LOCO_ADDRESS_X, request.address());
                       });
                   }
                   else if(const Z21::LanXSetLocoFunction* r = static_cast<const Z21::LanXSetLocoFunction*>(message);
@@ -385,9 +373,6 @@ void WLANmaus::receive()
                 EventLoop::call(
                   [this, broadcastFlags=static_cast<const Z21::LanSetBroadcastFlags*>(message)->broadcastFlags(), endpoint=m_receiveEndpoint]()
                   {
-                    if(debugLog)
-                      logDebug(toString(endpoint) + " LAN_SET_BROADCASTFLAGS 0x" + toHex(broadcastFlags));
-
                     m_clients[endpoint].broadcastFlags = broadcastFlags;
                   });
               }
@@ -401,9 +386,6 @@ void WLANmaus::receive()
                 EventLoop::call(
                   [this, endpoint=m_receiveEndpoint]()
                   {
-                    if(debugLog)
-                      logDebug(toString(endpoint) + " LAN_SYSTEMSTATE_GETDATA");
-
                     Z21::LanSystemStateDataChanged response;
 
                     if(!commandStation || commandStation->emergencyStop)
@@ -424,8 +406,6 @@ void WLANmaus::receive()
                 EventLoop::call(
                   [this, endpoint=m_receiveEndpoint]()
                   {
-                    if(debugLog)
-                      logDebug(toString(endpoint) + " LAN_LOGOFF");
                     m_clients.erase(endpoint);
                   });
               }
@@ -437,18 +417,6 @@ void WLANmaus::receive()
               unknownMessage = true;
               break;
           }
-
-          /*if(unknownMessage && debugLog)
-          {
-            std::string log = "unknown message: dataLen=0x" + toHex(message->dataLen()) + ", header=0x" + toHex(message->header());
-            if(message->dataLen() > 4)
-            {
-              log += ", data=";
-              for(int i = sizeof(Z21::Message); i < message->dataLen(); i++)
-                log += toHex(reinterpret_cast<const uint8_t*>(message)[i]);
-            }
-            EventLoop::call([this, log](){ logDebug(log); });
-          }*/
         }
         receive();
       }
@@ -456,7 +424,7 @@ void WLANmaus::receive()
         EventLoop::call(
           [this, ec]()
           {
-            logError("socket.async_receive_from: " + ec.message());
+            Log::log(*this, LogMessage::E2009_SOCKET_RECEIVE_FAILED_X, ec);
           });
     });
 }
@@ -464,20 +432,20 @@ void WLANmaus::receive()
 void WLANmaus::sendTo(const Z21::Message& message, const boost::asio::ip::udp::endpoint& endpoint)
 {
   if(debugLog)
-    logDebug(toString(endpoint) + " tx: " + Z21::toString(message));
+    Log::log(*this, LogMessage::D2004_X_TX_X, toString(endpoint), Z21::toString(message));
 
   // TODO: add to queue, send async
 
   boost::system::error_code ec;
   m_socket.send_to(boost::asio::buffer(&message, message.dataLen()), endpoint, 0, ec);
   if(ec)
-     EventLoop::call([this, ec](){ logError("socket.send_to: " + ec.message()); });
+     EventLoop::call([this, ec](){ Log::log(*this, LogMessage::E2011_SOCKET_SEND_FAILED_X, ec); });
 /*
   m_socket.async_send_to(boost::asio::buffer(&msg, msg.dataLen), endpoint,
     [this](const boost::system::error_code& ec, std::size_t)
     {
       if(ec)
-         EventLoop::call([this, ec](){ logError("socket.async_send_to: " + ec.message()); });
+         EventLoop::call([this, ec](){ Log::log(*this, LogMessage::E2011_SOCKET_SEND_FAILED_X, ec); });
     });
     */
 }
@@ -486,8 +454,6 @@ void WLANmaus::broadcastLocoInfo(const Decoder& decoder)
 {
   const uint16_t key = locoInfoKey(decoder.address, decoder.longAddress);
   const Z21::LanXLocoInfo message(decoder);
-
-//logDebug("z21_lan_x_loco_info.speedAndDirection=" + std::to_string(message.speedAndDirection));
 
   for(auto it : m_clients)
     if(it.second.broadcastFlags & Z21::PowerLocoTurnout)
