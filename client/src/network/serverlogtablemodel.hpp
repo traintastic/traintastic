@@ -26,6 +26,7 @@
 #include <QAbstractTableModel>
 #include <QIcon>
 #include <memory>
+#include <array>
 
 class Connection;
 class Message;

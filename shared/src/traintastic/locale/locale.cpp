@@ -29,7 +29,7 @@
 
 const Locale* Locale::instance = nullptr;
 
-Locale::Locale(std::string _filename, Locale* fallback) :
+Locale::Locale(std::filesystem::path _filename, Locale* fallback) :
   m_fallback{fallback},
   filename{std::move(_filename)}
 {

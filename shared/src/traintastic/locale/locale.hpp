@@ -30,6 +30,7 @@
 #ifdef QT_CORE_LIB
   #include <QString>
 #endif
+#include "../utils/stdfilesystem.hpp"
 
 class Locale
 {
@@ -46,9 +47,9 @@ class Locale
     inline static std::string_view tr(std::string_view id) { return instance ? instance->translate(id) : id; };
 #endif
 
-    const std::string filename;
+    const std::filesystem::path filename;
 
-    Locale(std::string _filename, Locale* fallback = nullptr);
+    Locale(std::filesystem::path _filename, Locale* fallback = nullptr);
 
 #ifdef QT_CORE_LIB
     QString translate(const QString& id) const;
