@@ -27,16 +27,26 @@
 #endif
 
 #ifdef WIN32
-std::filesystem::path getLocalAppDataPath()
+static std::filesystem::path getKnownFolderPath(REFKNOWNFOLDERID rfid)
 {
   std::filesystem::path path;
   PWSTR localAppDataPath = nullptr;
-  HRESULT r = SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, nullptr, &localAppDataPath);
+  HRESULT r = SHGetKnownFolderPath(rfid, 0, nullptr, &localAppDataPath);
   if(r == S_OK)
     path = std::filesystem::path(localAppDataPath);
   if(localAppDataPath)
     CoTaskMemFree(localAppDataPath);
   return path;
+}
+
+std::filesystem::path getProgramDataPath()
+{
+  return getKnownFolderPath(FOLDERID_ProgramData);
+}
+
+std::filesystem::path getLocalAppDataPath()
+{
+  return getKnownFolderPath(FOLDERID_LocalAppData);
 }
 #endif
 
@@ -46,7 +56,7 @@ std::filesystem::path getLocalePath()
     return std::filesystem::path(path);
 
 #ifdef WIN32
-  return getLocalAppDataPath() / "traintastic" / "shared" / "lang";
+  return getProgramDataPath() / "traintastic" / "shared" / "lang";
 #elif defined(__linux__)
   return "/opt/traintastic/lang";
 #else

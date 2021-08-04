@@ -26,6 +26,7 @@
 #include "stdfilesystem.hpp"
 
 #ifdef WIN32
+std::filesystem::path getProgramDataPath();
 std::filesystem::path getLocalAppDataPath();
 #endif
 
