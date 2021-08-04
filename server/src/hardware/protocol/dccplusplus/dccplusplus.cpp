@@ -27,6 +27,7 @@
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../log/log.hpp"
 
 namespace DCCPlusPlus {
 
@@ -61,7 +62,7 @@ DCCPlusPlus::DCCPlusPlus(Object& _parent, const std::string& parentPropertyName,
 bool DCCPlusPlus::send(std::string_view message)
 {
   if(m_debugLogRXTX)
-    logDebug("tx: " + std::string(message));
+    Log::log(*this, LogMessage::D2001_TX_X, message);
   return m_send(message);
 }
 
@@ -70,7 +71,7 @@ void DCCPlusPlus::receive(std::string_view message)
   // NOTE: this function is called async!
 
   if(m_debugLogRXTX)
-    EventLoop::call([this, log="rx: " + std::string(message)](){ logDebug(log); });
+    EventLoop::call([this, msg=std::string(message)](){ Log::log(*this, LogMessage::D2002_RX_X, msg); });
 
   if(message.size() > 1 && message[0] == '<')
   {
@@ -105,18 +106,10 @@ void DCCPlusPlus::powerOnChanged(bool value)
 
 void DCCPlusPlus::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
-  //! \todo check protocol and long address
-
   if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Throttle | DecoderChangeFlags::Direction))
     send(Ex::setLocoSpeedAndDirection(decoder.address, Decoder::throttleToSpeedStep(decoder.throttle, 126), decoder.emergencyStop, decoder.direction));
-
-  if(has(changes, DecoderChangeFlags::FunctionValue))
-  {
-    if(functionNumber <= 68)
-      send(Ex::setLocoFunction(decoder.address, static_cast<uint8_t>(functionNumber), decoder.getFunctionValue(functionNumber)));
-    else
-      logWarning("Function F" + std::to_string(functionNumber) + " not supported");
-  }
+  else if(has(changes, DecoderChangeFlags::FunctionValue) && functionNumber <= functionNumberMax)
+    send(Ex::setLocoFunction(decoder.address, static_cast<uint8_t>(functionNumber), decoder.getFunctionValue(functionNumber)));
 }
 
 void DCCPlusPlus::loaded()
