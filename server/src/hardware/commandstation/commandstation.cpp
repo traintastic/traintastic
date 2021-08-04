@@ -84,6 +84,13 @@ CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_vi
   m_interfaceItems.add(notes);
 }
 
+void CommandStation::loaded()
+{
+  IdObject::loaded();
+
+  checkAllDecoders();
+}
+
 void CommandStation::addToWorld()
 {
   IdObject::addToWorld();
@@ -157,6 +164,12 @@ void CommandStation::powerOnChanged(bool value)
 {
   for(auto& controller : *controllers)
     controller->powerOnChanged(value);
+}
+
+void CommandStation::checkAllDecoders() const
+{
+  for(const auto& decoder : *decoders)
+    checkDecoder(*decoder);
 }
 
 void CommandStation::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)

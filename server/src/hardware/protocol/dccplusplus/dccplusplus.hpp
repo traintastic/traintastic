@@ -60,6 +60,8 @@ class DCCPlusPlus : public SubObject
 
     void emergencyStopChanged(bool value);
     void powerOnChanged(bool value);
+
+    void checkDecoder(const Decoder& decoder) const;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 };
 

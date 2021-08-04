@@ -37,13 +37,15 @@ class CommandStation : public IdObject
   friend class ::Decoder;
 
   protected:
+    void loaded() override;
     void addToWorld() final;
     void worldEvent(WorldState state, WorldEvent event) override;
 
     virtual bool setOnline(bool& value) = 0;
     virtual void emergencyStopChanged(bool value);
     virtual void powerOnChanged(bool value);
-    //virtual bool isDecoderSupported(Decoder& decoder) const = 0;
+    void checkAllDecoders() const;
+    virtual void checkDecoder(const Decoder& decoder) const {}
     virtual void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 
     void restoreSpeed();

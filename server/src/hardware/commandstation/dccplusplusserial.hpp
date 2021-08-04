@@ -31,6 +31,7 @@ class DCCPlusPlusSerial : public SerialCommandStation
   protected:
     void emergencyStopChanged(bool value) final;
     void powerOnChanged(bool value) final;
+    void checkDecoder(const Decoder& decoder) const;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     bool send(std::string_view message);

@@ -52,6 +52,12 @@ void DCCPlusPlusSerial::powerOnChanged(bool value)
     dccPlusPlus->powerOnChanged(value);
 }
 
+void DCCPlusPlusSerial::checkDecoder(const Decoder& decoder) const
+{
+  CommandStation::checkDecoder(decoder);
+  dccPlusPlus->checkDecoder(decoder);
+}
+
 void DCCPlusPlusSerial::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   CommandStation::decoderChanged(decoder, changes, functionNumber);

@@ -104,6 +104,27 @@ void DCCPlusPlus::powerOnChanged(bool value)
     send(Ex::powerOff());
 }
 
+void DCCPlusPlus::checkDecoder(const Decoder& decoder) const
+{
+  assert(m_commandStation);
+
+  if(decoder.protocol != DecoderProtocol::Auto && decoder.protocol != DecoderProtocol::DCC)
+    Log::log(decoder, LogMessage::C2002_DCCPLUSPLUS_ONLY_SUPPORTS_THE_DCC_PROTOCOL);
+
+  if(decoder.protocol == DecoderProtocol::DCC && decoder.address <= 127 && decoder.longAddress)
+    Log::log(decoder, LogMessage::C2003_DCCPLUSPLUS_DOESNT_SUPPORT_DCC_LONG_ADDRESSES_BELOW_128);
+
+  if(decoder.speedSteps != Decoder::speedStepsAuto && decoder.speedSteps != speedSteps)
+    Log::log(decoder, LogMessage::W2003_COMMAND_STATION_DOESNT_SUPPORT_X_SPEEDSTEPS_USING_X, decoder.speedSteps.value(), speedSteps.value());
+
+  for(const auto& function : *decoder.functions)
+    if(function->number > functionNumberMax)
+    {
+      Log::log(decoder, LogMessage::W2002_COMMAND_STATION_DOESNT_SUPPORT_FUNCTIONS_ABOVE_FX, functionNumberMax);
+      break;
+    }
+}
+
 void DCCPlusPlus::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Throttle | DecoderChangeFlags::Direction))
