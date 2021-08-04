@@ -39,6 +39,8 @@ class DCCPlusPlus : public SubObject
   CLASS_ID("protocol.dccplusplus")
 
   private:
+    static constexpr uint32_t functionNumberMax = 68;
+
     CommandStation* const m_commandStation; // valid if parent is command station, else nullptr
     std::function<bool(std::string_view)> m_send;
     std::atomic_bool m_debugLogRXTX;
