@@ -60,7 +60,8 @@ Source: "..\..\client\build\Release\iconengines\*.dll"; DestDir: "{app}\client\i
 Source: "..\..\client\build\Release\imageformats\*.dll"; DestDir: "{app}\client\imageformats"; Flags: ignoreversion; Components: client
 Source: "..\..\client\build\Release\platforms\*.dll"; DestDir: "{app}\client\platforms"; Flags: ignoreversion; Components: client
 Source: "..\..\client\build\Release\styles\*.dll"; DestDir: "{app}\client\styles"; Flags: ignoreversion; Components: client
-Source: "..\..\lang\*.txt"; DestDir: "{commonappdata}\traintastic\client\lang"; Flags: ignoreversion; Components: client
+; Shared
+Source: "..\..\lang\*.txt"; DestDir: "{commonappdata}\traintastic\shared\lang"; Flags: ignoreversion;
 ; VC++ redistributable runtime. Extracted by VC2019RedistNeedsInstall(), if needed.
 Source: "..\..\client\build\Release\vc_redist.x64.exe"; DestDir: {tmp}; Flags: dontcopy
 
