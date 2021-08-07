@@ -68,6 +68,7 @@ class Settings : public Object
     Property<bool> discoverable;
     Property<std::string> defaultWorld;
     Property<bool> autoSaveWorldOnExit;
+    Property<bool> saveWorldUncompressed;
     Property<bool> allowClientServerRestart;
     Property<bool> allowClientServerShutdown;
     Property<uint32_t> memoryLoggerSize;

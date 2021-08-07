@@ -22,6 +22,7 @@
 
 #include "world.hpp"
 #include <fstream>
+#include <iomanip>
 #include <boost/algorithm/string.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
@@ -33,6 +34,7 @@
 #include "../core/abstractvectorproperty.hpp"
 #include "../log/log.hpp"
 #include "../utils/displayname.hpp"
+#include "../core/traintastic.hpp"
 
 using nlohmann::json;
 
@@ -177,7 +179,50 @@ World::World(Private) :
     {
       try
       {
-        WorldSaver saver(*this);
+        // backup world:
+        const std::filesystem::path worldDir = Traintastic::instance->worldDir();
+        const std::filesystem::path worldBackupDir = Traintastic::instance->worldBackupDir();
+        const std::string uuid{to_string(m_uuid)};
+        auto dateTimeStr =
+          []()
+          {
+            const auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+            std::stringstream ss;
+            ss << std::put_time(std::localtime(&now), "_%Y%m%d_%H%M%S");
+            return ss.str();
+          };
+
+        if(!std::filesystem::is_directory(worldBackupDir))
+        {
+          std::error_code ec;
+          std::filesystem::create_directories(worldBackupDir, ec);
+          if(ec)
+            Log::log(*this, LogMessage::C1007_CREATING_WORLD_BACKUP_DIRECTORY_FAILED_X, ec);
+        }
+
+        if(std::filesystem::is_directory(worldDir / uuid))
+        {
+          std::error_code ec;
+          std::filesystem::rename(worldDir / uuid, worldBackupDir / uuid += dateTimeStr(), ec);
+          if(ec)
+            Log::log(*this, LogMessage::C1006_CREATING_WORLD_BACKUP_FAILED_X, ec);
+        }
+
+        if(std::filesystem::is_regular_file(worldDir / uuid += dotCTW))
+        {
+          std::error_code ec;
+          std::filesystem::rename(worldDir / uuid += dotCTW, worldBackupDir / uuid += dateTimeStr() += dotCTW, ec);
+          if(ec)
+            Log::log(*this, LogMessage::C1006_CREATING_WORLD_BACKUP_FAILED_X, ec);
+        }
+
+        // save world:
+        std::filesystem::path savePath = worldDir / uuid;
+        if(!Traintastic::instance->settings->saveWorldUncompressed)
+          savePath += dotCTW;
+
+        WorldSaver saver(*this, savePath);
+
         Log::log(*this, LogMessage::N1022_SAVED_WORLD_X, name.value());
       }
       catch(const std::exception& e)
@@ -186,9 +231,6 @@ World::World(Private) :
       }
     }}
 {
-  m_filename = Traintastic::instance->worldDir() / to_string(m_uuid) / filename;
-  m_filenameState = Traintastic::instance->worldDir() / to_string(m_uuid) / filenameState;
-
   Attributes::addDisplayName(name, DisplayName::Object::name);
   m_interfaceItems.add(name);
   Attributes::addEnabled(scale, false);

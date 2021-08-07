@@ -44,7 +44,7 @@ class WorldSaver
     void saveToDisk(const std::string& data, const std::filesystem::path& filename);
 
   public:
-    WorldSaver(const World& world);
+    WorldSaver(const World& world, std::filesystem::path path);
 
     nlohmann::json saveObject(const ObjectPtr& object);
 

@@ -53,6 +53,8 @@ class WorldList : public Object, public Table
     std::vector<WorldInfo> m_items;
     std::vector<WorldListTableModel*> m_models;
 
+    bool readInfo(const nlohmann::json& world, WorldInfo& info);
+
   public:
     CLASS_ID("world_list");
 

@@ -28,6 +28,16 @@ TODO
 TODO
 
 
+## C1006: Creating world backup failed (*reason*) {#c1006}
+
+TODO
+
+
+## C1007: Creating world backup directory failed (*reason*) {#c1007}
+
+TODO
+
+
 ## C2001: Address already used at #*object* {#c2001}
 
 TODO

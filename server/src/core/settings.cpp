@@ -49,6 +49,7 @@ Settings::Settings(const std::filesystem::path& path) :
   discoverable{this, "discoverable", true, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
   defaultWorld{this, "default_world", "", PropertyFlags::ReadWrite, [this](const std::string&){ save(); }},
   autoSaveWorldOnExit{this, "auto_save_world_on_exit", false, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
+  saveWorldUncompressed{this, "save_world_uncompressed", false, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
   allowClientServerRestart{this, "allow_client_server_restart", false, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
   allowClientServerShutdown{this, "allow_client_server_shutdown", false, PropertyFlags::ReadWrite, [this](const bool&){ save(); }}
   , memoryLoggerSize{this, Name::memoryLoggerSize, Default::memoryLoggerSize, PropertyFlags::ReadWrite, [this](const uint32_t&){ save(); }}
@@ -59,6 +60,7 @@ Settings::Settings(const std::filesystem::path& path) :
   m_interfaceItems.add(discoverable);
   m_interfaceItems.add(defaultWorld);
   m_interfaceItems.add(autoSaveWorldOnExit);
+  m_interfaceItems.add(saveWorldUncompressed);
   m_interfaceItems.add(allowClientServerRestart);
   m_interfaceItems.add(allowClientServerShutdown);
   Attributes::addMinMax(memoryLoggerSize, 0U, 1'000'000U);

@@ -48,7 +48,7 @@ class Log
         list.emplace_back(value);
       else if constexpr((std::is_integral_v<T> && !std::is_enum_v<T>) || std::is_floating_point_v<T>)
         list.emplace_back(std::to_string(value));
-      else if constexpr(std::is_same_v<T, boost::system::error_code>)
+      else if constexpr(std::is_same_v<T, boost::system::error_code> || std::is_same_v<T, std::error_code>)
         list.emplace_back(value.message());
       else if constexpr(std::is_same_v<T, std::filesystem::path>)
         list.emplace_back(value.string());

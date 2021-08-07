@@ -98,6 +98,7 @@ class Traintastic : public Object
 
     const std::filesystem::path& dataDir() const { return m_dataDir; }
     std::filesystem::path worldDir() const { return m_dataDir / "world"; }
+    std::filesystem::path worldBackupDir() const { return worldDir() / ".backup"; }
 
     RunStatus run();
     void exit();

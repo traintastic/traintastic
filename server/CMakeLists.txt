@@ -134,6 +134,15 @@ else()
   endif()
 endif()
 
+### LIBRARIES ###
+
+# libarchive
+find_package(LibArchive REQUIRED)
+target_include_directories(traintastic-server PRIVATE ${LibArchive_INCLUDE_DIRS})
+target_link_libraries(traintastic-server PRIVATE ${LibArchive_LIBRARIES})
+target_include_directories(traintastic-server-test PRIVATE ${LibArchive_INCLUDE_DIRS})
+target_link_libraries(traintastic-server-test PRIVATE ${LibArchive_LIBRARIES})
+
 ### OPTIONS ###
 
 option(ENABLE_LUA_SCRIPTING "Lua scripting support" ON)

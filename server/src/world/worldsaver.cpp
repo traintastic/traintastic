@@ -25,11 +25,12 @@
 #include <boost/uuid/uuid_io.hpp>
 #include "world.hpp"
 #include "../utils/sha1.hpp"
+#include "ctwwriter.hpp"
 
 using nlohmann::json;
 
-WorldSaver::WorldSaver(const World& world) :
-  m_path{std::filesystem::path(world.m_filename).remove_filename()}
+WorldSaver::WorldSaver(const World& world, std::filesystem::path path) :
+  m_path{std::move(path)}
 {
   m_states = json::object();
   json data = json::object();
@@ -62,10 +63,21 @@ WorldSaver::WorldSaver(const World& world) :
     state["states"] = m_states;
   }
 
-  saveToDisk(data, world.m_filename);
-  saveToDisk(state, world.m_filenameState);
-  deleteFiles();
-  writeFiles();
+  if(m_path.extension() == World::dotCTW)
+  {
+    CTWWriter ctw(m_path);
+    ctw.writeFile(World::filename, data);
+    ctw.writeFile(World::filenameState, state);
+    for(const auto& file : m_writeFiles)
+      ctw.writeFile(file.first, file.second);
+  }
+  else
+  {
+    saveToDisk(data, m_path / World::filename);
+    saveToDisk(state, m_path / World::filenameState);
+    deleteFiles();
+    writeFiles();
+  }
 }
 
 json WorldSaver::saveObject(const ObjectPtr& object)

@@ -26,6 +26,7 @@
 #include "../core/traintastic.hpp"
 #include "../log/log.hpp"
 #include "worldlisttablemodel.hpp"
+#include "ctwreader.hpp"
 
 using nlohmann::json;
 
@@ -54,12 +55,23 @@ void WorldList::buildIndex()
 
   m_items.clear();
 
-  boost::uuids::string_generator string_to_uuid;
   WorldInfo info;
   for(auto& it : std::filesystem::directory_iterator(m_path))
   {
     info.path = it.path();
-    const auto worldFile = info.path / "traintastic.json";
+
+    if(info.path.extension() == World::dotCTW)
+    {
+      CTWReader ctw(info.path);
+
+      json world;
+      if(ctw.readFile(World::filename, world) && readInfo(world, info))
+        m_items.push_back(info);
+
+      continue;
+    }
+
+    const auto worldFile = info.path / World::filename;
     if(std::filesystem::is_directory(info.path) && std::filesystem::is_regular_file(worldFile))
     {
       std::ifstream file(worldFile);
@@ -69,17 +81,7 @@ void WorldList::buildIndex()
         {
           json world = json::parse(file);
 
-          auto it = world.find("uuid");
-          if(it == world.end())
-            continue;
-          info.uuid = string_to_uuid(std::string(*it));
-
-          it = world.find("name");
-          if(it == world.end())
-            continue;
-          info.name = *it;
-
-          if(!info.uuid.is_nil() && !info.name.empty())
+          if(readInfo(world, info))
             m_items.push_back(info);
         }
         catch(const std::exception& e)
@@ -99,4 +101,19 @@ void WorldList::buildIndex()
 TableModelPtr WorldList::getModel()
 {
   return std::make_shared<WorldListTableModel>(*this);
+}
+
+bool WorldList::readInfo(const json& world, WorldInfo& info)
+{
+  auto it = world.find("uuid");
+  if(it == world.end())
+    return false;
+  info.uuid = boost::uuids::string_generator()(std::string(*it));
+
+  it = world.find("name");
+  if(it == world.end())
+    return false;
+  info.name = *it;
+
+  return !info.uuid.is_nil();
 }

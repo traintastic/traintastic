@@ -26,6 +26,7 @@
 #include <boost/uuid/string_generator.hpp>
 #include "world.hpp"
 #include "../utils/string.hpp"
+#include "ctwreader.hpp"
 
 #include "../board/board.hpp"
 #include "../board/tile/tiles.hpp"
@@ -36,31 +37,41 @@
 #include "../hardware/input/inputs.hpp"
 #include "../hardware/output/outputs.hpp"
 #include "../vehicle/rail/railvehicles.hpp"
+#include "../train/train.hpp"
 #ifndef DISABLE_LUA_SCRIPTING
   #include "../lua/script.hpp"
 #endif
 
 using nlohmann::json;
 
-WorldLoader::WorldLoader(const std::filesystem::path& path) :
-  m_path{path},
+WorldLoader::WorldLoader(std::filesystem::path path) :
+  m_path{std::move(path)},
   m_world{World::create()}
 {
   m_states = json::object();
 
-  m_world->m_filename = path / World::filename;
-  m_world->m_filenameState = path / World::filenameState;
-
   json data;
 
   // load file(s):
+  if(m_path.extension() == World::dotCTW)
   {
-    std::ifstream file(m_world->m_filename);
+    m_ctw = std::make_unique<CTWReader>(m_path);
+
+    if(!m_ctw->readFile(World::filename, data))
+      throw std::runtime_error(std::string("can't read ").append(World::filename));
+
+    json state;
+    if(m_ctw->readFile(World::filenameState, state) && state["uuid"] == data["uuid"])
+        m_states = state["states"];
+  }
+  else
+  {
+    std::ifstream file(path / World::filename);
     if(!file.is_open())
-      throw std::runtime_error("can't open " + m_world->m_filename .string());
+      throw std::runtime_error("can't open " + (path / World::filename).string());
     data = json::parse(file);
 
-    std::ifstream stateFile(m_world->m_filenameState);
+    std::ifstream stateFile(path / World::filenameState);
     if(stateFile.is_open())
     {
       json state = json::parse(stateFile);
@@ -100,6 +111,8 @@ WorldLoader::WorldLoader(const std::filesystem::path& path) :
     it.second.object->loaded();
   }
 }
+
+WorldLoader::~WorldLoader() = default; // default here, so we can use a forward declaration of CTWReader in the header.
 
 ObjectPtr WorldLoader::getObject(std::string_view id)
 {
@@ -189,12 +202,20 @@ void WorldLoader::loadObject(ObjectData& objectData)
 
 bool WorldLoader::readFile(const std::filesystem::path& filename, std::string& data)
 {
-  std::ifstream file(m_path / filename, std::ios::in | std::ios::binary | std::ios::ate);
-  if(!file.is_open())
-    return false;
-  const size_t size = file.tellg();
-  data.resize(size);
-  file.seekg(std::ios::beg);
-  file.read(data.data(), size);
+  if(m_ctw)
+  {
+    if(!m_ctw->readFile(filename, data))
+      return false;
+  }
+  else
+  {
+    std::ifstream file(m_path / filename, std::ios::in | std::ios::binary | std::ios::ate);
+    if(!file.is_open())
+      return false;
+    const size_t size = file.tellg();
+    data.resize(size);
+    file.seekg(std::ios::beg);
+    file.read(data.data(), size);
+  }
   return true;
 }

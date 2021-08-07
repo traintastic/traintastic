@@ -32,6 +32,7 @@
 
 class Object;
 class World;
+class CTWReader;
 
 class WorldLoader
 {
@@ -44,6 +45,7 @@ class WorldLoader
     };
 
     const std::filesystem::path& m_path;
+    std::unique_ptr<CTWReader> m_ctw;
     std::shared_ptr<World> m_world;
     std::unordered_map<std::string, ObjectData> m_objects;
     nlohmann::json m_states;
@@ -52,7 +54,8 @@ class WorldLoader
     void loadObject(ObjectData& objectData);
 
   public:
-    WorldLoader(const std::filesystem::path& path);
+    WorldLoader(std::filesystem::path path);
+    ~WorldLoader();
 
     std::shared_ptr<World> world() { return m_world; }
 
