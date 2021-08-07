@@ -137,7 +137,21 @@ endif()
 ### LIBRARIES ###
 
 # libarchive
-find_package(LibArchive REQUIRED)
+if(WIN32)
+  set(LibArchive_INCLUDE_DIRS "thirdparty/libarchive/include")
+  set(LibArchive_LIBRARIES archive)
+
+  add_custom_command(TARGET traintastic-server PRE_LINK
+    COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/libarchive/bin/archive.def" /out:archive.lib /machine:x64)
+  add_custom_command(TARGET traintastic-server-test PRE_LINK
+    COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/libarchive/bin/archive.def" /out:archive.lib /machine:x64)
+
+  # copy archive.dll to build directory:
+  add_custom_command(TARGET traintastic-server POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/libarchive/bin/archive.dll" .)
+else()
+  find_package(LibArchive REQUIRED)
+endif()
 target_include_directories(traintastic-server PRIVATE ${LibArchive_INCLUDE_DIRS})
 target_link_libraries(traintastic-server PRIVATE ${LibArchive_LIBRARIES})
 target_include_directories(traintastic-server-test PRIVATE ${LibArchive_INCLUDE_DIRS})
