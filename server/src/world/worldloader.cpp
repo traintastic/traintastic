@@ -181,6 +181,8 @@ void WorldLoader::createObject(ObjectData& objectData)
   }
   else if(startsWith(classId, RailVehicles::classIdPrefix))
     objectData.object = RailVehicles::create(m_world, classId, id);
+  else if(classId == Train::classId)
+    objectData.object = Train::create(m_world, id);
 #ifndef DISABLE_LUA_SCRIPTING
   else if(classId == Lua::Script::classId)
     objectData.object = Lua::Script::create(m_world, id);
