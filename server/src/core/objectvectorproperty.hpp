@@ -119,6 +119,23 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
       }
     }
 
+    void moveInternal(const std::shared_ptr<T>& value, ssize_t count)
+    {
+      if(count == 0)
+        return;
+
+      auto it = std::find(m_values.begin(), m_values.end(), value);
+      if(it != m_values.end())
+      {
+        auto it2 = std::clamp(it + count, m_values.begin(), m_values.end() - 1);
+        if(it != it2)
+        {
+          std::iter_swap(it, it2);
+          changed();
+        }
+      }
+    }
+
     void load(std::vector<std::shared_ptr<T>> values)
     {
       m_values = std::move(values);
