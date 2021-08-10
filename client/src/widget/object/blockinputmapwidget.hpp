@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
 #ifndef TRAINTASTIC_CLIENT_WIDGET_OBJECT_BLOCKINPUTMAPWIDGET_HPP
 #define TRAINTASTIC_CLIENT_WIDGET_OBJECT_BLOCKINPUTMAPWIDGET_HPP
 
@@ -32,6 +31,7 @@ class QListWidget;
 class ObjectEditWidget;
 class ObjectVectorProperty;
 class Method;
+class MethodAction;
 
 class BlockInputMapWidget final : public AbstractEditWidget
 {
@@ -43,6 +43,9 @@ class BlockInputMapWidget final : public AbstractEditWidget
     Method* m_methodRemove;
     Method* m_methodMoveUp;
     Method* m_methodMoveDown;
+    MethodAction* m_actionRemove;
+    MethodAction* m_actionMoveUp;
+    MethodAction* m_actionMoveDown;
     QStackedWidget* m_stack;
     QListWidget* m_list;
     QMap<QString, ObjectEditWidget*> m_items;

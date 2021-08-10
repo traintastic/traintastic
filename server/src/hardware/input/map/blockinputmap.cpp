@@ -43,12 +43,12 @@ BlockInputMap::BlockInputMap(Object& _parent, const std::string& parentPropertyN
   moveUp{*this, "move_up",
     [this](const std::shared_ptr<BlockInputMapItem>& item)
     {
-      //
+      items.moveInternal(item, -1);
     }},
   moveDown{*this, "move_down",
     [this](const std::shared_ptr<BlockInputMapItem>& item)
     {
-      //
+      items.moveInternal(item, +1);
     }}
 {
   auto w = getWorld(&_parent);
@@ -62,9 +62,9 @@ BlockInputMap::BlockInputMap(Object& _parent, const std::string& parentPropertyN
   m_interfaceItems.add(add);
   Attributes::addEnabled(remove, editable);
   m_interfaceItems.add(remove);
-  Attributes::addEnabled(moveUp, false/*editable*/);
+  Attributes::addEnabled(moveUp, editable);
   m_interfaceItems.add(moveUp);
-  Attributes::addEnabled(moveDown, false/*editable*/);
+  Attributes::addEnabled(moveDown, editable);
   m_interfaceItems.add(moveDown);
 }
 
@@ -95,8 +95,8 @@ void BlockInputMap::worldEvent(WorldState state, WorldEvent event)
 
   Attributes::setEnabled(add, editable);
   Attributes::setEnabled(remove, editable);
-  Attributes::setEnabled(moveUp, false/*editable*/);
-  Attributes::setEnabled(moveDown, false/*editable*/);
+  Attributes::setEnabled(moveUp, editable);
+  Attributes::setEnabled(moveDown, editable);
 }
 
 uint32_t BlockInputMap::getItemId() const

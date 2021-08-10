@@ -49,6 +49,9 @@ BlockInputMapWidget::BlockInputMapWidget(const QString& id, QWidget* parent) :
   AbstractEditWidget(id, parent),
   m_methodAdd{nullptr},
   m_methodRemove{nullptr},
+  m_actionRemove{nullptr},
+  m_actionMoveUp{nullptr},
+  m_actionMoveDown{nullptr},
   m_stack{nullptr},
   m_list{nullptr}
 {
@@ -65,32 +68,49 @@ void BlockInputMapWidget::buildForm()
   m_methodMoveUp = m_object->getMethod("move_up");
   m_methodMoveDown = m_object->getMethod("move_down");
 
-  if(Q_UNLIKELY(!(m_propertyItems && m_methodAdd && m_methodRemove && m_methodMoveUp && m_methodMoveDown)))
+  if(Q_UNLIKELY(!(m_propertyItems)))
     return;
 
   QVBoxLayout* left = new QVBoxLayout();
 
   QToolBar* toolbar = new QToolBar(this);
   QAction* act;
-  toolbar->addAction(new MethodAction(Theme::getIcon("add"), *m_methodAdd, toolbar));
-  toolbar->addAction(new MethodAction(Theme::getIcon("remove"), *m_methodRemove,
-    [this]()
-    {
-      if(auto* item = m_list->currentItem())
-        callMethod(*m_methodRemove, nullptr, item->data(objectIdRole).toString());
-    }, toolbar));
-  toolbar->addAction(new MethodAction(Theme::getIcon("up"), *m_methodMoveUp,
-    [this]()
-    {
-      if(auto* item = m_list->currentItem())
-        callMethod(*m_methodMoveUp, nullptr, item->data(objectIdRole).toString());
-    }, toolbar));
-  toolbar->addAction(new MethodAction(Theme::getIcon("down"), *m_methodMoveDown,
-    [this]()
-    {
-      if(auto* item = m_list->currentItem())
-        callMethod(*m_methodMoveDown, nullptr, item->data(objectIdRole).toString());
-    }, toolbar));
+
+  if(m_methodAdd)
+    toolbar->addAction(new MethodAction(Theme::getIcon("add"), *m_methodAdd, toolbar));
+
+  if(m_methodRemove)
+  {
+    m_actionRemove = new MethodAction(Theme::getIcon("remove"), *m_methodRemove,
+      [this]()
+      {
+        if(auto* item = m_list->currentItem())
+          callMethod(*m_methodRemove, nullptr, item->data(objectIdRole).toString());
+      }, toolbar);
+    toolbar->addAction(m_actionRemove);
+  }
+
+  if(m_methodMoveUp)
+  {
+    m_actionMoveUp = new MethodAction(Theme::getIcon("up"), *m_methodMoveUp,
+      [this]()
+      {
+        if(auto* item = m_list->currentItem())
+          callMethod(*m_methodMoveUp, nullptr, item->data(objectIdRole).toString());
+      }, toolbar);
+    toolbar->addAction(m_actionMoveUp);
+  }
+
+  if(m_methodMoveDown)
+  {
+    m_actionMoveDown = new MethodAction(Theme::getIcon("down"), *m_methodMoveDown,
+      [this]()
+      {
+        if(auto* item = m_list->currentItem())
+          callMethod(*m_methodMoveDown, nullptr, item->data(objectIdRole).toString());
+      }, toolbar);
+    toolbar->addAction(m_actionMoveDown);
+  }
   left->addWidget(toolbar);
 
   m_list = new QListWidget(this);
@@ -110,6 +130,12 @@ void BlockInputMapWidget::buildForm()
       if(current)
         if(auto* w = m_items.value(current->data(objectIdRole).toString()))
           m_stack->setCurrentWidget(w);
+
+      if(m_actionMoveUp)
+        m_actionMoveUp->setForceDisabled(!current || current == m_list->item(0));
+
+      if(m_actionMoveDown)
+        m_actionMoveDown->setForceDisabled(!current || current == m_list->item(m_list->count() - 1));
     });
 }
 
@@ -138,6 +164,9 @@ void BlockInputMapWidget::updateListItems()
         }
     }
   }
+
+  if(m_actionRemove)
+    m_actionRemove->setForceDisabled(m_list->count() == 0);
 }
 
 void BlockInputMapWidget::itemsChanged()
