@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,7 +28,7 @@
 #include "luascriptlistwidget.hpp"
 #include "object/luascripteditwidget.hpp"
 #include "object/objecteditwidget.hpp"
-#include "object/blockinputmapwidget.hpp"
+#include "object/itemseditwidget.hpp"
 #include "inputmonitorwidget.hpp"
 #include "outputkeyboardwidget.hpp"
 #include "outputmapwidget.hpp"
@@ -63,7 +63,7 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
   else if(auto outputMap = std::dynamic_pointer_cast<OutputMap>(object))
     return new OutputMapWidget(outputMap, parent);
   else if(classId == "input_map.block")
-    return new BlockInputMapWidget(object, parent);
+    return new ItemsEditWidget(object, parent);
   else
     return nullptr;
 }

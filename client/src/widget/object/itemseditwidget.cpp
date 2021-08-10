@@ -1,5 +1,5 @@
 /**
- * client/src/widget/object/blockinputmapwidget.cpp
+ * client/src/widget/object/itemseditwidget.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "blockinputmapwidget.hpp"
+#include "itemseditwidget.hpp"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QToolBar>
@@ -36,19 +36,27 @@
 
 constexpr int objectIdRole = Qt::UserRole;
 
-BlockInputMapWidget::BlockInputMapWidget(const ObjectPtr& object, QWidget* parent) :
+ItemsEditWidget::ItemsEditWidget(const ObjectPtr& object, QWidget* parent) :
   AbstractEditWidget(object, parent),
   m_methodAdd{nullptr},
+  m_methodRemove{nullptr},
+  m_methodMoveUp{nullptr},
+  m_methodMoveDown{nullptr},
+  m_actionRemove{nullptr},
+  m_actionMoveUp{nullptr},
+  m_actionMoveDown{nullptr},
   m_stack{nullptr},
   m_list{nullptr}
 {
   buildForm();
 }
 
-BlockInputMapWidget::BlockInputMapWidget(const QString& id, QWidget* parent) :
+ItemsEditWidget::ItemsEditWidget(const QString& id, QWidget* parent) :
   AbstractEditWidget(id, parent),
   m_methodAdd{nullptr},
   m_methodRemove{nullptr},
+  m_methodMoveUp{nullptr},
+  m_methodMoveDown{nullptr},
   m_actionRemove{nullptr},
   m_actionMoveUp{nullptr},
   m_actionMoveDown{nullptr},
@@ -57,7 +65,7 @@ BlockInputMapWidget::BlockInputMapWidget(const QString& id, QWidget* parent) :
 {
 }
 
-void BlockInputMapWidget::buildForm()
+void ItemsEditWidget::buildForm()
 {
   setIdAsWindowTitle();
   setWindowIcon(Theme::getIconForClassId(m_object->classId()));
@@ -122,7 +130,7 @@ void BlockInputMapWidget::buildForm()
   l->addWidget(m_stack);
   setLayout(l);
 
-  connect(m_propertyItems, &ObjectVectorProperty::valueChanged, this, &BlockInputMapWidget::itemsChanged);
+  connect(m_propertyItems, &ObjectVectorProperty::valueChanged, this, &ItemsEditWidget::itemsChanged);
   itemsChanged();
   connect(m_list, &QListWidget::currentItemChanged, this,
     [this](QListWidgetItem* current, QListWidgetItem* previous)
@@ -139,7 +147,7 @@ void BlockInputMapWidget::buildForm()
     });
 }
 
-void BlockInputMapWidget::updateListItems()
+void ItemsEditWidget::updateListItems()
 {
   m_list->clear();
   for(const QString& objectId : *m_propertyItems)
@@ -169,7 +177,7 @@ void BlockInputMapWidget::updateListItems()
     m_actionRemove->setForceDisabled(m_list->count() == 0);
 }
 
-void BlockInputMapWidget::itemsChanged()
+void ItemsEditWidget::itemsChanged()
 {
   QList<QString> remove = m_items.keys();
 

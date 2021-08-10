@@ -1,5 +1,5 @@
 /**
- * client/src/widget/object/blockinputmapwidget.hpp
+ * client/src/widget/object/itemseditwidget.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_OBJECT_BLOCKINPUTMAPWIDGET_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_OBJECT_BLOCKINPUTMAPWIDGET_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_OBJECT_ITEMSEDITWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_OBJECT_ITEMSEDITWIDGET_HPP
 
 #include "abstracteditwidget.hpp"
 #include <QMap>
@@ -33,7 +33,7 @@ class ObjectVectorProperty;
 class Method;
 class MethodAction;
 
-class BlockInputMapWidget final : public AbstractEditWidget
+class ItemsEditWidget : public AbstractEditWidget
 {
   Q_OBJECT
 
@@ -59,8 +59,8 @@ class BlockInputMapWidget final : public AbstractEditWidget
     void buildForm() final;
 
   public:
-    explicit BlockInputMapWidget(const ObjectPtr& object, QWidget* parent = nullptr);
-    explicit BlockInputMapWidget(const QString& id, QWidget* parent = nullptr);
+    explicit ItemsEditWidget(const ObjectPtr& object, QWidget* parent = nullptr);
+    explicit ItemsEditWidget(const QString& id, QWidget* parent = nullptr);
 };
 
 #endif
