@@ -119,7 +119,7 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
       }
     }
 
-    void moveInternal(const std::shared_ptr<T>& value, ssize_t count)
+    void moveInternal(const std::shared_ptr<T>& value, intptr_t count)
     {
       if(count == 0)
         return;
