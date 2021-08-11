@@ -29,7 +29,7 @@
 #include "../../core/commandstationproperty.hpp"
 #include "../../enum/decoderprotocol.hpp"
 #include "../../enum/direction.hpp"
-#include "decoderfunctionlist.hpp"
+#include "decoderfunctions.hpp"
 
 enum class DecoderChangeFlags;
 class DecoderFunction;
@@ -81,12 +81,13 @@ class Decoder : public IdObject
     Property<Direction> direction;
     Property<uint8_t> speedSteps;
     Property<float> throttle;
-    ObjectProperty<DecoderFunctionList> functions;
+    ObjectProperty<DecoderFunctions> functions;
     Property<std::string> notes;
 
     Decoder(const std::weak_ptr<World>& world, std::string_view _id);
 
     void addToWorld() final;
+    bool hasFunction(uint32_t number) const;
     const std::shared_ptr<DecoderFunction>& getFunction(uint32_t number) const;
     const std::shared_ptr<DecoderFunction>& getFunction(DecoderFunctionType type) const;
     bool getFunctionValue(uint32_t number) const;

@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/decoder/decoderfunctionlist.hpp
+ * server/src/hardware/decoder/decoderfunctions.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,28 +20,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#ifndef TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERFUNCTIONS_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERFUNCTIONS_HPP
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERFUNCTIONLIST_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERFUNCTIONLIST_HPP
-
-#include "../../core/objectlist.hpp"
+#include "../../core/subobject.hpp"
+#include "../../core/objectvectorproperty.hpp"
 #include "../../core/method.hpp"
 #include "decoderfunction.hpp"
 
-class DecoderFunctionList : public ObjectList<DecoderFunction>
+class DecoderFunctions : public SubObject
 {
   protected:
+    void load(WorldLoader& loader, const nlohmann::json& data) final;
     void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
 
   public:
-    CLASS_ID("decoder_function_list")
+    CLASS_ID("decoder_functions")
 
+    ObjectVectorProperty<DecoderFunction> items;
     Method<std::shared_ptr<DecoderFunction>()> add;
+    Method<void(const std::shared_ptr<DecoderFunction>&)> remove;
+    Method<void(const std::shared_ptr<DecoderFunction>&)> moveUp;
+    Method<void(const std::shared_ptr<DecoderFunction>&)> moveDown;
 
-    DecoderFunctionList(Object& _parent, const std::string& parentPropertyName);
+    using const_iterator = ObjectVectorProperty<DecoderFunction>::const_iterator;
 
-    TableModelPtr getModel() final;
+    DecoderFunctions(Object& _parent, const std::string& parentPropertyName);
+
+    inline const_iterator begin() const { return items.begin(); }
+    inline const_iterator end() const { return items.end(); }
 };
 
 #endif

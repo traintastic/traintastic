@@ -24,20 +24,20 @@
 #include "../../world/world.hpp"
 #include "../../core/attributes.hpp"
 #include "../../utils/displayname.hpp"
+#include "../../log/logmessageexception.hpp"
 
 const std::shared_ptr<DecoderFunction> DecoderFunction::null;
 
-std::shared_ptr<DecoderFunction> DecoderFunction::create(Decoder& decoder, std::string_view _id)
-{
-  auto obj = std::make_shared<DecoderFunction>(decoder, _id);
-  obj->addToWorld();
-  return obj;
-}
-
-DecoderFunction::DecoderFunction(Decoder& decoder, std::string_view _id) :
-  IdObject(decoder.world(), _id),
+DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
+  Object(),
   m_decoder{decoder},
-  number{this, "number", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  number{this, "number", _number, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
+    [this](const uint8_t& value)
+    {
+      if(m_decoder.hasFunction(value))
+        throw LogMessageException(LogMessage::E2012_FUNCTION_NUMBER_ALREADY_IN_USE);
+      return true;
+    }},
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
   type{this, "type", DecoderFunctionType::OnOff, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](DecoderFunctionType)
@@ -65,22 +65,20 @@ DecoderFunction::DecoderFunction(Decoder& decoder, std::string_view _id) :
   m_interfaceItems.add(value);
 }
 
-void DecoderFunction::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const
+std::string DecoderFunction::getObjectId() const
 {
-  IdObject::save(saver, data, state);
-
-  data["decoder"] = m_decoder.id.toJSON();
+  return m_decoder.functions->getObjectId().append(".").append(m_decoder.functions->items.name()).append(".f").append(std::to_string(number.value()));
 }
 
 void DecoderFunction::loaded()
 {
-  IdObject::loaded();
+  Object::loaded();
   typeChanged();
 }
 
 void DecoderFunction::worldEvent(WorldState state, WorldEvent event)
 {
-  IdObject::worldEvent(state, event);
+  Object::worldEvent(state, event);
 
   const bool editable = contains(state, WorldState::Edit);
 

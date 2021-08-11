@@ -208,6 +208,7 @@ message:E2008=Socket read failed (%1)
 message:E2009=Socket receive failed (%1)
 message:E2010=Serial port open failed (%1)
 message:E2011=Socket send failed (%1)
+message:E2012=Function number already in use
 message:E9999=%1
 message:F1001=Opening TCP socket failed (%1)
 message:F1002=TCP socket address reuse failed (%1)

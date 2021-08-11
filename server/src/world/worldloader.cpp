@@ -160,9 +160,14 @@ void WorldLoader::createObject(ObjectData& objectData)
     objectData.object = Decoder::create(m_world, id);
   else if(classId == DecoderFunction::classId)
   {
+    // backwards compatibility
     const std::string_view decoderId = objectData.json["decoder"];
     if(std::shared_ptr<Decoder> decoder = std::dynamic_pointer_cast<Decoder>(getObject(decoderId)))
-      objectData.object = DecoderFunction::create(*decoder, id);
+    {
+      auto f = std::make_shared<DecoderFunction>(*decoder, objectData.json["number"]);
+      objectData.object = std::static_pointer_cast<Object>(f);
+      decoder->functions->items.appendInternal(f);
+    }
   }
   else if(startsWith(classId, Inputs::classIdPrefix))
     objectData.object = Inputs::create(m_world, classId, id);

@@ -23,13 +23,13 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERFUNCTION_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERFUNCTION_HPP
 
-#include "../../core/idobject.hpp"
-#include "../../core/objectproperty.hpp"
+#include "../../core/object.hpp"
+#include "../../core/property.hpp"
 #include "../../enum/decoderfunctiontype.hpp"
 
 class Decoder;
 
-class DecoderFunction : public IdObject
+class DecoderFunction : public Object
 {
   private:
     void typeChanged();
@@ -37,25 +37,22 @@ class DecoderFunction : public IdObject
   protected:
     Decoder& m_decoder;
 
-    void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
     void loaded() override;
     void worldEvent(WorldState state, WorldEvent event) final;
-
-   // void addToWorld() final { Output::addToWorld(); }
 
   public:
     CLASS_ID("decoder_function")
 
     static const std::shared_ptr<DecoderFunction> null;
-    static std::shared_ptr<DecoderFunction> create(Decoder& decoder, std::string_view _id);
 
     Property<uint8_t> number;
     Property<std::string> name;
     Property<DecoderFunctionType> type;
     Property<bool> value;
 
-    DecoderFunction(Decoder& decoder, std::string_view _id);
+    DecoderFunction(Decoder& decoder, uint8_t _number);
 
+    std::string getObjectId() const final;
     Decoder& decoder() { return m_decoder; }
 };
 

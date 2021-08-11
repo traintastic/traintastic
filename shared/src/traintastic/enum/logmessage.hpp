@@ -125,6 +125,7 @@ enum class LogMessage : uint32_t
   E2009_SOCKET_RECEIVE_FAILED_X = LogMessageOffset::error + 2009,
   E2010_SERIAL_PORT_OPEN_FAILED_X = LogMessageOffset::error + 2010,
   E2011_SOCKET_SEND_FAILED_X = LogMessageOffset::error + 2011,
+  E2012_FUNCTION_NUMBER_ALREADY_IN_USE = LogMessageOffset::error + 2012,
   E9999_X = LogMessageOffset::error + 9999,
 
   // Critical:

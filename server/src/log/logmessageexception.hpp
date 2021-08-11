@@ -1,9 +1,9 @@
 /**
- * client/src/widget/decoderlistwidget.hpp
+ * server/src/log/logmessageexception.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,20 +20,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_DECODERFUNCTIONLISTWIDGET_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_DECODERFUNCTIONLISTWIDGET_HPP
+#ifndef TRAINTASTIC_SERVER_LOG_LOGMESSAGEEXCEPTION_HPP
+#define TRAINTASTIC_SERVER_LOG_LOGMESSAGEEXCEPTION_HPP
 
-#include "objectlistwidget.hpp"
+#include <stdexcept>
+#include <traintastic/enum/logmessage.hpp>
 
-class DecoderFunctionListWidget : public ObjectListWidget
+class LogMessageException : public std::exception
 {
-  Q_OBJECT
-
-  protected:
-    void add() final;
+  private:
+    LogMessage m_message;
+    std::string m_what;
 
   public:
-    DecoderFunctionListWidget(const ObjectPtr& object, QWidget* parent = nullptr);
+    LogMessageException(LogMessage message)
+      : m_message{message}
+      , m_what{"message:"}
+    {
+      m_what += logMessageChar(message);
+      m_what.append(std::to_string(logMessageNumber(message)));
+    }
+
+    const char* what() const noexcept override
+    {
+      return m_what.c_str();
+    }
+
+    inline LogMessage message() const { return m_message; }
 };
 
 #endif

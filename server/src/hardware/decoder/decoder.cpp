@@ -25,7 +25,7 @@
 #include "decoderlisttablemodel.hpp"
 #include "decoderchangeflags.hpp"
 #include "decoderfunction.hpp"
-#include "decoderfunctionlist.hpp"
+#include "decoderfunctions.hpp"
 #include "../../world/world.hpp"
 #include "../commandstation/commandstation.hpp"
 #include "../../core/attributes.hpp"
@@ -100,7 +100,7 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
   functions{this, "functions", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
-  functions.setValueInternal(std::make_shared<DecoderFunctionList>(*this, functions.name()));
+  functions.setValueInternal(std::make_shared<DecoderFunctions>(*this, functions.name()));
 
   auto w = world.lock();
 
@@ -142,6 +142,14 @@ void Decoder::addToWorld()
 
   if(auto world = m_world.lock())
     world->decoders->addObject(shared_ptr<Decoder>());
+}
+
+bool Decoder::hasFunction(uint32_t number) const
+{
+  for(auto& f : *functions)
+    if(f->number == number)
+      return true;
+  return false;
 }
 
 const std::shared_ptr<DecoderFunction>& Decoder::getFunction(uint32_t number) const

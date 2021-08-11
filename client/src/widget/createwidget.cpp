@@ -22,7 +22,6 @@
 
 #include "createwidget.hpp"
 #include "commandstationlistwidget.hpp"
-#include "decoderfunctionlistwidget.hpp"
 #include "decoderlistwidget.hpp"
 #include "inputlistwidget.hpp"
 #include "luascriptlistwidget.hpp"
@@ -44,10 +43,8 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
 
   if(classId == "command_station_list")
     return new CommandStationListWidget(object, parent); // todo remove
-  else if(classId == "decoder_function_list")
-    return new DecoderListWidget(object, parent); // todo remove
   else if(classId == "decoder_list")
-    return new DecoderFunctionListWidget(object, parent); // todo remove
+    return new DecoderListWidget(object, parent); // todo remove
   else if(classId == "input_list")
     return new InputListWidget(object, parent); // todo remove
   else if(classId == "controller_list")
@@ -62,7 +59,7 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
     return new LuaScriptEditWidget(object, parent);
   else if(auto outputMap = std::dynamic_pointer_cast<OutputMap>(object))
     return new OutputMapWidget(outputMap, parent);
-  else if(classId == "input_map.block")
+  else if(classId == "input_map.block" || classId == "decoder_functions")
     return new ItemsEditWidget(object, parent);
   else
     return nullptr;
