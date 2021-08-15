@@ -63,11 +63,11 @@ Restore last known speed and direction of all trains.
 
 ### ![](../../gfx/toolbar/mute.png) Mute
 
-Disable all sound functions, this requires that sound or mute decoder functions are set to the *Sound* or *Mute* type, see [decoder function type](../object/decoderfunction.md#decoder-function-type).
+Disable all sound functions, this requires that sound or mute decoder functions are set to the *Sound* or *Mute* type, see [decoder function function](../object/decoderfunction.md#decoder-function-function).
 
 ### ![](../../gfx/toolbar/no_smoke.png) No smoke
 
-Disable all smoke generators, this requires that all smoke generater decoder functions are set to the *Smoke* type, see [decoder function type](../object/decoderfunction.md#decoder-function-type).
+Disable all smoke generators, this requires that all smoke generater decoder functions are set to the *Smoke* type, see [decoder function function](../object/decoderfunction.md#decoder-function-function).
 
 ### Edit mode
 

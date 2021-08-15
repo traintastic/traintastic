@@ -1,5 +1,5 @@
 /**
- * shared/src/enum/decoderfunctiontype.hpp
+ * server/src/enum/decoderfunctionfunction.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,30 +20,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_DECODERFUNCTIONTYPE_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_DECODERFUNCTIONTYPE_HPP
+#ifndef TRAINTASTIC_SERVER_ENUM_DECODERFUNCTIONFUNCTION_HPP
+#define TRAINTASTIC_SERVER_ENUM_DECODERFUNCTIONFUNCTION_HPP
 
-#include <cstdint>
-#include "enum.hpp"
+#include <traintastic/enum/decoderfunctionfunction.hpp>
+#include <array>
 
-enum class DecoderFunctionType : uint8_t
-{
-  OnOff = 0,
-  Momentary = 1,
-  Hold = 2,
-  AlwaysOff = 3,
-  AlwaysOn = 4,
-};
-
-ENUM_NAME(DecoderFunctionType, "decoder_function_type")
-
-ENUM_VALUES(DecoderFunctionType, 5,
-{
-  {DecoderFunctionType::OnOff, "on_off"},
-  {DecoderFunctionType::Momentary, "momentary"},
-  {DecoderFunctionType::Hold, "hold"},
-  {DecoderFunctionType::AlwaysOff, "always_off"},
-  {DecoderFunctionType::AlwaysOn, "always_on"},
-})
+inline constexpr std::array<DecoderFunctionFunction, 5> decoderFunctionFunctionValues{{
+  DecoderFunctionFunction::Generic,
+  DecoderFunctionFunction::Light,
+  DecoderFunctionFunction::Sound,
+  DecoderFunctionFunction::Mute,
+  DecoderFunctionFunction::Smoke,
+}};
 
 #endif

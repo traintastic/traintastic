@@ -47,7 +47,7 @@ DecoderFunctions::DecoderFunctions(Object& _parent, const std::string& parentPro
         function->name = "F" + std::to_string(number);
         function->number = number;
         if(number == 0) // F0 is (almost) always the light function
-          function->type = DecoderFunctionType::Light;
+          function->function = DecoderFunctionFunction::Light;
         items.appendInternal(function);
 
         return function;

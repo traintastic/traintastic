@@ -108,23 +108,26 @@ decoder:protocol=Protocol
 decoder:speed_step=Speed step
 decoder:speed_steps=Speed steps
 
-decoder_function:id=Id
+decoder_function:function=Function
 decoder_function:momentary=Momentary
 decoder_function:number=Number
 decoder_function:type=Type
 decoder_function:value=Value
+
+decoder_function_function:generic=Generic
+decoder_function_function:light=Light
+decoder_function_function:mute=Mute
+decoder_function_function:smoke=Smoke
+decoder_function_function:sound=Sound
 
 decoder_function_list:add=Add function
 decoder_function_list:f_hash=F#
 
 decoder_function_type:always_off=Always off
 decoder_function_type:always_on=Always on
-decoder_function_type:light=Light
+decoder_function_type:hold=Hold
 decoder_function_type:momentary=Momentary
-decoder_function_type:mute=Mute
 decoder_function_type:on_off=On/Off
-decoder_function_type:smoke=Smoke
-decoder_function_type:sound=Sound
 
 decoder_list:add=Add
 

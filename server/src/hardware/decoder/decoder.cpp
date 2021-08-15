@@ -161,10 +161,10 @@ const std::shared_ptr<DecoderFunction>& Decoder::getFunction(uint32_t number) co
   return DecoderFunction::null;
 }
 
-const std::shared_ptr<DecoderFunction>& Decoder::getFunction(DecoderFunctionType type) const
+const std::shared_ptr<DecoderFunction>& Decoder::getFunction(DecoderFunctionFunction function) const
 {
   for(auto& f : *functions)
-    if(f->type == type)
+    if(f->function == function)
       return f;
 
   return DecoderFunction::null;
@@ -185,14 +185,14 @@ bool Decoder::getFunctionValue(const std::shared_ptr<DecoderFunction>& function)
   // Apply mute/noSmoke world states:
   if(m_worldMute)
   {
-    if(function->type == DecoderFunctionType::Mute)
+    if(function->function == DecoderFunctionFunction::Mute)
       return true;
-    else if(function->type == DecoderFunctionType::Sound && !getFunction(DecoderFunctionType::Mute))
+    else if(function->function == DecoderFunctionFunction::Sound && !getFunction(DecoderFunctionFunction::Mute))
       return false;
   }
   if(m_worldNoSmoke)
   {
-    if(function->type == DecoderFunctionType::Smoke)
+    if(function->function == DecoderFunctionFunction::Smoke)
       return false;
   }
 
@@ -220,7 +220,7 @@ void Decoder::worldEvent(WorldState state, WorldEvent event)
     bool hasMute = false;
 
     for(auto& f : *functions)
-      if(f->type == DecoderFunctionType::Mute)
+      if(f->function == DecoderFunctionFunction::Mute)
       {
         if(!f->value)
           changed(DecoderChangeFlags::FunctionValue, f->number);
@@ -230,14 +230,14 @@ void Decoder::worldEvent(WorldState state, WorldEvent event)
     if(!hasMute)
     {
       for(auto& f : *functions)
-        if(f->type == DecoderFunctionType::Sound && f->value)
+        if(f->function == DecoderFunctionFunction::Sound && f->value)
           changed(DecoderChangeFlags::FunctionValue, f->number);
     }
   }
   else if(event == WorldEvent::NoSmoke || event == WorldEvent::Smoke)
   {
     for(auto& f : *functions)
-      if(f->type == DecoderFunctionType::Smoke && f->value)
+      if(f->function == DecoderFunctionFunction::Smoke && f->value)
         changed(DecoderChangeFlags::FunctionValue, f->number);
   }
 }

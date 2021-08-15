@@ -44,6 +44,7 @@ DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
     {
       typeChanged();
     }},
+  function{this, "function", DecoderFunctionFunction::Generic, PropertyFlags::ReadWrite | PropertyFlags::Store},
   value{this, "value", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
     [this](bool)
     {
@@ -61,6 +62,9 @@ DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
   Attributes::addEnabled(type, editable);
   Attributes::addValues(type, decoderFunctionTypeValues);
   m_interfaceItems.add(type);
+  Attributes::addEnabled(function, editable);
+  Attributes::addValues(function, decoderFunctionFunctionValues);
+  m_interfaceItems.add(function);
   Attributes::addEnabled(value, true);
   m_interfaceItems.add(value);
 }
@@ -85,6 +89,7 @@ void DecoderFunction::worldEvent(WorldState state, WorldEvent event)
   number.setAttributeEnabled(editable);
   name.setAttributeEnabled(editable);
   type.setAttributeEnabled(editable);
+  function.setAttributeEnabled(editable);
 }
 
 void DecoderFunction::typeChanged()

@@ -26,6 +26,7 @@
 #include "../../core/object.hpp"
 #include "../../core/property.hpp"
 #include "../../enum/decoderfunctiontype.hpp"
+#include "../../enum/decoderfunctionfunction.hpp"
 
 class Decoder;
 
@@ -48,6 +49,7 @@ class DecoderFunction : public Object
     Property<uint8_t> number;
     Property<std::string> name;
     Property<DecoderFunctionType> type;
+    Property<DecoderFunctionFunction> function;
     Property<bool> value;
 
     DecoderFunction(Decoder& decoder, uint8_t _number);
