@@ -84,7 +84,47 @@ class Property : public AbstractProperty
         return;
       else if(!isWriteable())
         throw not_writable_error();
-      else if(!m_onSet || m_onSet(value))
+
+      if constexpr(std::is_integral_v<T> || std::is_floating_point_v<T>)
+      {
+        if(auto it = m_attributes.find(AttributeName::Min); it != m_attributes.end())
+        {
+          const T min = static_cast<Attribute<T>&>(*it->second).value();
+
+          if(value < min)
+          {
+            if constexpr(std::is_floating_point_v<T>)
+            {
+              if(value > min - std::numeric_limits<T>::epsilon() * 100)
+                value = min;
+              else
+                throw out_of_range_error();
+            }
+            else
+              throw out_of_range_error();
+          }
+        }
+
+        if(auto it = m_attributes.find(AttributeName::Max); it != m_attributes.end())
+        {
+          const T max = static_cast<Attribute<T>&>(*it->second).value();
+
+          if(value > max)
+          {
+            if constexpr(std::is_floating_point_v<T>)
+            {
+              if(value < max + std::numeric_limits<T>::epsilon() * 100)
+                value = max;
+              else
+                throw out_of_range_error();
+            }
+            else
+              throw out_of_range_error();
+          }
+        }
+      }
+
+      if(!m_onSet || m_onSet(value))
       {
         m_value = value;
         if(m_onChanged)
