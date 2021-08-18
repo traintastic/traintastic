@@ -61,5 +61,9 @@
         <file>log.info.svg</file>
         <file>log.notice.svg</file>
         <file>log.warning.svg</file>
+        <file>decoder_function.mute.off.svg</file>
+        <file>decoder_function.mute.on.svg</file>
+        <file>decoder_function.sound.off.svg</file>
+        <file>decoder_function.sound.on.svg</file>
     </qresource>
 </RCC>

@@ -50,6 +50,8 @@ file(GLOB SOURCES
   "src/widget/*.cpp"
   "src/widget/object/*.hpp"
   "src/widget/object/*.cpp"
+  "src/widget/throttle/*.hpp"
+  "src/widget/throttle/*.cpp"
   "../shared/src/traintastic/locale/locale.cpp"
   "../shared/src/traintastic/utils/standardpaths.cpp"
   "thirdparty/QtWaitingSpinner/*.hpp"
