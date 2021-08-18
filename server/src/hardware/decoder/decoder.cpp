@@ -86,7 +86,7 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
     {
       changed(DecoderChangeFlags::Direction);
     }},
-  speedSteps{this, "speed_steps", 255, PropertyFlags::ReadWrite | PropertyFlags::Store,
+  speedSteps{this, "speed_steps", speedStepsAuto, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](const uint8_t&)
     {
       changed(DecoderChangeFlags::SpeedSteps);
