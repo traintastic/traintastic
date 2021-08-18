@@ -45,6 +45,7 @@ void DecoderListWidget::objectDoubleClicked(const QString& id)
         if(auto* p = w->getProperty("edit"); p && !p->toBool())
         {
           MainWindow::instance->showObject(id, "", SubWindowType::Throttle);
+          return;
         }
       }
     }
