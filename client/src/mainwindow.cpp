@@ -41,8 +41,9 @@
 #include "network/object.hpp"
 #include "network/property.hpp"
 #include "network/method.hpp"
-//#include "subwindow/objecteditsubwindow.hpp"
 #include "subwindow/objectsubwindow.hpp"
+#include "subwindow/boardsubwindow.hpp"
+#include "subwindow/throttlesubwindow.hpp"
 #include "widget/serverlogwidget.hpp"
 #include "utils/menu.hpp"
 #include "theme/theme.hpp"
@@ -69,6 +70,22 @@ inline static void setWorldNoSmoke(const ObjectPtr& world, bool value)
     world->setPropertyValue("no_smoke", value);
 }
 
+template<class... Args>
+static SubWindow* createSubWindow(SubWindowType type, Args... args)
+{
+  switch(type)
+  {
+    case SubWindowType::Object:
+      return ObjectSubWindow::create(args...);
+
+    case SubWindowType::Board:
+      return BoardSubWindow::create(args...);
+
+    case SubWindowType::Throttle:
+      return ThrottleSubWindow::create(args...);
+  }
+  return nullptr;
+}
 
 MainWindow::MainWindow(QWidget* parent) :
   QMainWindow(parent),
@@ -346,7 +363,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
 MainWindow::~MainWindow()
 {
-  for(QMdiSubWindow* window : m_mdiSubWindows)
+  for(SubWindow* window : m_subWindows)
     disconnect(window, &QMdiSubWindow::destroyed, nullptr, nullptr);
 }
 
@@ -516,48 +533,53 @@ void MainWindow::showObjectEdit(const ObjectPtr& object)
     m_mdiArea->setActiveSubWindow(m_mdiSubWindow.objectEdit[id]);
 }
 */
-void MainWindow::showObject(const ObjectPtr& object)
+void MainWindow::showObject(const ObjectPtr& object, SubWindowType type)
 {
-  QString id;
+  QString windowId;
   if(auto* property = object->getProperty("id"))
-    id = property->toString();
-  if(id.isEmpty() || !m_mdiSubWindows.contains(id))
+    windowId = toString(type).append("/").append(property->toString());
+  if(windowId.isEmpty() || !m_subWindows.contains(windowId))
   {
-    QMdiSubWindow* window = new ObjectSubWindow(object);
-    if(!id.isEmpty())
-      m_mdiSubWindows[id] = window;
+    SubWindow* window = createSubWindow(type, object);
+    if(!window)
+      return;
+    if(!windowId.isEmpty())
+      m_subWindows[windowId] = window;
     m_mdiArea->addSubWindow(window);
     window->setAttribute(Qt::WA_DeleteOnClose);
     connect(window, &QMdiSubWindow::destroyed, this,
-      [this, id](QObject*)
+      [this, windowId](QObject*)
       {
-        m_mdiSubWindows.remove(id);
+        m_subWindows.remove(windowId);
       });
     window->show();
   }
   else
-    m_mdiArea->setActiveSubWindow(m_mdiSubWindows[id]);
+    m_mdiArea->setActiveSubWindow(m_subWindows[windowId]);
 }
 
-void MainWindow::showObject(const QString& id, const QString& title)
+void MainWindow::showObject(const QString& id, const QString& title, SubWindowType type)
 {
-  if(!m_mdiSubWindows.contains(id))
+  const QString windowId{toString(type).append("/").append(id)};
+  if(!m_subWindows.contains(windowId))
   {
-    QMdiSubWindow* window = new ObjectSubWindow(m_connection, id);
+    SubWindow* window = createSubWindow(type, m_connection, id);
+    if(!window)
+      return;
     if(!title.isEmpty())
       window->setWindowTitle(title);
-    m_mdiSubWindows[id] = window;
+    m_subWindows[windowId] = window;
     m_mdiArea->addSubWindow(window);
     window->setAttribute(Qt::WA_DeleteOnClose);
     connect(window, &QMdiSubWindow::destroyed, this,
-      [this, id](QObject*)
+      [this, windowId](QObject*)
       {
-        m_mdiSubWindows.remove(id);
+        m_subWindows.remove(windowId);
       });
     window->show();
   }
   else
-    m_mdiArea->setActiveSubWindow(m_mdiSubWindows[id]);
+    m_mdiArea->setActiveSubWindow(m_subWindows[windowId]);
 }
 
 void MainWindow::showAbout()

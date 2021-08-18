@@ -21,73 +21,32 @@
  */
 
 #include "objectsubwindow.hpp"
-#include <QVBoxLayout>
-#include <QSettings>
-#include <QtWaitingSpinner/waitingspinnerwidget.h>
-#include "../network/connection.hpp"
-#include "../network/object.hpp"
-#include "../network/utils.hpp"
-#include "../widget/alertwidget.hpp"
 #include "../widget/createwidget.hpp"
 
-ObjectSubWindow::ObjectSubWindow(const ObjectPtr& object, QWidget* parent) :
-  QMdiSubWindow(parent),
-  m_connection{object->connection()},
-  m_requestId{Connection::invalidRequestId}
+ObjectSubWindow* ObjectSubWindow::create(const ObjectPtr& object, QWidget* parent)
 {
-  setObject(object);
+  auto* w = new ObjectSubWindow(parent);
+  w->setObject(object);
+  return w;
 }
 
-ObjectSubWindow::ObjectSubWindow(std::shared_ptr<Connection> connection, const QString& id, QWidget* parent) :
-  QMdiSubWindow(parent),
-  m_connection{std::move(connection)},
-  m_requestId{Connection::invalidRequestId}
+ObjectSubWindow* ObjectSubWindow::create(std::shared_ptr<Connection> connection, const QString& id, QWidget* parent)
 {
-  auto* spinner = new WaitingSpinnerWidget(this, true, false);
-  spinner->start();
-
-  m_requestId = m_connection->getObject(id,
-    [this, spinner](const ObjectPtr& object, Message::ErrorCode ec)
-    {
-      m_requestId = Connection::invalidRequestId;
-      if(object)
-        setObject(object);
-      else
-        static_cast<QVBoxLayout*>(this->layout())->addWidget(AlertWidget::error(errorCodeToText(ec)));
-      delete spinner;
-    });
+  return new ObjectSubWindow(std::move(connection), id, parent);
 }
 
-ObjectSubWindow::~ObjectSubWindow()
+ObjectSubWindow::ObjectSubWindow(QWidget* parent)
+  : SubWindow(SubWindowType::Object, parent)
 {
-  m_connection->cancelRequest(m_requestId);
-
-  if(!m_classId.isEmpty())
-    QSettings().setValue("subwindow/" + m_classId + "/size", size());
 }
 
-void ObjectSubWindow::setObject(const ObjectPtr& object)
+ObjectSubWindow::ObjectSubWindow(std::shared_ptr<Connection> connection, const QString& id, QWidget* parent)
+  : SubWindow(SubWindowType::Object, std::move(connection), id, parent)
 {
-  m_classId = object->classId();
-  setWidget(createWidget(object));
-  connect(widget(), &QWidget::windowTitleChanged, this, &ObjectSubWindow::setWindowTitle);
-  if(!widget()->windowTitle().isEmpty())
-    setWindowTitle(widget()->windowTitle());
-  setSizeFromSettings();
 }
 
-void ObjectSubWindow::showEvent(QShowEvent*)
+QWidget* ObjectSubWindow::createWidget(const ObjectPtr& object)
 {
-  setSizeFromSettings();
+  return ::createWidget(object);
 }
 
-void ObjectSubWindow::setSizeFromSettings()
-{
-  if(m_classId.isEmpty())
-    return;
-  QSize sz = QSettings().value("subwindow/" + m_classId + "/size", QSize()).toSize();
-  if(sz.isValid())
-    resize(sz);
-  else
-    resize(400, 300);
-}

@@ -26,12 +26,13 @@
 #include <QMainWindow>
 #include <QMap>
 #include "network/objectptr.hpp"
+#include "subwindow/subwindowtype.hpp"
 
 class MdiArea;
 class QSplitter;
-class QMdiSubWindow;
 class QActionGroup;
 class QToolButton;
+class SubWindow;
 class Connection;
 class AbstractProperty;
 class ObjectEditSubWindow;
@@ -50,7 +51,7 @@ class MainWindow : public QMainWindow
     QSplitter* m_splitter;
     MdiArea* m_mdiArea;
     ServerLogWidget* m_serverLog;
-    QMap<QString, QMdiSubWindow*> m_mdiSubWindows;
+    QMap<QString, SubWindow*> m_subWindows;
     // Main menu:
     QAction* m_actionConnectToServer;
     QAction* m_actionDisconnectFromServer;
@@ -117,8 +118,8 @@ class MainWindow : public QMainWindow
 
   public slots:
     void connectToServer(const QString& url = QString());
-    void showObject(const ObjectPtr& object);
-    void showObject(const QString& id, const QString& title = "");
+    void showObject(const ObjectPtr& object, SubWindowType flags = SubWindowType::Object);
+    void showObject(const QString& id, const QString& title = "", SubWindowType flags = SubWindowType::Object);
 };
 
 #endif
