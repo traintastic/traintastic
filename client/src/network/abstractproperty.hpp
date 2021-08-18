@@ -52,10 +52,24 @@ class AbstractProperty : public BaseProperty
     }
 
     template<typename T>
+    void setValueEnum(T value)
+    {
+      static_assert(std::is_enum_v<T>);
+      return setValueInt64(static_cast<int64_t>(value));
+    }
+
+    template<typename T>
     T toSet() const
     {
       static_assert(is_set_v<T>);
       return static_cast<T>(toInt64());
+    }
+
+    template<typename T>
+    void setValueSet(T value)
+    {
+      static_assert(is_set_v<T>);
+      return setValueInt64(static_cast<int64_t>(value));
     }
 
     [[nodiscard]] virtual int setValueBool(bool value, std::function<void(const QString& error)> callback) { Q_ASSERT(value != value); return -1; }
