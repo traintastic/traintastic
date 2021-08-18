@@ -131,6 +131,7 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
 
     const ObjectPtr& traintastic() const { return m_traintastic; }
     const ObjectPtr& world() const { return m_world; }
+    QString worldUUID() const;
 
     void serverLog(ServerLogTableModel& model, bool enable);
 

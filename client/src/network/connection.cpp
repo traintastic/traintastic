@@ -196,6 +196,18 @@ void Connection::cancelRequest(int requestId)
     m_requestCallback.erase(it);
 }
 
+QString Connection::worldUUID() const
+{
+  if(!m_world)
+    return QString();
+
+  auto* p = m_world->getProperty("uuid");
+  if(!p)
+    return QString();
+
+  return p->toString();
+}
+
 void Connection::serverLog(ServerLogTableModel& model, bool enable)
 {
   assert(enable || m_serverLogTableModel == &model);
