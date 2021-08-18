@@ -21,29 +21,34 @@
  */
 
 #include "decoderlistwidget.hpp"
-#include <QMessageBox>
+#include "tablewidget.hpp"
 #include "../network/connection.hpp"
 #include "../network/object.hpp"
-#include "../network/property.hpp"
-#include "../network/utils.hpp"
+#include "../network/abstractproperty.hpp"
 #include "../mainwindow.hpp"
 
 DecoderListWidget::DecoderListWidget(const ObjectPtr& object, QWidget* parent) :
   ObjectListWidget(object, parent)
 {
-  //addActionAdd();
   addActionEdit();
   addActionDelete();
 }
 
-void DecoderListWidget::add()
+void DecoderListWidget::objectDoubleClicked(const QString& id)
 {
-  /*m_object->connection()->createObject("hardware.decoder", "",
-    [this](const ObjectPtr& object, Message::ErrorCode ec)
+  if(m_object)
+  {
+    if(const auto& c = m_object->connection())
     {
-      if(object)
-        MainWindow::instance->showObject(object);
-      else
-        QMessageBox::critical(this, tr("Add failed"), errorCodeToText(ec));
-    });*/
+      if(const auto& w = c->world())
+      {
+        if(auto* p = w->getProperty("edit"); p && !p->toBool())
+        {
+          MainWindow::instance->showObject(id, "", SubWindowType::Throttle);
+        }
+      }
+    }
+  }
+
+  ObjectListWidget::objectDoubleClicked(id);
 }

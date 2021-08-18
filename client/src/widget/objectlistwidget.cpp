@@ -185,11 +185,16 @@ void ObjectListWidget::addActionDelete()
  // Q_ASSERT(!m_actionDelete);
 }
 
+void ObjectListWidget::objectDoubleClicked(const QString& id)
+{
+  MainWindow::instance->showObject(id);
+}
+
 void ObjectListWidget::tableDoubleClicked(const QModelIndex& index)
 {
   const QString id = m_tableWidget->getRowObjectId(index.row());
   if(!id.isEmpty())
-    MainWindow::instance->showObject(id);//emit rowDoubleClicked(id);
+    objectDoubleClicked(id);
 }
 
 

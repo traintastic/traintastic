@@ -37,6 +37,9 @@ class ObjectListWidget : public QWidget
   private:
     QToolButton* m_buttonAdd;
 
+  private slots:
+    void tableDoubleClicked(const QModelIndex& index);
+
   protected:
     const QString m_id;
     int m_requestId;
@@ -52,16 +55,11 @@ class ObjectListWidget : public QWidget
     void addActionDelete();
 
     virtual void add() { Q_ASSERT(false); }
-
-  protected slots:
-    void tableDoubleClicked(const QModelIndex& index);
+    virtual void objectDoubleClicked(const QString& id);
 
   public:
     explicit ObjectListWidget(const ObjectPtr& object, QWidget* parent = nullptr);
     ~ObjectListWidget() override;
-
-  //signals:
-  //  void rowDoubleClicked(const QString& id);
 };
 
 #endif
