@@ -38,7 +38,7 @@ class DecoderFunctions : public SubObject
     CLASS_ID("decoder_functions")
 
     ObjectVectorProperty<DecoderFunction> items;
-    Method<std::shared_ptr<DecoderFunction>()> add;
+    Method<void()> add;
     Method<void(const std::shared_ptr<DecoderFunction>&)> remove;
     Method<void(const std::shared_ptr<DecoderFunction>&)> moveUp;
     Method<void(const std::shared_ptr<DecoderFunction>&)> moveDown;

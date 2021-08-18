@@ -29,12 +29,12 @@ DecoderFunctions::DecoderFunctions(Object& _parent, const std::string& parentPro
   : SubObject(_parent, parentPropertyName)
   , items{*this, "items", {}, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , add{*this, "add",
-      [this]()
+      [this]() -> void
       {
         Decoder& decoder = static_cast<Decoder&>(this->parent());
         auto world = decoder.world().lock();
         if(!world)
-          return std::shared_ptr<DecoderFunction>();
+          return;
         uint8_t number = 0;
         if(!items.empty())
         {
@@ -49,8 +49,6 @@ DecoderFunctions::DecoderFunctions(Object& _parent, const std::string& parentPro
         if(number == 0) // F0 is (almost) always the light function
           function->function = DecoderFunctionFunction::Light;
         items.appendInternal(function);
-
-        return function;
       }}
   , remove{*this, "remove",
       [this](const std::shared_ptr<DecoderFunction>& function)
