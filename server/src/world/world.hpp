@@ -64,7 +64,6 @@ class World : public Object
   protected:
     static void init(const std::shared_ptr<World>& world);
 
-    boost::uuids::uuid m_uuid;
     std::unordered_map<std::string, std::weak_ptr<Object>> m_objects;
 
     void loaded() final;
@@ -81,6 +80,7 @@ class World : public Object
 
     static std::shared_ptr<World> create();
 
+    Property<std::string> uuid;
     Property<std::string> name;
     Property<WorldScale> scale;
     Property<double> scaleRatio;
@@ -117,7 +117,7 @@ class World : public Object
 
     std::string getObjectId() const final { return std::string(classId); }
 
-    const boost::uuids::uuid& uuid() const { return m_uuid; }
+    //const boost::uuids::uuid& uuid() const { return m_uuid; }
 
     std::string getUniqueId(std::string_view prefix) const;
     bool isObject(const std::string&_id) const;

@@ -24,6 +24,7 @@
 #include <fstream>
 #include <boost/algorithm/string.hpp>
 #include <boost/uuid/string_generator.hpp>
+#include <boost/uuid/uuid_io.hpp>
 #include "world.hpp"
 #include "../utils/string.hpp"
 #include "ctwreader.hpp"
@@ -82,7 +83,8 @@ WorldLoader::WorldLoader(std::filesystem::path path) :
     }
   }
 
-  m_world->m_uuid = boost::uuids::string_generator()(std::string(data["uuid"]));
+  // check if UUID is valid:
+  m_world->uuid.setValueInternal(to_string(boost::uuids::string_generator()(std::string(data["uuid"]))));
 
   // create a list of all objects
   m_objects.insert({m_world->getObjectId(), {data, m_world, false}});

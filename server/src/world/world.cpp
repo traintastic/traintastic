@@ -65,7 +65,7 @@ void World::init(const std::shared_ptr<World>& world)
 
 World::World(Private) :
   Object(),
-  m_uuid{boost::uuids::random_generator()()},
+  uuid{this, "uuid", to_string(boost::uuids::random_generator()()), PropertyFlags::ReadOnly | PropertyFlags::NoStore},
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
   scale{this, "scale", WorldScale::H0, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](WorldScale value){ updateScaleRatio(); }},
   scaleRatio{this, "scale_ratio", 87, PropertyFlags::ReadWrite | PropertyFlags::Store},
@@ -182,7 +182,6 @@ World::World(Private) :
         // backup world:
         const std::filesystem::path worldDir = Traintastic::instance->worldDir();
         const std::filesystem::path worldBackupDir = Traintastic::instance->worldBackupDir();
-        const std::string uuid{to_string(m_uuid)};
         auto dateTimeStr =
           []()
           {
@@ -200,24 +199,24 @@ World::World(Private) :
             Log::log(*this, LogMessage::C1007_CREATING_WORLD_BACKUP_DIRECTORY_FAILED_X, ec);
         }
 
-        if(std::filesystem::is_directory(worldDir / uuid))
+        if(std::filesystem::is_directory(worldDir / uuid.value()))
         {
           std::error_code ec;
-          std::filesystem::rename(worldDir / uuid, worldBackupDir / uuid += dateTimeStr(), ec);
+          std::filesystem::rename(worldDir / uuid.value(), worldBackupDir / uuid.value() += dateTimeStr(), ec);
           if(ec)
             Log::log(*this, LogMessage::C1006_CREATING_WORLD_BACKUP_FAILED_X, ec);
         }
 
-        if(std::filesystem::is_regular_file(worldDir / uuid += dotCTW))
+        if(std::filesystem::is_regular_file(worldDir / uuid.value() += dotCTW))
         {
           std::error_code ec;
-          std::filesystem::rename(worldDir / uuid += dotCTW, worldBackupDir / uuid += dateTimeStr() += dotCTW, ec);
+          std::filesystem::rename(worldDir / uuid.value() += dotCTW, worldBackupDir / uuid.value() += dateTimeStr() += dotCTW, ec);
           if(ec)
             Log::log(*this, LogMessage::C1006_CREATING_WORLD_BACKUP_FAILED_X, ec);
         }
 
         // save world:
-        std::filesystem::path savePath = worldDir / uuid;
+        std::filesystem::path savePath = worldDir / uuid.value();
         if(!Traintastic::instance->settings->saveWorldUncompressed)
           savePath += dotCTW;
 
@@ -231,6 +230,7 @@ World::World(Private) :
       }
     }}
 {
+  m_interfaceItems.add(uuid);
   Attributes::addDisplayName(name, DisplayName::Object::name);
   m_interfaceItems.add(name);
   Attributes::addEnabled(scale, false);

@@ -44,7 +44,7 @@ WorldSaver::WorldSaver(const World& world, std::filesystem::path path) :
     data.erase("class_id");
   }
 
-  data["uuid"] = state["uuid"] = to_string(world.m_uuid);
+  data["uuid"] = state["uuid"] = world.uuid.value();
 
   {
     json objects = json::array();
