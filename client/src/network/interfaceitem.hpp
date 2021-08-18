@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,6 +52,7 @@ class InterfaceItem : public QObject
     QVariant getAttribute(AttributeName name, const QVariant& default_) const;
     bool getAttributeBool(AttributeName name, bool default_) const;
     qint64 getAttributeInt64(AttributeName name, qint64 default_) const;
+    double getAttributeDouble(AttributeName name, double default_) const;
 
     template<typename T>
     T getAttributeEnum(AttributeName name, T default_) const
