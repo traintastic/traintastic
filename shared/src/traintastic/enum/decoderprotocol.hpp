@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,17 +37,13 @@ enum class DecoderProtocol : uint8_t
   Custom = 255,
 };
 
-template<>
-struct EnumName<DecoderProtocol>
-{
-  static constexpr char const* value = "decoder_protocol";
-};
+ENUM_NAME(DecoderProtocol, "decoder_protocol")
 
 ENUM_VALUES(DecoderProtocol, 3,
 {
-  {DecoderProtocol::Auto, "AUTO"},
-  {DecoderProtocol::DCC, "DCC"},
-  {DecoderProtocol::Custom, "CUSTOM"},
+  {DecoderProtocol::Auto, "auto"},
+  {DecoderProtocol::DCC, "dcc"},
+  {DecoderProtocol::Custom, "custom"},
 })
 
 #endif
