@@ -66,6 +66,7 @@ DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
   Attributes::addValues(function, decoderFunctionFunctionValues);
   m_interfaceItems.add(function);
   Attributes::addEnabled(value, true);
+  Attributes::addObjectEditor(value, false);
   m_interfaceItems.add(value);
 }
 

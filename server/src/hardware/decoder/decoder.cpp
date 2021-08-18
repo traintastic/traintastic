@@ -122,12 +122,15 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
   m_interfaceItems.add(address);
   Attributes::addEnabled(longAddress, false);
   m_interfaceItems.add(longAddress);
+  Attributes::addObjectEditor(emergencyStop, false);
   m_interfaceItems.add(emergencyStop);
   Attributes::addValues(direction, DirectionValues);
+  Attributes::addObjectEditor(direction, false);
   m_interfaceItems.add(direction);
   Attributes::addEnabled(speedSteps, false);
   m_interfaceItems.add(speedSteps);
   Attributes::addMinMax(throttle, throttleMin, throttleMax);
+  Attributes::addObjectEditor(throttle, false);
   m_interfaceItems.add(throttle);
   m_interfaceItems.add(functions);
   Attributes::addDisplayName(notes, DisplayName::Object::notes);
