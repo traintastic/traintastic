@@ -37,6 +37,7 @@ class DecoderList : public ObjectList<Decoder>
     CLASS_ID("decoder_list")
 
     Method<std::shared_ptr<Decoder>()> add;
+    Method<void(const std::shared_ptr<Decoder>&)> remove;
 
     DecoderList(Object& _parent, const std::string& parentPropertyName);
 

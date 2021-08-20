@@ -42,12 +42,22 @@ DecoderList::DecoderList(Object& _parent, const std::string& parentPropertyName)
       //  decoder->commandStation = cs->shared_ptr<CommandStation>();
       return decoder;
     }}
+  , remove{*this, "remove",
+      [this](const std::shared_ptr<Decoder>& decoder)
+      {
+        if(!decoder)
+          return;
+        decoder->destroy();
+        assert(!containsObject(decoder));
+      }}
 {
   auto world = getWorld(&_parent);
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
 
   Attributes::addEnabled(add, editable);
   m_interfaceItems.add(add);
+  Attributes::addEnabled(remove, editable);
+  m_interfaceItems.add(remove);
 }
 
 TableModelPtr DecoderList::getModel()
@@ -62,6 +72,7 @@ void DecoderList::worldEvent(WorldState state, WorldEvent event)
   const bool editable = contains(state, WorldState::Edit);
 
   add.setAttributeEnabled(editable);
+  remove.setAttributeEnabled(editable);
 }
 
 bool DecoderList::isListedProperty(const std::string& name)
