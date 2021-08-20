@@ -99,6 +99,18 @@ void CommandStation::addToWorld()
     world->commandStations->addObject(shared_ptr<CommandStation>());
 }
 
+void CommandStation::destroying()
+{
+  for(const auto& decoder : *decoders)
+  {
+    assert(decoder->commandStation.value() == shared_ptr<CommandStation>());
+    decoder->commandStation = nullptr;
+  }
+  if(auto world = m_world.lock())
+    world->commandStations->removeObject(shared_ptr<CommandStation>());
+  IdObject::destroying();
+}
+
 void CommandStation::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);

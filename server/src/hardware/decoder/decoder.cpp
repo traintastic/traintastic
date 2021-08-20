@@ -209,6 +209,15 @@ void Decoder::setFunctionValue(uint32_t number, bool value)
     f->value.setValueInternal(value);
 }
 
+void Decoder::destroying()
+{
+  if(commandStation.value())
+    commandStation = nullptr;
+  if(auto world = m_world.lock())
+    world->decoders->removeObject(shared_ptr<Decoder>());
+  IdObject::destroying();
+}
+
 void Decoder::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);

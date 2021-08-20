@@ -39,6 +39,7 @@ class CommandStation : public IdObject
   protected:
     void loaded() override;
     void addToWorld() final;
+    void destroying() override;
     void worldEvent(WorldState state, WorldEvent event) override;
 
     virtual bool setOnline(bool& value) = 0;

@@ -43,6 +43,7 @@ class Decoder : public IdObject
     bool m_worldNoSmoke;
 
   protected:
+    void destroying() override;
     void worldEvent(WorldState state, WorldEvent event) final;
     void updateEditable();
     void updateEditable(bool editable);
