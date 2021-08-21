@@ -1,9 +1,9 @@
 /**
- * client/src/widget/objectlistwidget.hpp
+ * client/src/widget/objectlist/objectlistwidget.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,42 +20,45 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_OBJECTLISTWIDGET_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_OBJECTLISTWIDGET_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_OBJECTLIST_OBJECTLISTWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_OBJECTLIST_OBJECTLISTWIDGET_HPP
 
 #include <QWidget>
-#include "../network/objectptr.hpp"
+#include "../../network/objectptr.hpp"
 
 class QToolBar;
 class QToolButton;
 class TableWidget;
+class MethodAction;
 
 class ObjectListWidget : public QWidget
 {
   Q_OBJECT
 
   private:
+    //const QString m_id;
+    int m_requestId;
+    int m_requestIdAdd;
+    ObjectPtr m_object;
+    QToolBar* m_toolbar;
     QToolButton* m_buttonAdd;
+    QAction* m_actionAdd;
+    QAction* m_actionEdit;
+    MethodAction* m_actionDelete;
+    TableWidget* m_tableWidget;
+
+    void tableSelectionChanged();
 
   private slots:
     void tableDoubleClicked(const QModelIndex& index);
 
   protected:
-    const QString m_id;
-    int m_requestId;
-    int m_requestIdAdd;
-    ObjectPtr m_object;
-    QToolBar* m_toolbar;
-    QAction* m_actionAdd;
-    QAction* m_actionEdit;
-    QAction* m_actionDelete;
-    TableWidget* m_tableWidget;
+    const ObjectPtr& object() { return m_object; }
+    QToolBar* toolbar() { return m_toolbar; }
 
-    void addActionEdit();
-    void addActionDelete();
-
-    virtual void add() { Q_ASSERT(false); }
+    virtual void tableSelectionChanged(bool hasSelection);
     virtual void objectDoubleClicked(const QString& id);
+    QStringList getSelectedObjectIds() const;
 
   public:
     explicit ObjectListWidget(const ObjectPtr& object, QWidget* parent = nullptr);

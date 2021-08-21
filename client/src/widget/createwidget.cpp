@@ -21,10 +21,7 @@
  */
 
 #include "createwidget.hpp"
-#include "commandstationlistwidget.hpp"
-#include "decoderlistwidget.hpp"
-#include "inputlistwidget.hpp"
-#include "luascriptlistwidget.hpp"
+#include "objectlist/throttleobjectlistwidget.hpp"
 #include "object/luascripteditwidget.hpp"
 #include "object/objecteditwidget.hpp"
 #include "object/itemseditwidget.hpp"
@@ -42,17 +39,17 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
   const QString& classId = object->classId();
 
   if(classId == "command_station_list")
-    return new CommandStationListWidget(object, parent); // todo remove
+    return new ObjectListWidget(object, parent); // todo remove
   else if(classId == "decoder_list")
-    return new DecoderListWidget(object, parent); // todo remove
+    return new ThrottleObjectListWidget(object, parent); // todo remove
   else if(classId == "input_list")
-    return new InputListWidget(object, parent); // todo remove
+    return new ObjectListWidget(object, parent); // todo remove
   else if(classId == "controller_list")
     return new ObjectListWidget(object, parent); // todo remove
   else if(classId == "rail_vehicle_list")
     return new ObjectListWidget(object, parent); // todo remove
   else if(classId == "lua.script_list")
-    return new LuaScriptListWidget(object, parent); // todo remove
+    return new ObjectListWidget(object, parent); // todo remove
   else if(classId == "world_list")
     return new ObjectListWidget(object, parent);
   else if(classId == "lua.script")

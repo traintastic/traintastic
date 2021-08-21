@@ -1,9 +1,9 @@
 /**
- * client/src/widget/commandstationlistwidget.hpp
+ * client/src/widget/objectlist/throttleobjectlistwidget.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,17 +20,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_COMMANDSTATIONLISTWIDGET_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_COMMANDSTATIONLISTWIDGET_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_OBJECTLIST_THROTTLEOBJECTLISTWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_OBJECTLIST_THROTTLEOBJECTLISTWIDGET_HPP
 
 #include "objectlistwidget.hpp"
 
-class CommandStationListWidget : public ObjectListWidget
+class ThrottleObjectListWidget : public ObjectListWidget
 {
-  Q_OBJECT
+  private:
+    QAction* m_actionThrottle;
+
+  protected:
+    void tableSelectionChanged(bool hasSelection) final;
+    void objectDoubleClicked(const QString& id) final;
 
   public:
-    CommandStationListWidget(const ObjectPtr& object, QWidget* parent = nullptr);
+    explicit ThrottleObjectListWidget(const ObjectPtr& object, QWidget* parent = nullptr);
 };
 
 #endif

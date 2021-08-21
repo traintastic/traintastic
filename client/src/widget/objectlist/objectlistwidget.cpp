@@ -1,9 +1,9 @@
 /**
- * client/src/widget/objectlistwidget.cpp
+ * client/src/widget/objectlist/objectlistwidget.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,17 +26,19 @@
 #include <QTableView>
 #include <QtWaitingSpinner/waitingspinnerwidget.h>
 #include <traintastic/locale/locale.hpp>
-#include "tablewidget.hpp"
-#include "../network/connection.hpp"
-#include "../network/object.hpp"
-#include "../network/tablemodel.hpp"
-#include "../network/method.hpp"
-#include "../network/utils.hpp"
-#include "../widget/alertwidget.hpp"
-#include "../theme/theme.hpp"
+#include "../tablewidget.hpp"
+#include "../../network/connection.hpp"
+#include "../../network/object.hpp"
+#include "../../network/tablemodel.hpp"
+#include "../../network/method.hpp"
+#include "../../network/utils.hpp"
+#include "../../network/callmethod.hpp"
+#include "../alertwidget.hpp"
+#include "../../theme/theme.hpp"
+#include "../../misc/methodaction.hpp"
 
 
-#include "../mainwindow.hpp"
+#include "../../mainwindow.hpp"
 
 
 
@@ -55,6 +57,8 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
   m_actionDelete{nullptr},
   m_tableWidget{new TableWidget()}
 {
+  m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+
   QVBoxLayout* layout = new QVBoxLayout();
   layout->setMargin(0);
   layout->addWidget(m_toolbar);
@@ -73,6 +77,12 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
 
         m_tableWidget->setTableModel(tableModel);
         connect(m_tableWidget, &TableWidget::doubleClicked, this, &ObjectListWidget::tableDoubleClicked);
+        connect(m_tableWidget->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+          [this](const QItemSelection&, const QItemSelection&)
+          {
+            tableSelectionChanged();
+          });
+        tableSelectionChanged();
 
         delete spinner;
       }
@@ -159,30 +169,30 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
       Q_ASSERT(false); // unsupported method prototype
   }
 
-  m_actionEdit = m_toolbar->addAction(Theme::getIcon("edit"), tr("Edit"));
+  m_actionEdit = m_toolbar->addAction(Theme::getIcon("edit"), Locale::tr("object_list:edit"),
+    [this]()
+    {
+      for(const QString& id : getSelectedObjectIds())
+        MainWindow::instance->showObject(id);
+    });
   m_actionEdit->setEnabled(false);
 
   if(Method* method = m_object->getMethod("remove"))
   {
-    m_actionDelete = m_toolbar->addAction(Theme::getIcon("delete"), method->displayName());
-    //m_actionDelete->setEnabled(false);
+    m_actionDelete = new MethodAction(Theme::getIcon("delete"), *method,
+      [this]()
+      {
+        for(const QString& id : getSelectedObjectIds())
+          callMethod(m_actionDelete->method(), nullptr, id);
+      });
+    m_actionDelete->setForceDisabled(true);
+    m_toolbar->addAction(m_actionDelete);
   }
 }
 
 ObjectListWidget::~ObjectListWidget()
 {
   m_object->connection()->cancelRequest(m_requestId);
-}
-
-void ObjectListWidget::addActionEdit()
-{
- // Q_ASSERT(!m_actionEdit);
-
-}
-
-void ObjectListWidget::addActionDelete()
-{
- // Q_ASSERT(!m_actionDelete);
 }
 
 void ObjectListWidget::objectDoubleClicked(const QString& id)
@@ -197,5 +207,27 @@ void ObjectListWidget::tableDoubleClicked(const QModelIndex& index)
     objectDoubleClicked(id);
 }
 
+QStringList ObjectListWidget::getSelectedObjectIds() const
+{
+  QStringList ids;
 
+  if(auto* model = m_tableWidget->selectionModel(); model && model->hasSelection())
+    for(const auto& index : model->selectedRows())
+      if(QString id = m_tableWidget->getRowObjectId(index.row()); !id.isEmpty())
+        ids.append(id);
 
+  return ids;
+}
+
+void ObjectListWidget::tableSelectionChanged()
+{
+  tableSelectionChanged(m_tableWidget->selectionModel() && m_tableWidget->selectionModel()->hasSelection());
+}
+
+void ObjectListWidget::tableSelectionChanged(bool hasSelection)
+{
+  if(m_actionEdit)
+    m_actionEdit->setEnabled(hasSelection);
+  if(m_actionDelete)
+    m_actionDelete->setForceDisabled(!hasSelection);
+}

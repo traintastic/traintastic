@@ -1,9 +1,9 @@
 /**
- * client/src/widget/decoderlistwidget.cpp
+ * client/src/widget/objectlist/throttleobjectlistwidget.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,25 +20,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "decoderlistwidget.hpp"
-#include "tablewidget.hpp"
-#include "../network/connection.hpp"
-#include "../network/object.hpp"
-#include "../network/abstractproperty.hpp"
-#include "../mainwindow.hpp"
+#include "throttleobjectlistwidget.hpp"
+#include <QToolBar>
+#include "../../network/connection.hpp"
+#include "../../network/object.hpp"
+#include "../../network/abstractproperty.hpp"
+#include "../../mainwindow.hpp"
 
-DecoderListWidget::DecoderListWidget(const ObjectPtr& object, QWidget* parent) :
-  ObjectListWidget(object, parent)
+ThrottleObjectListWidget::ThrottleObjectListWidget(const ObjectPtr& object, QWidget* parent)
+  : ObjectListWidget(object, parent)
 {
-  addActionEdit();
-  addActionDelete();
+  toolbar()->addSeparator();
+  m_actionThrottle = toolbar()->addAction("throttle_object_list:throttle",
+    [this]()
+    {
+      for(const QString& id : getSelectedObjectIds())
+        MainWindow::instance->showObject(id, "", SubWindowType::Throttle);
+    });
+  m_actionThrottle->setEnabled(false);
 }
 
-void DecoderListWidget::objectDoubleClicked(const QString& id)
+void ThrottleObjectListWidget::tableSelectionChanged(bool hasSelection)
 {
-  if(m_object)
+  m_actionThrottle->setEnabled(hasSelection);
+}
+
+void ThrottleObjectListWidget::objectDoubleClicked(const QString& id)
+{
+  if(object())
   {
-    if(const auto& c = m_object->connection())
+    if(const auto& c = object()->connection())
     {
       if(const auto& w = c->world())
       {
