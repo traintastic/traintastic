@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -71,15 +71,16 @@ class InterfaceItem
     }
 
   public:
+    InterfaceItem(const InterfaceItem&) = delete;
+    InterfaceItem& operator =(const InterfaceItem&) = delete;
+
     InterfaceItem(Object& object, const std::string& name) :
       m_object{object},
       m_name{name}
     {
     }
 
-    virtual ~InterfaceItem()
-    {
-    }
+    virtual ~InterfaceItem() = default;
 
     Object& object() const
     {
