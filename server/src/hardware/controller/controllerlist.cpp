@@ -42,6 +42,13 @@ ControllerList::ControllerList(Object& _parent, const std::string& parentPropert
       //  decoder->commandStation = cs->shared_ptr<CommandStation>();
       return controller;
     }}
+  , remove{*this, "remove",
+      [this](const std::shared_ptr<Controller>& controller)
+      {
+        if(containsObject(controller))
+          controller->destroy();
+        assert(!containsObject(controller));
+      }}
 {
   auto world = getWorld(&_parent);
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
@@ -49,6 +56,8 @@ ControllerList::ControllerList(Object& _parent, const std::string& parentPropert
   Attributes::addEnabled(add, editable);
   Attributes::addClassList(add, Controllers::classList);
   m_interfaceItems.add(add);
+  Attributes::addEnabled(remove, editable);
+  m_interfaceItems.add(remove);
 }
 
 TableModelPtr ControllerList::getModel()
@@ -62,7 +71,8 @@ void ControllerList::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  add.setAttributeEnabled(editable);
+  Attributes::setEnabled(add, editable);
+  Attributes::setEnabled(remove, editable);
 }
 
 bool ControllerList::isListedProperty(const std::string& name)

@@ -38,6 +38,7 @@ class Controller : public IdObject
 
   protected:
     void addToWorld() final;
+    void destroying() final;
     void worldEvent(WorldState state, WorldEvent event) override;
 
     virtual bool setActive(bool& value) = 0;

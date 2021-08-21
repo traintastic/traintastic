@@ -70,6 +70,15 @@ void Controller::addToWorld()
     world->controllers->addObject(shared_ptr<Controller>());
 }
 
+void Controller::destroying()
+{
+  if(commandStation.value())
+    commandStation = nullptr;
+  if(auto world = m_world.lock())
+    world->controllers->removeObject(shared_ptr<Controller>());
+  IdObject::destroying();
+}
+
 void Controller::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);
