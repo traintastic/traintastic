@@ -30,7 +30,7 @@ class Method;
 /**
  * @brief Action wrapper for method's
  *
- * The action's text is set to the method display name.
+ * The action's text is set to the method's display name.
  * The method's displayName, enabled and visible attributes are monitored for changes and applied to the action.
  *
  * If the method has no return value and no arguments it's will call the method when triggered.
@@ -48,6 +48,9 @@ class MethodAction : public QAction
     MethodAction(Method& method, QObject* parent = nullptr);
     MethodAction(const QIcon &icon, Method& method, QObject* parent = nullptr);
     MethodAction(const QIcon &icon, Method& method, std::function<void()> triggered, QObject* parent = nullptr);
+
+    const Method& method() const { return m_method; }
+    Method& method() { return m_method; }
 
     bool forceDisabled() const;
     void setForceDisabled(bool value);
