@@ -120,6 +120,61 @@ TEST_CASE("Create world and decoder => destroy decoder", "[object-create-destroy
   REQUIRE(worldWeak.expired());
 }
 
+TEST_CASE("Create world, decoder and function => destroy world", "[object-create-destroy]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(worldWeak.lock()->decoders->length == 0);
+
+  std::weak_ptr<Decoder> decoderWeak = world->decoders->add();
+  REQUIRE_FALSE(decoderWeak.expired());
+  REQUIRE(worldWeak.lock()->decoders->length == 1);
+
+  std::weak_ptr<DecoderFunctions> functionsWeak = decoderWeak.lock()->functions->shared_ptr<DecoderFunctions>();
+  REQUIRE_FALSE(functionsWeak.expired());
+
+  functionsWeak.lock()->add();
+  REQUIRE(functionsWeak.lock()->items.size() == 1);
+  std::weak_ptr<DecoderFunction> functionWeak = functionsWeak.lock()->items[0];
+  REQUIRE_FALSE(functionsWeak.expired());
+
+  world.reset();
+  REQUIRE(functionWeak.expired());
+  REQUIRE(functionsWeak.expired());
+  REQUIRE(decoderWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
+TEST_CASE("Create world, decoder and function => destroy function", "[object-create-destroy]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(worldWeak.lock()->decoders->length == 0);
+
+  std::weak_ptr<Decoder> decoderWeak = world->decoders->add();
+  REQUIRE_FALSE(decoderWeak.expired());
+  REQUIRE(worldWeak.lock()->decoders->length == 1);
+
+  std::weak_ptr<DecoderFunctions> functionsWeak = decoderWeak.lock()->functions->shared_ptr<DecoderFunctions>();
+  REQUIRE_FALSE(functionsWeak.expired());
+
+  functionsWeak.lock()->add();
+  REQUIRE(functionsWeak.lock()->items.size() == 1);
+  std::weak_ptr<DecoderFunction> functionWeak = functionsWeak.lock()->items[0];
+  REQUIRE_FALSE(functionsWeak.expired());
+
+  functionsWeak.lock()->remove(functionWeak.lock());
+  REQUIRE(functionWeak.expired());
+  REQUIRE(functionsWeak.lock()->items.size() == 0);
+
+  world.reset();
+  REQUIRE(functionsWeak.expired());
+  REQUIRE(decoderWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
 TEMPLATE_TEST_CASE("Create world, command station and decoder => destroy command station", "[object-create-destroy]"
   //, DCCPlusPlusSerial
   //, LocoNetSerial
