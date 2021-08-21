@@ -24,14 +24,19 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUT_HPP
 
 #include "../../core/idobject.hpp"
+#include "../../core/objectproperty.hpp"
 #include "../../enum/tristate.hpp"
 
 class Input : public IdObject
 {
   DEFAULT_ID("input")
 
+  private:
+    std::list<std::pair<ObjectPtr, ObjectProperty<Input>&>> m_consumers;
+
   protected:
     void addToWorld() override;
+    void destroying() override;
     void worldEvent(WorldState state, WorldEvent event) override;
     virtual void valueChanged(TriState _value) {}
 
@@ -42,6 +47,9 @@ class Input : public IdObject
     Property<TriState> value;
 
     Input(const std::weak_ptr<World> world, std::string_view _id);
+
+    void addConsumer(ObjectPtr object, ObjectProperty<Input>& property);
+    void removeConsumer(ObjectPtr object, ObjectProperty<Input>& property);
 };
 
 #endif

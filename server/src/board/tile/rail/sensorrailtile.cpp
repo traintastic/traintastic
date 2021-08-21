@@ -40,10 +40,16 @@ SensorRailTile::SensorRailTile(const std::weak_ptr<World>& world, std::string_vi
     [this](const std::shared_ptr<Input>& value)
     {
       if(input)
+      {
         input->propertyChanged.disconnect(m_inputPropertyChanged);
+        input->removeConsumer(shared_from_this(), input);
+      }
 
       if(value)
+      {
+        value->addConsumer(shared_from_this(), input);
         m_inputPropertyChanged = value->propertyChanged.connect(std::bind(&SensorRailTile::inputPropertyChanged, this, std::placeholders::_1));
+      }
 
       return true;
     }},
@@ -84,7 +90,10 @@ void SensorRailTile::loaded()
   StraightRailTile::loaded();
 
   if(input)
+  {
+    input->addConsumer(shared_from_this(), input);
     m_inputPropertyChanged = input->propertyChanged.connect(std::bind(&SensorRailTile::inputPropertyChanged, this, std::placeholders::_1));
+  }
 }
 
 void SensorRailTile::worldEvent(WorldState state, WorldEvent event)

@@ -37,6 +37,7 @@ class InputList : public ObjectList<Input>
     CLASS_ID("input_list")
 
     Method<std::shared_ptr<Input>(std::string_view)> add;
+    Method<void(const std::shared_ptr<Input>&)> remove;
 
     InputList(Object& _parent, const std::string& parentPropertyName);
 

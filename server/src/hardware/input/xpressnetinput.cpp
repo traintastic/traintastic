@@ -70,6 +70,13 @@ void XpressNetInput::loaded()
   }
 }
 
+void XpressNetInput::destroying()
+{
+  if(xpressnet)
+    xpressnet = nullptr;
+  Input::destroying();
+}
+
 void XpressNetInput::worldEvent(WorldState state, WorldEvent event)
 {
   Input::worldEvent(state, event);

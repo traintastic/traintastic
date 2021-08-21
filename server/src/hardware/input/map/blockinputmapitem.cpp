@@ -44,10 +44,16 @@ BlockInputMapItem::BlockInputMapItem(BlockInputMap& parent, uint32_t itemId) :
     [this](const std::shared_ptr<Input>& value)
     {
       if(input)
+      {
         input->propertyChanged.disconnect(m_inputPropertyChanged);
+        input->removeConsumer(shared_from_this(), input);
+      }
 
       if(value)
+      {
+        value->addConsumer(shared_from_this(), input);
         m_inputPropertyChanged = value->propertyChanged.connect(std::bind(&BlockInputMapItem::inputPropertyChanged, this, std::placeholders::_1));
+      }
 
       return true;
     }},
@@ -92,7 +98,10 @@ void BlockInputMapItem::loaded()
   InputMapItem::loaded();
 
   if(input)
+  {
+    input->addConsumer(shared_from_this(), input);
     m_inputPropertyChanged = input->propertyChanged.connect(std::bind(&BlockInputMapItem::inputPropertyChanged, this, std::placeholders::_1));
+  }
 }
 
 void BlockInputMapItem::worldEvent(WorldState state, WorldEvent event)

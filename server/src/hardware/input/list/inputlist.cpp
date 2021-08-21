@@ -55,6 +55,13 @@ InputList::InputList(Object& _parent, const std::string& parentPropertyName) :
       }
       return input;
     }}
+  , remove{*this, "remove",
+    [this](const std::shared_ptr<Input>& input)
+    {
+      if(containsObject(input))
+        input->destroy();
+      assert(!containsObject(input));
+    }}
 {
   auto w = getWorld(&_parent);
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
@@ -62,6 +69,8 @@ InputList::InputList(Object& _parent, const std::string& parentPropertyName) :
   Attributes::addEnabled(add, editable);
   Attributes::addClassList(add, Inputs::classList);
   m_interfaceItems.add(add);
+  Attributes::addEnabled(remove, editable);
+  m_interfaceItems.add(remove);
 }
 
 TableModelPtr InputList::getModel()
@@ -75,7 +84,8 @@ void InputList::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  add.setAttributeEnabled(editable);
+  Attributes::setEnabled(add, editable);
+  Attributes::setEnabled(remove, editable);
 }
 
 bool InputList::isListedProperty(const std::string& name)
