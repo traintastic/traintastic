@@ -47,6 +47,7 @@ class Board : public IdObject
     TileMap m_tiles;
 
     void addToWorld() final;
+    void destroying() final;
     void load(WorldLoader& loader, const nlohmann::json& data) final;
     void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const final;
     void worldEvent(WorldState state, WorldEvent event) override;

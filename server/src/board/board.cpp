@@ -122,6 +122,13 @@ void Board::addToWorld()
     world->boards->addObject(shared_ptr<Board>());
 }
 
+void Board::destroying()
+{
+  if(auto world = m_world.lock())
+    world->boards->removeObject(shared_ptr<Board>());
+  IdObject::destroying();
+}
+
 void Board::load(WorldLoader& loader, const nlohmann::json& data)
 {
   IdObject::load(loader, data);

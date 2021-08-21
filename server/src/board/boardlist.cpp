@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,12 +35,21 @@ BoardList::BoardList(Object& _parent, const std::string& parentPropertyName) :
         return std::shared_ptr<Board>();
       return Board::create(world, world->getUniqueId("board"));
     }}
+  , remove{*this, "remove",
+      [this](const std::shared_ptr<Board>& board)
+      {
+        if(containsObject(board))
+          board->destroy();
+        assert(!containsObject(board));
+      }}
 {
   auto world = getWorld(&_parent);
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
 
   Attributes::addEnabled(add, editable);
   m_interfaceItems.add(add);
+  Attributes::addEnabled(remove, editable);
+  m_interfaceItems.add(remove);
 }
 
 TableModelPtr BoardList::getModel()
@@ -54,7 +63,8 @@ void BoardList::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  add.setAttributeEnabled(editable);
+  Attributes::setEnabled(add, editable);
+  Attributes::setEnabled(remove, editable);
 }
 
 bool BoardList::isListedProperty(const std::string& name)

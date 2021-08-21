@@ -22,6 +22,7 @@
 
 #include <catch2/catch.hpp>
 #include "../src/world/world.hpp"
+#include "../src/board/board.hpp"
 
 //#include "../src/hardware/commandstation/dccplusplusserial.hpp"
 //#include "../src/hardware/commandstation/loconetserial.hpp"
@@ -35,6 +36,41 @@ TEST_CASE("Create world => destroy world", "[object-create-destroy]")
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
+
+  world.reset();
+  REQUIRE(worldWeak.expired());
+}
+
+TEST_CASE("Create world and board => destroy world", "[object-create-destroy]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(worldWeak.lock()->boards->length == 0);
+
+  std::weak_ptr<Board> boardWeak = world->boards->add();
+  REQUIRE_FALSE(boardWeak.expired());
+  REQUIRE(worldWeak.lock()->boards->length == 1);
+
+  world.reset();
+  REQUIRE(boardWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
+TEST_CASE("Create world and board => destroy board", "[object-create-destroy]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(worldWeak.lock()->boards->length == 0);
+
+  std::weak_ptr<Board> boardWeak = world->boards->add();
+  REQUIRE_FALSE(boardWeak.expired());
+  REQUIRE(worldWeak.lock()->boards->length == 1);
+
+  world->boards->remove(boardWeak.lock());
+  REQUIRE(boardWeak.expired());
+  REQUIRE(worldWeak.lock()->boards->length == 0);
 
   world.reset();
   REQUIRE(worldWeak.expired());
