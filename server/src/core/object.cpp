@@ -34,10 +34,6 @@ Object::Object() :
 {
 }
 
-Object::~Object()
-{
-}
-
 void Object::destroy()
 {
   assert(!m_dying);
