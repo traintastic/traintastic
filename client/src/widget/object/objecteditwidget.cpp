@@ -49,20 +49,8 @@
 #include "../createwidget.hpp"
 #include "../../theme/theme.hpp"
 //#include "../../mainwindow.hpp"
-#include <traintastic/enum/category.hpp>
 #include <traintastic/enum/direction.hpp>
-
-QString toString(Category value)
-{
-  switch(value)
-  {
-    case Category::General: return "General";
-    case Category::Info: return "Info";
-    case Category::Status: return "Status";
-    case Category::XpressNet: return "XpressNet";
-  }
-  return "?";
-}
+#include <traintastic/locale/locale.hpp>
 
 ObjectEditWidget::ObjectEditWidget(const ObjectPtr& object, QWidget* parent) :
   AbstractEditWidget(object, parent)
@@ -90,7 +78,7 @@ void ObjectEditWidget::buildForm()
   else
   {
     QList<QWidget*> tabs;
-    QMap<Category, QWidget*> categoryTabs;
+    QMap<QString, QWidget*> categoryTabs;
 
     for(const QString& name : m_object->interfaceItems().names())
     {
@@ -171,12 +159,12 @@ void ObjectEditWidget::buildForm()
           w = new MethodPushButton(*method, this);
         }
 
-        Category category = item->getAttributeEnum<Category>(AttributeName::Category, Category::General);
+        const QString category = item->getAttributeString(AttributeName::Category, "category:general");
         QWidget* tabWidget;
         if(!categoryTabs.contains(category))
         {
           tabWidget = new QWidget();
-          tabWidget->setWindowTitle(toString(category));
+          tabWidget->setWindowTitle(Locale::tr(category));
           tabWidget->setLayout(new QFormLayout());
           tabs.append(tabWidget);
           categoryTabs.insert(category, tabWidget);

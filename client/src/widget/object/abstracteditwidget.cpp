@@ -44,20 +44,6 @@
 //#include <traintastic/enum/category.hpp>
 //#include <traintastic/enum/direction.hpp>
 
-/*
-QString toString(Category value)
-{
-  switch(value)
-  {
-    case Category::General: return "General";
-    case Category::Info: return "Info";
-    case Category::Status: return "Status";
-    case Category::XpressNet: return "XpressNet";
-  }
-  return "?";
-}*/
-
-
 AbstractEditWidget::AbstractEditWidget(const ObjectPtr& object, QWidget* parent) :
   QWidget(parent),
   m_requestId{Connection::invalidRequestId},

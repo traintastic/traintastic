@@ -53,6 +53,7 @@ class InterfaceItem : public QObject
     bool getAttributeBool(AttributeName name, bool default_) const;
     qint64 getAttributeInt64(AttributeName name, qint64 default_) const;
     double getAttributeDouble(AttributeName name, double default_) const;
+    QString getAttributeString(AttributeName name, const QString& default_) const;
 
     template<typename T>
     T getAttributeEnum(AttributeName name, T default_) const

@@ -29,6 +29,7 @@
 #include "../protocol/xpressnet/messages.hpp"
 #include "../protocol/z21/messages.hpp"
 #include "../../utils/tohex.hpp"
+#include "../../utils/category.hpp"
 #include "../../log/log.hpp"
 
 
@@ -94,35 +95,35 @@ RocoZ21::RocoZ21(const std::weak_ptr<World>& world, std::string_view _id) :
   Attributes::addEnabled(port, true);
   m_interfaceItems.insertBefore(port, notes);
   m_interfaceItems.insertBefore(loconet, notes);
-  Attributes::addCategory(serialNumber, Category::Info);
+  Attributes::addCategory(serialNumber, Category::info);
   m_interfaceItems.insertBefore(serialNumber, notes);
-  Attributes::addCategory(hardwareType, Category::Info);
+  Attributes::addCategory(hardwareType, Category::info);
   m_interfaceItems.insertBefore(hardwareType, notes);
-  Attributes::addCategory(firmwareVersion, Category::Info);
+  Attributes::addCategory(firmwareVersion, Category::info);
   m_interfaceItems.insertBefore(firmwareVersion, notes);
-  Attributes::addCategory(mainCurrent, Category::Info);
+  Attributes::addCategory(mainCurrent, Category::info);
   m_interfaceItems.insertBefore(mainCurrent, notes);
-  Attributes::addCategory(progCurrent, Category::Info);
+  Attributes::addCategory(progCurrent, Category::info);
   m_interfaceItems.insertBefore(progCurrent, notes);
-  Attributes::addCategory(filteredMainCurrent, Category::Info);
+  Attributes::addCategory(filteredMainCurrent, Category::info);
   m_interfaceItems.insertBefore(filteredMainCurrent, notes);
-  Attributes::addCategory(temperature, Category::Info);
+  Attributes::addCategory(temperature, Category::info);
   m_interfaceItems.insertBefore(temperature, notes);
-  Attributes::addCategory(firmwareVersion, Category::Info);
+  Attributes::addCategory(firmwareVersion, Category::info);
   m_interfaceItems.insertBefore(supplyVoltage, notes);
-  Attributes::addCategory(vccVoltage, Category::Info);
+  Attributes::addCategory(vccVoltage, Category::info);
   m_interfaceItems.insertBefore(vccVoltage, notes);
-  Attributes::addCategory(firmwareVersion, Category::Info);
+  Attributes::addCategory(firmwareVersion, Category::info);
   m_interfaceItems.insertBefore(shortCircuit, notes);
-  Attributes::addCategory(programmingModeActive, Category::Info);
+  Attributes::addCategory(programmingModeActive, Category::info);
   m_interfaceItems.insertBefore(programmingModeActive, notes);
-  Attributes::addCategory(highTemperature, Category::Info);
+  Attributes::addCategory(highTemperature, Category::info);
   m_interfaceItems.insertBefore(highTemperature, notes);
-  Attributes::addCategory(powerLost, Category::Info);
+  Attributes::addCategory(powerLost, Category::info);
   m_interfaceItems.insertBefore(powerLost, notes);
-  Attributes::addCategory(shortCircutInternal, Category::Info);
+  Attributes::addCategory(shortCircutInternal, Category::info);
   m_interfaceItems.insertBefore(shortCircutInternal, notes);
-  Attributes::addCategory(shortCircutExternal, Category::Info);
+  Attributes::addCategory(shortCircutExternal, Category::info);
   m_interfaceItems.insertBefore(shortCircutExternal, notes);
 }
 

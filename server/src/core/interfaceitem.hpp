@@ -28,7 +28,6 @@
 #include <memory>
 #include "attribute.hpp"
 #include "arrayattribute.hpp"
-#include <traintastic/enum/category.hpp>
 
 class Object;
 

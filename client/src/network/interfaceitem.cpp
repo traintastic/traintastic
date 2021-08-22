@@ -74,3 +74,8 @@ double InterfaceItem::getAttributeDouble(AttributeName name, double default_) co
 {
   return m_attributes.value(name, default_).toDouble();
 }
+
+QString InterfaceItem::getAttributeString(AttributeName name, const QString& default_) const
+{
+  return m_attributes.value(name, default_).toString();
+}

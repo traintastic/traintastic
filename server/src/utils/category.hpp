@@ -1,9 +1,9 @@
 /**
- * shared/src/enum/category.hpp
+ * server/src/utils/category.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,17 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_CATEGORY_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_CATEGORY_HPP
+#ifndef TRAINTASTIC_SERVER_UTILS_CATEGORY_HPP
+#define TRAINTASTIC_SERVER_UTILS_CATEGORY_HPP
 
-#include <cstdint>
+#include <string_view>
 
-enum class Category : uint16_t
+namespace Category
 {
-  General = 0,
-  Info = 1,
-  Status = 2,
-  XpressNet = 3,
-};
+  constexpr std::string_view info = "category:info";
+}
 
 #endif

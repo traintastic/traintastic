@@ -30,7 +30,7 @@
 
 struct Attributes
 {
-  static inline void addCategory(InterfaceItem& item, Category value)
+  static inline void addCategory(InterfaceItem& item, std::string_view value)
   {
     item.addAttribute(AttributeName::Category, value);
   }

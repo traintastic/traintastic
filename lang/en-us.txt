@@ -28,6 +28,9 @@ board_tile.rail.sensor:invert=Invert
 board_tile.rail.sensor:state=State
 board_tile.rail.sensor:type=Type
 
+category:general=General
+category:info=Info
+
 class_id:board_tile.rail.block=Block
 class_id:board_tile.rail.buffer_stop=Buffer stop
 class_id:board_tile.rail.cross_45=Crossover 45°
@@ -134,6 +137,9 @@ decoder_list:add=Add
 decoder_protocol:auto=Auto
 decoder_protocol:custom=Custom
 decoder_protocol:dcc=DCC
+
+direction:forward=Forward
+direction:reverse=Reverse
 
 input_map.block:add=Add sensor
 input_map.block:move_down=Move down
