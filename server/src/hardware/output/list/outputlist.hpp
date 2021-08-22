@@ -37,6 +37,7 @@ class OutputList : public ObjectList<Output>
     CLASS_ID("list.output")
 
     Method<std::shared_ptr<Output>(std::string_view)> add;
+    Method<void(const std::shared_ptr<Output>&)> remove;
 
     OutputList(Object& _parent, const std::string& parentPropertyName);
 

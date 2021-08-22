@@ -24,12 +24,14 @@
 #define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_OUTPUT_HPP
 
 #include "../../core/idobject.hpp"
+#include "../../core/objectvectorproperty.hpp"
 #include "../../enum/tristate.hpp"
 
 class Output : public IdObject
 {
   protected:
     void addToWorld() override;
+    void destroying() override;
     void worldEvent(WorldState state, WorldEvent event) override;
     virtual void valueChanged(TriState _value) {}
     virtual bool setValue(TriState& _value) { return true; }
@@ -38,6 +40,7 @@ class Output : public IdObject
   public:
     Property<std::string> name;
     Property<TriState> value;
+    ObjectVectorProperty<Object> controllers;
 
     Output(const std::weak_ptr<World> world, std::string_view _id);
 };

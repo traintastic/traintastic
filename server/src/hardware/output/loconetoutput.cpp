@@ -70,6 +70,13 @@ void LocoNetOutput::loaded()
   }
 }
 
+void LocoNetOutput::destroying()
+{
+  if(loconet)
+    loconet = nullptr;
+  Output::destroying();
+}
+
 void LocoNetOutput::worldEvent(WorldState state, WorldEvent event)
 {
   Output::worldEvent(state, event);

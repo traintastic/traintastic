@@ -37,6 +37,9 @@ class OutputMap : public SubObject
     using Items = std::vector<std::shared_ptr<OutputMapItem>>;
     using Outputs = std::vector<std::shared_ptr<Output>>;
 
+  private:
+    std::map<std::shared_ptr<Output>, boost::signals2::connection> m_destroyingConnections;
+
   protected:
     Outputs m_outputs;
 

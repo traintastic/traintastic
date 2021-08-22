@@ -33,6 +33,7 @@ class LocoNetOutput : public Output
 
   protected:
     void loaded() final;
+    void destroying() final;
     void worldEvent(WorldState state, WorldEvent event) final;
     void idChanged(const std::string& id) final;
     void valueChanged(TriState _value) final;

@@ -38,6 +38,7 @@ Output::Output(const std::weak_ptr<World> world, std::string_view _id) :
     {
       return setValue(value);
     }}
+  , controllers{*this, "controllers", {}, PropertyFlags::ReadWrite | PropertyFlags::NoStore}
 {
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
@@ -48,6 +49,8 @@ Output::Output(const std::weak_ptr<World> world, std::string_view _id) :
   Attributes::addObjectEditor(value, false);
   Attributes::addValues(value, TriStateValues);
   m_interfaceItems.add(value);
+  Attributes::addObjectEditor(controllers, false); //! \todo add client support first
+  m_interfaceItems.add(controllers);
 }
 
 void Output::addToWorld()
@@ -56,6 +59,13 @@ void Output::addToWorld()
 
   if(auto world = m_world.lock())
     world->outputs->addObject(shared_ptr<Output>());
+}
+
+void Output::destroying()
+{
+  if(auto world = m_world.lock())
+    world->outputs->removeObject(shared_ptr<Output>());
+  IdObject::destroying();
 }
 
 void Output::worldEvent(WorldState state, WorldEvent event)

@@ -35,6 +35,14 @@ OutputMap::OutputMap(Object& _parent, const std::string& parentPropertyName) :
     {
       if(std::find(m_outputs.begin(), m_outputs.end(), output) != m_outputs.end())
         return;
+
+      output->controllers.appendInternal(parent().shared_from_this());
+      m_destroyingConnections.emplace(output, output->onDestroying.connect(
+        [this](Object& object)
+        {
+          removeOutput(object.shared_ptr<Output>());
+        }));
+
       outputAdded(output);
       m_outputs.emplace_back(std::move(output));
       outputsChanged(*this);
@@ -44,6 +52,13 @@ OutputMap::OutputMap(Object& _parent, const std::string& parentPropertyName) :
     {
       if(auto it = std::find(m_outputs.begin(), m_outputs.end(), output); it != m_outputs.end())
       {
+        output->controllers.removeInternal(parent().shared_from_this());
+        if(auto con = m_destroyingConnections.find(output); con != m_destroyingConnections.end())
+        {
+          con->second.disconnect();
+          m_destroyingConnections.erase(con);
+        }
+
         m_outputs.erase(it);
         outputRemoved(output);
         outputsChanged(*this);
