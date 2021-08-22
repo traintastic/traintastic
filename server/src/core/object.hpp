@@ -63,6 +63,7 @@ class Object : public std::enable_shared_from_this<Object>
     virtual void worldEvent(WorldState state, WorldEvent event);
 
   public:
+    boost::signals2::signal<void (Object&)> onDestroying;
     boost::signals2::signal<void (BaseProperty&)> propertyChanged;
     boost::signals2::signal<void (AbstractAttribute&)> attributeChanged;
 

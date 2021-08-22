@@ -45,6 +45,7 @@ void Object::destroy()
   {
     m_dying = true;
     destroying();
+    onDestroying(*this);
   }
 }
 
