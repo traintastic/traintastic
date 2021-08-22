@@ -28,13 +28,16 @@
 #include "enum.hpp"
 #include "set.hpp"
 #include "object.hpp"
+#include "../utils/is_shared_ptr.hpp"
 
 namespace Lua {
 
 template<typename T>
 void push(lua_State* L, const T& value)
 {
-  if constexpr(is_set_v<T>)
+  if constexpr(std::is_null_pointer_v<T>)
+    lua_pushnil(L);
+  else if constexpr(is_set_v<T>)
     Set<T>::push(L, value);
   else if constexpr(std::is_enum_v<T>)
     Enum<T>::push(L, value);
@@ -42,7 +45,14 @@ void push(lua_State* L, const T& value)
     lua_pushboolean(L, value);
   else if constexpr(std::is_integral_v<T>)
   {
-    if constexpr(std::numeric_limits<T>::min() >= LUA_MININTEGER &&
+    if constexpr(std::is_unsigned_v<T> && sizeof(T) >= sizeof(lua_Integer))
+    {
+      if(value <= static_cast<T>(LUA_MAXINTEGER))
+        lua_pushinteger(L, static_cast<lua_Integer>(value));
+      else
+        lua_pushnumber(L, value);
+    }
+    else if constexpr(std::numeric_limits<T>::min() >= LUA_MININTEGER &&
         std::numeric_limits<T>::max() <= LUA_MAXINTEGER)
       lua_pushinteger(L, value);
     else if(value >= LUA_MININTEGER && value <= LUA_MAXINTEGER)
@@ -52,9 +62,9 @@ void push(lua_State* L, const T& value)
   }
   else if constexpr(std::is_floating_point_v<T>)
     lua_pushnumber(L, value);
-  else if constexpr(std::is_same_v<T, std::string>)
+  else if constexpr(std::is_same_v<T, std::string> || std::is_same_v<T, std::string_view>)
     lua_pushlstring(L, value.data(), value.size());
-  else if constexpr(std::is_same_v<T, ObjectPtr>)
+  else if constexpr(is_shared_ptr_v<T>)
     Object::push(L, value);
   else
     static_assert(sizeof(T) != sizeof(T), "don't know how to push type");
