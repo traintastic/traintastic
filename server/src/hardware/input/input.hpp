@@ -25,14 +25,12 @@
 
 #include "../../core/idobject.hpp"
 #include "../../core/objectproperty.hpp"
+#include "../../core/objectvectorproperty.hpp"
 #include "../../enum/tristate.hpp"
 
 class Input : public IdObject
 {
   DEFAULT_ID("input")
-
-  private:
-    std::list<std::pair<ObjectPtr, ObjectProperty<Input>&>> m_consumers;
 
   protected:
     void addToWorld() override;
@@ -45,11 +43,9 @@ class Input : public IdObject
   public:
     Property<std::string> name;
     Property<TriState> value;
+    ObjectVectorProperty<Object> consumers;
 
     Input(const std::weak_ptr<World> world, std::string_view _id);
-
-    void addConsumer(ObjectPtr object, ObjectProperty<Input>& property);
-    void removeConsumer(ObjectPtr object, ObjectProperty<Input>& property);
 };
 
 #endif

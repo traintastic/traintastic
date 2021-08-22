@@ -38,9 +38,12 @@ class BlockInputMapItem : public InputMapItem
   private:
     BlockInputMap& m_parent;
     const uint32_t m_itemId;
+    boost::signals2::connection m_inputDestroying;
     boost::signals2::connection m_inputPropertyChanged;
     SensorState m_value;
 
+    void connectInput(Input& object);
+    void disconnectInput(Input& object);
     void inputPropertyChanged(BaseProperty& property);
     void setValue(SensorState value);
 

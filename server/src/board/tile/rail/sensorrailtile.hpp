@@ -36,8 +36,11 @@ class SensorRailTile : public StraightRailTile
   CREATE(SensorRailTile)
 
   private:
+    boost::signals2::connection m_inputDestroying;
     boost::signals2::connection m_inputPropertyChanged;
 
+    void connectInput(Input& object);
+    void disconnectInput(Input& object);
     void inputPropertyChanged(BaseProperty& property);
 
   protected:

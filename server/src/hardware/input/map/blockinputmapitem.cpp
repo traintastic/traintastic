@@ -44,16 +44,10 @@ BlockInputMapItem::BlockInputMapItem(BlockInputMap& parent, uint32_t itemId) :
     [this](const std::shared_ptr<Input>& value)
     {
       if(input)
-      {
-        input->propertyChanged.disconnect(m_inputPropertyChanged);
-        input->removeConsumer(shared_from_this(), input);
-      }
+        disconnectInput(*input);
 
       if(value)
-      {
-        value->addConsumer(shared_from_this(), input);
-        m_inputPropertyChanged = value->propertyChanged.connect(std::bind(&BlockInputMapItem::inputPropertyChanged, this, std::placeholders::_1));
-      }
+        connectInput(*value);
 
       return true;
     }},
@@ -98,10 +92,7 @@ void BlockInputMapItem::loaded()
   InputMapItem::loaded();
 
   if(input)
-  {
-    input->addConsumer(shared_from_this(), input);
-    m_inputPropertyChanged = input->propertyChanged.connect(std::bind(&BlockInputMapItem::inputPropertyChanged, this, std::placeholders::_1));
-  }
+    connectInput(*input);
 }
 
 void BlockInputMapItem::worldEvent(WorldState state, WorldEvent event)
@@ -115,6 +106,25 @@ void BlockInputMapItem::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(input, editable && stopped);
   Attributes::setEnabled(type, false/*editable && stopped*/);
   Attributes::setEnabled(invert, editable && stopped);
+}
+
+void BlockInputMapItem::connectInput(Input& object)
+{
+  object.consumers.appendInternal(m_parent.parent().shared_from_this());
+  m_inputDestroying = object.onDestroying.connect(
+    [this](Object& obj)
+    {
+      assert(input.value().get() == &obj);
+      input = nullptr;
+    });
+  m_inputPropertyChanged = object.propertyChanged.connect(std::bind(&BlockInputMapItem::inputPropertyChanged, this, std::placeholders::_1));
+}
+
+void BlockInputMapItem::disconnectInput(Input& object)
+{
+  m_inputPropertyChanged.disconnect();
+  m_inputDestroying.disconnect();
+  object.consumers.removeInternal(m_parent.parent().shared_from_this());
 }
 
 void BlockInputMapItem::inputPropertyChanged(BaseProperty& property)

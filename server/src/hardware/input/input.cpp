@@ -30,6 +30,7 @@ Input::Input(const std::weak_ptr<World> world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store},
   value{this, "value", TriState::Undefined, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
+  , consumers{*this, "consumers", {}, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
 {
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
@@ -40,23 +41,8 @@ Input::Input(const std::weak_ptr<World> world, std::string_view _id) :
   Attributes::addObjectEditor(value, false);
   Attributes::addValues(value, TriStateValues);
   m_interfaceItems.add(value);
-}
-
-void Input::addConsumer(ObjectPtr object, ObjectProperty<Input>& property)
-{
-  m_consumers.emplace_back(std::make_pair(std::move(object), std::ref(property)));
-}
-
-void Input::removeConsumer(ObjectPtr object, ObjectProperty<Input>& property)
-{
-  const auto v = std::make_pair(std::move(object), std::ref(property));
-  auto it = std::find_if(m_consumers.begin(), m_consumers.end(),
-    [&v](const auto& v2)
-    {
-      return v == v2;
-    });
-  if(it != m_consumers.end())
-    m_consumers.erase(it);
+  Attributes::addObjectEditor(consumers, false); //! \todo add client support first
+  m_interfaceItems.add(consumers);
 }
 
 void Input::addToWorld()
@@ -69,8 +55,6 @@ void Input::addToWorld()
 
 void Input::destroying()
 {
-  while(!m_consumers.empty())
-    m_consumers.front().second.setValue(nullptr);
   if(auto world = m_world.lock())
     world->inputs->removeObject(shared_ptr<Input>());
   IdObject::destroying();
