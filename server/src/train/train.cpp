@@ -70,6 +70,13 @@ void Train::addToWorld()
     world->trains->addObject(shared_ptr<Train>());
 }
 
+void Train::destroying()
+{
+  if(auto world = m_world.lock())
+    world->trains->removeObject(shared_ptr<Train>());
+  IdObject::destroying();
+}
+
 void Train::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);
