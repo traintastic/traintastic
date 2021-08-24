@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,6 +56,15 @@ void RailVehicle::addToWorld()
 
   if(auto world = m_world.lock())
     world->railVehicles->addObject(shared_ptr<RailVehicle>());
+}
+
+void RailVehicle::destroying()
+{
+  if(decoder)
+    decoder = nullptr;
+  if(auto world = m_world.lock())
+    world->railVehicles->removeObject(shared_ptr<RailVehicle>());
+  IdObject::destroying();
 }
 
 void RailVehicle::worldEvent(WorldState state, WorldEvent event)

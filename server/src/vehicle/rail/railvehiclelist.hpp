@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,7 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 
 #ifndef TRAINTASTIC_SERVER_VEHICLE_RAIL_RAILVEHICLELIST_HPP
 #define TRAINTASTIC_SERVER_VEHICLE_RAIL_RAILVEHICLELIST_HPP
@@ -37,6 +36,7 @@ class RailVehicleList : public ObjectList<RailVehicle>
     CLASS_ID("rail_vehicle_list")
 
     Method<std::shared_ptr<RailVehicle>(std::string_view classId)> add;
+    Method<void(const std::shared_ptr<RailVehicle>&)> remove;
 
     RailVehicleList(Object& _parent, const std::string& parentPropertyName);
 

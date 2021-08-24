@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,6 +36,13 @@ RailVehicleList::RailVehicleList(Object& _parent, const std::string& parentPrope
         return std::shared_ptr<RailVehicle>();
       return RailVehicles::create(world, classId, world->getUniqueId("vehicle"));
     }}
+  , remove{*this, "remove",
+      [this](const std::shared_ptr<RailVehicle>& railVehicle)
+      {
+        if(containsObject(railVehicle))
+          railVehicle->destroy();
+        assert(!containsObject(railVehicle));
+      }}
 {
   auto world = getWorld(&_parent);
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
@@ -43,6 +50,8 @@ RailVehicleList::RailVehicleList(Object& _parent, const std::string& parentPrope
   Attributes::addEnabled(add, editable);
   Attributes::addClassList(add, RailVehicles::classList);
   m_interfaceItems.add(add);
+  Attributes::addEnabled(remove, editable);
+  m_interfaceItems.add(remove);
 }
 
 TableModelPtr RailVehicleList::getModel()
@@ -56,7 +65,8 @@ void RailVehicleList::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  add.setAttributeEnabled(editable);
+  Attributes::setEnabled(add, editable);
+  Attributes::setEnabled(remove, editable);
 }
 
 bool RailVehicleList::isListedProperty(const std::string& name)
