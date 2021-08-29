@@ -99,6 +99,7 @@ file(GLOB SOURCES
   "thirdparty/boost/libs/program_options/src/*.cpp")
 
 file(GLOB TEST_SOURCES
+  "test/board/*.cpp"
   "test/objectcreatedestroy.cpp"
   )
 
