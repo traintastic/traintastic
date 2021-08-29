@@ -27,6 +27,7 @@
 #include "../world/worldloader.hpp"
 #include "../core/attributes.hpp"
 #include "../utils/displayname.hpp"
+#include <cassert>
 
 Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
@@ -70,20 +71,59 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
       updateSize();
       return true;
     }},
+  moveTile{*this, "moveTile",
+    [this](const int16_t xFrom, const int16_t yFrom, const int16_t xTo, const int16_t yTo, const bool replace)
+    {
+      // check if there is a tile at <From> and it is it's origin
+      auto tile = getTile({xFrom, yFrom});
+      if(!tile || tile->location().x != xFrom || tile->location().y != yFrom)
+        return false;
+
+      const int16_t xFrom2 = xFrom + tile->data().width();
+      const int16_t yFrom2 = yFrom + tile->data().height();
+      const int16_t xTo2 = xTo + tile->data().width();
+      const int16_t yTo2 = yTo + tile->data().height();
+
+      // check if <To> is within board limits
+      if(xTo < sizeMin || xTo2 >= sizeMax || yTo < sizeMin || yTo2 >= sizeMax)
+        return false;
+
+      // check if <To> is occupied, delete tile(s) if remove is allowed
+      for(int16_t x = xTo; x < xTo2; x++)
+        for(int16_t y = yTo; y < yTo2; y++)
+          if(auto t = getTile({x, y}); t && t != tile)
+            if(replace)
+              deleteTile(x, y);
+            else
+              return false;
+
+      // remove tile at tile origin
+      removeTile(tile->location().x, tile->location().y);
+
+      // set new origin
+      tile->m_location = {xTo, yTo};
+
+      // place tile at <To>
+      for(int16_t x = xTo; x < xTo2; x++)
+        for(int16_t y = yTo; y < yTo2; y++)
+        {
+          const TileLocation l{x, y};
+          assert(m_tiles.find(l) == m_tiles.end());
+          m_tiles[l] = tile;
+        }
+      tileDataChanged(*this, tile->location(), TileData());
+
+      updateSize();
+
+      return true;
+    }},
   deleteTile{*this, "delete_tile",
     [this](int16_t x, int16_t y)
     {
-      const TileLocation l{x, y};
-      auto it = m_tiles.find(l);
-      if(it != m_tiles.end())
+      auto tile = getTile({x, y});
+      if(tile)
       {
-        auto tile = it->second;
-        const int16_t x2 = tile->location().x + tile->data().width();
-        const int16_t y2 = tile->location().y + tile->data().height();
-        for(int16_t x = tile->location().x; x < x2; x++)
-          for(int16_t y = tile->location().y; y < y2; y++)
-            m_tiles.erase(TileLocation{x, y});
-        tileDataChanged(*this, tile->location(), TileData());
+        removeTile(x, y);
         tile->destroy();
         updateSize();
       }
@@ -108,6 +148,8 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
   m_interfaceItems.add(bottom);
   Attributes::addEnabled(addTile, editable && stopped);
   m_interfaceItems.add(addTile);
+  Attributes::addEnabled(moveTile, editable && stopped);
+  m_interfaceItems.add(moveTile);
   Attributes::addEnabled(deleteTile, editable && stopped);
   m_interfaceItems.add(deleteTile);
   Attributes::addEnabled(resizeToContents, editable);
@@ -124,6 +166,9 @@ void Board::addToWorld()
 
 void Board::destroying()
 {
+  for(auto& it : m_tiles)
+    it.second->destroy();
+  m_tiles.clear();
   if(auto world = m_world.lock())
     world->boards->removeObject(shared_ptr<Board>());
   IdObject::destroying();
@@ -175,8 +220,24 @@ void Board::worldEvent(WorldState state, WorldEvent event)
 
   name.setAttributeEnabled(editable);
   addTile.setAttributeEnabled(editable && stopped);
+  Attributes::setEnabled(moveTile, editable && stopped);
   deleteTile.setAttributeEnabled(editable && stopped);
   resizeToContents.setAttributeEnabled(editable);
+}
+
+void Board::removeTile(int16_t x, int16_t y)
+{
+  auto tile = getTile({x, y});
+  if(!tile)
+    return;
+  x = tile->location().x;
+  y = tile->location().y;
+  const int16_t x2 = x + tile->data().width();
+  const int16_t y2 = y + tile->data().height();
+  for(; x < x2; x++)
+    for(; y < y2; y++)
+      m_tiles.erase(TileLocation{x, y});
+  tileDataChanged(*this, tile->location(), TileData());
 }
 
 void Board::updateSize(bool allowShrink)

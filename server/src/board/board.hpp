@@ -38,12 +38,10 @@ class Board : public IdObject
     using TileMap = std::unordered_map<TileLocation, std::shared_ptr<Tile>, TileLocationHash>;
 
   private:
+    void removeTile(int16_t x, int16_t y);
     void updateSize(bool allowShrink = false);
 
   protected:
-    static constexpr int16_t sizeMax = 1000;
-    static constexpr int16_t sizeMin = -sizeMax;
-
     TileMap m_tiles;
 
     void addToWorld() final;
@@ -53,6 +51,9 @@ class Board : public IdObject
     void worldEvent(WorldState state, WorldEvent event) override;
 
   public:
+    static constexpr int16_t sizeMax = 1000;
+    static constexpr int16_t sizeMin = -sizeMax;
+
     CLASS_ID("board")
     CREATE(Board)
 
@@ -62,6 +63,7 @@ class Board : public IdObject
     Property<int16_t> right;
     Property<int16_t> bottom;
     Method<bool(int16_t, int16_t, TileRotate, std::string_view, bool)> addTile;
+    Method<bool(int16_t, int16_t, int16_t, int16_t, bool)> moveTile;
     Method<bool(int16_t, int16_t)> deleteTile;
     Method<void()> resizeToContents;
 
@@ -70,6 +72,12 @@ class Board : public IdObject
     Board(const std::weak_ptr<World>& world, std::string_view _id);
 
     const TileMap& tileMap() const { return m_tiles; }
+
+    bool isTile(TileLocation l)
+    {
+      auto it = m_tiles.find(l);
+      return it != m_tiles.end();
+    }
 
     std::shared_ptr<Tile> getTile(TileLocation l) const
     {
