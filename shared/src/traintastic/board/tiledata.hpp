@@ -28,6 +28,9 @@
 
 struct TileData
 {
+  static constexpr uint8_t heightMax = 16;
+  static constexpr uint8_t widthMax = 16;
+
   uint16_t _header;
   uint8_t _size;
   uint8_t _reserved;

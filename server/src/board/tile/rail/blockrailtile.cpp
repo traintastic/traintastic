@@ -115,3 +115,22 @@ void BlockRailTile::setRotate(TileRotate value)
     m_data.setSize(m_data.height(), m_data.width());
   }
 }
+
+bool BlockRailTile::resize(uint8_t w, uint8_t h)
+{
+  assert(w >= 1);
+  assert(h >= 1);
+
+  if(m_data.rotate() == TileRotate::Deg0 && w != 1)
+    return false;
+
+  if(m_data.rotate() == TileRotate::Deg90 && h != 1)
+    return false;
+
+  if(w > TileData::widthMax || h > TileData::heightMax)
+    return false;
+
+  m_data.setSize(w, h);
+
+  return true;
+}

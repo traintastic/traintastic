@@ -41,6 +41,7 @@ class Tile : public IdObject
     void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
 
     virtual void setRotate(TileRotate value) { m_data.setRotate(value); }
+    virtual bool resize(uint8_t w, uint8_t h) { return false; }
 
   public:
     static constexpr std::string_view defaultId = "tile";

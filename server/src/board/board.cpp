@@ -117,6 +117,55 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
 
       return true;
     }},
+  resizeTile{*this, "resize_tile",
+    [this](const int16_t x, const int16_t y, const uint8_t width, const uint8_t height)
+    {
+      // check for illigal size
+      if(width == 0 || height == 0)
+        return false;
+
+      // check if there is a tile at <x, y> and it is it's origin
+      auto tile = getTile({x, y});
+      if(!tile || tile->location().x != x || tile->location().y != y)
+        return false;
+
+      const uint8_t oldWidth = tile->data().width();
+      const uint8_t oldHeight = tile->data().height();
+
+      // check if space is available (if growing)
+      if(width > oldWidth || height > oldHeight)
+      {
+        const int16_t x2 = x + width;
+        const int16_t y2 = y + height;
+        for(int16_t xx = x; xx < x2; xx++)
+          for(int16_t yy = y; yy < y2; yy++)
+            if(auto t = getTile({xx, yy}); t && t != tile)
+              return false;
+      }
+
+      // check if new tile size is valid
+      if(!tile->resize(width, height))
+        return false;
+
+      // update m_tiles
+      {
+        const int16_t x2 = x + std::max(width, oldWidth);
+        const int16_t y2 = y + std::max(height, oldHeight);
+        const int16_t xNew = x + width;
+        const int16_t yNew = y + height;
+
+        for(int16_t xx = x; xx < x2; xx++)
+          for(int16_t yy = y; yy < y2; yy++)
+            if(xx < xNew && yy < yNew)
+              m_tiles[{xx, yy}] = tile;
+            else
+              m_tiles.erase({xx, yy});
+      }
+
+      tileDataChanged(*this, tile->location(), tile->data());
+
+      return true;
+    }},
   deleteTile{*this, "delete_tile",
     [this](int16_t x, int16_t y)
     {
@@ -150,6 +199,8 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
   m_interfaceItems.add(addTile);
   Attributes::addEnabled(moveTile, editable && stopped);
   m_interfaceItems.add(moveTile);
+  Attributes::addEnabled(resizeTile, editable && stopped);
+  m_interfaceItems.add(resizeTile);
   Attributes::addEnabled(deleteTile, editable && stopped);
   m_interfaceItems.add(deleteTile);
   Attributes::addEnabled(resizeToContents, editable);
@@ -221,6 +272,7 @@ void Board::worldEvent(WorldState state, WorldEvent event)
   name.setAttributeEnabled(editable);
   addTile.setAttributeEnabled(editable && stopped);
   Attributes::setEnabled(moveTile, editable && stopped);
+  Attributes::setEnabled(resizeTile, editable && stopped);
   deleteTile.setAttributeEnabled(editable && stopped);
   resizeToContents.setAttributeEnabled(editable);
 }

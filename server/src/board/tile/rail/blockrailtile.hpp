@@ -40,6 +40,7 @@ class BlockRailTile : public RailTile
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
     void setRotate(TileRotate value) final;
+    bool resize(uint8_t w, uint8_t h) final;
 
     void updateState();
 
