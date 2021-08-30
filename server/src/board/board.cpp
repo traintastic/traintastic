@@ -71,7 +71,7 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
       updateSize();
       return true;
     }},
-  moveTile{*this, "moveTile",
+  moveTile{*this, "move_tile",
     [this](const int16_t xFrom, const int16_t yFrom, const int16_t xTo, const int16_t yTo, const bool replace)
     {
       // check if there is a tile at <From> and it is it's origin
@@ -111,7 +111,7 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
           assert(m_tiles.find(l) == m_tiles.end());
           m_tiles[l] = tile;
         }
-      tileDataChanged(*this, tile->location(), TileData());
+      tileDataChanged(*this, tile->location(), tile->data());
 
       updateSize();
 
