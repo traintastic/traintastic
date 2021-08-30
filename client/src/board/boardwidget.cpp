@@ -31,6 +31,7 @@
 #include <QStatusBar>
 #include <QLabel>
 #include <QApplication>
+#include <QKeyEvent>
 #include <traintastic/locale/locale.hpp>
 #include "../mainwindow.hpp"
 #include "../network/board.hpp"
@@ -93,6 +94,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   m_statusBarCoords{new QLabel(this)},
   m_editActions{new QActionGroup(this)},
   m_editRotate{TileRotate::Deg0}
+  , m_tileMoveStarted{false}
 {
   if(AbstractProperty* name = m_object->getProperty("name"))
   {
@@ -166,7 +168,6 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
     }));
   m_editActionMove->setCheckable(true);
   m_editActionMove->setData(-1);
-  m_editActionMove->setEnabled(false); // todo: implement
 
   m_editActionDelete = m_editActions->addAction(m_toolbarEdit->addAction(Theme::getIcon("delete"), Locale::tr("board:delete_tile"), this,
     [this]()
@@ -384,6 +385,20 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
     }
     else if(act == m_editActionMove)
     {
+      if(!m_tileMoveStarted) // grab
+      {
+        m_tileMoveX = x;
+        m_tileMoveY = y;
+        m_tileMoveStarted = true;
+      }
+      else // drop
+      {
+        m_object->moveTile(m_tileMoveX, m_tileMoveY, x, y, false,
+          [this](const bool& r, Message::ErrorCode ec)
+          {
+          });
+        m_tileMoveStarted = false;
+      }
     }
     else if(act == m_editActionDelete)
     {
@@ -438,6 +453,8 @@ void BoardWidget::rightClicked()
 
 void BoardWidget::actionSelected(const TileInfo* tileInfo)
 {
+  m_tileMoveStarted = false;
+
   if(tileInfo)
   {
     validRotate(m_editRotate, tileInfo->rotates);
@@ -446,4 +463,12 @@ void BoardWidget::actionSelected(const TileInfo* tileInfo)
   }
   else
     m_boardArea->setMouseMoveTileId(TileId::None);
+}
+
+void BoardWidget::keyPressEvent(QKeyEvent* event)
+{
+  if(event->key() == Qt::Key_Escape && m_tileMoveStarted)
+    m_tileMoveStarted = false;
+  else
+    QWidget::keyPressEvent(event);
 }

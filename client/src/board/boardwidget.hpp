@@ -60,8 +60,12 @@ class BoardWidget : public QWidget
     QAction* m_editActionDelete;
     QAction* m_editActionResizeToContents;
     TileRotate m_editRotate;
+    bool m_tileMoveStarted;
+    int16_t m_tileMoveX;
+    int16_t m_tileMoveY;
 
     void actionSelected(const TileInfo* tile);
+    void keyPressEvent(QKeyEvent* event) override;
 
   protected slots:
     void worldEditChanged(bool value);

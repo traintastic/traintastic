@@ -63,6 +63,11 @@ int Board::addTile(int16_t x, int16_t y, TileRotate rotate, const QString& id, b
   return ::callMethod(*m_connection, *getMethod("add_tile"), std::move(callback), x, y, rotate, id, replace);
 }
 
+int Board::moveTile(int16_t xFrom, int16_t yFrom, int16_t xTo, int16_t yTo, bool replace, std::function<void(const bool&, Message::ErrorCode)> callback)
+{
+  return ::callMethod(*m_connection, *getMethod("move_tile"), std::move(callback), xFrom, yFrom, xTo, yTo, replace);
+}
+
 int Board::deleteTile(int16_t x, int16_t y, std::function<void(const bool&, Message::ErrorCode)> callback)
 {
   return ::callMethod(*m_connection, *getMethod("delete_tile"), std::move(callback), x, y);
