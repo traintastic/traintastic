@@ -72,12 +72,22 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
       return true;
     }},
   moveTile{*this, "move_tile",
-    [this](const int16_t xFrom, const int16_t yFrom, const int16_t xTo, const int16_t yTo, const bool replace)
+    [this](int16_t xFrom, int16_t yFrom, int16_t xTo, int16_t yTo, const bool replace)
     {
-      // check if there is a tile at <From> and it is it's origin
+      // check if there is a tile at <From>
       auto tile = getTile({xFrom, yFrom});
-      if(!tile || tile->location().x != xFrom || tile->location().y != yFrom)
+      if(!tile)
         return false;
+
+      // correct coordinates, so <to> is tile origin
+      {
+        const int16_t xDiff = xFrom - tile->location().x;
+        xFrom -= xDiff;
+        xTo -= xDiff;
+        const int16_t yDiff = yFrom - tile->location().y;
+        yFrom -= yDiff;
+        yTo -= yDiff;
+      }
 
       const int16_t xFrom2 = xFrom + tile->data().width();
       const int16_t yFrom2 = yFrom + tile->data().height();
