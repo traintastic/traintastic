@@ -45,6 +45,14 @@
 #include "../src/board/tile/rail/sensorrailtile.hpp"
 #include "../src/board/tile/rail/blockrailtile.hpp"
 
+TEST_CASE("Board: Add non existing tile", "[board][board-add]")
+{
+  auto world = World::create();
+  auto board = world->boards->add();
+
+  REQUIRE_FALSE(board->addTile(0, 0, TileRotate::Deg0, "board_tile.i_n_v_a_l_i_d", false));
+}
+
 TEMPLATE_TEST_CASE("Board: Add tile", "[board][board-add]"
   , StraightRailTile
   , Curve45RailTile
