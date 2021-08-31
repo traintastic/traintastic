@@ -42,6 +42,22 @@ void Board::getTileData()
   m_getTileDataRequestId = m_connection->getTileData(*this);
 }
 
+bool Board::getTileOrigin(TileLocation& l) const
+{
+  if(auto it = m_tileData.find(l); it != m_tileData.end())
+    return true;
+
+  for(const auto& it : m_tileData)
+    if(l.x >= it.first.x && l.x < it.first.x + it.second.width() &&
+        l.y >= it.first.y && l.y < it.first.y + it.second.height())
+    {
+      l = it.first;
+      return true;
+    }
+
+  return false;
+}
+
 ObjectPtr Board::getTileObject(TileLocation l) const
 {
   auto itObject = m_tileObjects.find(l);
@@ -66,6 +82,11 @@ int Board::addTile(int16_t x, int16_t y, TileRotate rotate, const QString& id, b
 int Board::moveTile(int16_t xFrom, int16_t yFrom, int16_t xTo, int16_t yTo, bool replace, std::function<void(const bool&, Message::ErrorCode)> callback)
 {
   return ::callMethod(*m_connection, *getMethod("move_tile"), std::move(callback), xFrom, yFrom, xTo, yTo, replace);
+}
+
+int Board::resizeTile(int16_t x, int16_t y, uint8_t w, uint8_t h, std::function<void(const bool&, Message::ErrorCode)> callback)
+{
+  return ::callMethod(*m_connection, *getMethod("resize_tile"), std::move(callback), x, y, w, h);
 }
 
 int Board::deleteTile(int16_t x, int16_t y, std::function<void(const bool&, Message::ErrorCode)> callback)

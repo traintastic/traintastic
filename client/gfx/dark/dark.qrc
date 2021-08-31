@@ -65,5 +65,6 @@
         <file>decoder_function.mute.on.svg</file>
         <file>decoder_function.sound.off.svg</file>
         <file>decoder_function.sound.on.svg</file>
+        <file>resize_tile.svg</file>
     </qresource>
 </RCC>

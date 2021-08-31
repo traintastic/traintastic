@@ -95,6 +95,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   m_editActions{new QActionGroup(this)},
   m_editRotate{TileRotate::Deg0}
   , m_tileMoveStarted{false}
+  , m_tileResizeStarted{false}
 {
   if(AbstractProperty* name = m_object->getProperty("name"))
   {
@@ -168,6 +169,14 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
     }));
   m_editActionMove->setCheckable(true);
   m_editActionMove->setData(-1);
+
+  m_editActionResize = m_editActions->addAction(m_toolbarEdit->addAction(Theme::getIcon("resize_tile"), Locale::tr("board:resize_tile"), this,
+    [this]()
+    {
+      actionSelected(nullptr);
+    }));
+  m_editActionResize->setCheckable(true);
+  m_editActionResize->setData(-1);
 
   m_editActionDelete = m_editActions->addAction(m_toolbarEdit->addAction(Theme::getIcon("delete"), Locale::tr("board:delete_tile"), this,
     [this]()
@@ -400,6 +409,34 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
         m_tileMoveStarted = false;
       }
     }
+    else if(act == m_editActionResize)
+    {
+      if(!m_tileResizeStarted) // start
+      {
+        TileLocation l{x, y};
+        if(m_object->getTileOrigin(l))
+        {
+          m_tileResizeX = l.x;
+          m_tileResizeY = l.y;
+          m_tileResizeStarted = true;
+        }
+      }
+      else // stop
+      {
+        const int16_t w = 1 + x - m_tileResizeX;
+        const int16_t h = 1 + y - m_tileResizeY;
+        if(w >= 1 && w <= std::numeric_limits<uint8_t>::max() &&
+            h >= 1 && h <= std::numeric_limits<uint8_t>::max())
+        {
+          m_object->resizeTile(m_tileResizeX, m_tileResizeY, w, h,
+            [this](const bool& r, Message::ErrorCode ec)
+            {
+            });
+
+          m_tileResizeStarted = false;
+        }
+      }
+    }
     else if(act == m_editActionDelete)
     {
       m_object->deleteTile(x, y,
@@ -454,6 +491,7 @@ void BoardWidget::rightClicked()
 void BoardWidget::actionSelected(const TileInfo* tileInfo)
 {
   m_tileMoveStarted = false;
+  m_tileResizeStarted = false;
 
   if(tileInfo)
   {
@@ -467,8 +505,11 @@ void BoardWidget::actionSelected(const TileInfo* tileInfo)
 
 void BoardWidget::keyPressEvent(QKeyEvent* event)
 {
-  if(event->key() == Qt::Key_Escape && m_tileMoveStarted)
+  if(event->key() == Qt::Key_Escape && (m_tileMoveStarted || m_tileResizeStarted))
+  {
     m_tileMoveStarted = false;
+    m_tileResizeStarted = false;
+  }
   else
     QWidget::keyPressEvent(event);
 }

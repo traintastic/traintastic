@@ -57,12 +57,16 @@ class BoardWidget : public QWidget
     QActionGroup* m_editActions;
     QAction* m_editActionNone;
     QAction* m_editActionMove;
+    QAction* m_editActionResize;
     QAction* m_editActionDelete;
     QAction* m_editActionResizeToContents;
     TileRotate m_editRotate;
     bool m_tileMoveStarted;
     int16_t m_tileMoveX;
     int16_t m_tileMoveY;
+    bool m_tileResizeStarted;
+    int16_t m_tileResizeX;
+    int16_t m_tileResizeY;
 
     void actionSelected(const TileInfo* tile);
     void keyPressEvent(QKeyEvent* event) override;

@@ -64,10 +64,12 @@ class Board final : public Object
 
     const TileObjectMap& tileObjects() const { return m_tileObjects; }
 
+    bool getTileOrigin(TileLocation& l) const;
     ObjectPtr getTileObject(TileLocation l) const;
 
     int addTile(int16_t x, int16_t y, TileRotate rotate, const QString& id, bool replace, std::function<void(const bool&, Message::ErrorCode)> callback);
     int moveTile(int16_t xFrom, int16_t yFrom, int16_t xTo, int16_t yTo, bool replace, std::function<void(const bool&, Message::ErrorCode)> callback);
+    int resizeTile(int16_t x, int16_t y, uint8_t w, uint8_t h, std::function<void(const bool&, Message::ErrorCode)> callback);
     int deleteTile(int16_t x, int16_t y, std::function<void(const bool&, Message::ErrorCode)> callback);
 
   signals:
