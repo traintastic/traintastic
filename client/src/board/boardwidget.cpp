@@ -396,9 +396,20 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
     {
       if(!m_tileMoveStarted) // grab
       {
-        m_tileMoveX = x;
-        m_tileMoveY = y;
-        m_tileMoveStarted = true;
+        TileLocation l{x, y};
+        if(m_object->getTileOrigin(l))
+        {
+          m_tileMoveX = x;
+          m_tileMoveY = y;
+          m_tileMoveStarted = true;
+
+          const auto& data = m_object->tileData().at(l);
+          m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::MoveTile);
+          m_boardArea->setMouseMoveTileId(data.id());
+          m_boardArea->setMouseMoveTileRotate(data.rotate());
+          m_boardArea->setMouseMoveTileSize(data.width(), data.height());
+          m_boardArea->setMouseMoveHideTileLocation(l);
+        }
       }
       else // drop
       {
@@ -407,6 +418,7 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
           {
           });
         m_tileMoveStarted = false;
+        m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::None);
       }
     }
     else if(act == m_editActionResize)
@@ -419,6 +431,12 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
           m_tileResizeX = l.x;
           m_tileResizeY = l.y;
           m_tileResizeStarted = true;
+
+          const auto& data = m_object->tileData().at(l);
+          m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::ResizeTile);
+          m_boardArea->setMouseMoveTileId(data.id());
+          m_boardArea->setMouseMoveTileRotate(data.rotate());
+          m_boardArea->setMouseMoveHideTileLocation(l);
         }
       }
       else // stop
@@ -434,6 +452,7 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
             });
 
           m_tileResizeStarted = false;
+          m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::None);
         }
       }
     }
@@ -490,17 +509,17 @@ void BoardWidget::rightClicked()
 
 void BoardWidget::actionSelected(const TileInfo* tileInfo)
 {
+  m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::None);
   m_tileMoveStarted = false;
   m_tileResizeStarted = false;
 
   if(tileInfo)
   {
     validRotate(m_editRotate, tileInfo->rotates);
+    m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::AddTile);
     m_boardArea->setMouseMoveTileRotate(m_editRotate);
     m_boardArea->setMouseMoveTileId(tileInfo->id);
   }
-  else
-    m_boardArea->setMouseMoveTileId(TileId::None);
 }
 
 void BoardWidget::keyPressEvent(QKeyEvent* event)
@@ -509,6 +528,7 @@ void BoardWidget::keyPressEvent(QKeyEvent* event)
   {
     m_tileMoveStarted = false;
     m_tileResizeStarted = false;
+    m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::None);
   }
   else
     QWidget::keyPressEvent(event);

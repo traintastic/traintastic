@@ -66,8 +66,11 @@ BoardAreaWidget::BoardAreaWidget(BoardWidget& board, QWidget* parent) :
   m_boardBottom{board.board().getProperty("bottom")},
   m_grid{Grid::Dot},
   m_zoomLevel{0},
+  m_mouseMoveAction{MouseMoveAction::None},
   m_mouseMoveTileId{TileId::None},
   m_mouseMoveTileRotate{TileRotate::Deg0}
+  , m_mouseMoveTileWidth{1}
+  , m_mouseMoveTileHeight{1}
 {
   setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
   setFocusPolicy(Qt::StrongFocus);
@@ -151,6 +154,23 @@ void BoardAreaWidget::setZoomLevel(int value)
   }
 }
 
+void BoardAreaWidget::setMouseMoveAction(MouseMoveAction action)
+{
+  if(m_mouseMoveAction == action)
+    return;
+
+  m_mouseMoveAction = action;
+
+  // reset others:
+  m_mouseMoveTileId = TileId::None;
+  m_mouseMoveTileRotate = TileRotate::Deg0;
+  m_mouseMoveTileWidth = 1;
+  m_mouseMoveTileHeight = 1;
+  m_mouseMoveHideTileLocation = TileLocation::invalid;
+
+  update();
+}
+
 void BoardAreaWidget::setMouseMoveTileId(TileId id)
 {
   if(m_mouseMoveTileId == id)
@@ -164,6 +184,23 @@ void BoardAreaWidget::setMouseMoveTileRotate(TileRotate rotate)
   if(m_mouseMoveTileRotate == rotate)
     return;
   m_mouseMoveTileRotate = rotate;
+  update();
+}
+
+void BoardAreaWidget::setMouseMoveTileSize(uint8_t w, uint8_t h)
+{
+  if(m_mouseMoveTileWidth == w && m_mouseMoveTileHeight == h)
+    return;
+  m_mouseMoveTileWidth = w;
+  m_mouseMoveTileHeight = h;
+  update();
+}
+
+void BoardAreaWidget::setMouseMoveHideTileLocation(TileLocation l)
+{
+  if(m_mouseMoveHideTileLocation == l)
+    return;
+  m_mouseMoveHideTileLocation = l;
   update();
 }
 
@@ -282,13 +319,26 @@ void BoardAreaWidget::mouseMoveEvent(QMouseEvent* event)
       const TileLocation old = m_mouseMoveTileLocation;
       m_mouseMoveTileLocation = tl;
       emit mouseTileLocationChanged(tl.x, tl.y);
-      if(m_mouseMoveTileId != TileId::None)
+      if(m_mouseMoveAction != MouseMoveAction::None)
       {
-        const int width = 1;  // currently always 1
-        const int height = 1; // currently always 1
         const int tileSize = getTileSize();
-        update(updateTileRect(old.x, old.y, width, height, tileSize));
-        update(updateTileRect(tl.x, tl.y, width, height, tileSize));
+        switch(m_mouseMoveAction)
+        {
+          case MouseMoveAction::AddTile:
+          case MouseMoveAction::MoveTile:
+            update(updateTileRect(old.x, old.y, m_mouseMoveTileWidth, m_mouseMoveTileHeight, tileSize));
+            update(updateTileRect(tl.x, tl.y, m_mouseMoveTileWidth, m_mouseMoveTileHeight, tileSize));
+            break;
+
+          case MouseMoveAction::ResizeTile:
+            update(updateTileRect(
+              m_mouseMoveHideTileLocation.x,
+              m_mouseMoveHideTileLocation.y,
+              std::max(1, 1 + std::max(old.x, tl.x) - m_mouseMoveHideTileLocation.x),
+              std::max(1, 1 + std::max(old.y, tl.y) - m_mouseMoveHideTileLocation.y),
+              tileSize));
+            break;
+        }
       }
     }
   }
@@ -362,6 +412,9 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
     if(it.first.x + it.second.width() - 1 >= tiles.left() && it.first.x <= tiles.right() &&
         it.first.y + it.second.height() - 1 >= tiles.top() && it.first.y <= tiles.bottom())
     {
+      if(it.first == m_mouseMoveHideTileLocation)
+        continue;
+
       const TileId id = it.second.id();
       const TileRotate a = it.second.rotate();
       painter.setBrush(Qt::NoBrush);
@@ -412,13 +465,33 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
   painter.restore();
 
-  if(m_mouseMoveTileId != TileId::None && m_mouseMoveTileLocation.isValid())
+  switch(m_mouseMoveAction)
   {
-    const QRectF r = drawTileRect(m_mouseMoveTileLocation.x - tileOriginX, m_mouseMoveTileLocation.y - tileOriginY, 1, 1, tileSize);
-    painter.fillRect(r, backgroundColor50);
-    painter.setPen(gridColorHighlight);
-    painter.drawRect(r.adjusted(-0.5, -0.5, 0.5, 0.5));
-    tilePainter.draw(m_mouseMoveTileId, r, m_mouseMoveTileRotate);
+    case MouseMoveAction::AddTile:
+    case MouseMoveAction::MoveTile:
+    case MouseMoveAction::ResizeTile:
+      if(m_mouseMoveTileId != TileId::None && m_mouseMoveTileLocation.isValid())
+      {
+        const QRectF r =
+          (m_mouseMoveAction == MouseMoveAction::ResizeTile)
+            ? drawTileRect(
+                m_mouseMoveHideTileLocation.x - tileOriginX,
+                m_mouseMoveHideTileLocation.y - tileOriginY,
+                1 + std::max(0, m_mouseMoveTileLocation.x - m_mouseMoveHideTileLocation.x),
+                1 + std::max(0, m_mouseMoveTileLocation.y - m_mouseMoveHideTileLocation.y),
+                tileSize)
+            : drawTileRect(
+                m_mouseMoveTileLocation.x - tileOriginX,
+                m_mouseMoveTileLocation.y - tileOriginY,
+                m_mouseMoveTileWidth,
+                m_mouseMoveTileHeight,
+                tileSize);
+        painter.fillRect(r, backgroundColor50);
+        painter.setPen(gridColorHighlight);
+        painter.drawRect(r.adjusted(-0.5, -0.5, 0.5, 0.5));
+        tilePainter.draw(m_mouseMoveTileId, r, m_mouseMoveTileRotate);
+      }
+      break;
   }
 }
 

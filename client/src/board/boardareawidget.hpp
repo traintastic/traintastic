@@ -49,6 +49,14 @@ class BoardAreaWidget : public QWidget
       Dot,
     };
 
+    enum class MouseMoveAction
+    {
+      None,
+      AddTile,
+      MoveTile,
+      ResizeTile,
+    };
+
   protected:
     static constexpr int boardMargin = 1; // tile
 
@@ -65,9 +73,13 @@ class BoardAreaWidget : public QWidget
     bool m_mouseRightButtonPressed;
     QPoint m_mouseRightButtonPressedPoint;
 
+    MouseMoveAction m_mouseMoveAction;
     TileId m_mouseMoveTileId;
     TileLocation m_mouseMoveTileLocation;
     TileRotate m_mouseMoveTileRotate;
+    uint8_t m_mouseMoveTileWidth;
+    uint8_t m_mouseMoveTileHeight;
+    TileLocation m_mouseMoveHideTileLocation;
 
     inline int boardLeft() const { return Q_LIKELY(m_boardLeft) ? m_boardLeft->toInt() - boardMargin : 0; }
     inline int boardTop() const { return Q_LIKELY(m_boardTop) ? m_boardTop->toInt() - boardMargin: 0; }
@@ -103,8 +115,11 @@ class BoardAreaWidget : public QWidget
     void nextGrid();
     int zoomLevel() const { return m_zoomLevel; }
 
+    void setMouseMoveAction(MouseMoveAction action);
     void setMouseMoveTileId(TileId id);
     void setMouseMoveTileRotate(TileRotate rotate);
+    void setMouseMoveTileSize(uint8_t x, uint8_t y);
+    void setMouseMoveHideTileLocation(TileLocation l);
 
   public slots:
     void tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& object);
