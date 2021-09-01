@@ -24,14 +24,18 @@ set_target_properties(traintastic-server-test PROPERTIES CXX_STANDARD 17)
 
 target_include_directories(traintastic-server PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}
-  ../shared/src/
+  ../shared/src)
+
+target_include_directories(traintastic-server SYSTEM PRIVATE
   ../shared/thirdparty
   thirdparty
   thirdparty/boost)
 
 target_include_directories(traintastic-server-test PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}
-  ../shared/src/
+  ../shared/src)
+
+target_include_directories(traintastic-server-test SYSTEM PRIVATE
   ../shared/thirdparty
   thirdparty
   thirdparty/boost)

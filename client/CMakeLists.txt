@@ -21,7 +21,9 @@ add_definitions(-DQT_DEPRECATED_WARNINGS)
 
 target_include_directories(traintastic-client PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}
-  ../shared/src
+  ../shared/src)
+
+target_include_directories(traintastic-client SYSTEM PRIVATE
   ../shared/thirdparty
   thirdparty)
 
