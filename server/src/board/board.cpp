@@ -287,19 +287,18 @@ void Board::worldEvent(WorldState state, WorldEvent event)
   resizeToContents.setAttributeEnabled(editable);
 }
 
-void Board::removeTile(int16_t x, int16_t y)
+void Board::removeTile(const int16_t x, const int16_t y)
 {
   auto tile = getTile({x, y});
   if(!tile)
     return;
-  x = tile->location().x;
-  y = tile->location().y;
-  const int16_t x2 = x + tile->data().width();
-  const int16_t y2 = y + tile->data().height();
-  for(; x < x2; x++)
-    for(; y < y2; y++)
-      m_tiles.erase(TileLocation{x, y});
-  tileDataChanged(*this, tile->location(), TileData());
+  const auto l = tile->location();
+  const int16_t x2 = l.x + tile->data().width();
+  const int16_t y2 = l.y + tile->data().height();
+  for(int16_t xx = x; xx < x2; xx++)
+    for(int16_t yy = y; yy < y2; yy++)
+      m_tiles.erase(TileLocation{xx, yy});
+  tileDataChanged(*this, l, TileData());
 }
 
 void Board::updateSize(bool allowShrink)
