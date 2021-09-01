@@ -42,5 +42,6 @@
         <file>remove.svg</file>
         <file>down.svg</file>
         <file>up.svg</file>
+        <file>resize_tile.svg</file>
     </qresource>
 </RCC>
