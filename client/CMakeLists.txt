@@ -92,9 +92,6 @@ install(TARGETS traintastic-client
     RUNTIME DESTINATION "/opt/traintastic/bin/"
 )
 
-file(GLOB LANG_FILES "../lang/*.txt")
-install(FILES ${LANG_FILES} DESTINATION "/opt/traintastic/lang")
-
 ### BUILD TYPE ###
 
 if (CMAKE_BUILD_TYPE EQUAL "Release")
@@ -114,5 +111,6 @@ set(CPACK_DEBIAN_PACKAGE_SECTION "misc")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Reinder Feenstra")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://traintastic.org")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "traintastic-data (>= ${CPACK_PACKAGE_VERSION})")
 
 include(CPack)

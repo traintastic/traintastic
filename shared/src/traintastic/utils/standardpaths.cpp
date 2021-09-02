@@ -56,10 +56,10 @@ std::filesystem::path getLocalePath()
     return std::filesystem::path(path);
 
 #ifdef WIN32
-  return getProgramDataPath() / "traintastic" / "shared" / "lang";
+  return getProgramDataPath() / "traintastic" / "translations";
 #elif defined(__linux__)
-  return "/opt/traintastic/lang";
+  return "/opt/traintastic/translations";
 #else
-  return std::filesystem::current_path() / "lang";
+  return std::filesystem::current_path() / "translations";
 #endif
 }

@@ -45,8 +45,8 @@ Name: "client"; Description: "Traintastic client"; Types: clientandserver client
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
-Name: "firewall_traintastic"; Description: "Allow Traintastic client"; GroupDescription: "Windows Firewall:"; Components: server 
-Name: "firewall_wlanmaus"; Description: "Allow WLANmaus/Z21"; GroupDescription: "Windows Firewall:"; Components: server 
+Name: "firewall_traintastic"; Description: "Allow Traintastic client"; GroupDescription: "Windows Firewall:"; Components: server
+Name: "firewall_wlanmaus"; Description: "Allow WLANmaus/Z21"; GroupDescription: "Windows Firewall:"; Components: server
 
 [Files]
 ; Server
@@ -62,7 +62,7 @@ Source: "..\..\client\build\Release\imageformats\*.dll"; DestDir: "{app}\client\
 Source: "..\..\client\build\Release\platforms\*.dll"; DestDir: "{app}\client\platforms"; Flags: ignoreversion; Components: client
 Source: "..\..\client\build\Release\styles\*.dll"; DestDir: "{app}\client\styles"; Flags: ignoreversion; Components: client
 ; Shared
-Source: "..\..\lang\*.txt"; DestDir: "{commonappdata}\traintastic\shared\lang"; Flags: ignoreversion;
+Source: "..\..\shared\translations\*.txt"; DestDir: "{commonappdata}\traintastic\translations"; Flags: ignoreversion;
 ; VC++ redistributable runtime. Extracted by VC2019RedistNeedsInstall(), if needed.
 Source: "..\..\client\build\Release\vc_redist.x64.exe"; DestDir: {tmp}; Flags: dontcopy
 
@@ -72,7 +72,7 @@ Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""T
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (UDP)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=UDP localport=5740 action=allow"; StatusMsg: "Add firewall rule for Traintastic client (UDP)"; Flags: runhidden; Components: server; Tasks: firewall_traintastic
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (WLANmaus/Z21)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=UDP localport=21105 action=allow"; StatusMsg: "Add firewall rule for WLANmaus/Z21"; Flags: runhidden; Components: server; Tasks: firewall_wlanmaus
 
-[UninstallRun]    
+[UninstallRun]
 Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""Traintastic server (TCP)"""; Flags: runhidden; Components: server; Tasks: firewall_traintastic
 Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""Traintastic server (UDP)"""; Flags: runhidden; Components: server; Tasks: firewall_traintastic
 Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""Traintastic server (WLANmaus/Z21)"""; Flags: runhidden; Components: server; Tasks: firewall_wlanmaus

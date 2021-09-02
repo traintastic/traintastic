@@ -295,6 +295,54 @@ jobs:
         name: traintastic-server-test-code-coverage
         path: ${{github.workspace}}/server/build/ccov/*
 
+  build-data:
+    name: shared data ${{matrix.config.name}}
+    runs-on: ${{matrix.config.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - name: "ubuntu_18.04"
+          os: ubuntu-18.04
+          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~bionic~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
+
+        - name: "ubuntu_20.04"
+          os: ubuntu-20.04
+          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~focal~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
+
+        - name: "raspberrypios_10_arm64"
+          os: [self-hosted, ARM64, RaspberryPi]
+          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
+
+    steps:
+    - uses: FranzDiebold/github-env-vars-action@v2
+
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        lfs: true
+
+    - name: Checkout LFS objects
+      run: git lfs checkout
+
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{github.workspace}}/shared/build
+
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{github.workspace}}/shared/build
+      run: cmake $GITHUB_WORKSPACE/shared ${{matrix.config.defines}}
+
+    - name: Build debian package
+      working-directory: ${{github.workspace}}/shared/build
+      run: cpack
+
+    - name: Upload debian package artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: traintastic-data-deb
+        path: ${{github.workspace}}/shared/build/*.deb
+
   build-manual:
     name: manual
     runs-on: ubuntu-20.04
@@ -370,35 +418,41 @@ jobs:
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
 
-    - name: Download artifacts 1/5
+    - name: Download artifacts 1/6
       uses: actions/download-artifact@v2
       with:
         name: package-innosetup
         path: ${{github.workspace}}/dist
 
-    - name: Download artifacts 2/5
+    - name: Download artifacts 2/6
       uses: actions/download-artifact@v2
       with:
         name: traintastic-client-deb
         path: ${{github.workspace}}/dist
 
-    - name: Download artifacts 3/5
+    - name: Download artifacts 3/6
       uses: actions/download-artifact@v2
       with:
         name: traintastic-server-deb
         path: ${{github.workspace}}/dist
 
-    - name: Download artifacts 4/5
+    - name: Download artifacts 4/6
       uses: actions/download-artifact@v2
       with:
         name: traintastic-server-test-code-coverage
         path: ${{github.workspace}}/dist/ccov
 
-    - name: Download artifacts 5/5
+    - name: Download artifacts 5/6
       uses: actions/download-artifact@v2
       with:
         name: traintastic-manual
         path: ${{github.workspace}}/dist/manual
+
+    - name: Download artifacts 6/6
+      uses: actions/download-artifact@v2
+      with:
+        name: traintastic-data-deb
+        path: ${{github.workspace}}/dist
 
     - uses: easingthemes/ssh-deploy@v2.1.5
       env:
