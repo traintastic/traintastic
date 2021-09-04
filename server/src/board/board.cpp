@@ -269,6 +269,11 @@ void Board::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state)
   for(const auto& it : m_tiles)
     if(it.first == it.second->location())
       tiles.push_back(it.second->id);
+  std::sort(tiles.begin(), tiles.end(),
+    [](const nlohmann::json& a, const nlohmann::json& b)
+    {
+      return (a < b);
+    });
   data["tiles"] = tiles;
 }
 
