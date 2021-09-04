@@ -263,12 +263,12 @@ void Decoder::updateEditable()
 void Decoder::updateEditable(bool editable)
 {
   const bool stopped = editable && almostZero(throttle.value());
-  name.setAttributeEnabled(editable);
-  commandStation.setAttributeEnabled(stopped);
-  protocol.setAttributeEnabled(stopped);
-  address.setAttributeEnabled(stopped);
-  longAddress.setAttributeEnabled(stopped && protocol == DecoderProtocol::DCC && address < addressDCCShortMax);
-  speedSteps.setAttributeEnabled(stopped);
+  Attributes::setEnabled(name, editable);
+  Attributes::setEnabled(commandStation, stopped);
+  Attributes::setEnabled(protocol, stopped);
+  Attributes::setEnabled(address, stopped);
+  Attributes::setEnabled(longAddress, stopped && protocol == DecoderProtocol::DCC && address < addressDCCShortMax);
+  Attributes::setEnabled(speedSteps, stopped);
 }
 
 void Decoder::changed(DecoderChangeFlags changes, uint32_t functionNumber)

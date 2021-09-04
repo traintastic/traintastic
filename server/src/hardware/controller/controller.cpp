@@ -85,7 +85,7 @@ void Controller::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  commandStation.setAttributeEnabled(editable);
+  Attributes::setEnabled(commandStation, editable);
 
   try
   {

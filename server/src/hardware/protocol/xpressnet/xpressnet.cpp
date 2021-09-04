@@ -102,10 +102,10 @@ void XpressNet::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  commandStation.setAttributeEnabled(editable);
-  useEmergencyStopLocomotiveCommand.setAttributeEnabled(editable);
-  //useFunctionStateCommands.setAttributeEnabled(editable);
-  useRocoF13F20Command.setAttributeEnabled(editable);
+  Attributes::setEnabled(commandStation, editable);
+  Attributes::setEnabled(useEmergencyStopLocomotiveCommand, editable);
+  //Attributes::setEnabled(useFunctionStateCommands, editable);
+  Attributes::setEnabled(useRocoF13F20Command, editable);
 }
 
 void XpressNet::receive(const Message& message)

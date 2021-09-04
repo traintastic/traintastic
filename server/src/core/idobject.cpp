@@ -56,7 +56,7 @@ IdObject::IdObject(const std::weak_ptr<World>& world, std::string_view _id) :
 
 IdObject::~IdObject()
 {
-  assert(m_world.expired());
+  //assert(m_world.expired()); // is destroy() called ??
 }
 
 void IdObject::destroying()
@@ -77,5 +77,5 @@ void IdObject::worldEvent(WorldState state, WorldEvent event)
 {
   Object::worldEvent(state, event);
 
-  id.setAttributeEnabled(contains(state, WorldState::Edit));
+  Attributes::setEnabled(id, contains(state, WorldState::Edit));
 }

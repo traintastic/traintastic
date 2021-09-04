@@ -136,12 +136,12 @@ void Script::updateEnabled()
   auto w = world().lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit) && state != LuaScriptState::Running;
 
-  id.setAttributeEnabled(editable);
-  name.setAttributeEnabled(editable);
-  code.setAttributeEnabled(editable);
+  Attributes::setEnabled(id, editable);
+  Attributes::setEnabled(name, editable);
+  Attributes::setEnabled(code, editable);
 
-  start.setAttributeEnabled(state != LuaScriptState::Running);
-  stop.setAttributeEnabled(state == LuaScriptState::Running);
+  Attributes::setEnabled(start, state != LuaScriptState::Running);
+  Attributes::setEnabled(stop, state == LuaScriptState::Running);
 }
 
 void Script::setState(LuaScriptState value)

@@ -88,5 +88,5 @@ void OutputMapOutputAction::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  action.setAttributeEnabled(editable);
+  Attributes::setEnabled(action, editable);
 }

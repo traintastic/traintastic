@@ -83,6 +83,6 @@ void Train::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  name.setAttributeEnabled(editable);
-  speedMax.setAttributeEnabled(editable);
+  Attributes::setEnabled(name, editable);
+  Attributes::setEnabled(speedMax, editable);
 }

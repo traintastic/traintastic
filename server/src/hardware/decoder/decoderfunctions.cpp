@@ -109,8 +109,8 @@ void DecoderFunctions::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  add.setAttributeEnabled(editable);
-  remove.setAttributeEnabled(editable);
-  moveUp.setAttributeEnabled(editable);
-  moveDown.setAttributeEnabled(editable);
+  Attributes::setEnabled(add, editable);
+  Attributes::setEnabled(remove, editable);
+  Attributes::setEnabled(moveUp, editable);
+  Attributes::setEnabled(moveDown, editable);
 }

@@ -71,8 +71,8 @@ void DecoderList::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  add.setAttributeEnabled(editable);
-  remove.setAttributeEnabled(editable);
+  Attributes::setEnabled(add, editable);
+  Attributes::setEnabled(remove, editable);
 }
 
 bool DecoderList::isListedProperty(const std::string& name)

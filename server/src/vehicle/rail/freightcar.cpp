@@ -46,5 +46,5 @@ void FreightCar::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  cargoWeight.setAttributeEnabled(editable);
+  Attributes::setEnabled(cargoWeight, editable);
 }

@@ -83,8 +83,8 @@ void LocoNetOutput::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  loconet.setAttributeEnabled(editable);
-  address.setAttributeEnabled(editable);
+  Attributes::setEnabled(loconet, editable);
+  Attributes::setEnabled(address, editable);
 }
 
 void LocoNetOutput::idChanged(const std::string& id)

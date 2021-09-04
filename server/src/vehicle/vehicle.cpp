@@ -44,5 +44,5 @@ void Vehicle::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);
 
-  name.setAttributeEnabled(contains(state, WorldState::Edit));
+  Attributes::setEnabled(name, contains(state, WorldState::Edit));
 }

@@ -83,8 +83,8 @@ void XpressNetInput::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  xpressnet.setAttributeEnabled(editable);
-  address.setAttributeEnabled(editable);
+  Attributes::setEnabled(xpressnet, editable);
+  Attributes::setEnabled(address, editable);
 }
 
 void XpressNetInput::idChanged(const std::string& id)

@@ -87,10 +87,10 @@ void DecoderFunction::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  number.setAttributeEnabled(editable);
-  name.setAttributeEnabled(editable);
-  type.setAttributeEnabled(editable);
-  function.setAttributeEnabled(editable);
+  Attributes::setEnabled(number, editable);
+  Attributes::setEnabled(name, editable);
+  Attributes::setEnabled(type, editable);
+  Attributes::setEnabled(function, editable);
 }
 
 void DecoderFunction::typeChanged()

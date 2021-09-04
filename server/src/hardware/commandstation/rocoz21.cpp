@@ -268,8 +268,8 @@ bool RocoZ21::setOnline(bool& value)
     for(auto& decoder : *decoders)
       send(Z21::LanXGetLocoInfo(decoder->address, decoder->longAddress));
 
-    hostname.setAttributeEnabled(false);
-    port.setAttributeEnabled(false);
+    Attributes::setEnabled(hostname, false);
+    Attributes::setEnabled(port, false);
   }
   else if(m_socket.is_open() && !value)
   {
@@ -279,8 +279,8 @@ bool RocoZ21::setOnline(bool& value)
     hardwareType.setValueInternal("");
     firmwareVersion.setValueInternal("");
 
-    hostname.setAttributeEnabled(true);
-    port.setAttributeEnabled(true);
+    Attributes::setEnabled(hostname, true);
+    Attributes::setEnabled(port, true);
 
     m_socket.close();
   }

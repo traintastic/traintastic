@@ -73,10 +73,10 @@ void RailVehicle::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  decoder.setAttributeEnabled(editable);
-  lob.setAttributeEnabled(editable);
-  speedMax.setAttributeEnabled(editable);
-  weight.setAttributeEnabled(editable);
+  Attributes::setEnabled(decoder, editable);
+  Attributes::setEnabled(lob, editable);
+  Attributes::setEnabled(speedMax, editable);
+  Attributes::setEnabled(weight, editable);
 }
 
 double RailVehicle::calcTotalWeight(WeightUnit unit) const

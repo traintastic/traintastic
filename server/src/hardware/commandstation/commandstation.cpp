@@ -37,8 +37,8 @@ CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_vi
   online{this, "online", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
     [this](bool value)
     {
-      emergencyStop.setAttributeEnabled(value);
-      powerOn.setAttributeEnabled(value);
+      Attributes::setEnabled(emergencyStop, value);
+      Attributes::setEnabled(powerOn, value);
     },
     std::bind(&CommandStation::setOnline, this, std::placeholders::_1)},
   //status{this, "status", CommandStationStatus::Offline, PropertyFlags::ReadOnly},
@@ -115,7 +115,7 @@ void CommandStation::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);
 
-  name.setAttributeEnabled(contains(state, WorldState::Edit));
+  Attributes::setEnabled(name, contains(state, WorldState::Edit));
 
   try
   {

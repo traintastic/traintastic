@@ -70,13 +70,13 @@ bool LocoNetTCPBinary::setOnline(bool& value)
 
     receive(); // start receiving messages
 
-    hostname.setAttributeEnabled(false);
-    port.setAttributeEnabled(false);
+    Attributes::setEnabled(hostname, false);
+    Attributes::setEnabled(port, false);
   }
   else if(m_socket.is_open() && !value)
   {
-    hostname.setAttributeEnabled(true);
-    port.setAttributeEnabled(true);
+    Attributes::setEnabled(hostname, true);
+    Attributes::setEnabled(port, true);
 
     m_socket.close();
   }

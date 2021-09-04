@@ -97,8 +97,6 @@ class InterfaceItem
       assert(m_attributes.find(name) != m_attributes.end());
       return static_cast<const Attribute<T>*>(m_attributes.at(name).get())->value();
     }
-
-    inline void setAttributeEnabled(bool value) { setAttribute(AttributeName::Enabled, value); }
 };
 
 #endif

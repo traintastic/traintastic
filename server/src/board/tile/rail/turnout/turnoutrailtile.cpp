@@ -54,5 +54,5 @@ void TurnoutRailTile::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  name.setAttributeEnabled(editable);
+  Attributes::setEnabled(name, editable);
 }

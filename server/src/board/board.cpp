@@ -286,12 +286,12 @@ void Board::worldEvent(WorldState state, WorldEvent event)
   const bool editable = contains(state, WorldState::Edit);
   const bool stopped = !contains(state, WorldState::Run);
 
-  name.setAttributeEnabled(editable);
-  addTile.setAttributeEnabled(editable && stopped);
+  Attributes::setEnabled(name, editable);
+  Attributes::setEnabled(addTile, editable && stopped);
   Attributes::setEnabled(moveTile, editable && stopped);
   Attributes::setEnabled(resizeTile, editable && stopped);
-  deleteTile.setAttributeEnabled(editable && stopped);
-  resizeToContents.setAttributeEnabled(editable);
+  Attributes::setEnabled(deleteTile, editable && stopped);
+  Attributes::setEnabled(resizeToContents, editable);
 }
 
 void Board::removeTile(const int16_t x, const int16_t y)

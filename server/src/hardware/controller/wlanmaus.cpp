@@ -76,11 +76,11 @@ bool WLANmaus::setActive(bool& value)
 
     // TODO: send message were alive ??
 
-    port.setAttributeEnabled(false);
+    Attributes::setEnabled(port, false);
   }
   else if(m_socket.is_open() && !value)
   {
-    port.setAttributeEnabled(true);
+    Attributes::setEnabled(port, true);
 
     m_socket.close();
   }
