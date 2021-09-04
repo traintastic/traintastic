@@ -37,10 +37,13 @@ class BlockRailTile : public RailTile
   DEFAULT_ID("block")
   CREATE(BlockRailTile)
 
+  private:
+    void updateHeightWidthMax();
+
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
+    void loaded() final;
     void setRotate(TileRotate value) final;
-    bool resize(uint8_t w, uint8_t h) final;
 
     void updateState();
 

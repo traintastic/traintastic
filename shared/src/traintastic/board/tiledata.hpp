@@ -24,7 +24,7 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_BOARD_TILEDATA_HPP
 
 #include "tileid.hpp"
-#include "tilerotate.hpp"
+#include "../enum/tilerotate.hpp"
 
 struct TileData
 {

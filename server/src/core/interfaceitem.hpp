@@ -46,20 +46,15 @@ class InterfaceItem
     template<typename T>
     void addAttribute(AttributeName name, const T& value)
     {
+      assert(m_attributes.find(name) == m_attributes.end());
       m_attributes.emplace(name, std::make_unique<Attribute<T>>(*this, name, value));
     }
 
     template<typename T, size_t N>
     void addAttribute(AttributeName name, const std::array<T, N>& values)
     {
+      assert(m_attributes.find(name) == m_attributes.end());
       m_attributes.emplace(name, std::make_unique<ArrayAttribute<T, N>>(*this, name, values));
-    }
-
-    template<typename T>
-    T getAttribute(AttributeName name) const
-    {
-      assert(m_attributes.find(name) != m_attributes.end());
-      return static_cast<const Attribute<T>*>(m_attributes.at(name).get())->value();
     }
 
     template<typename T>
@@ -94,6 +89,13 @@ class InterfaceItem
     const Attributes& attributes() const
     {
       return m_attributes;
+    }
+
+    template<typename T>
+    T getAttribute(AttributeName name) const
+    {
+      assert(m_attributes.find(name) != m_attributes.end());
+      return static_cast<const Attribute<T>*>(m_attributes.at(name).get())->value();
     }
 
     inline void setAttributeEnabled(bool value) { setAttribute(AttributeName::Enabled, value); }

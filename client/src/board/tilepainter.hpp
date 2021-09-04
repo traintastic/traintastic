@@ -27,7 +27,7 @@
 #include <vector>
 #include <QPainter>
 #include <traintastic/board/tileid.hpp>
-#include <traintastic/board/tilerotate.hpp>
+#include <traintastic/enum/tilerotate.hpp>
 #include <traintastic/enum/blockstate.hpp>
 #include <traintastic/enum/sensorstate.hpp>
 #include <traintastic/enum/signalaspect.hpp>

@@ -27,7 +27,7 @@
 #include <unordered_map>
 #include "../core/method.hpp"
 #include <traintastic/board/tilelocation.hpp>
-#include <traintastic/board/tilerotate.hpp>
+#include <traintastic/enum/tilerotate.hpp>
 
 class Tile;
 struct TileData;

@@ -47,21 +47,16 @@ TEST_CASE("Board: Resize block rail tile vertical", "[board][board-resize]")
   std::weak_ptr<Tile> tile = board->getTile({0, 0});
   REQUIRE_FALSE(tile.expired());
   REQUIRE(tile.lock()->location() == TileLocation{0, 0});
-  REQUIRE(tile.lock()->data().height() == 5);
-  REQUIRE(tile.lock()->data().width() == 1);
+  REQUIRE(tile.lock()->height == 1);
+  REQUIRE(tile.lock()->width == 1);
   REQUIRE_FALSE(board->isTile({0, -1}));
-  REQUIRE(board->getTile({0, 0}) == tile.lock());
-  REQUIRE(board->getTile({0, 1}) == tile.lock());
-  REQUIRE(board->getTile({0, 2}) == tile.lock());
-  REQUIRE(board->getTile({0, 3}) == tile.lock());
-  REQUIRE(board->getTile({0, 4}) == tile.lock());
-  REQUIRE_FALSE(board->isTile({0, 5}));
+  REQUIRE_FALSE(board->isTile({0, 1}));
 
   // resize to 1x6
   REQUIRE(board->resizeTile(0, 0, 1, 6));
   REQUIRE(tile.lock()->location() == TileLocation{0, 0});
-  REQUIRE(tile.lock()->data().height() == 6);
-  REQUIRE(tile.lock()->data().width() == 1);
+  REQUIRE(tile.lock()->height == 6);
+  REQUIRE(tile.lock()->width == 1);
   REQUIRE_FALSE(board->isTile({0, -1}));
   REQUIRE(board->getTile({0, 0}) == tile.lock());
   REQUIRE(board->getTile({0, 1}) == tile.lock());
@@ -74,8 +69,8 @@ TEST_CASE("Board: Resize block rail tile vertical", "[board][board-resize]")
   // resize to 1x3
   REQUIRE(board->resizeTile(0, 0, 1, 3));
   REQUIRE(tile.lock()->location() == TileLocation{0, 0});
-  REQUIRE(tile.lock()->data().height() == 3);
-  REQUIRE(tile.lock()->data().width() == 1);
+  REQUIRE(tile.lock()->height == 3);
+  REQUIRE(tile.lock()->width == 1);
   REQUIRE_FALSE(board->isTile({0, -1}));
   REQUIRE(board->getTile({0, 0}) == tile.lock());
   REQUIRE(board->getTile({0, 1}) == tile.lock());
@@ -88,8 +83,8 @@ TEST_CASE("Board: Resize block rail tile vertical", "[board][board-resize]")
   // resize to 2x2
   REQUIRE_FALSE(board->resizeTile(0, 0, 2, 2));
   REQUIRE(tile.lock()->location() == TileLocation{0, 0});
-  REQUIRE(tile.lock()->data().height() == 3);
-  REQUIRE(tile.lock()->data().width() == 1);
+  REQUIRE(tile.lock()->height == 3);
+  REQUIRE(tile.lock()->width == 1);
   REQUIRE_FALSE(board->isTile({0, -1}));
   REQUIRE(board->getTile({0, 0}) == tile.lock());
   REQUIRE(board->getTile({0, 1}) == tile.lock());
@@ -102,8 +97,8 @@ TEST_CASE("Board: Resize block rail tile vertical", "[board][board-resize]")
   // resize to 1x100
   REQUIRE_FALSE(board->resizeTile(0, 0, 1, 100));
   REQUIRE(tile.lock()->location() == TileLocation{0, 0});
-  REQUIRE(tile.lock()->data().height() == 3);
-  REQUIRE(tile.lock()->data().width() == 1);
+  REQUIRE(tile.lock()->height == 3);
+  REQUIRE(tile.lock()->width == 1);
   REQUIRE_FALSE(board->isTile({0, -1}));
   REQUIRE(board->getTile({0, 0}) == tile.lock());
   REQUIRE(board->getTile({0, 1}) == tile.lock());
@@ -124,21 +119,17 @@ TEST_CASE("Board: Resize block rail tile horizontal", "[board][board-resize]")
   std::weak_ptr<Tile> tile = board->getTile({0, 0});
   REQUIRE_FALSE(tile.expired());
   REQUIRE(tile.lock()->location() == TileLocation{0, 0});
-  REQUIRE(tile.lock()->data().height() == 1);
-  REQUIRE(tile.lock()->data().width() == 5);
+  REQUIRE(tile.lock()->height == 1);
+  REQUIRE(tile.lock()->width == 1);
   REQUIRE_FALSE(board->isTile({-1, 0}));
   REQUIRE(board->getTile({0, 0}) == tile.lock());
-  REQUIRE(board->getTile({1, 0}) == tile.lock());
-  REQUIRE(board->getTile({2, 0}) == tile.lock());
-  REQUIRE(board->getTile({3, 0}) == tile.lock());
-  REQUIRE(board->getTile({4, 0}) == tile.lock());
-  REQUIRE_FALSE(board->isTile({5, 0}));
+  REQUIRE_FALSE(board->isTile({1, 0}));
 
   // resize to 6x1
   REQUIRE(board->resizeTile(0, 0, 6, 1));
   REQUIRE(tile.lock()->location() == TileLocation{0, 0});
-  REQUIRE(tile.lock()->data().height() == 1);
-  REQUIRE(tile.lock()->data().width() == 6);
+  REQUIRE(tile.lock()->height == 1);
+  REQUIRE(tile.lock()->width == 6);
   REQUIRE_FALSE(board->isTile({-1, 0}));
   REQUIRE(board->getTile({0, 0}) == tile.lock());
   REQUIRE(board->getTile({1, 0}) == tile.lock());
@@ -151,8 +142,8 @@ TEST_CASE("Board: Resize block rail tile horizontal", "[board][board-resize]")
   // resize to 3x1
   REQUIRE(board->resizeTile(0, 0, 3, 1));
   REQUIRE(tile.lock()->location() == TileLocation{0, 0});
-  REQUIRE(tile.lock()->data().height() == 1);
-  REQUIRE(tile.lock()->data().width() == 3);
+  REQUIRE(tile.lock()->height == 1);
+  REQUIRE(tile.lock()->width == 3);
   REQUIRE_FALSE(board->isTile({-1, 0}));
   REQUIRE(board->getTile({0, 0}) == tile.lock());
   REQUIRE(board->getTile({1, 0}) == tile.lock());
@@ -165,8 +156,8 @@ TEST_CASE("Board: Resize block rail tile horizontal", "[board][board-resize]")
   // resize to 2x2
   REQUIRE_FALSE(board->resizeTile(0, 0, 2, 2));
   REQUIRE(tile.lock()->location() == TileLocation{0, 0});
-  REQUIRE(tile.lock()->data().height() == 1);
-  REQUIRE(tile.lock()->data().width() == 3);
+  REQUIRE(tile.lock()->height == 1);
+  REQUIRE(tile.lock()->width == 3);
   REQUIRE_FALSE(board->isTile({-1, 0}));
   REQUIRE(board->getTile({0, 0}) == tile.lock());
   REQUIRE(board->getTile({1, 0}) == tile.lock());
@@ -179,8 +170,8 @@ TEST_CASE("Board: Resize block rail tile horizontal", "[board][board-resize]")
   // resize to 100x1
   REQUIRE_FALSE(board->resizeTile(0, 0, 100, 1));
   REQUIRE(tile.lock()->location() == TileLocation{0, 0});
-  REQUIRE(tile.lock()->data().height() == 1);
-  REQUIRE(tile.lock()->data().width() == 3);
+  REQUIRE(tile.lock()->height == 1);
+  REQUIRE(tile.lock()->width == 3);
   REQUIRE_FALSE(board->isTile({-1, 0}));
   REQUIRE(board->getTile({0, 0}) == tile.lock());
   REQUIRE(board->getTile({1, 0}) == tile.lock());

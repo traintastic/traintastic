@@ -26,6 +26,7 @@
 #include "../../core/idobject.hpp"
 #include <traintastic/board/tiledata.hpp>
 #include <traintastic/board/tilelocation.hpp>
+#include "../../enum/tilerotate.hpp"
 
 class Tile : public IdObject
 {
@@ -33,21 +34,25 @@ class Tile : public IdObject
   friend class WorldLoader;
 
   protected:
-    TileLocation m_location;
-    TileData m_data;
+    const TileId m_tileId;
 
     Tile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
 
-    void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
-
-    virtual void setRotate(TileRotate value) { m_data.setRotate(value); }
-    virtual bool resize(uint8_t w, uint8_t h) { return false; }
+    virtual void setRotate(TileRotate value) { rotate.setValueInternal(value); }
+    bool resize(uint8_t w, uint8_t h);
 
   public:
     static constexpr std::string_view defaultId = "tile";
 
-    const TileLocation& location() const { return m_location; }
-    const TileData& data() const { return m_data; }
+    Property<int16_t> x;
+    Property<int16_t> y;
+    Property<TileRotate> rotate;
+    Property<uint8_t> height;
+    Property<uint8_t> width;
+
+    TileId tileId() const { return m_tileId; }
+    inline TileLocation location() const { return {x.value(), y.value()}; }
+    inline TileData data() const { return TileData{m_tileId, rotate, width, height}; }
 };
 
 #endif

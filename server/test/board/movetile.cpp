@@ -150,6 +150,7 @@ TEST_CASE("Board: Move 5x1 tile to occupied location", "[board][board-move]")
 
   // add tile at 0,0
   REQUIRE(board->addTile(0, 0, TileRotate::Deg0, BlockRailTile::classId, false));
+  REQUIRE(board->resizeTile(0, 0, 1, 5));
   std::weak_ptr<Tile> tile0 = board->getTile({0, 0});
   REQUIRE_FALSE(tile0.expired());
   REQUIRE(tile0.lock()->location() == TileLocation{0, 0});
@@ -160,6 +161,7 @@ TEST_CASE("Board: Move 5x1 tile to occupied location", "[board][board-move]")
 
   // add tile at 1,1
   REQUIRE(board->addTile(1, 1, TileRotate::Deg0, BlockRailTile::classId, false));
+  REQUIRE(board->resizeTile(1, 1, 1, 5));
   std::weak_ptr<Tile> tile1 = board->getTile({1, 1});
   REQUIRE_FALSE(tile1.expired());
   REQUIRE(tile1.lock()->location() == TileLocation{1, 1});
@@ -211,6 +213,7 @@ TEST_CASE("Board: Move 5x1 tile replace itself partly", "[board][board-move]")
 
   // add tile at 0,0
   REQUIRE(board->addTile(0, 0, TileRotate::Deg0, BlockRailTile::classId, false));
+  REQUIRE(board->resizeTile(0, 0, 1, 5));
   std::weak_ptr<Tile> tile = board->getTile({0, 0});
   REQUIRE_FALSE(tile.expired());
   REQUIRE(tile.lock()->location() == TileLocation{0, 0});

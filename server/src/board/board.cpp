@@ -52,11 +52,12 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
       if(!tile)
         return false;
 
-      tile->m_location = l;
+      tile->x.setValueInternal(l.x);
+      tile->y.setValueInternal(l.y);
       tile->setRotate(rotate);
 
-      const int16_t x2 = tile->location().x + tile->data().width();
-      const int16_t y2 = tile->location().y + tile->data().height();
+      const int16_t x2 = tile->location().x + tile->width;
+      const int16_t y2 = tile->location().y + tile->height;
       if(tile->location().x < sizeMin || x2 >= sizeMax ||
           tile->location().y < sizeMin || y2 >= sizeMax)
       {
@@ -89,10 +90,10 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
         yTo -= yDiff;
       }
 
-      const int16_t xFrom2 = xFrom + tile->data().width();
-      const int16_t yFrom2 = yFrom + tile->data().height();
-      const int16_t xTo2 = xTo + tile->data().width();
-      const int16_t yTo2 = yTo + tile->data().height();
+      const int16_t xFrom2 = xFrom + tile->width;
+      const int16_t yFrom2 = yFrom + tile->height;
+      const int16_t xTo2 = xTo + tile->width;
+      const int16_t yTo2 = yTo + tile->height;
 
       // check if <To> is within board limits
       if(xTo < sizeMin || xTo2 >= sizeMax || yTo < sizeMin || yTo2 >= sizeMax)
@@ -111,7 +112,8 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
       removeTile(tile->location().x, tile->location().y);
 
       // set new origin
-      tile->m_location = {xTo, yTo};
+      tile->x.setValueInternal(xTo);
+      tile->y.setValueInternal(yTo);
 
       // place tile at <To>
       for(int16_t x = xTo; x < xTo2; x++)
@@ -139,8 +141,8 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
       if(!tile || tile->location().x != x || tile->location().y != y)
         return false;
 
-      const uint8_t oldWidth = tile->data().width();
-      const uint8_t oldHeight = tile->data().height();
+      const uint8_t oldWidth = tile->width;
+      const uint8_t oldHeight = tile->height;
 
       // check if space is available (if growing)
       if(width > oldWidth || height > oldHeight)
@@ -245,10 +247,10 @@ void Board::load(WorldLoader& loader, const nlohmann::json& data)
   for(auto& [_, id] : objects.items())
     if(auto tile = std::dynamic_pointer_cast<Tile>(loader.getObject(id)))
     {
-      if(tile->data().width() > 1 || tile->data().height() > 1)
+      if(tile->width > 1 || tile->height > 1)
       {
-        const int16_t x2 = tile->location().x + tile->data().width();
-        const int16_t y2 = tile->location().y + tile->data().height();
+        const int16_t x2 = tile->location().x + tile->width;
+        const int16_t y2 = tile->location().y + tile->height;
         for(int16_t x = tile->location().x; x < x2; x++)
           for(int16_t y = tile->location().y; y < y2; y++)
             m_tiles.emplace(TileLocation{x, y}, tile);
@@ -298,8 +300,8 @@ void Board::removeTile(const int16_t x, const int16_t y)
   if(!tile)
     return;
   const auto l = tile->location();
-  const int16_t x2 = l.x + tile->data().width();
-  const int16_t y2 = l.y + tile->data().height();
+  const int16_t x2 = l.x + tile->width;
+  const int16_t y2 = l.y + tile->height;
   for(int16_t xx = x; xx < x2; xx++)
     for(int16_t yy = y; yy < y2; yy++)
       m_tiles.erase(TileLocation{xx, yy});

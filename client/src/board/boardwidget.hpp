@@ -25,7 +25,7 @@
 
 #include <QWidget>
 #include <memory>
-#include <traintastic/board/tilerotate.hpp>
+#include <traintastic/enum/tilerotate.hpp>
 #include "boardareawidget.hpp"
 
 class Board;

@@ -64,8 +64,23 @@ struct Attributes
   template<typename T>
   static inline void addMinMax(Property<T>& property, T min, T max)
   {
+    static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
     property.addAttribute(AttributeName::Min, min);
     property.addAttribute(AttributeName::Max, max);
+  }
+
+  template<typename T>
+  static inline void setMin(Property<T>& property, T value)
+  {
+    static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
+    property.setAttribute(AttributeName::Min, value);
+  }
+
+  template<typename T>
+  static inline void setMax(Property<T>& property, T value)
+  {
+    static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
+    property.setAttribute(AttributeName::Max, value);
   }
 
   static inline void addVisible(InterfaceItem& item, bool value)

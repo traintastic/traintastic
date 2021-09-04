@@ -34,8 +34,6 @@ BlockRailTile::BlockRailTile(const std::weak_ptr<World>& world, std::string_view
 {
   inputMap.setValueInternal(std::make_shared<BlockInputMap>(*this, inputMap.name()));
 
-  m_data.setSize(1, 5);
-
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
@@ -47,6 +45,8 @@ BlockRailTile::BlockRailTile(const std::weak_ptr<World>& world, std::string_view
   m_interfaceItems.add(state);
   Attributes::addValues(sensorStates, sensorStateValues);
   m_interfaceItems.add(sensorStates);
+
+  updateHeightWidthMax();
 }
 
 void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
@@ -104,33 +104,32 @@ void BlockRailTile::worldEvent(WorldState state, WorldEvent event)
   name.setAttributeEnabled(editable);
 }
 
+void BlockRailTile::loaded()
+{
+  RailTile::loaded();
+  updateHeightWidthMax();
+}
+
 void BlockRailTile::setRotate(TileRotate value)
 {
-  if(value == m_data.rotate())
+  if(value == rotate)
     return;
 
   if(value == TileRotate::Deg0 || value == TileRotate::Deg90)
   {
     RailTile::setRotate(value);
-    m_data.setSize(m_data.height(), m_data.width());
+
+    uint8_t tmp = height;
+    height.setValueInternal(width);
+    width.setValueInternal(tmp);
+
+    updateHeightWidthMax();
   }
 }
 
-bool BlockRailTile::resize(uint8_t w, uint8_t h)
+void BlockRailTile::updateHeightWidthMax()
 {
-  assert(w >= 1);
-  assert(h >= 1);
-
-  if(m_data.rotate() == TileRotate::Deg0 && w != 1)
-    return false;
-
-  if(m_data.rotate() == TileRotate::Deg90 && h != 1)
-    return false;
-
-  if(w > TileData::widthMax || h > TileData::heightMax)
-    return false;
-
-  m_data.setSize(w, h);
-
-  return true;
+    const bool vertical = (rotate == TileRotate::Deg0);
+    Attributes::setMax<uint8_t>(height, vertical ? TileData::heightMax : 1);
+    Attributes::setMax<uint8_t>(width, !vertical ? TileData::widthMax : 1);
 }

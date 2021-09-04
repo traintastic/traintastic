@@ -21,22 +21,38 @@
  */
 
 #include "tile.hpp"
+#include "../../core/attributes.hpp"
 
-Tile::Tile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId) :
-  IdObject(world, _id),
-  m_data{tileId}
+Tile::Tile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId)
+  : IdObject(world, _id)
+  , m_tileId{tileId}
+  , x{this, "x", 0, PropertyFlags::ReadOnly | PropertyFlags::Store}
+  , y{this, "y", 0, PropertyFlags::ReadOnly | PropertyFlags::Store}
+  , rotate{this, "rotate", TileRotate::Deg0, PropertyFlags::ReadOnly | PropertyFlags::Store}
+  , height{this, "height", 1, PropertyFlags::ReadOnly | PropertyFlags::Store}
+  , width{this, "width", 1, PropertyFlags::ReadOnly | PropertyFlags::Store}
 {
+  m_interfaceItems.add(x);
+  m_interfaceItems.add(y);
+  Attributes::addValues(rotate, tileRotateValues);
+  m_interfaceItems.add(rotate);
+  Attributes::addMinMax<uint8_t>(height, 1, 1);
+  m_interfaceItems.add(height);
+  Attributes::addMinMax<uint8_t>(width, 1, 1);
+  m_interfaceItems.add(width);
 }
 
-void Tile::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const
+bool Tile::resize(uint8_t w, uint8_t h)
 {
-  IdObject::save(saver, data, state);
+  assert(w >= 1);
+  assert(h >= 1);
 
-  data["x"] = m_location.x;
-  data["y"] = m_location.y;
-  data["rotate"] = toDeg(m_data.rotate());
-  if(uint8_t height = m_data.height(); height > 1)
-    data["height"] = height;
-  if(uint8_t width = m_data.width(); width > 1)
-    data["width"] = width;
+  if(w <= width.getAttribute<uint8_t>(AttributeName::Max) &&
+      h <= height.getAttribute<uint8_t>(AttributeName::Max))
+  {
+    width.setValueInternal(w);
+    height.setValueInternal(h);
+    return true;
+  }
+  return false;
 }

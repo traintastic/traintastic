@@ -162,7 +162,7 @@ void WorldLoader::createObject(ObjectData& objectData)
     objectData.object = Decoder::create(m_world, id);
   else if(classId == DecoderFunction::classId)
   {
-    // backwards compatibility
+    // backwards compatibility < 0.1
     const std::string_view decoderId = objectData.json["decoder"];
     if(std::shared_ptr<Decoder> decoder = std::dynamic_pointer_cast<Decoder>(getObject(decoderId)))
     {
@@ -180,10 +180,20 @@ void WorldLoader::createObject(ObjectData& objectData)
   else if(startsWith(classId, Tiles::classIdPrefix))
   {
     auto tile = Tiles::create(m_world, classId, id);
-    tile->m_location.x = objectData.json["x"];
-    tile->m_location.y = objectData.json["y"];
-    tile->m_data.setRotate(fromDeg(objectData.json["rotate"]));
-    tile->m_data.setSize(objectData.json.value("width", 1), objectData.json.value("height", 1));
+
+    // x, y, width, height are read in Board::load()
+    tile->x.setValueInternal(objectData.json["x"]);
+    tile->y.setValueInternal(objectData.json["y"]);
+    tile->height.setValueInternal(objectData.json.value("height", 1));
+    tile->width.setValueInternal(objectData.json.value("width", 1));
+
+    // backwards compatibility < 0.1
+    if(objectData.json["rotate"].is_number_integer())
+    {
+      tile->rotate.setValueInternal(fromDeg(objectData.json["rotate"]));
+      objectData.json.erase("rotate");
+    }
+
     objectData.object = tile;
   }
   else if(startsWith(classId, RailVehicles::classIdPrefix))

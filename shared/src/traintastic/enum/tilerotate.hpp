@@ -1,5 +1,5 @@
 /**
- * shared/src/traintastic/board/tilerotate.hpp
+ * shared/src/traintastic/enum/tilerotate.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,11 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_BOARD_TILEROTATE_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_BOARD_TILEROTATE_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_TILEROTATE_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_TILEROTATE_HPP
 
 #include <cstdint>
 #include <type_traits>
+#include "enum.hpp"
 
 enum class TileRotate : uint8_t // 3 bit
 {
@@ -37,6 +38,20 @@ enum class TileRotate : uint8_t // 3 bit
   Deg270 = 6,
   Deg315 = 7
 };
+
+ENUM_NAME(TileRotate, "tile_rotate")
+
+ENUM_VALUES(TileRotate, 8,
+{
+  {TileRotate::Deg0, "deg_0"},
+  {TileRotate::Deg45, "deg_45"},
+  {TileRotate::Deg90, "deg_90"},
+  {TileRotate::Deg135, "deg_135"},
+  {TileRotate::Deg180, "deg_180"},
+  {TileRotate::Deg225, "deg_225"},
+  {TileRotate::Deg270, "deg_270"},
+  {TileRotate::Deg315, "deg_315"},
+})
 
 constexpr TileRotate operator +(TileRotate lhs, TileRotate rhs)
 {
