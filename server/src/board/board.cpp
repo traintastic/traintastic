@@ -46,7 +46,7 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
 
       if(auto it = m_tiles.find(l); it != m_tiles.end())
       {
-        if(!replace && classId == StraightRailTile::classId && std::dynamic_pointer_cast<StraightRailTile>(it->second)) // merge to bridge
+        if(!replace && classId == StraightRailTile::classId && it->second->tileId() == TileId::RailStraight) // merge to bridge
         {
           const TileRotate tileRotate = it->second->rotate;
           if((tileRotate == rotate + TileRotate::Deg90 || tileRotate == rotate - TileRotate::Deg90) && deleteTile(x, y))
