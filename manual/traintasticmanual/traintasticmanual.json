@@ -39,7 +39,12 @@
   },
   {
     "type": "chapter",
-    "markdown": "board.md"
+    "markdown": "board.md",
+    "pages": [
+      {
+        "markdown": "board/tiles.md"
+      }
+    ]
   },
   {
     "type": "chapter",
