@@ -45,8 +45,31 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
         return false;
 
       if(auto it = m_tiles.find(l); it != m_tiles.end())
-        if(!replace || !deleteTile(x, y))
+      {
+        if(!replace && classId == StraightRailTile::classId && std::dynamic_pointer_cast<StraightRailTile>(it->second)) // merge to bridge
+        {
+          const TileRotate tileRotate = it->second->rotate;
+          if((tileRotate == rotate + TileRotate::Deg90 || tileRotate == rotate - TileRotate::Deg90) && deleteTile(x, y))
+          {
+            classId = Bridge90RailTile::classId;
+            rotate = tileRotate;
+          }
+          else if((tileRotate == rotate + TileRotate::Deg45 || tileRotate == rotate + TileRotate::Deg225) && deleteTile(x, y))
+          {
+            classId = Bridge45LeftRailTile::classId;
+            rotate = tileRotate;
+          }
+          else if((tileRotate == rotate - TileRotate::Deg45 || tileRotate == rotate - TileRotate::Deg225) && deleteTile(x, y))
+          {
+            classId = Bridge45RightRailTile::classId;
+            rotate = tileRotate;
+          }
+          else
+            return false;
+        }
+        else if(!replace || !deleteTile(x, y))
           return false;
+      }
 
       auto tile = Tiles::create(w, classId);
       if(!tile)
