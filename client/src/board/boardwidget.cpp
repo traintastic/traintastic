@@ -49,7 +49,7 @@ struct TileInfo
   uint8_t rotates;
 };
 
-const std::array<TileInfo, 26> tileInfo = {
+const std::array<TileInfo, 29> tileInfo = {
   TileInfo{QStringLiteral("board_tile.rail.straight"), TileId::RailStraight, 0xFF},
   TileInfo{QStringLiteral("board_tile.rail.buffer_stop"), TileId::RailBufferStop, 0xFF},
   TileInfo{QStringLiteral(""), TileId::None, 0},
@@ -58,6 +58,9 @@ const std::array<TileInfo, 26> tileInfo = {
   TileInfo{QStringLiteral(""), TileId::None, 0},
   TileInfo{QStringLiteral("board_tile.rail.cross_45"), TileId::RailCross45, 0x03},
   TileInfo{QStringLiteral("board_tile.rail.cross_90"), TileId::RailCross90, 0x03},
+  TileInfo{QStringLiteral("board_tile.rail.bridge_45_left"), TileId::RailBridge45Left, 0x0F},
+  TileInfo{QStringLiteral("board_tile.rail.bridge_45_right"), TileId::RailBridge45Right, 0x0F},
+  TileInfo{QStringLiteral("board_tile.rail.bridge_90"), TileId::RailBridge90, 0x0F},
   TileInfo{QStringLiteral(""), TileId::None, 0},
   TileInfo{QStringLiteral("board_tile.rail.turnout_left_45"), TileId::RailTurnoutLeft45, 0xFF},
   TileInfo{QStringLiteral("board_tile.rail.turnout_left_90"), TileId::RailTurnoutLeft90, 0xFF},

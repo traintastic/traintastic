@@ -373,7 +373,7 @@ void BoardAreaWidget::wheelEvent(QWheelEvent* event)
 void BoardAreaWidget::paintEvent(QPaintEvent* event)
 {
   const bool showBlockSensorStates = BoardSettings::instance().showBlockSensorStates;
-  const QColor backgroundColor{0x10, 0x10, 0x10};
+  const QColor backgroundColor = TilePainter::backgroundColor;
   const QColor backgroundColor50{0x10, 0x10, 0x10, 0x80};
   const QColor backgroundColorError50{0xff, 0x00, 0x00, 0x80};
   const QColor gridColor{0x40, 0x40, 0x40};
@@ -440,6 +440,9 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
         case TileId::RailCurve90:
         case TileId::RailCross45:
         case TileId::RailCross90:
+        case TileId::RailBridge45Left:
+        case TileId::RailBridge45Right:
+        case TileId::RailBridge90:
         case TileId::RailBufferStop:
           tilePainter.draw(id, r, a);
           break;
@@ -472,6 +475,8 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
         case TileId::None:
         case TileId::ReservedForFutureExpension:
+        default:
+          assert(false);
           break;
       }
     }

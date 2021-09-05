@@ -29,6 +29,9 @@
 #include "../src/board/tile/rail/curve90railtile.hpp"
 #include "../src/board/tile/rail/cross45railtile.hpp"
 #include "../src/board/tile/rail/cross90railtile.hpp"
+#include "../src/board/tile/rail/bridge45leftrailtile.hpp"
+#include "../src/board/tile/rail/bridge45rightrailtile.hpp"
+#include "../src/board/tile/rail/bridge90railtile.hpp"
 #include "../src/board/tile/rail/turnout/turnoutleft45railtile.hpp"
 #include "../src/board/tile/rail/turnout/turnoutleft90railtile.hpp"
 #include "../src/board/tile/rail/turnout/turnoutleftcurvedrailtile.hpp"
@@ -59,6 +62,9 @@ TEMPLATE_TEST_CASE("Board: Add tile", "[board][board-add]"
   , Curve90RailTile
   , Cross45RailTile
   , Cross90RailTile
+  , Bridge45LeftRailTile
+  , Bridge45RightRailTile
+  , Bridge90RailTile
   , TurnoutLeft45RailTile
   , TurnoutLeft90RailTile
   , TurnoutLeftCurvedRailTile

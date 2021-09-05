@@ -30,6 +30,7 @@ TilePainter::TilePainter(QPainter& painter, int tileSize) :
   m_trackWidth{tileSize / 5},
   m_turnoutMargin{tileSize / 10},
   m_trackPen(trackColor, m_trackWidth, Qt::SolidLine, Qt::FlatCap),
+  m_trackErasePen(backgroundColor, m_trackWidth * 2, Qt::SolidLine, Qt::FlatCap),
   m_turnoutStatePen(Qt::blue, (m_trackWidth + 1) / 2, Qt::SolidLine, Qt::FlatCap),
   m_painter{painter}
 {
@@ -63,6 +64,33 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate)
     case TileId::RailCross90:
       setTrackPen();
       drawStraight(r, rotate);
+      drawStraight(r, rotate + TileRotate::Deg90);
+      break;
+
+    case TileId::RailBridge45Left:
+      setTrackPen();
+      drawStraight(r, rotate);
+      setTrackErasePen();
+      drawStraight(r, rotate - TileRotate::Deg45);
+      setTrackPen();
+      drawStraight(r, rotate - TileRotate::Deg45);
+      break;
+
+    case TileId::RailBridge45Right:
+      setTrackPen();
+      drawStraight(r, rotate);
+      setTrackErasePen();
+      drawStraight(r, rotate + TileRotate::Deg45);
+      setTrackPen();
+      drawStraight(r, rotate + TileRotate::Deg45);
+      break;
+
+    case TileId::RailBridge90:
+      setTrackPen();
+      drawStraight(r, rotate);
+      setTrackErasePen();
+      drawStraight(r, rotate + TileRotate::Deg90);
+      setTrackPen();
       drawStraight(r, rotate + TileRotate::Deg90);
       break;
 

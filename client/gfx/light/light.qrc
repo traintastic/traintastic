@@ -43,5 +43,8 @@
         <file>down.svg</file>
         <file>up.svg</file>
         <file>resize_tile.svg</file>
+        <file>board_tile.rail.bridge_90.svg</file>
+        <file>board_tile.rail.bridge_45_left.svg</file>
+        <file>board_tile.rail.bridge_45_right.svg</file>
     </qresource>
 </RCC>

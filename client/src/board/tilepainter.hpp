@@ -36,6 +36,9 @@
 
 class TilePainter
 {
+  public:
+    inline static const QColor backgroundColor{0x10, 0x10, 0x10};
+
   private:
     inline static const QColor trackColor{0xC0, 0xC0, 0xC0};
     inline static const QColor signalRed{192, 0, 0};
@@ -54,11 +57,13 @@ class TilePainter
     const int m_trackWidth;
     const int m_turnoutMargin;
     const QPen m_trackPen;
+    const QPen m_trackErasePen;
     const QPen m_turnoutStatePen;
 
     QPainter& m_painter;
 
     inline void setTrackPen() { m_painter.setPen(m_trackPen); }
+    inline void setTrackErasePen() { m_painter.setPen(m_trackErasePen); }
     inline void setTurnoutStatePen() { m_painter.setPen(m_turnoutStatePen); }
     inline QRectF turnoutStateRect(const QRectF& r) { return r.adjusted(m_turnoutMargin, m_turnoutMargin, -m_turnoutMargin, -m_turnoutMargin); }
 

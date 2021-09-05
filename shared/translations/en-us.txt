@@ -32,6 +32,9 @@ category:general=General
 category:info=Info
 
 class_id:board_tile.rail.block=Block
+class_id:board_tile.rail.bridge_45_left=Bridge 45° (left)
+class_id:board_tile.rail.bridge_45_right=Bridge 45° (right)
+class_id:board_tile.rail.bridge_90=Bridge 90°
 class_id:board_tile.rail.buffer_stop=Buffer stop
 class_id:board_tile.rail.cross_45=Crossover 45°
 class_id:board_tile.rail.cross_90=Crossover 90°

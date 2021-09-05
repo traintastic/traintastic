@@ -30,6 +30,9 @@
 #include "rail/curve90railtile.hpp"
 #include "rail/cross45railtile.hpp"
 #include "rail/cross90railtile.hpp"
+#include "rail/bridge45leftrailtile.hpp"
+#include "rail/bridge45rightrailtile.hpp"
+#include "rail/bridge90railtile.hpp"
 #include "rail/turnout/turnoutleft45railtile.hpp"
 #include "rail/turnout/turnoutleft90railtile.hpp"
 #include "rail/turnout/turnoutleftcurvedrailtile.hpp"
@@ -56,6 +59,9 @@ struct Tiles
     Curve90RailTile::classId,
     Cross45RailTile::classId,
     Cross90RailTile::classId,
+    Bridge45LeftRailTile::classId,
+    Bridge45RightRailTile::classId,
+    Bridge90RailTile::classId,
     TurnoutLeft45RailTile::classId,
     TurnoutLeft90RailTile::classId,
     TurnoutLeftCurvedRailTile::classId,
