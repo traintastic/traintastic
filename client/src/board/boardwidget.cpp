@@ -40,6 +40,7 @@
 #include "../network/method.hpp"
 #include "../network/callmethod.hpp"
 #include "../theme/theme.hpp"
+#include <traintastic/utils/clamp.hpp>
 
 struct TileInfo
 {
@@ -428,6 +429,18 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
         TileLocation l{x, y};
         if(m_object->getTileOrigin(l))
         {
+          const auto tile = m_object->getTileObject(l);
+          if(!tile)
+            return; // no resize possible
+
+          const auto* width = tile->getProperty("width");
+          const auto* height = tile->getProperty("height");
+          const uint8_t widthMax = width ? clamp<uint8_t>(width->getAttributeInt64(AttributeName::Max, 1)) : 1;
+          const uint8_t heightMax = height ? clamp<uint8_t>(height->getAttributeInt64(AttributeName::Max, 1)) : 1;
+
+          if(widthMax <= 1 && heightMax <= 1)
+            return; // no resize possible
+
           m_tileResizeX = l.x;
           m_tileResizeY = l.y;
           m_tileResizeStarted = true;
@@ -437,6 +450,7 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
           m_boardArea->setMouseMoveTileId(data.id());
           m_boardArea->setMouseMoveTileRotate(data.rotate());
           m_boardArea->setMouseMoveHideTileLocation(l);
+          m_boardArea->setMouseMoveTileSizeMax(widthMax, heightMax);
         }
       }
       else // stop

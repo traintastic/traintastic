@@ -80,6 +80,8 @@ class BoardAreaWidget : public QWidget
     uint8_t m_mouseMoveTileWidth;
     uint8_t m_mouseMoveTileHeight;
     TileLocation m_mouseMoveHideTileLocation;
+    uint8_t m_mouseMoveTileWidthMax;
+    uint8_t m_mouseMoveTileHeightMax;
 
     inline int boardLeft() const { return Q_LIKELY(m_boardLeft) ? m_boardLeft->toInt() - boardMargin : 0; }
     inline int boardTop() const { return Q_LIKELY(m_boardTop) ? m_boardTop->toInt() - boardMargin: 0; }
@@ -120,6 +122,7 @@ class BoardAreaWidget : public QWidget
     void setMouseMoveTileRotate(TileRotate rotate);
     void setMouseMoveTileSize(uint8_t x, uint8_t y);
     void setMouseMoveHideTileLocation(TileLocation l);
+    void setMouseMoveTileSizeMax(uint8_t width, uint8_t height);
 
   public slots:
     void tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& object);

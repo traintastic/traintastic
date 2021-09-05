@@ -167,6 +167,8 @@ void BoardAreaWidget::setMouseMoveAction(MouseMoveAction action)
   m_mouseMoveTileWidth = 1;
   m_mouseMoveTileHeight = 1;
   m_mouseMoveHideTileLocation = TileLocation::invalid;
+  m_mouseMoveTileHeightMax = 1;
+  m_mouseMoveTileHeightMax = 1;
 
   update();
 }
@@ -201,6 +203,15 @@ void BoardAreaWidget::setMouseMoveHideTileLocation(TileLocation l)
   if(m_mouseMoveHideTileLocation == l)
     return;
   m_mouseMoveHideTileLocation = l;
+  update();
+}
+
+void BoardAreaWidget::setMouseMoveTileSizeMax(uint8_t width, uint8_t height)
+{
+  if(m_mouseMoveTileWidthMax == width && m_mouseMoveTileHeightMax == height)
+    return;
+  m_mouseMoveTileWidthMax = width;
+  m_mouseMoveTileHeightMax = height;
   update();
 }
 
@@ -364,8 +375,10 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
   const bool showBlockSensorStates = BoardSettings::instance().showBlockSensorStates;
   const QColor backgroundColor{0x10, 0x10, 0x10};
   const QColor backgroundColor50{0x10, 0x10, 0x10, 0x80};
+  const QColor backgroundColorError50{0xff, 0x00, 0x00, 0x80};
   const QColor gridColor{0x40, 0x40, 0x40};
   const QColor gridColorHighlight{Qt::white};
+  const QColor gridColorError{Qt::red};
   const int tileSize = getTileSize();
   const int gridSize = tileSize - 1;
 
@@ -472,13 +485,19 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
     case MouseMoveAction::ResizeTile:
       if(m_mouseMoveTileId != TileId::None && m_mouseMoveTileLocation.isValid())
       {
+        if(m_mouseMoveAction == MouseMoveAction::ResizeTile)
+        {
+          m_mouseMoveTileWidth = 1 + std::max(0, m_mouseMoveTileLocation.x - m_mouseMoveHideTileLocation.x);
+          m_mouseMoveTileHeight = 1 + std::max(0, m_mouseMoveTileLocation.y - m_mouseMoveHideTileLocation.y);
+        }
+
         const QRectF r =
           (m_mouseMoveAction == MouseMoveAction::ResizeTile)
             ? drawTileRect(
                 m_mouseMoveHideTileLocation.x - tileOriginX,
                 m_mouseMoveHideTileLocation.y - tileOriginY,
-                1 + std::max(0, m_mouseMoveTileLocation.x - m_mouseMoveHideTileLocation.x),
-                1 + std::max(0, m_mouseMoveTileLocation.y - m_mouseMoveHideTileLocation.y),
+                m_mouseMoveTileWidth,
+                m_mouseMoveTileHeight,
                 tileSize)
             : drawTileRect(
                 m_mouseMoveTileLocation.x - tileOriginX,
@@ -486,10 +505,21 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
                 m_mouseMoveTileWidth,
                 m_mouseMoveTileHeight,
                 tileSize);
-        painter.fillRect(r, backgroundColor50);
-        painter.setPen(gridColorHighlight);
-        painter.drawRect(r.adjusted(-0.5, -0.5, 0.5, 0.5));
-        tilePainter.draw(m_mouseMoveTileId, r, m_mouseMoveTileRotate);
+
+        if(m_mouseMoveAction == MouseMoveAction::ResizeTile &&
+            (m_mouseMoveTileWidth > m_mouseMoveTileWidthMax || m_mouseMoveTileHeight > m_mouseMoveTileHeightMax))
+        {
+          painter.fillRect(r, backgroundColorError50);
+          painter.setPen(gridColorError);
+          painter.drawRect(r.adjusted(-0.5, -0.5, 0.5, 0.5));
+        }
+        else
+        {
+          painter.fillRect(r, backgroundColor50);
+          painter.setPen(gridColorHighlight);
+          painter.drawRect(r.adjusted(-0.5, -0.5, 0.5, 0.5));
+          tilePainter.draw(m_mouseMoveTileId, r, m_mouseMoveTileRotate);
+        }
       }
       break;
   }
