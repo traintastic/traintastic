@@ -541,11 +541,19 @@ void BoardWidget::actionSelected(const TileInfo* tileInfo)
 
 void BoardWidget::keyPressEvent(QKeyEvent* event)
 {
-  if(event->key() == Qt::Key_Escape && (m_tileMoveStarted || m_tileResizeStarted))
+  if(event->key() == Qt::Key_Escape)
   {
-    m_tileMoveStarted = false;
-    m_tileResizeStarted = false;
-    m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::None);
+    if(m_tileMoveStarted || m_tileResizeStarted)
+    {
+      m_tileMoveStarted = false;
+      m_tileResizeStarted = false;
+      m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::None);
+    }
+    else
+    {
+      m_editActionNone->setChecked(true);
+      actionSelected(nullptr);
+    }
   }
   else
     QWidget::keyPressEvent(event);
