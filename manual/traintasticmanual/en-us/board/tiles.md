@@ -3,6 +3,7 @@
 ## Rail tiles {#tiles-rail}
 - ![](../../gfx/board/tiles/board_tile.rail.straight.png) Straight
 - ![](../../gfx/board/tiles/board_tile.rail.buffer_stop.png) Buffer stop
+- ![](../../gfx/board/tiles/board_tile.rail.tunnel.png) Tunnel
 - ![](../../gfx/board/tiles/board_tile.rail.curve_45.png) Curve 45°
 - ![](../../gfx/board/tiles/board_tile.rail.curve_90.png) Curve 90°
 - ![](../../gfx/board/tiles/board_tile.rail.cross_45.png) Crossover 45°

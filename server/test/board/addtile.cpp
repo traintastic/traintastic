@@ -47,6 +47,7 @@
 #include "../src/board/tile/rail/bufferstoprailtile.hpp"
 #include "../src/board/tile/rail/sensorrailtile.hpp"
 #include "../src/board/tile/rail/blockrailtile.hpp"
+#include "../src/board/tile/rail/tunnelrailtile.hpp"
 
 TEST_CASE("Board: Add non existing tile", "[board][board-add]")
 {
@@ -80,6 +81,7 @@ TEMPLATE_TEST_CASE("Board: Add tile", "[board][board-add]"
   , BufferStopRailTile
   , SensorRailTile
   , BlockRailTile
+  , TunnelRailTile
   )
 {
   auto world = World::create();

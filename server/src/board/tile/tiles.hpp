@@ -48,6 +48,7 @@
 #include "rail/bufferstoprailtile.hpp"
 #include "rail/sensorrailtile.hpp"
 #include "rail/blockrailtile.hpp"
+#include "rail/tunnelrailtile.hpp"
 
 struct Tiles
 {
@@ -76,7 +77,8 @@ struct Tiles
     Signal3AspectRailTile::classId,
     BufferStopRailTile::classId,
     SensorRailTile::classId,
-    BlockRailTile::classId
+    BlockRailTile::classId,
+    TunnelRailTile::classId
   );
 
   static std::shared_ptr<Tile> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = {});

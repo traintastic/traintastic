@@ -444,6 +444,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
         case TileId::RailBridge45Right:
         case TileId::RailBridge90:
         case TileId::RailBufferStop:
+        case TileId::RailTunnel:
           tilePainter.draw(id, r, a);
           break;
 

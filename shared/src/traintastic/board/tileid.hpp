@@ -51,6 +51,7 @@ enum class TileId : uint16_t // 10 bit
   RailBridge45Left = 21,
   RailBridge45Right = 22,
   RailBridge90 = 23,
+  RailTunnel = 24,
 
   ReservedForFutureExpension = 1023
 };

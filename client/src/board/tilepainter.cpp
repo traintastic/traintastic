@@ -125,6 +125,23 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate)
       drawBlock(id, r, rotate);
       break;
 
+    case TileId::RailTunnel:
+    {
+      setTrackPen();
+      drawStraight(r, rotate);
+
+      // tunnel arc:
+      const int angle = -toDeg(rotate) * 16 - 45 * 8; // - 22.5 deg
+      const int angleLength = 225 * 16; // 225 deg
+      const qreal m = r.width() / 5;
+      const QRectF rArc = r.adjusted(m, m, -m, -m);
+
+      m_painter.setPen(QPen(backgroundColor, m_trackWidth, Qt::SolidLine, Qt::FlatCap));
+      m_painter.drawArc(rArc, angle, angleLength);
+      m_painter.setPen(QPen(trackColor, m_trackWidth / 2., Qt::SolidLine, Qt::FlatCap));
+      m_painter.drawArc(rArc, angle, angleLength);
+      break;
+    }
     case TileId::None:
     case TileId::ReservedForFutureExpension:
       break;

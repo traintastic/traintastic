@@ -49,9 +49,10 @@ struct TileInfo
   uint8_t rotates;
 };
 
-const std::array<TileInfo, 29> tileInfo = {
+const std::array<TileInfo, 30> tileInfo = {
   TileInfo{QStringLiteral("board_tile.rail.straight"), TileId::RailStraight, 0xFF},
   TileInfo{QStringLiteral("board_tile.rail.buffer_stop"), TileId::RailBufferStop, 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.tunnel"), TileId::RailTunnel, 0xFF},
   TileInfo{QStringLiteral(""), TileId::None, 0},
   TileInfo{QStringLiteral("board_tile.rail.curve_45"), TileId::RailCurve45, 0xFF},
   TileInfo{QStringLiteral("board_tile.rail.curve_90"), TileId::RailCurve90, 0xFF},
