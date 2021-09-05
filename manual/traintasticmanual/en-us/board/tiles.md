@@ -21,6 +21,6 @@
 - ![](../../gfx/board/tiles/board_tile.rail.turnout_singleslip.png) Single slip
 - ![](../../gfx/board/tiles/board_tile.rail.turnout_doubleslip.png) Double slip
 - ![](../../gfx/board/tiles/board_tile.rail.block.png) Block
-- Sensor
+- ![](../../gfx/board/tiles/board_tile.rail.sensor.png) Sensor
 - ![](../../gfx/board/tiles/board_tile.rail.signal_2_aspect.png) Signal (2 aspects)
 - ![](../../gfx/board/tiles/board_tile.rail.signal_3_aspect.png) Signal (3 aspects)
