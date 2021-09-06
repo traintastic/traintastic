@@ -37,6 +37,15 @@ jobs:
           build_deb: true
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~focal~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
 
+        - name: "raspberrypios_10_arm7"
+          os: [self-hosted, ARM, RaspberryPi]
+          generator: "Unix Makefiles"
+          arch: ""
+          target: traintastic-client
+          build_type: Release
+          build_deb: true
+          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
+
         - name: "raspberrypios_10_arm64"
           os: [self-hosted, ARM64, RaspberryPi]
           generator: "Unix Makefiles"
@@ -202,6 +211,17 @@ jobs:
           build_deb: true
           defines: "-DCODE_COVERAGE=ON"
           ccov: true
+
+        - name: "raspberrypios_10_arm7"
+          os: [self-hosted, ARM, RaspberryPi]
+          generator: "Unix Makefiles"
+          arch: ""
+          toolset: ""
+          target: traintastic-server
+          build_type: Release
+          build_deb: true
+          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
+          ccov: false
 
         - name: "raspberrypios_10_arm64"
           os: [self-hosted, ARM64, RaspberryPi]
