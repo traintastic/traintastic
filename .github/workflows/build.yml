@@ -15,6 +15,7 @@ jobs:
           generator: "Visual Studio 16 2019"
           arch: "-A x64"
           target: traintastic-client
+          jobs: 2
           build_type: Release
           build_deb: false
           defines: ""
@@ -24,6 +25,7 @@ jobs:
           generator: "Unix Makefiles"
           arch: ""
           target: traintastic-client
+          jobs: 2
           build_type: Release
           build_deb: true
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~bionic~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
@@ -33,6 +35,7 @@ jobs:
           generator: "Unix Makefiles"
           arch: ""
           target: traintastic-client
+          jobs: 2
           build_type: Release
           build_deb: true
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~focal~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
@@ -42,6 +45,7 @@ jobs:
           generator: "Unix Makefiles"
           arch: ""
           target: traintastic-client
+          jobs: 2
           build_type: Release
           build_deb: true
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
@@ -51,6 +55,7 @@ jobs:
           generator: "Unix Makefiles"
           arch: ""
           target: traintastic-client
+          jobs: 2
           build_type: Release
           build_deb: true
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
@@ -108,7 +113,7 @@ jobs:
     - name: Build
       working-directory: ${{github.workspace}}/client/build
       shell: bash
-      run: cmake --build . --config ${{matrix.config.build_type}} --target ${{matrix.config.target}}
+      run: cmake --build . --config ${{matrix.config.build_type}} --target ${{matrix.config.target}} --parallel ${{matrix.config.jobs}}
 
     # Windows only:
     - name: Run windeployqt
@@ -120,7 +125,7 @@ jobs:
 
     # Linux only:
     - name: Build debian package
-      if: matrix.config.build_deb && matrix.config.target == 'traintastic-client'
+      if: matrix.config.build_deb
       working-directory: ${{github.workspace}}/client/build
       run: cpack
 
@@ -134,7 +139,7 @@ jobs:
 
     # Linux only:
     - name: Upload debian package artifact
-      if: matrix.config.build_deb && matrix.config.target == 'traintastic-client'
+      if: matrix.config.build_deb
       uses: actions/upload-artifact@v2
       with:
         name: traintastic-client-deb
@@ -152,17 +157,8 @@ jobs:
           generator: "Visual Studio 16 2019"
           arch: "-A x64"
           toolset: "-T ClangCL"
-          target: traintastic-server
-          build_type: Release
-          defines: ""
-          ccov: false
-
-        - name: "windows_x64_clang (test)"
-          os: windows-latest
-          generator: "Visual Studio 16 2019"
-          arch: "-A x64"
-          toolset: "-T ClangCL"
-          target: traintastic-server-test
+          target: all
+          jobs: 2
           build_type: Release
           build_deb: false
           defines: ""
@@ -173,21 +169,11 @@ jobs:
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
-          target: traintastic-server
+          target: all
+          jobs: 2
           build_type: Release
           build_deb: true
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~bionic~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
-          ccov: false
-
-        - name: "ubuntu_18.04 (test)"
-          os: ubuntu-18.04
-          generator: "Unix Makefiles"
-          arch: ""
-          toolset: ""
-          target: traintastic-server-test
-          build_type: Release
-          build_deb: true
-          defines: ""
           ccov: false
 
         - name: "ubuntu_20.04"
@@ -195,20 +181,22 @@ jobs:
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
-          target: traintastic-server
+          target: all
+          jobs: 2
           build_type: Release
           build_deb: true
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~focal~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
           ccov: false
 
-        - name: "ubuntu_20.04 (test+ccov)"
+        - name: "ubuntu_20.04 (debug+ccov)"
           os: ubuntu-20.04
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
           target: traintastic-server-test
+          jobs: 2
           build_type: Debug
-          build_deb: true
+          build_deb: false
           defines: "-DCODE_COVERAGE=ON"
           ccov: true
 
@@ -217,7 +205,8 @@ jobs:
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
-          target: traintastic-server
+          target: all
+          jobs: 2
           build_type: Release
           build_deb: true
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
@@ -228,7 +217,8 @@ jobs:
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
-          target: traintastic-server
+          target: all
+          jobs: 2
           build_type: Release
           build_deb: true
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
@@ -272,31 +262,30 @@ jobs:
       working-directory: ${{github.workspace}}/server/build
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: cmake --build . --config ${{matrix.config.build_type}} --target ${{matrix.config.target}}
+      run: cmake --build . --config ${{matrix.config.build_type}} --target ${{matrix.config.target}} --parallel ${{matrix.config.jobs}}
 
     # All:
     - name: Run tests
-      if: matrix.config.target == 'traintastic-server-test'
       working-directory: ${{github.workspace}}/server/build
       run: ctest --output-on-failure
 
     # Linux only:
     - name: Build debian package
-      if: matrix.config.build_deb && matrix.config.target == 'traintastic-server'
+      if: matrix.config.build_deb
       working-directory: ${{github.workspace}}/server/build
       run: cpack
 
     # Windows only:
     - name: Upload artifact
-      if: startswith(matrix.config.os, 'windows') && matrix.config.target == 'traintastic-server'
+      if: startswith(matrix.config.os, 'windows')
       uses: actions/upload-artifact@v2
       with:
         name: traintastic-server
-        path: ${{github.workspace}}/server/build/Release
+        path: ${{github.workspace}}/server/build/Release/traintastic-server.exe
 
     # Linux only:
     - name: Upload debian package artifact
-      if: matrix.config.build_deb && matrix.config.target == 'traintastic-server'
+      if: matrix.config.build_deb
       uses: actions/upload-artifact@v2
       with:
         name: traintastic-server-deb
@@ -330,7 +319,7 @@ jobs:
           os: ubuntu-20.04
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~focal~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
 
-        - name: "raspberrypios_10_arm64"
+        - name: "raspberrypios_10"
           os: [self-hosted, ARM64, RaspberryPi]
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
 
@@ -433,7 +422,7 @@ jobs:
   deploy:
     name: Deploy to website
     runs-on: ubuntu-20.04
-    needs: [package-innosetup, build-server, build-client, build-manual]
+    needs: [package-innosetup, build-server, build-client, build-data, build-manual]
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
