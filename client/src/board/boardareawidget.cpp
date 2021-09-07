@@ -526,6 +526,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           painter.fillRect(r, backgroundColor50);
           painter.setPen(gridColorHighlight);
           painter.drawRect(r.adjusted(-0.5, -0.5, 0.5, 0.5));
+          painter.setClipRect(r);
           tilePainter.draw(m_mouseMoveTileId, r, m_mouseMoveTileRotate);
         }
       }
