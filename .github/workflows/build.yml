@@ -157,7 +157,7 @@ jobs:
           generator: "Visual Studio 16 2019"
           arch: "-A x64"
           toolset: "-T ClangCL"
-          target: all
+          target: ALL_BUILD
           jobs: 2
           build_type: Release
           build_deb: false
