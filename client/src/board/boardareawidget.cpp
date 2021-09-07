@@ -332,13 +332,15 @@ void BoardAreaWidget::mouseMoveEvent(QMouseEvent* event)
       emit mouseTileLocationChanged(tl.x, tl.y);
       if(m_mouseMoveAction != MouseMoveAction::None)
       {
+        const int originX = boardLeft();
+        const int originY = boardTop();
         const int tileSize = getTileSize();
         switch(m_mouseMoveAction)
         {
           case MouseMoveAction::AddTile:
           case MouseMoveAction::MoveTile:
-            update(updateTileRect(old.x, old.y, m_mouseMoveTileWidth, m_mouseMoveTileHeight, tileSize));
-            update(updateTileRect(tl.x, tl.y, m_mouseMoveTileWidth, m_mouseMoveTileHeight, tileSize));
+            update(updateTileRect(old.x - originX, old.y - originY, m_mouseMoveTileWidth, m_mouseMoveTileHeight, tileSize));
+            update(updateTileRect(tl.x - originX, tl.y - originY, m_mouseMoveTileWidth, m_mouseMoveTileHeight, tileSize));
             break;
 
           case MouseMoveAction::ResizeTile:
