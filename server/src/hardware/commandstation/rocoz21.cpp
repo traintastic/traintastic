@@ -109,11 +109,11 @@ RocoZ21::RocoZ21(const std::weak_ptr<World>& world, std::string_view _id) :
   m_interfaceItems.insertBefore(filteredMainCurrent, notes);
   Attributes::addCategory(temperature, Category::info);
   m_interfaceItems.insertBefore(temperature, notes);
-  Attributes::addCategory(firmwareVersion, Category::info);
+  Attributes::addCategory(supplyVoltage, Category::info);
   m_interfaceItems.insertBefore(supplyVoltage, notes);
   Attributes::addCategory(vccVoltage, Category::info);
   m_interfaceItems.insertBefore(vccVoltage, notes);
-  Attributes::addCategory(firmwareVersion, Category::info);
+  Attributes::addCategory(shortCircuit, Category::info);
   m_interfaceItems.insertBefore(shortCircuit, notes);
   Attributes::addCategory(programmingModeActive, Category::info);
   m_interfaceItems.insertBefore(programmingModeActive, notes);
