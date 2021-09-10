@@ -54,10 +54,15 @@ Controller::Controller(const std::weak_ptr<World>& _world, std::string_view _id)
 
   Attributes::addDisplayName(name, DisplayName::Object::name);
   m_interfaceItems.add(name);
+
+  Attributes::addDisplayName(commandStation, DisplayName::Hardware::commandStation);
   Attributes::addEnabled(commandStation, editable);
   Attributes::addObjectList(commandStation, world->commandStations);
   m_interfaceItems.add(commandStation);
+
+  Attributes::addDisplayName(active, DisplayName::Controller::active);
   m_interfaceItems.add(active);
+
   Attributes::addDisplayName(notes, DisplayName::Object::notes);
   m_interfaceItems.add(notes);
 }

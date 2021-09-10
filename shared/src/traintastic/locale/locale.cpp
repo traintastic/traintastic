@@ -66,6 +66,12 @@ Locale::Locale(std::filesystem::path _filename, Locale* fallback) :
   }
 }
 
+void Locale::enableMissingLogging()
+{
+  if(!m_missing)
+    m_missing = std::make_unique<std::set<std::string>>();
+}
+
 #ifdef QT_CORE_LIB
 QString Locale::translate(const QString& id) const
 {
@@ -73,19 +79,14 @@ QString Locale::translate(const QString& id) const
   auto it = m_strings.find({b.data(), static_cast<std::string_view::size_type>(b.length())});
   if(it != m_strings.cend())
     return QString::fromUtf8(it->second.data(), static_cast<int>(it->second.size()));
-  else // cutoff namespace
-    b = b.right(b.length() - b.indexOf(':'));
-  
-  it = m_strings.find({b.data(), static_cast<std::string_view::size_type>(b.length())});
-  if(it != m_strings.cend())
-    return QString::fromUtf8(it->second.data(), static_cast<int>(it->second.size()));  
-  else if(m_fallback)
+  else if(m_missing)
+    m_missing->emplace(id.toStdString());
+
+  if(m_fallback)
     return m_fallback->translate(id);
-  else
-  {
-    qWarning() << "Locale: Missing translation for" << id;
-    return id;
-  }
+
+  qWarning() << "Locale: Missing translation for" << id;
+  return id;
 }
 
 QString Locale::parse(const QString& text) const
@@ -103,9 +104,12 @@ std::string_view Locale::translate(std::string_view id) const
   auto it = m_strings.find(id);
   if(it != m_strings.cend())
     return it->second;
-  else if(m_fallback)
+  else if(m_missing)
+    m_missing->emplace(id);
+
+  if(m_fallback)
     return m_fallback->translate(id);
-  else
-    return id;
+
+  return id;
 }
 #endif

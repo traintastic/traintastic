@@ -29,6 +29,7 @@
 #include "../../utils/tohex.hpp"
 #include "../../core/attributes.hpp"
 #include "../../log/log.hpp"
+#include "../../utils/displayname.hpp"
 
 static std::string toString(const boost::asio::ip::udp::endpoint& endpoint)
 {
@@ -49,8 +50,10 @@ WLANmaus::WLANmaus(const std::weak_ptr<World> world, std::string_view _id) :
       m_debugLog = value;
     }}
 {
+  Attributes::addDisplayName(port, DisplayName::IP::port);
   Attributes::addEnabled(port, !active);
   m_interfaceItems.add(port);
+
   m_interfaceItems.add(debugLog);
 }
 

@@ -112,14 +112,20 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, false);
   m_interfaceItems.add(name);
+
+  Attributes::addDisplayName(commandStation, DisplayName::Hardware::commandStation);
   Attributes::addEnabled(commandStation, false);
   Attributes::addObjectList(commandStation, w->commandStations);
   m_interfaceItems.add(commandStation);
+
   Attributes::addEnabled(protocol, false);
   Attributes::addValues(protocol, DecoderProtocolValues);
   m_interfaceItems.add(protocol);
+
+  Attributes::addDisplayName(address, DisplayName::Hardware::address);
   Attributes::addEnabled(address, false);
   m_interfaceItems.add(address);
+
   Attributes::addEnabled(longAddress, false);
   m_interfaceItems.add(longAddress);
   Attributes::addObjectEditor(emergencyStop, false);
@@ -127,8 +133,11 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
   Attributes::addValues(direction, DirectionValues);
   Attributes::addObjectEditor(direction, false);
   m_interfaceItems.add(direction);
+
+  Attributes::addDisplayName(speedSteps, DisplayName::Hardware::speedSteps);
   Attributes::addEnabled(speedSteps, false);
   m_interfaceItems.add(speedSteps);
+
   Attributes::addMinMax(throttle, throttleMin, throttleMax);
   Attributes::addObjectEditor(throttle, false);
   m_interfaceItems.add(throttle);

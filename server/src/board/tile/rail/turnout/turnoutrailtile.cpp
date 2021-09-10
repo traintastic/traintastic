@@ -42,8 +42,13 @@ TurnoutRailTile::TurnoutRailTile(const std::weak_ptr<World>& world, std::string_
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
+
   Attributes::addObjectEditor(position, false);
+  // position is added by sub class
+
+  Attributes::addDisplayName(outputMap, DisplayName::BoardTile::outputMap);
   m_interfaceItems.add(outputMap);
+
   Attributes::addObjectEditor(nextPosition, false);
   m_interfaceItems.add(nextPosition);
 }

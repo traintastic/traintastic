@@ -27,6 +27,7 @@
 #include "../../../world/getworld.hpp"
 #include "../../../world/worldloader.hpp"
 #include "../../../world/worldsaver.hpp"
+#include "../../../utils/displayname.hpp"
 
 OutputMap::OutputMap(Object& _parent, const std::string& parentPropertyName) :
   SubObject(_parent, parentPropertyName),
@@ -70,9 +71,12 @@ OutputMap::OutputMap(Object& _parent, const std::string& parentPropertyName) :
 
   const bool editable = contains(w->state.value(), WorldState::Edit);
 
+  Attributes::addDisplayName(addOutput, DisplayName::List::add);
   Attributes::addEnabled(addOutput, editable);
   Attributes::addObjectList(addOutput, w->outputs);
   m_interfaceItems.add(addOutput);
+
+  Attributes::addDisplayName(removeOutput, DisplayName::List::remove);
   Attributes::addEnabled(removeOutput, editable);
   m_interfaceItems.add(removeOutput);
 }

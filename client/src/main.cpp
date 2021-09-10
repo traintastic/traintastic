@@ -62,6 +62,20 @@ void parseOptions(QCoreApplication& app, Options& options)
   options.connectTo = parser.value(connect);
 }
 
+static void saveMissing(QDir path, const Locale& locale)
+{
+  QFile file(path.path() + QDir::separator() + "missing." + QString::fromStdString(locale.filename.filename()));
+
+  if(file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text) && locale.missing())
+  {
+    for(const auto& id : *locale.missing())
+    {
+      file.write(id.data(), id.size());
+      file.write("=\n");
+    }
+  }
+}
+
 int main(int argc, char* argv[])
 {
   QApplication::setOrganizationName("Traintastic");
@@ -85,11 +99,19 @@ int main(int argc, char* argv[])
   const QString languageDefault = GeneralSettings::instance().language.defaultValue();
   const QString language = GeneralSettings::instance().language;
 
+  const bool logMissingStrings = !DeveloperSettings::instance().logMissingStringsDir.value().isEmpty();
+
   Locale* fallback = nullptr;
   if(language != languageDefault && DeveloperSettings::instance().dontLoadFallbackLanguage)
+  {
     fallback = new Locale(getLocalePath() / languageDefault.toStdString().append(".txt"));
+    if(logMissingStrings)
+      fallback->enableMissingLogging();
+  }
 
   Locale::instance = new Locale(getLocalePath() / language.toStdString().append(".txt"), fallback);
+  if(logMissingStrings)
+    const_cast<Locale*>(Locale::instance)->enableMissingLogging();
 
   // Auto select icon set based on background color lightness:
   const qreal backgroundLightness = QApplication::style()->standardPalette().window().color().lightnessF();
@@ -104,5 +126,18 @@ int main(int argc, char* argv[])
   if(!mw.connection())
     mw.connectToServer(options.connectTo);
 
-  return app.exec();
+  const int r = app.exec();
+
+  if(logMissingStrings)
+  {
+    auto dir = DeveloperSettings::instance().logMissingStringsDir.value();
+    if(QDir(dir).exists())
+    {
+      if(fallback)
+        saveMissing(dir, *fallback);
+      saveMissing(dir, *Locale::instance);
+    }
+  }
+
+  return r;
 }

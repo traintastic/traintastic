@@ -38,7 +38,7 @@ bool CommandStationListTableModel::isListedProperty(const std::string& name)
     name == "name" ||
     name == "online" ||
     name == "emergency_stop" ||
-    name == "track_voltage_off";
+    name == "power_on";
 }
 
 CommandStationListTableModel::CommandStationListTableModel(CommandStationList& list) :
@@ -47,9 +47,9 @@ CommandStationListTableModel::CommandStationListTableModel(CommandStationList& l
   setColumnHeaders({
     DisplayName::Object::id,
     DisplayName::Object::name,
-    "command_station:online",
-    "command_station:emergency_stop",
-    "command_station:track_power",
+    DisplayName::CommandStation::online,
+    DisplayName::CommandStation::emergencyStop,
+    DisplayName::CommandStation::powerOn,
     });
 }
 

@@ -42,7 +42,7 @@ DecoderListTableModel::DecoderListTableModel(DecoderList& list) :
   setColumnHeaders({
     DisplayName::Object::id,
     DisplayName::Object::name,
-    "decoder:address",
+    DisplayName::Hardware::address,
     });
 }
 

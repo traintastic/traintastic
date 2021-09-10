@@ -32,12 +32,21 @@ Tile::Tile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileI
   , height{this, "height", 1, PropertyFlags::ReadOnly | PropertyFlags::Store}
   , width{this, "width", 1, PropertyFlags::ReadOnly | PropertyFlags::Store}
 {
+  Attributes::addObjectEditor(x, false);
   m_interfaceItems.add(x);
+
+  Attributes::addObjectEditor(y, false);
   m_interfaceItems.add(y);
+
+  Attributes::addObjectEditor(rotate, false);
   Attributes::addValues(rotate, tileRotateValues);
   m_interfaceItems.add(rotate);
+
+  Attributes::addObjectEditor(height, false);
   Attributes::addMinMax<uint8_t>(height, 1, 1);
   m_interfaceItems.add(height);
+
+  Attributes::addObjectEditor(width, false);
   Attributes::addMinMax<uint8_t>(width, 1, 1);
   m_interfaceItems.add(width);
 }

@@ -28,6 +28,7 @@
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../log/log.hpp"
+#include "../../../utils/displayname.hpp"
 
 namespace DCCPlusPlus {
 
@@ -54,8 +55,11 @@ DCCPlusPlus::DCCPlusPlus(Object& _parent, const std::string& parentPropertyName,
 
   Attributes::addEnabled(useEx, false); // disable for now, only ex is currently supported
   m_interfaceItems.add(useEx);
+
+  Attributes::addDisplayName(speedSteps, DisplayName::Hardware::speedSteps);
   Attributes::addValues(speedSteps, speedStepValues);
   m_interfaceItems.add(speedSteps);
+
   m_interfaceItems.add(debugLogRXTX);
 }
 

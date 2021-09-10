@@ -32,6 +32,7 @@
 #include "../../../world/getworld.hpp"
 #include "loconetlisttablemodel.hpp"
 #include "../../../log/log.hpp"
+#include "../../../utils/displayname.hpp"
 
 namespace LocoNet {
 
@@ -103,7 +104,11 @@ LocoNet::LocoNet(Object& _parent, const std::string& parentPropertyName, std::fu
   m_interfaceItems.add(debugLogOutput);
   //Attributes::addGroup(debugLogRXTX);
   m_interfaceItems.add(debugLogRXTX);
+
+  Attributes::addDisplayName(inputMonitor, DisplayName::Hardware::inputMonitor);
   m_interfaceItems.add(inputMonitor);
+
+  Attributes::addDisplayName(outputKeyboard, DisplayName::Hardware::outputKeyboard);
   m_interfaceItems.add(outputKeyboard);
 }
 

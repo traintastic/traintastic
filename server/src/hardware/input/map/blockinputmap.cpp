@@ -23,6 +23,7 @@
 #include "blockinputmap.hpp"
 #include "../../../world/getworld.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../utils/displayname.hpp"
 
 BlockInputMap::BlockInputMap(Object& _parent, const std::string& parentPropertyName) :
   InputMap(_parent, parentPropertyName),
@@ -57,13 +58,21 @@ BlockInputMap::BlockInputMap(Object& _parent, const std::string& parentPropertyN
   const bool editable = contains(w->state.value(), WorldState::Edit) && !contains(w->state.value(), WorldState::Run);
 
   m_interfaceItems.add(items);
+
+  Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
   Attributes::addObjectList(add, w->inputs);
   m_interfaceItems.add(add);
+
+  Attributes::addDisplayName(remove, DisplayName::List::remove);
   Attributes::addEnabled(remove, editable);
   m_interfaceItems.add(remove);
+
+  Attributes::addDisplayName(moveUp, DisplayName::List::moveUp);
   Attributes::addEnabled(moveUp, editable);
   m_interfaceItems.add(moveUp);
+
+  Attributes::addDisplayName(moveDown, DisplayName::List::moveDown);
   Attributes::addEnabled(moveDown, editable);
   m_interfaceItems.add(moveDown);
 }

@@ -37,12 +37,17 @@ BlockRailTile::BlockRailTile(const std::weak_ptr<World>& world, std::string_view
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
-  Attributes::addEnabled(name, editable);
   Attributes::addDisplayName(name, DisplayName::Object::name);
+  Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
+
   m_interfaceItems.add(inputMap);
+
+  Attributes::addObjectEditor(state, false);
   Attributes::addValues(state, blockStateValues);
   m_interfaceItems.add(state);
+
+  Attributes::addObjectEditor(sensorStates, false);
   Attributes::addValues(sensorStates, sensorStateValues);
   m_interfaceItems.add(sensorStates);
 

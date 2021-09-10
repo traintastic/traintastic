@@ -26,6 +26,7 @@
 #include "../../world/world.hpp"
 #include "../../world/getworld.hpp"
 #include "../../core/attributes.hpp"
+#include "../../utils/displayname.hpp"
 
 CommandStationList::CommandStationList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<CommandStation>(_parent, parentPropertyName),
@@ -48,10 +49,12 @@ CommandStationList::CommandStationList(Object& _parent, const std::string& paren
   auto world = getWorld(&_parent);
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
 
+  Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
   Attributes::addClassList(add, CommandStations::classList);
   m_interfaceItems.add(add);
 
+  Attributes::addDisplayName(remove, DisplayName::List::remove);
   Attributes::addEnabled(remove, editable);
   m_interfaceItems.add(remove);
 }

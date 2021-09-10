@@ -230,6 +230,7 @@ World::World(Private) :
       }
     }}
 {
+  Attributes::addDisplayName(uuid, DisplayName::World::uuid);
   m_interfaceItems.add(uuid);
   Attributes::addDisplayName(name, DisplayName::Object::name);
   m_interfaceItems.add(name);

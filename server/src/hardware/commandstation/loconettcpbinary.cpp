@@ -25,6 +25,7 @@
 #include "../../core/eventloop.hpp"
 #include "../../core/attributes.hpp"
 #include "../../log/log.hpp"
+#include "../../utils/displayname.hpp"
 
 LocoNetTCPBinary::LocoNetTCPBinary(const std::weak_ptr<World>& world, std::string_view _id) :
   CommandStation(world, _id),
@@ -36,10 +37,15 @@ LocoNetTCPBinary::LocoNetTCPBinary(const std::weak_ptr<World>& world, std::strin
   name = "LocoNet (TCP binary)";
   loconet.setValueInternal(LocoNet::LocoNet::create(*this, loconet.name(), std::bind(&LocoNetTCPBinary::send, this, std::placeholders::_1)));
 
+  Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
   Attributes::addEnabled(hostname, true);
   m_interfaceItems.insertBefore(hostname, notes);
+
+  Attributes::addDisplayName(port, DisplayName::IP::port);
   Attributes::addEnabled(port, true);
   m_interfaceItems.insertBefore(port, notes);
+
+  Attributes::addDisplayName(loconet, DisplayName::Hardware::loconet);
   m_interfaceItems.insertBefore(loconet, notes);
 }
 

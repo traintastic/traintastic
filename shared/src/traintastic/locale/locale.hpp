@@ -27,6 +27,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <set>
 #ifdef QT_CORE_LIB
   #include <QString>
 #endif
@@ -38,6 +39,7 @@ class Locale
     const Locale* m_fallback;
     std::string m_data;
     std::unordered_map<std::string_view, std::string_view> m_strings;
+    std::unique_ptr<std::set<std::string>> m_missing;
 
   public:
     static const Locale* instance;
@@ -50,6 +52,9 @@ class Locale
     const std::filesystem::path filename;
 
     Locale(std::filesystem::path _filename, Locale* fallback = nullptr);
+
+    const std::unique_ptr<std::set<std::string>>& missing() const { return m_missing; }
+    void enableMissingLogging();
 
 #ifdef QT_CORE_LIB
     QString translate(const QString& id) const;

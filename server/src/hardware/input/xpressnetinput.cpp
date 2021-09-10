@@ -24,6 +24,7 @@
 #include "../../core/attributes.hpp"
 #include "../../world/world.hpp"
 #include "../../log/log.hpp"
+#include "../../utils/displayname.hpp"
 
 XpressNetInput::XpressNetInput(const std::weak_ptr<World> world, std::string_view _id) :
   Input(world, _id),
@@ -49,9 +50,12 @@ XpressNetInput::XpressNetInput(const std::weak_ptr<World> world, std::string_vie
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
+  Attributes::addDisplayName(xpressnet, DisplayName::Hardware::xpressnet);
   Attributes::addEnabled(xpressnet, editable);
   Attributes::addObjectList(xpressnet, w->xpressnets);
   m_interfaceItems.add(xpressnet);
+
+  Attributes::addDisplayName(address, DisplayName::Hardware::address);
   Attributes::addEnabled(address, editable);
   Attributes::addMinMax(address, addressMin, addressMax);
   m_interfaceItems.add(address);

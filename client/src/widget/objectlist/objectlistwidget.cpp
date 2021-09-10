@@ -169,7 +169,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
       Q_ASSERT(false); // unsupported method prototype
   }
 
-  m_actionEdit = m_toolbar->addAction(Theme::getIcon("edit"), Locale::tr("object_list:edit"),
+  m_actionEdit = m_toolbar->addAction(Theme::getIcon("edit"), Locale::tr("list:edit"),
     [this]()
     {
       for(const QString& id : getSelectedObjectIds())

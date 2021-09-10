@@ -25,6 +25,7 @@
 #include "../inputs.hpp"
 #include "../../../world/getworld.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../utils/displayname.hpp"
 
 InputList::InputList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<Input>(_parent, parentPropertyName),
@@ -66,9 +67,12 @@ InputList::InputList(Object& _parent, const std::string& parentPropertyName) :
   auto w = getWorld(&_parent);
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
+  Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
   Attributes::addClassList(add, Inputs::classList);
   m_interfaceItems.add(add);
+
+  Attributes::addDisplayName(remove, DisplayName::List::remove);
   Attributes::addEnabled(remove, editable);
   m_interfaceItems.add(remove);
 }

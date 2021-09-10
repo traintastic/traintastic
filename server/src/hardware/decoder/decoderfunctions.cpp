@@ -24,6 +24,7 @@
 #include "decoder.hpp"
 #include "../../world/getworld.hpp"
 #include "../../core/attributes.hpp"
+#include "../../utils/displayname.hpp"
 
 DecoderFunctions::DecoderFunctions(Object& _parent, const std::string& parentPropertyName)
   : SubObject(_parent, parentPropertyName)
@@ -73,12 +74,20 @@ DecoderFunctions::DecoderFunctions(Object& _parent, const std::string& parentPro
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
 
   m_interfaceItems.add(items);
+
+  Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
   m_interfaceItems.add(add);
+
+  Attributes::addDisplayName(remove, DisplayName::List::remove);
   Attributes::addEnabled(remove, editable);
   m_interfaceItems.add(remove);
+
+  Attributes::addDisplayName(moveUp, DisplayName::List::moveUp);
   Attributes::addEnabled(moveUp, editable);
   m_interfaceItems.add(moveUp);
+
+  Attributes::addDisplayName(moveDown, DisplayName::List::moveDown);
   Attributes::addEnabled(moveDown, editable);
   m_interfaceItems.add(moveDown);
 }

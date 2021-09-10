@@ -37,7 +37,7 @@ WorldListTableModel::WorldListTableModel(WorldList& worldList) :
 
   setColumnHeaders({
     DisplayName::Object::name,
-    "world_list:uuid",
+    DisplayName::World::uuid,
     });
 }
 

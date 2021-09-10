@@ -27,6 +27,7 @@
 #include "../../../core/attributes.hpp"
 #include "../../input/xpressnetinput.hpp"
 #include "../../../log/log.hpp"
+#include "../../../utils/displayname.hpp"
 
 namespace XpressNet {
 
@@ -93,6 +94,8 @@ XpressNet::XpressNet(Object& _parent, const std::string& parentPropertyName, std
   Attributes::addEnabled(useRocoF13F20Command, false);
   m_interfaceItems.add(useRocoF13F20Command);
   m_interfaceItems.add(debugLog);
+
+  Attributes::addDisplayName(inputMonitor, DisplayName::Hardware::inputMonitor);
   m_interfaceItems.add(inputMonitor);
 }
 

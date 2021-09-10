@@ -22,6 +22,7 @@
 
 #include "outputkeyboardwidget.hpp"
 #include <QGridLayout>
+#include <traintastic/locale/locale.hpp>
 #include "ledwidget.hpp"
 #include "../network/outputkeyboard.hpp"
 
@@ -59,6 +60,8 @@ OutputKeyboardWidget::OutputKeyboardWidget(std::shared_ptr<OutputKeyboard> objec
   QWidget(parent),
   m_object{std::move(object)}
 {
+  setWindowTitle(Locale::tr("hardware:output_keyboard"));
+
   QGridLayout* grid = new QGridLayout();
 
   for(int i = 0; i < 128; i++)

@@ -42,8 +42,13 @@ SignalRailTile::SignalRailTile(const std::weak_ptr<World>& world, std::string_vi
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
+
   Attributes::addObjectEditor(aspect, false);
+  // aspect is added by sub class
+
+  Attributes::addDisplayName(outputMap, DisplayName::BoardTile::outputMap);
   m_interfaceItems.add(outputMap);
+
   Attributes::addObjectEditor(nextAspect, false);
   m_interfaceItems.add(nextAspect);
 }

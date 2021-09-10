@@ -26,6 +26,7 @@
 #include "../../core/eventloop.hpp"
 #include "../../core/attributes.hpp"
 #include "../../log/log.hpp"
+#include "../../utils/displayname.hpp"
 
 XpressNetSerial::XpressNetSerial(const std::weak_ptr<World>& world, std::string_view _id) :
   SerialCommandStation(world, _id),
@@ -66,11 +67,15 @@ XpressNetSerial::XpressNetSerial(const std::weak_ptr<World>& world, std::string_
   Attributes::addValues(interface, XpressNetSerialInterfaceValues);
   Attributes::addEnabled(interface, !online);
   m_interfaceItems.insertBefore(interface, baudrate);
+
+  Attributes::addDisplayName(xpressnet, DisplayName::Hardware::xpressnet);
   m_interfaceItems.insertBefore(xpressnet, notes);
+
   Attributes::addMinMax(s88StartAddress, XpressNet::RoSoftS88XpressNetLI::S88StartAddress::startAddressMin, XpressNet::RoSoftS88XpressNetLI::S88StartAddress::startAddressMax);
   Attributes::addEnabled(s88StartAddress, !online);
   Attributes::addVisible(s88StartAddress, false);
   m_interfaceItems.insertBefore(s88StartAddress, notes);
+
   Attributes::addMinMax(s88ModuleCount, XpressNet::RoSoftS88XpressNetLI::S88ModuleCount::moduleCountMin, XpressNet::RoSoftS88XpressNetLI::S88ModuleCount::moduleCountMax);
   Attributes::addEnabled(s88ModuleCount, !online);
   Attributes::addVisible(s88ModuleCount, false);

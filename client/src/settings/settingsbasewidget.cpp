@@ -25,6 +25,9 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QCheckBox>
+#include <QLineEdit>
+#include <QToolButton>
+#include <QFileDialog>
 #include <traintastic/locale/locale.hpp>
 
 SettingsBaseWidget::SettingsBaseWidget(QString trPrefix, QWidget* parent)
@@ -47,12 +50,41 @@ void SettingsBaseWidget::add(const QString& settingName, QWidget* widget)
   static_cast<QVBoxLayout*>(this->widget()->layout())->addLayout(l);
 }
 
+void SettingsBaseWidget::add(const QString& settingName, QLayout* layout)
+{
+  QHBoxLayout* l = new QHBoxLayout();
+  l->addWidget(new QLabel(Locale::tr(m_trPrefix + ":" + settingName), this->widget()));
+  l->addStretch();
+  l->addLayout(layout);
+  static_cast<QVBoxLayout*>(this->widget()->layout())->addLayout(l);
+}
+
 void SettingsBaseWidget::addSettingOnOff(Setting<bool>& setting)
 {
   QCheckBox* cb = new QCheckBox(widget());
   cb->setChecked(setting.value());
   connect(cb, &QCheckBox::toggled, [&setting](bool value){ setting.setValue(value); });
   add(setting.name(), cb);
+}
+
+void SettingsBaseWidget::addSettingDir(Setting<QString>& setting)
+{
+  QLineEdit* edt = new QLineEdit(setting.value(), this);
+  connect(edt, &QLineEdit::textChanged, [&setting](const QString& value){ setting.setValue(value); });
+
+  QToolButton* btn = new QToolButton(this);
+  connect(btn, &QToolButton::clicked,
+    [this, edt]()
+    {
+      const QString dir = QFileDialog::getExistingDirectory(this, Locale::tr("settings:select_folder"), edt->text());
+      if(!dir.isEmpty())
+        edt->setText(dir);
+    });
+
+  QHBoxLayout* l = new QHBoxLayout();
+  l->addWidget(edt);
+  l->addWidget(btn);
+  add(setting.name(), l);
 }
 
 void SettingsBaseWidget::done()

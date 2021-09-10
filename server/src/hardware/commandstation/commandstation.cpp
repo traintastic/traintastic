@@ -66,18 +66,23 @@ CommandStation::CommandStation(const std::weak_ptr<World>& world, std::string_vi
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
 
+  Attributes::addDisplayName(online, DisplayName::CommandStation::online);
   m_interfaceItems.add(online);
 
+  Attributes::addDisplayName(emergencyStop, DisplayName::CommandStation::emergencyStop);
   Attributes::addEnabled(emergencyStop, online);
   Attributes::addObjectEditor(emergencyStop, false);
   m_interfaceItems.insertBefore(emergencyStop, notes);
 
+  Attributes::addDisplayName(powerOn, DisplayName::CommandStation::powerOn);
   Attributes::addEnabled(powerOn, online);
   Attributes::addObjectEditor(powerOn, false);
   m_interfaceItems.insertBefore(powerOn, notes);
 
+  Attributes::addDisplayName(decoders, DisplayName::World::decoders);
   m_interfaceItems.add(decoders);
 
+  Attributes::addDisplayName(controllers, DisplayName::World::controllers);
   m_interfaceItems.add(controllers);
 
   Attributes::addDisplayName(notes, DisplayName::Object::notes);

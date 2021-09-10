@@ -24,7 +24,9 @@
 #define TRAINTASTIC_CLIENT_SETTINGS_DEVELOPERSETTINGS_HPP
 
 #include "settingsbase.hpp"
+#include <QDir>
 #include "setting.hpp"
+#include <traintastic/utils/stdfilesystem.hpp>
 
 class DeveloperSettings : public SettingsBase
 {
@@ -32,6 +34,8 @@ class DeveloperSettings : public SettingsBase
     DeveloperSettings()
       : SettingsBase("developer")
       , dontLoadFallbackLanguage{*this, "dont_load_fallback_language", false}
+      , logMissingStrings{*this, "log_missing_strings", false}
+      , logMissingStringsDir{*this, "log_missing_strings_dir", QDir::home().path()}
     {
     }
 
@@ -43,6 +47,8 @@ class DeveloperSettings : public SettingsBase
     }
 
     Setting<bool> dontLoadFallbackLanguage;
+    Setting<bool> logMissingStrings;
+    Setting<QString> logMissingStringsDir;
 };
 
 #endif

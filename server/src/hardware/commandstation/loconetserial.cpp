@@ -25,6 +25,7 @@
 #include "../../core/eventloop.hpp"
 #include "../../core/attributes.hpp"
 #include "../../log/log.hpp"
+#include "../../utils/displayname.hpp"
 
 LocoNetSerial::LocoNetSerial(const std::weak_ptr<World>& world, std::string_view _id) :
   SerialCommandStation(world, _id),
@@ -55,6 +56,8 @@ LocoNetSerial::LocoNetSerial(const std::weak_ptr<World>& world, std::string_view
   Attributes::addEnabled(interface, !online);
   Attributes::addValues(interface, LocoNetSerialInterfaceValues);
   m_interfaceItems.insertBefore(interface, baudrate);
+
+  Attributes::addDisplayName(loconet, DisplayName::Hardware::loconet);
   m_interfaceItems.insertBefore(loconet, notes);
 }
 

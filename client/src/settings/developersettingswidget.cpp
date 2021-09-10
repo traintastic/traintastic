@@ -29,6 +29,8 @@ DeveloperSettingsWidget::DeveloperSettingsWidget(QWidget* parent)
   DeveloperSettings& s = DeveloperSettings::instance();
 
   addSetting(s.dontLoadFallbackLanguage);
+  addSetting(s.logMissingStrings);
+  addSettingDir(s.logMissingStringsDir);
 
   done();
 }

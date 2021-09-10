@@ -25,6 +25,7 @@
 #include "railvehicles.hpp"
 #include "../../world/getworld.hpp"
 #include "../../core/attributes.hpp"
+#include "../../utils/displayname.hpp"
 
 RailVehicleList::RailVehicleList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<RailVehicle>(_parent, parentPropertyName),
@@ -47,9 +48,12 @@ RailVehicleList::RailVehicleList(Object& _parent, const std::string& parentPrope
   auto world = getWorld(&_parent);
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
 
+  Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
   Attributes::addClassList(add, RailVehicles::classList);
   m_interfaceItems.add(add);
+
+  Attributes::addDisplayName(remove, DisplayName::List::remove);
   Attributes::addEnabled(remove, editable);
   m_interfaceItems.add(remove);
 }

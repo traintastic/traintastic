@@ -42,7 +42,7 @@ ControllerListTableModel::ControllerListTableModel(ControllerList& list) :
   setColumnHeaders({
     DisplayName::Object::id,
     DisplayName::Object::name,
-    "controller:active",
+    DisplayName::Controller::active,
     });
 }
 

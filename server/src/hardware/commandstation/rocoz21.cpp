@@ -31,18 +31,7 @@
 #include "../../utils/tohex.hpp"
 #include "../../utils/category.hpp"
 #include "../../log/log.hpp"
-
-
-
-
-
-
-
-
-
-
-
-
+#include "../../utils/displayname.hpp"
 
 #define SET_ADDRESS \
   if(decoder.longAddress) \
@@ -90,11 +79,17 @@ RocoZ21::RocoZ21(const std::weak_ptr<World>& world, std::string_view _id) :
       return false;
     }));
 
+  Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
   Attributes::addEnabled(hostname, true);
   m_interfaceItems.insertBefore(hostname, notes);
+
+  Attributes::addDisplayName(port, DisplayName::IP::port);
   Attributes::addEnabled(port, true);
   m_interfaceItems.insertBefore(port, notes);
+
+  Attributes::addDisplayName(loconet, DisplayName::Hardware::loconet);
   m_interfaceItems.insertBefore(loconet, notes);
+
   Attributes::addCategory(serialNumber, Category::info);
   m_interfaceItems.insertBefore(serialNumber, notes);
   Attributes::addCategory(hardwareType, Category::info);

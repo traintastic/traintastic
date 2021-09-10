@@ -22,6 +22,7 @@
 
 #include "inputmonitorwidget.hpp"
 #include <QGridLayout>
+#include <traintastic/locale/locale.hpp>
 #include "ledwidget.hpp"
 #include "../network/inputmonitor.hpp"
 
@@ -51,6 +52,8 @@ InputMonitorWidget::InputMonitorWidget(std::shared_ptr<InputMonitor> object, QWi
   QWidget(parent),
   m_object{std::move(object)}
 {
+  setWindowTitle(Locale::tr("hardware:input_monitor"));
+
   QGridLayout* grid = new QGridLayout();
 
   for(int i = 1; i <= 128; i++)

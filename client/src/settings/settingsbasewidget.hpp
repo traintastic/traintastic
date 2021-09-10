@@ -31,12 +31,14 @@ class SettingsBaseWidget : public QScrollArea
   private:
     const QString m_trPrefix;
 
-    void addSettingOnOff(Setting<bool>& setting);
-
   protected:
     SettingsBaseWidget(QString trPrefix, QWidget* parent = nullptr);
 
     void add(const QString& settingName, QWidget* widget);
+    void add(const QString& settingName, QLayout* layout);
+
+    void addSettingOnOff(Setting<bool>& setting);
+    void addSettingDir(Setting<QString>& setting);
 
     template<class T>
     inline void addSetting(Setting<T>& setting)

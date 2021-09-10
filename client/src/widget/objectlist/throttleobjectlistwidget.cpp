@@ -22,6 +22,7 @@
 
 #include "throttleobjectlistwidget.hpp"
 #include <QToolBar>
+#include <traintastic/locale/locale.hpp>
 #include "../../network/connection.hpp"
 #include "../../network/object.hpp"
 #include "../../network/abstractproperty.hpp"
@@ -31,7 +32,7 @@ ThrottleObjectListWidget::ThrottleObjectListWidget(const ObjectPtr& object, QWid
   : ObjectListWidget(object, parent)
 {
   toolbar()->addSeparator();
-  m_actionThrottle = toolbar()->addAction("throttle_object_list:throttle",
+  m_actionThrottle = toolbar()->addAction(Locale::tr("throttle_object_list:throttle"),
     [this]()
     {
       for(const QString& id : getSelectedObjectIds())

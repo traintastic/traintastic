@@ -44,7 +44,7 @@ RailVehicleListTableModel::RailVehicleListTableModel(RailVehicleList& list) :
     DisplayName::Object::id,
     DisplayName::Object::name,
     "rail_vehicle_list:type",
-    "rail_vehicle:lob",
+    DisplayName::Vehicle::Rail::lob,
     });
 }
 

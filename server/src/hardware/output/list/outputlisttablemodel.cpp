@@ -44,7 +44,7 @@ OutputListTableModel::OutputListTableModel(OutputList& list) :
     DisplayName::Object::id,
     DisplayName::Object::name,
     "output_list:bus",
-    "output_list:address",
+    DisplayName::Hardware::address,
     });
 }
 

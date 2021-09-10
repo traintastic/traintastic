@@ -1,32 +1,17 @@
 ## Traintastic language file: English (US)
 
-:address=Address
-:baudrate=Baudrate
-:command_station=Command station
-:controllers=Controllers
-:decoders=Decoders
-:emergency_stop=Emergency stop
-:loconet=LocoNet
-:online=Online
-:output_map=Output mapping
-:port=Port
-:track_power=Track power
-:xpressnet=XpressNet
-
-block_input_type:occupy_detector=Occupy detector
-block_input_type:reed_switch=Reed switch
-
 board:delete_tile=Delete tile
 board:move_tile=Move tile
+board:resize_tile=Resize tile
 board:resize_to_contents=Resize to contents
 
 board_tile.rail.block:input_map=Sensors
-board_tile.rail.block:state=State
 
 board_tile.rail.sensor:input=Input
 board_tile.rail.sensor:invert=Invert
-board_tile.rail.sensor:state=State
 board_tile.rail.sensor:type=Type
+
+board_tile:output_map=Outputs
 
 category:general=General
 category:info=Info
@@ -42,9 +27,7 @@ class_id:board_tile.rail.curve_45=Curved track 45°
 class_id:board_tile.rail.curve_90=Curved track 90°
 class_id:board_tile.rail.sensor=Sensor
 class_id:board_tile.rail.signal_2_aspect=Signal (2 aspects)
-class_id:board_tile.rail.signal_2aspect=Signal 2 aspect
 class_id:board_tile.rail.signal_3_aspect=Signal (3 aspects)
-class_id:board_tile.rail.signal_3aspect=Signal 3 aspect
 class_id:board_tile.rail.straight=Straight track
 class_id:board_tile.rail.tunnel=Tunnel
 class_id:board_tile.rail.turnout_3way=Turnout 3-way
@@ -57,13 +40,16 @@ class_id:board_tile.rail.turnout_right_90=Turnout right 90°
 class_id:board_tile.rail.turnout_right_curved=Turnout right curved
 class_id:board_tile.rail.turnout_singleslip=Single slip
 class_id:board_tile.rail.turnout_wye=Turnout wye
+class_id:command_station.dccplusplus_serial=DCC++ (serial)
 class_id:command_station.loconet_serial=LocoNet (serial)
-class_id:command_station.usb_xpressnet_interface=USB XpressNet interface
+class_id:command_station.loconet_tcp_binary=LocoNet (TCP binary)
 class_id:command_station.virtual=Virtual
 class_id:command_station.xpressnet_serial=XpressNet (serial)
 class_id:command_station.z21=Z21
-class_id:controller.usb_xpressnet_controller=USB XpressNet controller
 class_id:controller.wlanmaus=WLANmaus
+class_id:input.loconet=LocoNet input
+class_id:input.xpressnet=XpressNet input
+class_id:output.loconet=LocoNet output
 class_id:vehicle.rail.freight_car=Freight car
 class_id:vehicle.rail.locomotive=Locomotive
 
@@ -74,52 +60,45 @@ clock:month=Month
 clock:multiplier=Multiplier
 clock:year=Year
 
-command_station.loconet_serial:flow_control=Flow control
+command_station.dccplusplus_serial:dcc_plus_plus=DCC++(EX)
+
 command_station.loconet_serial:interface=Interface
 
-command_station.xpressnet_serial:flow_control=Flow control
 command_station.xpressnet_serial:interface=Interface
 command_station.xpressnet_serial:s88_module_count=S88 module count
 command_station.xpressnet_serial:s88_start_address=S88 start address
 
 command_station.z21:filtered_main_current=Filtered main current
-command_station.z21:firmware_version=Firmware version
+command_station.z21:firmware_version=Firmware verion
 command_station.z21:hardware_type=Hardware type
 command_station.z21:high_temperature=High temperature
-command_station.z21:hostname=Hostname
 command_station.z21:main_current=Main current
 command_station.z21:power_lost=Power lost
 command_station.z21:prog_current=Prog current
 command_station.z21:programming_mode_active=Programming mode active
 command_station.z21:serial_number=Serial number
 command_station.z21:short_circuit=Short circuit
-command_station.z21:short_circut_external=Short circut external
-command_station.z21:short_circut_internal=Short circut internal
+command_station.z21:short_circut_external=Short circuit external
+command_station.z21:short_circut_internal=Short circuit internal
 command_station.z21:supply_voltage=Supply voltage
 command_station.z21:temperature=Temperature
 command_station.z21:vcc_voltage=VCC voltage
 
-command_station_list:add=Add
-command_station_list:remove=Remove
+command_station:emergency_stop=Emergency stop
+command_station:online=Online
+command_station:power_on=Power on
 
-controller.z21_app:active=Active
+controller.wlanmaus:debug_log=Enable command logging (debug)
 
 controller:active=Active
 
-controller_list:add=Add
-
-decoder:direction=Direction
 decoder:functions=Functions
-decoder:long_address=Long address
+decoder:long_address=DCC long address
 decoder:protocol=Protocol
-decoder:speed_step=Speed step
-decoder:speed_steps=Speed steps
 
 decoder_function:function=Function
-decoder_function:momentary=Momentary
 decoder_function:number=Number
 decoder_function:type=Type
-decoder_function:value=Value
 
 decoder_function_function:generic=Generic
 decoder_function_function:light=Light
@@ -127,16 +106,11 @@ decoder_function_function:mute=Mute
 decoder_function_function:smoke=Smoke
 decoder_function_function:sound=Sound
 
-decoder_function_list:add=Add function
-decoder_function_list:f_hash=F#
-
 decoder_function_type:always_off=Always off
 decoder_function_type:always_on=Always on
-decoder_function_type:hold=Hold
+decoder_function_type:hold=Push 'n hold
 decoder_function_type:momentary=Momentary
-decoder_function_type:on_off=On/Off
-
-decoder_list:add=Add
+decoder_function_type:on_off=On/Of
 
 decoder_protocol:auto=Auto
 decoder_protocol:custom=Custom
@@ -145,14 +119,22 @@ decoder_protocol:dcc=DCC
 direction:forward=Forward
 direction:reverse=Reverse
 
-input_map.block:add=Add sensor
-input_map.block:move_down=Move down
-input_map.block:move_up=Move up
-input_map.block:remove=Remove sensor
+hardware:address=Address
+hardware:command_station=Command station
+hardware:input_monitor=Input monitor
+hardware:loconet=LocoNet
+hardware:output_keyboard=Output keyboard
+hardware:speed_steps=Speed steps
+hardware:xpressnet=XpressNet
+
+input_list:bus=Bus
 
 input_map_item.block:input=Input
 input_map_item.block:invert=Invert
 input_map_item.block:type=Type
+
+ip:hostname=Hostname
+ip:port=Port
 
 language:de-de=German
 language:en-us=English (US)
@@ -165,9 +147,11 @@ length_unit:m=m
 length_unit:mm=mm
 length_unit:yd=yd
 
-list.board:add=Create new board
-
-list.train:add=Create train
+list:add=Add
+list:edit=Edit
+list:move_down=Move down
+list:move_up=Move up
+list:remove=Remove
 
 loconet_command_station:custom=Custom
 loconet_command_station:digikeijs_dr5000=Digikeijs DR5000
@@ -177,8 +161,10 @@ loconet_serial_interface:custom=Custom
 loconet_serial_interface:digikeijs_dr5000=Digikeijs DR5000
 loconet_serial_interface:rosoft_loconet_interface=RoSoft LocoNet interface
 
-lua.script:active=Active
-lua.script:code=Code
+lua.script:start=Start
+lua.script:stop=Stop
+
+lua_script:state=State
 
 message:C1001=Loading world failed (%1)
 message:C1002=Creating client failed (%1)
@@ -280,20 +266,24 @@ output_action:off=Off
 output_action:on=On
 output_action:pulse=Pulse
 
+output_list:bus=Bus
+
 output_map.signal:key=Aspect
 
 output_map.turnout:key=Position
 
-output_map:add_output=Add output
-output_map:remove_output=Remove output
 output_map:use=Use
 
-protocol.loconet:debug_log=Debug log
-protocol.loconet:input_monitor=Input monitor
-protocol.loconet:output_keyboard=Output keyboard
+protocol.dccplusplus:debug_log=Enable command logging (debug)
+protocol.dccplusplus:use_ex=Use DCC++EX commands
 
-protocol.xpressnet:debug_log=Debug log
-protocol.xpressnet:input_monitor=Input monitor
+protocol.loconet:command_station=Command station
+protocol.loconet:debug_log_input=Enable input logging
+protocol.loconet:debug_log_output=Enable output logging
+protocol.loconet:debug_log_rx_tx=Enable RX/TX logging
+
+protocol.xpressnet:command_station=Command station
+protocol.xpressnet:debug_log=Enable logging (debug)
 protocol.xpressnet:use_emergency_stop_locomotive_command=Use short emergency stop locomotive command
 protocol.xpressnet:use_function_state_commands=Use function state commands
 protocol.xpressnet:use_roco_f13_f20_command=Use Roco F13-F20 command
@@ -318,7 +308,6 @@ qtapp.mainmenu:help=Help
 qtapp.mainmenu:import_world=Import world
 qtapp.mainmenu:load_world=Load world
 qtapp.mainmenu:new_world=New world
-qtapp.mainmenu:objects=Objects
 qtapp.mainmenu:objects=Objects
 qtapp.mainmenu:power=Power
 qtapp.mainmenu:quit=Quit
@@ -346,15 +335,19 @@ qtapp.object_select_list_dialog:select_object=Select object
 
 qtapp.settings.board:show_block_sensor_states=Show block sensor states
 
+qtapp.settings.developer:dont_load_fallback_language=Don't load fallback language
+
 qtapp.settings.general:language=Language
 
 qtapp.settings:board=Board
+qtapp.settings:developer=Developer
 qtapp.settings:general=General
 
 qtapp.world_list_dialog:cancel=Cancel
 qtapp.world_list_dialog:load=Load
 qtapp.world_list_dialog:world_list=World list
 
+qtapp:board_properties=Board properties
 qtapp:grid=Grid
 qtapp:grid_dot=Dot
 qtapp:grid_line=Line
@@ -366,13 +359,14 @@ qtapp:toggle_smoke=Toggle smoke
 qtapp:zoom_in=Zoom in
 qtapp:zoom_out=Zoom out
 
-rail_vehicle:lob=LOB
-
-rail_vehicle_list:add=Add
 rail_vehicle_list:type=Type
 
 sensor_type:occupy_detector=Occupy detector
 sensor_type:reed_switch=Reed switch
+
+serial:baudrate=Baudrate
+serial:flow_control=Flow control
+serial:port=Port
 
 serial_flow_control:hardware=Hardware
 serial_flow_control:none=None
@@ -382,9 +376,15 @@ server_log:message=Message
 server_log:object=Object
 server_log:time=Time
 
-settings:default_world=Default world
+settings:allow_client_server_restart=Allow client server restart
+settings:allow_client_server_shutdown=Allow client server shutdown
+settings:auto_save_world_on_exit=Auto save world on exit
+settings:discoverable=Discoverable
+settings:enable_file_logger=Enable file logger
 settings:localhost_only=Localhost only
+settings:memory_logger_size=Memory logger size
 settings:port=Port
+settings:save_world_uncompressed=Save world uncompressed
 
 signal_aspect:proceed=Proceed
 signal_aspect:proceed_reduced_speed=Proceed, reduced speed
@@ -394,11 +394,11 @@ speed_unit:kmph=km/h
 speed_unit:mph=mph
 speed_unit:mps=m/s
 
-train:direction=Direction
+throttle_object_list:throttle=Throttle
+
 train:lob=LOB
-train:speed=Speed
 train:speed_max=Maximum speed
-train:throttle_speed=Throttle speed
+train:vehicles=Vehicles
 train:weight=Weight
 
 turnout_position:left=Left
@@ -406,17 +406,13 @@ turnout_position:right=Right
 turnout_position:straight=Straight
 
 vehicle.rail.freight_car:cargo_weight=Cargo weight
-vehicle.rail.freight_car:decoder=Decoder
-vehicle.rail.freight_car:lob=LOB
-vehicle.rail.freight_car:total_weight=Total weight
-vehicle.rail.freight_car:weight=Weight
 
-vehicle.rail.locomotive:decoder=Decoder
-vehicle.rail.locomotive:lob=LOB
-vehicle.rail.locomotive:speed_max=Maximum speed
-vehicle.rail.locomotive:total_weight=Total weight
-vehicle.rail.locomotive:train=Train
-vehicle.rail.locomotive:weight=Weight
+vehicle.rail:decoder=Decoder
+vehicle.rail:lob=LOB
+vehicle.rail:speed_max=Maximum speed
+vehicle.rail:total_weight=Total weight
+vehicle.rail:train=Train
+vehicle.rail:weight=Weight
 
 weight_unit:kg=kg
 weight_unit:long_tons=Long tons
@@ -426,9 +422,9 @@ weight_unit:ton=ton
 world:boards=Boards
 world:clock=Clock
 world:command_stations=Command stations
+world:controllers=Controllers
 world:decoders=Decoders
 world:edit=Edit world
-world:emergency_stop=Emergency stop
 world:inputs=Inputs
 world:lua_scripts=Lua scripts
 world:mute=Mute
@@ -441,13 +437,10 @@ world:power_on=Power on
 world:rail_vehicles=Rail vehicles
 world:run=Run
 world:scale=Scale
+world:scale_ratio=Scale ratio
 world:stop=Stop
-world:track_power_off=Track power off
-world:track_power_on=Track power on
 world:trains=Trains
-
-world_list:default=Default
-world_list:uuid=UUID
+world:uuid=UUID
 
 world_scale:custom=Custom
 world_scale:h0=H0 (1:87)
@@ -464,3 +457,6 @@ xpressnet_serial_interface:lenz_li100=Lenz LI100
 xpressnet_serial_interface:lenz_li100f=Lenz LI100F
 xpressnet_serial_interface:lenz_li101f=Lenz LI101F
 xpressnet_serial_interface:rosoft_s88xpressnetli=RoSoft s88XpressNetLI
+
+qtapp.settings.developer:log_missing_strings=Log missing translations
+qtapp.settings.developer:log_missing_strings_dir=Missing translations log directory

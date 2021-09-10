@@ -44,7 +44,7 @@ InputListTableModel::InputListTableModel(InputList& list) :
     DisplayName::Object::id,
     DisplayName::Object::name,
     "input_list:bus",
-    "input_list:address",
+    DisplayName::Hardware::address,
     });
 }
 

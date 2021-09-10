@@ -24,6 +24,7 @@
 #include "railvehiclelisttablemodel.hpp"
 #include "../../world/world.hpp"
 #include "../../core/attributes.hpp"
+#include "../../utils/displayname.hpp"
 
 RailVehicle::RailVehicle(const std::weak_ptr<World>& world, std::string_view _id) :
   Vehicle(world, _id),
@@ -37,16 +38,27 @@ RailVehicle::RailVehicle(const std::weak_ptr<World>& world, std::string_view _id
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
+  Attributes::addDisplayName(decoder, DisplayName::Vehicle::Rail::decoder);
   Attributes::addEnabled(decoder, editable);
   Attributes::addObjectList(decoder, w->decoders);
   m_interfaceItems.insertBefore(decoder, notes);
+
+  Attributes::addDisplayName(train, DisplayName::Vehicle::Rail::train);
   m_interfaceItems.insertBefore(train, notes);
+
+  Attributes::addDisplayName(lob, DisplayName::Vehicle::Rail::lob);
   Attributes::addEnabled(lob, editable);
   m_interfaceItems.insertBefore(lob, notes);
+
+  Attributes::addDisplayName(speedMax, DisplayName::Vehicle::Rail::speedMax);
   Attributes::addEnabled(speedMax, editable);
   m_interfaceItems.insertBefore(speedMax, notes);
+
+  Attributes::addDisplayName(weight, DisplayName::Vehicle::Rail::weight);
   Attributes::addEnabled(weight, editable);
   m_interfaceItems.insertBefore(weight, notes);
+
+  Attributes::addDisplayName(totalWeight, DisplayName::Vehicle::Rail::totalWeight);
   m_interfaceItems.insertBefore(totalWeight, notes);
 }
 

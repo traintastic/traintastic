@@ -25,6 +25,7 @@
 #include "../outputs.hpp"
 #include "../../../world/getworld.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../utils/displayname.hpp"
 
 OutputList::OutputList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<Output>(_parent, parentPropertyName),
@@ -57,9 +58,12 @@ OutputList::OutputList(Object& _parent, const std::string& parentPropertyName) :
   auto w = getWorld(&_parent);
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
+  Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
   Attributes::addClassList(add, Outputs::classList);
   m_interfaceItems.add(add);
+
+  Attributes::addDisplayName(remove, DisplayName::List::remove);
   Attributes::addEnabled(remove, editable);
   m_interfaceItems.add(remove);
 }

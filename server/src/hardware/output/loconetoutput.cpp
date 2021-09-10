@@ -24,6 +24,7 @@
 #include "../../core/attributes.hpp"
 #include "../../world/world.hpp"
 #include "../../log/log.hpp"
+#include "../../utils/displayname.hpp"
 
 LocoNetOutput::LocoNetOutput(const std::weak_ptr<World> world, std::string_view _id) :
   Output(world, _id),
@@ -49,9 +50,12 @@ LocoNetOutput::LocoNetOutput(const std::weak_ptr<World> world, std::string_view 
   auto w = world.lock();
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
+  Attributes::addDisplayName(loconet, DisplayName::Hardware::loconet);
   Attributes::addEnabled(loconet, editable);
   Attributes::addObjectList(loconet, w->loconets);
   m_interfaceItems.add(loconet);
+
+  Attributes::addDisplayName(address, DisplayName::Hardware::address);
   Attributes::addEnabled(address, editable);
   Attributes::addMinMax(address, addressMin, addressMax);
   m_interfaceItems.add(address);

@@ -27,11 +27,72 @@
 
 namespace DisplayName
 {
+  namespace BoardTile
+  {
+    constexpr std::string_view outputMap = "board_tile:output_map";
+  }
+  namespace CommandStation
+  {
+    constexpr std::string_view emergencyStop = "command_station:emergency_stop";
+    constexpr std::string_view online = "command_station:online";
+    constexpr std::string_view powerOn = "command_station:power_on";
+  }
+  namespace Controller
+  {
+    constexpr std::string_view active = "controller:active";
+    constexpr std::string_view commandStation = "controller:command_station";
+  }
+  namespace Hardware
+  {
+    constexpr std::string_view address = "hardware:address";
+    constexpr std::string_view commandStation = "hardware:command_station";
+    constexpr std::string_view inputMonitor = "hardware:input_monitor";
+    constexpr std::string_view loconet = "hardware:loconet";
+    constexpr std::string_view outputKeyboard = "hardware:output_keyboard";
+    constexpr std::string_view speedSteps = "hardware:speed_steps";
+    constexpr std::string_view xpressnet = "hardware:xpressnet";
+  }
+  namespace IP
+  {
+    constexpr std::string_view hostname = "ip:hostname";
+    constexpr std::string_view port = "ip:port";
+  }
+  namespace List
+  {
+    constexpr std::string_view add = "list:add";
+    constexpr std::string_view moveUp = "list:move_up";
+    constexpr std::string_view moveDown = "list:move_down";
+    constexpr std::string_view remove = "list:remove";
+  }
   namespace Object
   {
     constexpr std::string_view id = "object:id";
     constexpr std::string_view name = "object:name";
     constexpr std::string_view notes = "object:notes";
+  }
+  namespace Serial
+  {
+    constexpr std::string_view baudrate = "serial:baudrate";
+    constexpr std::string_view flowControl = "serial:flow_control";
+    constexpr std::string_view port = "serial:port";
+  }
+  namespace Vehicle
+  {
+    namespace Rail
+    {
+      constexpr std::string_view lob = "vehicle.rail:lob";
+      constexpr std::string_view speedMax = "vehicle.rail:speed_max";
+      constexpr std::string_view decoder = "vehicle.rail:decoder";
+      constexpr std::string_view totalWeight = "vehicle.rail:total_weight";
+      constexpr std::string_view train = "vehicle.rail:train";
+      constexpr std::string_view weight = "vehicle.rail:weight";
+    }
+  }
+  namespace World
+  {
+    constexpr std::string_view controllers = "world:controllers";
+    constexpr std::string_view decoders = "world:decoders";
+    constexpr std::string_view uuid = "world:uuid";
   }
 }
 

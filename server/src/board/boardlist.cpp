@@ -24,6 +24,7 @@
 #include "boardlisttablemodel.hpp"
 #include "../world/getworld.hpp"
 #include "../core/attributes.hpp"
+#include "../utils/displayname.hpp"
 
 BoardList::BoardList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<Board>(_parent, parentPropertyName),
@@ -46,8 +47,11 @@ BoardList::BoardList(Object& _parent, const std::string& parentPropertyName) :
   auto world = getWorld(&_parent);
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
 
+  Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
   m_interfaceItems.add(add);
+
+  Attributes::addDisplayName(remove, DisplayName::List::remove);
   Attributes::addEnabled(remove, editable);
   m_interfaceItems.add(remove);
 }
