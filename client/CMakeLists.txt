@@ -12,6 +12,12 @@ set(CMAKE_AUTOUIC ON)
 
 configure_file(../shared/src/traintastic/version.hpp.in version.hpp)
 
+if(MSVC)
+  add_compile_options(/Wall)
+else()
+  add_compile_options(-Wall -Wextra -Wpedantic -Wshadow)
+endif()
+
 add_executable(traintastic-client
   gfx/common.qrc
   gfx/dark/dark.qrc

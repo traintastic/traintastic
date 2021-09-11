@@ -9,6 +9,12 @@ include(code-coverage)
 
 configure_file(../shared/src/traintastic/version.hpp.in version.hpp)
 
+if(MSVC)
+  add_compile_options(/Wall)
+else()
+  add_compile_options(-Wall -Wextra -Wpedantic -Wshadow)
+endif()
+
 add_executable(traintastic-server src/main.cpp src/options.hpp)
 add_executable(traintastic-server-test test/main.cpp)
 
@@ -122,12 +128,6 @@ endif()
 if(MSVC)
 
 else()
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -Wshadow -pedantic")
-
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -pedantic")
-
-  message(STATUS "CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
-
   #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
   #set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
 
