@@ -64,7 +64,7 @@ void parseOptions(QCoreApplication& app, Options& options)
 
 static void saveMissing(QDir path, const Locale& locale)
 {
-  QFile file(path.path() + QDir::separator() + "missing." + QString::fromStdString(locale.filename.filename()));
+  QFile file(path.path() + QDir::separator() + "missing." + QString::fromStdString(locale.filename.filename().string()));
 
   if(file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text) && locale.missing())
   {
