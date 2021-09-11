@@ -174,7 +174,6 @@ void ThrottleWidget::keyPressEvent(QKeyEvent* event)
 
 void ThrottleWidget::keyReleaseEvent(QKeyEvent* event)
 {
-  ThrottleFunctionButton* btn;
   if(ThrottleFunctionButton* btn = getFunctionButton(*event))
   {
     btn->release();
