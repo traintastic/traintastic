@@ -32,9 +32,9 @@ DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
   Object(),
   m_decoder{decoder},
   number{this, "number", _number, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
-    [this](const uint8_t& value)
+    [this](const uint8_t& fn)
     {
-      if(m_decoder.hasFunction(value))
+      if(m_decoder.hasFunction(fn))
         throw LogMessageException(LogMessage::E2012_FUNCTION_NUMBER_ALREADY_IN_USE);
       return true;
     }},
@@ -103,6 +103,11 @@ void DecoderFunction::typeChanged()
 
     case DecoderFunctionType::AlwaysOn:
       value = true;
+      break;
+
+    case DecoderFunctionType::OnOff:
+    case DecoderFunctionType::Hold:
+    case DecoderFunctionType::Momentary:
       break;
   }
   Attributes::setEnabled(value, !isAlwaysOffOrOn(type));

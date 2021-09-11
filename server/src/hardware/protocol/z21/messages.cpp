@@ -36,6 +36,8 @@ static std::string_view toString(Header header)
     case LAN_X: return "LAN_X";
     case LAN_SET_BROADCASTFLAGS: return "LAN_SET_BROADCASTFLAGS";
     case LAN_GET_BROADCASTFLAGS: return "LAN_GET_BROADCASTFLAGS";
+    case LAN_GET_LOCO_MODE: return "LAN_GET_LOCO_MODE";
+    case LAN_SET_LOCO_MODE: return "LAN_SET_LOCO_MODE";
     case LAN_SYSTEMSTATE_DATACHANGED: return "LAN_SYSTEMSTATE_DATACHANGED";
     case LAN_SYSTEMSTATE_GETDATA: return "LAN_SYSTEMSTATE_GETDATA";
     case LAN_LOCONET_Z21_RX: return "LAN_LOCONET_Z21_RX";

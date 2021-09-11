@@ -47,7 +47,7 @@ CTWReader::CTWReader(const std::filesystem::path& filename)
   archive_entry* entry = nullptr;
   while(true)
   {
-    int r = archive_read_next_header(ctw.get(), &entry);
+    const int r = archive_read_next_header(ctw.get(), &entry);
     if(r == ARCHIVE_EOF)
       break;
     else if(r < ARCHIVE_OK)
@@ -56,9 +56,19 @@ CTWReader::CTWReader(const std::filesystem::path& filename)
     std::vector<std::byte> data;
     data.resize(archive_entry_size(entry));
 
-    auto size = archive_read_data(ctw.get(), data.data(), data.size());
+    size_t pos = 0;
+    while(pos < data.size())
+    {
+      const ssize_t count = archive_read_data(ctw.get(), data.data() + pos, data.size() - pos);
+      if(count < 0)
+        throw LibArchiveError(ctw.get());
+      else if(count == 0)
+        break; // should not happen
+      pos += static_cast<size_t>(count);
+    }
 
-    m_files.emplace(archive_entry_pathname(entry), std::move(data));
+    if(pos == data.size())
+      m_files.emplace(archive_entry_pathname(entry), std::move(data));
   }
 }
 

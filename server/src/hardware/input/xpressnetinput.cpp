@@ -29,9 +29,9 @@
 XpressNetInput::XpressNetInput(const std::weak_ptr<World> world, std::string_view _id) :
   Input(world, _id),
   xpressnet{this, "xpressnet", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](const std::shared_ptr<XpressNet::XpressNet>& value)
+    [this](const std::shared_ptr<XpressNet::XpressNet>& newValue)
     {
-      if(!value || value->addInput(*this))
+      if(!newValue || newValue->addInput(*this))
       {
         if(xpressnet.value())
           xpressnet->removeInput(*this);
@@ -40,10 +40,10 @@ XpressNetInput::XpressNetInput(const std::weak_ptr<World> world, std::string_vie
       return false;
     }},
   address{this, "address", addressMin, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
-    [this](const uint16_t& value)
+    [this](const uint16_t& newValue)
     {
       if(xpressnet)
-        return xpressnet->changeInputAddress(*this, value);
+        return xpressnet->changeInputAddress(*this, newValue);
       return true;
     }}
 {
@@ -91,10 +91,10 @@ void XpressNetInput::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(address, editable);
 }
 
-void XpressNetInput::idChanged(const std::string& id)
+void XpressNetInput::idChanged(const std::string& newId)
 {
   if(xpressnet)
-    xpressnet->inputMonitorIdChanged(address, id);
+    xpressnet->inputMonitorIdChanged(address, newId);
 }
 
 void XpressNetInput::valueChanged(TriState _value)

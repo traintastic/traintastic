@@ -37,8 +37,11 @@ void AbstractObjectList::load(WorldLoader& loader, const nlohmann::json& data)
   std::vector<ObjectPtr> items;
   items.reserve(objects.size());
   for(auto& [_, id] : objects.items())
+  {
+    static_cast<void>(_); // silence unused warning
     if(ObjectPtr item = loader.getObject(id))
       items.emplace_back(std::move(item));
+  }
   setItems(items);
 }
 

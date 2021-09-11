@@ -49,6 +49,9 @@ constexpr double getScaleRatio(WorldScale value)
 
     case WorldScale::Z:
       return 220;
+
+    case WorldScale::Custom:
+      break;
   }
   return 0;
 }

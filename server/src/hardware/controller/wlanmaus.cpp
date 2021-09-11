@@ -143,7 +143,6 @@ void WLANmaus::receive()
       {
         if((bytesReceived >= sizeof(Z21::Message)))
         {
-          bool unknownMessage = false;
           const Z21::Message* message = reinterpret_cast<const Z21::Message*>(m_receiveBuffer.data());
 
           if(m_debugLog)
@@ -206,8 +205,6 @@ void WLANmaus::receive()
                         }
                       });
                   }
-                  else
-                    unknownMessage = true;
                   break;
 
                 case 0x80:
@@ -224,8 +221,6 @@ void WLANmaus::receive()
                         }
                       });
                   }
-                  else
-                    unknownMessage = true;
                   break;
 
                 case 0xE3:
@@ -243,16 +238,14 @@ void WLANmaus::receive()
                           }
                       });
                   }
-                  else
-                    unknownMessage = true;
                   break;
 
                 case 0xE4:
-                  if(const Z21::LanXSetLocoDrive* r = static_cast<const Z21::LanXSetLocoDrive*>(message);
-                      r->db0 >= 0x10 && r->db0 <= 0x13)
+                  if(const Z21::LanXSetLocoDrive* locoDrive = static_cast<const Z21::LanXSetLocoDrive*>(message);
+                      locoDrive->db0 >= 0x10 && locoDrive->db0 <= 0x13)
                   {
                     EventLoop::call(
-                      [this, request=*r]()
+                      [this, request=*locoDrive]()
                       {
                         if(!commandStation)
                           return;
@@ -270,12 +263,12 @@ void WLANmaus::receive()
                           Log::log(*this, LogMessage::I2001_UNKNOWN_LOCO_ADDRESS_X, request.address());
                       });
                   }
-                  else if(const Z21::LanXSetLocoFunction* r = static_cast<const Z21::LanXSetLocoFunction*>(message);
-                          r->db0 == 0xF8 &&
-                          r->switchType() != Z21::LanXSetLocoFunction::SwitchType::Invalid)
+                  else if(const Z21::LanXSetLocoFunction* locoFunction = static_cast<const Z21::LanXSetLocoFunction*>(message);
+                          locoFunction->db0 == 0xF8 &&
+                          locoFunction->switchType() != Z21::LanXSetLocoFunction::SwitchType::Invalid)
                   {
                     EventLoop::call(
-                      [this, request=*r]()
+                      [this, request=*locoFunction]()
                       {
                         if(commandStation)
                           if(auto decoder = commandStation->getDecoder(DecoderProtocol::DCC, request.address(), request.isLongAddress()))
@@ -311,12 +304,6 @@ void WLANmaus::receive()
                         sendTo(Z21::LanXGetFirmwareVersionReply(1, 30), endpoint);
                       });
                   }
-                  else
-                    unknownMessage = true;
-                  break;
-
-                default:
-                  unknownMessage = true;
                   break;
               }
               break;
@@ -331,8 +318,6 @@ void WLANmaus::receive()
                     sendTo(Z21::LanGetLocoModeReply(address, Z21::LocoMode::DCC), endpoint);
                   });
               }
-              else
-                unknownMessage = true;
               break;
 
             case Z21::LAN_SET_LOCO_MODE:
@@ -340,8 +325,6 @@ void WLANmaus::receive()
               {
                 // ignore, we always report DCC
               }
-              else
-                unknownMessage = true;
               break;
 
             case Z21::LAN_GET_SERIAL_NUMBER:
@@ -353,8 +336,6 @@ void WLANmaus::receive()
                     sendTo(Z21::LanGetSerialNumberReply(123456789), endpoint);
                   });
               }
-              else
-                unknownMessage = true;
               break;
 
             case Z21::LAN_GET_HWINFO:
@@ -366,8 +347,6 @@ void WLANmaus::receive()
                     sendTo(Z21::LanGetHardwareInfoReply(Z21::HWT_Z21_START, 1, 30), endpoint);
                   });
               }
-              else
-                unknownMessage = true;
               break;
 
             case Z21::LAN_SET_BROADCASTFLAGS:
@@ -379,8 +358,6 @@ void WLANmaus::receive()
                     m_clients[endpoint].broadcastFlags = broadcastFlags;
                   });
               }
-              else
-                unknownMessage = true;
               break;
 
             case Z21::LAN_SYSTEMSTATE_GETDATA:
@@ -399,8 +376,6 @@ void WLANmaus::receive()
                     sendTo(response, endpoint);
                   });
               }
-              else
-                unknownMessage = true;
               break;
 
             case Z21::LAN_LOGOFF:
@@ -412,12 +387,9 @@ void WLANmaus::receive()
                     m_clients.erase(endpoint);
                   });
               }
-              else
-                unknownMessage = true;
               break;
 
             default:
-              unknownMessage = true;
               break;
           }
         }

@@ -46,7 +46,7 @@ class CommandStation : public IdObject
     virtual void emergencyStopChanged(bool value);
     virtual void powerOnChanged(bool value);
     void checkAllDecoders() const;
-    virtual void checkDecoder(const Decoder& decoder) const {}
+    virtual void checkDecoder(const Decoder& /*decoder*/) const {}
     virtual void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 
     void restoreSpeed();

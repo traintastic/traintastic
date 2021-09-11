@@ -70,27 +70,27 @@ class AbstractObjectProperty : public AbstractProperty
       throw conversion_error();
     }
 
-    void fromBool(bool value) final
+    void fromBool(bool /*value*/) final
     {
       throw conversion_error();
     }
 
-    void fromInt64(int64_t) final
+    void fromInt64(int64_t) /*value*/ final
     {
       throw conversion_error();
     }
 
-    void fromDouble(double) final
+    void fromDouble(double /*value*/) final
     {
       throw conversion_error();
     }
 
-    void fromString(const std::string&) final
+    void fromString(const std::string& /*value*/) final
     {
       throw conversion_error();
     }
 
-    void load(const nlohmann::json&) final
+    void load(const nlohmann::json& /*value*/) final
     {
       throw conversion_error();
     }

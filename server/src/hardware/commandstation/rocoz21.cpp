@@ -54,17 +54,17 @@ RocoZ21::RocoZ21(const std::weak_ptr<World>& world, std::string_view _id) :
   CommandStation(world, _id),
   m_socket{Traintastic::instance->ioContext()},
   hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
-  loconet{this, "loconet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   port{this, "port", 21105, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  loconet{this, "loconet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   serialNumber{this, "serial_number", "", PropertyFlags::ReadOnly},
   hardwareType{this, "hardware_type", "", PropertyFlags::ReadOnly},
+  firmwareVersion{this, "firmware_version", "", PropertyFlags::ReadOnly},
   mainCurrent{this, "main_current", std::numeric_limits<float>::quiet_NaN(), PropertyFlags::ReadOnly},
   progCurrent{this, "prog_current", std::numeric_limits<float>::quiet_NaN(), PropertyFlags::ReadOnly},
   filteredMainCurrent{this, "filtered_main_current", std::numeric_limits<float>::quiet_NaN(), PropertyFlags::ReadOnly},
   temperature{this, "temperature", std::numeric_limits<float>::quiet_NaN(), PropertyFlags::ReadOnly},
   supplyVoltage{this, "supply_voltage", std::numeric_limits<float>::quiet_NaN(), PropertyFlags::ReadOnly},
   vccVoltage{this, "vcc_voltage", std::numeric_limits<float>::quiet_NaN(), PropertyFlags::ReadOnly},
-  firmwareVersion{this, "firmware_version", "", PropertyFlags::ReadOnly},
   shortCircuit{this, "short_circuit", false, PropertyFlags::ReadOnly},
   programmingModeActive{this, "programming_mode_active", false, PropertyFlags::ReadOnly},
   highTemperature{this, "high_temperature", false, PropertyFlags::ReadOnly},
@@ -291,7 +291,6 @@ void RocoZ21::receive()
       {
         if((bytesReceived >= sizeof(Z21::Message)))
         {
-          bool unknownMessage = false;
           const Z21::Message* message = reinterpret_cast<const Z21::Message*>(m_receiveBuffer.data());
           //const z21_lan_header* cmd = reinterpret_cast<const z21_lan_header*>(m_receiveBuffer.data());
           switch(message->header())
@@ -305,8 +304,6 @@ void RocoZ21::receive()
                     serialNumber.setValueInternal(value);
                   });
               }
-              else
-                unknownMessage = true;
               break;
 
             case Z21::LAN_GET_HWINFO:
@@ -419,8 +416,9 @@ void RocoZ21::receive()
             }
             case Z21::LAN_SYSTEMSTATE_DATACHANGED:
             {
+              /*
               const Z21::LanSystemStateDataChanged state = *reinterpret_cast<const Z21::LanSystemStateDataChanged*>(m_receiveBuffer.data());
-              /*EventLoop::call(
+              EventLoop::call(
                 [this, state]()
                 {
                   mainCurrent.setValueInternal(state.mainCurrent / 1e3); //!< Current on the main track in mA
@@ -437,7 +435,8 @@ void RocoZ21::receive()
                   powerLost.setValueInternal(state.centralStateEx & Z21_CENTRALSTATEEX_POWERLOST);
                   shortCircutInternal.setValueInternal(state.centralStateEx & Z21_CENTRALSTATEEX_SHORTCIRCUITEXTERNAL);
                   shortCircutExternal.setValueInternal(state.centralStateEx & Z21_CENTRALSTATEEX_SHORTCIRCUITINTERNAL);
-                });*/
+                });
+                */
               break;
             }
             case Z21::LAN_LOCONET_Z21_RX:

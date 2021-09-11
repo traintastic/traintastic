@@ -39,9 +39,9 @@ class Script : public IdObject
     SandboxPtr m_sandbox;
 
     void load(WorldLoader& loader, const nlohmann::json& data) final;
-    void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const final;
+    void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& stateData) const final;
     void addToWorld() final;
-    void worldEvent(WorldState state, WorldEvent event) final;
+    void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
 
     void updateEnabled();
     void setState(LuaScriptState value);

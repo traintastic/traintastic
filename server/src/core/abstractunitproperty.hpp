@@ -61,17 +61,17 @@ class AbstractUnitProperty : public AbstractProperty
       throw conversion_error();
     }
 
-    void fromBool(bool value) final
+    void fromBool(bool /*value*/) final
     {
       throw conversion_error();
     }
 
-    void fromObject(const ObjectPtr& value) final
+    void fromObject(const ObjectPtr& /*value*/) final
     {
       throw conversion_error();
     }
 
-    void load(const ObjectPtr& value) final
+    void load(const ObjectPtr& /*value*/) final
     {
       throw conversion_error();
     }

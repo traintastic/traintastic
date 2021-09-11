@@ -50,7 +50,7 @@ class IdObject : public Object
     void destroying() override;
     virtual void addToWorld();
     void worldEvent(WorldState state, WorldEvent event) override;
-    virtual void idChanged(const std::string& id) {}
+    virtual void idChanged(const std::string& /*newId*/) {}
 
   public:
     Property<std::string> id;

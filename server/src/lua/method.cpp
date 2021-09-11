@@ -110,6 +110,10 @@ int Method::__call(lua_State* L)
         Lua::push(L, std::get<bool>(result));
         return 1;
 
+      case ValueType::Enum:
+      case ValueType::Set:
+        errorInternal(L); // not yet implemented
+
       case ValueType::Integer:
         Lua::push(L, std::get<int64_t>(result));
         return 1;

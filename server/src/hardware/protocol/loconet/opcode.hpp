@@ -84,6 +84,7 @@ constexpr std::string_view toString(OpCode value)
     case OPC_LOCO_SPD: return "OPC_LOCO_SPD";
     case OPC_LOCO_DIRF: return "OPC_LOCO_DIRF";
     case OPC_LOCO_SND: return "OPC_LOCO_SND";
+    case OPC_LOCO_F9F12: return "OPC_LOCO_F9F12";
     case OPC_SW_REQ: return "OPC_SW_REQ";
     case OPC_SW_REP: return "OPC_SW_REP";
     case OPC_INPUT_REP: return "OPC_INPUT_REP";
@@ -98,6 +99,8 @@ constexpr std::string_view toString(OpCode value)
     case OPC_SW_ACK: return "OPC_SW_ACK";
     case OPC_LOCO_ADR: return "OPC_LOCO_ADR";
     case OPC_MULTI_SENSE: return "OPC_MULTI_SENSE";
+    case OPC_D4: return "OPC_D4";
+    case OPC_MULTI_SENSE_LONG: return "OPC_MULTI_SENSE_LONG";
     case OPC_PEER_XFER: return "OPC_PEER_XFER";
     case OPC_SL_RD_DATA: return "OPC_SL_RD_DATA";
     case OPC_IMM_PACKET: return "OPC_IMM_PACKET";

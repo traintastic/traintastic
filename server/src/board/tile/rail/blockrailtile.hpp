@@ -41,7 +41,7 @@ class BlockRailTile : public RailTile
     void updateHeightWidthMax();
 
   protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
+    void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
     void loaded() final;
     void setRotate(TileRotate value) final;
 

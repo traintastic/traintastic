@@ -92,9 +92,9 @@ void Script::load(WorldLoader& loader, const nlohmann::json& data)
     code.load(s);
 }
 
-void Script::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const
+void Script::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& stateData) const
 {
-  IdObject::save(saver, data, state);
+  IdObject::save(saver, data, stateData);
 
   if(!m_basename.empty() && m_basename != id.value())
     saver.deleteFile(std::filesystem::path(scripts) / m_basename += dotLua);
@@ -111,9 +111,9 @@ void Script::addToWorld()
     world->luaScripts->addObject(shared_ptr<Script>());
 }
 
-void Script::worldEvent(WorldState state, WorldEvent event)
+void Script::worldEvent(WorldState worldState, WorldEvent worldEvent)
 {
-  IdObject::worldEvent(state, event);
+  IdObject::worldEvent(worldState, worldEvent);
 
   updateEnabled();
 
@@ -122,8 +122,8 @@ void Script::worldEvent(WorldState state, WorldEvent event)
     lua_State* L = m_sandbox.get();
     if(Sandbox::getGlobal(L, "world_event") == LUA_TFUNCTION)
     {
-      push(L, state);
-      push(L, event);
+      push(L, worldState);
+      push(L, worldEvent);
       pcall(L, 2);
     }
     else

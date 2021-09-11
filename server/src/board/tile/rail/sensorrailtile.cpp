@@ -87,11 +87,11 @@ void SensorRailTile::loaded()
     connectInput(*input);
 }
 
-void SensorRailTile::worldEvent(WorldState state, WorldEvent event)
+void SensorRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
 {
-  StraightRailTile::worldEvent(state, event);
+  StraightRailTile::worldEvent(worldState, worldEvent);
 
-  const bool editable = contains(state, WorldState::Edit);
+  const bool editable = contains(worldState, WorldState::Edit);
 
   Attributes::setEnabled(name, editable);
   Attributes::setEnabled(input, editable);

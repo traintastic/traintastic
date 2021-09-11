@@ -44,6 +44,7 @@ class OutputMapBase : public OutputMap
       nlohmann::json items = data.value("items", nlohmann::json::array());
       for(auto& [_, item] : items.items())
       {
+        static_cast<void>(_); // silence unused warning
         Key k = to<Key>(item["key"]);
         m_items[k]->load(loader, item);
       }

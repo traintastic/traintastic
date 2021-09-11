@@ -181,6 +181,9 @@ bool Session::processMessage(const Message& message)
                 case ValueType::String:
                   property->fromString(message.read<std::string>());
                   break;
+
+                default:
+                  throw std::runtime_error("invalid value type");
               }
             }
             catch(const std::exception& e) // set property failed
@@ -311,6 +314,8 @@ bool Session::processMessage(const Message& message)
                   break;
 
                 case ValueType::Integer:
+                case ValueType::Enum:
+                case ValueType::Set:
                   response->write(std::get<int64_t>(result));
                   break;
 
@@ -326,9 +331,9 @@ bool Session::processMessage(const Message& message)
                   writeObject(*response, std::get<ObjectPtr>(result));
                   break;
 
-                /*default:
+                case ValueType::Invalid:
                   assert(false);
-                  break;*/
+                  break;
               }
 
               m_client->sendMessage(std::move(response));
@@ -360,30 +365,30 @@ bool Session::processMessage(const Message& message)
           writeTableModel(*response, model);
           m_client->sendMessage(std::move(response));
 
-          model->columnHeadersChanged = [this](const TableModelPtr& model)
+          model->columnHeadersChanged = [this](const TableModelPtr& tableModel)
             {
               auto event = Message::newEvent(Message::Command::TableModelColumnHeadersChanged);
-              event->write(m_handles.getHandle(std::dynamic_pointer_cast<Object>(model)));
-              event->write(model->columnCount());
-              for(const auto& text : model->columnHeaders())
+              event->write(m_handles.getHandle(std::dynamic_pointer_cast<Object>(tableModel)));
+              event->write(tableModel->columnCount());
+              for(const auto& text : tableModel->columnHeaders())
                 event->write(text);
               m_client->sendMessage(std::move(event));
             };
 
-          model->rowCountChanged = [this](const TableModelPtr& model)
+          model->rowCountChanged = [this](const TableModelPtr& tableModel)
             {
               auto event = Message::newEvent(Message::Command::TableModelRowCountChanged);
-              event->write(m_handles.getHandle(std::dynamic_pointer_cast<Object>(model)));
-              event->write(model->rowCount());
+              event->write(m_handles.getHandle(std::dynamic_pointer_cast<Object>(tableModel)));
+              event->write(tableModel->rowCount());
               m_client->sendMessage(std::move(event));
             };
 
-          model->updateRegion = [this](const TableModelPtr& model, const TableModel::Region& region)
+          model->updateRegion = [this](const TableModelPtr& tableModel, const TableModel::Region& region)
             {
               std::cout << "updateRegion " << region.columnMin << " " << region.columnMax << " " << region.rowMin << " " << region.rowMax << std::endl;
 
               auto event = Message::newEvent(Message::Command::TableModelUpdateRegion);
-              event->write(m_handles.getHandle(std::dynamic_pointer_cast<Object>(model)));
+              event->write(m_handles.getHandle(std::dynamic_pointer_cast<Object>(tableModel)));
               event->write(region.columnMin);
               event->write(region.columnMax);
               event->write(region.rowMin);
@@ -391,7 +396,7 @@ bool Session::processMessage(const Message& message)
 
               for(uint32_t row = region.rowMin; row <= region.rowMax; row++)
                 for(uint32_t column = region.columnMin; column <= region.columnMax; column++)
-                  event->write(model->getText(column, row));
+                  event->write(tableModel->getText(column, row));
 
               m_client->sendMessage(std::move(event));
             };
@@ -685,8 +690,8 @@ void Session::memoryLoggerChanged(const MemoryLogger& logger, const uint32_t add
     event->write(log.message);
     const size_t argc = log.args ? std::min<size_t>(log.args->size(), std::numeric_limits<uint8_t>::max()) : 0;
     event->write(static_cast<uint8_t>(argc));
-    for(size_t i = 0; i < argc; i++)
-      event->write(log.args->at(i));
+    for(size_t j = 0; j < argc; j++)
+      event->write(log.args->at(j));
   }
 
   m_client->sendMessage(std::move(event));
@@ -741,6 +746,10 @@ void Session::writePropertyValue(Message& message , const AbstractProperty& prop
       else
         message.write<std::string_view>("");
       break;
+
+    case ValueType::Invalid:
+      assert(false);
+      break;
   }
 }
 
@@ -779,6 +788,10 @@ void Session::writeVectorPropertyValue(Message& message , const AbstractVectorPr
           message.write(obj->getObjectId());
         else
           message.write<std::string>("");
+      break;
+
+    case ValueType::Invalid:
+      assert(false);
       break;
   }
 }

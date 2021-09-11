@@ -57,7 +57,6 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", DecoderProtocol, Directio
 {
   using OtherEnumType = typename other_enum_type<TestType>::type;
 
-  const TestType firstValue = EnumValues<TestType>::value.begin()->first;
   const TestType lastValue = EnumValues<TestType>::value.rbegin()->first;
 
   {

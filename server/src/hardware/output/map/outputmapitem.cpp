@@ -48,6 +48,7 @@ void OutputMapItem::load(WorldLoader& loader, const nlohmann::json& data)
   nlohmann::json actions = data.value("output_actions", nlohmann::json::array());
   for(auto& [_, action] : actions.items())
   {
+    static_cast<void>(_); // silence unused warning
     auto output = std::dynamic_pointer_cast<Output>(loader.getObject(action.value("output", "")));
     auto it = std::find_if(m_outputActions.begin(), m_outputActions.end(),
       [&output](const auto& item)
@@ -84,7 +85,7 @@ void OutputMapItem::addOutput(const std::shared_ptr<Output>& output)
 
 void OutputMapItem::removeOutput(const std::shared_ptr<Output>& output)
 {
-  auto it = std::find_if(m_outputActions.begin(), m_outputActions.end(), [output](const auto& it){ return it->output() == output; });
+  auto it = std::find_if(m_outputActions.begin(), m_outputActions.end(), [output](const auto& item){ return item->output() == output; });
   if(it != m_outputActions.end())
   {
     (*it)->destroy();

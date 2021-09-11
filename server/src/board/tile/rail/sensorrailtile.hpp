@@ -45,7 +45,7 @@ class SensorRailTile : public StraightRailTile
 
   protected:
     void loaded() override;
-    void worldEvent(WorldState state, WorldEvent event) override;
+    void worldEvent(WorldState worldState, WorldEvent worldEvent) override;
 
   public:
     Property<std::string> name;

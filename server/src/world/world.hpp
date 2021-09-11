@@ -67,8 +67,8 @@ class World : public Object
     std::unordered_map<std::string, std::weak_ptr<Object>> m_objects;
 
     void loaded() final;
-    void worldEvent(WorldState state, WorldEvent event) final;
-    void event(WorldEvent event);
+    void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
+    void event(WorldEvent value);
 
   public:
     CLASS_ID("world")

@@ -38,11 +38,11 @@ class MemoryLogger : public Logger
       LogMessage message;
       std::vector<std::string>* args;
 
-      Log(std::chrono::system_clock::time_point time, std::string_view objectId, LogMessage message, std::vector<std::string>* args = nullptr)
-        : time{time}
-        , objectId{objectId}
-        , message{message}
-        , args{args}
+      Log(std::chrono::system_clock::time_point _time, std::string_view _objectId, LogMessage _message, std::vector<std::string>* _args = nullptr)
+        : time{_time}
+        , objectId{_objectId}
+        , message{_message}
+        , args{_args}
       {
       }
     };

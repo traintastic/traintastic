@@ -87,9 +87,9 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
         tile->destroy();
         return false;
       }
-      for(int16_t x = tile->location().x; x < x2; x++)
-        for(int16_t y = tile->location().y; y < y2; y++)
-          m_tiles[TileLocation{x, y}] = tile;
+      for(int16_t xx = tile->location().x; xx < x2; xx++)
+        for(int16_t yy = tile->location().y; yy < y2; yy++)
+          m_tiles[TileLocation{xx, yy}] = tile;
 
       tileDataChanged(*this, tile->location(), tile->data());
       updateSize();
@@ -113,8 +113,6 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
         yTo -= yDiff;
       }
 
-      const int16_t xFrom2 = xFrom + tile->width;
-      const int16_t yFrom2 = yFrom + tile->height;
       const int16_t xTo2 = xTo + tile->width;
       const int16_t yTo2 = yTo + tile->height;
 
@@ -126,10 +124,12 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
       for(int16_t x = xTo; x < xTo2; x++)
         for(int16_t y = yTo; y < yTo2; y++)
           if(auto t = getTile({x, y}); t && t != tile)
+          {
             if(replace)
               deleteTile(x, y);
             else
               return false;
+          }
 
       // remove tile at tile origin
       removeTile(tile->location().x, tile->location().y);
@@ -267,8 +267,10 @@ void Board::load(WorldLoader& loader, const nlohmann::json& data)
   nlohmann::json objects = data.value("tiles", nlohmann::json::array());
   std::vector<ObjectPtr> items;
   m_tiles.reserve(objects.size());
-  for(auto& [_, id] : objects.items())
-    if(auto tile = std::dynamic_pointer_cast<Tile>(loader.getObject(id)))
+  for(auto& [_, tileId] : objects.items())
+  {
+    static_cast<void>(_); // silence unused warning
+    if(auto tile = std::dynamic_pointer_cast<Tile>(loader.getObject(tileId)))
     {
       if(tile->width > 1 || tile->height > 1)
       {
@@ -284,6 +286,7 @@ void Board::load(WorldLoader& loader, const nlohmann::json& data)
         m_tiles.emplace(l, std::move(tile));
       }
     }
+  }
 }
 
 void Board::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const

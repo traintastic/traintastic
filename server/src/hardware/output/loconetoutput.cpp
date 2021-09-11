@@ -29,9 +29,9 @@
 LocoNetOutput::LocoNetOutput(const std::weak_ptr<World> world, std::string_view _id) :
   Output(world, _id),
   loconet{this, "loconet", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](const std::shared_ptr<LocoNet::LocoNet>& value)
+    [this](const std::shared_ptr<LocoNet::LocoNet>& newValue)
     {
-      if(!value || value->addOutput(*this))
+      if(!newValue || newValue->addOutput(*this))
       {
         if(loconet.value())
           loconet->removeOutput(*this);
@@ -40,10 +40,10 @@ LocoNetOutput::LocoNetOutput(const std::weak_ptr<World> world, std::string_view 
       return false;
     }},
   address{this, "address", addressMin, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
-    [this](const uint16_t& value)
+    [this](const uint16_t& newValue)
     {
       if(loconet)
-        return loconet->changeOutputAddress(*this, value);
+        return loconet->changeOutputAddress(*this, newValue);
       return true;
     }}
 {
@@ -91,10 +91,10 @@ void LocoNetOutput::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(address, editable);
 }
 
-void LocoNetOutput::idChanged(const std::string& id)
+void LocoNetOutput::idChanged(const std::string& newId)
 {
   if(loconet)
-    loconet->outputKeyboardIdChanged(address, id);
+    loconet->outputKeyboardIdChanged(address, newId);
 }
 
 void LocoNetOutput::valueChanged(TriState _value)

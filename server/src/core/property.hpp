@@ -223,7 +223,7 @@ class Property : public AbstractProperty
       setValue(to<T>(value));
     }
 
-    void fromObject(const ObjectPtr& value) final
+    void fromObject(const ObjectPtr& /*value*/) final
     {
       throw conversion_error();
     }
@@ -233,7 +233,7 @@ class Property : public AbstractProperty
       m_value = to<T>(value);
     }
 
-    void load(const ObjectPtr& value) final
+    void load(const ObjectPtr& /*value*/) final
     {
       throw conversion_error();
     }

@@ -86,8 +86,11 @@ void OutputMap::load(WorldLoader& loader, const nlohmann::json& data)
   SubObject::load(loader, data);
   nlohmann::json outputs = data.value("outputs", nlohmann::json::array());
   for(auto& [_, id] : outputs.items())
+  {
+    static_cast<void>(_); // silence unused warning
     if(auto output = std::dynamic_pointer_cast<Output>(loader.getObject(id)))
       addOutput(std::move(output));
+  }
 }
 
 void OutputMap::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const

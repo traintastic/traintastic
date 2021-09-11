@@ -156,7 +156,7 @@ class VectorProperty : public AbstractVectorProperty
       return to<std::string>(m_values[index]);
     }
 
-    ObjectPtr getObject(size_t index) const final
+    ObjectPtr getObject(size_t /*index*/) const final
     {
       throw conversion_error();
     }
@@ -189,7 +189,7 @@ class VectorProperty : public AbstractVectorProperty
       setValue(index, to<T>(value));
     }
 
-    void setObject(size_t index, const ObjectPtr& value) final
+    void setObject(size_t /*index*/, const ObjectPtr& /*value*/) final
     {
       throw conversion_error();
     }

@@ -60,8 +60,8 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
   {
     std::vector<SensorState> values;
     values.reserve(inputMap->items.size());
-    for(const auto& item : inputMap->items)
-      values.emplace_back(item->value());
+    for(const auto& v : inputMap->items)
+      values.emplace_back(v->value());
     sensorStates.setValuesInternal(values);
   }
   else
@@ -100,11 +100,11 @@ void BlockRailTile::updateState()
   state.setValueInternal(BlockState::Unknown);
 }
 
-void BlockRailTile::worldEvent(WorldState state, WorldEvent event)
+void BlockRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
 {
-  RailTile::worldEvent(state, event);
+  RailTile::worldEvent(worldState, worldEvent);
 
-  const bool editable = contains(state, WorldState::Edit);
+  const bool editable = contains(worldState, WorldState::Edit);
 
   Attributes::setEnabled(name, editable);
 }

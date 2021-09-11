@@ -36,7 +36,7 @@ class Input : public IdObject
     void addToWorld() override;
     void destroying() override;
     void worldEvent(WorldState state, WorldEvent event) override;
-    virtual void valueChanged(TriState _value) {}
+    virtual void valueChanged(TriState /*_value*/) {}
 
     void updateValue(TriState _value);
 

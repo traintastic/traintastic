@@ -308,6 +308,27 @@ void LocoNet::receive(const Message& message)
             Log::log(*this, LogMessage::D2010_SLOT_X_IS_FREE, slotReadData.slot);
         });
       break;
+
+    case OPC_BUSY:
+    case OPC_SW_REP:
+    case OPC_LONG_ACK:
+    case OPC_SLOT_STAT1:
+    case OPC_CONSIST_FUNC:
+    case OPC_UNLINK_SLOTS:
+    case OPC_LINK_SLOTS:
+    case OPC_MOVE_SLOTS:
+    case OPC_RQ_SL_DATA:
+    case OPC_SW_STATE:
+    case OPC_SW_ACK:
+    case OPC_LOCO_ADR:
+    case OPC_MULTI_SENSE:
+    case OPC_D4:
+    case OPC_MULTI_SENSE_LONG:
+    case OPC_PEER_XFER:
+    case OPC_IMM_PACKET:
+    case OPC_WR_SL_DATA:
+      // unimplemented
+      break;
   }
 }
 
@@ -504,16 +525,16 @@ void LocoNet::removeInput(LocoNetInput& input)
 
 void LocoNet::inputMonitorIdChanged(const uint32_t address, std::string_view value)
 {
-  for(auto* inputMonitor : m_inputMonitors)
-    if(inputMonitor->inputIdChanged)
-      inputMonitor->inputIdChanged(*inputMonitor, address, value);
+  for(auto* item : m_inputMonitors)
+    if(item->inputIdChanged)
+      item->inputIdChanged(*item, address, value);
 }
 
 void LocoNet::inputMonitorValueChanged(const uint32_t address, const TriState value)
 {
-  for(auto* inputMonitor : m_inputMonitors)
-    if(inputMonitor->inputValueChanged)
-      inputMonitor->inputValueChanged(*inputMonitor, address, value);
+  for(auto* item : m_inputMonitors)
+    if(item->inputValueChanged)
+      item->inputValueChanged(*item, address, value);
 }
 
 bool LocoNet::isOutputAddressAvailable(uint16_t address) const
@@ -565,16 +586,16 @@ void LocoNet::removeOutput(LocoNetOutput& output)
 
 void LocoNet::outputKeyboardIdChanged(const uint32_t address, std::string_view value)
 {
-  for(auto* outputKeyboard : m_outputKeyboards)
-    if(outputKeyboard->outputIdChanged)
-      outputKeyboard->outputIdChanged(*outputKeyboard, address, value);
+  for(auto* item : m_outputKeyboards)
+    if(item->outputIdChanged)
+      item->outputIdChanged(*item, address, value);
 }
 
 void LocoNet::outputKeyboardValueChanged(const uint32_t address, const TriState value)
 {
-  for(auto* outputKeyboard : m_outputKeyboards)
-    if(outputKeyboard->outputValueChanged)
-      outputKeyboard->outputValueChanged(*outputKeyboard, address, value);
+  for(auto* item : m_outputKeyboards)
+    if(item->outputValueChanged)
+      item->outputValueChanged(*item, address, value);
 }
 
 }

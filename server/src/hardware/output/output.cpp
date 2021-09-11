@@ -30,13 +30,13 @@ Output::Output(const std::weak_ptr<World> world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store},
   value{this, "value", TriState::Undefined, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
-    [this](TriState _value)
+    [this](TriState newValue)
     {
-      valueChanged(_value);
+      valueChanged(newValue);
     },
-    [this](TriState& value) -> bool
+    [this](TriState& newValue) -> bool
     {
-      return setValue(value);
+      return setValue(newValue);
     }}
   , controllers{*this, "controllers", {}, PropertyFlags::ReadWrite | PropertyFlags::NoStore}
 {

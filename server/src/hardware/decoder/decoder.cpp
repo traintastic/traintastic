@@ -92,7 +92,7 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
       changed(DecoderChangeFlags::SpeedSteps);
     }},
   throttle{this, "throttle", throttleMin, PropertyFlags::ReadWrite,
-    [this](const double& value)
+    [this](const double& /*value*/)
     {
       changed(DecoderChangeFlags::Throttle);
       updateEditable();

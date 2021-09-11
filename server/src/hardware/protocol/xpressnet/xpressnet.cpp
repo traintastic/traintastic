@@ -137,14 +137,14 @@ void XpressNet::receive(const Message& message)
             EventLoop::call(
               [this, baseAddress, status=p.statusNibble()]()
               {
-                for(uint16_t i = 0; i < 4; i++)
+                for(uint16_t j = 0; j < 4; j++)
                 {
-                  TriState v = toTriState((status & (1 << i)) != 0);
-                  auto it = m_inputs.find(baseAddress + i);
+                  TriState v = toTriState((status & (1 << j)) != 0);
+                  auto it = m_inputs.find(baseAddress + j);
                   if(it != m_inputs.end())
                     it->second->updateValue(v);
                   else
-                    inputMonitorValueChanged(baseAddress + i, v);
+                    inputMonitorValueChanged(baseAddress + j, v);
                 }
               });
           }
@@ -378,16 +378,16 @@ void XpressNet::removeInput(XpressNetInput& input)
 
 void XpressNet::inputMonitorIdChanged(const uint32_t address, std::string_view value)
 {
-  for(auto* inputMonitor : m_inputMonitors)
-    if(inputMonitor->inputIdChanged)
-      inputMonitor->inputIdChanged(*inputMonitor, address, value);
+  for(auto* item : m_inputMonitors)
+    if(item->inputIdChanged)
+      item->inputIdChanged(*item, address, value);
 }
 
 void XpressNet::inputMonitorValueChanged(const uint32_t address, const TriState value)
 {
-  for(auto* inputMonitor : m_inputMonitors)
-    if(inputMonitor->inputValueChanged)
-      inputMonitor->inputValueChanged(*inputMonitor, address, value);
+  for(auto* item : m_inputMonitors)
+    if(item->inputValueChanged)
+      item->inputValueChanged(*item, address, value);
 }
 
 }

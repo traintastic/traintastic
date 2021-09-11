@@ -28,7 +28,7 @@ VirtualCommandStation::VirtualCommandStation(const std::weak_ptr<World>& world, 
   name = "Virtual";
 }
 
-bool VirtualCommandStation::setOnline(bool& value)
+bool VirtualCommandStation::setOnline(bool& /*value*/)
 {
   return true;
 }

@@ -67,7 +67,7 @@ World::World(Private) :
   Object(),
   uuid{this, "uuid", to_string(boost::uuids::random_generator()()), PropertyFlags::ReadOnly | PropertyFlags::NoStore},
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
-  scale{this, "scale", WorldScale::H0, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](WorldScale value){ updateScaleRatio(); }},
+  scale{this, "scale", WorldScale::H0, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](WorldScale /*value*/){ updateScaleRatio(); }},
   scaleRatio{this, "scale_ratio", 87, PropertyFlags::ReadWrite | PropertyFlags::Store},
   commandStations{this, "command_stations", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
@@ -363,23 +363,23 @@ void World::loaded()
   Object::loaded();
 }
 
-void World::worldEvent(WorldState state, WorldEvent event)
+void World::worldEvent(WorldState worldState, WorldEvent worldEvent)
 {
-  Object::worldEvent(state, event);
+  Object::worldEvent(worldState, worldEvent);
 
-  const bool edit = contains(state, WorldState::Edit);
-  const bool run = contains(state, WorldState::Run);
+  const bool editState = contains(worldState, WorldState::Edit);
+  const bool runState = contains(worldState, WorldState::Run);
 
-  Attributes::setEnabled(scale, edit && !run);
-  Attributes::setEnabled(scaleRatio, edit && !run);
+  Attributes::setEnabled(scale, editState && !runState);
+  Attributes::setEnabled(scaleRatio, editState && !runState);
 }
 
-void World::event(WorldEvent event)
+void World::event(const WorldEvent value)
 {
-  const WorldState st = state;
-  worldEvent(st, event);
+  const WorldState worldState = state;
+  worldEvent(worldState, value);
   for(auto& it : m_objects)
-    it.second.lock()->worldEvent(st, event);
+    it.second.lock()->worldEvent(worldState, value);
 }
 
 void World::updateScaleRatio()

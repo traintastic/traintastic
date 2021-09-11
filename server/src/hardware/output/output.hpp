@@ -33,8 +33,8 @@ class Output : public IdObject
     void addToWorld() override;
     void destroying() override;
     void worldEvent(WorldState state, WorldEvent event) override;
-    virtual void valueChanged(TriState _value) {}
-    virtual bool setValue(TriState& _value) { return true; }
+    virtual void valueChanged(TriState /*_value*/) {}
+    virtual bool setValue(TriState& /*_value*/) { return true; }
     void updateValue(TriState _value);
 
   public:

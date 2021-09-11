@@ -46,13 +46,13 @@ inline void from_json(const BasicJsonType& j, EnumType& e, typename std::enable_
 }
 
 template<typename BasicJsonType, typename EnumType>
-inline void to_json(BasicJsonType& j, const EnumType& e, typename std::enable_if_t<is_set_v<EnumType>>* = nullptr)
+inline void to_json(BasicJsonType& /*j*/, const EnumType& /*e*/, typename std::enable_if_t<is_set_v<EnumType>>* = nullptr)
 {
   assert(false);
 }
 
 template<typename BasicJsonType, typename EnumType>
-inline void from_json(const BasicJsonType& j, EnumType& e, typename std::enable_if_t<is_set_v<EnumType>>* = nullptr)
+inline void from_json(const BasicJsonType& /*j*/, EnumType& /*e*/, typename std::enable_if_t<is_set_v<EnumType>>* = nullptr)
 {
   assert(false);
 }
