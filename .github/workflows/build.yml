@@ -45,7 +45,7 @@ jobs:
           generator: "Unix Makefiles"
           arch: ""
           target: traintastic-client
-          jobs: 2
+          jobs: 4
           build_type: Release
           build_deb: true
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
@@ -55,7 +55,7 @@ jobs:
           generator: "Unix Makefiles"
           arch: ""
           target: traintastic-client
-          jobs: 2
+          jobs: 4
           build_type: Release
           build_deb: true
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
