@@ -12,7 +12,22 @@ configure_file(../shared/src/traintastic/version.hpp.in version.hpp)
 if(MSVC)
   add_compile_options(/W3)
 else()
-  add_compile_options(-Wall -Wextra -Wpedantic -Wshadow)
+  add_compile_options(-Wall -Wextra -Wpedantic -Wshadow -Werror)
+
+  set_source_files_properties(
+      thirdparty/boost/libs/program_options/src/cmdline.cpp
+      thirdparty/boost/libs/program_options/src/config_file.cpp
+      thirdparty/boost/libs/program_options/src/convert.cpp
+      thirdparty/boost/libs/program_options/src/options_description.cpp
+      thirdparty/boost/libs/program_options/src/parsers.cpp
+      thirdparty/boost/libs/program_options/src/positional_options.cpp
+      thirdparty/boost/libs/program_options/src/split.cpp
+      thirdparty/boost/libs/program_options/src/utf8_codecvt_facet.cpp
+      thirdparty/boost/libs/program_options/src/value_semantic.cpp
+      thirdparty/boost/libs/program_options/src/variables_map.cpp
+      thirdparty/boost/libs/program_options/src/winmain.cpp
+    PROPERTIES
+      COMPILE_FLAGS -Wno-shadow)
 endif()
 
 add_executable(traintastic-server src/main.cpp src/options.hpp)
