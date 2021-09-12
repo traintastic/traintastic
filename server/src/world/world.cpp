@@ -296,17 +296,17 @@ World::World(Private) :
 
 std::string World::getUniqueId(std::string_view prefix) const
 {
-  std::string id{prefix};
-  id.append("_");
+  std::string uniqueId{prefix};
+  uniqueId.append("_");
   uint32_t number = 0;
   do
   {
-    id.resize(prefix.size() + 1);
-    id.append(std::to_string(++number));
+    uniqueId.resize(prefix.size() + 1);
+    uniqueId.append(std::to_string(++number));
   }
-  while(isObject(id));
+  while(isObject(uniqueId));
 
-  return id;
+  return uniqueId;
 }
 
 bool World::isObject(const std::string& _id) const
