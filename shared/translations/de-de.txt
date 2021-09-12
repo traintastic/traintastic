@@ -1,20 +1,461 @@
 ## Traintastic language file: German (DE)
 
-language:de-de=Deutsch
+#board:delete_tile=Delete tile
+#board:move_tile=Move tile
+#board:resize_tile=Resize tile
+#board:resize_to_contents=Resize to contents
+
+#board_tile.rail.block:input_map=Sensors
+
+#board_tile.rail.sensor:input=Input
+#board_tile.rail.sensor:invert=Invert
+#board_tile.rail.sensor:type=Type
+
+#board_tile:output_map=Outputs
+
+#category:general=General
+#category:info=Info
+
+#class_id:board_tile.rail.block=Block
+#class_id:board_tile.rail.bridge_45_left=Bridge 45° (left)
+#class_id:board_tile.rail.bridge_45_right=Bridge 45° (right)
+#class_id:board_tile.rail.bridge_90=Bridge 90°
+#class_id:board_tile.rail.buffer_stop=Buffer stop
+#class_id:board_tile.rail.cross_45=Crossover 45°
+#class_id:board_tile.rail.cross_90=Crossover 90°
+#class_id:board_tile.rail.curve_45=Curved track 45°
+#class_id:board_tile.rail.curve_90=Curved track 90°
+#class_id:board_tile.rail.sensor=Sensor
+#class_id:board_tile.rail.signal_2_aspect=Signal (2 aspects)
+#class_id:board_tile.rail.signal_3_aspect=Signal (3 aspects)
+#class_id:board_tile.rail.straight=Straight track
+#class_id:board_tile.rail.tunnel=Tunnel
+#class_id:board_tile.rail.turnout_3way=Turnout 3-way
+#class_id:board_tile.rail.turnout_doubleslip=Double slip
+#class_id:board_tile.rail.turnout_left_45=Turnout left 45°
+#class_id:board_tile.rail.turnout_left_90=Turnout left 90°
+#class_id:board_tile.rail.turnout_left_curved=Turnout left curved
+#class_id:board_tile.rail.turnout_right_45=Turnout right 45°
+#class_id:board_tile.rail.turnout_right_90=Turnout right 90°
+#class_id:board_tile.rail.turnout_right_curved=Turnout right curved
+#class_id:board_tile.rail.turnout_singleslip=Single slip
+#class_id:board_tile.rail.turnout_wye=Turnout wye
+#class_id:command_station.dccplusplus_serial=DCC++ (serial)
+#class_id:command_station.loconet_serial=LocoNet (serial)
+#class_id:command_station.loconet_tcp_binary=LocoNet (TCP binary)
+#class_id:command_station.virtual=Virtual
+#class_id:command_station.xpressnet_serial=XpressNet (serial)
+#class_id:command_station.z21=Z21
+#class_id:controller.wlanmaus=WLANmaus
+#class_id:input.loconet=LocoNet input
+#class_id:input.xpressnet=XpressNet input
+#class_id:output.loconet=LocoNet output
+#class_id:vehicle.rail.freight_car=Freight car
+#class_id:vehicle.rail.locomotive=Locomotive
+
+#clock:day=Day
+#clock:hour=Hour
+#clock:minute=Minute
+#clock:month=Month
+#clock:multiplier=Multiplier
+#clock:year=Year
+
+#command_station.dccplusplus_serial:dcc_plus_plus=DCC++(EX)
+
+#command_station.loconet_serial:interface=Interface
+
+#command_station.xpressnet_serial:interface=Interface
+#command_station.xpressnet_serial:s88_module_count=S88 module count
+#command_station.xpressnet_serial:s88_start_address=S88 start address
+
+#command_station.z21:filtered_main_current=Filtered main current
+#command_station.z21:firmware_version=Firmware verion
+#command_station.z21:hardware_type=Hardware type
+#command_station.z21:high_temperature=High temperature
+#command_station.z21:main_current=Main current
+#command_station.z21:power_lost=Power lost
+#command_station.z21:prog_current=Prog current
+#command_station.z21:programming_mode_active=Programming mode active
+#command_station.z21:serial_number=Serial number
+#command_station.z21:short_circuit=Short circuit
+#command_station.z21:short_circut_external=Short circuit external
+#command_station.z21:short_circut_internal=Short circuit internal
+#command_station.z21:supply_voltage=Supply voltage
+#command_station.z21:temperature=Temperature
+#command_station.z21:vcc_voltage=VCC voltage
+
+#command_station:emergency_stop=Emergency stop
+#command_station:online=Online
+#command_station:power_on=Power on
+
+#controller.wlanmaus:debug_log=Enable command logging (debug)
+
+#controller:active=Active
+
+#decoder:functions=Functions
+#decoder:long_address=DCC long address
+#decoder:protocol=Protocol
+
+#decoder_function:function=Function
+#decoder_function:number=Number
+#decoder_function:type=Type
+
+#decoder_function_function:generic=Generic
+#decoder_function_function:light=Light
+#decoder_function_function:mute=Mute
+#decoder_function_function:smoke=Smoke
+#decoder_function_function:sound=Sound
+
+#decoder_function_type:always_off=Always off
+#decoder_function_type:always_on=Always on
+#decoder_function_type:hold=Push 'n hold
+#decoder_function_type:momentary=Momentary
+#decoder_function_type:on_off=On/Of
+
+#decoder_protocol:auto=Auto
+#decoder_protocol:custom=Custom
+#decoder_protocol:dcc=DCC
+
+#direction:forward=Forward
+#direction:reverse=Reverse
+
+#hardware:address=Address
+#hardware:command_station=Command station
+#hardware:input_monitor=Input monitor
+#hardware:loconet=LocoNet
+#hardware:output_keyboard=Output keyboard
+#hardware:speed_steps=Speed steps
+#hardware:xpressnet=XpressNet
+
+#input_list:bus=Bus
+
+#input_map_item.block:input=Input
+#input_map_item.block:invert=Invert
+#input_map_item.block:type=Type
+
+#ip:hostname=Hostname
+#ip:port=Port
+
+language:de-de=Deutsch (Deutschland)
 language:en-us=Englisch (USA)
-language:nl-nl=Niederländisch
+language:nl-nl=Niederländisch (Die Niederlande)
+
+length_unit:cm=cm
+length_unit:ft=ft
+length_unit:in=in
+length_unit:m=m
+length_unit:mm=mm
+length_unit:yd=yd
+
+#list:add=Add
+#list:edit=Edit
+#list:move_down=Move down
+#list:move_up=Move up
+#list:remove=Remove
+
+#loconet_command_station:custom=Custom
+#loconet_command_station:digikeijs_dr5000=Digikeijs DR5000
+#loconet_command_station:uhlenbrock_intellibox=Uhlenbrock Intellibox
+
+#loconet_serial_interface:custom=Custom
+#loconet_serial_interface:digikeijs_dr5000=Digikeijs DR5000
+#loconet_serial_interface:rosoft_loconet_interface=RoSoft LocoNet interface
+
+#lua.script:start=Start
+#lua.script:stop=Stop
+
+#lua_script:state=State
+
+#message:C1001=Loading world failed (%1)
+#message:C1002=Creating client failed (%1)
+#message:C1003=Can't write to settings file (%1)
+#message:C1004=Reading world failed (%1) (%2)
+#message:C1005=Saving world failed (%1)
+#message:C1006=Creating world backup failed (%1)
+#message:C1007=Creating world backup directory failed (%1)
+#message:C2001=Address already used at #%1
+#message:C2002=DCC++ only supports the DCC protocol
+#message:C2003=DCC++ doesn't support DCC long addresses below 128
+message:C9999=%1
+#message:D2001=TX: %1
+#message:D2002=RX: %1
+#message:D2003=Unknown xHeader 0x%1
+#message:D2004=%1 TX: %2
+#message:D2005=%1 RX: %2
+#message:D2006=Unknown message: %1
+#message:D2007=Input %1 = %2
+#message:D2008=Output %1 = %1
+#message:D2009=Slot %1 = %2
+#message:D2010=Slot %1 = Free
+message:D9999=%1
+#message:E1001=Invalid world UUID: %1
+#message:E1002=World %1 doesn't exist
+#message:E1003=UDP receive error (%1)
+#message:E1004=TCP accept error (%1)
+#message:E1005=Socket shutdown failed (%1)
+#message:E1006=Socket write failed (%1)
+#message:E1007=Socket read failed (%1)
+#message:E1008=Socket acceptor cancel failed (%1)
+#message:E2001=Serial write failed (%1)
+#message:E2002=Serial read failed (%1)
+#message:E2003=Make address failed (%1)
+#message:E2004=Socket open failed (%1)
+#message:E2005=Socket connect failed (%1)
+#message:E2006=Socket bind failed (%1)
+#message:E2007=Socket write failed (%1)
+#message:E2008=Socket read failed (%1)
+#message:E2009=Socket receive failed (%1)
+#message:E2010=Serial port open failed (%1)
+#message:E2011=Socket send failed (%1)
+#message:E2012=Function number already in use
+message:E9999=%1
+#message:F1001=Opening TCP socket failed (%1)
+#message:F1002=TCP socket address reuse failed (%1)
+#message:F1003=Binding TCP socket failed (%1)
+#message:F1004=TCP socket listen failed (%1)
+#message:F1005=Opening UDP socket failed (%1)
+#message:F1006=UDP socket address reuse failed (%1)
+#message:F1007=Binding udp socket failed (%1)
+#message:F9001=Creating ua state failed
+#message:F9002=Running script failed (%1)
+#message:F9003=Calling function failed (%1)
+message:F9999=%1
+message:I1001=Traintastic v%1 %2
+#message:I1002=Settings file not found, using defaults
+#message:I1003=Client connected
+#message:I1004=Connection lost
+#message:I1005=Building world index
+#message:I2001=Unknown loco address: %1
+#message:I9999=%1
+#message:N1001=Received signal: %1
+#message:N1002=Created new world
+#message:N1003=Restaring
+#message:N1004=Shutting down
+#message:N1005=Discovery enabled
+#message:N1006=Discovery disabled
+#message:N1007=Listening at %1:%2
+#message:N1008=Loaded settings
+#message:N1009=Saved settings
+#message:N1010=Edit mode: enabled
+#message:N1011=Edit mode: disabled
+#message:N1012=Communication: enabled
+#message:N1013=Communication: disabled
+#message:N1014=Power: on
+#message:N1015=Power: off
+#message:N1016=Running
+#message:N1017=Stopped
+#message:N1018=Mute: enabled
+#message:N1019=Mute: disabled
+#message:N1020=Smoke: enabled
+#message:N1021=Smoke: disabled
+#message:N1022=Saved world: %1
+message:N9999=%1
+#message:W1001=Discovery disabled, only allowed on port %1
+#message:W1002=Setting %1 doesnt exist
+#message:W2001=Received malformed data dropped %1 bytes
+#message:W2002=Command station doesn't support functions above F%1
+#message:W2003=Command station doesn't support %1 speedsteps using %2
+message:W9999=%1
 
 object:id=Id
 object:name=Name
 object:notes=Notizen
 
+output_action:none=Kein
+output_action:off=Aus
+output_action:on=Auf
+output_action:pulse=Puls
+
+#output_list:bus=Bus
+
+#output_map.signal:key=Aspect
+
+#output_map.turnout:key=Position
+
+output_map:use=Benutzen
+
+#protocol.dccplusplus:debug_log=Enable command logging (debug)
+#protocol.dccplusplus:use_ex=Use DCC++EX commands
+
+#protocol.loconet:command_station=Command station
+#protocol.loconet:debug_log_input=Enable input logging
+#protocol.loconet:debug_log_output=Enable output logging
+#protocol.loconet:debug_log_rx_tx=Enable RX/TX logging
+
+#protocol.xpressnet:command_station=Command station
+#protocol.xpressnet:debug_log=Enable logging (debug)
+#protocol.xpressnet:use_emergency_stop_locomotive_command=Use short emergency stop locomotive command
+#protocol.xpressnet:use_function_state_commands=Use function state commands
+#protocol.xpressnet:use_roco_f13_f20_command=Use Roco F13-F20 command
+
+#qtapp.connect_dialog:connect=Connect
+#qtapp.connect_dialog:connect_to_server=Connect to server
+#qtapp.connect_dialog:connected=Connected
+#qtapp.connect_dialog:connecting=Connecting
+#qtapp.connect_dialog:password=Password
+#qtapp.connect_dialog:server=Server
+#qtapp.connect_dialog:username=Username
+
+#qtapp.mainmenu:about=About
+#qtapp.mainmenu:connect_to_server=Connect to server
+#qtapp.mainmenu:connection=Connection
+#qtapp.mainmenu:disconnect_from_server=Disconnect from server
+qtapp.mainmenu:export_world=Welt exportieren
 qtapp.mainmenu:file=Datei
+qtapp.mainmenu:fullscreen=Vollbildschirm
+#qtapp.mainmenu:hardware=Hardware
+#qtapp.mainmenu:help=Help
+qtapp.mainmenu:import_world=Welt importieren
+#qtapp.mainmenu:load_world=Load world
 qtapp.mainmenu:new_world=Neue Welt
+#qtapp.mainmenu:objects=Objects
+#qtapp.mainmenu:power=Power
+#qtapp.mainmenu:quit=Quit
+#qtapp.mainmenu:restart_server=Restart server
+#qtapp.mainmenu:restart_server_question=Are you sure you want to restart the server?
+#qtapp.mainmenu:save_world=Save world
+#qtapp.mainmenu:server=Server
+#qtapp.mainmenu:server_log=Server log
+#qtapp.mainmenu:server_settings=Server settings
+#qtapp.mainmenu:settings=Settings
+#qtapp.mainmenu:shutdown_server=Shutdown server
+#qtapp.mainmenu:shutdown_server_question=Are you sure you want to shutdown the server?
+#qtapp.mainmenu:toolbar=Toolbar
+#qtapp.mainmenu:tools=Tools
+#qtapp.mainmenu:view=View
+#qtapp.mainmenu:world=World
+#qtapp.mainmenu:world_properties=World properties
 
-#settings:default_world=
-#settings:localhost_only=
-#settings:port=
+qtapp.message_box:no=Nein
+qtapp.message_box:yes=Jawohl
 
+qtapp.object_select_list_dialog:cancel=Abbrechen
+qtapp.object_select_list_dialog:ok=OK
+#qtapp.object_select_list_dialog:select_object=Select object
 
-#! Garbage
-lua_script.active=Aktiviert
+#qtapp.settings.board:show_block_sensor_states=Show block sensor states
+
+#qtapp.settings.developer:dont_load_fallback_language=Don't load fallback language
+#qtapp.settings.developer:log_missing_strings=Log missing translations
+#qtapp.settings.developer:log_missing_strings_dir=Missing translations log directory
+
+qtapp.settings.general:language=Sprache
+
+qtapp.settings:board=Schalttafel
+qtapp.settings:developer=Entwickler
+qtapp.settings:general=Allgemein
+
+qtapp.world_list_dialog:cancel=Abbrechen
+#qtapp.world_list_dialog:load=Load
+#qtapp.world_list_dialog:world_list=World list
+
+#qtapp:board_properties=Board properties
+#qtapp:grid=Grid
+#qtapp:grid_dot=Dot
+#qtapp:grid_line=Line
+#qtapp:grid_none=None
+#qtapp:toggle_mute=Toggle mute
+#qtapp:toggle_offline_online=Toggle connection
+#qtapp:toggle_power=Toggle power
+#qtapp:toggle_smoke=Toggle smoke
+qtapp:zoom_in=Hineinzoomen
+qtapp:zoom_out=Rauszoomen
+
+#rail_vehicle_list:type=Type
+
+#sensor_type:occupy_detector=Occupy detector
+#sensor_type:reed_switch=Reed switch
+
+serial:baudrate=Baudrate
+#serial:flow_control=Flow control
+#serial:port=Port
+
+serial_flow_control:hardware=Hardware
+#serial_flow_control:none=None
+
+server_log:code=Code
+server_log:message=Meldung
+server_log:object=Objekt
+server_log:time=Zeit
+
+#settings:allow_client_server_restart=Allow client server restart
+#settings:allow_client_server_shutdown=Allow client server shutdown
+#settings:auto_save_world_on_exit=Auto save world on exit
+#settings:discoverable=Discoverable
+#settings:enable_file_logger=Enable file logger
+#settings:localhost_only=Localhost only
+#settings:memory_logger_size=Memory logger size
+settings:port=Port
+#settings:save_world_uncompressed=Save world uncompressed
+
+#signal_aspect:proceed=Proceed
+#signal_aspect:proceed_reduced_speed=Proceed, reduced speed
+#signal_aspect:stop=Stop
+
+speed_unit:kmph=km/h
+speed_unit:mph=mph
+speed_unit:mps=m/s
+
+#throttle_object_list:throttle=Throttle
+
+#train:lob=LOB
+train:speed_max=Maximale Geschwindigkeit
+#train:vehicles=Vehicles
+train:weight=Gewicht
+
+#turnout_position:left=Left
+#turnout_position:right=Right
+#turnout_position:straight=Straight
+
+#vehicle.rail.freight_car:cargo_weight=Cargo weight
+
+#vehicle.rail:decoder=Decoder
+#vehicle.rail:lob=LOB
+vehicle.rail:speed_max=Maximale Geschwindigkeit
+vehicle.rail:total_weight=Total weight
+vehicle.rail:train=Zug
+vehicle.rail:weight=Gewicht
+
+weight_unit:kg=kg
+#weight_unit:long_tons=Long tons
+#weight_unit:short_tons=Short tons
+weight_unit:ton=ton
+
+#world:boards=Boards
+#world:clock=Clock
+#world:command_stations=Command stations
+#world:controllers=Controllers
+#world:decoders=Decoders
+#world:edit=Edit world
+#world:inputs=Inputs
+#world:lua_scripts=Lua scripts
+#world:mute=Mute
+#world:no_smoke=No smoke
+world:offline=Trennen
+world:online=Verbinden
+#world:outputs=Outputs
+#world:power_off=Power off
+#world:power_on=Power on
+#world:rail_vehicles=Rail vehicles
+#world:run=Run
+#world:scale=Scale
+#world:scale_ratio=Scale ratio
+#world:stop=Stop
+world:trains=Züge
+world:uuid=UUID
+
+#world_scale:custom=Custom
+world_scale:h0=H0 (1:87)
+world_scale:n=N (1:160)
+world_scale:tt=TT (1:120)
+world_scale:z=Z (1:220)
+
+#xpressnet_command_station:custom=Custom
+xpressnet_command_station:digikeijs_dr5000=Digikeijs DR5000
+xpressnet_command_station:roco_10764=Roco 10764
+
+#xpressnet_serial_interface:custom=Custom
+xpressnet_serial_interface:lenz_li100=Lenz LI100
+xpressnet_serial_interface:lenz_li100f=Lenz LI100F
+xpressnet_serial_interface:lenz_li101f=Lenz LI101F
+xpressnet_serial_interface:rosoft_s88xpressnetli=RoSoft s88XpressNetLI
