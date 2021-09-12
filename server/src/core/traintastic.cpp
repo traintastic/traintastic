@@ -304,7 +304,7 @@ std::unique_ptr<Message> Traintastic::processMessage(const Message& message)
   {
     std::unique_ptr<Message> response = Message::newResponse(message.command(), message.requestId());
     response->write(boost::asio::ip::host_name());
-    return std::move(response);
+    return response;
   }
 
   return nullptr;
