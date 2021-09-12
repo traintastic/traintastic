@@ -177,8 +177,8 @@ TEST_CASE("Create world, decoder and function => destroy world", "[object-create
   functionsWeak.lock()->add();
   REQUIRE(functionsWeak.lock()->items.size() == 1);
   std::weak_ptr<DecoderFunction> functionWeak = functionsWeak.lock()->items[0];
-  REQUIRE_FALSE(functionsWeak.expired());
-  REQUIRE(functionsWeak.lock()->getClassId() == DecoderFunction::classId);
+  REQUIRE_FALSE(functionWeak.expired());
+  REQUIRE(functionWeak.lock()->getClassId() == DecoderFunction::classId);
 
   world.reset();
   REQUIRE(functionWeak.expired());
