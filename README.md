@@ -1,7 +1,7 @@
 # Traintastic - Model railway control software
 
 [![Build](https://github.com/traintastic/traintastic/actions/workflows/build.yml/badge.svg)](https://github.com/traintastic/traintastic/actions/workflows/build.yml) ![GitHub](https://img.shields.io/github/license/traintastic/traintastic)
-
+[![Activity](https://img.shields.io/github/commit-activity/m/badges/shields)](https://github.com/traintastic/traintastic/pulse)
 
 ## About The Project
 Traintastic is a client/server software application to control a model railway. It is in an early stage of development, it contains very limited functionality.
@@ -46,7 +46,7 @@ Note: When cloning the source from git, git-lfs is required.
 - Run CMake:
   - Windows: `cmake ../ -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=Release`
   - Linux: `cmake ../ -DCMAKE_BUILD_TYPE=Release`
-  - macOS: `cmake ../ -DCMAKE_BUILD_TYPE=Release -DQt5_DIR=/path/to/Qt/5.15.2/clang_64/lib/cmake/Qt5
+  - macOS: `cmake ../ -DCMAKE_BUILD_TYPE=Release -DQt5_DIR=/path/to/Qt/5.15.2/clang_64/lib/cmake/Qt5`
 - Build traintastic-client: `cmake --build . --config Release`
 
 
