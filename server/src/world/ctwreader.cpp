@@ -59,7 +59,7 @@ CTWReader::CTWReader(const std::filesystem::path& filename)
     size_t pos = 0;
     while(pos < data.size())
     {
-      const ssize_t count = archive_read_data(ctw.get(), data.data() + pos, data.size() - pos);
+      const auto count = archive_read_data(ctw.get(), data.data() + pos, data.size() - pos);
       if(count < 0)
         throw LibArchiveError(ctw.get());
       else if(count == 0)
