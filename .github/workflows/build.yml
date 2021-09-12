@@ -297,6 +297,14 @@ jobs:
       working-directory: ${{github.workspace}}/server/build
       run: make ccov
 
+    - name: "Code coverage: upload to coveralls.io"
+      if: matrix.config.ccov
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        path-to-lcov: ${{github.workspace}}/server/build/ccov/traintastic-server-test.info
+        base-path: ${{github.workspace}}/server
+
     - name: "Code coverage: upload artifact"
       if: matrix.config.ccov
       uses: actions/upload-artifact@v2
