@@ -50,6 +50,7 @@ TEST_CASE("Create world and board => destroy world", "[object-create-destroy]")
 
   std::weak_ptr<Board> boardWeak = world->boards->add();
   REQUIRE_FALSE(boardWeak.expired());
+  REQUIRE(boardWeak.lock()->getClassId() == Board::classId);
   REQUIRE(worldWeak.lock()->boards->length == 1);
 
   world.reset();
@@ -91,6 +92,7 @@ TEMPLATE_TEST_CASE("Create world and command station => destroy world", "[object
 
   std::weak_ptr<CommandStation> commandStationWeak = world->commandStations->add(TestType::classId);
   REQUIRE_FALSE(commandStationWeak.expired());
+  REQUIRE(commandStationWeak.lock()->getClassId() == TestType::classId);
 
   world.reset();
   REQUIRE(commandStationWeak.expired());
@@ -131,6 +133,7 @@ TEST_CASE("Create world and decoder => destroy world", "[object-create-destroy]"
 
   std::weak_ptr<Decoder> decoderWeak = world->decoders->add();
   REQUIRE_FALSE(decoderWeak.expired());
+  REQUIRE(decoderWeak.lock()->getClassId() == Decoder::classId);
 
   world.reset();
   REQUIRE(decoderWeak.expired());
@@ -169,11 +172,13 @@ TEST_CASE("Create world, decoder and function => destroy world", "[object-create
 
   std::weak_ptr<DecoderFunctions> functionsWeak = decoderWeak.lock()->functions->shared_ptr<DecoderFunctions>();
   REQUIRE_FALSE(functionsWeak.expired());
+  REQUIRE(functionsWeak.lock()->getClassId() == DecoderFunctions::classId);
 
   functionsWeak.lock()->add();
   REQUIRE(functionsWeak.lock()->items.size() == 1);
   std::weak_ptr<DecoderFunction> functionWeak = functionsWeak.lock()->items[0];
   REQUIRE_FALSE(functionsWeak.expired());
+  REQUIRE(functionsWeak.lock()->getClassId() == DecoderFunction::classId);
 
   world.reset();
   REQUIRE(functionWeak.expired());
