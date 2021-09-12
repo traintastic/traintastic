@@ -30,12 +30,12 @@
 OutputList::OutputList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<Output>(_parent, parentPropertyName),
   add{*this, "add",
-    [this](std::string_view classId)
+    [this](std::string_view outputClassId)
     {
       auto world = getWorld(&this->parent());
       if(!world)
         return std::shared_ptr<Output>();
-      auto output = Outputs::create(world, classId, world->getUniqueId("output"));
+      auto output = Outputs::create(world, outputClassId, world->getUniqueId("output"));
       if(auto locoNetOutput = std::dynamic_pointer_cast<LocoNetOutput>(output); locoNetOutput && world->loconets->length == 1)
       {
         auto& loconet = world->loconets->operator[](0);

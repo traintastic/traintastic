@@ -31,12 +31,12 @@
 ControllerList::ControllerList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<Controller>(_parent, parentPropertyName),
   add{*this, "add",
-    [this](std::string_view classId)
+    [this](std::string_view controllerClassId)
     {
       auto world = getWorld(&this->parent());
       if(!world)
         return std::shared_ptr<Controller>();
-      auto controller = Controllers::create(world, classId, world->getUniqueId("controller"));
+      auto controller = Controllers::create(world, controllerClassId, world->getUniqueId("controller"));
       if(auto* cs = dynamic_cast<CommandStation*>(&this->parent()))
         controller->commandStation = cs->shared_ptr<CommandStation>();
       //else if(world->commandStations->length() == 1)

@@ -30,12 +30,12 @@
 InputList::InputList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<Input>(_parent, parentPropertyName),
   add{*this, "add",
-    [this](std::string_view classId)
+    [this](std::string_view inputClassId)
     {
       auto world = getWorld(&this->parent());
       if(!world)
         return std::shared_ptr<Input>();
-      auto input = Inputs::create(world, classId, world->getUniqueId("input"));
+      auto input = Inputs::create(world, inputClassId, world->getUniqueId("input"));
       if(auto locoNetInput = std::dynamic_pointer_cast<LocoNetInput>(input); locoNetInput && world->loconets->length == 1)
       {
         auto& loconet = world->loconets->operator[](0);

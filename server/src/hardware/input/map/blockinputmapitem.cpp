@@ -112,7 +112,7 @@ void BlockInputMapItem::connectInput(Input& object)
 {
   object.consumers.appendInternal(m_parent.parent().shared_from_this());
   m_inputDestroying = object.onDestroying.connect(
-    [this](Object& obj)
+    [this]([[maybe_unused]] Object& obj)
     {
       assert(input.value().get() == &obj);
       input = nullptr;

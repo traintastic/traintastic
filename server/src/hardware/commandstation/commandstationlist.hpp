@@ -35,7 +35,7 @@ class CommandStationList : public ObjectList<CommandStation>
   public:
     CLASS_ID("command_station_list")
 
-    Method<std::shared_ptr<CommandStation>(std::string_view classId)> add;
+    Method<std::shared_ptr<CommandStation>(std::string_view)> add;
     Method<void(const std::shared_ptr<CommandStation>&)> remove;
 
     CommandStationList(Object& _parent, const std::string& parentPropertyName);

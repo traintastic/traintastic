@@ -31,12 +31,12 @@
 CommandStationList::CommandStationList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<CommandStation>(_parent, parentPropertyName),
   add{*this, "add",
-    [this](std::string_view classId)
+    [this](std::string_view commandStationClassId)
     {
       auto world = getWorld(this);
       if(!world)
         return std::shared_ptr<CommandStation>();
-      return CommandStations::create(world, classId, world->getUniqueId("cs"));
+      return CommandStations::create(world, commandStationClassId, world->getUniqueId("cs"));
     }},
   remove{*this, "remove",
     [this](const std::shared_ptr<CommandStation>& object)

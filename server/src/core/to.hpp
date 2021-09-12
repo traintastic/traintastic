@@ -115,7 +115,12 @@ To to(const From& value)
   }
   else if constexpr(std::is_same_v<From, nlohmann::json>)
   {
-    if constexpr(std::is_enum_v<To>)
+    if constexpr(is_set_v<To>)
+    {
+      assert(false); // not yet supported
+      throw conversion_error();
+    }
+    else if constexpr(std::is_enum_v<To>)
     {
       To e;
       from_json(value, e);
@@ -126,7 +131,12 @@ To to(const From& value)
   }
   else if constexpr(std::is_same_v<To, nlohmann::json>)
   {
-    if constexpr(std::is_enum_v<From>)
+    if constexpr(is_set_v<From>)
+    {
+      assert(false); // not yet supported
+      throw conversion_error();
+    }
+    else if constexpr(std::is_enum_v<From>)
     {
       To json;
       to_json(json, value);

@@ -103,7 +103,7 @@ void SensorRailTile::connectInput(Input& object)
 {
   object.consumers.appendInternal(shared_from_this());
   m_inputDestroying = object.onDestroying.connect(
-    [this](Object& obj)
+    [this]([[maybe_unused]] Object& obj)
     {
       assert(input.value().get() == &obj);
       input = nullptr;

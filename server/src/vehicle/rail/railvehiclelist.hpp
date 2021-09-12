@@ -35,7 +35,7 @@ class RailVehicleList : public ObjectList<RailVehicle>
   public:
     CLASS_ID("rail_vehicle_list")
 
-    Method<std::shared_ptr<RailVehicle>(std::string_view classId)> add;
+    Method<std::shared_ptr<RailVehicle>(std::string_view)> add;
     Method<void(const std::shared_ptr<RailVehicle>&)> remove;
 
     RailVehicleList(Object& _parent, const std::string& parentPropertyName);

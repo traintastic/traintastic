@@ -30,12 +30,12 @@
 RailVehicleList::RailVehicleList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<RailVehicle>(_parent, parentPropertyName),
   add{*this, "add",
-    [this](std::string_view classId)
+    [this](std::string_view railVehicleClassId)
     {
       auto world = getWorld(&this->parent());
       if(!world)
         return std::shared_ptr<RailVehicle>();
-      return RailVehicles::create(world, classId, world->getUniqueId("vehicle"));
+      return RailVehicles::create(world, railVehicleClassId, world->getUniqueId("vehicle"));
     }}
   , remove{*this, "remove",
       [this](const std::shared_ptr<RailVehicle>& railVehicle)

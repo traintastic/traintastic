@@ -37,7 +37,7 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
   right{this, "right", 0, PropertyFlags::ReadOnly | PropertyFlags::Store},
   bottom{this, "bottom", 0, PropertyFlags::ReadOnly | PropertyFlags::Store},
   addTile{*this, "add_tile",
-    [this](int16_t x, int16_t y, TileRotate rotate, std::string_view classId, bool replace)
+    [this](int16_t x, int16_t y, TileRotate rotate, std::string_view tileClassId, bool replace)
     {
       const TileLocation l{x, y};
       auto w = m_world.lock();
@@ -46,22 +46,22 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
 
       if(auto it = m_tiles.find(l); it != m_tiles.end())
       {
-        if(!replace && classId == StraightRailTile::classId && it->second->tileId() == TileId::RailStraight) // merge to bridge
+        if(!replace && tileClassId == StraightRailTile::classId && it->second->tileId() == TileId::RailStraight) // merge to bridge
         {
           const TileRotate tileRotate = it->second->rotate;
           if((tileRotate == rotate + TileRotate::Deg90 || tileRotate == rotate - TileRotate::Deg90) && deleteTile(x, y))
           {
-            classId = Bridge90RailTile::classId;
+            tileClassId = Bridge90RailTile::classId;
             rotate = tileRotate;
           }
           else if((tileRotate == rotate + TileRotate::Deg45 || tileRotate == rotate + TileRotate::Deg225) && deleteTile(x, y))
           {
-            classId = Bridge45LeftRailTile::classId;
+            tileClassId = Bridge45LeftRailTile::classId;
             rotate = tileRotate;
           }
           else if((tileRotate == rotate - TileRotate::Deg45 || tileRotate == rotate - TileRotate::Deg225) && deleteTile(x, y))
           {
-            classId = Bridge45RightRailTile::classId;
+            tileClassId = Bridge45RightRailTile::classId;
             rotate = tileRotate;
           }
           else
@@ -71,7 +71,7 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
           return false;
       }
 
-      auto tile = Tiles::create(w, classId);
+      auto tile = Tiles::create(w, tileClassId);
       if(!tile)
         return false;
 
