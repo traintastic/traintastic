@@ -303,7 +303,6 @@ jobs:
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         path-to-lcov: ${{github.workspace}}/server/build/ccov/traintastic-server-test.info
-        base-path: ${{github.workspace}}/server
 
     - name: "Code coverage: upload artifact"
       if: matrix.config.ccov
