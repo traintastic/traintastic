@@ -88,8 +88,14 @@ TEMPLATE_TEST_CASE("Board: Add tile", "[board][board-add]"
   auto board = world->boards->add();
 
   REQUIRE(board->addTile(0, 0, TileRotate::Deg0, TestType::classId, false));
+  REQUIRE(board->isTile({0, 0}));
+  std::weak_ptr<Tile> tileWeak = board->getTile({0, 0});
+  REQUIRE_FALSE(tileWeak.expired());
+  REQUIRE(tileWeak.lock()->getClassId() == TestType::classId);
 
   REQUIRE_FALSE(board->addTile(0, 0, TileRotate::Deg0, TestType::classId, false));
+  REQUIRE_FALSE(tileWeak.expired());
 
   REQUIRE(board->addTile(0, 0, TileRotate::Deg0, TestType::classId, true));
+  REQUIRE(tileWeak.expired());
 }
