@@ -36,9 +36,7 @@ ScriptList::ScriptList(Object& _parent, const std::string& parentPropertyName) :
       auto world = getWorld(&this->parent());
       if(!world)
         return std::shared_ptr<Script>();
-      auto script = Script::create(world, world->getUniqueId("script"));
-      addObject(script);
-      return script;
+      return Script::create(world, world->getUniqueId("script"));
     }}
 {
   auto world = getWorld(&_parent);
