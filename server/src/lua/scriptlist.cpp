@@ -38,6 +38,13 @@ ScriptList::ScriptList(Object& _parent, const std::string& parentPropertyName) :
         return std::shared_ptr<Script>();
       return Script::create(world, world->getUniqueId("script"));
     }}
+  , remove{*this, "remove",
+    [this](const std::shared_ptr<Script>& script)
+    {
+      if(containsObject(script))
+        script->destroy();
+      assert(!containsObject(script));
+    }}
 {
   auto world = getWorld(&_parent);
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
@@ -45,6 +52,10 @@ ScriptList::ScriptList(Object& _parent, const std::string& parentPropertyName) :
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
   m_interfaceItems.add(add);
+
+  Attributes::addDisplayName(remove, DisplayName::List::remove);
+  Attributes::addEnabled(remove, editable);
+  m_interfaceItems.add(remove);
 }
 
 TableModelPtr ScriptList::getModel()

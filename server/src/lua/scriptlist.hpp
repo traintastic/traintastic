@@ -39,6 +39,7 @@ class ScriptList : public ObjectList<Script>
     CLASS_ID("lua.script_list")
 
     ::Method<std::shared_ptr<Script>()> add;
+    ::Method<void(const std::shared_ptr<Script>&)> remove;
 
     ScriptList(Object& _parent, const std::string& parentPropertyName);
 
