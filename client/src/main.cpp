@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
   const bool logMissingStrings = !DeveloperSettings::instance().logMissingStringsDir.value().isEmpty();
 
   Locale* fallback = nullptr;
-  if(language != languageDefault && DeveloperSettings::instance().dontLoadFallbackLanguage)
+  if(language != languageDefault && !DeveloperSettings::instance().dontLoadFallbackLanguage)
   {
     fallback = new Locale(getLocalePath() / languageDefault.toStdString().append(".txt"));
     if(logMissingStrings)
@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
   if(!mw.connection())
     mw.connectToServer(options.connectTo);
 
-  const int r = app.exec();
+  const unsigned  int r = app.exec();
 
   if(logMissingStrings)
   {
