@@ -58,6 +58,7 @@ RailVehicle::RailVehicle(const std::weak_ptr<World>& world, std::string_view _id
   Attributes::addEnabled(weight, editable);
   m_interfaceItems.insertBefore(weight, notes);
 
+  Attributes::addObjectEditor(totalWeight, false);
   Attributes::addDisplayName(totalWeight, DisplayName::Vehicle::Rail::totalWeight);
   m_interfaceItems.insertBefore(totalWeight, notes);
 }
