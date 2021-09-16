@@ -24,10 +24,15 @@
 #define TRAINTASTIC_SERVER_VEHICLE_RAIL_FREIGHTCAR_HPP
 
 #include "railvehicle.hpp"
+#include "../../core/ratioproperty.hpp"
 
 class FreightCar : public RailVehicle
 {
+  private:
+    void updateCargoLoaded();
+
   protected:
+    void loaded() override;
     void worldEvent(WorldState state, WorldEvent event) final;
 
     double calcTotalWeight(WeightUnit unit) const override;
@@ -36,7 +41,9 @@ class FreightCar : public RailVehicle
     CLASS_ID("vehicle.rail.freight_car")
     CREATE(FreightCar)
 
+    RatioProperty cargoLoaded;
     WeightProperty cargoWeight;
+    WeightProperty cargoCapacity;
 
     FreightCar(const std::weak_ptr<World>& world, std::string_view _id);
 };

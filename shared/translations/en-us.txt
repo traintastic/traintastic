@@ -408,6 +408,8 @@ turnout_position:left=Left
 turnout_position:right=Right
 turnout_position:straight=Straight
 
+vehicle.rail.freight_car:cargo_capacity=Cargo capacity
+vehicle.rail.freight_car:cargo_loaded=Cargo loaded
 vehicle.rail.freight_car:cargo_weight=Cargo weight
 
 vehicle.rail:decoder=Decoder
