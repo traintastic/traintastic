@@ -361,6 +361,9 @@ qtapp:zoom_out=Zoom out
 
 rail_vehicle_list:type=Type
 
+ratio_unit:percent=%
+ratio_unit:ratio=
+
 sensor_type:occupy_detector=Occupy detector
 sensor_type:reed_switch=Reed switch
 
