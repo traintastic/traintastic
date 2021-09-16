@@ -67,7 +67,44 @@ class UnitProperty : public AbstractUnitProperty
         return;
       else if(!isWriteable())
         throw not_writable_error();
-      else //if(!m_onSet || m_onSet(value))
+
+      if(auto it = m_attributes.find(AttributeName::Min); it != m_attributes.end())
+      {
+        const T min = static_cast<Attribute<T>&>(*it->second).value();
+
+        if(value < min)
+        {
+          if constexpr(std::is_floating_point_v<T>)
+          {
+            if(value > min - std::numeric_limits<T>::epsilon() * 100)
+              value = min;
+            else
+              throw out_of_range_error();
+          }
+          else
+            throw out_of_range_error();
+        }
+      }
+
+      if(auto it = m_attributes.find(AttributeName::Max); it != m_attributes.end())
+      {
+        const T max = static_cast<Attribute<T>&>(*it->second).value();
+
+        if(value > max)
+        {
+          if constexpr(std::is_floating_point_v<T>)
+          {
+            if(value < max + std::numeric_limits<T>::epsilon() * 100)
+              value = max;
+            else
+              throw out_of_range_error();
+          }
+          else
+            throw out_of_range_error();
+        }
+      }
+
+      //if(!m_onSet || m_onSet(value))
       {
         m_value = value;
         if(m_onChanged)
@@ -108,6 +145,16 @@ class UnitProperty : public AbstractUnitProperty
         return;
 
       m_value = convertUnit(m_value, m_unit, value);
+      if(auto itMin = m_attributes.find(AttributeName::Min); itMin != m_attributes.end())
+      {
+        auto& attr = static_cast<Attribute<T>&>(*itMin->second);
+        attr.setValue(convertUnit(attr.value(), m_unit, value));
+      }
+      if(auto itMax = m_attributes.find(AttributeName::Max); itMax != m_attributes.end())
+      {
+        auto& attr = static_cast<Attribute<T>&>(*itMax->second);
+        attr.setValue(convertUnit(attr.value(), m_unit, value));
+      }
       m_unit = value;
       if(m_onChanged)
         m_onChanged(m_value, m_unit);

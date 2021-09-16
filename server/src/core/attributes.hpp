@@ -26,6 +26,7 @@
 #include "interfaceitem.hpp"
 #include "abstractobjectproperty.hpp"
 #include "property.hpp"
+#include "unitproperty.hpp"
 #include "vectorproperty.hpp"
 
 struct Attributes
@@ -69,6 +70,14 @@ struct Attributes
     property.addAttribute(AttributeName::Max, max);
   }
 
+  template<class T, class Unit>
+  static inline void addMinMax(UnitProperty<T, Unit>& property, T min, T max, Unit unit)
+  {
+    static_assert(std::is_floating_point_v<T>);
+    property.addAttribute(AttributeName::Min, convertUnit(min, unit, property.unit()));
+    property.addAttribute(AttributeName::Max, convertUnit(max, unit, property.unit()));
+  }
+
   template<typename T>
   static inline void setMin(Property<T>& property, T value)
   {
@@ -76,11 +85,25 @@ struct Attributes
     property.setAttribute(AttributeName::Min, value);
   }
 
+  template<class T, class Unit>
+  static inline void setMin(UnitProperty<T, Unit>& property, T value, Unit unit)
+  {
+    static_assert(std::is_floating_point_v<T>);
+    property.setAttribute(AttributeName::Min, convertUnit(value, unit, property.unit()));
+  }
+
   template<typename T>
   static inline void setMax(Property<T>& property, T value)
   {
     static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
     property.setAttribute(AttributeName::Max, value);
+  }
+
+  template<class T, class Unit>
+  static inline void setMax(UnitProperty<T, Unit>& property, T value, Unit unit)
+  {
+    static_assert(std::is_floating_point_v<T>);
+    property.setAttribute(AttributeName::Max, convertUnit(value, unit, property.unit()));
   }
 
   static inline void addVisible(InterfaceItem& item, bool value)
