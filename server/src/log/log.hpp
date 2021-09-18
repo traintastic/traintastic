@@ -101,6 +101,11 @@ class Log
 
     static void log(std::string objectId, LogMessage message);
 
+    inline static void log(std::string_view objectId, LogMessage message)
+    {
+      log(std::string{objectId}, message);
+    }
+
     inline static void log(const Object& object, LogMessage message)
     {
       log(object.getObjectId(), message);
@@ -113,6 +118,15 @@ class Log
       list.reserve(sizeof...(Args));
       append(list, std::forward<const Args&>(args)...);
       logFormatted(std::move(objectId), message, std::move(list));
+    }
+
+    template<class... Args>
+    inline static void log(std::string_view objectId, LogMessage message, const Args&... args)
+    {
+      std::vector<std::string> list;
+      list.reserve(sizeof...(Args));
+      append(list, std::forward<const Args&>(args)...);
+      logFormatted(std::string{objectId}, message, std::move(list));
     }
 
     template<class... Args>
