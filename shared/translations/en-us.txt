@@ -336,6 +336,8 @@ qtapp.object_select_list_dialog:select_object=Select object
 qtapp.settings.board:show_block_sensor_states=Show block sensor states
 
 qtapp.settings.developer:dont_load_fallback_language=Don't load fallback language
+qtapp.settings.developer:log_missing_strings=Log missing translations
+qtapp.settings.developer:log_missing_strings_dir=Missing translations log directory
 
 qtapp.settings.general:language=Language
 
@@ -462,6 +464,3 @@ xpressnet_serial_interface:lenz_li100=Lenz LI100
 xpressnet_serial_interface:lenz_li100f=Lenz LI100F
 xpressnet_serial_interface:lenz_li101f=Lenz LI101F
 xpressnet_serial_interface:rosoft_s88xpressnetli=RoSoft s88XpressNetLI
-
-qtapp.settings.developer:log_missing_strings=Log missing translations
-qtapp.settings.developer:log_missing_strings_dir=Missing translations log directory
