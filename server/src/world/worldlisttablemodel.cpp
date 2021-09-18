@@ -30,10 +30,10 @@ constexpr uint32_t columnUUID = 1;
 
 WorldListTableModel::WorldListTableModel(WorldList& worldList) :
   TableModel(),
-  m_worldList{worldList}
+  m_worldList{worldList.shared_ptr<WorldList>()}
 {
-  m_worldList.m_models.push_back(this);
-  setRowCount(static_cast<uint32_t>(m_worldList.m_items.size()));
+  m_worldList->m_models.push_back(this);
+  setRowCount(static_cast<uint32_t>(m_worldList->m_items.size()));
 
   setColumnHeaders({
     DisplayName::Object::name,
@@ -43,16 +43,16 @@ WorldListTableModel::WorldListTableModel(WorldList& worldList) :
 
 WorldListTableModel::~WorldListTableModel()
 {
-  auto it = std::find(m_worldList.m_models.begin(), m_worldList.m_models.end(), this);
-  assert(it != m_worldList.m_models.end());
-  m_worldList.m_models.erase(it);
+  auto it = std::find(m_worldList->m_models.begin(), m_worldList->m_models.end(), this);
+  assert(it != m_worldList->m_models.end());
+  m_worldList->m_models.erase(it);
 }
 
 std::string WorldListTableModel::getText(uint32_t column, uint32_t row) const
 {
   if(row < rowCount())
   {
-    auto& item = m_worldList.m_items[row];
+    auto& item = m_worldList->m_items[row];
 
     switch(column)
     {

@@ -51,7 +51,7 @@ const WorldList::WorldInfo* WorldList::find(const boost::uuids::uuid& uuid)
 
 void WorldList::buildIndex()
 {
-  Log::log(*Traintastic::instance, LogMessage::I1005_BUILDING_WORLD_INDEX);
+  Log::log(Traintastic::classId, LogMessage::I1005_BUILDING_WORLD_INDEX);
 
   m_items.clear();
 
@@ -86,7 +86,7 @@ void WorldList::buildIndex()
         }
         catch(const std::exception& e)
         {
-          Log::log(*Traintastic::instance, LogMessage::C1004_READING_WORLD_FAILED_X_X, e, worldFile);
+          Log::log(Traintastic::classId, LogMessage::C1004_READING_WORLD_FAILED_X_X, e, worldFile);
         }
       }
     }

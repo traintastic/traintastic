@@ -31,7 +31,7 @@ class WorldList;
 class WorldListTableModel : public TableModel
 {
   protected:
-    WorldList& m_worldList;
+    std::shared_ptr<WorldList> m_worldList;
 
   public:
     CLASS_ID("world_list_table_model")

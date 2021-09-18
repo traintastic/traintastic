@@ -31,27 +31,28 @@ class ObjectListTableModel : public TableModel
 {
   friend class ObjectList<T>;
 
-  protected:
-    ObjectList<T>& m_list;
+  private:
+    std::shared_ptr<ObjectList<T>> m_list;
 
-    const T& getItem(uint32_t row) const { return *m_list.m_items[row]; }
+  protected:
+    const T& getItem(uint32_t row) const { return *m_list->m_items[row]; }
     //T& getItem(uint32_t row) { return *m_list.m_items[row]; }
     virtual void propertyChanged(BaseProperty& property, uint32_t row) = 0;
 
   public:
     ObjectListTableModel(ObjectList<T>& list) :
       TableModel(),
-      m_list{list}
+      m_list{std::static_pointer_cast<ObjectList<T>>(list.shared_from_this())}
     {
-      m_list.m_models.push_back(this);
-      setRowCount(static_cast<uint32_t>(m_list.m_items.size()));
+      list.m_models.push_back(this);
+      setRowCount(static_cast<uint32_t>(list.m_items.size()));
     }
 
     ~ObjectListTableModel() override
     {
-      auto it = std::find(m_list.m_models.begin(), m_list.m_models.end(), this);
-      assert(it != m_list.m_models.end());
-      m_list.m_models.erase(it);
+      auto it = std::find(m_list->m_models.begin(), m_list->m_models.end(), this);
+      assert(it != m_list->m_models.end());
+      m_list->m_models.erase(it);
     }
 };
 
