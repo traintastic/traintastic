@@ -299,6 +299,7 @@ jobs:
 
     - name: "Code coverage: upload to coveralls.io"
       if: matrix.config.ccov
+      continue-on-error: true
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
