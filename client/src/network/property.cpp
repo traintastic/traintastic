@@ -92,7 +92,12 @@ template<class T>
     {
       QString error;
       if(message->isError())
-        error = QString::fromLatin1(message->read<QByteArray>());
+      {
+        if(message->errorCode() == Message::ErrorCode::Other)
+          error = QString::fromLatin1(message->read<QByteArray>());
+        else
+          error = QString("error %1").arg(static_cast<int>(message->errorCode()));
+      }
       callback(error);
     });
 
