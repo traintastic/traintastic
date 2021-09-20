@@ -193,10 +193,17 @@ bool Session::processMessage(const Message& message)
               else // send changed event with current value:
                 objectPropertyChanged(*property);
             }
+
+            if(message.isRequest()) // send success response
+              m_client->sendMessage(Message::newResponse(message.command(), message.requestId()));
           }
+          else if(message.isRequest()) // send error response
+            m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), "unknown property"));
         }
+        else if(message.isRequest()) // send error response
+          m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), "unknown object"));
       }
-      break;
+      return true;
     }
     case Message::Command::ObjectSetUnitPropertyUnit:
     {
