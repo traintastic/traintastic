@@ -25,6 +25,7 @@
 #include "object.hpp"
 #include "method.hpp"
 #include "log.hpp"
+#include "class.hpp"
 #include <traintastic/utils/str.hpp>
 #include <traintastic/codename.hpp>
 #include "../world/world.hpp"
@@ -92,6 +93,16 @@ SandboxPtr Sandbox::create(Script& script)
   // add logger:
   Log::push(L);
   lua_setfield(L, -2, "log");
+
+  // add is_instance function:
+  lua_pushcfunction(L, Class::isInstance);
+  lua_setfield(L, -2, "is_instance");
+
+  // add class types:
+  lua_newtable(L);
+  Class::registerValues(L);
+  ReadOnlyTable::wrap(L, -1);
+  lua_setfield(L, -2, "class");
 
   // add enum values:
   lua_newtable(L);
