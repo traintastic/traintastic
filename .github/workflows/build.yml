@@ -471,7 +471,7 @@ jobs:
         name: traintastic-data-deb
         path: ${{github.workspace}}/dist
 
-    - uses: easingthemes/ssh-deploy@v2.1.5
+    - uses: easingthemes/ssh-deploy@v2.2.11
       env:
           SSH_PRIVATE_KEY: ${{secrets.SERVER_SSH_KEY}}
           ARGS: "-rltgoDzvO"
