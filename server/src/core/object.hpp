@@ -92,9 +92,13 @@ class Object : public std::enable_shared_from_this<Object>
 
     const InterfaceItems& interfaceItems() const { return m_interfaceItems; }
 
+    const InterfaceItem* getItem(std::string_view name) const;
     InterfaceItem* getItem(std::string_view name);
+    const AbstractMethod* getMethod(std::string_view name) const;
     AbstractMethod* getMethod(std::string_view name);
+    const AbstractProperty* getProperty(std::string_view name) const;
     AbstractProperty* getProperty(std::string_view name);
+    const AbstractVectorProperty* getVectorProperty(std::string_view name) const;
     AbstractVectorProperty* getVectorProperty(std::string_view name);
 };
 
