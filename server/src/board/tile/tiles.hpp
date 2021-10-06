@@ -82,6 +82,8 @@ struct Tiles
   );
 
   static std::shared_ptr<Tile> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = {});
+
+  static bool isRailSignal(std::string_view classId);
 };
 
 #endif
