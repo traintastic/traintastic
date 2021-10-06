@@ -519,7 +519,10 @@ void BoardWidget::rightClicked()
   if(QAction* act = m_editActions->checkedAction())
     if(int index = act->data().toInt(); index >= 0 && Q_LIKELY(index < tileInfo.size()))
     {
-      m_editRotate += TileRotate::Deg45;
+      if(QApplication::keyboardModifiers() == Qt::NoModifier)
+        m_editRotate += TileRotate::Deg45;
+      else if(QApplication::keyboardModifiers() == Qt::ShiftModifier)
+        m_editRotate -= TileRotate::Deg45;
       validRotate(m_editRotate, tileInfo[index].rotates);
       m_boardArea->setMouseMoveTileRotate(m_editRotate);
     }
