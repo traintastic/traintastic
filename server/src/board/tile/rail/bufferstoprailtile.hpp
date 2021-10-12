@@ -27,7 +27,7 @@
 
 class BufferStopRailTile : public RailTile
 {
-  CLASS_ID("board_tile.rail.bufferstop")
+  CLASS_ID("board_tile.rail.buffer_stop")
   CREATE(BufferStopRailTile)
 
   public:
