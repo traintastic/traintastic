@@ -50,7 +50,7 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
         {
           const TileRotate tileRotate = it->second->rotate;
 
-          if(tileClassId == StraightRailTile::classId && it->second->tileId() == TileId::RailStraight) // merge to bridge
+          if(it->second->tileId() == TileId::RailStraight && tileClassId == StraightRailTile::classId) // merge to bridge
           {
             if((tileRotate == rotate + TileRotate::Deg90 || tileRotate == rotate - TileRotate::Deg90) && deleteTile(x, y))
             {
@@ -70,9 +70,10 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
             else
               return false;
           }
-          else if(Tiles::isRailSignal(tileClassId) && // replace straight by a signal
-                  it->second->tileId() == TileId::RailStraight &&
-                  (tileRotate == rotate || (tileRotate + TileRotate::Deg180) == rotate) && deleteTile(x, y))
+          else if(it->second->tileId() == TileId::RailStraight && // replace straight by a straight with something extra
+                  Tiles::canUpgradeStraightRail(tileClassId) &&
+                  (tileRotate == rotate || (tileRotate + TileRotate::Deg180) == rotate) &&
+                  deleteTile(x, y))
           {
             // tileClassId and rotate are ok :)
           }
