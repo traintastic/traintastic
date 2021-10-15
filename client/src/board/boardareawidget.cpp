@@ -353,6 +353,9 @@ void BoardAreaWidget::mouseMoveEvent(QMouseEvent* event)
               std::max(1, 1 + std::max(old.y, tl.y) - m_mouseMoveHideTileLocation.y),
               tileSize));
             break;
+
+          case MouseMoveAction::None:
+            break;
         }
       }
     }
@@ -533,6 +536,9 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           tilePainter.draw(m_mouseMoveTileId, r, m_mouseMoveTileRotate);
         }
       }
+      break;
+
+    case MouseMoveAction::None:
       break;
   }
 }
