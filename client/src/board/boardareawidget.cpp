@@ -59,6 +59,7 @@ constexpr QRect updateTileRect(const int x, const int y, const int w, const int 
 
 BoardAreaWidget::BoardAreaWidget(BoardWidget& board, QWidget* parent) :
   QWidget(parent),
+  m_colorScheme{&BoardColorScheme::dark},
   m_board{board},
   m_boardLeft{board.board().getProperty("left")},
   m_boardTop{board.board().getProperty("top")},
@@ -84,11 +85,12 @@ BoardAreaWidget::BoardAreaWidget(BoardWidget& board, QWidget* parent) :
   if(Q_LIKELY(m_boardBottom))
     connect(m_boardBottom, &AbstractProperty::valueChanged, this, &BoardAreaWidget::updateMinimumSize);
 
-  connect(&BoardSettings::instance(), &SettingsBase::changed, this, qOverload<>(&QWidget::update));
+  connect(&BoardSettings::instance(), &SettingsBase::changed, this, &BoardAreaWidget::settingsChanged);
 
   for(const auto& [l, object] : m_board.board().tileObjects())
     tileObjectAdded(l.x, l.y, object);
 
+  settingsChanged();
   updateMinimumSize();
 }
 
@@ -374,8 +376,9 @@ void BoardAreaWidget::wheelEvent(QWheelEvent* event)
 
 void BoardAreaWidget::paintEvent(QPaintEvent* event)
 {
+  assert(m_colorScheme);
+
   const bool showBlockSensorStates = BoardSettings::instance().showBlockSensorStates;
-  const QColor backgroundColor = TilePainter::backgroundColor;
   const QColor backgroundColor50{0x10, 0x10, 0x10, 0x80};
   const QColor backgroundColorError50{0xff, 0x00, 0x00, 0x80};
   const QColor gridColor{0x40, 0x40, 0x40};
@@ -388,7 +391,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
   const QRect viewport = rectToViewport(event->rect(), gridSize);
 
-  painter.fillRect(viewport, backgroundColor);
+  painter.fillRect(viewport, m_colorScheme->background);
 
   // draw grid:
   switch(m_grid)
@@ -415,7 +418,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
   painter.setRenderHint(QPainter::Antialiasing, true);
 
   // draw tiles:
-  TilePainter tilePainter{painter, tileSize};
+  TilePainter tilePainter{painter, tileSize, *m_colorScheme};
 
   const int tileOriginX = boardLeft();
   const int tileOriginY = boardTop();
@@ -532,6 +535,24 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
       }
       break;
   }
+}
+
+void BoardAreaWidget::settingsChanged()
+{
+  const auto& s = BoardSettings::instance();
+
+  switch(s.colorScheme.value())
+  {
+    case BoardSettings::ColorScheme::Dark:
+      m_colorScheme = &BoardColorScheme::dark;
+      break;
+
+    case BoardSettings::ColorScheme::Light:
+      m_colorScheme = &BoardColorScheme::light;
+      break;
+  }
+
+  update();
 }
 
 void BoardAreaWidget::updateMinimumSize()

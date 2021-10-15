@@ -32,6 +32,7 @@
 #include <traintastic/enum/signalaspect.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/turnoutposition.hpp>
+#include "boardcolorscheme.hpp"
 #include "../network/abstractproperty.hpp"
 #include "../network/objectptr.hpp"
 
@@ -56,6 +57,9 @@ class BoardAreaWidget : public QWidget
       MoveTile,
       ResizeTile,
     };
+
+  private:
+    const BoardColorScheme* m_colorScheme;
 
   protected:
     static constexpr int boardMargin = 1; // tile
@@ -105,6 +109,7 @@ class BoardAreaWidget : public QWidget
     void paintEvent(QPaintEvent* event) final;
 
   protected slots:
+    void settingsChanged();
     void updateMinimumSize();
 
   public:
