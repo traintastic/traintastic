@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_CLIENT_SETTINGS_BOARDSETTINGS_HPP
 #define TRAINTASTIC_CLIENT_SETTINGS_BOARDSETTINGS_HPP
 
+#include <array>
 #include "settingsbase.hpp"
 #include "setting.hpp"
 #include <traintastic/enum/enum.hpp>
