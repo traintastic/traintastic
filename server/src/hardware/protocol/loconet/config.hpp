@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/interfaces.hpp
+ * server/src/hardware/protocol/loconet/config.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,23 +20,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_CONFIG_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_CONFIG_HPP
 
-#include "interface.hpp"
-#include "../../utils/makearray.hpp"
+#include "../../../enum/loconetcommandstation.hpp"
 
-#include "loconetinterface.hpp"
+namespace LocoNet {
 
-struct Interfaces
+struct Config
 {
-  static constexpr std::string_view classIdPrefix = "interface.";
+  bool fastClockSyncEnabled;
+  uint8_t fastClockSyncInterval; //!< Fast clock sync interval in seconds
 
-  static constexpr auto classList = makeArray(
-    LocoNetInterface::classId
-  );
-
-  static std::shared_ptr<Interface> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = std::string_view{});
+  bool debugLogInput;
+  bool debugLogOutput;
+  bool debugLogRXTX;
 };
+
+}
 
 #endif

@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/interfaces.hpp
+ * server/src/utils/setthreadname.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,23 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
+#ifndef TRAINTASTIC_SERVER_UTILS_SETTHREADNAME_HPP
+#define TRAINTASTIC_SERVER_UTILS_SETTHREADNAME_HPP
 
-#include "interface.hpp"
-#include "../../utils/makearray.hpp"
+#include <type_traits>
+#include <thread>
+#if __has_include(<pthread.h>)
+  #include <pthread.h>
+#endif
 
-#include "loconetinterface.hpp"
-
-struct Interfaces
+inline void setThreadName(const char* name)
 {
-  static constexpr std::string_view classIdPrefix = "interface.";
-
-  static constexpr auto classList = makeArray(
-    LocoNetInterface::classId
-  );
-
-  static std::shared_ptr<Interface> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = std::string_view{});
-};
+#if __has_include(<pthread.h>)
+  if constexpr(std::is_same_v<std::thread::native_handle_type, pthread_t>)
+    pthread_setname_np(pthread_self(), name);
+#endif
+#ifdef WIN32
+  // TODO:
+  //if constexpr(std::is_same_v<std::thread::native_handle_type, HANDLE>)
+  //  SetThreadDescriptionA(GetCurrentThread(), name);
+#endif
+}
 
 #endif

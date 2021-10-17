@@ -126,6 +126,12 @@ enum class LogMessage : uint32_t
   E2010_SERIAL_PORT_OPEN_FAILED_X = LogMessageOffset::error + 2010,
   E2011_SOCKET_SEND_FAILED_X = LogMessageOffset::error + 2011,
   E2012_FUNCTION_NUMBER_ALREADY_IN_USE = LogMessageOffset::error + 2012,
+  E2013_SERIAL_PORT_SET_BAUDRATE_FAILED_X = LogMessageOffset::error + 2013,
+  E2014_SERIAL_PORT_SET_DATA_BITS_FAILED_X = LogMessageOffset::error + 2014,
+  E2015_SERIAL_PORT_SET_STOP_BITS_FAILED_X = LogMessageOffset::error + 2015,
+  E2016_SERIAL_PORT_SET_PARITY_FAILED_X = LogMessageOffset::error + 2016,
+  E2017_SERIAL_PORT_SET_FLOW_CONTROL_FAILED_X = LogMessageOffset::error + 2017,
+
   E9999_X = LogMessageOffset::error + 9999,
 
   // Critical:
@@ -137,8 +143,9 @@ enum class LogMessage : uint32_t
   C1006_CREATING_WORLD_BACKUP_FAILED_X = LogMessageOffset::critical + 1006,
   C1007_CREATING_WORLD_BACKUP_DIRECTORY_FAILED_X = LogMessageOffset::critical + 1007,
   C2001_ADDRESS_ALREADY_USED_AT_X = LogMessageOffset::critical + 2001,
-  C2002_DCCPLUSPLUS_ONLY_SUPPORTS_THE_DCC_PROTOCOL = LogMessageOffset::critical + 2001,
-  C2003_DCCPLUSPLUS_DOESNT_SUPPORT_DCC_LONG_ADDRESSES_BELOW_128 = LogMessageOffset::critical + 2002,
+  C2002_DCCPLUSPLUS_ONLY_SUPPORTS_THE_DCC_PROTOCOL = LogMessageOffset::critical + 2002,
+  C2003_DCCPLUSPLUS_DOESNT_SUPPORT_DCC_LONG_ADDRESSES_BELOW_128 = LogMessageOffset::critical + 2003,
+  C2004_CANT_GET_FREE_SLOT = LogMessageOffset::critical + 2004,
   C9999_X = LogMessageOffset::critical + 9999,
 
   // Fatal:

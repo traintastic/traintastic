@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/loconet/loconetlist.cpp
+ * server/src/enum/loconetinterface.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,20 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "loconetlist.hpp"
-#include "loconetlisttablemodel.hpp"
+#ifndef TRAINTASTIC_SERVER_ENUM_LOCONETINTERFACETYPE_HPP
+#define TRAINTASTIC_SERVER_ENUM_LOCONETINTERFACETYPE_HPP
 
-LocoNetList::LocoNetList(Object& _parent, const std::string& parentPropertyName) :
-  ObjectList<LocoNet::LocoNet>(_parent, parentPropertyName)
+#include <traintastic/enum/loconetinterfacetype.hpp>
+#include <array>
+
+inline constexpr std::array<LocoNetInterfaceType, 3> locoNetInterfaceTypeValues{{
+  LocoNetInterfaceType::Serial,
+  LocoNetInterfaceType::TCPBinary,
+  LocoNetInterfaceType::LBServer,
+}};
+
+constexpr bool isSerial(LocoNetInterfaceType value)
 {
+  return (value == LocoNetInterfaceType::Serial);
 }
 
-TableModelPtr LocoNetList::getModel()
+constexpr bool isNetwork(LocoNetInterfaceType value)
 {
-  return std::make_shared<LocoNetListTableModel>(*this);
+  return (value == LocoNetInterfaceType::TCPBinary || value == LocoNetInterfaceType::LBServer);
 }
 
-bool LocoNetList::isListedProperty(const std::string& name)
-{
-  return LocoNetListTableModel::isListedProperty(name);
-}
+#endif

@@ -40,16 +40,7 @@ class_id:board_tile.rail.turnout_right_90=Turnout right 90°
 class_id:board_tile.rail.turnout_right_curved=Turnout right curved
 class_id:board_tile.rail.turnout_singleslip=Single slip
 class_id:board_tile.rail.turnout_wye=Turnout wye
-class_id:command_station.dccplusplus_serial=DCC++ (serial)
-class_id:command_station.loconet_serial=LocoNet (serial)
-class_id:command_station.loconet_tcp_binary=LocoNet (TCP binary)
-class_id:command_station.virtual=Virtual
-class_id:command_station.xpressnet_serial=XpressNet (serial)
-class_id:command_station.z21=Z21
-class_id:controller.wlanmaus=WLANmaus
-class_id:input.loconet=LocoNet input
-class_id:input.xpressnet=XpressNet input
-class_id:output.loconet=LocoNet output
+class_id:interface.loconet=LocoNet
 class_id:vehicle.rail.freight_car=Freight car
 class_id:vehicle.rail.locomotive=Locomotive
 
@@ -137,6 +128,8 @@ input_map_item.block:input=Input
 input_map_item.block:invert=Invert
 input_map_item.block:type=Type
 
+interface.loconet:type=Type
+
 interface:status=Status
 
 ip:hostname=Hostname
@@ -163,9 +156,20 @@ loconet_command_station:custom=Custom
 loconet_command_station:digikeijs_dr5000=Digikeijs DR5000
 loconet_command_station:uhlenbrock_intellibox=Uhlenbrock Intellibox
 
+loconet_interface_type:lbserver=LBServer
+loconet_interface_type:serial=Serial
+loconet_interface_type:tcp_binary=TCP binary
+
 loconet_serial_interface:custom=Custom
 loconet_serial_interface:digikeijs_dr5000=Digikeijs DR5000
 loconet_serial_interface:rosoft_loconet_interface=RoSoft LocoNet interface
+
+loconet_settings:command_station=Command station
+loconet_settings:debug_log_input=Enable input logging
+loconet_settings:debug_log_output=Enable output logging
+loconet_settings:debug_log_rx_tx=Enable RX/TX logging
+loconet_settings:fast_clock_sync_enabled=Fast clock sync enabled
+loconet_settings:fast_clock_sync_interval=Fast clock sync interval
 
 lua.script:start=Start
 lua.script:stop=Stop
@@ -283,11 +287,6 @@ output_map:use=Use
 protocol.dccplusplus:debug_log=Enable command logging (debug)
 protocol.dccplusplus:use_ex=Use DCC++EX commands
 
-protocol.loconet:command_station=Command station
-protocol.loconet:debug_log_input=Enable input logging
-protocol.loconet:debug_log_output=Enable output logging
-protocol.loconet:debug_log_rx_tx=Enable RX/TX logging
-
 protocol.xpressnet:command_station=Command station
 protocol.xpressnet:debug_log=Enable logging (debug)
 protocol.xpressnet:use_emergency_stop_locomotive_command=Use short emergency stop locomotive command
@@ -376,6 +375,7 @@ sensor_type:occupy_detector=Occupy detector
 sensor_type:reed_switch=Reed switch
 
 serial:baudrate=Baudrate
+serial:device=Device
 serial:flow_control=Flow control
 serial:port=Port
 

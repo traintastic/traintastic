@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/interfaces.hpp
+ * server/src/hardware/protocol/loconet/iohandler/tcpiohandler.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,23 +20,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
+#include "tcpiohandler.hpp"
+#include "../kernel.hpp"
+#include "../../../../log/logmessageexception.hpp"
 
-#include "interface.hpp"
-#include "../../utils/makearray.hpp"
+namespace LocoNet {
 
-#include "loconetinterface.hpp"
-
-struct Interfaces
+TCPIOHandler::TCPIOHandler(Kernel& kernel, const std::string& hostname, uint16_t port)
+  : IOHandler(kernel)
+  , m_socket{m_kernel.ioContext()}
 {
-  static constexpr std::string_view classIdPrefix = "interface.";
+  boost::system::error_code ec;
 
-  static constexpr auto classList = makeArray(
-    LocoNetInterface::classId
-  );
+  m_endpoint.port(port);
+  m_endpoint.address(boost::asio::ip::make_address(hostname, ec));
+  if(ec)
+    throw LogMessageException(LogMessage::E2003_MAKE_ADDRESS_FAILED_X, ec);
 
-  static std::shared_ptr<Interface> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = std::string_view{});
-};
+  m_socket.connect(m_endpoint, ec);
+  if(ec)
+    throw LogMessageException(LogMessage::E2005_SOCKET_CONNECT_FAILED_X, ec);
 
-#endif
+
+  m_socket.set_option(boost::asio::socket_base::linger(true, 0));
+  m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
+}
+
+TCPIOHandler::~TCPIOHandler()
+{
+}
+
+}

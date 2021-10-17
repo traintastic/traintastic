@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/loconet/loconetlist.hpp
+ * server/src/utils/startswith.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,23 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_LOCONETLIST_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_LOCONETLIST_HPP
+#ifndef TRAINTASTIC_SERVER_UTILS_STARTSWITH_HPP
+#define TRAINTASTIC_SERVER_UTILS_STARTSWITH_HPP
 
-#include "../../../core/objectlist.hpp"
-#include "loconet.hpp"
+#include <string_view>
 
-class LocoNetList : public ObjectList<LocoNet::LocoNet>
+constexpr bool startsWith(std::string_view sv, std::string_view prefix)
 {
-  protected:
-    bool isListedProperty(const std::string& name) final;
-
-  public:
-    CLASS_ID("loconet_list")
-
-    LocoNetList(Object& _parent, const std::string& parentPropertyName);
-
-    TableModelPtr getModel() final;
-};
+  return sv.size() >= prefix.size() && std::equal(prefix.begin(), prefix.end(), sv.begin());
+}
 
 #endif

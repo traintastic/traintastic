@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/interfaces.hpp
+ * server/src/hardware/protocol/loconet/iohandler/tcpiohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,23 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_IOHANDLER_TCPIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_IOHANDLER_TCPIOHANDLER_HPP
 
-#include "interface.hpp"
-#include "../../utils/makearray.hpp"
+#include "iohandler.hpp"
+#include <boost/asio/ip/tcp.hpp>
 
-#include "loconetinterface.hpp"
+namespace LocoNet {
 
-struct Interfaces
+class TCPIOHandler : public IOHandler
 {
-  static constexpr std::string_view classIdPrefix = "interface.";
+  protected:
+    boost::asio::ip::tcp::socket m_socket;
+    boost::asio::ip::tcp::endpoint m_endpoint;
 
-  static constexpr auto classList = makeArray(
-    LocoNetInterface::classId
-  );
+    TCPIOHandler(Kernel& kernel, const std::string& hostname, uint16_t port);
 
-  static std::shared_ptr<Interface> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = std::string_view{});
+  public:
+    ~TCPIOHandler() override;
 };
+
+}
 
 #endif

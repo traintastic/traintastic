@@ -21,6 +21,7 @@
  */
 
 #include "messages.hpp"
+#include "../../../utils/inrange.hpp"
 #include "../../../utils/tohex.hpp"
 
 namespace LocoNet {
@@ -54,6 +55,65 @@ bool isValid(const Message& message)
     if(reinterpret_cast<const uint8_t*>(&message)[i] & 0x80)
       return false;
   return true;
+}
+
+bool isLocoSlot(uint8_t slot)
+{
+  return inRange(slot, SLOT_LOCO_MIN, SLOT_LOCO_MAX);
+}
+
+void setSlot(Message& message, uint8_t slot)
+{
+  assert(slot < 128);
+
+  switch(message.opCode)
+  {
+    case OPC_LOCO_SPD:
+    case OPC_LOCO_DIRF:
+    case OPC_LOCO_SND:
+    case OPC_LOCO_F9F12:
+      static_cast<SlotMessage&>(message).slot = slot;
+      return;
+
+    case OPC_RQ_SL_DATA:
+      static_cast<RequestSlotData&>(message).slot = slot;
+      return;
+
+    case OPC_D4:
+    {
+      uint8_t* bytes = reinterpret_cast<uint8_t*>(&message);
+      if(bytes[1] == 0x20 && (bytes[3] == 0x08 || bytes[3] == 0x05 || bytes[3] == 0x09)) // LocoF13F19 or LocoF20F28 or LocoF21F27
+      {
+        bytes[2] = slot;
+        return;
+      }
+      break;
+    }
+    case OPC_GPON:
+    case OPC_GPOFF:
+    case OPC_IDLE:
+    case OPC_BUSY:
+    case OPC_INPUT_REP:
+    case OPC_SW_REQ:
+    case OPC_MULTI_SENSE:
+    case OPC_MULTI_SENSE_LONG:
+    case OPC_SW_REP:
+    case OPC_LONG_ACK:
+    case OPC_SLOT_STAT1:
+    case OPC_CONSIST_FUNC:
+    case OPC_UNLINK_SLOTS:
+    case OPC_LINK_SLOTS:
+    case OPC_MOVE_SLOTS:
+    case OPC_SW_STATE:
+    case OPC_SW_ACK:
+    case OPC_LOCO_ADR:
+    case OPC_PEER_XFER:
+    case OPC_SL_RD_DATA:
+    case OPC_IMM_PACKET:
+    case OPC_WR_SL_DATA:
+      break; // no slot or not yet implemented
+  }
+  assert(false);
 }
 
 std::string toString(const Message& message, bool raw)

@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/interfaces.hpp
+ * shared/src/traintastic/enum/loconetinterfacetype.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,23 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_LOCONETINTERFACETYPE_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_LOCONETINTERFACETYPE_HPP
 
-#include "interface.hpp"
-#include "../../utils/makearray.hpp"
+#include <cstdint>
+#include "enum.hpp"
 
-#include "loconetinterface.hpp"
-
-struct Interfaces
+enum class LocoNetInterfaceType : uint16_t
 {
-  static constexpr std::string_view classIdPrefix = "interface.";
-
-  static constexpr auto classList = makeArray(
-    LocoNetInterface::classId
-  );
-
-  static std::shared_ptr<Interface> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = std::string_view{});
+  Serial = 0,
+  TCPBinary = 1,
+  LBServer = 2,
 };
+
+ENUM_NAME(LocoNetInterfaceType, "loconet_interface_type")
+
+ENUM_VALUES(LocoNetInterfaceType, 3,
+{
+  {LocoNetInterfaceType::Serial, "serial"},
+  {LocoNetInterfaceType::TCPBinary, "tcp_binary"},
+  {LocoNetInterfaceType::LBServer, "lbserver"},
+})
 
 #endif

@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/interfaces.hpp
+ * server/src/hardware/protocol/loconet/iohandler/iohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,23 +20,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
 
-#include "interface.hpp"
-#include "../../utils/makearray.hpp"
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_IOHANDLER_IOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_IOHANDLER_IOHANDLER_HPP
 
-#include "loconetinterface.hpp"
+namespace LocoNet {
 
-struct Interfaces
+class Kernel;
+struct Message;
+
+class IOHandler
 {
-  static constexpr std::string_view classIdPrefix = "interface.";
+  protected:
+    Kernel& m_kernel;
 
-  static constexpr auto classList = makeArray(
-    LocoNetInterface::classId
-  );
+    IOHandler(Kernel& kernel)
+      : m_kernel{kernel}
+    {
+    }
 
-  static std::shared_ptr<Interface> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = std::string_view{});
+  public:
+    IOHandler(const IOHandler&) = delete;
+    IOHandler& operator =(const IOHandler&) = delete;
+
+    virtual ~IOHandler() = default;
+
+    virtual void start() = 0;
+    virtual void stop() = 0;
+
+    virtual bool send(const Message& message) = 0;
 };
+
+}
 
 #endif

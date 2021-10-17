@@ -28,6 +28,7 @@
 #include <traintastic/enum/decoderprotocol.hpp>
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/lengthunit.hpp>
+#include <traintastic/enum/loconetinterfacetype.hpp>
 #include <traintastic/enum/loconetcommandstation.hpp>
 #include <traintastic/enum/loconetserialinterface.hpp>
 #include <traintastic/enum/outputaction.hpp>
@@ -72,6 +73,7 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(Direction)
   TRANSLATE_ENUM(LengthUnit)
   TRANSLATE_ENUM(LocoNetCommandStation)
+  TRANSLATE_ENUM(LocoNetInterfaceType)
   TRANSLATE_ENUM(LocoNetSerialInterface)
   TRANSLATE_ENUM(OutputAction)
   TRANSLATE_ENUM(SensorType)

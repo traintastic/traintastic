@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/loconet/loconetlisttablemodel.hpp
+ * server/src/hardware/protocol/loconet/iohandler/tcpbinaryiohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,29 +20,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_LOCONETLISTTABLEMODEL_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_LOCONETLISTTABLEMODEL_HPP
 
-#include "../../../core/objectlisttablemodel.hpp"
-#include "loconet.hpp"
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_IOHANDLER_TCPBINARYIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_IOHANDLER_TCPBINARYIOHANDLER_HPP
 
-class LocoNetList;
+#include "tcpiohandler.hpp"
 
-class LocoNetListTableModel : public ObjectListTableModel<LocoNet::LocoNet>
+namespace LocoNet {
+
+class TCPBinaryIOHandler : public TCPIOHandler
 {
-  friend class LocoNetList;
+  private:
+    std::array<std::byte, 1500> m_readBuffer;
+    size_t m_readBufferOffset;
+    std::array<std::byte, 1500> m_writeBuffer;
+    size_t m_writeBufferOffset;
 
-  protected:
-    void propertyChanged(BaseProperty& property, uint32_t row) final;
+    void read();
+    void write();
 
   public:
-    CLASS_ID("loconet_list_table_model")
+    TCPBinaryIOHandler(Kernel& kernel, const std::string& hostname, uint16_t port);
+    ~TCPBinaryIOHandler() final;
 
-    static bool isListedProperty(const std::string& name);
+    void start() final;
+    void stop() final;
 
-    LocoNetListTableModel(LocoNetList& list);
-
-    std::string getText(uint32_t column, uint32_t row) const final;
+    bool send(const Message& message) final;
 };
 
+}
+
 #endif
+
