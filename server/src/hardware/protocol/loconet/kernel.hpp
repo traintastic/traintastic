@@ -154,7 +154,7 @@ class Kernel
 
     std::shared_ptr<Decoder> getDecoder(uint16_t address);
 
-    void setIOHandler(std::unique_ptr<IOHandler> ioHandler);
+    void setIOHandler(std::unique_ptr<IOHandler> handler);
 
     void send(const Message& message, Priority priority = NormalPriority);
     void send(uint16_t address, Message& message, uint8_t& slot);

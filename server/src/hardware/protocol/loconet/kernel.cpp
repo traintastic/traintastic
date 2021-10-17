@@ -770,11 +770,11 @@ std::shared_ptr<Decoder> Kernel::getDecoder(uint16_t address)
   return m_decoderController->getDecoder(DecoderProtocol::DCC, address, DCC::isLongAddress(address), true);
 }
 
-void Kernel::setIOHandler(std::unique_ptr<IOHandler> ioHandler)
+void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
 {
-  assert(ioHandler);
+  assert(handler);
   assert(!m_ioHandler);
-  m_ioHandler = std::move(ioHandler);
+  m_ioHandler = std::move(handler);
 }
 
 void Kernel::send(const Message& message, Priority priority)
