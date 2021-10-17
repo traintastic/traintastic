@@ -25,11 +25,8 @@
 
 #include <string>
 #include <vector>
-#include <type_traits>
-#include <boost/system/error_code.hpp>
 #include <traintastic/enum/logmessage.hpp>
-#include <traintastic/utils/stdfilesystem.hpp>
-#include "../core/object.hpp"
+#include "appendarguments.hpp"
 
 class Logger;
 class MemoryLogger;
@@ -40,28 +37,6 @@ class Log
     static std::list<std::unique_ptr<Logger>> s_loggers;
 
     Log() = default;
-
-    template<class T, class... Ts>
-    inline static void append(std::vector<std::string>& list, const T& value, const Ts&... others)
-    {
-      if constexpr(std::is_same_v<T, std::string> || std::is_same_v<T, std::string_view> || std::is_same_v<T, const char*>)
-        list.emplace_back(value);
-      else if constexpr((std::is_integral_v<T> && !std::is_enum_v<T>) || std::is_floating_point_v<T>)
-        list.emplace_back(std::to_string(value));
-      else if constexpr(std::is_same_v<T, boost::system::error_code> || std::is_same_v<T, std::error_code>)
-        list.emplace_back(value.message());
-      else if constexpr(std::is_same_v<T, std::filesystem::path>)
-        list.emplace_back(value.string());
-      else if constexpr(std::is_base_of_v<Object, T>)
-        list.emplace_back(value.getObjectId());
-      else if constexpr(std::is_base_of_v<std::exception, T>)
-        list.emplace_back(value.what());
-      else
-        list.emplace_back(toString(value));
-
-      if constexpr(sizeof...(Ts) > 0)
-        append(list, std::forward<const Ts&>(others)...);
-    }
 
     template<class T>
     inline static T* get()
@@ -111,12 +86,27 @@ class Log
       log(object.getObjectId(), message);
     }
 
+    inline static void log(std::string objectId, LogMessage message, const std::vector<std::string>& args)
+    {
+      logFormatted(std::move(objectId), message, args);
+    }
+
+    inline static void log(std::string_view objectId, LogMessage message, const std::vector<std::string>& args)
+    {
+      logFormatted(std::string{objectId}, message, args);
+    }
+
+    inline static void log(const Object& object, LogMessage message, const std::vector<std::string>& args)
+    {
+      logFormatted(object.getObjectId(), message, args);
+    }
+
     template<class... Args>
     static void log(std::string objectId, LogMessage message, const Args&... args)
     {
       std::vector<std::string> list;
       list.reserve(sizeof...(Args));
-      append(list, std::forward<const Args&>(args)...);
+      appendArguments(list, std::forward<const Args&>(args)...);
       logFormatted(std::move(objectId), message, std::move(list));
     }
 
@@ -125,7 +115,7 @@ class Log
     {
       std::vector<std::string> list;
       list.reserve(sizeof...(Args));
-      append(list, std::forward<const Args&>(args)...);
+      appendArguments(list, std::forward<const Args&>(args)...);
       logFormatted(std::string{objectId}, message, std::move(list));
     }
 

@@ -25,11 +25,13 @@
 
 #include <stdexcept>
 #include <traintastic/enum/logmessage.hpp>
+#include "appendarguments.hpp"
 
 class LogMessageException : public std::exception
 {
   private:
     LogMessage m_message;
+    std::vector<std::string> m_args;
     std::string m_what;
 
   public:
@@ -41,12 +43,22 @@ class LogMessageException : public std::exception
       m_what.append(std::to_string(logMessageNumber(message)));
     }
 
+    template<class... Args>
+    LogMessageException(LogMessage message, const Args&... args)
+      : m_message{message}
+      , m_what{"message:"}
+    {
+      m_args.reserve(sizeof...(Args));
+      appendArguments(m_args, std::forward<const Args&>(args)...);
+    }
+
     const char* what() const noexcept override
     {
       return m_what.c_str();
     }
 
-    inline LogMessage message() const { return m_message; }
+    inline LogMessage message() const noexcept { return m_message; }
+    inline const std::vector<std::string>& args() const noexcept { return m_args; }
 };
 
 #endif
