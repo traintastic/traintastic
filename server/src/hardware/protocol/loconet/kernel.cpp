@@ -144,8 +144,8 @@ void Kernel::start()
       if(m_config.fastClockSyncEnabled)
         startFastClockSyncTimer();
 
-      //for(uint8_t slot = SLOT_LOCO_MIN; slot <= SLOT_LOCO_MAX; slot++)
-      //  send(RequestSlotData(slot), LowPriority);
+      for(uint8_t slot = SLOT_LOCO_MIN; slot <= SLOT_LOCO_MAX; slot++)
+        send(RequestSlotData(slot), LowPriority);
 
       if(m_onStarted)
         EventLoop::call(
