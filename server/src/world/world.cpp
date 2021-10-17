@@ -117,14 +117,14 @@ World::World(Private) :
   powerOff{*this, "power_off",
     [this]()
     {
-      Log::log(*this, LogMessage::N1014_POWER_ON);
+      Log::log(*this, LogMessage::N1015_POWER_OFF);
       state.setValueInternal(state.value() - WorldState::PowerOn);
       event(WorldEvent::PowerOff);
     }},
   powerOn{*this, "power_on",
     [this]()
     {
-      Log::log(*this, LogMessage::N1015_POWER_OFF);
+      Log::log(*this, LogMessage::N1014_POWER_ON);
       state.setValueInternal(state.value() + WorldState::PowerOn);
       event(WorldEvent::PowerOn);
     }},
