@@ -47,13 +47,14 @@ std::shared_ptr<World> World::create()
 
 void World::init(const std::shared_ptr<World>& world)
 {
-  world->commandStations.setValueInternal(std::make_shared<CommandStationList>(*world, world->commandStations.name()));
+  world->decoderControllers.setValueInternal(std::make_shared<ControllerList<DecoderController>>(*world, world->decoderControllers.name()));
+  world->inputControllers.setValueInternal(std::make_shared<ControllerList<InputController>>(*world, world->inputControllers.name()));
+  world->outputControllers.setValueInternal(std::make_shared<ControllerList<OutputController>>(*world, world->outputControllers.name()));
+
+  world->interfaces.setValueInternal(std::make_shared<InterfaceList>(*world, world->interfaces.name()));
   world->decoders.setValueInternal(std::make_shared<DecoderList>(*world, world->decoders.name()));
   world->inputs.setValueInternal(std::make_shared<InputList>(*world, world->inputs.name()));
   world->outputs.setValueInternal(std::make_shared<OutputList>(*world, world->outputs.name()));
-  world->controllers.setValueInternal(std::make_shared<ControllerList>(*world, world->controllers.name()));
-  world->loconets.setValueInternal(std::make_shared<LocoNetList>(*world, world->loconets.name()));
-  world->xpressnets.setValueInternal(std::make_shared<XpressNetList>(*world, world->xpressnets.name()));
   world->boards.setValueInternal(std::make_shared<BoardList>(*world, world->boards.name()));
   world->clock.setValueInternal(std::make_shared<Clock>(*world, world->clock.name()));
   world->trains.setValueInternal(std::make_shared<TrainList>(*world, world->trains.name()));
@@ -69,13 +70,13 @@ World::World(Private) :
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
   scale{this, "scale", WorldScale::H0, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](WorldScale /*value*/){ updateScaleRatio(); }},
   scaleRatio{this, "scale_ratio", 87, PropertyFlags::ReadWrite | PropertyFlags::Store},
-  commandStations{this, "command_stations", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  decoderControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  inputControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  outputControllers{this, "output_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  interfaces{this, "interfaces", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
-  controllers{this, "controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
-  loconets{this, "loconets", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
-  xpressnets{this, "xpressnets", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   boards{this, "boards", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   clock{this, "clock", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   trains{this, "trains", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
@@ -242,20 +243,21 @@ World::World(Private) :
   Attributes::addVisible(scaleRatio, false);
   m_interfaceItems.add(scaleRatio);
 
-  Attributes::addObjectEditor(commandStations, false);
-  m_interfaceItems.add(commandStations);
+  Attributes::addObjectEditor(decoderControllers, false);
+  m_interfaceItems.add(decoderControllers);
+  Attributes::addObjectEditor(inputControllers, false);
+  m_interfaceItems.add(inputControllers);
+  Attributes::addObjectEditor(outputControllers, false);
+  m_interfaceItems.add(outputControllers);
+
+  Attributes::addObjectEditor(interfaces, false);
+  m_interfaceItems.add(interfaces);
   Attributes::addObjectEditor(decoders, false);
   m_interfaceItems.add(decoders);
   Attributes::addObjectEditor(inputs, false);
   m_interfaceItems.add(inputs);
   Attributes::addObjectEditor(outputs, false);
   m_interfaceItems.add(outputs);
-  Attributes::addObjectEditor(controllers, false);
-  m_interfaceItems.add(controllers);
-  Attributes::addObjectEditor(loconets, false);
-  m_interfaceItems.add(loconets);
-  Attributes::addObjectEditor(xpressnets, false);
-  m_interfaceItems.add(xpressnets);
   Attributes::addObjectEditor(boards, false);
   m_interfaceItems.add(boards);
   Attributes::addObjectEditor(clock, false);

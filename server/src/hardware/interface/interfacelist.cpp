@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/decoder/decoderlist.cpp
+ * server/src/hardware/interface/interfacelist.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,43 +20,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "decoderlist.hpp"
-#include "decoderlisttablemodel.hpp"
+#include "interfacelist.hpp"
+#include "interfacelisttablemodel.hpp"
+#include "interfaces.hpp"
+#include "../../world/world.hpp"
 #include "../../world/getworld.hpp"
 #include "../../core/attributes.hpp"
 #include "../../utils/displayname.hpp"
 
-DecoderList::DecoderList(Object& _parent, const std::string& parentPropertyName) :
-  ObjectList<Decoder>(_parent, parentPropertyName),
+InterfaceList::InterfaceList(Object& _parent, const std::string& parentPropertyName) :
+  ObjectList<Interface>(_parent, parentPropertyName),
   add{*this, "add",
-    [this]()
+    [this](std::string_view interfaceClassId)
     {
-      auto world = getWorld(&this->parent());
+      auto world = getWorld(this);
       if(!world)
-        return std::shared_ptr<Decoder>();
-
-      auto decoder = Decoder::create(world, world->getUniqueId("decoder"));
-      if(const auto controller = std::dynamic_pointer_cast<DecoderController>(parent().shared_from_this()))
-      {
-        // todo: select free address?
-        decoder->interface = controller;
-      }
-      return decoder;
+        return std::shared_ptr<Interface>();
+      return Interfaces::create(world, interfaceClassId);
+    }},
+  remove{*this, "remove",
+    [this](const std::shared_ptr<Interface>& object)
+    {
+      if(containsObject(object))
+        object->destroy();
+      assert(!containsObject(object));
     }}
-  , remove{*this, "remove",
-      [this](const std::shared_ptr<Decoder>& decoder)
-      {
-        if(!decoder)
-          return;
-        decoder->destroy();
-        assert(!containsObject(decoder));
-      }}
 {
   auto world = getWorld(&_parent);
   const bool editable = world && contains(world->state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
+  Attributes::addClassList(add, Interfaces::classList);
   m_interfaceItems.add(add);
 
   Attributes::addDisplayName(remove, DisplayName::List::remove);
@@ -64,14 +59,14 @@ DecoderList::DecoderList(Object& _parent, const std::string& parentPropertyName)
   m_interfaceItems.add(remove);
 }
 
-TableModelPtr DecoderList::getModel()
+TableModelPtr InterfaceList::getModel()
 {
-  return std::make_shared<DecoderListTableModel>(*this);
+  return std::make_shared<InterfaceListTableModel>(*this);
 }
 
-void DecoderList::worldEvent(WorldState state, WorldEvent event)
+void InterfaceList::worldEvent(WorldState state, WorldEvent event)
 {
-  ObjectList<Decoder>::worldEvent(state, event);
+  ObjectList<Interface>::worldEvent(state, event);
 
   const bool editable = contains(state, WorldState::Edit);
 
@@ -79,7 +74,7 @@ void DecoderList::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(remove, editable);
 }
 
-bool DecoderList::isListedProperty(const std::string& name)
+bool InterfaceList::isListedProperty(const std::string& name)
 {
-  return DecoderListTableModel::isListedProperty(name);
+  return InterfaceListTableModel::isListedProperty(name);
 }

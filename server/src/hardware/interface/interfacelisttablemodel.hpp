@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/output/keyboard/loconetoutputkeyboard.hpp
+ * server/src/hardware/interface/interfacelisttablemodel.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,30 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_KEYBOARD_LOCONETOUTPUTKEYBOARD_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_KEYBOARD_LOCONETOUTPUTKEYBOARD_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACELISTTABLEMODEL_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACELISTTABLEMODEL_HPP
 
-#include "outputkeyboard.hpp"
+#include "../../core/objectlisttablemodel.hpp"
+#include "interfacelist.hpp"
 
-namespace LocoNet {
-  class LocoNet;
-}
+class InterfaceList;
 
-class LocoNetOutputKeyboard final : public OutputKeyboard
+class InterfaceListTableModel : public ObjectListTableModel<Interface>
 {
+  friend class InterfaceList;
+
   protected:
-    std::shared_ptr<LocoNet::LocoNet> m_loconet;
+    void propertyChanged(BaseProperty& property, uint32_t row) final;
 
   public:
-    CLASS_ID("output_keyboard.loconet")
+    CLASS_ID("table_model.list.interface")
 
-    LocoNetOutputKeyboard(std::shared_ptr<LocoNet::LocoNet> loconet);
-    ~LocoNetOutputKeyboard() final;
+    static bool isListedProperty(const std::string& name);
 
-    std::string getObjectId() const final { return ""; }
+    InterfaceListTableModel(InterfaceList& interfaceList);
 
-    std::vector<OutputInfo> getOutputInfo() const final;
-    void setOutputValue(uint32_t address, bool value) final;
+    std::string getText(uint32_t column, uint32_t row) const final;
 };
 
 #endif

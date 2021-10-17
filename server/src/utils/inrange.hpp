@@ -1,9 +1,9 @@
 /**
- * client/src/network/inputmonitor.hpp
+ * server/src/utils/inrange.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,30 +20,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_NETWORK_INPUTMONITOR_HPP
-#define TRAINTASTIC_CLIENT_NETWORK_INPUTMONITOR_HPP
+#ifndef TRAINTASTIC_SERVER_UTILS_INRANGE_HPP
+#define TRAINTASTIC_SERVER_UTILS_INRANGE_HPP
 
-#include "object.hpp"
-#include <traintastic/enum/tristate.hpp>
+#include <utility>
 
-class InputMonitor final : public Object
+template<class T>
+constexpr bool inRange(const T value, const T min, const T max)
 {
-  Q_OBJECT
+  return value >= min && value <= max;
+}
 
-  private:
-    int m_requestId;
-
-  public:
-    inline static const QString classId = QStringLiteral("input_monitor");
-
-    InputMonitor(const std::shared_ptr<Connection>& connection, Handle handle, const QString& classId);
-    ~InputMonitor() final;
-
-    void refresh();
-
-  signals:
-    void inputIdChanged(uint32_t address, QString id);
-    void inputValueChanged(uint32_t address, TriState value);
-};
+template<class T>
+constexpr bool inRange(const T value, const std::pair<T, T>& range)
+{
+  return inRange(value, range.first, range.second);
+}
 
 #endif

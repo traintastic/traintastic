@@ -36,15 +36,18 @@ class ObjectListWidget : public QWidget
   Q_OBJECT
 
   private:
-    //const QString m_id;
     int m_requestId;
     int m_requestIdAdd;
+    int m_requestIdInputMonitor;
+    int m_requestIdOutputKeyboard;
     ObjectPtr m_object;
     QToolBar* m_toolbar;
     QToolButton* m_buttonAdd;
     QAction* m_actionAdd;
     QAction* m_actionEdit;
     MethodAction* m_actionDelete;
+    MethodAction* m_actionInputMonitor;
+    MethodAction* m_actionOutputKeyboard;
     TableWidget* m_tableWidget;
 
     void tableSelectionChanged();

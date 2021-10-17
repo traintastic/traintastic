@@ -32,6 +32,12 @@ class InputListTableModel : public ObjectListTableModel<Input>
 {
   friend class InputList;
 
+  private:
+    static constexpr uint32_t columnId = 0;
+    static constexpr uint32_t columnName = 1;
+    const uint32_t m_columnInterface;
+    const uint32_t m_columnAddress;
+
   protected:
     void propertyChanged(BaseProperty& property, uint32_t row) final;
 

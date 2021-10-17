@@ -26,6 +26,7 @@
 #include "../core/object.hpp"
 #include "../core/property.hpp"
 #include "../core/objectproperty.hpp"
+#include "../core/controllerlist.hpp"
 #include <traintastic/utils/stdfilesystem.hpp>
 #include <unordered_map>
 #include <boost/uuid/uuid.hpp>
@@ -34,13 +35,13 @@
 #include <traintastic/set/worldstate.hpp>
 #include "../clock/clock.hpp"
 #include "../board/boardlist.hpp"
-#include "../hardware/commandstation/commandstationlist.hpp"
+#include "../hardware/interface/interfacelist.hpp"
 #include "../hardware/decoder/decoderlist.hpp"
+#include "../hardware/decoder/decodercontroller.hpp"
 #include "../hardware/input/list/inputlist.hpp"
+#include "../hardware/input/inputcontroller.hpp"
 #include "../hardware/output/list/outputlist.hpp"
-#include "../hardware/controller/controllerlist.hpp"
-#include "../hardware/protocol/loconet/loconetlist.hpp"
-#include "../hardware/protocol/xpressnet/xpressnetlist.hpp"
+#include "../hardware/output/outputcontroller.hpp"
 #include "../train/trainlist.hpp"
 #include "../vehicle/rail/railvehiclelist.hpp"
 #ifndef DISABLE_LUA_SCRIPTING
@@ -85,13 +86,14 @@ class World : public Object
     Property<WorldScale> scale;
     Property<double> scaleRatio;
 
-    ObjectProperty<CommandStationList> commandStations;
+    ObjectProperty<ControllerList<DecoderController>> decoderControllers;
+    ObjectProperty<ControllerList<InputController>> inputControllers;
+    ObjectProperty<ControllerList<OutputController>> outputControllers;
+
+    ObjectProperty<InterfaceList> interfaces;
     ObjectProperty<DecoderList> decoders;
     ObjectProperty<InputList> inputs;
     ObjectProperty<OutputList> outputs;
-    ObjectProperty<ControllerList> controllers;
-    ObjectProperty<LocoNetList> loconets;
-    ObjectProperty<XpressNetList> xpressnets;
     ObjectProperty<BoardList> boards;
     ObjectProperty<Clock> clock;
     ObjectProperty<TrainList> trains;

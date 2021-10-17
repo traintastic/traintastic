@@ -42,8 +42,6 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
     return new ObjectListWidget(object, parent); // todo remove
   else if(classId == "decoder_list")
     return new ThrottleObjectListWidget(object, parent); // todo remove
-  else if(classId == "input_list")
-    return new ObjectListWidget(object, parent); // todo remove
   else if(classId == "controller_list")
     return new ObjectListWidget(object, parent); // todo remove
   else if(classId == "rail_vehicle_list")
@@ -51,6 +49,8 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
   else if(classId == "lua.script_list")
     return new ObjectListWidget(object, parent); // todo remove
   else if(classId == "world_list")
+    return new ObjectListWidget(object, parent);
+  else if(object->classId().startsWith("list."))
     return new ObjectListWidget(object, parent);
   else if(classId == "lua.script")
     return new LuaScriptEditWidget(object, parent);
@@ -66,8 +66,6 @@ QWidget* createWidget(const ObjectPtr& object, QWidget* parent)
 {
   if(QWidget* widget = createWidgetIfCustom(object, parent))
     return widget;
-  else if(object->classId().startsWith("list."))
-    return new ObjectListWidget(object, parent);
   else if(auto inputMonitor = std::dynamic_pointer_cast<InputMonitor>(object))
     return new InputMonitorWidget(inputMonitor, parent);
   else if(auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(object))

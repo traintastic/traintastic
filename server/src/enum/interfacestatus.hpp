@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/input/monitor/xpressnetinputmonitor.hpp
+ * server/src/enum/interfacestatus.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,29 +20,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_MONITOR_XPRESSNETINPUTMONITOR_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INPUT_MONITOR_XPRESSNETINPUTMONITOR_HPP
+#ifndef TRAINTASTIC_SERVER_ENUM_INTERFACESTATUS_HPP
+#define TRAINTASTIC_SERVER_ENUM_INTERFACESTATUS_HPP
 
-#include "inputmonitor.hpp"
+#include <traintastic/enum/interfacestatus.hpp>
 
-namespace XpressNet {
-  class XpressNet;
-}
-
-class XpressNetInputMonitor final : public InputMonitor
-{
-  protected:
-    std::shared_ptr<XpressNet::XpressNet> m_xpressnet;
-
-  public:
-    CLASS_ID("input_monitor.xpressnet")
-
-    XpressNetInputMonitor(std::shared_ptr<XpressNet::XpressNet> xpressnet);
-    ~XpressNetInputMonitor() final;
-
-    std::string getObjectId() const final { return ""; }
-
-    std::vector<InputInfo> getInputInfo() const final;
-};
+inline constexpr std::array<InterfaceStatus, 4> interfaceStatusValues{{
+  InterfaceStatus::Offline,
+  InterfaceStatus::Initializing,
+  InterfaceStatus::Online,
+  InterfaceStatus::Error,
+}};
 
 #endif

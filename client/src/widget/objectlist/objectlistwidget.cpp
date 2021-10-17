@@ -49,12 +49,16 @@
 
 ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
   QWidget(parent),
+  m_requestIdInputMonitor{Connection::invalidRequestId},
+  m_requestIdOutputKeyboard{Connection::invalidRequestId},
   m_buttonAdd{nullptr},
   m_object{object},
   m_toolbar{new QToolBar()},
   m_actionAdd{nullptr},
   m_actionEdit{nullptr},
   m_actionDelete{nullptr},
+  m_actionInputMonitor{nullptr},
+  m_actionOutputKeyboard{nullptr},
   m_tableWidget{new TableWidget()}
 {
   m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -187,6 +191,43 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
       });
     m_actionDelete->setForceDisabled(true);
     m_toolbar->addAction(m_actionDelete);
+  }
+
+  if(Method* method = m_object->getMethod("input_monitor"))
+  {
+    m_actionInputMonitor = new MethodAction(Theme::getIcon("input_monitor"), *method,
+      [this]()
+      {
+        m_requestIdInputMonitor = m_actionInputMonitor->method().call(
+          [this](const ObjectPtr& inputMonitor, Message::ErrorCode)
+          {
+            if(inputMonitor)
+              MainWindow::instance->showObject(inputMonitor);
+          });
+      });
+  }
+
+  if(Method* method = m_object->getMethod("output_keyboard"))
+  {
+    m_actionOutputKeyboard = new MethodAction(Theme::getIcon("output_keyboard"), *method,
+      [this]()
+      {
+        m_requestIdOutputKeyboard = m_actionOutputKeyboard->method().call(
+          [this](const ObjectPtr& outputKeyboard, Message::ErrorCode)
+          {
+            if(outputKeyboard)
+              MainWindow::instance->showObject(outputKeyboard);
+          });
+      });
+  }
+
+  if(m_actionInputMonitor || m_actionOutputKeyboard)
+  {
+    m_toolbar->addSeparator();
+    if(m_actionInputMonitor)
+      m_toolbar->addAction(m_actionInputMonitor);
+    if(m_actionOutputKeyboard)
+      m_toolbar->addAction(m_actionOutputKeyboard);
   }
 }
 

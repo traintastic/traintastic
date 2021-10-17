@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/input/inputs.cpp
+ * server/src/hardware/interface/interface.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,13 +20,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "inputs.hpp"
-#include "../../utils/ifclassidcreate.hpp"
-#include "../../world/world.hpp"
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACE_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACE_HPP
 
-std::shared_ptr<Input> Inputs::create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id)
+#include "../../core/idobject.hpp"
+#include "../../enum/interfacestatus.hpp"
+
+/**
+ * @brief Base class for a hardware interface
+ */
+class Interface : public IdObject
 {
-  IF_CLASSID_CREATE(LocoNetInput)
-  IF_CLASSID_CREATE(XpressNetInput)
-  return std::shared_ptr<Input>();
-}
+  protected:
+    Interface(const std::weak_ptr<World>& world, std::string_view _id);
+
+    void addToWorld() override;
+    void destroying() override;
+    void worldEvent(WorldState state, WorldEvent event) override;
+
+    virtual bool setOnline(bool& value) = 0;
+
+  public:
+    Property<std::string> name;
+    Property<bool> online;
+    Property<InterfaceStatus> status;
+    Property<std::string> notes;
+};
+
+#endif

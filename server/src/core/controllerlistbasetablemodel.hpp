@@ -1,9 +1,9 @@
 /**
- * client/src/network/inputmonitor.hpp
+ * server/src/core/controllerlistbasetablemodel.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,30 +20,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_NETWORK_INPUTMONITOR_HPP
-#define TRAINTASTIC_CLIENT_NETWORK_INPUTMONITOR_HPP
+#ifndef TRAINTASTIC_SERVER_CORE_CONTROLLERLISTBASETABLEMODEL_HPP
+#define TRAINTASTIC_SERVER_CORE_CONTROLLERLISTBASETABLEMODEL_HPP
 
-#include "object.hpp"
-#include <traintastic/enum/tristate.hpp>
+#include "tablemodel.hpp"
 
-class InputMonitor final : public Object
+class ControllerListBase;
+
+class ControllerListBaseTableModel final : public TableModel
 {
-  Q_OBJECT
+  CLASS_ID("table_model.controller_list")
+
+  friend class ControllerListBase;
 
   private:
-    int m_requestId;
+    std::shared_ptr<ControllerListBase> m_list;
+
+    void propertyChanged(BaseProperty& property, uint32_t row);
 
   public:
-    inline static const QString classId = QStringLiteral("input_monitor");
+    static bool isListedProperty(const std::string& name);
 
-    InputMonitor(const std::shared_ptr<Connection>& connection, Handle handle, const QString& classId);
-    ~InputMonitor() final;
+    ControllerListBaseTableModel(ControllerListBase& list);
 
-    void refresh();
-
-  signals:
-    void inputIdChanged(uint32_t address, QString id);
-    void inputValueChanged(uint32_t address, TriState value);
+    std::string getText(uint32_t column, uint32_t row) const final;
 };
 
 #endif

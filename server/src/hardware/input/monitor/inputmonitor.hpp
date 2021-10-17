@@ -28,11 +28,18 @@
 #include "../../../core/property.hpp"
 #include "../../../enum/tristate.hpp"
 
+class InputController;
+
 class InputMonitor : public Object
 {
+  CLASS_ID("input_monitor")
+
+  private:
+    InputController& m_controller;
+
   public:
-    std::function<void(InputMonitor&, uint32_t, std::string_view)> inputIdChanged;
-    std::function<void(InputMonitor&, uint32_t, TriState)> inputValueChanged;
+    boost::signals2::signal<void(InputMonitor&, uint32_t, std::string_view)> inputIdChanged;
+    boost::signals2::signal<void(InputMonitor&, uint32_t, TriState)> inputValueChanged;
 
     struct InputInfo
     {
@@ -51,14 +58,11 @@ class InputMonitor : public Object
     Property<uint32_t> addressMin;
     Property<uint32_t> addressMax;
 
-    InputMonitor() :
-      Object(),
-      addressMin{this, "address_min", 0, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
-      addressMax{this, "address_max", 0, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
-    {
-    }
+    InputMonitor(InputController& controller);
 
-    virtual std::vector<InputInfo> getInputInfo() const = 0;
+    std::string getObjectId() const final;
+
+    virtual std::vector<InputInfo> getInputInfo() const;
 };
 
 #endif

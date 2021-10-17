@@ -22,31 +22,32 @@
 
 #include "outputlist.hpp"
 #include "outputlisttablemodel.hpp"
-#include "../outputs.hpp"
+#include "../outputcontroller.hpp"
 #include "../../../world/getworld.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
 
-OutputList::OutputList(Object& _parent, const std::string& parentPropertyName) :
-  ObjectList<Output>(_parent, parentPropertyName),
-  add{*this, "add",
-    [this](std::string_view outputClassId)
-    {
-      auto world = getWorld(&this->parent());
-      if(!world)
-        return std::shared_ptr<Output>();
-      auto output = Outputs::create(world, outputClassId, world->getUniqueId("output"));
-      if(auto locoNetOutput = std::dynamic_pointer_cast<LocoNetOutput>(output); locoNetOutput && world->loconets->length == 1)
+OutputList::OutputList(Object& _parent, const std::string& parentPropertyName)
+  : ObjectList<Output>(_parent, parentPropertyName)
+  , m_parentIsOutputController{dynamic_cast<OutputController*>(&_parent)}
+  , add{*this, "add",
+      [this]()
       {
-        auto& loconet = world->loconets->operator[](0);
-        if(uint16_t address = loconet->getUnusedOutputAddress(); address != LocoNetOutput::addressInvalid)
+        auto world = getWorld(&parent());
+        if(!world)
+          return std::shared_ptr<Output>();
+
+        auto output = Output::create(world, world->getUniqueId(Output::defaultId));
+        if(const auto controller = std::dynamic_pointer_cast<OutputController>(parent().shared_from_this()))
         {
-          locoNetOutput->address = address;
-          locoNetOutput->loconet = loconet;
+          if(const uint32_t address = controller->getUnusedOutputAddress(); address != Output::invalidAddress)
+          {
+            output->address = address;
+            output->interface = controller;
+          }
         }
-      }
-      return output;
-    }}
+        return output;
+      }}
   , remove{*this, "remove",
     [this](const std::shared_ptr<Output>& output)
     {
@@ -54,18 +55,31 @@ OutputList::OutputList(Object& _parent, const std::string& parentPropertyName) :
         output->destroy();
       assert(!containsObject(output));
     }}
+  , outputKeyboard{*this, "output_keyboard",
+      [this]()
+      {
+        if(const auto controller = std::dynamic_pointer_cast<OutputController>(parent().shared_from_this()))
+          return controller->outputKeyboard();
+        else
+          return std::shared_ptr<OutputKeyboard>();
+      }}
 {
   auto w = getWorld(&_parent);
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
-  Attributes::addClassList(add, Outputs::classList);
   m_interfaceItems.add(add);
 
   Attributes::addDisplayName(remove, DisplayName::List::remove);
   Attributes::addEnabled(remove, editable);
   m_interfaceItems.add(remove);
+
+  if(m_parentIsOutputController)
+  {
+    Attributes::addDisplayName(outputKeyboard, DisplayName::Hardware::outputKeyboard);
+    m_interfaceItems.add(outputKeyboard);
+  }
 }
 
 TableModelPtr OutputList::getModel()

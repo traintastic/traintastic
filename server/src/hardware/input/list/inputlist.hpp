@@ -26,20 +26,27 @@
 #include "../../../core/objectlist.hpp"
 #include "../../../core/method.hpp"
 #include "../input.hpp"
+#include "../monitor/inputmonitor.hpp"
 
 class InputList : public ObjectList<Input>
 {
+  CLASS_ID("list.input")
+
+  private:
+    const bool m_parentIsInputController;
+
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
     bool isListedProperty(const std::string& name) final;
 
   public:
-    CLASS_ID("input_list")
-
-    Method<std::shared_ptr<Input>(std::string_view)> add;
+    Method<std::shared_ptr<Input>()> add;
     Method<void(const std::shared_ptr<Input>&)> remove;
+    Method<std::shared_ptr<InputMonitor>()> inputMonitor;
 
     InputList(Object& _parent, const std::string& parentPropertyName);
+
+    inline bool parentIsInputController() const { return m_parentIsInputController; }
 
     TableModelPtr getModel() final;
 };

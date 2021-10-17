@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/input/monitor/xpressnetinputmonitor.cpp
+ * server/src/hardware/input/monitor/inputmonitor.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,31 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "xpressnetinputmonitor.hpp"
-#include "../../protocol/xpressnet/xpressnet.hpp"
-#include "../xpressnetinput.hpp"
+#include "inputmonitor.hpp"
+#include "../inputcontroller.hpp"
+#include "../input.hpp"
 
-XpressNetInputMonitor::XpressNetInputMonitor(std::shared_ptr<XpressNet::XpressNet> xpressnet) :
-  InputMonitor(),
-  m_xpressnet{std::move(xpressnet)}
+InputMonitor::InputMonitor(InputController& controller)
+  : Object()
+  , m_controller{controller}
+  , addressMin{this, "address_min", m_controller.inputAddressMinMax().first, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
+  , addressMax{this, "address_max", m_controller.inputAddressMinMax().second, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
 {
-  addressMin.setValueInternal(XpressNetInput::addressMin);
-  addressMax.setValueInternal(XpressNetInput::addressMax);
-  m_xpressnet->m_inputMonitors.emplace_back(this);
 }
 
-XpressNetInputMonitor::~XpressNetInputMonitor()
+std::string InputMonitor::getObjectId() const
 {
-  if(auto it = std::find(m_xpressnet->m_inputMonitors.begin(), m_xpressnet->m_inputMonitors.end(), this); it != m_xpressnet->m_inputMonitors.end())
-    m_xpressnet->m_inputMonitors.erase(it);
+  return ""; // todo
 }
 
-std::vector<InputMonitor::InputInfo> XpressNetInputMonitor::getInputInfo() const
+std::vector<InputMonitor::InputInfo> InputMonitor::getInputInfo() const
 {
   std::vector<InputInfo> inputInfo;
-  for(auto it : m_xpressnet->m_inputs)
+  for(auto it : m_controller.inputs())
   {
-    XpressNetInput& input = *(it.second);
+    const auto& input = *(it.second);
     InputInfo info(input.address, input.id, input.value);
     inputInfo.push_back(info);
   }

@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/input/monitor/loconetinputmonitor.hpp
+ * server/src/hardware/interface/interfacelist.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,29 +20,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_MONITOR_LOCONETINPUTMONITOR_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INPUT_MONITOR_LOCONETINPUTMONITOR_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACELIST_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACELIST_HPP
 
-#include "inputmonitor.hpp"
+#include "../../core/objectlist.hpp"
+#include "../../core/method.hpp"
+#include "interface.hpp"
 
-namespace LocoNet {
-  class LocoNet;
-}
-
-class LocoNetInputMonitor final : public InputMonitor
+class InterfaceList : public ObjectList<Interface>
 {
   protected:
-    std::shared_ptr<LocoNet::LocoNet> m_loconet;
+    void worldEvent(WorldState state, WorldEvent event) final;
+    bool isListedProperty(const std::string& name) final;
 
   public:
-    CLASS_ID("input_monitor.loconet")
+    CLASS_ID("list.interface")
 
-    LocoNetInputMonitor(std::shared_ptr<LocoNet::LocoNet> loconet);
-    ~LocoNetInputMonitor() final;
+    Method<std::shared_ptr<Interface>(std::string_view)> add;
+    Method<void(const std::shared_ptr<Interface>&)> remove;
 
-    std::string getObjectId() const final { return ""; }
+    InterfaceList(Object& _parent, const std::string& parentPropertyName);
 
-    std::vector<InputInfo> getInputInfo() const final;
+    TableModelPtr getModel() final;
 };
 
 #endif

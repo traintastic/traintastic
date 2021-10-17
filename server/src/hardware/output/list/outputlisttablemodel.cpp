@@ -22,30 +22,39 @@
 
 #include "outputlisttablemodel.hpp"
 #include "outputlist.hpp"
-#include "../loconetoutput.hpp"
 #include "../../../utils/displayname.hpp"
-
-constexpr uint32_t columnId = 0;
-constexpr uint32_t columnName = 1;
-constexpr uint32_t columnBus = 2;
-constexpr uint32_t columnAddress = 3;
 
 bool OutputListTableModel::isListedProperty(const std::string& name)
 {
   return
     name == "id" ||
-    name == "name";
+    name == "name" ||
+    name == "interface" ||
+    name == "address";
 }
 
 OutputListTableModel::OutputListTableModel(OutputList& list) :
   ObjectListTableModel<Output>(list)
+  , m_columnInterface(list.parentIsOutputController() ? invalidColumn : 2)
+  , m_columnAddress(list.parentIsOutputController() ? 2 : 3)
 {
-  setColumnHeaders({
-    DisplayName::Object::id,
-    DisplayName::Object::name,
-    "output_list:bus",
-    DisplayName::Hardware::address,
-    });
+  if(list.parentIsOutputController())
+  {
+    setColumnHeaders({
+      DisplayName::Object::id,
+      DisplayName::Object::name,
+      DisplayName::Hardware::address,
+      });
+  }
+  else
+  {
+    setColumnHeaders({
+      DisplayName::Object::id,
+      DisplayName::Object::name,
+      DisplayName::Hardware::interface,
+      DisplayName::Hardware::address,
+      });
+  }
 }
 
 std::string OutputListTableModel::getText(uint32_t column, uint32_t row) const
@@ -53,32 +62,27 @@ std::string OutputListTableModel::getText(uint32_t column, uint32_t row) const
   if(row < rowCount())
   {
     const Output& output = getItem(row);
-    const LocoNetOutput* outputLocoNet = dynamic_cast<const LocoNetOutput*>(&output);
 
-    switch(column)
+    if(column == columnId)
+      return output.id;
+    else if(column == columnName)
+      return output.name;
+    else if(column == m_columnInterface)
     {
-      case columnId:
-        return output.id;
-
-      case columnName:
-        return output.name;
-
-      case columnBus: // virtual method @ Output ??
-        if(outputLocoNet && outputLocoNet->loconet)
-          return outputLocoNet->loconet->getObjectId();
+        if(const auto& interface = std::dynamic_pointer_cast<Object>(output.interface.value()))
+        {
+          if(auto property = interface->getProperty("name"); property && !property->toString().empty())
+            return property->toString();
+          else
+            return interface->getObjectId();
+        }
         else
           return "";
-
-      case columnAddress: // virtual method @ Output ??
-        if(outputLocoNet)
-          return std::to_string(outputLocoNet->address);
-        else
-          return "";
-
-      default:
-        assert(false);
-        break;
     }
+    else if(column == m_columnAddress)
+      return std::to_string(output.address.value());
+    else
+      assert(false);
   }
 
   return "";
@@ -90,4 +94,8 @@ void OutputListTableModel::propertyChanged(BaseProperty& property, uint32_t row)
     changed(row, columnId);
   else if(property.name() == "name")
     changed(row, columnName);
+  else if(property.name() == "interface" && m_columnInterface != invalidColumn)
+    changed(row, m_columnInterface);
+  else if(property.name() == "address")
+    changed(row, m_columnAddress);
 }

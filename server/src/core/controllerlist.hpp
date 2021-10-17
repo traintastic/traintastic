@@ -1,9 +1,9 @@
 /**
- * client/src/network/inputmonitor.hpp
+ * server/src/core/controllerlist.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,30 +20,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_NETWORK_INPUTMONITOR_HPP
-#define TRAINTASTIC_CLIENT_NETWORK_INPUTMONITOR_HPP
+#ifndef TRAINTASTIC_SERVER_CORE_CONTROLLERLIST_HPP
+#define TRAINTASTIC_SERVER_CORE_CONTROLLERLIST_HPP
 
-#include "object.hpp"
-#include <traintastic/enum/tristate.hpp>
+#include "controllerlistbase.hpp"
 
-class InputMonitor final : public Object
+template<class T>
+class ControllerList : public ControllerListBase
 {
-  Q_OBJECT
-
-  private:
-    int m_requestId;
-
   public:
-    inline static const QString classId = QStringLiteral("input_monitor");
+    ControllerList(Object& _parent, const std::string& parentPropertyName)
+      : ControllerListBase(_parent, parentPropertyName)
+    {
+    }
 
-    InputMonitor(const std::shared_ptr<Connection>& connection, Handle handle, const QString& classId);
-    ~InputMonitor() final;
+    inline void add(const std::shared_ptr<T>& controller)
+    {
+      if(ObjectPtr object = std::dynamic_pointer_cast<Object>(controller))
+        ControllerListBase::add(std::move(object));
+      else
+        assert(false);
+    }
 
-    void refresh();
-
-  signals:
-    void inputIdChanged(uint32_t address, QString id);
-    void inputValueChanged(uint32_t address, TriState value);
+    inline void remove(const std::shared_ptr<T>& controller)
+    {
+      ControllerListBase::remove(std::dynamic_pointer_cast<Object>(controller));
+    }
 };
 
 #endif

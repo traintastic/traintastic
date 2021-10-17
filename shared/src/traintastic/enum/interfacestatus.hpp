@@ -1,9 +1,9 @@
 /**
- * client/src/network/inputmonitor.hpp
+ * shared/src/enum/interfacestatus.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,30 +20,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_NETWORK_INPUTMONITOR_HPP
-#define TRAINTASTIC_CLIENT_NETWORK_INPUTMONITOR_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_INTERFACESTATUS_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_INTERFACESTATUS_HPP
 
-#include "object.hpp"
-#include <traintastic/enum/tristate.hpp>
+#include <cstdint>
+#include "enum.hpp"
 
-class InputMonitor final : public Object
+enum class InterfaceStatus : uint8_t
 {
-  Q_OBJECT
-
-  private:
-    int m_requestId;
-
-  public:
-    inline static const QString classId = QStringLiteral("input_monitor");
-
-    InputMonitor(const std::shared_ptr<Connection>& connection, Handle handle, const QString& classId);
-    ~InputMonitor() final;
-
-    void refresh();
-
-  signals:
-    void inputIdChanged(uint32_t address, QString id);
-    void inputValueChanged(uint32_t address, TriState value);
+  Offline = 0,
+  Initializing = 1,
+  Online = 2,
+  Error = 255,
 };
+
+ENUM_NAME(InterfaceStatus, "interface_status")
+
+ENUM_VALUES(InterfaceStatus, 4,
+{
+  {InterfaceStatus::Offline, "offline"},
+  {InterfaceStatus::Initializing, "initializing"},
+  {InterfaceStatus::Online, "online"},
+  {InterfaceStatus::Error, "error"},
+})
 
 #endif

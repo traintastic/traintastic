@@ -46,11 +46,19 @@ namespace DisplayName
   {
     constexpr std::string_view address = "hardware:address";
     constexpr std::string_view commandStation = "hardware:command_station";
+    constexpr std::string_view decoders = "hardware:decoders";
     constexpr std::string_view inputMonitor = "hardware:input_monitor";
+    constexpr std::string_view inputs = "hardware:inputs";
+    constexpr std::string_view interface = "hardware:interface";
     constexpr std::string_view loconet = "hardware:loconet";
     constexpr std::string_view outputKeyboard = "hardware:output_keyboard";
+    constexpr std::string_view outputs = "hardware:outputs";
     constexpr std::string_view speedSteps = "hardware:speed_steps";
     constexpr std::string_view xpressnet = "hardware:xpressnet";
+  }
+  namespace Interface
+  {
+    constexpr std::string_view status = "interface:status";
   }
   namespace IP
   {
@@ -72,9 +80,9 @@ namespace DisplayName
   }
   namespace Serial
   {
+    constexpr std::string_view device = "serial:device";
     constexpr std::string_view baudrate = "serial:baudrate";
     constexpr std::string_view flowControl = "serial:flow_control";
-    constexpr std::string_view port = "serial:port";
   }
   namespace Vehicle
   {

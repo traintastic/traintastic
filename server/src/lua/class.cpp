@@ -54,30 +54,6 @@
 
 #include "../clock/clock.hpp"
 
-#include "../hardware/controller/wlanmaus.hpp"
-#include "../hardware/controller/controllerlist.hpp"
-#ifdef USB_XPRESSNET
-  #include "../hardware/controller/usbxpressnetcontroller.hpp"
-#endif
-
-#include "../hardware/commandstation/rocoz21.hpp"
-#include "../hardware/commandstation/virtualcommandstation.hpp"
-#include "../hardware/commandstation/loconettcpbinary.hpp"
-#ifdef USB_XPRESSNET
-  #include "../hardware/commandstation/usbxpressnetinterface.hpp"
-#endif
-#include "../hardware/commandstation/xpressnetserial.hpp"
-#include "../hardware/commandstation/dccplusplusserial.hpp"
-#include "../hardware/commandstation/commandstationlist.hpp"
-#include "../hardware/commandstation/loconetserial.hpp"
-
-#include "../hardware/protocol/loconet/loconetlist.hpp"
-#include "../hardware/protocol/loconet/loconet.hpp"
-#include "../hardware/protocol/loconet/loconetlisttablemodel.hpp"
-#include "../hardware/protocol/xpressnet/xpressnetlist.hpp"
-#include "../hardware/protocol/xpressnet/xpressnetlisttablemodel.hpp"
-#include "../hardware/protocol/xpressnet/xpressnet.hpp"
-#include "../hardware/protocol/dccplusplus/dccplusplus.hpp"
 
 #include "../hardware/decoder/decoderfunction.hpp"
 #include "../hardware/decoder/decoderlist.hpp"
@@ -85,24 +61,18 @@
 #include "../hardware/decoder/decoderfunctions.hpp"
 #include "../hardware/decoder/decoderlisttablemodel.hpp"
 
-#include "../hardware/input/loconetinput.hpp"
-#include "../hardware/input/monitor/xpressnetinputmonitor.hpp"
-#include "../hardware/input/monitor/loconetinputmonitor.hpp"
-#include "../hardware/input/xpressnetinput.hpp"
+#include "../hardware/input/input.hpp"
 #include "../hardware/input/list/inputlist.hpp"
-#include "../hardware/input/list/inputlisttablemodel.hpp"
 #include "../hardware/input/map/blockinputmap.hpp"
 #include "../hardware/input/map/blockinputmapitem.hpp"
 
+#include "../hardware/output/output.hpp"
 #include "../hardware/output/list/outputlist.hpp"
-#include "../hardware/output/list/outputlisttablemodel.hpp"
-#include "../hardware/output/keyboard/loconetoutputkeyboard.hpp"
 #include "../hardware/output/map/outputmapoutputaction.hpp"
 #include "../hardware/output/map/signaloutputmap.hpp"
 #include "../hardware/output/map/turnoutoutputmap.hpp"
 #include "../hardware/output/map/turnoutoutputmapitem.hpp"
 #include "../hardware/output/map/signaloutputmapitem.hpp"
-#include "../hardware/output/loconetoutput.hpp"
 
 #include "../vehicle/rail/railvehiclelist.hpp"
 #include "../vehicle/rail/locomotive.hpp"
@@ -170,34 +140,16 @@ void Class::registerValues(lua_State* L)
 
   setField<Clock>(L, "CLOCK");
 
-  setField<WLANmaus>(L, "WLANMAUS_CONTROLLER");
-  setField<ControllerList>(L, "CONTROLLER_LIST");
-#ifdef USB_XPRESSNET
-  setField<USBXpressNetController>(L, "USB_XPRESSNET_CONTROLLER");
-#endif
-
-  setField<RocoZ21>(L, "Z21_COMMAND_STATION");
-  setField<VirtualCommandStation>(L, "VIRTUAL_COMMAND_STATION");
-  setField<LocoNetTCPBinary>(L, "LOCONET_TCP_BINARY_COMMAND_STATION");
-#ifdef USB_XPRESSNET
-  setField<USBXpressNetInterface>(L, "USB_XPRESSNET_INTERFACE");
-#endif
-  setField<XpressNetSerial>(L, "XPRESSNET_SERIAL_COMMAND_STATION");
-  setField<DCCPlusPlusSerial>(L, "DCCPLUSPLUS_SERIAL_COMMAND_STATION");
-  setField<CommandStationList>(L, "COMMAND_STATION_LIST");
-  setField<LocoNetSerial>(L, "LOCONET_SERIAL_COMMAND_STATION");
-
   setField<DecoderFunction>(L, "DECODER_FUNCTION");
   setField<DecoderList>(L, "DECODER_LIST");
   setField<Decoder>(L, "DECODER");
   setField<DecoderFunctions>(L, "DECODER_FUNCTIONS");
 
-  setField<LocoNetInput>(L, "LOCONET_INPUT");
-  setField<XpressNetInput>(L, "XPRESSNET_INPUT");
+  setField<Input>(L, "INPUT");
   setField<InputList>(L, "INPUT_LIST");
 
+  setField<Output>(L, "OUTPUT");
   setField<OutputList>(L, "OUTPUT_LIST");
-  setField<LocoNetOutput>(L, "LOCONET_OUTPUT");
 
   setField<RailVehicleList>(L, "RAIL_VEHICLE_LIST");
   setField<Locomotive>(L, "LOCOMOTIVE");

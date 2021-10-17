@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/output/outputs.cpp
+ * server/src/hardware/interface/interfaces.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,12 +20,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "outputs.hpp"
+#include "interfaces.hpp"
+#include "../../utils/ifclassidcreate.hpp"
+#include "../../world/world.hpp"
 
-std::shared_ptr<Output> Outputs::create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id)
+std::shared_ptr<Interface> Interfaces::create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id)
 {
-  if(classId == LocoNetOutput::classId)
-    return LocoNetOutput::create(world, id);
-  else
-    return std::shared_ptr<Output>();
+  return std::shared_ptr<Interface>();
 }

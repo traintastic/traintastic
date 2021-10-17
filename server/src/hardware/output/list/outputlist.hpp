@@ -26,20 +26,27 @@
 #include "../../../core/objectlist.hpp"
 #include "../../../core/method.hpp"
 #include "../output.hpp"
+#include "../keyboard/outputkeyboard.hpp"
 
 class OutputList : public ObjectList<Output>
 {
+  CLASS_ID("list.output")
+
+  private:
+    const bool m_parentIsOutputController;
+
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
     bool isListedProperty(const std::string& name) final;
 
   public:
-    CLASS_ID("list.output")
-
-    Method<std::shared_ptr<Output>(std::string_view)> add;
+    Method<std::shared_ptr<Output>()> add;
     Method<void(const std::shared_ptr<Output>&)> remove;
+    Method<std::shared_ptr<OutputKeyboard>()> outputKeyboard;
 
     OutputList(Object& _parent, const std::string& parentPropertyName);
+
+    inline bool parentIsOutputController() const { return m_parentIsOutputController; }
 
     TableModelPtr getModel() final;
 };

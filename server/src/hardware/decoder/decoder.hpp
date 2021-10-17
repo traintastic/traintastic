@@ -26,9 +26,9 @@
 #include <type_traits>
 #include "../../core/idobject.hpp"
 #include "../../core/objectproperty.hpp"
-#include "../../core/commandstationproperty.hpp"
 #include "../../enum/decoderprotocol.hpp"
 #include "../../enum/direction.hpp"
+#include "decodercontroller.hpp"
 #include "decoderfunctions.hpp"
 
 enum class DecoderChangeFlags;
@@ -43,6 +43,7 @@ class Decoder : public IdObject
     bool m_worldNoSmoke;
 
   protected:
+    void loaded() final;
     void destroying() override;
     void worldEvent(WorldState state, WorldEvent event) final;
     void updateEditable();
@@ -74,7 +75,7 @@ class Decoder : public IdObject
     static const std::shared_ptr<Decoder> null;
 
     Property<std::string> name;
-    CommandStationProperty commandStation;
+    ObjectProperty<DecoderController> interface;
     Property<DecoderProtocol> protocol;
     Property<uint16_t> address;
     Property<bool> longAddress;

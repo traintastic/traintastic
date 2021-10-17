@@ -31,12 +31,9 @@
 
 #include "../board/board.hpp"
 #include "../board/tile/tiles.hpp"
-#include "../hardware/commandstation/commandstations.hpp"
-#include "../hardware/controller/controllers.hpp"
+#include "../hardware/interface/interfaces.hpp"
 #include "../hardware/decoder/decoder.hpp"
 #include "../hardware/decoder/decoderfunction.hpp"
-#include "../hardware/input/inputs.hpp"
-#include "../hardware/output/outputs.hpp"
 #include "../vehicle/rail/railvehicles.hpp"
 #include "../train/train.hpp"
 #ifndef DISABLE_LUA_SCRIPTING
@@ -154,10 +151,8 @@ void WorldLoader::createObject(ObjectData& objectData)
   std::string_view classId = objectData.json["class_id"];
   std::string_view id = objectData.json["id"];
 
-  if(startsWith(classId, CommandStations::classIdPrefix))
-    objectData.object = CommandStations::create(m_world, classId, id);
-  else if(startsWith(classId, Controllers::classIdPrefix))
-    objectData.object = Controllers::create(m_world, classId, id);
+  if(startsWith(classId, Interfaces::classIdPrefix))
+    objectData.object = Interfaces::create(m_world, classId, id);
   else if(classId == Decoder::classId)
     objectData.object = Decoder::create(m_world, id);
   else if(classId == DecoderFunction::classId)
@@ -171,10 +166,10 @@ void WorldLoader::createObject(ObjectData& objectData)
       decoder->functions->items.appendInternal(f);
     }
   }
-  else if(startsWith(classId, Inputs::classIdPrefix))
-    objectData.object = Inputs::create(m_world, classId, id);
-  else if(startsWith(classId, Outputs::classIdPrefix))
-    objectData.object = Outputs::create(m_world, classId, id);
+  else if(classId == Input::classId)
+    objectData.object = Input::create(m_world, id);
+  else if(classId == Output::classId)
+    objectData.object = Output::create(m_world, id);
   else if(classId == Board::classId)
     objectData.object = Board::create(m_world, id);
   else if(startsWith(classId, Tiles::classIdPrefix))

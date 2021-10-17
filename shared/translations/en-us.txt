@@ -121,9 +121,13 @@ direction:reverse=Reverse
 
 hardware:address=Address
 hardware:command_station=Command station
+hardware:decoders=Decoders
 hardware:input_monitor=Input monitor
+hardware:inputs=Inputs
+hardware:interface=Interface
 hardware:loconet=LocoNet
 hardware:output_keyboard=Output keyboard
+hardware:outputs=Outputs
 hardware:speed_steps=Speed steps
 hardware:xpressnet=XpressNet
 
@@ -132,6 +136,8 @@ input_list:bus=Bus
 input_map_item.block:input=Input
 input_map_item.block:invert=Invert
 input_map_item.block:type=Type
+
+interface:status=Status
 
 ip:hostname=Hostname
 ip:port=Port
@@ -433,6 +439,7 @@ world:controllers=Controllers
 world:decoders=Decoders
 world:edit=Edit world
 world:inputs=Inputs
+world:interfaces=Interfaces
 world:lua_scripts=Lua scripts
 world:mute=Mute
 world:no_smoke=No smoke

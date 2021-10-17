@@ -35,6 +35,8 @@ class ObjectListTableModel : public TableModel
     std::shared_ptr<ObjectList<T>> m_list;
 
   protected:
+    static constexpr uint32_t invalidColumn = std::numeric_limits<uint32_t>::max();
+
     const T& getItem(uint32_t row) const { return *m_list->m_items[row]; }
     //T& getItem(uint32_t row) { return *m_list.m_items[row]; }
     virtual void propertyChanged(BaseProperty& property, uint32_t row) = 0;

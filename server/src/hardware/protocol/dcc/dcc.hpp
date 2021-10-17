@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/input/inputs.hpp
+ * server/src/hardware/protocol/dcc/dcc.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,25 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTS_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTS_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCC_DCC_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCC_DCC_HPP
 
-#include "input.hpp"
-#include "../../utils/makearray.hpp"
+#include <cstdint>
+#include "../../../utils/inrange.hpp"
 
-#include "loconetinput.hpp"
-#include "xpressnetinput.hpp"
+namespace DCC {
 
-struct Inputs
+constexpr uint16_t addressBroadcast = 0;
+constexpr uint16_t addressMin = 1;
+constexpr uint16_t addressShortMax = 127;
+constexpr uint16_t addressLongStart = 128;
+constexpr uint16_t addressLongMax = 10239;
+
+constexpr bool isLongAddress(uint16_t address)
 {
-  static constexpr std::string_view classIdPrefix = "input.";
+  return inRange(address, addressLongStart, addressLongMax);
+}
 
-  static constexpr auto classList = makeArray(
-    LocoNetInput::classId,
-    XpressNetInput::classId
-  );
-
-  static std::shared_ptr<Input> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id);
-};
+}
 
 #endif
