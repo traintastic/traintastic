@@ -31,6 +31,10 @@
 #include "decodercontroller.hpp"
 #include "decoderfunctions.hpp"
 
+#ifdef interface
+  #undef interface // interface is defined in combaseapi.h
+#endif
+
 enum class DecoderChangeFlags;
 class DecoderFunction;
 

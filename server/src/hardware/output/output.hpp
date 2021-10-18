@@ -29,6 +29,10 @@
 #include "../../enum/tristate.hpp"
 #include "outputcontroller.hpp"
 
+#ifdef interface
+  #undef interface // interface is defined in combaseapi.h
+#endif
+
 class Output final : public IdObject
 {
   CLASS_ID("output")
