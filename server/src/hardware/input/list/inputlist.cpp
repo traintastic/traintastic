@@ -29,7 +29,7 @@
 
 InputList::InputList(Object& _parent, const std::string& parentPropertyName)
   : ObjectList<Input>(_parent, parentPropertyName)
-  , m_parentIsInputController{dynamic_cast<InputController*>(&_parent)}
+  , m_parentIsInputController(dynamic_cast<InputController*>(&_parent))
   , add{*this, "add",
       [this]()
       {

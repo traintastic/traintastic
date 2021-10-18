@@ -29,7 +29,7 @@
 
 OutputList::OutputList(Object& _parent, const std::string& parentPropertyName)
   : ObjectList<Output>(_parent, parentPropertyName)
-  , m_parentIsOutputController{dynamic_cast<OutputController*>(&_parent)}
+  , m_parentIsOutputController(dynamic_cast<OutputController*>(&_parent))
   , add{*this, "add",
       [this]()
       {
