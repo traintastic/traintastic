@@ -57,7 +57,7 @@ const std::array<TileInfo, 30> tileInfo = {
   TileInfo{QStringLiteral("board_tile.rail.curve_45"), TileId::RailCurve45, 0xFF},
   TileInfo{QStringLiteral("board_tile.rail.curve_90"), TileId::RailCurve90, 0xFF},
   TileInfo{QStringLiteral(""), TileId::None, 0},
-  TileInfo{QStringLiteral("board_tile.rail.cross_45"), TileId::RailCross45, 0x03},
+  TileInfo{QStringLiteral("board_tile.rail.cross_45"), TileId::RailCross45, 0x0F},
   TileInfo{QStringLiteral("board_tile.rail.cross_90"), TileId::RailCross90, 0x03},
   TileInfo{QStringLiteral("board_tile.rail.bridge_45_left"), TileId::RailBridge45Left, 0x0F},
   TileInfo{QStringLiteral("board_tile.rail.bridge_45_right"), TileId::RailBridge45Right, 0x0F},
