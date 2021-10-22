@@ -347,8 +347,8 @@ void BoardAreaWidget::mouseMoveEvent(QMouseEvent* event)
 
           case MouseMoveAction::ResizeTile:
             update(updateTileRect(
-              m_mouseMoveHideTileLocation.x,
-              m_mouseMoveHideTileLocation.y,
+              m_mouseMoveHideTileLocation.x - originX,
+              m_mouseMoveHideTileLocation.y - originY,
               std::max(1, 1 + std::max(old.x, tl.x) - m_mouseMoveHideTileLocation.x),
               std::max(1, 1 + std::max(old.y, tl.y) - m_mouseMoveHideTileLocation.y),
               tileSize));
