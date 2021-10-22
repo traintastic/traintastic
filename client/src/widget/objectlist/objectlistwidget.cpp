@@ -49,9 +49,9 @@
 
 ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
   QWidget(parent),
-  m_buttonAdd{nullptr},
   m_object{object},
   m_toolbar{new QToolBar()},
+  m_buttonAdd{nullptr},
   m_actionAdd{nullptr},
   m_actionEdit{nullptr},
   m_actionDelete{nullptr},
@@ -102,12 +102,12 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
             m_object->connection()->cancelRequest(m_requestIdAdd);
 
           m_requestIdAdd = method->call(
-            [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+            [this](const ObjectPtr& addedObject, Message::ErrorCode /*ec*/)
             {
               m_requestIdAdd = Connection::invalidRequestId;
-              if(object)
+              if(addedObject)
               {
-                MainWindow::instance->showObject(object);
+                MainWindow::instance->showObject(addedObject);
               }
               // TODO: show error
             });

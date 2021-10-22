@@ -82,7 +82,6 @@ void ItemsEditWidget::buildForm()
   QVBoxLayout* left = new QVBoxLayout();
 
   QToolBar* toolbar = new QToolBar(this);
-  QAction* act;
 
   if(m_methodAdd)
     toolbar->addAction(new MethodAction(Theme::getIcon("add"), *m_methodAdd, toolbar));
@@ -133,7 +132,7 @@ void ItemsEditWidget::buildForm()
   connect(m_propertyItems, &ObjectVectorProperty::valueChanged, this, &ItemsEditWidget::itemsChanged);
   itemsChanged();
   connect(m_list, &QListWidget::currentItemChanged, this,
-    [this](QListWidgetItem* current, QListWidgetItem* previous)
+    [this](QListWidgetItem* current, QListWidgetItem* /*previous*/)
     {
       if(current)
         if(auto* w = m_items.value(current->data(objectIdRole).toString()))

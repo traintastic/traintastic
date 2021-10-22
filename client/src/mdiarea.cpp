@@ -46,7 +46,7 @@ void MdiArea::addBackgroundAction(QAction* action)
 
 void MdiArea::removeBackgroundAction(QAction* action)
 {
-  auto it = std::find_if(m_backgroundActionButtons.begin(), m_backgroundActionButtons.end(), [action](const auto& it) { return it.first == action; });
+  auto it = std::find_if(m_backgroundActionButtons.begin(), m_backgroundActionButtons.end(), [action](const auto& i) { return i.first == action; });
   if(it != m_backgroundActionButtons.end())
   {
     delete it->second;

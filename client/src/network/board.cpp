@@ -24,7 +24,7 @@
 #include "connection.hpp"
 #include "callmethod.hpp"
 
-Board::Board(std::shared_ptr<Connection> connection, Handle handle, const QString& classId) :
+Board::Board(std::shared_ptr<Connection> connection, Handle handle) :
   Object(std::move(connection), handle, classId),
   m_getTileDataRequestId{Connection::invalidRequestId}
 {

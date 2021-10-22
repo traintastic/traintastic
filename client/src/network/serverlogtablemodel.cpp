@@ -122,7 +122,7 @@ void ServerLogTableModel::processMessage(const Message& message)
     log.code = message.read<LogMessage>();
     log.message = Locale::tr("message:" + toCodeString(log.code));
     const int argc = message.read<uint8_t>();
-    for(int i = 0; i < argc; i++)
+    for(int j = 0; j < argc; j++)
       log.message = log.message.arg(QString::fromUtf8(message.read<QByteArray>()));
     m_logs.append(log);
   }

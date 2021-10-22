@@ -31,8 +31,41 @@ QString errorCodeToText(Message::ErrorCode ec)
   QString text;
   switch(ec)
   {
+    case ErrorCode::InvalidCommand:
+      text = "Invalid command";
+      break;
+
+    case ErrorCode::Failed:
+      text = "Failed";
+      break;
+
+    case ErrorCode::AuthenticationFailed:
+      text = "Authentication failed";
+      break;
+
+    case ErrorCode::InvalidSession:
+      text = "Invalid session";
+      break;
+
     case ErrorCode::UnknownObject:
       text = "Unknown object";
+      break;
+
+    case ErrorCode::ObjectNotTable:
+      text = "Object not table";
+      break;
+
+    case ErrorCode::UnknownClassId:
+      text = "Unknown class id";
+      break;
+
+    case ErrorCode::Other:
+      assert(false);
+      text = "Other";
+      break;
+
+    case ErrorCode::Unknown:
+      text = "Unknown";
       break;
 
     case ErrorCode::None:

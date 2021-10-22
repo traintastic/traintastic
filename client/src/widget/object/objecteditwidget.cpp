@@ -96,7 +96,7 @@ void ObjectEditWidget::buildForm()
             ObjectProperty* property = static_cast<ObjectProperty*>(baseProperty);
             if(contains(baseProperty->flags(), PropertyFlags::SubObject))
             {
-              QWidget* w = new ObjectEditWidget(property->objectId());
+              w = new ObjectEditWidget(property->objectId());
               w->setWindowTitle(property->displayName());
               tabs.append(w);
               continue;

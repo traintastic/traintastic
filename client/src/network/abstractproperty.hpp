@@ -72,10 +72,10 @@ class AbstractProperty : public BaseProperty
       return setValueInt64(static_cast<int64_t>(value));
     }
 
-    [[nodiscard]] virtual int setValueBool(bool value, std::function<void(const QString& error)> callback) { Q_ASSERT(value != value); return -1; }
-    [[nodiscard]] virtual int setValueInt64(int64_t value, std::function<void(const QString& error)> callback) { Q_ASSERT(value != value); return -1; }
-    [[nodiscard]] virtual int setValueDouble(double value, std::function<void(const QString& error)> callback) { Q_ASSERT(value != value); return -1; }
-    [[nodiscard]] virtual int setValueString(const QString& value, std::function<void(const QString& error)> callback) { Q_ASSERT(value != value); return -1; }
+    [[nodiscard]] virtual int setValueBool(bool value, std::function<void(const QString& error)> /*callback*/) { Q_ASSERT(value != value); return -1; }
+    [[nodiscard]] virtual int setValueInt64(int64_t value, std::function<void(const QString& error)> /*callback*/) { Q_ASSERT(value != value); return -1; }
+    [[nodiscard]] virtual int setValueDouble(double value, std::function<void(const QString& error)> /*callback*/) { Q_ASSERT(value != value); return -1; }
+    [[nodiscard]] virtual int setValueString(const QString& value, std::function<void(const QString& error)> /*callback*/) { Q_ASSERT(value != value); return -1; }
 
   signals:
     void valueChanged();

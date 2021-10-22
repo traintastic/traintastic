@@ -66,9 +66,8 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget* parent)
       {
         GeneralSettings::instance().language.setValue(cb->itemData(index).toString());
       });
-    add(GeneralSettings::instance().language.name(), cb);
+    add(s.language.name(), cb);
   }
-
 
   done();
 }

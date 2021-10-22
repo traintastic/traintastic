@@ -107,7 +107,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
     connect(name, &AbstractProperty::valueChangedString, this, &BoardWidget::setWindowTitle);
     setWindowTitle(name->toString());
   }
-  QMenu* m;
+  QMenu* menu;
 
   QVBoxLayout* l = new QVBoxLayout();
   l->setMargin(0);
@@ -134,23 +134,23 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   m_toolButtonGrid->setToolTip(Locale::tr("qtapp:grid"));
   m_toolButtonGrid->setPopupMode(QToolButton::MenuButtonPopup);
   connect(m_toolButtonGrid, &QToolButton::pressed, m_toolButtonGrid, &QToolButton::showMenu);
-  m = new QMenu(this);
-  m_actionGridNone = m->addAction(Theme::getIcon("grid_none"), Locale::tr("qtapp:grid_none"),
+  menu = new QMenu(this);
+  m_actionGridNone = menu->addAction(Theme::getIcon("grid_none"), Locale::tr("qtapp:grid_none"),
     [this]()
     {
       m_boardArea->setGrid(BoardAreaWidget::Grid::None);
     });
-  m_actionGridDot = m->addAction(Theme::getIcon("grid_dot"), Locale::tr("qtapp:grid_dot"),
+  m_actionGridDot = menu->addAction(Theme::getIcon("grid_dot"), Locale::tr("qtapp:grid_dot"),
     [this]()
     {
       m_boardArea->setGrid(BoardAreaWidget::Grid::Dot);
     });
-  m_actionGridLine = m->addAction(Theme::getIcon("grid_line"), Locale::tr("qtapp:grid_line"),
+  m_actionGridLine = menu->addAction(Theme::getIcon("grid_line"), Locale::tr("qtapp:grid_line"),
     [this]()
     {
       m_boardArea->setGrid(BoardAreaWidget::Grid::Line);
     });
-  m_toolButtonGrid->setMenu(m);
+  m_toolButtonGrid->setMenu(menu);
   toolbar->addWidget(m_toolButtonGrid);
 
   // edit toolbar:
@@ -190,10 +190,10 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
     }));
   m_editActionDelete->setCheckable(true);
   m_editActionDelete->setData(-1);
-  if(auto* m = m_object->getMethod("delete_tile"))
+  if(auto* method = m_object->getMethod("delete_tile"))
   {
-    m_editActionDelete->setEnabled(m->getAttributeBool(AttributeName::Enabled, true));
-    connect(m, &Method::attributeChanged, this,
+    m_editActionDelete->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
+    connect(method, &Method::attributeChanged, this,
       [this](AttributeName name, const QVariant& value)
       {
         if(name == AttributeName::Enabled)
@@ -234,10 +234,10 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
           m_addActions.append(action);
           if(auto* tb = dynamic_cast<QToolButton*>(m_toolbarEdit->widgetForAction(action)))
             tb->setPopupMode(QToolButton::MenuButtonPopup);
-          QMenu* m = new QMenu(this);
+          QMenu* toolbuttonMenu = new QMenu(this);
           for(auto subAction : actions)
           {
-            m->addAction(subAction);
+            toolbuttonMenu->addAction(subAction);
             connect(subAction, &QAction::triggered, this,
               [this, action, subAction]()
               {
@@ -251,7 +251,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
           action->setIcon(actions[0]->icon());
           action->setText(actions[0]->text());
           action->setData(actions[0]->data());
-          action->setMenu(m);
+          action->setMenu(toolbuttonMenu);
           action->setCheckable(true);
           connect(action, &QAction::triggered, this,
             [this, action]()
@@ -269,13 +269,15 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
       }
     }
 
-    if(auto* m = m_object->getMethod("add_tile"))
+    if(auto* method = m_object->getMethod("add_tile"))
     {
-      const bool v = m->getAttributeBool(AttributeName::Enabled, true);
-      for(QAction* act : m_addActions)
-        act->setEnabled(v);
+      {
+        const bool v = method->getAttributeBool(AttributeName::Enabled, true);
+        for(QAction* act : m_addActions)
+          act->setEnabled(v);
+      }
 
-      connect(m, &Method::attributeChanged, this,
+      connect(method, &Method::attributeChanged, this,
         [this](AttributeName name, const QVariant& value)
         {
           if(name == AttributeName::Enabled)
@@ -301,10 +303,10 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
       if(Q_LIKELY(m_object))
         m_object->callMethod("resize_to_contents");
     });
-  if(auto* m = m_object->getMethod("resize_to_contents"))
+  if(auto* method = m_object->getMethod("resize_to_contents"))
   {
-    m_editActionResizeToContents->setEnabled(m->getAttributeBool(AttributeName::Enabled, true));
-    connect(m, &Method::attributeChanged, this,
+    m_editActionResizeToContents->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
+    connect(method, &Method::attributeChanged, this,
       [this](AttributeName name, const QVariant& value)
       {
         if(name == AttributeName::Enabled)
@@ -408,18 +410,18 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
           m_tileMoveY = y;
           m_tileMoveStarted = true;
 
-          const auto& data = m_object->tileData().at(l);
+          const auto& tileData = m_object->tileData().at(l);
           m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::MoveTile);
-          m_boardArea->setMouseMoveTileId(data.id());
-          m_boardArea->setMouseMoveTileRotate(data.rotate());
-          m_boardArea->setMouseMoveTileSize(data.width(), data.height());
+          m_boardArea->setMouseMoveTileId(tileData.id());
+          m_boardArea->setMouseMoveTileRotate(tileData.rotate());
+          m_boardArea->setMouseMoveTileSize(tileData.width(), tileData.height());
           m_boardArea->setMouseMoveHideTileLocation(l);
         }
       }
       else // drop
       {
         m_object->moveTile(m_tileMoveX, m_tileMoveY, x, y, false,
-          [this](const bool& r, Message::ErrorCode ec)
+          [this](const bool& /*r*/, Message::ErrorCode /*ec*/)
           {
           });
         m_tileMoveStarted = false;
@@ -449,10 +451,10 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
           m_tileResizeY = l.y;
           m_tileResizeStarted = true;
 
-          const auto& data = m_object->tileData().at(l);
+          const auto& tileData = m_object->tileData().at(l);
           m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::ResizeTile);
-          m_boardArea->setMouseMoveTileId(data.id());
-          m_boardArea->setMouseMoveTileRotate(data.rotate());
+          m_boardArea->setMouseMoveTileId(tileData.id());
+          m_boardArea->setMouseMoveTileRotate(tileData.rotate());
           m_boardArea->setMouseMoveHideTileLocation(l);
           m_boardArea->setMouseMoveTileSizeMax(widthMax, heightMax);
         }
@@ -465,7 +467,7 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
             h >= 1 && h <= std::numeric_limits<uint8_t>::max())
         {
           m_object->resizeTile(m_tileResizeX, m_tileResizeY, w, h,
-            [this](const bool& r, Message::ErrorCode ec)
+            [this](const bool& /*r*/, Message::ErrorCode /*ec*/)
             {
             });
 
@@ -477,7 +479,7 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
     else if(act == m_editActionDelete)
     {
       m_object->deleteTile(x, y,
-        [this](const bool& r, Message::ErrorCode ec)
+        [this](const bool& /*r*/, Message::ErrorCode /*ec*/)
         {
         });
     }
@@ -487,7 +489,7 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
       const Qt::KeyboardModifiers kbMod = QApplication::keyboardModifiers();
       if(kbMod == Qt::NoModifier || kbMod == Qt::ControlModifier)
         m_object->addTile(x, y, m_editRotate, classId, kbMod == Qt::ControlModifier,
-          [this](const bool& r, Message::ErrorCode ec)
+          [this](const bool& /*r*/, Message::ErrorCode /*ec*/)
           {
           });
     }
@@ -517,7 +519,7 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
 void BoardWidget::rightClicked()
 {
   if(QAction* act = m_editActions->checkedAction())
-    if(int index = act->data().toInt(); index >= 0 && Q_LIKELY(index < tileInfo.size()))
+    if(int index = act->data().toInt(); index >= 0 && Q_LIKELY(static_cast<size_t>(index) < tileInfo.size()))
     {
       if(QApplication::keyboardModifiers() == Qt::NoModifier)
         m_editRotate += TileRotate::Deg45;
@@ -528,18 +530,18 @@ void BoardWidget::rightClicked()
     }
 }
 
-void BoardWidget::actionSelected(const TileInfo* tileInfo)
+void BoardWidget::actionSelected(const TileInfo* info)
 {
   m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::None);
   m_tileMoveStarted = false;
   m_tileResizeStarted = false;
 
-  if(tileInfo)
+  if(info)
   {
-    validRotate(m_editRotate, tileInfo->rotates);
+    validRotate(m_editRotate, info->rotates);
     m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::AddTile);
     m_boardArea->setMouseMoveTileRotate(m_editRotate);
-    m_boardArea->setMouseMoveTileId(tileInfo->id);
+    m_boardArea->setMouseMoveTileId(info->id);
   }
 }
 

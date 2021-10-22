@@ -483,7 +483,7 @@ ObjectPtr Connection::readObject(const Message& message)
         else if(classId.startsWith(OutputMap::classIdPrefix))
           p = new OutputMap(shared_from_this(), handle, classId);
         else if(classId == Board::classId)
-          p = new Board(shared_from_this(), handle, classId);
+          p = new Board(shared_from_this(), handle);
         else
           p = new Object(shared_from_this(), handle, classId);
 
@@ -593,14 +593,14 @@ ObjectPtr Connection::readObject(const Message& message)
         {
           message.readBlock(); // item
           const AttributeName attributeName = message.read<AttributeName>();
-          const ValueType type = message.read<ValueType>();
+          const ValueType valueType = message.read<ValueType>();
 
           switch(message.read<AttributeType>())
           {
             case AttributeType::Value:
             {
               QVariant value;
-              switch(type)
+              switch(valueType)
               {
                 case ValueType::Boolean:
                   value = message.read<bool>();
@@ -632,7 +632,7 @@ ObjectPtr Connection::readObject(const Message& message)
             case AttributeType::Values:
             {
               const int length = message.read<int>(); // read uint32_t as int, Qt uses int for length
-              QList<QVariant> values = readArray(message, type, length);
+              QList<QVariant> values = readArray(message, valueType, length);
               if(Q_LIKELY(values.length() == length))
                 item->m_attributes[attributeName] = values;
               break;
@@ -683,7 +683,7 @@ void Connection::getWorld()
     setWorld(nullptr);
   else
     m_worldRequestId = getObject(m_worldProperty->objectId(),
-      [this](const ObjectPtr& object, Message::ErrorCode ec)
+      [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
       {
         m_worldRequestId = invalidRequestId;
         setWorld(object);
@@ -1039,22 +1039,22 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
 
 void Connection::socketConnected()
 {
-  std::unique_ptr<Message> request{Message::newRequest(Message::Command::Login)};
-  request->write(m_username.toUtf8());
-  request->write(m_password);
-  send(request,
-    [this](const std::shared_ptr<Message> message)
+  std::unique_ptr<Message> loginRequest{Message::newRequest(Message::Command::Login)};
+  loginRequest->write(m_username.toUtf8());
+  loginRequest->write(m_password);
+  send(loginRequest,
+    [this](const std::shared_ptr<Message> loginResponse)
     {
-      if(message && message->isResponse() && !message->isError())
+      if(loginResponse && loginResponse->isResponse() && !loginResponse->isError())
       {
-        std::unique_ptr<Message> request{Message::newRequest(Message::Command::NewSession)};
-        send(request,
-          [this](const std::shared_ptr<Message> message)
+        std::unique_ptr<Message> newSessionRequest{Message::newRequest(Message::Command::NewSession)};
+        send(newSessionRequest,
+          [this](const std::shared_ptr<Message> newSessionResonse)
           {
-            if(message && message->isResponse() && !message->isError())
+            if(newSessionResonse && newSessionResonse->isResponse() && !newSessionResonse->isError())
             {
-              message->read(m_sessionUUID);
-              m_traintastic = readObject(*message);
+              newSessionResonse->read(m_sessionUUID);
+              m_traintastic = readObject(*newSessionResonse);
               m_worldProperty = dynamic_cast<ObjectProperty*>(m_traintastic->getProperty("world"));
               connect(m_worldProperty, &ObjectProperty::valueChanged, this,
                 [this]()

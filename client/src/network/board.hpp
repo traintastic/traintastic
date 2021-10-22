@@ -56,7 +56,7 @@ class Board final : public Object
   public:
     inline static const QString classId = QStringLiteral("board");
 
-    Board(std::shared_ptr<Connection> connection, Handle handle, const QString& classId);
+    Board(std::shared_ptr<Connection> connection, Handle handle);
     ~Board() final;
 
     void getTileData();

@@ -39,12 +39,12 @@ class AbstractVectorProperty : public BaseProperty
   public:
     virtual int size() const = 0;
 
-    virtual bool getBool(int index) const { Q_ASSERT(false); return false; }
-    virtual int getInt(int index) const { Q_ASSERT(false); return 0; }
-    virtual int64_t getInt64(int index) const { Q_ASSERT(false); return 0; }
-    virtual double getDouble(int index) const { Q_ASSERT(false); return 0; }
-    virtual QString getString(int index) const { Q_ASSERT(false); return ""; }
-    virtual QVariant getVariant(int index) const { Q_ASSERT(false); return QVariant(); }
+    virtual bool getBool(int /*index*/) const { Q_ASSERT(false); return false; }
+    virtual int getInt(int /*index*/) const { Q_ASSERT(false); return 0; }
+    virtual int64_t getInt64(int /*index*/) const { Q_ASSERT(false); return 0; }
+    virtual double getDouble(int /*index*/) const { Q_ASSERT(false); return 0; }
+    virtual QString getString(int /*index*/) const { Q_ASSERT(false); return ""; }
+    virtual QVariant getVariant(int /*index*/) const { Q_ASSERT(false); return QVariant(); }
 
     template<typename T>
     T getEnum(int index) const
