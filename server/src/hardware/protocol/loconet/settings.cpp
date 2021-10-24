@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/settings.cpp
+ * server/src/hardware/protocol/loconet/settings.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -21,22 +21,8 @@
  */
 
 #include "settings.hpp"
-/*
-#include <thread>
-#include <chrono>
-#include "../../../core/eventloop.hpp"
-#include "../../../core/traintastic.hpp"
-//#include "../../commandstation/commandstation.hpp"
-//#include "../../input/loconetinput.hpp"
-//#include "../../output/loconetoutput.hpp"
-*/
 #include "../../../core/attributes.hpp"
-/*
-#include "../../../world/getworld.hpp"
-//#include "loconetlisttablemodel.hpp"
-#include "../../../log/log.hpp"
 #include "../../../utils/displayname.hpp"
-*/
 
 namespace LocoNet {
 
@@ -67,6 +53,7 @@ Settings::Settings(Object& _parent, const std::string& parentPropertyName)
   , debugLogOutput{this, "debug_log_output", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
+  Attributes::addDisplayName(commandStation, DisplayName::Hardware::commandStation);
   Attributes::addValues(commandStation, LocoNetCommandStationValues);
   m_interfaceItems.add(commandStation);
 
@@ -80,9 +67,11 @@ Settings::Settings(Object& _parent, const std::string& parentPropertyName)
   //Attributes::addGroup(debugLogInput, Group::debug);
   m_interfaceItems.add(debugLogInput);
 
+  Attributes::addDisplayName(debugLogInput, DisplayName::Hardware::debugLogInput);
   //Attributes::addGroup(debugLogOuput, Group::debug);
   m_interfaceItems.add(debugLogOutput);
 
+  Attributes::addDisplayName(debugLogRXTX, DisplayName::Hardware::debugLogRXTX);
   //Attributes::addGroup(debugLogRXTX, Group::debug);
   m_interfaceItems.add(debugLogRXTX);
 }

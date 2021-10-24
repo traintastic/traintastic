@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/settings.hpp
+ * server/src/hardware/protocol/loconet/settings.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -31,9 +31,6 @@ namespace LocoNet {
 
 class Settings final : public SubObject
 {
-  private:
-    std::function<void()> m_onChanged;
-
   protected:
     void loaded() final;
 
