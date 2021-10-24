@@ -120,14 +120,19 @@ struct FeedbackBroadcast : Message
     uint8_t address;
     uint8_t data;
 
+    constexpr uint16_t groupAddress() const
+    {
+      return (static_cast<uint16_t>(address) << 1) | ((data & 0x10) ? 1 : 0);
+    }
+
+    constexpr bool switchingCommandCompleted() const
+    {
+      return (data & 0x80);
+    }
+
     constexpr Type type() const
     {
       return static_cast<Type>((data & 0x60) >> 5);
-    }
-
-    constexpr bool isHighNibble() const
-    {
-      return (data & 0x10);
     }
 
     constexpr uint8_t statusNibble() const
@@ -161,8 +166,8 @@ struct EmergencyStopLocomotive : Message
     if(longAddress)
     {
       assert(address >= 1 && address <= 9999);
-      addressHigh = 0x00;
-      addressLow = address & 0x7f;
+      addressHigh = 0xC0 | address >> 8;
+      addressLow = address & 0xff;
     }
     else
     {
@@ -403,6 +408,25 @@ struct setFunctionStateGroup : LocomotiveInstruction
   }
 } __attribute__((packed));
 */
+
+struct AccessoryDecoderOperationRequest : Message
+{
+  uint8_t address = 0x00;
+  uint8_t data = 0x80;
+  uint8_t checksum;
+
+  AccessoryDecoderOperationRequest(uint16_t fullAddress, bool value)
+    : Message(0x52)
+  {
+    assert(fullAddress < 2048);
+    address = static_cast<uint8_t>(fullAddress >> 3);
+    data |= static_cast<uint8_t>(fullAddress & 0x07);
+    if(value)
+      data |= 0x40;
+    checksum = calcChecksum(*this);
+  }
+};
+static_assert(sizeof(AccessoryDecoderOperationRequest) == 4);
 
 namespace RocoMultiMAUS
 {

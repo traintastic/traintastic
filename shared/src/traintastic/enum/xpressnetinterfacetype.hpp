@@ -1,9 +1,9 @@
 /**
- * shared/src/enum/xpressnetserialinterface.hpp
+ * shared/src/traintastic/enum/xpressnetinterfacetype.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,34 +20,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_XPRESSNETSERIALINTERFACE_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_XPRESSNETSERIALINTERFACE_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_XPRESSNETINTERFACETYPE_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_XPRESSNETINTERFACETYPE_HPP
 
 #include <cstdint>
 #include "enum.hpp"
 
-enum class XpressNetSerialInterface : uint16_t
+enum class XpressNetInterfaceType : uint8_t
 {
-  Custom = 0,
-  LenzLI100 = 1,
-  LenzLI100F = 2,
-  LenzLI101F = 3,
-  RoSoftS88XPressNetLI = 4,
+  Serial = 0,
+  Network = 1,
 };
 
-template<>
-struct EnumName<XpressNetSerialInterface>
-{
-  static constexpr char const* value = "xpressnet_serial_interface";
-};
+ENUM_NAME(XpressNetInterfaceType, "xpressnet_interface_type")
 
-ENUM_VALUES(XpressNetSerialInterface, 5,
+ENUM_VALUES(XpressNetInterfaceType, 2,
 {
-  {XpressNetSerialInterface::Custom, "custom"},
-  {XpressNetSerialInterface::LenzLI100, "lenz_li100"},
-  {XpressNetSerialInterface::LenzLI100F, "lenz_li100f"},
-  {XpressNetSerialInterface::LenzLI101F, "lenz_li101f"},
-  {XpressNetSerialInterface::RoSoftS88XPressNetLI, "rosoft_s88xpressnetli"},
+  {XpressNetInterfaceType::Serial, "serial"},
+  {XpressNetInterfaceType::Network, "network"},
 })
 
 #endif

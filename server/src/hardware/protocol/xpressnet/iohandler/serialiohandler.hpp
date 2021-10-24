@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/interfaces.hpp
+ * server/src/hardware/protocol/xpressnet/iohandler/serialiohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,25 +20,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_SERIALIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_SERIALIOHANDLER_HPP
 
-#include "interface.hpp"
-#include "../../utils/makearray.hpp"
+#include "iohandler.hpp"
+#include <boost/asio/serial_port.hpp>
+#include "../../../../enum/serialflowcontrol.hpp"
 
-#include "loconetinterface.hpp"
-#include "xpressnetinterface.hpp"
+namespace XpressNet {
 
-struct Interfaces
+class SerialIOHandler : public IOHandler
 {
-  static constexpr std::string_view classIdPrefix = "interface.";
+  private:
+    static constexpr uint8_t characterSize = 8;
 
-  static constexpr auto classList = makeArray(
-    LocoNetInterface::classId,
-    XpressNetInterface::classId
-  );
+    boost::asio::serial_port m_serialPort;
 
-  static std::shared_ptr<Interface> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = std::string_view{});
+    void read();
+    void write() final;
+
+  public:
+    SerialIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate, SerialFlowControl flowControl);
+    ~SerialIOHandler() override;
+
+    void start() override;
+    void stop() final;
 };
+
+}
 
 #endif

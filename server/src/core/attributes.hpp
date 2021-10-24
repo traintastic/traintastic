@@ -62,6 +62,12 @@ struct Attributes
     item.setAttribute(AttributeName::Enabled, value);
   }
 
+  static inline void setEnabled(std::initializer_list<std::reference_wrapper<InterfaceItem>> items, bool value)
+  {
+    for(auto& item : items)
+      item.get().setAttribute(AttributeName::Enabled, value);
+  }
+
   template<typename T>
   static inline void addMinMax(Property<T>& property, T min, T max)
   {

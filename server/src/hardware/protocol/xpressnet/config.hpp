@@ -1,9 +1,9 @@
 /**
- * server/src/enum/xpressnetserialinterface.hpp
+ * server/src/hardware/protocol/xpressnet/config.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,18 +20,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_ENUM_XPRESSNETSERIALINTERFACE_HPP
-#define TRAINTASTIC_SERVER_ENUM_XPRESSNETSERIALINTERFACE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_CONFIG_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_CONFIG_HPP
 
-#include <traintastic/enum/xpressnetserialinterface.hpp>
-#include <array>
+namespace XpressNet {
 
-inline constexpr std::array<XpressNetSerialInterface, 5> XpressNetSerialInterfaceValues{{
-  XpressNetSerialInterface::Custom,
-  XpressNetSerialInterface::LenzLI100,
-  XpressNetSerialInterface::LenzLI100F,
-  XpressNetSerialInterface::LenzLI101F,
-  XpressNetSerialInterface::RoSoftS88XPressNetLI,
-}};
+struct Config
+{
+  bool useEmergencyStopLocomotiveCommand;
+  bool useRocoF13F20Command;
+
+  bool debugLogInput;
+  bool debugLogRXTX;
+};
+
+}
 
 #endif

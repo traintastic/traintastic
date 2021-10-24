@@ -27,5 +27,6 @@
 std::shared_ptr<Interface> Interfaces::create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id)
 {
   IF_CLASSID_CREATE(LocoNetInterface)
+  IF_CLASSID_CREATE(XpressNetInterface)
   return std::shared_ptr<Interface>();
 }

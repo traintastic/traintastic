@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/interfaces.hpp
+ * server/src/hardware/protocol/xpressnet/iohandler/rosofts88xpressnetliiohandler.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,25 +20,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
+#include "rosofts88xpressnetliiohandler.hpp"
+#include "../messages.hpp"
 
-#include "interface.hpp"
-#include "../../utils/makearray.hpp"
+namespace XpressNet {
 
-#include "loconetinterface.hpp"
-#include "xpressnetinterface.hpp"
-
-struct Interfaces
+RoSoftS88XPressNetLIIOHandler::RoSoftS88XPressNetLIIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate, SerialFlowControl flowControl, uint8_t s88StartAddress, uint8_t s88ModuleCount)
+  : SerialIOHandler(kernel, device, baudrate, flowControl)
+  , m_s88StartAddress{s88StartAddress}
+  , m_s88ModuleCount{s88ModuleCount}
 {
-  static constexpr std::string_view classIdPrefix = "interface.";
+}
 
-  static constexpr auto classList = makeArray(
-    LocoNetInterface::classId,
-    XpressNetInterface::classId
-  );
+void RoSoftS88XPressNetLIIOHandler::start()
+{
+  SerialIOHandler::start();
 
-  static std::shared_ptr<Interface> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = std::string_view{});
-};
+  send(RoSoftS88XpressNetLI::S88StartAddress(m_s88StartAddress));
+  send(RoSoftS88XpressNetLI::S88ModuleCount(m_s88ModuleCount));
+}
 
-#endif
+}

@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/interfaces.hpp
+ * server/src/hardware/protocol/xpressnet/iohandler/luisbiohandler.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,25 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
+#include "liusbiohandler.hpp"
 
-#include "interface.hpp"
-#include "../../utils/makearray.hpp"
+namespace XpressNet {
 
-#include "loconetinterface.hpp"
-#include "xpressnetinterface.hpp"
-
-struct Interfaces
+LIUSBIOHandler::LIUSBIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate, SerialFlowControl flowControl)
+  : SerialIOHandler(kernel, device, baudrate, flowControl)
 {
-  static constexpr std::string_view classIdPrefix = "interface.";
+  m_extraHeader = true;
+}
 
-  static constexpr auto classList = makeArray(
-    LocoNetInterface::classId,
-    XpressNetInterface::classId
-  );
-
-  static std::shared_ptr<Interface> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = std::string_view{});
-};
-
-#endif
+}

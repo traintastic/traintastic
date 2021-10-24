@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/xpressnet/xpressnetlist.cpp
+ * server/src/hardware/protocol/xpressnet/iohandler/tcpiohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,20 +20,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "xpressnetlist.hpp"
-#include "xpressnetlisttablemodel.hpp"
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_TCPIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_TCPIOHANDLER_HPP
 
-XpressNetList::XpressNetList(Object& _parent, const std::string& parentPropertyName) :
-  ObjectList<XpressNet::XpressNet>(_parent, parentPropertyName)
+#include "iohandler.hpp"
+#include <boost/asio/ip/tcp.hpp>
+
+namespace XpressNet {
+
+class TCPIOHandler : public IOHandler
 {
+  private:
+    boost::asio::ip::tcp::socket m_socket;
+    boost::asio::ip::tcp::endpoint m_endpoint;
+
+    void read();
+    void write() final;
+
+  public:
+    TCPIOHandler(Kernel& kernel, const std::string& hostname, uint16_t port);
+    ~TCPIOHandler() final;
+
+    void start() final;
+    void stop() final;
+};
+
 }
 
-TableModelPtr XpressNetList::getModel()
-{
-  return std::make_shared<XpressNetListTableModel>(*this);
-}
+#endif
 
-bool XpressNetList::isListedProperty(const std::string& name)
-{
-  return XpressNetListTableModel::isListedProperty(name);
-}

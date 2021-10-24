@@ -40,7 +40,8 @@
 #include <traintastic/enum/weightunit.hpp>
 #include <traintastic/enum/worldscale.hpp>
 #include <traintastic/enum/xpressnetcommandstation.hpp>
-#include <traintastic/enum/xpressnetserialinterface.hpp>
+#include <traintastic/enum/xpressnetinterfacetype.hpp>
+#include <traintastic/enum/xpressnetserialinterfacetype.hpp>
 
 #define GET_ENUM_VALUES(_type) \
   if(enumName == EnumName<_type>::value) \
@@ -84,7 +85,8 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(WeightUnit)
   TRANSLATE_ENUM(WorldScale)
   TRANSLATE_ENUM(XpressNetCommandStation)
-  TRANSLATE_ENUM(XpressNetSerialInterface)
+  TRANSLATE_ENUM(XpressNetInterfaceType)
+  TRANSLATE_ENUM(XpressNetSerialInterfaceType)
   return enumName + "@" + QString::number(value);
 }
 

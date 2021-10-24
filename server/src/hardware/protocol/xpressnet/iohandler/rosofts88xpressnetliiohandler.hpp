@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/xpressnet/xpressnetlist.hpp
+ * server/src/hardware/protocol/xpressnet/iohandler/rosofts88xpressnetliiohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,23 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_XPRESSNETLIST_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_XPRESSNETLIST_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_ROSOFTS88XPRESSNETLIIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_ROSOFTS88XPRESSNETLIIOHANDLER_HPP
 
-#include "../../../core/objectlist.hpp"
-#include "xpressnet.hpp"
+#include "serialiohandler.hpp"
 
-class XpressNetList : public ObjectList<XpressNet::XpressNet>
+namespace XpressNet {
+
+class RoSoftS88XPressNetLIIOHandler final : public SerialIOHandler
 {
-  protected:
-    bool isListedProperty(const std::string& name) final;
+  private:
+    const uint8_t m_s88StartAddress;
+    const uint8_t m_s88ModuleCount;
 
   public:
-    CLASS_ID("xpressnet_list")
+    RoSoftS88XPressNetLIIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate, SerialFlowControl flowControl, uint8_t s88StartAddress, uint8_t s88ModuleCount);
 
-    XpressNetList(Object& _parent, const std::string& parentPropertyName);
-
-    TableModelPtr getModel() final;
+    void start() final;
 };
+
+}
 
 #endif

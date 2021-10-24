@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/interface/interfaces.hpp
+ * server/src/enum/xpressnetserialinterfacetype.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,25 +20,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
+#ifndef TRAINTASTIC_SERVER_ENUM_XPRESSNETSERIALINTERFACETYPE_HPP
+#define TRAINTASTIC_SERVER_ENUM_XPRESSNETSERIALINTERFACETYPE_HPP
 
-#include "interface.hpp"
-#include "../../utils/makearray.hpp"
+#include <traintastic/enum/xpressnetserialinterfacetype.hpp>
+#include <array>
 
-#include "loconetinterface.hpp"
-#include "xpressnetinterface.hpp"
-
-struct Interfaces
-{
-  static constexpr std::string_view classIdPrefix = "interface.";
-
-  static constexpr auto classList = makeArray(
-    LocoNetInterface::classId,
-    XpressNetInterface::classId
-  );
-
-  static std::shared_ptr<Interface> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = std::string_view{});
-};
+constexpr std::array<XpressNetSerialInterfaceType, 6> XpressNetSerialInterfaceTypeValues{{
+  XpressNetSerialInterfaceType::DigikeijsDR5000,
+  XpressNetSerialInterfaceType::LenzLI100,
+  XpressNetSerialInterfaceType::LenzLI100F,
+  XpressNetSerialInterfaceType::LenzLI101F,
+  XpressNetSerialInterfaceType::LenzLIUSB,
+  XpressNetSerialInterfaceType::RoSoftS88XPressNetLI,
+}};
 
 #endif

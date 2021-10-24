@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/xpressnet/xpressnetlisttablemodel.hpp
+ * server/src/enum/xpressnetinterface.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,29 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_XPRESSNETLISTTABLEMODEL_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_XPRESSNETLISTTABLEMODEL_HPP
+#ifndef TRAINTASTIC_SERVER_ENUM_XPRESSNETINTERFACETYPE_HPP
+#define TRAINTASTIC_SERVER_ENUM_XPRESSNETINTERFACETYPE_HPP
 
-#include "../../../core/objectlisttablemodel.hpp"
-#include "xpressnet.hpp"
+#include <traintastic/enum/xpressnetinterfacetype.hpp>
+#include <array>
 
-class XpressNetList;
-
-class XpressNetListTableModel : public ObjectListTableModel<XpressNet::XpressNet>
-{
-  friend class XpressNetList;
-
-  protected:
-    void propertyChanged(BaseProperty& property, uint32_t row) final;
-
-  public:
-    CLASS_ID("xpressnet_list_table_model")
-
-    static bool isListedProperty(const std::string& name);
-
-    XpressNetListTableModel(XpressNetList& list);
-
-    std::string getText(uint32_t column, uint32_t row) const final;
-};
+inline constexpr std::array<XpressNetInterfaceType, 2> xpressNetInterfaceTypeValues{{
+  XpressNetInterfaceType::Serial,
+  XpressNetInterfaceType::Network,
+}};
 
 #endif
