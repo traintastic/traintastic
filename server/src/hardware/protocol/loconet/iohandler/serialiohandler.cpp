@@ -23,7 +23,6 @@
 #include "serialiohandler.hpp"
 #include "../kernel.hpp"
 #include "../messages.hpp"
-#include "../../../../log/logmessageexception.hpp"
 #include "../../../../utils/serialport.hpp"
 
 namespace LocoNet {
@@ -34,28 +33,7 @@ SerialIOHandler::SerialIOHandler(Kernel& kernel, const std::string& device, uint
   , m_readBufferOffset{0}
   , m_writeBufferOffset{0}
 {
-  using namespace SerialPort;
-
-  boost::system::error_code ec;
-
-  m_serialPort.open(device, ec);
-  if(ec)
-    throw LogMessageException(LogMessage::E2010_SERIAL_PORT_OPEN_FAILED_X, ec);
-
-  if((ec = setBaudRate(m_serialPort, baudrate)))
-    throw LogMessageException(LogMessage::E2013_SERIAL_PORT_SET_BAUDRATE_FAILED_X, ec);
-
-  if((ec = setCharacterSize(m_serialPort, characterSize)))
-    throw LogMessageException(LogMessage::E2014_SERIAL_PORT_SET_DATA_BITS_FAILED_X, ec);
-
-  if((ec = setStopBitsOne(m_serialPort)))
-    throw LogMessageException(LogMessage::E2015_SERIAL_PORT_SET_STOP_BITS_FAILED_X, ec);
-
-  if((ec = setParityNone(m_serialPort)))
-    throw LogMessageException(LogMessage::E2016_SERIAL_PORT_SET_PARITY_FAILED_X, ec);
-
-  if((ec = setFlowControl(m_serialPort, flowControl)))
-    throw LogMessageException(LogMessage::E2017_SERIAL_PORT_SET_FLOW_CONTROL_FAILED_X, ec);
+  SerialPort::open(m_serialPort, device, baudrate, 8, SerialParity::None, SerialStopBits::One, flowControl);
 }
 
 SerialIOHandler::~SerialIOHandler()

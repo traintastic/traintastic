@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/xpressnet/iohandler/serialiohandler.hpp
+ * shared/src/enum/serialstopbits.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,31 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_SERIALIOHANDLER_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_SERIALIOHANDLER_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_SERIALSTOPBITS_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_SERIALSTOPBITS_HPP
 
-#include "iohandler.hpp"
-#include <boost/asio/serial_port.hpp>
-#include "../../../../enum/serialflowcontrol.hpp"
+#include <cstdint>
 
-namespace XpressNet {
-
-class SerialIOHandler : public IOHandler
+enum class SerialStopBits : uint8_t
 {
-  private:
-    boost::asio::serial_port m_serialPort;
-
-    void read();
-    void write() final;
-
-  public:
-    SerialIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate, SerialFlowControl flowControl);
-    ~SerialIOHandler() override;
-
-    void start() override;
-    void stop() final;
+  One = 1,
 };
-
-}
 
 #endif

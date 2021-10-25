@@ -32,8 +32,6 @@ namespace LocoNet {
 class SerialIOHandler final : public IOHandler
 {
   private:
-    static constexpr uint8_t characterSize = 8;
-
     boost::asio::serial_port m_serialPort;
     std::array<std::byte, 1024> m_readBuffer;
     size_t m_readBufferOffset;

@@ -23,54 +23,25 @@
 #ifndef TRAINTASTIC_SERVER_UTILS_SERIALPORT_HPP
 #define TRAINTASTIC_SERVER_UTILS_SERIALPORT_HPP
 
+#include <cstdint>
+#include <array>
 #include <boost/asio/serial_port.hpp>
+#include <traintastic/enum/serialparity.hpp>
+#include <traintastic/enum/serialstopbits.hpp>
 #include <traintastic/enum/serialflowcontrol.hpp>
 
 namespace SerialPort {
 
-inline boost::system::error_code setBaudRate(boost::asio::serial_port& serialPort, uint32_t value)
-{
-  boost::system::error_code ec;
-  serialPort.set_option(boost::asio::serial_port_base::baud_rate(value), ec);
-  return ec;
-}
+constexpr uint32_t baudrateMin = 50;
+constexpr uint32_t baudrateMax = 3'000'000;
+constexpr std::array<uint32_t, 14> baudrateValues = {{110, 300, 600, 1'200, 2'400, 4'800, 9'600, 14'400, 19'200, 38'400, 57'600, 115'200, 128'000, 256'000}};
 
-inline boost::system::error_code setCharacterSize(boost::asio::serial_port& serialPort, uint8_t value)
-{
-  boost::system::error_code ec;
-  serialPort.set_option(boost::asio::serial_port_base::character_size(value), ec);
-  return ec;
-}
-
-inline boost::system::error_code setStopBitsOne(boost::asio::serial_port& serialPort)
-{
-  boost::system::error_code ec;
-  serialPort.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one), ec);
-  return ec;
-}
-
-inline boost::system::error_code setParityNone(boost::asio::serial_port& serialPort)
-{
-  boost::system::error_code ec;
-  serialPort.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none), ec);
-  return ec;
-}
-
-inline boost::system::error_code setFlowControl(boost::asio::serial_port& serialPort, SerialFlowControl flowControl)
-{
-  boost::system::error_code ec;
-  switch(flowControl)
-  {
-    case SerialFlowControl::None:
-      serialPort.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none));
-      break;
-
-    case SerialFlowControl::Hardware:
-      serialPort.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::hardware));
-      break;
-  }
-  return ec;
-}
+/**
+ * @brief Open serial port
+ *
+ * @note Throws LogMessageException on failure
+ */
+void open(boost::asio::serial_port& serialPort, const std::string& device, uint32_t baudrate, uint8_t characterSize, SerialParity parity, SerialStopBits stopBits, SerialFlowControl flowControl);
 
 }
 
