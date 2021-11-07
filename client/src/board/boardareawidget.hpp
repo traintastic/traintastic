@@ -92,7 +92,8 @@ class BoardAreaWidget : public QWidget
     inline int boardRight() const { return Q_LIKELY(m_boardRight) ? m_boardRight->toInt() + boardMargin: 0; }
     inline int boardBottom() const { return Q_LIKELY(m_boardBottom) ? m_boardBottom->toInt() + boardMargin: 0; }
 
-    int getTileSize() const { return 25 + m_zoomLevel * 5; }
+    static constexpr int getTileSize(int zoomLevel) { return 25 + zoomLevel * 5; }
+    int getTileSize() const { return getTileSize(m_zoomLevel); }
     TurnoutPosition getTurnoutPosition(const TileLocation& l) const;
     BlockState getBlockState(const TileLocation& l) const;
     std::vector<SensorState> getBlockSensorStates(const TileLocation& l) const;
@@ -121,6 +122,7 @@ class BoardAreaWidget : public QWidget
     Grid grid() const { return m_grid; }
     void nextGrid();
     int zoomLevel() const { return m_zoomLevel; }
+    float zoomRatio() const { return static_cast<float>(getTileSize()) / getTileSize(0); }
 
     void setMouseMoveAction(MouseMoveAction action);
     void setMouseMoveTileId(TileId id);

@@ -97,6 +97,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   m_statusBar{new QStatusBar(this)},
   m_statusBarMessage{new QLabel(this)},
   m_statusBarCoords{new QLabel(this)},
+  m_statusBarZoom{new QLabel(this)},
   m_editActions{new QActionGroup(this)},
   m_editRotate{TileRotate::Deg0}
   , m_tileMoveStarted{false}
@@ -325,6 +326,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
 
   m_statusBar->addWidget(m_statusBarMessage, 1);
   m_statusBar->addWidget(m_statusBarCoords, 0);
+  m_statusBar->addWidget(m_statusBarZoom, 0);
   l->addWidget(m_statusBar);
 
   AbstractProperty* edit = m_object->connection()->world()->getProperty("edit");
@@ -384,6 +386,7 @@ void BoardWidget::zoomLevelChanged(int value)
 {
   m_actionZoomIn->setEnabled(value < BoardAreaWidget::zoomLevelMax);
   m_actionZoomOut->setEnabled(value > BoardAreaWidget::zoomLevelMin);
+  m_statusBarZoom->setText(QString::number(100 * m_boardArea->zoomRatio(), 'f', 0) + " %");
 }
 
 void BoardWidget::tileClicked(int16_t x, int16_t y)
