@@ -113,7 +113,7 @@ class BoardAreaWidget : public QWidget
     void updateMinimumSize();
 
   public:
-    static constexpr int zoomLevelMin = 0;
+    static constexpr int zoomLevelMin = -2;
     static constexpr int zoomLevelMax = 15;
 
     BoardAreaWidget(BoardWidget& board, QWidget* parent = nullptr);
