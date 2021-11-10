@@ -26,6 +26,7 @@
 #include "method.hpp"
 #include "log.hpp"
 #include "class.hpp"
+#include <version.hpp>
 #include <traintastic/utils/str.hpp>
 #include <traintastic/codename.hpp>
 #include "../world/world.hpp"
@@ -81,8 +82,14 @@ SandboxPtr Sandbox::create(Script& script)
   ADD_GLOBAL_TO_SANDBOX("ipairs")
 
   // set VERSION:
-  lua_pushstring(L, STR(VERSION));
+  lua_pushstring(L, TRAINTASTIC_VERSION);
   lua_setfield(L, -2, "VERSION");
+  lua_pushinteger(L, TRAINTASTIC_VERSION_MAJOR);
+  lua_setfield(L, -2, "VERSION_MAJOR");
+  lua_pushinteger(L, TRAINTASTIC_VERSION_MINOR);
+  lua_setfield(L, -2, "VERSION_MINOR");
+  lua_pushinteger(L, TRAINTASTIC_VERSION_PATCH);
+  lua_setfield(L, -2, "VERSION_PATCH");
 
   // set CODENAME
   lua_pushstring(L, TRAINTASTIC_CODENAME);
