@@ -1,9 +1,9 @@
 /**
- * server/src/core/abstractmethod.cpp
+ * server/src/core/methodflags.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,10 +20,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "abstractmethod.hpp"
+#ifndef TRAINTASTIC_SERVER_CORE_METHODFLAGS_HPP
+#define TRAINTASTIC_SERVER_CORE_METHODFLAGS_HPP
 
-AbstractMethod::AbstractMethod(Object& object, const std::string& name, MethodFlags flags)
-  : InterfaceItem(object, name)
-  , m_flags{flags}
+enum class MethodFlags
 {
-}
+  // bit 0..1
+  NoScript = 1 << 0,
+  ScriptCallable = 2 << 0,
+};
+
+/// temporary placeholder, should be removed in the future when all method have their flags set
+constexpr MethodFlags noMethodFlags = static_cast<MethodFlags>(0);
+
+#endif

@@ -159,7 +159,10 @@ int Object::__index(lua_State* L)
     }
     else if(AbstractMethod* method = dynamic_cast<AbstractMethod*>(item))
     {
-      Method::push(L, *method);
+      if(method->isScriptCallable())
+        Method::push(L, *method);
+      else
+        lua_pushnil(L);
     }
     else
     {
