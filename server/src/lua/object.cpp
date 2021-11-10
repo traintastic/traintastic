@@ -108,44 +108,47 @@ int Object::__index(lua_State* L)
 
   if(InterfaceItem* item = object->getItem(name))
   {
-    // TODO: test scriptable
-
     if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(item))
     {
-      switch(property->type())
+      if(property->isScriptReadable())
       {
-        case ValueType::Boolean:
-          Lua::push(L, property->toBool());
-          break;
+        switch(property->type())
+        {
+          case ValueType::Boolean:
+            Lua::push(L, property->toBool());
+            break;
 
-        case ValueType::Enum:
-          // EnumName<T>::value assigned to the std::string_view is NUL terminated,
-          // so it can be used as const char* however it is a bit tricky :)
-          assert(*(property->enumName().data() + property->enumName().size()) == '\0');
-          pushEnum(L, property->enumName().data(), static_cast<lua_Integer>(property->toInt64()));
-          break;
+          case ValueType::Enum:
+            // EnumName<T>::value assigned to the std::string_view is NUL terminated,
+            // so it can be used as const char* however it is a bit tricky :)
+            assert(*(property->enumName().data() + property->enumName().size()) == '\0');
+            pushEnum(L, property->enumName().data(), static_cast<lua_Integer>(property->toInt64()));
+            break;
 
-        case ValueType::Integer:
-          Lua::push(L, property->toInt64());
-          break;
+          case ValueType::Integer:
+            Lua::push(L, property->toInt64());
+            break;
 
-        case ValueType::Float:
-          Lua::push(L, property->toDouble());
-          break;
+          case ValueType::Float:
+            Lua::push(L, property->toDouble());
+            break;
 
-        case ValueType::String:
-          Lua::push(L, property->toString());
-          break;
+          case ValueType::String:
+            Lua::push(L, property->toString());
+            break;
 
-        case ValueType::Object:
-          push(L, property->toObject());
-          break;
+          case ValueType::Object:
+            push(L, property->toObject());
+            break;
 
-        default:
-          assert(false);
-          lua_pushnil(L);
-          break;
+          default:
+            assert(false);
+            lua_pushnil(L);
+            break;
+        }
       }
+      else
+        lua_pushnil(L);
     }
     else if(AbstractMethod* method = dynamic_cast<AbstractMethod*>(item))
     {

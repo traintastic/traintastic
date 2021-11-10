@@ -43,6 +43,7 @@ class BaseProperty : public InterfaceItem
       assert(type != ValueType::Invalid);
       assert(is_access_valid(flags));
       assert(is_store_valid(flags));
+      assert(isScriptValid(flags));
     }
 
     void changed();
@@ -61,6 +62,17 @@ class BaseProperty : public InterfaceItem
     bool isStateStoreable() const
     {
       return (m_flags & PropertyFlagsStoreMask) == PropertyFlags::StoreState;
+    }
+
+    bool isScriptReadable() const
+    {
+      const PropertyFlags scriptFlags = m_flags & PropertyFlagsScriptMask;
+      return scriptFlags == PropertyFlags::ScriptReadOnly || scriptFlags == PropertyFlags::ScriptReadWrite;
+    }
+
+    bool isScriptWriteable() const
+    {
+      return (m_flags & PropertyFlagsScriptMask) == PropertyFlags::ScriptReadWrite;
     }
 
     PropertyFlags flags() const
