@@ -65,10 +65,10 @@ void World::init(const std::shared_ptr<World>& world)
 
 World::World(Private) :
   Object(),
-  uuid{this, "uuid", to_string(boost::uuids::random_generator()()), PropertyFlags::ReadOnly | PropertyFlags::NoStore},
-  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
-  scale{this, "scale", WorldScale::H0, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](WorldScale /*value*/){ updateScaleRatio(); }},
-  scaleRatio{this, "scale_ratio", 87, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  uuid{this, "uuid", to_string(boost::uuids::random_generator()()), PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
+  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
+  scale{this, "scale", WorldScale::H0, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly, [this](WorldScale /*value*/){ updateScaleRatio(); }},
+  scaleRatio{this, "scale_ratio", 87, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   commandStations{this, "command_stations", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
@@ -83,7 +83,7 @@ World::World(Private) :
 #ifndef DISABLE_LUA_SCRIPTING
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
 #endif
-  state{this, "state", WorldState(), PropertyFlags::ReadOnly | PropertyFlags::NoStore},
+  state{this, "state", WorldState(), PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   edit{this, "edit", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
     [this](bool value)
     {
