@@ -118,7 +118,12 @@ int Object::__index(lua_State* L)
           Lua::push(L, property->toBool());
           break;
 
-        //case ValueType::Enum:
+        case ValueType::Enum:
+          // EnumName<T>::value assigned to the std::string_view is NUL terminated,
+          // so it can be used as const char* however it is a bit tricky :)
+          assert(*(property->enumName().data() + property->enumName().size()) == '\0');
+          pushEnum(L, property->enumName().data(), static_cast<lua_Integer>(property->toInt64()));
+          break;
 
         case ValueType::Integer:
           Lua::push(L, property->toInt64());

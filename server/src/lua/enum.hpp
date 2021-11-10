@@ -32,6 +32,15 @@
 
 namespace Lua {
 
+inline void pushEnum(lua_State* L, const char* enumName, lua_Integer value)
+{
+  lua_getglobal(L, enumName); // get tabel with all enum values: key=int, value=userdata enum
+  assert(lua_istable(L, -1)); // check if enum is registered
+  lua_rawgeti(L, -1, value); // get userdata by key
+  lua_insert(L, lua_gettop(L) - 1); // swap table and userdata
+  lua_pop(L, 1); // remove table
+}
+
 template<typename T>
 struct Enum
 {
@@ -53,11 +62,7 @@ struct Enum
 
   static void push(lua_State* L, T value)
   {
-    lua_getglobal(L, EnumName<T>::value); // get tabel with all enum values: key=int, value=userdata enum
-    assert(lua_istable(L, -1)); // check if enum is registered
-    lua_rawgeti(L, -1, static_cast<lua_Integer>(value)); // get userdata by key
-    lua_insert(L, lua_gettop(L) - 1); // swap table and userdata
-    lua_pop(L, 1); // remove table
+    pushEnum(L, EnumName<T>::value, static_cast<lua_Integer>(value));
   }
 
   static int __tostring(lua_State* L)
