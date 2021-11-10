@@ -32,6 +32,7 @@
 #include "../enum/decoderprotocol.hpp"
 #include "../enum/direction.hpp"
 #include "../enum/worldevent.hpp"
+#include "../enum/worldscale.hpp"
 #include "../set/worldstate.hpp"
 
 #define LUA_SANDBOX "_sandbox"
@@ -65,6 +66,7 @@ SandboxPtr Sandbox::create(Script& script)
   Enum<DecoderProtocol>::registerType(L);
   Enum<Direction>::registerType(L);
   Enum<WorldEvent>::registerType(L);
+  Enum<WorldScale>::registerType(L);
   Set<WorldState>::registerType(L);
   Object::registerType(L);
   Method::registerType(L);
@@ -109,6 +111,7 @@ SandboxPtr Sandbox::create(Script& script)
   Enum<DecoderProtocol>::registerValues(L);
   Enum<Direction>::registerValues(L);
   Enum<WorldEvent>::registerValues(L);
+  Enum<WorldScale>::registerValues(L);
   ReadOnlyTable::wrap(L, -1);
   lua_setfield(L, -2, "enum");
 
