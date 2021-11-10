@@ -141,6 +141,13 @@ int Object::__index(lua_State* L)
             push(L, property->toObject());
             break;
 
+          case ValueType::Set:
+            // set_name<T>::value assigned to the std::string_view is NUL terminated,
+            // so it can be used as const char* however it is a bit tricky :)
+            assert(*(property->setName().data() + property->setName().size()) == '\0');
+            pushSet(L, property->setName().data(), static_cast<lua_Integer>(property->toInt64()));
+            break;
+
           default:
             assert(false);
             lua_pushnil(L);

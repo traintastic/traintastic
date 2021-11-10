@@ -49,6 +49,23 @@ struct set_values
 template<typename T>
 constexpr auto set_values_v = set_values<T>::value;
 
+inline void pushSet(lua_State* L, const char* setName, lua_Integer value)
+{
+    lua_getglobal(L, setName); // get tabel with all values: key=int, value=set as userdata
+    assert(lua_type(L, -1) == LUA_TTABLE);
+    lua_rawgeti(L, -1, value); // get userdata
+    if(lua_isnil(L, -1)) // value not in table
+    {
+      lua_pop(L, 1); // remove nil
+      *static_cast<lua_Integer*>(lua_newuserdata(L, sizeof(value))) = value;
+      luaL_setmetatable(L, setName);
+      lua_pushvalue(L, -1); // copy set userdata on stack
+      lua_rawseti(L, -3, value); // add set value to table
+    }
+    lua_insert(L, lua_gettop(L) - 1); // swap tabel and userdata
+    lua_pop(L, 1); // remove tabel
+}
+
 template<typename T>
 struct Set
 {
@@ -57,32 +74,20 @@ struct Set
 
   static T check(lua_State* L, int index)
   {
-    return *static_cast<T*>(luaL_checkudata(L, index, set_name_v<T>));
+    return static_cast<T>(*static_cast<lua_Integer*>(luaL_checkudata(L, index, set_name_v<T>)));
   }
 
   static bool test(lua_State* L, int index, T& value)
   {
-    T* data = static_cast<T*>(luaL_testudata(L, index, set_name_v<T>));
+    lua_Integer* data = static_cast<lua_Integer*>(luaL_testudata(L, index, set_name_v<T>));
     if(data)
-      value = *data;
+      value = static_cast<T>(*data);
     return data;
   }
 
   static void push(lua_State* L, T value)
   {
-    lua_getglobal(L, set_name_v<T>); // get tabel with all values: key=int, value=set as userdata
-    assert(lua_type(L, -1) == LUA_TTABLE);
-    lua_rawgeti(L, -1, static_cast<lua_Integer>(value)); // get userdata
-    if(lua_isnil(L, -1)) // value not in table
-    {
-      lua_pop(L, 1); // remove nil
-      *static_cast<T*>(lua_newuserdata(L, sizeof(value))) = value;
-      luaL_setmetatable(L, set_name_v<T>);
-      lua_pushvalue(L, -1); // copy set userdata on stack
-      lua_rawseti(L, -3, static_cast<lua_Integer>(value)); // add set value to table
-    }
-    lua_insert(L, lua_gettop(L) - 1); // swap tabel and userdata
-    lua_pop(L, 1); // remove tabel
+    pushSet(L, set_name_v<T>, static_cast<lua_Integer>(value));
   }
 
   static int __add(lua_State* L)
