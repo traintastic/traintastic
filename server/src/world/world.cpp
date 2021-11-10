@@ -114,7 +114,7 @@ World::World(Private) :
       state.setValueInternal(state.value() + WorldState::Online);
       event(WorldEvent::Online);
     }},
-  powerOff{*this, "power_off",
+  powerOff{*this, "power_off", MethodFlags::ScriptCallable,
     [this]()
     {
       Log::log(*this, LogMessage::N1014_POWER_ON);
@@ -135,7 +135,7 @@ World::World(Private) :
       state.setValueInternal(state.value() + WorldState::Run);
       event(WorldEvent::Run);
     }},
-  stop{*this, "stop",
+  stop{*this, "stop", MethodFlags::ScriptCallable,
     [this]()
     {
       Log::log(*this, LogMessage::N1017_STOPPED);
@@ -174,7 +174,7 @@ World::World(Private) :
         event(WorldEvent::Smoke);
       }
     }},
-  save{*this, "save",
+  save{*this, "save", MethodFlags::NoScript,
     [this]()
     {
       try
