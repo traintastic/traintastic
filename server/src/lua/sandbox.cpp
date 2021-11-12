@@ -95,6 +95,11 @@ SandboxPtr Sandbox::create(Script& script)
   lua_pushstring(L, TRAINTASTIC_CODENAME);
   lua_setfield(L, -2, "CODENAME");
 
+  // set LUA_VERSION
+  const std::string_view ident{lua_ident};
+  push(L, ident.substr(13, ident.find('$', 13) - 14));
+  lua_setfield(L, -2, "LUA_VERSION");
+
   // add world:
   push(L, std::static_pointer_cast<::Object>(script.world().lock()));
   lua_setfield(L, -2, "world");
