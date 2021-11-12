@@ -36,6 +36,8 @@ class Sandbox
 {
   private:
     static void close(lua_State* L);
+    static int __index(lua_State* L);
+    static int __newindex(lua_State* L);
 
   public:
     class StateData

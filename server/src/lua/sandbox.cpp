@@ -26,6 +26,7 @@
 #include "method.hpp"
 #include "log.hpp"
 #include "class.hpp"
+#include "to.hpp"
 #include <version.hpp>
 #include <traintastic/utils/str.hpp>
 #include <traintastic/codename.hpp>
@@ -37,11 +38,37 @@
 #include "../set/worldstate.hpp"
 
 #define LUA_SANDBOX "_sandbox"
+#define LUA_SANDBOX_GLOBALS "_sandbox_globals"
 
 #define ADD_GLOBAL_TO_SANDBOX(x) \
   lua_pushliteral(L, x); \
   lua_getglobal(L, x); \
   lua_settable(L, -3);
+
+constexpr std::array<std::string_view, 17> readOnlyGlobals = {{
+  // Lua baselib:
+  "assert",
+  "type",
+  "pairs",
+  "ipairs",
+  "_G",
+  // Constants:
+  "VERSION",
+  "VERSION_MAJOR",
+  "VERSION_MINOR",
+  "VERSION_PATCH",
+  "CODENAME",
+  "LUA_VERSION",
+  // Objects:
+  "world",
+  "log",
+  // Functions:
+  "is_instance",
+  // Type info:
+  "class",
+  "enum",
+  "set",
+}};
 
 namespace Lua {
 
@@ -49,6 +76,29 @@ void Sandbox::close(lua_State* L)
 {
   delete *static_cast<StateData**>(lua_getextraspace(L)); // free state data
   lua_close(L);
+}
+
+int Sandbox::__index(lua_State* L)
+{
+  lua_getglobal(L, LUA_SANDBOX_GLOBALS);
+  lua_replace(L, 1);
+
+  lua_rawget(L, 1);
+
+  return 1;
+}
+
+int Sandbox::__newindex(lua_State* L)
+{
+  if(std::find(readOnlyGlobals.begin(), readOnlyGlobals.end(), to<std::string_view>(L, 2)) != readOnlyGlobals.end())
+    errorGlobalNIsReadOnly(L, lua_tostring(L, 2));
+
+  lua_getglobal(L, LUA_SANDBOX_GLOBALS);
+  lua_replace(L, 1);
+
+  lua_rawset(L, 1);
+
+  return 0;
 }
 
 SandboxPtr Sandbox::create(Script& script)
@@ -73,6 +123,16 @@ SandboxPtr Sandbox::create(Script& script)
   Method::registerType(L);
 
   // setup sandbox:
+  lua_newtable(L);
+  luaL_newmetatable(L, LUA_SANDBOX);
+  lua_pushcfunction(L, __index);
+  lua_setfield(L, -2, "__index");
+  lua_pushcfunction(L, __newindex);
+  lua_setfield(L, -2, "__newindex");
+  lua_setmetatable(L, -2);
+  lua_setglobal(L, LUA_SANDBOX);
+
+  // setup globals:
   lua_newtable(L);
 
   // add some Lua baselib functions to the sandbox:
@@ -133,12 +193,11 @@ SandboxPtr Sandbox::create(Script& script)
   ReadOnlyTable::wrap(L, -1);
   lua_setfield(L, -2, "set");
 
-  // let global _G point to itself:
-  lua_pushliteral(L, "_G");
-  lua_pushvalue(L, -2);
-  lua_settable(L, -3);
+  // let global _G point to the sandbox:
+  lua_getglobal(L, LUA_SANDBOX);
+  lua_setfield(L, -2, "_G");
 
-  lua_setglobal(L, LUA_SANDBOX);
+  lua_setglobal(L, LUA_SANDBOX_GLOBALS);
 
   return SandboxPtr(L, close);
 }

@@ -42,7 +42,9 @@ namespace Lua {
 
 [[noreturn]] inline void errorExpectedNArgumentsGotN(lua_State* L, int expected, int got) { luaL_error(L, "expected %d arguments, got %d", expected, got); abort(); }
 
-[[noreturn]] inline void errorException(lua_State* L, const std::exception& e) { luaL_error(L, "exceptiop: %s", e.what()); abort(); }
+[[noreturn]] inline void errorException(lua_State* L, const std::exception& e) { luaL_error(L, "exception: %s", e.what()); abort(); }
+
+[[noreturn]] inline void errorGlobalNIsReadOnly(lua_State* L, const char* name) { luaL_error(L, "global %s is readonly", name); abort(); }
 
 [[noreturn]] inline void errorInternal(lua_State* L) { luaL_error(L, "internal error"); abort(); }
 
