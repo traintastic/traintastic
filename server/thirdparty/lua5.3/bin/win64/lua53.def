@@ -27,6 +27,7 @@ lua_gettable
 lua_gettop
 lua_getupvalue
 lua_getuservalue
+lua_ident
 lua_iscfunction
 lua_isinteger
 lua_isnumber
