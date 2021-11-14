@@ -40,18 +40,20 @@
 #define LUA_SANDBOX "_sandbox"
 #define LUA_SANDBOX_GLOBALS "_sandbox_globals"
 
-#define ADD_GLOBAL_TO_SANDBOX(x) \
-  lua_pushliteral(L, x); \
-  lua_getglobal(L, x); \
-  lua_settable(L, -3);
-
-constexpr std::array<std::string_view, 17> readOnlyGlobals = {{
+constexpr std::array<std::string_view, 23> readOnlyGlobals = {{
   // Lua baselib:
   "assert",
   "type",
   "pairs",
   "ipairs",
+  "next",
+  "tonumber",
+  "tostring",
   "_G",
+  // Lua libs:
+  LUA_MATHLIBNAME,
+  LUA_STRLIBNAME,
+  LUA_TABLIBNAME,
   // Constants:
   "VERSION",
   "VERSION_MAJOR",
@@ -69,6 +71,40 @@ constexpr std::array<std::string_view, 17> readOnlyGlobals = {{
   "enum",
   "set",
 }};
+
+static void addBaseLib(lua_State* L, std::initializer_list<const char*> names)
+{
+  // load Lua baselib:
+  lua_pushcfunction(L, luaopen_base);
+  lua_pushliteral(L, "");
+  lua_call(L, 1, 0);
+
+  for(const char* name : names)
+  {
+    lua_getglobal(L, name);
+    assert(!lua_isnil(L, -1));
+    lua_setfield(L, -2, name);
+  }
+}
+
+static void addLib(lua_State* L, const char* libraryName, lua_CFunction openFunction, std::initializer_list<const char*> names)
+{
+  lua_createtable(L, 0, names.size());
+
+  luaL_requiref(L, libraryName, openFunction, 1);
+
+  for(const char* name : names)
+  {
+    lua_getfield(L, -1, name);
+    assert(!lua_isnil(L, -1));
+    lua_setfield(L, -3, name);
+  }
+
+  lua_pop(L, 1); // pop lib
+
+  Lua::ReadOnlyTable::wrap(L, -1);
+  lua_setfield(L, -2, libraryName);
+}
 
 namespace Lua {
 
@@ -105,11 +141,6 @@ SandboxPtr Sandbox::create(Script& script)
 {
   lua_State* L = luaL_newstate();
 
-  // load Lua baselib:
-  lua_pushcfunction(L, luaopen_base);
-  lua_pushliteral(L, "");
-  lua_call(L, 1, 0);
-
   // create state data:
   *static_cast<StateData**>(lua_getextraspace(L)) = new StateData(script);
 
@@ -135,11 +166,23 @@ SandboxPtr Sandbox::create(Script& script)
   // setup globals:
   lua_newtable(L);
 
-  // add some Lua baselib functions to the sandbox:
-  ADD_GLOBAL_TO_SANDBOX("assert")
-  ADD_GLOBAL_TO_SANDBOX("type")
-  ADD_GLOBAL_TO_SANDBOX("pairs")
-  ADD_GLOBAL_TO_SANDBOX("ipairs")
+  // add Lua lib functions:
+  addBaseLib(L, {
+    "assert", "type", "pairs", "ipairs", "next", "tonumber", "tostring",
+    });
+  addLib(L, LUA_MATHLIBNAME, luaopen_math, {
+    "abs", "acos", "asin", "atan", "ceil", "cos", "deg", "exp",
+    "floor", "fmod", "huge", "log", "max", "maxinteger", "min", "mininteger",
+    "modf", "pi", "rad", "random", "randomseed", "sin", "sqrt", "tan",
+    "tointeger", "type", "ult",
+    });
+  addLib(L, LUA_STRLIBNAME, luaopen_string, {
+    "byte", "char", "find", "format", "gmatch", "gsub", "len", "lower",
+    "match", "pack", "packsize", "rep", "reverse", "sub", "unpack", "upper",
+    });
+  addLib(L, LUA_TABLIBNAME, luaopen_table, {
+    "concat", "insert", "pack", "unpack", "remove", "move", "sort",
+    });
 
   // set VERSION:
   lua_pushstring(L, TRAINTASTIC_VERSION);
