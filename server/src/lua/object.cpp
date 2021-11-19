@@ -183,9 +183,7 @@ int Object::__newindex(lua_State* L)
 
   if(AbstractProperty* property = object->getProperty(name))
   {
-    // TODO: test scriptable
-
-    if(!property->isWriteable())
+    if(!property->isScriptWriteable() || !property->isWriteable())
       errorCantSetReadOnlyProperty(L);
 
     try
