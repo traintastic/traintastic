@@ -1,5 +1,5 @@
 /**
- * server/src/lua/classid.hpp
+ * server/src/lua/checkarguments.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,32 +20,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_LUA_CLASS_HPP
-#define TRAINTASTIC_SERVER_LUA_CLASS_HPP
+#ifndef TRAINTASTIC_SERVER_LUA_CHECKARGUMENTS_HPP
+#define TRAINTASTIC_SERVER_LUA_CHECKARGUMENTS_HPP
 
-#include <lua.hpp>
-#include "../core/objectptr.hpp"
+#include "error.hpp"
 
 namespace Lua {
 
-struct Class
+inline void checkArguments(lua_State* L, int count)
 {
-  static void registerValues(lua_State* L);
-
-  static void push(lua_State* L, std::string_view classId);
-  static void push(lua_State* L, const ObjectPtr& object);
-
-  template<class T>
-  static void push(lua_State* L)
-  {
-    static_assert(std::is_base_of_v<::Object, T>);
-    push(L, T::classId);
-  }
-
-  static int __tostring(lua_State* L);
-
-  static int getClass(lua_State* L);
-};
+  const int top = lua_gettop(L);
+  if(top != count)
+    errorExpectedNArgumentsGotN(L, count, top);
+}
 
 }
 

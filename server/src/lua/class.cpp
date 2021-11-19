@@ -23,6 +23,7 @@
 #include "class.hpp"
 #include "push.hpp"
 #include "object.hpp"
+#include "checkarguments.hpp"
 
 #include "../board/board.hpp"
 #include "../board/boardlist.hpp"
@@ -126,96 +127,148 @@ static bool isInstance(const ::ObjectPtr& object)
 }
 
 template<class T>
-inline static void setField(lua_State* L, std::string_view key)
+inline static void registerValue(lua_State* L, std::string_view key)
 {
   static_assert(std::is_base_of_v<::Object, T>);
-  push(L, key);
+
+  // add to global class (used by Class::push)
+  lua_getglobal(L, metaTableName);
   *reinterpret_cast<IsInstance*>(lua_newuserdata(L, sizeof(IsInstance))) = isInstance<T>;
-  luaL_newmetatable(L, metaTableName);
+  if(luaL_newmetatable(L, metaTableName))
+  {
+    lua_pushcfunction(L, Class::__tostring);
+    lua_setfield(L, -2, "__tostring");
+  }
   lua_setmetatable(L, -2);
+  lua_rawsetp(L, -2, T::classId.data());
+  lua_pop(L, 1);
+
+  // add to sandbox class global:
+  Lua::push(L, key);
+  Class::push<T>(L);
   lua_settable(L, -3);
 }
 
 void Class::registerValues(lua_State* L)
 {
-  assert(lua_istable(L, -1));
+  assert(lua_istable(L, -1)); // sandboxes global class
 
-  setField<Board>(L, "BOARD");
-  setField<BoardList>(L, "BOARD_LIST");
+  lua_newtable(L); // global
+  lua_setglobal(L, metaTableName);
 
-  setField<StraightRailTile>(L, "STRAIGHT_RAIL_TILE");
-  setField<TunnelRailTile>(L, "TUNNEL_RAIL_TILE");
-  setField<BufferStopRailTile>(L, "BUFFER_STOP_RAIL_TILE");
-  setField<Curve45RailTile>(L, "CURVE_45_RAIL_TILE");
-  setField<Curve90RailTile>(L, "CURVE_90_RAIL_TILE");
-  setField<Cross45RailTile>(L, "CROSS_45_RAIL_TILE");
-  setField<Cross90RailTile>(L, "CROSS_90_RAIL_TILE");
-  setField<Bridge45RightRailTile>(L, "BRIDGE_45_RIGHT_RAIL_TILE");
-  setField<Bridge45LeftRailTile>(L, "BRIDGE_45_LEFT_RAIL_TILE");
-  setField<Bridge90RailTile>(L, "BRIDGE_90_RAIL_TILE");
-  setField<TurnoutSingleSlipRailTile>(L, "TURNOUT_SINGLE_SLIP_RAIL_TILE");
-  setField<TurnoutLeft90RailTile>(L, "TURNOUT_LEFT_90_RAIL_TILE");
-  setField<TurnoutRight45RailTile>(L, "TURNOUT_RIGHT_45_RAIL_TILE");
-  setField<TurnoutLeft45RailTile>(L, "TURNOUT_LEFT_45_RAIL_TILE");
-  setField<TurnoutRight90RailTile>(L, "TURNOUT_RIGHT_90_RAIL_TILE");
-  setField<TurnoutDoubleSlipRailTile>(L, "TURNOUT_DOUBLE_SLIP_RAIL_TILE");
-  setField<TurnoutWyeRailTile>(L, "TURNOUT_WYE_RAIL_TILE");
-  setField<TurnoutLeftCurvedRailTile>(L, "TURNOUT__RAIL_TILE");
-  setField<Turnout3WayRailTile>(L, "TURNOUT_3WAY_RAIL_TILE");
-  setField<TurnoutRightCurvedRailTile>(L, "TURNOUT_RIGHT_CURVED_RAIL_TILE");
-  setField<Signal2AspectRailTile>(L, "SIGNAL_2_ASPECT_RAIL_TILE");
-  setField<Signal3AspectRailTile>(L, "SIGNAL_3_ASPECT_RAIL_TILE");
-  setField<SensorRailTile>(L, "SENSOR_RAIL_TILE");
-  setField<BlockRailTile>(L, "BLOCK_RAIL_TILE");
+  registerValue<Board>(L, "BOARD");
+  registerValue<BoardList>(L, "BOARD_LIST");
 
-  setField<Clock>(L, "CLOCK");
+  registerValue<StraightRailTile>(L, "STRAIGHT_RAIL_TILE");
+  registerValue<TunnelRailTile>(L, "TUNNEL_RAIL_TILE");
+  registerValue<BufferStopRailTile>(L, "BUFFER_STOP_RAIL_TILE");
+  registerValue<Curve45RailTile>(L, "CURVE_45_RAIL_TILE");
+  registerValue<Curve90RailTile>(L, "CURVE_90_RAIL_TILE");
+  registerValue<Cross45RailTile>(L, "CROSS_45_RAIL_TILE");
+  registerValue<Cross90RailTile>(L, "CROSS_90_RAIL_TILE");
+  registerValue<Bridge45RightRailTile>(L, "BRIDGE_45_RIGHT_RAIL_TILE");
+  registerValue<Bridge45LeftRailTile>(L, "BRIDGE_45_LEFT_RAIL_TILE");
+  registerValue<Bridge90RailTile>(L, "BRIDGE_90_RAIL_TILE");
+  registerValue<TurnoutSingleSlipRailTile>(L, "TURNOUT_SINGLE_SLIP_RAIL_TILE");
+  registerValue<TurnoutLeft90RailTile>(L, "TURNOUT_LEFT_90_RAIL_TILE");
+  registerValue<TurnoutRight45RailTile>(L, "TURNOUT_RIGHT_45_RAIL_TILE");
+  registerValue<TurnoutLeft45RailTile>(L, "TURNOUT_LEFT_45_RAIL_TILE");
+  registerValue<TurnoutRight90RailTile>(L, "TURNOUT_RIGHT_90_RAIL_TILE");
+  registerValue<TurnoutDoubleSlipRailTile>(L, "TURNOUT_DOUBLE_SLIP_RAIL_TILE");
+  registerValue<TurnoutWyeRailTile>(L, "TURNOUT_WYE_RAIL_TILE");
+  registerValue<TurnoutLeftCurvedRailTile>(L, "TURNOUT__RAIL_TILE");
+  registerValue<Turnout3WayRailTile>(L, "TURNOUT_3WAY_RAIL_TILE");
+  registerValue<TurnoutRightCurvedRailTile>(L, "TURNOUT_RIGHT_CURVED_RAIL_TILE");
+  registerValue<Signal2AspectRailTile>(L, "SIGNAL_2_ASPECT_RAIL_TILE");
+  registerValue<Signal3AspectRailTile>(L, "SIGNAL_3_ASPECT_RAIL_TILE");
+  registerValue<SensorRailTile>(L, "SENSOR_RAIL_TILE");
+  registerValue<BlockRailTile>(L, "BLOCK_RAIL_TILE");
 
-  setField<WLANmaus>(L, "WLANMAUS_CONTROLLER");
-  setField<ControllerList>(L, "CONTROLLER_LIST");
+  registerValue<Clock>(L, "CLOCK");
+
+  registerValue<WLANmaus>(L, "WLANMAUS_CONTROLLER");
+  registerValue<ControllerList>(L, "CONTROLLER_LIST");
 #ifdef USB_XPRESSNET
-  setField<USBXpressNetController>(L, "USB_XPRESSNET_CONTROLLER");
+  registerValue<USBXpressNetController>(L, "USB_XPRESSNET_CONTROLLER");
 #endif
 
-  setField<RocoZ21>(L, "Z21_COMMAND_STATION");
-  setField<VirtualCommandStation>(L, "VIRTUAL_COMMAND_STATION");
-  setField<LocoNetTCPBinary>(L, "LOCONET_TCP_BINARY_COMMAND_STATION");
+  registerValue<RocoZ21>(L, "Z21_COMMAND_STATION");
+  registerValue<VirtualCommandStation>(L, "VIRTUAL_COMMAND_STATION");
+  registerValue<LocoNetTCPBinary>(L, "LOCONET_TCP_BINARY_COMMAND_STATION");
 #ifdef USB_XPRESSNET
-  setField<USBXpressNetInterface>(L, "USB_XPRESSNET_INTERFACE");
+  registerValue<USBXpressNetInterface>(L, "USB_XPRESSNET_INTERFACE");
 #endif
-  setField<XpressNetSerial>(L, "XPRESSNET_SERIAL_COMMAND_STATION");
-  setField<DCCPlusPlusSerial>(L, "DCCPLUSPLUS_SERIAL_COMMAND_STATION");
-  setField<CommandStationList>(L, "COMMAND_STATION_LIST");
-  setField<LocoNetSerial>(L, "LOCONET_SERIAL_COMMAND_STATION");
+  registerValue<XpressNetSerial>(L, "XPRESSNET_SERIAL_COMMAND_STATION");
+  registerValue<DCCPlusPlusSerial>(L, "DCCPLUSPLUS_SERIAL_COMMAND_STATION");
+  registerValue<CommandStationList>(L, "COMMAND_STATION_LIST");
+  registerValue<LocoNetSerial>(L, "LOCONET_SERIAL_COMMAND_STATION");
 
-  setField<DecoderFunction>(L, "DECODER_FUNCTION");
-  setField<DecoderList>(L, "DECODER_LIST");
-  setField<Decoder>(L, "DECODER");
-  setField<DecoderFunctions>(L, "DECODER_FUNCTIONS");
+  registerValue<DecoderFunction>(L, "DECODER_FUNCTION");
+  registerValue<DecoderList>(L, "DECODER_LIST");
+  registerValue<Decoder>(L, "DECODER");
+  registerValue<DecoderFunctions>(L, "DECODER_FUNCTIONS");
 
-  setField<LocoNetInput>(L, "LOCONET_INPUT");
-  setField<XpressNetInput>(L, "XPRESSNET_INPUT");
-  setField<InputList>(L, "INPUT_LIST");
+  registerValue<LocoNetInput>(L, "LOCONET_INPUT");
+  registerValue<XpressNetInput>(L, "XPRESSNET_INPUT");
+  registerValue<InputList>(L, "INPUT_LIST");
 
-  setField<OutputList>(L, "OUTPUT_LIST");
-  setField<LocoNetOutput>(L, "LOCONET_OUTPUT");
+  registerValue<OutputList>(L, "OUTPUT_LIST");
+  registerValue<LocoNetOutput>(L, "LOCONET_OUTPUT");
 
-  setField<RailVehicleList>(L, "RAIL_VEHICLE_LIST");
-  setField<Locomotive>(L, "LOCOMOTIVE");
-  setField<FreightCar>(L, "FREIGHT_CAR");
+  registerValue<RailVehicleList>(L, "RAIL_VEHICLE_LIST");
+  registerValue<Locomotive>(L, "LOCOMOTIVE");
+  registerValue<FreightCar>(L, "FREIGHT_CAR");
 
-  setField<Train>(L, "TRAIN");
-  setField<TrainList>(L, "TRAIN_LIST");
+  registerValue<Train>(L, "TRAIN");
+  registerValue<TrainList>(L, "TRAIN_LIST");
 
-  setField<World>(L, "WORLD");
+  registerValue<World>(L, "WORLD");
 }
 
-int Class::isInstance(lua_State* L)
+void Class::push(lua_State* L, std::string_view classId)
 {
-  if(lua_gettop(L) != 2)
-    errorExpectedNArgumentsGotN(L, 2, lua_gettop(L));
+  lua_getglobal(L, metaTableName);
+  assert(lua_istable(L, -1));
+  lua_rawgetp(L, -1, classId.data());
+  assert(lua_isuserdata(L, -1));
+  lua_insert(L, lua_gettop(L) - 1);
+  lua_pop(L, 1);
+  assert(lua_isuserdata(L, -1));
+}
 
-  push(L, (*reinterpret_cast<IsInstance*>(luaL_checkudata(L, 2, metaTableName)))(Object::test(L, 1)));
+void Class::push(lua_State* L, const ObjectPtr& object)
+{
+  push(L, object->getClassId());
+}
 
+int Class::__tostring(lua_State* L)
+{
+  Sandbox::getGlobal(L, metaTableName);
+
+  // get the real table, the global is wrapped for write protection:
+  lua_getmetatable(L, -1);
+  lua_getfield(L, -1, "__index");
+  assert(lua_istable(L, -1));
+
+  // loop over table to find value and the return key
+  const int idx = lua_gettop(L);
+  lua_pushnil(L);
+  while(lua_next(L, idx))
+  {
+    const bool eq = lua_compare(L, 1, -1, LUA_OPEQ);
+    lua_pop(L, 1); // pop value
+    if(eq)
+      return 1;
+  }
+
+  lua_pushlstring(L, NULL, 0);
+  return 1;
+}
+
+int Class::getClass(lua_State* L)
+{
+  checkArguments(L, 1);
+  push(L, Object::check(L, 1));
   return 1;
 }
 

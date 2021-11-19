@@ -27,6 +27,7 @@
 #include "log.hpp"
 #include "class.hpp"
 #include "to.hpp"
+#include "type.hpp"
 #include <version.hpp>
 #include <traintastic/utils/str.hpp>
 #include <traintastic/codename.hpp>
@@ -72,7 +73,17 @@ constexpr std::array<std::string_view, 23> readOnlyGlobals = {{
   "set",
 }};
 
-static void addBaseLib(lua_State* L, std::initializer_list<const char*> names)
+static void addExtensions(lua_State* L, std::initializer_list<std::pair<const char*, lua_CFunction>> extensions)
+{
+  assert(lua_istable(L, -1));
+  for(auto [name, func] : extensions)
+  {
+    lua_pushcfunction(L, func);
+    lua_setfield(L, -2, name);
+  }
+}
+
+static void addBaseLib(lua_State* L, std::initializer_list<const char*> names, std::initializer_list<std::pair<const char*, lua_CFunction>> extensions = {})
 {
   // load Lua baselib:
   lua_pushcfunction(L, luaopen_base);
@@ -85,11 +96,13 @@ static void addBaseLib(lua_State* L, std::initializer_list<const char*> names)
     assert(!lua_isnil(L, -1));
     lua_setfield(L, -2, name);
   }
+
+  addExtensions(L, extensions);
 }
 
-static void addLib(lua_State* L, const char* libraryName, lua_CFunction openFunction, std::initializer_list<const char*> names)
+static void addLib(lua_State* L, const char* libraryName, lua_CFunction openFunction, std::initializer_list<const char*> names, std::initializer_list<std::pair<const char*, lua_CFunction>> extensions = {})
 {
-  lua_createtable(L, 0, names.size());
+  lua_createtable(L, 0, names.size() + extensions.size());
 
   luaL_requiref(L, libraryName, openFunction, 1);
 
@@ -101,6 +114,8 @@ static void addLib(lua_State* L, const char* libraryName, lua_CFunction openFunc
   }
 
   lua_pop(L, 1); // pop lib
+
+  addExtensions(L, extensions);
 
   Lua::ReadOnlyTable::wrap(L, -1);
   lua_setfield(L, -2, libraryName);
@@ -166,9 +181,14 @@ SandboxPtr Sandbox::create(Script& script)
   // setup globals:
   lua_newtable(L);
 
-  // add Lua lib functions:
-  addBaseLib(L, {
-    "assert", "type", "pairs", "ipairs", "next", "tonumber", "tostring",
+  // add standard Lua lib functions and extensions/replacements:
+  addBaseLib(L,
+    {
+      "assert", "pairs", "ipairs", "next", "tonumber", "tostring",
+    },
+    {
+      {"type", type},
+      {"get_class", Class::getClass},
     });
   addLib(L, LUA_MATHLIBNAME, luaopen_math, {
     "abs", "acos", "asin", "atan", "ceil", "cos", "deg", "exp",
@@ -211,10 +231,6 @@ SandboxPtr Sandbox::create(Script& script)
   Log::push(L);
   lua_setfield(L, -2, "log");
 
-  // add is_instance function:
-  lua_pushcfunction(L, Class::isInstance);
-  lua_setfield(L, -2, "is_instance");
-
   // add class types:
   lua_newtable(L);
   Class::registerValues(L);
@@ -252,7 +268,7 @@ Sandbox::StateData& Sandbox::getStateData(lua_State* L)
 
 int Sandbox::getGlobal(lua_State* L, const char* name)
 {
-  lua_getglobal(L, LUA_SANDBOX); // get the sandbox
+  lua_getglobal(L, LUA_SANDBOX_GLOBALS); // get the sandbox
   lua_pushstring(L, name);
   const int type = lua_gettable(L, -2); // get item
   lua_insert(L, lua_gettop(L) - 1); // swap item and sandbox on the stack
