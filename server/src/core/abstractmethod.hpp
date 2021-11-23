@@ -28,7 +28,7 @@
 #include <vector>
 #include <variant>
 #include <stdexcept>
-#include "objectptr.hpp"
+#include "argument.hpp"
 
 class AbstractMethod : public InterfaceItem
 {
@@ -95,7 +95,6 @@ class AbstractMethod : public InterfaceItem
         }
     };
 
-    using Argument = std::variant<bool, int64_t, double, std::string, ObjectPtr>;
     using Result = std::variant<std::monostate, bool, int64_t, double, std::string, ObjectPtr>;
 
     AbstractMethod(Object& object, const std::string& name, MethodFlags m_flags = noMethodFlags);
@@ -107,7 +106,7 @@ class AbstractMethod : public InterfaceItem
     virtual std::size_t argumentCount() const = 0;
     virtual std::vector<ValueType> argumentTypes() const = 0;
     virtual ValueType resultType() const = 0;
-    virtual Result call(const std::vector<Argument>& args) = 0;
+    virtual Result call(const Arguments& args) = 0;
 };
 
 #endif

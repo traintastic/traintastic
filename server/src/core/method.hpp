@@ -44,7 +44,7 @@ template<std::size_t N, class... A>
 using getArgumentType = typename std::tuple_element<N, std::tuple<A...>>::type;
 
 template<std::size_t N, class... A>
-auto getArgument(const AbstractMethod::Argument& value)
+auto getArgument(const Argument& value)
 {
   using T = std::remove_const_t<std::remove_reference_t<getArgumentType<N, A...>>>;
 

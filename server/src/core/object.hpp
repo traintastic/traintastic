@@ -35,6 +35,7 @@
     static constexpr std::string_view classId = id; \
     std::string_view getClassId() const override { return classId; }
 
+template<class... Args> class Event;
 class AbstractMethod;
 class BaseProperty;
 class AbstractProperty;
@@ -54,6 +55,12 @@ class Object : public std::enable_shared_from_this<Object>
 
   protected:
     InterfaceItems m_interfaceItems;
+
+    template<class... Args>
+    inline void fireEvent(Event<Args...>& event, Args... args)
+    {
+      event.fire(std::forward<Args>(args)...);
+    }
 
     inline bool dying() const noexcept { return m_dying; }
     virtual void destroying() {}

@@ -261,7 +261,7 @@ bool Session::processMessage(const Message& message)
           const ValueType resultType = message.read<ValueType>();
           const uint8_t argumentCount = message.read<uint8_t>();
 
-          std::vector<AbstractMethod::Argument> args;
+          Arguments args;
           for(uint8_t i = 0; i < argumentCount; i++)
           {
             switch(message.read<ValueType>())
