@@ -36,6 +36,15 @@ class HTMLSinglePageBuilder(HTMLBuilder):
 
         return html
 
+    def subpages(self, page, depth=1):
+        html = ''
+        if 'pages' in page:
+            for subpage in page['pages']:
+                subhtml = self._file_to_html(subpage)
+                subhtml = re.sub(r'<h([1-5])([^>]*)>(.*?)</h\1>', lambda m: '<h' + str(min(6, int(m.group(1)) + depth)) + m.group(2) + '>' + m.group(3) + '</h' + str(min(6, int(m.group(1))) + depth) + '>', subhtml)
+                html += subhtml + self.subpages(subpage, depth + 1)
+        return html
+
     def build(self):
         self._output_copy_files([
             'css/pure-min.css',
@@ -46,12 +55,7 @@ class HTMLSinglePageBuilder(HTMLBuilder):
         toc = {'preface': [], 'chapter': [], 'appendix': []}
         manual_html = ''
         for page in self._json:
-            page_html = self._file_to_html(page)
-            if 'pages' in page:
-                for subpage in page['pages']:
-                    subhtml = self._file_to_html(subpage)
-                    subhtml = re.sub(r'<h([1-5])([^>]*)>(.*?)</h\1>', lambda m: '<h' + str(int(m.group(1)) + 1) + m.group(2) + '>' + m.group(3) + '</h' + str(int(m.group(1)) + 1) + '>', subhtml)
-                    page_html += subhtml
+            page_html = self._file_to_html(page) + self.subpages(page)
 
             m = re.findall(r'<h([1-2])([^>]*)>(.*?)</h\1>', page_html)
             if m is not None:
