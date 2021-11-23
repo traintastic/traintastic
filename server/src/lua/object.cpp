@@ -25,10 +25,12 @@
 #include "check.hpp"
 #include "to.hpp"
 #include "method.hpp"
+#include "event.hpp"
 #include "error.hpp"
 #include "../core/object.hpp"
 #include "../core/abstractproperty.hpp"
 #include "../core/abstractmethod.hpp"
+#include "../core/abstractevent.hpp"
 
 namespace Lua {
 
@@ -161,6 +163,13 @@ int Object::__index(lua_State* L)
     {
       if(method->isScriptCallable())
         Method::push(L, *method);
+      else
+        lua_pushnil(L);
+    }
+    else if(auto* event = dynamic_cast<AbstractEvent*>(item))
+    {
+      if(event->isScriptable())
+        Event::push(L, *event);
       else
         lua_pushnil(L);
     }

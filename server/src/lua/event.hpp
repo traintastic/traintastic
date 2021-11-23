@@ -1,5 +1,5 @@
 /**
- * server/src/lua/checkarguments.hpp
+ * server/src/lua/event.hpp - Lua event wrapper
  *
  * This file is part of the traintastic source code.
  *
@@ -20,27 +20,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_LUA_CHECKARGUMENTS_HPP
-#define TRAINTASTIC_SERVER_LUA_CHECKARGUMENTS_HPP
+#ifndef TRAINTASTIC_SERVER_LUA_EVENT_HPP
+#define TRAINTASTIC_SERVER_LUA_EVENT_HPP
 
-#include "error.hpp"
+#include <lua.hpp>
+
+class AbstractEvent;
 
 namespace Lua {
 
-inline void checkArguments(lua_State* L, int count)
+class Event
 {
-  const int top = lua_gettop(L);
-  if(top != count)
-    errorExpectedNArgumentsGotN(L, count, top);
-}
+  private:
+    static int __index(lua_State* L);
+    static int __gc(lua_State* L);
+    static int connect(lua_State* L);
+    static int disconnect(lua_State* L);
 
-inline int checkArguments(lua_State* L, int min, int max)
-{
-  const int top = lua_gettop(L);
-  if(top < min || top > max)
-    errorExpectedNNArgumentsGotN(L, min, max, top);
-  return top;
-}
+  public:
+    static constexpr char const* metaTableName = "event";
+
+    static AbstractEvent& check(lua_State* L, int index);
+    static AbstractEvent* test(lua_State* L, int index);
+
+    static void push(lua_State* L, AbstractEvent& value);
+
+    static void registerType(lua_State* L);
+};
 
 }
 

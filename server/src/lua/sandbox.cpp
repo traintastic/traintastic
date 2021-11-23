@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,8 @@
 #include "push.hpp"
 #include "object.hpp"
 #include "method.hpp"
+#include "event.hpp"
+#include "eventhandler.hpp"
 #include "log.hpp"
 #include "class.hpp"
 #include "to.hpp"
@@ -167,6 +169,7 @@ SandboxPtr Sandbox::create(Script& script)
   Set<WorldState>::registerType(L);
   Object::registerType(L);
   Method::registerType(L);
+  Event::registerType(L);
 
   // setup sandbox:
   lua_newtable(L);
@@ -298,6 +301,16 @@ int Sandbox::pcall(lua_State* L, int nargs, int nresults, int errfunc)
     }
   }
   return lua_pcall(L, nargs, nresults, errfunc);
+}
+
+Sandbox::StateData::~StateData()
+{
+  while(!m_eventHandlers.empty())
+  {
+    auto handler = m_eventHandlers.begin()->second;
+    m_eventHandlers.erase(m_eventHandlers.begin());
+    handler->disconnect();
+  }
 }
 
 }

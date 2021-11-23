@@ -91,7 +91,7 @@ int Method::__call(lua_State* L)
   if(lua_gettop(L) - 1 != argc)
     errorExpectedNArgumentsGotN(L, argc, lua_gettop(L) - 1);
 
-  std::vector<AbstractMethod::Argument> args;
+  Arguments args;
   args.reserve(argc);
 
 

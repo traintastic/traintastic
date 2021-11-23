@@ -37,10 +37,12 @@ namespace Lua {
 [[noreturn]] inline void errorCantSetNonExistingProperty(lua_State* L) { luaL_error(L, "can't set non existing property"); abort(); }
 [[noreturn]] inline void errorCantSetReadOnlyProperty(lua_State* L) { luaL_error(L, "can't set read only property"); abort(); }
 
+[[noreturn]] inline void errorDeadEvent(lua_State* L) { luaL_error(L, "dead event"); abort(); }
 [[noreturn]] inline void errorDeadMethod(lua_State* L) { luaL_error(L, "dead method"); abort(); }
 [[noreturn]] inline void errorDeadObject(lua_State* L) { luaL_error(L, "dead object"); abort(); }
 
 [[noreturn]] inline void errorExpectedNArgumentsGotN(lua_State* L, int expected, int got) { luaL_error(L, "expected %d arguments, got %d", expected, got); abort(); }
+[[noreturn]] inline void errorExpectedNNArgumentsGotN(lua_State* L, int min, int max, int got) { luaL_error(L, "expected %d..%d arguments, got %d", min, max, got); abort(); }
 
 [[noreturn]] inline void errorException(lua_State* L, const std::exception& e) { luaL_error(L, "exception: %s", e.what()); abort(); }
 

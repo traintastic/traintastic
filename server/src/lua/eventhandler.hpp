@@ -1,5 +1,5 @@
 /**
- * server/src/lua/checkarguments.hpp
+ * server/src/lua/eventhandler.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,27 +20,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_LUA_CHECKARGUMENTS_HPP
-#define TRAINTASTIC_SERVER_LUA_CHECKARGUMENTS_HPP
+#ifndef TRAINTASTIC_SERVER_LUA_EVENTHANDLER_HPP
+#define TRAINTASTIC_SERVER_LUA_EVENTHANDLER_HPP
 
-#include "error.hpp"
+#include <lua.hpp>
+#include "../core/abstracteventhandler.hpp"
 
 namespace Lua {
 
-inline void checkArguments(lua_State* L, int count)
+class EventHandler final : public AbstractEventHandler
 {
-  const int top = lua_gettop(L);
-  if(top != count)
-    errorExpectedNArgumentsGotN(L, count, top);
-}
+  private:
+    lua_State* m_L;
+    int m_function;
+    int m_userData;
 
-inline int checkArguments(lua_State* L, int min, int max)
-{
-  const int top = lua_gettop(L);
-  if(top < min || top > max)
-    errorExpectedNNArgumentsGotN(L, min, max, top);
-  return top;
-}
+    void release();
+
+  public:
+    EventHandler(AbstractEvent& _event, lua_State* L);
+    ~EventHandler() final;
+
+    void execute(const Arguments& args) final;
+
+    bool disconnect() final;
+};
 
 }
 
