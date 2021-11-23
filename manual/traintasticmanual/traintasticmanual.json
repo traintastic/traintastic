@@ -60,7 +60,42 @@
   },
   {
     "type": "chapter",
-    "markdown": "scripting.md"
+    "markdown": "lua.md",
+    "pages": [
+      {
+        "markdown": "lua/globals.md"
+      },
+      {
+        "markdown": "lua/enums.md",
+        "pages": [
+          {
+            "markdown": "lua/enum/worldevent.md"
+          },
+          {
+            "markdown": "lua/enum/worldscale.md"
+          }
+        ]
+      },
+      {
+        "markdown": "lua/sets.md",
+        "pages": [
+          {
+            "markdown": "lua/set/worldstate.md"
+          }
+        ]
+      },
+      {
+        "markdown": "lua/objects.md",
+        "pages": [
+          {
+            "markdown": "lua/object/log.md"
+          },
+          {
+            "markdown": "lua/object/world.md"
+          }
+        ]
+      }
+    ]
   },
   {
     "type": "chapter",
