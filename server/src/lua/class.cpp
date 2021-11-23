@@ -133,6 +133,7 @@ inline static void registerValue(lua_State* L, std::string_view key)
 
   // add to global class (used by Class::push)
   lua_getglobal(L, metaTableName);
+  Lua::push(L, T::classId);
   *reinterpret_cast<IsInstance*>(lua_newuserdata(L, sizeof(IsInstance))) = isInstance<T>;
   if(luaL_newmetatable(L, metaTableName))
   {
@@ -140,7 +141,7 @@ inline static void registerValue(lua_State* L, std::string_view key)
     lua_setfield(L, -2, "__tostring");
   }
   lua_setmetatable(L, -2);
-  lua_rawsetp(L, -2, T::classId.data());
+  lua_rawset(L, -3);
   lua_pop(L, 1);
 
   // add to sandbox class global:
@@ -229,7 +230,8 @@ void Class::push(lua_State* L, std::string_view classId)
 {
   lua_getglobal(L, metaTableName);
   assert(lua_istable(L, -1));
-  lua_rawgetp(L, -1, classId.data());
+  Lua::push(L, classId);
+  lua_rawget(L, -2);
   assert(lua_isuserdata(L, -1));
   lua_insert(L, lua_gettop(L) - 1);
   lua_pop(L, 1);
