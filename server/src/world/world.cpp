@@ -229,6 +229,7 @@ World::World(Private) :
         Log::log(*this, LogMessage::C1005_SAVING_WORLD_FAILED_X, e);
       }
     }}
+  , onEvent{*this, "on_event", EventFlags::Scriptable}
 {
   Attributes::addDisplayName(uuid, DisplayName::World::uuid);
   m_interfaceItems.add(uuid);
@@ -292,6 +293,8 @@ World::World(Private) :
 
   Attributes::addObjectEditor(save, false);
   m_interfaceItems.add(save);
+
+  m_interfaceItems.add(onEvent);
 }
 
 std::string World::getUniqueId(std::string_view prefix) const
@@ -372,6 +375,8 @@ void World::worldEvent(WorldState worldState, WorldEvent worldEvent)
 
   Attributes::setEnabled(scale, editState && !runState);
   Attributes::setEnabled(scaleRatio, editState && !runState);
+
+  fireEvent(onEvent, worldState, worldEvent);
 }
 
 void World::event(const WorldEvent value)

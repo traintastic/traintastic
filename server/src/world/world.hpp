@@ -26,6 +26,7 @@
 #include "../core/object.hpp"
 #include "../core/property.hpp"
 #include "../core/objectproperty.hpp"
+#include "../core/event.hpp"
 #include <traintastic/utils/stdfilesystem.hpp>
 #include <unordered_map>
 #include <boost/uuid/uuid.hpp>
@@ -112,6 +113,8 @@ class World : public Object
     Property<bool> noSmoke;
 
     Method<void()> save;
+
+    Event<WorldState, WorldEvent> onEvent;
 
     World(Private);
 
