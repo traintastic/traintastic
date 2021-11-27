@@ -1,7 +1,7 @@
 import os
 import re
 import codecs
-import pycmarkgfm  # pip3 install pycmarkgfm
+import cmarkgfm  # pip3 install cmarkgfm
 from .builder import Builder
 
 
@@ -10,7 +10,7 @@ class HTMLBuilder(Builder):
 
     def _file_to_html(self, page):
         with codecs.open(os.path.join(self._language_dir, page['markdown']), 'r', 'utf-8') as md:
-            html = pycmarkgfm.gfm_to_html(md.read())
+            html = cmarkgfm.github_flavored_markdown_to_html(md.read())
 
         # parse id
         html = re.sub(r'<h([1-6])([^>]*)>(.*) {#([a-z0-9-]+)}</h\1>', r'<h\1\2 id="\4">\3</h\1>', html)
