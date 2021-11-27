@@ -31,7 +31,7 @@
 
 Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
-  name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   left{this, "left", 0, PropertyFlags::ReadOnly | PropertyFlags::Store},
   top{this, "top", 0, PropertyFlags::ReadOnly | PropertyFlags::Store},
   right{this, "right", 0, PropertyFlags::ReadOnly | PropertyFlags::Store},

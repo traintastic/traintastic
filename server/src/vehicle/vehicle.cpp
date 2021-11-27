@@ -27,7 +27,7 @@
 
 Vehicle::Vehicle(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
-  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
+  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   auto w = world.lock();

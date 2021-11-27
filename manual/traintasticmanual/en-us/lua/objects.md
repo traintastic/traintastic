@@ -1,4 +1,5 @@
 # Objects {#lua-objects}
 
-- [`log`](object/log.md)
-- [`world`](object/world.md)
+- [Board](object/board.md)
+- [Log](object/log.md)
+- [World](object/world.md)
