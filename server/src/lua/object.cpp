@@ -36,9 +36,21 @@ namespace Lua {
 
 ObjectPtr Object::check(lua_State* L, int index)
 {
-  ObjectPtrWeak& data = **static_cast<ObjectPtrWeak**>(luaL_checkudata(L, index, metaTableName));
-  if(ObjectPtr object = data.lock())
+  ObjectPtrWeak** data = static_cast<ObjectPtrWeak**>(luaL_testudata(L, index, metaTableNameList));
+  if(!data)
+    data = static_cast<ObjectPtrWeak**>(luaL_checkudata(L, index, metaTableName));
+
+  if(ObjectPtr object = (**data).lock())
     return object;
+  else
+    errorDeadObject(L);
+}
+
+std::shared_ptr<AbstractObjectList> Object::checkList(lua_State* L, int index)
+{
+  ObjectPtrWeak& data = **static_cast<ObjectPtrWeak**>(luaL_checkudata(L, index, metaTableNameList));
+  if(ObjectPtr object = data.lock())
+    return std::static_pointer_cast<AbstractObjectList>(object);
   else
     errorDeadObject(L);
 }
@@ -47,9 +59,23 @@ ObjectPtr Object::test(lua_State* L, int index)
 {
   ObjectPtrWeak** data = static_cast<ObjectPtrWeak**>(luaL_testudata(L, index, metaTableName));
   if(!data)
-    return ObjectPtr();
+    data = static_cast<ObjectPtrWeak**>(luaL_testudata(L, index, metaTableNameList));
+
+  if(!data)
+    return {};
   else if(ObjectPtr object = (**data).lock())
     return object;
+  else
+    errorDeadObject(L);
+}
+
+std::shared_ptr<AbstractObjectList> Object::testList(lua_State* L, int index)
+{
+  ObjectPtrWeak** data = static_cast<ObjectPtrWeak**>(luaL_testudata(L, index, metaTableNameList));
+  if(!data)
+    return {};
+  else if(ObjectPtr object = (**data).lock())
+    return std::static_pointer_cast<AbstractObjectList>(object);
   else
     errorDeadObject(L);
 }
@@ -64,7 +90,10 @@ void Object::push(lua_State* L, const ObjectPtr& value)
     {
       lua_pop(L, 1); // remove nil
       *static_cast<ObjectPtrWeak**>(lua_newuserdata(L, sizeof(ObjectPtrWeak*))) = new ObjectPtrWeak(value);
-      luaL_setmetatable(L, metaTableName);
+      if(dynamic_cast<AbstractObjectList*>(value.get()))
+        luaL_setmetatable(L, metaTableNameList);
+      else
+        luaL_setmetatable(L, metaTableName);
       lua_pushvalue(L, -1); // copy userdata on stack
       lua_rawsetp(L, -3, value.get()); // add object to table
     }
@@ -87,6 +116,18 @@ void Object::registerType(lua_State* L)
   lua_setfield(L, -2, "__newindex");
   lua_pop(L, 1);
 
+  // metatable for object list userdata:
+  luaL_newmetatable(L, metaTableNameList);
+  lua_pushcfunction(L, __gc);
+  lua_setfield(L, -2, "__gc");
+  lua_pushcfunction(L, __index);
+  lua_setfield(L, -2, "__index");
+  lua_pushcfunction(L, __newindex);
+  lua_setfield(L, -2, "__newindex");
+  lua_pushcfunction(L, __len);
+  lua_setfield(L, -2, "__len");
+  lua_pop(L, 1);
+
   // weak table for object userdata:
   lua_newtable(L);
   lua_newtable(L); // metatable
@@ -106,6 +147,23 @@ int Object::__gc(lua_State* L)
 int Object::__index(lua_State* L)
 {
   ObjectPtr object{check(L, 1)};
+
+  // handle list[index]:
+  {
+    lua_Integer index;
+    if(to(L, 2, index))
+    {
+      if(auto list = std::dynamic_pointer_cast<AbstractObjectList>(object))
+      {
+        if(index >= 1 && index <= list->length)
+          push(L, list->getObject(static_cast<uint32_t>(index - 1)));
+        else
+          lua_pushnil(L);
+        return 1;
+      }
+    }
+  }
+
   std::string_view name{to<std::string_view>(L, 2)};
 
   if(InterfaceItem* item = object->getItem(name))
@@ -232,6 +290,15 @@ int Object::__newindex(lua_State* L)
   }
 
   errorCantSetNonExistingProperty(L);
+}
+
+int Object::__len(lua_State* L)
+{
+  auto list{checkList(L, 1)};
+
+  Lua::push(L, list->length.value());
+
+  return 1;
 }
 
 }

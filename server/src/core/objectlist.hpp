@@ -76,18 +76,15 @@ class ObjectList : public AbstractObjectList
     }
 
   public:
-    Property<uint32_t> length;
-
     ObjectList(Object& _parent, const std::string& parentPropertyName) :
-      AbstractObjectList{_parent, parentPropertyName},
-      length{this, "length", 0, PropertyFlags::ReadOnly}
+      AbstractObjectList{_parent, parentPropertyName}
     {
     }
 
     inline const_iterator begin() const noexcept { return m_items.begin(); }
     inline const_iterator end() const noexcept { return m_items.end(); }
 
-    ObjectPtr getObject(uint32_t index)
+    ObjectPtr getObject(uint32_t index) final
     {
       assert(index < m_items.size());
       return std::static_pointer_cast<Object>(m_items[index]);
