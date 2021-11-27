@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_LUA_CLASS_HPP
 #define TRAINTASTIC_SERVER_LUA_CLASS_HPP
 
+#include <string_view>
 #include <lua.hpp>
 #include "../core/objectptr.hpp"
 
