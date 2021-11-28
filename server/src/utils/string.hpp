@@ -30,4 +30,19 @@ constexpr bool startsWith(std::string_view s, std::string_view prefix)
   return s.rfind(prefix, 0) == 0;
 }
 
+constexpr std::string_view rtrim(std::string_view s, char c)
+{
+  if(s.empty())
+    return {};
+
+  size_t size = s.size() - 1;
+  while(s.data()[--size] == c)
+  {
+    if(size == 0)
+      return {};
+    size--;
+  }
+  return {s.data(), size + 1};
+}
+
 #endif
