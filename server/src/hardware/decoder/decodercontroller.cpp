@@ -22,6 +22,8 @@
 
 #include "decodercontroller.hpp"
 #include "decoder.hpp"
+#include "decoderchangeflags.hpp"
+#include "../../utils/almostzero.hpp"
 
 bool DecoderController::addDecoder(Decoder& decoder)
 {
@@ -80,4 +82,11 @@ DecoderController::DecoderVector::iterator DecoderController::findDecoder(Decode
         return it->protocol == protocol && it->address == address;
       });
   }
+}
+
+void DecoderController::restoreDecoderSpeed()
+{
+  for(const auto& decoder : m_decoders)
+    if(!decoder->emergencyStop && !almostZero(decoder->throttle.value()))
+      decoderChanged(*decoder, DecoderChangeFlags::Throttle, 0);
 }

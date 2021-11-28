@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/interfaces.cpp
+ * server/src/hardware/protocol/dccplusplus/config.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,14 +20,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "interfaces.hpp"
-#include "../../utils/ifclassidcreate.hpp"
-#include "../../world/world.hpp"
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_CONFIG_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_CONFIG_HPP
 
-std::shared_ptr<Interface> Interfaces::create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id)
+#include <cstdint>
+
+namespace DCCPlusPlus {
+
+struct Config
 {
-  IF_CLASSID_CREATE(DCCPlusPlusInterface)
-  IF_CLASSID_CREATE(LocoNetInterface)
-  IF_CLASSID_CREATE(XpressNetInterface)
-  return std::shared_ptr<Interface>();
+  static constexpr uint32_t functionNumberMax = 56;
+
+  bool useEx;
+  uint8_t speedSteps;
+  uint16_t startupDelay;
+  bool debugLogRXTX;
+};
+
 }
+
+#endif

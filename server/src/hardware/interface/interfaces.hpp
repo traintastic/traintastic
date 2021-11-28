@@ -26,6 +26,7 @@
 #include "interface.hpp"
 #include "../../utils/makearray.hpp"
 
+#include "dccplusplusinterface.hpp"
 #include "loconetinterface.hpp"
 #include "xpressnetinterface.hpp"
 
@@ -34,6 +35,7 @@ struct Interfaces
   static constexpr std::string_view classIdPrefix = "interface.";
 
   static constexpr auto classList = makeArray(
+    DCCPlusPlusInterface::classId,
     LocoNetInterface::classId,
     XpressNetInterface::classId
   );

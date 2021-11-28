@@ -42,6 +42,9 @@ class DecoderController
     DecoderVector::iterator findDecoder(const Decoder& decoder);
     DecoderVector::iterator findDecoder(DecoderProtocol protocol, uint16_t address, bool dccLongAddress = false);
 
+    /// \brief restore speed of all decoders that are not (emergency) stopped
+    void restoreDecoderSpeed();
+
   public:
     [[nodiscard]] virtual bool addDecoder(Decoder& decoder);
     [[nodiscard]] virtual bool removeDecoder(Decoder& decoder);
