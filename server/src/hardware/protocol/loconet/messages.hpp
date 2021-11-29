@@ -46,6 +46,8 @@ bool isValid(const Message& message);
 bool isLocoSlot(uint8_t slot);
 void setSlot(Message& message, uint8_t slot);
 
+bool isValidResponse(const Message& request, const Message& response);
+
 std::string toString(const Message& message, bool raw = false);
 
 constexpr uint8_t SLOT_DISPATCH = 0;
@@ -1410,6 +1412,11 @@ struct ImmediatePacketF21F28 : ImmediatePacketLoco
 };
 static_assert(sizeof(ImmediatePacketF21F28) == sizeof(ImmediatePacketLoco));
 */
+
+constexpr bool hasResponse(const Message& message)
+{
+  return (message.opCode & 0x08);
+}
 
 }
 

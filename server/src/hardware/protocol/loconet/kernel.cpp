@@ -49,6 +49,7 @@ static void updateDecoderSpeed(const std::shared_ptr<Decoder>& decoder, uint8_t 
 Kernel::Kernel(const Config& config)
   : m_ioContext{1}
   , m_waitingForEcho{false}
+  , m_waitingForResponse{false}
   , m_fastClockSyncTimer(m_ioContext)
   , m_decoderController{nullptr}
   , m_inputController{nullptr}
@@ -182,6 +183,21 @@ void Kernel::receive(const Message& message)
 {
   if(m_config.debugLogRXTX)
     EventLoop::call([this, msg=toString(message)](){ Log::log(m_logId, LogMessage::D2002_RX_X, msg); });
+
+  bool isResponse = false;
+  if(m_waitingForEcho && message == m_sendQueue[m_sentMessagePriority].front())
+  {
+    m_waitingForEcho = false;
+    if(!m_waitingForResponse)
+    {
+      m_sendQueue[m_sentMessagePriority].pop();
+      sendNextMessage();
+    }
+  }
+  else if(m_waitingForResponse)
+  {
+    isResponse = isValidResponse(m_sendQueue[m_sentMessagePriority].front(), message);
+  }
 
   switch(message.opCode)
   {
@@ -603,10 +619,10 @@ void Kernel::receive(const Message& message)
       break; // unimplemented
   }
 
-  if(m_waitingForEcho && message == m_sendQueue[m_sentMessagePriority].front())
+  if(m_waitingForResponse && isResponse)
   {
+    m_waitingForResponse = false;
     m_sendQueue[m_sentMessagePriority].pop();
-    m_waitingForEcho = false;
     sendNextMessage();
   }
 }
@@ -785,7 +801,7 @@ void Kernel::send(const Message& message, Priority priority)
     return;
   }
 
-  if(!m_waitingForEcho)
+  if(!m_waitingForEcho && !m_waitingForResponse)
     sendNextMessage();
 }
 
@@ -827,6 +843,7 @@ void Kernel::sendNextMessage()
       {
         m_sentMessagePriority = static_cast<Priority>(priority);
         m_waitingForEcho = true;
+        m_waitingForResponse = hasResponse(message);
       }
       else
       {} // log message and go to error state

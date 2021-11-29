@@ -116,6 +116,74 @@ void setSlot(Message& message, uint8_t slot)
   assert(false);
 }
 
+bool isValidResponse(const Message& request, const Message& response)
+{
+  switch(request.opCode)
+  {
+    case OPC_UNLINK_SLOTS:
+      assert(false); //! @todo implement
+      return false;
+
+    case OPC_LINK_SLOTS:
+      assert(false); //! @todo implement
+      return false;
+
+    case OPC_MOVE_SLOTS:
+      assert(false); //! @todo implement
+      return false;
+
+    case OPC_RQ_SL_DATA:
+      return
+        response.opCode == OPC_SL_RD_DATA &&
+        static_cast<const RequestSlotData&>(request).slot == static_cast<const SlotReadData&>(response).slot;
+
+    case OPC_SW_STATE:
+      assert(false); //! @todo implement
+      return false;
+
+    case OPC_SW_ACK:
+      assert(false); //! @todo implement
+      return false;
+
+    case OPC_LOCO_ADR:
+      return
+        response.opCode == OPC_SL_RD_DATA &&
+        static_cast<const LocoAdr&>(request).addressLow == static_cast<const SlotReadData&>(response).adr &&
+        static_cast<const LocoAdr&>(request).addressHigh == static_cast<const SlotReadData&>(response).adr2;
+
+    case OPC_IMM_PACKET:
+      assert(false); //! @todo implement
+      return false;
+
+    case OPC_WR_SL_DATA:
+      assert(false); //! @todo implement
+      return false;
+
+    case OPC_BUSY:
+    case OPC_GPOFF:
+    case OPC_GPON:
+    case OPC_IDLE:
+    case OPC_LOCO_SPD:
+    case OPC_LOCO_DIRF:
+    case OPC_LOCO_SND:
+    case OPC_LOCO_F9F12:
+    case OPC_SW_REQ:
+    case OPC_SW_REP:
+    case OPC_INPUT_REP:
+    case OPC_LONG_ACK:
+    case OPC_SLOT_STAT1:
+    case OPC_CONSIST_FUNC:
+    case OPC_MULTI_SENSE:
+    case OPC_D4:
+    case OPC_MULTI_SENSE_LONG:
+    case OPC_PEER_XFER:
+    case OPC_SL_RD_DATA:
+      assert(!hasResponse(request));
+      break;
+  }
+  return false;
+}
+
 std::string toString(const Message& message, bool raw)
 {
   std::string s;

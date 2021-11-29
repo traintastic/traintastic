@@ -123,6 +123,7 @@ class Kernel
     std::array<SendQueue, 3> m_sendQueue;
     Priority m_sentMessagePriority;
     bool m_waitingForEcho;
+    bool m_waitingForResponse;
 
     TriState m_globalPower;
     std::function<void(bool)> m_onGlobalPowerChanged;
@@ -212,6 +213,13 @@ class Kernel
     {
       assert(dynamic_cast<T*>(m_ioHandler.get()));
       return static_cast<T&>(*m_ioHandler);
+    }
+
+    /// @brief Get object id used for log messages
+    /// @return The object id
+    inline const std::string& logId()
+    {
+      return m_logId;
     }
 
     /**
