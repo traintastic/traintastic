@@ -41,11 +41,13 @@ void open(boost::asio::serial_port& serialPort, const std::string& device, uint3
   if(ec)
     throw LogMessageException(LogMessage::E2014_SERIAL_PORT_SET_DATA_BITS_FAILED_X, ec);
 
+  static_cast<void>(parity); // silence unused warning if assertions are off
   assert(parity == SerialParity::None);
   serialPort.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none), ec);
   if(ec)
     throw LogMessageException(LogMessage::E2016_SERIAL_PORT_SET_PARITY_FAILED_X, ec);
 
+  static_cast<void>(stopBits); // silence unused warning if assertions are off
   assert(stopBits == SerialStopBits::One);
   serialPort.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one), ec);
   if(ec)
