@@ -42,6 +42,7 @@ std::string toString(const Message& message, bool raw = false);
 enum Header : uint16_t
 {
   LAN_GET_SERIAL_NUMBER = 0x10,
+  LAN_GET_CODE = 0x18,
   LAN_GET_HWINFO = 0x1A,
   LAN_LOGOFF = 0x30,
   LAN_X = 0x40,
@@ -49,26 +50,90 @@ enum Header : uint16_t
   LAN_GET_BROADCASTFLAGS = 0x51,
   LAN_GET_LOCO_MODE = 0x60,
   LAN_SET_LOCO_MODE = 0x61,
+  LAN_GET_TURNOUTMODE = 0x70,
+  LAN_SET_TURNOUTMODE = 0x71,
+  LAN_RMBUS_DATACHANGED = 0x80,
+  LAN_RMBUS_GETDATA = 0x81,
+  LAN_RMBUS_PROGRAMMODULE = 0x82,
   LAN_SYSTEMSTATE_DATACHANGED = 0x84,
   LAN_SYSTEMSTATE_GETDATA = 0x85,
+  LAN_RAILCOM_DATACHANGED = 0x88,
+  LAN_RAILCOM_GETDATA = 0x89,
   LAN_LOCONET_Z21_RX = 0xA0,
   LAN_LOCONET_Z21_TX = 0xA1,
+  LAN_LOCONET_FROM_LAN = 0xA2,
+  LAN_LOCONET_DISPATCH_ADDR = 0xA3,
+  LAN_LOCONET_DETECTOR = 0xA4,
+  LAN_CAN_DETECTOR = 0xC4,
 };
 
 enum BroadcastFlags : uint32_t
 {
-  /**
-   * Broadcasts and info messages concerning driving and switching are delivered to the registered clients automatically.
-   * The following messages are concerned:
-   * 2.7 LAN_X_BC_TRACK_POWER_OFF
-   * 2.8 LAN_X_BC_TRACK_POWER_ON
-   * 2.9 LAN_X_BC_PROGRAMMING_MODE
-   * 2.10 LAN_X_BC_TRACK_SHORT_CIRCUIT
-   * 2.14 LAN_X_BC_STOPPED
-   * 4.4 LAN_X_LOCO_INFO (loco address must be subscribed too)
-   * 5.3 LAN_X_TURNOUT_INFO
-   */
-  PowerLocoTurnout = 0x00000001,
+  None = 0,
+
+  /// Broadcasts and info messages concerning driving and switching are delivered to the registered clients automatically.
+  /// The following messages are concerned:
+  /// 2.7 LAN_X_BC_TRACK_POWER_OFF
+  /// 2.8 LAN_X_BC_TRACK_POWER_ON
+  /// 2.9 LAN_X_BC_PROGRAMMING_MODE
+  /// 2.10 LAN_X_BC_TRACK_SHORT_CIRCUIT
+  /// 2.14 LAN_X_BC_STOPPED
+  /// 4.4 LAN_X_LOCO_INFO (loco address must be subscribed too)
+  /// 5.3 LAN_X_TURNOUT_INFO
+  PowerLocoTurnoutChanges = 0x00000001,
+
+  /// Changes of the feedback devices on the R-Bus are sent automatically.
+  /// Z21 Broadcast messages see 7.1 LAN_RMBUS_DATACHANGED
+  RBusChanges = 0x00000002,
+
+  /// Changes of RailCom data of subscribed locomotives are sent automatically.
+  /// Z21 Broadcast messages see 8.1 LAN_RAILCOM_DATACHANGED
+  RailCOMChanges = 0x00000004,
+
+  /// Changes of the Z21 system status are sent automatically.
+  /// Z21 Broadcast messages see 2.18 LAN_SYSTEMSTATE_DATACHANGED
+  SystemStatusChanges = 0x00000100,
+
+  /// Extends flag 0x00000001; client now gets LAN_X_LOCO_INFO LAN_X_LOCO_INFO
+  /// without having to subscribe to the corresponding locomotive addresses, i.e. for all
+  /// controlled locomotives!
+  /// Due to the high network traffic, this flag may only be used by adequate PC railroad
+  /// automation software and is NOT intended for mobile hand controllers under any
+  /// circumstances.
+  /// From FW V1.20 bis V1.23: LAN_X_LOCO_INFO is sent for all locomotives.
+  /// From FW V1.24: LAN_X_LOCO_INFO is sent for all modified locomotives.
+  AllLocoChanges = 0x00010000,
+
+  /// Forwarding messages from LocoNet bus to LAN client without locos and switches.
+  LocoNetWithoutLocoAndSwitches = 0x01000000,
+
+  /// Forwarding locomotive-specific LocoNet messages to LAN Client:
+  /// OPC_LOCO_SPD, OPC_LOCO_DIRF, OPC_LOCO_SND, OPC_LOCO_F912, OPC_EXP_CMD
+  LocoNetLoco = 0x02000000,
+
+  /// Forwarding switch-specific LocoNet messages to LAN client:
+  /// OPC_SW_REQ, OPC_SW_REP, OPC_SW_ACK, OPC_SW_STATE
+  LocoNetSwitch = 0x04000000,
+
+  /// Sending status changes of LocoNet track occupancy detectors to the LAN client.
+  /// See 9.5 LAN_LOCONET_DETECTOR
+  LocoNetDetector = 0x08000000,
+
+  ///
+  LocoNet = LocoNetWithoutLocoAndSwitches | LocoNetLoco | LocoNetSwitch | LocoNetDetector,
+
+  /// Version 1.29:
+  /// Sending changes of RailCom data to the LAN Client.
+  /// Client gets LAN_RAILCOM_DATACHANGED without having to subscribe to the
+  /// corresponding locomotive addresses, i.e. for all controlled locomotives! Due to the high
+  /// network traffic, this flag may only be used by adequate PC railroad automation software
+  /// and is NOT intended for mobile hand controllers under any circumstances.
+  /// Z21 Broadcast messages see 8.1 LAN_RAILCOM_DATACHANGED
+  RailComDataChanged = 0x00040000,
+
+  /// Sending status changes of CAN-Bus track occupancy detectors to the LAN client.
+  /// See 10.1 LAN_CAN_DETECTOR
+  CANDetector = 0x00080000,
 };
 
 enum LocoMode : uint8_t
@@ -443,7 +508,7 @@ struct LanSetBroadcastFlags : Message
 {
   BroadcastFlags broadcastFlagsLE; // LE
 
-  LanSetBroadcastFlags(uint32_t _broadcastFlags = 0) :
+  LanSetBroadcastFlags(BroadcastFlags _broadcastFlags = BroadcastFlags::None) :
     Message(sizeof(LanSetBroadcastFlags), LAN_SET_BROADCASTFLAGS),
     broadcastFlagsLE{host_to_le(_broadcastFlags)}
   {
@@ -453,7 +518,6 @@ struct LanSetBroadcastFlags : Message
   {
     return le_to_host(broadcastFlagsLE);
   }
-
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanSetBroadcastFlags) == 8);
 
@@ -970,6 +1034,13 @@ PRAGMA_PACK_POP
 inline bool operator ==(const Z21::Message& lhs, const Z21::Message& rhs)
 {
   return lhs.dataLen() == rhs.dataLen() && std::memcmp(&lhs, &rhs, lhs.dataLen()) == 0;
+}
+
+constexpr Z21::BroadcastFlags operator |(Z21::BroadcastFlags lhs, Z21::BroadcastFlags rhs)
+{
+  return static_cast<Z21::BroadcastFlags>(
+    static_cast<std::underlying_type_t<Z21::BroadcastFlags>>(lhs) |
+    static_cast<std::underlying_type_t<Z21::BroadcastFlags>>(rhs));
 }
 
 #endif
