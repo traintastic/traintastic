@@ -26,10 +26,11 @@
 #include <traintastic/enum/loconetinterfacetype.hpp>
 #include <array>
 
-inline constexpr std::array<LocoNetInterfaceType, 3> locoNetInterfaceTypeValues{{
+inline constexpr std::array<LocoNetInterfaceType, 4> locoNetInterfaceTypeValues{{
   LocoNetInterfaceType::Serial,
   LocoNetInterfaceType::TCPBinary,
   LocoNetInterfaceType::LBServer,
+  LocoNetInterfaceType::Z21,
 }};
 
 constexpr bool isSerial(LocoNetInterfaceType value)
@@ -39,7 +40,10 @@ constexpr bool isSerial(LocoNetInterfaceType value)
 
 constexpr bool isNetwork(LocoNetInterfaceType value)
 {
-  return (value == LocoNetInterfaceType::TCPBinary || value == LocoNetInterfaceType::LBServer);
+  return
+    value == LocoNetInterfaceType::TCPBinary ||
+    value == LocoNetInterfaceType::LBServer ||
+    value == LocoNetInterfaceType::Z21;
 }
 
 #endif

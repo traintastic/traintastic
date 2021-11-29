@@ -26,6 +26,7 @@
 #include "../protocol/loconet/iohandler/serialiohandler.hpp"
 #include "../protocol/loconet/iohandler/tcpbinaryiohandler.hpp"
 #include "../protocol/loconet/iohandler/lbserveriohandler.hpp"
+#include "../protocol/loconet/iohandler/z21iohandler.hpp"
 #include "../../core/attributes.hpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
@@ -181,6 +182,10 @@ bool LocoNetInterface::setOnline(bool& value)
 
         case LocoNetInterfaceType::LBServer:
           m_kernel = LocoNet::Kernel::create<LocoNet::LBServerIOHandler>(loconet->config(), hostname.value(), port.value());
+          break;
+
+        case LocoNetInterfaceType::Z21:
+          m_kernel = LocoNet::Kernel::create<LocoNet::Z21IOHandler>(loconet->config(), hostname.value());
           break;
 
         default:
@@ -364,5 +369,5 @@ void LocoNetInterface::typeChanged()
 
   const bool networkVisible = isNetwork(type);
   Attributes::setVisible(hostname, networkVisible);
-  Attributes::setVisible(port, networkVisible);
+  Attributes::setVisible(port, networkVisible && type != LocoNetInterfaceType::Z21);
 }

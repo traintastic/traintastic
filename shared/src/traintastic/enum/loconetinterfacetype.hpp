@@ -31,15 +31,17 @@ enum class LocoNetInterfaceType : uint16_t
   Serial = 0,
   TCPBinary = 1,
   LBServer = 2,
+  Z21 = 3,
 };
 
 ENUM_NAME(LocoNetInterfaceType, "loconet_interface_type")
 
-ENUM_VALUES(LocoNetInterfaceType, 3,
+ENUM_VALUES(LocoNetInterfaceType, 4,
 {
   {LocoNetInterfaceType::Serial, "serial"},
   {LocoNetInterfaceType::TCPBinary, "tcp_binary"},
   {LocoNetInterfaceType::LBServer, "lbserver"},
+  {LocoNetInterfaceType::Z21, "z21"},
 })
 
 #endif
