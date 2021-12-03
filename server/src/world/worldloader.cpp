@@ -26,7 +26,7 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include "world.hpp"
-#include "../utils/string.hpp"
+#include "../utils/startswith.hpp"
 #include "ctwreader.hpp"
 
 #include "../board/board.hpp"

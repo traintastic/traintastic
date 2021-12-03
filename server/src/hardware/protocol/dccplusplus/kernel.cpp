@@ -25,7 +25,7 @@
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../../utils/setthreadname.hpp"
-#include "../../../utils/string.hpp"
+#include "../../../utils/rtrim.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 

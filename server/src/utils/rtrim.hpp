@@ -1,9 +1,9 @@
 /**
- * server/src/utils/string.hpp
+ * server/src/utils/rtrim.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,15 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_UTILS_STRING_HPP
-#define TRAINTASTIC_SERVER_UTILS_STRING_HPP
+#ifndef TRAINTASTIC_SERVER_UTILS_RTRIM_HPP
+#define TRAINTASTIC_SERVER_UTILS_RTRIM_HPP
 
 #include <string_view>
-
-constexpr bool startsWith(std::string_view s, std::string_view prefix)
-{
-  return s.rfind(prefix, 0) == 0;
-}
 
 constexpr std::string_view rtrim(std::string_view s, char c)
 {
