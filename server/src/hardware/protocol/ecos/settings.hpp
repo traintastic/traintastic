@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/interfaces.cpp
+ * server/src/hardware/protocol/ecos/settings.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,15 +20,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "interfaces.hpp"
-#include "../../utils/ifclassidcreate.hpp"
-#include "../../world/world.hpp"
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_SETTINGS_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_SETTINGS_HPP
 
-std::shared_ptr<Interface> Interfaces::create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id)
+#include "../../../core/subobject.hpp"
+#include "../../../core/property.hpp"
+#include "config.hpp"
+
+namespace ECoS {
+
+class Settings final : public SubObject
 {
-  IF_CLASSID_CREATE(DCCPlusPlusInterface)
-  IF_CLASSID_CREATE(ECoSInterface)
-  IF_CLASSID_CREATE(LocoNetInterface)
-  IF_CLASSID_CREATE(XpressNetInterface)
-  return std::shared_ptr<Interface>();
+  public:
+    CLASS_ID("ecos_settings")
+
+    Property<bool> debugLogRXTX;
+
+    Settings(Object& _parent, const std::string& parentPropertyName);
+
+    Config config() const;
+};
+
 }
+
+#endif

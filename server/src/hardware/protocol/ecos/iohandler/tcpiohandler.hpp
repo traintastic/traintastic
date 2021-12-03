@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/interfaces.cpp
+ * server/src/hardware/protocol/ecos/iohandler/serialiohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,15 +20,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "interfaces.hpp"
-#include "../../utils/ifclassidcreate.hpp"
-#include "../../world/world.hpp"
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_IOHANDLER_TCPIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_IOHANDLER_TCPIOHANDLER_HPP
 
-std::shared_ptr<Interface> Interfaces::create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id)
+#include "iohandler.hpp"
+#include <boost/asio/ip/tcp.hpp>
+
+namespace ECoS {
+
+class TCPIOHandler final : public IOHandler
 {
-  IF_CLASSID_CREATE(DCCPlusPlusInterface)
-  IF_CLASSID_CREATE(ECoSInterface)
-  IF_CLASSID_CREATE(LocoNetInterface)
-  IF_CLASSID_CREATE(XpressNetInterface)
-  return std::shared_ptr<Interface>();
+  private:
+    boost::asio::ip::tcp::socket m_socket;
+    boost::asio::ip::tcp::endpoint m_endpoint;
+
+    void read();
+
+  protected:
+    void write() final;
+
+  public:
+    TCPIOHandler(Kernel& kernel, const std::string& hostname, uint16_t port = 15471);
+    ~TCPIOHandler() final;
+
+    void start() final;
+    void stop() final;
+};
+
 }
+
+#endif
+

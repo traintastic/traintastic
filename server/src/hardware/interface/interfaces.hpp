@@ -27,6 +27,7 @@
 #include "../../utils/makearray.hpp"
 
 #include "dccplusplusinterface.hpp"
+#include "ecosinterface.hpp"
 #include "loconetinterface.hpp"
 #include "xpressnetinterface.hpp"
 
@@ -36,6 +37,7 @@ struct Interfaces
 
   static constexpr auto classList = makeArray(
     DCCPlusPlusInterface::classId,
+    ECoSInterface::classId,
     LocoNetInterface::classId,
     XpressNetInterface::classId
   );
