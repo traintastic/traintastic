@@ -37,7 +37,7 @@ class IOHandler
     Kernel& m_kernel;
     std::array<char, 32 * 1024> m_readBuffer;
     size_t m_readBufferOffset;
-    const char* m_readPos;
+    size_t m_readPos;
     std::array<char, 1024> m_writeBuffer;
     size_t m_writeBufferOffset;
 

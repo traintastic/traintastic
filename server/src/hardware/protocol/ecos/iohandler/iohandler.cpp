@@ -28,7 +28,7 @@ namespace ECoS {
 IOHandler::IOHandler(Kernel& kernel)
   : m_kernel{kernel}
   , m_readBufferOffset{0}
-  , m_readPos{m_readBuffer.data()}
+  , m_readPos{0}
   , m_writeBufferOffset{0}
 {
 }
@@ -57,23 +57,23 @@ void IOHandler::processRead(size_t bytesTransferred)
   std::string_view buffer{m_readBuffer.data(), m_readBufferOffset + bytesTransferred};
 
   //! @todo this can be a bit optimized by remembering the "state" when a message in not yet complete.
-  while(m_readPos != buffer.end())
+  while(m_readPos != buffer.size())
   {
-    m_readPos = std::find(m_readPos, buffer.end(), '<');
-    if(m_readPos != buffer.end())
+    m_readPos = buffer.find('<', m_readPos);
+    if(m_readPos != std::string_view::npos)
     {
-      if(m_readPos && static_cast<size_t>(buffer.end() - m_readPos) >= typeLength)
+      if((buffer.size() - m_readPos) >= typeLength)
       {
-        std::string_view type{m_readPos + 1, typeLength};
+        std::string_view type{m_readBuffer.data() + m_readPos + 1, typeLength};
         if(type == typeReply || type == typeEvent)
         {
-          size_t pos = buffer.find(std::string_view{"<END"}, m_readPos - buffer.begin());
+          size_t pos = buffer.find(std::string_view{"<END"}, m_readPos);
           if(pos != std::string_view::npos)
           {
-            const char* end = std::find(buffer.begin() + pos, buffer.end(), '>');
-            if(end != buffer.end())
+            size_t end = buffer.find('>', pos);
+            if(end != buffer.size())
             {
-              m_kernel.receive(std::string_view{m_readPos, static_cast<size_t>(end - m_readPos + 1)});
+              m_kernel.receive(std::string_view{m_readBuffer.data() + m_readPos, end - m_readPos + 1});
               m_readPos = end + 1;
             }
             else
@@ -86,15 +86,17 @@ void IOHandler::processRead(size_t bytesTransferred)
       else
         break;
     }
+    else
+      m_readPos = buffer.size();
   }
 
-  if(m_readPos > m_readBuffer.data())
+  if(m_readPos > 0)
   {
-    assert(m_readPos <= m_readBuffer.end());
-    m_readBufferOffset = buffer.end() - m_readPos;
+    assert(m_readPos <= buffer.size());
+    m_readBufferOffset = buffer.size() - m_readPos;
     if(m_readBufferOffset > 0)
-      memmove(m_readBuffer.data(), m_readPos, m_readBufferOffset);
-    m_readPos = m_readBuffer.data();
+      memmove(m_readBuffer.data(), m_readBuffer.data() + m_readPos, m_readBufferOffset);
+    m_readPos = 0;
   }
 }
 
