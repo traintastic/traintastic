@@ -116,6 +116,16 @@ void Kernel::start()
 
       send(get(ObjectId::ecos, {Option::info}));
 
+      // query some lists
+      send(queryObjects(ObjectId::locManager, {Option::addr, Option::protocol}));
+      send(queryObjects(ObjectId::switchManager, {Option::addr}));
+      send(queryObjects(ObjectId::feedbackManager));
+
+      // query an object
+      send(request(1000, {Option::view}));
+      send(get(1000, {Option::addr}));
+      send(get(1000, {Option::name}));
+
       if(m_onStarted)
         EventLoop::call(
           [this]()

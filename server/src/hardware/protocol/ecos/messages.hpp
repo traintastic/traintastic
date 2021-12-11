@@ -43,8 +43,11 @@ struct ObjectId
 
 struct Option
 {
+  static constexpr std::string_view addr = "addr";
   static constexpr std::string_view go = "go";
   static constexpr std::string_view info = "info";
+  static constexpr std::string_view name = "name";
+  static constexpr std::string_view protocol = "protocol";
   static constexpr std::string_view status = "status";
   static constexpr std::string_view stop = "stop";
   static constexpr std::string_view view = "view";
@@ -60,7 +63,7 @@ inline std::string buildCommand(std::string_view command, uint16_t objectId, std
   return s;
 }
 
-inline std::string queryObjects(uint16_t objectId, std::initializer_list<std::string_view> options)
+inline std::string queryObjects(uint16_t objectId, std::initializer_list<std::string_view> options = {})
 {
   return buildCommand("queryObjects", objectId, options);
 }
