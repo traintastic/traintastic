@@ -28,7 +28,7 @@ jobs:
           jobs: 2
           build_type: Release
           build_deb: true
-          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~bionic~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
+          defines: "-DCMAKE_CXX_COMPILER=g++-8 -DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~bionic~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
 
         - name: "ubuntu_20.04"
           os: ubuntu-20.04
@@ -173,7 +173,7 @@ jobs:
           jobs: 2
           build_type: Release
           build_deb: true
-          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~bionic~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
+          defines: "-DCMAKE_CXX_COMPILER=g++-8 -DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~bionic~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
           ccov: false
 
         - name: "ubuntu_20.04"
