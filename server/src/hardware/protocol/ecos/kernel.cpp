@@ -165,14 +165,65 @@ void Kernel::receive(std::string_view message)
     EventLoop::call([this, msg](){ Log::log(m_logId, LogMessage::D2002_RX_X, msg); });
   }
 
-  if(startsWith(message, "<REPLY "))
-  {
+  Reply reply;
+  Event event;
 
-  }
-  else if(startsWith(message, "<EVENT "))
+  if(parseReply(message, reply))
   {
-
+    receiveReply(reply);
   }
+  else if(parseEvent(message, event))
+  {
+    receiveEvent(event);
+  }
+  else
+  {}//  EventLoop::call([this]() { Log::log(m_logId, LogMessage::E2018_ParseError); });
+}
+
+void Kernel::receiveReply(const Reply& reply)
+{
+  if(reply.objectId == ObjectId::ecos)
+  {
+    if(reply.command == Command::set)
+    {
+      if(reply.options.size() == 1)
+      {
+        if(reply.options[0] == Option::stop)
+        {
+          if(m_emergencyStop != TriState::True)
+          {
+            m_emergencyStop = TriState::True;
+            if(m_onEmergencyStop)
+              EventLoop::call([this]() { m_onEmergencyStop(); });
+          }
+        }
+        else if(reply.options[0] == Option::go)
+        {
+          if(m_emergencyStop != TriState::False)
+          {
+            m_emergencyStop = TriState::False;
+            if(m_onGo)
+              EventLoop::call([this]() { m_onGo(); });
+          }
+        }
+      }
+    }
+    else if(reply.command == Command::get)
+    {
+      if(reply.options.size() == 1)
+      {
+        if(reply.options[0] == Option::info)
+        {
+          //! @todo
+        }
+      }
+    }
+  }
+}
+
+void Kernel::receiveEvent(const Event& event)
+{
+  (void)event;
 }
 
 void Kernel::emergencyStop()

@@ -37,6 +37,9 @@ class OutputController;
 
 namespace ECoS {
 
+struct Reply;
+struct Event;
+
 class Kernel
 {
   private:
@@ -62,6 +65,9 @@ class Kernel
     Kernel(const Config& config);
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
+
+    void receiveReply(const Reply& reply);
+    void receiveEvent(const Event& event);
 
   public:// REMOVE!! just for testing
     void postSend(const std::string& message)

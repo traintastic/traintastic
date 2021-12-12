@@ -24,8 +24,20 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_MESSAGES_HPP
 
 #include <string>
+#include <vector>
 
 namespace ECoS {
+
+struct Command
+{
+  static constexpr std::string_view queryObjects = "queryObjects";
+  static constexpr std::string_view set = "set";
+  static constexpr std::string_view get = "get";
+  static constexpr std::string_view create = "create";
+  static constexpr std::string_view delete_ = "delete";
+  static constexpr std::string_view request = "request";
+  static constexpr std::string_view release = "release";
+};
 
 struct ObjectId
 {
@@ -53,6 +65,26 @@ struct Option
   static constexpr std::string_view view = "view";
 };
 
+enum class Status : uint32_t
+{
+  Ok = 0,
+};
+
+struct Reply
+{
+  std::string_view command;
+  uint32_t objectId;
+  std::vector<std::string_view> options;
+  std::vector<std::string_view> lines;
+  Status status;
+  std::string_view statusMessage;
+};
+
+struct Event
+{
+  uint32_t objectId;
+};
+
 inline std::string buildCommand(std::string_view command, uint16_t objectId, std::initializer_list<std::string_view> options)
 {
   std::string s(command);
@@ -65,38 +97,41 @@ inline std::string buildCommand(std::string_view command, uint16_t objectId, std
 
 inline std::string queryObjects(uint16_t objectId, std::initializer_list<std::string_view> options = {})
 {
-  return buildCommand("queryObjects", objectId, options);
+  return buildCommand(Command::queryObjects, objectId, options);
 }
 
 inline std::string set(uint16_t objectId, std::initializer_list<std::string_view> options)
 {
-  return buildCommand("set", objectId, options);
+  return buildCommand(Command::set, objectId, options);
 }
 
 inline std::string get(uint16_t objectId, std::initializer_list<std::string_view> options)
 {
-  return buildCommand("get", objectId, options);
+  return buildCommand(Command::get, objectId, options);
 }
 
 inline std::string create(uint16_t objectId, std::initializer_list<std::string_view> options)
 {
-  return buildCommand("create", objectId, options);
+  return buildCommand(Command::create, objectId, options);
 }
 
 inline std::string delete_(uint16_t objectId, std::initializer_list<std::string_view> options)
 {
-  return buildCommand("delete", objectId, options);
+  return buildCommand(Command::delete_, objectId, options);
 }
 
 inline std::string request(uint16_t objectId, std::initializer_list<std::string_view> options)
 {
-  return buildCommand("request", objectId, options);
+  return buildCommand(Command::request, objectId, options);
 }
 
 inline std::string release(uint16_t objectId, std::initializer_list<std::string_view> options)
 {
-  return buildCommand("release", objectId, options);
+  return buildCommand(Command::release, objectId, options);
 }
+
+bool parseReply(std::string_view message, Reply& reply);
+bool parseEvent(std::string_view message, Event& event);
 
 }
 
