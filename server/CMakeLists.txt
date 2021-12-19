@@ -105,6 +105,8 @@ file(GLOB SOURCES
   "src/hardware/protocol/ecos/*.cpp"
   "src/hardware/protocol/ecos/iohandler/*.hpp"
   "src/hardware/protocol/ecos/iohandler/*.cpp"
+  "src/hardware/protocol/ecos/object/*.hpp"
+  "src/hardware/protocol/ecos/object/*.cpp"
   "src/hardware/protocol/loconet/*.hpp"
   "src/hardware/protocol/loconet/*.cpp"
   "src/hardware/protocol/loconet/iohandler/*.hpp"

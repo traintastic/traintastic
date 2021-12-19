@@ -28,6 +28,7 @@
 #include <traintastic/enum/tristate.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
+#include "object/object.hpp"
 
 class Decoder;
 enum class DecoderChangeFlags;
@@ -37,19 +38,33 @@ class OutputController;
 
 namespace ECoS {
 
-struct Reply;
-struct Event;
+class ECoS;
 
 class Kernel
 {
+  friend class Object;
+  friend class ECoS;
+
   private:
+    class Objects : public std::unordered_map<uint16_t, std::unique_ptr<Object>>
+    {
+      public:
+        template<class T>
+        inline void add(std::unique_ptr<T> object)
+        {
+          const auto id = object->id();
+          emplace(id, std::move(object));
+        }
+    };
+
     boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
     std::thread m_thread;
     std::string m_logId;
     std::function<void()> m_onStarted;
 
-    TriState m_emergencyStop;
+    Objects m_objects;
+
     std::function<void()> m_onGo;
     std::function<void()> m_onEmergencyStop;
 
@@ -66,8 +81,8 @@ class Kernel
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
 
-    void receiveReply(const Reply& reply);
-    void receiveEvent(const Event& event);
+    ECoS& ecos();
+    void ecosGoChanged(TriState value);
 
   public:// REMOVE!! just for testing
     void postSend(const std::string& message)

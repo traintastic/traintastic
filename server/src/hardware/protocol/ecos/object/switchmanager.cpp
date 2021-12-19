@@ -1,5 +1,5 @@
 /**
- * server/src/utils/rtrim.hpp
+ * server/src/hardware/protocol/ecos/object/switchmanager.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,40 +20,45 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_UTILS_RTRIM_HPP
-#define TRAINTASTIC_SERVER_UTILS_RTRIM_HPP
+#include "switchmanager.hpp"
+#include <cassert>
+#include "switch.hpp"
+#include "../messages.hpp"
 
-#include <string_view>
-#include <algorithm>
+namespace ECoS {
 
-constexpr std::string_view rtrim(std::string_view s, char c)
+SwitchManager::SwitchManager(Kernel& kernel)
+  : Object(kernel, ObjectId::switchManager)
 {
-  if(s.empty())
-    return {};
-
-  size_t size = s.size() - 1;
-  while(s.data()[size] == c)
-  {
-    if(size == 0)
-      return {};
-    size--;
-  }
-  return {s.data(), size + 1};
+  requestView();
+  send(queryObjects(m_id, Switch::options));
 }
 
-constexpr std::string_view rtrim(std::string_view s, std::initializer_list<char> c)
+bool SwitchManager::receiveReply(const Reply& reply)
 {
-  if(s.empty())
-    return {};
+  assert(reply.objectId == m_id);
 
-  size_t size = s.size() - 1;
-  while(std::any_of(c.begin(), c.end(), [c1=s.data()[size]](char c2) { return c1 == c2; }))
+  if(reply.command == Command::queryObjects)
   {
-    if(size == 0)
-      return {};
-    size--;
+    for(std::string_view line : reply.lines)
+    {
+      if(uint16_t id; parseId(line, id) && !objectExists(id))
+      {
+        addObject(std::make_unique<Switch>(m_kernel, id));
+      }
+    }
+    return true;
   }
-  return {s.data(), size + 1};
+
+  return Object::receiveReply(reply);
 }
 
-#endif
+bool SwitchManager::receiveEvent(const Event& event)
+{
+  assert(event.objectId == m_id);
+
+
+  return Object::receiveEvent(event);
+}
+
+}

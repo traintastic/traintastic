@@ -1,5 +1,5 @@
 /**
- * server/src/utils/rtrim.hpp
+ * server/src/hardware/protocol/ecos/object/switch.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,40 +20,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_UTILS_RTRIM_HPP
-#define TRAINTASTIC_SERVER_UTILS_RTRIM_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_SWITCH_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_SWITCH_HPP
 
-#include <string_view>
-#include <algorithm>
+#include "object.hpp"
+#include "../messages.hpp"
 
-constexpr std::string_view rtrim(std::string_view s, char c)
+namespace ECoS {
+
+class Kernel;
+
+class Switch final : public Object
 {
-  if(s.empty())
-    return {};
+  public:
+    enum class Protocol
+    {
+      Unknown = 0,
+      DCC = 1,
+      MM = 2,
+    };
 
-  size_t size = s.size() - 1;
-  while(s.data()[size] == c)
-  {
-    if(size == 0)
-      return {};
-    size--;
-  }
-  return {s.data(), size + 1};
-}
+  private:
+    Protocol m_protocol = Protocol::Unknown;
 
-constexpr std::string_view rtrim(std::string_view s, std::initializer_list<char> c)
-{
-  if(s.empty())
-    return {};
+  public:
+    static const std::initializer_list<std::string_view> options;
 
-  size_t size = s.size() - 1;
-  while(std::any_of(c.begin(), c.end(), [c1=s.data()[size]](char c2) { return c1 == c2; }))
-  {
-    if(size == 0)
-      return {};
-    size--;
-  }
-  return {s.data(), size + 1};
+    Switch(Kernel& kernel, uint16_t id);
+
+    bool receiveReply(const Reply& reply) final;
+    bool receiveEvent(const Event& event) final;
+
+    Protocol protocol() const { return m_protocol; }
+};
+
 }
 
 #endif

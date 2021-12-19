@@ -43,7 +43,7 @@ struct ObjectId
 {
   static constexpr uint16_t ecos = 1;
   static constexpr uint16_t programmingTrack = 5;
-  static constexpr uint16_t locManager = 10;
+  static constexpr uint16_t locomotiveManager = 10;
   static constexpr uint16_t switchManager = 11;
   static constexpr uint16_t shuttleTrainControl = 12;
   static constexpr uint16_t deviceManager = 20;
@@ -51,15 +51,22 @@ struct ObjectId
   static constexpr uint16_t feedbackManager = 26;
   static constexpr uint16_t booster = 27;
   static constexpr uint16_t controlDesk = 31;
+  static constexpr uint16_t s88 = 100;
+  static constexpr uint16_t ecosDetector = 200;
 };
 
 struct Option
 {
   static constexpr std::string_view addr = "addr";
+  static constexpr std::string_view dir = "dir";
   static constexpr std::string_view go = "go";
   static constexpr std::string_view info = "info";
+  static constexpr std::string_view mode = "mode";
   static constexpr std::string_view name = "name";
+  static constexpr std::string_view ports = "ports";
   static constexpr std::string_view protocol = "protocol";
+  static constexpr std::string_view speedStep = "speedstep";
+  static constexpr std::string_view state = "state";
   static constexpr std::string_view status = "status";
   static constexpr std::string_view stop = "stop";
   static constexpr std::string_view view = "view";
@@ -73,7 +80,7 @@ enum class Status : uint32_t
 struct Reply
 {
   std::string_view command;
-  uint32_t objectId;
+  uint16_t objectId;
   std::vector<std::string_view> options;
   std::vector<std::string_view> lines;
   Status status;
@@ -82,7 +89,7 @@ struct Reply
 
 struct Event
 {
-  uint32_t objectId;
+  uint16_t objectId;
 };
 
 inline std::string buildCommand(std::string_view command, uint16_t objectId, std::initializer_list<std::string_view> options)
@@ -132,6 +139,8 @@ inline std::string release(uint16_t objectId, std::initializer_list<std::string_
 
 bool parseReply(std::string_view message, Reply& reply);
 bool parseEvent(std::string_view message, Event& event);
+
+bool parseId(std::string_view line, uint16_t& id);
 
 }
 

@@ -1,5 +1,5 @@
 /**
- * server/src/utils/rtrim.hpp
+ * server/src/hardware/protocol/ecos/object/feedback.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,40 +20,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_UTILS_RTRIM_HPP
-#define TRAINTASTIC_SERVER_UTILS_RTRIM_HPP
+#include "feedback.hpp"
+#include <cassert>
+#include "../messages.hpp"
 
-#include <string_view>
-#include <algorithm>
+namespace ECoS {
 
-constexpr std::string_view rtrim(std::string_view s, char c)
+const std::initializer_list<std::string_view> Feedback::options = {Option::addr, Option::protocol, Option::state, Option::ports};
+
+Feedback::Feedback(Kernel& kernel, uint16_t id)
+  : Object(kernel, id)
 {
-  if(s.empty())
-    return {};
-
-  size_t size = s.size() - 1;
-  while(s.data()[size] == c)
-  {
-    if(size == 0)
-      return {};
-    size--;
-  }
-  return {s.data(), size + 1};
 }
 
-constexpr std::string_view rtrim(std::string_view s, std::initializer_list<char> c)
+bool Feedback::receiveReply(const Reply& reply)
 {
-  if(s.empty())
-    return {};
+  assert(reply.objectId == m_id);
 
-  size_t size = s.size() - 1;
-  while(std::any_of(c.begin(), c.end(), [c1=s.data()[size]](char c2) { return c1 == c2; }))
-  {
-    if(size == 0)
-      return {};
-    size--;
-  }
-  return {s.data(), size + 1};
+  return Object::receiveReply(reply);
 }
 
-#endif
+bool Feedback::receiveEvent(const Event& event)
+{
+  assert(event.objectId == m_id);
+
+  return Object::receiveEvent(event);
+}
+
+}

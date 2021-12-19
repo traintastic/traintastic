@@ -23,6 +23,10 @@
 #include "kernel.hpp"
 #include <algorithm>
 #include "messages.hpp"
+#include "object/ecos.hpp"
+#include "object/locomotivemanager.hpp"
+#include "object/switchmanager.hpp"
+#include "object/feedbackmanager.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../../utils/setthreadname.hpp"
@@ -94,9 +98,7 @@ void Kernel::start()
 {
   assert(m_ioHandler);
   assert(!m_started);
-
-  // reset all state values
-  m_emergencyStop = TriState::Undefined;
+  assert(m_objects.empty());
 
   m_thread = std::thread(
     [this]()
@@ -111,20 +113,10 @@ void Kernel::start()
     {
       m_ioHandler->start();
 
-      for(auto id : {ObjectId::ecos, ObjectId::locManager, ObjectId::switchManager, ObjectId::feedbackManager})
-        send(request(id, {Option::view}));
-
-      send(get(ObjectId::ecos, {Option::info}));
-
-      // query some lists
-      send(queryObjects(ObjectId::locManager, {Option::addr, Option::protocol}));
-      send(queryObjects(ObjectId::switchManager, {Option::addr}));
-      send(queryObjects(ObjectId::feedbackManager));
-
-      // query an object
-      send(request(1000, {Option::view}));
-      send(get(1000, {Option::addr}));
-      send(get(1000, {Option::name}));
+      m_objects.add(std::make_unique<ECoS>(*this));
+      m_objects.add(std::make_unique<LocomotiveManager>(*this));
+      m_objects.add(std::make_unique<SwitchManager>(*this));
+      m_objects.add(std::make_unique<FeedbackManager>(*this));
 
       if(m_onStarted)
         EventLoop::call(
@@ -151,6 +143,8 @@ void Kernel::stop()
 
   m_thread.join();
 
+  m_objects.clear();
+
 #ifndef NDEBUG
   m_started = false;
 #endif
@@ -160,90 +154,48 @@ void Kernel::receive(std::string_view message)
 {
   if(m_config.debugLogRXTX)
   {
-    std::string msg{message};
-    std::replace(msg.begin(), msg.end(), '\n', ';');
+    std::string msg{rtrim(message, {'\r', '\n'})};
+    std::replace_if(msg.begin(), msg.end(), [](char c){ return c == '\r' || c == '\n'; }, ';');
     EventLoop::call([this, msg](){ Log::log(m_logId, LogMessage::D2002_RX_X, msg); });
   }
 
-  Reply reply;
-  Event event;
-
-  if(parseReply(message, reply))
+  if(Reply reply; parseReply(message, reply))
   {
-    receiveReply(reply);
+    auto it = m_objects.find(reply.objectId);
+    if(it != m_objects.end())
+      it->second->receiveReply(reply);
   }
-  else if(parseEvent(message, event))
+  else if(Event event; parseEvent(message, event))
   {
-    receiveEvent(event);
+    auto it = m_objects.find(event.objectId);
+    if(it != m_objects.end())
+      it->second->receiveEvent(event);
   }
   else
   {}//  EventLoop::call([this]() { Log::log(m_logId, LogMessage::E2018_ParseError); });
 }
 
-void Kernel::receiveReply(const Reply& reply)
+ECoS& Kernel::ecos()
 {
-  if(reply.objectId == ObjectId::ecos)
-  {
-    if(reply.command == Command::set)
-    {
-      if(reply.options.size() == 1)
-      {
-        if(reply.options[0] == Option::stop)
-        {
-          if(m_emergencyStop != TriState::True)
-          {
-            m_emergencyStop = TriState::True;
-            if(m_onEmergencyStop)
-              EventLoop::call([this]() { m_onEmergencyStop(); });
-          }
-        }
-        else if(reply.options[0] == Option::go)
-        {
-          if(m_emergencyStop != TriState::False)
-          {
-            m_emergencyStop = TriState::False;
-            if(m_onGo)
-              EventLoop::call([this]() { m_onGo(); });
-          }
-        }
-      }
-    }
-    else if(reply.command == Command::get)
-    {
-      if(reply.options.size() == 1)
-      {
-        if(reply.options[0] == Option::info)
-        {
-          //! @todo
-        }
-      }
-    }
-  }
+  return static_cast<ECoS&>(*m_objects[ObjectId::ecos]);
 }
 
-void Kernel::receiveEvent(const Event& event)
+void Kernel::ecosGoChanged(TriState value)
 {
-  (void)event;
+  if(value == TriState::False && m_onEmergencyStop)
+    EventLoop::call([this]() { m_onEmergencyStop(); });
+  else if(value == TriState::True && m_onGo)
+    EventLoop::call([this]() { m_onGo(); });
 }
 
 void Kernel::emergencyStop()
 {
-  m_ioContext.post(
-    [this]()
-    {
-      if(m_emergencyStop != TriState::True)
-        send(set(ObjectId::ecos, {Option::stop}));
-    });
+  m_ioContext.post([this]() { ecos().stop(); });
 }
 
 void Kernel::go()
 {
-  m_ioContext.post(
-    [this]()
-    {
-      if(m_emergencyStop != TriState::False)
-        send(set(ObjectId::ecos, {Option::go}));
-    });
+  m_ioContext.post([this]() { ecos().go(); });
 }
 
 void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
