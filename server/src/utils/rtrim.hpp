@@ -41,7 +41,12 @@ constexpr std::string_view rtrim(std::string_view s, char c)
   return {s.data(), size + 1};
 }
 
-constexpr std::string_view rtrim(std::string_view s, std::initializer_list<char> c)
+#if __cplusplus >= 202002L
+constexpr
+#else
+inline
+#endif
+std::string_view rtrim(std::string_view s, std::initializer_list<char> c)
 {
   if(s.empty())
     return {};
