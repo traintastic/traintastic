@@ -37,12 +37,16 @@ bool Object::receiveReply(const Reply& reply)
 {
   assert(reply.objectId == m_id);
 
+  (void)(reply);
+
   return false;
 }
 
 bool Object::receiveEvent(const Event& event)
 {
   assert(event.objectId == m_id);
+
+  (void)(event);
 
   return false;
 }
