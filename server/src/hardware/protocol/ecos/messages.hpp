@@ -25,6 +25,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 namespace ECoS {
 
@@ -92,6 +93,12 @@ struct Event
   uint16_t objectId;
 };
 
+struct Line
+{
+  uint16_t objectId;
+  std::unordered_map<std::string_view, std::string_view> values;
+};
+
 inline std::string buildCommand(std::string_view command, uint16_t objectId, std::initializer_list<std::string_view> options)
 {
   std::string s(command);
@@ -141,6 +148,7 @@ bool parseReply(std::string_view message, Reply& reply);
 bool parseEvent(std::string_view message, Event& event);
 
 bool parseId(std::string_view line, uint16_t& id);
+bool parseLine(std::string_view text, Line& line);
 
 }
 

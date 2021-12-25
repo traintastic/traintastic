@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/ecos/object/feedback.hpp
+ * server/src/utils/fromchars.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,29 +20,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_FEEDBACK_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_FEEDBACK_HPP
+#ifndef TRAINTASTIC_SERVER_UTILS_FROMCHARS_HPP
+#define TRAINTASTIC_SERVER_UTILS_FROMCHARS_HPP
 
-#include "object.hpp"
-#include "../messages.hpp"
+#include <charconv>
+#include <string_view>
 
-namespace ECoS {
-
-class Kernel;
-struct Line;
-
-class Feedback final : public Object
+template<class T>
+inline auto fromChars(std::string_view sv, T& value, int base = 10)
 {
-  public:
-    static const std::initializer_list<std::string_view> options;
-
-    Feedback(Kernel& kernel, uint16_t id);
-    Feedback(Kernel& kernel, const Line& data);
-
-    bool receiveReply(const Reply& reply) final;
-    bool receiveEvent(const Event& event) final;
-};
-
+  return std::from_chars(sv.data(), sv.data() + sv.size() - 1, value, base);
 }
 
 #endif

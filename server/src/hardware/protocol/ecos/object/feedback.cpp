@@ -26,11 +26,21 @@
 
 namespace ECoS {
 
-const std::initializer_list<std::string_view> Feedback::options = {Option::addr, Option::protocol, Option::state, Option::ports};
+const std::initializer_list<std::string_view> Feedback::options = {Option::ports, Option::state};
 
 Feedback::Feedback(Kernel& kernel, uint16_t id)
   : Object(kernel, id)
 {
+}
+
+Feedback::Feedback(Kernel& kernel, const Line& data)
+  : Feedback(kernel, data.objectId)
+{
+  const auto values = data.values;
+  if(auto ports = values.find(Option::ports); ports != values.end())
+  {}
+  if(auto state = values.find(Option::state); state != values.end())
+  {}
 }
 
 bool Feedback::receiveReply(const Reply& reply)

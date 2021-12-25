@@ -29,6 +29,7 @@
 namespace ECoS {
 
 class Kernel;
+struct Line;
 
 class Locomotive final : public Object
 {
@@ -47,16 +48,19 @@ class Locomotive final : public Object
     };
 
   private:
+    uint16_t m_address = 0;
     Protocol m_protocol = Protocol::Unknown;
 
   public:
     static const std::initializer_list<std::string_view> options;
 
     Locomotive(Kernel& kernel, uint16_t id);
+    Locomotive(Kernel& kernel, const Line& data);
 
     bool receiveReply(const Reply& reply) final;
     bool receiveEvent(const Event& event) final;
 
+    uint16_t address() const { return m_address; }
     Protocol protocol() const { return m_protocol; }
 };
 

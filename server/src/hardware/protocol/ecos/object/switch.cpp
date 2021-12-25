@@ -23,10 +23,22 @@
 #include "switch.hpp"
 #include <cassert>
 #include "../messages.hpp"
+#include "../../../../utils/fromchars.hpp"
 
 namespace ECoS {
 
 const std::initializer_list<std::string_view> Switch::options = {Option::addr, Option::protocol, Option::state, Option::mode};
+
+static bool fromString(std::string_view text, Switch::Protocol& protocol)
+{
+  if(text == "MM")
+    protocol = Switch::Protocol::MM;
+  else if(text == "DCC")
+    protocol = Switch::Protocol::DCC;
+  else
+    return false;
+  return true;
+}
 
 Switch::Switch(Kernel& kernel, uint16_t id)
   : Object(kernel, id)
@@ -34,9 +46,25 @@ Switch::Switch(Kernel& kernel, uint16_t id)
   requestView();
 }
 
+Switch::Switch(Kernel& kernel, const Line& data)
+  : Switch(kernel, data.objectId)
+{
+  const auto values = data.values;
+  if(auto addr = values.find(Option::addr); addr != values.end())
+    fromChars(addr->second, m_address);
+  if(auto protocol = values.find(Option::protocol); protocol != values.end())
+    fromString(protocol->second, m_protocol);
+  if(auto state = values.find(Option::state); state != values.end())
+  {}
+  if(auto mode = values.find(Option::mode); mode != values.end())
+  {}
+}
+
 bool Switch::receiveReply(const Reply& reply)
 {
   assert(reply.objectId == m_id);
+
+  (void)(reply);
 
   return Object::receiveReply(reply);
 }
@@ -44,6 +72,8 @@ bool Switch::receiveReply(const Reply& reply)
 bool Switch::receiveEvent(const Event& event)
 {
   assert(event.objectId == m_id);
+
+  (void)(event);
 
   return Object::receiveEvent(event);
 }

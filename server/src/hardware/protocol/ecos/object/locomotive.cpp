@@ -23,15 +23,53 @@
 #include "locomotive.hpp"
 #include <cassert>
 #include "../messages.hpp"
+#include "../../../../utils/fromchars.hpp"
 
 namespace ECoS {
 
-const std::initializer_list<std::string_view> Locomotive::options = {Option::addr, Option::protocol, Option::state, Option::speedStep};
+const std::initializer_list<std::string_view> Locomotive::options = {Option::addr, Option::protocol, Option::dir, Option::speedStep};
+
+static bool fromString(std::string_view text, Locomotive::Protocol& protocol)
+{
+  if(text == "MM14")
+    protocol = Locomotive::Protocol::MM14;
+  else if(text == "MM27")
+    protocol = Locomotive::Protocol::MM27;
+  else if(text == "MM28")
+    protocol = Locomotive::Protocol::MM28;
+  else if(text == "DCC14")
+    protocol = Locomotive::Protocol::DCC14;
+  else if(text == "DCC28")
+    protocol = Locomotive::Protocol::DCC28;
+  else if(text == "DCC128")
+    protocol = Locomotive::Protocol::DCC128;
+  else if(text == "SX32")
+    protocol = Locomotive::Protocol::SX32;
+  else if(text == "MMFKT")
+    protocol = Locomotive::Protocol::MMFKT;
+  else
+    return false;
+  return true;
+}
 
 Locomotive::Locomotive(Kernel& kernel, uint16_t id)
   : Object(kernel, id)
 {
   requestView();
+}
+
+Locomotive::Locomotive(Kernel& kernel, const Line& data)
+  : Locomotive(kernel, data.objectId)
+{
+  const auto values = data.values;
+  if(auto addr = values.find(Option::addr); addr != values.end())
+    fromChars(addr->second, m_address);
+  if(auto protocol = values.find(Option::protocol); protocol != values.end())
+    fromString(protocol->second, m_protocol);
+  if(auto dir = values.find(Option::dir); dir != values.end())
+  {}
+  if(auto speedStep = values.find(Option::speedStep); speedStep != values.end())
+  {}
 }
 
 bool Locomotive::receiveReply(const Reply& reply)

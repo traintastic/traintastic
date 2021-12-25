@@ -24,6 +24,7 @@
 #include <cassert>
 #include <charconv>
 #include "../../../utils/startswith.hpp"
+#include "../../../utils/fromchars.hpp"
 
 namespace ECoS {
 
@@ -126,8 +127,46 @@ bool parseEvent(std::string_view message, Event& event)
 
 bool parseId(std::string_view line, uint16_t& id)
 {
-  auto r = std::from_chars(line.data(), line.data() + line.size() - 1, id);
+  auto r = fromChars(line, id);
   return r.ec == std::errc();
+}
+
+bool parseLine(std::string_view text, Line& line)
+{
+  auto r = fromChars(text, line.objectId);
+  if(r.ec != std::errc())
+    return false;
+
+  assert(line.values.empty());
+
+  size_t n = r.ptr - text.data();
+  while(n < text.size())
+  {
+    while(text[n] == ' ' && n < text.size())
+      n++;
+
+    if(n < text.size())
+    {
+      size_t pos = text.find('[', n);
+      if(pos != std::string_view::npos)
+      {
+        std::string_view key{text.data() + n, pos - n};
+        n = pos + 1;
+        if(n >= text.size())
+          return false;
+        const bool quoted = (text[n] == '"');
+        pos = quoted ? text.find("\"]", ++n) : text.find(']', n);
+        if(pos == std::string_view::npos)
+          return false;
+        line.values.emplace(key, std::string_view{text.data() + n, pos - n});
+        n = pos + (quoted ? 2 : 1);
+      }
+      else
+        n = pos;
+    }
+  }
+
+  return true;
 }
 
 }

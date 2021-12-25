@@ -44,10 +44,9 @@ bool FeedbackManager::receiveReply(const Reply& reply)
   {
     for(std::string_view line : reply.lines)
     {
-      if(uint16_t id; parseId(line, id) && !objectExists(id))
-      {
-        addObject(std::make_unique<Feedback>(m_kernel, id));
-      }
+      Line data;
+      if(parseLine(line, data) && !objectExists(data.objectId))
+        addObject(std::make_unique<Feedback>(m_kernel, data));
     }
     return true;
   }
