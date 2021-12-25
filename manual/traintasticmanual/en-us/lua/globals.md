@@ -5,17 +5,17 @@ TODO
 
 ## Constants
 
-`CODENAME`
+`CODENAME` - Traintastic release name or development branch, e.g. `"master"`.
 
-`LUA_VERSION`
+`LUA_VERSION` - Lua version and copyright, e.g. `"Lua 5.3.3  Copyright (C) 1994-2016 Lua.org, PUC-Rio"`
 
-`VERSION`
+`VERSION` - Traintastic version, e.g. `"0.1.0"`
 
-`VERSION_MAJOR`
+`VERSION_MAJOR` - Traintastic major version, e.g. `0`
 
-`VERSION_MINOR`
+`VERSION_MINOR` - Traintastic minor version, e.g. `1`
 
-`VERSION_PATCH`
+`VERSION_PATCH` - Traintastic patch level, e.g. `0`
 
 
 ## Functions
