@@ -27,7 +27,7 @@
 
 namespace ECoS {
 
-const std::initializer_list<std::string_view> Switch::options = {Option::addr, Option::protocol, Option::state, Option::mode};
+const std::initializer_list<std::string_view> Switch::options = {Option::addr, Option::protocol, Option::state, Option::mode, Option::duration};
 
 static bool fromString(std::string_view text, Switch::Protocol& protocol)
 {
@@ -35,6 +35,17 @@ static bool fromString(std::string_view text, Switch::Protocol& protocol)
     protocol = Switch::Protocol::MM;
   else if(text == "DCC")
     protocol = Switch::Protocol::DCC;
+  else
+    return false;
+  return true;
+}
+
+static bool fromString(std::string_view text, Switch::Mode& mode)
+{
+  if(text == "SWITCH")
+    mode = Switch::Mode::Switch;
+  else if(text == "PULSE")
+    mode = Switch::Mode::Pulse;
   else
     return false;
   return true;
@@ -57,7 +68,9 @@ Switch::Switch(Kernel& kernel, const Line& data)
   if(auto state = values.find(Option::state); state != values.end())
   {}
   if(auto mode = values.find(Option::mode); mode != values.end())
-  {}
+    fromString(mode->second, m_mode);
+  if(auto duration = values.find(Option::duration); duration != values.end())
+    fromChars(duration->second, m_duration);
 }
 
 bool Switch::receiveReply(const Reply& reply)

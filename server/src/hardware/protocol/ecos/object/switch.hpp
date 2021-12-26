@@ -41,9 +41,18 @@ class Switch final : public Object
       MM = 2,
     };
 
+    enum class Mode
+    {
+      Unknown = 0,
+      Switch = 1,
+      Pulse = 2,
+    };
+
   private:
     uint16_t m_address = 0;
     Protocol m_protocol = Protocol::Unknown;
+    Mode m_mode = Mode::Unknown;
+    uint16_t m_duration = 0;
 
   public:
     static const std::initializer_list<std::string_view> options;
@@ -56,6 +65,8 @@ class Switch final : public Object
 
     uint16_t address() const { return m_address; }
     Protocol protocol() const { return m_protocol; }
+    Mode mode() const { return m_mode; }
+    uint16_t duration() const { return m_duration; }
 };
 
 }

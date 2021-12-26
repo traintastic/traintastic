@@ -60,6 +60,7 @@ struct Option
 {
   static constexpr std::string_view addr = "addr";
   static constexpr std::string_view dir = "dir";
+  static constexpr std::string_view duration = "duration";
   static constexpr std::string_view go = "go";
   static constexpr std::string_view info = "info";
   static constexpr std::string_view mode = "mode";
