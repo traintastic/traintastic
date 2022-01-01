@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/decoder/decoderlist.hpp
+ * server/src/hardware/protocol/z21/settings.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,31 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_SETTINGS_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_SETTINGS_HPP
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERLIST_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERLIST_HPP
+#include "../../../core/subobject.hpp"
+#include "../../../core/property.hpp"
+#include "config.hpp"
 
-#include "../../core/objectlist.hpp"
-#include "decoder.hpp"
+namespace Z21 {
 
-class DecoderList : public ObjectList<Decoder>
+class Settings : public SubObject
 {
   protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
+    Settings(Object& _parent, const std::string& parentPropertyName);
+
+    void getConfig(Config& config) const;
 
   public:
-    CLASS_ID("decoder_list")
-
-    Method<std::shared_ptr<Decoder>()> add;
-    Method<void(const std::shared_ptr<Decoder>&)> remove;
-
-    DecoderList(Object& _parent, const std::string& parentPropertyName);
-
-    TableModelPtr getModel() final;
-
-    std::shared_ptr<Decoder> getDecoder(uint16_t address) const;
-    std::shared_ptr<Decoder> getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress = false) const;
+    Property<bool> debugLogRXTX;
 };
+
+}
 
 #endif

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -67,7 +67,7 @@ enum Header : uint16_t
   LAN_CAN_DETECTOR = 0xC4,
 };
 
-enum BroadcastFlags : uint32_t
+enum class BroadcastFlags : uint32_t
 {
   None = 0,
 
@@ -157,11 +157,43 @@ static constexpr uint8_t LAN_X_LOCO_INFO = 0xEF;
 
 enum HardwareType : uint32_t
 {
+  HWT_UNKNOWN = 0,
   HWT_Z21_OLD = 0x00000200, //!< „black Z21” (hardware variant from 2012)
   HWT_Z21_NEW = 0x00000201, //!<  „black Z21”(hardware variant from 2013)
   HWT_SMARTRAIL = 0x00000202, //!< SmartRail (from 2012)
   HWT_Z21_SMALL = 0x00000203, //!< „white z21” starter set variant (from 2013)
   HWT_Z21_START = 0x00000204, //!< „z21 start” starter set variant (from 2016)
+};
+
+constexpr std::string_view toString(HardwareType value)
+{
+  switch(value)
+  {
+    case HWT_Z21_OLD:
+      return "Black Z21 (hardware variant from 2012)";
+
+    case HWT_Z21_NEW:
+      return "Black Z21 (hardware variant from 2013)";
+
+    case HWT_SMARTRAIL:
+      return "SmartRail (from 2012)";
+
+    case HWT_Z21_SMALL:
+      return "White Z21 (starter set variant from 2013)";
+
+    case HWT_Z21_START :
+      return "Z21 start (starter set variant from 2016)";
+
+    case HWT_UNKNOWN:
+      break;
+  }
+
+  return {};
+}
+
+enum class CommandStationId : uint8_t
+{
+  Z21 = 0x12,
 };
 
 #define Z21_CENTRALSTATE_EMERGENCYSTOP 0x01 //!< The emergency stop is switched on
@@ -260,6 +292,19 @@ struct LanLogoff : Message
 static_assert(sizeof(LanLogoff) == 4);
 
 // LAN_X_GET_VERSION
+struct LanXGetVersion : LanX
+{
+  uint8_t db0 = 0x21;
+  uint8_t checksum = 0x00;
+
+  LanXGetVersion() :
+    LanX(sizeof(LanXGetVersion), 0x21)
+  {
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanXGetVersion) == 7);
+
+// LAN_X_GET_FIRMWARE_VERSION
 struct LanXGetFirmwareVersion : LanX
 {
   uint8_t db0 = 0x0A;
@@ -378,9 +423,6 @@ static_assert(sizeof(LanXGetLocoInfo) == 9);
 // LAN_X_SET_LOCO_DRIVE
 struct LanXSetLocoDrive : LanX
 {
-  //static constexpr uint8_t directionFlag = 0x80;
-
-  //uint8_t xheader = 0xe4;
   uint8_t db0;
   uint8_t addressHigh;
   uint8_t addressLow;
@@ -400,6 +442,12 @@ struct LanXSetLocoDrive : LanX
   inline bool isLongAddress() const
   {
     return (addressHigh & 0xC0) == 0xC0;
+  }
+
+  inline void setAddress(uint16_t address, bool longAddress)
+  {
+    addressHigh = longAddress ? (0xC0 | (address >> 8)) : 0x00;
+    addressLow = longAddress ? address & 0xFF : address & 0x7F;
   }
 
   inline uint8_t speedSteps() const
@@ -475,6 +523,12 @@ struct LanXSetLocoFunction : LanX
   inline bool isLongAddress() const
   {
     return (addressHigh & 0xC0) == 0xC0;
+  }
+
+  inline void setAddress(uint16_t address, bool longAddress)
+  {
+    addressHigh = longAddress ? (0xC0 | (address >> 8)) : 0x00;
+    addressLow = longAddress ? address & 0xFF : address & 0x7F;
   }
 
   inline SwitchType switchType() const
@@ -633,6 +687,40 @@ struct LanGetSerialNumberReply : Message
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanGetSerialNumberReply) == 8);
 
+// Reply to LAN_X_GET_VERSION
+struct LanXGetVersionReply : LanX
+{
+  uint8_t db0 = 0x21;
+  uint8_t xBusVersionBCD;
+  CommandStationId commandStationId;
+  uint8_t checksum;
+
+  LanXGetVersionReply()
+    : LanX(sizeof(LanXGetVersionReply), 0x63)
+  {
+  }
+
+  LanXGetVersionReply(uint8_t _xBusVersion, CommandStationId _commandStationId)
+    : LanXGetVersionReply()
+  {
+    setXBusVersion(_xBusVersion);
+    commandStationId = _commandStationId;
+    calcChecksum();
+  }
+
+  inline uint8_t xBusVersion() const
+  {
+    return Utils::fromBCD(xBusVersionBCD);
+  }
+
+  inline void setXBusVersion(uint8_t value)
+  {
+    assert(value < 100);
+    xBusVersionBCD = Utils::toBCD(value);
+  }
+};
+static_assert(sizeof(LanXGetVersionReply) == 9);
+
 // Reply to LAN_GET_CODE
 struct LanXGetFirmwareVersionReply : LanX
 {
@@ -788,6 +876,7 @@ struct LanXLocoInfo : LanX
   static constexpr uint8_t directionFlag = 0x80;
   static constexpr uint8_t speedStepMask = 0x7F;
   static constexpr uint8_t flagF0 = 0x10;
+  static constexpr uint8_t functionIndexMax = 28;
 
   uint8_t addressHigh = 0;
   uint8_t addressLow = 0;
@@ -889,7 +978,7 @@ struct LanXLocoInfo : LanX
     Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
   }
 
-  bool getFunction(uint8_t index)
+  bool getFunction(uint8_t index) const
   {
     if(index == 0)
       return db4 & flagF0;
@@ -1029,6 +1118,22 @@ static_assert(sizeof(LanSystemStateDataChanged) == 20);
 
 PRAGMA_PACK_POP
 
+constexpr std::string_view toString(LanXSetLocoFunction::SwitchType value)
+{
+  switch(value)
+  {
+    case LanXSetLocoFunction::SwitchType::Off:
+      return "off";
+    case LanXSetLocoFunction::SwitchType::On:
+      return "on";
+    case LanXSetLocoFunction::SwitchType::Toggle:
+      return "toggle";
+    case LanXSetLocoFunction::SwitchType::Invalid:
+      return "invalid";
+  }
+  return {};
+}
+
 }
 
 inline bool operator ==(const Z21::Message& lhs, const Z21::Message& rhs)
@@ -1040,6 +1145,13 @@ constexpr Z21::BroadcastFlags operator |(Z21::BroadcastFlags lhs, Z21::Broadcast
 {
   return static_cast<Z21::BroadcastFlags>(
     static_cast<std::underlying_type_t<Z21::BroadcastFlags>>(lhs) |
+    static_cast<std::underlying_type_t<Z21::BroadcastFlags>>(rhs));
+}
+
+constexpr Z21::BroadcastFlags operator &(Z21::BroadcastFlags lhs, Z21::BroadcastFlags rhs)
+{
+  return static_cast<Z21::BroadcastFlags>(
+    static_cast<std::underlying_type_t<Z21::BroadcastFlags>>(lhs) &
     static_cast<std::underlying_type_t<Z21::BroadcastFlags>>(rhs));
 }
 

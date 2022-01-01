@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -89,6 +89,8 @@ class Decoder : public IdObject
     Property<float> throttle;
     ObjectProperty<DecoderFunctions> functions;
     Property<std::string> notes;
+
+    boost::signals2::signal<void (Decoder&, DecoderChangeFlags, uint32_t)> decoderChanged;
 
     Decoder(const std::weak_ptr<World>& world, std::string_view _id);
 

@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/interfaces.hpp
+ * server/src/hardware/protocol/z21/iohandler/udpserveriohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,31 +20,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_IOHANDLER_UDPSERVERIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_IOHANDLER_UDPSERVERIOHANDLER_HPP
 
-#include "interface.hpp"
-#include "../../utils/makearray.hpp"
+#include "udpiohandler.hpp"
+#include <unordered_map>
 
-#include "dccplusplusinterface.hpp"
-#include "ecosinterface.hpp"
-#include "loconetinterface.hpp"
-#include "wlanmausinterface.hpp"
-#include "xpressnetinterface.hpp"
+namespace Z21 {
 
-struct Interfaces
+class ServerKernel;
+
+class UDPServerIOHandler final : public UDPIOHandler
 {
-  static constexpr std::string_view classIdPrefix = "interface.";
+  private:
+    ClientId m_lastClientId = 0;
+    std::unordered_map<ClientId, boost::asio::ip::udp::endpoint> m_clients;
 
-  static constexpr auto classList = makeArray(
-    DCCPlusPlusInterface::classId,
-    ECoSInterface::classId,
-    LocoNetInterface::classId,
-    WlanMausInterface::classId,
-    XpressNetInterface::classId
-  );
+  protected:
+    void receive(const Message& message, const boost::asio::ip::udp::endpoint& remoteEndpoint) final;
 
-  static std::shared_ptr<Interface> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = std::string_view{});
+  public:
+    UDPServerIOHandler(ServerKernel& kernel);
+
+    bool sendTo(const Message& message, ClientId id) final;
+
+    void purgeClient(ClientId id) final;
 };
+
+}
 
 #endif

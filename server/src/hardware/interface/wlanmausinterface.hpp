@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/decoder/decoderlist.hpp
+ * server/src/hardware/interface/wlanmausinterface.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,31 +20,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_WLANMAUSINTERFACE_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_WLANMAUSINTERFACE_HPP
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERLIST_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERLIST_HPP
+#include "interface.hpp"
+#include "../protocol/z21/serverkernel.hpp"
+#include "../protocol/z21/serversettings.hpp"
+#include "../../core/objectproperty.hpp"
 
-#include "../../core/objectlist.hpp"
-#include "decoder.hpp"
-
-class DecoderList : public ObjectList<Decoder>
+/**
+ * @brief WLANmaus/Z21 app hardware interface
+ */
+class WlanMausInterface : public Interface
 {
+  CLASS_ID("interface.wlanmaus")
+  DEFAULT_ID("wlanmaus")
+  CREATE(WlanMausInterface)
+
+  private:
+    std::unique_ptr<Z21::ServerKernel> m_kernel;
+    boost::signals2::connection m_z21PropertyChanged;
+
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
+    void idChanged(const std::string& newId) final;
+    bool setOnline(bool& value) final;
 
   public:
-    CLASS_ID("decoder_list")
+    ObjectProperty<Z21::ServerSettings> z21;
 
-    Method<std::shared_ptr<Decoder>()> add;
-    Method<void(const std::shared_ptr<Decoder>&)> remove;
-
-    DecoderList(Object& _parent, const std::string& parentPropertyName);
-
-    TableModelPtr getModel() final;
-
-    std::shared_ptr<Decoder> getDecoder(uint16_t address) const;
-    std::shared_ptr<Decoder> getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress = false) const;
+    WlanMausInterface(const std::weak_ptr<World>& world, std::string_view _id);
 };
 
 #endif
+

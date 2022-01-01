@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/interface/interfaces.cpp
+ * server/src/hardware/protocol/z21/settings.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,16 +20,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "interfaces.hpp"
-#include "../../utils/ifclassidcreate.hpp"
-#include "../../world/world.hpp"
+#include "settings.hpp"
+#include "../../../core/attributes.hpp"
+#include "../../../utils/displayname.hpp"
 
-std::shared_ptr<Interface> Interfaces::create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id)
+namespace Z21 {
+
+Settings::Settings(Object& _parent, const std::string& parentPropertyName)
+  : SubObject(_parent, parentPropertyName)
+  , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
-  IF_CLASSID_CREATE(DCCPlusPlusInterface)
-  IF_CLASSID_CREATE(ECoSInterface)
-  IF_CLASSID_CREATE(LocoNetInterface)
-  IF_CLASSID_CREATE(WlanMausInterface)
-  IF_CLASSID_CREATE(XpressNetInterface)
-  return std::shared_ptr<Interface>();
+  Attributes::addDisplayName(debugLogRXTX, DisplayName::Hardware::debugLogRXTX);
+  m_interfaceItems.add(debugLogRXTX);
+}
+
+void Settings::getConfig(Config& config) const
+{
+  config.debugLogRXTX = debugLogRXTX;
+}
+
 }

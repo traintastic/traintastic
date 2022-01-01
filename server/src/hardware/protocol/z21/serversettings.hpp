@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/interfaces.hpp
+ * server/src/hardware/protocol/z21/serversettings.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,31 +20,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_SERVERSETTINGS_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_SERVERSETTINGS_HPP
 
-#include "interface.hpp"
-#include "../../utils/makearray.hpp"
+#include "settings.hpp"
 
-#include "dccplusplusinterface.hpp"
-#include "ecosinterface.hpp"
-#include "loconetinterface.hpp"
-#include "wlanmausinterface.hpp"
-#include "xpressnetinterface.hpp"
+namespace Z21 {
 
-struct Interfaces
+class ServerSettings final : public Settings
 {
-  static constexpr std::string_view classIdPrefix = "interface.";
+  CLASS_ID("z21_settings.server")
 
-  static constexpr auto classList = makeArray(
-    DCCPlusPlusInterface::classId,
-    ECoSInterface::classId,
-    LocoNetInterface::classId,
-    WlanMausInterface::classId,
-    XpressNetInterface::classId
-  );
+  public:
+    Property<bool> allowEmergencyStop;
+    Property<bool> allowTrackPowerOff;
+    Property<bool> allowTrackPowerOnReleaseEmergencyStop;
 
-  static std::shared_ptr<Interface> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = std::string_view{});
+    ServerSettings(Object& _parent, const std::string& parentPropertyName);
+
+    ServerConfig config() const;
 };
+
+}
 
 #endif
