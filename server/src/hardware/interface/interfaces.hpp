@@ -31,6 +31,7 @@
 #include "loconetinterface.hpp"
 #include "wlanmausinterface.hpp"
 #include "xpressnetinterface.hpp"
+#include "z21interface.hpp"
 
 struct Interfaces
 {
@@ -41,7 +42,8 @@ struct Interfaces
     ECoSInterface::classId,
     LocoNetInterface::classId,
     WlanMausInterface::classId,
-    XpressNetInterface::classId
+    XpressNetInterface::classId,
+    Z21Interface::classId
   );
 
   static std::shared_ptr<Interface> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = std::string_view{});

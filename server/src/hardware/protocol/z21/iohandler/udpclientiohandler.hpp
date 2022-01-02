@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/interfaces.cpp
+ * server/src/hardware/protocol/z21/iohandler/udpclientiohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,17 +20,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "interfaces.hpp"
-#include "../../utils/ifclassidcreate.hpp"
-#include "../../world/world.hpp"
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_IOHANDLER_UDPCLIENTIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_IOHANDLER_UDPCLIENTIOHANDLER_HPP
 
-std::shared_ptr<Interface> Interfaces::create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id)
+#include "udpiohandler.hpp"
+
+namespace Z21 {
+
+class ClientKernel;
+
+class UDPClientIOHandler final : public UDPIOHandler
 {
-  IF_CLASSID_CREATE(DCCPlusPlusInterface)
-  IF_CLASSID_CREATE(ECoSInterface)
-  IF_CLASSID_CREATE(LocoNetInterface)
-  IF_CLASSID_CREATE(WlanMausInterface)
-  IF_CLASSID_CREATE(XpressNetInterface)
-  IF_CLASSID_CREATE(Z21Interface)
-  return std::shared_ptr<Interface>();
+  private:
+    boost::asio::ip::udp::endpoint m_remoteEndpoint;
+    std::array<std::byte, payloadSizeMax> m_sendBuffer;
+    size_t m_sendBufferOffset;
+
+    void send();
+
+  protected:
+    void receive(const Message& message, const boost::asio::ip::udp::endpoint& remoteEndpoint) final;
+
+  public:
+    UDPClientIOHandler(ClientKernel& kernel, const std::string& hostname, uint16_t port);
+
+    bool send(const Message& message) final;
+};
+
 }
+
+#endif

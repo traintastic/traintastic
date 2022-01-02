@@ -70,6 +70,8 @@ enum class LogMessage : uint32_t
   I1004_CONNECTION_LOST = LogMessageOffset::info + 1004,
   I1005_BUILDING_WORLD_INDEX = LogMessageOffset::info + 1005,
   I2001_UNKNOWN_LOCO_ADDRESS_X = LogMessageOffset::info + 2001,
+  I2002_HARDWARE_TYPE_X = LogMessageOffset::info + 2002,
+  I2003_FIRMWARE_VERSION_X = LogMessageOffset::info + 2003,
   I9999_X = LogMessageOffset::info + 9999,
 
   // Notice:

@@ -77,8 +77,23 @@ std::string toString(const Message& message, bool raw)
       switch(static_cast<const LanX&>(message).xheader)
       {
         case 0x21:
-          if(message == LanXGetStatus())
+          if(message == LanXGetVersion())
+            s = "LAN_X_GET_VERSION";
+          else if(message == LanXGetStatus())
             s = "LAN_X_GET_STATUS";
+          else if(message == LanXSetTrackPowerOff())
+            s = "LAN_X_SET_TRACK_POWER_OFF";
+          else if(message == LanXSetTrackPowerOn())
+            s = "LAN_X_SET_TRACK_POWER_ON";
+          else
+            raw = true;
+          break;
+
+        case 0x61:
+          if(message == LanXBCTrackPowerOff())
+            s = "LAN_X_BC_TRACK_POWER_OFF";
+          else if(message == LanXBCTrackPowerOn())
+            s = "LAN_X_BC_TRACK_POWER_ON";
           else
             raw = true;
           break;
@@ -92,6 +107,13 @@ std::string toString(const Message& message, bool raw)
             s.append(" short_circuit=").append(statusChanged.db1 & Z21_CENTRALSTATE_SHORTCIRCUIT ? "yes" : "no");
             s.append(" programming_mode_active=").append(statusChanged.db1 & Z21_CENTRALSTATE_PROGRAMMINGMODEACTIVE ? "yes" : "no");
           }
+          else
+            raw = true;
+          break;
+
+        case 0x80:
+          if(message == LanXSetStop())
+            s = "LAN_X_SET_STOP";
           else
             raw = true;
           break;

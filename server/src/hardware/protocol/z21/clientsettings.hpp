@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/interfaces.cpp
+ * server/src/hardware/protocol/z21/clientsettings.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,17 +20,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "interfaces.hpp"
-#include "../../utils/ifclassidcreate.hpp"
-#include "../../world/world.hpp"
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_CLIENTSETTINGS_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_CLIENTSETTINGS_HPP
 
-std::shared_ptr<Interface> Interfaces::create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id)
+#include "settings.hpp"
+
+namespace Z21 {
+
+class ClientSettings final : public Settings
 {
-  IF_CLASSID_CREATE(DCCPlusPlusInterface)
-  IF_CLASSID_CREATE(ECoSInterface)
-  IF_CLASSID_CREATE(LocoNetInterface)
-  IF_CLASSID_CREATE(WlanMausInterface)
-  IF_CLASSID_CREATE(XpressNetInterface)
-  IF_CLASSID_CREATE(Z21Interface)
-  return std::shared_ptr<Interface>();
+  CLASS_ID("z21_settings.client")
+
+  public:
+    ClientSettings(Object& _parent, const std::string& parentPropertyName);
+
+    ClientConfig config() const;
+};
+
 }
+
+#endif

@@ -504,6 +504,11 @@ struct LanXSetLocoFunction : LanX
     Invalid = 3,
   };
 
+  static constexpr uint8_t functionNumberMax = 28;
+  static constexpr uint8_t functionNumberMask = 0x3F;
+  static constexpr uint8_t switchTypeMask = 0xC0;
+  static constexpr uint8_t switchTypeShift = 6;
+
   uint8_t db0 = 0xf8;
   uint8_t addressHigh;
   uint8_t addressLow;
@@ -513,6 +518,15 @@ struct LanXSetLocoFunction : LanX
   LanXSetLocoFunction() :
     LanX(sizeof(LanXSetLocoFunction), 0xE4)
   {
+  }
+
+  LanXSetLocoFunction(uint16_t address, bool longAddress, uint8_t functionIndex, SwitchType value)
+    : LanXSetLocoFunction()
+  {
+    setAddress(address, longAddress);
+    setFunctionIndex(functionIndex);
+    setSwitchType(value);
+    calcChecksum();
   }
 
   inline uint16_t address() const
@@ -533,12 +547,23 @@ struct LanXSetLocoFunction : LanX
 
   inline SwitchType switchType() const
   {
-    return static_cast<SwitchType>(db3 >> 6);
+    return static_cast<SwitchType>(db3 >> switchTypeShift);
+  }
+
+  inline void setSwitchType(SwitchType value)
+  {
+    db3 = (db3 & functionNumberMask) | (static_cast<uint8_t>(value) << switchTypeShift);
   }
 
   inline uint8_t functionIndex() const
   {
-    return db3 & 0x3F;
+    return db3 & functionNumberMask;
+  }
+
+  inline void setFunctionIndex(uint8_t value)
+  {
+    assert(value <= functionNumberMax);
+    db3 = (db3 & switchTypeMask) | (value & functionNumberMask);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXSetLocoFunction) == 10);

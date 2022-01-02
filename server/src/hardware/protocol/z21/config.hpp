@@ -32,6 +32,11 @@ struct Config
   bool debugLogRXTX;
 };
 
+struct ClientConfig : Config
+{
+  static constexpr uint16_t keepAliveInterval = 15; //!< sec
+};
+
 struct ServerConfig : Config
 {
   static constexpr CommandStationId commandStationId = CommandStationId::Z21;
