@@ -31,12 +31,6 @@ namespace DisplayName
   {
     constexpr std::string_view outputMap = "board_tile:output_map";
   }
-  namespace CommandStation
-  {
-    constexpr std::string_view emergencyStop = "command_station:emergency_stop";
-    constexpr std::string_view online = "command_station:online";
-    constexpr std::string_view powerOn = "command_station:power_on";
-  }
   namespace Controller
   {
     constexpr std::string_view active = "controller:active";
@@ -48,8 +42,10 @@ namespace DisplayName
     constexpr std::string_view commandStation = "hardware:command_station";
     constexpr std::string_view dccplusplus = "hardware:dccplusplus";
     constexpr std::string_view debugLogInput = "hardware:debug_log_input";
+    constexpr std::string_view debugLogOutput = "hardware:debug_log_output";
     constexpr std::string_view debugLogRXTX = "hardware:debug_log_rx_tx";
     constexpr std::string_view decoders = "hardware:decoders";
+    constexpr std::string_view ecos = "hardware:ecos";
     constexpr std::string_view inputMonitor = "hardware:input_monitor";
     constexpr std::string_view inputs = "hardware:inputs";
     constexpr std::string_view interface = "hardware:interface";
@@ -62,7 +58,9 @@ namespace DisplayName
   }
   namespace Interface
   {
+    constexpr std::string_view online = "interface:online";
     constexpr std::string_view status = "interface:status";
+    constexpr std::string_view type = "interface:type";
   }
   namespace IP
   {

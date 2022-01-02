@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -88,6 +88,7 @@ XpressNetInterface::XpressNetInterface(const std::weak_ptr<World>& world, std::s
   inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name()));
   outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name()));
 
+  Attributes::addDisplayName(type, DisplayName::Interface::type);
   Attributes::addEnabled(type, !online);
   Attributes::addValues(type, xpressNetInterfaceTypeValues);
   m_interfaceItems.insertBefore(type, notes);

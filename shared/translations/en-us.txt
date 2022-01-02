@@ -40,7 +40,12 @@ class_id:board_tile.rail.turnout_right_90=Turnout right 90°
 class_id:board_tile.rail.turnout_right_curved=Turnout right curved
 class_id:board_tile.rail.turnout_singleslip=Single slip
 class_id:board_tile.rail.turnout_wye=Turnout wye
+class_id:interface.dccplusplus=DCC++
+class_id:interface.ecos=ECoS
 class_id:interface.loconet=LocoNet
+class_id:interface.wlanmaus=WLANmaus
+class_id:interface.xpressnet=XpressNet
+class_id:interface.z21=Z21
 class_id:vehicle.rail.freight_car=Freight car
 class_id:vehicle.rail.locomotive=Locomotive
 
@@ -51,37 +56,8 @@ clock:month=Month
 clock:multiplier=Multiplier
 clock:year=Year
 
-command_station.dccplusplus_serial:dcc_plus_plus=DCC++(EX)
-
-command_station.loconet_serial:interface=Interface
-
-command_station.xpressnet_serial:interface=Interface
-command_station.xpressnet_serial:s88_module_count=S88 module count
-command_station.xpressnet_serial:s88_start_address=S88 start address
-
-command_station.z21:filtered_main_current=Filtered main current
-command_station.z21:firmware_version=Firmware verion
-command_station.z21:hardware_type=Hardware type
-command_station.z21:high_temperature=High temperature
-command_station.z21:main_current=Main current
-command_station.z21:power_lost=Power lost
-command_station.z21:prog_current=Prog current
-command_station.z21:programming_mode_active=Programming mode active
-command_station.z21:serial_number=Serial number
-command_station.z21:short_circuit=Short circuit
-command_station.z21:short_circut_external=Short circuit external
-command_station.z21:short_circut_internal=Short circuit internal
-command_station.z21:supply_voltage=Supply voltage
-command_station.z21:temperature=Temperature
-command_station.z21:vcc_voltage=VCC voltage
-
-command_station:emergency_stop=Emergency stop
-command_station:online=Online
-command_station:power_on=Power on
-
-controller.wlanmaus:debug_log=Enable command logging (debug)
-
-controller:active=Active
+dccplusplus_settings:startup_delay=Startup delay
+dccplusplus_settings:use_ex=Use DCC++EX commands
 
 decoder:functions=Functions
 decoder:long_address=DCC long address
@@ -112,7 +88,12 @@ direction:reverse=Reverse
 
 hardware:address=Address
 hardware:command_station=Command station
+hardware:dccplusplus=DCC++
+hardware:debug_log_input=Log input changes
+hardware:debug_log_output=Log output changes
+hardware:debug_log_rx_tx=Log all communication
 hardware:decoders=Decoders
+hardware:ecos=ECoS
 hardware:input_monitor=Input monitor
 hardware:inputs=Inputs
 hardware:interface=Interface
@@ -121,6 +102,7 @@ hardware:output_keyboard=Output keyboard
 hardware:outputs=Outputs
 hardware:speed_steps=Speed steps
 hardware:xpressnet=XpressNet
+hardware:z21=Z21
 
 input_list:bus=Bus
 
@@ -128,9 +110,21 @@ input_map_item.block:input=Input
 input_map_item.block:invert=Invert
 input_map_item.block:type=Type
 
-interface.loconet:type=Type
+interface.dccplusplus:dcc_plus_plus=DCC++(EX)
 
+interface.loconet:interface=Interface
+
+interface.xpressnet:interface=Interface
+interface.xpressnet:s88_module_count=S88 module count
+interface.xpressnet:s88_start_address=S88 start address
+
+interface.z21:firmware_version=Firmware version
+interface.z21:hardware_type=Hardware type
+interface.z21:serial_number=Serial number
+
+interface:online=Online
 interface:status=Status
+interface:type=Type
 
 ip:hostname=Hostname
 ip:port=Port
@@ -159,15 +153,13 @@ loconet_command_station:uhlenbrock_intellibox=Uhlenbrock Intellibox
 loconet_interface_type:lbserver=LBServer
 loconet_interface_type:serial=Serial
 loconet_interface_type:tcp_binary=TCP binary
+loconet_interface_type:z21=Z21
 
 loconet_serial_interface:custom=Custom
 loconet_serial_interface:digikeijs_dr5000=Digikeijs DR5000
 loconet_serial_interface:rosoft_loconet_interface=RoSoft LocoNet interface
 
 loconet_settings:command_station=Command station
-loconet_settings:debug_log_input=Enable input logging
-loconet_settings:debug_log_output=Enable output logging
-loconet_settings:debug_log_rx_tx=Enable RX/TX logging
 loconet_settings:fast_clock_sync_enabled=Fast clock sync enabled
 loconet_settings:fast_clock_sync_interval=Fast clock sync interval
 
@@ -238,6 +230,7 @@ message:I1005=Building world index
 message:I2001=Unknown loco address: %1
 message:I2002=Hardware type: %1
 message:I2003=Firmware version: %1
+message:I2004=Hardware version: %1
 message:I9999=%1
 message:N1001=Received signal: %1
 message:N1002=Created new world
@@ -285,15 +278,6 @@ output_map.signal:key=Aspect
 output_map.turnout:key=Position
 
 output_map:use=Use
-
-protocol.dccplusplus:debug_log=Enable command logging (debug)
-protocol.dccplusplus:use_ex=Use DCC++EX commands
-
-protocol.xpressnet:command_station=Command station
-protocol.xpressnet:debug_log=Enable logging (debug)
-protocol.xpressnet:use_emergency_stop_locomotive_command=Use short emergency stop locomotive command
-protocol.xpressnet:use_function_state_commands=Use function state commands
-protocol.xpressnet:use_roco_f13_f20_command=Use Roco F13-F20 command
 
 qtapp.connect_dialog:connect=Connect
 qtapp.connect_dialog:connect_to_server=Connect to server
@@ -436,8 +420,6 @@ weight_unit:ton=ton
 
 world:boards=Boards
 world:clock=Clock
-world:command_stations=Command stations
-world:controllers=Controllers
 world:decoders=Decoders
 world:edit=Edit world
 world:inputs=Inputs
@@ -468,8 +450,20 @@ xpressnet_command_station:custom=Custom
 xpressnet_command_station:digikeijs_dr5000=Digikeijs DR5000
 xpressnet_command_station:roco_10764=Roco 10764
 
-xpressnet_serial_interface:custom=Custom
-xpressnet_serial_interface:lenz_li100=Lenz LI100
-xpressnet_serial_interface:lenz_li100f=Lenz LI100F
-xpressnet_serial_interface:lenz_li101f=Lenz LI101F
-xpressnet_serial_interface:rosoft_s88xpressnetli=RoSoft s88XpressNetLI
+xpressnet_interface_type:network=Network
+xpressnet_interface_type:serial=Serial
+
+xpressnet_serial_interface_type:custom=Custom
+xpressnet_serial_interface_type:digikeijs_dr5000=Digikeijs DR5000
+xpressnet_serial_interface_type:lenz_li100=Lenz LI100
+xpressnet_serial_interface_type:lenz_li100f=Lenz LI100F
+xpressnet_serial_interface_type:lenz_li101f=Lenz LI101F
+xpressnet_serial_interface_type:lenz_liusb=Lenz LIUSB
+xpressnet_serial_interface_type:rosoft_s88xpressnetli=RoSoft s88XpressNetLI
+
+xpressnet_settings:use_emergency_stop_locomotive_command=Use short emergency stop locomotive command
+xpressnet_settings:use_roco_f13_f20_command=Use Roco F13-F20 command
+
+z21_settings.server:allow_emergency_stop=Allow emergency stop
+z21_settings.server:allow_track_power_off=Allow power off
+z21_settings.server:allow_track_power_on_release_emergency_stop=Allow power on/emergency stop release
