@@ -26,6 +26,7 @@
 #include <lua.hpp>
 #include <memory>
 #include "../core/objectptr.hpp"
+#include "../core/abstractobjectlist.hpp"
 
 namespace Lua {
 
@@ -35,12 +36,17 @@ class Object
     static int __gc(lua_State* L);
     static int __index(lua_State* L);
     static int __newindex(lua_State* L);
+    static int __len(lua_State* L);
 
   public:
     static constexpr char const* metaTableName = "object";
+    static constexpr char const* metaTableNameList = "object_list";
 
     static ObjectPtr check(lua_State* L, int index);
+    static std::shared_ptr<AbstractObjectList> checkList(lua_State* L, int index);
+
     static ObjectPtr test(lua_State* L, int index);
+    static std::shared_ptr<AbstractObjectList> testList(lua_State* L, int index);
 
     static void push(lua_State* L, const ObjectPtr& value);
 

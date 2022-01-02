@@ -51,11 +51,11 @@ void OutputMap::getItems()
       {
         m_getItemsRequestId = Connection::invalidRequestId;
 
-        if(auto c = connection())
+        if(auto con = connection())
         {
           Items objects;
           while(!response->endOfMessage())
-            objects.emplace_back(c->readObject(*response));
+            objects.emplace_back(con->readObject(*response));
           m_items = std::move(objects);
 
           emit itemsChanged();

@@ -1,7 +1,7 @@
 import os
 import re
 import codecs
-import pycmarkgfm  # pip3 install pycmarkgfm
+import cmarkgfm  # pip3 install cmarkgfm
 from .builder import Builder
 
 
@@ -10,7 +10,7 @@ class HTMLBuilder(Builder):
 
     def _file_to_html(self, page):
         with codecs.open(os.path.join(self._language_dir, page['markdown']), 'r', 'utf-8') as md:
-            html = pycmarkgfm.gfm_to_html(md.read())
+            html = cmarkgfm.github_flavored_markdown_to_html(md.read())
 
         # parse id
         html = re.sub(r'<h([1-6])([^>]*)>(.*) {#([a-z0-9-]+)}</h\1>', r'<h\1\2 id="\4">\3</h\1>', html)
@@ -21,6 +21,9 @@ class HTMLBuilder(Builder):
         # set target="_blank" for external links:
         html = re.sub(r'<a([^>]+href="http(s|)://)', r'<a target="_blank"\1', html)
 
+        if 'code' in page and page['code'] == 'lua':
+            html = re.sub(r'<code>(.+)</code>', self._highlight_lua, html)
+
         # change img title attribute to figcaption
         html = re.sub(r'(<img[^>]+)title="([^">]*)"([^>]*>)',
             lambda m:
@@ -30,3 +33,9 @@ class HTMLBuilder(Builder):
                 html)
 
         return html
+
+    def _highlight_lua(self, m):
+        code = m.group(1)
+        code = re.sub(r'\b([A-Z_][A-Z0-9_]*)\b', r'<span class="const">\1</span>', code)  # CONSTANTS
+        code = re.sub(r'\b(and|break|do|else|elseif|end|false|for|function|goto|if|in|local|nil|not|or|repeat|return|then|true|until|while)\b', r'<span class="keyword">\1</span>', code)  # keywords
+        return '<code class="lua">' + code + '</code>'

@@ -91,7 +91,7 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
       });
   }
 
-  if(m_emergencyStop = m_object->getProperty("emergency_stop"))
+  if((m_emergencyStop = m_object->getProperty("emergency_stop")))
   {
     m_speedoMeter->setEStop(m_emergencyStop->toBool());
     connect(m_emergencyStop, &AbstractProperty::valueChangedBool, m_speedoMeter, &SpeedoMeterWidget::setEStop);
@@ -100,7 +100,7 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
   if(auto* p = dynamic_cast<ObjectProperty*>(m_object->getProperty("functions")))
   {
     m_functionsRequestId = m_object->connection()->getObject(p->objectId(),
-      [this](const ObjectPtr& functions, Message::ErrorCode ec)
+      [this](const ObjectPtr& functions, Message::ErrorCode /*ec*/)
       {
         m_functionsRequestId = Connection::invalidRequestId;
 
@@ -113,7 +113,7 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
           for(const QString& id : *items)
           {
             const int functionRequestId = functions->connection()->getObject(id,
-              [this, i](const ObjectPtr& function, Message::ErrorCode ec)
+              [this, i](const ObjectPtr& function, Message::ErrorCode /*ec*/)
               {
                 m_functionRequestIds.erase(i);
 
@@ -263,9 +263,7 @@ ThrottleFunctionButton* ThrottleWidget::getFunctionButton(DecoderFunctionFunctio
   auto it = std::find_if(m_functionButtons.begin(), m_functionButtons.end(),
     [function](const auto* btn)
     {
-      auto n = btn->number();
-      auto f = btn->function();
-      return f == function;
+      return btn->function() == function;
     });
   return (it != m_functionButtons.end()) ? *it : nullptr;
 }

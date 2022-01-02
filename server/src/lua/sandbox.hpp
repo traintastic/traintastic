@@ -24,11 +24,15 @@
 #define TRAINTASTIC_SERVER_LUA_SANDBOX_HPP
 
 #include <memory>
+#include <map>
+#include <algorithm>
+#include <cassert>
 #include <lua.hpp>
 
 namespace Lua {
 
 class Script;
+class EventHandler;
 
 using SandboxPtr = std::unique_ptr<lua_State, void(*)(lua_State*)>;
 
@@ -36,22 +40,65 @@ class Sandbox
 {
   private:
     static void close(lua_State* L);
+    static int __index(lua_State* L);
+    static int __newindex(lua_State* L);
 
   public:
     class StateData
     {
       private:
         Script& m_script;
+        lua_Integer m_eventHandlerId;
+        std::map<lua_Integer, std::shared_ptr<EventHandler>> m_eventHandlers;
 
       public:
-        StateData(Script& script) :
-          m_script{script}
+        StateData(Script& script)
+          : m_script{script}
+          , m_eventHandlerId{1}
         {
         }
+
+        ~StateData();
 
         inline Script& script() const
         {
           return m_script;
+        }
+
+        std::shared_ptr<EventHandler> getEventHandler(lua_Integer id) const
+        {
+          auto it = m_eventHandlers.find(id);
+          if(it != m_eventHandlers.end())
+            return it->second;
+          else
+            return std::shared_ptr<EventHandler>();
+        }
+
+        inline lua_Integer registerEventHandler(std::shared_ptr<EventHandler> handler)
+        {
+          while(m_eventHandlers.find(m_eventHandlerId) != m_eventHandlers.end())
+          {
+            if(m_eventHandlerId == std::numeric_limits<lua_Integer>::max())
+              m_eventHandlerId = 1;
+            else
+              m_eventHandlerId++;
+          }
+          const lua_Integer id = m_eventHandlerId;
+          m_eventHandlerId++;
+          m_eventHandlers.emplace(id, std::move(handler));
+          return id;
+        }
+
+        inline void unregisterEventHandler(const std::shared_ptr<EventHandler>& handler)
+        {
+          auto it = std::find_if(m_eventHandlers.begin(), m_eventHandlers.end(),
+            [&handler](const auto& elem)
+            {
+              return elem.second == handler;
+            });
+
+          if(it != m_eventHandlers.end())
+            m_eventHandlers.erase(it);
         }
     };
 

@@ -24,14 +24,20 @@
 #include <cmath>
 #include <QtMath>
 #include <QPainterPath>
+#include "boardcolorscheme.hpp"
+#include "../settings/boardsettings.hpp"
 #include "../utils/rectf.hpp"
 
-TilePainter::TilePainter(QPainter& painter, int tileSize) :
+TilePainter::TilePainter(QPainter& painter, int tileSize, const BoardColorScheme& colorScheme) :
+  m_colorScheme{colorScheme},
+  m_turnoutDrawState{BoardSettings::instance().turnoutDrawState},
   m_trackWidth{tileSize / 5},
   m_turnoutMargin{tileSize / 10},
-  m_trackPen(trackColor, m_trackWidth, Qt::SolidLine, Qt::FlatCap),
-  m_trackErasePen(backgroundColor, m_trackWidth * 2, Qt::SolidLine, Qt::FlatCap),
-  m_turnoutStatePen(Qt::blue, (m_trackWidth + 1) / 2, Qt::SolidLine, Qt::FlatCap),
+  m_blockPen{m_colorScheme.track},
+  m_trackPen(m_colorScheme.track, m_trackWidth, Qt::SolidLine, Qt::FlatCap),
+  m_trackDisabledPen(m_colorScheme.trackDisabled, m_trackWidth, Qt::SolidLine, Qt::FlatCap),
+  m_trackErasePen(m_colorScheme.background, m_trackWidth * 2, Qt::SolidLine, Qt::FlatCap),
+  m_turnoutStatePen(m_colorScheme.turnoutState, (m_trackWidth + 1) / 2, Qt::SolidLine, Qt::FlatCap),
   m_painter{painter}
 {
 }
@@ -136,9 +142,9 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate)
       const qreal m = r.width() / 5;
       const QRectF rArc = r.adjusted(m, m, -m, -m);
 
-      m_painter.setPen(QPen(backgroundColor, m_trackWidth, Qt::SolidLine, Qt::FlatCap));
+      m_painter.setPen(QPen(m_colorScheme.background, m_trackWidth, Qt::SolidLine, Qt::FlatCap));
       m_painter.drawArc(rArc, angle, angleLength);
-      m_painter.setPen(QPen(trackColor, m_trackWidth / 2., Qt::SolidLine, Qt::FlatCap));
+      m_painter.setPen(QPen(m_colorScheme.track, m_trackWidth / 2., Qt::SolidLine, Qt::FlatCap));
       m_painter.drawArc(rArc, angle, angleLength);
       break;
     }
@@ -157,7 +163,7 @@ void TilePainter::drawSensor(TileId id, const QRectF& r, TileRotate rotate, Sens
       setTrackPen();
       drawStraight(r, rotate);
       const qreal sz = r.width() / 4;
-      drawLED(r.adjusted(sz, sz, -sz, -sz), sensorStateToColor(state), trackColor);
+      drawLED(r.adjusted(sz, sz, -sz, -sz), sensorStateToColor(state), m_colorScheme.track);
       break;
     }
     default:
@@ -170,7 +176,7 @@ void TilePainter::drawTurnout(TileId id, const QRectF& r, TileRotate rotate, Tur
   switch(id)
   {
     case TileId::RailTurnoutLeft45:
-      setTrackPen();
+      setTurnoutPen();
       drawStraight(r, rotate);
       drawCurve45(r, rotate);
 
@@ -191,7 +197,7 @@ void TilePainter::drawTurnout(TileId id, const QRectF& r, TileRotate rotate, Tur
       break;
 
     case TileId::RailTurnoutLeft90:
-      setTrackPen();
+      setTurnoutPen();
       drawStraight(r, rotate);
       drawCurve90(r, rotate);
 
@@ -212,7 +218,7 @@ void TilePainter::drawTurnout(TileId id, const QRectF& r, TileRotate rotate, Tur
       break;
 
     case TileId::RailTurnoutLeftCurved:
-      setTrackPen();
+      setTurnoutPen();
       drawCurve45(r, rotate);
       drawCurve90(r, rotate);
 
@@ -233,7 +239,7 @@ void TilePainter::drawTurnout(TileId id, const QRectF& r, TileRotate rotate, Tur
       break;
 
     case TileId::RailTurnoutRight45:
-      setTrackPen();
+      setTurnoutPen();
       drawStraight(r, rotate);
       drawCurve45(r, rotate + TileRotate::Deg225);
 
@@ -254,7 +260,7 @@ void TilePainter::drawTurnout(TileId id, const QRectF& r, TileRotate rotate, Tur
       break;
 
     case TileId::RailTurnoutRight90:
-      setTrackPen();
+      setTurnoutPen();
       drawStraight(r, rotate);
       drawCurve90(r, rotate + TileRotate::Deg270);
 
@@ -275,7 +281,7 @@ void TilePainter::drawTurnout(TileId id, const QRectF& r, TileRotate rotate, Tur
       break;
 
     case TileId::RailTurnoutRightCurved:
-      setTrackPen();
+      setTurnoutPen();
       drawCurve45(r, rotate + TileRotate::Deg225);
       drawCurve90(r, rotate + TileRotate::Deg270);
 
@@ -296,7 +302,7 @@ void TilePainter::drawTurnout(TileId id, const QRectF& r, TileRotate rotate, Tur
       break;
 
     case TileId::RailTurnoutWye:
-      setTrackPen();
+      setTurnoutPen();
       drawCurve45(r, rotate);
       drawCurve45(r, rotate + TileRotate::Deg225);
 
@@ -317,7 +323,7 @@ void TilePainter::drawTurnout(TileId id, const QRectF& r, TileRotate rotate, Tur
       break;
 
     case TileId::RailTurnout3Way:
-      setTrackPen();
+      setTurnoutPen();
       drawStraight(r, rotate);
       drawCurve45(r, rotate);
       drawCurve45(r, rotate + TileRotate::Deg225);
@@ -343,7 +349,7 @@ void TilePainter::drawTurnout(TileId id, const QRectF& r, TileRotate rotate, Tur
       break;
 
     case TileId::RailTurnoutSingleSlip:
-      setTrackPen();
+      setTurnoutPen();
       drawStraight(r, rotate);
       drawStraight(r, rotate - TileRotate::Deg45);
       drawCurve45(r, rotate);
@@ -366,7 +372,7 @@ void TilePainter::drawTurnout(TileId id, const QRectF& r, TileRotate rotate, Tur
       break;
 
     case TileId::RailTurnoutDoubleSlip:
-      setTrackPen();
+      setTurnoutPen();
       drawStraight(r, rotate);
       drawStraight(r, rotate - TileRotate::Deg45);
       drawCurve45(r, rotate);
@@ -439,19 +445,19 @@ QColor TilePainter::sensorStateToColor(SensorState value) const
   switch(value)
   {
     case SensorState::Occupied:
-      return sensorColorOccupied;
+      return m_colorScheme.sensorOccupied;
 
     case SensorState::Free:
-      return sensorColorFree;
+      return m_colorScheme.sensorFree;
 
     case SensorState::Idle:
-      return sensorColorIdle;
+      return m_colorScheme.sensorIdle;
 
     case SensorState::Triggered:
-      return sensorColorTriggered;
+      return m_colorScheme.sensorTriggered;
 
     case SensorState::Unknown:
-      return sensorColorUnknown;
+      return m_colorScheme.sensorUnknown;
   }
   assert(false);
   return QColor();
@@ -462,15 +468,15 @@ void TilePainter::setBlockStateBrush(BlockState value)
   switch(value)
   {
     case BlockState::Occupied:
-      m_painter.setBrush(blockBrushOccupied);
+      m_painter.setBrush(m_colorScheme.blockOccupied);
       break;
 
     case BlockState::Free:
-      m_painter.setBrush(blockBrushFree);
+      m_painter.setBrush(m_colorScheme.blockFree);
       break;
 
     case BlockState::Unknown:
-      m_painter.setBrush(blockBrushUnknown);
+      m_painter.setBrush(m_colorScheme.blockUnknown);
       break;
   }
 }
@@ -768,7 +774,7 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, BlockState s
   {
     m_painter.drawLine(topCenter(r), bottomCenter(r));
     setBlockStateBrush(state);
-    m_painter.setPen(blockPen);
+    m_painter.setPen(m_blockPen);
     const qreal m = 0.5 + qFloor(r.width() / 10);
     const QRectF block = r.adjusted(m, m, -m, -m);
     m_painter.drawRect(block);
@@ -790,7 +796,7 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, BlockState s
   {
     m_painter.drawLine(centerLeft(r), centerRight(r));
     setBlockStateBrush(state);
-    m_painter.setPen(blockPen);
+    m_painter.setPen(m_blockPen);
     const qreal m = 0.5 + qFloor(r.height() / 10);
     const QRectF block = r.adjusted(m, m, -m, -m);
     m_painter.drawRect(block);

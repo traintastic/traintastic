@@ -34,7 +34,7 @@ The project goal is to develop open source software that can control everything 
   - liblua5.3 (Linux only)
 - Manual:
   - Python 3.6+ (older versions untested)
-  - pycmarkgfm (`pip3 install pycmarkgfm`)
+  - cmarkgfm (`pip3 install cmarkgfm`)
 
 Note: When cloning the source from git, git-lfs is required.
 

@@ -24,7 +24,10 @@
 #define TRAINTASTIC_CLIENT_SETTINGS_SETTINGSBASEWIDGET_HPP
 
 #include <QScrollArea>
+#include <QComboBox>
+#include <traintastic/enum/enum.hpp>
 #include "setting.hpp"
+#include "../utils/enum.hpp"
 
 class SettingsBaseWidget : public QScrollArea
 {
@@ -41,10 +44,30 @@ class SettingsBaseWidget : public QScrollArea
     void addSettingDir(Setting<QString>& setting);
 
     template<class T>
+    void addSettingEnumDropdown(Setting<T>& setting)
+    {
+      QComboBox* cb = new QComboBox(widget());
+      for(auto value : SettingEnum<T>::values)
+      {
+        cb->addItem(translateEnum(EnumName<T>::value, static_cast<quint64>(value)), static_cast<uint>(value));
+        if(setting.value() == value)
+          cb->setCurrentIndex(cb->count() - 1);
+      }
+      connect(cb, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        [&setting, cb](int /*index*/)
+        {
+          setting.setValue(static_cast<T>(cb->currentData().toUInt()));
+        });
+      add(setting.name(), cb);
+    }
+
+    template<class T>
     inline void addSetting(Setting<T>& setting)
     {
       if constexpr(std::is_same_v<T, bool>)
         addSettingOnOff(setting);
+      else if constexpr(std::is_enum_v<T>)
+        addSettingEnumDropdown(setting);
       else
         static_assert(sizeof(T) != sizeof(T));
     }

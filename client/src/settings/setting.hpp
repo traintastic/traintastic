@@ -26,6 +26,12 @@
 #include "settingsbase.hpp"
 
 template<class T>
+struct SettingEnum
+{
+  static_assert(sizeof(T) != sizeof(T));
+};
+
+template<class T>
 class Setting
 {
   private:

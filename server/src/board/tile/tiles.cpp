@@ -52,3 +52,13 @@ std::shared_ptr<Tile> Tiles::create(const std::shared_ptr<World>& world, std::st
   IF_CLASSID_CREATE(TunnelRailTile)
   return std::shared_ptr<Tile>();
 }
+
+bool Tiles::canUpgradeStraightRail(std::string_view classId)
+{
+  return
+    (classId == TunnelRailTile::classId) ||
+    (classId == BlockRailTile::classId) ||
+    (classId == SensorRailTile::classId) ||
+    (classId == Signal2AspectRailTile::classId) ||
+    (classId == Signal3AspectRailTile::classId);
+}

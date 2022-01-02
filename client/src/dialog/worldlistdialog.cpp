@@ -72,7 +72,7 @@ WorldListDialog::WorldListDialog(std::shared_ptr<Connection> connection, QWidget
         m_object = object;
 
         m_requestId = m_connection->getTableModel(m_object,
-          [this, spinner](const TableModelPtr& tableModel, Message::ErrorCode ec)
+          [this, spinner](const TableModelPtr& tableModel, Message::ErrorCode errorCode)
           {
             if(tableModel)
             {
@@ -95,7 +95,7 @@ WorldListDialog::WorldListDialog(std::shared_ptr<Connection> connection, QWidget
               delete spinner;
             }
             else
-              static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(errorCodeToText(ec)));
+              static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(errorCodeToText(errorCode)));
           });
       }
       else

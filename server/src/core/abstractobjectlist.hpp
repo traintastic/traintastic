@@ -25,6 +25,7 @@
 
 #include "subobject.hpp"
 #include "table.hpp"
+#include "property.hpp"
 
 class WorldSaver;
 
@@ -40,7 +41,11 @@ class AbstractObjectList : public SubObject, public Table
     virtual void setItems(const std::vector<ObjectPtr>& items) = 0;
 
   public:
+    Property<uint32_t> length;
+
     AbstractObjectList(Object& _parent, const std::string& parentPropertyName);
+
+    virtual ObjectPtr getObject(uint32_t index) = 0;
 };
 
 #endif

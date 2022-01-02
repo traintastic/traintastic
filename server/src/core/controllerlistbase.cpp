@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,6 +32,12 @@ ControllerListBase::ControllerListBase(Object& _parent, const std::string& paren
 TableModelPtr ControllerListBase::getModel()
 {
   return std::make_shared<ControllerListBaseTableModel>(*this);
+}
+
+ObjectPtr ControllerListBase::getObject(uint32_t index)
+{
+  assert(index < m_items.size());
+  return std::static_pointer_cast<Object>(m_items[index]);
 }
 
 void ControllerListBase::add(ObjectPtr controller)

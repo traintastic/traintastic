@@ -5,6 +5,9 @@ board:move_tile=Move tile
 board:resize_tile=Resize tile
 board:resize_to_contents=Resize to contents
 
+board_settings.color_scheme:dark=Dark
+board_settings.color_scheme:light=Light
+
 board_tile.rail.block:input_map=Sensors
 
 board_tile.rail.sensor:input=Input
@@ -324,7 +327,9 @@ qtapp.object_select_list_dialog:cancel=Cancel
 qtapp.object_select_list_dialog:ok=Ok
 qtapp.object_select_list_dialog:select_object=Select object
 
+qtapp.settings.board:color_scheme=Color scheme
 qtapp.settings.board:show_block_sensor_states=Show block sensor states
+qtapp.settings.board:turnout_draw_state=Draw turnout state
 
 qtapp.settings.developer:dont_load_fallback_language=Don't load fallback language
 qtapp.settings.developer:log_missing_strings=Log missing translations

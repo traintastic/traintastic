@@ -169,6 +169,18 @@
   font-size: 80%;
 }
 
+/** Lua **********************************************************************/
+
+code.lua span.const
+{
+  color: #4e004e;
+}
+
+code.lua span.keyword
+{
+  color: #000080;
+}
+
 /** MEDIA BREAKPOINTS ********************************************************/
 
 @media screen and (max-width: 991px)

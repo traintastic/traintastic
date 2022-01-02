@@ -44,7 +44,7 @@ template<std::size_t N, class... A>
 using getArgumentType = typename std::tuple_element<N, std::tuple<A...>>::type;
 
 template<std::size_t N, class... A>
-auto getArgument(const AbstractMethod::Argument& value)
+auto getArgument(const Argument& value)
 {
   using T = std::remove_const_t<std::remove_reference_t<getArgumentType<N, A...>>>;
 
@@ -96,6 +96,12 @@ class Method<R(A...)> : public AbstractMethod
     std::function<R(A...)> m_function;
 
   public:
+    Method(Object& object, const std::string& name, MethodFlags flags, std::function<R(A...)> function) :
+      AbstractMethod(object, name, flags),
+      m_function{std::move(function)}
+    {
+    }
+
     Method(Object& object, const std::string& name, std::function<R(A...)> function) :
       AbstractMethod(object, name),
       m_function{std::move(function)}

@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_LUA_CLASS_HPP
 #define TRAINTASTIC_SERVER_LUA_CLASS_HPP
 
+#include <string_view>
 #include <lua.hpp>
 #include "../core/objectptr.hpp"
 
@@ -32,7 +33,19 @@ struct Class
 {
   static void registerValues(lua_State* L);
 
-  static int isInstance(lua_State* L);
+  static void push(lua_State* L, std::string_view classId);
+  static void push(lua_State* L, const ObjectPtr& object);
+
+  template<class T>
+  static void push(lua_State* L)
+  {
+    static_assert(std::is_base_of_v<::Object, T>);
+    push(L, T::classId);
+  }
+
+  static int __tostring(lua_State* L);
+
+  static int getClass(lua_State* L);
 };
 
 }

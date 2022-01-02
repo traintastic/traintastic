@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -51,9 +51,9 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
   QWidget(parent),
   m_requestIdInputMonitor{Connection::invalidRequestId},
   m_requestIdOutputKeyboard{Connection::invalidRequestId},
-  m_buttonAdd{nullptr},
   m_object{object},
   m_toolbar{new QToolBar()},
+  m_buttonAdd{nullptr},
   m_actionAdd{nullptr},
   m_actionEdit{nullptr},
   m_actionDelete{nullptr},
@@ -106,12 +106,12 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
             m_object->connection()->cancelRequest(m_requestIdAdd);
 
           m_requestIdAdd = method->call(
-            [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+            [this](const ObjectPtr& addedObject, Message::ErrorCode /*ec*/)
             {
               m_requestIdAdd = Connection::invalidRequestId;
-              if(object)
+              if(addedObject)
               {
-                MainWindow::instance->showObject(object);
+                MainWindow::instance->showObject(addedObject);
               }
               // TODO: show error
             });

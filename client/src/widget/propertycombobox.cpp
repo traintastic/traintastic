@@ -21,6 +21,7 @@
  */
 
 #include "propertycombobox.hpp"
+#include <cassert>
 #include "../network/property.hpp"
 #include "../utils/internalupdateholder.hpp"
 #include "../utils/enum.hpp"
@@ -102,6 +103,15 @@ void PropertyComboBox::updateValues()
             if(m_property.toInt64() == value)
               setCurrentIndex(count() - 1);
           }
+          break;
+
+        case ValueType::Invalid:
+        case ValueType::Boolean:
+        case ValueType::Float:
+        case ValueType::String:
+        case ValueType::Object:
+        case ValueType::Set:
+          assert(false);
           break;
       }
     }

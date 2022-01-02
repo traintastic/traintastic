@@ -31,7 +31,7 @@
 
 Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
-  name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   left{this, "left", 0, PropertyFlags::ReadOnly | PropertyFlags::Store},
   top{this, "top", 0, PropertyFlags::ReadOnly | PropertyFlags::Store},
   right{this, "right", 0, PropertyFlags::ReadOnly | PropertyFlags::Store},
@@ -46,23 +46,36 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
 
       if(auto it = m_tiles.find(l); it != m_tiles.end())
       {
-        if(!replace && tileClassId == StraightRailTile::classId && it->second->tileId() == TileId::RailStraight) // merge to bridge
+        if(!replace)
         {
           const TileRotate tileRotate = it->second->rotate;
-          if((tileRotate == rotate + TileRotate::Deg90 || tileRotate == rotate - TileRotate::Deg90) && deleteTile(x, y))
+
+          if(it->second->tileId() == TileId::RailStraight && tileClassId == StraightRailTile::classId) // merge to bridge
           {
-            tileClassId = Bridge90RailTile::classId;
-            rotate = tileRotate;
+            if((tileRotate == rotate + TileRotate::Deg90 || tileRotate == rotate - TileRotate::Deg90) && deleteTile(x, y))
+            {
+              tileClassId = Bridge90RailTile::classId;
+              rotate = tileRotate;
+            }
+            else if((tileRotate == rotate + TileRotate::Deg45 || tileRotate == rotate + TileRotate::Deg225) && deleteTile(x, y))
+            {
+              tileClassId = Bridge45LeftRailTile::classId;
+              rotate = tileRotate;
+            }
+            else if((tileRotate == rotate - TileRotate::Deg45 || tileRotate == rotate - TileRotate::Deg225) && deleteTile(x, y))
+            {
+              tileClassId = Bridge45RightRailTile::classId;
+              rotate = tileRotate;
+            }
+            else
+              return false;
           }
-          else if((tileRotate == rotate + TileRotate::Deg45 || tileRotate == rotate + TileRotate::Deg225) && deleteTile(x, y))
+          else if(it->second->tileId() == TileId::RailStraight && // replace straight by a straight with something extra
+                  Tiles::canUpgradeStraightRail(tileClassId) &&
+                  (tileRotate == rotate || (tileRotate + TileRotate::Deg180) == rotate) &&
+                  deleteTile(x, y))
           {
-            tileClassId = Bridge45LeftRailTile::classId;
-            rotate = tileRotate;
-          }
-          else if((tileRotate == rotate - TileRotate::Deg45 || tileRotate == rotate - TileRotate::Deg225) && deleteTile(x, y))
-          {
-            tileClassId = Bridge45RightRailTile::classId;
-            rotate = tileRotate;
+            // tileClassId and rotate are ok :)
           }
           else
             return false;

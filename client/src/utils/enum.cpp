@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,6 +42,7 @@
 #include <traintastic/enum/xpressnetcommandstation.hpp>
 #include <traintastic/enum/xpressnetinterfacetype.hpp>
 #include <traintastic/enum/xpressnetserialinterfacetype.hpp>
+#include "../settings/boardsettings.hpp"
 
 #define GET_ENUM_VALUES(_type) \
   if(enumName == EnumName<_type>::value) \
@@ -87,6 +88,7 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(XpressNetCommandStation)
   TRANSLATE_ENUM(XpressNetInterfaceType)
   TRANSLATE_ENUM(XpressNetSerialInterfaceType)
+  TRANSLATE_ENUM(BoardSettings::ColorScheme)
   return enumName + "@" + QString::number(value);
 }
 

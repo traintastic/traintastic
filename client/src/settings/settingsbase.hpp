@@ -39,16 +39,30 @@ class SettingsBase : public QObject
     template<class T>
     inline T get(const QString& key, const T& defaultValue) const
     {
-      return qvariant_cast<T>(m_settings.value(key, defaultValue));
+      if constexpr(std::is_enum_v<T>)
+        return static_cast<T>(m_settings.value(key, static_cast<uint>(defaultValue)).toUInt());
+      else
+        return qvariant_cast<T>(m_settings.value(key, defaultValue));
     }
 
     template<class T>
     inline void set(const QString& key, const T& value)
     {
-      if(m_settings.value(key) != value)
+      if constexpr(std::is_enum_v<T>)
       {
-        m_settings.setValue(key, value);
-        emit changed();
+        if(m_settings.value(key) != static_cast<uint>(value))
+        {
+          m_settings.setValue(key, static_cast<uint>(value));
+          emit changed();
+        }
+      }
+      else
+      {
+        if(m_settings.value(key) != value)
+        {
+          m_settings.setValue(key, value);
+          emit changed();
+        }
       }
     }
 

@@ -31,41 +31,18 @@ enum class PropertyFlags : uint16_t
   ReadOnly = 1 << 0,
   ReadWrite = PropertyFlags::ReadOnly | 2 << 0,
 
-  // bit 2..4
+  // bit 2..3
   NoStore = 1 << 2,
   Store = 2 << 2,
   StoreState = 3 << 2,
 
-  // bit 5
-  SubObject = 1 << 4
+  // bit 4
+  SubObject = 1 << 4,
 
-/*
-
-  // Access:
-  EditConstant = 1 << 0,
-  EditReadOnly = 2 << 0,
-  EditReadWrite = 3 << 0,
-  StopConstant = 1 << 2,
-  StopReadOnly = 2 << 2,
-  StopReadWrite = 3 << 2,
-  RunConstant = 1 << 4,
-  RunReadOnly = 2 << 4,
-  RunReadWrite = 3 << 4,
-
-  AccessRRR = PropertyFlags::EditReadOnly | PropertyFlags::StopReadOnly | PropertyFlags::RunReadOnly,
-  AccessRRW = PropertyFlags::EditReadOnly | PropertyFlags::StopReadOnly | PropertyFlags::RunReadWrite,
-  AccessRWW = PropertyFlags::EditReadOnly | PropertyFlags::StopReadWrite | PropertyFlags::RunReadWrite,
-  AccessWCC = PropertyFlags::EditReadWrite | PropertyFlags::StopConstant | PropertyFlags::RunConstant,
-  AccessWWW = PropertyFlags::EditReadWrite | PropertyFlags::StopReadWrite | PropertyFlags::RunReadWrite,
-  // Store:
-  NoStore = 1 << 6,
-  Store = 2 << 6,
-  StoreState = 3 << 6,
-
-
-
-  TODO = AccessWWW,
-  */
+  // bit 5..6
+  NoScript = 1 << 5,
+  ScriptReadOnly = 2 << 5,
+  ScriptReadWrite = 3 << 5,
 };
 
 constexpr PropertyFlags operator| (const PropertyFlags& lhs, const PropertyFlags& rhs)
@@ -100,6 +77,7 @@ constexpr bool is_empty(const PropertyFlags value)
 
 constexpr PropertyFlags PropertyFlagsAccessMask = static_cast<PropertyFlags>(0x0003);
 constexpr PropertyFlags PropertyFlagsStoreMask = static_cast<PropertyFlags>(0x000C);
+constexpr PropertyFlags PropertyFlagsScriptMask = static_cast<PropertyFlags>(0x0060);
 
 constexpr bool is_access_valid(const PropertyFlags value)
 {
@@ -111,6 +89,13 @@ constexpr bool is_store_valid(const PropertyFlags /*value*/)
   return true;
   //const PropertyFlags store = value & PropertyFlagsStoreMask;
   //return (store == PropertyFlags::NoStore) || (store == PropertyFlags::Store) || (store == PropertyFlags::StoreState);
+}
+
+constexpr bool isScriptValid(const PropertyFlags /*value*/)
+{
+  return true;
+  //const PropertyFlags script = value & PropertyFlagsScriptMask;
+  //return (script == PropertyFlags::NoScript) || (script == PropertyFlags::ScriptReadOnly) || (script == PropertyFlags::ScriptReadWrite);
 }
 
 #endif

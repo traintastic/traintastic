@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -66,10 +66,10 @@ void World::init(const std::shared_ptr<World>& world)
 
 World::World(Private) :
   Object(),
-  uuid{this, "uuid", to_string(boost::uuids::random_generator()()), PropertyFlags::ReadOnly | PropertyFlags::NoStore},
-  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
-  scale{this, "scale", WorldScale::H0, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](WorldScale /*value*/){ updateScaleRatio(); }},
-  scaleRatio{this, "scale_ratio", 87, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  uuid{this, "uuid", to_string(boost::uuids::random_generator()()), PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
+  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
+  scale{this, "scale", WorldScale::H0, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly, [this](WorldScale /*value*/){ updateScaleRatio(); }},
+  scaleRatio{this, "scale_ratio", 87, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   decoderControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   inputControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   outputControllers{this, "output_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
@@ -77,14 +77,14 @@ World::World(Private) :
   decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
-  boards{this, "boards", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  boards{this, "boards", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   clock{this, "clock", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
-  trains{this, "trains", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
-  railVehicles{this, "rail_vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  trains{this, "trains", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
+  railVehicles{this, "rail_vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
 #ifndef DISABLE_LUA_SCRIPTING
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
 #endif
-  state{this, "state", WorldState(), PropertyFlags::ReadOnly | PropertyFlags::NoStore},
+  state{this, "state", WorldState(), PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   edit{this, "edit", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
     [this](bool value)
     {
@@ -115,7 +115,7 @@ World::World(Private) :
       state.setValueInternal(state.value() + WorldState::Online);
       event(WorldEvent::Online);
     }},
-  powerOff{*this, "power_off",
+  powerOff{*this, "power_off", MethodFlags::ScriptCallable,
     [this]()
     {
       Log::log(*this, LogMessage::N1015_POWER_OFF);
@@ -136,7 +136,7 @@ World::World(Private) :
       state.setValueInternal(state.value() + WorldState::Run);
       event(WorldEvent::Run);
     }},
-  stop{*this, "stop",
+  stop{*this, "stop", MethodFlags::ScriptCallable,
     [this]()
     {
       Log::log(*this, LogMessage::N1017_STOPPED);
@@ -175,7 +175,7 @@ World::World(Private) :
         event(WorldEvent::Smoke);
       }
     }},
-  save{*this, "save",
+  save{*this, "save", MethodFlags::NoScript,
     [this]()
     {
       try
@@ -230,6 +230,7 @@ World::World(Private) :
         Log::log(*this, LogMessage::C1005_SAVING_WORLD_FAILED_X, e);
       }
     }}
+  , onEvent{*this, "on_event", EventFlags::Scriptable}
 {
   Attributes::addDisplayName(uuid, DisplayName::World::uuid);
   m_interfaceItems.add(uuid);
@@ -294,6 +295,8 @@ World::World(Private) :
 
   Attributes::addObjectEditor(save, false);
   m_interfaceItems.add(save);
+
+  m_interfaceItems.add(onEvent);
 }
 
 std::string World::getUniqueId(std::string_view prefix) const
@@ -374,6 +377,8 @@ void World::worldEvent(WorldState worldState, WorldEvent worldEvent)
 
   Attributes::setEnabled(scale, editState && !runState);
   Attributes::setEnabled(scaleRatio, editState && !runState);
+
+  fireEvent(onEvent, worldState, worldEvent);
 }
 
 void World::event(const WorldEvent value)

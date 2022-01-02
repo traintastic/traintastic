@@ -32,6 +32,7 @@
 #include <traintastic/enum/signalaspect.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/turnoutposition.hpp>
+#include "boardcolorscheme.hpp"
 #include "../network/abstractproperty.hpp"
 #include "../network/objectptr.hpp"
 
@@ -56,6 +57,9 @@ class BoardAreaWidget : public QWidget
       MoveTile,
       ResizeTile,
     };
+
+  private:
+    const BoardColorScheme* m_colorScheme;
 
   protected:
     static constexpr int boardMargin = 1; // tile
@@ -88,7 +92,8 @@ class BoardAreaWidget : public QWidget
     inline int boardRight() const { return Q_LIKELY(m_boardRight) ? m_boardRight->toInt() + boardMargin: 0; }
     inline int boardBottom() const { return Q_LIKELY(m_boardBottom) ? m_boardBottom->toInt() + boardMargin: 0; }
 
-    int getTileSize() const { return 25 + m_zoomLevel * 5; }
+    static constexpr int getTileSize(int zoomLevel) { return 25 + zoomLevel * 5; }
+    int getTileSize() const { return getTileSize(m_zoomLevel); }
     TurnoutPosition getTurnoutPosition(const TileLocation& l) const;
     BlockState getBlockState(const TileLocation& l) const;
     std::vector<SensorState> getBlockSensorStates(const TileLocation& l) const;
@@ -105,10 +110,11 @@ class BoardAreaWidget : public QWidget
     void paintEvent(QPaintEvent* event) final;
 
   protected slots:
+    void settingsChanged();
     void updateMinimumSize();
 
   public:
-    static constexpr int zoomLevelMin = 0;
+    static constexpr int zoomLevelMin = -2;
     static constexpr int zoomLevelMax = 15;
 
     BoardAreaWidget(BoardWidget& board, QWidget* parent = nullptr);
@@ -116,6 +122,7 @@ class BoardAreaWidget : public QWidget
     Grid grid() const { return m_grid; }
     void nextGrid();
     int zoomLevel() const { return m_zoomLevel; }
+    float zoomRatio() const { return static_cast<float>(getTileSize()) / getTileSize(0); }
 
     void setMouseMoveAction(MouseMoveAction action);
     void setMouseMoveTileId(TileId id);

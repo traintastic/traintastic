@@ -28,6 +28,8 @@ BoardSettingsWidget::BoardSettingsWidget(QWidget* parent)
 {
   BoardSettings& s = BoardSettings::instance();
 
+  addSetting(s.colorScheme);
+  addSetting(s.turnoutDrawState);
   addSetting(s.showBlockSensorStates);
 
   done();

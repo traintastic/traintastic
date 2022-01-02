@@ -116,19 +116,6 @@ void Script::worldEvent(WorldState worldState, WorldEvent worldEvent)
   IdObject::worldEvent(worldState, worldEvent);
 
   updateEnabled();
-
-  if(m_sandbox)
-  {
-    lua_State* L = m_sandbox.get();
-    if(Sandbox::getGlobal(L, "world_event") == LUA_TFUNCTION)
-    {
-      push(L, worldState);
-      push(L, worldEvent);
-      pcall(L, 2);
-    }
-    else
-      lua_pop(L, 1);
-  }
 }
 
 void Script::updateEnabled()

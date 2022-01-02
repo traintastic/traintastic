@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include "../core/property.hpp"
 #include "../core/objectproperty.hpp"
 #include "../core/controllerlist.hpp"
+#include "../core/event.hpp"
 #include <traintastic/utils/stdfilesystem.hpp>
 #include <unordered_map>
 #include <boost/uuid/uuid.hpp>
@@ -114,6 +115,8 @@ class World : public Object
     Property<bool> noSmoke;
 
     Method<void()> save;
+
+    Event<WorldState, WorldEvent> onEvent;
 
     World(Private);
 

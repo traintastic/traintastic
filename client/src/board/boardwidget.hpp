@@ -46,6 +46,7 @@ class BoardWidget : public QWidget
     QStatusBar* m_statusBar;
     QLabel* m_statusBarMessage;
     QLabel* m_statusBarCoords;
+    QLabel* m_statusBarZoom;
     QAction* m_actionZoomIn;
     QAction* m_actionZoomOut;
     QToolButton* m_toolButtonGrid;

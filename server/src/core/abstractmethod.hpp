@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,13 +24,17 @@
 #define TRAINTASTIC_SERVER_CORE_ABSTRACTMETHOD_HPP
 
 #include "interfaceitem.hpp"
+#include "methodflags.hpp"
 #include <vector>
 #include <variant>
 #include <stdexcept>
-#include "objectptr.hpp"
+#include "argument.hpp"
 
 class AbstractMethod : public InterfaceItem
 {
+  private:
+    const MethodFlags m_flags;
+
   public:
     class MethodCallError : public std::runtime_error
     {
@@ -91,15 +95,18 @@ class AbstractMethod : public InterfaceItem
         }
     };
 
-    using Argument = std::variant<bool, int64_t, double, std::string, ObjectPtr>;
     using Result = std::variant<std::monostate, bool, int64_t, double, std::string, ObjectPtr>;
 
-    AbstractMethod(Object& object, const std::string& name);
+    AbstractMethod(Object& object, const std::string& name, MethodFlags m_flags = noMethodFlags);
+
+    inline bool isScriptCallable() const { return m_flags == MethodFlags::ScriptCallable; }
+
+    inline MethodFlags flags() const { return m_flags; }
 
     virtual std::size_t argumentCount() const = 0;
     virtual std::vector<ValueType> argumentTypes() const = 0;
     virtual ValueType resultType() const = 0;
-    virtual Result call(const std::vector<Argument>& args) = 0;
+    virtual Result call(const Arguments& args) = 0;
 };
 
 #endif

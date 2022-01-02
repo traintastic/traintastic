@@ -26,6 +26,7 @@
 #include "script.hpp"
 #include "object.hpp"
 #include "method.hpp"
+#include "event.hpp"
 #include "../log/log.hpp"
 
 namespace Lua {
@@ -79,6 +80,8 @@ int Log::log(lua_State* L, LogMessage code)
             message += object->getClassId();
           else if(Method::test(L, i))
             message += "method";
+          else if(Event::test(L, i))
+            message += "event";
           else
           {
             lua_getglobal(L, "tostring");

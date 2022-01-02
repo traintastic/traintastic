@@ -24,8 +24,9 @@
 #include "../core/idobject.hpp"
 #include "../world/worldloader.hpp"
 
-AbstractObjectList::AbstractObjectList(Object& _parent, const std::string& parentPropertyName) :
-  SubObject{_parent, parentPropertyName}
+AbstractObjectList::AbstractObjectList(Object& _parent, const std::string& parentPropertyName)
+  : SubObject{_parent, parentPropertyName}
+  , length{this, "length", 0, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::NoScript}
 {
 }
 

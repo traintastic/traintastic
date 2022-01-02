@@ -182,7 +182,10 @@ PropertyLuaCodeEdit::Highlighter::Highlighter(QTextDocument* parent) :
     m_rules.append(Rule(regex, Qt::magenta));
 
   const auto globals = {
-    QStringLiteral("\\log(?=\\.)"),
+    QStringLiteral("\\bmath(?=\\.)"),
+    QStringLiteral("\\bstring(?=\\.)"),
+    QStringLiteral("\\btable(?=\\.)"),
+    QStringLiteral("\\blog(?=\\.)"),
     QStringLiteral("\\bworld(?=\\.)"),
     QStringLiteral("\\bset(?=\\.)"),
     QStringLiteral("\\benum(?=\\.)"),

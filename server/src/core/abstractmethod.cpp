@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,7 +22,8 @@
 
 #include "abstractmethod.hpp"
 
-AbstractMethod::AbstractMethod(Object& object, const std::string& name) :
-  InterfaceItem(object, name)
+AbstractMethod::AbstractMethod(Object& object, const std::string& name, MethodFlags flags)
+  : InterfaceItem(object, name)
+  , m_flags{flags}
 {
 }

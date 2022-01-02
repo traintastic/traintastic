@@ -54,6 +54,8 @@ class ControllerListBase : public AbstractObjectList
     ControllerListBase(Object& _parent, const std::string& parentPropertyName);
 
     TableModelPtr getModel() final;
+
+    ObjectPtr getObject(uint32_t index) final;
 };
 
 #endif
