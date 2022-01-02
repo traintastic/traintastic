@@ -224,29 +224,6 @@ else()
   add_definitions(-DDISABLE_LUA_SCRIPTING)
 endif()
 
-option(USB_XPRESSNET "USB XpressNet interface/controller support" ON)
-message(STATUS "USB XpressNet interface/controller support: ${USB_XPRESSNET}")
-if(ENABLE_USB_XPRESSNET_INTERFACE)
-  #pkg_check_modules(USBXPRESSNET REQUIRED IMPORTED_TARGET usbxpressnet)
-  find_path(USBXPRESSNET_INCLUDE_DIR usbxpressnet.h)
-  #message(${USBXPRESSNET_INCLUDE_DIR})
-  find_library(USBXPRESSNET_LIB usbxpressnet)
-  #message(${USBXPRESSNET_LIB})
-  #if(NOT USBXPRESSNET_LIB)
-  #  message(FATAL_ERROR "usbxpressnet library not found")
-  #endif()
-
-  add_definitions(-DUSB_XPRESSNET)
-
-  target_include_directories(traintastic-server PRIVATE ${USBXPRESSNET_INCLUDE_DIR})
-  target_link_libraries(traintastic-server PRIVATE ${USBXPRESSNET_LIB})
-
-  target_include_directories(traintastic-server-test PRIVATE ${USBXPRESSNET_INCLUDE_DIR})
-  target_link_libraries(traintastic-server-test PRIVATE ${USBXPRESSNET_LIB})
-else()
-  list(FILTER SOURCES EXCLUDE REGEX ".*usbxpressnet(interface|controller)\.(hpp|cpp)$")
-endif()
-
 ### OPTIONS END ###
 
 target_sources(traintastic-server PRIVATE ${SOURCES})
