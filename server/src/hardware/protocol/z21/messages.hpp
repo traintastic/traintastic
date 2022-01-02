@@ -512,7 +512,7 @@ struct LanXSetLocoFunction : LanX
   uint8_t db0 = 0xf8;
   uint8_t addressHigh;
   uint8_t addressLow;
-  uint8_t db3;
+  uint8_t db3 = 0;
   uint8_t checksum;
 
   LanXSetLocoFunction() :
