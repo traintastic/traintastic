@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "settings.hpp"
 #include <fstream>
 #include "attributes.hpp"
+#include "traintastic.hpp"
 #include "../log/log.hpp"
 
 using nlohmann::json;
@@ -92,6 +93,34 @@ void Settings::load()
 
 void Settings::save()
 {
+  // backup settings:
+  {
+    const std::filesystem::path backupDir = Traintastic::instance->dataBackupDir();
+    auto dateTimeStr =
+      []()
+      {
+        const auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+        std::stringstream ss;
+        ss << std::put_time(std::localtime(&now), "_%Y%m%d_%H%M%S");
+        return ss.str();
+      };
+
+    if(!std::filesystem::is_directory(backupDir))
+    {
+      std::error_code ec;
+      std::filesystem::create_directories(backupDir, ec);
+      if(ec)
+        Log::log(*this, LogMessage::C1008_CREATING_BACKUP_DIRECTORY_FAILED_X, ec);
+    }
+
+    {
+      std::error_code ec;
+      std::filesystem::rename(m_filename, backupDir / m_filename.stem() += dateTimeStr() += m_filename.extension(), ec);
+      if(ec)
+        Log::log(*this, LogMessage::C1009_CREATING_SETTING_BACKUP_FAILED_X, ec);
+    }
+  }
+
   json settings = json::object();
   for(const auto& it : m_interfaceItems)
     if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&it.second))

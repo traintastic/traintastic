@@ -144,6 +144,8 @@ enum class LogMessage : uint32_t
   C1005_SAVING_WORLD_FAILED_X = LogMessageOffset::critical + 1005,
   C1006_CREATING_WORLD_BACKUP_FAILED_X = LogMessageOffset::critical + 1006,
   C1007_CREATING_WORLD_BACKUP_DIRECTORY_FAILED_X = LogMessageOffset::critical + 1007,
+  C1008_CREATING_BACKUP_DIRECTORY_FAILED_X = LogMessageOffset::critical + 1008,
+  C1009_CREATING_SETTING_BACKUP_FAILED_X = LogMessageOffset::critical + 1009,
   C2001_ADDRESS_ALREADY_USED_AT_X = LogMessageOffset::critical + 2001,
   C2002_DCCPLUSPLUS_ONLY_SUPPORTS_THE_DCC_PROTOCOL = LogMessageOffset::critical + 2002,
   C2003_DCCPLUSPLUS_DOESNT_SUPPORT_DCC_LONG_ADDRESSES_BELOW_128 = LogMessageOffset::critical + 2003,

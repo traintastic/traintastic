@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -97,8 +97,10 @@ class Traintastic : public Object
     boost::asio::io_context& ioContext() { return m_ioContext; }
 
     const std::filesystem::path& dataDir() const { return m_dataDir; }
-    std::filesystem::path worldDir() const { return m_dataDir / "world"; }
-    std::filesystem::path worldBackupDir() const { return worldDir() / ".backup"; }
+    std::filesystem::path dataBackupDir() const { return m_dataDir / ".backup"; }
+
+    std::filesystem::path worldDir() const { return dataDir() / "world"; }
+    std::filesystem::path worldBackupDir() const { return dataBackupDir() / "world"; }
 
     RunStatus run();
     void exit();
