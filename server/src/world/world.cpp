@@ -223,6 +223,9 @@ World::World(Private) :
 
         WorldSaver saver(*this, savePath);
 
+        if(Traintastic::instance)
+          Traintastic::instance->settings->lastWorld = uuid.value();
+
         Log::log(*this, LogMessage::N1022_SAVED_WORLD_X, name.value());
       }
       catch(const std::exception& e)

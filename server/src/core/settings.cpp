@@ -49,7 +49,8 @@ Settings::Settings(const std::filesystem::path& path) :
   localhostOnly{this, "localhost_only", true, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
   port{this, "port", defaultPort, PropertyFlags::ReadWrite, [this](const uint16_t&){ save(); }},
   discoverable{this, "discoverable", true, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
-  defaultWorld{this, "default_world", "", PropertyFlags::ReadWrite, [this](const std::string&){ save(); }},
+  lastWorld{this, "last_world", "", PropertyFlags::ReadWrite | PropertyFlags::Internal, [this](const std::string&){ save(); }},
+  loadLastWorldOnStartup{this, "load_last_world_on_startup", true, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
   autoSaveWorldOnExit{this, "auto_save_world_on_exit", false, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
   saveWorldUncompressed{this, "save_world_uncompressed", false, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
   allowClientServerRestart{this, "allow_client_server_restart", false, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
@@ -57,7 +58,8 @@ Settings::Settings(const std::filesystem::path& path) :
   , memoryLoggerSize{this, Name::memoryLoggerSize, Default::memoryLoggerSize, PropertyFlags::ReadWrite, [this](const uint32_t&){ save(); }}
   , enableFileLogger{this, Name::enableFileLogger, Default::enableFileLogger, PropertyFlags::ReadWrite, [this](const bool&){ save(); }}
 {
-  m_interfaceItems.add(defaultWorld);
+  m_interfaceItems.add(lastWorld);
+  m_interfaceItems.add(loadLastWorldOnStartup);
   m_interfaceItems.add(autoSaveWorldOnExit);
 
   Attributes::addCategory(localhostOnly, Category::network);

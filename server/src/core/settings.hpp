@@ -66,7 +66,8 @@ class Settings : public Object
     Property<bool> localhostOnly;
     Property<uint16_t> port;
     Property<bool> discoverable;
-    Property<std::string> defaultWorld;
+    Property<std::string> lastWorld;
+    Property<bool> loadLastWorldOnStartup;
     Property<bool> autoSaveWorldOnExit;
     Property<bool> saveWorldUncompressed;
     Property<bool> allowClientServerRestart;

@@ -58,6 +58,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
       world = World::create();
       Log::log(*this, LogMessage::N1002_CREATED_NEW_WORLD);
       world->edit = true;
+      settings->lastWorld = "";
     }},
   loadWorld{*this, "load_world",
     [this](const std::string& _uuid)
@@ -119,10 +120,10 @@ Traintastic::RunStatus Traintastic::run()
   Attributes::setEnabled(restart, settings->allowClientServerRestart);
   Attributes::setEnabled(shutdown, settings->allowClientServerShutdown);
 
-  worldList = std::make_shared<WorldList>(m_dataDir / "world");
+  worldList = std::make_shared<WorldList>(worldDir());
 
-  if(!settings->defaultWorld.value().empty())
-    loadWorld(settings->defaultWorld.value());
+  if(settings->loadLastWorldOnStartup && !settings->lastWorld.value().empty())
+    loadWorld(settings->lastWorld.value());
 
   if(!start())
     return ExitFailure;
@@ -251,6 +252,7 @@ void Traintastic::load(const std::filesystem::path& path)
   try
   {
     world = WorldLoader(path).world();
+    settings->lastWorld = world->uuid.value();
   }
   catch(const std::exception& e)
   {
