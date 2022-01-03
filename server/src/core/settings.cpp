@@ -130,7 +130,7 @@ void Settings::save()
 
     {
       std::error_code ec;
-      std::filesystem::rename(m_filename, backupDir / m_filename.stem() += dateTimeStr() += m_filename.extension(), ec);
+      std::filesystem::rename(m_filename, backupDir / (m_filename.stem() += dateTimeStr()) += m_filename.extension(), ec);
       if(ec)
         Log::log(*this, LogMessage::C1009_CREATING_SETTING_BACKUP_FAILED_X, ec);
     }
