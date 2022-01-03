@@ -22,6 +22,7 @@
 
 #include "settings.hpp"
 #include <fstream>
+#include <iomanip>
 #include "attributes.hpp"
 #include "traintastic.hpp"
 #include "../log/log.hpp"
