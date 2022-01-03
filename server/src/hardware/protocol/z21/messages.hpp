@@ -811,12 +811,12 @@ struct LanGetHardwareInfoReply : Message
 
   uint8_t firmwareVersionMajor() const
   {
-    return Utils::fromBCD((le_to_host(firmwareVersionLE) >> 8) && 0xFF);
+    return Utils::fromBCD((le_to_host(firmwareVersionLE) >> 8) & 0xFF);
   }
 
   uint8_t firmwareVersionMinor() const
   {
-    return Utils::fromBCD(le_to_host(firmwareVersionLE) && 0xFF);
+    return Utils::fromBCD(le_to_host(firmwareVersionLE) & 0xFF);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanGetHardwareInfoReply) == 12);
