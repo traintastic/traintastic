@@ -49,12 +49,11 @@ static constexpr uint8_t hexDigitValue(char c)
 {
   if(c >= '0' && c <= '9')
     return static_cast<uint8_t>(c - '0');
-  else if(c >= 'A' && c <= 'F')
+  if(c >= 'A' && c <= 'F')
     return static_cast<uint8_t>(c - 'A' + 10);
-  else if(c >= 'a' && c <= 'f')
+  if(c >= 'a' && c <= 'f')
     return static_cast<uint8_t>(c - 'a' + 10);
-  else
-    return 0xFF;
+  return 0xFF;
 }
 
 static std::vector<std::byte> readHexBytes(std::string_view text)
@@ -169,7 +168,7 @@ void LBServerIOHandler::write()
   assert(!m_writeQueue.empty());
   const std::string& message = m_writeQueue.front();
   boost::asio::async_write(m_socket, boost::asio::buffer(message.data(), message.size()),
-    [this](const boost::system::error_code& ec, std::size_t /*bytesTransferred*/)
+    [](const boost::system::error_code& ec, std::size_t /*bytesTransferred*/)
     {
       if(ec != boost::asio::error::operation_aborted)
       {

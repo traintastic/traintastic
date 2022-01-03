@@ -27,7 +27,6 @@
 #include <thread> //! @todo remove
 
 OutputMapOutputAction::OutputMapOutputAction(Object& _parent, std::shared_ptr<Output> _output) :
-  Object(),
   m_parent{_parent},
   m_output{_output},
   action{this, "action", OutputAction::None, PropertyFlags::ReadWrite | PropertyFlags::Store}

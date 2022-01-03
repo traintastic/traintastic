@@ -45,8 +45,8 @@ class ControllerListBase : public AbstractObjectList
     std::vector<ObjectPtr> getItems() const final { return m_items; }
     void setItems(const std::vector<ObjectPtr>& items) final { m_items = items; }
 
-    void add(ObjectPtr object);
-    void remove(const ObjectPtr& object);
+    void add(ObjectPtr controller);
+    void remove(const ObjectPtr& controller);
 
   public:
     Property<uint32_t> length;

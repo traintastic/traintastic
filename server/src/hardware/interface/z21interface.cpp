@@ -152,7 +152,7 @@ bool Z21Interface::setOnline(bool& value)
       m_kernel->start();
 
       m_z21PropertyChanged = z21->propertyChanged.connect(
-        [this](BaseProperty&)
+        [this](BaseProperty& /*property*/)
         {
           m_kernel->setConfig(z21->config());
         });

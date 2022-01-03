@@ -44,7 +44,7 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
       if(!newValue || newValue->addDecoder(*this))
       {
         if(interface.value())
-          interface->removeDecoder(*this);
+          return interface->removeDecoder(*this);
         return true;
       }
       return false;
@@ -68,18 +68,18 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
     }},
   longAddress{this, "long_address", false, PropertyFlags::ReadWrite | PropertyFlags::Store},
   emergencyStop{this, "emergency_stop", false, PropertyFlags::ReadWrite,
-    [this](const bool&)
+    [this](const bool& /*value*/)
     {
       changed(DecoderChangeFlags::EmergencyStop);
       updateEditable();
     }},
   direction{this, "direction", Direction::Forward, PropertyFlags::ReadWrite,
-    [this](const Direction&)
+    [this](const Direction& /*value*/)
     {
       changed(DecoderChangeFlags::Direction);
     }},
   speedSteps{this, "speed_steps", speedStepsAuto, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](const uint8_t&)
+    [this](const uint8_t& /*value*/)
     {
       changed(DecoderChangeFlags::SpeedSteps);
     }},
@@ -163,24 +163,42 @@ void Decoder::loaded()
 
 bool Decoder::hasFunction(uint32_t number) const
 {
-  for(auto& f : *functions)
+  for(const auto& f : *functions)
     if(f->number == number)
       return true;
   return false;
 }
 
-const std::shared_ptr<DecoderFunction>& Decoder::getFunction(uint32_t number) const
+std::shared_ptr<const DecoderFunction> Decoder::getFunction(uint32_t number) const
 {
-  for(auto& f : *functions)
+  for(const auto& f : *functions)
+    if(f->number == number)
+      return f;
+
+  return {};
+}
+
+const std::shared_ptr<DecoderFunction>& Decoder::getFunction(uint32_t number)
+{
+  for(const auto& f : *functions)
     if(f->number == number)
       return f;
 
   return DecoderFunction::null;
 }
 
-const std::shared_ptr<DecoderFunction>& Decoder::getFunction(DecoderFunctionFunction function) const
+std::shared_ptr<const DecoderFunction> Decoder::getFunction(DecoderFunctionFunction function) const
 {
-  for(auto& f : *functions)
+  for(const auto& f : *functions)
+    if(f->function == function)
+      return f;
+
+  return {};
+}
+
+const std::shared_ptr<DecoderFunction>& Decoder::getFunction(DecoderFunctionFunction function)
+{
+  for(const auto& f : *functions)
     if(f->function == function)
       return f;
 
@@ -192,7 +210,7 @@ bool Decoder::getFunctionValue(uint32_t number) const
   return getFunctionValue(getFunction(number));
 }
 
-bool Decoder::getFunctionValue(const std::shared_ptr<DecoderFunction>& function) const
+bool Decoder::getFunctionValue(const std::shared_ptr<const DecoderFunction>& function) const
 {
   if(!function)
     return false;
@@ -204,7 +222,7 @@ bool Decoder::getFunctionValue(const std::shared_ptr<DecoderFunction>& function)
   {
     if(function->function == DecoderFunctionFunction::Mute)
       return true;
-    else if(function->function == DecoderFunctionFunction::Sound && !getFunction(DecoderFunctionFunction::Mute))
+    if(function->function == DecoderFunctionFunction::Sound && !getFunction(DecoderFunctionFunction::Mute))
       return false;
   }
   if(m_worldNoSmoke)
@@ -245,7 +263,7 @@ void Decoder::worldEvent(WorldState state, WorldEvent event)
   {
     bool hasMute = false;
 
-    for(auto& f : *functions)
+    for(const auto& f : *functions)
       if(f->function == DecoderFunctionFunction::Mute)
       {
         if(!f->value)
@@ -255,14 +273,14 @@ void Decoder::worldEvent(WorldState state, WorldEvent event)
 
     if(!hasMute)
     {
-      for(auto& f : *functions)
+      for(const auto& f : *functions)
         if(f->function == DecoderFunctionFunction::Sound && f->value)
           changed(DecoderChangeFlags::FunctionValue, f->number);
     }
   }
   else if(event == WorldEvent::NoSmoke || event == WorldEvent::Smoke)
   {
-    for(auto& f : *functions)
+    for(const auto& f : *functions)
       if(f->function == DecoderFunctionFunction::Smoke && f->value)
         changed(DecoderChangeFlags::FunctionValue, f->number);
   }

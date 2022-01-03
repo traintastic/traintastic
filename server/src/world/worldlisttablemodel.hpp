@@ -28,7 +28,7 @@
 
 class WorldList;
 
-class WorldListTableModel : public TableModel
+class WorldListTableModel final : public TableModel
 {
   protected:
     std::shared_ptr<WorldList> m_worldList;

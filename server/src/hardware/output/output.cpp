@@ -49,7 +49,7 @@ Output::Output(const std::weak_ptr<World> world, std::string_view _id)
         if(!newValue || newValue->addOutput(*this))
         {
           if(interface.value())
-            interface->removeOutput(*this);
+            return interface->removeOutput(*this);
           return true;
         }
         return false;
@@ -70,8 +70,7 @@ Output::Output(const std::weak_ptr<World> world, std::string_view _id)
       {
         if(!interface || newValue == TriState::Undefined)
           return false;
-        else
-          return interface->setOutputValue(address, newValue == TriState::True);
+        return interface->setOutputValue(address, newValue == TriState::True);
       }}
   , controllers{*this, "controllers", {}, PropertyFlags::ReadWrite | PropertyFlags::NoStore}
 {

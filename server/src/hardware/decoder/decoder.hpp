@@ -96,10 +96,12 @@ class Decoder : public IdObject
 
     void addToWorld() final;
     bool hasFunction(uint32_t number) const;
-    const std::shared_ptr<DecoderFunction>& getFunction(uint32_t number) const;
-    const std::shared_ptr<DecoderFunction>& getFunction(DecoderFunctionFunction function) const;
+    std::shared_ptr<const DecoderFunction> getFunction(uint32_t number) const;
+    const std::shared_ptr<DecoderFunction>& getFunction(uint32_t number);
+    std::shared_ptr<const DecoderFunction> getFunction(DecoderFunctionFunction function) const;
+    const std::shared_ptr<DecoderFunction>& getFunction(DecoderFunctionFunction function);
     bool getFunctionValue(uint32_t number) const;
-    bool getFunctionValue(const std::shared_ptr<DecoderFunction>& function) const;
+    bool getFunctionValue(const std::shared_ptr<const DecoderFunction>& function) const;
     void setFunctionValue(uint32_t number, bool value);
 };
 

@@ -156,7 +156,7 @@ bool ECoSInterface::setOnline(bool& value)
       m_kernel->start();
 
       m_ecosPropertyChanged = ecos->propertyChanged.connect(
-        [this](BaseProperty&)
+        [this](BaseProperty& /*property*/)
         {
           m_kernel->setConfig(ecos->config());
         });

@@ -65,8 +65,7 @@ bool InputController::addInput(Input& input)
     input.value.setValueInternal(TriState::Undefined);
     return true;
   }
-  else
-    return false;
+  return false;
 }
 
 bool InputController::removeInput(Input& input)
@@ -79,8 +78,7 @@ bool InputController::removeInput(Input& input)
     input.value.setValueInternal(TriState::Undefined);
     return true;
   }
-  else
-    return false;
+  return false;
 }
 
 void InputController::updateInputValue(uint32_t address, TriState value)

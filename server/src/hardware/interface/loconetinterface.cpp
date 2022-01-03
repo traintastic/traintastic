@@ -37,7 +37,7 @@
 LocoNetInterface::LocoNetInterface(const std::weak_ptr<World>& world, std::string_view _id)
   : Interface(world, _id)
   , type{this, "type", LocoNetInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
-      [this](LocoNetInterfaceType)
+      [this](LocoNetInterfaceType /*value*/)
       {
         typeChanged();
       }}
@@ -225,7 +225,7 @@ bool LocoNetInterface::setOnline(bool& value)
       m_kernel->start();
 
       m_loconetPropertyChanged = loconet->propertyChanged.connect(
-        [this](BaseProperty&)
+        [this](BaseProperty& /*property*/)
         {
           m_kernel->setConfig(loconet->config());
         });

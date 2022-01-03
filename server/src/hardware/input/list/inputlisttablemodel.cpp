@@ -65,24 +65,23 @@ std::string InputListTableModel::getText(uint32_t column, uint32_t row) const
 
     if(column == columnId)
       return input.id;
-    else if(column == columnName)
+    if(column == columnName)
       return input.name;
-    else if(column == m_columnInterface)
+    if(column == m_columnInterface)
     {
-        if(const auto& interface = std::dynamic_pointer_cast<Object>(input.interface.value()))
-        {
-          if(auto property = interface->getProperty("name"); property && !property->toString().empty())
-            return property->toString();
-          else
-            return interface->getObjectId();
-        }
-        else
-          return "";
+      if(const auto& interface = std::dynamic_pointer_cast<Object>(input.interface.value()))
+      {
+        if(auto* property = interface->getProperty("name"); property && !property->toString().empty())
+          return property->toString();
+
+        return interface->getObjectId();
+      }
+      return "";
     }
-    else if(column == m_columnAddress)
+    if(column == m_columnAddress)
       return std::to_string(input.address.value());
-    else
-      assert(false);
+
+    assert(false);
   }
 
   return "";

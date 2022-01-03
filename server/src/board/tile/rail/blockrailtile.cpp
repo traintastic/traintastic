@@ -83,7 +83,7 @@ void BlockRailTile::updateState()
         state.setValueInternal(BlockState::Occupied);
         return;
       }
-      else if(item->value() != SensorState::Free)
+      if(item->value() != SensorState::Free)
       {
         allFree = false;
         break;

@@ -23,7 +23,6 @@
 #include "subobject.hpp"
 
 SubObject::SubObject(Object& _parent, const std::string& parentPropertyName) :
-  Object(),
   m_parent{_parent},
   m_parentPropertyName{parentPropertyName}
 {
@@ -31,7 +30,7 @@ SubObject::SubObject(Object& _parent, const std::string& parentPropertyName) :
 
 std::string SubObject::getObjectId() const
 {
-  std::string value(std::move(m_parent.getObjectId()));
+  std::string value(m_parent.getObjectId());
   value += ".";
   value += m_parentPropertyName;
   return value;

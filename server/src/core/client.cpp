@@ -76,7 +76,7 @@ void Client::doReadHeader()
   boost::asio::async_read(m_socket,
     boost::asio::buffer(&m_readBuffer.header, sizeof(m_readBuffer.header)),
       m_strand.wrap(
-        [this, self](const boost::system::error_code& ec, std::size_t)
+        [this, self](const boost::system::error_code& ec, std::size_t /*bytesReceived*/)
         {
           if(!ec)
           {
@@ -111,7 +111,7 @@ void Client::doReadData()
   boost::asio::async_read(m_socket,
     boost::asio::buffer(m_readBuffer.message->data(), m_readBuffer.message->dataSize()),
       m_strand.wrap(
-        [this, self](const boost::system::error_code& ec, std::size_t)
+        [this, self](const boost::system::error_code& ec, std::size_t /*bytesReceived*/)
         {
           if(!ec)
           {
@@ -139,7 +139,7 @@ void Client::doWrite()
   auto self(shared_from_this());
   boost::asio::async_write(m_socket, boost::asio::buffer(**m_writeQueue.front(), m_writeQueue.front()->size()),
     m_strand.wrap(
-      [this, self](const boost::system::error_code& ec, std::size_t)
+      [this, self](const boost::system::error_code& ec, std::size_t /*bytesTransferred*/)
       {
         if(!ec)
         {

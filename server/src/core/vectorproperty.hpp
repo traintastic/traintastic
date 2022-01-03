@@ -194,7 +194,7 @@ class VectorProperty : public AbstractVectorProperty
       throw conversion_error();
     }
 
-    void load(const nlohmann::json& values) final
+    void loadJSON(const nlohmann::json& values) final
     {
       if(values.is_array())
       {

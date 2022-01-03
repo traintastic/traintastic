@@ -36,7 +36,7 @@ Input::Input(const std::weak_ptr<World> world, std::string_view _id)
         if(!newValue || newValue->addInput(*this))
         {
           if(interface.value())
-            interface->removeInput(*this);
+            return interface->removeInput(*this);
           return true;
         }
         return false;

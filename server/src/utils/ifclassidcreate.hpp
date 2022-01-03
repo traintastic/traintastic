@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,6 @@
 #define TRAINTASTIC_SERVER_UTILS_IFCLASSIDCREATE_HPP
 
 #define IF_CLASSID_CREATE(T) \
-  if(classId == T::classId) { return T::create(world, id.empty() ? world->getUniqueId(T::defaultId) : id); } else
+  if(classId == T::classId) { return T::create(world, id.empty() ? world->getUniqueId(T::defaultId) : id); }
 
 #endif

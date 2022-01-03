@@ -29,7 +29,6 @@
 const std::shared_ptr<DecoderFunction> DecoderFunction::null;
 
 DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
-  Object(),
   m_decoder{decoder},
   number{this, "number", _number, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
     [this](const uint8_t& fn)
@@ -40,13 +39,13 @@ DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
     }},
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
   type{this, "type", DecoderFunctionType::OnOff, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](DecoderFunctionType)
+    [this](DecoderFunctionType /*type*/)
     {
       typeChanged();
     }},
   function{this, "function", DecoderFunctionFunction::Generic, PropertyFlags::ReadWrite | PropertyFlags::Store},
   value{this, "value", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
-    [this](bool)
+    [this](bool /*newValue*/)
     {
       m_decoder.changed(DecoderChangeFlags::FunctionValue, number);
     }}

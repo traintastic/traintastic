@@ -55,8 +55,7 @@ int type(lua_State* L)
         lua_replace(L, -3);
         return 2;
       }
-      else
-        lua_pop(L, 2);
+      lua_pop(L, 2);
 
       // check for set:
       Sandbox::getGlobal(L, "set");
@@ -68,8 +67,7 @@ int type(lua_State* L)
         lua_replace(L, -3);
         return 2;
       }
-      else
-        lua_pop(L, 2);
+      lua_pop(L, 2);
     }
   }
 

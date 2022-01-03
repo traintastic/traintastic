@@ -30,8 +30,7 @@
 namespace Z21 {
 
 ServerKernel::ServerKernel(const ServerConfig& config, std::shared_ptr<DecoderList> decoderList)
-  : Kernel()
-  , m_inactiveClientPurgeTimer{m_ioContext}
+  : m_inactiveClientPurgeTimer{m_ioContext}
   , m_config{config}
   , m_decoderList{std::move(decoderList)}
 {
@@ -414,8 +413,8 @@ void ServerKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags /*c
 
 void ServerKernel::startInactiveClientPurgeTimer()
 {
-  assert(m_config.inactiveClientPurgeTime > 0);
-  m_inactiveClientPurgeTimer.expires_after(boost::asio::chrono::seconds(std::max(1, m_config.inactiveClientPurgeTime / 4)));
+  assert(ServerConfig::inactiveClientPurgeTime > 0);
+  m_inactiveClientPurgeTimer.expires_after(boost::asio::chrono::seconds(std::max(1, ServerConfig::inactiveClientPurgeTime / 4)));
   m_inactiveClientPurgeTimer.async_wait(std::bind(&ServerKernel::inactiveClientPurgeTimerExpired, this, std::placeholders::_1));
 }
 

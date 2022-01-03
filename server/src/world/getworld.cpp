@@ -28,10 +28,9 @@ std::shared_ptr<World> getWorld(Object* object)
 {
   if(IdObject* idObject = dynamic_cast<IdObject*>(object))
     return idObject->world().lock();
-  else if(SubObject* subObject = dynamic_cast<SubObject*>(object))
+  if(SubObject* subObject = dynamic_cast<SubObject*>(object))
     return getWorld(&subObject->parent());
-  else if(World* world = dynamic_cast<World*>(object))
+  if(World* world = dynamic_cast<World*>(object))
     return world->shared_ptr<World>();
-  else
-    return nullptr;
+  return {};
 }

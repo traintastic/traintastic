@@ -64,8 +64,7 @@ void World::init(const std::shared_ptr<World>& world)
 #endif
 }
 
-World::World(Private) :
-  Object(),
+World::World(Private /*unused*/) :
   uuid{this, "uuid", to_string(boost::uuids::random_generator()()), PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   scale{this, "scale", WorldScale::H0, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly, [this](WorldScale /*value*/){ updateScaleRatio(); }},

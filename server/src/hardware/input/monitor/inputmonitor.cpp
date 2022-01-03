@@ -25,8 +25,7 @@
 #include "../input.hpp"
 
 InputMonitor::InputMonitor(InputController& controller)
-  : Object()
-  , m_controller{controller}
+  : m_controller{controller}
   , addressMin{this, "address_min", m_controller.inputAddressMinMax().first, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , addressMax{this, "address_max", m_controller.inputAddressMinMax().second, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
 {

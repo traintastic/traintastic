@@ -65,8 +65,7 @@ bool OutputController::addOutput(Output& output)
     output.value.setValueInternal(TriState::Undefined);
     return true;
   }
-  else
-    return false;
+  return false;
 }
 
 bool OutputController::removeOutput(Output& output)
@@ -79,8 +78,7 @@ bool OutputController::removeOutput(Output& output)
     output.value.setValueInternal(TriState::Undefined);
     return true;
   }
-  else
-    return false;
+  return false;
 }
 
 void OutputController::updateOutputValue(uint32_t address, TriState value)

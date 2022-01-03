@@ -89,7 +89,7 @@ void Script::load(WorldLoader& loader, const nlohmann::json& data)
   m_basename = id;
   std::string s;
   if(loader.readFile(std::filesystem::path(scripts) / m_basename += dotLua, s))
-    code.load(s);
+    code.loadJSON(s);
 }
 
 void Script::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& stateData) const

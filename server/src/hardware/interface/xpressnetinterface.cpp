@@ -38,7 +38,7 @@
 XpressNetInterface::XpressNetInterface(const std::weak_ptr<World>& world, std::string_view _id)
   : Interface(world, _id)
   , type{this, "type", XpressNetInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
-      [this](XpressNetInterfaceType)
+      [this](XpressNetInterfaceType /*value*/)
       {
         updateVisible();
       }}
@@ -293,7 +293,7 @@ bool XpressNetInterface::setOnline(bool& value)
       m_kernel->start();
 
       m_xpressnetPropertyChanged = xpressnet->propertyChanged.connect(
-        [this](BaseProperty&)
+        [this](BaseProperty& /*property*/)
         {
           m_kernel->setConfig(xpressnet->config());
         });

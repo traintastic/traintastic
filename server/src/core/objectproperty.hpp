@@ -158,7 +158,7 @@ class ObjectProperty : public AbstractObjectProperty
         setValue(nullptr);
     }
 
-    void load(const ObjectPtr& value) final
+    void loadObject(const ObjectPtr& value) final
     {
       if(value)
       {

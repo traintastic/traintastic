@@ -30,6 +30,8 @@ else()
       COMPILE_FLAGS -Wno-shadow)
 endif()
 
+set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*,-readability-braces-around-statements,-readability-implicit-bool-conversion,-readability-magic-numbers)
+
 add_executable(traintastic-server src/main.cpp src/options.hpp)
 add_executable(traintastic-server-test test/main.cpp)
 

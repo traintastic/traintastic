@@ -29,7 +29,7 @@ bool DecoderController::addDecoder(Decoder& decoder)
 {
   if(decoder.protocol != DecoderProtocol::Auto && findDecoder(decoder) != m_decoders.end())
     return false;
-  else if(findDecoder(DecoderProtocol::Auto, decoder.address) != m_decoders.end())
+  if(findDecoder(DecoderProtocol::Auto, decoder.address) != m_decoders.end())
     return false;
 
   m_decoders.emplace_back(decoder.shared_ptr<Decoder>());
@@ -44,8 +44,7 @@ bool DecoderController::removeDecoder(Decoder& decoder)
     m_decoders.erase(it);
     return true;
   }
-  else
-    return false;
+  return false;
 }
 
 const std::shared_ptr<Decoder>& DecoderController::getDecoder(DecoderProtocol protocol, uint16_t address, bool dccLongAddress, bool fallbackToProtocolAuto)
@@ -53,10 +52,10 @@ const std::shared_ptr<Decoder>& DecoderController::getDecoder(DecoderProtocol pr
   auto it = findDecoder(protocol, address, dccLongAddress);
   if(it != m_decoders.end())
     return *it;
-  else if(fallbackToProtocolAuto && protocol != DecoderProtocol::Auto && (it = findDecoder(DecoderProtocol::Auto, address)) != m_decoders.end())
+  if(fallbackToProtocolAuto && protocol != DecoderProtocol::Auto && (it = findDecoder(DecoderProtocol::Auto, address)) != m_decoders.end())
     return *it;
-  else
-    return Decoder::null;
+
+  return Decoder::null;
 }
 
 DecoderController::DecoderVector::iterator DecoderController::findDecoder(const Decoder& decoder)
@@ -74,14 +73,12 @@ DecoderController::DecoderVector::iterator DecoderController::findDecoder(Decode
         return it->protocol == DecoderProtocol::DCC && it->address == address && it->longAddress == dccLongAddress;
       });
   }
-  else
-  {
-    return std::find_if(m_decoders.begin(), m_decoders.end(),
-      [protocol, address](const auto& it)
-      {
-        return it->protocol == protocol && it->address == address;
-      });
-  }
+
+  return std::find_if(m_decoders.begin(), m_decoders.end(),
+    [protocol, address](const auto& it)
+    {
+      return it->protocol == protocol && it->address == address;
+    });
 }
 
 void DecoderController::restoreDecoderSpeed()

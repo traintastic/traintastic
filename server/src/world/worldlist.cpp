@@ -31,7 +31,6 @@
 using nlohmann::json;
 
 WorldList::WorldList(const std::filesystem::path& path) :
-  Object(),
   m_path{path}
 {
   if(!std::filesystem::is_directory(m_path))
@@ -56,7 +55,7 @@ void WorldList::buildIndex()
   m_items.clear();
 
   WorldInfo info;
-  for(auto& it : std::filesystem::directory_iterator(m_path))
+  for(const auto& it : std::filesystem::directory_iterator(m_path))
   {
     info.path = it.path();
 

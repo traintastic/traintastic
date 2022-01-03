@@ -63,7 +63,7 @@ class OutputKeyboard : public Object
     std::string getObjectId() const final;
 
     std::vector<OutputInfo> getOutputInfo() const;
-    void setOutputValue(uint32_t address, bool value);
+    bool setOutputValue(uint32_t address, bool value);
 };
 
 #endif

@@ -42,8 +42,8 @@ ObjectPtr Object::check(lua_State* L, int index)
 
   if(ObjectPtr object = (**data).lock())
     return object;
-  else
-    errorDeadObject(L);
+
+  errorDeadObject(L);
 }
 
 std::shared_ptr<AbstractObjectList> Object::checkList(lua_State* L, int index)
@@ -51,8 +51,8 @@ std::shared_ptr<AbstractObjectList> Object::checkList(lua_State* L, int index)
   ObjectPtrWeak& data = **static_cast<ObjectPtrWeak**>(luaL_checkudata(L, index, metaTableNameList));
   if(ObjectPtr object = data.lock())
     return std::static_pointer_cast<AbstractObjectList>(object);
-  else
-    errorDeadObject(L);
+
+  errorDeadObject(L);
 }
 
 ObjectPtr Object::test(lua_State* L, int index)
@@ -63,10 +63,10 @@ ObjectPtr Object::test(lua_State* L, int index)
 
   if(!data)
     return {};
-  else if(ObjectPtr object = (**data).lock())
+  if(ObjectPtr object = (**data).lock())
     return object;
-  else
-    errorDeadObject(L);
+
+  errorDeadObject(L);
 }
 
 std::shared_ptr<AbstractObjectList> Object::testList(lua_State* L, int index)
@@ -74,10 +74,10 @@ std::shared_ptr<AbstractObjectList> Object::testList(lua_State* L, int index)
   ObjectPtrWeak** data = static_cast<ObjectPtrWeak**>(luaL_testudata(L, index, metaTableNameList));
   if(!data)
     return {};
-  else if(ObjectPtr object = (**data).lock())
+  if(ObjectPtr object = (**data).lock())
     return std::static_pointer_cast<AbstractObjectList>(object);
-  else
-    errorDeadObject(L);
+
+  errorDeadObject(L);
 }
 
 void Object::push(lua_State* L, const ObjectPtr& value)

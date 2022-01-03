@@ -38,7 +38,7 @@
 class Client;
 class Message;
 
-class Traintastic : public Object
+class Traintastic final : public Object
 {
   friend class Client;
 
@@ -64,8 +64,8 @@ class Traintastic : public Object
     bool start();
     void stop();
 
-    void load(const boost::uuids::uuid& uuid);
-    void load(const std::filesystem::path& path);
+    void loadWorldUUID(const boost::uuids::uuid& uuid);
+    void loadWorldPath(const std::filesystem::path& path);
 
     void doReceive();
     std::unique_ptr<Message> processMessage(const Message& message);

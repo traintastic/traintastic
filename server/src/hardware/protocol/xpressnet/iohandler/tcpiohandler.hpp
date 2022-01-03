@@ -28,7 +28,7 @@
 
 namespace XpressNet {
 
-class TCPIOHandler : public IOHandler
+class TCPIOHandler final : public IOHandler
 {
   private:
     boost::asio::ip::tcp::socket m_socket;

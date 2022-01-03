@@ -33,7 +33,7 @@ FreightCar::FreightCar(const std::weak_ptr<World>& world, std::string_view _id)
       cargoWeight.setValue(ratio * cargoCapacity.getValue(cargoWeight.unit()));
     }}
   , cargoWeight{*this, "cargo_weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
-    [this](double, WeightUnit)
+    [this](double /*value*/, WeightUnit /*unit*/)
     {
       updateCargoLoaded();
       updateTotalWeight();

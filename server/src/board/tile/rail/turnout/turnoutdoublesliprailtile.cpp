@@ -33,7 +33,7 @@ TurnoutDoubleSlipRailTile::TurnoutDoubleSlipRailTile(const std::weak_ptr<World>&
   m_interfaceItems.add(position);
 }
 
-void TurnoutDoubleSlipRailTile::doNextPosition(bool)
+void TurnoutDoubleSlipRailTile::doNextPosition(bool /*reverse*/)
 {
   position = (position == TurnoutPosition::Crossed) ? TurnoutPosition::Diverged : TurnoutPosition::Crossed;
 }

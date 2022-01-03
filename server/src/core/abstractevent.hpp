@@ -35,7 +35,6 @@ class AbstractEvent : public InterfaceItem
   private:
     const EventFlags m_flags;
     std::list<std::shared_ptr<AbstractEventHandler>> m_handlers;
-    bool m_firing;
 
   protected:
     void fire(const Arguments& args);

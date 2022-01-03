@@ -57,7 +57,7 @@ AbstractEvent* Event::test(lua_State* L, int index)
   EventData** data = static_cast<EventData**>(luaL_testudata(L, index, metaTableName));
   if(!data)
     return nullptr;
-  else if(!(**data).object.expired())
+  if(!(**data).object.expired())
     return &(**data).event;
 
   errorDeadEvent(L);

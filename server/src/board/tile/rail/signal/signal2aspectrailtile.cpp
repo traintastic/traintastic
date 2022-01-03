@@ -33,7 +33,7 @@ Signal2AspectRailTile::Signal2AspectRailTile(const std::weak_ptr<World>& world, 
   m_interfaceItems.add(aspect);
 }
 
-void Signal2AspectRailTile::doNextAspect(bool)
+void Signal2AspectRailTile::doNextAspect(bool /*reverse*/)
 {
   aspect = (aspect == SignalAspect::Stop) ? SignalAspect::Proceed : SignalAspect::Stop;
 }

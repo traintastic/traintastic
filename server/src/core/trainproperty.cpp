@@ -57,9 +57,9 @@ void TrainProperty::setValue(const std::shared_ptr<T>& value)
   assert(isWriteable());
   if(m_value == value)
     return;
-  else if(!isWriteable())
+  if(!isWriteable())
     throw not_writable_error();
-  else if(!m_onSet || m_onSet(value))
+  if(!m_onSet || m_onSet(value))
   {
     m_value = value;
     changed();
@@ -126,7 +126,7 @@ void TrainProperty::fromObject(const ObjectPtr& value)
     setValue(nullptr);
 }
 
-void TrainProperty::load(const ObjectPtr& value)
+void TrainProperty::loadObject(const ObjectPtr& value)
 {
   if(value)
   {

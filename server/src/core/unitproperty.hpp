@@ -219,7 +219,7 @@ class UnitProperty : public AbstractUnitProperty
       setValue(to<T>(value));
     }
 
-    void load(const nlohmann::json& value) final
+    void loadJSON(const nlohmann::json& value) final
     {
       m_value = to<T>(value["value"]);
       from_json(value["unit"], m_unit);

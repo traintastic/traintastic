@@ -33,7 +33,7 @@ TurnoutRightRailTile::TurnoutRightRailTile(const std::weak_ptr<World>& world, st
   m_interfaceItems.add(position);
 }
 
-void TurnoutRightRailTile::doNextPosition(bool)
+void TurnoutRightRailTile::doNextPosition(bool /*reverse*/)
 {
   position = (position == TurnoutPosition::Straight) ? TurnoutPosition::Right : TurnoutPosition::Straight;
 }

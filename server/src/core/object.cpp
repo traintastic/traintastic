@@ -101,13 +101,13 @@ void Object::load(WorldLoader& loader, const nlohmann::json& data)
         else
         {
           if(value.is_string())
-            property->load(loader.getObject(value));
+            property->loadObject(loader.getObject(value));
           else if(value.is_null())
-            property->load(ObjectPtr());
+            property->loadObject(ObjectPtr());
         }
       }
       else
-        property->load(value);
+        property->loadJSON(value);
     }
     else if(AbstractVectorProperty* vectorProperty = getVectorProperty(name))
     {
@@ -129,7 +129,7 @@ void Object::load(WorldLoader& loader, const nlohmann::json& data)
         }
       }
       else
-        vectorProperty->load(value);
+        vectorProperty->loadJSON(value);
     }
   }
 
@@ -138,9 +138,9 @@ void Object::load(WorldLoader& loader, const nlohmann::json& data)
   for(auto& [name, value] : state.items())
   {
     if(AbstractProperty* property = getProperty(name))
-      property->load(value);
+      property->loadJSON(value);
     else if(AbstractVectorProperty* vectorProperty = getVectorProperty(name))
-      vectorProperty->load(value);
+      vectorProperty->loadJSON(value);
   }
 }
 
@@ -148,7 +148,7 @@ void Object::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state
 {
   data["class_id"] = getClassId();
 
-  for(auto& item : interfaceItems())
+  for(const auto& item : interfaceItems())
     if(BaseProperty* baseProperty = dynamic_cast<BaseProperty*>(&item.second))
     {
       if(baseProperty->isStoreable())
@@ -205,7 +205,7 @@ void Object::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state
 
 void Object::loaded()
 {
-  for(auto& it : m_interfaceItems)
+  for(const auto& it : m_interfaceItems)
   {
     if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&it.second);
         property && contains(property->flags(), PropertyFlags::SubObject))
@@ -224,7 +224,7 @@ void Object::loaded()
 
 void Object::worldEvent(WorldState state, WorldEvent event)
 {
-  for(auto& it : m_interfaceItems)
+  for(const auto& it : m_interfaceItems)
   {
     if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&it.second);
         property && contains(property->flags(), PropertyFlags::SubObject))

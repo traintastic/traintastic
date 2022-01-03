@@ -47,8 +47,8 @@ class AbstractProperty : public BaseProperty
     virtual void fromString(const std::string& value) = 0;
     virtual void fromObject(const ObjectPtr& value) = 0;
 
-    virtual void load(const nlohmann::json& value) = 0;
-    virtual void load(const ObjectPtr& value) = 0;
+    virtual void loadJSON(const nlohmann::json& value) = 0;
+    virtual void loadObject(const ObjectPtr& value) = 0;
 };
 
 #endif

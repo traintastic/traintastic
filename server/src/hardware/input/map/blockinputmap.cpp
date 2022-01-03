@@ -80,7 +80,7 @@ BlockInputMap::BlockInputMap(Object& _parent, const std::string& parentPropertyN
 void BlockInputMap::load(WorldLoader& loader, const nlohmann::json& data)
 {
   nlohmann::json objects = data.value("items", nlohmann::json::array());
-  if(objects.size() > 0)
+  if(!objects.empty())
   {
     std::vector<std::shared_ptr<BlockInputMapItem>> values;
     for(const auto& object : objects.items())

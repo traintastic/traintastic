@@ -49,11 +49,11 @@ class WorldList : public Object, public Table
     };
 
   protected:
+    static bool readInfo(const nlohmann::json& world, WorldInfo& info);
+
     const std::filesystem::path m_path;
     std::vector<WorldInfo> m_items;
     std::vector<WorldListTableModel*> m_models;
-
-    bool readInfo(const nlohmann::json& world, WorldInfo& info);
 
   public:
     CLASS_ID("world_list");

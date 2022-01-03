@@ -42,7 +42,6 @@ using nlohmann::json;
 std::shared_ptr<Traintastic> Traintastic::instance;
 
 Traintastic::Traintastic(const std::filesystem::path& dataDir) :
-  Object{},
   m_restart{false},
   m_dataDir{std::filesystem::absolute(dataDir)},
   m_ioContext{},
@@ -75,7 +74,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
       }
 
       if(!uuid.is_nil())
-        load(uuid);
+        loadWorldUUID(uuid);
     }},
   restart{*this, "restart",
     [this]()
@@ -123,7 +122,7 @@ Traintastic::RunStatus Traintastic::run()
   worldList = std::make_shared<WorldList>(worldDir());
 
   if(settings->loadLastWorldOnStartup && !settings->lastWorld.value().empty())
-    loadWorld(settings->lastWorld.value());
+    loadWorldPath(settings->lastWorld.value());
 
   if(!start())
     return ExitFailure;
@@ -239,15 +238,15 @@ void Traintastic::stop()
   m_socketUDP.close();
 }
 
-void Traintastic::load(const boost::uuids::uuid& uuid)
+void Traintastic::loadWorldUUID(const boost::uuids::uuid& uuid)
 {
   if(const WorldList::WorldInfo* info = worldList->find(uuid))
-    load(info->path);
+    loadWorldPath(info->path);
   else
     Log::log(*this, LogMessage::E1002_WORLD_X_DOESNT_EXIST, to_string(uuid));
 }
 
-void Traintastic::load(const std::filesystem::path& path)
+void Traintastic::loadWorldPath(const std::filesystem::path& path)
 {
   try
   {
@@ -284,7 +283,7 @@ void Traintastic::doReceive()
               if(response)
               {
                 m_socketUDP.async_send_to(boost::asio::buffer(**response, response->size()), m_remoteEndpoint,
-                  [this](const boost::system::error_code&, std::size_t)
+                  [this](const boost::system::error_code& /*ec*/, std::size_t /*bytesTransferred*/)
                   {
                     doReceive();
                   });

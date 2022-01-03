@@ -49,7 +49,7 @@ WorldSaver::WorldSaver(const World& world, std::filesystem::path path) :
   {
     json objects = json::array();
 
-    for(auto& it : world.m_objects)
+    for(const auto& it : world.m_objects)
       if(ObjectPtr object = it.second.lock())
         objects.push_back(saveObject(object));
 

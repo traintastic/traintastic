@@ -29,7 +29,6 @@ constexpr uint32_t columnName = 0;
 constexpr uint32_t columnUUID = 1;
 
 WorldListTableModel::WorldListTableModel(WorldList& worldList) :
-  TableModel(),
   m_worldList{worldList.shared_ptr<WorldList>()}
 {
   m_worldList->m_models.push_back(this);

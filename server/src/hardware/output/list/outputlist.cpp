@@ -60,8 +60,7 @@ OutputList::OutputList(Object& _parent, const std::string& parentPropertyName)
       {
         if(const auto controller = std::dynamic_pointer_cast<OutputController>(parent().shared_from_this()))
           return controller->outputKeyboard();
-        else
-          return std::shared_ptr<OutputKeyboard>();
+        return std::shared_ptr<OutputKeyboard>();
       }}
 {
   auto w = getWorld(&_parent);

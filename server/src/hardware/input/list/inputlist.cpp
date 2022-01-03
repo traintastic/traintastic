@@ -60,8 +60,7 @@ InputList::InputList(Object& _parent, const std::string& parentPropertyName)
       {
         if(const auto controller = std::dynamic_pointer_cast<InputController>(parent().shared_from_this()))
           return controller->inputMonitor();
-        else
-          return std::shared_ptr<InputMonitor>();
+        return std::shared_ptr<InputMonitor>();
       }}
 {
   auto w = getWorld(&_parent);

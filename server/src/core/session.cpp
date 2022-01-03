@@ -487,7 +487,7 @@ bool Session::processMessage(const Message& message)
       if(board)
       {
         auto response = Message::newResponse(message.command(), message.requestId());
-        for(auto& it : board->tileMap())
+        for(const auto& it : board->tileMap())
         {
           const Tile& tile = *(it.second);
           if(it.first != tile.location()) // only tiles at origin
@@ -520,7 +520,7 @@ bool Session::processMessage(const Message& message)
       if(auto outputMap = std::dynamic_pointer_cast<OutputMap>(m_handles.getItem(message.read<Handle>())))
       {
         auto response = Message::newResponse(message.command(), message.requestId());
-        for(auto& item : outputMap->outputs())
+        for(const auto& item : outputMap->outputs())
           writeObject(*response, item);
         m_client->sendMessage(std::move(response));
         return true;
@@ -939,7 +939,7 @@ void Session::outputMapOutputsChanged(OutputMap& outputMap)
 {
   auto event = Message::newEvent(Message::Command::OutputMapOutputsChanged);
   event->write(m_handles.getHandle(outputMap.shared_from_this()));
-  for(auto& item : outputMap.outputs())
+  for(const auto& item : outputMap.outputs())
     writeObject(*event, item);
   m_client->sendMessage(std::move(event));
 }

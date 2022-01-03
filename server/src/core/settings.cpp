@@ -44,20 +44,19 @@ Settings::PreStart Settings::getPreStartSettings(const std::filesystem::path& pa
   return PreStart();
 }
 
-Settings::Settings(const std::filesystem::path& path) :
-  Object{},
-  m_filename{path / filename},
-  localhostOnly{this, "localhost_only", true, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
-  port{this, "port", defaultPort, PropertyFlags::ReadWrite, [this](const uint16_t&){ save(); }},
-  discoverable{this, "discoverable", true, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
-  lastWorld{this, "last_world", "", PropertyFlags::ReadWrite | PropertyFlags::Internal, [this](const std::string&){ save(); }},
-  loadLastWorldOnStartup{this, "load_last_world_on_startup", true, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
-  autoSaveWorldOnExit{this, "auto_save_world_on_exit", false, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
-  saveWorldUncompressed{this, "save_world_uncompressed", false, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
-  allowClientServerRestart{this, "allow_client_server_restart", false, PropertyFlags::ReadWrite, [this](const bool&){ save(); }},
-  allowClientServerShutdown{this, "allow_client_server_shutdown", false, PropertyFlags::ReadWrite, [this](const bool&){ save(); }}
-  , memoryLoggerSize{this, Name::memoryLoggerSize, Default::memoryLoggerSize, PropertyFlags::ReadWrite, [this](const uint32_t&){ save(); }}
-  , enableFileLogger{this, Name::enableFileLogger, Default::enableFileLogger, PropertyFlags::ReadWrite, [this](const bool&){ save(); }}
+Settings::Settings(const std::filesystem::path& path)
+  : m_filename{path / filename}
+  , localhostOnly{this, "localhost_only", true, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
+  , port{this, "port", defaultPort, PropertyFlags::ReadWrite, [this](const uint16_t& /*value*/){ saveToFile(); }}
+  , discoverable{this, "discoverable", true, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
+  , lastWorld{this, "last_world", "", PropertyFlags::ReadWrite | PropertyFlags::Internal, [this](const std::string& /*value*/){ saveToFile(); }}
+  , loadLastWorldOnStartup{this, "load_last_world_on_startup", true, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
+  , autoSaveWorldOnExit{this, "auto_save_world_on_exit", false, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
+  , saveWorldUncompressed{this, "save_world_uncompressed", false, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
+  , allowClientServerRestart{this, "allow_client_server_restart", false, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
+  , allowClientServerShutdown{this, "allow_client_server_shutdown", false, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
+  , memoryLoggerSize{this, Name::memoryLoggerSize, Default::memoryLoggerSize, PropertyFlags::ReadWrite, [this](const uint32_t& /*value*/){ saveToFile(); }}
+  , enableFileLogger{this, Name::enableFileLogger, Default::enableFileLogger, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
 {
   m_interfaceItems.add(lastWorld);
   m_interfaceItems.add(loadLastWorldOnStartup);
@@ -75,7 +74,7 @@ Settings::Settings(const std::filesystem::path& path) :
   m_interfaceItems.add(allowClientServerShutdown);
 
   Attributes::addCategory(memoryLoggerSize, Category::log);
-  Attributes::addMinMax(memoryLoggerSize, 0U, 1'000'000U);
+  Attributes::addMinMax(memoryLoggerSize, 0U, memoryLoggerSizeMax);
   m_interfaceItems.add(memoryLoggerSize);
   Attributes::addCategory(enableFileLogger, Category::log);
   m_interfaceItems.add(enableFileLogger);
@@ -83,10 +82,10 @@ Settings::Settings(const std::filesystem::path& path) :
   Attributes::addCategory(saveWorldUncompressed, Category::developer);
   m_interfaceItems.add(saveWorldUncompressed);
 
-  load();
+  loadFromFile();
 }
 
-void Settings::load()
+void Settings::loadFromFile()
 {
   std::ifstream file(m_filename);
   if(file.is_open())
@@ -96,7 +95,7 @@ void Settings::load()
     {
       AbstractProperty* property = getProperty(name);
       if(property)
-        property->load(value);
+        property->loadJSON(value);
       else
         Log::log(*this, LogMessage::W1002_SETTING_X_DOESNT_EXIST, name);
     }
@@ -106,7 +105,7 @@ void Settings::load()
     Log::log(*this, LogMessage::I1002_SETTING_FILE_NOT_FOUND_USING_DEFAULTS);
 }
 
-void Settings::save()
+void Settings::saveToFile()
 {
   // backup settings:
   {

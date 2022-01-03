@@ -95,7 +95,7 @@ DecoderFunctions::DecoderFunctions(Object& _parent, const std::string& parentPro
 void DecoderFunctions::load(WorldLoader& loader, const nlohmann::json& data)
 {
   nlohmann::json objects = data.value("items", nlohmann::json::array());
-  if(objects.size() > 0)
+  if(!objects.empty())
   {
     Decoder& decoder = static_cast<Decoder&>(this->parent());
     std::vector<std::shared_ptr<DecoderFunction>> values;

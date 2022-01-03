@@ -55,6 +55,8 @@ class DecoderFunction : public Object
     DecoderFunction(Decoder& decoder, uint8_t _number);
 
     std::string getObjectId() const final;
+
+    const Decoder& decoder() const { return m_decoder; }
     Decoder& decoder() { return m_decoder; }
 };
 

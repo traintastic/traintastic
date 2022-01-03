@@ -29,7 +29,7 @@ namespace LocoNet {
 Settings::Settings(Object& _parent, const std::string& parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , commandStation{this, "command_station", LocoNetCommandStation::Custom, PropertyFlags::ReadWrite | PropertyFlags::Store,
-      [this](LocoNetCommandStation value)
+      [](LocoNetCommandStation value)
       {
         switch(value)
         {

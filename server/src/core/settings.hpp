@@ -31,6 +31,7 @@ class Settings : public Object
 {
   private:
     static constexpr std::string_view filename = "settings.json";
+    static constexpr uint32_t memoryLoggerSizeMax = 1'000'000;
 
     struct Name
     {
@@ -46,8 +47,8 @@ class Settings : public Object
 
     const std::filesystem::path m_filename;
 
-    void load();
-    void save();
+    void loadFromFile();
+    void saveToFile();
 
   public:
     CLASS_ID("settings")

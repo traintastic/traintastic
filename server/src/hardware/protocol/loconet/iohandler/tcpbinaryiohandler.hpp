@@ -28,7 +28,7 @@
 
 namespace LocoNet {
 
-class TCPBinaryIOHandler : public TCPIOHandler
+class TCPBinaryIOHandler final : public TCPIOHandler
 {
   private:
     std::array<std::byte, 1500> m_readBuffer;

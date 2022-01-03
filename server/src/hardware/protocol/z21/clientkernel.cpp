@@ -32,8 +32,7 @@
 namespace Z21 {
 
 ClientKernel::ClientKernel(const ClientConfig& config)
-  : Kernel()
-  , m_keepAliveTimer(m_ioContext)
+  : m_keepAliveTimer(m_ioContext)
   , m_config{config}
 {
 }
@@ -327,8 +326,8 @@ void ClientKernel::send(const Message& message)
 
 void ClientKernel::startKeepAliveTimer()
 {
-  assert(m_config.keepAliveInterval > 0);
-  m_keepAliveTimer.expires_after(boost::asio::chrono::seconds(m_config.keepAliveInterval));
+  assert(ClientConfig::keepAliveInterval > 0);
+  m_keepAliveTimer.expires_after(boost::asio::chrono::seconds(ClientConfig::keepAliveInterval));
   m_keepAliveTimer.async_wait(std::bind(&ClientKernel::keepAliveTimerExpired, this, std::placeholders::_1));
 }
 

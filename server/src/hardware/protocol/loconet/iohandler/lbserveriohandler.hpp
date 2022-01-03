@@ -29,7 +29,7 @@
 
 namespace LocoNet {
 
-class LBServerIOHandler : public TCPIOHandler
+class LBServerIOHandler final : public TCPIOHandler
 {
   private:
     std::array<char, 4096> m_readBuffer;

@@ -44,8 +44,7 @@ bool AbstractEvent::disconnect(const std::shared_ptr<AbstractEventHandler>& hand
     m_handlers.erase(it);
     return true;
   }
-  else
-    return false;
+  return false;
 }
 
 void AbstractEvent::fire(const Arguments& args)

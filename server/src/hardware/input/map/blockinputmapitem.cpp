@@ -29,7 +29,6 @@
 #include "../../../board/tile/rail/blockrailtile.hpp"
 
 BlockInputMapItem::BlockInputMapItem(BlockInputMap& parent, uint32_t itemId) :
-  InputMapItem(),
   m_parent{parent},
   m_itemId{itemId},
   name{this, "name", std::string("sensor").append(std::to_string(m_itemId)), PropertyFlags::ReadWrite | PropertyFlags::Store},
@@ -53,7 +52,7 @@ BlockInputMapItem::BlockInputMapItem(BlockInputMap& parent, uint32_t itemId) :
     }},
   type{this, "type", SensorType::OccupyDetector, PropertyFlags::ReadWrite | PropertyFlags::Store},
   invert{this, "invert", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](bool)
+    [this](bool /*value*/)
     {
       if(input)
         inputPropertyChanged(input->value);

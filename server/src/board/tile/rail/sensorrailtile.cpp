@@ -48,13 +48,13 @@ SensorRailTile::SensorRailTile(const std::weak_ptr<World>& world, std::string_vi
       return true;
     }},
   type{this, "type", SensorType::OccupyDetector, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](SensorType)
+    [this](SensorType /*value*/)
     {
       if(input)
         inputPropertyChanged(input->value);
     }},
   invert{this, "invert", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](bool)
+    [this](bool /*value*/)
     {
       if(input)
         inputPropertyChanged(input->value);

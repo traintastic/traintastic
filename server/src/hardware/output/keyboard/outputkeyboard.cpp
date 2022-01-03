@@ -26,8 +26,7 @@
 #include "../../../utils/inrange.hpp"
 
 OutputKeyboard::OutputKeyboard(OutputController& controller)
-  : Object()
-  , m_controller{controller}
+  : m_controller{controller}
   , addressMin{this, "address_min", m_controller.outputAddressMinMax().first, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , addressMax{this, "address_max", m_controller.outputAddressMinMax().second, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
 {
@@ -49,7 +48,7 @@ std::vector<OutputKeyboard::OutputInfo> OutputKeyboard::getOutputInfo() const
   return outputInfo;
 }
 
-void OutputKeyboard::setOutputValue(uint32_t address, bool value)
+bool OutputKeyboard::setOutputValue(uint32_t address, bool value)
 {
-  m_controller.setOutputValue(address, value);
+  return m_controller.setOutputValue(address, value);
 }

@@ -25,7 +25,7 @@
 #define TRAINTASTIC_SERVER_CORE_CONVERTUNIT_HPP
 
 template<typename T, typename Unit>
-T convertUnit(T value, Unit from, Unit to)
+T convertUnit(T /*value*/, Unit /*from*/, Unit /*to*/)
 {
   static_assert(sizeof(T) != sizeof(T), "Specialization required");
   return 0;
