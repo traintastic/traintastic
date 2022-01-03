@@ -25,6 +25,7 @@
 #include "attributes.hpp"
 #include "traintastic.hpp"
 #include "../log/log.hpp"
+#include "../utils/category.hpp"
 
 using nlohmann::json;
 
@@ -56,17 +57,28 @@ Settings::Settings(const std::filesystem::path& path) :
   , memoryLoggerSize{this, Name::memoryLoggerSize, Default::memoryLoggerSize, PropertyFlags::ReadWrite, [this](const uint32_t&){ save(); }}
   , enableFileLogger{this, Name::enableFileLogger, Default::enableFileLogger, PropertyFlags::ReadWrite, [this](const bool&){ save(); }}
 {
-  m_interfaceItems.add(localhostOnly);
-  m_interfaceItems.add(port);
-  m_interfaceItems.add(discoverable);
   m_interfaceItems.add(defaultWorld);
   m_interfaceItems.add(autoSaveWorldOnExit);
-  m_interfaceItems.add(saveWorldUncompressed);
+
+  Attributes::addCategory(localhostOnly, Category::network);
+  m_interfaceItems.add(localhostOnly);
+  Attributes::addCategory(port, Category::network);
+  m_interfaceItems.add(port);
+  Attributes::addCategory(discoverable, Category::network);
+  m_interfaceItems.add(discoverable);
+  Attributes::addCategory(allowClientServerRestart, Category::network);
   m_interfaceItems.add(allowClientServerRestart);
+  Attributes::addCategory(allowClientServerShutdown, Category::network);
   m_interfaceItems.add(allowClientServerShutdown);
+
+  Attributes::addCategory(memoryLoggerSize, Category::log);
   Attributes::addMinMax(memoryLoggerSize, 0U, 1'000'000U);
   m_interfaceItems.add(memoryLoggerSize);
+  Attributes::addCategory(enableFileLogger, Category::log);
   m_interfaceItems.add(enableFileLogger);
+
+  Attributes::addCategory(saveWorldUncompressed, Category::developer);
+  m_interfaceItems.add(saveWorldUncompressed);
 
   load();
 }

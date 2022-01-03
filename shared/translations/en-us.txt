@@ -16,8 +16,11 @@ board_tile.rail.sensor:type=Type
 
 board_tile:output_map=Outputs
 
+category:developer=Developer
 category:general=General
 category:info=Info
+category:log=Log
+category:network=Network
 
 class_id:board_tile.rail.block=Block
 class_id:board_tile.rail.bridge_45_left=Bridge 45° (left)
