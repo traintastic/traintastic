@@ -45,9 +45,19 @@ void Object::destroy()
   }
 }
 
+const InterfaceItem* Object::getItem(std::string_view name) const
+{
+  return m_interfaceItems.find(name);
+}
+
 InterfaceItem* Object::getItem(std::string_view name)
 {
   return m_interfaceItems.find(name);
+}
+
+const AbstractMethod* Object::getMethod(std::string_view name) const
+{
+  return dynamic_cast<const AbstractMethod*>(getItem(name));
 }
 
 AbstractMethod* Object::getMethod(std::string_view name)
@@ -55,9 +65,19 @@ AbstractMethod* Object::getMethod(std::string_view name)
   return dynamic_cast<AbstractMethod*>(getItem(name));
 }
 
+const AbstractProperty* Object::getProperty(std::string_view name) const
+{
+  return dynamic_cast<const AbstractProperty*>(getItem(name));
+}
+
 AbstractProperty* Object::getProperty(std::string_view name)
 {
   return dynamic_cast<AbstractProperty*>(getItem(name));
+}
+
+const AbstractVectorProperty* Object::getVectorProperty(std::string_view name) const
+{
+  return dynamic_cast<const AbstractVectorProperty*>(getItem(name));
 }
 
 AbstractVectorProperty* Object::getVectorProperty(std::string_view name)

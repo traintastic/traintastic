@@ -34,7 +34,7 @@ class InputMonitor final : public Object
     int m_requestId;
 
   public:
-    inline static const QString classIdPrefix = QStringLiteral("input_monitor.");
+    inline static const QString classId = QStringLiteral("input_monitor");
 
     InputMonitor(const std::shared_ptr<Connection>& connection, Handle handle, const QString& classId);
     ~InputMonitor() final;

@@ -34,7 +34,7 @@ class OutputKeyboard final : public Object
     int m_requestId;
 
   public:
-    inline static const QString classIdPrefix = QStringLiteral("output_keyboard.");
+    inline static const QString classId = QStringLiteral("output_keyboard");
 
     OutputKeyboard(std::shared_ptr<Connection> connection, Handle handle, const QString& classId);
     ~OutputKeyboard() final;

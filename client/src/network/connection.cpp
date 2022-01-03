@@ -476,9 +476,9 @@ ObjectPtr Connection::readObject(const Message& message)
       else
       {
         const QString classId = QString::fromLatin1(message.read<QByteArray>());
-        if(classId.startsWith(InputMonitor::classIdPrefix))
+        if(classId == InputMonitor::classId)
           p = new InputMonitor(shared_from_this(), handle, classId);
-        else if(classId.startsWith(OutputKeyboard::classIdPrefix))
+        else if(classId == OutputKeyboard::classId)
           p = new OutputKeyboard(shared_from_this(), handle, classId);
         else if(classId.startsWith(OutputMap::classIdPrefix))
           p = new OutputMap(shared_from_this(), handle, classId);

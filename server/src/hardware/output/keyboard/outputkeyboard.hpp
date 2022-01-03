@@ -28,11 +28,18 @@
 #include "../../../core/property.hpp"
 #include "../../../enum/tristate.hpp"
 
+class OutputController;
+
 class OutputKeyboard : public Object
 {
+  CLASS_ID("output_keyboard")
+
+  private:
+    OutputController& m_controller;
+
   public:
-    std::function<void(OutputKeyboard&, uint32_t, std::string_view)> outputIdChanged;
-    std::function<void(OutputKeyboard&, uint32_t, TriState)> outputValueChanged;
+    boost::signals2::signal<void(OutputKeyboard&, uint32_t, std::string_view)> outputIdChanged;
+    boost::signals2::signal<void(OutputKeyboard&, uint32_t, TriState)> outputValueChanged;
 
     struct OutputInfo
     {
@@ -51,15 +58,12 @@ class OutputKeyboard : public Object
     Property<uint32_t> addressMin;
     Property<uint32_t> addressMax;
 
-    OutputKeyboard() :
-      Object(),
-      addressMin{this, "address_min", 0, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
-      addressMax{this, "address_max", 0, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
-    {
-    }
+    OutputKeyboard(OutputController& controller);
 
-    virtual std::vector<OutputInfo> getOutputInfo() const = 0;
-    virtual void setOutputValue(uint32_t address, bool value) = 0;
+    std::string getObjectId() const final;
+
+    std::vector<OutputInfo> getOutputInfo() const;
+    void setOutputValue(uint32_t address, bool value);
 };
 
 #endif

@@ -24,12 +24,7 @@
 #include "../src/world/world.hpp"
 #include "../src/board/board.hpp"
 
-//#include "../src/hardware/commandstation/dccplusplusserial.hpp"
-//#include "../src/hardware/commandstation/loconetserial.hpp"
-//#include "../src/hardware/commandstation/loconettcpbinary.hpp"
-//#include "../src/hardware/commandstation/rocoz21.hpp"
-#include "../src/hardware/commandstation/virtualcommandstation.hpp"
-//#include "../src/hardware/commandstation/xpressnetserial.hpp"
+#include "../src/hardware/interface/loconetinterface.hpp"
 
 TEST_CASE("Create world => destroy world", "[object-create-destroy]")
 {
@@ -77,49 +72,39 @@ TEST_CASE("Create world and board => destroy board", "[object-create-destroy]")
   REQUIRE(worldWeak.expired());
 }
 
-TEMPLATE_TEST_CASE("Create world and command station => destroy world", "[object-create-destroy]"
-  //, DCCPlusPlusSerial
-  //, LocoNetSerial
-  //, LocoNetTCPBinary
-  //, RocoZ21
-  , VirtualCommandStation
-  //, XpressNetSerial
+TEMPLATE_TEST_CASE("Create world and interface => destroy world", "[object-create-destroy]"
+  , LocoNetInterface
   )
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
 
-  std::weak_ptr<CommandStation> commandStationWeak = world->commandStations->add(TestType::classId);
-  REQUIRE_FALSE(commandStationWeak.expired());
-  REQUIRE(commandStationWeak.lock()->getClassId() == TestType::classId);
+  std::weak_ptr<TestType> interfaceWeak = std::dynamic_pointer_cast<TestType>(world->interfaces->add(TestType::classId));
+  REQUIRE_FALSE(interfaceWeak.expired());
+  REQUIRE(interfaceWeak.lock()->getClassId() == TestType::classId);
 
   world.reset();
-  REQUIRE(commandStationWeak.expired());
+  REQUIRE(interfaceWeak.expired());
   REQUIRE(worldWeak.expired());
 }
 
-TEMPLATE_TEST_CASE("Create world and command station => destroy command station", "[object-create-destroy]"
-  //, DCCPlusPlusSerial
-  //, LocoNetSerial
-  //, LocoNetTCPBinary
-  //, RocoZ21
-  , VirtualCommandStation
-  //, XpressNetSerial
+TEMPLATE_TEST_CASE("Create world and interface => destroy interface", "[object-create-destroy]"
+  , LocoNetInterface
   )
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
-  REQUIRE(worldWeak.lock()->commandStations->length == 0);
+  REQUIRE(worldWeak.lock()->interfaces->length == 0);
 
-  std::weak_ptr<CommandStation> commandStationWeak = world->commandStations->add(TestType::classId);
-  REQUIRE_FALSE(commandStationWeak.expired());
-  REQUIRE(worldWeak.lock()->commandStations->length == 1);
+  std::weak_ptr<TestType> interfaceWeak = std::dynamic_pointer_cast<TestType>(world->interfaces->add(TestType::classId));
+  REQUIRE_FALSE(interfaceWeak.expired());
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
 
-  world->commandStations->remove(commandStationWeak.lock());
-  REQUIRE(commandStationWeak.expired());
-  REQUIRE(worldWeak.lock()->commandStations->length == 0);
+  world->interfaces->remove(interfaceWeak.lock());
+  REQUIRE(interfaceWeak.expired());
+  REQUIRE(worldWeak.lock()->interfaces->length == 0);
 
   world.reset();
   REQUIRE(worldWeak.expired());
@@ -216,39 +201,34 @@ TEST_CASE("Create world, decoder and function => destroy function", "[object-cre
   REQUIRE(worldWeak.expired());
 }
 
-TEMPLATE_TEST_CASE("Create world, command station and decoder => destroy command station", "[object-create-destroy]"
-  //, DCCPlusPlusSerial
-  //, LocoNetSerial
-  //, LocoNetTCPBinary
-  //, RocoZ21
-  , VirtualCommandStation
-  //, XpressNetSerial
+TEMPLATE_TEST_CASE("Create world, interface and decoder => destroy interface", "[object-create-destroy]"
+  , LocoNetInterface
   )
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
-  REQUIRE(worldWeak.lock()->commandStations->length == 0);
+  REQUIRE(worldWeak.lock()->interfaces->length == 0);
   REQUIRE(worldWeak.lock()->decoders->length == 0);
 
-  std::weak_ptr<CommandStation> commandStationWeak = world->commandStations->add(TestType::classId);
-  REQUIRE_FALSE(commandStationWeak.expired());
-  REQUIRE(worldWeak.lock()->commandStations->length == 1);
+  std::weak_ptr<TestType> interfaceWeak = std::dynamic_pointer_cast<TestType>(world->interfaces->add(TestType::classId));
+  REQUIRE_FALSE(interfaceWeak.expired());
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
   REQUIRE(worldWeak.lock()->decoders->length == 0);
-  REQUIRE(commandStationWeak.lock()->decoders->length == 0);
+  REQUIRE(interfaceWeak.lock()->decoders->length == 0);
 
-  std::weak_ptr<Decoder> decoderWeak = commandStationWeak.lock()->decoders->add();
+  std::weak_ptr<Decoder> decoderWeak = interfaceWeak.lock()->decoders->add();
   REQUIRE_FALSE(decoderWeak.expired());
-  REQUIRE(decoderWeak.lock()->commandStation.value() == commandStationWeak.lock());
-  REQUIRE(worldWeak.lock()->commandStations->length == 1);
+  REQUIRE(decoderWeak.lock()->interface.value() == std::dynamic_pointer_cast<DecoderController>(interfaceWeak.lock()));
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
   REQUIRE(worldWeak.lock()->decoders->length == 1);
-  REQUIRE(commandStationWeak.lock()->decoders->length == 1);
+  REQUIRE(interfaceWeak.lock()->decoders->length == 1);
 
-  world->commandStations->remove(commandStationWeak.lock());
-  REQUIRE(commandStationWeak.expired());
+  world->interfaces->remove(interfaceWeak.lock());
+  REQUIRE(interfaceWeak.expired());
   REQUIRE_FALSE(decoderWeak.expired());
-  REQUIRE_FALSE(decoderWeak.lock()->commandStation.value().operator bool());
-  REQUIRE(worldWeak.lock()->commandStations->length == 0);
+  REQUIRE_FALSE(decoderWeak.lock()->interface.value().operator bool());
+  REQUIRE(worldWeak.lock()->interfaces->length == 0);
   REQUIRE(worldWeak.lock()->decoders->length == 1);
 
   world.reset();
@@ -256,42 +236,37 @@ TEMPLATE_TEST_CASE("Create world, command station and decoder => destroy command
   REQUIRE(worldWeak.expired());
 }
 
-TEMPLATE_TEST_CASE("Create world, command station and decoder => destroy decoder", "[object-create-destroy]"
-  //, DCCPlusPlusSerial
-  //, LocoNetSerial
-  //, LocoNetTCPBinary
-  //, RocoZ21
-  , VirtualCommandStation
-  //, XpressNetSerial
+TEMPLATE_TEST_CASE("Create world, interface and decoder => destroy decoder", "[object-create-destroy]"
+  , LocoNetInterface
   )
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
-  REQUIRE(worldWeak.lock()->commandStations->length == 0);
+  REQUIRE(worldWeak.lock()->interfaces->length == 0);
   REQUIRE(worldWeak.lock()->decoders->length == 0);
 
-  std::weak_ptr<CommandStation> commandStationWeak = world->commandStations->add(TestType::classId);
-  REQUIRE_FALSE(commandStationWeak.expired());
-  REQUIRE(worldWeak.lock()->commandStations->length == 1);
+  std::weak_ptr<TestType> interfaceWeak = std::dynamic_pointer_cast<TestType>(world->interfaces->add(TestType::classId));
+  REQUIRE_FALSE(interfaceWeak.expired());
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
   REQUIRE(worldWeak.lock()->decoders->length == 0);
-  REQUIRE(commandStationWeak.lock()->decoders->length == 0);
+  REQUIRE(interfaceWeak.lock()->decoders->length == 0);
 
-  std::weak_ptr<Decoder> decoderWeak = commandStationWeak.lock()->decoders->add();
+  std::weak_ptr<Decoder> decoderWeak = interfaceWeak.lock()->decoders->add();
   REQUIRE_FALSE(decoderWeak.expired());
-  REQUIRE(decoderWeak.lock()->commandStation.value() == commandStationWeak.lock());
-  REQUIRE(worldWeak.lock()->commandStations->length == 1);
+  REQUIRE(decoderWeak.lock()->interface.value() == std::dynamic_pointer_cast<DecoderController>(interfaceWeak.lock()));
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
   REQUIRE(worldWeak.lock()->decoders->length == 1);
-  REQUIRE(commandStationWeak.lock()->decoders->length == 1);
+  REQUIRE(interfaceWeak.lock()->decoders->length == 1);
 
   world->decoders->remove(decoderWeak.lock());
-  REQUIRE_FALSE(commandStationWeak.expired());
+  REQUIRE_FALSE(interfaceWeak.expired());
   REQUIRE(decoderWeak.expired());
-  REQUIRE(worldWeak.lock()->commandStations->length == 1);
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
   REQUIRE(worldWeak.lock()->decoders->length == 0);
-  REQUIRE(commandStationWeak.lock()->decoders->length == 0);
+  REQUIRE(interfaceWeak.lock()->decoders->length == 0);
 
   world.reset();
-  REQUIRE(commandStationWeak.expired());
+  REQUIRE(interfaceWeak.expired());
   REQUIRE(worldWeak.expired());
 }

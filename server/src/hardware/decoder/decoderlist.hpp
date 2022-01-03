@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,6 +42,9 @@ class DecoderList : public ObjectList<Decoder>
     DecoderList(Object& _parent, const std::string& parentPropertyName);
 
     TableModelPtr getModel() final;
+
+    std::shared_ptr<Decoder> getDecoder(uint16_t address) const;
+    std::shared_ptr<Decoder> getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress = false) const;
 };
 
 #endif

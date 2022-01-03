@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -63,6 +63,9 @@ constexpr void setEmergencyStop(uint8_t& db)
 
 constexpr uint8_t getSpeedStep(uint8_t db, uint8_t speedSteps)
 {
+  if(isEmergencyStop(db, speedSteps))
+    return 0;
+
   switch(speedSteps)
   {
     case 126:
@@ -70,7 +73,7 @@ constexpr uint8_t getSpeedStep(uint8_t db, uint8_t speedSteps)
       break;
 
     case 28:
-      db = ((db & 0x0F) << 1) | ((db & 0x10) >> 4);
+      db = ((db & 0x0F) << 1) | ((db & 0x10) >> 4); //! @todo check
       break;
 
     case 14:

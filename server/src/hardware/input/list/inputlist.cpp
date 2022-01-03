@@ -22,59 +22,64 @@
 
 #include "inputlist.hpp"
 #include "inputlisttablemodel.hpp"
-#include "../inputs.hpp"
+#include "../inputcontroller.hpp"
 #include "../../../world/getworld.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
 
-InputList::InputList(Object& _parent, const std::string& parentPropertyName) :
-  ObjectList<Input>(_parent, parentPropertyName),
-  add{*this, "add",
-    [this](std::string_view inputClassId)
-    {
-      auto world = getWorld(&this->parent());
-      if(!world)
-        return std::shared_ptr<Input>();
-      auto input = Inputs::create(world, inputClassId, world->getUniqueId("input"));
-      if(auto locoNetInput = std::dynamic_pointer_cast<LocoNetInput>(input); locoNetInput && world->loconets->length == 1)
+InputList::InputList(Object& _parent, const std::string& parentPropertyName)
+  : ObjectList<Input>(_parent, parentPropertyName)
+  , m_parentIsInputController(dynamic_cast<InputController*>(&_parent))
+  , add{*this, "add",
+      [this]()
       {
-        auto& loconet = world->loconets->operator[](0);
-        if(uint16_t address = loconet->getUnusedInputAddress(); address != LocoNetInput::addressInvalid)
+        auto world = getWorld(&parent());
+        if(!world)
+          return std::shared_ptr<Input>();
+
+        auto input = Input::create(world, world->getUniqueId(Input::defaultId));
+        if(const auto controller = std::dynamic_pointer_cast<InputController>(parent().shared_from_this()))
         {
-          locoNetInput->address = address;
-          locoNetInput->loconet = loconet;
+          if(const uint32_t address = controller->getUnusedInputAddress(); address != Input::invalidAddress)
+          {
+            input->address = address;
+            input->interface = controller;
+          }
         }
-      }
-      else if(auto xpressNetInput = std::dynamic_pointer_cast<XpressNetInput>(input); xpressNetInput && world->xpressnets->length == 1)
-      {
-        auto& xpressnet = world->xpressnets->operator[](0);
-        if(uint16_t address = xpressnet->getUnusedInputAddress(); address != XpressNetInput::addressInvalid)
-        {
-          xpressNetInput->address = address;
-          xpressNetInput->xpressnet = xpressnet;
-        }
-      }
-      return input;
-    }}
+        return input;
+      }}
   , remove{*this, "remove",
-    [this](const std::shared_ptr<Input>& input)
-    {
-      if(containsObject(input))
-        input->destroy();
-      assert(!containsObject(input));
-    }}
+      [this](const std::shared_ptr<Input>& input)
+      {
+        if(containsObject(input))
+          input->destroy();
+        assert(!containsObject(input));
+      }}
+  , inputMonitor{*this, "input_monitor",
+      [this]()
+      {
+        if(const auto controller = std::dynamic_pointer_cast<InputController>(parent().shared_from_this()))
+          return controller->inputMonitor();
+        else
+          return std::shared_ptr<InputMonitor>();
+      }}
 {
   auto w = getWorld(&_parent);
   const bool editable = w && contains(w->state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
-  Attributes::addClassList(add, Inputs::classList);
   m_interfaceItems.add(add);
 
   Attributes::addDisplayName(remove, DisplayName::List::remove);
   Attributes::addEnabled(remove, editable);
   m_interfaceItems.add(remove);
+
+  if(m_parentIsInputController)
+  {
+    Attributes::addDisplayName(inputMonitor, DisplayName::Hardware::inputMonitor);
+    m_interfaceItems.add(inputMonitor);
+  }
 }
 
 TableModelPtr InputList::getModel()

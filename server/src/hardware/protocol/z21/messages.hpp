@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,6 +42,7 @@ std::string toString(const Message& message, bool raw = false);
 enum Header : uint16_t
 {
   LAN_GET_SERIAL_NUMBER = 0x10,
+  LAN_GET_CODE = 0x18,
   LAN_GET_HWINFO = 0x1A,
   LAN_LOGOFF = 0x30,
   LAN_X = 0x40,
@@ -49,26 +50,90 @@ enum Header : uint16_t
   LAN_GET_BROADCASTFLAGS = 0x51,
   LAN_GET_LOCO_MODE = 0x60,
   LAN_SET_LOCO_MODE = 0x61,
+  LAN_GET_TURNOUTMODE = 0x70,
+  LAN_SET_TURNOUTMODE = 0x71,
+  LAN_RMBUS_DATACHANGED = 0x80,
+  LAN_RMBUS_GETDATA = 0x81,
+  LAN_RMBUS_PROGRAMMODULE = 0x82,
   LAN_SYSTEMSTATE_DATACHANGED = 0x84,
   LAN_SYSTEMSTATE_GETDATA = 0x85,
+  LAN_RAILCOM_DATACHANGED = 0x88,
+  LAN_RAILCOM_GETDATA = 0x89,
   LAN_LOCONET_Z21_RX = 0xA0,
   LAN_LOCONET_Z21_TX = 0xA1,
+  LAN_LOCONET_FROM_LAN = 0xA2,
+  LAN_LOCONET_DISPATCH_ADDR = 0xA3,
+  LAN_LOCONET_DETECTOR = 0xA4,
+  LAN_CAN_DETECTOR = 0xC4,
 };
 
-enum BroadcastFlags : uint32_t
+enum class BroadcastFlags : uint32_t
 {
-  /**
-   * Broadcasts and info messages concerning driving and switching are delivered to the registered clients automatically.
-   * The following messages are concerned:
-   * 2.7 LAN_X_BC_TRACK_POWER_OFF
-   * 2.8 LAN_X_BC_TRACK_POWER_ON
-   * 2.9 LAN_X_BC_PROGRAMMING_MODE
-   * 2.10 LAN_X_BC_TRACK_SHORT_CIRCUIT
-   * 2.14 LAN_X_BC_STOPPED
-   * 4.4 LAN_X_LOCO_INFO (loco address must be subscribed too)
-   * 5.3 LAN_X_TURNOUT_INFO
-   */
-  PowerLocoTurnout = 0x00000001,
+  None = 0,
+
+  /// Broadcasts and info messages concerning driving and switching are delivered to the registered clients automatically.
+  /// The following messages are concerned:
+  /// 2.7 LAN_X_BC_TRACK_POWER_OFF
+  /// 2.8 LAN_X_BC_TRACK_POWER_ON
+  /// 2.9 LAN_X_BC_PROGRAMMING_MODE
+  /// 2.10 LAN_X_BC_TRACK_SHORT_CIRCUIT
+  /// 2.14 LAN_X_BC_STOPPED
+  /// 4.4 LAN_X_LOCO_INFO (loco address must be subscribed too)
+  /// 5.3 LAN_X_TURNOUT_INFO
+  PowerLocoTurnoutChanges = 0x00000001,
+
+  /// Changes of the feedback devices on the R-Bus are sent automatically.
+  /// Z21 Broadcast messages see 7.1 LAN_RMBUS_DATACHANGED
+  RBusChanges = 0x00000002,
+
+  /// Changes of RailCom data of subscribed locomotives are sent automatically.
+  /// Z21 Broadcast messages see 8.1 LAN_RAILCOM_DATACHANGED
+  RailCOMChanges = 0x00000004,
+
+  /// Changes of the Z21 system status are sent automatically.
+  /// Z21 Broadcast messages see 2.18 LAN_SYSTEMSTATE_DATACHANGED
+  SystemStatusChanges = 0x00000100,
+
+  /// Extends flag 0x00000001; client now gets LAN_X_LOCO_INFO LAN_X_LOCO_INFO
+  /// without having to subscribe to the corresponding locomotive addresses, i.e. for all
+  /// controlled locomotives!
+  /// Due to the high network traffic, this flag may only be used by adequate PC railroad
+  /// automation software and is NOT intended for mobile hand controllers under any
+  /// circumstances.
+  /// From FW V1.20 bis V1.23: LAN_X_LOCO_INFO is sent for all locomotives.
+  /// From FW V1.24: LAN_X_LOCO_INFO is sent for all modified locomotives.
+  AllLocoChanges = 0x00010000,
+
+  /// Forwarding messages from LocoNet bus to LAN client without locos and switches.
+  LocoNetWithoutLocoAndSwitches = 0x01000000,
+
+  /// Forwarding locomotive-specific LocoNet messages to LAN Client:
+  /// OPC_LOCO_SPD, OPC_LOCO_DIRF, OPC_LOCO_SND, OPC_LOCO_F912, OPC_EXP_CMD
+  LocoNetLoco = 0x02000000,
+
+  /// Forwarding switch-specific LocoNet messages to LAN client:
+  /// OPC_SW_REQ, OPC_SW_REP, OPC_SW_ACK, OPC_SW_STATE
+  LocoNetSwitch = 0x04000000,
+
+  /// Sending status changes of LocoNet track occupancy detectors to the LAN client.
+  /// See 9.5 LAN_LOCONET_DETECTOR
+  LocoNetDetector = 0x08000000,
+
+  ///
+  LocoNet = LocoNetWithoutLocoAndSwitches | LocoNetLoco | LocoNetSwitch | LocoNetDetector,
+
+  /// Version 1.29:
+  /// Sending changes of RailCom data to the LAN Client.
+  /// Client gets LAN_RAILCOM_DATACHANGED without having to subscribe to the
+  /// corresponding locomotive addresses, i.e. for all controlled locomotives! Due to the high
+  /// network traffic, this flag may only be used by adequate PC railroad automation software
+  /// and is NOT intended for mobile hand controllers under any circumstances.
+  /// Z21 Broadcast messages see 8.1 LAN_RAILCOM_DATACHANGED
+  RailComDataChanged = 0x00040000,
+
+  /// Sending status changes of CAN-Bus track occupancy detectors to the LAN client.
+  /// See 10.1 LAN_CAN_DETECTOR
+  CANDetector = 0x00080000,
 };
 
 enum LocoMode : uint8_t
@@ -92,11 +157,43 @@ static constexpr uint8_t LAN_X_LOCO_INFO = 0xEF;
 
 enum HardwareType : uint32_t
 {
+  HWT_UNKNOWN = 0,
   HWT_Z21_OLD = 0x00000200, //!< „black Z21” (hardware variant from 2012)
   HWT_Z21_NEW = 0x00000201, //!<  „black Z21”(hardware variant from 2013)
   HWT_SMARTRAIL = 0x00000202, //!< SmartRail (from 2012)
   HWT_Z21_SMALL = 0x00000203, //!< „white z21” starter set variant (from 2013)
   HWT_Z21_START = 0x00000204, //!< „z21 start” starter set variant (from 2016)
+};
+
+constexpr std::string_view toString(HardwareType value)
+{
+  switch(value)
+  {
+    case HWT_Z21_OLD:
+      return "Black Z21 (hardware variant from 2012)";
+
+    case HWT_Z21_NEW:
+      return "Black Z21 (hardware variant from 2013)";
+
+    case HWT_SMARTRAIL:
+      return "SmartRail (from 2012)";
+
+    case HWT_Z21_SMALL:
+      return "White Z21 (starter set variant from 2013)";
+
+    case HWT_Z21_START :
+      return "Z21 start (starter set variant from 2016)";
+
+    case HWT_UNKNOWN:
+      break;
+  }
+
+  return {};
+}
+
+enum class CommandStationId : uint8_t
+{
+  Z21 = 0x12,
 };
 
 #define Z21_CENTRALSTATE_EMERGENCYSTOP 0x01 //!< The emergency stop is switched on
@@ -195,6 +292,19 @@ struct LanLogoff : Message
 static_assert(sizeof(LanLogoff) == 4);
 
 // LAN_X_GET_VERSION
+struct LanXGetVersion : LanX
+{
+  uint8_t db0 = 0x21;
+  uint8_t checksum = 0x00;
+
+  LanXGetVersion() :
+    LanX(sizeof(LanXGetVersion), 0x21)
+  {
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanXGetVersion) == 7);
+
+// LAN_X_GET_FIRMWARE_VERSION
 struct LanXGetFirmwareVersion : LanX
 {
   uint8_t db0 = 0x0A;
@@ -313,9 +423,6 @@ static_assert(sizeof(LanXGetLocoInfo) == 9);
 // LAN_X_SET_LOCO_DRIVE
 struct LanXSetLocoDrive : LanX
 {
-  //static constexpr uint8_t directionFlag = 0x80;
-
-  //uint8_t xheader = 0xe4;
   uint8_t db0;
   uint8_t addressHigh;
   uint8_t addressLow;
@@ -335,6 +442,12 @@ struct LanXSetLocoDrive : LanX
   inline bool isLongAddress() const
   {
     return (addressHigh & 0xC0) == 0xC0;
+  }
+
+  inline void setAddress(uint16_t address, bool longAddress)
+  {
+    addressHigh = longAddress ? (0xC0 | (address >> 8)) : 0x00;
+    addressLow = longAddress ? address & 0xFF : address & 0x7F;
   }
 
   inline uint8_t speedSteps() const
@@ -391,15 +504,29 @@ struct LanXSetLocoFunction : LanX
     Invalid = 3,
   };
 
+  static constexpr uint8_t functionNumberMax = 28;
+  static constexpr uint8_t functionNumberMask = 0x3F;
+  static constexpr uint8_t switchTypeMask = 0xC0;
+  static constexpr uint8_t switchTypeShift = 6;
+
   uint8_t db0 = 0xf8;
   uint8_t addressHigh;
   uint8_t addressLow;
-  uint8_t db3;
+  uint8_t db3 = 0;
   uint8_t checksum;
 
   LanXSetLocoFunction() :
     LanX(sizeof(LanXSetLocoFunction), 0xE4)
   {
+  }
+
+  LanXSetLocoFunction(uint16_t address, bool longAddress, uint8_t functionIndex, SwitchType value)
+    : LanXSetLocoFunction()
+  {
+    setAddress(address, longAddress);
+    setFunctionIndex(functionIndex);
+    setSwitchType(value);
+    calcChecksum();
   }
 
   inline uint16_t address() const
@@ -412,14 +539,31 @@ struct LanXSetLocoFunction : LanX
     return (addressHigh & 0xC0) == 0xC0;
   }
 
+  inline void setAddress(uint16_t address, bool longAddress)
+  {
+    addressHigh = longAddress ? (0xC0 | (address >> 8)) : 0x00;
+    addressLow = longAddress ? address & 0xFF : address & 0x7F;
+  }
+
   inline SwitchType switchType() const
   {
-    return static_cast<SwitchType>(db3 >> 6);
+    return static_cast<SwitchType>(db3 >> switchTypeShift);
+  }
+
+  inline void setSwitchType(SwitchType value)
+  {
+    db3 = (db3 & functionNumberMask) | (static_cast<uint8_t>(value) << switchTypeShift);
   }
 
   inline uint8_t functionIndex() const
   {
-    return db3 & 0x3F;
+    return db3 & functionNumberMask;
+  }
+
+  inline void setFunctionIndex(uint8_t value)
+  {
+    assert(value <= functionNumberMax);
+    db3 = (db3 & switchTypeMask) | (value & functionNumberMask);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXSetLocoFunction) == 10);
@@ -443,7 +587,7 @@ struct LanSetBroadcastFlags : Message
 {
   BroadcastFlags broadcastFlagsLE; // LE
 
-  LanSetBroadcastFlags(uint32_t _broadcastFlags = 0) :
+  LanSetBroadcastFlags(BroadcastFlags _broadcastFlags = BroadcastFlags::None) :
     Message(sizeof(LanSetBroadcastFlags), LAN_SET_BROADCASTFLAGS),
     broadcastFlagsLE{host_to_le(_broadcastFlags)}
   {
@@ -453,7 +597,6 @@ struct LanSetBroadcastFlags : Message
   {
     return le_to_host(broadcastFlagsLE);
   }
-
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanSetBroadcastFlags) == 8);
 
@@ -568,6 +711,40 @@ struct LanGetSerialNumberReply : Message
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanGetSerialNumberReply) == 8);
+
+// Reply to LAN_X_GET_VERSION
+struct LanXGetVersionReply : LanX
+{
+  uint8_t db0 = 0x21;
+  uint8_t xBusVersionBCD;
+  CommandStationId commandStationId;
+  uint8_t checksum;
+
+  LanXGetVersionReply()
+    : LanX(sizeof(LanXGetVersionReply), 0x63)
+  {
+  }
+
+  LanXGetVersionReply(uint8_t _xBusVersion, CommandStationId _commandStationId)
+    : LanXGetVersionReply()
+  {
+    setXBusVersion(_xBusVersion);
+    commandStationId = _commandStationId;
+    calcChecksum();
+  }
+
+  inline uint8_t xBusVersion() const
+  {
+    return Utils::fromBCD(xBusVersionBCD);
+  }
+
+  inline void setXBusVersion(uint8_t value)
+  {
+    assert(value < 100);
+    xBusVersionBCD = Utils::toBCD(value);
+  }
+};
+static_assert(sizeof(LanXGetVersionReply) == 9);
 
 // Reply to LAN_GET_CODE
 struct LanXGetFirmwareVersionReply : LanX
@@ -724,6 +901,7 @@ struct LanXLocoInfo : LanX
   static constexpr uint8_t directionFlag = 0x80;
   static constexpr uint8_t speedStepMask = 0x7F;
   static constexpr uint8_t flagF0 = 0x10;
+  static constexpr uint8_t functionIndexMax = 28;
 
   uint8_t addressHigh = 0;
   uint8_t addressLow = 0;
@@ -825,7 +1003,7 @@ struct LanXLocoInfo : LanX
     Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
   }
 
-  bool getFunction(uint8_t index)
+  bool getFunction(uint8_t index) const
   {
     if(index == 0)
       return db4 & flagF0;
@@ -965,11 +1143,41 @@ static_assert(sizeof(LanSystemStateDataChanged) == 20);
 
 PRAGMA_PACK_POP
 
+constexpr std::string_view toString(LanXSetLocoFunction::SwitchType value)
+{
+  switch(value)
+  {
+    case LanXSetLocoFunction::SwitchType::Off:
+      return "off";
+    case LanXSetLocoFunction::SwitchType::On:
+      return "on";
+    case LanXSetLocoFunction::SwitchType::Toggle:
+      return "toggle";
+    case LanXSetLocoFunction::SwitchType::Invalid:
+      return "invalid";
+  }
+  return {};
+}
+
 }
 
 inline bool operator ==(const Z21::Message& lhs, const Z21::Message& rhs)
 {
   return lhs.dataLen() == rhs.dataLen() && std::memcmp(&lhs, &rhs, lhs.dataLen()) == 0;
+}
+
+constexpr Z21::BroadcastFlags operator |(Z21::BroadcastFlags lhs, Z21::BroadcastFlags rhs)
+{
+  return static_cast<Z21::BroadcastFlags>(
+    static_cast<std::underlying_type_t<Z21::BroadcastFlags>>(lhs) |
+    static_cast<std::underlying_type_t<Z21::BroadcastFlags>>(rhs));
+}
+
+constexpr Z21::BroadcastFlags operator &(Z21::BroadcastFlags lhs, Z21::BroadcastFlags rhs)
+{
+  return static_cast<Z21::BroadcastFlags>(
+    static_cast<std::underlying_type_t<Z21::BroadcastFlags>>(lhs) &
+    static_cast<std::underlying_type_t<Z21::BroadcastFlags>>(rhs));
 }
 
 #endif

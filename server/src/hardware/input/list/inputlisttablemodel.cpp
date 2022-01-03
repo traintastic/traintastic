@@ -22,30 +22,39 @@
 
 #include "inputlisttablemodel.hpp"
 #include "inputlist.hpp"
-#include "../loconetinput.hpp"
 #include "../../../utils/displayname.hpp"
-
-constexpr uint32_t columnId = 0;
-constexpr uint32_t columnName = 1;
-constexpr uint32_t columnBus = 2;
-constexpr uint32_t columnAddress = 3;
 
 bool InputListTableModel::isListedProperty(const std::string& name)
 {
   return
     name == "id" ||
-    name == "name";
+    name == "name" ||
+    name == "interface" ||
+    name == "address";
 }
 
-InputListTableModel::InputListTableModel(InputList& list) :
-  ObjectListTableModel<Input>(list)
+InputListTableModel::InputListTableModel(InputList& list)
+  : ObjectListTableModel<Input>(list)
+  , m_columnInterface(list.parentIsInputController() ? invalidColumn : 2)
+  , m_columnAddress(list.parentIsInputController() ? 2 : 3)
 {
-  setColumnHeaders({
-    DisplayName::Object::id,
-    DisplayName::Object::name,
-    "input_list:bus",
-    DisplayName::Hardware::address,
-    });
+  if(list.parentIsInputController())
+  {
+    setColumnHeaders({
+      DisplayName::Object::id,
+      DisplayName::Object::name,
+      DisplayName::Hardware::address,
+      });
+  }
+  else
+  {
+    setColumnHeaders({
+      DisplayName::Object::id,
+      DisplayName::Object::name,
+      DisplayName::Hardware::interface,
+      DisplayName::Hardware::address,
+      });
+  }
 }
 
 std::string InputListTableModel::getText(uint32_t column, uint32_t row) const
@@ -53,32 +62,27 @@ std::string InputListTableModel::getText(uint32_t column, uint32_t row) const
   if(row < rowCount())
   {
     const Input& input = getItem(row);
-    const LocoNetInput* inputLocoNet = dynamic_cast<const LocoNetInput*>(&input);
 
-    switch(column)
+    if(column == columnId)
+      return input.id;
+    else if(column == columnName)
+      return input.name;
+    else if(column == m_columnInterface)
     {
-      case columnId:
-        return input.id;
-
-      case columnName:
-        return input.name;
-
-      case columnBus: // virtual method @ Input ??
-        if(inputLocoNet && inputLocoNet->loconet)
-          return inputLocoNet->loconet->getObjectId();
+        if(const auto& interface = std::dynamic_pointer_cast<Object>(input.interface.value()))
+        {
+          if(auto property = interface->getProperty("name"); property && !property->toString().empty())
+            return property->toString();
+          else
+            return interface->getObjectId();
+        }
         else
           return "";
-
-      case columnAddress: // virtual method @ Input ??
-        if(inputLocoNet)
-          return std::to_string(inputLocoNet->address);
-        else
-          return "";
-
-      default:
-        assert(false);
-        break;
     }
+    else if(column == m_columnAddress)
+      return std::to_string(input.address.value());
+    else
+      assert(false);
   }
 
   return "";
@@ -90,4 +94,8 @@ void InputListTableModel::propertyChanged(BaseProperty& property, uint32_t row)
     changed(row, columnId);
   else if(property.name() == "name")
     changed(row, columnName);
-}
+  else if(property.name() == "interface" && m_columnInterface != invalidColumn)
+    changed(row, m_columnInterface);
+  else if(property.name() == "address")
+    changed(row, m_columnAddress);
+  }

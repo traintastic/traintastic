@@ -62,6 +62,12 @@ struct Attributes
     item.setAttribute(AttributeName::Enabled, value);
   }
 
+  static inline void setEnabled(std::initializer_list<std::reference_wrapper<InterfaceItem>> items, bool value)
+  {
+    for(auto& item : items)
+      item.get().setAttribute(AttributeName::Enabled, value);
+  }
+
   template<typename T>
   static inline void addMinMax(Property<T>& property, T min, T max)
   {
@@ -104,6 +110,22 @@ struct Attributes
   {
     static_assert(std::is_floating_point_v<T>);
     property.setAttribute(AttributeName::Max, convertUnit(value, unit, property.unit()));
+  }
+
+  template<typename T>
+  static inline void setMinMax(Property<T>& property, T min, T max)
+  {
+    static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
+    property.setAttribute(AttributeName::Min, min);
+    property.setAttribute(AttributeName::Max, max);
+  }
+
+  template<class T, class Unit>
+  static inline void setMinMax(UnitProperty<T, Unit>& property, T min, T max, Unit unit)
+  {
+    static_assert(std::is_floating_point_v<T>);
+    property.setAttribute(AttributeName::Min, convertUnit(min, unit, property.unit()));
+    property.setAttribute(AttributeName::Max, convertUnit(max, unit, property.unit()));
   }
 
   static inline void addVisible(InterfaceItem& item, bool value)

@@ -27,13 +27,23 @@
 #include "../../core/objectproperty.hpp"
 #include "../../core/objectvectorproperty.hpp"
 #include "../../enum/tristate.hpp"
+#include "inputcontroller.hpp"
+
+#ifdef interface
+  #undef interface // interface is defined in combaseapi.h
+#endif
 
 class Input : public IdObject
 {
+  CLASS_ID("input")
   DEFAULT_ID("input")
+  CREATE(Input)
+
+  friend class InputController;
 
   protected:
     void addToWorld() override;
+    void loaded() override;
     void destroying() override;
     void worldEvent(WorldState state, WorldEvent event) override;
     virtual void valueChanged(TriState /*_value*/) {}
@@ -41,7 +51,11 @@ class Input : public IdObject
     void updateValue(TriState _value);
 
   public:
+    static constexpr uint32_t invalidAddress = std::numeric_limits<uint32_t>::max();
+
     Property<std::string> name;
+    ObjectProperty<InputController> interface;
+    Property<uint32_t> address;
     Property<TriState> value;
     ObjectVectorProperty<Object> consumers;
 

@@ -77,10 +77,6 @@ file(GLOB SOURCES
   "src/core/*.hpp"
   "src/core/*.cpp"
   "src/enum/*.hpp"
-  "src/hardware/commandstation/*.hpp"
-  "src/hardware/commandstation/*.cpp"
-  "src/hardware/controller/*.hpp"
-  "src/hardware/controller/*.cpp"
   "src/hardware/decoder/*.hpp"
   "src/hardware/decoder/*.cpp"
   "src/hardware/input/*.hpp"
@@ -91,6 +87,8 @@ file(GLOB SOURCES
   "src/hardware/input/map/*.cpp"
   "src/hardware/input/monitor/*.hpp"
   "src/hardware/input/monitor/*.cpp"
+  "src/hardware/interface/*.hpp"
+  "src/hardware/interface/*.cpp"
   "src/hardware/output/*.hpp"
   "src/hardware/output/*.cpp"
   "src/hardware/output/keyboard/*.hpp"
@@ -101,12 +99,26 @@ file(GLOB SOURCES
   "src/hardware/output/map/*.cpp"
   "src/hardware/protocol/dccplusplus/*.hpp"
   "src/hardware/protocol/dccplusplus/*.cpp"
+  "src/hardware/protocol/dccplusplus/iohandler/*.hpp"
+  "src/hardware/protocol/dccplusplus/iohandler/*.cpp"
+  "src/hardware/protocol/ecos/*.hpp"
+  "src/hardware/protocol/ecos/*.cpp"
+  "src/hardware/protocol/ecos/iohandler/*.hpp"
+  "src/hardware/protocol/ecos/iohandler/*.cpp"
+  "src/hardware/protocol/ecos/object/*.hpp"
+  "src/hardware/protocol/ecos/object/*.cpp"
   "src/hardware/protocol/loconet/*.hpp"
   "src/hardware/protocol/loconet/*.cpp"
+  "src/hardware/protocol/loconet/iohandler/*.hpp"
+  "src/hardware/protocol/loconet/iohandler/*.cpp"
   "src/hardware/protocol/xpressnet/*.hpp"
   "src/hardware/protocol/xpressnet/*.cpp"
+  "src/hardware/protocol/xpressnet/iohandler/*.hpp"
+  "src/hardware/protocol/xpressnet/iohandler/*.cpp"
   "src/hardware/protocol/z21/*.hpp"
   "src/hardware/protocol/z21/*.cpp"
+  "src/hardware/protocol/z21/iohandler/*.hpp"
+  "src/hardware/protocol/z21/iohandler/*.cpp"
   "src/log/*.hpp"
   "src/log/*.cpp"
   "src/train/*.hpp"
@@ -210,29 +222,6 @@ if(ENABLE_LUA_SCRIPTING)
   target_link_libraries(traintastic-server-test PRIVATE ${LUA_LIBRARIES})
 else()
   add_definitions(-DDISABLE_LUA_SCRIPTING)
-endif()
-
-option(USB_XPRESSNET "USB XpressNet interface/controller support" ON)
-message(STATUS "USB XpressNet interface/controller support: ${USB_XPRESSNET}")
-if(ENABLE_USB_XPRESSNET_INTERFACE)
-  #pkg_check_modules(USBXPRESSNET REQUIRED IMPORTED_TARGET usbxpressnet)
-  find_path(USBXPRESSNET_INCLUDE_DIR usbxpressnet.h)
-  #message(${USBXPRESSNET_INCLUDE_DIR})
-  find_library(USBXPRESSNET_LIB usbxpressnet)
-  #message(${USBXPRESSNET_LIB})
-  #if(NOT USBXPRESSNET_LIB)
-  #  message(FATAL_ERROR "usbxpressnet library not found")
-  #endif()
-
-  add_definitions(-DUSB_XPRESSNET)
-
-  target_include_directories(traintastic-server PRIVATE ${USBXPRESSNET_INCLUDE_DIR})
-  target_link_libraries(traintastic-server PRIVATE ${USBXPRESSNET_LIB})
-
-  target_include_directories(traintastic-server-test PRIVATE ${USBXPRESSNET_INCLUDE_DIR})
-  target_link_libraries(traintastic-server-test PRIVATE ${USBXPRESSNET_LIB})
-else()
-  list(FILTER SOURCES EXCLUDE REGEX ".*usbxpressnet(interface|controller)\.(hpp|cpp)$")
 endif()
 
 ### OPTIONS END ###

@@ -26,17 +26,15 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include "world.hpp"
-#include "../utils/string.hpp"
+#include "../utils/startswith.hpp"
+#include "../utils/stripsuffix.hpp"
 #include "ctwreader.hpp"
 
 #include "../board/board.hpp"
 #include "../board/tile/tiles.hpp"
-#include "../hardware/commandstation/commandstations.hpp"
-#include "../hardware/controller/controllers.hpp"
+#include "../hardware/interface/interfaces.hpp"
 #include "../hardware/decoder/decoder.hpp"
 #include "../hardware/decoder/decoderfunction.hpp"
-#include "../hardware/input/inputs.hpp"
-#include "../hardware/output/outputs.hpp"
 #include "../vehicle/rail/railvehicles.hpp"
 #include "../train/train.hpp"
 #ifndef DISABLE_LUA_SCRIPTING
@@ -154,10 +152,8 @@ void WorldLoader::createObject(ObjectData& objectData)
   std::string_view classId = objectData.json["class_id"];
   std::string_view id = objectData.json["id"];
 
-  if(startsWith(classId, CommandStations::classIdPrefix))
-    objectData.object = CommandStations::create(m_world, classId, id);
-  else if(startsWith(classId, Controllers::classIdPrefix))
-    objectData.object = Controllers::create(m_world, classId, id);
+  if(startsWith(classId, Interfaces::classIdPrefix))
+    objectData.object = Interfaces::create(m_world, classId, id);
   else if(classId == Decoder::classId)
     objectData.object = Decoder::create(m_world, id);
   else if(classId == DecoderFunction::classId)
@@ -171,10 +167,10 @@ void WorldLoader::createObject(ObjectData& objectData)
       decoder->functions->items.appendInternal(f);
     }
   }
-  else if(startsWith(classId, Inputs::classIdPrefix))
-    objectData.object = Inputs::create(m_world, classId, id);
-  else if(startsWith(classId, Outputs::classIdPrefix))
-    objectData.object = Outputs::create(m_world, classId, id);
+  else if(classId == Input::classId)
+    objectData.object = Input::create(m_world, id);
+  else if(classId == Output::classId)
+    objectData.object = Output::create(m_world, id);
   else if(classId == Board::classId)
     objectData.object = Board::create(m_world, id);
   else if(startsWith(classId, Tiles::classIdPrefix))
@@ -204,6 +200,61 @@ void WorldLoader::createObject(ObjectData& objectData)
   else if(classId == Lua::Script::classId)
     objectData.object = Lua::Script::create(m_world, id);
 #endif
+  // backwards compatibility < 0.1
+  else if(classId == "command_station.dccplusplus_serial")
+  {
+    objectData.object = DCCPlusPlusInterface::create(m_world, id);
+    objectData.json["device"] = objectData.json["port"];
+    objectData.json.erase("port");
+  }
+  else if(classId == "command_station.loconet_serial")
+  {
+    auto object = LocoNetInterface::create(m_world, id);
+    object->type = LocoNetInterfaceType::Serial;
+    objectData.object = object;
+    objectData.json["device"] = objectData.json["port"];
+    objectData.json.erase("port");
+  }
+  else if(classId == "command_station.loconet_tcp_binary")
+  {
+    auto object = LocoNetInterface::create(m_world, id);
+    object->type = LocoNetInterfaceType::TCPBinary;
+    objectData.object = object;
+  }
+  else if(classId == "command_station.xpressnet_serial")
+  {
+    auto object = XpressNetInterface::create(m_world, id);
+    object->type = XpressNetInterfaceType::Serial;
+    objectData.object = object;
+    objectData.json["device"] = objectData.json["port"];
+    objectData.json.erase("port");
+  }
+  else if(classId == "command_station.z21")
+  {
+    objectData.object = Z21Interface::create(m_world, id);
+  }
+  else if(classId == "controller.wlanmaus")
+  {
+    objectData.object = WlanMausInterface::create(m_world, id);
+  }
+  else if(classId == "input.loconet")
+  {
+    objectData.object = Input::create(m_world, id);
+    objectData.json["interface"] = stripSuffix(objectData.json["loconet"], ".loconet");
+    objectData.json.erase("loconet");
+  }
+  else if(classId == "output.loconet")
+  {
+    objectData.object = Output::create(m_world, id);
+    objectData.json["interface"] = stripSuffix(objectData.json["loconet"], ".loconet");
+    objectData.json.erase("loconet");
+  }
+  else if(classId == "input.xpressnet")
+  {
+    objectData.object = Input::create(m_world, id);
+    objectData.json["interface"] = stripSuffix(objectData.json["xpressnet"], ".xpressnet");
+    objectData.json.erase("xpressnet");
+  }
   else
     assert(false);
 

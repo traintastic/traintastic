@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +28,7 @@
 #include <traintastic/enum/decoderprotocol.hpp>
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/lengthunit.hpp>
+#include <traintastic/enum/loconetinterfacetype.hpp>
 #include <traintastic/enum/loconetcommandstation.hpp>
 #include <traintastic/enum/loconetserialinterface.hpp>
 #include <traintastic/enum/outputaction.hpp>
@@ -39,7 +40,8 @@
 #include <traintastic/enum/weightunit.hpp>
 #include <traintastic/enum/worldscale.hpp>
 #include <traintastic/enum/xpressnetcommandstation.hpp>
-#include <traintastic/enum/xpressnetserialinterface.hpp>
+#include <traintastic/enum/xpressnetinterfacetype.hpp>
+#include <traintastic/enum/xpressnetserialinterfacetype.hpp>
 #include "../settings/boardsettings.hpp"
 
 #define GET_ENUM_VALUES(_type) \
@@ -73,6 +75,7 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(Direction)
   TRANSLATE_ENUM(LengthUnit)
   TRANSLATE_ENUM(LocoNetCommandStation)
+  TRANSLATE_ENUM(LocoNetInterfaceType)
   TRANSLATE_ENUM(LocoNetSerialInterface)
   TRANSLATE_ENUM(OutputAction)
   TRANSLATE_ENUM(SensorType)
@@ -83,7 +86,8 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(WeightUnit)
   TRANSLATE_ENUM(WorldScale)
   TRANSLATE_ENUM(XpressNetCommandStation)
-  TRANSLATE_ENUM(XpressNetSerialInterface)
+  TRANSLATE_ENUM(XpressNetInterfaceType)
+  TRANSLATE_ENUM(XpressNetSerialInterfaceType)
   TRANSLATE_ENUM(BoardSettings::ColorScheme)
   return enumName + "@" + QString::number(value);
 }

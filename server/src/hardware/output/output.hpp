@@ -24,21 +24,42 @@
 #define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_OUTPUT_HPP
 
 #include "../../core/idobject.hpp"
+#include "../../core/objectproperty.hpp"
 #include "../../core/objectvectorproperty.hpp"
 #include "../../enum/tristate.hpp"
+#include "outputcontroller.hpp"
 
-class Output : public IdObject
+#ifdef interface
+  #undef interface // interface is defined in combaseapi.h
+#endif
+
+class Output final : public IdObject
 {
+  CLASS_ID("output")
+  DEFAULT_ID("output")
+  CREATE(Output)
+
+  friend class OutputController;
+
+  private:
+    static constexpr uint32_t addressMinDefault = 0;
+    static constexpr uint32_t addressMaxDefault = 1'000'000;
+
   protected:
-    void addToWorld() override;
-    void destroying() override;
-    void worldEvent(WorldState state, WorldEvent event) override;
+    void addToWorld() final;
+    void loaded() final;
+    void destroying() final;
+    void worldEvent(WorldState state, WorldEvent event) final;
     virtual void valueChanged(TriState /*_value*/) {}
     virtual bool setValue(TriState& /*_value*/) { return true; }
     void updateValue(TriState _value);
 
   public:
+    static constexpr uint32_t invalidAddress = std::numeric_limits<uint32_t>::max();
+
     Property<std::string> name;
+    ObjectProperty<OutputController> interface;
+    Property<uint32_t> address;
     Property<TriState> value;
     ObjectVectorProperty<Object> controllers;
 

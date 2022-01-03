@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,7 +22,6 @@
 
 #include "decoderlist.hpp"
 #include "decoderlisttablemodel.hpp"
-#include "../commandstation/commandstation.hpp"
 #include "../../world/getworld.hpp"
 #include "../../core/attributes.hpp"
 #include "../../utils/displayname.hpp"
@@ -35,12 +34,13 @@ DecoderList::DecoderList(Object& _parent, const std::string& parentPropertyName)
       auto world = getWorld(&this->parent());
       if(!world)
         return std::shared_ptr<Decoder>();
+
       auto decoder = Decoder::create(world, world->getUniqueId("decoder"));
-      //addObject(decoder);
-      if(auto* cs = dynamic_cast<CommandStation*>(&this->parent()))
-        decoder->commandStation = cs->shared_ptr<CommandStation>();
-      //else if(world->commandStations->length() == 1)
-      //  decoder->commandStation = cs->shared_ptr<CommandStation>();
+      if(const auto controller = std::dynamic_pointer_cast<DecoderController>(parent().shared_from_this()))
+      {
+        // todo: select free address?
+        decoder->interface = controller;
+      }
       return decoder;
     }}
   , remove{*this, "remove",
@@ -67,6 +67,33 @@ DecoderList::DecoderList(Object& _parent, const std::string& parentPropertyName)
 TableModelPtr DecoderList::getModel()
 {
   return std::make_shared<DecoderListTableModel>(*this);
+}
+
+std::shared_ptr<Decoder> DecoderList::getDecoder(uint16_t address) const
+{
+  auto it = std::find_if(begin(), end(),
+    [address](const auto& decoder)
+    {
+      return decoder->address.value() == address;
+    });
+  if(it != end())
+    return *it;
+  return {};
+}
+
+std::shared_ptr<Decoder> DecoderList::getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress) const
+{
+  auto it = std::find_if(begin(), end(),
+    [protocol, address, longAddress](const auto& decoder)
+    {
+      return
+        decoder->protocol.value() == protocol &&
+        decoder->address.value() == address &&
+        (protocol != DecoderProtocol::DCC || decoder->longAddress == longAddress);
+    });
+  if(it != end())
+    return *it;
+  return {};
 }
 
 void DecoderList::worldEvent(WorldState state, WorldEvent event)

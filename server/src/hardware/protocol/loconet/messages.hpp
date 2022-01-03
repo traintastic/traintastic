@@ -29,6 +29,7 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_MESSAGES_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_MESSAGES_HPP
 
+#include <cstring>
 #include <string>
 #include <traintastic/enum/direction.hpp>
 #include "opcode.hpp"
@@ -41,8 +42,15 @@ uint8_t calcChecksum(const Message& msmessageg);
 void updateChecksum(Message& message);
 bool isChecksumValid(const Message& message);
 bool isValid(const Message& message);
+
+bool isLocoSlot(uint8_t slot);
+void setSlot(Message& message, uint8_t slot);
+
+bool isValidResponse(const Message& request, const Message& response);
+
 std::string toString(const Message& message, bool raw = false);
 
+constexpr uint8_t SLOT_DISPATCH = 0;
 constexpr uint8_t SLOT_LOCO_MIN = 1;
 constexpr uint8_t SLOT_LOCO_MAX = 119;
 constexpr uint8_t SLOT_FAST_CLOCK = 123;
@@ -533,6 +541,27 @@ struct InputRep : Message
   }
 };
 static_assert(sizeof(InputRep) == 4);
+
+struct LongAck : Message
+{
+  uint8_t lpoc;
+  uint8_t ack1;
+  uint8_t checksum;
+
+  LongAck() :
+    Message{OPC_LONG_ACK},
+    lpoc{0},
+    ack1{0},
+    checksum{0}
+  {
+  }
+
+  OpCode respondingOpCode() const
+  {
+    return static_cast<OpCode>(0x80 | lpoc);
+  }
+};
+static_assert(sizeof(LongAck) == 4);
 
 struct SwitchRequest : Message
 {
@@ -1037,10 +1066,20 @@ struct MultiSenseLongTransponder : MultiSenseLong
 static_assert(sizeof(MultiSenseLongTransponder) == 9);
 
 // OPC_SL_RD_DATA [E7 0E 1F 13 6F 01 30 07 08 19 00 00 00 52]
-struct SlotReadData : Message
+struct SlotReadDataBase : Message
 {
   uint8_t len;
   uint8_t slot;
+
+  SlotReadDataBase() :
+    Message(OPC_SL_RD_DATA),
+    len{14}
+  {
+  }
+};
+
+struct SlotReadData : SlotReadDataBase
+{
   uint8_t stat;
   uint8_t adr;
   uint8_t spd;
@@ -1052,12 +1091,6 @@ struct SlotReadData : Message
   uint8_t id1;
   uint8_t id2;
   uint8_t checksum;
-
-  SlotReadData() :
-    Message(OPC_SL_RD_DATA),
-    len{14}
-  {
-  }
 
   bool isBusy() const
   {
@@ -1215,6 +1248,23 @@ struct SlotReadData : Message
   }
 };
 static_assert(sizeof(SlotReadData) == 14);
+
+struct FastClockSlotReadData : SlotReadDataBase
+{
+  uint8_t clk_rate;
+  uint8_t frac_minsl;
+  uint8_t frac_minsh;
+  uint8_t mins_60;
+  uint8_t trk;
+  uint8_t hrs_24;
+  uint8_t days;
+  uint8_t clk_cntrl;
+  uint8_t id1;
+  uint8_t id2;
+  uint8_t checksum;
+};
+static_assert(sizeof(FastClockSlotReadData) == 14);
+
 /*
 struct ImmediatePacket : Message
 {
@@ -1363,6 +1413,16 @@ struct ImmediatePacketF21F28 : ImmediatePacketLoco
 static_assert(sizeof(ImmediatePacketF21F28) == sizeof(ImmediatePacketLoco));
 */
 
+constexpr bool hasResponse(const Message& message)
+{
+  return (message.opCode & 0x08);
+}
+
+}
+
+inline bool operator ==(const LocoNet::Message& lhs, const LocoNet::Message& rhs)
+{
+  return lhs.size() == rhs.size() && std::memcmp(&lhs, &rhs, lhs.size()) == 0;
 }
 
 #endif

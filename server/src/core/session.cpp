@@ -49,7 +49,6 @@
 
 #include "settings.hpp"
 
-#include "../hardware/commandstation/commandstationlist.hpp"
 #include "../hardware/decoder/decoderlist.hpp"
 
 #include <iostream>
@@ -563,13 +562,13 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
 
     if(auto* inputMonitor = dynamic_cast<InputMonitor*>(object.get()))
     {
-      inputMonitor->inputIdChanged = std::bind(&Session::inputMonitorInputIdChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-      inputMonitor->inputValueChanged = std::bind(&Session::inputMonitorInputValueChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+      m_objectSignals.emplace(handle, inputMonitor->inputIdChanged.connect(std::bind(&Session::inputMonitorInputIdChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+      m_objectSignals.emplace(handle, inputMonitor->inputValueChanged.connect(std::bind(&Session::inputMonitorInputValueChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
     }
     else if(auto* outputKeyboard = dynamic_cast<OutputKeyboard*>(object.get()))
     {
-      outputKeyboard->outputIdChanged = std::bind(&Session::outputKeyboardOutputIdChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-      outputKeyboard->outputValueChanged = std::bind(&Session::outputKeyboardOutputValueChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+      m_objectSignals.emplace(handle, outputKeyboard->outputIdChanged.connect(std::bind(&Session::outputKeyboardOutputIdChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+      m_objectSignals.emplace(handle, outputKeyboard->outputValueChanged.connect(std::bind(&Session::outputKeyboardOutputValueChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
     }
     else if(auto* board = dynamic_cast<Board*>(object.get()))
     {

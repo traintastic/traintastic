@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -55,30 +55,6 @@
 
 #include "../clock/clock.hpp"
 
-#include "../hardware/controller/wlanmaus.hpp"
-#include "../hardware/controller/controllerlist.hpp"
-#ifdef USB_XPRESSNET
-  #include "../hardware/controller/usbxpressnetcontroller.hpp"
-#endif
-
-#include "../hardware/commandstation/rocoz21.hpp"
-#include "../hardware/commandstation/virtualcommandstation.hpp"
-#include "../hardware/commandstation/loconettcpbinary.hpp"
-#ifdef USB_XPRESSNET
-  #include "../hardware/commandstation/usbxpressnetinterface.hpp"
-#endif
-#include "../hardware/commandstation/xpressnetserial.hpp"
-#include "../hardware/commandstation/dccplusplusserial.hpp"
-#include "../hardware/commandstation/commandstationlist.hpp"
-#include "../hardware/commandstation/loconetserial.hpp"
-
-#include "../hardware/protocol/loconet/loconetlist.hpp"
-#include "../hardware/protocol/loconet/loconet.hpp"
-#include "../hardware/protocol/loconet/loconetlisttablemodel.hpp"
-#include "../hardware/protocol/xpressnet/xpressnetlist.hpp"
-#include "../hardware/protocol/xpressnet/xpressnetlisttablemodel.hpp"
-#include "../hardware/protocol/xpressnet/xpressnet.hpp"
-#include "../hardware/protocol/dccplusplus/dccplusplus.hpp"
 
 #include "../hardware/decoder/decoderfunction.hpp"
 #include "../hardware/decoder/decoderlist.hpp"
@@ -86,24 +62,18 @@
 #include "../hardware/decoder/decoderfunctions.hpp"
 #include "../hardware/decoder/decoderlisttablemodel.hpp"
 
-#include "../hardware/input/loconetinput.hpp"
-#include "../hardware/input/monitor/xpressnetinputmonitor.hpp"
-#include "../hardware/input/monitor/loconetinputmonitor.hpp"
-#include "../hardware/input/xpressnetinput.hpp"
+#include "../hardware/input/input.hpp"
 #include "../hardware/input/list/inputlist.hpp"
-#include "../hardware/input/list/inputlisttablemodel.hpp"
 #include "../hardware/input/map/blockinputmap.hpp"
 #include "../hardware/input/map/blockinputmapitem.hpp"
 
+#include "../hardware/output/output.hpp"
 #include "../hardware/output/list/outputlist.hpp"
-#include "../hardware/output/list/outputlisttablemodel.hpp"
-#include "../hardware/output/keyboard/loconetoutputkeyboard.hpp"
 #include "../hardware/output/map/outputmapoutputaction.hpp"
 #include "../hardware/output/map/signaloutputmap.hpp"
 #include "../hardware/output/map/turnoutoutputmap.hpp"
 #include "../hardware/output/map/turnoutoutputmapitem.hpp"
 #include "../hardware/output/map/signaloutputmapitem.hpp"
-#include "../hardware/output/loconetoutput.hpp"
 
 #include "../vehicle/rail/railvehiclelist.hpp"
 #include "../vehicle/rail/locomotive.hpp"
@@ -187,34 +157,16 @@ void Class::registerValues(lua_State* L)
 
   registerValue<Clock>(L, "CLOCK");
 
-  registerValue<WLANmaus>(L, "WLANMAUS_CONTROLLER");
-  registerValue<ControllerList>(L, "CONTROLLER_LIST");
-#ifdef USB_XPRESSNET
-  registerValue<USBXpressNetController>(L, "USB_XPRESSNET_CONTROLLER");
-#endif
-
-  registerValue<RocoZ21>(L, "Z21_COMMAND_STATION");
-  registerValue<VirtualCommandStation>(L, "VIRTUAL_COMMAND_STATION");
-  registerValue<LocoNetTCPBinary>(L, "LOCONET_TCP_BINARY_COMMAND_STATION");
-#ifdef USB_XPRESSNET
-  registerValue<USBXpressNetInterface>(L, "USB_XPRESSNET_INTERFACE");
-#endif
-  registerValue<XpressNetSerial>(L, "XPRESSNET_SERIAL_COMMAND_STATION");
-  registerValue<DCCPlusPlusSerial>(L, "DCCPLUSPLUS_SERIAL_COMMAND_STATION");
-  registerValue<CommandStationList>(L, "COMMAND_STATION_LIST");
-  registerValue<LocoNetSerial>(L, "LOCONET_SERIAL_COMMAND_STATION");
-
   registerValue<DecoderFunction>(L, "DECODER_FUNCTION");
   registerValue<DecoderList>(L, "DECODER_LIST");
   registerValue<Decoder>(L, "DECODER");
   registerValue<DecoderFunctions>(L, "DECODER_FUNCTIONS");
 
-  registerValue<LocoNetInput>(L, "LOCONET_INPUT");
-  registerValue<XpressNetInput>(L, "XPRESSNET_INPUT");
+  registerValue<Input>(L, "INPUT");
   registerValue<InputList>(L, "INPUT_LIST");
 
+  registerValue<Output>(L, "OUTPUT");
   registerValue<OutputList>(L, "OUTPUT_LIST");
-  registerValue<LocoNetOutput>(L, "LOCONET_OUTPUT");
 
   registerValue<RailVehicleList>(L, "RAIL_VEHICLE_LIST");
   registerValue<Locomotive>(L, "LOCOMOTIVE");

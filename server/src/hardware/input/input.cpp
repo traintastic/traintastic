@@ -24,12 +24,31 @@
 #include "../../world/world.hpp"
 #include "list/inputlisttablemodel.hpp"
 #include "../../core/attributes.hpp"
+#include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
 
-Input::Input(const std::weak_ptr<World> world, std::string_view _id) :
-  IdObject(world, _id),
-  name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store},
-  value{this, "value", TriState::Undefined, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
+Input::Input(const std::weak_ptr<World> world, std::string_view _id)
+  : IdObject(world, _id)
+  , name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , interface{this, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
+      [this](const std::shared_ptr<InputController>& newValue)
+      {
+        if(!newValue || newValue->addInput(*this))
+        {
+          if(interface.value())
+            interface->removeInput(*this);
+          return true;
+        }
+        return false;
+      }}
+  , address{this, "address", 1, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
+      [this](const uint32_t& newValue)
+      {
+        if(interface)
+          return interface->changeInputAddress(*this, newValue);
+        return true;
+      }}
+  , value{this, "value", TriState::Undefined, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
   , consumers{*this, "consumers", {}, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
 {
   auto w = world.lock();
@@ -38,9 +57,21 @@ Input::Input(const std::weak_ptr<World> world, std::string_view _id) :
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
+
+  Attributes::addDisplayName(interface, DisplayName::Hardware::interface);
+  Attributes::addEnabled(interface, editable);
+  Attributes::addObjectList(interface, w->inputControllers);
+  m_interfaceItems.add(interface);
+
+  Attributes::addDisplayName(address, DisplayName::Hardware::address);
+  Attributes::addEnabled(address, editable);
+  Attributes::addMinMax(address, std::numeric_limits<uint32_t>::min(), std::numeric_limits<uint32_t>::max());
+  m_interfaceItems.add(address);
+
   Attributes::addObjectEditor(value, false);
   Attributes::addValues(value, TriStateValues);
   m_interfaceItems.add(value);
+
   Attributes::addObjectEditor(consumers, false); //! \todo add client support first
   m_interfaceItems.add(consumers);
 }
@@ -53,8 +84,24 @@ void Input::addToWorld()
     world->inputs->addObject(shared_ptr<Input>());
 }
 
+void Input::loaded()
+{
+  IdObject::loaded();
+  if(interface)
+  {
+    if(!interface->addInput(*this))
+    {
+      if(auto object = std::dynamic_pointer_cast<Object>(interface.value()))
+        Log::log(*this, LogMessage::C2001_ADDRESS_ALREADY_USED_AT_X, *object);
+      interface.setValueInternal(nullptr);
+    }
+  }
+}
+
 void Input::destroying()
 {
+  if(interface.value())
+    interface = nullptr;
   if(auto world = m_world.lock())
     world->inputs->removeObject(shared_ptr<Input>());
   IdObject::destroying();
@@ -67,6 +114,8 @@ void Input::worldEvent(WorldState state, WorldEvent event)
   const bool editable = contains(state, WorldState::Edit);
 
   Attributes::setEnabled(name, editable);
+  Attributes::setEnabled(interface, editable);
+  Attributes::setEnabled(address, editable);
 }
 
 void Input::updateValue(TriState _value)

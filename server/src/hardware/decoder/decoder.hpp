@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,10 +26,14 @@
 #include <type_traits>
 #include "../../core/idobject.hpp"
 #include "../../core/objectproperty.hpp"
-#include "../../core/commandstationproperty.hpp"
 #include "../../enum/decoderprotocol.hpp"
 #include "../../enum/direction.hpp"
+#include "decodercontroller.hpp"
 #include "decoderfunctions.hpp"
+
+#ifdef interface
+  #undef interface // interface is defined in combaseapi.h
+#endif
 
 enum class DecoderChangeFlags;
 class DecoderFunction;
@@ -43,6 +47,7 @@ class Decoder : public IdObject
     bool m_worldNoSmoke;
 
   protected:
+    void loaded() final;
     void destroying() override;
     void worldEvent(WorldState state, WorldEvent event) final;
     void updateEditable();
@@ -74,7 +79,7 @@ class Decoder : public IdObject
     static const std::shared_ptr<Decoder> null;
 
     Property<std::string> name;
-    CommandStationProperty commandStation;
+    ObjectProperty<DecoderController> interface;
     Property<DecoderProtocol> protocol;
     Property<uint16_t> address;
     Property<bool> longAddress;
@@ -84,6 +89,8 @@ class Decoder : public IdObject
     Property<float> throttle;
     ObjectProperty<DecoderFunctions> functions;
     Property<std::string> notes;
+
+    boost::signals2::signal<void (Decoder&, DecoderChangeFlags, uint32_t)> decoderChanged;
 
     Decoder(const std::weak_ptr<World>& world, std::string_view _id);
 

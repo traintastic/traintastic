@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,41 +26,33 @@
 #include "decoderchangeflags.hpp"
 #include "decoderfunction.hpp"
 #include "decoderfunctions.hpp"
+#include "../protocol/dcc/dcc.hpp"
 #include "../../world/world.hpp"
-#include "../commandstation/commandstation.hpp"
 #include "../../core/attributes.hpp"
+#include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/almostzero.hpp"
-
-//constexpr uint16_t addressDCCMin = 1;
-constexpr uint16_t addressDCCShortMax = 127;
 
 const std::shared_ptr<Decoder> Decoder::null;
 
 Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
-  commandStation{this, "command_station", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](const std::shared_ptr<CommandStation>& value)
+  interface{this, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
+    [this](const std::shared_ptr<DecoderController>& newValue)
     {
-      std::shared_ptr<Decoder> decoder = std::dynamic_pointer_cast<Decoder>(shared_from_this());
-      assert(decoder);
-
-      //if(value)
-      // TODO: check compatible??
-
-      if(commandStation)
-        commandStation->decoders->removeObject(decoder);
-
-      if(value)
-        value->decoders->addObject(decoder);
-
-      return true;
+      if(!newValue || newValue->addDecoder(*this))
+      {
+        if(interface.value())
+          interface->removeDecoder(*this);
+        return true;
+      }
+      return false;
     }},
   protocol{this, "protocol", DecoderProtocol::Auto, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](const DecoderProtocol& value)
     {
-      if(value == DecoderProtocol::DCC && address > addressDCCShortMax)
+      if(value == DecoderProtocol::DCC && DCC::isLongAddress(address))
         longAddress = true;
       updateEditable();
     }},
@@ -69,7 +61,7 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
     {
       if(protocol == DecoderProtocol::DCC)
       {
-        if(value > addressDCCShortMax)
+        if(DCC::isLongAddress(value))
           longAddress = true;
         updateEditable();
       }
@@ -103,20 +95,19 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
   functions.setValueInternal(std::make_shared<DecoderFunctions>(*this, functions.name()));
 
   auto w = world.lock();
+  assert(w);
 
   m_worldMute = contains(w->state.value(), WorldState::Mute);
   m_worldNoSmoke = contains(w->state.value(), WorldState::NoSmoke);
-
-//  const bool editable = w && contains(w->state.value(), WorldState::Edit) && speedStep == 0;
 
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, false);
   m_interfaceItems.add(name);
 
-  Attributes::addDisplayName(commandStation, DisplayName::Hardware::commandStation);
-  Attributes::addEnabled(commandStation, false);
-  Attributes::addObjectList(commandStation, w->commandStations);
-  m_interfaceItems.add(commandStation);
+  Attributes::addDisplayName(interface, DisplayName::Hardware::interface);
+  Attributes::addEnabled(interface, false);
+  Attributes::addObjectList(interface, w->decoderControllers);
+  m_interfaceItems.add(interface);
 
   Attributes::addEnabled(protocol, false);
   Attributes::addValues(protocol, DecoderProtocolValues);
@@ -154,6 +145,20 @@ void Decoder::addToWorld()
 
   if(auto world = m_world.lock())
     world->decoders->addObject(shared_ptr<Decoder>());
+}
+
+void Decoder::loaded()
+{
+  IdObject::loaded();
+  if(interface)
+  {
+    if(!interface->addDecoder(*this))
+    {
+      if(auto object = std::dynamic_pointer_cast<Object>(interface.value()))
+        Log::log(*this, LogMessage::C2001_ADDRESS_ALREADY_USED_AT_X, *object);
+      interface.setValueInternal(nullptr);
+    }
+  }
 }
 
 bool Decoder::hasFunction(uint32_t number) const
@@ -220,8 +225,8 @@ void Decoder::setFunctionValue(uint32_t number, bool value)
 
 void Decoder::destroying()
 {
-  if(commandStation.value())
-    commandStation = nullptr;
+  if(interface.value())
+    interface = nullptr;
   if(auto world = m_world.lock())
     world->decoders->removeObject(shared_ptr<Decoder>());
   IdObject::destroying();
@@ -273,15 +278,16 @@ void Decoder::updateEditable(bool editable)
 {
   const bool stopped = editable && almostZero(throttle.value());
   Attributes::setEnabled(name, editable);
-  Attributes::setEnabled(commandStation, stopped);
+  Attributes::setEnabled(interface, stopped);
   Attributes::setEnabled(protocol, stopped);
   Attributes::setEnabled(address, stopped);
-  Attributes::setEnabled(longAddress, stopped && protocol == DecoderProtocol::DCC && address < addressDCCShortMax);
+  Attributes::setEnabled(longAddress, stopped && protocol == DecoderProtocol::DCC && !DCC::isLongAddress(address));
   Attributes::setEnabled(speedSteps, stopped);
 }
 
 void Decoder::changed(DecoderChangeFlags changes, uint32_t functionNumber)
 {
-  if(commandStation)
-    commandStation->decoderChanged(*this, changes, functionNumber);
+  if(interface)
+    interface->decoderChanged(*this, changes, functionNumber);
+  decoderChanged(*this, changes, functionNumber);
 }
