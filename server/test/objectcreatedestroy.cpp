@@ -24,7 +24,12 @@
 #include "../src/world/world.hpp"
 #include "../src/board/board.hpp"
 
+#include "../src/hardware/interface/dccplusplusinterface.hpp"
+#include "../src/hardware/interface/ecosinterface.hpp"
 #include "../src/hardware/interface/loconetinterface.hpp"
+#include "../src/hardware/interface/wlanmausinterface.hpp"
+#include "../src/hardware/interface/xpressnetinterface.hpp"
+#include "../src/hardware/interface/z21interface.hpp"
 
 TEST_CASE("Create world => destroy world", "[object-create-destroy]")
 {
@@ -73,7 +78,12 @@ TEST_CASE("Create world and board => destroy board", "[object-create-destroy]")
 }
 
 TEMPLATE_TEST_CASE("Create world and interface => destroy world", "[object-create-destroy]"
+  , DCCPlusPlusInterface
+  , ECoSInterface
   , LocoNetInterface
+  , WlanMausInterface
+  , XpressNetInterface
+  , Z21Interface
   )
 {
   auto world = World::create();
@@ -90,7 +100,12 @@ TEMPLATE_TEST_CASE("Create world and interface => destroy world", "[object-creat
 }
 
 TEMPLATE_TEST_CASE("Create world and interface => destroy interface", "[object-create-destroy]"
+  , DCCPlusPlusInterface
+  , ECoSInterface
   , LocoNetInterface
+  , WlanMausInterface
+  , XpressNetInterface
+  , Z21Interface
   )
 {
   auto world = World::create();
@@ -202,7 +217,11 @@ TEST_CASE("Create world, decoder and function => destroy function", "[object-cre
 }
 
 TEMPLATE_TEST_CASE("Create world, interface and decoder => destroy interface", "[object-create-destroy]"
+  , DCCPlusPlusInterface
+  , ECoSInterface
   , LocoNetInterface
+  , XpressNetInterface
+  , Z21Interface
   )
 {
   auto world = World::create();
@@ -237,7 +256,11 @@ TEMPLATE_TEST_CASE("Create world, interface and decoder => destroy interface", "
 }
 
 TEMPLATE_TEST_CASE("Create world, interface and decoder => destroy decoder", "[object-create-destroy]"
+  , DCCPlusPlusInterface
+  , ECoSInterface
   , LocoNetInterface
+  , XpressNetInterface
+  , Z21Interface
   )
 {
   auto world = World::create();
