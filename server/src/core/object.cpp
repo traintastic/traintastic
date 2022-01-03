@@ -101,7 +101,7 @@ void Object::load(WorldLoader& loader, const nlohmann::json& data)
         else
         {
           if(value.is_string())
-            property->loadObject(loader.getObject(value));
+            property->loadObject(loader.getObject(value.get<std::string_view>()));
           else if(value.is_null())
             property->loadObject(ObjectPtr());
         }

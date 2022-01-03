@@ -88,7 +88,7 @@ void OutputMap::load(WorldLoader& loader, const nlohmann::json& data)
   for(auto& [_, id] : outputs.items())
   {
     static_cast<void>(_); // silence unused warning
-    if(auto output = std::dynamic_pointer_cast<Output>(loader.getObject(id)))
+    if(auto output = std::dynamic_pointer_cast<Output>(loader.getObject(id.get<std::string_view>())))
       addOutput(std::move(output));
   }
 }

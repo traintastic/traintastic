@@ -149,8 +149,8 @@ void WorldLoader::createObject(ObjectData& objectData)
 {
   assert(!objectData.object);
 
-  std::string_view classId = objectData.json["class_id"];
-  std::string_view id = objectData.json["id"];
+  std::string_view classId = objectData.json["class_id"].get<std::string_view>();
+  std::string_view id = objectData.json["id"].get<std::string_view>();
 
   if(startsWith(classId, Interfaces::classIdPrefix))
     objectData.object = Interfaces::create(m_world, classId, id);
@@ -159,7 +159,7 @@ void WorldLoader::createObject(ObjectData& objectData)
   else if(classId == DecoderFunction::classId)
   {
     // backwards compatibility < 0.1
-    const std::string_view decoderId = objectData.json["decoder"];
+    const std::string_view decoderId = objectData.json["decoder"].get<std::string_view>();
     if(std::shared_ptr<Decoder> decoder = std::dynamic_pointer_cast<Decoder>(getObject(decoderId)))
     {
       auto f = std::make_shared<DecoderFunction>(*decoder, objectData.json["number"]);
@@ -240,19 +240,19 @@ void WorldLoader::createObject(ObjectData& objectData)
   else if(classId == "input.loconet")
   {
     objectData.object = Input::create(m_world, id);
-    objectData.json["interface"] = stripSuffix(objectData.json["loconet"], ".loconet");
+    objectData.json["interface"] = stripSuffix(objectData.json["loconet"].get<std::string_view>(), ".loconet");
     objectData.json.erase("loconet");
   }
   else if(classId == "output.loconet")
   {
     objectData.object = Output::create(m_world, id);
-    objectData.json["interface"] = stripSuffix(objectData.json["loconet"], ".loconet");
+    objectData.json["interface"] = stripSuffix(objectData.json["loconet"].get<std::string_view>(), ".loconet");
     objectData.json.erase("loconet");
   }
   else if(classId == "input.xpressnet")
   {
     objectData.object = Input::create(m_world, id);
-    objectData.json["interface"] = stripSuffix(objectData.json["xpressnet"], ".xpressnet");
+    objectData.json["interface"] = stripSuffix(objectData.json["xpressnet"].get<std::string_view>(), ".xpressnet");
     objectData.json.erase("xpressnet");
   }
   else

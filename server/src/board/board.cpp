@@ -283,7 +283,7 @@ void Board::load(WorldLoader& loader, const nlohmann::json& data)
   for(auto& [_, tileId] : objects.items())
   {
     static_cast<void>(_); // silence unused warning
-    if(auto tile = std::dynamic_pointer_cast<Tile>(loader.getObject(tileId)))
+    if(auto tile = std::dynamic_pointer_cast<Tile>(loader.getObject(tileId.get<std::string_view>())))
     {
       if(tile->width > 1 || tile->height > 1)
       {

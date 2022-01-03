@@ -40,7 +40,7 @@ void AbstractObjectList::load(WorldLoader& loader, const nlohmann::json& data)
   for(auto& [_, id] : objects.items())
   {
     static_cast<void>(_); // silence unused warning
-    if(ObjectPtr item = loader.getObject(id))
+    if(ObjectPtr item = loader.getObject(id.get<std::string_view>()))
       items.emplace_back(std::move(item));
   }
   setItems(items);
