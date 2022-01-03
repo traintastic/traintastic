@@ -28,7 +28,16 @@ enum class MethodFlags
   // bit 0..1
   NoScript = 1 << 0,
   ScriptCallable = 2 << 0,
+
+  // bit 2
+  Internal = 1 << 2,
 };
+
+constexpr MethodFlags operator &(MethodFlags lhs, MethodFlags rhs)
+{
+  using T = std::underlying_type_t<MethodFlags>;
+  return static_cast<MethodFlags>(static_cast<T>(lhs) & static_cast<T>(rhs));
+}
 
 /// temporary placeholder, should be removed in the future when all method have their flags set
 constexpr MethodFlags noMethodFlags = static_cast<MethodFlags>(0);

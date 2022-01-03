@@ -76,6 +76,8 @@ class InterfaceItem
 
     virtual ~InterfaceItem() = default;
 
+    virtual bool isInternal() const = 0;
+
     Object& object() const
     {
       return m_object;

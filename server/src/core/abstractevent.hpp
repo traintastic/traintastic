@@ -47,6 +47,11 @@ class AbstractEvent : public InterfaceItem
 
     inline bool isScriptable() const { return (m_flags & EventFlags::Scriptable) == EventFlags::Scriptable; }
 
+    inline bool isInternal() const final
+    {
+      return true;
+    }
+
     inline EventFlags flags() const { return m_flags; }
 
     /// @todo C++20 -> std::span ??

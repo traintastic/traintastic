@@ -75,6 +75,11 @@ class BaseProperty : public InterfaceItem
       return (m_flags & PropertyFlagsScriptMask) == PropertyFlags::ScriptReadWrite;
     }
 
+    bool isInternal() const final
+    {
+      return (m_flags & PropertyFlags::Internal) == PropertyFlags::Internal;
+    }
+
     PropertyFlags flags() const
     {
       return m_flags;

@@ -43,6 +43,9 @@ enum class PropertyFlags : uint16_t
   NoScript = 1 << 5,
   ScriptReadOnly = 2 << 5,
   ScriptReadWrite = 3 << 5,
+
+  // bit 7
+  Internal = 1 << 7,
 };
 
 constexpr PropertyFlags operator| (const PropertyFlags& lhs, const PropertyFlags& rhs)

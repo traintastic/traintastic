@@ -588,7 +588,8 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
     {
       InterfaceItem& item = interfaceItems[name];
 
-      // TODO: if(item. internal)
+      if(item.isInternal())
+        continue;
 
       message.writeBlock(); // item
       message.write(name);
@@ -705,6 +706,9 @@ void Session::memoryLoggerChanged(const MemoryLogger& logger, const uint32_t add
 
 void Session::objectPropertyChanged(BaseProperty& baseProperty)
 {
+  if(baseProperty.isInternal())
+    return;
+
   auto event = Message::newEvent(Message::Command::ObjectPropertyChanged);
   event->write(m_handles.getHandle(baseProperty.object().shared_from_this()));
   event->write(baseProperty.name());

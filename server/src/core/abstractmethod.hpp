@@ -99,7 +99,15 @@ class AbstractMethod : public InterfaceItem
 
     AbstractMethod(Object& object, const std::string& name, MethodFlags m_flags = noMethodFlags);
 
-    inline bool isScriptCallable() const { return m_flags == MethodFlags::ScriptCallable; }
+    inline bool isScriptCallable() const
+    {
+      return (m_flags & MethodFlags::ScriptCallable) == MethodFlags::ScriptCallable;
+    }
+
+    inline bool isInternal() const final
+    {
+      return (m_flags & MethodFlags::Internal) == MethodFlags::Internal;
+    }
 
     inline MethodFlags flags() const { return m_flags; }
 
