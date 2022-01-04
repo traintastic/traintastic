@@ -35,8 +35,7 @@ bool ControllerListBaseTableModel::isListedProperty(const std::string& name)
 }
 
 ControllerListBaseTableModel::ControllerListBaseTableModel(ControllerListBase& list)
-  : TableModel()
-  , m_list{list.shared_ptr<ControllerListBase>()}
+  : m_list{list.shared_ptr<ControllerListBase>()}
 {
   list.m_models.push_back(this);
   setRowCount(static_cast<uint32_t>(list.m_items.size()));

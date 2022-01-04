@@ -71,7 +71,7 @@ std::string OutputListTableModel::getText(uint32_t column, uint32_t row) const
     {
         if(const auto& interface = std::dynamic_pointer_cast<Object>(output.interface.value()))
         {
-          if(auto property = interface->getProperty("name"); property && !property->toString().empty())
+          if(auto* property = interface->getProperty("name"); property && !property->toString().empty())
             return property->toString();
 
           return interface->getObjectId();

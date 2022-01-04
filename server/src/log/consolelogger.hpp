@@ -28,7 +28,7 @@
 class ConsoleLogger : public Logger
 {
   private:
-    void write(const std::chrono::system_clock::time_point& time, std::string_view objectId, LogMessage code, std::string_view message);
+    static void write(const std::chrono::system_clock::time_point& time, std::string_view objectId, LogMessage code, std::string_view message);
 
   public:
     ConsoleLogger() = default;

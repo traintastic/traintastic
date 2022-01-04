@@ -38,7 +38,7 @@ class EventHandler final : public AbstractEventHandler
     void release();
 
   public:
-    EventHandler(AbstractEvent& _event, lua_State* L);
+    EventHandler(AbstractEvent& evt, lua_State* L);
     ~EventHandler() final;
 
     void execute(const Arguments& args) final;

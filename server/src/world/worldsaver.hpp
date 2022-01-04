@@ -40,8 +40,8 @@ class WorldSaver
 
     void deleteFiles();
     void writeFiles();
-    void saveToDisk(const nlohmann::json& data, const std::filesystem::path& filename);
-    void saveToDisk(const std::string& data, const std::filesystem::path& filename);
+    static void saveToDisk(const nlohmann::json& data, const std::filesystem::path& filename);
+    static void saveToDisk(const std::string& data, const std::filesystem::path& filename);
 
   public:
     WorldSaver(const World& world, std::filesystem::path path);

@@ -25,6 +25,7 @@
 #include "../../world/getworld.hpp"
 #include "../../core/attributes.hpp"
 #include "../../utils/displayname.hpp"
+#include "../../utils/ifndefndebug.hpp"
 
 DecoderList::DecoderList(Object& _parent, const std::string& parentPropertyName) :
   ObjectList<Decoder>(_parent, parentPropertyName),
@@ -44,7 +45,7 @@ DecoderList::DecoderList(Object& _parent, const std::string& parentPropertyName)
       return decoder;
     }}
   , remove{*this, "remove",
-      [this](const std::shared_ptr<Decoder>& decoder)
+      [IFNDEF_NDEBUG(this)](const std::shared_ptr<Decoder>& decoder)
       {
         if(!decoder)
           return;

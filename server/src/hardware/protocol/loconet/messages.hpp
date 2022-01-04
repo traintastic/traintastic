@@ -38,7 +38,7 @@ namespace LocoNet {
 
 struct Message;
 
-uint8_t calcChecksum(const Message& msmessageg);
+uint8_t calcChecksum(const Message& messageg);
 void updateChecksum(Message& message);
 bool isChecksumValid(const Message& message);
 bool isValid(const Message& message);

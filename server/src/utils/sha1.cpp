@@ -24,10 +24,10 @@
 #include <fstream>
 #include <boost/uuid/detail/sha1.hpp>
 
-Sha1::Digest Sha1::of(const std::string& string)
+Sha1::Digest Sha1::of(const std::string& value)
 {
   boost::uuids::detail::sha1 sha1;
-	sha1.process_bytes(string.c_str(), string.size());
+	sha1.process_bytes(value.c_str(), value.size());
   Digest digest;
 	sha1.get_digest(digest.m_hash);
   return digest;

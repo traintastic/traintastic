@@ -54,7 +54,7 @@ AbstractMethod* Method::test(lua_State* L, int index)
   MethodData** data = static_cast<MethodData**>(luaL_testudata(L, index, metaTableName));
   if(!data)
     return nullptr;
-  else if(!(**data).object.expired())
+  if(!(**data).object.expired())
     return &(**data).method;
 
   errorDeadMethod(L);

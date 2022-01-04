@@ -50,7 +50,7 @@ CTWReader::CTWReader(const std::filesystem::path& filename)
     const int r = archive_read_next_header(ctw.get(), &entry);
     if(r == ARCHIVE_EOF)
       break;
-    else if(r < ARCHIVE_OK)
+    if(r < ARCHIVE_OK)
       throw LibArchiveError(ctw.get());
 
     std::vector<std::byte> data;
@@ -62,7 +62,7 @@ CTWReader::CTWReader(const std::filesystem::path& filename)
       const auto count = archive_read_data(ctw.get(), data.data() + pos, data.size() - pos);
       if(count < 0)
         throw LibArchiveError(ctw.get());
-      else if(count == 0)
+      if(count == 0)
         break; // should not happen
       pos += static_cast<size_t>(count);
     }

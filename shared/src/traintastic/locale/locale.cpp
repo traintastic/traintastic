@@ -55,7 +55,7 @@ Locale::Locale(std::filesystem::path _filename, Locale* fallback) :
         p++; // next line
       else
       {
-        auto start = p;
+        const auto* start = p;
         while(*(++p) != '='); // seek =
         std::string_view id{start, static_cast<size_t>(p - start)};
         start = ++p;
@@ -104,7 +104,7 @@ std::string_view Locale::translate(std::string_view id) const
   auto it = m_strings.find(id);
   if(it != m_strings.cend())
     return it->second;
-  else if(m_missing)
+  if(m_missing)
     m_missing->emplace(id);
 
   if(m_fallback)

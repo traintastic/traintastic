@@ -68,7 +68,7 @@ class Traintastic final : public Object
     void loadWorldPath(const std::filesystem::path& path);
 
     void doReceive();
-    std::unique_ptr<Message> processMessage(const Message& message);
+    static std::unique_ptr<Message> processMessage(const Message& message);
     void doAccept();
 
   protected:

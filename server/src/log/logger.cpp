@@ -31,7 +31,7 @@ std::string_view Logger::toString(LogMessage message)
   int n = snprintf(key.data(), key.size() ,"message:%c%04d", logMessageChar(message), logMessageNumber(message));
   if(n < 0)
     return {};
-  else if(n < static_cast<int>(key.size()))
+  if(n < static_cast<int>(key.size()))
     key.resize(n);
 
   assert(Locale::tr(key) != key);

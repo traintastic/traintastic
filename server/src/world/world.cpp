@@ -326,10 +326,9 @@ ObjectPtr World::getObject(const std::string& _id) const
   auto it = m_objects.find(_id);
   if(it != m_objects.end())
     return it->second.lock();
-  else if(_id == classId)
+  if(_id == classId)
     return std::const_pointer_cast<Object>(shared_from_this());
-  else
-    return ObjectPtr();
+  return ObjectPtr();
 }
 
 ObjectPtr World::getObjectByPath(std::string_view path) const

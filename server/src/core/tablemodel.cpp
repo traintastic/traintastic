@@ -23,7 +23,6 @@
 #include "tablemodel.hpp"
 
 TableModel::TableModel() :
-  Object(),
   m_rowCount{0}
 {
 }
