@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,13 +23,15 @@
 #ifndef TRAINTASTIC_SHARED_TRAINTASTIC_UTILS_STDFILESYSTEM_HPP
 #define TRAINTASTIC_SHARED_TRAINTASTIC_UTILS_STDFILESYSTEM_HPP
 
-#if defined(__GNUC__) && __GNUC__ < 8 && !defined(__APPLE__)
+#if __has_include(<filesystem>)
+  #include <filesystem>
+#elif __has_include(<experimental/filesystem>)
   #include <experimental/filesystem>
   namespace std {
     namespace filesystem = experimental::filesystem::v1;
   }
 #else
-  #include <filesystem>
+  #error "Can't find std::filesystem header"
 #endif
 
 #endif
