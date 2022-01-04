@@ -245,7 +245,7 @@ jobs:
     # Ubuntu only:
     - name: Install packages
       if: startswith(matrix.config.os, 'ubuntu')
-      run: sudo apt install liblua5.3-dev lcov libarchive-dev
+      run: sudo apt install liblua5.3-dev lcov libarchive-dev clang-tidy
 
     # Ubuntu 18.04 only:
     - name: Install g++-8
