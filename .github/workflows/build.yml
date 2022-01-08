@@ -20,16 +20,6 @@ jobs:
           build_deb: false
           defines: ""
 
-        - name: "ubuntu_18.04"
-          os: ubuntu-18.04
-          generator: "Unix Makefiles"
-          arch: ""
-          target: traintastic-client
-          jobs: 2
-          build_type: Release
-          build_deb: true
-          defines: "-DCMAKE_CXX_COMPILER=g++-8 -DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~bionic~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
-
         - name: "ubuntu_20.04"
           os: ubuntu-20.04
           generator: "Unix Makefiles"
@@ -98,11 +88,6 @@ jobs:
     - name: Install packages
       if: startswith(matrix.config.os, 'ubuntu')
       run: sudo apt install qt5-default libqt5svg5-dev
-    
-    # Ubuntu 18.04 only:
-    - name: Install g++-8
-      if: matrix.config.os == 'ubuntu-18.04'
-      run: sudo apt install g++-8
 
     # All:
     - name: Create Build Environment
@@ -167,18 +152,6 @@ jobs:
           build_type: Release
           build_deb: false
           defines: ""
-          ccov: false
-
-        - name: "ubuntu_18.04"
-          os: ubuntu-18.04
-          generator: "Unix Makefiles"
-          arch: ""
-          toolset: ""
-          target: all
-          jobs: 2
-          build_type: Release
-          build_deb: true
-          defines: "-DCMAKE_CXX_COMPILER=g++-8 -DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~bionic~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
           ccov: false
 
         - name: "ubuntu_20.04"
@@ -246,11 +219,6 @@ jobs:
     - name: Install packages
       if: startswith(matrix.config.os, 'ubuntu')
       run: sudo apt install liblua5.3-dev lcov libarchive-dev clang-tidy
-
-    # Ubuntu 18.04 only:
-    - name: Install g++-8
-      if: matrix.config.os == 'ubuntu-18.04'
-      run: sudo apt install g++-8
 
     # All:
     - name: Create Build Environment
@@ -329,10 +297,6 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - name: "ubuntu_18.04"
-          os: ubuntu-18.04
-          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~bionic~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
-
         - name: "ubuntu_20.04"
           os: ubuntu-20.04
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~ubuntu~focal~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
