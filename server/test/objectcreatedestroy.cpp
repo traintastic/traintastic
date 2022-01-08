@@ -208,7 +208,7 @@ TEST_CASE("Create world, decoder and function => destroy function", "[object-cre
 
   functionsWeak.lock()->remove(functionWeak.lock());
   REQUIRE(functionWeak.expired());
-  REQUIRE(functionsWeak.lock()->items.size() == 0);
+  REQUIRE(functionsWeak.lock()->items.empty());
 
   world.reset();
   REQUIRE(functionsWeak.expired());
