@@ -1,6 +1,7 @@
 #include <winver.h>
 #include <version.hpp>
 #include <traintastic/codename.hpp>
+#include <traintastic/copyright.hpp>
 
 VS_VERSION_INFO VERSIONINFO
 FILEVERSION     TRAINTASTIC_VERSION_MAJOR, TRAINTASTIC_VERSION_MINOR, TRAINTASTIC_VERSION_PATCH, 0
@@ -23,7 +24,7 @@ BEGIN
             VALUE "FileDescription",  "Traintastic client application"
             VALUE "FileVersion",      TRAINTASTIC_VERSION " " TRAINTASTIC_CODENAME
             VALUE "InternalName",     "traintastic-client"
-            VALUE "LegalCopyright",   "Copyright (c) 2019-2022 Reinder Feenstra"
+            VALUE "LegalCopyright",   TRAINTASTIC_COPYRIGHT
             VALUE "OriginalFilename", "traintastic-client.exe"
             VALUE "ProductName",      "Traintastic client"
             VALUE "ProductVersion",   TRAINTASTIC_VERSION " " TRAINTASTIC_CODENAME
