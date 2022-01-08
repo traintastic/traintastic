@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,6 +32,8 @@
 #include "../../src/enum/direction.hpp"
 #include "../../src/enum/worldevent.hpp"
 #include "../../src/enum/worldscale.hpp"
+
+#include <iostream>
 
 template<class T>
 static lua_State* createState()
@@ -83,6 +85,68 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]"
       code.assign("enum.").append(EnumName<TestType>::value).append("[42] = nil");
       REQUIRE_FALSE(run(L, code));
       REQUIRE(lua_tostring(L, -1) == std::string_view{":1: table is readonly"});
+    }
+
+    closeStateWithProtect(L);
+  }
+
+  {
+    INFO("iterate over enum.*")
+
+    lua_State* L = createState<TestType>();
+
+    // load Lua baselib:
+    lua_pushcfunction(L, luaopen_base);
+    lua_pushliteral(L, "");
+    lua_call(L, 1, 0);
+
+    // load Lua tablelib:
+    luaL_requiref(L, "table", luaopen_table, 1);
+
+    const std::string code =
+      std::string(
+        "local keys = {}\n"
+        "for k, v in pairs(enum.") + EnumName<TestType>::value + ") do\n"
+        "  table.insert(keys, k)\n"
+        "end\n"
+        "return keys\n";
+    REQUIRE(run(L, code));
+
+    // check length
+    lua_len(L, -1);
+    const lua_Integer len = lua_tointeger(L, -1);
+    REQUIRE(len == static_cast<lua_Integer>(EnumValues<TestType>::value.size()));
+    lua_pop(L, 1);
+
+    // check values (lua table -> enum values):
+    for(lua_Integer i = 1; i <= len; i++)
+    {
+      lua_rawgeti(L, -1, i);
+      REQUIRE(
+        std::find_if(EnumValues<TestType>::value.begin(), EnumValues<TestType>::value.end(),
+          [s=std::string_view{lua_tostring(L, -1)}](auto it)
+          {
+            return s == toUpper(it.second);
+          }) != EnumValues<TestType>::value.end());
+      lua_pop(L, 1);
+    }
+
+    // check values (enum values -> lua table):
+    for(auto it : EnumValues<TestType>::value)
+    {
+      REQUIRE(
+        [L, len, s=toUpper(it.second)]()
+        {
+          for(lua_Integer i = 1; i <= len; i++)
+          {
+            lua_rawgeti(L, -1, i);
+            const bool equal = s == lua_tostring(L, -1);
+            lua_pop(L, 1);
+            if(equal)
+              return true;
+          }
+          return false;
+        }());
     }
 
     closeStateWithProtect(L);

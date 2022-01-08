@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,6 +37,18 @@ class ReadOnlyTable
       errorTableIsReadOnly(L);
     }
 
+    static int __pairs(lua_State* L)
+    {
+      lua_getglobal(L, "next");
+      assert(lua_isfunction(L, -1));
+      lua_getmetatable(L, 1);
+      assert(lua_istable(L, -1));
+      lua_getfield(L, -1, "__index");
+      assert(lua_istable(L, -1));
+      lua_replace(L, lua_gettop(L) - 1); // replace metatable by source table
+      return 2;
+    }
+
   public:
     static void wrap(lua_State* L, int index)
     {
@@ -49,6 +61,8 @@ class ReadOnlyTable
       lua_setfield(L, -2, "__index");
       lua_pushcfunction(L, __newindex);
       lua_setfield(L, -2, "__newindex");
+      lua_pushcfunction(L, __pairs);
+      lua_setfield(L, -2, "__pairs");
       lua_pushboolean(L, 0);
       lua_setfield(L, -2, "__metatable");
       lua_setmetatable(L, -2); // set metatable @ wrapper table
