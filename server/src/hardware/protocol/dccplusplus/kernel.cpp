@@ -28,6 +28,7 @@
 #include "../../../utils/rtrim.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
+#include "../../../utils/inrange.hpp"
 
 namespace DCCPlusPlus {
 
