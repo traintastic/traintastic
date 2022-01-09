@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,8 +29,8 @@
 namespace Lua {
 
 // Note:
-// All these functions call abort(), it's just a trick to let the compiler understand it is a noretrun function,
-// Lua's error funtions aren't marked as noretrun functions, but they are.
+// All these functions call abort(), it's just a trick to let the compiler understand it is a noreturn function,
+// Lua's error funtions aren't marked as noreturn functions, but they are.
 
 [[noreturn]] inline void errorArgumentOutOfRange(lua_State* L, int arg) { luaL_argerror(L, arg, "out of range"); abort(); }
 
@@ -38,7 +38,6 @@ namespace Lua {
 [[noreturn]] inline void errorCantSetReadOnlyProperty(lua_State* L) { luaL_error(L, "can't set read only property"); abort(); }
 
 [[noreturn]] inline void errorDeadEvent(lua_State* L) { luaL_error(L, "dead event"); abort(); }
-[[noreturn]] inline void errorDeadMethod(lua_State* L) { luaL_error(L, "dead method"); abort(); }
 [[noreturn]] inline void errorDeadObject(lua_State* L) { luaL_error(L, "dead object"); abort(); }
 
 [[noreturn]] inline void errorExpectedNArgumentsGotN(lua_State* L, int expected, int got) { luaL_error(L, "expected %d arguments, got %d", expected, got); abort(); }

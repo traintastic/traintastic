@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,7 +46,7 @@ AbstractMethod& Method::check(lua_State* L, int index)
   if(!data.object.expired())
     return data.method;
 
-  errorDeadMethod(L);
+  errorDeadObject(L);
 }
 
 AbstractMethod* Method::test(lua_State* L, int index)
@@ -57,7 +57,7 @@ AbstractMethod* Method::test(lua_State* L, int index)
   if(!(**data).object.expired())
     return &(**data).method;
 
-  errorDeadMethod(L);
+  errorDeadObject(L);
 }
 
 void Method::push(lua_State* L, AbstractMethod& value)
