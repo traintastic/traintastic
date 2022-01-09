@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,9 +40,11 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(const std::weak_ptr<World>& world, st
   , flowControl{this, "flow_control", SerialFlowControl::None, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , dccplusplus{this, "dccplusplus", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
+  , outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
   dccplusplus.setValueInternal(std::make_shared<DCCPlusPlus::Settings>(*this, dccplusplus.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
+  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name()));
 
   Attributes::addDisplayName(device, DisplayName::Serial::device);
   Attributes::addEnabled(device, !online);
@@ -64,6 +66,9 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(const std::weak_ptr<World>& world, st
 
   Attributes::addDisplayName(decoders, DisplayName::Hardware::decoders);
   m_interfaceItems.insertBefore(decoders, notes);
+
+  Attributes::addDisplayName(outputs, DisplayName::Hardware::outputs);
+  m_interfaceItems.insertBefore(outputs, notes);
 }
 
 bool DCCPlusPlusInterface::addDecoder(Decoder& decoder)
@@ -86,6 +91,30 @@ void DCCPlusPlusInterface::decoderChanged(const Decoder& decoder, DecoderChangeF
 {
   if(m_kernel)
     m_kernel->decoderChanged(decoder, changes, functionNumber);
+}
+
+bool DCCPlusPlusInterface::addOutput(Output& output)
+{
+  const bool success = OutputController::addOutput(output);
+  if(success)
+    outputs->addObject(output.shared_ptr<Output>());
+  return success;
+}
+
+bool DCCPlusPlusInterface::removeOutput(Output& output)
+{
+  const bool success = OutputController::removeOutput(output);
+  if(success)
+    outputs->removeObject(output.shared_ptr<Output>());
+  return success;
+}
+
+bool DCCPlusPlusInterface::setOutputValue(uint32_t address, bool value)
+{
+  return
+    m_kernel &&
+    inRange(address, outputAddressMinMax()) &&
+    m_kernel->setOutput(static_cast<uint16_t>(address), value);
 }
 
 bool DCCPlusPlusInterface::setOnline(bool& value)

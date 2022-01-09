@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,6 +34,7 @@
 class Decoder;
 enum class DecoderChangeFlags;
 class DecoderController;
+class OutputController;
 
 namespace DCCPlusPlus {
 
@@ -41,6 +42,10 @@ struct Message;
 
 class Kernel
 {
+  public:
+    static constexpr uint16_t outputAddressMin = 1;
+    static constexpr uint16_t outputAddressMax = 2044;
+
   private:
     boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
@@ -54,6 +59,9 @@ class Kernel
     std::function<void(bool)> m_onPowerOnChanged;
 
     DecoderController* m_decoderController;
+
+    OutputController* m_outputController;
+    std::array<TriState, outputAddressMax - outputAddressMin + 1> m_outputValues;
 
     Config m_config;
 #ifndef NDEBUG
@@ -177,6 +185,18 @@ class Kernel
     }
 
     /**
+     * @brief Set the output controller
+     *
+     * @param[in] outputController The output controller
+     * @note This function may not be called when the kernel is running.
+     */
+    inline void setOutputController(OutputController* outputController)
+    {
+      assert(!m_started);
+      m_outputController = outputController;
+    }
+
+    /**
      * @brief Start the kernel and IO handler
      */
     void start();
@@ -225,6 +245,14 @@ class Kernel
      *
      */
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
+
+    /**
+     *
+     * @param[in] address Output address, #outputAddressMin..#outputAddressMax
+     * @param[in] value Output value: \c true is on, \c false is off.
+     * @return \c true if send successful, \c false otherwise.
+     */
+    bool setOutput(uint16_t address, bool value);
 };
 
 }

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -181,7 +181,7 @@ namespace Ex {
 
   inline std::string setAccessory(uint16_t linearAddress, bool activate)
   {
-    assert(linearAddress <= 2047);
+    assert(linearAddress >= 1 && linearAddress <= 2044);
 
     return std::string("<a ")
       .append(std::to_string(linearAddress))

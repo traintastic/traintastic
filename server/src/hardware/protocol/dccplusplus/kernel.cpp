@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -62,6 +62,7 @@ void Kernel::start()
   // reset all state values
   m_powerOn = TriState::Undefined;
   m_emergencyStop = TriState::Undefined;
+  m_outputValues.fill(TriState::Undefined);
 
   m_thread = std::thread(
     [this]()
@@ -212,6 +213,24 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   {
     postSend(Ex::setLocoFunction(decoder.address, static_cast<uint8_t>(functionNumber), decoder.getFunctionValue(functionNumber)));
   }
+}
+
+bool Kernel::setOutput(uint16_t address, bool value)
+{
+  assert(inRange(address, outputAddressMin, outputAddressMax));
+
+  m_ioContext.post(
+    [this, address, value]()
+    {
+      const auto index = address - outputAddressMin;
+      if(m_outputValues[index] != toTriState(value))
+      {
+        m_outputValues[index] = toTriState(value);
+        send(Ex::setAccessory(address - outputAddressMin, value));
+      }
+    });
+
+  return true;
 }
 
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
