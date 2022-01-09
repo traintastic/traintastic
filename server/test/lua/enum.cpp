@@ -23,17 +23,10 @@
 #include <catch2/catch.hpp>
 #include "protect.hpp"
 #include "run.hpp"
+#include "enums.hpp"
 #include "../../src/lua/enum.hpp"
 #include "../../src/lua/readonlytable.hpp"
 #include "../../src/utils/toupper.hpp"
-
-// Enums:
-#include "../../src/enum/decoderprotocol.hpp"
-#include "../../src/enum/direction.hpp"
-#include "../../src/enum/worldevent.hpp"
-#include "../../src/enum/worldscale.hpp"
-
-#include <iostream>
 
 template<class T>
 static lua_State* createState()
@@ -49,12 +42,7 @@ static lua_State* createState()
   return L;
 }
 
-TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]"
-  , DecoderProtocol
-  , Direction
-  , WorldEvent
-  , WorldScale
-  )
+TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", TEST_ENUMS)
 {
   const TestType firstKey = EnumValues<TestType>::value.begin()->first;
   const TestType lastKey = EnumValues<TestType>::value.rbegin()->first;

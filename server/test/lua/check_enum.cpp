@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,12 +23,8 @@
 #include <catch2/catch.hpp>
 #include "../../src/lua/check.hpp"
 #include "protect.hpp"
+#include "enums.hpp"
 #include <type_traits>
-
-// Enums:
-#include "../../src/enum/decoderprotocol.hpp"
-#include "../../src/enum/direction.hpp"
-#include "../../src/enum/worldevent.hpp"
 
 template<class T>
 struct other_enum_type
@@ -53,7 +49,7 @@ static lua_State* createState()
   return L;
 }
 
-TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", DecoderProtocol, Direction, WorldEvent)
+TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", TEST_ENUMS)
 {
   using OtherEnumType = typename other_enum_type<TestType>::type;
 

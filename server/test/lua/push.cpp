@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,9 +24,7 @@
 #include "../../src/lua/push.hpp"
 
 // Enums:
-#include "../../src/enum/decoderprotocol.hpp"
-#include "../../src/enum/direction.hpp"
-#include "../../src/enum/worldevent.hpp"
+#include "enums.hpp"
 
 // Sets:
 #include "../../src/set/worldstate.hpp"
@@ -118,7 +116,7 @@ TEMPLATE_TEST_CASE("Lua::push<>", "[lua][lua-push]", std::string, std::string_vi
   lua_close(L);
 }
 
-TEMPLATE_TEST_CASE("Lua::push<>", "[lua][lua-push]", DecoderProtocol, Direction, WorldEvent)
+TEMPLATE_TEST_CASE("Lua::push<>", "[lua][lua-push]", TEST_ENUMS)
 {
   lua_State* L = luaL_newstate();
   const int top = lua_gettop(L);

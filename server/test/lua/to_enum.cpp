@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,14 +21,10 @@
  */
 
 #include <catch2/catch.hpp>
+#include "enums.hpp"
 #include "../../src/lua/to.hpp"
 #include <string_view>
 #include <type_traits>
-
-// Enums:
-#include "../../src/enum/decoderprotocol.hpp"
-#include "../../src/enum/direction.hpp"
-#include "../../src/enum/worldevent.hpp"
 
 #define REQUIRE_TRY_TO_FAIL() \
   { \
@@ -52,7 +48,7 @@ struct other_enum_type<WorldEvent>
   using type = DecoderProtocol;
 };
 
-TEMPLATE_TEST_CASE("Lua::to<>", "[lua][lua-to]", DecoderProtocol, Direction, WorldEvent)
+TEMPLATE_TEST_CASE("Lua::to<>", "[lua][lua-to]", TEST_ENUMS)
 {
   using OtherEnumType = typename other_enum_type<TestType>::type;
 
