@@ -37,10 +37,12 @@ Select *I accept the agreement* and click *Next*.
 
 Select *Client and Server* if this computer will control the layout or select *Client only* if this computer is used as additional computer to operate the layout. Then click *Next*.
 
-### Step 7: Desktop shortcuts
+### Step 7: Desktop shortcuts and firewall rules
 ![](../../gfx/en-us/installation/traintastic-setup-7.png)
 
-Uncheck *Create a desktop shortcut* if you don't want desktop shortcuts to start Traintastic, then click *Next*.
+Uncheck *Create a desktop shortcut* if you don't want desktop shortcuts to start Traintastic.
+Firewall rules will be added to allow other pc's and device to connect to Traintastic, can be unchecked if not nessacary.
+Then click *Next*.
 
 ### Step 8: Ready for installation
 ![](../../gfx/en-us/installation/traintastic-setup-8.png)
