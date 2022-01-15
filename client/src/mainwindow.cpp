@@ -222,6 +222,15 @@ MainWindow::MainWindow(QWidget* parent) :
       });
     m_worldEditAction->setCheckable(true);
     m_menuWorld->addSeparator();
+    m_worldSimulationAction = m_menuWorld->addAction(Theme::getIcon("simulation"), Locale::tr("world:simulation"),
+      [this](bool checked)
+      {
+        if(m_world)
+          if(AbstractProperty* property = m_world->getProperty("simulation"))
+            property->setValueBool(checked);
+      });
+    m_worldSimulationAction->setCheckable(true);
+    m_menuWorld->addSeparator();
     m_menuWorld->addAction(Theme::getIcon("world"), Locale::tr("qtapp.mainmenu:world_properties"), [this](){ showObject("world", Locale::tr("qtapp.mainmenu:world_properties")); });
 
     m_menuObjects = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:objects"));
@@ -424,11 +433,17 @@ void MainWindow::worldChanged()
     if(auto* state = m_world->getProperty("state"))
       connect(state, &AbstractProperty::valueChangedInt64, this, &MainWindow::worldStateChanged);
 
-    //if(AbstractProperty* edit = m_world->getProperty("edit"))
-    //  connect(edit, &AbstractProperty::valueChangedBool, m_worldEditAction, &QAction::setChecked);
+    if(AbstractProperty* simulation = m_world->getProperty("simulation"))
+    {
+      connect(simulation, &AbstractProperty::attributeChanged,
+        [this](AttributeName attribute, const QVariant& value)
+        {
+          if(attribute == AttributeName::Enabled)
+            m_worldSimulationAction->setEnabled(value.toBool());
+        });
 
-    //if(AbstractProperty* edit = m_world->getProperty("edit"))
-    //  connect(edit, &AbstractProperty::valueChangedBool, m_worldEditAction, &QAction::setChecked);
+      m_worldSimulationAction->setEnabled(simulation->getAttributeBool(AttributeName::Enabled, true));
+    }
   }
 
   updateWindowTitle();
@@ -694,4 +709,5 @@ void MainWindow::worldStateChanged(int64_t value)
   m_worldNoSmokeMenuAction->setChecked(contains(state, WorldState::NoSmoke));
   m_worldNoSmokeToolbarAction->setChecked(contains(state, WorldState::NoSmoke));
   m_worldEditAction->setChecked(contains(state, WorldState::Edit));
+  m_worldSimulationAction->setChecked(contains(state, WorldState::Simulation));
 }

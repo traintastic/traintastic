@@ -60,7 +60,7 @@ class DCCPlusPlusInterface final
     void idChanged(const std::string& newId) final;
 
   protected:
-    bool setOnline(bool& value) final;
+    bool setOnline(bool& value, bool simulation) final;
 
   public:
     Property<std::string> device;

@@ -40,6 +40,8 @@ enum class WorldEvent : uint64_t
   Mute = 9,
   NoSmoke = 10,
   Smoke = 11,
+  SimulationDisabled = 12,
+  SimulationEnabled = 13,
 };
 
 template<>

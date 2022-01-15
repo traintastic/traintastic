@@ -61,6 +61,7 @@ class World : public Object
   private:
     struct Private {};
 
+    void updateEnabled();
     void updateScaleRatio();
 
   protected:
@@ -113,6 +114,7 @@ class World : public Object
     Method<void()> stop;
     Property<bool> mute;
     Property<bool> noSmoke;
+    Property<bool> simulation;
 
     Method<void()> save;
 

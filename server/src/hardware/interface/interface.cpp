@@ -29,7 +29,12 @@
 Interface::Interface(const std::weak_ptr<World>& world, std::string_view _id)
   : IdObject(world, _id)
   , name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
-  , online{this, "online", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore, nullptr, std::bind(&Interface::setOnline, this, std::placeholders::_1)}
+  , online{this, "online", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore, nullptr,
+      [this](bool& value)
+      {
+        assert(m_world.lock());
+        return setOnline(value, contains(m_world.lock()->state.value(), WorldState::Simulation));
+      }}
   , status{this, "status", InterfaceStatus::Offline, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {

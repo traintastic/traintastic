@@ -91,8 +91,14 @@ void Z21Interface::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-bool Z21Interface::setOnline(bool& value)
+bool Z21Interface::setOnline(bool& value, bool simulation)
 {
+  if(simulation)
+  {
+    Log::log(*this, LogMessage::N2001_SIMULATION_NOT_SUPPORTED);
+    return false;
+  }
+
   if(!m_kernel && value)
   {
     try

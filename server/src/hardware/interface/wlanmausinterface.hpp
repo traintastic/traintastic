@@ -44,7 +44,7 @@ class WlanMausInterface : public Interface
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
     void idChanged(const std::string& newId) final;
-    bool setOnline(bool& value) final;
+    bool setOnline(bool& value, bool simulation) final;
 
   public:
     ObjectProperty<Z21::ServerSettings> z21;

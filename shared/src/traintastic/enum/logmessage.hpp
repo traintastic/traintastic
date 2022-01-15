@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -97,6 +97,9 @@ enum class LogMessage : uint32_t
   N1020_SMOKE_ENABLED = LogMessageOffset::notice + 1020,
   N1021_SMOKE_DISABLED = LogMessageOffset::notice + 1021,
   N1022_SAVED_WORLD_X = LogMessageOffset::notice + 1022,
+  N1023_SIMULATION_DISABLED = LogMessageOffset::notice + 1022,
+  N1024_SIMULATION_ENABLED = LogMessageOffset::notice + 1023,
+  N2001_SIMULATION_NOT_SUPPORTED = LogMessageOffset::notice + 2001,
   N9999_X = LogMessageOffset::notice + 9999,
 
   // Warning:

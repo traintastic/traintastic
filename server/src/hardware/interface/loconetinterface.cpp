@@ -165,7 +165,7 @@ bool LocoNetInterface::setOutputValue(uint32_t address, bool value)
     m_kernel->setOutput(static_cast<uint16_t>(address), value);
 }
 
-bool LocoNetInterface::setOnline(bool& value)
+bool LocoNetInterface::setOnline(bool& value, bool simulation)
 {
   if(!m_kernel && value)
   {

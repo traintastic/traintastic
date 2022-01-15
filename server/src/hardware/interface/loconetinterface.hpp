@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -63,7 +63,7 @@ class LocoNetInterface final
     void typeChanged();
 
   protected:
-    bool setOnline(bool& value) final;
+    bool setOnline(bool& value, bool simulation) final;
 
   public:
     Property<LocoNetInterfaceType> type;

@@ -72,6 +72,7 @@ class MainWindow : public QMainWindow
     QAction* m_worldMuteMenuAction;
     QAction* m_worldNoSmokeMenuAction;
     QAction* m_worldEditAction;
+    QAction* m_worldSimulationAction;
     QMenu* m_menuObjects;
     QAction* m_actionLuaScript;
     QAction* m_actionFullScreen;

@@ -117,8 +117,14 @@ bool DCCPlusPlusInterface::setOutputValue(uint32_t address, bool value)
     m_kernel->setOutput(static_cast<uint16_t>(address), value);
 }
 
-bool DCCPlusPlusInterface::setOnline(bool& value)
+bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
 {
+  if(simulation)
+  {
+    Log::log(*this, LogMessage::N2001_SIMULATION_NOT_SUPPORTED);
+    return false;
+  }
+
   if(!m_kernel && value)
   {
     try

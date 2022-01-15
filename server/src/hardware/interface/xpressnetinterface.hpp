@@ -64,7 +64,7 @@ class XpressNetInterface final
     void updateVisible();
 
   protected:
-    bool setOnline(bool& value) final;
+    bool setOnline(bool& value, bool simulation) final;
 
   public:
     Property<XpressNetInterfaceType> type;
