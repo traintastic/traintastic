@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_IOHANDLER_SIMULATIONIOHANDLER_HPP
 
 #include "iohandler.hpp"
+#include <array>
 #include "../messages.hpp"
 
 namespace LocoNet {
