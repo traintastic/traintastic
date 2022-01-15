@@ -22,7 +22,7 @@
 
 #include "abstractmethod.hpp"
 
-AbstractMethod::AbstractMethod(Object& object, const std::string& name, MethodFlags flags)
+AbstractMethod::AbstractMethod(Object& object, std::string_view name, MethodFlags flags)
   : InterfaceItem(object, name)
   , m_flags{flags}
 {

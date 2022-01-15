@@ -24,7 +24,7 @@
 #include "outputlist.hpp"
 #include "../../../utils/displayname.hpp"
 
-bool OutputListTableModel::isListedProperty(const std::string& name)
+bool OutputListTableModel::isListedProperty(std::string_view name)
 {
   return
     name == "id" ||

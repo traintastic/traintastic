@@ -26,7 +26,7 @@
 
 namespace LocoNet {
 
-Settings::Settings(Object& _parent, const std::string& parentPropertyName)
+Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , commandStation{this, "command_station", LocoNetCommandStation::Custom, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [](LocoNetCommandStation value)

@@ -30,7 +30,7 @@ constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
 constexpr uint32_t columnState = 2;
 
-bool ScriptListTableModel::isListedProperty(const std::string& name)
+bool ScriptListTableModel::isListedProperty(std::string_view name)
 {
   return
     name == "id" ||

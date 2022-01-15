@@ -26,7 +26,7 @@
 #include "../core/attributes.hpp"
 #include "../utils/displayname.hpp"
 
-BoardList::BoardList(Object& _parent, const std::string& parentPropertyName) :
+BoardList::BoardList(Object& _parent, std::string_view parentPropertyName) :
   ObjectList<Board>(_parent, parentPropertyName),
   add{*this, "add",
     [this]()
@@ -71,7 +71,7 @@ void BoardList::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(remove, editable);
 }
 
-bool BoardList::isListedProperty(const std::string& name)
+bool BoardList::isListedProperty(std::string_view name)
 {
   return BoardListTableModel::isListedProperty(name);
 }

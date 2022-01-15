@@ -27,7 +27,7 @@
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
 
-bool TrainListTableModel::isListedProperty(const std::string& name)
+bool TrainListTableModel::isListedProperty(std::string_view name)
 {
   return
     name == "id" ||

@@ -47,26 +47,26 @@ class Property : public AbstractProperty
     }*/
 
   public:
-    Property(Object* object, const std::string& name, const T& value, PropertyFlags flags) :
+    Property(Object* object, std::string_view name, const T& value, PropertyFlags flags) :
       AbstractProperty(*object, name, value_type<T>::value, flags),
       m_value{value}
     {
       //static_assert(property_type<T>::value != PropertyType::Invalid);
     }
 
-    Property(Object* object, const std::string& name, const T& value, PropertyFlags flags, OnChanged onChanged) :
+    Property(Object* object, std::string_view name, const T& value, PropertyFlags flags, OnChanged onChanged) :
       Property(object, name, value, flags)
     {
       m_onChanged = std::move(onChanged);
     }
 
-    Property(Object* object, const std::string& name, const T& value, PropertyFlags flags, OnChanged onChanged, OnSet onSet) :
+    Property(Object* object, std::string_view name, const T& value, PropertyFlags flags, OnChanged onChanged, OnSet onSet) :
       Property(object, name, value, flags, onChanged)
     {
       m_onSet = std::move(onSet);
     }
 
-    Property(Object* object, const std::string& name, const T& value, PropertyFlags flags, std::nullptr_t, OnSet onSet) :
+    Property(Object* object, std::string_view name, const T& value, PropertyFlags flags, std::nullptr_t, OnSet onSet) :
       Property(object, name, value, flags)
     {
       m_onSet = std::move(onSet);

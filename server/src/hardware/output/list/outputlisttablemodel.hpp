@@ -44,7 +44,7 @@ class OutputListTableModel : public ObjectListTableModel<Output>
   public:
     CLASS_ID("output_list_table_model")
 
-    static bool isListedProperty(const std::string& name);
+    static bool isListedProperty(std::string_view name);
 
     OutputListTableModel(OutputList& list);
 

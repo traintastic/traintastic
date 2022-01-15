@@ -24,7 +24,7 @@
 
 namespace Z21 {
 
-ServerSettings::ServerSettings(Object& _parent, const std::string& parentPropertyName)
+ServerSettings::ServerSettings(Object& _parent, std::string_view parentPropertyName)
   : Settings(_parent, parentPropertyName)
   , allowEmergencyStop{this, "allow_emergency_stop", true, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , allowTrackPowerOff{this, "allow_track_power_off", true, PropertyFlags::ReadWrite | PropertyFlags::Store}

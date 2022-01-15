@@ -24,7 +24,7 @@
 #include "inputlist.hpp"
 #include "../../../utils/displayname.hpp"
 
-bool InputListTableModel::isListedProperty(const std::string& name)
+bool InputListTableModel::isListedProperty(std::string_view name)
 {
   return
     name == "id" ||

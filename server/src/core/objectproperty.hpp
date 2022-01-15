@@ -40,36 +40,36 @@ class ObjectProperty : public AbstractObjectProperty
     OnSet m_onSet;
 
   public:
-    ObjectProperty(Object* object, const std::string& name, const std::shared_ptr<T>& value, PropertyFlags flags) :
+    ObjectProperty(Object* object, std::string_view name, const std::shared_ptr<T>& value, PropertyFlags flags) :
       AbstractObjectProperty(object, name, flags),
       m_value{value}
     {
     }
 
-    ObjectProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags) :
+    ObjectProperty(Object* object, std::string_view name, std::nullptr_t, PropertyFlags flags) :
       ObjectProperty(object, name, std::shared_ptr<T>(), flags)
     {
     }
 
-    ObjectProperty(Object* object, const std::string& name, const std::shared_ptr<T>& value, PropertyFlags flags, OnChanged onChanged, OnSet onSet) :
+    ObjectProperty(Object* object, std::string_view name, const std::shared_ptr<T>& value, PropertyFlags flags, OnChanged onChanged, OnSet onSet) :
       ObjectProperty(object, name, value, flags)
     {
       m_onChanged = onChanged;
       m_onSet = onSet;
     }
 
-    ObjectProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags, OnChanged onChanged, OnSet onSet) :
+    ObjectProperty(Object* object, std::string_view name, std::nullptr_t, PropertyFlags flags, OnChanged onChanged, OnSet onSet) :
       ObjectProperty(object, name, std::shared_ptr<T>(), flags, onChanged, onSet)
     {
     }
 
-    ObjectProperty(Object* object, const std::string& name, const std::shared_ptr<T>& value, PropertyFlags flags, OnSet onSet) :
+    ObjectProperty(Object* object, std::string_view name, const std::shared_ptr<T>& value, PropertyFlags flags, OnSet onSet) :
       ObjectProperty(object, name, value, flags)
     {
       m_onSet = onSet;
     }
 
-    ObjectProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags, OnSet onSet) :
+    ObjectProperty(Object* object, std::string_view name, std::nullptr_t, PropertyFlags flags, OnSet onSet) :
       ObjectProperty(object, name, std::shared_ptr<T>(), flags, onSet)
     {
     }

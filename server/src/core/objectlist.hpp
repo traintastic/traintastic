@@ -65,7 +65,7 @@ class ObjectList : public AbstractObjectList
       rowCountChanged();
     }
 
-    virtual bool isListedProperty(const std::string& name) = 0;
+    virtual bool isListedProperty(std::string_view name) = 0;
 
     void rowCountChanged()
     {
@@ -76,7 +76,7 @@ class ObjectList : public AbstractObjectList
     }
 
   public:
-    ObjectList(Object& _parent, const std::string& parentPropertyName) :
+    ObjectList(Object& _parent, std::string_view parentPropertyName) :
       AbstractObjectList{_parent, parentPropertyName}
     {
     }

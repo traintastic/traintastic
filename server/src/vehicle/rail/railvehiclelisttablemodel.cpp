@@ -29,7 +29,7 @@ constexpr uint32_t columnName = 1;
 constexpr uint32_t columnType = 2;
 constexpr uint32_t columnLOB = 3;
 
-bool RailVehicleListTableModel::isListedProperty(const std::string& name)
+bool RailVehicleListTableModel::isListedProperty(std::string_view name)
 {
   return
     name == "id" ||

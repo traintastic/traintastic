@@ -44,7 +44,7 @@ class InputListTableModel : public ObjectListTableModel<Input>
   public:
     CLASS_ID("input_list_table_model")
 
-    static bool isListedProperty(const std::string& name);
+    static bool isListedProperty(std::string_view name);
 
     InputListTableModel(InputList& list);
 

@@ -29,7 +29,7 @@
 #include "../../../world/worldsaver.hpp"
 #include "../../../utils/displayname.hpp"
 
-OutputMap::OutputMap(Object& _parent, const std::string& parentPropertyName) :
+OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName) :
   SubObject(_parent, parentPropertyName),
   addOutput{*this, "add_output",
     [this](std::shared_ptr<Output> output)

@@ -96,13 +96,13 @@ class Method<R(A...)> : public AbstractMethod
     std::function<R(A...)> m_function;
 
   public:
-    Method(Object& object, const std::string& name, MethodFlags flags, std::function<R(A...)> function) :
+    Method(Object& object, std::string_view name, MethodFlags flags, std::function<R(A...)> function) :
       AbstractMethod(object, name, flags),
       m_function{std::move(function)}
     {
     }
 
-    Method(Object& object, const std::string& name, std::function<R(A...)> function) :
+    Method(Object& object, std::string_view name, std::function<R(A...)> function) :
       AbstractMethod(object, name),
       m_function{std::move(function)}
     {

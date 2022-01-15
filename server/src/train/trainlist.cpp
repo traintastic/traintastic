@@ -27,7 +27,7 @@
 #include "../core/attributes.hpp"
 #include "../utils/displayname.hpp"
 
-TrainList::TrainList(Object& _parent, const std::string& parentPropertyName) :
+TrainList::TrainList(Object& _parent, std::string_view parentPropertyName) :
   ObjectList<Train>(_parent, parentPropertyName),
   add{*this, "add",
     [this]()
@@ -72,7 +72,7 @@ void TrainList::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(remove, editable);
 }
 
-bool TrainList::isListedProperty(const std::string& name)
+bool TrainList::isListedProperty(std::string_view name)
 {
   return TrainListTableModel::isListedProperty(name);
 }

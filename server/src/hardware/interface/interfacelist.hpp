@@ -31,7 +31,7 @@ class InterfaceList : public ObjectList<Interface>
 {
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
+    bool isListedProperty(std::string_view name) final;
 
   public:
     CLASS_ID("list.interface")
@@ -39,7 +39,7 @@ class InterfaceList : public ObjectList<Interface>
     Method<std::shared_ptr<Interface>(std::string_view)> add;
     Method<void(const std::shared_ptr<Interface>&)> remove;
 
-    InterfaceList(Object& _parent, const std::string& parentPropertyName);
+    InterfaceList(Object& _parent, std::string_view parentPropertyName);
 
     TableModelPtr getModel() final;
 };

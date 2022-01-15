@@ -69,7 +69,7 @@ class Event : public AbstractEvent
     }
 
   public:
-    Event(Object& object, const std::string& name, EventFlags flags) :
+    Event(Object& object, std::string_view name, EventFlags flags) :
       AbstractEvent(object, name, flags)
     {
     }

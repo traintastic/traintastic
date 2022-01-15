@@ -56,7 +56,7 @@ class OutputMap : public SubObject
     Method<void(std::shared_ptr<Output>)> addOutput;
     Method<void(const std::shared_ptr<Output>&)> removeOutput;
 
-    OutputMap(Object& _parent, const std::string& parentPropertyName);
+    OutputMap(Object& _parent, std::string_view parentPropertyName);
 
     virtual Items items() const = 0;
     const Outputs& outputs() const { return m_outputs; }

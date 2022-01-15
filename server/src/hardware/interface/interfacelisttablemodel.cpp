@@ -28,7 +28,7 @@ constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
 constexpr uint32_t columnStatus = 2;
 
-bool InterfaceListTableModel::isListedProperty(const std::string& name)
+bool InterfaceListTableModel::isListedProperty(std::string_view name)
 {
   return
     name == "id" ||

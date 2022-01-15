@@ -36,7 +36,7 @@ class VectorProperty : public AbstractVectorProperty
   public:
     using const_iterator = typename std::vector<T>::const_iterator;
 
-    VectorProperty(Object& object, const std::string& name, std::initializer_list<T> values, PropertyFlags flags) :
+    VectorProperty(Object& object, std::string_view name, std::initializer_list<T> values, PropertyFlags flags) :
       AbstractVectorProperty(object, name, value_type<T>::value, flags),
       m_values{values}
     {

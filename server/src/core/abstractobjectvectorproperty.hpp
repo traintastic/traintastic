@@ -28,7 +28,7 @@
 class AbstractObjectVectorProperty : public AbstractVectorProperty
 {
   public:
-    AbstractObjectVectorProperty(Object& object, const std::string& name, PropertyFlags flags) :
+    AbstractObjectVectorProperty(Object& object, std::string_view name, PropertyFlags flags) :
       AbstractVectorProperty(object, name, ValueType::Object, flags)
     {
     }

@@ -28,7 +28,7 @@
 #include "../../core/attributes.hpp"
 #include "../../utils/displayname.hpp"
 
-InterfaceList::InterfaceList(Object& _parent, const std::string& parentPropertyName) :
+InterfaceList::InterfaceList(Object& _parent, std::string_view parentPropertyName) :
   ObjectList<Interface>(_parent, parentPropertyName),
   add{*this, "add",
     [this](std::string_view interfaceClassId)
@@ -74,7 +74,7 @@ void InterfaceList::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(remove, editable);
 }
 
-bool InterfaceList::isListedProperty(const std::string& name)
+bool InterfaceList::isListedProperty(std::string_view name)
 {
   return InterfaceListTableModel::isListedProperty(name);
 }

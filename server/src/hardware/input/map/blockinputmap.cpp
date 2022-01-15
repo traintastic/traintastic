@@ -25,7 +25,7 @@
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
 
-BlockInputMap::BlockInputMap(Object& _parent, const std::string& parentPropertyName) :
+BlockInputMap::BlockInputMap(Object& _parent, std::string_view parentPropertyName) :
   InputMap(_parent, parentPropertyName),
   items{*this, "items", {}, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   add{*this, "add",

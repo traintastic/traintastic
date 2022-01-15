@@ -29,7 +29,7 @@ template<class T>
 class ControllerList : public ControllerListBase
 {
   public:
-    ControllerList(Object& _parent, const std::string& parentPropertyName)
+    ControllerList(Object& _parent, std::string_view parentPropertyName)
       : ControllerListBase(_parent, parentPropertyName)
     {
     }

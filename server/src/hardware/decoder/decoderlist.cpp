@@ -27,7 +27,7 @@
 #include "../../utils/displayname.hpp"
 #include "../../utils/ifndefndebug.hpp"
 
-DecoderList::DecoderList(Object& _parent, const std::string& parentPropertyName) :
+DecoderList::DecoderList(Object& _parent, std::string_view parentPropertyName) :
   ObjectList<Decoder>(_parent, parentPropertyName),
   add{*this, "add",
     [this]()
@@ -107,7 +107,7 @@ void DecoderList::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(remove, editable);
 }
 
-bool DecoderList::isListedProperty(const std::string& name)
+bool DecoderList::isListedProperty(std::string_view name)
 {
   return DecoderListTableModel::isListedProperty(name);
 }

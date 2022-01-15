@@ -26,7 +26,7 @@
 #include "../../core/attributes.hpp"
 #include "../../utils/displayname.hpp"
 
-DecoderFunctions::DecoderFunctions(Object& _parent, const std::string& parentPropertyName)
+DecoderFunctions::DecoderFunctions(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , items{*this, "items", {}, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , add{*this, "add",

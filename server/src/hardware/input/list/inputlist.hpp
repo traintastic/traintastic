@@ -37,14 +37,14 @@ class InputList : public ObjectList<Input>
 
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
+    bool isListedProperty(std::string_view name) final;
 
   public:
     Method<std::shared_ptr<Input>()> add;
     Method<void(const std::shared_ptr<Input>&)> remove;
     Method<std::shared_ptr<InputMonitor>()> inputMonitor;
 
-    InputList(Object& _parent, const std::string& parentPropertyName);
+    InputList(Object& _parent, std::string_view parentPropertyName);
 
     inline bool parentIsInputController() const { return m_parentIsInputController; }
 

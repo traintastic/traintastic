@@ -22,7 +22,7 @@
 
 #include "signaloutputmap.hpp"
 
-SignalOutputMap::SignalOutputMap(Object& _parent, const std::string& parentPropertyName, std::initializer_list<SignalAspect> aspects) :
+SignalOutputMap::SignalOutputMap(Object& _parent, std::string_view parentPropertyName, std::initializer_list<SignalAspect> aspects) :
   OutputMapBase(_parent, parentPropertyName, aspects)
 {
 }

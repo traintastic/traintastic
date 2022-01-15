@@ -37,14 +37,14 @@ class OutputList : public ObjectList<Output>
 
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
+    bool isListedProperty(std::string_view name) final;
 
   public:
     Method<std::shared_ptr<Output>()> add;
     Method<void(const std::shared_ptr<Output>&)> remove;
     Method<std::shared_ptr<OutputKeyboard>()> outputKeyboard;
 
-    OutputList(Object& _parent, const std::string& parentPropertyName);
+    OutputList(Object& _parent, std::string_view parentPropertyName);
 
     inline bool parentIsOutputController() const { return m_parentIsOutputController; }
 

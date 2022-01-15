@@ -38,7 +38,7 @@ class InterfaceListTableModel : public ObjectListTableModel<Interface>
   public:
     CLASS_ID("table_model.list.interface")
 
-    static bool isListedProperty(const std::string& name);
+    static bool isListedProperty(std::string_view name);
 
     InterfaceListTableModel(InterfaceList& interfaceList);
 

@@ -28,7 +28,7 @@
 
 namespace Lua {
 
-ScriptList::ScriptList(Object& _parent, const std::string& parentPropertyName) :
+ScriptList::ScriptList(Object& _parent, std::string_view parentPropertyName) :
   ObjectList<Script>(_parent, parentPropertyName),
   add{*this, "add",
     [this]()
@@ -72,7 +72,7 @@ void ScriptList::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(add, editable);
 }
 
-bool ScriptList::isListedProperty(const std::string& name)
+bool ScriptList::isListedProperty(std::string_view name)
 {
   return ScriptListTableModel::isListedProperty(name);
 }

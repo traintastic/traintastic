@@ -22,7 +22,7 @@
 
 #include "subobject.hpp"
 
-SubObject::SubObject(Object& _parent, const std::string& parentPropertyName) :
+SubObject::SubObject(Object& _parent, std::string_view parentPropertyName) :
   m_parent{_parent},
   m_parentPropertyName{parentPropertyName}
 {

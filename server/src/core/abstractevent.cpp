@@ -23,7 +23,7 @@
 #include "abstractevent.hpp"
 #include "abstracteventhandler.hpp"
 
-AbstractEvent::AbstractEvent(Object& object, const std::string& name, EventFlags flags)
+AbstractEvent::AbstractEvent(Object& object, std::string_view name, EventFlags flags)
   : InterfaceItem(object, name)
   , m_flags{flags}
 {

@@ -28,7 +28,7 @@
 class AbstractObjectProperty : public AbstractProperty
 {
   public:
-    AbstractObjectProperty(Object* object, const std::string& name, PropertyFlags flags) :
+    AbstractObjectProperty(Object* object, std::string_view name, PropertyFlags flags) :
       AbstractProperty(*object, name, ValueType::Object, flags)
     {
     }

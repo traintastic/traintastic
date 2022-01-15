@@ -38,7 +38,7 @@ class DecoderListTableModel : public ObjectListTableModel<Decoder>
   public:
     CLASS_ID("decoder_list_table_model")
 
-    static bool isListedProperty(const std::string& name);
+    static bool isListedProperty(std::string_view name);
 
     DecoderListTableModel(DecoderList& commandStationList);
 

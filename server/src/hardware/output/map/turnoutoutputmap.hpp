@@ -31,7 +31,7 @@ class TurnoutOutputMap : public OutputMapBase<TurnoutPosition, TurnoutOutputMapI
   CLASS_ID("output_map.turnout")
 
   public:
-    TurnoutOutputMap(Object& _parent, const std::string& parentPropertyName, std::initializer_list<TurnoutPosition> positions);
+    TurnoutOutputMap(Object& _parent, std::string_view parentPropertyName, std::initializer_list<TurnoutPosition> positions);
 };
 
 #endif

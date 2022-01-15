@@ -30,7 +30,7 @@
 class AbstractUnitProperty : public AbstractProperty
 {
   public:
-    AbstractUnitProperty(Object& object, const std::string& name, ValueType type, PropertyFlags flags) :
+    AbstractUnitProperty(Object& object, std::string_view name, ValueType type, PropertyFlags flags) :
       AbstractProperty(object, name, type, flags)
     {
     }

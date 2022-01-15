@@ -41,7 +41,7 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
   public:
     using const_iterator = typename std::vector<std::shared_ptr<T>>::const_iterator;
 
-    ObjectVectorProperty(Object& object, const std::string& name, std::initializer_list<std::shared_ptr<T>> values, PropertyFlags flags) :
+    ObjectVectorProperty(Object& object, std::string_view name, std::initializer_list<std::shared_ptr<T>> values, PropertyFlags flags) :
       AbstractObjectVectorProperty(object, name, flags),
       m_values{values}
     {

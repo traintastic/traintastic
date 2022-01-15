@@ -27,7 +27,7 @@
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
 
-InputList::InputList(Object& _parent, const std::string& parentPropertyName)
+InputList::InputList(Object& _parent, std::string_view parentPropertyName)
   : ObjectList<Input>(_parent, parentPropertyName)
   , m_parentIsInputController(dynamic_cast<InputController*>(&_parent))
   , add{*this, "add",
@@ -96,7 +96,7 @@ void InputList::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(remove, editable);
 }
 
-bool InputList::isListedProperty(const std::string& name)
+bool InputList::isListedProperty(std::string_view name)
 {
   return InputListTableModel::isListedProperty(name);
 }

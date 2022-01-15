@@ -26,7 +26,7 @@
 
 namespace Z21 {
 
-Settings::Settings(Object& _parent, const std::string& parentPropertyName)
+Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {

@@ -27,7 +27,7 @@
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
 
-OutputList::OutputList(Object& _parent, const std::string& parentPropertyName)
+OutputList::OutputList(Object& _parent, std::string_view parentPropertyName)
   : ObjectList<Output>(_parent, parentPropertyName)
   , m_parentIsOutputController(dynamic_cast<OutputController*>(&_parent))
   , add{*this, "add",
@@ -96,7 +96,7 @@ void OutputList::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(remove, editable);
 }
 
-bool OutputList::isListedProperty(const std::string& name)
+bool OutputList::isListedProperty(std::string_view name)
 {
   return OutputListTableModel::isListedProperty(name);
 }

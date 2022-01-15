@@ -42,14 +42,14 @@ class UnitProperty : public AbstractUnitProperty
     OnChanged m_onChanged;
 
   public:
-    UnitProperty(Object& object, const std::string& name, T value, Unit unit, PropertyFlags flags) :
+    UnitProperty(Object& object, std::string_view name, T value, Unit unit, PropertyFlags flags) :
       AbstractUnitProperty(object, name, value_type<T>::value, flags),
       m_value{value},
       m_unit{unit}
     {
     }
 
-    UnitProperty(Object& object, const std::string& name, T value, Unit unit, PropertyFlags flags, OnChanged onChanged) :
+    UnitProperty(Object& object, std::string_view name, T value, Unit unit, PropertyFlags flags, OnChanged onChanged) :
       UnitProperty(object, name, value, unit, flags)
     {
       m_onChanged = std::move(onChanged);

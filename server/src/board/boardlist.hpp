@@ -31,7 +31,7 @@ class BoardList : public ObjectList<Board>
 {
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
+    bool isListedProperty(std::string_view name) final;
 
   public:
     CLASS_ID("list.board")
@@ -39,7 +39,7 @@ class BoardList : public ObjectList<Board>
     Method<std::shared_ptr<Board>()> add;
     Method<void(const std::shared_ptr<Board>&)> remove;
 
-    BoardList(Object& _parent, const std::string& parentPropertyName);
+    BoardList(Object& _parent, std::string_view parentPropertyName);
 
     TableModelPtr getModel() final;
 };

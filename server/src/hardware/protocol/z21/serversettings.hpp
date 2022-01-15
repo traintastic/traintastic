@@ -36,7 +36,7 @@ class ServerSettings final : public Settings
     Property<bool> allowTrackPowerOff;
     Property<bool> allowTrackPowerOnReleaseEmergencyStop;
 
-    ServerSettings(Object& _parent, const std::string& parentPropertyName);
+    ServerSettings(Object& _parent, std::string_view parentPropertyName);
 
     ServerConfig config() const;
 };

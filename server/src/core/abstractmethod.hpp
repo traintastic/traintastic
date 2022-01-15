@@ -97,7 +97,7 @@ class AbstractMethod : public InterfaceItem
 
     using Result = std::variant<std::monostate, bool, int64_t, double, std::string, ObjectPtr>;
 
-    AbstractMethod(Object& object, const std::string& name, MethodFlags m_flags = noMethodFlags);
+    AbstractMethod(Object& object, std::string_view name, MethodFlags m_flags = noMethodFlags);
 
     inline bool isScriptCallable() const
     {

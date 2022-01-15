@@ -44,7 +44,7 @@ class Settings final : public SubObject
     Property<bool> debugLogOutput;
     Property<bool> debugLogRXTX;
 
-    Settings(Object& _parent, const std::string& parentPropertyName);
+    Settings(Object& _parent, std::string_view parentPropertyName);
 
     Config config() const;
 };

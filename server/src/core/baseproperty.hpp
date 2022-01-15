@@ -35,7 +35,7 @@ class BaseProperty : public InterfaceItem
     const ValueType m_type;
     const PropertyFlags m_flags;
 
-    BaseProperty(Object& object, const std::string& name, ValueType type, PropertyFlags flags) :
+    BaseProperty(Object& object, std::string_view name, ValueType type, PropertyFlags flags) :
       InterfaceItem{object, name},
       m_type{type},
       m_flags{flags}

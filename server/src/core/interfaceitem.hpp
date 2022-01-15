@@ -40,7 +40,7 @@ class InterfaceItem
 
   protected:
     Object& m_object;
-    const std::string m_name;
+    std::string_view m_name;
     Attributes m_attributes;
 
     template<typename T>
@@ -68,7 +68,7 @@ class InterfaceItem
     InterfaceItem(const InterfaceItem&) = delete;
     InterfaceItem& operator =(const InterfaceItem&) = delete;
 
-    InterfaceItem(Object& object, const std::string& name) :
+    InterfaceItem(Object& object, std::string_view name) :
       m_object{object},
       m_name{name}
     {
@@ -83,7 +83,7 @@ class InterfaceItem
       return m_object;
     }
 
-    const std::string& name() const
+    std::string_view name() const
     {
       return m_name;
     }

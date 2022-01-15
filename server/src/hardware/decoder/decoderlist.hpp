@@ -31,7 +31,7 @@ class DecoderList : public ObjectList<Decoder>
 {
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
+    bool isListedProperty(std::string_view name) final;
 
   public:
     CLASS_ID("decoder_list")
@@ -39,7 +39,7 @@ class DecoderList : public ObjectList<Decoder>
     Method<std::shared_ptr<Decoder>()> add;
     Method<void(const std::shared_ptr<Decoder>&)> remove;
 
-    DecoderList(Object& _parent, const std::string& parentPropertyName);
+    DecoderList(Object& _parent, std::string_view parentPropertyName);
 
     TableModelPtr getModel() final;
 

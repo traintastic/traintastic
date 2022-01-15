@@ -22,7 +22,7 @@
 
 #include "clock.hpp"
 
-Clock::Clock(Object& _parent, const std::string& parentPropertyName) :
+Clock::Clock(Object& _parent, std::string_view parentPropertyName) :
   SubObject(_parent, parentPropertyName),
   year{this, "year", 2020, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
   month{this, "month", 1, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
