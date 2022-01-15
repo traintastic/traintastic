@@ -219,6 +219,11 @@ struct LocoAdr : Message
   {
     checksum = calcChecksum(*this);
   }
+
+  uint16_t address() const
+  {
+    return (static_cast<uint16_t>(addressHigh) << 7) | addressLow;
+  }
 };
 static_assert(sizeof(LocoAdr) == 4);
 
@@ -544,21 +549,21 @@ static_assert(sizeof(InputRep) == 4);
 
 struct LongAck : Message
 {
-  uint8_t lpoc;
+  uint8_t lopc;
   uint8_t ack1;
   uint8_t checksum;
 
-  LongAck() :
+  LongAck(OpCode _lopc = static_cast<OpCode>(0), uint8_t _ack1 = 0) :
     Message{OPC_LONG_ACK},
-    lpoc{0},
-    ack1{0},
-    checksum{0}
+    lopc{static_cast<uint8_t>(_lopc & 0x7F)},
+    ack1{_ack1},
+    checksum{calcChecksum(*this)}
   {
   }
 
   OpCode respondingOpCode() const
   {
-    return static_cast<OpCode>(0x80 | lpoc);
+    return static_cast<OpCode>(0x80 | lopc);
   }
 };
 static_assert(sizeof(LongAck) == 4);
@@ -1065,36 +1070,50 @@ struct MultiSenseLongTransponder : MultiSenseLong
 };
 static_assert(sizeof(MultiSenseLongTransponder) == 9);
 
-// OPC_SL_RD_DATA [E7 0E 1F 13 6F 01 30 07 08 19 00 00 00 52]
 struct SlotReadDataBase : Message
 {
   uint8_t len;
   uint8_t slot;
 
-  SlotReadDataBase() :
-    Message(OPC_SL_RD_DATA),
-    len{14}
+  SlotReadDataBase(uint8_t _slot = 0)
+    : Message(OPC_SL_RD_DATA)
+    , len{14}
+    , slot{_slot}
   {
   }
 };
 
 struct SlotReadData : SlotReadDataBase
 {
-  uint8_t stat;
-  uint8_t adr;
-  uint8_t spd;
-  uint8_t dirf;
-  uint8_t trk;
-  uint8_t ss2;
-  uint8_t adr2;
-  uint8_t snd;
-  uint8_t id1;
-  uint8_t id2;
+  uint8_t stat = 0;
+  uint8_t adr = 0;
+  uint8_t spd = 0;
+  uint8_t dirf = 0;
+  uint8_t trk = 0;
+  uint8_t ss2 = 0;
+  uint8_t adr2 = 0;
+  uint8_t snd = 0;
+  uint8_t id1 = 0;
+  uint8_t id2 = 0;
   uint8_t checksum;
+
+  SlotReadData(uint8_t _slot = 0)
+    : SlotReadDataBase(_slot)
+    , checksum{calcChecksum(*this)}
+  {
+  }
 
   bool isBusy() const
   {
     return stat & SL_BUSY;
+  }
+
+  void setBusy(bool value)
+  {
+    if(value)
+      stat |= SL_BUSY;
+    else
+      stat &= ~SL_BUSY;
   }
 
   bool isActive() const
@@ -1102,9 +1121,28 @@ struct SlotReadData : SlotReadDataBase
     return stat & SL_ACTIVE;
   }
 
+  void setActive(bool value)
+  {
+    if(value)
+      stat |= SL_ACTIVE;
+    else
+      stat &= ~SL_ACTIVE;
+  }
+
+  bool isFree() const
+  {
+    return !isBusy() && !isActive();
+  }
+
   uint16_t address() const
   {
     return (static_cast<uint16_t>(adr2) << 7) | adr;
+  }
+
+  void setAddress(uint16_t value)
+  {
+    adr = value & 0x7F;
+    adr2 = (value >> 7) & 0x7F;
   }
 
   bool isEmergencyStop() const

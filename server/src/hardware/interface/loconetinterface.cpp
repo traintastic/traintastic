@@ -24,6 +24,7 @@
 #include "../input/list/inputlisttablemodel.hpp"
 #include "../output/list/outputlisttablemodel.hpp"
 #include "../protocol/loconet/iohandler/serialiohandler.hpp"
+#include "../protocol/loconet/iohandler/simulationiohandler.hpp"
 #include "../protocol/loconet/iohandler/tcpbinaryiohandler.hpp"
 #include "../protocol/loconet/iohandler/lbserveriohandler.hpp"
 #include "../protocol/loconet/iohandler/z21iohandler.hpp"
@@ -171,27 +172,34 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
   {
     try
     {
-      switch(type)
+      if(simulation)
       {
-        case LocoNetInterfaceType::Serial:
-          m_kernel = LocoNet::Kernel::create<LocoNet::SerialIOHandler>(loconet->config(), device.value(), baudrate.value(), flowControl.value());
-          break;
+        m_kernel = LocoNet::Kernel::create<LocoNet::SimulationIOHandler>(loconet->config());
+      }
+      else
+      {
+        switch(type)
+        {
+          case LocoNetInterfaceType::Serial:
+            m_kernel = LocoNet::Kernel::create<LocoNet::SerialIOHandler>(loconet->config(), device.value(), baudrate.value(), flowControl.value());
+            break;
 
-        case LocoNetInterfaceType::TCPBinary:
-          m_kernel = LocoNet::Kernel::create<LocoNet::TCPBinaryIOHandler>(loconet->config(), hostname.value(), port.value());
-          break;
+          case LocoNetInterfaceType::TCPBinary:
+            m_kernel = LocoNet::Kernel::create<LocoNet::TCPBinaryIOHandler>(loconet->config(), hostname.value(), port.value());
+            break;
 
-        case LocoNetInterfaceType::LBServer:
-          m_kernel = LocoNet::Kernel::create<LocoNet::LBServerIOHandler>(loconet->config(), hostname.value(), port.value());
-          break;
+          case LocoNetInterfaceType::LBServer:
+            m_kernel = LocoNet::Kernel::create<LocoNet::LBServerIOHandler>(loconet->config(), hostname.value(), port.value());
+            break;
 
-        case LocoNetInterfaceType::Z21:
-          m_kernel = LocoNet::Kernel::create<LocoNet::Z21IOHandler>(loconet->config(), hostname.value());
-          break;
+          case LocoNetInterfaceType::Z21:
+            m_kernel = LocoNet::Kernel::create<LocoNet::Z21IOHandler>(loconet->config(), hostname.value());
+            break;
 
-        default:
-          assert(false);
-          return false;
+          default:
+            assert(false);
+            return false;
+        }
       }
 
       status.setValueInternal(InterfaceStatus::Initializing);
