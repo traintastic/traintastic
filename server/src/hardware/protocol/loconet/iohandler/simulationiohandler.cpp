@@ -86,7 +86,7 @@ bool SimulationIOHandler::send(const Message& message)
 
       // find slot for address
       {
-        auto* it = std::find_if(m_locoSlots.begin(), m_locoSlots.end(),
+        auto it = std::find_if(m_locoSlots.begin(), m_locoSlots.end(), // NOLINT [readability-qualified-auto]
           [address=locoAdr.address()](const auto& locoSlot)
           {
             return locoSlot.address() == address;
@@ -102,7 +102,7 @@ bool SimulationIOHandler::send(const Message& message)
 
       // find a free slot
       {
-        auto* it = std::find_if(m_locoSlots.begin(), m_locoSlots.end(),
+        auto it = std::find_if(m_locoSlots.begin(), m_locoSlots.end(), // NOLINT [readability-qualified-auto]
           [](const auto& locoSlot)
           {
             return locoSlot.isFree();
