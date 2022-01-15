@@ -184,10 +184,10 @@ jobs:
           arch: ""
           toolset: ""
           target: all
-          jobs: 2
+          jobs: 3
           build_type: Release
           build_deb: true
-          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
+          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT -DDISABLE_CLANG_TIDY"
           ccov: false
 
         - name: "raspberrypios_10_arm64"
@@ -196,10 +196,10 @@ jobs:
           arch: ""
           toolset: ""
           target: all
-          jobs: 2
+          jobs: 3
           build_type: Release
           build_deb: true
-          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT"
+          defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT -DDISABLE_CLANG_TIDY"
           ccov: false
 
     steps:
