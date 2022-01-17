@@ -34,7 +34,7 @@
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
-LocoNetInterface::LocoNetInterface(const std::weak_ptr<World>& world, std::string_view _id)
+LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , type{this, "type", LocoNetInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](LocoNetInterfaceType /*value*/)
@@ -205,19 +205,16 @@ bool LocoNetInterface::setOnline(bool& value)
       m_kernel->setOnGlobalPowerChanged(
         [this](bool powerOn)
         {
-          if(auto w = m_world.lock())
-          {
-            if(powerOn && !contains(w->state.value(), WorldState::PowerOn))
-              w->powerOn();
-            else if(!powerOn && contains(w->state.value(), WorldState::PowerOn))
-              w->powerOff();
-          }
+          if(powerOn && !contains(m_world.state.value(), WorldState::PowerOn))
+            m_world.powerOn();
+          else if(!powerOn && contains(m_world.state.value(), WorldState::PowerOn))
+            m_world.powerOff();
         });
       m_kernel->setOnIdle(
         [this]()
         {
-          if(auto w = m_world.lock(); w && contains(w->state.value(), WorldState::Run))
-            w->stop();
+          if(contains(m_world.state.value(), WorldState::Run))
+            m_world.stop();
         });
       m_kernel->setDecoderController(this);
       m_kernel->setInputController(this);
@@ -230,15 +227,12 @@ bool LocoNetInterface::setOnline(bool& value)
           m_kernel->setConfig(loconet->config());
         });
 
-      if(auto w = m_world.lock())
-      {
-        m_kernel->setPowerOn(contains(w->state.value(), WorldState::PowerOn));
+      m_kernel->setPowerOn(contains(m_world.state.value(), WorldState::PowerOn));
 
-        if(contains(w->state.value(), WorldState::Run))
-          m_kernel->resume();
-        else
-          m_kernel->emergencyStop();
-      }
+      if(contains(m_world.state.value(), WorldState::Run))
+        m_kernel->resume();
+      else
+        m_kernel->emergencyStop();
 
       Attributes::setEnabled(type, false);
       Attributes::setEnabled(device, false);
@@ -277,12 +271,9 @@ void LocoNetInterface::addToWorld()
 {
   Interface::addToWorld();
 
-  if(auto world = m_world.lock())
-  {
-    world->decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-    world->inputControllers->add(std::dynamic_pointer_cast<InputController>(shared_from_this()));
-    world->outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
-  }
+  m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
+  m_world.inputControllers->add(std::dynamic_pointer_cast<InputController>(shared_from_this()));
+  m_world.outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 }
 
 void LocoNetInterface::loaded()
@@ -312,12 +303,9 @@ void LocoNetInterface::destroying()
     output->interface = nullptr;
   }
 
-  if(auto world = m_world.lock())
-  {
-    world->decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-    world->inputControllers->remove(std::dynamic_pointer_cast<InputController>(shared_from_this()));
-    world->outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
-  }
+  m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
+  m_world.inputControllers->remove(std::dynamic_pointer_cast<InputController>(shared_from_this()));
+  m_world.outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 
   Interface::destroying();
 }

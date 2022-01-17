@@ -33,7 +33,7 @@
 class RailVehicle : public Vehicle
 {
   protected:
-    RailVehicle(const std::weak_ptr<World>& world, std::string_view _id);
+    RailVehicle(World& world, std::string_view _id);
 
     void addToWorld() override;
     void destroying() override;

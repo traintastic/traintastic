@@ -22,7 +22,7 @@
 
 #include "turnoutright45railtile.hpp"
 
-TurnoutRight45RailTile::TurnoutRight45RailTile(const std::weak_ptr<World>& world, std::string_view _id) :
+TurnoutRight45RailTile::TurnoutRight45RailTile(World& world, std::string_view _id) :
   TurnoutRightRailTile(world, _id, TileId::RailTurnoutRight45)
 {
 }

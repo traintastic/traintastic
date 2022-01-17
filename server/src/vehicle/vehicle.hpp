@@ -28,7 +28,7 @@
 class Vehicle : public IdObject
 {
   protected:
-    Vehicle(const std::weak_ptr<World>& world, std::string_view _id);
+    Vehicle(World& world, std::string_view _id);
 
     void worldEvent(WorldState state, WorldEvent event) override;
 

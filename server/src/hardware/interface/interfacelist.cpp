@@ -33,10 +33,7 @@ InterfaceList::InterfaceList(Object& _parent, std::string_view parentPropertyNam
   add{*this, "add",
     [this](std::string_view interfaceClassId)
     {
-      auto world = getWorld(this);
-      if(!world)
-        return std::shared_ptr<Interface>();
-      return Interfaces::create(world, interfaceClassId);
+      return Interfaces::create(getWorld(parent()), interfaceClassId);
     }},
   remove{*this, "remove",
     [this](const std::shared_ptr<Interface>& object)
@@ -46,8 +43,7 @@ InterfaceList::InterfaceList(Object& _parent, std::string_view parentPropertyNam
       assert(!containsObject(object));
     }}
 {
-  auto world = getWorld(&_parent);
-  const bool editable = world && contains(world->state.value(), WorldState::Edit);
+  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);

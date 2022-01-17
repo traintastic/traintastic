@@ -22,7 +22,7 @@
 
 #include "tunnelrailtile.hpp"
 
-TunnelRailTile::TunnelRailTile(const std::weak_ptr<World>& world, std::string_view _id)
+TunnelRailTile::TunnelRailTile(World& world, std::string_view _id)
   : StraightRailTile(world, _id, TileId::RailTunnel)
 {
 }

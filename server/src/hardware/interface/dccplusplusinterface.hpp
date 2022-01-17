@@ -70,7 +70,7 @@ class DCCPlusPlusInterface final
     ObjectProperty<DecoderList> decoders;
     ObjectProperty<OutputList> outputs;
 
-    DCCPlusPlusInterface(const std::weak_ptr<World>& world, std::string_view _id);
+    DCCPlusPlusInterface(World& world, std::string_view _id);
 
     // DecoderController:
     [[nodiscard]] bool addDecoder(Decoder& decoder) final;

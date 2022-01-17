@@ -54,7 +54,7 @@ class SensorRailTile : public StraightRailTile
     Property<bool> invert;
     Property<SensorState> state;
 
-    SensorRailTile(const std::weak_ptr<World>& world, std::string_view _id);
+    SensorRailTile(World& world, std::string_view _id);
 };
 
 #endif

@@ -65,7 +65,7 @@ class Z21Interface final
     Property<std::string> serialNumber;
     Property<std::string> firmwareVersion;
 
-    Z21Interface(const std::weak_ptr<World>& world, std::string_view _id);
+    Z21Interface(World& world, std::string_view _id);
 
     // DecoderController:
     [[nodiscard]] bool addDecoder(Decoder& decoder) final;

@@ -66,14 +66,12 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName) :
       }
     }}
 {
-  auto w = getWorld(&_parent);
-  assert(w);
-
-  const bool editable = contains(w->state.value(), WorldState::Edit);
+  auto& world = getWorld(&_parent);
+  const bool editable = contains(world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(addOutput, DisplayName::List::add);
   Attributes::addEnabled(addOutput, editable);
-  Attributes::addObjectList(addOutput, w->outputs);
+  Attributes::addObjectList(addOutput, world.outputs);
   m_interfaceItems.add(addOutput);
 
   Attributes::addDisplayName(removeOutput, DisplayName::List::remove);

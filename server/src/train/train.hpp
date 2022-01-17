@@ -51,7 +51,7 @@ class Train : public IdObject
     ObjectProperty<RailVehicleList> vehicles;
     Property<std::string> notes;
 
-    Train(const std::weak_ptr<World>& world, std::string_view _id);
+    Train(World& world, std::string_view _id);
 };
 
 #endif

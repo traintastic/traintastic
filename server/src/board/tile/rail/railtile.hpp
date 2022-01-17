@@ -28,7 +28,7 @@
 class RailTile : public Tile
 {
   protected:
-    RailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
+    RailTile(World& world, std::string_view _id, TileId tileId);
 };
 
 #endif

@@ -38,7 +38,7 @@ namespace Lua {
 constexpr std::string_view scripts = "scripts";
 constexpr std::string_view dotLua = ".lua";
 
-Script::Script(const std::weak_ptr<World>& world, std::string_view _id) :
+Script::Script(World& world, std::string_view _id) :
   IdObject(world, _id),
   m_sandbox{nullptr, nullptr},
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
@@ -106,9 +106,7 @@ void Script::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state
 void Script::addToWorld()
 {
   IdObject::addToWorld();
-
-  if(auto world = m_world.lock())
-    world->luaScripts->addObject(shared_ptr<Script>());
+  m_world.luaScripts->addObject(shared_ptr<Script>());
 }
 
 void Script::worldEvent(WorldState worldState, WorldEvent worldEvent)
@@ -120,8 +118,7 @@ void Script::worldEvent(WorldState worldState, WorldEvent worldEvent)
 
 void Script::updateEnabled()
 {
-  auto w = world().lock();
-  const bool editable = w && contains(w->state.value(), WorldState::Edit) && state != LuaScriptState::Running;
+  const bool editable = contains(m_world.state.value(), WorldState::Edit) && state != LuaScriptState::Running;
 
   Attributes::setEnabled(id, editable);
   Attributes::setEnabled(name, editable);
@@ -140,8 +137,7 @@ void Script::setState(LuaScriptState value)
 void Script::startSandbox()
 {
   assert(!m_sandbox);
-  auto world = m_world.lock();
-  if(world && (m_sandbox = Sandbox::create(*this)))
+  if((m_sandbox = Sandbox::create(*this)))
   {
     lua_State* L = m_sandbox.get();
     const int r = luaL_loadbuffer(L, code.value().c_str(), code.value().size(), "=") || Sandbox::pcall(L, 0, LUA_MULTRET);

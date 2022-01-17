@@ -31,7 +31,7 @@
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
-ECoSInterface::ECoSInterface(const std::weak_ptr<World>& world, std::string_view _id)
+ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , ecos{this, "ecos", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
@@ -161,13 +161,10 @@ bool ECoSInterface::setOnline(bool& value)
           m_kernel->setConfig(ecos->config());
         });
 
-      if(auto w = m_world.lock())
-      {
-        if(contains(w->state.value(), WorldState::Run))
-          m_kernel->go();
-        else
-          m_kernel->emergencyStop();
-      }
+      if(contains(m_world.state.value(), WorldState::Run))
+        m_kernel->go();
+      else
+        m_kernel->emergencyStop();
 
       Attributes::setEnabled(hostname, false);
     }
@@ -196,12 +193,9 @@ void ECoSInterface::addToWorld()
 {
   Interface::addToWorld();
 
-  if(auto world = m_world.lock())
-  {
-    world->decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-    world->inputControllers->add(std::dynamic_pointer_cast<InputController>(shared_from_this()));
-    world->outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
-  }
+  m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
+  m_world.inputControllers->add(std::dynamic_pointer_cast<InputController>(shared_from_this()));
+  m_world.outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 }
 
 void ECoSInterface::destroying()
@@ -224,12 +218,9 @@ void ECoSInterface::destroying()
     output->interface = nullptr;
   }
 
-  if(auto world = m_world.lock())
-  {
-    world->decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-    world->inputControllers->remove(std::dynamic_pointer_cast<InputController>(shared_from_this()));
-    world->outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
-  }
+  m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
+  m_world.inputControllers->remove(std::dynamic_pointer_cast<InputController>(shared_from_this()));
+  m_world.outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 
   Interface::destroying();
 }

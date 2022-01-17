@@ -71,7 +71,7 @@ class ECoSInterface final
     Property<std::string> testCommand;
     Method<void()> testCommandSend;
 
-    ECoSInterface(const std::weak_ptr<World>& world, std::string_view _id);
+    ECoSInterface(World& world, std::string_view _id);
 
     // DecoderController:
     [[nodiscard]] bool addDecoder(Decoder& decoder) final;

@@ -34,7 +34,7 @@ class TurnoutSingleSlipRailTile : public TurnoutRailTile
     CLASS_ID("board_tile.rail.turnout_singleslip")
     CREATE(TurnoutSingleSlipRailTile)
 
-    TurnoutSingleSlipRailTile(const std::weak_ptr<World>& world, std::string_view _id);
+    TurnoutSingleSlipRailTile(World& world, std::string_view _id);
 };
 
 #endif

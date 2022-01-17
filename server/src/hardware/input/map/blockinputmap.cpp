@@ -52,16 +52,15 @@ BlockInputMap::BlockInputMap(Object& _parent, std::string_view parentPropertyNam
       items.moveInternal(item, +1);
     }}
 {
-  auto w = getWorld(&_parent);
-  assert(w);
+  auto& world = getWorld(parent());
 
-  const bool editable = contains(w->state.value(), WorldState::Edit) && !contains(w->state.value(), WorldState::Run);
+  const bool editable = contains(world.state.value(), WorldState::Edit) && !contains(world.state.value(), WorldState::Run);
 
   m_interfaceItems.add(items);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
-  Attributes::addObjectList(add, w->inputs);
+  Attributes::addObjectList(add, world.inputs);
   m_interfaceItems.add(add);
 
   Attributes::addDisplayName(remove, DisplayName::List::remove);

@@ -32,10 +32,8 @@ RailVehicleList::RailVehicleList(Object& _parent, std::string_view parentPropert
   add{*this, "add",
     [this](std::string_view railVehicleClassId)
     {
-      auto world = getWorld(&this->parent());
-      if(!world)
-        return std::shared_ptr<RailVehicle>();
-      return RailVehicles::create(world, railVehicleClassId, world->getUniqueId("vehicle"));
+      auto& world = getWorld(parent());
+      return RailVehicles::create(world, railVehicleClassId, world.getUniqueId("vehicle"));
     }}
   , remove{*this, "remove",
       [this](const std::shared_ptr<RailVehicle>& railVehicle)
@@ -45,8 +43,7 @@ RailVehicleList::RailVehicleList(Object& _parent, std::string_view parentPropert
         assert(!containsObject(railVehicle));
       }}
 {
-  auto world = getWorld(&_parent);
-  const bool editable = world && contains(world->state.value(), WorldState::Edit);
+  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);

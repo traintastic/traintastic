@@ -26,7 +26,7 @@
 #include "../core/attributes.hpp"
 #include "../utils/displayname.hpp"
 
-Train::Train(const std::weak_ptr<World>& world, std::string_view _id) :
+Train::Train(World& world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadOnly | PropertyFlags::Store},
@@ -40,8 +40,7 @@ Train::Train(const std::weak_ptr<World>& world, std::string_view _id) :
 {
   vehicles.setValueInternal(std::make_shared<RailVehicleList>(*this, vehicles.name()));
 
-  auto w = world.lock();
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
@@ -65,15 +64,12 @@ Train::Train(const std::weak_ptr<World>& world, std::string_view _id) :
 void Train::addToWorld()
 {
   IdObject::addToWorld();
-
-  if(auto world = m_world.lock())
-    world->trains->addObject(shared_ptr<Train>());
+  m_world.trains->addObject(shared_ptr<Train>());
 }
 
 void Train::destroying()
 {
-  if(auto world = m_world.lock())
-    world->trains->removeObject(shared_ptr<Train>());
+  m_world.trains->removeObject(shared_ptr<Train>());
   IdObject::destroying();
 }
 

@@ -41,26 +41,26 @@ using nlohmann::json;
 std::shared_ptr<World> World::create()
 {
   auto world = std::make_shared<World>(Private());
-  init(world);
+  init(*world);
   return world;
 }
 
-void World::init(const std::shared_ptr<World>& world)
+void World::init(World& world)
 {
-  world->decoderControllers.setValueInternal(std::make_shared<ControllerList<DecoderController>>(*world, world->decoderControllers.name()));
-  world->inputControllers.setValueInternal(std::make_shared<ControllerList<InputController>>(*world, world->inputControllers.name()));
-  world->outputControllers.setValueInternal(std::make_shared<ControllerList<OutputController>>(*world, world->outputControllers.name()));
+  world.decoderControllers.setValueInternal(std::make_shared<ControllerList<DecoderController>>(world, world.decoderControllers.name()));
+  world.inputControllers.setValueInternal(std::make_shared<ControllerList<InputController>>(world, world.inputControllers.name()));
+  world.outputControllers.setValueInternal(std::make_shared<ControllerList<OutputController>>(world, world.outputControllers.name()));
 
-  world->interfaces.setValueInternal(std::make_shared<InterfaceList>(*world, world->interfaces.name()));
-  world->decoders.setValueInternal(std::make_shared<DecoderList>(*world, world->decoders.name()));
-  world->inputs.setValueInternal(std::make_shared<InputList>(*world, world->inputs.name()));
-  world->outputs.setValueInternal(std::make_shared<OutputList>(*world, world->outputs.name()));
-  world->boards.setValueInternal(std::make_shared<BoardList>(*world, world->boards.name()));
-  world->clock.setValueInternal(std::make_shared<Clock>(*world, world->clock.name()));
-  world->trains.setValueInternal(std::make_shared<TrainList>(*world, world->trains.name()));
-  world->railVehicles.setValueInternal(std::make_shared<RailVehicleList>(*world, world->railVehicles.name()));
+  world.interfaces.setValueInternal(std::make_shared<InterfaceList>(world, world.interfaces.name()));
+  world.decoders.setValueInternal(std::make_shared<DecoderList>(world, world.decoders.name()));
+  world.inputs.setValueInternal(std::make_shared<InputList>(world, world.inputs.name()));
+  world.outputs.setValueInternal(std::make_shared<OutputList>(world, world.outputs.name()));
+  world.boards.setValueInternal(std::make_shared<BoardList>(world, world.boards.name()));
+  world.clock.setValueInternal(std::make_shared<Clock>(world, world.clock.name()));
+  world.trains.setValueInternal(std::make_shared<TrainList>(world, world.trains.name()));
+  world.railVehicles.setValueInternal(std::make_shared<RailVehicleList>(world, world.railVehicles.name()));
 #ifndef DISABLE_LUA_SCRIPTING
-  world->luaScripts.setValueInternal(std::make_shared<Lua::ScriptList>(*world, world->luaScripts.name()));
+  world.luaScripts.setValueInternal(std::make_shared<Lua::ScriptList>(world, world.luaScripts.name()));
 #endif
 }
 

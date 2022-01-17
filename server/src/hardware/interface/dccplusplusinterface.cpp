@@ -33,7 +33,7 @@
 #include "../../utils/serialport.hpp"
 #include "../../world/world.hpp"
 
-DCCPlusPlusInterface::DCCPlusPlusInterface(const std::weak_ptr<World>& world, std::string_view _id)
+DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , baudrate{this, "baudrate", 115200, PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -133,35 +133,29 @@ bool DCCPlusPlusInterface::setOnline(bool& value)
         {
           status.setValueInternal(InterfaceStatus::Online);
 
-          if(auto w = m_world.lock())
+          const bool powerOn = contains(m_world.state.value(), WorldState::PowerOn);
+
+          if(!powerOn)
+            m_kernel->powerOff();
+
+          if(contains(m_world.state.value(), WorldState::Run))
           {
-            const bool powerOn = contains(w->state.value(), WorldState::PowerOn);
-
-            if(!powerOn)
-              m_kernel->powerOff();
-
-            if(contains(w->state.value(), WorldState::Run))
-            {
-              m_kernel->clearEmergencyStop();
-              restoreDecoderSpeed();
-            }
-            else
-              m_kernel->emergencyStop();
-
-            if(powerOn)
-              m_kernel->powerOn();
+            m_kernel->clearEmergencyStop();
+            restoreDecoderSpeed();
           }
+          else
+            m_kernel->emergencyStop();
+
+          if(powerOn)
+            m_kernel->powerOn();
         });
       m_kernel->setOnPowerOnChanged(
         [this](bool powerOn)
         {
-          if(auto w = m_world.lock())
-          {
-            if(powerOn && !contains(w->state.value(), WorldState::PowerOn))
-              w->powerOn();
-            else if(!powerOn && contains(w->state.value(), WorldState::PowerOn))
-              w->powerOff();
-          }
+          if(powerOn && !contains(m_world.state.value(), WorldState::PowerOn))
+            m_world.powerOn();
+          else if(!powerOn && contains(m_world.state.value(), WorldState::PowerOn))
+            m_world.powerOff();
         });
       m_kernel->setDecoderController(this);
       m_kernel->start();
@@ -199,11 +193,7 @@ bool DCCPlusPlusInterface::setOnline(bool& value)
 void DCCPlusPlusInterface::addToWorld()
 {
   Interface::addToWorld();
-
-  if(auto world = m_world.lock())
-  {
-    world->decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  }
+  m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
 }
 
 void DCCPlusPlusInterface::loaded()
@@ -221,11 +211,7 @@ void DCCPlusPlusInterface::destroying()
     decoder->interface = nullptr;
   }
 
-  if(auto world = m_world.lock())
-  {
-    world->decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  }
-
+  m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
   Interface::destroying();
 }
 

@@ -38,7 +38,7 @@ struct RailVehicles
     FreightCar::classId
   );
 
-  static std::shared_ptr<RailVehicle> create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id);
+  static std::shared_ptr<RailVehicle> create(World& world, std::string_view classId, std::string_view id);
 };
 
 #endif

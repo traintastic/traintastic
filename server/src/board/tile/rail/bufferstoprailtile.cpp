@@ -22,7 +22,7 @@
 
 #include "bufferstoprailtile.hpp"
 
-BufferStopRailTile::BufferStopRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
+BufferStopRailTile::BufferStopRailTile(World& world, std::string_view _id) :
   RailTile(world, _id, TileId::RailBufferStop)
 {
 }

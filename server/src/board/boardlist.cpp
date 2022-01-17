@@ -31,10 +31,8 @@ BoardList::BoardList(Object& _parent, std::string_view parentPropertyName) :
   add{*this, "add",
     [this]()
     {
-      auto world = getWorld(&this->parent());
-      if(!world)
-        return std::shared_ptr<Board>();
-      return Board::create(world, world->getUniqueId("board"));
+      auto& world = getWorld(parent());
+      return Board::create(world, world.getUniqueId("board"));
     }}
   , remove{*this, "remove",
       [this](const std::shared_ptr<Board>& board)
@@ -44,8 +42,7 @@ BoardList::BoardList(Object& _parent, std::string_view parentPropertyName) :
         assert(!containsObject(board));
       }}
 {
-  auto world = getWorld(&_parent);
-  const bool editable = world && contains(world->state.value(), WorldState::Edit);
+  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);

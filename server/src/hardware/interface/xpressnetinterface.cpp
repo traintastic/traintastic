@@ -35,7 +35,7 @@
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
-XpressNetInterface::XpressNetInterface(const std::weak_ptr<World>& world, std::string_view _id)
+XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , type{this, "type", XpressNetInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](XpressNetInterfaceType /*value*/)
@@ -261,30 +261,24 @@ bool XpressNetInterface::setOnline(bool& value)
       m_kernel->setOnNormalOperationResumed(
         [this]()
         {
-          if(auto w = m_world.lock())
-          {
-            if(!contains(w->state.value(), WorldState::PowerOn))
-              w->powerOn();
-            if(!contains(w->state.value(), WorldState::Run))
-              w->run();
-          }
+          if(!contains(m_world.state.value(), WorldState::PowerOn))
+            m_world.powerOn();
+          if(!contains(m_world.state.value(), WorldState::Run))
+            m_world.run();
         });
       m_kernel->setOnTrackPowerOff(
         [this]()
         {
-          if(auto w = m_world.lock())
-          {
-            if(contains(w->state.value(), WorldState::PowerOn))
-              w->powerOff();
-            if(contains(w->state.value(), WorldState::Run))
-              w->stop();
-          }
+          if(contains(m_world.state.value(), WorldState::PowerOn))
+            m_world.powerOff();
+          if(contains(m_world.state.value(), WorldState::Run))
+            m_world.stop();
         });
       m_kernel->setOnEmergencyStop(
         [this]()
         {
-          if(auto w = m_world.lock(); w && contains(w->state.value(), WorldState::Run))
-            w->stop();
+          if(contains(m_world.state.value(), WorldState::Run))
+            m_world.stop();
         });
 
       m_kernel->setDecoderController(this);
@@ -298,15 +292,12 @@ bool XpressNetInterface::setOnline(bool& value)
           m_kernel->setConfig(xpressnet->config());
         });
 
-      if(auto w = m_world.lock())
-      {
-        if(!contains(w->state.value(), WorldState::PowerOn))
-          m_kernel->trackPowerOff();
-        else if(!contains(w->state.value(), WorldState::Run))
-          m_kernel->emergencyStop();
-        else
-          m_kernel->normalOperationsResumed();
-      }
+      if(!contains(m_world.state.value(), WorldState::PowerOn))
+        m_kernel->trackPowerOff();
+      else if(!contains(m_world.state.value(), WorldState::Run))
+        m_kernel->emergencyStop();
+      else
+        m_kernel->normalOperationsResumed();
 
       Attributes::setEnabled({type, serialInterfaceType, device, baudrate, flowControl, hostname, port, s88StartAddress, s88ModuleCount}, false);
     }
@@ -335,12 +326,9 @@ void XpressNetInterface::addToWorld()
 {
   Interface::addToWorld();
 
-  if(auto world = m_world.lock())
-  {
-    world->decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-    world->inputControllers->add(std::dynamic_pointer_cast<InputController>(shared_from_this()));
-    world->outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
-  }
+  m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
+  m_world.inputControllers->add(std::dynamic_pointer_cast<InputController>(shared_from_this()));
+  m_world.outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 }
 
 void XpressNetInterface::loaded()
@@ -370,12 +358,9 @@ void XpressNetInterface::destroying()
     output->interface = nullptr;
   }
 
-  if(auto world = m_world.lock())
-  {
-    world->decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-    world->inputControllers->remove(std::dynamic_pointer_cast<InputController>(shared_from_this()));
-    world->outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
-  }
+  m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
+  m_world.inputControllers->remove(std::dynamic_pointer_cast<InputController>(shared_from_this()));
+  m_world.outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 
   Interface::destroying();
 }

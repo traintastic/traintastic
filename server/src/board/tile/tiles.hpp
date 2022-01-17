@@ -81,7 +81,7 @@ struct Tiles
     TunnelRailTile::classId
   );
 
-  static std::shared_ptr<Tile> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = {});
+  static std::shared_ptr<Tile> create(World& world, std::string_view classId, std::string_view id = {});
 
   static bool canUpgradeStraightRail(std::string_view classId);
 };

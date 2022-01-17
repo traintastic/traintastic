@@ -26,7 +26,7 @@
 #include "../../core/attributes.hpp"
 #include "../../utils/displayname.hpp"
 
-RailVehicle::RailVehicle(const std::weak_ptr<World>& world, std::string_view _id) :
+RailVehicle::RailVehicle(World& world, std::string_view _id) :
   Vehicle(world, _id),
   decoder{this, "decoder", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store},
   train{this, "train", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store},
@@ -35,12 +35,11 @@ RailVehicle::RailVehicle(const std::weak_ptr<World>& world, std::string_view _id
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](double /*value*/, WeightUnit /*unit*/){ updateTotalWeight(); }},
   totalWeight{*this, "total_weight", 0, WeightUnit::Ton, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
 {
-  auto w = world.lock();
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(decoder, DisplayName::Vehicle::Rail::decoder);
   Attributes::addEnabled(decoder, editable);
-  Attributes::addObjectList(decoder, w->decoders);
+  Attributes::addObjectList(decoder, m_world.decoders);
   m_interfaceItems.insertBefore(decoder, notes);
 
   Attributes::addDisplayName(train, DisplayName::Vehicle::Rail::train);
@@ -66,17 +65,14 @@ RailVehicle::RailVehicle(const std::weak_ptr<World>& world, std::string_view _id
 void RailVehicle::addToWorld()
 {
   Vehicle::addToWorld();
-
-  if(auto world = m_world.lock())
-    world->railVehicles->addObject(shared_ptr<RailVehicle>());
+  m_world.railVehicles->addObject(shared_ptr<RailVehicle>());
 }
 
 void RailVehicle::destroying()
 {
   if(decoder)
     decoder = nullptr;
-  if(auto world = m_world.lock())
-    world->railVehicles->removeObject(shared_ptr<RailVehicle>());
+  m_world.railVehicles->removeObject(shared_ptr<RailVehicle>());
   IdObject::destroying();
 }
 

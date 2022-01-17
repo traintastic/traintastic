@@ -22,7 +22,7 @@
 
 #include "straightrailtile.hpp"
 
-StraightRailTile::StraightRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId) :
+StraightRailTile::StraightRailTile(World& world, std::string_view _id, TileId tileId) :
   RailTile(world, _id, tileId)
 {
 }

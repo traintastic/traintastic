@@ -34,7 +34,7 @@ class TurnoutRailTile : public RailTile
   DEFAULT_ID("turnout")
 
   protected:
-    TurnoutRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
+    TurnoutRailTile(World& world, std::string_view _id, TileId tileId);
 
     void worldEvent(WorldState state, WorldEvent event) override;
 

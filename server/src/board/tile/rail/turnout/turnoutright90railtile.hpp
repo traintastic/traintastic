@@ -31,7 +31,7 @@ class TurnoutRight90RailTile : public TurnoutRightRailTile
   CREATE(TurnoutRight90RailTile)
 
   public:
-    TurnoutRight90RailTile(const std::weak_ptr<World>& world, std::string_view _id);
+    TurnoutRight90RailTile(World& world, std::string_view _id);
 };
 
 #endif

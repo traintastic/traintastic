@@ -63,7 +63,7 @@ class Output final : public IdObject
     Property<TriState> value;
     ObjectVectorProperty<Object> controllers;
 
-    Output(const std::weak_ptr<World> world, std::string_view _id);
+    Output(World& world, std::string_view _id);
 };
 
 #endif

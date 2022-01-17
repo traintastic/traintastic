@@ -25,7 +25,7 @@
 #include "../../../../world/getworld.hpp"
 #include "../../../../utils/displayname.hpp"
 
-SignalRailTile::SignalRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId) :
+SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId) :
   StraightRailTile(world, _id, tileId),
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store},
   aspect{this, "aspect", SignalAspect::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
@@ -36,8 +36,7 @@ SignalRailTile::SignalRailTile(const std::weak_ptr<World>& world, std::string_vi
   outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   nextAspect{*this, "next_aspect", [this](bool reverse){ doNextAspect(reverse); }}
 {
-  auto w = world.lock();
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);

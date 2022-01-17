@@ -33,9 +33,6 @@ DecoderFunctions::DecoderFunctions(Object& _parent, std::string_view parentPrope
       [this]() -> void
       {
         Decoder& decoder = static_cast<Decoder&>(this->parent());
-        auto world = decoder.world().lock();
-        if(!world)
-          return;
         uint8_t number = 0;
         if(!items.empty())
         {
@@ -70,8 +67,7 @@ DecoderFunctions::DecoderFunctions(Object& _parent, std::string_view parentPrope
         items.moveInternal(function, +1);
       }}
 {
-  auto world = getWorld(&_parent);
-  const bool editable = world && contains(world->state.value(), WorldState::Edit);
+  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
   m_interfaceItems.add(items);
 

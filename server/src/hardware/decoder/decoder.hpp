@@ -92,7 +92,7 @@ class Decoder : public IdObject
 
     boost::signals2::signal<void (Decoder&, DecoderChangeFlags, uint32_t)> decoderChanged;
 
-    Decoder(const std::weak_ptr<World>& world, std::string_view _id);
+    Decoder(World& world, std::string_view _id);
 
     void addToWorld() final;
     bool hasFunction(uint32_t number) const;

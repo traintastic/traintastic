@@ -31,7 +31,7 @@ class Bridge90RailTile : public RailTile
   CREATE(Bridge90RailTile)
 
   public:
-    Bridge90RailTile(const std::weak_ptr<World>& world, std::string_view _id);
+    Bridge90RailTile(World& world, std::string_view _id);
 };
 
 #endif

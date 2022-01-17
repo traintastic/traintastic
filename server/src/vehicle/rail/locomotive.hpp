@@ -31,7 +31,7 @@ class Locomotive : public RailVehicle
     CLASS_ID("vehicle.rail.locomotive")
     CREATE(Locomotive)
 
-    Locomotive(const std::weak_ptr<World>& world, std::string_view _id);
+    Locomotive(World& world, std::string_view _id);
 };
 
 #endif

@@ -32,11 +32,8 @@ DecoderList::DecoderList(Object& _parent, std::string_view parentPropertyName) :
   add{*this, "add",
     [this]()
     {
-      auto world = getWorld(&this->parent());
-      if(!world)
-        return std::shared_ptr<Decoder>();
-
-      auto decoder = Decoder::create(world, world->getUniqueId("decoder"));
+      auto& world = getWorld(parent());
+      auto decoder = Decoder::create(world, world.getUniqueId("decoder"));
       if(const auto controller = std::dynamic_pointer_cast<DecoderController>(parent().shared_from_this()))
       {
         // todo: select free address?
@@ -53,8 +50,7 @@ DecoderList::DecoderList(Object& _parent, std::string_view parentPropertyName) :
         assert(!containsObject(decoder));
       }}
 {
-  auto world = getWorld(&_parent);
-  const bool editable = world && contains(world->state.value(), WorldState::Edit);
+  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);

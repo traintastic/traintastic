@@ -33,11 +33,8 @@ InputList::InputList(Object& _parent, std::string_view parentPropertyName)
   , add{*this, "add",
       [this]()
       {
-        auto world = getWorld(&parent());
-        if(!world)
-          return std::shared_ptr<Input>();
-
-        auto input = Input::create(world, world->getUniqueId(Input::defaultId));
+        auto& world = getWorld(parent());
+        auto input = Input::create(world, world.getUniqueId(Input::defaultId));
         if(const auto controller = std::dynamic_pointer_cast<InputController>(parent().shared_from_this()))
         {
           if(const uint32_t address = controller->getUnusedInputAddress(); address != Input::invalidAddress)
@@ -63,8 +60,7 @@ InputList::InputList(Object& _parent, std::string_view parentPropertyName)
         return std::shared_ptr<InputMonitor>();
       }}
 {
-  auto w = getWorld(&_parent);
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);

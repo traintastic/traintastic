@@ -81,7 +81,7 @@ class XpressNetInterface final
     ObjectProperty<InputList> inputs;
     ObjectProperty<OutputList> outputs;
 
-    XpressNetInterface(const std::weak_ptr<World>& world, std::string_view _id);
+    XpressNetInterface(World& world, std::string_view _id);
 
     // DecoderController:
     [[nodiscard]] bool addDecoder(Decoder& decoder) final;

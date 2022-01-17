@@ -34,7 +34,7 @@ class TurnoutDoubleSlipRailTile : public TurnoutRailTile
     CLASS_ID("board_tile.rail.turnout_doubleslip")
     CREATE(TurnoutDoubleSlipRailTile)
 
-    TurnoutDoubleSlipRailTile(const std::weak_ptr<World>& world, std::string_view _id);
+    TurnoutDoubleSlipRailTile(World& world, std::string_view _id);
 };
 
 #endif

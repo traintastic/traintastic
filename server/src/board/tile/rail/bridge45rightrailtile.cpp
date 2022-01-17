@@ -22,7 +22,7 @@
 
 #include "bridge45rightrailtile.hpp"
 
-Bridge45RightRailTile::Bridge45RightRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
+Bridge45RightRailTile::Bridge45RightRailTile(World& world, std::string_view _id) :
   RailTile(world, _id, TileId::RailBridge45Right)
 {
 }

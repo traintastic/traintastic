@@ -34,7 +34,7 @@ class SignalRailTile : public StraightRailTile
   DEFAULT_ID("signal")
 
   protected:
-    SignalRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
+    SignalRailTile(World& world, std::string_view _id, TileId tileId);
 
     void worldEvent(WorldState state, WorldEvent event) override;
 

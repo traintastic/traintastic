@@ -34,7 +34,7 @@ class TurnoutWyeRailTile : public TurnoutRailTile
     CLASS_ID("board_tile.rail.turnout_wye")
     CREATE(TurnoutWyeRailTile)
 
-    TurnoutWyeRailTile(const std::weak_ptr<World>& world, std::string_view _id);
+    TurnoutWyeRailTile(World& world, std::string_view _id);
 };
 
 #endif

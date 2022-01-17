@@ -25,7 +25,7 @@
 
 #include "world.hpp"
 
-std::shared_ptr<World> getWorld(Object* object);
-inline std::shared_ptr<World> getWorld(Object& object) { return getWorld(&object); }
+World& getWorld(Object* object);
+inline World& getWorld(Object& object) { return getWorld(&object); }
 
 #endif

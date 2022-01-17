@@ -24,7 +24,7 @@
 #include "attributes.hpp"
 #include "../utils/displayname.hpp"
 
-IdObject::IdObject(const std::weak_ptr<World>& world, std::string_view _id) :
+IdObject::IdObject(World& world, std::string_view _id) :
   m_world{world},
   id{this, "id", std::string(_id.data(), _id.size()), PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly,
     [this](const std::string& value)
@@ -33,10 +33,7 @@ IdObject::IdObject(const std::weak_ptr<World>& world, std::string_view _id) :
     },
     [this](std::string& value)
     {
-      auto w = getWorld(this);
-      if(!w)
-        return false;
-      auto& m = w->m_objects;
+      auto& m = m_world.m_objects;
       if(m.find(value) != m.end())
         return false;
       auto n = m.extract(id);
@@ -45,8 +42,7 @@ IdObject::IdObject(const std::weak_ptr<World>& world, std::string_view _id) :
       return true;
     }}
 {
-  auto w = world.lock();
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(id, DisplayName::Object::id);
   Attributes::addEnabled(id, editable);
@@ -60,16 +56,13 @@ IdObject::~IdObject()
 
 void IdObject::destroying()
 {
-  if(auto world = m_world.lock())
-    world->m_objects.erase(id);
-  m_world.reset();
+  m_world.m_objects.erase(id);
   Object::destroying();
 }
 
 void IdObject::addToWorld()
 {
-  if(auto world = m_world.lock())
-    world->m_objects.emplace(id, weak_from_this());
+  m_world.m_objects.emplace(id, weak_from_this());
 }
 
 void IdObject::worldEvent(WorldState state, WorldEvent event)

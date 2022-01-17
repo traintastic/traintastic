@@ -227,7 +227,7 @@ SandboxPtr Sandbox::create(Script& script)
   lua_setfield(L, -2, "LUA_VERSION");
 
   // add world:
-  push(L, std::static_pointer_cast<::Object>(script.world().lock()));
+  push(L, script.world().shared_from_this());
   lua_setfield(L, -2, "world");
 
   // add logger:

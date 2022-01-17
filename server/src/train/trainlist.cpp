@@ -32,10 +32,8 @@ TrainList::TrainList(Object& _parent, std::string_view parentPropertyName) :
   add{*this, "add",
     [this]()
     {
-      auto world = getWorld(&this->parent());
-      if(!world)
-        return std::shared_ptr<Train>();
-      return Train::create(world, world->getUniqueId("train"));
+      auto& world = getWorld(parent());
+      return Train::create(world, world.getUniqueId("train"));
     }}
   , remove{*this, "remove",
       [this](const std::shared_ptr<Train>& train)
@@ -45,8 +43,7 @@ TrainList::TrainList(Object& _parent, std::string_view parentPropertyName) :
         assert(!containsObject(train));
       }}
 {
-  auto world = getWorld(&_parent);
-  const bool editable = world && contains(world->state.value(), WorldState::Edit);
+  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);

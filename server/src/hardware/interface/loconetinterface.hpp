@@ -77,7 +77,7 @@ class LocoNetInterface final
     ObjectProperty<InputList> inputs;
     ObjectProperty<OutputList> outputs;
 
-    LocoNetInterface(const std::weak_ptr<World>& world, std::string_view _id);
+    LocoNetInterface(World& world, std::string_view _id);
 
     // DecoderController:
     [[nodiscard]] bool addDecoder(Decoder& decoder) final;

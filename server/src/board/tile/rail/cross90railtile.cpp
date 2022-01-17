@@ -22,7 +22,7 @@
 
 #include "cross90railtile.hpp"
 
-Cross90RailTile::Cross90RailTile(const std::weak_ptr<World>& world, std::string_view _id) :
+Cross90RailTile::Cross90RailTile(World& world, std::string_view _id) :
   RailTile(world, _id, TileId::RailCross90)
 {
 }

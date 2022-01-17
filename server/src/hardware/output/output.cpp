@@ -27,7 +27,7 @@
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
 
-Output::Output(const std::weak_ptr<World> world, std::string_view _id)
+Output::Output(World& world, std::string_view _id)
   : IdObject(world, _id)
   , name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , interface{this, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
@@ -74,8 +74,7 @@ Output::Output(const std::weak_ptr<World> world, std::string_view _id)
       }}
   , controllers{*this, "controllers", {}, PropertyFlags::ReadWrite | PropertyFlags::NoStore}
 {
-  auto w = world.lock();
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
@@ -83,7 +82,7 @@ Output::Output(const std::weak_ptr<World> world, std::string_view _id)
 
   Attributes::addDisplayName(interface, DisplayName::Hardware::interface);
   Attributes::addEnabled(interface, editable);
-  Attributes::addObjectList(interface, w->outputControllers);
+  Attributes::addObjectList(interface, m_world.outputControllers);
   m_interfaceItems.add(interface);
 
   Attributes::addDisplayName(address, DisplayName::Hardware::address);
@@ -102,9 +101,7 @@ Output::Output(const std::weak_ptr<World> world, std::string_view _id)
 void Output::addToWorld()
 {
   IdObject::addToWorld();
-
-  if(auto world = m_world.lock())
-    world->outputs->addObject(shared_ptr<Output>());
+  m_world.outputs->addObject(shared_ptr<Output>());
 }
 
 void Output::loaded()
@@ -123,10 +120,9 @@ void Output::loaded()
 
 void Output::destroying()
 {
-  if(auto world = m_world.lock())
-    world->outputs->removeObject(shared_ptr<Output>());
   if(interface)
     interface = nullptr;
+  m_world.outputs->removeObject(shared_ptr<Output>());
   IdObject::destroying();
 }
 

@@ -33,11 +33,8 @@ OutputList::OutputList(Object& _parent, std::string_view parentPropertyName)
   , add{*this, "add",
       [this]()
       {
-        auto world = getWorld(&parent());
-        if(!world)
-          return std::shared_ptr<Output>();
-
-        auto output = Output::create(world, world->getUniqueId(Output::defaultId));
+        auto& world = getWorld(parent());
+        auto output = Output::create(world, world.getUniqueId(Output::defaultId));
         if(const auto controller = std::dynamic_pointer_cast<OutputController>(parent().shared_from_this()))
         {
           if(const uint32_t address = controller->getUnusedOutputAddress(); address != Output::invalidAddress)
@@ -63,8 +60,7 @@ OutputList::OutputList(Object& _parent, std::string_view parentPropertyName)
         return std::shared_ptr<OutputKeyboard>();
       }}
 {
-  auto w = getWorld(&_parent);
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);

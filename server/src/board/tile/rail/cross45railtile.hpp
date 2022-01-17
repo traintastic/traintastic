@@ -31,7 +31,7 @@ class Cross45RailTile : public RailTile
     CLASS_ID("board_tile.rail.cross_45")
     CREATE(Cross45RailTile)
 
-    Cross45RailTile(const std::weak_ptr<World>& world, std::string_view _id);
+    Cross45RailTile(World& world, std::string_view _id);
 };
 
 #endif

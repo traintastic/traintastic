@@ -36,7 +36,7 @@ class Tile : public IdObject
   protected:
     const TileId m_tileId;
 
-    Tile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
+    Tile(World& world, std::string_view _id, TileId tileId);
 
     virtual void setRotate(TileRotate value) { rotate.setValueInternal(value); }
     bool resize(uint8_t w, uint8_t h);

@@ -26,15 +26,14 @@
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
 
-Interface::Interface(const std::weak_ptr<World>& world, std::string_view _id)
+Interface::Interface(World& world, std::string_view _id)
   : IdObject(world, _id)
   , name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , online{this, "online", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore, nullptr, std::bind(&Interface::setOnline, this, std::placeholders::_1)}
   , status{this, "status", InterfaceStatus::Offline, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
-  auto w = world.lock();
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
@@ -54,15 +53,12 @@ Interface::Interface(const std::weak_ptr<World>& world, std::string_view _id)
 void Interface::addToWorld()
 {
   IdObject::addToWorld();
-
-  if(auto world = m_world.lock())
-    world->interfaces->addObject(shared_ptr<Interface>());
+  m_world.interfaces->addObject(shared_ptr<Interface>());
 }
 
 void Interface::destroying()
 {
-  if(auto world = m_world.lock())
-    world->interfaces->removeObject(shared_ptr<Interface>());
+  m_world.interfaces->removeObject(shared_ptr<Interface>());
   IdObject::destroying();
 }
 

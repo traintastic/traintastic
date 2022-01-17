@@ -32,7 +32,7 @@
 class Interface : public IdObject
 {
   protected:
-    Interface(const std::weak_ptr<World>& world, std::string_view _id);
+    Interface(World& world, std::string_view _id);
 
     void addToWorld() override;
     void destroying() override;

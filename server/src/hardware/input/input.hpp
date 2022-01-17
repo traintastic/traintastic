@@ -59,7 +59,7 @@ class Input : public IdObject
     Property<TriState> value;
     ObjectVectorProperty<Object> consumers;
 
-    Input(const std::weak_ptr<World> world, std::string_view _id);
+    Input(World& world, std::string_view _id);
 };
 
 #endif
