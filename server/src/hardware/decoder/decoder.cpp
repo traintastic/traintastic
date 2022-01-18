@@ -94,8 +94,6 @@ Decoder::Decoder(World& world, std::string_view _id) :
 {
   functions.setValueInternal(std::make_shared<DecoderFunctions>(*this, functions.name()));
 
-  assert(w);
-
   m_worldMute = contains(m_world.state.value(), WorldState::Mute);
   m_worldNoSmoke = contains(m_world.state.value(), WorldState::NoSmoke);
 
