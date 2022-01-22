@@ -122,7 +122,7 @@ Traintastic::RunStatus Traintastic::run()
   worldList = std::make_shared<WorldList>(worldDir());
 
   if(settings->loadLastWorldOnStartup && !settings->lastWorld.value().empty())
-    loadWorldPath(settings->lastWorld.value());
+    loadWorld(settings->lastWorld.value());
 
   if(!start())
     return ExitFailure;
