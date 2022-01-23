@@ -78,6 +78,11 @@ Decoder::Decoder(World& world, std::string_view _id) :
     {
       changed(DecoderChangeFlags::Direction);
     }},
+  toggleDirection{*this, "toggle_direction",
+    [this]()
+    {
+      direction = (direction == Direction::Forward) ? Direction::Reverse : Direction::Forward;
+    }},
   speedSteps{this, "speed_steps", speedStepsAuto, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](const uint8_t& /*value*/)
     {
@@ -118,9 +123,13 @@ Decoder::Decoder(World& world, std::string_view _id) :
   m_interfaceItems.add(longAddress);
   Attributes::addObjectEditor(emergencyStop, false);
   m_interfaceItems.add(emergencyStop);
+
   Attributes::addValues(direction, DirectionValues);
   Attributes::addObjectEditor(direction, false);
   m_interfaceItems.add(direction);
+
+  Attributes::addObjectEditor(toggleDirection, false);
+  m_interfaceItems.add(toggleDirection);
 
   Attributes::addDisplayName(speedSteps, DisplayName::Hardware::speedSteps);
   Attributes::addEnabled(speedSteps, false);

@@ -85,6 +85,7 @@ class Decoder : public IdObject
     Property<bool> longAddress;
     Property<bool> emergencyStop;
     Property<Direction> direction;
+    Method<void()> toggleDirection;
     Property<uint8_t> speedSteps;
     Property<float> throttle;
     ObjectProperty<DecoderFunctions> functions;
