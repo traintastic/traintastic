@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -244,7 +244,7 @@ void ThrottleWidget::changeSpeed(bool up)
     {
       throttle += up ? throttleStep : -throttleStep;
     }
-    m_throttle->setValueDouble(throttle);
+    m_throttle->setValueDouble(std::clamp(throttle, m_throttle->getAttributeDouble(AttributeName::Min, 0), m_throttle->getAttributeDouble(AttributeName::Max, 1)));
   }
 }
 
