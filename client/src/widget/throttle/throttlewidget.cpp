@@ -33,6 +33,7 @@
 #include "../../network/objectproperty.hpp"
 #include "../../network/abstractproperty.hpp"
 #include "../../network/objectvectorproperty.hpp"
+#include "../../network/method.hpp"
 #include "throttledirectionbutton.hpp"
 #include "throttlefunctionbutton.hpp"
 #include "throttlestopbutton.hpp"
@@ -44,6 +45,7 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
   , m_functionsRequestId{Connection::invalidRequestId}
   , m_speed{nullptr}
   , m_throttle{nullptr}
+  , m_toggleDirection{m_object->getMethod("toggle_direction")}
   , m_nameLabel{new QLabel("", this)}
   , m_functionGrid{new QGridLayout()}
   , m_speedoMeter{new SpeedoMeterWidget(this)}
@@ -184,6 +186,12 @@ void ThrottleWidget::keyReleaseEvent(QKeyEvent* event)
     {
       case Qt::Key_Space:
         m_stopButton->click();
+        return;
+
+      case Qt::Key_Return:
+      case Qt::Key_Enter:
+        if(Q_LIKELY(m_toggleDirection))
+          m_toggleDirection->call();
         return;
 
       case Qt::Key_Left:
