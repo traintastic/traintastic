@@ -219,33 +219,33 @@ void Kernel::receive(const Message& message)
   }
 }
 
-void Kernel::normalOperationsResumed()
+void Kernel::resumeOperations()
 {
   m_ioContext.post(
     [this]()
     {
       if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::False)
-        send(NormalOperationResumed());
+        send(ResumeOperationsRequest());
     });
 }
 
-void Kernel::trackPowerOff()
+void Kernel::stopOperations()
 {
   m_ioContext.post(
     [this]()
     {
       if(m_trackPowerOn != TriState::False)
-        send(TrackPowerOff());
+        send(StopOperationsRequest());
     });
 }
 
-void Kernel::emergencyStop()
+void Kernel::stopAllLocomotives()
 {
   m_ioContext.post(
     [this]()
     {
       if(m_emergencyStop != TriState::True)
-        send(EmergencyStop());
+        send(StopAllLocomotivesRequest());
     });
 }
 

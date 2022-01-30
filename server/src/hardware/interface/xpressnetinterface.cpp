@@ -307,11 +307,11 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
       if(auto w = m_world.lock())
       {
         if(!contains(w->state.value(), WorldState::PowerOn))
-          m_kernel->trackPowerOff();
+          m_kernel->stopOperations();
         else if(!contains(w->state.value(), WorldState::Run))
-          m_kernel->emergencyStop();
+          m_kernel->stopAllLocomotives();
         else
-          m_kernel->normalOperationsResumed();
+          m_kernel->resumeOperations();
       }
 
       Attributes::setEnabled({type, serialInterfaceType, device, baudrate, flowControl, hostname, port, s88StartAddress, s88ModuleCount}, false);
@@ -395,22 +395,22 @@ void XpressNetInterface::worldEvent(WorldState state, WorldEvent event)
     switch(event)
     {
       case WorldEvent::PowerOff:
-        m_kernel->trackPowerOff();
+        m_kernel->stopOperations();
         break;
 
       case WorldEvent::PowerOn:
-        m_kernel->normalOperationsResumed();
+        m_kernel->resumeOperations();
         if(!contains(state, WorldState::Run))
-          m_kernel->emergencyStop();
+          m_kernel->stopAllLocomotives();
         break;
 
       case WorldEvent::Stop:
-        m_kernel->emergencyStop();
+        m_kernel->stopAllLocomotives();
         break;
 
       case WorldEvent::Run:
         if(contains(state, WorldState::PowerOn))
-          m_kernel->normalOperationsResumed();
+          m_kernel->resumeOperations();
         break;
 
       default:

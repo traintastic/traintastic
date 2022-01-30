@@ -259,19 +259,19 @@ class Kernel
      *
      *
      */
-    void normalOperationsResumed();
+    void resumeOperations();
 
     /**
      *
      *
      */
-    void trackPowerOff();
+    void stopOperations();
 
     /**
      *
      *
      */
-    void emergencyStop();
+    void stopAllLocomotives();
 
     /**
      *

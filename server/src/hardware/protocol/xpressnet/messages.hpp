@@ -154,6 +154,41 @@ struct FeedbackBroadcast : Message
   }
 };
 
+struct ResumeOperationsRequest : Message
+{
+  uint8_t db1 = 0x81;
+  uint8_t checksum = 0xA0;
+
+  ResumeOperationsRequest()
+  {
+    header = 0x21;
+  }
+};
+static_assert(sizeof(ResumeOperationsRequest) == 3);
+
+struct StopOperationsRequest : Message
+{
+  uint8_t db1 = 0x80;
+  uint8_t checksum = 0xA1;
+
+  StopOperationsRequest()
+  {
+    header = 0x21;
+  }
+};
+static_assert(sizeof(StopOperationsRequest) == 3);
+
+struct StopAllLocomotivesRequest : Message
+{
+  uint8_t checksum = 0x80;
+
+  StopAllLocomotivesRequest()
+  {
+    header = 0x80;
+  }
+};
+static_assert(sizeof(StopAllLocomotivesRequest) == 2);
+
 struct EmergencyStopLocomotive : Message
 {
   uint8_t addressHigh;
