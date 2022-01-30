@@ -25,6 +25,7 @@
 
 #include "iohandler.hpp"
 #include <array>
+#include <cstddef>
 
 namespace XpressNet {
 
