@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/xpressnet/iohandler/serialiohandler.hpp
+ * server/src/hardware/protocol/xpressnet/iohandler/simulationiohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,31 +20,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_SERIALIOHANDLER_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_SERIALIOHANDLER_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_SIMULATIONIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_SIMULATIONIOHANDLER_HPP
 
-#include "hardwareiohandler.hpp"
-#include <boost/asio/serial_port.hpp>
-#include "../../../../enum/serialflowcontrol.hpp"
+#include "iohandler.hpp"
+#include <array>
 
 namespace XpressNet {
 
-class SerialIOHandler : public HardwareIOHandler
+class SimulationIOHandler final : public IOHandler
 {
   private:
-    boost::asio::serial_port m_serialPort;
-
-    void read();
-    void write() final;
+    void reply(const Message& message);
+    void reply(const Message& message, size_t count);
 
   public:
-    SerialIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate, SerialFlowControl flowControl);
-    ~SerialIOHandler() override;
+    SimulationIOHandler(Kernel& kernel);
 
-    void start() override;
-    void stop() final;
+    void start() final {}
+    void stop() final {}
+
+    bool send(const Message& message) final;
 };
 
 }
 
 #endif
+

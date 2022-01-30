@@ -25,6 +25,7 @@
 #include "../output/list/outputlisttablemodel.hpp"
 #include "../protocol/xpressnet/messages.hpp"
 #include "../protocol/xpressnet/iohandler/serialiohandler.hpp"
+#include "../protocol/xpressnet/iohandler/simulationiohandler.hpp"
 #include "../protocol/xpressnet/iohandler/liusbiohandler.hpp"
 #include "../protocol/xpressnet/iohandler/rosofts88xpressnetliiohandler.hpp"
 #include "../protocol/xpressnet/iohandler/tcpiohandler.hpp"
@@ -213,41 +214,42 @@ bool XpressNetInterface::setOutputValue(uint32_t address, bool value)
 
 bool XpressNetInterface::setOnline(bool& value, bool simulation)
 {
-  if(simulation)
-  {
-    Log::log(*this, LogMessage::N2001_SIMULATION_NOT_SUPPORTED);
-    return false;
-  }
-
   if(!m_kernel && value)
   {
     try
     {
-      switch(type)
+      if(simulation)
       {
-        case XpressNetInterfaceType::Serial:
-          switch(serialInterfaceType)
-          {
-            case XpressNetSerialInterfaceType::LenzLI100:
-            case XpressNetSerialInterfaceType::LenzLI100F:
-            case XpressNetSerialInterfaceType::LenzLI101F:
-              m_kernel = XpressNet::Kernel::create<XpressNet::SerialIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value());
-              break;
+        m_kernel = XpressNet::Kernel::create<XpressNet::SimulationIOHandler>(xpressnet->config());
+      }
+      else
+      {
+        switch(type)
+        {
+          case XpressNetInterfaceType::Serial:
+            switch(serialInterfaceType)
+            {
+              case XpressNetSerialInterfaceType::LenzLI100:
+              case XpressNetSerialInterfaceType::LenzLI100F:
+              case XpressNetSerialInterfaceType::LenzLI101F:
+                m_kernel = XpressNet::Kernel::create<XpressNet::SerialIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value());
+                break;
 
-            case XpressNetSerialInterfaceType::RoSoftS88XPressNetLI:
-              m_kernel = XpressNet::Kernel::create<XpressNet::RoSoftS88XPressNetLIIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value(), s88StartAddress.value(), s88ModuleCount.value());
-              break;
+              case XpressNetSerialInterfaceType::RoSoftS88XPressNetLI:
+                m_kernel = XpressNet::Kernel::create<XpressNet::RoSoftS88XPressNetLIIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value(), s88StartAddress.value(), s88ModuleCount.value());
+                break;
 
-            case XpressNetSerialInterfaceType::LenzLIUSB:
-            case XpressNetSerialInterfaceType::DigikeijsDR5000:
-              m_kernel = XpressNet::Kernel::create<XpressNet::LIUSBIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value());
-              break;
-          }
-          break;
+              case XpressNetSerialInterfaceType::LenzLIUSB:
+              case XpressNetSerialInterfaceType::DigikeijsDR5000:
+                m_kernel = XpressNet::Kernel::create<XpressNet::LIUSBIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value());
+                break;
+            }
+            break;
 
-        case XpressNetInterfaceType::Network:
-          m_kernel = XpressNet::Kernel::create<XpressNet::TCPIOHandler>(xpressnet->config(), hostname.value(), port.value());
-          break;
+          case XpressNetInterfaceType::Network:
+            m_kernel = XpressNet::Kernel::create<XpressNet::TCPIOHandler>(xpressnet->config(), hostname.value(), port.value());
+            break;
+        }
       }
 
       if(!m_kernel)

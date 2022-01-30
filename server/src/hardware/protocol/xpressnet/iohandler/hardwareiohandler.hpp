@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/xpressnet/iohandler/serialiohandler.hpp
+ * server/src/hardware/protocol/xpressnet/iohandler/hardwareiohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,29 +20,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_SERIALIOHANDLER_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_SERIALIOHANDLER_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_HARDWAREIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_HARDWAREIOHANDLER_HPP
 
-#include "hardwareiohandler.hpp"
-#include <boost/asio/serial_port.hpp>
-#include "../../../../enum/serialflowcontrol.hpp"
+#include <cstddef>
+#include <array>
+#include "iohandler.hpp"
 
 namespace XpressNet {
 
-class SerialIOHandler : public HardwareIOHandler
-{
-  private:
-    boost::asio::serial_port m_serialPort;
+class Kernel;
+struct Message;
 
-    void read();
-    void write() final;
+class HardwareIOHandler : public IOHandler
+{
+  protected:
+    std::array<std::byte, 1024> m_readBuffer;
+    size_t m_readBufferOffset;
+    std::array<std::byte, 1024> m_writeBuffer;
+    size_t m_writeBufferOffset;
+    bool m_extraHeader; //!< every message is prepended by [FF FD] or [FF FE]
+
+    HardwareIOHandler(Kernel& kernel);
+
+    void processRead(size_t bytesTransferred);
+    virtual void write() = 0;
 
   public:
-    SerialIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate, SerialFlowControl flowControl);
-    ~SerialIOHandler() override;
-
-    void start() override;
-    void stop() final;
+    bool send(const Message& message) final;
 };
 
 }
