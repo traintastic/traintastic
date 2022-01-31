@@ -37,7 +37,6 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , baudrate{this, "baudrate", 115200, PropertyFlags::ReadWrite | PropertyFlags::Store}
-  , flowControl{this, "flow_control", SerialFlowControl::None, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , dccplusplus{this, "dccplusplus", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
@@ -55,11 +54,6 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   Attributes::addMinMax(baudrate, SerialPort::baudrateMin, SerialPort::baudrateMax);
   Attributes::addValues(baudrate, SerialPort::baudrateValues);
   m_interfaceItems.insertBefore(baudrate, notes);
-
-  Attributes::addDisplayName(flowControl, DisplayName::Serial::flowControl);
-  Attributes::addEnabled(flowControl, !online);
-  Attributes::addValues(flowControl, SerialFlowControlValues);
-  m_interfaceItems.insertBefore(flowControl, notes);
 
   Attributes::addDisplayName(dccplusplus, DisplayName::Hardware::dccplusplus);
   m_interfaceItems.insertBefore(dccplusplus, notes);
@@ -123,7 +117,7 @@ bool DCCPlusPlusInterface::setOnline(bool& value)
   {
     try
     {
-      m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SerialIOHandler>(dccplusplus->config(), device.value(), baudrate.value(), flowControl.value());
+      m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SerialIOHandler>(dccplusplus->config(), device.value(), baudrate.value(), SerialFlowControl::None);
 
       status.setValueInternal(InterfaceStatus::Initializing);
 
@@ -167,7 +161,7 @@ bool DCCPlusPlusInterface::setOnline(bool& value)
             m_kernel->setConfig(dccplusplus->config());
         });
 
-      Attributes::setEnabled({device, baudrate, flowControl}, false);
+      Attributes::setEnabled({device, baudrate}, false);
     }
     catch(const LogMessageException& e)
     {
@@ -178,7 +172,7 @@ bool DCCPlusPlusInterface::setOnline(bool& value)
   }
   else if(m_kernel && !value)
   {
-    Attributes::setEnabled({device, baudrate, flowControl}, true);
+    Attributes::setEnabled({device, baudrate}, true);
 
     m_dccplusplusPropertyChanged.disconnect();
 

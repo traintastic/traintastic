@@ -65,7 +65,6 @@ class DCCPlusPlusInterface final
   public:
     Property<std::string> device;
     Property<uint32_t> baudrate;
-    Property<SerialFlowControl> flowControl;
     ObjectProperty<DCCPlusPlus::Settings> dccplusplus;
     ObjectProperty<DecoderList> decoders;
     ObjectProperty<OutputList> outputs;
