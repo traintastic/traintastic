@@ -144,7 +144,7 @@ namespace Ex {
     assert(address <= 10293);
     assert(speed <= 126);
 
-    return std::string("<t ")
+    return std::string("<t 1 ")
       .append(std::to_string(address))
       .append(" ")
       .append(emergencyStop ? "-1" : std::to_string(speed))
