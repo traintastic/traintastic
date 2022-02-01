@@ -24,11 +24,13 @@
 #include "messages.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
+#include "../../input/inputcontroller.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../utils/rtrim.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 #include "../../../utils/inrange.hpp"
+#include "../../../utils/fromchars.hpp"
 
 namespace DCCPlusPlus {
 
@@ -146,6 +148,22 @@ void Kernel::receive(std::string_view message)
                 {
                   m_onPowerOnChanged(true);
                 });
+          }
+        }
+        break;
+
+      case 'q': // Sensor/Input: ACTIVE to INACTIVE
+      case 'Q': // Sensor/Input: INACTIVE to ACTIVE
+        if(m_inputController && message[2] == ' ')
+        {
+          uint32_t id;
+          if(auto r = fromChars(message.substr(3), id); r.ec == std::errc() && *r.ptr == '>' && id <= idMax)
+          {
+            EventLoop::call(
+              [this, id, value=toTriState(message[1] == 'Q')]()
+              {
+                m_inputController->updateInputValue(id, value);
+              });
           }
         }
         break;

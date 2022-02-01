@@ -28,6 +28,8 @@
 #include "../protocol/dccplusplus/settings.hpp"
 #include "../decoder/decodercontroller.hpp"
 #include "../decoder/decoderlist.hpp"
+#include "../input/inputcontroller.hpp"
+#include "../input/list/inputlist.hpp"
 #include "../output/outputcontroller.hpp"
 #include "../output/list/outputlist.hpp"
 #include "../../core/objectproperty.hpp"
@@ -39,6 +41,7 @@
 class DCCPlusPlusInterface final
   : public Interface
   , public DecoderController
+  , public InputController
   , public OutputController
 {
   CLASS_ID("interface.dccplusplus")
@@ -67,6 +70,7 @@ class DCCPlusPlusInterface final
     Property<uint32_t> baudrate;
     ObjectProperty<DCCPlusPlus::Settings> dccplusplus;
     ObjectProperty<DecoderList> decoders;
+    ObjectProperty<InputList> inputs;
     ObjectProperty<OutputList> outputs;
 
     DCCPlusPlusInterface(World& world, std::string_view _id);
@@ -75,6 +79,11 @@ class DCCPlusPlusInterface final
     [[nodiscard]] bool addDecoder(Decoder& decoder) final;
     [[nodiscard]] bool removeDecoder(Decoder& decoder) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
+
+    // InputController:
+    std::pair<uint32_t, uint32_t> inputAddressMinMax() const final { return {DCCPlusPlus::Kernel::idMin, DCCPlusPlus::Kernel::idMax}; }
+    [[nodiscard]] bool addInput(Input& input) final;
+    [[nodiscard]] bool removeInput(Input& input) final;
 
     // OutputController:
     std::pair<uint32_t, uint32_t> outputAddressMinMax() const final { return {DCCPlusPlus::Kernel::outputAddressMin, DCCPlusPlus::Kernel::outputAddressMax}; }

@@ -39,10 +39,12 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   , baudrate{this, "baudrate", 115200, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , dccplusplus{this, "dccplusplus", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
+  , inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
   dccplusplus.setValueInternal(std::make_shared<DCCPlusPlus::Settings>(*this, dccplusplus.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
+  inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name()));
   outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name()));
 
   Attributes::addDisplayName(device, DisplayName::Serial::device);
@@ -60,6 +62,9 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
 
   Attributes::addDisplayName(decoders, DisplayName::Hardware::decoders);
   m_interfaceItems.insertBefore(decoders, notes);
+
+  Attributes::addDisplayName(inputs, DisplayName::Hardware::inputs);
+  m_interfaceItems.insertBefore(inputs, notes);
 
   Attributes::addDisplayName(outputs, DisplayName::Hardware::outputs);
   m_interfaceItems.insertBefore(outputs, notes);
@@ -85,6 +90,22 @@ void DCCPlusPlusInterface::decoderChanged(const Decoder& decoder, DecoderChangeF
 {
   if(m_kernel)
     m_kernel->decoderChanged(decoder, changes, functionNumber);
+}
+
+bool DCCPlusPlusInterface::addInput(Input& input)
+{
+  const bool success = InputController::addInput(input);
+  if(success)
+    inputs->addObject(input.shared_ptr<Input>());
+  return success;
+}
+
+bool DCCPlusPlusInterface::removeInput(Input& input)
+{
+  const bool success = InputController::removeInput(input);
+  if(success)
+    inputs->removeObject(input.shared_ptr<Input>());
+  return success;
 }
 
 bool DCCPlusPlusInterface::addOutput(Output& output)
@@ -152,6 +173,8 @@ bool DCCPlusPlusInterface::setOnline(bool& value)
             m_world.powerOff();
         });
       m_kernel->setDecoderController(this);
+      m_kernel->setInputController(this);
+      m_kernel->setOutputController(this);
       m_kernel->start();
 
       m_dccplusplusPropertyChanged = dccplusplus->propertyChanged.connect(

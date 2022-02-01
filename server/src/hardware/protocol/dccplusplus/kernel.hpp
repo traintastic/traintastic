@@ -34,6 +34,7 @@
 class Decoder;
 enum class DecoderChangeFlags;
 class DecoderController;
+class InputController;
 class OutputController;
 
 namespace DCCPlusPlus {
@@ -43,6 +44,8 @@ struct Message;
 class Kernel
 {
   public:
+    static constexpr uint32_t idMin = 0;
+    static constexpr uint32_t idMax = 32767;
     static constexpr uint16_t outputAddressMin = 1;
     static constexpr uint16_t outputAddressMax = 2044;
 
@@ -59,6 +62,8 @@ class Kernel
     std::function<void(bool)> m_onPowerOnChanged;
 
     DecoderController* m_decoderController;
+
+    InputController* m_inputController;
 
     OutputController* m_outputController;
     std::array<TriState, outputAddressMax - outputAddressMin + 1> m_outputValues;
@@ -182,6 +187,18 @@ class Kernel
     {
       assert(!m_started);
       m_decoderController = decoderController;
+    }
+
+    /**
+     * @brief Set the input controller
+     *
+     * @param[in] inputController The input controller
+     * @note This function may not be called when the kernel is running.
+     */
+    inline void setInputController(InputController* inputController)
+    {
+      assert(!m_started);
+      m_inputController = inputController;
     }
 
     /**
