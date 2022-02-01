@@ -38,6 +38,8 @@ Kernel::Kernel(const Config& config)
   : m_ioContext{1}
   , m_startupDelayTimer{m_ioContext}
   , m_decoderController{nullptr}
+  , m_inputController{nullptr}
+  , m_outputController{nullptr}
   , m_config{config}
 #ifndef NDEBUG
   , m_started{false}
