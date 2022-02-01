@@ -29,7 +29,7 @@
 template<class T>
 inline auto fromChars(std::string_view sv, T& value, int base = 10)
 {
-  return std::from_chars(sv.data(), sv.data() + sv.size() - 1, value, base);
+  return std::from_chars(sv.data(), sv.data() + sv.size(), value, base);
 }
 
 #endif
