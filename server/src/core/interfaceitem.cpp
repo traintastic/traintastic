@@ -1,9 +1,9 @@
 /**
- * shared/src/enum/propertytype.hpp
+ * server/src/core/interfaceitem.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,26 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_ATTRIBUTENAME_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_ATTRIBUTENAME_HPP
+#include "interfaceitem.hpp"
+#include "abstractvaluesattribute.hpp"
 
-#include <cstdint>
-
-enum class AttributeName : uint16_t
+const AbstractValuesAttribute* InterfaceItem::tryGetValuesAttribute(AttributeName name) const
 {
-  Visible = 0,
-  Enabled = 1,
-  Min = 2,
-  Max = 3,
-  Category = 4,
-  ObjectEditor = 5,
-  Values = 6,
-  SubObject = 7,
-  ClassList = 8,
-  ObjectList = 9,
-  DisplayName = 10,
-  AliasKeys = 11,
-  AliasValues = 12,
-};
-
-#endif
+  if(auto it = m_attributes.find(name); it != m_attributes.end())
+    return dynamic_cast<AbstractValuesAttribute*>(it->second.get());
+  return nullptr;
+}

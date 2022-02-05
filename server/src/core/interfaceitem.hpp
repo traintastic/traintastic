@@ -28,8 +28,11 @@
 #include <memory>
 #include "attribute.hpp"
 #include "arrayattribute.hpp"
+#include "vectorattribute.hpp"
+#include "vectorrefattribute.hpp"
 
 class Object;
+class AbstractValuesAttribute;
 
 class InterfaceItem
 {
@@ -58,10 +61,31 @@ class InterfaceItem
     }
 
     template<typename T>
+    void addAttribute(AttributeName name, const std::vector<T>* values)
+    {
+      assert(m_attributes.find(name) == m_attributes.end());
+      m_attributes.emplace(name, std::make_unique<VectorRefAttribute<T>>(*this, name, values));
+    }
+
+    template<typename T>
+    void addAttribute(AttributeName name, std::vector<T> values)
+    {
+      assert(m_attributes.find(name) == m_attributes.end());
+      m_attributes.emplace(name, std::make_unique<VectorAttribute<T>>(*this, name, std::move(values)));
+    }
+
+    template<typename T>
     void setAttribute(AttributeName name, const T& value)
     {
       assert(m_attributes.find(name) != m_attributes.end());
       static_cast<Attribute<T>*>(m_attributes[name].get())->setValue(value);
+    }
+
+    template<typename T>
+    void setAttribute(AttributeName name, const std::vector<T>* values)
+    {
+      assert(m_attributes.find(name) != m_attributes.end());
+      static_cast<VectorRefAttribute<T>*>(m_attributes[name].get())->setValues(values);
     }
 
   public:
@@ -99,6 +123,8 @@ class InterfaceItem
       assert(m_attributes.find(name) != m_attributes.end());
       return static_cast<const Attribute<T>*>(m_attributes.at(name).get())->value();
     }
+
+    const AbstractValuesAttribute* tryGetValuesAttribute(AttributeName name) const;
 };
 
 #endif
