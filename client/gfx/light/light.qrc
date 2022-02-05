@@ -48,5 +48,7 @@
         <file>board_tile.rail.bridge_45_right.svg</file>
         <file>board_tile.rail.sensor.svg</file>
         <file>board_tile.rail.tunnel.svg</file>
+        <file>output_keyboard.svg</file>
+        <file>input_monitor.svg</file>
     </qresource>
 </RCC>
