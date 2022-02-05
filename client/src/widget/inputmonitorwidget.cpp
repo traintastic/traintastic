@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 #include <traintastic/locale/locale.hpp>
 #include "ledwidget.hpp"
 #include "../network/inputmonitor.hpp"
+#include "../network/abstractproperty.hpp"
 
 static const LEDWidget::Colors colors = {
   QColor(),
@@ -48,20 +49,23 @@ constexpr LEDWidget::State toState(TriState value)
 }
 
 
-InputMonitorWidget::InputMonitorWidget(std::shared_ptr<InputMonitor> object, QWidget* parent) :
-  QWidget(parent),
-  m_object{std::move(object)}
+InputMonitorWidget::InputMonitorWidget(std::shared_ptr<InputMonitor> object, QWidget* parent)
+  : QWidget(parent)
+  , m_object{std::move(object)}
+  , m_addressMin{m_object->getProperty("address_min")}
+  , m_addressMax{m_object->getProperty("address_max")}
 {
   setWindowTitle(Locale::tr("hardware:input_monitor"));
 
   QGridLayout* grid = new QGridLayout();
 
-  for(int i = 1; i <= 128; i++)
+  const uint32_t first = static_cast<uint32_t>(m_addressMin->toInt64());
+  for(uint32_t i = first; i < first + 128; i++)
   {
     auto* led = new LEDWidget(colors, this);
     led->setEnabled(false);
     led->setText(QString::number(i));
-    grid->addWidget(led, (i - 1) / 16, (i - 1) % 16);
+    grid->addWidget(led, (i - first) / 16, (i - first) % 16);
     m_leds.emplace(i, led);
   }
 
