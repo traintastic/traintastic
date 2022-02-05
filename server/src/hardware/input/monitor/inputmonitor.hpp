@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,6 +36,7 @@ class InputMonitor : public Object
 
   private:
     InputController& m_controller;
+    const uint32_t m_channel;
 
   public:
     boost::signals2::signal<void(InputMonitor&, uint32_t, std::string_view)> inputIdChanged;
@@ -58,7 +59,7 @@ class InputMonitor : public Object
     Property<uint32_t> addressMin;
     Property<uint32_t> addressMax;
 
-    InputMonitor(InputController& controller);
+    InputMonitor(InputController& controller, uint32_t channel);
 
     std::string getObjectId() const final;
 

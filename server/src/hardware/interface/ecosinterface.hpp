@@ -79,7 +79,7 @@ class ECoSInterface final
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
-    std::pair<uint32_t, uint32_t> inputAddressMinMax() const final { return {1, 1}; }
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final { return {1, 1}; }
     [[nodiscard]] bool addInput(Input& input) final;
     [[nodiscard]] bool removeInput(Input& input) final;
 

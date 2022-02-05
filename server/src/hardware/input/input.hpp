@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,6 +41,13 @@ class Input : public IdObject
 
   friend class InputController;
 
+  private:
+    static constexpr uint32_t addressMinDefault = 0;
+    static constexpr uint32_t addressMaxDefault = 1'000'000;
+
+    void interfaceChanged();
+    void channelChanged();
+
   protected:
     void addToWorld() override;
     void loaded() override;
@@ -55,6 +62,7 @@ class Input : public IdObject
 
     Property<std::string> name;
     ObjectProperty<InputController> interface;
+    Property<uint32_t> channel;
     Property<uint32_t> address;
     Property<TriState> value;
     ObjectVectorProperty<Object> consumers;

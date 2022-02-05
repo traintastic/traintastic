@@ -34,6 +34,7 @@
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
+constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
 
 LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
@@ -56,7 +57,7 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   name = "LocoNet";
   loconet.setValueInternal(std::make_shared<LocoNet::Settings>(*this, loconet.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
-  inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name()));
+  inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name(), inputListColumns));
   outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);

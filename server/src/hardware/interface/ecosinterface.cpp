@@ -31,6 +31,7 @@
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
+constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
 
 ECoSInterface::ECoSInterface(World& world, std::string_view _id)
@@ -51,7 +52,7 @@ ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   name = "ECoS";
   ecos.setValueInternal(std::make_shared<ECoS::Settings>(*this, ecos.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
-  inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name()));
+  inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name(), inputListColumns));
   outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);

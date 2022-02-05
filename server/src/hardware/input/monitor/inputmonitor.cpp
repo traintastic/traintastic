@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,11 +24,14 @@
 #include "../inputcontroller.hpp"
 #include "../input.hpp"
 
-InputMonitor::InputMonitor(InputController& controller)
+InputMonitor::InputMonitor(InputController& controller, uint32_t channel)
   : m_controller{controller}
-  , addressMin{this, "address_min", m_controller.inputAddressMinMax().first, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
-  , addressMax{this, "address_max", m_controller.inputAddressMinMax().second, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
+  , m_channel{channel}
+  , addressMin{this, "address_min", m_controller.inputAddressMinMax(m_channel).first, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
+  , addressMax{this, "address_max", m_controller.inputAddressMinMax(m_channel).second, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
 {
+  m_interfaceItems.add(addressMin);
+  m_interfaceItems.add(addressMax);
 }
 
 std::string InputMonitor::getObjectId() const

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INPUT_LIST_INPUTLISTTABLEMODEL_HPP
 
 #include "../../../core/objectlisttablemodel.hpp"
+#include "inputlistcolumn.hpp"
 #include "../input.hpp"
 
 class InputList;
@@ -33,10 +34,9 @@ class InputListTableModel : public ObjectListTableModel<Input>
   friend class InputList;
 
   private:
-    static constexpr uint32_t columnId = 0;
-    static constexpr uint32_t columnName = 1;
-    const uint32_t m_columnInterface;
-    const uint32_t m_columnAddress;
+    std::vector<InputListColumn> m_columns;
+
+    void changed(uint32_t row, InputListColumn column);
 
   protected:
     void propertyChanged(BaseProperty& property, uint32_t row) final;
