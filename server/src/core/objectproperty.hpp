@@ -89,6 +89,8 @@ class ObjectProperty : public AbstractObjectProperty
       else if(!m_onSet || m_onSet(value))
       {
         m_value = value;
+        if(m_onChanged)
+          m_onChanged(m_value);
         changed();
       }
       else
