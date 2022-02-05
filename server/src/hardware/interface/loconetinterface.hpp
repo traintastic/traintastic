@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -90,10 +90,10 @@ class LocoNetInterface final
     [[nodiscard]] bool removeInput(Input& input) final;
 
     // OutputController:
-    std::pair<uint32_t, uint32_t> outputAddressMinMax() const final { return {LocoNet::Kernel::outputAddressMin, LocoNet::Kernel::outputAddressMax}; }
+    std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final { return {LocoNet::Kernel::outputAddressMin, LocoNet::Kernel::outputAddressMax}; }
     [[nodiscard]] bool addOutput(Output& output) final;
     [[nodiscard]] bool removeOutput(Output& output) final;
-    [[nodiscard]] bool setOutputValue(uint32_t address, bool value) final;
+    [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 };
 
 #endif

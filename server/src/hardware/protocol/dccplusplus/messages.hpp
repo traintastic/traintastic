@@ -202,6 +202,26 @@ namespace Ex {
       .append(">\n");
   }
 
+  inline std::string setTurnout(uint16_t id, bool throw_)
+  {
+    assert(id <= 32767);
+
+    return std::string("<T ")
+      .append(std::to_string(id))
+      .append(throw_ ? " 1" : " 0")
+      .append(">\n");
+  }
+
+  inline std::string setOutput(uint16_t id, bool state)
+  {
+    assert(id <= 32767);
+
+    return std::string("<Z ")
+      .append(std::to_string(id))
+      .append(state ? " 1" : " 0")
+      .append(">\n");
+  }
+
   inline std::string_view setSpeedSteps(uint8_t value)
   {
     switch(value)

@@ -86,10 +86,12 @@ class DCCPlusPlusInterface final
     [[nodiscard]] bool removeInput(Input& input) final;
 
     // OutputController:
-    std::pair<uint32_t, uint32_t> outputAddressMinMax() const final { return {DCCPlusPlus::Kernel::outputAddressMin, DCCPlusPlus::Kernel::outputAddressMax}; }
+    const std::vector<uint32_t>* outputChannels() const final { return &DCCPlusPlus::Kernel::outputChannels; }
+    const std::vector<std::string_view>* outputChannelNames() const final { return &DCCPlusPlus::Kernel::outputChannelNames; }
+    std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t channel) const final;
     [[nodiscard]] bool addOutput(Output& output) final;
     [[nodiscard]] bool removeOutput(Output& output) final;
-    [[nodiscard]] bool setOutputValue(uint32_t address, bool value) final;
+    [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 };
 
 #endif

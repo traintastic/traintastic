@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,22 +27,16 @@
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
 
-OutputList::OutputList(Object& _parent, std::string_view parentPropertyName)
+OutputList::OutputList(Object& _parent, std::string_view parentPropertyName, OutputListColumn _columns)
   : ObjectList<Output>(_parent, parentPropertyName)
-  , m_parentIsOutputController(dynamic_cast<OutputController*>(&_parent))
+  , columns{_columns}
   , add{*this, "add",
       [this]()
       {
         auto& world = getWorld(parent());
         auto output = Output::create(world, world.getUniqueId(Output::defaultId));
         if(const auto controller = std::dynamic_pointer_cast<OutputController>(parent().shared_from_this()))
-        {
-          if(const uint32_t address = controller->getUnusedOutputAddress(); address != Output::invalidAddress)
-          {
-            output->address = address;
-            output->interface = controller;
-          }
-        }
+          output->interface = controller;
         return output;
       }}
   , remove{*this, "remove",
@@ -56,7 +50,14 @@ OutputList::OutputList(Object& _parent, std::string_view parentPropertyName)
       [this]()
       {
         if(const auto controller = std::dynamic_pointer_cast<OutputController>(parent().shared_from_this()))
-          return controller->outputKeyboard();
+          return controller->outputKeyboard(OutputController::defaultOutputChannel);
+        return std::shared_ptr<OutputKeyboard>();
+      }}
+  , outputKeyboardChannel{*this, "output_keyboard_channel",
+      [this](uint32_t channel)
+      {
+        if(const auto controller = std::dynamic_pointer_cast<OutputController>(parent().shared_from_this()))
+          return controller->outputKeyboard(channel);
         return std::shared_ptr<OutputKeyboard>();
       }}
 {
@@ -70,10 +71,21 @@ OutputList::OutputList(Object& _parent, std::string_view parentPropertyName)
   Attributes::addEnabled(remove, editable);
   m_interfaceItems.add(remove);
 
-  if(m_parentIsOutputController)
+  if(auto* controller = dynamic_cast<OutputController*>(&_parent))
   {
-    Attributes::addDisplayName(outputKeyboard, DisplayName::Hardware::outputKeyboard);
-    m_interfaceItems.add(outputKeyboard);
+    const auto* channels = controller->outputChannels();
+    if(channels && !channels->empty())
+    {
+      Attributes::addDisplayName(outputKeyboardChannel, DisplayName::Hardware::outputKeyboard);
+      Attributes::addValues(outputKeyboardChannel, channels);
+      Attributes::addAliases(outputKeyboardChannel, channels, controller->outputChannelNames());
+      m_interfaceItems.add(outputKeyboardChannel);
+    }
+    else
+    {
+      Attributes::addDisplayName(outputKeyboard, DisplayName::Hardware::outputKeyboard);
+      m_interfaceItems.add(outputKeyboard);
+    }
   }
 }
 

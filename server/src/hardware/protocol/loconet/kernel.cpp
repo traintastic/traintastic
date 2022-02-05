@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -385,7 +385,7 @@ void Kernel::receive(const Message& message)
           EventLoop::call(
             [this, address=1 + switchRequest.fullAddress(), on]()
             {
-              m_outputController->updateOutputValue(address, on);
+              m_outputController->updateOutputValue(OutputController::defaultOutputChannel, address, on);
             });
         }
       }

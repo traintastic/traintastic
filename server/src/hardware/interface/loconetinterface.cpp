@@ -34,6 +34,8 @@
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
+constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
+
 LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , type{this, "type", LocoNetInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
@@ -55,7 +57,7 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   loconet.setValueInternal(std::make_shared<LocoNet::Settings>(*this, loconet.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
   inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name()));
-  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name()));
+  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
   Attributes::addEnabled(type, !online);
@@ -157,11 +159,11 @@ bool LocoNetInterface::removeOutput(Output& output)
   return success;
 }
 
-bool LocoNetInterface::setOutputValue(uint32_t address, bool value)
+bool LocoNetInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
 {
   return
     m_kernel &&
-    inRange(address, outputAddressMinMax()) &&
+    inRange(address, outputAddressMinMax(channel)) &&
     m_kernel->setOutput(static_cast<uint16_t>(address), value);
 }
 

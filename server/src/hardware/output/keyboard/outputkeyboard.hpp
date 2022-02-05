@@ -36,6 +36,7 @@ class OutputKeyboard : public Object
 
   private:
     OutputController& m_controller;
+    const uint32_t m_channel;
 
   public:
     boost::signals2::signal<void(OutputKeyboard&, uint32_t, std::string_view)> outputIdChanged;
@@ -58,7 +59,7 @@ class OutputKeyboard : public Object
     Property<uint32_t> addressMin;
     Property<uint32_t> addressMax;
 
-    OutputKeyboard(OutputController& controller);
+    OutputKeyboard(OutputController& controller, uint32_t channel);
 
     std::string getObjectId() const final;
 

@@ -33,6 +33,8 @@
 #include "../../utils/serialport.hpp"
 #include "../../world/world.hpp"
 
+constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Channel | OutputListColumn::Address;
+
 DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -45,7 +47,7 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   dccplusplus.setValueInternal(std::make_shared<DCCPlusPlus::Settings>(*this, dccplusplus.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
   inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name()));
-  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name()));
+  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(device, DisplayName::Serial::device);
   Attributes::addEnabled(device, !online);
@@ -108,6 +110,24 @@ bool DCCPlusPlusInterface::removeInput(Input& input)
   return success;
 }
 
+std::pair<uint32_t, uint32_t> DCCPlusPlusInterface::outputAddressMinMax(uint32_t channel) const
+{
+  using namespace DCCPlusPlus;
+
+  switch(channel)
+  {
+    case Kernel::OutputChannel::dccAccessory:
+      return {Kernel::dccAccessoryAddressMin, Kernel::dccAccessoryAddressMax};
+
+    case Kernel::OutputChannel::turnout:
+    case Kernel::OutputChannel::output:
+      return {Kernel::idMin, Kernel::idMax};
+  }
+
+  assert(false);
+  return {0, 0};
+}
+
 bool DCCPlusPlusInterface::addOutput(Output& output)
 {
   const bool success = OutputController::addOutput(output);
@@ -124,12 +144,12 @@ bool DCCPlusPlusInterface::removeOutput(Output& output)
   return success;
 }
 
-bool DCCPlusPlusInterface::setOutputValue(uint32_t address, bool value)
+bool DCCPlusPlusInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
 {
   return
     m_kernel &&
-    inRange(address, outputAddressMinMax()) &&
-    m_kernel->setOutput(static_cast<uint16_t>(address), value);
+    inRange(address, outputAddressMinMax(channel)) &&
+    m_kernel->setOutput(channel, static_cast<uint16_t>(address), value);
 }
 
 bool DCCPlusPlusInterface::setOnline(bool& value)

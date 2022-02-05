@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,32 +25,46 @@
 #include "keyboard/outputkeyboard.hpp"
 #include "../../utils/inrange.hpp"
 
-bool OutputController::isOutputAddressAvailable(uint32_t address) const
+bool OutputController::isOutputChannel(uint32_t channel) const
 {
-  return
-    inRange(address, outputAddressMinMax()) &&
-    m_outputs.find(address) == m_outputs.end();
+  const auto* channels = outputChannels();
+  if(!channels || channels->empty())
+    return channel == defaultOutputChannel;
+
+  auto it = std::find(channels->begin(), channels->end(), channel);
+  assert(it == channels->end() || *it != defaultOutputChannel);
+  return it != channels->end();
 }
 
-uint32_t OutputController::getUnusedOutputAddress() const
+bool OutputController::isOutputAddressAvailable(uint32_t channel, uint32_t address) const
 {
+  assert(isOutputChannel(channel));
+  return
+    inRange(address, outputAddressMinMax(channel)) &&
+    m_outputs.find({channel, address}) == m_outputs.end();
+}
+
+uint32_t OutputController::getUnusedOutputAddress(uint32_t channel) const
+{
+  assert(isOutputChannel(channel));
   const auto end = m_outputs.cend();
-  const auto range = outputAddressMinMax();
+  const auto range = outputAddressMinMax(channel);
   for(uint32_t address = range.first; address < range.second; address++)
-    if(m_outputs.find(address) == end)
+    if(m_outputs.find({channel, address}) == end)
       return address;
   return Output::invalidAddress;
 }
 
-bool OutputController::changeOutputAddress(Output& output, uint32_t newAddress)
+bool OutputController::changeOutputChannelAddress(Output& output, uint32_t newChannel, uint32_t newAddress)
 {
   assert(output.interface.value().get() == this);
+  assert(isOutputChannel(newChannel));
 
-  if(!isOutputAddressAvailable(newAddress))
+  if(!isOutputAddressAvailable(newChannel, newAddress))
     return false;
 
-  auto node = m_outputs.extract(output.address); // old address
-  node.key() = newAddress;
+  auto node = m_outputs.extract({output.channel, output.address});
+  node.key() = {newChannel, newAddress};
   m_outputs.insert(std::move(node));
   output.value.setValueInternal(TriState::Undefined);
 
@@ -59,9 +73,9 @@ bool OutputController::changeOutputAddress(Output& output, uint32_t newAddress)
 
 bool OutputController::addOutput(Output& output)
 {
-  if(isOutputAddressAvailable(output.address))
+  if(isOutputChannel(output.channel) && isOutputAddressAvailable(output.channel, output.address))
   {
-    m_outputs.insert({output.address, output.shared_ptr<Output>()});
+    m_outputs.insert({{output.channel, output.address}, output.shared_ptr<Output>()});
     output.value.setValueInternal(TriState::Undefined);
     return true;
   }
@@ -71,7 +85,7 @@ bool OutputController::addOutput(Output& output)
 bool OutputController::removeOutput(Output& output)
 {
   assert(output.interface.value().get() == this);
-  auto it = m_outputs.find(output.address);
+  auto it = m_outputs.find({output.channel, output.address});
   if(it != m_outputs.end() && it->second.get() == &output)
   {
     m_outputs.erase(it);
@@ -81,21 +95,22 @@ bool OutputController::removeOutput(Output& output)
   return false;
 }
 
-void OutputController::updateOutputValue(uint32_t address, TriState value)
+void OutputController::updateOutputValue(uint32_t channel, uint32_t address, TriState value)
 {
-  if(auto it = m_outputs.find(address); it != m_outputs.end())
+  if(auto it = m_outputs.find({channel, address}); it != m_outputs.end())
     it->second->updateValue(value);
-  if(auto keyboard = m_outputKeyboard.lock())
+  if(auto keyboard = m_outputKeyboards[channel].lock())
     keyboard->outputValueChanged(*keyboard, address, value);
 }
 
-std::shared_ptr<OutputKeyboard> OutputController::outputKeyboard()
+std::shared_ptr<OutputKeyboard> OutputController::outputKeyboard(uint32_t channel)
 {
-  auto keyboard = m_outputKeyboard.lock();
+  assert(isOutputChannel(channel));
+  auto keyboard = m_outputKeyboards[channel].lock();
   if(!keyboard)
   {
-    keyboard = std::make_shared<OutputKeyboard>(*this);
-    m_outputKeyboard = keyboard;
+    keyboard = std::make_shared<OutputKeyboard>(*this, channel);
+    m_outputKeyboards[channel] = keyboard;
   }
   return keyboard;
 }

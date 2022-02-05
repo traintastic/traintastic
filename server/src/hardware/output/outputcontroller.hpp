@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_OUTPUTCONTROLLER_HPP
 
 #include <cstdint>
+#include <vector>
 #include <unordered_map>
 #include <memory>
 #include "../../enum/tristate.hpp"
@@ -34,13 +35,36 @@ class OutputKeyboard;
 class OutputController
 {
   public:
-    using OutputMap = std::unordered_map<uint32_t, std::shared_ptr<Output>>;
+    struct OutputMapKey
+    {
+      uint32_t channel;
+      uint32_t address;
+
+      inline bool operator ==(const OutputMapKey other) const noexcept
+      {
+        return channel == other.channel && address == other.address;
+      }
+    };
+    static_assert(sizeof(OutputMapKey) == sizeof(uint64_t));
+
+    struct OutputMapKeyHash
+    {
+      std::size_t operator()(const OutputMapKey& value) const noexcept
+      {
+        return std::hash<uint64_t>{}(*reinterpret_cast<const uint64_t*>(&value));
+      }
+    };
+
+    using OutputMap = std::unordered_map<OutputMapKey, std::shared_ptr<Output>, OutputMapKeyHash>;
 
   protected:
     OutputMap m_outputs;
-    std::weak_ptr<OutputKeyboard> m_outputKeyboard;
+    std::unordered_map<uint32_t, std::weak_ptr<OutputKeyboard>> m_outputKeyboards;
 
   public:
+    static constexpr std::vector<uint32_t>* noOutputChannels = nullptr;
+    static constexpr uint32_t defaultOutputChannel = 0;
+
     /**
      *
      */
@@ -49,25 +73,40 @@ class OutputController
     /**
      *
      */
-    virtual std::pair<uint32_t, uint32_t> outputAddressMinMax() const = 0;
+    virtual const std::vector<uint32_t>* outputChannels() const { return noOutputChannels; }
 
     /**
      *
      */
-    [[nodiscard]] virtual bool isOutputAddressAvailable(uint32_t address) const;
+    virtual const std::vector<std::string_view>* outputChannelNames() const { return nullptr; }
+
+    /**
+     *
+     */
+    bool isOutputChannel(uint32_t channel) const;
+
+    /**
+     *
+     */
+    virtual std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t channel) const = 0;
+
+    /**
+     *
+     */
+    [[nodiscard]] virtual bool isOutputAddressAvailable(uint32_t channel, uint32_t address) const;
 
     /**
      * @brief Get the next unused output address
      *
      * @return An usused address or Output::invalidAddress if no unused address is available.
      */
-    uint32_t getUnusedOutputAddress() const;
+    uint32_t getUnusedOutputAddress(uint32_t channel) const;
 
     /**
      *
      * @return \c true if changed, \c false otherwise.
      */
-    [[nodiscard]] virtual bool changeOutputAddress(Output& output, uint32_t newAddress);
+    [[nodiscard]] virtual bool changeOutputChannelAddress(Output& output, uint32_t newChannel, uint32_t newAddress);
 
     /**
      *
@@ -84,23 +123,24 @@ class OutputController
     /**
      * @brief ...
      */
-    [[nodiscard]] virtual bool setOutputValue(uint32_t address, bool value) = 0;
+    [[nodiscard]] virtual bool setOutputValue(uint32_t channel, uint32_t address, bool value) = 0;
 
     /**
      * @brief Update the output value
      *
      * This function should be called by the hardware layer whenever the output value changes.
      *
+     * @param[in] channel Output channel
      * @param[in] address Output address
      * @param[in] value New output value
      */
-    void updateOutputValue(uint32_t address, TriState value);
+    void updateOutputValue(uint32_t channel, uint32_t address, TriState value);
 
     /**
      *
      *
      */
-    std::shared_ptr<OutputKeyboard> outputKeyboard();
+    std::shared_ptr<OutputKeyboard> outputKeyboard(uint32_t channel);
 };
 
 #endif

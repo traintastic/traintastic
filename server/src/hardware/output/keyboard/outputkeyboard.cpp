@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,11 +25,14 @@
 #include "../outputcontroller.hpp"
 #include "../../../utils/inrange.hpp"
 
-OutputKeyboard::OutputKeyboard(OutputController& controller)
+OutputKeyboard::OutputKeyboard(OutputController& controller, uint32_t channel)
   : m_controller{controller}
-  , addressMin{this, "address_min", m_controller.outputAddressMinMax().first, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
-  , addressMax{this, "address_max", m_controller.outputAddressMinMax().second, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
+  , m_channel{channel}
+  , addressMin{this, "address_min", m_controller.outputAddressMinMax(channel).first, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
+  , addressMax{this, "address_max", m_controller.outputAddressMinMax(channel).second, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
 {
+  m_interfaceItems.add(addressMin);
+  m_interfaceItems.add(addressMax);
 }
 
 std::string OutputKeyboard::getObjectId() const
@@ -43,12 +46,13 @@ std::vector<OutputKeyboard::OutputInfo> OutputKeyboard::getOutputInfo() const
   for(auto it : m_controller.outputs())
   {
     const auto& output = *(it.second);
-    outputInfo.emplace_back(OutputInfo{output.address, output.id, output.value});
+    if(output.channel == m_channel)
+      outputInfo.emplace_back(OutputInfo{output.address, output.id, output.value});
   }
   return outputInfo;
 }
 
 bool OutputKeyboard::setOutputValue(uint32_t address, bool value)
 {
-  return m_controller.setOutputValue(address, value);
+  return m_controller.setOutputValue(m_channel, address, value);
 }

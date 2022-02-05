@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,8 @@
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
+constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
+
 ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -50,7 +52,7 @@ ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   ecos.setValueInternal(std::make_shared<ECoS::Settings>(*this, ecos.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
   inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name()));
-  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name()));
+  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
   Attributes::addEnabled(hostname, !online);
@@ -125,11 +127,11 @@ bool ECoSInterface::removeOutput(Output& output)
   return success;
 }
 
-bool ECoSInterface::setOutputValue(uint32_t address, bool value)
+bool ECoSInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
 {
   return
     m_kernel &&
-    inRange(address, outputAddressMinMax()) &&
+    inRange(address, outputAddressMinMax(channel)) &&
     m_kernel->setOutput(static_cast<uint16_t>(address), value);
 }
 

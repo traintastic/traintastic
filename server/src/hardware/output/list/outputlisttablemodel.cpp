@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,31 +30,48 @@ bool OutputListTableModel::isListedProperty(std::string_view name)
     name == "id" ||
     name == "name" ||
     name == "interface" ||
+    name == "channel" ||
     name == "address";
+}
+
+static std::string_view displayName(OutputListColumn column)
+{
+  switch(column)
+  {
+    case OutputListColumn::Id:
+      return DisplayName::Object::id;
+
+    case OutputListColumn::Name:
+      return DisplayName::Object::name;
+
+    case OutputListColumn::Interface:
+      return DisplayName::Hardware::interface;
+
+    case OutputListColumn::Channel:
+      return DisplayName::Hardware::channel;
+
+    case OutputListColumn::Address:
+      return DisplayName::Hardware::address;
+  }
+  assert(false);
+  return {};
 }
 
 OutputListTableModel::OutputListTableModel(OutputList& list) :
   ObjectListTableModel<Output>(list)
-  , m_columnInterface(list.parentIsOutputController() ? invalidColumn : 2)
-  , m_columnAddress(list.parentIsOutputController() ? 2 : 3)
 {
-  if(list.parentIsOutputController())
+  std::vector<std::string_view> labels;
+
+  for(auto column : outputListColumnValues)
   {
-    setColumnHeaders({
-      DisplayName::Object::id,
-      DisplayName::Object::name,
-      DisplayName::Hardware::address,
-      });
+    if(contains(list.columns, column))
+    {
+      labels.emplace_back(displayName(column));
+      m_columns.emplace_back(column);
+    }
   }
-  else
-  {
-    setColumnHeaders({
-      DisplayName::Object::id,
-      DisplayName::Object::name,
-      DisplayName::Hardware::interface,
-      DisplayName::Hardware::address,
-      });
-  }
+
+  setColumnHeaders(std::move(labels));
 }
 
 std::string OutputListTableModel::getText(uint32_t column, uint32_t row) const
@@ -63,12 +80,16 @@ std::string OutputListTableModel::getText(uint32_t column, uint32_t row) const
   {
     const Output& output = getItem(row);
 
-    if(column == columnId)
-      return output.id;
-    if(column == columnName)
-      return output.name;
-    if(column == m_columnInterface)
+    assert(column < m_columns.size());
+    switch(m_columns[column])
     {
+      case OutputListColumn::Id:
+        return output.id;
+
+      case OutputListColumn::Name:
+        return output.name;
+
+      case OutputListColumn::Interface:
         if(const auto& interface = std::dynamic_pointer_cast<Object>(output.interface.value()))
         {
           if(auto* property = interface->getProperty("name"); property && !property->toString().empty())
@@ -77,9 +98,29 @@ std::string OutputListTableModel::getText(uint32_t column, uint32_t row) const
           return interface->getObjectId();
         }
         return "";
+
+      case OutputListColumn::Channel:
+      {
+        const uint32_t channel = output.channel.value();
+        if(channel == OutputController::defaultOutputChannel)
+          return "";
+
+        if(const auto* aliasKeys = output.channel.tryGetValuesAttribute(AttributeName::AliasKeys))
+        {
+          if(const auto* aliasValues = output.channel.tryGetValuesAttribute(AttributeName::AliasValues))
+          {
+            assert(aliasKeys->length() == aliasValues->length());
+            for(uint32_t i = 0; i < aliasKeys->length(); i++)
+              if(aliasKeys->getInt64(i) == channel)
+                return aliasValues->getString(i);
+          }
+        }
+
+        return std::to_string(channel);
+      }
+      case OutputListColumn::Address:
+        return std::to_string(output.address.value());
     }
-    if(column == m_columnAddress)
-      return std::to_string(output.address.value());
     assert(false);
   }
 
@@ -88,12 +129,28 @@ std::string OutputListTableModel::getText(uint32_t column, uint32_t row) const
 
 void OutputListTableModel::propertyChanged(BaseProperty& property, uint32_t row)
 {
-  if(property.name() == "id")
-    changed(row, columnId);
-  else if(property.name() == "name")
-    changed(row, columnName);
-  else if(property.name() == "interface" && m_columnInterface != invalidColumn)
-    changed(row, m_columnInterface);
-  else if(property.name() == "address")
-    changed(row, m_columnAddress);
+  std::string_view name = property.name();
+
+  if(name == "id")
+    changed(row, OutputListColumn::Id);
+  else if(name == "name")
+    changed(row, OutputListColumn::Name);
+  else if(name == "interface")
+    changed(row, OutputListColumn::Interface);
+  else if(name == "channel")
+    changed(row, OutputListColumn::Channel);
+  else if(name == "address")
+    changed(row, OutputListColumn::Address);
+}
+
+void OutputListTableModel::changed(uint32_t row, OutputListColumn column)
+{
+  for(size_t i = 0; i < m_columns.size(); i++)
+  {
+    if(m_columns[i] == column)
+    {
+      TableModel::changed(row, static_cast<uint32_t>(i));
+      return;
+    }
+  }
 }

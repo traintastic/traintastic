@@ -59,6 +59,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
   m_actionDelete{nullptr},
   m_actionInputMonitor{nullptr},
   m_actionOutputKeyboard{nullptr},
+  m_actionOutputKeyboardChannel{nullptr},
   m_tableWidget{new TableWidget()}
 {
   m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -212,22 +213,68 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
     m_actionOutputKeyboard = new MethodAction(Theme::getIcon("output_keyboard"), *method,
       [this]()
       {
+        //cancelRequest(m_requestIdOutputKeyboard);
+
         m_requestIdOutputKeyboard = m_actionOutputKeyboard->method().call(
           [this](const ObjectPtr& outputKeyboard, Message::ErrorCode)
           {
+            m_requestIdOutputKeyboard = Connection::invalidRequestId;
             if(outputKeyboard)
               MainWindow::instance->showObject(outputKeyboard);
           });
       });
   }
 
-  if(m_actionInputMonitor || m_actionOutputKeyboard)
+  if(Method* method = m_object->getMethod("output_keyboard_channel"))
+  {
+    if(const auto values = method->getAttribute(AttributeName::Values, QVariant()).toList(); !values.isEmpty())
+    {
+      const QVariantList aliasKeys = method->getAttribute(AttributeName::AliasKeys, QVariant()).toList();
+      const QVariantList aliasValues = method->getAttribute(AttributeName::AliasValues, QVariant()).toList();
+
+      QMenu* menu = new QMenu(this);
+      for(const auto& value : values)
+      {
+        QString text;
+        if(int index = aliasKeys.indexOf(value); index != -1)
+          text = Locale::instance->parse(aliasValues[index].toString());
+        else
+          text = value.toString();
+
+        menu->addAction(text,
+          [this, channel=value.toUInt()]()
+          {
+            //cancelRequest(m_requestIdOutputKeyboard);
+
+            m_requestIdOutputKeyboard = callMethodR<ObjectPtr>(m_actionOutputKeyboardChannel->method(),
+              [this](const ObjectPtr& outputKeyboard, Message::ErrorCode /*ec*/)
+              {
+                m_requestIdOutputKeyboard = Connection::invalidRequestId;
+                if(outputKeyboard)
+                  MainWindow::instance->showObject(outputKeyboard);
+              },
+              channel);
+          });
+      }
+
+      m_actionOutputKeyboardChannel = new MethodAction(Theme::getIcon("output_keyboard"), *method);
+      m_actionOutputKeyboardChannel->setMenu(menu);
+    }
+  }
+
+  if(m_actionInputMonitor || m_actionOutputKeyboard || m_actionOutputKeyboardChannel)
   {
     m_toolbar->addSeparator();
     if(m_actionInputMonitor)
       m_toolbar->addAction(m_actionInputMonitor);
     if(m_actionOutputKeyboard)
       m_toolbar->addAction(m_actionOutputKeyboard);
+    if(m_actionOutputKeyboardChannel)
+    {
+      m_toolbar->addAction(m_actionOutputKeyboardChannel);
+      if(auto* button = qobject_cast<QToolButton*>(m_toolbar->widgetForAction(m_actionOutputKeyboardChannel)))
+        connect(m_actionOutputKeyboardChannel, &QAction::triggered, button, &QToolButton::showMenu);
+    }
   }
 }
 

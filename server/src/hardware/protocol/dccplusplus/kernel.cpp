@@ -31,6 +31,7 @@
 #include "../../../log/log.hpp"
 #include "../../../utils/inrange.hpp"
 #include "../../../utils/fromchars.hpp"
+#include "../../../utils/displayname.hpp"
 
 namespace DCCPlusPlus {
 
@@ -67,7 +68,6 @@ void Kernel::start()
   // reset all state values
   m_powerOn = TriState::Undefined;
   m_emergencyStop = TriState::Undefined;
-  m_outputValues.fill(TriState::Undefined);
 
   m_thread = std::thread(
     [this]()
@@ -236,22 +236,40 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   }
 }
 
-bool Kernel::setOutput(uint16_t address, bool value)
+bool Kernel::setOutput(uint32_t channel, uint16_t address, bool value)
 {
-  assert(inRange(address, outputAddressMin, outputAddressMax));
+  switch(channel)
+  {
+    case OutputChannel::dccAccessory:
+      assert(inRange<uint32_t>(address, dccAccessoryAddressMin, dccAccessoryAddressMax));
+      m_ioContext.post(
+        [this, address, value]()
+        {
+          send(Ex::setAccessory(address, value));
+        });
+      return true;
 
-  m_ioContext.post(
-    [this, address, value]()
-    {
-      const auto index = address - outputAddressMin;
-      if(m_outputValues[index] != toTriState(value))
-      {
-        m_outputValues[index] = toTriState(value);
-        send(Ex::setAccessory(address - outputAddressMin, value));
-      }
-    });
+    case OutputChannel::turnout:
+      assert(inRange<uint32_t>(address, idMin, idMax));
+      m_ioContext.post(
+        [this, address, value]()
+        {
+          send(Ex::setTurnout(address, value));
+        });
+      return true;
 
-  return true;
+    case OutputChannel::output:
+      assert(inRange<uint32_t>(address, idMin, idMax));
+      m_ioContext.post(
+        [this, address, value]()
+        {
+          send(Ex::setOutput(address, value));
+        });
+      return true;
+  }
+
+  assert(false);
+  return false;
 }
 
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)

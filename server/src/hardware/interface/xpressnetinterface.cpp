@@ -35,6 +35,8 @@
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
+constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
+
 XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , type{this, "type", XpressNetInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
@@ -86,7 +88,7 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   xpressnet.setValueInternal(std::make_shared<XpressNet::Settings>(*this, xpressnet.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
   inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name()));
-  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name()));
+  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
   Attributes::addEnabled(type, !online);
@@ -203,11 +205,12 @@ bool XpressNetInterface::removeOutput(Output& output)
   return success;
 }
 
-bool XpressNetInterface::setOutputValue(uint32_t address, bool value)
+bool XpressNetInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
 {
+  assert(isOutputChannel(channel));
   return
     m_kernel &&
-    inRange(address, outputAddressMinMax()) &&
+    inRange(address, outputAddressMinMax(channel)) &&
     m_kernel->setOutput(static_cast<uint16_t>(address), value);
 }
 

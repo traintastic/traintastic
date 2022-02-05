@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_LIST_OUTPUTLISTTABLEMODEL_HPP
 
 #include "../../../core/objectlisttablemodel.hpp"
+#include "outputlistcolumn.hpp"
 #include "../output.hpp"
 
 class OutputList;
@@ -33,10 +34,9 @@ class OutputListTableModel : public ObjectListTableModel<Output>
   friend class OutputList;
 
   private:
-    static constexpr uint32_t columnId = 0;
-    static constexpr uint32_t columnName = 1;
-    const uint32_t m_columnInterface;
-    const uint32_t m_columnAddress;
+    std::vector<OutputListColumn> m_columns;
+
+    void changed(uint32_t row, OutputListColumn column);
 
   protected:
     void propertyChanged(BaseProperty& property, uint32_t row) final;
