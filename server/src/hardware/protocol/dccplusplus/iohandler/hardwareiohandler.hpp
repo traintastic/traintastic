@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/dccplusplus/iohandler/iohandler.hpp
+ * server/src/hardware/protocol/dccplusplus/iohandler/hardwareiohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,36 +20,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_IOHANDLER_IOHANDLER_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_IOHANDLER_IOHANDLER_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_IOHANDLER_HARDWAREIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_IOHANDLER_HARDWAREIOHANDLER_HPP
 
-#include <cstddef>
-#include <string_view>
+#include <array>
+#include "iohandler.hpp"
 
 namespace DCCPlusPlus {
 
 class Kernel;
 
-class IOHandler
+class HardwareIOHandler : public IOHandler
 {
   protected:
-    Kernel& m_kernel;
+    std::array<char, 1024> m_readBuffer;
+    size_t m_readBufferOffset;
+    std::array<char, 1024> m_writeBuffer;
+    size_t m_writeBufferOffset;
 
-    IOHandler(Kernel& kernel)
-      : m_kernel{kernel}
-    {
-    }
+    HardwareIOHandler(Kernel& kernel);
+
+    void processRead(size_t bytesTransferred);
+    virtual void write() = 0;
 
   public:
-    IOHandler(const IOHandler&) = delete;
-    IOHandler& operator =(const IOHandler&) = delete;
-
-    virtual ~IOHandler() = default;
-
-    virtual void start() = 0;
-    virtual void stop() = 0;
-
-    virtual bool send(std::string_view message) = 0;
+    bool send(std::string_view message) final;
 };
 
 }

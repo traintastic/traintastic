@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/dccplusplus/iohandler/iohandler.cpp
+ * server/src/hardware/protocol/dccplusplus/iohandler/hardwareiohandler.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,19 +20,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "iohandler.hpp"
+#include "hardwareiohandler.hpp"
 #include "../kernel.hpp"
 
 namespace DCCPlusPlus {
 
-IOHandler::IOHandler(Kernel& kernel)
-  : m_kernel{kernel}
+HardwareIOHandler::HardwareIOHandler(Kernel& kernel)
+  : IOHandler(kernel)
   , m_readBufferOffset{0}
   , m_writeBufferOffset{0}
 {
 }
 
-bool IOHandler::send(std::string_view message)
+bool HardwareIOHandler::send(std::string_view message)
 {
   if(m_writeBufferOffset + message.size() > m_writeBuffer.size())
     return false;
@@ -47,7 +47,7 @@ bool IOHandler::send(std::string_view message)
   return true;
 }
 
-void IOHandler::processRead(size_t bytesTransferred)
+void HardwareIOHandler::processRead(size_t bytesTransferred)
 {
   const char* pos = reinterpret_cast<const char*>(m_readBuffer.data());
   bytesTransferred += m_readBufferOffset;

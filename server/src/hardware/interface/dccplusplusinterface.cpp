@@ -25,6 +25,7 @@
 #include "../output/list/outputlisttablemodel.hpp"
 #include "../protocol/dccplusplus/messages.hpp"
 #include "../protocol/dccplusplus/iohandler/serialiohandler.hpp"
+#include "../protocol/dccplusplus/iohandler/simulationiohandler.hpp"
 #include "../../core/attributes.hpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
@@ -119,17 +120,18 @@ bool DCCPlusPlusInterface::setOutputValue(uint32_t address, bool value)
 
 bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
 {
-  if(simulation)
-  {
-    Log::log(*this, LogMessage::N2001_SIMULATION_NOT_SUPPORTED);
-    return false;
-  }
-
   if(!m_kernel && value)
   {
     try
     {
-      m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SerialIOHandler>(dccplusplus->config(), device.value(), baudrate.value(), flowControl.value());
+      if(simulation)
+      {
+        m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SimulationIOHandler>(dccplusplus->config());
+      }
+      else
+      {
+        m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SerialIOHandler>(dccplusplus->config(), device.value(), baudrate.value(), flowControl.value());
+      }
 
       status.setValueInternal(InterfaceStatus::Initializing);
 
