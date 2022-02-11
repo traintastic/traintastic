@@ -24,7 +24,6 @@
 #include <QHeaderView>
 #include <QSettings>
 #include <QScrollBar>
-#include <QDebug>
 #include "../network/serverlogtablemodel.hpp"
 
 ServerLogWidget::ServerLogWidget(std::shared_ptr<Connection> connection, QWidget* parent)
@@ -74,7 +73,5 @@ ServerLogWidget::~ServerLogWidget()
 void ServerLogWidget::updateStickToBottom()
 {
   const int bottomRow = indexAt(viewport()->rect().bottomLeft()).row();
-  qDebug() << "bottomRow = " << bottomRow;
   m_stickToBottom = (bottomRow == -1) || (bottomRow == m_model->rowCount() - 1);
-  qDebug() << "m_stickToBottom = " << m_stickToBottom;
 }
