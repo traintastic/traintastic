@@ -46,7 +46,7 @@ class BlockInputMap : public InputMap
     Method<void(const std::shared_ptr<BlockInputMapItem>& item)> moveUp;
     Method<void(const std::shared_ptr<BlockInputMapItem>& item)> moveDown;
 
-    BlockInputMap(Object& _parent, const std::string& parentPropertyName);
+    BlockInputMap(Object& _parent, std::string_view parentPropertyName);
 
     void itemValueChanged(BlockInputMapItem& item);
 };

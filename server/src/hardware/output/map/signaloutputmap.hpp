@@ -31,7 +31,7 @@ class SignalOutputMap : public OutputMapBase<SignalAspect, SignalOutputMapItem>
   CLASS_ID("output_map.signal")
 
   public:
-    SignalOutputMap(Object& _parent, const std::string& parentPropertyName, std::initializer_list<SignalAspect> aspects);
+    SignalOutputMap(Object& _parent, std::string_view parentPropertyName, std::initializer_list<SignalAspect> aspects);
 };
 
 #endif

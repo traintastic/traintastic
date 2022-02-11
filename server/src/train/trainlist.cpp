@@ -27,15 +27,13 @@
 #include "../core/attributes.hpp"
 #include "../utils/displayname.hpp"
 
-TrainList::TrainList(Object& _parent, const std::string& parentPropertyName) :
+TrainList::TrainList(Object& _parent, std::string_view parentPropertyName) :
   ObjectList<Train>(_parent, parentPropertyName),
   add{*this, "add",
     [this]()
     {
-      auto world = getWorld(&this->parent());
-      if(!world)
-        return std::shared_ptr<Train>();
-      return Train::create(world, world->getUniqueId("train"));
+      auto& world = getWorld(parent());
+      return Train::create(world, world.getUniqueId("train"));
     }}
   , remove{*this, "remove",
       [this](const std::shared_ptr<Train>& train)
@@ -45,8 +43,7 @@ TrainList::TrainList(Object& _parent, const std::string& parentPropertyName) :
         assert(!containsObject(train));
       }}
 {
-  auto world = getWorld(&_parent);
-  const bool editable = world && contains(world->state.value(), WorldState::Edit);
+  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
@@ -72,7 +69,7 @@ void TrainList::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(remove, editable);
 }
 
-bool TrainList::isListedProperty(const std::string& name)
+bool TrainList::isListedProperty(std::string_view name)
 {
   return TrainListTableModel::isListedProperty(name);
 }

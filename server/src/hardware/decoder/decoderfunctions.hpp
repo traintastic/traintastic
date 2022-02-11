@@ -45,7 +45,7 @@ class DecoderFunctions : public SubObject
 
     using const_iterator = ObjectVectorProperty<DecoderFunction>::const_iterator;
 
-    DecoderFunctions(Object& _parent, const std::string& parentPropertyName);
+    DecoderFunctions(Object& _parent, std::string_view parentPropertyName);
 
     inline const_iterator begin() const { return items.begin(); }
     inline const_iterator end() const { return items.end(); }

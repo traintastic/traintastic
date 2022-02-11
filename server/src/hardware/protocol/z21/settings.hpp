@@ -32,7 +32,7 @@ namespace Z21 {
 class Settings : public SubObject
 {
   protected:
-    Settings(Object& _parent, const std::string& parentPropertyName);
+    Settings(Object& _parent, std::string_view parentPropertyName);
 
     void getConfig(Config& config) const;
 

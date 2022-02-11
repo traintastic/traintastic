@@ -360,7 +360,7 @@ void Kernel::receive(const Message& message)
           EventLoop::call(
             [this, address=1 + inputRep.fullAddress(), value]()
             {
-              m_inputController->updateInputValue(address, value);
+              m_inputController->updateInputValue(InputController::defaultInputChannel, address, value);
             });
         }
       }
@@ -385,7 +385,7 @@ void Kernel::receive(const Message& message)
           EventLoop::call(
             [this, address=1 + switchRequest.fullAddress(), on]()
             {
-              m_outputController->updateOutputValue(address, on);
+              m_outputController->updateOutputValue(OutputController::defaultOutputChannel, address, on);
             });
         }
       }

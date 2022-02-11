@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,12 +26,21 @@
 #include "object.hpp"
 #include <traintastic/enum/tristate.hpp>
 
+class Message;
+
 class InputMonitor final : public Object
 {
   Q_OBJECT
 
+  friend class Connection;
+
   private:
     int m_requestId;
+    std::unordered_map<uint32_t, QString> m_inputIds;
+    std::unordered_map<uint32_t, TriState> m_inputValues;
+
+  protected:
+    void processMessage(const Message& message);
 
   public:
     inline static const QString classId = QStringLiteral("input_monitor");

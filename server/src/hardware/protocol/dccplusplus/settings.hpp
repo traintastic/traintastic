@@ -44,7 +44,7 @@ class Settings : public SubObject
     Property<uint16_t> startupDelay;
     Property<bool> debugLogRXTX;
 
-    Settings(Object& _parent, const std::string& parentPropertyName);
+    Settings(Object& _parent, std::string_view parentPropertyName);
 
     Config config() const;
 };

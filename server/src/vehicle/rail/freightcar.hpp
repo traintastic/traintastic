@@ -45,7 +45,7 @@ class FreightCar : public RailVehicle
     WeightProperty cargoWeight;
     WeightProperty cargoCapacity;
 
-    FreightCar(const std::weak_ptr<World>& world, std::string_view _id);
+    FreightCar(World& world, std::string_view _id);
 };
 
 #endif

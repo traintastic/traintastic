@@ -70,7 +70,7 @@ class Board : public IdObject
 
     boost::signals2::signal<void (Board&, const TileLocation&, const TileData&)> tileDataChanged;
 
-    Board(const std::weak_ptr<World>& world, std::string_view _id);
+    Board(World& world, std::string_view _id);
 
     const TileMap& tileMap() const { return m_tiles; }
 

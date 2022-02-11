@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,25 +27,16 @@
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
 
-InputList::InputList(Object& _parent, const std::string& parentPropertyName)
+InputList::InputList(Object& _parent, std::string_view parentPropertyName, InputListColumn _columns)
   : ObjectList<Input>(_parent, parentPropertyName)
-  , m_parentIsInputController(dynamic_cast<InputController*>(&_parent))
+  , columns{_columns}
   , add{*this, "add",
       [this]()
       {
-        auto world = getWorld(&parent());
-        if(!world)
-          return std::shared_ptr<Input>();
-
-        auto input = Input::create(world, world->getUniqueId(Input::defaultId));
+        auto& world = getWorld(parent());
+        auto input = Input::create(world, world.getUniqueId(Input::defaultId));
         if(const auto controller = std::dynamic_pointer_cast<InputController>(parent().shared_from_this()))
-        {
-          if(const uint32_t address = controller->getUnusedInputAddress(); address != Input::invalidAddress)
-          {
-            input->address = address;
-            input->interface = controller;
-          }
-        }
+          input->interface = controller;
         return input;
       }}
   , remove{*this, "remove",
@@ -59,12 +50,18 @@ InputList::InputList(Object& _parent, const std::string& parentPropertyName)
       [this]()
       {
         if(const auto controller = std::dynamic_pointer_cast<InputController>(parent().shared_from_this()))
-          return controller->inputMonitor();
+          return controller->inputMonitor(InputController::defaultInputChannel);
+        return std::shared_ptr<InputMonitor>();
+      }}
+  , inputMonitorChannel{*this, "input_monitor_channel",
+      [this](uint32_t channel)
+      {
+        if(const auto controller = std::dynamic_pointer_cast<InputController>(parent().shared_from_this()))
+          return controller->inputMonitor(channel);
         return std::shared_ptr<InputMonitor>();
       }}
 {
-  auto w = getWorld(&_parent);
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
@@ -74,10 +71,21 @@ InputList::InputList(Object& _parent, const std::string& parentPropertyName)
   Attributes::addEnabled(remove, editable);
   m_interfaceItems.add(remove);
 
-  if(m_parentIsInputController)
+  if(auto* controller = dynamic_cast<InputController*>(&_parent))
   {
-    Attributes::addDisplayName(inputMonitor, DisplayName::Hardware::inputMonitor);
-    m_interfaceItems.add(inputMonitor);
+    const auto* channels = controller->inputChannels();
+    if(channels && !channels->empty())
+    {
+      Attributes::addDisplayName(inputMonitorChannel, DisplayName::Hardware::inputMonitor);
+      Attributes::addValues(inputMonitorChannel, channels);
+      Attributes::addAliases(inputMonitorChannel, channels, controller->inputChannelNames());
+      m_interfaceItems.add(inputMonitorChannel);
+    }
+    else
+    {
+      Attributes::addDisplayName(inputMonitor, DisplayName::Hardware::inputMonitor);
+      m_interfaceItems.add(inputMonitor);
+    }
   }
 }
 
@@ -96,7 +104,7 @@ void InputList::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(remove, editable);
 }
 
-bool InputList::isListedProperty(const std::string& name)
+bool InputList::isListedProperty(std::string_view name)
 {
   return InputListTableModel::isListedProperty(name);
 }

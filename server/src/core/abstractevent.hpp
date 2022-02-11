@@ -42,7 +42,7 @@ class AbstractEvent : public InterfaceItem
   public:
     using ArgumentInfo = std::pair<ValueType, std::string_view>;
 
-    AbstractEvent(Object& object, const std::string& name, EventFlags m_flags);
+    AbstractEvent(Object& object, std::string_view name, EventFlags m_flags);
 
     inline bool isScriptable() const { return (m_flags & EventFlags::Scriptable) == EventFlags::Scriptable; }
 

@@ -29,7 +29,7 @@
 #include "../../../world/worldsaver.hpp"
 #include "../../../utils/displayname.hpp"
 
-OutputMap::OutputMap(Object& _parent, const std::string& parentPropertyName) :
+OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName) :
   SubObject(_parent, parentPropertyName),
   addOutput{*this, "add_output",
     [this](std::shared_ptr<Output> output)
@@ -66,14 +66,12 @@ OutputMap::OutputMap(Object& _parent, const std::string& parentPropertyName) :
       }
     }}
 {
-  auto w = getWorld(&_parent);
-  assert(w);
-
-  const bool editable = contains(w->state.value(), WorldState::Edit);
+  auto& world = getWorld(&_parent);
+  const bool editable = contains(world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(addOutput, DisplayName::List::add);
   Attributes::addEnabled(addOutput, editable);
-  Attributes::addObjectList(addOutput, w->outputs);
+  Attributes::addObjectList(addOutput, world.outputs);
   m_interfaceItems.add(addOutput);
 
   Attributes::addDisplayName(removeOutput, DisplayName::List::remove);
@@ -88,7 +86,7 @@ void OutputMap::load(WorldLoader& loader, const nlohmann::json& data)
   for(auto& [_, id] : outputs.items())
   {
     static_cast<void>(_); // silence unused warning
-    if(auto output = std::dynamic_pointer_cast<Output>(loader.getObject(id)))
+    if(auto output = std::dynamic_pointer_cast<Output>(loader.getObject(id.get<std::string_view>())))
       addOutput(std::move(output));
   }
 }

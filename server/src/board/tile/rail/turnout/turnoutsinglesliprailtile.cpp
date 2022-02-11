@@ -24,7 +24,7 @@
 #include "../../../../core/attributes.hpp"
 #include "../../../../utils/makearray.hpp"
 
-TurnoutSingleSlipRailTile::TurnoutSingleSlipRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
+TurnoutSingleSlipRailTile::TurnoutSingleSlipRailTile(World& world, std::string_view _id) :
   TurnoutRailTile(world, _id, TileId::RailTurnoutSingleSlip)
 {
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Crossed, TurnoutPosition::Diverged}));

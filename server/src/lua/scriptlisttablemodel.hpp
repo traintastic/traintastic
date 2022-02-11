@@ -40,7 +40,7 @@ class ScriptListTableModel : public ObjectListTableModel<Script>
   public:
     CLASS_ID("lua.script_list_table_model")
 
-    static bool isListedProperty(const std::string& name);
+    static bool isListedProperty(std::string_view name);
 
     ScriptListTableModel(ScriptList& list);
 

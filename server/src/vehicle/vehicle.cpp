@@ -25,13 +25,12 @@
 #include "../core/attributes.hpp"
 #include "../utils/displayname.hpp"
 
-Vehicle::Vehicle(const std::weak_ptr<World>& world, std::string_view _id) :
+Vehicle::Vehicle(World& world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
-  auto w = world.lock();
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);

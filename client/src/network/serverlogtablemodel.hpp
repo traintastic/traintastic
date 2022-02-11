@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,6 +34,8 @@ enum class LogMessage : uint32_t;
 
 class ServerLogTableModel final : public QAbstractTableModel
 {
+  Q_OBJECT
+
   friend class Connection;
 
   private:
@@ -73,6 +75,9 @@ class ServerLogTableModel final : public QAbstractTableModel
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const final;
     QVariant data(const QModelIndex& index, int role) const final;
+
+  signals:
+    void rowCountChanged();
 };
 
 #endif

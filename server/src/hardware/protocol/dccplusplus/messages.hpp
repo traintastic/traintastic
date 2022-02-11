@@ -185,7 +185,7 @@ namespace Ex {
     assert(address <= 10293);
     assert(speed <= 126);
 
-    return std::string("<t ")
+    return std::string("<t 1 ")
       .append(std::to_string(address))
       .append(" ")
       .append(emergencyStop ? "-1" : std::to_string(speed))
@@ -240,6 +240,26 @@ namespace Ex {
       .append(" ")
       .append(std::to_string(subAddress))
       .append(activate ? " 1" : " 0")
+      .append(">\n");
+  }
+
+  inline std::string setTurnout(uint16_t id, bool throw_)
+  {
+    assert(id <= 32767);
+
+    return std::string("<T ")
+      .append(std::to_string(id))
+      .append(throw_ ? " 1" : " 0")
+      .append(">\n");
+  }
+
+  inline std::string setOutput(uint16_t id, bool state)
+  {
+    assert(id <= 32767);
+
+    return std::string("<Z ")
+      .append(std::to_string(id))
+      .append(state ? " 1" : " 0")
       .append(">\n");
   }
 

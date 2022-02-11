@@ -38,7 +38,7 @@ class TrainListTableModel : public ObjectListTableModel<Train>
   public:
     CLASS_ID("train_list_table_model")
 
-    static bool isListedProperty(const std::string& name);
+    static bool isListedProperty(std::string_view name);
 
     TrainListTableModel(TrainList& list);
 

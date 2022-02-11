@@ -22,7 +22,7 @@
 
 #include "turnoutoutputmap.hpp"
 
-TurnoutOutputMap::TurnoutOutputMap(Object& _parent, const std::string& parentPropertyName, std::initializer_list<TurnoutPosition> positions) :
+TurnoutOutputMap::TurnoutOutputMap(Object& _parent, std::string_view parentPropertyName, std::initializer_list<TurnoutPosition> positions) :
   OutputMapBase(_parent, parentPropertyName, positions)
 {
 }

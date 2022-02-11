@@ -35,7 +35,7 @@
 
 const std::shared_ptr<Decoder> Decoder::null;
 
-Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
+Decoder::Decoder(World& world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
   interface{this, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
@@ -78,6 +78,11 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
     {
       changed(DecoderChangeFlags::Direction);
     }},
+  toggleDirection{*this, "toggle_direction",
+    [this]()
+    {
+      direction = (direction == Direction::Forward) ? Direction::Reverse : Direction::Forward;
+    }},
   speedSteps{this, "speed_steps", speedStepsAuto, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](const uint8_t& /*value*/)
     {
@@ -94,11 +99,8 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
 {
   functions.setValueInternal(std::make_shared<DecoderFunctions>(*this, functions.name()));
 
-  auto w = world.lock();
-  assert(w);
-
-  m_worldMute = contains(w->state.value(), WorldState::Mute);
-  m_worldNoSmoke = contains(w->state.value(), WorldState::NoSmoke);
+  m_worldMute = contains(m_world.state.value(), WorldState::Mute);
+  m_worldNoSmoke = contains(m_world.state.value(), WorldState::NoSmoke);
 
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, false);
@@ -106,7 +108,7 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
 
   Attributes::addDisplayName(interface, DisplayName::Hardware::interface);
   Attributes::addEnabled(interface, false);
-  Attributes::addObjectList(interface, w->decoderControllers);
+  Attributes::addObjectList(interface, m_world.decoderControllers);
   m_interfaceItems.add(interface);
 
   Attributes::addEnabled(protocol, false);
@@ -121,9 +123,13 @@ Decoder::Decoder(const std::weak_ptr<World>& world, std::string_view _id) :
   m_interfaceItems.add(longAddress);
   Attributes::addObjectEditor(emergencyStop, false);
   m_interfaceItems.add(emergencyStop);
+
   Attributes::addValues(direction, DirectionValues);
   Attributes::addObjectEditor(direction, false);
   m_interfaceItems.add(direction);
+
+  Attributes::addObjectEditor(toggleDirection, false);
+  m_interfaceItems.add(toggleDirection);
 
   Attributes::addDisplayName(speedSteps, DisplayName::Hardware::speedSteps);
   Attributes::addEnabled(speedSteps, false);
@@ -143,8 +149,7 @@ void Decoder::addToWorld()
 {
   IdObject::addToWorld();
 
-  if(auto world = m_world.lock())
-    world->decoders->addObject(shared_ptr<Decoder>());
+  m_world.decoders->addObject(shared_ptr<Decoder>());
 }
 
 void Decoder::loaded()
@@ -245,8 +250,7 @@ void Decoder::destroying()
 {
   if(interface.value())
     interface = nullptr;
-  if(auto world = m_world.lock())
-    world->decoders->removeObject(shared_ptr<Decoder>());
+  m_world.decoders->removeObject(shared_ptr<Decoder>());
   IdObject::destroying();
 }
 
@@ -288,8 +292,7 @@ void Decoder::worldEvent(WorldState state, WorldEvent event)
 
 void Decoder::updateEditable()
 {
-  auto w = m_world.lock();
-  updateEditable(w && contains(w->state.value(), WorldState::Edit));
+  updateEditable(contains(m_world.state.value(), WorldState::Edit));
 }
 
 void Decoder::updateEditable(bool editable)

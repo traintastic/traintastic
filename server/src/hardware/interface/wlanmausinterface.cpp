@@ -28,7 +28,7 @@
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
 
-WlanMausInterface::WlanMausInterface(const std::weak_ptr<World>& world, std::string_view _id)
+WlanMausInterface::WlanMausInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , z21{this, "z21", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
@@ -77,9 +77,7 @@ bool WlanMausInterface::setOnline(bool& value, bool simulation)
   {
     try
     {
-      auto world = m_world.lock();
-      assert(world);
-      m_kernel = Z21::ServerKernel::create<Z21::UDPServerIOHandler>(z21->config(), world->decoders.value());
+      m_kernel = Z21::ServerKernel::create<Z21::UDPServerIOHandler>(z21->config(), m_world.decoders.value());
 
       status.setValueInternal(InterfaceStatus::Initializing);
 
@@ -93,25 +91,22 @@ bool WlanMausInterface::setOnline(bool& value, bool simulation)
       m_kernel->setOnTrackPowerOff(
         [this]()
         {
-          if(auto w = m_world.lock(); w && contains(w->state.value(), WorldState::PowerOn))
-            w->powerOff();
+          if(contains(m_world.state.value(), WorldState::PowerOn))
+            m_world.powerOff();
         });
       m_kernel->setOnTrackPowerOn(
         [this]()
         {
-          if(auto w = m_world.lock())
-          {
-            if(!contains(w->state.value(), WorldState::PowerOn))
-              w->powerOn();
-            if(!contains(w->state.value(), WorldState::Run))
-              w->run();
-          }
+          if(!contains(m_world.state.value(), WorldState::PowerOn))
+            m_world.powerOn();
+          if(!contains(m_world.state.value(), WorldState::Run))
+            m_world.run();
         });
       m_kernel->setOnEmergencyStop(
         [this]()
         {
-          if(auto w = m_world.lock(); w && contains(w->state.value(), WorldState::Run))
-            w->stop();
+          if(contains(m_world.state.value(), WorldState::Run))
+            m_world.stop();
         });
 
       m_kernel->start();
@@ -122,8 +117,7 @@ bool WlanMausInterface::setOnline(bool& value, bool simulation)
           m_kernel->setConfig(z21->config());
         });
 
-      if(auto w = m_world.lock())
-        m_kernel->setState(contains(w->state.value(), WorldState::PowerOn), !contains(w->state.value(), WorldState::Run));
+      m_kernel->setState(contains(m_world.state.value(), WorldState::PowerOn), !contains(m_world.state.value(), WorldState::Run));
     }
     catch(const LogMessageException& e)
     {

@@ -30,7 +30,7 @@ class RailVehicleList : public ObjectList<RailVehicle>
 {
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
+    bool isListedProperty(std::string_view name) final;
 
   public:
     CLASS_ID("rail_vehicle_list")
@@ -38,7 +38,7 @@ class RailVehicleList : public ObjectList<RailVehicle>
     Method<std::shared_ptr<RailVehicle>(std::string_view)> add;
     Method<void(const std::shared_ptr<RailVehicle>&)> remove;
 
-    RailVehicleList(Object& _parent, const std::string& parentPropertyName);
+    RailVehicleList(Object& _parent, std::string_view parentPropertyName);
 
     TableModelPtr getModel() final;
 };

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,32 +27,65 @@
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
 
-Input::Input(const std::weak_ptr<World> world, std::string_view _id)
+Input::Input(World& world, std::string_view _id)
   : IdObject(world, _id)
   , name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store}
-  , interface{this, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
+  , interface{this, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
+      [this](const std::shared_ptr<InputController>& /*newValue*/)
+      {
+        interfaceChanged();
+      },
       [this](const std::shared_ptr<InputController>& newValue)
       {
-        if(!newValue || newValue->addInput(*this))
+        if(interface.value())
+          return interface->removeInput(*this);
+
+        if(newValue)
         {
-          if(interface.value())
-            return interface->removeInput(*this);
-          return true;
+          if(!newValue->isInputChannel(channel))
+          {
+            const auto* const channels = newValue->inputChannels();
+            if(channels && !channels->empty())
+              channel.setValueInternal(channels->front());
+            else
+              channel.setValueInternal(InputController::defaultInputChannel);
+          }
+
+          if(!newValue->isInputAddressAvailable(channel, address))
+          {
+            const uint32_t newAddress = newValue->getUnusedInputAddress(channel);
+            if(newAddress == Input::invalidAddress)
+              return false; // no free address available
+            address.setValueInternal(newAddress);
+          }
+
+          return newValue->addInput(*this);
         }
-        return false;
+
+        return true;
+      }}
+  , channel{this, "channel", InputController::defaultInputChannel, PropertyFlags::ReadWrite | PropertyFlags::Store,
+      [this](const uint32_t& /*newValue*/)
+      {
+        channelChanged();
+      },
+      [this](const uint32_t& newValue)
+      {
+        if(interface)
+          return interface->changeInputChannelAddress(*this, newValue, address);
+        return true;
       }}
   , address{this, "address", 1, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
       [this](const uint32_t& newValue)
       {
         if(interface)
-          return interface->changeInputAddress(*this, newValue);
+          return interface->changeInputChannelAddress(*this, channel, newValue);
         return true;
       }}
   , value{this, "value", TriState::Undefined, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
   , consumers{*this, "consumers", {}, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
 {
-  auto w = world.lock();
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
@@ -60,12 +93,20 @@ Input::Input(const std::weak_ptr<World> world, std::string_view _id)
 
   Attributes::addDisplayName(interface, DisplayName::Hardware::interface);
   Attributes::addEnabled(interface, editable);
-  Attributes::addObjectList(interface, w->inputControllers);
+  Attributes::addObjectList(interface, m_world.inputControllers);
   m_interfaceItems.add(interface);
+
+  Attributes::addDisplayName(channel, DisplayName::Hardware::channel);
+  Attributes::addEnabled(channel, editable);
+  Attributes::addVisible(channel, false);
+  Attributes::addValues(channel, InputController::noInputChannels);
+  Attributes::addAliases(channel, InputController::noInputChannels, nullptr);
+  m_interfaceItems.add(channel);
 
   Attributes::addDisplayName(address, DisplayName::Hardware::address);
   Attributes::addEnabled(address, editable);
-  Attributes::addMinMax(address, std::numeric_limits<uint32_t>::min(), std::numeric_limits<uint32_t>::max());
+  Attributes::addVisible(address, false);
+  Attributes::addMinMax(address, addressMinDefault, addressMaxDefault);
   m_interfaceItems.add(address);
 
   Attributes::addObjectEditor(value, false);
@@ -80,8 +121,7 @@ void Input::addToWorld()
 {
   IdObject::addToWorld();
 
-  if(auto world = m_world.lock())
-    world->inputs->addObject(shared_ptr<Input>());
+  m_world.inputs->addObject(shared_ptr<Input>());
 }
 
 void Input::loaded()
@@ -95,6 +135,7 @@ void Input::loaded()
         Log::log(*this, LogMessage::C2001_ADDRESS_ALREADY_USED_AT_X, *object);
       interface.setValueInternal(nullptr);
     }
+    interfaceChanged();
   }
 }
 
@@ -102,8 +143,7 @@ void Input::destroying()
 {
   if(interface.value())
     interface = nullptr;
-  if(auto world = m_world.lock())
-    world->inputs->removeObject(shared_ptr<Input>());
+  m_world.inputs->removeObject(shared_ptr<Input>());
   IdObject::destroying();
 }
 
@@ -123,4 +163,27 @@ void Input::updateValue(TriState _value)
   // todo: delay in ms for 0->1 || 1->0
   value.setValueInternal(_value);
   valueChanged(value);
+}
+
+void Input::interfaceChanged()
+{
+  Attributes::setValues(channel, interface ? interface->inputChannels() : InputController::noInputChannels);
+  Attributes::setAliases(channel, interface ? interface->inputChannels() : InputController::noInputChannels, interface ? interface->inputChannelNames() : nullptr);
+  Attributes::setVisible(channel, interface && interface->inputChannels() && !interface->inputChannels()->empty());
+  Attributes::setVisible(address, interface);
+
+  channelChanged();
+}
+
+void Input::channelChanged()
+{
+  if(interface)
+  {
+    const auto limits = interface->inputAddressMinMax(channel);
+    Attributes::setMinMax(address, limits.first, limits.second);
+  }
+  else
+    Attributes::setMinMax(address, addressMinDefault, addressMaxDefault);
+
+  value.setValueInternal(TriState::Undefined);
 }

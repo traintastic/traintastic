@@ -25,7 +25,7 @@
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
 
-BlockInputMap::BlockInputMap(Object& _parent, const std::string& parentPropertyName) :
+BlockInputMap::BlockInputMap(Object& _parent, std::string_view parentPropertyName) :
   InputMap(_parent, parentPropertyName),
   items{*this, "items", {}, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   add{*this, "add",
@@ -52,16 +52,15 @@ BlockInputMap::BlockInputMap(Object& _parent, const std::string& parentPropertyN
       items.moveInternal(item, +1);
     }}
 {
-  auto w = getWorld(&_parent);
-  assert(w);
+  auto& world = getWorld(parent());
 
-  const bool editable = contains(w->state.value(), WorldState::Edit) && !contains(w->state.value(), WorldState::Run);
+  const bool editable = contains(world.state.value(), WorldState::Edit) && !contains(world.state.value(), WorldState::Run);
 
   m_interfaceItems.add(items);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
-  Attributes::addObjectList(add, w->inputs);
+  Attributes::addObjectList(add, world.inputs);
   m_interfaceItems.add(add);
 
   Attributes::addDisplayName(remove, DisplayName::List::remove);

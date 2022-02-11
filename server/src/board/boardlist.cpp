@@ -26,15 +26,13 @@
 #include "../core/attributes.hpp"
 #include "../utils/displayname.hpp"
 
-BoardList::BoardList(Object& _parent, const std::string& parentPropertyName) :
+BoardList::BoardList(Object& _parent, std::string_view parentPropertyName) :
   ObjectList<Board>(_parent, parentPropertyName),
   add{*this, "add",
     [this]()
     {
-      auto world = getWorld(&this->parent());
-      if(!world)
-        return std::shared_ptr<Board>();
-      return Board::create(world, world->getUniqueId("board"));
+      auto& world = getWorld(parent());
+      return Board::create(world, world.getUniqueId("board"));
     }}
   , remove{*this, "remove",
       [this](const std::shared_ptr<Board>& board)
@@ -44,8 +42,7 @@ BoardList::BoardList(Object& _parent, const std::string& parentPropertyName) :
         assert(!containsObject(board));
       }}
 {
-  auto world = getWorld(&_parent);
-  const bool editable = world && contains(world->state.value(), WorldState::Edit);
+  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
@@ -71,7 +68,7 @@ void BoardList::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(remove, editable);
 }
 
-bool BoardList::isListedProperty(const std::string& name)
+bool BoardList::isListedProperty(std::string_view name)
 {
   return BoardListTableModel::isListedProperty(name);
 }

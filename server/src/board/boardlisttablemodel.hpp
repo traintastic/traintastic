@@ -36,7 +36,7 @@ class BoardListTableModel : public ObjectListTableModel<Board>
   public:
     CLASS_ID("table_model.board_list")
 
-    static bool isListedProperty(const std::string& name);
+    static bool isListedProperty(std::string_view name);
 
     BoardListTableModel(BoardList& list);
 

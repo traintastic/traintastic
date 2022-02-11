@@ -23,7 +23,7 @@
 #include "controllerlistbase.hpp"
 #include "controllerlistbasetablemodel.hpp"
 
-ControllerListBase::ControllerListBase(Object& _parent, const std::string& parentPropertyName)
+ControllerListBase::ControllerListBase(Object& _parent, std::string_view parentPropertyName)
   : AbstractObjectList(_parent, parentPropertyName)
   , length{this, "length", 0, PropertyFlags::ReadOnly}
 {

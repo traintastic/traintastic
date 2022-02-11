@@ -39,10 +39,10 @@ class TrainProperty : public AbstractObjectProperty
     OnSet m_onSet;
 
   public:
-    TrainProperty(Object* object, const std::string& name, const std::shared_ptr<Train>& value, PropertyFlags flags);
-    TrainProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags);
-    TrainProperty(Object* object, const std::string& name, const std::shared_ptr<Train>& value, PropertyFlags flags, OnSet onSet);
-    TrainProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags, OnSet onSet);
+    TrainProperty(Object* object, std::string_view name, const std::shared_ptr<Train>& value, PropertyFlags flags);
+    TrainProperty(Object* object, std::string_view name, std::nullptr_t, PropertyFlags flags);
+    TrainProperty(Object* object, std::string_view name, const std::shared_ptr<Train>& value, PropertyFlags flags, OnSet onSet);
+    TrainProperty(Object* object, std::string_view name, std::nullptr_t, PropertyFlags flags, OnSet onSet);
 
     const std::shared_ptr<Train>& value() const;
 

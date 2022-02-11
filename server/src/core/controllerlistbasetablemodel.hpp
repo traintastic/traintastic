@@ -39,7 +39,7 @@ class ControllerListBaseTableModel final : public TableModel
     void propertyChanged(BaseProperty& property, uint32_t row);
 
   public:
-    static bool isListedProperty(const std::string& name);
+    static bool isListedProperty(std::string_view name);
 
     ControllerListBaseTableModel(ControllerListBase& list);
 

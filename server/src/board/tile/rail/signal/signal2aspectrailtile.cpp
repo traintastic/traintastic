@@ -24,7 +24,7 @@
 #include "../../../../core/attributes.hpp"
 #include "../../../../utils/makearray.hpp"
 
-Signal2AspectRailTile::Signal2AspectRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
+Signal2AspectRailTile::Signal2AspectRailTile(World& world, std::string_view _id) :
   SignalRailTile(world, _id, TileId::RailSignal2Aspect)
 {
   outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::Proceed}));

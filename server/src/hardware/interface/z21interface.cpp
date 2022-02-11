@@ -33,7 +33,7 @@
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
-Z21Interface::Z21Interface(const std::weak_ptr<World>& world, std::string_view _id)
+Z21Interface::Z21Interface(World& world, std::string_view _id)
   : Interface(world, _id)
   , hostname{this, "hostname", "192.168.1.203", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , port{this, "port", 21105, PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -133,22 +133,19 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
       m_kernel->setOnTrackPowerOnChanged(
         [this](bool powerOn)
         {
-          if(auto w = m_world.lock())
-          {
-            if(powerOn == contains(w->state.value(), WorldState::PowerOn))
-              return;
+          if(powerOn == contains(m_world.state.value(), WorldState::PowerOn))
+            return;
 
-            if(powerOn)
-              w->powerOn();
-            else
-              w->powerOff();
-          }
+          if(powerOn)
+            m_world.powerOn();
+          else
+            m_world.powerOff();
         });
       m_kernel->setOnEmergencyStop(
         [this]()
         {
-          if(auto w = m_world.lock(); w && contains(w->state.value(), WorldState::Run))
-            w->stop();
+          if(contains(m_world.state.value(), WorldState::Run))
+            m_world.stop();
         });
 
       m_kernel->setDecoderController(this);
@@ -161,16 +158,13 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
           m_kernel->setConfig(z21->config());
         });
 
-      if(auto w = m_world.lock())
-      {
-        if(contains(w->state.value(), WorldState::PowerOn))
-          m_kernel->trackPowerOn();
-        else
-          m_kernel->trackPowerOff();
+      if(contains(m_world.state.value(), WorldState::PowerOn))
+        m_kernel->trackPowerOn();
+      else
+        m_kernel->trackPowerOff();
 
-        if(!contains(w->state.value(), WorldState::Run))
-          m_kernel->emergencyStop();
-      }
+      if(!contains(m_world.state.value(), WorldState::Run))
+        m_kernel->emergencyStop();
 
       Attributes::setEnabled({hostname, port}, false);
     }
@@ -201,11 +195,7 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
 void Z21Interface::addToWorld()
 {
   Interface::addToWorld();
-
-  if(auto world = m_world.lock())
-  {
-    world->decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  }
+  m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
 }
 
 void Z21Interface::destroying()
@@ -216,11 +206,7 @@ void Z21Interface::destroying()
     decoder->interface = nullptr;
   }
 
-  if(auto world = m_world.lock())
-  {
-    world->decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  }
-
+  m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
   Interface::destroying();
 }
 

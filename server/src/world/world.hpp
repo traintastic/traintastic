@@ -65,7 +65,7 @@ class World : public Object
     void updateScaleRatio();
 
   protected:
-    static void init(const std::shared_ptr<World>& world);
+    static void init(World& world);
 
     std::unordered_map<std::string, std::weak_ptr<Object>> m_objects;
 

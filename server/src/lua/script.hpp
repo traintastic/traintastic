@@ -54,7 +54,7 @@ class Script : public IdObject
     CLASS_ID("lua.script")
     CREATE(Script)
 
-    Script(const std::weak_ptr<World>& world, std::string_view _id);
+    Script(World& world, std::string_view _id);
 
     Property<std::string> name;
     Property<LuaScriptState> state;

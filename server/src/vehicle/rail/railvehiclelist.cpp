@@ -27,15 +27,13 @@
 #include "../../core/attributes.hpp"
 #include "../../utils/displayname.hpp"
 
-RailVehicleList::RailVehicleList(Object& _parent, const std::string& parentPropertyName) :
+RailVehicleList::RailVehicleList(Object& _parent, std::string_view parentPropertyName) :
   ObjectList<RailVehicle>(_parent, parentPropertyName),
   add{*this, "add",
     [this](std::string_view railVehicleClassId)
     {
-      auto world = getWorld(&this->parent());
-      if(!world)
-        return std::shared_ptr<RailVehicle>();
-      return RailVehicles::create(world, railVehicleClassId, world->getUniqueId("vehicle"));
+      auto& world = getWorld(parent());
+      return RailVehicles::create(world, railVehicleClassId, world.getUniqueId("vehicle"));
     }}
   , remove{*this, "remove",
       [this](const std::shared_ptr<RailVehicle>& railVehicle)
@@ -45,8 +43,7 @@ RailVehicleList::RailVehicleList(Object& _parent, const std::string& parentPrope
         assert(!containsObject(railVehicle));
       }}
 {
-  auto world = getWorld(&_parent);
-  const bool editable = world && contains(world->state.value(), WorldState::Edit);
+  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
@@ -73,7 +70,7 @@ void RailVehicleList::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(remove, editable);
 }
 
-bool RailVehicleList::isListedProperty(const std::string& name)
+bool RailVehicleList::isListedProperty(std::string_view name)
 {
   return RailVehicleListTableModel::isListedProperty(name);
 }

@@ -25,7 +25,7 @@
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
 
-BlockRailTile::BlockRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
+BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   RailTile(world, _id, TileId::RailBlock),
   name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store},
   inputMap{this, "input_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
@@ -34,8 +34,7 @@ BlockRailTile::BlockRailTile(const std::weak_ptr<World>& world, std::string_view
 {
   inputMap.setValueInternal(std::make_shared<BlockInputMap>(*this, inputMap.name()));
 
-  auto w = world.lock();
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);

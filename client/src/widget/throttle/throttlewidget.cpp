@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@
 #include "../../network/objectproperty.hpp"
 #include "../../network/abstractproperty.hpp"
 #include "../../network/objectvectorproperty.hpp"
+#include "../../network/method.hpp"
 #include "throttledirectionbutton.hpp"
 #include "throttlefunctionbutton.hpp"
 #include "throttlestopbutton.hpp"
@@ -44,6 +45,7 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
   , m_functionsRequestId{Connection::invalidRequestId}
   , m_speed{nullptr}
   , m_throttle{nullptr}
+  , m_toggleDirection{m_object->getMethod("toggle_direction")}
   , m_nameLabel{new QLabel("", this)}
   , m_functionGrid{new QGridLayout()}
   , m_speedoMeter{new SpeedoMeterWidget(this)}
@@ -186,6 +188,12 @@ void ThrottleWidget::keyReleaseEvent(QKeyEvent* event)
         m_stopButton->click();
         return;
 
+      case Qt::Key_Return:
+      case Qt::Key_Enter:
+        if(Q_LIKELY(m_toggleDirection))
+          m_toggleDirection->call();
+        return;
+
       case Qt::Key_Left:
         m_reverseButton->click();
         return;
@@ -244,7 +252,7 @@ void ThrottleWidget::changeSpeed(bool up)
     {
       throttle += up ? throttleStep : -throttleStep;
     }
-    m_throttle->setValueDouble(throttle);
+    m_throttle->setValueDouble(std::clamp(throttle, m_throttle->getAttributeDouble(AttributeName::Min, 0), m_throttle->getAttributeDouble(AttributeName::Max, 1)));
   }
 }
 

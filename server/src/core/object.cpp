@@ -101,7 +101,7 @@ void Object::load(WorldLoader& loader, const nlohmann::json& data)
         else
         {
           if(value.is_string())
-            property->loadObject(loader.getObject(value));
+            property->loadObject(loader.getObject(value.get<std::string_view>()));
           else if(value.is_null())
             property->loadObject(ObjectPtr());
         }
@@ -153,6 +153,8 @@ void Object::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state
     {
       if(baseProperty->isStoreable())
       {
+        const std::string name{baseProperty->name()};
+
         if(baseProperty->type() == ValueType::Object)
         {
           if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(baseProperty))
@@ -160,17 +162,17 @@ void Object::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state
             if(ObjectPtr value = property->toObject())
             {
               if(IdObject* idObject = dynamic_cast<IdObject*>(value.get()))
-                data[property->name()] = idObject->id.toJSON();
+                data[name] = idObject->id.toJSON();
               else if(SubObject* subObject = dynamic_cast<SubObject*>(value.get()))
               {
                 if((property->flags() & PropertyFlags::SubObject) == PropertyFlags::SubObject)
-                  data[property->name()] = saver.saveObject(value);
+                  data[name] = saver.saveObject(value);
                 else
-                  data[property->name()] = subObject->getObjectId();
+                  data[name] = subObject->getObjectId();
               }
             }
             else
-              data[property->name()] = nullptr;
+              data[name] = nullptr;
           }
           else if(AbstractVectorProperty* vectorProperty = dynamic_cast<AbstractVectorProperty*>(baseProperty))
           {
@@ -189,16 +191,16 @@ void Object::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state
                 values.emplace_back(nullptr);
             }
 
-            data[vectorProperty->name()] = values;
+            data[name] = values;
           }
         }
         else
-          data[baseProperty->name()] = baseProperty->toJSON();
+          data[name] = baseProperty->toJSON();
       }
       else if(baseProperty->isStateStoreable())
       {
         assert(baseProperty->type() != ValueType::Object);
-        state[baseProperty->name()] = baseProperty->toJSON();
+        state[std::string{baseProperty->name()}] = baseProperty->toJSON();
       }
     }
 }

@@ -46,7 +46,7 @@ struct Interfaces
     Z21Interface::classId
   );
 
-  static std::shared_ptr<Interface> create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id = std::string_view{});
+  static std::shared_ptr<Interface> create(World& world, std::string_view classId, std::string_view id = std::string_view{});
 };
 
 #endif

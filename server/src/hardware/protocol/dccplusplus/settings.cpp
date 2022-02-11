@@ -28,7 +28,7 @@ namespace DCCPlusPlus {
 
 constexpr std::array<uint8_t, 2> speedStepValues{28, 128};
 
-Settings::Settings(Object& _parent, const std::string& parentPropertyName)
+Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , useEx{this, "use_ex", true, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , speedSteps{this, "speed_steps", 128, PropertyFlags::ReadWrite | PropertyFlags::Store}

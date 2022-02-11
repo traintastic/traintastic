@@ -24,7 +24,7 @@
 #include "../../utils/ifclassidcreate.hpp"
 #include "../../world/world.hpp"
 
-std::shared_ptr<Tile> Tiles::create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id)
+std::shared_ptr<Tile> Tiles::create(World& world, std::string_view classId, std::string_view id)
 {
   IF_CLASSID_CREATE(StraightRailTile)
   IF_CLASSID_CREATE(Curve45RailTile)

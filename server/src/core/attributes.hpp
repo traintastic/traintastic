@@ -25,12 +25,37 @@
 
 #include "interfaceitem.hpp"
 #include "abstractobjectproperty.hpp"
+#include "method.hpp"
 #include "property.hpp"
 #include "unitproperty.hpp"
 #include "vectorproperty.hpp"
 
 struct Attributes
 {
+  template<class T>
+  static inline void addAliases(Property<T>& property, const std::vector<T>* keys, const std::vector<std::string_view>* values)
+  {
+    assert((!keys && !values) || (keys && values && keys->size() == values->size()));
+    property.addAttribute(AttributeName::AliasKeys, keys);
+    property.addAttribute(AttributeName::AliasValues, values);
+  }
+
+  template<class R, class T>
+  static inline void addAliases(Method<R(T)>& method, const std::vector<T>* keys, const std::vector<std::string_view>* values)
+  {
+    assert((!keys && !values) || (keys && values && keys->size() == values->size()));
+    method.addAttribute(AttributeName::AliasKeys, keys);
+    method.addAttribute(AttributeName::AliasValues, values);
+  }
+
+  template<class T>
+  static inline void setAliases(Property<T>& property, const std::vector<T>* keys, const std::vector<std::string_view>* values)
+  {
+    assert((!keys && !values) || (keys && values && keys->size() == values->size()));
+    property.setAttribute(AttributeName::AliasKeys, keys);
+    property.setAttribute(AttributeName::AliasValues, values);
+  }
+
   static inline void addCategory(InterfaceItem& item, std::string_view value)
   {
     item.addAttribute(AttributeName::Category, value);
@@ -157,16 +182,35 @@ struct Attributes
     property.addAttribute(AttributeName::Values, values);
   }
 
+  template<class R, class T>
+  static inline void addValues(Method<R(T)>& method, const std::vector<T>* values)
+  {
+    method.addAttribute(AttributeName::Values, values);
+  }
+
+  template<typename T>
+  static inline void addValues(Property<T>& property, const std::vector<T>* values)
+  {
+    property.addAttribute(AttributeName::Values, values);
+  }
+
+  template<typename T>
+  static inline void addValues(Property<T>& property, std::vector<T> values)
+  {
+    property.addAttribute(AttributeName::Values, std::move(values));
+  }
+
   template<class T, size_t N>
   static inline void addValues(VectorProperty<T>& property, const std::array<T, N>& values)
   {
     property.addAttribute(AttributeName::Values, values);
   }
-//inline InterfaceItem& addAttributeSubObject(bool value) { return addAttribute(AttributeName::SubObject, value); }
-/*
-template<typename T, std::size_t N>
-inline InterfaceItem& addAttributeValues(const std::array<T, N>& values) { return addAttribute(AttributeName::Values, values); }
-*/
+
+  template<typename T>
+  static inline void setValues(Property<T>& property, const std::vector<T>* values)
+  {
+    property.setAttribute(AttributeName::Values, values);
+  }
 };
 
 #endif

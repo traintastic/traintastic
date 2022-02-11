@@ -29,7 +29,7 @@
 class InputMap : public SubObject
 {
   protected:
-    InputMap(Object& _parent, const std::string& parentPropertyName) :
+    InputMap(Object& _parent, std::string_view parentPropertyName) :
       SubObject(_parent, parentPropertyName)
     {
     }

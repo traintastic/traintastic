@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -374,26 +374,7 @@ int Connection::getInputMonitorInputInfo(InputMonitor& inputMonitor)
   send(request,
     [&inputMonitor](const std::shared_ptr<Message> message)
     {
-      uint32_t count = message->read<uint32_t>();
-      while(count > 0)
-      {
-        const uint32_t address = message->read<uint32_t>();
-        const QString id = QString::fromUtf8(message->read<QByteArray>());
-        const TriState value = message->read<TriState>();
-        emit inputMonitor.inputIdChanged(address, id);
-        emit inputMonitor.inputValueChanged(address, value);
-        count--;
-      }
-
-/*
-      TableModelPtr tableModel;
-      if(!message->isError())
-      {
-        tableModel = readTableModel(*message);
-        m_tableModels[tableModel->handle()] = tableModel.data();
-      }
-      callback(tableModel, message->errorCode());
-*/
+      inputMonitor.processMessage(*message);
     });
   return request->requestId();
 }
@@ -985,21 +966,9 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
         break;
 
       case Message::Command::InputMonitorInputIdChanged:
-        if(auto inputMonitor = std::dynamic_pointer_cast<InputMonitor>(m_objects.value(message->read<Handle>()).lock()))
-        {
-          const uint32_t address = message->read<uint32_t>();
-          const QString id = QString::fromUtf8(message->read<QByteArray>());
-          emit inputMonitor->inputIdChanged(address, id);
-        }
-        break;
-
       case Message::Command::InputMonitorInputValueChanged:
         if(auto inputMonitor = std::dynamic_pointer_cast<InputMonitor>(m_objects.value(message->read<Handle>()).lock()))
-        {
-          const uint32_t address = message->read<uint32_t>();
-          const TriState value = message->read<TriState>();
-          emit inputMonitor->inputValueChanged(address, value);
-        }
+          inputMonitor->processMessage(*message);
         break;
 
       case Message::Command::OutputKeyboardOutputIdChanged:

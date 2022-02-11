@@ -32,7 +32,7 @@ class ClientSettings final : public Settings
   CLASS_ID("z21_settings.client")
 
   public:
-    ClientSettings(Object& _parent, const std::string& parentPropertyName);
+    ClientSettings(Object& _parent, std::string_view parentPropertyName);
 
     ClientConfig config() const;
 };

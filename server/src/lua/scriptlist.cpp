@@ -28,15 +28,13 @@
 
 namespace Lua {
 
-ScriptList::ScriptList(Object& _parent, const std::string& parentPropertyName) :
+ScriptList::ScriptList(Object& _parent, std::string_view parentPropertyName) :
   ObjectList<Script>(_parent, parentPropertyName),
   add{*this, "add",
     [this]()
     {
-      auto world = getWorld(&this->parent());
-      if(!world)
-        return std::shared_ptr<Script>();
-      return Script::create(world, world->getUniqueId("script"));
+      auto& world = getWorld(parent());
+      return Script::create(world, world.getUniqueId("script"));
     }}
   , remove{*this, "remove",
     [this](const std::shared_ptr<Script>& script)
@@ -46,8 +44,7 @@ ScriptList::ScriptList(Object& _parent, const std::string& parentPropertyName) :
       assert(!containsObject(script));
     }}
 {
-  auto world = getWorld(&_parent);
-  const bool editable = world && contains(world->state.value(), WorldState::Edit);
+  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, editable);
@@ -72,7 +69,7 @@ void ScriptList::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(add, editable);
 }
 
-bool ScriptList::isListedProperty(const std::string& name)
+bool ScriptList::isListedProperty(std::string_view name)
 {
   return ScriptListTableModel::isListedProperty(name);
 }

@@ -51,7 +51,7 @@ class ControllerListBase : public AbstractObjectList
   public:
     Property<uint32_t> length;
 
-    ControllerListBase(Object& _parent, const std::string& parentPropertyName);
+    ControllerListBase(Object& _parent, std::string_view parentPropertyName);
 
     TableModelPtr getModel() final;
 

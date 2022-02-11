@@ -58,15 +58,15 @@ BlockInputMapItem::BlockInputMapItem(BlockInputMap& parent, uint32_t itemId) :
         inputPropertyChanged(input->value);
     }}
 {
-  auto w = getWorld(m_parent);
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
-  const bool stopped = w && !contains(w->state.value(), WorldState::Run);
+  auto& world = getWorld(m_parent);
+  const bool editable = contains(world.state.value(), WorldState::Edit);
+  const bool stopped = !contains(world.state.value(), WorldState::Run);
 
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
   Attributes::addEnabled(input, editable && stopped);
-  Attributes::addObjectList(input, w->inputs);
+  Attributes::addObjectList(input, world.inputs);
   m_interfaceItems.add(input);
   Attributes::addEnabled(type, false/*editable && stopped*/);
   Attributes::addValues(type, sensorTypeValues);

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,8 @@
 #include "serverlogwidget.hpp"
 #include <QHeaderView>
 #include <QSettings>
+#include <QScrollBar>
+#include <QDebug>
 #include "../network/serverlogtablemodel.hpp"
 
 ServerLogWidget::ServerLogWidget(std::shared_ptr<Connection> connection, QWidget* parent)
@@ -38,7 +40,17 @@ ServerLogWidget::ServerLogWidget(std::shared_ptr<Connection> connection, QWidget
   horizontalHeader()->setDefaultSectionSize(fontMetrics().height() + 1);
   horizontalHeader()->setStretchLastSection(true);
 
+  connect(verticalScrollBar(), &QScrollBar::rangeChanged, [this]() { updateStickToBottom(); });
+  connect(verticalScrollBar(), &QScrollBar::valueChanged, [this]() { updateStickToBottom(); });
+
   setModel(m_model);
+
+  connect(m_model, &ServerLogTableModel::rowCountChanged,
+    [this]()
+    {
+      if(m_stickToBottom)
+        scrollToBottom();
+    });
 
   const int averageCharWidth = fontMetrics().averageCharWidth();
   setColumnWidth(ServerLogTableModel::columnTime, averageCharWidth * 25);
@@ -57,4 +69,12 @@ ServerLogWidget::~ServerLogWidget()
   for(int i = 0; i < m_model->columnCount(); i++)
     columnSizes.append(columnWidth(i));
   QSettings().setValue(settingColumSizes, columnSizes);
+}
+
+void ServerLogWidget::updateStickToBottom()
+{
+  const int bottomRow = indexAt(viewport()->rect().bottomLeft()).row();
+  qDebug() << "bottomRow = " << bottomRow;
+  m_stickToBottom = (bottomRow == -1) || (bottomRow == m_model->rowCount() - 1);
+  qDebug() << "m_stickToBottom = " << m_stickToBottom;
 }

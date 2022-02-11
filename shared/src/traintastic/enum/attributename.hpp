@@ -38,6 +38,8 @@ enum class AttributeName : uint16_t
   ClassList = 8,
   ObjectList = 9,
   DisplayName = 10,
+  AliasKeys = 11,
+  AliasValues = 12,
 };
 
 #endif

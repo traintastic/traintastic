@@ -26,16 +26,13 @@
 #include "../../core/attributes.hpp"
 #include "../../utils/displayname.hpp"
 
-DecoderFunctions::DecoderFunctions(Object& _parent, const std::string& parentPropertyName)
+DecoderFunctions::DecoderFunctions(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , items{*this, "items", {}, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , add{*this, "add",
       [this]() -> void
       {
         Decoder& decoder = static_cast<Decoder&>(this->parent());
-        auto world = decoder.world().lock();
-        if(!world)
-          return;
         uint8_t number = 0;
         if(!items.empty())
         {
@@ -70,8 +67,7 @@ DecoderFunctions::DecoderFunctions(Object& _parent, const std::string& parentPro
         items.moveInternal(function, +1);
       }}
 {
-  auto world = getWorld(&_parent);
-  const bool editable = world && contains(world->state.value(), WorldState::Edit);
+  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
   m_interfaceItems.add(items);
 

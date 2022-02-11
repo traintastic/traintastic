@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,4 +40,45 @@ void InputMonitor::refresh()
   if(m_requestId != Connection::invalidRequestId)
     m_connection->cancelRequest(m_requestId);
   m_requestId = m_connection->getInputMonitorInputInfo(*this);
+}
+
+void InputMonitor::processMessage(const Message& message)
+{
+  switch(message.command())
+  {
+    case Message::Command::InputMonitorGetInputInfo:
+    {
+      uint32_t count = message.read<uint32_t>();
+      while(count > 0)
+      {
+        const uint32_t address = message.read<uint32_t>();
+        const QString id = QString::fromUtf8(message.read<QByteArray>());
+        const TriState value = message.read<TriState>();
+        m_inputIds[address] = id;
+        m_inputValues[address] = value;
+        emit inputIdChanged(address, id);
+        emit inputValueChanged(address, value);
+        count--;
+      }
+      return;
+    }
+    case Message::Command::InputMonitorInputIdChanged:
+    {
+      const uint32_t address = message.read<uint32_t>();
+      const QString id = QString::fromUtf8(message.read<QByteArray>());
+      m_inputIds[address] = id;
+      emit inputIdChanged(address, id);
+      return;
+    }
+    case Message::Command::InputMonitorInputValueChanged:
+    {
+      const uint32_t address = message.read<uint32_t>();
+      const TriState value = message.read<TriState>();
+      m_inputValues[address] = value;
+      emit inputValueChanged(address, value);
+      return;
+    }
+    default:
+      break;
+  }
 }

@@ -25,7 +25,7 @@
 #include "../../../../world/world.hpp"
 #include "../../../../utils/displayname.hpp"
 
-TurnoutRailTile::TurnoutRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId) :
+TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tileId) :
   RailTile(world, _id, tileId),
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store},
   position{this, "position", TurnoutPosition::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
@@ -36,8 +36,7 @@ TurnoutRailTile::TurnoutRailTile(const std::weak_ptr<World>& world, std::string_
   outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   nextPosition{*this, "next_position", [this](bool reverse){ doNextPosition(reverse); }}
 {
-  auto w = world.lock();
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,38 +27,59 @@
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
 
-Output::Output(const std::weak_ptr<World> world, std::string_view _id)
+Output::Output(World& world, std::string_view _id)
   : IdObject(world, _id)
   , name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , interface{this, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
-      [this](const std::shared_ptr<OutputController>& newValue)
+      [this](const std::shared_ptr<OutputController>& /*newValue*/)
       {
-        if(newValue)
-        {
-          const auto limits = newValue->outputAddressMinMax();
-          Attributes::setMinMax(address, limits.first, limits.second);
-        }
-        else
-        {
-          Attributes::setMinMax(address, addressMinDefault, addressMaxDefault);
-          value.setValueInternal(TriState::Undefined);
-        }
+        interfaceChanged();
       },
       [this](const std::shared_ptr<OutputController>& newValue)
       {
-        if(!newValue || newValue->addOutput(*this))
+        if(interface.value())
+          return interface->removeOutput(*this);
+
+        if(newValue)
         {
-          if(interface.value())
-            return interface->removeOutput(*this);
-          return true;
+          if(!newValue->isOutputChannel(channel))
+          {
+            const auto* const channels = newValue->outputChannels();
+            if(channels && !channels->empty())
+              channel.setValueInternal(channels->front());
+            else
+              channel.setValueInternal(OutputController::defaultOutputChannel);
+          }
+
+          if(!newValue->isOutputAddressAvailable(channel, address))
+          {
+            const uint32_t newAddress = newValue->getUnusedOutputAddress(channel);
+            if(newAddress == Output::invalidAddress)
+              return false; // no free address available
+            address.setValueInternal(newAddress);
+          }
+
+          return newValue->addOutput(*this);
         }
-        return false;
+
+        return true;
+      }}
+  , channel{this, "channel", OutputController::defaultOutputChannel, PropertyFlags::ReadWrite | PropertyFlags::Store,
+      [this](const uint32_t& /*newValue*/)
+      {
+        channelChanged();
+      },
+      [this](const uint32_t& newValue)
+      {
+        if(interface)
+          return interface->changeOutputChannelAddress(*this, newValue, address);
+        return true;
       }}
   , address{this, "address", 1, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
       [this](const uint32_t& newValue)
       {
         if(interface)
-          return interface->changeOutputAddress(*this, newValue);
+          return interface->changeOutputChannelAddress(*this, channel, newValue);
         return true;
       }}
   , value{this, "value", TriState::Undefined, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
@@ -70,12 +91,11 @@ Output::Output(const std::weak_ptr<World> world, std::string_view _id)
       {
         if(!interface || newValue == TriState::Undefined)
           return false;
-        return interface->setOutputValue(address, newValue == TriState::True);
+        return interface->setOutputValue(channel, address, newValue == TriState::True);
       }}
   , controllers{*this, "controllers", {}, PropertyFlags::ReadWrite | PropertyFlags::NoStore}
 {
-  auto w = world.lock();
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
@@ -83,11 +103,19 @@ Output::Output(const std::weak_ptr<World> world, std::string_view _id)
 
   Attributes::addDisplayName(interface, DisplayName::Hardware::interface);
   Attributes::addEnabled(interface, editable);
-  Attributes::addObjectList(interface, w->outputControllers);
+  Attributes::addObjectList(interface, m_world.outputControllers);
   m_interfaceItems.add(interface);
+
+  Attributes::addDisplayName(channel, DisplayName::Hardware::channel);
+  Attributes::addEnabled(channel, editable);
+  Attributes::addVisible(channel, false);
+  Attributes::addValues(channel, OutputController::noOutputChannels);
+  Attributes::addAliases(channel, OutputController::noOutputChannels, nullptr);
+  m_interfaceItems.add(channel);
 
   Attributes::addDisplayName(address, DisplayName::Hardware::address);
   Attributes::addEnabled(address, editable);
+  Attributes::addVisible(address, false);
   Attributes::addMinMax(address, addressMinDefault, addressMaxDefault);
   m_interfaceItems.add(address);
 
@@ -102,9 +130,7 @@ Output::Output(const std::weak_ptr<World> world, std::string_view _id)
 void Output::addToWorld()
 {
   IdObject::addToWorld();
-
-  if(auto world = m_world.lock())
-    world->outputs->addObject(shared_ptr<Output>());
+  m_world.outputs->addObject(shared_ptr<Output>());
 }
 
 void Output::loaded()
@@ -118,15 +144,15 @@ void Output::loaded()
         Log::log(*this, LogMessage::C2001_ADDRESS_ALREADY_USED_AT_X, *object);
       interface.setValueInternal(nullptr);
     }
+    interfaceChanged();
   }
 }
 
 void Output::destroying()
 {
-  if(auto world = m_world.lock())
-    world->outputs->removeObject(shared_ptr<Output>());
   if(interface)
     interface = nullptr;
+  m_world.outputs->removeObject(shared_ptr<Output>());
   IdObject::destroying();
 }
 
@@ -134,15 +160,34 @@ void Output::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);
 
-  const bool editable = contains(state, WorldState::Edit);
-
-  Attributes::setEnabled(name, editable);
-  Attributes::setEnabled(interface, editable);
-  Attributes::setEnabled(address, editable);
+  Attributes::setEnabled({name, interface, channel, address}, contains(state, WorldState::Edit));
 }
 
 void Output::updateValue(TriState _value)
 {
   value.setValueInternal(_value);
   valueChanged(value);
+}
+
+void Output::interfaceChanged()
+{
+  Attributes::setValues(channel, interface ? interface->outputChannels() : OutputController::noOutputChannels);
+  Attributes::setAliases(channel, interface ? interface->outputChannels() : OutputController::noOutputChannels, interface ? interface->outputChannelNames() : nullptr);
+  Attributes::setVisible(channel, interface && interface->outputChannels() && !interface->outputChannels()->empty());
+  Attributes::setVisible(address, interface);
+
+  channelChanged();
+}
+
+void Output::channelChanged()
+{
+  if(interface)
+  {
+    const auto limits = interface->outputAddressMinMax(channel);
+    Attributes::setMinMax(address, limits.first, limits.second);
+  }
+  else
+    Attributes::setMinMax(address, addressMinDefault, addressMaxDefault);
+
+  value.setValueInternal(TriState::Undefined);
 }

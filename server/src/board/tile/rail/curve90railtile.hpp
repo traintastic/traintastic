@@ -31,7 +31,7 @@ class Curve90RailTile : public RailTile
     CLASS_ID("board_tile.rail.curve_90")
     CREATE(Curve90RailTile)
 
-    Curve90RailTile(const std::weak_ptr<World>& world, std::string_view _id);
+    Curve90RailTile(World& world, std::string_view _id);
 };
 
 #endif

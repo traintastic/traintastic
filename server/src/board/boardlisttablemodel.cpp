@@ -27,7 +27,7 @@
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
 
-bool BoardListTableModel::isListedProperty(const std::string& name)
+bool BoardListTableModel::isListedProperty(std::string_view name)
 {
   return
     name == "id" ||

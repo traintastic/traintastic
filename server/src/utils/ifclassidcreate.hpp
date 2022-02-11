@@ -24,6 +24,6 @@
 #define TRAINTASTIC_SERVER_UTILS_IFCLASSIDCREATE_HPP
 
 #define IF_CLASSID_CREATE(T) \
-  if(classId == T::classId) { return T::create(world, id.empty() ? world->getUniqueId(T::defaultId) : id); }
+  if(classId == T::classId) { return T::create(world, id.empty() ? world.getUniqueId(T::defaultId) : id); }
 
 #endif

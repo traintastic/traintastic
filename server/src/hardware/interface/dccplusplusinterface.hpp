@@ -28,6 +28,8 @@
 #include "../protocol/dccplusplus/settings.hpp"
 #include "../decoder/decodercontroller.hpp"
 #include "../decoder/decoderlist.hpp"
+#include "../input/inputcontroller.hpp"
+#include "../input/list/inputlist.hpp"
 #include "../output/outputcontroller.hpp"
 #include "../output/list/outputlist.hpp"
 #include "../../core/objectproperty.hpp"
@@ -39,6 +41,7 @@
 class DCCPlusPlusInterface final
   : public Interface
   , public DecoderController
+  , public InputController
   , public OutputController
 {
   CLASS_ID("interface.dccplusplus")
@@ -65,23 +68,30 @@ class DCCPlusPlusInterface final
   public:
     Property<std::string> device;
     Property<uint32_t> baudrate;
-    Property<SerialFlowControl> flowControl;
     ObjectProperty<DCCPlusPlus::Settings> dccplusplus;
     ObjectProperty<DecoderList> decoders;
+    ObjectProperty<InputList> inputs;
     ObjectProperty<OutputList> outputs;
 
-    DCCPlusPlusInterface(const std::weak_ptr<World>& world, std::string_view _id);
+    DCCPlusPlusInterface(World& world, std::string_view _id);
 
     // DecoderController:
     [[nodiscard]] bool addDecoder(Decoder& decoder) final;
     [[nodiscard]] bool removeDecoder(Decoder& decoder) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
+    // InputController:
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final { return {DCCPlusPlus::Kernel::idMin, DCCPlusPlus::Kernel::idMax}; }
+    [[nodiscard]] bool addInput(Input& input) final;
+    [[nodiscard]] bool removeInput(Input& input) final;
+
     // OutputController:
-    std::pair<uint32_t, uint32_t> outputAddressMinMax() const final { return {DCCPlusPlus::Kernel::outputAddressMin, DCCPlusPlus::Kernel::outputAddressMax}; }
+    const std::vector<uint32_t>* outputChannels() const final { return &DCCPlusPlus::Kernel::outputChannels; }
+    const std::vector<std::string_view>* outputChannelNames() const final { return &DCCPlusPlus::Kernel::outputChannelNames; }
+    std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t channel) const final;
     [[nodiscard]] bool addOutput(Output& output) final;
     [[nodiscard]] bool removeOutput(Output& output) final;
-    [[nodiscard]] bool setOutputValue(uint32_t address, bool value) final;
+    [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 };
 
 #endif

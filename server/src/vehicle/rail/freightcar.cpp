@@ -24,7 +24,7 @@
 #include "../../world/world.hpp"
 #include "../../core/attributes.hpp"
 
-FreightCar::FreightCar(const std::weak_ptr<World>& world, std::string_view _id)
+FreightCar::FreightCar(World& world, std::string_view _id)
   : RailVehicle(world, _id)
   , cargoLoaded{*this, "cargo_loaded", 0, RatioUnit::Percent, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
     [this](double value, RatioUnit unit)
@@ -47,8 +47,7 @@ FreightCar::FreightCar(const std::weak_ptr<World>& world, std::string_view _id)
       updateCargoLoaded();
     }}
 {
-  auto w = world.lock();
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addMinMax(cargoLoaded, 0., 100., RatioUnit::Percent);
   m_interfaceItems.insertBefore(cargoLoaded, totalWeight);

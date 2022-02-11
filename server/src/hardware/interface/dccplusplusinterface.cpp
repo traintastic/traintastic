@@ -34,18 +34,22 @@
 #include "../../utils/serialport.hpp"
 #include "../../world/world.hpp"
 
-DCCPlusPlusInterface::DCCPlusPlusInterface(const std::weak_ptr<World>& world, std::string_view _id)
+constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
+constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Channel | OutputListColumn::Address;
+
+DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , baudrate{this, "baudrate", 115200, PropertyFlags::ReadWrite | PropertyFlags::Store}
-  , flowControl{this, "flow_control", SerialFlowControl::None, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , dccplusplus{this, "dccplusplus", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
+  , inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
   dccplusplus.setValueInternal(std::make_shared<DCCPlusPlus::Settings>(*this, dccplusplus.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
-  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name()));
+  inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name(), inputListColumns));
+  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(device, DisplayName::Serial::device);
   Attributes::addEnabled(device, !online);
@@ -57,16 +61,14 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(const std::weak_ptr<World>& world, st
   Attributes::addValues(baudrate, SerialPort::baudrateValues);
   m_interfaceItems.insertBefore(baudrate, notes);
 
-  Attributes::addDisplayName(flowControl, DisplayName::Serial::flowControl);
-  Attributes::addEnabled(flowControl, !online);
-  Attributes::addValues(flowControl, SerialFlowControlValues);
-  m_interfaceItems.insertBefore(flowControl, notes);
-
   Attributes::addDisplayName(dccplusplus, DisplayName::Hardware::dccplusplus);
   m_interfaceItems.insertBefore(dccplusplus, notes);
 
   Attributes::addDisplayName(decoders, DisplayName::Hardware::decoders);
   m_interfaceItems.insertBefore(decoders, notes);
+
+  Attributes::addDisplayName(inputs, DisplayName::Hardware::inputs);
+  m_interfaceItems.insertBefore(inputs, notes);
 
   Attributes::addDisplayName(outputs, DisplayName::Hardware::outputs);
   m_interfaceItems.insertBefore(outputs, notes);
@@ -94,6 +96,40 @@ void DCCPlusPlusInterface::decoderChanged(const Decoder& decoder, DecoderChangeF
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
+bool DCCPlusPlusInterface::addInput(Input& input)
+{
+  const bool success = InputController::addInput(input);
+  if(success)
+    inputs->addObject(input.shared_ptr<Input>());
+  return success;
+}
+
+bool DCCPlusPlusInterface::removeInput(Input& input)
+{
+  const bool success = InputController::removeInput(input);
+  if(success)
+    inputs->removeObject(input.shared_ptr<Input>());
+  return success;
+}
+
+std::pair<uint32_t, uint32_t> DCCPlusPlusInterface::outputAddressMinMax(uint32_t channel) const
+{
+  using namespace DCCPlusPlus;
+
+  switch(channel)
+  {
+    case Kernel::OutputChannel::dccAccessory:
+      return {Kernel::dccAccessoryAddressMin, Kernel::dccAccessoryAddressMax};
+
+    case Kernel::OutputChannel::turnout:
+    case Kernel::OutputChannel::output:
+      return {Kernel::idMin, Kernel::idMax};
+  }
+
+  assert(false);
+  return {0, 0};
+}
+
 bool DCCPlusPlusInterface::addOutput(Output& output)
 {
   const bool success = OutputController::addOutput(output);
@@ -110,12 +146,12 @@ bool DCCPlusPlusInterface::removeOutput(Output& output)
   return success;
 }
 
-bool DCCPlusPlusInterface::setOutputValue(uint32_t address, bool value)
+bool DCCPlusPlusInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
 {
   return
     m_kernel &&
-    inRange(address, outputAddressMinMax()) &&
-    m_kernel->setOutput(static_cast<uint16_t>(address), value);
+    inRange(address, outputAddressMinMax(channel)) &&
+    m_kernel->setOutput(channel, static_cast<uint16_t>(address), value);
 }
 
 bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
@@ -130,7 +166,7 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
       }
       else
       {
-        m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SerialIOHandler>(dccplusplus->config(), device.value(), baudrate.value(), flowControl.value());
+        m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SerialIOHandler>(dccplusplus->config(), device.value(), baudrate.value(), SerialFlowControl::None);
       }
 
       status.setValueInternal(InterfaceStatus::Initializing);
@@ -141,37 +177,33 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
         {
           status.setValueInternal(InterfaceStatus::Online);
 
-          if(auto w = m_world.lock())
+          const bool powerOn = contains(m_world.state.value(), WorldState::PowerOn);
+
+          if(!powerOn)
+            m_kernel->powerOff();
+
+          if(contains(m_world.state.value(), WorldState::Run))
           {
-            const bool powerOn = contains(w->state.value(), WorldState::PowerOn);
-
-            if(!powerOn)
-              m_kernel->powerOff();
-
-            if(contains(w->state.value(), WorldState::Run))
-            {
-              m_kernel->clearEmergencyStop();
-              restoreDecoderSpeed();
-            }
-            else
-              m_kernel->emergencyStop();
-
-            if(powerOn)
-              m_kernel->powerOn();
+            m_kernel->clearEmergencyStop();
+            restoreDecoderSpeed();
           }
+          else
+            m_kernel->emergencyStop();
+
+          if(powerOn)
+            m_kernel->powerOn();
         });
       m_kernel->setOnPowerOnChanged(
         [this](bool powerOn)
         {
-          if(auto w = m_world.lock())
-          {
-            if(powerOn && !contains(w->state.value(), WorldState::PowerOn))
-              w->powerOn();
-            else if(!powerOn && contains(w->state.value(), WorldState::PowerOn))
-              w->powerOff();
-          }
+          if(powerOn && !contains(m_world.state.value(), WorldState::PowerOn))
+            m_world.powerOn();
+          else if(!powerOn && contains(m_world.state.value(), WorldState::PowerOn))
+            m_world.powerOff();
         });
       m_kernel->setDecoderController(this);
+      m_kernel->setInputController(this);
+      m_kernel->setOutputController(this);
       m_kernel->start();
 
       m_dccplusplusPropertyChanged = dccplusplus->propertyChanged.connect(
@@ -181,7 +213,7 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
             m_kernel->setConfig(dccplusplus->config());
         });
 
-      Attributes::setEnabled({device, baudrate, flowControl}, false);
+      Attributes::setEnabled({device, baudrate}, false);
     }
     catch(const LogMessageException& e)
     {
@@ -192,7 +224,7 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
   }
   else if(m_kernel && !value)
   {
-    Attributes::setEnabled({device, baudrate, flowControl}, true);
+    Attributes::setEnabled({device, baudrate}, true);
 
     m_dccplusplusPropertyChanged.disconnect();
 
@@ -207,11 +239,7 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
 void DCCPlusPlusInterface::addToWorld()
 {
   Interface::addToWorld();
-
-  if(auto world = m_world.lock())
-  {
-    world->decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  }
+  m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
 }
 
 void DCCPlusPlusInterface::loaded()
@@ -229,11 +257,7 @@ void DCCPlusPlusInterface::destroying()
     decoder->interface = nullptr;
   }
 
-  if(auto world = m_world.lock())
-  {
-    world->decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  }
-
+  m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
   Interface::destroying();
 }
 

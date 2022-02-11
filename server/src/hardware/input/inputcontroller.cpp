@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,32 +25,46 @@
 #include "monitor/inputmonitor.hpp"
 #include "../../utils/inrange.hpp"
 
-bool InputController::isInputAddressAvailable(uint32_t address) const
+bool InputController::isInputChannel(uint32_t channel) const
 {
-  return
-    inRange(address, inputAddressMinMax()) &&
-    m_inputs.find(address) == m_inputs.end();
+  const auto* channels = inputChannels();
+  if(!channels || channels->empty())
+    return channel == defaultInputChannel;
+
+  auto it = std::find(channels->begin(), channels->end(), channel);
+  assert(it == channels->end() || *it != defaultInputChannel);
+  return it != channels->end();
 }
 
-uint32_t InputController::getUnusedInputAddress() const
+bool InputController::isInputAddressAvailable(uint32_t channel, uint32_t address) const
 {
+  assert(isInputChannel(channel));
+  return
+    inRange(address, inputAddressMinMax(channel)) &&
+    m_inputs.find({channel, address}) == m_inputs.end();
+}
+
+uint32_t InputController::getUnusedInputAddress(uint32_t channel) const
+{
+  assert(isInputChannel(channel));
   const auto end = m_inputs.cend();
-  const auto range = inputAddressMinMax();
+  const auto range = inputAddressMinMax(channel);
   for(uint32_t address = range.first; address < range.second; address++)
-    if(m_inputs.find(address) == end)
+    if(m_inputs.find({channel, address}) == end)
       return address;
   return Input::invalidAddress;
 }
 
-bool InputController::changeInputAddress(Input& input, uint32_t newAddress)
+bool InputController::changeInputChannelAddress(Input& input, uint32_t newChannel, uint32_t newAddress)
 {
   assert(input.interface.value().get() == this);
+  assert(isInputChannel(newChannel));
 
-  if(!isInputAddressAvailable(newAddress))
+  if(!isInputAddressAvailable(newChannel, newAddress))
     return false;
 
-  auto node = m_inputs.extract(input.address); // old address
-  node.key() = newAddress;
+  auto node = m_inputs.extract({input.channel, input.address});
+  node.key() = {newChannel, newAddress};
   m_inputs.insert(std::move(node));
   input.value.setValueInternal(TriState::Undefined);
 
@@ -59,9 +73,9 @@ bool InputController::changeInputAddress(Input& input, uint32_t newAddress)
 
 bool InputController::addInput(Input& input)
 {
-  if(isInputAddressAvailable(input.address))
+  if(isInputChannel(input.channel) && isInputAddressAvailable(input.channel, input.address))
   {
-    m_inputs.insert({input.address, input.shared_ptr<Input>()});
+    m_inputs.insert({{input.channel, input.address}, input.shared_ptr<Input>()});
     input.value.setValueInternal(TriState::Undefined);
     return true;
   }
@@ -71,7 +85,7 @@ bool InputController::addInput(Input& input)
 bool InputController::removeInput(Input& input)
 {
   assert(input.interface.value().get() == this);
-  auto it = m_inputs.find(input.address);
+  auto it = m_inputs.find({input.channel, input.address});
   if(it != m_inputs.end() && it->second.get() == &input)
   {
     m_inputs.erase(it);
@@ -81,21 +95,22 @@ bool InputController::removeInput(Input& input)
   return false;
 }
 
-void InputController::updateInputValue(uint32_t address, TriState value)
+void InputController::updateInputValue(uint32_t channel, uint32_t address, TriState value)
 {
-  if(auto it = m_inputs.find(address); it != m_inputs.end())
+  if(auto it = m_inputs.find({channel, address}); it != m_inputs.end())
     it->second->updateValue(value);
-  if(auto monitor = m_inputMonitor.lock())
+  if(auto monitor = m_inputMonitors[channel].lock())
     monitor->inputValueChanged(*monitor, address, value);
 }
 
-std::shared_ptr<InputMonitor> InputController::inputMonitor()
+std::shared_ptr<InputMonitor> InputController::inputMonitor(uint32_t channel)
 {
-  auto monitor = m_inputMonitor.lock();
+  assert(isInputChannel(channel));
+  auto monitor = m_inputMonitors[channel].lock();
   if(!monitor)
   {
-    monitor = std::make_shared<InputMonitor>(*this);
-    m_inputMonitor = monitor;
+    monitor = std::make_shared<InputMonitor>(*this, channel);
+    m_inputMonitors[channel] = monitor;
   }
   return monitor;
 }

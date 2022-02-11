@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,50 +23,51 @@
 #ifndef TRAINTASTIC_SERVER_CORE_VECTORATTRIBUTE_HPP
 #define TRAINTASTIC_SERVER_CORE_VECTORATTRIBUTE_HPP
 
-#include "abstractattribute.hpp"
+#include <vector>
+#include "abstractvaluesattribute.hpp"
 #include "to.hpp"
-#include "valuetypetraits.hpp"
 
 template<typename T>
-class VectorAttribute : public AbstractAttribute
+class VectorAttribute : public AbstractValuesAttribute
 {
-  protected:
+  private:
     std::vector<T> m_values;
 
   public:
-    VectorAttribute(InterfaceItem& item, AttributeName name, const T& values) :
-      AbstractAttribute{item, name, value_type_v<T>},
-      m_value{values}
+    VectorAttribute(InterfaceItem& _item, AttributeName _name, std::vector<T> values) :
+      AbstractValuesAttribute(_item, _name, value_type_v<T>),
+      m_values{std::move(values)}
     {
+      static_assert(value_type_v<T> != ValueType::Invalid);
     }
 
-    bool toBool() const final
+    virtual uint32_t length() const final
     {
-      return to<bool>(m_value);
+      return m_values.size();
     }
 
-    int64_t toInt64() const final
+    virtual bool getBool(uint32_t index) const final
     {
-      return to<int64_t>(m_value);
+      assert(index < length());
+      return to<bool>(m_values[index]);
     }
 
-    double toDouble() const final
+    virtual int64_t getInt64(uint32_t index) const final
     {
-      return to<double>(m_value);
+      assert(index < length());
+      return to<int64_t>(m_values[index]);
     }
 
-    std::string toString() const final
+    virtual double getDouble(uint32_t index) const final
     {
-      return to<std::string>(m_value);
+      assert(index < length());
+      return to<double>(m_values[index]);
     }
 
-    void setValue(const T& value)
+    virtual std::string getString(uint32_t index) const final
     {
-      if(m_value != value)
-      {
-        m_value = value;
-        changed();
-      }
+      assert(index < length());
+      return to<std::string>(m_values[index]);
     }
 };
 

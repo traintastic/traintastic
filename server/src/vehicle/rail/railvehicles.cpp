@@ -23,7 +23,7 @@
 #include "railvehicles.hpp"
 #include "../../utils/ifclassidcreate.hpp"
 
-std::shared_ptr<RailVehicle> RailVehicles::create(const std::weak_ptr<World>& world, std::string_view classId, std::string_view id)
+std::shared_ptr<RailVehicle> RailVehicles::create(World& world, std::string_view classId, std::string_view id)
 {
   if(classId == Locomotive::classId)
     return Locomotive::create(world, id);

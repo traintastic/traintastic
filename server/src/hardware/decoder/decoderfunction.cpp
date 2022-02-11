@@ -50,8 +50,7 @@ DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
       m_decoder.changed(DecoderChangeFlags::FunctionValue, number);
     }}
 {
-  auto w = decoder.world().lock();
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(decoder.world().state.value(), WorldState::Edit);
 
   Attributes::addEnabled(number, editable);
   m_interfaceItems.add(number);

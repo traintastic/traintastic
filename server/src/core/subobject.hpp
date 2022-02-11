@@ -29,10 +29,10 @@ class SubObject : public Object
 {
   private:
     Object& m_parent;
-    const std::string& m_parentPropertyName;
+    std::string_view m_parentPropertyName;
 
   public:
-    SubObject(Object& _parent, const std::string& parentPropertyName);
+    SubObject(Object& _parent, std::string_view parentPropertyName);
 
     Object& parent() const { return m_parent; }
     std::string getObjectId() const final;

@@ -36,7 +36,10 @@
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
-XpressNetInterface::XpressNetInterface(const std::weak_ptr<World>& world, std::string_view _id)
+constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
+constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
+
+XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , type{this, "type", XpressNetInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](XpressNetInterfaceType /*value*/)
@@ -86,8 +89,8 @@ XpressNetInterface::XpressNetInterface(const std::weak_ptr<World>& world, std::s
 {
   xpressnet.setValueInternal(std::make_shared<XpressNet::Settings>(*this, xpressnet.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
-  inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name()));
-  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name()));
+  inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name(), inputListColumns));
+  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
   Attributes::addEnabled(type, !online);
@@ -204,11 +207,12 @@ bool XpressNetInterface::removeOutput(Output& output)
   return success;
 }
 
-bool XpressNetInterface::setOutputValue(uint32_t address, bool value)
+bool XpressNetInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
 {
+  assert(isOutputChannel(channel));
   return
     m_kernel &&
-    inRange(address, outputAddressMinMax()) &&
+    inRange(address, outputAddressMinMax(channel)) &&
     m_kernel->setOutput(static_cast<uint16_t>(address), value);
 }
 
@@ -269,30 +273,24 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
       m_kernel->setOnNormalOperationResumed(
         [this]()
         {
-          if(auto w = m_world.lock())
-          {
-            if(!contains(w->state.value(), WorldState::PowerOn))
-              w->powerOn();
-            if(!contains(w->state.value(), WorldState::Run))
-              w->run();
-          }
+          if(!contains(m_world.state.value(), WorldState::PowerOn))
+            m_world.powerOn();
+          if(!contains(m_world.state.value(), WorldState::Run))
+            m_world.run();
         });
       m_kernel->setOnTrackPowerOff(
         [this]()
         {
-          if(auto w = m_world.lock())
-          {
-            if(contains(w->state.value(), WorldState::PowerOn))
-              w->powerOff();
-            if(contains(w->state.value(), WorldState::Run))
-              w->stop();
-          }
+          if(contains(m_world.state.value(), WorldState::PowerOn))
+            m_world.powerOff();
+          if(contains(m_world.state.value(), WorldState::Run))
+            m_world.stop();
         });
       m_kernel->setOnEmergencyStop(
         [this]()
         {
-          if(auto w = m_world.lock(); w && contains(w->state.value(), WorldState::Run))
-            w->stop();
+          if(contains(m_world.state.value(), WorldState::Run))
+            m_world.stop();
         });
 
       m_kernel->setDecoderController(this);
@@ -306,15 +304,12 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
           m_kernel->setConfig(xpressnet->config());
         });
 
-      if(auto w = m_world.lock())
-      {
-        if(!contains(w->state.value(), WorldState::PowerOn))
-          m_kernel->stopOperations();
-        else if(!contains(w->state.value(), WorldState::Run))
-          m_kernel->stopAllLocomotives();
-        else
-          m_kernel->resumeOperations();
-      }
+      if(!contains(m_world.state.value(), WorldState::PowerOn))
+        m_kernel->stopOperations();
+      else if(!contains(m_world.state.value(), WorldState::Run))
+        m_kernel->stopAllLocomotives();
+      else
+        m_kernel->resumeOperations();
 
       Attributes::setEnabled({type, serialInterfaceType, device, baudrate, flowControl, hostname, port, s88StartAddress, s88ModuleCount}, false);
     }
@@ -343,12 +338,9 @@ void XpressNetInterface::addToWorld()
 {
   Interface::addToWorld();
 
-  if(auto world = m_world.lock())
-  {
-    world->decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-    world->inputControllers->add(std::dynamic_pointer_cast<InputController>(shared_from_this()));
-    world->outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
-  }
+  m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
+  m_world.inputControllers->add(std::dynamic_pointer_cast<InputController>(shared_from_this()));
+  m_world.outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 }
 
 void XpressNetInterface::loaded()
@@ -378,12 +370,9 @@ void XpressNetInterface::destroying()
     output->interface = nullptr;
   }
 
-  if(auto world = m_world.lock())
-  {
-    world->decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-    world->inputControllers->remove(std::dynamic_pointer_cast<InputController>(shared_from_this()));
-    world->outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
-  }
+  m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
+  m_world.inputControllers->remove(std::dynamic_pointer_cast<InputController>(shared_from_this()));
+  m_world.outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 
   Interface::destroying();
 }

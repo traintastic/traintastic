@@ -34,6 +34,7 @@
 class Decoder;
 enum class DecoderChangeFlags;
 class DecoderController;
+class InputController;
 class OutputController;
 
 namespace DCCPlusPlus {
@@ -43,8 +44,29 @@ struct Message;
 class Kernel
 {
   public:
-    static constexpr uint16_t outputAddressMin = 1;
-    static constexpr uint16_t outputAddressMax = 2044;
+    static constexpr uint32_t idMin = 0;
+    static constexpr uint32_t idMax = 32767;
+    static constexpr uint16_t dccAccessoryAddressMin = 1;
+    static constexpr uint16_t dccAccessoryAddressMax = 2044;
+
+    struct OutputChannel
+    {
+      static constexpr uint32_t dccAccessory = 1;
+      static constexpr uint32_t turnout = 2;
+      static constexpr uint32_t output = 3;
+    };
+
+    inline static const std::vector<uint32_t> outputChannels = {
+      OutputChannel::dccAccessory,
+      OutputChannel::turnout,
+      OutputChannel::output,
+    };
+
+    inline static const std::vector<std::string_view> outputChannelNames = {
+      "$dccplusplus_channel:dcc_accessory$ <a>",
+      "$dccplusplus_channel:turnout$ <T>",
+      "$dccplusplus_channel:output$ <Z>",
+    };
 
   private:
     boost::asio::io_context m_ioContext;
@@ -60,8 +82,9 @@ class Kernel
 
     DecoderController* m_decoderController;
 
+    InputController* m_inputController;
+
     OutputController* m_outputController;
-    std::array<TriState, outputAddressMax - outputAddressMin + 1> m_outputValues;
 
     Config m_config;
 #ifndef NDEBUG
@@ -185,6 +208,18 @@ class Kernel
     }
 
     /**
+     * @brief Set the input controller
+     *
+     * @param[in] inputController The input controller
+     * @note This function may not be called when the kernel is running.
+     */
+    inline void setInputController(InputController* inputController)
+    {
+      assert(!m_started);
+      m_inputController = inputController;
+    }
+
+    /**
      * @brief Set the output controller
      *
      * @param[in] outputController The output controller
@@ -248,11 +283,12 @@ class Kernel
 
     /**
      *
+     * @param[in] channel Output channel, see #OutputChannel
      * @param[in] address Output address, #outputAddressMin..#outputAddressMax
      * @param[in] value Output value: \c true is on, \c false is off.
      * @return \c true if send successful, \c false otherwise.
      */
-    bool setOutput(uint16_t address, bool value);
+    bool setOutput(uint32_t channel, uint16_t address, bool value);
 };
 
 }

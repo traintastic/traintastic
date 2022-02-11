@@ -27,7 +27,7 @@
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
 
-bool ControllerListBaseTableModel::isListedProperty(const std::string& name)
+bool ControllerListBaseTableModel::isListedProperty(std::string_view name)
 {
   return
     name == "id" ||

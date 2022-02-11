@@ -49,7 +49,7 @@ class WlanMausInterface : public Interface
   public:
     ObjectProperty<Z21::ServerSettings> z21;
 
-    WlanMausInterface(const std::weak_ptr<World>& world, std::string_view _id);
+    WlanMausInterface(World& world, std::string_view _id);
 };
 
 #endif

@@ -29,7 +29,7 @@
 #include "../utils/displayname.hpp"
 #include <cassert>
 
-Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
+Board::Board(World& world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   left{this, "left", 0, PropertyFlags::ReadOnly | PropertyFlags::Store},
@@ -40,9 +40,6 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
     [this](int16_t x, int16_t y, TileRotate rotate, std::string_view tileClassId, bool replace)
     {
       const TileLocation l{x, y};
-      auto w = m_world.lock();
-      if(!w)
-        return false;
 
       if(auto it = m_tiles.find(l); it != m_tiles.end())
       {
@@ -84,7 +81,7 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
           return false;
       }
 
-      auto tile = Tiles::create(w, tileClassId);
+      auto tile = Tiles::create(m_world, tileClassId);
       if(!tile)
         return false;
 
@@ -232,9 +229,8 @@ Board::Board(const std::weak_ptr<World>& world, std::string_view _id) :
       updateSize(true);
     }}
 {
-  auto w = world.lock();
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
-  const bool stopped = w && !contains(w->state.value(), WorldState::Run);
+  const bool editable = contains(world.state.value(), WorldState::Edit);
+  const bool stopped = !contains(world.state.value(), WorldState::Run);
 
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
@@ -259,8 +255,7 @@ void Board::addToWorld()
 {
   IdObject::addToWorld();
 
-  if(auto world = m_world.lock())
-    world->boards->addObject(shared_ptr<Board>());
+  m_world.boards->addObject(shared_ptr<Board>());
 }
 
 void Board::destroying()
@@ -268,8 +263,7 @@ void Board::destroying()
   for(auto& it : m_tiles)
     it.second->destroy();
   m_tiles.clear();
-  if(auto world = m_world.lock())
-    world->boards->removeObject(shared_ptr<Board>());
+  m_world.boards->removeObject(shared_ptr<Board>());
   IdObject::destroying();
 }
 
@@ -283,7 +277,7 @@ void Board::load(WorldLoader& loader, const nlohmann::json& data)
   for(auto& [_, tileId] : objects.items())
   {
     static_cast<void>(_); // silence unused warning
-    if(auto tile = std::dynamic_pointer_cast<Tile>(loader.getObject(tileId)))
+    if(auto tile = std::dynamic_pointer_cast<Tile>(loader.getObject(tileId.get<std::string_view>())))
     {
       if(tile->width > 1 || tile->height > 1)
       {

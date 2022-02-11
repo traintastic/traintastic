@@ -28,7 +28,7 @@
 
 #define CREATE(T) \
   public: \
-    static std::shared_ptr<T> create(const std::weak_ptr<World>& world, std::string_view _id) \
+    static std::shared_ptr<T> create(World& world, std::string_view _id) \
     { \
       auto obj = std::make_shared<T>(world, _id); \
       obj->addToWorld(); \
@@ -44,9 +44,9 @@ class World;
 class IdObject : public Object
 {
   protected:
-    std::weak_ptr<World> m_world;
+    World& m_world;
 
-    IdObject(const std::weak_ptr<World>& world, std::string_view _id);
+    IdObject(World& world, std::string_view _id);
     void destroying() override;
     virtual void addToWorld();
     void worldEvent(WorldState state, WorldEvent event) override;
@@ -58,7 +58,7 @@ class IdObject : public Object
     ~IdObject() override;
 
     std::string getObjectId() const final { return id.value(); }
-    const std::weak_ptr<World>& world() const { return m_world; }
+    World& world() const { return m_world; }
 };
 
 #endif

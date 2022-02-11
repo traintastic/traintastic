@@ -31,8 +31,7 @@ OutputMapOutputAction::OutputMapOutputAction(Object& _parent, std::shared_ptr<Ou
   m_output{_output},
   action{this, "action", OutputAction::None, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
-  auto w = getWorld(&_parent);
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(getWorld(m_parent).state.value(), WorldState::Edit);
 
   Attributes::addEnabled(action, editable);
   Attributes::addValues(action, OutputActionValues);

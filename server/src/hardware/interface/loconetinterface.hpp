@@ -77,7 +77,7 @@ class LocoNetInterface final
     ObjectProperty<InputList> inputs;
     ObjectProperty<OutputList> outputs;
 
-    LocoNetInterface(const std::weak_ptr<World>& world, std::string_view _id);
+    LocoNetInterface(World& world, std::string_view _id);
 
     // DecoderController:
     [[nodiscard]] bool addDecoder(Decoder& decoder) final;
@@ -85,15 +85,15 @@ class LocoNetInterface final
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
-    std::pair<uint32_t, uint32_t> inputAddressMinMax() const final { return {LocoNet::Kernel::inputAddressMin, LocoNet::Kernel::inputAddressMax}; }
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final { return {LocoNet::Kernel::inputAddressMin, LocoNet::Kernel::inputAddressMax}; }
     [[nodiscard]] bool addInput(Input& input) final;
     [[nodiscard]] bool removeInput(Input& input) final;
 
     // OutputController:
-    std::pair<uint32_t, uint32_t> outputAddressMinMax() const final { return {LocoNet::Kernel::outputAddressMin, LocoNet::Kernel::outputAddressMax}; }
+    std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final { return {LocoNet::Kernel::outputAddressMin, LocoNet::Kernel::outputAddressMax}; }
     [[nodiscard]] bool addOutput(Output& output) final;
     [[nodiscard]] bool removeOutput(Output& output) final;
-    [[nodiscard]] bool setOutputValue(uint32_t address, bool value) final;
+    [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 };
 
 #endif

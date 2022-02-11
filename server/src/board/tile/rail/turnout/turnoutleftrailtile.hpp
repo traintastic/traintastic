@@ -28,7 +28,7 @@
 class TurnoutLeftRailTile : public TurnoutRailTile
 {
   protected:
-    TurnoutLeftRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId);
+    TurnoutLeftRailTile(World& world, std::string_view _id, TileId tileId);
 
     void doNextPosition(bool) final;
 };

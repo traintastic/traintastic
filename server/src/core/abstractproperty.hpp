@@ -29,7 +29,7 @@
 class AbstractProperty : public BaseProperty
 {
   protected:
-    AbstractProperty(Object& object, const std::string& name, ValueType type, PropertyFlags flags) :
+    AbstractProperty(Object& object, std::string_view name, ValueType type, PropertyFlags flags) :
       BaseProperty{object, name, type, flags}
     {
     }

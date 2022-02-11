@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,13 +24,15 @@
 #include "../core/idobject.hpp"
 #include "../core/subobject.hpp"
 
-std::shared_ptr<World> getWorld(Object* object)
+World& getWorld(Object* object)
 {
+  assert(object);
   if(IdObject* idObject = dynamic_cast<IdObject*>(object))
-    return idObject->world().lock();
+    return idObject->world();
   if(SubObject* subObject = dynamic_cast<SubObject*>(object))
     return getWorld(&subObject->parent());
   if(World* world = dynamic_cast<World*>(object))
-    return world->shared_ptr<World>();
-  return {};
+    return *world;
+  assert(false);
+  abort();
 }

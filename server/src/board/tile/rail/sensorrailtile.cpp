@@ -26,7 +26,7 @@
 #include "../../../utils/sensor.hpp"
 #include "../../../utils/displayname.hpp"
 
-SensorRailTile::SensorRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
+SensorRailTile::SensorRailTile(World& world, std::string_view _id) :
   StraightRailTile(world, _id, TileId::RailSensor),
   name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store},
   input{this, "input", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
@@ -61,14 +61,13 @@ SensorRailTile::SensorRailTile(const std::weak_ptr<World>& world, std::string_vi
     }},
   state{this, "state", SensorState::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
 {
-  auto w = world.lock();
-  const bool editable = w && contains(w->state.value(), WorldState::Edit);
+  const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addEnabled(name, editable);
   Attributes::addDisplayName(name, DisplayName::Object::name);
   m_interfaceItems.add(name);
   Attributes::addEnabled(input, editable);
-  Attributes::addObjectList(input, w->inputs);
+  Attributes::addObjectList(input, m_world.inputs);
   m_interfaceItems.add(input);
   Attributes::addEnabled(type, editable);
   Attributes::addValues(type, sensorTypeValues);

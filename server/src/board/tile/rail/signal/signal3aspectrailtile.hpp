@@ -34,7 +34,7 @@ class Signal3AspectRailTile : public SignalRailTile
     void doNextAspect(bool reverse) final;
 
   public:
-    Signal3AspectRailTile(const std::weak_ptr<World>& world, std::string_view _id);
+    Signal3AspectRailTile(World& world, std::string_view _id);
 };
 
 #endif

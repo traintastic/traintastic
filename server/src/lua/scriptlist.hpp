@@ -33,7 +33,7 @@ class ScriptList : public ObjectList<Script>
 {
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(const std::string& name) final;
+    bool isListedProperty(std::string_view name) final;
 
   public:
     CLASS_ID("lua.script_list")
@@ -41,7 +41,7 @@ class ScriptList : public ObjectList<Script>
     ::Method<std::shared_ptr<Script>()> add;
     ::Method<void(const std::shared_ptr<Script>&)> remove;
 
-    ScriptList(Object& _parent, const std::string& parentPropertyName);
+    ScriptList(Object& _parent, std::string_view parentPropertyName);
 
     TableModelPtr getModel() final;
 };

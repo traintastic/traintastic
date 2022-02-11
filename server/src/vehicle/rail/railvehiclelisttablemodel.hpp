@@ -38,7 +38,7 @@ class RailVehicleListTableModel : public ObjectListTableModel<RailVehicle>
   public:
     CLASS_ID("rail_vehicle_list_table_model")
 
-    static bool isListedProperty(const std::string& name);
+    static bool isListedProperty(std::string_view name);
 
     RailVehicleListTableModel(RailVehicleList& list);
 

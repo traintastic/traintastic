@@ -25,24 +25,24 @@
 
 using T = Train;
 
-TrainProperty::TrainProperty(Object* object, const std::string& name, const std::shared_ptr<T>& value, PropertyFlags flags) :
+TrainProperty::TrainProperty(Object* object, std::string_view name, const std::shared_ptr<T>& value, PropertyFlags flags) :
   AbstractObjectProperty(object, name, flags),
   m_value{value}
 {
 }
 
-TrainProperty::TrainProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags) :
+TrainProperty::TrainProperty(Object* object, std::string_view name, std::nullptr_t, PropertyFlags flags) :
   TrainProperty(object, name, std::shared_ptr<T>(), flags)
 {
 }
 
-TrainProperty::TrainProperty(Object* object, const std::string& name, const std::shared_ptr<T>& value, PropertyFlags flags, OnSet onSet) :
+TrainProperty::TrainProperty(Object* object, std::string_view name, const std::shared_ptr<T>& value, PropertyFlags flags, OnSet onSet) :
   TrainProperty(object, name, value, flags)
 {
   m_onSet = onSet;
 }
 
-TrainProperty::TrainProperty(Object* object, const std::string& name, std::nullptr_t, PropertyFlags flags, OnSet onSet) :
+TrainProperty::TrainProperty(Object* object, std::string_view name, std::nullptr_t, PropertyFlags flags, OnSet onSet) :
   TrainProperty(object, name, std::shared_ptr<T>(), flags, onSet)
 {
 }

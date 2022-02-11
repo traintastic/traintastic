@@ -24,7 +24,7 @@
 
 namespace Z21 {
 
-ClientSettings::ClientSettings(Object& _parent, const std::string& parentPropertyName)
+ClientSettings::ClientSettings(Object& _parent, std::string_view parentPropertyName)
   : Settings(_parent, parentPropertyName)
 {
 }

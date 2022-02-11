@@ -31,7 +31,10 @@
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
-ECoSInterface::ECoSInterface(const std::weak_ptr<World>& world, std::string_view _id)
+constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
+constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
+
+ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , ecos{this, "ecos", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
@@ -49,8 +52,8 @@ ECoSInterface::ECoSInterface(const std::weak_ptr<World>& world, std::string_view
   name = "ECoS";
   ecos.setValueInternal(std::make_shared<ECoS::Settings>(*this, ecos.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
-  inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name()));
-  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name()));
+  inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name(), inputListColumns));
+  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
   Attributes::addEnabled(hostname, !online);
@@ -125,11 +128,11 @@ bool ECoSInterface::removeOutput(Output& output)
   return success;
 }
 
-bool ECoSInterface::setOutputValue(uint32_t address, bool value)
+bool ECoSInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
 {
   return
     m_kernel &&
-    inRange(address, outputAddressMinMax()) &&
+    inRange(address, outputAddressMinMax(channel)) &&
     m_kernel->setOutput(static_cast<uint16_t>(address), value);
 }
 
@@ -167,13 +170,10 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
           m_kernel->setConfig(ecos->config());
         });
 
-      if(auto w = m_world.lock())
-      {
-        if(contains(w->state.value(), WorldState::Run))
-          m_kernel->go();
-        else
-          m_kernel->emergencyStop();
-      }
+      if(contains(m_world.state.value(), WorldState::Run))
+        m_kernel->go();
+      else
+        m_kernel->emergencyStop();
 
       Attributes::setEnabled(hostname, false);
     }
@@ -202,12 +202,9 @@ void ECoSInterface::addToWorld()
 {
   Interface::addToWorld();
 
-  if(auto world = m_world.lock())
-  {
-    world->decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-    world->inputControllers->add(std::dynamic_pointer_cast<InputController>(shared_from_this()));
-    world->outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
-  }
+  m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
+  m_world.inputControllers->add(std::dynamic_pointer_cast<InputController>(shared_from_this()));
+  m_world.outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 }
 
 void ECoSInterface::destroying()
@@ -230,12 +227,9 @@ void ECoSInterface::destroying()
     output->interface = nullptr;
   }
 
-  if(auto world = m_world.lock())
-  {
-    world->decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-    world->inputControllers->remove(std::dynamic_pointer_cast<InputController>(shared_from_this()));
-    world->outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
-  }
+  m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
+  m_world.inputControllers->remove(std::dynamic_pointer_cast<InputController>(shared_from_this()));
+  m_world.outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 
   Interface::destroying();
 }

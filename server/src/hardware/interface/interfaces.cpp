@@ -24,7 +24,7 @@
 #include "../../utils/ifclassidcreate.hpp"
 #include "../../world/world.hpp"
 
-std::shared_ptr<Interface> Interfaces::create(const std::shared_ptr<World>& world, std::string_view classId, std::string_view id)
+std::shared_ptr<Interface> Interfaces::create(World& world, std::string_view classId, std::string_view id)
 {
   IF_CLASSID_CREATE(DCCPlusPlusInterface)
   IF_CLASSID_CREATE(ECoSInterface)

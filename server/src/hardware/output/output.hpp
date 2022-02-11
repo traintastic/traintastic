@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,6 +45,9 @@ class Output final : public IdObject
     static constexpr uint32_t addressMinDefault = 0;
     static constexpr uint32_t addressMaxDefault = 1'000'000;
 
+    void interfaceChanged();
+    void channelChanged();
+
   protected:
     void addToWorld() final;
     void loaded() final;
@@ -59,11 +62,12 @@ class Output final : public IdObject
 
     Property<std::string> name;
     ObjectProperty<OutputController> interface;
+    Property<uint32_t> channel;
     Property<uint32_t> address;
     Property<TriState> value;
     ObjectVectorProperty<Object> controllers;
 
-    Output(const std::weak_ptr<World> world, std::string_view _id);
+    Output(World& world, std::string_view _id);
 };
 
 #endif

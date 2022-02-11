@@ -31,7 +31,7 @@ class TunnelRailTile : public StraightRailTile
   CREATE(TunnelRailTile)
 
   public:
-    TunnelRailTile(const std::weak_ptr<World>& world, std::string_view _id);
+    TunnelRailTile(World& world, std::string_view _id);
 };
 
 #endif

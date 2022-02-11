@@ -23,7 +23,7 @@
 #include "tile.hpp"
 #include "../../core/attributes.hpp"
 
-Tile::Tile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId)
+Tile::Tile(World& world, std::string_view _id, TileId tileId)
   : IdObject(world, _id)
   , m_tileId{tileId}
   , x{this, "x", 0, PropertyFlags::ReadOnly | PropertyFlags::Store}

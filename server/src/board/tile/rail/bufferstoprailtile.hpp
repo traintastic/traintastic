@@ -31,7 +31,7 @@ class BufferStopRailTile : public RailTile
   CREATE(BufferStopRailTile)
 
   public:
-    BufferStopRailTile(const std::weak_ptr<World>& world, std::string_view _id);
+    BufferStopRailTile(World& world, std::string_view _id);
 };
 
 #endif

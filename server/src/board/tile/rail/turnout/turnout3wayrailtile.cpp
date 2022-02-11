@@ -24,7 +24,7 @@
 #include "../../../../core/attributes.hpp"
 #include "../../../../utils/makearray.hpp"
 
-Turnout3WayRailTile::Turnout3WayRailTile(const std::weak_ptr<World>& world, std::string_view _id) :
+Turnout3WayRailTile::Turnout3WayRailTile(World& world, std::string_view _id) :
   TurnoutRailTile(world, _id, TileId::RailTurnout3Way)
 {
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right}));

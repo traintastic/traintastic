@@ -149,17 +149,17 @@ void WorldLoader::createObject(ObjectData& objectData)
 {
   assert(!objectData.object);
 
-  std::string_view classId = objectData.json["class_id"];
-  std::string_view id = objectData.json["id"];
+  std::string_view classId = objectData.json["class_id"].get<std::string_view>();
+  std::string_view id = objectData.json["id"].get<std::string_view>();
 
   if(startsWith(classId, Interfaces::classIdPrefix))
-    objectData.object = Interfaces::create(m_world, classId, id);
+    objectData.object = Interfaces::create(*m_world, classId, id);
   else if(classId == Decoder::classId)
-    objectData.object = Decoder::create(m_world, id);
+    objectData.object = Decoder::create(*m_world, id);
   else if(classId == DecoderFunction::classId)
   {
     // backwards compatibility < 0.1
-    const std::string_view decoderId = objectData.json["decoder"];
+    const std::string_view decoderId = objectData.json["decoder"].get<std::string_view>();
     if(std::shared_ptr<Decoder> decoder = std::dynamic_pointer_cast<Decoder>(getObject(decoderId)))
     {
       auto f = std::make_shared<DecoderFunction>(*decoder, objectData.json["number"]);
@@ -168,14 +168,14 @@ void WorldLoader::createObject(ObjectData& objectData)
     }
   }
   else if(classId == Input::classId)
-    objectData.object = Input::create(m_world, id);
+    objectData.object = Input::create(*m_world, id);
   else if(classId == Output::classId)
-    objectData.object = Output::create(m_world, id);
+    objectData.object = Output::create(*m_world, id);
   else if(classId == Board::classId)
-    objectData.object = Board::create(m_world, id);
+    objectData.object = Board::create(*m_world, id);
   else if(startsWith(classId, Tiles::classIdPrefix))
   {
-    auto tile = Tiles::create(m_world, classId, id);
+    auto tile = Tiles::create(*m_world, classId, id);
 
     // x, y, width, height are read in Board::load()
     tile->x.setValueInternal(objectData.json["x"]);
@@ -193,23 +193,23 @@ void WorldLoader::createObject(ObjectData& objectData)
     objectData.object = tile;
   }
   else if(startsWith(classId, RailVehicles::classIdPrefix))
-    objectData.object = RailVehicles::create(m_world, classId, id);
+    objectData.object = RailVehicles::create(*m_world, classId, id);
   else if(classId == Train::classId)
-    objectData.object = Train::create(m_world, id);
+    objectData.object = Train::create(*m_world, id);
 #ifndef DISABLE_LUA_SCRIPTING
   else if(classId == Lua::Script::classId)
-    objectData.object = Lua::Script::create(m_world, id);
+    objectData.object = Lua::Script::create(*m_world, id);
 #endif
   // backwards compatibility < 0.1
   else if(classId == "command_station.dccplusplus_serial")
   {
-    objectData.object = DCCPlusPlusInterface::create(m_world, id);
+    objectData.object = DCCPlusPlusInterface::create(*m_world, id);
     objectData.json["device"] = objectData.json["port"];
     objectData.json.erase("port");
   }
   else if(classId == "command_station.loconet_serial")
   {
-    auto object = LocoNetInterface::create(m_world, id);
+    auto object = LocoNetInterface::create(*m_world, id);
     object->type = LocoNetInterfaceType::Serial;
     objectData.object = object;
     objectData.json["device"] = objectData.json["port"];
@@ -217,13 +217,13 @@ void WorldLoader::createObject(ObjectData& objectData)
   }
   else if(classId == "command_station.loconet_tcp_binary")
   {
-    auto object = LocoNetInterface::create(m_world, id);
+    auto object = LocoNetInterface::create(*m_world, id);
     object->type = LocoNetInterfaceType::TCPBinary;
     objectData.object = object;
   }
   else if(classId == "command_station.xpressnet_serial")
   {
-    auto object = XpressNetInterface::create(m_world, id);
+    auto object = XpressNetInterface::create(*m_world, id);
     object->type = XpressNetInterfaceType::Serial;
     objectData.object = object;
     objectData.json["device"] = objectData.json["port"];
@@ -231,28 +231,28 @@ void WorldLoader::createObject(ObjectData& objectData)
   }
   else if(classId == "command_station.z21")
   {
-    objectData.object = Z21Interface::create(m_world, id);
+    objectData.object = Z21Interface::create(*m_world, id);
   }
   else if(classId == "controller.wlanmaus")
   {
-    objectData.object = WlanMausInterface::create(m_world, id);
+    objectData.object = WlanMausInterface::create(*m_world, id);
   }
   else if(classId == "input.loconet")
   {
-    objectData.object = Input::create(m_world, id);
-    objectData.json["interface"] = stripSuffix(objectData.json["loconet"], ".loconet");
+    objectData.object = Input::create(*m_world, id);
+    objectData.json["interface"] = stripSuffix(objectData.json["loconet"].get<std::string_view>(), ".loconet");
     objectData.json.erase("loconet");
   }
   else if(classId == "output.loconet")
   {
-    objectData.object = Output::create(m_world, id);
-    objectData.json["interface"] = stripSuffix(objectData.json["loconet"], ".loconet");
+    objectData.object = Output::create(*m_world, id);
+    objectData.json["interface"] = stripSuffix(objectData.json["loconet"].get<std::string_view>(), ".loconet");
     objectData.json.erase("loconet");
   }
   else if(classId == "input.xpressnet")
   {
-    objectData.object = Input::create(m_world, id);
-    objectData.json["interface"] = stripSuffix(objectData.json["xpressnet"], ".xpressnet");
+    objectData.object = Input::create(*m_world, id);
+    objectData.json["interface"] = stripSuffix(objectData.json["xpressnet"].get<std::string_view>(), ".xpressnet");
     objectData.json.erase("xpressnet");
   }
   else

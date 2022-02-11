@@ -24,11 +24,14 @@
 #include "messages.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
+#include "../../input/inputcontroller.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../utils/rtrim.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 #include "../../../utils/inrange.hpp"
+#include "../../../utils/fromchars.hpp"
+#include "../../../utils/displayname.hpp"
 
 namespace DCCPlusPlus {
 
@@ -36,6 +39,8 @@ Kernel::Kernel(const Config& config)
   : m_ioContext{1}
   , m_startupDelayTimer{m_ioContext}
   , m_decoderController{nullptr}
+  , m_inputController{nullptr}
+  , m_outputController{nullptr}
   , m_config{config}
 #ifndef NDEBUG
   , m_started{false}
@@ -63,7 +68,6 @@ void Kernel::start()
   // reset all state values
   m_powerOn = TriState::Undefined;
   m_emergencyStop = TriState::Undefined;
-  m_outputValues.fill(TriState::Undefined);
 
   m_thread = std::thread(
     [this]()
@@ -149,6 +153,22 @@ void Kernel::receive(std::string_view message)
           }
         }
         break;
+
+      case 'q': // Sensor/Input: ACTIVE to INACTIVE
+      case 'Q': // Sensor/Input: INACTIVE to ACTIVE
+        if(m_inputController && message[2] == ' ')
+        {
+          uint32_t id;
+          if(auto r = fromChars(message.substr(3), id); r.ec == std::errc() && *r.ptr == '>' && id <= idMax)
+          {
+            EventLoop::call(
+              [this, id, value=toTriState(message[1] == 'Q')]()
+              {
+                m_inputController->updateInputValue(InputController::defaultInputChannel, id, value);
+              });
+          }
+        }
+        break;
     }
   }
 }
@@ -216,22 +236,40 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   }
 }
 
-bool Kernel::setOutput(uint16_t address, bool value)
+bool Kernel::setOutput(uint32_t channel, uint16_t address, bool value)
 {
-  assert(inRange(address, outputAddressMin, outputAddressMax));
+  switch(channel)
+  {
+    case OutputChannel::dccAccessory:
+      assert(inRange<uint32_t>(address, dccAccessoryAddressMin, dccAccessoryAddressMax));
+      m_ioContext.post(
+        [this, address, value]()
+        {
+          send(Ex::setAccessory(address, value));
+        });
+      return true;
 
-  m_ioContext.post(
-    [this, address, value]()
-    {
-      const auto index = address - outputAddressMin;
-      if(m_outputValues[index] != toTriState(value))
-      {
-        m_outputValues[index] = toTriState(value);
-        send(Ex::setAccessory(address - outputAddressMin, value));
-      }
-    });
+    case OutputChannel::turnout:
+      assert(inRange<uint32_t>(address, idMin, idMax));
+      m_ioContext.post(
+        [this, address, value]()
+        {
+          send(Ex::setTurnout(address, value));
+        });
+      return true;
 
-  return true;
+    case OutputChannel::output:
+      assert(inRange<uint32_t>(address, idMin, idMax));
+      m_ioContext.post(
+        [this, address, value]()
+        {
+          send(Ex::setOutput(address, value));
+        });
+      return true;
+  }
+
+  assert(false);
+  return false;
 }
 
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)

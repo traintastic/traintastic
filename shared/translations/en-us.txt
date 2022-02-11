@@ -62,6 +62,10 @@ clock:month=Month
 clock:multiplier=Multiplier
 clock:year=Year
 
+dccplusplus_channel:dcc_accessory=DCC accessory
+dccplusplus_channel:turnout=Turnout
+dccplusplus_channel:output=Output
+
 dccplusplus_settings:startup_delay=Startup delay
 dccplusplus_settings:use_ex=Use DCC++EX commands
 
@@ -93,6 +97,7 @@ direction:forward=Forward
 direction:reverse=Reverse
 
 hardware:address=Address
+hardware:channel=Channel
 hardware:command_station=Command station
 hardware:dccplusplus=DCC++
 hardware:debug_log_input=Log input changes

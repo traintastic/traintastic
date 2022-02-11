@@ -53,7 +53,7 @@ class BlockRailTile : public RailTile
     Property<BlockState> state;
     VectorProperty<SensorState> sensorStates;
 
-    BlockRailTile(const std::weak_ptr<World>& world, std::string_view _id);
+    BlockRailTile(World& world, std::string_view _id);
 
     void inputItemValueChanged(BlockInputMapItem& item);
 };

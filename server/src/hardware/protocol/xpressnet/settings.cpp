@@ -26,7 +26,7 @@
 
 namespace XpressNet {
 
-Settings::Settings(Object& _parent, const std::string& parentPropertyName)
+Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , commandStation{this, "command_station", XpressNetCommandStation::Custom, PropertyFlags::ReadWrite | PropertyFlags::Store, std::bind(&Settings::commandStationChanged, this, std::placeholders::_1)}
   , useEmergencyStopLocomotiveCommand{this, "use_emergency_stop_locomotive_command", false, PropertyFlags::ReadWrite | PropertyFlags::Store, std::bind(&Settings::setCommandStationCustom, this)}

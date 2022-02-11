@@ -31,7 +31,7 @@ class StraightRailTile : public RailTile
     CLASS_ID("board_tile.rail.straight")
     CREATE(StraightRailTile)
 
-    StraightRailTile(const std::weak_ptr<World>& world, std::string_view _id, TileId tileId = TileId::RailStraight);
+    StraightRailTile(World& world, std::string_view _id, TileId tileId = TileId::RailStraight);
 };
 
 #endif

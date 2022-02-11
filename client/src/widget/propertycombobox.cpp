@@ -22,6 +22,7 @@
 
 #include "propertycombobox.hpp"
 #include <cassert>
+#include <traintastic/locale/locale.hpp>
 #include "../network/property.hpp"
 #include "../utils/internalupdateholder.hpp"
 #include "../utils/enum.hpp"
@@ -55,6 +56,8 @@ PropertyComboBox::PropertyComboBox(Property& property, QWidget* parent) :
           setVisible(value.toBool());
           break;
 
+        case AttributeName::AliasKeys:
+        case AttributeName::AliasValues:
         case AttributeName::Values:
           updateValues();
           break;
@@ -86,15 +89,22 @@ void PropertyComboBox::updateValues()
       switch(m_property.type())
       {
         case ValueType::Integer:
+        {
+          const QVariantList aliasKeys = m_property.getAttribute(AttributeName::AliasKeys, QVariant()).toList();
+          const QVariantList aliasValues = m_property.getAttribute(AttributeName::AliasValues, QVariant()).toList();
+
           for(QVariant& v : values.toList())
           {
             const qint64 value = v.toLongLong();
-            addItem(QString::number(value), value);
+            if(int index = aliasKeys.indexOf(value); index != -1)
+              addItem(Locale::instance->parse(aliasValues[index].toString()), value);
+            else
+              addItem(QString::number(value), value);
             if(m_property.toInt64() == value)
               setCurrentIndex(count() - 1);
           }
           break;
-
+        }
         case ValueType::Enum:
           for(QVariant& v : values.toList())
           {

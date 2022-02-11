@@ -43,7 +43,7 @@ class AbstractObjectList : public SubObject, public Table
   public:
     Property<uint32_t> length;
 
-    AbstractObjectList(Object& _parent, const std::string& parentPropertyName);
+    AbstractObjectList(Object& _parent, std::string_view parentPropertyName);
 
     virtual ObjectPtr getObject(uint32_t index) = 0;
 };

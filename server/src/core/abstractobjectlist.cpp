@@ -24,7 +24,7 @@
 #include "../core/idobject.hpp"
 #include "../world/worldloader.hpp"
 
-AbstractObjectList::AbstractObjectList(Object& _parent, const std::string& parentPropertyName)
+AbstractObjectList::AbstractObjectList(Object& _parent, std::string_view parentPropertyName)
   : SubObject{_parent, parentPropertyName}
   , length{this, "length", 0, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::NoScript}
 {
@@ -40,7 +40,7 @@ void AbstractObjectList::load(WorldLoader& loader, const nlohmann::json& data)
   for(auto& [_, id] : objects.items())
   {
     static_cast<void>(_); // silence unused warning
-    if(ObjectPtr item = loader.getObject(id))
+    if(ObjectPtr item = loader.getObject(id.get<std::string_view>()))
       items.emplace_back(std::move(item));
   }
   setItems(items);

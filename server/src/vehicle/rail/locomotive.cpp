@@ -22,7 +22,7 @@
 
 #include "locomotive.hpp"
 
-Locomotive::Locomotive(const std::weak_ptr<World>& world, std::string_view _id) :
+Locomotive::Locomotive(World& world, std::string_view _id) :
   RailVehicle(world, _id)
 {
 }
