@@ -24,6 +24,7 @@
 #include "../kernel.hpp"
 #include "../messages.hpp"
 #include "../../../../utils/endswith.hpp"
+#include "../../../../utils/fromchars.hpp"
 
 namespace DCCPlusPlus {
 
@@ -58,6 +59,35 @@ bool SimulationIOHandler::send(std::string_view message)
       else if(message == Ex::powerOnJoin())
         reply(Ex::powerOnJoinResponse());
       break;
+
+    case 'T': // Turnout
+    {
+      uint16_t id;
+      if(auto r = fromChars(message.substr(3), id); r.ec == std::errc())
+      {
+        const char state = *(r.ptr + 1);
+
+        if(state == '0' || state == 'C')
+          reply(Ex::setTurnoutResponse(id, false));
+        else if(state == '1' || state == 'T')
+          reply(Ex::setTurnoutResponse(id, true));
+      }
+      break;
+    }
+    case 'Z': // Output
+    {
+      uint16_t id;
+      if(auto r = fromChars(message.substr(3), id); r.ec == std::errc())
+      {
+        const char state = *(r.ptr + 1);
+
+        if(state == '0')
+          reply(Ex::setOutputResponse(id, false));
+        else if(state == '1')
+          reply(Ex::setOutputResponse(id, true));
+      }
+      break;
+    }
   }
 
   return true;

@@ -253,11 +253,31 @@ namespace Ex {
       .append(">\n");
   }
 
+  inline std::string setTurnoutResponse(uint16_t id, bool state)
+  {
+    assert(id <= 32767);
+
+    return std::string("<H ")
+      .append(std::to_string(id))
+      .append(state ? " 1" : " 0")
+      .append(">\n");
+  }
+
   inline std::string setOutput(uint16_t id, bool state)
   {
     assert(id <= 32767);
 
     return std::string("<Z ")
+      .append(std::to_string(id))
+      .append(state ? " 1" : " 0")
+      .append(">\n");
+  }
+
+  inline std::string setOutputResponse(uint16_t id, bool state)
+  {
+    assert(id <= 32767);
+
+    return std::string("<Y ")
       .append(std::to_string(id))
       .append(state ? " 1" : " 0")
       .append(">\n");
