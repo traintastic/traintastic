@@ -136,8 +136,14 @@ bool ECoSInterface::setOutputValue(uint32_t channel, uint32_t address, bool valu
     m_kernel->setOutput(static_cast<uint16_t>(address), value);
 }
 
-bool ECoSInterface::setOnline(bool& value)
+bool ECoSInterface::setOnline(bool& value, bool simulation)
 {
+  if(simulation)
+  {
+    Log::log(*this, LogMessage::N2001_SIMULATION_NOT_SUPPORTED);
+    return false;
+  }
+
   if(!m_kernel && value)
   {
     try

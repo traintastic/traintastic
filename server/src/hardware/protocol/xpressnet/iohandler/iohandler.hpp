@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,9 +23,6 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_IOHANDLER_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_IOHANDLER_HPP
 
-#include <cstddef>
-#include <array>
-
 namespace XpressNet {
 
 class Kernel;
@@ -35,16 +32,8 @@ class IOHandler
 {
   protected:
     Kernel& m_kernel;
-    std::array<std::byte, 1024> m_readBuffer;
-    size_t m_readBufferOffset;
-    std::array<std::byte, 1024> m_writeBuffer;
-    size_t m_writeBufferOffset;
-    bool m_extraHeader; //!< every message is prepended by [FF FD] or [FF FE]
 
     IOHandler(Kernel& kernel);
-
-    void processRead(size_t bytesTransferred);
-    virtual void write() = 0;
 
   public:
     IOHandler(const IOHandler&) = delete;
@@ -55,7 +44,7 @@ class IOHandler
     virtual void start() = 0;
     virtual void stop() = 0;
 
-    bool send(const Message& message);
+    virtual bool send(const Message& message) = 0;
 };
 
 }

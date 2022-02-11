@@ -42,6 +42,11 @@ namespace Ex {
     return "<0>\n";
   }
 
+  constexpr std::string_view powerOffResponse()
+  {
+    return "<p0>\n";
+  }
+
   constexpr std::string_view powerOff(Track track)
   {
     switch(track)
@@ -55,10 +60,28 @@ namespace Ex {
     return "";
   }
 
+  constexpr std::string_view powerOffResponse(Track track)
+  {
+    switch(track)
+    {
+      case Track::Main:
+        return "<p0 MAIN>\n";
+
+      case Track::Programming:
+        return "<p0 PROG>\n";
+    }
+    return "";
+  }
+
   //! Turn Power ON to tracks (Both Main & Programming)
   constexpr std::string_view powerOn()
   {
     return "<1>\n";
+  }
+
+  constexpr std::string_view powerOnResponse()
+  {
+    return "<p1>\n";
   }
 
   constexpr std::string_view powerOn(Track track)
@@ -74,9 +97,27 @@ namespace Ex {
     return "";
   }
 
+  constexpr std::string_view powerOnResponse(Track track)
+  {
+    switch(track)
+    {
+      case Track::Main:
+        return "<p1 MAIN>\n";
+
+      case Track::Programming:
+        return "<p1 PROG>\n";
+    }
+    return "";
+  }
+
   constexpr std::string_view powerOnJoin()
   {
     return "<1 JOIN>\n";
+  }
+
+  constexpr std::string_view powerOnJoinResponse()
+  {
+    return "<p1 JOIN>\n";
   }
 
   //! Displays the instantaneous current on the MAIN Track

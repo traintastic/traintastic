@@ -38,7 +38,7 @@ class Interface : public IdObject
     void destroying() override;
     void worldEvent(WorldState state, WorldEvent event) override;
 
-    virtual bool setOnline(bool& value) = 0;
+    virtual bool setOnline(bool& value, bool simulation) = 0;
 
   public:
     Property<std::string> name;

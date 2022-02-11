@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@
 namespace XpressNet {
 
 TCPIOHandler::TCPIOHandler(Kernel& kernel, const std::string& hostname, uint16_t port)
-  : IOHandler(kernel)
+  : HardwareIOHandler(kernel)
   , m_socket{m_kernel.ioContext()}
 {
   m_extraHeader = true;

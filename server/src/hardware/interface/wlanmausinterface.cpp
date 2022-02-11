@@ -65,8 +65,14 @@ void WlanMausInterface::idChanged(const std::string& newId)
     m_kernel->setLogId(newId);
 }
 
-bool WlanMausInterface::setOnline(bool& value)
+bool WlanMausInterface::setOnline(bool& value, bool simulation)
 {
+  if(simulation)
+  {
+    Log::log(*this, LogMessage::N2001_SIMULATION_NOT_SUPPORTED);
+    return false;
+  }
+
   if(!m_kernel && value)
   {
     try

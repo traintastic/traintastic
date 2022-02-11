@@ -106,76 +106,47 @@ World::World(Private /*unused*/) :
   offline{*this, "offline",
     [this]()
     {
-      Log::log(*this, LogMessage::N1013_COMMUNICATION_DISABLED);
-      state.setValueInternal(state.value() - WorldState::Online);
       event(WorldEvent::Offline);
     }},
   online{*this, "online",
     [this]()
     {
-      Log::log(*this, LogMessage::N1012_COMMUNICATION_ENABLED);
-      state.setValueInternal(state.value() + WorldState::Online);
       event(WorldEvent::Online);
     }},
   powerOff{*this, "power_off", MethodFlags::ScriptCallable,
     [this]()
     {
-      Log::log(*this, LogMessage::N1015_POWER_OFF);
-      state.setValueInternal(state.value() - WorldState::PowerOn);
       event(WorldEvent::PowerOff);
     }},
   powerOn{*this, "power_on",
     [this]()
     {
-      Log::log(*this, LogMessage::N1014_POWER_ON);
-      state.setValueInternal(state.value() + WorldState::PowerOn);
       event(WorldEvent::PowerOn);
     }},
   run{*this, "run",
     [this]()
     {
-      Log::log(*this, LogMessage::N1016_RUNNING);
-      state.setValueInternal(state.value() + WorldState::Run);
       event(WorldEvent::Run);
     }},
   stop{*this, "stop", MethodFlags::ScriptCallable,
     [this]()
     {
-      Log::log(*this, LogMessage::N1017_STOPPED);
-      state.setValueInternal(state.value() - WorldState::Run);
       event(WorldEvent::Stop);
     }},
   mute{this, "mute", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
     [this](bool value)
     {
-      if(value)
-      {
-        Log::log(*this, LogMessage::N1018_MUTE_ENABLED);
-        state.setValueInternal(state.value() + WorldState::Mute);
-        event(WorldEvent::Mute);
-      }
-      else
-      {
-        Log::log(*this, LogMessage::N1019_MUTE_DISABLED);
-        state.setValueInternal(state.value() - WorldState::Mute);
-        event(WorldEvent::Unmute);
-      }
+      event(value ? WorldEvent::Mute : WorldEvent::Unmute);
     }},
   noSmoke{this, "no_smoke", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
     [this](bool value)
     {
-      if(value)
-      {
-        Log::log(*this, LogMessage::N1021_SMOKE_DISABLED);
-        state.setValueInternal(state.value() + WorldState::NoSmoke);
-        event(WorldEvent::NoSmoke);
-      }
-      else
-      {
-        Log::log(*this, LogMessage::N1020_SMOKE_ENABLED);
-        state.setValueInternal(state.value() - WorldState::NoSmoke);
-        event(WorldEvent::Smoke);
-      }
+      event(value ? WorldEvent::NoSmoke : WorldEvent::Smoke);
+    }},
+  simulation{this, "simulation", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
+    [this](bool value)
+    {
+      event(value ? WorldEvent::SimulationEnabled : WorldEvent::SimulationDisabled);
     }},
   save{*this, "save", MethodFlags::NoScript,
     [this]()
@@ -297,11 +268,16 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(mute);
   Attributes::addObjectEditor(noSmoke, false);
   m_interfaceItems.add(noSmoke);
+  Attributes::addEnabled(simulation, false);
+  Attributes::addObjectEditor(simulation, false);
+  m_interfaceItems.add(simulation);
 
   Attributes::addObjectEditor(save, false);
   m_interfaceItems.add(save);
 
   m_interfaceItems.add(onEvent);
+
+  updateEnabled();
 }
 
 std::string World::getUniqueId(std::string_view prefix) const
@@ -387,10 +363,93 @@ void World::worldEvent(WorldState worldState, WorldEvent worldEvent)
 
 void World::event(const WorldEvent value)
 {
+  // Update state:
+  switch(value)
+  {
+    case WorldEvent::EditDisabled:
+      state.setValueInternal(state.value() - WorldState::Edit);
+      break;
+
+    case WorldEvent::EditEnabled:
+      state.setValueInternal(state.value() + WorldState::Edit);
+      break;
+
+    case WorldEvent::Offline:
+      Log::log(*this, LogMessage::N1013_COMMUNICATION_DISABLED);
+      state.setValueInternal(state.value() - WorldState::Online);
+      break;
+
+    case WorldEvent::Online:
+      Log::log(*this, LogMessage::N1012_COMMUNICATION_ENABLED);
+      state.setValueInternal(state.value() + WorldState::Online);
+      break;
+
+    case WorldEvent::PowerOff:
+      Log::log(*this, LogMessage::N1015_POWER_OFF);
+      state.setValueInternal(state.value() - WorldState::PowerOn);
+      break;
+
+    case WorldEvent::PowerOn:
+      Log::log(*this, LogMessage::N1014_POWER_ON);
+      state.setValueInternal(state.value() + WorldState::PowerOn);
+      break;
+
+    case WorldEvent::Stop:
+      Log::log(*this, LogMessage::N1017_STOPPED);
+      state.setValueInternal(state.value() - WorldState::Run);
+      break;
+
+    case WorldEvent::Run:
+      Log::log(*this, LogMessage::N1016_RUNNING);
+      state.setValueInternal(state.value() + WorldState::Run);
+      break;
+
+    case WorldEvent::Unmute:
+      Log::log(*this, LogMessage::N1019_MUTE_DISABLED);
+      state.setValueInternal(state.value() - WorldState::Mute);
+      break;
+
+    case WorldEvent::Mute:
+      Log::log(*this, LogMessage::N1018_MUTE_ENABLED);
+      state.setValueInternal(state.value() + WorldState::Mute);
+      break;
+
+    case WorldEvent::NoSmoke:
+      Log::log(*this, LogMessage::N1021_SMOKE_DISABLED);
+      state.setValueInternal(state.value() + WorldState::NoSmoke);
+      break;
+
+    case WorldEvent::Smoke:
+      Log::log(*this, LogMessage::N1020_SMOKE_ENABLED);
+      state.setValueInternal(state.value() - WorldState::NoSmoke);
+      break;
+
+    case WorldEvent::SimulationDisabled:
+      Log::log(*this, LogMessage::N1023_SIMULATION_DISABLED);
+      state.setValueInternal(state.value() - WorldState::Simulation);
+      break;
+
+    case WorldEvent::SimulationEnabled:
+      Log::log(*this, LogMessage::N1024_SIMULATION_ENABLED);
+      state.setValueInternal(state.value() + WorldState::Simulation);
+      break;
+  }
+
+  updateEnabled();
+
   const WorldState worldState = state;
   worldEvent(worldState, value);
   for(auto& it : m_objects)
     it.second.lock()->worldEvent(worldState, value);
+}
+
+void World::updateEnabled()
+{
+  const bool isOnline = contains(state.value(), WorldState::Online);
+  const bool isPoweredOn = contains(state.value(), WorldState::PowerOn);
+  const bool isRunning = contains(state.value(), WorldState::Run);
+
+  Attributes::setEnabled(simulation, !isOnline && !isPoweredOn && !isRunning);
 }
 
 void World::updateScaleRatio()

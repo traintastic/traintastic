@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,12 +23,12 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_TCPIOHANDLER_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_TCPIOHANDLER_HPP
 
-#include "iohandler.hpp"
+#include "hardwareiohandler.hpp"
 #include <boost/asio/ip/tcp.hpp>
 
 namespace XpressNet {
 
-class TCPIOHandler final : public IOHandler
+class TCPIOHandler final : public HardwareIOHandler
 {
   private:
     boost::asio::ip::tcp::socket m_socket;

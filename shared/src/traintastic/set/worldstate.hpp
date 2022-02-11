@@ -34,6 +34,7 @@ enum class WorldState : uint32_t
   Run = 1 << 3,
   Mute = 1 << 4,
   NoSmoke = 1 << 5,
+  Simulation = 1 << 6,
 };
 
 template<>

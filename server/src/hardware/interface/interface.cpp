@@ -29,7 +29,11 @@
 Interface::Interface(World& world, std::string_view _id)
   : IdObject(world, _id)
   , name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
-  , online{this, "online", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore, nullptr, std::bind(&Interface::setOnline, this, std::placeholders::_1)}
+  , online{this, "online", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore, nullptr,
+      [this](bool& value)
+      {
+        return setOnline(value, contains(m_world.state.value(), WorldState::Simulation));
+      }}
   , status{this, "status", InterfaceStatus::Offline, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
@@ -40,6 +44,7 @@ Interface::Interface(World& world, std::string_view _id)
   m_interfaceItems.add(name);
 
   Attributes::addDisplayName(online, DisplayName::Interface::online);
+  Attributes::addEnabled(online, contains(m_world.state.value(), WorldState::Online));
   m_interfaceItems.add(online);
 
   Attributes::addDisplayName(status, DisplayName::Interface::status);
@@ -72,9 +77,11 @@ void Interface::worldEvent(WorldState state, WorldEvent event)
   {
     case WorldEvent::Offline:
       online = false;
+      Attributes::setEnabled(online, false);
       break;
 
     case WorldEvent::Online:
+      Attributes::setEnabled(online, true);
       online = true;
       break;
 

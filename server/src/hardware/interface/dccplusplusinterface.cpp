@@ -25,6 +25,7 @@
 #include "../output/list/outputlisttablemodel.hpp"
 #include "../protocol/dccplusplus/messages.hpp"
 #include "../protocol/dccplusplus/iohandler/serialiohandler.hpp"
+#include "../protocol/dccplusplus/iohandler/simulationiohandler.hpp"
 #include "../../core/attributes.hpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
@@ -153,13 +154,20 @@ bool DCCPlusPlusInterface::setOutputValue(uint32_t channel, uint32_t address, bo
     m_kernel->setOutput(channel, static_cast<uint16_t>(address), value);
 }
 
-bool DCCPlusPlusInterface::setOnline(bool& value)
+bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
 {
   if(!m_kernel && value)
   {
     try
     {
-      m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SerialIOHandler>(dccplusplus->config(), device.value(), baudrate.value(), SerialFlowControl::None);
+      if(simulation)
+      {
+        m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SimulationIOHandler>(dccplusplus->config());
+      }
+      else
+      {
+        m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SerialIOHandler>(dccplusplus->config(), device.value(), baudrate.value(), SerialFlowControl::None);
+      }
 
       status.setValueInternal(InterfaceStatus::Initializing);
 

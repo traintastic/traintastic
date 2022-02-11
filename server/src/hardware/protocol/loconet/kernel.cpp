@@ -399,7 +399,13 @@ void Kernel::receive(const Message& message)
       const uint8_t slot = *(reinterpret_cast<const uint8_t*>(&message) + 2);
       if(m_decoderController && isLocoSlot(slot))
       {
-        const SlotReadData& slotReadData = static_cast<const SlotReadData&>(message);
+        const auto& slotReadData = static_cast<const SlotReadData&>(message);
+        if(slotReadData.isFree())
+        {
+          clearLocoSlot(slotReadData.slot);
+          break;
+        }
+
         LocoSlot* locoSlot = getLocoSlot(slotReadData.slot, false);
         assert(locoSlot);
 
@@ -779,6 +785,15 @@ Kernel::LocoSlot* Kernel::getLocoSlot(uint8_t slot, bool sendSlotDataRequestIfNe
   }
 
   return &it->second;
+}
+
+void Kernel::clearLocoSlot(uint8_t slot)
+{
+  if(auto it = m_slots.find(slot); it != m_slots.end())
+    m_slots.erase(it);
+
+  if(auto it = std::find_if(m_addressToSlot.begin(), m_addressToSlot.end(), [slot](const auto& item){ return item.second == slot; }); it != m_addressToSlot.end())
+    m_addressToSlot.erase(it);
 }
 
 std::shared_ptr<Decoder> Kernel::getDecoder(uint16_t address)

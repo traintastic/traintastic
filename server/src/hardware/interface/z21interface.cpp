@@ -23,6 +23,7 @@
 #include "z21interface.hpp"
 #include "../decoder/decoderlisttablemodel.hpp"
 #include "../protocol/z21/messages.hpp"
+#include "../protocol/z21/iohandler/simulationiohandler.hpp"
 #include "../protocol/z21/iohandler/udpclientiohandler.hpp"
 #include "../../core/attributes.hpp"
 #include "../../log/log.hpp"
@@ -91,13 +92,16 @@ void Z21Interface::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-bool Z21Interface::setOnline(bool& value)
+bool Z21Interface::setOnline(bool& value, bool simulation)
 {
   if(!m_kernel && value)
   {
     try
     {
-      m_kernel = Z21::ClientKernel::create<Z21::UDPClientIOHandler>(z21->config(), hostname.value(), port.value());
+      if(simulation)
+        m_kernel = Z21::ClientKernel::create<Z21::SimulationIOHandler>(z21->config());
+      else
+        m_kernel = Z21::ClientKernel::create<Z21::UDPClientIOHandler>(z21->config(), hostname.value(), port.value());
 
       status.setValueInternal(InterfaceStatus::Initializing);
 

@@ -25,6 +25,7 @@
 #include "../output/list/outputlisttablemodel.hpp"
 #include "../protocol/xpressnet/messages.hpp"
 #include "../protocol/xpressnet/iohandler/serialiohandler.hpp"
+#include "../protocol/xpressnet/iohandler/simulationiohandler.hpp"
 #include "../protocol/xpressnet/iohandler/liusbiohandler.hpp"
 #include "../protocol/xpressnet/iohandler/rosofts88xpressnetliiohandler.hpp"
 #include "../protocol/xpressnet/iohandler/tcpiohandler.hpp"
@@ -215,37 +216,44 @@ bool XpressNetInterface::setOutputValue(uint32_t channel, uint32_t address, bool
     m_kernel->setOutput(static_cast<uint16_t>(address), value);
 }
 
-bool XpressNetInterface::setOnline(bool& value)
+bool XpressNetInterface::setOnline(bool& value, bool simulation)
 {
   if(!m_kernel && value)
   {
     try
     {
-      switch(type)
+      if(simulation)
       {
-        case XpressNetInterfaceType::Serial:
-          switch(serialInterfaceType)
-          {
-            case XpressNetSerialInterfaceType::LenzLI100:
-            case XpressNetSerialInterfaceType::LenzLI100F:
-            case XpressNetSerialInterfaceType::LenzLI101F:
-              m_kernel = XpressNet::Kernel::create<XpressNet::SerialIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value());
-              break;
+        m_kernel = XpressNet::Kernel::create<XpressNet::SimulationIOHandler>(xpressnet->config());
+      }
+      else
+      {
+        switch(type)
+        {
+          case XpressNetInterfaceType::Serial:
+            switch(serialInterfaceType)
+            {
+              case XpressNetSerialInterfaceType::LenzLI100:
+              case XpressNetSerialInterfaceType::LenzLI100F:
+              case XpressNetSerialInterfaceType::LenzLI101F:
+                m_kernel = XpressNet::Kernel::create<XpressNet::SerialIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value());
+                break;
 
-            case XpressNetSerialInterfaceType::RoSoftS88XPressNetLI:
-              m_kernel = XpressNet::Kernel::create<XpressNet::RoSoftS88XPressNetLIIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value(), s88StartAddress.value(), s88ModuleCount.value());
-              break;
+              case XpressNetSerialInterfaceType::RoSoftS88XPressNetLI:
+                m_kernel = XpressNet::Kernel::create<XpressNet::RoSoftS88XPressNetLIIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value(), s88StartAddress.value(), s88ModuleCount.value());
+                break;
 
-            case XpressNetSerialInterfaceType::LenzLIUSB:
-            case XpressNetSerialInterfaceType::DigikeijsDR5000:
-              m_kernel = XpressNet::Kernel::create<XpressNet::LIUSBIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value());
-              break;
-          }
-          break;
+              case XpressNetSerialInterfaceType::LenzLIUSB:
+              case XpressNetSerialInterfaceType::DigikeijsDR5000:
+                m_kernel = XpressNet::Kernel::create<XpressNet::LIUSBIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value());
+                break;
+            }
+            break;
 
-        case XpressNetInterfaceType::Network:
-          m_kernel = XpressNet::Kernel::create<XpressNet::TCPIOHandler>(xpressnet->config(), hostname.value(), port.value());
-          break;
+          case XpressNetInterfaceType::Network:
+            m_kernel = XpressNet::Kernel::create<XpressNet::TCPIOHandler>(xpressnet->config(), hostname.value(), port.value());
+            break;
+        }
       }
 
       if(!m_kernel)
@@ -297,11 +305,11 @@ bool XpressNetInterface::setOnline(bool& value)
         });
 
       if(!contains(m_world.state.value(), WorldState::PowerOn))
-        m_kernel->trackPowerOff();
+        m_kernel->stopOperations();
       else if(!contains(m_world.state.value(), WorldState::Run))
-        m_kernel->emergencyStop();
+        m_kernel->stopAllLocomotives();
       else
-        m_kernel->normalOperationsResumed();
+        m_kernel->resumeOperations();
 
       Attributes::setEnabled({type, serialInterfaceType, device, baudrate, flowControl, hostname, port, s88StartAddress, s88ModuleCount}, false);
     }
@@ -378,22 +386,22 @@ void XpressNetInterface::worldEvent(WorldState state, WorldEvent event)
     switch(event)
     {
       case WorldEvent::PowerOff:
-        m_kernel->trackPowerOff();
+        m_kernel->stopOperations();
         break;
 
       case WorldEvent::PowerOn:
-        m_kernel->normalOperationsResumed();
+        m_kernel->resumeOperations();
         if(!contains(state, WorldState::Run))
-          m_kernel->emergencyStop();
+          m_kernel->stopAllLocomotives();
         break;
 
       case WorldEvent::Stop:
-        m_kernel->emergencyStop();
+        m_kernel->stopAllLocomotives();
         break;
 
       case WorldEvent::Run:
         if(contains(state, WorldState::PowerOn))
-          m_kernel->normalOperationsResumed();
+          m_kernel->resumeOperations();
         break;
 
       default:
