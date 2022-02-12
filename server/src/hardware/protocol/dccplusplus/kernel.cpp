@@ -296,6 +296,13 @@ bool Kernel::setOutput(uint32_t channel, uint16_t address, bool value)
         [this, address, value]()
         {
           send(Ex::setAccessory(address, value));
+
+          // no response for accessory command, assume it succeeds:
+          EventLoop::call(
+            [this, address, value]()
+            {
+              m_outputController->updateOutputValue(OutputChannel::dccAccessory, address, toTriState(value));
+            });
         });
       return true;
 
