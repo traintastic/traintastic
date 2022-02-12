@@ -239,7 +239,10 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
 void DCCPlusPlusInterface::addToWorld()
 {
   Interface::addToWorld();
+
   m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
+  m_world.inputControllers->add(std::dynamic_pointer_cast<InputController>(shared_from_this()));
+  m_world.outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 }
 
 void DCCPlusPlusInterface::loaded()
@@ -257,7 +260,22 @@ void DCCPlusPlusInterface::destroying()
     decoder->interface = nullptr;
   }
 
+  for(const auto& input : *inputs)
+  {
+    assert(input->interface.value() == std::dynamic_pointer_cast<InputController>(shared_from_this()));
+    input->interface = nullptr;
+  }
+
+  for(const auto& output : *outputs)
+  {
+    assert(output->interface.value() == std::dynamic_pointer_cast<OutputController>(shared_from_this()));
+    output->interface = nullptr;
+  }
+
   m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
+  m_world.inputControllers->remove(std::dynamic_pointer_cast<InputController>(shared_from_this()));
+  m_world.outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
+
   Interface::destroying();
 }
 
