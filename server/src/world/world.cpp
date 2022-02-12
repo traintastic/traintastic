@@ -401,7 +401,7 @@ void World::event(const WorldEvent value)
 
     case WorldEvent::Run:
       Log::log(*this, LogMessage::N1016_RUNNING);
-      state.setValueInternal(state.value() + WorldState::Run);
+      state.setValueInternal(state.value() + WorldState::PowerOn + WorldState::Run);
       break;
 
     case WorldEvent::Unmute:
