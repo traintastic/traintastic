@@ -271,6 +271,7 @@ void DCCPlusPlusInterface::worldEvent(WorldState state, WorldEvent event)
     {
       case WorldEvent::PowerOff:
         m_kernel->powerOff();
+        m_kernel->emergencyStop();
         break;
 
       case WorldEvent::PowerOn:
@@ -282,6 +283,7 @@ void DCCPlusPlusInterface::worldEvent(WorldState state, WorldEvent event)
         break;
 
       case WorldEvent::Run:
+        m_kernel->powerOn();
         m_kernel->clearEmergencyStop();
         restoreDecoderSpeed();
         break;
