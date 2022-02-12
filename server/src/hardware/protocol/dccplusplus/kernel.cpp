@@ -25,6 +25,7 @@
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../input/inputcontroller.hpp"
+#include "../../output/outputcontroller.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../utils/rtrim.hpp"
 #include "../../../core/eventloop.hpp"
@@ -123,6 +124,30 @@ void Kernel::receive(std::string_view message)
   {
     switch(message[1])
     {
+      case 'H': // Turnout response
+      {
+        uint16_t id;
+        if(auto r = fromChars(message.substr(3), id); r.ec == std::errc())
+        {
+          const char state = *(r.ptr + 1);
+          TriState value = TriState::Undefined;
+
+          if(state == '0' || state == 'C')
+            value = TriState::False;
+          else if(state == '1' || state == 'T')
+            value = TriState::True;
+
+          if(value != TriState::Undefined)
+          {
+            EventLoop::call(
+              [this, id, value]()
+              {
+                m_outputController->updateOutputValue(OutputChannel::turnout, id, value);
+              });
+          }
+        }
+        break;
+      }
       case 'p': // Power on/off response
         if(message[2] == '0')
         {
@@ -169,6 +194,31 @@ void Kernel::receive(std::string_view message)
           }
         }
         break;
+
+      case 'Y': // Output response
+      {
+        uint16_t id;
+        if(auto r = fromChars(message.substr(3), id); r.ec == std::errc())
+        {
+          const char state = *(r.ptr + 1);
+          TriState value = TriState::Undefined;
+
+          if(state == '0')
+            value = TriState::False;
+          else if(state == '1')
+            value = TriState::True;
+
+          if(value != TriState::Undefined)
+          {
+            EventLoop::call(
+              [this, id, value]()
+              {
+                m_outputController->updateOutputValue(OutputChannel::output, id, value);
+              });
+          }
+        }
+        break;
+      }
     }
   }
 }
