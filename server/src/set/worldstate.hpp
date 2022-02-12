@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@
 #include <traintastic/set/worldstate.hpp>
 #include "../lua/set.hpp"
 
-LUA_SET(WorldState, 6,
+LUA_SET(WorldState, 7,
 {
   {WorldState::Edit, "EDIT"},
   {WorldState::Online, "ONLINE"},
@@ -34,6 +34,7 @@ LUA_SET(WorldState, 6,
   {WorldState::Run, "RUN"},
   {WorldState::Mute, "MUTE"},
   {WorldState::NoSmoke, "NO_SMOKE"},
+  {WorldState::Simulation, "SIMULATION"}
 })
 
 #endif
