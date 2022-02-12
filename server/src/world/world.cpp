@@ -386,7 +386,7 @@ void World::event(const WorldEvent value)
 
     case WorldEvent::PowerOff:
       Log::log(*this, LogMessage::N1015_POWER_OFF);
-      state.setValueInternal(state.value() - WorldState::PowerOn);
+      state.setValueInternal(state.value() - WorldState::PowerOn - WorldState::Run);
       break;
 
     case WorldEvent::PowerOn:
