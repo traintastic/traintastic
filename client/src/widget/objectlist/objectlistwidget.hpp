@@ -47,6 +47,7 @@ class ObjectListWidget : public QWidget
     QAction* m_actionEdit;
     MethodAction* m_actionDelete;
     MethodAction* m_actionInputMonitor;
+    MethodAction* m_actionInputMonitorChannel;
     MethodAction* m_actionOutputKeyboard;
     MethodAction* m_actionOutputKeyboardChannel;
     TableWidget* m_tableWidget;

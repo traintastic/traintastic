@@ -58,6 +58,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
   m_actionEdit{nullptr},
   m_actionDelete{nullptr},
   m_actionInputMonitor{nullptr},
+  m_actionInputMonitorChannel{nullptr},
   m_actionOutputKeyboard{nullptr},
   m_actionOutputKeyboardChannel{nullptr},
   m_tableWidget{new TableWidget()}
@@ -208,6 +209,43 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
       });
   }
 
+  if(Method* method = m_object->getMethod("input_monitor_channel"))
+  {
+    if(const auto values = method->getAttribute(AttributeName::Values, QVariant()).toList(); !values.isEmpty())
+    {
+      const QVariantList aliasKeys = method->getAttribute(AttributeName::AliasKeys, QVariant()).toList();
+      const QVariantList aliasValues = method->getAttribute(AttributeName::AliasValues, QVariant()).toList();
+
+      QMenu* menu = new QMenu(this);
+      for(const auto& value : values)
+      {
+        QString text;
+        if(int index = aliasKeys.indexOf(value); index != -1)
+          text = Locale::instance->parse(aliasValues[index].toString());
+        else
+          text = value.toString();
+
+        menu->addAction(text,
+          [this, channel=value.toUInt()]()
+          {
+            //cancelRequest(m_requestIdInputMonitor);
+
+            m_requestIdInputMonitor = callMethodR<ObjectPtr>(m_actionInputMonitorChannel->method(),
+              [this](const ObjectPtr& inputMonitor, Message::ErrorCode /*ec*/)
+              {
+                m_requestIdInputMonitor = Connection::invalidRequestId;
+                if(inputMonitor)
+                  MainWindow::instance->showObject(inputMonitor);
+              },
+              channel);
+          });
+      }
+
+      m_actionInputMonitorChannel = new MethodAction(Theme::getIcon("input_monitor"), *method);
+      m_actionInputMonitorChannel->setMenu(menu);
+    }
+  }
+
   if(Method* method = m_object->getMethod("output_keyboard"))
   {
     m_actionOutputKeyboard = new MethodAction(Theme::getIcon("output_keyboard"), *method,
@@ -262,11 +300,17 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
     }
   }
 
-  if(m_actionInputMonitor || m_actionOutputKeyboard || m_actionOutputKeyboardChannel)
+  if(m_actionInputMonitor || m_actionInputMonitorChannel || m_actionOutputKeyboard || m_actionOutputKeyboardChannel)
   {
     m_toolbar->addSeparator();
     if(m_actionInputMonitor)
       m_toolbar->addAction(m_actionInputMonitor);
+    if(m_actionInputMonitorChannel)
+    {
+      m_toolbar->addAction(m_actionInputMonitorChannel);
+      if(auto* button = qobject_cast<QToolButton*>(m_toolbar->widgetForAction(m_actionInputMonitorChannel)))
+        connect(m_actionInputMonitorChannel, &QAction::triggered, button, &QToolButton::showMenu);
+    }
     if(m_actionOutputKeyboard)
       m_toolbar->addAction(m_actionOutputKeyboard);
     if(m_actionOutputKeyboardChannel)
