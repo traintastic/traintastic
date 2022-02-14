@@ -28,6 +28,8 @@
 #include "../protocol/z21/clientsettings.hpp"
 #include "../decoder/decodercontroller.hpp"
 #include "../decoder/decoderlist.hpp"
+#include "../input/inputcontroller.hpp"
+#include "../input/list/inputlist.hpp"
 #include "../output/outputcontroller.hpp"
 #include "../output/list/outputlist.hpp"
 #include "../../core/objectproperty.hpp"
@@ -38,6 +40,7 @@
 class Z21Interface final
   : public Interface
   , public DecoderController
+  , public InputController
   , public OutputController
 {
   CLASS_ID("interface.z21")
@@ -64,6 +67,7 @@ class Z21Interface final
     Property<uint16_t> port;
     ObjectProperty<Z21::ClientSettings> z21;
     ObjectProperty<DecoderList> decoders;
+    ObjectProperty<InputList> inputs;
     ObjectProperty<OutputList> outputs;
     Property<std::string> hardwareType;
     Property<std::string> serialNumber;
@@ -75,6 +79,13 @@ class Z21Interface final
     [[nodiscard]] bool addDecoder(Decoder& decoder) final;
     [[nodiscard]] bool removeDecoder(Decoder& decoder) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
+
+    // InputController:
+    const std::vector<uint32_t>* inputChannels() const final { return &Z21::ClientKernel::inputChannels; }
+    const std::vector<std::string_view>* inputChannelNames() const final { return &Z21::ClientKernel::inputChannelNames; }
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t channel) const final;
+    [[nodiscard]] bool addInput(Input& input) final;
+    [[nodiscard]] bool removeInput(Input& input) final;
 
     // OutputController:
     std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final { return {Z21::ClientKernel::outputAddressMin, Z21::ClientKernel::outputAddressMax}; }

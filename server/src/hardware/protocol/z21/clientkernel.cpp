@@ -162,6 +162,29 @@ void ClientKernel::receive(const Message& message)
       }
       break;
 
+    case LAN_RMBUS_DATACHANGED:
+      if(m_inputController && message.dataLen() == sizeof(LanRMBusDataChanged))
+      {
+        const auto& data = static_cast<const LanRMBusDataChanged&>(message);
+
+        for(uint8_t i = 0; i < LanRMBusDataChanged::feedbackStatusCount; i++)
+        {
+          const uint16_t index = data.groupIndex * LanRMBusDataChanged::feedbackStatusCount + i;
+          const TriState value = toTriState(data.getFeedbackStatus(i));
+          if(m_rbusFeedbackStatus[index] != value)
+          {
+            m_rbusFeedbackStatus[index] = value;
+
+            EventLoop::call(
+              [this, address=rbusAddressMin + index, value]()
+              {
+                m_inputController->updateInputValue(InputChannel::rbus, address, value);
+              });
+          }
+        }
+      }
+      break;
+
     case LAN_GET_CODE:
     case LAN_LOGOFF:
     case LAN_SET_BROADCASTFLAGS:
@@ -170,7 +193,6 @@ void ClientKernel::receive(const Message& message)
     case LAN_SET_LOCO_MODE:
     case LAN_GET_TURNOUTMODE:
     case LAN_SET_TURNOUTMODE:
-    case LAN_RMBUS_DATACHANGED:
     case LAN_RMBUS_GETDATA:
     case LAN_RMBUS_PROGRAMMODULE:
     case LAN_SYSTEMSTATE_DATACHANGED:
@@ -302,12 +324,14 @@ void ClientKernel::onStart()
   m_firmwareVersionMinor = 0;
   m_trackPowerOn = TriState::Undefined;
   m_emergencyStop = TriState::Undefined;
+  m_rbusFeedbackStatus.fill(TriState::Undefined);
 
   send(LanGetSerialNumber());
   send(LanGetHardwareInfo());
 
   send(LanSetBroadcastFlags(
     BroadcastFlags::PowerLocoTurnoutChanges |
+    BroadcastFlags::RBusChanges |
     BroadcastFlags::SystemStatusChanges |
     BroadcastFlags::AllLocoChanges)); // seems not to work with DR5000
 

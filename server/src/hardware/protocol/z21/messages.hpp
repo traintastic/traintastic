@@ -735,6 +735,17 @@ static_assert(sizeof(LanSetLocoMode) == 7);
 // LAN_SET_TURNOUTMODE
 
 // LAN_RMBUS_GETDATA
+struct LanRMBusGetData : Message
+{
+  uint8_t groupIndex;
+
+  LanRMBusGetData(uint8_t groupIndex_ = 0)
+    : Message(sizeof(LanRMBusGetData), LAN_RMBUS_GETDATA)
+    , groupIndex{groupIndex_}
+  {
+  }
+};
+static_assert(sizeof(LanRMBusGetData) == 5);
 
 // LAN_RMBUS_PROGRAMMODULE
 
@@ -1175,6 +1186,26 @@ static_assert(sizeof(LanGetLocoModeReply) == 7);
 // Reply to LAN_GET_TURNOUTMODE
 
 // LAN_RMBUS_DATACHANGED
+struct LanRMBusDataChanged : Message
+{
+  uint8_t groupIndex;
+  uint8_t feedbackStatus[10];
+
+  static constexpr uint8_t feedbackStatusCount = 8 * sizeof(feedbackStatus);
+
+  LanRMBusDataChanged(uint8_t groupIndex_ = 0)
+    : Message(sizeof(LanRMBusDataChanged), LAN_RMBUS_DATACHANGED)
+    , groupIndex{groupIndex_}
+  {
+  }
+
+  inline bool getFeedbackStatus(uint8_t index) const
+  {
+    assert(index < feedbackStatusCount);
+    return feedbackStatus[index >> 3] & (1 << (index & 0x7));
+  }
+};
+static_assert(sizeof(LanRMBusDataChanged) == 15);
 
 // LAN_SYSTEMSTATE_DATACHANGED
 struct LanSystemStateDataChanged : Message

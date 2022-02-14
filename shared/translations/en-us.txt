@@ -483,6 +483,8 @@ xpressnet_serial_interface_type:rosoft_s88xpressnetli=RoSoft s88XpressNetLI
 xpressnet_settings:use_emergency_stop_locomotive_command=Use short emergency stop locomotive command
 xpressnet_settings:use_roco_f13_f20_command=Use Roco F13-F20 command
 
+z21_channel:rbus=R-Bus
+
 z21_settings.server:allow_emergency_stop=Allow emergency stop
 z21_settings.server:allow_track_power_off=Allow power off
 z21_settings.server:allow_track_power_on_release_emergency_stop=Allow power on/emergency stop release

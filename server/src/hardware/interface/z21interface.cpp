@@ -33,6 +33,7 @@
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
+constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
 
 Z21Interface::Z21Interface(World& world, std::string_view _id)
@@ -41,6 +42,7 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
   , port{this, "port", 21105, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , z21{this, "z21", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
+  , inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , hardwareType{this, "hardware_type", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , serialNumber{this, "serial_number", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
@@ -48,6 +50,7 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
 {
   z21.setValueInternal(std::make_shared<Z21::ClientSettings>(*this, z21.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
+  inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name(), inputListColumns));
   outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
@@ -63,6 +66,9 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
 
   Attributes::addDisplayName(decoders, DisplayName::Hardware::decoders);
   m_interfaceItems.insertBefore(decoders, notes);
+
+  Attributes::addDisplayName(inputs, DisplayName::Hardware::inputs);
+  m_interfaceItems.insertBefore(inputs, notes);
 
   Attributes::addDisplayName(outputs, DisplayName::Hardware::outputs);
   m_interfaceItems.insertBefore(outputs, notes);
@@ -97,6 +103,36 @@ void Z21Interface::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
 {
   if(m_kernel)
     m_kernel->decoderChanged(decoder, changes, functionNumber);
+}
+
+std::pair<uint32_t, uint32_t> Z21Interface::inputAddressMinMax(uint32_t channel) const
+{
+  using namespace Z21;
+
+  switch(channel)
+  {
+    case ClientKernel::InputChannel::rbus:
+      return {ClientKernel::rbusAddressMin, ClientKernel::rbusAddressMax};
+  }
+
+  assert(false);
+  return {0, 0};
+}
+
+bool Z21Interface::addInput(Input& input)
+{
+  const bool success = InputController::addInput(input);
+  if(success)
+    inputs->addObject(input.shared_ptr<Input>());
+  return success;
+}
+
+bool Z21Interface::removeInput(Input& input)
+{
+  const bool success = InputController::removeInput(input);
+  if(success)
+    inputs->removeObject(input.shared_ptr<Input>());
+  return success;
 }
 
 bool Z21Interface::addOutput(Output& output)
@@ -180,6 +216,8 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
         });
 
       m_kernel->setDecoderController(this);
+      m_kernel->setInputController(this);
+      m_kernel->setOutputController(this);
 
       m_kernel->start();
 

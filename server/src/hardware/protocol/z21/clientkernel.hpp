@@ -27,10 +27,32 @@
 #include <boost/asio/steady_timer.hpp>
 #include "../../../enum/tristate.hpp"
 
+class InputController;
+class OutputController;
+
 namespace Z21 {
 
 class ClientKernel final : public Kernel
 {
+  public:
+    static constexpr uint32_t outputAddressMin = 1;
+    static constexpr uint32_t outputAddressMax = 4096;
+    static constexpr uint16_t rbusAddressMin = 1;
+    static constexpr uint16_t rbusAddressMax = 1000; //!< \todo what is the maximum
+
+    struct InputChannel
+    {
+      static constexpr uint32_t rbus = 1;
+    };
+
+    inline static const std::vector<uint32_t> inputChannels = {
+      InputChannel::rbus,
+    };
+
+    inline static const std::vector<std::string_view> inputChannelNames = {
+      "$z21_channel:rbus$",
+    };
+
   private:
     boost::asio::steady_timer m_keepAliveTimer;
 
@@ -48,6 +70,11 @@ class ClientKernel final : public Kernel
     std::function<void()> m_onEmergencyStop;
 
     DecoderController* m_decoderController = nullptr;
+
+    InputController* m_inputController = nullptr;
+    std::array<TriState, rbusAddressMax - rbusAddressMin + 1> m_rbusFeedbackStatus;
+
+    OutputController* m_outputController = nullptr;
 
     ClientConfig m_config;
 
@@ -72,9 +99,6 @@ class ClientKernel final : public Kernel
     void keepAliveTimerExpired(const boost::system::error_code& ec);
 
   public:
-    static constexpr uint32_t outputAddressMin = 1;
-    static constexpr uint32_t outputAddressMax = 4096;
-
     /**
      * @brief Create kernel and IO handler
      * @param[in] config Z21 client configuration
@@ -169,6 +193,30 @@ class ClientKernel final : public Kernel
     {
       assert(!m_started);
       m_decoderController = decoderController;
+    }
+
+    /**
+     * @brief Set the input controller
+     *
+     * @param[in] inputController The input controller
+     * @note This function may not be called when the kernel is running.
+     */
+    void setInputController(InputController* inputController)
+    {
+      assert(!m_started);
+      m_inputController = inputController;
+    }
+
+    /**
+     * @brief Set the output controller
+     *
+     * @param[in] outputController The output controller
+     * @note This function may not be called when the kernel is running.
+     */
+    void setOutputController(OutputController* outputController)
+    {
+      assert(!m_started);
+      m_outputController = outputController;
     }
 
     /**
