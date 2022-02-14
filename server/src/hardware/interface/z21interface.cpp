@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,18 +33,22 @@
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
+constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
+
 Z21Interface::Z21Interface(World& world, std::string_view _id)
   : Interface(world, _id)
   , hostname{this, "hostname", "192.168.1.203", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , port{this, "port", 21105, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , z21{this, "z21", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
+  , outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , hardwareType{this, "hardware_type", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , serialNumber{this, "serial_number", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , firmwareVersion{this, "firmware_version", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
 {
   z21.setValueInternal(std::make_shared<Z21::ClientSettings>(*this, z21.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
+  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
   Attributes::addEnabled(hostname, !online);
@@ -59,6 +63,9 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
 
   Attributes::addDisplayName(decoders, DisplayName::Hardware::decoders);
   m_interfaceItems.insertBefore(decoders, notes);
+
+  Attributes::addDisplayName(outputs, DisplayName::Hardware::outputs);
+  m_interfaceItems.insertBefore(outputs, notes);
 
   Attributes::addCategory(hardwareType, Category::info);
   m_interfaceItems.insertBefore(hardwareType, notes);
@@ -90,6 +97,30 @@ void Z21Interface::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
 {
   if(m_kernel)
     m_kernel->decoderChanged(decoder, changes, functionNumber);
+}
+
+bool Z21Interface::addOutput(Output& output)
+{
+  const bool success = OutputController::addOutput(output);
+  if(success)
+    outputs->addObject(output.shared_ptr<Output>());
+  return success;
+}
+
+bool Z21Interface::removeOutput(Output& output)
+{
+  const bool success = OutputController::removeOutput(output);
+  if(success)
+    outputs->removeObject(output.shared_ptr<Output>());
+  return success;
+}
+
+bool Z21Interface::setOutputValue(uint32_t channel, uint32_t address, bool value)
+{
+  return
+    m_kernel &&
+    inRange(address, outputAddressMinMax(channel)) &&
+    m_kernel->setOutput(static_cast<uint16_t>(address), value);
 }
 
 bool Z21Interface::setOnline(bool& value, bool simulation)
@@ -195,7 +226,9 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
 void Z21Interface::addToWorld()
 {
   Interface::addToWorld();
+
   m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
+  m_world.outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 }
 
 void Z21Interface::destroying()
@@ -206,7 +239,15 @@ void Z21Interface::destroying()
     decoder->interface = nullptr;
   }
 
+  for(const auto& output : *outputs)
+  {
+    assert(output->interface.value() == std::dynamic_pointer_cast<OutputController>(shared_from_this()));
+    output->interface = nullptr;
+  }
+
   m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
+  m_world.outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
+
   Interface::destroying();
 }
 

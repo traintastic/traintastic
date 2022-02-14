@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +28,8 @@
 #include "../protocol/z21/clientsettings.hpp"
 #include "../decoder/decodercontroller.hpp"
 #include "../decoder/decoderlist.hpp"
+#include "../output/outputcontroller.hpp"
+#include "../output/list/outputlist.hpp"
 #include "../../core/objectproperty.hpp"
 
 /**
@@ -36,6 +38,7 @@
 class Z21Interface final
   : public Interface
   , public DecoderController
+  , public OutputController
 {
   CLASS_ID("interface.z21")
   DEFAULT_ID("z21")
@@ -61,6 +64,7 @@ class Z21Interface final
     Property<uint16_t> port;
     ObjectProperty<Z21::ClientSettings> z21;
     ObjectProperty<DecoderList> decoders;
+    ObjectProperty<OutputList> outputs;
     Property<std::string> hardwareType;
     Property<std::string> serialNumber;
     Property<std::string> firmwareVersion;
@@ -71,6 +75,12 @@ class Z21Interface final
     [[nodiscard]] bool addDecoder(Decoder& decoder) final;
     [[nodiscard]] bool removeDecoder(Decoder& decoder) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
+
+    // OutputController:
+    std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final { return {Z21::ClientKernel::outputAddressMin, Z21::ClientKernel::outputAddressMax}; }
+    [[nodiscard]] bool addOutput(Output& output) final;
+    [[nodiscard]] bool removeOutput(Output& output) final;
+    [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 };
 
 #endif

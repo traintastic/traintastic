@@ -72,6 +72,9 @@ class ClientKernel final : public Kernel
     void keepAliveTimerExpired(const boost::system::error_code& ec);
 
   public:
+    static constexpr uint32_t outputAddressMin = 1;
+    static constexpr uint32_t outputAddressMax = 4096;
+
     /**
      * @brief Create kernel and IO handler
      * @param[in] config Z21 client configuration
@@ -171,6 +174,14 @@ class ClientKernel final : public Kernel
     /**
      */
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
+
+    /**
+     *
+     * @param[in] address Output address, \ref outputAddressMin .. \ref outputAddressMax
+     * @param[in] value Output value: \c true is on, \c false is off.
+     * @return \c true if send successful, \c false otherwise.
+     */
+    bool setOutput(uint16_t address, bool value);
 };
 
 }

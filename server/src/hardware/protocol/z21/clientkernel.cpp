@@ -28,6 +28,7 @@
 #include "../../input/inputcontroller.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
+#include "../../../utils/inrange.hpp"
 
 namespace Z21 {
 
@@ -277,6 +278,19 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
           static_cast<uint8_t>(functionNumber),
           f->value ? LanXSetLocoFunction::SwitchType::On : LanXSetLocoFunction::SwitchType::Off));
   }
+}
+
+bool ClientKernel::setOutput(uint16_t address, bool value)
+{
+  assert(inRange<uint32_t>(address, outputAddressMin, outputAddressMax));
+
+  m_ioContext.post(
+    [this, address, value]()
+    {
+      send(LanXSetTurnout(address, value, true));
+    });
+
+  return true;
 }
 
 void ClientKernel::onStart()

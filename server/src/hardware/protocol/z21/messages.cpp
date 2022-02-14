@@ -89,6 +89,24 @@ std::string toString(const Message& message, bool raw)
             raw = true;
           break;
 
+        case 0x43:
+        {
+          const auto& getTurnoutInfo = static_cast<const LanXGetTurnoutInfo&>(message);
+          s = "LAN_X_GET_TURNOUT_INFO";
+          s.append(" address=").append(std::to_string(getTurnoutInfo.address()));
+          break;
+        }
+        case 0x53:
+        {
+          const auto& setTurnout = static_cast<const LanXSetTurnout&>(message);
+          s = "LAN_X_SET_TURNOUT";
+          s.append(" linear_address=").append(std::to_string(setTurnout.linearAddress()));
+          s.append(" address=").append(std::to_string(setTurnout.address()));
+          s.append(" port=").append(std::to_string(setTurnout.port()));
+          s.append(" activate=").append(setTurnout.activate() ? "yes" : "no");
+          s.append(" queue=").append(setTurnout.queue() ? "yes" : "no");
+          break;
+        }
         case 0x61:
           if(message == LanXBCTrackPowerOff())
             s = "LAN_X_BC_TRACK_POWER_OFF";
