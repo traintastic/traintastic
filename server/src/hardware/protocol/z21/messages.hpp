@@ -766,6 +766,76 @@ static_assert(sizeof(LanSystemStateGetData) == 4);
 // LAN_LOCONET_DISPATCH_ADDR
 
 // LAN_LOCONET_DETECTOR
+struct LanLocoNetDetector : Message
+{
+  enum class Type : uint8_t
+  {
+    OccupancyDetector = 0x01,
+    TransponderEntersBlock = 0x02,
+    TransponderExitsBlock = 0x03,
+
+    LissyLocoAddress = 0x10,
+    LissyBlockStatus = 0x11,
+    LissySpeed = 0x12,
+
+    StationaryInterrogateRequest = 0x80,
+    ReportAddress = 0x81,
+    StatusRequestLissy = 0x82,
+  };
+
+  Type type;
+  uint16_t feedbackAddressLE;
+
+  LanLocoNetDetector(uint16_t dataLen, Type type_, uint16_t feedbackAddress)
+    : Message(dataLen, LAN_LOCONET_DETECTOR)
+    , type{type_}
+    , feedbackAddressLE{host_to_le(feedbackAddress)}
+  {
+  }
+
+  uint16_t feedbackAddress() const
+  {
+    return le_to_host(feedbackAddressLE);
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanLocoNetDetector) == 7);
+
+struct LanLocoNetDetectorOccupancyDetector : LanLocoNetDetector
+{
+  uint8_t occupied;
+
+  LanLocoNetDetectorOccupancyDetector(uint16_t feedbackAddress, bool occupied_ = false)
+    : LanLocoNetDetector(sizeof(LanLocoNetDetectorOccupancyDetector), Type::OccupancyDetector, feedbackAddress)
+    , occupied(occupied_ ? 1 : 0)
+  {
+  }
+
+  bool isOccupied() const
+  {
+    return occupied != 0;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanLocoNetDetectorOccupancyDetector) == 8);
+
+struct LanLocoNetDetectorTransponderEntersExitsBlock : LanLocoNetDetector
+{
+  uint8_t transponderAddressLow;
+  uint8_t transponderAddressHigh;
+
+  LanLocoNetDetectorTransponderEntersExitsBlock(Type type_, uint16_t feedbackAddress, uint16_t transponderAddress)
+    : LanLocoNetDetector(sizeof(LanLocoNetDetectorTransponderEntersExitsBlock), type_, feedbackAddress)
+    , transponderAddressLow(transponderAddress >> 8)
+    , transponderAddressHigh(transponderAddress & 0xFF)
+  {
+    assert(type == Type::TransponderEntersBlock || type == Type::TransponderExitsBlock);
+  }
+
+  uint16_t transponderAddress() const
+  {
+    return (static_cast<uint16_t>(transponderAddressHigh) << 8) | transponderAddressLow;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanLocoNetDetectorTransponderEntersExitsBlock) == 9);
 
 // LAN_CAN_DETECTOR
 

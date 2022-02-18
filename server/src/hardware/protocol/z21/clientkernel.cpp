@@ -185,6 +185,41 @@ void ClientKernel::receive(const Message& message)
       }
       break;
 
+    case LAN_LOCONET_DETECTOR:
+      if(m_inputController && message.dataLen() >= sizeof(LanLocoNetDetector))
+      {
+        switch(static_cast<const LanLocoNetDetector&>(message).type)
+        {
+          case LanLocoNetDetector::Type::OccupancyDetector:
+          {
+            const auto& data = static_cast<const LanLocoNetDetectorOccupancyDetector&>(message);
+            const uint16_t index = data.feedbackAddress();
+            const TriState value = toTriState(data.isOccupied());
+            if(m_loconetFeedbackStatus[index] != value)
+            {
+              m_loconetFeedbackStatus[index] = value;
+
+              EventLoop::call(
+                [this, address=loconetAddressMin + index, value]()
+                {
+                  m_inputController->updateInputValue(InputChannel::loconet, address, value);
+                });
+            }
+            break;
+          }
+          case LanLocoNetDetector::Type::TransponderEntersBlock:
+          case LanLocoNetDetector::Type::TransponderExitsBlock:
+          case LanLocoNetDetector::Type::LissyLocoAddress:
+          case LanLocoNetDetector::Type::LissyBlockStatus:
+          case LanLocoNetDetector::Type::LissySpeed:
+          case LanLocoNetDetector::Type::StationaryInterrogateRequest:
+          case LanLocoNetDetector::Type::ReportAddress:
+          case LanLocoNetDetector::Type::StatusRequestLissy:
+            break; // not (yet) supported
+        }
+      }
+      break;
+
     case LAN_GET_CODE:
     case LAN_LOGOFF:
     case LAN_SET_BROADCASTFLAGS:
@@ -203,7 +238,6 @@ void ClientKernel::receive(const Message& message)
     case LAN_LOCONET_Z21_TX:
     case LAN_LOCONET_FROM_LAN:
     case LAN_LOCONET_DISPATCH_ADDR:
-    case LAN_LOCONET_DETECTOR:
     case LAN_CAN_DETECTOR:
       break; // not (yet) supported
   }
@@ -325,6 +359,7 @@ void ClientKernel::onStart()
   m_trackPowerOn = TriState::Undefined;
   m_emergencyStop = TriState::Undefined;
   m_rbusFeedbackStatus.fill(TriState::Undefined);
+  m_loconetFeedbackStatus.fill(TriState::Undefined);
 
   send(LanGetSerialNumber());
   send(LanGetHardwareInfo());
@@ -333,7 +368,8 @@ void ClientKernel::onStart()
     BroadcastFlags::PowerLocoTurnoutChanges |
     BroadcastFlags::RBusChanges |
     BroadcastFlags::SystemStatusChanges |
-    BroadcastFlags::AllLocoChanges)); // seems not to work with DR5000
+    BroadcastFlags::AllLocoChanges | // seems not to work with DR5000
+    BroadcastFlags::LocoNetDetector));
 
   send(LanGetBroadcastFlags());
 

@@ -113,6 +113,9 @@ std::pair<uint32_t, uint32_t> Z21Interface::inputAddressMinMax(uint32_t channel)
   {
     case ClientKernel::InputChannel::rbus:
       return {ClientKernel::rbusAddressMin, ClientKernel::rbusAddressMax};
+
+    case ClientKernel::InputChannel::loconet:
+      return {ClientKernel::loconetAddressMin, ClientKernel::loconetAddressMax};
   }
 
   assert(false);

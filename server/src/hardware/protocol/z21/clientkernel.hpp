@@ -39,18 +39,23 @@ class ClientKernel final : public Kernel
     static constexpr uint32_t outputAddressMax = 4096;
     static constexpr uint16_t rbusAddressMin = 1;
     static constexpr uint16_t rbusAddressMax = 1000; //!< \todo what is the maximum
+    static constexpr uint16_t loconetAddressMin = 1;
+    static constexpr uint16_t loconetAddressMax = 4096;
 
     struct InputChannel
     {
       static constexpr uint32_t rbus = 1;
+      static constexpr uint32_t loconet = 2;
     };
 
     inline static const std::vector<uint32_t> inputChannels = {
       InputChannel::rbus,
+      InputChannel::loconet,
     };
 
     inline static const std::vector<std::string_view> inputChannelNames = {
       "$z21_channel:rbus$",
+      "$hardware:loconet$",
     };
 
   private:
@@ -73,6 +78,7 @@ class ClientKernel final : public Kernel
 
     InputController* m_inputController = nullptr;
     std::array<TriState, rbusAddressMax - rbusAddressMin + 1> m_rbusFeedbackStatus;
+    std::array<TriState, loconetAddressMax - loconetAddressMin + 1> m_loconetFeedbackStatus;
 
     OutputController* m_outputController = nullptr;
 
