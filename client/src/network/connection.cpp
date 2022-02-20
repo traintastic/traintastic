@@ -658,7 +658,7 @@ TableModelPtr Connection::readTableModel(const Message& message)
 void Connection::getWorld()
 {
   if(m_worldRequestId != invalidRequestId)
-    cancelRequest(m_worldRequestId);
+    return;
 
   if(m_worldProperty->objectId().isEmpty())
     setWorld(nullptr);
