@@ -926,6 +926,12 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
         }
         break;
 
+      case Message::Command::ObjectDestroyed:
+      {
+        //const Handle handle = message->read<Handle>();
+        break;
+      }
+
       case Message::Command::TableModelColumnHeadersChanged:
         if(TableModel* model = m_tableModels.value(message->read<Handle>(), nullptr))
         {

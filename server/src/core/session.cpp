@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -557,6 +557,7 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
 
     handle = m_handles.addItem(object);
 
+    m_objectSignals.emplace(handle, object->onDestroying.connect(std::bind(&Session::objectDestroying, this, std::placeholders::_1)));
     m_objectSignals.emplace(handle, object->propertyChanged.connect(std::bind(&Session::objectPropertyChanged, this, std::placeholders::_1)));
     m_objectSignals.emplace(handle, object->attributeChanged.connect(std::bind(&Session::objectAttributeChanged, this, std::placeholders::_1)));
 
@@ -701,6 +702,17 @@ void Session::memoryLoggerChanged(const MemoryLogger& logger, const uint32_t add
       event->write(log.args->at(j));
   }
 
+  m_client->sendMessage(std::move(event));
+}
+
+void Session::objectDestroying(Object& object)
+{
+  const auto handle = m_handles.getHandle(object.shared_from_this());
+  m_handles.removeHandle(handle);
+  m_objectSignals.erase(handle);
+
+  auto event = Message::newEvent(Message::Command::ObjectDestroyed, sizeof(Handle));
+  event->write(handle);
   m_client->sendMessage(std::move(event));
 }
 
