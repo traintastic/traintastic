@@ -56,14 +56,14 @@ void TrayIcon::run()
   windowClass.lpfnWndProc = windowProc;
   windowClass.hInstance = GetModuleHandle(nullptr);
   windowClass.lpszClassName = windowClassName;
-  if(!RegisterClassExA(&windowClass)) 
+  if(!RegisterClassExA(&windowClass))
     return;
 
   // create window (for receiving messages):
   s_window = CreateWindowExA(0, windowClassName, nullptr, 0, 0, 0, 0, 0, 0, 0, 0, 0);
   if(!s_window)
     return;
-  
+
   UpdateWindow(s_window);
 
   // create menu:
@@ -77,16 +77,16 @@ void TrayIcon::run()
   notifyIconData.hWnd = s_window;
   notifyIconData.uID = 0;
   notifyIconData.uFlags = NIF_ICON | NIF_MESSAGE;
-  notifyIconData.uCallbackMessage = WM_NOTIFYICON_CALLBACK; 
+  notifyIconData.uCallbackMessage = WM_NOTIFYICON_CALLBACK;
   notifyIconData.hIcon = static_cast<HICON>(LoadImageA(GetModuleHandleA(nullptr), "APPICON", IMAGE_ICON, 0, 0, LR_DEFAULTSIZE));
-  
+
   const std::string_view infoTitle{"Traintastic server"};
   const std::string_view infoMessage{"Traintastic server is running in the system tray."};
   std::strncpy(notifyIconData.szInfoTitle, infoTitle.data(), std::min(infoTitle.size(), sizeof(notifyIconData.szInfoTitle) - 1));
   std::strncpy(notifyIconData.szInfo, infoMessage.data(), std::min(infoMessage.size(), sizeof(notifyIconData.szInfo) - 1));
   notifyIconData.dwInfoFlags = NIIF_INFO | NIIF_LARGE_ICON;
   notifyIconData.uFlags |= NIF_INFO;
-  
+
   Shell_NotifyIcon(NIM_ADD, &notifyIconData);
 
   // message loop:
@@ -102,13 +102,13 @@ void TrayIcon::run()
 
   // remove tray icon:
   Shell_NotifyIcon(NIM_DELETE, &notifyIconData);
-  
+
   if(notifyIconData.hIcon)
     DestroyIcon(notifyIconData.hIcon);
-  
+
   if(s_menu)
     DestroyMenu(s_menu);
-  
+
   UnregisterClass(windowClassName, GetModuleHandle(nullptr));
 }
 
@@ -119,11 +119,11 @@ LRESULT CALLBACK TrayIcon::windowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARA
     case WM_CLOSE:
       DestroyWindow(hWnd);
       return 0;
-    
+
     case WM_DESTROY:
       PostQuitMessage(0);
       return 0;
-  
+
     case WM_NOTIFYICON_CALLBACK:
       if(lParam == WM_LBUTTONUP || lParam == WM_RBUTTONUP)
       {
