@@ -1,5 +1,5 @@
 /**
- * server/src/core/session.cpp
+ * server/src/network/session.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -25,17 +25,17 @@
 #include <boost/uuid/random_generator.hpp>
 #include "../traintastic/traintastic.hpp"
 #include "client.hpp"
-#include "abstractproperty.hpp"
-#include "abstractunitproperty.hpp"
-#include "abstractvectorproperty.hpp"
-#include "abstractvalueattribute.hpp"
-#include "abstractvaluesattribute.hpp"
+#include "../core/abstractproperty.hpp"
+#include "../core/abstractunitproperty.hpp"
+#include "../core/abstractvectorproperty.hpp"
+#include "../core/abstractvalueattribute.hpp"
+#include "../core/abstractvaluesattribute.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
 #include <traintastic/enum/attributetype.hpp>
-#include "tablemodel.hpp"
+#include "../core/tablemodel.hpp"
 #include "../world/world.hpp"
-#include "idobject.hpp"
-#include "subobject.hpp"
+#include "../core/idobject.hpp"
+#include "../core/subobject.hpp"
 #include "../log/log.hpp"
 #include "../log/memorylogger.hpp"
 #include "../hardware/input/monitor/inputmonitor.hpp"

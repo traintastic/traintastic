@@ -1,5 +1,5 @@
 /**
- * server/src/core/client.cpp
+ * server/src/network/client.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -24,7 +24,7 @@
 //#include "console.hpp"
 //#include "objectregistry.hpp"
 #include "../traintastic/traintastic.hpp"
-#include "eventloop.hpp"
+#include "../core/eventloop.hpp"
 #include "session.hpp"
 #include "../log/log.hpp"
 

@@ -1,9 +1,9 @@
 /**
- * server/src/core/client.hpp
+ * server/src/network/client.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_CORE_CLIENT_HPP
-#define TRAINTASTIC_SERVER_CORE_CLIENT_HPP
+#ifndef TRAINTASTIC_SERVER_NETWORK_CLIENT_HPP
+#define TRAINTASTIC_SERVER_NETWORK_CLIENT_HPP
 
 //#include "Message.hpp"
 //#include "MessageQueue.hpp"
@@ -36,7 +36,7 @@
 //#include "status.hpp"
 //#include <chrono>
 //#include <cmath>
-#include "objectptr.hpp"
+#include "../core/objectptr.hpp"
 #include <traintastic/network/message.hpp>
 
 class Traintastic;

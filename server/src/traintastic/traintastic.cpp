@@ -29,7 +29,7 @@
 #include <traintastic/codename.hpp>
 #include <traintastic/utils/str.hpp>
 #include "../core/eventloop.hpp"
-#include "../core/client.hpp"
+#include "../network/client.hpp"
 #include "../core/attributes.hpp"
 #include "../world/world.hpp"
 #include "../world/worldlist.hpp"

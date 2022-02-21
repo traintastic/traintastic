@@ -125,6 +125,8 @@ file(GLOB SOURCES
   "src/hardware/protocol/z21/iohandler/*.cpp"
   "src/log/*.hpp"
   "src/log/*.cpp"
+  "src/network/*.hpp"
+  "src/network/*.cpp"
   "src/train/*.hpp"
   "src/train/*.cpp"
   "src/traintastic/*.hpp"

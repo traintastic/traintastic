@@ -1,5 +1,5 @@
 /**
- * server/src/core/session.hpp
+ * server/src/network/session.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_CORE_SESSION_HPP
-#define TRAINTASTIC_SERVER_CORE_SESSION_HPP
+#ifndef TRAINTASTIC_SERVER_NETWORK_SESSION_HPP
+#define TRAINTASTIC_SERVER_NETWORK_SESSION_HPP
 
 #include <memory>
 #include <boost/uuid/uuid.hpp>
@@ -29,8 +29,8 @@
 #include <traintastic/network/message.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include "handlelist.hpp"
-#include "objectptr.hpp"
-#include "tablemodelptr.hpp"
+#include "../core/objectptr.hpp"
+#include "../core/tablemodelptr.hpp"
 
 class Client;
 class MemoryLogger;

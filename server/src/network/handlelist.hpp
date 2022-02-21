@@ -1,5 +1,5 @@
 /**
- * server/src/core/handlelist.hpp
+ * server/src/network/handlelist.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_CORE_HANDLELIST_HPP
-#define TRAINTASTIC_SERVER_CORE_HANDLELIST_HPP
+#ifndef TRAINTASTIC_SERVER_NETWORK_HANDLELIST_HPP
+#define TRAINTASTIC_SERVER_NETWORK_HANDLELIST_HPP
 
 #include <cstdint>
 #include <cassert>
