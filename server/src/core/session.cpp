@@ -23,7 +23,7 @@
 #include "session.hpp"
 #include <boost/algorithm/string.hpp>
 #include <boost/uuid/random_generator.hpp>
-#include "traintastic.hpp"
+#include "../traintastic/traintastic.hpp"
 #include "client.hpp"
 #include "abstractproperty.hpp"
 #include "abstractunitproperty.hpp"
@@ -47,7 +47,7 @@
 
 
 
-#include "settings.hpp"
+#include "../traintastic/settings.hpp"
 
 #include "../hardware/decoder/decoderlist.hpp"
 

@@ -28,13 +28,13 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include "worldsaver.hpp"
-#include "../core/traintastic.hpp"
+#include "../traintastic/traintastic.hpp"
 #include "../core/objectlisttablemodel.hpp"
 #include "../core/attributes.hpp"
 #include "../core/abstractvectorproperty.hpp"
 #include "../log/log.hpp"
 #include "../utils/displayname.hpp"
-#include "../core/traintastic.hpp"
+#include "../traintastic/traintastic.hpp"
 
 using nlohmann::json;
 

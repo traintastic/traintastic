@@ -1,5 +1,5 @@
 /**
- * server/src/core/settings.cpp
+ * server/src/traintastic/settings.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -23,7 +23,7 @@
 #include "settings.hpp"
 #include <fstream>
 #include <iomanip>
-#include "attributes.hpp"
+#include "../core/attributes.hpp"
 #include "traintastic.hpp"
 #include "../log/log.hpp"
 #include "../utils/category.hpp"

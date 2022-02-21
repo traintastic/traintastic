@@ -127,6 +127,8 @@ file(GLOB SOURCES
   "src/log/*.cpp"
   "src/train/*.hpp"
   "src/train/*.cpp"
+  "src/traintastic/*.hpp"
+  "src/traintastic/*.cpp"
   "src/vehicle/*.hpp"
   "src/vehicle/*.cpp"
   "src/vehicle/rail/*.hpp"

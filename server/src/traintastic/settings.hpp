@@ -1,5 +1,5 @@
 /**
- * server/src/core/settings.hpp
+ * server/src/traintastic/settings.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,12 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_CORE_SETTINGS_HPP
-#define TRAINTASTIC_SERVER_CORE_SETTINGS_HPP
+#ifndef TRAINTASTIC_SERVER_TRAINTASTIC_SETTINGS_HPP
+#define TRAINTASTIC_SERVER_TRAINTASTIC_SETTINGS_HPP
 
-#include "object.hpp"
+#include "../core/object.hpp"
 #include <traintastic/utils/stdfilesystem.hpp>
-#include "property.hpp"
+#include "../core/property.hpp"
 
 class Settings : public Object
 {

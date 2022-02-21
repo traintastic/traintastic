@@ -1,5 +1,5 @@
 /**
- * server/src/core/traintastic.cpp
+ * server/src/traintastic/traintastic.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -28,10 +28,9 @@
 #include <version.hpp>
 #include <traintastic/codename.hpp>
 #include <traintastic/utils/str.hpp>
-#include "eventloop.hpp"
-#include "settings.hpp"
-#include "client.hpp"
-#include "attributes.hpp"
+#include "../core/eventloop.hpp"
+#include "../core/client.hpp"
+#include "../core/attributes.hpp"
 #include "../world/world.hpp"
 #include "../world/worldlist.hpp"
 #include "../world/worldloader.hpp"

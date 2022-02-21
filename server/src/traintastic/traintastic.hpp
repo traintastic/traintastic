@@ -1,5 +1,5 @@
 /**
- * server/src/core/traintastic.hpp
+ * server/src/traintastic/traintastic.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,17 +20,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_CORE_TRAINTASTIC_HPP
-#define TRAINTASTIC_SERVER_CORE_TRAINTASTIC_HPP
+#ifndef TRAINTASTIC_SERVER_TRAINTASTIC_TRAINTASTIC_HPP
+#define TRAINTASTIC_SERVER_TRAINTASTIC_TRAINTASTIC_HPP
 
 #include <memory>
 #include <list>
 #include <traintastic/utils/stdfilesystem.hpp>
 #include <boost/asio.hpp>
 #include <boost/uuid/uuid.hpp>
-#include "object.hpp"
-#include "objectproperty.hpp"
-#include "method.hpp"
+#include "../core/object.hpp"
+#include "../core/objectproperty.hpp"
+#include "../core/method.hpp"
 #include "settings.hpp"
 #include "../world/world.hpp"
 #include "../world/worldlist.hpp"
