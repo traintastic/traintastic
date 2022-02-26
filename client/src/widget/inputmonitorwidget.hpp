@@ -25,7 +25,7 @@
 
 #include <QWidget>
 #include <memory>
-#include <unordered_map>
+#include <array>
 
 class InputMonitor;
 class AbstractProperty;
@@ -33,13 +33,29 @@ class LEDWidget;
 
 class InputMonitorWidget : public QWidget
 {
-  protected:
+  private:
+    static constexpr uint32_t columns = 16;
+    static constexpr uint32_t rows = 8;
+
     std::shared_ptr<InputMonitor> m_object;
     AbstractProperty* m_addressMin;
     AbstractProperty* m_addressMax;
-    std::unordered_map<uint32_t, LEDWidget*> m_leds;
+    std::array<LEDWidget*, columns * rows> m_leds;
+    QAction* m_previousPage;
+    QAction* m_nextPage;
+    uint32_t m_page = 0;
+    uint32_t m_groupBy = 1;
+
+    uint32_t pageCount() const;
+    void setPage(uint32_t value);
+
+    void setGroupBy(uint32_t value);
 
     LEDWidget* getLED(uint32_t address);
+    void updateLEDs();
+
+  protected:
+    void keyReleaseEvent(QKeyEvent* event) final;
 
   public:
     InputMonitorWidget(std::shared_ptr<InputMonitor> object, QWidget* parent = nullptr);

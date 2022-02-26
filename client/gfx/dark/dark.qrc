@@ -72,5 +72,7 @@
         <file>board_tile.rail.sensor.svg</file>
         <file>board_tile.rail.tunnel.svg</file>
         <file>simulation.svg</file>
+        <file>previous_page.svg</file>
+        <file>next_page.svg</file>
     </qresource>
 </RCC>

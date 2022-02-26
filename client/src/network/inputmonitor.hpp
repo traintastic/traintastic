@@ -48,6 +48,9 @@ class InputMonitor final : public Object
     InputMonitor(const std::shared_ptr<Connection>& connection, Handle handle, const QString& classId);
     ~InputMonitor() final;
 
+    TriState getInputState(uint32_t address) const;
+    QString getInputId(uint32_t address) const;
+
     void refresh();
 
   signals:

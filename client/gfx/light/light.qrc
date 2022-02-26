@@ -51,5 +51,7 @@
         <file>simulation.svg</file>
         <file>output_keyboard.svg</file>
         <file>input_monitor.svg</file>
+        <file>previous_page.svg</file>
+        <file>next_page.svg</file>
     </qresource>
 </RCC>

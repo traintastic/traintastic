@@ -35,6 +35,20 @@ InputMonitor::~InputMonitor()
     m_connection->cancelRequest(m_requestId);
 }
 
+TriState InputMonitor::getInputState(uint32_t address) const
+{
+  if(auto it = m_inputValues.find(address); it != m_inputValues.end())
+    return it->second;
+  return TriState::Undefined;
+}
+
+QString InputMonitor::getInputId(uint32_t address) const
+{
+  if(auto it = m_inputIds.find(address); it != m_inputIds.end())
+    return it->second;
+  return {};
+}
+
 void InputMonitor::refresh()
 {
   if(m_requestId != Connection::invalidRequestId)
