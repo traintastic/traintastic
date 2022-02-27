@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,22 +29,21 @@
 
 using nlohmann::json;
 
-WorldSaver::WorldSaver(const World& world, std::filesystem::path path) :
-  m_path{std::move(path)}
+WorldSaver::WorldSaver(const World& world)
 {
   m_states = json::object();
-  json data = json::object();
-  json state = json::object();
+  m_data = json::object();
+  m_state = json::object();
 
   {
     json worldState = json::object();
-    world.Object::save(*this, data, worldState);
+    world.Object::save(*this, m_data, worldState);
     if(!worldState.empty())
       m_states[world.getObjectId()] = worldState;
-    data.erase("class_id");
+    m_data.erase("class_id");
   }
 
-  data["uuid"] = state["uuid"] = world.uuid.value();
+  m_data["uuid"] = m_state["uuid"] = world.uuid.value();
 
   {
     json objects = json::array();
@@ -59,25 +58,41 @@ WorldSaver::WorldSaver(const World& world, std::filesystem::path path) :
         return (a["id"] < b["id"]);
       });
 
-    data["objects"] = objects;
-    state["states"] = m_states;
+    m_data["objects"] = objects;
+    m_state["states"] = m_states;
   }
+}
 
-  if(m_path.extension() == World::dotCTW)
+WorldSaver::WorldSaver(const World& world, const std::filesystem::path& path)
+  : WorldSaver(world)
+{
+  if(path.extension() == World::dotCTW)
   {
-    CTWWriter ctw(m_path);
-    ctw.writeFile(World::filename, data);
-    ctw.writeFile(World::filenameState, state);
-    for(const auto& file : m_writeFiles)
-      ctw.writeFile(file.first, file.second);
+    CTWWriter ctw(path);
+    writeCTW(ctw);
   }
   else
   {
-    saveToDisk(data, m_path / World::filename);
-    saveToDisk(state, m_path / World::filenameState);
-    deleteFiles();
-    writeFiles();
+    saveToDisk(m_data, path / World::filename);
+    saveToDisk(m_state, path / World::filenameState);
+    deleteFiles(path);
+    writeFiles(path);
   }
+}
+
+WorldSaver::WorldSaver(const World& world, std::vector<std::byte>& memory)
+  : WorldSaver(world)
+{
+  CTWWriter ctw(memory);
+  writeCTW(ctw);
+}
+
+void WorldSaver::writeCTW(CTWWriter& ctw)
+{
+  ctw.writeFile(World::filename, m_data);
+  ctw.writeFile(World::filenameState, m_state);
+  for(const auto& file : m_writeFiles)
+    ctw.writeFile(file.first, file.second);
 }
 
 json WorldSaver::saveObject(const ObjectPtr& object)
@@ -103,20 +118,20 @@ void WorldSaver::writeFile(std::filesystem::path filename, std::string data)
   m_writeFiles.push_back({std::move(filename), std::move(data)});
 }
 
-void WorldSaver::deleteFiles()
+void WorldSaver::deleteFiles(const std::filesystem::path& basePath)
 {
   for(const auto& filename : m_deleteFiles)
   {
     std::error_code ec;
-    std::filesystem::remove(m_path / filename, ec);
+    std::filesystem::remove(basePath / filename, ec);
     //! \todo report error if removal fails of existing file
   }
 }
 
-void WorldSaver::writeFiles()
+void WorldSaver::writeFiles(const std::filesystem::path& basePath)
 {
   for(const auto& file : m_writeFiles)
-    saveToDisk(file.second, m_path / file.first);
+    saveToDisk(file.second, basePath / file.first);
 }
 
 void WorldSaver::saveToDisk(const json& data, const std::filesystem::path& filename)

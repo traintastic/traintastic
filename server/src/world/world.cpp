@@ -342,6 +342,21 @@ ObjectPtr World::getObjectByPath(std::string_view path) const
   return obj;
 }
 
+bool World::export_(std::vector<std::byte>& data)
+{
+  try
+  {
+    WorldSaver saver(*this, data);
+    Log::log(*this, LogMessage::N1025_EXPORTED_WORLD_SUCCESSFULLY);
+    return true;
+  }
+  catch(const std::exception& e)
+  {
+    Log::log(*this, LogMessage::C1010_EXPORTING_WORLD_FAILED_X, e);
+  }
+  return false;
+}
+
 void World::loaded()
 {
   updateScaleRatio();

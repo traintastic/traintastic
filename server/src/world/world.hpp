@@ -130,6 +130,8 @@ class World : public Object
     bool isObject(const std::string&_id) const;
     ObjectPtr getObject(const std::string& _id) const;
     ObjectPtr getObjectByPath(std::string_view path) const;
+
+    bool export_(std::vector<std::byte>& data);
 };
 
 #endif

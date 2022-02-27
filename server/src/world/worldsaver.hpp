@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,22 +29,29 @@
 #include "../utils/json.hpp"
 
 class World;
+class CTWWriter;
 
 class WorldSaver
 {
   private:
     nlohmann::json m_states;
-    const std::filesystem::path m_path;
+    nlohmann::json m_data;
+    nlohmann::json m_state;
     std::list<std::filesystem::path> m_deleteFiles;
     std::list<std::pair<std::filesystem::path, std::string>> m_writeFiles;
 
-    void deleteFiles();
-    void writeFiles();
+    WorldSaver(const World& world);
+
+    void writeCTW(CTWWriter& ctw);
+
+    void deleteFiles(const std::filesystem::path& basePath);
+    void writeFiles(const std::filesystem::path& basePath);
     static void saveToDisk(const nlohmann::json& data, const std::filesystem::path& filename);
     static void saveToDisk(const std::string& data, const std::filesystem::path& filename);
 
   public:
-    WorldSaver(const World& world, std::filesystem::path path);
+    WorldSaver(const World& world, const std::filesystem::path& path);
+    WorldSaver(const World& world, std::vector<std::byte>& memory);
 
     nlohmann::json saveObject(const ObjectPtr& object);
 

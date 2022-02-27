@@ -51,7 +51,7 @@ class Message
       //LoadWorld = 7,
       //SaveWorld = 8,
       //ImportWorld = 9,
-      //ExportWorld = 10,
+      ExportWorld = 10,
       CreateObject = 11,
       //DeleteObject = 12,
       //IsObject = 13,
@@ -155,6 +155,11 @@ class Message
 
     const Header& header() const { return *reinterpret_cast<const Header*>(m_data.data()); }
     Header& header() { return *reinterpret_cast<Header*>(m_data.data()); }
+
+    void updateDataSize()
+    {
+      header().dataSize = static_cast<uint32_t>(m_data.size() - sizeof(Header));
+    }
 
   public:
     static std::unique_ptr<Message> newRequest(Command command, size_t capacity = 0)
@@ -341,7 +346,24 @@ class Message
       else
         static_assert(sizeof(T) != sizeof(T));
 
-      header().dataSize = static_cast<uint32_t>(m_data.size() - sizeof(Header));
+      updateDataSize();
+    }
+
+    template<typename T>
+    void write(const std::vector<T>& value)
+    {
+      if constexpr(std::is_trivially_copyable_v<T>)
+      {
+        write(static_cast<Length>(value.size())); // number of elements, not bytes!
+        const Length dataSize = value.size() * sizeof(T);
+        const size_t oldSize = m_data.size();
+        m_data.resize(oldSize + dataSize);
+        memcpy(m_data.data() + oldSize, value.data(), dataSize);
+      }
+      else
+        static_assert(sizeof(T) != sizeof(T));
+
+      updateDataSize();
     }
 
     void writeBlock()

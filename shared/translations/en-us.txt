@@ -63,8 +63,8 @@ clock:multiplier=Multiplier
 clock:year=Year
 
 dccplusplus_channel:dcc_accessory=DCC accessory
-dccplusplus_channel:turnout=Turnout
 dccplusplus_channel:output=Output
+dccplusplus_channel:turnout=Turnout
 
 dccplusplus_settings:startup_delay=Startup delay
 dccplusplus_settings:use_ex=Use DCC++EX commands
@@ -188,6 +188,7 @@ message:C1006=Creating world backup failed (%1)
 message:C1007=Creating world backup directory failed (%1)
 message:C1008=Creating backup directory failed (%1)
 message:C1009=Creating settings backup failed (%1)
+message:C1010=Exporting world failed (%1)
 message:C2001=Address already used at #%1
 message:C2002=DCC++ only supports the DCC protocol
 message:C2003=DCC++ doesn't support DCC long addresses below 128
@@ -267,8 +268,9 @@ message:N1019=Mute: disabled
 message:N1020=Smoke: enabled
 message:N1021=Smoke: disabled
 message:N1022=Saved world: %1
-message:N1023=Simulation: enabled
-message:N1024=Simulation: disabled
+message:N1023=Simulation: disabled
+message:N1024=Simulation: enabled
+message:N1025=Exported world successfully
 message:N2001=Simulation not supported
 message:N9999=%1
 message:W1001=Discovery disabled, only allowed on port %1
@@ -302,6 +304,9 @@ qtapp.connect_dialog:connecting=Connecting
 qtapp.connect_dialog:password=Password
 qtapp.connect_dialog:server=Server
 qtapp.connect_dialog:username=Username
+
+qtapp.error:cant_write_to_file_x=Can't write to file: %1
+qtapp.error:server_error_x=Server error %1
 
 qtapp.mainmenu:about=About
 qtapp.mainmenu:connect_to_server=Connect to server
@@ -359,6 +364,7 @@ qtapp.world_list_dialog:load=Load
 qtapp.world_list_dialog:world_list=World list
 
 qtapp:board_properties=Board properties
+qtapp:export_world_failed=Export world failed
 qtapp:grid=Grid
 qtapp:grid_dot=Dot
 qtapp:grid_line=Line
@@ -369,6 +375,7 @@ qtapp:toggle_mute=Toggle mute
 qtapp:toggle_offline_online=Toggle connection
 qtapp:toggle_power=Toggle power
 qtapp:toggle_smoke=Toggle smoke
+qtapp:traintastic_world=Traintastic world
 qtapp:zoom_in=Zoom in
 qtapp:zoom_out=Zoom out
 

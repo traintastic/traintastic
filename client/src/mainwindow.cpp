@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,6 +32,9 @@
 #include <QApplication>
 #include <QSplitter>
 #include <QToolButton>
+#include <QFileDialog>
+#include <QDateTime>
+#include <QSaveFile>
 #include <traintastic/set/worldstate.hpp>
 #include "mdiarea.hpp"
 #include "dialog/connectdialog.hpp"
@@ -58,6 +61,8 @@
 #define SETTING_GEOMETRY SETTING_PREFIX "geometry"
 #define SETTING_WINDOWSTATE SETTING_PREFIX "windowstate"
 #define SETTING_VIEW_TOOLBAR SETTING_PREFIX "view_toolbar"
+
+static constexpr QLatin1String dotCTW{".ctw"};
 
 inline static void setWorldMute(const ObjectPtr& world, bool value)
 {
@@ -136,7 +141,82 @@ MainWindow::MainWindow(QWidget* parent) :
     m_actionSaveWorld->setShortcut(QKeySequence::Save);
     menu->addSeparator();
     m_actionImportWorld = menu->addAction(Theme::getIcon("world_import"), Locale::tr("qtapp.mainmenu:import_world") + "...", this, &MainWindow::importWorld);
-    m_actionExportWorld = menu->addAction(Theme::getIcon("world_export"), Locale::tr("qtapp.mainmenu:export_world") + "...", this, &MainWindow::exportWorld);
+    m_actionExportWorld = menu->addAction(Theme::getIcon("world_export"), Locale::tr("qtapp.mainmenu:export_world") + "...",
+      [this]()
+      {
+        if(m_world)
+        {
+          assert(m_world->getProperty("name"));
+
+          QSettings settings;
+          settings.beginGroup("export");
+          const QString pathKey{"path"};
+
+          QString filename =
+            settings.value(pathKey, QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).toString()
+              .append(QDir::separator())
+              .append(m_world->getProperty("name")->toString())
+              .append(QDateTime::currentDateTime().toString(" yyyy-MM-dd"))
+              .append(dotCTW);
+
+          filename = QFileDialog::getSaveFileName(
+            this,
+            Locale::tr("qtapp.mainmenu:export_world"),
+            filename,
+            Locale::tr("qtapp:traintastic_world").append(" (*.ctw)"));
+
+          if(!filename.isEmpty())
+          {
+            settings.setValue(pathKey, QFileInfo(filename).absolutePath());
+
+            if(!filename.endsWith(dotCTW))
+              filename.append(dotCTW);
+
+            auto request = Message::newRequest(Message::Command::ExportWorld);
+            m_connection->send(request,
+              [this, filename](const std::shared_ptr<Message>& response)
+              {
+                if(response->isResponse() && !response->isError())
+                {
+                  QByteArray worldData;
+                  response->read(worldData);
+
+                  bool success = false;
+                  QSaveFile file(filename);
+                  if(file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+                  {
+                    const auto* p = worldData.constData();
+                    const auto* end = p + worldData.size();
+                    while(p < end)
+                    {
+                      qint64 r = file.write(p, end - p);
+                      if(r < 0)
+                        break;
+                      p += r;
+                    }
+
+                    success = file.commit();
+                  }
+
+                  if(!success)
+                  {
+                    QMessageBox::critical(
+                      this,
+                      Locale::tr("qtapp:export_world_failed"),
+                      Locale::tr("qtapp.error:cant_write_to_file_x").arg(filename));
+                  }
+                }
+                else
+                {
+                  QMessageBox::critical(
+                    this,
+                    Locale::tr("qtapp:export_world_failed"),
+                    Locale::tr("qtapp.error:server_error_x").arg(static_cast<std::underlying_type_t<Message::ErrorCode>>(response->errorCode())));
+                }
+              });
+          }
+        }
+      });
     menu->addSeparator();
     menu->addAction(Locale::tr("qtapp.mainmenu:quit"), this, &MainWindow::close)->setShortcut(QKeySequence::Quit);
 
@@ -475,10 +555,6 @@ void MainWindow::importWorld()
 {
 }
 
-void MainWindow::exportWorld()
-{
-}
-
 void MainWindow::toggleFullScreen()
 {
   const bool fullScreen = qobject_cast<QAction*>(sender())->isChecked();
@@ -654,7 +730,7 @@ void MainWindow::updateActions()
   m_actionLoadWorld->setEnabled(connected);
   m_actionSaveWorld->setEnabled(haveWorld);
   m_actionImportWorld->setEnabled(haveWorld    && false);
-  m_actionExportWorld->setEnabled(haveWorld    && false);
+  m_actionExportWorld->setEnabled(haveWorld);
 
   m_actionServerLog->setEnabled(connected);
   m_menuServer->setEnabled(connected);
