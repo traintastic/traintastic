@@ -11,7 +11,7 @@ jobs:
       matrix:
         config:
         - name: "windows_x64_msvc"
-          os: windows-latest
+          os: windows-2019
           generator: "Visual Studio 16 2019"
           arch: "-A x64"
           target: traintastic-client
@@ -143,7 +143,7 @@ jobs:
       matrix:
         config:
         - name: "windows_x64_clang"
-          os: windows-latest
+          os: windows-2019
           generator: "Visual Studio 16 2019"
           arch: "-A x64"
           toolset: "-T ClangCL"
@@ -364,7 +364,7 @@ jobs:
 
   package-innosetup:
     name: package innosetup
-    runs-on: windows-latest
+    runs-on: windows-2019
     needs: [build-client, build-server]
 
     steps:
