@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,10 +34,15 @@ struct archive;
 class CTWReader
 {
   private:
+    std::unique_ptr<archive, void(*)(archive*)> m_archive;
     std::unordered_map<std::string, std::vector<std::byte>> m_files;
+
+    CTWReader();
+    void readFiles();
 
   public:
     CTWReader(const std::filesystem::path& filename);
+    CTWReader(const std::vector<std::byte>& memory);
 
     bool readFile(const std::filesystem::path& filename, nlohmann::json& data);
     bool readFile(const std::filesystem::path& filename, std::string& text);

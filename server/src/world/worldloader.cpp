@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,19 +43,72 @@
 
 using nlohmann::json;
 
-WorldLoader::WorldLoader(std::filesystem::path path) :
-  m_path{std::move(path)},
-  m_world{World::create()}
+WorldLoader::WorldLoader()
+  : m_world{World::create()}
+{
+}
+
+WorldLoader::WorldLoader(std::filesystem::path path)
+  : WorldLoader()
+{
+  if(path.extension() == World::dotCTW)
+    m_ctw = std::make_unique<CTWReader>(path);
+  else
+    m_path = std::move(path);
+
+  load();
+}
+
+WorldLoader::WorldLoader(const std::vector<std::byte>& memory)
+  : WorldLoader()
+{
+  m_ctw = std::make_unique<CTWReader>(memory);
+
+  load();
+}
+
+WorldLoader::~WorldLoader() = default; // default here, so we can use a forward declaration of CTWReader in the header.
+
+ObjectPtr WorldLoader::getObject(std::string_view id)
+{
+  std::vector<std::string> ids;
+  boost::split(ids, id, [](char c){ return c == '.'; });
+  auto itId = ids.cbegin();
+
+  ObjectPtr obj;
+  if(auto it = m_objects.find(*itId); it != m_objects.end())
+  {
+    if(!it->second.object)
+      createObject(it->second);
+    obj = it->second.object;
+  }
+
+  while(obj && ++itId != ids.cend())
+  {
+    AbstractProperty* property = obj->getProperty(*itId);
+    if(property && property->type() == ValueType::Object)
+      obj = property->toObject();
+    else
+      obj = nullptr;
+  }
+
+  return obj;
+}
+
+json WorldLoader::getState(const std::string& id) const
+{
+  return m_states.value(id, json::object());
+}
+
+void WorldLoader::load()
 {
   m_states = json::object();
 
   json data;
 
   // load file(s):
-  if(m_path.extension() == World::dotCTW)
+  if(m_ctw)
   {
-    m_ctw = std::make_unique<CTWReader>(m_path);
-
     if(!m_ctw->readFile(World::filename, data))
       throw std::runtime_error(std::string("can't read ").append(World::filename));
 
@@ -65,12 +118,12 @@ WorldLoader::WorldLoader(std::filesystem::path path) :
   }
   else
   {
-    std::ifstream file(path / World::filename);
+    std::ifstream file(m_path / World::filename);
     if(!file.is_open())
-      throw std::runtime_error("can't open " + (path / World::filename).string());
+      throw std::runtime_error("can't open " + (m_path / World::filename).string());
     data = json::parse(file);
 
-    std::ifstream stateFile(path / World::filenameState);
+    std::ifstream stateFile(m_path / World::filenameState);
     if(stateFile.is_open())
     {
       json state = json::parse(stateFile);
@@ -110,39 +163,6 @@ WorldLoader::WorldLoader(std::filesystem::path path) :
     assert(it.second.object);
     it.second.object->loaded();
   }
-}
-
-WorldLoader::~WorldLoader() = default; // default here, so we can use a forward declaration of CTWReader in the header.
-
-ObjectPtr WorldLoader::getObject(std::string_view id)
-{
-  std::vector<std::string> ids;
-  boost::split(ids, id, [](char c){ return c == '.'; });
-  auto itId = ids.cbegin();
-
-  ObjectPtr obj;
-  if(auto it = m_objects.find(*itId); it != m_objects.end())
-  {
-    if(!it->second.object)
-      createObject(it->second);
-    obj = it->second.object;
-  }
-
-  while(obj && ++itId != ids.cend())
-  {
-    AbstractProperty* property = obj->getProperty(*itId);
-    if(property && property->type() == ValueType::Object)
-      obj = property->toObject();
-    else
-      obj = nullptr;
-  }
-
-  return obj;
-}
-
-json WorldLoader::getState(const std::string& id) const
-{
-  return m_states.value(id, json::object());
 }
 
 void WorldLoader::createObject(ObjectData& objectData)

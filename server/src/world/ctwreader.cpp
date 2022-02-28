@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,31 +27,49 @@
 
 using nlohmann::json;
 
-CTWReader::CTWReader(const std::filesystem::path& filename)
-{
-  std::unique_ptr<archive, void(*)(archive*)> ctw{archive_read_new(),
+CTWReader::CTWReader() :
+  m_archive{archive_read_new(),
     [](archive* a)
     {
       archive_read_close(a);
       archive_read_free(a);
-    }};
+    }}
+{
+  if(archive_read_support_filter_xz(m_archive.get()) != ARCHIVE_OK)
+    throw LibArchiveError(m_archive.get());
+  if(archive_read_support_format_tar(m_archive.get()) != ARCHIVE_OK)
+    throw LibArchiveError(m_archive.get());
+}
 
-  if(archive_read_support_filter_xz(ctw.get()) != ARCHIVE_OK)
-    throw LibArchiveError(ctw.get());
-  if(archive_read_support_format_tar(ctw.get()) != ARCHIVE_OK)
-    throw LibArchiveError(ctw.get());
-  if(archive_read_open_filename(ctw.get(), filename.string().c_str(), 10240) != ARCHIVE_OK)
-    throw LibArchiveError(ctw.get());
+CTWReader::CTWReader(const std::filesystem::path& filename)
+  : CTWReader()
+{
+  if(archive_read_open_filename(m_archive.get(), filename.string().c_str(), 10240) != ARCHIVE_OK)
+    throw LibArchiveError(m_archive.get());
 
+  readFiles();
+}
+
+CTWReader::CTWReader(const std::vector<std::byte>& memory)
+  : CTWReader()
+{
+  if(archive_read_open_memory(m_archive.get(), memory.data(), memory.size()) != ARCHIVE_OK)
+    throw LibArchiveError(m_archive.get());
+
+  readFiles();
+}
+
+void CTWReader::readFiles()
+{
   // load everything in memory:
   archive_entry* entry = nullptr;
   while(true)
   {
-    const int r = archive_read_next_header(ctw.get(), &entry);
+    const int r = archive_read_next_header(m_archive.get(), &entry);
     if(r == ARCHIVE_EOF)
       break;
     if(r < ARCHIVE_OK)
-      throw LibArchiveError(ctw.get());
+      throw LibArchiveError(m_archive.get());
 
     std::vector<std::byte> data;
     data.resize(archive_entry_size(entry));
@@ -59,9 +77,9 @@ CTWReader::CTWReader(const std::filesystem::path& filename)
     size_t pos = 0;
     while(pos < data.size())
     {
-      const auto count = archive_read_data(ctw.get(), data.data() + pos, data.size() - pos);
+      const auto count = archive_read_data(m_archive.get(), data.data() + pos, data.size() - pos);
       if(count < 0)
-        throw LibArchiveError(ctw.get());
+        throw LibArchiveError(m_archive.get());
       if(count == 0)
         break; // should not happen
       pos += static_cast<size_t>(count);
@@ -70,6 +88,8 @@ CTWReader::CTWReader(const std::filesystem::path& filename)
     if(pos == data.size())
       m_files.emplace(archive_entry_pathname(entry), std::move(data));
   }
+
+  m_archive.reset();
 }
 
 bool CTWReader::readFile(const std::filesystem::path& filename, nlohmann::json& data)

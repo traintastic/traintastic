@@ -540,6 +540,18 @@ bool Session::processMessage(const Message& message)
         m_memoryLoggerChanged.disconnect();
       break;
 
+    case Message::Command::ImportWorld:
+      if(message.isRequest())
+      {
+        std::vector<std::byte> worldData;
+        message.read(worldData);
+        if(Traintastic::instance->importWorld(worldData))
+          m_client->sendMessage(Message::newResponse(message.command(), message.requestId()));
+        else
+          m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::Failed));
+      }
+      break;
+
     case Message::Command::ExportWorld:
       if(message.isRequest())
       {

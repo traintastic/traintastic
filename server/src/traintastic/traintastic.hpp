@@ -102,6 +102,8 @@ class Traintastic final : public Object
     std::filesystem::path worldDir() const { return dataDir() / "world"; }
     std::filesystem::path worldBackupDir() const { return dataBackupDir() / "world"; }
 
+    bool importWorld(const std::vector<std::byte>& worldData);
+
     RunStatus run();
     void exit();
 };

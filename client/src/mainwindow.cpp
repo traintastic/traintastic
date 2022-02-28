@@ -140,7 +140,49 @@ MainWindow::MainWindow(QWidget* parent) :
       });
     m_actionSaveWorld->setShortcut(QKeySequence::Save);
     menu->addSeparator();
-    m_actionImportWorld = menu->addAction(Theme::getIcon("world_import"), Locale::tr("qtapp.mainmenu:import_world") + "...", this, &MainWindow::importWorld);
+    m_actionImportWorld = menu->addAction(Theme::getIcon("world_import"), Locale::tr("qtapp.mainmenu:import_world") + "...",
+      [this]()
+      {
+        QSettings settings;
+        settings.beginGroup("import");
+        const QString pathKey{"path"};
+
+        const QString filename = QFileDialog::getOpenFileName(
+            this,
+            Locale::tr("qtapp.mainmenu:import_world"),
+            settings.value(pathKey, QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first()).toString(),
+            Locale::tr("qtapp:traintastic_world").append(" (*.ctw)"));
+
+        if(!filename.isEmpty())
+        {
+          settings.setValue(pathKey, QFileInfo(filename).absolutePath());
+
+          QFile file(filename);
+          if(file.open(QIODevice::ReadOnly))
+          {
+            auto request = Message::newRequest(Message::Command::ImportWorld);
+            request->write(file.readAll());
+            m_connection->send(request,
+              [this](const std::shared_ptr<Message>& response)
+              {
+                if(response->isResponse() && response->isError())
+                {
+                  QMessageBox::critical(
+                    this,
+                    Locale::tr("qtapp:import_world_failed"),
+                    Locale::tr("qtapp.error:server_error_x").arg(static_cast<std::underlying_type_t<Message::ErrorCode>>(response->errorCode())));
+                }
+              });
+          }
+          else
+          {
+            QMessageBox::critical(
+              this,
+              Locale::tr("qtapp:import_world_failed"),
+              Locale::tr("qtapp.error:cant_read_from_file_x").arg(filename));
+          }
+        }
+      });
     m_actionExportWorld = menu->addAction(Theme::getIcon("world_export"), Locale::tr("qtapp.mainmenu:export_world") + "...",
       [this]()
       {
@@ -551,10 +593,6 @@ void MainWindow::loadWorld()
   }
 }
 
-void MainWindow::importWorld()
-{
-}
-
 void MainWindow::toggleFullScreen()
 {
   const bool fullScreen = qobject_cast<QAction*>(sender())->isChecked();
@@ -729,7 +767,7 @@ void MainWindow::updateActions()
   m_actionNewWorld->setEnabled(connected);
   m_actionLoadWorld->setEnabled(connected);
   m_actionSaveWorld->setEnabled(haveWorld);
-  m_actionImportWorld->setEnabled(haveWorld    && false);
+  m_actionImportWorld->setEnabled(connected);
   m_actionExportWorld->setEnabled(haveWorld);
 
   m_actionServerLog->setEnabled(connected);

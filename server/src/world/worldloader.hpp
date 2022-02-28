@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 #include <unordered_map>
 #include <traintastic/utils/stdfilesystem.hpp>
 #include "../core/objectptr.hpp"
@@ -44,17 +45,21 @@ class WorldLoader
       bool loaded;
     };
 
-    const std::filesystem::path& m_path;
+    std::filesystem::path m_path;
     std::unique_ptr<CTWReader> m_ctw;
     std::shared_ptr<World> m_world;
     std::unordered_map<std::string, ObjectData> m_objects;
     nlohmann::json m_states;
+
+    WorldLoader();
+    void load();
 
     void createObject(ObjectData& objectData);
     void loadObject(ObjectData& objectData);
 
   public:
     WorldLoader(std::filesystem::path path);
+    WorldLoader(const std::vector<std::byte>& memory);
     ~WorldLoader();
 
     std::shared_ptr<World> world() { return m_world; }

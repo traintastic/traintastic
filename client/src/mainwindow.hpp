@@ -99,7 +99,6 @@ class MainWindow : public QMainWindow
   protected slots:
     void disconnectFromServer();
     void loadWorld();
-    void importWorld();
     void toggleFullScreen();
     void toggleServerLog();
     void showAbout();

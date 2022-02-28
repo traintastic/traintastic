@@ -100,6 +100,7 @@ enum class LogMessage : uint32_t
   N1023_SIMULATION_DISABLED = LogMessageOffset::notice + 1023,
   N1024_SIMULATION_ENABLED = LogMessageOffset::notice + 1024,
   N1025_EXPORTED_WORLD_SUCCESSFULLY = LogMessageOffset::notice + 1025,
+  N1026_IMPORTED_WORLD_SUCCESSFULLY = LogMessageOffset::notice + 1026,
   N2001_SIMULATION_NOT_SUPPORTED = LogMessageOffset::notice + 2001,
   N9999_X = LogMessageOffset::notice + 9999,
 
@@ -151,6 +152,7 @@ enum class LogMessage : uint32_t
   C1008_CREATING_BACKUP_DIRECTORY_FAILED_X = LogMessageOffset::critical + 1008,
   C1009_CREATING_SETTING_BACKUP_FAILED_X = LogMessageOffset::critical + 1009,
   C1010_EXPORTING_WORLD_FAILED_X = LogMessageOffset::critical + 1010,
+  C1011_IMPORTING_WORLD_FAILED_X = LogMessageOffset::critical + 1011,
   C2001_ADDRESS_ALREADY_USED_AT_X = LogMessageOffset::critical + 2001,
   C2002_DCCPLUSPLUS_ONLY_SUPPORTS_THE_DCC_PROTOCOL = LogMessageOffset::critical + 2002,
   C2003_DCCPLUSPLUS_DOESNT_SUPPORT_DCC_LONG_ADDRESSES_BELOW_128 = LogMessageOffset::critical + 2003,

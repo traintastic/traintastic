@@ -48,12 +48,24 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_socketTCP{m_ioContext},
   m_socketUDP{m_ioContext},
   settings{this, "settings", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
-  world{this, "world", nullptr, PropertyFlags::ReadWrite},
+  world{this, "world", nullptr, PropertyFlags::ReadWrite,
+    [this](const std::shared_ptr<World>& /*newWorld*/)
+    {
+      if(world)
+        world->destroy();
+      return true;
+    }},
   worldList{this, "world_list", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
   newWorld{*this, "new_world",
     [this]()
     {
+#ifndef NDEBUG
+      std::weak_ptr<World> weakWorld = world.value();
+#endif
       world = World::create();
+#ifndef NDEBUG
+      assert(weakWorld.expired());
+#endif
       Log::log(*this, LogMessage::N1002_CREATED_NEW_WORLD);
       world->edit = true;
       settings->lastWorld = "";
@@ -108,6 +120,27 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
 Traintastic::~Traintastic()
 {
   assert(m_ioContext.stopped());
+}
+
+bool Traintastic::importWorld(const std::vector<std::byte>& worldData)
+{
+  try
+  {
+#ifndef NDEBUG
+    std::weak_ptr<World> weakWorld = world.value();
+#endif
+    world = WorldLoader(worldData).world();
+#ifndef NDEBUG
+    assert(weakWorld.expired());
+#endif
+    Log::log(*this, LogMessage::N1026_IMPORTED_WORLD_SUCCESSFULLY);
+    return true;
+  }
+  catch(const std::exception& e)
+  {
+    Log::log(*this, LogMessage::C1011_IMPORTING_WORLD_FAILED_X, e.what());
+  }
+  return false;
 }
 
 Traintastic::RunStatus Traintastic::run()
@@ -252,8 +285,6 @@ void Traintastic::loadWorldPath(const std::filesystem::path& path)
 #ifndef NDEBUG
     std::weak_ptr<World> weakWorld = world.value();
 #endif
-    if(world)
-      world->destroy();
     world = WorldLoader(path).world();
 #ifndef NDEBUG
     assert(weakWorld.expired());

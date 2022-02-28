@@ -50,7 +50,7 @@ class Message
       //GetWorldList = 6,
       //LoadWorld = 7,
       //SaveWorld = 8,
-      //ImportWorld = 9,
+      ImportWorld = 9,
       ExportWorld = 10,
       CreateObject = 11,
       //DeleteObject = 12,
@@ -279,6 +279,21 @@ class Message
       {
         value = *reinterpret_cast<const T*>(p);
         m_readPosition += sizeof(value);
+      }
+      else
+        static_assert(sizeof(T) != sizeof(T));
+    }
+
+    template<typename T>
+    void read(std::vector<T>& value) const
+    {
+      const Length length = read<Length>();
+
+      if constexpr(std::is_trivially_copyable_v<T>)
+      {
+        value.resize(length);
+        memcpy(value.data(), m_data.data() + sizeof(Header) + m_readPosition, length * sizeof(T));
+        m_readPosition += length * sizeof(T);
       }
       else
         static_assert(sizeof(T) != sizeof(T));
