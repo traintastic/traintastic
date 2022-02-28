@@ -62,7 +62,7 @@
 #define SETTING_WINDOWSTATE SETTING_PREFIX "windowstate"
 #define SETTING_VIEW_TOOLBAR SETTING_PREFIX "view_toolbar"
 
-static constexpr QLatin1String dotCTW{".ctw"};
+static const QLatin1String dotCTW{".ctw"};
 
 inline static void setWorldMute(const ObjectPtr& world, bool value)
 {
