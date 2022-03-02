@@ -35,6 +35,20 @@ OutputKeyboard::~OutputKeyboard()
     m_connection->cancelRequest(m_requestId);
 }
 
+TriState OutputKeyboard::getOutputState(uint32_t address) const
+{
+  if(auto it = m_outputValues.find(address); it != m_outputValues.end())
+    return it->second;
+  return TriState::Undefined;
+}
+
+QString OutputKeyboard::getOutputId(uint32_t address) const
+{
+  if(auto it = m_outputIds.find(address); it != m_outputIds.end())
+    return it->second;
+  return {};
+}
+
 void OutputKeyboard::refresh()
 {
   if(m_requestId != Connection::invalidRequestId)
@@ -59,6 +73,8 @@ void OutputKeyboard::processMessage(const Message& message)
         const uint32_t address = message.read<uint32_t>();
         const QString id = QString::fromUtf8(message.read<QByteArray>());
         const TriState value = message.read<TriState>();
+        m_outputIds[address] = id;
+        m_outputValues[address] = value;
         emit outputIdChanged(address, id);
         emit outputValueChanged(address, value);
         count--;
@@ -69,6 +85,7 @@ void OutputKeyboard::processMessage(const Message& message)
     {
       const uint32_t address = message.read<uint32_t>();
       const QString id = QString::fromUtf8(message.read<QByteArray>());
+      m_outputIds[address] = id;
       emit outputIdChanged(address, id);
       return;
     }
@@ -76,6 +93,7 @@ void OutputKeyboard::processMessage(const Message& message)
     {
       const uint32_t address = message.read<uint32_t>();
       const TriState value = message.read<TriState>();
+      m_outputValues[address] = value;
       emit outputValueChanged(address, value);
       return;
     }

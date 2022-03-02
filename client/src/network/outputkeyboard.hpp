@@ -32,6 +32,8 @@ class OutputKeyboard final : public Object
 
   private:
     int m_requestId;
+    std::unordered_map<uint32_t, QString> m_outputIds;
+    std::unordered_map<uint32_t, TriState> m_outputValues;
 
   protected:
     void processMessage(const Message& message) final;
@@ -41,6 +43,9 @@ class OutputKeyboard final : public Object
 
     OutputKeyboard(std::shared_ptr<Connection> connection, Handle handle, const QString& classId);
     ~OutputKeyboard() final;
+
+    TriState getOutputState(uint32_t address) const;
+    QString getOutputId(uint32_t address) const;
 
     void refresh();
 

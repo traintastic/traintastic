@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,18 +25,37 @@
 
 #include <QWidget>
 #include <memory>
-#include <unordered_map>
+#include <array>
 
 class OutputKeyboard;
 class LEDWidget;
+class AbstractProperty;
 
 class OutputKeyboardWidget : public QWidget
 {
-  protected:
+  private:
+    static constexpr uint32_t columns = 16;
+    static constexpr uint32_t rows = 8;
+
     std::shared_ptr<OutputKeyboard> m_object;
-    std::unordered_map<uint32_t, LEDWidget*> m_leds;
+    AbstractProperty* m_addressMin;
+    AbstractProperty* m_addressMax;
+    std::array<LEDWidget*, columns * rows> m_leds;
+    QAction* m_previousPage;
+    QAction* m_nextPage;
+    uint32_t m_page = 0;
+    uint32_t m_groupBy = 1;
+
+    uint32_t pageCount() const;
+    void setPage(uint32_t value);
+
+    void setGroupBy(uint32_t value);
 
     LEDWidget* getLED(uint32_t address);
+    void updateLEDs();
+
+  protected:
+    void keyReleaseEvent(QKeyEvent* event) final;
 
   public:
     OutputKeyboardWidget(std::shared_ptr<OutputKeyboard> object, QWidget* parent = nullptr);
