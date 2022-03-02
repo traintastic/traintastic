@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,14 +26,9 @@
 #include "object.hpp"
 #include "objectptr.hpp"
 
-class Connection;
-class Message;
-
 class OutputMap final : public Object
 {
   Q_OBJECT
-
-  friend class Connection;
 
   public:
     using Items = std::vector<ObjectPtr>;
@@ -48,7 +43,7 @@ class OutputMap final : public Object
     void readOutputs(const Message& message);
 
   protected:
-    void processMessage(const Message& message);
+    void processMessage(const Message& message) final;
 
   public:
     inline static const QString classIdPrefix = QStringLiteral("output_map.");

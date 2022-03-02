@@ -93,6 +93,7 @@ void InputMonitor::processMessage(const Message& message)
       return;
     }
     default:
+      Object::processMessage(message);
       break;
   }
 }

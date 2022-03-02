@@ -26,13 +26,9 @@
 #include "object.hpp"
 #include <traintastic/enum/tristate.hpp>
 
-class Message;
-
 class InputMonitor final : public Object
 {
   Q_OBJECT
-
-  friend class Connection;
 
   private:
     int m_requestId;
@@ -40,7 +36,7 @@ class InputMonitor final : public Object
     std::unordered_map<uint32_t, TriState> m_inputValues;
 
   protected:
-    void processMessage(const Message& message);
+    void processMessage(const Message& message) final;
 
   public:
     inline static const QString classId = QStringLiteral("input_monitor");

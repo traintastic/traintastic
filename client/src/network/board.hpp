@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,9 +32,6 @@
 #include <traintastic/network/message.hpp>
 #include "objectptr.hpp"
 
-class Connection;
-class Message;
-
 class Board final : public Object
 {
   Q_OBJECT
@@ -51,7 +48,7 @@ class Board final : public Object
     int m_getTileDataRequestId;
 
     void getTileDataResponse(const Message& response);
-    void processMessage(const Message& message);
+    void processMessage(const Message& message) final;
 
   public:
     inline static const QString classId = QStringLiteral("board");

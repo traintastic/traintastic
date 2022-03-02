@@ -374,7 +374,7 @@ int Connection::getInputMonitorInputInfo(InputMonitor& inputMonitor)
   send(request,
     [&inputMonitor](const std::shared_ptr<Message> message)
     {
-      inputMonitor.processMessage(*message);
+      static_cast<Object&>(inputMonitor).processMessage(*message);
     });
   return request->requestId();
 }
@@ -386,16 +386,7 @@ int Connection::getOutputKeyboardOutputInfo(OutputKeyboard& object)
   send(request,
     [&object](const std::shared_ptr<Message> message)
     {
-      uint32_t count = message->read<uint32_t>();
-      while(count > 0)
-      {
-        const uint32_t address = message->read<uint32_t>();
-        const QString id = QString::fromUtf8(message->read<QByteArray>());
-        const TriState value = message->read<TriState>();
-        emit object.outputIdChanged(address, id);
-        emit object.outputValueChanged(address, value);
-        count--;
-      }
+      static_cast<Object&>(object).processMessage(*message);
     });
   return request->requestId();
 }
@@ -973,36 +964,12 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
 
       case Message::Command::InputMonitorInputIdChanged:
       case Message::Command::InputMonitorInputValueChanged:
-        if(auto inputMonitor = std::dynamic_pointer_cast<InputMonitor>(m_objects.value(message->read<Handle>()).lock()))
-          inputMonitor->processMessage(*message);
-        break;
-
       case Message::Command::OutputKeyboardOutputIdChanged:
-        if(auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(m_objects.value(message->read<Handle>()).lock()))
-        {
-          const uint32_t address = message->read<uint32_t>();
-          const QString id = QString::fromUtf8(message->read<QByteArray>());
-          emit outputKeyboard->outputIdChanged(address, id);
-        }
-        break;
-
       case Message::Command::OutputKeyboardOutputValueChanged:
-        if(auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(m_objects.value(message->read<Handle>()).lock()))
-        {
-          const uint32_t address = message->read<uint32_t>();
-          const TriState value = message->read<TriState>();
-          emit outputKeyboard->outputValueChanged(address, value);
-        }
-        break;
-
       case Message::Command::BoardTileDataChanged:
-        if(auto board = std::dynamic_pointer_cast<Board>(m_objects.value(message->read<Handle>()).lock()))
-          board->processMessage(*message);
-        break;
-
       case Message::Command::OutputMapOutputsChanged:
-        if(auto outputMap = std::dynamic_pointer_cast<OutputMap>(m_objects.value(message->read<Handle>()).lock()))
-          outputMap->processMessage(*message);
+        if(auto object = m_objects.value(message->read<Handle>()).lock())
+          object->processMessage(*message);
         break;
 
       default:
