@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,6 +32,9 @@ class OutputKeyboard final : public Object
 
   private:
     int m_requestId;
+
+  protected:
+    void processMessage(const Message& message) final;
 
   public:
     inline static const QString classId = QStringLiteral("output_keyboard");

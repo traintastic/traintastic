@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,4 +45,42 @@ void OutputKeyboard::refresh()
 void OutputKeyboard::outputSetValue(uint32_t address, bool value)
 {
   m_connection->setOutputKeyboardOutputValue(*this, address, value);
+}
+
+void OutputKeyboard::processMessage(const Message& message)
+{
+  switch(message.command())
+  {
+    case Message::Command::OutputKeyboardGetOutputInfo:
+    {
+      uint32_t count = message.read<uint32_t>();
+      while(count > 0)
+      {
+        const uint32_t address = message.read<uint32_t>();
+        const QString id = QString::fromUtf8(message.read<QByteArray>());
+        const TriState value = message.read<TriState>();
+        emit outputIdChanged(address, id);
+        emit outputValueChanged(address, value);
+        count--;
+      }
+      return;
+    }
+    case Message::Command::OutputKeyboardOutputIdChanged:
+    {
+      const uint32_t address = message.read<uint32_t>();
+      const QString id = QString::fromUtf8(message.read<QByteArray>());
+      emit outputIdChanged(address, id);
+      return;
+    }
+    case Message::Command::OutputKeyboardOutputValueChanged:
+    {
+      const uint32_t address = message.read<uint32_t>();
+      const TriState value = message.read<TriState>();
+      emit outputValueChanged(address, value);
+      return;
+    }
+    default:
+      Object::processMessage(message);
+      break;
+  }
 }
