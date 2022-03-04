@@ -48,6 +48,7 @@ Interface::Interface(World& world, std::string_view _id)
   m_interfaceItems.add(online);
 
   Attributes::addDisplayName(status, DisplayName::Interface::status);
+  Attributes::addObjectEditor(status, false);
   Attributes::addValues(status, interfaceStatusValues);
   m_interfaceItems.add(status);
 
