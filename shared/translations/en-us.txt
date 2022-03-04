@@ -137,6 +137,11 @@ interface:online=Online
 interface:status=Status
 interface:type=Type
 
+interface_status:error=Error
+interface_status:initializing=Initializing
+interface_status:offline=Offline
+interface_status:online=Online
+
 ip:hostname=Hostname
 ip:port=Port
 

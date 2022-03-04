@@ -61,7 +61,9 @@ std::string InterfaceListTableModel::getText(uint32_t column, uint32_t row) cons
         return interface.name;
 
       case columnStatus:
-        return "<todo>";
+        if(const auto* it = EnumValues<InterfaceStatus>::value.find(interface.status); it != EnumValues<InterfaceStatus>::value.end())
+          return std::string("$").append(EnumName<InterfaceStatus>::value).append(":").append(it->second).append("$");
+        break;
 
       default:
         assert(false);
