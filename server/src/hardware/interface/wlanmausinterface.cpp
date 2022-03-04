@@ -32,6 +32,7 @@ WlanMausInterface::WlanMausInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , z21{this, "z21", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
+  name = "WLANmaus";
   z21.setValueInternal(std::make_shared<Z21::ServerSettings>(*this, z21.name()));
 
   Attributes::addDisplayName(z21, DisplayName::Hardware::z21);

@@ -48,6 +48,7 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
   , serialNumber{this, "serial_number", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , firmwareVersion{this, "firmware_version", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
 {
+  name = "Z21";
   z21.setValueInternal(std::make_shared<Z21::ClientSettings>(*this, z21.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
   inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name(), inputListColumns));

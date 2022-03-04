@@ -87,6 +87,7 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   , inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
+  name = "XpressNet";
   xpressnet.setValueInternal(std::make_shared<XpressNet::Settings>(*this, xpressnet.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
   inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name(), inputListColumns));
