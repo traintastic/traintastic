@@ -121,8 +121,6 @@ InputMonitorWidget::InputMonitorWidget(std::shared_ptr<InputMonitor> object, QWi
         led->setState(toState(value));
     });
 
-  m_object->refresh();
-
   updateLEDs();
 }
 

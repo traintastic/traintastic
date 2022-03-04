@@ -27,6 +27,14 @@ InputMonitor::InputMonitor(const std::shared_ptr<Connection>& connection, Handle
   Object(connection, handle, classId),
   m_requestId{Connection::invalidRequestId}
 {
+  auto request = Message::newRequest(Message::Command::InputMonitorGetInputInfo);
+  request->write(m_handle);
+  m_connection->send(request,
+    [this](const std::shared_ptr<Message> message)
+    {
+      processMessage(*message);
+    });
+  m_requestId = request->requestId();
 }
 
 InputMonitor::~InputMonitor()
@@ -47,13 +55,6 @@ QString InputMonitor::getInputId(uint32_t address) const
   if(auto it = m_inputIds.find(address); it != m_inputIds.end())
     return it->second;
   return {};
-}
-
-void InputMonitor::refresh()
-{
-  if(m_requestId != Connection::invalidRequestId)
-    m_connection->cancelRequest(m_requestId);
-  m_requestId = m_connection->getInputMonitorInputInfo(*this);
 }
 
 void InputMonitor::processMessage(const Message& message)

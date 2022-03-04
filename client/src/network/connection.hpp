@@ -152,11 +152,6 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
     void releaseTableModel(TableModel* tableModel);
     void setTableModelRegion(TableModel* tableModel, int columnMin, int columnMax, int rowMin, int rowMax);
 
-    [[nodiscard]] int getInputMonitorInputInfo(InputMonitor& object);
-
-    [[nodiscard]] int getOutputKeyboardOutputInfo(OutputKeyboard& object);
-    void setOutputKeyboardOutputValue(OutputKeyboard& object, uint32_t address, bool value);
-
     [[nodiscard]] int getTileData(Board& object);
 
   signals:

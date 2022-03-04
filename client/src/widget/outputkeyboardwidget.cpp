@@ -139,8 +139,6 @@ OutputKeyboardWidget::OutputKeyboardWidget(std::shared_ptr<OutputKeyboard> objec
         led->setState(toState(value));
     });
 
-  m_object->refresh();
-
   updateLEDs();
 }
 

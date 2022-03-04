@@ -27,6 +27,14 @@ OutputKeyboard::OutputKeyboard(std::shared_ptr<Connection> connection, Handle ha
   Object(std::move(connection), handle, classId),
   m_requestId{Connection::invalidRequestId}
 {
+  auto request = Message::newRequest(Message::Command::OutputKeyboardGetOutputInfo);
+  request->write(m_handle);
+  m_connection->send(request,
+    [this](const std::shared_ptr<Message> message)
+    {
+      processMessage(*message);
+    });
+  m_requestId = request->requestId();
 }
 
 OutputKeyboard::~OutputKeyboard()
@@ -49,16 +57,13 @@ QString OutputKeyboard::getOutputId(uint32_t address) const
   return {};
 }
 
-void OutputKeyboard::refresh()
-{
-  if(m_requestId != Connection::invalidRequestId)
-    m_connection->cancelRequest(m_requestId);
-  m_requestId = m_connection->getOutputKeyboardOutputInfo(*this);
-}
-
 void OutputKeyboard::outputSetValue(uint32_t address, bool value)
 {
-  m_connection->setOutputKeyboardOutputValue(*this, address, value);
+  auto event = Message::newEvent(Message::Command::OutputKeyboardSetOutputValue);
+  event->write(handle());
+  event->write(address);
+  event->write(value);
+  m_connection->send(event);
 }
 
 void OutputKeyboard::processMessage(const Message& message)

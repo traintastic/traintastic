@@ -47,8 +47,6 @@ class OutputKeyboard final : public Object
     TriState getOutputState(uint32_t address) const;
     QString getOutputId(uint32_t address) const;
 
-    void refresh();
-
   public slots:
     void outputSetValue(uint32_t address, bool value);
 

@@ -367,39 +367,6 @@ void Connection::setTableModelRegion(TableModel* tableModel, int columnMin, int 
   send(event);
 }
 
-int Connection::getInputMonitorInputInfo(InputMonitor& inputMonitor)
-{
-  auto request = Message::newRequest(Message::Command::InputMonitorGetInputInfo);
-  request->write(inputMonitor.handle());
-  send(request,
-    [&inputMonitor](const std::shared_ptr<Message> message)
-    {
-      static_cast<Object&>(inputMonitor).processMessage(*message);
-    });
-  return request->requestId();
-}
-
-int Connection::getOutputKeyboardOutputInfo(OutputKeyboard& object)
-{
-  auto request = Message::newRequest(Message::Command::OutputKeyboardGetOutputInfo);
-  request->write(object.handle());
-  send(request,
-    [&object](const std::shared_ptr<Message> message)
-    {
-      static_cast<Object&>(object).processMessage(*message);
-    });
-  return request->requestId();
-}
-
-void Connection::setOutputKeyboardOutputValue(OutputKeyboard& object, uint32_t address, bool value)
-{
-  auto event = Message::newEvent(Message::Command::OutputKeyboardSetOutputValue);
-  event->write(object.handle());
-  event->write(address);
-  event->write(value);
-  send(event);
-}
-
 int Connection::getTileData(Board& object)
 {
   auto request = Message::newRequest(Message::Command::BoardGetTileData);
