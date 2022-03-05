@@ -27,7 +27,7 @@
 #include "../protocol/z21/clientkernel.hpp"
 #include "../protocol/z21/clientsettings.hpp"
 #include "../decoder/decodercontroller.hpp"
-#include "../decoder/decoderlist.hpp"
+#include "../decoder/list/decoderlist.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../input/list/inputlist.hpp"
 #include "../output/outputcontroller.hpp"

@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/decoder/decoderlist.cpp
+ * server/src/hardware/decoder/list/decoderlist.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -22,10 +22,10 @@
 
 #include "decoderlist.hpp"
 #include "decoderlisttablemodel.hpp"
-#include "../../world/getworld.hpp"
-#include "../../core/attributes.hpp"
-#include "../../utils/displayname.hpp"
-#include "../../utils/ifndefndebug.hpp"
+#include "../../../world/getworld.hpp"
+#include "../../../core/attributes.hpp"
+#include "../../../utils/displayname.hpp"
+#include "../../../utils/ifndefndebug.hpp"
 
 DecoderList::DecoderList(Object& _parent, std::string_view parentPropertyName, DecoderListColumn _columns) :
   ObjectList<Decoder>(_parent, parentPropertyName),

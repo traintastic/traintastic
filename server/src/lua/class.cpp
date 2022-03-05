@@ -57,10 +57,9 @@
 
 
 #include "../hardware/decoder/decoderfunction.hpp"
-#include "../hardware/decoder/decoderlist.hpp"
+#include "../hardware/decoder/list/decoderlist.hpp"
 #include "../hardware/decoder/decoder.hpp"
 #include "../hardware/decoder/decoderfunctions.hpp"
-#include "../hardware/decoder/decoderlisttablemodel.hpp"
 
 #include "../hardware/input/input.hpp"
 #include "../hardware/input/list/inputlist.hpp"

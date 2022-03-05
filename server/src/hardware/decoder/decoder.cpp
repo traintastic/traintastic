@@ -21,8 +21,8 @@
  */
 
 #include "decoder.hpp"
-#include "decoderlist.hpp"
-#include "decoderlisttablemodel.hpp"
+#include "list/decoderlist.hpp"
+#include "list/decoderlisttablemodel.hpp"
 #include "decoderchangeflags.hpp"
 #include "decoderfunction.hpp"
 #include "decoderfunctions.hpp"

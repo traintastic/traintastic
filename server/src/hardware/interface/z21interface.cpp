@@ -21,7 +21,7 @@
  */
 
 #include "z21interface.hpp"
-#include "../decoder/decoderlisttablemodel.hpp"
+#include "../decoder/list/decoderlisttablemodel.hpp"
 #include "../protocol/z21/messages.hpp"
 #include "../protocol/z21/iohandler/simulationiohandler.hpp"
 #include "../protocol/z21/iohandler/udpclientiohandler.hpp"

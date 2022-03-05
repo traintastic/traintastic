@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/decoder/decoderlisttablemodel.hpp
+ * server/src/hardware/decoder/list/decoderlisttablemodel.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,12 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERLISTTABLEMODEL_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERLISTTABLEMODEL_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_DECODER_LIST_DECODERLISTTABLEMODEL_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_DECODER_LIST_DECODERLISTTABLEMODEL_HPP
 
-#include "../../core/objectlisttablemodel.hpp"
-#include "list/decoderlistcolumn.hpp"
-#include "decoder.hpp"
+#include "../../../core/objectlisttablemodel.hpp"
+#include "decoderlistcolumn.hpp"
+#include "../decoder.hpp"
 
 class DecoderList;
 

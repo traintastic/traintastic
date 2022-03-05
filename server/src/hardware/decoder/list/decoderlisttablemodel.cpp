@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/decoder/decoderlisttablemodel.cpp
+ * server/src/hardware/decoder/list/decoderlisttablemodel.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -22,7 +22,7 @@
 
 #include "decoderlisttablemodel.hpp"
 #include "decoderlist.hpp"
-#include "../../utils/displayname.hpp"
+#include "../../../utils/displayname.hpp"
 
 static std::string_view displayName(DecoderListColumn column)
 {

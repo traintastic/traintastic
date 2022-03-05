@@ -37,7 +37,7 @@
 #include "../clock/clock.hpp"
 #include "../board/boardlist.hpp"
 #include "../hardware/interface/interfacelist.hpp"
-#include "../hardware/decoder/decoderlist.hpp"
+#include "../hardware/decoder/list/decoderlist.hpp"
 #include "../hardware/decoder/decodercontroller.hpp"
 #include "../hardware/input/list/inputlist.hpp"
 #include "../hardware/input/inputcontroller.hpp"

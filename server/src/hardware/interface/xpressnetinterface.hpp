@@ -27,7 +27,7 @@
 #include "../protocol/xpressnet/kernel.hpp"
 #include "../protocol/xpressnet/settings.hpp"
 #include "../decoder/decodercontroller.hpp"
-#include "../decoder/decoderlist.hpp"
+#include "../decoder/list/decoderlist.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../input/list/inputlist.hpp"
 #include "../output/outputcontroller.hpp"

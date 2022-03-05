@@ -49,8 +49,6 @@
 
 #include "../traintastic/settings.hpp"
 
-#include "../hardware/decoder/decoderlist.hpp"
-
 #include <iostream>
 
 #ifdef GetObject

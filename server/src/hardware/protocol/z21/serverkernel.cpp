@@ -23,7 +23,7 @@
 #include "serverkernel.hpp"
 #include "messages.hpp"
 #include "../xpressnet/messages.hpp"
-#include "../../decoder/decoderlist.hpp"
+#include "../../decoder/list/decoderlist.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 

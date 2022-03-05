@@ -83,6 +83,8 @@ file(GLOB SOURCES
   "src/enum/*.hpp"
   "src/hardware/decoder/*.hpp"
   "src/hardware/decoder/*.cpp"
+  "src/hardware/decoder/list/*.hpp"
+  "src/hardware/decoder/list/*.cpp"
   "src/hardware/input/*.hpp"
   "src/hardware/input/*.cpp"
   "src/hardware/input/list/*.hpp"
