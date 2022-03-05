@@ -25,21 +25,24 @@
 #define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERLIST_HPP
 
 #include "../../core/objectlist.hpp"
+#include "list/decoderlistcolumn.hpp"
 #include "decoder.hpp"
 
 class DecoderList : public ObjectList<Decoder>
 {
+  CLASS_ID("decoder_list")
+
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
     bool isListedProperty(std::string_view name) final;
 
   public:
-    CLASS_ID("decoder_list")
+    const DecoderListColumn columns;
 
     Method<std::shared_ptr<Decoder>()> add;
     Method<void(const std::shared_ptr<Decoder>&)> remove;
 
-    DecoderList(Object& _parent, std::string_view parentPropertyName);
+    DecoderList(Object& _parent, std::string_view parentPropertyName, DecoderListColumn _columns);
 
     TableModelPtr getModel() final;
 

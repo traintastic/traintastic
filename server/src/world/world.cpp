@@ -38,6 +38,7 @@
 
 using nlohmann::json;
 
+constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Interface | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Interface | InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Interface | OutputListColumn::Channel | OutputListColumn::Address;
 
@@ -55,7 +56,7 @@ void World::init(World& world)
   world.outputControllers.setValueInternal(std::make_shared<ControllerList<OutputController>>(world, world.outputControllers.name()));
 
   world.interfaces.setValueInternal(std::make_shared<InterfaceList>(world, world.interfaces.name()));
-  world.decoders.setValueInternal(std::make_shared<DecoderList>(world, world.decoders.name()));
+  world.decoders.setValueInternal(std::make_shared<DecoderList>(world, world.decoders.name(), decoderListColumns));
   world.inputs.setValueInternal(std::make_shared<InputList>(world, world.inputs.name(), inputListColumns));
   world.outputs.setValueInternal(std::make_shared<OutputList>(world, world.outputs.name(), outputListColumns));
   world.boards.setValueInternal(std::make_shared<BoardList>(world, world.boards.name()));

@@ -27,8 +27,9 @@
 #include "../../utils/displayname.hpp"
 #include "../../utils/ifndefndebug.hpp"
 
-DecoderList::DecoderList(Object& _parent, std::string_view parentPropertyName) :
+DecoderList::DecoderList(Object& _parent, std::string_view parentPropertyName, DecoderListColumn _columns) :
   ObjectList<Decoder>(_parent, parentPropertyName),
+  columns{_columns},
   add{*this, "add",
     [this]()
     {

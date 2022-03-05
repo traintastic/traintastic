@@ -33,6 +33,7 @@
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
+constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
 
@@ -50,7 +51,7 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
 {
   name = "Z21";
   z21.setValueInternal(std::make_shared<Z21::ClientSettings>(*this, z21.name()));
-  decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name()));
+  decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name(), decoderListColumns));
   inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name(), inputListColumns));
   outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 

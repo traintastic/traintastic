@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERLISTTABLEMODEL_HPP
 
 #include "../../core/objectlisttablemodel.hpp"
+#include "list/decoderlistcolumn.hpp"
 #include "decoder.hpp"
 
 class DecoderList;
@@ -31,6 +32,11 @@ class DecoderList;
 class DecoderListTableModel : public ObjectListTableModel<Decoder>
 {
   friend class DecoderList;
+
+  private:
+    std::vector<DecoderListColumn> m_columns;
+
+    void changed(uint32_t row, DecoderListColumn column);
 
   protected:
     void propertyChanged(BaseProperty& property, uint32_t row) final;

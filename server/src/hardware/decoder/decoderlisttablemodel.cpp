@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,26 +24,50 @@
 #include "decoderlist.hpp"
 #include "../../utils/displayname.hpp"
 
-constexpr uint32_t columnId = 0;
-constexpr uint32_t columnName = 1;
-constexpr uint32_t columnAddress = 2;
+static std::string_view displayName(DecoderListColumn column)
+{
+  switch(column)
+  {
+    case DecoderListColumn::Id:
+      return DisplayName::Object::id;
+
+    case DecoderListColumn::Name:
+      return DisplayName::Object::name;
+
+    case DecoderListColumn::Interface:
+      return DisplayName::Hardware::interface;
+
+    case DecoderListColumn::Address:
+      return DisplayName::Hardware::address;
+  }
+  assert(false);
+  return {};
+}
 
 bool DecoderListTableModel::isListedProperty(std::string_view name)
 {
   return
     name == "id" ||
     name == "name" ||
+    name == "interface" ||
     name == "address";
 }
 
 DecoderListTableModel::DecoderListTableModel(DecoderList& list) :
   ObjectListTableModel<Decoder>(list)
 {
-  setColumnHeaders({
-    DisplayName::Object::id,
-    DisplayName::Object::name,
-    DisplayName::Hardware::address,
-    });
+  std::vector<std::string_view> labels;
+
+  for(auto column : decoderListColumnValues)
+  {
+    if(contains(list.columns, column))
+    {
+      labels.emplace_back(displayName(column));
+      m_columns.emplace_back(column);
+    }
+  }
+
+  setColumnHeaders(std::move(labels));
 }
 
 std::string DecoderListTableModel::getText(uint32_t column, uint32_t row) const
@@ -52,15 +76,26 @@ std::string DecoderListTableModel::getText(uint32_t column, uint32_t row) const
   {
     const Decoder& decoder = getItem(row);
 
-    switch(column)
+    assert(column < m_columns.size());
+    switch(m_columns[column])
     {
-      case columnId:
+      case DecoderListColumn::Id:
         return decoder.id;
 
-      case columnName:
+      case DecoderListColumn::Name:
         return decoder.name;
 
-      case columnAddress:
+      case DecoderListColumn::Interface:
+        if(const auto& interface = std::dynamic_pointer_cast<Object>(decoder.interface.value()))
+        {
+          if(auto* property = interface->getProperty("name"); property && !property->toString().empty())
+            return property->toString();
+
+          return interface->getObjectId();
+        }
+        return "";
+
+      case DecoderListColumn::Address:
         return decoder.address.toString();
 
       default:
@@ -74,10 +109,26 @@ std::string DecoderListTableModel::getText(uint32_t column, uint32_t row) const
 
 void DecoderListTableModel::propertyChanged(BaseProperty& property, uint32_t row)
 {
-  if(property.name() == "id")
-    changed(row, columnId);
-  else if(property.name() == "name")
-    changed(row, columnName);
-  else if(property.name() == "address")
-    changed(row, columnAddress);
+  std::string_view name = property.name();
+
+  if(name == "id")
+    changed(row, DecoderListColumn::Id);
+  else if(name == "name")
+    changed(row, DecoderListColumn::Name);
+  else if(name == "interface")
+    changed(row, DecoderListColumn::Interface);
+  else if(name == "address")
+    changed(row, DecoderListColumn::Address);
+}
+
+void DecoderListTableModel::changed(uint32_t row, DecoderListColumn column)
+{
+  for(size_t i = 0; i < m_columns.size(); i++)
+  {
+    if(m_columns[i] == column)
+    {
+      TableModel::changed(row, static_cast<uint32_t>(i));
+      return;
+    }
+  }
 }
