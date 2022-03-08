@@ -118,6 +118,9 @@ void setSlot(Message& message, uint8_t slot)
 
 bool isValidResponse(const Message& request, const Message& response)
 {
+  if(response.opCode == OPC_LONG_ACK)
+    return request.opCode == static_cast<const LongAck&>(response).respondingOpCode();
+
   switch(request.opCode)
   {
     case OPC_UNLINK_SLOTS:
