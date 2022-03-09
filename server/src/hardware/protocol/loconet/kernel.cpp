@@ -616,7 +616,11 @@ void Kernel::receive(const Message& message)
       break; // unimplemented
 
     case OPC_PEER_XFER:
-      break; // unimplemented
+      if(Uhlenbrock::ReadSpecialOptionReply::check(message))
+      {
+        [[maybe_unused]] const auto& readSpecialOptionReply = static_cast<const Uhlenbrock::ReadSpecialOptionReply&>(message);
+      }
+      break;
 
     case OPC_IMM_PACKET:
       break; // unimplemented

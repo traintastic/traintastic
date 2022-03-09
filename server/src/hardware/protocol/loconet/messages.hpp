@@ -1303,6 +1303,163 @@ struct FastClockSlotReadData : SlotReadDataBase
 };
 static_assert(sizeof(FastClockSlotReadData) == 14);
 
+namespace Uhlenbrock
+{
+  using SpecialOption = uint16_t;
+
+  struct DataMessage : Message
+  {
+    static constexpr uint8_t dataLen = 12;
+
+    uint8_t len = 0x0F;
+    uint8_t data[dataLen] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    uint8_t checksum = 0;
+
+    DataMessage(OpCode opc)
+      : Message(opc)
+    {
+    }
+
+    template<uint8_t N>
+    uint8_t getData() const
+    {
+      static_assert(N >= 5 && N <= 7);
+      return (data[4] & static_cast<uint8_t>(1 << (N - 5)) ? 0x80 : 0x00) | data[N];
+    }
+
+    template<uint8_t N>
+    void setData(uint8_t value)
+    {
+      static_assert(N >= 5 && N <= 7);
+      data[N] = value & 0x7F;
+      if(value & 0x80)
+        data[4] |= static_cast<uint8_t>(1 << (N - 5));
+      else
+        data[4] &= ~static_cast<uint8_t>(1 << (N - 5));
+    }
+  };
+  static_assert(sizeof(DataMessage) == 15);
+
+  template<class T, class Tbase>
+  inline bool checkMagicData(const Tbase& message)
+  {
+    static_assert(std::is_base_of_v<Tbase, T>);
+    static_assert(sizeof(T) == sizeof(Tbase));
+    static_assert(Tbase::dataLen == T::magicData.size());
+    static_assert(Tbase::dataLen == T::magicMask.size());
+    for(uint8_t i = 0; i < Tbase::dataLen; i++)
+      if((message.data[i] & T::magicMask[i]) != T::magicData[i])
+        return false;
+    return true;
+  }
+
+  template<class T>
+  void setMagicData(T& message)
+  {
+    static_assert(std::is_base_of_v<DataMessage, T>);
+    static_assert(T::dataLen == T::magicData.size());
+    static_assert(T::dataLen == T::magicMask.size());
+    for(uint8_t i = 0; i < T::dataLen; i++)
+      message.data[i] = (message.data[i] & ~T::magicMask[i]) | T::magicData[i];
+  }
+
+  struct ImmPacketDataMessage : DataMessage
+  {
+    inline static bool check(const Message& message)
+    {
+      return
+        (message.opCode == OPC_IMM_PACKET) &&
+        (message.size() == sizeof(ImmPacketDataMessage));
+    }
+
+    ImmPacketDataMessage()
+      : DataMessage(OPC_IMM_PACKET)
+    {
+    }
+  };
+  static_assert(sizeof(ImmPacketDataMessage) == 15);
+
+  struct ReadSpecialOption : ImmPacketDataMessage
+  {
+    static constexpr std::array<uint8_t, dataLen> magicData = {0x01, 0x49, 0x42, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    static constexpr std::array<uint8_t, dataLen> magicMask = {0xFF, 0xFF, 0xFF, 0xFF, 0xFC, 0x80, 0x80, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+
+    inline static bool check(const Message& message)
+    {
+      return
+        ImmPacketDataMessage::check(message) &&
+        checkMagicData<ReadSpecialOption>(static_cast<const ImmPacketDataMessage&>(message));
+    }
+
+    ReadSpecialOption(SpecialOption specialOption)
+    {
+      setMagicData(*this);
+
+      setData<5>(specialOption & 0xFF);
+      setData<6>(specialOption >> 8);
+
+      checksum = calcChecksum(*this);
+    }
+
+    SpecialOption specialOption() const
+    {
+      return (static_cast<SpecialOption>(getData<6>()) << 8) | getData<5>();
+    }
+  };
+  static_assert(sizeof(ReadSpecialOption) == 15);
+
+  struct PeerXferDataMessage : DataMessage
+  {
+    inline static bool check(const Message& message)
+    {
+      return
+        (message.opCode == OPC_PEER_XFER) &&
+        (message.size() == sizeof(PeerXferDataMessage));
+    }
+
+    PeerXferDataMessage()
+      : DataMessage(OPC_PEER_XFER)
+    {
+    }
+  };
+  static_assert(sizeof(PeerXferDataMessage) == 15);
+
+  struct ReadSpecialOptionReply : PeerXferDataMessage
+  {
+    static constexpr std::array<uint8_t, dataLen> magicData = {0x00, 0x49, 0x4B, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    static constexpr std::array<uint8_t, dataLen> magicMask = {0xFF, 0xFF, 0xFF, 0xFF, 0xF8, 0x80, 0x80, 0x80, 0xFF, 0xFF, 0xFF, 0xFF};
+
+    inline static bool check(const Message& message)
+    {
+      return
+        PeerXferDataMessage::check(message) &&
+        checkMagicData<ReadSpecialOptionReply>(static_cast<const PeerXferDataMessage&>(message));
+    }
+
+    ReadSpecialOptionReply(SpecialOption specialOption, uint8_t value)
+    {
+      setMagicData(*this);
+
+      setData<5>(specialOption & 0xFF);
+      setData<6>(specialOption >> 8);
+      setData<7>(value);
+
+      checksum = calcChecksum(*this);
+    }
+
+    SpecialOption specialOption() const
+    {
+      return (static_cast<SpecialOption>(getData<6>()) << 8) | getData<5>();
+    }
+
+    uint8_t value() const
+    {
+      return getData<7>();
+    }
+  };
+  static_assert(sizeof(ReadSpecialOptionReply) == 15);
+}
+
 /*
 struct ImmediatePacket : Message
 {

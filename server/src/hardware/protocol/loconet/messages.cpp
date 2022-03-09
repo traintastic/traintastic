@@ -155,7 +155,14 @@ bool isValidResponse(const Message& request, const Message& response)
         static_cast<const LocoAdr&>(request).addressHigh == static_cast<const SlotReadData&>(response).adr2;
 
     case OPC_IMM_PACKET:
-      assert(false); //! @todo implement
+      if(Uhlenbrock::ReadSpecialOption::check(request))
+      {
+        return
+          Uhlenbrock::ReadSpecialOptionReply::check(response) &&
+          static_cast<const Uhlenbrock::ReadSpecialOption&>(request).specialOption() == static_cast<const Uhlenbrock::ReadSpecialOptionReply&>(response).specialOption();
+      }
+      else
+        assert(false); //! @todo implement
       return false;
 
     case OPC_WR_SL_DATA:
