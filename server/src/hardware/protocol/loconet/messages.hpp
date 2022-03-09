@@ -31,6 +31,7 @@
 
 #include <cstring>
 #include <string>
+#include <array>
 #include <traintastic/enum/direction.hpp>
 #include "opcode.hpp"
 
