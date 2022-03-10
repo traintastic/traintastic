@@ -161,6 +161,18 @@ bool isValidResponse(const Message& request, const Message& response)
           Uhlenbrock::ReadSpecialOptionReply::check(response) &&
           static_cast<const Uhlenbrock::ReadSpecialOption&>(request).specialOption() == static_cast<const Uhlenbrock::ReadSpecialOptionReply&>(response).specialOption();
       }
+      else if(Uhlenbrock::LNCVStart::check(request))
+      {
+        if(Uhlenbrock::LNCVStartResponse::check(response))
+        {
+          const auto& lncvStart = static_cast<const Uhlenbrock::LNCVStart&>(request);
+          const auto& lncvStartResponse = static_cast<const Uhlenbrock::LNCVStartResponse&>(response);
+
+          return
+            lncvStart.moduleId() == lncvStartResponse.moduleId() &&
+            (lncvStart.address() == Uhlenbrock::LNCVStart::broadcastAddress || lncvStart.address() == lncvStartResponse.address());
+        }
+      }
       else
         assert(false); //! @todo implement
       return false;

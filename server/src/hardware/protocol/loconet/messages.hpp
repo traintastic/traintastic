@@ -34,6 +34,7 @@
 #include <array>
 #include <traintastic/enum/direction.hpp>
 #include "opcode.hpp"
+#include "../../../utils/byte.hpp"
 
 namespace LocoNet {
 
@@ -1324,14 +1325,14 @@ namespace Uhlenbrock
     template<uint8_t N>
     uint8_t getData() const
     {
-      static_assert(N >= 5 && N <= 7);
+      static_assert(N >= 5 && N <= 10);
       return (data[4] & static_cast<uint8_t>(1 << (N - 5)) ? 0x80 : 0x00) | data[N];
     }
 
     template<uint8_t N>
     void setData(uint8_t value)
     {
-      static_assert(N >= 5 && N <= 7);
+      static_assert(N >= 5 && N <= 10);
       data[N] = value & 0x7F;
       if(value & 0x80)
         data[4] |= static_cast<uint8_t>(1 << (N - 5));
@@ -1441,8 +1442,8 @@ namespace Uhlenbrock
     {
       setMagicData(*this);
 
-      setData<5>(specialOption & 0xFF);
-      setData<6>(specialOption >> 8);
+      setData<5>(low8(specialOption));
+      setData<6>(high8(specialOption));
       setData<7>(value);
 
       checksum = calcChecksum(*this);
@@ -1450,7 +1451,7 @@ namespace Uhlenbrock
 
     SpecialOption specialOption() const
     {
-      return (static_cast<SpecialOption>(getData<6>()) << 8) | getData<5>();
+      return to16(getData<5>(), getData<6>());
     }
 
     uint8_t value() const
@@ -1459,6 +1460,116 @@ namespace Uhlenbrock
     }
   };
   static_assert(sizeof(ReadSpecialOptionReply) == 15);
+
+  /**
+   * \group lncv LNCV programming
+   * \{
+   */
+
+  enum ModuleId : uint16_t
+  {
+    Uhlenbrock_LissyReceiver_68610 = 6861,
+    Uhlenbrock_LocoNetS88Adaptor_63880 = 6388,
+  };
+
+  struct LNCVStart : ImmPacketDataMessage
+  {
+    static constexpr std::array<uint8_t, dataLen> magicData = {0x01, 0x05, 0x00, 0x21, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    static constexpr std::array<uint8_t, dataLen> magicMask = {0xFF, 0xFF, 0xFF, 0xFF, 0xCC, 0x80, 0x80, 0xFF, 0xFF, 0x80, 0x80, 0xFF};
+
+    static constexpr uint16_t broadcastAddress = 65535;
+
+    inline static bool check(const Message& message)
+    {
+      return
+        ImmPacketDataMessage::check(message) &&
+        checkMagicData<LNCVStart>(static_cast<const ImmPacketDataMessage&>(message));
+    }
+
+    LNCVStart()
+    {
+      setMagicData(*this);
+    }
+
+    LNCVStart(ModuleId moduleId, uint16_t address)
+      : LNCVStart()
+    {
+      setModuleId(moduleId);
+      setAddress(address);
+
+      checksum = calcChecksum(*this);
+    }
+
+    ModuleId moduleId() const
+    {
+      return static_cast<ModuleId>(to16(getData<5>(), getData<6>()));
+    }
+
+    void setModuleId(ModuleId value)
+    {
+      setData<5>(low8(value));
+      setData<6>(high8(value));
+    }
+
+    uint16_t address() const
+    {
+      return to16(getData<9>(), getData<10>());
+    }
+
+    void setAddress(uint16_t value)
+    {
+      setData<9>(low8(value));
+      setData<10>(high8(value));
+    }
+  };
+  static_assert(sizeof(ReadSpecialOptionReply) == 15);
+
+  struct LNCVStartResponse : PeerXferDataMessage
+  {
+    static constexpr std::array<uint8_t, dataLen> magicData = {0x05, 0x49, 0x4B, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    static constexpr std::array<uint8_t, dataLen> magicMask = {0xFF, 0xFF, 0xFF, 0xFF, 0xCC, 0x80, 0x80, 0xFF, 0xFF, 0x80, 0x80, 0xFF};
+
+    LNCVStartResponse()
+    {
+      setMagicData(*this);
+    }
+
+    LNCVStartResponse(ModuleId moduleId, uint16_t address)
+      : LNCVStartResponse()
+    {
+      setModuleId(moduleId);
+      setAddress(address);
+
+      checksum = calcChecksum(*this);
+    }
+
+    ModuleId moduleId() const
+    {
+      return static_cast<ModuleId>(to16(getData<5>(), getData<6>()));
+    }
+
+    void setModuleId(ModuleId value)
+    {
+      setData<5>(low8(value));
+      setData<6>(high8(value));
+    }
+
+    uint16_t address() const
+    {
+      return to16(getData<9>(), getData<10>());
+    }
+
+    void setAddress(uint16_t value)
+    {
+      setData<9>(low8(value));
+      setData<10>(high8(value));
+    }
+  };
+  static_assert(sizeof(LNCVStartResponse) == 15);
+
+  /**
+   * \}
+   */
 }
 
 /*

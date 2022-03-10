@@ -77,6 +77,124 @@ leave dir B = E0 09 00 0F 19 6F 00 00 6F
 ```2021-06-19 22:19:32.454136 [debug]    cs_1.loconet: rx: OPC_IMM_PACKET [ED 0F 01 05 00 21 41 4D 1A 00 00 01 00 00 2F]```
 ```2021-06-19 22:19:32.470128 [debug]    cs_1.loconet: rx: OPC_PEER_XFER [E5 0F 05 49 4B 1F 01 4D 1A 00 00 01 00 00 5A]```
 
+```
+2022-03-10 15:23:12.802948 loconet_1 D2002: RX: OPC_IMM_PACKET [ED 0F 01 05 00 21 41 74 18 00 00 01 00 00 14]
+2022-03-10 15:23:12.818892 loconet_1 D2002: RX: OPC_PEER_XFER [E5 0F 05 49 4B 1F 01 74 18 00 00 01 00 00 61]
+
+module = 63880
+address = 1
+```
+
+```
+2022-03-10 15:26:44.290989 loconet_1 D2002: RX: OPC_IMM_PACKET [ED 0F 01 05 00 21 41 4D 1A 00 00 01 00 00 2F]
+2022-03-10 15:26:44.307022 loconet_1 D2002: RX: OPC_PEER_XFER [E5 0F 05 49 4B 1F 01 4D 1A 00 00 01 00 00 5A]
+
+module = 68610
+address = 1
+```
+
+```
+2022-03-10 15:28:20.034279 loconet_1 D2002: RX: OPC_IMM_PACKET [ED 0F 01 05 00 21 41 4D 1A 00 00 02 00 00 2C]
+
+module = 68610
+address = 2
+
+no response, so it doesn't exist I guess
+```
+
+```
+2022-03-10 15:31:17.482750 loconet_1 D2002: RX: OPC_IMM_PACKET [ED 0F 01 05 00 21 51 4D 1A 00 00 7F 00 00 41]
+
+module = 68610
+address = 255
+
+no response, so it doesn't exist
+```
+
+```
+2022-03-10 15:32:44.592787 loconet_1 D2002: RX: OPC_IMM_PACKET [ED 0F 01 05 00 21 51 4D 1A 00 00 7F 03 00 42]
+
+module = 68610
+address = 1023
+
+no response, so it doesn't exist
+```
+
+```
+2022-03-10 15:57:55.128820 loconet_1 D2002: RX: OPC_IMM_PACKET [ED 0F 01 05 00 21 51 4D 1A 00 00 7F 0F 00 4E]
+
+module = 68610
+address = 4095
+
+no response, so it doesn't exist
+```
+
+```
+2022-03-10 15:59:27.716753 loconet_1 D2002: RX: OPC_IMM_PACKET [ED 0F 01 05 00 21 51 4D 1A 00 00 7F 1F 00 5E]
+
+module = 68610
+address = 8191
+
+no response, so it doesn't exist
+```
+
+```
+2022-03-10 16:02:19.704231 loconet_1 D2002: RX: OPC_IMM_PACKET [ED 0F 01 05 00 21 71 4D 1A 00 00 7F 7F 00 1E]
+2022-03-10 16:02:19.704362 loconet_1 D2002: RX: OPC_PEER_XFER [E5 0F 05 49 4B 1F 01 4D 1A 00 00 01 00 00 5A]
+
+module = 68610
+address = 65535 = 0xFFFF
+
+response! broadcast?
+```
+
+summary:
+```
+Module: 68610
+    0 => [ED 0F 01 05 00 21 41 4D 1A 00 00 00 00 00 2E]
+    1 => [ED 0F 01 05 00 21 41 4D 1A 00 00 01 00 00 2F]
+    2 => [ED 0F 01 05 00 21 41 4D 1A 00 00 02 00 00 2C]
+    3 => [ED 0F 01 05 00 21 41 4D 1A 00 00 03 00 00 2D]
+  127 => [ED 0F 01 05 00 21 41 4D 1A 00 00 7F 00 00 51]
+  128 => [ED 0F 01 05 00 21 51 4D 1A 00 00 00 00 00 3E]
+  129 => [ED 0F 01 05 00 21 51 4D 1A 00 00 01 00 00 3F]
+  511 => [ED 0F 01 05 00 21 51 4D 1A 00 00 7F 01 00 40]
+65535 => [ED 0F 01 05 00 21 71 4D 1A 00 00 7F 7F 00 1E] => broadcast
+Module: 63880
+65535 => [ED 0F 01 05 00 21 71 74 18 00 00 7F 7F 00 25]
+Module: 0
+    0 => [ED 0F 01 05 00 21 40 00 00 00 00 00 00 00 78]
+65535 => [ED 0F 01 05 00 21 70 00 00 00 00 7F 7F 00 48]
+                            ^^ ^^ ^^       ^^ ^^
+                            B8 ML MH       AL AH
+
+B8 is used for 7th bit's
+
+AL = address bit 0..6
+AH = address bit 8..14
+B8: 0x40 |
+- 0x10 = address bit 7
+- 0x20 = address bit 15
+
+ML MH = module address
+4D 1A => 68610
+74 18 => 63880
+^^ ^^
+Lo Hi
+
+0x80 | 0x4d | (0x1a << 8) => 6861
+
+0x80 | 0x74 | (0x18 << 8) => 6388
+
+module number = div 10
+
+response:
+Module: 68610
+     1 => [E5 0F 05 49 4B 1F 01 4D 1A 00 00 01 00 00 5A]
+                             ^^ ^^ ^^       ^^ ^^
+                             B8 ML MH       AL AH
+```
+
 ### LNCV 0 -> 5
 ```2021-06-19 21:17:57.749146 [debug]    cs_1.loconet: rx: OPC_IMM_PACKET [ED 0F 01 05 00 20 01 4D 1A 00 00 05 00 00 6A]```
 ```2021-06-19 21:17:57.764779 [debug]    cs_1.loconet: rx: OPC_LONG_ACK [B4 6D 7F 59]```

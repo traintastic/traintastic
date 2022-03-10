@@ -620,6 +620,10 @@ void Kernel::receive(const Message& message)
       {
         [[maybe_unused]] const auto& readSpecialOptionReply = static_cast<const Uhlenbrock::ReadSpecialOptionReply&>(message);
       }
+      else if(Uhlenbrock::LNCVStartResponse::check(message))
+      {
+        [[maybe_unused]] const auto& lncvStartResponse = static_cast<const Uhlenbrock::LNCVStartResponse&>(message);
+      }
       break;
 
     case OPC_IMM_PACKET:
