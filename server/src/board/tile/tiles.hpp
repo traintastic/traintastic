@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,8 @@
 #include "tile.hpp"
 #include "../../utils/makearray.hpp"
 #include "rail/straightrailtile.hpp"
+#include "rail/directioncontrolrailtile.hpp"
+#include "rail/onewayrailtile.hpp"
 #include "rail/curve45railtile.hpp"
 #include "rail/curve90railtile.hpp"
 #include "rail/cross45railtile.hpp"
@@ -56,6 +58,8 @@ struct Tiles
 
   static constexpr auto classList = makeArray(
     StraightRailTile::classId,
+    OneWayRailTile::classId,
+    DirectionControlRailTile::classId,
     Curve45RailTile::classId,
     Curve90RailTile::classId,
     Cross45RailTile::classId,

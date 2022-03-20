@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,7 @@
 #include <traintastic/board/tileid.hpp>
 #include <traintastic/enum/tilerotate.hpp>
 #include <traintastic/enum/blockstate.hpp>
+#include <traintastic/enum/directioncontrolstate.hpp>
 #include <traintastic/enum/sensorstate.hpp>
 #include <traintastic/enum/signalaspect.hpp>
 #include <traintastic/enum/tristate.hpp>
@@ -72,6 +73,7 @@ class TilePainter
 
     void drawBufferStop(const QRectF& r, TileRotate rotate);
 
+    void drawTriangle(const QRectF& r);
     void drawLED(const QRectF& r, const QColor& color, const QColor& borderColor);
 
     void drawSignal2Aspect(QRectF r, TileRotate rotate, SignalAspect aspect);
@@ -84,6 +86,7 @@ class TilePainter
 
     void draw(TileId id, const QRectF& r, TileRotate rotate);
     void drawSensor(TileId id, const QRectF& r, TileRotate rotate, SensorState state = SensorState::Unknown);
+    void drawDirectionControl(TileId id, const QRectF& r, TileRotate rotate, DirectionControlState state = DirectionControlState::Both);
     void drawTurnout(TileId id, const QRectF& r, TileRotate rotate, TurnoutPosition position = TurnoutPosition::Unknown);
     void drawSignal(TileId id, const QRectF& r, TileRotate rotate, SignalAspect aspect = SignalAspect::Unknown);
     void drawBlock(TileId id, const QRectF& r, TileRotate rotate, BlockState state = BlockState::Unknown, const std::vector<SensorState> subStates = {});

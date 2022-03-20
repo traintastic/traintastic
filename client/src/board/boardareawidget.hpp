@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +28,7 @@
 #include <traintastic/board/tilelocation.hpp>
 #include <traintastic/enum/tilerotate.hpp>
 #include <traintastic/enum/blockstate.hpp>
+#include <traintastic/enum/directioncontrolstate.hpp>
 #include <traintastic/enum/sensorstate.hpp>
 #include <traintastic/enum/signalaspect.hpp>
 #include <traintastic/enum/tristate.hpp>
@@ -98,6 +99,7 @@ class BoardAreaWidget : public QWidget
     BlockState getBlockState(const TileLocation& l) const;
     std::vector<SensorState> getBlockSensorStates(const TileLocation& l) const;
     SensorState getSensorState(const TileLocation& l) const;
+    DirectionControlState getDirectionControlState(const TileLocation& l) const;
     SignalAspect getSignalAspect(const TileLocation& l) const;
     TileLocation pointToTileLocation(const QPoint& p);
 

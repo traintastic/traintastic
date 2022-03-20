@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -49,10 +49,12 @@ struct TileInfo
   uint8_t rotates;
 };
 
-const std::array<TileInfo, 30> tileInfo = {
-  TileInfo{QStringLiteral("board_tile.rail.straight"), TileId::RailStraight, 0xFF},
+const std::array<TileInfo, 32> tileInfo = {
+  TileInfo{QStringLiteral("board_tile.rail.straight"), TileId::RailStraight, 0x0F},
   TileInfo{QStringLiteral("board_tile.rail.buffer_stop"), TileId::RailBufferStop, 0xFF},
   TileInfo{QStringLiteral("board_tile.rail.tunnel"), TileId::RailTunnel, 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.one_way"), TileId::RailOneWay, 0xFF},
+  TileInfo{QStringLiteral("board_tile.rail.direction_control"), TileId::RailDirectionControl, 0x0F},
   TileInfo{QStringLiteral(""), TileId::None, 0},
   TileInfo{QStringLiteral("board_tile.rail.curve_45"), TileId::RailCurve45, 0xFF},
   TileInfo{QStringLiteral("board_tile.rail.curve_90"), TileId::RailCurve90, 0xFF},

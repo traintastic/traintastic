@@ -74,5 +74,7 @@
         <file>simulation.svg</file>
         <file>previous_page.svg</file>
         <file>next_page.svg</file>
+        <file>board_tile.rail.one_way.svg</file>
+        <file>board_tile.rail.direction_control.svg</file>
     </qresource>
 </RCC>

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,8 @@
 std::shared_ptr<Tile> Tiles::create(World& world, std::string_view classId, std::string_view id)
 {
   IF_CLASSID_CREATE(StraightRailTile)
+  IF_CLASSID_CREATE(OneWayRailTile)
+  IF_CLASSID_CREATE(DirectionControlRailTile)
   IF_CLASSID_CREATE(Curve45RailTile)
   IF_CLASSID_CREATE(Curve90RailTile)
   IF_CLASSID_CREATE(Bridge45LeftRailTile)
@@ -56,6 +58,8 @@ std::shared_ptr<Tile> Tiles::create(World& world, std::string_view classId, std:
 bool Tiles::canUpgradeStraightRail(std::string_view classId)
 {
   return
+    (classId == OneWayRailTile::classId) ||
+    (classId == DirectionControlRailTile::classId) ||
     (classId == TunnelRailTile::classId) ||
     (classId == BlockRailTile::classId) ||
     (classId == SensorRailTile::classId) ||

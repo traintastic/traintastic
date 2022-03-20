@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -206,10 +206,28 @@ struct Attributes
     property.addAttribute(AttributeName::Values, values);
   }
 
+  template<class R, class T>
+  static inline void addValues(Method<R(T)>& method, std::vector<T> values)
+  {
+    method.addAttribute(AttributeName::Values, std::move(values));
+  }
+
   template<typename T>
   static inline void setValues(Property<T>& property, const std::vector<T>* values)
   {
     property.setAttribute(AttributeName::Values, values);
+  }
+
+  template<typename T>
+  static inline void setValues(Property<T>& property, std::vector<T> values)
+  {
+    property.setAttribute(AttributeName::Values, std::move(values));
+  }
+
+  template<class R, class T>
+  static inline void setValues(Method<R(T)>& method, std::vector<T> values)
+  {
+    method.setAttribute(AttributeName::Values, std::move(values));
   }
 };
 

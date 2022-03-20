@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -148,6 +148,29 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate)
       m_painter.drawArc(rArc, angle, angleLength);
       break;
     }
+    case TileId::RailDirectionControl:
+      drawDirectionControl(id, r, rotate);
+      break;
+
+    case TileId::RailOneWay:
+    {
+      setTrackPen();
+      drawStraight(r, rotate);
+      m_painter.setBrush(m_trackPen.color());
+
+      const qreal m = r.width() / 4;
+      QRectF rTriangle = r.adjusted(m, m, -m, -m);
+      m_painter.save();
+      m_painter.translate(rTriangle.center());
+      m_painter.rotate(toDeg(rotate));
+      rTriangle.moveCenter(QPointF{0, 0});
+      QPen pen = m_painter.pen();
+      pen.setJoinStyle(Qt::RoundJoin);
+      m_painter.setPen(pen);
+      drawTriangle(rTriangle);
+      m_painter.restore();
+      break;
+    }
     case TileId::None:
     case TileId::ReservedForFutureExpension:
       break;
@@ -164,6 +187,75 @@ void TilePainter::drawSensor(TileId id, const QRectF& r, TileRotate rotate, Sens
       drawStraight(r, rotate);
       const qreal sz = r.width() / 4;
       drawLED(r.adjusted(sz, sz, -sz, -sz), sensorStateToColor(state), m_colorScheme.track);
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+void TilePainter::drawDirectionControl(TileId id, const QRectF& r, TileRotate rotate, DirectionControlState state)
+{
+  switch(id)
+  {
+    case TileId::RailDirectionControl:
+    {
+      setTrackPen();
+      drawStraight(r, rotate);
+
+      QPen pen{m_trackPen};
+      const qreal w = pen.width() / 2;
+      pen.setWidth(w);
+      switch(state)
+      {
+        case DirectionControlState::None:
+          pen.setColor(Qt::red);
+          break;
+
+        case DirectionControlState::AtoB:
+        case DirectionControlState::BtoA:
+          pen.setColor(Qt::blue);
+          break;
+
+
+        case DirectionControlState::Both:
+          pen.setColor(Qt::darkGreen);
+          break;
+      }
+      m_painter.setPen(pen);
+      m_painter.setBrush(pen.color());
+      m_painter.drawEllipse(r.adjusted(w, w, -w, -w));
+
+      const qreal m = r.width() / 3;
+      QRectF rSign = r.adjusted(m, m, -m, -m);
+      m_painter.save();
+      m_painter.translate(rSign.center());
+      m_painter.rotate(toDeg(rotate + (state == DirectionControlState::BtoA ? TileRotate::Deg180 : TileRotate::Deg0)));
+      rSign.moveCenter(QPointF{0, 0});
+      pen = m_trackPen;
+      pen.setColor(Qt::white);
+      pen.setBrush(pen.color());
+      pen.setCapStyle(Qt::RoundCap);
+      pen.setJoinStyle(Qt::RoundJoin);
+      m_painter.setPen(pen);
+
+      switch(state)
+      {
+        case DirectionControlState::None:
+          m_painter.drawLine(centerLeft(rSign), centerRight(rSign));
+          break;
+
+        case DirectionControlState::AtoB:
+        case DirectionControlState::BtoA:
+          drawTriangle(rSign);
+          break;
+
+        case DirectionControlState::Both:
+          m_painter.drawLine(topCenter(rSign), bottomCenter(rSign));
+          break;
+      }
+
+      m_painter.restore();
       break;
     }
     default:
@@ -703,6 +795,16 @@ void TilePainter::drawSignal2Aspect(QRectF r, TileRotate rotate, SignalAspect as
   }
 
   m_painter.restore();
+}
+
+void TilePainter::drawTriangle(const QRectF& r)
+{
+  const std::array<QPointF, 3> points = {{
+    {r.center().x(), r.top()},
+    {r.right(), r.bottom()},
+    {r.left(), r.bottom()}}};
+
+  m_painter.drawConvexPolygon(points.data(), points.size());
 }
 
 void TilePainter::drawLED(const QRectF& r, const QColor& color, const QColor& borderColor)

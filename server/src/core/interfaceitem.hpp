@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -122,6 +122,13 @@ class InterfaceItem
     {
       assert(m_attributes.find(name) != m_attributes.end());
       return static_cast<const Attribute<T>*>(m_attributes.at(name).get())->value();
+    }
+
+    template<typename T>
+    const std::vector<T>& getVectorAttribute(AttributeName name) const
+    {
+      assert(m_attributes.find(name) != m_attributes.end());
+      return static_cast<const VectorAttribute<T>*>(m_attributes.at(name).get())->values();
     }
 
     const AbstractValuesAttribute* tryGetValuesAttribute(AttributeName name) const;

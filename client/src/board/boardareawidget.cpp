@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -255,6 +255,14 @@ SensorState BoardAreaWidget::getSensorState(const TileLocation& l) const
   return SensorState::Unknown;
 }
 
+DirectionControlState BoardAreaWidget::getDirectionControlState(const TileLocation& l) const
+{
+  if(ObjectPtr object = m_board.board().getTileObject(l))
+    if(const auto* p = object->getProperty("state"))
+      return p->toEnum<DirectionControlState>();
+  return DirectionControlState::Both;
+}
+
 SignalAspect BoardAreaWidget::getSignalAspect(const TileLocation& l) const
 {
   if(ObjectPtr object = m_board.board().getTileObject(l))
@@ -453,6 +461,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
         case TileId::RailBridge90:
         case TileId::RailBufferStop:
         case TileId::RailTunnel:
+        case TileId::RailOneWay:
           tilePainter.draw(id, r, a);
           break;
 
@@ -480,6 +489,10 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
         case TileId::RailBlock:
           tilePainter.drawBlock(id, r, a, getBlockState(it.first), showBlockSensorStates ? getBlockSensorStates(it.first) : std::vector<SensorState>());
+          break;
+
+        case TileId::RailDirectionControl:
+          tilePainter.drawDirectionControl(id, r, a, getDirectionControlState(it.first));
           break;
 
         case TileId::None:

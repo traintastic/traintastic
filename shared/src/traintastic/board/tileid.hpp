@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,6 +52,8 @@ enum class TileId : uint16_t // 10 bit
   RailBridge45Right = 22,
   RailBridge90 = 23,
   RailTunnel = 24,
+  RailOneWay = 25,
+  RailDirectionControl = 26,
 
   ReservedForFutureExpension = 1023
 };
@@ -110,6 +112,7 @@ constexpr bool isActive(TileId id)
     case TileId::RailSignal3Aspect:
     case TileId::RailSensor:
     case TileId::RailBlock:
+    case TileId::RailDirectionControl:
       return true;
 
     default:

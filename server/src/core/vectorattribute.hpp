@@ -41,6 +41,11 @@ class VectorAttribute : public AbstractValuesAttribute
       static_assert(value_type_v<T> != ValueType::Invalid);
     }
 
+    const std::vector<T>& values() const
+    {
+      return m_values;
+    }
+
     virtual uint32_t length() const final
     {
       return m_values.size();

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,6 +32,12 @@ enum class MethodFlags
   // bit 2
   Internal = 1 << 2,
 };
+
+constexpr MethodFlags operator |(MethodFlags lhs, MethodFlags rhs)
+{
+  using T = std::underlying_type_t<MethodFlags>;
+  return static_cast<MethodFlags>(static_cast<T>(lhs) | static_cast<T>(rhs));
+}
 
 constexpr MethodFlags operator &(MethodFlags lhs, MethodFlags rhs)
 {
