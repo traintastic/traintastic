@@ -280,7 +280,7 @@ bool Session::processMessage(const Message& message)
               case ValueType::String:
               {
                 std::string arg = message.read<std::string>();
-                if(i < method->argumentCount() && method->argumentTypes()[i] == ValueType::Object)
+                if(i < method->argumentTypeInfo().size() && method->argumentTypeInfo()[i].type == ValueType::Object)
                 {
                   if(arg.empty())
                     args.push_back(ObjectPtr());
@@ -671,10 +671,10 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
       else if(const AbstractMethod* method = dynamic_cast<const AbstractMethod*>(&item))
       {
         message.write(InterfaceItemType::Method);
-        message.write(method->resultType());
-        message.write(static_cast<uint8_t>(method->argumentCount()));
-        for(auto type : method->argumentTypes())
-          message.write(type);
+        message.write(method->resultTypeInfo().type);
+        message.write(static_cast<uint8_t>(method->argumentTypeInfo().size()));
+        for(const auto& info : method->argumentTypeInfo())
+          message.write(info.type);
       }
 
       message.writeBlock(); // attributes

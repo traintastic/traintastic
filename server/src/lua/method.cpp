@@ -86,7 +86,7 @@ int Method::__gc(lua_State* L)
 int Method::__call(lua_State* L)
 {
   AbstractMethod& method = check(L, 1);
-  const int argc = static_cast<int>(method.argumentCount());
+  const int argc = static_cast<int>(method.argumentTypeInfo().size());
 
   if(lua_gettop(L) - 1 != argc)
     errorExpectedNArgumentsGotN(L, argc, lua_gettop(L) - 1);
@@ -101,7 +101,8 @@ int Method::__call(lua_State* L)
   {
     AbstractMethod::Result result = method.call(args);
 
-    switch(method.resultType())
+    const auto& typeInfo = method.resultTypeInfo();
+    switch(typeInfo.type)
     {
       case ValueType::Invalid:
         return 0; // no return value

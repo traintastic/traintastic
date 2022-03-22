@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,14 +32,14 @@
 
 template<class T>
 class Method;
-
+/*
 template<class... A>
 struct args
 {
   static constexpr std::size_t count = sizeof...(A);
-  static constexpr std::array<ValueType, count> types = {{value_type_v<A>...}};
+  static constexpr std::array<ValueType, count> types = {{value_type_v<std::remove_const_t<std::remove_reference_t<A>>>...}};
 };
-
+*/
 template<std::size_t N, class... A>
 using getArgumentType = typename std::tuple_element<N, std::tuple<A...>>::type;
 
@@ -90,8 +90,6 @@ inline AbstractMethod::Result toResult(const T& value)
 template<class R, class... A>
 class Method<R(A...)> : public AbstractMethod
 {
-  private:
-
   protected:
     std::function<R(A...)> m_function;
 
@@ -113,34 +111,20 @@ class Method<R(A...)> : public AbstractMethod
       return m_function(args...);
     }
 
-    std::size_t argumentCount() const final
+    tcb::span<const TypeInfo> argumentTypeInfo() const final
     {
-      return sizeof...(A);
+      //return {typeInfoArray<A...>.data(), typeInfoArray<A...>.size()};
+      return {typeInfoArray<A...>};
     }
 
-    std::vector<ValueType> argumentTypes() const final
+    TypeInfo resultTypeInfo() const final
     {
-      if constexpr(sizeof...(A) == 0)
-        return {};
-      else
-        return std::vector<ValueType>(args<A...>::types.begin(), args<A...>::types.end());
-    }
-
-    ValueType resultType() const final
-    {
-      if constexpr(std::is_same_v<R, void>)
-        return ValueType::Invalid;
-      else if constexpr(value_type_v<R> != ValueType::Invalid)
-        return value_type_v<R>;
-      else if constexpr(is_shared_ptr_v<R> && std::is_base_of_v<Object, typename R::element_type>)
-        return ValueType::Object;
-      else
-        static_assert(sizeof(R) != sizeof(R));
+      return getTypeInfo<R>();
     }
 
     Result call(const std::vector<Argument>& args) final
     {
-      if(args.size() != argumentCount())
+      if(args.size() != sizeof...(A))
         throw InvalidNumberOfArgumentsError();
 
       if constexpr(std::is_same_v<R, void>)

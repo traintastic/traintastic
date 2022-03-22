@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -55,8 +55,11 @@ EventHandler::~EventHandler()
 
 void EventHandler::execute(const Arguments& args)
 {
-  const auto argumentInfo = m_event.argumentInfo();
-  assert(args.size() == argumentInfo.second);
+  const auto argumentTypeInfo = m_event.argumentTypeInfo();
+  assert(args.size() == argumentTypeInfo.size());
+
+  if(args.size() != argumentTypeInfo.size())
+    return;
 
   lua_rawgeti(m_L, LUA_REGISTRYINDEX, m_function);
 
@@ -64,14 +67,14 @@ void EventHandler::execute(const Arguments& args)
   for(size_t i = 0; i < nargs; i++)
   {
     const auto& arg = args[i];
-    switch(argumentInfo.first[i].first)
+    switch(argumentTypeInfo[i].type)
     {
       case ValueType::Boolean:
         push(m_L, std::get<bool>(arg));
         break;
 
       case ValueType::Enum:
-        pushEnum(m_L, argumentInfo.first[i].second.data(), std::get<int64_t>(arg));
+        pushEnum(m_L, argumentTypeInfo[i].enumName.data(), std::get<int64_t>(arg));
         break;
 
       case ValueType::Integer:
@@ -91,7 +94,7 @@ void EventHandler::execute(const Arguments& args)
         break;
 
       case ValueType::Set:
-        pushSet(m_L, argumentInfo.first[i].second.data(), std::get<int64_t>(arg));
+        pushSet(m_L, argumentTypeInfo[i].setName.data(), std::get<int64_t>(arg));
         break;
 
       case ValueType::Invalid:

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,7 +34,7 @@ class Event : public AbstractEvent
     template<class T, class... Tn>
     inline void addArguments(Arguments& args, T value, Tn... others)
     {
-      if constexpr(value_type_v<T> == ValueType::Enum || value_type_v<T> == ValueType::Set)
+      if constexpr(value_type_v<T> == ValueType::Enum || value_type_v<T> == ValueType::Set || value_type_v<T> == ValueType::Integer)
         args.emplace_back(static_cast<int64_t>(value));
       else
         args.emplace_back(value);
@@ -43,18 +43,7 @@ class Event : public AbstractEvent
         addArguments(args, others...);
     }
 
-    template<class T>
-    static constexpr std::pair<ValueType, std::string_view> getArgumentInfo()
-    {
-      if constexpr(is_set_v<T>)
-        return {ValueType::Set, set_name_v<T>};
-      else if constexpr(std::is_enum_v<T>)
-        return {ValueType::Enum, EnumName<T>::value};
-      else
-        return {value_type_v<T>, {}};
-    }
-
-    static constexpr std::array<ArgumentInfo, sizeof...(Args)> s_argumentInfo = {{getArgumentInfo<Args>()...}};
+    //static constexpr std::array<ArgumentInfo, sizeof...(Args)> s_argumentInfo = {{getArgumentInfo<Args>()...}};
 
   protected:
     void fire(Args... args)
@@ -74,9 +63,9 @@ class Event : public AbstractEvent
     {
     }
 
-    std::pair<const ArgumentInfo*, size_t> argumentInfo() const final
+    tcb::span<const TypeInfo> argumentTypeInfo() const final
     {
-      return {s_argumentInfo.data(), s_argumentInfo.size()};
+      return {typeInfoArray<Args...>};//.data(), typeInfoArray<Args...>.size()};
     }
 };
 
