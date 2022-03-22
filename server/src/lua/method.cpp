@@ -23,6 +23,7 @@
 #include "method.hpp"
 #include "push.hpp"
 #include "error.hpp"
+#include "to.hpp"
 #include "../core/abstractmethod.hpp"
 #include "../core/object.hpp"
 
@@ -94,8 +95,50 @@ int Method::__call(lua_State* L)
   Arguments args;
   args.reserve(argc);
 
+  if(argc > 0)
+  {
+    int index = 2;
 
-  assert(argc == 0);
+    for(const auto& info : method.argumentTypeInfo())
+    {
+      switch(info.type)
+      {
+        case ValueType::Boolean:
+          args.emplace_back(to<bool>(L, index));
+          break;
+
+        case ValueType::Enum:
+          args.emplace_back(static_cast<int64_t>(checkEnum(L, index, info.enumName.data())));
+          break;
+
+        case ValueType::Integer:
+          args.emplace_back(to<int64_t>(L, index));
+          break;
+
+        case ValueType::Float:
+          args.emplace_back(to<double>(L, index));
+          break;
+
+        case ValueType::String:
+          args.emplace_back(to<std::string>(L, index));
+          break;
+
+        case ValueType::Object:
+          errorInternal(L); // not yet implemented
+
+        case ValueType::Set:
+          args.emplace_back(static_cast<int64_t>(checkSet(L, index, info.setName.data())));
+          break;
+
+        case ValueType::Invalid:
+          assert(false);
+          errorInternal(L);
+      }
+      index++;
+    }
+  }
+
+  assert(args.size() == static_cast<Arguments::size_type>(argc));
 
   try
   {
