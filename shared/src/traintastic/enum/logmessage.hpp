@@ -138,7 +138,7 @@ enum class LogMessage : uint32_t
   E2015_SERIAL_PORT_SET_STOP_BITS_FAILED_X = LogMessageOffset::error + 2015,
   E2016_SERIAL_PORT_SET_PARITY_FAILED_X = LogMessageOffset::error + 2016,
   E2017_SERIAL_PORT_SET_FLOW_CONTROL_FAILED_X = LogMessageOffset::error + 2017,
-
+  E9001_X_DURING_EXECUTION_OF_X_EVENT_HANDLER = LogMessageOffset::error + 9001,
   E9999_X = LogMessageOffset::error + 9999,
 
   // Critical:
