@@ -25,12 +25,14 @@
 
 #include "../../src/enum/decoderprotocol.hpp"
 #include "../../src/enum/direction.hpp"
+#include "../../src/enum/directioncontrolstate.hpp"
 #include "../../src/enum/worldevent.hpp"
 #include "../../src/enum/worldscale.hpp"
 
 #define TEST_ENUMS \
   DecoderProtocol, \
   Direction, \
+  DirectionControlState, \
   WorldEvent, \
   WorldScale
 

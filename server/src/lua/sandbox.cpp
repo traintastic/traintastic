@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,6 +36,7 @@
 #include "../world/world.hpp"
 #include "../enum/decoderprotocol.hpp"
 #include "../enum/direction.hpp"
+#include "../enum/directioncontrolstate.hpp"
 #include "../enum/worldevent.hpp"
 #include "../enum/worldscale.hpp"
 #include "../set/worldstate.hpp"
@@ -164,6 +165,7 @@ SandboxPtr Sandbox::create(Script& script)
   // register types:
   Enum<DecoderProtocol>::registerType(L);
   Enum<Direction>::registerType(L);
+  Enum<DirectionControlState>::registerType(L);
   Enum<WorldEvent>::registerType(L);
   Enum<WorldScale>::registerType(L);
   Set<WorldState>::registerType(L);
@@ -244,6 +246,7 @@ SandboxPtr Sandbox::create(Script& script)
   lua_newtable(L);
   Enum<DecoderProtocol>::registerValues(L);
   Enum<Direction>::registerValues(L);
+  Enum<DirectionControlState>::registerValues(L);
   Enum<WorldEvent>::registerValues(L);
   Enum<WorldScale>::registerValues(L);
   ReadOnlyTable::wrap(L, -1);
