@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,6 +41,19 @@ inline void pushEnum(lua_State* L, const char* enumName, lua_Integer value)
   lua_pop(L, 1); // remove table
 }
 
+inline lua_Integer checkEnum(lua_State* L, int index, const char* enumName)
+{
+  return *static_cast<const lua_Integer*>(luaL_checkudata(L, index, enumName));
+}
+
+inline bool testEnum(lua_State* L, int index, const char* enumName, lua_Integer& value)
+{
+  const auto* data = static_cast<const lua_Integer*>(luaL_testudata(L, index, enumName));
+  if(data)
+    value = *data;
+  return data;
+}
+
 template<typename T>
 struct Enum
 {
@@ -49,15 +62,16 @@ struct Enum
 
   static T check(lua_State* L, int index)
   {
-    return *static_cast<const T*>(luaL_checkudata(L, index, EnumName<T>::value));
+    return static_cast<T>(checkEnum(L, index, EnumName<T>::value));
   }
 
   static bool test(lua_State* L, int index, T& value)
   {
-    const T* data = static_cast<const T*>(luaL_testudata(L, index, EnumName<T>::value));
-    if(data)
-      value = *data;
-    return data;
+    lua_Integer n;
+    const bool success = testEnum(L, index, EnumName<T>::value, n);
+    if(success)
+      value = static_cast<T>(n);
+    return success;
   }
 
   static void push(lua_State* L, T value)
@@ -83,7 +97,7 @@ struct Enum
     lua_createtable(L, EnumValues<T>::value.size(), 0);
     for(auto& it : EnumValues<T>::value)
     {
-      *static_cast<T*>(lua_newuserdata(L, sizeof(T))) = it.first;
+      *static_cast<lua_Integer*>(lua_newuserdata(L, sizeof(lua_Integer))) = static_cast<lua_Integer>(it.first);
       lua_pushvalue(L, -3); // copy metatable
       lua_setmetatable(L, -2);
       check(L, -1);
