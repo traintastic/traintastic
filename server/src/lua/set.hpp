@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -66,6 +66,19 @@ inline void pushSet(lua_State* L, const char* setName, lua_Integer value)
     lua_pop(L, 1); // remove tabel
 }
 
+inline lua_Integer checkSet(lua_State* L, int index, const char* setName)
+{
+  return *static_cast<const lua_Integer*>(luaL_checkudata(L, index, setName));
+}
+
+inline bool testSet(lua_State* L, int index, const char* setName, lua_Integer& value)
+{
+  const auto* data = static_cast<const lua_Integer*>(luaL_testudata(L, index, setName));
+  if(data)
+    value = *data;
+  return data;
+}
+
 template<typename T>
 struct Set
 {
@@ -74,15 +87,16 @@ struct Set
 
   static T check(lua_State* L, int index)
   {
-    return static_cast<T>(*static_cast<lua_Integer*>(luaL_checkudata(L, index, set_name_v<T>)));
+    return static_cast<T>(checkSet(L, index, set_name_v<T>));
   }
 
   static bool test(lua_State* L, int index, T& value)
   {
-    lua_Integer* data = static_cast<lua_Integer*>(luaL_testudata(L, index, set_name_v<T>));
-    if(data)
-      value = static_cast<T>(*data);
-    return data;
+    lua_Integer n;
+    const bool success = testSet(L, index, set_name_v<T>, n);
+    if(success)
+      value = static_cast<T>(n);
+    return success;
   }
 
   static void push(lua_State* L, T value)
