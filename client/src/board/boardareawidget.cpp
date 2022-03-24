@@ -101,7 +101,8 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
 
   if((property = object->getProperty("state")) ||       // block or sensor
       (property = object->getProperty("position")) ||   // turnout
-      (property = object->getProperty("aspect")))       // signal
+      (property = object->getProperty("aspect")) ||     // signal
+      (property = object->getProperty("color")))        // push button
     connect(property, &AbstractProperty::valueChanged, this,
       [this, l]()
       {
@@ -269,6 +270,14 @@ SignalAspect BoardAreaWidget::getSignalAspect(const TileLocation& l) const
     if(const auto* p = object->getProperty("aspect"))
       return p->toEnum<SignalAspect>();
   return SignalAspect::Unknown;
+}
+
+Color BoardAreaWidget::getColor(const TileLocation& l) const
+{
+  if(ObjectPtr object = m_board.board().getTileObject(l))
+    if(const auto* p = object->getProperty("color"))
+      return p->toEnum<Color>();
+  return Color::None;
 }
 
 TileLocation BoardAreaWidget::pointToTileLocation(const QPoint& p)
@@ -493,6 +502,10 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
         case TileId::RailDirectionControl:
           tilePainter.drawDirectionControl(id, r, a, getDirectionControlState(it.first));
+          break;
+
+        case TileId::PushButton:
+          tilePainter.drawPushButton(r, getColor(it.first));
           break;
 
         case TileId::None:

@@ -34,6 +34,7 @@
 #include <traintastic/enum/signalaspect.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/turnoutposition.hpp>
+#include "../enum/color.hpp"
 
 struct BoardColorScheme;
 
@@ -90,6 +91,8 @@ class TilePainter
     void drawTurnout(TileId id, const QRectF& r, TileRotate rotate, TurnoutPosition position = TurnoutPosition::Unknown);
     void drawSignal(TileId id, const QRectF& r, TileRotate rotate, SignalAspect aspect = SignalAspect::Unknown);
     void drawBlock(TileId id, const QRectF& r, TileRotate rotate, BlockState state = BlockState::Unknown, const std::vector<SensorState> subStates = {});
+
+    void drawPushButton(const QRectF& r, Color color = Color::Yellow);
 };
 
 #endif

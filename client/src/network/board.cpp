@@ -58,6 +58,21 @@ bool Board::getTileOrigin(TileLocation& l) const
   return false;
 }
 
+TileId Board::getTileId(TileLocation l) const
+{
+  if(auto it = m_tileData.find(l); it != m_tileData.end())
+    return it->second.id();
+
+  for(const auto& it : m_tileData)
+    if(l.x >= it.first.x && l.x < it.first.x + it.second.width() &&
+        l.y >= it.first.y && l.y < it.first.y + it.second.height())
+    {
+      return it.second.id();
+    }
+
+  return TileId::None;
+}
+
 ObjectPtr Board::getTileObject(TileLocation l) const
 {
   auto itObject = m_tileObjects.find(l);

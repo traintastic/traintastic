@@ -33,6 +33,7 @@
 #include <traintastic/enum/signalaspect.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/turnoutposition.hpp>
+#include <traintastic/enum/color.hpp>
 #include "boardcolorscheme.hpp"
 #include "../network/abstractproperty.hpp"
 #include "../network/objectptr.hpp"
@@ -101,6 +102,7 @@ class BoardAreaWidget : public QWidget
     SensorState getSensorState(const TileLocation& l) const;
     DirectionControlState getDirectionControlState(const TileLocation& l) const;
     SignalAspect getSignalAspect(const TileLocation& l) const;
+    Color getColor(const TileLocation& l) const;
     TileLocation pointToTileLocation(const QPoint& p);
 
     void leaveEvent(QEvent *event) final;

@@ -54,6 +54,7 @@ enum class TileId : uint16_t // 10 bit
   RailTunnel = 24,
   RailOneWay = 25,
   RailDirectionControl = 26,
+  PushButton = 27,
 
   ReservedForFutureExpension = 1023
 };
@@ -113,6 +114,7 @@ constexpr bool isActive(TileId id)
     case TileId::RailSensor:
     case TileId::RailBlock:
     case TileId::RailDirectionControl:
+    case TileId::PushButton:
       return true;
 
     default:

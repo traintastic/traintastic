@@ -8,6 +8,8 @@ board:resize_to_contents=Resize to contents
 board_settings.color_scheme:dark=Dark
 board_settings.color_scheme:light=Light
 
+board_tile.misc.push_button:color=Color
+
 board_tile.rail.block:input_map=Sensors
 
 board_tile.rail.direction_control:state=State
@@ -28,6 +30,7 @@ category:info=Info
 category:log=Log
 category:network=Network
 
+class_id:board_tile.misc.push_button=Push button
 class_id:board_tile.rail.block=Block
 class_id:board_tile.rail.bridge_45_left=Bridge 45° (left)
 class_id:board_tile.rail.bridge_45_right=Bridge 45° (right)
@@ -69,6 +72,23 @@ clock:minute=Minute
 clock:month=Month
 clock:multiplier=Multiplier
 clock:year=Year
+
+color:aqua=Aqua
+color:black=Black
+color:blue=Blue
+color:fuchsia=Fuchsia
+color:gray=Gray
+color:green=Green
+color:lime=Lime
+color:maroon=Maroon
+color:navy=Navy
+color:olive=Olive
+color:purple=Purple
+color:red=Red
+color:silver=Silver
+color:teal=Teal
+color:white=White
+color:yellow=Yellow
 
 dccplusplus_channel:dcc_accessory=DCC accessory
 dccplusplus_channel:output=Output

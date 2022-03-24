@@ -52,6 +52,7 @@ std::shared_ptr<Tile> Tiles::create(World& world, std::string_view classId, std:
   IF_CLASSID_CREATE(SensorRailTile)
   IF_CLASSID_CREATE(BlockRailTile)
   IF_CLASSID_CREATE(TunnelRailTile)
+  IF_CLASSID_CREATE(PushButtonTile)
   return std::shared_ptr<Tile>();
 }
 

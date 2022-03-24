@@ -49,7 +49,7 @@ struct TileInfo
   uint8_t rotates;
 };
 
-const std::array<TileInfo, 32> tileInfo = {
+const std::array<TileInfo, 34> tileInfo = {
   TileInfo{QStringLiteral("board_tile.rail.straight"), TileId::RailStraight, 0x0F},
   TileInfo{QStringLiteral("board_tile.rail.buffer_stop"), TileId::RailBufferStop, 0xFF},
   TileInfo{QStringLiteral("board_tile.rail.tunnel"), TileId::RailTunnel, 0xFF},
@@ -81,6 +81,8 @@ const std::array<TileInfo, 32> tileInfo = {
   TileInfo{QStringLiteral(""), TileId::None, 0},
   TileInfo{QStringLiteral("board_tile.rail.signal_2_aspect"), TileId::RailSignal2Aspect, 0xFF},
   TileInfo{QStringLiteral("board_tile.rail.signal_3_aspect"), TileId::RailSignal3Aspect, 0xFF},
+  TileInfo{QStringLiteral(""), TileId::None, 0},
+  TileInfo{QStringLiteral("board_tile.misc.push_button"), TileId::PushButton, 0x01},
   TileInfo{QStringLiteral(""), TileId::None, 0}
 };
 
@@ -506,15 +508,21 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
     {
       if(ObjectPtr obj = m_object->getTileObject({x, y}))
       {
-        if(isRailTurnout(it->second.id()))
+        const auto tileId = it->second.id();
+        if(isRailTurnout(tileId))
         {
           if(auto* m = obj->getMethod("next_position"))
             callMethod(*m, nullptr, false);
         }
-        else if(isRailSignal(it->second.id()))
+        else if(isRailSignal(tileId))
         {
           if(auto* m = obj->getMethod("next_aspect"))
             callMethod(*m, nullptr, false);
+        }
+        else if(tileId == TileId::PushButton)
+        {
+          if(auto* m = obj->getMethod("pressed"))
+            m->call();
         }
       }
     }

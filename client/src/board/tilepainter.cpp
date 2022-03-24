@@ -171,6 +171,10 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate)
       m_painter.restore();
       break;
     }
+    case TileId::PushButton:
+      drawPushButton(r);
+      break;
+
     case TileId::None:
     case TileId::ReservedForFutureExpension:
       break;
@@ -528,6 +532,14 @@ void TilePainter::drawBlock(TileId id, const QRectF& r, TileRotate rotate, Block
       assert(false);
       break;
   }
+}
+
+void TilePainter::drawPushButton(const QRectF& r, Color color)
+{
+  m_painter.setPen(QPen(Qt::gray, r.width() / 10));
+  m_painter.setBrush(toQColor(color));
+  const qreal radius = r.width() * 0.4;
+  m_painter.drawEllipse(r.center(), radius, radius);
 }
 
 //=============================================================================

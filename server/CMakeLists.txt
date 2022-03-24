@@ -70,6 +70,8 @@ file(GLOB SOURCES
   "src/board/*.cpp"
   "src/board/tile/*.hpp"
   "src/board/tile/*.cpp"
+  "src/board/tile/misc/*.hpp"
+  "src/board/tile/misc/*.cpp"
   "src/board/tile/rail/*.hpp"
   "src/board/tile/rail/*.cpp"
   "src/board/tile/rail/signal/*.hpp"
