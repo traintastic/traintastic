@@ -72,6 +72,7 @@ enum class LogMessage : uint32_t
   I2001_UNKNOWN_LOCO_ADDRESS_X = LogMessageOffset::info + 2001,
   I2002_HARDWARE_TYPE_X = LogMessageOffset::info + 2002,
   I2003_FIRMWARE_VERSION_X = LogMessageOffset::info + 2003,
+  I9001_STOPPED_SCRIPT = LogMessageOffset::info + 9001,
   I9999_X = LogMessageOffset::info + 9999,
 
   // Notice:
@@ -102,6 +103,7 @@ enum class LogMessage : uint32_t
   N1025_EXPORTED_WORLD_SUCCESSFULLY = LogMessageOffset::notice + 1025,
   N1026_IMPORTED_WORLD_SUCCESSFULLY = LogMessageOffset::notice + 1026,
   N2001_SIMULATION_NOT_SUPPORTED = LogMessageOffset::notice + 2001,
+  N9001_STARTING_SCRIPT = LogMessageOffset::notice + 9001,
   N9999_X = LogMessageOffset::notice + 9999,
 
   // Warning:

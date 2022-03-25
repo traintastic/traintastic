@@ -147,6 +147,7 @@ void Script::startSandbox()
   assert(!m_sandbox);
   if((m_sandbox = Sandbox::create(*this)))
   {
+    Log::log(*this, LogMessage::N9001_STARTING_SCRIPT);
     lua_State* L = m_sandbox.get();
     const int r = luaL_loadbuffer(L, code.value().c_str(), code.value().size(), "=") || Sandbox::pcall(L, 0, LUA_MULTRET);
     if(r == LUA_OK)
@@ -179,7 +180,10 @@ void Script::stopSandbox()
   assert(m_sandbox);
   m_sandbox.reset();
   if(state == LuaScriptState::Running)
+  {
     setState(LuaScriptState::Stopped);
+    Log::log(*this, LogMessage::I9001_STOPPED_SCRIPT);
+  }
 }
 
 bool Script::pcall(lua_State* L, int nargs, int nresults)
