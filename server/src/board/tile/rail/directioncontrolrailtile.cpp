@@ -104,6 +104,7 @@ DirectionControlRailTile::DirectionControlRailTile(World& world, std::string_vie
   Attributes::addValues(state, std::vector<DirectionControlState>{});
   m_interfaceItems.add(state);
 
+  Attributes::addObjectEditor(setState, false);
   Attributes::addValues(setState, std::vector<DirectionControlState>{});
   m_interfaceItems.add(setState);
 
