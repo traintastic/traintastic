@@ -167,6 +167,6 @@ void DirectionControlRailTile::updateStateValues()
   if(std::find(states.begin(), states.end(), state.value()) == states.end() && !states.empty())
     state.setValueInternal(states.front());
 
-  Attributes::setValues(state, std::move(states));
+  Attributes::setValues(state, states);
   Attributes::setValues(setState, std::move(states));
 }
