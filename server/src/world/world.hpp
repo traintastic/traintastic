@@ -118,6 +118,8 @@ class World : public Object
 
     Method<void()> save;
 
+    Method<ObjectPtr(const std::string&)> getObject_;
+
     Event<WorldState, WorldEvent> onEvent;
 
     World(Private);
@@ -128,7 +130,7 @@ class World : public Object
 
     std::string getUniqueId(std::string_view prefix) const;
     bool isObject(const std::string&_id) const;
-    ObjectPtr getObject(const std::string& _id) const;
+    ObjectPtr getObjectById(const std::string& _id) const;
     ObjectPtr getObjectByPath(std::string_view path) const;
 
     bool export_(std::vector<std::byte>& data);

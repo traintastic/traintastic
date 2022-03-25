@@ -20,6 +20,8 @@
 
 ## Methods
 
+`object get_object(string id)`
+
 `power_off()`
 
 `stop()`

@@ -207,6 +207,11 @@ World::World(Private /*unused*/) :
         Log::log(*this, LogMessage::C1005_SAVING_WORLD_FAILED_X, e);
       }
     }}
+  , getObject_{*this, "get_object", MethodFlags::Internal | MethodFlags::ScriptCallable,
+      [this](const std::string& objectId)
+      {
+        return getObjectById(objectId);
+      }}
   , onEvent{*this, "on_event", EventFlags::Scriptable}
 {
   Attributes::addDisplayName(uuid, DisplayName::World::uuid);
@@ -276,6 +281,8 @@ World::World(Private /*unused*/) :
   Attributes::addObjectEditor(save, false);
   m_interfaceItems.add(save);
 
+  m_interfaceItems.add(getObject_);
+
   m_interfaceItems.add(onEvent);
 
   updateEnabled();
@@ -301,7 +308,7 @@ bool World::isObject(const std::string& _id) const
   return m_objects.find(_id) != m_objects.end() || _id == id || _id == Traintastic::id;
 }
 
-ObjectPtr World::getObject(const std::string& _id) const
+ObjectPtr World::getObjectById(const std::string& _id) const
 {
   auto it = m_objects.find(_id);
   if(it != m_objects.end())
@@ -317,7 +324,7 @@ ObjectPtr World::getObjectByPath(std::string_view path) const
   boost::split(ids, path, [](char c){ return c == '.'; });
   auto it = ids.cbegin();
 
-  ObjectPtr obj = getObject(*it);
+  ObjectPtr obj = getObjectById(*it);
   while(obj && ++it != ids.cend())
   {
     if(AbstractProperty* property = obj->getProperty(*it); property && property->type() == ValueType::Object)

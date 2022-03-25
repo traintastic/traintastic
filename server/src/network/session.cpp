@@ -97,7 +97,7 @@ bool Session::processMessage(const Message& message)
       if(*it == Traintastic::classId)
         obj = Traintastic::instance;
       else if(Traintastic::instance->world)
-        obj = Traintastic::instance->world->getObject(*it);
+        obj = Traintastic::instance->world->getObjectById(*it);
 
       while(obj && ++it != ids.cend())
       {
