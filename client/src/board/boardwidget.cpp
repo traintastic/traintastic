@@ -351,12 +351,22 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   connect(m_boardArea, &BoardAreaWidget::mouseTileLocationChanged, this,
     [this](int16_t x, int16_t y)
     {
-      if(TileLocation{x, y}.isValid())
+      if(const auto tl = TileLocation{x, y}; tl.isValid())
+      {
         m_statusBarCoords->setText(QString::number(x) + ", " + QString::number(y));
+
+        const auto tileId = m_object->getTileId(tl);
+        if((!m_toolbarEdit->isVisible() && (isRailTurnout(tileId) || isRailSignal(tileId) || tileId == TileId::PushButton)) ||
+            (m_toolbarEdit->isVisible() && isActive(tileId) && m_editActions->checkedAction() == m_editActionNone))
+          setCursor(Qt::PointingHandCursor);
+        else
+          setCursor(Qt::ArrowCursor);
+      }
       else
         m_statusBarCoords->setText("");
     });
 
+  m_boardArea->setMouseTracking(true);
   gridChanged(m_boardArea->grid());
   zoomLevelChanged(m_boardArea->zoomLevel());
 }
@@ -365,7 +375,6 @@ void BoardWidget::worldEditChanged(bool value)
 {
   m_toolbarEdit->setVisible(value);
   m_statusBar->setVisible(value);
-  m_boardArea->setMouseTracking(value);
 }
 
 void BoardWidget::gridChanged(BoardAreaWidget::Grid value)
