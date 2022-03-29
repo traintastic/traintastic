@@ -28,16 +28,20 @@
 
 namespace ECoS {
 
+static const std::string_view startDelimiterReply = "<REPLY ";
 static const std::string_view endDelimiter = "<END ";
+
+bool isReply(std::string_view message)
+{
+  return startsWith(message, startDelimiterReply);
+}
 
 bool parseReply(std::string_view message, Reply& reply)
 {
-  static const std::string_view startDelimiter = "<REPLY ";
-
-  if(!startsWith(message, startDelimiter))
+  if(!isReply(message))
     return false;
 
-  size_t n = startDelimiter.size();
+  size_t n = startDelimiterReply.size();
   size_t pos;
   if((pos = message.find('(', n)) == std::string_view::npos)
     return false;

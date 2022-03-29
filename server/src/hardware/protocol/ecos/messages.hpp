@@ -148,6 +148,7 @@ inline std::string release(uint16_t objectId, std::initializer_list<std::string_
   return buildCommand(Command::release, objectId, options);
 }
 
+bool isReply(std::string_view message);
 bool parseReply(std::string_view message, Reply& reply);
 bool parseEvent(std::string_view message, Event& event);
 

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,12 +31,16 @@ namespace ECoS {
 class TCPIOHandler final : public IOHandler
 {
   private:
+    static constexpr uint32_t transferWindow = 25;
     boost::asio::ip::tcp::socket m_socket;
     boost::asio::ip::tcp::endpoint m_endpoint;
+    bool m_writing = false;
+    uint32_t m_waitingForReply = 0;
 
     void read();
 
   protected:
+    void receive(std::string_view message) final;
     void write() final;
 
   public:

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -71,9 +71,9 @@ void IOHandler::processRead(size_t bytesTransferred)
           if(pos != std::string_view::npos)
           {
             size_t end = buffer.find('>', pos);
-            if(end != buffer.size())
+            if(end != std::string_view::npos)
             {
-              m_kernel.receive(std::string_view{m_readBuffer.data() + m_readPos, end - m_readPos + 1});
+              receive(std::string_view{m_readBuffer.data() + m_readPos, end - m_readPos + 1});
               m_readPos = end + 1;
             }
             else
@@ -98,6 +98,11 @@ void IOHandler::processRead(size_t bytesTransferred)
       memmove(m_readBuffer.data(), m_readBuffer.data() + m_readPos, m_readBufferOffset);
     m_readPos = 0;
   }
+}
+
+void IOHandler::receive(std::string_view message)
+{
+  m_kernel.receive(message);
 }
 
 }

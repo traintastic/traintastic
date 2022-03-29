@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@
  */
 
 #include "tcpiohandler.hpp"
+#include "../messages.hpp"
 #include "../kernel.hpp"
 #include "../../../../core/eventloop.hpp"
 #include "../../../../log/log.hpp"
@@ -86,18 +87,48 @@ void TCPIOHandler::read()
     });
 }
 
+void TCPIOHandler::receive(std::string_view message)
+{
+  IOHandler::receive(message);
+  if(m_waitingForReply > 0 && isReply(message))
+  {
+    m_waitingForReply--;
+    if(!m_writing && m_waitingForReply < transferWindow && m_writeBufferOffset > 0)
+      write();
+  }
+}
+
 void TCPIOHandler::write()
 {
-  m_socket.async_write_some(boost::asio::buffer(m_writeBuffer.data(), m_writeBufferOffset),
+  assert(!m_writing);
+
+  m_writing = true;
+
+  const char* p = m_writeBuffer.data();
+  const char* end = m_writeBuffer.data() + m_writeBufferOffset;
+
+  while(m_waitingForReply < transferWindow && (p = std::find(p, end, '\n')) != end)
+  {
+    p++;
+    m_waitingForReply++;
+  }
+
+  if(p == m_writeBuffer.data())
+    return;
+
+  m_socket.async_write_some(boost::asio::buffer(m_writeBuffer.data(), p - m_writeBuffer.data()),
     [this](const boost::system::error_code& ec, std::size_t bytesTransferred)
     {
+      m_writing = false;
+
       if(!ec)
       {
         if(bytesTransferred < m_writeBufferOffset)
         {
           m_writeBufferOffset -= bytesTransferred;
           memmove(m_writeBuffer.data(), m_writeBuffer.data() + bytesTransferred, m_writeBufferOffset);
-          write();
+          if(m_waitingForReply < transferWindow)
+            write();
         }
         else
           m_writeBufferOffset = 0;

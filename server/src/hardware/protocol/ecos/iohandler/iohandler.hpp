@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,12 +38,13 @@ class IOHandler
     std::array<char, 32 * 1024> m_readBuffer;
     size_t m_readBufferOffset;
     size_t m_readPos;
-    std::array<char, 1024> m_writeBuffer;
+    std::array<char, 32 * 1024> m_writeBuffer;
     size_t m_writeBufferOffset;
 
     IOHandler(Kernel& kernel);
 
     void processRead(size_t bytesTransferred);
+    virtual void receive(std::string_view message);
     virtual void write() = 0;
 
   public:
