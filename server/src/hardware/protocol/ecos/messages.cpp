@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -120,9 +120,59 @@ bool parseEvent(std::string_view message, Event& event)
   if(!startsWith(message, startDelimiter))
     return false;
 
-  (void)event;
+  size_t n = startDelimiter.size();
+  size_t pos;
 
-  return false;
+  // read objectId
+  auto r = std::from_chars(&message[n], &message[message.size() - 1], event.objectId);
+  if(r.ec != std::errc())
+    return false;
+
+  // advance to next line
+  n = r.ptr - message.data();
+  while((message[n] == '\n' || message[n] == '\r') && n < message.size())
+    n++;
+  if(n >= message.size())
+    return false;
+
+  // find end
+  size_t end;
+  if((end = message.find(endDelimiter, n)) == std::string_view::npos)
+    return false;
+
+  // read lines
+  if(end > n)
+  {
+    while((pos = message.find('\n', n)) < end)
+    {
+      event.lines.emplace_back(&message[n], pos - n);
+      n = pos + 1;
+    }
+  }
+
+  // read status code
+  std::underlying_type_t<Status> status;
+  r = std::from_chars(&message[end + endDelimiter.size()], &message[message.size() - 1], status);
+  if(r.ec != std::errc())
+    return false;
+  event.status = static_cast<Status>(status);
+  n = r.ptr - message.data();
+
+  // read status message
+  while(message[n] != '(' && message[n] != '\n' && message[n] != '\r' && n < message.size())
+    n++;
+  if(n >= message.size() || message[n] != '(')
+    return false;
+
+  pos = ++n;
+  while(message[pos] != ')' && message[pos] != '\n' && message[pos] != '\r' && n < message.size())
+    pos++;
+  if(pos >= message.size() || message[pos] != ')')
+    return false;
+
+  event.statusMessage = message.substr(n, pos - n);
+
+  return true;
 }
 
 bool parseId(std::string_view line, uint16_t& id)
