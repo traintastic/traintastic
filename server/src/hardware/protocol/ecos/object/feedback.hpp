@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 
 #include "object.hpp"
 #include "../messages.hpp"
+#include "../../../../enum/tristate.hpp"
 
 namespace ECoS {
 
@@ -33,14 +34,17 @@ struct Line;
 
 class Feedback final : public Object
 {
+  private:
+    std::vector<TriState> m_state;
+
+  protected:
+    void update(std::string_view option, std::string_view value) final;
+
   public:
     static const std::initializer_list<std::string_view> options;
 
     Feedback(Kernel& kernel, uint16_t id);
     Feedback(Kernel& kernel, const Line& data);
-
-    bool receiveReply(const Reply& reply) final;
-    bool receiveEvent(const Event& event) final;
 };
 
 }

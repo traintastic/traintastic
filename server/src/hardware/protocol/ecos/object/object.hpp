@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <vector>
 #include <string_view>
 
 namespace ECoS {
@@ -35,6 +36,9 @@ struct Event;
 
 class Object
 {
+  private:
+    void update(const std::vector<std::string_view>& lines);
+
   protected:
     Kernel& m_kernel;
     const uint16_t m_id;
@@ -44,6 +48,8 @@ class Object
 
     bool objectExists(uint16_t objectId) const;
     void addObject(std::unique_ptr<Object> object);
+
+    virtual void update(std::string_view /*option*/, std::string_view /*value*/){}// = 0;
 
   public:
     Object(const Object&) = delete;

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,11 +39,34 @@ class OutputController;
 namespace ECoS {
 
 class ECoS;
+class Feedback;
 
 class Kernel
 {
   friend class Object;
   friend class ECoS;
+
+  public:
+    static constexpr uint16_t s88AddressMin = 1;
+    static constexpr uint16_t s88AddressMax = 1000; //!< \todo what is the maximum
+    static constexpr uint16_t ecosDetectorAddressMin = 1;
+    static constexpr uint16_t ecosDetectorAddressMax = 1000; //!< \todo what is the maximum
+
+    struct InputChannel
+    {
+      static constexpr uint32_t s88 = 1;
+      static constexpr uint32_t ecosDetector = 2;
+    };
+
+    inline static const std::vector<uint32_t> inputChannels = {
+      InputChannel::s88,
+      InputChannel::ecosDetector,
+    };
+
+    inline static const std::vector<std::string_view> inputChannelNames = {
+      "$hardware:s88$",
+      "$ecos_channel:ecos_detector$",
+    };
 
   private:
     class Objects : public std::unordered_map<uint16_t, std::unique_ptr<Object>>
@@ -241,6 +264,8 @@ class Kernel
      * @return \c true if send successful, \c false otherwise.
      */
     bool setOutput(uint16_t address, bool value);
+
+    void feedbackStateChanged(Feedback& object, uint8_t port, TriState value);
 };
 
 }

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,8 +27,10 @@
 #include "object/locomotivemanager.hpp"
 #include "object/switchmanager.hpp"
 #include "object/feedbackmanager.hpp"
+#include "object/feedback.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
+#include "../../input/inputcontroller.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../utils/startswith.hpp"
 #include "../../../utils/rtrim.hpp"
@@ -211,6 +213,35 @@ bool Kernel::setOutput(uint16_t address, bool value)
   (void)(value);
 
   return false;
+}
+
+void Kernel::feedbackStateChanged(Feedback& object, uint8_t port, TriState value)
+{
+  if(!m_inputController)
+    return;
+
+  if(isS88FeedbackId(object.id()))
+  {
+    const uint16_t portsPerObject = 16;
+    const uint16_t address = 1 + port + portsPerObject * (object.id() - ObjectId::s88);
+
+    EventLoop::call(
+      [this, address, value]()
+      {
+        m_inputController->updateInputValue(InputChannel::s88, address, value);
+      });
+  }
+  else // ECoS Detector
+  {
+    const uint16_t portsPerObject = 16;
+    const uint16_t address = 1 + port + portsPerObject * (object.id() - ObjectId::ecosDetector);
+
+    EventLoop::call(
+      [this, address, value]()
+      {
+        m_inputController->updateInputValue(InputChannel::ecosDetector, address, value);
+      });
+  }
 }
 
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)

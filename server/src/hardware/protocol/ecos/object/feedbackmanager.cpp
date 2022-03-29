@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,8 +32,6 @@ FeedbackManager::FeedbackManager(Kernel& kernel)
 {
   requestView();
   send(queryObjects(m_id, Feedback::options));
-  send(request(ObjectId::s88, {Option::view}));
-  send(request(ObjectId::ecosDetector, {Option::view}));
 }
 
 bool FeedbackManager::receiveReply(const Reply& reply)

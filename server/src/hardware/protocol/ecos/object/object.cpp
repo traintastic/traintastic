@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,7 +37,8 @@ bool Object::receiveReply(const Reply& reply)
 {
   assert(reply.objectId == m_id);
 
-  (void)(reply);
+  if(reply.command == Command::get)
+    update(reply.lines);
 
   return false;
 }
@@ -46,9 +47,9 @@ bool Object::receiveEvent(const Event& event)
 {
   assert(event.objectId == m_id);
 
-  (void)(event);
+  update(event.lines);
 
-  return false;
+  return true;
 }
 
 void Object::requestView()
@@ -70,6 +71,17 @@ bool Object::objectExists(uint16_t objectId) const
 void Object::addObject(std::unique_ptr<Object> object)
 {
   m_kernel.m_objects.add(std::move(object));
+}
+
+void Object::update(const std::vector<std::string_view>& lines)
+{
+  for(auto line : lines)
+  {
+    Line data;
+    if(parseLine(line, data))
+      for(auto it : data.values)
+        update(it.first, it.second);
+  }
 }
 
 }

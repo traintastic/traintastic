@@ -129,6 +129,8 @@ direction_control_state:b_to_a=A ← B
 direction_control_state:both=A ⇄ B
 direction_control_state:none=A 🛇 B
 
+ecos_channel:ecos_detector=ECoS Detector
+
 hardware:address=Address
 hardware:channel=Channel
 hardware:command_station=Command station
@@ -144,6 +146,7 @@ hardware:interface=Interface
 hardware:loconet=LocoNet
 hardware:output_keyboard=Output keyboard
 hardware:outputs=Outputs
+hardware:s88=S88
 hardware:speed_steps=Speed steps
 hardware:xpressnet=XpressNet
 hardware:z21=Z21

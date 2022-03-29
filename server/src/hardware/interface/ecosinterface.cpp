@@ -32,7 +32,7 @@
 #include "../../world/world.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
-constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
 
 ECoSInterface::ECoSInterface(World& world, std::string_view _id)
@@ -95,6 +95,23 @@ void ECoSInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags ch
 {
   if(m_kernel)
     m_kernel->decoderChanged(decoder, changes, functionNumber);
+}
+
+std::pair<uint32_t, uint32_t> ECoSInterface::inputAddressMinMax(uint32_t channel) const
+{
+  using namespace ECoS;
+
+  switch(channel)
+  {
+    case Kernel::InputChannel::s88:
+      return {Kernel::s88AddressMin, Kernel::s88AddressMax};
+
+    case Kernel::InputChannel::ecosDetector:
+      return {Kernel::ecosDetectorAddressMin, Kernel::ecosDetectorAddressMax};
+  }
+
+  assert(false);
+  return {0, 0};
 }
 
 bool ECoSInterface::addInput(Input& input)
