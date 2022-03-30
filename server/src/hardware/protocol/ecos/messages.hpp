@@ -59,14 +59,17 @@ struct ObjectId
 struct Option
 {
   static constexpr std::string_view addr = "addr";
+  static constexpr std::string_view applicationVersion = "ApplicationVersion";
   static constexpr std::string_view dir = "dir";
   static constexpr std::string_view duration = "duration";
   static constexpr std::string_view go = "go";
+  static constexpr std::string_view hardwareVersion = "HardwareVersion";
   static constexpr std::string_view info = "info";
   static constexpr std::string_view mode = "mode";
   static constexpr std::string_view name = "name";
   static constexpr std::string_view ports = "ports";
   static constexpr std::string_view protocol = "protocol";
+  static constexpr std::string_view protocolVersion = "ProtocolVersion";
   static constexpr std::string_view speedStep = "speedstep";
   static constexpr std::string_view state = "state";
   static constexpr std::string_view status = "status";

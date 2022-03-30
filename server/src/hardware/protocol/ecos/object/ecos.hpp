@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 
 #include "object.hpp"
 #include <traintastic/enum/tristate.hpp>
+#include "../../../../utils/version.hpp"
 
 namespace ECoS {
 
@@ -32,11 +33,35 @@ class Kernel;
 
 class ECoS final : public Object
 {
+  public:
+    enum class Model
+    {
+      Unknown = 0,
+      ECoS = 1,
+      ECoS2 = 2,
+    };
+
+    using ProtocolVersion = Version::MajorMinor<uint8_t>;
+    using ApplicationVersion = Version::MajorMinorPatch<uint8_t>;
+    using HardwareVersion = Version::MajorMinor<uint8_t>;
+
   private:
+    Model m_model = Model::Unknown;
+    ProtocolVersion m_protocolVersion;
+    ApplicationVersion m_applicationVersion;
+    HardwareVersion m_hardwareVersion;
     TriState m_go = TriState::Undefined;
+
+  protected:
+    void update(std::string_view option, std::string_view value) final;
 
   public:
     ECoS(Kernel& kernel);
+
+    Model model() const { return m_model; }
+    ProtocolVersion protocolVersion() const { return m_protocolVersion; }
+    ApplicationVersion applicationVersion() const { return m_applicationVersion; }
+    HardwareVersion hardwareVersion() const { return m_hardwareVersion; }
 
     bool receiveReply(const Reply& reply) final;
     bool receiveEvent(const Event& event) final;
