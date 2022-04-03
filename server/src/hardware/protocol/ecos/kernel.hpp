@@ -30,6 +30,7 @@
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
 #include "object/object.hpp"
+#include "object/switchprotocol.hpp"
 
 class Decoder;
 enum class DecoderChangeFlags;
@@ -41,6 +42,7 @@ namespace ECoS {
 
 class ECoS;
 class Locomotive;
+class SwitchManager;
 class Feedback;
 
 class Kernel
@@ -68,6 +70,27 @@ class Kernel
     inline static const std::vector<std::string_view> inputChannelNames = {
       "$hardware:s88$",
       "$ecos_channel:ecos_detector$",
+    };
+
+    static constexpr uint16_t outputDCCAddressMin = 1;
+    static constexpr uint16_t outputDCCAddressMax = 1000; //!< \todo what is the maximum
+    static constexpr uint16_t outputMotorolaAddressMin = 1;
+    static constexpr uint16_t outputMotorolaAddressMax = 1000; //!< \todo what is the maximum
+
+    struct OutputChannel
+    {
+      static constexpr uint32_t dcc = 1;
+      static constexpr uint32_t motorola = 2;
+    };
+
+    inline static const std::vector<uint32_t> outputChannels = {
+      OutputChannel::dcc,
+      OutputChannel::motorola,
+    };
+
+    inline static const std::vector<std::string_view> outputChannelNames = {
+      "$hardware:dcc$",
+      "$hardware:motorola$",
     };
 
   private:
@@ -110,6 +133,8 @@ class Kernel
     void ecosGoChanged(TriState value);
 
     Locomotive* getLocomotive(DecoderProtocol protocol, uint16_t address, uint8_t speedSteps);
+
+    SwitchManager& switchManager();
 
   public:// REMOVE!! just for testing
     void postSend(const std::string& message)
@@ -263,11 +288,14 @@ class Kernel
 
     /**
      * @brief ...
+     * @param[in] channel Channel
      * @param[in] address Output address
      * @param[in] value Output value: \c true is on, \c false is off.
      * @return \c true if send successful, \c false otherwise.
      */
-    bool setOutput(uint16_t address, bool value);
+    bool setOutput(uint32_t channel, uint16_t address, bool value);
+
+    void switchManagerSwitched(SwitchProtocol protocol, uint16_t address);
 
     void feedbackStateChanged(Feedback& object, uint8_t port, TriState value);
 };

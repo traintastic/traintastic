@@ -134,6 +134,7 @@ ecos_channel:ecos_detector=ECoS Detector
 hardware:address=Address
 hardware:channel=Channel
 hardware:command_station=Command station
+hardware:dcc=DCC
 hardware:dccplusplus=DCC++
 hardware:debug_log_input=Log input changes
 hardware:debug_log_output=Log output changes
@@ -144,6 +145,7 @@ hardware:input_monitor=Input monitor
 hardware:inputs=Inputs
 hardware:interface=Interface
 hardware:loconet=LocoNet
+hardware:motorola=Motorola
 hardware:output_keyboard=Output keyboard
 hardware:outputs=Outputs
 hardware:s88=S88
@@ -158,6 +160,8 @@ input_map_item.block:invert=Invert
 input_map_item.block:type=Type
 
 interface.dccplusplus:dcc_plus_plus=DCC++(EX)
+
+interface.ecos:ecos=ECoS
 
 interface.loconet:interface=Interface
 

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,7 +23,10 @@
 #include "switchmanager.hpp"
 #include <cassert>
 #include "switch.hpp"
+#include "../kernel.hpp"
 #include "../messages.hpp"
+#include "../../../../utils/fromchars.hpp"
+#include "../../../../utils/startswith.hpp"
 
 namespace ECoS {
 
@@ -32,6 +35,12 @@ SwitchManager::SwitchManager(Kernel& kernel)
 {
   requestView();
   send(queryObjects(m_id, Switch::options));
+}
+
+void SwitchManager::setSwitch(SwitchProtocol protocol, uint16_t address)
+{
+  if(protocol == SwitchProtocol::DCC || protocol == SwitchProtocol::Motorola)
+    send(set(m_id, Option::switch_, std::string((protocol == SwitchProtocol::Motorola) ? "MOT" : "DCC").append(std::to_string(1 + ((address - 1) >> 1))).append(((address - 1) & 1) ? "g" : "r")));
 }
 
 bool SwitchManager::receiveReply(const Reply& reply)
@@ -58,6 +67,31 @@ bool SwitchManager::receiveEvent(const Event& event)
 
 
   return Object::receiveEvent(event);
+}
+
+void SwitchManager::update(std::string_view option, std::string_view value)
+{
+  if(option == Option::switch_)
+  {
+    auto protocol = SwitchProtocol::Unknown;
+    for(auto p : {SwitchProtocol::DCC, SwitchProtocol::Motorola})
+      if(startsWith(value, toString(p)))
+      {
+        protocol = p;
+        value = value.substr(toString(p).size());
+        break;
+      }
+
+    if(protocol != SwitchProtocol::Unknown)
+    {
+      uint16_t address;
+      if(auto r = fromChars(value, address); r.ec == std::errc() && r.ptr < value.data() + value.size())
+      {
+        address = (address << 1) - ((*r.ptr == 'r') ? 1 : 0);
+        m_kernel.switchManagerSwitched(protocol, address);
+      }
+    }
+  }
 }
 
 }

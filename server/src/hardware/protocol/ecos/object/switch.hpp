@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_SWITCH_HPP
 
 #include "object.hpp"
+#include "switchprotocol.hpp"
 #include "../messages.hpp"
 
 namespace ECoS {
@@ -34,13 +35,6 @@ struct Line;
 class Switch final : public Object
 {
   public:
-    enum class Protocol
-    {
-      Unknown = 0,
-      DCC = 1,
-      MM = 2,
-    };
-
     enum class Mode
     {
       Unknown = 0,
@@ -50,9 +44,12 @@ class Switch final : public Object
 
   private:
     uint16_t m_address = 0;
-    Protocol m_protocol = Protocol::Unknown;
+    SwitchProtocol m_protocol = SwitchProtocol::Unknown;
     Mode m_mode = Mode::Unknown;
     uint16_t m_duration = 0;
+
+  protected:
+    void update(std::string_view option, std::string_view value) final;
 
   public:
     static const std::initializer_list<std::string_view> options;
@@ -64,7 +61,7 @@ class Switch final : public Object
     bool receiveEvent(const Event& event) final;
 
     uint16_t address() const { return m_address; }
-    Protocol protocol() const { return m_protocol; }
+    SwitchProtocol protocol() const { return m_protocol; }
     Mode mode() const { return m_mode; }
     uint16_t duration() const { return m_duration; }
 };

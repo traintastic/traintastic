@@ -33,7 +33,7 @@
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
-constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
+constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Channel | OutputListColumn::Address;
 
 ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   : Interface(world, _id)
@@ -130,6 +130,23 @@ bool ECoSInterface::removeInput(Input& input)
   return success;
 }
 
+std::pair<uint32_t, uint32_t> ECoSInterface::outputAddressMinMax(uint32_t channel) const
+{
+  using namespace ECoS;
+
+  switch(channel)
+  {
+    case Kernel::OutputChannel::dcc:
+      return {Kernel::outputDCCAddressMin, Kernel::outputDCCAddressMax};
+
+    case Kernel::OutputChannel::motorola:
+      return {Kernel::outputMotorolaAddressMin, Kernel::outputMotorolaAddressMax};
+  }
+
+  assert(false);
+  return {0, 0};
+}
+
 bool ECoSInterface::addOutput(Output& output)
 {
   const bool success = OutputController::addOutput(output);
@@ -151,7 +168,7 @@ bool ECoSInterface::setOutputValue(uint32_t channel, uint32_t address, bool valu
   return
     m_kernel &&
     inRange(address, outputAddressMinMax(channel)) &&
-    m_kernel->setOutput(static_cast<uint16_t>(address), value);
+    m_kernel->setOutput(channel, static_cast<uint16_t>(address), value);
 }
 
 bool ECoSInterface::setOnline(bool& value, bool simulation)

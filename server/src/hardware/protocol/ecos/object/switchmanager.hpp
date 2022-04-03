@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_SWITCHMANAGER_HPP
 
 #include "object.hpp"
+#include "switchprotocol.hpp"
 
 namespace ECoS {
 
@@ -31,8 +32,13 @@ class Kernel;
 
 class SwitchManager final : public Object
 {
+  protected:
+    void update(std::string_view option, std::string_view value) final;
+
   public:
     SwitchManager(Kernel& kernel);
+
+    void setSwitch(SwitchProtocol protocol, uint16_t address);
 
     bool receiveReply(const Reply& reply) final;
     bool receiveEvent(const Event& event) final;

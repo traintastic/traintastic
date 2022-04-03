@@ -77,6 +77,7 @@ struct Option
   static constexpr std::string_view state = "state";
   static constexpr std::string_view status = "status";
   static constexpr std::string_view stop = "stop";
+  static constexpr std::string_view switch_ = "switch";
   static constexpr std::string_view view = "view";
 };
 
@@ -135,7 +136,12 @@ inline std::string set(uint16_t objectId, std::string_view option, T value)
   std::string s(Command::set);
   s.append("(").append(std::to_string(objectId));
   s.append(", ").append(option);
-  s.append("[").append(std::to_string(value)).append("]");
+  s.append("[");
+  if constexpr(std::is_same_v<T, std::string>)
+    s.append(value);
+  else
+    s.append(std::to_string(value));
+  s.append("]");
   s.append(")\n");
   return s;
 }

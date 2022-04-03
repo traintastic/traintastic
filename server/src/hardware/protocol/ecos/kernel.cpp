@@ -32,6 +32,7 @@
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../input/inputcontroller.hpp"
+#include "../../output/outputcontroller.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../utils/startswith.hpp"
 #include "../../../utils/rtrim.hpp"
@@ -244,6 +245,13 @@ Locomotive* Kernel::getLocomotive(DecoderProtocol protocol, uint16_t address, ui
   return nullptr;
 }
 
+SwitchManager& Kernel::switchManager()
+{
+  ASSERT_IS_KERNEL_THREAD;
+
+  return static_cast<SwitchManager&>(*m_objects[ObjectId::switchManager]);
+}
+
 void Kernel::emergencyStop()
 {
   m_ioContext.post([this]() { ecos().stop(); });
@@ -304,12 +312,65 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   }
 }
 
-bool Kernel::setOutput(uint16_t address, bool value)
+bool Kernel::setOutput(uint32_t channel, uint16_t address, bool value)
 {
-  (void)(address);
-  (void)(value);
+  if(value)
+  {
+    switch(channel)
+    {
+      case OutputChannel::dcc:
+        m_ioContext.post(
+          [this, address]()
+          {
+            switchManager().setSwitch(SwitchProtocol::DCC, address);
+          });
+        return true;
+
+      case OutputChannel::motorola:
+        m_ioContext.post(
+          [this, address]()
+          {
+            switchManager().setSwitch(SwitchProtocol::Motorola, address);
+          });
+        return true;
+    }
+    assert(false);
+  }
 
   return false;
+}
+
+void Kernel::switchManagerSwitched(SwitchProtocol protocol, uint16_t address)
+{
+  ASSERT_IS_KERNEL_THREAD;
+
+  if(!m_outputController)
+    return;
+
+  switch(protocol)
+  {
+    case SwitchProtocol::DCC:
+      EventLoop::call(
+        [this, address]()
+        {
+          m_outputController->updateOutputValue(OutputChannel::dcc, address, TriState::True);
+          m_outputController->updateOutputValue(OutputChannel::dcc, (address & 1) ? (address + 1) : (address - 1), TriState::False);
+        });
+      break;
+
+    case SwitchProtocol::Motorola:
+      EventLoop::call(
+        [this, address]()
+        {
+          m_outputController->updateOutputValue(OutputChannel::motorola, address, TriState::True);
+          m_outputController->updateOutputValue(OutputChannel::motorola, (address & 1) ? (address + 1) : (address - 1), TriState::False);
+        });
+      break;
+
+    case SwitchProtocol::Unknown:
+      assert(false);
+      break;
+  }
 }
 
 void Kernel::feedbackStateChanged(Feedback& object, uint8_t port, TriState value)
