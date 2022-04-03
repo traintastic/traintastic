@@ -86,6 +86,13 @@ enum class Status : uint32_t
   Ok = 0,
 };
 
+struct Request
+{
+  std::string_view command;
+  uint16_t objectId;
+  std::vector<std::string_view> options;
+};
+
 struct Reply
 {
   std::string_view command;
@@ -192,6 +199,8 @@ inline std::string release(uint16_t objectId, std::initializer_list<std::string_
 {
   return buildCommand(Command::release, objectId, options);
 }
+
+bool parseRequest(std::string_view message, Request& request);
 
 bool isReply(std::string_view message);
 bool parseReply(std::string_view message, Reply& reply);

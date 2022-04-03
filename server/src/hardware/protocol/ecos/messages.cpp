@@ -31,6 +31,42 @@ namespace ECoS {
 static const std::string_view startDelimiterReply = "<REPLY ";
 static const std::string_view endDelimiter = "<END ";
 
+bool parseRequest(std::string_view message, Request& request)
+{
+  // read command:
+  size_t pos;
+  if((pos = message.find('(')) == std::string_view::npos)
+    return false;
+  request.command = message.substr(0, pos);
+
+  // read objectId:
+  auto r = fromChars(message.substr(pos + 1), request.objectId);
+  if(r.ec != std::errc())
+    return false;
+
+  // read arguments
+  size_t n = r.ptr - message.data();
+  while((pos = std::min(std::min(message.find(',', n), message.find(')', n)), message.find('[', n))) != std::string_view::npos)
+  {
+    if(message[pos] == '[')
+    {
+      if((pos = message.find(']', pos)) == std::string_view::npos)
+        return false;
+      if((pos = std::min(message.find(',', pos), message.find(')', pos))) == std::string_view::npos)
+        return false;
+    }
+    while(message[n] == ' ' && n < pos)
+      n++;
+    if(pos > n)
+      request.options.emplace_back(&message[n], pos - n);
+    if(message[pos] == ')')
+      break;
+    n = pos + 1;
+  }
+
+  return true;
+}
+
 bool isReply(std::string_view message)
 {
   return startsWith(message, startDelimiterReply);

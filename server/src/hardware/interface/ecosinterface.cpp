@@ -24,6 +24,7 @@
 #include "../input/list/inputlisttablemodel.hpp"
 #include "../output/list/outputlisttablemodel.hpp"
 #include "../protocol/ecos/iohandler/tcpiohandler.hpp"
+#include "../protocol/ecos/iohandler/simulationiohandler.hpp"
 #include "../../core/attributes.hpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
@@ -173,17 +174,14 @@ bool ECoSInterface::setOutputValue(uint32_t channel, uint32_t address, bool valu
 
 bool ECoSInterface::setOnline(bool& value, bool simulation)
 {
-  if(simulation)
-  {
-    Log::log(*this, LogMessage::N2001_SIMULATION_NOT_SUPPORTED);
-    return false;
-  }
-
   if(!m_kernel && value)
   {
     try
     {
-      m_kernel = ECoS::Kernel::create<ECoS::TCPIOHandler>(ecos->config(), hostname.value());
+      if(simulation)
+        m_kernel = ECoS::Kernel::create<ECoS::SimulationIOHandler>(ecos->config());
+      else
+        m_kernel = ECoS::Kernel::create<ECoS::TCPIOHandler>(ecos->config(), hostname.value());
 
       status.setValueInternal(InterfaceStatus::Initializing);
 

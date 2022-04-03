@@ -34,14 +34,19 @@ class TCPIOHandler final : public IOHandler
     static constexpr uint32_t transferWindow = 25;
     boost::asio::ip::tcp::socket m_socket;
     boost::asio::ip::tcp::endpoint m_endpoint;
+    std::array<char, 32 * 1024> m_readBuffer;
+    size_t m_readBufferOffset = 0;
+    size_t m_readPos = 0;
+    std::array<char, 32 * 1024> m_writeBuffer;
+    size_t m_writeBufferOffset = 0;
     bool m_writing = false;
     uint32_t m_waitingForReply = 0;
 
-    void read();
 
-  protected:
-    void receive(std::string_view message) final;
-    void write() final;
+    void read();
+    void processRead(size_t bytesTransferred);
+    void receive(std::string_view message);
+    void write();
 
   public:
     TCPIOHandler(Kernel& kernel, const std::string& hostname, uint16_t port = 15471);
@@ -49,6 +54,8 @@ class TCPIOHandler final : public IOHandler
 
     void start() final;
     void stop() final;
+
+    bool send(std::string_view message) final;
 };
 
 }

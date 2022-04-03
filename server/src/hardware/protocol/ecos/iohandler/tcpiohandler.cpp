@@ -65,6 +65,21 @@ void TCPIOHandler::stop()
   m_socket.close();
 }
 
+bool TCPIOHandler::send(std::string_view message)
+{
+  if(m_writeBufferOffset + message.size() > m_writeBuffer.size())
+    return false;
+
+  const bool wasEmpty = m_writeBufferOffset == 0;
+  memcpy(m_writeBuffer.data() + m_writeBufferOffset, message.data(), message.size());
+  m_writeBufferOffset += message.size();
+
+  if(wasEmpty)
+    write();
+
+  return true;
+}
+
 void TCPIOHandler::read()
 {
   m_socket.async_read_some(boost::asio::buffer(m_readBuffer.data() + m_readBufferOffset, m_readBuffer.size() - m_readBufferOffset),
@@ -87,9 +102,62 @@ void TCPIOHandler::read()
     });
 }
 
+void TCPIOHandler::processRead(size_t bytesTransferred)
+{
+  static constexpr std::string_view typeReply{"REPLY"};
+  static constexpr std::string_view typeEvent{"EVENT"};
+  static constexpr size_t typeLength = 5;
+
+  std::string_view buffer{m_readBuffer.data(), m_readBufferOffset + bytesTransferred};
+
+  //! @todo this can be a bit optimized by remembering the "state" when a message in not yet complete.
+  while(m_readPos != buffer.size())
+  {
+    m_readPos = buffer.find('<', m_readPos);
+    if(m_readPos != std::string_view::npos)
+    {
+      if((buffer.size() - m_readPos) >= typeLength)
+      {
+        std::string_view type{m_readBuffer.data() + m_readPos + 1, typeLength};
+        if(type == typeReply || type == typeEvent)
+        {
+          size_t pos = buffer.find(std::string_view{"<END"}, m_readPos);
+          if(pos != std::string_view::npos)
+          {
+            size_t end = buffer.find('>', pos);
+            if(end != std::string_view::npos)
+            {
+              receive(std::string_view{m_readBuffer.data() + m_readPos, end - m_readPos + 1});
+              m_readPos = end + 1;
+            }
+            else
+              break;
+          }
+          else
+            break;
+        }
+      }
+      else
+        break;
+    }
+    else
+      m_readPos = buffer.size();
+  }
+
+  if(m_readPos > 0)
+  {
+    assert(m_readPos <= buffer.size());
+    m_readBufferOffset = buffer.size() - m_readPos;
+    if(m_readBufferOffset > 0)
+      memmove(m_readBuffer.data(), m_readBuffer.data() + m_readPos, m_readBufferOffset);
+    m_readPos = 0;
+  }
+}
+
 void TCPIOHandler::receive(std::string_view message)
 {
-  IOHandler::receive(message);
+  m_kernel.receive(message);
+
   if(m_waitingForReply > 0 && isReply(message))
   {
     m_waitingForReply--;
