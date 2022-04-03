@@ -137,8 +137,8 @@ void Locomotive::update(std::string_view option, std::string_view value)
   if(option == Option::speedStep)
   {
     uint8_t v;
-    fromChars(value, v);
-    m_speedStep = v;
+    if(auto r = fromChars(value, v); r.ec == std::errc())
+      m_speedStep = v;
   }
   else if(option == Option::dir)
   {
