@@ -25,6 +25,7 @@
 #include "messages.hpp"
 #include "object/ecos.hpp"
 #include "object/locomotivemanager.hpp"
+#include "object/locomotive.hpp"
 #include "object/switchmanager.hpp"
 #include "object/feedbackmanager.hpp"
 #include "object/feedback.hpp"
@@ -37,7 +38,33 @@
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 
+#define ASSERT_IS_KERNEL_THREAD assert(std::this_thread::get_id() == m_thread.get_id())
+
 namespace ECoS {
+
+static constexpr DecoderProtocol toDecoderProtocol(Locomotive::Protocol value)
+{
+  switch(value)
+  {
+    case Locomotive::Protocol::DCC14:
+    case Locomotive::Protocol::DCC28:
+    case Locomotive::Protocol::DCC128:
+      return DecoderProtocol::DCC;
+
+    case Locomotive::Protocol::MM14:
+    case Locomotive::Protocol::MM27:
+    case Locomotive::Protocol::MM28:
+      return DecoderProtocol::Motorola;
+
+    case Locomotive::Protocol::SX32:
+      return DecoderProtocol::Selectrix;
+
+    case Locomotive::Protocol::Unknown:
+    case Locomotive::Protocol::MMFKT:
+      break;
+  }
+  return DecoderProtocol::Custom;
+}
 
 Kernel::Kernel(const Config& config)
   : m_ioContext{1}
@@ -179,15 +206,42 @@ void Kernel::receive(std::string_view message)
 
 ECoS& Kernel::ecos()
 {
+  ASSERT_IS_KERNEL_THREAD;
+
   return static_cast<ECoS&>(*m_objects[ObjectId::ecos]);
 }
 
 void Kernel::ecosGoChanged(TriState value)
 {
+  ASSERT_IS_KERNEL_THREAD;
+
   if(value == TriState::False && m_onEmergencyStop)
     EventLoop::call([this]() { m_onEmergencyStop(); });
   else if(value == TriState::True && m_onGo)
     EventLoop::call([this]() { m_onGo(); });
+}
+
+Locomotive* Kernel::getLocomotive(DecoderProtocol protocol, uint16_t address, uint8_t speedSteps)
+{
+  ASSERT_IS_KERNEL_THREAD;
+
+  //! \todo optimize this
+
+  auto it = std::find_if(m_objects.begin(), m_objects.end(),
+    [protocol, address, speedSteps](const auto& item)
+    {
+      auto* l = dynamic_cast<Locomotive*>(item.second.get());
+      return
+        l &&
+        (protocol == DecoderProtocol::Auto || protocol == toDecoderProtocol(l->protocol())) &&
+        address == l->address()  &&
+        (speedSteps == 0 || speedSteps == l->speedSteps());
+    });
+
+  if(it != m_objects.end())
+    return static_cast<Locomotive*>(it->second.get());
+
+  return nullptr;
 }
 
 void Kernel::emergencyStop()
@@ -202,9 +256,52 @@ void Kernel::go()
 
 void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
-  (void)(decoder);
-  (void)(changes);
-  (void)(functionNumber);
+  if(has(changes, DecoderChangeFlags::Direction))
+  {
+    m_ioContext.post(
+      [this,
+        protocol=decoder.protocol.value(),
+        address=decoder.address.value(),
+        speedSteps=decoder.speedSteps.value(),
+        direction=decoder.direction.value()]()
+      {
+        if(auto* locomotive = getLocomotive(protocol, address, speedSteps))
+          locomotive->setDirection(direction);
+      });
+  }
+  else if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Throttle))
+  {
+    m_ioContext.post(
+      [this,
+        protocol=decoder.protocol.value(),
+        address=decoder.address.value(),
+        speedSteps=decoder.speedSteps.value(),
+        throttle=decoder.throttle.value(),
+        emergencyStop=decoder.emergencyStop.value()]()
+      {
+        if(auto* locomotive = getLocomotive(protocol, address, speedSteps))
+        {
+          if(emergencyStop)
+            locomotive->stop();
+          else
+            locomotive->setSpeedStep(Decoder::throttleToSpeedStep(throttle, locomotive->speedSteps()));
+        }
+      });
+  }
+  else if(has(changes, DecoderChangeFlags::FunctionValue) && functionNumber <= std::numeric_limits<uint8_t>::max())
+  {
+    m_ioContext.post(
+      [this,
+        protocol=decoder.protocol.value(),
+        address=decoder.address.value(),
+        speedSteps=decoder.speedSteps.value(),
+        index=static_cast<uint8_t>(functionNumber),
+        value=decoder.getFunctionValue(functionNumber)]()
+      {
+        if(auto* locomotive = getLocomotive(protocol, address, speedSteps))
+          locomotive->setFunctionValue(index, value);
+      });
+  }
 }
 
 bool Kernel::setOutput(uint16_t address, bool value)

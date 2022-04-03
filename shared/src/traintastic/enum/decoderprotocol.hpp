@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,19 +30,21 @@ enum class DecoderProtocol : uint8_t
 {
   Auto = 0,
   DCC = 1,
-  //Motorola = 2,
+  Motorola = 2,
   //MFX = 3,
-  //Selectrix = 4,
+  Selectrix = 4,
   //FMZ = 5,
   Custom = 255,
 };
 
 ENUM_NAME(DecoderProtocol, "decoder_protocol")
 
-ENUM_VALUES(DecoderProtocol, 3,
+ENUM_VALUES(DecoderProtocol, 5,
 {
   {DecoderProtocol::Auto, "auto"},
   {DecoderProtocol::DCC, "dcc"},
+  {DecoderProtocol::Motorola, "motorola"},
+  {DecoderProtocol::Selectrix, "selectrix"},
   {DecoderProtocol::Custom, "custom"},
 })
 

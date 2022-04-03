@@ -57,8 +57,15 @@ bool parseReply(std::string_view message, Reply& reply)
 
   // read arguments
   n = r.ptr - message.data();
-  while((pos = std::min(message.find(',', n), message.find(')', n))) != std::string_view::npos)
+  while((pos = std::min(std::min(message.find(',', n), message.find(')', n)), message.find('[', n))) != std::string_view::npos)
   {
+    if(message[pos] == '[')
+    {
+      if((pos = message.find(']', pos)) == std::string_view::npos)
+        return false;
+      if((pos = std::min(message.find(',', pos), message.find(')', pos))) == std::string_view::npos)
+        return false;
+    }
     while(message[n] == ' ' && n < pos)
       n++;
     if(pos > n)

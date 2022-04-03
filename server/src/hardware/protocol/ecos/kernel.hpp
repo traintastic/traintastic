@@ -26,6 +26,7 @@
 #include <thread>
 #include <boost/asio/io_context.hpp>
 #include <traintastic/enum/tristate.hpp>
+#include <traintastic/enum/decoderprotocol.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
 #include "object/object.hpp"
@@ -39,6 +40,7 @@ class OutputController;
 namespace ECoS {
 
 class ECoS;
+class Locomotive;
 class Feedback;
 
 class Kernel
@@ -106,6 +108,8 @@ class Kernel
 
     ECoS& ecos();
     void ecosGoChanged(TriState value);
+
+    Locomotive* getLocomotive(DecoderProtocol protocol, uint16_t address, uint8_t speedSteps);
 
   public:// REMOVE!! just for testing
     void postSend(const std::string& message)

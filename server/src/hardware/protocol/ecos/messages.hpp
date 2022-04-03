@@ -60,8 +60,11 @@ struct Option
 {
   static constexpr std::string_view addr = "addr";
   static constexpr std::string_view applicationVersion = "ApplicationVersion";
+  static constexpr std::string_view control = "control";
   static constexpr std::string_view dir = "dir";
   static constexpr std::string_view duration = "duration";
+  static constexpr std::string_view force = "force";
+  static constexpr std::string_view func = "func";
   static constexpr std::string_view go = "go";
   static constexpr std::string_view hardwareVersion = "HardwareVersion";
   static constexpr std::string_view info = "info";
@@ -126,9 +129,42 @@ inline std::string set(uint16_t objectId, std::initializer_list<std::string_view
   return buildCommand(Command::set, objectId, options);
 }
 
+template<class T>
+inline std::string set(uint16_t objectId, std::string_view option, T value)
+{
+  std::string s(Command::set);
+  s.append("(").append(std::to_string(objectId));
+  s.append(", ").append(option);
+  s.append("[").append(std::to_string(value)).append("]");
+  s.append(")\n");
+  return s;
+}
+
+template<class T1, class T2>
+inline std::string set(uint16_t objectId, std::string_view option, T1 value1, T2 value2)
+{
+  std::string s(Command::set);
+  s.append("(").append(std::to_string(objectId));
+  s.append(", ").append(option);
+  s.append("[").append(std::to_string(value1)).append(",").append(std::to_string(value2)).append("]");
+  s.append(")\n");
+  return s;
+}
+
 inline std::string get(uint16_t objectId, std::initializer_list<std::string_view> options)
 {
   return buildCommand(Command::get, objectId, options);
+}
+
+template<class T>
+inline std::string get(uint16_t objectId, std::string_view option, T value)
+{
+  std::string s(Command::get);
+  s.append("(").append(std::to_string(objectId));
+  s.append(", ").append(option);
+  s.append("[").append(std::to_string(value)).append("]");
+  s.append(")\n");
+  return s;
 }
 
 inline std::string create(uint16_t objectId, std::initializer_list<std::string_view> options)

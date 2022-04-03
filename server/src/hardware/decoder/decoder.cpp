@@ -112,7 +112,7 @@ Decoder::Decoder(World& world, std::string_view _id) :
   m_interfaceItems.add(interface);
 
   Attributes::addEnabled(protocol, false);
-  Attributes::addValues(protocol, DecoderProtocolValues);
+  Attributes::addValues(protocol, decoderProtocolValues);
   m_interfaceItems.add(protocol);
 
   Attributes::addDisplayName(address, DisplayName::Hardware::address);

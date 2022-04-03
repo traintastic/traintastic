@@ -38,7 +38,19 @@ bool Object::receiveReply(const Reply& reply)
   assert(reply.objectId == m_id);
 
   if(reply.command == Command::get)
+  {
     update(reply.lines);
+  }
+  else if(reply.command == Command::set && reply.status == Status::Ok)
+  {
+    for(auto option : reply.options)
+    {
+      auto n = option.find('[');
+      if(n == std::string_view::npos || *option.rbegin() != ']')
+        continue;
+      update(option.substr(0, n), option.substr(n + 1, option.size() - (n + 2)));
+    }
+  }
 
   return false;
 }
