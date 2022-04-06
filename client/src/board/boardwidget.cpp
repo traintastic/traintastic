@@ -373,6 +373,11 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
 
 void BoardWidget::worldEditChanged(bool value)
 {
+  if(!value)
+  {
+    m_editActionNone->setChecked(true);
+    actionSelected(nullptr);
+  }
   m_toolbarEdit->setVisible(value);
   m_statusBar->setVisible(value);
 }
