@@ -130,7 +130,10 @@ class BoardAreaWidget : public QWidget
 
     void setMouseMoveAction(MouseMoveAction action);
     void setMouseMoveTileId(TileId id);
+    TileRotate mouseMoveTileRotate() const { return m_mouseMoveTileRotate; }
     void setMouseMoveTileRotate(TileRotate rotate);
+    uint8_t mouseMoveTileHeight() const { return m_mouseMoveTileHeight; }
+    uint8_t mouseMoveTileWidth() const { return m_mouseMoveTileWidth; }
     void setMouseMoveTileSize(uint8_t x, uint8_t y);
     void setMouseMoveHideTileLocation(TileLocation l);
     void setMouseMoveTileSizeMax(uint8_t width, uint8_t height);

@@ -86,6 +86,28 @@ const std::array<TileInfo, 34> tileInfo = {
   TileInfo{QStringLiteral(""), TileId::None, 0}
 };
 
+inline TileRotate rotateCW(TileRotate rotate, uint8_t rotates)
+{
+  assert(rotates != 0);
+  do
+  {
+    rotate += TileRotate::Deg45;
+  }
+  while(((1 << static_cast<uint8_t>(rotate)) & rotates) == 0);
+  return rotate;
+}
+
+inline TileRotate rotateCCW(TileRotate rotate, uint8_t rotates)
+{
+  assert(rotates != 0);
+  do
+  {
+    rotate -= TileRotate::Deg45;
+  }
+  while(((1 << static_cast<uint8_t>(rotate)) & rotates) == 0);
+  return rotate;
+}
+
 inline void validRotate(TileRotate& rotate, uint8_t rotates)
 {
   Q_ASSERT(rotates != 0);
@@ -102,8 +124,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   m_statusBarMessage{new QLabel(this)},
   m_statusBarCoords{new QLabel(this)},
   m_statusBarZoom{new QLabel(this)},
-  m_editActions{new QActionGroup(this)},
-  m_editRotate{TileRotate::Deg0}
+  m_editActions{new QActionGroup(this)}
   , m_tileMoveStarted{false}
   , m_tileResizeStarted{false}
 {
@@ -437,11 +458,15 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
           m_boardArea->setMouseMoveTileRotate(tileData.rotate());
           m_boardArea->setMouseMoveTileSize(tileData.width(), tileData.height());
           m_boardArea->setMouseMoveHideTileLocation(l);
+          m_tileRotateLast = tileData.rotate();
+
+          if(auto it = std::find_if(tileInfo.begin(), tileInfo.end(), [id=tileData.id()](const auto& v){ return v.id == id; }); it != tileInfo.end())
+            m_tileRotates = it->rotates;
         }
       }
       else // drop
       {
-        m_object->moveTile(m_tileMoveX, m_tileMoveY, x, y, false,
+        m_object->moveTile(m_tileMoveX, m_tileMoveY, x, y, m_boardArea->mouseMoveTileRotate(), false,
           [this](const bool& /*r*/, Message::ErrorCode /*ec*/)
           {
           });
@@ -509,7 +534,7 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
       const QString& classId = tileInfo[act->data().toInt()].classId;
       const Qt::KeyboardModifiers kbMod = QApplication::keyboardModifiers();
       if(kbMod == Qt::NoModifier || kbMod == Qt::ControlModifier)
-        m_object->addTile(x, y, m_editRotate, classId, kbMod == Qt::ControlModifier,
+        m_object->addTile(x, y, m_boardArea->mouseMoveTileRotate(), classId, kbMod == Qt::ControlModifier,
           [this](const bool& /*r*/, Message::ErrorCode /*ec*/)
           {
           });
@@ -545,16 +570,18 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
 
 void BoardWidget::rightClicked()
 {
-  if(QAction* act = m_editActions->checkedAction())
-    if(int index = act->data().toInt(); index >= 0 && Q_LIKELY(static_cast<size_t>(index) < tileInfo.size()))
-    {
-      if(QApplication::keyboardModifiers() == Qt::NoModifier)
-        m_editRotate += TileRotate::Deg45;
-      else if(QApplication::keyboardModifiers() == Qt::ShiftModifier)
-        m_editRotate -= TileRotate::Deg45;
-      validRotate(m_editRotate, tileInfo[index].rotates);
-      m_boardArea->setMouseMoveTileRotate(m_editRotate);
-    }
+  if(m_tileRotates != 0)
+  {
+    if(QApplication::keyboardModifiers() == Qt::NoModifier)
+      m_boardArea->setMouseMoveTileRotate(rotateCW(m_boardArea->mouseMoveTileRotate(), m_tileRotates));
+    else if(QApplication::keyboardModifiers() == Qt::ShiftModifier)
+      m_boardArea->setMouseMoveTileRotate(rotateCCW(m_boardArea->mouseMoveTileRotate(), m_tileRotates));
+
+    if(m_boardArea->mouseMoveTileHeight() != m_boardArea->mouseMoveTileWidth() && diff(m_tileRotateLast, m_boardArea->mouseMoveTileRotate()) == TileRotate::Deg90)
+      m_boardArea->setMouseMoveTileSize(m_boardArea->mouseMoveTileHeight(), m_boardArea->mouseMoveTileWidth());
+
+    m_tileRotateLast = m_boardArea->mouseMoveTileRotate();
+  }
 }
 
 void BoardWidget::actionSelected(const TileInfo* info)
@@ -565,11 +592,14 @@ void BoardWidget::actionSelected(const TileInfo* info)
 
   if(info)
   {
-    validRotate(m_editRotate, info->rotates);
+    m_tileRotates = info->rotates;
+    validRotate(m_tileRotateLast, m_tileRotates);
     m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::AddTile);
-    m_boardArea->setMouseMoveTileRotate(m_editRotate);
+    m_boardArea->setMouseMoveTileRotate(m_tileRotateLast);
     m_boardArea->setMouseMoveTileId(info->id);
   }
+  else
+    m_tileRotates = 0;
 }
 
 void BoardWidget::keyPressEvent(QKeyEvent* event)

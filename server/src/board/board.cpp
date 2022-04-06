@@ -106,7 +106,7 @@ Board::Board(World& world, std::string_view _id) :
       return true;
     }},
   moveTile{*this, "move_tile",
-    [this](int16_t xFrom, int16_t yFrom, int16_t xTo, int16_t yTo, const bool replace)
+    [this](int16_t xFrom, int16_t yFrom, int16_t xTo, int16_t yTo, TileRotate rotate, const bool replace)
     {
       // check if there is a tile at <From>
       auto tile = getTile({xFrom, yFrom});
@@ -123,8 +123,20 @@ Board::Board(World& world, std::string_view _id) :
         yTo -= yDiff;
       }
 
-      const int16_t xTo2 = xTo + tile->width;
-      const int16_t yTo2 = yTo + tile->height;
+      // determine new width and height
+      uint8_t width = tile->width;
+      uint8_t height = tile->height;
+      if(tile->rotate != rotate && width != height)
+      {
+        if(isDiagonal(rotate))
+          return false;
+
+        if(diff(tile->rotate, rotate) == TileRotate::Deg90)
+          std::swap(width, height);
+      }
+
+      const int16_t xTo2 = xTo + width;
+      const int16_t yTo2 = yTo + height;
 
       // check if <To> is within board limits
       if(xTo < sizeMin || xTo2 >= sizeMax || yTo < sizeMin || yTo2 >= sizeMax)
@@ -144,9 +156,12 @@ Board::Board(World& world, std::string_view _id) :
       // remove tile at tile origin
       removeTile(tile->location().x, tile->location().y);
 
-      // set new origin
+      // set new params
       tile->x.setValueInternal(xTo);
       tile->y.setValueInternal(yTo);
+      tile->height.setValueInternal(height);
+      tile->width.setValueInternal(width);
+      tile->rotate.setValueInternal(rotate);
 
       // place tile at <To>
       for(int16_t x = xTo; x < xTo2; x++)

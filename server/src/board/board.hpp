@@ -63,7 +63,7 @@ class Board : public IdObject
     Property<int16_t> right;
     Property<int16_t> bottom;
     Method<bool(int16_t, int16_t, TileRotate, std::string_view, bool)> addTile;
-    Method<bool(int16_t, int16_t, int16_t, int16_t, bool)> moveTile;
+    Method<bool(int16_t, int16_t, int16_t, int16_t, TileRotate, bool)> moveTile;
     Method<bool(int16_t, int16_t, uint8_t, uint8_t)> resizeTile;
     Method<bool(int16_t, int16_t)> deleteTile;
     Method<void()> resizeToContents;

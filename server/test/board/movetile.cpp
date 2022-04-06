@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@ TEST_CASE("Board: Move non existing tile", "[board][board-move]")
 
   REQUIRE_FALSE(board->getTile({0, 0}));
   REQUIRE_FALSE(board->getTile({1, 1}));
-  REQUIRE_FALSE(board->moveTile(0, 0, 1, 1, false));
+  REQUIRE_FALSE(board->moveTile(0, 0, 1, 1, TileRotate::Deg0, false));
   REQUIRE_FALSE(board->getTile({0, 0}));
   REQUIRE_FALSE(board->getTile({1, 1}));
 }
@@ -50,14 +50,14 @@ TEST_CASE("Board: Move 1x1 tile to empty location", "[board][board-move]")
   REQUIRE(tile.lock()->location() == TileLocation{0, 0});
 
   // move without replace
-  REQUIRE(board->moveTile(0, 0, 1, 1, false));
+  REQUIRE(board->moveTile(0, 0, 1, 1, TileRotate::Deg0, false));
   REQUIRE_FALSE(board->getTile({0, 0}));
   REQUIRE_FALSE(tile.expired());
   REQUIRE(tile.lock()->location() == TileLocation{1, 1});
   REQUIRE(board->getTile({1, 1}) == tile.lock());
 
   // move with replace
-  REQUIRE(board->moveTile(1, 1, 2, 2, true));
+  REQUIRE(board->moveTile(1, 1, 2, 2, TileRotate::Deg0, true));
   REQUIRE_FALSE(board->getTile({1, 1}));
   REQUIRE_FALSE(tile.expired());
   REQUIRE(tile.lock()->location() == TileLocation{2, 2});
@@ -82,7 +82,7 @@ TEST_CASE("Board: Move 1x1 tile to occupied location", "[board][board-move]")
   REQUIRE(tile1.lock()->location() == TileLocation{1, 1});
 
   // move without replace
-  REQUIRE_FALSE(board->moveTile(0, 0, 1, 1, false));
+  REQUIRE_FALSE(board->moveTile(0, 0, 1, 1, TileRotate::Deg0, false));
   REQUIRE_FALSE(tile0.expired());
   REQUIRE(tile0.lock()->location() == TileLocation{0, 0});
   REQUIRE(board->getTile({0, 0}) == tile0.lock());
@@ -91,7 +91,7 @@ TEST_CASE("Board: Move 1x1 tile to occupied location", "[board][board-move]")
   REQUIRE(board->getTile({1, 1}) == tile1.lock());
 
   // move with replace
-  REQUIRE(board->moveTile(0, 0, 1, 1, true));
+  REQUIRE(board->moveTile(0, 0, 1, 1, TileRotate::Deg0, true));
   REQUIRE_FALSE(tile0.expired());
   REQUIRE_FALSE(board->getTile({0, 0}));
   REQUIRE(tile0.lock()->location() == TileLocation{1, 1});
@@ -111,7 +111,7 @@ TEST_CASE("Board: Move 1x1 tile to invalid location", "[board][board-move]")
   REQUIRE(tile.lock()->location() == TileLocation{0, 0});
 
   // move far top
-  REQUIRE_FALSE(board->moveTile(0, 0, 0, Board::sizeMin - 1, false));
+  REQUIRE_FALSE(board->moveTile(0, 0, 0, Board::sizeMin - 1, TileRotate::Deg0, false));
   REQUIRE_FALSE(board->getTile({0, std::numeric_limits<int16_t>::min()}));
   REQUIRE(board->getTile({0, 0}));
   REQUIRE_FALSE(tile.expired());
@@ -119,7 +119,7 @@ TEST_CASE("Board: Move 1x1 tile to invalid location", "[board][board-move]")
   REQUIRE(board->getTile({0, 0}) == tile.lock());
 
   // move far bottom
-  REQUIRE_FALSE(board->moveTile(0, 0, 0, Board::sizeMax + 1, false));
+  REQUIRE_FALSE(board->moveTile(0, 0, 0, Board::sizeMax + 1, TileRotate::Deg0, false));
   REQUIRE_FALSE(board->getTile({0, std::numeric_limits<int16_t>::max()}));
   REQUIRE(board->getTile({0, 0}));
   REQUIRE_FALSE(tile.expired());
@@ -127,7 +127,7 @@ TEST_CASE("Board: Move 1x1 tile to invalid location", "[board][board-move]")
   REQUIRE(board->getTile({0, 0}) == tile.lock());
 
   // move left
-  REQUIRE_FALSE(board->moveTile(0, 0, Board::sizeMin - 1, 0, false));
+  REQUIRE_FALSE(board->moveTile(0, 0, Board::sizeMin - 1, 0, TileRotate::Deg0, false));
   REQUIRE_FALSE(board->getTile({std::numeric_limits<int16_t>::min(), 0}));
   REQUIRE(board->getTile({0, 0}));
   REQUIRE_FALSE(tile.expired());
@@ -135,7 +135,7 @@ TEST_CASE("Board: Move 1x1 tile to invalid location", "[board][board-move]")
   REQUIRE(board->getTile({0, 0}) == tile.lock());
 
   // move right
-  REQUIRE_FALSE(board->moveTile(0, 0, Board::sizeMax + 1, 0, false));
+  REQUIRE_FALSE(board->moveTile(0, 0, Board::sizeMax + 1, 0, TileRotate::Deg0, false));
   REQUIRE_FALSE(board->getTile({std::numeric_limits<int16_t>::max(), 0}));
   REQUIRE(board->getTile({0, 0}));
   REQUIRE_FALSE(tile.expired());
@@ -171,7 +171,7 @@ TEST_CASE("Board: Move 5x1 tile to occupied location", "[board][board-move]")
   REQUIRE(board->getTile({1, 5}) == tile1.lock());
 
   // move without replace, partly replace other tile
-  REQUIRE_FALSE(board->moveTile(0, 0, 1, 0, false));
+  REQUIRE_FALSE(board->moveTile(0, 0, 1, 0, TileRotate::Deg0, false));
   REQUIRE_FALSE(board->isTile({1, 0}));
   REQUIRE_FALSE(tile0.expired());
   REQUIRE(tile0.lock()->location() == TileLocation{0, 0});
@@ -189,7 +189,7 @@ TEST_CASE("Board: Move 5x1 tile to occupied location", "[board][board-move]")
   REQUIRE(board->getTile({1, 5}) == tile1.lock());
 
   // move with replace, partly replace other tile
-  REQUIRE(board->moveTile(0, 0, 1, 0, true));
+  REQUIRE(board->moveTile(0, 0, 1, 0, TileRotate::Deg0, true));
   REQUIRE_FALSE(tile0.expired());
   REQUIRE_FALSE(board->isTile({0, 0}));
   REQUIRE_FALSE(board->isTile({0, 1}));
@@ -223,14 +223,51 @@ TEST_CASE("Board: Move 5x1 tile replace itself partly", "[board][board-move]")
   REQUIRE(board->getTile({0, 4}) == tile.lock());
 
   // move without replace, partly replacing itself
-  REQUIRE(board->moveTile(0, 0, 0, 2, false));
+  REQUIRE(board->moveTile(0, 0, 0, 2, TileRotate::Deg0, false));
   REQUIRE_FALSE(board->isTile({0, 0}));
   REQUIRE_FALSE(board->isTile({0, 1}));
   REQUIRE_FALSE(tile.expired());
   REQUIRE(tile.lock()->location() == TileLocation{0, 2});
+  REQUIRE(tile.lock()->rotate.value() == TileRotate::Deg0);
+  REQUIRE(tile.lock()->height.value() == 5);
+  REQUIRE(tile.lock()->width.value() == 1);
   REQUIRE(board->getTile({0, 2}) == tile.lock());
   REQUIRE(board->getTile({0, 3}) == tile.lock());
   REQUIRE(board->getTile({0, 4}) == tile.lock());
   REQUIRE(board->getTile({0, 5}) == tile.lock());
   REQUIRE(board->getTile({0, 6}) == tile.lock());
+}
+
+TEST_CASE("Board: Move and rotate 5x1 tile replace itself partly", "[board][board-move]")
+{
+  auto world = World::create();
+  auto board = world->boards->add();
+
+  // add tile at 0,0
+  REQUIRE(board->addTile(0, 0, TileRotate::Deg0, BlockRailTile::classId, false));
+  REQUIRE(board->resizeTile(0, 0, 1, 5));
+  std::weak_ptr<Tile> tile = board->getTile({0, 0});
+  REQUIRE_FALSE(tile.expired());
+  REQUIRE(tile.lock()->location() == TileLocation{0, 0});
+  REQUIRE(board->getTile({0, 1}) == tile.lock());
+  REQUIRE(board->getTile({0, 2}) == tile.lock());
+  REQUIRE(board->getTile({0, 3}) == tile.lock());
+  REQUIRE(board->getTile({0, 4}) == tile.lock());
+
+  // move and rotate without replace, partly replacing itself
+  REQUIRE(board->moveTile(0, 0, 0, 2, TileRotate::Deg90, false));
+  REQUIRE_FALSE(board->isTile({0, 0}));
+  REQUIRE_FALSE(board->isTile({0, 1}));
+  REQUIRE_FALSE(board->isTile({0, 3}));
+  REQUIRE_FALSE(board->isTile({0, 4}));
+  REQUIRE_FALSE(tile.expired());
+  REQUIRE(tile.lock()->location() == TileLocation{0, 2});
+  REQUIRE(tile.lock()->rotate.value() == TileRotate::Deg90);
+  REQUIRE(tile.lock()->height.value() == 1);
+  REQUIRE(tile.lock()->width.value() == 5);
+  REQUIRE(board->getTile({0, 2}) == tile.lock());
+  REQUIRE(board->getTile({1, 2}) == tile.lock());
+  REQUIRE(board->getTile({2, 2}) == tile.lock());
+  REQUIRE(board->getTile({3, 2}) == tile.lock());
+  REQUIRE(board->getTile({4, 2}) == tile.lock());
 }

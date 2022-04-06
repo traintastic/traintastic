@@ -61,13 +61,14 @@ class BoardWidget : public QWidget
     QAction* m_editActionResize;
     QAction* m_editActionDelete;
     QAction* m_editActionResizeToContents;
-    TileRotate m_editRotate;
     bool m_tileMoveStarted;
     int16_t m_tileMoveX;
     int16_t m_tileMoveY;
     bool m_tileResizeStarted;
     int16_t m_tileResizeX;
     int16_t m_tileResizeY;
+    uint8_t m_tileRotates = 0; //!< allowed rotate for add/move tile
+    TileRotate m_tileRotateLast = TileRotate::Deg0; //!< Last used tile rotate for add/move
 
     void actionSelected(const TileInfo* tile);
     void keyPressEvent(QKeyEvent* event) override;

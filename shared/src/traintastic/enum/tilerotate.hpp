@@ -80,6 +80,11 @@ constexpr bool isDiagonal(TileRotate value)
   return (static_cast<std::underlying_type_t<TileRotate>>(value) & 1);
 }
 
+inline TileRotate diff(TileRotate a, TileRotate b)
+{
+  return static_cast<TileRotate>(std::abs(static_cast<int8_t>(a) - static_cast<int8_t>(b)));
+}
+
 constexpr uint16_t toDeg(TileRotate value)
 {
   return static_cast<uint16_t>(value) * 45;
