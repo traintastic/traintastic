@@ -113,7 +113,26 @@ void ECoS::stop()
 
 void ECoS::update(std::string_view option, std::string_view value)
 {
-  if(option == Option::applicationVersion)
+  if(option == Option::status)
+  {
+    if(value == "STOP")
+    {
+      if(m_go != TriState::False)
+      {
+        m_go = TriState::False;
+        m_kernel.ecosGoChanged(m_go);
+      }
+    }
+    else if(value == "GO")
+    {
+      if(m_go != TriState::True)
+      {
+        m_go = TriState::True;
+        m_kernel.ecosGoChanged(m_go);
+      }
+    }
+  }
+  else if(option == Option::applicationVersion)
   {
     Version::fromChars(value, m_applicationVersion);
   }

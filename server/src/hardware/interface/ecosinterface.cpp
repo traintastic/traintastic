@@ -191,7 +191,18 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
         {
           status.setValueInternal(InterfaceStatus::Online);
         });
-
+      m_kernel->setOnEmergencyStop(
+        [this]()
+        {
+          if(contains(m_world.state.value(), WorldState::PowerOn | WorldState::Run))
+            m_world.powerOff();
+        });
+      m_kernel->setOnGo(
+        [this]()
+        {
+          if(!contains(m_world.state.value(), WorldState::Run))
+            m_world.run();
+        });
       m_kernel->setDecoderController(this);
       m_kernel->setInputController(this);
       m_kernel->setOutputController(this);
