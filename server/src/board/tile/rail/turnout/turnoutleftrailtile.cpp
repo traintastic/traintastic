@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,18 +22,18 @@
 
 #include "turnoutleftrailtile.hpp"
 #include "../../../../core/attributes.hpp"
-#include "../../../../utils/makearray.hpp"
+
+static const std::array<TurnoutPosition, 3> positionValues = {TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Unknown};
+static const std::array<TurnoutPosition, 2> setPositionValues = {TurnoutPosition::Straight, TurnoutPosition::Left};
 
 TurnoutLeftRailTile::TurnoutLeftRailTile(World& world, std::string_view _id, TileId tileId) :
   TurnoutRailTile(world, _id, tileId)
 {
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Left}));
 
-  Attributes::addValues(position, makeArray(TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Unknown));
+  Attributes::addValues(position, positionValues);
   m_interfaceItems.add(position);
-}
 
-void TurnoutLeftRailTile::doNextPosition(bool /*reverse*/)
-{
-  position = (position == TurnoutPosition::Straight) ? TurnoutPosition::Left : TurnoutPosition::Straight;
+  Attributes::addValues(setPosition, setPositionValues);
+  m_interfaceItems.add(setPosition);
 }

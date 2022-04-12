@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,14 +27,10 @@
 
 TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tileId) :
   RailTile(world, _id, tileId),
-  name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store},
-  position{this, "position", TurnoutPosition::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
-    [this](TurnoutPosition value)
-    {
-      (*outputMap)[value]->execute();
-    }},
-  outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
-  nextPosition{*this, "next_position", [this](bool reverse){ doNextPosition(reverse); }}
+  name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
+  position{this, "position", TurnoutPosition::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+  outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
+  setPosition{*this, "set_position", MethodFlags::ScriptCallable, [this](TurnoutPosition value) { return doSetPosition(value); }}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
@@ -48,8 +44,8 @@ TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tile
   Attributes::addDisplayName(outputMap, DisplayName::BoardTile::outputMap);
   m_interfaceItems.add(outputMap);
 
-  Attributes::addObjectEditor(nextPosition, false);
-  m_interfaceItems.add(nextPosition);
+  Attributes::addObjectEditor(setPosition, false);
+  // setPosition is added by sub class
 }
 
 void TurnoutRailTile::worldEvent(WorldState state, WorldEvent event)
@@ -59,4 +55,15 @@ void TurnoutRailTile::worldEvent(WorldState state, WorldEvent event)
   const bool editable = contains(state, WorldState::Edit);
 
   Attributes::setEnabled(name, editable);
+}
+
+bool TurnoutRailTile::doSetPosition(TurnoutPosition value)
+{
+  const auto* values = setPosition.tryGetValuesAttribute(AttributeName::Values);
+  assert(values);
+  if(!values->contains(static_cast<int64_t>(value)))
+    return false;
+  (*outputMap)[value]->execute();
+  position.setValueInternal(value);
+  return true;
 }

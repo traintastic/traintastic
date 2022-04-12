@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,18 +22,18 @@
 
 #include "turnoutdoublesliprailtile.hpp"
 #include "../../../../core/attributes.hpp"
-#include "../../../../utils/makearray.hpp"
+
+static const std::array<TurnoutPosition, 3> positionValues = {TurnoutPosition::Crossed, TurnoutPosition::Diverged, TurnoutPosition::Unknown};
+static const std::array<TurnoutPosition, 2> setPositionValues = {TurnoutPosition::Crossed, TurnoutPosition::Diverged};
 
 TurnoutDoubleSlipRailTile::TurnoutDoubleSlipRailTile(World& world, std::string_view _id) :
   TurnoutRailTile(world, _id, TileId::RailTurnoutDoubleSlip)
 {
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Crossed, TurnoutPosition::Diverged}));
 
-  Attributes::addValues(position, makeArray(TurnoutPosition::Crossed, TurnoutPosition::Diverged, TurnoutPosition::Unknown));
+  Attributes::addValues(position, positionValues);
   m_interfaceItems.add(position);
-}
 
-void TurnoutDoubleSlipRailTile::doNextPosition(bool /*reverse*/)
-{
-  position = (position == TurnoutPosition::Crossed) ? TurnoutPosition::Diverged : TurnoutPosition::Crossed;
+  Attributes::addValues(setPosition, setPositionValues);
+  m_interfaceItems.add(setPosition);
 }

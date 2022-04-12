@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,39 +22,18 @@
 
 #include "turnout3wayrailtile.hpp"
 #include "../../../../core/attributes.hpp"
-#include "../../../../utils/makearray.hpp"
+
+static const std::array<TurnoutPosition, 4> positionValues = {TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right, TurnoutPosition::Unknown};
+static const std::array<TurnoutPosition, 3> setPositionValues = {TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right};
 
 Turnout3WayRailTile::Turnout3WayRailTile(World& world, std::string_view _id) :
   TurnoutRailTile(world, _id, TileId::RailTurnout3Way)
 {
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right}));
 
-  Attributes::addValues(position, makeArray(TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right, TurnoutPosition::Unknown));
+  Attributes::addValues(position, positionValues);
   m_interfaceItems.add(position);
-}
 
-void Turnout3WayRailTile::doNextPosition(bool reverse)
-{
-  switch(position)
-  {
-    case TurnoutPosition::Unknown:
-      position = TurnoutPosition::Straight;
-      break;
-
-    case TurnoutPosition::Straight:
-      position = reverse ? TurnoutPosition::Left : TurnoutPosition::Right;
-      break;
-
-    case TurnoutPosition::Left:
-      position = reverse ? TurnoutPosition::Right : TurnoutPosition::Straight;
-      break;
-
-    case TurnoutPosition::Right:
-      position = reverse ? TurnoutPosition::Straight : TurnoutPosition::Left;
-      break;
-
-    default:
-      assert(false);
-      break;
-  }
+  Attributes::addValues(setPosition, setPositionValues);
+  m_interfaceItems.add(setPosition);
 }
