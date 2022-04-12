@@ -176,6 +176,12 @@ struct Attributes
     item.addAttribute(AttributeName::ObjectList, id);
   }
 
+  template<class R, class T, size_t N>
+  static inline void addValues(Method<R(T)>& method, const std::array<T, N>& values)
+  {
+    method.addAttribute(AttributeName::Values, values);
+  }
+
   template<typename T, size_t N>
   static inline void addValues(Property<T>& property, const std::array<T, N>& values)
   {

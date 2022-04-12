@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,39 +22,18 @@
 
 #include "signal3aspectrailtile.hpp"
 #include "../../../../core/attributes.hpp"
-#include "../../../../utils/makearray.hpp"
+
+static const std::array<SignalAspect, 4> aspectValues = {SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed, SignalAspect::Unknown};
+static const std::array<SignalAspect, 3> setAspectValues = {SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed};
 
 Signal3AspectRailTile::Signal3AspectRailTile(World& world, std::string_view _id) :
   SignalRailTile(world, _id, TileId::RailSignal3Aspect)
 {
   outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed}));
 
-  Attributes::addValues(aspect, makeArray(SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed, SignalAspect::Unknown));
+  Attributes::addValues(aspect, aspectValues);
   m_interfaceItems.add(aspect);
-}
 
-void Signal3AspectRailTile::doNextAspect(bool reverse)
-{
-  switch(aspect)
-  {
-    case SignalAspect::Unknown:
-      aspect = SignalAspect::Stop;
-      break;
-
-    case SignalAspect::Stop:
-      aspect = reverse ? SignalAspect::Proceed : SignalAspect::ProceedReducedSpeed;
-      break;
-
-    case SignalAspect::ProceedReducedSpeed:
-      aspect = reverse ? SignalAspect::Stop : SignalAspect::Proceed;
-      break;
-
-    case SignalAspect::Proceed:
-      aspect = reverse ? SignalAspect::ProceedReducedSpeed : SignalAspect::Stop;
-      break;
-
-    default:
-      assert(false);
-      break;
-  }
+  Attributes::addValues(setAspect, setAspectValues);
+  m_interfaceItems.add(setAspect);
 }

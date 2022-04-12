@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,13 +38,13 @@ class SignalRailTile : public StraightRailTile
 
     void worldEvent(WorldState state, WorldEvent event) override;
 
-    virtual void doNextAspect(bool reverse) = 0;
+    virtual bool doSetAspect(SignalAspect value);
 
   public:
     Property<std::string> name;
     Property<SignalAspect> aspect;
     ObjectProperty<SignalOutputMap> outputMap;
-    Method<void(bool)> nextAspect;
+    Method<bool(SignalAspect)> setAspect;
 };
 
 #endif

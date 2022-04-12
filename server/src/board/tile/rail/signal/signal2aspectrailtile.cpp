@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,18 +22,18 @@
 
 #include "signal2aspectrailtile.hpp"
 #include "../../../../core/attributes.hpp"
-#include "../../../../utils/makearray.hpp"
+
+static const std::array<SignalAspect, 3> aspectValues = {SignalAspect::Stop, SignalAspect::Proceed, SignalAspect::Unknown};
+static const std::array<SignalAspect, 2> setAspectValues = {SignalAspect::Stop, SignalAspect::Proceed};
 
 Signal2AspectRailTile::Signal2AspectRailTile(World& world, std::string_view _id) :
   SignalRailTile(world, _id, TileId::RailSignal2Aspect)
 {
   outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::Proceed}));
 
-  Attributes::addValues(aspect, makeArray(SignalAspect::Stop, SignalAspect::Proceed, SignalAspect::Unknown));
+  Attributes::addValues(aspect, aspectValues);
   m_interfaceItems.add(aspect);
-}
 
-void Signal2AspectRailTile::doNextAspect(bool /*reverse*/)
-{
-  aspect = (aspect == SignalAspect::Stop) ? SignalAspect::Proceed : SignalAspect::Stop;
+  Attributes::addValues(setAspect, setAspectValues);
+  m_interfaceItems.add(setAspect);
 }

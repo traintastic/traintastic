@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,14 +27,10 @@
 
 SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId) :
   StraightRailTile(world, _id, tileId),
-  name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store},
-  aspect{this, "aspect", SignalAspect::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
-    [this](SignalAspect value)
-    {
-      (*outputMap)[value]->execute();
-    }},
-  outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
-  nextAspect{*this, "next_aspect", [this](bool reverse){ doNextAspect(reverse); }}
+  name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
+  aspect{this, "aspect", SignalAspect::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+  outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
+  setAspect{*this, "set_aspect", MethodFlags::ScriptCallable, [this](SignalAspect value) { return doSetAspect(value); }}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
@@ -48,8 +44,8 @@ SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId
   Attributes::addDisplayName(outputMap, DisplayName::BoardTile::outputMap);
   m_interfaceItems.add(outputMap);
 
-  Attributes::addObjectEditor(nextAspect, false);
-  m_interfaceItems.add(nextAspect);
+  Attributes::addObjectEditor(setAspect, false);
+  // setAspect is added by sub class
 }
 
 void SignalRailTile::worldEvent(WorldState state, WorldEvent event)
@@ -59,4 +55,15 @@ void SignalRailTile::worldEvent(WorldState state, WorldEvent event)
   const bool editable = contains(state, WorldState::Edit);
 
   Attributes::setEnabled(name, editable);
+}
+
+bool SignalRailTile::doSetAspect(SignalAspect value)
+{
+  const auto* values = setAspect.tryGetValuesAttribute(AttributeName::Values);
+  assert(values);
+  if(!values->contains(static_cast<int64_t>(value)))
+    return false;
+  (*outputMap)[value]->execute();
+  aspect.setValueInternal(value);
+  return true;
 }

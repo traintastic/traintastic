@@ -39,6 +39,15 @@ class AbstractValuesAttribute : public AbstractAttribute
     virtual int64_t getInt64(uint32_t index) const = 0;
     virtual double getDouble(uint32_t index) const = 0;
     virtual std::string getString(uint32_t index) const = 0;
+
+    inline bool contains(int64_t value) const
+    {
+      const auto l{length()};
+      for(uint32_t i = 0; i < l; i++)
+        if(value == getInt64(i))
+          return true;
+      return false;
+    }
 };
 
 #endif
