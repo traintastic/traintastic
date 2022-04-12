@@ -32,7 +32,10 @@
 #include <QLabel>
 #include <QApplication>
 #include <QKeyEvent>
+#include <QPainter>
 #include <traintastic/locale/locale.hpp>
+#include "getboardcolorscheme.hpp"
+#include "tilepainter.hpp"
 #include "../mainwindow.hpp"
 #include "../network/board.hpp"
 #include "../network/connection.hpp"
@@ -40,6 +43,8 @@
 #include "../network/method.hpp"
 #include "../network/callmethod.hpp"
 #include "../theme/theme.hpp"
+#include "../utils/enum.hpp"
+#include "../settings/boardsettings.hpp"
 #include <traintastic/utils/clamp.hpp>
 
 struct TileInfo
@@ -377,7 +382,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
         m_statusBarCoords->setText(QString::number(x) + ", " + QString::number(y));
 
         const auto tileId = m_object->getTileId(tl);
-        if((!m_toolbarEdit->isVisible() && (isRailTurnout(tileId) || isRailSignal(tileId) || tileId == TileId::PushButton)) ||
+        if((!m_toolbarEdit->isVisible() && (isRailTurnout(tileId) || isRailSignal(tileId) || tileId == TileId::RailDirectionControl || tileId == TileId::PushButton)) ||
             (m_toolbarEdit->isVisible() && isActive(tileId) && m_editActions->checkedAction() == m_editActionNone))
           setCursor(Qt::PointingHandCursor);
         else
@@ -548,20 +553,76 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
       if(ObjectPtr obj = m_object->getTileObject({x, y}))
       {
         const auto tileId = it->second.id();
-        if(isRailTurnout(tileId))
-        {
-          if(auto* m = obj->getMethod("next_position"))
-            callMethod(*m, nullptr, false);
-        }
-        else if(isRailSignal(tileId))
-        {
-          if(auto* m = obj->getMethod("next_aspect"))
-            callMethod(*m, nullptr, false);
-        }
-        else if(tileId == TileId::PushButton)
+
+        if(tileId == TileId::PushButton)
         {
           if(auto* m = obj->getMethod("pressed"))
             m->call();
+        }
+        else
+        {
+          AbstractProperty* value = nullptr;
+          Method* setValue = nullptr;
+          if(isRailTurnout(tileId))
+          {
+            value = obj->getProperty("position");
+            setValue = obj->getMethod("set_position");
+          }
+          else if(isRailSignal(tileId))
+          {
+            value = obj->getProperty("aspect");
+            setValue = obj->getMethod("set_aspect");
+          }
+          else if(tileId == TileId::RailDirectionControl)
+          {
+            value = obj->getProperty("state");
+            setValue = obj->getMethod("set_state");
+          }
+
+          if(value && setValue)
+          {
+            const auto values = setValue->getAttribute(AttributeName::Values, QVariant()).toList();
+
+            if(values.size() == 2)
+            {
+              const auto n = (value->toInt() == values[0].toInt()) ? values[1].toInt() : values[0].toInt();
+              callMethod(*setValue, nullptr, n);
+            }
+            else if(values.size() > 2)
+            {
+              auto tileRotate = TileRotate::Deg0;
+              if(auto* p = obj->getProperty("rotate"))
+                tileRotate = p->toEnum<TileRotate>();
+
+              const int iconSize = 16;
+              QImage image(iconSize, iconSize, QImage::Format_ARGB32);
+              QPainter painter{&image};
+              painter.setRenderHint(QPainter::Antialiasing, true);
+              TilePainter tilePainter{painter, iconSize, *getBoardColorScheme(BoardSettings::instance().colorScheme.value())};
+
+              QMenu menu(this);
+              for(const auto& v : values)
+              {
+                const auto n = v.toInt();
+
+                image.fill(Qt::transparent);
+
+                if(isRailTurnout(tileId))
+                  tilePainter.drawTurnout(tileId, image.rect(), tileRotate, static_cast<TurnoutPosition>(n));
+                else if(isRailSignal(tileId))
+                  tilePainter.drawSignal(tileId, image.rect(), tileRotate, static_cast<SignalAspect>(n));
+                else if(tileId == TileId::RailDirectionControl)
+                  tilePainter.drawDirectionControl(tileId, image.rect(), tileRotate, static_cast<DirectionControlState>(n));
+
+                connect(menu.addAction(QIcon(QPixmap::fromImage(image)), translateEnum(value->enumName(), n)), &QAction::triggered,
+                  [this, setValue, n]()
+                  {
+                    callMethod(*setValue, nullptr, n);
+                  });
+              }
+              menu.exec(QCursor::pos());
+            }
+          }
         }
       }
     }

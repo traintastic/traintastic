@@ -27,6 +27,7 @@
 #include <QtMath>
 #include <QApplication>
 #include "boardwidget.hpp"
+#include "getboardcolorscheme.hpp"
 #include "tilepainter.hpp"
 #include "../network/board.hpp"
 #include "../network/abstractproperty.hpp"
@@ -573,16 +574,7 @@ void BoardAreaWidget::settingsChanged()
 {
   const auto& s = BoardSettings::instance();
 
-  switch(s.colorScheme.value())
-  {
-    case BoardSettings::ColorScheme::Dark:
-      m_colorScheme = &BoardColorScheme::dark;
-      break;
-
-    case BoardSettings::ColorScheme::Light:
-      m_colorScheme = &BoardColorScheme::light;
-      break;
-  }
+  m_colorScheme = getBoardColorScheme(s.colorScheme.value());
 
   update();
 }
