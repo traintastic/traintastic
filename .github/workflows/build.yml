@@ -216,6 +216,11 @@ jobs:
       run: git lfs checkout
 
     # Ubuntu only:
+    - name: apt update
+      if: startswith(matrix.config.os, 'ubuntu')
+      run: sudo apt update
+
+    # Ubuntu only:
     - name: Install packages
       if: startswith(matrix.config.os, 'ubuntu')
       run: sudo apt install liblua5.3-dev lcov libarchive-dev clang-tidy
