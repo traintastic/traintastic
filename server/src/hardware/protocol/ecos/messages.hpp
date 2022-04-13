@@ -209,6 +209,8 @@ bool parseEvent(std::string_view message, Event& event);
 bool parseId(std::string_view line, uint16_t& id);
 bool parseLine(std::string_view text, Line& line);
 
+bool parseOptionValue(std::string_view text, std::string_view& option, std::string_view& value);
+
 constexpr bool isS88FeedbackId(uint16_t id)
 {
   return id >= ObjectId::s88 && id < ObjectId::ecosDetector;

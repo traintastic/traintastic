@@ -23,6 +23,7 @@
 #include "simulationiohandler.hpp"
 #include "../kernel.hpp"
 #include "../messages.hpp"
+#include "../../../../utils/rtrim.hpp"
 
 namespace ECoS {
 
@@ -39,7 +40,7 @@ bool SimulationIOHandler::send(std::string_view message)
 
   if(request.command == Command::request && request.options.size() == 1 && request.options[0] == Option::view)
   {
-    return reply(std::string("<REPLY ").append(message).append(">\r\n<END 0 (OK)>\r\n"));
+    return replyOk(message); // notify view active
   }
 
   if(request.objectId == ObjectId::ecos)
@@ -53,6 +54,40 @@ bool SimulationIOHandler::send(std::string_view message)
         "1 ApplicationVersion[4.2.6]\r\n"
         "1 HardwareVersion[2.0]\r\n"
         "<END 0 (OK)>\r\n");
+    }
+    if(request.command == Command::set && request.options.size() == 1 && (request.options[0] == Option::stop || request.options[0] == Option::go))
+    {
+      return replyOk(message);
+    }
+  }
+  else if(request.objectId == ObjectId::locomotiveManager)
+  {
+    if(request.command == Command::queryObjects)
+    {
+      return replyOk(message); // empty list for now
+    }
+  }
+  else if(request.objectId == ObjectId::switchManager)
+  {
+    if(request.command == Command::set && request.options.size() == 1)
+    {
+      std::string_view option;
+      std::string_view value;
+      if(parseOptionValue(request.options[0], option, value) && option == Option::switch_)
+      {
+        return replyOk(message); // notify executed
+      }
+    }
+    else if(request.command == Command::queryObjects)
+    {
+      return replyOk(message); // empty list for now
+    }
+  }
+  else if(request.objectId == ObjectId::feedbackManager)
+  {
+    if(request.command == Command::queryObjects)
+    {
+      return replyOk(message); // empty list for now
     }
   }
 
@@ -69,6 +104,11 @@ bool SimulationIOHandler::reply(std::string_view message)
     });
 
   return true;
+}
+
+bool SimulationIOHandler::replyOk(std::string_view request)
+{
+  return reply(std::string("<REPLY ").append(rtrim(request, {'\r', '\n'})).append(">\r\n<END 0 (OK)>\r\n"));
 }
 
 }

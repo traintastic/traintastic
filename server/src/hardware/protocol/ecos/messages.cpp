@@ -266,4 +266,14 @@ bool parseLine(std::string_view text, Line& line)
   return true;
 }
 
+bool parseOptionValue(std::string_view text, std::string_view& option, std::string_view& value)
+{
+  auto n = text.find('[');
+  if(n == std::string_view::npos || *text.rbegin() != ']')
+    return false;
+  option = text.substr(0, n);
+  value = text.substr(n + 1, text.size() - (n + 2));
+  return true;
+}
+
 }

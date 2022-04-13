@@ -43,13 +43,11 @@ bool Object::receiveReply(const Reply& reply)
   }
   else if(reply.command == Command::set && reply.status == Status::Ok)
   {
+    std::string_view key;
+    std::string_view value;
     for(auto option : reply.options)
-    {
-      auto n = option.find('[');
-      if(n == std::string_view::npos || *option.rbegin() != ']')
-        continue;
-      update(option.substr(0, n), option.substr(n + 1, option.size() - (n + 2)));
-    }
+      if(parseOptionValue(option, key, value))
+        update(key, value);
   }
 
   return false;

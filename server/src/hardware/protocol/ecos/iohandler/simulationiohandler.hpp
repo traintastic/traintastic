@@ -33,6 +33,7 @@ class SimulationIOHandler final : public IOHandler
 {
   private:
     bool reply(std::string_view message);
+    bool replyOk(std::string_view request);
 
   public:
     SimulationIOHandler(Kernel& kernel);
