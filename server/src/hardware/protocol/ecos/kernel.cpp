@@ -44,25 +44,25 @@
 
 namespace ECoS {
 
-static constexpr DecoderProtocol toDecoderProtocol(Locomotive::Protocol value)
+static constexpr DecoderProtocol toDecoderProtocol(LocomotiveProtocol value)
 {
   switch(value)
   {
-    case Locomotive::Protocol::DCC14:
-    case Locomotive::Protocol::DCC28:
-    case Locomotive::Protocol::DCC128:
+    case LocomotiveProtocol::DCC14:
+    case LocomotiveProtocol::DCC28:
+    case LocomotiveProtocol::DCC128:
       return DecoderProtocol::DCC;
 
-    case Locomotive::Protocol::MM14:
-    case Locomotive::Protocol::MM27:
-    case Locomotive::Protocol::MM28:
+    case LocomotiveProtocol::MM14:
+    case LocomotiveProtocol::MM27:
+    case LocomotiveProtocol::MM28:
       return DecoderProtocol::Motorola;
 
-    case Locomotive::Protocol::SX32:
+    case LocomotiveProtocol::SX32:
       return DecoderProtocol::Selectrix;
 
-    case Locomotive::Protocol::Unknown:
-    case Locomotive::Protocol::MMFKT:
+    case LocomotiveProtocol::Unknown:
+    case LocomotiveProtocol::MMFKT:
       break;
   }
   return DecoderProtocol::Custom;
@@ -178,13 +178,20 @@ void Kernel::stop(Simulation* simulation)
   {
     simulation->clear();
 
+    // Locomotives:
+    for(const auto& it : m_objects)
+    {
+      if(const auto* locomotive = dynamic_cast<const Locomotive*>(it.second.get()))
+        simulation->locomotives.emplace_back(Simulation::Locomotive{{locomotive->id()}, locomotive->protocol(), locomotive->address()});
+    }
+
     // S88:
     {
       uint16_t id = ObjectId::s88;
       auto it = m_objects.find(id);
       while(it != m_objects.end())
       {
-        if(const auto* feedback = dynamic_cast<Feedback*>(it->second.get()))
+        if(const auto* feedback = dynamic_cast<const Feedback*>(it->second.get()))
           simulation->s88.emplace_back(Simulation::S88{{feedback->id()}, feedback->ports()});
         else
           break;

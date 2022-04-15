@@ -26,6 +26,7 @@
 #include "object.hpp"
 #include <map>
 #include <traintastic/enum/tristate.hpp>
+#include "locomotiveprotocol.hpp"
 #include "../messages.hpp"
 #include "../../../../enum/direction.hpp"
 
@@ -36,20 +37,6 @@ struct Line;
 
 class Locomotive final : public Object
 {
-  public:
-    enum class Protocol
-    {
-      Unknown = 0,
-      MM14 = 1,
-      MM27 = 2,
-      MM28 = 3,
-      DCC14 = 4,
-      DCC28 = 5,
-      DCC128 = 6,
-      SX32 = 7,
-      MMFKT = 8,
-    };
-
   private:
     struct Function
     {
@@ -58,7 +45,7 @@ class Locomotive final : public Object
 
     bool m_control = false;
     uint16_t m_address = 0;
-    Protocol m_protocol = Protocol::Unknown;
+    LocomotiveProtocol m_protocol = LocomotiveProtocol::Unknown;
     uint8_t m_speedStep = 0;
     Direction m_direction = Direction::Forward;
     std::map<uint8_t, Function> m_functions;
@@ -71,8 +58,8 @@ class Locomotive final : public Object
   public:
     static const std::initializer_list<std::string_view> options;
 
-    static constexpr uint8_t getSpeedSteps(Protocol protocol);
-    static constexpr uint8_t getFunctionCount(Protocol protocol);
+    static constexpr uint8_t getSpeedSteps(LocomotiveProtocol protocol);
+    static constexpr uint8_t getFunctionCount(LocomotiveProtocol protocol);
 
     Locomotive(Kernel& kernel, uint16_t id);
     Locomotive(Kernel& kernel, const Line& data);
@@ -81,7 +68,7 @@ class Locomotive final : public Object
     bool receiveEvent(const Event& event) final;
 
     uint16_t address() const { return m_address; }
-    Protocol protocol() const { return m_protocol; }
+    LocomotiveProtocol protocol() const { return m_protocol; }
 
     void stop();
 
@@ -97,53 +84,53 @@ class Locomotive final : public Object
     void setFunctionValue(uint8_t index, bool value);
 };
 
-constexpr uint8_t Locomotive::getSpeedSteps(Protocol protocol)
+constexpr uint8_t Locomotive::getSpeedSteps(LocomotiveProtocol protocol)
 {
   switch(protocol)
   {
-    case Protocol::DCC14:
-    case Protocol::MM14:
+    case LocomotiveProtocol::DCC14:
+    case LocomotiveProtocol::MM14:
       return 14;
 
-    case Protocol::MM27:
+    case LocomotiveProtocol::MM27:
       return 27;
 
-    case Protocol::DCC28:
-    case Protocol::MM28:
+    case LocomotiveProtocol::DCC28:
+    case LocomotiveProtocol::MM28:
       return 28;
 
-    case Protocol::SX32:
+    case LocomotiveProtocol::SX32:
       return 32;
 
-    case Protocol::DCC128:
+    case LocomotiveProtocol::DCC128:
       return 128;
 
-    case Protocol::MMFKT:
+    case LocomotiveProtocol::MMFKT:
       return 0; // ??
 
-    case Protocol::Unknown:
+    case LocomotiveProtocol::Unknown:
       break;
   }
   return 0;
 }
 
-constexpr uint8_t Locomotive::getFunctionCount(Protocol protocol)
+constexpr uint8_t Locomotive::getFunctionCount(LocomotiveProtocol protocol)
 {
   switch(protocol)
   {
-    case Protocol::DCC14:
-    case Protocol::DCC28:
-    case Protocol::DCC128:
+    case LocomotiveProtocol::DCC14:
+    case LocomotiveProtocol::DCC28:
+    case LocomotiveProtocol::DCC128:
       return 29;
 
-    case Protocol::MM14:
-    case Protocol::MM27:
-    case Protocol::MM28:
-    case Protocol::SX32:
-    case Protocol::MMFKT:
+    case LocomotiveProtocol::MM14:
+    case LocomotiveProtocol::MM27:
+    case LocomotiveProtocol::MM28:
+    case LocomotiveProtocol::SX32:
+    case LocomotiveProtocol::MMFKT:
       return 9; // ??
 
-    case Protocol::Unknown:
+    case LocomotiveProtocol::Unknown:
       break;
   }
   return 0;

@@ -25,6 +25,7 @@
 
 #include <vector>
 #include <cstdint>
+#include "object/locomotiveprotocol.hpp"
 
 namespace ECoS {
 
@@ -35,15 +36,23 @@ struct Simulation
     uint16_t id;
   };
 
+  struct Locomotive : Object
+  {
+    LocomotiveProtocol protocol;
+    uint16_t address;
+  };
+
   struct S88 : Object
   {
     uint8_t ports;
   };
 
+  std::vector<Locomotive> locomotives;
   std::vector<S88> s88;
 
   void clear()
   {
+    locomotives.clear();
     s88.clear();
   }
 };

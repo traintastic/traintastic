@@ -289,7 +289,19 @@ void ECoSInterface::load(WorldLoader& loader, const nlohmann::json& data)
   // load simulation data:
   if(json simulation = state.value("simulation", json::object()); !simulation.empty())
   {
-    using ECoS::Simulation;
+    using namespace ECoS;
+
+    if(json locomotives = simulation.value("locomotives", json::array()); !locomotives.empty())
+    {
+      for(const json& object : locomotives)
+      {
+        const uint16_t objectId = object.value("id", 0U);
+        LocomotiveProtocol protocol;
+        const uint16_t address = object.value("address", 0U);
+        if(objectId != 0 && fromString(object.value("protocol", ""), protocol) && address != 0)
+          m_simulation.locomotives.emplace_back(Simulation::Locomotive{{objectId}, protocol, address});
+      }
+    }
 
     if(json s88 = simulation.value("s88", json::array()); !s88.empty())
     {
@@ -314,6 +326,15 @@ void ECoSInterface::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json
 
   // save data for simulation:
   json simulation = json::object();
+
+  if(!m_simulation.locomotives.empty())
+  {
+    json objects = json::array();
+    for(const auto& locomotive : m_simulation.locomotives)
+      objects.emplace_back(json::object({{"id", locomotive.id}, {"protocol", toString(locomotive.protocol)}, {"address", locomotive.address}}));
+    simulation["locomotives"] = objects;
+  }
+
   if(!m_simulation.s88.empty())
   {
     json objects = json::array();

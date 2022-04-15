@@ -24,7 +24,6 @@
 #include "../kernel.hpp"
 #include "../messages.hpp"
 #include "../../../../utils/rtrim.hpp"
-#include "../../../../utils/contains.hpp"
 
 namespace ECoS {
 
@@ -66,7 +65,22 @@ bool SimulationIOHandler::send(std::string_view message)
   {
     if(request.command == Command::queryObjects)
     {
-      return replyOk(message); // empty list for now
+      std::string response{replyHeader(message)};
+      for(const auto& locomotive : m_simulation.locomotives)
+      {
+        response.append(std::to_string(locomotive.id));
+        for(auto option : request.options)
+        {
+          if(option == Option::protocol)
+            response.append(" protocol[").append(toString(locomotive.protocol)).append("]");
+          else if(option == Option::addr)
+            response.append(" addr[").append(std::to_string(locomotive.address)).append("]");
+        }
+        response.append("\r\n");
+      }
+      response.append("<END 0 (OK)>\r\n");
+
+      return reply(response);
     }
   }
   else if(request.objectId == ObjectId::switchManager)
@@ -89,15 +103,43 @@ bool SimulationIOHandler::send(std::string_view message)
   {
     if(request.command == Command::queryObjects)
     {
-      const bool ports = contains(request.options, Option::ports);
-
       std::string response{replyHeader(message)};
       for(const auto& s88 : m_simulation.s88)
       {
         response.append(std::to_string(s88.id));
-        if(ports)
-          response.append(" ports[").append(std::to_string(s88.ports)).append("]");
+        for(auto option : request.options)
+        {
+          if(option == Option::ports)
+            response.append(" ports[").append(std::to_string(s88.ports)).append("]");
+        }
         response.append("\r\n");
+      }
+      response.append("<END 0 (OK)>\r\n");
+
+      return reply(response);
+    }
+  }
+  else if(auto itLocomotive = std::find_if(m_simulation.locomotives.begin(), m_simulation.locomotives.end(),
+    [id=request.objectId](const auto& v)
+    {
+      return v.id == id;
+    }); itLocomotive != m_simulation.locomotives.end())
+  {
+    if(request.command == Command::get)
+    {
+      std::string_view key;
+      std::string_view value;
+      std::string response{replyHeader(message)};
+      for(auto option : request.options)
+      {
+        if(option == Option::dir)
+          response.append(std::to_string(request.objectId)).append(" dir[0]\r\n");
+        else if(option == Option::speedStep)
+          response.append(std::to_string(request.objectId)).append(" speedstep[0]\r\n");
+        else if(parseOptionValue(option, key, value) && key == Option::func)
+          response.append(std::to_string(request.objectId)).append(" func[").append(value).append(",0]\r\n");
+        else
+          assert(false);
       }
       response.append("<END 0 (OK)>\r\n");
 
@@ -110,15 +152,18 @@ bool SimulationIOHandler::send(std::string_view message)
       return v.id == id;
     }); it != m_simulation.s88.end())
   {
-    const bool state = contains(request.options, Option::state);
+    if(request.command == Command::get)
+    {
+      std::string response{replyHeader(message)};
+      for(auto option : request.options)
+      {
+        if(option == Option::state)
+          response.append(std::to_string(request.objectId)).append(" state[0x0]\r\n");
+      }
+      response.append("<END 0 (OK)>\r\n");
 
-    std::string response{replyHeader(message)};
-    response.append(std::to_string(request.objectId));
-    if(state)
-      response.append(" state[0x0]");
-    response.append("<END 0 (OK)>\r\n");
-
-    return reply(response);
+      return reply(response);
+    }
   }
 
   return reply(std::string("<REPLY ").append(message).append(">\r\n<END 999 (Traintastic: no simulation support)>\r\n"));
