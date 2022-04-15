@@ -24,11 +24,13 @@
 #include "../kernel.hpp"
 #include "../messages.hpp"
 #include "../../../../utils/rtrim.hpp"
+#include "../../../../utils/contains.hpp"
 
 namespace ECoS {
 
-SimulationIOHandler::SimulationIOHandler(Kernel& kernel)
+SimulationIOHandler::SimulationIOHandler(Kernel& kernel, const Simulation& simulation)
   : IOHandler(kernel)
+  , m_simulation{simulation}
 {
 }
 
@@ -87,8 +89,36 @@ bool SimulationIOHandler::send(std::string_view message)
   {
     if(request.command == Command::queryObjects)
     {
-      return replyOk(message); // empty list for now
+      const bool ports = contains(request.options, Option::ports);
+
+      std::string response{replyHeader(message)};
+      for(const auto& s88 : m_simulation.s88)
+      {
+        response.append(std::to_string(s88.id));
+        if(ports)
+          response.append(" ports[").append(std::to_string(s88.ports)).append("]");
+        response.append("\r\n");
+      }
+      response.append("<END 0 (OK)>\r\n");
+
+      return reply(response);
     }
+  }
+  else if(auto it = std::find_if(m_simulation.s88.begin(), m_simulation.s88.end(),
+    [id=request.objectId](const auto& v)
+    {
+      return v.id == id;
+    }); it != m_simulation.s88.end())
+  {
+    const bool state = contains(request.options, Option::state);
+
+    std::string response{replyHeader(message)};
+    response.append(std::to_string(request.objectId));
+    if(state)
+      response.append(" state[0x0]");
+    response.append("<END 0 (OK)>\r\n");
+
+    return reply(response);
   }
 
   return reply(std::string("<REPLY ").append(message).append(">\r\n<END 999 (Traintastic: no simulation support)>\r\n"));
@@ -108,7 +138,12 @@ bool SimulationIOHandler::reply(std::string_view message)
 
 bool SimulationIOHandler::replyOk(std::string_view request)
 {
-  return reply(std::string("<REPLY ").append(rtrim(request, {'\r', '\n'})).append(">\r\n<END 0 (OK)>\r\n"));
+  return reply(replyHeader(request).append("<END 0 (OK)>\r\n"));
+}
+
+std::string SimulationIOHandler::replyHeader(std::string_view request)
+{
+  return std::string("<REPLY ").append(rtrim(request, {'\r', '\n'})).append(">\r\n");
 }
 
 }

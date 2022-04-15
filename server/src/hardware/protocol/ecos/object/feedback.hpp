@@ -45,6 +45,8 @@ class Feedback final : public Object
 
     Feedback(Kernel& kernel, uint16_t id);
     Feedback(Kernel& kernel, const Line& data);
+
+    uint8_t ports() const { return static_cast<uint8_t>(m_state.size()); }
 };
 
 }

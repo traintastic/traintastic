@@ -23,6 +23,7 @@
 #include "kernel.hpp"
 #include <algorithm>
 #include "messages.hpp"
+#include "simulation.hpp"
 #include "object/ecos.hpp"
 #include "object/locomotivemanager.hpp"
 #include "object/locomotive.hpp"
@@ -161,7 +162,7 @@ void Kernel::start()
 #endif
 }
 
-void Kernel::stop()
+void Kernel::stop(Simulation* simulation)
 {
   m_ioContext.post(
     [this]()
@@ -172,6 +173,25 @@ void Kernel::stop()
   m_ioContext.stop();
 
   m_thread.join();
+
+  if(simulation) // get simulation data
+  {
+    simulation->clear();
+
+    // S88:
+    {
+      uint16_t id = ObjectId::s88;
+      auto it = m_objects.find(id);
+      while(it != m_objects.end())
+      {
+        if(const auto* feedback = dynamic_cast<Feedback*>(it->second.get()))
+          simulation->s88.emplace_back(Simulation::S88{{feedback->id()}, feedback->ports()});
+        else
+          break;
+        it = m_objects.find(++id);
+      }
+    }
+  }
 
   m_objects.clear();
 

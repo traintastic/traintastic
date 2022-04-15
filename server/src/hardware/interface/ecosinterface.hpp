@@ -26,6 +26,7 @@
 #include "interface.hpp"
 #include "../protocol/ecos/kernel.hpp"
 #include "../protocol/ecos/settings.hpp"
+#include "../protocol/ecos/simulation.hpp"
 #include "../decoder/decodercontroller.hpp"
 #include "../decoder/list/decoderlist.hpp"
 #include "../input/inputcontroller.hpp"
@@ -50,9 +51,12 @@ class ECoSInterface final
   private:
     std::unique_ptr<ECoS::Kernel> m_kernel;
     boost::signals2::connection m_ecosPropertyChanged;
+    ECoS::Simulation m_simulation;
 
     void addToWorld() final;
     void destroying() final;
+    void load(WorldLoader& loader, const nlohmann::json& data) final;
+    void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const final;
     void worldEvent(WorldState state, WorldEvent event) final;
 
     void idChanged(const std::string& newId) final;

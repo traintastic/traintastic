@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/ecos/iohandler/simulationiohandler.hpp
+ * server/src/hardware/protocol/ecos/simulation.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,36 +20,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_IOHANDLER_SIMULATIONIOHANDLER_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_IOHANDLER_SIMULATIONIOHANDLER_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_SIMULATION_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_SIMULATION_HPP
 
-#include "iohandler.hpp"
-#include <array>
-#include <cstddef>
-#include "../simulation.hpp"
+#include <vector>
+#include <cstdint>
 
 namespace ECoS {
 
-class SimulationIOHandler final : public IOHandler
+struct Simulation
 {
-  private:
-    const Simulation m_simulation;
+  struct Object
+  {
+    uint16_t id;
+  };
 
-    bool reply(std::string_view message);
-    bool replyOk(std::string_view request);
+  struct S88 : Object
+  {
+    uint8_t ports;
+  };
 
-    static std::string replyHeader(std::string_view request);
+  std::vector<S88> s88;
 
-  public:
-    SimulationIOHandler(Kernel& kernel, const Simulation& simulation);
-
-    void start() final {}
-    void stop() final {}
-
-    bool send(std::string_view message) final;
+  void clear()
+  {
+    s88.clear();
+  }
 };
 
 }
 
 #endif
-

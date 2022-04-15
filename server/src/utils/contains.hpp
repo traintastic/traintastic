@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/ecos/iohandler/simulationiohandler.hpp
+ * server/src/utils/contains.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,36 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_IOHANDLER_SIMULATIONIOHANDLER_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_IOHANDLER_SIMULATIONIOHANDLER_HPP
+#ifndef TRAINTASTIC_SERVER_UTILS_CONTAINS_HPP
+#define TRAINTASTIC_SERVER_UTILS_CONTAINS_HPP
 
-#include "iohandler.hpp"
-#include <array>
-#include <cstddef>
-#include "../simulation.hpp"
+#include <vector>
 
-namespace ECoS {
-
-class SimulationIOHandler final : public IOHandler
+template<class T>
+inline bool contains(const std::vector<T>& vector, T value)
 {
-  private:
-    const Simulation m_simulation;
-
-    bool reply(std::string_view message);
-    bool replyOk(std::string_view request);
-
-    static std::string replyHeader(std::string_view request);
-
-  public:
-    SimulationIOHandler(Kernel& kernel, const Simulation& simulation);
-
-    void start() final {}
-    void stop() final {}
-
-    bool send(std::string_view message) final;
-};
-
+  return std::find(vector.begin(), vector.end(), value) != vector.end();
 }
 
 #endif
-

@@ -44,6 +44,7 @@ class ECoS;
 class Locomotive;
 class SwitchManager;
 class Feedback;
+struct Simulation;
 
 class Kernel
 {
@@ -255,8 +256,9 @@ class Kernel
 
     /**
      * @brief Stop the kernel and IO handler
+     * @param[out] simulation Get simulation data (optional)
      */
-    void stop();
+    void stop(Simulation* simulation);
 
     /**
      * @brief ...

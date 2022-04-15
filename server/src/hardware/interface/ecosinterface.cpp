@@ -31,6 +31,7 @@
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
+#include "../../world/worldloader.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
@@ -179,7 +180,7 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
     try
     {
       if(simulation)
-        m_kernel = ECoS::Kernel::create<ECoS::SimulationIOHandler>(ecos->config());
+        m_kernel = ECoS::Kernel::create<ECoS::SimulationIOHandler>(ecos->config(), m_simulation);
       else
         m_kernel = ECoS::Kernel::create<ECoS::TCPIOHandler>(ecos->config(), hostname.value());
 
@@ -234,7 +235,7 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
 
     m_ecosPropertyChanged.disconnect();
 
-    m_kernel->stop();
+    m_kernel->stop(simulation ? nullptr : &m_simulation);
     m_kernel.reset();
 
     status.setValueInternal(InterfaceStatus::Offline);
@@ -276,6 +277,53 @@ void ECoSInterface::destroying()
   m_world.outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 
   Interface::destroying();
+}
+
+void ECoSInterface::load(WorldLoader& loader, const nlohmann::json& data)
+{
+  Interface::load(loader, data);
+
+  using nlohmann::json;
+
+  json state = loader.getState(getObjectId());
+  // load simulation data:
+  if(json simulation = state.value("simulation", json::object()); !simulation.empty())
+  {
+    using ECoS::Simulation;
+
+    if(json s88 = simulation.value("s88", json::array()); !s88.empty())
+    {
+      for(const json& object : s88)
+      {
+        const uint16_t objectId = object.value("id", 0U);
+        const uint8_t ports = object.value("ports", 0U);
+        if(objectId != 0 && (ports == 8 || ports == 16))
+          m_simulation.s88.emplace_back(Simulation::S88{{objectId}, ports});
+        else
+          break;
+      }
+    }
+  }
+}
+
+void ECoSInterface::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const
+{
+  Interface::save(saver, data, state);
+
+  using nlohmann::json;
+
+  // save data for simulation:
+  json simulation = json::object();
+  if(!m_simulation.s88.empty())
+  {
+    json objects = json::array();
+    for(const auto& s88 : m_simulation.s88)
+      objects.emplace_back(json::object({{"id", s88.id}, {"ports", s88.ports}}));
+    simulation["s88"] = objects;
+  }
+
+  if(!simulation.empty())
+    state["simulation"] = simulation;
 }
 
 void ECoSInterface::worldEvent(WorldState state, WorldEvent event)
