@@ -22,6 +22,7 @@
 
 #include "inputmonitor.hpp"
 #include "connection.hpp"
+#include "callmethod.hpp"
 
 InputMonitor::InputMonitor(const std::shared_ptr<Connection>& connection, Handle handle, const QString& classId) :
   Object(connection, handle, classId),
@@ -55,6 +56,12 @@ QString InputMonitor::getInputId(uint32_t address) const
   if(auto it = m_inputIds.find(address); it != m_inputIds.end())
     return it->second;
   return {};
+}
+
+void InputMonitor::simulateInputChange(uint32_t address)
+{
+  if(auto* simulateInputChange = getMethod("simulate_input_change"))
+    ::callMethod(*simulateInputChange, nullptr, address);
 }
 
 void InputMonitor::processMessage(const Message& message)

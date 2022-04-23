@@ -47,6 +47,8 @@ class InputMonitor final : public Object
     TriState getInputState(uint32_t address) const;
     QString getInputId(uint32_t address) const;
 
+    void simulateInputChange(uint32_t address);
+
   signals:
     void inputIdChanged(uint32_t address, QString id);
     void inputValueChanged(uint32_t address, TriState value);
