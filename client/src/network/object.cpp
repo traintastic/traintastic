@@ -54,6 +54,13 @@ AbstractProperty* Object::getProperty(const QString& name)
   return dynamic_cast<AbstractProperty*>(m_interfaceItems.find(name));
 }
 
+bool Object::getPropertyValueBool(const QString& name, bool defaultValue) const
+{
+  if(const auto* property = getProperty(name); property && property->type() == ValueType::Boolean)
+    return property->toBool();
+  return defaultValue;
+}
+
 const AbstractVectorProperty* Object::getVectorProperty(const QString& name) const
 {
   return dynamic_cast<AbstractVectorProperty*>(m_interfaceItems.find(name));

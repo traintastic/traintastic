@@ -66,6 +66,14 @@ class Object : public QObject
     const AbstractProperty* getProperty(const QString& name) const;
     AbstractProperty* getProperty(const QString& name);
 
+    /**
+     * \brief Get boolean property value
+     * \param[in] name Property name
+     * \param[in] defaultValue Value to return if property doesn't exist or isn't boolean
+     * \return Property value or \c defaultValue if property doesn't exist or isn't boolean
+     */
+    bool getPropertyValueBool(const QString& name, bool defaultValue) const;
+
     inline bool hasVectorProperty(const QString& name) const { return getVectorProperty(name); }
     const AbstractVectorProperty* getVectorProperty(const QString& name) const;
     AbstractVectorProperty* getVectorProperty(const QString& name);
