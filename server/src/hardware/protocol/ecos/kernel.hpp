@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_KERNEL_HPP
 
 #include <thread>
+#include <unordered_map>
 #include <boost/asio/io_context.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>

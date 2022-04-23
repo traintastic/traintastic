@@ -202,6 +202,18 @@ jobs:
           defines: "-DDEBIAN_PACKAGE_VERSION_EXTRA=~raspberrypios~buster~$CI_REF_NAME_SLUG~${{github.run_number}}~$CI_SHA_SHORT -DDISABLE_CLANG_TIDY=ON"
           ccov: false
 
+        - name: "macos-11"
+          os: "macos-11"
+          generator: "Unix Makefiles"
+          arch: ""
+          toolset: ""
+          target: all
+          jobs: 3
+          build_type: Release
+          build_deb: false
+          defines: "-DDISABLE_CLANG_TIDY=ON"
+          ccov: false
+
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
 
@@ -224,6 +236,11 @@ jobs:
     - name: Install packages
       if: startswith(matrix.config.os, 'ubuntu')
       run: sudo apt install liblua5.3-dev lcov libarchive-dev clang-tidy
+
+    # MacOS only:
+    - name: Install brew packages
+      if: startswith(matrix.config.os, 'macos')
+      run: brew install libarchive lua@5.3
 
     # All:
     - name: Create Build Environment

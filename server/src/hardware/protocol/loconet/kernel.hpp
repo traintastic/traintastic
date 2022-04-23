@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_KERNEL_HPP
 
 #include <array>
+#include <unordered_map>
 #include <thread>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>

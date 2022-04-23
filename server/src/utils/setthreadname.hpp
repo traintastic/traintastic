@@ -33,7 +33,11 @@ inline void setThreadName(const char* name)
 {
 #if __has_include(<pthread.h>)
   if constexpr(std::is_same_v<std::thread::native_handle_type, pthread_t>)
+  #ifdef __APPLE__
+    pthread_setname_np(name);
+  #else
     pthread_setname_np(pthread_self(), name);
+  #endif
 #endif
 #ifdef WIN32
   // TODO:
