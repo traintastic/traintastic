@@ -28,6 +28,8 @@
 #include "../../src/enum/decoderprotocol.hpp"
 #include "../../src/enum/direction.hpp"
 #include "../../src/enum/directioncontrolstate.hpp"
+#include "../../src/enum/turnoutposition.hpp"
+#include "../../src/enum/signalaspect.hpp"
 #include "../../src/enum/worldevent.hpp"
 #include "../../src/enum/worldscale.hpp"
 
@@ -35,6 +37,8 @@
   DecoderProtocol, \
   Direction, \
   DirectionControlState, \
+  TurnoutPosition, \
+  SignalAspect, \
   WorldEvent, \
   WorldScale
 
