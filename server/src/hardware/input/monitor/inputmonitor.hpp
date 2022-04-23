@@ -26,6 +26,7 @@
 #include "../../../core/object.hpp"
 #include <vector>
 #include "../../../core/property.hpp"
+#include "../../../core/method.hpp"
 #include "../../../enum/tristate.hpp"
 
 class InputController;
@@ -58,6 +59,7 @@ class InputMonitor : public Object
 
     Property<uint32_t> addressMin;
     Property<uint32_t> addressMax;
+    Method<void(uint32_t)> simulateInputChange;
 
     InputMonitor(InputController& controller, uint32_t channel);
 

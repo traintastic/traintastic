@@ -26,6 +26,7 @@
 #include <QKeyEvent>
 #include <traintastic/locale/locale.hpp>
 #include "ledwidget.hpp"
+#include "../network/connection.hpp"
 #include "../network/inputmonitor.hpp"
 #include "../network/abstractproperty.hpp"
 #include "../theme/theme.hpp"
@@ -98,6 +99,15 @@ InputMonitorWidget::InputMonitorWidget(std::shared_ptr<InputMonitor> object, QWi
   for(uint32_t i = 0; i < m_leds.size(); i++)
   {
     auto* led = new LEDWidget(colors, this);
+    connect(led, &LEDWidget::clicked, this,
+      [this, index=i]()
+      {
+        if(m_object->connection()->world()->getPropertyValueBool("simulation", false))
+        {
+          const uint32_t address = static_cast<uint32_t>(m_addressMin->toInt64()) + m_page * m_leds.size() + index;
+          m_object->simulateInputChange(address);
+        }
+      });
     grid->addWidget(led, i / columns, i % columns);
     m_leds[i] = led;
   }

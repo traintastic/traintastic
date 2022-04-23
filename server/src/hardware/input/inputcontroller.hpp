@@ -136,6 +136,13 @@ class InputController
      *
      */
     std::shared_ptr<InputMonitor> inputMonitor(uint32_t channel);
+
+    /**
+     * \brief Simulate input change
+     * \param[in] channel Input channel
+     * \param[in] address Input address
+     */
+    virtual void inputSimulateChange(uint32_t /*channel*/, uint32_t /*address*/) {}
 };
 
 #endif

@@ -29,9 +29,15 @@ InputMonitor::InputMonitor(InputController& controller, uint32_t channel)
   , m_channel{channel}
   , addressMin{this, "address_min", m_controller.inputAddressMinMax(m_channel).first, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , addressMax{this, "address_max", m_controller.inputAddressMinMax(m_channel).second, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
+  , simulateInputChange{*this, "simulate_input_change", MethodFlags::NoScript,
+      [this](uint32_t address)
+      {
+        m_controller.inputSimulateChange(m_channel, address);
+      }}
 {
   m_interfaceItems.add(addressMin);
   m_interfaceItems.add(addressMax);
+  m_interfaceItems.add(simulateInputChange);
 }
 
 std::string InputMonitor::getObjectId() const
