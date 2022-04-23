@@ -88,6 +88,7 @@ class LocoNetInterface final
     std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final { return {LocoNet::Kernel::inputAddressMin, LocoNet::Kernel::inputAddressMax}; }
     [[nodiscard]] bool addInput(Input& input) final;
     [[nodiscard]] bool removeInput(Input& input) final;
+    void inputSimulateChange(uint32_t channel, uint32_t address) final;
 
     // OutputController:
     std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final { return {LocoNet::Kernel::outputAddressMin, LocoNet::Kernel::outputAddressMax}; }

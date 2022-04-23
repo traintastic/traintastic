@@ -522,6 +522,18 @@ struct InputRep : Message
   {
   }
 
+  InputRep(uint16_t fullAddress_, bool value_) :
+    InputRep{}
+  {
+    in1 = (fullAddress_ >> 1) & 0x7F;
+    in2 = (fullAddress_ >> 8) & 0x0F;
+    if(fullAddress_ & 0x0001)
+      in2 |= 0x20;
+    if(value_)
+      in2 |= 0x10;
+    checksum = calcChecksum(*this);
+  }
+
   inline uint16_t fullAddress() const
   {
     return (address() << 1) | (isSwitchInput() ? 1 : 0);

@@ -146,6 +146,12 @@ bool LocoNetInterface::removeInput(Input& input)
   return success;
 }
 
+void LocoNetInterface::inputSimulateChange(uint32_t channel, uint32_t address)
+{
+  if(m_kernel && inRange(address, outputAddressMinMax(channel)))
+    m_kernel->simulateInputChange(address);
+}
+
 bool LocoNetInterface::addOutput(Output& output)
 {
   const bool success = OutputController::addOutput(output);

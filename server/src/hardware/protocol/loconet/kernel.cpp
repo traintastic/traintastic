@@ -46,8 +46,9 @@ static void updateDecoderSpeed(const std::shared_ptr<Decoder>& decoder, uint8_t 
     decoder->throttle.setValueInternal(Decoder::speedStepToThrottle(speed - 1, SPEED_MAX - 1));
 }
 
-Kernel::Kernel(const Config& config)
+Kernel::Kernel(const Config& config, bool simulation)
   : m_ioContext{1}
+  , m_simulation{simulation}
   , m_waitingForEcho{false}
   , m_waitingForResponse{false}
   , m_fastClockSyncTimer(m_ioContext)
@@ -777,6 +778,17 @@ bool Kernel::setOutput(uint16_t address, bool value)
     });
 
   return true;
+}
+
+void Kernel::simulateInputChange(uint16_t address)
+{
+  assert(inRange(address, inputAddressMin, inputAddressMax));
+  if(m_simulation)
+    m_ioContext.post(
+      [this, fullAddress=address - 1]()
+      {
+        receive(InputRep(fullAddress, m_inputValues[fullAddress] != TriState::True));
+      });
 }
 
 Kernel::LocoSlot* Kernel::getLocoSlot(uint8_t slot, bool sendSlotDataRequestIfNew)
