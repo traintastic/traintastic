@@ -21,7 +21,7 @@
  */
 
 #include <catch2/catch.hpp>
-#include "enums.hpp"
+#include "../../src/lua/enums.hpp"
 #include "../../src/lua/to.hpp"
 #include <string_view>
 #include <type_traits>
@@ -48,7 +48,7 @@ struct other_enum_type<WorldEvent>
   using type = DecoderProtocol;
 };
 
-TEMPLATE_TEST_CASE("Lua::to<>", "[lua][lua-to]", TEST_ENUMS)
+TEMPLATE_TEST_CASE("Lua::to<>", "[lua][lua-to]", LUA_ENUMS)
 {
   using OtherEnumType = typename other_enum_type<TestType>::type;
 

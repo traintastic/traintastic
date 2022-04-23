@@ -23,7 +23,7 @@
 #include <catch2/catch.hpp>
 #include "../../src/lua/check.hpp"
 #include "protect.hpp"
-#include "enums.hpp"
+#include "../../src/lua/enums.hpp"
 #include <type_traits>
 
 template<class T>
@@ -49,7 +49,7 @@ static lua_State* createState()
   return L;
 }
 
-TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", TEST_ENUMS)
+TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", LUA_ENUMS)
 {
   using OtherEnumType = typename other_enum_type<TestType>::type;
 

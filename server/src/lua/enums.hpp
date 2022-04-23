@@ -1,7 +1,7 @@
 /**
- * server/test/lua/enums.hpp
+ * server/src/lua/enums.hpp
  *
- * This file is part of the traintastic test suite.
+ * This file is part of the traintastic source code.
  *
  * Copyright (C) 2022 Reinder Feenstra
  *
@@ -20,21 +20,46 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_TEST_LUA_ENUMS_HPP
-#define TRAINTASTIC_SERVER_TEST_LUA_ENUMS_HPP
+#ifndef TRAINTASTIC_SERVER_LUA_ENUMS_HPP
+#define TRAINTASTIC_SERVER_LUA_ENUMS_HPP
 
+#include <lua.hpp>
+#include "enum.hpp"
 #include "../../src/enum/decoderprotocol.hpp"
 #include "../../src/enum/direction.hpp"
 #include "../../src/enum/directioncontrolstate.hpp"
 #include "../../src/enum/worldevent.hpp"
 #include "../../src/enum/worldscale.hpp"
 
-#define TEST_ENUMS \
+#define LUA_ENUMS \
   DecoderProtocol, \
   Direction, \
   DirectionControlState, \
   WorldEvent, \
   WorldScale
+
+namespace Lua {
+
+struct Enums
+{
+  template<class T, class... Ts>
+  inline static void registerTypes(lua_State* L)
+  {
+    Enum<T>::registerType(L);
+    if constexpr(sizeof...(Ts) != 0)
+      registerTypes<Ts...>(L);
+  }
+
+  template<class T, class... Ts>
+  inline static void registerValues(lua_State* L)
+  {
+    Enum<T>::registerValues(L);
+    if constexpr(sizeof...(Ts) != 0)
+      registerValues<Ts...>(L);
+  }
+};
+
+}
 
 #endif
 

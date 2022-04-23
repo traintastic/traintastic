@@ -24,7 +24,7 @@
 #include "../../src/lua/push.hpp"
 
 // Enums:
-#include "enums.hpp"
+#include "../../src/lua/enums.hpp"
 
 // Sets:
 #include "../../src/set/worldstate.hpp"
@@ -116,7 +116,7 @@ TEMPLATE_TEST_CASE("Lua::push<>", "[lua][lua-push]", std::string, std::string_vi
   lua_close(L);
 }
 
-TEMPLATE_TEST_CASE("Lua::push<>", "[lua][lua-push]", TEST_ENUMS)
+TEMPLATE_TEST_CASE("Lua::push<>", "[lua][lua-push]", LUA_ENUMS)
 {
   lua_State* L = luaL_newstate();
   const int top = lua_gettop(L);

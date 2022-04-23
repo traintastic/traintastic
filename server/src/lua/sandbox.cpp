@@ -30,15 +30,11 @@
 #include "class.hpp"
 #include "to.hpp"
 #include "type.hpp"
+#include "enums.hpp"
 #include <version.hpp>
 #include <traintastic/utils/str.hpp>
 #include <traintastic/codename.hpp>
 #include "../world/world.hpp"
-#include "../enum/decoderprotocol.hpp"
-#include "../enum/direction.hpp"
-#include "../enum/directioncontrolstate.hpp"
-#include "../enum/worldevent.hpp"
-#include "../enum/worldscale.hpp"
 #include "../set/worldstate.hpp"
 
 #define LUA_SANDBOX "_sandbox"
@@ -163,11 +159,7 @@ SandboxPtr Sandbox::create(Script& script)
   *static_cast<StateData**>(lua_getextraspace(L)) = new StateData(script);
 
   // register types:
-  Enum<DecoderProtocol>::registerType(L);
-  Enum<Direction>::registerType(L);
-  Enum<DirectionControlState>::registerType(L);
-  Enum<WorldEvent>::registerType(L);
-  Enum<WorldScale>::registerType(L);
+  Enums::registerTypes<LUA_ENUMS>(L);
   Set<WorldState>::registerType(L);
   Object::registerType(L);
   Method::registerType(L);
@@ -244,11 +236,7 @@ SandboxPtr Sandbox::create(Script& script)
 
   // add enum values:
   lua_newtable(L);
-  Enum<DecoderProtocol>::registerValues(L);
-  Enum<Direction>::registerValues(L);
-  Enum<DirectionControlState>::registerValues(L);
-  Enum<WorldEvent>::registerValues(L);
-  Enum<WorldScale>::registerValues(L);
+  Enums::registerValues<LUA_ENUMS>(L);
   ReadOnlyTable::wrap(L, -1);
   lua_setfield(L, -2, "enum");
 
