@@ -84,6 +84,7 @@ Input::Input(World& world, std::string_view _id)
       }}
   , value{this, "value", TriState::Undefined, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
   , consumers{*this, "consumers", {}, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
+  , onValueChanged{*this, "on_value_changed", EventFlags::Scriptable}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
@@ -115,6 +116,8 @@ Input::Input(World& world, std::string_view _id)
 
   Attributes::addObjectEditor(consumers, false); //! \todo add client support first
   m_interfaceItems.add(consumers);
+
+  m_interfaceItems.add(onValueChanged);
 }
 
 void Input::addToWorld()
@@ -162,7 +165,8 @@ void Input::updateValue(TriState _value)
 {
   // todo: delay in ms for 0->1 || 1->0
   value.setValueInternal(_value);
-  valueChanged(value);
+  if(value != TriState::Undefined)
+    fireEvent(onValueChanged, value == TriState::True);
 }
 
 void Input::interfaceChanged()

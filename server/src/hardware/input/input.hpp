@@ -26,6 +26,7 @@
 #include "../../core/idobject.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../core/objectvectorproperty.hpp"
+#include "../../core/event.hpp"
 #include "../../enum/tristate.hpp"
 #include "inputcontroller.hpp"
 
@@ -53,7 +54,6 @@ class Input : public IdObject
     void loaded() override;
     void destroying() override;
     void worldEvent(WorldState state, WorldEvent event) override;
-    virtual void valueChanged(TriState /*_value*/) {}
 
     void updateValue(TriState _value);
 
@@ -66,6 +66,7 @@ class Input : public IdObject
     Property<uint32_t> address;
     Property<TriState> value;
     ObjectVectorProperty<Object> consumers;
+    Event<bool> onValueChanged;
 
     Input(World& world, std::string_view _id);
 };
