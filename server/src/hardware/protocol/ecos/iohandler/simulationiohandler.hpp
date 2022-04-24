@@ -49,6 +49,12 @@ class SimulationIOHandler final : public IOHandler
     bool send(std::string_view message) final;
 };
 
+template<>
+constexpr bool isSimulation<SimulationIOHandler>()
+{
+  return true;
+}
+
 }
 
 #endif
