@@ -139,6 +139,14 @@ MainWindow::MainWindow(QWidget* parent) :
             method->call();
       });
     m_actionSaveWorld->setShortcut(QKeySequence::Save);
+    m_actionCloseWorld = menu->addAction(Theme::getIcon("world_close"), Locale::tr("qtapp.mainmenu:close_world"),
+      [this]()
+      {
+        if(m_connection)
+          if(const ObjectPtr& traintastic = m_connection->traintastic())
+            traintastic->callMethod("close_world");
+      });
+    m_actionCloseWorld->setShortcut(QKeySequence::Close);
     menu->addSeparator();
     m_actionImportWorld = menu->addAction(Theme::getIcon("world_import"), Locale::tr("qtapp.mainmenu:import_world") + "...",
       [this]()
@@ -767,6 +775,7 @@ void MainWindow::updateActions()
   m_actionNewWorld->setEnabled(connected);
   m_actionLoadWorld->setEnabled(connected);
   m_actionSaveWorld->setEnabled(haveWorld);
+  m_actionCloseWorld->setEnabled(haveWorld);
   m_actionImportWorld->setEnabled(connected);
   m_actionExportWorld->setEnabled(haveWorld);
 

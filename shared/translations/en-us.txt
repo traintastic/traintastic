@@ -360,6 +360,7 @@ qtapp.error:cant_write_to_file_x=Can't write to file: %1
 qtapp.error:server_error_x=Server error %1
 
 qtapp.mainmenu:about=About
+qtapp.mainmenu:close_world=Close world
 qtapp.mainmenu:connect_to_server=Connect to server
 qtapp.mainmenu:connection=Connection
 qtapp.mainmenu:disconnect_from_server=Disconnect from server

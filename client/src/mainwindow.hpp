@@ -58,6 +58,7 @@ class MainWindow : public QMainWindow
     QAction* m_actionNewWorld;
     QAction* m_actionLoadWorld;
     QAction* m_actionSaveWorld;
+    QAction* m_actionCloseWorld;
     QAction* m_actionImportWorld;
     QAction* m_actionExportWorld;
     QMenu* m_menuWorld;
