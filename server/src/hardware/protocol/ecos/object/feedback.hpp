@@ -46,6 +46,12 @@ class Feedback final : public Object
     Feedback(Kernel& kernel, uint16_t id);
     Feedback(Kernel& kernel, const Line& data);
 
+    inline TriState operator [](uint8_t port) const
+    {
+      assert(port < ports());
+      return m_state[port];
+    }
+
     uint8_t ports() const { return static_cast<uint8_t>(m_state.size()); }
 };
 
