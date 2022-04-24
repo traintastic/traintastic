@@ -132,6 +132,12 @@ bool ECoSInterface::removeInput(Input& input)
   return success;
 }
 
+void ECoSInterface::inputSimulateChange(uint32_t channel, uint32_t address)
+{
+  if(m_kernel && inRange(address, outputAddressMinMax(channel)))
+    m_kernel->simulateInputChange(channel, address);
+}
+
 std::pair<uint32_t, uint32_t> ECoSInterface::outputAddressMinMax(uint32_t channel) const
 {
   using namespace ECoS;

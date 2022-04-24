@@ -36,7 +36,9 @@
 #include "../../output/outputcontroller.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../utils/startswith.hpp"
+#include "../../../utils/ltrim.hpp"
 #include "../../../utils/rtrim.hpp"
+#include "../../../utils/tohex.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 
@@ -68,8 +70,9 @@ static constexpr DecoderProtocol toDecoderProtocol(LocomotiveProtocol value)
   return DecoderProtocol::Custom;
 }
 
-Kernel::Kernel(const Config& config)
+Kernel::Kernel(const Config& config, bool simulation)
   : m_ioContext{1}
+  , m_simulation{simulation}
   , m_decoderController{nullptr}
   , m_inputController{nullptr}
   , m_outputController{nullptr}
@@ -367,6 +370,58 @@ bool Kernel::setOutput(uint32_t channel, uint16_t address, bool value)
   return false;
 }
 
+void Kernel::simulateInputChange(uint32_t channel, uint32_t address)
+{
+  if(!m_simulation)
+    return;
+
+  m_ioContext.post(
+    [this, channel, address]()
+    {
+      switch(channel)
+      {
+        case InputChannel::s88:
+        {
+          uint16_t id = ObjectId::s88;
+          uint32_t port = address - 1;
+          auto it = m_objects.find(id);
+          while(it != m_objects.end())
+          {
+            if(const auto* feedback = dynamic_cast<const Feedback*>(it->second.get()))
+            {
+              const auto ports = feedback->ports();
+              if(port < ports)
+              {
+                uint16_t mask = 0;
+                for(uint8_t i = 0; i < ports; i++)
+                {
+                  TriState value = feedback->operator[](i);
+                  if(port == i)
+                    value = (value == TriState::True) ? TriState::False : TriState::True;
+                  if(value == TriState::True)
+                    mask |= 1 << i;
+                }
+
+                receive(
+                  std::string("<EVENT ").append(std::to_string(feedback->id())).append(">\r\n")
+                    .append(std::to_string(feedback->id())).append(" state[0x").append(mask != 0 ? ltrim(toHex(mask), '0') : std::string_view{"0"}).append("]>\r\n")
+                    .append("<END 0 (OK)>\r\n"));
+
+                break;
+              }
+              port -= ports;
+            }
+            it = m_objects.find(++id);
+          }
+          break;
+        }
+        case InputChannel::ecosDetector:
+          //! \todo Implement ECoS detector simulation
+          break;
+      }
+    });
+}
+
 void Kernel::switchManagerSwitched(SwitchProtocol protocol, uint16_t address)
 {
   ASSERT_IS_KERNEL_THREAD;
@@ -407,11 +462,28 @@ void Kernel::feedbackStateChanged(Feedback& object, uint8_t port, TriState value
 
   if(isS88FeedbackId(object.id()))
   {
-    const uint16_t portsPerObject = 16;
-    const uint16_t address = 1 + port + portsPerObject * (object.id() - ObjectId::s88);
+    uint32_t offset = 1;
+    for(uint16_t id = ObjectId::s88; id < object.id(); id++)
+    {
+      auto it = m_objects.find(id);
+      if(it == m_objects.end())
+      {
+        assert(false);
+        return;
+      }
+
+      const auto* feedback = dynamic_cast<const Feedback*>(it->second.get());
+      if(!feedback)
+      {
+        assert(false);
+        return;
+      }
+
+      offset += feedback->ports();
+    }
 
     EventLoop::call(
-      [this, address, value]()
+      [this, address=offset + port, value]()
       {
         m_inputController->updateInputValue(InputChannel::s88, address, value);
       });

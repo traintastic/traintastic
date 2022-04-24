@@ -109,6 +109,7 @@ class Kernel
 
     boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
+    const bool m_simulation;
     std::thread m_thread;
     std::string m_logId;
     std::function<void()> m_onStarted;
@@ -127,7 +128,7 @@ class Kernel
     bool m_started;
 #endif
 
-    Kernel(const Config& config);
+    Kernel(const Config& config, bool simulation);
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
 
@@ -170,7 +171,7 @@ class Kernel
     static std::unique_ptr<Kernel> create(const Config& config, Args... args)
     {
       static_assert(std::is_base_of_v<IOHandler, IOHandlerType>);
-      std::unique_ptr<Kernel> kernel{new Kernel(config)};
+      std::unique_ptr<Kernel> kernel{new Kernel(config, isSimulation<IOHandlerType>())};
       kernel->setIOHandler(std::make_unique<IOHandlerType>(*kernel, std::forward<Args>(args)...));
       return kernel;
     }
@@ -297,6 +298,8 @@ class Kernel
      * @return \c true if send successful, \c false otherwise.
      */
     bool setOutput(uint32_t channel, uint16_t address, bool value);
+
+    void simulateInputChange(uint32_t channel, uint32_t address);
 
     void switchManagerSwitched(SwitchProtocol protocol, uint16_t address);
 
