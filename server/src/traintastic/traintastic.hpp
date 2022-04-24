@@ -86,6 +86,7 @@ class Traintastic final : public Object
     ObjectProperty<WorldList> worldList;
     Method<void()> newWorld;
     Method<void(std::string)> loadWorld;
+    Method<void()> closeWorld;
     Method<void()> restart;
     Method<void()> shutdown;
 

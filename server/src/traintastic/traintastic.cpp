@@ -87,6 +87,18 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
       if(!uuid.is_nil())
         loadWorldUUID(uuid);
     }},
+  closeWorld{*this, "close_world",
+    [this]()
+    {
+#ifndef NDEBUG
+      std::weak_ptr<World> weakWorld = world.value();
+#endif
+      world = nullptr;
+#ifndef NDEBUG
+      assert(weakWorld.expired());
+#endif
+      settings->lastWorld = "";
+    }},
   restart{*this, "restart",
     [this]()
     {
@@ -111,6 +123,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_interfaceItems.add(worldList);
   m_interfaceItems.add(newWorld);
   m_interfaceItems.add(loadWorld);
+  m_interfaceItems.add(closeWorld);
   Attributes::addEnabled(restart, false);
   m_interfaceItems.add(restart);
   Attributes::addEnabled(shutdown, false);
