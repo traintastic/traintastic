@@ -31,11 +31,11 @@
 #include "to.hpp"
 #include "type.hpp"
 #include "enums.hpp"
+#include "sets.hpp"
 #include <version.hpp>
 #include <traintastic/utils/str.hpp>
 #include <traintastic/codename.hpp>
 #include "../world/world.hpp"
-#include "../set/worldstate.hpp"
 
 #define LUA_SANDBOX "_sandbox"
 #define LUA_SANDBOX_GLOBALS "_sandbox_globals"
@@ -160,7 +160,7 @@ SandboxPtr Sandbox::create(Script& script)
 
   // register types:
   Enums::registerTypes<LUA_ENUMS>(L);
-  Set<WorldState>::registerType(L);
+  Sets::registerTypes<LUA_SETS>(L);
   Object::registerType(L);
   Method::registerType(L);
   Event::registerType(L);
@@ -242,7 +242,7 @@ SandboxPtr Sandbox::create(Script& script)
 
   // add set values:
   lua_newtable(L);
-  Set<WorldState>::registerValues(L);
+  Sets::registerValues<LUA_SETS>(L);
   ReadOnlyTable::wrap(L, -1);
   lua_setfield(L, -2, "set");
 

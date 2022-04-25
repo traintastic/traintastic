@@ -23,12 +23,9 @@
 #include <catch2/catch.hpp>
 #include "protect.hpp"
 #include "run.hpp"
-#include "../../src/lua/set.hpp"
+#include "../../src/lua/sets.hpp"
 #include "../../src/lua/readonlytable.hpp"
 #include "../../src/utils/toupper.hpp"
-
-// Sets:
-#include "../../src/set/worldstate.hpp"
 
 template<class T>
 static lua_State* createState()
@@ -44,7 +41,7 @@ static lua_State* createState()
   return L;
 }
 
-TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", WorldState)
+TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
 {
   const TestType mask = set_mask_v<TestType>;
   const TestType emptySet = static_cast<TestType>(0);
