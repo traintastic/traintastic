@@ -72,6 +72,26 @@
         "code": "lua",
         "pages": [
           {
+            "markdown": "lua/enum/decoderprotocol.md",
+            "code": "lua"
+          },
+          {
+            "markdown": "lua/enum/direction.md",
+            "code": "lua"
+          },
+          {
+            "markdown": "lua/enum/directioncontrolstate.md",
+            "code": "lua"
+          },
+          {
+            "markdown": "lua/enum/turnoutposition.md",
+            "code": "lua"
+          },
+          {
+            "markdown": "lua/enum/signalaspect.md",
+            "code": "lua"
+          },
+          {
             "markdown": "lua/enum/worldevent.md",
             "code": "lua"
           },
