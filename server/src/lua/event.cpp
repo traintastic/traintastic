@@ -45,7 +45,7 @@ struct EventData
 
 AbstractEvent& Event::check(lua_State* L, int index)
 {
-  EventData& data = **static_cast<EventData**>(luaL_checkudata(L, index, metaTableName));
+  auto& data = *static_cast<EventData*>(luaL_checkudata(L, index, metaTableName));
   if(!data.object.expired())
     return data.event;
 
@@ -54,18 +54,18 @@ AbstractEvent& Event::check(lua_State* L, int index)
 
 AbstractEvent* Event::test(lua_State* L, int index)
 {
-  EventData** data = static_cast<EventData**>(luaL_testudata(L, index, metaTableName));
+  auto* data = static_cast<EventData*>(luaL_testudata(L, index, metaTableName));
   if(!data)
     return nullptr;
-  if(!(**data).object.expired())
-    return &(**data).event;
+  if(!data->object.expired())
+    return &data->event;
 
   errorDeadEvent(L);
 }
 
 void Event::push(lua_State* L, AbstractEvent& value)
 {
-  *static_cast<EventData**>(lua_newuserdata(L, sizeof(EventData*))) = new EventData(value);
+  new(lua_newuserdata(L, sizeof(EventData))) EventData(value);
   luaL_getmetatable(L, metaTableName);
   lua_setmetatable(L, -2);
 }
@@ -115,7 +115,7 @@ int Event::__call(lua_State* L)
 
 int Event::__gc(lua_State* L)
 {
-  delete *static_cast<EventData**>(lua_touserdata(L, 1));
+  static_cast<EventData*>(lua_touserdata(L, 1))->~EventData();
   return 0;
 }
 

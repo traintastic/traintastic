@@ -31,22 +31,22 @@
 
 namespace Lua {
 
-EventHandler::EventHandler(AbstractEvent& evt, lua_State* L)
+EventHandler::EventHandler(AbstractEvent& evt, lua_State* L, int functionIndex)
   : AbstractEventHandler(evt)
   , m_L{L}
   , m_function{LUA_NOREF}
   , m_userData{LUA_NOREF}
 {
-  luaL_checktype(L, 1, LUA_TFUNCTION);
+  luaL_checktype(L, functionIndex, LUA_TFUNCTION);
 
   // add function to registry:
-  lua_pushvalue(L, 1);
+  lua_pushvalue(L, functionIndex);
   m_function = luaL_ref(m_L, LUA_REGISTRYINDEX);
 
   // add userdata to registry (if available):
-  if(!lua_isnoneornil(L, 2))
+  if(!lua_isnoneornil(L, functionIndex + 1))
   {
-    lua_pushvalue(L, 2);
+    lua_pushvalue(L, functionIndex + 1);
     m_userData = luaL_ref(m_L, LUA_REGISTRYINDEX);;
   }
 }
