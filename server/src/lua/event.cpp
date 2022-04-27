@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -75,6 +75,8 @@ void Event::registerType(lua_State* L)
   luaL_newmetatable(L, metaTableName);
   lua_pushcfunction(L, __index);
   lua_setfield(L, -2, "__index");
+  lua_pushcfunction(L, __call);
+  lua_setfield(L, -2, "__call");
   lua_pushcfunction(L, __gc);
   lua_setfield(L, -2, "__gc");
   lua_pop(L, 1);
@@ -98,6 +100,16 @@ int Event::__index(lua_State* L)
   else
     lua_pushnil(L);
 
+  return 1;
+}
+
+int Event::__call(lua_State* L)
+{
+  checkArguments(L, 2, 3);
+  auto& event = check(L, 1);
+  auto handler = std::make_shared<EventHandler>(event, L, 2);
+  event.connect(handler);
+  lua_pushinteger(L, Sandbox::getStateData(L).registerEventHandler(handler));
   return 1;
 }
 
