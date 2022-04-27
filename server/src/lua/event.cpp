@@ -49,7 +49,7 @@ AbstractEvent& Event::check(lua_State* L, int index)
   if(!data.object.expired())
     return data.event;
 
-  errorDeadEvent(L);
+  errorDeadObject(L);
 }
 
 AbstractEvent* Event::test(lua_State* L, int index)
@@ -60,7 +60,7 @@ AbstractEvent* Event::test(lua_State* L, int index)
   if(!data->object.expired())
     return &data->event;
 
-  errorDeadEvent(L);
+  errorDeadObject(L);
 }
 
 void Event::push(lua_State* L, AbstractEvent& value)
