@@ -43,7 +43,7 @@ struct MethodData
 
 AbstractMethod& Method::check(lua_State* L, int index)
 {
-  MethodData& data = **static_cast<MethodData**>(luaL_checkudata(L, index, metaTableName));
+  auto& data = *static_cast<MethodData*>(luaL_checkudata(L, index, metaTableName));
   if(!data.object.expired())
     return data.method;
 
@@ -52,18 +52,18 @@ AbstractMethod& Method::check(lua_State* L, int index)
 
 AbstractMethod* Method::test(lua_State* L, int index)
 {
-  MethodData** data = static_cast<MethodData**>(luaL_testudata(L, index, metaTableName));
+  auto* data = static_cast<MethodData*>(luaL_testudata(L, index, metaTableName));
   if(!data)
     return nullptr;
-  if(!(**data).object.expired())
-    return &(**data).method;
+  if(!data->object.expired())
+    return &data->method;
 
   errorDeadObject(L);
 }
 
 void Method::push(lua_State* L, AbstractMethod& value)
 {
-  *static_cast<MethodData**>(lua_newuserdata(L, sizeof(MethodData*))) = new MethodData(value);
+  new(lua_newuserdata(L, sizeof(MethodData))) MethodData(value);
   luaL_getmetatable(L, metaTableName);
   lua_setmetatable(L, -2);
 }
@@ -80,7 +80,7 @@ void Method::registerType(lua_State* L)
 
 int Method::__gc(lua_State* L)
 {
-  delete *static_cast<MethodData**>(lua_touserdata(L, 1));
+  static_cast<MethodData*>(lua_touserdata(L, 1))->~MethodData();
   return 0;
 }
 
