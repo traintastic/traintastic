@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,11 +36,11 @@ namespace Lua {
 
 ObjectPtr Object::check(lua_State* L, int index)
 {
-  ObjectPtrWeak** data = static_cast<ObjectPtrWeak**>(luaL_testudata(L, index, metaTableNameList));
+  auto* data = static_cast<ObjectPtrWeak*>(luaL_testudata(L, index, metaTableNameList));
   if(!data)
-    data = static_cast<ObjectPtrWeak**>(luaL_checkudata(L, index, metaTableName));
+    data = static_cast<ObjectPtrWeak*>(luaL_checkudata(L, index, metaTableName));
 
-  if(ObjectPtr object = (**data).lock())
+  if(ObjectPtr object = data->lock())
     return object;
 
   errorDeadObject(L);
@@ -48,7 +48,7 @@ ObjectPtr Object::check(lua_State* L, int index)
 
 std::shared_ptr<AbstractObjectList> Object::checkList(lua_State* L, int index)
 {
-  ObjectPtrWeak& data = **static_cast<ObjectPtrWeak**>(luaL_checkudata(L, index, metaTableNameList));
+  auto& data = *static_cast<ObjectPtrWeak*>(luaL_checkudata(L, index, metaTableNameList));
   if(ObjectPtr object = data.lock())
     return std::static_pointer_cast<AbstractObjectList>(object);
 
@@ -57,13 +57,13 @@ std::shared_ptr<AbstractObjectList> Object::checkList(lua_State* L, int index)
 
 ObjectPtr Object::test(lua_State* L, int index)
 {
-  ObjectPtrWeak** data = static_cast<ObjectPtrWeak**>(luaL_testudata(L, index, metaTableName));
+  auto* data = static_cast<ObjectPtrWeak*>(luaL_testudata(L, index, metaTableName));
   if(!data)
-    data = static_cast<ObjectPtrWeak**>(luaL_testudata(L, index, metaTableNameList));
+    data = static_cast<ObjectPtrWeak*>(luaL_testudata(L, index, metaTableNameList));
 
   if(!data)
     return {};
-  if(ObjectPtr object = (**data).lock())
+  if(ObjectPtr object = data->lock())
     return object;
 
   errorDeadObject(L);
@@ -71,10 +71,10 @@ ObjectPtr Object::test(lua_State* L, int index)
 
 std::shared_ptr<AbstractObjectList> Object::testList(lua_State* L, int index)
 {
-  ObjectPtrWeak** data = static_cast<ObjectPtrWeak**>(luaL_testudata(L, index, metaTableNameList));
+  auto* data = static_cast<ObjectPtrWeak*>(luaL_testudata(L, index, metaTableNameList));
   if(!data)
     return {};
-  if(ObjectPtr object = (**data).lock())
+  if(ObjectPtr object = data->lock())
     return std::static_pointer_cast<AbstractObjectList>(object);
 
   errorDeadObject(L);
@@ -89,7 +89,7 @@ void Object::push(lua_State* L, const ObjectPtr& value)
     if(lua_isnil(L, -1)) // object not in table
     {
       lua_pop(L, 1); // remove nil
-      *static_cast<ObjectPtrWeak**>(lua_newuserdata(L, sizeof(ObjectPtrWeak*))) = new ObjectPtrWeak(value);
+      new(lua_newuserdata(L, sizeof(ObjectPtrWeak))) ObjectPtrWeak(value);
       if(dynamic_cast<AbstractObjectList*>(value.get()))
         luaL_setmetatable(L, metaTableNameList);
       else
@@ -140,7 +140,7 @@ void Object::registerType(lua_State* L)
 
 int Object::__gc(lua_State* L)
 {
-  delete *static_cast<ObjectPtrWeak**>(lua_touserdata(L, 1));
+  static_cast<ObjectPtrWeak*>(lua_touserdata(L, 1))->~ObjectPtrWeak();
   return 0;
 }
 
