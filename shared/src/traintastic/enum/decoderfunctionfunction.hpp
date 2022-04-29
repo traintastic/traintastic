@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,15 +35,13 @@ enum class DecoderFunctionFunction : uint16_t
   Smoke = 4,
 };
 
-ENUM_NAME(DecoderFunctionFunction, "decoder_function_function")
-
-ENUM_VALUES(DecoderFunctionFunction, 5,
+TRAINTASTIC_ENUM(DecoderFunctionFunction, "decoder_function_function", 5,
 {
   {DecoderFunctionFunction::Generic, "generic"},
   {DecoderFunctionFunction::Light, "light"},
   {DecoderFunctionFunction::Sound, "sound"},
   {DecoderFunctionFunction::Mute, "mute"},
   {DecoderFunctionFunction::Smoke, "smoke"},
-})
+});
 
 #endif

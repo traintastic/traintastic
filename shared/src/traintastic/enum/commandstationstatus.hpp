@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,18 +34,12 @@ enum class CommandStationStatus : uint8_t
   Error = 255,
 };
 
-template<>
-struct EnumName<CommandStationStatus>
-{
-  static constexpr char const* value = "command_station_status";
-};
-
-ENUM_VALUES(CommandStationStatus, 4,
+TRAINTASTIC_ENUM(CommandStationStatus, "command_station_status", 4,
 {
   {CommandStationStatus::Offline, "offline"},
   {CommandStationStatus::Initializing, "initializing"},
   {CommandStationStatus::Online, "online"},
   {CommandStationStatus::Error, "error"},
-})
+});
 
 #endif

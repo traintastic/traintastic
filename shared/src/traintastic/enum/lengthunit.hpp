@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,13 +35,7 @@ enum class LengthUnit
   Inch = 5,
 };
 
-template<>
-struct EnumName<LengthUnit>
-{
-  static constexpr char const* value = "length_unit";
-};
-
-ENUM_VALUES(LengthUnit, 6,
+TRAINTASTIC_ENUM(LengthUnit, "length_unit", 6,
 {
   {LengthUnit::Meter, "m"},
   {LengthUnit::CentiMeter, "cm"},
@@ -49,6 +43,6 @@ ENUM_VALUES(LengthUnit, 6,
   {LengthUnit::Yard, "yd"},
   {LengthUnit::Foot, "ft"},
   {LengthUnit::Inch, "in"},
-})
+});
 
 #endif

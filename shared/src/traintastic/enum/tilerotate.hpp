@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,9 +39,7 @@ enum class TileRotate : uint8_t // 3 bit
   Deg315 = 7
 };
 
-ENUM_NAME(TileRotate, "tile_rotate")
-
-ENUM_VALUES(TileRotate, 8,
+TRAINTASTIC_ENUM(TileRotate, "tile_rotate", 8,
 {
   {TileRotate::Deg0, "deg_0"},
   {TileRotate::Deg45, "deg_45"},
@@ -51,7 +49,7 @@ ENUM_VALUES(TileRotate, 8,
   {TileRotate::Deg225, "deg_225"},
   {TileRotate::Deg270, "deg_270"},
   {TileRotate::Deg315, "deg_315"},
-})
+});
 
 constexpr TileRotate operator +(TileRotate lhs, TileRotate rhs)
 {

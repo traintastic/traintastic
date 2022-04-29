@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,19 +35,13 @@ enum class SensorState : uint8_t
   Triggered = 4,
 };
 
-template<>
-struct EnumName<SensorState>
-{
-  static constexpr char const* value = "sensor_state";
-};
-
-ENUM_VALUES(SensorState, 5,
+TRAINTASTIC_ENUM(SensorState, "sensor_state", 5,
 {
   {SensorState::Unknown, "unknown"},
   {SensorState::Occupied, "occupied"},
   {SensorState::Free, "free"},
   {SensorState::Idle, "idle"},
   {SensorState::Triggered, "triggered"},
-})
+});
 
 #endif

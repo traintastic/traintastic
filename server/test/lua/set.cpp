@@ -45,8 +45,8 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
 {
   const TestType mask = set_mask_v<TestType>;
   const TestType emptySet = static_cast<TestType>(0);
-  const TestType firstKey = Lua::set_values_v<TestType>.begin()->first;
-  const TestType lastKey = Lua::set_values_v<TestType>.rbegin()->first;
+  const TestType firstKey = set_values_v<TestType>.begin()->first;
+  const TestType lastKey = set_values_v<TestType>.rbegin()->first;
 
   {
     INFO("write to set.*")
@@ -54,7 +54,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
     lua_State* L = createState<TestType>();
 
     // existing keys
-    for(auto& it : Lua::set_values_v<TestType>)
+    for(auto& it : set_values_v<TestType>)
     {
       std::string code;
       code.assign("set.").append(set_name_v<TestType>).append(".").append(toUpper(it.second)).append(" = nil");
@@ -104,7 +104,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
     // check length
     lua_len(L, -1);
     const lua_Integer len = lua_tointeger(L, -1);
-    REQUIRE(len == static_cast<lua_Integer>(Lua::set_values_v<TestType>.size()));
+    REQUIRE(len == static_cast<lua_Integer>(set_values_v<TestType>.size()));
     lua_pop(L, 1);
 
     // check values (lua table -> enum values):
@@ -112,16 +112,16 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
     {
       lua_rawgeti(L, -1, i);
       REQUIRE(
-        std::find_if(Lua::set_values_v<TestType>.begin(), Lua::set_values_v<TestType>.end(),
+        std::find_if(set_values_v<TestType>.begin(), set_values_v<TestType>.end(),
           [s=std::string_view{lua_tostring(L, -1)}](auto it)
           {
             return s == toUpper(it.second);
-          }) != Lua::set_values_v<TestType>.end());
+          }) != set_values_v<TestType>.end());
       lua_pop(L, 1);
     }
 
     // check values (enum values -> lua table):
-    for(auto it : Lua::set_values_v<TestType>)
+    for(auto it : set_values_v<TestType>)
     {
       REQUIRE(
         [L, len, s=toUpper(it.second)]()
@@ -146,7 +146,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
 
     lua_State* L = createState<TestType>();
 
-    for(auto& it : Lua::set_values_v<TestType>)
+    for(auto& it : set_values_v<TestType>)
     {
       std::string code;
       code.assign("return set.").append(set_name_v<TestType>).append(".").append(toUpper(it.second));
@@ -177,7 +177,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
     REQUIRE(lua_tostring(L, -1) == std::string(set_name_v<TestType>).append("()"));
 
     // set with single value
-    for(auto& it : Lua::set_values_v<TestType>)
+    for(auto& it : set_values_v<TestType>)
     {
       lua_getglobal(L, "tostring");
       Lua::Set<TestType>::push(L, it.first);
@@ -192,9 +192,9 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
     {
       std::string r = std::string(set_name_v<TestType>);
       r.append("(");
-      for(auto& it : Lua::set_values_v<TestType>)
+      for(auto& it : set_values_v<TestType>)
       {
-        if(it != *Lua::set_values_v<TestType>.begin())
+        if(it != *set_values_v<TestType>.begin())
           r.append(" ");
         r.append(toUpper(it.second));
       }

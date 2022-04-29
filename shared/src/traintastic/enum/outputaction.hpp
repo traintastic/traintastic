@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,18 +34,12 @@ enum class OutputAction : uint8_t
   Pulse = 3,
 };
 
-template<>
-struct EnumName<OutputAction>
-{
-  static constexpr char const* value = "output_action";
-};
-
-ENUM_VALUES(OutputAction, 4,
+TRAINTASTIC_ENUM(OutputAction, "output_action", 4,
 {
   {OutputAction::None, "none"},
   {OutputAction::Off, "off"},
   {OutputAction::On, "on"},
   {OutputAction::Pulse, "pulse"},
-})
+});
 
 #endif

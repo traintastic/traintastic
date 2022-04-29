@@ -37,15 +37,13 @@ enum class DecoderProtocol : uint8_t
   Custom = 255,
 };
 
-ENUM_NAME(DecoderProtocol, "decoder_protocol")
-
-ENUM_VALUES(DecoderProtocol, 5,
+TRAINTASTIC_ENUM(DecoderProtocol, "decoder_protocol", 5,
 {
   {DecoderProtocol::Auto, "auto"},
   {DecoderProtocol::DCC, "dcc"},
   {DecoderProtocol::Motorola, "motorola"},
   {DecoderProtocol::Selectrix, "selectrix"},
   {DecoderProtocol::Custom, "custom"},
-})
+});
 
 #endif

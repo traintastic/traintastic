@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_SPEEDUNIT_HPP
 
 #include <cstdint>
+#include "enum.hpp"
 
 enum class SpeedUnit
 {
@@ -32,17 +33,11 @@ enum class SpeedUnit
   MilePerHour = 2,
 };
 
-template<>
-struct EnumName<SpeedUnit>
-{
-  static constexpr char const* value = "speed_unit";
-};
-
-ENUM_VALUES(SpeedUnit, 3,
+TRAINTASTIC_ENUM(SpeedUnit, "speed_unit", 3,
 {
   {SpeedUnit::MeterPerSecond, "mps"},
   {SpeedUnit::KiloMeterPerHour, "kmph"},
   {SpeedUnit::MilePerHour, "mph"},
-})
+});
 
 #endif

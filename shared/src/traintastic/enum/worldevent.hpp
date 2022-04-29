@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,13 +44,7 @@ enum class WorldEvent : uint64_t
   SimulationEnabled = 13,
 };
 
-template<>
-struct EnumName<WorldEvent>
-{
-  static constexpr char const* value = "world_event";
-};
-
-ENUM_VALUES(WorldEvent, 12,
+TRAINTASTIC_ENUM(WorldEvent, "world_event", 12,
 {
   {WorldEvent::EditDisabled, "edit_disabled"},
   {WorldEvent::EditEnabled, "edit_enabled"},
@@ -64,6 +58,6 @@ ENUM_VALUES(WorldEvent, 12,
   {WorldEvent::Mute, "mute"},
   {WorldEvent::NoSmoke, "no_smoke"},
   {WorldEvent::Smoke, "smoke"},
-})
+});
 
 #endif

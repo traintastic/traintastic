@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,12 +32,10 @@ enum class XpressNetInterfaceType : uint8_t
   Network = 1,
 };
 
-ENUM_NAME(XpressNetInterfaceType, "xpressnet_interface_type")
-
-ENUM_VALUES(XpressNetInterfaceType, 2,
+TRAINTASTIC_ENUM(XpressNetInterfaceType, "xpressnet_interface_type", 2,
 {
   {XpressNetInterfaceType::Serial, "serial"},
   {XpressNetInterfaceType::Network, "network"},
-})
+});
 
 #endif

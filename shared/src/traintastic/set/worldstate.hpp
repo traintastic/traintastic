@@ -37,26 +37,24 @@ enum class WorldState : uint32_t
   Simulation = 1 << 6,
 };
 
-template<>
-struct is_set<WorldState> : std::true_type{};
-
-template<>
-struct set_name<WorldState>
-{
-  static constexpr char const* value = "world_state";
-};
-
-template<>
-struct set_mask<WorldState>
-{
-  static constexpr WorldState value =
+TRAINTASTIC_SET(WorldState, "world_state", 7,
+  (
     WorldState::Edit |
     WorldState::Online |
     WorldState::PowerOn |
     WorldState::Run |
     WorldState::Mute |
     WorldState::NoSmoke |
-    WorldState::Simulation;
-};
+    WorldState::Simulation
+  ),
+  {
+    {WorldState::Edit, "edit"},
+    {WorldState::Online, "online"},
+    {WorldState::PowerOn, "power_on"},
+    {WorldState::Run, "run"},
+    {WorldState::Mute, "mute"},
+    {WorldState::NoSmoke, "no_smoke"},
+    {WorldState::Simulation, "simulation"}
+  });
 
 #endif

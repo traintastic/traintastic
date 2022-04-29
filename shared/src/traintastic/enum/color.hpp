@@ -47,9 +47,7 @@ enum class Color : uint8_t
   Aqua = 16,
 };
 
-ENUM_NAME(Color, "color")
-
-ENUM_VALUES(Color, 17,
+TRAINTASTIC_ENUM(Color, "color", 17,
 {
   {Color::None, "none"},
   {Color::Black, "black"},
@@ -68,6 +66,6 @@ ENUM_VALUES(Color, 17,
   {Color::Blue, "blue"},
   {Color::Teal, "teal"},
   {Color::Aqua, "aqua"},
-})
+});
 
 #endif

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,12 +32,10 @@ enum class SerialFlowControl : uint8_t
   Hardware = 1,
 };
 
-ENUM_NAME(SerialFlowControl, "serial_flow_control")
-
-ENUM_VALUES(SerialFlowControl, 2,
+TRAINTASTIC_ENUM(SerialFlowControl, "serial_flow_control", 2,
 {
   {SerialFlowControl::None, "none"},
   {SerialFlowControl::Hardware, "hardware"},
-})
+});
 
 #endif

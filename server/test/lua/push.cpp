@@ -137,7 +137,7 @@ TEMPLATE_TEST_CASE("Lua::push<>", "[lua][lua-push]", LUA_SETS)
 
   Lua::Set<TestType>::registerType(L);
 
-  Lua::push(L, Lua::set_values_v<TestType>.begin()->first);
+  Lua::push(L, set_values_v<TestType>.begin()->first);
   REQUIRE(lua_type(L, -1) == LUA_TUSERDATA);
   REQUIRE(lua_gettop(L) == top + 1);
 

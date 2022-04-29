@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,12 +33,10 @@ enum class USBXpressNetControllerMode : uint8_t
   Virtual = 1,
 };
 
-ENUM_NAME(USBXpressNetControllerMode, "usb_xpressnet_controller_mode")
-
-ENUM_VALUES(USBXpressNetControllerMode, 2,
+TRAINTASTIC_ENUM(USBXpressNetControllerMode, "usb_xpressnet_controller_mode", 2,
 {
   {USBXpressNetControllerMode::Direct, "direct"},
   {USBXpressNetControllerMode::Virtual, "virtual"},
-})
+});
 
 #endif

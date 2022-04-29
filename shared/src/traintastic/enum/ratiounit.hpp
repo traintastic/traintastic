@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,12 +31,10 @@ enum class RatioUnit
   Percent = 1,
 };
 
-ENUM_NAME(RatioUnit, "ratio_unit")
-
-ENUM_VALUES(RatioUnit, 2,
+TRAINTASTIC_ENUM(RatioUnit, "ratio_unit", 2,
 {
   {RatioUnit::Ratio, "ratio"},
   {RatioUnit::Percent, "percent"},
-})
+});
 
 #endif

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,13 +33,11 @@ enum class LocoNetSerialInterface : uint16_t
   RoSoftLocoNetInterface = 2,
 };
 
-ENUM_NAME(LocoNetSerialInterface, "loconet_serial_interface")
-
-ENUM_VALUES(LocoNetSerialInterface, 3,
+TRAINTASTIC_ENUM(LocoNetSerialInterface, "loconet_serial_interface", 3,
 {
   {LocoNetSerialInterface::Custom, "custom"},
   {LocoNetSerialInterface::DigikeijsDR5000, "digikeijs_dr5000"},
   {LocoNetSerialInterface::RoSoftLocoNetInterface, "rosoft_loconet_interface"},
-})
+});
 
 #endif

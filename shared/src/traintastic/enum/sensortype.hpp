@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,16 +32,10 @@ enum class SensorType : uint8_t
   ReedSwitch = 1,
 };
 
-template<>
-struct EnumName<SensorType>
-{
-  static constexpr char const* value = "sensor_type";
-};
-
-ENUM_VALUES(SensorType, 2,
+TRAINTASTIC_ENUM(SensorType, "sensor_type", 2,
 {
   {SensorType::OccupyDetector, "occupy_detector"},
   {SensorType::ReedSwitch, "reed_switch"},
-})
+});
 
 #endif

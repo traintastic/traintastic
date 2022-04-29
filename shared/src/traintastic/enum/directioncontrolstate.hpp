@@ -34,18 +34,12 @@ enum class DirectionControlState : uint8_t
   Both = 3,
 };
 
-template<>
-struct EnumName<DirectionControlState>
-{
-  static constexpr char const* value = "direction_control_state";
-};
-
-ENUM_VALUES(DirectionControlState, 4,
+TRAINTASTIC_ENUM(DirectionControlState, "direction_control_state", 4,
 {
   {DirectionControlState::None, "none"},
   {DirectionControlState::AtoB, "a_to_b"},
   {DirectionControlState::BtoA, "b_to_a"},
   {DirectionControlState::Both, "both"},
-})
+});
 
 #endif

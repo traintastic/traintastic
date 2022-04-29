@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,29 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_SET_SET_HPP
 
 #include <type_traits>
+#include <frozen/map.h>
+
+#define TRAINTASTIC_SET(T, Name, Size, Mask, ...) \
+  template<> \
+  struct is_set<T> : std::true_type{}; \
+  \
+  template<> \
+  struct set_name<T> \
+  { \
+    static constexpr char const* value = Name; \
+  }; \
+  \
+  template<> \
+  struct set_mask<T> \
+  { \
+    static constexpr T value = Mask; \
+  }; \
+  \
+  template<> \
+  struct set_values<T> \
+  { \
+    static constexpr frozen::map<T, const char*, Size> value = { __VA_ARGS__ }; \
+  }
 
 template<class T>
 struct is_set : std::false_type{};
@@ -48,6 +71,15 @@ struct set_mask
 
 template<class T>
 constexpr T set_mask_v = set_mask<T>::value;
+
+template<typename T>
+struct set_values
+{
+  static_assert(sizeof(T) != sizeof(T), "template specialization required");
+};
+
+template<typename T>
+constexpr auto set_values_v = set_values<T>::value;
 
 template<class T, std::enable_if_t<is_set_v<T>>* = nullptr>
 constexpr T operator&(const T& lhs, const T& rhs)

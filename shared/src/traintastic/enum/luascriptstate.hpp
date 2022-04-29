@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_LUASCRIPTSTATE_HPP
 
 #include <cstdint>
+#include "enum.hpp"
 
 enum class LuaScriptState
 {
@@ -32,17 +33,11 @@ enum class LuaScriptState
   Error = 2,
 };
 
-template<>
-struct EnumName<LuaScriptState>
-{
-  static constexpr char const* value = "lua_script_state";
-};
-
-ENUM_VALUES(LuaScriptState, 3,
+TRAINTASTIC_ENUM(LuaScriptState, "lua_script_state", 3,
 {
   {LuaScriptState::Stopped, "stopped"},
   {LuaScriptState::Running, "running"},
   {LuaScriptState::Error, "error"},
-})
+});
 
 #endif

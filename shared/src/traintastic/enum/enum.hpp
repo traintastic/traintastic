@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,19 +26,18 @@
 
 #include <frozen/map.h>
 
-#define ENUM_NAME(_type, _name) \
+#define TRAINTASTIC_ENUM(T, Name, Size, ...) \
   template<> \
-  struct EnumName<_type> \
+  struct EnumName<T> \
   { \
-    static constexpr char const* value = _name; \
-  };
-
-#define ENUM_VALUES(_type, _size, ...) \
+    static constexpr char const* value = Name; \
+  }; \
+  \
   template<> \
-  struct EnumValues<_type> \
+  struct EnumValues<T> \
   { \
-    static constexpr frozen::map<_type, const char*, _size> value = { __VA_ARGS__ }; \
-  };
+    static constexpr frozen::map<T, const char*, Size> value = { __VA_ARGS__ }; \
+  }
 
 template<typename T>
 struct EnumName

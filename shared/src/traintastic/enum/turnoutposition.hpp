@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,13 +36,7 @@ enum class TurnoutPosition : uint8_t
   Diverged = 5,
 };
 
-template<>
-struct EnumName<TurnoutPosition>
-{
-  static constexpr char const* value = "turnout_position";
-};
-
-ENUM_VALUES(TurnoutPosition, 6,
+TRAINTASTIC_ENUM(TurnoutPosition, "turnout_position", 6,
 {
   {TurnoutPosition::Unknown, "unknown"},
   {TurnoutPosition::Straight, "straight"},
@@ -50,6 +44,6 @@ ENUM_VALUES(TurnoutPosition, 6,
   {TurnoutPosition::Right, "right"},
   {TurnoutPosition::Crossed, "crossed"},
   {TurnoutPosition::Diverged, "diverged"}
-})
+});
 
 #endif

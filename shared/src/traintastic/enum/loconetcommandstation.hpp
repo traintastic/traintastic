@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,13 +34,11 @@ enum class LocoNetCommandStation : uint16_t
   DigikeijsDR5000 = 2,
 };
 
-ENUM_NAME(LocoNetCommandStation, "loconet_command_station")
-
-ENUM_VALUES(LocoNetCommandStation, 3,
+TRAINTASTIC_ENUM(LocoNetCommandStation, "loconet_command_station", 3,
 {
   {LocoNetCommandStation::Custom, "custom"},
   {LocoNetCommandStation::UhlenbrockIntellibox, "uhlenbrock_intellibox"},
   {LocoNetCommandStation::DigikeijsDR5000, "digikeijs_dr5000"},
-})
+});
 
 #endif

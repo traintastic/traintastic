@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,16 +32,10 @@ enum class Direction : uint8_t
   Reverse = 1,
 };
 
-template<>
-struct EnumName<Direction>
-{
-  static constexpr char const* value = "direction";
-};
-
-ENUM_VALUES(Direction, 2,
+TRAINTASTIC_ENUM(Direction, "direction", 2,
 {
   {Direction::Forward, "forward"},
   {Direction::Reverse, "reverse"},
-})
+});
 
 #endif

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,14 +34,12 @@ enum class InterfaceStatus : uint8_t
   Error = 255,
 };
 
-ENUM_NAME(InterfaceStatus, "interface_status")
-
-ENUM_VALUES(InterfaceStatus, 4,
+TRAINTASTIC_ENUM(InterfaceStatus, "interface_status", 4,
 {
   {InterfaceStatus::Offline, "offline"},
   {InterfaceStatus::Initializing, "initializing"},
   {InterfaceStatus::Online, "online"},
   {InterfaceStatus::Error, "error"},
-})
+});
 
 #endif

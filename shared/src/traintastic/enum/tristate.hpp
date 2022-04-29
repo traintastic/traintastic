@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,14 +33,12 @@ enum class TriState : uint8_t
   True = 2,
 };
 
-ENUM_NAME(TriState, "tri_state")
-
-ENUM_VALUES(TriState, 3,
+TRAINTASTIC_ENUM(TriState, "tri_state", 3,
 {
   {TriState::Undefined, "undefined"},
   {TriState::False, "false"},
   {TriState::True, "true"},
-})
+});
 
 constexpr TriState toTriState(bool value)
 {

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,9 +36,7 @@ enum class XpressNetSerialInterfaceType : uint16_t
   DigikeijsDR5000 = 5,
 };
 
-ENUM_NAME(XpressNetSerialInterfaceType, "xpressnet_serial_interface_type")
-
-ENUM_VALUES(XpressNetSerialInterfaceType, 6,
+TRAINTASTIC_ENUM(XpressNetSerialInterfaceType, "xpressnet_serial_interface_type", 6,
 {
   {XpressNetSerialInterfaceType::LenzLI100, "lenz_li100"},
   {XpressNetSerialInterfaceType::LenzLI100F, "lenz_li100f"},
@@ -46,6 +44,6 @@ ENUM_VALUES(XpressNetSerialInterfaceType, 6,
   {XpressNetSerialInterfaceType::RoSoftS88XPressNetLI, "rosoft_s88xpressnetli"},
   {XpressNetSerialInterfaceType::LenzLIUSB, "lenz_liusb"},
   {XpressNetSerialInterfaceType::DigikeijsDR5000, "digikeijs_dr5000"},
-})
+});
 
 #endif

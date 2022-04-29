@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,14 +34,12 @@ enum class LocoNetInterfaceType : uint16_t
   Z21 = 3,
 };
 
-ENUM_NAME(LocoNetInterfaceType, "loconet_interface_type")
-
-ENUM_VALUES(LocoNetInterfaceType, 4,
+TRAINTASTIC_ENUM(LocoNetInterfaceType, "loconet_interface_type", 4,
 {
   {LocoNetInterfaceType::Serial, "serial"},
   {LocoNetInterfaceType::TCPBinary, "tcp_binary"},
   {LocoNetInterfaceType::LBServer, "lbserver"},
   {LocoNetInterfaceType::Z21, "z21"},
-})
+});
 
 #endif

@@ -26,28 +26,10 @@
 #include <type_traits>
 #include <traintastic/set/set.hpp>
 #include <lua.hpp>
-#include <frozen/map.h>
 #include "readonlytable.hpp"
-
-#define LUA_SET(_type, _size, ...) \
-  namespace Lua { \
-    template<> \
-    struct set_values<_type> \
-    { \
-      static constexpr frozen::map<_type, const char*, _size> value = { __VA_ARGS__ }; \
-    }; \
-  }
+#include "../utils/toupper.hpp"
 
 namespace Lua {
-
-template<typename T>
-struct set_values
-{
-  static_assert(sizeof(T) != sizeof(T), "template specialization required");
-};
-
-template<typename T>
-constexpr auto set_values_v = set_values<T>::value;
 
 inline void pushSet(lua_State* L, const char* setName, lua_Integer value)
 {
@@ -148,7 +130,7 @@ struct Set
           lua_pushliteral(L, " ");
           n++;
         }
-        lua_pushstring(L, it.second);
+        lua_pushstring(L, toUpper(it.second).c_str());
         n++;
       }
     lua_pushliteral(L, ")");
@@ -191,7 +173,7 @@ struct Set
     for(auto& it : set_values_v<T>)
     {
       push(L, it.first);
-      lua_setfield(L, -2, it.second);
+      lua_setfield(L, -2, toUpper(it.second).c_str());
     }
     ReadOnlyTable::wrap(L, -1);
     lua_setfield(L, -2, set_name_v<T>);

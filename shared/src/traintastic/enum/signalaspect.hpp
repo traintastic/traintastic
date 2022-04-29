@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,18 +34,12 @@ enum class SignalAspect : uint8_t
   ProceedReducedSpeed = 3,
 };
 
-template<>
-struct EnumName<SignalAspect>
-{
-  static constexpr char const* value = "signal_aspect";
-};
-
-ENUM_VALUES(SignalAspect, 4,
+TRAINTASTIC_ENUM(SignalAspect, "signal_aspect", 4,
 {
   {SignalAspect::Unknown, "unknown"},
   {SignalAspect::Stop, "stop"},
   {SignalAspect::Proceed, "proceed"},
   {SignalAspect::ProceedReducedSpeed, "proceed_reduced_speed"},
-})
+});
 
 #endif

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,26 +28,20 @@
 
 enum class WorldScale : uint8_t
 {
-  H0 = 0, //!< 1:87
-  N = 1,  //!< 1:160
-  TT = 2, //!< 1:120
-  Z = 3,  //!< 1:220
+  H0 = 0, //!< H0 scale (1:87)
+  N = 1,  //!< N scale (1:160)
+  TT = 2, //!< TT scale (1:120)
+  Z = 3,  //!< Z scale (1:220)
   Custom = 255
 };
 
-template<>
-struct EnumName<WorldScale>
-{
-  static constexpr char const* value = "world_scale";
-};
-
-ENUM_VALUES(WorldScale, 5,
+TRAINTASTIC_ENUM(WorldScale, "world_scale", 5,
 {
   {WorldScale::H0, "h0"},
   {WorldScale::N, "n"},
   {WorldScale::TT, "tt"},
   {WorldScale::Z, "z"},
   {WorldScale::Custom, "custom"},
-})
+});
 
 #endif

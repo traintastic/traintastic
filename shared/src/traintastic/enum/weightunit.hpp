@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,14 +33,12 @@ enum class WeightUnit
   LongTons = 3,
 };
 
-ENUM_NAME(WeightUnit, "weight_unit")
-
-ENUM_VALUES(WeightUnit, 4,
+TRAINTASTIC_ENUM(WeightUnit, "weight_unit", 4,
 {
   {WeightUnit::KiloGram, "kg"},
   {WeightUnit::Ton, "ton"},
   {WeightUnit::ShortTons, "short_tons"},
   {WeightUnit::LongTons, "long_tons"},
-})
+});
 
 #endif

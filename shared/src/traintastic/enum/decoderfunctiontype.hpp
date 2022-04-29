@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,15 +35,13 @@ enum class DecoderFunctionType : uint8_t
   AlwaysOn = 4,
 };
 
-ENUM_NAME(DecoderFunctionType, "decoder_function_type")
-
-ENUM_VALUES(DecoderFunctionType, 5,
+TRAINTASTIC_ENUM(DecoderFunctionType, "decoder_function_type", 5,
 {
   {DecoderFunctionType::OnOff, "on_off"},
   {DecoderFunctionType::Momentary, "momentary"},
   {DecoderFunctionType::Hold, "hold"},
   {DecoderFunctionType::AlwaysOff, "always_off"},
   {DecoderFunctionType::AlwaysOn, "always_on"},
-})
+});
 
 #endif

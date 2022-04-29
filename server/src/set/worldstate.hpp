@@ -24,17 +24,5 @@
 #define TRAINTASTIC_SERVER_SET_WORLDSTATE_HPP
 
 #include <traintastic/set/worldstate.hpp>
-#include "../lua/set.hpp"
-
-LUA_SET(WorldState, 7,
-{
-  {WorldState::Edit, "EDIT"},
-  {WorldState::Online, "ONLINE"},
-  {WorldState::PowerOn, "POWER_ON"},
-  {WorldState::Run, "RUN"},
-  {WorldState::Mute, "MUTE"},
-  {WorldState::NoSmoke, "NO_SMOKE"},
-  {WorldState::Simulation, "SIMULATION"}
-})
 
 #endif
