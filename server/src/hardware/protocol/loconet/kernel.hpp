@@ -125,7 +125,9 @@ class Kernel
     std::array<SendQueue, 3> m_sendQueue;
     Priority m_sentMessagePriority;
     bool m_waitingForEcho;
+    boost::asio::steady_timer m_waitingForEchoTimer;
     bool m_waitingForResponse;
+    boost::asio::steady_timer m_waitingForResponseTimer;
 
     TriState m_globalPower;
     std::function<void(bool)> m_onGlobalPowerChanged;
@@ -160,6 +162,11 @@ class Kernel
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
 
+    inline const Message& lastSentMessage() const
+    {
+      return m_sendQueue[m_sentMessagePriority].front();
+    }
+
     void send(const Message& message, Priority priority = NormalPriority);
     void send(uint16_t address, Message& message, uint8_t& slot);
     template<typename T>
@@ -168,6 +175,9 @@ class Kernel
       send(address, message, message.slot);
     }
     void sendNextMessage();
+
+    void waitingForEchoTimerExpired(const boost::system::error_code& ec);
+    void waitingForResponseTimerExpired(const boost::system::error_code& ec);
 
     void startFastClockSyncTimer();
     void stopFastClockSyncTimer();

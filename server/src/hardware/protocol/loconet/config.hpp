@@ -29,6 +29,9 @@ namespace LocoNet {
 
 struct Config
 {
+  static constexpr uint16_t echoTimeout = 500; //!< Wait for echo timeout in milliseconds
+  static constexpr uint16_t responseTimeout = 500; //!< Wait for response timeout in milliseconds
+
   bool fastClockSyncEnabled;
   uint8_t fastClockSyncInterval; //!< Fast clock sync interval in seconds
 

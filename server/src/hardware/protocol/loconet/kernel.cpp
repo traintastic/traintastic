@@ -50,7 +50,9 @@ Kernel::Kernel(const Config& config, bool simulation)
   : m_ioContext{1}
   , m_simulation{simulation}
   , m_waitingForEcho{false}
+  , m_waitingForEchoTimer{m_ioContext}
   , m_waitingForResponse{false}
+  , m_waitingForResponseTimer{m_ioContext}
   , m_fastClockSyncTimer(m_ioContext)
   , m_decoderController{nullptr}
   , m_inputController{nullptr}
@@ -167,6 +169,8 @@ void Kernel::stop()
   m_ioContext.post(
     [this]()
     {
+      m_waitingForEchoTimer.cancel();
+      m_waitingForResponseTimer.cancel();
       m_fastClockSyncTimer.cancel();
       m_ioHandler->stop();
     });
@@ -186,9 +190,10 @@ void Kernel::receive(const Message& message)
     EventLoop::call([this, msg=toString(message)](){ Log::log(m_logId, LogMessage::D2002_RX_X, msg); });
 
   bool isResponse = false;
-  if(m_waitingForEcho && message == m_sendQueue[m_sentMessagePriority].front())
+  if(m_waitingForEcho && message == lastSentMessage())
   {
     m_waitingForEcho = false;
+    m_waitingForEchoTimer.cancel();
     if(!m_waitingForResponse)
     {
       m_sendQueue[m_sentMessagePriority].pop();
@@ -197,7 +202,7 @@ void Kernel::receive(const Message& message)
   }
   else if(m_waitingForResponse)
   {
-    isResponse = isValidResponse(m_sendQueue[m_sentMessagePriority].front(), message);
+    isResponse = isValidResponse(lastSentMessage(), message);
   }
 
   switch(message.opCode)
@@ -637,6 +642,7 @@ void Kernel::receive(const Message& message)
   if(m_waitingForResponse && isResponse)
   {
     m_waitingForResponse = false;
+    m_waitingForResponseTimer.cancel();
     m_sendQueue[m_sentMessagePriority].pop();
     sendNextMessage();
   }
@@ -877,8 +883,17 @@ void Kernel::sendNextMessage()
       if(m_ioHandler->send(message))
       {
         m_sentMessagePriority = static_cast<Priority>(priority);
+
         m_waitingForEcho = true;
+        m_waitingForEchoTimer.expires_after(boost::asio::chrono::milliseconds(Config::echoTimeout));
+        m_waitingForEchoTimer.async_wait(std::bind(&Kernel::waitingForEchoTimerExpired, this, std::placeholders::_1));
+
         m_waitingForResponse = hasResponse(message);
+        if(m_waitingForResponse)
+        {
+          m_waitingForResponseTimer.expires_after(boost::asio::chrono::milliseconds(Config::responseTimeout));
+          m_waitingForResponseTimer.async_wait(std::bind(&Kernel::waitingForResponseTimerExpired, this, std::placeholders::_1));
+        }
       }
       else
       {} // log message and go to error state
@@ -887,6 +902,29 @@ void Kernel::sendNextMessage()
   }
 }
 
+void Kernel::waitingForEchoTimerExpired(const boost::system::error_code& ec)
+{
+  if(ec)
+    return;
+
+  EventLoop::call(
+    [this]()
+    {
+      Log::log(m_logId, LogMessage::E2018_TIMEOUT_NO_ECHO_WITHIN_X_MS, Config::echoTimeout);
+    });
+}
+
+void Kernel::waitingForResponseTimerExpired(const boost::system::error_code& ec)
+{
+  if(ec)
+    return;
+
+  EventLoop::call(
+    [this]()
+    {
+      Log::log(m_logId, LogMessage::E2019_TIMEOUT_NO_RESPONSE_WITHIN_X_MS, Config::responseTimeout);
+    });
+}
 void Kernel::startFastClockSyncTimer()
 {
   assert(m_config.fastClockSyncInterval > 0);
