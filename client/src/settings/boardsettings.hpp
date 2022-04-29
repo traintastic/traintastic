@@ -58,13 +58,11 @@ class BoardSettings : public SettingsBase
     Setting<bool> showBlockSensorStates;
 };
 
-ENUM_NAME(BoardSettings::ColorScheme, "board_settings.color_scheme")
-
-ENUM_VALUES(BoardSettings::ColorScheme, 2,
+TRAINTASTIC_ENUM(BoardSettings::ColorScheme, "board_settings.color_scheme", 2,
 {
   {BoardSettings::ColorScheme::Dark, "dark"},
   {BoardSettings::ColorScheme::Light, "light"},
-})
+});
 
 template<>
 struct SettingEnum<BoardSettings::ColorScheme>
