@@ -84,6 +84,7 @@ class DCCPlusPlusInterface final
     std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final { return {DCCPlusPlus::Kernel::idMin, DCCPlusPlus::Kernel::idMax}; }
     [[nodiscard]] bool addInput(Input& input) final;
     [[nodiscard]] bool removeInput(Input& input) final;
+    void inputSimulateChange(uint32_t channel, uint32_t address) final;
 
     // OutputController:
     const std::vector<uint32_t>* outputChannels() const final { return &DCCPlusPlus::Kernel::outputChannels; }

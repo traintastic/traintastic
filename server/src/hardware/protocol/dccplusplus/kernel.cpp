@@ -36,8 +36,9 @@
 
 namespace DCCPlusPlus {
 
-Kernel::Kernel(const Config& config)
+Kernel::Kernel(const Config& config, bool simulation)
   : m_ioContext{1}
+  , m_simulation{simulation}
   , m_startupDelayTimer{m_ioContext}
   , m_decoderController{nullptr}
   , m_inputController{nullptr}
@@ -69,6 +70,7 @@ void Kernel::start()
   // reset all state values
   m_powerOn = TriState::Undefined;
   m_emergencyStop = TriState::Undefined;
+  m_inputValues.clear();
 
   m_thread = std::thread(
     [this]()
@@ -186,11 +188,18 @@ void Kernel::receive(std::string_view message)
           uint32_t id;
           if(auto r = fromChars(message.substr(3), id); r.ec == std::errc() && *r.ptr == '>' && id <= idMax)
           {
-            EventLoop::call(
-              [this, id, value=toTriState(message[1] == 'Q')]()
-              {
-                m_inputController->updateInputValue(InputController::defaultInputChannel, id, value);
-              });
+            const bool value = message[1] == 'Q';
+            auto it = m_inputValues.find(id);
+            if(it == m_inputValues.end() || it->second != value)
+            {
+              m_inputValues[id] = value;
+
+              EventLoop::call(
+                [this, id, value]()
+                {
+                  m_inputController->updateInputValue(InputController::defaultInputChannel, id, toTriState(value));
+                });
+            }
           }
         }
         break;
@@ -327,6 +336,17 @@ bool Kernel::setOutput(uint32_t channel, uint16_t address, bool value)
 
   assert(false);
   return false;
+}
+
+void Kernel::simulateInputChange(uint16_t address)
+{
+  if(m_simulation)
+    m_ioContext.post(
+      [this, address]()
+      {
+        auto it = m_inputValues.find(address);
+        receive(Ex::sensorTransition(address, it != m_inputValues.end() ? !it->second : true));
+      });
 }
 
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)

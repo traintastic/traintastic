@@ -114,6 +114,12 @@ bool DCCPlusPlusInterface::removeInput(Input& input)
   return success;
 }
 
+void DCCPlusPlusInterface::inputSimulateChange(uint32_t channel, uint32_t address)
+{
+  if(m_kernel && inRange(address, inputAddressMinMax(channel)))
+    m_kernel->simulateInputChange(address);
+}
+
 std::pair<uint32_t, uint32_t> DCCPlusPlusInterface::outputAddressMinMax(uint32_t channel) const
 {
   using namespace DCCPlusPlus;

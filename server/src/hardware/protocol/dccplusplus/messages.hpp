@@ -283,6 +283,16 @@ namespace Ex {
       .append(">\n");
   }
 
+  inline std::string sensorTransition(uint16_t id, bool active)
+  {
+    assert(id <= 32767);
+
+    if(active)
+      return std::string("<Q ").append(std::to_string(id)).append(">\n");
+    else
+      return std::string("<q ").append(std::to_string(id)).append(">\n");
+  }
+
   inline std::string_view setSpeedSteps(uint8_t value)
   {
     switch(value)
