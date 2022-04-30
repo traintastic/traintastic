@@ -24,6 +24,7 @@
 #define TRAINTASTIC_CLIENT_NETWORK_OUTPUTKEYBOARD_HPP
 
 #include "object.hpp"
+#include <unordered_map>
 #include <traintastic/enum/tristate.hpp>
 
 class OutputKeyboard final : public Object
