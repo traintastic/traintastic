@@ -45,3 +45,5 @@ CMakeLists.txt.*
 *.gcov
 *.pyc
 .vs
+.DS_Store
+
