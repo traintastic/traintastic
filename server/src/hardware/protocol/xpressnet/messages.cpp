@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,6 +33,11 @@ uint8_t calcChecksum(const Message& msg)
   for(int i = 1; i <= dataSize; i++)
     checksum ^= p[i];
   return checksum;
+}
+
+void updateChecksum(Message& msg)
+{
+  *(reinterpret_cast<uint8_t*>(&msg) + msg.dataSize() + 1) = calcChecksum(msg);
 }
 
 bool isChecksumValid(const Message& msg)

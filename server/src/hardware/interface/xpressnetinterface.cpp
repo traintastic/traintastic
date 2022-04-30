@@ -193,6 +193,12 @@ bool XpressNetInterface::removeInput(Input& input)
   return success;
 }
 
+void XpressNetInterface::inputSimulateChange(uint32_t channel, uint32_t address)
+{
+  if(m_kernel && inRange(address, outputAddressMinMax(channel)))
+    m_kernel->simulateInputChange(address);
+}
+
 bool XpressNetInterface::addOutput(Output& output)
 {
   const bool success = OutputController::addOutput(output);

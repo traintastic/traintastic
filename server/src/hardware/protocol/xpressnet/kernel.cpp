@@ -31,8 +31,9 @@
 
 namespace XpressNet {
 
-Kernel::Kernel(const Config& config)
+Kernel::Kernel(const Config& config, bool simulation)
   : m_ioContext{1}
+  , m_simulation{simulation}
   , m_decoderController{nullptr}
   , m_inputController{nullptr}
   , m_outputController{nullptr}
@@ -384,6 +385,36 @@ bool Kernel::setOutput(uint16_t address, bool value)
 {
   postSend(AccessoryDecoderOperationRequest(address - 1, value));
   return true;
+}
+
+void Kernel::simulateInputChange(uint16_t address)
+{
+  if(m_simulation)
+    m_ioContext.post(
+      [this, address]()
+      {
+        const uint16_t groupAddress = (address - 1) >> 2;
+        const uint8_t index = static_cast<uint8_t>((address - 1) & 0x0003);
+
+        std::byte message[sizeof(FeedbackBroadcast) + sizeof(FeedbackBroadcast::Pair) + 1];
+        auto* feedbackBroadcast = reinterpret_cast<FeedbackBroadcast*>(&message);
+        feedbackBroadcast->header = idFeedbackBroadcast;
+        feedbackBroadcast->setPairCount(1);
+        auto& pair = feedbackBroadcast->pair(0);
+        pair.setGroupAddress(groupAddress);
+        pair.setType(FeedbackBroadcast::Pair::Type::FeedbackModule);
+        for(uint8_t i = 0; i < 4; i++)
+        {
+          const uint16_t n = (groupAddress << 2) + i;
+          if(i == index)
+            pair.setStatus(i, m_inputValues[n] != TriState::True);
+          else
+            pair.setStatus(i, m_inputValues[n] == TriState::True);
+        }
+        updateChecksum(*feedbackBroadcast);
+
+        receive(*feedbackBroadcast);
+      });
 }
 
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,6 +36,7 @@ constexpr uint8_t idFeedbackBroadcast = 0x40;
 struct Message;
 
 uint8_t calcChecksum(const Message& msg);
+void updateChecksum(Message& msg);
 bool isChecksumValid(const Message& msg);
 std::string toString(const Message& message, bool raw = false);
 
@@ -125,6 +126,16 @@ struct FeedbackBroadcast : Message
       return (static_cast<uint16_t>(address) << 1) | ((data & 0x10) ? 1 : 0);
     }
 
+    void setGroupAddress(uint16_t value)
+    {
+      assert(value < 512);
+      address = value >> 1;
+      if(value & 0x0001)
+        data |= 0x10;
+      else
+        data &= 0xEF;
+    }
+
     constexpr bool switchingCommandCompleted() const
     {
       return (data & 0x80);
@@ -135,9 +146,29 @@ struct FeedbackBroadcast : Message
       return static_cast<Type>((data & 0x60) >> 5);
     }
 
+    void setType(Type value)
+    {
+      assert(
+        value == Type::AccessoryDecoderWithoutFeedback ||
+        value == Type::AccessoryDecoderWithFeedback ||
+        value == Type::FeedbackModule ||
+        value == Type::ReservedForFutureUse);
+
+      data = (data & 0x9F) | (static_cast<uint8_t>(value) << 5);
+    }
+
     constexpr uint8_t statusNibble() const
     {
       return (data & 0x0F);
+    }
+
+    void setStatus(uint8_t index, bool value)
+    {
+      assert(index < 4);
+      if(value)
+        data |= (1 << index);
+      else
+        data &= ~static_cast<uint8_t>(1 << index);
     }
   };
   static_assert(sizeof(Pair) == 2);
@@ -147,10 +178,22 @@ struct FeedbackBroadcast : Message
     return dataSize() / sizeof(Pair);
   }
 
+  void setPairCount(uint8_t value)
+  {
+    assert(value <= 7);
+    header = (header & 0xF0) | (value * 2);
+  }
+
   const Pair& pair(uint8_t index) const
   {
     assert(index < pairCount());
     return *(reinterpret_cast<const Pair*>(&header + sizeof(header)) + index);
+  }
+
+  Pair& pair(uint8_t index)
+  {
+    assert(index < pairCount());
+    return *(reinterpret_cast<Pair*>(&header + sizeof(header)) + index);
   }
 };
 

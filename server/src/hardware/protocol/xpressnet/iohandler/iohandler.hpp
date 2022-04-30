@@ -47,6 +47,12 @@ class IOHandler
     virtual bool send(const Message& message) = 0;
 };
 
+template<class T>
+constexpr bool isSimulation()
+{
+  return false;
+}
+
 }
 
 #endif

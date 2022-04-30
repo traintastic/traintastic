@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,6 +46,7 @@ class Kernel
   private:
     boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
+    const bool m_simulation;
     std::thread m_thread;
     std::string m_logId;
     std::function<void()> m_onStarted;
@@ -69,7 +70,7 @@ class Kernel
     bool m_started;
 #endif
 
-    Kernel(const Config& config);
+    Kernel(const Config& config, bool simulation);
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
 
@@ -110,7 +111,7 @@ class Kernel
     static std::unique_ptr<Kernel> create(const Config& config, Args... args)
     {
       static_assert(std::is_base_of_v<IOHandler, IOHandlerType>);
-      std::unique_ptr<Kernel> kernel{new Kernel(config)};
+      std::unique_ptr<Kernel> kernel{new Kernel(config, isSimulation<IOHandlerType>())};
       kernel->setIOHandler(std::make_unique<IOHandlerType>(*kernel, std::forward<Args>(args)...));
       return kernel;
     }
@@ -281,11 +282,17 @@ class Kernel
 
     /**
      *
-     * @param[in] address Output address, 1..2048
+     * @param[in] address Output address, #ioAddressMin..#ioAddressMax
      * @param[in] value Output value: \c true is on, \c false is off.
      * @return \c true if send successful, \c false otherwise.
      */
     bool setOutput(uint16_t address, bool value);
+
+    /**
+     * \brief Simulate input change
+     * \param[in] address Input address, #ioAddressMin..#ioAddressMax
+     */
+    void simulateInputChange(uint16_t address);
 };
 
 }

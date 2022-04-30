@@ -44,6 +44,12 @@ class SimulationIOHandler final : public IOHandler
     bool send(const Message& message) final;
 };
 
+template<>
+constexpr bool isSimulation<SimulationIOHandler>()
+{
+  return true;
+}
+
 }
 
 #endif
