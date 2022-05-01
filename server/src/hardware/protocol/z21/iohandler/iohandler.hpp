@@ -58,6 +58,12 @@ class IOHandler
     virtual void purgeClient(ClientId /*id*/) {}
 };
 
+template<class T>
+constexpr bool isSimulation()
+{
+  return false;
+}
+
 }
 
 #endif

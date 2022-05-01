@@ -59,6 +59,7 @@ class ClientKernel final : public Kernel
     };
 
   private:
+    const bool m_simulation;
     boost::asio::steady_timer m_keepAliveTimer;
 
     uint32_t m_serialNumber;
@@ -84,7 +85,7 @@ class ClientKernel final : public Kernel
 
     ClientConfig m_config;
 
-    ClientKernel(const ClientConfig& config);
+    ClientKernel(const ClientConfig& config, bool simulation);
 
     void onStart() final;
     void onStop() final;
@@ -115,7 +116,7 @@ class ClientKernel final : public Kernel
     static std::unique_ptr<ClientKernel> create(const ClientConfig& config, Args... args)
     {
       static_assert(std::is_base_of_v<IOHandler, IOHandlerType>);
-      std::unique_ptr<ClientKernel> kernel{new ClientKernel(config)};
+      std::unique_ptr<ClientKernel> kernel{new ClientKernel(config, isSimulation<IOHandlerType>())};
       kernel->setIOHandler(std::make_unique<IOHandlerType>(*kernel, std::forward<Args>(args)...));
       return kernel;
     }
@@ -236,6 +237,8 @@ class ClientKernel final : public Kernel
      * @return \c true if send successful, \c false otherwise.
      */
     bool setOutput(uint16_t address, bool value);
+
+    void simulateInputChange(uint32_t channel, uint32_t address);
 };
 
 }

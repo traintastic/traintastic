@@ -1274,6 +1274,15 @@ struct LanRMBusDataChanged : Message
     assert(index < feedbackStatusCount);
     return feedbackStatus[index >> 3] & (1 << (index & 0x7));
   }
+
+  inline void setFeedbackStatus(uint8_t index, bool value)
+  {
+    assert(index < feedbackStatusCount);
+    if(value)
+      feedbackStatus[index >> 3] |= (1 << (index & 0x7));
+    else
+      feedbackStatus[index >> 3] &= ~static_cast<uint8_t>(1 << (index & 0x7));
+  }
 };
 static_assert(sizeof(LanRMBusDataChanged) == 15);
 

@@ -32,8 +32,9 @@
 
 namespace Z21 {
 
-ClientKernel::ClientKernel(const ClientConfig& config)
-  : m_keepAliveTimer(m_ioContext)
+ClientKernel::ClientKernel(const ClientConfig& config, bool simulation)
+  : m_simulation{simulation}
+  , m_keepAliveTimer(m_ioContext)
   , m_config{config}
 {
 }
@@ -347,6 +348,45 @@ bool ClientKernel::setOutput(uint16_t address, bool value)
     });
 
   return true;
+}
+
+void ClientKernel::simulateInputChange(uint32_t channel, uint32_t address)
+{
+  if(!m_simulation)
+    return;
+
+  m_ioContext.post(
+    [this, channel, address]()
+    {
+      (void)address;
+      switch(channel)
+      {
+        case InputChannel::rbus:
+        {
+          LanRMBusDataChanged message;
+          message.groupIndex = (address - rbusAddressMin) / LanRMBusDataChanged::feedbackStatusCount;
+
+          for(uint8_t i = 0; i < LanRMBusDataChanged::feedbackStatusCount; i++)
+          {
+            const uint32_t n = static_cast<uint32_t>(message.groupIndex) * LanRMBusDataChanged::feedbackStatusCount + i;
+            if(address == rbusAddressMin + n)
+              message.setFeedbackStatus(i, m_rbusFeedbackStatus[n] != TriState::True);
+            else
+              message.setFeedbackStatus(i, m_rbusFeedbackStatus[n] == TriState::True);
+          }
+
+          receive(message);
+
+          break;
+        }
+        case InputChannel::loconet:
+        {
+          const uint16_t feedbackAddress = address - loconetAddressMin;
+          receive(LanLocoNetDetectorOccupancyDetector(feedbackAddress, m_loconetFeedbackStatus[feedbackAddress] != TriState::True));
+          break;
+        }
+      }
+    });
 }
 
 void ClientKernel::onStart()

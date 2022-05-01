@@ -140,6 +140,12 @@ bool Z21Interface::removeInput(Input& input)
   return success;
 }
 
+void Z21Interface::inputSimulateChange(uint32_t channel, uint32_t address)
+{
+  if(m_kernel && inRange(address, outputAddressMinMax(channel)))
+    m_kernel->simulateInputChange(channel, address);
+}
+
 bool Z21Interface::addOutput(Output& output)
 {
   const bool success = OutputController::addOutput(output);
