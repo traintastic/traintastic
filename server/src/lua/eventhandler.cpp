@@ -78,6 +78,7 @@ void EventHandler::execute(const Arguments& args)
 
       case ValueType::Enum:
         pushEnum(m_L, argumentTypeInfo[i].enumName.data(), std::get<int64_t>(arg));
+        assert(lua_isuserdata(m_L, -1)); // check if enum value is known
         break;
 
       case ValueType::Integer:
