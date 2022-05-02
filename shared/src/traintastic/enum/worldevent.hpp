@@ -44,7 +44,7 @@ enum class WorldEvent : uint64_t
   SimulationEnabled = 13,
 };
 
-TRAINTASTIC_ENUM(WorldEvent, "world_event", 12,
+TRAINTASTIC_ENUM(WorldEvent, "world_event", 14,
 {
   {WorldEvent::EditDisabled, "edit_disabled"},
   {WorldEvent::EditEnabled, "edit_enabled"},
@@ -58,6 +58,8 @@ TRAINTASTIC_ENUM(WorldEvent, "world_event", 12,
   {WorldEvent::Mute, "mute"},
   {WorldEvent::NoSmoke, "no_smoke"},
   {WorldEvent::Smoke, "smoke"},
+  {WorldEvent::SimulationDisabled, "simulation_disabled"},
+  {WorldEvent::SimulationEnabled, "simulation_enabled"},
 });
 
 #endif
