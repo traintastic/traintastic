@@ -128,6 +128,7 @@ class InterfaceItem
     const std::vector<T>& getVectorAttribute(AttributeName name) const
     {
       assert(m_attributes.find(name) != m_attributes.end());
+      assert(dynamic_cast<const VectorAttribute<T>*>(m_attributes.at(name).get()));
       return static_cast<const VectorAttribute<T>*>(m_attributes.at(name).get())->values();
     }
 
