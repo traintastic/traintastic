@@ -48,7 +48,7 @@ class AbstractEvent : public InterfaceItem
 
     inline bool isInternal() const final
     {
-      return true;
+      return (m_flags & EventFlags::Public) != EventFlags::Public;
     }
 
     inline EventFlags flags() const { return m_flags; }

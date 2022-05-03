@@ -64,6 +64,7 @@ class Message
       ObjectAttributeChanged = 18,
       ObjectCallMethod = 25,
       ObjectDestroyed = 28,
+      ObjectEventFired = 42,
 
       GetTableModel = 19,
       ReleaseTableModel = 20,

@@ -33,6 +33,7 @@ class Message;
 class AbstractProperty;
 class AbstractVectorProperty;
 class Method;
+class Event;
 
 class Object : public QObject
 {
@@ -46,7 +47,7 @@ class Object : public QObject
     const QString m_classId;
     InterfaceItems m_interfaceItems;
 
-    virtual void processMessage(const Message& /*message*/) {}
+    virtual void processMessage(const Message& message);
 
   public:
     explicit Object(std::shared_ptr<Connection> connection, Handle handle, const QString& classId);
@@ -82,6 +83,9 @@ class Object : public QObject
 
     const Method* getMethod(const QString& name) const;
     Method* getMethod(const QString& name);
+
+    const Event* getEvent(const QString& name) const;
+    Event* getEvent(const QString& name);
 
     void callMethod(const QString& name);
 };

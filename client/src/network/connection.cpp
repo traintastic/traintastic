@@ -33,6 +33,7 @@
 #include "vectorproperty.hpp"
 #include "objectvectorproperty.hpp"
 #include "method.hpp"
+#include "event.hpp"
 #include "tablemodel.hpp"
 #include "inputmonitor.hpp"
 #include "outputkeyboard.hpp"
@@ -523,6 +524,20 @@ ObjectPtr Connection::readObject(const Message& message)
           item = new Method(*obj, name, resultType, argumentTypes);
           break;
         }
+        case InterfaceItemType::Event:
+        {
+          const uint8_t argumentCount = message.read<uint8_t>();
+          std::vector<ValueType> argumentTypes;
+          for(uint8_t i = 0; i < argumentCount; i++)
+          {
+            const auto argumentType = message.read<ValueType>();
+            argumentTypes.emplace_back(argumentType);
+            if(argumentType == ValueType::Enum || argumentType == ValueType::Set)
+              message.read<QByteArray>(); // enum/set type, currently unused
+          }
+          item = new Event(*obj, name, std::move(argumentTypes));
+          break;
+        }
       }
 
       if(Q_LIKELY(item))
@@ -929,6 +944,7 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
         }
         break;
 
+      case Message::Command::ObjectEventFired:
       case Message::Command::InputMonitorInputIdChanged:
       case Message::Command::InputMonitorInputValueChanged:
       case Message::Command::OutputKeyboardOutputIdChanged:

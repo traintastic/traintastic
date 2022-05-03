@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@
 
 #include "abstractevent.hpp"
 #include "abstracteventhandler.hpp"
+#include "object.hpp"
 
 AbstractEvent::AbstractEvent(Object& object, std::string_view name, EventFlags flags)
   : InterfaceItem(object, name)
@@ -52,4 +53,6 @@ void AbstractEvent::fire(const Arguments& args)
   const auto handlers{m_handlers}; // copy, list can be modified while iterating
   for(const auto& handler : handlers)
     handler->execute(args);
+
+  m_object.onEventFired(*this, args);
 }

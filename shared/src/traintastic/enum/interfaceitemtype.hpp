@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@ enum class InterfaceItemType : uint8_t
   Method = 2,
   UnitProperty = 3,
   VectorProperty = 4,
+  Event = 5,
 };
 
 #endif

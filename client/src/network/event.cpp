@@ -1,9 +1,9 @@
 /**
- * server/src/core/eventflags.hpp
+ * client/src/network/event.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,26 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_CORE_EVENTFLAGS_HPP
-#define TRAINTASTIC_SERVER_CORE_EVENTFLAGS_HPP
+#include "event.hpp"
 
-enum class EventFlags
+Event::Event(Object& object, const QString& name, std::vector<ValueType> argumentTypes)
+  : InterfaceItem(object, name)
+  , m_argumentTypes{std::move(argumentTypes)}
 {
-  // bit 0
-  Scriptable = 1 << 0,
-
-  // bit 1
-  Public = 1 << 1,
-};
-
-constexpr EventFlags operator &(EventFlags lhs, EventFlags rhs)
-{
-  return static_cast<EventFlags>(static_cast<std::underlying_type_t<EventFlags>>(lhs) & static_cast<std::underlying_type_t<EventFlags>>(rhs));
 }
-
-constexpr EventFlags operator |(EventFlags lhs, EventFlags rhs)
-{
-  return static_cast<EventFlags>(static_cast<std::underlying_type_t<EventFlags>>(lhs) | static_cast<std::underlying_type_t<EventFlags>>(rhs));
-}
-
-#endif

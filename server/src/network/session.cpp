@@ -609,6 +609,8 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
       m_objectSignals.emplace(handle, outputMap->outputsChanged.connect(std::bind(&Session::outputMapOutputsChanged, this, std::placeholders::_1)));
     }
 
+    bool hasPublicEvents = false;
+
     message.write(handle);
     message.write(object->getClassId());
 
@@ -676,6 +678,17 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
         for(const auto& info : method->argumentTypeInfo())
           message.write(info.type);
       }
+      else if(const auto* event = dynamic_cast<const AbstractEvent*>(&item))
+      {
+        hasPublicEvents = true;
+
+        message.write(InterfaceItemType::Event);
+        message.write(static_cast<uint8_t>(event->argumentTypeInfo().size()));
+        for(const auto& typeInfo : event->argumentTypeInfo())
+          writeTypeInfo(message, typeInfo);
+      }
+      else
+        assert(false);
 
       message.writeBlock(); // attributes
 
@@ -691,6 +704,9 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
       message.writeBlockEnd(); // end item
     }
     message.writeBlockEnd(); // end items
+
+    if(hasPublicEvents)
+      m_objectSignals.emplace(handle, object->onEventFired.connect(std::bind(&Session::objectEventFired, this, std::placeholders::_1, std::placeholders::_2)));
   }
   else
     message.write(handle);
@@ -856,6 +872,51 @@ void Session::objectAttributeChanged(AbstractAttribute& attribute)
   m_client->sendMessage(std::move(event));
 }
 
+void Session::objectEventFired(const AbstractEvent& event, const Arguments& arguments)
+{
+  auto message = Message::newEvent(Message::Command::ObjectEventFired);
+  message->write(m_handles.getHandle(event.object().shared_from_this()));
+  message->write(event.name());
+  message->write(static_cast<uint32_t>(arguments.size()));
+  size_t i = 0;
+  for(const auto& typeInfo : event.argumentTypeInfo())
+  {
+    switch(typeInfo.type)
+    {
+      case ValueType::Boolean:
+        message->write(std::get<bool>(arguments[i]));
+        break;
+
+      case ValueType::Enum:
+      case ValueType::Integer:
+      case ValueType::Set:
+        message->write(std::get<int64_t>(arguments[i]));
+        break;
+
+      case ValueType::Float:
+        message->write(std::get<double>(arguments[i]));
+        break;
+
+      case ValueType::String:
+        message->write(std::get<std::string>(arguments[i]));
+        break;
+
+      case ValueType::Object:
+        if(ObjectPtr obj = std::get<ObjectPtr>(arguments[i]))
+          message->write(obj->getObjectId());
+        else
+          message->write(std::string_view{});
+        break;
+
+      case ValueType::Invalid:
+        assert(false);
+        return;
+    }
+    i++;
+  }
+  m_client->sendMessage(std::move(message));
+}
+
 void Session::writeAttribute(Message& message , const AbstractAttribute& attribute)
 {
   message.write(attribute.name());
@@ -922,6 +983,18 @@ void Session::writeAttribute(Message& message , const AbstractAttribute& attribu
   }
   else
     assert(false);
+}
+
+void Session::writeTypeInfo(Message& message, const TypeInfo& typeInfo)
+{
+  assert((typeInfo.type == ValueType::Enum) != typeInfo.enumName.empty());
+  assert((typeInfo.type == ValueType::Set) != typeInfo.setName.empty());
+
+  message.write(typeInfo.type);
+  if(typeInfo.type == ValueType::Enum)
+    message.write(typeInfo.enumName);
+  else if(typeInfo.type == ValueType::Set)
+    message.write(typeInfo.setName);
 }
 
 void Session::inputMonitorInputIdChanged(InputMonitor& inputMonitor, const uint32_t address, std::string_view id)

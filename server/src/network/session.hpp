@@ -31,6 +31,7 @@
 #include "handlelist.hpp"
 #include "../core/objectptr.hpp"
 #include "../core/tablemodelptr.hpp"
+#include "../core/argument.hpp"
 
 class Client;
 class MemoryLogger;
@@ -38,10 +39,12 @@ class BaseProperty;
 class AbstractProperty;
 class AbstractVectorProperty;
 class AbstractAttribute;
+class AbstractEvent;
 class InputMonitor;
 class OutputKeyboard;
 class Board;
 class OutputMap;
+struct TypeInfo;
 struct TileLocation;
 struct TileData;
 
@@ -53,6 +56,7 @@ class Session : public std::enable_shared_from_this<Session>
     static void writePropertyValue(Message& message, const AbstractProperty& property);
     static void writeVectorPropertyValue(Message& message, const AbstractVectorProperty& vectorProperty);
     static void writeAttribute(Message& message, const AbstractAttribute& attribute);
+    static void writeTypeInfo(Message& message, const TypeInfo& typeInfo);
 
     boost::signals2::connection m_memoryLoggerChanged;
 
@@ -75,6 +79,7 @@ class Session : public std::enable_shared_from_this<Session>
     void objectDestroying(Object& object);
     void objectPropertyChanged(BaseProperty& property);
     void objectAttributeChanged(AbstractAttribute& attribute);
+    void objectEventFired(const AbstractEvent& event, const Arguments& arguments);
 
     void inputMonitorInputIdChanged(InputMonitor& inputMonitor, uint32_t address, std::string_view id);
     void inputMonitorInputValueChanged(InputMonitor& inputMonitor, uint32_t address, TriState value);

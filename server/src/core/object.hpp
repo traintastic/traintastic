@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include <boost/signals2/signal.hpp>
 #include <nlohmann/json.hpp>
 #include "interfaceitems.hpp"
+#include "argument.hpp"
 #include <traintastic/enum/worldevent.hpp>
 #include <traintastic/set/worldstate.hpp>
 
@@ -41,6 +42,7 @@ class BaseProperty;
 class AbstractProperty;
 class AbstractVectorProperty;
 class AbstractAttribute;
+class AbstractEvent;
 class WorldLoader;
 class WorldSaver;
 
@@ -76,6 +78,7 @@ class Object : public std::enable_shared_from_this<Object>
     boost::signals2::signal<void (Object&)> onDestroying;
     boost::signals2::signal<void (BaseProperty&)> propertyChanged;
     boost::signals2::signal<void (AbstractAttribute&)> attributeChanged;
+    boost::signals2::signal<void (const AbstractEvent&, const Arguments&)> onEventFired;
 
     Object();
     virtual ~Object() = default;

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 #include "property.hpp"
 #include "abstractvectorproperty.hpp"
 #include "method.hpp"
+#include "event.hpp"
 
 Object::Object(std::shared_ptr<Connection> connection, Handle handle, const QString& classId) :
   QObject(nullptr),
@@ -89,10 +90,71 @@ Method* Object::getMethod(const QString& name)
   return dynamic_cast<Method*>(m_interfaceItems.find(name));
 }
 
+const Event* Object::getEvent(const QString& name) const
+{
+  return dynamic_cast<const Event*>(m_interfaceItems.find(name));
+}
+
+Event* Object::getEvent(const QString& name)
+{
+  return dynamic_cast<Event*>(m_interfaceItems.find(name));
+}
+
 void Object::callMethod(const QString& name)
 {
   if(Method* method = getMethod(name))
     method->call();
   else
     Q_ASSERT(false);
+}
+
+void Object::processMessage(const Message& message)
+{
+  switch(message.command())
+  {
+    case Message::Command::ObjectEventFired:
+    {
+      if(Event* event = getEvent(QString::fromLatin1(message.read<QByteArray>())))
+      {
+        const auto& argumentTypes = event->argumentTypes();
+        const auto argumentCount = message.read<uint32_t>();
+        assert(argumentTypes.size() == argumentCount);
+        QVariantList arguments;
+        arguments.reserve(argumentCount);
+        for(uint32_t i = 0; i < argumentCount; i++)
+        {
+          switch(argumentTypes[i])
+          {
+            case ValueType::Boolean:
+              arguments.push_back(message.read<bool>());
+              break;
+
+            case ValueType::Integer:
+            case ValueType::Enum:
+            case ValueType::Set:
+              arguments.push_back(message.read<qint64>());
+              break;
+
+            case ValueType::Float:
+              arguments.push_back(message.read<double>());
+              break;
+
+            case ValueType::String:
+            case ValueType::Object:
+              arguments.push_back(QString::fromUtf8(message.read<QByteArray>()));
+              break;
+
+            default:
+              assert(false);
+              return;
+          }
+        }
+        emit event->fired(arguments);
+      }
+      break;
+    }
+    default:
+      assert(false);
+      break;
+  }
 }
