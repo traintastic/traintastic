@@ -219,10 +219,19 @@ loconet_settings:command_station=Command station
 loconet_settings:fast_clock_sync_enabled=Fast clock sync enabled
 loconet_settings:fast_clock_sync_interval=Fast clock sync interval
 
+lua.script:disabled=Disabled
 lua.script:start=Start
 lua.script:stop=Stop
 
+lua.script_list:start_all=Start all
+lua.script_list:stop_all=Stop all
+
 lua_script:state=State
+
+lua_script_state:disabled=Disabled
+lua_script_state:error=Error
+lua_script_state:running=Running
+lua_script_state:stopped=Stopped
 
 message:C1001=Loading world failed (%1)
 message:C1002=Creating client failed (%1)

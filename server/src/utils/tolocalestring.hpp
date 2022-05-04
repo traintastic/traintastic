@@ -1,9 +1,9 @@
 /**
- * shared/src/traintastic/enum/luascriptstate.hpp
+ * server/src/utils/tolocalestring.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022 Reinder Feenstra
+ * Copyright (C) 2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,26 +20,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_LUASCRIPTSTATE_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_LUASCRIPTSTATE_HPP
+#ifndef TRAINTASTIC_SERVER_UTILS_TOLOCALESTRING_HPP
+#define TRAINTASTIC_SERVER_UTILS_TOLOCALESTRING_HPP
 
-#include <cstdint>
-#include "enum.hpp"
+#include <traintastic/enum/enum.hpp>
 
-enum class LuaScriptState
+template<class T, std::enable_if_t<std::is_enum_v<T>, bool> = true>
+inline std::string toLocaleString(T value)
 {
-  Stopped = 0,
-  Running = 1,
-  Error = 2,
-  Disabled = 3,
-};
-
-TRAINTASTIC_ENUM(LuaScriptState, "lua_script_state", 4,
-{
-  {LuaScriptState::Stopped, "stopped"},
-  {LuaScriptState::Running, "running"},
-  {LuaScriptState::Error, "error"},
-  {LuaScriptState::Disabled, "disabled"},
-});
+  return
+    std::string("$")
+      .append(EnumName<T>::value)
+      .append(":")
+      .append(EnumValues<T>::value.at(value))
+      .append("$");
+}
 
 #endif

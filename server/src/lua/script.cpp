@@ -41,22 +41,20 @@ constexpr std::string_view dotLua = ".lua";
 Script::Script(World& world, std::string_view _id) :
   IdObject(world, _id),
   m_sandbox{nullptr, nullptr},
-  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
-  /*active{this, "active", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
+  name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store},
+  disabled{this, "disabled", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore | PropertyFlags::NoScript,
     [this](bool value)
     {
-      if(!value && m_sandbox)
-        fini();
-      else if(value && !m_sandbox)
-        init();
-    }},*/
+      assert(state != LuaScriptState::Running);
+      setState(value ? LuaScriptState::Disabled : LuaScriptState::Stopped);
+    }},
   state{this, "state", LuaScriptState::Stopped, PropertyFlags::ReadOnly | PropertyFlags::Store},
   code{this, "code", "", PropertyFlags::ReadWrite | PropertyFlags::NoStore},
   error{this, "error", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore},
   start{*this, "start",
     [this]()
     {
-      if(state != LuaScriptState::Running)
+      if(state == LuaScriptState::Stopped || state == LuaScriptState::Error)
         startSandbox();
     }},
   stop{*this, "stop",
@@ -69,6 +67,8 @@ Script::Script(World& world, std::string_view _id) :
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, false);
   m_interfaceItems.add(name);
+  Attributes::addEnabled(disabled, false);
+  m_interfaceItems.add(disabled);
   Attributes::addValues(state, LuaScriptStateValues);
   m_interfaceItems.add(state);
   Attributes::addEnabled(code, false);
@@ -113,7 +113,9 @@ void Script::loaded()
 {
   IdObject::loaded();
 
-  if(state == LuaScriptState::Running)
+  if(state == LuaScriptState::Disabled)
+    disabled.setValueInternal(true);
+  else if(state == LuaScriptState::Running)
     startSandbox();
 }
 
@@ -130,9 +132,10 @@ void Script::updateEnabled()
 
   Attributes::setEnabled(id, editable);
   Attributes::setEnabled(name, editable);
+  Attributes::setEnabled(disabled, editable);
   Attributes::setEnabled(code, editable);
 
-  Attributes::setEnabled(start, state != LuaScriptState::Running);
+  Attributes::setEnabled(start, state == LuaScriptState::Stopped || state == LuaScriptState::Error);
   Attributes::setEnabled(stop, state == LuaScriptState::Running);
 }
 

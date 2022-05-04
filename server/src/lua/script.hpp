@@ -58,6 +58,7 @@ class Script : public IdObject
     Script(World& world, std::string_view _id);
 
     Property<std::string> name;
+    Property<bool> disabled;
     Property<LuaScriptState> state;
     Property<std::string> code;
     Property<std::string> error;

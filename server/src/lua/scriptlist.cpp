@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,6 +43,20 @@ ScriptList::ScriptList(Object& _parent, std::string_view parentPropertyName) :
         script->destroy();
       assert(!containsObject(script));
     }}
+  , startAll{*this, "start_all",
+      [this]()
+      {
+        for(const auto& script : m_items)
+          if(!script->disabled)
+            script->start();
+      }}
+  , stopAll{*this, "stop_all",
+      [this]()
+      {
+        for(const auto& script : m_items)
+          if(!script->disabled)
+            script->stop();
+      }}
 {
   const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
@@ -53,6 +67,10 @@ ScriptList::ScriptList(Object& _parent, std::string_view parentPropertyName) :
   Attributes::addDisplayName(remove, DisplayName::List::remove);
   Attributes::addEnabled(remove, editable);
   m_interfaceItems.add(remove);
+
+  m_interfaceItems.add(startAll);
+
+  m_interfaceItems.add(stopAll);
 }
 
 TableModelPtr ScriptList::getModel()

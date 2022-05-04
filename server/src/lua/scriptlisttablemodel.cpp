@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "scriptlisttablemodel.hpp"
 #include "scriptlist.hpp"
 #include "../utils/displayname.hpp"
+#include "../utils/tolocalestring.hpp"
 
 namespace Lua {
 
@@ -63,21 +64,7 @@ std::string ScriptListTableModel::getText(uint32_t column, uint32_t row) const
         return script.name;
 
       case columnState:
-        switch(script.state)
-        {
-          case LuaScriptState::Stopped:
-            return "stopped";
-
-          case LuaScriptState::Running:
-            return "running";
-
-          case LuaScriptState::Error:
-            return "Error";
-
-          default:
-            assert(false);
-            return "";
-        }
+        return toLocaleString(script.state.value());
 
       default:
         assert(false);
