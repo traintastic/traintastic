@@ -14,8 +14,8 @@
    viewBox="0 0 25.399999 25.400001"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="world_new.svg">
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
+   sodipodi:docname="world_load.svg">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.959798"
-     inkscape:cx="46.002732"
-     inkscape:cy="45.48465"
+     inkscape:zoom="7.919596"
+     inkscape:cx="58.224841"
+     inkscape:cy="45.816562"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -51,7 +51,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <cc:license
            rdf:resource="http://creativecommons.org/licenses/by-nc/4.0/" />
       </cc:Work>
@@ -104,5 +104,17 @@
        d="m 20.108333,286.41665 c -2.303233,-0.10271 -3.014867,3.1754 -0.78079,3.91852 2.232157,0.99084 3.0625,-2.19831 1.497019,-3.42866 -0.199377,-0.2124 -0.44335,-0.38535 -0.716229,-0.48986 z"
        id="path2025"
        inkscape:connector-curvature="0" />
+    <path
+       style="fill:#aa8800;stroke:#806600;stroke-width:2.11666656;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 9.5249999,295.94165 v -12.7 h 4.2333331 l 2.116667,2.11666 5.291666,0 0,10.58334 z"
+       id="path3360"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccc" />
+    <path
+       style="fill:#aa8800;stroke:#806600;stroke-width:2.11666656;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+       d="m 24.341666,288.53331 -3.175,7.40834 H 9.5249999 L 12.7,288.53331 Z"
+       id="path3370"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc" />
   </g>
 </svg>

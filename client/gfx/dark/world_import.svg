@@ -14,8 +14,8 @@
    viewBox="0 0 25.399999 25.400001"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="world_new.svg">
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
+   sodipodi:docname="world_import.svg">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.959798"
-     inkscape:cx="46.002732"
-     inkscape:cy="45.48465"
+     inkscape:zoom="5.6"
+     inkscape:cx="69.649423"
+     inkscape:cy="39.362192"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -51,7 +51,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <cc:license
            rdf:resource="http://creativecommons.org/licenses/by-nc/4.0/" />
       </cc:Work>
@@ -104,5 +104,16 @@
        d="m 20.108333,286.41665 c -2.303233,-0.10271 -3.014867,3.1754 -0.78079,3.91852 2.232157,0.99084 3.0625,-2.19831 1.497019,-3.42866 -0.199377,-0.2124 -0.44335,-0.38535 -0.716229,-0.48986 z"
        id="path2025"
        inkscape:connector-curvature="0" />
+    <path
+       style="fill:#8844cc;stroke:#8844cc;stroke-width:2.11666667;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1"
+       d="M 12.7,294.88331 7.4083332,289.59165 H 16.933333 Z"
+       id="path2138"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#8844cc;stroke-width:4.23333311;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 12.7,289.59165 C 11.838927,284.71058 10.259547,280.06752 1.0583333,277.94998"
+       id="path2140"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
   </g>
 </svg>
