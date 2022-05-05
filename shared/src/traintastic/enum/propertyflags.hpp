@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SERVER_CORE_PropertyFlags_HPP
-#define SERVER_CORE_PropertyFlags_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_PROPERTYFLAGS_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_PROPERTYFLAGS_HPP
 
 #include <cstdint>
 
