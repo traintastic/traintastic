@@ -1,7 +1,7 @@
 # LocoNet {#loconet}
 
 LocoNet is a network bus developed by Digitrax inc. in the early 90's for use with their products.
-Nowadays LocoNet is used by multiple vendors, products of different vendors can easily be combined due to the standaard LocoNet bus.
+Nowadays LocoNet is used by multiple vendors, products of different vendors can easily be combined due to the standard LocoNet bus.
 This appendix describes Traintastic's LocoNet implementation details.
 
 ## Supported LocoNet command stations {#loconet-command-stations}
