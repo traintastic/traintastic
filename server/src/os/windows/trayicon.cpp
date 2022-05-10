@@ -22,6 +22,8 @@
 
 #include "trayicon.hpp"
 #include <cassert>
+#include <version.hpp>
+#include <traintastic/codename.hpp>
 #include "../../core/eventloop.hpp"
 #include "../../traintastic/traintastic.hpp"
 
@@ -76,9 +78,11 @@ void TrayIcon::run()
   notifyIconData.cbSize = sizeof(notifyIconData);
   notifyIconData.hWnd = s_window;
   notifyIconData.uID = 0;
-  notifyIconData.uFlags = NIF_ICON | NIF_MESSAGE;
+  notifyIconData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_SHOWTIP;
   notifyIconData.uCallbackMessage = WM_NOTIFYICON_CALLBACK;
   notifyIconData.hIcon = static_cast<HICON>(LoadImageA(GetModuleHandleA(nullptr), "APPICON", IMAGE_ICON, 0, 0, LR_DEFAULTSIZE));
+  const std::string_view toolTip{"Traintastic server v" TRAINTASTIC_VERSION " " TRAINTASTIC_CODENAME};
+  std::strncpy(notifyIconData.szTip, toolTip.data(),  std::min(toolTip.size(), sizeof(notifyIconData.szTip) - 1));
 
   const std::string_view infoTitle{"Traintastic server"};
   const std::string_view infoMessage{"Traintastic server is running in the system tray."};
