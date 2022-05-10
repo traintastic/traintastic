@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,7 +29,6 @@
 #define _WINSOCKAPI_ // prevent windows.h including winsock.h
 #include <windows.h>
 #undef _WINSOCKAPI_
-//#include <shellapi.h>
 
 namespace Windows {
 
@@ -41,7 +40,9 @@ class TrayIcon
   protected:
     enum class MenuItem : UINT
     {
-      Quit = 1,
+      Shutdown = 1,
+      Restart = 2,
+      ShowHideConsole = 3,
     };
     
     static constexpr UINT WM_NOTIFYICON_CALLBACK = WM_USER + 1;
@@ -53,7 +54,8 @@ class TrayIcon
     static void run();
     static LRESULT CALLBACK windowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam);
 
-    static void menuAddItem(MenuItem id, const std::string& text);
+    static void menuAddItem(MenuItem id, const LPSTR text, bool enabled = true);
+    static void menuAddSeperator();
 
   public:
     static void add();

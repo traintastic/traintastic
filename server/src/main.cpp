@@ -146,7 +146,7 @@ int main(int argc, char* argv[])
   if(options.tray)
   {
     Windows::setConsoleWindowVisible(false);
-    enableConsoleLogger = false;
+    enableConsoleLogger = Windows::hasConsoleWindow();
   }
 #endif
 

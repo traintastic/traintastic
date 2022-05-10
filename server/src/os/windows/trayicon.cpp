@@ -24,6 +24,7 @@
 #include <cassert>
 #include <version.hpp>
 #include <traintastic/codename.hpp>
+#include "consolewindow.hpp"
 #include "../../core/eventloop.hpp"
 #include "../../traintastic/traintastic.hpp"
 
@@ -70,7 +71,10 @@ void TrayIcon::run()
 
   // create menu:
   s_menu = CreatePopupMenu();
-  menuAddItem(MenuItem::Quit, "Quit");
+  menuAddItem(MenuItem::ShowHideConsole, "Show/hide console", hasConsoleWindow());
+  menuAddSeperator();
+  menuAddItem(MenuItem::Restart, "Restart");
+  menuAddItem(MenuItem::Shutdown, "Shutdown");
 
   // setup tray icon:
   static NOTIFYICONDATA notifyIconData;
@@ -143,12 +147,24 @@ LRESULT CALLBACK TrayIcon::windowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARA
   case WM_COMMAND:
     switch(static_cast<MenuItem>(wParam))
     {
-      case MenuItem::Quit:
+      case MenuItem::Shutdown:
         EventLoop::call(
           []()
           {
             Traintastic::instance->exit();
           });
+        return 0;
+
+      case MenuItem::Restart:
+        EventLoop::call(
+          []()
+          {
+            Traintastic::instance->restart();
+          });
+        return 0;
+
+      case MenuItem::ShowHideConsole:
+        setConsoleWindowVisible(!isConsoleWindowVisible());
         return 0;
     }
     break;
@@ -156,7 +172,7 @@ LRESULT CALLBACK TrayIcon::windowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARA
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-void TrayIcon::menuAddItem(MenuItem id, const std::string& text)
+void TrayIcon::menuAddItem(MenuItem id, const LPSTR text, bool enabled)
 {
   assert(s_menu);
   MENUITEMINFO item;
@@ -164,10 +180,21 @@ void TrayIcon::menuAddItem(MenuItem id, const std::string& text)
   item.cbSize = sizeof(item);
   item.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
   item.fType = 0;
-  item.fState = 0;
+  item.fState = enabled ? MFS_ENABLED : MFS_DISABLED;
   item.wID = static_cast<UINT>(id);
-  item.dwTypeData = const_cast<LPSTR>(text.c_str());
-  InsertMenuItem(s_menu, 0, TRUE, &item);
+  item.dwTypeData = const_cast<LPSTR>(text);
+  InsertMenuItem(s_menu, GetMenuItemCount(s_menu), TRUE, &item);
+}
+
+void TrayIcon::menuAddSeperator()
+{
+  assert(s_menu);
+  MENUITEMINFO item;
+  memset(&item, 0, sizeof(item));
+  item.cbSize = sizeof(item);
+  item.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
+  item.fType = MFT_SEPARATOR;
+  InsertMenuItem(s_menu, GetMenuItemCount(s_menu), TRUE, &item);
 }
 
 }
