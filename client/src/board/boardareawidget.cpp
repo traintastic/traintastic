@@ -98,24 +98,74 @@ BoardAreaWidget::BoardAreaWidget(BoardWidget& board, QWidget* parent) :
 void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& object)
 {
   const TileLocation l{x, y};
-  AbstractProperty* property;
 
-  if((property = object->getProperty("state")) ||       // block or sensor
-      (property = object->getProperty("position")) ||   // turnout
-      (property = object->getProperty("aspect")) ||     // signal
-      (property = object->getProperty("color")))        // push button
-    connect(property, &AbstractProperty::valueChanged, this,
-      [this, l]()
-      {
-        try
-        {
-          const TileData& tileData = m_board.board().tileData().at(l);
-          update(updateTileRect(l.x - boardLeft(), l.y - boardTop(), tileData.width(), tileData.height(), getTileSize()));
-        }
-        catch(...)
-        {
-        }
-      });
+  auto tryConnect =
+    [this, l, &object](const QString& name)
+    {
+      if(auto* property = dynamic_cast<BaseProperty*>(object->getInterfaceItem(name)))
+        connect(property, &BaseProperty::valueChanged, this,
+          [this, l]()
+          {
+            try
+            {
+              const TileData& tileData = m_board.board().tileData().at(l);
+              update(updateTileRect(l.x - boardLeft(), l.y - boardTop(), tileData.width(), tileData.height(), getTileSize()));
+            }
+            catch(...)
+            {
+            }
+          });
+    };
+
+  switch(m_board.board().getTileId(l))
+  {
+    case TileId::RailTurnoutLeft45:
+    case TileId::RailTurnoutLeft90:
+    case TileId::RailTurnoutLeftCurved:
+    case TileId::RailTurnoutRight45:
+    case TileId::RailTurnoutRight90:
+    case TileId::RailTurnoutRightCurved:
+    case TileId::RailTurnoutWye:
+    case TileId::RailTurnout3Way:
+    case TileId::RailTurnoutSingleSlip:
+    case TileId::RailTurnoutDoubleSlip:
+      tryConnect("position");
+      break;
+
+    case TileId::RailSignal2Aspect:
+    case TileId::RailSignal3Aspect:
+      tryConnect("aspect");
+      break;
+
+    case TileId::RailSensor:
+    case TileId::RailDirectionControl:
+      tryConnect("state");
+      break;
+
+    case TileId::RailBlock:
+      tryConnect("state");
+      tryConnect("sensor_states");
+      break;
+
+    case TileId::PushButton:
+      tryConnect("color");
+      break;
+
+    case TileId::None:
+    case TileId::RailStraight:
+    case TileId::RailCurve45:
+    case TileId::RailCurve90:
+    case TileId::RailCross45:
+    case TileId::RailCross90:
+    case TileId::RailBufferStop:
+    case TileId::RailBridge45Left:
+    case TileId::RailBridge45Right:
+    case TileId::RailBridge90:
+    case TileId::RailTunnel:
+    case TileId::RailOneWay:
+    case TileId::ReservedForFutureExpension:
+      break;
+  }
 }
 
 void BoardAreaWidget::setGrid(Grid value)
