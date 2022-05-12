@@ -59,9 +59,6 @@ class AbstractVectorProperty : public BaseProperty
       static_assert(is_set_v<T>);
       return static_cast<T>(getInt64(index));
     }
-
-  signals:
-    void valueChanged();
 };
 
 #endif

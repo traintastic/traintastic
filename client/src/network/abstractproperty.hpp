@@ -78,7 +78,6 @@ class AbstractProperty : public BaseProperty
     [[nodiscard]] virtual int setValueString(const QString& value, std::function<void(const QString& error)> /*callback*/) { Q_ASSERT(value != value); return -1; }
 
   signals:
-    void valueChanged();
     void valueChangedBool(bool newValue);
     void valueChangedInt(int newValue);
     void valueChangedInt64(int64_t newValue);

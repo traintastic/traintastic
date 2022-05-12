@@ -55,6 +55,9 @@ class BaseProperty : public InterfaceItem
 
     virtual const QString& enumName() const { Q_ASSERT(false); return enumOrSetNameEmpty; }
     virtual const QString& setName() const  { Q_ASSERT(false); return enumOrSetNameEmpty; }
+
+  signals:
+    void valueChanged();
 };
 
 #endif
