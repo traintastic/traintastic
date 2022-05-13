@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,7 @@
 #include "../../network/property.hpp"
 #include "../../network/method.hpp"
 #include "../propertylineedit.hpp"
+#include "../propertycheckbox.hpp"
 #include "../propertyluacodeedit.hpp"
 #include "../../theme/theme.hpp"
 
@@ -72,6 +73,9 @@ void LuaScriptEditWidget::buildForm()
   for(const QString& name : {"id", "name"})
     if(Property* property = dynamic_cast<Property*>(m_object->getProperty(name)))
       form->addRow(property->displayName(), new PropertyLineEdit(*property, this));
+
+  if(Property* property = dynamic_cast<Property*>(m_object->getProperty("disabled")))
+    form->addRow(property->displayName(), new PropertyCheckBox(*property, this));
 
   QToolBar* toolbar = new QToolBar(this);
   m_start = toolbar->addAction(Theme::getIcon("run"), m_methodStart->displayName(),
