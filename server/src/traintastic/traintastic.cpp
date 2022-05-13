@@ -356,6 +356,10 @@ std::unique_ptr<Message> Traintastic::processMessage(const Message& message)
   {
     std::unique_ptr<Message> response = Message::newResponse(message.command(), message.requestId());
     response->write(boost::asio::ip::host_name());
+    response->write<uint16_t>(TRAINTASTIC_VERSION_MAJOR);
+    response->write<uint16_t>(TRAINTASTIC_VERSION_MINOR);
+    response->write<uint16_t>(TRAINTASTIC_VERSION_PATCH);
+    assert(response->size() <= 1500); // must fit in a UDP packet
     return response;
   }
 
