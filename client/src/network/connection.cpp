@@ -1002,6 +1002,31 @@ void Connection::socketConnected()
                     setWorld(nullptr);*/
                 });
 
+              {
+                auto request{Message::newRequest(Message::Command::BoardGetTileInfo)};
+
+                send(request,
+                  [this](const std::shared_ptr<Message> boardGetTileInfoResponse)
+                  {
+                    if(boardGetTileInfoResponse->isResponse() && !boardGetTileInfoResponse->isError())
+                    {
+                      Board::tileInfo.clear();
+                      const auto count = boardGetTileInfoResponse->read<uint32_t>();
+                      for(uint32_t i = 0; i < count; i++)
+                      {
+                        Board::TileInfo info;
+                        info.classId = QString::fromLatin1(boardGetTileInfoResponse->read<QByteArray>());
+                        boardGetTileInfoResponse->read(info.tileId);
+                        boardGetTileInfoResponse->read(info.rotates);
+                        const uint32_t length = boardGetTileInfoResponse->read<uint32_t>();
+                        for(uint32_t j = 0; j < length; j++)
+                          info.menu.append(QString::fromLatin1(boardGetTileInfoResponse->read<QByteArray>()));
+                        Board::tileInfo.emplace_back(info);
+                      }
+                    }
+                  });
+              }
+
               if(!m_worldProperty->objectId().isEmpty())
                 getWorld();
               else

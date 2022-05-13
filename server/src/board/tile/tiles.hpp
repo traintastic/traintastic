@@ -23,8 +23,8 @@
 #ifndef TRAINTASTIC_SERVER_BOARD_TILE_TILES_HPP
 #define TRAINTASTIC_SERVER_BOARD_TILE_TILES_HPP
 
+#include <vector>
 #include "tile.hpp"
-#include "../../utils/makearray.hpp"
 #include "rail/straightrailtile.hpp"
 #include "rail/directioncontrolrailtile.hpp"
 #include "rail/onewayrailtile.hpp"
@@ -55,37 +55,17 @@
 
 struct Tiles
 {
+  struct Info
+  {
+    std::string_view classId;
+    TileId tileId;
+    uint8_t rotates;
+    std::vector<std::string_view> menu;
+  };
+
   static constexpr std::string_view classIdPrefix = "board_tile.";
 
-  static constexpr auto classList = makeArray(
-    StraightRailTile::classId,
-    OneWayRailTile::classId,
-    DirectionControlRailTile::classId,
-    Curve45RailTile::classId,
-    Curve90RailTile::classId,
-    Cross45RailTile::classId,
-    Cross90RailTile::classId,
-    Bridge45LeftRailTile::classId,
-    Bridge45RightRailTile::classId,
-    Bridge90RailTile::classId,
-    TurnoutLeft45RailTile::classId,
-    TurnoutLeft90RailTile::classId,
-    TurnoutLeftCurvedRailTile::classId,
-    TurnoutRight45RailTile::classId,
-    TurnoutRight90RailTile::classId,
-    TurnoutRightCurvedRailTile::classId,
-    TurnoutWyeRailTile::classId,
-    Turnout3WayRailTile::classId,
-    TurnoutSingleSlipRailTile::classId,
-    TurnoutDoubleSlipRailTile::classId,
-    Signal2AspectRailTile::classId,
-    Signal3AspectRailTile::classId,
-    BufferStopRailTile::classId,
-    SensorRailTile::classId,
-    BlockRailTile::classId,
-    TunnelRailTile::classId,
-    PushButtonTile::classId
-  );
+  static const std::vector<Info>& getInfo();
 
   static std::shared_ptr<Tile> create(World& world, std::string_view classId, std::string_view id = {});
 

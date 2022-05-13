@@ -42,7 +42,7 @@
 #include "../hardware/output/map/outputmap.hpp"
 #include "../hardware/output/map/outputmapitem.hpp"
 #include "../board/board.hpp"
-#include "../board/tile/tile.hpp"
+#include "../board/tile/tiles.hpp"
 
 
 
@@ -500,6 +500,21 @@ bool Session::processMessage(const Message& message)
         return true;
       }
       break;
+    }
+    case Message::Command::BoardGetTileInfo:
+    {
+      auto response = Message::newResponse(message.command(), message.requestId());
+      const auto& info = Tiles::getInfo();
+      response->write<uint32_t>(info.size());
+      for(const auto& item : info)
+      {
+        response->write(item.classId);
+        response->write(item.tileId);
+        response->write(item.rotates);
+        response->write(item.menu);
+      }
+      m_client->sendMessage(std::move(response));
+      return true;
     }
     case Message::Command::OutputMapGetItems:
     {

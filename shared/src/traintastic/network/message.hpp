@@ -84,6 +84,7 @@ class Message
 
       BoardGetTileData = 37,
       BoardTileDataChanged = 38,
+      BoardGetTileInfo = 43,
 
       OutputMapGetItems = 39,
       OutputMapGetOutputs = 40,
@@ -368,7 +369,13 @@ class Message
     template<typename T>
     void write(const std::vector<T>& value)
     {
-      if constexpr(std::is_trivially_copyable_v<T>)
+      if constexpr(std::is_same_v<T,std::string_view> || std::is_same_v<T,std::string>)
+      {
+        write(static_cast<Length>(value.size()));
+        for(const auto& v : value)
+          write(v);
+      }
+      else if constexpr(std::is_trivially_copyable_v<T>)
       {
         write(static_cast<Length>(value.size())); // number of elements, not bytes!
         const Length dataSize = value.size() * sizeof(T);

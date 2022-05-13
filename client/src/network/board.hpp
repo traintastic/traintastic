@@ -42,6 +42,16 @@ class Board final : public Object
     using TileDataMap = std::unordered_map<TileLocation, TileData, TileLocationHash>;
     using TileObjectMap = std::unordered_map<TileLocation, ObjectPtr, TileLocationHash>;
 
+    struct TileInfo
+    {
+      QString classId;
+      TileId tileId;
+      uint8_t rotates;
+      QStringList menu;
+    };
+
+    static std::vector<TileInfo> tileInfo;
+
   protected:
     TileDataMap m_tileData;
     TileObjectMap m_tileObjects;

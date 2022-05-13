@@ -24,6 +24,8 @@
 #include "connection.hpp"
 #include "callmethod.hpp"
 
+std::vector<Board::TileInfo> Board::tileInfo;
+
 Board::Board(std::shared_ptr<Connection> connection, Handle handle) :
   Object(std::move(connection), handle, classId),
   m_getTileDataRequestId{Connection::invalidRequestId}

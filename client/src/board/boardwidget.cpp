@@ -37,7 +37,6 @@
 #include "getboardcolorscheme.hpp"
 #include "tilepainter.hpp"
 #include "../mainwindow.hpp"
-#include "../network/board.hpp"
 #include "../network/connection.hpp"
 #include "../network/property.hpp"
 #include "../network/method.hpp"
@@ -46,50 +45,6 @@
 #include "../utils/enum.hpp"
 #include "../settings/boardsettings.hpp"
 #include <traintastic/utils/clamp.hpp>
-
-struct TileInfo
-{
-  QString classId;
-  TileId id;
-  uint8_t rotates;
-};
-
-const std::array<TileInfo, 34> tileInfo = {
-  TileInfo{QStringLiteral("board_tile.rail.straight"), TileId::RailStraight, 0x0F},
-  TileInfo{QStringLiteral("board_tile.rail.buffer_stop"), TileId::RailBufferStop, 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.tunnel"), TileId::RailTunnel, 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.one_way"), TileId::RailOneWay, 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.direction_control"), TileId::RailDirectionControl, 0x0F},
-  TileInfo{QStringLiteral(""), TileId::None, 0},
-  TileInfo{QStringLiteral("board_tile.rail.curve_45"), TileId::RailCurve45, 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.curve_90"), TileId::RailCurve90, 0xFF},
-  TileInfo{QStringLiteral(""), TileId::None, 0},
-  TileInfo{QStringLiteral("board_tile.rail.cross_45"), TileId::RailCross45, 0x0F},
-  TileInfo{QStringLiteral("board_tile.rail.cross_90"), TileId::RailCross90, 0x03},
-  TileInfo{QStringLiteral("board_tile.rail.bridge_45_left"), TileId::RailBridge45Left, 0x0F},
-  TileInfo{QStringLiteral("board_tile.rail.bridge_45_right"), TileId::RailBridge45Right, 0x0F},
-  TileInfo{QStringLiteral("board_tile.rail.bridge_90"), TileId::RailBridge90, 0x0F},
-  TileInfo{QStringLiteral(""), TileId::None, 0},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_left_45"), TileId::RailTurnoutLeft45, 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_left_90"), TileId::RailTurnoutLeft90, 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_left_curved"), TileId::RailTurnoutLeftCurved, 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_right_45"), TileId::RailTurnoutRight45, 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_right_90"), TileId::RailTurnoutRight90, 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_right_curved"), TileId::RailTurnoutRightCurved, 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_wye"), TileId::RailTurnoutWye, 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_3way"), TileId::RailTurnout3Way, 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_singleslip"), TileId::RailTurnoutSingleSlip, 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.turnout_doubleslip"), TileId::RailTurnoutDoubleSlip, 0xFF},
-  TileInfo{QStringLiteral(""), TileId::None, 0},
-  TileInfo{QStringLiteral("board_tile.rail.block"), TileId::RailBlock, 0x05},
-  TileInfo{QStringLiteral("board_tile.rail.sensor"), TileId::RailSensor, 0xFF},
-  TileInfo{QStringLiteral(""), TileId::None, 0},
-  TileInfo{QStringLiteral("board_tile.rail.signal_2_aspect"), TileId::RailSignal2Aspect, 0xFF},
-  TileInfo{QStringLiteral("board_tile.rail.signal_3_aspect"), TileId::RailSignal3Aspect, 0xFF},
-  TileInfo{QStringLiteral(""), TileId::None, 0},
-  TileInfo{QStringLiteral("board_tile.misc.push_button"), TileId::PushButton, 0x01},
-  TileInfo{QStringLiteral(""), TileId::None, 0}
-};
 
 inline TileRotate rotateCW(TileRotate rotate, uint8_t rotates)
 {
@@ -240,26 +195,21 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
 
   m_toolbarEdit->addSeparator();
   {
-    QVector<QAction*> actions;
-    for(size_t i = 0; i < tileInfo.size(); i++)
-    {
-      const TileInfo& info = tileInfo[i];
-      if(info.classId.isEmpty()) // next item group
+    auto addItems =
+      [this](const QVector<QAction*>& actions)
       {
-        if(actions.isEmpty())
-          continue;
-        else if(actions.length() == 1)
+        if(actions.length() == 1)
         {
           actions[0]->setCheckable(true);
           m_toolbarEdit->addAction(m_editActions->addAction(actions[0]));
           connect(actions[0], &QAction::triggered, this,
             [this, action=actions[0]]()
             {
-              actionSelected(&tileInfo[action->data().toInt()]);
+              actionSelected(&Board::tileInfo[action->data().toInt()]);
             });
           m_addActions.append(actions[0]);
         }
-        else // > 1
+        else if(actions.length() > 1)
         {
           QAction* action = m_editActions->addAction(m_toolbarEdit->addAction(""));
           m_addActions.append(action);
@@ -276,7 +226,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
                 action->setText(subAction->text());
                 action->setData(subAction->data());
                 action->setChecked(true);
-                actionSelected(&tileInfo[subAction->data().toInt()]);
+                actionSelected(&Board::tileInfo[subAction->data().toInt()]);
               });
           }
           action->setIcon(actions[0]->icon());
@@ -287,18 +237,29 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
           connect(action, &QAction::triggered, this,
             [this, action]()
             {
-              actionSelected(&tileInfo[action->data().toInt()]);
+              actionSelected(&Board::tileInfo[action->data().toInt()]);
             });
         }
+      };
+
+    //! \todo add multi level menu support (not yet used)
+    QStringList lastMenu;
+    QVector<QAction*> actions;
+    for(size_t i = 0; i < Board::tileInfo.size(); i++)
+    {
+      const auto& info = Board::tileInfo[i];
+      if(info.menu != lastMenu)
+      {
+        lastMenu = info.menu;
+        addItems(actions);
         actions.clear();
       }
-      else
-      {
-        QAction* act = new QAction(Theme::getIcon(info.classId), Locale::tr(QString("class_id:").append(info.classId)));
-        act->setData(static_cast<qint64>(i));
-        actions.append(act);
-      }
+
+      QAction* act = new QAction(Theme::getIcon(info.classId), Locale::tr(QString("class_id:").append(info.classId)));
+      act->setData(static_cast<qint64>(i));
+      actions.append(act);
     }
+    addItems(actions);
 
     if(auto* method = m_object->getMethod("add_tile"))
     {
@@ -465,7 +426,7 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
           m_boardArea->setMouseMoveHideTileLocation(l);
           m_tileRotateLast = tileData.rotate();
 
-          if(auto it = std::find_if(tileInfo.begin(), tileInfo.end(), [id=tileData.id()](const auto& v){ return v.id == id; }); it != tileInfo.end())
+          if(auto it = std::find_if(Board::tileInfo.begin(), Board::tileInfo.end(), [id=tileData.id()](const auto& v){ return v.tileId == id; }); it != Board::tileInfo.end())
             m_tileRotates = it->rotates;
         }
       }
@@ -536,7 +497,7 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
     }
     else // add
     {
-      const QString& classId = tileInfo[act->data().toInt()].classId;
+      const QString& classId = Board::tileInfo[act->data().toInt()].classId;
       const Qt::KeyboardModifiers kbMod = QApplication::keyboardModifiers();
       if(kbMod == Qt::NoModifier || kbMod == Qt::ControlModifier)
         m_object->addTile(x, y, m_boardArea->mouseMoveTileRotate(), classId, kbMod == Qt::ControlModifier,
@@ -645,7 +606,7 @@ void BoardWidget::rightClicked()
   }
 }
 
-void BoardWidget::actionSelected(const TileInfo* info)
+void BoardWidget::actionSelected(const Board::TileInfo* info)
 {
   m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::None);
   m_tileMoveStarted = false;
@@ -657,7 +618,7 @@ void BoardWidget::actionSelected(const TileInfo* info)
     validRotate(m_tileRotateLast, m_tileRotates);
     m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::AddTile);
     m_boardArea->setMouseMoveTileRotate(m_tileRotateLast);
-    m_boardArea->setMouseMoveTileId(info->id);
+    m_boardArea->setMouseMoveTileId(info->tileId);
   }
   else
     m_tileRotates = 0;

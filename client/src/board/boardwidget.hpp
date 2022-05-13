@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,8 +27,8 @@
 #include <memory>
 #include <traintastic/enum/tilerotate.hpp>
 #include "boardareawidget.hpp"
+#include "../network/board.hpp"
 
-class Board;
 class QToolBar;
 class QToolButton;
 class QActionGroup;
@@ -70,7 +70,7 @@ class BoardWidget : public QWidget
     uint8_t m_tileRotates = 0; //!< allowed rotate for add/move tile
     TileRotate m_tileRotateLast = TileRotate::Deg0; //!< Last used tile rotate for add/move
 
-    void actionSelected(const TileInfo* tile);
+    void actionSelected(const Board::TileInfo* tile);
     void keyPressEvent(QKeyEvent* event) override;
 
   protected slots:
