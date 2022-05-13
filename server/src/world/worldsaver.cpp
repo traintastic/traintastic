@@ -23,6 +23,8 @@
 #include "worldsaver.hpp"
 #include <fstream>
 #include <boost/uuid/uuid_io.hpp>
+#include <version.hpp>
+#include <traintastic/codename.hpp>
 #include "world.hpp"
 #include "../utils/sha1.hpp"
 #include "ctwwriter.hpp"
@@ -44,6 +46,20 @@ WorldSaver::WorldSaver(const World& world)
   }
 
   m_data["uuid"] = m_state["uuid"] = world.uuid.value();
+
+  // traintastic version info:
+  {
+    json version;
+    version["major"] = TRAINTASTIC_VERSION_MAJOR;
+    version["minor"] = TRAINTASTIC_VERSION_MINOR;
+    version["patch"] = TRAINTASTIC_VERSION_PATCH;
+
+    json traintastic;
+    traintastic["version"] = version;
+    traintastic["codename"] = TRAINTASTIC_CODENAME;
+
+    m_data["traintastic"] = m_state["traintastic"] = traintastic;
+  }
 
   {
     json objects = json::array();
