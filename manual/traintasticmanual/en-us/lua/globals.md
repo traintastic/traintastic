@@ -5,55 +5,74 @@ TODO
 
 ## Constants
 
-`CODENAME` - Traintastic release name or development branch, e.g. `"master"`.
+### `CODENAME` $badge:since:v0.1$
+Traintastic release name or development branch, e.g. `"master"`.
 
-`LUA_VERSION` - Lua version and copyright, e.g. `"Lua 5.3.3  Copyright (C) 1994-2016 Lua.org, PUC-Rio"`
+### `LUA_VERSION` $badge:since:v0.1$
+Lua version and copyright, e.g. `"Lua 5.3.3  Copyright (C) 1994-2016 Lua.org, PUC-Rio"`
 
-`VERSION` - Traintastic version, e.g. `"0.1.0"`
+### `VERSION` $badge:since:v0.1$
+Traintastic version, e.g. `"0.1.0"`
 
-`VERSION_MAJOR` - Traintastic major version, e.g. `0`
+### `VERSION_MAJOR` $badge:since:v0.1$
+Traintastic major version, e.g. `0`
 
-`VERSION_MINOR` - Traintastic minor version, e.g. `1`
+### `VERSION_MINOR` $badge:since:v0.1$
+Traintastic minor version, e.g. `1`
 
-`VERSION_PATCH` - Traintastic patch level, e.g. `0`
+### `VERSION_PATCH` $badge:since:v0.1$
+Traintastic patch level, e.g. `0`
+
+
+## Variables
+
+### `world` $badge:since:v0.1$
+The global [world object](object/world.md).
 
 
 ## Functions
 
-`assert()`
+### `assert()` $badge:since:v0.1$ $badge:lua$
+TODO
 
-`get_class()`
+### `ipairs()` $badge:since:v0.1$ $badge:lua$
+TODO
 
-`ipairs()`
+### `next()` $badge:since:v0.1$ $badge:lua$
+TODO
 
-`next()`
+### `pairs()` $badge:since:v0.1$ $badge:lua$
+TODO
 
-`pairs()`
+### `tonumber()` $badge:since:v0.1$ $badge:lua$
+TODO
 
-`tonumber()`
+### `tostring()` $badge:since:v0.1$ $badge:lua$
+TODO
 
-`tostring()`
-
-`type()`
-
-
-## Objects
-
-`log`
-
-`world`
+### `type()` $badge:since:v0.1$
+TODO
 
 
-## ???
+## Libraries
 
-`class`
+### `class` $badge:since:v0.1$
+The [class library](library/class.md).
 
-`enum`
+### `enum` $badge:since:v0.1$
+The [enum library](library/enum.md).
 
-`math`
+### `log` $badge:since:v0.1$
+The [log library](library/log.md).
 
-`set`
+### `math` $badge:since:v0.1$
+The [math library](library/math.md).
 
-`string`
+### `set` $badge:since:v0.1$
+The [set library](library/set.md).
 
-`table`
+### `string` $badge:since:v0.1$
+The [string library](library/string.md).
+
+### `table` $badge:since:v0.1$
+The [table library](library/table.md).

@@ -7,9 +7,9 @@ This appendix describes Traintastic's LocoNet implementation details.
 ## Supported LocoNet command stations {#loconet-command-stations}
 
 The following LocoNet command stations are verified to work with Traintastic:
-- Digikeijs DR5000
-- Uhlenblock Intellibox 65000
-- Uhlenbrock IB-COM 65071
+- [Digikeijs DR5000](supportedhardware/digikeijs/dr5000.md)
+- [Uhlenblock Intellibox 65000](supportedhardware/uhlenbrock/intellibox.md)
+- [Uhlenbrock IB-COM 65071](supportedhardware/uhlenbrock/ibcom.md)
 
 LocoNet command stations not listed here will probably work but aren't tested.
 
@@ -17,7 +17,7 @@ LocoNet command stations not listed here will probably work but aren't tested.
 
 The following LocoNet interfaces are verified to work with Traintastic:
 - RoSoft LocoNet interface
-- Uhlenbrock LocoNet interface 63120
+- [Uhlenbrock LocoNet interface 63120](supportedhardware/uhlenbrock/loconetinterface63120.md)
 
 LocoNet interfaces not listed here might work but aren't tested.
 

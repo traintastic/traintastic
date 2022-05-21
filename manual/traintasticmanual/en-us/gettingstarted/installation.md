@@ -25,9 +25,9 @@ Click *Yes* to allow running the installer.
 ### Step 4: Select language
 ![](../../gfx/en-us/installation/traintastic-setup-4.png)
 
-Select language for the installation wizard and click *Ok*.
+Select language for the installation wizard and click *OK*.
 
-### Step 5: Licence agreement
+### Step 5: License agreement
 ![](../../gfx/en-us/installation/traintastic-setup-5.png)
 
 Select *I accept the agreement* and click *Next*.
@@ -41,7 +41,7 @@ Select *Client and Server* if this computer will control the layout or select *C
 ![](../../gfx/en-us/installation/traintastic-setup-7.png)
 
 Uncheck *Create a desktop shortcut* if you don't want desktop shortcuts to start Traintastic.
-Firewall rules will be added to allow other pc's and device to connect to Traintastic, can be unchecked if not nessacary.
+Firewall rules will be added to allow other PC's and device to connect to Traintastic, can be unchecked if not necessary.
 Then click *Next*.
 
 ### Step 8: Ready for installation

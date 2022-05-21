@@ -30,6 +30,20 @@
   },
   {
     "type": "chapter",
+    "markdown": "hardware.md",
+    "pages": [
+      {
+        "markdown": "hardware/interface.md",
+        "pages": [
+          {
+            "markdown": "hardware/interface/loconet.md"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "chapter",
     "markdown": "trainsandvehicles.md",
     "pages": [
       {
@@ -60,80 +74,7 @@
   },
   {
     "type": "chapter",
-    "markdown": "lua.md",
-    "code": "lua",
-    "pages": [
-      {
-        "markdown": "lua/globals.md",
-        "code": "lua"
-      },
-      {
-        "markdown": "lua/enums.md",
-        "code": "lua",
-        "pages": [
-          {
-            "markdown": "lua/enum/decoderprotocol.md",
-            "code": "lua"
-          },
-          {
-            "markdown": "lua/enum/direction.md",
-            "code": "lua"
-          },
-          {
-            "markdown": "lua/enum/directioncontrolstate.md",
-            "code": "lua"
-          },
-          {
-            "markdown": "lua/enum/turnoutposition.md",
-            "code": "lua"
-          },
-          {
-            "markdown": "lua/enum/signalaspect.md",
-            "code": "lua"
-          },
-          {
-            "markdown": "lua/enum/worldevent.md",
-            "code": "lua"
-          },
-          {
-            "markdown": "lua/enum/worldscale.md",
-            "code": "lua"
-          }
-        ]
-      },
-      {
-        "markdown": "lua/sets.md",
-        "code": "lua",
-        "pages": [
-          {
-            "markdown": "lua/set/worldstate.md",
-            "code": "lua"
-          }
-        ]
-      },
-      {
-        "markdown": "lua/objects.md",
-        "code": "lua",
-        "pages": [
-          {
-            "markdown": "lua/object/board.md",
-            "code": "lua"
-          },
-          {
-            "markdown": "lua/object/log.md",
-            "code": "lua"
-          },
-          {
-            "markdown": "lua/object/world.md",
-            "code": "lua"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "type": "chapter",
-    "markdown": "commandlineoptions.md"
+    "markdown": "scripting.md"
   },
   {
     "type": "appendix",
@@ -164,7 +105,13 @@
         "markdown": "supportedhardware/traintastic/usbxpressnetinterface.md"
       },
       {
+        "markdown": "supportedhardware/uhlenbrock/ibcom.md"
+      },
+      {
         "markdown": "supportedhardware/uhlenbrock/intellibox.md"
+      },
+      {
+        "markdown": "supportedhardware/uhlenbrock/loconetinterface63120.md"
       }
     ]
   },
@@ -202,5 +149,111 @@
         "markdown": "messages/debug.md"
       }
     ]
+  },
+  {
+    "type": "appendix",
+    "markdown": "lua.md",
+    "code": "lua",
+    "pages": [
+      {
+        "markdown": "lua/globals.md",
+        "code": "lua"
+      },
+      {
+        "markdown": "lua/library/class.md",
+        "code": "lua"
+      },
+      {
+        "markdown": "lua/library/enum.md",
+        "code": "lua",
+        "pages": [
+          {
+            "markdown": "lua/library/enum/decoderprotocol.md",
+            "code": "lua"
+          },
+          {
+            "markdown": "lua/library/enum/direction.md",
+            "code": "lua"
+          },
+          {
+            "markdown": "lua/library/enum/directioncontrolstate.md",
+            "code": "lua"
+          },
+          {
+            "markdown": "lua/library/enum/signalaspect.md",
+            "code": "lua"
+          },
+          {
+            "markdown": "lua/library/enum/turnoutposition.md",
+            "code": "lua"
+          },
+          {
+            "markdown": "lua/library/enum/worldevent.md",
+            "code": "lua"
+          },
+          {
+            "markdown": "lua/library/enum/worldscale.md",
+            "code": "lua"
+          }
+        ]
+      },
+      {
+        "markdown": "lua/library/log.md",
+        "code": "lua"
+      },
+      {
+        "markdown": "lua/library/math.md",
+        "code": "lua"
+      },
+      {
+        "markdown": "lua/library/set.md",
+        "code": "lua",
+        "pages": [
+          {
+            "markdown": "lua/library/set/worldstate.md",
+            "code": "lua"
+          }
+        ]
+      },
+      {
+        "markdown": "lua/library/string.md",
+        "code": "lua"
+      },
+      {
+        "markdown": "lua/library/table.md",
+        "code": "lua"
+      },
+      {
+        "markdown": "lua/objects.md",
+        "code": "lua",
+        "pages": [
+          {
+            "markdown": "lua/object/board.md",
+            "code": "lua"
+          },
+          {
+            "markdown": "lua/object/input.md",
+            "code": "lua"
+          },
+          {
+            "markdown": "lua/object/objectlist.md",
+            "code": "lua"
+          },
+          {
+            "markdown": "lua/object/world.md",
+            "code": "lua"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "appendix",
+    "markdown": "luaexamples.md",
+    "code": "lua"
+  },
+  {
+    "type": "appendix",
+    "markdown": "commandlineoptions.md"
   }
 ]

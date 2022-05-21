@@ -10,8 +10,8 @@ When Traintastic server is running the Traintastic client can be started.
 
 When the Traintastic client is started a *connect to server* dialog will appear.
 The Traintastic client will automatically search the local network for running Traintastic servers.
-Usally there is only one Traintastic server running, connect to it by clicking on the *Connect* button.
-When successful the dialog will disapear and the main application dialog becomes active.
+Usually there is only one Traintastic server running, connect to it by clicking on the *Connect* button.
+When successful the dialog will disappear and the main application dialog becomes active.
 
 ## Main menu
 
@@ -67,9 +67,9 @@ Disable all sound functions, this requires that sound or mute decoder functions 
 
 ### ![](../../gfx/toolbar/no_smoke.png) No smoke
 
-Disable all smoke generators, this requires that all smoke generater decoder functions are set to the *Smoke* type, see [decoder function function](../object/decoderfunction.md#decoder-function-function).
+Disable all smoke generators, this requires that all smoke generator decoder functions are set to the *Smoke* type, see [decoder function function](../object/decoderfunction.md#decoder-function-function).
 
 ### Edit mode
 
 Traintastic as a special *edit mode*, when the world is not in edit mode most settings that define the layout can't be changed.
-This prevents making accidential changes during layout operation. Changing some settings also also requires the world to be stopped.
+This prevents making accidental changes during layout operation. Changing some settings also also requires the world to be stopped.

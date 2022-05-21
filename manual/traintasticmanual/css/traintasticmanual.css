@@ -121,9 +121,16 @@
 
 .content h2,
 .content h3,
-.content h4
+.content h4,
+.content h5,
+.content h6
 {
   margin: 1.5em 0 0.5em 0;
+}
+
+.content p
+{
+  margin-top: 0.5em;
 }
 
 .content table
@@ -167,6 +174,39 @@
 {
   line-height: 80%;
   font-size: 80%;
+}
+
+/** Badge ********************************************************************/
+span.badge
+{
+  border-radius: .6rem;
+  display: inline-block;
+  font-size: small;
+  font-weight: 700;
+  line-height: 1;
+  margin-left: 1rem;
+  padding: .25em .4em;
+  text-align: center;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+
+span.badge:first-child,
+span.badge ~ span.badge
+{
+  margin-left: 0;
+}
+
+span.badge.badge-lua
+{
+  background-color: #030380;
+  color: #fff;
+}
+
+span.badge.badge-since
+{
+  background-color: #28a745;
+  color: #fff;
 }
 
 /** Lua **********************************************************************/

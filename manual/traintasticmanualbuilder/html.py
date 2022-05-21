@@ -10,7 +10,7 @@ class HTMLBuilder(Builder):
 
     def _file_to_html(self, page):
         with codecs.open(os.path.join(self._language_dir, page['markdown']), 'r', 'utf-8') as md:
-            html = cmarkgfm.github_flavored_markdown_to_html(md.read())
+            html = cmarkgfm.github_flavored_markdown_to_html(md.read(), options=cmarkgfm.Options.CMARK_OPT_UNSAFE)
 
         # parse id
         html = re.sub(r'<h([1-6])([^>]*)>(.*) {#([a-z0-9-]+)}</h\1>', r'<h\1\2 id="\4">\3</h\1>', html)
@@ -31,6 +31,10 @@ class HTMLBuilder(Builder):
                 m.group(1) + m.group(3) +
                 '<figcaption>' + m.group(2) + '</figcaption></figure>',
                 html)
+
+        # handle badges
+        html = html.replace('$badge:lua$', '<span class="badge badge-lua">Lua</span>')
+        html = re.sub(r'\$badge:since:v([0-9]+\.[0-9]+(|\.[0-9]+))\$', r'<span class="badge badge-since">&ge; \1\2</span>', html)
 
         return html
 

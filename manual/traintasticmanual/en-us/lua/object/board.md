@@ -2,13 +2,17 @@
 
 ## Properties
 
-`string id`
+### `id`
+Object id, unique within the world.
 
-`string name`
+### `name`
+Input name.
+
 
 ## Methods
 
 *None.*
+
 
 ## Events
 
