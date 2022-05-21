@@ -102,6 +102,29 @@ TODO
 
 TODO
 
+## E2013: Serial port set baudrate failed (*reason*) {#e2013}
+TODO
+
+## E2014: Serial port set data bits failed (*reason*) {#e2014}
+TODO
+
+## E2015: Serial port set stop bits failed (*reason*) {#e2015}
+TODO
+
+## E2016: Serial port set parity failed (*reason*) {#e2016}
+TODO
+
+## E2017: Serial port set flow control failed (*reason*) {#e2017}
+TODO
+
+## E2018: Timeout, no echo within *number*ms {#e2018}
+TODO
+
+## E2019: Timeout, no response within *number*ms {#e2019}
+TODO
+
+## E9001: *error* (During execution of *name* event handler) {#e9001}
+TODO
 
 ## E9999: *message* {#e9999}
 

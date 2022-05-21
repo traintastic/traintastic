@@ -37,6 +37,17 @@ TODO
 
 TODO
 
+## C1008: Creating backup directory failed (*reason*) {#c1008}
+TODO
+
+## C1009: Creating settings backup failed (*reason*) {#c1009}
+TODO
+
+## C1010: Exporting world failed (*reason*) {#c1010}
+TODO
+
+## C1011: Importing world failed (*reason*) {#c1011}
+TODO
 
 ## C2001: Address already used at #*object* {#c2001}
 
@@ -56,6 +67,9 @@ TODO
 
 **Solution:** Change the locomotive decoder address.
 
+
+## C2004: Can't get free slot {#c2004}
+TODO
 
 ## C9999: *message* {#c9999}
 

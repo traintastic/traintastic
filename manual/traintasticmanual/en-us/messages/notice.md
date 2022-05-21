@@ -112,7 +112,23 @@ TODO
 
 TODO
 
+## N1023: Simulation: disabled {#n1023}
+TODO
 
+## N1024: Simulation: enabled {#n1024}
+TODO
+
+## N1025: Exported world successfully {#n1025}
+TODO
+
+## N1026: Imported world successfully {#n1026}
+TODO
+
+## N2001: Simulation not supported {#n2001}
+TODO
+
+## N9001: Starting script {#n9001}
+TODO
 
 ## N9999: *message* {#n9999}
 

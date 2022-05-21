@@ -32,6 +32,14 @@ TODO
 
 TODO
 
+## I2002: Hardware type: *type* {#i2002}
+TODO
+
+## I2003: Firmware version: *version* {#i2003}
+TODO
+
+## I9001: Stopped script {#i9001}
+TODO
 
 ## I9999: *message* {#i9999}
 
