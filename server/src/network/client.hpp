@@ -23,23 +23,13 @@
 #ifndef TRAINTASTIC_SERVER_NETWORK_CLIENT_HPP
 #define TRAINTASTIC_SERVER_NETWORK_CLIENT_HPP
 
-//#include "Message.hpp"
-//#include "MessageQueue.hpp"
-//#include <thread>
 #include <memory>
 #include <queue>
-//#include <deque>
-//#include <list>
-//#include <condition_variable>
 #include <boost/asio.hpp>
-//#include "connection-callback.hpp"
-//#include "status.hpp"
-//#include <chrono>
-//#include <cmath>
 #include "../core/objectptr.hpp"
 #include <traintastic/network/message.hpp>
 
-class Traintastic;
+class Server;
 class Session;
 
 class Client : public std::enable_shared_from_this<Client>
@@ -49,8 +39,7 @@ class Client : public std::enable_shared_from_this<Client>
   protected:
     using ObjectHandle = uint32_t;
 
-    Traintastic& m_server;
-    boost::asio::io_service::strand m_strand;
+    Server& m_server;
     boost::asio::ip::tcp::socket m_socket;
     const std::string m_id;
     struct
@@ -62,8 +51,6 @@ class Client : public std::enable_shared_from_this<Client>
     std::queue<std::unique_ptr<Message>> m_writeQueue;
     bool m_authenticated;
     std::shared_ptr<Session> m_session;
-    //ObjectHandle m_lastObjectHandle;
-    //std::map<ObjectHandle,ObjectPtr> m_objects;
 
     void doReadHeader();
     void doReadData();
@@ -76,7 +63,7 @@ class Client : public std::enable_shared_from_this<Client>
     void disconnect();
 
   public:
-    Client(Traintastic& server, const std::string& id, boost::asio::ip::tcp::socket socket);
+    Client(Server& server, std::string id, boost::asio::ip::tcp::socket socket);
     virtual ~Client();
 
     void start();

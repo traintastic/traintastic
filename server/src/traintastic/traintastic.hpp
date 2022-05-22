@@ -35,13 +35,10 @@
 #include "../world/world.hpp"
 #include "../world/worldlist.hpp"
 
-class Client;
-class Message;
+class Server;
 
 class Traintastic final : public Object
 {
-  friend class Client;
-
   public:
     enum RunStatus
     {
@@ -53,26 +50,13 @@ class Traintastic final : public Object
   private:
     bool m_restart;
     const std::filesystem::path m_dataDir;
-    boost::asio::io_context m_ioContext;
-    boost::asio::ip::tcp::acceptor m_acceptor;
-    boost::asio::ip::tcp::socket m_socketTCP;
-    boost::asio::ip::udp::socket m_socketUDP;
-    std::array<char, 8> m_udpBuffer;
-    boost::asio::ip::udp::endpoint m_remoteEndpoint;
-    std::list<std::shared_ptr<Client>> m_clients;
+    std::shared_ptr<Server> m_server;
 
     bool start();
     void stop();
 
     void loadWorldUUID(const boost::uuids::uuid& uuid);
     void loadWorldPath(const std::filesystem::path& path);
-
-    void doReceive();
-    static std::unique_ptr<Message> processMessage(const Message& message);
-    void doAccept();
-
-  protected:
-    void clientGone(const std::shared_ptr<Client>& client);
 
   public:
     CLASS_ID("traintastic");
@@ -91,11 +75,9 @@ class Traintastic final : public Object
     Method<void()> shutdown;
 
     Traintastic(const std::filesystem::path& dataDir);
-    ~Traintastic() final;
+    ~Traintastic() final = default;
 
     std::string getObjectId() const final { return std::string(id); }
-
-    boost::asio::io_context& ioContext() { return m_ioContext; }
 
     const std::filesystem::path& dataDir() const { return m_dataDir; }
     std::filesystem::path dataBackupDir() const { return m_dataDir / ".backup"; }

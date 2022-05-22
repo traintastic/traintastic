@@ -21,21 +21,24 @@
  */
 
 #include "client.hpp"
-//#include "console.hpp"
-//#include "objectregistry.hpp"
+#include "server.hpp"
 #include "../traintastic/traintastic.hpp"
 #include "../core/eventloop.hpp"
 #include "session.hpp"
 #include "../log/log.hpp"
 
-Client::Client(Traintastic& server, const std::string& id, boost::asio::ip::tcp::socket socket) :
-  m_server{server},
-  m_strand{Traintastic::instance->ioContext()},
-  m_socket(std::move(socket)),
-  m_id{id},
-  m_authenticated{false}//,
-  //m_lastObjectHandle{0}
+#ifndef NDEBUG
+  #define IS_SERVER_THREAD (std::this_thread::get_id() == m_server.threadId())
+#endif
+
+Client::Client(Server& server, std::string id, boost::asio::ip::tcp::socket socket)
+  : m_server{server}
+  , m_socket(std::move(socket))
+  , m_id{std::move(id)}
+  , m_authenticated{false}
 {
+  assert(IS_SERVER_THREAD);
+
   m_socket.set_option(boost::asio::socket_base::linger(true, 0));
   m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
 
@@ -44,20 +47,22 @@ Client::Client(Traintastic& server, const std::string& id, boost::asio::ip::tcp:
 
 Client::~Client()
 {
+  assert(IS_SERVER_THREAD);
+
   stop();
 }
 
 void Client::start()
 {
-  m_strand.post(
-    [this]()
-    {
-      doReadHeader();
-    });
+  assert(IS_SERVER_THREAD);
+
+  doReadHeader();
 }
 
 void Client::stop()
 {
+  assert(IS_SERVER_THREAD);
+
   m_session.reset();
 
   if(!m_socket.is_open())
@@ -72,47 +77,54 @@ void Client::stop()
 
 void Client::doReadHeader()
 {
-  auto self(shared_from_this());
+  assert(IS_SERVER_THREAD);
+
   boost::asio::async_read(m_socket,
     boost::asio::buffer(&m_readBuffer.header, sizeof(m_readBuffer.header)),
-      m_strand.wrap(
-        [this, self](const boost::system::error_code& ec, std::size_t /*bytesReceived*/)
+      [this, weak=weak_from_this()](const boost::system::error_code& ec, std::size_t /*bytesReceived*/)
+      {
+        if(weak.expired())
+          return;
+
+        if(!ec)
         {
-          if(!ec)
+          m_readBuffer.message.reset(new Message(m_readBuffer.header));
+          if(m_readBuffer.message->dataSize() == 0)
           {
-            m_readBuffer.message.reset(new Message(m_readBuffer.header));
-            if(m_readBuffer.message->dataSize() == 0)
-            {
-              if(m_readBuffer.message->command() != Message::Command::Ping)
-                EventLoop::call(&Client::processMessage, this, m_readBuffer.message);
-              else
-                {} // TODO: ping hier replyen
-              m_readBuffer.message.reset();
-              doReadHeader();
-            }
+            if(m_readBuffer.message->command() != Message::Command::Ping)
+              EventLoop::call(&Client::processMessage, this, m_readBuffer.message);
             else
-              doReadData();
+              {} // TODO: ping hier replyen
+            m_readBuffer.message.reset();
+            doReadHeader();
           }
-          else if(ec == boost::asio::error::eof || ec == boost::asio::error::connection_aborted || ec == boost::asio::error::connection_reset)
-            EventLoop::call(&Client::connectionLost, this);
-          else if(ec != boost::asio::error::operation_aborted)
-            EventLoop::call(
-              [self, ec]()
-              {
-                Log::log(self->m_id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
-                self->disconnect();
-              });
-        }));
+          else
+            doReadData();
+        }
+        else if(ec == boost::asio::error::eof || ec == boost::asio::error::connection_aborted || ec == boost::asio::error::connection_reset)
+        {
+          connectionLost();
+        }
+        else if(ec != boost::asio::error::operation_aborted)
+        {
+          Log::log(m_id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
+          disconnect();
+        }
+      });
 }
 
 void Client::doReadData()
 {
-  auto self(shared_from_this());
+  assert(IS_SERVER_THREAD);
+
   boost::asio::async_read(m_socket,
     boost::asio::buffer(m_readBuffer.message->data(), m_readBuffer.message->dataSize()),
-      m_strand.wrap(
-        [this, self](const boost::system::error_code& ec, std::size_t /*bytesReceived*/)
+      //m_strand.wrap(
+        [this, weak=weak_from_this()](const boost::system::error_code& ec, std::size_t /*bytesReceived*/)
         {
+          if(weak.expired())
+            return;
+
           if(!ec)
           {
             if(m_readBuffer.message->command() != Message::Command::Ping)
@@ -123,42 +135,45 @@ void Client::doReadData()
             doReadHeader();
           }
           else if(ec == boost::asio::error::eof || ec == boost::asio::error::connection_aborted || ec == boost::asio::error::connection_reset)
-            EventLoop::call(&Client::connectionLost, this);
+          {
+            connectionLost();
+          }
           else if(ec != boost::asio::error::operation_aborted)
-            EventLoop::call(
-              [self, ec]()
-              {
-                Log::log(self->m_id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
-                self->disconnect();
-              });
-        }));
+          {
+            Log::log(m_id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
+            disconnect();
+          }
+        });
 }
 
 void Client::doWrite()
 {
-  auto self(shared_from_this());
+  assert(IS_SERVER_THREAD);
+
   boost::asio::async_write(m_socket, boost::asio::buffer(**m_writeQueue.front(), m_writeQueue.front()->size()),
-    m_strand.wrap(
-      [this, self](const boost::system::error_code& ec, std::size_t /*bytesTransferred*/)
+    [this, weak=weak_from_this()](const boost::system::error_code& ec, std::size_t /*bytesTransferred*/)
+    {
+      if(weak.expired())
+        return;
+
+      if(!ec)
       {
-        if(!ec)
-        {
-          m_writeQueue.pop();
-          if(!m_writeQueue.empty())
-            doWrite();
-        }
-        else if(ec != boost::asio::error::operation_aborted)
-          EventLoop::call(
-            [self, ec]()
-            {
-              Log::log(self->m_id, LogMessage::E1006_SOCKET_WRITE_FAILED_X, ec);
-              self->disconnect();
-            });
-      }));
+        m_writeQueue.pop();
+        if(!m_writeQueue.empty())
+          doWrite();
+      }
+      else if(ec != boost::asio::error::operation_aborted)
+      {
+        Log::log(m_id, LogMessage::E1006_SOCKET_WRITE_FAILED_X, ec);
+        disconnect();
+      }
+    });
 }
 
 void Client::processMessage(const std::shared_ptr<Message> message)
 {
+  assert(isEventLoopThread());
+
   if(m_authenticated && m_session)
   {
     if(m_session->processMessage(*message))
@@ -281,7 +296,9 @@ void Client::processMessage(const std::shared_ptr<Message> message)
 
 void Client::sendMessage(std::unique_ptr<Message> message)
 {
-  m_strand.post(
+  assert(isEventLoopThread());
+
+  m_server.m_ioContext.post(
     [this, msg=std::make_shared<std::unique_ptr<Message>>(std::move(message))]()
     {
       const bool wasEmpty = m_writeQueue.empty();
@@ -293,12 +310,16 @@ void Client::sendMessage(std::unique_ptr<Message> message)
 
 void Client::connectionLost()
 {
+  assert(IS_SERVER_THREAD);
+
   Log::log(m_id, LogMessage::I1004_CONNECTION_LOST);
   disconnect();
 }
 
 void Client::disconnect()
 {
+  assert(IS_SERVER_THREAD);
+
   stop();
   m_server.clientGone(shared_from_this());
 }

@@ -25,7 +25,7 @@
 
 #include <queue>
 #include <mutex>
-#include <thread>
+#include <atomic>
 #include <condition_variable>
 #include <functional>
 #include <iostream>
@@ -34,47 +34,34 @@
 class EventLoop
 {
   private:
-    inline static EventLoop* s_instance;
-    std::queue<std::function<void()>> m_queue;
-    std::mutex m_queueMutex;
-    std::condition_variable m_condition;
-    bool m_run;
-    std::thread m_thread;
+    inline static std::queue<std::function<void()>> s_queue;
+    inline static std::mutex s_queueMutex;
+    inline static std::condition_variable s_condition;
+    inline static std::atomic<bool> s_run;
 
-    EventLoop() :
-      m_run{true},
-      m_thread(&EventLoop::run, this)
-    {
-    }
+    EventLoop() = default;
+    ~EventLoop() = default;
 
     EventLoop(const EventLoop&) = delete;
+    EventLoop& operator =(const EventLoop&) = delete;
 
-    ~EventLoop()
+  public:
+    inline static const std::thread::id threadId = std::this_thread::get_id();
+
+    static void exec()
     {
-    }
+      std::unique_lock<std::mutex> lock(s_queueMutex);
 
-    void add(std::function<void()>&& f)
-    {
-      std::lock_guard<std::mutex> lock(m_queueMutex);
-      m_queue.emplace(f);
-      m_condition.notify_one();
-    }
-
-    void run()
-    {
-      setThreadName("eventloop");
-
-      std::unique_lock<std::mutex> lock(m_queueMutex);
-
-      while(m_run)
+      s_run = true;
+      while(s_run)
       {
-        if(m_queue.empty())
-          m_condition.wait(lock, [this]{ return !m_queue.empty(); });
+        if(s_queue.empty())
+          s_condition.wait(lock, []{ return !s_queue.empty(); });
 
-        if(m_queue.empty())
+        if(s_queue.empty())
           continue; // a suspisius wakeup may occur
 
-        std::function<void()>& f{m_queue.front()};
+        std::function<void()>& f{s_queue.front()};
 
         lock.unlock();
 
@@ -89,34 +76,27 @@ class EventLoop
 
         lock.lock();
 
-        m_queue.pop();
+        s_queue.pop();
       }
-    }
-
-    void exit()
-    {
-      add([this](){ m_run = false; });
-      m_thread.join();
-    }
-
-  public:
-    static void start()
-    {
-      s_instance = new EventLoop();
     }
 
     static void stop()
     {
-      s_instance->exit();
-      delete s_instance;
-      s_instance = nullptr;
+      s_run = false;
     }
 
     template<typename _Callable, typename... _Args>
     inline static void call(_Callable&& __f, _Args&&... __args)
     {
-      s_instance->add(std::bind(__f, __args...));
+      std::lock_guard<std::mutex> lock(s_queueMutex);
+      s_queue.emplace(std::bind(__f, __args...));
+      s_condition.notify_one();
     }
 };
+
+inline bool isEventLoopThread()
+{
+  return std::this_thread::get_id() == EventLoop::threadId;
+}
 
 #endif

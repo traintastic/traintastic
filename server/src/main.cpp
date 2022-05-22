@@ -25,7 +25,6 @@
   #include <csignal>
 #endif
 #include "options.hpp"
-#include "core/eventloop.hpp"
 #include "traintastic/traintastic.hpp"
 #include "log/log.hpp"
 #include <traintastic/locale/locale.hpp>
@@ -46,12 +45,8 @@ void signalHandler(int signum)
       signal(SIGINT, SIG_DFL);
       signal(SIGQUIT, SIG_DFL);
 
-      EventLoop::call(
-        [signum]()
-        {
-          Log::log(*Traintastic::instance, LogMessage::N1001_RECEIVED_SIGNAL_X, std::string_view{strsignal(signum)});
-          Traintastic::instance->exit();
-        });
+      Log::log(*Traintastic::instance, LogMessage::N1001_RECEIVED_SIGNAL_X, std::string_view{strsignal(signum)});
+      Traintastic::instance->exit();
       break;
     }
   }
@@ -174,7 +169,6 @@ int main(int argc, char* argv[])
         Log::disableFileLogger();
     }
 
-    EventLoop::start();
 #ifdef WIN32
     if(options.tray)
       Windows::TrayIcon::add();
@@ -209,7 +203,6 @@ int main(int argc, char* argv[])
     if(options.tray)
       Windows::TrayIcon::remove();
 #endif
-    EventLoop::stop();
   }
   while(restart);
 

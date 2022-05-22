@@ -25,6 +25,7 @@
 #include <iomanip>
 #include "../core/attributes.hpp"
 #include "traintastic.hpp"
+#include "../network/server.hpp"
 #include "../log/log.hpp"
 #include "../utils/category.hpp"
 
@@ -47,7 +48,7 @@ Settings::PreStart Settings::getPreStartSettings(const std::filesystem::path& pa
 Settings::Settings(const std::filesystem::path& path)
   : m_filename{path / filename}
   , localhostOnly{this, "localhost_only", true, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
-  , port{this, "port", defaultPort, PropertyFlags::ReadWrite, [this](const uint16_t& /*value*/){ saveToFile(); }}
+  , port{this, "port", Server::defaultPort, PropertyFlags::ReadWrite, [this](const uint16_t& /*value*/){ saveToFile(); }}
   , discoverable{this, "discoverable", true, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
   , lastWorld{this, "last_world", "", PropertyFlags::ReadWrite | PropertyFlags::Internal, [this](const std::string& /*value*/){ saveToFile(); }}
   , loadLastWorldOnStartup{this, "load_last_world_on_startup", true, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
