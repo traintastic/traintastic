@@ -320,6 +320,25 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
         connect(m_actionOutputKeyboardChannel, &QAction::triggered, button, &QToolButton::showMenu);
     }
   }
+
+  {
+    QAction* startAll = nullptr;
+    if(Method* method = m_object->getMethod("start_all"))
+      startAll = new MethodAction(Theme::getIcon("run"), *method);
+
+    QAction* stopAll = nullptr;
+    if(Method* method = m_object->getMethod("stop_all"))
+      stopAll = new MethodAction(Theme::getIcon("stop"), *method);
+
+    if(startAll || stopAll)
+    {
+      m_toolbar->addSeparator();
+      if(startAll)
+        m_toolbar->addAction(startAll);
+      if(stopAll)
+        m_toolbar->addAction(stopAll);
+    }
+  }
 }
 
 ObjectListWidget::~ObjectListWidget()
