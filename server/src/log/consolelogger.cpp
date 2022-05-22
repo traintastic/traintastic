@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,6 +38,8 @@ void ConsoleLogger::write(const std::chrono::system_clock::time_point& time, std
 {
   const auto tm = std::chrono::system_clock::to_time_t(time);
   const auto us = std::chrono::duration_cast<std::chrono::microseconds>(time.time_since_epoch()) % 1000000;
+
+  std::lock_guard<std::mutex> lock(m_streamMutex);
 
   std::ostream& ss = (isErrorLogMessage(code) || isCriticalLogMessage(code) || isFatalLogMessage(code)) ? std::cerr : std::cout;
   ss

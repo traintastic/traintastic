@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,9 +38,9 @@ class MemoryLogger : public Logger
       LogMessage message;
       std::vector<std::string>* args;
 
-      Log(std::chrono::system_clock::time_point _time, std::string_view _objectId, LogMessage _message, std::vector<std::string>* _args = nullptr)
-        : time{_time}
-        , objectId{_objectId}
+      Log(std::chrono::system_clock::time_point _time, std::string _objectId, LogMessage _message, std::vector<std::string>* _args = nullptr)
+        : time{std::move(_time)}
+        , objectId{std::move(_objectId)}
         , message{_message}
         , args{_args}
       {
@@ -51,6 +51,7 @@ class MemoryLogger : public Logger
     std::vector<Log> m_logs;
     size_t m_sizeMax;
 
+    void add(std::chrono::system_clock::time_point time, std::string objectId, LogMessage message, std::vector<std::string>* args);
     uint32_t cleanUp();
 
   public:

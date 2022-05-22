@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@
  */
 
 #include "memorylogger.hpp"
+#include "../core/eventloop.hpp"
 
 MemoryLogger::MemoryLogger(uint32_t sizeMax)
   : m_sizeMax{sizeMax}
@@ -29,14 +30,29 @@ MemoryLogger::MemoryLogger(uint32_t sizeMax)
 
 void MemoryLogger::log(const std::chrono::system_clock::time_point& time, std::string_view objectId, LogMessage message)
 {
-  m_logs.emplace_back(time, objectId, message);
-  changed(*this, 1, cleanUp());
+  add(time, std::string{objectId}, message, nullptr);
 }
 
 void MemoryLogger::log(const std::chrono::system_clock::time_point& time, std::string_view objectId, LogMessage message, const std::vector<std::string>& args)
 {
-  m_logs.emplace_back(time, objectId, message, new std::vector<std::string>(args));
-  changed(*this, 1, cleanUp());
+  add(time, std::string{objectId}, message, new std::vector<std::string>(args));
+}
+
+void MemoryLogger::add(std::chrono::system_clock::time_point time, std::string objectId, LogMessage message, std::vector<std::string>* args)
+{
+  if(isEventLoopThread())
+  {
+    m_logs.emplace_back(std::move(time), std::move(objectId), message, args);
+    changed(*this, 1, cleanUp());
+  }
+  else
+  {
+    EventLoop::call(
+      [this, time=std::move(time), objectId=std::move(objectId), message, args]()
+      {
+        add(std::move(time), std::move(objectId), message, args);
+      });
+  }
 }
 
 uint32_t MemoryLogger::cleanUp()
