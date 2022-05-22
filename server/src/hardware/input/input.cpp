@@ -29,7 +29,7 @@
 
 Input::Input(World& world, std::string_view _id)
   : IdObject(world, _id)
-  , name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
   , interface{this, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](const std::shared_ptr<InputController>& /*newValue*/)
       {
@@ -82,7 +82,7 @@ Input::Input(World& world, std::string_view _id)
           return interface->changeInputChannelAddress(*this, channel, newValue);
         return true;
       }}
-  , value{this, "value", TriState::Undefined, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
+  , value{this, "value", TriState::Undefined, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
   , consumers{*this, "consumers", {}, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , onValueChanged{*this, "on_value_changed", EventFlags::Scriptable}
 {
