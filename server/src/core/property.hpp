@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -239,5 +239,11 @@ class Property : public AbstractProperty
     }
 
 };
+
+template<class T, std::enable_if_t<is_set_v<T>>* = nullptr>
+inline bool contains(const Property<T>& property, const T& mask)
+{
+  return (property.value() & mask) == mask;
+}
 
 #endif
