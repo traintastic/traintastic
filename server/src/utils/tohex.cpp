@@ -1,9 +1,9 @@
 /**
- * server/src/utils/tohex.hpp
+ * server/src/utils/tohex.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022 Reinder Feenstra
+ * Copyright (C) 2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,29 +20,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_UTILS_TOHEX_HPP
-#define TRAINTASTIC_SERVER_UTILS_TOHEX_HPP
+#include "tohex.hpp"
 
-#include <string>
-#include <string_view>
-#include <type_traits>
-
-static const std::string_view toHexDigits = "0123456789ABCDEF";
-
-template<typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T> && !std::is_pointer_v<T>>>
-std::string toHex(T value, size_t length = sizeof(T) * 2)
+std::string toHex(const void* buffer, const size_t size)
 {
-  std::string s(length, '0');
-  for(size_t i = 0, j = length - 1; i < length; i++, j--)
-    s[j] = toHexDigits[(value >> (i * 4)) & 0xf];
+  std::string s;
+  s.reserve(size * 2);
+  const uint8_t* p = reinterpret_cast<const uint8_t*>(buffer);
+  for(size_t i = 0; i < size; i++, p++)
+  {
+    s.push_back(toHexDigits[*p >> 4]);
+    s.push_back(toHexDigits[*p & 0x0F]);
+  }
   return s;
 }
-
-std::string toHex(const void* buffer, size_t size);
-
-inline std::string toHex(std::string_view value)
-{
-  return toHex(value.data(), value.size());
-}
-
-#endif
