@@ -59,6 +59,7 @@ class_id:board_tile.rail.turnout_singleslip=Single slip
 class_id:board_tile.rail.turnout_wye=Turnout wye
 class_id:interface.dccplusplus=DCC++
 class_id:interface.ecos=ECoS
+class_id:interface.hsi88=HSI-88
 class_id:interface.loconet=LocoNet
 class_id:interface.wlanmaus=WLANmaus
 class_id:interface.xpressnet=XpressNet
@@ -153,6 +154,10 @@ hardware:speed_steps=Speed steps
 hardware:xpressnet=XpressNet
 hardware:z21=Z21
 
+hsi88:s88_left=S88 left
+hsi88:s88_middle=S88 middle
+hsi88:s88_right=S88 right
+
 input_list:bus=Bus
 
 input_map_item.block:input=Input
@@ -162,6 +167,10 @@ input_map_item.block:type=Type
 interface.dccplusplus:dcc_plus_plus=DCC++(EX)
 
 interface.ecos:ecos=ECoS
+
+interface.hsi88:modules_left=Modules left
+interface.hsi88:modules_middle=Modulles middle
+interface.hsi88:modules_right=Modules right
 
 interface.loconet:interface=Interface
 
@@ -287,6 +296,7 @@ message:E2016=Serial port set parity failed (%1)
 message:E2017=Serial port set flow control failed (%1)
 message:E2018=Timeout, no echo within %1ms
 message:E2019=Timeout, no response within %1ms
+message:E2020=Total number of modules may not exceed %1
 message:E9001=%1 (During execution of %2 event handler)
 message:E9999=%1
 message:F1001=Opening TCP socket failed (%1)
@@ -308,7 +318,7 @@ message:I1005=Building world index
 message:I2001=Unknown loco address: %1
 message:I2002=Hardware type: %1
 message:I2003=Firmware version: %1
-message:I2004=Hardware version: %1
+message:I2004=HSI-88: %1
 message:I9001=Stopped script
 message:I9999=%1
 message:N1001=Received signal: %1

@@ -72,6 +72,7 @@ enum class LogMessage : uint32_t
   I2001_UNKNOWN_LOCO_ADDRESS_X = LogMessageOffset::info + 2001,
   I2002_HARDWARE_TYPE_X = LogMessageOffset::info + 2002,
   I2003_FIRMWARE_VERSION_X = LogMessageOffset::info + 2003,
+  I2004_HSI_88_X = LogMessageOffset::info + 2004,
   I9001_STOPPED_SCRIPT = LogMessageOffset::info + 9001,
   I9999_X = LogMessageOffset::info + 9999,
 
@@ -142,6 +143,7 @@ enum class LogMessage : uint32_t
   E2017_SERIAL_PORT_SET_FLOW_CONTROL_FAILED_X = LogMessageOffset::error + 2017,
   E2018_TIMEOUT_NO_ECHO_WITHIN_X_MS = LogMessageOffset::error + 2018,
   E2019_TIMEOUT_NO_RESPONSE_WITHIN_X_MS = LogMessageOffset::error + 2019,
+  E2020_TOTAL_NUMBER_OF_MODULES_MAY_NOT_EXCEED_X  = LogMessageOffset::error + 2020,
   E9001_X_DURING_EXECUTION_OF_X_EVENT_HANDLER = LogMessageOffset::error + 9001,
   E9999_X = LogMessageOffset::error + 9999,
 

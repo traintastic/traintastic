@@ -28,6 +28,7 @@
 
 #include "dccplusplusinterface.hpp"
 #include "ecosinterface.hpp"
+#include "hsi88.hpp"
 #include "loconetinterface.hpp"
 #include "wlanmausinterface.hpp"
 #include "xpressnetinterface.hpp"
@@ -40,6 +41,7 @@ struct Interfaces
   static constexpr auto classList = makeArray(
     DCCPlusPlusInterface::classId,
     ECoSInterface::classId,
+    HSI88Interface::classId,
     LocoNetInterface::classId,
     WlanMausInterface::classId,
     XpressNetInterface::classId,

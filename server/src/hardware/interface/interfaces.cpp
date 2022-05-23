@@ -28,6 +28,7 @@ std::shared_ptr<Interface> Interfaces::create(World& world, std::string_view cla
 {
   IF_CLASSID_CREATE(DCCPlusPlusInterface)
   IF_CLASSID_CREATE(ECoSInterface)
+  IF_CLASSID_CREATE(HSI88Interface)
   IF_CLASSID_CREATE(LocoNetInterface)
   IF_CLASSID_CREATE(WlanMausInterface)
   IF_CLASSID_CREATE(XpressNetInterface)
