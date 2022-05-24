@@ -94,6 +94,8 @@ HSI88Interface::HSI88Interface(World& world, std::string_view _id)
 
 std::pair<uint32_t, uint32_t> HSI88Interface::inputAddressMinMax(uint32_t channel) const
 {
+  (void)channel; // silence unused warning
+
   assert(
     channel == InputChannel::left ||
     channel == InputChannel::middle ||
