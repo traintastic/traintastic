@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_CORE_EVENTLOOP_HPP
 
 #include <queue>
+#include <thread>
 #include <mutex>
 #include <atomic>
 #include <condition_variable>
