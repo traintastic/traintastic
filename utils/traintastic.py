@@ -1,9 +1,9 @@
-import sys
 import os
 import re
 import codecs
 
-def format_lang_file(filename):
+
+def read_locale_file(filename):
     with codecs.open(filename, 'r', 'utf-8') as f:
         lines = f.readlines()
 
@@ -29,6 +29,10 @@ def format_lang_file(filename):
         elif line != '\n' and not line.startswith('##'):
             garbage += line
 
+    return (strings, header, garbage)
+
+
+def write_locale_file(filename, header, strings, garbage=''):
     txt = header
     ns = None
     for s in sorted(strings, key=lambda k: k['id']):
@@ -51,8 +55,3 @@ def format_lang_file(filename):
 
     with codecs.open(filename, 'w', 'utf-8') as f:
         f.write(txt)
-
-
-if __name__ == "__main__":
-    for f in sys.argv[1:]:
-        format_lang_file(f)
