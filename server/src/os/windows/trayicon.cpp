@@ -25,6 +25,7 @@
 #include <version.hpp>
 #include <traintastic/codename.hpp>
 #include "consolewindow.hpp"
+#include "registry.hpp"
 #include "../../core/eventloop.hpp"
 #include "../../traintastic/traintastic.hpp"
 #include "../../utils/setthreadname.hpp"
@@ -79,8 +80,14 @@ void TrayIcon::run()
   menuAddItem(MenuItem::AllowClientServerRestart, "Allow client to restart server");
   menuAddItem(MenuItem::AllowClientServerShutdown, "Allow client to shutdown server");
   menuAddSeperator();
+  menuAddItem(MenuItem::StartAutomaticallyAtLogon, "Start automatically at logon");
+  menuAddSeperator();
   menuAddItem(MenuItem::Restart, "Restart");
   menuAddItem(MenuItem::Shutdown, "Shutdown");
+
+  bool startUpApproved = false;
+  Registry::getStartUpApproved(startUpApproved);
+  menuSetItemChecked(MenuItem::StartAutomaticallyAtLogon, startUpApproved);  
 
   // setup tray icon:
   static NOTIFYICONDATA notifyIconData;
@@ -206,6 +213,16 @@ LRESULT CALLBACK TrayIcon::windowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARA
           });
         break;
       }
+      case MenuItem::StartAutomaticallyAtLogon:
+      {
+        bool startUpApproved = !menuGetItemChecked(MenuItem::StartAutomaticallyAtLogon);
+        if(startUpApproved)
+          Registry::addRun();
+        Registry::setStartUpApproved(startUpApproved);
+        if(Registry::getStartUpApproved(startUpApproved))
+          menuSetItemChecked(MenuItem::StartAutomaticallyAtLogon, startUpApproved);
+        break;
+      }
     }
     break;
 
@@ -243,6 +260,12 @@ void TrayIcon::menuAddSeperator()
   item.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
   item.fType = MFT_SEPARATOR;
   InsertMenuItem(s_menu, GetMenuItemCount(s_menu), TRUE, &item);
+}
+
+bool TrayIcon::menuGetItemChecked(MenuItem id)
+{
+  assert(s_menu);
+  return GetMenuState(s_menu, static_cast<UINT>(id), MF_BYCOMMAND) & MF_CHECKED;
 }
 
 void TrayIcon::menuSetItemChecked(MenuItem id, bool checked)

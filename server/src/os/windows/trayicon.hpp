@@ -46,6 +46,7 @@ class TrayIcon
       ShowHideConsole = 3,
       AllowClientServerRestart = 4,
       AllowClientServerShutdown = 5,
+      StartAutomaticallyAtLogon = 6,
     };
 
     struct TraintasticSettings
@@ -68,6 +69,7 @@ class TrayIcon
 
     static void menuAddItem(MenuItem id, const LPSTR text, bool enabled = true);
     static void menuAddSeperator();
+    static bool menuGetItemChecked(MenuItem id);
     static void menuSetItemChecked(MenuItem id, bool checked);
 
     static void getSettings();
