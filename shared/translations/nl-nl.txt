@@ -5,7 +5,18 @@ board:move_tile=Verplaats tegel
 board:resize_tile=Tegel formaat aanpassen
 #board:resize_to_contents=Resize to contents
 
+board_settings.color_scheme:dark=Donker
+board_settings.color_scheme:light=Licht
+
+board_tile.misc.push_button:color=Kleur
+
 board_tile.rail.block:input_map=Sensoren
+
+#board_tile.rail.direction_control:state=State
+board_tile.rail.direction_control:use_a_to_b=Gebruik: A → B
+board_tile.rail.direction_control:use_b_to_a=Gebruik: A ← B
+board_tile.rail.direction_control:use_both=Gebruik: A ⇄ B
+board_tile.rail.direction_control:use_none=Gebruik: A 🛇 B
 
 board_tile.rail.sensor:input=Ingang
 board_tile.rail.sensor:invert=Omdraaien
@@ -13,9 +24,13 @@ board_tile.rail.sensor:type=Type
 
 board_tile:output_map=Uitgangen
 
+category:developer=Ontwikkelaar
 category:general=Algemeen
 category:info=Informatie
+category:log=Log
+category:network=Netwerk
 
+class_id:board_tile.misc.push_button=Drukknop
 class_id:board_tile.rail.block=Blok
 class_id:board_tile.rail.bridge_45_left=Brug 45° (links)
 class_id:board_tile.rail.bridge_45_right=Brug 45° (rechts)
@@ -25,6 +40,8 @@ class_id:board_tile.rail.cross_45=Kruising 45°
 class_id:board_tile.rail.cross_90=Kruising 90°
 class_id:board_tile.rail.curve_45=Bocht 45°
 class_id:board_tile.rail.curve_90=Bocht 90°
+#class_id:board_tile.rail.direction_control=Direction control
+class_id:board_tile.rail.one_way=Eenrichting
 class_id:board_tile.rail.sensor=Sensor
 class_id:board_tile.rail.signal_2_aspect=Sein (2 aspecten)
 class_id:board_tile.rail.signal_3_aspect=Sein (3 aspecten)
@@ -49,6 +66,13 @@ class_id:command_station.z21=Z21
 class_id:controller.wlanmaus=WLANmaus
 class_id:input.loconet=LocoNet ingang
 class_id:input.xpressnet=XpressNet ingang
+class_id:interface.dccplusplus=DCC++
+class_id:interface.ecos=ECoS
+class_id:interface.hsi88=HSI-88
+class_id:interface.loconet=LocoNet
+class_id:interface.wlanmaus=WLANmaus
+class_id:interface.xpressnet=XpressNet
+class_id:interface.z21=Z21
 class_id:output.loconet=LocoNet uitgang
 class_id:vehicle.rail.freight_car=Groedrenwagon
 class_id:vehicle.rail.locomotive=Locomotief
@@ -59,6 +83,23 @@ clock:minute=Minuut
 clock:month=Maand
 clock:multiplier=Vermenigvuldiger
 clock:year=Jaar
+
+#color:aqua=Aqua
+color:black=Zwart
+color:blue=Blauw
+#color:fuchsia=Fuchsia
+color:gray=Grijs
+color:green=Groen
+#color:lime=Lime
+#color:maroon=Maroon
+color:navy=Marine blauw
+color:olive=Olijf
+color:purple=Paars
+color:red=Rood
+color:silver=Zilver
+#color:teal=Teal
+color:white=Wit
+color:yellow=Geel
 
 command_station.dccplusplus_serial:dcc_plus_plus=DCC++(EX)
 
@@ -92,6 +133,13 @@ command_station:power_on=Ingeschakeld
 
 controller:active=Actief
 
+dccplusplus_channel:dcc_accessory=DCC accesoire
+dccplusplus_channel:output=Uitgang
+dccplusplus_channel:turnout=Wissel
+
+dccplusplus_settings:startup_delay=Opstart vertraging
+dccplusplus_settings:use_ex=Gebruik DCC++EX commando's
+
 decoder:functions=Functies
 decoder:long_address=Lang DCC adres
 decoder:protocol=Protocol
@@ -113,25 +161,77 @@ decoder_function_type:always_on=Altijd aan
 decoder_function_type:on_off=Aan/Uit
 
 decoder_protocol:auto=Automatische
-#decoder_protocol:custom=Custom
+decoder_protocol:custom=Aangepast
 decoder_protocol:dcc=DCC
 
 direction:forward=Vooruit
 direction:reverse=Achteruit
 
+direction_control_state:a_to_b=A → B
+direction_control_state:b_to_a=A ← B
+direction_control_state:both=A ⇄ B
+direction_control_state:none=A 🛇 B
+
+ecos_channel:ecos_detector=ECoS Detector
+
 hardware:address=Adres
+hardware:channel=Kanaal
 hardware:command_station=Centrale
+hardware:dcc=DCC
+hardware:dccplusplus=DCC++
+hardware:debug_log_input=Log ingang veranderingen
+hardware:debug_log_output=Log uitgang veranderingen
+hardware:debug_log_rx_tx=Log alle communicatie
+hardware:decoders=Decoders
+hardware:ecos=ECoS
 hardware:input_monitor=Ingang monitor
+hardware:inputs=Ingangen
+#hardware:interface=Interface
 hardware:loconet=LocoNet
+hardware:motorola=Motorola
 hardware:output_keyboard=Uitgang toetsenbord
+hardware:outputs=Uitgangen
+hardware:s88=S88
 hardware:speed_steps=Snelheid stappen
 hardware:xpressnet=XpressNet
+hardware:z21=Z21
+
+hsi88:s88_left=S88 links
+hsi88:s88_middle=S88 midden
+hsi88:s88_right=S88 rechts
 
 input_list:bus=Bus
 
 input_map_item.block:input=Ingang
 input_map_item.block:invert=Omdraaien
 input_map_item.block:type=Type
+
+interface.dccplusplus:dcc_plus_plus=DCC++(EX)
+
+interface.ecos:ecos=ECoS
+
+interface.hsi88:modules_left=Modules links
+interface.hsi88:modules_middle=Modulles midden
+interface.hsi88:modules_right=Modules rechts
+
+#interface.loconet:interface=Interface
+
+#interface.xpressnet:interface=Interface
+interface.xpressnet:s88_module_count=Aantal S88 modules
+interface.xpressnet:s88_start_address=S88 start adress
+
+#interface.z21:firmware_version=Firmware version
+#interface.z21:hardware_type=Hardware type
+interface.z21:serial_number=Serienummer
+
+#interface:online=Online
+interface:status=Status
+interface:type=Type
+
+interface_status:error=Fout
+interface_status:initializing=Initialiseren
+interface_status:offline=Offline
+interface_status:online=Online
 
 ip:hostname=Hostnaam
 ip:port=Poort
@@ -153,18 +253,36 @@ list:move_down=Omlaag verplaatsen
 list:move_up=Omhoog verplaatsen
 list:remove=Verwijderen
 
-#loconet_command_station:custom=Custom
+loconet_command_station:custom=Anders
 loconet_command_station:digikeijs_dr5000=Digikeijs DR5000
 loconet_command_station:uhlenbrock_intellibox=Uhlenbrock Intellibox
 
-#loconet_serial_interface:custom=Custom
+loconet_interface_type:lbserver=LBServer
+loconet_interface_type:serial=Serieel
+loconet_interface_type:tcp_binary=TCP binear
+loconet_interface_type:z21=Z21
+
+loconet_serial_interface:custom=Anders
 loconet_serial_interface:digikeijs_dr5000=Digikeijs DR5000
 loconet_serial_interface:rosoft_loconet_interface=RoSoft LocoNet interface
 
+loconet_settings:command_station=Centrale
+#loconet_settings:fast_clock_sync_enabled=Fast clock sync enabled
+#loconet_settings:fast_clock_sync_interval=Fast clock sync interval
+
+lua.script:disabled=Uitgeschakeld
 lua.script:start=Start
 lua.script:stop=Stop
 
+lua.script_list:start_all=Start alle
+lua.script_list:stop_all=Stop alle
+
 lua_script:state=Status
+
+lua_script_state:disabled=Uitgeschakeld
+lua_script_state:error=Fout
+lua_script_state:running=Actief
+lua_script_state:stopped=Gestopt
 
 message:C1001=Wereld laden mislukt (%1)
 #message:C1002=Creating client failed (%1)
@@ -173,9 +291,14 @@ message:C1001=Wereld laden mislukt (%1)
 #message:C1005=Saving world failed (%1)
 #message:C1006=Creating world backup failed (%1)
 #message:C1007=Creating world backup directory failed (%1)
+#message:C1008=Creating backup directory failed (%1)
+#message:C1009=Creating settings backup failed (%1)
+message:C1010=Wereld exporteren mislukt (%1)
+message:C1011=Wereld importeren mislukt (%1)
 #message:C2001=Address already used at #%1
 #message:C2002=DCC++ only supports the DCC protocol
 #message:C2003=DCC++ doesn't support DCC long addresses below 128
+#message:C2004=Can't get free slot
 #message:C9999=%1
 #message:D2001=TX: %1
 #message:D2002=RX: %1
@@ -188,8 +311,8 @@ message:C1001=Wereld laden mislukt (%1)
 #message:D2009=Slot %1 = %2
 #message:D2010=Slot %1 = Free
 #message:D9999=%1
-#message:E1001=Invalid world UUID: %1
-#message:E1002=World %1 doesn't exist
+message:E1001=Wereld UUID ongeldig: %1
+message:E1002=Wereld %1 bestaat niet
 #message:E1003=UDP receive error (%1)
 #message:E1004=TCP accept error (%1)
 #message:E1005=Socket shutdown failed (%1)
@@ -208,6 +331,15 @@ message:C1001=Wereld laden mislukt (%1)
 #message:E2010=Serial port open failed (%1)
 #message:E2011=Socket send failed (%1)
 #message:E2012=Function number already in use
+#message:E2013=Serial port set baudrate failed (%1)
+#message:E2014=Serial port set data bits failed (%1)
+#message:E2015=Serial port set stop bits failed (%1)
+#message:E2016=Serial port set parity failed (%1)
+#message:E2017=Serial port set flow control failed (%1)
+#message:E2018=Timeout, no echo within %1ms
+#message:E2019=Timeout, no response within %1ms
+#message:E2020=Total number of modules may not exceed %1
+#message:E9001=%1 (During execution of %2 event handler)
 #message:E9999=%1
 #message:F1001=Opening TCP socket failed (%1)
 #message:F1002=TCP socket address reuse failed (%1)
@@ -226,7 +358,11 @@ message:C1001=Wereld laden mislukt (%1)
 #message:I1004=Connection lost
 #message:I1005=Building world index
 #message:I2001=Unknown loco address: %1
-#message:I9999=%1
+#message:I2002=Hardware type: %1
+#message:I2003=Firmware version: %1
+#message:I2004=HSI-88: %1
+#message:I9001=Stopped script
+message:I9999=%1
 #message:N1001=Received signal: %1
 #message:N1002=Created new world
 #message:N1003=Restaring
@@ -249,13 +385,19 @@ message:C1001=Wereld laden mislukt (%1)
 #message:N1020=Smoke: enabled
 #message:N1021=Smoke: disabled
 #message:N1022=Saved world: %1
-#message:N9999=%1
+message:N1023=Simulatie: uitgeschakeld
+message:N1024=Simulatie: actief
+message:N1025=Wereld succesvol geexporteerd
+message:N1026=Wereld succevol geimporteerd
+message:N2001=Simulatie wordt niet ondersteund
+#message:N9001=Starting script
+message:N9999=%1
 #message:W1001=Discovery disabled, only allowed on port %1
 #message:W1002=Setting %1 doesnt exist
 #message:W2001=Received malformed data dropped %1 bytes
 #message:W2002=Command station doesn't support functions above F%1
 #message:W2003=Command station doesn't support %1 speedsteps using %2
-#message:W9999=%1
+message:W9999=%1
 
 object:id=Id
 object:name=Naam
@@ -296,7 +438,12 @@ qtapp.connect_dialog:password=Wachtwoord
 qtapp.connect_dialog:server=Server
 qtapp.connect_dialog:username=Gebruikersnaam
 
+#qtapp.error:cant_read_from_file_x=Can't read from file: %1
+#qtapp.error:cant_write_to_file_x=Can't write to file: %1
+#qtapp.error:server_error_x=Server error %1
+
 qtapp.mainmenu:about=Over
+qtapp.mainmenu:close_world=Sluit wereld
 qtapp.mainmenu:connect_to_server=Verbind met server
 qtapp.mainmenu:connection=Verbinding
 qtapp.mainmenu:disconnect_from_server=Verbreek server verbinding
@@ -333,7 +480,9 @@ qtapp.object_select_list_dialog:cancel=Annuleren
 qtapp.object_select_list_dialog:ok=Ok
 qtapp.object_select_list_dialog:select_object=Selecteer object
 
+qtapp.settings.board:color_scheme=Kleurschema
 #qtapp.settings.board:show_block_sensor_states=Show block sensor states
+#qtapp.settings.board:turnout_draw_state=Draw turnout state
 
 #qtapp.settings.developer:dont_load_fallback_language=Don't load fallback language
 #qtapp.settings.developer:log_missing_strings=Log missing translations
@@ -349,29 +498,38 @@ qtapp.world_list_dialog:cancel=Annuleren
 qtapp.world_list_dialog:load=Laad
 qtapp.world_list_dialog:world_list=Wereld lijst
 
-#qtapp:board_properties=Board properties
+qtapp:board_properties=Bord eigenschappen
+#qtapp:export_world_failed=Export world failed
 qtapp:grid=Raster
 qtapp:grid_dot=Stip
 qtapp:grid_line=Lijn
 qtapp:grid_none=Geen
+#qtapp:import_world_failed=Import world failed
+qtapp:next=Volgende
+qtapp:previous=Vorige
 #qtapp:toggle_mute=Toggle mute
 #qtapp:toggle_offline_online=Toggle connection
 #qtapp:toggle_power=Toggle power
 #qtapp:toggle_smoke=Toggle smoke
+qtapp:traintastic_world=Traintastic wereld
 qtapp:zoom_in=Vergroten
 qtapp:zoom_out=Verkleinen
 
 rail_vehicle_list:type=Type
 
-#sensor_type:occupy_detector=Occupy detector
-#sensor_type:reed_switch=Reed switch
+ratio_unit:percent=%
+ratio_unit:ratio=
+
+sensor_type:occupy_detector=Bezetmelder
+sensor_type:reed_switch=Reedcontact
 
 #serial:baudrate=Baudrate
+#serial:device=Device
 #serial:flow_control=Flow control
 serial:port=Poort
 
 #serial_flow_control:hardware=Hardware
-#serial_flow_control:none=None
+serial_flow_control:none=Geen
 
 server_log:code=Code
 server_log:message=Bericht
@@ -385,8 +543,8 @@ server_log:time=Tijd
 #settings:enable_file_logger=Enable file logger
 #settings:localhost_only=Localhost only
 #settings:memory_logger_size=Memory logger size
-#settings:port=Port
-#settings:save_world_uncompressed=Save world uncompressed
+settings:port=Poort
+settings:save_world_uncompressed=Wereld ongecomprimeerd opslaan
 
 #signal_aspect:proceed=Proceed
 #signal_aspect:proceed_reduced_speed=Proceed, reduced speed
@@ -396,7 +554,7 @@ speed_unit:kmph=km/h
 speed_unit:mph=mph
 speed_unit:mps=m/s
 
-#throttle_object_list:throttle=Throttle
+throttle_object_list:throttle=Regelaar
 
 train:lob=LOB
 train:speed_max=Maximale snelheid
@@ -407,6 +565,8 @@ turnout_position:left=Links
 turnout_position:right=Rechts
 turnout_position:straight=Rechtdoor
 
+#vehicle.rail.freight_car:cargo_capacity=Cargo capacity
+#vehicle.rail.freight_car:cargo_loaded=Cargo loaded
 vehicle.rail.freight_car:cargo_weight=Gewicht lading
 
 vehicle.rail:decoder=Decoder
@@ -428,6 +588,7 @@ world:command_stations=Centrales
 world:decoders=Decoders
 world:edit=Bewerk wereld
 world:inputs=Ingangen
+#world:interfaces=Interfaces
 #world:lua_scripts=Lua scripts
 world:mute=Mute
 world:no_smoke=Geen rook
@@ -439,12 +600,13 @@ world:outputs=Uitgangen
 world:rail_vehicles=Spoorvoertuigen
 #world:run=Run
 world:scale=Schaal
-#world:scale_ratio=Scale ratio
+world:scale_ratio=Schaalverhouding
+world:simulation=Simulatie
 world:stop=Stop
 world:trains=Treinen
-#world:uuid=UUID
+world:uuid=UUID
 
-#world_scale:custom=Custom
+world_scale:custom=Aangepast
 world_scale:h0=H0 (1:87)
 world_scale:n=N (1:160)
 world_scale:tt=TT (1:120)
@@ -454,8 +616,22 @@ world_scale:z=Z (1:220)
 xpressnet_command_station:digikeijs_dr5000=Digikeijs DR5000
 xpressnet_command_station:roco_10764=Roco 10764
 
-#xpressnet_serial_interface:custom=Custom
-xpressnet_serial_interface:lenz_li100=Lenz LI100
-xpressnet_serial_interface:lenz_li100f=Lenz LI100F
-xpressnet_serial_interface:lenz_li101f=Lenz LI101F
-xpressnet_serial_interface:rosoft_s88xpressnetli=RoSoft s88XpressNetLI
+xpressnet_interface_type:network=Netwerk
+xpressnet_interface_type:serial=Serieel
+
+#xpressnet_serial_interface_type:custom=Custom
+xpressnet_serial_interface_type:digikeijs_dr5000=Digikeijs DR5000
+xpressnet_serial_interface_type:lenz_li100=Lenz LI100
+xpressnet_serial_interface_type:lenz_li100f=Lenz LI100F
+xpressnet_serial_interface_type:lenz_li101f=Lenz LI101F
+xpressnet_serial_interface_type:lenz_liusb=Lenz LIUSB
+xpressnet_serial_interface_type:rosoft_s88xpressnetli=RoSoft s88XpressNetLI
+
+#xpressnet_settings:use_emergency_stop_locomotive_command=Use short emergency stop locomotive command
+xpressnet_settings:use_roco_f13_f20_command=Gebruik Roco F13-F20 commando
+
+z21_channel:rbus=R-Bus
+
+#z21_settings.server:allow_emergency_stop=Allow emergency stop
+#z21_settings.server:allow_track_power_off=Allow power off
+#z21_settings.server:allow_track_power_on_release_emergency_stop=Allow power on/emergency stop release
