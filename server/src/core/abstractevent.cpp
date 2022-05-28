@@ -30,6 +30,12 @@ AbstractEvent::AbstractEvent(Object& object, std::string_view name, EventFlags f
 {
 }
 
+AbstractEvent::~AbstractEvent()
+{
+  while(!m_handlers.empty())
+    m_handlers.front()->disconnect();
+}
+
 void AbstractEvent::connect(std::shared_ptr<AbstractEventHandler> handler)
 {
   assert(handler);

@@ -43,6 +43,7 @@ class AbstractEvent : public InterfaceItem
 
   public:
     AbstractEvent(Object& object, std::string_view name, EventFlags m_flags);
+    ~AbstractEvent() override;
 
     inline bool isScriptable() const { return (m_flags & EventFlags::Scriptable) == EventFlags::Scriptable; }
 
