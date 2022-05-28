@@ -157,7 +157,7 @@ bool Session::processMessage(const Message& message)
       {
         if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
         {
-          if(AbstractProperty* property = object->getProperty(message.read<std::string>()))
+          if(AbstractProperty* property = object->getProperty(message.read<std::string>()); property && !property->isInternal())
           {
             try
             {
@@ -206,7 +206,7 @@ bool Session::processMessage(const Message& message)
     {
       if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
       {
-        if(AbstractUnitProperty* property = dynamic_cast<AbstractUnitProperty*>(object->getProperty(message.read<std::string>())))
+        if(AbstractUnitProperty* property = dynamic_cast<AbstractUnitProperty*>(object->getProperty(message.read<std::string>())); property && !property->isInternal())
         {
           try
           {
@@ -225,7 +225,7 @@ bool Session::processMessage(const Message& message)
     {
       if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
       {
-        if(AbstractObjectProperty* property = dynamic_cast<AbstractObjectProperty*>(object->getProperty(message.read<std::string>())))
+        if(AbstractObjectProperty* property = dynamic_cast<AbstractObjectProperty*>(object->getProperty(message.read<std::string>())); property && !property->isInternal())
         {
           try
           {
@@ -253,7 +253,7 @@ bool Session::processMessage(const Message& message)
     {
       if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
       {
-        if(AbstractMethod* method = object->getMethod(message.read<std::string>()))
+        if(AbstractMethod* method = object->getMethod(message.read<std::string>()); method && !method->isInternal())
         {
           const ValueType resultType = message.read<ValueType>();
           const uint8_t argumentCount = message.read<uint8_t>();

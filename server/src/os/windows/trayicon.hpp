@@ -25,6 +25,7 @@
 
 #include <memory>
 #include <thread>
+#include <mutex>
 #include <string>
 #define _WINSOCKAPI_ // prevent windows.h including winsock.h
 #include <windows.h>
@@ -43,19 +44,35 @@ class TrayIcon
       Shutdown = 1,
       Restart = 2,
       ShowHideConsole = 3,
+      AllowClientServerRestart = 4,
+      AllowClientServerShutdown = 5,
+      StartAutomaticallyAtLogon = 6,
+    };
+
+    struct TraintasticSettings
+    {
+      std::mutex mutex;
+      bool allowClientServerRestart;
+      bool allowClientServerShutdown;
     };
     
     static constexpr UINT WM_NOTIFYICON_CALLBACK = WM_USER + 1;
+    static constexpr UINT WM_TRAINTASTIC_SETTINGS = WM_USER + 2;
 
     static std::unique_ptr<std::thread> s_thread;
     static HWND s_window;   
     static HMENU s_menu;
+    inline static TraintasticSettings s_settings = {{}, false, false};
 
     static void run();
     static LRESULT CALLBACK windowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam);
 
     static void menuAddItem(MenuItem id, const LPSTR text, bool enabled = true);
     static void menuAddSeperator();
+    static bool menuGetItemChecked(MenuItem id);
+    static void menuSetItemChecked(MenuItem id, bool checked);
+
+    static void getSettings();
 
   public:
     static void add();

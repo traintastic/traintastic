@@ -25,8 +25,10 @@
 #include <version.hpp>
 #include <traintastic/codename.hpp>
 #include "consolewindow.hpp"
+#include "registry.hpp"
 #include "../../core/eventloop.hpp"
 #include "../../traintastic/traintastic.hpp"
+#include "../../utils/setthreadname.hpp"
 
 namespace Windows {
 
@@ -50,6 +52,8 @@ void TrayIcon::remove()
 
 void TrayIcon::run()
 {
+  setThreadName("trayicon");
+
   const LPCSTR windowClassName = "TraintasticServerTrayIcon";
 
   // register window class:
@@ -73,8 +77,17 @@ void TrayIcon::run()
   s_menu = CreatePopupMenu();
   menuAddItem(MenuItem::ShowHideConsole, "Show/hide console", hasConsoleWindow());
   menuAddSeperator();
+  menuAddItem(MenuItem::AllowClientServerRestart, "Allow client to restart server");
+  menuAddItem(MenuItem::AllowClientServerShutdown, "Allow client to shutdown server");
+  menuAddSeperator();
+  menuAddItem(MenuItem::StartAutomaticallyAtLogon, "Start automatically at logon");
+  menuAddSeperator();
   menuAddItem(MenuItem::Restart, "Restart");
   menuAddItem(MenuItem::Shutdown, "Shutdown");
+
+  bool startUpApproved = false;
+  Registry::getStartUpApproved(startUpApproved);
+  menuSetItemChecked(MenuItem::StartAutomaticallyAtLogon, startUpApproved);  
 
   // setup tray icon:
   static NOTIFYICONDATA notifyIconData;
@@ -96,6 +109,9 @@ void TrayIcon::run()
   notifyIconData.uFlags |= NIF_INFO;
 
   Shell_NotifyIcon(NIM_ADD, &notifyIconData);
+
+  // Get settings:
+  EventLoop::call(getSettings);
 
   // message loop:
   while(true)
@@ -166,8 +182,57 @@ LRESULT CALLBACK TrayIcon::windowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARA
       case MenuItem::ShowHideConsole:
         setConsoleWindowVisible(!isConsoleWindowVisible());
         return 0;
+
+      case MenuItem::AllowClientServerRestart:
+      {
+        bool value;
+        {
+          std::lock_guard lock{s_settings.mutex};
+          value = !s_settings.allowClientServerRestart;
+        }
+        EventLoop::call(
+          [value]()
+          {
+            Traintastic::instance->settings->allowClientServerRestart = value;
+            getSettings();
+          });
+        break;
+      }
+      case MenuItem::AllowClientServerShutdown:
+      {
+        bool value;
+        {
+          std::lock_guard lock{s_settings.mutex};
+          value = !s_settings.allowClientServerShutdown;
+        }
+        EventLoop::call(
+          [value]()
+          {
+            Traintastic::instance->settings->allowClientServerShutdown = value;
+            getSettings();
+          });
+        break;
+      }
+      case MenuItem::StartAutomaticallyAtLogon:
+      {
+        bool startUpApproved = !menuGetItemChecked(MenuItem::StartAutomaticallyAtLogon);
+        if(startUpApproved)
+          Registry::addRun();
+        Registry::setStartUpApproved(startUpApproved);
+        if(Registry::getStartUpApproved(startUpApproved))
+          menuSetItemChecked(MenuItem::StartAutomaticallyAtLogon, startUpApproved);
+        break;
+      }
     }
     break;
+
+    case WM_TRAINTASTIC_SETTINGS:
+    {
+      std::lock_guard lock{s_settings.mutex};
+      menuSetItemChecked(MenuItem::AllowClientServerRestart, s_settings.allowClientServerRestart);
+      menuSetItemChecked(MenuItem::AllowClientServerShutdown, s_settings.allowClientServerShutdown);
+      break;
+    }
   }
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
@@ -195,6 +260,30 @@ void TrayIcon::menuAddSeperator()
   item.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
   item.fType = MFT_SEPARATOR;
   InsertMenuItem(s_menu, GetMenuItemCount(s_menu), TRUE, &item);
+}
+
+bool TrayIcon::menuGetItemChecked(MenuItem id)
+{
+  assert(s_menu);
+  return GetMenuState(s_menu, static_cast<UINT>(id), MF_BYCOMMAND) & MF_CHECKED;
+}
+
+void TrayIcon::menuSetItemChecked(MenuItem id, bool checked)
+{
+  assert(s_menu);
+  CheckMenuItem(s_menu, static_cast<UINT>(id), checked ? MF_CHECKED : MF_UNCHECKED);
+}
+
+void TrayIcon::getSettings()
+{
+  assert(isEventLoopThread());
+  const auto& settings = *Traintastic::instance->settings.value();
+  {
+    std::lock_guard lock{s_settings.mutex};
+    s_settings.allowClientServerRestart = settings.allowClientServerRestart;
+    s_settings.allowClientServerShutdown = settings.allowClientServerShutdown;
+  }
+  PostMessage(s_window, WM_TRAINTASTIC_SETTINGS, 0, 0);
 }
 
 }

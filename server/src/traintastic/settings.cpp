@@ -54,8 +54,8 @@ Settings::Settings(const std::filesystem::path& path)
   , loadLastWorldOnStartup{this, "load_last_world_on_startup", true, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
   , autoSaveWorldOnExit{this, "auto_save_world_on_exit", false, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
   , saveWorldUncompressed{this, "save_world_uncompressed", false, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
-  , allowClientServerRestart{this, "allow_client_server_restart", false, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
-  , allowClientServerShutdown{this, "allow_client_server_shutdown", false, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
+  , allowClientServerRestart{this, "allow_client_server_restart", false, PropertyFlags::ReadWrite | PropertyFlags::Internal, [this](const bool& /*value*/){ saveToFile(); }}
+  , allowClientServerShutdown{this, "allow_client_server_shutdown", false, PropertyFlags::ReadWrite | PropertyFlags::Internal, [this](const bool& /*value*/){ saveToFile(); }}
   , memoryLoggerSize{this, Name::memoryLoggerSize, Default::memoryLoggerSize, PropertyFlags::ReadWrite, [this](const uint32_t& /*value*/){ saveToFile(); }}
   , enableFileLogger{this, Name::enableFileLogger, Default::enableFileLogger, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
 {
