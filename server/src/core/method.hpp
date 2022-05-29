@@ -32,14 +32,7 @@
 
 template<class T>
 class Method;
-/*
-template<class... A>
-struct args
-{
-  static constexpr std::size_t count = sizeof...(A);
-  static constexpr std::array<ValueType, count> types = {{value_type_v<std::remove_const_t<std::remove_reference_t<A>>>...}};
-};
-*/
+
 template<std::size_t N, class... A>
 using getArgumentType = typename std::tuple_element<N, std::tuple<A...>>::type;
 
@@ -113,7 +106,6 @@ class Method<R(A...)> : public AbstractMethod
 
     tcb::span<const TypeInfo> argumentTypeInfo() const final
     {
-      //return {typeInfoArray<A...>.data(), typeInfoArray<A...>.size()};
       return {typeInfoArray<A...>};
     }
 
