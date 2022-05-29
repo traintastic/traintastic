@@ -508,10 +508,12 @@ bool Session::processMessage(const Message& message)
       response->write<uint32_t>(info.size());
       for(const auto& item : info)
       {
+        response->writeBlock();
         response->write(item.classId);
         response->write(item.tileId);
         response->write(item.rotates);
         response->write(item.menu);
+        response->writeBlockEnd();
       }
       m_client->sendMessage(std::move(response));
       return true;

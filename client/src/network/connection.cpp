@@ -1014,6 +1014,7 @@ void Connection::socketConnected()
                       const auto count = boardGetTileInfoResponse->read<uint32_t>();
                       for(uint32_t i = 0; i < count; i++)
                       {
+                        boardGetTileInfoResponse->readBlock();
                         Board::TileInfo info;
                         info.classId = QString::fromLatin1(boardGetTileInfoResponse->read<QByteArray>());
                         boardGetTileInfoResponse->read(info.tileId);
@@ -1022,6 +1023,7 @@ void Connection::socketConnected()
                         for(uint32_t j = 0; j < length; j++)
                           info.menu.append(QString::fromLatin1(boardGetTileInfoResponse->read<QByteArray>()));
                         Board::tileInfo.emplace_back(info);
+                        boardGetTileInfoResponse->readBlockEnd();
                       }
                     }
                   });
