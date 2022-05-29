@@ -88,6 +88,8 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   , m_tileMoveStarted{false}
   , m_tileResizeStarted{false}
 {
+  setFocusPolicy(Qt::StrongFocus);
+
   if(AbstractProperty* name = m_object->getProperty("name"))
   {
     connect(name, &AbstractProperty::valueChangedString, this, &BoardWidget::setWindowTitle);
@@ -592,18 +594,10 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
 
 void BoardWidget::rightClicked()
 {
-  if(m_tileRotates != 0)
-  {
-    if(QApplication::keyboardModifiers() == Qt::NoModifier)
-      m_boardArea->setMouseMoveTileRotate(rotateCW(m_boardArea->mouseMoveTileRotate(), m_tileRotates));
-    else if(QApplication::keyboardModifiers() == Qt::ShiftModifier)
-      m_boardArea->setMouseMoveTileRotate(rotateCCW(m_boardArea->mouseMoveTileRotate(), m_tileRotates));
-
-    if(m_boardArea->mouseMoveTileHeight() != m_boardArea->mouseMoveTileWidth() && diff(m_tileRotateLast, m_boardArea->mouseMoveTileRotate()) == TileRotate::Deg90)
-      m_boardArea->setMouseMoveTileSize(m_boardArea->mouseMoveTileHeight(), m_boardArea->mouseMoveTileWidth());
-
-    m_tileRotateLast = m_boardArea->mouseMoveTileRotate();
-  }
+  if(QApplication::keyboardModifiers() == Qt::NoModifier)
+    rotateTile();
+  else if(QApplication::keyboardModifiers() == Qt::ShiftModifier)
+    rotateTile(true);
 }
 
 void BoardWidget::actionSelected(const Board::TileInfo* info)
@@ -626,20 +620,48 @@ void BoardWidget::actionSelected(const Board::TileInfo* info)
 
 void BoardWidget::keyPressEvent(QKeyEvent* event)
 {
-  if(event->key() == Qt::Key_Escape)
+  switch(event->key())
   {
-    if(m_tileMoveStarted || m_tileResizeStarted)
-    {
-      m_tileMoveStarted = false;
-      m_tileResizeStarted = false;
-      m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::None);
-    }
-    else
-    {
-      m_editActionNone->setChecked(true);
-      actionSelected(nullptr);
-    }
+    case Qt::Key_Escape:
+      if(m_tileMoveStarted || m_tileResizeStarted)
+      {
+        m_tileMoveStarted = false;
+        m_tileResizeStarted = false;
+        m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::None);
+      }
+      else
+      {
+        m_editActionNone->setChecked(true);
+        actionSelected(nullptr);
+      }
+      break;
+
+    case Qt::Key_Left:
+      rotateTile(true);
+      break;
+
+    case Qt::Key_Right:
+      rotateTile();
+      break;
+
+    default:
+      QWidget::keyPressEvent(event);
+      break;
   }
-  else
-    QWidget::keyPressEvent(event);
+}
+
+void BoardWidget::rotateTile(bool ccw)
+{
+  if(m_tileRotates != 0)
+  {
+    m_boardArea->setMouseMoveTileRotate(
+      ccw
+      ? rotateCCW(m_boardArea->mouseMoveTileRotate(), m_tileRotates)
+      : rotateCW(m_boardArea->mouseMoveTileRotate(), m_tileRotates));
+
+    if(m_boardArea->mouseMoveTileHeight() != m_boardArea->mouseMoveTileWidth() && diff(m_tileRotateLast, m_boardArea->mouseMoveTileRotate()) == TileRotate::Deg90)
+      m_boardArea->setMouseMoveTileSize(m_boardArea->mouseMoveTileHeight(), m_boardArea->mouseMoveTileWidth());
+
+    m_tileRotateLast = m_boardArea->mouseMoveTileRotate();
+  }
 }

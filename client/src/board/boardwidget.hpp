@@ -72,6 +72,7 @@ class BoardWidget : public QWidget
 
     void actionSelected(const Board::TileInfo* tile);
     void keyPressEvent(QKeyEvent* event) override;
+    void rotateTile(bool ccw = false);
 
   protected slots:
     void worldEditChanged(bool value);
