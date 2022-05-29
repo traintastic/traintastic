@@ -314,7 +314,6 @@ bool Session::processMessage(const Message& message)
           }
           catch(const std::exception& e)
           {
-            std::cerr << e.what() << '\n';
             if(message.isRequest())
             {
               m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::Failed));
@@ -357,8 +356,6 @@ bool Session::processMessage(const Message& message)
 
           model->updateRegion = [this](const TableModelPtr& tableModel, const TableModel::Region& region)
             {
-              std::cout << "updateRegion " << region.columnMin << " " << region.columnMax << " " << region.rowMin << " " << region.rowMax << std::endl;
-
               auto event = Message::newEvent(Message::Command::TableModelUpdateRegion);
               event->write(m_handles.getHandle(std::dynamic_pointer_cast<Object>(tableModel)));
               event->write(region.columnMin);
