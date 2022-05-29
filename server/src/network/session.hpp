@@ -93,6 +93,7 @@ class Session : public std::enable_shared_from_this<Session>
 
   public:
     Session(const std::shared_ptr<Client>& client);
+    ~Session();
 
     const boost::uuids::uuid& uuid() const { return m_uuid; }
 };

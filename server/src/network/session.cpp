@@ -61,6 +61,12 @@ Session::Session(const std::shared_ptr<Client>& client) :
 {
 }
 
+Session::~Session()
+{
+  for(const auto& it : m_objectSignals)
+    it.second.disconnect();
+}
+
 bool Session::processMessage(const Message& message)
 {
   switch(message.command())
