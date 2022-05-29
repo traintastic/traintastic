@@ -27,6 +27,7 @@
 #include <functional>
 #include <tuple>
 #include <limits>
+#include <utility>
 #include <traintastic/utils/valuetypetraits.hpp>
 #include "../utils/is_shared_ptr.hpp"
 
@@ -36,12 +37,10 @@ class Method;
 template<std::size_t N, class... A>
 using getArgumentType = typename std::tuple_element<N, std::tuple<A...>>::type;
 
-template<std::size_t N, class... A>
-auto getArgument(const std::vector<Argument>& args)
+template<std::size_t N, class A>
+auto getArgument(const Argument& value)
 {
-  using T = std::remove_const_t<std::remove_reference_t<getArgumentType<N, A...>>>;
-
-  const auto& value = args[N];
+  using T = std::remove_const_t<std::remove_reference_t<A>>;
 
   if constexpr(std::is_same_v<T, bool>)
     return std::get<bool>(value);
@@ -85,6 +84,22 @@ inline AbstractMethod::Result toResult(const T& value)
 template<class R, class... A>
 class Method<R(A...)> : public AbstractMethod
 {
+  private:
+    template<std::size_t... I>
+    Result call(const std::vector<Argument>& args, std::index_sequence<I...>)
+    {
+      if(args.size() != sizeof...(A))
+        throw InvalidNumberOfArgumentsError();
+
+      if constexpr(std::is_same_v<R, void>)
+      {
+        m_function(getArgument<I, A>(args[I])...);
+        return Result();
+      }
+      else
+        return toResult(m_function(getArgument<I, A>(args[I])...));
+    }
+
   protected:
     std::function<R(A...)> m_function;
 
@@ -118,83 +133,7 @@ class Method<R(A...)> : public AbstractMethod
 
     Result call(const std::vector<Argument>& args) final
     {
-      if(args.size() != sizeof...(A))
-        throw InvalidNumberOfArgumentsError();
-
-      if constexpr(std::is_same_v<R, void>)
-      {
-        if constexpr(sizeof...(A) == 0)
-          m_function();
-        else if constexpr(sizeof...(A) == 1)
-          m_function(
-            getArgument<0, A...>(args));
-        else if constexpr(sizeof...(A) == 2)
-          m_function(
-            getArgument<0, A...>(args),
-            getArgument<1, A...>(args));
-        else if constexpr(sizeof...(A) == 3)
-          m_function(
-            getArgument<0, A...>(args),
-            getArgument<1, A...>(args),
-            getArgument<2, A...>(args));
-        else if constexpr(sizeof...(A) == 4)
-          m_function(
-            getArgument<0, A...>(args),
-            getArgument<1, A...>(args),
-            getArgument<2, A...>(args),
-            getArgument<3, A...>(args));
-        else if constexpr(sizeof...(A) == 5)
-          m_function(
-            getArgument<0, A...>(args),
-            getArgument<1, A...>(args),
-            getArgument<2, A...>(args),
-            getArgument<3, A...>(args),
-            getArgument<4, A...>(args));
-        else
-          static_assert(sizeof(R) != sizeof(R));
-
-        return Result();
-      }
-      else
-      {
-        if constexpr(sizeof...(A) == 0)
-          return toResult(m_function());
-        else if constexpr(sizeof...(A) == 1)
-          return toResult(m_function(
-            getArgument<0, A...>(args)));
-        else if constexpr(sizeof...(A) == 2)
-          return toResult(m_function(
-            getArgument<0, A...>(args),
-            getArgument<1, A...>(args)));
-        else if constexpr(sizeof...(A) == 3)
-          return toResult(m_function(
-            getArgument<0, A...>(args),
-            getArgument<1, A...>(args),
-            getArgument<2, A...>(args)));
-        else if constexpr(sizeof...(A) == 4)
-          return toResult(m_function(
-            getArgument<0, A...>(args),
-            getArgument<1, A...>(args),
-            getArgument<2, A...>(args),
-            getArgument<3, A...>(args)));
-        else if constexpr(sizeof...(A) == 5)
-          return toResult(m_function(
-            getArgument<0, A...>(args),
-            getArgument<1, A...>(args),
-            getArgument<2, A...>(args),
-            getArgument<3, A...>(args),
-            getArgument<4, A...>(args)));
-        else if constexpr(sizeof...(A) == 6)
-          return toResult(m_function(
-            getArgument<0, A...>(args),
-            getArgument<1, A...>(args),
-            getArgument<2, A...>(args),
-            getArgument<3, A...>(args),
-            getArgument<4, A...>(args),
-            getArgument<5, A...>(args)));
-        else
-          static_assert(sizeof(R) != sizeof(R));
-      }
+      return call(args, std::index_sequence_for<A...>{});
     }
 };
 
