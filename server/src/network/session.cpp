@@ -25,31 +25,12 @@
 #include <boost/uuid/random_generator.hpp>
 #include "../traintastic/traintastic.hpp"
 #include "client.hpp"
-#include "../core/abstractproperty.hpp"
-#include "../core/abstractunitproperty.hpp"
-#include "../core/abstractvectorproperty.hpp"
-#include "../core/abstractvalueattribute.hpp"
-#include "../core/abstractvaluesattribute.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
 #include <traintastic/enum/attributetype.hpp>
 #include "../core/tablemodel.hpp"
-#include "../world/world.hpp"
-#include "../core/idobject.hpp"
-#include "../core/subobject.hpp"
 #include "../log/log.hpp"
 #include "../log/memorylogger.hpp"
-#include "../hardware/input/monitor/inputmonitor.hpp"
-#include "../hardware/output/map/outputmap.hpp"
-#include "../hardware/output/map/outputmapitem.hpp"
-#include "../board/board.hpp"
 #include "../board/tile/tiles.hpp"
-
-
-
-
-#include "../traintastic/settings.hpp"
-
-#include <iostream>
 
 #ifdef GetObject
   #undef GetObject // GetObject is defined by a winapi header
@@ -71,25 +52,6 @@ bool Session::processMessage(const Message& message)
 {
   switch(message.command())
   {
-    /*case Message::Command::CreateObject:
-    {
-      std::string classId;
-      std::string id;
-      message.read(classId);
-      message.read(id);
-
-      ObjectPtr obj = Traintastic::instance->world->createObject(classId, id);
-      if(obj)
-      {
-        auto response = Message::newResponse(message.command(), message.requestId());
-        writeObject(*response, obj);
-        m_client->sendMessage(std::move(response));
-      }
-      else
-        m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::UnknownClassId));
-
-      return true;
-    }*/
     case Message::Command::GetObject:
     {
       std::string id;
@@ -431,7 +393,6 @@ bool Session::processMessage(const Message& message)
         message.read(region.columnMax);
         message.read(region.rowMin);
         message.read(region.rowMax);
-        //std::cout << "TableModelSetRegion " << region.columnMin << " " << region.columnMax << " " << region.rowMin << " " << region.rowMax << std::endl;
         model->setRegion(region);
       }
       break;
