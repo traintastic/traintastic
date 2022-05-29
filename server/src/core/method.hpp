@@ -37,9 +37,11 @@ template<std::size_t N, class... A>
 using getArgumentType = typename std::tuple_element<N, std::tuple<A...>>::type;
 
 template<std::size_t N, class... A>
-auto getArgument(const Argument& value)
+auto getArgument(const std::vector<Argument>& args)
 {
   using T = std::remove_const_t<std::remove_reference_t<getArgumentType<N, A...>>>;
+
+  const auto& value = args[N];
 
   if constexpr(std::is_same_v<T, bool>)
     return std::get<bool>(value);
@@ -125,29 +127,29 @@ class Method<R(A...)> : public AbstractMethod
           m_function();
         else if constexpr(sizeof...(A) == 1)
           m_function(
-            getArgument<0, A...>(args[0]));
+            getArgument<0, A...>(args));
         else if constexpr(sizeof...(A) == 2)
           m_function(
-            getArgument<0, A...>(args[0]),
-            getArgument<1, A...>(args[1]));
+            getArgument<0, A...>(args),
+            getArgument<1, A...>(args));
         else if constexpr(sizeof...(A) == 3)
           m_function(
-            getArgument<0, A...>(args[0]),
-            getArgument<1, A...>(args[1]),
-            getArgument<2, A...>(args[2]));
+            getArgument<0, A...>(args),
+            getArgument<1, A...>(args),
+            getArgument<2, A...>(args));
         else if constexpr(sizeof...(A) == 4)
           m_function(
-            getArgument<0, A...>(args[0]),
-            getArgument<1, A...>(args[1]),
-            getArgument<2, A...>(args[2]),
-            getArgument<3, A...>(args[3]));
+            getArgument<0, A...>(args),
+            getArgument<1, A...>(args),
+            getArgument<2, A...>(args),
+            getArgument<3, A...>(args));
         else if constexpr(sizeof...(A) == 5)
           m_function(
-            getArgument<0, A...>(args[0]),
-            getArgument<1, A...>(args[1]),
-            getArgument<2, A...>(args[2]),
-            getArgument<3, A...>(args[3]),
-            getArgument<4, A...>(args[4]));
+            getArgument<0, A...>(args),
+            getArgument<1, A...>(args),
+            getArgument<2, A...>(args),
+            getArgument<3, A...>(args),
+            getArgument<4, A...>(args));
         else
           static_assert(sizeof(R) != sizeof(R));
 
@@ -159,37 +161,37 @@ class Method<R(A...)> : public AbstractMethod
           return toResult(m_function());
         else if constexpr(sizeof...(A) == 1)
           return toResult(m_function(
-            getArgument<0, A...>(args[0])));
+            getArgument<0, A...>(args)));
         else if constexpr(sizeof...(A) == 2)
           return toResult(m_function(
-            getArgument<0, A...>(args[0]),
-            getArgument<1, A...>(args[1])));
+            getArgument<0, A...>(args),
+            getArgument<1, A...>(args)));
         else if constexpr(sizeof...(A) == 3)
           return toResult(m_function(
-            getArgument<0, A...>(args[0]),
-            getArgument<1, A...>(args[1]),
-            getArgument<2, A...>(args[2])));
+            getArgument<0, A...>(args),
+            getArgument<1, A...>(args),
+            getArgument<2, A...>(args)));
         else if constexpr(sizeof...(A) == 4)
           return toResult(m_function(
-            getArgument<0, A...>(args[0]),
-            getArgument<1, A...>(args[1]),
-            getArgument<2, A...>(args[2]),
-            getArgument<3, A...>(args[3])));
+            getArgument<0, A...>(args),
+            getArgument<1, A...>(args),
+            getArgument<2, A...>(args),
+            getArgument<3, A...>(args)));
         else if constexpr(sizeof...(A) == 5)
           return toResult(m_function(
-            getArgument<0, A...>(args[0]),
-            getArgument<1, A...>(args[1]),
-            getArgument<2, A...>(args[2]),
-            getArgument<3, A...>(args[3]),
-            getArgument<4, A...>(args[4])));
+            getArgument<0, A...>(args),
+            getArgument<1, A...>(args),
+            getArgument<2, A...>(args),
+            getArgument<3, A...>(args),
+            getArgument<4, A...>(args)));
         else if constexpr(sizeof...(A) == 6)
           return toResult(m_function(
-            getArgument<0, A...>(args[0]),
-            getArgument<1, A...>(args[1]),
-            getArgument<2, A...>(args[2]),
-            getArgument<3, A...>(args[3]),
-            getArgument<4, A...>(args[4]),
-            getArgument<5, A...>(args[5])));
+            getArgument<0, A...>(args),
+            getArgument<1, A...>(args),
+            getArgument<2, A...>(args),
+            getArgument<3, A...>(args),
+            getArgument<4, A...>(args),
+            getArgument<5, A...>(args)));
         else
           static_assert(sizeof(R) != sizeof(R));
       }
