@@ -42,7 +42,7 @@ void MemoryLogger::add(std::chrono::system_clock::time_point time, std::string o
 {
   if(isEventLoopThread())
   {
-    m_logs.emplace_back(std::move(time), std::move(objectId), message, args);
+    m_logs.emplace_back(std::move(time), std::move(objectId), message, std::unique_ptr<std::vector<std::string>>{args});
     changed(*this, 1, cleanUp());
   }
   else

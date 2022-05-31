@@ -36,13 +36,13 @@ class MemoryLogger : public Logger
       std::chrono::system_clock::time_point time;
       std::string objectId;
       LogMessage message;
-      std::vector<std::string>* args;
+      std::unique_ptr<std::vector<std::string>> args;
 
-      Log(std::chrono::system_clock::time_point _time, std::string _objectId, LogMessage _message, std::vector<std::string>* _args = nullptr)
+      Log(std::chrono::system_clock::time_point _time, std::string _objectId, LogMessage _message, std::unique_ptr<std::vector<std::string>> _args = {})
         : time{std::move(_time)}
         , objectId{std::move(_objectId)}
         , message{_message}
-        , args{_args}
+        , args{std::move(_args)}
       {
       }
     };
