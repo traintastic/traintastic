@@ -35,6 +35,7 @@
 #include "../world/worldlist.hpp"
 #include "../world/worldloader.hpp"
 #include "../log/log.hpp"
+#include "../log/logmessageexception.hpp"
 
 using nlohmann::json;
 
@@ -43,7 +44,6 @@ std::shared_ptr<Traintastic> Traintastic::instance;
 Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_restart{false},
   m_dataDir{std::filesystem::absolute(dataDir)},
-  m_server{std::make_shared<Server>()},
   settings{this, "settings", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
   world{this, "world", nullptr, PropertyFlags::ReadWrite,
     [this](const std::shared_ptr<World>& /*newWorld*/)
@@ -161,8 +161,15 @@ Traintastic::RunStatus Traintastic::run()
   if(settings->loadLastWorldOnStartup && !settings->lastWorld.value().empty())
     loadWorld(settings->lastWorld.value());
 
-  if(!m_server->start(settings->localhostOnly, settings->port, settings->discoverable))
+  try
+  {
+    m_server = std::make_shared<Server>(settings->localhostOnly, settings->port, settings->discoverable);
+  }
+  catch(const LogMessageException& e)
+  {
+    Log::log(Server::id, e.message(), e.args());
     return ExitFailure;
+  }
 
   EventLoop::exec();
 

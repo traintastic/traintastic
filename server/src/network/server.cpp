@@ -26,61 +26,37 @@
 #include "client.hpp"
 #include "../core/eventloop.hpp"
 #include "../log/log.hpp"
+#include "../log/logmessageexception.hpp"
 #include "../utils/setthreadname.hpp"
 
 #define IS_SERVER_THREAD (std::this_thread::get_id() == m_thread.get_id())
 
-Server::Server()
+Server::Server(bool localhostOnly, uint16_t port, bool discoverable)
   : m_ioContext{1}
   , m_acceptor{m_ioContext}
-  , m_socketTCP{m_ioContext}
   , m_socketUDP{m_ioContext}
+  , m_localhostOnly{localhostOnly}
 {
   assert(isEventLoopThread());
-}
-
-Server::~Server()
-{
-  assert(isEventLoopThread());
-  assert(m_ioContext.stopped());
-}
-
-bool Server::start(bool localhostOnly, uint16_t port, bool discoverable)
-{
-  assert(isEventLoopThread());
-
-  m_localhostOnly = localhostOnly;
 
   boost::system::error_code ec;
   boost::asio::ip::tcp::endpoint endpoint(localhostOnly ? boost::asio::ip::address_v4::loopback() : boost::asio::ip::address_v4::any(), port);
 
   m_acceptor.open(endpoint.protocol(), ec);
   if(ec)
-  {
-    Log::log(id, LogMessage::F1001_OPENING_TCP_SOCKET_FAILED_X, ec.message());
-    return false;
-  }
+    throw LogMessageException(LogMessage::F1001_OPENING_TCP_SOCKET_FAILED_X, ec);
 
   m_acceptor.set_option(boost::asio::socket_base::reuse_address(true), ec);
   if(ec)
-  {
-    Log::log(id, LogMessage::F1002_TCP_SOCKET_ADDRESS_REUSE_FAILED_X, ec.message());
-    return false;
-  }
+    throw LogMessageException(LogMessage::F1002_TCP_SOCKET_ADDRESS_REUSE_FAILED_X, ec);
 
   m_acceptor.bind(endpoint, ec);
   if(ec)
-  {
-    Log::log(id, LogMessage::F1003_BINDING_TCP_SOCKET_FAILED_X, ec.message());
-    return false;
-  }
+    throw LogMessageException(LogMessage::F1003_BINDING_TCP_SOCKET_FAILED_X, ec);
 
   m_acceptor.listen(5, ec);
   if(ec)
-  {
-    Log::log(id, LogMessage::F1004_TCP_SOCKET_LISTEN_FAILED_X, ec.message());
-    return false;
-  }
+    throw LogMessageException(LogMessage::F1004_TCP_SOCKET_LISTEN_FAILED_X, ec);
 
   if(discoverable)
   {
@@ -88,24 +64,15 @@ bool Server::start(bool localhostOnly, uint16_t port, bool discoverable)
     {
       m_socketUDP.open(boost::asio::ip::udp::v4(), ec);
       if(ec)
-      {
-        Log::log(id, LogMessage::F1005_OPENING_UDP_SOCKET_FAILED_X, ec.message());
-        return false;
-      }
+        throw LogMessageException(LogMessage::F1005_OPENING_UDP_SOCKET_FAILED_X, ec);
 
       m_socketUDP.set_option(boost::asio::socket_base::reuse_address(true), ec);
       if(ec)
-      {
-        Log::log(id, LogMessage::F1006_UDP_SOCKET_ADDRESS_REUSE_FAILED_X, ec.message());
-        return false;
-      }
+        throw LogMessageException(LogMessage::F1006_UDP_SOCKET_ADDRESS_REUSE_FAILED_X, ec);
 
       m_socketUDP.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::address_v4::any(), defaultPort), ec);
       if(ec)
-      {
-        Log::log(id, LogMessage::F1007_BINDING_UDP_SOCKET_FAILED_X, ec.message());
-        return false;
-      }
+        throw LogMessageException(LogMessage::F1007_BINDING_UDP_SOCKET_FAILED_X, ec);
 
       Log::log(id, LogMessage::N1005_DISCOVERY_ENABLED);
     }
@@ -136,40 +103,39 @@ bool Server::start(bool localhostOnly, uint16_t port, bool discoverable)
 
       doAccept();
     });
-
-  return true;
 }
 
-void Server::stop()
+Server::~Server()
 {
   assert(isEventLoopThread());
 
-  m_ioContext.post(
-    [this]()
-    {
-      boost::system::error_code ec;
-      if(m_acceptor.cancel(ec))
-        Log::log(id, LogMessage::E1008_SOCKET_ACCEPTOR_CANCEL_FAILED_X, ec);
-
-      m_acceptor.close();
-
-      m_socketUDP.close();
-
-      for(auto& client : m_clients)
+  if(!m_ioContext.stopped())
+  {
+    m_ioContext.post(
+      [this]()
       {
-        client->stop();
-        client.reset();
-      }
-    });
+        boost::system::error_code ec;
+        if(m_acceptor.cancel(ec))
+          Log::log(id, LogMessage::E1008_SOCKET_ACCEPTOR_CANCEL_FAILED_X, ec);
 
-  m_ioContext.stop();
+        m_acceptor.close();
 
-  m_thread.join();
+        m_socketUDP.close();
+      });
+
+    m_ioContext.stop();
+  }
+
+  if(m_thread.joinable())
+    m_thread.join();
+
+  while(!m_clients.empty())
+    m_clients.front()->disconnect();
 }
 
 void Server::clientGone(const std::shared_ptr<Client>& client)
 {
-  assert(IS_SERVER_THREAD);
+  assert(isEventLoopThread());
 
   m_clients.erase(std::find(m_clients.begin(), m_clients.end(), client));
 }
@@ -233,22 +199,28 @@ void Server::doAccept()
 {
   assert(IS_SERVER_THREAD);
 
-  m_acceptor.async_accept(m_socketTCP,
+  if(!m_socketTCP)
+    m_socketTCP = std::make_shared<boost::asio::ip::tcp::socket>(m_ioContext);
+
+  m_acceptor.async_accept(*m_socketTCP,
     [this](boost::system::error_code ec)
     {
       if(!ec)
       {
-        try
-        {
-          std::shared_ptr<Client> client = std::make_shared<Client>(*this, "client[" + m_socketTCP.remote_endpoint().address().to_string() + ":" + std::to_string(m_socketTCP.remote_endpoint().port()) + "]", std::move(m_socketTCP));
-          client->start();
-          m_clients.push_back(client);
-          doAccept();
-        }
-        catch(const std::exception& e)
-        {
-          Log::log(id, LogMessage::C1002_CREATING_CLIENT_FAILED_X, e.what());
-        }
+        EventLoop::call(
+          [this, socket=m_socketTCP]()
+          {
+            try
+            {
+              m_clients.emplace_back(std::make_shared<Client>(*this, std::move(*socket)));
+            }
+            catch(const std::exception& e)
+            {
+              Log::log(id, LogMessage::C1002_CREATING_CLIENT_FAILED_X, e.what());
+            }
+          });
+        m_socketTCP.reset();
+        doAccept();
       }
       else
         Log::log(id, LogMessage::E1004_TCP_ACCEPT_ERROR_X, ec.message());

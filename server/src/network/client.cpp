@@ -31,48 +31,41 @@
   #define IS_SERVER_THREAD (std::this_thread::get_id() == m_server.threadId())
 #endif
 
-Client::Client(Server& server, std::string id, boost::asio::ip::tcp::socket socket)
+std::string clientId(const boost::asio::ip::tcp::socket& socket)
+{
+  return
+    std::string("client[")
+      .append(socket.remote_endpoint().address().to_string())
+      .append(":")
+      .append(std::to_string(socket.remote_endpoint().port()))
+      .append("]");
+}
+
+Client::Client(Server& server, boost::asio::ip::tcp::socket socket)
   : m_server{server}
   , m_socket(std::move(socket))
-  , m_id{std::move(id)}
+  , m_id{clientId(m_socket)}
   , m_authenticated{false}
 {
-  assert(IS_SERVER_THREAD);
+  assert(isEventLoopThread());
 
   m_socket.set_option(boost::asio::socket_base::linger(true, 0));
   m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
 
   Log::log(m_id, LogMessage::I1003_CLIENT_CONNECTED);
+
+  m_server.m_ioContext.post(
+    [this]()
+    {
+      doReadHeader();
+    });
 }
 
 Client::~Client()
 {
-  assert(IS_SERVER_THREAD);
-
-  stop();
-}
-
-void Client::start()
-{
-  assert(IS_SERVER_THREAD);
-
-  doReadHeader();
-}
-
-void Client::stop()
-{
-  assert(IS_SERVER_THREAD);
-
-  m_session.reset();
-
-  if(!m_socket.is_open())
-    return;
-
-  boost::system::error_code ec;
-  m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-  if(ec)
-    Log::log(m_id, LogMessage::E1005_SOCKET_SHUTDOWN_FAILED_X, ec);
-  m_socket.close();
+  assert(isEventLoopThread());
+  assert(!m_session);
+  assert(!m_socket.is_open());
 }
 
 void Client::doReadHeader()
@@ -103,12 +96,12 @@ void Client::doReadHeader()
         }
         else if(ec == boost::asio::error::eof || ec == boost::asio::error::connection_aborted || ec == boost::asio::error::connection_reset)
         {
-          connectionLost();
+          EventLoop::call(std::bind(&Client::connectionLost, this));
         }
         else if(ec != boost::asio::error::operation_aborted)
         {
           Log::log(m_id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
-          disconnect();
+          EventLoop::call(std::bind(&Client::disconnect, this));
         }
       });
 }
@@ -136,12 +129,12 @@ void Client::doReadData()
           }
           else if(ec == boost::asio::error::eof || ec == boost::asio::error::connection_aborted || ec == boost::asio::error::connection_reset)
           {
-            connectionLost();
+            EventLoop::call(std::bind(&Client::connectionLost, this));
           }
           else if(ec != boost::asio::error::operation_aborted)
           {
             Log::log(m_id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
-            disconnect();
+            EventLoop::call(std::bind(&Client::disconnect, this));
           }
         });
 }
@@ -224,7 +217,7 @@ void Client::sendMessage(std::unique_ptr<Message> message)
 
 void Client::connectionLost()
 {
-  assert(IS_SERVER_THREAD);
+  assert(isEventLoopThread());
 
   Log::log(m_id, LogMessage::I1004_CONNECTION_LOST);
   disconnect();
@@ -232,8 +225,18 @@ void Client::connectionLost()
 
 void Client::disconnect()
 {
-  assert(IS_SERVER_THREAD);
+  assert(isEventLoopThread());
 
-  stop();
+  m_session.reset();
+
+  if(m_socket.is_open())
+  {
+    boost::system::error_code ec;
+    m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+    if(ec && ec != boost::asio::error::not_connected)
+      Log::log(m_id, LogMessage::E1005_SOCKET_SHUTDOWN_FAILED_X, ec);
+    m_socket.close();
+  }
+
   m_server.clientGone(shared_from_this());
 }

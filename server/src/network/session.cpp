@@ -27,6 +27,9 @@
 #include "client.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
 #include <traintastic/enum/attributetype.hpp>
+#ifndef NDEBUG
+  #include "../core/eventloop.hpp" // for: isEventLoopThread()
+#endif
 #include "../core/tablemodel.hpp"
 #include "../log/log.hpp"
 #include "../log/memorylogger.hpp"
@@ -40,10 +43,12 @@ Session::Session(const std::shared_ptr<Client>& client) :
   m_client{client},
   m_uuid{boost::uuids::random_generator()()}
 {
+  assert(isEventLoopThread());
 }
 
 Session::~Session()
 {
+  assert(isEventLoopThread());
   m_memoryLoggerChanged.disconnect();
   for(const auto& it : m_objectSignals)
     it.second.disconnect();

@@ -60,14 +60,12 @@ class Client : public std::enable_shared_from_this<Client>
     void sendMessage(std::unique_ptr<Message> message);
 
     void connectionLost();
-    void disconnect();
 
   public:
-    Client(Server& server, std::string id, boost::asio::ip::tcp::socket socket);
+    Client(Server& server, boost::asio::ip::tcp::socket socket);
     virtual ~Client();
 
-    void start();
-    void stop();
+    void disconnect();
 };
 
 #endif

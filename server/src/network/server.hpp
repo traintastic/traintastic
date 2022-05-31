@@ -39,15 +39,14 @@ class Server : public std::enable_shared_from_this<Server>
   friend class Client;
 
   private:
-    static constexpr std::string_view id{"server"};
     boost::asio::io_context m_ioContext;
     std::thread m_thread;
     boost::asio::ip::tcp::acceptor m_acceptor;
-    boost::asio::ip::tcp::socket m_socketTCP;
+    std::shared_ptr<boost::asio::ip::tcp::socket> m_socketTCP;
     boost::asio::ip::udp::socket m_socketUDP;
     std::array<char, 8> m_udpBuffer;
     boost::asio::ip::udp::endpoint m_remoteEndpoint;
-    bool m_localhostOnly;
+    const bool m_localhostOnly;
     std::list<std::shared_ptr<Client>> m_clients;
 
     void doReceive();
@@ -57,17 +56,15 @@ class Server : public std::enable_shared_from_this<Server>
     void clientGone(const std::shared_ptr<Client>& client);
 
   public:
+    static constexpr std::string_view id{"server"};
     static constexpr uint16_t defaultPort = 5740; //!< unoffical, not (yet) assigned by IANA
 
-    Server();
+    Server(bool localhostOnly, uint16_t port, bool discoverable);
     ~Server();
 
 #ifndef NDEBUG
     inline auto threadId() const { return m_thread.get_id(); }
 #endif
-
-    bool start(bool localhostOnly, uint16_t port, bool discoverable);
-    void stop();
 };
 
 #endif
