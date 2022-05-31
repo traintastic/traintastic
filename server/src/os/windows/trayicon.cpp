@@ -36,10 +36,10 @@ std::unique_ptr<std::thread> TrayIcon::s_thread;
 HWND TrayIcon::s_window = nullptr;
 HMENU TrayIcon::s_menu = nullptr;
 
-void TrayIcon::add()
+void TrayIcon::add(bool isRestart)
 {
   assert(!s_thread);
-  s_thread = std::make_unique<std::thread>(run);
+  s_thread = std::make_unique<std::thread>(run, isRestart);
 }
 
 void TrayIcon::remove()
@@ -50,21 +50,24 @@ void TrayIcon::remove()
   s_thread.reset();
 }
 
-void TrayIcon::run()
+void TrayIcon::run(bool isRestart)
 {
   setThreadName("trayicon");
 
   const LPCSTR windowClassName = "TraintasticServerTrayIcon";
 
-  // register window class:
-  WNDCLASSEX windowClass;
-  memset(&windowClass, 0, sizeof(windowClass));
-  windowClass.cbSize = sizeof(windowClass);
-  windowClass.lpfnWndProc = windowProc;
-  windowClass.hInstance = GetModuleHandle(nullptr);
-  windowClass.lpszClassName = windowClassName;
-  if(!RegisterClassExA(&windowClass))
-    return;
+  // register window class, once:
+  if(!isRestart)
+  {
+    WNDCLASSEX windowClass;
+    memset(&windowClass, 0, sizeof(windowClass));
+    windowClass.cbSize = sizeof(windowClass);
+    windowClass.lpfnWndProc = windowProc;
+    windowClass.hInstance = GetModuleHandle(nullptr);
+    windowClass.lpszClassName = windowClassName;
+    if(!RegisterClassExA(&windowClass))
+      return;
+  }
 
   // create window (for receiving messages):
   s_window = CreateWindowExA(0, windowClassName, nullptr, 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -103,8 +106,12 @@ void TrayIcon::run()
 
   const std::string_view infoTitle{"Traintastic server"};
   const std::string_view infoMessage{"Traintastic server is running in the system tray."};
+  const std::string_view infoMessageRestarted{"Traintastic server restarted"};
   std::strncpy(notifyIconData.szInfoTitle, infoTitle.data(), std::min(infoTitle.size(), sizeof(notifyIconData.szInfoTitle) - 1));
-  std::strncpy(notifyIconData.szInfo, infoMessage.data(), std::min(infoMessage.size(), sizeof(notifyIconData.szInfo) - 1));
+  if(isRestart)
+    std::strncpy(notifyIconData.szInfo, infoMessageRestarted.data(), std::min(infoMessageRestarted.size(), sizeof(notifyIconData.szInfo) - 1));
+  else
+    std::strncpy(notifyIconData.szInfo, infoMessage.data(), std::min(infoMessage.size(), sizeof(notifyIconData.szInfo) - 1));
   notifyIconData.dwInfoFlags = NIIF_INFO | NIIF_LARGE_ICON;
   notifyIconData.uFlags |= NIF_INFO;
 
@@ -132,8 +139,6 @@ void TrayIcon::run()
 
   if(s_menu)
     DestroyMenu(s_menu);
-
-  UnregisterClass(windowClassName, GetModuleHandle(nullptr));
 }
 
 LRESULT CALLBACK TrayIcon::windowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)

@@ -64,7 +64,7 @@ class TrayIcon
     static HMENU s_menu;
     inline static TraintasticSettings s_settings = {{}, false, false};
 
-    static void run();
+    static void run(bool isRestart);
     static LRESULT CALLBACK windowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam);
 
     static void menuAddItem(MenuItem id, const LPSTR text, bool enabled = true);
@@ -75,7 +75,7 @@ class TrayIcon
     static void getSettings();
 
   public:
-    static void add();
+    static void add(bool isRestart = false);
     static void remove();
 };
 

@@ -153,8 +153,6 @@ int main(int argc, char* argv[])
 
   do
   {
-    restart = false;
-
     {
       const auto settings = Settings::getPreStartSettings(dataDir);
 
@@ -171,9 +169,11 @@ int main(int argc, char* argv[])
 
 #ifdef WIN32
     if(options.tray)
-      Windows::TrayIcon::add();
+      Windows::TrayIcon::add(restart);
 #endif
 
+    restart = false;
+    
     try
     {
       Traintastic::instance = std::make_shared<Traintastic>(dataDir);
