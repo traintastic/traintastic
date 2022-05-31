@@ -203,6 +203,18 @@ int main(int argc, char* argv[])
     if(options.tray)
       Windows::TrayIcon::remove();
 #endif
+
+    if(Traintastic::instance)
+    {
+#ifndef NDEBUG
+      std::weak_ptr<Traintastic> weak = Traintastic::instance;
+#endif
+      Traintastic::instance->destroy(); // notify others to release the object
+      Traintastic::instance.reset();
+#ifndef NDEBUG
+      assert(weak.expired());
+#endif
+    }
   }
   while(restart);
 
