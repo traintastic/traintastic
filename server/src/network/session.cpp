@@ -44,6 +44,7 @@ Session::Session(const std::shared_ptr<Client>& client) :
 
 Session::~Session()
 {
+  m_memoryLoggerChanged.disconnect();
   for(const auto& it : m_objectSignals)
     it.second.disconnect();
 }
