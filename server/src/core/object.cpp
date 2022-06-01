@@ -95,7 +95,6 @@ void Object::load(WorldLoader& loader, const nlohmann::json& data)
       {
         if(contains(property->flags(), PropertyFlags::SubObject))
         {
-          //loadObject(*property->toObject(), value);
           property->toObject()->load(loader, value);
         }
         else

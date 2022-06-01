@@ -43,8 +43,6 @@ class Event : public AbstractEvent
         addArguments(args, others...);
     }
 
-    //static constexpr std::array<ArgumentInfo, sizeof...(Args)> s_argumentInfo = {{getArgumentInfo<Args>()...}};
-
   protected:
     void fire(Args... args)
     {
@@ -65,7 +63,7 @@ class Event : public AbstractEvent
 
     tcb::span<const TypeInfo> argumentTypeInfo() const final
     {
-      return {typeInfoArray<Args...>};//.data(), typeInfoArray<Args...>.size()};
+      return {typeInfoArray<Args...>};
     }
 };
 

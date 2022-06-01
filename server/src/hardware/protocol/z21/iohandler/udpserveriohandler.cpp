@@ -21,7 +21,6 @@
  */
 
 #include "udpserveriohandler.hpp"
-//#include <boost/asio/buffer.hpp>
 #include "../serverkernel.hpp"
 #include "../messages.hpp"
 #include "../../../../log/logmessageexception.hpp"

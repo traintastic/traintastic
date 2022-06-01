@@ -126,8 +126,6 @@ class World : public Object
 
     std::string getObjectId() const final { return std::string(classId); }
 
-    //const boost::uuids::uuid& uuid() const { return m_uuid; }
-
     std::string getUniqueId(std::string_view prefix) const;
     bool isObject(const std::string&_id) const;
     ObjectPtr getObjectById(const std::string& _id) const;

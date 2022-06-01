@@ -24,7 +24,6 @@
 #define TRAINTASTIC_SERVER_CORE_TABLEMODEL_HPP
 
 #include "object.hpp"
-//#include <vector>
 #include <functional>
 #include "tablemodelptr.hpp"
 
