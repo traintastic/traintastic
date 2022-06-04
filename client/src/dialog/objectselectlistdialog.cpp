@@ -68,7 +68,6 @@ ObjectSelectListDialog::ObjectSelectListDialog(InterfaceItem& item, QWidget* par
   layout->setMargin(0);
   layout->addWidget(m_tableWidget);
   layout->addWidget(m_buttons);
-  //layout->setSizeConstraint(QLayout::SetFixedSize);
   setLayout(layout);
 
   auto* spinner = new WaitingSpinnerWidget(this, true, false);

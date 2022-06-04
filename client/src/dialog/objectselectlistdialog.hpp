@@ -51,7 +51,6 @@ class ObjectSelectListDialog : public QDialog
   public:
     ObjectSelectListDialog(Method& method, QWidget* parent);
     ObjectSelectListDialog(ObjectProperty& property, QWidget* parent);
-    //~ObjectSelectListDialog() final = default;
 };
 
 #endif

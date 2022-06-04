@@ -25,7 +25,6 @@
 
 #include "abstractproperty.hpp"
 #include <QVariant>
-//#include "objectptr.hpp"
 
 class Object;
 

@@ -23,12 +23,10 @@
 #include <QApplication>
 #ifdef Q_OS_WINDOWS
   #include <QSettings>
-  //#include <QStandardPaths>
 #endif
 #include <QCommandLineParser>
 #include <version.hpp>
 #include "mainwindow.hpp"
-//#include "network/client.hpp"
 #include "settings/generalsettings.hpp"
 #include "settings/developersettings.hpp"
 #include "style/materialdarkstyle.hpp"

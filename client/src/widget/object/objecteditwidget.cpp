@@ -24,16 +24,11 @@
 
 #include <QFormLayout>
 #include <QVBoxLayout>
-//#include <QTabWidget>
-//#include <QtWaitingSpinner/waitingspinnerwidget.h>
-//#include "../../network/connection.hpp"
 #include "../../network/object.hpp"
 #include "../../network/property.hpp"
 #include "../../network/objectproperty.hpp"
 #include "../../network/unitproperty.hpp"
 #include "../../network/method.hpp"
-//#include "../../network/utils.hpp"
-//#include "../alertwidget.hpp"
 #include "../interfaceitemnamelabel.hpp"
 #include "../propertycheckbox.hpp"
 #include "../propertycombobox.hpp"
@@ -48,7 +43,6 @@
 #include "../unitpropertyedit.hpp"
 #include "../createwidget.hpp"
 #include "../../theme/theme.hpp"
-//#include "../../mainwindow.hpp"
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/locale/locale.hpp>
 

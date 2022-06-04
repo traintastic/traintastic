@@ -58,7 +58,6 @@ WorldListDialog::WorldListDialog(std::shared_ptr<Connection> connection, QWidget
   layout->setMargin(0);
   layout->addWidget(m_tableWidget);
   layout->addWidget(m_buttons);
-  //layout->setSizeConstraint(QLayout::SetFixedSize);
   setLayout(layout);
 
   auto* spinner = new WaitingSpinnerWidget(this, true, false);

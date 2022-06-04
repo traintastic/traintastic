@@ -106,7 +106,6 @@ class MainWindow : public QMainWindow
     void connectionStateChanged();
     void updateActions();
     void worldStateChanged(int64_t value);
-    //void updateModeActions();
 
   public:
     inline static MainWindow* instance = nullptr;

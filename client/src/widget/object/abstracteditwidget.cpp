@@ -21,28 +21,11 @@
  */
 
 #include "abstracteditwidget.hpp"
-//#include <QFormLayout>
-//#include <QVBoxLayout>
-//#include <QTabWidget>
 #include <QtWaitingSpinner/waitingspinnerwidget.h>
 #include "../../network/connection.hpp"
 #include "../../network/object.hpp"
 #include "../../network/abstractproperty.hpp"
-//#include "../../network/property.hpp"
-//#include "../../network/objectproperty.hpp"
-//#include "../../network/utils.hpp"
-//#include "../alertwidget.hpp"
-//#include "../propertycheckbox.hpp"
-//#include "../propertycombobox.hpp"
-//#include "../propertyspinbox.hpp"
-//#include "../propertylineedit.hpp"
-//#include "../propertytextedit.hpp"
-//#include "../propertydirectioncontrol.hpp"
-//#include "../propertyvaluelabel.hpp"
-//#include "../createwidget.hpp"
 #include "../../mainwindow.hpp"
-//#include <traintastic/enum/category.hpp>
-//#include <traintastic/enum/direction.hpp>
 
 AbstractEditWidget::AbstractEditWidget(const ObjectPtr& object, QWidget* parent) :
   QWidget(parent),

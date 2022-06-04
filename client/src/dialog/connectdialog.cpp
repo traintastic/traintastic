@@ -31,6 +31,7 @@
 #include <QUrl>
 #include <QTimer>
 #include "../network/connection.hpp"
+#include "../network/object.hpp"
 #include <traintastic/locale/locale.hpp>
 
 ConnectDialog::ConnectDialog(QWidget* parent, const QString& url) :
@@ -45,12 +46,9 @@ ConnectDialog::ConnectDialog(QWidget* parent, const QString& url) :
 {
   setWindowTitle(Locale::tr("qtapp.connect_dialog:connect_to_server"));
 
-  //m_udpSocket->bind(QHostAddress::Any);
-
   m_server->setSizeAdjustPolicy(QComboBox::AdjustToContentsOnFirstShow);
   m_server->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   m_server->setEditable(true);
-  //m_server->addItem("localhost");
 
   m_password->setEchoMode(QLineEdit::Password);
 
@@ -72,7 +70,6 @@ ConnectDialog::ConnectDialog(QWidget* parent, const QString& url) :
   layout->setSizeConstraint(QLayout::SetFixedSize);
 
   setLayout(layout);
-  //setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
   connect(m_udpSocket, &QUdpSocket::readyRead, this, &ConnectDialog::socketReadyRead);
   connect(&m_broadcastTimer, &QTimer::timeout, this, &ConnectDialog::broadcast);
   connect(m_connection.get(), &Connection::stateChanged, this, &ConnectDialog::stateChanged);

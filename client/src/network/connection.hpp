@@ -110,10 +110,7 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
     static const quint16 defaultPort = 5740;
     static constexpr int invalidRequestId = -1;
 
-    //static Client* instance;
-
     Connection();
-    ~Connection();
 
     inline bool isConnected() const { return m_state == State::Connected; }
     bool isDisconnected() const;
@@ -135,7 +132,6 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
 
     void serverLog(ServerLogTableModel& model, bool enable);
 
-    //[[nodiscard]] int createObject(const QString& classId, const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
     [[nodiscard]] int getObject(const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
     void releaseObject(Object* object);
 

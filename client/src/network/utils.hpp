@@ -27,4 +27,4 @@
 
 QString errorCodeToText(Message::ErrorCode ec);
 
-#endif // UTILS_HPP
+#endif

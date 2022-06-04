@@ -113,8 +113,6 @@ MainWindow::MainWindow(QWidget* parent) :
   // build the main menu
   {
     setMenuBar(new QMenuBar());
-    //QMenu* subMenu;
-    //QAction* act;
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:file"));
     m_actionConnectToServer = menu->addAction(Locale::tr("qtapp.mainmenu:connect_to_server") + "...", this, [this](){ MainWindow::connectToServer(); });
@@ -638,38 +636,6 @@ void MainWindow::toggleServerLog()
   }
 }
 
-/*
-void MainWindow::showObjectEdit(const QString& id)
-{
-  if(!m_mdiSubWindow.objectEdit.contains(id))
-  {
-    ObjectEditSubWindow* window = new ObjectEditSubWindow(id);
-    m_mdiArea->addSubWindow(window);
-    window->setAttribute(Qt::WA_DeleteOnClose);
-    connect(window, &QMdiSubWindow::destroyed, [this, id](QObject*){ m_mdiSubWindow.objectEdit.remove(id); });
-    window->show();
-    m_mdiSubWindow.objectEdit[id] = window;
-  }
-  else
-    m_mdiArea->setActiveSubWindow(m_mdiSubWindow.objectEdit[id]);
-}
-
-void MainWindow::showObjectEdit(const ObjectPtr& object)
-{
-  const QString& id = object->getProperty("id")->toString();
-  if(!m_mdiSubWindow.objectEdit.contains(id))
-  {
-    ObjectEditSubWindow* window = new ObjectEditSubWindow(object);
-    m_mdiArea->addSubWindow(window);
-    window->setAttribute(Qt::WA_DeleteOnClose);
-    connect(window, &QMdiSubWindow::destroyed, [this, id](QObject*){ m_mdiSubWindow.objectEdit.remove(id); });
-    window->show();
-    m_mdiSubWindow.objectEdit[id] = window;
-  }
-  else
-    m_mdiArea->setActiveSubWindow(m_mdiSubWindow.objectEdit[id]);
-}
-*/
 void MainWindow::showObject(const ObjectPtr& object, SubWindowType type)
 {
   QString windowId;

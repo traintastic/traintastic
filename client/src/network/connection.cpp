@@ -42,11 +42,6 @@
 #include <traintastic/enum/interfaceitemtype.hpp>
 #include <traintastic/enum/attributetype.hpp>
 #include <traintastic/locale/locale.hpp>
-//#include <enum/valuetype.hpp>
-//#include <enum/propertyflags.hpp>
-
-//Client* Client::instance = nullptr;
-
 
 inline static QVariant readValue(const Message& message, const ValueType valueType)
 {
@@ -151,11 +146,6 @@ Connection::Connection() :
   connect(m_socket, &QTcpSocket::readyRead, this, &Connection::socketReadyRead);
 }
 
-Connection::~Connection()
-{
- // instance = nullptr;
-}
-
 bool Connection::isDisconnected() const
 {
   return m_state != State::Connected && m_state != State::Connecting && m_state != State::Disconnecting;
@@ -219,23 +209,6 @@ void Connection::serverLog(ServerLogTableModel& model, bool enable)
   send(request);
 }
 
-/*
-int Connection::createObject(const QString& classId, const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
-{
-  std::unique_ptr<Message> request{Message::newRequest(Message::Command::CreateObject)};
-  request->write(classId.toLatin1());
-  request->write(id.toLatin1());
-  send(request,
-    [this, callback](const std::shared_ptr<Message> message)
-    {
-      ObjectPtr object;
-      if(!message->isError())
-        object = readObject(*message);
-      callback(object, message->errorCode());
-    });
-  return request->requestId();
-}
-*/
 int Connection::getObject(const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
 {
   std::unique_ptr<Message> request{Message::newRequest(Message::Command::GetObject)};
@@ -862,39 +835,6 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
               default:
                 Q_ASSERT(false);
             }
-
-            /*
-            switch(message->read<ValueType>())
-            {
-              case ValueType::Boolean:
-                value = message->read<bool>();
-                break;
-
-              case ValueType::Integer:
-              case ValueType::Enum:
-                value = message->read<qlonglong>();
-                break;
-
-              case ValueType::Float:
-                value = message->read<double>();
-                break;
-
-              case ValueType::String:
-                value = QString::fromUtf8(message->read<QByteArray>());
-                break;
-
-              case ValueType::Object:
-              case ValueType::Invalid:
-                Q_ASSERT(false);
-                break;
-            }
-
-            if(Q_LIKELY(value.isValid()))
-            {
-              item->m_attributes[attributeName] = value;
-              emit item->attributeChanged(attributeName, value);
-            }
-            */
           }
         }
         break;
@@ -985,23 +925,7 @@ void Connection::socketConnected()
                 [this]()
                 {
                   getWorld();
-                  /*if(!m_worldProperty->objectId().isEmpty())
-                  {
-                    if(m_worldRequestId != invalidRequestId)
-                      cancelRequest(m_worldRequestId);
-
-                    m_worldRequestId = getObject(m_worldProperty->objectId(),
-                      [this](const ObjectPtr& object, Message::ErrorCode ec)
-                      {
-                        m_worldRequestId = invalidRequestId;
-                        setWorld(object);
-                        // TODO: show error??
-                      });
-                  }
-                  else
-                    setWorld(nullptr);*/
                 });
-
               {
                 auto request{Message::newRequest(Message::Command::BoardGetTileInfo)};
 
@@ -1033,39 +957,6 @@ void Connection::socketConnected()
                 getWorld();
               else
                 setState(State::Connected);
-
-
-/*
-              getObject("traintastic",
-                [this](const ObjectPtr& object, Message::ErrorCode errorCode)
-                {
-                  if(object && errorCode == Message::ErrorCode::None)
-                  {
-                    m_traintastic = object;
-                    m_worldProperty = object->getProperty("world");
-                    if(!m_worldProperty)
-                    {
-                      Q_ASSERT(false);
-                      disconnectFromServer();
-                    }
-                    m_worldProperty->getObject(
-                      [this](const ObjectPtr& object, Message::ErrorCode ec)
-                      {
-                        if(!ec)
-                        {
-                          if(object)
-                        }
-
-                      });
-
-
-
-
-
-                    setState(State::Connected);
-                  }
-                });
-                */
             }
             else
             {

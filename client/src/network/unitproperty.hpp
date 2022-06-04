@@ -43,9 +43,6 @@ class UnitProperty : public Property
     qint64 unitValue() const { return m_unitValue; }
 
     void setUnitValue(qint64 value);
-
-    //template<typename T>
-    //T unit() const { return static_cast<T>(m_unitValue); }
 };
 
 #endif
