@@ -104,10 +104,10 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   QToolBar* toolbar = new QToolBar(this);
   l->addWidget(toolbar);
 
-  toolbar->addAction(/*Theme::getIcon("properties"),*/ Locale::tr("qtapp:board_properties"),
-    []()
+  toolbar->addAction(Theme::getIcon("edit"), Locale::tr("qtapp:board_properties"),
+    [this]()
     {
-      // TODO
+      MainWindow::instance->showObject(m_object, SubWindowType::Object);
     });
 
   toolbar->addSeparator();

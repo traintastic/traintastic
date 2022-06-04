@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -250,19 +250,28 @@ Board::Board(World& world, std::string_view _id) :
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
+  Attributes::addObjectEditor(left, false);
   m_interfaceItems.add(left);
+  Attributes::addObjectEditor(top, false);
   m_interfaceItems.add(top);
+  Attributes::addObjectEditor(right, false);
   m_interfaceItems.add(right);
+  Attributes::addObjectEditor(bottom, false);
   m_interfaceItems.add(bottom);
   Attributes::addEnabled(addTile, editable && stopped);
+  Attributes::addObjectEditor(addTile, false);
   m_interfaceItems.add(addTile);
   Attributes::addEnabled(moveTile, editable && stopped);
+  Attributes::addObjectEditor(moveTile, false);
   m_interfaceItems.add(moveTile);
   Attributes::addEnabled(resizeTile, editable && stopped);
+  Attributes::addObjectEditor(resizeTile, false);
   m_interfaceItems.add(resizeTile);
   Attributes::addEnabled(deleteTile, editable && stopped);
+  Attributes::addObjectEditor(deleteTile, false);
   m_interfaceItems.add(deleteTile);
   Attributes::addEnabled(resizeToContents, editable);
+  Attributes::addObjectEditor(resizeToContents, false);
   m_interfaceItems.add(resizeToContents);
 }
 

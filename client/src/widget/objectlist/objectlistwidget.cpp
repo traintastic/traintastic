@@ -348,7 +348,10 @@ ObjectListWidget::~ObjectListWidget()
 
 void ObjectListWidget::objectDoubleClicked(const QString& id)
 {
-  MainWindow::instance->showObject(id);
+  SubWindowType type = SubWindowType::Object;
+  if(m_object->classId() == "list.board")
+    type = SubWindowType::Board;
+  MainWindow::instance->showObject(id, "", type);
 }
 
 void ObjectListWidget::tableDoubleClicked(const QModelIndex& index)

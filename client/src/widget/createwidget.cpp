@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -70,8 +70,6 @@ QWidget* createWidget(const ObjectPtr& object, QWidget* parent)
     return new InputMonitorWidget(inputMonitor, parent);
   else if(auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(object))
     return new OutputKeyboardWidget(outputKeyboard, parent);
-  else if(auto board = std::dynamic_pointer_cast<Board>(object))
-    return new BoardWidget(board, parent);
   else
     return new ObjectEditWidget(object, parent);
 }
