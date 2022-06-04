@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,7 @@
 
 #include "../src/hardware/interface/dccplusplusinterface.hpp"
 #include "../src/hardware/interface/ecosinterface.hpp"
+#include "../src/hardware/interface/hsi88.hpp"
 #include "../src/hardware/interface/loconetinterface.hpp"
 #include "../src/hardware/interface/wlanmausinterface.hpp"
 #include "../src/hardware/interface/xpressnetinterface.hpp"
@@ -80,6 +81,7 @@ TEST_CASE("Create world and board => destroy board", "[object-create-destroy]")
 TEMPLATE_TEST_CASE("Create world and interface => destroy world", "[object-create-destroy]"
   , DCCPlusPlusInterface
   , ECoSInterface
+  , HSI88Interface
   , LocoNetInterface
   , WlanMausInterface
   , XpressNetInterface
@@ -102,6 +104,7 @@ TEMPLATE_TEST_CASE("Create world and interface => destroy world", "[object-creat
 TEMPLATE_TEST_CASE("Create world and interface => destroy interface", "[object-create-destroy]"
   , DCCPlusPlusInterface
   , ECoSInterface
+  , HSI88Interface
   , LocoNetInterface
   , WlanMausInterface
   , XpressNetInterface
