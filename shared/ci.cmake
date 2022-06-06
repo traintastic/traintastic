@@ -2,11 +2,11 @@
 if(DEFINED ENV{GITHUB_ACTIONS})
   message(STATUS "We're on GitHub Actions")
 
-  if($ENV{GITHUB_REF_TYPE} MATCHES "branch")
+  if(ENV{GITHUB_REF_TYPE} EQUAL "branch")
 
     set(TRAINTASTIC_CODENAME "$ENV{CI_REF_NAME_SLUG}-$ENV{GITHUB_RUN_NUMBER}-$ENV{CI_SHA_SHORT}")
 
-    if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    if(CMAKE_SYSTEM_NAME MATCHES "Linux")
       execute_process(COMMAND lsb_release -i -s OUTPUT_VARIABLE LSB_RELEASE_ID)
       execute_process(COMMAND lsb_release -c -s OUTPUT_VARIABLE LSB_RELEASE_CODENAME)
 
