@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.9)
-include(./ci.cmake)
-include(./version.cmake)
+include(./traintastic.cmake)
 project(traintastic-data VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic data")
 
 ### INSTALL ###
