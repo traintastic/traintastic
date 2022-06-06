@@ -210,6 +210,10 @@ void Traintastic::loadWorldPath(const std::filesystem::path& path)
 #endif
     settings->lastWorld = world->uuid.value();
   }
+  catch(const LogMessageException& e)
+  {
+    Log::log(*this, e.message(), e.args());
+  }
   catch(const std::exception& e)
   {
     Log::log(*this, LogMessage::C1001_LOADING_WORLD_FAILED_X, e.what());

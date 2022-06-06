@@ -49,6 +49,16 @@ TODO
 ## C1011: Importing world failed (*reason*) {#c1011}
 TODO
 
+## C1012: Unknown class '*class id*', can't recreate object '*object id*' {#c1012}
+TODO
+
+## C1013: Can't load world saved with newer version, requires at least: Traintastic server *version* {#c1013}
+
+**Cause:** The world is saved with a newer version of Traintastic server than currently is running.
+
+**Solution:** Update Traintastic server (and client) to at least *version*.
+
+
 ## C2001: Address already used at #*object* {#c2001}
 
 TODO

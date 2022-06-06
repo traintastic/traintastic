@@ -29,6 +29,8 @@
 #include "../utils/startswith.hpp"
 #include "../utils/stripsuffix.hpp"
 #include "ctwreader.hpp"
+#include "../log/logmessageexception.hpp"
+#include <version.hpp>
 
 #include "../board/board.hpp"
 #include "../board/tile/tiles.hpp"
@@ -137,6 +139,30 @@ void WorldLoader::load()
   // check if UUID is valid:
   m_world->uuid.setValueInternal(to_string(boost::uuids::string_generator()(std::string(data["uuid"]))));
 
+  // check version:
+  //! \todo require this for >= v0.2
+  {
+    json traintastic = data["traintastic"];
+    if(traintastic.is_object())
+    {
+      json version = traintastic["version"];
+      if(version.is_object())
+      {
+        const uint16_t major = version["major"].get<uint16_t>();
+        const uint16_t minor = version["minor"].get<uint16_t>();
+        const uint16_t patch = version["patch"].get<uint16_t>();
+
+        if((major != TRAINTASTIC_VERSION_MAJOR) ||
+            (minor > TRAINTASTIC_VERSION_MINOR) ||
+            (minor == TRAINTASTIC_VERSION_MINOR && patch > TRAINTASTIC_VERSION_PATCH))
+        {
+          throw LogMessageException(LogMessage::C1013_CANT_LOAD_WORLD_SAVED_WITH_NEWER_VERSION_REQUIRES_AT_LEAST_X,
+              std::string("Traintastic server v").append(std::to_string(major)).append(".").append(std::to_string(minor)).append(".").append(std::to_string(patch)));
+        }
+      }
+    }
+  }
+
   // create a list of all objects
   m_objects.insert({m_world->getObjectId(), {data, m_world, false}});
   for(json object : data["objects"])
@@ -159,10 +185,7 @@ void WorldLoader::load()
 
   // and finally notify loading is completed
   for(auto& it : m_objects)
-  {
-    assert(it.second.object);
     it.second.object->loaded();
-  }
 }
 
 void WorldLoader::createObject(ObjectData& objectData)
@@ -195,22 +218,23 @@ void WorldLoader::createObject(ObjectData& objectData)
     objectData.object = Board::create(*m_world, id);
   else if(startsWith(classId, Tiles::classIdPrefix))
   {
-    auto tile = Tiles::create(*m_world, classId, id);
-
-    // x, y, width, height are read in Board::load()
-    tile->x.setValueInternal(objectData.json["x"]);
-    tile->y.setValueInternal(objectData.json["y"]);
-    tile->height.setValueInternal(objectData.json.value("height", 1));
-    tile->width.setValueInternal(objectData.json.value("width", 1));
-
-    // backwards compatibility < 0.1
-    if(objectData.json["rotate"].is_number_integer())
+    if(auto tile = Tiles::create(*m_world, classId, id))
     {
-      tile->rotate.setValueInternal(fromDeg(objectData.json["rotate"]));
-      objectData.json.erase("rotate");
-    }
+      // x, y, width, height are read in Board::load()
+      tile->x.setValueInternal(objectData.json["x"]);
+      tile->y.setValueInternal(objectData.json["y"]);
+      tile->height.setValueInternal(objectData.json.value("height", 1));
+      tile->width.setValueInternal(objectData.json.value("width", 1));
 
-    objectData.object = tile;
+      // backwards compatibility < 0.1
+      if(objectData.json["rotate"].is_number_integer())
+      {
+        tile->rotate.setValueInternal(fromDeg(objectData.json["rotate"]));
+        objectData.json.erase("rotate");
+      }
+
+      objectData.object = tile;
+    }
   }
   else if(startsWith(classId, RailVehicles::classIdPrefix))
     objectData.object = RailVehicles::create(*m_world, classId, id);
@@ -275,16 +299,14 @@ void WorldLoader::createObject(ObjectData& objectData)
     objectData.json["interface"] = stripSuffix(objectData.json["xpressnet"].get<std::string_view>(), ".xpressnet");
     objectData.json.erase("xpressnet");
   }
-  else
-    assert(false);
 
   if(!objectData.object)
-    {};//m_objects.insert(id, object);
+    throw LogMessageException(LogMessage::C1012_UNKNOWN_CLASS_X_CANT_RECREATE_OBJECT_X, classId, id);
 }
 
 void WorldLoader::loadObject(ObjectData& objectData)
 {
-  /*assert*/if(!objectData.object)return;
+  assert(objectData.object);
   assert(!objectData.loaded);
   objectData.object->load(*this, objectData.json);
   objectData.loaded = true;
