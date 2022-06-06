@@ -10,7 +10,7 @@ endif()
 if(DEFINED ENV{GITHUB_ACTIONS})
   message(STATUS "We're on GitHub Actions")
 
-  if(ENV{GITHUB_REF_TYPE} EQUAL "branch")
+  if($ENV{GITHUB_REF_TYPE} EQUAL "branch")
 
     set(TRAINTASTIC_CODENAME "$ENV{CI_REF_NAME_SLUG}-$ENV{GITHUB_RUN_NUMBER}-$ENV{CI_SHA_SHORT}")
 
