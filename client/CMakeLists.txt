@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.9)
+include(../shared/ci.cmake)
 include(../shared/version.cmake)
 project(traintastic-client VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic client")
 include(GNUInstallDirs)
