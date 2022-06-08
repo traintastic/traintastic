@@ -415,7 +415,7 @@ jobs:
     - name: Build installer
       shell: cmd
       run: |
-        "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" %GITHUB_WORKSPACE%/package/innosetup/traintastic.iss /Ftraintastic-setup-%CI_REF_NAME_SLUG%-${{github.run_number}}-%CI_SHA_SHORT%
+        "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" %GITHUB_WORKSPACE%/package/innosetup/traintastic.iss
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2

@@ -1,10 +1,11 @@
 ; Inno Setup Script for Traintastic
 
+#define VersionInfoBinary "..\..\server\build\traintastic-server.exe" 
+
 #define Name "Traintastic"
-#define Version "0.0.1"
-#ifndef Codename
-  #define Codename "master"
-#endif
+#define Version GetFileVersion(VersionInfoBinary)
+#define VersionFull GetStringFileInfo(VersionInfoBinary, FILE_VERSION)
+#define Copyright GetFileCopyright(VersionInfoBinary)
 #define Publisher "Reinder Feenstra"
 #define URL "https://traintastic.org"
 #define ServerExeName "traintastic-server.exe"
@@ -14,17 +15,20 @@
 AppId={{7E509202-257F-4859-B8FA-D87D636342BB}
 AppName={#Name}
 AppVersion={#Version}
-AppVerName={#Name} v{#Version} {#Codename}
+AppVerName={#Name} v{#VersionFull}
+AppCopyright={#Copyright}
 AppPublisher={#Publisher}
 AppPublisherURL={#URL}
 AppSupportURL={#URL}
 AppUpdatesURL={#URL}
+VersionInfoVersion={#Version}
+VersionInfoProductTextVersion={#VersionFull}
 DefaultDirName={autopf}\{#Name}
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 LicenseFile=..\..\LICENSE
 OutputDir=output
-OutputBaseFilename=traintastic-setup-{#Version}-{#Codename}
+OutputBaseFilename=traintastic-setup-v{#VersionFull}
 SolidCompression=yes
 WizardStyle=modern
 ArchitecturesInstallIn64BitMode=x64
