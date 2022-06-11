@@ -25,7 +25,6 @@
 
 #include <boost/program_options.hpp>
 #include <version.hpp>
-#include <traintastic/codename.hpp>
 
 struct Options
 {
@@ -73,7 +72,7 @@ struct Options
 
       if(vm.count("version"))
       {
-        std::cout << TRAINTASTIC_VERSION << " " << TRAINTASTIC_CODENAME << std::endl;
+        std::cout << TRAINTASTIC_VERSION_FULL << std::endl;
         exit(EXIT_SUCCESS);
       }
 

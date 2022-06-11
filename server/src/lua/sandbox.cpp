@@ -34,7 +34,6 @@
 #include "sets.hpp"
 #include <version.hpp>
 #include <traintastic/utils/str.hpp>
-#include <traintastic/codename.hpp>
 #include "../world/world.hpp"
 
 #define LUA_SANDBOX "_sandbox"
@@ -202,7 +201,7 @@ SandboxPtr Sandbox::create(Script& script)
     });
 
   // set VERSION:
-  lua_pushstring(L, TRAINTASTIC_VERSION);
+  lua_pushstring(L, TRAINTASTIC_VERSION_FULL);
   lua_setfield(L, -2, "VERSION");
   lua_pushinteger(L, TRAINTASTIC_VERSION_MAJOR);
   lua_setfield(L, -2, "VERSION_MAJOR");
@@ -210,10 +209,6 @@ SandboxPtr Sandbox::create(Script& script)
   lua_setfield(L, -2, "VERSION_MINOR");
   lua_pushinteger(L, TRAINTASTIC_VERSION_PATCH);
   lua_setfield(L, -2, "VERSION_PATCH");
-
-  // set CODENAME
-  lua_pushstring(L, TRAINTASTIC_CODENAME);
-  lua_setfield(L, -2, "CODENAME");
 
   // set LUA_VERSION
   const std::string_view ident{lua_ident};

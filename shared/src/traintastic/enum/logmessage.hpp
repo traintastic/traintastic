@@ -64,7 +64,7 @@ enum class LogMessage : uint32_t
   D9999_X = LogMessageOffset::debug + 9999,
 
   // Info:
-  I1001_TRAINTASTIC_VX_X = LogMessageOffset::info + 1001,
+  I1001_TRAINTASTIC_VX = LogMessageOffset::info + 1001,
   I1002_SETTING_FILE_NOT_FOUND_USING_DEFAULTS = LogMessageOffset::info + 1002,
   I1003_CLIENT_CONNECTED = LogMessageOffset::info + 1003,
   I1004_CONNECTION_LOST = LogMessageOffset::info + 1004,

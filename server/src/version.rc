@@ -1,6 +1,5 @@
 #include <winver.h>
 #include <version.hpp>
-#include <traintastic/codename.hpp>
 #include <traintastic/copyright.hpp>
 
 VS_VERSION_INFO VERSIONINFO
@@ -22,12 +21,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName",      "Traintastic"
             VALUE "FileDescription",  "Traintastic server application"
-            VALUE "FileVersion",      TRAINTASTIC_VERSION "-" TRAINTASTIC_CODENAME
+            VALUE "FileVersion",      TRAINTASTIC_VERSION TRAINTASTIC_VERSION_EXTRA
             VALUE "InternalName",     "traintastic-server"
             VALUE "LegalCopyright",   TRAINTASTIC_COPYRIGHT
             VALUE "OriginalFilename", "traintastic-server.exe"
             VALUE "ProductName",      "Traintastic server"
-            VALUE "ProductVersion",   TRAINTASTIC_VERSION "-" TRAINTASTIC_CODENAME
+            VALUE "ProductVersion",   TRAINTASTIC_VERSION TRAINTASTIC_VERSION_EXTRA
             VALUE "Website",          "https://traintastic.org"
         END
     END

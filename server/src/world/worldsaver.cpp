@@ -24,7 +24,6 @@
 #include <fstream>
 #include <boost/uuid/uuid_io.hpp>
 #include <version.hpp>
-#include <traintastic/codename.hpp>
 #include "world.hpp"
 #include "../utils/sha1.hpp"
 #include "ctwwriter.hpp"
@@ -53,10 +52,10 @@ WorldSaver::WorldSaver(const World& world)
     version["major"] = TRAINTASTIC_VERSION_MAJOR;
     version["minor"] = TRAINTASTIC_VERSION_MINOR;
     version["patch"] = TRAINTASTIC_VERSION_PATCH;
+    version["version"] = TRAINTASTIC_VERSION_FULL;
 
     json traintastic;
     traintastic["version"] = version;
-    traintastic["codename"] = TRAINTASTIC_CODENAME;
 
     m_data["traintastic"] = m_state["traintastic"] = traintastic;
   }

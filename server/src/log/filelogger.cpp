@@ -23,7 +23,6 @@
 #include "filelogger.hpp"
 #include <iomanip>
 #include <version.hpp>
-#include <traintastic/codename.hpp>
 
 FileLogger::FileLogger(const std::filesystem::path& filename)
 {
@@ -34,7 +33,7 @@ FileLogger::FileLogger(const std::filesystem::path& filename)
 
   // open logfile and write marker
   m_file.open(filename, std::ios::app);
-  m_file << "=== Traintastic v" TRAINTASTIC_VERSION " " TRAINTASTIC_CODENAME " ===" << std::endl;
+  m_file << "=== Traintastic v" TRAINTASTIC_VERSION_FULL << std::endl;
 }
 
 void FileLogger::log(const std::chrono::system_clock::time_point& time, std::string_view objectId, LogMessage message)

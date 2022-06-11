@@ -5,14 +5,11 @@ TODO
 
 ## Constants
 
-### `CODENAME` $badge:since:v0.1$
-Traintastic release name or development branch, e.g. `"master"`.
-
 ### `LUA_VERSION` $badge:since:v0.1$
 Lua version and copyright, e.g. `"Lua 5.3.3  Copyright (C) 1994-2016 Lua.org, PUC-Rio"`
 
 ### `VERSION` $badge:since:v0.1$
-Traintastic version, e.g. `"0.1.0"`
+Traintastic version, e.g. `"0.1.0-master-380-e669a73b"`
 
 ### `VERSION_MAJOR` $badge:since:v0.1$
 Traintastic major version, e.g. `0`
@@ -22,7 +19,6 @@ Traintastic minor version, e.g. `1`
 
 ### `VERSION_PATCH` $badge:since:v0.1$
 Traintastic patch level, e.g. `0`
-
 
 ## Variables
 

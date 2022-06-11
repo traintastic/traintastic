@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,5 +27,14 @@
 #define TRAINTASTIC_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
 #define TRAINTASTIC_VERSION_MINOR @PROJECT_VERSION_MINOR@
 #define TRAINTASTIC_VERSION_PATCH @PROJECT_VERSION_PATCH@
+#cmakedefine TRAINTASTIC_VERSION_EXTRA "@TRAINTASTIC_VERSION_EXTRA@"
+
+#define TRAINTASTIC_CODENAME "@TRAINTASTIC_CODENAME@"
+
+#ifdef TRAINTASTIC_VERSION_EXTRA
+  #define TRAINTASTIC_VERSION_FULL TRAINTASTIC_VERSION TRAINTASTIC_VERSION_EXTRA
+#else
+  #define TRAINTASTIC_VERSION_FULL TRAINTASTIC_VERSION " " TRAINTASTIC_CODENAME
+#endif
 
 #endif

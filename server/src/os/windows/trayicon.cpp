@@ -23,7 +23,6 @@
 #include "trayicon.hpp"
 #include <cassert>
 #include <version.hpp>
-#include <traintastic/codename.hpp>
 #include "consolewindow.hpp"
 #include "registry.hpp"
 #include "../../core/eventloop.hpp"
@@ -90,7 +89,7 @@ void TrayIcon::run(bool isRestart)
 
   bool startUpApproved = false;
   Registry::getStartUpApproved(startUpApproved);
-  menuSetItemChecked(MenuItem::StartAutomaticallyAtLogon, startUpApproved);  
+  menuSetItemChecked(MenuItem::StartAutomaticallyAtLogon, startUpApproved);
 
   // setup tray icon:
   static NOTIFYICONDATA notifyIconData;
@@ -101,7 +100,7 @@ void TrayIcon::run(bool isRestart)
   notifyIconData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_SHOWTIP;
   notifyIconData.uCallbackMessage = WM_NOTIFYICON_CALLBACK;
   notifyIconData.hIcon = static_cast<HICON>(LoadImageA(GetModuleHandleA(nullptr), "APPICON", IMAGE_ICON, 0, 0, LR_DEFAULTSIZE));
-  const std::string_view toolTip{"Traintastic server v" TRAINTASTIC_VERSION " " TRAINTASTIC_CODENAME};
+  const std::string_view toolTip{"Traintastic server v" TRAINTASTIC_VERSION_FULL};
   std::strncpy(notifyIconData.szTip, toolTip.data(),  std::min(toolTip.size(), sizeof(notifyIconData.szTip) - 1));
 
   const std::string_view infoTitle{"Traintastic server"};

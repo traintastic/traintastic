@@ -26,7 +26,6 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <version.hpp>
-#include <traintastic/codename.hpp>
 #include <traintastic/utils/str.hpp>
 #include "../core/eventloop.hpp"
 #include "../network/server.hpp"
@@ -150,7 +149,7 @@ bool Traintastic::importWorld(const std::vector<std::byte>& worldData)
 
 Traintastic::RunStatus Traintastic::run()
 {
-  Log::log(*this, LogMessage::I1001_TRAINTASTIC_VX_X, std::string_view{TRAINTASTIC_VERSION}, std::string_view{TRAINTASTIC_CODENAME});
+  Log::log(*this, LogMessage::I1001_TRAINTASTIC_VX, std::string_view{TRAINTASTIC_VERSION_FULL});
 
   settings = std::make_shared<Settings>(m_dataDir);
   Attributes::setEnabled(restart, settings->allowClientServerRestart);

@@ -54,8 +54,8 @@
 
 #include <QDesktopServices>
 #include <traintastic/locale/locale.hpp>
-#include <traintastic/codename.hpp>
 #include <traintastic/copyright.hpp>
+#include <version.hpp>
 
 #define SETTING_PREFIX "mainwindow/"
 #define SETTING_GEOMETRY SETTING_PREFIX "geometry"
@@ -412,7 +412,7 @@ MainWindow::MainWindow(QWidget* parent) :
       });
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:help"));
-    menu->addAction(Locale::tr("qtapp.mainmenu:help"), [](){ QDesktopServices::openUrl("https://traintastic.org/manual?version=" + QApplication::applicationVersion() + "&codename=" TRAINTASTIC_CODENAME); })->setShortcut(QKeySequence::HelpContents);
+    menu->addAction(Locale::tr("qtapp.mainmenu:help"), [](){ QDesktopServices::openUrl(QString("https://traintastic.org/manual?version=" TRAINTASTIC_VERSION_FULL)); })->setShortcut(QKeySequence::HelpContents);
     //menu->addSeparator();
     //menu->addAction(Locale::tr("qtapp.mainmenu:about_qt") + "...", qApp, &QApplication::aboutQt);
     menu->addAction(Locale::tr("qtapp.mainmenu:about") + "...", this, &MainWindow::showAbout);
@@ -579,7 +579,7 @@ void MainWindow::worldChanged()
 
 void MainWindow::updateWindowTitle()
 {
-  QString title = "Traintastic v" + QApplication::applicationVersion();
+  QString title = "Traintastic v" TRAINTASTIC_VERSION_FULL;
   if(m_world)
     title = m_world->getProperty("name")->toString() + " - " + title;
   setWindowTitle(title);
@@ -688,7 +688,13 @@ void MainWindow::showObject(const QString& id, const QString& title, SubWindowTy
 void MainWindow::showAbout()
 {
   QMessageBox::about(this, tr("About Traintastic"),
-    "<h2>Traintastic v" + QApplication::applicationVersion() + " <small>" TRAINTASTIC_CODENAME "</small></h2>"
+    "<h2>Traintastic v" TRAINTASTIC_VERSION " <small>"
+#ifdef TRAINTASTIC_VERSION_EXTRA
+    + QString(TRAINTASTIC_VERSION_EXTRA).mid(1) +
+#else
+    TRAINTASTIC_CODENAME
+#endif
+    "</small></h2>"
     "<p>" TRAINTASTIC_COPYRIGHT "</p>"
     "<p>This program is free software; you can redistribute it and/or"
     " modify it under the terms of the GNU General Public License"
