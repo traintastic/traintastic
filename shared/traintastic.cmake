@@ -29,7 +29,7 @@ if(LINUX)
   message(STATUS "lsb_release id is ${LSB_RELEASE_ID}")
   message(STATUS "lsb_release codename is ${LSB_RELEASE_CODENAME}")
 
-  string(REPLACE "-" "~" DEBIAN_PACKAGE_VERSION_EXTRA ${TRAINTASTIC_VERSION_EXTRA})
+  string(REPLACE "-" "~" DEBIAN_PACKAGE_VERSION_EXTRA ~${LSB_RELEASE_ID}~${LSB_RELEASE_CODENAME}${TRAINTASTIC_VERSION_EXTRA})
 endif()
 
 # Debug
