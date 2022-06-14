@@ -105,7 +105,7 @@ bool CTWReader::readFile(const std::filesystem::path& filename, nlohmann::json& 
 
 bool CTWReader::readFile(const std::filesystem::path& filename, std::string& text)
 {
-  auto it = m_files.find(filename.string());
+  auto it = m_files.find(filename.generic_string());
   if(it == m_files.end())
     return false;
 
