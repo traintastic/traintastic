@@ -211,6 +211,7 @@ option(ENABLE_LUA_SCRIPTING "Lua scripting support" ON)
 message(STATUS "Lua scripting support: ${ENABLE_LUA_SCRIPTING}")
 if(ENABLE_LUA_SCRIPTING)
   if(WIN32)
+    add_definitions(-DLUA_BUILD_AS_DLL)
     set(LUA_INCLUDE_DIR "thirdparty/lua5.3/include")
     set(LUA_LIBRARIES lua53)
 
