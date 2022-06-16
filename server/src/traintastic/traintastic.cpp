@@ -140,6 +140,10 @@ bool Traintastic::importWorld(const std::vector<std::byte>& worldData)
     Log::log(*this, LogMessage::N1026_IMPORTED_WORLD_SUCCESSFULLY);
     return true;
   }
+  catch(const LogMessageException& e)
+  {
+    Log::log(*this, e.message(), e.args());
+  }
   catch(const std::exception& e)
   {
     Log::log(*this, LogMessage::C1011_IMPORTING_WORLD_FAILED_X, e.what());
