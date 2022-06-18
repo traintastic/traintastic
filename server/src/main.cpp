@@ -74,66 +74,6 @@ int main(int argc, char* argv[])
   bool enableConsoleLogger = true;
 
 #ifdef __unix__
-/*
-  if(options.daemonize)
-  {
-    // fork first time:
-    pid_t pid = fork();
-    if(pid < 0)
-    {
-      std::cerr << "First time fork failed" << std::endl;
-      exit(EXIT_FAILURE);
-    }
-    else if(pid > 0)
-      exit(EXIT_SUCCESS); // exit parent process
-
-    // Create a new SID for the child process:
-    if(setsid() < 0)
-    {
-      std::cerr << "Failed to create new session" << std::endl;
-      exit(EXIT_FAILURE);
-    }
-
-    // change work directory to root:
-    if(chdir("/") < 0)
-    {
-      std::cerr << "Failed to change work directory to root" << std::endl;
-      exit(EXIT_FAILURE);
-    }
-
-    // change the file mode mask:
-    umask(0);
-
-    // fork second time:
-    pid = fork();
-    if(pid < 0)
-    {
-      std::cerr << "Second time fork failed" << std::endl;
-      exit(EXIT_FAILURE);
-    }
-    else if(pid > 0)
-      exit(EXIT_SUCCESS); // Exit parent process.
-
-    // close all std io:
-    fclose(stdin);
-    fclose(stdout);
-    fclose(stderr);
-  }
-
-  if(!options.pidFile.empty())
-    UnixUtils::writePIDFile(options.pidFile);
-
-  if(!options.group.empty())
-  {
-    UnixUtils::changeGroupID(options.group);
-  }
-
-  if(!options.user.empty())
-  {
-    UnixUtils::changeUserID(options.user, options.group.empty(), true);
-  }
-*/
-
   // setup signal handlers:
   signal(SIGINT, signalHandler);
   signal(SIGQUIT, signalHandler);
@@ -173,7 +113,7 @@ int main(int argc, char* argv[])
 #endif
 
     restart = false;
-    
+
     try
     {
       Traintastic::instance = std::make_shared<Traintastic>(dataDir);

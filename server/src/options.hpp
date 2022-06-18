@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,12 +31,6 @@ struct Options
 #ifdef WIN32
   bool tray;
 #endif
-#ifdef __unix__
-  bool daemonize;
-  std::string user;
-  std::string group;
-  std::string pidFile;
-#endif
   std::string dataDir;
   std::string world;
 
@@ -48,12 +42,6 @@ struct Options
       ("version,v", "output version information and exit")
 #ifdef WIN32
       ("tray", "run as system tray application")
-#endif
-#ifdef __unix__
-      ("daemonize,d", "daemonize")
-      ("user,u", boost::program_options::value<std::string>(&user), "run as user")
-      ("group,g", boost::program_options::value<std::string>(&group), "run as group")
-      ("pidfile,P", boost::program_options::value<std::string>(&pidFile), "pid file")
 #endif
       ("datadir,D", boost::program_options::value<std::string>(&dataDir), "data directory")
       ;
@@ -78,10 +66,6 @@ struct Options
 
 #ifdef WIN32
       tray = vm.count("tray");
-#endif
-
-#ifdef __unix__
-      daemonize = vm.count("daemonize");
 #endif
 
       boost::program_options::notify(vm);
