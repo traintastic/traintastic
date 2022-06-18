@@ -103,12 +103,16 @@ void Settings::loadFromFile()
     Log::log(*this, LogMessage::N1008_LOADED_SETTINGS);
   }
   else
+  {
     Log::log(*this, LogMessage::I1002_SETTING_FILE_NOT_FOUND_USING_DEFAULTS);
+    saveToFile();
+  }
 }
 
 void Settings::saveToFile()
 {
   // backup settings:
+  if(std::filesystem::is_regular_file(m_filename))
   {
     const std::filesystem::path backupDir = Traintastic::instance->dataBackupDir();
     auto dateTimeStr =
