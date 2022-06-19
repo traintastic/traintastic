@@ -72,8 +72,6 @@ class ECoSInterface final
     ObjectProperty<DecoderList> decoders;
     ObjectProperty<InputList> inputs;
     ObjectProperty<OutputList> outputs;
-    Property<std::string> testCommand;
-    Method<void()> testCommandSend;
 
     ECoSInterface(World& world, std::string_view _id);
 
