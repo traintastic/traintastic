@@ -74,6 +74,7 @@ SensorRailTile::SensorRailTile(World& world, std::string_view _id) :
   m_interfaceItems.add(type);
   Attributes::addEnabled(invert, editable);
   m_interfaceItems.add(invert);
+  Attributes::addObjectEditor(state, false);
   Attributes::addValues(state, sensorStateValues);
   m_interfaceItems.add(state);
 }
