@@ -695,7 +695,7 @@ void MainWindow::showAbout()
     TRAINTASTIC_CODENAME
 #endif
     "</small></h2>"
-    "<p>" TRAINTASTIC_COPYRIGHT "</p>"
+    "<p>" + QString(TRAINTASTIC_COPYRIGHT).replace("(c)", "&copy;") + "</p>"
     "<p>This program is free software; you can redistribute it and/or"
     " modify it under the terms of the GNU General Public License"
     " as published by the Free Software Foundation; either version 2"
@@ -703,7 +703,8 @@ void MainWindow::showAbout()
     "<p>This program is distributed in the hope that it will be useful,"
     " but WITHOUT ANY WARRANTY; without even the implied warranty of"
     " MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the"
-    " GNU General Public License for more details.</p>");
+    " GNU General Public License for more details.</p>"
+    "<p><a href=\"https://traintastic.org\">traintastic.org</a></p>");
 }
 
 void MainWindow::connectionStateChanged()
