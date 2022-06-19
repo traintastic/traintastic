@@ -44,13 +44,6 @@ ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
-  , testCommand{this, "test_command", "", PropertyFlags::ReadWrite | PropertyFlags::NoStore}
-  , testCommandSend{*this, "test_command_send",
-    [this]()
-    {
-      if(m_kernel)
-        m_kernel->postSend(testCommand.value() + "\n");
-    }}
 {
   name = "ECoS";
   ecos.setValueInternal(std::make_shared<ECoS::Settings>(*this, ecos.name()));
@@ -72,9 +65,6 @@ ECoSInterface::ECoSInterface(World& world, std::string_view _id)
 
   Attributes::addDisplayName(outputs, DisplayName::Hardware::outputs);
   m_interfaceItems.insertBefore(outputs, notes);
-
-  m_interfaceItems.add(testCommand);
-  m_interfaceItems.add(testCommandSend);
 }
 
 bool ECoSInterface::addDecoder(Decoder& decoder)
