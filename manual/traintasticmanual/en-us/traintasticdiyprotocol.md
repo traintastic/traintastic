@@ -1,0 +1,203 @@
+# Traintastic DIY protocol {#tdiyp}
+
+The Traintastic DIY protocol is designed to make it possible to develop custom hardware, e.g. by using the Arduino platform and use it with Traintastic.
+
+The Traintastic DIY protocol is currently supported via:
+- Serial port: baudrate and flow control can be chosen, data format is fixed at 8N1 (8 data byte, no parity, one stop bit)
+- Network connection (TCP): port number can be chosen.
+
+It is currently limited to:
+- Reading inputs
+- Controlling outputs
+
+Other features might be added in the future.
+
+## Message format {#tdiyp-message-format}
+
+Each Traintastic DIY protocol message starts with an opcode byte, besides the message type it also contains the data payload length in the lowest nibble.
+If the lowest nibble is `0xF` the the second byte of the message determines the payload length.
+The message always ends with a checksum byte, the checksum is the result of XOR-ing of all message bytes.
+
+Examples:
+```
+0x50 0x50
+```
+The lowest nibble of the first byte is `0` indicating a zero byte payload.
+The checksum is identical to the opcode, there is no data to XOR with.
+
+```
+0x24 0x11 0x22 0x33 0x44 0x60
+```
+The lowest nibble of the first byte is `4` indicating a 4 byte payload.
+The checksum is `0x24` XOR `0x11` XOR `0x22` XOR `0x33` XOR `0x44` = `0x60`.
+
+```
+0x2F 0x20 ... 0x??
+```
+The lowest nibble of the first byte is `F` indicating that the second byte must be used as payload length, 32 byte.
+The checksum is `0x2F` XOR `0x20` XOR *all payload bytes*.
+
+
+## Messages {#tdiyp-messages}
+
+Messages are send by Traintastic to the DIY device, for every message the DIY device sends a response message.
+Some messages are sent unsolicited by the DIY device to Traintastic if changes are detected by the DIY device.
+
+| Command                                     |                                         |
+|---------------------------------------------|-----------------------------------------|
+| [Heartbeat](#tdiyp-heartbeat)               | Mandatory                               |
+| [Get information](#tdiyp-get-information)   | Mandatory                               |
+| [Get features](#tdiyp-get-features)         | Mandatory                               |
+| [Get input state](#tdiyp-get-input-state)   | Mandatory if input feature flag is set  |
+| [Set input state](#tdiyp-set-input-state)   | Mandatory if input feature flag is set  |
+| [Get output state](#tdiyp-get-output-state) | Mandatory if output feature flag is set |
+| [Set output state](#tdiyp-set-output-state) | Mandatory if output feature flag is set |
+
+**Badges**:
+- The $badge:since:v0.2$ badge indicates in which version of Traintastic the message is added.
+
+
+### Heartbeat $badge:since:v0.2$ {#tdiyp-heartbeat}
+
+The heartbeat message is sent by Traintastic to check if the DIY device is (still) present, the DIY device responds with a heartbeat message.
+The heartbeat rate can be configured in Traintastic, by default the heartbeat message is one second after the last message is received from the DIY device.
+
+#### Request message
+```
+0x00 <checksum>
+```
+
+#### Response message
+```
+0x00 <checksum>
+```
+
+
+### Get information $badge:since:v0.2$ {#tdiyp-get-information}
+
+The *get information* message is the first message sent after connecting.
+The DIY device responds with an *information* message containing a description of the connected DIY device.
+This is pure informational and displayed in the message console.
+
+#### Request message
+```
+0xF0 <checksum>
+```
+
+#### Response message
+```
+0xFF <len> <text...> <checksum>
+```
+
+### Get features $badge:since:v0.2$ {#tdiyp-get-features}
+
+The *get features* message is the second message sent by Traintastic after connecting.
+The DIY device responds with a *features* message containing flags which indicate what is supported by the DIY device.
+
+#### Request message
+```
+0xE0 <checksum>
+```
+
+#### Response message
+```
+0xE4 <FF1> <FF2> <FF3> <FF4> <checksum>
+```
+- `<FF1>` feature flags 1, OR-ed value of:
+  - `0x01` input feature flag: set if the DIY device has inputs $badge:since:v0.2$
+  - `0x02` output feature flag: set if the DIY device has outputs $badge:since:v0.2$
+  - `0x04`...`0x80` are reserved, do not use
+- `<FF2>` feature flags 2, reserved must be `0x00`
+- `<FF3>` feature flags 3, reserved must be `0x00`
+- `<FF4>` feature flags 4, reserved must be `0x00`
+
+
+### Get input state $badge:since:v0.2$ {#tdiyp-get-input-state}
+
+Sent by Traintastic to retrieve the current input state.
+Address zero has a special meaning, it is used as broadcast address to retrieve the current state of all inputs.
+
+#### Request message
+```
+0x12 <AH> <AL> <checksum>
+```
+
+- `<AH>` high byte of 16bit input address
+- `<AL>` low byte of 16bit input address
+
+#### Response
+If the address is non zero the DIY device responds with a *[set input state](#tdiyp-set-input-state)* message containing the current state of the input address.
+
+If the address is zero the DIY device responds with multiple *[set input state](#tdiyp-set-input-state)* messages, one for each know input address or
+send a single *[set input state](#tdiyp-set-input-state)* message with address zero and state *invalid* to inform Traintastic that the address zero request is not supported.
+
+
+### Set input state $badge:since:v0.2$ {#tdiyp-set-input-state}
+
+Sent by the DIY device as response to the *[get input state](#tdiyp-get-input-state)* message and must be sent by the DIY device whenever an input state changes.
+
+#### Message
+```
+0x13 <AH> <AL> <S> <checksum>
+```
+
+- `<AH>` high byte of 16bit input address
+- `<AL>` low byte of 16bit input address
+- `<S>` input state:
+  - `0x00` if input state is unknown
+  - `0x01` if input state is low/false
+  - `0x02` if input state is high/true
+  - `0x03` if input is invalid (only as response to a *[get input state](#tdiyp-get-input-state)* message)
+  - `0x04`...`0xFF` are reserved, do not use
+
+Examples:
+```
+0x13 0x00 0x12 0x02 0x03
+```
+Input 18 state changed to high/true
+
+```
+0x13 0x02 0xA2 0x01 0xB2
+```
+Input 674 state changed to low/false
+
+
+### Get output state $badge:since:v0.2$ {#tdiyp-get-output-state}
+
+Sent by Traintastic to retrieve the current output state.
+Address zero has a special meaning, it is used as broadcast address to retrieve the current state of all outputs.
+
+#### Request message
+```
+0x22 <AH> <AL> <checksum>
+```
+
+- `<AH>` high byte of 16bit output address
+- `<AL>` low byte of 16bit output address
+
+#### Response message
+If the address is non zero the DIY device responds with a *[set output state](#tdiyp-set-output-state)* message containing the current state of the output address.
+
+If the address is zero the DIY device responds with multiple *[set inpoutputut state](#tdiyp-set-output-state)* messages, one for each know output address or
+send a single *[set output state](#tdiyp-set-output-state)* message with address zero and state *invalid* to inform Traintastic that the address zero request is not supported.
+
+
+### Output state changed $badge:since:v0.2$ {#tdiyp-output-state-change}
+
+Sent by Traintastic to change the state of an output, the DIY device responds with a *get output state* message containing the new output state,
+if for some reason the output state cannot be the current state must be send.
+Sent by the DIY device as response to the *[get output state](#tdiyp-get-output-state)* message and must be sent by the DIY device whenever an output state changes.
+
+#### Message
+```
+0x23 <AH> <AL> <S> <checksum>
+```
+
+- `<AH>` high byte of 16bit output address
+- `<AL>` low byte of 16bit output address
+- `<S>` output state:
+  - `0x00` if output state is unknown
+  - `0x01` if output state is low/false
+  - `0x02` if output state is high/true
+  - `0x03` if output is invalid (only as response to a *[get output state](#tdiyp-get-output-state)* message)
+  - `0x04`...`0xFF` are reserved, do not use

@@ -73,6 +73,7 @@ enum class LogMessage : uint32_t
   I2002_HARDWARE_TYPE_X = LogMessageOffset::info + 2002,
   I2003_FIRMWARE_VERSION_X = LogMessageOffset::info + 2003,
   I2004_HSI_88_X = LogMessageOffset::info + 2004,
+  I2005_X = LogMessageOffset::info + 2005,
   I9001_STOPPED_SCRIPT = LogMessageOffset::info + 9001,
   I9999_X = LogMessageOffset::info + 9999,
 
@@ -113,6 +114,8 @@ enum class LogMessage : uint32_t
   W2001_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES = LogMessageOffset::warning + 2001,
   W2002_COMMAND_STATION_DOESNT_SUPPORT_FUNCTIONS_ABOVE_FX = LogMessageOffset::warning + 2002,
   W2003_COMMAND_STATION_DOESNT_SUPPORT_X_SPEEDSTEPS_USING_X = LogMessageOffset::warning + 2003,
+  W2004_INPUT_ADDRESS_X_IS_INVALID = LogMessageOffset::warning + 2004,
+  W2005_OUTPUT_ADDRESS_X_IS_INVALID = LogMessageOffset::warning + 2005,
   W9999_X = LogMessageOffset::warning + 9999,
 
   // Error:

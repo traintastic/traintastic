@@ -42,6 +42,10 @@ TODO
 
 Information about the connected HSI-88 interface, e.g. *Ver. 0.62 / 08.07.02 / HSI-88 / (c) LDT*.
 
+
+## I2005: *info* {#i2005}
+Information about the connected Traintastic DIY device.
+
 ## I9001: Stopped script {#i9001}
 TODO
 

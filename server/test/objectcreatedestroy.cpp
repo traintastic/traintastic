@@ -28,6 +28,7 @@
 #include "../src/hardware/interface/ecosinterface.hpp"
 #include "../src/hardware/interface/hsi88.hpp"
 #include "../src/hardware/interface/loconetinterface.hpp"
+#include "../src/hardware/interface/traintasticdiyinterface.hpp"
 #include "../src/hardware/interface/wlanmausinterface.hpp"
 #include "../src/hardware/interface/xpressnetinterface.hpp"
 #include "../src/hardware/interface/z21interface.hpp"
@@ -83,6 +84,7 @@ TEMPLATE_TEST_CASE("Create world and interface => destroy world", "[object-creat
   , ECoSInterface
   , HSI88Interface
   , LocoNetInterface
+  , TraintasticDIYInterface
   , WlanMausInterface
   , XpressNetInterface
   , Z21Interface
@@ -106,6 +108,7 @@ TEMPLATE_TEST_CASE("Create world and interface => destroy interface", "[object-c
   , ECoSInterface
   , HSI88Interface
   , LocoNetInterface
+  , TraintasticDIYInterface
   , WlanMausInterface
   , XpressNetInterface
   , Z21Interface

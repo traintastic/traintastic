@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/interfaces.cpp
+ * shared/src/traintastic/enum/traintasticdiyinterfacetype.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,19 +20,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "interfaces.hpp"
-#include "../../utils/ifclassidcreate.hpp"
-#include "../../world/world.hpp"
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_TRAINTASTICDIYINTERFACETYPE_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_TRAINTASTICDIYINTERFACETYPE_HPP
 
-std::shared_ptr<Interface> Interfaces::create(World& world, std::string_view classId, std::string_view id)
+#include <cstdint>
+#include "enum.hpp"
+
+enum class TraintasticDIYInterfaceType : uint8_t
 {
-  IF_CLASSID_CREATE(DCCPlusPlusInterface)
-  IF_CLASSID_CREATE(ECoSInterface)
-  IF_CLASSID_CREATE(HSI88Interface)
-  IF_CLASSID_CREATE(LocoNetInterface)
-  IF_CLASSID_CREATE(TraintasticDIYInterface)
-  IF_CLASSID_CREATE(WlanMausInterface)
-  IF_CLASSID_CREATE(XpressNetInterface)
-  IF_CLASSID_CREATE(Z21Interface)
-  return std::shared_ptr<Interface>();
-}
+  Serial = 0,
+  NetworkTCP = 1,
+};
+
+TRAINTASTIC_ENUM(TraintasticDIYInterfaceType, "traintastic_diy_interface_type", 2,
+{
+  {TraintasticDIYInterfaceType::Serial, "serial"},
+  {TraintasticDIYInterfaceType::NetworkTCP, "network_tcp"},
+});
+
+#endif
