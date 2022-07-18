@@ -30,6 +30,7 @@
 #include "../../../utils/setthreadname.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
+#include "../../../world/world.hpp"
 
 namespace TraintasticDIY {
 
@@ -67,8 +68,9 @@ constexpr TriState toTriState(OutputState value)
   return TriState::Undefined;
 }
 
-Kernel::Kernel(const Config& config, bool simulation)
-  : m_ioContext{1}
+Kernel::Kernel(World& world, const Config& config, bool simulation)
+  : m_world{world}
+  , m_ioContext{1}
   , m_simulation{simulation}
   , m_heartbeatTimeout{m_ioContext}
   , m_inputController{nullptr}
@@ -93,6 +95,10 @@ void Kernel::start()
 {
   assert(m_ioHandler);
   assert(!m_started);
+  assert(m_inputValues.empty());
+  assert(m_outputValues.empty());
+  assert(m_throttleSubscriptions.empty());
+  assert(m_decoderSubscriptions.empty());
 
   m_featureFlagsSet = false;
   m_featureFlags1 = FeatureFlags1::None;
@@ -133,6 +139,9 @@ void Kernel::start()
 
 void Kernel::stop()
 {
+  for(auto& it : m_decoderSubscriptions)
+    it.second.connection.disconnect();
+
   m_ioContext.post(
     [this]()
     {
@@ -143,6 +152,11 @@ void Kernel::stop()
   m_ioContext.stop();
 
   m_thread.join();
+
+  m_inputValues.clear();
+  m_outputValues.clear();
+  m_throttleSubscriptions.clear();
+  m_decoderSubscriptions.clear();
 
 #ifndef NDEBUG
   m_started = false;
@@ -221,6 +235,85 @@ void Kernel::receive(const Message& message)
             });
         }
       }
+      break;
+    }
+    case OpCode::ThrottleUnsubscribe:
+    {
+      if(!m_featureFlagsSet || !hasFeatureThrottle())
+        break;
+
+      const auto& unsubscribe = static_cast<const ThrottleUnsubscribe&>(message);
+      throttleUnsubscribe(unsubscribe.throttleId(), {unsubscribe.address(), unsubscribe.isLongAddress()});
+      send(unsubscribe);
+      break;
+    }
+    case OpCode::ThrottleSetFunction:
+    {
+      if(!m_featureFlagsSet || !hasFeatureThrottle())
+        break;
+
+      const auto& throttleSetFunction = static_cast<const ThrottleSetFunction&>(message);
+
+      throttleSubscribe(throttleSetFunction.throttleId(), {throttleSetFunction.address(), throttleSetFunction.isLongAddress()});
+
+      EventLoop::call(
+        [this, throttleSetFunction]()
+        {
+          if(auto decoder = getDecoder(throttleSetFunction.address(), throttleSetFunction.isLongAddress()))
+          {
+            bool value = false;
+
+            if(auto function = decoder->getFunction(throttleSetFunction.functionNumber()))
+            {
+              function->value = throttleSetFunction.functionValue();
+              if(function->value != throttleSetFunction.functionValue())
+              {
+                send(ThrottleSetFunction(
+                  throttleSetFunction.throttleId(),
+                  throttleSetFunction.address(),
+                  throttleSetFunction.isLongAddress(),
+                  throttleSetFunction.functionNumber(),
+                  function->value));
+              }
+            }
+            else
+            {
+              // warning or debug?
+              send(ThrottleSetFunction(
+                throttleSetFunction.throttleId(),
+                throttleSetFunction.address(),
+                throttleSetFunction.isLongAddress(),
+                throttleSetFunction.functionNumber(),
+                value));
+            }
+          }
+        });
+      break;
+    }
+    case OpCode::ThrottleSetSpeedDirection:
+    {
+      if(!m_featureFlagsSet || !hasFeatureThrottle())
+        break;
+
+      const auto& throttleSetSpeedDirection = static_cast<const ThrottleSetSpeedDirection&>(message);
+
+      throttleSubscribe(throttleSetSpeedDirection.throttleId(), {throttleSetSpeedDirection.address(), throttleSetSpeedDirection.isLongAddress()});
+
+      EventLoop::call(
+        [this, throttleSetSpeedDirection]()
+        {
+          if(auto decoder = getDecoder(throttleSetSpeedDirection.address(), throttleSetSpeedDirection.isLongAddress()))
+          {
+            if(throttleSetSpeedDirection.isSpeedSet())
+            {
+              decoder->emergencyStop = throttleSetSpeedDirection.isEmergencyStop();
+              if(!throttleSetSpeedDirection.isEmergencyStop())
+                decoder->throttle = throttleSetSpeedDirection.throttle();
+            }
+            if(throttleSetSpeedDirection.isDirectionSet())
+              decoder->direction = throttleSetSpeedDirection.direction();
+          }
+        });
       break;
     }
     case OpCode::Features:
@@ -320,6 +413,110 @@ void Kernel::heartbeatTimeoutExpired(const boost::system::error_code& ec)
   m_heartbeatTimeout.cancel();
   send(Heartbeat());
   restartHeartbeatTimeout();
+}
+
+std::shared_ptr<Decoder> Kernel::getDecoder(uint16_t address, bool longAddress) const
+{
+  const auto& decoderList = *m_world.decoders;
+  std::shared_ptr<Decoder> decoder;
+  if(longAddress)
+    decoder = decoderList.getDecoder(DecoderProtocol::DCC, address, longAddress);
+  if(!decoder)
+    decoder = decoderList.getDecoder(DecoderProtocol::Auto, address);
+  if(!decoder)
+    decoder = decoderList.getDecoder(address);
+  return decoder;
+}
+
+void Kernel::throttleSubscribe(uint16_t throttleId, std::pair<uint16_t, bool> key)
+{
+  auto [unused, added] = m_throttleSubscriptions[throttleId].insert(key);
+  if(added)
+  {
+    EventLoop::call(
+      [this, key]()
+      {
+        if(auto it = m_decoderSubscriptions.find(key); it == m_decoderSubscriptions.end())
+        {
+          if(auto decoder = getDecoder(key.first, key.second))
+            m_decoderSubscriptions.emplace(key, DecoderSubscription{decoder->decoderChanged.connect(std::bind(&Kernel::throttleDecoderChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)), 1});
+        }
+        else
+        {
+          it->second.count++;
+        }
+      });
+  }
+}
+
+void Kernel::throttleUnsubscribe(uint16_t throttleId, std::pair<uint16_t, bool> key)
+{
+  {
+    auto& subscriptions = m_throttleSubscriptions[throttleId];
+    subscriptions.erase(key);
+    if(subscriptions.empty())
+      m_throttleSubscriptions.erase(throttleId);
+  }
+
+  EventLoop::call(
+    [this, key]()
+    {
+      if(auto it = m_decoderSubscriptions.find(key); it != m_decoderSubscriptions.end())
+      {
+        assert(it->second.count > 0);
+        if(--it->second.count == 0)
+        {
+          it->second.connection.disconnect();
+          m_decoderSubscriptions.erase(it);
+        }
+      }
+    });
+}
+
+void Kernel::throttleDecoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
+{
+  const std::pair<uint16_t, bool> key(decoder.address, decoder.longAddress);
+
+  if(has(changes, DecoderChangeFlags::Direction | DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::SpeedSteps | DecoderChangeFlags::Throttle))
+  {
+    const bool emergencyStop = decoder.emergencyStop.value();
+
+    uint8_t speedMax = 0;
+    if(!emergencyStop)
+    {
+      speedMax = decoder.speedSteps.value();
+      if(speedMax == Decoder::speedStepsAuto)
+        speedMax = std::numeric_limits<uint8_t>::max();
+    }
+
+    m_ioContext.post(
+      [this,
+        key,
+        direction=decoder.direction.value(),
+        speed=speedMax > 0 ? Decoder::throttleToSpeedStep(decoder.throttle, speedMax) : 0,
+        speedMax]()
+      {
+        for(const auto& it : m_throttleSubscriptions)
+          if(it.second.count(key) != 0)
+            send(ThrottleSetSpeedDirection(it.first, key.first, key.second, speed, speedMax, direction));
+      });
+  }
+
+  if(has(changes, DecoderChangeFlags::FunctionValue))
+  {
+    assert(functionNumber <= std::numeric_limits<uint8_t>::max());
+
+    m_ioContext.post(
+      [this,
+        key,
+        number=static_cast<uint8_t>(functionNumber),
+        value=decoder.getFunctionValue(functionNumber)]()
+      {
+        for(const auto& it : m_throttleSubscriptions)
+          if(it.second.count(key) != 0)
+            send(ThrottleSetFunction(it.first, key.first, key.second, number, value));
+      });
+  }
 }
 
 }

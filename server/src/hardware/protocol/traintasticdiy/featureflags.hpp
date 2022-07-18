@@ -32,6 +32,7 @@ enum class FeatureFlags1 : uint8_t
   None = 0x00,
   Input = 0x01,
   Output = 0x02,
+  Throttle = 0x04,
 };
 
 enum class FeatureFlags2 : uint8_t

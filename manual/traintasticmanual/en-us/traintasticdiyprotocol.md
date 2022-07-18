@@ -3,12 +3,13 @@
 The Traintastic DIY protocol is designed to make it possible to develop custom hardware, e.g. by using the Arduino platform and use it with Traintastic.
 
 The Traintastic DIY protocol is currently supported via:
-- Serial port: baudrate and flow control can be chosen, data format is fixed at 8N1 (8 data byte, no parity, one stop bit)
+- Serial port: baudrate and flow control can be chosen, data format is fixed at 8N1 (8 data bits, no parity, one stop bit)
 - Network connection (TCP): port number can be chosen.
 
 It is currently limited to:
 - Reading inputs
 - Controlling outputs
+- Throttles
 
 Other features might be added in the future.
 
@@ -40,7 +41,7 @@ The checksum is `0x2F` XOR `0x20` XOR *all payload bytes*.
 
 ## Messages {#tdiyp-messages}
 
-Messages are send by Traintastic to the DIY device, for every message the DIY device sends a response message.
+Messages are send by Traintastic to the DIY device, for most messages the DIY device sends a response message.
 Some messages are sent unsolicited by the DIY device to Traintastic if changes are detected by the DIY device.
 
 | Command                                     |                                         |
@@ -52,6 +53,9 @@ Some messages are sent unsolicited by the DIY device to Traintastic if changes a
 | [Set input state](#tdiyp-set-input-state)   | Mandatory if input feature flag is set  |
 | [Get output state](#tdiyp-get-output-state) | Mandatory if output feature flag is set |
 | [Set output state](#tdiyp-set-output-state) | Mandatory if output feature flag is set |
+| [Throttle set function](#tdiyp-throttle-set-function) | |
+| [Throttle set speed/direction](#tdiyp-throttle-set-speed-direction) | |
+| [Throttle unsubscribe](#tdiyp-throttle-unsubscribe) | |
 
 **Badges**:
 - The $badge:since:v0.2$ badge indicates in which version of Traintastic the message is added.
@@ -103,10 +107,11 @@ The DIY device responds with a *features* message containing flags which indicat
 ```
 0xE4 <FF1> <FF2> <FF3> <FF4> <checksum>
 ```
-- `<FF1>` feature flags 1, OR-ed value of:
-  - `0x01` input feature flag: set if the DIY device has inputs $badge:since:v0.2$
-  - `0x02` output feature flag: set if the DIY device has outputs $badge:since:v0.2$
-  - `0x04`...`0x80` are reserved, do not use
+- `<FF1>` feature flags 1:
+  - bit 0: input feature flag: set if the DIY device has inputs $badge:since:v0.2$
+  - bit 1: output feature flag: set if the DIY device has outputs $badge:since:v0.2$
+  - bit 2: throttle feature flag: set if the DIY device is a throttle $badge:since:v0.2$
+  - bit 3...7: reserved, must be `0`
 - `<FF2>` feature flags 2, reserved must be `0x00`
 - `<FF3>` feature flags 3, reserved must be `0x00`
 - `<FF4>` feature flags 4, reserved must be `0x00`
@@ -182,7 +187,7 @@ If the address is zero the DIY device responds with multiple *[set inpoutputut s
 send a single *[set output state](#tdiyp-set-output-state)* message with address zero and state *invalid* to inform Traintastic that the address zero request is not supported.
 
 
-### Output state changed $badge:since:v0.2$ {#tdiyp-output-state-change}
+### Set output state $badge:since:v0.2$ {#tdiyp-set-output-state}
 
 Sent by Traintastic to change the state of an output, the DIY device responds with a *get output state* message containing the new output state,
 if for some reason the output state cannot be the current state must be send.
@@ -201,3 +206,83 @@ Sent by the DIY device as response to the *[get output state](#tdiyp-get-output-
   - `0x02` if output state is high/true
   - `0x03` if output is invalid (only as response to a *[get output state](#tdiyp-get-output-state)* message)
   - `0x04`...`0xFF` are reserved, do not use
+
+
+### Throttle set speed/direction $badge:since:v0.2$ {#tdiyp-throttle-set-speed-direction}
+
+Set locomotive decoder speed and/or direction.
+
+Once a *Throttle set speed/direction* message is sent, the *throttle id* will automatically be subscribed for speed, direction and function changes of the locomotive decoder specified by the *decoder address*.
+To stop receiving these changes a [throttle unsubscribe](#tdiyp-throttle-unsubscribe) message has to be send to Traintastic by the DIY device.
+
+#### Message
+```
+0x37 <TH> <TL> <AH> <AL> <FN> <SP> <SM> <FL> <checksum>
+```
+
+- `<TH>` high byte of 16bit throttle id
+- `<TL>` low byte of 16bit throttle id
+- `<AH>`:
+  - bit 0...5: highest 6bit of 14bit decoder address
+  - bit 6 is reserved and must be `0`
+  - bit 7 can be set to force a *DCC long address*
+- `<AL>` lowest 8bit of 14bit decoder address
+- `<SP>` speed (step), `0`...`<SM>`
+- `<SM>` maximum speed (step), set to `0` for emergency stop
+- `<FL>` flage:
+  - bit 0: direction `1`=forward, `0`=reverse
+  - bit 1...5: reserved, must be `0`
+  - bit 6: set to set direction
+  - bit 7: set to set speed
+
+
+### Throttle set function $badge:since:v0.2$ {#tdiyp-throttle-set-function}
+
+Enable/disable locomotive decoder function.
+
+Once a *Throttle set function* message is sent, the *throttle id* will automatically be subscribed for speed, direction and function changes of the locomotive decoder specified by the *decoder address*.
+To stop receiving these changes a [throttle unsubscribe](#tdiyp-throttle-unsubscribe) message has to be send to Traintastic by the DIY device.
+
+#### Message
+```
+0x35 <TH> <TL> <AH> <AL> <FN> <checksum>
+```
+
+- `<TH>` high byte of 16bit throttle id
+- `<TL>` low byte of 16bit throttle id
+- `<AH>`:
+  - bit 0...5: highest 6bit of 14bit decoder address
+  - bit 6: reserved and must be `0`
+  - bit 7: set to force a *DCC long address*
+- `<AL>` lowest 8bit of 14bit decoder address
+- `<FN>`:
+  - bit 0...6: function number
+  - bit 7: function value
+
+
+Examples:
+```
+0x35 0x00 0x01 0x00 0x03 0x80 0xB7
+```
+Enable F0 for decoder with address 3.
+
+```
+0x35 0x00 0x02 0x80 0x05 0x01 0xB3
+```
+Disable F1 for decoder with long address 5.
+
+
+## Throttle unsubscribe $badge:since:v0.2$ {#tdiyp-throttle-unsubscribe}
+
+#### Message
+```
+0x34 <TH> <TL> <AH> <AL> <checksum>
+```
+
+- `<TH>` high byte of 16bit throttle id
+- `<TL>` low byte of 16bit throttle id
+- `<AH>`:
+  - bit 0...5: highest 6bit of 14bit decoder address
+  - bit 6: reserved and must be `0`
+  - bit 7: set to force a *DCC long address*
+- `<AL>` lowest 8bit of 14bit decoder address

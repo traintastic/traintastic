@@ -155,18 +155,18 @@ bool TraintasticDIYInterface::setOnline(bool& value, bool simulation)
     {
       if(simulation)
       {
-        m_kernel = TraintasticDIY::Kernel::create<TraintasticDIY::SimulationIOHandler>(traintasticDIY->config());
+        m_kernel = TraintasticDIY::Kernel::create<TraintasticDIY::SimulationIOHandler>(m_world, traintasticDIY->config());
       }
       else
       {
         switch(type)
         {
           case TraintasticDIYInterfaceType::Serial:
-            m_kernel = TraintasticDIY::Kernel::create<TraintasticDIY::SerialIOHandler>(traintasticDIY->config(), device.value(), baudrate.value(), flowControl.value());
+            m_kernel = TraintasticDIY::Kernel::create<TraintasticDIY::SerialIOHandler>(m_world, traintasticDIY->config(), device.value(), baudrate.value(), flowControl.value());
             break;
 
           case TraintasticDIYInterfaceType::NetworkTCP:
-            m_kernel = TraintasticDIY::Kernel::create<TraintasticDIY::TCPIOHandler>(traintasticDIY->config(), hostname.value(), port.value());
+            m_kernel = TraintasticDIY::Kernel::create<TraintasticDIY::TCPIOHandler>(m_world, traintasticDIY->config(), hostname.value(), port.value());
             break;
         }
       }

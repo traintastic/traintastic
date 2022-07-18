@@ -29,6 +29,7 @@
 #include "inputstate.hpp"
 #include "outputstate.hpp"
 #include "featureflags.hpp"
+#include "../../../enum/direction.hpp"
 #include "../../../utils/byte.hpp"
 
 namespace TraintasticDIY {
@@ -163,6 +164,151 @@ struct SetOutputState  : Message
 };
 static_assert(sizeof(SetOutputState) == 5);
 
+struct ThrottleMessage : Message
+{
+  static constexpr uint8_t addressHighMask = 0x3F;
+
+  uint8_t throttleIdHigh;
+  uint8_t throttleIdLow;
+  uint8_t addressHigh;
+  uint8_t addressLow;
+
+  ThrottleMessage(OpCode opCode_, uint16_t throttleId_, uint16_t address_, bool longAddress)
+    : Message(opCode_)
+    , throttleIdHigh{high8(throttleId_)}
+    , throttleIdLow{low8(throttleId_)}
+    , addressHigh((high8(address_) & addressHighMask) | (longAddress ? 0x80 : 0x00))
+    , addressLow{low8(address_)}
+  {
+  }
+
+  uint16_t throttleId() const
+  {
+    return to16(throttleIdLow, throttleIdHigh);
+  }
+
+  uint16_t address() const
+  {
+    return to16(addressLow, addressHigh & addressHighMask);
+  }
+
+  bool isLongAddress() const
+  {
+    return (addressHigh & 0x80);
+  }
+};
+static_assert(sizeof(ThrottleMessage) == 5);
+
+struct ThrottleUnsubscribe : ThrottleMessage
+{
+  Checksum checksum;
+
+  ThrottleUnsubscribe(uint16_t throttleId_, uint16_t address_, bool longAddress)
+    : ThrottleMessage(OpCode::ThrottleUnsubscribe, throttleId_, address_, longAddress)
+    , checksum{calcChecksum(*this)}
+  {
+  }
+};
+static_assert(sizeof(ThrottleUnsubscribe) == 6);
+
+struct ThrottleSetSpeedDirection : ThrottleMessage
+{
+  static constexpr uint8_t flagDirectionForward = 0x01;
+  static constexpr uint8_t flagDirectionSet = 0x40;
+  static constexpr uint8_t flagSpeedSet = 0x80;
+
+  uint8_t speed;
+  uint8_t speedMax;
+  uint8_t flags;
+  Checksum checksum;
+
+  ThrottleSetSpeedDirection(uint16_t throttleId_, uint16_t address_, bool longAddress, uint8_t speed_, uint8_t speedMax_, Direction direction_)
+    : ThrottleMessage(OpCode::ThrottleSetSpeedDirection, throttleId_, address_, longAddress)
+    , speed{speed_}
+    , speedMax{speedMax_}
+    , flags{flagSpeedSet | flagDirectionSet}
+  {
+    if(direction_ == Direction::Forward)
+      flags |= flagDirectionForward;
+    updateChecksum(*this);
+  }
+
+  ThrottleSetSpeedDirection(uint16_t throttleId_, uint16_t address_, bool longAddress, uint8_t speed_, uint8_t speedMax_)
+    : ThrottleMessage(OpCode::ThrottleSetSpeedDirection, throttleId_, address_, longAddress)
+    , speed{speed_}
+    , speedMax{speedMax_}
+    , flags{flagSpeedSet}
+    , checksum{calcChecksum(*this)}
+  {
+  }
+
+  ThrottleSetSpeedDirection(uint16_t throttleId_, uint16_t address_, bool longAddress, Direction direction_)
+    : ThrottleMessage(OpCode::ThrottleSetSpeedDirection, throttleId_, address_, longAddress)
+    , speed{0}
+    , speedMax{0}
+    , flags{flagDirectionSet}
+  {
+    if(direction_ == Direction::Forward)
+      flags |= flagDirectionForward;
+    updateChecksum(*this);
+  }
+
+  bool isEmergencyStop() const
+  {
+    return speedMax == 0;
+  }
+
+  float throttle() const
+  {
+    return (speedMax > 0) ? std::min<float>(static_cast<float>(speed) / static_cast<float>(speedMax), 1) : 0;
+  }
+
+  bool isSpeedSet() const
+  {
+    return (flags & flagSpeedSet);
+  }
+
+  bool isDirectionSet() const
+  {
+    return (flags & flagDirectionSet);
+  }
+
+  Direction direction() const
+  {
+    return (flags & flagDirectionForward) ? Direction::Forward : Direction::Reverse;
+  }
+};
+static_assert(sizeof(ThrottleSetSpeedDirection) == 9);
+
+struct ThrottleSetFunction : ThrottleMessage
+{
+  static constexpr uint8_t functionNumberMask = 0x7F;
+  static constexpr uint8_t functionValueMask = 0x80;
+  static constexpr uint8_t functionValueOn = 0x80;
+  static constexpr uint8_t functionValueOff = 0x00;
+
+  uint8_t function;
+  Checksum checksum;
+
+  ThrottleSetFunction(uint16_t throttleId_, uint16_t address_, bool longAddress, uint8_t functionNumber_, bool functionValue_)
+    : ThrottleMessage(OpCode::ThrottleSetFunction, throttleId_, address_, longAddress)
+    , function((functionNumber_ & functionNumberMask) | (functionValue_ ? functionValueOn : functionValueOff))
+    , checksum{calcChecksum(*this)}
+  {
+  }
+
+  uint8_t functionNumber() const
+  {
+    return function & functionNumberMask;
+  }
+
+  bool functionValue() const
+  {
+    return (function & functionValueMask) == functionValueOn;
+  }
+};
+static_assert(sizeof(ThrottleSetFunction) == 7);
+
 struct GetFeatures  : Message
 {
   Checksum checksum;
@@ -175,7 +321,7 @@ struct GetFeatures  : Message
 };
 static_assert(sizeof(GetFeatures) == 2);
 
-struct Features  : Message
+struct Features : Message
 {
   FeatureFlags1 featureFlags1;
   FeatureFlags2 featureFlags2;

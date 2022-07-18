@@ -34,6 +34,9 @@ enum class OpCode : uint8_t
   SetInputState = 0x13,
   GetOutputState = 0x22,
   SetOutputState = 0x23,
+  ThrottleUnsubscribe = 0x34,
+  ThrottleSetFunction = 0x35,
+  ThrottleSetSpeedDirection = 0x37,
   GetFeatures = 0xE0,
   Features = 0xE4,
   GetInfo = 0xF0,
@@ -62,6 +65,15 @@ constexpr std::string_view toString(TraintasticDIY::OpCode value)
 
     case OpCode::SetOutputState:
       return "SetOutputState";
+
+    case OpCode::ThrottleUnsubscribe:
+      return "ThrottleUnsubscribe";
+
+    case OpCode::ThrottleSetFunction:
+      return "ThrottleSetFunction";
+
+    case OpCode::ThrottleSetSpeedDirection:
+      return "ThrottleSetSpeedDirection";
 
     case OpCode::GetFeatures:
       return "GetFeatures";

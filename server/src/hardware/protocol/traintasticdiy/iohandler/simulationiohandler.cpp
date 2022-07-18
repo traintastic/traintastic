@@ -68,6 +68,21 @@ bool SimulationIOHandler::send(const Message& message)
       reply(message);
       break;
     }
+    case OpCode::ThrottleUnsubscribe:
+    {
+      // TODO
+      break;
+    }
+    case OpCode::ThrottleSetFunction:
+    {
+      // TODO
+      break;
+    }
+    case OpCode::ThrottleSetSpeedDirection:
+    {
+      // TODO
+      break;
+    }
     case OpCode::GetFeatures:
     {
       reply(Features(FeatureFlags1::Input | FeatureFlags1::Output));

@@ -24,9 +24,11 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_TRAINTASTICDIY_KERNEL_HPP
 
 #include <unordered_map>
+#include <set>
 #include <thread>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
+#include <boost/signals2/signal.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include "config.hpp"
 #include "featureflags.hpp"
@@ -34,8 +36,11 @@
 #include "outputstate.hpp"
 #include "iohandler/iohandler.hpp"
 
+class World;
 class InputController;
 class OutputController;
+class Decoder;
+enum class DecoderChangeFlags;
 
 namespace TraintasticDIY {
 
@@ -44,6 +49,13 @@ struct Message;
 class Kernel
 {
   private:
+    struct DecoderSubscription
+    {
+      boost::signals2::connection connection;
+      size_t count; //!< number of throttles subscribed to the decoder
+    };
+
+    World& m_world;
     boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
@@ -64,12 +76,15 @@ class Kernel
     OutputController* m_outputController;
     std::unordered_map<uint16_t, OutputState>  m_outputValues;
 
+    std::unordered_map<uint16_t, std::set<std::pair<uint16_t, bool>>> m_throttleSubscriptions;
+    std::map<std::pair<uint16_t, bool>, DecoderSubscription> m_decoderSubscriptions;
+
     Config m_config;
 #ifndef NDEBUG
     bool m_started;
 #endif
 
-    Kernel(const Config& config, bool simulation);
+    Kernel(World& world, const Config& config, bool simulation);
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
 
@@ -87,9 +102,16 @@ class Kernel
 
     inline bool hasFeatureInput() const { return contains(m_featureFlags1, FeatureFlags1::Input); }
     inline bool hasFeatureOutput() const { return contains(m_featureFlags1, FeatureFlags1::Output); }
+    inline bool hasFeatureThrottle() const { return contains(m_featureFlags1, FeatureFlags1::Throttle); }
 
     void restartHeartbeatTimeout();
     void heartbeatTimeoutExpired(const boost::system::error_code& ec);
+
+    std::shared_ptr<Decoder> getDecoder(uint16_t address, bool longAddress) const;
+
+    void throttleSubscribe(uint16_t throttleId, std::pair<uint16_t, bool> key);
+    void throttleUnsubscribe(uint16_t throttleId, std::pair<uint16_t, bool> key);
+    void throttleDecoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 
   public:
     static constexpr uint16_t ioAddressMin = 1;
@@ -113,10 +135,10 @@ class Kernel
      * \return The kernel instance
      */
     template<class IOHandlerType, class... Args>
-    static std::unique_ptr<Kernel> create(const Config& config, Args... args)
+    static std::unique_ptr<Kernel> create(World& world, const Config& config, Args... args)
     {
       static_assert(std::is_base_of_v<IOHandler, IOHandlerType>);
-      std::unique_ptr<Kernel> kernel{new Kernel(config, isSimulation<IOHandlerType>())};
+      std::unique_ptr<Kernel> kernel{new Kernel(world, config, isSimulation<IOHandlerType>())};
       kernel->setIOHandler(std::make_unique<IOHandlerType>(*kernel, std::forward<Args>(args)...));
       return kernel;
     }

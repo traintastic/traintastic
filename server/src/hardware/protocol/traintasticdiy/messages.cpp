@@ -62,6 +62,41 @@ std::string toString(const Message& message)
       s.append(" state=").append(::toString(setOutputState.state));
       break;
     }
+    case OpCode::ThrottleUnsubscribe:
+    {
+      const auto& throttleUnsubscribe = static_cast<const ThrottleUnsubscribe&>(message);
+      s.append(" throttle=").append(std::to_string(throttleUnsubscribe.throttleId()));
+      s.append(" address=").append(std::to_string(throttleUnsubscribe.address()));
+      break;
+    }
+    case OpCode::ThrottleSetFunction:
+    {
+      const auto& throttleSetFunction = static_cast<const ThrottleSetFunction&>(message);
+      s.append(" throttle=").append(std::to_string(throttleSetFunction.throttleId()));
+      s.append(" address=").append(std::to_string(throttleSetFunction.address()));
+      s.append(" function=").append(std::to_string(throttleSetFunction.functionNumber()));
+      s.append(" value=").append(throttleSetFunction.functionValue() ? "on" : "off");
+      break;
+    }
+    case OpCode::ThrottleSetSpeedDirection:
+    {
+      const auto& throttleSetSpeedDirection = static_cast<const ThrottleSetSpeedDirection&>(message);
+      s.append(" throttle=").append(std::to_string(throttleSetSpeedDirection.throttleId()));
+      s.append(" address=").append(std::to_string(throttleSetSpeedDirection.address()));
+      if(throttleSetSpeedDirection.isSpeedSet())
+      {
+        if(!throttleSetSpeedDirection.isEmergencyStop())
+        {
+          s.append(" speed=").append(std::to_string(throttleSetSpeedDirection.speed));
+          s.append(" speed_max=").append(std::to_string(throttleSetSpeedDirection.speedMax));
+        }
+        else
+          s.append(" estop");
+      }
+      if(throttleSetSpeedDirection.isDirectionSet())
+        s.append(" direction=").append((throttleSetSpeedDirection.direction() == Direction::Forward) ? "fwd" : "rev");
+      break;
+    }
     case OpCode::Features:
     {
       break;
