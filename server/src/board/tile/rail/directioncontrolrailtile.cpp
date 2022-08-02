@@ -28,6 +28,7 @@
 
 DirectionControlRailTile::DirectionControlRailTile(World& world, std::string_view _id)
   : StraightRailTile(world, _id, TileId::RailDirectionControl)
+  , m_node{*this, 2}
   , name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
   , useNone{this, "use_none", true, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly,
       [this](const bool /*value*/)

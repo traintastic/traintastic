@@ -68,6 +68,8 @@ target_include_directories(traintastic-server-test SYSTEM PRIVATE
 file(GLOB SOURCES
   "src/board/*.hpp"
   "src/board/*.cpp"
+  "src/board/map/*.hpp"
+  "src/board/map/*.cpp"
   "src/board/tile/*.hpp"
   "src/board/tile/*.cpp"
   "src/board/tile/misc/*.hpp"

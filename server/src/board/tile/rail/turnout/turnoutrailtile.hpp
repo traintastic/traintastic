@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUT_TURNOUTRAILTILE_HPP
 
 #include "../railtile.hpp"
+#include "../../../map/node.hpp"
 #include "../../../../core/objectproperty.hpp"
 #include "../../../../core/method.hpp"
 #include "../../../../enum/turnoutposition.hpp"
@@ -33,8 +34,11 @@ class TurnoutRailTile : public RailTile
 {
   DEFAULT_ID("turnout")
 
+  private:
+    Node m_node;
+
   protected:
-    TurnoutRailTile(World& world, std::string_view _id, TileId tileId);
+    TurnoutRailTile(World& world, std::string_view _id, TileId tileId, size_t connectors);
 
     void worldEvent(WorldState state, WorldEvent event) override;
 
@@ -45,6 +49,9 @@ class TurnoutRailTile : public RailTile
     Property<TurnoutPosition> position;
     ObjectProperty<TurnoutOutputMap> outputMap;
     Method<bool(TurnoutPosition)> setPosition;
+
+    std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }
+    std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
 };
 
 #endif

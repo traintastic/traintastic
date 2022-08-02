@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,14 @@
 #include "bridge45rightrailtile.hpp"
 
 Bridge45RightRailTile::Bridge45RightRailTile(World& world, std::string_view _id) :
-  RailTile(world, _id, TileId::RailBridge45Right)
+  BridgeRailTile(world, _id, TileId::RailBridge45Right)
 {
+}
+
+void Bridge45RightRailTile::getConnectors(std::vector<Connector>& connectors) const
+{
+  connectors.emplace_back(location(), rotate, Connector::Type::Rail);
+  connectors.emplace_back(location(), rotate + TileRotate::Deg45, Connector::Type::Rail);
+  connectors.emplace_back(location(), rotate + TileRotate::Deg180, Connector::Type::Rail);
+  connectors.emplace_back(location(), rotate + TileRotate::Deg225, Connector::Type::Rail);
 }

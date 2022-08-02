@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,6 +38,9 @@ class Board : public IdObject
     using TileMap = std::unordered_map<TileLocation, std::shared_ptr<Tile>, TileLocationHash>;
 
   private:
+    bool m_modified = false;
+
+    void modified();
     void removeTile(int16_t x, int16_t y);
     void updateSize(bool allowShrink = false);
 
@@ -49,6 +52,7 @@ class Board : public IdObject
     void load(WorldLoader& loader, const nlohmann::json& data) final;
     void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const final;
     void worldEvent(WorldState state, WorldEvent event) override;
+    void loaded() final;
 
   public:
     static constexpr int16_t sizeMax = 1000;
@@ -80,12 +84,20 @@ class Board : public IdObject
       return it != m_tiles.end();
     }
 
-    std::shared_ptr<Tile> getTile(TileLocation l) const
+    std::shared_ptr<const Tile> getTile(TileLocation l) const
     {
       if(auto it = m_tiles.find(l); it != m_tiles.end())
         return it->second;
-      else
-        return std::shared_ptr<Tile>();
+
+      return {};
+    }
+
+    std::shared_ptr<Tile> getTile(TileLocation l)
+    {
+      if(auto it = m_tiles.find(l); it != m_tiles.end())
+        return it->second;
+
+      return {};
     }
 };
 

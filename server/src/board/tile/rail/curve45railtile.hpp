@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,11 +27,13 @@
 
 class Curve45RailTile : public RailTile
 {
-  public:
-    CLASS_ID("board_tile.rail.curve_45")
-    CREATE(Curve45RailTile)
+  CLASS_ID("board_tile.rail.curve_45")
+  CREATE(Curve45RailTile)
 
+  public:
     Curve45RailTile(World& world, std::string_view _id);
+
+    void getConnectors(std::vector<Connector>& connectors) const final;
 };
 
 #endif

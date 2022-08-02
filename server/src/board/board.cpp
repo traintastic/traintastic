@@ -22,6 +22,7 @@
 
 #include "board.hpp"
 #include "boardlisttablemodel.hpp"
+#include "map/link.hpp"
 #include "tile/tiles.hpp"
 #include "../world/world.hpp"
 #include "../world/worldloader.hpp"
@@ -103,6 +104,7 @@ Board::Board(World& world, std::string_view _id) :
 
       tileDataChanged(*this, tile->location(), tile->data());
       updateSize();
+      m_modified = true;
       return true;
     }},
   moveTile{*this, "move_tile",
@@ -174,7 +176,7 @@ Board::Board(World& world, std::string_view _id) :
       tileDataChanged(*this, tile->location(), tile->data());
 
       updateSize();
-
+      m_modified = true;
       return true;
     }},
   resizeTile{*this, "resize_tile",
@@ -223,7 +225,7 @@ Board::Board(World& world, std::string_view _id) :
       }
 
       tileDataChanged(*this, tile->location(), tile->data());
-
+      m_modified = true;
       return true;
     }},
   deleteTile{*this, "delete_tile",
@@ -235,6 +237,7 @@ Board::Board(World& world, std::string_view _id) :
         removeTile(x, y);
         tile->destroy();
         updateSize();
+        m_modified = true;
       }
       return true;
     }},
@@ -349,6 +352,88 @@ void Board::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(resizeTile, editable && stopped);
   Attributes::setEnabled(deleteTile, editable && stopped);
   Attributes::setEnabled(resizeToContents, editable);
+
+  if(event == WorldEvent::EditDisabled || event == WorldEvent::Run)
+  {
+    modified();
+  }
+}
+
+void Board::loaded()
+{
+  IdObject::loaded();
+
+  m_modified = true;
+  modified();
+}
+
+void Board::modified()
+{
+  if(!m_modified)
+    return;
+
+  auto updateLink =
+    [this](const std::shared_ptr<Tile>& startTile, const Connector& startConnector)
+    {
+      assert(startTile->node());
+
+      std::vector<std::shared_ptr<Tile>> tiles;
+      std::vector<Connector> connectors;
+      connectors.reserve(2);
+
+      Connector connector{startConnector.opposite()};
+      while(auto nextTile = getTile(connector.location))
+      {
+        if(nextTile->node())
+        {
+          auto link = std::make_shared<Link>(std::move(tiles));
+          link->connect(*startTile->node(), startConnector, *nextTile->node(), connector);
+          return;
+        }
+        tiles.emplace_back(nextTile);
+        connectors.clear();
+        nextTile->getConnectors(connectors);
+        if(connectors.size() == 2)
+        {
+          assert(connectors[0] == connector || connectors[1] == connector);
+          connector = connectors[connectors[0] == connector ? 1 : 0].opposite();
+        }
+        else
+        {
+          assert(connectors.size() == 1);
+          assert(connectors[0] == connector);
+          break;
+        }
+      }
+    };
+
+  // check/rebuild links:
+  {
+    std::vector<Connector> connectors;
+
+    for(auto& [l, tile] : m_tiles)
+    {
+      if(auto node = tile->node(); node && l == tile->location())
+      {
+        connectors.clear();
+
+        tile->getConnectors(connectors);
+
+        assert(!connectors.empty());
+        for(const auto connector : connectors)
+        {
+          updateLink(tile, connector);
+        }
+      }
+    }
+  }
+
+  // notify board changed:
+  for(auto& [l, tile] : m_tiles)
+    if(l == tile->location()) // check origin to notify each tile once
+      tile->boardModified();
+
+  m_modified = false;
 }
 
 void Board::removeTile(const int16_t x, const int16_t y)

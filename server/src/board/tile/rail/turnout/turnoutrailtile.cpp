@@ -25,13 +25,16 @@
 #include "../../../../world/world.hpp"
 #include "../../../../utils/displayname.hpp"
 
-TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tileId) :
+TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tileId, size_t connectors) :
   RailTile(world, _id, tileId),
+  m_node{*this, connectors},
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   position{this, "position", TurnoutPosition::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
   setPosition{*this, "set_position", MethodFlags::ScriptCallable, [this](TurnoutPosition value) { return doSetPosition(value); }}
 {
+  assert(isRailTurnout(tileId));
+
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(name, DisplayName::Object::name);

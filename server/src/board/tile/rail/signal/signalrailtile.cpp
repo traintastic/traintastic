@@ -27,6 +27,7 @@
 
 SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId) :
   StraightRailTile(world, _id, tileId),
+  m_node{*this, 2},
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   aspect{this, "aspect", SignalAspect::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},

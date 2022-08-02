@@ -26,8 +26,8 @@
 static const std::array<TurnoutPosition, 4> positionValues = {TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right, TurnoutPosition::Unknown};
 static const std::array<TurnoutPosition, 3> setPositionValues = {TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right};
 
-Turnout3WayRailTile::Turnout3WayRailTile(World& world, std::string_view _id) :
-  TurnoutRailTile(world, _id, TileId::RailTurnout3Way)
+Turnout3WayRailTile::Turnout3WayRailTile(World& world, std::string_view _id)
+  : TurnoutRailTile(world, _id, TileId::RailTurnout3Way, 4)
 {
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right}));
 
@@ -36,4 +36,12 @@ Turnout3WayRailTile::Turnout3WayRailTile(World& world, std::string_view _id) :
 
   Attributes::addValues(setPosition, setPositionValues);
   m_interfaceItems.add(setPosition);
+}
+
+void Turnout3WayRailTile::getConnectors(std::vector<Connector>& connectors) const
+{
+  connectors.emplace_back(location(), rotate, Connector::Type::Rail);
+  connectors.emplace_back(location(), rotate + TileRotate::Deg135, Connector::Type::Rail);
+  connectors.emplace_back(location(), rotate + TileRotate::Deg180, Connector::Type::Rail);
+  connectors.emplace_back(location(), rotate + TileRotate::Deg225, Connector::Type::Rail);
 }

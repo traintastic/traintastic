@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_BLOCKRAILTILE_HPP
 
 #include "railtile.hpp"
+#include "../../map/node.hpp"
 #include "../../../core/objectproperty.hpp"
 #include "../../../core/vectorproperty.hpp"
 #include "../../../enum/blockstate.hpp"
@@ -38,6 +39,8 @@ class BlockRailTile : public RailTile
   CREATE(BlockRailTile)
 
   private:
+    Node m_node;
+
     void updateHeightWidthMax();
 
   protected:
@@ -54,6 +57,10 @@ class BlockRailTile : public RailTile
     VectorProperty<SensorState> sensorStates;
 
     BlockRailTile(World& world, std::string_view _id);
+
+    std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }
+    std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
+    void getConnectors(std::vector<Connector>& connectors) const final;
 
     void inputItemValueChanged(BlockInputMapItem& item);
 };

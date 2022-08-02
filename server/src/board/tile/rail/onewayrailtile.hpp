@@ -24,14 +24,21 @@
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_ONEWAYRAILTILE_HPP
 
 #include "straightrailtile.hpp"
+#include "../../map/node.hpp"
 
 class OneWayRailTile : public StraightRailTile
 {
   CLASS_ID("board_tile.rail.one_way")
   CREATE(OneWayRailTile)
 
+  private:
+    Node m_node;
+
   public:
     OneWayRailTile(World& world, std::string_view _id);
+
+    std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }
+    std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
 };
 
 #endif

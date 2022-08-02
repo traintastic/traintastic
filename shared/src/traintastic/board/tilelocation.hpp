@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,6 +46,11 @@ struct TileLocation
   bool operator !=(const TileLocation& other) const
   {
     return x != other.x || y != other.y;
+  }
+
+  TileLocation adjusted(int16_t dx, int16_t dy)
+  {
+    return {static_cast<int16_t>(x + dx), static_cast<int16_t>(y + dy)};
   }
 };
 

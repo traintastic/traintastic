@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,4 +25,11 @@
 TurnoutLeftCurvedRailTile::TurnoutLeftCurvedRailTile(World& world, std::string_view _id) :
   TurnoutLeftRailTile(world, _id, TileId::RailTurnoutLeftCurved)
 {
+}
+
+void TurnoutLeftCurvedRailTile::getConnectors(std::vector<Connector>& connectors) const
+{
+  connectors.emplace_back(location(), rotate, Connector::Type::Rail);
+  connectors.emplace_back(location(), rotate + TileRotate::Deg90, Connector::Type::Rail);
+  connectors.emplace_back(location(), rotate + TileRotate::Deg135, Connector::Type::Rail);
 }

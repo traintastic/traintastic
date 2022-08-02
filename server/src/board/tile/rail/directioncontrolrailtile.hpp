@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_DIRECTIONCONTROLRAILTILE_HPP
 
 #include "straightrailtile.hpp"
+#include "../../map/node.hpp"
 #include "../../../core/method.hpp"
 #include "../../../enum/directioncontrolstate.hpp"
 
@@ -34,6 +35,8 @@ class DirectionControlRailTile final : public StraightRailTile
   CREATE(DirectionControlRailTile)
 
   private:
+    Node m_node;
+
     void updateEnabled();
     void updateStateValues();
 
@@ -52,6 +55,9 @@ class DirectionControlRailTile final : public StraightRailTile
     Method<bool()> toggle;
 
     DirectionControlRailTile(World& world, std::string_view _id);
+
+    std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }
+    std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
 };
 
 #endif

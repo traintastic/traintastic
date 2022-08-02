@@ -1,9 +1,9 @@
 /**
- * server/src/board/tile/rail/curve45railtile.cpp
+ * server/src/board/tile/rail/cross45railtile.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,9 +20,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "curve45railtile.hpp"
+#include "cross45railtile.hpp"
 
-Curve45RailTile::Curve45RailTile(World& world, std::string_view _id) :
-  RailTile(world, _id, TileId::RailCurve45)
+Cross45RailTile::Cross45RailTile(World& world, std::string_view _id) :
+  CrossRailTile(world, _id, TileId::RailCross45)
 {
+}
+
+void Cross45RailTile::getConnectors(std::vector<Connector>& connectors) const
+{
+  connectors.emplace_back(location(), rotate, Connector::Type::Rail);
+  connectors.emplace_back(location(), rotate + TileRotate::Deg135, Connector::Type::Rail);
+  connectors.emplace_back(location(), rotate + TileRotate::Deg180, Connector::Type::Rail);
+  connectors.emplace_back(location(), rotate + TileRotate::Deg315, Connector::Type::Rail);
 }

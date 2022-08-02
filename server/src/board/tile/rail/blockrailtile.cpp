@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 
 BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   RailTile(world, _id, TileId::RailBlock),
+  m_node{*this, 2},
   name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store},
   inputMap{this, "input_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   state{this, "state", BlockState::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState},
@@ -112,6 +113,22 @@ void BlockRailTile::loaded()
 {
   RailTile::loaded();
   updateHeightWidthMax();
+}
+
+void BlockRailTile::getConnectors(std::vector<Connector>& connectors) const
+{
+  if(rotate == TileRotate::Deg0)
+  {
+    connectors.emplace_back(location(), Connector::Direction::North, Connector::Type::Rail);
+    connectors.emplace_back(location().adjusted(0, height - 1), Connector::Direction::South, Connector::Type::Rail);
+  }
+  else if(rotate == TileRotate::Deg90)
+  {
+    connectors.emplace_back(location(), Connector::Direction::West, Connector::Type::Rail);
+    connectors.emplace_back(location().adjusted(width - 1, 0), Connector::Direction::East, Connector::Type::Rail);
+  }
+  else
+    assert(false);
 }
 
 void BlockRailTile::setRotate(TileRotate value)

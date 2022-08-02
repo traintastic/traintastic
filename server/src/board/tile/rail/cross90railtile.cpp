@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,14 @@
 #include "cross90railtile.hpp"
 
 Cross90RailTile::Cross90RailTile(World& world, std::string_view _id) :
-  RailTile(world, _id, TileId::RailCross90)
+  CrossRailTile(world, _id, TileId::RailCross90)
 {
+}
+
+void Cross90RailTile::getConnectors(std::vector<Connector>& connectors) const
+{
+  connectors.emplace_back(location(), rotate, Connector::Type::Rail);
+  connectors.emplace_back(location(), rotate + TileRotate::Deg90, Connector::Type::Rail);
+  connectors.emplace_back(location(), rotate + TileRotate::Deg180, Connector::Type::Rail);
+  connectors.emplace_back(location(), rotate + TileRotate::Deg270, Connector::Type::Rail);
 }

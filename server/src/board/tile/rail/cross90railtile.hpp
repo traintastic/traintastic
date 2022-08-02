@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020,2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,15 +23,17 @@
 #ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_CROSS90RAILTILE_HPP
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_CROSS90RAILTILE_HPP
 
-#include "railtile.hpp"
+#include "crossrailtile.hpp"
 
-class Cross90RailTile : public RailTile
+class Cross90RailTile : public CrossRailTile
 {
-  public:
-    CLASS_ID("board_tile.rail.cross_90")
-    CREATE(Cross90RailTile)
+  CLASS_ID("board_tile.rail.cross_90")
+  CREATE(Cross90RailTile)
 
+  public:
     Cross90RailTile(World& world, std::string_view _id);
+
+    void getConnectors(std::vector<Connector>& connectors) const final;
 };
 
 #endif

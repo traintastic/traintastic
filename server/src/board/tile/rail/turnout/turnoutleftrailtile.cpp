@@ -26,8 +26,8 @@
 static const std::array<TurnoutPosition, 3> positionValues = {TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Unknown};
 static const std::array<TurnoutPosition, 2> setPositionValues = {TurnoutPosition::Straight, TurnoutPosition::Left};
 
-TurnoutLeftRailTile::TurnoutLeftRailTile(World& world, std::string_view _id, TileId tileId) :
-  TurnoutRailTile(world, _id, tileId)
+TurnoutLeftRailTile::TurnoutLeftRailTile(World& world, std::string_view _id, TileId tileId)
+  : TurnoutRailTile(world, _id, tileId, 3)
 {
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Left}));
 

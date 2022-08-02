@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,10 +23,14 @@
 #ifndef TRAINTASTIC_SERVER_BOARD_TILE_TILE_HPP
 #define TRAINTASTIC_SERVER_BOARD_TILE_TILE_HPP
 
+#include <optional>
 #include "../../core/idobject.hpp"
+#include "../map/connector.hpp"
 #include <traintastic/board/tiledata.hpp>
 #include <traintastic/board/tilelocation.hpp>
 #include "../../enum/tilerotate.hpp"
+
+class Node;
 
 class Tile : public IdObject
 {
@@ -38,6 +42,7 @@ class Tile : public IdObject
 
     Tile(World& world, std::string_view _id, TileId tileId);
 
+    virtual void boardModified() {}
     virtual void setRotate(TileRotate value) { rotate.setValueInternal(value); }
     bool resize(uint8_t w, uint8_t h);
 
@@ -53,6 +58,10 @@ class Tile : public IdObject
     TileId tileId() const { return m_tileId; }
     inline TileLocation location() const { return {x.value(), y.value()}; }
     inline TileData data() const { return TileData{m_tileId, rotate, width, height}; }
+
+    virtual std::optional<std::reference_wrapper<const Node>> node() const { return {}; }
+    virtual std::optional<std::reference_wrapper<Node>> node() { return {}; }
+    virtual void getConnectors(std::vector<Connector>& /*connectors*/) const {}
 };
 
 #endif

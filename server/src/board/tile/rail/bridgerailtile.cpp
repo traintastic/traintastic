@@ -1,9 +1,9 @@
 /**
- * server/src/board/tile/rail/curve90railtile.cpp
+ * server/src/board/tile/rail/bridgerailtile.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020,2022 Reinder Feenstra
+ * Copyright (C) 2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,15 +20,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "curve90railtile.hpp"
+#include "bridgerailtile.hpp"
 
-Curve90RailTile::Curve90RailTile(World& world, std::string_view _id) :
-  RailTile(world, _id, TileId::RailCurve90)
+BridgeRailTile::BridgeRailTile(World& world, std::string_view _id, TileId tileId_)
+  : RailTile(world, _id, tileId_)
+  , m_node{*this, 4}
 {
-}
-
-void Curve90RailTile::getConnectors(std::vector<Connector>& connectors) const
-{
-  connectors.emplace_back(location(), rotate, Connector::Type::Rail);
-  connectors.emplace_back(location(), rotate + TileRotate::Deg90, Connector::Type::Rail);
+  assert(isRailBridge(tileId_));
 }

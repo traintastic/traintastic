@@ -1,9 +1,9 @@
 /**
- * server/src/board/tile/rail/curve90railtile.cpp
+ * server/src/board/map/connector.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020,2022 Reinder Feenstra
+ * Copyright (C) 2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,15 +20,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "curve90railtile.hpp"
+#include "connector.hpp"
 
-Curve90RailTile::Curve90RailTile(World& world, std::string_view _id) :
-  RailTile(world, _id, TileId::RailCurve90)
+Connector::Connector(TileLocation location_, Direction direction_, Type type_)
+  : location{location_}
+  , direction{direction_}
+  , type{type_}
 {
 }
 
-void Curve90RailTile::getConnectors(std::vector<Connector>& connectors) const
+Connector::Connector(TileLocation location_, TileRotate rotate, Type type_)
+  : location{location_}
+  , direction{toConnectorDirection(rotate)}
+  , type{type_}
 {
-  connectors.emplace_back(location(), rotate, Connector::Type::Rail);
-  connectors.emplace_back(location(), rotate + TileRotate::Deg90, Connector::Type::Rail);
+}
+
+Connector Connector::opposite() const
+{
+  return {location + direction, ~direction, type};
 }

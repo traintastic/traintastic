@@ -32,6 +32,8 @@ class Turnout3WayRailTile : public TurnoutRailTile
 
   public:
     Turnout3WayRailTile(World& world, std::string_view _id);
+
+    void getConnectors(std::vector<Connector>& connectors) const final;
 };
 
 #endif

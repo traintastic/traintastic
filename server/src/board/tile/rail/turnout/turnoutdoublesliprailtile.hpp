@@ -32,6 +32,8 @@ class TurnoutDoubleSlipRailTile : public TurnoutRailTile
 
   public:
     TurnoutDoubleSlipRailTile(World& world, std::string_view _id);
+
+    void getConnectors(std::vector<Connector>& connectors) const final;
 };
 
 #endif

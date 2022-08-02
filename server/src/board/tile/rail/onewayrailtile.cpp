@@ -24,5 +24,6 @@
 
 OneWayRailTile::OneWayRailTile(World& world, std::string_view _id)
   : StraightRailTile(world, _id, TileId::RailOneWay)
+  , m_node{*this, 2}
 {
 }

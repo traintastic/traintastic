@@ -1,9 +1,9 @@
 /**
- * server/src/board/tile/rail/signal/signalrailtile.hpp
+ * server/src/board/tile/rail/bridgerailtile.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,36 +20,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_SIGNAL_SIGNALRAILTILE_HPP
-#define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_SIGNAL_SIGNALRAILTILE_HPP
+#ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_BRIDGERAILTILE_HPP
+#define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_BRIDGERAILTILE_HPP
 
-#include "../straightrailtile.hpp"
-#include "../../../map/node.hpp"
-#include "../../../../core/method.hpp"
-#include "../../../../enum/signalaspect.hpp"
-#include "../../../../core/objectproperty.hpp"
-#include "../../../../hardware/output/map/signaloutputmap.hpp"
+#include "railtile.hpp"
+#include "../../map/node.hpp"
 
-class SignalRailTile : public StraightRailTile
+class BridgeRailTile : public RailTile
 {
-  DEFAULT_ID("signal")
-
   private:
     Node m_node;
 
   protected:
-    SignalRailTile(World& world, std::string_view _id, TileId tileId);
-
-    void worldEvent(WorldState state, WorldEvent event) override;
-
-    virtual bool doSetAspect(SignalAspect value);
+    BridgeRailTile(World& world, std::string_view _id, TileId tileId_);
 
   public:
-    Property<std::string> name;
-    Property<SignalAspect> aspect;
-    ObjectProperty<SignalOutputMap> outputMap;
-    Method<bool(SignalAspect)> setAspect;
-
     std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }
     std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
 };

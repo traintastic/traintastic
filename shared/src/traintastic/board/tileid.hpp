@@ -59,6 +59,73 @@ enum class TileId : uint16_t // 10 bit
   ReservedForFutureExpension = 1023
 };
 
+constexpr bool isRail(TileId id)
+{
+  switch(id)
+  {
+    case TileId::RailStraight:
+    case TileId::RailCurve45:
+    case TileId::RailCurve90:
+    case TileId::RailCross45:
+    case TileId::RailCross90:
+    case TileId::RailTurnoutLeft45:
+    case TileId::RailTurnoutRight45:
+    case TileId::RailTurnoutWye:
+    case TileId::RailTurnout3Way:
+    case TileId::RailTurnoutSingleSlip:
+    case TileId::RailTurnoutDoubleSlip:
+    case TileId::RailSignal2Aspect:
+    case TileId::RailSignal3Aspect:
+    case TileId::RailBufferStop:
+    case TileId::RailSensor:
+    case TileId::RailBlock:
+    case TileId::RailTurnoutLeft90:
+    case TileId::RailTurnoutRight90:
+    case TileId::RailTurnoutLeftCurved:
+    case TileId::RailTurnoutRightCurved:
+    case TileId::RailBridge45Left:
+    case TileId::RailBridge45Right:
+    case TileId::RailBridge90:
+    case TileId::RailTunnel:
+    case TileId::RailOneWay:
+    case TileId::RailDirectionControl:
+      return true;
+
+    default:
+      break;
+  }
+  return false;
+}
+
+constexpr bool isRailCross(TileId id)
+{
+  switch(id)
+  {
+    case TileId::RailCross45:
+    case TileId::RailCross90:
+      return true;
+
+    default:
+      break;
+  }
+  return false;
+}
+
+constexpr bool isRailBridge(TileId id)
+{
+  switch(id)
+  {
+    case TileId::RailBridge45Left:
+    case TileId::RailBridge45Right:
+    case TileId::RailBridge90:
+      return true;
+
+    default:
+      break;
+  }
+  return false;
+}
+
 constexpr bool isRailTurnout(TileId id)
 {
   switch(id)
