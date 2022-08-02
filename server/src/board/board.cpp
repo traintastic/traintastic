@@ -359,8 +359,8 @@ void Board::removeTile(const int16_t x, const int16_t y)
   const auto l = tile->location();
   const int16_t x2 = l.x + tile->width;
   const int16_t y2 = l.y + tile->height;
-  for(int16_t xx = x; xx < x2; xx++)
-    for(int16_t yy = y; yy < y2; yy++)
+  for(int16_t xx = l.x; xx < x2; xx++)
+    for(int16_t yy = l.y; yy < y2; yy++)
       m_tiles.erase(TileLocation{xx, yy});
   tileDataChanged(*this, l, TileData());
 }
