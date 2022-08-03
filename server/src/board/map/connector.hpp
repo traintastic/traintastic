@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_BOARD_MAP_CONNECTOR_HPP
 
 #include <cstdint>
+#include <type_traits>
 #include <traintastic/board/tilelocation.hpp>
 #include "../../enum/tilerotate.hpp"
 

@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_BOARD_MAP_LINK_HPP
 
 #include <vector>
+#include <array>
 #include <memory>
 
 class Tile;
