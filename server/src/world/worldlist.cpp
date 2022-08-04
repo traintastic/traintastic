@@ -27,6 +27,7 @@
 #include "../log/log.hpp"
 #include "worldlisttablemodel.hpp"
 #include "ctwreader.hpp"
+#include "libarchiveerror.hpp"
 
 using nlohmann::json;
 
@@ -61,12 +62,18 @@ void WorldList::buildIndex()
 
     if(info.path.extension() == World::dotCTW)
     {
-      CTWReader ctw(info.path);
+      try
+      {
+        CTWReader ctw(info.path);
 
-      json world;
-      if(ctw.readFile(World::filename, world) && readInfo(world, info))
-        m_items.push_back(info);
-
+        json world;
+        if(ctw.readFile(World::filename, world) && readInfo(world, info))
+          m_items.push_back(info);
+      }
+      catch(const LibArchiveError& e)
+      {
+        Log::log(Traintastic::classId, LogMessage::W1003_READING_WORLD_X_FAILED_LIBARCHIVE_ERROR_X_X, info.path.filename(), e.errorCode, e.what());
+      }
       continue;
     }
 
