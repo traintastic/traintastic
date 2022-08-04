@@ -12,6 +12,8 @@ TODO
 
 TODO
 
+## W1003: Reading world *filename* failed (libarchive error *code*: *reason*) {#w1003}
+TODO
 
 ## W2001: Received malformed data dropped *number* bytes {#w2001}
 
