@@ -23,15 +23,8 @@
 #include <catch2/catch.hpp>
 #include "../src/world/world.hpp"
 #include "../src/board/board.hpp"
-
-#include "../src/hardware/interface/dccplusplusinterface.hpp"
-#include "../src/hardware/interface/ecosinterface.hpp"
-#include "../src/hardware/interface/hsi88.hpp"
-#include "../src/hardware/interface/loconetinterface.hpp"
-#include "../src/hardware/interface/traintasticdiyinterface.hpp"
-#include "../src/hardware/interface/wlanmausinterface.hpp"
-#include "../src/hardware/interface/xpressnetinterface.hpp"
-#include "../src/hardware/interface/z21interface.hpp"
+#include "../src/hardware/input/input.hpp"
+#include "interfaces.hpp"
 
 TEST_CASE("Create world => destroy world", "[object-create-destroy]")
 {
@@ -79,16 +72,7 @@ TEST_CASE("Create world and board => destroy board", "[object-create-destroy]")
   REQUIRE(worldWeak.expired());
 }
 
-TEMPLATE_TEST_CASE("Create world and interface => destroy world", "[object-create-destroy]"
-  , DCCPlusPlusInterface
-  , ECoSInterface
-  , HSI88Interface
-  , LocoNetInterface
-  , TraintasticDIYInterface
-  , WlanMausInterface
-  , XpressNetInterface
-  , Z21Interface
-  )
+TEMPLATE_TEST_CASE("Create world and interface => destroy world", "[object-create-destroy]", INTERFACES)
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
@@ -103,16 +87,7 @@ TEMPLATE_TEST_CASE("Create world and interface => destroy world", "[object-creat
   REQUIRE(worldWeak.expired());
 }
 
-TEMPLATE_TEST_CASE("Create world and interface => destroy interface", "[object-create-destroy]"
-  , DCCPlusPlusInterface
-  , ECoSInterface
-  , HSI88Interface
-  , LocoNetInterface
-  , TraintasticDIYInterface
-  , WlanMausInterface
-  , XpressNetInterface
-  , Z21Interface
-  )
+TEMPLATE_TEST_CASE("Create world and interface => destroy interface", "[object-create-destroy]", INTERFACES)
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
@@ -222,13 +197,7 @@ TEST_CASE("Create world, decoder and function => destroy function", "[object-cre
   REQUIRE(worldWeak.expired());
 }
 
-TEMPLATE_TEST_CASE("Create world, interface and decoder => destroy interface", "[object-create-destroy]"
-  , DCCPlusPlusInterface
-  , ECoSInterface
-  , LocoNetInterface
-  , XpressNetInterface
-  , Z21Interface
-  )
+TEMPLATE_TEST_CASE("Create world, interface and decoder => destroy interface", "[object-create-destroy]", INTERFACES_DECODER)
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
@@ -261,13 +230,7 @@ TEMPLATE_TEST_CASE("Create world, interface and decoder => destroy interface", "
   REQUIRE(worldWeak.expired());
 }
 
-TEMPLATE_TEST_CASE("Create world, interface and decoder => destroy decoder", "[object-create-destroy]"
-  , DCCPlusPlusInterface
-  , ECoSInterface
-  , LocoNetInterface
-  , XpressNetInterface
-  , Z21Interface
-  )
+TEMPLATE_TEST_CASE("Create world, interface and decoder => destroy decoder", "[object-create-destroy]", INTERFACES_DECODER)
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
@@ -294,6 +257,206 @@ TEMPLATE_TEST_CASE("Create world, interface and decoder => destroy decoder", "[o
   REQUIRE(worldWeak.lock()->interfaces->length == 1);
   REQUIRE(worldWeak.lock()->decoders->length == 0);
   REQUIRE(interfaceWeak.lock()->decoders->length == 0);
+
+  world.reset();
+  REQUIRE(interfaceWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
+TEST_CASE("Create world and input => destroy world", "[object-create-destroy]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+
+  std::weak_ptr<Input> inputWeak = world->inputs->add();
+  REQUIRE_FALSE(inputWeak.expired());
+  REQUIRE(inputWeak.lock()->getClassId() == Input::classId);
+
+  world.reset();
+  REQUIRE(inputWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
+TEST_CASE("Create world and input => destroy input", "[object-create-destroy]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(worldWeak.lock()->inputs->length == 0);
+
+  std::weak_ptr<Input> inputWeak = world->inputs->add();
+  REQUIRE_FALSE(inputWeak.expired());
+  REQUIRE(worldWeak.lock()->inputs->length == 1);
+
+  world->inputs->remove(inputWeak.lock());
+  REQUIRE(inputWeak.expired());
+  REQUIRE(worldWeak.lock()->inputs->length == 0);
+
+  world.reset();
+  REQUIRE(worldWeak.expired());
+}
+
+TEMPLATE_TEST_CASE("Create world, interface and input => destroy interface", "[object-create-destroy]", INTERFACES_INPUT)
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(worldWeak.lock()->interfaces->length == 0);
+  REQUIRE(worldWeak.lock()->inputs->length == 0);
+
+  std::weak_ptr<TestType> interfaceWeak = std::dynamic_pointer_cast<TestType>(world->interfaces->add(TestType::classId));
+  REQUIRE_FALSE(interfaceWeak.expired());
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
+  REQUIRE(worldWeak.lock()->inputs->length == 0);
+  REQUIRE(interfaceWeak.lock()->inputs->length == 0);
+
+  std::weak_ptr<Input> inputWeak = interfaceWeak.lock()->inputs->add();
+  REQUIRE_FALSE(inputWeak.expired());
+  REQUIRE(inputWeak.lock()->interface.value() == std::dynamic_pointer_cast<InputController>(interfaceWeak.lock()));
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
+  REQUIRE(worldWeak.lock()->inputs->length == 1);
+  REQUIRE(interfaceWeak.lock()->inputs->length == 1);
+
+  world->interfaces->remove(interfaceWeak.lock());
+  REQUIRE(interfaceWeak.expired());
+  REQUIRE_FALSE(inputWeak.expired());
+  REQUIRE_FALSE(inputWeak.lock()->interface.value().operator bool());
+  REQUIRE(worldWeak.lock()->interfaces->length == 0);
+  REQUIRE(worldWeak.lock()->inputs->length == 1);
+
+  world.reset();
+  REQUIRE(inputWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
+TEMPLATE_TEST_CASE("Create world, interface and input => destroy input", "[object-create-destroy]", INTERFACES_INPUT)
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(worldWeak.lock()->interfaces->length == 0);
+  REQUIRE(worldWeak.lock()->inputs->length == 0);
+
+  std::weak_ptr<TestType> interfaceWeak = std::dynamic_pointer_cast<TestType>(world->interfaces->add(TestType::classId));
+  REQUIRE_FALSE(interfaceWeak.expired());
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
+  REQUIRE(worldWeak.lock()->inputs->length == 0);
+  REQUIRE(interfaceWeak.lock()->inputs->length == 0);
+
+  std::weak_ptr<Input> inputWeak = interfaceWeak.lock()->inputs->add();
+  REQUIRE_FALSE(inputWeak.expired());
+  REQUIRE(inputWeak.lock()->interface.value() == std::dynamic_pointer_cast<InputController>(interfaceWeak.lock()));
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
+  REQUIRE(worldWeak.lock()->inputs->length == 1);
+  REQUIRE(interfaceWeak.lock()->inputs->length == 1);
+
+  world->inputs->remove(inputWeak.lock());
+  REQUIRE_FALSE(interfaceWeak.expired());
+  REQUIRE(inputWeak.expired());
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
+  REQUIRE(worldWeak.lock()->inputs->length == 0);
+  REQUIRE(interfaceWeak.lock()->inputs->length == 0);
+
+  world.reset();
+  REQUIRE(interfaceWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
+TEST_CASE("Create world and output => destroy world", "[object-create-destroy]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+
+  std::weak_ptr<Output> outputWeak = world->outputs->add();
+  REQUIRE_FALSE(outputWeak.expired());
+  REQUIRE(outputWeak.lock()->getClassId() == Output::classId);
+
+  world.reset();
+  REQUIRE(outputWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
+TEST_CASE("Create world and output => destroy output", "[object-create-destroy]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(worldWeak.lock()->outputs->length == 0);
+
+  std::weak_ptr<Output> outputWeak = world->outputs->add();
+  REQUIRE_FALSE(outputWeak.expired());
+  REQUIRE(worldWeak.lock()->outputs->length == 1);
+
+  world->outputs->remove(outputWeak.lock());
+  REQUIRE(outputWeak.expired());
+  REQUIRE(worldWeak.lock()->outputs->length == 0);
+
+  world.reset();
+  REQUIRE(worldWeak.expired());
+}
+
+TEMPLATE_TEST_CASE("Create world, interface and output => destroy interface", "[object-create-destroy]", INTERFACES_OUTPUT)
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(worldWeak.lock()->interfaces->length == 0);
+  REQUIRE(worldWeak.lock()->outputs->length == 0);
+
+  std::weak_ptr<TestType> interfaceWeak = std::dynamic_pointer_cast<TestType>(world->interfaces->add(TestType::classId));
+  REQUIRE_FALSE(interfaceWeak.expired());
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
+  REQUIRE(worldWeak.lock()->outputs->length == 0);
+  REQUIRE(interfaceWeak.lock()->outputs->length == 0);
+
+  std::weak_ptr<Output> outputWeak = interfaceWeak.lock()->outputs->add();
+  REQUIRE_FALSE(outputWeak.expired());
+  REQUIRE(outputWeak.lock()->interface.value() == std::dynamic_pointer_cast<OutputController>(interfaceWeak.lock()));
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
+  REQUIRE(worldWeak.lock()->outputs->length == 1);
+  REQUIRE(interfaceWeak.lock()->outputs->length == 1);
+
+  world->interfaces->remove(interfaceWeak.lock());
+  REQUIRE(interfaceWeak.expired());
+  REQUIRE_FALSE(outputWeak.expired());
+  REQUIRE_FALSE(outputWeak.lock()->interface.value().operator bool());
+  REQUIRE(worldWeak.lock()->interfaces->length == 0);
+  REQUIRE(worldWeak.lock()->outputs->length == 1);
+
+  world.reset();
+  REQUIRE(outputWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
+TEMPLATE_TEST_CASE("Create world, interface and output => destroy output", "[object-create-destroy]", INTERFACES_OUTPUT)
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(worldWeak.lock()->interfaces->length == 0);
+  REQUIRE(worldWeak.lock()->outputs->length == 0);
+
+  std::weak_ptr<TestType> interfaceWeak = std::dynamic_pointer_cast<TestType>(world->interfaces->add(TestType::classId));
+  REQUIRE_FALSE(interfaceWeak.expired());
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
+  REQUIRE(worldWeak.lock()->outputs->length == 0);
+  REQUIRE(interfaceWeak.lock()->outputs->length == 0);
+
+  std::weak_ptr<Output> outputWeak = interfaceWeak.lock()->outputs->add();
+  REQUIRE_FALSE(outputWeak.expired());
+  REQUIRE(outputWeak.lock()->interface.value() == std::dynamic_pointer_cast<OutputController>(interfaceWeak.lock()));
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
+  REQUIRE(worldWeak.lock()->outputs->length == 1);
+  REQUIRE(interfaceWeak.lock()->outputs->length == 1);
+
+  world->outputs->remove(outputWeak.lock());
+  REQUIRE_FALSE(interfaceWeak.expired());
+  REQUIRE(outputWeak.expired());
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
+  REQUIRE(worldWeak.lock()->outputs->length == 0);
+  REQUIRE(interfaceWeak.lock()->outputs->length == 0);
 
   world.reset();
   REQUIRE(interfaceWeak.expired());
