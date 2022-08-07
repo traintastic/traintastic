@@ -39,11 +39,11 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 
 Z21Interface::Z21Interface(World& world, std::string_view _id)
   : Interface(world, _id)
+  , InputController(*this, inputListColumns)
   , hostname{this, "hostname", "192.168.1.203", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , port{this, "port", 21105, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , z21{this, "z21", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
-  , inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , hardwareType{this, "hardware_type", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , serialNumber{this, "serial_number", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
@@ -52,7 +52,6 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
   name = "Z21";
   z21.setValueInternal(std::make_shared<Z21::ClientSettings>(*this, z21.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name(), decoderListColumns));
-  inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name(), inputListColumns));
   outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
@@ -69,7 +68,6 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
   Attributes::addDisplayName(decoders, DisplayName::Hardware::decoders);
   m_interfaceItems.insertBefore(decoders, notes);
 
-  Attributes::addDisplayName(inputs, DisplayName::Hardware::inputs);
   m_interfaceItems.insertBefore(inputs, notes);
 
   Attributes::addDisplayName(outputs, DisplayName::Hardware::outputs);
@@ -122,22 +120,6 @@ std::pair<uint32_t, uint32_t> Z21Interface::inputAddressMinMax(uint32_t channel)
 
   assert(false);
   return {0, 0};
-}
-
-bool Z21Interface::addInput(Input& input)
-{
-  const bool success = InputController::addInput(input);
-  if(success)
-    inputs->addObject(input.shared_ptr<Input>());
-  return success;
-}
-
-bool Z21Interface::removeInput(Input& input)
-{
-  const bool success = InputController::removeInput(input);
-  if(success)
-    inputs->removeObject(input.shared_ptr<Input>());
-  return success;
 }
 
 void Z21Interface::inputSimulateChange(uint32_t channel, uint32_t address)
@@ -275,6 +257,7 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
 void Z21Interface::addToWorld()
 {
   Interface::addToWorld();
+  InputController::addToWorld();
 
   m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
   m_world.outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
@@ -297,6 +280,7 @@ void Z21Interface::destroying()
   m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
   m_world.outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 
+  InputController::destroying();
   Interface::destroying();
 }
 

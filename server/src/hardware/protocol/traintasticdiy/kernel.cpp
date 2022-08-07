@@ -198,7 +198,7 @@ void Kernel::receive(const Message& message)
             {
               if(state == InputState::Invalid)
               {
-                if(m_inputController->inputs().count({InputController::defaultInputChannel, address}) != 0)
+                if(m_inputController->inputMap().count({InputController::defaultInputChannel, address}) != 0)
                   Log::log(m_logId, LogMessage::W2004_INPUT_ADDRESS_X_IS_INVALID, address);
               }
               else
@@ -329,7 +329,7 @@ void Kernel::receive(const Message& message)
         EventLoop::call(
           [this]()
           {
-            for(const auto& it : m_inputController->inputs())
+            for(const auto& it : m_inputController->inputMap())
               postSend(GetInputState(static_cast<uint16_t>(it.first.address)));
           });
 

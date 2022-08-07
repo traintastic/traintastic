@@ -21,7 +21,6 @@
  */
 
 #include "dccplusplusinterface.hpp"
-#include "../input/list/inputlisttablemodel.hpp"
 #include "../output/list/outputlisttablemodel.hpp"
 #include "../protocol/dccplusplus/messages.hpp"
 #include "../protocol/dccplusplus/iohandler/serialiohandler.hpp"
@@ -40,17 +39,16 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 
 DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   : Interface(world, _id)
+  , InputController(*this, inputListColumns)
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , baudrate{this, "baudrate", 115200, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , dccplusplus{this, "dccplusplus", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
-  , inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
   name = "DCC++";
   dccplusplus.setValueInternal(std::make_shared<DCCPlusPlus::Settings>(*this, dccplusplus.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name(), decoderListColumns));
-  inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name(), inputListColumns));
   outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(device, DisplayName::Serial::device);
@@ -69,7 +67,6 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   Attributes::addDisplayName(decoders, DisplayName::Hardware::decoders);
   m_interfaceItems.insertBefore(decoders, notes);
 
-  Attributes::addDisplayName(inputs, DisplayName::Hardware::inputs);
   m_interfaceItems.insertBefore(inputs, notes);
 
   Attributes::addDisplayName(outputs, DisplayName::Hardware::outputs);
@@ -96,22 +93,6 @@ void DCCPlusPlusInterface::decoderChanged(const Decoder& decoder, DecoderChangeF
 {
   if(m_kernel)
     m_kernel->decoderChanged(decoder, changes, functionNumber);
-}
-
-bool DCCPlusPlusInterface::addInput(Input& input)
-{
-  const bool success = InputController::addInput(input);
-  if(success)
-    inputs->addObject(input.shared_ptr<Input>());
-  return success;
-}
-
-bool DCCPlusPlusInterface::removeInput(Input& input)
-{
-  const bool success = InputController::removeInput(input);
-  if(success)
-    inputs->removeObject(input.shared_ptr<Input>());
-  return success;
 }
 
 void DCCPlusPlusInterface::inputSimulateChange(uint32_t channel, uint32_t address)
@@ -247,9 +228,9 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
 void DCCPlusPlusInterface::addToWorld()
 {
   Interface::addToWorld();
+  InputController::addToWorld();
 
   m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  m_world.inputControllers->add(std::dynamic_pointer_cast<InputController>(shared_from_this()));
   m_world.outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 }
 
@@ -268,12 +249,6 @@ void DCCPlusPlusInterface::destroying()
     decoder->interface = nullptr;
   }
 
-  for(const auto& input : *inputs)
-  {
-    assert(input->interface.value() == std::dynamic_pointer_cast<InputController>(shared_from_this()));
-    input->interface = nullptr;
-  }
-
   for(const auto& output : *outputs)
   {
     assert(output->interface.value() == std::dynamic_pointer_cast<OutputController>(shared_from_this()));
@@ -281,9 +256,9 @@ void DCCPlusPlusInterface::destroying()
   }
 
   m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  m_world.inputControllers->remove(std::dynamic_pointer_cast<InputController>(shared_from_this()));
   m_world.outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 
+  InputController::destroying();
   Interface::destroying();
 }
 

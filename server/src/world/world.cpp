@@ -32,6 +32,7 @@
 #include "../core/objectlisttablemodel.hpp"
 #include "../core/attributes.hpp"
 #include "../core/abstractvectorproperty.hpp"
+#include "../hardware/input/input.hpp"
 #include "../log/log.hpp"
 #include "../utils/displayname.hpp"
 #include "../traintastic/traintastic.hpp"

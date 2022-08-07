@@ -29,7 +29,6 @@
 #include "../decoder/decodercontroller.hpp"
 #include "../decoder/list/decoderlist.hpp"
 #include "../input/inputcontroller.hpp"
-#include "../input/list/inputlist.hpp"
 #include "../output/outputcontroller.hpp"
 #include "../output/list/outputlist.hpp"
 #include "../../core/objectproperty.hpp"
@@ -74,7 +73,6 @@ class LocoNetInterface final
     Property<uint16_t> port;
     ObjectProperty<LocoNet::Settings> loconet;
     ObjectProperty<DecoderList> decoders;
-    ObjectProperty<InputList> inputs;
     ObjectProperty<OutputList> outputs;
 
     LocoNetInterface(World& world, std::string_view _id);
@@ -86,8 +84,6 @@ class LocoNetInterface final
 
     // InputController:
     std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final { return {LocoNet::Kernel::inputAddressMin, LocoNet::Kernel::inputAddressMax}; }
-    [[nodiscard]] bool addInput(Input& input) final;
-    [[nodiscard]] bool removeInput(Input& input) final;
     void inputSimulateChange(uint32_t channel, uint32_t address) final;
 
     // OutputController:

@@ -48,7 +48,7 @@ std::string InputMonitor::getObjectId() const
 std::vector<InputMonitor::InputInfo> InputMonitor::getInputInfo() const
 {
   std::vector<InputInfo> inputInfo;
-  for(auto it : m_controller.inputs())
+  for(auto it : m_controller.inputMap())
   {
     const auto& input = *(it.second);
     InputInfo info(input.address, input.id, input.value);

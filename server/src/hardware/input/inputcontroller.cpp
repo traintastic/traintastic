@@ -22,8 +22,22 @@
 
 #include "inputcontroller.hpp"
 #include "input.hpp"
+#include "list/inputlist.hpp"
+#include "list/inputlisttablemodel.hpp"
 #include "monitor/inputmonitor.hpp"
+#include "../../core/attributes.hpp"
+#include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
+#include "../../world/world.hpp"
+
+InputController::InputController(IdObject& interface, InputListColumn columns)
+  : m_interface{interface}
+  , inputs{&m_interface, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
+{
+  inputs.setValueInternal(std::make_shared<InputList>(m_interface, inputs.name(), columns));
+
+  Attributes::addDisplayName(inputs, DisplayName::Hardware::inputs);
+}
 
 bool InputController::isInputChannel(uint32_t channel) const
 {
@@ -77,6 +91,7 @@ bool InputController::addInput(Input& input)
   {
     m_inputs.insert({{input.channel, input.address}, input.shared_ptr<Input>()});
     input.value.setValueInternal(TriState::Undefined);
+    inputs->addObject(input.shared_ptr<Input>());
     return true;
   }
   return false;
@@ -90,6 +105,7 @@ bool InputController::removeInput(Input& input)
   {
     m_inputs.erase(it);
     input.value.setValueInternal(TriState::Undefined);
+    inputs->removeObject(input.shared_ptr<Input>());
     return true;
   }
   return false;
@@ -113,4 +129,19 @@ std::shared_ptr<InputMonitor> InputController::inputMonitor(uint32_t channel)
     m_inputMonitors[channel] = monitor;
   }
   return monitor;
+}
+
+void InputController::addToWorld()
+{
+  m_interface.world().inputControllers->add(std::dynamic_pointer_cast<InputController>(m_interface.shared_from_this()));
+}
+
+void InputController::destroying()
+{
+  for(const auto& input : *inputs)
+  {
+    assert(input->interface.value() == std::dynamic_pointer_cast<InputController>(m_interface.shared_from_this()));
+    input->interface = nullptr;
+  }
+  m_interface.world().inputControllers->remove(std::dynamic_pointer_cast<InputController>(m_interface.shared_from_this()));
 }

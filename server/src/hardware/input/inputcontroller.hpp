@@ -27,10 +27,15 @@
 #include <vector>
 #include <unordered_map>
 #include <memory>
+#include "../../core/objectproperty.hpp"
 #include "../../enum/tristate.hpp"
 
+class IdObject;
 class Input;
 class InputMonitor;
+
+class InputList;
+enum class InputListColumn;
 
 class InputController
 {
@@ -57,18 +62,28 @@ class InputController
 
     using InputMap = std::unordered_map<InputMapKey, std::shared_ptr<Input>, InputMapKeyHash>;
 
+  private:
+    IdObject& m_interface;
+
   protected:
     InputMap m_inputs;
     std::unordered_map<uint32_t, std::weak_ptr<InputMonitor>> m_inputMonitors;
+
+    InputController(IdObject& interface, InputListColumn columns);
+
+    void addToWorld();
+    void destroying();
 
   public:
     static constexpr std::vector<uint32_t>* noInputChannels = nullptr;
     static constexpr uint32_t defaultInputChannel = 0;
 
+    ObjectProperty<InputList> inputs;
+
     /**
      *
      */
-    inline const InputMap& inputs() const { return m_inputs; }
+    inline const InputMap& inputMap() const { return m_inputs; }
 
     /**
      *
@@ -112,13 +127,13 @@ class InputController
      *
      * @return \c true if added, \c false otherwise.
      */
-    [[nodiscard]] virtual bool addInput(Input& input);
+    [[nodiscard]] bool addInput(Input& input);
 
     /**
      *
      * @return \c true if removed, \c false otherwise.
      */
-    [[nodiscard]] virtual bool removeInput(Input& input);
+    [[nodiscard]] bool removeInput(Input& input);
 
     /**
      * @brief Update the input value

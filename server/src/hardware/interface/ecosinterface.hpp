@@ -30,7 +30,6 @@
 #include "../decoder/decodercontroller.hpp"
 #include "../decoder/list/decoderlist.hpp"
 #include "../input/inputcontroller.hpp"
-#include "../input/list/inputlist.hpp"
 #include "../output/outputcontroller.hpp"
 #include "../output/list/outputlist.hpp"
 #include "../../core/objectproperty.hpp"
@@ -70,7 +69,6 @@ class ECoSInterface final
     Property<std::string> hostname;
     ObjectProperty<ECoS::Settings> ecos;
     ObjectProperty<DecoderList> decoders;
-    ObjectProperty<InputList> inputs;
     ObjectProperty<OutputList> outputs;
 
     ECoSInterface(World& world, std::string_view _id);
@@ -84,8 +82,6 @@ class ECoSInterface final
     const std::vector<uint32_t>* inputChannels() const final { return &ECoS::Kernel::inputChannels; }
     const std::vector<std::string_view>* inputChannelNames() const final { return &ECoS::Kernel::inputChannelNames; }
     std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t channel) const final;
-    [[nodiscard]] bool addInput(Input& input) final;
-    [[nodiscard]] bool removeInput(Input& input) final;
     void inputSimulateChange(uint32_t channel, uint32_t address) final;
 
     // OutputController:

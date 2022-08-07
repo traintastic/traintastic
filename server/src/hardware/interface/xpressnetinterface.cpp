@@ -21,7 +21,7 @@
  */
 
 #include "xpressnetinterface.hpp"
-#include "../input/list/inputlisttablemodel.hpp"
+#include "../input/input.hpp"
 #include "../output/list/outputlisttablemodel.hpp"
 #include "../protocol/xpressnet/messages.hpp"
 #include "../protocol/xpressnet/iohandler/serialiohandler.hpp"
@@ -42,6 +42,7 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 
 XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   : Interface(world, _id)
+  , InputController(*this, inputListColumns)
   , type{this, "type", XpressNetInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](XpressNetInterfaceType /*value*/)
       {
@@ -85,13 +86,11 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   , s88ModuleCount{this, "s88_module_count", XpressNet::RoSoftS88XpressNetLI::S88ModuleCount::moduleCountDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , xpressnet{this, "xpressnet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
-  , inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
   name = "XpressNet";
   xpressnet.setValueInternal(std::make_shared<XpressNet::Settings>(*this, xpressnet.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name(), decoderListColumns));
-  inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name(), inputListColumns));
   outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
@@ -146,7 +145,6 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   Attributes::addDisplayName(decoders, DisplayName::Hardware::decoders);
   m_interfaceItems.insertBefore(decoders, notes);
 
-  Attributes::addDisplayName(inputs, DisplayName::Hardware::inputs);
   m_interfaceItems.insertBefore(inputs, notes);
 
   Attributes::addDisplayName(outputs, DisplayName::Hardware::outputs);
@@ -175,22 +173,6 @@ void XpressNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFla
 {
   if(m_kernel)
     m_kernel->decoderChanged(decoder, changes, functionNumber);
-}
-
-bool XpressNetInterface::addInput(Input& input)
-{
-  const bool success = InputController::addInput(input);
-  if(success)
-    inputs->addObject(input.shared_ptr<Input>());
-  return success;
-}
-
-bool XpressNetInterface::removeInput(Input& input)
-{
-  const bool success = InputController::removeInput(input);
-  if(success)
-    inputs->removeObject(input.shared_ptr<Input>());
-  return success;
 }
 
 void XpressNetInterface::inputSimulateChange(uint32_t channel, uint32_t address)
@@ -345,9 +327,9 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
 void XpressNetInterface::addToWorld()
 {
   Interface::addToWorld();
+  InputController::addToWorld();
 
   m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  m_world.inputControllers->add(std::dynamic_pointer_cast<InputController>(shared_from_this()));
   m_world.outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 }
 
@@ -366,12 +348,6 @@ void XpressNetInterface::destroying()
     decoder->interface = nullptr;
   }
 
-  for(const auto& input : *inputs)
-  {
-    assert(input->interface.value() == std::dynamic_pointer_cast<InputController>(shared_from_this()));
-    input->interface = nullptr;
-  }
-
   for(const auto& output : *outputs)
   {
     assert(output->interface.value() == std::dynamic_pointer_cast<OutputController>(shared_from_this()));
@@ -379,9 +355,9 @@ void XpressNetInterface::destroying()
   }
 
   m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  m_world.inputControllers->remove(std::dynamic_pointer_cast<InputController>(shared_from_this()));
   m_world.outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 
+  InputController::destroying();
   Interface::destroying();
 }
 

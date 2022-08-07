@@ -21,6 +21,7 @@
  */
 
 #include "hsi88.hpp"
+#include "../input/input.hpp"
 #include "../input/list/inputlisttablemodel.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/eventloop.hpp"
@@ -36,6 +37,7 @@ constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | 
 
 HSI88Interface::HSI88Interface(World& world, std::string_view _id)
   : Interface(world, _id)
+  , InputController(*this, inputListColumns)
   , m_ioContext{1}
   , m_serialPort{m_ioContext}
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -59,7 +61,6 @@ HSI88Interface::HSI88Interface(World& world, std::string_view _id)
       {
         m_debugLogRXTX = value;
       }}
-  , inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
   name = "HSI-88";
   inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name(), inputListColumns));
@@ -82,7 +83,6 @@ HSI88Interface::HSI88Interface(World& world, std::string_view _id)
   Attributes::addMinMax(modulesRight, modulesMin, modulesMax);
   m_interfaceItems.insertBefore(modulesRight, notes);
 
-  Attributes::addDisplayName(inputs, DisplayName::Hardware::inputs);
   m_interfaceItems.insertBefore(inputs, notes);
 
   Attributes::addDisplayName(debugLogRXTX, DisplayName::Hardware::debugLogRXTX);
@@ -104,22 +104,6 @@ std::pair<uint32_t, uint32_t> HSI88Interface::inputAddressMinMax(uint32_t channe
   return {inputAddressMin, inputAddressMax};
 }
 
-bool HSI88Interface::addInput(Input& input)
-{
-  const bool success = InputController::addInput(input);
-  if(success)
-    inputs->addObject(input.shared_ptr<Input>());
-  return success;
-}
-
-bool HSI88Interface::removeInput(Input& input)
-{
-  const bool success = InputController::removeInput(input);
-  if(success)
-    inputs->removeObject(input.shared_ptr<Input>());
-  return success;
-}
-
 void HSI88Interface::inputSimulateChange(uint32_t channel, uint32_t address)
 {
   //! \todo add simulation support
@@ -130,20 +114,12 @@ void HSI88Interface::inputSimulateChange(uint32_t channel, uint32_t address)
 void HSI88Interface::addToWorld()
 {
   Interface::addToWorld();
-
-  m_world.inputControllers->add(std::dynamic_pointer_cast<InputController>(shared_from_this()));
+  InputController::addToWorld();
 }
 
 void HSI88Interface::destroying()
 {
-  for(const auto& input : *inputs)
-  {
-    assert(input->interface.value() == std::dynamic_pointer_cast<InputController>(shared_from_this()));
-    input->interface = nullptr;
-  }
-
-  m_world.inputControllers->remove(std::dynamic_pointer_cast<InputController>(shared_from_this()));
-
+  InputController::destroying();
   Interface::destroying();
 }
 

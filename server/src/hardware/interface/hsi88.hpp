@@ -31,7 +31,6 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/serial_port.hpp>
 #include "../input/inputcontroller.hpp"
-#include "../input/list/inputlist.hpp"
 
 /**
  * \brief HSI-88 hardware interface
@@ -113,7 +112,6 @@ class HSI88Interface final
     Property<uint8_t> modulesMiddle;
     Property<uint8_t> modulesRight;
     Property<bool> debugLogRXTX;
-    ObjectProperty<InputList> inputs;
 
     HSI88Interface(World& world, std::string_view _id);
 
@@ -121,8 +119,6 @@ class HSI88Interface final
     const std::vector<uint32_t>* inputChannels() const final { return &channels; }
     const std::vector<std::string_view>* inputChannelNames() const final { return &channelNames; }
     std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t channel) const final;
-    [[nodiscard]] bool addInput(Input& input) final;
-    [[nodiscard]] bool removeInput(Input& input) final;
     void inputSimulateChange(uint32_t channel, uint32_t address) final;
 };
 

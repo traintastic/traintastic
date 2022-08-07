@@ -21,7 +21,7 @@
  */
 
 #include "loconetinterface.hpp"
-#include "../input/list/inputlisttablemodel.hpp"
+#include "../input/input.hpp"
 #include "../output/list/outputlisttablemodel.hpp"
 #include "../protocol/loconet/iohandler/serialiohandler.hpp"
 #include "../protocol/loconet/iohandler/simulationiohandler.hpp"
@@ -41,6 +41,7 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 
 LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   : Interface(world, _id)
+  , InputController(*this, inputListColumns)
   , type{this, "type", LocoNetInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](LocoNetInterfaceType /*value*/)
       {
@@ -53,13 +54,11 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   , port{this, "port", 5550, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , loconet{this, "loconet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
-  , inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
   name = "LocoNet";
   loconet.setValueInternal(std::make_shared<LocoNet::Settings>(*this, loconet.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name(), decoderListColumns));
-  inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name(), inputListColumns));
   outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
@@ -99,7 +98,6 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   Attributes::addDisplayName(decoders, DisplayName::Hardware::decoders);
   m_interfaceItems.insertBefore(decoders, notes);
 
-  Attributes::addDisplayName(inputs, DisplayName::Hardware::inputs);
   m_interfaceItems.insertBefore(inputs, notes);
 
   Attributes::addDisplayName(outputs, DisplayName::Hardware::outputs);
@@ -128,22 +126,6 @@ void LocoNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags
 {
   if(m_kernel)
     m_kernel->decoderChanged(decoder, changes, functionNumber);
-}
-
-bool LocoNetInterface::addInput(Input& input)
-{
-  const bool success = InputController::addInput(input);
-  if(success)
-    inputs->addObject(input.shared_ptr<Input>());
-  return success;
-}
-
-bool LocoNetInterface::removeInput(Input& input)
-{
-  const bool success = InputController::removeInput(input);
-  if(success)
-    inputs->removeObject(input.shared_ptr<Input>());
-  return success;
 }
 
 void LocoNetInterface::inputSimulateChange(uint32_t channel, uint32_t address)
@@ -288,9 +270,9 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
 void LocoNetInterface::addToWorld()
 {
   Interface::addToWorld();
+  InputController::addToWorld();
 
   m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  m_world.inputControllers->add(std::dynamic_pointer_cast<InputController>(shared_from_this()));
   m_world.outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 }
 
@@ -309,12 +291,6 @@ void LocoNetInterface::destroying()
     decoder->interface = nullptr;
   }
 
-  for(const auto& input : *inputs)
-  {
-    assert(input->interface.value() == std::dynamic_pointer_cast<InputController>(shared_from_this()));
-    input->interface = nullptr;
-  }
-
   for(const auto& output : *outputs)
   {
     assert(output->interface.value() == std::dynamic_pointer_cast<OutputController>(shared_from_this()));
@@ -322,9 +298,9 @@ void LocoNetInterface::destroying()
   }
 
   m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  m_world.inputControllers->remove(std::dynamic_pointer_cast<InputController>(shared_from_this()));
   m_world.outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 
+  InputController::destroying();
   Interface::destroying();
 }
 
