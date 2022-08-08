@@ -39,16 +39,15 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 
 DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   : Interface(world, _id)
+  , DecoderController(*this, decoderListColumns)
   , InputController(*this, inputListColumns)
   , OutputController(*this, outputListColumns)
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , baudrate{this, "baudrate", 115200, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , dccplusplus{this, "dccplusplus", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
-  , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
   name = "DCC++";
   dccplusplus.setValueInternal(std::make_shared<DCCPlusPlus::Settings>(*this, dccplusplus.name()));
-  decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name(), decoderListColumns));
 
   Attributes::addDisplayName(device, DisplayName::Serial::device);
   Attributes::addEnabled(device, !online);
@@ -63,28 +62,11 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   Attributes::addDisplayName(dccplusplus, DisplayName::Hardware::dccplusplus);
   m_interfaceItems.insertBefore(dccplusplus, notes);
 
-  Attributes::addDisplayName(decoders, DisplayName::Hardware::decoders);
   m_interfaceItems.insertBefore(decoders, notes);
 
   m_interfaceItems.insertBefore(inputs, notes);
 
   m_interfaceItems.insertBefore(outputs, notes);
-}
-
-bool DCCPlusPlusInterface::addDecoder(Decoder& decoder)
-{
-  const bool success = DecoderController::addDecoder(decoder);
-  if(success)
-    decoders->addObject(decoder.shared_ptr<Decoder>());
-  return success;
-}
-
-bool DCCPlusPlusInterface::removeDecoder(Decoder& decoder)
-{
-  const bool success = DecoderController::removeDecoder(decoder);
-  if(success)
-    decoders->removeObject(decoder.shared_ptr<Decoder>());
-  return success;
 }
 
 void DCCPlusPlusInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
@@ -210,10 +192,9 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
 void DCCPlusPlusInterface::addToWorld()
 {
   Interface::addToWorld();
+  DecoderController::addToWorld();
   InputController::addToWorld();
   OutputController::addToWorld();
-
-  m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
 }
 
 void DCCPlusPlusInterface::loaded()
@@ -225,16 +206,9 @@ void DCCPlusPlusInterface::loaded()
 
 void DCCPlusPlusInterface::destroying()
 {
-  for(const auto& decoder : *decoders)
-  {
-    assert(decoder->interface.value() == std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-    decoder->interface = nullptr;
-  }
-
-  m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-
   OutputController::destroying();
   InputController::destroying();
+  DecoderController::destroying();
   Interface::destroying();
 }
 

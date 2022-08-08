@@ -41,6 +41,7 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 
 LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   : Interface(world, _id)
+  , DecoderController(*this, decoderListColumns)
   , InputController(*this, inputListColumns)
   , OutputController(*this, outputListColumns)
   , type{this, "type", LocoNetInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
@@ -54,11 +55,9 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   , hostname{this, "hostname", "192.168.1.203", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , port{this, "port", 5550, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , loconet{this, "loconet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
-  , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
   name = "LocoNet";
   loconet.setValueInternal(std::make_shared<LocoNet::Settings>(*this, loconet.name()));
-  decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name(), decoderListColumns));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
   Attributes::addEnabled(type, !online);
@@ -94,7 +93,6 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   Attributes::addDisplayName(loconet, DisplayName::Hardware::loconet);
   m_interfaceItems.insertBefore(loconet, notes);
 
-  Attributes::addDisplayName(decoders, DisplayName::Hardware::decoders);
   m_interfaceItems.insertBefore(decoders, notes);
 
   m_interfaceItems.insertBefore(inputs, notes);
@@ -102,22 +100,6 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(outputs, notes);
 
   typeChanged();
-}
-
-bool LocoNetInterface::addDecoder(Decoder& decoder)
-{
-  const bool success = DecoderController::addDecoder(decoder);
-  if(success)
-    decoders->addObject(decoder.shared_ptr<Decoder>());
-  return success;
-}
-
-bool LocoNetInterface::removeDecoder(Decoder& decoder)
-{
-  const bool success = DecoderController::removeDecoder(decoder);
-  if(success)
-    decoders->removeObject(decoder.shared_ptr<Decoder>());
-  return success;
 }
 
 void LocoNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
@@ -252,10 +234,9 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
 void LocoNetInterface::addToWorld()
 {
   Interface::addToWorld();
+  DecoderController::addToWorld();
   InputController::addToWorld();
   OutputController::addToWorld();
-
-  m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
 }
 
 void LocoNetInterface::loaded()
@@ -267,16 +248,9 @@ void LocoNetInterface::loaded()
 
 void LocoNetInterface::destroying()
 {
-  for(const auto& decoder : *decoders)
-  {
-    assert(decoder->interface.value() == std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-    decoder->interface = nullptr;
-  }
-
-  m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-
   OutputController::destroying();
   InputController::destroying();
+  DecoderController::destroying();
   Interface::destroying();
 }
 

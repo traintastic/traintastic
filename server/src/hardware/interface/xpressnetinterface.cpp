@@ -21,7 +21,6 @@
  */
 
 #include "xpressnetinterface.hpp"
-#include "../decoder/list/decoderlisttablemodel.hpp"
 #include "../input/input.hpp"
 #include "../protocol/xpressnet/messages.hpp"
 #include "../protocol/xpressnet/iohandler/serialiohandler.hpp"
@@ -42,6 +41,7 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 
 XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   : Interface(world, _id)
+  , DecoderController(*this, decoderListColumns)
   , InputController(*this, inputListColumns)
   , OutputController(*this, outputListColumns)
   , type{this, "type", XpressNetInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
@@ -86,11 +86,9 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   , s88StartAddress{this, "s88_start_address", XpressNet::RoSoftS88XpressNetLI::S88StartAddress::startAddressDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , s88ModuleCount{this, "s88_module_count", XpressNet::RoSoftS88XpressNetLI::S88ModuleCount::moduleCountDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , xpressnet{this, "xpressnet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
-  , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
   name = "XpressNet";
   xpressnet.setValueInternal(std::make_shared<XpressNet::Settings>(*this, xpressnet.name()));
-  decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name(), decoderListColumns));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
   Attributes::addEnabled(type, !online);
@@ -141,7 +139,6 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   Attributes::addDisplayName(xpressnet, DisplayName::Hardware::xpressnet);
   m_interfaceItems.insertBefore(xpressnet, notes);
 
-  Attributes::addDisplayName(decoders, DisplayName::Hardware::decoders);
   m_interfaceItems.insertBefore(decoders, notes);
 
   m_interfaceItems.insertBefore(inputs, notes);
@@ -149,22 +146,6 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(outputs, notes);
 
   updateVisible();
-}
-
-bool XpressNetInterface::addDecoder(Decoder& decoder)
-{
-  const bool success = DecoderController::addDecoder(decoder);
-  if(success)
-    decoders->addObject(decoder.shared_ptr<Decoder>());
-  return success;
-}
-
-bool XpressNetInterface::removeDecoder(Decoder& decoder)
-{
-  const bool success = DecoderController::removeDecoder(decoder);
-  if(success)
-    decoders->removeObject(decoder.shared_ptr<Decoder>());
-  return success;
 }
 
 void XpressNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
@@ -309,10 +290,9 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
 void XpressNetInterface::addToWorld()
 {
   Interface::addToWorld();
+  DecoderController::addToWorld();
   InputController::addToWorld();
   OutputController::addToWorld();
-
-  m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
 }
 
 void XpressNetInterface::loaded()
@@ -324,16 +304,9 @@ void XpressNetInterface::loaded()
 
 void XpressNetInterface::destroying()
 {
-  for(const auto& decoder : *decoders)
-  {
-    assert(decoder->interface.value() == std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-    decoder->interface = nullptr;
-  }
-
-  m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-
   OutputController::destroying();
   InputController::destroying();
+  DecoderController::destroying();
   Interface::destroying();
 }
 

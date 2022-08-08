@@ -28,7 +28,6 @@
 #include "../protocol/ecos/settings.hpp"
 #include "../protocol/ecos/simulation.hpp"
 #include "../decoder/decodercontroller.hpp"
-#include "../decoder/list/decoderlist.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
 #include "../../core/objectproperty.hpp"
@@ -67,13 +66,10 @@ class ECoSInterface final
   public:
     Property<std::string> hostname;
     ObjectProperty<ECoS::Settings> ecos;
-    ObjectProperty<DecoderList> decoders;
 
     ECoSInterface(World& world, std::string_view _id);
 
     // DecoderController:
-    [[nodiscard]] bool addDecoder(Decoder& decoder) final;
-    [[nodiscard]] bool removeDecoder(Decoder& decoder) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:

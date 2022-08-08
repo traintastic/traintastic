@@ -27,7 +27,6 @@
 #include "../protocol/z21/clientkernel.hpp"
 #include "../protocol/z21/clientsettings.hpp"
 #include "../decoder/decodercontroller.hpp"
-#include "../decoder/list/decoderlist.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
 #include "../../core/objectproperty.hpp"
@@ -64,7 +63,6 @@ class Z21Interface final
     Property<std::string> hostname;
     Property<uint16_t> port;
     ObjectProperty<Z21::ClientSettings> z21;
-    ObjectProperty<DecoderList> decoders;
     Property<std::string> hardwareType;
     Property<std::string> serialNumber;
     Property<std::string> firmwareVersion;
@@ -72,8 +70,6 @@ class Z21Interface final
     Z21Interface(World& world, std::string_view _id);
 
     // DecoderController:
-    [[nodiscard]] bool addDecoder(Decoder& decoder) final;
-    [[nodiscard]] bool removeDecoder(Decoder& decoder) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:

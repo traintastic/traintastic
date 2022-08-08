@@ -21,7 +21,6 @@
  */
 
 #include "z21interface.hpp"
-#include "../decoder/list/decoderlisttablemodel.hpp"
 #include "../protocol/z21/messages.hpp"
 #include "../protocol/z21/iohandler/simulationiohandler.hpp"
 #include "../protocol/z21/iohandler/udpclientiohandler.hpp"
@@ -39,19 +38,18 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 
 Z21Interface::Z21Interface(World& world, std::string_view _id)
   : Interface(world, _id)
+  , DecoderController(*this, decoderListColumns)
   , InputController(*this, inputListColumns)
   , OutputController(*this, outputListColumns)
   , hostname{this, "hostname", "192.168.1.203", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , port{this, "port", 21105, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , z21{this, "z21", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
-  , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , hardwareType{this, "hardware_type", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , serialNumber{this, "serial_number", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , firmwareVersion{this, "firmware_version", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
 {
   name = "Z21";
   z21.setValueInternal(std::make_shared<Z21::ClientSettings>(*this, z21.name()));
-  decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name(), decoderListColumns));
 
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
   Attributes::addEnabled(hostname, !online);
@@ -64,7 +62,6 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
   Attributes::addDisplayName(z21, DisplayName::Hardware::z21);
   m_interfaceItems.insertBefore(z21, notes);
 
-  Attributes::addDisplayName(decoders, DisplayName::Hardware::decoders);
   m_interfaceItems.insertBefore(decoders, notes);
 
   m_interfaceItems.insertBefore(inputs, notes);
@@ -79,22 +76,6 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
 
   Attributes::addCategory(firmwareVersion, Category::info);
   m_interfaceItems.insertBefore(firmwareVersion, notes);
-}
-
-bool Z21Interface::addDecoder(Decoder& decoder)
-{
-  const bool success = DecoderController::addDecoder(decoder);
-  if(success)
-    decoders->addObject(decoder.shared_ptr<Decoder>());
-  return success;
-}
-
-bool Z21Interface::removeDecoder(Decoder& decoder)
-{
-  const bool success = DecoderController::removeDecoder(decoder);
-  if(success)
-    decoders->removeObject(decoder.shared_ptr<Decoder>());
-  return success;
 }
 
 void Z21Interface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
@@ -239,30 +220,16 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
 void Z21Interface::addToWorld()
 {
   Interface::addToWorld();
+  DecoderController::addToWorld();
   InputController::addToWorld();
-
-  m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  m_world.outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
+  OutputController::addToWorld();
 }
 
 void Z21Interface::destroying()
 {
-  for(const auto& decoder : *decoders)
-  {
-    assert(decoder->interface.value() == std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-    decoder->interface = nullptr;
-  }
-
-  for(const auto& output : *outputs)
-  {
-    assert(output->interface.value() == std::dynamic_pointer_cast<OutputController>(shared_from_this()));
-    output->interface = nullptr;
-  }
-
-  m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  m_world.outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
-
+  OutputController::destroying();
   InputController::destroying();
+  DecoderController::destroying();
   Interface::destroying();
 }
 

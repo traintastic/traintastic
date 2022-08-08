@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,18 +26,30 @@
 #include <cstdint>
 #include <vector>
 #include <memory>
+#include "../../core/objectproperty.hpp"
 
+class IdObject;
 class Decoder;
 enum class DecoderChangeFlags;
 enum class DecoderProtocol : uint8_t;
+class DecoderList;
+enum class DecoderListColumn;
 
 class DecoderController
 {
   public:
     using DecoderVector = std::vector<std::shared_ptr<Decoder>>;
 
-  protected:
+  private:
     DecoderVector m_decoders;
+
+    IdObject& interface();
+
+  protected:
+    DecoderController(IdObject& interface, DecoderListColumn columns);
+
+    void addToWorld();
+    void destroying();
 
     DecoderVector::iterator findDecoder(const Decoder& decoder);
     DecoderVector::iterator findDecoder(DecoderProtocol protocol, uint16_t address, bool dccLongAddress = false);
@@ -46,8 +58,10 @@ class DecoderController
     void restoreDecoderSpeed();
 
   public:
-    [[nodiscard]] virtual bool addDecoder(Decoder& decoder);
-    [[nodiscard]] virtual bool removeDecoder(Decoder& decoder);
+    ObjectProperty<DecoderList> decoders;
+
+    [[nodiscard]] bool addDecoder(Decoder& decoder);
+    [[nodiscard]] bool removeDecoder(Decoder& decoder);
 
     const std::shared_ptr<Decoder>& getDecoder(DecoderProtocol protocol, uint16_t address, bool dccLongAddress = false, bool fallbackToProtocolAuto = false);
 

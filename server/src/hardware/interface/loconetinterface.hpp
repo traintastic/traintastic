@@ -27,7 +27,6 @@
 #include "../protocol/loconet/kernel.hpp"
 #include "../protocol/loconet/settings.hpp"
 #include "../decoder/decodercontroller.hpp"
-#include "../decoder/list/decoderlist.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
 #include "../../core/objectproperty.hpp"
@@ -71,13 +70,10 @@ class LocoNetInterface final
     Property<std::string> hostname;
     Property<uint16_t> port;
     ObjectProperty<LocoNet::Settings> loconet;
-    ObjectProperty<DecoderList> decoders;
 
     LocoNetInterface(World& world, std::string_view _id);
 
     // DecoderController:
-    [[nodiscard]] bool addDecoder(Decoder& decoder) final;
-    [[nodiscard]] bool removeDecoder(Decoder& decoder) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:

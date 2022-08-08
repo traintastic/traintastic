@@ -27,7 +27,6 @@
 #include "../protocol/xpressnet/kernel.hpp"
 #include "../protocol/xpressnet/settings.hpp"
 #include "../decoder/decodercontroller.hpp"
-#include "../decoder/list/decoderlist.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
 #include "../../core/objectproperty.hpp"
@@ -75,13 +74,10 @@ class XpressNetInterface final
     Property<uint8_t> s88StartAddress;
     Property<uint8_t> s88ModuleCount;
     ObjectProperty<XpressNet::Settings> xpressnet;
-    ObjectProperty<DecoderList> decoders;
 
     XpressNetInterface(World& world, std::string_view _id);
 
     // DecoderController:
-    [[nodiscard]] bool addDecoder(Decoder& decoder) final;
-    [[nodiscard]] bool removeDecoder(Decoder& decoder) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:

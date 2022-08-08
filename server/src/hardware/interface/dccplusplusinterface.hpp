@@ -27,7 +27,6 @@
 #include "../protocol/dccplusplus/kernel.hpp"
 #include "../protocol/dccplusplus/settings.hpp"
 #include "../decoder/decodercontroller.hpp"
-#include "../decoder/list/decoderlist.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
 #include "../../core/objectproperty.hpp"
@@ -67,13 +66,10 @@ class DCCPlusPlusInterface final
     Property<std::string> device;
     Property<uint32_t> baudrate;
     ObjectProperty<DCCPlusPlus::Settings> dccplusplus;
-    ObjectProperty<DecoderList> decoders;
 
     DCCPlusPlusInterface(World& world, std::string_view _id);
 
     // DecoderController:
-    [[nodiscard]] bool addDecoder(Decoder& decoder) final;
-    [[nodiscard]] bool removeDecoder(Decoder& decoder) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
