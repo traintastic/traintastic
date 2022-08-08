@@ -31,10 +31,9 @@
 #include "../../world/world.hpp"
 
 InputController::InputController(IdObject& interface, InputListColumn columns)
-  : m_interface{interface}
-  , inputs{&m_interface, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
+  : inputs{&interface, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
-  inputs.setValueInternal(std::make_shared<InputList>(m_interface, inputs.name(), columns));
+  inputs.setValueInternal(std::make_shared<InputList>(interface, inputs.name(), columns));
 
   Attributes::addDisplayName(inputs, DisplayName::Hardware::inputs);
 }
@@ -133,15 +132,24 @@ std::shared_ptr<InputMonitor> InputController::inputMonitor(uint32_t channel)
 
 void InputController::addToWorld()
 {
-  m_interface.world().inputControllers->add(std::dynamic_pointer_cast<InputController>(m_interface.shared_from_this()));
+  auto& object = interface();
+  object.world().inputControllers->add(std::dynamic_pointer_cast<InputController>(object.shared_from_this()));
 }
 
 void InputController::destroying()
 {
+  auto& object = interface();
   for(const auto& input : *inputs)
   {
-    assert(input->interface.value() == std::dynamic_pointer_cast<InputController>(m_interface.shared_from_this()));
+    assert(input->interface.value() == std::dynamic_pointer_cast<InputController>(object.shared_from_this()));
     input->interface = nullptr;
   }
-  m_interface.world().inputControllers->remove(std::dynamic_pointer_cast<InputController>(m_interface.shared_from_this()));
+  object.world().inputControllers->remove(std::dynamic_pointer_cast<InputController>(object.shared_from_this()));
+}
+
+IdObject& InputController::interface()
+{
+  auto* object = dynamic_cast<IdObject*>(this);
+  assert(object);
+  return *object;
 }

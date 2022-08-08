@@ -43,7 +43,7 @@ std::string OutputKeyboard::getObjectId() const
 std::vector<OutputKeyboard::OutputInfo> OutputKeyboard::getOutputInfo() const
 {
   std::vector<OutputInfo> outputInfo;
-  for(auto it : m_controller.outputs())
+  for(auto it : m_controller.outputMap())
   {
     const auto& output = *(it.second);
     if(output.channel == m_channel)

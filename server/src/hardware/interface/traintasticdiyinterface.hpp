@@ -28,7 +28,6 @@
 #include "../protocol/traintasticdiy/settings.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
-#include "../output/list/outputlist.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../enum/traintasticdiyinterfacetype.hpp"
 #include "../../enum/serialflowcontrol.hpp"
@@ -68,7 +67,6 @@ class TraintasticDIYInterface final
     Property<std::string> hostname;
     Property<uint16_t> port;
     ObjectProperty<TraintasticDIY::Settings> traintasticDIY;
-    ObjectProperty<OutputList> outputs;
 
     TraintasticDIYInterface(World& world, std::string_view _id);
 
@@ -78,8 +76,6 @@ class TraintasticDIYInterface final
 
     // OutputController:
     std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final { return {TraintasticDIY::Kernel::ioAddressMin, TraintasticDIY::Kernel::ioAddressMax}; }
-    [[nodiscard]] bool addOutput(Output& output) final;
-    [[nodiscard]] bool removeOutput(Output& output) final;
     [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 };
 

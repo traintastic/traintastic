@@ -27,10 +27,14 @@
 #include <vector>
 #include <unordered_map>
 #include <memory>
+#include "../../core/objectproperty.hpp"
 #include "../../enum/tristate.hpp"
 
+class IdObject;
 class Output;
 class OutputKeyboard;
+class OutputList;
+enum class OutputListColumn;
 
 class OutputController
 {
@@ -57,18 +61,28 @@ class OutputController
 
     using OutputMap = std::unordered_map<OutputMapKey, std::shared_ptr<Output>, OutputMapKeyHash>;
 
+  private:
+    IdObject& interface();
+
   protected:
     OutputMap m_outputs;
     std::unordered_map<uint32_t, std::weak_ptr<OutputKeyboard>> m_outputKeyboards;
+
+    OutputController(IdObject& interface, OutputListColumn columns);
+
+    void addToWorld();
+    void destroying();
 
   public:
     static constexpr std::vector<uint32_t>* noOutputChannels = nullptr;
     static constexpr uint32_t defaultOutputChannel = 0;
 
+    ObjectProperty<OutputList> outputs;
+
     /**
      *
      */
-    inline const OutputMap& outputs() const { return m_outputs; }
+    inline const OutputMap& outputMap() const { return m_outputs; }
 
     /**
      *
@@ -112,13 +126,13 @@ class OutputController
      *
      * @return \c true if added, \c false otherwise.
      */
-    [[nodiscard]] virtual bool addOutput(Output& output);
+    [[nodiscard]] bool addOutput(Output& output);
 
     /**
      *
      * @return \c true if removed, \c false otherwise.
      */
-    [[nodiscard]] virtual bool removeOutput(Output& output);
+    [[nodiscard]] bool removeOutput(Output& output);
 
     /**
      * @brief ...

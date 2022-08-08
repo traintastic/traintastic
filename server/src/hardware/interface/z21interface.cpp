@@ -40,11 +40,11 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 Z21Interface::Z21Interface(World& world, std::string_view _id)
   : Interface(world, _id)
   , InputController(*this, inputListColumns)
+  , OutputController(*this, outputListColumns)
   , hostname{this, "hostname", "192.168.1.203", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , port{this, "port", 21105, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , z21{this, "z21", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
-  , outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , hardwareType{this, "hardware_type", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , serialNumber{this, "serial_number", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , firmwareVersion{this, "firmware_version", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
@@ -52,7 +52,6 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
   name = "Z21";
   z21.setValueInternal(std::make_shared<Z21::ClientSettings>(*this, z21.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name(), decoderListColumns));
-  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
   Attributes::addEnabled(hostname, !online);
@@ -70,7 +69,6 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
 
   m_interfaceItems.insertBefore(inputs, notes);
 
-  Attributes::addDisplayName(outputs, DisplayName::Hardware::outputs);
   m_interfaceItems.insertBefore(outputs, notes);
 
   Attributes::addCategory(hardwareType, Category::info);
@@ -126,22 +124,6 @@ void Z21Interface::inputSimulateChange(uint32_t channel, uint32_t address)
 {
   if(m_kernel && inRange(address, outputAddressMinMax(channel)))
     m_kernel->simulateInputChange(channel, address);
-}
-
-bool Z21Interface::addOutput(Output& output)
-{
-  const bool success = OutputController::addOutput(output);
-  if(success)
-    outputs->addObject(output.shared_ptr<Output>());
-  return success;
-}
-
-bool Z21Interface::removeOutput(Output& output)
-{
-  const bool success = OutputController::removeOutput(output);
-  if(success)
-    outputs->removeObject(output.shared_ptr<Output>());
-  return success;
 }
 
 bool Z21Interface::setOutputValue(uint32_t channel, uint32_t address, bool value)

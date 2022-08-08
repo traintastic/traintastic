@@ -30,7 +30,6 @@
 #include "../decoder/list/decoderlist.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
-#include "../output/list/outputlist.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../enum/xpressnetinterfacetype.hpp"
 #include "../../enum/xpressnetserialinterfacetype.hpp"
@@ -77,7 +76,6 @@ class XpressNetInterface final
     Property<uint8_t> s88ModuleCount;
     ObjectProperty<XpressNet::Settings> xpressnet;
     ObjectProperty<DecoderList> decoders;
-    ObjectProperty<OutputList> outputs;
 
     XpressNetInterface(World& world, std::string_view _id);
 
@@ -92,8 +90,6 @@ class XpressNetInterface final
 
     // OutputController:
     std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final { return {XpressNet::Kernel::ioAddressMin, XpressNet::Kernel::ioAddressMax}; }
-    [[nodiscard]] bool addOutput(Output& output) final;
-    [[nodiscard]] bool removeOutput(Output& output) final;
     [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 };
 

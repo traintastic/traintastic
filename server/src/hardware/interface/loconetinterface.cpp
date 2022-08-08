@@ -21,8 +21,8 @@
  */
 
 #include "loconetinterface.hpp"
+#include "../decoder/list/decoderlisttablemodel.hpp"
 #include "../input/input.hpp"
-#include "../output/list/outputlisttablemodel.hpp"
 #include "../protocol/loconet/iohandler/serialiohandler.hpp"
 #include "../protocol/loconet/iohandler/simulationiohandler.hpp"
 #include "../protocol/loconet/iohandler/tcpbinaryiohandler.hpp"
@@ -42,6 +42,7 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , InputController(*this, inputListColumns)
+  , OutputController(*this, outputListColumns)
   , type{this, "type", LocoNetInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](LocoNetInterfaceType /*value*/)
       {
@@ -54,12 +55,10 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   , port{this, "port", 5550, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , loconet{this, "loconet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
-  , outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
   name = "LocoNet";
   loconet.setValueInternal(std::make_shared<LocoNet::Settings>(*this, loconet.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name(), decoderListColumns));
-  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
   Attributes::addEnabled(type, !online);
@@ -100,7 +99,6 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
 
   m_interfaceItems.insertBefore(inputs, notes);
 
-  Attributes::addDisplayName(outputs, DisplayName::Hardware::outputs);
   m_interfaceItems.insertBefore(outputs, notes);
 
   typeChanged();
@@ -132,22 +130,6 @@ void LocoNetInterface::inputSimulateChange(uint32_t channel, uint32_t address)
 {
   if(m_kernel && inRange(address, outputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address);
-}
-
-bool LocoNetInterface::addOutput(Output& output)
-{
-  const bool success = OutputController::addOutput(output);
-  if(success)
-    outputs->addObject(output.shared_ptr<Output>());
-  return success;
-}
-
-bool LocoNetInterface::removeOutput(Output& output)
-{
-  const bool success = OutputController::removeOutput(output);
-  if(success)
-    outputs->removeObject(output.shared_ptr<Output>());
-  return success;
 }
 
 bool LocoNetInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
@@ -271,9 +253,9 @@ void LocoNetInterface::addToWorld()
 {
   Interface::addToWorld();
   InputController::addToWorld();
+  OutputController::addToWorld();
 
   m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  m_world.outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 }
 
 void LocoNetInterface::loaded()
@@ -291,15 +273,9 @@ void LocoNetInterface::destroying()
     decoder->interface = nullptr;
   }
 
-  for(const auto& output : *outputs)
-  {
-    assert(output->interface.value() == std::dynamic_pointer_cast<OutputController>(shared_from_this()));
-    output->interface = nullptr;
-  }
-
   m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  m_world.outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 
+  OutputController::destroying();
   InputController::destroying();
   Interface::destroying();
 }

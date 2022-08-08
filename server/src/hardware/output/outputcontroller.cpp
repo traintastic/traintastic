@@ -21,9 +21,21 @@
  */
 
 #include "outputcontroller.hpp"
-#include "output.hpp"
+#include "list/outputlist.hpp"
+#include "list/outputlisttablemodel.hpp"
 #include "keyboard/outputkeyboard.hpp"
+#include "../../core/attributes.hpp"
+#include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
+#include "../../world/world.hpp"
+
+OutputController::OutputController(IdObject& interface, OutputListColumn columns)
+  : outputs{&interface, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
+{
+  outputs.setValueInternal(std::make_shared<OutputList>(interface, outputs.name(), columns));
+
+  Attributes::addDisplayName(outputs, DisplayName::Hardware::outputs);
+}
 
 bool OutputController::isOutputChannel(uint32_t channel) const
 {
@@ -77,6 +89,7 @@ bool OutputController::addOutput(Output& output)
   {
     m_outputs.insert({{output.channel, output.address}, output.shared_ptr<Output>()});
     output.value.setValueInternal(TriState::Undefined);
+    outputs->addObject(output.shared_ptr<Output>());
     return true;
   }
   return false;
@@ -90,6 +103,7 @@ bool OutputController::removeOutput(Output& output)
   {
     m_outputs.erase(it);
     output.value.setValueInternal(TriState::Undefined);
+    outputs->removeObject(output.shared_ptr<Output>());
     return true;
   }
   return false;
@@ -113,4 +127,28 @@ std::shared_ptr<OutputKeyboard> OutputController::outputKeyboard(uint32_t channe
     m_outputKeyboards[channel] = keyboard;
   }
   return keyboard;
+}
+
+void OutputController::addToWorld()
+{
+  auto& object = interface();
+  object.world().outputControllers->add(std::dynamic_pointer_cast<OutputController>(object.shared_from_this()));
+}
+
+void OutputController::destroying()
+{
+  auto& object = interface();
+  for(const auto& output : *outputs)
+  {
+    assert(output->interface.value() == std::dynamic_pointer_cast<OutputController>(object.shared_from_this()));
+    output->interface = nullptr;
+  }
+  object.world().outputControllers->remove(std::dynamic_pointer_cast<OutputController>(object.shared_from_this()));
+}
+
+IdObject& OutputController::interface()
+{
+  auto* object = dynamic_cast<IdObject*>(this);
+  assert(object);
+  return *object;
 }

@@ -21,7 +21,7 @@
  */
 
 #include "ecosinterface.hpp"
-#include "../output/list/outputlisttablemodel.hpp"
+#include "../decoder/list/decoderlisttablemodel.hpp"
 #include "../protocol/ecos/iohandler/tcpiohandler.hpp"
 #include "../protocol/ecos/iohandler/simulationiohandler.hpp"
 #include "../../core/attributes.hpp"
@@ -39,15 +39,14 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , InputController(*this, inputListColumns)
+  , OutputController(*this, outputListColumns)
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , ecos{this, "ecos", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
-  , outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
   name = "ECoS";
   ecos.setValueInternal(std::make_shared<ECoS::Settings>(*this, ecos.name()));
   decoders.setValueInternal(std::make_shared<DecoderList>(*this, decoders.name(), decoderListColumns));
-  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
   Attributes::addEnabled(hostname, !online);
@@ -60,7 +59,6 @@ ECoSInterface::ECoSInterface(World& world, std::string_view _id)
 
   m_interfaceItems.insertBefore(inputs, notes);
 
-  Attributes::addDisplayName(outputs, DisplayName::Hardware::outputs);
   m_interfaceItems.insertBefore(outputs, notes);
 }
 
@@ -124,22 +122,6 @@ std::pair<uint32_t, uint32_t> ECoSInterface::outputAddressMinMax(uint32_t channe
 
   assert(false);
   return {0, 0};
-}
-
-bool ECoSInterface::addOutput(Output& output)
-{
-  const bool success = OutputController::addOutput(output);
-  if(success)
-    outputs->addObject(output.shared_ptr<Output>());
-  return success;
-}
-
-bool ECoSInterface::removeOutput(Output& output)
-{
-  const bool success = OutputController::removeOutput(output);
-  if(success)
-    outputs->removeObject(output.shared_ptr<Output>());
-  return success;
 }
 
 bool ECoSInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
@@ -224,9 +206,9 @@ void ECoSInterface::addToWorld()
 {
   Interface::addToWorld();
   InputController::addToWorld();
+  OutputController::addToWorld();
 
   m_world.decoderControllers->add(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  m_world.outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 }
 
 void ECoSInterface::destroying()
@@ -237,15 +219,9 @@ void ECoSInterface::destroying()
     decoder->interface = nullptr;
   }
 
-  for(const auto& output : *outputs)
-  {
-    assert(output->interface.value() == std::dynamic_pointer_cast<OutputController>(shared_from_this()));
-    output->interface = nullptr;
-  }
-
   m_world.decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(shared_from_this()));
-  m_world.outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
 
+  OutputController::destroying();
   InputController::destroying();
   Interface::destroying();
 }

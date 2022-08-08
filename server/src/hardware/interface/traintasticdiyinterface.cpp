@@ -21,7 +21,6 @@
  */
 
 #include "traintasticdiyinterface.hpp"
-#include "../output/list/outputlisttablemodel.hpp"
 #include "../protocol/traintasticdiy/messages.hpp"
 #include "../protocol/traintasticdiy/iohandler/serialiohandler.hpp"
 #include "../protocol/traintasticdiy/iohandler/simulationiohandler.hpp"
@@ -39,6 +38,7 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 TraintasticDIYInterface::TraintasticDIYInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , InputController(*this, inputListColumns)
+  , OutputController(*this, outputListColumns)
   , type{this, "type", TraintasticDIYInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](TraintasticDIYInterfaceType /*value*/)
       {
@@ -50,11 +50,9 @@ TraintasticDIYInterface::TraintasticDIYInterface(World& world, std::string_view 
   , hostname{this, "hostname", "192.168.1.203", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , port{this, "port", 5550, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , traintasticDIY{this, "traintastic_diy", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
-  , outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
   name = "Traintastic DIY";
   traintasticDIY.setValueInternal(std::make_shared<TraintasticDIY::Settings>(*this, traintasticDIY.name()));
-  outputs.setValueInternal(std::make_shared<OutputList>(*this, outputs.name(), outputListColumns));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
   Attributes::addEnabled(type, !online);
@@ -91,7 +89,6 @@ TraintasticDIYInterface::TraintasticDIYInterface(World& world, std::string_view 
 
   m_interfaceItems.insertBefore(inputs, notes);
 
-  Attributes::addDisplayName(outputs, DisplayName::Hardware::outputs);
   m_interfaceItems.insertBefore(outputs, notes);
 
   updateVisible();
@@ -101,22 +98,6 @@ void TraintasticDIYInterface::inputSimulateChange(uint32_t channel, uint32_t add
 {
   if(m_kernel && inRange(address, outputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address);
-}
-
-bool TraintasticDIYInterface::addOutput(Output& output)
-{
-  const bool success = OutputController::addOutput(output);
-  if(success)
-    outputs->addObject(output.shared_ptr<Output>());
-  return success;
-}
-
-bool TraintasticDIYInterface::removeOutput(Output& output)
-{
-  const bool success = OutputController::removeOutput(output);
-  if(success)
-    outputs->removeObject(output.shared_ptr<Output>());
-  return success;
 }
 
 bool TraintasticDIYInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
@@ -204,8 +185,7 @@ void TraintasticDIYInterface::addToWorld()
 {
   Interface::addToWorld();
   InputController::addToWorld();
-
-  m_world.outputControllers->add(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
+  OutputController::addToWorld();
 }
 
 void TraintasticDIYInterface::loaded()
@@ -217,14 +197,7 @@ void TraintasticDIYInterface::loaded()
 
 void TraintasticDIYInterface::destroying()
 {
-  for(const auto& output : *outputs)
-  {
-    assert(output->interface.value() == std::dynamic_pointer_cast<OutputController>(shared_from_this()));
-    output->interface = nullptr;
-  }
-
-  m_world.outputControllers->remove(std::dynamic_pointer_cast<OutputController>(shared_from_this()));
-
+  OutputController::destroying();
   InputController::destroying();
   Interface::destroying();
 }

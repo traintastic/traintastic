@@ -227,7 +227,7 @@ void Kernel::receive(const Message& message)
             {
               if(state == OutputState::Invalid)
               {
-                if(m_outputController->outputs().count({OutputController::defaultOutputChannel, address}) != 0)
+                if(m_outputController->outputMap().count({OutputController::defaultOutputChannel, address}) != 0)
                   Log::log(m_logId, LogMessage::W2005_OUTPUT_ADDRESS_X_IS_INVALID, address);
               }
               else
@@ -337,7 +337,7 @@ void Kernel::receive(const Message& message)
         EventLoop::call(
           [this]()
           {
-            for(const auto& it : m_outputController->outputs())
+            for(const auto& it : m_outputController->outputMap())
               postSend(GetOutputState(static_cast<uint16_t>(it.first.address)));
           });
       break;

@@ -31,7 +31,6 @@
 #include "../decoder/list/decoderlist.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
-#include "../output/list/outputlist.hpp"
 #include "../../core/objectproperty.hpp"
 
 /**
@@ -69,7 +68,6 @@ class ECoSInterface final
     Property<std::string> hostname;
     ObjectProperty<ECoS::Settings> ecos;
     ObjectProperty<DecoderList> decoders;
-    ObjectProperty<OutputList> outputs;
 
     ECoSInterface(World& world, std::string_view _id);
 
@@ -88,8 +86,6 @@ class ECoSInterface final
     const std::vector<uint32_t>* outputChannels() const final { return &ECoS::Kernel::outputChannels; }
     const std::vector<std::string_view>* outputChannelNames() const final { return &ECoS::Kernel::outputChannelNames; }
     std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t channel) const final;
-    [[nodiscard]] bool addOutput(Output& output) final;
-    [[nodiscard]] bool removeOutput(Output& output) final;
     [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 };
 

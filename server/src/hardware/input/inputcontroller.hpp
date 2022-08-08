@@ -63,7 +63,7 @@ class InputController
     using InputMap = std::unordered_map<InputMapKey, std::shared_ptr<Input>, InputMapKeyHash>;
 
   private:
-    IdObject& m_interface;
+    IdObject& interface();
 
   protected:
     InputMap m_inputs;

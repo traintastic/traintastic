@@ -30,7 +30,6 @@
 #include "../decoder/list/decoderlist.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
-#include "../output/list/outputlist.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../enum/loconetinterfacetype.hpp"
 #include "../../enum/serialflowcontrol.hpp"
@@ -73,7 +72,6 @@ class LocoNetInterface final
     Property<uint16_t> port;
     ObjectProperty<LocoNet::Settings> loconet;
     ObjectProperty<DecoderList> decoders;
-    ObjectProperty<OutputList> outputs;
 
     LocoNetInterface(World& world, std::string_view _id);
 
@@ -88,8 +86,6 @@ class LocoNetInterface final
 
     // OutputController:
     std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final { return {LocoNet::Kernel::outputAddressMin, LocoNet::Kernel::outputAddressMax}; }
-    [[nodiscard]] bool addOutput(Output& output) final;
-    [[nodiscard]] bool removeOutput(Output& output) final;
     [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 };
 

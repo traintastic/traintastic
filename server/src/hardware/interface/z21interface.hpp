@@ -30,7 +30,6 @@
 #include "../decoder/list/decoderlist.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
-#include "../output/list/outputlist.hpp"
 #include "../../core/objectproperty.hpp"
 
 /**
@@ -66,7 +65,6 @@ class Z21Interface final
     Property<uint16_t> port;
     ObjectProperty<Z21::ClientSettings> z21;
     ObjectProperty<DecoderList> decoders;
-    ObjectProperty<OutputList> outputs;
     Property<std::string> hardwareType;
     Property<std::string> serialNumber;
     Property<std::string> firmwareVersion;
@@ -86,8 +84,6 @@ class Z21Interface final
 
     // OutputController:
     std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final { return {Z21::ClientKernel::outputAddressMin, Z21::ClientKernel::outputAddressMax}; }
-    [[nodiscard]] bool addOutput(Output& output) final;
-    [[nodiscard]] bool removeOutput(Output& output) final;
     [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 };
 

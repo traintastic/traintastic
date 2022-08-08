@@ -30,7 +30,6 @@
 #include "../decoder/list/decoderlist.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
-#include "../output/list/outputlist.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../enum/serialflowcontrol.hpp"
 
@@ -69,7 +68,6 @@ class DCCPlusPlusInterface final
     Property<uint32_t> baudrate;
     ObjectProperty<DCCPlusPlus::Settings> dccplusplus;
     ObjectProperty<DecoderList> decoders;
-    ObjectProperty<OutputList> outputs;
 
     DCCPlusPlusInterface(World& world, std::string_view _id);
 
@@ -86,8 +84,6 @@ class DCCPlusPlusInterface final
     const std::vector<uint32_t>* outputChannels() const final { return &DCCPlusPlus::Kernel::outputChannels; }
     const std::vector<std::string_view>* outputChannelNames() const final { return &DCCPlusPlus::Kernel::outputChannelNames; }
     std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t channel) const final;
-    [[nodiscard]] bool addOutput(Output& output) final;
-    [[nodiscard]] bool removeOutput(Output& output) final;
     [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 };
 
