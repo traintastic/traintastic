@@ -28,6 +28,10 @@
 #include <memory>
 #include "../../core/objectproperty.hpp"
 
+#ifdef interface
+  #undef interface // interface is defined in combaseapi.h
+#endif
+
 class IdObject;
 class Decoder;
 enum class DecoderChangeFlags;

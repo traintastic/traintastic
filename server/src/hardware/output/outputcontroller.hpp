@@ -30,6 +30,10 @@
 #include "../../core/objectproperty.hpp"
 #include "../../enum/tristate.hpp"
 
+#ifdef interface
+  #undef interface // interface is defined in combaseapi.h
+#endif
+
 class IdObject;
 class Output;
 class OutputKeyboard;
