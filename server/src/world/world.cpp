@@ -28,7 +28,7 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include "worldsaver.hpp"
-#include "../traintastic/traintastic.hpp"
+#include "../board/tile/rail/linkrailtile.hpp"
 #include "../core/objectlisttablemodel.hpp"
 #include "../core/attributes.hpp"
 #include "../core/abstractvectorproperty.hpp"
@@ -67,6 +67,8 @@ void World::init(World& world)
 #ifndef DISABLE_LUA_SCRIPTING
   world.luaScripts.setValueInternal(std::make_shared<Lua::ScriptList>(world, world.luaScripts.name()));
 #endif
+
+  world.linkRailTiles.setValueInternal(std::make_shared<LinkRailTileList>(world, world.linkRailTiles.name()));
 }
 
 World::World(Private /*unused*/) :
@@ -88,6 +90,7 @@ World::World(Private /*unused*/) :
 #ifndef DISABLE_LUA_SCRIPTING
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
 #endif
+  linkRailTiles{this, "link_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   state{this, "state", WorldState(), PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   edit{this, "edit", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
     [this](bool value)
@@ -254,6 +257,9 @@ World::World(Private /*unused*/) :
   Attributes::addObjectEditor(luaScripts, false);
   m_interfaceItems.add(luaScripts);
 #endif
+
+  Attributes::addObjectEditor(linkRailTiles, false);
+  m_interfaceItems.add(linkRailTiles);
 
   Attributes::addObjectEditor(state, false);
   m_interfaceItems.add(state);

@@ -21,6 +21,7 @@
  */
 
 #include "tiles.hpp"
+#include "rail/linkrailtile.hpp"
 #include "../../utils/ifclassidcreate.hpp"
 #include "../../world/world.hpp"
 
@@ -52,6 +53,7 @@ std::shared_ptr<Tile> Tiles::create(World& world, std::string_view classId, std:
   IF_CLASSID_CREATE(SensorRailTile)
   IF_CLASSID_CREATE(BlockRailTile)
   IF_CLASSID_CREATE(TunnelRailTile)
+  IF_CLASSID_CREATE(LinkRailTile)
   IF_CLASSID_CREATE(PushButtonTile)
   return std::shared_ptr<Tile>();
 }
@@ -78,6 +80,7 @@ const std::vector<Tiles::Info>& Tiles::getInfo()
     Info{TunnelRailTile::classId, TileId::RailTunnel, rotateFull, {straight}},
     Info{OneWayRailTile::classId, TileId::RailOneWay, rotateFull, {straight}},
     Info{DirectionControlRailTile::classId, TileId::RailDirectionControl, rotateHalf, {straight}},
+    Info{LinkRailTile::classId, TileId::RailLink, rotateFull, {straight}},
 
     Info{Curve45RailTile::classId, TileId::RailCurve45, rotateFull, {curve}},
     Info{Curve90RailTile::classId, TileId::RailCurve90, rotateFull, {curve}},

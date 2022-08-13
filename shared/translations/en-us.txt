@@ -18,6 +18,8 @@ board_tile.rail.direction_control:use_b_to_a=Use: A ← B
 board_tile.rail.direction_control:use_both=Use: A ⇄ B
 board_tile.rail.direction_control:use_none=Use: A 🛇 B
 
+board_tile.rail.link:link=Link
+
 board_tile.rail.sensor:input=Input
 board_tile.rail.sensor:invert=Invert
 board_tile.rail.sensor:type=Type
@@ -41,6 +43,7 @@ class_id:board_tile.rail.cross_90=Crossover 90°
 class_id:board_tile.rail.curve_45=Curved track 45°
 class_id:board_tile.rail.curve_90=Curved track 90°
 class_id:board_tile.rail.direction_control=Direction control
+class_id:board_tile.rail.link=Link
 class_id:board_tile.rail.one_way=One way
 class_id:board_tile.rail.sensor=Sensor
 class_id:board_tile.rail.signal_2_aspect=Signal (2 aspects)

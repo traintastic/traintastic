@@ -175,6 +175,11 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate)
       drawPushButton(r);
       break;
 
+    case TileId::RailLink:
+      setTrackPen();
+      drawLink(r, rotate);
+      break;
+
     case TileId::None:
     case TileId::ReservedForFutureExpension:
       break;
@@ -763,6 +768,48 @@ void TilePainter::drawBufferStop(const QRectF& r, TileRotate rotate)
       m_painter.drawLine(QPointF{cx - stopSizeDiagonal, cy + stopSizeDiagonal}, QPointF{cx + stopSizeDiagonal, cy - stopSizeDiagonal});
       break;
   }
+}
+
+void TilePainter::drawLink(const QRectF& r, TileRotate rotate)
+{
+  switch(rotate)
+  {
+    case TileRotate::Deg0:
+      m_painter.drawLine(bottomCenter(r), r.center());
+      break;
+
+    case TileRotate::Deg45:
+      m_painter.drawLine(r.bottomLeft(), r.center());
+      break;
+
+    case TileRotate::Deg90:
+      m_painter.drawLine(centerLeft(r), r.center());
+      break;
+
+    case TileRotate::Deg135:
+      m_painter.drawLine(r.topLeft(), r.center());
+      break;
+
+    case TileRotate::Deg180:
+      m_painter.drawLine(topCenter(r), r.center());
+      break;
+
+    case TileRotate::Deg225:
+      m_painter.drawLine(r.topRight(), r.center());
+      break;
+
+    case TileRotate::Deg270:
+      m_painter.drawLine(centerRight(r), r.center());
+      break;
+
+    case TileRotate::Deg315:
+      m_painter.drawLine(r.bottomRight(), r.center());
+      break;
+  }
+
+  const qreal radius = r.width() / 6;
+  m_painter.setBrush(m_painter.pen().color());
+  m_painter.drawEllipse(r.center(), radius, radius);
 }
 
 void TilePainter::drawSignal2Aspect(QRectF r, TileRotate rotate, SignalAspect aspect)

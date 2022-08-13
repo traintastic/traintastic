@@ -36,6 +36,7 @@
 #include <traintastic/set/worldstate.hpp>
 #include "../clock/clock.hpp"
 #include "../board/boardlist.hpp"
+#include "../board/list/linkrailtilelist.hpp"
 #include "../hardware/interface/interfacelist.hpp"
 #include "../hardware/decoder/list/decoderlist.hpp"
 #include "../hardware/decoder/decodercontroller.hpp"
@@ -50,6 +51,7 @@
 #endif
 
 class WorldLoader;
+class LinkRailTile;
 
 class World : public Object
 {
@@ -103,6 +105,8 @@ class World : public Object
 #ifndef DISABLE_LUA_SCRIPTING
     ObjectProperty<Lua::ScriptList> luaScripts;
 #endif
+
+    ObjectProperty<LinkRailTileList> linkRailTiles;
 
     Property<WorldState> state;
     Property<bool> edit;

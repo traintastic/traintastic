@@ -73,6 +73,7 @@ class TilePainter
     void drawCurve90(QRectF r, TileRotate rotate);
 
     void drawBufferStop(const QRectF& r, TileRotate rotate);
+    void drawLink(const QRectF& r, TileRotate rotate);
 
     void drawTriangle(const QRectF& r);
     void drawLED(const QRectF& r, const QColor& color, const QColor& borderColor);

@@ -78,5 +78,6 @@
         <file>board_tile.rail.direction_control.svg</file>
         <file>board_tile.misc.push_button.svg</file>
         <file>world_close.svg</file>
+        <file>board_tile.rail.link.svg</file>
     </qresource>
 </RCC>

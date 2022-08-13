@@ -163,6 +163,7 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
     case TileId::RailBridge90:
     case TileId::RailTunnel:
     case TileId::RailOneWay:
+    case TileId::RailLink:
     case TileId::ReservedForFutureExpension:
       break;
   }
@@ -522,6 +523,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
         case TileId::RailBufferStop:
         case TileId::RailTunnel:
         case TileId::RailOneWay:
+        case TileId::RailLink:
           tilePainter.draw(id, r, a);
           break;
 
