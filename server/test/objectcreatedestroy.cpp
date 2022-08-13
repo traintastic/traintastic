@@ -297,6 +297,7 @@ TEST_CASE("Create world and input => destroy input", "[object-create-destroy]")
   REQUIRE(worldWeak.expired());
 }
 
+#ifndef __aarch64__
 TEMPLATE_TEST_CASE("Create world, interface and input => destroy interface", "[object-create-destroy]", INTERFACES_INPUT)
 {
   auto world = World::create();
@@ -362,6 +363,7 @@ TEMPLATE_TEST_CASE("Create world, interface and input => destroy input", "[objec
   REQUIRE(interfaceWeak.expired());
   REQUIRE(worldWeak.expired());
 }
+#endif
 
 TEST_CASE("Create world and output => destroy world", "[object-create-destroy]")
 {
@@ -397,6 +399,7 @@ TEST_CASE("Create world and output => destroy output", "[object-create-destroy]"
   REQUIRE(worldWeak.expired());
 }
 
+#ifndef __aarch64__
 TEMPLATE_TEST_CASE("Create world, interface and output => destroy interface", "[object-create-destroy]", INTERFACES_OUTPUT)
 {
   auto world = World::create();
@@ -462,3 +465,4 @@ TEMPLATE_TEST_CASE("Create world, interface and output => destroy output", "[obj
   REQUIRE(interfaceWeak.expired());
   REQUIRE(worldWeak.expired());
 }
+#endif
