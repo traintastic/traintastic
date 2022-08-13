@@ -1,5 +1,6 @@
 # Traintastic - Model railway control software
 
+[![Release](https://img.shields.io/github/v/release/traintastic/traintastic?sort=semver)](https://github.com/traintastic/traintastic/releases)
 [![Build](https://github.com/traintastic/traintastic/actions/workflows/build.yml/badge.svg)](https://github.com/traintastic/traintastic/actions/workflows/build.yml) [![License](https://img.shields.io/github/license/traintastic/traintastic)](https://github.com/traintastic/traintastic/blob/master/LICENSE)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/traintastic/traintastic)](https://github.com/traintastic/traintastic/graphs/commit-activity)
 [![Coverage Status](https://coveralls.io/repos/github/traintastic/traintastic/badge.svg?branch=master)](https://coveralls.io/github/traintastic/traintastic?branch=master)
