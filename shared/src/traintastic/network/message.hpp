@@ -273,7 +273,7 @@ class Message
       }
       else if constexpr(std::is_trivially_copyable_v<T>)
       {
-        value = *reinterpret_cast<const T*>(p);
+        memcpy(&value, p, sizeof(value));
         m_readPosition += sizeof(value);
       }
       else
@@ -338,7 +338,8 @@ class Message
       if constexpr(std::is_same_v<T,QByteArray>)
       {
         m_data.resize(oldSize + sizeof(Length) + value.size());
-        *reinterpret_cast<Length*>(m_data.data() + oldSize) = value.size();
+        const Length length = value.size();
+        memcpy(m_data.data() + oldSize, &length, sizeof(length));
         memcpy(m_data.data() + oldSize + sizeof(Length), value.data(), value.size());
       }
       else
@@ -346,13 +347,14 @@ class Message
       if constexpr(std::is_same_v<T,std::string_view> || std::is_same_v<T,std::string>)
       {
         m_data.resize(oldSize + sizeof(Length) + value.size());
-        *reinterpret_cast<Length*>(m_data.data() + oldSize) = static_cast<Length>(value.size());
+        const Length length = static_cast<Length>(value.size());
+        memcpy(m_data.data() + oldSize, &length, sizeof(length));
         memcpy(m_data.data() + oldSize + sizeof(Length), value.data(), value.size());
       }
       else if constexpr(std::is_trivially_copyable_v<T>)
       {
         m_data.resize(oldSize + sizeof(value));
-        *reinterpret_cast<T*>(m_data.data() + oldSize) = value;
+        memcpy(m_data.data() + oldSize, &value, sizeof(value));
       }
       else
         static_assert(sizeof(T) != sizeof(T));
@@ -392,7 +394,8 @@ class Message
     void writeBlockEnd()
     {
       assert(!m_block.empty());
-      *reinterpret_cast<uint32_t*>(m_data.data() + sizeof(Header) + m_block.top() - sizeof(uint32_t)) = header().dataSize - m_block.top();
+      const uint32_t blockSize = header().dataSize - m_block.top();
+      memcpy(m_data.data() + sizeof(Header) + m_block.top() - sizeof(uint32_t), &blockSize, sizeof(blockSize));
       m_block.pop();
     }
 };
