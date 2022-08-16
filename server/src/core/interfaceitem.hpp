@@ -82,6 +82,13 @@ class InterfaceItem
     }
 
     template<typename T>
+    void setAttribute(AttributeName name, std::vector<T> values)
+    {
+      assert(m_attributes.find(name) != m_attributes.end());
+      static_cast<VectorAttribute<T>*>(m_attributes[name].get())->setValues(std::move(values));
+    }
+
+    template<typename T>
     void setAttribute(AttributeName name, const std::vector<T>* values)
     {
       assert(m_attributes.find(name) != m_attributes.end());

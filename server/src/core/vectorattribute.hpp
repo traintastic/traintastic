@@ -74,6 +74,15 @@ class VectorAttribute : public AbstractValuesAttribute
       assert(index < length());
       return to<std::string>(m_values[index]);
     }
+
+    void setValues(std::vector<T> values)
+    {
+      if(m_values != values)
+      {
+        m_values = std::move(values);
+        changed();
+      }
+    }
 };
 
 #endif
