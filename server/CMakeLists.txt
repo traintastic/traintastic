@@ -162,6 +162,11 @@ file(GLOB TEST_SOURCES
 
 ### PLATFORM ###
 
+if(UNIX)
+  file(GLOB SOURCES_UNIX "src/os/unix/*.hpp" "src/os/unix/*.cpp")
+  list(APPEND SOURCES ${SOURCES_UNIX})
+endif()
+
 if(WIN32)
   add_definitions(-D_WIN32_WINNT=0x0601)
   file(GLOB SOURCES_WINDOWS "src/os/windows/*.hpp" "src/os/windows/*.cpp")

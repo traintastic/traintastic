@@ -21,36 +21,16 @@
  */
 
 #include <iostream>
-#ifdef __unix__
-  #include <csignal>
-#endif
 #include "options.hpp"
 #include "traintastic/traintastic.hpp"
 #include "log/log.hpp"
 #include <traintastic/locale/locale.hpp>
 #include <traintastic/utils/standardpaths.hpp>
-#ifdef WIN32
+#ifdef __unix__
+  #include "os/unix/signals.hpp"
+#elif defined(WIN32)
   #include "os/windows/consolewindow.hpp"
   #include "os/windows/trayicon.hpp"
-#endif
-
-#ifdef __unix__
-void signalHandler(int signum)
-{
-  switch(signum)
-  {
-    case SIGINT:
-    case SIGQUIT:
-    {
-      signal(SIGINT, SIG_DFL);
-      signal(SIGQUIT, SIG_DFL);
-
-      Log::log(*Traintastic::instance, LogMessage::N1001_RECEIVED_SIGNAL_X, std::string_view{strsignal(signum)});
-      Traintastic::instance->exit();
-      break;
-    }
-  }
-}
 #endif
 
 int main(int argc, char* argv[])
@@ -134,9 +114,7 @@ int main(int argc, char* argv[])
   }
 */
 
-  // setup signal handlers:
-  signal(SIGINT, signalHandler);
-  signal(SIGQUIT, signalHandler);
+  Unix::setupSignalHandlers();
 #elif defined(WIN32)
   if(options.tray)
   {
