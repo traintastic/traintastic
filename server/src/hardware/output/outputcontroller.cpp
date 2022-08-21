@@ -29,11 +29,9 @@
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
-OutputController::OutputController(IdObject& interface, OutputListColumn columns)
+OutputController::OutputController(IdObject& interface)
   : outputs{&interface, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
-  outputs.setValueInternal(std::make_shared<OutputList>(interface, outputs.name(), columns));
-
   Attributes::addDisplayName(outputs, DisplayName::Hardware::outputs);
 }
 
@@ -129,9 +127,10 @@ std::shared_ptr<OutputKeyboard> OutputController::outputKeyboard(uint32_t channe
   return keyboard;
 }
 
-void OutputController::addToWorld()
+void OutputController::addToWorld(OutputListColumn columns)
 {
   auto& object = interface();
+  outputs.setValueInternal(std::make_shared<OutputList>(object, outputs.name(), columns));
   object.world().outputControllers->add(std::dynamic_pointer_cast<OutputController>(object.shared_from_this()));
 }
 

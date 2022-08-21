@@ -39,8 +39,8 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 Z21Interface::Z21Interface(World& world, std::string_view _id)
   : Interface(world, _id)
   , DecoderController(*this, decoderListColumns)
-  , InputController(*this, inputListColumns)
-  , OutputController(*this, outputListColumns)
+  , InputController(static_cast<IdObject&>(*this))
+  , OutputController(static_cast<IdObject&>(*this))
   , hostname{this, "hostname", "192.168.1.203", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , port{this, "port", 21105, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , z21{this, "z21", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
@@ -221,8 +221,8 @@ void Z21Interface::addToWorld()
 {
   Interface::addToWorld();
   DecoderController::addToWorld();
-  InputController::addToWorld();
-  OutputController::addToWorld();
+  InputController::addToWorld(inputListColumns);
+  OutputController::addToWorld(outputListColumns);
 }
 
 void Z21Interface::destroying()

@@ -40,8 +40,8 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , DecoderController(*this, decoderListColumns)
-  , InputController(*this, inputListColumns)
-  , OutputController(*this, outputListColumns)
+  , InputController(static_cast<IdObject&>(*this))
+  , OutputController(static_cast<IdObject&>(*this))
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , baudrate{this, "baudrate", 115200, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , dccplusplus{this, "dccplusplus", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
@@ -193,8 +193,8 @@ void DCCPlusPlusInterface::addToWorld()
 {
   Interface::addToWorld();
   DecoderController::addToWorld();
-  InputController::addToWorld();
-  OutputController::addToWorld();
+  InputController::addToWorld(inputListColumns);
+  OutputController::addToWorld(outputListColumns);
 }
 
 void DCCPlusPlusInterface::loaded()

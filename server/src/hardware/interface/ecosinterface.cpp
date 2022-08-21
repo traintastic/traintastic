@@ -39,8 +39,8 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , DecoderController(*this, decoderListColumns)
-  , InputController(*this, inputListColumns)
-  , OutputController(*this, outputListColumns)
+  , InputController(static_cast<IdObject&>(*this))
+  , OutputController(static_cast<IdObject&>(*this))
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , ecos{this, "ecos", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
@@ -188,8 +188,8 @@ void ECoSInterface::addToWorld()
 {
   Interface::addToWorld();
   DecoderController::addToWorld();
-  InputController::addToWorld();
-  OutputController::addToWorld();
+  InputController::addToWorld(inputListColumns);
+  OutputController::addToWorld(outputListColumns);
 }
 
 void ECoSInterface::destroying()

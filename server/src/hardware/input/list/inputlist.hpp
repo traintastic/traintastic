@@ -26,7 +26,6 @@
 #include "../../../core/objectlist.hpp"
 #include "inputlistcolumn.hpp"
 #include "../../../core/method.hpp"
-//#include "../input.hpp"
 #include "../monitor/inputmonitor.hpp"
 
 class Input;

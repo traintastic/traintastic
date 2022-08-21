@@ -37,7 +37,7 @@ constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | 
 
 HSI88Interface::HSI88Interface(World& world, std::string_view _id)
   : Interface(world, _id)
-  , InputController(*this, inputListColumns)
+  , InputController(static_cast<IdObject&>(*this))
   , m_ioContext{1}
   , m_serialPort{m_ioContext}
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -63,7 +63,6 @@ HSI88Interface::HSI88Interface(World& world, std::string_view _id)
       }}
 {
   name = "HSI-88";
-  inputs.setValueInternal(std::make_shared<InputList>(*this, inputs.name(), inputListColumns));
 
   const bool editable = contains(m_world.state, WorldState::Edit);
 
@@ -114,7 +113,7 @@ void HSI88Interface::inputSimulateChange(uint32_t channel, uint32_t address)
 void HSI88Interface::addToWorld()
 {
   Interface::addToWorld();
-  InputController::addToWorld();
+  InputController::addToWorld(inputListColumns);
 }
 
 void HSI88Interface::destroying()

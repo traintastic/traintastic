@@ -73,9 +73,9 @@ class InputController
     InputMap m_inputs;
     std::unordered_map<uint32_t, std::weak_ptr<InputMonitor>> m_inputMonitors;
 
-    InputController(IdObject& interface, InputListColumn columns);
+    InputController(IdObject& interface);
 
-    void addToWorld();
+    void addToWorld(InputListColumn columns);
     void destroying();
 
   public:

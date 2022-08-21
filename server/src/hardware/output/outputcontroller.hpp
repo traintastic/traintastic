@@ -72,9 +72,9 @@ class OutputController
     OutputMap m_outputs;
     std::unordered_map<uint32_t, std::weak_ptr<OutputKeyboard>> m_outputKeyboards;
 
-    OutputController(IdObject& interface, OutputListColumn columns);
+    OutputController(IdObject& interface);
 
-    void addToWorld();
+    void addToWorld(OutputListColumn columns);
     void destroying();
 
   public:

@@ -37,8 +37,8 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 
 TraintasticDIYInterface::TraintasticDIYInterface(World& world, std::string_view _id)
   : Interface(world, _id)
-  , InputController(*this, inputListColumns)
-  , OutputController(*this, outputListColumns)
+  , InputController(static_cast<IdObject&>(*this))
+  , OutputController(static_cast<IdObject&>(*this))
   , type{this, "type", TraintasticDIYInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](TraintasticDIYInterfaceType /*value*/)
       {
@@ -184,8 +184,8 @@ bool TraintasticDIYInterface::setOnline(bool& value, bool simulation)
 void TraintasticDIYInterface::addToWorld()
 {
   Interface::addToWorld();
-  InputController::addToWorld();
-  OutputController::addToWorld();
+  InputController::addToWorld(inputListColumns);
+  OutputController::addToWorld(outputListColumns);
 }
 
 void TraintasticDIYInterface::loaded()

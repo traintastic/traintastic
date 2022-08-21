@@ -30,11 +30,9 @@
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
-InputController::InputController(IdObject& interface, InputListColumn columns)
+InputController::InputController(IdObject& interface)
   : inputs{&interface, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
-  inputs.setValueInternal(std::make_shared<InputList>(interface, inputs.name(), columns));
-
   Attributes::addDisplayName(inputs, DisplayName::Hardware::inputs);
 }
 
@@ -130,9 +128,10 @@ std::shared_ptr<InputMonitor> InputController::inputMonitor(uint32_t channel)
   return monitor;
 }
 
-void InputController::addToWorld()
+void InputController::addToWorld(InputListColumn columns)
 {
   auto& object = interface();
+  inputs.setValueInternal(std::make_shared<InputList>(object, inputs.name(), columns));
   object.world().inputControllers->add(std::dynamic_pointer_cast<InputController>(object.shared_from_this()));
 }
 
