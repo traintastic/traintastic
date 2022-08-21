@@ -79,5 +79,6 @@
         <file>board_tile.misc.push_button.svg</file>
         <file>world_close.svg</file>
         <file>board_tile.rail.link.svg</file>
+        <file>board_tile.rail.decoupler.svg</file>
     </qresource>
 </RCC>

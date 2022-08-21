@@ -1,9 +1,9 @@
 /**
- * client/src/board/boardcolorscheme.hpp
+ * server/src/hardware/output/map/decoupleroutputmapitem.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,30 +20,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_BOARD_BOARDCOLORSCHEME_HPP
-#define TRAINTASTIC_CLIENT_BOARD_BOARDCOLORSCHEME_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_DECOUPLEROUTPUTMAPITEM_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_DECOUPLEROUTPUTMAPITEM_HPP
 
-#include <QColor>
+#include "outputmapitembase.hpp"
+#include <traintastic/enum/decouplerstate.hpp>
 
-struct BoardColorScheme
+class DecouplerOutputMapItem : public OutputMapItemBase<DecouplerState>
 {
-  static const BoardColorScheme dark;
-  static const BoardColorScheme light;
+  CLASS_ID("output_map_item.decoupler")
 
-  const QColor background;
-  const QColor track;
-  const QColor trackDisabled;
-  const QColor blockFree;
-  const QColor blockOccupied;
-  const QColor blockUnknown;
-  const QColor sensorFree;
-  const QColor sensorOccupied;
-  const QColor sensorIdle;
-  const QColor sensorTriggered;
-  const QColor sensorUnknown;
-  const QColor turnoutState;
-  const QColor decouplerDeactivated;
-  const QColor decouplerActivated;
+  public:
+    DecouplerOutputMapItem(Object& map, DecouplerState state);
 };
 
 #endif

@@ -345,7 +345,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
         m_statusBarCoords->setText(QString::number(x) + ", " + QString::number(y));
 
         const auto tileId = m_object->getTileId(tl);
-        if((!m_toolbarEdit->isVisible() && (isRailTurnout(tileId) || isRailSignal(tileId) || tileId == TileId::RailDirectionControl || tileId == TileId::PushButton)) ||
+        if((!m_toolbarEdit->isVisible() && (isRailTurnout(tileId) || isRailSignal(tileId) || tileId == TileId::RailDirectionControl || tileId == TileId::RailDecoupler || tileId == TileId::PushButton)) ||
             (m_toolbarEdit->isVisible() && isActive(tileId) && m_editActions->checkedAction() == m_editActionNone))
           setCursor(Qt::PointingHandCursor);
         else
@@ -521,6 +521,22 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
         {
           if(auto* m = obj->getMethod("pressed"))
             m->call();
+        }
+        else if(tileId == TileId::RailDecoupler)
+        {
+          if(const auto* state = obj->getProperty("state"))
+          {
+            switch(state->toEnum<DecouplerState>())
+            {
+              case DecouplerState::Deactivated:
+                obj->callMethod("activate");
+                break;
+
+              case DecouplerState::Activated:
+                obj->callMethod("deactivate");
+                break;
+            }
+          }
         }
         else
         {

@@ -1,9 +1,9 @@
 /**
- * client/src/board/boardcolorscheme.hpp
+ * server/src/hardware/output/map/decoupleroutputmapitem.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,30 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_BOARD_BOARDCOLORSCHEME_HPP
-#define TRAINTASTIC_CLIENT_BOARD_BOARDCOLORSCHEME_HPP
+#include "decoupleroutputmapitem.hpp"
 
-#include <QColor>
-
-struct BoardColorScheme
+DecouplerOutputMapItem::DecouplerOutputMapItem(Object& map, DecouplerState state) :
+  OutputMapItemBase(map, state)
 {
-  static const BoardColorScheme dark;
-  static const BoardColorScheme light;
-
-  const QColor background;
-  const QColor track;
-  const QColor trackDisabled;
-  const QColor blockFree;
-  const QColor blockOccupied;
-  const QColor blockUnknown;
-  const QColor sensorFree;
-  const QColor sensorOccupied;
-  const QColor sensorIdle;
-  const QColor sensorTriggered;
-  const QColor sensorUnknown;
-  const QColor turnoutState;
-  const QColor decouplerDeactivated;
-  const QColor decouplerActivated;
-};
-
-#endif
+}

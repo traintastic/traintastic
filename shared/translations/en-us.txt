@@ -42,6 +42,7 @@ class_id:board_tile.rail.cross_45=Crossover 45°
 class_id:board_tile.rail.cross_90=Crossover 90°
 class_id:board_tile.rail.curve_45=Curved track 45°
 class_id:board_tile.rail.curve_90=Curved track 90°
+class_id:board_tile.rail.decoupler=Decoupler
 class_id:board_tile.rail.direction_control=Direction control
 class_id:board_tile.rail.link=Link
 class_id:board_tile.rail.one_way=One way
@@ -125,6 +126,9 @@ decoder_function_type:on_off=On/Of
 decoder_protocol:auto=Auto
 decoder_protocol:custom=Custom
 decoder_protocol:dcc=DCC
+
+decoupler_state:activated=Activated
+decoupler_state:deactivated=Deactivated
 
 direction:forward=Forward
 direction:reverse=Reverse
@@ -382,6 +386,8 @@ output_action:on=On
 output_action:pulse=Pulse
 
 output_list:bus=Bus
+
+output_map.decoupler:key=State
 
 output_map.signal:key=Aspect
 

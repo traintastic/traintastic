@@ -56,6 +56,7 @@ enum class TileId : uint16_t // 10 bit
   RailDirectionControl = 26,
   PushButton = 27,
   RailLink = 28,
+  RailDecoupler = 29,
 
   ReservedForFutureExpension = 1023
 };
@@ -91,6 +92,7 @@ constexpr bool isRail(TileId id)
     case TileId::RailOneWay:
     case TileId::RailDirectionControl:
     case TileId::RailLink:
+    case TileId::RailDecoupler:
       return true;
 
     default:
@@ -185,6 +187,7 @@ constexpr bool isActive(TileId id)
     case TileId::RailDirectionControl:
     case TileId::PushButton:
     case TileId::RailLink:
+    case TileId::RailDecoupler:
       return true;
 
     default:

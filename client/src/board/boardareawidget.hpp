@@ -28,6 +28,7 @@
 #include <traintastic/board/tilelocation.hpp>
 #include <traintastic/enum/tilerotate.hpp>
 #include <traintastic/enum/blockstate.hpp>
+#include <traintastic/enum/decouplerstate.hpp>
 #include <traintastic/enum/directioncontrolstate.hpp>
 #include <traintastic/enum/sensorstate.hpp>
 #include <traintastic/enum/signalaspect.hpp>
@@ -103,6 +104,7 @@ class BoardAreaWidget : public QWidget
     DirectionControlState getDirectionControlState(const TileLocation& l) const;
     SignalAspect getSignalAspect(const TileLocation& l) const;
     Color getColor(const TileLocation& l) const;
+    DecouplerState getDecouplerState(const TileLocation& l) const;
     TileLocation pointToTileLocation(const QPoint& p);
 
     void leaveEvent(QEvent *event) final;

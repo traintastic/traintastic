@@ -29,6 +29,7 @@
 #include <traintastic/board/tileid.hpp>
 #include <traintastic/enum/tilerotate.hpp>
 #include <traintastic/enum/blockstate.hpp>
+#include <traintastic/enum/decouplerstate.hpp>
 #include <traintastic/enum/directioncontrolstate.hpp>
 #include <traintastic/enum/sensorstate.hpp>
 #include <traintastic/enum/signalaspect.hpp>
@@ -94,6 +95,8 @@ class TilePainter
     void drawBlock(TileId id, const QRectF& r, TileRotate rotate, BlockState state = BlockState::Unknown, const std::vector<SensorState> subStates = {});
 
     void drawPushButton(const QRectF& r, Color color = Color::Yellow);
+
+    void drawRailDecoupler(const QRectF& r, TileRotate rotate, DecouplerState active = DecouplerState::Deactivated);
 };
 
 #endif

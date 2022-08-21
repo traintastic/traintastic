@@ -180,6 +180,10 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate)
       drawLink(r, rotate);
       break;
 
+    case TileId::RailDecoupler:
+      drawRailDecoupler(r, rotate);
+      break;
+
     case TileId::None:
     case TileId::ReservedForFutureExpension:
       break;
@@ -978,4 +982,20 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, BlockState s
   }
   else
     assert(false);
+}
+
+void TilePainter::drawRailDecoupler(const QRectF& r, TileRotate rotate, DecouplerState state)
+{
+  setTrackPen();
+  drawStraight(r, rotate);
+
+  m_painter.save();
+  m_painter.translate(r.center());
+  m_painter.rotate(toDeg(rotate));
+  m_painter.setPen(QPen(m_colorScheme.track, r.width() / 12, Qt::SolidLine, Qt::RoundCap));
+  const qreal h = r.height() * 0.6;
+  const qreal w = r.width() * 0.3;
+  m_painter.setBrush(state == DecouplerState::Activated ? m_colorScheme.decouplerActivated : m_colorScheme.decouplerDeactivated);
+  m_painter.drawRect(QRectF(-w / 2, -h / 2, w, h));
+  m_painter.restore();
 }

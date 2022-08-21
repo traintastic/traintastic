@@ -139,6 +139,7 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
 
     case TileId::RailSensor:
     case TileId::RailDirectionControl:
+    case TileId::RailDecoupler:
       tryConnect("state");
       break;
 
@@ -330,6 +331,14 @@ Color BoardAreaWidget::getColor(const TileLocation& l) const
     if(const auto* p = object->getProperty("color"))
       return p->toEnum<Color>();
   return Color::None;
+}
+
+DecouplerState BoardAreaWidget::getDecouplerState(const TileLocation& l) const
+{
+  if(ObjectPtr object = m_board.board().getTileObject(l))
+    if(const auto* p = object->getProperty("state"))
+      return p->toEnum<DecouplerState>();
+  return DecouplerState::Deactivated;
 }
 
 TileLocation BoardAreaWidget::pointToTileLocation(const QPoint& p)
@@ -559,6 +568,10 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
         case TileId::PushButton:
           tilePainter.drawPushButton(r, getColor(it.first));
+          break;
+
+        case TileId::RailDecoupler:
+          tilePainter.drawRailDecoupler(r, a, getDecouplerState(it.first));
           break;
 
         case TileId::None:

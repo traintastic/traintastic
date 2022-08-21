@@ -35,6 +35,8 @@ const BoardColorScheme BoardColorScheme::dark = {
   /*.sensorTriggered =*/ {0x00, 0xBF, 0xFF},
   /*.sensorUnknown =*/ {0x10, 0x10, 0x10},
   /*.turnoutState =*/ {Qt::blue},
+  /*.decouplerDeactivated =*/ {0x10, 0x10, 0x10},
+  /*.decouplerActivated =*/ {0x00, 0xBF, 0xFF},
 };
 
 const BoardColorScheme BoardColorScheme::light = {
@@ -50,4 +52,6 @@ const BoardColorScheme BoardColorScheme::light = {
   /*.sensorTriggered =*/ {0x00, 0xBF, 0xFF},
   /*.sensorUnknown =*/ {0x10, 0x10, 0x10},
   /*.turnoutState =*/ {Qt::cyan},
+  /*.decouplerDeactivated =*/ {0xF5, 0xF5, 0xF5},
+  /*.decouplerActivated =*/ {0x00, 0xBF, 0xFF},
 };
