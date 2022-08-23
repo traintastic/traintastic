@@ -209,6 +209,23 @@ span.badge.badge-since
   color: #fff;
 }
 
+/** Note **/
+
+p.note
+{
+  border-left: solid 0.4em darkblue;
+  font-size: 85%;
+  line-height: normal;
+  padding: 0 0 0 0.4em;
+}
+
+p.note span.label
+{
+  display: block;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
 /** Lua **********************************************************************/
 
 code.lua span.const

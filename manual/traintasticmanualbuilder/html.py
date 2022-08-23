@@ -36,6 +36,9 @@ class HTMLBuilder(Builder):
         html = html.replace('$badge:lua$', '<span class="badge badge-lua">Lua</span>')
         html = re.sub(r'\$badge:since:v([0-9]+\.[0-9]+(|\.[0-9]+))\$', r'<span class="badge badge-since">&ge; \1\2</span>', html)
 
+        # handle notes
+        html = html.replace('<p>Note: ', '<p class="note"><span class="label">Note</span> ')
+
         return html
 
     def _highlight_lua(self, m):
