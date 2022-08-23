@@ -51,11 +51,11 @@ struct Options
 #endif
 #ifdef __unix__
       ("daemonize,d", "daemonize")
-      ("user,u", boost::program_options::value<std::string>(&user), "run as user")
-      ("group,g", boost::program_options::value<std::string>(&group), "run as group")
-      ("pidfile,P", boost::program_options::value<std::string>(&pidFile), "pid file")
+      ("user,u", boost::program_options::value<std::string>(&user)->value_name("USERNAME"), "run as user")
+      ("group,g", boost::program_options::value<std::string>(&group)->value_name("GROUPNAME"), "run as group")
+      ("pidfile,P", boost::program_options::value<std::string>(&pidFile)->value_name("FILENAME")->default_value("")->implicit_value("/run/traintastic-server.pid"), "write pid file")
 #endif
-      ("datadir,D", boost::program_options::value<std::string>(&dataDir), "data directory")
+      ("datadir,D", boost::program_options::value<std::string>(&dataDir)->value_name("PATH"), "data directory")
       ;
 
     boost::program_options::variables_map vm;

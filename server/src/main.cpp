@@ -28,6 +28,10 @@
 #include <traintastic/utils/standardpaths.hpp>
 #ifdef __unix__
   #include "os/unix/signals.hpp"
+  #include "os/unix/daemonize.hpp"
+  #include "os/unix/writepidfile.hpp"
+  #include "os/unix/setgroupid.hpp"
+  #include "os/unix/setuserid.hpp"
 #elif defined(WIN32)
   #include "os/windows/consolewindow.hpp"
   #include "os/windows/trayicon.hpp"
@@ -49,70 +53,32 @@ int main(int argc, char* argv[])
 #endif
   }
 
-  Locale::instance = new Locale(getLocalePath() / "en-us.txt");
-
   bool enableConsoleLogger = true;
 
 #ifdef __unix__
-/*
   if(options.daemonize)
   {
-    // fork first time:
-    pid_t pid = fork();
-    if(pid < 0)
-    {
-      std::cerr << "First time fork failed" << std::endl;
-      exit(EXIT_FAILURE);
-    }
-    else if(pid > 0)
-      exit(EXIT_SUCCESS); // exit parent process
-
-    // Create a new SID for the child process:
-    if(setsid() < 0)
-    {
-      std::cerr << "Failed to create new session" << std::endl;
-      exit(EXIT_FAILURE);
-    }
-
-    // change work directory to root:
-    if(chdir("/") < 0)
-    {
-      std::cerr << "Failed to change work directory to root" << std::endl;
-      exit(EXIT_FAILURE);
-    }
-
-    // change the file mode mask:
-    umask(0);
-
-    // fork second time:
-    pid = fork();
-    if(pid < 0)
-    {
-      std::cerr << "Second time fork failed" << std::endl;
-      exit(EXIT_FAILURE);
-    }
-    else if(pid > 0)
-      exit(EXIT_SUCCESS); // Exit parent process.
-
-    // close all std io:
-    fclose(stdin);
-    fclose(stdout);
-    fclose(stderr);
+    enableConsoleLogger = false;
+    Unix::daemonize(dataDir);
   }
 
-  if(!options.pidFile.empty())
-    UnixUtils::writePIDFile(options.pidFile);
-
-  if(!options.group.empty())
+  try
   {
-    UnixUtils::changeGroupID(options.group);
-  }
+    if(!options.pidFile.empty())
+      Unix::writePIDFile(options.pidFile);
 
-  if(!options.user.empty())
-  {
-    UnixUtils::changeUserID(options.user, options.group.empty(), true);
+    if(!options.group.empty())
+      Unix::setGroupID(options.group);
+
+    if(!options.user.empty())
+      Unix::setUserID(options.user, options.group.empty());
   }
-*/
+  catch(const std::exception& e)
+  {
+    if(!options.daemonize)
+      std::cerr << e.what() << std::endl;
+    exit(EXIT_FAILURE);
+  }
 
   Unix::setupSignalHandlers();
 #elif defined(WIN32)
@@ -122,6 +88,8 @@ int main(int argc, char* argv[])
     enableConsoleLogger = Windows::hasConsoleWindow();
   }
 #endif
+
+  Locale::instance = new Locale(getLocalePath() / "en-us.txt");
 
   if(enableConsoleLogger)
     Log::enableConsoleLogger();
@@ -151,7 +119,7 @@ int main(int argc, char* argv[])
 #endif
 
     restart = false;
-    
+
     try
     {
       Traintastic::instance = std::make_shared<Traintastic>(dataDir);
