@@ -25,6 +25,7 @@
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <archive.h>
 #include <version.hpp>
 #include <traintastic/utils/str.hpp>
 #include "../core/eventloop.hpp"
@@ -35,6 +36,7 @@
 #include "../world/worldloader.hpp"
 #include "../log/log.hpp"
 #include "../log/logmessageexception.hpp"
+#include "../lua/getversion.hpp"
 
 using nlohmann::json;
 
@@ -153,7 +155,13 @@ bool Traintastic::importWorld(const std::vector<std::byte>& worldData)
 
 Traintastic::RunStatus Traintastic::run()
 {
+  static const std::string boostVersion = std::string("boost ").append(std::to_string(BOOST_VERSION / 100000)).append(".").append(std::to_string(BOOST_VERSION / 100 % 100)).append(".").append(std::to_string(BOOST_VERSION % 100));
   Log::log(*this, LogMessage::I1001_TRAINTASTIC_VX, std::string_view{TRAINTASTIC_VERSION_FULL});
+  Log::log(*this, LogMessage::I1006_X, boostVersion);
+  Log::log(*this, LogMessage::I1007_X, std::string_view{"nlohmann::json " STR(NLOHMANN_JSON_VERSION_MAJOR) "." STR(NLOHMANN_JSON_VERSION_MINOR) "." STR(NLOHMANN_JSON_VERSION_PATCH)});
+  Log::log(*this, LogMessage::I1008_X, std::string_view{archive_version_details()});
+  //! \todo Add tcb::span version when available, see https://github.com/tcbrindle/span/issues/33
+  Log::log(*this, LogMessage::I9002_X, Lua::getVersion());
 
   settings = std::make_shared<Settings>(m_dataDir);
   Attributes::setEnabled(restart, settings->allowClientServerRestart);

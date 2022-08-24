@@ -69,12 +69,16 @@ enum class LogMessage : uint32_t
   I1003_CLIENT_CONNECTED = LogMessageOffset::info + 1003,
   I1004_CONNECTION_LOST = LogMessageOffset::info + 1004,
   I1005_BUILDING_WORLD_INDEX = LogMessageOffset::info + 1005,
+  I1006_X = LogMessageOffset::info + 1006, //!< boost version
+  I1007_X = LogMessageOffset::info + 1007, //!< nlohmann::json version
+  I1008_X = LogMessageOffset::info + 1008, //!< LibArchive version
   I2001_UNKNOWN_LOCO_ADDRESS_X = LogMessageOffset::info + 2001,
   I2002_HARDWARE_TYPE_X = LogMessageOffset::info + 2002,
   I2003_FIRMWARE_VERSION_X = LogMessageOffset::info + 2003,
   I2004_HSI_88_X = LogMessageOffset::info + 2004,
   I2005_X = LogMessageOffset::info + 2005,
   I9001_STOPPED_SCRIPT = LogMessageOffset::info + 9001,
+  I9002_X = LogMessageOffset::info + 9002, //!< Lua version
   I9999_X = LogMessageOffset::info + 9999,
 
   // Notice:

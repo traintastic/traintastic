@@ -32,6 +32,7 @@
 #include "type.hpp"
 #include "enums.hpp"
 #include "sets.hpp"
+#include "getversion.hpp"
 #include <version.hpp>
 #include <traintastic/utils/str.hpp>
 #include "../world/world.hpp"
@@ -211,8 +212,7 @@ SandboxPtr Sandbox::create(Script& script)
   lua_setfield(L, -2, "VERSION_PATCH");
 
   // set LUA_VERSION
-  const std::string_view ident{lua_ident};
-  push(L, ident.substr(13, ident.find('$', 13) - 14));
+  push(L, getVersion());
   lua_setfield(L, -2, "LUA_VERSION");
 
   // add world:
