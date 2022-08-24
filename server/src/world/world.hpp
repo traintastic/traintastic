@@ -46,9 +46,7 @@
 #include "../hardware/output/outputcontroller.hpp"
 #include "../train/trainlist.hpp"
 #include "../vehicle/rail/railvehiclelist.hpp"
-#ifndef DISABLE_LUA_SCRIPTING
-  #include "../lua/scriptlist.hpp"
-#endif
+#include "../lua/scriptlist.hpp"
 
 class WorldLoader;
 class LinkRailTile;
@@ -102,9 +100,7 @@ class World : public Object
     ObjectProperty<Clock> clock;
     ObjectProperty<TrainList> trains;
     ObjectProperty<RailVehicleList> railVehicles;
-#ifndef DISABLE_LUA_SCRIPTING
     ObjectProperty<Lua::ScriptList> luaScripts;
-#endif
 
     ObjectProperty<LinkRailTileList> linkRailTiles;
 

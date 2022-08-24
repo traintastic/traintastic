@@ -64,9 +64,7 @@ void World::init(World& world)
   world.clock.setValueInternal(std::make_shared<Clock>(world, world.clock.name()));
   world.trains.setValueInternal(std::make_shared<TrainList>(world, world.trains.name()));
   world.railVehicles.setValueInternal(std::make_shared<RailVehicleList>(world, world.railVehicles.name()));
-#ifndef DISABLE_LUA_SCRIPTING
   world.luaScripts.setValueInternal(std::make_shared<Lua::ScriptList>(world, world.luaScripts.name()));
-#endif
 
   world.linkRailTiles.setValueInternal(std::make_shared<LinkRailTileList>(world, world.linkRailTiles.name()));
 }
@@ -87,9 +85,7 @@ World::World(Private /*unused*/) :
   clock{this, "clock", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   trains{this, "trains", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   railVehicles{this, "rail_vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
-#ifndef DISABLE_LUA_SCRIPTING
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
-#endif
   linkRailTiles{this, "link_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   state{this, "state", WorldState(), PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   edit{this, "edit", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
@@ -253,10 +249,8 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(trains);
   Attributes::addObjectEditor(railVehicles, false);
   m_interfaceItems.add(railVehicles);
-#ifndef DISABLE_LUA_SCRIPTING
   Attributes::addObjectEditor(luaScripts, false);
   m_interfaceItems.add(luaScripts);
-#endif
 
   Attributes::addObjectEditor(linkRailTiles, false);
   m_interfaceItems.add(linkRailTiles);

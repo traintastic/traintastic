@@ -39,9 +39,7 @@
 #include "../hardware/decoder/decoderfunction.hpp"
 #include "../vehicle/rail/railvehicles.hpp"
 #include "../train/train.hpp"
-#ifndef DISABLE_LUA_SCRIPTING
-  #include "../lua/script.hpp"
-#endif
+#include "../lua/script.hpp"
 
 using nlohmann::json;
 
@@ -221,10 +219,8 @@ void WorldLoader::createObject(ObjectData& objectData)
     objectData.object = RailVehicles::create(*m_world, classId, id);
   else if(classId == Train::classId)
     objectData.object = Train::create(*m_world, id);
-#ifndef DISABLE_LUA_SCRIPTING
   else if(classId == Lua::Script::classId)
     objectData.object = Lua::Script::create(*m_world, id);
-#endif
 
   if(!objectData.object)
     throw LogMessageException(LogMessage::C1012_UNKNOWN_CLASS_X_CANT_RECREATE_OBJECT_X, classId, id);

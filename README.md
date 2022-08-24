@@ -18,7 +18,7 @@ The project goal is to develop open source software that can control everything 
 
 ## Build Traintastic from source
 
-*This section is only for developers, if your just want to use it [download Traintastic](https://traintastic.org/download).* 
+*This section is only for developers, if your just want to use it [download Traintastic](https://traintastic.org/download).*
 
 
 ### Requirements:
@@ -58,9 +58,9 @@ Note: When cloning the source from git, git-lfs is required.
 - Create a build directory: `cmake -E make_directory build`
 - Go into the created build directory: `cd build`
 - Configure CMake:
-  - Windows: `cmake ../ -G "Visual Studio 16 2019" -A x64 -T ClangCL -DCMAKE_BUILD_TYPE=Release -DUSB_XPRESSNET=OFF`
-  - Linux: `cmake ../ -DCMAKE_BUILD_TYPE=Release -DUSB_XPRESSNET=OFF`
-  - macOS: `cmake ../ -DCMAKE_BUILD_TYPE=Release -DUSB_XPRESSNET=OFF -DENABLE_LUA_SCRIPTING=OFF`
+  - Windows: `cmake ../ -G "Visual Studio 16 2019" -A x64 -T ClangCL -DCMAKE_BUILD_TYPE=Release`
+  - Linux: `cmake ../ -DCMAKE_BUILD_TYPE=Release`
+  - macOS: `cmake ../ -DCMAKE_BUILD_TYPE=Release`
 - Build traintastic-server: `cmake --build . --config Release --target traintastic-server`
 
 

@@ -137,6 +137,8 @@ file(GLOB SOURCES
   "src/hardware/protocol/z21/iohandler/*.cpp"
   "src/log/*.hpp"
   "src/log/*.cpp"
+  "src/lua/*.hpp"
+  "src/lua/*.cpp"
   "src/network/*.hpp"
   "src/network/*.cpp"
   "src/train/*.hpp"
@@ -157,6 +159,7 @@ file(GLOB SOURCES
 
 file(GLOB TEST_SOURCES
   "test/board/*.cpp"
+  "test/lua/*.cpp"
   "test/objectcreatedestroy.cpp"
   )
 
@@ -218,45 +221,32 @@ target_link_libraries(traintastic-server PRIVATE ${LibArchive_LIBRARIES})
 target_include_directories(traintastic-server-test PRIVATE ${LibArchive_INCLUDE_DIRS})
 target_link_libraries(traintastic-server-test PRIVATE ${LibArchive_LIBRARIES})
 
-### OPTIONS ###
+# liblua5.3
+if(WIN32)
+  add_definitions(-DLUA_BUILD_AS_DLL)
+  set(LUA_INCLUDE_DIR "thirdparty/lua5.3/include")
+  set(LUA_LIBRARIES lua53)
 
-option(ENABLE_LUA_SCRIPTING "Lua scripting support" ON)
-message(STATUS "Lua scripting support: ${ENABLE_LUA_SCRIPTING}")
-if(ENABLE_LUA_SCRIPTING)
-  if(WIN32)
-    add_definitions(-DLUA_BUILD_AS_DLL)
-    set(LUA_INCLUDE_DIR "thirdparty/lua5.3/include")
-    set(LUA_LIBRARIES lua53)
+  add_custom_command(TARGET traintastic-server PRE_LINK
+    COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.def" /out:lua53.lib /machine:x64)
+  add_custom_command(TARGET traintastic-server-test PRE_LINK
+    COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.def" /out:lua53.lib /machine:x64)
 
-    add_custom_command(TARGET traintastic-server PRE_LINK
-      COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.def" /out:lua53.lib /machine:x64)
-    add_custom_command(TARGET traintastic-server-test PRE_LINK
-      COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.def" /out:lua53.lib /machine:x64)
-
-    # copy lua53.dll to build directory, to be able to run the tests:
-    add_custom_command(TARGET traintastic-server-test POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.dll" .)
-  elseif(APPLE)
-    set(LUA_INCLUDE_DIR "/usr/local/opt/lua@5.3/include/lua")
-    set(LUA_LIBRARIES "/usr/local/opt/lua@5.3/lib/liblua5.3.dylib")
-  else()
-    find_package(Lua 5.3 REQUIRED)
-  endif()
-
-  file(GLOB SOURCES_LUA "src/lua/*.hpp" "src/lua/*.cpp")
-  list(APPEND SOURCES ${SOURCES_LUA})
-  target_include_directories(traintastic-server PRIVATE ${LUA_INCLUDE_DIR})
-  target_link_libraries(traintastic-server PRIVATE ${LUA_LIBRARIES})
-
-  file(GLOB TEST_SOURCES_LUA "test/lua/*.cpp")
-  list(APPEND TEST_SOURCES ${TEST_SOURCES_LUA})
-  target_include_directories(traintastic-server-test PRIVATE ${LUA_INCLUDE_DIR})
-  target_link_libraries(traintastic-server-test PRIVATE ${LUA_LIBRARIES})
+  # copy lua53.dll to build directory, to be able to run the tests:
+  add_custom_command(TARGET traintastic-server-test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.dll" .)
+elseif(APPLE)
+  set(LUA_INCLUDE_DIR "/usr/local/opt/lua@5.3/include/lua")
+  set(LUA_LIBRARIES "/usr/local/opt/lua@5.3/lib/liblua5.3.dylib")
 else()
-  add_definitions(-DDISABLE_LUA_SCRIPTING)
+  find_package(Lua 5.3 REQUIRED)
 endif()
+target_include_directories(traintastic-server PRIVATE ${LUA_INCLUDE_DIR})
+target_link_libraries(traintastic-server PRIVATE ${LUA_LIBRARIES})
+target_include_directories(traintastic-server-test PRIVATE ${LUA_INCLUDE_DIR})
+target_link_libraries(traintastic-server-test PRIVATE ${LUA_LIBRARIES})
 
-### OPTIONS END ###
+### LIBRARIES END ###
 
 target_sources(traintastic-server PRIVATE ${SOURCES})
 target_sources(traintastic-server-test PRIVATE ${TEST_SOURCES} ${SOURCES})
