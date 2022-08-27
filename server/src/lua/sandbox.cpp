@@ -185,7 +185,6 @@ SandboxPtr Sandbox::create(Script& script)
     },
     {
       {"type", type},
-      {"get_class", Class::getClass},
     });
   addLib(L, LUA_MATHLIBNAME, luaopen_math, {
     "abs", "acos", "asin", "atan", "ceil", "cos", "deg", "exp",

@@ -126,6 +126,9 @@ void Class::registerValues(lua_State* L)
   lua_newtable(L); // global
   lua_setglobal(L, metaTableName);
 
+  lua_pushcfunction(L, getClass);
+  lua_setfield(L, -2, "get");
+
   registerValue<Board>(L, "BOARD");
   registerValue<BoardList>(L, "BOARD_LIST");
 
@@ -221,7 +224,10 @@ int Class::__tostring(lua_State* L)
 int Class::getClass(lua_State* L)
 {
   checkArguments(L, 1);
-  push(L, Object::check(L, 1));
+  if(auto object = Object::test(L, 1))
+    push(L, object);
+  else
+    lua_pushnil(L);
   return 1;
 }
 
