@@ -55,6 +55,14 @@
 
 #include "../clock/clock.hpp"
 
+#include "../hardware/interface/dccplusplusinterface.hpp"
+#include "../hardware/interface/ecosinterface.hpp"
+#include "../hardware/interface/hsi88.hpp"
+#include "../hardware/interface/loconetinterface.hpp"
+#include "../hardware/interface/traintasticdiyinterface.hpp"
+#include "../hardware/interface/wlanmausinterface.hpp"
+#include "../hardware/interface/xpressnetinterface.hpp"
+#include "../hardware/interface/z21interface.hpp"
 
 #include "../hardware/decoder/decoderfunction.hpp"
 #include "../hardware/decoder/list/decoderlist.hpp"
@@ -158,6 +166,16 @@ void Class::registerValues(lua_State* L)
   registerValue<BlockRailTile>(L, "BLOCK_RAIL_TILE");
 
   registerValue<Clock>(L, "CLOCK");
+
+  // hardware - interface:
+  registerValue<DCCPlusPlusInterface>(L, "DCCPLUSPLUS");
+  registerValue<ECoSInterface>(L, "DCCPLUSPLUS");
+  registerValue<HSI88Interface>(L, "HSI88");
+  registerValue<LocoNetInterface>(L, "LOCONET");
+  registerValue<TraintasticDIYInterface>(L, "TRAINTASTIC_DIY");
+  registerValue<XpressNetInterface>(L, "XPRESSNET");
+  registerValue<WlanMausInterface>(L, "WLANMAUS");
+  registerValue<Z21Interface>(L, "Z21");
 
   registerValue<DecoderFunction>(L, "DECODER_FUNCTION");
   registerValue<DecoderList>(L, "DECODER_LIST");
