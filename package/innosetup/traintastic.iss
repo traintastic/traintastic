@@ -67,6 +67,8 @@ Source: "..\..\client\build\Release\platforms\*.dll"; DestDir: "{app}\client\pla
 Source: "..\..\client\build\Release\styles\*.dll"; DestDir: "{app}\client\styles"; Flags: ignoreversion; Components: client
 ; Shared
 Source: "..\..\shared\translations\*.txt"; DestDir: "{commonappdata}\traintastic\translations"; Flags: ignoreversion;
+; Manual
+Source: "..\..\manual\build\*"; DestDir: "{commonappdata}\traintastic\manual"; Flags: ignoreversion recursesubdirs
 ; VC++ redistributable runtime. Extracted by VC2019RedistNeedsInstall(), if needed.
 Source: "..\..\client\build\Release\vc_redist.x64.exe"; DestDir: {tmp}; Flags: dontcopy
 
