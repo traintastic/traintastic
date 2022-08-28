@@ -160,98 +160,76 @@
   {
     "type": "appendix",
     "markdown": "lua.md",
-    "code": "lua",
     "pages": [
       {
-        "markdown": "lua/globals.md",
-        "code": "lua"
+        "markdown": "lua/globals.md"
       },
       {
-        "markdown": "lua/library/class.md",
-        "code": "lua"
+        "markdown": "lua/library/class.md"
       },
       {
         "markdown": "lua/library/enum.md",
-        "code": "lua",
         "pages": [
           {
-            "markdown": "lua/library/enum/decoderprotocol.md",
-            "code": "lua"
+            "markdown": "lua/library/enum/decoderprotocol.md"
           },
           {
-            "markdown": "lua/library/enum/direction.md",
-            "code": "lua"
+            "markdown": "lua/library/enum/direction.md"
           },
           {
-            "markdown": "lua/library/enum/directioncontrolstate.md",
-            "code": "lua"
+            "markdown": "lua/library/enum/directioncontrolstate.md"
           },
           {
-            "markdown": "lua/library/enum/signalaspect.md",
-            "code": "lua"
+            "markdown": "lua/library/enum/signalaspect.md"
           },
           {
-            "markdown": "lua/library/enum/turnoutposition.md",
-            "code": "lua"
+            "markdown": "lua/library/enum/turnoutposition.md"
           },
           {
-            "markdown": "lua/library/enum/worldevent.md",
-            "code": "lua"
+            "markdown": "lua/library/enum/worldevent.md"
           },
           {
-            "markdown": "lua/library/enum/worldscale.md",
-            "code": "lua"
+            "markdown": "lua/library/enum/worldscale.md"
           }
         ]
       },
       {
-        "markdown": "lua/library/log.md",
-        "code": "lua"
+        "markdown": "lua/library/log.md"
       },
       {
-        "markdown": "lua/library/math.md",
-        "code": "lua"
+        "markdown": "lua/library/math.md"
       },
       {
         "markdown": "lua/library/set.md",
-        "code": "lua",
         "pages": [
           {
-            "markdown": "lua/library/set/worldstate.md",
-            "code": "lua"
+            "markdown": "lua/library/set/worldstate.md"
           }
         ]
       },
       {
-        "markdown": "lua/library/string.md",
-        "code": "lua"
+        "markdown": "lua/library/string.md"
       },
       {
-        "markdown": "lua/library/table.md",
-        "code": "lua"
+        "markdown": "lua/library/table.md"
       },
       {
         "markdown": "lua/objects.md",
-        "code": "lua",
         "pages": [
           {
-            "markdown": "lua/object/board.md",
-            "code": "lua"
+            "markdown": "lua/object/board.md"
           },
           {
-            "markdown": "lua/object/input.md",
-            "code": "lua"
+            "markdown": "lua/object/input.md"
           },
           {
             "markdown": "lua/object/output.md"
           },
           {
-            "markdown": "lua/object/objectlist.md",
-            "code": "lua"
+            "markdown": "lua/object/objectlist.md"
           },
           {
-            "markdown": "lua/object/world.md",
-            "code": "lua"
+            "markdown": "lua/object/world.md"
           }
         ]
       }

@@ -228,9 +228,38 @@ p.note span.label
 
 /** Lua **********************************************************************/
 
-code.lua span.const
+pre[lang="lua"]
 {
-  color: #4e004e;
+  border: solid 1px darkgray;
+  background-color: #f8f8f8;
+  font-size: 80%;
+  line-height: normal;
+  padding: 0.2em 0.3em 0.2em 0.3em;
+}
+
+pre[lang="lua"] code span.const
+{
+  color: darkviolet;
+}
+
+pre[lang="lua"] code span.keyword
+{
+  color: blue;
+}
+
+pre[lang="lua"] code span.global
+{
+  color: chocolate;
+}
+
+pre[lang="lua"] code span.text
+{
+  color: darkgreen;
+}
+
+pre[lang="lua"] code span.comment
+{
+  color: darkslategray;
 }
 
 code.lua span.keyword
