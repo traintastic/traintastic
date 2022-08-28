@@ -36,6 +36,7 @@
 #include <QDateTime>
 #include <QSaveFile>
 #include <traintastic/set/worldstate.hpp>
+#include <traintastic/utils/standardpaths.hpp>
 #include "mdiarea.hpp"
 #include "dialog/connectdialog.hpp"
 #include "settings/settingsdialog.hpp"
@@ -412,7 +413,15 @@ MainWindow::MainWindow(QWidget* parent) :
       });
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:help"));
-    menu->addAction(Locale::tr("qtapp.mainmenu:help"), [](){ QDesktopServices::openUrl(QString("https://traintastic.org/manual?version=" TRAINTASTIC_VERSION_FULL)); })->setShortcut(QKeySequence::HelpContents);
+    menu->addAction(Locale::tr("qtapp.mainmenu:help"), 
+      []()
+      {
+        const auto manual = QString::fromStdString((getManualPath() / "en-us.html").string());
+        if(QFile::exists(manual))
+          QDesktopServices::openUrl(QUrl::fromLocalFile(manual));
+        else
+          QDesktopServices::openUrl(QString("https://traintastic.org/manual?version=" TRAINTASTIC_VERSION_FULL)); 
+      })->setShortcut(QKeySequence::HelpContents);
     //menu->addSeparator();
     //menu->addAction(Locale::tr("qtapp.mainmenu:about_qt") + "...", qApp, &QApplication::aboutQt);
     menu->addAction(Locale::tr("qtapp.mainmenu:about") + "...", this, &MainWindow::showAbout);
