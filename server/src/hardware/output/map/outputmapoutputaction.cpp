@@ -54,20 +54,20 @@ void OutputMapOutputAction::execute()
       break;
 
     case OutputAction::Off:
-      m_output->value = TriState::False;
+      m_output->setValue(false);
       break;
 
     case OutputAction::On:
-      m_output->value = TriState::True;
+      m_output->setValue(true);
       break;
 
     case OutputAction::Pulse:
     {
       //! @todo quick hack, add method pulse to output
       using namespace std::chrono_literals;
-      m_output->value = TriState::True;
+      m_output->setValue(true);
       std::this_thread::sleep_for(100ms);
-      m_output->value = TriState::False;
+      m_output->setValue(false);
       break;
     }
   }

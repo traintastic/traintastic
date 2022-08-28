@@ -243,6 +243,9 @@
             "code": "lua"
           },
           {
+            "markdown": "lua/object/output.md"
+          },
+          {
             "markdown": "lua/object/objectlist.md",
             "code": "lua"
           },

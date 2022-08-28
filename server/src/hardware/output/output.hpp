@@ -26,6 +26,8 @@
 #include "../../core/idobject.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../core/objectvectorproperty.hpp"
+#include "../../core/method.hpp"
+#include "../../core/event.hpp"
 #include "../../enum/tristate.hpp"
 #include "outputcontroller.hpp"
 
@@ -53,8 +55,6 @@ class Output final : public IdObject
     void loaded() final;
     void destroying() final;
     void worldEvent(WorldState state, WorldEvent event) final;
-    virtual void valueChanged(TriState /*_value*/) {}
-    virtual bool setValue(TriState& /*_value*/) { return true; }
     void updateValue(TriState _value);
 
   public:
@@ -66,6 +66,8 @@ class Output final : public IdObject
     Property<uint32_t> address;
     Property<TriState> value;
     ObjectVectorProperty<Object> controllers;
+    Method<bool(bool)> setValue;
+    Event<bool> onValueChanged;
 
     Output(World& world, std::string_view _id);
 };

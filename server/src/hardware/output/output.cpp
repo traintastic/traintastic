@@ -29,7 +29,7 @@
 
 Output::Output(World& world, std::string_view _id)
   : IdObject(world, _id)
-  , name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
   , interface{this, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](const std::shared_ptr<OutputController>& /*newValue*/)
       {
@@ -82,18 +82,14 @@ Output::Output(World& world, std::string_view _id)
           return interface->changeOutputChannelAddress(*this, channel, newValue);
         return true;
       }}
-  , value{this, "value", TriState::Undefined, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
-      [this](TriState newValue)
-      {
-        valueChanged(newValue);
-      },
-      [this](TriState& newValue) -> bool
-      {
-        if(!interface || newValue == TriState::Undefined)
-          return false;
-        return interface->setOutputValue(channel, address, newValue == TriState::True);
-      }}
+  , value{this, "value", TriState::Undefined, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
   , controllers{*this, "controllers", {}, PropertyFlags::ReadWrite | PropertyFlags::NoStore}
+  , setValue{*this, "set_value", MethodFlags::ScriptCallable,
+      [this](bool newValue)
+      {
+        return interface && interface->setOutputValue(channel, address, newValue);
+      }}
+  , onValueChanged{*this, "on_value_changed", EventFlags::Scriptable}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
@@ -125,6 +121,11 @@ Output::Output(World& world, std::string_view _id)
 
   Attributes::addObjectEditor(controllers, false); //! \todo add client support first
   m_interfaceItems.add(controllers);
+
+  Attributes::addObjectEditor(setValue, false);
+  m_interfaceItems.add(setValue);
+
+  m_interfaceItems.add(onValueChanged);
 }
 
 void Output::addToWorld()
@@ -166,7 +167,8 @@ void Output::worldEvent(WorldState state, WorldEvent event)
 void Output::updateValue(TriState _value)
 {
   value.setValueInternal(_value);
-  valueChanged(value);
+  if(value != TriState::Undefined)
+    fireEvent(onValueChanged, value == TriState::True);
 }
 
 void Output::interfaceChanged()
