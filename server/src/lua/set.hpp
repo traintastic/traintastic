@@ -86,6 +86,29 @@ struct Set
     pushSet(L, set_name_v<T>, static_cast<lua_Integer>(value));
   }
 
+  static int contains(lua_State* L)
+  {
+    lua_pushboolean(L, ::contains(check(L, lua_upvalueindex(1)), check(L, 1)) ? 1 : 0);
+    return 1;
+  }
+
+  static int __index(lua_State* L)
+  {
+    size_t len;
+    const char* s = lua_tolstring(L, 2, &len);
+    std::string_view name{s, len};
+
+    if(name == "contains")
+    {
+      lua_pushvalue(L, 1);
+      lua_pushcclosure(L, contains, 1);
+    }
+    else
+      lua_pushnil(L);
+
+    return 1;
+  }
+
   static int __add(lua_State* L)
   {
     push(L, check(L, 1) + check(L, 2));
@@ -123,7 +146,7 @@ struct Set
     lua_pushstring(L, set_name_v<T>);
     lua_pushliteral(L, "(");
     for(auto& it : set_values_v<T>)
-      if(contains(value, it.first))
+      if(::contains(value, it.first))
       {
         if(n > 3)
         {
@@ -142,6 +165,8 @@ struct Set
   {
     // meta table for set userdata:
     luaL_newmetatable(L, set_name_v<T>);
+    lua_pushcfunction(L, __index);
+    lua_setfield(L, -2, "__index");
     lua_pushcfunction(L, __add);
     lua_setfield(L, -2, "__add");
     lua_pushcfunction(L, __sub);
