@@ -22,7 +22,7 @@ class HTMLSinglePageBuilder(HTMLBuilder):
         # find id of <h1>
         m = re.search(r'<h1[^>]+id="([^"]+)"[^>]*>', html)
         if m is not None:
-            self._md2id[page['markdown']] = '#' + m.group(1)
+            self._md2id[os.path.normpath(page['markdown'])] = '#' + m.group(1)
 
         # correct href to md files:
         html = re.sub(r'href="([^"]+\.md)"', lambda m: 'href="' + os.path.relpath(os.path.abspath(os.path.join(basedir, m.group(1))), self._language_dir) + '"', html)
