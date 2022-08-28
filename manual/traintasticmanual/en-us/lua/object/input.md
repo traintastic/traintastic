@@ -17,14 +17,7 @@ Note: The input value can be `enum.tristate.UNDEFINED`, especially when just con
 
 ## Methods
 
-### `get_object(id)`
-Get object with *id*, if it exists it returns the object, else it returns `nil`.
-
-### `power_off()`
-Stop all vehicles and power off, identical to pressing power off in the Traintastic client application.
-
-### `stop()`
-Stop all vehicles, identical to pressing stop in the Traintastic client application.
+*None*.
 
 
 ## Events
