@@ -238,7 +238,14 @@
   {
     "type": "appendix",
     "markdown": "luaexamples.md",
-    "code": "lua"
+    "pages": [
+      {
+        "markdown": "luaexamples/controloutputworldrunstop.md"
+      },
+      {
+        "markdown": "luaexamples/directioncontrolusinginput.md"
+      }
+    ]
   },
   {
     "type": "appendix",

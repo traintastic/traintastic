@@ -51,3 +51,5 @@ Handler: `function (state, event, world, user_data)`
 - *event* - an [`enum.world_event`](../library/enum/worldevent.md) value;
 - *world* - the world object;
 - *user_data* - user data that was set or `nil` if no user data was set during connect.
+
+Example: [Control output on world run/stop](../../luaexamples/controloutputworldrunstop.md).
