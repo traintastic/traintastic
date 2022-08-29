@@ -135,6 +135,7 @@ file(GLOB SOURCES
 file(GLOB TEST_SOURCES
   "test/board/*.cpp"
   "test/lua/*.cpp"
+  "test/lua/script/*.cpp"
   "test/objectcreatedestroy.cpp"
   )
 
