@@ -412,6 +412,12 @@ jobs:
         name: traintastic-server
         path: ${{github.workspace}}/server/build
 
+    - name: "Download artifact: manual"
+      uses: actions/download-artifact@v2
+      with:
+        name: traintastic-manual
+        path: ${{github.workspace}}/manual/build
+
     - name: Build installer
       shell: cmd
       run: |
