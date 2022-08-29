@@ -13,21 +13,6 @@ if(MSVC)
   add_compile_options(/W3)
 else()
   add_compile_options(-Wall -Wextra -Wpedantic -Wshadow -Werror)
-
-  set_source_files_properties(
-      thirdparty/boost/libs/program_options/src/cmdline.cpp
-      thirdparty/boost/libs/program_options/src/config_file.cpp
-      thirdparty/boost/libs/program_options/src/convert.cpp
-      thirdparty/boost/libs/program_options/src/options_description.cpp
-      thirdparty/boost/libs/program_options/src/parsers.cpp
-      thirdparty/boost/libs/program_options/src/positional_options.cpp
-      thirdparty/boost/libs/program_options/src/split.cpp
-      thirdparty/boost/libs/program_options/src/utf8_codecvt_facet.cpp
-      thirdparty/boost/libs/program_options/src/value_semantic.cpp
-      thirdparty/boost/libs/program_options/src/variables_map.cpp
-      thirdparty/boost/libs/program_options/src/winmain.cpp
-    PROPERTIES
-      COMPILE_FLAGS -Wno-shadow)
 endif()
 
 if(NOT DISABLE_CLANG_TIDY)
@@ -36,13 +21,6 @@ endif()
 
 add_executable(traintastic-server src/main.cpp src/options.hpp)
 add_executable(traintastic-server-test test/main.cpp)
-
-add_definitions(
-  -DBOOST_ALL_NO_LIB
-  -DBOOST_ERROR_CODE_HEADER_ONLY
-  -DBOOST_CHRONO_HEADER_ONLY
-  -DBOOST_ASIO_HEADER_ONLY
-  -DBOOST_SYSTEM_NO_DEPRECATED)
 
 set_target_properties(traintastic-server PROPERTIES CXX_STANDARD 17)
 set_target_properties(traintastic-server-test PROPERTIES CXX_STANDARD 17)
@@ -53,8 +31,7 @@ target_include_directories(traintastic-server PRIVATE
 
 target_include_directories(traintastic-server SYSTEM PRIVATE
   ../shared/thirdparty
-  thirdparty
-  thirdparty/boost)
+  thirdparty)
 
 target_include_directories(traintastic-server-test PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -62,8 +39,7 @@ target_include_directories(traintastic-server-test PRIVATE
 
 target_include_directories(traintastic-server-test SYSTEM PRIVATE
   ../shared/thirdparty
-  thirdparty
-  thirdparty/boost)
+  thirdparty)
 
 file(GLOB SOURCES
   "src/board/*.hpp"
@@ -154,8 +130,7 @@ file(GLOB SOURCES
   "src/world/*.hpp"
   "src/world/*.cpp"
   "../shared/src/traintastic/locale/locale.cpp"
-  "../shared/src/traintastic/utils/standardpaths.cpp"
-  "thirdparty/boost/libs/program_options/src/*.cpp")
+  "../shared/src/traintastic/utils/standardpaths.cpp")
 
 file(GLOB TEST_SOURCES
   "test/board/*.cpp"
@@ -164,6 +139,10 @@ file(GLOB TEST_SOURCES
   )
 
 ### PLATFORM ###
+
+if(UNIX AND NOT APPLE)
+  set(LINUX TRUE)
+endif()
 
 if(UNIX)
   file(GLOB SOURCES_UNIX "src/os/unix/*.hpp" "src/os/unix/*.cpp")
@@ -196,6 +175,46 @@ else()
 endif()
 
 ### LIBRARIES ###
+
+# boost
+if(LINUX)
+  find_package(Boost 1.71 REQUIRED COMPONENTS program_options)
+
+  target_include_directories(traintastic-server SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
+  target_link_libraries(traintastic-server PRIVATE ${Boost_LIBRARIES})
+  target_include_directories(traintastic-server-test SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
+  target_link_libraries(traintastic-server-test PRIVATE ${Boost_LIBRARIES})
+else()
+  add_definitions(
+    -DBOOST_ALL_NO_LIB
+    -DBOOST_ERROR_CODE_HEADER_ONLY
+    -DBOOST_CHRONO_HEADER_ONLY
+    -DBOOST_ASIO_HEADER_ONLY
+    -DBOOST_SYSTEM_NO_DEPRECATED)
+
+  if(NOT MSVC)
+    set_source_files_properties(
+        thirdparty/boost/libs/program_options/src/cmdline.cpp
+        thirdparty/boost/libs/program_options/src/config_file.cpp
+        thirdparty/boost/libs/program_options/src/convert.cpp
+        thirdparty/boost/libs/program_options/src/options_description.cpp
+        thirdparty/boost/libs/program_options/src/parsers.cpp
+        thirdparty/boost/libs/program_options/src/positional_options.cpp
+        thirdparty/boost/libs/program_options/src/split.cpp
+        thirdparty/boost/libs/program_options/src/utf8_codecvt_facet.cpp
+        thirdparty/boost/libs/program_options/src/value_semantic.cpp
+        thirdparty/boost/libs/program_options/src/variables_map.cpp
+        thirdparty/boost/libs/program_options/src/winmain.cpp
+      PROPERTIES
+        COMPILE_FLAGS -Wno-shadow)
+  endif()
+
+  target_include_directories(traintastic-server SYSTEM PRIVATE thirdparty/boost)
+  target_include_directories(traintastic-server-test SYSTEM PRIVATE thirdparty/boost)
+
+  file(GLOB SOURCES_BOOST "thirdparty/boost/libs/program_options/src/*.cpp")
+  list(APPEND SOURCES ${SOURCES_BOOST})
+endif()
 
 # libarchive
 if(WIN32)
