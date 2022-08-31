@@ -30,6 +30,16 @@ jobs:
           build_deb: true
           defines: ""
 
+        - name: "ubuntu_22.04"
+          os: ubuntu-22.04
+          generator: "Unix Makefiles"
+          arch: ""
+          target: traintastic-client
+          jobs: 2
+          build_type: Release
+          build_deb: true
+          defines: ""
+
         - name: "raspberrypios_arm7"
           os: [self-hosted, ARM, RaspberryPi]
           generator: "Unix Makefiles"
@@ -156,6 +166,18 @@ jobs:
 
         - name: "ubuntu_20.04"
           os: ubuntu-20.04
+          generator: "Unix Makefiles"
+          arch: ""
+          toolset: ""
+          target: all
+          jobs: 2
+          build_type: Release
+          build_deb: true
+          defines: ""
+          ccov: false
+
+        - name: "ubuntu_22.04"
+          os: ubuntu-22.04
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
