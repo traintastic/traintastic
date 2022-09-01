@@ -155,9 +155,6 @@ void Script::startSandbox()
     const int r = luaL_loadbuffer(L, code.value().c_str(), code.value().size(), "=") || Sandbox::pcall(L, 0, LUA_MULTRET);
     if(r == LUA_OK)
     {
-      if(Sandbox::getGlobal(L, "init") == LUA_TFUNCTION)
-        pcall(L);
-
       setState(LuaScriptState::Running);
       error.setValueInternal("");
     }
