@@ -96,7 +96,7 @@
         "markdown": "supportedhardware/littfinskidatentechnik/hsi88.md"
       },
       {
-        "markdown": "supportedhardware/roco/10764.md"
+        "markdown": "supportedhardware/roco/multimaus10764.md"
       },
       {
         "markdown": "supportedhardware/roco/z21.md"
@@ -181,6 +181,9 @@
           },
           {
             "markdown": "lua/library/enum/signalaspect.md"
+          },
+          {
+            "markdown": "lua/library/enum/tristate.md"
           },
           {
             "markdown": "lua/library/enum/turnoutposition.md"
