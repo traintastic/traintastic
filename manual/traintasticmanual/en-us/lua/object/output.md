@@ -10,7 +10,7 @@ Object id, unique within the world.
 Output name.
 
 ### `value`
-Output value, an `enum.tristate` value.
+Output value, an [`enum.tristate`](../library/enum/tristate.md) value.
 
 Note: The output value can be `enum.tristate.UNDEFINED`, especially when just connected to the hardware.
 
