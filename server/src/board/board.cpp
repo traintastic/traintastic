@@ -405,6 +405,8 @@ void Board::modified()
           break;
         }
       }
+
+      startTile->node()->get().disconnect(startConnector);
     };
 
   // check/rebuild links:

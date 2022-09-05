@@ -82,3 +82,9 @@ bool Node::disconnect(size_t index, Link& link)
   }
   return false;
 }
+
+void Node::disconnect(const Connector& connector)
+{
+  if(auto index = getIndex(connector); index != noIndex && m_links[index])
+    m_links[index]->disconnect();
+}

@@ -56,6 +56,7 @@ class Node
 
     bool connect(size_t index, Link& link);
     bool disconnect(size_t index, Link& link);
+    void disconnect(const Connector& connector);
 };
 
 #endif
