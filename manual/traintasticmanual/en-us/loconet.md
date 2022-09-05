@@ -43,7 +43,6 @@ Messages defined in the *LocoNet Personal Use Edition 1.0 specification*:
 | `OPC_GPON`         | Yes            |
 | `OPC_GPOFF`        | Yes            |
 | `OPC_BUSY`         | No             |
-| `OPC_BUSY`         | No             |
 | `OPC_SW_ACK`       | No             |
 | `OPC_SW_STATE`     | No             |
 | `OPC_RQ_SL_DATA`   | Yes            |
