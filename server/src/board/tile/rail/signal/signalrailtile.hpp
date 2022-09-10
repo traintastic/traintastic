@@ -30,14 +30,16 @@
 #include "../../../../core/objectproperty.hpp"
 #include "../../../../hardware/output/map/signaloutputmap.hpp"
 
+class SignalPath;
+
 class SignalRailTile : public StraightRailTile
 {
   DEFAULT_ID("signal")
 
-  private:
-    Node m_node;
-
   protected:
+    Node m_node;
+    std::unique_ptr<SignalPath> m_signalPath;
+
     SignalRailTile(World& world, std::string_view _id, TileId tileId);
 
     void worldEvent(WorldState state, WorldEvent event) override;
@@ -49,6 +51,8 @@ class SignalRailTile : public StraightRailTile
     Property<SignalAspect> aspect;
     ObjectProperty<SignalOutputMap> outputMap;
     Method<bool(SignalAspect)> setAspect;
+
+    ~SignalRailTile() override;
 
     std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }
     std::optional<std::reference_wrapper<Node>> node() final { return m_node; }

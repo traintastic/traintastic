@@ -63,6 +63,7 @@ class Link : public std::enable_shared_from_this<Link>
     void connect(Node& node1, const Connector& connector1, Node& node2, const Connector& connector2);
     void disconnect();
 
+    const Node& getNext(const Node& node) const;
     Node& getNext(Node& node);
 };
 

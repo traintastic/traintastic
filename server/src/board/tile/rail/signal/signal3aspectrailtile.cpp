@@ -21,6 +21,7 @@
  */
 
 #include "signal3aspectrailtile.hpp"
+#include "../../../map/signalpath.hpp"
 #include "../../../../core/attributes.hpp"
 
 static const std::array<SignalAspect, 4> aspectValues = {SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed, SignalAspect::Unknown};
@@ -36,4 +37,21 @@ Signal3AspectRailTile::Signal3AspectRailTile(World& world, std::string_view _id)
 
   Attributes::addValues(setAspect, setAspectValues);
   m_interfaceItems.add(setAspect);
+}
+
+void Signal3AspectRailTile::boardModified()
+{
+  m_signalPath = std::make_unique<SignalPath>(m_node, 2,
+    [this](const std::vector<BlockState>& states)
+    {
+      if(!states.empty() && states[0] == BlockState::Free)
+      {
+        if(states.size() >= 2 && states[1] == BlockState::Free)
+          setAspect(SignalAspect::Proceed);
+        else
+          setAspect(SignalAspect::ProceedReducedSpeed);
+      }
+      else
+        setAspect(SignalAspect::Stop);
+    });
 }

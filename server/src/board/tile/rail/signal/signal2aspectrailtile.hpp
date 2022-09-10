@@ -30,6 +30,9 @@ class Signal2AspectRailTile : public SignalRailTile
   CLASS_ID("board_tile.rail.signal_2_aspect")
   CREATE(Signal2AspectRailTile)
 
+  protected:
+    void boardModified() final;
+
   public:
     Signal2AspectRailTile(World& world, std::string_view _id);
 };

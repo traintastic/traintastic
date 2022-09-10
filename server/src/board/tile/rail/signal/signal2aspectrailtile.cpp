@@ -21,6 +21,7 @@
  */
 
 #include "signal2aspectrailtile.hpp"
+#include "../../../map/signalpath.hpp"
 #include "../../../../core/attributes.hpp"
 
 static const std::array<SignalAspect, 3> aspectValues = {SignalAspect::Stop, SignalAspect::Proceed, SignalAspect::Unknown};
@@ -36,4 +37,13 @@ Signal2AspectRailTile::Signal2AspectRailTile(World& world, std::string_view _id)
 
   Attributes::addValues(setAspect, setAspectValues);
   m_interfaceItems.add(setAspect);
+}
+
+void Signal2AspectRailTile::boardModified()
+{
+  m_signalPath = std::make_unique<SignalPath>(m_node, 1,
+    [this](const std::vector<BlockState>& states)
+    {
+      setAspect(!states.empty() && states[0] == BlockState::Free ? SignalAspect::Proceed : SignalAspect::Stop);
+    });
 }

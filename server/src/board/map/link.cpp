@@ -84,6 +84,12 @@ void Link::disconnect()
     }
 }
 
+const Node& Link::getNext(const Node& node) const
+{
+  assert(m_connections[0].node == &node || m_connections[1].node == &node);
+  return *m_connections[(m_connections[0].node == &node) ? 1 : 0].node;
+}
+
 Node& Link::getNext(Node& node)
 {
   assert(m_connections[0].node == &node || m_connections[1].node == &node);

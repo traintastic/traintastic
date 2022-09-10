@@ -21,6 +21,7 @@
  */
 
 #include "signalrailtile.hpp"
+#include "../../../map/signalpath.hpp"
 #include "../../../../core/attributes.hpp"
 #include "../../../../world/getworld.hpp"
 #include "../../../../utils/displayname.hpp"
@@ -48,6 +49,8 @@ SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId
   Attributes::addObjectEditor(setAspect, false);
   // setAspect is added by sub class
 }
+
+SignalRailTile::~SignalRailTile() = default; // default here, so we can use a forward declaration of SignalPath in the header.
 
 void SignalRailTile::worldEvent(WorldState state, WorldEvent event)
 {

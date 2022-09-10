@@ -46,9 +46,8 @@ class Node
     Node(Tile& tile, size_t connectors);
     ~Node();
 
-    const Tile& tile() const { return m_tile; }
-    Tile& tile() { return m_tile; }
-    const std::vector<std::shared_ptr<Link>>& links() { return m_links; }
+    Tile& tile() const { return m_tile; }
+    const std::vector<std::shared_ptr<Link>>& links() const { return m_links; }
 
     size_t getIndex(const Connector& connector) const;
     std::shared_ptr<const Link> getLink(size_t index) const;
