@@ -48,6 +48,9 @@ class LinkRailTile : public RailTile
 
     LinkRailTile(World& world, std::string_view _id);
 
+    std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }
+    std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
+
     void getConnectors(std::vector<Connector>& connectors) const final;
 };
 

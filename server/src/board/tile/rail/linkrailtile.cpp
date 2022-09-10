@@ -28,7 +28,7 @@
 
 LinkRailTile::LinkRailTile(World& world, std::string_view _id)
   : RailTile(world, _id, TileId::RailLink)
-  , m_node{*this, 2}
+  , m_node{*this, 1}
   , name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
   , link{this, "link", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript, nullptr,
       [this](const std::shared_ptr<LinkRailTile>& newValue)
