@@ -62,6 +62,7 @@ DirectionControlRailTile::DirectionControlRailTile(World& world, std::string_vie
         if(std::find(states.begin(), states.end(), newState) == states.end())
           return false;
         state.setValueInternal(newState);
+        stateChanged(*this, newState);
         return true;
       }}
   , toggle{*this, "toggle", MethodFlags::Internal | MethodFlags::ScriptCallable,

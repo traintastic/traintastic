@@ -45,6 +45,8 @@ class DirectionControlRailTile final : public StraightRailTile
     void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
 
   public:
+    boost::signals2::signal<void (const DirectionControlRailTile&, DirectionControlState)> stateChanged;
+
     Property<std::string> name;
     Property<bool> useNone;
     Property<bool> useAtoB;

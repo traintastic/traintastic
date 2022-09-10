@@ -45,6 +45,8 @@ class TurnoutRailTile : public RailTile
     virtual bool doSetPosition(TurnoutPosition value);
 
   public:
+    boost::signals2::signal<void (const TurnoutRailTile&, TurnoutPosition)> positionChanged;
+
     Property<std::string> name;
     Property<TurnoutPosition> position;
     ObjectProperty<TurnoutOutputMap> outputMap;

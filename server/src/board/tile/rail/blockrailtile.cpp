@@ -80,7 +80,7 @@ void BlockRailTile::updateState()
     {
       if(item->value() == SensorState::Occupied)
       {
-        state.setValueInternal(BlockState::Occupied);
+        setState(BlockState::Occupied);
         return;
       }
       if(item->value() != SensorState::Free)
@@ -92,12 +92,21 @@ void BlockRailTile::updateState()
 
     if(allFree)
     {
-      state.setValueInternal(BlockState::Free);
+      setState(BlockState::Free);
       return;
     }
   }
 
-  state.setValueInternal(BlockState::Unknown);
+  setState(BlockState::Unknown);
+}
+
+void BlockRailTile::setState(BlockState value)
+{
+  if(value == state)
+    return;
+
+  state.setValueInternal(value);
+  stateChanged(*this, value);
 }
 
 void BlockRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)

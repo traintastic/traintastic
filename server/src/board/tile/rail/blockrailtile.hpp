@@ -49,8 +49,11 @@ class BlockRailTile : public RailTile
     void setRotate(TileRotate value) final;
 
     void updateState();
+    void setState(BlockState value);
 
   public:
+    boost::signals2::signal<void (const BlockRailTile&, BlockState)> stateChanged;
+
     Property<std::string> name;
     ObjectProperty<BlockInputMap> inputMap;
     Property<BlockState> state;

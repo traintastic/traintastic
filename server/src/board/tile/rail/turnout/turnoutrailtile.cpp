@@ -68,5 +68,6 @@ bool TurnoutRailTile::doSetPosition(TurnoutPosition value)
     return false;
   (*outputMap)[value]->execute();
   position.setValueInternal(value);
+  positionChanged(*this, value);
   return true;
 }
