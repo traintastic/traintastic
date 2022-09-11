@@ -162,6 +162,22 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
     }));
   m_editActionMove->setCheckable(true);
   m_editActionMove->setData(-1);
+  if(auto* method = m_object->getMethod("move_tile"))
+  {
+    m_editActionMove->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
+    connect(method, &Method::attributeChanged, this,
+      [this](AttributeName name, const QVariant& value)
+      {
+        if(name == AttributeName::Enabled)
+        {
+          m_editActionMove->setEnabled(value.toBool());
+          if(!m_editActionMove->isEnabled() && m_editActionMove->isChecked())
+            m_editActionNone->activate(QAction::Trigger);
+        }
+      });
+  }
+  else
+    m_editActionMove->setEnabled(false);
 
   m_editActionResize = m_editActions->addAction(m_toolbarEdit->addAction(Theme::getIcon("resize_tile"), Locale::tr("board:resize_tile"), this,
     [this]()
@@ -170,6 +186,22 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
     }));
   m_editActionResize->setCheckable(true);
   m_editActionResize->setData(-1);
+  if(auto* method = m_object->getMethod("resize_tile"))
+  {
+    m_editActionResize->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
+    connect(method, &Method::attributeChanged, this,
+      [this](AttributeName name, const QVariant& value)
+      {
+        if(name == AttributeName::Enabled)
+        {
+          m_editActionResize->setEnabled(value.toBool());
+          if(!m_editActionResize->isEnabled() && m_editActionResize->isChecked())
+            m_editActionNone->activate(QAction::Trigger);
+        }
+      });
+  }
+  else
+    m_editActionResize->setEnabled(false);
 
   m_editActionDelete = m_editActions->addAction(m_toolbarEdit->addAction(Theme::getIcon("delete"), Locale::tr("board:delete_tile"), this,
     [this]()
@@ -188,7 +220,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
         {
           m_editActionDelete->setEnabled(value.toBool());
           if(!m_editActionDelete->isEnabled() && m_editActionDelete->isChecked())
-            m_editActionNone->setChecked(true);
+            m_editActionNone->activate(QAction::Trigger);
         }
       });
   }
@@ -281,7 +313,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
             {
               act->setEnabled(v);
               if(!v && act->isChecked())
-                m_editActionNone->setChecked(true);
+                m_editActionNone->activate(QAction::Trigger);
             }
           }
         });
@@ -363,10 +395,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
 void BoardWidget::worldEditChanged(bool value)
 {
   if(!value)
-  {
-    m_editActionNone->setChecked(true);
-    actionSelected(nullptr);
-  }
+    m_editActionNone->activate(QAction::Trigger);
   m_toolbarEdit->setVisible(value);
   m_statusBar->setVisible(value);
 }
@@ -646,10 +675,7 @@ void BoardWidget::keyPressEvent(QKeyEvent* event)
         m_boardArea->setMouseMoveAction(BoardAreaWidget::MouseMoveAction::None);
       }
       else
-      {
-        m_editActionNone->setChecked(true);
-        actionSelected(nullptr);
-      }
+        m_editActionNone->activate(QAction::Trigger);
       break;
 
     case Qt::Key_Left:
