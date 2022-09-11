@@ -68,6 +68,8 @@ BoardAreaWidget::BoardAreaWidget(BoardWidget& board, QWidget* parent) :
   m_boardBottom{board.board().getProperty("bottom")},
   m_grid{Grid::Dot},
   m_zoomLevel{0},
+  m_mouseLeftButtonPressed{false},
+  m_mouseRightButtonPressed{false},
   m_mouseMoveAction{MouseMoveAction::None},
   m_mouseMoveTileId{TileId::None},
   m_mouseMoveTileRotate{TileRotate::Deg0}
