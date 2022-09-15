@@ -27,6 +27,14 @@ TODO
 
 TODO
 
+## I1006: *boost version* {#i1006}
+Version information about used boost library, e.g. *boost 1.71.0*.
+
+## I1007: *nlohmann::json version* {#i1007}
+Version information about used nlohmann::json library, e.g. *nlohmann::json 3.10.5*.
+
+## I1008: *archive version* {#i1008}
+Version information about used archive library, e.g. *libarchive 3.4.0 zlib/1.2.11 liblzma/5.2.4 bz2lib/1.0.8 liblz4/1.9.2 libzstd/1.4.4*.
 
 ## I2001: Unknown loco address: *address* {#i2001}
 
@@ -48,6 +56,9 @@ Information about the connected Traintastic DIY device.
 
 ## I9001: Stopped script {#i9001}
 TODO
+
+## I9002: *lua version* {#i9002}
+Version information about used Lua scripting engine, e.g. *Lua 5.3.3  Copyright (C) 1994-2016 Lua.org, PUC-Rio*.
 
 ## I9999: *message* {#i9999}
 

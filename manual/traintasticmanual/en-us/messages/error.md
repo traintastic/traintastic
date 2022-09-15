@@ -123,7 +123,7 @@ TODO
 ## E2019: Timeout, no response within *number*ms {#e2019}
 TODO
 
-## E2020: Total number of modules may not exceed *number*
+## E2020: Total number of modules may not exceed *number* {#e2020}
 
 **Cause:** The maximum number of S88 modules connected to the HSI-88 may not exceed *number*, this is a hardware limitation.
 
