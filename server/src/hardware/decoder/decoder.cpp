@@ -78,7 +78,7 @@ Decoder::Decoder(World& world, std::string_view _id) :
     {
       changed(DecoderChangeFlags::Direction);
     },
-    [this](Direction& value)
+    [](Direction& value)
     {
       return value != Direction::Unknown;
     }},
