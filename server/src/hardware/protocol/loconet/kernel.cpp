@@ -28,6 +28,7 @@
 #include "../../decoder/decodercontroller.hpp"
 #include "../../input/inputcontroller.hpp"
 #include "../../output/outputcontroller.hpp"
+#include "../../identification/identificationcontroller.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../utils/inrange.hpp"
 #include "../../../core/eventloop.hpp"
@@ -57,6 +58,7 @@ Kernel::Kernel(const Config& config, bool simulation)
   , m_decoderController{nullptr}
   , m_inputController{nullptr}
   , m_outputController{nullptr}
+  , m_identificationController{nullptr}
   , m_config{config}
 #ifndef NDEBUG
   , m_started{false}
@@ -116,6 +118,12 @@ void Kernel::setOutputController(OutputController* outputController)
 {
   assert(!m_started);
   m_outputController = outputController;
+}
+
+void Kernel::setIdentificationController(IdentificationController* identificationController)
+{
+  assert(!m_started);
+  m_identificationController= identificationController;
 }
 
 void Kernel::start()
@@ -527,8 +535,24 @@ void Kernel::receive(const Message& message)
       break; // unimplemented
 
     case OPC_MULTI_SENSE:
-      break; // unimplemented
-
+    {
+      const auto& multiSense = static_cast<const MultiSense&>(message);
+      if(multiSense.isTransponder())
+      {
+        EventLoop::call(
+          [this, multiSenseTransponder=static_cast<const MultiSenseTransponder&>(multiSense)]()
+          {
+            m_identificationController->identificationEvent(
+              IdentificationController::defaultIdentificationChannel,
+              multiSenseTransponder.sensorAddress(),
+              multiSenseTransponder.isPresent() ? IdentificationEventType::Present : IdentificationEventType::Absent,
+              multiSenseTransponder.transponderAddress(),
+              Direction::Unknown,
+              0);
+          });
+      }
+      break;
+    }
     case OPC_D4:
       if(m_decoderController)
       {
@@ -619,8 +643,24 @@ void Kernel::receive(const Message& message)
       break;
 
     case OPC_MULTI_SENSE_LONG:
-      break; // unimplemented
-
+    {
+      const MultiSenseLong& multiSense = static_cast<const MultiSenseLong&>(message);
+      if(multiSense.isTransponder())
+      {
+        EventLoop::call(
+          [this, multiSenseTransponder=static_cast<const MultiSenseLongTransponder&>(multiSense)]()
+          {
+            m_identificationController->identificationEvent(
+              IdentificationController::defaultIdentificationChannel,
+              multiSenseTransponder.sensorAddress(),
+              multiSenseTransponder.isPresent() ? IdentificationEventType::Present : IdentificationEventType::Absent,
+              multiSenseTransponder.transponderAddress(),
+              multiSenseTransponder.transponderDirection(),
+              0);
+          });
+      }
+      break;
+    }
     case OPC_PEER_XFER:
       if(Uhlenbrock::ReadSpecialOptionReply::check(message))
       {

@@ -23,6 +23,7 @@
 #include "loconetinterface.hpp"
 #include "../decoder/list/decoderlisttablemodel.hpp"
 #include "../input/input.hpp"
+#include "../identification/identification.hpp"
 #include "../protocol/loconet/iohandler/serialiohandler.hpp"
 #include "../protocol/loconet/iohandler/simulationiohandler.hpp"
 #include "../protocol/loconet/iohandler/tcpbinaryiohandler.hpp"
@@ -38,12 +39,14 @@
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
+constexpr auto identificationListColumns = IdentificationListColumn::Id | IdentificationListColumn::Name | IdentificationListColumn::Interface | IdentificationListColumn::Address;
 
 LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , DecoderController(*this, decoderListColumns)
   , InputController(static_cast<IdObject&>(*this))
   , OutputController(static_cast<IdObject&>(*this))
+  , IdentificationController(static_cast<IdObject&>(*this))
   , type{this, "type", LocoNetInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](LocoNetInterfaceType /*value*/)
       {
@@ -99,6 +102,8 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
 
   m_interfaceItems.insertBefore(outputs, notes);
 
+  m_interfaceItems.insertBefore(identifications, notes);
+
   typeChanged();
 }
 
@@ -120,6 +125,49 @@ bool LocoNetInterface::setOutputValue(uint32_t channel, uint32_t address, bool v
     m_kernel &&
     inRange(address, outputAddressMinMax(channel)) &&
     m_kernel->setOutput(static_cast<uint16_t>(address), value);
+}
+
+void LocoNetInterface::identificationEvent(uint32_t channel, uint32_t address, IdentificationEventType eventType, uint16_t identifier, Direction direction, uint8_t category)
+{
+  // OPC_MULTI_SENSE direction:
+  if(direction == Direction::Unknown && (eventType == IdentificationEventType::Present || eventType == IdentificationEventType::Absent))
+  {
+    constexpr uint32_t addressDirectionMask = 0x800;
+
+    if(auto it = m_identifications.find({channel, address}); it != m_identifications.end() )
+    {
+      switch(it->second->opcMultiSenseDirection.value())
+      {
+        case OPCMultiSenseDirection::None:
+          break;
+
+        case OPCMultiSenseDirection::InSensorAddress:
+          direction = Direction::Reverse;
+          break;
+
+        case OPCMultiSenseDirection::InTransponderAddress:
+        {
+          constexpr uint16_t identifierDirectionMask = 0x1000;
+          direction = (identifier & identifierDirectionMask) ? Direction::Forward : Direction::Reverse;
+          identifier &= ~identifierDirectionMask;
+          break;
+        }
+      }
+    }
+    else if(address & addressDirectionMask)
+    {
+      address &= ~addressDirectionMask;
+
+      if(it = m_identifications.find({channel, address});
+          it != m_identifications.end() &&
+          it->second->opcMultiSenseDirection == OPCMultiSenseDirection::InSensorAddress)
+      {
+        direction = Direction::Forward;
+      }
+    }
+  }
+
+  IdentificationController::identificationEvent(channel, address, eventType, identifier, direction, category);
 }
 
 bool LocoNetInterface::setOnline(bool& value, bool simulation)
@@ -183,6 +231,8 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
       m_kernel->setDecoderController(this);
       m_kernel->setInputController(this);
       m_kernel->setOutputController(this);
+      m_kernel->setIdentificationController(this);
+
       m_kernel->start();
 
       m_loconetPropertyChanged = loconet->propertyChanged.connect(
@@ -237,6 +287,7 @@ void LocoNetInterface::addToWorld()
   DecoderController::addToWorld();
   InputController::addToWorld(inputListColumns);
   OutputController::addToWorld(outputListColumns);
+  IdentificationController::addToWorld(identificationListColumns);
 }
 
 void LocoNetInterface::loaded()
@@ -248,6 +299,7 @@ void LocoNetInterface::loaded()
 
 void LocoNetInterface::destroying()
 {
+  IdentificationController::destroying();
   OutputController::destroying();
   InputController::destroying();
   DecoderController::destroying();

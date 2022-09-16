@@ -167,6 +167,8 @@ hsi88:s88_left=S88 left
 hsi88:s88_middle=S88 middle
 hsi88:s88_right=S88 right
 
+identification:opc_multi_sense_direction=OPC_MULTI_SENSE direction
+
 input_list:bus=Bus
 
 input_map_item.block:input=Input
@@ -384,6 +386,10 @@ message:W9999=%1
 object:id=Id
 object:name=Name
 object:notes=Notes
+
+opc_multi_sense_direction:in_sensor_address=In sensor address
+opc_multi_sense_direction:in_transponder_address=In transponder address (Blücher GBM16XN)
+opc_multi_sense_direction:none=None
 
 output_action:none=None
 output_action:off=Off

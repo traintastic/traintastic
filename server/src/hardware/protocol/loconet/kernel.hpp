@@ -37,6 +37,7 @@ enum class DecoderChangeFlags;
 class DecoderController;
 class InputController;
 class OutputController;
+class IdentificationController;
 
 namespace LocoNet {
 
@@ -148,6 +149,8 @@ class Kernel
     OutputController* m_outputController;
     std::array<TriState, 4096> m_outputValues;
 
+    IdentificationController* m_identificationController;
+
     Config m_config;
 #ifndef NDEBUG
     bool m_started;
@@ -188,6 +191,8 @@ class Kernel
     static constexpr uint16_t inputAddressMax = 4096;
     static constexpr uint16_t outputAddressMin = 1;
     static constexpr uint16_t outputAddressMax = 4096;
+    static constexpr uint16_t identificationAddressMin = 1;
+    static constexpr uint16_t identificationAddressMax = 4096;
 
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
@@ -296,6 +301,14 @@ class Kernel
      * @note This function may not be called when the kernel is running.
      */
     void setOutputController(OutputController* outputController);
+
+    /**
+     * @brief Set the identification controller
+     *
+     * @param[in] identificationController The identification controller
+     * @note This function may not be called when the kernel is running.
+     */
+    void setIdentificationController(IdentificationController* identificationController);
 
     /**
      * @brief Start the kernel and IO handler

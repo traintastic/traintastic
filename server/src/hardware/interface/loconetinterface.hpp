@@ -29,6 +29,7 @@
 #include "../decoder/decodercontroller.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
+#include "../identification/identificationcontroller.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../enum/loconetinterfacetype.hpp"
 #include "../../enum/serialflowcontrol.hpp"
@@ -41,6 +42,7 @@ class LocoNetInterface final
   , public DecoderController
   , public InputController
   , public OutputController
+  , public IdentificationController
 {
   CLASS_ID("interface.loconet")
   DEFAULT_ID("loconet")
@@ -83,6 +85,10 @@ class LocoNetInterface final
     // OutputController:
     std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final { return {LocoNet::Kernel::outputAddressMin, LocoNet::Kernel::outputAddressMax}; }
     [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
+
+    // IdentificationController:
+    std::pair<uint32_t, uint32_t> identificationAddressMinMax(uint32_t /*channel*/) const final { return {LocoNet::Kernel::identificationAddressMin, LocoNet::Kernel::identificationAddressMax}; }
+    void identificationEvent(uint32_t channel, uint32_t address, IdentificationEventType eventType, uint16_t identifier, Direction direction, uint8_t category) final;
 };
 
 #endif

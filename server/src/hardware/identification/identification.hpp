@@ -29,6 +29,7 @@
 #include "../../core/event.hpp"
 #include "../../enum/direction.hpp"
 #include <traintastic/enum/identificationeventtype.hpp>
+#include <traintastic/enum/opcmultisensedirection.hpp>
 #include "identificationcontroller.hpp"
 
 #ifdef interface
@@ -50,6 +51,8 @@ class Identification : public IdObject
     void interfaceChanged();
     void channelChanged();
 
+    bool hasLocoNetInterface() const;
+
   protected:
     void addToWorld() override;
     void loaded() override;
@@ -65,6 +68,7 @@ class Identification : public IdObject
     ObjectProperty<IdentificationController> interface;
     Property<uint32_t> channel;
     Property<uint32_t> address;
+    Property<OPCMultiSenseDirection> opcMultiSenseDirection;
     ObjectVectorProperty<Object> consumers;
     Event<IdentificationEventType, uint16_t, Direction, uint8_t> onEvent;
 
