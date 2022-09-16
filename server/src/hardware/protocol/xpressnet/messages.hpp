@@ -290,6 +290,7 @@ struct SpeedAndDirectionInstruction : LocomotiveInstruction
   SpeedAndDirectionInstruction(uint16_t address, bool longAddress, bool emergencyStop, Direction direction) :
     LocomotiveInstruction(address, longAddress)
   {
+    assert(direction != Direction::Unknown);
     speedAndDirection = emergencyStop ? 0x01 : 0x00;
     if(direction == Direction::Forward)
       speedAndDirection |= 0x80;

@@ -47,6 +47,8 @@ namespace DisplayName
     constexpr std::string_view debugLogRXTX = "hardware:debug_log_rx_tx";
     constexpr std::string_view decoders = "hardware:decoders";
     constexpr std::string_view ecos = "hardware:ecos";
+    constexpr std::string_view identificationMonitor = "hardware:identification_monitor";
+    constexpr std::string_view identifications = "hardware:identifications";
     constexpr std::string_view inputMonitor = "hardware:input_monitor";
     constexpr std::string_view inputs = "hardware:inputs";
     constexpr std::string_view interface = "hardware:interface";

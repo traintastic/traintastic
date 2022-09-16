@@ -9,3 +9,6 @@ TODO
 
 ### `enum.direction.REVERSE` $badge:since:v0.1$
 TODO
+
+### `enum.direction.UNKNOWN` $badge:since:v0.2$
+TODO

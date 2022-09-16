@@ -540,6 +540,7 @@ struct LanXSetLocoDrive : LanX
 
   inline void setDirection(Direction value)
   {
+    assert(value != Direction::Unknown);
     Utils::setDirection(speedAndDirection, value);
   }
 

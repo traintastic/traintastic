@@ -320,6 +320,7 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
       }
     }
 
+    assert(decoder.direction.value() != Direction::Unknown);
     if(decoder.direction.value() == Direction::Forward)
       cmd.speedAndDirection |= 0x80;
 

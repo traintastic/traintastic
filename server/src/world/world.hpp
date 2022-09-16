@@ -40,6 +40,8 @@
 #include "../hardware/interface/interfacelist.hpp"
 #include "../hardware/decoder/list/decoderlist.hpp"
 #include "../hardware/decoder/decodercontroller.hpp"
+#include "../hardware/identification/list/identificationlist.hpp"
+#include "../hardware/identification/identificationcontroller.hpp"
 #include "../hardware/input/list/inputlist.hpp"
 #include "../hardware/input/inputcontroller.hpp"
 #include "../hardware/output/list/outputlist.hpp"
@@ -91,11 +93,13 @@ class World : public Object
     ObjectProperty<ControllerList<DecoderController>> decoderControllers;
     ObjectProperty<ControllerList<InputController>> inputControllers;
     ObjectProperty<ControllerList<OutputController>> outputControllers;
+    ObjectProperty<ControllerList<IdentificationController>> identificationControllers;
 
     ObjectProperty<InterfaceList> interfaces;
     ObjectProperty<DecoderList> decoders;
     ObjectProperty<InputList> inputs;
     ObjectProperty<OutputList> outputs;
+    ObjectProperty<IdentificationList> identifications;
     ObjectProperty<BoardList> boards;
     ObjectProperty<Clock> clock;
     ObjectProperty<TrainList> trains;

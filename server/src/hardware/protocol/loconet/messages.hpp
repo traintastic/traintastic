@@ -252,6 +252,7 @@ struct LocoDirF : SlotMessage
     SlotMessage{OPC_LOCO_DIRF, SLOT_UNKNOWN},
     dirf{0}
   {
+    assert(direction != Direction::Unknown);
     if(direction == Direction::Forward)
       dirf |= SL_DIR;
     if(f0)
@@ -273,6 +274,7 @@ struct LocoDirF : SlotMessage
 
   inline void setDirection(Direction value)
   {
+    assert(value != Direction::Unknown);
     if(value == Direction::Forward)
       dirf |= SL_DIR;
     else

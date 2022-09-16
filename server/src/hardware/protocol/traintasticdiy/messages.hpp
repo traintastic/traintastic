@@ -228,6 +228,7 @@ struct ThrottleSetSpeedDirection : ThrottleMessage
     , speedMax{speedMax_}
     , flags{flagSpeedSet | flagDirectionSet}
   {
+    assert(direction_ != Direction::Unknown);
     if(direction_ == Direction::Forward)
       flags |= flagDirectionForward;
     updateChecksum(*this);
@@ -248,6 +249,7 @@ struct ThrottleSetSpeedDirection : ThrottleMessage
     , speedMax{0}
     , flags{flagDirectionSet}
   {
+    assert(direction_ != Direction::Unknown);
     if(direction_ == Direction::Forward)
       flags |= flagDirectionForward;
     updateChecksum(*this);

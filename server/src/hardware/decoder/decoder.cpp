@@ -77,6 +77,10 @@ Decoder::Decoder(World& world, std::string_view _id) :
     [this](const Direction& /*value*/)
     {
       changed(DecoderChangeFlags::Direction);
+    },
+    [this](Direction& value)
+    {
+      return value != Direction::Unknown;
     }},
   toggleDirection{*this, "toggle_direction",
     [this]()

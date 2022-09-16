@@ -37,6 +37,7 @@
 #include "../hardware/interface/interfaces.hpp"
 #include "../hardware/decoder/decoder.hpp"
 #include "../hardware/decoder/decoderfunction.hpp"
+#include "../hardware/identification/identification.hpp"
 #include "../vehicle/rail/railvehicles.hpp"
 #include "../train/train.hpp"
 #include "../lua/script.hpp"
@@ -201,6 +202,8 @@ void WorldLoader::createObject(ObjectData& objectData)
     objectData.object = Input::create(*m_world, id);
   else if(classId == Output::classId)
     objectData.object = Output::create(*m_world, id);
+  else if(classId == Identification::classId)
+    objectData.object = Identification::create(*m_world, id);
   else if(classId == Board::classId)
     objectData.object = Board::create(*m_world, id);
   else if(startsWith(classId, Tiles::classIdPrefix))

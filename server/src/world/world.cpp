@@ -33,6 +33,7 @@
 #include "../core/attributes.hpp"
 #include "../core/abstractvectorproperty.hpp"
 #include "../hardware/input/input.hpp"
+#include "../hardware/identification/identification.hpp"
 #include "../log/log.hpp"
 #include "../utils/displayname.hpp"
 #include "../traintastic/traintastic.hpp"
@@ -42,6 +43,7 @@ using nlohmann::json;
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Interface | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Interface | InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Interface | OutputListColumn::Channel | OutputListColumn::Address;
+constexpr auto identificationListColumns = IdentificationListColumn::Id | IdentificationListColumn::Name | IdentificationListColumn::Interface /*| IdentificationListColumn::Channel*/ | IdentificationListColumn::Address;
 
 std::shared_ptr<World> World::create()
 {
@@ -55,11 +57,13 @@ void World::init(World& world)
   world.decoderControllers.setValueInternal(std::make_shared<ControllerList<DecoderController>>(world, world.decoderControllers.name()));
   world.inputControllers.setValueInternal(std::make_shared<ControllerList<InputController>>(world, world.inputControllers.name()));
   world.outputControllers.setValueInternal(std::make_shared<ControllerList<OutputController>>(world, world.outputControllers.name()));
+  world.identificationControllers.setValueInternal(std::make_shared<ControllerList<IdentificationController>>(world, world.identificationControllers.name()));
 
   world.interfaces.setValueInternal(std::make_shared<InterfaceList>(world, world.interfaces.name()));
   world.decoders.setValueInternal(std::make_shared<DecoderList>(world, world.decoders.name(), decoderListColumns));
   world.inputs.setValueInternal(std::make_shared<InputList>(world, world.inputs.name(), inputListColumns));
   world.outputs.setValueInternal(std::make_shared<OutputList>(world, world.outputs.name(), outputListColumns));
+  world.identifications.setValueInternal(std::make_shared<IdentificationList>(world, world.outputs.name(), identificationListColumns));
   world.boards.setValueInternal(std::make_shared<BoardList>(world, world.boards.name()));
   world.clock.setValueInternal(std::make_shared<Clock>(world, world.clock.name()));
   world.trains.setValueInternal(std::make_shared<TrainList>(world, world.trains.name()));
@@ -77,10 +81,12 @@ World::World(Private /*unused*/) :
   decoderControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   inputControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   outputControllers{this, "output_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  identificationControllers{this, "identification_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   interfaces{this, "interfaces", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  identifications{this, "identifications", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   boards{this, "boards", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   clock{this, "clock", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   trains{this, "trains", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
@@ -232,6 +238,8 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(inputControllers);
   Attributes::addObjectEditor(outputControllers, false);
   m_interfaceItems.add(outputControllers);
+  Attributes::addObjectEditor(identificationControllers, false);
+  m_interfaceItems.add(identificationControllers);
 
   Attributes::addObjectEditor(interfaces, false);
   m_interfaceItems.add(interfaces);
@@ -241,6 +249,8 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(inputs);
   Attributes::addObjectEditor(outputs, false);
   m_interfaceItems.add(outputs);
+  Attributes::addObjectEditor(identifications, false);
+  m_interfaceItems.add(identifications);
   Attributes::addObjectEditor(boards, false);
   m_interfaceItems.add(boards);
   Attributes::addObjectEditor(clock, false);

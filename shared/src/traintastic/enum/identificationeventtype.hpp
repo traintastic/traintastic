@@ -1,9 +1,9 @@
 /**
- * shared/src/enum/direction.hpp
+ * shared/src/traintastic/enum/identificationeventtype.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022 Reinder Feenstra
+ * Copyright (C) 2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,24 +20,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_DIRECTION_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_DIRECTION_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_IDENTIFICATIONEVENTTYPE_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_IDENTIFICATIONEVENTTYPE_HPP
 
 #include <cstdint>
 #include "enum.hpp"
 
-enum class Direction : uint8_t
+enum class IdentificationEventType : uint8_t
 {
-  Forward = 0,
-  Reverse = 1,
-  Unknown = 255
+  Present = 1,
+  Absent = 2,
+  Seen = 3,
 };
 
-TRAINTASTIC_ENUM(Direction, "direction", 3,
+TRAINTASTIC_ENUM(IdentificationEventType, "identification_event_type", 3,
 {
-  {Direction::Forward, "forward"},
-  {Direction::Reverse, "reverse"},
-  {Direction::Unknown, "unknown"}
+  {IdentificationEventType::Present, "present"},
+  {IdentificationEventType::Absent, "absent"},
+  {IdentificationEventType::Seen, "seen"},
 });
 
 #endif

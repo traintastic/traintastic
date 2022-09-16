@@ -150,6 +150,7 @@ hardware:debug_log_output=Log output changes
 hardware:debug_log_rx_tx=Log all communication
 hardware:decoders=Decoders
 hardware:ecos=ECoS
+hardware:identifications=Identifications
 hardware:input_monitor=Input monitor
 hardware:inputs=Inputs
 hardware:interface=Interface
