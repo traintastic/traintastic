@@ -229,6 +229,7 @@ list:remove=Remove
 
 loconet_command_station:custom=Custom
 loconet_command_station:digikeijs_dr5000=Digikeijs DR5000
+loconet_command_station:uhlenbrock_ibcom=Uhlenbrock IB-Com
 loconet_command_station:uhlenbrock_intellibox=Uhlenbrock Intellibox
 
 loconet_interface_type:lbserver=LBServer
@@ -241,8 +242,11 @@ loconet_serial_interface:digikeijs_dr5000=Digikeijs DR5000
 loconet_serial_interface:rosoft_loconet_interface=RoSoft LocoNet interface
 
 loconet_settings:command_station=Command station
+loconet_settings:echo_timeout=Echo timeout
 loconet_settings:fast_clock_sync_enabled=Fast clock sync enabled
 loconet_settings:fast_clock_sync_interval=Fast clock sync interval
+loconet_settings:locomotive_slots=Locomotive slots
+loconet_settings:response_timeout=Response timeout
 
 lua.script:disabled=Disabled
 lua.script:start=Start
@@ -382,6 +386,7 @@ message:W2002=Command station doesn't support functions above F%1
 message:W2003=Command station doesn't support %1 speedsteps using %2
 message:W2004=Input address %1 is invalid
 message:W2005=Output address %1 is invalid
+message:W2018=Timeout, no echo within %1ms
 message:W9999=%1
 
 object:id=Id

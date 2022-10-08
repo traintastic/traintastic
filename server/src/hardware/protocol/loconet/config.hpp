@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,14 +23,19 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_CONFIG_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_CONFIG_HPP
 
-#include "../../../enum/loconetcommandstation.hpp"
+#include <traintastic/enum/loconetcommandstation.hpp>
 
 namespace LocoNet {
 
 struct Config
 {
-  static constexpr uint16_t echoTimeout = 500; //!< Wait for echo timeout in milliseconds
-  static constexpr uint16_t responseTimeout = 500; //!< Wait for response timeout in milliseconds
+  static constexpr uint16_t timeoutMin = 100; //!< Minimum timeout in milliseconds
+  static constexpr uint16_t timeoutMax = 10000; //!< Maximum timeout in milliseconds
+
+  uint16_t echoTimeout; //!< Wait for echo timeout in milliseconds
+  uint16_t responseTimeout; //!< Wait for response timeout in milliseconds
+
+  uint8_t locomotiveSlots; //!< Number of available locomotive slots, defaults to #SLOT_LOCO_MAX
 
   bool fastClockSyncEnabled;
   uint8_t fastClockSyncInterval; //!< Fast clock sync interval in seconds

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,13 +31,19 @@ namespace LocoNet {
 
 class Settings final : public SubObject
 {
+  CLASS_ID("loconet_settings")
+
+  private:
+    void commandStationChanged(LocoNetCommandStation value);
+
   protected:
     void loaded() final;
 
   public:
-    CLASS_ID("loconet_settings")
-
     Property<LocoNetCommandStation> commandStation;
+    Property<uint16_t> echoTimeout;
+    Property<uint16_t> responseTimeout;
+    Property<uint8_t> locomotiveSlots;
     Property<bool> fastClockSyncEnabled;
     Property<uint8_t> fastClockSyncInterval; //!< Fast clock sync interval in seconds
     Property<bool> debugLogInput;

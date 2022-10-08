@@ -161,7 +161,7 @@ void Kernel::start()
       if(m_config.fastClockSyncEnabled)
         startFastClockSyncTimer();
 
-      for(uint8_t slot = SLOT_LOCO_MIN; slot <= SLOT_LOCO_MAX; slot++)
+      for(uint8_t slot = SLOT_LOCO_MIN; slot <= m_config.locomotiveSlots; slot++)
         send(RequestSlotData(slot), LowPriority);
 
       if(m_onStarted)
@@ -1014,13 +1014,13 @@ void Kernel::sendNextMessage()
         m_sentMessagePriority = static_cast<Priority>(priority);
 
         m_waitingForEcho = true;
-        m_waitingForEchoTimer.expires_after(boost::asio::chrono::milliseconds(Config::echoTimeout));
+        m_waitingForEchoTimer.expires_after(boost::asio::chrono::milliseconds(m_config.echoTimeout));
         m_waitingForEchoTimer.async_wait(std::bind(&Kernel::waitingForEchoTimerExpired, this, std::placeholders::_1));
 
         m_waitingForResponse = hasResponse(message);
         if(m_waitingForResponse)
         {
-          m_waitingForResponseTimer.expires_after(boost::asio::chrono::milliseconds(Config::responseTimeout));
+          m_waitingForResponseTimer.expires_after(boost::asio::chrono::milliseconds(m_config.responseTimeout));
           m_waitingForResponseTimer.async_wait(std::bind(&Kernel::waitingForResponseTimerExpired, this, std::placeholders::_1));
         }
       }
@@ -1039,7 +1039,7 @@ void Kernel::waitingForEchoTimerExpired(const boost::system::error_code& ec)
   EventLoop::call(
     [this]()
     {
-      Log::log(m_logId, LogMessage::E2018_TIMEOUT_NO_ECHO_WITHIN_X_MS, Config::echoTimeout);
+      Log::log(m_logId, LogMessage::W2018_TIMEOUT_NO_ECHO_WITHIN_X_MS, m_config.echoTimeout);
     });
 }
 

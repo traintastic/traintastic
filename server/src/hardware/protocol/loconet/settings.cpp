@@ -21,6 +21,7 @@
  */
 
 #include "settings.hpp"
+#include "messages.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
 
@@ -28,21 +29,10 @@ namespace LocoNet {
 
 Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
-  , commandStation{this, "command_station", LocoNetCommandStation::Custom, PropertyFlags::ReadWrite | PropertyFlags::Store,
-      [](LocoNetCommandStation value)
-      {
-        switch(value)
-        {
-          case LocoNetCommandStation::Custom:
-            break;
-
-          case LocoNetCommandStation::DigikeijsDR5000:
-            break;
-
-          case LocoNetCommandStation::UhlenbrockIntellibox:
-            break;
-        }
-      }}
+  , commandStation{this, "command_station", LocoNetCommandStation::Custom, PropertyFlags::ReadWrite | PropertyFlags::Store, std::bind(&Settings::commandStationChanged, this, std::placeholders::_1)}
+  , echoTimeout{this, "echo_timeout", 250, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , responseTimeout{this, "response_timeout", 1000, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , locomotiveSlots{this, "locomotive_slots", SLOT_LOCO_MAX, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , fastClockSyncEnabled{this, "fast_clock_sync_enabled", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](bool value)
       {
@@ -56,6 +46,16 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   Attributes::addDisplayName(commandStation, DisplayName::Hardware::commandStation);
   Attributes::addValues(commandStation, LocoNetCommandStationValues);
   m_interfaceItems.add(commandStation);
+
+  Attributes::addMinMax(echoTimeout, Config::timeoutMin, Config::timeoutMax);
+  m_interfaceItems.add(echoTimeout);
+
+  Attributes::addMinMax(responseTimeout, Config::timeoutMin, Config::timeoutMax);
+  m_interfaceItems.add(responseTimeout);
+
+  Attributes::addEnabled(locomotiveSlots, true);
+  Attributes::addMinMax(locomotiveSlots, SLOT_LOCO_MIN, SLOT_LOCO_MAX);
+  m_interfaceItems.add(locomotiveSlots);
 
   //Attributes::addGroup(fastClockSyncEnabled, Group::fastClockSync);
   m_interfaceItems.add(fastClockSyncEnabled);
@@ -81,6 +81,11 @@ Config Settings::config() const
 {
   Config config;
 
+  config.echoTimeout = echoTimeout;
+  config.responseTimeout = responseTimeout;
+
+  config.locomotiveSlots = locomotiveSlots;
+
   config.fastClockSyncEnabled = fastClockSyncEnabled;
   config.fastClockSyncInterval = fastClockSyncInterval;
 
@@ -96,6 +101,30 @@ void Settings::loaded()
   SubObject::loaded();
 
   Attributes::setEnabled(fastClockSyncInterval, fastClockSyncEnabled);
+
+  commandStationChanged(commandStation);
+}
+
+void Settings::commandStationChanged(LocoNetCommandStation value)
+{
+  const bool isCustom = (value == LocoNetCommandStation::Custom);
+
+  switch(value)
+  {
+    case LocoNetCommandStation::Custom:
+      break;
+
+    case LocoNetCommandStation::DigikeijsDR5000:
+      locomotiveSlots = SLOT_LOCO_MAX;
+      break;
+
+    case LocoNetCommandStation::UhlenbrockIntellibox:
+    case LocoNetCommandStation::UhlenbrockIBCOM:
+      locomotiveSlots = 32;
+      break;
+  }
+
+  Attributes::setEnabled(locomotiveSlots, isCustom);
 }
 
 }

@@ -122,6 +122,7 @@ enum class LogMessage : uint32_t
   W2003_COMMAND_STATION_DOESNT_SUPPORT_X_SPEEDSTEPS_USING_X = LogMessageOffset::warning + 2003,
   W2004_INPUT_ADDRESS_X_IS_INVALID = LogMessageOffset::warning + 2004,
   W2005_OUTPUT_ADDRESS_X_IS_INVALID = LogMessageOffset::warning + 2005,
+  W2018_TIMEOUT_NO_ECHO_WITHIN_X_MS = LogMessageOffset::warning + 2018,
   W9999_X = LogMessageOffset::warning + 9999,
 
   // Error:

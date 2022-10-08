@@ -24,21 +24,30 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_LOCONETCOMMANDSTATION_HPP
 
 #include <cstdint>
+#include <array>
 #include "enum.hpp"
-#include <frozen/map.h>
 
 enum class LocoNetCommandStation : uint16_t
 {
   Custom = 0,
   UhlenbrockIntellibox = 1,
   DigikeijsDR5000 = 2,
+  UhlenbrockIBCOM = 3,
 };
 
-TRAINTASTIC_ENUM(LocoNetCommandStation, "loconet_command_station", 3,
+TRAINTASTIC_ENUM(LocoNetCommandStation, "loconet_command_station", 4,
 {
   {LocoNetCommandStation::Custom, "custom"},
   {LocoNetCommandStation::UhlenbrockIntellibox, "uhlenbrock_intellibox"},
   {LocoNetCommandStation::DigikeijsDR5000, "digikeijs_dr5000"},
+  {LocoNetCommandStation::UhlenbrockIBCOM, "uhlenbrock_ibcom"},
 });
+
+inline constexpr std::array<LocoNetCommandStation, 4> LocoNetCommandStationValues{{
+  LocoNetCommandStation::Custom,
+  LocoNetCommandStation::DigikeijsDR5000,
+  LocoNetCommandStation::UhlenbrockIntellibox,
+  LocoNetCommandStation::UhlenbrockIBCOM,
+}};
 
 #endif
