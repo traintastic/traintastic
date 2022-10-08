@@ -38,7 +38,7 @@ void LNCVProgrammingController::lncvDetach(LNCVProgrammer& programmer)
 {
   if(m_programmer == &programmer)
   {
-    stopLNCVProgramming();
+    [[maybe_unused]] const bool r = stopLNCVProgramming();
     m_programmer = nullptr;
   }
 }
