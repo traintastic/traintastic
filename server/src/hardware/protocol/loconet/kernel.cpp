@@ -47,6 +47,11 @@ static void updateDecoderSpeed(const std::shared_ptr<Decoder>& decoder, uint8_t 
     decoder->throttle.setValueInternal(Decoder::speedStepToThrottle(speed - 1, SPEED_MAX - 1));
 }
 
+constexpr Kernel::Priority& operator ++(Kernel::Priority& value)
+{
+  return (value = static_cast<Kernel::Priority>(static_cast<std::underlying_type_t<Kernel::Priority>>(value) + 1));
+}
+
 Kernel::Kernel(const Config& config, bool simulation)
   : m_ioContext{1}
   , m_simulation{simulation}
@@ -995,7 +1000,7 @@ void Kernel::send(uint16_t address, Message& message, uint8_t& slot)
 
 void Kernel::sendNextMessage()
 {
-  for(int priority = HighPriority; priority <= LowPriority; priority++)
+  for(Priority priority = HighPriority; priority <= LowPriority; ++priority)
   {
     if(!m_sendQueue[priority].empty())
     {

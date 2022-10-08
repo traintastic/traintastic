@@ -55,6 +55,7 @@ class Kernel
       NormalPriority = 1,
       LowPriority = 2,
     };
+    friend constexpr Priority& operator ++(Priority& value);
 
     class SendQueue
     {
