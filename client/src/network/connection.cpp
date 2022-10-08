@@ -891,10 +891,15 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
       case Message::Command::OutputKeyboardOutputValueChanged:
       case Message::Command::BoardTileDataChanged:
       case Message::Command::OutputMapOutputsChanged:
-        if(auto object = m_objects.value(message->read<Handle>()).lock())
+      {
+        const auto handle = message->read<Handle>();
+        if(auto object = m_objects.value(handle).lock())
+        {
+          m_handleCounter[handle]++;
           object->processMessage(*message);
+        }
         break;
-
+      }
       default:
         Q_ASSERT(false);
         break;
