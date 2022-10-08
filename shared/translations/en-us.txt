@@ -371,6 +371,7 @@ message:N1024=Simulation: enabled
 message:N1025=Exported world successfully
 message:N1026=Imported world successfully
 message:N2001=Simulation not supported
+message:N2002=No response from LNCV module %1 with address %2
 message:N9001=Starting script
 message:N9999=%1
 message:W1001=Discovery disabled, only allowed on port %1

@@ -109,6 +109,7 @@ enum class LogMessage : uint32_t
   N1025_EXPORTED_WORLD_SUCCESSFULLY = LogMessageOffset::notice + 1025,
   N1026_IMPORTED_WORLD_SUCCESSFULLY = LogMessageOffset::notice + 1026,
   N2001_SIMULATION_NOT_SUPPORTED = LogMessageOffset::notice + 2001,
+  N2002_NO_RESPONSE_FROM_LNCV_MODULE_X_WITH_ADDRESS_X = LogMessageOffset::notice + 2002,
   N9001_STARTING_SCRIPT = LogMessageOffset::notice + 9001,
   N9999_X = LogMessageOffset::notice + 9999,
 

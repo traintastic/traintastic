@@ -45,6 +45,9 @@ struct Message;
 
 class Kernel
 {
+  public:
+    using OnLNCVReadResponse = std::function<void(bool, uint16_t, uint16_t)>;
+
   private:
     enum Priority
     {
@@ -137,6 +140,11 @@ class Kernel
     std::function<void()> m_onIdle;
 
     boost::asio::steady_timer m_fastClockSyncTimer;
+
+    bool m_lncvActive = false;
+    uint16_t m_lncvModuleId = 0;
+    uint16_t m_lncvModuleAddress = 0;
+    OnLNCVReadResponse m_onLNCVReadResponse;
 
     DecoderController* m_decoderController;
     std::unordered_map<uint16_t, uint8_t> m_addressToSlot;
@@ -371,6 +379,12 @@ class Kernel
      * \param[in] address Input address, 1..4096
      */
     void simulateInputChange(uint16_t address);
+
+    void lncvStart(uint16_t moduleId, uint16_t moduleAddress);
+    void lncvRead(uint16_t lncv);
+    void lncvWrite(uint16_t lncv, uint16_t value);
+    void lncvStop();
+    void setOnLNCVReadResponse(OnLNCVReadResponse callback);
 };
 
 }

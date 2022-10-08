@@ -24,6 +24,7 @@
 #include "../decoder/list/decoderlisttablemodel.hpp"
 #include "../input/input.hpp"
 #include "../identification/identification.hpp"
+#include "../programming/lncv/lncvprogrammer.hpp"
 #include "../protocol/loconet/iohandler/serialiohandler.hpp"
 #include "../protocol/loconet/iohandler/simulationiohandler.hpp"
 #include "../protocol/loconet/iohandler/tcpbinaryiohandler.hpp"
@@ -170,6 +171,42 @@ void LocoNetInterface::identificationEvent(uint32_t channel, uint32_t address, I
   IdentificationController::identificationEvent(channel, address, eventType, identifier, direction, category);
 }
 
+bool LocoNetInterface::startLNCVProgramming(uint16_t moduleId, uint16_t moduleAddress)
+{
+  if(!m_kernel)
+    return false;
+
+  m_kernel->lncvStart(moduleId, moduleAddress);
+  return true;
+}
+
+bool LocoNetInterface::readLNCV(uint16_t lncv)
+{
+  if(!m_kernel)
+    return false;
+
+  m_kernel->lncvRead(lncv);
+  return true;
+}
+
+bool LocoNetInterface::writeLNCV(uint16_t lncv, uint16_t value)
+{
+  if(!m_kernel)
+    return false;
+
+  m_kernel->lncvWrite(lncv, value);
+  return true;
+}
+
+bool LocoNetInterface::stopLNCVProgramming()
+{
+  if(!m_kernel)
+    return false;
+
+  m_kernel->lncvStop();
+  return true;
+}
+
 bool LocoNetInterface::setOnline(bool& value, bool simulation)
 {
   if(!m_kernel && value)
@@ -233,6 +270,13 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
       m_kernel->setOutputController(this);
       m_kernel->setIdentificationController(this);
 
+      m_kernel->setOnLNCVReadResponse(
+        [this](bool success, uint16_t lncv, uint16_t lncvValue)
+        {
+          if(auto* programmer = lncvProgrammer())
+            programmer->readResponse(success, lncv, lncvValue);
+        });
+
       m_kernel->start();
 
       m_loconetPropertyChanged = loconet->propertyChanged.connect(
@@ -288,6 +332,7 @@ void LocoNetInterface::addToWorld()
   InputController::addToWorld(inputListColumns);
   OutputController::addToWorld(outputListColumns);
   IdentificationController::addToWorld(identificationListColumns);
+  LNCVProgrammingController::addToWorld();
 }
 
 void LocoNetInterface::loaded()
@@ -299,6 +344,7 @@ void LocoNetInterface::loaded()
 
 void LocoNetInterface::destroying()
 {
+  LNCVProgrammingController::destroying();
   IdentificationController::destroying();
   OutputController::destroying();
   InputController::destroying();

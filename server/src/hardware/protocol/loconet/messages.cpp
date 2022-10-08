@@ -116,6 +116,21 @@ void setSlot(Message& message, uint8_t slot)
   assert(false);
 }
 
+bool hasResponse(const Message& message)
+{
+  if(message.opCode == OPC_IMM_PACKET)
+  {
+    return
+      Uhlenbrock::ReadSpecialOption::check(message) ||
+      Uhlenbrock::LNCVStart::check(message) ||
+      Uhlenbrock::LNCVRead::check(message) ||
+      Uhlenbrock::LNCVWrite::check(message);
+  }
+
+  return (message.opCode & 0x08);
+}
+
+
 bool isValidResponse(const Message& request, const Message& response)
 {
   if(response.opCode == OPC_LONG_ACK)
@@ -161,16 +176,25 @@ bool isValidResponse(const Message& request, const Message& response)
           Uhlenbrock::ReadSpecialOptionReply::check(response) &&
           static_cast<const Uhlenbrock::ReadSpecialOption&>(request).specialOption() == static_cast<const Uhlenbrock::ReadSpecialOptionReply&>(response).specialOption();
       }
-      else if(Uhlenbrock::LNCVStart::check(request))
+      else if(Uhlenbrock::LNCVReadResponse::check(response))
       {
-        if(Uhlenbrock::LNCVStartResponse::check(response))
+        if(Uhlenbrock::LNCVStart::check(request))
         {
-          const auto& lncvStart = static_cast<const Uhlenbrock::LNCVStart&>(request);
-          const auto& lncvStartResponse = static_cast<const Uhlenbrock::LNCVStartResponse&>(response);
+          const auto& lncvRequest = static_cast<const Uhlenbrock::LNCVStart&>(request);
+          const auto& lncvResponse = static_cast<const Uhlenbrock::LNCVReadResponse&>(response);
 
           return
-            lncvStart.moduleId() == lncvStartResponse.moduleId() &&
-            (lncvStart.address() == Uhlenbrock::LNCVStart::broadcastAddress || lncvStart.address() == lncvStartResponse.address());
+            lncvRequest.moduleId() == lncvResponse.moduleId() &&
+            lncvResponse.lncv() == 0;
+        }
+        if(Uhlenbrock::LNCVRead::check(request))
+        {
+          const auto& lncvRequest = static_cast<const Uhlenbrock::LNCVRead&>(request);
+          const auto& lncvResponse = static_cast<const Uhlenbrock::LNCVReadResponse&>(response);
+
+          return
+            lncvRequest.moduleId() == lncvResponse.moduleId() &&
+            lncvRequest.lncv() == lncvResponse.lncv();
         }
       }
       else
@@ -206,7 +230,7 @@ bool isValidResponse(const Message& request, const Message& response)
   return false;
 }
 
-std::string toString(const Message& message, bool raw)
+std::string toString(const Message& message)
 {
   std::string s;
   if(std::string_view sv = toString(message.opCode); !sv.empty())
@@ -295,8 +319,6 @@ std::string toString(const Message& message, bool raw)
         s.append(" sensorAddress=").append(std::to_string(multiSenseTransponder.sensorAddress()));
         s.append(" transponderAddress=").append(std::to_string(multiSenseTransponder.transponderAddress()));
       }
-      else
-        raw = true;
       break;
     }
     case OPC_D4:
@@ -340,13 +362,8 @@ std::string toString(const Message& message, bool raw)
             s.append(" f27=").append(locoF21F27.f27() ? "on" : "off");
             break;
           }
-          default:
-            raw = true;
-            break;
         }
       }
-      else
-        raw = true;
       break;
     }
     case OPC_MULTI_SENSE_LONG:
@@ -360,27 +377,68 @@ std::string toString(const Message& message, bool raw)
         s.append(" transponderAddress=").append(std::to_string(multiSenseTransponder.transponderAddress()));
         s.append(" transponderDirection=").append(multiSenseTransponder.transponderDirection() == Direction::Forward ? "fwd" : "rev");
       }
-      else
-        raw = true;
+      break;
+    }
+    case OPC_PEER_XFER:
+    {
+      if(Uhlenbrock::LNCVReadResponse::check(message))
+      {
+        const auto& lncvReadResponse = static_cast<const Uhlenbrock::LNCVReadResponse&>(message);
+        s.append(" LNCV read response:");
+        s.append(" module=").append(std::to_string(lncvReadResponse.moduleId()));
+        s.append(" lncv=").append(std::to_string(lncvReadResponse.lncv()));
+        s.append(" value=").append(std::to_string(lncvReadResponse.value()));
+      }
+      break;
+    }
+    case OPC_IMM_PACKET:
+    {
+      if(Uhlenbrock::LNCVStart::check(message))
+      {
+        const auto& lncvStart = static_cast<const Uhlenbrock::LNCVStart&>(message);
+        s.append(" LNCV start:");
+        s.append(" module=").append(std::to_string(lncvStart.moduleId()));
+        s.append(" address=").append(std::to_string(lncvStart.address()));
+      }
+      else if(Uhlenbrock::LNCVRead::check(message))
+      {
+        const auto& lncvRead = static_cast<const Uhlenbrock::LNCVRead&>(message);
+        s.append(" LNCV read:");
+        s.append(" module=").append(std::to_string(lncvRead.moduleId()));
+        s.append(" address=").append(std::to_string(lncvRead.address()));
+        s.append(" lncv=").append(std::to_string(lncvRead.lncv()));
+      }
+      else if(Uhlenbrock::LNCVWrite::check(message))
+      {
+        const auto& lncvWrite = static_cast<const Uhlenbrock::LNCVWrite&>(message);
+        s.append(" LNCV write:");
+        s.append(" module=").append(std::to_string(lncvWrite.moduleId()));
+        s.append(" lncv=").append(std::to_string(lncvWrite.lncv()));
+        s.append(" value=").append(std::to_string(lncvWrite.value()));
+      }
+      else if(Uhlenbrock::LNCVStop::check(message))
+      {
+        const auto& lncvStop = static_cast<const Uhlenbrock::LNCVStop&>(message);
+        s.append(" LNCV stop:");
+        s.append(" module=").append(std::to_string(lncvStop.moduleId()));
+        s.append(" address=").append(std::to_string(lncvStop.address()));
+      }
       break;
     }
     default:
-      raw = true;
       break;
   }
 
-  if(raw)
+  // raw bytes:
+  s.append(" [");
+  const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&message);
+  for(int i = 0; i < message.size(); i++)
   {
-    s.append(" [");
-    const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&message);
-    for(int i = 0; i < message.size(); i++)
-    {
-      if(i != 0)
-        s.append(" ");
-      s.append(toHex(bytes[i]));
-    }
-    s.append("]");
+    if(i != 0)
+      s.append(" ");
+    s.append(toHex(bytes[i]));
   }
+  s.append("]");
 
   return s;
 }

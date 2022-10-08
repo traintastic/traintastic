@@ -217,6 +217,13 @@ Module: 68610
 ### LNCV programming off??
 ```2021-06-19 21:40:20.590313 [debug]    cs_1.loconet: rx: OPC_PEER_XFER [E5 0F 01 05 00 21 03 7F 7F 00 00 01 00 40 72]```
 
+```
+2022-03-11 19:14:13.177378 loconet_1 D2002: RX: OPC_IMM_PACKET [ED 0F 01 05 00 21 11 74 18 00 00 7F 00 40 7A]
+
+module = 63880
+address = 255
+```
+
 ### LNCV write
 ```
 LNCV  0 -> 5 : OPC_IMM_PACKET [ED 0F 01 05 00 20 01 4D 1A 00 00 05 00 00 6A]
@@ -224,12 +231,55 @@ LNCV  0 -> 1 : OPC_IMM_PACKET [ED 0F 01 05 00 20 01 4D 1A 00 00 01 00 00 6E]
 LNCV  1 -> 2 : OPC_IMM_PACKET [ED 0F 01 05 00 20 01 4D 1A 01 00 02 00 00 6C]
 LNCV  2 -> 1 : OPC_IMM_PACKET [ED 0F 01 05 00 20 01 4D 1A 02 00 01 00 00 6C]
 LNCV 15 -> 1 : OPC_IMM_PACKET [ED 0F 01 05 00 20 01 4D 1A 0F 00 01 00 00 61]
-                               ^^ ^^ ?? ?? ?? ?? ?? ?? ?? ^^ ^^^^^ ^^^^^ ^^
-                              OPC  |                      LN value not   chk
-                              IMM len                     CV u16   used? sum
-                                                          u8 big
-                                                             endian
+                               ^^ ^^ ?? ?? ?? ?? ?? ^^^^^ ^^^^^ ^^^^^
+                              OPC  |               Module LNCV  Value
+                              IMM len               Lo Hi Lo Hi Lo Hi
 ```
+
+```
+2022-03-11 19:06:19.252118 loconet_1 D2002: RX: OPC_IMM_PACKET [ED 0F 01 05 00 20 11 74 18 00 00 7F 00 00 3B]
+```
+
+Response = long ack
+```
+2022-10-08 17:21:36.955220 loconet_1 D2002: RX: OPC_LONG_ACK [B4 6D 7F 59]
+```
+
+
+### LNCV read
+```
+2022-03-11 19:02:14.989146 loconet_1 D2002: RX: OPC_IMM_PACKET [ED 0F 01 05 00 21 01 74 18 01 00 0F 00 00 5B]
+2022-03-11 19:02:15.005091 loconet_1 D2002: RX: OPC_PEER_XFER [E5 0F 05 49 4B 1F 01 74 18 01 00 02 00 00 63]
+
+module = 63880
+address = 15
+lncv = 1
+value = 2
+```
+
+```
+2022-03-11 20:53:12.608484 loconet_1 D2002: RX: OPC_IMM_PACKET [ED 0F 01 05 00 21 01 4D 1A 01 00 01 00 00 6E]
+2022-03-11 20:53:12.624477 loconet_1 D2002: RX: OPC_PEER_XFER [E5 0F 05 49 4B 1F 01 4D 1A 01 00 02 00 00 58]
+
+module = 68610
+address = 1
+lncv = 1
+value = 2
+```
+
+
+Start/Read LNCV 1 with IB-com util
+```
+2022-10-08 16:09:19.373818 loconet_1 D2002: RX: OPC_IMM_PACKET LNCV read: module=6388 address=1 lncv=0 [ED 0F 01 05 00 21 41 74 18 00 00 01 00 00 14]
+2022-10-08 16:09:19.394023 loconet_1 D2002: RX: OPC_PEER_XFER LNCV read response: module=6388 lncv=0 value=1 [E5 0F 05 49 4B 1F 01 74 18 00 00 01 00 00 61]
+2022-10-08 16:09:19.409595 loconet_1 D2002: RX: OPC_PEER_XFER LNCV read response: module=6388 lncv=0 value=1 [E5 0F 05 49 4B 1F 01 74 18 00 00 01 00 00 61]
+2022-10-08 16:09:24.932170 loconet_1 D2002: RX: OPC_IMM_PACKET [ED 0F 01 05 00 21 01 74 18 00 00 01 00 00 54]
+2022-10-08 16:09:24.959117 loconet_1 D2002: RX: OPC_PEER_XFER LNCV read response: module=6388 lncv=0 value=1 [E5 0F 05 49 4B 1F 01 74 18 00 00 01 00 00 61]
+2022-10-08 16:09:24.973951 loconet_1 D2002: RX: OPC_PEER_XFER LNCV read response: module=6388 lncv=0 value=1 [E5 0F 05 49 4B 1F 01 74 18 00 00 01 00 00 61]
+```
+
+**Start = read of lncv 0 with one extra bit set**
+
 
 ## Uhlenbrock IB-COM
 
@@ -254,4 +304,20 @@ Read SO 255:
 2022-03-07 23:42:12.564207 loconet_1 D2001: TX: OPC_IMM_PACKET [ED 0F 01 49 42 02 01 7F 00 00 00 00 00 00 6B]
 2022-03-07 23:42:12.579173 loconet_1 D2002: RX: OPC_IMM_PACKET [ED 0F 01 49 42 02 01 7F 00 00 00 00 00 00 6B]
 2022-03-07 23:42:12.588373 loconet_1 D2002: RX: OPC_PEER_XFER [E5 0F 00 49 4B 00 05 7F 00 7F 00 00 00 00 12]
+```
+
+### Serial number
+```
+2022-03-10 15:14:55.780674 loconet_1 D2002: RX: OPC_IMM_PACKET [ED 0F 01 49 42 07 00 00 00 00 00 00 00 00 10]
+2022-03-10 15:14:55.796607 loconet_1 D2002: RX: OPC_PEER_XFER [E5 0F 00 49 4B 09 08 11 00 00 03 06 00 00 02]
+
+serial number = 1100008306
+```
+
+### Software version
+```
+2022-03-10 15:14:55.828622 loconet_1 D2002: RX: OPC_IMM_PACKET [ED 0F 01 49 42 06 00 00 00 00 00 00 00 00 11]
+2022-03-10 15:14:55.844670 loconet_1 D2002: RX: OPC_PEER_XFER [E5 0F 00 49 4B 08 00 00 10 01 01 01 00 00 0E]
+
+version = 1.00
 ```

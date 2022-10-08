@@ -505,6 +505,22 @@ void Kernel::receive(const Message& message)
             Log::log(m_logId, LogMessage::C2004_CANT_GET_FREE_SLOT);
           });
       }
+      else if(m_lncvActive && m_onLNCVReadResponse &&
+          longAck.respondingOpCode() == OPC_IMM_PACKET && longAck.ack1 == 0x7F &&
+          Uhlenbrock::LNCVWrite::check(lastSentMessage()))
+      {
+        const auto& lncvWrite = static_cast<const Uhlenbrock::LNCVWrite&>(lastSentMessage());
+        if(lncvWrite.lncv() == 0)
+        {
+          m_lncvModuleAddress = lncvWrite.value();
+        }
+
+        EventLoop::call(
+          [this, lncvWrite]()
+          {
+            m_onLNCVReadResponse(true, lncvWrite.lncv(), lncvWrite.value());
+          });
+      }
       break;
     }
     case OPC_SLOT_STAT1:
@@ -662,13 +678,27 @@ void Kernel::receive(const Message& message)
       break;
     }
     case OPC_PEER_XFER:
-      if(Uhlenbrock::ReadSpecialOptionReply::check(message))
+      if(isResponse)
       {
-        [[maybe_unused]] const auto& readSpecialOptionReply = static_cast<const Uhlenbrock::ReadSpecialOptionReply&>(message);
-      }
-      else if(Uhlenbrock::LNCVStartResponse::check(message))
-      {
-        [[maybe_unused]] const auto& lncvStartResponse = static_cast<const Uhlenbrock::LNCVStartResponse&>(message);
+        if(Uhlenbrock::ReadSpecialOptionReply::check(message))
+        {
+          [[maybe_unused]] const auto& readSpecialOptionReply = static_cast<const Uhlenbrock::ReadSpecialOptionReply&>(message);
+        }
+        else if(m_onLNCVReadResponse && Uhlenbrock::LNCVReadResponse::check(message))
+        {
+          const auto& lncvReadResponse = static_cast<const Uhlenbrock::LNCVReadResponse&>(message);
+          if(lncvReadResponse.lncv() == 0)
+          {
+            m_lncvActive = true;
+            m_lncvModuleAddress = lncvReadResponse.value();
+          }
+
+          EventLoop::call(
+            [this, lncvReadResponse]()
+            {
+              m_onLNCVReadResponse(true, lncvReadResponse.lncv(), lncvReadResponse.value());
+            });
+        }
       }
       break;
 
@@ -837,6 +867,60 @@ void Kernel::simulateInputChange(uint16_t address)
       });
 }
 
+void Kernel::lncvStart(uint16_t moduleId, uint16_t moduleAddress)
+{
+  m_ioContext.post(
+    [this, moduleId, moduleAddress]()
+    {
+      if(m_lncvActive)
+        return;
+
+      m_lncvActive = true;
+      m_lncvModuleId = moduleId;
+      m_lncvModuleAddress = moduleAddress;
+      send(Uhlenbrock::LNCVStart(m_lncvModuleId, m_lncvModuleAddress), HighPriority);
+    });
+}
+
+void Kernel::lncvRead(uint16_t lncv)
+{
+  m_ioContext.post(
+    [this, lncv]()
+    {
+      if(m_lncvActive)
+        send(Uhlenbrock::LNCVRead(m_lncvModuleId, m_lncvModuleAddress, lncv), HighPriority);
+    });
+}
+
+void Kernel::lncvWrite(uint16_t lncv, uint16_t value)
+{
+  m_ioContext.post(
+    [this, lncv, value]()
+    {
+      if(m_lncvActive)
+        send(Uhlenbrock::LNCVWrite(m_lncvModuleId, lncv, value), HighPriority);
+    });
+}
+
+void Kernel::lncvStop()
+{
+  m_ioContext.post(
+    [this]()
+    {
+      if(!m_lncvActive)
+        return;
+
+      send(Uhlenbrock::LNCVStop(m_lncvModuleId, m_lncvModuleAddress), HighPriority);
+      m_lncvActive = false;
+    });
+}
+
+void Kernel::setOnLNCVReadResponse(OnLNCVReadResponse callback)
+{
+  assert(!m_started);
+  m_onLNCVReadResponse = std::move(callback);
+}
+
 Kernel::LocoSlot* Kernel::getLocoSlot(uint8_t slot, bool sendSlotDataRequestIfNew)
 {
   if(!isLocoSlot(slot))
@@ -959,12 +1043,29 @@ void Kernel::waitingForResponseTimerExpired(const boost::system::error_code& ec)
   if(ec)
     return;
 
-  EventLoop::call(
-    [this]()
-    {
-      Log::log(m_logId, LogMessage::E2019_TIMEOUT_NO_RESPONSE_WITHIN_X_MS, Config::responseTimeout);
-    });
+  if(m_lncvActive && Uhlenbrock::LNCVStart::check(lastSentMessage()))
+  {
+    EventLoop::call(
+      [this, lncvStart=static_cast<const Uhlenbrock::LNCVStart&>(lastSentMessage())]()
+      {
+        Log::log(m_logId, LogMessage::N2002_NO_RESPONSE_FROM_LNCV_MODULE_X_WITH_ADDRESS_X, lncvStart.moduleId(), lncvStart.address());
+
+        if(m_onLNCVReadResponse && m_lncvModuleId == lncvStart.moduleId())
+          m_onLNCVReadResponse(false, lncvStart.address(), 0);
+      });
+
+    sendNextMessage();
+  }
+  else
+  {
+    EventLoop::call(
+      [this]()
+      {
+        Log::log(m_logId, LogMessage::E2019_TIMEOUT_NO_RESPONSE_WITHIN_X_MS, m_config.responseTimeout);
+      });
+  }
 }
+
 void Kernel::startFastClockSyncTimer()
 {
   assert(m_config.fastClockSyncInterval > 0);

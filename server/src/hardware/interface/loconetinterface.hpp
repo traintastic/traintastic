@@ -30,6 +30,7 @@
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
 #include "../identification/identificationcontroller.hpp"
+#include "../programming/lncv/lncvprogrammingcontroller.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../enum/loconetinterfacetype.hpp"
 #include "../../enum/serialflowcontrol.hpp"
@@ -43,6 +44,7 @@ class LocoNetInterface final
   , public InputController
   , public OutputController
   , public IdentificationController
+  , public LNCVProgrammingController
 {
   CLASS_ID("interface.loconet")
   DEFAULT_ID("loconet")
@@ -89,6 +91,12 @@ class LocoNetInterface final
     // IdentificationController:
     std::pair<uint32_t, uint32_t> identificationAddressMinMax(uint32_t /*channel*/) const final { return {LocoNet::Kernel::identificationAddressMin, LocoNet::Kernel::identificationAddressMax}; }
     void identificationEvent(uint32_t channel, uint32_t address, IdentificationEventType eventType, uint16_t identifier, Direction direction, uint8_t category) final;
+
+    // LNCVProgrammingController:
+    bool startLNCVProgramming(uint16_t moduleId, uint16_t moduleAddress) final;
+    bool readLNCV(uint16_t lncv) final;
+    bool writeLNCV(uint16_t lncv, uint16_t value) final;
+    bool stopLNCVProgramming() final;
 };
 
 #endif
