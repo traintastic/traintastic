@@ -55,7 +55,6 @@ WorldListDialog::WorldListDialog(std::shared_ptr<Connection> connection, QWidget
   connect(m_buttons->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &WorldListDialog::reject);
 
   QVBoxLayout* layout = new QVBoxLayout();
-  layout->setMargin(0);
   layout->addWidget(m_tableWidget);
   layout->addWidget(m_buttons);
   setLayout(layout);
