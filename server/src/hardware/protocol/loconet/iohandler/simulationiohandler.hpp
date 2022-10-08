@@ -25,6 +25,8 @@
 
 #include "iohandler.hpp"
 #include <array>
+#include <vector>
+#include <unordered_map>
 #include "../messages.hpp"
 
 namespace LocoNet {
@@ -32,7 +34,24 @@ namespace LocoNet {
 class SimulationIOHandler final : public IOHandler
 {
   private:
+    struct LNCVModule
+    {
+      static constexpr uint16_t broadcastAddress = 65535;
+      static constexpr uint16_t lncvAddress = 0;
+
+      const uint16_t id;
+      bool programmingModeActive;
+      std::unordered_map<uint16_t, uint16_t> lncvs;
+
+      uint16_t address() const
+      {
+        assert(lncvs.find(LNCVModule::lncvAddress) != lncvs.end());
+        return lncvs.find(LNCVModule::lncvAddress)->second;
+      }
+    };
+
     std::array<SlotReadData, SLOT_LOCO_MAX - SLOT_LOCO_MIN + 1> m_locoSlots;
+    std::vector<LNCVModule> m_lncvModules;
 
     void reply(const Message& message);
 

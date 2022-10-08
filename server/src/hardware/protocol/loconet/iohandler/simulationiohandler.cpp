@@ -46,6 +46,28 @@ SimulationIOHandler::SimulationIOHandler(Kernel& kernel)
 {
   for(uint8_t slot = SLOT_LOCO_MIN; slot <= SLOT_LOCO_MAX; slot++)
     m_locoSlots[slot - SLOT_LOCO_MIN].slot = slot;
+
+  // LNCV modules:
+  m_lncvModules.emplace_back(LNCVModule{
+    6312, // Uhlenbrock USB LocoNet interface 68610
+    false,
+    {
+      {0, 1},
+      {1, 0},
+      {2, 4},
+      {4, 0},
+    }});
+
+  m_lncvModules.emplace_back(LNCVModule{
+    6388, // Uhlenbrock S88 LocoNet adaptor 63880
+    false,
+    {
+      {0, 1},
+      {1, 0},
+      {2, 20},
+      {3, 31},
+      {4, 1},
+    }});
 }
 
 bool SimulationIOHandler::send(const Message& message)
@@ -124,8 +146,65 @@ bool SimulationIOHandler::send(const Message& message)
       break;
     }
     case OPC_IMM_PACKET:
-      break; // unimplemented
+    {
+      if(Uhlenbrock::LNCVStart::check(message))
+      {
+        const auto lncvStart = static_cast<const Uhlenbrock::LNCVStart&>(message);
 
+        for(auto& module : m_lncvModules)
+        {
+          if(lncvStart.moduleId() == module.id && (lncvStart.address() == module.address() || lncvStart.address() == LNCVModule::broadcastAddress))
+          {
+            module.programmingModeActive = true;
+            reply(Uhlenbrock::LNCVReadResponse(lncvStart.moduleId(), LNCVModule::lncvAddress, module.address()));
+          }
+        }
+      }
+      else if(Uhlenbrock::LNCVRead::check(message))
+      {
+        const auto lncvRead = static_cast<const Uhlenbrock::LNCVRead&>(message);
+
+        for(auto& module : m_lncvModules)
+        {
+          if(lncvRead.moduleId() == module.id && module.programmingModeActive)
+          {
+            if(auto it = module.lncvs.find(lncvRead.lncv()); it != module.lncvs.end())
+            {
+              reply(Uhlenbrock::LNCVReadResponse(lncvRead.moduleId(), lncvRead.lncv(), it->second));
+            }
+          }
+        }
+      }
+      else if(Uhlenbrock::LNCVWrite::check(message))
+      {
+        const auto lncvWrite = static_cast<const Uhlenbrock::LNCVWrite&>(message);
+
+        for(auto& module : m_lncvModules)
+        {
+          if(lncvWrite.moduleId() == module.id && module.programmingModeActive)
+          {
+            if(auto it = module.lncvs.find(lncvWrite.lncv()); it != module.lncvs.end())
+            {
+              it->second = lncvWrite.value();
+              reply(LongAck(lncvWrite.opCode, 0x7F));
+            }
+          }
+        }
+      }
+      else if(Uhlenbrock::LNCVStop::check(message))
+      {
+        const auto lncvStop = static_cast<const Uhlenbrock::LNCVStop&>(message);
+
+        for(auto& module : m_lncvModules)
+        {
+          if(lncvStop.moduleId() == module.id)
+          {
+            module.programmingModeActive = false;
+          }
+        }
+      }
+      break;
+    }
     case OPC_WR_SL_DATA:
       break; // unimplemented
 
@@ -163,6 +242,7 @@ bool SimulationIOHandler::send(const Message& message)
       }
       break;
     }
+
     case OPC_BUSY:
     case OPC_GPOFF:
     case OPC_GPON:
