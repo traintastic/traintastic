@@ -1,0 +1,3 @@
+[submodule "shared/data/lncv"]
+	path = shared/data/lncv
+	url = git@github.com:traintastic/lncv.git

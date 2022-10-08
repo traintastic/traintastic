@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -77,7 +77,8 @@ int callMethod(Connection& connection, Method& method, std::function<void(const 
   request->write(value_type_v<R>);
   request->write<uint8_t>(sizeof...(A)); // N arguments
 
-  writeArguments(*request, args...);
+  if constexpr(sizeof...(A) > 0)
+    writeArguments(*request, args...);
 
   connection.send(request,
     [&connection, callback](const std::shared_ptr<Message> message)
@@ -101,7 +102,8 @@ int callMethodR(Method& method, std::function<void(const R&, Message::ErrorCode)
   request->write(value_type_v<R>);
   request->write<uint8_t>(sizeof...(A)); // N arguments
 
-  writeArguments(*request, args...);
+  if constexpr(sizeof...(A) > 0)
+    writeArguments(*request, args...);
 
   auto c = method.object().connection();
   c->send(request,
@@ -125,7 +127,8 @@ int callMethod(Method& method, std::function<void(Message::ErrorCode)> callback,
   request->write(ValueType::Invalid);
   request->write<uint8_t>(sizeof...(A)); // N arguments
 
-  writeArguments(*request, args...);
+  if constexpr(sizeof...(A) > 0)
+    writeArguments(*request, args...);
 
   method.object().connection()->send(request,
     [callback=std::move(callback)](const std::shared_ptr<Message> message)
@@ -137,7 +140,7 @@ int callMethod(Method& method, std::function<void(Message::ErrorCode)> callback,
 }
 
 template<class... A>
-void callMethod(Method& method, std::nullptr_t, A... args)
+void callMethod(Method& method, std::nullptr_t = nullptr, A... args)
 {
   auto event = Message::newEvent(Message::Command::ObjectCallMethod);
   event->write(method.object().handle());
@@ -145,7 +148,8 @@ void callMethod(Method& method, std::nullptr_t, A... args)
   event->write(ValueType::Invalid);
   event->write<uint8_t>(sizeof...(A)); // N arguments
 
-  writeArguments(*event, args...);
+  if constexpr(sizeof...(A) > 0)
+    writeArguments(*event, args...);
 
   method.object().connection()->send(event);
 }

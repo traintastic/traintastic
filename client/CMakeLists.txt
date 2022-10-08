@@ -44,6 +44,8 @@ file(GLOB SOURCES
   "src/misc/*.cpp"
   "src/network/*.hpp"
   "src/network/*.cpp"
+  "src/programming/lncv/*.hpp"
+  "src/programming/lncv/*.cpp"
   "src/settings/*.hpp"
   "src/settings/*.cpp"
   "src/style/*.hpp"
@@ -67,11 +69,11 @@ file(GLOB SOURCES
   "thirdparty/QtWaitingSpinner/*.hpp"
   "thirdparty/QtWaitingSpinner/*.cpp")
 
-find_package(Qt5 COMPONENTS Widgets Network Svg REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Network Svg Xml REQUIRED)
 
 target_sources(traintastic-client PRIVATE ${SOURCES})
 
-target_link_libraries(traintastic-client PRIVATE Qt5::Widgets Qt5::Network Qt5::Svg)
+target_link_libraries(traintastic-client PRIVATE Qt5::Widgets Qt5::Network Qt5::Svg Qt5::Xml)
 
 ### PLATFORM ###
 

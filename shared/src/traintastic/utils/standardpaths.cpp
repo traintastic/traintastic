@@ -72,3 +72,14 @@ std::filesystem::path getManualPath()
   return {};
 #endif
 }
+
+std::filesystem::path getLNCVXMLPath()
+{
+#ifdef WIN32
+  return getProgramDataPath() / "traintastic" / "lncv";
+#elif defined(__linux__)
+  return "/opt/traintastic/lncv";
+#else
+  return std::filesystem::current_path() / "lncv";
+#endif
+}

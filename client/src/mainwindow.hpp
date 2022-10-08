@@ -83,6 +83,7 @@ class MainWindow : public QMainWindow
     QAction* m_actionServerRestart;
     QAction* m_actionServerShutdown;
     QAction* m_actionServerLog;
+    QMenu* m_menuProgramming;
     // Main toolbar:
     QToolBar* m_toolbar;
     QToolButton* m_worldOnlineOfflineToolButton;

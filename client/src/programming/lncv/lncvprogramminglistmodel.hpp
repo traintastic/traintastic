@@ -1,9 +1,9 @@
 /**
- * shared/src/traintastic/utils/standardpaths.hpp
+ * client/src/programming/lncv/lncvprogramminglistmodel.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,18 +20,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_UTILS_STANDARDPATHS_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_UTILS_STANDARDPATHS_HPP
+#ifndef TRAINTASTIC_CLIENT_PROGRAMMING_LNCV_LNCVPROGRAMMINGLISTMODEL_HPP
+#define TRAINTASTIC_CLIENT_PROGRAMMING_LNCV_LNCVPROGRAMMINGLISTMODEL_HPP
 
-#include "stdfilesystem.hpp"
+#include <QAbstractListModel>
+#include "../../network/tablemodelptr.hpp"
 
-#ifdef WIN32
-std::filesystem::path getProgramDataPath();
-std::filesystem::path getLocalAppDataPath();
-#endif
+class LNCVProgrammingListModel : public QAbstractListModel
+{
+  private:
+    TableModelPtr m_tableModel;
 
-std::filesystem::path getLocalePath();
-std::filesystem::path getManualPath();
-std::filesystem::path getLNCVXMLPath();
+  public:
+    explicit LNCVProgrammingListModel(TableModelPtr tableModel, QObject* parent = nullptr);
+
+    int rowCount(const QModelIndex& parent = QModelIndex()) const final;
+
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const final;
+};
 
 #endif

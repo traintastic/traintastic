@@ -45,6 +45,7 @@
 #include "network/object.hpp"
 #include "network/property.hpp"
 #include "network/method.hpp"
+#include "programming/lncv/lncvprogrammer.hpp"
 #include "subwindow/objectsubwindow.hpp"
 #include "subwindow/boardsubwindow.hpp"
 #include "subwindow/throttlesubwindow.hpp"
@@ -412,6 +413,16 @@ MainWindow::MainWindow(QWidget* parent) :
             if(Method* method = traintastic->getMethod("shutdown"))
               method->call();
       });
+    m_menuProgramming = menu->addMenu(Locale::tr("qtapp.mainmenu:programming"));
+    m_menuProgramming->addAction(Locale::tr("lncv_programmer:lncv_programmer") + "...",
+      [this]()
+      {
+        auto* window = new QMdiSubWindow();
+        window->setWidget(new LNCVProgrammer(m_connection));
+        window->setAttribute(Qt::WA_DeleteOnClose);
+        m_mdiArea->addSubWindow(window);
+        window->show();
+      });
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:help"));
     menu->addAction(Locale::tr("qtapp.mainmenu:help"), 
@@ -773,6 +784,7 @@ void MainWindow::updateActions()
     m = m_connection->traintastic()->getMethod("shutdown");
     m_actionServerShutdown->setEnabled(m && m->getAttributeBool(AttributeName::Enabled, false));
   }
+  m_menuProgramming->setEnabled(haveWorld);
 
   setMenuEnabled(m_menuWorld, haveWorld);
   m_worldOnlineOfflineToolButton->setEnabled(haveWorld);
