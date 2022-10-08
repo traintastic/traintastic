@@ -89,6 +89,8 @@ file(GLOB SOURCES
   "src/hardware/output/list/*.cpp"
   "src/hardware/output/map/*.hpp"
   "src/hardware/output/map/*.cpp"
+  "src/hardware/programming/lncv/*.hpp"
+  "src/hardware/programming/lncv/*.cpp"
   "src/hardware/protocol/dccplusplus/*.hpp"
   "src/hardware/protocol/dccplusplus/*.cpp"
   "src/hardware/protocol/dccplusplus/iohandler/*.hpp"

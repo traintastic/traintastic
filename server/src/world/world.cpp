@@ -34,6 +34,7 @@
 #include "../core/abstractvectorproperty.hpp"
 #include "../hardware/input/input.hpp"
 #include "../hardware/identification/identification.hpp"
+#include "../hardware/programming/lncv/lncvprogrammer.hpp"
 #include "../log/log.hpp"
 #include "../utils/displayname.hpp"
 #include "../traintastic/traintastic.hpp"
@@ -58,6 +59,7 @@ void World::init(World& world)
   world.inputControllers.setValueInternal(std::make_shared<ControllerList<InputController>>(world, world.inputControllers.name()));
   world.outputControllers.setValueInternal(std::make_shared<ControllerList<OutputController>>(world, world.outputControllers.name()));
   world.identificationControllers.setValueInternal(std::make_shared<ControllerList<IdentificationController>>(world, world.identificationControllers.name()));
+  world.lncvProgrammingControllers.setValueInternal(std::make_shared<ControllerList<LNCVProgrammingController>>(world, world.lncvProgrammingControllers.name()));
 
   world.interfaces.setValueInternal(std::make_shared<InterfaceList>(world, world.interfaces.name()));
   world.decoders.setValueInternal(std::make_shared<DecoderList>(world, world.decoders.name(), decoderListColumns));
@@ -82,6 +84,7 @@ World::World(Private /*unused*/) :
   inputControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   outputControllers{this, "output_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   identificationControllers{this, "identification_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  lncvProgrammingControllers{this, "lncv_programming_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   interfaces{this, "interfaces", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
@@ -218,6 +221,13 @@ World::World(Private /*unused*/) :
       {
         return getObjectById(objectId);
       }}
+  , getLNCVProgrammer{*this, "get_lncv_programmer", MethodFlags::NoScript,
+      [](const ObjectPtr& interface) -> std::shared_ptr<LNCVProgrammer>
+      {
+        if(auto controller = std::dynamic_pointer_cast<LNCVProgrammingController>(interface))
+          return std::make_shared<LNCVProgrammer>(*controller);
+        return {};
+      }}
   , onEvent{*this, "on_event", EventFlags::Scriptable}
 {
   Attributes::addDisplayName(uuid, DisplayName::World::uuid);
@@ -240,6 +250,8 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(outputControllers);
   Attributes::addObjectEditor(identificationControllers, false);
   m_interfaceItems.add(identificationControllers);
+  Attributes::addObjectEditor(lncvProgrammingControllers, false);
+  m_interfaceItems.add(lncvProgrammingControllers);
 
   Attributes::addObjectEditor(interfaces, false);
   m_interfaceItems.add(interfaces);
@@ -293,6 +305,9 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(save);
 
   m_interfaceItems.add(getObject_);
+
+  Attributes::addObjectEditor(getLNCVProgrammer, false);
+  m_interfaceItems.add(getLNCVProgrammer);
 
   m_interfaceItems.add(onEvent);
 

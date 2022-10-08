@@ -46,12 +46,14 @@
 #include "../hardware/input/inputcontroller.hpp"
 #include "../hardware/output/list/outputlist.hpp"
 #include "../hardware/output/outputcontroller.hpp"
+#include "../hardware/programming/lncv/lncvprogrammingcontroller.hpp"
 #include "../train/trainlist.hpp"
 #include "../vehicle/rail/railvehiclelist.hpp"
 #include "../lua/scriptlist.hpp"
 
 class WorldLoader;
 class LinkRailTile;
+class LNCVProgrammer;
 
 class World : public Object
 {
@@ -94,6 +96,7 @@ class World : public Object
     ObjectProperty<ControllerList<InputController>> inputControllers;
     ObjectProperty<ControllerList<OutputController>> outputControllers;
     ObjectProperty<ControllerList<IdentificationController>> identificationControllers;
+    ObjectProperty<ControllerList<LNCVProgrammingController>> lncvProgrammingControllers;
 
     ObjectProperty<InterfaceList> interfaces;
     ObjectProperty<DecoderList> decoders;
@@ -123,6 +126,8 @@ class World : public Object
     Method<void()> save;
 
     Method<ObjectPtr(const std::string&)> getObject_;
+
+    Method<std::shared_ptr<LNCVProgrammer>(const ObjectPtr&)> getLNCVProgrammer;
 
     Event<WorldState, WorldEvent> onEvent;
 
