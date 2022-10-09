@@ -7,6 +7,9 @@ project(traintastic-data VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic
 file(GLOB TRANSLATION_FILES "translations/*.txt")
 install(FILES ${TRANSLATION_FILES} DESTINATION "/opt/traintastic/translations")
 
+file(GLOB LNCV_XML_FILES "data/lncv/xml/*.xml")
+install(FILES ${LNCV_XML_FILES} "data/lncv/xml/lncvmodule.xsd" DESTINATION "/opt/traintastic/lncv")
+
 ### DEB package ###
 
 if(NOT DEBIAN_PACKAGE_VERSION_EXTRA)
