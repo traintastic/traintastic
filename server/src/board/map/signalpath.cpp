@@ -28,7 +28,7 @@
 #include "../tile/rail/linkrailtile.hpp"
 #include "../map/signalpath.hpp"
 
-const std::shared_ptr<Link> otherLink(const Node& node, const Link& link)
+std::shared_ptr<Link> otherLink(const Node& node, const Link& link)
 {
   static const std::shared_ptr<Link> noLink{};
   const auto& links = node.links();
@@ -74,7 +74,7 @@ std::unique_ptr<const SignalPath::Item> SignalPath::findBlocks(const Node& node,
   if(auto block = std::dynamic_pointer_cast<BlockRailTile>(tile))
   {
     m_connections.emplace_back(block->stateChanged.connect(
-      [this](const BlockRailTile&, BlockState)
+      [this](const BlockRailTile& /*tile*/, BlockState /*state*/)
       {
         evaluate();
       }));
@@ -85,10 +85,10 @@ std::unique_ptr<const SignalPath::Item> SignalPath::findBlocks(const Node& node,
         next = findBlocks(nextNode, *nextLink, blocksAhead - 1);
     return std::unique_ptr<const SignalPath::Item>{new BlockItem(block, std::move(next))};
   }
-  else if(auto turnout = std::dynamic_pointer_cast<TurnoutRailTile>(tile))
+  if(auto turnout = std::dynamic_pointer_cast<TurnoutRailTile>(tile))
   {
     m_connections.emplace_back(turnout->positionChanged.connect(
-      [this](const TurnoutRailTile&, TurnoutPosition)
+      [this](const TurnoutRailTile& /*tile*/, TurnoutPosition /*position*/)
       {
         evaluate();
       }));
@@ -232,7 +232,7 @@ std::unique_ptr<const SignalPath::Item> SignalPath::findBlocks(const Node& node,
       //   |
       //  0 A
       m_connections.emplace_back(direction->stateChanged.connect(
-        [this](const DirectionControlRailTile&, DirectionControlState)
+        [this](const DirectionControlRailTile& /*tile*/, DirectionControlState /*state*/)
         {
           evaluate();
         }));
