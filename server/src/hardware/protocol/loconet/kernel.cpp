@@ -682,6 +682,20 @@ void Kernel::receive(const Message& message)
       }
       break;
     }
+    case OPC_E4:
+      EventLoop::call(
+        [this, lissy=static_cast<const Uhlenbrock::Lissy&>(message)]()
+        {
+          m_identificationController->identificationEvent(
+            IdentificationController::defaultIdentificationChannel,
+            lissy.sensorAddress(),
+            IdentificationEventType::Seen,
+            lissy.decoderAddress(),
+            Direction::Unknown,
+            lissy.category());
+        });
+      break;
+
     case OPC_PEER_XFER:
       if(isResponse)
       {

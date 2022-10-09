@@ -257,6 +257,7 @@ bool SimulationIOHandler::send(const Message& message)
     case OPC_MULTI_SENSE:
     case OPC_D4:
     case OPC_MULTI_SENSE_LONG:
+    case OPC_E4:
     case OPC_PEER_XFER:
     case OPC_SL_RD_DATA:
       assert(!hasResponse(message)); // no response

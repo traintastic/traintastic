@@ -321,3 +321,20 @@ serial number = 1100008306
 
 version = 1.00
 ```
+
+## LISSY
+
+68610: single sensor lissy format:
+```
+2022-10-09 22:45:43.034066 loconet_1 D2002: RX: E4 [E4 08 00 00 01 00 03 11] // sensor_address=1    decoder_address=3    category=1
+2022-10-09 22:55:17.651995 loconet_1 D2002: RX: E4 [E4 08 03 00 01 00 63 72] // sensor_address=1    decoder_address=99   category=4
+2022-10-09 23:03:55.056175 loconet_1 D2002: RX: E4 [E4 08 02 00 01 0F 50 4F] // sensor_address=1    decoder_address=2000 category=3
+2022-10-09 23:09:03.150772 loconet_1 D2002: RX: E4 [E4 08 02 00 7F 0F 50 31] // sensor_address=127  decoder_address=2000 category=3
+2022-10-09 23:12:03.391446 loconet_1 D2002: RX: E4 [E4 08 02 1F 7F 0F 50 2E] // sensor_address=4095 decoder_address=2000 category=3
+                                                          ^^ ^^^^^ ^^^^^
+                                                          |    |     \ decoder address: [high 7] [low 7]
+                                                          |    |
+                                                          |    \ sensor address: [high 5] [low 7]
+                                                          |
+                                                          \ category: 0-3 => 1-4
+```

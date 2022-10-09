@@ -67,6 +67,7 @@ enum OpCode : uint8_t
 
   // variable byte message opcodes:
   OPC_MULTI_SENSE_LONG = 0XE0, // based on reverse engineering, see loconet.md
+  OPC_E4 = 0xE4, // based on reverse engineering, see loconet.md
   OPC_PEER_XFER = 0xE5,
   OPC_SL_RD_DATA = 0xE7,
   OPC_IMM_PACKET = 0xED,
@@ -101,6 +102,7 @@ constexpr std::string_view toString(OpCode value)
     case OPC_MULTI_SENSE: return "OPC_MULTI_SENSE";
     case OPC_D4: return "OPC_D4";
     case OPC_MULTI_SENSE_LONG: return "OPC_MULTI_SENSE_LONG";
+    case OPC_E4: return "OPC_E4";
     case OPC_PEER_XFER: return "OPC_PEER_XFER";
     case OPC_SL_RD_DATA: return "OPC_SL_RD_DATA";
     case OPC_IMM_PACKET: return "OPC_IMM_PACKET";

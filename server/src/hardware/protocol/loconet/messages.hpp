@@ -1771,6 +1771,44 @@ namespace Uhlenbrock
 
   /**
    * \}
+   * \group lissy LISSY
+   * \{
+   */
+
+  struct Lissy : Message
+  {
+    uint8_t len = 8;
+    uint8_t data1 = 0;
+    uint8_t sensorAddressHigh = 0;
+    uint8_t sensorAddressLow = 0;
+    uint8_t decoderAddressHigh = 0;
+    uint8_t decoderAddressLow = 0;
+    uint8_t checksum = 0;
+
+    Lissy()
+      : Message(OPC_E4)
+    {
+    }
+
+    uint16_t sensorAddress() const
+    {
+      return static_cast<uint16_t>(sensorAddressHigh & 0x1F) << 7 | sensorAddressLow;
+    }
+
+    uint16_t decoderAddress() const
+    {
+      return static_cast<uint16_t>(decoderAddressHigh) << 7 | decoderAddressLow;
+    }
+
+    uint8_t category() const
+    {
+      return (data1 & 0x03) + 1;
+    }
+  };
+  static_assert(sizeof(Lissy) == 8);
+
+  /**
+   * \}
    */
 }
 

@@ -107,6 +107,7 @@ void setSlot(Message& message, uint8_t slot)
     case OPC_SW_STATE:
     case OPC_SW_ACK:
     case OPC_LOCO_ADR:
+    case OPC_E4:
     case OPC_PEER_XFER:
     case OPC_SL_RD_DATA:
     case OPC_IMM_PACKET:
@@ -222,6 +223,7 @@ bool isValidResponse(const Message& request, const Message& response)
     case OPC_MULTI_SENSE:
     case OPC_D4:
     case OPC_MULTI_SENSE_LONG:
+    case OPC_E4:
     case OPC_PEER_XFER:
     case OPC_SL_RD_DATA:
       assert(!hasResponse(request));
@@ -377,6 +379,15 @@ std::string toString(const Message& message)
         s.append(" transponderAddress=").append(std::to_string(multiSenseTransponder.transponderAddress()));
         s.append(" transponderDirection=").append(multiSenseTransponder.transponderDirection() == Direction::Forward ? "fwd" : "rev");
       }
+      break;
+    }
+    case OPC_E4:
+    {
+      const auto& lissy = static_cast<const Uhlenbrock::Lissy&>(message);
+      s.append(" LISSY:");
+      s.append(" sensorAddress=").append(std::to_string(lissy.sensorAddress()));
+      s.append(" decoderAddress=").append(std::to_string(lissy.decoderAddress()));
+      s.append(" category=").append(std::to_string(lissy.category()));
       break;
     }
     case OPC_PEER_XFER:
