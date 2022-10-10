@@ -1777,12 +1777,18 @@ namespace Uhlenbrock
 
   struct Lissy : Message
   {
+    enum class Type
+    {
+      AddressCategoryDirection,
+      Speed,
+    };
+
     uint8_t len = 8;
     uint8_t data1 = 0;
     uint8_t sensorAddressHigh = 0;
     uint8_t sensorAddressLow = 0;
-    uint8_t decoderAddressHigh = 0;
-    uint8_t decoderAddressLow = 0;
+    uint8_t data4 = 0;
+    uint8_t data5 = 0;
     uint8_t checksum = 0;
 
     Lissy()
@@ -1790,22 +1796,58 @@ namespace Uhlenbrock
     {
     }
 
+    Type type() const
+    {
+      return (sensorAddressHigh & 0x60) == 0x20 ? Type::Speed : Type::AddressCategoryDirection;
+    }
+
     uint16_t sensorAddress() const
     {
       return static_cast<uint16_t>(sensorAddressHigh & 0x1F) << 7 | sensorAddressLow;
     }
 
+  };
+  static_assert(sizeof(Lissy) == 8);
+
+  struct LissyAddressCategoryDirection : Lissy
+  {
     uint16_t decoderAddress() const
     {
-      return static_cast<uint16_t>(decoderAddressHigh) << 7 | decoderAddressLow;
+      return static_cast<uint16_t>(data4) << 7 | data5;
     }
 
     uint8_t category() const
     {
       return (data1 & 0x03) + 1;
     }
+
+    Direction direction() const
+    {
+      switch(sensorAddressHigh & 0x60)
+      {
+        case 0x00:
+          return Direction::Unknown;
+
+        case 0x40:
+          return Direction::Forward; // TODO: verify this
+
+        case 0x60:
+          return Direction::Reverse; // TODO: verify this
+      }
+      assert(false);
+      return Direction::Unknown;
+    }
   };
-  static_assert(sizeof(Lissy) == 8);
+  static_assert(sizeof(LissyAddressCategoryDirection) == 8);
+
+  struct LissySpeed : Lissy
+  {
+    uint16_t speed() const
+    {
+      return static_cast<uint16_t>(data4) << 7 | data5; // TODO: verify this, no clue yet...
+    }
+  };
+  static_assert(sizeof(LissySpeed) == 8);
 
   /**
    * \}

@@ -338,3 +338,15 @@ version = 1.00
                                                           |
                                                           \ category: 0-3 => 1-4
 ```
+
+68610: double sensor lissy format:
+```
+2022-10-10 21:32:47.407984 loconet_1 D2002: RX: E4 [E4 08 02 60 01 0F 50 2F] // sensor_address=1 decoder_address=2000 category=3
+2022-10-10 21:32:47.415238 loconet_1 D2002: RX: E4 [E4 08 00 20 01 00 17 25]
+
+2022-10-10 21:34:57.571569 loconet_1 D2002: RX: E4 [E4 08 02 40 01 0F 50 0F] // sensor_address=1 decoder_address=2000 category=3 opposite_direction
+2022-10-10 21:34:58.282593 loconet_1 D2002: RX: E4 [E4 08 00 20 01 00 04 36]
+
+1st message simelar to single sensor, direction in 4th byte? 40 vs 60
+2nd message speed? indicated by 4th byte 20? speed in km/h (last 2 data byte?)
+```

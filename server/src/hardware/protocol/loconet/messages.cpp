@@ -383,11 +383,39 @@ std::string toString(const Message& message)
     }
     case OPC_E4:
     {
-      const auto& lissy = static_cast<const Uhlenbrock::Lissy&>(message);
-      s.append(" LISSY:");
-      s.append(" sensorAddress=").append(std::to_string(lissy.sensorAddress()));
-      s.append(" decoderAddress=").append(std::to_string(lissy.decoderAddress()));
-      s.append(" category=").append(std::to_string(lissy.category()));
+      switch(static_cast<const Uhlenbrock::Lissy&>(message).type())
+      {
+        case Uhlenbrock::Lissy::Type::AddressCategoryDirection:
+        {
+          const auto& lissy = static_cast<const Uhlenbrock::LissyAddressCategoryDirection&>(message);
+          s.append(" LISSY:");
+          s.append(" sensorAddress=").append(std::to_string(lissy.sensorAddress()));
+          s.append(" decoderAddress=").append(std::to_string(lissy.decoderAddress()));
+          s.append(" category=").append(std::to_string(lissy.category()));
+          switch(lissy.direction())
+          {
+            case Direction::Forward:
+              s.append(" direction=fwd");
+              break;
+
+            case Direction::Reverse:
+              s.append(" direction=rev");
+              break;
+
+            case Direction::Unknown:
+              break;
+          }
+          break;
+        }
+        case Uhlenbrock::Lissy::Type::Speed:
+        {
+          const auto& lissy = static_cast<const Uhlenbrock::LissySpeed&>(message);
+          s.append(" LISSY:");
+          s.append(" sensorAddress=").append(std::to_string(lissy.sensorAddress()));
+          s.append(" speed=").append(std::to_string(lissy.speed()));
+          break;
+        }
+      }
       break;
     }
     case OPC_PEER_XFER:

@@ -683,17 +683,20 @@ void Kernel::receive(const Message& message)
       break;
     }
     case OPC_E4:
-      EventLoop::call(
-        [this, lissy=static_cast<const Uhlenbrock::Lissy&>(message)]()
-        {
-          m_identificationController->identificationEvent(
-            IdentificationController::defaultIdentificationChannel,
-            lissy.sensorAddress(),
-            IdentificationEventType::Seen,
-            lissy.decoderAddress(),
-            Direction::Unknown,
-            lissy.category());
-        });
+      if(static_cast<const Uhlenbrock::Lissy&>(message).type() == Uhlenbrock::Lissy::Type::AddressCategoryDirection)
+      {
+        EventLoop::call(
+          [this, lissy=static_cast<const Uhlenbrock::LissyAddressCategoryDirection&>(message)]()
+          {
+            m_identificationController->identificationEvent(
+              IdentificationController::defaultIdentificationChannel,
+              lissy.sensorAddress(),
+              IdentificationEventType::Seen,
+              lissy.decoderAddress(),
+              lissy.direction(),
+              lissy.category());
+          });
+      }
       break;
 
     case OPC_PEER_XFER:
