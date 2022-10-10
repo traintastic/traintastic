@@ -178,17 +178,22 @@ LNCVProgrammer::LNCVProgrammer(std::shared_ptr<Connection> connection, QWidget* 
                           else if(auto* comboBox = dynamic_cast<QComboBox*>(w))
                           {
                             comboBox->setEnabled(true);
+                            bool found = false;
                             const int itemCount = comboBox->count();
                             for(int i = 0; i < itemCount; i++)
                             {
                               if(comboBox->itemData(i) == value)
                               {
                                 comboBox->setCurrentIndex(i);
-                                return;
+                                found = true;
+                                break;
                               }
                             }
-                            comboBox->addItem(QString::number(value), value);
-                            comboBox->setCurrentIndex(itemCount);
+                            if(!found)
+                            {
+                              comboBox->addItem(QString::number(value), value);
+                              comboBox->setCurrentIndex(itemCount);
+                            }
                           }
                           else
                           {
@@ -615,7 +620,8 @@ int LNCVProgrammer::getSelectedLNCVValue() const
     }
     if(const auto* comboBox = dynamic_cast<const QComboBox*>(widget))
     {
-      return comboBox->currentData().toInt();
+      int x = comboBox->currentData().toInt();
+      return x;
     }
     if(const auto* doubleSpinBox = dynamic_cast<const QDoubleSpinBox*>(widget))
     {
