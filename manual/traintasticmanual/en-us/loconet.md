@@ -31,9 +31,12 @@ Summary of supported LocoNet messages by Traintastic:
 - Power control
 - Control of locomotive speed and direction
 - Control of locomotive functions: F0 … F28
-- Reading feedback sensor
+- Reading feedback sensors
+- Reading of RailCom feedback
+- Reading of LISSY IR sensors
 - Control of turnouts, signals and outputs
 - Fast clock sync ping
+- LNCV programming
 
 Messages defined in the *LocoNet Personal Use Edition 1.0 specification*:
 
@@ -65,3 +68,6 @@ Messages defined in the *LocoNet Personal Use Edition 1.0 specification*:
 
 Messages retrieved through traffic analysis:
 - Control of locomotive functions: F9 … F28
+- RailCOM feedback (`OPC_MULTI_SENSE` and `OPC_MULTI_SENSE_LONG`)
+- Uhlenbrock LISSY locomotive address, category, direction and speed feedback
+- LNCV programming
