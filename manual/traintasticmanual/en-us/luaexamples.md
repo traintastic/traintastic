@@ -1,5 +1,7 @@
 # Lua scripting examples {#lua-examples}
 
+[![>Lua logo](../gfx/lua/Lua-Logo_128x128.png)](https://lua.org)
+
 TODO
 
 **Badges**:

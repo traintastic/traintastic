@@ -1,6 +1,6 @@
 # Lua scripting reference {#lua}
 
-[![Lua logo](../gfx/lua/Lua-Logo_128x128.png)](https://lua.org)
+[![>Lua logo](../gfx/lua/Lua-Logo_128x128.png)](https://lua.org)
 
 Lua is a scripting language developed at PUC-Rio in Brazil.
 Lua is a lightweight and easy to learn scripting language especially designed to be embedded in other applications like Traintastic.

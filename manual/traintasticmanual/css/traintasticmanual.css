@@ -11,6 +11,12 @@
   margin-right: 16em;
 }
 
+img.img-float-right
+{
+  float: right;
+  margin: 0 0 1rem 1rem;
+}
+
 /** TOC **********************************************************************/
 
 #toc

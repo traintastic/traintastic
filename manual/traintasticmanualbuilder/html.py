@@ -32,6 +32,9 @@ class HTMLBuilder(Builder):
                 '<figcaption>' + m.group(2) + '</figcaption></figure>',
                 html)
 
+        # float image right
+        html = re.sub(r'(<img[^>]+)alt="&gt;', r'\1class="img-float-right" alt="', html)
+
         # handle badges
         html = html.replace('$badge:lua$', '<span class="badge badge-lua">Lua</span>')
         html = re.sub(r'\$badge:since:v([0-9]+\.[0-9]+(|\.[0-9]+))\$', r'<span class="badge badge-since">&ge; \1\2</span>', html)
