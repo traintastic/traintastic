@@ -33,12 +33,12 @@
 #include <string>
 #include <array>
 #include <traintastic/enum/direction.hpp>
-#include "opcode.hpp"
 #include "../../../utils/byte.hpp"
 
-namespace LocoNet {
+// include all message headers:
+#include "message/uhlenbrock.hpp"
 
-struct Message;
+namespace LocoNet {
 
 uint8_t calcChecksum(const Message& messageg);
 void updateChecksum(Message& message);
@@ -109,41 +109,6 @@ constexpr uint8_t MULTI_SENSE_TYPE_MASK = 0xE0;
 constexpr uint8_t MULTI_SENSE_TYPE_TRANSPONDER_GONE = 0x00;
 constexpr uint8_t MULTI_SENSE_TYPE_TRANSPONDER_PRESENT = 0x20;
 constexpr uint8_t MULTI_SENSE_TRANSPONDER_ADDRESS_SHORT = 0xFD;
-
-struct Message
-{
-  OpCode opCode;
-
-  Message()
-  {
-  }
-
-  Message(OpCode _opCode) :
-    opCode{_opCode}
-  {
-  }
-
-  uint8_t size() const
-  {
-    switch(opCode & 0xE0)
-    {
-      case 0x80: // 1 0 0 F D C B A
-        return 2;
-
-      case 0xA0: // 1 0 1 F D C B A
-        return 4;
-
-      case 0xC0: // 1 1 0 F D C B A
-        return 6;
-
-      case 0xE0: // 1 1 1 F D C B A => length in next byte
-        return reinterpret_cast<const uint8_t*>(this)[1];
-
-      default:
-        return 0; // not an op opcode, bit 7 not 1
-    }
-  }
-};
 
 struct SlotMessage : Message
 {
@@ -1785,90 +1750,6 @@ namespace Uhlenbrock
     }
   };
   static_assert(sizeof(LNCVStop) == 15);
-
-  /**
-   * \}
-   * \group lissy LISSY
-   * \{
-   */
-
-  struct Lissy : Message
-  {
-    enum class Type
-    {
-      AddressCategoryDirection,
-      Speed,
-    };
-
-    uint8_t len = 8;
-    uint8_t data1 = 0;
-    uint8_t sensorAddressHigh = 0;
-    uint8_t sensorAddressLow = 0;
-    uint8_t data4 = 0;
-    uint8_t data5 = 0;
-    uint8_t checksum = 0;
-
-    Lissy()
-      : Message(OPC_E4)
-    {
-    }
-
-    Type type() const
-    {
-      return (sensorAddressHigh & 0x60) == 0x20 ? Type::Speed : Type::AddressCategoryDirection;
-    }
-
-    uint16_t sensorAddress() const
-    {
-      return static_cast<uint16_t>(sensorAddressHigh & 0x1F) << 7 | sensorAddressLow;
-    }
-
-  };
-  static_assert(sizeof(Lissy) == 8);
-
-  struct LissyAddressCategoryDirection : Lissy
-  {
-    uint16_t decoderAddress() const
-    {
-      return static_cast<uint16_t>(data4) << 7 | data5;
-    }
-
-    uint8_t category() const
-    {
-      return (data1 & 0x03) + 1;
-    }
-
-    Direction direction() const
-    {
-      switch(sensorAddressHigh & 0x60)
-      {
-        case 0x00:
-          return Direction::Unknown;
-
-        case 0x40:
-          return Direction::Forward; // TODO: verify this
-
-        case 0x60:
-          return Direction::Reverse; // TODO: verify this
-      }
-      assert(false);
-      return Direction::Unknown;
-    }
-  };
-  static_assert(sizeof(LissyAddressCategoryDirection) == 8);
-
-  struct LissySpeed : Lissy
-  {
-    uint16_t speed() const
-    {
-      return static_cast<uint16_t>(data4) << 7 | data5; // TODO: verify this, no clue yet...
-    }
-  };
-  static_assert(sizeof(LissySpeed) == 8);
-
-  /**
-   * \}
-   */
 }
 
 /*
