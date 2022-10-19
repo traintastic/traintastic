@@ -350,3 +350,13 @@ version = 1.00
 1st message simelar to single sensor, direction in 4th byte? 40 vs 60
 2nd message speed? indicated by 4th byte 20? speed in km/h (last 2 data byte?)
 ```
+
+
+## F12, F20, F28
+
+| F12 | F20 | F28 | Uhlenbrock IB-COM     | Digikeijs DR5000 |
+|-----|-----|-----|-----------------------|------------------|
+| off | off | off | `[D4 20 01 05 00 0F]` | *todo*           |
+| on  | off | off | `[D4 20 01 05 10 1F]` | *todo*           |
+| off | on  | off | `[D4 20 01 05 20 2F]` | *todo*           |
+| off | off | on  | `[D4 20 01 05 40 4F]` | *todo*           |

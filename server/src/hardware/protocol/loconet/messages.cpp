@@ -345,10 +345,11 @@ std::string toString(const Message& message)
           }
           case 0x05:
           {
-            const LocoF20F28& locoF20F28 = static_cast<const LocoF20F28&>(message);
-            s.append(" slot=").append(std::to_string(locoF20F28.slot));
-            s.append(" f20=").append(locoF20F28.f20() ? "on" : "off");
-            s.append(" f28=").append(locoF20F28.f28() ? "on" : "off");
+            const auto& locoF12F20F28 = static_cast<const LocoF12F20F28&>(message);
+            s.append(" slot=").append(std::to_string(locoF12F20F28.slot));
+            s.append(" f12=").append(locoF12F20F28.f12() ? "on" : "off");
+            s.append(" f20=").append(locoF12F20F28.f20() ? "on" : "off");
+            s.append(" f28=").append(locoF12F20F28.f28() ? "on" : "off");
             break;
           }
           case 0x09:

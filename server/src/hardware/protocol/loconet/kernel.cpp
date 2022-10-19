@@ -344,6 +344,14 @@ void Kernel::receive(const Message& message)
           slot->f9f12 = locoF9F12.function;
           slot->f9f12Valid = true;
 
+          if(slot->f12f20f28Valid)
+          {
+            if(locoF9F12.f12())
+              slot->f12f20f28 |= LocoF12F20F28::F12;
+            else
+              slot->f12f20f28 &= ~LocoF12F20F28::F12;
+          }
+
           if(changed)
             EventLoop::call(
               [this, address=slot->address, f9f12=slot->f9f12]()
@@ -611,21 +619,30 @@ void Kernel::receive(const Message& message)
             }
             case 0x05:
             {
-              const LocoF20F28& locoF20F28 = static_cast<const LocoF20F28&>(message);
-              if(LocoSlot* slot = getLocoSlot(locoF20F28.slot))
+              const auto& locoF12F20F28 = static_cast<const LocoF12F20F28&>(message);
+              if(LocoSlot* slot = getLocoSlot(locoF12F20F28.slot))
               {
-                const bool changed = slot->addressValid && (!slot->f20f28Valid || slot->f20f28 != locoF20F28.function);
-                slot->f20f28 = locoF20F28.function;
-                slot->f20f28Valid = true;
+                const bool changed = slot->addressValid && (!slot->f12f20f28Valid || slot->f12f20f28 != locoF12F20F28.function);
+                slot->f12f20f28 = locoF12F20F28.function;
+                slot->f12f20f28Valid = true;
+
+                if(slot->f9f12Valid)
+                {
+                  if(locoF12F20F28.f12())
+                    slot->f9f12 |= SL_F12;
+                  else
+                    slot->f9f12 &= ~SL_F12;
+                }
 
                 if(changed)
                   EventLoop::call(
-                    [this, address=slot->address, f20f28=slot->f20f28]()
+                    [this, address=slot->address, f12f20f28=slot->f12f20f28]()
                     {
                       if(auto decoder = getDecoder(address))
                       {
-                        decoder->setFunctionValue(20, f20f28 & SL_F20);
-                        decoder->setFunctionValue(28, f20f28 & SL_F28);
+                        decoder->setFunctionValue(12, f12f20f28 & LocoF12F20F28::F12);
+                        decoder->setFunctionValue(20, f12f20f28 & LocoF12F20F28::F20);
+                        decoder->setFunctionValue(28, f12f20f28 & LocoF12F20F28::F28);
                       }
                     });
               }
@@ -844,7 +861,8 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
     }
     else if(functionNumber == 20 || functionNumber == 28)
     {
-      LocoF20F28 message{
+      LocoF12F20F28 message{
+        decoder.getFunctionValue(12),
         decoder.getFunctionValue(20),
         decoder.getFunctionValue(28)};
       send(decoder.address, message);

@@ -94,9 +94,6 @@ constexpr uint8_t SL_F17 = 0x10;
 constexpr uint8_t SL_F18 = 0x20;
 constexpr uint8_t SL_F19 = 0x40;
 
-constexpr uint8_t SL_F20 = 0x20;
-constexpr uint8_t SL_F28 = 0x40;
-
 constexpr uint8_t SL_F21 = 0x01;
 constexpr uint8_t SL_F22 = 0x02;
 constexpr uint8_t SL_F23 = 0x04;
@@ -830,53 +827,73 @@ struct LocoF13F19 : Message
 };
 static_assert(sizeof(LocoF13F19) == 6);
 
-struct LocoF20F28 : Message
+struct LocoF12F20F28 : Message
 {
+  static constexpr uint8_t F12 = 0x10;
+  static constexpr uint8_t F20 = 0x20;
+  static constexpr uint8_t F28 = 0x40;
+
   uint8_t data1;
   uint8_t slot;
   uint8_t data3;
   uint8_t function;
   uint8_t checksum;
 
-  LocoF20F28(bool f20, bool f28) :
+  LocoF12F20F28(bool f12, bool f20, bool f28) :
     Message(OPC_D4),
     data1{0x20},
     slot{SLOT_UNKNOWN},
     data3{0x05},
     function{0}
   {
+    if(f12)
+      function |= F12;
     if(f20)
-      function |= SL_F20;
+      function |= F20;
     if(f28)
-      function |= SL_F28;
+      function |= F28;
+  }
+
+  inline bool f12() const
+  {
+    return function & F12;
+  }
+
+  inline void setF12(bool value)
+  {
+    if(value)
+      function |= F12;
+    else
+      function &= ~F12;
   }
 
   inline bool f20() const
   {
-    return function & SL_F20;
+    return function & F20;
   }
 
   inline void setF20(bool value)
   {
     if(value)
-      function |= SL_F20;
+      function |= F20;
     else
-      function &= ~SL_F20;
+      function &= ~F20;
   }
+
   inline bool f28() const
   {
-    return function & SL_F28;
+    return function & F28;
   }
 
   inline void setF28(bool value)
   {
     if(value)
-      function |= SL_F28;
+      function |= F28;
     else
-      function &= ~SL_F28;
+      function &= ~F28;
   }
 };
-static_assert(sizeof(LocoF20F28) == 6);
+static_assert(sizeof(LocoF12F20F28) == 6);
 
 struct LocoF21F27 : Message
 {

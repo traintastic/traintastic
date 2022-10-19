@@ -104,8 +104,8 @@ class Kernel
       bool f13f19Valid = false;
       uint8_t f21f27 = 0;
       bool f21f27Valid = false;
-      uint8_t f20f28 = 0;
-      bool f20f28Valid = false;
+      uint8_t f12f20f28 = 0;
+      bool f12f20f28Valid = false;
 
       void invalidate()
       {
@@ -115,7 +115,7 @@ class Kernel
         f5f8Valid = false;
         f9f12Valid = false;
         f13f19Valid = false;
-        f20f28Valid = false;
+        f12f20f28Valid = false;
         f21f27Valid = false;
       }
     };
