@@ -127,6 +127,12 @@ TODO
 ## N2001: Simulation not supported {#n2001}
 TODO
 
+## N2002: No response from LNCV module *id* with address *address* {#n2002}
+TODO
+
+## N2003: Stopped sending fast clock sync {#n2003}
+A fast clock sync message is no longer sent periodically, see [W2007](#w2007).
+
 ## N9001: Starting script {#n9001}
 TODO
 
