@@ -57,6 +57,7 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   Attributes::addMinMax(locomotiveSlots, SLOT_LOCO_MIN, SLOT_LOCO_MAX);
   m_interfaceItems.add(locomotiveSlots);
 
+  Attributes::addEnabled(fastClockSyncEnabled, true);
   //Attributes::addGroup(fastClockSyncEnabled, Group::fastClockSync);
   m_interfaceItems.add(fastClockSyncEnabled);
 
@@ -109,6 +110,7 @@ void Settings::commandStationChanged(LocoNetCommandStation value)
 {
   const bool isCustom = (value == LocoNetCommandStation::Custom);
 
+  // locomotive slots:
   switch(value)
   {
     case LocoNetCommandStation::Custom:
@@ -123,8 +125,22 @@ void Settings::commandStationChanged(LocoNetCommandStation value)
       locomotiveSlots = 32;
       break;
   }
-
   Attributes::setEnabled(locomotiveSlots, isCustom);
+
+  // fast clock:
+  switch(value)
+  {
+    case LocoNetCommandStation::Custom:
+    case LocoNetCommandStation::DigikeijsDR5000:
+      Attributes::setEnabled(fastClockSyncEnabled, true);
+      break;
+
+    case LocoNetCommandStation::UhlenbrockIntellibox:
+    case LocoNetCommandStation::UhlenbrockIBCOM:
+      fastClockSyncEnabled = false;
+      Attributes::setEnabled(fastClockSyncEnabled, false);
+      break;
+  }
 }
 
 }

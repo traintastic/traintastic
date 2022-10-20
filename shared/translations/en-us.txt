@@ -392,6 +392,7 @@ message:N1025=Exported world successfully
 message:N1026=Imported world successfully
 message:N2001=Simulation not supported
 message:N2002=No response from LNCV module %1 with address %2
+message:N2003=Stopped sending fast clock sync
 message:N9001=Starting script
 message:N9999=%1
 message:W1001=Discovery disabled, only allowed on port %1
@@ -402,6 +403,8 @@ message:W2002=Command station doesn't support functions above F%1
 message:W2003=Command station doesn't support %1 speedsteps using %2
 message:W2004=Input address %1 is invalid
 message:W2005=Output address %1 is invalid
+message:W2006=Command station does not support loco slot %1
+message:W2007=Command station does not support the fast clock slot
 message:W2018=Timeout, no echo within %1ms
 message:W9999=%1
 

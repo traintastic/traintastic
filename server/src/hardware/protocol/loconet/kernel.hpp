@@ -141,6 +141,7 @@ class Kernel
     std::function<void()> m_onIdle;
 
     boost::asio::steady_timer m_fastClockSyncTimer;
+    bool m_fastClockSupported = true;
 
     bool m_lncvActive = false;
     uint16_t m_lncvModuleId = 0;

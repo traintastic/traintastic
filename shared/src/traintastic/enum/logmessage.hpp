@@ -110,6 +110,7 @@ enum class LogMessage : uint32_t
   N1026_IMPORTED_WORLD_SUCCESSFULLY = LogMessageOffset::notice + 1026,
   N2001_SIMULATION_NOT_SUPPORTED = LogMessageOffset::notice + 2001,
   N2002_NO_RESPONSE_FROM_LNCV_MODULE_X_WITH_ADDRESS_X = LogMessageOffset::notice + 2002,
+  N2003_STOPPED_SENDING_FAST_CLOCK_SYNC = LogMessageOffset::notice + 2003,
   N9001_STARTING_SCRIPT = LogMessageOffset::notice + 9001,
   N9999_X = LogMessageOffset::notice + 9999,
 
@@ -122,6 +123,8 @@ enum class LogMessage : uint32_t
   W2003_COMMAND_STATION_DOESNT_SUPPORT_X_SPEEDSTEPS_USING_X = LogMessageOffset::warning + 2003,
   W2004_INPUT_ADDRESS_X_IS_INVALID = LogMessageOffset::warning + 2004,
   W2005_OUTPUT_ADDRESS_X_IS_INVALID = LogMessageOffset::warning + 2005,
+  W2006_COMMAND_STATION_DOES_NOT_SUPPORT_LOCO_SLOT_X = LogMessageOffset::warning + 2006,
+  W2007_COMMAND_STATION_DOES_NOT_SUPPORT_THE_FAST_CLOCK_SLOT = LogMessageOffset::warning + 2007,
   W2018_TIMEOUT_NO_ECHO_WITHIN_X_MS = LogMessageOffset::warning + 2018,
   W9999_X = LogMessageOffset::warning + 9999,
 

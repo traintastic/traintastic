@@ -518,6 +518,33 @@ void Kernel::receive(const Message& message)
             Log::log(m_logId, LogMessage::C2004_CANT_GET_FREE_SLOT);
           });
       }
+      else if(longAck.respondingOpCode() == OPC_RQ_SL_DATA && longAck.ack1 == 0 && lastSentMessage().opCode == OPC_RQ_SL_DATA)
+      {
+        const uint8_t slot = static_cast<const RequestSlotData&>(lastSentMessage()).slot;
+
+        if(isLocoSlot(slot))
+        {
+          EventLoop::call(
+            [this, slot]()
+            {
+              Log::log(m_logId, LogMessage::W2006_COMMAND_STATION_DOES_NOT_SUPPORT_LOCO_SLOT_X, slot);
+            });
+        }
+        else if(slot == SLOT_FAST_CLOCK)
+        {
+          m_fastClockSupported = false;
+          if(m_config.fastClockSyncEnabled)
+            stopFastClockSyncTimer();
+
+          EventLoop::call(
+            [this, stoppedFastClockSyncTimer=m_config.fastClockSyncEnabled]()
+            {
+              Log::log(m_logId, LogMessage::W2007_COMMAND_STATION_DOES_NOT_SUPPORT_THE_FAST_CLOCK_SLOT);
+              if(stoppedFastClockSyncTimer)
+                Log::log(m_logId, LogMessage::N2003_STOPPED_SENDING_FAST_CLOCK_SYNC);
+            });
+        }
+      }
       else if(m_lncvActive && m_onLNCVReadResponse &&
           longAck.respondingOpCode() == OPC_IMM_PACKET && longAck.ack1 == 0x7F &&
           Uhlenbrock::LNCVWrite::check(lastSentMessage()))
@@ -1120,7 +1147,7 @@ void Kernel::stopFastClockSyncTimer()
 
 void Kernel::fastClockSyncTimerExpired(const boost::system::error_code& ec)
 {
-  if(ec || !m_config.fastClockSyncEnabled)
+  if(ec || !m_config.fastClockSyncEnabled || !m_fastClockSupported)
     return;
 
   send(RequestSlotData(SLOT_FAST_CLOCK));
