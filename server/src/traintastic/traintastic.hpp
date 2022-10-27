@@ -87,7 +87,7 @@ class Traintastic final : public Object
 
     bool importWorld(const std::vector<std::byte>& worldData);
 
-    RunStatus run();
+    RunStatus run(const std::string& worldUUID = {}, bool simulate = false, bool online = false, bool power = false, bool run = false);
     void exit();
 };
 

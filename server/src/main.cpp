@@ -118,15 +118,19 @@ int main(int argc, char* argv[])
       Windows::TrayIcon::add(restart);
 #endif
 
-    restart = false;
-
     try
     {
       Traintastic::instance = std::make_shared<Traintastic>(dataDir);
 
-      switch(Traintastic::instance->run())
+      if(!restart) // initial startup
+        status = Traintastic::instance->run(options.world, options.simulate, options.online, options.power, options.run);
+      else
+        status = Traintastic::instance->run();
+
+      switch(status)
       {
         case Traintastic::ExitSuccess:
+          restart = false;
           status = EXIT_SUCCESS;
           break;
 
@@ -135,6 +139,7 @@ int main(int argc, char* argv[])
           break;
 
         case Traintastic::ExitFailure:
+          restart = false;
           status = EXIT_FAILURE;
           break;
       }
@@ -142,6 +147,7 @@ int main(int argc, char* argv[])
     catch(const std::exception& e)
     {
       std::cerr << e.what() << std::endl;
+      restart = false;
       status = EXIT_FAILURE;
     }
 

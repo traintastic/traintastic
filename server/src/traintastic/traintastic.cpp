@@ -153,7 +153,7 @@ bool Traintastic::importWorld(const std::vector<std::byte>& worldData)
   return false;
 }
 
-Traintastic::RunStatus Traintastic::run()
+Traintastic::RunStatus Traintastic::run(const std::string& worldUUID, bool simulate, bool online, bool power, bool run)
 {
   static const std::string boostVersion = std::string("boost ").append(std::to_string(BOOST_VERSION / 100000)).append(".").append(std::to_string(BOOST_VERSION / 100 % 100)).append(".").append(std::to_string(BOOST_VERSION % 100));
   Log::log(*this, LogMessage::I1001_TRAINTASTIC_VX, std::string_view{TRAINTASTIC_VERSION_FULL});
@@ -169,7 +169,13 @@ Traintastic::RunStatus Traintastic::run()
 
   worldList = std::make_shared<WorldList>(worldDir());
 
-  if(settings->loadLastWorldOnStartup && !settings->lastWorld.value().empty())
+  if(!worldUUID.empty())
+  {
+    loadWorld(worldUUID);
+    if(!world)
+      return ExitFailure;
+  }
+  else if(settings->loadLastWorldOnStartup && !settings->lastWorld.value().empty())
     loadWorld(settings->lastWorld.value());
 
   try
@@ -180,6 +186,20 @@ Traintastic::RunStatus Traintastic::run()
   {
     Log::log(Server::id, e.message(), e.args());
     return ExitFailure;
+  }
+
+  if(world)
+  {
+    if(simulate)
+      world->simulation = true;
+
+    if(online)
+      world->online();
+
+    if(power && run)
+      world->run();
+    else if(power)
+      world->powerOn();
   }
 
   EventLoop::exec();

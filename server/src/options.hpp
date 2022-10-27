@@ -39,6 +39,10 @@ struct Options
 #endif
   std::string dataDir;
   std::string world;
+  bool simulate;
+  bool online;
+  bool power;
+  bool run;
 
   Options(int argc , char* argv[])
   {
@@ -56,6 +60,11 @@ struct Options
       ("pidfile,P", boost::program_options::value<std::string>(&pidFile)->value_name("FILENAME")->default_value("")->implicit_value("/run/traintastic-server.pid"), "write pid file")
 #endif
       ("datadir,D", boost::program_options::value<std::string>(&dataDir)->value_name("PATH"), "data directory")
+      ("world,W", boost::program_options::value<std::string>(&world)->value_name("UUID"), "world UUID to load")
+      ("simulate", "enable simulation after loading world")
+      ("online", "enable communication after loading world")
+      ("power", "enable power after loading world")
+      ("run", "start after loading world")
       ;
 
     boost::program_options::variables_map vm;
@@ -66,7 +75,13 @@ struct Options
 
       if(vm.count("help"))
       {
-        std::cout << desc << std::endl;
+        std::cout
+          << desc << std::endl
+          << "NOTES:"<< std::endl
+          << "1. --simulate, --online, --power and --run options only apply to the world loaded at startup." << std::endl
+          << "2. --run option requires --power, --power option must be set for --run to work."
+          << std::endl
+          ;
         exit(EXIT_SUCCESS);
       }
 
@@ -83,6 +98,17 @@ struct Options
 #ifdef __unix__
       daemonize = vm.count("daemonize");
 #endif
+
+      simulate = vm.count("simulate");
+      online = vm.count("online");
+      power = vm.count("power");
+      run = vm.count("run");
+
+      if(!power && run)
+      {
+        std::cerr << "Error: --run option requires --power option to be set too." << std::endl;
+        exit(EXIT_FAILURE);
+      }
 
       boost::program_options::notify(vm);
     }

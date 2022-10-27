@@ -21,11 +21,20 @@ Command line options available for Traintastic server depend on the used operati
 
 Traintastic server command line options available on all supported operating systems:
 
-| Short     | Long             | Description                         |
-|-----------|------------------|-------------------------------------|
-| `-h`      | `--help`         | Display help text and exit          |
-| `-v`      | `--version`      | Output version information and exit |
-| `-D PATH` | `--datadir PATH` | Data directory                      |
+| Short     | Long             | Description                              |
+|-----------|------------------|------------------------------------------|
+| `-h`      | `--help`         | Display help text and exit               |
+| `-v`      | `--version`      | Output version information and exit      |
+| `-D PATH` | `--datadir PATH` | Data directory                           |
+| `-W UUID` | `--world UUID`   | World UUID to load                       |
+|           | `--simulate`     | Enable simulation after loading world    |
+|           | `--online`       | Enable communication after loading world |
+|           | `--power`        | Enable power after loading world         |
+|           | `--run`          | Start after loading world                |
+
+Note: `--simulate`, `--online`, `--power` and `--run` options only apply to the world loaded at startup.
+
+Note: `--run` option requires `--power`, `--power` option must be set for `--run` to work.
 
 #### Data directory
 
