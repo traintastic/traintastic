@@ -122,6 +122,12 @@ bool hasResponse(const Message& message)
   if(message.opCode == OPC_IMM_PACKET)
   {
     return
+      isSignatureMatch<LocoF9F12IMMShortAddress>(message) ||
+      isSignatureMatch<LocoF9F12IMMLongAddress>(message) ||
+      isSignatureMatch<LocoF13F20IMMShortAddress>(message) ||
+      isSignatureMatch<LocoF13F20IMMLongAddress>(message) ||
+      isSignatureMatch<LocoF21F28IMMShortAddress>(message) ||
+      isSignatureMatch<LocoF21F28IMMLongAddress>(message) ||
       Uhlenbrock::ReadSpecialOption::check(message) ||
       Uhlenbrock::LNCVStart::check(message) ||
       Uhlenbrock::LNCVRead::check(message) ||
@@ -130,7 +136,6 @@ bool hasResponse(const Message& message)
 
   return (message.opCode & 0x08);
 }
-
 
 bool isValidResponse(const Message& request, const Message& response)
 {
