@@ -36,6 +36,9 @@
 #include "../../../utils/byte.hpp"
 
 // include all message headers:
+#include "message/locof9f12imm.hpp"
+#include "message/locof13f20imm.hpp"
+#include "message/locof21f28imm.hpp"
 #include "message/uhlenbrock.hpp"
 
 namespace LocoNet {
@@ -244,6 +247,12 @@ struct LocoDirF : SlotMessage
       dirf &= ~SL_DIR;
   }
 
+  bool f(uint8_t n) const
+  {
+    assert(n <= 5);
+    return n == 0 ? f0() : ((dirf & (1 << (n - 1))) != 0);
+  }
+
   inline bool f0() const
   {
     return dirf & SL_F0;
@@ -332,6 +341,12 @@ struct LocoSnd : SlotMessage
     checksum = calcChecksum(*this);
   }
 
+  bool f(uint8_t n) const
+  {
+    assert(n >= 5 && n <= 8);
+    return snd & (1 << (n - 5));
+  }
+
   inline bool f5() const
   {
     return snd & SL_F5;
@@ -405,6 +420,12 @@ struct LocoF9F12 : SlotMessage
       function |= SL_F12;
 
     checksum = calcChecksum(*this);
+  }
+
+  bool f(uint8_t n) const
+  {
+    assert(n >= 9 && n <= 12);
+    return function & (1 << (n - 9));
   }
 
   inline bool f9() const
@@ -699,6 +720,12 @@ struct LocoF13F19 : Message
       function |= SL_F19;
   }
 
+  bool f(uint8_t n) const
+  {
+    assert(n >= 13 && n <= 19);
+    return (function & (1 << (n - 13)));
+  }
+
   inline bool f13() const
   {
     return function & SL_F13;
@@ -889,6 +916,12 @@ struct LocoF21F27 : Message
       function |= SL_F26;
     if(f27)
       function |= SL_F27;
+  }
+
+  bool f(uint8_t n) const
+  {
+    assert(n >= 21 && n <= 27);
+    return (function & (1 << (n - 21)));
   }
 
   inline bool f21() const
@@ -1165,6 +1198,17 @@ struct SlotReadData : SlotReadDataBase
       dirf |= SL_DIR;
     else
       dirf &= ~SL_DIR;
+  }
+
+  bool f(uint8_t n) const
+  {
+    assert(n <= 8);
+    if(n == 0)
+      return f0();
+    else if(n <= 4)
+      return (dirf & (1 << (n - 1)));
+    else // n <= 8
+      return (snd & (1 << (n - 5)));
   }
 
   inline bool f0() const

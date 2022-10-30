@@ -112,4 +112,14 @@ constexpr TriState operator^(TriState lhs, bool shr)
   return lhs ^ toTriState(shr);
 }
 
+constexpr bool operator ==(TriState lhs, bool shr)
+{
+  return lhs == toTriState(shr);
+}
+
+constexpr bool operator !=(TriState lhs, bool shr)
+{
+  return lhs != toTriState(shr);
+}
+
 #endif

@@ -28,6 +28,7 @@
 #include <thread>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
+#include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
@@ -90,33 +91,31 @@ class Kernel
 
     struct LocoSlot
     {
-      uint16_t address = 0;
-      bool addressValid = false;
-      uint8_t speed = 0;
-      bool speedValid = false;
-      uint8_t dirf0f4 = 0;
-      bool dirf0f4Valid = false;
-      uint8_t f5f8 = 0;
-      bool f5f8Valid = false;
-      uint8_t f9f12 = 0;
-      bool f9f12Valid = false;
-      uint8_t f13f19 = 0;
-      bool f13f19Valid = false;
-      uint8_t f21f27 = 0;
-      bool f21f27Valid = false;
-      uint8_t f12f20f28 = 0;
-      bool f12f20f28Valid = false;
+      static constexpr uint16_t invalidAddress = 0xFFFF;
+      static constexpr uint8_t invalidSpeed = 0xFF;
+
+      uint16_t address;
+      uint8_t speed;
+      Direction direction;
+      std::array<TriState, 29> functions;
+
+      LocoSlot()
+      {
+        invalidate();
+      }
+
+      bool isAddressValid() const
+      {
+        return address != invalidAddress;
+      }
 
       void invalidate()
       {
-        addressValid = false;
-        speedValid = false;
-        dirf0f4Valid = false;
-        f5f8Valid = false;
-        f9f12Valid = false;
-        f13f19Valid = false;
-        f12f20f28Valid = false;
-        f21f27Valid = false;
+        address = invalidAddress;
+        speed = invalidSpeed;
+        direction = Direction::Unknown;
+        for(auto& f : functions)
+          f = TriState::Undefined;
       }
     };
 
@@ -169,6 +168,7 @@ class Kernel
     Kernel(const Config& config, bool simulation);
 
     LocoSlot* getLocoSlot(uint8_t slot, bool sendSlotDataRequestIfNew = true);
+    LocoSlot* getLocoSlotByAddress(uint16_t address);
     void clearLocoSlot(uint8_t slot);
 
     std::shared_ptr<Decoder> getDecoder(uint16_t address);
@@ -223,6 +223,9 @@ class Kernel
     void startFastClockSyncTimer();
     void stopFastClockSyncTimer();
     void fastClockSyncTimerExpired(const boost::system::error_code& ec);
+
+    template<uint8_t First, uint8_t Last, class T>
+    bool updateFunctions(LocoSlot& slot, const T& message);
 
   public:
     static constexpr uint16_t inputAddressMin = 1;

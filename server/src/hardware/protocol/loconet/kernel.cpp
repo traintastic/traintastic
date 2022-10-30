@@ -280,17 +280,21 @@ void Kernel::receive(const Message& message)
         const LocoSpd& locoSpd = static_cast<const LocoSpd&>(message);
         if(LocoSlot* slot = getLocoSlot(locoSpd.slot))
         {
-          const bool changed = slot->addressValid && (!slot->speedValid || slot->speed != locoSpd.speed);
-          slot->speed = locoSpd.speed;
-          slot->speedValid = true;
+          if(!slot->isAddressValid())
+          {
+            send(RequestSlotData(locoSpd.slot));
+          }
+          else if(slot->speed != locoSpd.speed)
+          {
+            slot->speed = locoSpd.speed;
 
-          if(changed)
             EventLoop::call(
               [this, address=slot->address, speed=slot->speed]()
               {
                 if(auto decoder = getDecoder(address))
                   updateDecoderSpeed(decoder, speed);
               });
+          }
         }
       }
       break;
@@ -298,27 +302,29 @@ void Kernel::receive(const Message& message)
     case OPC_LOCO_DIRF: // direction and F0-F4
       if(m_decoderController)
       {
-        const LocoDirF& locoDirF = static_cast<const LocoDirF&>(message);
+        const auto& locoDirF = static_cast<const LocoDirF&>(message);
         if(LocoSlot* slot = getLocoSlot(locoDirF.slot))
         {
-          const bool changed = slot->addressValid && (!slot->dirf0f4Valid || slot->dirf0f4 != locoDirF.dirf);
-          slot->dirf0f4 = locoDirF.dirf;
-          slot->dirf0f4Valid = true;
+          if(!slot->isAddressValid())
+          {
+            send(RequestSlotData(locoDirF.slot));
+          }
+          else
+          {
+            if(slot->direction != locoDirF.direction())
+            {
+              slot->direction = locoDirF.direction();
 
-          if(changed)
-            EventLoop::call(
-              [this, address=slot->address, dirf0f4=slot->dirf0f4]()
-              {
-                if(auto decoder = getDecoder(address))
+              EventLoop::call(
+                [this, address=slot->address, direction=locoDirF.direction()]()
                 {
-                  decoder->direction.setValueInternal((dirf0f4 & SL_DIR) ? Direction::Forward : Direction::Reverse);
-                  decoder->setFunctionValue(0, dirf0f4 & SL_F0);
-                  decoder->setFunctionValue(1, dirf0f4 & SL_F1);
-                  decoder->setFunctionValue(2, dirf0f4 & SL_F2);
-                  decoder->setFunctionValue(3, dirf0f4 & SL_F3);
-                  decoder->setFunctionValue(4, dirf0f4 & SL_F4);
-                }
-              });
+                  if(auto decoder = getDecoder(address))
+                    decoder->direction.setValueInternal(direction);
+                });
+            }
+
+            updateFunctions<0, 4>(*slot, locoDirF);
+          }
         }
       }
       break;
@@ -326,25 +332,17 @@ void Kernel::receive(const Message& message)
     case OPC_LOCO_SND: // F5-F8
       if(m_decoderController)
       {
-        const LocoSnd& locoSnd = static_cast<const LocoSnd&>(message);
+        const auto& locoSnd = static_cast<const LocoSnd&>(message);
         if(LocoSlot* slot = getLocoSlot(locoSnd.slot))
         {
-          const bool changed = slot->addressValid && (!slot->f5f8Valid || slot->f5f8 != locoSnd.snd);
-          slot->f5f8 = locoSnd.snd;
-          slot->f5f8Valid = true;
-
-          if(changed)
-            EventLoop::call(
-              [this, address=slot->address, f5f8=slot->f5f8]()
-              {
-                if(auto decoder = getDecoder(address))
-                {
-                  decoder->setFunctionValue(5, f5f8 & SL_F5);
-                  decoder->setFunctionValue(6, f5f8 & SL_F6);
-                  decoder->setFunctionValue(7, f5f8 & SL_F7);
-                  decoder->setFunctionValue(8, f5f8 & SL_F8);
-                }
-              });
+          if(!slot->isAddressValid())
+          {
+            send(RequestSlotData(locoSnd.slot));
+          }
+          else
+          {
+            updateFunctions<5, 8>(*slot, locoSnd);
+          }
         }
       }
       break;
@@ -352,33 +350,14 @@ void Kernel::receive(const Message& message)
     case OPC_LOCO_F9F12:
       if(m_decoderController)
       {
-        const LocoF9F12& locoF9F12 = static_cast<const LocoF9F12&>(message);
+        const auto& locoF9F12 = static_cast<const LocoF9F12&>(message);
         if(LocoSlot* slot = getLocoSlot(locoF9F12.slot))
         {
-          const bool changed = slot->addressValid && (!slot->f9f12Valid || slot->f9f12 != locoF9F12.function);
-          slot->f9f12 = locoF9F12.function;
-          slot->f9f12Valid = true;
-
-          if(slot->f12f20f28Valid)
+          if(!slot->isAddressValid())
           {
-            if(locoF9F12.f12())
-              slot->f12f20f28 |= LocoF12F20F28::F12;
-            else
-              slot->f12f20f28 &= ~LocoF12F20F28::F12;
+            send(RequestSlotData(locoF9F12.slot));
           }
-
-          if(changed)
-            EventLoop::call(
-              [this, address=slot->address, f9f12=slot->f9f12]()
-              {
-                if(auto decoder = getDecoder(address))
-                {
-                  decoder->setFunctionValue(9, f9f12 & SL_F9);
-                  decoder->setFunctionValue(10, f9f12 & SL_F10);
-                  decoder->setFunctionValue(11, f9f12 & SL_F11);
-                  decoder->setFunctionValue(12, f9f12 & SL_F12);
-                }
-              });
+          updateFunctions<9, 12>(*slot, locoF9F12);
         }
       }
       break;
@@ -451,10 +430,10 @@ void Kernel::receive(const Message& message)
         LocoSlot* locoSlot = getLocoSlot(slotReadData.slot, false);
         assert(locoSlot);
 
-        if(!locoSlot->addressValid)
+        if(!locoSlot->isAddressValid())
           m_addressToSlot[slotReadData.address()] = slot;
 
-        bool changed = locoSlot->addressValid && locoSlot->address != slotReadData.address();
+        bool changed = locoSlot->isAddressValid() && locoSlot->address != slotReadData.address();
         if(changed)
         {
           if(auto it = m_addressToSlot.find(locoSlot->address); it != m_addressToSlot.end() && it->second == slotReadData.slot)
@@ -462,35 +441,21 @@ void Kernel::receive(const Message& message)
           locoSlot->invalidate();
         }
         locoSlot->address = slotReadData.address();
-        locoSlot->addressValid = true;
-
-        changed |= (!locoSlot->dirf0f4Valid || locoSlot->dirf0f4 != slotReadData.dirf);
-        locoSlot->dirf0f4 = slotReadData.dirf;
-        locoSlot->dirf0f4Valid = true;
-
-        changed |= (!locoSlot->f5f8Valid || locoSlot->f5f8 != slotReadData.snd);
-        locoSlot->f5f8 = slotReadData.snd;
-        locoSlot->f5f8Valid = true;
 
         if(changed)
+        {
           EventLoop::call(
-            [this, address=locoSlot->address, speed=locoSlot->speed, dirf0f4=locoSlot->dirf0f4, f5f8=locoSlot->f5f8]()
+            [this, address=locoSlot->address, speed=locoSlot->speed, direction=locoSlot->direction]()
             {
               if(auto decoder = getDecoder(address))
               {
                 updateDecoderSpeed(decoder, speed);
-                decoder->direction.setValueInternal((dirf0f4 & SL_DIR) ? Direction::Forward : Direction::Reverse);
-                decoder->setFunctionValue(0, dirf0f4 & SL_F0);
-                decoder->setFunctionValue(1, dirf0f4 & SL_F1);
-                decoder->setFunctionValue(2, dirf0f4 & SL_F2);
-                decoder->setFunctionValue(3, dirf0f4 & SL_F3);
-                decoder->setFunctionValue(4, dirf0f4 & SL_F4);
-                decoder->setFunctionValue(5, f5f8 & SL_F5);
-                decoder->setFunctionValue(6, f5f8 & SL_F6);
-                decoder->setFunctionValue(7, f5f8 & SL_F7);
-                decoder->setFunctionValue(8, f5f8 & SL_F8);
+                decoder->direction.setValueInternal(direction);
               }
             });
+        }
+
+        updateFunctions<0, 8>(*locoSlot, slotReadData);
 
         // check if there are pending slot messages
         if(auto it = m_pendingSlotMessages.find(locoSlot->address); it != m_pendingSlotMessages.end())
@@ -634,28 +599,14 @@ void Kernel::receive(const Message& message)
           {
             case 0x08:
             {
-              const LocoF13F19& locoF13F19 = static_cast<const LocoF13F19&>(message);
+              const auto& locoF13F19 = static_cast<const LocoF13F19&>(message);
               if(LocoSlot* slot = getLocoSlot(locoF13F19.slot))
               {
-                const bool changed = slot->addressValid && (!slot->f13f19Valid || slot->f13f19 != locoF13F19.function);
-                slot->f13f19 = locoF13F19.function;
-                slot->f13f19Valid = true;
-
-                if(changed)
-                  EventLoop::call(
-                    [this, address=slot->address, f13f19=slot->f13f19]()
-                    {
-                      if(auto decoder = getDecoder(address))
-                      {
-                        decoder->setFunctionValue(13, f13f19 & SL_F13);
-                        decoder->setFunctionValue(14, f13f19 & SL_F14);
-                        decoder->setFunctionValue(15, f13f19 & SL_F15);
-                        decoder->setFunctionValue(16, f13f19 & SL_F16);
-                        decoder->setFunctionValue(17, f13f19 & SL_F17);
-                        decoder->setFunctionValue(18, f13f19 & SL_F18);
-                        decoder->setFunctionValue(19, f13f19 & SL_F19);
-                      }
-                    });
+                if(!slot->isAddressValid())
+                {
+                  send(RequestSlotData(locoF13F19.slot));
+                }
+                updateFunctions<13, 19>(*slot, locoF13F19);
               }
               break;
             }
@@ -664,56 +615,46 @@ void Kernel::receive(const Message& message)
               const auto& locoF12F20F28 = static_cast<const LocoF12F20F28&>(message);
               if(LocoSlot* slot = getLocoSlot(locoF12F20F28.slot))
               {
-                const bool changed = slot->addressValid && (!slot->f12f20f28Valid || slot->f12f20f28 != locoF12F20F28.function);
-                slot->f12f20f28 = locoF12F20F28.function;
-                slot->f12f20f28Valid = true;
-
-                if(slot->f9f12Valid)
+                if(!slot->isAddressValid())
                 {
-                  if(locoF12F20F28.f12())
-                    slot->f9f12 |= SL_F12;
-                  else
-                    slot->f9f12 &= ~SL_F12;
+                  send(RequestSlotData(locoF12F20F28.slot));
                 }
 
+                const bool changed =
+                  slot->functions[12] != locoF12F20F28.f12() ||
+                  slot->functions[20] != locoF12F20F28.f20() ||
+                  slot->functions[28] != locoF12F20F28.f28();
+
                 if(changed)
+                {
+                  slot->functions[12] = toTriState(locoF12F20F28.f12());
+                  slot->functions[20] = toTriState(locoF12F20F28.f20());
+                  slot->functions[28] = toTriState(locoF12F20F28.f28());
+
                   EventLoop::call(
-                    [this, address=slot->address, f12f20f28=slot->f12f20f28]()
+                    [this, address=slot->address, f12=locoF12F20F28.f12(), f20=locoF12F20F28.f20(), f28=locoF12F20F28.f28()]()
                     {
                       if(auto decoder = getDecoder(address))
                       {
-                        decoder->setFunctionValue(12, f12f20f28 & LocoF12F20F28::F12);
-                        decoder->setFunctionValue(20, f12f20f28 & LocoF12F20F28::F20);
-                        decoder->setFunctionValue(28, f12f20f28 & LocoF12F20F28::F28);
+                        decoder->setFunctionValue(12, f12);
+                        decoder->setFunctionValue(20, f20);
+                        decoder->setFunctionValue(28, f28);
                       }
                     });
+                }
               }
               break;
             }
             case 0x09:
             {
-              const LocoF21F27& locoF21F27 = static_cast<const LocoF21F27&>(message);
+              const auto& locoF21F27 = static_cast<const LocoF21F27&>(message);
               if(LocoSlot* slot = getLocoSlot(locoF21F27.slot))
               {
-                const bool changed = slot->addressValid && (!slot->f21f27Valid || slot->f21f27 != locoF21F27.function);
-                slot->f21f27 = locoF21F27.function;
-                slot->f21f27Valid = true;
-
-                if(changed)
-                  EventLoop::call(
-                    [this, address=slot->address, f21f27=slot->f21f27]()
-                    {
-                      if(auto decoder = getDecoder(address))
-                      {
-                        decoder->setFunctionValue(21, f21f27 & SL_F21);
-                        decoder->setFunctionValue(22, f21f27 & SL_F22);
-                        decoder->setFunctionValue(23, f21f27 & SL_F23);
-                        decoder->setFunctionValue(24, f21f27 & SL_F24);
-                        decoder->setFunctionValue(25, f21f27 & SL_F25);
-                        decoder->setFunctionValue(26, f21f27 & SL_F26);
-                        decoder->setFunctionValue(27, f21f27 & SL_F27);
-                      }
-                    });
+                if(!slot->isAddressValid())
+                {
+                  send(RequestSlotData(locoF21F27.slot));
+                }
+                updateFunctions<21, 27>(*slot, locoF21F27);
               }
               break;
             }
@@ -784,6 +725,57 @@ void Kernel::receive(const Message& message)
       break;
 
     case OPC_IMM_PACKET:
+      if(m_decoderController)
+      {
+        if(isSignatureMatch<LocoF9F12IMMShortAddress>(message))
+        {
+          const auto& locoF9F12 = static_cast<const LocoF9F12IMMShortAddress&>(message);
+          if(LocoSlot* slot = getLocoSlotByAddress(locoF9F12.address()))
+            updateFunctions<9, 12>(*slot, locoF9F12);
+          else
+            send(LocoAdr(locoF9F12.address()));
+        }
+        else if(isSignatureMatch<LocoF9F12IMMLongAddress>(message))
+        {
+          const auto& locoF9F12 = static_cast<const LocoF9F12IMMLongAddress&>(message);
+          if(LocoSlot* slot = getLocoSlotByAddress(locoF9F12.address()))
+            updateFunctions<9, 12>(*slot, locoF9F12);
+          else
+            send(LocoAdr(locoF9F12.address()));
+        }
+        else if(isSignatureMatch<LocoF13F20IMMShortAddress>(message))
+        {
+          const auto& locoF13F20 = static_cast<const LocoF13F20IMMShortAddress&>(message);
+          if(LocoSlot* slot = getLocoSlotByAddress(locoF13F20.address()))
+            updateFunctions<13, 20>(*slot, locoF13F20);
+          else
+            send(LocoAdr(locoF13F20.address()));
+        }
+        else if(isSignatureMatch<LocoF13F20IMMLongAddress>(message))
+        {
+          const auto& locoF13F20 = static_cast<const LocoF13F20IMMLongAddress&>(message);
+          if(LocoSlot* slot = getLocoSlotByAddress(locoF13F20.address()))
+            updateFunctions<13, 20>(*slot, locoF13F20);
+          else
+            send(LocoAdr(locoF13F20.address()));
+        }
+        else if(isSignatureMatch<LocoF21F28IMMShortAddress>(message))
+        {
+          const auto& locoF21F28 = static_cast<const LocoF21F28IMMShortAddress&>(message);
+          if(LocoSlot* slot = getLocoSlotByAddress(locoF21F28.address()))
+            updateFunctions<21, 28>(*slot, locoF21F28);
+          else
+            send(LocoAdr(locoF21F28.address()));
+        }
+        else if(isSignatureMatch<LocoF21F28IMMLongAddress>(message))
+        {
+          const auto& locoF21F28 = static_cast<const LocoF21F28IMMLongAddress&>(message);
+          if(LocoSlot* slot = getLocoSlotByAddress(locoF21F28.address()))
+            updateFunctions<21, 28>(*slot, locoF21F28);
+          else
+            send(LocoAdr(locoF21F28.address()));
+        }
+      }
       break; // unimplemented
 
     case OPC_WR_SL_DATA:
@@ -885,46 +877,149 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
         decoder.getFunctionValue(8)};
       postSend(decoder.address, message);
     }
-    else if(functionNumber <= 12)
+    else if(functionNumber <= 28)
     {
-      LocoF9F12 message{
-        decoder.getFunctionValue(9),
-        decoder.getFunctionValue(10),
-        decoder.getFunctionValue(11),
-        decoder.getFunctionValue(12)};
-      postSend(decoder.address, message);
-    }
-    else if(functionNumber <= 19)
-    {
-      LocoF13F19 message{
-        decoder.getFunctionValue(13),
-        decoder.getFunctionValue(14),
-        decoder.getFunctionValue(15),
-        decoder.getFunctionValue(16),
-        decoder.getFunctionValue(17),
-        decoder.getFunctionValue(18),
-        decoder.getFunctionValue(19)};
-      postSend(decoder.address, message);
-    }
-    else if(functionNumber == 20 || functionNumber == 28)
-    {
-      LocoF12F20F28 message{
-        decoder.getFunctionValue(12),
-        decoder.getFunctionValue(20),
-        decoder.getFunctionValue(28)};
-      postSend(decoder.address, message);
-    }
-    else if(functionNumber <= 27)
-    {
-      LocoF21F27 message{
-        decoder.getFunctionValue(21),
-        decoder.getFunctionValue(22),
-        decoder.getFunctionValue(23),
-        decoder.getFunctionValue(24),
-        decoder.getFunctionValue(25),
-        decoder.getFunctionValue(26),
-        decoder.getFunctionValue(27)};
-      postSend(decoder.address, message);
+      switch(m_config.f9f28)
+      {
+        case LocoNetF9F28::IMMPacket:
+        {
+          const bool longAddress = (decoder.address > DCC::addressShortMax) || decoder.longAddress;
+
+          if(functionNumber <= 12)
+          {
+            if(longAddress)
+            {
+              postSend(
+                LocoF9F12IMMLongAddress(
+                  decoder.address,
+                  decoder.getFunctionValue(9),
+                  decoder.getFunctionValue(10),
+                  decoder.getFunctionValue(11),
+                  decoder.getFunctionValue(12)));
+            }
+            else
+            {
+              postSend(
+                LocoF9F12IMMShortAddress(
+                  decoder.address,
+                  decoder.getFunctionValue(9),
+                  decoder.getFunctionValue(10),
+                  decoder.getFunctionValue(11),
+                  decoder.getFunctionValue(12)));
+            }
+          }
+          else if(functionNumber <= 20)
+          {
+            if(longAddress)
+            {
+              postSend(
+                LocoF13F20IMMLongAddress(
+                  decoder.address,
+                  decoder.getFunctionValue(13),
+                  decoder.getFunctionValue(14),
+                  decoder.getFunctionValue(15),
+                  decoder.getFunctionValue(16),
+                  decoder.getFunctionValue(17),
+                  decoder.getFunctionValue(18),
+                  decoder.getFunctionValue(19),
+                  decoder.getFunctionValue(20)));
+            }
+            else
+            {
+              postSend(
+                LocoF13F20IMMShortAddress(
+                  decoder.address,
+                  decoder.getFunctionValue(13),
+                  decoder.getFunctionValue(14),
+                  decoder.getFunctionValue(15),
+                  decoder.getFunctionValue(16),
+                  decoder.getFunctionValue(17),
+                  decoder.getFunctionValue(18),
+                  decoder.getFunctionValue(19),
+                  decoder.getFunctionValue(20)));
+            }
+          }
+          else if(functionNumber <= 28)
+          {
+            if(longAddress)
+            {
+              postSend(
+                LocoF21F28IMMLongAddress(
+                  decoder.address,
+                  decoder.getFunctionValue(21),
+                  decoder.getFunctionValue(22),
+                  decoder.getFunctionValue(23),
+                  decoder.getFunctionValue(24),
+                  decoder.getFunctionValue(25),
+                  decoder.getFunctionValue(26),
+                  decoder.getFunctionValue(27),
+                  decoder.getFunctionValue(28)));
+            }
+            else
+            {
+              postSend(
+                LocoF21F28IMMShortAddress(
+                  decoder.address,
+                  decoder.getFunctionValue(21),
+                  decoder.getFunctionValue(22),
+                  decoder.getFunctionValue(23),
+                  decoder.getFunctionValue(24),
+                  decoder.getFunctionValue(25),
+                  decoder.getFunctionValue(26),
+                  decoder.getFunctionValue(27),
+                  decoder.getFunctionValue(28)));
+            }
+          }
+          break;
+        }
+        case LocoNetF9F28::UhlenbrockExtended:
+          if(functionNumber <= 12)
+          {
+            LocoF9F12 message{
+              decoder.getFunctionValue(9),
+              decoder.getFunctionValue(10),
+              decoder.getFunctionValue(11),
+              decoder.getFunctionValue(12)};
+            postSend(decoder.address, message);
+          }
+          else if(functionNumber <= 19)
+          {
+            LocoF13F19 message{
+              decoder.getFunctionValue(13),
+              decoder.getFunctionValue(14),
+              decoder.getFunctionValue(15),
+              decoder.getFunctionValue(16),
+              decoder.getFunctionValue(17),
+              decoder.getFunctionValue(18),
+              decoder.getFunctionValue(19)};
+            postSend(decoder.address, message);
+          }
+          else if(functionNumber == 20 || functionNumber == 28)
+          {
+            LocoF12F20F28 message{
+              decoder.getFunctionValue(12),
+              decoder.getFunctionValue(20),
+              decoder.getFunctionValue(28)};
+            postSend(decoder.address, message);
+          }
+          else if(functionNumber <= 27)
+          {
+            LocoF21F27 message{
+              decoder.getFunctionValue(21),
+              decoder.getFunctionValue(22),
+              decoder.getFunctionValue(23),
+              decoder.getFunctionValue(24),
+              decoder.getFunctionValue(25),
+              decoder.getFunctionValue(26),
+              decoder.getFunctionValue(27)};
+            postSend(decoder.address, message);
+          }
+          break;
+
+        default:
+          assert(false);
+          break;
+      }
     }
   }
 }
@@ -1031,6 +1126,20 @@ Kernel::LocoSlot* Kernel::getLocoSlot(uint8_t slot, bool sendSlotDataRequestIfNe
   }
 
   return &it->second;
+}
+
+Kernel::LocoSlot* Kernel::getLocoSlotByAddress(uint16_t address)
+{
+  assert(isKernelThread());
+
+  auto it = std::find_if(m_slots.begin(), m_slots.end(),
+    [address](auto& item)
+    {
+      assert(address != LocoSlot::invalidAddress);
+      return item.second.address == address;
+    });
+
+  return it != m_slots.end() ? &it->second : nullptr;
 }
 
 void Kernel::clearLocoSlot(uint8_t slot)
@@ -1200,6 +1309,32 @@ void Kernel::fastClockSyncTimerExpired(const boost::system::error_code& ec)
   send(RequestSlotData(SLOT_FAST_CLOCK));
 
   startFastClockSyncTimer();
+}
+
+template<uint8_t First, uint8_t Last, class T>
+bool Kernel::updateFunctions(LocoSlot& slot, const T& message)
+{
+  assert(isKernelThread());
+
+  bool changed = false;
+  for(uint8_t i = First; i <= Last; ++i)
+  {
+    if(slot.functions[i] != message.f(i))
+    {
+      slot.functions[i] = toTriState(message.f(i));
+      changed = true;
+    }
+  }
+
+  EventLoop::call(
+    [this, address=slot.address, message]()
+    {
+      if(auto decoder = getDecoder(address))
+        for(uint8_t i = First; i <= Last; ++i)
+          decoder->setFunctionValue(i, message.f(i));
+    });
+
+  return changed;
 }
 
 

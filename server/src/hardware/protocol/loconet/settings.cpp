@@ -33,6 +33,7 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   , echoTimeout{this, "echo_timeout", 250, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , responseTimeout{this, "response_timeout", 1000, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , locomotiveSlots{this, "locomotive_slots", SLOT_LOCO_MAX, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , f9f28{this, "f9_f28", LocoNetF9F28::IMMPacket, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , fastClockSyncEnabled{this, "fast_clock_sync_enabled", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](bool value)
       {
@@ -56,6 +57,10 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   Attributes::addEnabled(locomotiveSlots, true);
   Attributes::addMinMax(locomotiveSlots, SLOT_LOCO_MIN, SLOT_LOCO_MAX);
   m_interfaceItems.add(locomotiveSlots);
+
+  Attributes::addEnabled(f9f28, true);
+  Attributes::addValues(f9f28, loconetF9F28Values);
+  m_interfaceItems.add(f9f28);
 
   Attributes::addEnabled(fastClockSyncEnabled, true);
   //Attributes::addGroup(fastClockSyncEnabled, Group::fastClockSync);
@@ -86,6 +91,7 @@ Config Settings::config() const
   config.responseTimeout = responseTimeout;
 
   config.locomotiveSlots = locomotiveSlots;
+  config.f9f28 = f9f28;
 
   config.fastClockSyncEnabled = fastClockSyncEnabled;
   config.fastClockSyncInterval = fastClockSyncInterval;
@@ -118,11 +124,13 @@ void Settings::commandStationChanged(LocoNetCommandStation value)
 
     case LocoNetCommandStation::DigikeijsDR5000:
       locomotiveSlots = SLOT_LOCO_MAX;
+      f9f28 = LocoNetF9F28::UhlenbrockExtended;
       break;
 
     case LocoNetCommandStation::UhlenbrockIntellibox:
     case LocoNetCommandStation::UhlenbrockIBCOM:
       locomotiveSlots = 32;
+      f9f28 = LocoNetF9F28::UhlenbrockExtended;
       break;
   }
   Attributes::setEnabled(locomotiveSlots, isCustom);

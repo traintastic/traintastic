@@ -82,7 +82,7 @@ void setSlot(Message& message, uint8_t slot)
     case OPC_D4:
     {
       uint8_t* bytes = reinterpret_cast<uint8_t*>(&message);
-      if(bytes[1] == 0x20 && (bytes[3] == 0x08 || bytes[3] == 0x05 || bytes[3] == 0x09)) // LocoF13F19 or LocoF20F28 or LocoF21F27
+      if(bytes[1] == 0x20 && (bytes[3] == 0x08 || bytes[3] == 0x05 || bytes[3] == 0x09)) // LocoF13F19 or LocoF12F20F28 or LocoF21F27
       {
         bytes[2] = slot;
         return;
@@ -433,7 +433,77 @@ std::string toString(const Message& message)
     }
     case OPC_IMM_PACKET:
     {
-      if(Uhlenbrock::LNCVStart::check(message))
+      if(isSignatureMatch<LocoF9F12IMMShortAddress>(message))
+      {
+        const auto& locoF9F12 = static_cast<const LocoF9F12IMMShortAddress&>(message);
+        s.append(" short_address=").append(std::to_string(locoF9F12.address()));
+        s.append(" f9=").append(locoF9F12.f9() ? "on" : "off");
+        s.append(" f10=").append(locoF9F12.f10() ? "on" : "off");
+        s.append(" f11=").append(locoF9F12.f11() ? "on" : "off");
+        s.append(" f12=").append(locoF9F12.f12() ? "on" : "off");
+      }
+      else if(isSignatureMatch<LocoF9F12IMMLongAddress>(message))
+      {
+        const auto& locoF9F12 = static_cast<const LocoF9F12IMMLongAddress&>(message);
+        s.append(" long_address=").append(std::to_string(locoF9F12.address()));
+        s.append(" f9=").append(locoF9F12.f9() ? "on" : "off");
+        s.append(" f10=").append(locoF9F12.f10() ? "on" : "off");
+        s.append(" f11=").append(locoF9F12.f11() ? "on" : "off");
+        s.append(" f12=").append(locoF9F12.f12() ? "on" : "off");
+      }
+      else if(isSignatureMatch<LocoF13F20IMMShortAddress>(message))
+      {
+        const auto& locoF13F20 = static_cast<const LocoF13F20IMMShortAddress&>(message);
+        s.append(" short_address=").append(std::to_string(locoF13F20.address()));
+        s.append(" f13=").append(locoF13F20.f13() ? "on" : "off");
+        s.append(" f14=").append(locoF13F20.f14() ? "on" : "off");
+        s.append(" f15=").append(locoF13F20.f15() ? "on" : "off");
+        s.append(" f16=").append(locoF13F20.f16() ? "on" : "off");
+        s.append(" f17=").append(locoF13F20.f17() ? "on" : "off");
+        s.append(" f18=").append(locoF13F20.f18() ? "on" : "off");
+        s.append(" f19=").append(locoF13F20.f19() ? "on" : "off");
+        s.append(" f20=").append(locoF13F20.f20() ? "on" : "off");
+      }
+      else if(isSignatureMatch<LocoF13F20IMMLongAddress>(message))
+      {
+        const auto& locoF13F20 = static_cast<const LocoF13F20IMMLongAddress&>(message);
+        s.append(" long_address=").append(std::to_string(locoF13F20.address()));
+        s.append(" f13=").append(locoF13F20.f13() ? "on" : "off");
+        s.append(" f14=").append(locoF13F20.f14() ? "on" : "off");
+        s.append(" f15=").append(locoF13F20.f15() ? "on" : "off");
+        s.append(" f16=").append(locoF13F20.f16() ? "on" : "off");
+        s.append(" f17=").append(locoF13F20.f17() ? "on" : "off");
+        s.append(" f18=").append(locoF13F20.f18() ? "on" : "off");
+        s.append(" f19=").append(locoF13F20.f19() ? "on" : "off");
+        s.append(" f20=").append(locoF13F20.f20() ? "on" : "off");
+      }
+      else if(isSignatureMatch<LocoF21F28IMMShortAddress>(message))
+      {
+        const auto& locoF21F28 = static_cast<const LocoF21F28IMMShortAddress&>(message);
+        s.append(" short_address=").append(std::to_string(locoF21F28.address()));
+        s.append(" f21=").append(locoF21F28.f21() ? "on" : "off");
+        s.append(" f22=").append(locoF21F28.f22() ? "on" : "off");
+        s.append(" f23=").append(locoF21F28.f23() ? "on" : "off");
+        s.append(" f24=").append(locoF21F28.f24() ? "on" : "off");
+        s.append(" f25=").append(locoF21F28.f25() ? "on" : "off");
+        s.append(" f26=").append(locoF21F28.f26() ? "on" : "off");
+        s.append(" f27=").append(locoF21F28.f27() ? "on" : "off");
+        s.append(" f28=").append(locoF21F28.f28() ? "on" : "off");
+      }
+      else if(isSignatureMatch<LocoF21F28IMMLongAddress>(message))
+      {
+        const auto& locoF21F28 = static_cast<const LocoF21F28IMMLongAddress&>(message);
+        s.append(" long_address=").append(std::to_string(locoF21F28.address()));
+        s.append(" f21=").append(locoF21F28.f21() ? "on" : "off");
+        s.append(" f22=").append(locoF21F28.f22() ? "on" : "off");
+        s.append(" f23=").append(locoF21F28.f23() ? "on" : "off");
+        s.append(" f24=").append(locoF21F28.f24() ? "on" : "off");
+        s.append(" f25=").append(locoF21F28.f25() ? "on" : "off");
+        s.append(" f26=").append(locoF21F28.f26() ? "on" : "off");
+        s.append(" f27=").append(locoF21F28.f27() ? "on" : "off");
+        s.append(" f28=").append(locoF21F28.f28() ? "on" : "off");
+      }
+      else if(Uhlenbrock::LNCVStart::check(message))
       {
         const auto& lncvStart = static_cast<const Uhlenbrock::LNCVStart&>(message);
         s.append(" LNCV start:");

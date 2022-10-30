@@ -23,7 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_CONFIG_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_CONFIG_HPP
 
-#include <traintastic/enum/loconetcommandstation.hpp>
+#include <traintastic/enum/loconetf9f28.hpp>
 
 namespace LocoNet {
 
@@ -36,6 +36,7 @@ struct Config
   uint16_t responseTimeout; //!< Wait for response timeout in milliseconds
 
   uint8_t locomotiveSlots; //!< Number of available locomotive slots, defaults to #SLOT_LOCO_MAX
+  LocoNetF9F28 f9f28;
 
   bool fastClockSyncEnabled;
   uint8_t fastClockSyncInterval; //!< Fast clock sync interval in seconds
