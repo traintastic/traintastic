@@ -181,11 +181,39 @@ class Kernel
     }
 
     void send(const Message& message, Priority priority = NormalPriority);
+    template<class T>
+    void postSend(const T& message)
+    {
+      m_ioContext.post(
+        [this, message]()
+        {
+          send(message);
+        });
+    }
+    template<class T>
+    void postSend(const T& message, Priority priority)
+    {
+      m_ioContext.post(
+        [this, message, priority]()
+        {
+          send(message, priority);
+        });
+    }
     void send(uint16_t address, Message& message, uint8_t& slot);
-    template<typename T>
+    template<class T>
     inline void send(uint16_t address, T& message)
     {
       send(address, message, message.slot);
+    }
+    template<class T>
+    void postSend(uint16_t address, const T& message)
+    {
+      m_ioContext.post(
+        [this, address, message]()
+        {
+          T msg(message);
+          send(address, msg, msg.slot);
+        });
     }
     void sendNextMessage();
 
@@ -206,6 +234,13 @@ class Kernel
 
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
+
+#ifndef NDEBUG
+    bool isKernelThread() const
+    {
+      return std::this_thread::get_id() == m_thread.get_id();
+    }
+#endif
 
     /**
      * @brief IO context for LocoNet kernel and IO handler

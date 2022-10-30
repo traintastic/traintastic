@@ -69,10 +69,13 @@ Kernel::Kernel(const Config& config, bool simulation)
   , m_started{false}
 #endif
 {
+  assert(isEventLoopThread());
 }
 
 void Kernel::setConfig(const Config& config)
 {
+  assert(isEventLoopThread());
+
   m_ioContext.post(
     [this, newConfig=config]()
     {
@@ -91,48 +94,56 @@ void Kernel::setConfig(const Config& config)
 
 void Kernel::setOnStarted(std::function<void()> callback)
 {
+  assert(isEventLoopThread());
   assert(!m_started);
   m_onStarted = std::move(callback);
 }
 
 void Kernel::setOnGlobalPowerChanged(std::function<void(bool)> callback)
 {
+  assert(isEventLoopThread());
   assert(!m_started);
   m_onGlobalPowerChanged = std::move(callback);
 }
 
 void Kernel::setOnIdle(std::function<void()> callback)
 {
+  assert(isEventLoopThread());
   assert(!m_started);
   m_onIdle = std::move(callback);
 }
 
 void Kernel::setDecoderController(DecoderController* decoderController)
 {
+  assert(isEventLoopThread());
   assert(!m_started);
   m_decoderController = decoderController;
 }
 
 void Kernel::setInputController(InputController* inputController)
 {
+  assert(isEventLoopThread());
   assert(!m_started);
   m_inputController = inputController;
 }
 
 void Kernel::setOutputController(OutputController* outputController)
 {
+  assert(isEventLoopThread());
   assert(!m_started);
   m_outputController = outputController;
 }
 
 void Kernel::setIdentificationController(IdentificationController* identificationController)
 {
+  assert(isEventLoopThread());
   assert(!m_started);
   m_identificationController= identificationController;
 }
 
 void Kernel::start()
 {
+  assert(isEventLoopThread());
   assert(m_ioHandler);
   assert(!m_started);
 
@@ -179,6 +190,8 @@ void Kernel::start()
 
 void Kernel::stop()
 {
+  assert(isEventLoopThread());
+
   m_ioContext.post(
     [this]()
     {
@@ -199,6 +212,8 @@ void Kernel::stop()
 
 void Kernel::receive(const Message& message)
 {
+  assert(isKernelThread());
+
   if(m_config.debugLogRXTX)
     EventLoop::call([this, msg=toString(message)](){ Log::log(m_logId, LogMessage::D2002_RX_X, msg); });
 
@@ -786,6 +801,7 @@ void Kernel::receive(const Message& message)
 
 void Kernel::setPowerOn(bool value)
 {
+  assert(isEventLoopThread());
   if(value)
   {
     m_ioContext.post(
@@ -808,6 +824,7 @@ void Kernel::setPowerOn(bool value)
 
 void Kernel::emergencyStop()
 {
+  assert(isEventLoopThread());
   m_ioContext.post(
     [this]()
     {
@@ -818,6 +835,7 @@ void Kernel::emergencyStop()
 
 void Kernel::resume()
 {
+  assert(isEventLoopThread());
   m_ioContext.post(
     [this]()
     {
@@ -832,6 +850,8 @@ void Kernel::resume()
 
 void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
+  assert(isEventLoopThread());
+
   if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Throttle))
   {
     const uint8_t speedStep = Decoder::throttleToSpeedStep(decoder.throttle, SPEED_MAX - 1);
@@ -839,7 +859,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
     {
       // only send speed updates if bus estop isn't active, except for speed STOP and ESTOP
       LocoSpd message{static_cast<uint8_t>(decoder.emergencyStop ? SPEED_ESTOP : (speedStep > 0 ? 1 + speedStep : SPEED_STOP))};
-      send(decoder.address, message);
+      postSend(decoder.address, message);
     }
   }
 
@@ -854,7 +874,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
         decoder.getFunctionValue(2),
         decoder.getFunctionValue(3),
         decoder.getFunctionValue(4)};
-      send(decoder.address, message);
+      postSend(decoder.address, message);
     }
     else if(functionNumber <= 8)
     {
@@ -863,7 +883,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
         decoder.getFunctionValue(6),
         decoder.getFunctionValue(7),
         decoder.getFunctionValue(8)};
-      send(decoder.address, message);
+      postSend(decoder.address, message);
     }
     else if(functionNumber <= 12)
     {
@@ -872,7 +892,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
         decoder.getFunctionValue(10),
         decoder.getFunctionValue(11),
         decoder.getFunctionValue(12)};
-      send(decoder.address, message);
+      postSend(decoder.address, message);
     }
     else if(functionNumber <= 19)
     {
@@ -884,7 +904,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
         decoder.getFunctionValue(17),
         decoder.getFunctionValue(18),
         decoder.getFunctionValue(19)};
-      send(decoder.address, message);
+      postSend(decoder.address, message);
     }
     else if(functionNumber == 20 || functionNumber == 28)
     {
@@ -892,7 +912,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
         decoder.getFunctionValue(12),
         decoder.getFunctionValue(20),
         decoder.getFunctionValue(28)};
-      send(decoder.address, message);
+      postSend(decoder.address, message);
     }
     else if(functionNumber <= 27)
     {
@@ -904,13 +924,14 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
         decoder.getFunctionValue(25),
         decoder.getFunctionValue(26),
         decoder.getFunctionValue(27)};
-      send(decoder.address, message);
+      postSend(decoder.address, message);
     }
   }
 }
 
 bool Kernel::setOutput(uint16_t address, bool value)
 {
+  assert(isEventLoopThread());
   if(!inRange(address, outputAddressMin, outputAddressMax))
     return false;
 
@@ -925,6 +946,7 @@ bool Kernel::setOutput(uint16_t address, bool value)
 
 void Kernel::simulateInputChange(uint16_t address)
 {
+  assert(isEventLoopThread());
   assert(inRange(address, inputAddressMin, inputAddressMax));
   if(m_simulation)
     m_ioContext.post(
@@ -936,6 +958,7 @@ void Kernel::simulateInputChange(uint16_t address)
 
 void Kernel::lncvStart(uint16_t moduleId, uint16_t moduleAddress)
 {
+  assert(isEventLoopThread());
   m_ioContext.post(
     [this, moduleId, moduleAddress]()
     {
@@ -951,6 +974,7 @@ void Kernel::lncvStart(uint16_t moduleId, uint16_t moduleAddress)
 
 void Kernel::lncvRead(uint16_t lncv)
 {
+  assert(isEventLoopThread());
   m_ioContext.post(
     [this, lncv]()
     {
@@ -961,6 +985,7 @@ void Kernel::lncvRead(uint16_t lncv)
 
 void Kernel::lncvWrite(uint16_t lncv, uint16_t value)
 {
+  assert(isEventLoopThread());
   m_ioContext.post(
     [this, lncv, value]()
     {
@@ -971,6 +996,7 @@ void Kernel::lncvWrite(uint16_t lncv, uint16_t value)
 
 void Kernel::lncvStop()
 {
+  assert(isEventLoopThread());
   m_ioContext.post(
     [this]()
     {
@@ -984,12 +1010,15 @@ void Kernel::lncvStop()
 
 void Kernel::setOnLNCVReadResponse(OnLNCVReadResponse callback)
 {
+  assert(isEventLoopThread());
   assert(!m_started);
   m_onLNCVReadResponse = std::move(callback);
 }
 
 Kernel::LocoSlot* Kernel::getLocoSlot(uint8_t slot, bool sendSlotDataRequestIfNew)
 {
+  assert(isKernelThread());
+
   if(!isLocoSlot(slot))
     return nullptr;
 
@@ -1006,6 +1035,8 @@ Kernel::LocoSlot* Kernel::getLocoSlot(uint8_t slot, bool sendSlotDataRequestIfNe
 
 void Kernel::clearLocoSlot(uint8_t slot)
 {
+  assert(isKernelThread());
+
   if(auto it = m_slots.find(slot); it != m_slots.end())
     m_slots.erase(it);
 
@@ -1015,11 +1046,13 @@ void Kernel::clearLocoSlot(uint8_t slot)
 
 std::shared_ptr<Decoder> Kernel::getDecoder(uint16_t address)
 {
+  assert(isEventLoopThread());
   return m_decoderController->getDecoder(DecoderProtocol::DCC, address, DCC::isLongAddress(address), true);
 }
 
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
 {
+  assert(isEventLoopThread());
   assert(handler);
   assert(!m_ioHandler);
   m_ioHandler = std::move(handler);
@@ -1027,6 +1060,8 @@ void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
 
 void Kernel::send(const Message& message, Priority priority)
 {
+  assert(isKernelThread());
+
   if(!m_sendQueue[priority].append(message))
   {
     // TODO: log message
@@ -1039,6 +1074,8 @@ void Kernel::send(const Message& message, Priority priority)
 
 void Kernel::send(uint16_t address, Message& message, uint8_t& slot)
 {
+  assert(isKernelThread());
+
   if(auto addressToSlot = m_addressToSlot.find(address); addressToSlot != m_addressToSlot.end())
   {
     slot = addressToSlot->second;
@@ -1062,6 +1099,8 @@ void Kernel::send(uint16_t address, Message& message, uint8_t& slot)
 
 void Kernel::sendNextMessage()
 {
+  assert(isKernelThread());
+
   for(Priority priority = HighPriority; priority <= LowPriority; ++priority)
   {
     if(!m_sendQueue[priority].empty())
@@ -1095,6 +1134,8 @@ void Kernel::sendNextMessage()
 
 void Kernel::waitingForEchoTimerExpired(const boost::system::error_code& ec)
 {
+  assert(isKernelThread());
+
   if(ec)
     return;
 
@@ -1107,6 +1148,8 @@ void Kernel::waitingForEchoTimerExpired(const boost::system::error_code& ec)
 
 void Kernel::waitingForResponseTimerExpired(const boost::system::error_code& ec)
 {
+  assert(isKernelThread());
+
   if(ec)
     return;
 
@@ -1135,6 +1178,7 @@ void Kernel::waitingForResponseTimerExpired(const boost::system::error_code& ec)
 
 void Kernel::startFastClockSyncTimer()
 {
+  assert(isKernelThread());
   assert(m_config.fastClockSyncInterval > 0);
   m_fastClockSyncTimer.expires_after(boost::asio::chrono::seconds(m_config.fastClockSyncInterval));
   m_fastClockSyncTimer.async_wait(std::bind(&Kernel::fastClockSyncTimerExpired, this, std::placeholders::_1));
@@ -1142,11 +1186,14 @@ void Kernel::startFastClockSyncTimer()
 
 void Kernel::stopFastClockSyncTimer()
 {
+  assert(isKernelThread());
   m_fastClockSyncTimer.cancel();
 }
 
 void Kernel::fastClockSyncTimerExpired(const boost::system::error_code& ec)
 {
+  assert(isKernelThread());
+
   if(ec || !m_config.fastClockSyncEnabled || !m_fastClockSupported)
     return;
 
