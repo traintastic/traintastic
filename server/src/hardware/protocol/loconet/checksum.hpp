@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/loconet/messages/uhlenbrock.hpp
+ * server/src/hardware/protocol/loconet/checksum.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,23 +20,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_MESSAGE_UHLENBROCK_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_MESSAGE_UHLENBROCK_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_CHECKSUM_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_CHECKSUM_HPP
 
-/**
- * \addtogroup loconet_messages
- * \{
- *   \defgroup loconet_messages_uhlenbrock Uhlenbrock
- *   \{
- *     \brief LocoNet messages specific to Uhlenbrock devices.
- *     \note These messages are discovered by analyzing LocoNet traffic, there is no garantee that they are correct as there is no official documentation available.
- *   \}
- * \}
- */
+#include <cstdint>
 
-// include all headers in the uhlenbrock directory:
-#include "uhlenbrock/lissy.hpp"
-#include "uhlenbrock/lncv.hpp"
-#include "uhlenbrock/specialoption.hpp"
+namespace LocoNet {
+
+struct Message;
+
+uint8_t calcChecksum(const Message& messageg);
+void updateChecksum(Message& message);
+bool isChecksumValid(const Message& message);
+
+}
 
 #endif

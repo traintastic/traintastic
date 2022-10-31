@@ -24,11 +24,10 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_MESSAGE_LOCOF13F20IMM_HPP
 
 #include "message.hpp"
+#include "../checksum.hpp"
 #include "../signature.hpp"
 
 namespace LocoNet {
-
-uint8_t calcChecksum(const Message&);
 
 struct LocoF13F20IMMShortAddress : Message
 {

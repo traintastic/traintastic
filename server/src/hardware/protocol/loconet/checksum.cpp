@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/loconet/messages/uhlenbrock.hpp
+ * server/src/hardware/protocol/loconet/checksum.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,23 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_MESSAGE_UHLENBROCK_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_MESSAGE_UHLENBROCK_HPP
+#include "checksum.hpp"
+#include "message/message.hpp"
 
-/**
- * \addtogroup loconet_messages
- * \{
- *   \defgroup loconet_messages_uhlenbrock Uhlenbrock
- *   \{
- *     \brief LocoNet messages specific to Uhlenbrock devices.
- *     \note These messages are discovered by analyzing LocoNet traffic, there is no garantee that they are correct as there is no official documentation available.
- *   \}
- * \}
- */
+namespace LocoNet {
 
-// include all headers in the uhlenbrock directory:
-#include "uhlenbrock/lissy.hpp"
-#include "uhlenbrock/lncv.hpp"
-#include "uhlenbrock/specialoption.hpp"
+uint8_t calcChecksum(const Message& message)
+{
+  const uint8_t* p = reinterpret_cast<const uint8_t*>(&message);
+  const int size = message.size() - 1;
+  uint8_t checksum = 0xFF;
+  for(int i = 0; i < size; i++)
+    checksum ^= p[i];
+  return checksum;
+}
 
-#endif
+void updateChecksum(Message& message)
+{
+  reinterpret_cast<uint8_t*>(&message)[message.size() - 1] = calcChecksum(message);
+}
+
+bool isChecksumValid(const Message& message)
+{
+  return calcChecksum(message) == reinterpret_cast<const uint8_t*>(&message)[message.size() - 1];
+}
+
+}
