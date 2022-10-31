@@ -231,6 +231,8 @@ struct LocoDirF : SlotMessage
       dirf |= SL_F3;
     if(f4)
       dirf |= SL_F4;
+
+    checksum = calcChecksum(*this);
   }
 
   inline Direction direction() const
@@ -718,6 +720,8 @@ struct LocoF13F19 : Message
       function |= SL_F18;
     if(f19)
       function |= SL_F19;
+
+    checksum = calcChecksum(*this);
   }
 
   bool f(uint8_t n) const
@@ -844,6 +848,8 @@ struct LocoF12F20F28 : Message
       function |= F20;
     if(f28)
       function |= F28;
+
+    checksum = calcChecksum(*this);
   }
 
   inline bool f12() const
@@ -916,6 +922,8 @@ struct LocoF21F27 : Message
       function |= SL_F26;
     if(f27)
       function |= SL_F27;
+
+    checksum = calcChecksum(*this);
   }
 
   bool f(uint8_t n) const
