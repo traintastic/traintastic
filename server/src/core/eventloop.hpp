@@ -23,23 +23,12 @@
 #ifndef TRAINTASTIC_SERVER_CORE_EVENTLOOP_HPP
 #define TRAINTASTIC_SERVER_CORE_EVENTLOOP_HPP
 
-#include <queue>
 #include <thread>
-#include <mutex>
-#include <atomic>
-#include <condition_variable>
-#include <functional>
-#include <iostream>
-#include "../utils/setthreadname.hpp"
+#include <boost/asio/io_context.hpp>
 
 class EventLoop
 {
   private:
-    inline static std::queue<std::function<void()>> s_queue;
-    inline static std::mutex s_queueMutex;
-    inline static std::condition_variable s_condition;
-    inline static std::atomic<bool> s_run;
-
     EventLoop() = default;
     ~EventLoop() = default;
 
@@ -47,51 +36,24 @@ class EventLoop
     EventLoop& operator =(const EventLoop&) = delete;
 
   public:
+    inline static boost::asio::io_context ioContext;
     inline static const std::thread::id threadId = std::this_thread::get_id();
 
     static void exec()
     {
-      std::unique_lock<std::mutex> lock(s_queueMutex);
-
-      s_run = true;
-      while(s_run)
-      {
-        if(s_queue.empty())
-          s_condition.wait(lock, []{ return !s_queue.empty(); });
-
-        if(s_queue.empty())
-          continue; // a suspisius wakeup may occur
-
-        std::function<void()>& f{s_queue.front()};
-
-        lock.unlock();
-
-        try
-        {
-          f();
-        }
-        catch(const std::exception& e)
-        {
-          std::cerr << e.what() << std::endl;
-        }
-
-        lock.lock();
-
-        s_queue.pop();
-      }
+      auto work = std::make_shared<boost::asio::io_context::work>(ioContext);
+      ioContext.run();
     }
 
     static void stop()
     {
-      s_run = false;
+      ioContext.stop();
     }
 
     template<typename _Callable, typename... _Args>
     inline static void call(_Callable&& __f, _Args&&... __args)
     {
-      std::lock_guard<std::mutex> lock(s_queueMutex);
-      s_queue.emplace(std::bind(__f, __args...));
-      s_condition.notify_one();
+      ioContext.post(std::bind(__f, __args...));
     }
 };
 
