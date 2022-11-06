@@ -223,6 +223,9 @@
             "markdown": "lua/object/board.md"
           },
           {
+            "markdown": "lua/object/clock.md"
+          },
+          {
             "markdown": "lua/object/input.md"
           },
           {

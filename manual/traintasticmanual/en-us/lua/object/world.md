@@ -6,6 +6,9 @@
 ### `boards` $badge:since:v0.1$
 [List](objectlist.md) of all boards.
 
+### `clock` $badge:since:v0.2$
+The world clock, see [Clock](clock.md).
+
 ### `name` $badge:since:v0.1$
 World name.
 
