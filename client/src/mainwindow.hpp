@@ -48,6 +48,8 @@ class MainWindow : public QMainWindow
   protected:
     std::shared_ptr<Connection> m_connection;
     ObjectPtr m_world;
+    int m_clockRequest;
+    ObjectPtr m_clock;
     QSplitter* m_splitter;
     MdiArea* m_mdiArea;
     ServerLogWidget* m_serverLog;
@@ -70,6 +72,7 @@ class MainWindow : public QMainWindow
     QAction* m_worldPowerOffAction;
     QAction* m_worldStopAction;
     QAction* m_worldRunAction;
+    QAction* m_clockAction;
     QAction* m_worldMuteMenuAction;
     QAction* m_worldNoSmokeMenuAction;
     QAction* m_worldEditAction;

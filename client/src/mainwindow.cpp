@@ -331,6 +331,14 @@ MainWindow::MainWindow(QWidget* parent) :
       });
     m_worldRunAction->setCheckable(true);
     m_menuWorld->addSeparator();
+    m_clockAction = m_menuWorld->addAction(Theme::getIcon("clock"), Locale::tr("world:clock"),
+      [this](bool checked)
+      {
+        if(Q_LIKELY(m_clock))
+          m_clock->setPropertyValue("freeze", !checked);
+      });
+    m_clockAction->setCheckable(true);
+    m_menuWorld->addSeparator();
     m_worldMuteMenuAction = m_menuWorld->addAction(Theme::getIcon("mute"), Locale::tr("world:mute"),
       [this](bool checked)
       {
@@ -473,6 +481,8 @@ MainWindow::MainWindow(QWidget* parent) :
   m_toolbar->addAction(m_worldStopAction);
   m_toolbar->addAction(m_worldRunAction);
   m_toolbar->addSeparator();
+  m_toolbar->addAction(m_clockAction);
+  m_toolbar->addSeparator();
   m_worldMuteToolbarAction = m_toolbar->addAction(Theme::getIcon("unmute", "mute"), Locale::tr("qtapp:toggle_mute"),
     [this](bool checked)
     {
@@ -572,8 +582,38 @@ void MainWindow::worldChanged()
   if(m_world)
     m_mdiArea->closeAllSubWindows();
 
+  m_clockAction->setEnabled(false);
+  m_clockAction->setChecked(false);
+  m_clock.reset();
+
   if(m_connection)
+  {
+    if(m_clockRequest != Connection::invalidRequestId)
+      m_connection->cancelRequest(m_clockRequest);
+
     m_world = m_connection->world();
+
+    m_clockRequest = m_connection->getObject("world.clock",
+      [this](const ObjectPtr& object, Message::ErrorCode ec)
+      {
+        m_clockRequest = Connection::invalidRequestId;
+        if(object && !ec)
+        {
+          if(auto* freeze = object->getProperty("freeze"))
+          {
+            m_clock = object;
+            m_clockAction->setEnabled(true);
+            m_clockAction->setChecked(!freeze->toBool());
+
+            connect(freeze, &AbstractProperty::valueChangedBool, m_clockAction,
+              [this](bool value)
+              {
+                m_clockAction->setChecked(!value);
+              });
+          }
+        }
+      });
+  }
   else
     m_world.reset();
 

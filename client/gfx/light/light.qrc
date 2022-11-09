@@ -57,5 +57,6 @@
         <file>board_tile.rail.direction_control.svg</file>
         <file>board_tile.rail.link.svg</file>
         <file>board_tile.rail.decoupler.svg</file>
+        <file>clock.svg</file>
     </qresource>
 </RCC>
