@@ -75,6 +75,14 @@ class Object : public QObject
      */
     bool getPropertyValueBool(const QString& name, bool defaultValue) const;
 
+    /**
+     * \brief Get integer property value
+     * \param[in] name Property name
+     * \param[in] defaultValue Value to return if property doesn't exist or isn't an integer
+     * \return Property value or \c defaultValue if property doesn't exist or isn't an integer
+     */
+    int getPropertyValueInt(const QString& name, int defaultValue) const;
+
     inline bool hasVectorProperty(const QString& name) const { return getVectorProperty(name); }
     const AbstractVectorProperty* getVectorProperty(const QString& name) const;
     AbstractVectorProperty* getVectorProperty(const QString& name);

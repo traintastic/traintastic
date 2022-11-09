@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include <QPushButton>
 #include <traintastic/locale/locale.hpp>
 #include "generalsettingswidget.hpp"
+#include "statusbarsettingswidget.hpp"
 #include "boardsettingswidget.hpp"
 #include "developersettingswidget.hpp"
 
@@ -38,6 +39,7 @@ SettingsDialog::SettingsDialog(QWidget* parent) :
   setWindowTitle(Locale::tr("qtapp.mainmenu:settings"));
 
   add(new GeneralSettingsWidget(this));
+  add(new StatusBarSettingsWidget(this));
   add(new BoardSettingsWidget(this));
   add(new DeveloperSettingsWidget(this));
 

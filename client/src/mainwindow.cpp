@@ -22,7 +22,6 @@
 
 #include "mainwindow.hpp"
 #include <QMenuBar>
-#include <QStatusBar>
 #include <QMdiSubWindow>
 #include <QVBoxLayout>
 #include <QToolBar>
@@ -38,6 +37,7 @@
 #include <traintastic/set/worldstate.hpp>
 #include <traintastic/utils/standardpaths.hpp>
 #include "mdiarea.hpp"
+#include "mainwindow/mainwindowstatusbar.hpp"
 #include "dialog/connectdialog.hpp"
 #include "settings/settingsdialog.hpp"
 #include "dialog/worldlistdialog.hpp"
@@ -99,6 +99,7 @@ MainWindow::MainWindow(QWidget* parent) :
   QMainWindow(parent),
   m_splitter{new QSplitter(Qt::Vertical, this)},
   m_mdiArea{new MdiArea(m_splitter)},
+  m_statusBar{new MainWindowStatusBar(*this)},
   m_serverLog{nullptr},
   m_toolbar{new QToolBar(this)}
 {
@@ -514,7 +515,7 @@ MainWindow::MainWindow(QWidget* parent) :
   m_splitter->setCollapsible(0, false);
 
   setCentralWidget(m_splitter);
-  setStatusBar(new QStatusBar());
+  setStatusBar(m_statusBar);
 
   QSettings settings;
   if(settings.contains(SETTING_GEOMETRY))
@@ -585,6 +586,7 @@ void MainWindow::worldChanged()
   m_clockAction->setEnabled(false);
   m_clockAction->setChecked(false);
   m_clock.reset();
+  emit worldClockChanged();
 
   if(m_connection)
   {
@@ -602,6 +604,7 @@ void MainWindow::worldChanged()
           if(auto* freeze = object->getProperty("freeze"))
           {
             m_clock = object;
+            emit worldClockChanged();
             m_clockAction->setEnabled(true);
             m_clockAction->setChecked(!freeze->toBool());
 

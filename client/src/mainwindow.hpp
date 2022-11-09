@@ -29,6 +29,7 @@
 #include "subwindow/subwindowtype.hpp"
 
 class MdiArea;
+class MainWindowStatusBar;
 class QSplitter;
 class QActionGroup;
 class QToolButton;
@@ -52,6 +53,7 @@ class MainWindow : public QMainWindow
     ObjectPtr m_clock;
     QSplitter* m_splitter;
     MdiArea* m_mdiArea;
+    MainWindowStatusBar* m_statusBar;
     ServerLogWidget* m_serverLog;
     QMap<QString, SubWindow*> m_subWindows;
     // Main menu:
@@ -119,10 +121,15 @@ class MainWindow : public QMainWindow
 
     const std::shared_ptr<Connection>& connection() { return m_connection; }
 
+    const ObjectPtr& worldClock() const { return m_clock; }
+
   public slots:
     void connectToServer(const QString& url = QString());
     void showObject(const ObjectPtr& object, SubWindowType flags = SubWindowType::Object);
     void showObject(const QString& id, const QString& title = "", SubWindowType flags = SubWindowType::Object);
+
+  signals:
+    void worldClockChanged();
 };
 
 #endif
