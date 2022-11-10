@@ -65,7 +65,7 @@ jobs:
 
     # All:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         lfs: true
         submodules: recursive
@@ -133,7 +133,7 @@ jobs:
     # Windows only:
     - name: Upload artifact
       if: startswith(matrix.config.os, 'windows')
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: traintastic-client
         path: ${{github.workspace}}/client/build/${{matrix.config.build_type}}
@@ -141,7 +141,7 @@ jobs:
     # Linux only:
     - name: Upload debian package artifact
       if: matrix.config.build_deb
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: traintastic-client-deb
         path: ${{github.workspace}}/client/build/*.deb
@@ -242,7 +242,7 @@ jobs:
 
     # All:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         lfs: true
         submodules: recursive
@@ -302,7 +302,7 @@ jobs:
     # Windows only:
     - name: Upload artifact
       if: startswith(matrix.config.os, 'windows')
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: traintastic-server
         path: ${{github.workspace}}/server/build/Release/traintastic-server.exe
@@ -310,7 +310,7 @@ jobs:
     # Linux only:
     - name: Upload debian package artifact
       if: matrix.config.build_deb
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: traintastic-server-deb
         path: ${{github.workspace}}/server/build/*.deb
@@ -331,7 +331,7 @@ jobs:
 
     - name: "Code coverage: upload artifact"
       if: matrix.config.ccov
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: traintastic-server-test-code-coverage
         path: ${{github.workspace}}/server/build/ccov/*
@@ -359,7 +359,7 @@ jobs:
     - uses: FranzDiebold/github-env-vars-action@v2
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         lfs: true
         submodules: recursive
@@ -380,7 +380,7 @@ jobs:
       run: cpack
 
     - name: Upload debian package artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: traintastic-data-deb
         path: ${{github.workspace}}/shared/build/*.deb
@@ -393,7 +393,7 @@ jobs:
     - uses: FranzDiebold/github-env-vars-action@v2
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         lfs: true
         submodules: recursive
@@ -409,7 +409,7 @@ jobs:
       run: ./builddoc.py html-single-page --output-dir build
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: traintastic-manual
         path: ${{github.workspace}}/manual/build/*
@@ -423,7 +423,7 @@ jobs:
     - uses: FranzDiebold/github-env-vars-action@v2
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         lfs: true
         submodules: recursive
@@ -455,7 +455,7 @@ jobs:
         "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" %GITHUB_WORKSPACE%/package/innosetup/traintastic.iss
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: package-innosetup
         path: ${{github.workspace}}/package/innosetup/output
