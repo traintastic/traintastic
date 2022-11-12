@@ -30,6 +30,7 @@
 
 class MdiArea;
 class MainWindowStatusBar;
+class QMdiSubWindow;
 class QSplitter;
 class QActionGroup;
 class QToolButton;
@@ -55,6 +56,7 @@ class MainWindow : public QMainWindow
     MdiArea* m_mdiArea;
     MainWindowStatusBar* m_statusBar;
     ServerLogWidget* m_serverLog;
+    QMdiSubWindow* m_clockWindow = nullptr;
     QMap<QString, SubWindow*> m_subWindows;
     // Main menu:
     QAction* m_actionConnectToServer;
@@ -83,6 +85,7 @@ class MainWindow : public QMainWindow
     QAction* m_actionLuaScript;
     QAction* m_actionFullScreen;
     QAction* m_actionViewToolbar;
+    QAction* m_actionClock;
     QMenu* m_menuServer;
     QAction* m_actionServerSettings;
     QAction* m_actionServerRestart;
@@ -107,6 +110,7 @@ class MainWindow : public QMainWindow
     void disconnectFromServer();
     void loadWorld();
     void toggleFullScreen();
+    void viewClockWindow(bool value);
     void toggleServerLog();
     void showAbout();
     void connectionStateChanged();

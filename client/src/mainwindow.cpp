@@ -38,6 +38,7 @@
 #include <traintastic/utils/standardpaths.hpp>
 #include "mdiarea.hpp"
 #include "mainwindow/mainwindowstatusbar.hpp"
+#include "clock/clock.hpp"
 #include "dialog/connectdialog.hpp"
 #include "settings/settingsdialog.hpp"
 #include "dialog/worldlistdialog.hpp"
@@ -277,6 +278,8 @@ MainWindow::MainWindow(QWidget* parent) :
     m_actionFullScreen->setShortcut(Qt::Key_F11);
     m_actionViewToolbar = menu->addAction(Locale::tr("qtapp.mainmenu:toolbar"), m_toolbar, &QToolBar::setVisible);
     m_actionViewToolbar->setCheckable(true);
+    m_actionClock = menu->addAction(Theme::getIcon("clock"), Locale::tr("world:clock"), this, &MainWindow::viewClockWindow);
+    m_actionClock->setCheckable(true);
     m_actionServerLog = menu->addAction(Locale::tr("qtapp.mainmenu:server_log") + "...", this, &MainWindow::toggleServerLog);
     m_actionServerLog->setCheckable(true);
     m_actionServerLog->setShortcut(Qt::Key_F12);
@@ -380,7 +383,7 @@ MainWindow::MainWindow(QWidget* parent) :
     menu->addAction(Locale::tr("world:outputs") + "...", [this](){ showObject("world.outputs", Locale::tr("world:outputs")); });
     menu->addAction(Locale::tr("hardware:identifications") + "...", [this](){ showObject("world.identifications", Locale::tr("hardware:identifications")); });
     m_menuObjects->addAction(Locale::tr("world:boards") + "...", [this](){ showObject("world.boards", Locale::tr("world:boards")); });
-    m_menuObjects->addAction(Locale::tr("world:clock") + "...", [this](){ showObject("world.clock", Locale::tr("world:clock")); });
+    m_menuObjects->addAction(Theme::getIcon("clock"), Locale::tr("world:clock") + "...", [this](){ showObject("world.clock", Locale::tr("world:clock")); });
     m_menuObjects->addAction(Locale::tr("world:trains") + "...", [this](){ showObject("world.trains", Locale::tr("world:trains")); });
     m_menuObjects->addAction(Locale::tr("world:rail_vehicles") + "...", [this](){ showObject("world.rail_vehicles", Locale::tr("world:rail_vehicles")); });
     m_actionLuaScript = m_menuObjects->addAction(Theme::getIcon("lua"), Locale::tr("world:lua_scripts") + "...", [this](){ showObject("world.lua_scripts", Locale::tr("world:lua_scripts")); });
@@ -684,6 +687,31 @@ void MainWindow::toggleFullScreen()
   }
 }
 
+void MainWindow::viewClockWindow(bool value)
+{
+  if(!value && m_clockWindow)
+  {
+    m_clockWindow->close();
+  }
+  else if(value && !m_clockWindow)
+  {
+    m_clockWindow = new QMdiSubWindow();
+    m_clockWindow->setWidget(new Clock(m_clock, m_clockWindow));
+    m_clockWindow->setAttribute(Qt::WA_DeleteOnClose);
+    connect(m_clockWindow, &QMdiSubWindow::destroyed,
+      [this](QObject* object)
+      {
+        assert(m_clockWindow == object);
+        m_clockWindow = nullptr;
+        m_actionClock->setChecked(false);
+      });
+    m_mdiArea->addSubWindow(m_clockWindow);
+    m_clockWindow->show();
+  }
+
+  m_actionClock->setChecked(m_clockWindow);
+}
+
 void MainWindow::toggleServerLog()
 {
   if(m_serverLog)
@@ -816,6 +844,7 @@ void MainWindow::updateActions()
   m_actionImportWorld->setEnabled(connected);
   m_actionExportWorld->setEnabled(haveWorld);
 
+  m_actionClock->setEnabled(haveWorld);
   m_actionServerLog->setEnabled(connected);
   m_menuServer->setEnabled(connected);
   m_actionServerSettings->setEnabled(connected);
