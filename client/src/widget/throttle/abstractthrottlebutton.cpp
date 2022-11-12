@@ -24,6 +24,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QSvgRenderer>
+#include <QFile>
 #include <traintastic/enum/decoderfunctiontype.hpp>
 #include <traintastic/enum/decoderfunctionfunction.hpp>
 #include "../../network/object.hpp"

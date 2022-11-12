@@ -56,7 +56,7 @@ ConnectDialog::ConnectDialog(QWidget* parent, const QString& url) :
   m_status->setMinimumWidth(400);
 
   QFormLayout* formLayout = new QFormLayout();
-  formLayout->setMargin(0);
+  formLayout->setContentsMargins(0, 0, 0, 0);
   formLayout->addRow(Locale::tr("qtapp.connect_dialog:server"), m_server);
 /*
   formLayout->addRow(Locale::tr("qtapp.connect_dialog:username"), m_username);

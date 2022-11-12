@@ -34,6 +34,7 @@
 #include <QFileDialog>
 #include <QDateTime>
 #include <QSaveFile>
+#include <QStandardPaths>
 #include <traintastic/set/worldstate.hpp>
 #include <traintastic/utils/standardpaths.hpp>
 #include "mdiarea.hpp"
@@ -508,7 +509,7 @@ MainWindow::MainWindow(QWidget* parent) :
   m_toolbar->addAction(m_worldEditAction);
 
   QVBoxLayout* l = new QVBoxLayout();
-  l->setMargin(0);
+  l->setContentsMargins(0, 0, 0, 0);
   l->addWidget(m_toolbar);
   l->addWidget(m_mdiArea);
 

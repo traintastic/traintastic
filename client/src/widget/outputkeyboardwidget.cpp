@@ -24,6 +24,7 @@
 #include <QGridLayout>
 #include <QToolBar>
 #include <QKeyEvent>
+#include <QActionGroup>
 #include <traintastic/locale/locale.hpp>
 #include "ledwidget.hpp"
 #include "../network/outputkeyboard.hpp"
@@ -121,7 +122,7 @@ OutputKeyboardWidget::OutputKeyboardWidget(std::shared_ptr<OutputKeyboard> objec
   }
 
   QVBoxLayout* l = new QVBoxLayout();
-  l->setMargin(0);
+  l->setContentsMargins(0, 0, 0, 0);
   l->addWidget(toolbar);
   l->addLayout(grid);
   setLayout(l);

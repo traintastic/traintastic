@@ -73,7 +73,7 @@ QVariant ServerLogTableModel::data(const QModelIndex& index, int role) const
     switch(index.column())
     {
       case columnTime:
-        return QDateTime::fromTime_t(log.time / 1'000'000).toString("yyyy-MM-dd hh:mm:ss.").append(QString::number(log.time % 1'000'000).rightJustified(6, '0'));
+        return QDateTime::fromSecsSinceEpoch(log.time / 1'000'000).toString("yyyy-MM-dd hh:mm:ss.").append(QString::number(log.time % 1'000'000).rightJustified(6, '0'));
 
       case columnObject:
         return log.object;

@@ -66,7 +66,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
   m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 
   QVBoxLayout* layout = new QVBoxLayout();
-  layout->setMargin(0);
+  layout->setContentsMargins(0, 0, 0, 0);
   layout->addWidget(m_toolbar);
   layout->addWidget(m_tableWidget);
   setLayout(layout);

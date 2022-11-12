@@ -24,6 +24,7 @@
 #include <QGridLayout>
 #include <QToolBar>
 #include <QKeyEvent>
+#include <QActionGroup>
 #include <traintastic/locale/locale.hpp>
 #include "ledwidget.hpp"
 #include "../network/connection.hpp"
@@ -104,7 +105,7 @@ InputMonitorWidget::InputMonitorWidget(std::shared_ptr<InputMonitor> object, QWi
       {
         if(m_object->connection()->world()->getPropertyValueBool("simulation", false))
         {
-          const uint32_t address = static_cast<uint32_t>(m_addressMin->toInt64()) + m_page * m_leds.size() + index;
+          const uint32_t address = static_cast<uint32_t>(m_addressMin->toInt64() + m_page * m_leds.size() + index);
           m_object->simulateInputChange(address);
         }
       });
@@ -113,7 +114,7 @@ InputMonitorWidget::InputMonitorWidget(std::shared_ptr<InputMonitor> object, QWi
   }
 
   QVBoxLayout* l = new QVBoxLayout();
-  l->setMargin(0);
+  l->setContentsMargins(0, 0, 0, 0);
   l->addWidget(toolbar);
   l->addLayout(grid);
   setLayout(l);

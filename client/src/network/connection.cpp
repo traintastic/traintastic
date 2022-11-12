@@ -139,7 +139,11 @@ Connection::Connection() :
 {
   connect(m_socket, &QTcpSocket::connected, this, &Connection::socketConnected);
   connect(m_socket, &QTcpSocket::disconnected, this, &Connection::socketDisconnected);
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
   connect(m_socket, static_cast<void(QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &Connection::socketError);
+#else
+  connect(m_socket, &QTcpSocket::errorOccurred, this, &Connection::socketError);
+#endif
 
   m_socket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
 

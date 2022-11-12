@@ -340,7 +340,7 @@ LNCVProgrammer::LNCVProgrammer(std::shared_ptr<Connection> connection, QWidget* 
   }
 
   auto* l = new QVBoxLayout();
-  l->setMargin(0);
+  l->setContentsMargins(0, 0, 0, 0);
   l->addWidget(m_pages);
   l->addWidget(m_statusBar);
   setLayout(l);

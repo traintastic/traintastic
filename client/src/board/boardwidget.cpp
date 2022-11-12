@@ -27,6 +27,7 @@
 #include <QToolButton>
 #include <QMenu>
 #include <QAction>
+#include <QActionGroup>
 #include <QScrollArea>
 #include <QStatusBar>
 #include <QLabel>
@@ -98,7 +99,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   QMenu* menu;
 
   QVBoxLayout* l = new QVBoxLayout();
-  l->setMargin(0);
+  l->setContentsMargins(0, 0, 0, 0);
 
   // main toolbar:
   QToolBar* toolbar = new QToolBar(this);

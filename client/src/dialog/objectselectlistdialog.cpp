@@ -65,7 +65,7 @@ ObjectSelectListDialog::ObjectSelectListDialog(InterfaceItem& item, QWidget* par
   connect(m_buttons->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &ObjectSelectListDialog::reject);
 
   QVBoxLayout* layout = new QVBoxLayout();
-  layout->setMargin(0);
+  layout->setContentsMargins(0, 0, 0, 0);
   layout->addWidget(m_tableWidget);
   layout->addWidget(m_buttons);
   setLayout(layout);

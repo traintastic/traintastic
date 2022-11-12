@@ -69,7 +69,7 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
     });
 
   QHBoxLayout* l = new QHBoxLayout();
-  l->setMargin(0);
+  l->setContentsMargins(0, 0, 0, 0);
 
   m_lineEdit->setEnabled(enabled);
   m_lineEdit->setVisible(visible);

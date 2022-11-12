@@ -65,7 +65,7 @@ void ObjectEditWidget::buildForm()
   if(QWidget* widget = createWidgetIfCustom(m_object))
   {
     QVBoxLayout* l = new QVBoxLayout();
-    l->setMargin(0);
+    l->setContentsMargins(0, 0, 0, 0);
     l->addWidget(widget);
     setLayout(l);
   }
@@ -176,7 +176,7 @@ void ObjectEditWidget::buildForm()
       for(auto* tab : tabs)
         tabWidget->addTab(tab, tab->windowTitle());
       QVBoxLayout* l = new QVBoxLayout();
-      l->setMargin(0);
+      l->setContentsMargins(0, 0, 0, 0);
       l->addWidget(tabWidget);
       setLayout(l);
     }

@@ -48,6 +48,6 @@ OutputMapOutputActionWidget::OutputMapOutputActionWidget(const ObjectPtr& item, 
   }
 
   QVBoxLayout* l = new QVBoxLayout();
-  l->setMargin(0);
+  l->setContentsMargins(0, 0, 0, 0);
   setLayout(l);
 }

@@ -41,7 +41,7 @@ PropertyDirectionControl::PropertyDirectionControl(Property& property, QWidget* 
   m_forward->setArrowType(Qt::RightArrow);
 
   QHBoxLayout* l = new QHBoxLayout();
-  l->setMargin(0);
+  l->setContentsMargins(0, 0, 0, 0);
   l->addWidget(m_reverse);
   l->addWidget(m_forward);
   setLayout(l);
