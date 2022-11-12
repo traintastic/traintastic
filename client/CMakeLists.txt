@@ -38,6 +38,8 @@ file(GLOB SOURCES
   "src/*.cpp"
   "src/board/*.hpp"
   "src/board/*.cpp"
+  "src/clock/*.hpp"
+  "src/clock/*.cpp"
   "src/dialog/*.hpp"
   "src/dialog/*.cpp"
   "src/mainwindow/*.hpp"
