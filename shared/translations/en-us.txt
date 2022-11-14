@@ -73,13 +73,13 @@ class_id:vehicle.rail.freight_car=Freight car
 class_id:vehicle.rail.locomotive=Locomotive
 
 clock:day=Day
+clock:debug_log=Debug log
+clock:freeze=Freeze
 clock:hour=Hour
 clock:minute=Minute
 clock:month=Month
 clock:multiplier=Multiplier
 clock:year=Year
-clock:freeze=Freeze
-clock:debug_log=Debug log
 
 color:aqua=Aqua
 color:black=Black
@@ -253,6 +253,9 @@ loconet_command_station:uhlenbrock_intellibox=Uhlenbrock Intellibox
 loconet_f9_f28:imm_packet=Direct (OPC_IMM_PACKET)
 loconet_f9_f28:uhlenbrock_extended=Uhlenbrock extended (OPC_A3, OPC_D4)
 
+loconet_fastclock:master=Master (Traintatic controls the clock)
+loconet_fastclock:off=Off
+
 loconet_interface_type:lbserver=LBServer
 loconet_interface_type:serial=Serial
 loconet_interface_type:tcp_binary=TCP binary
@@ -265,6 +268,7 @@ loconet_serial_interface:rosoft_loconet_interface=RoSoft LocoNet interface
 loconet_settings:command_station=Command station
 loconet_settings:echo_timeout=Echo timeout
 loconet_settings:f9_f28=F9-F28
+loconet_settings:fast_clock=Fast clock
 loconet_settings:fast_clock_sync_enabled=Fast clock sync enabled
 loconet_settings:fast_clock_sync_interval=Fast clock sync interval
 loconet_settings:locomotive_slots=Locomotive slots
@@ -501,9 +505,12 @@ qtapp.settings.developer:log_missing_strings_dir=Missing translations log direct
 
 qtapp.settings.general:language=Language
 
+qtapp.settings.statusbar:show_clock=Show clock
+
 qtapp.settings:board=Board
 qtapp.settings:developer=Developer
 qtapp.settings:general=General
+qtapp.settings:statusbar=Status bar
 
 qtapp.world_list_dialog:cancel=Cancel
 qtapp.world_list_dialog:load=Load

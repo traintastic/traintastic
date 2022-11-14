@@ -46,6 +46,7 @@ class Settings final : public SubObject
     Property<uint16_t> responseTimeout;
     Property<uint8_t> locomotiveSlots;
     Property<LocoNetF9F28> f9f28;
+    Property<LocoNetFastClock> fastClock;
     Property<bool> fastClockSyncEnabled;
     Property<uint8_t> fastClockSyncInterval; //!< Fast clock sync interval in seconds
     Property<bool> debugLogInput;

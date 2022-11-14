@@ -416,6 +416,26 @@ std::string toString(const Message& message)
       }
       break;
     }
+    case OPC_SL_RD_DATA:
+    case OPC_WR_SL_DATA:
+    {
+      const auto& slotData = static_cast<const SlotDataBase&>(message);
+      if(slotData.slot == SLOT_FAST_CLOCK)
+      {
+        const auto& fastClock = static_cast<const FastClockSlotData&>(message);
+        s.append(" slot=fastclock");
+        s.append(" clk_rate=").append(std::to_string(fastClock.clk_rate));
+        s.append(" days=").append(std::to_string(fastClock.days));
+        s.append(" hour=").append(std::to_string(fastClock.hour()));
+        s.append(" minute=").append(std::to_string(fastClock.minute()));
+        s.append(fastClock.valid() ? " valid" : " invalid");
+        s.append(" id=").append(std::to_string(fastClock.id()));
+        s.append(" frac_minsl=").append(std::to_string(fastClock.frac_minsl));
+        s.append(" frac_minsh=").append(std::to_string(fastClock.frac_minsh));
+        s.append(" trk=").append(std::to_string(fastClock.trk));
+      }
+      break;
+    }
     case OPC_IMM_PACKET:
     {
       if(isSignatureMatch<LocoF9F12IMMShortAddress>(message))

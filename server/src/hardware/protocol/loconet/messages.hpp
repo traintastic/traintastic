@@ -36,6 +36,7 @@
 #include "../../../utils/byte.hpp"
 
 // include all message headers:
+#include "message/fastclock.hpp"
 #include "message/locof9f12imm.hpp"
 #include "message/locof13f20imm.hpp"
 #include "message/locof21f28imm.hpp"
@@ -56,7 +57,6 @@ std::string toString(const Message& message);
 constexpr uint8_t SLOT_DISPATCH = 0;
 constexpr uint8_t SLOT_LOCO_MIN = 1;
 constexpr uint8_t SLOT_LOCO_MAX = 119;
-constexpr uint8_t SLOT_FAST_CLOCK = 123;
 constexpr uint8_t SLOT_PROGRAMMING_TRACK = 124;
 constexpr uint8_t SLOT_UNKNOWN = 255; //!< placeholder to indicate invalid slot
 
@@ -1334,22 +1334,6 @@ struct SlotReadData : SlotReadDataBase
   }
 };
 static_assert(sizeof(SlotReadData) == 14);
-
-struct FastClockSlotReadData : SlotReadDataBase
-{
-  uint8_t clk_rate;
-  uint8_t frac_minsl;
-  uint8_t frac_minsh;
-  uint8_t mins_60;
-  uint8_t trk;
-  uint8_t hrs_24;
-  uint8_t days;
-  uint8_t clk_cntrl;
-  uint8_t id1;
-  uint8_t id2;
-  uint8_t checksum;
-};
-static_assert(sizeof(FastClockSlotReadData) == 14);
 
 /*
 struct ImmediatePacket : Message

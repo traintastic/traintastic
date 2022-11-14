@@ -130,7 +130,8 @@ void Clock::tick(const boost::system::error_code& ec)
   hour.setValueInternal(m_time.hour());
   minute.setValueInternal(m_time.minute());
 
-  // fire event:
+  // fire events:
+  onChange(ClockEvent::Tick, multiplier, m_time);
   fireEvent(onTick, m_time.ticks);
 }
 
@@ -156,6 +157,7 @@ void Clock::update()
       if(debugLog)
         Log::log(classId, LogMessage::D1001_RESUME_X_MULTIPLIER_X, m_time, multiplier.value());
 
+      onChange(ClockEvent::Resume, multiplier, m_time);
       fireEvent(onResume, m_time.ticks, multiplier.value());
     }
     else // freeze clock
@@ -165,6 +167,7 @@ void Clock::update()
       if(debugLog)
         Log::log(classId, LogMessage::D1003_FREEZE_X, m_time);
 
+      onChange(ClockEvent::Freeze, multiplier, m_time);
       fireEvent(onFreeze, m_time.ticks);
     }
     running.setValueInternal(run);

@@ -265,6 +265,7 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
           if(contains(m_world.state.value(), WorldState::Run))
             m_world.stop();
         });
+      m_kernel->setClock(m_world.clock.value());
       m_kernel->setDecoderController(this);
       m_kernel->setInputController(this);
       m_kernel->setOutputController(this);

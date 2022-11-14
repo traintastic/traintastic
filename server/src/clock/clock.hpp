@@ -55,6 +55,14 @@ class Clock : public SubObject
     void worldEvent(WorldState state, WorldEvent event) final;
 
   public:
+    enum class ClockEvent
+    {
+      Resume,
+      Tick,
+      Freeze,
+    };
+    boost::signals2::signal<void(ClockEvent, uint8_t, Time)> onChange;
+
     Property<uint16_t> time;
     Property<uint8_t> hour;
     Property<uint8_t> minute;

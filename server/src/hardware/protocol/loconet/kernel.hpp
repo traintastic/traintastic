@@ -28,11 +28,13 @@
 #include <thread>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
+#include <boost/signals2/connection.hpp>
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
 
+class Clock;
 class Decoder;
 enum class DecoderChangeFlags;
 class DecoderController;
@@ -119,6 +121,15 @@ class Kernel
       }
     };
 
+    struct FastClock
+    {
+      uint8_t multiplier;
+      uint8_t hour;
+      uint8_t minute;
+      uint8_t : 8; // padding for std::atomic
+    };
+    static_assert(sizeof(FastClock) == 4);
+
     boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
@@ -138,6 +149,10 @@ class Kernel
 
     TriState m_emergencyStop;
     std::function<void()> m_onIdle;
+
+    std::shared_ptr<Clock> m_clock;
+    boost::signals2::connection m_clockChangeConnection;
+    std::atomic<FastClock> m_fastClock;
 
     boost::asio::steady_timer m_fastClockSyncTimer;
     bool m_fastClockSupported = true;
@@ -219,6 +234,8 @@ class Kernel
 
     void waitingForEchoTimerExpired(const boost::system::error_code& ec);
     void waitingForResponseTimerExpired(const boost::system::error_code& ec);
+
+    void setFastClockMaster(bool enable);
 
     void startFastClockSyncTimer();
     void stopFastClockSyncTimer();
@@ -325,6 +342,14 @@ class Kernel
      * @note This function may not be called when the kernel is running.
      */
     void setOnIdle(std::function<void()> callback);
+
+    /**
+     * @brief Set clock for LocoNet fast clock
+     *
+     * @param[in] clock The clock
+     * @note This function may not be called when the kernel is running.
+     */
+    void setClock(std::shared_ptr<Clock> clock);
 
     /**
      * @brief Set the decoder controller

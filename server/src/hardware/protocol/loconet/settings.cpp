@@ -34,6 +34,7 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   , responseTimeout{this, "response_timeout", 1000, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , locomotiveSlots{this, "locomotive_slots", SLOT_LOCO_MAX, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , f9f28{this, "f9_f28", LocoNetF9F28::IMMPacket, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , fastClock{this, "fast_clock", LocoNetFastClock::Off, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , fastClockSyncEnabled{this, "fast_clock_sync_enabled", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](bool value)
       {
@@ -61,6 +62,11 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   Attributes::addEnabled(f9f28, true);
   Attributes::addValues(f9f28, loconetF9F28Values);
   m_interfaceItems.add(f9f28);
+
+  Attributes::addEnabled(fastClock, true);
+  //Attributes::addGroup(fastClock, Group::fastClock);
+  Attributes::addValues(fastClock, loconetFastClockValues);
+  m_interfaceItems.add(fastClock);
 
   Attributes::addEnabled(fastClockSyncEnabled, true);
   //Attributes::addGroup(fastClockSyncEnabled, Group::fastClockSync);
@@ -93,6 +99,7 @@ Config Settings::config() const
   config.locomotiveSlots = locomotiveSlots;
   config.f9f28 = f9f28;
 
+  config.fastClock = fastClock;
   config.fastClockSyncEnabled = fastClockSyncEnabled;
   config.fastClockSyncInterval = fastClockSyncInterval;
 

@@ -33,9 +33,12 @@
 #include "../../../utils/inrange.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
+#include "../../../clock/clock.hpp"
 #include "../dcc/dcc.hpp"
 
 namespace LocoNet {
+
+static constexpr uint8_t multiplierFreeze = 0;
 
 static void updateDecoderSpeed(const std::shared_ptr<Decoder>& decoder, uint8_t speed)
 {
@@ -76,9 +79,29 @@ void Kernel::setConfig(const Config& config)
 {
   assert(isEventLoopThread());
 
+  switch(config.fastClock)
+  {
+    case LocoNetFastClock::Off:
+      disableClockEvents();
+      break;
+
+    case LocoNetFastClock::Master:
+      enableClockEvents();
+      break;
+  }
+
   m_ioContext.post(
     [this, newConfig=config]()
     {
+      if(m_config.fastClock == LocoNetFastClock::Master && newConfig.fastClock == LocoNetFastClock::Off)
+      {
+        setFastClockMaster(false);
+      }
+      else if(m_config.fastClock == LocoNetFastClock::Off && newConfig.fastClock == LocoNetFastClock::Master)
+      {
+        setFastClockMaster(true);
+      }
+
       if(!m_config.fastClockSyncEnabled && newConfig.fastClockSyncEnabled)
       {
         send(RequestSlotData(SLOT_FAST_CLOCK));
@@ -111,6 +134,15 @@ void Kernel::setOnIdle(std::function<void()> callback)
   assert(isEventLoopThread());
   assert(!m_started);
   m_onIdle = std::move(callback);
+}
+
+void Kernel::setClock(std::shared_ptr<Clock> clock)
+{
+  assert(isEventLoopThread());
+  assert(!m_started);
+  assert(clock);
+  m_clock = std::move(clock);
+  m_fastClock.store(FastClock{m_clock->running ? m_clock->multiplier : multiplierFreeze, m_clock->hour, m_clock->minute});
 }
 
 void Kernel::setDecoderController(DecoderController* decoderController)
@@ -164,10 +196,16 @@ void Kernel::start()
       m_ioContext.run();
     });
 
+  if(m_config.fastClock == LocoNetFastClock::Master)
+    enableClockEvents();
+
   m_ioContext.post(
     [this]()
     {
       m_ioHandler->start();
+
+      if(m_config.fastClock == LocoNetFastClock::Master)
+        setFastClockMaster(true);
 
       if(m_config.fastClockSyncEnabled)
         startFastClockSyncTimer();
@@ -191,6 +229,8 @@ void Kernel::start()
 void Kernel::stop()
 {
   assert(isEventLoopThread());
+
+  disableClockEvents();
 
   m_ioContext.post(
     [this]()
@@ -1283,6 +1323,50 @@ void Kernel::waitingForResponseTimerExpired(const boost::system::error_code& ec)
         Log::log(m_logId, LogMessage::E2019_TIMEOUT_NO_RESPONSE_WITHIN_X_MS, m_config.responseTimeout);
       });
   }
+}
+
+void Kernel::setFastClockMaster(bool enable)
+{
+  assert(isKernelThread());
+  if(enable)
+  {
+    const auto clock = m_fastClock.load();
+    FastClockSlotWriteData fastClock;
+    fastClock.clk_rate = clock.multiplier;
+    fastClock.setHour(clock.hour);
+    fastClock.setMinute(clock.minute);
+    fastClock.setValid(true);
+    fastClock.setId(idTraintastic);
+    updateChecksum(fastClock);
+    send(fastClock, HighPriority);
+  }
+  else
+    send(FastClockSlotWriteData(), HighPriority);
+}
+
+void Kernel::disableClockEvents()
+{
+  m_clockChangeConnection.disconnect();
+}
+
+void Kernel::enableClockEvents()
+{
+  if(m_clockChangeConnection.connected() || !m_clock)
+    return;
+
+  m_clockChangeConnection = m_clock->onChange.connect(
+    [this](Clock::ClockEvent event, uint8_t multiplier, Time time)
+    {
+      m_fastClock.store(FastClock{event == Clock::ClockEvent::Freeze ? multiplierFreeze : multiplier, time.hour(), time.minute()});
+      if(event == Clock::ClockEvent::Freeze || event == Clock::ClockEvent::Resume)
+      {
+        m_ioContext.post(
+          [this]()
+          {
+            setFastClockMaster(true);
+          });
+      }
+    });
 }
 
 void Kernel::startFastClockSyncTimer()
