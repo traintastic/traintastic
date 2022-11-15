@@ -236,6 +236,8 @@ class Kernel
     void waitingForResponseTimerExpired(const boost::system::error_code& ec);
 
     void setFastClockMaster(bool enable);
+    void disableClockEvents();
+    void enableClockEvents();
 
     void startFastClockSyncTimer();
     void stopFastClockSyncTimer();
