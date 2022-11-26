@@ -53,7 +53,7 @@ struct FastClockSlotData : SlotDataBase
 
   uint8_t hour() const
   {
-    return 24 - (((256 - hrs_24) & 0x7F) % 24);
+    return (24 - (((256 - hrs_24) & 0x7F) % 24)) % 24;
   }
 
   void setHour(uint8_t value)
@@ -64,13 +64,13 @@ struct FastClockSlotData : SlotDataBase
 
   uint8_t minute() const
   {
-    return 60 - (((255 - mins_60) & 0x7F) % 60);
+    return (60 - (((256 - mins_60) & 0x7F) % 60)) % 60;
   }
 
   void setMinute(uint8_t value)
   {
     assert(value < 60);
-    mins_60 = (255 - (60 - value)) & 0x7F;
+    mins_60 = (256 - (60 - value)) & 0x7F;
   }
 
   bool valid() const
