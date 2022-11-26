@@ -44,8 +44,8 @@ class LNCVProgrammingController
   public:
     static constexpr uint16_t moduleAddressAny = 65535;
 
-    [[nodiscard]] bool lncvAttach(LNCVProgrammer& programmer);
-    void lncvDetach(LNCVProgrammer& programmer);
+    [[nodiscard]] bool attachLNCVProgrammer(LNCVProgrammer& programmer);
+    void detachLNCVProgrammer(LNCVProgrammer& programmer);
 
     [[nodiscard]] virtual bool startLNCVProgramming(uint16_t moduleId, uint16_t moduleAddress) = 0;
     [[nodiscard]] virtual bool readLNCV(uint16_t lncv) = 0;

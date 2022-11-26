@@ -25,7 +25,7 @@
 #include "../../../core/idobject.hpp"
 #include "../../../world/world.hpp"
 
-bool LNCVProgrammingController::lncvAttach(LNCVProgrammer& programmer)
+bool LNCVProgrammingController::attachLNCVProgrammer(LNCVProgrammer& programmer)
 {
   if(m_programmer)
     return false;
@@ -34,7 +34,7 @@ bool LNCVProgrammingController::lncvAttach(LNCVProgrammer& programmer)
   return true;
 }
 
-void LNCVProgrammingController::lncvDetach(LNCVProgrammer& programmer)
+void LNCVProgrammingController::detachLNCVProgrammer(LNCVProgrammer& programmer)
 {
   if(m_programmer == &programmer)
   {

@@ -47,7 +47,7 @@ LNCVProgrammer::LNCVProgrammer(LNCVProgrammingController& controller)
       }}
   , onReadResponse{*this, "on_read_response", EventFlags::Public}
 {
-  if(!m_controller.lncvAttach(*this))
+  if(!m_controller.attachLNCVProgrammer(*this))
     throw std::runtime_error("lncv_programmer:programmer_not_available");
 
   m_interfaceItems.add(start);
@@ -59,7 +59,7 @@ LNCVProgrammer::LNCVProgrammer(LNCVProgrammingController& controller)
 
 LNCVProgrammer::~LNCVProgrammer()
 {
-  m_controller.lncvDetach(*this);
+  m_controller.detachLNCVProgrammer(*this);
 }
 
 void LNCVProgrammer::readResponse(bool success, uint16_t lncv, uint16_t value)
