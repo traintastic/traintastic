@@ -206,7 +206,8 @@ bool SimulationIOHandler::send(const Message& message)
       break;
     }
     case OPC_WR_SL_DATA:
-      break; // unimplemented
+      reply(LongAck(message.opCode, 0x7F)); // slot write successful
+      break;
 
     // no response:
     case OPC_LOCO_SPD:
