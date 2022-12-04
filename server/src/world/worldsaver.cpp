@@ -64,8 +64,14 @@ WorldSaver::WorldSaver(const World& world)
     json objects = json::array();
 
     for(const auto& it : world.m_objects)
+    {
       if(ObjectPtr object = it.second.lock())
-        objects.push_back(saveObject(object));
+      {
+        json data = saveObject(object);
+        if(!data.empty())
+          objects.push_back(std::move(data));
+      }
+    }
 
     std::sort(objects.begin(), objects.end(),
       [](const json& a, const json& b)
