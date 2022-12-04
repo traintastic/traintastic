@@ -31,6 +31,7 @@
 #include "hsi88.hpp"
 #include "loconetinterface.hpp"
 #include "traintasticdiyinterface.hpp"
+#include "withrottleinterface.hpp"
 #include "wlanmausinterface.hpp"
 #include "xpressnetinterface.hpp"
 #include "z21interface.hpp"
@@ -45,6 +46,7 @@ struct Interfaces
     HSI88Interface::classId,
     LocoNetInterface::classId,
     TraintasticDIYInterface::classId,
+    WiThrottleInterface::classId,
     WlanMausInterface::classId,
     XpressNetInterface::classId,
     Z21Interface::classId

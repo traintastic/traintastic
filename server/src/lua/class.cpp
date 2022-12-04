@@ -60,6 +60,7 @@
 #include "../hardware/interface/hsi88.hpp"
 #include "../hardware/interface/loconetinterface.hpp"
 #include "../hardware/interface/traintasticdiyinterface.hpp"
+#include "../hardware/interface/withrottleinterface.hpp"
 #include "../hardware/interface/wlanmausinterface.hpp"
 #include "../hardware/interface/xpressnetinterface.hpp"
 #include "../hardware/interface/z21interface.hpp"
@@ -169,11 +170,12 @@ void Class::registerValues(lua_State* L)
 
   // hardware - interface:
   registerValue<DCCPlusPlusInterface>(L, "DCCPLUSPLUS");
-  registerValue<ECoSInterface>(L, "DCCPLUSPLUS");
+  registerValue<ECoSInterface>(L, "ECOS");
   registerValue<HSI88Interface>(L, "HSI88");
   registerValue<LocoNetInterface>(L, "LOCONET");
   registerValue<TraintasticDIYInterface>(L, "TRAINTASTIC_DIY");
   registerValue<XpressNetInterface>(L, "XPRESSNET");
+  registerValue<WiThrottleInterface>(L, "WITHROTTLE");
   registerValue<WlanMausInterface>(L, "WLANMAUS");
   registerValue<Z21Interface>(L, "Z21");
 

@@ -66,6 +66,7 @@ class_id:interface.ecos=ECoS
 class_id:interface.hsi88=HSI-88
 class_id:interface.loconet=LocoNet
 class_id:interface.traintastic_diy=Traintastic DIY
+class_id:interface.withrottle=WiThrottle
 class_id:interface.wlanmaus=WLANmaus
 class_id:interface.xpressnet=XpressNet
 class_id:interface.z21=Z21
@@ -162,6 +163,7 @@ hardware:output_keyboard=Output keyboard
 hardware:outputs=Outputs
 hardware:s88=S88
 hardware:speed_steps=Speed steps
+hardware:throttles=Throttles
 hardware:xpressnet=XpressNet
 hardware:z21=Z21
 
@@ -191,6 +193,8 @@ interface.hsi88:modules_right=Modules right
 interface.loconet:interface=Interface
 
 interface.traintastic_diy:traintastic_diy=Traintastic DIY
+
+interface.withrottle:withrottle=WiThrottle
 
 interface.xpressnet:interface=Interface
 interface.xpressnet:s88_module_count=S88 module count

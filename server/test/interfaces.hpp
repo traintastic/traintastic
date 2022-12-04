@@ -28,6 +28,7 @@
 #include "../src/hardware/interface/hsi88.hpp"
 #include "../src/hardware/interface/loconetinterface.hpp"
 #include "../src/hardware/interface/traintasticdiyinterface.hpp"
+#include "../src/hardware/interface/withrottleinterface.hpp"
 #include "../src/hardware/interface/wlanmausinterface.hpp"
 #include "../src/hardware/interface/xpressnetinterface.hpp"
 #include "../src/hardware/interface/z21interface.hpp"
@@ -38,6 +39,7 @@
   HSI88Interface, \
   LocoNetInterface, \
   TraintasticDIYInterface, \
+  WiThrottleInterface, \
   WlanMausInterface, \
   XpressNetInterface, \
   Z21Interface
