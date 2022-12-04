@@ -27,6 +27,7 @@
 #include "decoderfunction.hpp"
 #include "decoderfunctions.hpp"
 #include "../protocol/dcc/dcc.hpp"
+#include "../throttle/throttle.hpp"
 #include "../../world/world.hpp"
 #include "../../core/attributes.hpp"
 #include "../../log/log.hpp"
@@ -250,8 +251,38 @@ void Decoder::setFunctionValue(uint32_t number, bool value)
     f->value.setValueInternal(value);
 }
 
+bool Decoder::acquire(Throttle& driver, bool steal)
+{
+  if(m_driver)
+  {
+    if(!steal)
+      return false;
+
+    m_driver->release();
+  }
+
+  assert(!m_driver);
+
+  m_driver = driver.shared_ptr<Throttle>();
+
+  return true;
+}
+
+void Decoder::release(Throttle& driver)
+{
+  if(m_driver.get() == &driver)
+    m_driver.reset();
+  else
+    assert(false);
+}
+
 void Decoder::destroying()
 {
+  if(m_driver) // release driver throttle
+  {
+    m_driver->release();
+    assert(!m_driver);
+  }
   if(interface.value())
     interface = nullptr;
   m_world.decoders->removeObject(shared_ptr<Decoder>());

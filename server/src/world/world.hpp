@@ -111,6 +111,8 @@ class World : public Object
 
     ObjectProperty<LinkRailTileList> linkRailTiles;
 
+    Property<uint32_t> hardwareThrottles; //<! number of connected hardware throttles
+
     Property<WorldState> state;
     Property<bool> edit;
     Method<void()> offline;

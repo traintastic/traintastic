@@ -25,6 +25,7 @@
 #include "subobject.hpp"
 #include "abstractmethod.hpp"
 #include "abstractproperty.hpp"
+#include "abstractobjectproperty.hpp"
 #include "abstractvectorproperty.hpp"
 #include "../world/worldloader.hpp"
 #include "../world/worldsaver.hpp"
@@ -73,6 +74,16 @@ const AbstractProperty* Object::getProperty(std::string_view name) const
 AbstractProperty* Object::getProperty(std::string_view name)
 {
   return dynamic_cast<AbstractProperty*>(getItem(name));
+}
+
+const AbstractObjectProperty* Object::getObjectProperty(std::string_view name) const
+{
+  return dynamic_cast<const AbstractObjectProperty*>(getItem(name));
+}
+
+AbstractObjectProperty* Object::getObjectProperty(std::string_view name)
+{
+  return dynamic_cast<AbstractObjectProperty*>(getItem(name));
 }
 
 const AbstractVectorProperty* Object::getVectorProperty(std::string_view name) const

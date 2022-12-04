@@ -96,6 +96,7 @@ World::World(Private /*unused*/) :
   railVehicles{this, "rail_vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   linkRailTiles{this, "link_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  hardwareThrottles{this, "hardware_throttles", 0, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::NoScript},
   state{this, "state", WorldState(), PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   edit{this, "edit", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
     [this](bool value)
@@ -276,6 +277,9 @@ World::World(Private /*unused*/) :
 
   Attributes::addObjectEditor(linkRailTiles, false);
   m_interfaceItems.add(linkRailTiles);
+
+  Attributes::addObjectEditor(hardwareThrottles, false);
+  m_interfaceItems.add(hardwareThrottles);
 
   Attributes::addObjectEditor(state, false);
   m_interfaceItems.add(state);

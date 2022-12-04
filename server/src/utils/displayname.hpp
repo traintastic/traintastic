@@ -56,6 +56,7 @@ namespace DisplayName
     constexpr std::string_view outputKeyboard = "hardware:output_keyboard";
     constexpr std::string_view outputs = "hardware:outputs";
     constexpr std::string_view speedSteps = "hardware:speed_steps";
+    constexpr std::string_view throttles = "hardware:throttles";
     constexpr std::string_view xpressnet = "hardware:xpressnet";
     constexpr std::string_view z21 = "hardware:z21";
   }

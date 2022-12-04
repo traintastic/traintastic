@@ -40,6 +40,7 @@ template<class... Args> class Event;
 class AbstractMethod;
 class BaseProperty;
 class AbstractProperty;
+class AbstractObjectProperty;
 class AbstractVectorProperty;
 class AbstractAttribute;
 class AbstractEvent;
@@ -108,6 +109,8 @@ class Object : public std::enable_shared_from_this<Object>
     AbstractMethod* getMethod(std::string_view name);
     const AbstractProperty* getProperty(std::string_view name) const;
     AbstractProperty* getProperty(std::string_view name);
+    const AbstractObjectProperty* getObjectProperty(std::string_view name) const;
+    AbstractObjectProperty* getObjectProperty(std::string_view name);
     const AbstractVectorProperty* getVectorProperty(std::string_view name) const;
     AbstractVectorProperty* getVectorProperty(std::string_view name);
 };

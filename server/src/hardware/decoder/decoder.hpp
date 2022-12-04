@@ -37,6 +37,7 @@
 
 enum class DecoderChangeFlags;
 class DecoderFunction;
+class Throttle;
 
 class Decoder : public IdObject
 {
@@ -45,6 +46,7 @@ class Decoder : public IdObject
   private:
     bool m_worldMute;
     bool m_worldNoSmoke;
+    std::shared_ptr<Throttle> m_driver;
 
   protected:
     void loaded() final;
@@ -104,6 +106,9 @@ class Decoder : public IdObject
     bool getFunctionValue(uint32_t number) const;
     bool getFunctionValue(const std::shared_ptr<const DecoderFunction>& function) const;
     void setFunctionValue(uint32_t number, bool value);
+
+    bool acquire(Throttle& driver, bool steal = false);
+    void release(Throttle& driver);
 };
 
 #endif
