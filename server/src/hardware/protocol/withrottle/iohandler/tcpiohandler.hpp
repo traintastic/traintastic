@@ -24,6 +24,8 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_WITHROTTLE_IOHANDLER_TCPIOHANDLER_HPP
 
 #include "iohandler.hpp"
+#include <array>
+#include <unordered_map>
 #include <boost/asio/ip/tcp.hpp>
 
 namespace WiThrottle {
