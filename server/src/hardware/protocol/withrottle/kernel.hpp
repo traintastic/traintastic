@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_WITHROTTLE_KERNEL_HPP
 
 #include <thread>
+#include <unordered_map>
 #include <boost/asio/io_context.hpp>
 #include <boost/signals2/connection.hpp>
 #include <traintastic/enum/tristate.hpp>
