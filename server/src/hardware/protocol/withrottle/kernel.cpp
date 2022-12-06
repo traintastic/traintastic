@@ -203,6 +203,8 @@ void Kernel::newClient(IOHandler::ClientId clientId)
   assert(m_running);
 
   sendTo(protocolVersion(), clientId);
+  sendTo(serverType(), clientId);
+  sendTo(serverVersion(), clientId);
   sendTo(rosterList({}), clientId);
   sendTo(trackPower(m_powerOn), clientId);
 
