@@ -699,6 +699,7 @@ void MainWindow::viewClockWindow(bool value)
     m_clockWindow = new QMdiSubWindow();
     m_clockWindow->setWidget(new Clock(m_clock, m_clockWindow));
     m_clockWindow->setAttribute(Qt::WA_DeleteOnClose);
+    m_clockWindow->setWindowFlags(m_clockWindow->windowFlags() & ~Qt::WindowMaximizeButtonHint);
     connect(m_clockWindow, &QMdiSubWindow::destroyed,
       [this](QObject* object)
       {
