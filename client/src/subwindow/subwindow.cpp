@@ -23,6 +23,7 @@
 #include "subwindow.hpp"
 #include <QVBoxLayout>
 #include <QSettings>
+#include <QIcon>
 #include <QtWaitingSpinner/waitingspinnerwidget.h>
 #include "../network/connection.hpp"
 #include "../network/object.hpp"
@@ -91,6 +92,8 @@ void SubWindow::setObject(const ObjectPtr& object)
   connect(widget(), &QWidget::windowTitleChanged, this, &SubWindow::setWindowTitle);
   if(!widget()->windowTitle().isEmpty())
     setWindowTitle(widget()->windowTitle());
+  if(!widget()->windowIcon().isNull())
+    setWindowIcon(widget()->windowIcon());
   restoreSizeFromSettings();
 }
 
