@@ -24,6 +24,9 @@
 #ifndef NDEBUG
   #include "../core/eventloop.hpp"
 #endif
+#ifdef HAS_LIBSYSTEMD
+  #include "linux/serialportlistimplsystemd.hpp"
+#endif
 
 SerialPortList& SerialPortList::instance()
 {

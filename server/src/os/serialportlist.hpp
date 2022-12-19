@@ -29,13 +29,22 @@
 #include <boost/signals2/signal.hpp>
 
 class SerialPortListImpl;
+#ifdef HAS_LIBSYSTEMD
+namespace Linux {
+  class SerialPortListImplSystemD;
+}
+#endif
 
 class SerialPortList
 {
   friend class SerialPortListImpl;
 
   private:
+#ifdef HAS_LIBSYSTEMD
+    using Impl = Linux::SerialPortListImplSystemD;
+#else
     using Impl = SerialPortListImpl;
+#endif
 
     static std::unique_ptr<SerialPortList> create();
 

@@ -259,7 +259,7 @@ jobs:
     # Ubuntu only:
     - name: Install packages
       if: startswith(matrix.config.os, 'ubuntu')
-      run: sudo apt install libboost-program-options-dev liblua5.3-dev lcov libarchive-dev clang-tidy
+      run: sudo apt install libboost-program-options-dev liblua5.3-dev lcov libarchive-dev clang-tidy libsystemd-dev
 
     # MacOS only:
     - name: Install brew packages
