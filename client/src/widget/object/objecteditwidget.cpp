@@ -136,6 +136,8 @@ void ObjectEditWidget::buildForm()
                 tabs.append(edit);
                 continue;
               }
+              else if(property->hasAttribute(AttributeName::Values))
+                w = new PropertyComboBox(*property);
               else
                 w = new PropertyLineEdit(*property);
             }

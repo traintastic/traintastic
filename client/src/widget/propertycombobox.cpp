@@ -32,17 +32,45 @@ PropertyComboBox::PropertyComboBox(Property& property, QWidget* parent) :
   m_property{property},
   m_internalUpdate{0}
 {
-  Q_ASSERT(m_property.type() == ValueType::Enum || m_property.type() == ValueType::Integer);
+  Q_ASSERT(m_property.type() == ValueType::Enum || m_property.type() == ValueType::Integer || m_property.type() == ValueType::String);
   setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
   setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
 
-  connect(&m_property, &Property::valueChangedInt64, this,
-    [this](qint64 value)
-    {
-      InternalUpdateHolder hold(m_internalUpdate);
-      if(int index = findData(value); index != -1)
-        setCurrentIndex(index);
-    });
+  setEditable(m_property.type() == ValueType::String); //! \todo add attribute for this
+  setInsertPolicy(QComboBox::NoInsert);
+
+  switch(m_property.type())
+  {
+    case ValueType::Integer:
+    case ValueType::Enum:
+      connect(&m_property, &Property::valueChangedInt64, this,
+        [this](qint64 value)
+        {
+          InternalUpdateHolder hold(m_internalUpdate);
+          if(int index = findData(value); index != -1)
+            setCurrentIndex(index);
+        });
+      break;
+
+    case ValueType::String:
+      connect(&m_property, &Property::valueChangedString, this,
+        [this](const QString & value)
+        {
+          InternalUpdateHolder hold(m_internalUpdate);
+          if(int index = findData(value); index != -1)
+            setCurrentIndex(index);
+        });
+      break;
+
+    case ValueType::Invalid:
+    case ValueType::Boolean:
+    case ValueType::Float:
+    case ValueType::Object:
+    case ValueType::Set:
+      assert(false);
+      break;
+  }
+
   connect(&m_property, &Property::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
@@ -70,9 +98,26 @@ PropertyComboBox::PropertyComboBox(Property& property, QWidget* parent) :
     [this](int)
     {
       if(m_internalUpdate == 0)
-        if(QVariant v = currentData(); v.canConvert<int>())
-          m_property.setValueInt(v.toInt());
+      {
+        const QVariant v = currentData();
+        if(v.canConvert<qint64>())
+          m_property.setValueInt64(v.value<qint64>());
+        else
+          m_property.setValueString(v.toString());
+      }
     });
+
+  if(isEditable())
+  {
+    connect(this, &QComboBox::currentTextChanged,
+      [this](const QString& value)
+      {
+        if(m_internalUpdate == 0)
+        {
+          m_property.setValueString(value);
+        }
+      });
+  }
 
   updateValues();
 }
@@ -83,9 +128,13 @@ void PropertyComboBox::updateValues()
   if(Q_LIKELY(values.isValid()))
   {
     InternalUpdateHolder hold(m_internalUpdate);//QSignalBlocker block(this);
+
     clear();
+
     if(Q_LIKELY(values.userType() == QMetaType::QVariantList))
     {
+      bool currentIndexSet = false;
+
       switch(m_property.type())
       {
         case ValueType::Integer:
@@ -101,7 +150,10 @@ void PropertyComboBox::updateValues()
             else
               addItem(QString::number(value), value);
             if(m_property.toInt64() == value)
+            {
               setCurrentIndex(count() - 1);
+              currentIndexSet = true;
+            }
           }
           break;
         }
@@ -111,18 +163,38 @@ void PropertyComboBox::updateValues()
             const qint64 value = v.toLongLong();
             addItem(translateEnum(m_property.enumName(), value), value);
             if(m_property.toInt64() == value)
+            {
               setCurrentIndex(count() - 1);
+              currentIndexSet = true;
+            }
+          }
+          break;
+
+        case ValueType::String:
+          for(QVariant& v : values.toList())
+          {
+            const QString value = v.toString();
+            addItem(value, value);
+            if(m_property.toString() == value)
+            {
+              setCurrentIndex(count() - 1);
+              currentIndexSet = true;
+            }
           }
           break;
 
         case ValueType::Invalid:
         case ValueType::Boolean:
         case ValueType::Float:
-        case ValueType::String:
         case ValueType::Object:
         case ValueType::Set:
           assert(false);
           break;
+      }
+
+      if(isEditable() && !currentIndexSet)
+      {
+        setCurrentText(m_property.toString());
       }
     }
   }
