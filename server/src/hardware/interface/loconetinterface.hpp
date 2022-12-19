@@ -31,6 +31,7 @@
 #include "../output/outputcontroller.hpp"
 #include "../identification/identificationcontroller.hpp"
 #include "../programming/lncv/lncvprogrammingcontroller.hpp"
+#include "../../core/serialdeviceproperty.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../enum/loconetinterfacetype.hpp"
 #include "../../enum/serialflowcontrol.hpp"
@@ -68,7 +69,7 @@ class LocoNetInterface final
 
   public:
     Property<LocoNetInterfaceType> type;
-    Property<std::string> device;
+    SerialDeviceProperty device;
     Property<uint32_t> baudrate;
     Property<SerialFlowControl> flowControl;
     Property<std::string> hostname;

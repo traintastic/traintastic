@@ -78,6 +78,11 @@ class VectorRefAttribute : public AbstractValuesAttribute
         changed();
       }
     }
+
+    void internalChanged()
+    {
+      changed();
+    }
 };
 
 #endif

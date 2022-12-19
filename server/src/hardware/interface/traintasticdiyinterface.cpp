@@ -59,7 +59,6 @@ TraintasticDIYInterface::TraintasticDIYInterface(World& world, std::string_view 
   Attributes::addValues(type, traintasticDIYInterfaceTypeValues);
   m_interfaceItems.insertBefore(type, notes);
 
-  Attributes::addDisplayName(device, DisplayName::Serial::device);
   Attributes::addEnabled(device, !online);
   Attributes::addVisible(device, false);
   m_interfaceItems.insertBefore(device, notes);

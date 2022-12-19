@@ -29,6 +29,7 @@
 #include "../decoder/decodercontroller.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
+#include "../../core/serialdeviceproperty.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../enum/serialflowcontrol.hpp"
 
@@ -63,7 +64,7 @@ class DCCPlusPlusInterface final
     bool setOnline(bool& value, bool simulation) final;
 
   public:
-    Property<std::string> device;
+    SerialDeviceProperty device;
     Property<uint32_t> baudrate;
     ObjectProperty<DCCPlusPlus::Settings> dccplusplus;
 

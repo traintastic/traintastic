@@ -49,7 +49,6 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   name = "DCC++";
   dccplusplus.setValueInternal(std::make_shared<DCCPlusPlus::Settings>(*this, dccplusplus.name()));
 
-  Attributes::addDisplayName(device, DisplayName::Serial::device);
   Attributes::addEnabled(device, !online);
   m_interfaceItems.insertBefore(device, notes);
 

@@ -135,6 +135,8 @@ file(GLOB SOURCES
   "src/lua/*.cpp"
   "src/network/*.hpp"
   "src/network/*.cpp"
+  "src/os/*.hpp"
+  "src/os/*.cpp"
   "src/train/*.hpp"
   "src/train/*.cpp"
   "src/traintastic/*.hpp"

@@ -100,7 +100,6 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   Attributes::addVisible(serialInterfaceType, false);
   m_interfaceItems.insertBefore(serialInterfaceType, notes);
 
-  Attributes::addDisplayName(device, DisplayName::Serial::device);
   Attributes::addEnabled(device, !online);
   Attributes::addVisible(device, false);
   m_interfaceItems.insertBefore(device, notes);

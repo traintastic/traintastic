@@ -30,6 +30,7 @@
 #include <queue>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/serial_port.hpp>
+#include "../../core/serialdeviceproperty.hpp"
 #include "../input/inputcontroller.hpp"
 
 /**
@@ -107,7 +108,7 @@ class HSI88Interface final
     bool setOnline(bool& value, bool simulation) final;
 
   public:
-    Property<std::string> device;
+    SerialDeviceProperty device;
     Property<uint8_t> modulesLeft;
     Property<uint8_t> modulesMiddle;
     Property<uint8_t> modulesRight;

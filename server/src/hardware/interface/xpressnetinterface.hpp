@@ -29,6 +29,7 @@
 #include "../decoder/decodercontroller.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
+#include "../../core/serialdeviceproperty.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../enum/xpressnetinterfacetype.hpp"
 #include "../../enum/xpressnetserialinterfacetype.hpp"
@@ -66,7 +67,7 @@ class XpressNetInterface final
   public:
     Property<XpressNetInterfaceType> type;
     Property<XpressNetSerialInterfaceType> serialInterfaceType;
-    Property<std::string> device;
+    SerialDeviceProperty device;
     Property<uint32_t> baudrate;
     Property<SerialFlowControl> flowControl;
     Property<std::string> hostname;

@@ -28,6 +28,7 @@
 #include "../protocol/traintasticdiy/settings.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
+#include "../../core/serialdeviceproperty.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../enum/traintasticdiyinterfacetype.hpp"
 #include "../../enum/serialflowcontrol.hpp"
@@ -61,7 +62,7 @@ class TraintasticDIYInterface final
 
   public:
     Property<TraintasticDIYInterfaceType> type;
-    Property<std::string> device;
+    SerialDeviceProperty device;
     Property<uint32_t> baudrate;
     Property<SerialFlowControl> flowControl;
     Property<std::string> hostname;

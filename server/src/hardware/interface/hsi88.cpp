@@ -66,7 +66,6 @@ HSI88Interface::HSI88Interface(World& world, std::string_view _id)
 
   const bool editable = contains(m_world.state, WorldState::Edit);
 
-  Attributes::addDisplayName(device, DisplayName::Serial::device);
   Attributes::addEnabled(device, !online && editable);
   m_interfaceItems.insertBefore(device, notes);
 
