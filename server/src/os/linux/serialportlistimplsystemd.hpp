@@ -37,15 +37,14 @@ class SerialPortListImplSystemD final : public SerialPortListImpl
       return reinterpret_cast<SerialPortListImplSystemD*>(userdata)->monitorHandler(device);
     }
 
-    static int stopEventHandler(sd_event_source* /*s*/, int /*fd*/, uint32_t /*revents*/, void *userdata)
+    static int stopEventHandler(sd_event_source* s, int /*fd*/, uint32_t /*revents*/, void* /*userdata*/)
     {
-      sd_event_exit(reinterpret_cast<SerialPortListImplSystemD*>(userdata)->m_eventLoop, 0);
+      sd_event_exit(sd_event_source_get_event(s), 0);
       return 0;
     }
 
     int m_stopEvent;
     std::thread m_thread;
-    sd_event* m_eventLoop = nullptr;
 
     int monitorHandler(sd_device* device);
 

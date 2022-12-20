@@ -63,11 +63,11 @@ SerialPortListImplSystemD::SerialPortListImplSystemD(SerialPortList& list)
 
           if(sd_device_monitor_start(monitor, monitorHandlerHelper, this) == 0)
           {
-            m_eventLoop = sd_device_monitor_get_event(monitor);
+            sd_event* eventLoop = sd_device_monitor_get_event(monitor);
             sd_event_source* src;
-            sd_event_add_io(m_eventLoop, &src, m_stopEvent, EPOLLIN, stopEventHandler, this);
+            sd_event_add_io(eventLoop, &src, m_stopEvent, EPOLLIN, stopEventHandler, this);
 
-            sd_event_loop(m_eventLoop);
+            sd_event_loop(eventLoop);
 
             sd_event_source_unref(src);
             sd_device_monitor_stop(monitor);
