@@ -102,8 +102,6 @@ std::vector<std::string> SerialPortListImplSystemD::get() const
         devices.emplace_back(std::string{getDevPath(device)});
       }
 
-      sd_device_unref(device);
-
       device = sd_device_enumerator_get_device_next(enumerator);
     }
 
