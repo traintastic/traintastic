@@ -26,6 +26,8 @@
 #endif
 #ifdef HAS_LIBSYSTEMD
   #include "linux/serialportlistimplsystemd.hpp"
+#else
+  #include "serialportlistimpl.hpp"
 #endif
 
 SerialPortList& SerialPortList::instance()
