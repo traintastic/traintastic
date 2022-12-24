@@ -42,7 +42,7 @@ constexpr std::string_view rtrim(std::string_view s, char c)
   return {s.data(), size + 1};
 }
 
-constexpr std::string& rtrim(std::string& s, char c)
+inline std::string& rtrim(std::string& s, char c)
 {
   const auto sz = s.size();
   size_t n = 0;
