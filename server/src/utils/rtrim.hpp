@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_UTILS_RTRIM_HPP
 #define TRAINTASTIC_SERVER_UTILS_RTRIM_HPP
 
+#include <string>
 #include <string_view>
 #include <algorithm>
 
@@ -39,6 +40,16 @@ constexpr std::string_view rtrim(std::string_view s, char c)
     size--;
   }
   return {s.data(), size + 1};
+}
+
+constexpr std::string& rtrim(std::string& s, char c)
+{
+  const auto sz = s.size();
+  size_t n = 0;
+  while(n != sz && s[sz - n - 1] == c)
+    n++;
+  s.resize(sz - n);
+  return s;
 }
 
 #if __cplusplus >= 202002L
