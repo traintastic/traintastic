@@ -1,5 +1,5 @@
 /**
- * server/src/os/windows/registry.hpp
+ * server/src/os/linux/serialportlistimplwin32.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,27 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_OS_WINDOWS_REGISTRY_HPP
-#define TRAINTASTIC_SERVER_OS_WINDOWS_REGISTRY_HPP
+#ifndef TRAINTASTIC_SERVER_OS_LINUX_SERIALPORTLISTIMPLWIN32_HPP
+#define TRAINTASTIC_SERVER_OS_LINUX_SERIALPORTLISTIMPLWIN32_HPP
 
-#include <string>
-#include <windows.h>
+#include "../serialportlistimpl.hpp"
+#include <thread>
 
-namespace Windows::Registry {
+namespace Windows {
 
-bool addRun();
-
-bool getStartUpApproved(bool& enabled);
-bool setStartUpApproved(bool enabled);
-
-bool queryInfoKey(HKEY key, DWORD& numberOfValues, DWORD& maxValueNameLength);
-bool enumValue(HKEY key, DWORD index, std::string& name, std::string& value);
-bool queryValue(HKEY key, const char* name, std::string& value);
-
-inline bool queryValue(HKEY key, const std::string& name, std::string& value)
+class SerialPortListImplWin32 final : public SerialPortListImpl
 {
-  return queryValue(key, name.c_str(), value);
-}
+  private:
+    std::thread m_thread;
+
+  public:
+    SerialPortListImplWin32(SerialPortList& list);
+    ~SerialPortListImplWin32() final;
+
+    std::vector<std::string> get() const final;
+};
 
 }
 

@@ -187,8 +187,8 @@ if(WIN32)
   add_definitions(-D_WIN32_WINNT=0x0601)
   file(GLOB SOURCES_WINDOWS "src/os/windows/*.hpp" "src/os/windows/*.cpp")
   list(APPEND SOURCES ${SOURCES_WINDOWS} src/version.rc ../shared/gfx/appicon.rc)
-  target_link_libraries(traintastic-server PRIVATE bcrypt)
-  target_link_libraries(traintastic-server-test PRIVATE bcrypt)
+  target_link_libraries(traintastic-server PRIVATE bcrypt setupapi)
+  target_link_libraries(traintastic-server-test PRIVATE bcrypt setupapi)
 endif()
 
 ### COMPILER ###

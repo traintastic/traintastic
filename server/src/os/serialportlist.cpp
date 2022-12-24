@@ -26,6 +26,8 @@
 #endif
 #ifdef HAS_LIBSYSTEMD
   #include "linux/serialportlistimplsystemd.hpp"
+#elif defined(WIN32)
+  #include "windows/serialportlistimplwin32.hpp"
 #else
   #include "serialportlistimpl.hpp"
 #endif

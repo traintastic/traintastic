@@ -33,6 +33,10 @@ class SerialPortListImpl;
 namespace Linux {
   class SerialPortListImplSystemD;
 }
+#elif defined(WIN32)
+namespace Windows {
+  class SerialPortListImplWin32;
+}
 #endif
 
 class SerialPortList
@@ -42,6 +46,8 @@ class SerialPortList
   private:
 #ifdef HAS_LIBSYSTEMD
     using Impl = Linux::SerialPortListImplSystemD;
+#elif defined(WIN32)
+    using Impl = Windows::SerialPortListImplWin32;
 #else
     using Impl = SerialPortListImpl;
 #endif

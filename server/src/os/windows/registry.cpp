@@ -23,6 +23,7 @@
 #include "registry.hpp"
 #include <string>
 #include <windows.h>
+#include "../../utils/rtrim.hpp"
 
 namespace Windows::Registry {
 
@@ -92,6 +93,55 @@ bool setStartUpApproved(bool enabled)
     RegCloseKey(key);
   }
   return success;
+}
+
+bool queryInfoKey(HKEY key, DWORD& numberOfValues, DWORD& maxValueNameLength)
+{
+  return RegQueryInfoKeyA(key, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &numberOfValues, &maxValueNameLength, nullptr, nullptr, nullptr) == ERROR_SUCCESS;
+}
+
+bool enumValue(HKEY key, DWORD index, std::string& name, std::string& value)
+{
+  DWORD type;
+  DWORD nameSize = name.size();
+  DWORD valueSize = value.size();
+
+  if(RegEnumValueA(key, index, name.data(), &nameSize, nullptr, &type, reinterpret_cast<BYTE*>(value.data()), &valueSize) == ERROR_MORE_DATA && type == REG_SZ)
+  {
+    // add one for '\0'
+    name.resize(++nameSize);
+    value.resize(++valueSize);
+
+    if(RegEnumValueA(key, index, name.data(), &nameSize, nullptr, nullptr, reinterpret_cast<BYTE*>(value.data()), &valueSize) != ERROR_SUCCESS)
+      return false;
+
+    name.resize(nameSize);
+    value.resize(valueSize);
+  }
+
+  if(type != REG_SZ)
+    return false;
+  
+  rtrim(value, '\0');
+  return true;
+}
+
+bool queryValue(HKEY key, const char* name, std::string& value)
+{
+  DWORD type;
+  DWORD size;
+
+  if(RegQueryValueExA(key, name, nullptr, &type, nullptr, &size) == ERROR_SUCCESS && type == REG_SZ)
+  {
+    value.resize(size);
+    if(RegQueryValueExA(key, name, nullptr, nullptr, reinterpret_cast<BYTE*>(value.data()), &size) == ERROR_SUCCESS)
+    {
+      rtrim(value, '\0');
+      return true;
+    }
+  }
+
+  return false;
 }
 
 }
