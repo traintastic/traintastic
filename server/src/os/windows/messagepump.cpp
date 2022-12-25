@@ -29,16 +29,20 @@ namespace Windows {
 
 std::atomic_size_t MessagePump::s_useCount{0};
 std::thread MessagePump::s_thread;
-HWND MessagePump::s_window;
+HWND MessagePump::s_window = nullptr;
 MessagePump::OnDeviceChangeComPort MessagePump::s_onDeviceChangeComPort;
+
+static const auto WM_STOP = WM_USER;
 
 void MessagePump::start()
 {
   if(s_useCount++ != 0)
     return; // already running
 
+  HANDLE event = CreateEventA(nullptr, false, false, nullptr);
+
   s_thread = std::thread{
-    []()
+    [event]()
     {
       setThreadName("messagepump");
 
@@ -50,11 +54,14 @@ void MessagePump::start()
       windowClass.lpfnWndProc = windowProc;
       windowClass.hInstance = GetModuleHandle(nullptr);
       windowClass.lpszClassName = windowClassName;
-      if(!RegisterClassExA(&windowClass))
-        return;
+      if(RegisterClassExA(&windowClass))
+      {
+        // create window (for receiving messages):
+        s_window = CreateWindowExA(0, windowClassName, nullptr, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+      }
 
-      // create window (for receiving messages):
-      s_window = CreateWindowExA(0, windowClassName, nullptr, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+      SetEvent(event);
+
       if(!s_window)
         return;
 
@@ -62,13 +69,21 @@ void MessagePump::start()
       while(true)
       {
         MSG msg;
-        GetMessage(&msg, NULL, 0, 0);
-        if(msg.message == WM_QUIT)
+        if(!GetMessageA(&msg, nullptr, 0, 0) || msg.message == WM_STOP)
           break;
         TranslateMessage(&msg);
         DispatchMessage(&msg);
       }
+
+      DestroyWindow(s_window);
+      s_window = nullptr;
+
+      UnregisterClassA(windowClassName, windowClass.hInstance);
     }};
+
+  // wait for window handle to be allocated, stopping requires a window handle
+  WaitForSingleObject(event, INFINITE);
+  CloseHandle(event);
 }
 
 void MessagePump::stop()
@@ -77,7 +92,7 @@ void MessagePump::stop()
   if(--s_useCount != 0)
     return; // don't stop
 
-  PostMessage(s_window, WM_QUIT, 0, 0);
+  PostMessage(s_window, WM_STOP, 0, 0);
 
   s_thread.join();
 }
