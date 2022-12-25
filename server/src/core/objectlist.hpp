@@ -83,6 +83,9 @@ class ObjectList : public AbstractObjectList
 
     inline const_iterator begin() const noexcept { return m_items.begin(); }
     inline const_iterator end() const noexcept { return m_items.end(); }
+    inline const std::shared_ptr<T>& front() const noexcept { return m_items.front(); }
+    inline std::shared_ptr<T>& front() noexcept { return m_items.front(); }
+    inline bool empty() const noexcept { return m_items.empty(); }
 
     ObjectPtr getObject(uint32_t index) final
     {

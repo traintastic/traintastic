@@ -82,10 +82,11 @@ void DecoderController::addToWorld()
 void DecoderController::destroying()
 {
   auto& object = interface();
-  for(const auto& decoder : *decoders)
+  while(!decoders->empty())
   {
+    const auto& decoder = decoders->front();
     assert(decoder->interface.value() == std::dynamic_pointer_cast<DecoderController>(object.shared_from_this()));
-    decoder->interface = nullptr;
+    decoder->interface = nullptr; // removes object form the list
   }
 
   object.world().decoderControllers->remove(std::dynamic_pointer_cast<DecoderController>(object.shared_from_this()));

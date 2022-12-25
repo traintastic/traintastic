@@ -137,10 +137,11 @@ void OutputController::addToWorld(OutputListColumn columns)
 void OutputController::destroying()
 {
   auto& object = interface();
-  for(const auto& output : *outputs)
+  while(!outputs->empty())
   {
+    const auto& output = outputs->front();
     assert(output->interface.value() == std::dynamic_pointer_cast<OutputController>(object.shared_from_this()));
-    output->interface = nullptr;
+    output->interface = nullptr; // removes object form the list
   }
   object.world().outputControllers->remove(std::dynamic_pointer_cast<OutputController>(object.shared_from_this()));
 }

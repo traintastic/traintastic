@@ -138,10 +138,11 @@ void InputController::addToWorld(InputListColumn columns)
 void InputController::destroying()
 {
   auto& object = interface();
-  for(const auto& input : *inputs)
+  while(!inputs->empty())
   {
+    const auto& input = inputs->front();
     assert(input->interface.value() == std::dynamic_pointer_cast<InputController>(object.shared_from_this()));
-    input->interface = nullptr;
+    input->interface = nullptr; // removes object form the list
   }
   object.world().inputControllers->remove(std::dynamic_pointer_cast<InputController>(object.shared_from_this()));
 }

@@ -120,10 +120,11 @@ void IdentificationController::addToWorld(IdentificationListColumn columns)
 void IdentificationController::destroying()
 {
   auto& object = interface();
-  for(const auto& identification : *identifications)
+  while(!identifications->empty())
   {
+    const auto& identification = identifications->front();
     assert(identification->interface.value() == std::dynamic_pointer_cast<IdentificationController>(object.shared_from_this()));
-    identification->interface = nullptr;
+    identification->interface = nullptr; // removes object form the list
   }
   object.world().identificationControllers->remove(std::dynamic_pointer_cast<IdentificationController>(object.shared_from_this()));
 }
