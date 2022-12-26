@@ -50,6 +50,8 @@ QIcon Theme::getIconForClassId(const QString& classId)
 {
   if(classId == "lua.script" || classId == "lua.script_list")
     return getIcon("lua");
+  else if(classId == "clock")
+    return getIcon("clock");
   else
     return QIcon();
 }
