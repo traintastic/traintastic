@@ -18,6 +18,8 @@ board_tile.rail.direction_control:use_b_to_a=Gebruik: A ← B
 board_tile.rail.direction_control:use_both=Gebruik: A ⇄ B
 board_tile.rail.direction_control:use_none=Gebruik: A 🛇 B
 
+board_tile.rail.link:link=Link
+
 board_tile.rail.sensor:input=Ingang
 board_tile.rail.sensor:invert=Omdraaien
 board_tile.rail.sensor:type=Type
@@ -40,7 +42,9 @@ class_id:board_tile.rail.cross_45=Kruising 45°
 class_id:board_tile.rail.cross_90=Kruising 90°
 class_id:board_tile.rail.curve_45=Bocht 45°
 class_id:board_tile.rail.curve_90=Bocht 90°
+class_id:board_tile.rail.decoupler=Ontkoppelaar
 class_id:board_tile.rail.direction_control=Richting besturing
+class_id:board_tile.rail.link=Link
 class_id:board_tile.rail.one_way=Eenrichting
 class_id:board_tile.rail.sensor=Sensor
 class_id:board_tile.rail.signal_2_aspect=Sein (2 standen)
@@ -61,6 +65,8 @@ class_id:interface.dccplusplus=DCC++
 class_id:interface.ecos=ECoS
 class_id:interface.hsi88=HSI-88
 class_id:interface.loconet=LocoNet
+class_id:interface.traintastic_diy=Traintastic DIY
+class_id:interface.withrottle=WiThrottle
 class_id:interface.wlanmaus=WLANmaus
 class_id:interface.xpressnet=XpressNet
 class_id:interface.z21=Z21
@@ -68,6 +74,8 @@ class_id:vehicle.rail.freight_car=Groedrenwagon
 class_id:vehicle.rail.locomotive=Locomotief
 
 clock:day=Dag
+clock:debug_log=Debug log
+clock:freeze=Bevriezen
 clock:hour=Uur
 clock:minute=Minuut
 clock:month=Maand
@@ -122,6 +130,9 @@ decoder_protocol:auto=Automatische
 decoder_protocol:custom=Aangepast
 decoder_protocol:dcc=DCC
 
+decoupler_state:activated=Geactiveerd
+decoupler_state:deactivated=Gedeactiveerd
+
 direction:forward=Vooruit
 direction:reverse=Achteruit
 
@@ -142,6 +153,7 @@ hardware:debug_log_output=Log uitgang veranderingen
 hardware:debug_log_rx_tx=Log alle communicatie
 hardware:decoders=Decoders
 hardware:ecos=ECoS
+hardware:identifications=Identificatie
 hardware:input_monitor=Ingang monitor
 hardware:inputs=Ingangen
 hardware:interface=Interface
@@ -151,12 +163,15 @@ hardware:output_keyboard=Uitgang toetsenbord
 hardware:outputs=Uitgangen
 hardware:s88=S88
 hardware:speed_steps=Snelheid stappen
+hardware:throttles=Regelaars
 hardware:xpressnet=XpressNet
 hardware:z21=Z21
 
 hsi88:s88_left=S88 links
 hsi88:s88_middle=S88 midden
 hsi88:s88_right=S88 rechts
+
+identification:opc_multi_sense_direction=OPC_MULTI_SENSE richting
 
 input_list:bus=Bus
 
@@ -167,12 +182,18 @@ input_map_item.block:type=Type
 interface.dccplusplus:dcc_plus_plus=DCC++(EX)
 
 interface.ecos:ecos=ECoS
+interface.ecos:ecos_detector=ECoS detector
+interface.ecos:s88=S88
 
 interface.hsi88:modules_left=Modules links
 interface.hsi88:modules_middle=Modulles midden
 interface.hsi88:modules_right=Modules rechts
 
 interface.loconet:interface=Interface
+
+interface.traintastic_diy:traintastic_diy=Traintastic DIY
+
+interface.withrottle:withrottle=WiThrottle
 
 interface.xpressnet:interface=Interface
 interface.xpressnet:s88_module_count=Aantal S88 modules
@@ -211,9 +232,32 @@ list:move_down=Omlaag verplaatsen
 list:move_up=Omhoog verplaatsen
 list:remove=Verwijderen
 
+lncv_programmer:description=Beschrijving
+lncv_programmer:lncv_programmer=LNCV programmeren
+lncv_programmer:module=Module
+lncv_programmer:other_module=Andere module
+lncv_programmer:read=Lezen
+lncv_programmer:reading_lncv_x=LNCV %1 lezen
+lncv_programmer:reading_lncv_x_failed=LNCV %1 lezen mislukt
+lncv_programmer:sending_start=Start verzenden
+lncv_programmer:start=Start
+lncv_programmer:stop=Stop
+lncv_programmer:use_broadcast_address=Gebruik adres zoeken
+lncv_programmer:value=Waarde
+lncv_programmer:waiting_for_module_to_respond=Wachten op antwoord van de module
+lncv_programmer:write=Schrijf
+lncv_programmer:writing_lncv_x=LNCV %1 schrijven
+
 loconet_command_station:custom=Anders
 loconet_command_station:digikeijs_dr5000=Digikeijs DR5000
+loconet_command_station:uhlenbrock_ibcom=Uhlenbrock IB-Com
 loconet_command_station:uhlenbrock_intellibox=Uhlenbrock Intellibox
+
+loconet_f9_f28:imm_packet=Direct (OPC_IMM_PACKET)
+loconet_f9_f28:uhlenbrock_extended=Uhlenbrock uitbereiding (OPC_A3, OPC_D4)
+
+loconet_fastclock:master=Master (Traintatic stuurt de klok)
+loconet_fastclock:off=Uit
 
 loconet_interface_type:lbserver=LBServer
 loconet_interface_type:serial=Serieel
@@ -225,8 +269,13 @@ loconet_serial_interface:digikeijs_dr5000=Digikeijs DR5000
 loconet_serial_interface:rosoft_loconet_interface=RoSoft LocoNet interface
 
 loconet_settings:command_station=Centrale
+loconet_settings:echo_timeout=Echo time-out
+loconet_settings:f9_f28=F9-F28
+loconet_settings:fast_clock=Fast clock
 #loconet_settings:fast_clock_sync_enabled=Fast clock sync enabled
 #loconet_settings:fast_clock_sync_interval=Fast clock sync interval
+loconet_settings:locomotive_slots=Locomotief slots
+loconet_settings:response_timeout=Antwoord time-out
 
 lua.script:disabled=Uitgeschakeld
 lua.script:start=Start
@@ -245,19 +294,24 @@ lua_script_state:stopped=Gestopt
 message:C1001=Wereld laden mislukt (%1)
 #message:C1002=Creating client failed (%1)
 message:C1003=Kan niet schrijven naar instellingen bestand (%1)
-message:C1004=Wereld laden mislukt (%1) (%2)
-message:C1005=Wereld opslaan mislukt (%1)
-#message:C1006=Creating world backup failed (%1)
-message:C1007=Aanmaken wereld backup map mislukt (%1)
-message:C1008=Aanmaken backup map mislukt (%1)
-#message:C1009=Creating settings backup failed (%1)
+message:C1004=Wereld laden is mislukt (%1) (%2)
+message:C1005=Wereld opslaan is mislukt (%1)
+message:C1006=Aanmaken wereld reserve kopie is mislukt(%1)
+message:C1007=Aanmaken wereld reserve kopie map is mislukt (%1)
+message:C1008=Aanmaken reserve kopie map is mislukt (%1)
+#message:C1009=Aanmaken instelling reserve kopie is mislukt (%1)
 message:C1010=Wereld exporteren mislukt (%1)
 message:C1011=Wereld importeren mislukt (%1)
-#message:C2001=Address already used at #%1
-#message:C2002=DCC++ only supports the DCC protocol
-#message:C2003=DCC++ doesn't support DCC long addresses below 128
+message:C1012=Klasse '%1' is onbekend, kan object '%2' niet maken
+message:C1013=Wereld kan niet geladen worden, de wereld is opgeslagen met een nieuwere versie, minimaal %1 vereist
+message:C2001=Adres is al in gebruikt door #%1
+message:C2002=DCC++ ondersteund alleen het DCC protocol
+message:C2003=DCC++ ondersteund geen lange adressen onder de 128
 #message:C2004=Can't get free slot
 message:C9999=%1
+message:D1001=Hervatten %1 (vermenigvuldiger: %2)
+message:D1002=Tik %1 (fout: %2us)
+message:D1003=Bevries %1
 message:D2001=TX: %1
 message:D2002=RX: %1
 message:D2003=Onbekende xHeader 0x%1
@@ -311,20 +365,25 @@ message:E9999=%1
 #message:F9003=Calling function failed (%1)
 message:F9999=%1
 message:I1001=Traintastic v%1
-#message:I1002=Settings file not found, using defaults
+message:I1002=Instellingen bestand niet gevonden, standaard instellingen worden gebruikt
 #message:I1003=Client connected
 message:I1004=Verbinding verbroken
 #message:I1005=Building world index
-#message:I2001=Unknown loco address: %1
+message:I1006=%1
+message:I1007=%1
+message:I1008=%1
+message:I2001=Onbekend locomotief adres: %1
 message:I2002=Hardware type: %1
 message:I2003=Firmware verie: %1
 message:I2004=HSI-88: %1
+message:I2005=%1
 message:I9001=Script gestopt
+message:I9002=%1
 message:I9999=%1
 #message:N1001=Received signal: %1
-#message:N1002=Created new world
-#message:N1003=Restaring
-#message:N1004=Shutting down
+message:N1002=Nieuwe wereld aangemaakt
+message:N1003=Herstarten
+message:N1004=Afsluiten
 #message:N1005=Discovery enabled
 #message:N1006=Discovery disabled
 #message:N1007=Listening at %1:%2
@@ -332,14 +391,14 @@ message:N1008=Instellingen geladen
 message:N1009=Instellingen opgeslagen
 #message:N1010=Edit mode: enabled
 #message:N1011=Edit mode: disabled
-#message:N1012=Communicatie: aan
-#message:N1013=Communicatie: uit
+message:N1012=Communicatie: aan
+message:N1013=Communicatie: uit
 #message:N1014=Power: on
 #message:N1015=Power: off
 #message:N1016=Running
 message:N1017=Gestopt
-#message:N1018=Mute: enabled
-#message:N1019=Mute: disabled
+message:N1018=Mute: aan
+message:N1019=Mute: uit
 message:N1020=Rook: aan
 message:N1021=Rook: uit
 message:N1022=Wereld opgeslagen: %1
@@ -348,18 +407,30 @@ message:N1024=Simulatie: actief
 message:N1025=Wereld succesvol geexporteerd
 message:N1026=Wereld succevol geimporteerd
 message:N2001=Simulatie wordt niet ondersteund
+message:N2002=Geen antwoord van LNCV module %1 met adres %2
+message:N2003=Gestopt met verzenden van fast clock sync
 message:N9001=Script gestart
 message:N9999=%1
 #message:W1001=Discovery disabled, only allowed on port %1
 message:W1002=Instelling %1 bestaat niet
+message:W1003=Inlezen wereld %1 is mislukt (libarchive fout %2: %3)
 message:W2001=Ongeldige data ontvangen, %1 bytes weggegooid
 #message:W2002=Command station doesn't support functions above F%1
 #message:W2003=Command station doesn't support %1 speedsteps using %2
+message:W2004=Ingang adres %1 is ongeldig
+message:W2005=Uitgang adres %1 is ongeldig
+message:W2006=Locomotief slot %1 wordt niet ondersteund door de centrale
+message:W2007=Fast clock slot wordt niet ondersteund door de centrale
+message:W2018=Time-out, geen echo binnen %1ms
 message:W9999=%1
 
 object:id=Id
 object:name=Naam
 object:notes=Notities
+
+opc_multi_sense_direction:in_sensor_address=In sensor adres
+opc_multi_sense_direction:in_transponder_address=In transponder adres (Blücher GBM16XN)
+opc_multi_sense_direction:none=Geen
 
 output_action:none=Geen
 output_action:off=Uit
@@ -367,6 +438,8 @@ output_action:on=Aan
 output_action:pulse=Puls
 
 output_list:bus=Bus
+
+output_map.decoupler:key=Stand
 
 output_map.signal:key=Stand
 
@@ -401,6 +474,7 @@ qtapp.mainmenu:load_world=Wereld laden
 qtapp.mainmenu:new_world=Nieuwe wereld
 qtapp.mainmenu:objects=Objecten
 #qtapp.mainmenu:power=Power
+qtapp.mainmenu:programming=Programmeren
 qtapp.mainmenu:quit=Afsluiten
 qtapp.mainmenu:restart_server=Herstart server
 qtapp.mainmenu:restart_server_question=Weet je zeker dat je de server wil herstarten?
@@ -434,9 +508,12 @@ qtapp.settings.board:turnout_draw_state=Teken wissel stand
 
 qtapp.settings.general:language=Taal
 
+qtapp.settings.statusbar:show_clock=Toon klok
+
 qtapp.settings:board=Bord
 qtapp.settings:developer=Ontwikkelaar
 qtapp.settings:general=Algemeen
+qtapp.settings:statusbar=Status balk
 
 qtapp.world_list_dialog:cancel=Annuleren
 qtapp.world_list_dialog:load=Laad
@@ -504,6 +581,12 @@ train:lob=LOB
 train:speed_max=Maximale snelheid
 #train:vehicles=Vehicles
 train:weight=Massa
+
+traintastic_diy_interface_type:network_tcp=Netwerk (TCP)
+traintastic_diy_interface_type:serial=Serieel
+
+traintastic_diy_settings:debug_log_heartbeat=Log heartbeat communicatie
+traintastic_diy_settings:heartbeat_timeout=Heartbeat time-out
 
 turnout_position:left=Links
 turnout_position:right=Rechts
