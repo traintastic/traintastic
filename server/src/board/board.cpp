@@ -288,7 +288,8 @@ void Board::addToWorld()
 void Board::destroying()
 {
   for(auto& it : m_tiles)
-    it.second->destroy();
+    if(it.first == it.second->location()) // only on origin
+      it.second->destroy();
   m_tiles.clear();
   m_world.boards->removeObject(shared_ptr<Board>());
   IdObject::destroying();

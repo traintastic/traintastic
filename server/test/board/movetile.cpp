@@ -29,19 +29,28 @@
 TEST_CASE("Board: Move non existing tile", "[board][board-move]")
 {
   auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->add();
+  std::weak_ptr<Board> boardWeak = board;
 
   REQUIRE_FALSE(board->getTile({0, 0}));
   REQUIRE_FALSE(board->getTile({1, 1}));
   REQUIRE_FALSE(board->moveTile(0, 0, 1, 1, TileRotate::Deg0, false));
   REQUIRE_FALSE(board->getTile({0, 0}));
   REQUIRE_FALSE(board->getTile({1, 1}));
+
+  board.reset();
+  world.reset();
+  REQUIRE(worldWeak.expired());
+  REQUIRE(boardWeak.expired());
 }
 
 TEST_CASE("Board: Move 1x1 tile to empty location", "[board][board-move]")
 {
   auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->add();
+  std::weak_ptr<Board> boardWeak = board;
 
   // add tile at 0,0
   REQUIRE(board->addTile(0, 0, TileRotate::Deg0, StraightRailTile::classId, false));
@@ -62,12 +71,19 @@ TEST_CASE("Board: Move 1x1 tile to empty location", "[board][board-move]")
   REQUIRE_FALSE(tile.expired());
   REQUIRE(tile.lock()->location() == TileLocation{2, 2});
   REQUIRE(board->getTile({2, 2}) == tile.lock());
+
+  board.reset();
+  world.reset();
+  REQUIRE(worldWeak.expired());
+  REQUIRE(boardWeak.expired());
 }
 
 TEST_CASE("Board: Move 1x1 tile to occupied location", "[board][board-move]")
 {
   auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->add();
+  std::weak_ptr<Board> boardWeak = board;
 
   // add tile at 0,0
   REQUIRE(board->addTile(0, 0, TileRotate::Deg0, StraightRailTile::classId, false));
@@ -97,12 +113,19 @@ TEST_CASE("Board: Move 1x1 tile to occupied location", "[board][board-move]")
   REQUIRE(tile0.lock()->location() == TileLocation{1, 1});
   REQUIRE(board->getTile({1, 1}) == tile0.lock());
   REQUIRE(tile1.expired());
+
+  board.reset();
+  world.reset();
+  REQUIRE(worldWeak.expired());
+  REQUIRE(boardWeak.expired());
 }
 
 TEST_CASE("Board: Move 1x1 tile to invalid location", "[board][board-move]")
 {
   auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->add();
+  std::weak_ptr<Board> boardWeak = board;
 
   // add tile at 0,0
   REQUIRE(board->addTile(0, 0, TileRotate::Deg0, StraightRailTile::classId, false));
@@ -141,12 +164,19 @@ TEST_CASE("Board: Move 1x1 tile to invalid location", "[board][board-move]")
   REQUIRE_FALSE(tile.expired());
   REQUIRE(tile.lock()->location() == TileLocation{0, 0});
   REQUIRE(board->getTile({0, 0}) == tile.lock());
+
+  board.reset();
+  world.reset();
+  REQUIRE(worldWeak.expired());
+  REQUIRE(boardWeak.expired());
 }
 
 TEST_CASE("Board: Move 5x1 tile to occupied location", "[board][board-move]")
 {
   auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->add();
+  std::weak_ptr<Board> boardWeak = board;
 
   // add tile at 0,0
   REQUIRE(board->addTile(0, 0, TileRotate::Deg0, BlockRailTile::classId, false));
@@ -204,12 +234,19 @@ TEST_CASE("Board: Move 5x1 tile to occupied location", "[board][board-move]")
   REQUIRE(board->getTile({1, 4}) == tile0.lock());
   REQUIRE_FALSE(board->getTile({0, 5}));
   REQUIRE(tile1.expired());
+
+  board.reset();
+  world.reset();
+  REQUIRE(worldWeak.expired());
+  REQUIRE(boardWeak.expired());
 }
 
 TEST_CASE("Board: Move 5x1 tile replace itself partly", "[board][board-move]")
 {
   auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->add();
+  std::weak_ptr<Board> boardWeak = board;
 
   // add tile at 0,0
   REQUIRE(board->addTile(0, 0, TileRotate::Deg0, BlockRailTile::classId, false));
@@ -236,12 +273,19 @@ TEST_CASE("Board: Move 5x1 tile replace itself partly", "[board][board-move]")
   REQUIRE(board->getTile({0, 4}) == tile.lock());
   REQUIRE(board->getTile({0, 5}) == tile.lock());
   REQUIRE(board->getTile({0, 6}) == tile.lock());
+
+  board.reset();
+  world.reset();
+  REQUIRE(worldWeak.expired());
+  REQUIRE(boardWeak.expired());
 }
 
 TEST_CASE("Board: Move and rotate 5x1 tile replace itself partly", "[board][board-move]")
 {
   auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->add();
+  std::weak_ptr<Board> boardWeak = board;
 
   // add tile at 0,0
   REQUIRE(board->addTile(0, 0, TileRotate::Deg0, BlockRailTile::classId, false));
@@ -270,4 +314,9 @@ TEST_CASE("Board: Move and rotate 5x1 tile replace itself partly", "[board][boar
   REQUIRE(board->getTile({2, 2}) == tile.lock());
   REQUIRE(board->getTile({3, 2}) == tile.lock());
   REQUIRE(board->getTile({4, 2}) == tile.lock());
+
+  board.reset();
+  world.reset();
+  REQUIRE(worldWeak.expired());
+  REQUIRE(boardWeak.expired());
 }

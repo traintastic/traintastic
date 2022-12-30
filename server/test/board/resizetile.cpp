@@ -28,19 +28,28 @@
 TEST_CASE("Board: Resize non existing tile", "[board][board-resize]")
 {
   auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->add();
+  std::weak_ptr<Board> boardWeak = board;
 
   REQUIRE_FALSE(board->getTile({0, 0}));
   REQUIRE_FALSE(board->getTile({1, 1}));
   REQUIRE_FALSE(board->resizeTile(0, 0, 1, 1));
   REQUIRE_FALSE(board->getTile({0, 0}));
   REQUIRE_FALSE(board->getTile({1, 1}));
+
+  board.reset();
+  world.reset();
+  REQUIRE(worldWeak.expired());
+  REQUIRE(boardWeak.expired());
 }
 
 TEST_CASE("Board: Resize block rail tile vertical", "[board][board-resize]")
 {
   auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->add();
+  std::weak_ptr<Board> boardWeak = board;
 
   // add tile at 0,0
   REQUIRE(board->addTile(0, 0, TileRotate::Deg0, BlockRailTile::classId, false));
@@ -107,12 +116,19 @@ TEST_CASE("Board: Resize block rail tile vertical", "[board][board-resize]")
   REQUIRE_FALSE(board->isTile({0, 4}));
   REQUIRE_FALSE(board->isTile({0, 5}));
   REQUIRE_FALSE(board->isTile({0, 6}));
+
+  board.reset();
+  world.reset();
+  REQUIRE(worldWeak.expired());
+  REQUIRE(boardWeak.expired());
 }
 
 TEST_CASE("Board: Resize block rail tile horizontal", "[board][board-resize]")
 {
   auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->add();
+  std::weak_ptr<Board> boardWeak = board;
 
   // add tile at 0,0
   REQUIRE(board->addTile(0, 0, TileRotate::Deg90, BlockRailTile::classId, false));
@@ -180,4 +196,9 @@ TEST_CASE("Board: Resize block rail tile horizontal", "[board][board-resize]")
   REQUIRE_FALSE(board->isTile({4, 0}));
   REQUIRE_FALSE(board->isTile({5, 0}));
   REQUIRE_FALSE(board->isTile({6, 0}));
+
+  board.reset();
+  world.reset();
+  REQUIRE(worldWeak.expired());
+  REQUIRE(boardWeak.expired());
 }

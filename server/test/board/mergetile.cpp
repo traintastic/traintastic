@@ -31,7 +31,9 @@
 TEST_CASE("Board: Merge tile, brigde 90", "[board][board-merge]")
 {
   auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->add();
+  std::weak_ptr<Board> boardWeak = board;
 
   int16_t x = 0;
   const int16_t y = 0;
@@ -51,12 +53,19 @@ TEST_CASE("Board: Merge tile, brigde 90", "[board][board-merge]")
 
     x++;
   }
+
+  board.reset();
+  world.reset();
+  REQUIRE(worldWeak.expired());
+  REQUIRE(boardWeak.expired());
 }
 
 TEST_CASE("Board: Merge tile, brigde 45 left", "[board][board-merge]")
 {
   auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->add();
+  std::weak_ptr<Board> boardWeak = board;
 
   int16_t x = 0;
   const int16_t y = 0;
@@ -76,12 +85,19 @@ TEST_CASE("Board: Merge tile, brigde 45 left", "[board][board-merge]")
 
     x++;
   }
+
+  board.reset();
+  world.reset();
+  REQUIRE(worldWeak.expired());
+  REQUIRE(boardWeak.expired());
 }
 
 TEST_CASE("Board: Merge tile, brigde 45 right", "[board][board-merge]")
 {
   auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->add();
+  std::weak_ptr<Board> boardWeak = board;
 
   int16_t x = 0;
   const int16_t y = 0;
@@ -101,4 +117,9 @@ TEST_CASE("Board: Merge tile, brigde 45 right", "[board][board-merge]")
 
     x++;
   }
+
+  board.reset();
+  world.reset();
+  REQUIRE(worldWeak.expired());
+  REQUIRE(boardWeak.expired());
 }

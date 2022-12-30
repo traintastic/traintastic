@@ -52,9 +52,16 @@
 TEST_CASE("Board: Add non existing tile", "[board][board-add]")
 {
   auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->add();
+  std::weak_ptr<Board> boardWeak = board;
 
   REQUIRE_FALSE(board->addTile(0, 0, TileRotate::Deg0, "board_tile.i_n_v_a_l_i_d", false));
+
+  board.reset();
+  world.reset();
+  REQUIRE(worldWeak.expired());
+  REQUIRE(boardWeak.expired());
 }
 
 TEMPLATE_TEST_CASE("Board: Add tile", "[board][board-add]"
@@ -85,7 +92,9 @@ TEMPLATE_TEST_CASE("Board: Add tile", "[board][board-add]"
   )
 {
   auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->add();
+  std::weak_ptr<Board> boardWeak = board;
 
   REQUIRE(board->addTile(0, 0, TileRotate::Deg0, TestType::classId, false));
   REQUIRE(board->isTile({0, 0}));
@@ -98,4 +107,9 @@ TEMPLATE_TEST_CASE("Board: Add tile", "[board][board-add]"
 
   REQUIRE(board->addTile(0, 0, TileRotate::Deg0, TestType::classId, true));
   REQUIRE(tileWeak.expired());
+
+  board.reset();
+  world.reset();
+  REQUIRE(worldWeak.expired());
+  REQUIRE(boardWeak.expired());
 }
