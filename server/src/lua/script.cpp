@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -107,6 +107,12 @@ void Script::addToWorld()
 {
   IdObject::addToWorld();
   m_world.luaScripts->addObject(shared_ptr<Script>());
+}
+
+void Script::destroying()
+{
+  m_world.luaScripts->removeObject(shared_ptr<Script>());
+  IdObject::destroying();
 }
 
 void Script::loaded()
