@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -81,6 +81,12 @@ class ObjectList : public AbstractObjectList
       assert((std::is_base_of_v<IdObject, T> || std::is_base_of_v<SubObject, T>));
     }
 
+    ~ObjectList()
+    {
+      for(auto& it : m_propertyChanged)
+        it.second.disconnect();
+    }
+
     inline const_iterator begin() const noexcept { return m_items.begin(); }
     inline const_iterator end() const noexcept { return m_items.end(); }
     inline const std::shared_ptr<T>& front() const noexcept { return m_items.front(); }
@@ -131,6 +137,7 @@ class ObjectList : public AbstractObjectList
       auto it = std::find(m_items.begin(), m_items.end(), object);
       if(it != m_items.end())
       {
+        m_propertyChanged[object.get()].disconnect();
         m_propertyChanged.erase(object.get());
         m_items.erase(it);
         rowCountChanged();
