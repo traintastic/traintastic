@@ -68,4 +68,7 @@
   XpressNetInterface, \
   Z21Interface
 
+#define INTERFACES_IDENTIFICATION \
+  LocoNetInterface
+
 #endif
