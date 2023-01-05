@@ -1,5 +1,5 @@
 /**
- * server/src/os/linux/serialportlistimplwin32.hpp
+ * server/src/os/windows/serialportlistimplwin32.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_OS_LINUX_SERIALPORTLISTIMPLWIN32_HPP
-#define TRAINTASTIC_SERVER_OS_LINUX_SERIALPORTLISTIMPLWIN32_HPP
+#ifndef TRAINTASTIC_SERVER_OS_WINDOWS_SERIALPORTLISTIMPLWIN32_HPP
+#define TRAINTASTIC_SERVER_OS_WINDOWS_SERIALPORTLISTIMPLWIN32_HPP
 
 #include "../serialportlistimpl.hpp"
 #include <thread>
