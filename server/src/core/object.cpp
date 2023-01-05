@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,6 +41,7 @@ void Object::destroy()
   if(!m_dying)
   {
     m_dying = true;
+    auto keepAlive = shared_from_this(); // make sure object isn't deleted during destroying
     destroying();
     onDestroying(*this);
   }
