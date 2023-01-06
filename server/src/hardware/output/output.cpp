@@ -37,8 +37,8 @@ Output::Output(World& world, std::string_view _id)
       },
       [this](const std::shared_ptr<OutputController>& newValue)
       {
-        if(interface.value())
-          return interface->removeOutput(*this);
+        if(interface.value() && !interface->removeOutput(*this))
+          return false;
 
         if(newValue)
         {
