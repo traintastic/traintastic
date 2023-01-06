@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,8 +39,13 @@ InterfaceList::InterfaceList(Object& _parent, std::string_view parentPropertyNam
     [this](const std::shared_ptr<Interface>& object)
     {
       if(containsObject(object))
-        object->destroy();
-      assert(!containsObject(object));
+      {
+#ifndef NDEBUG
+        std::weak_ptr<Interface> weak = object;
+#endif
+        object->destroy(); // object might not be valid after this call!
+        assert(weak.expired() || !containsObject(object));
+      }
     }}
 {
   const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
