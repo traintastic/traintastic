@@ -13,7 +13,7 @@ set(CMAKE_AUTOUIC ON)
 configure_file(../shared/src/traintastic/version.hpp.in version.hpp)
 
 if(MSVC)
-  add_compile_options(/Wall)
+  add_compile_options(/W4)
 else()
   add_compile_options(-Wall -Wextra -Wpedantic -Wshadow)
 endif()
@@ -73,7 +73,7 @@ file(GLOB SOURCES
   "thirdparty/QtWaitingSpinner/*.hpp"
   "thirdparty/QtWaitingSpinner/*.cpp")
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets Network Svg Xml)
+find_package(QT NAMES Qt5 REQUIRED COMPONENTS Core Widgets Network Svg Xml)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Network Svg Xml)
 message(STATUS "Found Qt ${QT_VERSION}")
 
