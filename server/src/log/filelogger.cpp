@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "filelogger.hpp"
 #include <iomanip>
 #include <version.hpp>
+#include "../os/localtime.hpp"
 
 FileLogger::FileLogger(const std::filesystem::path& filename)
 {
@@ -48,13 +49,14 @@ void FileLogger::log(const std::chrono::system_clock::time_point& time, std::str
 
 void FileLogger::write(const std::chrono::system_clock::time_point& time, std::string_view objectId, LogMessage code, std::string_view message)
 {
-  const auto tm = std::chrono::system_clock::to_time_t(time);
+  const auto systemTime = std::chrono::system_clock::to_time_t(time);
   const auto us = std::chrono::duration_cast<std::chrono::microseconds>(time.time_since_epoch()) % 1000000;
+  tm tm;
 
   std::lock_guard<std::mutex> lock(m_fileMutex);
 
   m_file
-    << std::put_time(std::localtime(&tm), "%F;%T") << '.' << std::setfill('0') << std::setw(6) << us.count() << ';'
+    << std::put_time(localTime(&systemTime, &tm), "%F;%T") << '.' << std::setfill('0') << std::setw(6) << us.count() << ';'
     << objectId << ';'
     << logMessageChar(code) << std::setw(4) << logMessageNumber(code) << ';'
     << message

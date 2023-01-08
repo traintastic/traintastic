@@ -36,6 +36,7 @@
 #include "../hardware/identification/identification.hpp"
 #include "../hardware/programming/lncv/lncvprogrammer.hpp"
 #include "../log/log.hpp"
+#include "../os/localtime.hpp"
 #include "../utils/displayname.hpp"
 #include "../traintastic/traintastic.hpp"
 
@@ -179,7 +180,8 @@ World::World(Private /*unused*/) :
           {
             const auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
             std::stringstream ss;
-            ss << std::put_time(std::localtime(&now), "_%Y%m%d_%H%M%S");
+            tm tm;
+            ss << std::put_time(localTime(&now, &tm), "_%Y%m%d_%H%M%S");
             return ss.str();
           };
 

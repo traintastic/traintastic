@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include "traintastic.hpp"
 #include "../network/server.hpp"
 #include "../log/log.hpp"
+#include "../os/localtime.hpp"
 #include "../utils/category.hpp"
 
 using nlohmann::json;
@@ -120,7 +121,8 @@ void Settings::saveToFile()
       {
         const auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         std::stringstream ss;
-        ss << std::put_time(std::localtime(&now), "_%Y%m%d_%H%M%S");
+        tm tm;
+        ss << std::put_time(localTime(&now, &tm), "_%Y%m%d_%H%M%S");
         return ss.str();
       };
 
