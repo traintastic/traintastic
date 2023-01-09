@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -199,8 +199,8 @@ void Server::doAccept()
 {
   assert(IS_SERVER_THREAD);
 
-  if(!m_socketTCP)
-    m_socketTCP = std::make_shared<boost::asio::ip::tcp::socket>(m_ioContext);
+  assert(!m_socketTCP);
+  m_socketTCP = std::make_shared<boost::asio::ip::tcp::socket>(m_ioContext);
 
   m_acceptor.async_accept(*m_socketTCP,
     [this](boost::system::error_code ec)
@@ -208,7 +208,7 @@ void Server::doAccept()
       if(!ec)
       {
         EventLoop::call(
-          [this, socket=m_socketTCP]()
+          [this, socket=std::move(m_socketTCP)]()
           {
             try
             {
@@ -219,10 +219,13 @@ void Server::doAccept()
               Log::log(id, LogMessage::C1002_CREATING_CLIENT_FAILED_X, e.what());
             }
           });
-        m_socketTCP.reset();
+
         doAccept();
       }
       else
+      {
         Log::log(id, LogMessage::E1004_TCP_ACCEPT_ERROR_X, ec.message());
+        m_socket.reset();
+      }
     });
 }
