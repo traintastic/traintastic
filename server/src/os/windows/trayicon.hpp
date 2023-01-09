@@ -67,7 +67,7 @@ class TrayIcon
     static void run(bool isRestart);
     static LRESULT CALLBACK windowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam);
 
-    static void menuAddItem(MenuItem id, const LPSTR text, bool enabled = true);
+    static void menuAddItem(MenuItem id, const LPCSTR text, bool enabled = true);
     static void menuAddSeperator();
     static bool menuGetItemChecked(MenuItem id);
     static void menuSetItemChecked(MenuItem id, bool checked);

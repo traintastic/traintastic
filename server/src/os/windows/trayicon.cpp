@@ -241,7 +241,7 @@ LRESULT CALLBACK TrayIcon::windowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARA
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-void TrayIcon::menuAddItem(MenuItem id, const LPSTR text, bool enabled)
+void TrayIcon::menuAddItem(MenuItem id, const LPCSTR text, bool enabled)
 {
   assert(s_menu);
   MENUITEMINFO item;
