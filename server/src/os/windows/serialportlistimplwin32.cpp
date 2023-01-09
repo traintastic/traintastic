@@ -25,6 +25,12 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include "../../core/eventloop.hpp" // include before windows.h, else we get winsock header issues
 #include <windows.h>
+
+#if defined(__MINGW32__) || defined(__MINGW64__)
+//Needed for PHYSICAL_ADDRESS, used in ntddser.h
+#include <ntdef.h>
+#endif
+
 #include <ntddser.h>
 #include <setupapi.h>
 #include <dbt.h>
