@@ -10,7 +10,7 @@ include(code-coverage)
 configure_file(../shared/src/traintastic/version.hpp.in version.hpp)
 
 if(MSVC)
-  add_compile_options(/W3)
+  add_compile_options(/W4)
 else()
   add_compile_options(-Wall -Wextra -Wpedantic -Wshadow -Werror)
 endif()
