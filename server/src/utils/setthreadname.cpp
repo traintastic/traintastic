@@ -42,7 +42,7 @@ void setThreadName(const char* name)
     pthread_setname_np(pthread_self(), name);
   #endif
 #endif
-#ifdef WIN32
+#if defined(WIN32) && !defined(__MINGW32__) && !defined(__MINGW64__)
   if constexpr(std::is_same_v<std::thread::native_handle_type, HANDLE>)
   {
     const size_t nameSize = strlen(name);
