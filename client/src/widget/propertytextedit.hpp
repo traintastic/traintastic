@@ -23,11 +23,11 @@
 #ifndef TRAINTASTIC_CLIENT_WIDGET_PROPERTYTEXTEDIT_HPP
 #define TRAINTASTIC_CLIENT_WIDGET_PROPERTYTEXTEDIT_HPP
 
-#include <QTextEdit>
+#include <QPlainTextEdit>
 
 class Property;
 
-class PropertyTextEdit : public QTextEdit
+class PropertyTextEdit : public QPlainTextEdit
 {
   protected:
     Property& m_property;

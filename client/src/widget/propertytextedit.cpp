@@ -24,7 +24,7 @@
 #include "../network/property.hpp"
 
 PropertyTextEdit::PropertyTextEdit(Property& property, QWidget* parent) :
-  QTextEdit(parent),
+  QPlainTextEdit(parent),
   m_property{property}
 {
   Q_ASSERT(m_property.type() == ValueType::String);
