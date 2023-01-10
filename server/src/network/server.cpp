@@ -225,7 +225,7 @@ void Server::doAccept()
       else
       {
         Log::log(id, LogMessage::E1004_TCP_ACCEPT_ERROR_X, ec.message());
-        m_socket.reset();
+        m_socketTCP.reset();
       }
     });
 }
