@@ -24,7 +24,14 @@
 #define TRAINTASTIC_SERVER_UTILS_ENDIAN_HPP
 
 #include <type_traits>
-#ifdef _MSC_VER
+
+
+#if defined(__MINGW32__) || defined(__MINGW64__)
+//Needed for definition of _byteswap_ushort, _byteswap_ulong and _byteswap_uint64 on MinGW
+#include <cstdlib>
+#endif
+
+#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__MINGW64__)
   #define bswap_16(x) _byteswap_ushort(x)
   #define bswap_32(x) _byteswap_ulong(x)
   #define bswap_64(x) _byteswap_uint64(x)
