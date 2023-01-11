@@ -174,7 +174,7 @@ jobs:
           jobs: 2
           build_type: Release
           build_deb: false
-          defines: ""
+          defines: "-DDISABLE_CLANG_TIDY=ON"
           ccov: false
 
         - name: "ubuntu_20.04"
