@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_OS_LOCALTIME_HPP
 #define TRAINTASTIC_SERVER_OS_LOCALTIME_HPP
 
+#include <cstring>
 #include <ctime>
 
 inline tm* localTime(const time_t* time, struct tm* result)
