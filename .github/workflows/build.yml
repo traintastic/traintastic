@@ -237,6 +237,18 @@ jobs:
           defines: "-DDISABLE_CLANG_TIDY=ON"
           ccov: false
 
+        - name: "macos-12"
+          os: "macos-12"
+          generator: "Unix Makefiles"
+          arch: ""
+          toolset: ""
+          target: all
+          jobs: 3
+          build_type: Release
+          build_deb: false
+          defines: "-DDISABLE_CLANG_TIDY=ON"
+          ccov: false
+
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
 
