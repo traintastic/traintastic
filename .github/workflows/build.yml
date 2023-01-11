@@ -165,6 +165,18 @@ jobs:
           defines: ""
           ccov: false
 
+        - name: "windows_x64_mingw"
+          os: windows-2022
+          generator: "MinGW Makefiles"
+          arch: ""
+          toolset: ""
+          target: all
+          jobs: 2
+          build_type: Release
+          build_deb: false
+          defines: ""
+          ccov: false
+
         - name: "ubuntu_20.04"
           os: ubuntu-20.04
           generator: "Unix Makefiles"
@@ -313,7 +325,7 @@ jobs:
 
     # Windows only:
     - name: Upload artifact
-      if: startswith(matrix.config.os, 'windows')
+      if: matrix.config.name == 'windows_x64_clang'
       uses: actions/upload-artifact@v3
       with:
         name: traintastic-server
