@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -101,16 +101,16 @@ void TrayIcon::run(bool isRestart)
   notifyIconData.uCallbackMessage = WM_NOTIFYICON_CALLBACK;
   notifyIconData.hIcon = static_cast<HICON>(LoadImageA(GetModuleHandleA(nullptr), "APPICON", IMAGE_ICON, 0, 0, LR_DEFAULTSIZE));
   const std::string_view toolTip{"Traintastic server v" TRAINTASTIC_VERSION_FULL};
-  std::strncpy(notifyIconData.szTip, toolTip.data(),  std::min(toolTip.size(), sizeof(notifyIconData.szTip) - 1));
+  std::memcpy(notifyIconData.szTip, toolTip.data(), std::min(toolTip.size(), sizeof(notifyIconData.szTip) - 1));
 
   const std::string_view infoTitle{"Traintastic server"};
   const std::string_view infoMessage{"Traintastic server is running in the system tray."};
   const std::string_view infoMessageRestarted{"Traintastic server restarted"};
-  std::strncpy(notifyIconData.szInfoTitle, infoTitle.data(), std::min(infoTitle.size(), sizeof(notifyIconData.szInfoTitle) - 1));
+  std::memcpy(notifyIconData.szInfoTitle, infoTitle.data(), std::min(infoTitle.size(), sizeof(notifyIconData.szInfoTitle) - 1));
   if(isRestart)
-    std::strncpy(notifyIconData.szInfo, infoMessageRestarted.data(), std::min(infoMessageRestarted.size(), sizeof(notifyIconData.szInfo) - 1));
+    std::memcpy(notifyIconData.szInfo, infoMessageRestarted.data(), std::min(infoMessageRestarted.size(), sizeof(notifyIconData.szInfo) - 1));
   else
-    std::strncpy(notifyIconData.szInfo, infoMessage.data(), std::min(infoMessage.size(), sizeof(notifyIconData.szInfo) - 1));
+    std::memcpy(notifyIconData.szInfo, infoMessage.data(), std::min(infoMessage.size(), sizeof(notifyIconData.szInfo) - 1));
   notifyIconData.dwInfoFlags = NIIF_INFO | NIIF_LARGE_ICON;
   notifyIconData.uFlags |= NIF_INFO;
 
