@@ -313,12 +313,16 @@ jobs:
       run: cmake --build . --config ${{matrix.config.build_type}} --target ${{matrix.config.target}} --parallel ${{matrix.config.jobs}}
 
     # mingw only
-    - name: Update PATH
+    - name: Run tests (mingw)
       if: matrix.config.name == 'windows_x64_mingw'
-      run: $env:PATH += ';C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin'
+      working-directory: ${{github.workspace}}/server/build
+      run: |
+        $env:PATH += ';C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin'
+        ctest --output-on-failure
       
     # All:
     - name: Run tests
+      if: matrix.config.name != 'windows_x64_mingw'
       working-directory: ${{github.workspace}}/server/build
       run: ctest --output-on-failure
 
