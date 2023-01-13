@@ -374,7 +374,7 @@ void Kernel::simulateInputChange(uint16_t address)
       [this, address]()
       {
         auto it = m_inputValues.find(address);
-        receive(SetInputState(address, (it == m_inputValues.end() && it->second == InputState::True) ? InputState::False : InputState::True));
+        receive(SetInputState(address, (it == m_inputValues.end() || it->second == InputState::True) ? InputState::False : InputState::True));
       });
 }
 
