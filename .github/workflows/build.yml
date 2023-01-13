@@ -312,6 +312,11 @@ jobs:
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config ${{matrix.config.build_type}} --target ${{matrix.config.target}} --parallel ${{matrix.config.jobs}}
 
+    # mingw only
+    - name: Update PATH
+      if: matrix.config.name == 'windows_x64_mingw'
+      run: set PATH=%PATH%;C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin
+      
     # All:
     - name: Run tests
       working-directory: ${{github.workspace}}/server/build
