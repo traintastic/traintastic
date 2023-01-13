@@ -315,7 +315,7 @@ jobs:
     # mingw only
     - name: Update PATH
       if: matrix.config.name == 'windows_x64_mingw'
-      run: set PATH=%PATH%;C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin
+      run: $env:PATH += ';C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin'
       
     # All:
     - name: Run tests
