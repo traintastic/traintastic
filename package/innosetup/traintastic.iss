@@ -51,9 +51,17 @@ en.AddFirewallRuleTraintasticClient=Add firewall rule for Traintastic client
 en.FirewallAllowWLANmausZ21=Allow WLANmaus/Z21
 en.AddFirewallRuleWLANmausZ21=Add firewall rule for WLANmaus/Z21
 
-[Components]
-Name: "server"; Description: "Traintastic server"; Types: clientandserver
-Name: "client"; Description: "Traintastic client"; Types: clientandserver clientonly; Flags: fixed
+; Dutch
+nl.ClientAndServer=Client en server
+nl.ClientAndServerDesc=Voor de computer die verbonden is met de centrale.
+nl.ClientOnly=Alleen client
+nl.ClientOnlyDesc=Voor extra computers om de modelspoorbaan te besturen.
+nl.WindowsFirewall=Windows Firewall:
+nl.FirewallAllowTraintasticClient=Sta Traintastic client toe
+;nl.AddFirewallRuleTraintasticClient=
+nl.FirewallAllowWLANmausZ21=Sta WLANmaus/Z21 toe
+;nl.AddFirewallRuleWLANmausZ21=
+
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
