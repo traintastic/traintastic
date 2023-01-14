@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_SHARED_TRAINTASTIC_BOARD_TILELOCATION_HPP
 #define TRAINTASTIC_SHARED_TRAINTASTIC_BOARD_TILELOCATION_HPP
 
+#include <cstdint>
 #include <functional>
 #include <limits>
 
