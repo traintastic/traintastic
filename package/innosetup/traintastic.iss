@@ -62,6 +62,16 @@ nl.FirewallAllowTraintasticClient=Sta Traintastic client toe
 nl.FirewallAllowWLANmausZ21=Sta WLANmaus/Z21 toe
 ;nl.AddFirewallRuleWLANmausZ21=
 
+; German
+;de.ClientAndServer=
+;de.ClientAndServerDesc=
+;de.ClientOnly=
+;de.ClientOnlyDesc=
+;de.WindowsFirewall=
+;de.FirewallAllowTraintasticClient=
+;de.AddFirewallRuleTraintasticClient=
+;de.FirewallAllowWLANmausZ21=
+;de.AddFirewallRuleWLANmausZ21=
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
