@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,10 +37,17 @@ class EventLoop
 
   public:
     inline static boost::asio::io_context ioContext;
+#ifdef TRAINTASTIC_TEST
+    inline static std::thread::id threadId;
+#else
     inline static const std::thread::id threadId = std::this_thread::get_id();
+#endif
 
     static void exec()
     {
+#ifdef TRAINTASTIC_TEST
+      threadId = std::this_thread::get_id();
+#endif
       auto work = std::make_shared<boost::asio::io_context::work>(ioContext);
       ioContext.run();
     }
