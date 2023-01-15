@@ -22,6 +22,8 @@ endif()
 add_executable(traintastic-server src/main.cpp src/options.hpp)
 add_executable(traintastic-server-test test/main.cpp)
 
+target_compile_definitions(traintastic-server-test PRIVATE -DTRAINTASTIC_TEST)
+
 set_target_properties(traintastic-server PROPERTIES CXX_STANDARD 17)
 set_target_properties(traintastic-server-test PROPERTIES CXX_STANDARD 17)
 
