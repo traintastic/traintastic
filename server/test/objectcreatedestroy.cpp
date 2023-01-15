@@ -24,7 +24,7 @@
 #include "../src/world/world.hpp"
 #include "../src/board/board.hpp"
 #include "../src/hardware/input/input.hpp"
-#include "interfaces.hpp"
+#include "hardware/interfaces.hpp"
 
 TEST_CASE("Create world => destroy world", "[object-create-destroy]")
 {

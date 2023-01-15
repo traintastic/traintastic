@@ -1,5 +1,5 @@
 /**
- * server/test/interfaces.hpp
+ * server/test/hardware/interfaces.hpp
  *
  * This file is part of the traintastic test suite.
  *
@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_TEST_INTERFACES_HPP
-#define TRAINTASTIC_SERVER_TEST_INTERFACES_HPP
+#ifndef TRAINTASTIC_SERVER_TEST_HARDWARE_INTERFACES_HPP
+#define TRAINTASTIC_SERVER_TEST_HARDWARE_INTERFACES_HPP
 
 #include "../src/hardware/interface/dccplusplusinterface.hpp"
 #include "../src/hardware/interface/ecosinterface.hpp"

@@ -21,7 +21,7 @@
  */
 
 #include <catch2/catch.hpp>
-#include "../../interfaces.hpp"
+#include "../../hardware/interfaces.hpp"
 #include "../../../src/world/world.hpp"
 #include "../../../src/lua/enums.hpp"
 #include "../../../src/lua/sets.hpp"

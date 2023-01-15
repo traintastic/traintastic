@@ -1,5 +1,5 @@
 /**
- * server/test/interface.cpp
+ * server/test/hardware/interface.cpp
  *
  * This file is part of the traintastic test suite.
  *
