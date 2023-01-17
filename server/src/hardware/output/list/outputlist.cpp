@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,13 +39,7 @@ OutputList::OutputList(Object& _parent, std::string_view parentPropertyName, Out
           output->interface = controller;
         return output;
       }}
-  , remove{*this, "remove",
-    [this](const std::shared_ptr<Output>& output)
-    {
-      if(containsObject(output))
-        output->destroy();
-      assert(!containsObject(output));
-    }}
+  , remove{*this, "remove", std::bind(&OutputList::removeMethodHandler, this, std::placeholders::_1)}
   , outputKeyboard{*this, "output_keyboard",
       [this]()
       {

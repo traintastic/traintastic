@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,13 +36,7 @@ ScriptList::ScriptList(Object& _parent, std::string_view parentPropertyName) :
       auto& world = getWorld(parent());
       return Script::create(world, world.getUniqueId("script"));
     }}
-  , remove{*this, "remove",
-    [this](const std::shared_ptr<Script>& script)
-    {
-      if(containsObject(script))
-        script->destroy();
-      assert(!containsObject(script));
-    }}
+  , remove{*this, "remove", std::bind(&ScriptList::removeMethodHandler, this, std::placeholders::_1)}
   , startAll{*this, "start_all",
       [this]()
       {

@@ -45,6 +45,18 @@ class ObjectList : public AbstractObjectList
     std::unordered_map<Object*, boost::signals2::connection> m_propertyChanged;
     std::vector<ObjectListTableModel<T>*> m_models;
 
+    void removeMethodHandler(const std::shared_ptr<T>& object)
+    {
+      if(containsObject(object))
+      {
+#ifndef NDEBUG
+        std::weak_ptr<T> weak = object;
+#endif
+        object->destroy(); // NOTE: object might not be valid after this call or point to another object (if it was a reference to the modified list)
+        assert(weak.expired() || !containsObject(weak.lock()));
+      }
+    }
+
     std::vector<ObjectPtr> getItems() const
     {
       std::vector<ObjectPtr> items;

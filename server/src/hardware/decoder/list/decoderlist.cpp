@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,14 +42,7 @@ DecoderList::DecoderList(Object& _parent, std::string_view parentPropertyName, D
       }
       return decoder;
     }}
-  , remove{*this, "remove",
-      [IFNDEF_NDEBUG(this)](const std::shared_ptr<Decoder>& decoder)
-      {
-        if(!decoder)
-          return;
-        decoder->destroy();
-        assert(!containsObject(decoder));
-      }}
+  , remove{*this, "remove", std::bind(&DecoderList::removeMethodHandler, this, std::placeholders::_1)}
 {
   const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 

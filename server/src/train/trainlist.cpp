@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,13 +35,7 @@ TrainList::TrainList(Object& _parent, std::string_view parentPropertyName) :
       auto& world = getWorld(parent());
       return Train::create(world, world.getUniqueId("train"));
     }}
-  , remove{*this, "remove",
-      [this](const std::shared_ptr<Train>& train)
-      {
-        if(containsObject(train))
-          train->destroy();
-        assert(!containsObject(train));
-      }}
+  , remove{*this, "remove", std::bind(&TrainList::removeMethodHandler, this, std::placeholders::_1)}
 {
   const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 

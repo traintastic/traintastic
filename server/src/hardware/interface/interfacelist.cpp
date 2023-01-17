@@ -35,18 +35,7 @@ InterfaceList::InterfaceList(Object& _parent, std::string_view parentPropertyNam
     {
       return Interfaces::create(getWorld(parent()), interfaceClassId);
     }},
-  remove{*this, "remove",
-    [this](const std::shared_ptr<Interface>& object)
-    {
-      if(containsObject(object))
-      {
-#ifndef NDEBUG
-        std::weak_ptr<Interface> weak = object;
-#endif
-        object->destroy(); // object might not be valid after this call!
-        assert(weak.expired() || !containsObject(object));
-      }
-    }}
+  remove{*this, "remove", std::bind(&InterfaceList::removeMethodHandler, this, std::placeholders::_1)}
 {
   const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 

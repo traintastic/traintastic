@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,13 +39,7 @@ IdentificationList::IdentificationList(Object& _parent, std::string_view parentP
           identification->interface = controller;
         return identification;
       }}
-  , remove{*this, "remove",
-      [this](const std::shared_ptr<Identification>& identification)
-      {
-        if(containsObject(identification))
-          identification->destroy();
-        assert(!containsObject(identification));
-      }}
+  , remove{*this, "remove", std::bind(&IdentificationList::removeMethodHandler, this, std::placeholders::_1)}
 /*
   , identificationMonitor{*this, "identification_monitor",
       [this]()

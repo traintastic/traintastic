@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,13 +35,7 @@ RailVehicleList::RailVehicleList(Object& _parent, std::string_view parentPropert
       auto& world = getWorld(parent());
       return RailVehicles::create(world, railVehicleClassId, world.getUniqueId("vehicle"));
     }}
-  , remove{*this, "remove",
-      [this](const std::shared_ptr<RailVehicle>& railVehicle)
-      {
-        if(containsObject(railVehicle))
-          railVehicle->destroy();
-        assert(!containsObject(railVehicle));
-      }}
+  , remove{*this, "remove", std::bind(&RailVehicleList::removeMethodHandler, this, std::placeholders::_1)}
 {
   const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
