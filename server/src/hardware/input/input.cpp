@@ -37,8 +37,8 @@ Input::Input(World& world, std::string_view _id)
       },
       [this](const std::shared_ptr<InputController>& newValue)
       {
-        if(interface.value())
-          return interface->removeInput(*this);
+        if(interface.value() && !interface->removeInput(*this))
+          return false;
 
         if(newValue)
         {
