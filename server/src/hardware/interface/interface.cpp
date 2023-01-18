@@ -83,7 +83,13 @@ void Interface::worldEvent(WorldState state, WorldEvent event)
 
     case WorldEvent::Online:
       Attributes::setEnabled(online, true);
-      online = true;
+      try
+      {
+        online = true;
+      }
+      catch(const invalid_value_error&)
+      {
+      }
       break;
 
     default:
