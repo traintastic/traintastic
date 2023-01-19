@@ -52,6 +52,8 @@ class Traintastic final : public Object
     const std::filesystem::path m_dataDir;
     std::shared_ptr<Server> m_server;
 
+    boost::asio::signal_set m_signalSet;
+
     bool start();
     void stop();
 

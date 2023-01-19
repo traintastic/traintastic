@@ -45,6 +45,7 @@ std::shared_ptr<Traintastic> Traintastic::instance;
 Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_restart{false},
   m_dataDir{std::filesystem::absolute(dataDir)},
+  m_signalSet(EventLoop::ioContext),
   settings{this, "settings", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
   world{this, "world", nullptr, PropertyFlags::ReadWrite,
     [this](const std::shared_ptr<World>& /*newWorld*/)
@@ -115,6 +116,15 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
 {
   if(!std::filesystem::is_directory(m_dataDir))
     std::filesystem::create_directories(m_dataDir);
+
+  //Register signal handlers to shutdown gracefully
+  m_signalSet.add(SIGINT);
+  m_signalSet.add(SIGTERM);
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+  m_signalSet.add(SIGBREAK); //Windows uses SIGBREAK instead of SIGTERM
+#endif
+
+  m_signalSet.async_wait([this]() { exit(); });
 
   m_interfaceItems.add(settings);
   m_interfaceItems.add(world);
