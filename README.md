@@ -72,4 +72,21 @@ Note: When cloning the source from git, git-lfs is required.
 ## Contributors
 
 <!-- readme: contributors -start -->
+<table>
+<tr>
+    <td align="center">
+        <a href="https://github.com/reinder">
+            <img src="https://avatars.githubusercontent.com/u/886282?v=4" width="100;" alt="reinder"/>
+            <br />
+            <sub><b>Reinder Feenstra</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/gfgit">
+            <img src="https://avatars.githubusercontent.com/u/42845724?v=4" width="100;" alt="gfgit"/>
+            <br />
+            <sub><b>Null</b></sub>
+        </a>
+    </td></tr>
+</table>
 <!-- readme: contributors -end -->
