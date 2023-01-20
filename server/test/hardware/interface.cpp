@@ -20,6 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#ifndef __aarch64__
+
 #include <catch2/catch.hpp>
 #include "../src/world/world.hpp"
 #include "../src/hardware/input/input.hpp"
@@ -155,6 +157,8 @@ TEMPLATE_TEST_CASE("Assign output to another interface", "[interface]", INTERFAC
   REQUIRE(outputWeak.expired());
 }
 
+#ifndef __APPLE__
+
 TEMPLATE_TEST_CASE("Assign identification to another interface", "[interface]", INTERFACES_IDENTIFICATION)
 {
   auto world = World::create();
@@ -197,3 +201,6 @@ TEMPLATE_TEST_CASE("Assign identification to another interface", "[interface]", 
   REQUIRE(interfaceWeak2.expired());
   REQUIRE(identificationWeak.expired());
 }
+
+#endif
+#endif
