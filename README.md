@@ -68,3 +68,8 @@ Note: When cloning the source from git, git-lfs is required.
 
 1. From the project root go into the manual directory: `cd manual`
 2. Run the build script: `python3 builddoc.py html-single-page --output-dir build`
+
+## Contributors
+
+<!-- readme: contributors -start -->
+<!-- readme: contributors -end -->

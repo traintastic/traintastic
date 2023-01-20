@@ -319,7 +319,7 @@ jobs:
     #  run: |
     #    $env:PATH += ';C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin'
     #    ctest --output-on-failure
-      
+
     # All:
     - name: Run tests
       if: matrix.config.name != 'windows_x64_mingw'
@@ -546,3 +546,12 @@ jobs:
           REMOTE_PORT: ${{secrets.REMOTE_PORT}}
           REMOTE_USER: ${{secrets.REMOTE_USER}}
           TARGET: ${{secrets.REMOTE_TARGET}}/traintastic/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}/
+
+  update-readme-contributors:
+    runs-on: ubuntu-latest
+    name: Update contributers in README.md
+    steps:
+        - name: Update contribute list
+          uses: akhilmhdh/contributors-readme-action@v2.3.6
+          env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
