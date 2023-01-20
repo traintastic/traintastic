@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -59,6 +59,7 @@
 #include "../hardware/interface/ecosinterface.hpp"
 #include "../hardware/interface/hsi88.hpp"
 #include "../hardware/interface/loconetinterface.hpp"
+#include "../hardware/interface/marklincsinterface.hpp"
 #include "../hardware/interface/traintasticdiyinterface.hpp"
 #include "../hardware/interface/withrottleinterface.hpp"
 #include "../hardware/interface/wlanmausinterface.hpp"
@@ -173,6 +174,7 @@ void Class::registerValues(lua_State* L)
   registerValue<ECoSInterface>(L, "ECOS");
   registerValue<HSI88Interface>(L, "HSI88");
   registerValue<LocoNetInterface>(L, "LOCONET");
+  registerValue<MarklinCSInterface>(L, "MARKLIN_CS");
   registerValue<TraintasticDIYInterface>(L, "TRAINTASTIC_DIY");
   registerValue<XpressNetInterface>(L, "XPRESSNET");
   registerValue<WiThrottleInterface>(L, "WITHROTTLE");

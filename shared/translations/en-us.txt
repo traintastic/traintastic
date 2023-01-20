@@ -65,6 +65,7 @@ class_id:interface.dccplusplus=DCC++
 class_id:interface.ecos=ECoS
 class_id:interface.hsi88=HSI-88
 class_id:interface.loconet=LocoNet
+class_id:interface.marklin_cs=Märklin CS2/CS3
 class_id:interface.traintastic_diy=Traintastic DIY
 class_id:interface.withrottle=WiThrottle
 class_id:interface.wlanmaus=WLANmaus
