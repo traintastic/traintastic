@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -109,6 +109,7 @@ class SignalPath
         const std::unique_ptr<const Item>& next() const final;
     };
 
+    const Node& m_signalNode;
     std::unique_ptr<const Item> m_root;
     std::vector<boost::signals2::connection> m_connections;
     std::function<void(const std::vector<BlockState>&)> m_onEvaluated;

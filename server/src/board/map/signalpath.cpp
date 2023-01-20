@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,7 +40,8 @@ std::shared_ptr<Link> otherLink(const Node& node, const Link& link)
 
 
 SignalPath::SignalPath(const Node& signalNode, size_t blocksAhead, std::function<void(const std::vector<BlockState>&)> onEvaluated)
-  : m_onEvaluated{std::move(onEvaluated)}
+  : m_signalNode{signalNode}
+  , m_onEvaluated{std::move(onEvaluated)}
 {
   if(auto link = signalNode.getLink(1))
     m_root = findBlocks(signalNode, *link, blocksAhead);
@@ -277,8 +278,12 @@ std::unique_ptr<const SignalPath::Item> SignalPath::findBlocks(const Node& node,
   else if(tile->tileId() != TileId::RailBufferStop)
   {
     if(const auto& nextLink = otherLink(nextNode, link))
-      return findBlocks(nextNode, *nextLink, blocksAhead - 1);
+    {
+      if(&nextNode == &m_signalNode)
+        return {}; // we're reached oursels
 
+      return findBlocks(nextNode, *nextLink, blocksAhead - 1);
+    }
     assert(false); // unhandled rail tile
   }
 
