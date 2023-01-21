@@ -60,7 +60,7 @@ class Traintastic final : public Object
     void loadWorldUUID(const boost::uuids::uuid& uuid);
     void loadWorldPath(const std::filesystem::path& path);
 
-    static void signalHandler(const boost::system::error_code& error, int signal_number);
+    static void signalHandler(const boost::system::error_code& ec, int signalNumber);
 
   public:
     CLASS_ID("traintastic");
