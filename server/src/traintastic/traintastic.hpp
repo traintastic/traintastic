@@ -52,11 +52,15 @@ class Traintastic final : public Object
     const std::filesystem::path m_dataDir;
     std::shared_ptr<Server> m_server;
 
+    boost::asio::signal_set m_signalSet;
+
     bool start();
     void stop();
 
     void loadWorldUUID(const boost::uuids::uuid& uuid);
     void loadWorldPath(const std::filesystem::path& path);
+
+    static void signalHandler(const boost::system::error_code& ec, int signalNumber);
 
   public:
     CLASS_ID("traintastic");
