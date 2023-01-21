@@ -79,8 +79,6 @@ int main(int argc, char* argv[])
       std::cerr << e.what() << std::endl;
     exit(EXIT_FAILURE);
   }
-
-  Unix::setupSignalHandlers();
 #elif defined(WIN32)
   if(options.tray)
   {
