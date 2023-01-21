@@ -27,13 +27,11 @@
 #include <QFile>
 #include <traintastic/enum/decoderfunctiontype.hpp>
 #include <traintastic/enum/decoderfunctionfunction.hpp>
-#include "../../network/object.hpp"
-#include "../../network/abstractproperty.hpp"
 
 AbstractThrottleButton::AbstractThrottleButton(ObjectPtr object, QWidget* parent)
   : QWidget(parent)
-  , m_object{std::move(object)}
   , m_textColor{Qt::white}
+  , m_object{std::move(object)}
 {
 }
 
