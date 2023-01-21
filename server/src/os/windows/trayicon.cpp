@@ -29,6 +29,8 @@
 #include "../../traintastic/traintastic.hpp"
 #include "../../utils/setthreadname.hpp"
 
+#include <iostream>
+
 namespace Windows {
 
 std::unique_ptr<std::thread> TrayIcon::s_thread;
@@ -58,6 +60,10 @@ void TrayIcon::run(bool isRestart)
   // register window class, once:
   if(!isRestart)
   {
+    bool val = IsProcessDPIAware();
+    bool val1 = SetProcessDPIAware() == TRUE;
+    std::cout << std::endl << "DPI MENU:" << val << " then " <<  val1 << std::endl << std::endl;
+
     WNDCLASSEX windowClass;
     memset(&windowClass, 0, sizeof(windowClass));
     windowClass.cbSize = sizeof(windowClass);
