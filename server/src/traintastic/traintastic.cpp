@@ -261,9 +261,9 @@ void Traintastic::loadWorldPath(const std::filesystem::path& path)
   }
 }
 
-void Traintastic::signalHandler(const boost::system::error_code &error, int signal_number)
+void Traintastic::signalHandler(const boost::system::error_code& ec, int signalNumber)
 {
-  if(error)
+  if(ec)
     return;
 
 #define SIGNAL_NAME_CASE(x) \
@@ -273,16 +273,14 @@ void Traintastic::signalHandler(const boost::system::error_code &error, int sign
       break;\
   }
 
-  const char *val = "Unkwonw Signal";
-  switch (signal_number)
+  const char* val = "Unknown signal";
+  switch(signalNumber)
   {
     SIGNAL_NAME_CASE(SIGINT)
     SIGNAL_NAME_CASE(SIGTERM)
 #if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
     SIGNAL_NAME_CASE(SIGBREAK); //Windows uses SIGBREAK instead of SIGTERM
 #endif
-  default:
-    break;
   }
 
 #undef SIGNAL_NAME_CASE
