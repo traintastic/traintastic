@@ -44,7 +44,7 @@
 
 static QDomElement getElementByLanguage(const QList<QDomElement>& list, const QString& language)
 {
-  for(const auto element : list)
+  for(const auto &element : list)
     if(element.attribute("language", "") == language)
       return element;
 
