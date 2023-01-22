@@ -71,7 +71,8 @@ class Kernel
 
       public:
         SendQueue()
-          : m_front{m_buffer.data()}
+          : m_buffer{}
+          , m_front{m_buffer.data()}
           , m_bytes{0}
         {
         }

@@ -70,7 +70,7 @@ void LuaScriptEditWidget::buildForm()
 
   QFormLayout* form = new QFormLayout();
 
-  for(const QString& name : {"id", "name"})
+  for(const char* name : {"id", "name"})
     if(Property* property = dynamic_cast<Property*>(m_object->getProperty(name)))
       form->addRow(property->displayName(), new PropertyLineEdit(*property, this));
 

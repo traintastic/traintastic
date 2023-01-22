@@ -29,7 +29,6 @@
 #include "../tablewidget.hpp"
 #include "../../network/connection.hpp"
 #include "../../network/object.hpp"
-#include "../../network/tablemodel.hpp"
 #include "../../network/method.hpp"
 #include "../../network/utils.hpp"
 #include "../../network/callmethod.hpp"
@@ -147,12 +146,12 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
               m_object->connection()->cancelRequest(m_requestIdAdd);
 
             m_requestIdAdd = method->call(action->data().toString(),
-              [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+              [this](const ObjectPtr& addedObject, Message::ErrorCode /*ec*/)
               {
                 m_requestIdAdd = Connection::invalidRequestId;
-                if(object)
+                if(addedObject)
                 {
-                  MainWindow::instance->showObject(object);
+                  MainWindow::instance->showObject(addedObject);
                 }
                 // TODO: show error
               });
@@ -201,7 +200,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
       [this]()
       {
         m_requestIdInputMonitor = m_actionInputMonitor->method().call(
-          [this](const ObjectPtr& inputMonitor, Message::ErrorCode)
+          [](const ObjectPtr& inputMonitor, Message::ErrorCode)
           {
             if(inputMonitor)
               MainWindow::instance->showObject(inputMonitor);
