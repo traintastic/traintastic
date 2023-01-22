@@ -39,6 +39,7 @@ MinVersion=10.0
 Name: en; MessagesFile: "compiler:Default.isl"
 Name: nl; MessagesFile: "compiler:Languages\Dutch.isl"
 Name: de; MessagesFile: "compiler:Languages\German.isl"
+Name: it; MessagesFile: "compiler:Languages\Italian.isl"
 
 [CustomMessages]
 ; English
@@ -73,6 +74,17 @@ nl.FirewallAllowWLANmausZ21=Sta WLANmaus/Z21 toe
 ;de.AddFirewallRuleTraintasticClient=
 ;de.FirewallAllowWLANmausZ21=
 ;de.AddFirewallRuleWLANmausZ21=
+
+; Italian
+;it.ClientAndServer=
+;it.ClientAndServerDesc=
+;it.ClientOnly=
+;it.ClientOnlyDesc=
+;it.WindowsFirewall=
+;it.FirewallAllowTraintasticClient=
+;it.AddFirewallRuleTraintasticClient=
+;it.FirewallAllowWLANmausZ21=
+;it.AddFirewallRuleWLANmausZ21=
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
