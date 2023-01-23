@@ -495,6 +495,7 @@ jobs:
 
   deploy:
     name: Deploy to website
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-20.04
     needs: [package-innosetup, build-server, build-client, build-data, build-manual]
 
