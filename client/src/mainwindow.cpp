@@ -704,6 +704,7 @@ void MainWindow::viewClockWindow(bool value)
       [this](QObject* object)
       {
         assert(m_clockWindow == object);
+        (void)object; // silence usused warning in Release
         m_clockWindow = nullptr;
         m_actionClock->setChecked(false);
       });
