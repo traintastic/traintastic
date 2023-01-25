@@ -1,7 +1,7 @@
 /**
- * Traintastic
+ * server/src/core/idobject.cpp
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@
 #include "../traintastic/traintastic.hpp"
 #include "../world/getworld.hpp"
 #include "attributes.hpp"
+#include "isvalidobjectid.hpp"
 #include "../utils/displayname.hpp"
 
 IdObject::IdObject(World& world, std::string_view _id) :
@@ -33,6 +34,8 @@ IdObject::IdObject(World& world, std::string_view _id) :
     },
     [this](std::string& value)
     {
+      if(!isValidObjectId(value))
+        throw invalid_value_error();
       auto& m = m_world.m_objects;
       if(m.find(value) != m.end())
         return false;
