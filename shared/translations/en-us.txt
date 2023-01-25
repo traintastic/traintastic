@@ -578,7 +578,7 @@ speed_unit:mps=m/s
 
 throttle_object_list:throttle=Throttle
 
-train:lob=LOB
+train:lob=Length over buffers
 train:speed_max=Maximum speed
 train:vehicles=Vehicles
 train:weight=Weight

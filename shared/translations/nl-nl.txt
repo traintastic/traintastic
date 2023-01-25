@@ -577,7 +577,7 @@ speed_unit:mps=m/s
 
 throttle_object_list:throttle=Regelaar
 
-train:lob=LOB
+train:lob=Lengte over de buffers
 train:speed_max=Maximale snelheid
 #train:vehicles=Vehicles
 train:weight=Massa
