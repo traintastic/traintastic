@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,7 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include "world.hpp"
+#include "../core/isvalidobjectid.hpp"
 #include "../utils/startswith.hpp"
 #include "../utils/stripsuffix.hpp"
 #include "ctwreader.hpp"
@@ -167,7 +168,12 @@ void WorldLoader::load()
   for(json object : data["objects"])
   {
     if(auto it = object.find("id"); it != object.end())
-      m_objects.insert({it.value().get<std::string>(), {object, nullptr, false}});
+    {
+      auto id = it.value().get<std::string>();
+      if(!isValidObjectId(id))
+        throw std::runtime_error("invalid object id value");
+      m_objects.insert({std::move(id), {object, nullptr, false}});
+    }
     else
       throw std::runtime_error("id missing");
   }
