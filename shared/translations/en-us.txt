@@ -187,7 +187,7 @@ interface.ecos:ecos_detector=ECoS detector
 interface.ecos:s88=S88
 
 interface.hsi88:modules_left=Modules left
-interface.hsi88:modules_middle=Modulles middle
+interface.hsi88:modules_middle=Modules middle
 interface.hsi88:modules_right=Modules right
 
 interface.loconet:interface=Interface
@@ -361,7 +361,7 @@ message:F1004=TCP socket listen failed (%1)
 message:F1005=Opening UDP socket failed (%1)
 message:F1006=UDP socket address reuse failed (%1)
 message:F1007=Binding udp socket failed (%1)
-message:F9001=Creating ua state failed
+message:F9001=Creating Lua state failed
 message:F9002=Running script failed (%1)
 message:F9003=Calling function failed (%1)
 message:F9999=%1
