@@ -38,6 +38,7 @@ MinVersion=10.0
 [Languages]
 Name: en; MessagesFile: "compiler:Default.isl"
 Name: nl; MessagesFile: "compiler:Languages\Dutch.isl"
+Name: it; MessagesFile: "compiler:Languages\Italian.isl"
 
 [CustomMessages]
 ; English
@@ -61,6 +62,17 @@ nl.FirewallAllowTraintasticClient=Sta Traintastic client toe
 ;nl.AddFirewallRuleTraintasticClient=
 nl.FirewallAllowWLANmausZ21=Sta WLANmaus/Z21 toe
 ;nl.AddFirewallRuleWLANmausZ21=
+
+; Italian
+it.ClientAndServer=Client e Server
+it.ClientAndServerDesc=Per il computer connesso alla centralina di comando
+it.ClientOnly=Solo Client
+it.ClientOnlyDesc=Per computer aggiuntivi che operano nel plastico
+it.WindowsFirewall=Windows Firewall:
+it.FirewallAllowTraintasticClient=Abilita Traintastic client
+it.AddFirewallRuleTraintasticClient=Aggiungi regola del firewall per Traintastic client
+it.FirewallAllowWLANmausZ21=Abilita WLANmaus/Z21
+it.AddFirewallRuleWLANmausZ21=Aggiungi regola del firewall per WLANmaus/Z21
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
