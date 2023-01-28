@@ -218,6 +218,7 @@ ip:port=Port
 
 language:de-de=German
 language:en-us=English (US)
+language:it-it=Italian
 language:nl-nl=Dutch
 
 length_unit:cm=cm

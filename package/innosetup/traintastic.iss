@@ -76,15 +76,15 @@ nl.FirewallAllowWLANmausZ21=Sta WLANmaus/Z21 toe
 ;de.AddFirewallRuleWLANmausZ21=
 
 ; Italian
-;it.ClientAndServer=
-;it.ClientAndServerDesc=
-;it.ClientOnly=
-;it.ClientOnlyDesc=
-;it.WindowsFirewall=
-;it.FirewallAllowTraintasticClient=
-;it.AddFirewallRuleTraintasticClient=
-;it.FirewallAllowWLANmausZ21=
-;it.AddFirewallRuleWLANmausZ21=
+it.ClientAndServer=Client e Server
+it.ClientAndServerDesc=Per il computer connesso alla centralina di comando
+it.ClientOnly=Solo Client
+it.ClientOnlyDesc=Per computer aggiuntivi che operano nel plastico
+it.WindowsFirewall=Windows Firewall:
+it.FirewallAllowTraintasticClient=Abilita Traintastic client
+it.AddFirewallRuleTraintasticClient=Aggiungi regola del firewall per Traintastic client
+it.FirewallAllowWLANmausZ21=Abilita WLANmaus/Z21
+it.AddFirewallRuleWLANmausZ21=Aggiungi regola del firewall per WLANmaus/Z21
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked

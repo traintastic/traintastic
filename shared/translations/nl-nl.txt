@@ -217,6 +217,7 @@ ip:port=Poort
 
 language:de-de=Duits (Duitsland)
 language:en-us=Engels (VS)
+language:it-it=Italiaans (Italië)
 language:nl-nl=Nederlands (Nederland)
 
 length_unit:cm=cm
