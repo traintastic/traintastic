@@ -217,6 +217,7 @@ ip:port=Poort
 
 language:de-de=Duits (Duitsland)
 language:en-us=Engels (VS)
+language:it-it=Italiaans (Italië)
 language:nl-nl=Nederlands (Nederland)
 
 length_unit:cm=cm
@@ -360,7 +361,7 @@ message:E9999=%1
 #message:F1005=Opening UDP socket failed (%1)
 #message:F1006=UDP socket address reuse failed (%1)
 #message:F1007=Binding udp socket failed (%1)
-#message:F9001=Creating ua state failed
+#message:F9001=Creating Lua state failed
 #message:F9002=Running script failed (%1)
 #message:F9003=Calling function failed (%1)
 message:F9999=%1
