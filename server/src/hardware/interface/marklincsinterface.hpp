@@ -24,6 +24,8 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLINCSINTERFACE_HPP
 
 #include "interface.hpp"
+#include <traintastic/enum/marklincaninterfacetype.hpp>
+#include "../protocol/marklincan/kernel.hpp"
 
 /**
  * @brief Märklin CS2/CS3 hardware interface
@@ -36,14 +38,19 @@ class MarklinCSInterface final
   DEFAULT_ID("marklin_cs")
 
   private:
+    std::unique_ptr<MarklinCAN::Kernel> m_kernel;
+
     void addToWorld() final;
     void destroying() final;
     void worldEvent(WorldState state, WorldEvent event) final;
+
+    void idChanged(const std::string& newId) final;
 
   protected:
     bool setOnline(bool& value, bool simulation) final;
 
   public:
+    Property<MarklinCANInterfaceType> type;
     Property<std::string> hostname;
 
     MarklinCSInterface(World& world, std::string_view _id);

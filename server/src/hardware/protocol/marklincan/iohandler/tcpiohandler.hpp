@@ -1,9 +1,9 @@
 /**
- * server/src/utils/byte.hpp
+ * server/src/hardware/protocol/marklincan/iohandler/tcpiohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,34 +20,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_UTILS_BYTE_HPP
-#define TRAINTASTIC_SERVER_UTILS_BYTE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_IOHANDLER_TCPIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_IOHANDLER_TCPIOHANDLER_HPP
 
-#include <cstdint>
+#include "networkiohandler.hpp"
+#include <boost/asio/ip/tcp.hpp>
 
-constexpr uint8_t high8(const uint16_t value)
+namespace MarklinCAN {
+
+class TCPIOHandler final : public NetworkIOHandler
 {
-  return static_cast<uint8_t>(value >> 8);
-}
+  private:
+    static constexpr uint16_t port = 15731;
 
-constexpr uint8_t low8(const uint16_t value)
-{
-  return static_cast<uint8_t>(value & 0xFF);
-}
+    boost::asio::ip::tcp::socket m_socket;
+    boost::asio::ip::tcp::endpoint m_endpoint;
+    std::array<std::byte, 1500> m_readBuffer;
+    size_t m_readBufferOffset;
 
-constexpr uint16_t to16(const uint8_t valueLow, const uint8_t valueHigh)
-{
-  return (static_cast<uint16_t>(valueHigh) << 8) | valueLow;
-}
+    void read() final;
+    void write() final;
 
-constexpr uint16_t high16(const uint32_t value)
-{
-  return static_cast<uint16_t>(value >> 16);
-}
+  public:
+    TCPIOHandler(Kernel& kernel, const std::string& hostname);
 
-constexpr uint16_t low16(const uint32_t value)
-{
-  return static_cast<uint16_t>(value & 0xFFFF);
+    void stop() final;
+};
+
 }
 
 #endif

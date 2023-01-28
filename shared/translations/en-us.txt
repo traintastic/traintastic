@@ -293,6 +293,9 @@ lua_script_state:error=Error
 lua_script_state:running=Running
 lua_script_state:stopped=Stopped
 
+marklin_can_interface_type:tcp=TCP
+marklin_can_interface_type:udp=UDP
+
 message:C1001=Loading world failed (%1)
 message:C1002=Creating client failed (%1)
 message:C1003=Can't write to settings file (%1)

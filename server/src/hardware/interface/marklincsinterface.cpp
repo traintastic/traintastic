@@ -21,6 +21,9 @@
  */
 
 #include "marklincsinterface.hpp"
+#include "../protocol/marklincan/iohandler/simulationiohandler.hpp"
+#include "../protocol/marklincan/iohandler/tcpiohandler.hpp"
+#include "../protocol/marklincan/iohandler/udpiohandler.hpp"
 #include "../../core/attributes.hpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
@@ -28,24 +31,61 @@
 
 MarklinCSInterface::MarklinCSInterface(World& world, std::string_view _id)
   : Interface(world, _id)
+  , type{this, "type", MarklinCANInterfaceType::TCP, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   name = "M\u00E4rklin CS2/CS3";
+
+  Attributes::addDisplayName(type, DisplayName::Interface::type);
+  Attributes::addEnabled(type, !online);
+  Attributes::addValues(type, marklinCANInterfaceTypeValues);
+  m_interfaceItems.insertBefore(type, notes);
 
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
   Attributes::addEnabled(hostname, !online);
   m_interfaceItems.insertBefore(hostname, notes);
 }
 
-bool MarklinCSInterface::setOnline(bool& value, bool /*simulation*/)
+bool MarklinCSInterface::setOnline(bool& value, bool simulation)
 {
-  if(/*!m_kernel &&*/ value)
+  if(!m_kernel && value)
   {
     try
     {
-      status.setValueInternal(InterfaceStatus::Online);
+      const MarklinCAN::Config config{true};
 
-      Attributes::setEnabled({hostname}, false);
+      if(simulation)
+      {
+        m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SimulationIOHandler>(config);
+      }
+      else
+      {
+        switch(type.value())
+        {
+          case MarklinCANInterfaceType::TCP:
+            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::TCPIOHandler>(config, hostname.value());
+            break;
+
+          case MarklinCANInterfaceType::UDP:
+            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::UDPIOHandler>(config, hostname.value());
+            break;
+        }
+      }
+      assert(m_kernel);
+
+      status.setValueInternal(InterfaceStatus::Initializing);
+
+      m_kernel->setLogId(id.value());
+
+      m_kernel->setOnStarted(
+        [this]()
+        {
+          status.setValueInternal(InterfaceStatus::Online);
+        });
+
+      m_kernel->start();
+
+      Attributes::setEnabled({type, hostname}, false);
     }
     catch(const LogMessageException& e)
     {
@@ -54,9 +94,12 @@ bool MarklinCSInterface::setOnline(bool& value, bool /*simulation*/)
       return false;
     }
   }
-  else //if(m_kernel && !value)
+  else if(m_kernel && !value)
   {
-    Attributes::setEnabled({hostname}, true);
+    Attributes::setEnabled({type, hostname}, true);
+
+    m_kernel->stop();
+    m_kernel.reset();
 
     status.setValueInternal(InterfaceStatus::Offline);
   }
@@ -77,24 +120,35 @@ void MarklinCSInterface::worldEvent(WorldState state, WorldEvent event)
 {
   Interface::worldEvent(state, event);
 
-  //if(m_kernel)
+  if(m_kernel)
   {
     switch(event)
     {
       case WorldEvent::PowerOff:
+        m_kernel->systemStop();
         break;
 
       case WorldEvent::PowerOn:
+        m_kernel->systemGo();
+        m_kernel->systemHalt();
         break;
 
       case WorldEvent::Stop:
+        m_kernel->systemHalt();
         break;
 
       case WorldEvent::Run:
+        m_kernel->systemGo();
         break;
 
       default:
         break;
     }
   }
+}
+
+void MarklinCSInterface::idChanged(const std::string& newId)
+{
+  if(m_kernel)
+    m_kernel->setLogId(newId);
 }
