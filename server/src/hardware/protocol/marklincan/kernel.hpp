@@ -29,6 +29,10 @@
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
 
+class Decoder;
+enum class DecoderChangeFlags;
+class DecoderController;
+
 namespace MarklinCAN {
 
 struct Message;
@@ -42,6 +46,8 @@ class Kernel
     std::thread m_thread;
     std::string m_logId;
     std::function<void()> m_onStarted;
+
+    DecoderController* m_decoderController;
 
     Config m_config;
 #ifndef NDEBUG
@@ -134,6 +140,13 @@ class Kernel
     void setOnStarted(std::function<void()> callback);
 
     /**
+     * \brief Set the decoder controller
+     * \param[in] decoderController The decoder controller
+     * \note This function may not be called when the kernel is running.
+     */
+    void setDecoderController(DecoderController* decoderController);
+
+    /**
      * \brief Start the kernel and IO handler
      */
     void start();
@@ -156,6 +169,8 @@ class Kernel
     void systemStop();
     void systemGo();
     void systemHalt();
+
+    void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 };
 
 }

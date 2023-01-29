@@ -50,6 +50,7 @@
   DCCPlusPlusInterface, \
   ECoSInterface, \
   LocoNetInterface, \
+  MarklinCANInterface, \
   XpressNetInterface, \
   Z21Interface
 

@@ -22,11 +22,25 @@
 
 #include "kernel.hpp"
 #include "messages.hpp"
+#include "uid.hpp"
+#include "../dcc/dcc.hpp"
+#include "../../decoder/decoder.hpp"
+#include "../../decoder/decoderchangeflags.hpp"
+#include "../../decoder/decodercontroller.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
+#include "../../../utils/inrange.hpp"
 #include "../../../utils/setthreadname.hpp"
 
 namespace MarklinCAN {
+
+static std::tuple<bool, DecoderProtocol, uint16_t> uidToProtocolAddress(uint32_t uid)
+{
+  if(inRange(uid, UID::Range::locomotiveDCC))
+    return {true, DecoderProtocol::DCC, uid - UID::Range::locomotiveDCC.first};
+
+  return {false, DecoderProtocol::Auto, 0};
+}
 
 Kernel::Kernel(const Config& config, bool simulation)
   : m_ioContext{1}
@@ -56,6 +70,12 @@ void Kernel::setOnStarted(std::function<void()> callback)
   assert(isEventLoopThread());
   assert(!m_started);
   m_onStarted = std::move(callback);
+}
+
+void Kernel::setDecoderController(DecoderController* decoderController)
+{
+  assert(!m_started);
+  m_decoderController = decoderController;
 }
 
 void Kernel::start()
@@ -127,7 +147,26 @@ void Kernel::receive(const Message& message)
         case SystemSubCommand::SystemStop:
         case SystemSubCommand::SystemGo:
         case SystemSubCommand::SystemHalt:
+          // not (yet) implemented
+          break;
+
         case SystemSubCommand::LocomotiveEmergencyStop:
+          if(m_decoderController && system.isResponse())
+          {
+            auto [success, protocol, address] = uidToProtocolAddress(system.uid());
+            if(success)
+            {
+              EventLoop::call(
+                [this, protocol=protocol, address=address]()
+                {
+                  const bool longAddress = (protocol == DecoderProtocol::DCC) && DCC::isLongAddress(address);
+                  if(const auto& decoder = m_decoderController->getDecoder(protocol, address, longAddress))
+                    decoder->emergencyStop.setValueInternal(true);
+                });
+            }
+          }
+          break;
+
         case SystemSubCommand::LocomotiveCycleEnd:
         case SystemSubCommand::Overload:
         case SystemSubCommand::Status:
@@ -139,9 +178,91 @@ void Kernel::receive(const Message& message)
     case Command::Discovery:
     case Command::Bind:
     case Command::Verify:
+      // not (yet) implemented
+      break;
+
     case Command::LocomotiveSpeed:
+      if(m_decoderController)
+      {
+        const auto& locomotiveSpeed = static_cast<const LocomotiveSpeed&>(message);
+        if(locomotiveSpeed.isResponse() && locomotiveSpeed.hasSpeed())
+        {
+          auto [success, protocol, address] = uidToProtocolAddress(locomotiveSpeed.uid());
+          if(success)
+          {
+            EventLoop::call(
+              [this, protocol=protocol, address=address, throttle=Decoder::speedStepToThrottle(locomotiveSpeed.speed(), LocomotiveSpeed::speedMax)]()
+              {
+                const bool longAddress = (protocol == DecoderProtocol::DCC) && DCC::isLongAddress(address);
+                if(const auto& decoder = m_decoderController->getDecoder(protocol, address, longAddress))
+                {
+                  decoder->emergencyStop.setValueInternal(false);
+                  decoder->throttle.setValueInternal(throttle);
+                }
+              });
+          }
+        }
+      }
+      break;
+
     case Command::LocomotiveDirection:
+      if(m_decoderController)
+      {
+        const auto& locomotiveDirection = static_cast<const LocomotiveDirection&>(message);
+        if(locomotiveDirection.isResponse() && locomotiveDirection.hasDirection())
+        {
+          auto [success, protocol, address] = uidToProtocolAddress(locomotiveDirection.uid());
+          if(success)
+          {
+            Direction direction = Direction::Unknown;
+            switch(locomotiveDirection.direction())
+            {
+              case LocomotiveDirection::Direction::Forward:
+                direction = Direction::Forward;
+                break;
+
+              case LocomotiveDirection::Direction::Reverse:
+                direction = Direction::Reverse;
+                break;
+
+              case LocomotiveDirection::Direction::Same:
+              case LocomotiveDirection::Direction::Inverse:
+                break;
+            }
+
+            EventLoop::call(
+              [this, protocol=protocol, address=address, direction]()
+              {
+                const bool longAddress = (protocol == DecoderProtocol::DCC) && DCC::isLongAddress(address);
+                if(const auto& decoder = m_decoderController->getDecoder(protocol, address, longAddress))
+                  decoder->direction.setValueInternal(direction);
+              });
+          }
+        }
+      }
+      break;
+
     case Command::LocomotiveFunction:
+      if(m_decoderController)
+      {
+        const auto& locomotiveFunction = static_cast<const LocomotiveFunction&>(message);
+        if(locomotiveFunction.isResponse() && locomotiveFunction.hasValue())
+        {
+          auto [success, protocol, address] = uidToProtocolAddress(locomotiveFunction.uid());
+          if(success)
+          {
+            EventLoop::call(
+              [this, protocol=protocol, address=address, number=locomotiveFunction.number(), value=locomotiveFunction.isOn()]()
+              {
+                const bool longAddress = (protocol == DecoderProtocol::DCC) && DCC::isLongAddress(address);
+                if(const auto& decoder = m_decoderController->getDecoder(protocol, address, longAddress))
+                  decoder->setFunctionValue(number, value);
+              });
+          }
+        }
+      }
+      break;
+
     case Command::ReadConfig:
     case Command::WriteConfig:
     case Command::AccessoryControl:
@@ -179,6 +300,58 @@ void Kernel::systemHalt()
     {
         send(SystemHalt());
     });
+}
+
+void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
+{
+  assert(isEventLoopThread());
+  uint32_t uid = 0;
+
+  switch(decoder.protocol.value())
+  {
+    case DecoderProtocol::DCC:
+      uid = UID::locomotiveDCC(decoder.address);
+      break;
+
+    case DecoderProtocol::Auto:
+    case DecoderProtocol::Motorola:
+    case DecoderProtocol::Selectrix:
+    case DecoderProtocol::Custom:
+      break;
+  }
+
+  if(uid == 0)
+    return;
+
+  if(has(changes, DecoderChangeFlags::Direction))
+  {
+    LocomotiveDirection::Direction direction = LocomotiveDirection::Direction::Same;
+
+    switch(decoder.direction.value())
+    {
+      case Direction::Forward:
+        direction = LocomotiveDirection::Direction::Forward;
+        break;
+
+      case Direction::Reverse:
+        direction = LocomotiveDirection::Direction::Reverse;
+        break;
+
+      case Direction::Unknown:
+        break;
+    }
+
+    if(direction != LocomotiveDirection::Direction::Same)
+      postSend(LocomotiveDirection(uid, direction));
+  }
+
+  if(has(changes, DecoderChangeFlags::EmergencyStop) && decoder.emergencyStop)
+    postSend(LocomotiveEmergencyStop(uid));
+  else if(has(changes, DecoderChangeFlags::Throttle | DecoderChangeFlags::EmergencyStop))
+    postSend(LocomotiveSpeed(uid, Decoder::throttleToSpeedStep(decoder.throttle, LocomotiveSpeed::speedMax)));
+
+  if(has(changes, DecoderChangeFlags::FunctionValue) && functionNumber <= std::numeric_limits<uint8_t>::max())
+    postSend(LocomotiveFunction(uid, functionNumber, decoder.getFunctionValue(functionNumber)));
 }
 
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)

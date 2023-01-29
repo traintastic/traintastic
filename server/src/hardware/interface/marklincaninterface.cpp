@@ -21,6 +21,8 @@
  */
 
 #include "marklincaninterface.hpp"
+#include "../decoder/list/decoderlist.hpp" // ????
+#include "../decoder/list/decoderlisttablemodel.hpp"
 #include "../protocol/marklincan/iohandler/simulationiohandler.hpp"
 #include "../protocol/marklincan/iohandler/tcpiohandler.hpp"
 #include "../protocol/marklincan/iohandler/udpiohandler.hpp"
@@ -29,8 +31,11 @@
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
 
+constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
+
 MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   : Interface(world, _id)
+  , DecoderController(*this, decoderListColumns)
   , type{this, "type", MarklinCANInterfaceType::TCP, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
@@ -44,6 +49,14 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
   Attributes::addEnabled(hostname, !online);
   m_interfaceItems.insertBefore(hostname, notes);
+
+  m_interfaceItems.insertBefore(decoders, notes);
+}
+
+void MarklinCANInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
+{
+  if(m_kernel)
+    m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
 bool MarklinCANInterface::setOnline(bool& value, bool simulation)
@@ -83,6 +96,8 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
           status.setValueInternal(InterfaceStatus::Online);
         });
 
+      m_kernel->setDecoderController(this);
+
       m_kernel->start();
 
       Attributes::setEnabled({type, hostname}, false);
@@ -109,10 +124,12 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
 void MarklinCANInterface::addToWorld()
 {
   Interface::addToWorld();
+  DecoderController::addToWorld();
 }
 
 void MarklinCANInterface::destroying()
 {
+  DecoderController::destroying();
   Interface::destroying();
 }
 

@@ -72,6 +72,8 @@ enum class SystemSubCommand : uint8_t
 
 struct Message
 {
+  static constexpr uint32_t responseMask = 0x00010000;
+
   uint32_t id = 0;
   uint8_t dlc = 0;
   uint8_t data[8] = {0, 0, 0, 0, 0, 0, 0, 0};
@@ -104,7 +106,15 @@ struct Message
 
   bool isResponse() const
   {
-    return (id >> 16) & 0x001;
+    return id & responseMask;
+  }
+
+  void setResponse(bool value)
+  {
+    if(value)
+      id |= responseMask;
+    else
+      id &= ~responseMask;
   }
 
   uint16_t hash() const
@@ -113,19 +123,28 @@ struct Message
   }
 };
 
-struct SystemMessage : Message
+struct UidMessage : Message
 {
-  SystemMessage(SystemSubCommand subCommand, uint32_t uid = 0)
-    : Message{Command::System, false, uid}
+  UidMessage(Command command, bool response, uint32_t uid)
+    : Message(command, response, uid)
   {
-    dlc = 5;
+    dlc = 4;
     *reinterpret_cast<uint32_t*>(&data[0]) = host_to_be(uid);
-    data[4] = static_cast<uint8_t>(subCommand);
   }
 
   uint32_t uid() const
   {
     return be_to_host(*reinterpret_cast<const uint32_t*>(&data[0]));
+  }
+};
+
+struct SystemMessage : UidMessage
+{
+  SystemMessage(SystemSubCommand subCommand, uint32_t uid = 0)
+    : UidMessage{Command::System, false, uid}
+  {
+    dlc = 5;
+    data[4] = static_cast<uint8_t>(subCommand);
   }
 
   SystemSubCommand subCommand() const
@@ -155,6 +174,162 @@ struct SystemHalt : SystemMessage
   SystemHalt(uint32_t uid = 0)
     : SystemMessage(SystemSubCommand::SystemHalt, uid)
   {
+  }
+};
+
+struct LocomotiveEmergencyStop : SystemMessage
+{
+  LocomotiveEmergencyStop(uint32_t uid)
+    : SystemMessage(SystemSubCommand::LocomotiveEmergencyStop, uid)
+  {
+  }
+};
+
+struct LocomotiveSpeed : UidMessage
+{
+  static constexpr uint16_t speedMax = 1000;
+
+  LocomotiveSpeed(uint32_t uid)
+    : UidMessage(Command::LocomotiveSpeed, false, uid)
+  {
+  }
+
+  LocomotiveSpeed(uint32_t uid, uint16_t speed_, bool response = false)
+    : LocomotiveSpeed(uid)
+  {
+    setResponse(response);
+    dlc = 6;
+    setSpeed(speed_);
+  }
+
+  bool hasSpeed() const
+  {
+    return dlc == 6;
+  }
+
+  uint16_t speed() const
+  {
+    assert(hasSpeed());
+    return to16(data[5], data[4]);
+  }
+
+  void setSpeed(uint16_t value)
+  {
+    assert(hasSpeed());
+    assert(value <= speedMax);
+    data[4] = high8(value);
+    data[5] = low8(value);
+  }
+};
+
+struct LocomotiveDirection : UidMessage
+{
+  enum class Direction : uint8_t
+  {
+    Same = 0,
+    Forward = 1,
+    Reverse = 2,
+    Inverse = 3,
+  };
+
+  LocomotiveDirection(uint32_t uid)
+    : UidMessage(Command::LocomotiveDirection, false, uid)
+  {
+  }
+
+  LocomotiveDirection(uint32_t uid, Direction direction_, bool response = false)
+    : LocomotiveDirection(uid)
+  {
+    setResponse(response);
+    dlc = 5;
+    setDirection(direction_);
+  }
+
+  bool hasDirection() const
+  {
+    return dlc == 5;
+  }
+
+  Direction direction() const
+  {
+    assert(hasDirection());
+    return static_cast<Direction>(data[4]);
+  }
+
+  void setDirection(Direction value)
+  {
+    assert(hasDirection());
+    data[4] = static_cast<uint8_t>(value);
+  }
+};
+
+struct LocomotiveFunction : UidMessage
+{
+  static constexpr uint8_t numberMax = 31;
+  static constexpr uint8_t valueOff = 0;
+  static constexpr uint8_t valueOnMin = 1;
+  static constexpr uint8_t valueOnMax = 31;
+
+  LocomotiveFunction(uint32_t uid, uint8_t number_)
+    : UidMessage(Command::LocomotiveFunction, false, uid)
+  {
+    dlc = 5;
+    setNumber(number_);
+  }
+
+  LocomotiveFunction(uint32_t uid, uint8_t number_, uint8_t value_, bool response = false)
+    : LocomotiveFunction(uid, number_)
+  {
+    setResponse(response);
+    dlc = 6;
+    setNumber(value_);
+  }
+
+  LocomotiveFunction(uint32_t uid, uint8_t number_, bool value_, bool response = false)
+    : LocomotiveFunction(uid, number_)
+  {
+    setResponse(response);
+    dlc = 6;
+    setValue(value_);
+  }
+
+  uint8_t number() const
+  {
+    return data[4];
+  }
+
+  void setNumber(uint8_t value)
+  {
+    assert(value <= numberMax);
+    data[4] = value;
+  }
+
+  bool hasValue() const
+  {
+    return dlc == 6;
+  }
+
+  bool isOn() const
+  {
+    return value() != valueOff;
+  }
+
+  uint8_t value() const
+  {
+    assert(hasValue());
+    return data[5];
+  }
+
+  void setValue(bool value)
+  {
+    setValue(value ? valueOnMin : valueOff);
+  }
+
+  void setValue(uint8_t value)
+  {
+    assert(hasValue());
+    assert(value <= valueOnMax);
+    data[5] = value;
   }
 };
 

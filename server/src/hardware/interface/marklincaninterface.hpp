@@ -25,6 +25,7 @@
 
 #include "interface.hpp"
 #include <traintastic/enum/marklincaninterfacetype.hpp>
+#include "../decoder/decodercontroller.hpp"
 #include "../protocol/marklincan/kernel.hpp"
 
 /**
@@ -32,6 +33,7 @@
  */
 class MarklinCANInterface final
   : public Interface
+  , public DecoderController
 {
   CLASS_ID("interface.marklin_can")
   CREATE(MarklinCANInterface)
@@ -54,6 +56,9 @@ class MarklinCANInterface final
     Property<std::string> hostname;
 
     MarklinCANInterface(World& world, std::string_view _id);
+
+    // DecoderController:
+    void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 };
 
 #endif
