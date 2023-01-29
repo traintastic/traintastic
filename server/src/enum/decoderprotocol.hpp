@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,9 +26,10 @@
 #include <traintastic/enum/decoderprotocol.hpp>
 #include <array>
 
-inline constexpr std::array<DecoderProtocol, 5> decoderProtocolValues{{
+inline constexpr std::array<DecoderProtocol, 6> decoderProtocolValues{{
   DecoderProtocol::Auto,
   DecoderProtocol::DCC,
+  DecoderProtocol::MFX,
   DecoderProtocol::Motorola,
   DecoderProtocol::Selectrix,
   DecoderProtocol::Custom,

@@ -29,9 +29,11 @@ namespace MarklinCAN::UID {
 std::string toString(uint32_t uid)
 {
   if(inRange(uid, Range::locomotiveMotorola))
-    return std::string("Motorola(").append(std::to_string(uid)).append(")");
+    return std::string("Motorola(").append(std::to_string(uid - Range::locomotiveMotorola.first)).append(")");
+  if(inRange(uid, Range::locomotiveMFX))
+    return std::string("MFX(").append(std::to_string(uid - Range::locomotiveMFX.first)).append(")");
   if(inRange<uint32_t>(uid, Range::locomotiveDCC))
-    return std::string("DCC(").append(std::to_string(uid & 0x3FFF)).append(")");
+    return std::string("DCC(").append(std::to_string(uid - Range::locomotiveDCC.first)).append(")");
 
   return std::string("uid=").append(toHex(uid));
 }

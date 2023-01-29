@@ -130,6 +130,7 @@ decoder_function_type:on_off=On/Of
 decoder_protocol:auto=Auto
 decoder_protocol:custom=Custom
 decoder_protocol:dcc=DCC
+decoder_protocol:mfx=MFX
 decoder_protocol:motorola=Motorola
 decoder_protocol:selectrix=Selectrix
 

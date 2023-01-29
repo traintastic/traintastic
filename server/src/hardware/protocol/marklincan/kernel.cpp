@@ -38,6 +38,8 @@ static std::tuple<bool, DecoderProtocol, uint16_t> uidToProtocolAddress(uint32_t
 {
   if(inRange(uid, UID::Range::locomotiveMotorola))
     return {true, DecoderProtocol::Motorola, uid - UID::Range::locomotiveMotorola.first};
+  if(inRange(uid, UID::Range::locomotiveMFX))
+    return {true, DecoderProtocol::MFX, uid - UID::Range::locomotiveMFX.first};
   if(inRange(uid, UID::Range::locomotiveDCC))
     return {true, DecoderProtocol::DCC, uid - UID::Range::locomotiveDCC.first};
 
@@ -317,6 +319,10 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
 
     case DecoderProtocol::Motorola:
       uid = UID::locomotiveMotorola(decoder.address);
+      break;
+
+    case DecoderProtocol::MFX:
+      uid = UID::locomotiveMFX(decoder.address);
       break;
 
     case DecoderProtocol::Auto:
