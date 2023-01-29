@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -285,7 +285,7 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
     {
       case 14:
       {
-        const uint8_t speedStep = Decoder::throttleToSpeedStep(decoder.throttle, 14);
+        const uint8_t speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 14);
         cmd.db0 = 0x10;
         if(decoder.emergencyStop)
           cmd.speedAndDirection = 0x01;
@@ -295,7 +295,7 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
       }
       case 28:
       {
-        uint8_t speedStep = Decoder::throttleToSpeedStep(decoder.throttle, 28);
+        uint8_t speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 28);
         cmd.db0 = 0x12;
         if(decoder.emergencyStop)
           cmd.speedAndDirection = 0x01;
@@ -310,7 +310,7 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
       case 128:
       default:
       {
-        const uint8_t speedStep = Decoder::throttleToSpeedStep(decoder.throttle, 126);
+        const uint8_t speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 126);
         cmd.db0 = 0x13;
         if(decoder.emergencyStop)
           cmd.speedAndDirection = 0x01;

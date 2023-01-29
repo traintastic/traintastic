@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,7 +47,7 @@ static void updateDecoderSpeed(const std::shared_ptr<Decoder>& decoder, uint8_t 
   if(speed == SPEED_STOP || speed == SPEED_ESTOP)
     decoder->throttle.setValueInternal(Decoder::throttleStop);
   else
-    decoder->throttle.setValueInternal(Decoder::speedStepToThrottle(speed - 1, SPEED_MAX - 1));
+    decoder->throttle.setValueInternal(Decoder::speedStepToThrottle<uint8_t>(speed - 1, SPEED_MAX - 1));
 }
 
 constexpr Kernel::Priority& operator ++(Kernel::Priority& value)
@@ -886,7 +886,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
 
   if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Throttle))
   {
-    const uint8_t speedStep = Decoder::throttleToSpeedStep(decoder.throttle, SPEED_MAX - 1);
+    const uint8_t speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, SPEED_MAX - 1);
     if(m_emergencyStop == TriState::False || decoder.emergencyStop || speedStep == SPEED_STOP)
     {
       // only send speed updates if bus estop isn't active, except for speed STOP and ESTOP

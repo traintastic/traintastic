@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -266,7 +266,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
           decoder.longAddress,
           decoder.emergencyStop,
           decoder.direction,
-          Decoder::throttleToSpeedStep(decoder.throttle, 14),
+          Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 14),
           decoder.getFunctionValue(0)));
         break;
 
@@ -276,7 +276,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
           decoder.longAddress,
           decoder.emergencyStop,
           decoder.direction,
-          Decoder::throttleToSpeedStep(decoder.throttle, 27)));
+          Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 27)));
         break;
 
       case 28:
@@ -285,7 +285,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
           decoder.longAddress,
           decoder.emergencyStop,
           decoder.direction,
-          Decoder::throttleToSpeedStep(decoder.throttle, 28)));
+          Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 28)));
         break;
 
       case 126:
@@ -296,7 +296,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
           decoder.longAddress,
           decoder.emergencyStop,
           decoder.direction,
-          Decoder::throttleToSpeedStep(decoder.throttle, 126)));
+          Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 126)));
         break;
     }
   }
