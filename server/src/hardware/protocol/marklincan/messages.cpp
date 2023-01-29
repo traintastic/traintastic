@@ -21,6 +21,7 @@
  */
 
 #include "messages.hpp"
+#include "uid.hpp"
 #include "../../../utils/tohex.hpp"
 
 namespace MarklinCAN {
@@ -29,13 +30,168 @@ std::string toString(const Message& message)
 {
   std::string s;
 
-  s.append("priority=").append(std::to_string(message.priority()));
-  s.append(" command=").append(toHex(static_cast<uint8_t>(message.command())));
-  s.append(" response=").append(message.isResponse() ? "1" : "0");
-  s.append(" hash=").append(toHex(message.hash()));
-  s.append(" dlc=").append(std::to_string(message.dlc));
+  switch(message.command())
+  {
+    case Command::System:
+    {
+      s.append("System");
+
+      const auto& system = static_cast<const SystemMessage&>(message);
+
+      switch(system.subCommand())
+      {
+        case SystemSubCommand::SystemStop:
+          s.append(" stop");
+          break;
+
+        case SystemSubCommand::SystemGo:
+          s.append(" go");
+          break;
+
+        case SystemSubCommand::SystemHalt:
+          s.append(" halt");
+          break;
+
+        case SystemSubCommand::LocomotiveEmergencyStop:
+          break;
+
+        case SystemSubCommand::LocomotiveCycleEnd:
+          break;
+
+        case SystemSubCommand::Overload:
+          break;
+
+        case SystemSubCommand::Status:
+          break;
+      }
+      break;
+    }
+    case Command::Discovery:
+      s.append("Discovery");
+      break;
+
+    case Command::Bind:
+      s.append("Bind");
+      break;
+
+    case Command::Verify:
+      s.append("Verify");
+      break;
+
+    case Command::LocomotiveSpeed:
+    {
+      s.append("LocomotiveSpeed");
+
+      const auto& locomotiveSpeed = static_cast<const LocomotiveSpeed&>(message);
+
+      if(!locomotiveSpeed.hasSpeed() && !locomotiveSpeed.isResponse())
+        s.append(" get");
+      else if(locomotiveSpeed.hasSpeed() && !locomotiveSpeed.isResponse())
+        s.append(" set");
+      else if(locomotiveSpeed.hasSpeed() && locomotiveSpeed.isResponse())
+        s.append(" ack");
+      else
+        s.append(" ???");
+
+      s.append(" ").append(UID::toString(locomotiveSpeed.uid()));
+
+      if(locomotiveSpeed.dlc == 6)
+        s.append(" speed=").append(std::to_string(locomotiveSpeed.speed()));
+
+      break;
+    }
+    case Command::LocomotiveDirection:
+    {
+      s.append("LocomotiveDirection");
+
+      const auto& locomotiveDirection = static_cast<const LocomotiveDirection&>(message);
+
+      if(!locomotiveDirection.hasDirection() && !locomotiveDirection.isResponse())
+        s.append(" get");
+      else if(locomotiveDirection.hasDirection() && !locomotiveDirection.isResponse())
+        s.append(" set");
+      else if(locomotiveDirection.hasDirection() && locomotiveDirection.isResponse())
+        s.append(" ack");
+      else
+        s.append(" ???");
+
+      s.append(" ").append(UID::toString(locomotiveDirection.uid()));
+
+      if(locomotiveDirection.hasDirection())
+      {
+        s.append(" direction=");
+
+        switch(locomotiveDirection.direction())
+        {
+          case LocomotiveDirection::Direction::Same:
+            s.append("same");
+            break;
+
+          case LocomotiveDirection::Direction::Forward:
+            s.append("forward");
+            break;
+
+          case LocomotiveDirection::Direction::Reverse:
+            s.append("reverse");
+            break;
+
+          case LocomotiveDirection::Direction::Inverse:
+            s.append("inverse");
+            break;
+        }
+      }
+      break;
+    }
+    case Command::LocomotiveFunction:
+    {
+      s.append("LocomotiveFunction");
+
+      const auto& locomotiveFunction = static_cast<const LocomotiveFunction&>(message);
+
+      if(!locomotiveFunction.hasValue() && !locomotiveFunction.isResponse())
+        s.append(" get");
+      else if(locomotiveFunction.hasValue() && !locomotiveFunction.isResponse())
+        s.append(" set");
+      else if(locomotiveFunction.hasValue() && locomotiveFunction.isResponse())
+        s.append(" ack");
+      else
+        s.append(" ???");
+
+      s.append(" ").append(UID::toString(locomotiveFunction.uid()));
+
+      s.append(" number=").append(std::to_string(locomotiveFunction.number()));
+
+      if(locomotiveFunction.hasValue())
+        s.append(" value=").append(std::to_string(locomotiveFunction.value()));
+
+      break;
+    }
+    case Command::ReadConfig:
+      s.append("ReadConfig");
+      break;
+
+    case Command::WriteConfig:
+      s.append("WriteConfig");
+      break;
+
+    case Command::AccessoryControl:
+      s.append("AccessoryControl");
+      break;
+
+    case Command::Ping:
+      s.append("Ping");
+      break;
+  }
+
+  // raw:
+  s.append(s.empty() ? "[" : " [").append(std::to_string(message.priority()));
+  s.append(" ").append(toHex(static_cast<uint8_t>(message.command())));
+  s.append(message.isResponse() ? " 1" : " 0");
+  s.append(" ").append(toHex(message.hash()));
+  s.append(" ").append(std::to_string(message.dlc));
   if(message.dlc > 0)
-    s.append(" data=").append(toHex(message.data, message.dlc));
+    s.append(" ").append(toHex(message.data, message.dlc));
+  s.append("]");
 
   return s;
 }

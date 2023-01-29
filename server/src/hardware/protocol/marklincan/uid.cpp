@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/marklincan/uid.hpp
+ * server/src/hardware/protocol/marklincan/uid.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,27 +20,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_UID_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_UID_HPP
-
-#include <cstdint>
-#include <string>
-#include <utility>
+#include "uid.hpp"
+#include "../../../utils/inrange.hpp"
+#include "../../../utils/tohex.hpp"
 
 namespace MarklinCAN::UID {
 
-namespace Range
+std::string toString(uint32_t uid)
 {
-  constexpr std::pair<uint32_t, uint32_t> locomotiveDCC{0xC000, 0xFFFF};
+  if(inRange<uint32_t>(uid, Range::locomotiveDCC))
+    return std::string("DCC(").append(std::to_string(uid & 0x3FFF)).append(")");
+
+  return std::string("uid=").append(toHex(uid));
 }
 
-constexpr uint32_t locomotiveDCC(uint16_t address)
-{
-  return (Range::locomotiveDCC.first | address);
 }
-
-std::string toString(uint32_t uid);
-
-}
-
-#endif
