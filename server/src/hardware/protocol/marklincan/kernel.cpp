@@ -36,6 +36,8 @@ namespace MarklinCAN {
 
 static std::tuple<bool, DecoderProtocol, uint16_t> uidToProtocolAddress(uint32_t uid)
 {
+  if(inRange(uid, UID::Range::locomotiveMotorola))
+    return {true, DecoderProtocol::Motorola, uid - UID::Range::locomotiveMotorola.first};
   if(inRange(uid, UID::Range::locomotiveDCC))
     return {true, DecoderProtocol::DCC, uid - UID::Range::locomotiveDCC.first};
 
@@ -313,8 +315,11 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       uid = UID::locomotiveDCC(decoder.address);
       break;
 
-    case DecoderProtocol::Auto:
     case DecoderProtocol::Motorola:
+      uid = UID::locomotiveMotorola(decoder.address);
+      break;
+
+    case DecoderProtocol::Auto:
     case DecoderProtocol::Selectrix:
     case DecoderProtocol::Custom:
       break;

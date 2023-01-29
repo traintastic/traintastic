@@ -26,12 +26,19 @@
 #include <cstdint>
 #include <string>
 #include <utility>
+#include <traintastic/enum/decoderprotocol.hpp>
 
 namespace MarklinCAN::UID {
 
 namespace Range
 {
+  constexpr std::pair<uint32_t, uint32_t> locomotiveMotorola{0x000, 0x03FF};
   constexpr std::pair<uint32_t, uint32_t> locomotiveDCC{0xC000, 0xFFFF};
+}
+
+constexpr uint32_t locomotiveMotorola(uint16_t address)
+{
+  return (Range::locomotiveMotorola.first | address);
 }
 
 constexpr uint32_t locomotiveDCC(uint16_t address)
