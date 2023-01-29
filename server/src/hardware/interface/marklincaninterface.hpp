@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/marklincsinterface.hpp
+ * server/src/hardware/interface/marklincaninterface.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,22 +20,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLINCSINTERFACE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLINCSINTERFACE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLINCANINTERFACE_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLINCANINTERFACE_HPP
 
 #include "interface.hpp"
 #include <traintastic/enum/marklincaninterfacetype.hpp>
 #include "../protocol/marklincan/kernel.hpp"
 
 /**
- * @brief Märklin CS2/CS3 hardware interface
+ * @brief Märklin CAN hardware interface
  */
-class MarklinCSInterface final
+class MarklinCANInterface final
   : public Interface
 {
-  CLASS_ID("interface.marklin_cs")
-  CREATE(MarklinCSInterface)
-  DEFAULT_ID("marklin_cs")
+  CLASS_ID("interface.marklin_can")
+  CREATE(MarklinCANInterface)
+  DEFAULT_ID("marklin_can")
 
   private:
     std::unique_ptr<MarklinCAN::Kernel> m_kernel;
@@ -53,7 +53,7 @@ class MarklinCSInterface final
     Property<MarklinCANInterfaceType> type;
     Property<std::string> hostname;
 
-    MarklinCSInterface(World& world, std::string_view _id);
+    MarklinCANInterface(World& world, std::string_view _id);
 };
 
 #endif

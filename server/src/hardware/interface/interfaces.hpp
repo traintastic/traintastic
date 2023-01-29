@@ -30,7 +30,7 @@
 #include "ecosinterface.hpp"
 #include "hsi88.hpp"
 #include "loconetinterface.hpp"
-#include "marklincsinterface.hpp"
+#include "marklincaninterface.hpp"
 #include "traintasticdiyinterface.hpp"
 #include "withrottleinterface.hpp"
 #include "wlanmausinterface.hpp"
@@ -46,7 +46,7 @@ struct Interfaces
     ECoSInterface::classId,
     HSI88Interface::classId,
     LocoNetInterface::classId,
-    MarklinCSInterface::classId,
+    MarklinCANInterface::classId,
     TraintasticDIYInterface::classId,
     WiThrottleInterface::classId,
     WlanMausInterface::classId,

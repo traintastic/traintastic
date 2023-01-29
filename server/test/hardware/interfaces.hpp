@@ -27,7 +27,7 @@
 #include "../src/hardware/interface/ecosinterface.hpp"
 #include "../src/hardware/interface/hsi88.hpp"
 #include "../src/hardware/interface/loconetinterface.hpp"
-#include "../src/hardware/interface/marklincsinterface.hpp"
+#include "../src/hardware/interface/marklincaninterface.hpp"
 #include "../src/hardware/interface/traintasticdiyinterface.hpp"
 #include "../src/hardware/interface/withrottleinterface.hpp"
 #include "../src/hardware/interface/wlanmausinterface.hpp"
@@ -39,7 +39,7 @@
   ECoSInterface, \
   HSI88Interface, \
   LocoNetInterface, \
-  MarklinCSInterface, \
+  MarklinCANInterface, \
   TraintasticDIYInterface, \
   WiThrottleInterface, \
   WlanMausInterface, \

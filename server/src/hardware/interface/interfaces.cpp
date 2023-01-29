@@ -30,7 +30,7 @@ std::shared_ptr<Interface> Interfaces::create(World& world, std::string_view cla
   IF_CLASSID_CREATE(ECoSInterface)
   IF_CLASSID_CREATE(HSI88Interface)
   IF_CLASSID_CREATE(LocoNetInterface)
-  IF_CLASSID_CREATE(MarklinCSInterface)
+  IF_CLASSID_CREATE(MarklinCANInterface)
   IF_CLASSID_CREATE(TraintasticDIYInterface)
   IF_CLASSID_CREATE(WiThrottleInterface)
   IF_CLASSID_CREATE(WlanMausInterface)

@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/marklincsinterface.cpp
+ * server/src/hardware/interface/marklincaninterface.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "marklincsinterface.hpp"
+#include "marklincaninterface.hpp"
 #include "../protocol/marklincan/iohandler/simulationiohandler.hpp"
 #include "../protocol/marklincan/iohandler/tcpiohandler.hpp"
 #include "../protocol/marklincan/iohandler/udpiohandler.hpp"
@@ -29,12 +29,12 @@
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
 
-MarklinCSInterface::MarklinCSInterface(World& world, std::string_view _id)
+MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , type{this, "type", MarklinCANInterfaceType::TCP, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
-  name = "M\u00E4rklin CS2/CS3";
+  name = "M\u00E4rklin CAN";
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
   Attributes::addEnabled(type, !online);
@@ -46,7 +46,7 @@ MarklinCSInterface::MarklinCSInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(hostname, notes);
 }
 
-bool MarklinCSInterface::setOnline(bool& value, bool simulation)
+bool MarklinCANInterface::setOnline(bool& value, bool simulation)
 {
   if(!m_kernel && value)
   {
@@ -106,17 +106,17 @@ bool MarklinCSInterface::setOnline(bool& value, bool simulation)
   return true;
 }
 
-void MarklinCSInterface::addToWorld()
+void MarklinCANInterface::addToWorld()
 {
   Interface::addToWorld();
 }
 
-void MarklinCSInterface::destroying()
+void MarklinCANInterface::destroying()
 {
   Interface::destroying();
 }
 
-void MarklinCSInterface::worldEvent(WorldState state, WorldEvent event)
+void MarklinCANInterface::worldEvent(WorldState state, WorldEvent event)
 {
   Interface::worldEvent(state, event);
 
@@ -147,7 +147,7 @@ void MarklinCSInterface::worldEvent(WorldState state, WorldEvent event)
   }
 }
 
-void MarklinCSInterface::idChanged(const std::string& newId)
+void MarklinCANInterface::idChanged(const std::string& newId)
 {
   if(m_kernel)
     m_kernel->setLogId(newId);
