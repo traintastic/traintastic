@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -195,6 +195,32 @@ bool Session::processMessage(const Message& message)
       }
       break;
     }
+    case Message::Command::ObjectGetObjectPropertyObject:
+      if(message.isRequest())
+      {
+        if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
+        {
+          if(auto* property = object->getObjectProperty(message.read<std::string>()); property && !property->isInternal())
+          {
+            if(auto obj = property->toObject())
+            {
+              auto response = Message::newResponse(message.command(), message.requestId());
+              writeObject(*response, obj);
+              m_client->sendMessage(std::move(response));
+            }
+            else
+              m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::UnknownObject));
+          }
+          else // send error response
+            m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), "unknown property"));
+        }
+        else // send error response
+          m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), "unknown object"));
+
+        return true;
+      }
+      break;
+
     case Message::Command::ObjectSetObjectPropertyById:
     {
       if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))

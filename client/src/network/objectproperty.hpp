@@ -24,6 +24,8 @@
 #define TRAINTASTIC_CLIENT_NETWORK_OBJECTPROPERTY_HPP
 
 #include "abstractproperty.hpp"
+#include "objectptr.hpp"
+#include <traintastic/network/message.hpp>
 
 class ObjectProperty : public AbstractProperty
 {
@@ -40,6 +42,7 @@ class ObjectProperty : public AbstractProperty
       return !m_id.isEmpty();
     }
 
+    [[nodiscard]] int getObject(std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
     const QString& objectId() const { return m_id; }
     void setByObjectId(const QString& value);
 };
