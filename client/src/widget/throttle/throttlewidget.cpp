@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -101,7 +101,7 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
 
   if(auto* p = dynamic_cast<ObjectProperty*>(m_object->getProperty("functions")))
   {
-    m_functionsRequestId = m_object->connection()->getObject(p->objectId(),
+    m_functionsRequestId = p->getObject(
       [this](const ObjectPtr& functions, Message::ErrorCode /*ec*/)
       {
         m_functionsRequestId = Connection::invalidRequestId;

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -57,6 +57,11 @@ ObjectEditWidget::ObjectEditWidget(const QString& id, QWidget* parent) :
 {
 }
 
+ObjectEditWidget::ObjectEditWidget(ObjectProperty& property, QWidget* parent)
+  : AbstractEditWidget(property, parent)
+{
+}
+
 void ObjectEditWidget::buildForm()
 {
   setIdAsWindowTitle();
@@ -90,9 +95,7 @@ void ObjectEditWidget::buildForm()
             ObjectProperty* property = static_cast<ObjectProperty*>(baseProperty);
             if(contains(baseProperty->flags(), PropertyFlags::SubObject))
             {
-              w = new ObjectEditWidget(property->objectId());
-              w->setWindowTitle(property->displayName());
-              tabs.append(w);
+              tabs.append(new ObjectEditWidget(*property));
               continue;
             }
             else

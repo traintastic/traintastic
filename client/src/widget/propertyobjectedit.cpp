@@ -22,6 +22,7 @@
 
 #include "propertyobjectedit.hpp"
 #include <memory>
+#include "../network/connection.hpp"
 #include "../network/objectproperty.hpp"
 #include "../network/object.hpp"
 #include "../dialog/objectselectlistdialog.hpp"
@@ -37,6 +38,7 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
   m_lineEdit{new QLineEdit(m_property.objectId(), this)},
   m_changeButton{m_property.isWritable() && m_property.hasAttribute(AttributeName::ObjectList) ? new QToolButton(this) : nullptr},
   m_editButton{new QToolButton(this)}
+  , m_editObjectRequestId{Connection::invalidRequestId}
 {
   bool enabled = m_property.getAttributeBool(AttributeName::Enabled, true);
   bool visible = m_property.getAttributeBool(AttributeName::Visible, true);
@@ -94,10 +96,28 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
   connect(m_editButton, &QToolButton::clicked, this,
     [this]()
     {
-      if(m_property.hasObject())
-        MainWindow::instance->showObject(m_property.objectId());
+      if(!m_property.hasObject())
+        return;
+
+      if(m_editObjectRequestId != Connection::invalidRequestId)
+        m_property.object().connection()->cancelRequest(m_editObjectRequestId);
+
+      m_editObjectRequestId = m_property.getObject(
+        [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+        {
+          m_editObjectRequestId = Connection::invalidRequestId;
+
+          if(object)
+            MainWindow::instance->showObject(object);
+        });
     });
   l->addWidget(m_editButton);
 
   setLayout(l);
+}
+
+PropertyObjectEdit::~PropertyObjectEdit()
+{
+  if(m_editObjectRequestId != Connection::invalidRequestId)
+    m_property.object().connection()->cancelRequest(m_editObjectRequestId);
 }
