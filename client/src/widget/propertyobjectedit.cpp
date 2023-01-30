@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -64,7 +64,7 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
   connect(&m_property, &ObjectProperty::valueChanged, this,
     [this]()
     {
-      m_editButton->setEnabled(!m_property.objectId().isEmpty());
+      m_editButton->setEnabled(m_property.hasObject());
       m_lineEdit->setText(m_property.objectId());
     });
 
@@ -90,11 +90,11 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
   }
 
   m_editButton->setIcon(Theme::getIcon("edit"));
-  m_editButton->setEnabled(!m_property.objectId().isEmpty());
+  m_editButton->setEnabled(m_property.hasObject());
   connect(m_editButton, &QToolButton::clicked, this,
     [this]()
     {
-      if(!m_property.objectId().isEmpty())
+      if(m_property.hasObject())
         MainWindow::instance->showObject(m_property.objectId());
     });
   l->addWidget(m_editButton);
