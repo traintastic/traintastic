@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,9 +38,11 @@ class PropertyObjectEdit : public QWidget
     QLineEdit* m_lineEdit;
     QToolButton* m_changeButton;
     QToolButton* m_editButton;
+    int m_editObjectRequestId;
 
   public:
     explicit PropertyObjectEdit(ObjectProperty& property, QWidget* parent = nullptr);
+    ~PropertyObjectEdit() override;
 };
 
 #endif

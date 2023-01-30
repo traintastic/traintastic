@@ -629,7 +629,7 @@ void Connection::getWorld()
   if(!m_worldProperty->hasObject())
     setWorld(nullptr);
   else
-    m_worldRequestId = getObject(m_worldProperty->objectId(),
+    m_worldRequestId = m_worldProperty->getObject(
       [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
       {
         m_worldRequestId = invalidRequestId;
