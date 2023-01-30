@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +28,11 @@ ObjectProperty::ObjectProperty(Object& object, const QString& name, PropertyFlag
   AbstractProperty(object, name, ValueType::Object, flags),
   m_id{id}
 {
+}
+
+int ObjectProperty::getObject(std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+{
+  return object().connection()->getObject(*this, std::move(callback));
 }
 
 void ObjectProperty::setByObjectId(const QString& value)

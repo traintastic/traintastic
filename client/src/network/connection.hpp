@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -133,6 +133,7 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
     void serverLog(ServerLogTableModel& model, bool enable);
 
     [[nodiscard]] int getObject(const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
+    [[nodiscard]] int getObject(const ObjectProperty& property, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
     void releaseObject(Object* object);
 
     void setUnitPropertyUnit(UnitProperty& property, int64_t value);

@@ -228,6 +228,22 @@ int Connection::getObject(const QString& id, std::function<void(const ObjectPtr&
   return request->requestId();
 }
 
+int Connection::getObject(const ObjectProperty& property, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+{
+  std::unique_ptr<Message> request{Message::newRequest(Message::Command::ObjectGetObjectPropertyObject)};
+  request->write(property.object().handle());
+  request->write(property.name().toLatin1());
+  send(request,
+    [this, callback](const std::shared_ptr<Message> message)
+    {
+      ObjectPtr object;
+      if(!message->isError())
+        object = readObject(*message);
+      callback(object, message->errorCode());
+    });
+  return request->requestId();
+}
+
 void Connection::setUnitPropertyUnit(UnitProperty& property, int64_t value)
 {
   auto event = Message::newEvent(Message::Command::ObjectSetUnitPropertyUnit);

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -83,6 +83,8 @@ class Message
       OutputMapGetItems = 39,
       OutputMapGetOutputs = 40,
       OutputMapOutputsChanged = 41,
+
+      ObjectGetObjectPropertyObject = 44,
 
       Discover = 255,
     };
