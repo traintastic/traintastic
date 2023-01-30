@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -610,7 +610,7 @@ void Connection::getWorld()
   if(m_worldRequestId != invalidRequestId)
     return;
 
-  if(m_worldProperty->objectId().isEmpty())
+  if(!m_worldProperty->hasObject())
     setWorld(nullptr);
   else
     m_worldRequestId = getObject(m_worldProperty->objectId(),
@@ -962,7 +962,7 @@ void Connection::socketConnected()
                   });
               }
 
-              if(!m_worldProperty->objectId().isEmpty())
+              if(m_worldProperty->hasObject())
                 getWorld();
               else
                 setState(State::Connected);
