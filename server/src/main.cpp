@@ -27,7 +27,6 @@
 #include <traintastic/locale/locale.hpp>
 #include <traintastic/utils/standardpaths.hpp>
 #ifdef __unix__
-  #include "os/unix/signals.hpp"
   #include "os/unix/daemonize.hpp"
   #include "os/unix/writepidfile.hpp"
   #include "os/unix/setgroupid.hpp"
@@ -79,8 +78,6 @@ int main(int argc, char* argv[])
       std::cerr << e.what() << std::endl;
     exit(EXIT_FAILURE);
   }
-
-  Unix::setupSignalHandlers();
 #elif defined(WIN32)
   if(options.tray)
   {

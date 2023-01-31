@@ -1,6 +1,6 @@
 name: Build
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build-client:
@@ -495,6 +495,7 @@ jobs:
 
   deploy:
     name: Deploy to website
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-20.04
     needs: [package-innosetup, build-server, build-client, build-data, build-manual]
 
@@ -549,6 +550,7 @@ jobs:
 
   update-readme-contributors:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
     name: Update contributers in README.md
     steps:
         - name: Update contribute list

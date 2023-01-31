@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -740,15 +740,17 @@ void MainWindow::showObject(const ObjectPtr& object, SubWindowType type)
     SubWindow* window = createSubWindow(type, object);
     if(!window)
       return;
-    if(!windowId.isEmpty())
-      m_subWindows[windowId] = window;
     m_mdiArea->addSubWindow(window);
     window->setAttribute(Qt::WA_DeleteOnClose);
-    connect(window, &QMdiSubWindow::destroyed, this,
-      [this, windowId](QObject*)
-      {
-        m_subWindows.remove(windowId);
-      });
+    if(!windowId.isEmpty())
+    {
+      m_subWindows[windowId] = window;
+      connect(window, &QMdiSubWindow::destroyed, this,
+        [this, windowId](QObject*)
+        {
+          m_subWindows.remove(windowId);
+        });
+    }
     window->show();
   }
   else

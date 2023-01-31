@@ -45,6 +45,7 @@ std::shared_ptr<Traintastic> Traintastic::instance;
 Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_restart{false},
   m_dataDir{std::filesystem::absolute(dataDir)},
+  m_signalSet(EventLoop::ioContext),
   settings{this, "settings", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
   world{this, "world", nullptr, PropertyFlags::ReadWrite,
     [this](const std::shared_ptr<World>& /*newWorld*/)
@@ -115,6 +116,15 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
 {
   if(!std::filesystem::is_directory(m_dataDir))
     std::filesystem::create_directories(m_dataDir);
+
+  //Register signal handlers to shutdown gracefully
+  m_signalSet.add(SIGINT);
+  m_signalSet.add(SIGTERM);
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+  m_signalSet.add(SIGBREAK); //Windows uses SIGBREAK instead of SIGTERM
+#endif
+
+  m_signalSet.async_wait(&Traintastic::signalHandler);
 
   m_interfaceItems.add(settings);
   m_interfaceItems.add(world);
@@ -249,4 +259,32 @@ void Traintastic::loadWorldPath(const std::filesystem::path& path)
   {
     Log::log(*this, LogMessage::C1001_LOADING_WORLD_FAILED_X, e.what());
   }
+}
+
+void Traintastic::signalHandler(const boost::system::error_code& ec, int signalNumber)
+{
+  if(ec)
+    return;
+
+#define SIGNAL_NAME_CASE(x) \
+  {\
+    case x:\
+      val = #x;\
+      break;\
+  }
+
+  const char* val = "Unknown signal";
+  switch(signalNumber)
+  {
+    SIGNAL_NAME_CASE(SIGINT)
+    SIGNAL_NAME_CASE(SIGTERM)
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+    SIGNAL_NAME_CASE(SIGBREAK); //Windows uses SIGBREAK instead of SIGTERM
+#endif
+  }
+
+#undef SIGNAL_NAME_CASE
+
+  Log::log(*Traintastic::instance, LogMessage::N1001_RECEIVED_SIGNAL_X, std::string_view{val});
+  instance->exit();
 }
