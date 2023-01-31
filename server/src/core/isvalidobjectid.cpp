@@ -1,9 +1,9 @@
 /**
- * client/src/widget/propertyobjectedit.hpp
+ * server/src/core/isvalidobjectid.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2023 Reinder Feenstra
+ * Copyright (C) 2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,29 +20,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_PROPERTYOBJECTEDIT_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_PROPERTYOBJECTEDIT_HPP
+#include "isvalidobjectid.hpp"
+#include <regex>
 
-#include <QWidget>
-
-class ObjectProperty;
-class QLineEdit;
-class QToolButton;
-
-class PropertyObjectEdit : public QWidget
+bool isValidObjectId(std::string_view id)
 {
-  Q_OBJECT
-
-  protected:
-    ObjectProperty& m_property;
-    QLineEdit* m_lineEdit;
-    QToolButton* m_changeButton;
-    QToolButton* m_editButton;
-    int m_editObjectRequestId;
-
-  public:
-    explicit PropertyObjectEdit(ObjectProperty& property, QWidget* parent = nullptr);
-    ~PropertyObjectEdit() override;
-};
-
-#endif
+  static const std::regex re{"[a-z][a-z0-9_]*", };
+  return std::regex_match(id.begin(), id.end(), re);
+}

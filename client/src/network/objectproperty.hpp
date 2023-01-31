@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,8 @@
 #define TRAINTASTIC_CLIENT_NETWORK_OBJECTPROPERTY_HPP
 
 #include "abstractproperty.hpp"
+#include "objectptr.hpp"
+#include <traintastic/network/message.hpp>
 
 class ObjectProperty : public AbstractProperty
 {
@@ -35,6 +37,12 @@ class ObjectProperty : public AbstractProperty
   public:
     ObjectProperty(Object& object, const QString& name, PropertyFlags flags, const QString& id);
 
+    bool hasObject() const
+    {
+      return !m_id.isEmpty();
+    }
+
+    [[nodiscard]] int getObject(std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
     const QString& objectId() const { return m_id; }
     void setByObjectId(const QString& value);
 };

@@ -1,0 +1,665 @@
+## Traintastic language file: Italian (IT)
+
+board:delete_tile=Elimina mattonella
+board:move_tile=Sposta mattonella
+board:resize_tile=Ridimensiona mattonella
+board:resize_to_contents=Ridimensiona al contenuto
+
+board_settings.color_scheme:dark=Scuro
+board_settings.color_scheme:light=Chiaro
+
+board_tile.misc.push_button:color=Colore
+
+board_tile.rail.block:input_map=Sensori
+
+board_tile.rail.direction_control:state=Stato
+board_tile.rail.direction_control:use_a_to_b=Usa: A → B
+board_tile.rail.direction_control:use_b_to_a=Usa: A ← B
+board_tile.rail.direction_control:use_both=Usa: A ⇄ B
+board_tile.rail.direction_control:use_none=Usa: A 🛇 B
+
+board_tile.rail.link:link=Link
+
+board_tile.rail.sensor:input=Input
+board_tile.rail.sensor:invert=Inverti
+board_tile.rail.sensor:type=Tipo
+
+board_tile:output_map=Outputs
+
+category:developer=Sviluppatore
+category:general=Generale
+category:info=Info
+category:log=Log
+category:network=Rete
+
+class_id:board_tile.misc.push_button=Bottone
+class_id:board_tile.rail.block=Blocco
+class_id:board_tile.rail.bridge_45_left=Ponte 45° (sinistra)
+class_id:board_tile.rail.bridge_45_right=Ponte 45° (destra)
+class_id:board_tile.rail.bridge_90=Ponte 90°
+class_id:board_tile.rail.buffer_stop=Ferma carri
+class_id:board_tile.rail.cross_45=Incrocio 45°
+class_id:board_tile.rail.cross_90=Incrocio 90°
+class_id:board_tile.rail.curve_45=Binario curvo 45°
+class_id:board_tile.rail.curve_90=Binario curvo 90°
+class_id:board_tile.rail.decoupler=Sganciatore
+class_id:board_tile.rail.direction_control=Controllo Direzione
+class_id:board_tile.rail.link=Link
+class_id:board_tile.rail.one_way=Senso unico
+class_id:board_tile.rail.sensor=Sensore
+class_id:board_tile.rail.signal_2_aspect=Segnale (2 aspetti)
+class_id:board_tile.rail.signal_3_aspect=Segnale (3 aspetti)
+class_id:board_tile.rail.straight=Binario dritto
+class_id:board_tile.rail.tunnel=Tunnel
+class_id:board_tile.rail.turnout_3way=Deviatoio triplo
+class_id:board_tile.rail.turnout_doubleslip=Deviatoio inglese doppio
+class_id:board_tile.rail.turnout_left_45=Deviatoio sinistro 45°
+class_id:board_tile.rail.turnout_left_90=Deviatoio sinistro 90°
+class_id:board_tile.rail.turnout_left_curved=Deviatoio curvo sinistro
+class_id:board_tile.rail.turnout_right_45=Deviatoio destro 45°
+class_id:board_tile.rail.turnout_right_90=Deviatoio destro 90°
+class_id:board_tile.rail.turnout_right_curved=Deviatoio curvo destro
+class_id:board_tile.rail.turnout_singleslip=Deviatoio inglese singolo
+class_id:board_tile.rail.turnout_wye=Deviatoio Y
+class_id:interface.dccplusplus=DCC++
+class_id:interface.ecos=ECoS
+class_id:interface.hsi88=HSI-88
+class_id:interface.loconet=LocoNet
+class_id:interface.traintastic_diy=Traintastic DIY
+class_id:interface.withrottle=WiThrottle
+class_id:interface.wlanmaus=WLANmaus
+class_id:interface.xpressnet=XpressNet
+class_id:interface.z21=Z21
+class_id:vehicle.rail.freight_car=Carro merce
+class_id:vehicle.rail.locomotive=Locomotiva
+
+clock:day=Giorno
+clock:debug_log=Debug log
+clock:freeze=Blocca
+clock:hour=Ora
+clock:minute=Minuto
+clock:month=Mese
+clock:multiplier=Moltiplicatore
+clock:year=Anno
+
+color:aqua=Aqua
+color:black=Nero
+color:blue=Blu
+color:fuchsia=Fuchsia
+color:gray=Grigio
+color:green=Verde
+color:lime=Lime
+color:maroon=Marrone
+color:navy=Navy
+color:olive=Verde oliva
+color:purple=Viola
+color:red=Rosso
+color:silver=Argento
+color:teal=Teal
+color:white=Bianco
+color:yellow=Giallo
+
+dccplusplus_channel:dcc_accessory=DCC accessorio
+dccplusplus_channel:output=Output
+dccplusplus_channel:turnout=Deviatoio
+
+dccplusplus_settings:startup_delay=Ritardo accensione
+dccplusplus_settings:use_ex=Usa comandi DCC++EX
+
+decoder:functions=Funzioni
+decoder:long_address=DCC indirizzo esteso
+decoder:protocol=Protocollo
+
+decoder_function:function=Funzione
+decoder_function:number=Numero
+decoder_function:type=Tipo
+
+decoder_function_function:generic=Generica
+decoder_function_function:light=Luci
+decoder_function_function:mute=Mute
+decoder_function_function:smoke=Fumo
+decoder_function_function:sound=Suoni
+
+decoder_function_type:always_off=Sempre spenta
+decoder_function_type:always_on=Sempre accesa
+decoder_function_type:hold=Premi e mantieni
+decoder_function_type:momentary=Momentanea
+decoder_function_type:on_off=On/Of
+
+decoder_protocol:auto=Auto
+decoder_protocol:custom=Custom
+decoder_protocol:dcc=DCC
+
+decoupler_state:activated=Attivato
+decoupler_state:deactivated=Disattivato
+
+direction:forward=Avanti
+direction:reverse=Indietro
+
+direction_control_state:a_to_b=A → B
+direction_control_state:b_to_a=A ← B
+direction_control_state:both=A ⇄ B
+direction_control_state:none=A 🛇 B
+
+ecos_channel:ecos_detector=ECoS Detector
+
+hardware:address=Indirizzo
+hardware:channel=Canale
+hardware:command_station=Centralina di comando
+hardware:dcc=DCC
+hardware:dccplusplus=DCC++
+hardware:debug_log_input=Log cambiamenti input
+hardware:debug_log_output=Log cambiamenti output
+hardware:debug_log_rx_tx=Log tutte le communicazioni
+hardware:decoders=Decoders
+hardware:ecos=ECoS
+hardware:identifications=Identificazioni
+hardware:input_monitor=Monitor Input
+hardware:inputs=Inputs
+hardware:interface=Interfaccia
+hardware:loconet=LocoNet
+hardware:motorola=Motorola
+hardware:output_keyboard=Pulsantiera Output
+hardware:outputs=Outputs
+hardware:s88=S88
+hardware:speed_steps=Step Velocità
+hardware:throttles=Throttles
+hardware:xpressnet=XpressNet
+hardware:z21=Z21
+
+hsi88:s88_left=S88 sinistra
+hsi88:s88_middle=S88 centrale
+hsi88:s88_right=S88 destra
+
+identification:opc_multi_sense_direction=OPC_MULTI_SENSE direction
+
+input_list:bus=Bus
+
+input_map_item.block:input=Input
+input_map_item.block:invert=Inverti
+input_map_item.block:type=Tipo
+
+interface.dccplusplus:dcc_plus_plus=DCC++(EX)
+
+interface.ecos:ecos=ECoS
+interface.ecos:ecos=ECoS
+interface.ecos:ecos_detector=ECoS detector
+interface.ecos:s88=S88
+
+interface.hsi88:modules_left=Moduli sinistra
+interface.hsi88:modules_middle=Moduli centrali
+interface.hsi88:modules_right=Moduli destra
+
+interface.loconet:interface=Interfaccia
+
+interface.traintastic_diy:traintastic_diy=Traintastic DIY
+
+interface.withrottle:withrottle=WiThrottle
+
+interface.xpressnet:interface=Interfaccia
+interface.xpressnet:s88_module_count=S88 conteggio moduli
+interface.xpressnet:s88_start_address=S88 indirizzo di partenza
+
+interface.z21:firmware_version=Versione Firmware
+interface.z21:hardware_type=Tipologia Hardware
+interface.z21:serial_number=Numero Seriale
+
+interface:online=Online
+interface:status=Stato
+interface:type=Tipo
+
+interface_status:error=Errore
+interface_status:initializing=Inizializzando
+interface_status:offline=Offline
+interface_status:online=Online
+
+ip:hostname=Hostname
+ip:port=Porta
+
+language:de-de=Tedesco
+language:en-us=Inglese (US)
+language:it-it=Italiano
+language:nl-nl=Olandese
+
+length_unit:cm=cm
+length_unit:ft=ft
+length_unit:in=in
+length_unit:m=m
+length_unit:mm=mm
+length_unit:yd=yd
+
+list:add=Aggiungi
+list:edit=Modifica
+list:move_down=Sposta giù
+list:move_up=Sposta su
+list:remove=Rimuovi
+
+lncv_programmer:description=Descrizione
+lncv_programmer:lncv_programmer=LNCV programmer
+lncv_programmer:module=Modulo
+lncv_programmer:other_module=Secondo modulo
+lncv_programmer:read=Leggi
+lncv_programmer:reading_lncv_x=Lettura LNCV %1
+lncv_programmer:reading_lncv_x_failed=Lettura LNCV %1 fallita
+lncv_programmer:sending_start=Invio start
+lncv_programmer:start=Start
+lncv_programmer:stop=Stop
+lncv_programmer:use_broadcast_address=Usa indirizzo broadcast
+lncv_programmer:value=Valore
+lncv_programmer:waiting_for_module_to_respond=In attesa della risposta dal modulo
+lncv_programmer:write=Scrivi
+lncv_programmer:writing_lncv_x=Scrittura LNCV %1
+
+loconet_command_station:custom=Custom
+loconet_command_station:digikeijs_dr5000=Digikeijs DR5000
+loconet_command_station:uhlenbrock_ibcom=Uhlenbrock IB-Com
+loconet_command_station:uhlenbrock_intellibox=Uhlenbrock Intellibox
+
+loconet_f9_f28:imm_packet=Direct (OPC_IMM_PACKET)
+loconet_f9_f28:uhlenbrock_extended=Uhlenbrock extended (OPC_A3, OPC_D4)
+
+loconet_fastclock:master=Master (Traintatic controlla l'orologio)
+loconet_fastclock:off=Off
+
+loconet_interface_type:lbserver=LBServer
+loconet_interface_type:serial=Serial
+loconet_interface_type:tcp_binary=TCP binary
+loconet_interface_type:z21=Z21
+
+loconet_serial_interface:custom=Custom
+loconet_serial_interface:digikeijs_dr5000=Digikeijs DR5000
+loconet_serial_interface:rosoft_loconet_interface=RoSoft LocoNet interface
+
+loconet_settings:command_station=Centralina di comando
+loconet_settings:echo_timeout=Echo timeout
+loconet_settings:f9_f28=F9-F28
+loconet_settings:fast_clock=Orologio Accelerato
+loconet_settings:fast_clock_sync_enabled=Fast clock sync abilitato
+loconet_settings:fast_clock_sync_interval=Fast clock intervallo di sync
+loconet_settings:locomotive_slots=Slots Locomotive
+loconet_settings:response_timeout=Timeout di risposta
+
+lua.script:disabled=Disabilitato
+lua.script:start=Esegui
+lua.script:stop=Stop
+
+lua.script_list:start_all=Esegui tutti
+lua.script_list:stop_all=Stoppa tutti
+
+lua_script:state=Stato
+
+lua_script_state:disabled=Disabilitato
+lua_script_state:error=Errore
+lua_script_state:running=In esecuzione
+lua_script_state:stopped=Stoppato
+
+message:C1001=Caricamento mondo fallito (%1)
+message:C1002=Creazione client fallita (%1)
+message:C1003=Impossibile scrivere nel file impostazioni (%1)
+message:C1004=Lettura mondo fallita (%1) (%2)
+message:C1005=Salvataggio mondo fallito (%1)
+message:C1006=Creazione backup mondo fallita (%1)
+message:C1007=Creazione cartella di backup mondi fallita (%1)
+message:C1008=Creazione cartella di backup fallita (%1)
+message:C1009=Creazione backup delle impostazioni fallita (%1)
+message:C1010=Esportazione mondo fallita (%1)
+message:C1011=Importazione mondo fallito (%1)
+message:C1012=Classe '%1' non nota, impossibile ricreare oggetto '%2'
+message:C1013=Impossibile caricare mondo salvato con una versione più recente, necessaria almeno: %1
+message:C2001=Indirizzo già usato in #%1
+message:C2002=DCC++ supporta solo il protocollo DCC
+message:C2003=DCC++ non supporta indirizzi estesi DCC inferiori a 128
+message:C2004=Impossibile ottenere slot libero
+message:C9999=%1
+message:D1001=Riprendi %1 (moltiplicatore: %2)
+message:D1002=Tick %1 (errore: %2us)
+message:D1003=Congela %1
+message:D2001=TX: %1
+message:D2002=RX: %1
+message:D2003=Unknown xHeader 0x%1
+message:D2004=%1 TX: %2
+message:D2005=%1 RX: %2
+message:D2006=Messaggio non noto: %1
+message:D2007=Input %1 = %2
+message:D2008=Output %1 = %1
+message:D2009=Slot %1 = %2
+message:D2010=Slot %1 = Libero
+message:D9999=%1
+message:E1001=UUID Mondo non valido: %1
+message:E1002=Il Mondo %1 non esiste
+message:E1003=UDP errore ricezione (%1)
+message:E1004=TCP errore accept (%1)
+message:E1005=Socket shutdown fallito (%1)
+message:E1006=Socket write fallita (%1)
+message:E1007=Socket read fallita (%1)
+message:E1008=Socket acceptor cancel fallita (%1)
+message:E2001=Serial write fallita (%1)
+message:E2002=Serial read fallita (%1)
+message:E2003=Make address fallita (%1)
+message:E2004=Socket open fallita (%1)
+message:E2005=Socket connect fallita (%1)
+message:E2006=Socket bind fallita (%1)
+message:E2007=Socket write fallita (%1)
+message:E2008=Socket read fallita (%1)
+message:E2009=Socket receive fallita (%1)
+message:E2010=Serial port open fallita (%1)
+message:E2011=Socket send fallita (%1)
+message:E2012=Numero Funzione già in uso
+message:E2013=Porta Seriale impostazione baudrate fallita (%1)
+message:E2014=Porta Seriale port set data bits fallita (%1)
+message:E2015=Porta Seriale set stop bits fallita (%1)
+message:E2016=Porta Seriale set parity fallita (%1)
+message:E2017=Porta Seriale set flow control fallita (%1)
+message:E2018=Timeout, nessun eco entro %1ms
+message:E2019=Timeout, nessuna risposta entro %1ms
+message:E2020=Il numero totale di moduli non può superare %1
+message:E9001=%1 (Durante l'esecuzione dell'event handler %2)
+message:E9999=%1
+message:F1001=Opening TCP socket fallita (%1)
+message:F1002=TCP socket address reuse fallita (%1)
+message:F1003=Binding TCP socket fallita (%1)
+message:F1004=TCP socket listen fallita (%1)
+message:F1005=Opening UDP socket fallita (%1)
+message:F1006=UDP socket address reuse fallita (%1)
+message:F1007=Binding udp socket fallita (%1)
+message:F9001=Creazione Lua state fallita
+message:F9002=Esecuzione script fallita (%1)
+message:F9003=Chaiamata funzione fallita (%1)
+message:F9999=%1
+message:I1001=Traintastic v%1
+message:I1002=File impostazioni non trovato, utilizzo valori default
+message:I1003=Client connesso
+message:I1004=Connessione persa
+message:I1005=Costruzione index mondo
+message:I1006=%1
+message:I1007=%1
+message:I1008=%1
+message:I2001=Indirizzo locomotiva non noto: %1
+message:I2002=Tipologia Hardware: %1
+message:I2003=Versione Firmware: %1
+message:I2004=HSI-88: %1
+message:I2005=%1
+message:I9001=Script interrotto
+message:I9002=%1
+message:I9999=%1
+message:N1001=Ricevuto segnale: %1
+message:N1002=Nuovo mondo creato
+message:N1003=Riavvio
+message:N1004=Spegnimento
+message:N1005=Discovery abilitata
+message:N1006=Discovery disabilitata
+message:N1007=Ascolto a %1:%2
+message:N1008=Impostazioni caricate
+message:N1009=Impostazioni salvate
+message:N1010=Modalità Modifica: abilitata
+message:N1011=Modalità Modifica: disabilitata
+message:N1012=Comunicazione: abilitata
+message:N1013=Comunicazione: disabilitata
+message:N1014=Power: on
+message:N1015=Power: off
+message:N1016=In Esecuzione
+message:N1017=Interrotto
+message:N1018=Mute: abilitata
+message:N1019=Mute: disabilitato
+message:N1020=Fumo: abilitata
+message:N1021=Fumo: disabilitato
+message:N1022=Mondo salvato: %1
+message:N1023=Simulazione: disabilitata
+message:N1024=Simulazione: abilitata
+message:N1025=Mondo esportato con successo
+message:N1026=Mondo importato con successo
+message:N2001=Simulazione non supportata
+message:N2002=Nessuna risposta dal modulo LNCV %1 con indirizzo %2
+message:N2003=Interrotto invio Fast Clock Sync
+message:N9001=Avvio script
+message:N9999=%1
+message:W1001=Discovery disabilitata, consentita solo sulla porta %1
+message:W1002=Impostazione %1 non esistente
+message:W1003=Lettura Mondo %1 fallita (libarchive error %2: %3)
+message:W2001=Ricevuti dati malformati ignorati %1 bytes
+message:W2002=La centralina di comando non supporta funzioni superiori a F%1
+message:W2003=La centralina di comando non supporta %1 passi velocità, utilizzo %2
+message:W2004=Input indirizzo %1 non valido
+message:W2005=Output indirizzo %1 non valido
+message:W2006=La centralina di comando non supporta slot locomotiva %1
+message:W2007=La centralina di comando non supporta slot Fast Clock
+message:W2018=Timeout, no echo within %1ms
+message:W9999=%1
+
+object:id=Id
+object:name=Nome
+object:notes=Note
+
+opc_multi_sense_direction:in_sensor_address=Indirizzo sensore ingresso
+opc_multi_sense_direction:in_transponder_address=Indirizzo transponder ingresso (Blücher GBM16XN)
+opc_multi_sense_direction:none=Nessuna
+
+output_action:none=Nessuna
+output_action:off=Off
+output_action:on=On
+output_action:pulse=Impulsa
+
+output_list:bus=Bus
+
+output_map.decoupler:key=Stato
+
+output_map.signal:key=Aspetto
+
+output_map.turnout:key=Posizione
+
+output_map:use=Usa
+
+qtapp.connect_dialog:connect=Connetti
+qtapp.connect_dialog:connect_to_server=Connetti al Server
+qtapp.connect_dialog:connected=Connesso
+qtapp.connect_dialog:connecting=Connessione in corso
+qtapp.connect_dialog:password=Password
+qtapp.connect_dialog:server=Server
+qtapp.connect_dialog:username=Nome utente
+
+qtapp.error:cant_read_from_file_x=Impossibile leggere file: %1
+qtapp.error:cant_write_to_file_x=Impossibile scrivere file: %1
+qtapp.error:server_error_x=Errore Server %1
+
+qtapp.mainmenu:about=Informazioni
+qtapp.mainmenu:close_world=Chiudi mondo
+qtapp.mainmenu:connect_to_server=Connetti al Server
+qtapp.mainmenu:connection=Connessione
+qtapp.mainmenu:disconnect_from_server=Disconnetti dal Server
+qtapp.mainmenu:export_world=Esporta mondo
+qtapp.mainmenu:file=File
+qtapp.mainmenu:fullscreen=Schermo intero
+qtapp.mainmenu:hardware=Hardware
+qtapp.mainmenu:help=Aiuto
+qtapp.mainmenu:import_world=Importa mondo
+qtapp.mainmenu:load_world=Carica mondo
+qtapp.mainmenu:new_world=Nuovo mondo
+qtapp.mainmenu:objects=Oggetti
+qtapp.mainmenu:power=Power
+qtapp.mainmenu:programming=Programmazione
+qtapp.mainmenu:quit=Esci
+qtapp.mainmenu:restart_server=Riavvia server
+qtapp.mainmenu:restart_server_question=Sei sicuro di voler riavviare il server?
+qtapp.mainmenu:save_world=Salva mondo
+qtapp.mainmenu:server=Server
+qtapp.mainmenu:server_log=Server log
+qtapp.mainmenu:server_settings=Impostazioni Server
+qtapp.mainmenu:settings=Impostazioni
+qtapp.mainmenu:shutdown_server=Spegni server
+qtapp.mainmenu:shutdown_server_question=Sei sicuro di voler spegnere il server?
+qtapp.mainmenu:toolbar=Barra degli Strumenti
+qtapp.mainmenu:tools=Strumenti
+qtapp.mainmenu:view=Visualizza
+qtapp.mainmenu:world=Mondo
+qtapp.mainmenu:world_properties=Proprietà mondo
+
+qtapp.message_box:no=No
+qtapp.message_box:yes=Sì
+
+qtapp.object_select_list_dialog:cancel=Annulla
+qtapp.object_select_list_dialog:ok=Ok
+qtapp.object_select_list_dialog:select_object=Seleziona oggetto
+
+qtapp.settings.board:color_scheme=Schema colori
+qtapp.settings.board:show_block_sensor_states=Mostra stato dei sensori di blocco
+qtapp.settings.board:turnout_draw_state=Disegna stato del deviatoio
+
+qtapp.settings.developer:dont_load_fallback_language=Non caricare lingua di fallback
+qtapp.settings.developer:log_missing_strings=Log traduzioni mancanti
+qtapp.settings.developer:log_missing_strings_dir=Cartella log traduzioni mancanti
+
+qtapp.settings.general:language=Lingua
+
+qtapp.settings.statusbar:show_clock=Mostra orologio
+
+qtapp.settings:board=Lavagna
+qtapp.settings:developer=Sviluppatore
+qtapp.settings:general=Generale
+qtapp.settings:statusbar=Barra di Stato
+
+qtapp.world_list_dialog:cancel=Annulla
+qtapp.world_list_dialog:load=Carica
+qtapp.world_list_dialog:world_list=Lista mondi
+
+qtapp:board_properties=Proprietà Lavagna
+qtapp:export_world_failed=Esportazione mondo fallita
+qtapp:grid=Griglia
+qtapp:grid_dot=Punto
+qtapp:grid_line=Linea
+qtapp:grid_none=Nessuna
+qtapp:import_world_failed=Importazione mondo fallita
+qtapp:next=Successivo
+qtapp:previous=Precedente
+qtapp:toggle_mute=Mute/Unmute
+qtapp:toggle_offline_online=Abilita/Disabilita connessione
+qtapp:toggle_power=On/Off power
+qtapp:toggle_smoke=Abilita/Disabilita fumo
+qtapp:traintastic_world=Mondo Traintastic
+qtapp:zoom_in=Zoom in
+qtapp:zoom_out=Zoom out
+
+rail_vehicle_list:type=Tipo
+
+ratio_unit:percent=%
+ratio_unit:ratio=
+
+sensor_type:occupy_detector=Rilevatore occupazione
+sensor_type:reed_switch=Interruttore Reed
+
+serial:baudrate=Baudrate
+serial:device=Dispositivo
+serial:flow_control=Flow control
+serial:port=Porta
+
+serial_flow_control:hardware=Hardware
+serial_flow_control:none=Nessuno
+
+server_log:code=Codice
+server_log:message=Messaggio
+server_log:object=Oggetto
+server_log:time=Tempo
+
+settings:allow_client_server_restart=Permetti al client di riavviare il server
+settings:allow_client_server_shutdown=Permetti al client di spegnere il server
+settings:auto_save_world_on_exit=Salvataggio automatico del mondo all'uscita
+settings:discoverable=Individuabile
+settings:enable_file_logger=Abilita logger file
+settings:localhost_only=Solo Localhost
+settings:memory_logger_size=Dimensione logger in memoria
+settings:port=Porta
+settings:save_world_uncompressed=Salva mondo non compresso
+settings:select_folder=Seleziona cartella
+
+signal_aspect:proceed=Via libera
+signal_aspect:proceed_reduced_speed=Via libera con riduzione di velocità
+signal_aspect:stop=Via impedita
+
+speed_unit:kmph=km/h
+speed_unit:mph=mph
+speed_unit:mps=m/s
+
+throttle_object_list:throttle=Throttle
+
+train:lob=Lunghezza con respingenti
+train:speed_max=Velocità massima
+train:vehicles=Rotabili
+train:weight=Peso
+
+traintastic_diy_interface_type:network_tcp=Rete (TCP)
+traintastic_diy_interface_type:serial=Seriale
+
+traintastic_diy_settings:debug_log_heartbeat=Log communicazione di heartbeat
+traintastic_diy_settings:heartbeat_timeout=Timeout Heartbeat
+
+turnout_position:left=Sinistra
+turnout_position:right=Destra
+turnout_position:straight=Corretto tracciato
+
+vehicle.rail.freight_car:cargo_capacity=Capacità di carico
+vehicle.rail.freight_car:cargo_loaded=Carico presente
+vehicle.rail.freight_car:cargo_weight=Peso del carico
+
+vehicle.rail:decoder=Decoder
+vehicle.rail:lob=Lunghezza veicolo
+vehicle.rail:speed_max=Velocità massima
+vehicle.rail:total_weight=Peso Totale
+vehicle.rail:train=Treno
+vehicle.rail:weight=Peso
+
+weight_unit:kg=kg
+weight_unit:long_tons=Long tons
+weight_unit:short_tons=Short tons
+weight_unit:ton=ton
+
+world:boards=Lavagne
+world:clock=Orologio
+world:decoders=Decoders
+world:edit=Modifica mondo
+world:inputs=Inputs
+world:interfaces=Interfacce
+world:lua_scripts=Script Lua
+world:mute=Mute
+world:no_smoke=No fumo
+world:offline=Disconnetti
+world:online=Connetti
+world:outputs=Outputs
+world:power_off=Spegni
+world:power_on=Accendi
+world:rail_vehicles=Rotabili
+world:run=Esegui
+world:scale=Scala
+world:scale_ratio=Rapporto Scala
+world:simulation=Simulazione
+world:stop=Stop
+world:trains=Treni
+world:uuid=UUID
+
+world_scale:custom=Custom
+world_scale:h0=H0 (1:87)
+world_scale:n=N (1:160)
+world_scale:tt=TT (1:120)
+world_scale:z=Z (1:220)
+
+xpressnet_command_station:custom=Custom
+xpressnet_command_station:digikeijs_dr5000=Digikeijs DR5000
+xpressnet_command_station:roco_10764=Roco 10764
+
+xpressnet_interface_type:network=Rete
+xpressnet_interface_type:serial=Seriale
+
+xpressnet_serial_interface_type:custom=Custom
+xpressnet_serial_interface_type:digikeijs_dr5000=Digikeijs DR5000
+xpressnet_serial_interface_type:lenz_li100=Lenz LI100
+xpressnet_serial_interface_type:lenz_li100f=Lenz LI100F
+xpressnet_serial_interface_type:lenz_li101f=Lenz LI101F
+xpressnet_serial_interface_type:lenz_liusb=Lenz LIUSB
+xpressnet_serial_interface_type:rosoft_s88xpressnetli=RoSoft s88XpressNetLI
+
+xpressnet_settings:use_emergency_stop_locomotive_command=Usa comando stoppa locomotive emergenza corto circuito
+xpressnet_settings:use_roco_f13_f20_command=Usa comandi Roco F13-F20
+
+z21_channel:rbus=R-Bus
+
+z21_settings.server:allow_emergency_stop=Permetti stop di emergenza
+z21_settings.server:allow_track_power_off=Permetti spegnimento
+z21_settings.server:allow_track_power_on_release_emergency_stop=Permetti accensione/rilascio stop di emergenza

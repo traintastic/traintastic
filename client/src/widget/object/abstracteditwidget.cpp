@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,7 @@
 #include <QtWaitingSpinner/waitingspinnerwidget.h>
 #include "../../network/connection.hpp"
 #include "../../network/object.hpp"
-#include "../../network/abstractproperty.hpp"
+#include "../../network/objectproperty.hpp"
 #include "../../mainwindow.hpp"
 
 AbstractEditWidget::AbstractEditWidget(const ObjectPtr& object, QWidget* parent) :
@@ -43,6 +43,29 @@ AbstractEditWidget::AbstractEditWidget(const QString& id, QWidget* parent) :
   spinner->start();
 
   m_requestId = MainWindow::instance->connection()->getObject(id,
+    [this, spinner](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+    {
+      m_requestId = Connection::invalidRequestId;
+      if(object)
+      {
+        m_object = object;
+        buildForm();
+      }
+ // TODO     else
+ // TODO       static_cast<QFormLayout*>(this->layout())->addRow(AlertWidget::error(errorCodeToText(ec)));
+      delete spinner;
+    });
+}
+
+AbstractEditWidget::AbstractEditWidget(ObjectProperty& property, QWidget* parent)
+  : QWidget(parent)
+{
+  setWindowTitle(property.displayName());
+
+  auto* spinner = new WaitingSpinnerWidget(this, true, false);
+  spinner->start();
+
+  m_requestId = property.getObject(
     [this, spinner](const ObjectPtr& object, Message::ErrorCode /*ec*/)
     {
       m_requestId = Connection::invalidRequestId;

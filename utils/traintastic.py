@@ -26,7 +26,7 @@ def read_locale_file(filename):
                 'value': m.group(5),
                 'hash': m.group(1) == '#',
               })
-        elif line != '\n' and not line.startswith('##'):
+        elif line != '\n' and line != '\r\n' and not line.startswith('##'):
             garbage += line
 
     return (strings, header, garbage)

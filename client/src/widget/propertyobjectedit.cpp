@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@
 
 #include "propertyobjectedit.hpp"
 #include <memory>
+#include "../network/connection.hpp"
 #include "../network/objectproperty.hpp"
 #include "../network/object.hpp"
 #include "../dialog/objectselectlistdialog.hpp"
@@ -37,6 +38,7 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
   m_lineEdit{new QLineEdit(m_property.objectId(), this)},
   m_changeButton{m_property.isWritable() && m_property.hasAttribute(AttributeName::ObjectList) ? new QToolButton(this) : nullptr},
   m_editButton{new QToolButton(this)}
+  , m_editObjectRequestId{Connection::invalidRequestId}
 {
   bool enabled = m_property.getAttributeBool(AttributeName::Enabled, true);
   bool visible = m_property.getAttributeBool(AttributeName::Visible, true);
@@ -64,7 +66,7 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
   connect(&m_property, &ObjectProperty::valueChanged, this,
     [this]()
     {
-      m_editButton->setEnabled(!m_property.objectId().isEmpty());
+      m_editButton->setEnabled(m_property.hasObject());
       m_lineEdit->setText(m_property.objectId());
     });
 
@@ -90,14 +92,32 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
   }
 
   m_editButton->setIcon(Theme::getIcon("edit"));
-  m_editButton->setEnabled(!m_property.objectId().isEmpty());
+  m_editButton->setEnabled(m_property.hasObject());
   connect(m_editButton, &QToolButton::clicked, this,
     [this]()
     {
-      if(!m_property.objectId().isEmpty())
-        MainWindow::instance->showObject(m_property.objectId());
+      if(!m_property.hasObject())
+        return;
+
+      if(m_editObjectRequestId != Connection::invalidRequestId)
+        m_property.object().connection()->cancelRequest(m_editObjectRequestId);
+
+      m_editObjectRequestId = m_property.getObject(
+        [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+        {
+          m_editObjectRequestId = Connection::invalidRequestId;
+
+          if(object)
+            MainWindow::instance->showObject(object);
+        });
     });
   l->addWidget(m_editButton);
 
   setLayout(l);
+}
+
+PropertyObjectEdit::~PropertyObjectEdit()
+{
+  if(m_editObjectRequestId != Connection::invalidRequestId)
+    m_property.object().connection()->cancelRequest(m_editObjectRequestId);
 }

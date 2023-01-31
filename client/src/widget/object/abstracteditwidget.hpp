@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,8 @@
 #include <QWidget>
 #include "../../network/objectptr.hpp"
 
+class ObjectProperty;
+
 class AbstractEditWidget : public QWidget
 {
   Q_OBJECT
@@ -43,6 +45,7 @@ class AbstractEditWidget : public QWidget
   public:
     explicit AbstractEditWidget(const ObjectPtr& object, QWidget* parent = nullptr);
     explicit AbstractEditWidget(const QString& id, QWidget* parent = nullptr);
+    explicit AbstractEditWidget(ObjectProperty& property, QWidget* parent = nullptr);
     ~AbstractEditWidget() override;
 };
 

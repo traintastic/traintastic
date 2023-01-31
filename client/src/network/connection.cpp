@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -217,6 +217,22 @@ int Connection::getObject(const QString& id, std::function<void(const ObjectPtr&
 {
   std::unique_ptr<Message> request{Message::newRequest(Message::Command::GetObject)};
   request->write(id.toLatin1());
+  send(request,
+    [this, callback](const std::shared_ptr<Message> message)
+    {
+      ObjectPtr object;
+      if(!message->isError())
+        object = readObject(*message);
+      callback(object, message->errorCode());
+    });
+  return request->requestId();
+}
+
+int Connection::getObject(const ObjectProperty& property, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+{
+  std::unique_ptr<Message> request{Message::newRequest(Message::Command::ObjectGetObjectPropertyObject)};
+  request->write(property.object().handle());
+  request->write(property.name().toLatin1());
   send(request,
     [this, callback](const std::shared_ptr<Message> message)
     {
@@ -610,10 +626,10 @@ void Connection::getWorld()
   if(m_worldRequestId != invalidRequestId)
     return;
 
-  if(m_worldProperty->objectId().isEmpty())
+  if(!m_worldProperty->hasObject())
     setWorld(nullptr);
   else
-    m_worldRequestId = getObject(m_worldProperty->objectId(),
+    m_worldRequestId = m_worldProperty->getObject(
       [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
       {
         m_worldRequestId = invalidRequestId;
@@ -962,7 +978,7 @@ void Connection::socketConnected()
                   });
               }
 
-              if(!m_worldProperty->objectId().isEmpty())
+              if(m_worldProperty->hasObject())
                 getWorld();
               else
                 setState(State::Connected);
