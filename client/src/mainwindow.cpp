@@ -438,14 +438,14 @@ MainWindow::MainWindow(QWidget* parent) :
       });
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:help"));
-    menu->addAction(Locale::tr("qtapp.mainmenu:help"), 
+    menu->addAction(Locale::tr("qtapp.mainmenu:help"),
       []()
       {
         const auto manual = QString::fromStdString((getManualPath() / "en-us.html").string());
         if(QFile::exists(manual))
           QDesktopServices::openUrl(QUrl::fromLocalFile(manual));
         else
-          QDesktopServices::openUrl(QString("https://traintastic.org/manual?version=" TRAINTASTIC_VERSION_FULL)); 
+          QDesktopServices::openUrl(QString("https://traintastic.org/manual?version=" TRAINTASTIC_VERSION_FULL));
       })->setShortcut(QKeySequence::HelpContents);
     //menu->addSeparator();
     //menu->addAction(Locale::tr("qtapp.mainmenu:about_qt") + "...", qApp, &QApplication::aboutQt);
