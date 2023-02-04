@@ -735,24 +735,10 @@ void MainWindow::showObject(const ObjectPtr& object, SubWindowType type)
 {
   QString windowId;
   if(auto* property = object->getProperty("id"))
-    windowId = toString(type).append("/").append(property->toString());
+    windowId = SubWindow::windowId(type, property->toString());
   if(windowId.isEmpty() || !m_subWindows.contains(windowId))
   {
-    SubWindow* window = createSubWindow(type, object);
-    if(!window)
-      return;
-    m_mdiArea->addSubWindow(window);
-    window->setAttribute(Qt::WA_DeleteOnClose);
-    if(!windowId.isEmpty())
-    {
-      m_subWindows[windowId] = window;
-      connect(window, &QMdiSubWindow::destroyed, this,
-        [this, windowId](QObject*)
-        {
-          m_subWindows.remove(windowId);
-        });
-    }
-    window->show();
+    addSubWindow(windowId, createSubWindow(type, object));
   }
   else
     m_mdiArea->setActiveSubWindow(m_subWindows[windowId]);
@@ -760,26 +746,54 @@ void MainWindow::showObject(const ObjectPtr& object, SubWindowType type)
 
 void MainWindow::showObject(const QString& id, const QString& title, SubWindowType type)
 {
-  const QString windowId{toString(type).append("/").append(id)};
+  const QString windowId = SubWindow::windowId(type, id);
   if(!m_subWindows.contains(windowId))
   {
     SubWindow* window = createSubWindow(type, m_connection, id);
-    if(!window)
-      return;
-    if(!title.isEmpty())
+    if(window && !title.isEmpty())
       window->setWindowTitle(title);
-    m_subWindows[windowId] = window;
-    m_mdiArea->addSubWindow(window);
-    window->setAttribute(Qt::WA_DeleteOnClose);
-    connect(window, &QMdiSubWindow::destroyed, this,
-      [this, windowId](QObject*)
-      {
-        m_subWindows.remove(windowId);
-      });
-    window->show();
+    addSubWindow(windowId, window);
   }
   else
     m_mdiArea->setActiveSubWindow(m_subWindows[windowId]);
+}
+
+void MainWindow::addSubWindow(const QString& windowId, SubWindow* window)
+{
+  if(!window)
+    return;
+  m_mdiArea->addSubWindow(window);
+  window->setAttribute(Qt::WA_DeleteOnClose);
+  if(!windowId.isEmpty())
+  {
+    m_subWindows[windowId] = window;
+    connect(window, &QMdiSubWindow::destroyed, this,
+      [this](QObject* object)
+      {
+        for(auto it = m_subWindows.begin(); it != m_subWindows.end(); it++)
+        {
+          if(static_cast<QObject*>(it.value()) == object)
+          {
+            m_subWindows.erase(it);
+            break;
+          }
+        }
+      });
+    connect(window, &SubWindow::objectIdChanged, this,
+      [this](SubWindow* subWindow, const QString& newObjectId)
+      {
+        for(auto it = m_subWindows.begin(); it != m_subWindows.end(); it++)
+        {
+          if(it.value() == subWindow)
+          {
+            m_subWindows.erase(it);
+            m_subWindows[SubWindow::windowId(subWindow->type(), newObjectId)] = subWindow;
+            break;
+          }
+        }
+      });
+  }
+  window->show();
 }
 
 void MainWindow::showAbout()
