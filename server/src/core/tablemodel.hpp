@@ -110,6 +110,8 @@ class TableModel : public Object
     virtual std::string getText(uint32_t column, uint32_t row) const = 0;
 
     void setRegion(const Region& value);
+
+    void rowRemovedHack(uint32_t row);
 };
 
 #endif
