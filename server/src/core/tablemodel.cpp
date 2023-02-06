@@ -53,6 +53,17 @@ void TableModel::setRegion(const Region& value)
   }
 }
 
+void TableModel::rowRemovedHack(uint32_t row)
+{
+  //Hack, tell clients to refresh from row onwards
+  Region update = m_region;
+  if(update.rowMin <= row && update.rowMax >= row)
+  {
+    update.rowMin = row;
+    updateRegion(shared_ptr<TableModel>(), update);
+  }
+}
+
 void TableModel::setColumnHeaders(std::vector<std::string_view> values)
 {
   m_columnHeaders = std::move(values);
