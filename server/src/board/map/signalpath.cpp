@@ -282,7 +282,7 @@ std::unique_ptr<const SignalPath::Item> SignalPath::findBlocks(const Node& node,
       if(&nextNode == &m_signalNode)
         return {}; // we're reached oursels
 
-      return findBlocks(nextNode, *nextLink, blocksAhead - 1);
+      return findBlocks(nextNode, *nextLink, blocksAhead);
     }
     assert(false); // unhandled rail tile
   }
