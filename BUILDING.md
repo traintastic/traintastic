@@ -49,6 +49,12 @@ This must be done AFTER inferior has started, symbol loading is delayed until fi
 
 More info in [GDB Documentation](https://sourceware.org/gdb/onlinedocs/gdb/Files.html)
 
+#### Client only
+
+Qt debugging symbols are distributed separately in `NAME.dll.debug` files.
+These files needs to be copied in same directory of the deployed DLL so GDB automatically loads them.
+They usually are in `C:\Qt\5.15.2\mingw81_64\lib`
+
 ### Linux
 
 In the *build* directory:
