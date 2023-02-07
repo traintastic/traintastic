@@ -95,37 +95,37 @@ void ObjectEditWidget::buildForm()
             ObjectProperty* property = static_cast<ObjectProperty*>(baseProperty);
             if(contains(baseProperty->flags(), PropertyFlags::SubObject))
             {
-              tabs.append(new ObjectEditWidget(*property));
+              tabs.append(new ObjectEditWidget(*property, this));
               continue;
             }
             else
             {
-              w = new PropertyObjectEdit(*property);
+              w = new PropertyObjectEdit(*property, this);
             }
           }
           else
           {
             Property* property = static_cast<Property*>(baseProperty);
             if(UnitProperty* unitProperty = dynamic_cast<UnitProperty*>(property))
-              w = new UnitPropertyEdit(*unitProperty);
+              w = new UnitPropertyEdit(*unitProperty, this);
             else if(!property->isWritable())
-              w = new PropertyValueLabel(*property);
+              w = new PropertyValueLabel(*property, this);
             else if(property->type() == ValueType::Boolean)
-              w = new PropertyCheckBox(*property);
+              w = new PropertyCheckBox(*property, this);
             else if(property->type() == ValueType::Integer)
             {
               if(property->hasAttribute(AttributeName::Values) && !property->hasAttribute(AttributeName::Min) && !property->hasAttribute(AttributeName::Max))
-                w = new PropertyComboBox(*property);
+                w = new PropertyComboBox(*property, this);
               else
-                w = new PropertySpinBox(*property);
+                w = new PropertySpinBox(*property, this);
             }
             else if(property->type() == ValueType::Float)
-              w = new PropertyDoubleSpinBox(*property);
+              w = new PropertyDoubleSpinBox(*property, this);
             else if(property->type() == ValueType::String)
             {
               if(property->name() == "notes")
               {
-                PropertyTextEdit* edit = new PropertyTextEdit(*property);
+                PropertyTextEdit* edit = new PropertyTextEdit(*property, this);
                 edit->setWindowTitle(property->displayName());
                 edit->setPlaceholderText(property->displayName());
                 tabs.append(edit);
@@ -133,23 +133,23 @@ void ObjectEditWidget::buildForm()
               }
               else if(property->name() == "code")
               {
-                PropertyTextEdit* edit = new PropertyTextEdit(*property);
+                PropertyTextEdit* edit = new PropertyTextEdit(*property, this);
                 edit->setWindowTitle(property->displayName());
                 edit->setPlaceholderText(property->displayName());
                 tabs.append(edit);
                 continue;
               }
               else if(property->hasAttribute(AttributeName::Values))
-                w = new PropertyComboBox(*property);
+                w = new PropertyComboBox(*property, this);
               else
-                w = new PropertyLineEdit(*property);
+                w = new PropertyLineEdit(*property, this);
             }
             else if(property->type() == ValueType::Enum)
             {
               if(property->enumName() == EnumName<Direction>::value)
-                w = new PropertyDirectionControl(*property);
+                w = new PropertyDirectionControl(*property, this);
               else
-                w = new PropertyComboBox(*property);
+                w = new PropertyComboBox(*property, this);
             }
           }
         }
@@ -162,7 +162,7 @@ void ObjectEditWidget::buildForm()
         QWidget* tabWidget;
         if(!categoryTabs.contains(category))
         {
-          tabWidget = new QWidget();
+          tabWidget = new QWidget(this);
           tabWidget->setWindowTitle(Locale::tr(category));
           tabWidget->setLayout(new QFormLayout());
           tabs.append(tabWidget);
@@ -177,7 +177,7 @@ void ObjectEditWidget::buildForm()
 
     if(tabs.count() > 1)
     {
-      QTabWidget* tabWidget = new QTabWidget();
+      QTabWidget* tabWidget = new QTabWidget(this);
       for(auto* tab : tabs)
         tabWidget->addTab(tab, tab->windowTitle());
       QVBoxLayout* l = new QVBoxLayout();
