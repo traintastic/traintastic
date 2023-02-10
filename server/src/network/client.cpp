@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -158,7 +158,7 @@ void Client::doWrite()
       else if(ec != boost::asio::error::operation_aborted)
       {
         Log::log(m_id, LogMessage::E1006_SOCKET_WRITE_FAILED_X, ec);
-        disconnect();
+        EventLoop::call(std::bind(&Client::disconnect, this));
       }
     });
 }
