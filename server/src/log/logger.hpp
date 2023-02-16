@@ -29,6 +29,16 @@
 #include <chrono>
 #include <traintastic/enum/logmessage.hpp>
 
+#if defined(__MINGW32__) || defined(__MINGW64__)
+//NOTE: MinGW does not yet support all C++11 std::put_time specifiers
+//See bug: https://sourceforge.net/p/mingw-w64/bugs/793
+#define TRAINTASTIC_LOG_DATE_FORMAT "%Y-%m-%d"
+#define TRAINTASTIC_LOG_TIME_FORMAT "%H:%M:%S"
+#else
+#define TRAINTASTIC_LOG_DATE_FORMAT "%F"
+#define TRAINTASTIC_LOG_TIME_FORMAT "%T"
+#endif
+
 class Logger
 {
   protected:
