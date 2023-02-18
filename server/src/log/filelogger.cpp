@@ -55,8 +55,10 @@ void FileLogger::write(const std::chrono::system_clock::time_point& time, std::s
 
   std::lock_guard<std::mutex> lock(m_fileMutex);
 
+  const char time_format[] = TRAINTASTIC_LOG_DATE_FORMAT ";" TRAINTASTIC_LOG_TIME_FORMAT;
+
   m_file
-    << std::put_time(localTime(&systemTime, &tm), "%F;%T") << '.' << std::setfill('0') << std::setw(6) << us.count() << ';'
+    << std::put_time(localTime(&systemTime, &tm), time_format) << '.' << std::setfill('0') << std::setw(6) << us.count() << ';'
     << objectId << ';'
     << logMessageChar(code) << std::setw(4) << logMessageNumber(code) << ';'
     << message

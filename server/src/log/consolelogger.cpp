@@ -41,11 +41,13 @@ void ConsoleLogger::write(const std::chrono::system_clock::time_point& time, std
   const auto us = std::chrono::duration_cast<std::chrono::microseconds>(time.time_since_epoch()) % 1000000;
   tm tm;
 
+  const char time_format[] = TRAINTASTIC_LOG_DATE_FORMAT " " TRAINTASTIC_LOG_TIME_FORMAT;
+
   std::lock_guard<std::mutex> lock(m_streamMutex);
 
   std::ostream& ss = (isErrorLogMessage(code) || isCriticalLogMessage(code) || isFatalLogMessage(code)) ? std::cerr : std::cout;
   ss
-    << std::put_time(localTime(&systemTime, &tm), "%F %T") << '.' << std::setfill('0') << std::setw(6) << us.count() << ' '
+    << std::put_time(localTime(&systemTime, &tm), time_format) << '.' << std::setfill('0') << std::setw(6) << us.count() << ' '
     << objectId << ' '
     << logMessageChar(code) << std::setw(4) << logMessageNumber(code) << ": "
     << message
