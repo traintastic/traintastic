@@ -229,14 +229,22 @@ void Client::disconnect()
 
   m_session.reset();
 
-  if(m_socket.is_open())
-  {
-    boost::system::error_code ec;
-    m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-    if(ec && ec != boost::asio::error::not_connected)
-      Log::log(m_id, LogMessage::E1005_SOCKET_SHUTDOWN_FAILED_X, ec);
-    m_socket.close();
-  }
+  m_server.m_ioContext.post(
+    [this]()
+    {
+      if(m_socket.is_open())
+      {
+        boost::system::error_code ec;
+        m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+        if(ec && ec != boost::asio::error::not_connected)
+          Log::log(m_id, LogMessage::E1005_SOCKET_SHUTDOWN_FAILED_X, ec);
+        m_socket.close();
+      }
 
-  m_server.clientGone(shared_from_this());
+      EventLoop::call(
+        [this]()
+        {
+          m_server.clientGone(shared_from_this());
+        });
+    });
 }
