@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,7 @@
 #include <boost/asio.hpp>
 #include <boost/uuid/uuid.hpp>
 #include "../core/object.hpp"
+#include "../core/property.hpp"
 #include "../core/objectproperty.hpp"
 #include "../core/method.hpp"
 #include "settings.hpp"
@@ -70,6 +71,7 @@ class Traintastic final : public Object
     static std::shared_ptr<Traintastic> instance;
 
     ObjectProperty<Settings> settings;
+    Property<std::string> version;
     ObjectProperty<World> world;
     ObjectProperty<WorldList> worldList;
     Method<void()> newWorld;
