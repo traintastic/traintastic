@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,6 +47,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_dataDir{std::filesystem::absolute(dataDir)},
   m_signalSet(EventLoop::ioContext),
   settings{this, "settings", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
+  version{this, "version", TRAINTASTIC_VERSION_FULL, PropertyFlags::ReadOnly},
   world{this, "world", nullptr, PropertyFlags::ReadWrite,
     [this](const std::shared_ptr<World>& /*newWorld*/)
     {
@@ -127,6 +128,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_signalSet.async_wait(&Traintastic::signalHandler);
 
   m_interfaceItems.add(settings);
+  m_interfaceItems.add(version);
   m_interfaceItems.add(world);
   m_interfaceItems.add(worldList);
   m_interfaceItems.add(newWorld);
