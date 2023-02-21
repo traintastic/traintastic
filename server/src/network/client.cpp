@@ -49,14 +49,14 @@ Client::Client(Server& server, boost::asio::ip::tcp::socket socket)
 {
   assert(isEventLoopThread());
 
-  m_socket.set_option(boost::asio::socket_base::linger(true, 0));
-  m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
-
   Log::log(m_id, LogMessage::I1003_CLIENT_CONNECTED);
 
   m_server.m_ioContext.post(
     [this]()
     {
+      m_socket.set_option(boost::asio::socket_base::linger(true, 0));
+      m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
+
       doReadHeader();
     });
 }
