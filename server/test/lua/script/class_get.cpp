@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@ TEST_CASE("Lua script: class.get() - nil", "[lua][lua-script][lua-script-class-g
 {
   auto world = World::create();
   REQUIRE(world);
-  auto script = world->luaScripts->add();
+  auto script = world->luaScripts->create();
   REQUIRE(script);
 
   script->code = "assert(class.get(nil) == nil)";
@@ -46,7 +46,7 @@ TEST_CASE("Lua script: class.get() - false", "[lua][lua-script][lua-script-class
 {
   auto world = World::create();
   REQUIRE(world);
-  auto script = world->luaScripts->add();
+  auto script = world->luaScripts->create();
   REQUIRE(script);
 
   script->code = "assert(class.get(false) == nil)";
@@ -60,7 +60,7 @@ TEST_CASE("Lua script: class.get() - true", "[lua][lua-script][lua-script-class-
 {
   auto world = World::create();
   REQUIRE(world);
-  auto script = world->luaScripts->add();
+  auto script = world->luaScripts->create();
   REQUIRE(script);
 
   script->code = "assert(class.get(true) == nil)";
@@ -74,7 +74,7 @@ TEST_CASE("Lua script: class.get() - integer", "[lua][lua-script][lua-script-cla
 {
   auto world = World::create();
   REQUIRE(world);
-  auto script = world->luaScripts->add();
+  auto script = world->luaScripts->create();
   REQUIRE(script);
 
   script->code = "assert(class.get(42) == nil)";
@@ -88,7 +88,7 @@ TEST_CASE("Lua script: class.get() - number", "[lua][lua-script][lua-script-clas
 {
   auto world = World::create();
   REQUIRE(world);
-  auto script = world->luaScripts->add();
+  auto script = world->luaScripts->create();
   REQUIRE(script);
 
   script->code = "assert(class.get(3.14) == nil)";
@@ -102,7 +102,7 @@ TEST_CASE("Lua script: class.get() - string", "[lua][lua-script][lua-script-clas
 {
   auto world = World::create();
   REQUIRE(world);
-  auto script = world->luaScripts->add();
+  auto script = world->luaScripts->create();
   REQUIRE(script);
 
   script->code = "assert(class.get(\"traintastic\") == nil)";
@@ -116,7 +116,7 @@ TEST_CASE("Lua script: class.get() - table", "[lua][lua-script][lua-script-class
 {
   auto world = World::create();
   REQUIRE(world);
-  auto script = world->luaScripts->add();
+  auto script = world->luaScripts->create();
   REQUIRE(script);
 
   script->code = "assert(class.get({}) == nil)";
@@ -130,7 +130,7 @@ TEMPLATE_TEST_CASE("Lua script: class.get()", "[lua][lua-script][lua-script-clas
 {
   auto world = World::create();
   REQUIRE(world);
-  auto script = world->luaScripts->add();
+  auto script = world->luaScripts->create();
   REQUIRE(script);
 
   script->code = std::string("assert(class.get(enum.").append(EnumName<TestType>::value).append(".").append(toUpper(EnumValues<TestType>::value.begin()->second)).append(") == nil)");
@@ -146,7 +146,7 @@ TEMPLATE_TEST_CASE("Lua script: class.get()", "[lua][lua-script][lua-script-clas
 {
   auto world = World::create();
   REQUIRE(world);
-  auto script = world->luaScripts->add();
+  auto script = world->luaScripts->create();
   REQUIRE(script);
 
   script->code = std::string("assert(class.get(set.").append(set_name_v<TestType>).append(".").append(toUpper(set_values_v<TestType>.begin()->second)).append(") == nil)");
@@ -162,11 +162,11 @@ TEMPLATE_TEST_CASE("Lua script: class.get()", "[lua][lua-script][lua-script-clas
 {
   auto world = World::create();
   REQUIRE(world);
-  auto interface = world->interfaces->add(TestType::classId);
+  auto interface = world->interfaces->create(TestType::classId);
   REQUIRE(interface);
   interface->id = "if";
   REQUIRE(interface->id.value() == "if");
-  auto script = world->luaScripts->add();
+  auto script = world->luaScripts->create();
   REQUIRE(script);
 
   script->code = "assert(class.get(world.get_object(\"if\")) ~= nil)";

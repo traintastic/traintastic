@@ -36,19 +36,19 @@ TEMPLATE_TEST_CASE("Assign decoder to another interface", "[interface]", INTERFA
   REQUIRE(worldWeak.lock()->interfaces->length == 0);
   REQUIRE(worldWeak.lock()->decoders->length == 0);
 
-  std::weak_ptr<TestType> interfaceWeak1 = std::dynamic_pointer_cast<TestType>(world->interfaces->add(TestType::classId));
+  std::weak_ptr<TestType> interfaceWeak1 = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
   REQUIRE_FALSE(interfaceWeak1.expired());
   REQUIRE(worldWeak.lock()->interfaces->length == 1);
   REQUIRE(worldWeak.lock()->decoders->length == 0);
   REQUIRE(interfaceWeak1.lock()->decoders->length == 0);
 
-  std::weak_ptr<TestType> interfaceWeak2 = std::dynamic_pointer_cast<TestType>(world->interfaces->add(TestType::classId));
+  std::weak_ptr<TestType> interfaceWeak2 = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
   REQUIRE_FALSE(interfaceWeak2.expired());
   REQUIRE(worldWeak.lock()->interfaces->length == 2);
   REQUIRE(worldWeak.lock()->decoders->length == 0);
   REQUIRE(interfaceWeak2.lock()->decoders->length == 0);
 
-  std::weak_ptr<Decoder> decoderWeak = interfaceWeak1.lock()->decoders->add();
+  std::weak_ptr<Decoder> decoderWeak = interfaceWeak1.lock()->decoders->create();
   REQUIRE_FALSE(decoderWeak.expired());
   REQUIRE(decoderWeak.lock()->interface.value() == std::dynamic_pointer_cast<DecoderController>(interfaceWeak1.lock()));
   REQUIRE(worldWeak.lock()->interfaces->length == 2);
@@ -79,19 +79,19 @@ TEMPLATE_TEST_CASE("Assign input to another interface", "[interface]", INTERFACE
   REQUIRE(worldWeak.lock()->interfaces->length == 0);
   REQUIRE(worldWeak.lock()->inputs->length == 0);
 
-  std::weak_ptr<TestType> interfaceWeak1 = std::dynamic_pointer_cast<TestType>(world->interfaces->add(TestType::classId));
+  std::weak_ptr<TestType> interfaceWeak1 = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
   REQUIRE_FALSE(interfaceWeak1.expired());
   REQUIRE(worldWeak.lock()->interfaces->length == 1);
   REQUIRE(worldWeak.lock()->inputs->length == 0);
   REQUIRE(interfaceWeak1.lock()->inputs->length == 0);
 
-  std::weak_ptr<TestType> interfaceWeak2 = std::dynamic_pointer_cast<TestType>(world->interfaces->add(TestType::classId));
+  std::weak_ptr<TestType> interfaceWeak2 = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
   REQUIRE_FALSE(interfaceWeak2.expired());
   REQUIRE(worldWeak.lock()->interfaces->length == 2);
   REQUIRE(worldWeak.lock()->inputs->length == 0);
   REQUIRE(interfaceWeak2.lock()->inputs->length == 0);
 
-  std::weak_ptr<Input> inputWeak = interfaceWeak1.lock()->inputs->add();
+  std::weak_ptr<Input> inputWeak = interfaceWeak1.lock()->inputs->create();
   REQUIRE_FALSE(inputWeak.expired());
   REQUIRE(inputWeak.lock()->interface.value() == std::dynamic_pointer_cast<InputController>(interfaceWeak1.lock()));
   REQUIRE(worldWeak.lock()->interfaces->length == 2);
@@ -122,19 +122,19 @@ TEMPLATE_TEST_CASE("Assign output to another interface", "[interface]", INTERFAC
   REQUIRE(worldWeak.lock()->interfaces->length == 0);
   REQUIRE(worldWeak.lock()->outputs->length == 0);
 
-  std::weak_ptr<TestType> interfaceWeak1 = std::dynamic_pointer_cast<TestType>(world->interfaces->add(TestType::classId));
+  std::weak_ptr<TestType> interfaceWeak1 = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
   REQUIRE_FALSE(interfaceWeak1.expired());
   REQUIRE(worldWeak.lock()->interfaces->length == 1);
   REQUIRE(worldWeak.lock()->outputs->length == 0);
   REQUIRE(interfaceWeak1.lock()->outputs->length == 0);
 
-  std::weak_ptr<TestType> interfaceWeak2 = std::dynamic_pointer_cast<TestType>(world->interfaces->add(TestType::classId));
+  std::weak_ptr<TestType> interfaceWeak2 = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
   REQUIRE_FALSE(interfaceWeak2.expired());
   REQUIRE(worldWeak.lock()->interfaces->length == 2);
   REQUIRE(worldWeak.lock()->outputs->length == 0);
   REQUIRE(interfaceWeak2.lock()->outputs->length == 0);
 
-  std::weak_ptr<Output> outputWeak = interfaceWeak1.lock()->outputs->add();
+  std::weak_ptr<Output> outputWeak = interfaceWeak1.lock()->outputs->create();
   REQUIRE_FALSE(outputWeak.expired());
   REQUIRE(outputWeak.lock()->interface.value() == std::dynamic_pointer_cast<OutputController>(interfaceWeak1.lock()));
   REQUIRE(worldWeak.lock()->interfaces->length == 2);
@@ -167,19 +167,19 @@ TEMPLATE_TEST_CASE("Assign identification to another interface", "[interface]", 
   REQUIRE(worldWeak.lock()->interfaces->length == 0);
   REQUIRE(worldWeak.lock()->identifications->length == 0);
 
-  std::weak_ptr<TestType> interfaceWeak1 = std::dynamic_pointer_cast<TestType>(world->interfaces->add(TestType::classId));
+  std::weak_ptr<TestType> interfaceWeak1 = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
   REQUIRE_FALSE(interfaceWeak1.expired());
   REQUIRE(worldWeak.lock()->interfaces->length == 1);
   REQUIRE(worldWeak.lock()->identifications->length == 0);
   REQUIRE(interfaceWeak1.lock()->identifications->length == 0);
 
-  std::weak_ptr<TestType> interfaceWeak2 = std::dynamic_pointer_cast<TestType>(world->interfaces->add(TestType::classId));
+  std::weak_ptr<TestType> interfaceWeak2 = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
   REQUIRE_FALSE(interfaceWeak2.expired());
   REQUIRE(worldWeak.lock()->interfaces->length == 2);
   REQUIRE(worldWeak.lock()->identifications->length == 0);
   REQUIRE(interfaceWeak2.lock()->identifications->length == 0);
 
-  std::weak_ptr<Identification> identificationWeak = interfaceWeak1.lock()->identifications->add();
+  std::weak_ptr<Identification> identificationWeak = interfaceWeak1.lock()->identifications->create();
   REQUIRE_FALSE(identificationWeak.expired());
   REQUIRE(identificationWeak.lock()->interface.value() == std::dynamic_pointer_cast<IdentificationController>(interfaceWeak1.lock()));
   REQUIRE(worldWeak.lock()->interfaces->length == 2);

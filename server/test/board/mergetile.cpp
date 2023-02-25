@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,7 +32,7 @@ TEST_CASE("Board: Merge tile, brigde 90", "[board][board-merge]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
-  auto board = world->boards->add();
+  auto board = world->boards->create();
   std::weak_ptr<Board> boardWeak = board;
 
   int16_t x = 0;
@@ -64,7 +64,7 @@ TEST_CASE("Board: Merge tile, brigde 45 left", "[board][board-merge]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
-  auto board = world->boards->add();
+  auto board = world->boards->create();
   std::weak_ptr<Board> boardWeak = board;
 
   int16_t x = 0;
@@ -96,7 +96,7 @@ TEST_CASE("Board: Merge tile, brigde 45 right", "[board][board-merge]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
-  auto board = world->boards->add();
+  auto board = world->boards->create();
   std::weak_ptr<Board> boardWeak = board;
 
   int16_t x = 0;

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@ TEST_CASE("Board: Move non existing tile", "[board][board-move]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
-  auto board = world->boards->add();
+  auto board = world->boards->create();
   std::weak_ptr<Board> boardWeak = board;
 
   REQUIRE_FALSE(board->getTile({0, 0}));
@@ -49,7 +49,7 @@ TEST_CASE("Board: Move 1x1 tile to empty location", "[board][board-move]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
-  auto board = world->boards->add();
+  auto board = world->boards->create();
   std::weak_ptr<Board> boardWeak = board;
 
   // add tile at 0,0
@@ -82,7 +82,7 @@ TEST_CASE("Board: Move 1x1 tile to occupied location", "[board][board-move]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
-  auto board = world->boards->add();
+  auto board = world->boards->create();
   std::weak_ptr<Board> boardWeak = board;
 
   // add tile at 0,0
@@ -124,7 +124,7 @@ TEST_CASE("Board: Move 1x1 tile to invalid location", "[board][board-move]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
-  auto board = world->boards->add();
+  auto board = world->boards->create();
   std::weak_ptr<Board> boardWeak = board;
 
   // add tile at 0,0
@@ -175,7 +175,7 @@ TEST_CASE("Board: Move 5x1 tile to occupied location", "[board][board-move]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
-  auto board = world->boards->add();
+  auto board = world->boards->create();
   std::weak_ptr<Board> boardWeak = board;
 
   // add tile at 0,0
@@ -245,7 +245,7 @@ TEST_CASE("Board: Move 5x1 tile replace itself partly", "[board][board-move]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
-  auto board = world->boards->add();
+  auto board = world->boards->create();
   std::weak_ptr<Board> boardWeak = board;
 
   // add tile at 0,0
@@ -284,7 +284,7 @@ TEST_CASE("Board: Move and rotate 5x1 tile replace itself partly", "[board][boar
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
-  auto board = world->boards->add();
+  auto board = world->boards->create();
   std::weak_ptr<Board> boardWeak = board;
 
   // add tile at 0,0

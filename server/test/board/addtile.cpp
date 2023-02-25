@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,7 +53,7 @@ TEST_CASE("Board: Add non existing tile", "[board][board-add]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
-  auto board = world->boards->add();
+  auto board = world->boards->create();
   std::weak_ptr<Board> boardWeak = board;
 
   REQUIRE_FALSE(board->addTile(0, 0, TileRotate::Deg0, "board_tile.i_n_v_a_l_i_d", false));
@@ -93,7 +93,7 @@ TEMPLATE_TEST_CASE("Board: Add tile", "[board][board-add]"
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
-  auto board = world->boards->add();
+  auto board = world->boards->create();
   std::weak_ptr<Board> boardWeak = board;
 
   REQUIRE(board->addTile(0, 0, TileRotate::Deg0, TestType::classId, false));
