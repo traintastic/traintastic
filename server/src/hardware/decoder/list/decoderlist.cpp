@@ -30,7 +30,7 @@
 DecoderList::DecoderList(Object& _parent, std::string_view parentPropertyName, DecoderListColumn _columns) :
   ObjectList<Decoder>(_parent, parentPropertyName),
   columns{_columns},
-  add{*this, "add",
+  create{*this, "create",
     [this]()
     {
       auto& world = getWorld(parent());
@@ -42,17 +42,17 @@ DecoderList::DecoderList(Object& _parent, std::string_view parentPropertyName, D
       }
       return decoder;
     }}
-  , remove{*this, "remove", std::bind(&DecoderList::removeMethodHandler, this, std::placeholders::_1)}
+  , delete_{*this, "delete", std::bind(&DecoderList::deleteMethodHandler, this, std::placeholders::_1)}
 {
   const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
-  Attributes::addDisplayName(add, DisplayName::List::add);
-  Attributes::addEnabled(add, editable);
-  m_interfaceItems.add(add);
+  Attributes::addDisplayName(create, DisplayName::List::create);
+  Attributes::addEnabled(create, editable);
+  m_interfaceItems.add(create);
 
-  Attributes::addDisplayName(remove, DisplayName::List::remove);
-  Attributes::addEnabled(remove, editable);
-  m_interfaceItems.add(remove);
+  Attributes::addDisplayName(delete_, DisplayName::List::remove);
+  Attributes::addEnabled(delete_, editable);
+  m_interfaceItems.add(delete_);
 }
 
 TableModelPtr DecoderList::getModel()
@@ -93,8 +93,8 @@ void DecoderList::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  Attributes::setEnabled(add, editable);
-  Attributes::setEnabled(remove, editable);
+  Attributes::setEnabled(create, editable);
+  Attributes::setEnabled(delete_, editable);
 }
 
 bool DecoderList::isListedProperty(std::string_view name)

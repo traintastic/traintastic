@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,8 +40,8 @@ class OutputList : public ObjectList<Output>
   public:
     const OutputListColumn columns;
 
-    Method<std::shared_ptr<Output>()> add;
-    Method<void(const std::shared_ptr<Output>&)> remove;
+    Method<std::shared_ptr<Output>()> create;
+    Method<void(const std::shared_ptr<Output>&)> delete_;
     Method<std::shared_ptr<OutputKeyboard>()> outputKeyboard;
     Method<std::shared_ptr<OutputKeyboard>(uint32_t)> outputKeyboardChannel;
 

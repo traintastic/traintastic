@@ -74,6 +74,8 @@ namespace DisplayName
   namespace List
   {
     constexpr std::string_view add = "list:add";
+    constexpr std::string_view create = "list:create";
+    constexpr std::string_view delete_ = "list:delete";
     constexpr std::string_view moveUp = "list:move_up";
     constexpr std::string_view moveDown = "list:move_down";
     constexpr std::string_view remove = "list:remove";

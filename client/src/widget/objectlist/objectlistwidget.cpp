@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,8 +52,8 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
   m_requestIdOutputKeyboard{Connection::invalidRequestId},
   m_object{object},
   m_toolbar{new QToolBar()},
-  m_buttonAdd{nullptr},
-  m_actionAdd{nullptr},
+  m_buttonCreate{nullptr},
+  m_actionCreate{nullptr},
   m_actionEdit{nullptr},
   m_actionDelete{nullptr},
   m_actionInputMonitor{nullptr},
@@ -95,12 +95,12 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
         static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(errorCodeToText(ec)));
     });
 
-  if(Method* method = m_object->getMethod("add");
+  if(Method* method = m_object->getMethod("create");
      method && method->resultType() == ValueType::Object)
   {
-    if(method->argumentTypes().size() == 0) // Add method witout argument
+    if(method->argumentTypes().size() == 0) // Create method witout argument
     {
-      m_actionAdd = m_toolbar->addAction(Theme::getIcon("add"), method->displayName(),
+      m_actionCreate = m_toolbar->addAction(Theme::getIcon("add"), method->displayName(),
         [this, method]()
         {
           if(m_requestIdAdd != Connection::invalidRequestId)
@@ -117,22 +117,22 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
               // TODO: show error
             });
         });
-      m_actionAdd->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
+      m_actionCreate->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
       connect(method, &Method::attributeChanged, this,
         [this](AttributeName name, QVariant value)
         {
           if(name == AttributeName::Enabled)
-            m_actionAdd->setEnabled(value.toBool());
+            m_actionCreate->setEnabled(value.toBool());
         });
     }
     else if(method->argumentTypes().size() == 1 && method->argumentTypes()[0] == ValueType::String)
     {
-      m_buttonAdd = new QToolButton(m_toolbar);
-      m_buttonAdd->setIcon(Theme::getIcon("add"));
-      m_buttonAdd->setText(method->displayName());
-      m_buttonAdd->setPopupMode(QToolButton::InstantPopup);
+      m_buttonCreate = new QToolButton(m_toolbar);
+      m_buttonCreate->setIcon(Theme::getIcon("add"));
+      m_buttonCreate->setText(method->displayName());
+      m_buttonCreate->setPopupMode(QToolButton::InstantPopup);
 
-      QMenu* menu = new QMenu(m_buttonAdd);
+      QMenu* menu = new QMenu(m_buttonCreate);
 
       QStringList classList = method->getAttribute(AttributeName::ClassList, QVariant()).toStringList();
       for(const QString& classId : classList)
@@ -158,16 +158,16 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
           });
       }
 
-      m_buttonAdd->setMenu(menu);
+      m_buttonCreate->setMenu(menu);
 
-      m_toolbar->addWidget(m_buttonAdd);
+      m_toolbar->addWidget(m_buttonCreate);
 
-      m_buttonAdd->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
+      m_buttonCreate->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
       connect(method, &Method::attributeChanged, this,
         [this](AttributeName name, QVariant value)
         {
           if(name == AttributeName::Enabled)
-            m_buttonAdd->setEnabled(value.toBool());
+            m_buttonCreate->setEnabled(value.toBool());
         });
     }
     else
@@ -182,7 +182,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
     });
   m_actionEdit->setEnabled(false);
 
-  if(Method* method = m_object->getMethod("remove"))
+  if(Method* method = m_object->getMethod("delete"))
   {
     m_actionDelete = new MethodAction(Theme::getIcon("delete"), *method,
       [this]()

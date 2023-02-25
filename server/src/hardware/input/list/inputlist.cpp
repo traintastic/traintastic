@@ -30,7 +30,7 @@
 InputList::InputList(Object& _parent, std::string_view parentPropertyName, InputListColumn _columns)
   : ObjectList<Input>(_parent, parentPropertyName)
   , columns{_columns}
-  , add{*this, "add",
+  , create{*this, "create",
       [this]()
       {
         auto& world = getWorld(parent());
@@ -39,7 +39,7 @@ InputList::InputList(Object& _parent, std::string_view parentPropertyName, Input
           input->interface = controller;
         return input;
       }}
-  , remove{*this, "remove", std::bind(&InputList::removeMethodHandler, this, std::placeholders::_1)}
+  , delete_{*this, "delete", std::bind(&InputList::deleteMethodHandler, this, std::placeholders::_1)}
   , inputMonitor{*this, "input_monitor",
       [this]()
       {
@@ -57,13 +57,13 @@ InputList::InputList(Object& _parent, std::string_view parentPropertyName, Input
 {
   const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
-  Attributes::addDisplayName(add, DisplayName::List::add);
-  Attributes::addEnabled(add, editable);
-  m_interfaceItems.add(add);
+  Attributes::addDisplayName(create, DisplayName::List::create);
+  Attributes::addEnabled(create, editable);
+  m_interfaceItems.add(create);
 
-  Attributes::addDisplayName(remove, DisplayName::List::remove);
-  Attributes::addEnabled(remove, editable);
-  m_interfaceItems.add(remove);
+  Attributes::addDisplayName(delete_, DisplayName::List::delete_);
+  Attributes::addEnabled(delete_, editable);
+  m_interfaceItems.add(delete_);
 
   if(auto* controller = dynamic_cast<InputController*>(&_parent))
   {
@@ -94,8 +94,8 @@ void InputList::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  Attributes::setEnabled(add, editable);
-  Attributes::setEnabled(remove, editable);
+  Attributes::setEnabled(create, editable);
+  Attributes::setEnabled(delete_, editable);
 }
 
 bool InputList::isListedProperty(std::string_view name)

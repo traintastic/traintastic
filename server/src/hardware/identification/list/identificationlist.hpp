@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,8 +40,8 @@ class IdentificationList : public ObjectList<Identification>
   public:
     const IdentificationListColumn columns;
 
-    Method<std::shared_ptr<Identification>()> add;
-    Method<void(const std::shared_ptr<Identification>&)> remove;
+    Method<std::shared_ptr<Identification>()> create;
+    Method<void(const std::shared_ptr<Identification>&)> delete_;
 
     IdentificationList(Object& _parent, std::string_view parentPropertyName, IdentificationListColumn _columns);
 

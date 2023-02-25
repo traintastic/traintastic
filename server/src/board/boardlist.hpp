@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,8 +36,8 @@ class BoardList : public ObjectList<Board>
   public:
     CLASS_ID("list.board")
 
-    Method<std::shared_ptr<Board>()> add;
-    Method<void(const std::shared_ptr<Board>&)> remove;
+    Method<std::shared_ptr<Board>()> create;
+    Method<void(const std::shared_ptr<Board>&)> delete_;
 
     BoardList(Object& _parent, std::string_view parentPropertyName);
 

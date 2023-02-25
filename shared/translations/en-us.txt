@@ -229,6 +229,8 @@ length_unit:mm=mm
 length_unit:yd=yd
 
 list:add=Add
+list:create=Create
+list:delete=Delete
 list:edit=Edit
 list:move_down=Move down
 list:move_up=Move up

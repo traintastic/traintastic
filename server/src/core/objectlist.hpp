@@ -45,7 +45,7 @@ class ObjectList : public AbstractObjectList
     std::unordered_map<Object*, boost::signals2::connection> m_propertyChanged;
     std::vector<ObjectListTableModel<T>*> m_models;
 
-    void removeMethodHandler(const std::shared_ptr<T>& object)
+    void deleteMethodHandler(const std::shared_ptr<T>& object)
     {
       if(containsObject(object))
       {

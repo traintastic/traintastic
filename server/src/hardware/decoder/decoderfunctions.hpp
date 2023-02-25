@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,8 +38,8 @@ class DecoderFunctions : public SubObject
     CLASS_ID("decoder_functions")
 
     ObjectVectorProperty<DecoderFunction> items;
-    Method<void()> add;
-    Method<void(const std::shared_ptr<DecoderFunction>&)> remove;
+    Method<void()> create;
+    Method<void(const std::shared_ptr<DecoderFunction>&)> delete_;
     Method<void(const std::shared_ptr<DecoderFunction>&)> moveUp;
     Method<void(const std::shared_ptr<DecoderFunction>&)> moveDown;
 

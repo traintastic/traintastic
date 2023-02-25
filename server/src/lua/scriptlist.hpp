@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,8 +38,8 @@ class ScriptList : public ObjectList<Script>
   public:
     CLASS_ID("lua.script_list")
 
-    ::Method<std::shared_ptr<Script>()> add;
-    ::Method<void(const std::shared_ptr<Script>&)> remove;
+    ::Method<std::shared_ptr<Script>()> create;
+    ::Method<void(const std::shared_ptr<Script>&)> delete_;
     ::Method<void()> startAll;
     ::Method<void()> stopAll;
 

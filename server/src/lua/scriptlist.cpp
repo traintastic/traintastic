@@ -30,13 +30,13 @@ namespace Lua {
 
 ScriptList::ScriptList(Object& _parent, std::string_view parentPropertyName) :
   ObjectList<Script>(_parent, parentPropertyName),
-  add{*this, "add",
+  create{*this, "create",
     [this]()
     {
       auto& world = getWorld(parent());
       return Script::create(world, world.getUniqueId("script"));
     }}
-  , remove{*this, "remove", std::bind(&ScriptList::removeMethodHandler, this, std::placeholders::_1)}
+  , delete_{*this, "delete", std::bind(&ScriptList::deleteMethodHandler, this, std::placeholders::_1)}
   , startAll{*this, "start_all",
       [this]()
       {
@@ -54,13 +54,13 @@ ScriptList::ScriptList(Object& _parent, std::string_view parentPropertyName) :
 {
   const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
-  Attributes::addDisplayName(add, DisplayName::List::add);
-  Attributes::addEnabled(add, editable);
-  m_interfaceItems.add(add);
+  Attributes::addDisplayName(create, DisplayName::List::create);
+  Attributes::addEnabled(create, editable);
+  m_interfaceItems.add(create);
 
-  Attributes::addDisplayName(remove, DisplayName::List::remove);
-  Attributes::addEnabled(remove, editable);
-  m_interfaceItems.add(remove);
+  Attributes::addDisplayName(delete_, DisplayName::List::delete_);
+  Attributes::addEnabled(delete_, editable);
+  m_interfaceItems.add(delete_);
 
   m_interfaceItems.add(startAll);
 
@@ -78,7 +78,8 @@ void ScriptList::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  Attributes::setEnabled(add, editable);
+  Attributes::setEnabled(create, editable);
+  Attributes::setEnabled(delete_, editable);
 }
 
 bool ScriptList::isListedProperty(std::string_view name)

@@ -48,10 +48,10 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 constexpr auto identificationListColumns = IdentificationListColumn::Id | IdentificationListColumn::Name | IdentificationListColumn::Interface /*| IdentificationListColumn::Channel*/ | IdentificationListColumn::Address;
 
 template<class T>
-inline static void removeAll(T& objectList)
+inline static void deleteAll(T& objectList)
 {
   while(!objectList.empty())
-    objectList.remove(objectList.front());
+    objectList.delete_(objectList.front());
 }
 
 std::shared_ptr<World> World::create()
@@ -329,15 +329,15 @@ World::World(Private /*unused*/) :
 
 World::~World()
 {
-  removeAll(*interfaces);
-  removeAll(*decoders);
-  removeAll(*inputs);
-  removeAll(*outputs);
-  removeAll(*identifications);
-  removeAll(*boards);
-  removeAll(*trains);
-  removeAll(*railVehicles);
-  removeAll(*luaScripts);
+  deleteAll(*interfaces);
+  deleteAll(*decoders);
+  deleteAll(*inputs);
+  deleteAll(*outputs);
+  deleteAll(*identifications);
+  deleteAll(*boards);
+  deleteAll(*trains);
+  deleteAll(*railVehicles);
+  deleteAll(*luaScripts);
 }
 
 std::string World::getUniqueId(std::string_view prefix) const
