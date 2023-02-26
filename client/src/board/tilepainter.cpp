@@ -486,6 +486,14 @@ void TilePainter::drawTurnout(TileId id, const QRectF& r, TileRotate rotate, Tur
       setTurnoutStatePen();
       switch(position)
       {
+        case TurnoutPosition::Left:
+          drawCurve45(turnoutStateRect(r), rotate);
+          break;
+
+        case TurnoutPosition::Right:
+          drawCurve45(turnoutStateRect(r), rotate + TileRotate::Deg180);
+          break;
+
         case TurnoutPosition::Crossed:
           drawStraight(turnoutStateRect(r), rotate);
           drawStraight(turnoutStateRect(r), rotate - TileRotate::Deg45);
@@ -494,6 +502,14 @@ void TilePainter::drawTurnout(TileId id, const QRectF& r, TileRotate rotate, Tur
         case TurnoutPosition::Diverged:
           drawCurve45(turnoutStateRect(r), rotate);
           drawCurve45(turnoutStateRect(r), rotate + TileRotate::Deg180);
+          break;
+
+        case TurnoutPosition::DoubleSlipStraightA:
+          drawStraight(turnoutStateRect(r), rotate);
+          break;
+
+        case TurnoutPosition::DoubleSlipStraightB:
+          drawStraight(turnoutStateRect(r), rotate - TileRotate::Deg45);
           break;
 
         default:

@@ -190,23 +190,41 @@ std::unique_ptr<const SignalPath::Item> SignalPath::findBlocks(const Node& node,
         {
           next.emplace(TurnoutPosition::Crossed, findBlocks(nextNode, nextNode.getLink(2), blocksAhead));
           next.emplace(TurnoutPosition::Diverged, findBlocks(nextNode, nextNode.getLink(1), blocksAhead));
+          if(turnout->tileId() == TileId::RailTurnoutDoubleSlip)
+          {
+            next.emplace(TurnoutPosition::DoubleSlipStraightA, findBlocks(nextNode, nextNode.getLink(2), blocksAhead));
+            next.emplace(TurnoutPosition::Left, findBlocks(nextNode, nextNode.getLink(1), blocksAhead));
+          }
         }
         else if(nextNode.getLink(1).get() == &link)
         {
           next.emplace(TurnoutPosition::Crossed, findBlocks(nextNode, nextNode.getLink(3), blocksAhead));
           next.emplace(TurnoutPosition::Diverged, findBlocks(nextNode, nextNode.getLink(0), blocksAhead));
+          if(turnout->tileId() == TileId::RailTurnoutDoubleSlip)
+          {
+            next.emplace(TurnoutPosition::DoubleSlipStraightB, findBlocks(nextNode, nextNode.getLink(3), blocksAhead));
+            next.emplace(TurnoutPosition::Left, findBlocks(nextNode, nextNode.getLink(0), blocksAhead));
+          }
         }
         else if(nextNode.getLink(2).get() == &link)
         {
           next.emplace(TurnoutPosition::Crossed, findBlocks(nextNode, nextNode.getLink(0), blocksAhead));
           if(turnout->tileId() == TileId::RailTurnoutDoubleSlip)
+          {
             next.emplace(TurnoutPosition::Diverged, findBlocks(nextNode, nextNode.getLink(3), blocksAhead));
+            next.emplace(TurnoutPosition::DoubleSlipStraightA, findBlocks(nextNode, nextNode.getLink(0), blocksAhead));
+            next.emplace(TurnoutPosition::Right, findBlocks(nextNode, nextNode.getLink(3), blocksAhead));
+          }
         }
         else if(nextNode.getLink(3).get() == &link)
         {
           next.emplace(TurnoutPosition::Crossed, findBlocks(nextNode, nextNode.getLink(1), blocksAhead));
           if(turnout->tileId() == TileId::RailTurnoutDoubleSlip)
+          {
             next.emplace(TurnoutPosition::Diverged, findBlocks(nextNode, nextNode.getLink(2), blocksAhead));
+            next.emplace(TurnoutPosition::DoubleSlipStraightB, findBlocks(nextNode, nextNode.getLink(1), blocksAhead));
+            next.emplace(TurnoutPosition::Right, findBlocks(nextNode, nextNode.getLink(2), blocksAhead));
+          }
         }
         else
         {
