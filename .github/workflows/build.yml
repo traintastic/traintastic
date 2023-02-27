@@ -506,37 +506,37 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: package-innosetup
-        path: ${{github.workspace}}/dist
+        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
     - name: Download artifacts 2/6
       uses: actions/download-artifact@v2
       with:
         name: traintastic-client-deb
-        path: ${{github.workspace}}/dist
+        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
     - name: Download artifacts 3/6
       uses: actions/download-artifact@v2
       with:
         name: traintastic-server-deb
-        path: ${{github.workspace}}/dist
+        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
     - name: Download artifacts 4/6
       uses: actions/download-artifact@v2
       with:
         name: traintastic-server-test-code-coverage
-        path: ${{github.workspace}}/dist/ccov
+        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}/ccov
 
     - name: Download artifacts 5/6
       uses: actions/download-artifact@v2
       with:
         name: traintastic-manual
-        path: ${{github.workspace}}/dist/manual
+        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}/manual
 
     - name: Download artifacts 6/6
       uses: actions/download-artifact@v2
       with:
         name: traintastic-data-deb
-        path: ${{github.workspace}}/dist
+        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
     - uses: easingthemes/ssh-deploy@v2.2.11
       env:
@@ -546,7 +546,7 @@ jobs:
           REMOTE_HOST: ${{secrets.REMOTE_HOST}}
           REMOTE_PORT: ${{secrets.REMOTE_PORT}}
           REMOTE_USER: ${{secrets.REMOTE_USER}}
-          TARGET: ${{secrets.REMOTE_TARGET}}/traintastic/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}/
+          TARGET: ${{secrets.REMOTE_TARGET}}/traintastic/
 
   update-readme-contributors:
     runs-on: ubuntu-latest
