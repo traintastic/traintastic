@@ -471,6 +471,14 @@ void TilePainter::drawTurnout(TileId id, const QRectF& r, TileRotate rotate, Tur
           drawCurve45(turnoutStateRect(r), rotate);
           break;
 
+        case TurnoutPosition::DoubleSlipStraightA:
+          drawStraight(turnoutStateRect(r), rotate);
+          break;
+
+        case TurnoutPosition::DoubleSlipStraightB:
+          drawStraight(turnoutStateRect(r), rotate - TileRotate::Deg45);
+          break;
+
         default:
           break;
       }
