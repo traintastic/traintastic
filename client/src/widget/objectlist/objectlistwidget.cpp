@@ -103,13 +103,13 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
       m_actionCreate = m_toolbar->addAction(Theme::getIcon("add"), method->displayName(),
         [this, method]()
         {
-          if(m_requestIdAdd != Connection::invalidRequestId)
-            m_object->connection()->cancelRequest(m_requestIdAdd);
+          if(m_requestIdCreate != Connection::invalidRequestId)
+            m_object->connection()->cancelRequest(m_requestIdCreate);
 
-          m_requestIdAdd = method->call(
+          m_requestIdCreate = method->call(
             [this](const ObjectPtr& addedObject, Message::ErrorCode /*ec*/)
             {
-              m_requestIdAdd = Connection::invalidRequestId;
+              m_requestIdCreate = Connection::invalidRequestId;
               if(addedObject)
               {
                 MainWindow::instance->showObject(addedObject);
@@ -142,13 +142,13 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
         connect(action, &QAction::triggered, this,
           [this, method, action]()
           {
-            if(m_requestIdAdd != Connection::invalidRequestId)
-              m_object->connection()->cancelRequest(m_requestIdAdd);
+            if(m_requestIdCreate != Connection::invalidRequestId)
+              m_object->connection()->cancelRequest(m_requestIdCreate);
 
-            m_requestIdAdd = method->call(action->data().toString(),
+            m_requestIdCreate = method->call(action->data().toString(),
               [this](const ObjectPtr& addedObject, Message::ErrorCode /*ec*/)
               {
-                m_requestIdAdd = Connection::invalidRequestId;
+                m_requestIdCreate = Connection::invalidRequestId;
                 if(addedObject)
                 {
                   MainWindow::instance->showObject(addedObject);

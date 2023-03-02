@@ -37,7 +37,7 @@ class ObjectListWidget : public QWidget
 
   private:
     int m_requestId;
-    int m_requestIdAdd;
+    int m_requestIdCreate;
     int m_requestIdInputMonitor;
     int m_requestIdOutputKeyboard;
     ObjectPtr m_object;
