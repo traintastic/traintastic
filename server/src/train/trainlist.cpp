@@ -37,30 +37,16 @@ TrainList::TrainList(Object& _parent, std::string_view parentPropertyName) :
     }}
   , delete_{*this, "delete", std::bind(&TrainList::deleteMethodHandler, this, std::placeholders::_1)}
 {
-  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
-
   Attributes::addDisplayName(create, DisplayName::List::create);
-  Attributes::addEnabled(create, editable);
   m_interfaceItems.add(create);
 
   Attributes::addDisplayName(delete_, DisplayName::List::delete_);
-  Attributes::addEnabled(delete_, editable);
   m_interfaceItems.add(delete_);
 }
 
 TableModelPtr TrainList::getModel()
 {
   return std::make_shared<TrainListTableModel>(*this);
-}
-
-void TrainList::worldEvent(WorldState state, WorldEvent event)
-{
-  ObjectList<Train>::worldEvent(state, event);
-
-  const bool editable = contains(state, WorldState::Edit);
-
-  Attributes::setEnabled(create, editable);
-  Attributes::setEnabled(delete_, editable);
 }
 
 bool TrainList::isListedProperty(std::string_view name)

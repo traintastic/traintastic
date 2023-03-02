@@ -30,7 +30,6 @@
 class TrainList : public ObjectList<Train>
 {
   protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
     bool isListedProperty(std::string_view name) final;
 
   public:
