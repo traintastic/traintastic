@@ -133,7 +133,6 @@ class ObjectList : public AbstractObjectList
 
     void addObject(std::shared_ptr<T> object)
     {
-      m_items.emplace_back(std::move(object));
       m_propertyChanged.emplace(object.get(), object->propertyChanged.connect(
         [this](BaseProperty& property)
         {
@@ -150,6 +149,7 @@ class ObjectList : public AbstractObjectList
               }
           }
         }));
+      m_items.emplace_back(std::move(object));
       rowCountChanged();
     }
 
