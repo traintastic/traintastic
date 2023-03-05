@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -63,7 +63,21 @@ void TableWidget::setTableModel(const TableModelPtr& model)
   for(int i = 0; i < m_model->columnCount(); i++)
     setColumnWidth(i, i < columnSizes.count() ? columnSizes[i].toInt() : defaultWidth);
 
-  connect(m_model.get(), &TableModel::modelReset, this, &TableWidget::updateRegion);
+  connect(m_model.get(), &TableModel::modelAboutToBeReset, this,
+    [this]()
+    {
+      m_selectedRow = -1;
+      if(const auto* sm = selectionModel())
+        if(auto rows = sm->selectedRows(); rows.size() == 1)
+          m_selectedRow = rows[0].row();
+    });
+  connect(m_model.get(), &TableModel::modelReset, this,
+    [this]()
+    {
+      updateRegion();
+      if(m_selectedRow != -1)
+        selectRow(m_selectedRow);
+    });
   connect(horizontalScrollBar(), &QScrollBar::rangeChanged, this, &TableWidget::updateRegion);
   connect(horizontalScrollBar(), &QScrollBar::valueChanged, this, &TableWidget::updateRegion);
   connect(verticalScrollBar(), &QScrollBar::rangeChanged, this, &TableWidget::updateRegion);
