@@ -68,11 +68,12 @@ class ObjectList : public AbstractObjectList
 
     void setItems(const std::vector<ObjectPtr>& items)
     {
+      m_propertyChanged.clear();
       m_items.clear();
       m_items.reserve(items.size());
       for(auto& item : items)
         if(std::shared_ptr<T> t = std::dynamic_pointer_cast<T>(item))
-          m_items.emplace_back(std::move(t));
+          addObject(std::move(t));
       rowCountChanged();
     }
 
@@ -130,9 +131,9 @@ class ObjectList : public AbstractObjectList
       return std::find(m_items.begin(), m_items.end(), object) != m_items.end();
     }
 
-    void addObject(const std::shared_ptr<T>& object)
+    void addObject(std::shared_ptr<T> object)
     {
-      m_items.push_back(object);
+      m_items.emplace_back(std::move(object));
       m_propertyChanged.emplace(object.get(), object->propertyChanged.connect(
         [this](BaseProperty& property)
         {
