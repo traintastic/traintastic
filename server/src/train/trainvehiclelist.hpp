@@ -1,9 +1,9 @@
 /**
- * server/src/vehicle/rail/railvehiclelisttablemodel.hpp
+ * server/src/train/trainvehiclelist.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023 Reinder Feenstra
+ * Copyright (C) 2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,29 +20,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_VEHICLE_RAIL_RAILVEHICLELISTTABLEMODEL_HPP
-#define TRAINTASTIC_SERVER_VEHICLE_RAIL_RAILVEHICLELISTTABLEMODEL_HPP
+#ifndef TRAINTASTIC_SERVER_TRAIN_TRAINVEHICLELIST_HPP
+#define TRAINTASTIC_SERVER_TRAIN_TRAINVEHICLELIST_HPP
 
-#include "../../core/objectlisttablemodel.hpp"
-#include "railvehicle.hpp"
+#include "../core/objectlist.hpp"
+#include "../vehicle/rail/railvehicle.hpp"
 
-class RailVehicleList;
-
-class RailVehicleListTableModel : public ObjectListTableModel<RailVehicle>
+class TrainVehicleList : public ObjectList<RailVehicle>
 {
-  friend class DecoderList;
-
   protected:
-    void propertyChanged(BaseProperty& property, uint32_t row) final;
+    bool isListedProperty(std::string_view name) final;
 
   public:
-    CLASS_ID("rail_vehicle_list_table_model")
+    CLASS_ID("list.train_vehicle")
 
-    static bool isListedProperty(std::string_view name);
+    Method<void(const std::shared_ptr<RailVehicle>&)> add;
+    Method<void(const std::shared_ptr<RailVehicle>&)> remove;
+    Method<void(uint32_t, uint32_t)> move;
+    Method<void()> reverse;
 
-    RailVehicleListTableModel(ObjectList<RailVehicle>& list);
+    TrainVehicleList(Train& train_, std::string_view parentPropertyName);
 
-    std::string getText(uint32_t column, uint32_t row) const final;
+    TableModelPtr getModel() final;
 };
 
 #endif

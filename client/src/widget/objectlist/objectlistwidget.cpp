@@ -35,6 +35,7 @@
 #include "../alertwidget.hpp"
 #include "../../theme/theme.hpp"
 #include "../../misc/methodaction.hpp"
+#include "../../dialog/objectselectlistdialog.hpp"
 
 
 #include "../../mainwindow.hpp"
@@ -174,6 +175,25 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
       Q_ASSERT(false); // unsupported method prototype
   }
 
+  if(Method* method = m_object->getMethod("add");
+     method &&
+     method->argumentTypes().size() == 1 &&  method->argumentTypes()[0] == ValueType::Object &&
+     method->resultType() == ValueType::Invalid)
+  {
+    m_actionAdd = m_toolbar->addAction(Theme::getIcon("add"), method->displayName(),
+      [this, method]()
+      {
+        std::make_unique<ObjectSelectListDialog>(*method, this)->exec();
+      });
+    m_actionAdd->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
+    connect(method, &Method::attributeChanged, this,
+      [this](AttributeName name, QVariant value)
+      {
+        if(name == AttributeName::Enabled)
+          m_actionAdd->setEnabled(value.toBool());
+      });
+  }
+
   m_actionEdit = m_toolbar->addAction(Theme::getIcon("edit"), Locale::tr("list:edit"),
     [this]()
     {
@@ -181,6 +201,18 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
         MainWindow::instance->showObject(id);
     });
   m_actionEdit->setEnabled(false);
+
+  if(Method* method = m_object->getMethod("remove"))
+  {
+    m_actionRemove = new MethodAction(Theme::getIcon("remove"), *method,
+      [this]()
+      {
+        for(const QString& id : getSelectedObjectIds())
+          callMethod(m_actionRemove->method(), nullptr, id);
+      });
+    m_actionRemove->setForceDisabled(true);
+    m_toolbar->addAction(m_actionRemove);
+  }
 
   if(Method* method = m_object->getMethod("delete"))
   {
@@ -192,6 +224,44 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
       });
     m_actionDelete->setForceDisabled(true);
     m_toolbar->addAction(m_actionDelete);
+  }
+
+  if(Method* move = m_object->getMethod("move"))
+  {
+    m_actionMoveUp = new QAction(Theme::getIcon("up"), Locale::tr("list:move_up"), this);
+    connect(m_actionMoveUp, &QAction::triggered, this,
+      [this, move]()
+      {
+        if(auto* model = m_tableWidget->selectionModel(); model && model->hasSelection())
+        {
+          if(const auto rows = model->selectedRows(); !rows.empty())
+          {
+            const int row = rows[0].row();
+            callMethod(*move, nullptr, row, row - 1);
+            m_tableWidget->selectRow(row - 1);
+          }
+        }
+      });
+
+    m_actionMoveDown = new QAction(Theme::getIcon("down"), Locale::tr("list:move_down"), this);
+    connect(m_actionMoveDown, &QAction::triggered, this,
+      [this, move]()
+      {
+        if(auto* model = m_tableWidget->selectionModel(); model && model->hasSelection())
+        {
+          if(const auto rows = model->selectedRows(); !rows.empty())
+          {
+            const int row = rows[0].row();
+            callMethod(*move, nullptr, row, row + 1);
+            m_tableWidget->selectRow(row + 1);
+          }
+        }
+      });
+  }
+
+  if(Method* method = m_object->getMethod("reverse"))
+  {
+    m_actionReverse = new MethodAction(Theme::getIcon("reverse"), *method);
   }
 
   if(Method* method = m_object->getMethod("input_monitor"))
@@ -299,6 +369,21 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
     }
   }
 
+  if(m_actionMoveUp || m_actionMoveDown)
+  {
+    m_toolbar->addSeparator();
+    if(m_actionMoveUp)
+      m_toolbar->addAction(m_actionMoveUp);
+    if(m_actionMoveDown)
+      m_toolbar->addAction(m_actionMoveDown);
+  }
+
+  if(m_actionReverse)
+  {
+    m_toolbar->addSeparator();
+    m_toolbar->addAction(m_actionReverse);
+  }
+
   if(m_actionInputMonitor || m_actionInputMonitorChannel || m_actionOutputKeyboard || m_actionOutputKeyboardChannel)
   {
     m_toolbar->addSeparator();
@@ -381,6 +466,16 @@ void ObjectListWidget::tableSelectionChanged(bool hasSelection)
 {
   if(m_actionEdit)
     m_actionEdit->setEnabled(hasSelection);
+  if(m_actionRemove)
+    m_actionRemove->setForceDisabled(!hasSelection);
   if(m_actionDelete)
     m_actionDelete->setForceDisabled(!hasSelection);
+  if(m_actionMoveUp || m_actionMoveDown)
+  {
+    const int selectedRow = m_tableWidget->selectionModel() && m_tableWidget->selectionModel()->selectedRows().length() == 1 ? m_tableWidget->selectionModel()->selectedRows()[0].row() : -1;
+    if(m_actionMoveUp)
+      m_actionMoveUp->setEnabled(hasSelection && selectedRow != 0);
+    if(m_actionMoveDown)
+      m_actionMoveDown->setEnabled(hasSelection && selectedRow != (m_tableWidget->model()->rowCount() - 1));
+  }
 }

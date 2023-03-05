@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,7 +38,7 @@ Train::Train(World& world, std::string_view _id) :
   vehicles{this, "vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
-  vehicles.setValueInternal(std::make_shared<RailVehicleList>(*this, vehicles.name()));
+  vehicles.setValueInternal(std::make_shared<TrainVehicleList>(*this, vehicles.name()));
 
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 

@@ -236,6 +236,8 @@ list:move_down=Move down
 list:move_up=Move up
 list:remove=Remove
 
+list.train_vehicle:reverse=Reverse
+
 lncv_programmer:description=Description
 lncv_programmer:lncv_programmer=LNCV programmer
 lncv_programmer:module=Module

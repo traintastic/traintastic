@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,7 +28,7 @@
 #include "../core/speedproperty.hpp"
 #include "../core/weightproperty.hpp"
 #include "../enum/direction.hpp"
-#include "../vehicle/rail/railvehiclelist.hpp"
+#include "trainvehiclelist.hpp"
 
 class Train : public IdObject
 {
@@ -48,7 +48,7 @@ class Train : public IdObject
     SpeedProperty speedMax;
     SpeedProperty throttleSpeed;
     WeightProperty weight;
-    ObjectProperty<RailVehicleList> vehicles;
+    ObjectProperty<TrainVehicleList> vehicles;
     Property<std::string> notes;
 
     Train(World& world, std::string_view _id);

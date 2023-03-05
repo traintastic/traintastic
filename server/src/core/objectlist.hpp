@@ -86,6 +86,14 @@ class ObjectList : public AbstractObjectList
         model->setRowCount(static_cast<uint32_t>(size));
     }
 
+    void rowsChanged(uint32_t first, uint32_t last)
+    {
+      for(auto& model : m_models)
+      {
+        model->rowsChanged(first, last);
+      }
+    }
+
   public:
     ObjectList(Object& _parent, std::string_view parentPropertyName) :
       AbstractObjectList{_parent, parentPropertyName}

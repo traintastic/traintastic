@@ -44,8 +44,13 @@ class ObjectListWidget : public QWidget
     QToolBar* m_toolbar;
     QToolButton* m_buttonCreate;
     QAction* m_actionCreate;
+    QAction* m_actionAdd = nullptr;
     QAction* m_actionEdit;
+    MethodAction* m_actionRemove = nullptr;
     MethodAction* m_actionDelete;
+    QAction* m_actionMoveUp = nullptr;
+    QAction* m_actionMoveDown = nullptr;
+    MethodAction* m_actionReverse = nullptr;
     MethodAction* m_actionInputMonitor;
     MethodAction* m_actionInputMonitorChannel;
     MethodAction* m_actionOutputKeyboard;

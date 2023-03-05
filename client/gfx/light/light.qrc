@@ -58,5 +58,6 @@
         <file>board_tile.rail.link.svg</file>
         <file>board_tile.rail.decoupler.svg</file>
         <file>clock.svg</file>
+        <file>reverse.svg</file>
     </qresource>
 </RCC>
