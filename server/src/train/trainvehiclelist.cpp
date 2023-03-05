@@ -35,12 +35,18 @@ TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropert
       [this](const std::shared_ptr<RailVehicle>& vehicle)
       {
         if(!containsObject(vehicle))
+        {
           addObject(vehicle);
+          train().updateLength();
+          train().updateWeight();
+        }
       }}
   , remove{*this, "remove",
       [this](const std::shared_ptr<RailVehicle>& vehicle)
       {
         removeObject(vehicle);
+        train().updateLength();
+        train().updateWeight();
       }}
   , move{*this, "move",
       [this](uint32_t from, uint32_t to)
@@ -90,4 +96,17 @@ TableModelPtr TrainVehicleList::getModel()
 bool TrainVehicleList::isListedProperty(std::string_view name)
 {
   return RailVehicleListTableModel::isListedProperty(name);
+}
+
+void TrainVehicleList::propertyChanged(BaseProperty& property)
+{
+  if(property.name() == "lob")
+    train().updateLength();
+  else if(property.name() == "total_weight")
+    train().updateWeight();
+}
+
+Train& TrainVehicleList::train()
+{
+  return static_cast<Train&>(parent());
 }

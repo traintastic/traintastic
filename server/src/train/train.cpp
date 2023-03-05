@@ -29,12 +29,26 @@
 Train::Train(World& world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
-  lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadOnly | PropertyFlags::Store},
+  lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  overrideLength{this, "override_length", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
+    [this](bool value)
+    {
+      Attributes::setEnabled(lob, value);
+      if(!value)
+        updateLength();
+    }},
   direction{this, "direction", Direction::Forward, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
   speed{*this, "speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
   speedMax{*this, "speed_max", 120, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::Store},
   throttleSpeed{*this, "throttle_speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
-  weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadOnly | PropertyFlags::Store},
+  weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  overrideWeight{this, "override_weight", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
+    [this](bool value)
+    {
+      Attributes::setEnabled(weight, value);
+      if(!value)
+        updateWeight();
+    }},
   vehicles{this, "vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
@@ -45,7 +59,9 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
+  Attributes::addEnabled(lob, overrideLength);
   m_interfaceItems.add(lob);
+  m_interfaceItems.add(overrideLength);
   Attributes::addValues(direction, DirectionValues);
   Attributes::addObjectEditor(direction, false);
   m_interfaceItems.add(direction);
@@ -55,7 +71,9 @@ Train::Train(World& world, std::string_view _id) :
   m_interfaceItems.add(speedMax);
   Attributes::addObjectEditor(throttleSpeed, false);
   m_interfaceItems.add(throttleSpeed);
+  Attributes::addEnabled(weight, overrideWeight);
   m_interfaceItems.add(weight);
+  m_interfaceItems.add(overrideWeight);
   m_interfaceItems.add(vehicles);
   Attributes::addDisplayName(notes, DisplayName::Object::notes);
   m_interfaceItems.add(notes);
@@ -73,6 +91,17 @@ void Train::destroying()
   IdObject::destroying();
 }
 
+void Train::loaded()
+{
+  IdObject::loaded();
+
+  Attributes::setEnabled(lob, overrideLength);
+  updateLength();
+
+  Attributes::setEnabled(weight, overrideWeight);
+  updateWeight();
+}
+
 void Train::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);
@@ -81,4 +110,26 @@ void Train::worldEvent(WorldState state, WorldEvent event)
 
   Attributes::setEnabled(name, editable);
   Attributes::setEnabled(speedMax, editable);
+}
+
+void Train::updateLength()
+{
+  if(overrideLength)
+    return;
+
+  double mm = 0;
+  for(const auto& vehicle : *vehicles)
+    mm += vehicle->lob.getValue(LengthUnit::MilliMeter);
+  lob.setValueInternal(convertUnit(mm, LengthUnit::MilliMeter, lob.unit()));
+}
+
+void Train::updateWeight()
+{
+  if(overrideWeight)
+    return;
+
+  double ton = 0;
+  for(const auto& vehicle : *vehicles)
+    ton += vehicle->totalWeight.getValue(WeightUnit::Ton);
+  weight.setValueInternal(convertUnit(ton, WeightUnit::Ton, weight.unit()));
 }

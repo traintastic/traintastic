@@ -28,8 +28,12 @@
 
 class TrainVehicleList : public ObjectList<RailVehicle>
 {
+  private:
+    inline Train& train();
+
   protected:
     bool isListedProperty(std::string_view name) final;
+    void propertyChanged(BaseProperty& property) final;
 
   public:
     CLASS_ID("list.train_vehicle")

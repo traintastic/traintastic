@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,6 +37,7 @@ class RailVehicle : public Vehicle
 
     void addToWorld() override;
     void destroying() override;
+    void loaded() override;
     void worldEvent(WorldState state, WorldEvent event) override;
 
     virtual double calcTotalWeight(WeightUnit unit) const;

@@ -32,9 +32,16 @@
 
 class Train : public IdObject
 {
+  friend class TrainVehicleList;
+
+  private:
+    void updateLength();
+    void updateWeight();
+
   protected:
     void addToWorld() override;
     void destroying() override;
+    void loaded() override;
     void worldEvent(WorldState state, WorldEvent event) override;
 
   public:
@@ -43,11 +50,13 @@ class Train : public IdObject
 
     Property<std::string> name;
     LengthProperty lob;
+    Property<bool> overrideLength;
     Property<Direction> direction;
     SpeedProperty speed;
     SpeedProperty speedMax;
     SpeedProperty throttleSpeed;
     WeightProperty weight;
+    Property<bool> overrideWeight;
     ObjectProperty<TrainVehicleList> vehicles;
     Property<std::string> notes;
 
