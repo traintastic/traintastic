@@ -79,6 +79,22 @@ class ObjectList : public AbstractObjectList
 
     virtual bool isListedProperty(std::string_view name) = 0;
 
+    virtual void propertyChanged(BaseProperty& property)
+    {
+      if(!m_models.empty() && isListedProperty(property.name()))
+      {
+        ObjectPtr obj = property.object().shared_from_this();
+        const uint32_t rows = static_cast<uint32_t>(m_items.size());
+        for(uint32_t row = 0; row < rows; row++)
+          if(m_items[row] == obj)
+          {
+            for(auto& model : m_models)
+              model->propertyChanged(property, row);
+            break;
+          }
+      }
+    }
+
     void rowCountChanged()
     {
       const auto size = m_items.size();
@@ -133,22 +149,7 @@ class ObjectList : public AbstractObjectList
 
     void addObject(std::shared_ptr<T> object)
     {
-      m_propertyChanged.emplace(object.get(), object->propertyChanged.connect(
-        [this](BaseProperty& property)
-        {
-          if(!m_models.empty() && isListedProperty(property.name()))
-          {
-            ObjectPtr obj = property.object().shared_from_this();
-            const uint32_t rows = static_cast<uint32_t>(m_items.size());
-            for(uint32_t row = 0; row < rows; row++)
-              if(m_items[row] == obj)
-              {
-                for(auto& model : m_models)
-                  model->propertyChanged(property, row);
-                break;
-              }
-          }
-        }));
+      m_propertyChanged.emplace(object.get(), object->propertyChanged.connect(std::bind(&ObjectList<T>::propertyChanged, this, std::placeholders::_1)));
       m_items.emplace_back(std::move(object));
       rowCountChanged();
     }
