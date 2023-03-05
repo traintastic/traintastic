@@ -26,12 +26,16 @@
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
+constexpr uint32_t columnLength = 2;
+constexpr uint32_t columnWeight = 3;
 
 bool TrainListTableModel::isListedProperty(std::string_view name)
 {
   return
     name == "id" ||
-    name == "name";
+    name == "name" ||
+    name == "lob" ||
+    name == "weight";
 }
 
 TrainListTableModel::TrainListTableModel(TrainList& list) :
@@ -40,6 +44,8 @@ TrainListTableModel::TrainListTableModel(TrainList& list) :
   setColumnHeaders({
     DisplayName::Object::id,
     DisplayName::Object::name,
+    "train:lob",
+    "train:weight"
     });
 }
 
@@ -57,6 +63,12 @@ std::string TrainListTableModel::getText(uint32_t column, uint32_t row) const
       case columnName:
         return train.name;
 
+      case columnLength:
+        return toString(train.lob);
+
+      case columnWeight:
+        return toString(train.weight);
+
       default:
         assert(false);
         break;
@@ -72,4 +84,8 @@ void TrainListTableModel::propertyChanged(BaseProperty& property, uint32_t row)
     changed(row, columnId);
   else if(property.name() == "name")
     changed(row, columnName);
+  else if(property.name() == "lob")
+    changed(row, columnLength);
+  else if(property.name() == "weight")
+    changed(row, columnWeight);
 }
