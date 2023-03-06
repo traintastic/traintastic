@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@
 #include "../../core/attributes.hpp"
 
 FreightCar::FreightCar(World& world, std::string_view _id)
-  : RailVehicle(world, _id)
+  : UnpoweredRailVehicle(world, _id)
   , cargoLoaded{*this, "cargo_loaded", 0, RatioUnit::Percent, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
     [this](double value, RatioUnit unit)
     {
@@ -66,14 +66,14 @@ double FreightCar::calcTotalWeight(WeightUnit unit) const
 
 void FreightCar::loaded()
 {
-  RailVehicle::loaded();
+  UnpoweredRailVehicle::loaded();
   updateCargoLoaded();
   Attributes::setMax(cargoWeight, cargoCapacity.value(), cargoCapacity.unit());
 }
 
 void FreightCar::worldEvent(WorldState state, WorldEvent event)
 {
-  RailVehicle::worldEvent(state, event);
+  UnpoweredRailVehicle::worldEvent(state, event);
 
   const bool editable = contains(state, WorldState::Edit);
 

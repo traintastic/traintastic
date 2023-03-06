@@ -1,9 +1,9 @@
 /**
- * server/src/vehicle/rail/locomotive.cpp
+ * server/src/vehicle/rail/poweredrailvehicle.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2023 Reinder Feenstra
+ * Copyright (C) 2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,9 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "locomotive.hpp"
+#ifndef TRAINTASTIC_SERVER_VEHICLE_RAIL_POWEREDRAILVEHICLE_HPP
+#define TRAINTASTIC_SERVER_VEHICLE_RAIL_POWEREDRAILVEHICLE_HPP
 
-Locomotive::Locomotive(World& world, std::string_view _id) :
-  PoweredRailVehicle(world, _id)
+#include "railvehicle.hpp"
+
+class PoweredRailVehicle : public RailVehicle
 {
-}
+  protected:
+    PoweredRailVehicle(World& world, std::string_view id_);
+};
+
+#endif
