@@ -593,10 +593,10 @@ turnout_position:left=Links
 turnout_position:right=Rechts
 turnout_position:straight=Rechtdoor
 
-#vehicle.rail.freight_car:cargo_capacity=Cargo capacity
-#vehicle.rail.freight_car:cargo_loaded=Cargo loaded
 vehicle.rail.freight_car:cargo_weight=Gewicht lading
 
+#vehicle.rail:cargo_capacity=Cargo capacity
+#vehicle.rail:cargo_loaded=Cargo loaded
 vehicle.rail:decoder=Decoder
 vehicle.rail:lob=LOB
 vehicle.rail:speed_max=Maximale snelheid

@@ -29,6 +29,7 @@
 #include "locomotive.hpp"
 #include "multipleunit.hpp"
 #include "freightcar.hpp"
+#include "tankwagon.hpp"
 
 struct RailVehicles
 {
@@ -37,7 +38,8 @@ struct RailVehicles
   static constexpr auto classList = makeArray(
     Locomotive::classId,
     MultipleUnit::classId,
-    FreightCar::classId
+    FreightCar::classId,
+    TankWagon::classId
   );
 
   static std::shared_ptr<RailVehicle> create(World& world, std::string_view classId, std::string_view id);

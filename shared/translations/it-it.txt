@@ -595,10 +595,10 @@ turnout_position:left=Sinistra
 turnout_position:right=Destra
 turnout_position:straight=Corretto tracciato
 
-vehicle.rail.freight_car:cargo_capacity=Capacità di carico
-vehicle.rail.freight_car:cargo_loaded=Carico presente
 vehicle.rail.freight_car:cargo_weight=Peso del carico
 
+vehicle.rail:cargo_capacity=Capacità di carico
+vehicle.rail:cargo_loaded=Carico presente
 vehicle.rail:decoder=Decoder
 vehicle.rail:lob=Lunghezza veicolo
 vehicle.rail:speed_max=Velocità massima

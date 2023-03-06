@@ -72,6 +72,8 @@ class_id:interface.xpressnet=XpressNet
 class_id:interface.z21=Z21
 class_id:vehicle.rail.freight_car=Freight car
 class_id:vehicle.rail.locomotive=Locomotive
+class_id:vehicle.rail.multiple_unit=Multiple unit
+class_id:vehicle.rail.tank_wagon=Tank wagon
 
 clock:day=Day
 clock:debug_log=Debug log
@@ -228,6 +230,8 @@ length_unit:m=m
 length_unit:mm=mm
 length_unit:yd=yd
 
+list.train_vehicle:reverse=Reverse
+
 list:add=Add
 list:create=Create
 list:delete=Delete
@@ -235,8 +239,6 @@ list:edit=Edit
 list:move_down=Move down
 list:move_up=Move up
 list:remove=Remove
-
-list.train_vehicle:reverse=Reverse
 
 lncv_programmer:description=Description
 lncv_programmer:lncv_programmer=LNCV programmer
@@ -600,10 +602,12 @@ turnout_position:left=Left
 turnout_position:right=Right
 turnout_position:straight=Straight
 
-vehicle.rail.freight_car:cargo_capacity=Cargo capacity
-vehicle.rail.freight_car:cargo_loaded=Cargo loaded
 vehicle.rail.freight_car:cargo_weight=Cargo weight
 
+vehicle.rail.tank_wagon:cargo_volume=Cargo volume
+
+vehicle.rail:cargo_capacity=Cargo capacity
+vehicle.rail:cargo_loaded=Cargo loaded
 vehicle.rail:decoder=Decoder
 vehicle.rail:lob=LOB
 vehicle.rail:speed_max=Maximum speed
