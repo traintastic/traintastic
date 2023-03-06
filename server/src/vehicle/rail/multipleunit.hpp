@@ -1,9 +1,9 @@
 /**
- * server/src/vehicle/rail/railvehicles.hpp
+ * server/src/vehicle/rail/multipleunit.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2023 Reinder Feenstra
+ * Copyright (C) 2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,27 +20,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_VEHICLE_RAIL_RAILVEHICLES_HPP
-#define TRAINTASTIC_SERVER_VEHICLE_RAIL_RAILVEHICLES_HPP
+#ifndef TRAINTASTIC_SERVER_VEHICLE_RAIL_MULTIPLEUNIT_HPP
+#define TRAINTASTIC_SERVER_VEHICLE_RAIL_MULTIPLEUNIT_HPP
 
-#include "railvehicle.hpp"
-#include "../../utils/makearray.hpp"
+#include "poweredrailvehicle.hpp"
 
-#include "locomotive.hpp"
-#include "multipleunit.hpp"
-#include "freightcar.hpp"
-
-struct RailVehicles
+class MultipleUnit : public PoweredRailVehicle
 {
-  static constexpr std::string_view classIdPrefix = "vehicle.rail.";
+  public:
+    CLASS_ID("vehicle.rail.multiple_unit")
+    CREATE(MultipleUnit)
 
-  static constexpr auto classList = makeArray(
-    Locomotive::classId,
-    MultipleUnit::classId,
-    FreightCar::classId
-  );
-
-  static std::shared_ptr<RailVehicle> create(World& world, std::string_view classId, std::string_view id);
+    MultipleUnit(World& world, std::string_view _id);
 };
 
 #endif
