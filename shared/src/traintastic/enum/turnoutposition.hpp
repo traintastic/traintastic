@@ -34,16 +34,20 @@ enum class TurnoutPosition : uint8_t
   Right = 3,
   Crossed = 4,
   Diverged = 5,
+  DoubleSlipStraightA = 6,
+  DoubleSlipStraightB = 7
 };
 
-TRAINTASTIC_ENUM(TurnoutPosition, "turnout_position", 6,
+TRAINTASTIC_ENUM(TurnoutPosition, "turnout_position", 8,
 {
   {TurnoutPosition::Unknown, "unknown"},
   {TurnoutPosition::Straight, "straight"},
   {TurnoutPosition::Left, "left"},
   {TurnoutPosition::Right, "right"},
   {TurnoutPosition::Crossed, "crossed"},
-  {TurnoutPosition::Diverged, "diverged"}
+  {TurnoutPosition::Diverged, "diverged"},
+  {TurnoutPosition::DoubleSlipStraightA, "double_slip_straight_a"},
+  {TurnoutPosition::DoubleSlipStraightB, "double_slip_straight_b"}
 });
 
 #endif
