@@ -23,6 +23,7 @@
 #include "freightcar.hpp"
 #include "../../world/world.hpp"
 #include "../../core/attributes.hpp"
+#include "../../utils/category.hpp"
 #include "../../utils/displayname.hpp"
 
 FreightCar::FreightCar(World& world, std::string_view _id)
@@ -50,13 +51,16 @@ FreightCar::FreightCar(World& world, std::string_view _id)
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
+  Attributes::addCategory(cargoLoaded, Category::cargo);
   Attributes::addDisplayName(cargoLoaded, DisplayName::Vehicle::Rail::cargoLoaded);
   Attributes::addMinMax(cargoLoaded, 0., 100., RatioUnit::Percent);
   m_interfaceItems.insertBefore(cargoLoaded, totalWeight);
 
+  Attributes::addCategory(cargoWeight, Category::cargo);
   Attributes::addMinMax(cargoWeight, 0., 0., WeightUnit::Ton);
   m_interfaceItems.insertBefore(cargoWeight, totalWeight);
 
+  Attributes::addCategory(cargoCapacity, Category::cargo);
   Attributes::addDisplayName(cargoCapacity, DisplayName::Vehicle::Rail::cargoCapacity);
   Attributes::addEnabled(cargoCapacity, editable);
   m_interfaceItems.insertBefore(cargoCapacity, totalWeight);

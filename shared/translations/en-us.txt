@@ -26,6 +26,7 @@ board_tile.rail.sensor:type=Type
 
 board_tile:output_map=Outputs
 
+category:cargo=Cargo
 category:developer=Developer
 category:general=General
 category:info=Info
