@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,6 +38,7 @@
 #include <traintastic/enum/loconetserialinterface.hpp>
 #include <traintastic/enum/opcmultisensedirection.hpp>
 #include <traintastic/enum/outputaction.hpp>
+#include <traintastic/enum/ratiounit.hpp>
 #include <traintastic/enum/sensortype.hpp>
 #include <traintastic/enum/serialflowcontrol.hpp>
 #include <traintastic/enum/signalaspect.hpp>
@@ -63,6 +64,7 @@ QVector<qint64> enumValues(const QString& enumName)
 {
   QVector<qint64> values;
   GET_ENUM_VALUES(LengthUnit)
+  GET_ENUM_VALUES(RatioUnit)
   GET_ENUM_VALUES(SpeedUnit)
   GET_ENUM_VALUES(WeightUnit)
   {} // fix final else
@@ -91,6 +93,7 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(LocoNetSerialInterface)
   TRANSLATE_ENUM(OPCMultiSenseDirection)
   TRANSLATE_ENUM(OutputAction)
+  TRANSLATE_ENUM(RatioUnit)
   TRANSLATE_ENUM(SensorType)
   TRANSLATE_ENUM(SerialFlowControl)
   TRANSLATE_ENUM(SignalAspect)
