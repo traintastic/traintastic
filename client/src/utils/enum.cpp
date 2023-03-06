@@ -45,6 +45,7 @@
 #include <traintastic/enum/speedunit.hpp>
 #include <traintastic/enum/traintasticdiyinterfacetype.hpp>
 #include <traintastic/enum/turnoutposition.hpp>
+#include <traintastic/enum/volumeunit.hpp>
 #include <traintastic/enum/weightunit.hpp>
 #include <traintastic/enum/worldscale.hpp>
 #include <traintastic/enum/xpressnetcommandstation.hpp>
@@ -66,6 +67,7 @@ QVector<qint64> enumValues(const QString& enumName)
   GET_ENUM_VALUES(LengthUnit)
   GET_ENUM_VALUES(RatioUnit)
   GET_ENUM_VALUES(SpeedUnit)
+  GET_ENUM_VALUES(VolumeUnit)
   GET_ENUM_VALUES(WeightUnit)
   {} // fix final else
   return values;
@@ -100,6 +102,7 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(SpeedUnit)
   TRANSLATE_ENUM(TraintasticDIYInterfaceType)
   TRANSLATE_ENUM(TurnoutPosition)
+  TRANSLATE_ENUM(VolumeUnit)
   TRANSLATE_ENUM(WeightUnit)
   TRANSLATE_ENUM(WorldScale)
   TRANSLATE_ENUM(XpressNetCommandStation)

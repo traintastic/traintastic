@@ -611,6 +611,11 @@ vehicle.rail:total_weight=Total weight
 vehicle.rail:train=Train
 vehicle.rail:weight=Weight
 
+volume_unit:gallon_uk=gal (UK)
+volume_unit:gallon_us=gal (US)
+volume_unit:l=l
+volume_unit:m3=m³
+
 weight_unit:kg=kg
 weight_unit:long_tons=Long tons
 weight_unit:short_tons=Short tons
