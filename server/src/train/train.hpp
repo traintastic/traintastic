@@ -37,6 +37,7 @@ class Train : public IdObject
   private:
     void updateLength();
     void updateWeight();
+    void updatePowered();
 
   protected:
     void addToWorld() override;
@@ -58,6 +59,7 @@ class Train : public IdObject
     WeightProperty weight;
     Property<bool> overrideWeight;
     ObjectProperty<TrainVehicleList> vehicles;
+    Property<bool> powered;
     Property<std::string> notes;
 
     Train(World& world, std::string_view _id);

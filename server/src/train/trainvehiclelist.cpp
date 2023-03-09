@@ -39,6 +39,7 @@ TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropert
           addObject(vehicle);
           train().updateLength();
           train().updateWeight();
+          train().updatePowered();
         }
       }}
   , remove{*this, "remove",
@@ -47,6 +48,7 @@ TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropert
         removeObject(vehicle);
         train().updateLength();
         train().updateWeight();
+        train().updatePowered();
       }}
   , move{*this, "move",
       [this](uint32_t from, uint32_t to)

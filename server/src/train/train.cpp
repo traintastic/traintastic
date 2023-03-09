@@ -24,6 +24,7 @@
 #include "../world/world.hpp"
 #include "trainlisttablemodel.hpp"
 #include "../core/attributes.hpp"
+#include "../vehicle/rail/poweredrailvehicle.hpp"
 #include "../utils/displayname.hpp"
 
 Train::Train(World& world, std::string_view _id) :
@@ -50,6 +51,7 @@ Train::Train(World& world, std::string_view _id) :
         updateWeight();
     }},
   vehicles{this, "vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
+  powered{this, "powered", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   vehicles.setValueInternal(std::make_shared<TrainVehicleList>(*this, vehicles.name()));
@@ -75,6 +77,8 @@ Train::Train(World& world, std::string_view _id) :
   m_interfaceItems.add(weight);
   m_interfaceItems.add(overrideWeight);
   m_interfaceItems.add(vehicles);
+  Attributes::addObjectEditor(powered, false);
+  m_interfaceItems.add(powered);
   Attributes::addDisplayName(notes, DisplayName::Object::notes);
   m_interfaceItems.add(notes);
 }
@@ -100,6 +104,8 @@ void Train::loaded()
 
   Attributes::setEnabled(weight, overrideWeight);
   updateWeight();
+
+  updatePowered();
 }
 
 void Train::worldEvent(WorldState state, WorldEvent event)
@@ -132,4 +138,12 @@ void Train::updateWeight()
   for(const auto& vehicle : *vehicles)
     ton += vehicle->totalWeight.getValue(WeightUnit::Ton);
   weight.setValueInternal(convertUnit(ton, WeightUnit::Ton, weight.unit()));
+}
+
+void Train::updatePowered()
+{
+  for(const auto& vehicle : *vehicles)
+    if(dynamic_cast<PoweredRailVehicle*>(vehicle.get()))
+      return powered.setValueInternal(true);
+  powered.setValueInternal(false);
 }
