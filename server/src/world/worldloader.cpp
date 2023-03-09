@@ -225,7 +225,10 @@ void WorldLoader::createObject(ObjectData& objectData)
     }
   }
   else if(startsWith(classId, RailVehicles::classIdPrefix))
+  {
+    if(classId == "vehicle.rail.freight_car") { classId = FreightWagon::classId; } //! \todo Remove in v0.4
     objectData.object = RailVehicles::create(*m_world, classId, id);
+  }
   else if(classId == Train::classId)
     objectData.object = Train::create(*m_world, id);
   else if(classId == Lua::Script::classId)

@@ -70,7 +70,7 @@ class_id:interface.withrottle=WiThrottle
 class_id:interface.wlanmaus=WLANmaus
 class_id:interface.xpressnet=XpressNet
 class_id:interface.z21=Z21
-class_id:vehicle.rail.freight_car=Carro merce
+class_id:vehicle.rail.freight_wagon=Carro merce
 class_id:vehicle.rail.locomotive=Locomotiva
 
 clock:day=Giorno
@@ -595,7 +595,7 @@ turnout_position:left=Sinistra
 turnout_position:right=Destra
 turnout_position:straight=Corretto tracciato
 
-vehicle.rail.freight_car:cargo_weight=Peso del carico
+vehicle.rail.freight_wagon:cargo_weight=Peso del carico
 
 vehicle.rail:cargo_capacity=Capacità di carico
 vehicle.rail:cargo_loaded=Carico presente

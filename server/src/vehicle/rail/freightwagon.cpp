@@ -1,5 +1,5 @@
 /**
- * server/src/vehicle/rail/freightcar.cpp
+ * server/src/vehicle/rail/freightwagon.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,13 +20,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "freightcar.hpp"
+#include "freightwagon.hpp"
 #include "../../world/world.hpp"
 #include "../../core/attributes.hpp"
 #include "../../utils/category.hpp"
 #include "../../utils/displayname.hpp"
 
-FreightCar::FreightCar(World& world, std::string_view _id)
+FreightWagon::FreightWagon(World& world, std::string_view _id)
   : UnpoweredRailVehicle(world, _id)
   , cargoLoaded{*this, "cargo_loaded", 0, RatioUnit::Percent, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
     [this](double value, RatioUnit unit)
@@ -66,19 +66,19 @@ FreightCar::FreightCar(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(cargoCapacity, totalWeight);
 }
 
-double FreightCar::calcTotalWeight(WeightUnit unit) const
+double FreightWagon::calcTotalWeight(WeightUnit unit) const
 {
   return RailVehicle::calcTotalWeight(unit) + cargoWeight.getValue(unit);
 }
 
-void FreightCar::loaded()
+void FreightWagon::loaded()
 {
   UnpoweredRailVehicle::loaded();
   updateCargoLoaded();
   Attributes::setMax(cargoWeight, cargoCapacity.value(), cargoCapacity.unit());
 }
 
-void FreightCar::worldEvent(WorldState state, WorldEvent event)
+void FreightWagon::worldEvent(WorldState state, WorldEvent event)
 {
   UnpoweredRailVehicle::worldEvent(state, event);
 
@@ -87,7 +87,7 @@ void FreightCar::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(cargoCapacity, editable);
 }
 
-void FreightCar::updateCargoLoaded()
+void FreightWagon::updateCargoLoaded()
 {
   const double capacity = cargoCapacity.getValue(WeightUnit::Ton);
   if(capacity > 0)

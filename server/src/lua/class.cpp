@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -85,7 +85,7 @@
 
 #include "../vehicle/rail/railvehiclelist.hpp"
 #include "../vehicle/rail/locomotive.hpp"
-#include "../vehicle/rail/freightcar.hpp"
+#include "../vehicle/rail/freightwagon.hpp"
 
 #include "../train/train.hpp"
 #include "../train/trainlist.hpp"
@@ -192,7 +192,7 @@ void Class::registerValues(lua_State* L)
 
   registerValue<RailVehicleList>(L, "RAIL_VEHICLE_LIST");
   registerValue<Locomotive>(L, "LOCOMOTIVE");
-  registerValue<FreightCar>(L, "FREIGHT_CAR");
+  registerValue<FreightWagon>(L, "FREIGHT_WAGON");
 
   registerValue<Train>(L, "TRAIN");
   registerValue<TrainList>(L, "TRAIN_LIST");

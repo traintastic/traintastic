@@ -1,5 +1,5 @@
 /**
- * server/src/vehicle/rail/freightcar.hpp
+ * server/src/vehicle/rail/freightwagon.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,13 +20,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_VEHICLE_RAIL_FREIGHTCAR_HPP
-#define TRAINTASTIC_SERVER_VEHICLE_RAIL_FREIGHTCAR_HPP
+#ifndef TRAINTASTIC_SERVER_VEHICLE_RAIL_FREIGHTWAGON_HPP
+#define TRAINTASTIC_SERVER_VEHICLE_RAIL_FREIGHTWAGON_HPP
 
 #include "unpoweredrailvehicle.hpp"
 #include "../../core/ratioproperty.hpp"
 
-class FreightCar : public UnpoweredRailVehicle
+class FreightWagon : public UnpoweredRailVehicle
 {
   private:
     void updateCargoLoaded();
@@ -38,14 +38,14 @@ class FreightCar : public UnpoweredRailVehicle
     double calcTotalWeight(WeightUnit unit) const override;
 
   public:
-    CLASS_ID("vehicle.rail.freight_car")
-    CREATE(FreightCar)
+    CLASS_ID("vehicle.rail.freight_wagon")
+    CREATE(FreightWagon)
 
     RatioProperty cargoLoaded;
     WeightProperty cargoWeight;
     WeightProperty cargoCapacity;
 
-    FreightCar(World& world, std::string_view _id);
+    FreightWagon(World& world, std::string_view _id);
 };
 
 #endif

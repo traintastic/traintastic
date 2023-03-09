@@ -29,8 +29,8 @@ std::shared_ptr<RailVehicle> RailVehicles::create(World& world, std::string_view
     return Locomotive::create(world, id);
   if(classId == MultipleUnit::classId)
     return MultipleUnit::create(world, id);
-  if(classId == FreightCar::classId)
-    return FreightCar::create(world, id);
+  if(classId == FreightWagon::classId)
+    return FreightWagon::create(world, id);
   if(classId == TankWagon::classId)
     return TankWagon::create(world, id);
   return std::shared_ptr<RailVehicle>();

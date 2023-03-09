@@ -28,7 +28,7 @@
 
 #include "locomotive.hpp"
 #include "multipleunit.hpp"
-#include "freightcar.hpp"
+#include "freightwagon.hpp"
 #include "tankwagon.hpp"
 
 struct RailVehicles
@@ -38,7 +38,7 @@ struct RailVehicles
   static constexpr auto classList = makeArray(
     Locomotive::classId,
     MultipleUnit::classId,
-    FreightCar::classId,
+    FreightWagon::classId,
     TankWagon::classId
   );
 
