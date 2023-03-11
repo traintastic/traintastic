@@ -35,9 +35,11 @@ class Train : public IdObject
   friend class TrainVehicleList;
 
   private:
+    void vehiclesChanged();
     void updateLength();
     void updateWeight();
     void updatePowered();
+    void updateSpeedMax();
 
   protected:
     void addToWorld() override;

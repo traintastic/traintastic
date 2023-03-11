@@ -27,6 +27,11 @@
 #include "../vehicle/rail/poweredrailvehicle.hpp"
 #include "../utils/displayname.hpp"
 
+static inline bool isPowered(const RailVehicle& vehicle)
+{
+  return dynamic_cast<const PoweredRailVehicle*>(&vehicle);
+}
+
 Train::Train(World& world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
@@ -40,7 +45,7 @@ Train::Train(World& world, std::string_view _id) :
     }},
   direction{this, "direction", Direction::Forward, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
   speed{*this, "speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
-  speedMax{*this, "speed_max", 120, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  speedMax{*this, "speed_max", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   throttleSpeed{*this, "throttle_speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store},
   overrideWeight{this, "override_weight", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
@@ -69,7 +74,6 @@ Train::Train(World& world, std::string_view _id) :
   m_interfaceItems.add(direction);
   Attributes::addObjectEditor(speed, false);
   m_interfaceItems.add(speed);
-  Attributes::addEnabled(speedMax, editable);
   m_interfaceItems.add(speedMax);
   Attributes::addObjectEditor(throttleSpeed, false);
   m_interfaceItems.add(throttleSpeed);
@@ -100,12 +104,9 @@ void Train::loaded()
   IdObject::loaded();
 
   Attributes::setEnabled(lob, overrideLength);
-  updateLength();
-
   Attributes::setEnabled(weight, overrideWeight);
-  updateWeight();
 
-  updatePowered();
+  vehiclesChanged();
 }
 
 void Train::worldEvent(WorldState state, WorldEvent event)
@@ -115,7 +116,14 @@ void Train::worldEvent(WorldState state, WorldEvent event)
   const bool editable = contains(state, WorldState::Edit);
 
   Attributes::setEnabled(name, editable);
-  Attributes::setEnabled(speedMax, editable);
+}
+
+void Train::vehiclesChanged()
+{
+  updateLength();
+  updateWeight();
+  updatePowered();
+  updateSpeedMax();
 }
 
 void Train::updateLength()
@@ -143,7 +151,26 @@ void Train::updateWeight()
 void Train::updatePowered()
 {
   for(const auto& vehicle : *vehicles)
-    if(dynamic_cast<PoweredRailVehicle*>(vehicle.get()))
+    if(isPowered(*vehicle))
       return powered.setValueInternal(true);
   powered.setValueInternal(false);
+}
+
+void Train::updateSpeedMax()
+{
+  if(!vehicles->empty() && powered)
+  {
+    const auto itEnd = vehicles->end();
+    auto it = vehicles->begin();
+    double kmph = (*it)->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+    for(; it != itEnd; ++it)
+    {
+      const double v = (*it)->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+      if((v > 0 || isPowered(**it)) && v < kmph)
+        kmph = v;
+    }
+    speedMax.setValueInternal(convertUnit(kmph, SpeedUnit::KiloMeterPerHour, speedMax.unit()));
+  }
+  else
+    speedMax.setValueInternal(0);
 }

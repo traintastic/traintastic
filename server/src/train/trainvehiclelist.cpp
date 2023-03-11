@@ -23,7 +23,6 @@
 #include "trainvehiclelist.hpp"
 #include "../vehicle/rail/railvehiclelisttablemodel.hpp"
 #include "train.hpp"
-//#include "../vehicle/rail/railvehicles.hpp"
 #include "../world/getworld.hpp"
 #include "../world/world.hpp"
 #include "../core/attributes.hpp"
@@ -37,18 +36,14 @@ TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropert
         if(!containsObject(vehicle))
         {
           addObject(vehicle);
-          train().updateLength();
-          train().updateWeight();
-          train().updatePowered();
+          train().vehiclesChanged();
         }
       }}
   , remove{*this, "remove",
       [this](const std::shared_ptr<RailVehicle>& vehicle)
       {
         removeObject(vehicle);
-        train().updateLength();
-        train().updateWeight();
-        train().updatePowered();
+        train().vehiclesChanged();
       }}
   , move{*this, "move",
       [this](uint32_t from, uint32_t to)
@@ -106,6 +101,8 @@ void TrainVehicleList::propertyChanged(BaseProperty& property)
     train().updateLength();
   else if(property.name() == "total_weight")
     train().updateWeight();
+  else if(property.name() == "speed_max")
+    train().updateSpeedMax();
 }
 
 Train& TrainVehicleList::train()
