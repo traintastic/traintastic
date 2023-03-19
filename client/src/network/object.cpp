@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #include "connection.hpp"
 #include "property.hpp"
 #include "abstractvectorproperty.hpp"
+#include "unitproperty.hpp"
 #include "method.hpp"
 #include "event.hpp"
 
@@ -67,6 +68,16 @@ int Object::getPropertyValueInt(const QString& name, int defaultValue) const
   if(const auto* property = getProperty(name); property && property->type() == ValueType::Integer)
     return property->toInt();
   return defaultValue;
+}
+
+const UnitProperty* Object::getUnitProperty(const QString& name) const
+{
+  return dynamic_cast<UnitProperty*>(m_interfaceItems.find(name));
+}
+
+UnitProperty* Object::getUnitProperty(const QString& name)
+{
+  return dynamic_cast<UnitProperty*>(m_interfaceItems.find(name));
 }
 
 const AbstractVectorProperty* Object::getVectorProperty(const QString& name) const
