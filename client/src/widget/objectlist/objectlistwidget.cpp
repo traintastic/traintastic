@@ -257,6 +257,17 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
           }
         }
       });
+
+    connect(move, &Method::attributeChanged, this,
+      [this](AttributeName name, const QVariant& value)
+      {
+        if(name == AttributeName::Enabled)
+        {
+          const bool b = value.toBool();
+          m_actionMoveUp->setEnabled(b);
+          m_actionMoveDown->setEnabled(b);
+        }
+      });
   }
 
   if(Method* method = m_object->getMethod("reverse"))
