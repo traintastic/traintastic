@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,6 +36,7 @@ class ThrottleStopButton;
 class ThrottleDirectionButton;
 class ThrottleFunctionButton;
 class AbstractProperty;
+class UnitProperty;
 class Method;
 
 class ThrottleWidget final : public QWidget
@@ -45,8 +46,9 @@ class ThrottleWidget final : public QWidget
     int m_functionsRequestId;
     std::map<int, int> m_functionRequestIds;
     AbstractProperty* m_emergencyStop;
-    AbstractProperty* m_speed;
-    AbstractProperty* m_throttle;
+    UnitProperty* m_speed = nullptr;
+    UnitProperty* m_throttleSpeed = nullptr;
+    AbstractProperty* m_throttle = nullptr;
     Method* m_toggleDirection;
     QLabel* m_nameLabel;
     QGridLayout* m_functionGrid;
