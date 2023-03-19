@@ -25,6 +25,7 @@
 #include "trainlisttablemodel.hpp"
 #include "../core/attributes.hpp"
 #include "../vehicle/rail/poweredrailvehicle.hpp"
+#include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
 
 static inline bool isPowered(const RailVehicle& vehicle)
@@ -43,10 +44,20 @@ Train::Train(World& world, std::string_view _id) :
       if(!value)
         updateLength();
     }},
-  direction{this, "direction", Direction::Forward, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
+  direction{this, "direction", Direction::Forward, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
+    [this](Direction value)
+    {
+      for(const auto& vehicle : m_poweredVehicles)
+        vehicle->setDirection(value);
+      updateEnabled();
+    }},
   speed{*this, "speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
   speedMax{*this, "speed_max", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
-  throttleSpeed{*this, "throttle_speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
+  throttleSpeed{*this, "throttle_speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
+    [this](double value, SpeedUnit unit)
+    {
+      setSpeed(convertUnit(value, unit, SpeedUnit::KiloMeterPerHour)); // just set speed for now, no train fysics yet
+    }},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store},
   overrideWeight{this, "override_weight", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](bool value)
@@ -61,20 +72,22 @@ Train::Train(World& world, std::string_view _id) :
 {
   vehicles.setValueInternal(std::make_shared<TrainVehicleList>(*this, vehicles.name()));
 
-  const bool editable = contains(m_world.state.value(), WorldState::Edit);
-
   Attributes::addDisplayName(name, DisplayName::Object::name);
-  Attributes::addEnabled(name, editable);
+  Attributes::addEnabled(name, false);
   m_interfaceItems.add(name);
   Attributes::addEnabled(lob, overrideLength);
   m_interfaceItems.add(lob);
   m_interfaceItems.add(overrideLength);
+  Attributes::addEnabled(direction, false);
   Attributes::addValues(direction, DirectionValues);
   Attributes::addObjectEditor(direction, false);
   m_interfaceItems.add(direction);
   Attributes::addObjectEditor(speed, false);
+  Attributes::addMinMax(speed, 0., 0., SpeedUnit::KiloMeterPerHour);
   m_interfaceItems.add(speed);
   m_interfaceItems.add(speedMax);
+  Attributes::addMinMax(throttleSpeed, 0., 0., SpeedUnit::KiloMeterPerHour);
+  Attributes::addEnabled(throttleSpeed, false);
   Attributes::addObjectEditor(throttleSpeed, false);
   m_interfaceItems.add(throttleSpeed);
   Attributes::addEnabled(weight, overrideWeight);
@@ -85,6 +98,8 @@ Train::Train(World& world, std::string_view _id) :
   m_interfaceItems.add(powered);
   Attributes::addDisplayName(notes, DisplayName::Object::notes);
   m_interfaceItems.add(notes);
+
+  updateEnabled();
 }
 
 void Train::addToWorld()
@@ -116,6 +131,14 @@ void Train::worldEvent(WorldState state, WorldEvent event)
   const bool editable = contains(state, WorldState::Edit);
 
   Attributes::setEnabled(name, editable);
+}
+
+void Train::setSpeed(const double kmph)
+{
+  for(const auto& vehicle : m_poweredVehicles)
+    vehicle->setSpeed(kmph);
+  speed.setValueInternal(convertUnit(kmph, SpeedUnit::KiloMeterPerHour, speed.unit()));
+  updateEnabled();
 }
 
 void Train::vehiclesChanged()
@@ -150,10 +173,11 @@ void Train::updateWeight()
 
 void Train::updatePowered()
 {
+  m_poweredVehicles.clear();
   for(const auto& vehicle : *vehicles)
-    if(isPowered(*vehicle))
-      return powered.setValueInternal(true);
-  powered.setValueInternal(false);
+    if(auto poweredVehicle = std::dynamic_pointer_cast<PoweredRailVehicle>(vehicle))
+      m_poweredVehicles.emplace_back(poweredVehicle);
+  powered.setValueInternal(!m_poweredVehicles.empty());
 }
 
 void Train::updateSpeedMax()
@@ -173,4 +197,22 @@ void Train::updateSpeedMax()
   }
   else
     speedMax.setValueInternal(0);
+
+  speed.setUnit(speedMax.unit());
+  Attributes::setMax(speed, speedMax.value(), speedMax.unit());
+  throttleSpeed.setUnit(speedMax.unit());
+  Attributes::setMax(throttleSpeed, speedMax.value(), speedMax.unit());
+}
+
+void Train::updateEnabled()
+{
+  const bool stopped = almostZero(speed.value()) && almostZero(throttleSpeed.value());
+
+  Attributes::setEnabled(name, stopped);
+  Attributes::setEnabled(direction, stopped && powered);
+  Attributes::setEnabled(throttleSpeed, powered);
+  Attributes::setEnabled(vehicles->add, stopped);
+  Attributes::setEnabled(vehicles->remove, stopped);
+  Attributes::setEnabled(vehicles->move, stopped);
+  Attributes::setEnabled(vehicles->reverse, stopped);
 }

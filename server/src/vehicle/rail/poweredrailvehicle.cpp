@@ -21,8 +21,44 @@
  */
 
 #include "poweredrailvehicle.hpp"
+#include "../../utils/almostzero.hpp"
 
 PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   : RailVehicle(world, id_)
 {
+}
+
+void PoweredRailVehicle::setDirection(Direction value)
+{
+  if(decoder)
+    decoder->direction = value;
+}
+
+void PoweredRailVehicle::setSpeed(double kmph)
+{
+  if(!decoder)
+    return;
+
+  if(almostZero(kmph))
+  {
+    decoder->throttle.setValue(0);
+    return;
+  }
+
+  //! \todo Implement speed profile
+
+  // No speed profile -> linear
+  {
+    const double max = speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+    if(max > 0)
+    {
+      const uint8_t steps = decoder->speedSteps;
+      if(steps == Decoder::speedStepsAuto)
+        decoder->throttle.setValue(kmph / max);
+      else
+        decoder->throttle.setValue(std::round(kmph / max * steps) / steps);
+    }
+    else
+      decoder->throttle.setValue(0);
+  }
 }

@@ -30,16 +30,22 @@
 #include "../enum/direction.hpp"
 #include "trainvehiclelist.hpp"
 
+class PoweredRailVehicle;
+
 class Train : public IdObject
 {
   friend class TrainVehicleList;
 
   private:
+    std::vector<std::shared_ptr<PoweredRailVehicle>> m_poweredVehicles;
+
+    void setSpeed(double kmph);
     void vehiclesChanged();
     void updateLength();
     void updateWeight();
     void updatePowered();
     void updateSpeedMax();
+    void updateEnabled();
 
   protected:
     void addToWorld() override;

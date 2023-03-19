@@ -74,14 +74,18 @@ TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropert
   const auto& world = getWorld(parent());
 
   Attributes::addDisplayName(add, DisplayName::List::add);
+  Attributes::addEnabled(add, false);
   Attributes::addObjectList(add, world.railVehicles);
   m_interfaceItems.add(add);
 
   Attributes::addDisplayName(remove, DisplayName::List::remove);
+  Attributes::addEnabled(remove, false);
   m_interfaceItems.add(remove);
 
+  Attributes::addEnabled(move, false);
   m_interfaceItems.add(move);
 
+  Attributes::addEnabled(reverse, false);
   m_interfaceItems.add(reverse);
 }
 

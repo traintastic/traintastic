@@ -24,11 +24,16 @@
 #define TRAINTASTIC_SERVER_VEHICLE_RAIL_POWEREDRAILVEHICLE_HPP
 
 #include "railvehicle.hpp"
+#include <traintastic/enum/direction.hpp>
 
 class PoweredRailVehicle : public RailVehicle
 {
   protected:
     PoweredRailVehicle(World& world, std::string_view id_);
+
+  public:
+    void setDirection(Direction value);
+    void setSpeed(double kmph);
 };
 
 #endif
