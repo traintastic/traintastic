@@ -69,6 +69,7 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
     m_speedoMeter->setUnit("km/h");
     m_speedoMeter->setSpeedMax(m_speed->getAttributeDouble(AttributeName::Max, 0));
     m_speedoMeter->setSpeed(m_speed->toDouble());
+    m_speedoMeter->setSpeedTarget(m_throttleSpeed->toDouble());
 
     connect(m_speed, &AbstractProperty::valueChangedDouble, this,
       [this](double value)
@@ -87,6 +88,11 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
           default:
             break;
         }
+      });
+    connect(m_throttleSpeed, &AbstractProperty::valueChangedDouble, this,
+      [this](double value)
+      {
+        m_speedoMeter->setSpeedTarget(value);
       });
   }
   else if((m_throttle = m_object->getProperty("throttle"))) // decoder
