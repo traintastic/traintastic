@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_TRAIN_TRAIN_HPP
 
 #include "../core/idobject.hpp"
+#include <boost/asio/steady_timer.hpp>
 #include "../core/lengthproperty.hpp"
 #include "../core/speedproperty.hpp"
 #include "../core/weightproperty.hpp"
@@ -37,9 +38,21 @@ class Train : public IdObject
   friend class TrainVehicleList;
 
   private:
+    enum class SpeedState
+    {
+      Idle,
+      Accelerate,
+      Braking,
+    };
+
     std::vector<std::shared_ptr<PoweredRailVehicle>> m_poweredVehicles;
 
+    boost::asio::steady_timer m_speedTimer;
+    SpeedState m_speedState = SpeedState::Idle;
+
     void setSpeed(double kmph);
+    void updateSpeed();
+
     void vehiclesChanged();
     void updateLength();
     void updateWeight();

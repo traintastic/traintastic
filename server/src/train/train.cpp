@@ -24,6 +24,7 @@
 #include "../world/world.hpp"
 #include "trainlisttablemodel.hpp"
 #include "../core/attributes.hpp"
+#include "../core/eventloop.hpp"
 #include "../vehicle/rail/poweredrailvehicle.hpp"
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
@@ -35,6 +36,7 @@ static inline bool isPowered(const RailVehicle& vehicle)
 
 Train::Train(World& world, std::string_view _id) :
   IdObject(world, _id),
+  m_speedTimer{EventLoop::ioContext},
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
   overrideLength{this, "override_length", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
@@ -56,7 +58,26 @@ Train::Train(World& world, std::string_view _id) :
   throttleSpeed{*this, "throttle_speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
     [this](double value, SpeedUnit unit)
     {
-      setSpeed(convertUnit(value, unit, SpeedUnit::KiloMeterPerHour)); // just set speed for now, no train fysics yet
+      const double currentSpeed = speed.getValue(unit);
+
+      if(value > currentSpeed) // Accelerate
+      {
+        if(m_speedState == SpeedState::Accelerate)
+          return;
+
+        m_speedTimer.cancel();
+        m_speedState = SpeedState::Accelerate;
+        updateSpeed();
+      }
+      else if(value < currentSpeed) // brake
+      {
+        if(m_speedState == SpeedState::Braking)
+          return;
+
+        m_speedTimer.cancel();
+        m_speedState = SpeedState::Braking;
+        updateSpeed();
+      }
     }},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store},
   overrideWeight{this, "override_weight", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
@@ -139,6 +160,50 @@ void Train::setSpeed(const double kmph)
     vehicle->setSpeed(kmph);
   speed.setValueInternal(convertUnit(kmph, SpeedUnit::KiloMeterPerHour, speed.unit()));
   updateEnabled();
+}
+
+void Train::updateSpeed()
+{
+  if(m_speedState == SpeedState::Idle)
+    return;
+
+  const double targetSpeed = throttleSpeed.getValue(SpeedUnit::MeterPerSecond);
+  double currentSpeed = speed.getValue(SpeedUnit::MeterPerSecond);
+
+  double acceleration = 0;
+  if(m_speedState == SpeedState::Accelerate)
+  {
+    //! \todo add realistic acceleration
+    acceleration = 1; // m/s^2
+  }
+  else if(m_speedState == SpeedState::Braking)
+  {
+    //! \todo add realistic braking
+    acceleration = -0.5; // m/s^2
+  }
+  else
+    assert(false);
+
+  currentSpeed += acceleration * 0.1; // x 100ms
+
+  if((m_speedState == SpeedState::Accelerate && currentSpeed >= targetSpeed) ||
+      (m_speedState == SpeedState::Braking && currentSpeed <= targetSpeed))
+  {
+    m_speedState = SpeedState::Idle;
+    setSpeed(convertUnit(targetSpeed, SpeedUnit::MeterPerSecond, SpeedUnit::KiloMeterPerHour));
+  }
+  else
+  {
+    using namespace std::literals;
+    setSpeed(convertUnit(currentSpeed, SpeedUnit::MeterPerSecond, SpeedUnit::KiloMeterPerHour));
+    m_speedTimer.expires_after(100ms);
+    m_speedTimer.async_wait(
+      [this](const boost::system::error_code& ec)
+      {
+        if(!ec)
+          updateSpeed();
+      });
+  }
 }
 
 void Train::vehiclesChanged()
