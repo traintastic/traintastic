@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -62,6 +62,7 @@ constexpr uint8_t SLOT_UNKNOWN = 255; //!< placeholder to indicate invalid slot
 
 constexpr uint8_t SPEED_STOP = 0;
 constexpr uint8_t SPEED_ESTOP = 1;
+constexpr uint8_t SPEED_MIN = 2;
 constexpr uint8_t SPEED_MAX = 127;
 
 constexpr uint8_t SL_CONUP = 0x40;

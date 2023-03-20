@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1228,6 +1228,12 @@ void Kernel::send(uint16_t address, Message& message, uint8_t& slot)
   if(auto addressToSlot = m_addressToSlot.find(address); addressToSlot != m_addressToSlot.end())
   {
     slot = addressToSlot->second;
+
+    if(message.opCode == OPC_LOCO_SPD &&
+        static_cast<LocoSpd&>(message).speed >= SPEED_MIN &&
+        static_cast<LocoSpd&>(message).speed == m_slots[slot].speed)
+      return; // same speed, don't send it (always send ESTOP and STOP)
+
     updateChecksum(message);
     send(message);
   }
