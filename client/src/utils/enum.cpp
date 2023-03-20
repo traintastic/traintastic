@@ -38,6 +38,7 @@
 #include <traintastic/enum/loconetserialinterface.hpp>
 #include <traintastic/enum/opcmultisensedirection.hpp>
 #include <traintastic/enum/outputaction.hpp>
+#include <traintastic/enum/powerunit.hpp>
 #include <traintastic/enum/ratiounit.hpp>
 #include <traintastic/enum/sensortype.hpp>
 #include <traintastic/enum/serialflowcontrol.hpp>
@@ -65,6 +66,7 @@ QVector<qint64> enumValues(const QString& enumName)
 {
   QVector<qint64> values;
   GET_ENUM_VALUES(LengthUnit)
+  GET_ENUM_VALUES(PowerUnit)
   GET_ENUM_VALUES(RatioUnit)
   GET_ENUM_VALUES(SpeedUnit)
   GET_ENUM_VALUES(VolumeUnit)
@@ -95,6 +97,7 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(LocoNetSerialInterface)
   TRANSLATE_ENUM(OPCMultiSenseDirection)
   TRANSLATE_ENUM(OutputAction)
+  TRANSLATE_ENUM(PowerUnit)
   TRANSLATE_ENUM(RatioUnit)
   TRANSLATE_ENUM(SensorType)
   TRANSLATE_ENUM(SerialFlowControl)

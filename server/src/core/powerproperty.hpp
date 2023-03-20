@@ -1,5 +1,5 @@
 /**
- * server/src/vehicle/rail/poweredrailvehicle.hpp
+ * server/src/core/powerproperty.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,25 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_VEHICLE_RAIL_POWEREDRAILVEHICLE_HPP
-#define TRAINTASTIC_SERVER_VEHICLE_RAIL_POWEREDRAILVEHICLE_HPP
+#ifndef TRAINTASTIC_SERVER_CORE_POWERPROPERTY_HPP
+#define TRAINTASTIC_SERVER_CORE_POWERPROPERTY_HPP
 
-#include "railvehicle.hpp"
-#include <traintastic/enum/direction.hpp>
-#include "../../core/powerproperty.hpp"
+#include "unitproperty.hpp"
+#include "../enum/powerunit.hpp"
 
-class PoweredRailVehicle : public RailVehicle
-{
-  protected:
-    PoweredRailVehicle(World& world, std::string_view id_);
-
-    void worldEvent(WorldState state, WorldEvent event) override;
-
-  public:
-    PowerProperty power;
-
-    void setDirection(Direction value);
-    void setSpeed(double kmph);
-};
+using PowerProperty = UnitProperty<double, PowerUnit>;
 
 #endif

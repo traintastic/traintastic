@@ -21,11 +21,20 @@
  */
 
 #include "poweredrailvehicle.hpp"
+#include "../../core/attributes.hpp"
 #include "../../utils/almostzero.hpp"
+#include "../../utils/displayname.hpp"
+#include "../../world/world.hpp"
 
 PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   : RailVehicle(world, id_)
+  , power{*this, "power", 0, PowerUnit::KiloWatt, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
+  const bool editable = contains(m_world.state.value(), WorldState::Edit);
+
+  Attributes::addDisplayName(power, DisplayName::Vehicle::Rail::power);
+  Attributes::addEnabled(power, editable);
+  m_interfaceItems.add(power);
 }
 
 void PoweredRailVehicle::setDirection(Direction value)
@@ -61,4 +70,13 @@ void PoweredRailVehicle::setSpeed(double kmph)
     else
       decoder->throttle.setValue(0);
   }
+}
+
+void PoweredRailVehicle::worldEvent(WorldState state, WorldEvent event)
+{
+  RailVehicle::worldEvent(state, event);
+
+  const bool editable = contains(state, WorldState::Edit);
+
+  Attributes::setEnabled(power, editable);
 }

@@ -456,6 +456,11 @@ output_map.turnout:key=Position
 
 output_map:use=Use
 
+power_unit:hp=hp
+power_unit:kw=kW
+power_unit:mw=MW
+power_unit:w=W
+
 qtapp.connect_dialog:connect=Connect
 qtapp.connect_dialog:connect_to_server=Connect to server
 qtapp.connect_dialog:connected=Connected
@@ -611,6 +616,7 @@ vehicle.rail:cargo_capacity=Cargo capacity
 vehicle.rail:cargo_loaded=Cargo loaded
 vehicle.rail:decoder=Decoder
 vehicle.rail:lob=LOB
+vehicle.rail:power=Power
 vehicle.rail:speed_max=Maximum speed
 vehicle.rail:total_weight=Total weight
 vehicle.rail:train=Train

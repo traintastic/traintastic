@@ -99,6 +99,7 @@ namespace DisplayName
       constexpr std::string_view cargoCapacity = "vehicle.rail:cargo_capacity";
       constexpr std::string_view cargoLoaded = "vehicle.rail:cargo_loaded";
       constexpr std::string_view lob = "vehicle.rail:lob";
+      constexpr std::string_view power = "vehicle.rail:power";
       constexpr std::string_view speedMax = "vehicle.rail:speed_max";
       constexpr std::string_view decoder = "vehicle.rail:decoder";
       constexpr std::string_view totalWeight = "vehicle.rail:total_weight";

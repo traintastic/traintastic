@@ -1,5 +1,5 @@
 /**
- * server/src/vehicle/rail/poweredrailvehicle.hpp
+ * shared/src/traintastic/enum/powerunit.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,25 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_VEHICLE_RAIL_POWEREDRAILVEHICLE_HPP
-#define TRAINTASTIC_SERVER_VEHICLE_RAIL_POWEREDRAILVEHICLE_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_POWERUNIT_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_POWERUNIT_HPP
 
-#include "railvehicle.hpp"
-#include <traintastic/enum/direction.hpp>
-#include "../../core/powerproperty.hpp"
+#include <cstdint>
+#include "enum.hpp"
 
-class PoweredRailVehicle : public RailVehicle
+enum class PowerUnit
 {
-  protected:
-    PoweredRailVehicle(World& world, std::string_view id_);
-
-    void worldEvent(WorldState state, WorldEvent event) override;
-
-  public:
-    PowerProperty power;
-
-    void setDirection(Direction value);
-    void setSpeed(double kmph);
+  Watt = 0,
+  KiloWatt = 1,
+  MegaWatt = 2,
+  HorsePower = 3,
 };
+
+TRAINTASTIC_ENUM(PowerUnit, "power_unit", 4,
+{
+  {PowerUnit::Watt, "w"},
+  {PowerUnit::KiloWatt, "kw"},
+  {PowerUnit::MegaWatt, "mw"},
+  {PowerUnit::HorsePower, "hp"},
+});
 
 #endif
