@@ -29,7 +29,6 @@
 RailVehicle::RailVehicle(World& world, std::string_view _id) :
   Vehicle(world, _id),
   decoder{this, "decoder", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store},
-  train{this, "train", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store},
   lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
   speedMax{*this, "speed_max", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::Store},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](double /*value*/, WeightUnit /*unit*/){ updateTotalWeight(); }},
@@ -41,9 +40,6 @@ RailVehicle::RailVehicle(World& world, std::string_view _id) :
   Attributes::addEnabled(decoder, editable);
   Attributes::addObjectList(decoder, m_world.decoders);
   m_interfaceItems.insertBefore(decoder, notes);
-
-  Attributes::addDisplayName(train, DisplayName::Vehicle::Rail::train);
-  m_interfaceItems.insertBefore(train, notes);
 
   Attributes::addDisplayName(lob, DisplayName::Vehicle::Rail::lob);
   Attributes::addEnabled(lob, editable);

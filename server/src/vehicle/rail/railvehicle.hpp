@@ -24,7 +24,6 @@
 #define TRAINTASTIC_SERVER_VEHICLE_RAIL_RAILVEHICLE_HPP
 
 #include "../vehicle.hpp"
-#include "../../core/trainproperty.hpp"
 #include "../../core/lengthproperty.hpp"
 #include "../../core/speedproperty.hpp"
 #include "../../core/weightproperty.hpp"
@@ -45,7 +44,6 @@ class RailVehicle : public Vehicle
 
   public:
     ObjectProperty<Decoder> decoder;
-    TrainProperty train;
     LengthProperty lob;
     SpeedProperty speedMax;
     WeightProperty weight;

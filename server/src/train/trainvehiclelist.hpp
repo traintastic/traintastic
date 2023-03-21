@@ -26,6 +26,8 @@
 #include "../core/objectlist.hpp"
 #include "../vehicle/rail/railvehicle.hpp"
 
+class Train;
+
 class TrainVehicleList : public ObjectList<RailVehicle>
 {
   private:
