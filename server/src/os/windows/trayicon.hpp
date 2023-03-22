@@ -47,6 +47,7 @@ class TrayIcon
       AllowClientServerRestart = 4,
       AllowClientServerShutdown = 5,
       StartAutomaticallyAtLogon = 6,
+      OpenDataDirectory = 7,
     };
 
     struct TraintasticSettings

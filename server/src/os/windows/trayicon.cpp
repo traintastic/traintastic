@@ -87,6 +87,9 @@ void TrayIcon::run(bool isRestart)
   menuAddSeperator(s_menuSettings);
   menuAddItem(s_menuSettings, MenuItem::StartAutomaticallyAtLogon, "Start automatically at logon");  
   
+  HMENU menuAdvanced = menuAddSubMenu(s_menu, "Advanced");
+  menuAddItem(menuAdvanced, MenuItem::OpenDataDirectory, "Open data directory");
+
   menuAddSeperator(s_menu);
   menuAddItem(s_menu, MenuItem::Restart, "Restart");
   menuAddItem(s_menu, MenuItem::Shutdown, "Shutdown");
@@ -229,6 +232,12 @@ LRESULT CALLBACK TrayIcon::windowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARA
         Registry::setStartUpApproved(startUpApproved);
         if(Registry::getStartUpApproved(startUpApproved))
           menuSetItemChecked(s_menuSettings, MenuItem::StartAutomaticallyAtLogon, startUpApproved);
+        break;
+      }
+      case MenuItem::OpenDataDirectory:
+      {
+        const auto dataDir = Traintastic::instance->dataDir().string();
+        ShellExecuteA(nullptr, "open", dataDir.c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
         break;
       }
     }
