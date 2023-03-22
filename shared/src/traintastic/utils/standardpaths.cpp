@@ -52,7 +52,7 @@ std::filesystem::path getLocalAppDataPath()
 
 std::filesystem::path getLocalePath()
 {
-#ifdef WIN32
+#if defined(WIN32) && !(defined(__MINGW32__) || defined(__MINGW64__))
   wchar_t* path = nullptr;
   size_t pathLength = 0;
   if(_wdupenv_s(&path, &pathLength, L"TRAINTASTIC_LOCALE_PATH") == 0 && path && pathLength != 0)
