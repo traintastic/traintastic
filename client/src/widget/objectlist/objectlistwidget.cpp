@@ -294,7 +294,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
         else
           text = value.toString();
 
-        menu->addAction(text,
+        menu->addAction(text, this,
           [this, channel=value.toUInt()]()
           {
             //cancelRequest(m_requestIdInputMonitor);
@@ -348,7 +348,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
         else
           text = value.toString();
 
-        menu->addAction(text,
+        menu->addAction(text, this,
           [this, channel=value.toUInt()]()
           {
             //cancelRequest(m_requestIdOutputKeyboard);
