@@ -74,6 +74,7 @@ class Train : public IdObject
     LengthProperty lob;
     Property<bool> overrideLength;
     Property<Direction> direction;
+    Property<bool> isStopped;
     SpeedProperty speed;
     SpeedProperty speedMax;
     SpeedProperty throttleSpeed;

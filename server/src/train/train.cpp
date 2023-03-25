@@ -53,6 +53,7 @@ Train::Train(World& world, std::string_view _id) :
         vehicle->setDirection(value);
       updateEnabled();
     }},
+  isStopped{this, "is_stopped", true, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   speed{*this, "speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
   speedMax{*this, "speed_max", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   throttleSpeed{*this, "throttle_speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
@@ -202,6 +203,8 @@ void Train::updateSpeed()
           updateSpeed();
       });
   }
+
+  isStopped.setValueInternal(m_speedState == SpeedState::Idle);
 }
 
 void Train::vehiclesChanged()
@@ -269,8 +272,7 @@ void Train::updateSpeedMax()
 
 void Train::updateEnabled()
 {
-  const bool stopped = almostZero(speed.value()) && almostZero(throttleSpeed.value());
-
+  const bool stopped = isStopped;
   const bool editable = contains(m_world.state, WorldState::Edit);
 
   Attributes::setEnabled(name, stopped && editable);
