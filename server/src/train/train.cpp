@@ -149,9 +149,7 @@ void Train::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);
 
-  const bool editable = contains(state, WorldState::Edit);
-
-  Attributes::setEnabled(name, editable);
+  updateEnabled();
 }
 
 void Train::setSpeed(const double kmph)
@@ -273,7 +271,9 @@ void Train::updateEnabled()
 {
   const bool stopped = almostZero(speed.value()) && almostZero(throttleSpeed.value());
 
-  Attributes::setEnabled(name, stopped);
+  const bool editable = contains(m_world.state, WorldState::Edit);
+
+  Attributes::setEnabled(name, stopped && editable);
   Attributes::setEnabled(direction, stopped && powered);
   Attributes::setEnabled(throttleSpeed, powered);
   Attributes::setEnabled(vehicles->add, stopped);
