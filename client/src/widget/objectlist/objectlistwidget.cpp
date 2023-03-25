@@ -241,6 +241,8 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
           }
         }
       });
+    //Override default method name
+    m_actionMoveUp->setText(Locale::tr("list:move_up"));
     m_actionMoveUp->setForceDisabled(true);
 
     m_actionMoveDown = new MethodAction(Theme::getIcon("down"), *move,
@@ -256,6 +258,8 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
           }
         }
       });
+    //Override default method name
+    m_actionMoveDown->setText(Locale::tr("list:move_down"));
     m_actionMoveDown->setForceDisabled(true);
   }
 
