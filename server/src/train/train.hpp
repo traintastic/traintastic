@@ -78,6 +78,8 @@ class Train : public IdObject
     SpeedProperty speed;
     SpeedProperty speedMax;
     SpeedProperty throttleSpeed;
+    Method<void()> stop;
+    Property<bool> emergencyStop;
     WeightProperty weight;
     Property<bool> overrideWeight;
     ObjectProperty<TrainVehicleList> vehicles;

@@ -61,6 +61,8 @@ Train::Train(World& world, std::string_view _id) :
     {
       const double currentSpeed = speed.getValue(unit);
 
+      emergencyStop.setValueInternal(false);
+
       if(value > currentSpeed) // Accelerate
       {
         if(m_speedState == SpeedState::Accelerate)
@@ -79,6 +81,26 @@ Train::Train(World& world, std::string_view _id) :
         m_speedState = SpeedState::Braking;
         updateSpeed();
       }
+    }},
+  stop{*this, "stop", MethodFlags::ScriptCallable,
+    [this]()
+    {
+      throttleSpeed.setValue(0);
+    }},
+  emergencyStop{this, "emergency_stop", true, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadWrite,
+    [this](bool value)
+    {
+      if(value)
+      {
+        m_speedState = SpeedState::Idle;
+        m_speedTimer.cancel();
+        throttleSpeed.setValueInternal(0);
+        speed.setValueInternal(0);
+        isStopped.setValueInternal(true);
+      }
+
+      for(const auto& vehicle : m_poweredVehicles)
+        vehicle->setEmergencyStop(value);
     }},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store},
   overrideWeight{this, "override_weight", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
@@ -112,6 +134,15 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addEnabled(throttleSpeed, false);
   Attributes::addObjectEditor(throttleSpeed, false);
   m_interfaceItems.add(throttleSpeed);
+
+  Attributes::addEnabled(stop, false);
+  Attributes::addObjectEditor(stop, false);
+  m_interfaceItems.add(stop);
+
+  Attributes::addEnabled(emergencyStop, false);
+  Attributes::addObjectEditor(emergencyStop, false);
+  m_interfaceItems.add(emergencyStop);
+
   Attributes::addEnabled(weight, overrideWeight);
   m_interfaceItems.add(weight);
   m_interfaceItems.add(overrideWeight);
@@ -278,6 +309,8 @@ void Train::updateEnabled()
   Attributes::setEnabled(name, stopped && editable);
   Attributes::setEnabled(direction, stopped && powered);
   Attributes::setEnabled(throttleSpeed, powered);
+  Attributes::setEnabled(stop, powered);
+  Attributes::setEnabled(emergencyStop, powered);
   Attributes::setEnabled(vehicles->add, stopped);
   Attributes::setEnabled(vehicles->remove, stopped);
   Attributes::setEnabled(vehicles->move, stopped);
