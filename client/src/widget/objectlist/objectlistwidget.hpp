@@ -48,8 +48,8 @@ class ObjectListWidget : public QWidget
     QAction* m_actionEdit;
     MethodAction* m_actionRemove = nullptr;
     MethodAction* m_actionDelete;
-    QAction* m_actionMoveUp = nullptr;
-    QAction* m_actionMoveDown = nullptr;
+    MethodAction* m_actionMoveUp = nullptr;
+    MethodAction* m_actionMoveDown = nullptr;
     MethodAction* m_actionReverse = nullptr;
     MethodAction* m_actionInputMonitor;
     MethodAction* m_actionInputMonitorChannel;

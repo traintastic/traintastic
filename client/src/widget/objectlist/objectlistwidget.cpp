@@ -228,46 +228,35 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
 
   if(Method* move = m_object->getMethod("move"))
   {
-    m_actionMoveUp = new QAction(Theme::getIcon("up"), Locale::tr("list:move_up"), this);
-    connect(m_actionMoveUp, &QAction::triggered, this,
-      [this, move]()
+    m_actionMoveUp = new MethodAction(Theme::getIcon("up"), *move,
+      [this]()
       {
         if(auto* model = m_tableWidget->selectionModel(); model && model->hasSelection())
         {
           if(const auto rows = model->selectedRows(); !rows.empty())
           {
             const int row = rows[0].row();
-            callMethod(*move, nullptr, row, row - 1);
+            callMethod(m_actionMoveUp->method(), nullptr, row, row - 1);
             m_tableWidget->selectRow(row - 1);
           }
         }
       });
+    m_actionMoveUp->setForceDisabled(true);
 
-    m_actionMoveDown = new QAction(Theme::getIcon("down"), Locale::tr("list:move_down"), this);
-    connect(m_actionMoveDown, &QAction::triggered, this,
-      [this, move]()
+    m_actionMoveDown = new MethodAction(Theme::getIcon("down"), *move,
+      [this]()
       {
         if(auto* model = m_tableWidget->selectionModel(); model && model->hasSelection())
         {
           if(const auto rows = model->selectedRows(); !rows.empty())
           {
             const int row = rows[0].row();
-            callMethod(*move, nullptr, row, row + 1);
+            callMethod(m_actionMoveDown->method(), nullptr, row, row + 1);
             m_tableWidget->selectRow(row + 1);
           }
         }
       });
-
-    connect(move, &Method::attributeChanged, this,
-      [this](AttributeName name, const QVariant& value)
-      {
-        if(name == AttributeName::Enabled)
-        {
-          const bool b = value.toBool();
-          m_actionMoveUp->setEnabled(b);
-          m_actionMoveDown->setEnabled(b);
-        }
-      });
+    m_actionMoveDown->setForceDisabled(true);
   }
 
   if(Method* method = m_object->getMethod("reverse"))
@@ -485,8 +474,8 @@ void ObjectListWidget::tableSelectionChanged(bool hasSelection)
   {
     const int selectedRow = m_tableWidget->selectionModel() && m_tableWidget->selectionModel()->selectedRows().length() == 1 ? m_tableWidget->selectionModel()->selectedRows()[0].row() : -1;
     if(m_actionMoveUp)
-      m_actionMoveUp->setEnabled(hasSelection && selectedRow != 0);
+      m_actionMoveUp->setForceDisabled(!hasSelection || selectedRow == 0);
     if(m_actionMoveDown)
-      m_actionMoveDown->setEnabled(hasSelection && selectedRow != (m_tableWidget->model()->rowCount() - 1));
+      m_actionMoveDown->setForceDisabled(!hasSelection || selectedRow == (m_tableWidget->model()->rowCount() - 1));
   }
 }
