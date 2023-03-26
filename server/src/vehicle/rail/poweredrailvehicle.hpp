@@ -38,6 +38,7 @@ class PoweredRailVehicle : public RailVehicle
     PowerProperty power;
 
     void setDirection(Direction value);
+    void setEmergencyStop(bool value);
     void setSpeed(double kmph);
 };
 
