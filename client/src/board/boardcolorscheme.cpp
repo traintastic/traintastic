@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@ const BoardColorScheme BoardColorScheme::dark = {
   /*.track =*/ {0xC0, 0xC0, 0xC0},
   /*.trackDisabled =*/ {0x40, 0x40, 0x40},
   /*.blockFree =*/ {0x66, 0xC6, 0x66},
+  /*.blockReserved =*/ {Qt::yellow},
   /*.blockOccupied =*/ {0xC6, 0x66, 0x66},
   /*.blockUnknown =*/ {0x66, 0x66, 0x66},
   /*.sensorFree =*/ {0x66, 0xC6, 0x66},
@@ -44,6 +45,7 @@ const BoardColorScheme BoardColorScheme::light = {
   /*.track =*/ {0x00, 0x00, 0x00},
   /*.trackDisabled =*/ {0xA0, 0xA0, 0xA0},
   /*.blockFree =*/ {0x44, 0xC6, 0x44},
+  /*.blockReserved =*/ {Qt::yellow},
   /*.blockOccupied =*/ {0xC6, 0x44, 0x44},
   /*.blockUnknown =*/ {0x88, 0x88, 0x88},
   /*.sensorFree =*/ {0x44, 0xC6, 0x44},
