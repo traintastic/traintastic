@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,6 +37,7 @@
 #include <traintastic/locale/locale.hpp>
 #include "getboardcolorscheme.hpp"
 #include "tilepainter.hpp"
+#include "tilemenu.hpp"
 #include "../mainwindow.hpp"
 #include "../network/connection.hpp"
 #include "../network/property.hpp"
@@ -540,97 +541,97 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
   }
   else
   {
-    auto it = m_object->tileData().find({x, y});
-    if(it != m_object->tileData().end())
+    if(ObjectPtr obj = m_object->getTileObject({x, y}))
     {
-      if(ObjectPtr obj = m_object->getTileObject({x, y}))
+      const auto tileId = m_object->getTileId({x, y});
+
+      if(tileId == TileId::PushButton)
       {
-        const auto tileId = it->second.id();
-
-        if(tileId == TileId::PushButton)
+        if(auto* m = obj->getMethod("pressed"))
+          m->call();
+      }
+      else if(tileId == TileId::RailDecoupler)
+      {
+        if(const auto* state = obj->getProperty("state"))
         {
-          if(auto* m = obj->getMethod("pressed"))
-            m->call();
-        }
-        else if(tileId == TileId::RailDecoupler)
-        {
-          if(const auto* state = obj->getProperty("state"))
+          switch(state->toEnum<DecouplerState>())
           {
-            switch(state->toEnum<DecouplerState>())
-            {
-              case DecouplerState::Deactivated:
-                obj->callMethod("activate");
-                break;
+            case DecouplerState::Deactivated:
+              obj->callMethod("activate");
+              break;
 
-              case DecouplerState::Activated:
-                obj->callMethod("deactivate");
-                break;
-            }
+            case DecouplerState::Activated:
+              obj->callMethod("deactivate");
+              break;
           }
         }
-        else
+      }
+      else if(tileId == TileId::RailBlock)
+      {
+        TileMenu::getBlockRailTileMenu(obj, this)->exec(QCursor::pos());
+      }
+      else
+      {
+        AbstractProperty* value = nullptr;
+        Method* setValue = nullptr;
+        if(isRailTurnout(tileId))
         {
-          AbstractProperty* value = nullptr;
-          Method* setValue = nullptr;
-          if(isRailTurnout(tileId))
-          {
-            value = obj->getProperty("position");
-            setValue = obj->getMethod("set_position");
-          }
-          else if(isRailSignal(tileId))
-          {
-            value = obj->getProperty("aspect");
-            setValue = obj->getMethod("set_aspect");
-          }
-          else if(tileId == TileId::RailDirectionControl)
-          {
-            value = obj->getProperty("state");
-            setValue = obj->getMethod("set_state");
-          }
+          value = obj->getProperty("position");
+          setValue = obj->getMethod("set_position");
+        }
+        else if(isRailSignal(tileId))
+        {
+          value = obj->getProperty("aspect");
+          setValue = obj->getMethod("set_aspect");
+        }
+        else if(tileId == TileId::RailDirectionControl)
+        {
+          value = obj->getProperty("state");
+          setValue = obj->getMethod("set_state");
+        }
 
-          if(value && setValue)
-          {
-            const auto values = setValue->getAttribute(AttributeName::Values, QVariant()).toList();
+        if(value && setValue)
+        {
+          const auto values = setValue->getAttribute(AttributeName::Values, QVariant()).toList();
 
-            if(values.size() == 2)
+          if(values.size() == 2)
+          {
+            const auto n = (value->toInt() == values[0].toInt()) ? values[1].toInt() : values[0].toInt();
+            callMethod(*setValue, nullptr, n);
+          }
+          else if(values.size() > 2)
+          {
+            auto tileRotate = TileRotate::Deg0;
+            if(auto* p = obj->getProperty("rotate"))
+              tileRotate = p->toEnum<TileRotate>();
+
+            const int iconSize = 16;
+            QImage image(iconSize, iconSize, QImage::Format_ARGB32);
+            QPainter painter{&image};
+            painter.setRenderHint(QPainter::Antialiasing, true);
+            TilePainter tilePainter{painter, iconSize, *getBoardColorScheme(BoardSettings::instance().colorScheme.value())};
+
+            QMenu menu(this);
+            for(const auto& v : values)
             {
-              const auto n = (value->toInt() == values[0].toInt()) ? values[1].toInt() : values[0].toInt();
-              callMethod(*setValue, nullptr, n);
+              const auto n = v.toInt();
+
+              image.fill(Qt::transparent);
+
+              if(isRailTurnout(tileId))
+                tilePainter.drawTurnout(tileId, image.rect(), tileRotate, static_cast<TurnoutPosition>(n));
+              else if(isRailSignal(tileId))
+                tilePainter.drawSignal(tileId, image.rect(), tileRotate, static_cast<SignalAspect>(n));
+              else if(tileId == TileId::RailDirectionControl)
+                tilePainter.drawDirectionControl(tileId, image.rect(), tileRotate, static_cast<DirectionControlState>(n));
+
+              connect(menu.addAction(QIcon(QPixmap::fromImage(image)), translateEnum(value->enumName(), n)), &QAction::triggered,
+                [this, setValue, n]()
+                {
+                  callMethod(*setValue, nullptr, n);
+                });
             }
-            else if(values.size() > 2)
-            {
-              auto tileRotate = TileRotate::Deg0;
-              if(auto* p = obj->getProperty("rotate"))
-                tileRotate = p->toEnum<TileRotate>();
-
-              const int iconSize = 16;
-              QImage image(iconSize, iconSize, QImage::Format_ARGB32);
-              QPainter painter{&image};
-              painter.setRenderHint(QPainter::Antialiasing, true);
-              TilePainter tilePainter{painter, iconSize, *getBoardColorScheme(BoardSettings::instance().colorScheme.value())};
-
-              QMenu menu(this);
-              for(const auto& v : values)
-              {
-                const auto n = v.toInt();
-
-                image.fill(Qt::transparent);
-
-                if(isRailTurnout(tileId))
-                  tilePainter.drawTurnout(tileId, image.rect(), tileRotate, static_cast<TurnoutPosition>(n));
-                else if(isRailSignal(tileId))
-                  tilePainter.drawSignal(tileId, image.rect(), tileRotate, static_cast<SignalAspect>(n));
-                else if(tileId == TileId::RailDirectionControl)
-                  tilePainter.drawDirectionControl(tileId, image.rect(), tileRotate, static_cast<DirectionControlState>(n));
-
-                connect(menu.addAction(QIcon(QPixmap::fromImage(image)), translateEnum(value->enumName(), n)), &QAction::triggered,
-                  [this, setValue, n]()
-                  {
-                    callMethod(*setValue, nullptr, n);
-                  });
-              }
-              menu.exec(QCursor::pos());
-            }
+            menu.exec(QCursor::pos());
           }
         }
       }
