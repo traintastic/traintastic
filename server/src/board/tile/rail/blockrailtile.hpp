@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,10 +25,12 @@
 
 #include "railtile.hpp"
 #include "../../map/node.hpp"
+#include "../../../core/method.hpp"
 #include "../../../core/objectproperty.hpp"
 #include "../../../core/vectorproperty.hpp"
 #include "../../../enum/blockstate.hpp"
 #include "../../../hardware/input/map/blockinputmap.hpp"
+#include "../../../train/train.hpp"
 
 class BlockInputMapItem;
 
@@ -49,6 +51,7 @@ class BlockRailTile : public RailTile
     void setRotate(TileRotate value) final;
 
     void updateState();
+    void updateTrainMethodEnabled();
     void setState(BlockState value);
 
   public:
@@ -58,6 +61,9 @@ class BlockRailTile : public RailTile
     ObjectProperty<BlockInputMap> inputMap;
     Property<BlockState> state;
     VectorProperty<SensorState> sensorStates;
+    ObjectVectorProperty<Train> trains;
+    Method<void(std::shared_ptr<Train>)> assignTrain;
+    Method<void()> removeTrain;
 
     BlockRailTile(World& world, std::string_view _id);
 

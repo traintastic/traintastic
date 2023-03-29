@@ -10,7 +10,9 @@ board_settings.color_scheme:light=Light
 
 board_tile.misc.push_button:color=Color
 
+board_tile.rail.block:assign_train=Assign train
 board_tile.rail.block:input_map=Sensors
+board_tile.rail.block:remove_train=Remove train
 
 board_tile.rail.direction_control:state=State
 board_tile.rail.direction_control:use_a_to_b=Use: A → B
@@ -418,6 +420,8 @@ message:N1026=Imported world successfully
 message:N2001=Simulation not supported
 message:N2002=No response from LNCV module %1 with address %2
 message:N2003=Stopped sending fast clock sync
+message:N3001=Assigned train %1 to block %2
+message:N3002=Removed train %1 from block %2
 message:N9001=Starting script
 message:N9999=%1
 message:W1001=Discovery disabled, only allowed on port %1

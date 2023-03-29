@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "blockrailtile.hpp"
 #include "../../../world/world.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../log/log.hpp"
 #include "../../../utils/displayname.hpp"
 
 BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
@@ -32,6 +33,32 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   inputMap{this, "input_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   state{this, "state", BlockState::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState},
   sensorStates{*this, "sensor_states", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
+  , trains{*this, "trains", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
+  , assignTrain{*this, "assign_train",
+      [this](const std::shared_ptr<Train>& newTrain)
+      {
+        if(trains.empty())
+        {
+          trains.appendInternal(newTrain);
+          updateTrainMethodEnabled();
+          if(state == BlockState::Free || state == BlockState::Unknown)
+            updateState();
+          Log::log(*this, LogMessage::N3001_ASSIGNED_TRAIN_X_TO_BLOCK_X, newTrain->name.value(), name.value());
+        }
+      }}
+  , removeTrain{*this, "remove_train",
+      [this]()
+      {
+        if(trains.size() == 1 && trains[0]->isStopped)
+        {
+          auto oldTrain = trains[0];
+          trains.clearInternal();//.setValueInternal(nullptr);
+          updateTrainMethodEnabled();
+          if(state == BlockState::Reserved)
+            updateState();
+          Log::log(*this, LogMessage::N3002_REMOVED_TRAIN_X_FROM_BLOCK_X, oldTrain->name.value(), name.value());
+        }
+      }}
 {
   inputMap.setValueInternal(std::make_shared<BlockInputMap>(*this, inputMap.name()));
 
@@ -50,6 +77,18 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   Attributes::addObjectEditor(sensorStates, false);
   Attributes::addValues(sensorStates, sensorStateValues);
   m_interfaceItems.add(sensorStates);
+
+  Attributes::addObjectEditor(trains, false);
+  m_interfaceItems.add(trains);
+
+  Attributes::addEnabled(assignTrain, true);
+  Attributes::addObjectEditor(assignTrain, false);
+  Attributes::addObjectList(assignTrain, world.trains);
+  m_interfaceItems.add(assignTrain);
+
+  Attributes::addEnabled(removeTrain, false);
+  Attributes::addObjectEditor(removeTrain, false);
+  m_interfaceItems.add(removeTrain);
 
   updateHeightWidthMax();
 }
@@ -92,12 +131,18 @@ void BlockRailTile::updateState()
 
     if(allFree)
     {
-      setState(BlockState::Free);
+      setState(trains.empty() ? BlockState::Free : BlockState::Reserved);
       return;
     }
   }
 
-  setState(BlockState::Unknown);
+  setState(trains.empty() ? BlockState::Unknown : BlockState::Reserved);
+}
+
+void BlockRailTile::updateTrainMethodEnabled()
+{
+  Attributes::setEnabled(assignTrain, trains.empty());
+  Attributes::setEnabled(removeTrain, trains.size() == 1);
 }
 
 void BlockRailTile::setState(BlockState value)
@@ -121,6 +166,7 @@ void BlockRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
 void BlockRailTile::loaded()
 {
   RailTile::loaded();
+  updateTrainMethodEnabled();
   updateHeightWidthMax();
 }
 
