@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,6 +54,9 @@ class Object : public std::enable_shared_from_this<Object>
   friend class WorldSaver;
 
   private:
+    static nlohmann::json toJSON(WorldSaver& saver, const BaseProperty& baseProperty);
+    static void loadJSON(WorldLoader& loader, BaseProperty& baseProperty, const nlohmann::json& value);
+
     bool m_dying; // TODO: atomic??
 
   protected:

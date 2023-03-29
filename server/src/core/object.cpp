@@ -100,59 +100,14 @@ AbstractVectorProperty* Object::getVectorProperty(std::string_view name)
 void Object::load(WorldLoader& loader, const nlohmann::json& data)
 {
   for(auto& [name, value] : data.items())
-  {
-    if(AbstractProperty* property = getProperty(name))
-    {
-      if(property->type() == ValueType::Object)
-      {
-        if(contains(property->flags(), PropertyFlags::SubObject))
-        {
-          property->toObject()->load(loader, value);
-        }
-        else
-        {
-          if(value.is_string())
-            property->loadObject(loader.getObject(value.get<std::string_view>()));
-          else if(value.is_null())
-            property->loadObject(ObjectPtr());
-        }
-      }
-      else
-        property->loadJSON(value);
-    }
-    else if(AbstractVectorProperty* vectorProperty = getVectorProperty(name))
-    {
-      if(vectorProperty->type() == ValueType::Object)
-      {
-        if(contains(vectorProperty->flags(), PropertyFlags::SubObject))
-        {
-          const size_t size = std::min(value.size(), vectorProperty->size());
-          for(size_t i = 0; i < size; i++)
-            vectorProperty->getObject(i)->load(loader, value[i]);
-        }
-        else
-        {
-          assert(false);
-          //if(value.is_string())
-          //  property->load(loader.getObject(value));
-          //else if(value.is_null())
-          //  property->load(ObjectPtr());
-        }
-      }
-      else
-        vectorProperty->loadJSON(value);
-    }
-  }
+    if(auto* baseProperty = dynamic_cast<BaseProperty*>(getItem(name)))
+      loadJSON(loader, *baseProperty, value);
 
   // state values (optional):
   nlohmann::json state = loader.getState(getObjectId());
   for(auto& [name, value] : state.items())
-  {
-    if(AbstractProperty* property = getProperty(name))
-      property->loadJSON(value);
-    else if(AbstractVectorProperty* vectorProperty = getVectorProperty(name))
-      vectorProperty->loadJSON(value);
-  }
+    if(auto* baseProperty = dynamic_cast<BaseProperty*>(getItem(name)))
+      loadJSON(loader, *baseProperty, value);
 }
 
 void Object::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const
@@ -164,54 +119,11 @@ void Object::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state
     {
       if(baseProperty->isStoreable())
       {
-        const std::string name{baseProperty->name()};
-
-        if(baseProperty->type() == ValueType::Object)
-        {
-          if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(baseProperty))
-          {
-            if(ObjectPtr value = property->toObject())
-            {
-              if(IdObject* idObject = dynamic_cast<IdObject*>(value.get()))
-                data[name] = idObject->id.toJSON();
-              else if(SubObject* subObject = dynamic_cast<SubObject*>(value.get()))
-              {
-                if((property->flags() & PropertyFlags::SubObject) == PropertyFlags::SubObject)
-                  data[name] = saver.saveObject(value);
-                else
-                  data[name] = subObject->getObjectId();
-              }
-            }
-            else
-              data[name] = nullptr;
-          }
-          else if(AbstractVectorProperty* vectorProperty = dynamic_cast<AbstractVectorProperty*>(baseProperty))
-          {
-            nlohmann::json values(nlohmann::json::value_t::array);
-
-            for(size_t i = 0; i < vectorProperty->size(); i++)
-            {
-              if(ObjectPtr value = vectorProperty->getObject(i))
-              {
-                if((vectorProperty->flags() & PropertyFlags::SubObject) == PropertyFlags::SubObject)
-                  values.emplace_back(saver.saveObject(value));
-                else
-                  values.emplace_back(value->getObjectId());
-              }
-              else
-                values.emplace_back(nullptr);
-            }
-
-            data[name] = values;
-          }
-        }
-        else
-          data[name] = baseProperty->toJSON();
+        data[std::string{baseProperty->name()}] = toJSON(saver, *baseProperty);
       }
       else if(baseProperty->isStateStoreable())
       {
-        assert(baseProperty->type() != ValueType::Object);
-        state[std::string{baseProperty->name()}] = baseProperty->toJSON();
+        state[std::string{baseProperty->name()}] = toJSON(saver, *baseProperty);
       }
     }
 }
@@ -251,5 +163,103 @@ void Object::worldEvent(WorldState state, WorldEvent event)
       for(size_t i = 0; i < size; i++)
         vectorProperty->getObject(i)->worldEvent(state, event);
     }
+  }
+}
+
+nlohmann::json Object::toJSON(WorldSaver& saver, const BaseProperty& baseProperty)
+{
+  if(baseProperty.type() == ValueType::Object)
+  {
+    if(const AbstractProperty* property = dynamic_cast<const AbstractProperty*>(&baseProperty))
+    {
+      if(ObjectPtr value = property->toObject())
+      {
+        if(IdObject* idObject = dynamic_cast<IdObject*>(value.get()))
+          return idObject->id.toJSON();
+
+        if(SubObject* subObject = dynamic_cast<SubObject*>(value.get()))
+        {
+          if((property->flags() & PropertyFlags::SubObject) == PropertyFlags::SubObject)
+            return saver.saveObject(value);
+
+          return subObject->getObjectId();
+        }
+      }
+
+      return nullptr;
+    }
+
+    if(const AbstractVectorProperty* vectorProperty = dynamic_cast<const AbstractVectorProperty*>(&baseProperty))
+    {
+      nlohmann::json values(nlohmann::json::value_t::array);
+
+      for(size_t i = 0; i < vectorProperty->size(); i++)
+      {
+        if(ObjectPtr value = vectorProperty->getObject(i))
+        {
+          if((vectorProperty->flags() & PropertyFlags::SubObject) == PropertyFlags::SubObject)
+            values.emplace_back(saver.saveObject(value));
+          else
+            values.emplace_back(value->getObjectId());
+        }
+        else
+          values.emplace_back(nullptr);
+      }
+
+      return values;
+    }
+  }
+  else
+    return baseProperty.toJSON();
+
+  assert(false);
+  return {};
+}
+
+void Object::loadJSON(WorldLoader& loader, BaseProperty& baseProperty, const nlohmann::json& value)
+{
+  if(auto* property = dynamic_cast<AbstractProperty*>(&baseProperty))
+  {
+    if(property->type() == ValueType::Object)
+    {
+      if(contains(property->flags(), PropertyFlags::SubObject))
+      {
+        property->toObject()->load(loader, value);
+      }
+      else
+      {
+        if(value.is_string())
+          property->loadObject(loader.getObject(value.get<std::string_view>()));
+        else if(value.is_null())
+          property->loadObject(ObjectPtr());
+      }
+    }
+    else
+      property->loadJSON(value);
+  }
+  else if(auto* vectorProperty = dynamic_cast<AbstractVectorProperty*>(&baseProperty))
+  {
+    if(vectorProperty->type() == ValueType::Object)
+    {
+      if(contains(vectorProperty->flags(), PropertyFlags::SubObject))
+      {
+        const size_t size = std::min(value.size(), vectorProperty->size());
+        for(size_t i = 0; i < size; i++)
+          vectorProperty->getObject(i)->load(loader, value[i]);
+      }
+      else
+      {
+        std::vector<ObjectPtr> objects;
+        objects.reserve(value.size());
+        for(const auto& v : value)
+        {
+          assert(v.is_string());
+          objects.emplace_back(loader.getObject(v.get<std::string_view>()));
+        }
+        vectorProperty->loadObjects(objects);
+      }
+    }
+    else
+      vectorProperty->loadJSON(value);
   }
 }

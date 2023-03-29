@@ -149,6 +149,18 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
     {
       m_values = std::move(values);
     }
+
+    void loadObjects(tcb::span<ObjectPtr> values) final
+    {
+      std::vector<std::shared_ptr<T>> objects;
+      objects.reserve(values.size());
+      for(const auto& object : values)
+        if(auto v = std::dynamic_pointer_cast<T>(object))
+          objects.emplace_back(v);
+        else
+          throw conversion_error();
+      m_values = std::move(objects);
+    }
 };
 
 #endif
