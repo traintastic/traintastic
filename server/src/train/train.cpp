@@ -115,8 +115,8 @@ Train::Train(World& world, std::string_view _id) :
     }},
   vehicles{this, "vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   powered{this, "powered", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
-  active{this, "active", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly,
-           [](bool){}, std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
+  active{this, "active", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly,
+    [](bool){}, std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   vehicles.setValueInternal(std::make_shared<TrainVehicleList>(*this, vehicles.name()));

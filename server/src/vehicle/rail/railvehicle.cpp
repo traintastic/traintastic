@@ -35,7 +35,7 @@ RailVehicle::RailVehicle(World& world, std::string_view _id) :
   speedMax{*this, "speed_max", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::Store},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](double /*value*/, WeightUnit /*unit*/){ updateTotalWeight(); }},
   totalWeight{*this, "total_weight", 0, WeightUnit::Ton, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
-    activeTrain{this, "active_train", nullptr, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::NoStore}
+  activeTrain{this, "active_train", nullptr, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::StoreState}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
