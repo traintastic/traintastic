@@ -22,6 +22,7 @@
 
 #include <catch2/catch.hpp>
 #include "../../src/world/world.hpp"
+#include "../../src/lua/scriptlist.hpp"
 
 TEST_CASE("Lua script: no code, start/stop, disable", "[lua][lua-script]")
 {

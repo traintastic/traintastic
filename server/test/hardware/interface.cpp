@@ -24,8 +24,13 @@
 
 #include <catch2/catch.hpp>
 #include "../src/world/world.hpp"
+#include "../src/hardware/interface/interfacelist.hpp"
+#include "../src/hardware/decoder/list/decoderlist.hpp"
 #include "../src/hardware/input/input.hpp"
+#include "../src/hardware/input/list/inputlist.hpp"
+#include "../src/hardware/output/list/outputlist.hpp"
 #include "../src/hardware/identification/identification.hpp"
+#include "../src/hardware/identification/list/identificationlist.hpp"
 #include "interfaces.hpp"
 
 TEMPLATE_TEST_CASE("Assign decoder to another interface", "[interface]", INTERFACES_DECODER)

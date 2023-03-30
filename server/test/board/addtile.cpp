@@ -23,6 +23,7 @@
 #include <catch2/catch.hpp>
 #include "../src/world/world.hpp"
 #include "../src/board/board.hpp"
+#include "../src/board/boardlist.hpp"
 
 #include "../src/board/tile/rail/straightrailtile.hpp"
 #include "../src/board/tile/rail/curve45railtile.hpp"

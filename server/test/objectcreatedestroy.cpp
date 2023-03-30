@@ -23,7 +23,12 @@
 #include <catch2/catch.hpp>
 #include "../src/world/world.hpp"
 #include "../src/board/board.hpp"
+#include "../src/board/boardlist.hpp"
+#include "../src/hardware/decoder/list/decoderlist.hpp"
+#include "../src/hardware/interface/interfacelist.hpp"
 #include "../src/hardware/input/input.hpp"
+#include "../src/hardware/input/list/inputlist.hpp"
+#include "../src/hardware/output/list/outputlist.hpp"
 #include "hardware/interfaces.hpp"
 
 TEST_CASE("Create world => destroy world", "[object-create-destroy]")
