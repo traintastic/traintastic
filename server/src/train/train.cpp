@@ -128,6 +128,10 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addValues(direction, DirectionValues);
   Attributes::addObjectEditor(direction, false);
   m_interfaceItems.add(direction);
+
+  Attributes::addObjectEditor(isStopped, false);
+  m_interfaceItems.add(isStopped);
+
   Attributes::addObjectEditor(speed, false);
   Attributes::addMinMax(speed, 0., 0., SpeedUnit::KiloMeterPerHour);
   m_interfaceItems.add(speed);
