@@ -26,6 +26,7 @@
 #include "consolewindow.hpp"
 #include "registry.hpp"
 #include "../../core/eventloop.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../traintastic/traintastic.hpp"
 #include "../../utils/setthreadname.hpp"
 
