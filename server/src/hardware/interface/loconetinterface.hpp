@@ -49,7 +49,7 @@ class LocoNetInterface final
 {
   CLASS_ID("interface.loconet")
   DEFAULT_ID("loconet")
-  CREATE(LocoNetInterface)
+  CREATE_DEF(LocoNetInterface)
 
   private:
     std::unique_ptr<LocoNet::Kernel> m_kernel;

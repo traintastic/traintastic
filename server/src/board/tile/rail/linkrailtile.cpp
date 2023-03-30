@@ -21,8 +21,10 @@
  */
 
 #include "linkrailtile.hpp"
+#include "../../list/linkrailtilelist.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../core/objectlisttablemodel.hpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../utils/displayname.hpp"
 #include "../../../world/world.hpp"
 

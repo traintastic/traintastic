@@ -22,6 +22,7 @@
 
 #include "poweredrailvehicle.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../utils/almostzero.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"

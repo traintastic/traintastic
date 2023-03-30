@@ -28,6 +28,7 @@
 #include "../enum/worldevent.hpp"
 #include "../set/worldstate.hpp"
 #include "../core/attributes.hpp"
+#include "../core/objectproperty.tpp"
 #include "../world/worldloader.hpp"
 #include "../world/worldsaver.hpp"
 #include "../utils/displayname.hpp"

@@ -21,9 +21,11 @@
  */
 
 #include "railvehicle.hpp"
+#include "railvehiclelist.hpp"
 #include "railvehiclelisttablemodel.hpp"
 #include "../../world/world.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../utils/displayname.hpp"
 
 RailVehicle::RailVehicle(World& world, std::string_view _id) :

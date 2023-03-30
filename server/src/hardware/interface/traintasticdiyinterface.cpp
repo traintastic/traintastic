@@ -21,11 +21,14 @@
  */
 
 #include "traintasticdiyinterface.hpp"
+#include "../input/list/inputlist.hpp"
+#include "../output/list/outputlist.hpp"
 #include "../protocol/traintasticdiy/messages.hpp"
 #include "../protocol/traintasticdiy/iohandler/serialiohandler.hpp"
 #include "../protocol/traintasticdiy/iohandler/simulationiohandler.hpp"
 #include "../protocol/traintasticdiy/iohandler/tcpiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"

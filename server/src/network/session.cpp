@@ -30,10 +30,14 @@
 #ifndef NDEBUG
   #include "../core/eventloop.hpp" // for: isEventLoopThread()
 #endif
+#include "../core/objectproperty.tpp"
 #include "../core/tablemodel.hpp"
 #include "../log/log.hpp"
 #include "../log/memorylogger.hpp"
+#include "../board/board.hpp"
 #include "../board/tile/tiles.hpp"
+#include "../hardware/input/monitor/inputmonitor.hpp"
+#include "../hardware/output/keyboard/outputkeyboard.hpp"
 
 #ifdef GetObject
   #undef GetObject // GetObject is defined by a winapi header

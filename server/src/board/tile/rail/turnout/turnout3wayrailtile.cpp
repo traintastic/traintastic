@@ -21,6 +21,7 @@
  */
 
 #include "turnout3wayrailtile.hpp"
+#include "../../../../core/objectproperty.tpp"
 #include "../../../../core/attributes.hpp"
 
 static const std::array<TurnoutPosition, 4> positionValues = {TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right, TurnoutPosition::Unknown};

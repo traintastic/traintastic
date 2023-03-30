@@ -23,6 +23,7 @@
 #include "lncvprogrammingcontroller.hpp"
 #include "lncvprogrammer.hpp"
 #include "../../../core/idobject.hpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../world/world.hpp"
 
 bool LNCVProgrammingController::attachLNCVProgrammer(LNCVProgrammer& programmer)

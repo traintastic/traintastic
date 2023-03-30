@@ -33,6 +33,7 @@
 #include "enums.hpp"
 #include "sets.hpp"
 #include "getversion.hpp"
+#include "script.hpp"
 #include <version.hpp>
 #include <traintastic/utils/str.hpp>
 #include "../world/world.hpp"

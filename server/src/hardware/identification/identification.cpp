@@ -21,10 +21,12 @@
  */
 
 #include "identification.hpp"
+#include "list/identificationlist.hpp"
 #include "../../world/world.hpp"
 #include "list/identificationlisttablemodel.hpp"
 #include "../interface/loconetinterface.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
 

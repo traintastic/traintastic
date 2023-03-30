@@ -23,6 +23,7 @@
 #include "interface.hpp"
 #include "interfacelisttablemodel.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
 

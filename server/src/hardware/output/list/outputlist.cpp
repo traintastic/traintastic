@@ -25,6 +25,7 @@
 #include "../outputcontroller.hpp"
 #include "../../../world/getworld.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../utils/displayname.hpp"
 
 OutputList::OutputList(Object& _parent, std::string_view parentPropertyName, OutputListColumn _columns)

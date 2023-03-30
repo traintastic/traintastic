@@ -26,6 +26,7 @@
 #include "list/inputlisttablemodel.hpp"
 #include "monitor/inputmonitor.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"

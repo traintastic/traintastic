@@ -25,6 +25,7 @@
 #include "../inputcontroller.hpp"
 #include "../../../world/getworld.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../utils/displayname.hpp"
 
 InputList::InputList(Object& _parent, std::string_view parentPropertyName, InputListColumn _columns)

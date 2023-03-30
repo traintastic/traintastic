@@ -24,6 +24,7 @@
 #include "messages.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
+#include "../../decoder/list/decoderlist.hpp"
 #include "../../input/inputcontroller.hpp"
 #include "../../output/outputcontroller.hpp"
 #include "../../../utils/inrange.hpp"

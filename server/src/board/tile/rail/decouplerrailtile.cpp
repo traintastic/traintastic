@@ -21,6 +21,7 @@
  */
 
 #include "decouplerrailtile.hpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../world/world.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"

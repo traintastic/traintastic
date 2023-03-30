@@ -24,6 +24,7 @@
 #include "push.hpp"
 #include "object.hpp"
 #include "checkarguments.hpp"
+#include "sandbox.hpp"
 
 #include "../board/board.hpp"
 #include "../board/boardlist.hpp"

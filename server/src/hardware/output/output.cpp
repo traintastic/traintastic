@@ -21,9 +21,11 @@
  */
 
 #include "output.hpp"
+#include "list/outputlist.hpp"
 #include "../../world/world.hpp"
 #include "list/outputlisttablemodel.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
 

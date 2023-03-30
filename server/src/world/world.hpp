@@ -27,6 +27,7 @@
 #include "../core/property.hpp"
 #include "../core/objectproperty.hpp"
 #include "../core/controllerlist.hpp"
+#include "../core/method.hpp"
 #include "../core/event.hpp"
 #include <traintastic/utils/stdfilesystem.hpp>
 #include <unordered_map>
@@ -34,26 +35,28 @@
 #include <traintastic/enum/worldevent.hpp>
 #include "../enum/worldscale.hpp"
 #include <traintastic/set/worldstate.hpp>
-#include "../clock/clock.hpp"
-#include "../board/boardlist.hpp"
-#include "../board/list/linkrailtilelist.hpp"
-#include "../hardware/interface/interfacelist.hpp"
-#include "../hardware/decoder/list/decoderlist.hpp"
-#include "../hardware/decoder/decodercontroller.hpp"
-#include "../hardware/identification/list/identificationlist.hpp"
-#include "../hardware/identification/identificationcontroller.hpp"
-#include "../hardware/input/list/inputlist.hpp"
-#include "../hardware/input/inputcontroller.hpp"
-#include "../hardware/output/list/outputlist.hpp"
-#include "../hardware/output/outputcontroller.hpp"
-#include "../hardware/programming/lncv/lncvprogrammingcontroller.hpp"
-#include "../train/trainlist.hpp"
-#include "../vehicle/rail/railvehiclelist.hpp"
-#include "../lua/scriptlist.hpp"
 
 class WorldLoader;
 class LinkRailTile;
 class LNCVProgrammer;
+class DecoderController;
+class InputController;
+class OutputController;
+class IdentificationController;
+class LNCVProgrammingController;
+class InterfaceList;
+class DecoderList;
+class InputList;
+class OutputList;
+class IdentificationList;
+class BoardList;
+class Clock;
+class TrainList;
+class RailVehicleList;
+namespace Lua {
+  class ScriptList;
+}
+class LinkRailTileList;
 
 class World : public Object
 {

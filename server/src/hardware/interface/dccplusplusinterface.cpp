@@ -21,11 +21,15 @@
  */
 
 #include "dccplusplusinterface.hpp"
+#include "../decoder/list/decoderlist.hpp"
 #include "../decoder/list/decoderlisttablemodel.hpp"
+#include "../input/list/inputlist.hpp"
+#include "../output/list/outputlist.hpp"
 #include "../protocol/dccplusplus/messages.hpp"
 #include "../protocol/dccplusplus/iohandler/serialiohandler.hpp"
 #include "../protocol/dccplusplus/iohandler/simulationiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"

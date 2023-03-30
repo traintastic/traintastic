@@ -21,7 +21,10 @@
  */
 
 #include "xpressnetinterface.hpp"
+#include "../decoder/list/decoderlist.hpp"
 #include "../input/input.hpp"
+#include "../input/list/inputlist.hpp"
+#include "../output/list/outputlist.hpp"
 #include "../protocol/xpressnet/messages.hpp"
 #include "../protocol/xpressnet/iohandler/serialiohandler.hpp"
 #include "../protocol/xpressnet/iohandler/simulationiohandler.hpp"
@@ -29,6 +32,7 @@
 #include "../protocol/xpressnet/iohandler/rosofts88xpressnetliiohandler.hpp"
 #include "../protocol/xpressnet/iohandler/tcpiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"

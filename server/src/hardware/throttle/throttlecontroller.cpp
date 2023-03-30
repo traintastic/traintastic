@@ -25,6 +25,7 @@
 #include "list/throttlelist.hpp"
 #include "list/throttlelisttablemodel.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../utils/displayname.hpp"
 
 ThrottleController::ThrottleController(IdObject& interface, ThrottleListColumn columns)

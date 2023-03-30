@@ -29,6 +29,7 @@
 #include <boost/uuid/uuid_io.hpp>
 #include "worldsaver.hpp"
 #include "../board/tile/rail/linkrailtile.hpp"
+#include "../core/objectproperty.tpp"
 #include "../core/objectlisttablemodel.hpp"
 #include "../core/attributes.hpp"
 #include "../core/abstractvectorproperty.hpp"
@@ -39,6 +40,23 @@
 #include "../os/localtime.hpp"
 #include "../utils/displayname.hpp"
 #include "../traintastic/traintastic.hpp"
+
+#include "../clock/clock.hpp"
+#include "../board/boardlist.hpp"
+#include "../board/list/linkrailtilelist.hpp"
+#include "../hardware/interface/interfacelist.hpp"
+#include "../hardware/decoder/list/decoderlist.hpp"
+//#include "../hardware/decoder/decodercontroller.hpp"
+#include "../hardware/identification/list/identificationlist.hpp"
+//#include "../hardware/identification/identificationcontroller.hpp"
+#include "../hardware/input/list/inputlist.hpp"
+//#include "../hardware/input/inputcontroller.hpp"
+#include "../hardware/output/list/outputlist.hpp"
+//#include "../hardware/output/outputcontroller.hpp"
+#include "../hardware/programming/lncv/lncvprogrammingcontroller.hpp"
+#include "../train/trainlist.hpp"
+#include "../vehicle/rail/railvehiclelist.hpp"
+#include "../lua/scriptlist.hpp"
 
 using nlohmann::json;
 

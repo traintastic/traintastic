@@ -23,6 +23,7 @@
 #include "signalrailtile.hpp"
 #include "../../../map/signalpath.hpp"
 #include "../../../../core/attributes.hpp"
+#include "../../../../core/objectproperty.tpp"
 #include "../../../../world/getworld.hpp"
 #include "../../../../utils/displayname.hpp"
 

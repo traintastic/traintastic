@@ -21,9 +21,11 @@
  */
 
 #include "board.hpp"
+#include "boardlist.hpp"
 #include "boardlisttablemodel.hpp"
 #include "map/link.hpp"
 #include "tile/tiles.hpp"
+#include "../core/objectproperty.tpp"
 #include "../world/world.hpp"
 #include "../world/worldloader.hpp"
 #include "../core/attributes.hpp"

@@ -25,6 +25,7 @@
 #include "../protocol/withrottle/kernel.hpp"
 #include "../protocol/withrottle/iohandler/tcpiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"

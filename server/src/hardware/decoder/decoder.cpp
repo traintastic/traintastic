@@ -29,6 +29,7 @@
 #include "../protocol/dcc/dcc.hpp"
 #include "../throttle/throttle.hpp"
 #include "../../world/world.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../core/attributes.hpp"
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"

@@ -21,10 +21,14 @@
  */
 
 #include "z21interface.hpp"
+#include "../decoder/list/decoderlist.hpp"
+#include "../input/list/inputlist.hpp"
+#include "../output/list/outputlist.hpp"
 #include "../protocol/z21/messages.hpp"
 #include "../protocol/z21/iohandler/simulationiohandler.hpp"
 #include "../protocol/z21/iohandler/udpclientiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/category.hpp"

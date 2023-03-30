@@ -22,8 +22,10 @@
 
 #include "input.hpp"
 #include "../../world/world.hpp"
+#include "list/inputlist.hpp"
 #include "list/inputlisttablemodel.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
 

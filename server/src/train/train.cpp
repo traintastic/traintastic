@@ -21,9 +21,11 @@
  */
 
 #include "train.hpp"
+#include "trainlist.hpp"
 #include "../world/world.hpp"
 #include "trainlisttablemodel.hpp"
 #include "../core/attributes.hpp"
+#include "../core/objectproperty.tpp"
 #include "../core/eventloop.hpp"
 #include "../vehicle/rail/poweredrailvehicle.hpp"
 #include "../utils/almostzero.hpp"

@@ -23,6 +23,7 @@
 #include "signal3aspectrailtile.hpp"
 #include "../../../map/signalpath.hpp"
 #include "../../../../core/attributes.hpp"
+#include "../../../../core/objectproperty.tpp"
 
 static const std::array<SignalAspect, 4> aspectValues = {SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed, SignalAspect::Unknown};
 static const std::array<SignalAspect, 3> setAspectValues = {SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed};

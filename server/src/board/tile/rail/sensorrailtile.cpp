@@ -23,6 +23,7 @@
 #include "sensorrailtile.hpp"
 #include "../../../world/world.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../utils/sensor.hpp"
 #include "../../../utils/displayname.hpp"
 
