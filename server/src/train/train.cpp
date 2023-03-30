@@ -99,6 +99,7 @@ Train::Train(World& world, std::string_view _id) :
         throttleSpeed.setValueInternal(0);
         speed.setValueInternal(0);
         isStopped.setValueInternal(true);
+        updateEnabled();
       }
 
       for(const auto& vehicle : m_poweredVehicles)
@@ -227,6 +228,7 @@ void Train::updateSpeed()
   {
     m_speedState = SpeedState::Idle;
     setSpeed(convertUnit(targetSpeed, SpeedUnit::MeterPerSecond, SpeedUnit::KiloMeterPerHour));
+    currentSpeed = targetSpeed;
   }
   else
   {
@@ -241,7 +243,10 @@ void Train::updateSpeed()
       });
   }
 
-  isStopped.setValueInternal(m_speedState == SpeedState::Idle);
+  const bool currentValue = isStopped;
+  isStopped.setValueInternal(m_speedState == SpeedState::Idle && almostZero(currentSpeed) && almostZero(targetSpeed));
+  if(currentValue != isStopped)
+    updateEnabled();
 }
 
 void Train::vehiclesChanged()
