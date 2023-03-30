@@ -116,7 +116,11 @@ Train::Train(World& world, std::string_view _id) :
   vehicles{this, "vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   powered{this, "powered", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   active{this, "active", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly,
-    [](bool){}, std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
+    [this](bool)
+    {
+      updateSpeed();
+    },
+    std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   vehicles.setValueInternal(std::make_shared<TrainVehicleList>(*this, vehicles.name()));
@@ -208,6 +212,9 @@ void Train::setSpeed(const double kmph)
 void Train::updateSpeed()
 {
   if(m_speedState == SpeedState::Idle)
+    return;
+
+  if(m_speedState == SpeedState::Accelerate && !active)
     return;
 
   const double targetSpeed = throttleSpeed.getValue(SpeedUnit::MeterPerSecond);
