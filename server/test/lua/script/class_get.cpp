@@ -22,7 +22,11 @@
 
 #include <catch2/catch.hpp>
 #include "../../hardware/interfaces.hpp"
+#include "../../../src/core/objectproperty.tpp"
 #include "../../../src/hardware/interface/interfacelist.hpp"
+#include "../../../src/hardware/decoder/list/decoderlist.hpp"
+#include "../../../src/hardware/input/list/inputlist.hpp"
+#include "../../../src/hardware/output/list/outputlist.hpp"
 #include "../../../src/world/world.hpp"
 #include "../../../src/lua/enums.hpp"
 #include "../../../src/lua/sets.hpp"

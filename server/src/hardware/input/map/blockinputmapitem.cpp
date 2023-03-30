@@ -23,6 +23,7 @@
 #include "blockinputmapitem.hpp"
 #include "blockinputmap.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../world/getworld.hpp"
 #include "../../../utils/displayname.hpp"
 #include "../../../utils/sensor.hpp"

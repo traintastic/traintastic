@@ -30,6 +30,7 @@
 #include "../../../utils/inrange.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../core/eventloop.hpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../log/log.hpp"
 #include "../../../world/world.hpp"
 

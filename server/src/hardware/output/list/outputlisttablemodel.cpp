@@ -22,6 +22,7 @@
 
 #include "outputlisttablemodel.hpp"
 #include "outputlist.hpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../utils/displayname.hpp"
 
 bool OutputListTableModel::isListedProperty(std::string_view name)

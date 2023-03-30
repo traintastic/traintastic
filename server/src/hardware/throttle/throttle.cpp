@@ -22,6 +22,7 @@
 
 #include "throttle.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../hardware/decoder/decoder.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"

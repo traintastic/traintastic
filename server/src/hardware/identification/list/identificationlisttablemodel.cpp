@@ -22,6 +22,7 @@
 
 #include "identificationlisttablemodel.hpp"
 #include "identificationlist.hpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../utils/displayname.hpp"
 
 bool IdentificationListTableModel::isListedProperty(std::string_view name)

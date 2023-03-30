@@ -25,6 +25,7 @@
 #include "../identificationcontroller.hpp"
 #include "../../../world/getworld.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../utils/displayname.hpp"
 
 IdentificationList::IdentificationList(Object& _parent, std::string_view parentPropertyName, IdentificationListColumn _columns)

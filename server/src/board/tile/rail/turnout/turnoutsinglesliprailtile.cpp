@@ -22,6 +22,7 @@
 
 #include "turnoutsinglesliprailtile.hpp"
 #include "../../../../core/attributes.hpp"
+#include "../../../../core/objectproperty.tpp"
 
 static const std::array<TurnoutPosition, 5> positionValues = {TurnoutPosition::Crossed, TurnoutPosition::Diverged,
                                                               TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB,

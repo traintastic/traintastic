@@ -22,6 +22,7 @@
 
 #include "turnoutwyerailtile.hpp"
 #include "../../../../core/attributes.hpp"
+#include "../../../../core/objectproperty.tpp"
 
 static const std::array<TurnoutPosition, 3> positionValues = {TurnoutPosition::Left, TurnoutPosition::Right, TurnoutPosition::Unknown};
 static const std::array<TurnoutPosition, 2> setPositionValues = {TurnoutPosition::Left, TurnoutPosition::Right};
