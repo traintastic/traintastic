@@ -217,7 +217,7 @@ To stop receiving these changes a [throttle unsubscribe](#tdiyp-throttle-unsubsc
 
 #### Message
 ```
-0x37 <TH> <TL> <AH> <AL> <FN> <SP> <SM> <FL> <checksum>
+0x37 <TH> <TL> <AH> <AL> <SP> <SM> <FL> <checksum>
 ```
 
 - `<TH>` high byte of 16bit throttle id
