@@ -94,18 +94,6 @@ PropertyComboBox::PropertyComboBox(Property& property, QWidget* parent) :
           break;
       }
     });
-  connect(this, static_cast<void(PropertyComboBox::*)(int)>(&PropertyComboBox::currentIndexChanged),
-    [this](int)
-    {
-      if(m_internalUpdate == 0)
-      {
-        const QVariant v = currentData();
-        if(v.canConvert<qint64>())
-          m_property.setValueInt64(v.value<qint64>());
-        else
-          m_property.setValueString(v.toString());
-      }
-    });
 
   if(isEditable())
   {
@@ -118,6 +106,21 @@ PropertyComboBox::PropertyComboBox(Property& property, QWidget* parent) :
         }
       });
   }
+  else
+  {
+    connect(this, static_cast<void(PropertyComboBox::*)(int)>(&PropertyComboBox::currentIndexChanged),
+      [this](int)
+      {
+        if(m_internalUpdate == 0)
+        {
+          const QVariant v = currentData();
+          if(v.canConvert<qint64>())
+            m_property.setValueInt64(v.value<qint64>());
+          else
+            m_property.setValueString(v.toString());
+        }
+      });
+    }
 
   updateValues();
 }
