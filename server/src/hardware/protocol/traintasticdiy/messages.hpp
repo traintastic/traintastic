@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -199,17 +199,46 @@ struct ThrottleMessage : Message
 };
 static_assert(sizeof(ThrottleMessage) == 5);
 
-struct ThrottleUnsubscribe : ThrottleMessage
+struct ThrottleSubUnsub : ThrottleMessage
 {
+  static constexpr uint8_t addressHighSubUnsubBit = 0x40;
+
+  enum Action
+  {
+    Unsubscribe = 0,
+    Subscribe = 1
+  };
+
   Checksum checksum;
 
-  ThrottleUnsubscribe(uint16_t throttleId_, uint16_t address_, bool longAddress)
-    : ThrottleMessage(OpCode::ThrottleUnsubscribe, throttleId_, address_, longAddress)
+  ThrottleSubUnsub(uint16_t throttleId_, uint16_t address_, bool longAddress, Action action_)
+    : ThrottleMessage(OpCode::ThrottleSubUnsub, throttleId_, address_, longAddress)
     , checksum{calcChecksum(*this)}
   {
+    setAction(action_);
+  }
+
+  Action action() const
+  {
+    return (addressHigh & addressHighSubUnsubBit) ? Subscribe : Unsubscribe;
+  }
+
+  void setAction(Action value)
+  {
+    assert(value == Subscribe || value == Unsubscribe);
+    switch(value)
+    {
+      case Subscribe:
+        addressHigh |= addressHighSubUnsubBit; // set
+        break;
+
+      case Unsubscribe:
+        addressHigh &= ~addressHighSubUnsubBit; // clear
+        break;
+    }
   }
 };
-static_assert(sizeof(ThrottleUnsubscribe) == 6);
+static_assert(sizeof(ThrottleSubUnsub) == 6);
 
 struct ThrottleSetSpeedDirection : ThrottleMessage
 {

@@ -239,14 +239,44 @@ void Kernel::receive(const Message& message)
       }
       break;
     }
-    case OpCode::ThrottleUnsubscribe:
+    case OpCode::ThrottleSubUnsub:
     {
       if(!m_featureFlagsSet || !hasFeatureThrottle())
         break;
 
-      const auto& unsubscribe = static_cast<const ThrottleUnsubscribe&>(message);
-      throttleUnsubscribe(unsubscribe.throttleId(), {unsubscribe.address(), unsubscribe.isLongAddress()});
-      send(unsubscribe);
+      const auto& subUnsub = static_cast<const ThrottleSubUnsub&>(message);
+      switch(subUnsub.action())
+      {
+        case ThrottleSubUnsub::Unsubscribe:
+          throttleUnsubscribe(subUnsub.throttleId(), {subUnsub.address(), subUnsub.isLongAddress()});
+          send(subUnsub);
+          break;
+
+        case ThrottleSubUnsub::Subscribe:
+          throttleSubscribe(subUnsub.throttleId(), {subUnsub.address(), subUnsub.isLongAddress()});
+          EventLoop::call(
+            [this, subUnsub]()
+            {
+              if(auto decoder = getDecoder(subUnsub.address(), subUnsub.isLongAddress()))
+              {
+                uint8_t speedMax = 0;
+                uint8_t speed = 0;
+
+                if(!decoder->emergencyStop)
+                {
+                  speedMax = decoder->speedSteps.value();
+                  if(speedMax == Decoder::speedStepsAuto)
+                    speedMax = std::numeric_limits<uint8_t>::max();
+                  speed = Decoder::throttleToSpeedStep(decoder->throttle, speedMax);
+                }
+
+                postSend(ThrottleSetSpeedDirection(subUnsub.throttleId(), subUnsub.address(), subUnsub.isLongAddress(), speed, speedMax, decoder->direction));
+                for(const auto& function : *decoder->functions)
+                  postSend(ThrottleSetFunction(subUnsub.throttleId(), subUnsub.address(), subUnsub.isLongAddress(), function->number, function->value));
+              }
+            });
+          break;
+      }
       break;
     }
     case OpCode::ThrottleSetFunction:
