@@ -31,8 +31,15 @@ class PoweredRailVehicle : public RailVehicle
 {
   protected:
     PoweredRailVehicle(World& world, std::string_view id_);
+    ~PoweredRailVehicle() override;
 
+    void destroying() override;
+    void loaded() override;
     void worldEvent(WorldState state, WorldEvent event) override;
+
+    void registerDecoder();
+    boost::signals2::connection decoderConnection;
+    float lastTrainSpeedStep = 0;
 
   public:
     PowerProperty power;
