@@ -102,8 +102,12 @@ Train::Train(World& world, std::string_view _id) :
         updateEnabled();
       }
 
-      for(const auto& vehicle : m_poweredVehicles)
-        vehicle->setEmergencyStop(value);
+      if(active)
+      {
+        //Propagate to all vehicles in this Train
+        for(const auto& vehicle : m_poweredVehicles)
+          vehicle->setEmergencyStop(value);
+      }
     }},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store},
   overrideWeight{this, "override_weight", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
@@ -363,10 +367,16 @@ bool Train::setTrainActive(bool val)
     }
 
     //Now really activate
+    //Register this train as activeTrain
     for(const auto& vehicle : *vehicles)
     {
       vehicle->activeTrain.setValueInternal(self);
     }
+
+    //Sync Emergency Stop state
+    const bool stopValue = emergencyStop;
+    for(const auto& vehicle : m_poweredVehicles)
+      vehicle->setEmergencyStop(stopValue);
   }
   else
   {
