@@ -1,5 +1,5 @@
 # Version
-set(TRAINTASTIC_VERSION 0.2.0)
+set(TRAINTASTIC_VERSION 0.2.1)
 set(TRAINTASTIC_CODENAME "Berlin")
 
 # Platform
