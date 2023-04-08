@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,13 +40,18 @@ class BlockInputMap : public InputMap
     void worldEvent(WorldState state, WorldEvent event) final;
 
   public:
+    using const_iterator = ObjectVectorProperty<BlockInputMapItem>::const_iterator;
+
     ObjectVectorProperty<BlockInputMapItem> items;
-    Method<void()> add;
-    Method<void(const std::shared_ptr<BlockInputMapItem>& item)> remove;
+    Method<void()> create;
+    Method<void(const std::shared_ptr<BlockInputMapItem>& item)> delete_;
     Method<void(const std::shared_ptr<BlockInputMapItem>& item)> moveUp;
     Method<void(const std::shared_ptr<BlockInputMapItem>& item)> moveDown;
 
     BlockInputMap(Object& _parent, std::string_view parentPropertyName);
+
+    inline const_iterator begin() const { return items.begin(); }
+    inline const_iterator end() const { return items.end(); }
 
     void itemValueChanged(BlockInputMapItem& item);
 };

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,12 +28,12 @@
 BlockInputMap::BlockInputMap(Object& _parent, std::string_view parentPropertyName) :
   InputMap(_parent, parentPropertyName),
   items{*this, "items", {}, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
-  add{*this, "add",
+  create{*this, "create",
     [this]()
     {
       items.appendInternal(std::make_shared<BlockInputMapItem>(*this, getItemId()));
     }},
-  remove{*this, "remove",
+  delete_{*this, "delete",
     [this](const std::shared_ptr<BlockInputMapItem>& item)
     {
       if(!item)
@@ -58,14 +58,13 @@ BlockInputMap::BlockInputMap(Object& _parent, std::string_view parentPropertyNam
 
   m_interfaceItems.add(items);
 
-  Attributes::addDisplayName(add, DisplayName::List::add);
-  Attributes::addEnabled(add, editable);
-  Attributes::addObjectList(add, world.inputs);
-  m_interfaceItems.add(add);
+  Attributes::addDisplayName(create, DisplayName::List::create);
+  Attributes::addEnabled(create, editable);
+  m_interfaceItems.add(create);
 
-  Attributes::addDisplayName(remove, DisplayName::List::remove);
-  Attributes::addEnabled(remove, editable);
-  m_interfaceItems.add(remove);
+  Attributes::addDisplayName(delete_, DisplayName::List::delete_);
+  Attributes::addEnabled(delete_, editable);
+  m_interfaceItems.add(delete_);
 
   Attributes::addDisplayName(moveUp, DisplayName::List::moveUp);
   Attributes::addEnabled(moveUp, editable);
@@ -101,10 +100,7 @@ void BlockInputMap::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit) && !contains(state, WorldState::Run);
 
-  Attributes::setEnabled(add, editable);
-  Attributes::setEnabled(remove, editable);
-  Attributes::setEnabled(moveUp, editable);
-  Attributes::setEnabled(moveDown, editable);
+  Attributes::setEnabled({create, delete_, moveUp, moveDown}, editable);
 }
 
 uint32_t BlockInputMap::getItemId() const
