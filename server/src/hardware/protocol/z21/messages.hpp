@@ -163,6 +163,12 @@ enum HardwareType : uint32_t
   HWT_SMARTRAIL = 0x00000202, //!< SmartRail (from 2012)
   HWT_Z21_SMALL = 0x00000203, //!< „white z21” starter set variant (from 2013)
   HWT_Z21_START = 0x00000204, //!< „z21 start” starter set variant (from 2016)
+  HWT_SINGLE_BOOSTER = 0x00000205, //!< 10806 „Z21 Single Booster” (zLink)
+  HWT_DUAL_BOOSTER   = 0x00000206, //!< 10807 „Z21 Dual Booster” (zLink)
+  HWT_Z21_XL     = 0x00000211, //!< 10870 „Z21 XL Series” (from 2020)
+  HWT_XL_BOOSTER = 0x00000212, //!< 10869 „Z21 XL Booster” (from 2021, zLink)
+  HWT_Z21_SWITCH_DECODER = 0x00000301, //!< 10836 „Z21 SwitchDecoder” (zLink)
+  HWT_Z21_SIGNAL_DECODER = 0x00000302  //!< 10837 „Z21 SignalDecoder” (zLink)
 };
 
 constexpr std::string_view toString(HardwareType value)
@@ -183,6 +189,24 @@ constexpr std::string_view toString(HardwareType value)
 
     case HWT_Z21_START :
       return "Z21 start (starter set variant from 2016)";
+
+    case HWT_SINGLE_BOOSTER :
+      return "Z21 Single Booster (10806, zLink)";
+
+    case HWT_DUAL_BOOSTER :
+      return "Z21 Dual Booster (10807, zLink)";
+
+    case HWT_Z21_XL :
+      return "Z21 XL Series (from 2020)";
+
+    case HWT_XL_BOOSTER :
+      return "Z21 XL Booster (from 2021, zLink)";
+
+    case HWT_Z21_SWITCH_DECODER :
+      return "Z21 SwitchDecoder (zLink)";
+
+    case HWT_Z21_SIGNAL_DECODER :
+      return "Z21 SignalDecoder (zLink)";
 
     case HWT_UNKNOWN:
       break;
