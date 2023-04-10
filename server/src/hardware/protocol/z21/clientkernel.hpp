@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include <boost/asio/steady_timer.hpp>
 #include "../../../enum/tristate.hpp"
 
+enum class SimulateInputAction;
 class InputController;
 class OutputController;
 
@@ -238,7 +239,7 @@ class ClientKernel final : public Kernel
      */
     bool setOutput(uint16_t address, bool value);
 
-    void simulateInputChange(uint32_t channel, uint32_t address);
+    void simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action);
 };
 
 }

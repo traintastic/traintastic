@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -69,6 +69,8 @@ class Input : public IdObject
     Event<bool> onValueChanged;
 
     Input(World& world, std::string_view _id);
+
+    void simulateChange(SimulateInputAction action);
 };
 
 #endif

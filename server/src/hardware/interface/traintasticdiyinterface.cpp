@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -96,10 +96,10 @@ TraintasticDIYInterface::TraintasticDIYInterface(World& world, std::string_view 
   updateVisible();
 }
 
-void TraintasticDIYInterface::inputSimulateChange(uint32_t channel, uint32_t address)
+void TraintasticDIYInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, outputAddressMinMax(channel)))
-    m_kernel->simulateInputChange(address);
+    m_kernel->simulateInputChange(address, action);
 }
 
 bool TraintasticDIYInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)

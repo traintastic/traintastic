@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -387,12 +387,16 @@ bool Kernel::setOutput(uint16_t address, bool value)
   return true;
 }
 
-void Kernel::simulateInputChange(uint16_t address)
+void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
 {
   if(m_simulation)
     m_ioContext.post(
-      [this, address]()
+      [this, address, action]()
       {
+        if((action == SimulateInputAction::SetFalse && m_inputValues[address - 1] == TriState::False) ||
+            (action == SimulateInputAction::SetTrue && m_inputValues[address - 1] == TriState::True))
+          return; // no change
+
         const uint16_t groupAddress = (address - 1) >> 2;
         const uint8_t index = static_cast<uint8_t>((address - 1) & 0x0003);
 
@@ -407,7 +411,22 @@ void Kernel::simulateInputChange(uint16_t address)
         {
           const uint16_t n = (groupAddress << 2) + i;
           if(i == index)
-            pair.setStatus(i, m_inputValues[n] != TriState::True);
+          {
+            switch(action)
+            {
+              case SimulateInputAction::SetFalse:
+                pair.setStatus(i, false);
+                break;
+
+              case SimulateInputAction::SetTrue:
+                pair.setStatus(i, true);
+                break;
+
+              case SimulateInputAction::Toggle:
+                pair.setStatus(i, m_inputValues[n] != TriState::True);
+                break;
+            }
+          }
           else
             pair.setStatus(i, m_inputValues[n] == TriState::True);
         }

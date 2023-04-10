@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,7 +32,7 @@ InputMonitor::InputMonitor(InputController& controller, uint32_t channel)
   , simulateInputChange{*this, "simulate_input_change", MethodFlags::NoScript,
       [this](uint32_t address)
       {
-        m_controller.inputSimulateChange(m_channel, address);
+        m_controller.inputSimulateChange(m_channel, address, SimulateInputAction::Toggle);
       }}
 {
   m_interfaceItems.add(addressMin);

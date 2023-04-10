@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -78,10 +78,10 @@ void DCCPlusPlusInterface::decoderChanged(const Decoder& decoder, DecoderChangeF
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-void DCCPlusPlusInterface::inputSimulateChange(uint32_t channel, uint32_t address)
+void DCCPlusPlusInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
-    m_kernel->simulateInputChange(address);
+    m_kernel->simulateInputChange(address, action);
 }
 
 std::pair<uint32_t, uint32_t> DCCPlusPlusInterface::outputAddressMinMax(uint32_t channel) const

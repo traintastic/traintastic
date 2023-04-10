@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -399,14 +399,37 @@ bool Kernel::setOutput(uint16_t address, bool value)
   return true;
 }
 
-void Kernel::simulateInputChange(uint16_t address)
+void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
 {
   if(m_simulation)
     m_ioContext.post(
-      [this, address]()
+      [this, address, action]()
       {
+        TraintasticDIY::InputState state;
         auto it = m_inputValues.find(address);
-        receive(SetInputState(address, (it == m_inputValues.end() || it->second == InputState::True) ? InputState::False : InputState::True));
+        switch(action)
+        {
+          case SimulateInputAction::SetFalse:
+            if(it != m_inputValues.end() && it->second == InputState::False)
+              return; // no change
+            state = InputState::False;
+            break;
+
+          case SimulateInputAction::SetTrue:
+            if(it != m_inputValues.end() && it->second == InputState::True)
+              return; // no change
+            state = InputState::True;
+            break;
+
+          case SimulateInputAction::Toggle:
+            state = (it == m_inputValues.end() || it->second == InputState::True) ? InputState::False : InputState::True;
+            break;
+
+          default:
+            assert(false);
+            return;
+        }
+        receive(SetInputState(address, state));
       });
 }
 

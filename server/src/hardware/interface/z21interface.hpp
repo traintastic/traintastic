@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -76,7 +76,7 @@ class Z21Interface final
     const std::vector<uint32_t>* inputChannels() const final { return &Z21::ClientKernel::inputChannels; }
     const std::vector<std::string_view>* inputChannelNames() const final { return &Z21::ClientKernel::inputChannelNames; }
     std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t channel) const final;
-    void inputSimulateChange(uint32_t channel, uint32_t address) final;
+    void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
 
     // OutputController:
     std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final { return {Z21::ClientKernel::outputAddressMin, Z21::ClientKernel::outputAddressMax}; }

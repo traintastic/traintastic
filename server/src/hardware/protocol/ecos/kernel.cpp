@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -370,13 +370,13 @@ bool Kernel::setOutput(uint32_t channel, uint16_t address, bool value)
   return false;
 }
 
-void Kernel::simulateInputChange(uint32_t channel, uint32_t address)
+void Kernel::simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
   if(!m_simulation)
     return;
 
   m_ioContext.post(
-    [this, channel, address]()
+    [this, channel, address, action]()
     {
       switch(channel)
       {
@@ -397,7 +397,26 @@ void Kernel::simulateInputChange(uint32_t channel, uint32_t address)
                 {
                   TriState value = feedback->operator[](i);
                   if(port == i)
-                    value = (value == TriState::True) ? TriState::False : TriState::True;
+                  {
+                    switch(action)
+                    {
+                      case SimulateInputAction::SetFalse:
+                        if(value == TriState::False)
+                          return; // no change
+                        value = TriState::False;
+                        break;
+
+                      case SimulateInputAction::SetTrue:
+                        if(value == TriState::True)
+                          return; // no change
+                        value = TriState::True;
+                        break;
+
+                      case SimulateInputAction::Toggle:
+                        value = (value == TriState::True) ? TriState::False : TriState::True;
+                        break;
+                    }
+                  }
                   if(value == TriState::True)
                     mask |= 1 << i;
                 }

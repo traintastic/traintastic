@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -351,19 +351,23 @@ bool ClientKernel::setOutput(uint16_t address, bool value)
   return true;
 }
 
-void ClientKernel::simulateInputChange(uint32_t channel, uint32_t address)
+void ClientKernel::simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
   if(!m_simulation)
     return;
 
   m_ioContext.post(
-    [this, channel, address]()
+    [this, channel, address, action]()
     {
       (void)address;
       switch(channel)
       {
         case InputChannel::rbus:
         {
+          if((action == SimulateInputAction::SetFalse && m_rbusFeedbackStatus[address - rbusAddressMin] == TriState::False) ||
+              (action == SimulateInputAction::SetTrue && m_rbusFeedbackStatus[address - rbusAddressMin] == TriState::True))
+            return; // no change
+
           LanRMBusDataChanged message;
           message.groupIndex = (address - rbusAddressMin) / LanRMBusDataChanged::feedbackStatusCount;
 
@@ -371,7 +375,22 @@ void ClientKernel::simulateInputChange(uint32_t channel, uint32_t address)
           {
             const uint32_t n = static_cast<uint32_t>(message.groupIndex) * LanRMBusDataChanged::feedbackStatusCount + i;
             if(address == rbusAddressMin + n)
-              message.setFeedbackStatus(i, m_rbusFeedbackStatus[n] != TriState::True);
+            {
+              switch(action)
+              {
+                case SimulateInputAction::SetFalse:
+                  message.setFeedbackStatus(i, false);
+                  break;
+
+                case SimulateInputAction::SetTrue:
+                  message.setFeedbackStatus(i, true);
+                  break;
+
+                case SimulateInputAction::Toggle:
+                  message.setFeedbackStatus(i, m_rbusFeedbackStatus[n] != TriState::True);
+                  break;
+              }
+            }
             else
               message.setFeedbackStatus(i, m_rbusFeedbackStatus[n] == TriState::True);
           }
@@ -383,7 +402,30 @@ void ClientKernel::simulateInputChange(uint32_t channel, uint32_t address)
         case InputChannel::loconet:
         {
           const uint16_t feedbackAddress = address - loconetAddressMin;
-          receive(LanLocoNetDetectorOccupancyDetector(feedbackAddress, m_loconetFeedbackStatus[feedbackAddress] != TriState::True));
+          bool occupied;
+          switch(action)
+          {
+            case SimulateInputAction::SetFalse:
+              if(m_loconetFeedbackStatus[feedbackAddress] == TriState::False)
+                return; // no change
+              occupied = false;
+              break;
+
+            case SimulateInputAction::SetTrue:
+              if(m_loconetFeedbackStatus[feedbackAddress] == TriState::True)
+                return; // no change
+              occupied = true;
+              break;
+
+            case SimulateInputAction::Toggle:
+              occupied = m_loconetFeedbackStatus[feedbackAddress] != TriState::True;
+              break;
+
+            default:
+              assert(false);
+              return;
+          }
+          receive(LanLocoNetDetectorOccupancyDetector(feedbackAddress, occupied));
           break;
         }
       }

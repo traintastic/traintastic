@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,6 +34,7 @@
 class Decoder;
 enum class DecoderChangeFlags;
 class DecoderController;
+enum class SimulateInputAction;
 class InputController;
 class OutputController;
 
@@ -291,8 +292,9 @@ class Kernel
     /**
      * \brief Simulate input change
      * \param[in] address Input address, #ioAddressMin..#ioAddressMax
+     * \param[in] action Simulation action to perform
      */
-    void simulateInputChange(uint16_t address);
+    void simulateInputChange(uint16_t address, SimulateInputAction action);
 };
 
 }

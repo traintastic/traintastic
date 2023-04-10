@@ -1079,15 +1079,30 @@ bool Kernel::setOutput(uint16_t address, bool value)
   return true;
 }
 
-void Kernel::simulateInputChange(uint16_t address)
+void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
 {
   assert(isEventLoopThread());
   assert(inRange(address, inputAddressMin, inputAddressMax));
   if(m_simulation)
     m_ioContext.post(
-      [this, fullAddress=address - 1]()
+      [this, fullAddress=address - 1, action]()
       {
-        receive(InputRep(fullAddress, m_inputValues[fullAddress] != TriState::True));
+        switch(action)
+        {
+            case SimulateInputAction::SetFalse:
+              if(m_inputValues[fullAddress] != TriState::False)
+                receive(InputRep(fullAddress, false));
+              break;
+
+            case SimulateInputAction::SetTrue:
+              if(m_inputValues[fullAddress] != TriState::True)
+                receive(InputRep(fullAddress, true));
+              break;
+
+            case SimulateInputAction::Toggle:
+              receive(InputRep(fullAddress, m_inputValues[fullAddress] != TriState::True));
+              break;
+        }
       });
 }
 

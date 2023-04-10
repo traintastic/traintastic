@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -105,10 +105,10 @@ std::pair<uint32_t, uint32_t> Z21Interface::inputAddressMinMax(uint32_t channel)
   return {0, 0};
 }
 
-void Z21Interface::inputSimulateChange(uint32_t channel, uint32_t address)
+void Z21Interface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, outputAddressMinMax(channel)))
-    m_kernel->simulateInputChange(channel, address);
+    m_kernel->simulateInputChange(channel, address, action);
 }
 
 bool Z21Interface::setOutputValue(uint32_t channel, uint32_t address, bool value)
