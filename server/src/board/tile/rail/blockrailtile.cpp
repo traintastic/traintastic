@@ -45,6 +45,21 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
           if(state == BlockState::Free || state == BlockState::Unknown)
             updateState();
           Log::log(*this, LogMessage::N3001_ASSIGNED_TRAIN_X_TO_BLOCK_X, newTrain->name.value(), name.value());
+
+          if(m_world.simulation)
+          {
+            // TODO: use train length if block has multiple occupy sensors, center train in block
+            for(const auto& item : *inputMap)
+            {
+              if(item->input && item->input->interface)
+              {
+                if(item->type == SensorType::OccupyDetector)
+                  item->input->simulateChange(item->invert.value() ? SimulateInputAction::SetFalse : SimulateInputAction::SetTrue);
+                else
+                  assert(false); // not yet implemented
+              }
+            }
+          }
         }
       }}
   , removeTrain{*this, "remove_train",
@@ -53,11 +68,25 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
         if(trains.size() == 1 && trains[0]->isStopped)
         {
           auto oldTrain = trains[0];
-          trains.clearInternal();//.setValueInternal(nullptr);
+          trains.clearInternal();
           updateTrainMethodEnabled();
           if(state == BlockState::Reserved)
             updateState();
           Log::log(*this, LogMessage::N3002_REMOVED_TRAIN_X_FROM_BLOCK_X, oldTrain->name.value(), name.value());
+
+          if(m_world.simulation)
+          {
+            for(const auto& item : *inputMap)
+            {
+              if(item->input && item->input->interface)
+              {
+                if(item->type == SensorType::OccupyDetector)
+                  item->input->simulateChange(item->invert.value() ? SimulateInputAction::SetTrue : SimulateInputAction::SetFalse);
+                else
+                  assert(false); // not yet implemented
+              }
+            }
+          }
         }
       }}
 {
