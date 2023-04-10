@@ -69,7 +69,7 @@ void ClientKernel::receive(const Message& message)
       switch(lanX.xheader)
       {
         case 0x61:
-          if(message == LanXBCTrackPowerOff())
+          if(message == LanXBCTrackPowerOff() || message == LanXBCTrackShortCircuit())
           {
             if(m_trackPowerOn != TriState::False)
             {
