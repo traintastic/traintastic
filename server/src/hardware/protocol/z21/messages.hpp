@@ -148,7 +148,7 @@ static constexpr uint8_t LAN_X_BC = 0x61;
 static constexpr uint8_t LAN_X_BC_TRACK_POWER_OFF = 0x00;
 static constexpr uint8_t LAN_X_BC_TRACK_POWER_ON = 0x01;
 //static constexpr uint8_t LAN_X_BC_PROGRAMMING_MODE = 0x02;
-//static constexpr uint8_t LAN_X_BC_TRACK_SHORT_CIRCUIT = 0x08;
+static constexpr uint8_t LAN_X_BC_TRACK_SHORT_CIRCUIT = 0x08;
 //static constexpr uint8_t LAN_X_CV_NACK_SC = 0x12;
 //static constexpr uint8_t LAN_X_CV_NACK = 0x13;
 //static constexpr uint8_t LAN_X_UNKNOWN_COMMAND = 0x82;
@@ -1030,6 +1030,17 @@ static_assert(sizeof(LanXBCTrackPowerOn) == 7);
 // LAN_X_BC_PROGRAMMING_MODE
 
 // LAN_X_BC_TRACK_SHORT_CIRCUIT
+struct LanXBCTrackShortCircuit : LanX
+{
+  uint8_t db0 = LAN_X_BC_TRACK_SHORT_CIRCUIT;
+  uint8_t checksum = 0x69;
+
+  LanXBCTrackShortCircuit() :
+      LanX(sizeof(LanXBCTrackShortCircuit), LAN_X_BC)
+  {
+  }
+};
+static_assert(sizeof(LanXBCTrackShortCircuit) == 7);
 
 // LAN_X_CV_NACK_SC
 
