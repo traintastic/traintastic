@@ -220,6 +220,7 @@ void ClientKernel::receive(const Message& message)
         }
       }
       break;
+
     case LAN_GET_BROADCASTFLAGS:
       if(message.dataLen() == sizeof(LanGetBroadcastFlagsReply))
       {
@@ -227,6 +228,44 @@ void ClientKernel::receive(const Message& message)
         m_broadcastFlags = reply.broadcastFlags();
       }
       break;
+
+    case LAN_SYSTEMSTATE_DATACHANGED:
+    {
+      if(message.dataLen() == sizeof(LanSystemStateDataChanged))
+      {
+        const auto& reply = static_cast<const LanSystemStateDataChanged&>(message);
+
+        const bool isStop = reply.centralState & Z21_CENTRALSTATE_EMERGENCYSTOP;
+        const bool isTrackPowerOn = (reply.centralState & Z21_CENTRALSTATE_TRACKVOLTAGEOFF) == 0
+                                    && (reply.centralState & Z21_CENTRALSTATE_SHORTCIRCUIT) == 0;
+
+        const TriState trackPowerOn = toTriState(isTrackPowerOn);
+        if(m_trackPowerOn != trackPowerOn)
+        {
+          m_trackPowerOn = trackPowerOn;
+
+          if(m_onTrackPowerOnChanged)
+            EventLoop::call(
+              [this, isTrackPowerOn]()
+              {
+                m_onTrackPowerOnChanged(isTrackPowerOn);
+              });
+        }
+
+        if(m_emergencyStop != TriState::True && isStop)
+        {
+          m_emergencyStop = TriState::True;
+
+          if(m_onEmergencyStop)
+            EventLoop::call(
+              [this]()
+              {
+                m_onEmergencyStop();
+              });
+        }
+      }
+      break;
+    }
 
     case LAN_GET_CODE:
     case LAN_LOGOFF:
@@ -237,7 +276,6 @@ void ClientKernel::receive(const Message& message)
     case LAN_SET_TURNOUTMODE:
     case LAN_RMBUS_GETDATA:
     case LAN_RMBUS_PROGRAMMODULE:
-    case LAN_SYSTEMSTATE_DATACHANGED:
     case LAN_SYSTEMSTATE_GETDATA:
     case LAN_RAILCOM_DATACHANGED:
     case LAN_RAILCOM_GETDATA:
