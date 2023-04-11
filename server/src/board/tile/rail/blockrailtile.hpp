@@ -64,6 +64,8 @@ class BlockRailTile : public RailTile
     ObjectVectorProperty<Train> trains;
     Method<void(std::shared_ptr<Train>)> assignTrain;
     Method<void()> removeTrain;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onTrainAssigned;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onTrainRemoved;
 
     BlockRailTile(World& world, std::string_view _id);
 

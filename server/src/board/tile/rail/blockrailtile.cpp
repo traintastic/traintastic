@@ -60,6 +60,8 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
               }
             }
           }
+
+          fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(onTrainAssigned, newTrain, shared_ptr<BlockRailTile>());
         }
       }}
   , removeTrain{*this, "remove_train",
@@ -87,8 +89,12 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
               }
             }
           }
+
+          fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(onTrainRemoved, oldTrain, shared_ptr<BlockRailTile>());
         }
       }}
+  , onTrainAssigned{*this, "on_train_assigned", EventFlags::Scriptable}
+  , onTrainRemoved{*this, "on_train_removed", EventFlags::Scriptable}
 {
   inputMap.setValueInternal(std::make_shared<BlockInputMap>(*this, inputMap.name()));
 
@@ -119,6 +125,9 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   Attributes::addEnabled(removeTrain, false);
   Attributes::addObjectEditor(removeTrain, false);
   m_interfaceItems.add(removeTrain);
+
+  m_interfaceItems.add(onTrainAssigned);
+  m_interfaceItems.add(onTrainRemoved);
 
   updateHeightWidthMax();
 }
