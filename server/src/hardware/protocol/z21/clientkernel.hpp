@@ -62,6 +62,14 @@ class ClientKernel final : public Kernel
   private:
     const bool m_simulation;
     boost::asio::steady_timer m_keepAliveTimer;
+    BroadcastFlags m_broadcastFlags;
+
+    static constexpr BroadcastFlags requiredBroadcastFlags =
+      BroadcastFlags::PowerLocoTurnoutChanges |
+      BroadcastFlags::RBusChanges |
+      BroadcastFlags::SystemStatusChanges |
+      BroadcastFlags::AllLocoChanges | // seems not to work with DR5000
+      BroadcastFlags::LocoNetDetector;
 
     uint32_t m_serialNumber;
     std::function<void(uint32_t)> m_onSerialNumberChanged;

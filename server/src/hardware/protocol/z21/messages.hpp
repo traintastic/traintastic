@@ -1263,6 +1263,22 @@ static_assert(sizeof(LanXLocoInfo) == 14);
 // Reply to LAN_X_GET_FIRMWARE_VERSION
 
 // Reply to LAN_GET_BROADCASTFLAGS
+struct LanGetBroadcastFlagsReply : Message
+{
+  BroadcastFlags broadcastFlagsLE; // LE
+
+  LanGetBroadcastFlagsReply(BroadcastFlags _broadcastFlags = BroadcastFlags::None) :
+      Message(sizeof(LanGetBroadcastFlagsReply), LAN_GET_BROADCASTFLAGS),
+      broadcastFlagsLE{host_to_le(_broadcastFlags)}
+  {
+  }
+
+  inline BroadcastFlags broadcastFlags() const
+  {
+    return le_to_host(broadcastFlagsLE);
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanGetBroadcastFlagsReply) == 8);
 
 // Reply to LAN_GET_LOCOMODE
 struct LanGetLocoModeReply : Message

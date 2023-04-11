@@ -220,11 +220,17 @@ void ClientKernel::receive(const Message& message)
         }
       }
       break;
+    case LAN_GET_BROADCASTFLAGS:
+      if(message.dataLen() == sizeof(LanGetBroadcastFlagsReply))
+      {
+        const auto& reply = static_cast<const LanGetBroadcastFlagsReply&>(message);
+        m_broadcastFlags = reply.broadcastFlags();
+      }
+      break;
 
     case LAN_GET_CODE:
     case LAN_LOGOFF:
     case LAN_SET_BROADCASTFLAGS:
-    case LAN_GET_BROADCASTFLAGS:
     case LAN_GET_LOCO_MODE:
     case LAN_SET_LOCO_MODE:
     case LAN_GET_TURNOUTMODE:
@@ -435,6 +441,7 @@ void ClientKernel::simulateInputChange(uint32_t channel, uint32_t address, Simul
 void ClientKernel::onStart()
 {
   // reset all state values
+  m_broadcastFlags = BroadcastFlags::None;
   m_serialNumber = 0;
   m_hardwareType = HWT_UNKNOWN;
   m_firmwareVersionMajor = 0;
@@ -447,12 +454,7 @@ void ClientKernel::onStart()
   send(LanGetSerialNumber());
   send(LanGetHardwareInfo());
 
-  send(LanSetBroadcastFlags(
-    BroadcastFlags::PowerLocoTurnoutChanges |
-    BroadcastFlags::RBusChanges |
-    BroadcastFlags::SystemStatusChanges |
-    BroadcastFlags::AllLocoChanges | // seems not to work with DR5000
-    BroadcastFlags::LocoNetDetector));
+  send(LanSetBroadcastFlags(requiredBroadcastFlags));
 
   send(LanGetBroadcastFlags());
 
@@ -483,8 +485,18 @@ void ClientKernel::send(const Message& message)
 
 void ClientKernel::startKeepAliveTimer()
 {
-  assert(ClientConfig::keepAliveInterval > 0);
-  m_keepAliveTimer.expires_after(boost::asio::chrono::seconds(ClientConfig::keepAliveInterval));
+  if(m_broadcastFlags == BroadcastFlags::None)
+  {
+    //Request BC flags as keep alive message
+    m_keepAliveTimer.expires_after(boost::asio::chrono::seconds(2));
+  }
+  else
+  {
+    //Normal keep alive
+    assert(ClientConfig::keepAliveInterval > 0);
+    m_keepAliveTimer.expires_after(boost::asio::chrono::seconds(ClientConfig::keepAliveInterval));
+  }
+
   m_keepAliveTimer.async_wait(std::bind(&ClientKernel::keepAliveTimerExpired, this, std::placeholders::_1));
 }
 
@@ -493,7 +505,17 @@ void ClientKernel::keepAliveTimerExpired(const boost::system::error_code& ec)
   if(ec)
     return;
 
-  send(LanSystemStateGetData());
+  if(m_broadcastFlags == BroadcastFlags::None)
+  {
+    //Request BC flags as keep alive message
+    send(LanSetBroadcastFlags(requiredBroadcastFlags));
+    send(LanGetBroadcastFlags());
+  }
+  else
+  {
+    //Normal keep alive
+    send(LanSystemStateGetData());
+  }
 
   startKeepAliveTimer();
 }
