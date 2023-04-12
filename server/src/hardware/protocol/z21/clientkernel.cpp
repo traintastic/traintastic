@@ -226,6 +226,11 @@ void ClientKernel::receive(const Message& message)
       {
         const auto& reply = static_cast<const LanGetBroadcastFlagsReply&>(message);
         m_broadcastFlags = reply.broadcastFlags();
+
+        if(m_broadcastFlags != requiredBroadcastFlags)
+        {
+            Log::log(m_logId, LogMessage::W2019_Z21_BROADCAST_FLAG_MISMATCH);
+        }
       }
       break;
 
@@ -480,6 +485,7 @@ void ClientKernel::onStart()
 {
   // reset all state values
   m_broadcastFlags = BroadcastFlags::None;
+  m_broadcastFlagsRetryCount = 0;
   m_serialNumber = 0;
   m_hardwareType = HWT_UNKNOWN;
   m_firmwareVersionMajor = 0;
@@ -523,7 +529,13 @@ void ClientKernel::send(const Message& message)
 
 void ClientKernel::startKeepAliveTimer()
 {
-  if(m_broadcastFlags == BroadcastFlags::None)
+  if(m_broadcastFlags == BroadcastFlags::None && m_broadcastFlagsRetryCount == maxBroadcastFlagsRetryCount)
+  {
+    Log::log(m_logId, LogMessage::W2019_Z21_BROADCAST_FLAG_MISMATCH);
+    m_broadcastFlagsRetryCount++; //Log only once
+  }
+
+  if(m_broadcastFlags == BroadcastFlags::None && m_broadcastFlagsRetryCount < maxBroadcastFlagsRetryCount)
   {
     //Request BC flags as keep alive message
     m_keepAliveTimer.expires_after(boost::asio::chrono::seconds(2));
@@ -546,6 +558,7 @@ void ClientKernel::keepAliveTimerExpired(const boost::system::error_code& ec)
   if(m_broadcastFlags == BroadcastFlags::None)
   {
     //Request BC flags as keep alive message
+    m_broadcastFlagsRetryCount++;
     send(LanSetBroadcastFlags(requiredBroadcastFlags));
     send(LanGetBroadcastFlags());
   }

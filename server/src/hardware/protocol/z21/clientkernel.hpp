@@ -63,6 +63,8 @@ class ClientKernel final : public Kernel
     const bool m_simulation;
     boost::asio::steady_timer m_keepAliveTimer;
     BroadcastFlags m_broadcastFlags;
+    int m_broadcastFlagsRetryCount;
+    static constexpr int maxBroadcastFlagsRetryCount = 10;
 
     static constexpr BroadcastFlags requiredBroadcastFlags =
       BroadcastFlags::PowerLocoTurnoutChanges |
