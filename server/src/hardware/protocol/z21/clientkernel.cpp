@@ -68,7 +68,7 @@ void ClientKernel::receive(const Message& message)
 
       switch(lanX.xheader)
       {
-        case 0x61:
+        case LAN_X_BC:
           if(message == LanXBCTrackPowerOff() || message == LanXBCTrackShortCircuit())
           {
             if(m_trackPowerOn != TriState::False)
@@ -99,7 +99,7 @@ void ClientKernel::receive(const Message& message)
           }
           break;
 
-        case 0x81:
+        case LAN_X_BC_STOPPED:
           if(message == LanXBCStopped())
           {
             if(m_emergencyStop != TriState::True)
