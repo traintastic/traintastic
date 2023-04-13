@@ -25,6 +25,7 @@
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../input/inputcontroller.hpp"
+#include "../../output/outputcontroller.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 #include "../../../utils/inrange.hpp"
@@ -68,6 +69,23 @@ void ClientKernel::receive(const Message& message)
 
       switch(lanX.xheader)
       {
+        case LAN_X_TURNOUT_INFO:
+          if(message.dataLen() == sizeof(LanXTurnoutInfo))
+          {
+            const auto& reply = static_cast<const LanXTurnoutInfo&>(message);
+            TriState on = toTriState(reply.state());
+            if(reply.positionUnknown())
+              on = TriState::Undefined;
+
+            EventLoop::call(
+              [this, address=reply.address() + 1, on]()
+              {
+                // Z21 turnout addresses start at 0 so add one
+                m_outputController->updateOutputValue(OutputController::defaultOutputChannel, address, on);
+              });
+          }
+          break;
+
         case LAN_X_BC:
           if(message == LanXBCTrackPowerOff() || message == LanXBCTrackShortCircuit())
           {
@@ -369,7 +387,8 @@ bool ClientKernel::setOutput(uint16_t address, bool value)
   m_ioContext.post(
     [this, address, value]()
     {
-      send(LanXSetTurnout(address, value, true));
+      // Z21 turnout addresses start at 0 so lower by one
+      send(LanXSetTurnout(address - 1, value, true, true));
     });
 
   return true;

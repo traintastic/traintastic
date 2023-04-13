@@ -440,16 +440,16 @@ struct LanXSetTurnout : LanX
   uint8_t db2 = 0x80;
   uint8_t checksum;
 
-  LanXSetTurnout(uint16_t linearAddress, bool activate, bool queue = false)
+  LanXSetTurnout(uint16_t _address, bool _port, bool _activate = true, bool _queue = true)
     : LanX(sizeof(LanXSetTurnout), LAN_X_SET_TURNOUT)
-    , db0(linearAddress >> 9)
-    , db1((linearAddress >> 1) & 0xFF)
+    , db0(_address >> 8)
+    , db1((_address >> 0) & 0xFF)
   {
-    if(queue)
+    if(_queue)
       db2 |= db2Queue;
-    if(activate)
+    if(_activate)
       db2 |= db2Activate;
-    if(linearAddress & 0x0001)
+    if(_port)
       db2 |= db2Port;
 
     updateChecksum();
@@ -460,14 +460,9 @@ struct LanXSetTurnout : LanX
     return (static_cast<uint16_t>(db0) << 8) | db1;
   }
 
-  uint16_t linearAddress() const
-  {
-    return (address() << 1) | port();
-  }
-
   bool activate() const
   {
-    return db2 & db2Queue;
+    return db2 & db2Activate;
   }
 
   bool queue() const
@@ -1031,6 +1026,37 @@ struct LanGetHardwareInfoReply : Message
 static_assert(sizeof(LanGetHardwareInfoReply) == 12);
 
 // LAN_X_TURNOUT_INFO
+struct LanXTurnoutInfo : LanX
+{
+  uint8_t db0;
+  uint8_t db1;
+  uint8_t db2;
+  uint8_t checksum;
+
+  LanXTurnoutInfo()
+    : LanX(sizeof(LanXTurnoutInfo), LAN_X_TURNOUT_INFO)
+  {
+    updateChecksum();
+  }
+
+  uint16_t address() const
+  {
+    return (static_cast<uint16_t>(db0) << 8) | db1;
+  }
+
+  bool positionUnknown() const
+  {
+    return db2 == 0;
+  }
+
+  bool state() const
+  {
+    if(db2 == 0x02)
+      return true;
+    return false;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanXTurnoutInfo) == 9);
 
 // LAN_X_BC_TRACK_POWER_OFF
 struct LanXBCTrackPowerOff : LanX
