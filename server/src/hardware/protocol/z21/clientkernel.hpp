@@ -25,7 +25,7 @@
 
 #include "kernel.hpp"
 #include <boost/asio/steady_timer.hpp>
-#include "../../../enum/tristate.hpp"
+#include <traintastic/enum/tristate.hpp>
 
 enum class SimulateInputAction;
 class InputController;
