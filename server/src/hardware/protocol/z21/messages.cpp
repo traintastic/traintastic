@@ -132,6 +132,13 @@ std::string toString(const Message& message, bool raw)
             raw = true;
           break;
 
+        case LAN_X_BC_STOPPED:
+          if(message == LanXBCStopped())
+            s = "LAN_X_BC_STOPPED";
+          else
+            raw = true;
+          break;
+
         case 0xE3:
           if(const auto& getLocoInfo = static_cast<const LanXGetLocoInfo&>(message); getLocoInfo.db0 == 0xF0)
           {
