@@ -1072,7 +1072,7 @@ static_assert(sizeof(LanXStatusChanged) == 8);
 struct LanXBCStopped : LanX
 {
   uint8_t db0 = 0x00;
-  uint8_t checksum = 0x80;
+  uint8_t checksum = 0x81;
 
   LanXBCStopped() :
     LanX(sizeof(LanXBCStopped), LAN_X_BC_STOPPED)
