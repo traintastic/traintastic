@@ -257,6 +257,12 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
         {
           status.setValueInternal(InterfaceStatus::Online);
         });
+      m_kernel->setOnError(
+        [this]()
+        {
+          status.setValueInternal(InterfaceStatus::Error);
+          online = false; // communication no longer possible
+        });
       m_kernel->setOnGlobalPowerChanged(
         [this](bool powerOn)
         {
@@ -327,7 +333,8 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
     m_kernel->stop();
     m_kernel.reset();
 
-    status.setValueInternal(InterfaceStatus::Offline);
+    if(status != InterfaceStatus::Error)
+      status.setValueInternal(InterfaceStatus::Offline);
   }
   return true;
 }

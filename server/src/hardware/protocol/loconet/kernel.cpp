@@ -122,6 +122,13 @@ void Kernel::setOnStarted(std::function<void()> callback)
   m_onStarted = std::move(callback);
 }
 
+void Kernel::setOnError(std::function<void()> callback)
+{
+  assert(isEventLoopThread());
+  assert(!m_started);
+  m_onError = std::move(callback);
+}
+
 void Kernel::setOnGlobalPowerChanged(std::function<void(bool)> callback)
 {
   assert(isEventLoopThread());
@@ -1342,6 +1349,8 @@ void Kernel::waitingForResponseTimerExpired(const boost::system::error_code& ec)
       [this]()
       {
         Log::log(m_logId, LogMessage::E2019_TIMEOUT_NO_RESPONSE_WITHIN_X_MS, m_config.responseTimeout);
+        if(m_onError)
+          m_onError();
       });
   }
 }
