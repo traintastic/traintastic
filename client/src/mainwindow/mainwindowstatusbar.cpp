@@ -34,15 +34,14 @@
 MainWindowStatusBar::MainWindowStatusBar(MainWindow& mainWindow)
   : QStatusBar(&mainWindow)
   , m_mainWindow{mainWindow}
-  , m_statusesLayout{new QHBoxLayout()}
+  , m_statuses{new QWidget(this)}
   , m_clockLabel{new QLabel(this)}
   , m_statusesRequest{Connection::invalidRequestId}
 {
   // statuses:
-  auto* statuses = new QWidget(this);
-  m_statusesLayout->setMargin(0);
-  statuses->setLayout(m_statusesLayout);
-  addPermanentWidget(statuses);
+  m_statuses->setLayout(new QHBoxLayout());
+  m_statuses->layout()->setMargin(0);
+  addPermanentWidget(m_statuses);
 
   // clock:
   m_clockLabel->setMinimumWidth(m_clockLabel->fontMetrics().averageCharWidth() * 5);
@@ -80,6 +79,9 @@ void MainWindowStatusBar::worldChanged()
 
 void MainWindowStatusBar::settingsChanged()
 {
+  const auto& settings = StatusBarSettings::instance();
+  if(settings.showStatuses.value() != m_statuses->isVisible())
+    updateStatuses();
   clockChanged();
 }
 
@@ -106,13 +108,22 @@ void MainWindowStatusBar::updateClock()
 
 void MainWindowStatusBar::clearStatuses()
 {
-  while(!m_statusesLayout->isEmpty())
-    m_statusesLayout->removeItem(m_statusesLayout->itemAt(0));
+  auto* l = m_statuses->layout();
+  while(!l->isEmpty())
+    l->removeItem(l->itemAt(0));
 }
 
 void MainWindowStatusBar::updateStatuses()
 {
-  assert(m_mainWindow.world());
+  if(!m_mainWindow.world())
+    return;
+
+  m_statuses->setVisible(StatusBarSettings::instance().showStatuses.value());
+  if(!m_statuses->isVisible())
+  {
+    clearStatuses();
+    return;
+  }
 
   if(auto* statuses = dynamic_cast<ObjectVectorProperty*>(m_mainWindow.world()->getVectorProperty("statuses")))
   {
@@ -127,7 +138,7 @@ void MainWindowStatusBar::updateStatuses()
           return;
 
         for(const auto& object : objects)
-          m_statusesLayout->addWidget(new InterfaceStatusWidget(object, this));
+          m_statuses->layout()->addWidget(new InterfaceStatusWidget(object, this));
       });
   }
 }

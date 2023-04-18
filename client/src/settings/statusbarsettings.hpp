@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@ class StatusBarSettings  : public SettingsBase
   private:
     StatusBarSettings()
       : SettingsBase("statusbar")
+      , showStatuses{*this, "show_statuses", true}
       , showClock{*this, "show_clock", true}
     {
     }
@@ -42,6 +43,7 @@ class StatusBarSettings  : public SettingsBase
       return settings;
     }
 
+    Setting<bool> showStatuses;
     Setting<bool> showClock;
 };
 

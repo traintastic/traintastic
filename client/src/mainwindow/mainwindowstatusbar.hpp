@@ -26,14 +26,13 @@
 #include <QStatusBar>
 
 class MainWindow;
-class QHBoxLayout;
 class QLabel;
 
 class MainWindowStatusBar : public QStatusBar
 {
   private:
     MainWindow& m_mainWindow;
-    QHBoxLayout* m_statusesLayout;
+    QWidget* m_statuses;
     QLabel* m_clockLabel;
     int m_statusesRequest;
 

@@ -527,6 +527,7 @@ qtapp.settings.developer:log_missing_strings_dir=Missing translations log direct
 qtapp.settings.general:language=Language
 
 qtapp.settings.statusbar:show_clock=Show clock
+qtapp.settings.statusbar:show_statuses=Show statuses
 
 qtapp.settings:board=Board
 qtapp.settings:developer=Developer
