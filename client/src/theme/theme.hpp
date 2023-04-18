@@ -42,10 +42,11 @@ class Theme
     static IconSet s_iconSet;
 
     static const std::array<const QString*, 3>& getIconPaths();
-    static QString getIconFile(const QString& id);
 
   public:
     static void setIconSet(IconSet value);
+
+    static QString getIconFile(const QString& id);
 
     inline static QIcon getIcon(const QString& id) { return QIcon(getIconFile(id)); }
     static QIcon getIcon(const QString& idOff, const QString& idOn);
