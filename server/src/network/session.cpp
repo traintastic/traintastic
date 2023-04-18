@@ -225,6 +225,36 @@ bool Session::processMessage(const Message& message)
       }
       break;
 
+    case Message::Command::ObjectGetObjectVectorPropertyObject:
+      if(message.isRequest())
+      {
+        if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
+        {
+          if(auto* property = object->getVectorProperty(message.read<std::string>()); property && !property->isInternal())
+          {
+            const size_t startIndex = message.read<uint32_t>();
+            const size_t endIndex = message.read<uint32_t>();
+
+            if(endIndex >= startIndex && endIndex < property->size())
+            {
+              auto response = Message::newResponse(message.command(), message.requestId());
+              for(size_t i = startIndex; i <= endIndex; i++)
+                writeObject(*response, property->getObject(i));
+              m_client->sendMessage(std::move(response));
+            }
+            else // send error response
+              m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), "invalid indices"));
+          }
+          else // send error response
+            m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), "unknown property"));
+        }
+        else // send error response
+          m_client->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), "unknown object"));
+
+        return true;
+      }
+      break;
+
     case Message::Command::ObjectSetObjectPropertyById:
     {
       if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))

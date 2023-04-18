@@ -244,6 +244,44 @@ int Connection::getObject(const ObjectProperty& property, std::function<void(con
   return request->requestId();
 }
 
+int Connection::getObject(const ObjectVectorProperty& property, uint32_t index, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+{
+  std::unique_ptr<Message> request{Message::newRequest(Message::Command::ObjectGetObjectVectorPropertyObject)};
+  request->write(property.object().handle());
+  request->write(property.name().toLatin1());
+  request->write(index); // start index
+  request->write(index); // end index
+  send(request,
+    [this, callback](const std::shared_ptr<Message> message)
+    {
+      ObjectPtr object;
+      if(!message->isError())
+        object = readObject(*message);
+      callback(object, message->errorCode());
+    });
+  return request->requestId();
+}
+
+int Connection::getObjects(const ObjectVectorProperty& property, uint32_t startIndex, uint32_t endIndex, std::function<void(const std::vector<ObjectPtr>&, Message::ErrorCode)> callback)
+{
+  std::unique_ptr<Message> request{Message::newRequest(Message::Command::ObjectGetObjectVectorPropertyObject)};
+  request->write(property.object().handle());
+  request->write(property.name().toLatin1());
+  request->write(startIndex);
+  request->write(endIndex);
+  send(request,
+    [this, size=(endIndex - startIndex + 1), callback](const std::shared_ptr<Message> message)
+    {
+      std::vector<ObjectPtr> objects;
+      objects.reserve(size);
+      if(!message->isError())
+        for(uint32_t i = 0; i < size; i++)
+          objects.emplace_back(readObject(*message));
+      callback(objects, message->errorCode());
+    });
+  return request->requestId();
+}
+
 void Connection::setUnitPropertyUnit(UnitProperty& property, int64_t value)
 {
   auto event = Message::newEvent(Message::Command::ObjectSetUnitPropertyUnit);

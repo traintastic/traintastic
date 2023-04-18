@@ -85,6 +85,7 @@ class Message
       OutputMapOutputsChanged = 41,
 
       ObjectGetObjectPropertyObject = 44,
+      ObjectGetObjectVectorPropertyObject = 45,
 
       Discover = 255,
     };
