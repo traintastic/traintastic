@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,17 +21,29 @@
  */
 
 #include "mainwindowstatusbar.hpp"
+#include <QHBoxLayout>
 #include <QLabel>
 #include "../mainwindow.hpp"
+#include "../network/connection.hpp"
 #include "../network/object.hpp"
 #include "../network/abstractproperty.hpp"
+#include "../network/objectvectorproperty.hpp"
 #include "../settings/statusbarsettings.hpp"
+#include "../widget/status/interfacestatuswidget.hpp"
 
 MainWindowStatusBar::MainWindowStatusBar(MainWindow& mainWindow)
   : QStatusBar(&mainWindow)
   , m_mainWindow{mainWindow}
+  , m_statusesLayout{new QHBoxLayout()}
   , m_clockLabel{new QLabel(this)}
+  , m_statusesRequest{Connection::invalidRequestId}
 {
+  // statuses:
+  auto* statuses = new QWidget(this);
+  m_statusesLayout->setMargin(0);
+  statuses->setLayout(m_statusesLayout);
+  addPermanentWidget(statuses);
+
   // clock:
   m_clockLabel->setMinimumWidth(m_clockLabel->fontMetrics().averageCharWidth() * 5);
   m_clockLabel->setAlignment(Qt::AlignRight);
@@ -47,6 +59,22 @@ MainWindowStatusBar::MainWindowStatusBar(MainWindow& mainWindow)
   // settings:
   connect(&StatusBarSettings::instance(), &StatusBarSettings::changed, this, &MainWindowStatusBar::settingsChanged);
   settingsChanged();
+}
+
+void MainWindowStatusBar::worldChanged()
+{
+  if(const auto world = m_mainWindow.world())
+  {
+    if(auto* statuses = dynamic_cast<ObjectVectorProperty*>(world->getVectorProperty("statuses")))
+    {
+      connect(statuses, &ObjectVectorProperty::valueChanged, this, &MainWindowStatusBar::updateStatuses);
+      updateStatuses();
+    }
+  }
+  else // no world
+  {
+    clearStatuses();
+  }
 }
 
 void MainWindowStatusBar::settingsChanged()
@@ -73,4 +101,32 @@ void MainWindowStatusBar::updateClock()
     m_clockLabel->setText(QString("%1:%2").arg(clock->getPropertyValueInt("hour", 0)).arg(clock->getPropertyValueInt("minute", 0), 2, 10, QChar('0')));
   else
     m_clockLabel->setText("--:--");
+}
+
+void MainWindowStatusBar::clearStatuses()
+{
+  while(!m_statusesLayout->isEmpty())
+    m_statusesLayout->removeItem(m_statusesLayout->itemAt(0));
+}
+
+void MainWindowStatusBar::updateStatuses()
+{
+  assert(m_mainWindow.world());
+
+  if(auto* statuses = dynamic_cast<ObjectVectorProperty*>(m_mainWindow.world()->getVectorProperty("statuses")))
+  {
+    m_mainWindow.connection()->cancelRequest(m_statusesRequest);
+
+    m_statusesRequest = statuses->getObjects(0, statuses->size() - 1,
+      [this](const std::vector<ObjectPtr>& objects, Message::ErrorCode ec)
+      {
+        m_statusesRequest = Connection::invalidRequestId;
+        clearStatuses();
+        if(!!ec || objects.empty())
+          return;
+
+        for(const auto& object : objects)
+          m_statusesLayout->addWidget(new InterfaceStatusWidget(object, this));
+      });
+  }
 }

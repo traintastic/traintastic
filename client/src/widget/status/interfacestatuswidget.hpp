@@ -1,9 +1,9 @@
 /**
- * client/src/mainwindow/mainwindowstatusbar.hpp
+ * client/src/widget/status/interfacestatuswidget.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,35 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_MAINWINDOW_MAINWINDOWSTATUSBAR_HPP
-#define TRAINTASTIC_CLIENT_MAINWINDOW_MAINWINDOWSTATUSBAR_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_STATUS_INTERFACESTATUSWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_STATUS_INTERFACESTATUSWIDGET_HPP
 
-#include <QStatusBar>
+#include <QSvgWidget>
+#include "../../network/objectptr.hpp"
 
-class MainWindow;
-class QHBoxLayout;
-class QLabel;
-
-class MainWindowStatusBar : public QStatusBar
+class InterfaceStatusWidget : public QSvgWidget
 {
   private:
-    MainWindow& m_mainWindow;
-    QHBoxLayout* m_statusesLayout;
-    QLabel* m_clockLabel;
-    int m_statusesRequest;
+    ObjectPtr m_object;
 
-    void settingsChanged();
+    void labelChanged();
+    void stateChanged();
 
-    void clockChanged();
-    void updateClock();
-
-    void clearStatuses();
-    void updateStatuses();
+  protected:
+    void resizeEvent(QResizeEvent* event) override;
 
   public:
-    MainWindowStatusBar(MainWindow& mainWindow);
-
-    void worldChanged();
+    explicit InterfaceStatusWidget(const ObjectPtr& object, QWidget* parent = nullptr);
 };
 
 #endif

@@ -46,6 +46,7 @@
 #include "network/connection.hpp"
 #include "network/object.hpp"
 #include "network/property.hpp"
+#include "network/objectvectorproperty.hpp"
 #include "network/method.hpp"
 #include "programming/lncv/lncvprogrammer.hpp"
 #include "subwindow/objectsubwindow.hpp"
@@ -540,6 +541,12 @@ MainWindow::~MainWindow()
     disconnect(window, &QMdiSubWindow::destroyed, nullptr, nullptr);
 }
 
+const ObjectPtr& MainWindow::world() const
+{
+  static const ObjectPtr null;
+  return m_connection ? m_connection->world() : null;
+}
+
 void MainWindow::connectToServer(const QString& url)
 {
   if(m_connection)
@@ -642,6 +649,7 @@ void MainWindow::worldChanged()
     }
   }
 
+  static_cast<MainWindowStatusBar*>(statusBar())->worldChanged();
   updateWindowTitle();
 }
 

@@ -66,6 +66,8 @@ file(GLOB SOURCES
   "src/widget/object/*.cpp"
   "src/widget/objectlist/*.hpp"
   "src/widget/objectlist/*.cpp"
+  "src/widget/status/*.hpp"
+  "src/widget/status/*.cpp"
   "src/widget/throttle/*.hpp"
   "src/widget/throttle/*.cpp"
   "../shared/src/traintastic/locale/locale.cpp"

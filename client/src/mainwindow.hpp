@@ -126,6 +126,7 @@ class MainWindow : public QMainWindow
 
     const std::shared_ptr<Connection>& connection() { return m_connection; }
 
+    const ObjectPtr& world() const;
     const ObjectPtr& worldClock() const { return m_clock; }
 
   public slots:

@@ -82,5 +82,9 @@
         <file>board_tile.rail.decoupler.svg</file>
         <file>clock.svg</file>
         <file>reverse.svg</file>
+        <file>interface_state.error.svg</file>
+        <file>interface_state.initializing.svg</file>
+        <file>interface_state.offline.svg</file>
+        <file>interface_state.online.svg</file>
     </qresource>
 </RCC>
