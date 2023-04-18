@@ -74,6 +74,7 @@ void MainWindowStatusBar::worldChanged()
   else // no world
   {
     clearStatuses();
+    updateClock();
   }
 }
 
