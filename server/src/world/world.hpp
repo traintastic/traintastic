@@ -26,6 +26,7 @@
 #include "../core/object.hpp"
 #include "../core/property.hpp"
 #include "../core/objectproperty.hpp"
+#include "../core/objectvectorproperty.hpp"
 #include "../core/controllerlist.hpp"
 #include "../core/method.hpp"
 #include "../core/event.hpp"
@@ -34,6 +35,7 @@
 #include <boost/uuid/uuid.hpp>
 #include <traintastic/enum/worldevent.hpp>
 #include "../enum/worldscale.hpp"
+#include "../status/status.hpp"
 #include <traintastic/set/worldstate.hpp>
 
 class WorldLoader;
@@ -114,6 +116,7 @@ class World : public Object
 
     ObjectProperty<LinkRailTileList> linkRailTiles;
 
+    ObjectVectorProperty<Status> statuses;
     Property<uint32_t> hardwareThrottles; //<! number of connected hardware throttles
 
     Property<WorldState> state;

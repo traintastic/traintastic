@@ -129,13 +129,13 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
       else
         m_kernel = ECoS::Kernel::create<ECoS::TCPIOHandler>(ecos->config(), hostname.value());
 
-      status.setValueInternal(InterfaceStatus::Initializing);
+      setState(InterfaceState::Initializing);
 
       m_kernel->setLogId(id.value());
       m_kernel->setOnStarted(
         [this]()
         {
-          status.setValueInternal(InterfaceStatus::Online);
+          setState(InterfaceState::Online);
         });
       m_kernel->setOnEmergencyStop(
         [this]()
@@ -169,7 +169,7 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
     }
     catch(const LogMessageException& e)
     {
-      status.setValueInternal(InterfaceStatus::Offline);
+      setState(InterfaceState::Offline);
       Log::log(*this, e.message(), e.args());
       return false;
     }
@@ -183,7 +183,7 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
     m_kernel->stop(simulation ? nullptr : &m_simulation);
     m_kernel.reset();
 
-    status.setValueInternal(InterfaceStatus::Offline);
+    setState(InterfaceState::Offline);
   }
   return true;
 }

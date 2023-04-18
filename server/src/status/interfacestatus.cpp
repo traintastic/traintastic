@@ -1,9 +1,9 @@
 /**
- * server/src/enum/interfacestatus.hpp
+ * server/src/status/interfacestatus.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,16 +20,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_ENUM_INTERFACESTATUS_HPP
-#define TRAINTASTIC_SERVER_ENUM_INTERFACESTATUS_HPP
+#include "interfacestatus.hpp"
+#include "../core/attributes.hpp"
 
-#include <traintastic/enum/interfacestatus.hpp>
-
-inline constexpr std::array<InterfaceStatus, 4> interfaceStatusValues{{
-  InterfaceStatus::Offline,
-  InterfaceStatus::Initializing,
-  InterfaceStatus::Online,
-  InterfaceStatus::Error,
-}};
-
-#endif
+InterfaceStatus::InterfaceStatus(Object& parent_, std::string_view parentPropertyName_)
+  : Status(parent_, parentPropertyName_)
+  , state(this, "state", InterfaceState::Offline, PropertyFlags::ReadOnly | PropertyFlags::NoStore)
+{
+  Attributes::addValues(state, interfaceStateValues);
+  m_interfaceItems.add(state);
+}

@@ -207,10 +207,10 @@ interface:online=Online
 interface:status=Status
 interface:type=Type
 
-interface_status:error=Fout
-interface_status:initializing=Initialiseren
-interface_status:offline=Offline
-interface_status:online=Online
+interface_state:error=Fout
+interface_state:initializing=Initialiseren
+interface_state:offline=Offline
+interface_state:online=Online
 
 ip:hostname=Hostnaam
 ip:port=Poort

@@ -207,10 +207,10 @@ interface.z21:serial_number=Seriennummer
 #interface:status=Status
 interface:type=Typ
 
-#interface_status:error=Error
-#interface_status:initializing=Initializing
-#interface_status:offline=Offline
-#interface_status:online=Online
+#interface_state:error=Error
+#interface_state:initializing=Initializing
+#interface_state:offline=Offline
+#interface_state:online=Online
 
 ip:hostname=Hostname
 ip:port=Port

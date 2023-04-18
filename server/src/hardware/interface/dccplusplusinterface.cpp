@@ -125,13 +125,13 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
         m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SerialIOHandler>(dccplusplus->config(), device.value(), baudrate.value(), SerialFlowControl::None);
       }
 
-      status.setValueInternal(InterfaceStatus::Initializing);
+      setState(InterfaceState::Initializing);
 
       m_kernel->setLogId(id.value());
       m_kernel->setOnStarted(
         [this]()
         {
-          status.setValueInternal(InterfaceStatus::Online);
+          setState(InterfaceState::Online);
 
           const bool powerOn = contains(m_world.state.value(), WorldState::PowerOn);
 
@@ -173,7 +173,7 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
     }
     catch(const LogMessageException& e)
     {
-      status.setValueInternal(InterfaceStatus::Offline);
+      setState(InterfaceState::Offline);
       Log::log(*this, e.message(), e.args());
       return false;
     }
@@ -187,7 +187,7 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
     m_kernel->stop();
     m_kernel.reset();
 
-    status.setValueInternal(InterfaceStatus::Offline);
+    setState(InterfaceState::Offline);
   }
   return true;
 }

@@ -29,15 +29,22 @@
 
 Interface::Interface(World& world, std::string_view _id)
   : IdObject(world, _id)
-  , name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store,
+    [this](const std::string& value)
+    {
+      status->label.setValueInternal(value);
+    }}
   , online{this, "online", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore, nullptr,
       [this](bool& value)
       {
         return setOnline(value, contains(m_world.state.value(), WorldState::Simulation));
       }}
-  , status{this, "status", InterfaceStatus::Offline, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
+  , status{this, "status", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
+  status.setValueInternal(std::make_shared<InterfaceStatus>(*this, status.name()));
+  status->label.setValueInternal(name.value());
+
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(name, DisplayName::Object::name);
@@ -48,9 +55,7 @@ Interface::Interface(World& world, std::string_view _id)
   Attributes::addEnabled(online, contains(m_world.state.value(), WorldState::Online));
   m_interfaceItems.add(online);
 
-  Attributes::addDisplayName(status, DisplayName::Interface::status);
   Attributes::addObjectEditor(status, false);
-  Attributes::addValues(status, interfaceStatusValues);
   m_interfaceItems.add(status);
 
   Attributes::addDisplayName(notes, DisplayName::Object::notes);
@@ -61,11 +66,13 @@ void Interface::addToWorld()
 {
   IdObject::addToWorld();
   m_world.interfaces->addObject(shared_ptr<Interface>());
+  m_world.statuses.appendInternal(status.value());
 }
 
 void Interface::destroying()
 {
   online = false; // make sure interface is offline before destroying it
+  m_world.statuses.removeInternal(status.value());
   m_world.interfaces->removeObject(shared_ptr<Interface>());
   IdObject::destroying();
 }
@@ -97,4 +104,9 @@ void Interface::worldEvent(WorldState state, WorldEvent event)
     default:
       break;
   }
+}
+
+void Interface::setState(InterfaceState value)
+{
+  status->state.setValueInternal(value);
 }

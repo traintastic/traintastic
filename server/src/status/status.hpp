@@ -1,9 +1,9 @@
 /**
- * shared/src/enum/interfacestatus.hpp
+ * server/src/status/status.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,26 +20,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_INTERFACESTATUS_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_INTERFACESTATUS_HPP
+#ifndef TRAINTASTIC_SERVER_STATUS_STATUS_HPP
+#define TRAINTASTIC_SERVER_STATUS_STATUS_HPP
 
-#include <cstdint>
-#include "enum.hpp"
+#include "../core/subobject.hpp"
+#include "../core/property.hpp"
 
-enum class InterfaceStatus : uint8_t
+class Status : public SubObject
 {
-  Offline = 0,
-  Initializing = 1,
-  Online = 2,
-  Error = 255,
+  public:
+    Property<std::string> label;
+
+    Status(Object& parent_, std::string_view parentPropertyName_);
 };
-
-TRAINTASTIC_ENUM(InterfaceStatus, "interface_status", 4,
-{
-  {InterfaceStatus::Offline, "offline"},
-  {InterfaceStatus::Initializing, "initializing"},
-  {InterfaceStatus::Online, "online"},
-  {InterfaceStatus::Error, "error"},
-});
 
 #endif

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@
 
 #include "interfacelisttablemodel.hpp"
 #include "interfacelist.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../utils/displayname.hpp"
 
 constexpr uint32_t columnId = 0;
@@ -61,8 +62,8 @@ std::string InterfaceListTableModel::getText(uint32_t column, uint32_t row) cons
         return interface.name;
 
       case columnStatus:
-        if(const auto* it = EnumValues<InterfaceStatus>::value.find(interface.status); it != EnumValues<InterfaceStatus>::value.end())
-          return std::string("$").append(EnumName<InterfaceStatus>::value).append(":").append(it->second).append("$");
+        if(const auto* it = EnumValues<InterfaceState>::value.find(interface.status->state); it != EnumValues<InterfaceState>::value.end())
+          return std::string("$").append(EnumName<InterfaceState>::value).append(":").append(it->second).append("$");
         break;
 
       default:

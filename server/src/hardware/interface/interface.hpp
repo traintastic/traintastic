@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,8 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACE_HPP
 
 #include "../../core/idobject.hpp"
-#include "../../enum/interfacestatus.hpp"
+#include "../../core/objectproperty.hpp"
+#include "../../status/interfacestatus.hpp"
 
 /**
  * @brief Base class for a hardware interface
@@ -39,11 +40,12 @@ class Interface : public IdObject
     void worldEvent(WorldState state, WorldEvent event) override;
 
     virtual bool setOnline(bool& value, bool simulation) = 0;
+    void setState(InterfaceState value);
 
   public:
     Property<std::string> name;
     Property<bool> online;
-    Property<InterfaceStatus> status;
+    ObjectProperty<InterfaceStatus> status;
     Property<std::string> notes;
 };
 

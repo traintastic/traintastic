@@ -130,13 +130,13 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
       else
         m_kernel = Z21::ClientKernel::create<Z21::UDPClientIOHandler>(z21->config(), hostname.value(), port.value());
 
-      status.setValueInternal(InterfaceStatus::Initializing);
+      setState(InterfaceState::Initializing);
 
       m_kernel->setLogId(id.value());
       m_kernel->setOnStarted(
         [this]()
         {
-          status.setValueInternal(InterfaceStatus::Online);
+          setState(InterfaceState::Online);
         });
       m_kernel->setOnSerialNumberChanged(
         [this](uint32_t newValue)
@@ -199,7 +199,7 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
     }
     catch(const LogMessageException& e)
     {
-      status.setValueInternal(InterfaceStatus::Offline);
+      setState(InterfaceState::Offline);
       Log::log(*this, e.message(), e.args());
       return false;
     }
@@ -213,7 +213,7 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
     m_kernel->stop();
     m_kernel.reset();
 
-    status.setValueInternal(InterfaceStatus::Offline);
+    setState(InterfaceState::Offline);
     hardwareType.setValueInternal("");
     serialNumber.setValueInternal("");
     firmwareVersion.setValueInternal("");
