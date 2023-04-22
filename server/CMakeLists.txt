@@ -164,6 +164,8 @@ file(GLOB TEST_SOURCES
   "test/objectcreatedestroy.cpp"
   )
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DENABLE_LOG_DEBUG")
+
 ### PLATFORM ###
 
 if(UNIX AND NOT APPLE)

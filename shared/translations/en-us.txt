@@ -320,6 +320,7 @@ message:C2002=DCC++ only supports the DCC protocol
 message:C2003=DCC++ doesn't support DCC long addresses below 128
 message:C2004=Can't get free slot
 message:C9999=%1
+message:D0000=%1
 message:D1001=Resume %1 (multiplier: %2)
 message:D1002=Tick %1 (error: %2us)
 message:D1003=Freeze %1

@@ -51,6 +51,9 @@ struct LogMessageOffset
 enum class LogMessage : uint32_t
 {
   // Debug:
+#ifdef ENABLE_LOG_DEBUG
+  D0000_X = LogMessageOffset::debug,
+#endif
   D1001_RESUME_X_MULTIPLIER_X = LogMessageOffset::debug + 1001,
   D1002_TICK_X_ERROR_X_US = LogMessageOffset::debug + 1002,
   D1003_FREEZE_X = LogMessageOffset::debug + 1003,

@@ -310,6 +310,7 @@ message:C2002=DCC++ ondersteund alleen het DCC protocol
 message:C2003=DCC++ ondersteund geen lange adressen onder de 128
 #message:C2004=Can't get free slot
 message:C9999=%1
+message:D0000=%1
 message:D1001=Hervatten %1 (vermenigvuldiger: %2)
 message:D1002=Tik %1 (fout: %2us)
 message:D1003=Bevries %1

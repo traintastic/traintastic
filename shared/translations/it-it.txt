@@ -311,6 +311,7 @@ message:C2002=DCC++ supporta solo il protocollo DCC
 message:C2003=DCC++ non supporta indirizzi estesi DCC inferiori a 128
 message:C2004=Impossibile ottenere slot libero
 message:C9999=%1
+message:D0000=%1
 message:D1001=Riprendi %1 (moltiplicatore: %2)
 message:D1002=Tick %1 (errore: %2us)
 message:D1003=Congela %1
