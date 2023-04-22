@@ -47,7 +47,12 @@ static void updateDecoderSpeed(const std::shared_ptr<Decoder>& decoder, uint8_t 
   if(speed == SPEED_STOP || speed == SPEED_ESTOP)
     decoder->throttle.setValueInternal(Decoder::throttleStop);
   else
-    decoder->throttle.setValueInternal(Decoder::speedStepToThrottle(speed - 1, SPEED_MAX - 1));
+  {
+    speed--; // decrement one for ESTOP: 2..127 -> 1..126
+    const uint8_t currentStep = Decoder::throttleToSpeedStep(decoder->throttle.value(), SPEED_MAX - 1);
+    if(currentStep != speed) // only update trottle if it is a different step
+      decoder->throttle.setValueInternal(Decoder::speedStepToThrottle(speed, SPEED_MAX - 1));
+  }
 }
 
 constexpr Kernel::Priority& operator ++(Kernel::Priority& value)
