@@ -88,6 +88,7 @@ void Interface::worldEvent(WorldState state, WorldEvent event)
     case WorldEvent::Offline:
       online = false;
       Attributes::setEnabled(online, false);
+      setState(InterfaceState::Offline);
       break;
 
     case WorldEvent::Online:
