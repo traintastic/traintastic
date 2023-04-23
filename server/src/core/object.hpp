@@ -68,7 +68,6 @@ class Object : public std::enable_shared_from_this<Object>
       event.fire(std::forward<Args>(args)...);
     }
 
-    inline bool dying() const noexcept { return m_dying; }
     virtual void destroying() {}
     virtual void load(WorldLoader& loader, const nlohmann::json& data);
     virtual void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const;
@@ -87,6 +86,7 @@ class Object : public std::enable_shared_from_this<Object>
     Object();
     virtual ~Object() = default;
 
+    inline bool dying() const noexcept { return m_dying; }
     void destroy();
 
     template <typename Derived>
