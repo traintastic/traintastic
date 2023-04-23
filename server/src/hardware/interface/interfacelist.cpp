@@ -23,9 +23,13 @@
 #include "interfacelist.hpp"
 #include "interfacelisttablemodel.hpp"
 #include "interfaces.hpp"
+#include "../decoder/list/decoderlist.hpp"
+#include "../output/list/outputlist.hpp"
+#include "../input/list/inputlist.hpp"
 #include "../../world/world.hpp"
 #include "../../world/getworld.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../utils/displayname.hpp"
 
 InterfaceList::InterfaceList(Object& _parent, std::string_view parentPropertyName) :
