@@ -77,6 +77,9 @@ class ObjectList : public AbstractObjectList
       rowCountChanged();
     }
 
+    virtual void objectAdded(const std::shared_ptr<T>& /*object*/) {}
+    virtual void objectRemoved(const std::shared_ptr<T>& /*object*/) {}
+
     virtual bool isListedProperty(std::string_view name) = 0;
 
     virtual void propertyChanged(BaseProperty& property)
@@ -151,6 +154,7 @@ class ObjectList : public AbstractObjectList
     {
       m_propertyChanged.emplace(object.get(), object->propertyChanged.connect(std::bind(&ObjectList<T>::propertyChanged, this, std::placeholders::_1)));
       m_items.emplace_back(std::move(object));
+      objectAdded(m_items.back());
       rowCountChanged();
     }
 
@@ -162,6 +166,7 @@ class ObjectList : public AbstractObjectList
         m_propertyChanged[object.get()].disconnect();
         m_propertyChanged.erase(object.get());
         m_items.erase(it);
+        objectRemoved(object);
         rowCountChanged();
 
         uint32_t row = std::distance(m_items.begin(), it);

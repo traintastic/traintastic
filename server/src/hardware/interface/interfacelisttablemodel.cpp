@@ -27,7 +27,6 @@
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
-constexpr uint32_t columnStatus = 2;
 
 bool InterfaceListTableModel::isListedProperty(std::string_view name)
 {
@@ -81,6 +80,4 @@ void InterfaceListTableModel::propertyChanged(BaseProperty& property, uint32_t r
     changed(row, columnId);
   else if(property.name() == "name")
     changed(row, columnName);
-  else if(property.name() == "status")
-    changed(row, columnStatus);
 }

@@ -49,6 +49,12 @@ InterfaceList::InterfaceList(Object& _parent, std::string_view parentPropertyNam
   m_interfaceItems.add(delete_);
 }
 
+InterfaceList::~InterfaceList()
+{
+  for(auto& it : m_statusPropertyChanged)
+    it.second.disconnect();
+}
+
 TableModelPtr InterfaceList::getModel()
 {
   return std::make_shared<InterfaceListTableModel>(*this);
@@ -67,4 +73,31 @@ void InterfaceList::worldEvent(WorldState state, WorldEvent event)
 bool InterfaceList::isListedProperty(std::string_view name)
 {
   return InterfaceListTableModel::isListedProperty(name);
+}
+
+void InterfaceList::objectAdded(const std::shared_ptr<Interface>& object)
+{
+  m_statusPropertyChanged.emplace(object.get(), object->status->propertyChanged.connect(std::bind(&InterfaceList::statusPropertyChanged, this, std::placeholders::_1)));
+}
+
+void InterfaceList::objectRemoved(const std::shared_ptr<Interface>& object)
+{
+  m_statusPropertyChanged[object.get()].disconnect();
+  m_statusPropertyChanged.erase(object.get());
+}
+
+void InterfaceList::statusPropertyChanged(BaseProperty& property)
+{
+  if(!m_models.empty() && property.name() == "state")
+  {
+    ObjectPtr obj = static_cast<SubObject&>(property.object()).parent().shared_from_this();
+    const uint32_t rows = static_cast<uint32_t>(m_items.size());
+    for(uint32_t row = 0; row < rows; row++)
+      if(m_items[row] == obj)
+      {
+        for(auto& model : m_models)
+          static_cast<InterfaceListTableModel*>(model)->changed(row, InterfaceListTableModel::columnStatus);
+        break;
+      }
+  }
 }
