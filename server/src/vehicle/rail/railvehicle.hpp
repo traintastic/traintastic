@@ -27,6 +27,7 @@
 #include "../../core/lengthproperty.hpp"
 #include "../../core/speedproperty.hpp"
 #include "../../core/weightproperty.hpp"
+#include "../../core/trainproperty.hpp"
 #include "../../hardware/decoder/decoder.hpp"
 
 class RailVehicle : public Vehicle
@@ -48,6 +49,8 @@ class RailVehicle : public Vehicle
     SpeedProperty speedMax;
     WeightProperty weight;
     WeightProperty totalWeight;
+
+    TrainProperty activeTrain;
 };
 
 #endif

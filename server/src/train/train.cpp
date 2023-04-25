@@ -102,8 +102,12 @@ Train::Train(World& world, std::string_view _id) :
         updateEnabled();
       }
 
-      for(const auto& vehicle : m_poweredVehicles)
-        vehicle->setEmergencyStop(value);
+      if(active)
+      {
+        //Propagate to all vehicles in this Train
+        for(const auto& vehicle : m_poweredVehicles)
+          vehicle->setEmergencyStop(value);
+      }
     }},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store},
   overrideWeight{this, "override_weight", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
@@ -115,6 +119,12 @@ Train::Train(World& world, std::string_view _id) :
     }},
   vehicles{this, "vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   powered{this, "powered", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
+  active{this, "active", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly,
+    [this](bool)
+    {
+      updateSpeed();
+    },
+    std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   vehicles.setValueInternal(std::make_shared<TrainVehicleList>(*this, vehicles.name()));
@@ -154,6 +164,10 @@ Train::Train(World& world, std::string_view _id) :
   m_interfaceItems.add(weight);
   m_interfaceItems.add(overrideWeight);
   m_interfaceItems.add(vehicles);
+
+  Attributes::addEnabled(active, true);
+  m_interfaceItems.add(active);
+
   Attributes::addObjectEditor(powered, false);
   m_interfaceItems.add(powered);
   Attributes::addDisplayName(notes, DisplayName::Object::notes);
@@ -202,6 +216,9 @@ void Train::setSpeed(const double kmph)
 void Train::updateSpeed()
 {
   if(m_speedState == SpeedState::Idle)
+    return;
+
+  if(m_speedState == SpeedState::Accelerate && !active)
     return;
 
   const double targetSpeed = throttleSpeed.getValue(SpeedUnit::MeterPerSecond);
@@ -326,4 +343,54 @@ void Train::updateEnabled()
   Attributes::setEnabled(vehicles->remove, stopped);
   Attributes::setEnabled(vehicles->move, stopped);
   Attributes::setEnabled(vehicles->reverse, stopped);
+}
+
+bool Train::setTrainActive(bool val)
+{
+  auto self = this->shared_ptr<Train>();
+
+  if(val)
+  {
+    //To activate a train, ensure all vehicles are stopped and free
+    for(const auto& vehicle : *vehicles)
+    {
+      assert(vehicle->activeTrain.value() != self);
+      if(vehicle->activeTrain.value())
+      {
+        return false; //Not free
+      }
+
+      if(auto decoder = vehicle->decoder.value(); decoder && !almostZero(decoder->throttle.value()))
+      {
+        return false; //Already running
+      }
+    }
+
+    //Now really activate
+    //Register this train as activeTrain
+    for(const auto& vehicle : *vehicles)
+    {
+      vehicle->activeTrain.setValueInternal(self);
+    }
+
+    //Sync Emergency Stop state
+    const bool stopValue = emergencyStop;
+    for(const auto& vehicle : m_poweredVehicles)
+      vehicle->setEmergencyStop(stopValue);
+  }
+  else
+  {
+    //To deactivate a Train it must be stopped first
+    if(!isStopped)
+      return false;
+
+    //Deactivate all vehicles
+    for(const auto& vehicle : *vehicles)
+    {
+      assert(vehicle->activeTrain.value() == self);
+      vehicle->activeTrain.setValueInternal(nullptr);
+    }
+  }
+
+  return true;
 }

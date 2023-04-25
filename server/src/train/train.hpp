@@ -59,6 +59,7 @@ class Train : public IdObject
     void updatePowered();
     void updateSpeedMax();
     void updateEnabled();
+    bool setTrainActive(bool val);
 
   protected:
     void addToWorld() override;
@@ -84,6 +85,7 @@ class Train : public IdObject
     Property<bool> overrideWeight;
     ObjectProperty<TrainVehicleList> vehicles;
     Property<bool> powered;
+    Property<bool> active;
     Property<std::string> notes;
 
     Train(World& world, std::string_view _id);
