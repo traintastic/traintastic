@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -130,7 +130,9 @@ void LBServerIOHandler::read()
           if(startsWith(line, "RECEIVE "))
           {
             std::vector<std::byte> bytes = readHexBytes(line.substr(8));
-            m_kernel.receive(*reinterpret_cast<const Message*>(bytes.data()));
+            const Message* message = reinterpret_cast<const Message*>(bytes.data());
+            if(isValid(*message))
+              m_kernel.receive(*message);
           }
           else if(startsWith(line, "SENT OK"))
           {

@@ -265,6 +265,7 @@ void Kernel::stop()
 void Kernel::receive(const Message& message)
 {
   assert(isKernelThread());
+  assert(isValid(message)); // only valid messages should be received
 
   if(m_config.debugLogRXTX)
     EventLoop::call([this, msg=toString(message)](){ Log::log(m_logId, LogMessage::D2002_RX_X, msg); });
