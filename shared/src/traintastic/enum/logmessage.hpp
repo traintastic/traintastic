@@ -117,6 +117,8 @@ enum class LogMessage : uint32_t
   N2001_SIMULATION_NOT_SUPPORTED = LogMessageOffset::notice + 2001,
   N2002_NO_RESPONSE_FROM_LNCV_MODULE_X_WITH_ADDRESS_X = LogMessageOffset::notice + 2002,
   N2003_STOPPED_SENDING_FAST_CLOCK_SYNC = LogMessageOffset::notice + 2003,
+  N2004_STARTING_PCAP_FILE_LOG_X = LogMessageOffset::notice + 2004,
+  N2005_STARTING_PCAP_LOG_PIPE_X = LogMessageOffset::notice + 2005,
   N3001_ASSIGNED_TRAIN_X_TO_BLOCK_X = LogMessageOffset::notice + 3001,
   N3002_REMOVED_TRAIN_X_FROM_BLOCK_X = LogMessageOffset::notice + 3002,
   N9001_STARTING_SCRIPT = LogMessageOffset::notice + 9001,
@@ -165,6 +167,7 @@ enum class LogMessage : uint32_t
   E2018_TIMEOUT_NO_ECHO_WITHIN_X_MS = LogMessageOffset::error + 2018,
   E2019_TIMEOUT_NO_RESPONSE_WITHIN_X_MS = LogMessageOffset::error + 2019,
   E2020_TOTAL_NUMBER_OF_MODULES_MAY_NOT_EXCEED_X  = LogMessageOffset::error + 2020,
+  E2021_STARTING_PCAP_LOG_FAILED_X = LogMessageOffset::error + 2021,
   E9001_X_DURING_EXECUTION_OF_X_EVENT_HANDLER = LogMessageOffset::error + 9001,
   E9999_X = LogMessageOffset::error + 9999,
 

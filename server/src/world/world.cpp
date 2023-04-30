@@ -21,8 +21,6 @@
  */
 
 #include "world.hpp"
-#include <fstream>
-#include <iomanip>
 #include <boost/algorithm/string.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
@@ -37,7 +35,7 @@
 #include "../hardware/identification/identification.hpp"
 #include "../hardware/programming/lncv/lncvprogrammer.hpp"
 #include "../log/log.hpp"
-#include "../os/localtime.hpp"
+#include "../utils/datetimestr.hpp"
 #include "../utils/displayname.hpp"
 #include "../traintastic/traintastic.hpp"
 
@@ -194,15 +192,6 @@ World::World(Private /*unused*/) :
         // backup world:
         const std::filesystem::path worldDir = Traintastic::instance->worldDir();
         const std::filesystem::path worldBackupDir = Traintastic::instance->worldBackupDir();
-        auto dateTimeStr =
-          []()
-          {
-            const auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-            std::stringstream ss;
-            tm tm;
-            ss << std::put_time(localTime(&now, &tm), "_%Y%m%d_%H%M%S");
-            return ss.str();
-          };
 
         if(!std::filesystem::is_directory(worldBackupDir))
         {

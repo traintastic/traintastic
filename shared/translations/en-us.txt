@@ -286,6 +286,8 @@ loconet_settings:fast_clock=Fast clock
 loconet_settings:fast_clock_sync_enabled=Fast clock sync enabled
 loconet_settings:fast_clock_sync_interval=Fast clock sync interval
 loconet_settings:locomotive_slots=Locomotive slots
+loconet_settings:pcap=PCAP
+loconet_settings:pcap_output=PCAP output
 loconet_settings:response_timeout=Response timeout
 
 lua.script:disabled=Disabled
@@ -363,6 +365,7 @@ message:E2017=Serial port set flow control failed (%1)
 message:E2018=Timeout, no echo within %1ms
 message:E2019=Timeout, no response within %1ms
 message:E2020=Total number of modules may not exceed %1
+message:E2021=Staring PCAP log failed: %1
 message:E9001=%1 (During execution of %2 event handler)
 message:E9999=%1
 message:F1001=Opening TCP socket failed (%1)
@@ -421,6 +424,8 @@ message:N1026=Imported world successfully
 message:N2001=Simulation not supported
 message:N2002=No response from LNCV module %1 with address %2
 message:N2003=Stopped sending fast clock sync
+message:N2004=Starting PCAP file log: %1
+message:N2005=Starting PCAP log pipe: %1
 message:N3001=Assigned train %1 to block %2
 message:N3002=Removed train %1 from block %2
 message:N9001=Starting script
@@ -460,6 +465,9 @@ output_map.signal:key=Aspect
 output_map.turnout:key=Position
 
 output_map:use=Use
+
+pcap_output:file=File
+pcap_output:pipe=Pipe
 
 power_unit:hp=hp
 power_unit:kw=kW

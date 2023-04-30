@@ -38,6 +38,7 @@
 #include <traintastic/enum/loconetserialinterface.hpp>
 #include <traintastic/enum/opcmultisensedirection.hpp>
 #include <traintastic/enum/outputaction.hpp>
+#include <traintastic/enum/pcapoutput.hpp>
 #include <traintastic/enum/powerunit.hpp>
 #include <traintastic/enum/ratiounit.hpp>
 #include <traintastic/enum/sensortype.hpp>
@@ -97,6 +98,7 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(LocoNetSerialInterface)
   TRANSLATE_ENUM(OPCMultiSenseDirection)
   TRANSLATE_ENUM(OutputAction)
+  TRANSLATE_ENUM(PCAPOutput)
   TRANSLATE_ENUM(PowerUnit)
   TRANSLATE_ENUM(RatioUnit)
   TRANSLATE_ENUM(SensorType)

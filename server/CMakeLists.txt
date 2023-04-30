@@ -139,6 +139,8 @@ file(GLOB SOURCES
   "src/network/*.cpp"
   "src/os/*.hpp"
   "src/os/*.cpp"
+  "src/pcap/*.hpp"
+  "src/pcap/*.cpp"
   "src/status/*.hpp"
   "src/status/*.cpp"
   "src/train/*.hpp"

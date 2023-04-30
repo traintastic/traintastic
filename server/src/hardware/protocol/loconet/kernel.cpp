@@ -29,11 +29,15 @@
 #include "../../input/inputcontroller.hpp"
 #include "../../output/outputcontroller.hpp"
 #include "../../identification/identificationcontroller.hpp"
+#include "../../../utils/datetimestr.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../utils/inrange.hpp"
+#include "../../../pcap/pcapfile.hpp"
+#include "../../../pcap/pcappipe.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 #include "../../../clock/clock.hpp"
+#include "../../../traintastic/traintastic.hpp"
 #include "../dcc/dcc.hpp"
 
 namespace LocoNet {
@@ -72,6 +76,7 @@ Kernel::Kernel(const Config& config, bool simulation)
   , m_inputController{nullptr}
   , m_outputController{nullptr}
   , m_identificationController{nullptr}
+  , m_debugDir{Traintastic::instance->debugDir()}
   , m_config{config}
 #ifndef NDEBUG
   , m_started{false}
@@ -79,6 +84,8 @@ Kernel::Kernel(const Config& config, bool simulation)
 {
   assert(isEventLoopThread());
 }
+
+Kernel::~Kernel() = default;
 
 void Kernel::setConfig(const Config& config)
 {
@@ -98,6 +105,19 @@ void Kernel::setConfig(const Config& config)
   m_ioContext.post(
     [this, newConfig=config]()
     {
+      if(newConfig.pcap != m_config.pcap)
+      {
+        if(newConfig.pcap)
+          startPCAP(newConfig.pcapOutput);
+        else
+          m_pcap.reset();
+      }
+      else if(newConfig.pcap && newConfig.pcapOutput != m_config.pcapOutput)
+      {
+        m_pcap.reset();
+        startPCAP(newConfig.pcapOutput);
+      }
+
       if(m_config.fastClock == LocoNetFastClock::Master && newConfig.fastClock == LocoNetFastClock::Off)
       {
         setFastClockMaster(false);
@@ -214,6 +234,9 @@ void Kernel::start()
   m_ioContext.post(
     [this]()
     {
+      if(m_config.pcap)
+        startPCAP(m_config.pcapOutput);
+
       m_ioHandler->start();
 
       if(m_config.fastClock == LocoNetFastClock::Master)
@@ -251,6 +274,7 @@ void Kernel::stop()
       m_waitingForResponseTimer.cancel();
       m_fastClockSyncTimer.cancel();
       m_ioHandler->stop();
+      m_pcap.reset();
     });
 
   m_ioContext.stop();
@@ -266,6 +290,9 @@ void Kernel::receive(const Message& message)
 {
   assert(isKernelThread());
   assert(isValid(message)); // only valid messages should be received
+
+  if(m_pcap)
+    m_pcap->writeRecord(&message, message.size());
 
   if(m_config.debugLogRXTX)
     EventLoop::call([this, msg=toString(message)](){ Log::log(m_logId, LogMessage::D2002_RX_X, msg); });
@@ -1455,6 +1482,55 @@ bool Kernel::updateFunctions(LocoSlot& slot, const T& message)
     });
 
   return changed;
+}
+
+void Kernel::startPCAP(PCAPOutput pcapOutput)
+{
+  assert(isKernelThread());
+  assert(!m_pcap);
+
+  const uint32_t DLT_USER0 = 147; //! \todo change to LocoNet DLT once it is registered
+
+  try
+  {
+    switch(pcapOutput)
+    {
+      case PCAPOutput::File:
+      {
+        const auto filename = m_debugDir / m_logId += dateTimeStr() += ".pcap";
+        EventLoop::call(
+          [this, filename]()
+          {
+            Log::log(m_logId, LogMessage::N2004_STARTING_PCAP_FILE_LOG_X, filename);
+          });
+        m_pcap = std::make_unique<PCAPFile>(filename, DLT_USER0);
+        break;
+      }
+      case PCAPOutput::Pipe:
+      {
+#ifdef WIN32
+        return; //! \todo Implement
+#else // unix
+        auto pipe = std::filesystem::temp_directory_path() / "traintastic-server" / m_logId;
+#endif
+        EventLoop::call(
+          [this, pipe]()
+          {
+            Log::log(m_logId, LogMessage::N2005_STARTING_PCAP_LOG_PIPE_X, pipe);
+          });
+        m_pcap = std::make_unique<PCAPPipe>(std::move(pipe), DLT_USER0);
+        break;
+      }
+    }
+  }
+  catch(const std::exception& e)
+  {
+    EventLoop::call(
+      [this, what=std::string(e.what())]()
+      {
+        Log::log(m_logId, LogMessage::E2021_STARTING_PCAP_LOG_FAILED_X, what);
+      });
+  }
 }
 
 

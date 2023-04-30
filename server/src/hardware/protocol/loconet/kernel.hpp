@@ -26,6 +26,7 @@
 #include <array>
 #include <unordered_map>
 #include <thread>
+#include <filesystem>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/signals2/connection.hpp>
@@ -42,6 +43,7 @@ enum class SimulateInputAction;
 class InputController;
 class OutputController;
 class IdentificationController;
+class PCAP;
 
 namespace LocoNet {
 
@@ -178,6 +180,9 @@ class Kernel
 
     IdentificationController* m_identificationController;
 
+    const std::filesystem::path m_debugDir;
+    std::unique_ptr<PCAP> m_pcap;
+
     Config m_config;
 #ifndef NDEBUG
     bool m_started;
@@ -249,6 +254,8 @@ class Kernel
     template<uint8_t First, uint8_t Last, class T>
     bool updateFunctions(LocoSlot& slot, const T& message);
 
+    void startPCAP(PCAPOutput pcapOutput);
+
   public:
     static constexpr uint16_t inputAddressMin = 1;
     static constexpr uint16_t inputAddressMax = 4096;
@@ -259,6 +266,7 @@ class Kernel
 
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
+    ~Kernel();
 
 #ifndef NDEBUG
     bool isKernelThread() const
