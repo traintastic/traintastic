@@ -103,7 +103,9 @@ void RailVehicle::destroying()
     decoder = nullptr;
   for(const auto& train : trains)
   {
-    train->vehicles->remove(self);
+    auto item = train->vehicles->getItemFromVehicle(self);
+    if(item)
+      train->vehicles->remove(item);
   }
   m_world.railVehicles->removeObject(self);
   IdObject::destroying();

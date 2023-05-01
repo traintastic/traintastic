@@ -21,10 +21,13 @@
  */
 
 #include "trainvehiclelist.hpp"
-#include "../vehicle/rail/railvehiclelisttablemodel.hpp"
+#include "trainvehiclelistitem.hpp"
+#include "trainvehiclelisttablemodel.hpp"
 #include "train.hpp"
+#include "../vehicle/rail/railvehicle.hpp"
 #include "../world/getworld.hpp"
 #include "../world/world.hpp"
+#include "../world/worldloader.hpp"
 #include "../core/attributes.hpp"
 #include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
@@ -32,62 +35,48 @@
 #include "../utils/displayname.hpp"
 
 TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropertyName)
-  : ObjectList<RailVehicle>(train_, parentPropertyName)
+  : SubObject(train_, parentPropertyName)
+  , items{*this, "items", {}, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::StoreState | PropertyFlags::SubObject}
   , add{*this, "add",
       [this](const std::shared_ptr<RailVehicle>& vehicle)
       {
-        if(train().active && vehicle->activeTrain.value())
-          return; // Cannot add vehicle already in active train to other active train
-
-        if(containsObject(vehicle))
-          return;
-
         addObject(vehicle);
-        train().vehiclesChanged();
-        vehicle->trains.appendInternal(parent().shared_ptr<Train>());
-
-        if(train().active)
-          vehicle->activeTrain.setValueInternal(parent().shared_ptr<Train>());
       }}
   , remove{*this, "remove",
-      [this](const std::shared_ptr<RailVehicle>& vehicle)
+      [this](const std::shared_ptr<TrainVehicleListItem>& item)
       {
-        if(vehicle->activeTrain.value() == train().shared_ptr<Train>())
-          vehicle->activeTrain.setValueInternal(nullptr);
-
-        vehicle->trains.removeInternal(parent().shared_ptr<Train>());
-        removeObject(vehicle);
-        train().vehiclesChanged();
+        removeObject(item);
       }}
   , move{*this, "move",
       [this](uint32_t from, uint32_t to)
       {
-        if(from >= length || to >= length || from == to)
+        if(from >= items.size() || to >= items.size() || from == to)
           return;
+
+        auto fromVal = items[from];
+        items.moveInternal(fromVal, to - from);
 
         if(from > to)
         {
-          std::rotate(m_items.rend() - from - 1, m_items.rend() - from, m_items.rend() - to);
           rowsChanged(to, from);
         }
         else
         {
-          std::rotate(m_items.begin() + from, m_items.begin() + from + 1, m_items.begin() + to + 1);
           rowsChanged(from, to);
         }
       }}
   , reverse{*this, "reverse",
       [this]()
       {
-        if(m_items.empty())
+        if(items.empty())
           return;
-        std::reverse(m_items.begin(), m_items.end());
-        rowsChanged(0, length - 1);
+        items.reverseInternal();
+        rowsChanged(0, items.size() - 1);
       }}
 {
   const auto& world = getWorld(parent());
 
-  m_interfaceItems.add(length);
+  m_interfaceItems.add(items);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, false);
@@ -105,17 +94,32 @@ TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropert
   m_interfaceItems.add(reverse);
 }
 
-TableModelPtr TrainVehicleList::getModel()
+void TrainVehicleList::load(WorldLoader& loader, const nlohmann::json& data)
 {
-  return std::make_shared<RailVehicleListTableModel>(*this);
+  nlohmann::json state = loader.getState(getObjectId());
+  nlohmann::json objects = state.value("items", nlohmann::json::array());
+  if(!objects.empty())
+  {
+    std::vector<std::shared_ptr<TrainVehicleListItem>> values;
+    for(const auto& object : objects.items())
+    {
+      nlohmann::json itemId = object.value().value("item_id", nlohmann::json());
+      if(itemId.is_number_unsigned())
+      {
+        auto item = std::make_shared<TrainVehicleListItem>(*this, itemId.get<uint32_t>());
+        m_propertyChanged.emplace(item.get(), item->propertyChanged.connect(std::bind(&TrainVehicleList::propertyChanged, this, std::placeholders::_1)));
+        values.emplace_back(item);
+      }
+      else
+        break;
+      }
+      items.load(std::move(values));
+  }
+  SubObject::load(loader, data);
+  rowCountChanged();
 }
 
-bool TrainVehicleList::isListedProperty(std::string_view name)
-{
-  return RailVehicleListTableModel::isListedProperty(name);
-}
-
-void TrainVehicleList::propertyChanged(BaseProperty& property)
+void TrainVehicleList::propertyChanged(BaseProperty &property)
 {
   if(property.name() == "lob")
     train().updateLength();
@@ -124,10 +128,108 @@ void TrainVehicleList::propertyChanged(BaseProperty& property)
   else if(property.name() == "speed_max")
     train().updateSpeedMax();
 
-  ObjectList<RailVehicle>::propertyChanged(property);
+  if(!m_models.empty() && TrainVehicleListTableModel::isListedProperty(property.name()))
+  {
+    ObjectPtr obj = property.object().shared_from_this();
+    const uint32_t rows = static_cast<uint32_t>(items.size());
+    for(uint32_t row = 0; row < rows; row++)
+    {
+      if(items[row] == obj)
+      {
+        for(auto& model : m_models)
+        {
+          model->propertyChanged(property, row);
+          break;
+        }
+      }
+    }
+  }
+}
+
+TableModelPtr TrainVehicleList::getModel()
+{
+  return std::make_shared<TrainVehicleListTableModel>(*this);
+}
+
+void TrainVehicleList::rowCountChanged()
+{
+  const auto size = items.size();
+  //length.setValueInternal(static_cast<uint32_t>(size));
+  for(auto& model : m_models)
+    model->setRowCount(static_cast<uint32_t>(size));
+}
+
+void TrainVehicleList::rowsChanged(uint32_t first, uint32_t last)
+{
+  for(auto& model : m_models)
+  {
+    model->rowsChanged(first, last);
+  }
+}
+
+void TrainVehicleList::addObject(std::shared_ptr<RailVehicle> vehicle)
+{
+  std::shared_ptr<TrainVehicleListItem> object = getItemFromVehicle(vehicle);
+  if(object)
+    return; //Vehicle is already in this train
+
+  object = std::make_shared<TrainVehicleListItem>(*this, getItemId());
+  object->vehicle.setValueInternal(vehicle);
+  object->vehicle->trains.appendInternal(parent().shared_ptr<Train>());
+
+  items.appendInternal(object);
+  m_propertyChanged.emplace(object.get(), object->propertyChanged.connect(std::bind(&TrainVehicleList::propertyChanged, this, std::placeholders::_1)));
+
+  rowCountChanged();
+  train().vehiclesChanged();
+}
+
+void TrainVehicleList::removeObject(const std::shared_ptr<TrainVehicleListItem> &item)
+{
+  auto it = std::find(items.begin(), items.end(), item);
+  if(it == items.end())
+    return;
+
+  m_propertyChanged[item.get()].disconnect();
+  m_propertyChanged.erase(item.get());
+
+  item->vehicle->trains.removeInternal(parent().shared_ptr<Train>());
+  item->destroy();
+  items.removeInternal(item);
+
+  rowCountChanged();
+
+  uint32_t row = std::distance(items.begin(), it);
+  for(auto& model : m_models)
+  {
+    model->rowRemovedHack(row);
+  }
+
+  train().vehiclesChanged();
 }
 
 Train& TrainVehicleList::train()
 {
   return static_cast<Train&>(parent());
+}
+
+uint32_t TrainVehicleList::getItemId() const
+{
+  uint32_t itemId = 1;
+  while(std::find_if(begin(), end(), [itemId](const auto& it){ return it->itemId() == itemId; }) != end())
+    itemId++;
+  return itemId;
+}
+
+std::shared_ptr<TrainVehicleListItem> TrainVehicleList::getItemFromVehicle(const std::shared_ptr<RailVehicle>& vehicle) const
+{
+  static const std::shared_ptr<TrainVehicleListItem> null;
+
+  auto it = std::find_if(begin(), end(),
+    [vehicle](const std::shared_ptr<TrainVehicleListItem>& item)
+    {
+      return item->vehicle.value() == vehicle;
+    });
+
+  return it == end() ? null : *it;
 }

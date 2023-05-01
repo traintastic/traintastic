@@ -23,32 +23,60 @@
 #ifndef TRAINTASTIC_SERVER_TRAIN_TRAINVEHICLELIST_HPP
 #define TRAINTASTIC_SERVER_TRAIN_TRAINVEHICLELIST_HPP
 
+#include "../core/subobject.hpp"
+#include "../core/objectvectorproperty.hpp"
+#include "../core/table.hpp"
 #include "../core/method.hpp"
-#include "../core/objectlist.hpp"
-#include "../vehicle/rail/railvehicle.hpp"
 
 class Train;
+class TrainVehicleListItem;
+class TrainVehicleListTableModel;
+class RailVehicle;
 
-class TrainVehicleList : public ObjectList<RailVehicle>
+class TrainVehicleList : public SubObject, public Table
 {
+  CLASS_ID("list.train_vehicle")
+
   private:
+    friend class TrainVehicleListItem;
+    friend class TrainVehicleListTableModel;
     inline Train& train();
+    uint32_t getItemId() const;
 
   protected:
-    bool isListedProperty(std::string_view name) final;
-    void propertyChanged(BaseProperty& property) final;
+    std::unordered_map<Object*, boost::signals2::connection> m_propertyChanged;
+    std::vector<TrainVehicleListTableModel *> m_models;
+
+    void load(WorldLoader& loader, const nlohmann::json& data) final;
+
+    void propertyChanged(BaseProperty& property);
+
+    void rowCountChanged();
+
+    void rowsChanged(uint32_t first, uint32_t last);
+
+    void addObject(std::shared_ptr<RailVehicle> vehicle);
+
+    void removeObject(const std::shared_ptr<TrainVehicleListItem>& item);
 
   public:
-    CLASS_ID("list.train_vehicle")
+    using const_iterator = ObjectVectorProperty<TrainVehicleListItem>::const_iterator;
 
+    ObjectVectorProperty<TrainVehicleListItem> items;
     Method<void(const std::shared_ptr<RailVehicle>&)> add;
-    Method<void(const std::shared_ptr<RailVehicle>&)> remove;
+    Method<void(const std::shared_ptr<TrainVehicleListItem>&)> remove;
     Method<void(uint32_t, uint32_t)> move;
     Method<void()> reverse;
 
     TrainVehicleList(Train& train_, std::string_view parentPropertyName);
 
+    inline const_iterator begin() const { return items.begin(); }
+    inline const_iterator end() const { return items.end(); }
+    inline bool empty() const { return items.empty(); }
+
     TableModelPtr getModel() final;
+
+    std::shared_ptr<TrainVehicleListItem> getItemFromVehicle(const std::shared_ptr<RailVehicle>& vehicle) const;
 };
 
 #endif
