@@ -446,23 +446,26 @@ void Kernel::receive(const Message& message)
       if(m_inputController)
       {
         const auto& inputRep = static_cast<const InputRep&>(message);
-        const auto value = toTriState(inputRep.value());
-        if(m_inputValues[inputRep.fullAddress()] != value)
+        if(inputRep.isControlSet())
         {
-          if(m_config.debugLogInput)
+          const auto value = toTriState(inputRep.value());
+          if(m_inputValues[inputRep.fullAddress()] != value)
+          {
+            if(m_config.debugLogInput)
+              EventLoop::call(
+                [this, address=1 + inputRep.fullAddress(), value=inputRep.value()]()
+                {
+                  Log::log(m_logId, LogMessage::D2007_INPUT_X_IS_X, address, value ? std::string_view{"1"} : std::string_view{"0"});
+                });
+
+            m_inputValues[inputRep.fullAddress()] = value;
+
             EventLoop::call(
-              [this, address=1 + inputRep.fullAddress(), value=inputRep.value()]()
+              [this, address=1 + inputRep.fullAddress(), value]()
               {
-                Log::log(m_logId, LogMessage::D2007_INPUT_X_IS_X, address, value ? std::string_view{"1"} : std::string_view{"0"});
+                m_inputController->updateInputValue(InputController::defaultInputChannel, address, value);
               });
-
-          m_inputValues[inputRep.fullAddress()] = value;
-
-          EventLoop::call(
-            [this, address=1 + inputRep.fullAddress(), value]()
-            {
-              m_inputController->updateInputValue(InputController::defaultInputChannel, address, value);
-            });
+          }
         }
       }
       break;
