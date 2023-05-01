@@ -23,6 +23,6 @@
 #ifndef TRAINTASTIC_SHARED_TRAINTASTIC_COPYRIGHT_HPP
 #define TRAINTASTIC_SHARED_TRAINTASTIC_COPYRIGHT_HPP
 
-#define TRAINTASTIC_COPYRIGHT "Copyright (c) 2019-2023 Reinder Feenstra"
+#define TRAINTASTIC_COPYRIGHT "Copyright (c) 2019-2023 Reinder Feenstra and contributors"
 
 #endif
