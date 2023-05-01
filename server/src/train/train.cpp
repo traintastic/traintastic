@@ -21,11 +21,12 @@
  */
 
 #include "train.hpp"
-#include "trainlist.hpp"
-#include "trainvehiclelist.hpp"
-#include "../world/world.hpp"
 #include "trainblockstatus.hpp"
+#include "trainlist.hpp"
 #include "trainlisttablemodel.hpp"
+#include "trainvehiclelist.hpp"
+#include "trainvehiclelistitem.hpp"
+#include "../world/world.hpp"
 #include "../core/attributes.hpp"
 #include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
@@ -224,7 +225,7 @@ void Train::destroying()
   auto self = shared_ptr<Train>();
   for(const auto& vehicle : *vehicles)
   {
-    vehicle->trains.removeInternal(self);
+    vehicle->vehicle->trains.removeInternal(self);
   }
   m_world.trains->removeObject(self);
   IdObject::destroying();
@@ -323,8 +324,8 @@ void Train::updateLength()
     return;
 
   double mm = 0;
-  for(const auto& vehicle : *vehicles)
-    mm += vehicle->lob.getValue(LengthUnit::MilliMeter);
+  for(const auto& item : *vehicles)
+    mm += item->vehicle->lob.getValue(LengthUnit::MilliMeter);
   lob.setValueInternal(convertUnit(mm, LengthUnit::MilliMeter, lob.unit()));
 }
 
@@ -334,16 +335,16 @@ void Train::updateWeight()
     return;
 
   double ton = 0;
-  for(const auto& vehicle : *vehicles)
-    ton += vehicle->totalWeight.getValue(WeightUnit::Ton);
+  for(const auto& item : *vehicles)
+    ton += item->vehicle->totalWeight.getValue(WeightUnit::Ton);
   weight.setValueInternal(convertUnit(ton, WeightUnit::Ton, weight.unit()));
 }
 
 void Train::updatePowered()
 {
   m_poweredVehicles.clear();
-  for(const auto& vehicle : *vehicles)
-    if(auto poweredVehicle = std::dynamic_pointer_cast<PoweredRailVehicle>(vehicle))
+  for(const auto& item : *vehicles)
+    if(auto poweredVehicle = std::dynamic_pointer_cast<PoweredRailVehicle>(item->vehicle.value()))
       m_poweredVehicles.emplace_back(poweredVehicle);
   powered.setValueInternal(!m_poweredVehicles.empty());
 }
@@ -354,11 +355,11 @@ void Train::updateSpeedMax()
   {
     const auto itEnd = vehicles->end();
     auto it = vehicles->begin();
-    double kmph = (*it)->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+    double kmph = (*it)->vehicle->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
     for(; it != itEnd; ++it)
     {
-      const double v = (*it)->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
-      if((v > 0 || isPowered(**it)) && v < kmph)
+      const double v = (*it)->vehicle->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+      if((v > 0 || isPowered(*(*it)->vehicle)) && v < kmph)
         kmph = v;
     }
     speedMax.setValueInternal(convertUnit(kmph, SpeedUnit::KiloMeterPerHour, speedMax.unit()));
@@ -400,15 +401,15 @@ bool Train::setTrainActive(bool val)
     }
 
     //To activate a train, ensure all vehicles are stopped and free
-    for(const auto& vehicle : *vehicles)
+    for(const auto& item : *vehicles)
     {
-      assert(vehicle->activeTrain.value() != self);
-      if(vehicle->activeTrain.value())
+      assert(item->vehicle->activeTrain.value() != self);
+      if(item->vehicle->activeTrain.value())
       {
         return false; //Not free
       }
 
-      if(auto decoder = vehicle->decoder.value(); decoder && !almostZero(decoder->throttle.value()))
+      if(auto decoder = item->vehicle->decoder.value(); decoder && !almostZero(decoder->throttle.value()))
       {
         return false; //Already running
       }
@@ -416,9 +417,9 @@ bool Train::setTrainActive(bool val)
 
     //Now really activate
     //Register this train as activeTrain
-    for(const auto& vehicle : *vehicles)
+    for(const auto& item : *vehicles)
     {
-      vehicle->activeTrain.setValueInternal(self);
+      item->vehicle->activeTrain.setValueInternal(self);
     }
 
     //Sync Emergency Stop state
@@ -433,10 +434,10 @@ bool Train::setTrainActive(bool val)
       return false;
 
     //Deactivate all vehicles
-    for(const auto& vehicle : *vehicles)
+    for(const auto& item : *vehicles)
     {
-      assert(vehicle->activeTrain.value() == self);
-      vehicle->activeTrain.setValueInternal(nullptr);
+      assert(item->vehicle->activeTrain.value() == self);
+      item->vehicle->activeTrain.setValueInternal(nullptr);
     }
   }
 
