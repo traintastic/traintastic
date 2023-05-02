@@ -61,7 +61,7 @@ class Event : public AbstractEvent
     {
     }
 
-    tcb::span<const TypeInfo> argumentTypeInfo() const final
+    std::span<const TypeInfo> argumentTypeInfo() const final
     {
       return {typeInfoArray<Args...>};
     }

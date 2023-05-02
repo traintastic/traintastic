@@ -24,7 +24,7 @@
 #define TRAINTASTIC_SERVER_CORE_ABSTRACTVECTORPROPERTY_HPP
 
 #include "baseproperty.hpp"
-#include <tcb/span.hpp>
+#include <span>
 #include "objectptr.hpp"
 
 class AbstractVectorProperty : public BaseProperty
@@ -52,7 +52,7 @@ class AbstractVectorProperty : public BaseProperty
     virtual void setObject(size_t index, const ObjectPtr& value) = 0;
 
     virtual void loadJSON(const nlohmann::json& values) = 0;
-    virtual void loadObjects(tcb::span<ObjectPtr> values) = 0;
+    virtual void loadObjects(std::span<ObjectPtr> values) = 0;
 };
 
 #endif

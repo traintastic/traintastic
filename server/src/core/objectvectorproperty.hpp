@@ -150,7 +150,7 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
       m_values = std::move(values);
     }
 
-    void loadObjects(tcb::span<ObjectPtr> values) final
+    void loadObjects(std::span<ObjectPtr> values) final
     {
       std::vector<std::shared_ptr<T>> objects;
       objects.reserve(values.size());

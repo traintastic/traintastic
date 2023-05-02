@@ -121,7 +121,7 @@ class Method<R(A...)> : public AbstractMethod
       return m_function(args...);
     }
 
-    tcb::span<const TypeInfo> argumentTypeInfo() const final
+    std::span<const TypeInfo> argumentTypeInfo() const final
     {
       return {typeInfoArray<A...>};
     }
