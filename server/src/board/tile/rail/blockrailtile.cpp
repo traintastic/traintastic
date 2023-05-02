@@ -40,6 +40,21 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
       {
         if(trains.empty())
         {
+          if(!newTrain->active)
+          {
+            try
+            {
+              newTrain->active = true;
+            }
+            catch(...)
+            {
+              //! \todo report reason back to caller
+            }
+
+            if(!newTrain->active)
+              return;
+          }
+
           trains.appendInternal(newTrain);
           updateTrainMethodEnabled();
           if(state == BlockState::Free || state == BlockState::Unknown)
