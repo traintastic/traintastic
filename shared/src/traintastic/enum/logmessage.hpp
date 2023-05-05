@@ -136,6 +136,7 @@ enum class LogMessage : uint32_t
   W2006_COMMAND_STATION_DOES_NOT_SUPPORT_LOCO_SLOT_X = LogMessageOffset::warning + 2006,
   W2007_COMMAND_STATION_DOES_NOT_SUPPORT_THE_FAST_CLOCK_SLOT = LogMessageOffset::warning + 2007,
   W2018_TIMEOUT_NO_ECHO_WITHIN_X_MS = LogMessageOffset::warning + 2018,
+  W2019_Z21_BROADCAST_FLAG_MISMATCH = LogMessageOffset::warning + 2019,
   W9999_X = LogMessageOffset::warning + 9999,
 
   // Error:

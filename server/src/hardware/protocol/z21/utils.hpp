@@ -23,6 +23,9 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_UTILS_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_UTILS_HPP
 
+#include <cstdint>
+#include <traintastic/enum/direction.hpp>
+
 namespace Z21::Utils {
 
 inline constexpr uint8_t directionFlag = 0x80;

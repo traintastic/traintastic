@@ -441,6 +441,7 @@ message:W2005=Output address %1 is invalid
 message:W2006=Command station does not support loco slot %1
 message:W2007=Command station does not support the fast clock slot
 message:W2018=Timeout, no echo within %1ms
+message:W2019=Z21 broadcast flags do not match requested ones
 message:W9999=%1
 
 object:id=Id
