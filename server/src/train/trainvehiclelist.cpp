@@ -27,6 +27,7 @@
 #include "../vehicle/rail/railvehicle.hpp"
 #include "../world/getworld.hpp"
 #include "../world/world.hpp"
+#include "../world/worldloader.hpp"
 #include "../core/attributes.hpp"
 #include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
@@ -95,7 +96,8 @@ TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropert
 
 void TrainVehicleList::load(WorldLoader& loader, const nlohmann::json& data)
 {
-  nlohmann::json objects = data.value("items", nlohmann::json::array());
+  nlohmann::json state = loader.getState(getObjectId());
+  nlohmann::json objects = state.value("items", nlohmann::json::array());
   if(!objects.empty())
   {
     std::vector<std::shared_ptr<TrainVehicleListItem>> values;
