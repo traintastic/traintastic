@@ -26,6 +26,7 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include "worldsaver.hpp"
+#include "../board/tile/rail/blockrailtile.hpp"
 #include "../board/tile/rail/linkrailtile.hpp"
 #include "../core/objectproperty.tpp"
 #include "../core/objectvectorproperty.tpp"

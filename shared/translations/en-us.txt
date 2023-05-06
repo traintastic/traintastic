@@ -607,6 +607,7 @@ speed_unit:mps=m/s
 throttle_object_list:throttle=Throttle
 
 train:active=Active
+train:block=Block
 train:lob=Length over buffers
 train:override_length=Override length
 train:override_weight=Override weight

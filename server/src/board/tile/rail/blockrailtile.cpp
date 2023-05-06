@@ -26,6 +26,7 @@
 #include "../../../world/world.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../log/log.hpp"
+#include "../../../train/train.hpp"
 #include "../../../utils/displayname.hpp"
 
 BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
@@ -56,7 +57,17 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
               return;
           }
 
+          const auto self = shared_ptr<BlockRailTile>();
+
           trains.appendInternal(newTrain);
+          if(!newTrain->blocks.empty())
+          {
+            //! \todo check if block is connected to the head or tail block of the train
+            return; // not yet supported
+          }
+          else
+            newTrain->blocks.appendInternal(self);
+
           updateTrainMethodEnabled();
           if(state == BlockState::Free || state == BlockState::Unknown)
             updateState();
@@ -77,7 +88,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
             }
           }
 
-          fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(onTrainAssigned, newTrain, shared_ptr<BlockRailTile>());
+          fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(onTrainAssigned, newTrain, self);
         }
       }}
   , removeTrain{*this, "remove_train",
@@ -85,7 +96,11 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
       {
         if(trains.size() == 1 && trains[0]->isStopped)
         {
+          const auto self = shared_ptr<BlockRailTile>();
           auto oldTrain = trains[0];
+          if(!oldTrain->blocks.empty() && self != *oldTrain->blocks.begin() && self != *oldTrain->blocks.rbegin())
+            return; // only possible to remove the train from the head or tail block
+          oldTrain->blocks.removeInternal(self);
           trains.clearInternal();
           updateTrainMethodEnabled();
           if(state == BlockState::Reserved)
@@ -106,7 +121,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
             }
           }
 
-          fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(onTrainRemoved, oldTrain, shared_ptr<BlockRailTile>());
+          fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(onTrainRemoved, oldTrain, self);
         }
       }}
   , onTrainAssigned{*this, "on_train_assigned", EventFlags::Scriptable}

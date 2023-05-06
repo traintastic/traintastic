@@ -32,6 +32,7 @@
 #include "trainvehiclelist.hpp"
 
 class PoweredRailVehicle;
+class BlockRailTile;
 
 class Train : public IdObject
 {
@@ -86,6 +87,11 @@ class Train : public IdObject
     ObjectProperty<TrainVehicleList> vehicles;
     Property<bool> powered;
     Property<bool> active;
+
+    //! \brief List of blocks the train is in
+    //! Index 0 is the block where the head of the train is.
+    //! If the train changes direction this list will be reversed.
+    ObjectVectorProperty<BlockRailTile> blocks;
     Property<std::string> notes;
 
     Train(World& world, std::string_view _id);

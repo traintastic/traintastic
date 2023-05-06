@@ -26,7 +26,9 @@
 #include "trainlisttablemodel.hpp"
 #include "../core/attributes.hpp"
 #include "../core/objectproperty.tpp"
+#include "../core/objectvectorproperty.tpp"
 #include "../core/eventloop.hpp"
+#include "../board/tile/rail/blockrailtile.hpp"
 #include "../vehicle/rail/poweredrailvehicle.hpp"
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
@@ -125,6 +127,7 @@ Train::Train(World& world, std::string_view _id) :
       updateSpeed();
     },
     std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
+  blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   vehicles.setValueInternal(std::make_shared<TrainVehicleList>(*this, vehicles.name()));
@@ -167,6 +170,9 @@ Train::Train(World& world, std::string_view _id) :
 
   Attributes::addEnabled(active, true);
   m_interfaceItems.add(active);
+
+  Attributes::addObjectEditor(blocks, false);
+  m_interfaceItems.add(blocks);
 
   Attributes::addObjectEditor(powered, false);
   m_interfaceItems.add(powered);
