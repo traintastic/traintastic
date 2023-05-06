@@ -87,24 +87,8 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
       return m_values.size();
     }
 
-    ObjectPtr getObject(size_t index) const final
-    {
-      assert(index < size());
-      return std::dynamic_pointer_cast<Object>(m_values[index]);
-    }
-
-    void setObject(size_t index, const ObjectPtr& value) final
-    {
-      if(value)
-      {
-        if(std::shared_ptr<T> v = std::dynamic_pointer_cast<T>(value))
-          setValue(index, v);
-        else
-          throw conversion_error();
-      }
-      else
-        setValue(index, nullptr);
-    }
+    ObjectPtr getObject(size_t index) const final;
+    void setObject(size_t index, const ObjectPtr& value) final;
 
     void appendInternal(std::shared_ptr<T> value)
     {
@@ -153,17 +137,7 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
       m_values = std::move(values);
     }
 
-    void loadObjects(tcb::span<ObjectPtr> values) final
-    {
-      std::vector<std::shared_ptr<T>> objects;
-      objects.reserve(values.size());
-      for(const auto& object : values)
-        if(auto v = std::dynamic_pointer_cast<T>(object))
-          objects.emplace_back(v);
-        else
-          throw conversion_error();
-      m_values = std::move(objects);
-    }
+    void loadObjects(tcb::span<ObjectPtr> values) final;
 };
 
 #endif

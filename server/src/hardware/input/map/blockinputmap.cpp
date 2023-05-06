@@ -23,6 +23,7 @@
 #include "blockinputmap.hpp"
 #include "../../../world/getworld.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../core/objectvectorproperty.tpp"
 #include "../../../utils/displayname.hpp"
 
 BlockInputMap::BlockInputMap(Object& _parent, std::string_view parentPropertyName) :

@@ -28,6 +28,7 @@
 #include "worldsaver.hpp"
 #include "../board/tile/rail/linkrailtile.hpp"
 #include "../core/objectproperty.tpp"
+#include "../core/objectvectorproperty.tpp"
 #include "../core/objectlisttablemodel.hpp"
 #include "../core/attributes.hpp"
 #include "../core/abstractvectorproperty.hpp"
