@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,8 +50,12 @@ QIcon Theme::getIconForClassId(const QString& classId)
 {
   if(classId == "lua.script" || classId == "lua.script_list")
     return getIcon("lua");
+  else if(classId == "board" || classId == "list.board")
+    return getIcon("board");
   else if(classId == "clock")
     return getIcon("clock");
+  else if(classId == "train" || classId == "list.train")
+    return getIcon("train");
   else
     return QIcon();
 }

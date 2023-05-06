@@ -90,6 +90,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   , m_tileMoveStarted{false}
   , m_tileResizeStarted{false}
 {
+  setWindowIcon(Theme::getIconForClassId(object->classId));
   setFocusPolicy(Qt::StrongFocus);
 
   if(AbstractProperty* name = m_object->getProperty("name"))

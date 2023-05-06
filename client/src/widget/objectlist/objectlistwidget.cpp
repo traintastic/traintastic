@@ -63,6 +63,8 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
   m_actionOutputKeyboardChannel{nullptr},
   m_tableWidget{new TableWidget()}
 {
+  setWindowIcon(Theme::getIconForClassId(m_object->classId()));
+
   m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 
   QVBoxLayout* layout = new QVBoxLayout();
