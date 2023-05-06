@@ -135,11 +135,11 @@ void PoweredRailVehicle::registerDecoder()
       if(!activeTrain)
         return;
 
-      if(flags == DecoderChangeFlags::EmergencyStop)
+      if(has(flags, DecoderChangeFlags::EmergencyStop))
       {
         activeTrain.value()->emergencyStop.setValue(self.emergencyStop);
       }
-      else if(flags == DecoderChangeFlags::Throttle)
+      else if(has(flags, DecoderChangeFlags::Throttle))
       {
         if(almostZero(lastTrainSpeedStep - self.throttle))
         {
@@ -154,6 +154,11 @@ void PoweredRailVehicle::registerDecoder()
         // No speed profile -> linear
         const double kmph = self.throttle * speedMax.getValue(SpeedUnit::KiloMeterPerHour);
         activeTrain.value()->throttleSpeed.setValue(kmph);
+      }
+
+      if(has(flags, DecoderChangeFlags::Direction))
+      {
+        activeTrain->handleDecoderDirection(this->shared_ptr<PoweredRailVehicle>(), self.direction);
       }
     });
 }

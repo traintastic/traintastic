@@ -44,6 +44,7 @@ class PoweredRailVehicle;
 class Train : public IdObject
 {
   friend class TrainVehicleList;
+  friend class PoweredRailVehicle;
   friend class TrainTracking;
 
   private:
@@ -69,6 +70,8 @@ class Train : public IdObject
     void updateSpeedMax();
     void updateEnabled();
     bool setTrainActive(bool val);
+    void propagateDirection(Direction newDirection);
+    void handleDecoderDirection(const std::shared_ptr<PoweredRailVehicle>& vehicle, Direction newDirection);
 
     void fireBlockReserved(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
     void fireBlockEntered(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
