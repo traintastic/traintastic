@@ -40,6 +40,7 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
 
   public:
     using const_iterator = typename std::vector<std::shared_ptr<T>>::const_iterator;
+    using const_reverse_iterator = typename std::vector<std::shared_ptr<T>>::const_reverse_iterator;
 
     ObjectVectorProperty(Object& object, std::string_view name, std::initializer_list<std::shared_ptr<T>> values, PropertyFlags flags) :
       AbstractObjectVectorProperty(object, name, flags),
@@ -49,6 +50,8 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
 
     inline const_iterator begin() const { return m_values.begin(); }
     inline const_iterator end() const { return m_values.end(); }
+    inline const_reverse_iterator rbegin() const { return m_values.rbegin(); }
+    inline const_reverse_iterator rend() const { return m_values.rend(); }
 
     const std::shared_ptr<T>& operator [](size_t index) const
     {
