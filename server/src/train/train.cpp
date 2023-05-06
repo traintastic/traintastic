@@ -64,8 +64,7 @@ Train::Train(World& world, std::string_view _id) :
       for(auto& status : *blocks)
         status->direction.setValueInternal(!status->direction.value());
 
-      for(const auto& vehicle : m_poweredVehicles)
-        vehicle->setDirection(value);
+      propagateDirection(value);
       updateEnabled();
     },
     [](Direction& value)
@@ -140,6 +139,7 @@ Train::Train(World& world, std::string_view _id) :
   active{this, "active", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly,
     [this](bool)
     {
+      propagateDirection(direction); //Sync all vehicles direction
       updateSpeed();
     },
     std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
@@ -430,4 +430,49 @@ bool Train::setTrainActive(bool val)
   }
 
   return true;
+}
+
+void Train::propagateDirection(Direction newDirection)
+{
+  if(!active)
+    return;
+
+  const Direction oppositeDirection = newDirection == Direction::Forward ? Direction::Reverse : Direction::Forward;
+  for(const auto& item : *vehicles)
+  {
+    Direction dir = newDirection;
+    if(item->invertDirection)
+      dir = oppositeDirection;
+
+    auto poweredVehicle = std::dynamic_pointer_cast<PoweredRailVehicle>(item->vehicle.value());
+    if(poweredVehicle)
+      poweredVehicle->setDirection(dir);
+  }
+}
+
+void Train::handleDecoderDirection(const std::shared_ptr<PoweredRailVehicle>& vehicle, Direction newDirection)
+{
+  //! \todo assert vehicle contained in train?
+  if(!active || newDirection == Direction::Unknown)
+    return;
+
+  //Check if vehicle is inverted
+  bool isInverted = false;
+  for(const auto& item : *vehicles)
+  {
+    if(item->vehicle.value() == vehicle)
+    {
+      if(item->invertDirection)
+        isInverted = true;
+      break;
+    }
+  }
+
+  if(isInverted)
+    newDirection = newDirection == Direction::Forward ? Direction::Reverse : Direction::Forward;
+
+  if(direction == newDirection)
+    return; //No change
+
+  direction = newDirection;
 }

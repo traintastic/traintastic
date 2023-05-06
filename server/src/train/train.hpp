@@ -41,6 +41,7 @@ class PoweredRailVehicle;
 class Train : public IdObject
 {
   friend class TrainVehicleList;
+  friend class PoweredRailVehicle;
 
   private:
     enum class SpeedState
@@ -65,6 +66,8 @@ class Train : public IdObject
     void updateSpeedMax();
     void updateEnabled();
     bool setTrainActive(bool val);
+    void propagateDirection(Direction newDirection);
+    void handleDecoderDirection(const std::shared_ptr<PoweredRailVehicle>& vehicle, Direction newDirection);
 
   protected:
     void addToWorld() override;
