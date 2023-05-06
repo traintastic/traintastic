@@ -67,8 +67,7 @@ Train::Train(World& world, std::string_view _id) :
         status->direction.setValueInternal(!status->direction.value());
       blocks.reverseInternal(); // index 0 is head of train
 
-      for(const auto& vehicle : m_poweredVehicles)
-        vehicle->setDirection(value);
+      propagateDirection(value);
       updateEnabled();
     },
     [](Direction& value)
@@ -143,6 +142,7 @@ Train::Train(World& world, std::string_view _id) :
   active{this, "active", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly,
     [this](bool value)
     {
+      propagateDirection(direction); //Sync all vehicles direction
       updateSpeed();
       if(!value && m_throttle)
       {
@@ -605,4 +605,49 @@ void Train::fireBlockRemoved(const std::shared_ptr<BlockRailTile>& block)
     onBlockRemoved,
     shared_ptr<Train>(),
     block);
+}
+
+void Train::propagateDirection(Direction newDirection)
+{
+  if(!active)
+    return;
+
+  const Direction oppositeDirection = newDirection == Direction::Forward ? Direction::Reverse : Direction::Forward;
+  for(const auto& item : *vehicles)
+  {
+    Direction dir = newDirection;
+    if(item->invertDirection)
+      dir = oppositeDirection;
+
+    auto poweredVehicle = std::dynamic_pointer_cast<PoweredRailVehicle>(item->vehicle.value());
+    if(poweredVehicle)
+      poweredVehicle->setDirection(dir);
+  }
+}
+
+void Train::handleDecoderDirection(const std::shared_ptr<PoweredRailVehicle>& vehicle, Direction newDirection)
+{
+  //! \todo assert vehicle contained in train?
+  if(!active || newDirection == Direction::Unknown)
+    return;
+
+  //Check if vehicle is inverted
+  bool isInverted = false;
+  for(const auto& item : *vehicles)
+  {
+    if(item->vehicle.value() == vehicle)
+    {
+      if(item->invertDirection)
+        isInverted = true;
+      break;
+    }
+  }
+
+  if(isInverted)
+    newDirection = newDirection == Direction::Forward ? Direction::Reverse : Direction::Forward;
+
+  if(direction == newDirection)
+    return; //No change
+
+  direction = newDirection;
 }
