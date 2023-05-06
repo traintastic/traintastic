@@ -23,6 +23,8 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERCHANGEFLAGS_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERCHANGEFLAGS_HPP
 
+#include <type_traits>
+
 enum class DecoderChangeFlags
 {
   EmergencyStop = 1 << 0,
