@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -68,7 +68,7 @@ void SerialIOHandler::read()
           [this, ec]()
           {
             Log::log(m_kernel.logId(), LogMessage::E2002_SERIAL_READ_FAILED_X, ec);
-            // TODO interface status -> error
+            m_kernel.error();
           });
       }
     });
@@ -96,7 +96,7 @@ void SerialIOHandler::write()
           [this, ec]()
           {
             Log::log(m_kernel.logId(), LogMessage::E2001_SERIAL_WRITE_FAILED_X, ec);
-            // TODO interface status -> error
+            m_kernel.error();
           });
       }
     });

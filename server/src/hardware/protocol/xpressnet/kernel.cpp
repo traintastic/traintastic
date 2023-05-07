@@ -53,6 +53,13 @@ void Kernel::setConfig(const Config& config)
     });
 }
 
+void Kernel::setOnError(std::function<void()> callback)
+{
+  assert(isEventLoopThread());
+  assert(!m_started);
+  m_onError = std::move(callback);
+}
+
 void Kernel::start()
 {
   assert(m_ioHandler);
@@ -218,6 +225,13 @@ void Kernel::receive(const Message& message)
       }
       break;
   }
+}
+
+void Kernel::error()
+{
+  assert(isEventLoopThread());
+  if(m_onError)
+    m_onError();
 }
 
 void Kernel::resumeOperations()

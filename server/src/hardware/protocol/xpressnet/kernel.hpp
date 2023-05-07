@@ -51,6 +51,7 @@ class Kernel
     std::thread m_thread;
     std::string m_logId;
     std::function<void()> m_onStarted;
+    std::function<void()> m_onError;
 
     TriState m_trackPowerOn;
     TriState m_emergencyStop;
@@ -165,6 +166,12 @@ class Kernel
       m_onStarted = std::move(callback);
     }
 
+    //! \brief Register error handler
+    //! Once this handler is called the XpressNet communication is stopped.
+    //! \param[in] callback Handler to call in case of an error.
+    //! \note This function may not be called when the kernel is running.
+    void setOnError(std::function<void()> callback);
+
     /**
      * @brief ...
      *
@@ -256,6 +263,11 @@ class Kernel
      * @note This function must run in the kernel's IO context
      */
     void receive(const Message& message);
+
+    //! Must be called by the IO handler in case of a fatal error.
+    //! This will put the interface in error state
+    //! \note This function must run in the event loop thread
+    void error();
 
     /**
      *

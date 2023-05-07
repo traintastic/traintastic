@@ -226,6 +226,12 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
         {
           setState(InterfaceState::Online);
         });
+      m_kernel->setOnError(
+        [this]()
+        {
+          setState(InterfaceState::Error);
+          online = false; // communication no longer possible
+        });
       m_kernel->setOnNormalOperationResumed(
         [this]()
         {
