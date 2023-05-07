@@ -144,6 +144,7 @@ void Z21IOHandler::receive()
           [this, ec]()
           {
             Log::log(m_kernel.logId(), LogMessage::E2009_SOCKET_RECEIVE_FAILED_X, ec);
+            m_kernel.error();
           });
       }
     });
@@ -180,7 +181,7 @@ void Z21IOHandler::send()
           [this, ec]()
           {
             Log::log(m_kernel.logId(), LogMessage::E2011_SOCKET_SEND_FAILED_X, ec);
-            // TODO interface status -> error
+            m_kernel.error();
           });
       }
     });

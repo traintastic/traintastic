@@ -426,6 +426,11 @@ class Kernel
      */
     void receive(const Message& message);
 
+    //! Must be called by the IO handler in case of a fatal error.
+    //! This will put the interface in error state
+    //! \note This function must run in the event loop thread
+    void error();
+
     /**
      *
      *
