@@ -81,6 +81,7 @@ class TilePainter
 
     void drawSignal2Aspect(QRectF r, TileRotate rotate, SignalAspect aspect);
     void drawSignal3Aspect(QRectF r, TileRotate rotate, SignalAspect aspect);
+    void drawSignalDirection(QRectF r, TileRotate rotate);
 
     void drawRailBlock(const QRectF& r, TileRotate rotate, BlockState state = BlockState::Unknown, const std::vector<SensorState> subStates = {});
 

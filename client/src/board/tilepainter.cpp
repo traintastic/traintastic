@@ -538,12 +538,14 @@ void TilePainter::drawSignal(TileId id, const QRectF& r, TileRotate rotate, Sign
     case TileId::RailSignal2Aspect:
       setTrackPen();
       drawStraight(r, rotate);
+      drawSignalDirection(r, rotate);
       drawSignal2Aspect(r, rotate, aspect);
       break;
 
     case TileId::RailSignal3Aspect:
       setTrackPen();
       drawStraight(r, rotate);
+      drawSignalDirection(r, rotate);
       drawSignal3Aspect(r, rotate, aspect);
       break;
 
@@ -955,6 +957,34 @@ void TilePainter::drawSignal3Aspect(QRectF r, TileRotate rotate, SignalAspect as
     default:
       break;
   }
+
+  m_painter.restore();
+}
+
+void TilePainter::drawSignalDirection(QRectF r, TileRotate rotate)
+{
+  m_painter.save();
+  m_painter.translate(r.center());
+  m_painter.rotate(toDeg(rotate));
+  r.moveCenter(QPointF{0, 0});
+
+  QPainterPath path;
+  qreal x;
+  qreal y;
+  if(isDiagonal(rotate))
+  {
+    x = r.width() * 0.55;
+    y = r.height() * 0.075;
+  }
+  else
+  {
+    x = r.width() * 0.4;
+    y = r.height() * 0.4;
+  }
+  path.moveTo(x, y);
+  path.lineTo(x - r.width() * 0.15, y);
+  path.lineTo(x - r.width() * 0.075, y - r.height() * 0.15);
+  m_painter.fillPath(path, m_colorScheme.foreground);
 
   m_painter.restore();
 }

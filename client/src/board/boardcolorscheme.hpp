@@ -31,6 +31,7 @@ struct BoardColorScheme
   static const BoardColorScheme light;
 
   const QColor background;
+  const QColor foreground;
   const QColor track;
   const QColor trackDisabled;
   const QColor blockFree;
