@@ -387,6 +387,12 @@ void Train::updateEnabled()
   Attributes::setEnabled(vehicles->remove, stopped);
   Attributes::setEnabled(vehicles->move, stopped);
   Attributes::setEnabled(vehicles->reverse, stopped);
+
+  for(const auto& item : *vehicles)
+  {
+    Attributes::setEnabled(item->vehicle, stopped);
+    Attributes::setEnabled(item->invertDirection, stopped);
+  }
 }
 
 bool Train::setTrainActive(bool val)
