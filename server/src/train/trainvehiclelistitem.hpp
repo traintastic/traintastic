@@ -30,7 +30,7 @@
 class TrainVehicleList;
 class RailVehicle;
 
-class TrainVehicleListItem : public Object
+class TrainVehicleListItem final : public Object
 {
   public:
     CLASS_ID("train_vehicle.item")
@@ -42,6 +42,7 @@ class TrainVehicleListItem : public Object
     boost::signals2::connection m_vehicleDestroying;
 
   protected:
+    void destroying() final;
     void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const final;
     void loaded() final;
 
@@ -53,6 +54,7 @@ class TrainVehicleListItem : public Object
     Property<bool> invertDirection;
 
     TrainVehicleListItem(TrainVehicleList& parent, uint32_t itemId);
+    ~TrainVehicleListItem() final;
 
     std::string getObjectId() const final;
     uint32_t itemId() const { return m_itemId; }
