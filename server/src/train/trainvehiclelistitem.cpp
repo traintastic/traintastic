@@ -56,9 +56,25 @@ TrainVehicleListItem::TrainVehicleListItem(TrainVehicleList &parent, uint32_t it
   m_interfaceItems.add(invertDirection);
 }
 
+TrainVehicleListItem::~TrainVehicleListItem()
+{
+  assert(!vehicle);
+  assert(!m_vehiclePropertyChanged.connected());
+  assert(!m_vehicleDestroying.connected());
+}
+
 std::string TrainVehicleListItem::getObjectId() const
 {
   return m_parent.getObjectId().append(".").append(m_parent.items.name()).append(".item").append(std::to_string(m_itemId));
+}
+
+void TrainVehicleListItem::destroying()
+{
+  if(vehicle)
+    disconnectVehicle(*vehicle.value());
+  vehicle = nullptr;
+
+  Object::destroying();
 }
 
 void TrainVehicleListItem::save(WorldSaver &saver, nlohmann::json &data, nlohmann::json &state) const
