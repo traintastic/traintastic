@@ -546,6 +546,24 @@ struct LanXSetLocoDrive : LanX
     addressLow = longAddress ? address & 0xFF : address & 0x7F;
   }
 
+  inline void setSpeedSteps(uint8_t steps)
+  {
+    switch(steps)
+    {
+    case 14:
+      db0 = 0x10;
+      break;
+    case 28:
+      db0 = 0x12;
+      break;
+    case 126:
+    case 128:
+    default:
+      db0 = 0x13;
+      break;
+    }
+  }
+
   inline uint8_t speedSteps() const
   {
     switch(db0 & 0x0F)

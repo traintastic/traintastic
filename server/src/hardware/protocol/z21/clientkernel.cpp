@@ -333,49 +333,21 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
   {
     LanXSetLocoDrive cmd;
     cmd.setAddress(decoder.address, decoder.protocol == DecoderProtocol::DCCLong);
+    cmd.setDirection(decoder.direction);
 
-    switch(decoder.speedSteps)
+    // Decoder max speed steps must be set for the message to be correctly
+    // distinguished from LAN_X_SET_LOCO_FUNCTION
+    cmd.setSpeedSteps(decoder.speedSteps);
+
+    if(decoder.emergencyStop)
     {
-      case 14:
-      {
-        const uint8_t speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 14);
-        cmd.db0 = 0x10;
-        if(decoder.emergencyStop)
-          cmd.speedAndDirection = 0x01;
-        else if(speedStep > 0)
-          cmd.speedAndDirection = speedStep + 1;
-        break;
-      }
-      case 28:
-      {
-        uint8_t speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 28);
-        cmd.db0 = 0x12;
-        if(decoder.emergencyStop)
-          cmd.speedAndDirection = 0x01;
-        else if(speedStep > 0)
-        {
-          speedStep++;
-          cmd.speedAndDirection = ((speedStep & 0x01) << 4) | (speedStep >> 1);
-        }
-        break;
-      }
-      case 126:
-      case 128:
-      default:
-      {
-        const uint8_t speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 126);
-        cmd.db0 = 0x13;
-        if(decoder.emergencyStop)
-          cmd.speedAndDirection = 0x01;
-        else if(speedStep > 0)
-          cmd.speedAndDirection = speedStep + 1;
-        break;
-      }
+        cmd.setEmergencyStop();
     }
-
-    assert(decoder.direction.value() != Direction::Unknown);
-    if(decoder.direction.value() == Direction::Forward)
-      cmd.speedAndDirection |= 0x80;
+    else
+    {
+      const uint8_t speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, cmd.speedSteps());
+      cmd.setSpeedStep(speedStep);
+    }
 
     cmd.checksum = XpressNet::calcChecksum(*reinterpret_cast<const XpressNet::Message*>(&cmd.xheader));
     postSend(cmd);
