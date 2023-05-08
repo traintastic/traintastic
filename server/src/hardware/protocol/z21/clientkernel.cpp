@@ -116,13 +116,13 @@ void ClientKernel::receive(const Message& message)
 
         case LAN_X_LOCO_INFO:
         {
-          const int n = message.dataLen() - 7;
-          if(n >= 7 && n <= 14)
+          if(message.dataLen() >= LanXLocoInfo::minMessageSize && message.dataLen() <= LanXLocoInfo::maxMessageSize)
           {
             const auto& reply = static_cast<const LanXLocoInfo&>(message);
 
+            const int maxFunc = reply.supportsF29F31() ? 31 : 28;
             bool val[31 + 1] = {};
-            const int maxFunc = (n >= 8) ? 31 : 28;
+
             for(int i = 0; i <= maxFunc; i++)
             {
               val[i] = reply.getFunction(i);
