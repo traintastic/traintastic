@@ -39,7 +39,10 @@ class PoweredRailVehicle : public RailVehicle
 
     void registerDecoder();
     boost::signals2::connection decoderConnection;
+
+    friend class Train;
     float lastTrainSpeedStep = 0;
+    Direction lastTrainSetDirection = Direction::Unknown;
 
   public:
     PowerProperty power;
