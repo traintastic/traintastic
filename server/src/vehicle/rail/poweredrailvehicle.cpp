@@ -158,6 +158,8 @@ void PoweredRailVehicle::registerDecoder()
 
       if(has(flags, DecoderChangeFlags::Direction))
       {
+        if(self.direction == lastTrainSetDirection)
+          return; //Direction change was caused by Train itself, no need propagate back
         activeTrain->handleDecoderDirection(this->shared_ptr<PoweredRailVehicle>(), self.direction);
       }
     });
