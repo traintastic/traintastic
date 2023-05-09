@@ -621,7 +621,10 @@ void Train::propagateDirection(Direction newDirection)
 
     auto poweredVehicle = std::dynamic_pointer_cast<PoweredRailVehicle>(item->vehicle.value());
     if(poweredVehicle)
+    {
+      poweredVehicle->lastTrainSetDirection = dir;
       poweredVehicle->setDirection(dir);
+    }
   }
 }
 
