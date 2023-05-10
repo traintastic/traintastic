@@ -106,7 +106,8 @@ void TrainVehicleList::load(WorldLoader& loader, const nlohmann::json& data)
       nlohmann::json itemId = object.value().value("item_id", nlohmann::json());
       if(itemId.is_number_unsigned())
       {
-        auto item = std::make_shared<TrainVehicleListItem>(*this, itemId.get<uint32_t>());
+        //Actual load of vehicle is done by SubObject
+        auto item = std::make_shared<TrainVehicleListItem>(nullptr, *this, itemId.get<uint32_t>());
         m_propertyChanged.emplace(item.get(), item->propertyChanged.connect(std::bind(&TrainVehicleList::propertyChanged, this, std::placeholders::_1)));
         values.emplace_back(item);
       }
@@ -169,12 +170,14 @@ void TrainVehicleList::rowsChanged(uint32_t first, uint32_t last)
 
 void TrainVehicleList::addObject(std::shared_ptr<RailVehicle> vehicle)
 {
+  if(!vehicle)
+    return; //Cannot add null vehicles
+
   std::shared_ptr<TrainVehicleListItem> object = getItemFromVehicle(vehicle);
   if(object)
     return; //Vehicle is already in this train
 
-  object = std::make_shared<TrainVehicleListItem>(*this, getItemId());
-  object->vehicle.setValueInternal(vehicle);
+  object = std::make_shared<TrainVehicleListItem>(vehicle, *this, getItemId());
 
   items.appendInternal(object);
   m_propertyChanged.emplace(object.get(), object->propertyChanged.connect(std::bind(&TrainVehicleList::propertyChanged, this, std::placeholders::_1)));

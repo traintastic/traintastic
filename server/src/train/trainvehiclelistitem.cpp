@@ -28,13 +28,13 @@
 #include "../vehicle/rail/railvehicle.hpp"
 
 
-TrainVehicleListItem::TrainVehicleListItem(TrainVehicleList &parent, uint32_t itemId)
+TrainVehicleListItem::TrainVehicleListItem(const std::shared_ptr<RailVehicle> &vehicle_, TrainVehicleList &parent, uint32_t itemId)
   : m_parent(parent)
   , m_itemId(itemId)
-  , vehicle(this, "vehicle", nullptr, PropertyFlags::ReadWrite | PropertyFlags::ScriptReadWrite | PropertyFlags::StoreState,
+  , vehicle(this, "vehicle", vehicle_, PropertyFlags::ReadWrite | PropertyFlags::ScriptReadWrite | PropertyFlags::StoreState,
       [this](const std::shared_ptr<RailVehicle>& value) -> bool
       {
-        if(value && m_parent.getItemFromVehicle(value))
+        if(!value || m_parent.getItemFromVehicle(value))
           return false; //Vehicle already in train
 
         if(vehicle)
