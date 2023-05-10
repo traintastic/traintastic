@@ -76,6 +76,13 @@ class Object : public QObject
      */
     bool getPropertyValueBool(const QString& name, bool defaultValue) const;
 
+    //! \brief Get enum property value
+    //! \param[in] name Property name
+    //! \param[in] defaultValue Value to return if property doesn't exist or isn't an enum
+    //! \return Property value or \c defaultValue if property doesn't exist or isn't an enum
+    template<typename T>
+    T getPropertyValueEnum(const QString& name, T defaultValue) const;
+
     /**
      * \brief Get integer property value
      * \param[in] name Property name
@@ -83,6 +90,12 @@ class Object : public QObject
      * \return Property value or \c defaultValue if property doesn't exist or isn't an integer
      */
     int getPropertyValueInt(const QString& name, int defaultValue) const;
+
+    //! \brief Get string property value
+    //! \param[in] name Property name
+    //! \param[in] defaultValue Value to return if property doesn't exist or isn't an string
+    //! \return Property value or \c defaultValue if property doesn't exist or isn't an string
+    QString getPropertyValueString(const QString& name, const QString& defaultValue = {}) const;
 
     inline bool hasVectorProperty(const QString& name) const { return getVectorProperty(name); }
     const AbstractVectorProperty* getVectorProperty(const QString& name) const;

@@ -25,11 +25,14 @@
 #include <QtMath>
 #include <QPainterPath>
 #include "boardcolorscheme.hpp"
+#include "../network/object.tpp"
+#include "../network/abstractvectorproperty.hpp"
 #include "../settings/boardsettings.hpp"
 #include "../utils/rectf.hpp"
 
 TilePainter::TilePainter(QPainter& painter, int tileSize, const BoardColorScheme& colorScheme) :
   m_colorScheme{colorScheme},
+  m_showBlockSensorStates{BoardSettings::instance().showBlockSensorStates},
   m_turnoutDrawState{BoardSettings::instance().turnoutDrawState},
   m_trackWidth{tileSize / 5},
   m_turnoutMargin{tileSize / 10},
@@ -555,12 +558,12 @@ void TilePainter::drawSignal(TileId id, const QRectF& r, TileRotate rotate, Sign
   }
 }
 
-void TilePainter::drawBlock(TileId id, const QRectF& r, TileRotate rotate, BlockState state, const std::vector<SensorState> subStates)
+void TilePainter::drawBlock(TileId id, const QRectF& r, TileRotate rotate, const ObjectPtr& blockTile)
 {
   switch(id)
   {
     case TileId::RailBlock:
-      drawRailBlock(r, rotate, state, subStates);
+      drawRailBlock(r, rotate, blockTile);
       break;
 
     default:
@@ -989,8 +992,38 @@ void TilePainter::drawSignalDirection(QRectF r, TileRotate rotate)
   m_painter.restore();
 }
 
-void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, BlockState state, const std::vector<SensorState> subStates)
+void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, const ObjectPtr& blockTile)
 {
+  const BlockState state = blockTile ? blockTile->getPropertyValueEnum<BlockState>("state", BlockState::Unknown) : BlockState::Unknown;
+  std::vector<SensorState> subStates;
+  QString label;
+
+  if(blockTile)
+  {
+    if(m_showBlockSensorStates)
+    {
+      if(const auto* p = blockTile->getVectorProperty("sensor_states"))
+      {
+        const int size = p->size();
+        subStates.resize(static_cast<size_t>(size));
+        for(int i = 0; i < size; i++)
+          subStates[i] = p->getEnum<SensorState>(i);
+      }
+    }
+
+    switch(state)
+    {
+      case BlockState::Free:
+      case BlockState::Unknown:
+        label = blockTile->getPropertyValueString("name");
+        break;
+
+      case BlockState::Reserved:
+      case BlockState::Occupied:
+        break;
+    }
+  }
+
   setTrackPen();
 
   if(rotate == TileRotate::Deg0)
@@ -999,7 +1032,7 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, BlockState s
     setBlockStateBrush(state);
     m_painter.setPen(m_blockPen);
     const qreal m = 0.5 + qFloor(r.width() / 10);
-    const QRectF block = r.adjusted(m, m, -m, -m);
+    QRectF block = r.adjusted(m, m, -m, -m);
     m_painter.drawRect(block);
 
     if(!subStates.empty())
@@ -1013,6 +1046,17 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, BlockState s
         m_painter.drawRect(QRectF(block.left(), qRound(top) - 0.5, width, qRound(top + height) - qRound(top)));
         top += height;
       }
+      block.setLeft(block.left() + width);
+    }
+
+    if(!label.isEmpty())
+    {
+      m_painter.save();
+      m_painter.translate(r.center());
+      m_painter.rotate(90);
+      m_painter.setPen(m_colorScheme.blockText);
+      m_painter.drawText(QRectF{-block.height() / 2, -block.width() / 2, block.height(), block.width()}, label, QTextOption(Qt::AlignCenter));
+      m_painter.restore();
     }
   }
   else if(rotate == TileRotate::Deg90)
@@ -1021,7 +1065,7 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, BlockState s
     setBlockStateBrush(state);
     m_painter.setPen(m_blockPen);
     const qreal m = 0.5 + qFloor(r.height() / 10);
-    const QRectF block = r.adjusted(m, m, -m, -m);
+    QRectF block = r.adjusted(m, m, -m, -m);
     m_painter.drawRect(block);
 
     if(!subStates.empty())
@@ -1036,6 +1080,13 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, BlockState s
         m_painter.drawRect(QRectF(qRound(left) - 0.5, top, qRound(left + width) - qRound(left), height));
         left += width;
       }
+      block.setHeight(block.height() - height);
+    }
+
+    if(!label.isEmpty())
+    {
+      m_painter.setPen(m_colorScheme.blockText);
+      m_painter.drawText(block, label, QTextOption(Qt::AlignCenter));
     }
   }
   else

@@ -38,6 +38,7 @@ struct BoardColorScheme
   const QColor blockReserved;
   const QColor blockOccupied;
   const QColor blockUnknown;
+  const QColor blockText;
   const QColor sensorFree;
   const QColor sensorOccupied;
   const QColor sensorIdle;

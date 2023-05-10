@@ -70,6 +70,13 @@ int Object::getPropertyValueInt(const QString& name, int defaultValue) const
   return defaultValue;
 }
 
+QString Object::getPropertyValueString(const QString& name, const QString& defaultValue) const
+{
+  if(const auto* property = getProperty(name); property && property->type() == ValueType::String)
+    return property->toString();
+  return defaultValue;
+}
+
 const UnitProperty* Object::getUnitProperty(const QString& name) const
 {
   return dynamic_cast<UnitProperty*>(m_interfaceItems.find(name));

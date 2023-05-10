@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -146,6 +146,7 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
       break;
 
     case TileId::RailBlock:
+      tryConnect("name");
       tryConnect("state");
       tryConnect("sensor_states");
       break;
@@ -279,28 +280,6 @@ TurnoutPosition BoardAreaWidget::getTurnoutPosition(const TileLocation& l) const
     if(const auto* p = object->getProperty("position"))
       return p->toEnum<TurnoutPosition>();
   return TurnoutPosition::Unknown;
-}
-
-BlockState BoardAreaWidget::getBlockState(const TileLocation& l) const
-{
-  if(ObjectPtr object = m_board.board().getTileObject(l))
-    if(const auto* p = object->getProperty("state"))
-      return p->toEnum<BlockState>();
-  return BlockState::Unknown;
-}
-
-std::vector<SensorState> BoardAreaWidget::getBlockSensorStates(const TileLocation& l) const
-{
-  if(ObjectPtr object = m_board.board().getTileObject(l))
-    if(const auto* p = object->getVectorProperty("sensor_states"))
-    {
-      const int size = p->size();
-      std::vector<SensorState> sensorStates(static_cast<size_t>(size));
-      for(int i = 0; i < size; i++)
-        sensorStates[i] = p->getEnum<SensorState>(i);
-      return sensorStates;
-    }
-  return {};
 }
 
 SensorState BoardAreaWidget::getSensorState(const TileLocation& l) const
@@ -461,7 +440,6 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 {
   assert(m_colorScheme);
 
-  const bool showBlockSensorStates = BoardSettings::instance().showBlockSensorStates;
   const QColor backgroundColor50{0x10, 0x10, 0x10, 0x80};
   const QColor backgroundColorError50{0xff, 0x00, 0x00, 0x80};
   const QColor gridColor{0x40, 0x40, 0x40};
@@ -561,7 +539,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           break;
 
         case TileId::RailBlock:
-          tilePainter.drawBlock(id, r, a, getBlockState(it.first), showBlockSensorStates ? getBlockSensorStates(it.first) : std::vector<SensorState>());
+          tilePainter.drawBlock(id, r, a, m_board.board().getTileObject(it.first));
           break;
 
         case TileId::RailDirectionControl:
