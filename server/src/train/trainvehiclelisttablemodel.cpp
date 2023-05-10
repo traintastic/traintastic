@@ -26,6 +26,7 @@
 #include "../vehicle/rail/railvehicle.hpp"
 #include "../core/objectproperty.tpp"
 #include "../utils/displayname.hpp"
+#include "../utils/utf8.hpp"
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnVehicleId = 1;
@@ -91,7 +92,7 @@ std::string TrainVehicleListTableModel::getText(uint32_t column, uint32_t row) c
         return toString(item.vehicle->lob);
 
       case columnInvertDir:
-        return item.invertDirection ? "invert" : "normal";
+        return item.invertDirection ? UTF8_CHECKMARK : "";
 
       default:
         assert(false);
