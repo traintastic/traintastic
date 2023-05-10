@@ -53,7 +53,7 @@ class TrainVehicleListItem final : public Object
     ObjectProperty<RailVehicle> vehicle;
     Property<bool> invertDirection;
 
-    TrainVehicleListItem(TrainVehicleList& parent, uint32_t itemId);
+    TrainVehicleListItem(const std::shared_ptr<RailVehicle>& vehicle_, TrainVehicleList& parent, uint32_t itemId);
     ~TrainVehicleListItem() final;
 
     std::string getObjectId() const final;

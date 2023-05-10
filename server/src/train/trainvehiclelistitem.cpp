@@ -28,13 +28,13 @@
 #include "../vehicle/rail/railvehicle.hpp"
 
 
-TrainVehicleListItem::TrainVehicleListItem(TrainVehicleList &parent, uint32_t itemId)
+TrainVehicleListItem::TrainVehicleListItem(const std::shared_ptr<RailVehicle> &vehicle_, TrainVehicleList &parent, uint32_t itemId)
   : m_parent(parent)
   , m_itemId(itemId)
-  , vehicle(this, "vehicle", nullptr, PropertyFlags::ReadWrite | PropertyFlags::ScriptReadWrite | PropertyFlags::StoreState,
+  , vehicle(this, "vehicle", vehicle_, PropertyFlags::ReadWrite | PropertyFlags::ScriptReadWrite | PropertyFlags::StoreState,
       [this](const std::shared_ptr<RailVehicle>& value) -> bool
       {
-        if(value && m_parent.getItemFromVehicle(value))
+        if(!value || m_parent.getItemFromVehicle(value))
           return false; //Vehicle already in train
 
         if(vehicle)
@@ -70,9 +70,11 @@ std::string TrainVehicleListItem::getObjectId() const
 
 void TrainVehicleListItem::destroying()
 {
+  //NOTE: we cannot normally set vehicle to nullptr (rejected by OnSet callback)
+  //So we mirror cleanup operations and manually reset value at end
   if(vehicle)
     disconnectVehicle(*vehicle.value());
-  vehicle = nullptr;
+  vehicle.setValueInternal(nullptr);
 
   Object::destroying();
 }
