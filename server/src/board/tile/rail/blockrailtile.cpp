@@ -240,6 +240,15 @@ void BlockRailTile::loaded()
   updateHeightWidthMax();
 }
 
+void BlockRailTile::destroying()
+{
+  const auto self = shared_ptr<BlockRailTile>();
+  for(const auto& train : *trains)
+    train->blocks.removeInternal(self);
+
+  RailTile::destroying();
+}
+
 void BlockRailTile::getConnectors(std::vector<Connector>& connectors) const
 {
   if(rotate == TileRotate::Deg0)

@@ -48,6 +48,7 @@ class BlockRailTile : public RailTile
   protected:
     void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
     void loaded() final;
+    void destroying() final;
     void setRotate(TileRotate value) final;
 
     void updateState();
