@@ -306,6 +306,12 @@ bool LanX::isChecksumValid(const LanX &lanX)
 {
   const XpressNet::Message& msg = *reinterpret_cast<const XpressNet::Message*>(&lanX.xheader);
   int dataSize = msg.dataSize();
+  if(lanX.xheader == LAN_X_LOCO_INFO)
+  {
+    //Special case for variable length message
+    dataSize = lanX.dataLen() - 6;
+  }
+
   return XpressNet::isChecksumValid(msg, dataSize);
 }
 

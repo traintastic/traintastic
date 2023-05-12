@@ -1109,14 +1109,14 @@ struct LanXLocoInfo : LanX
   static constexpr uint8_t flagF0 = 0x10;
   static constexpr uint8_t functionIndexMax = 28;
 
-  uint8_t addressHigh = 0;
-  uint8_t addressLow = 0;
+  uint8_t addressHigh = 0; //db0
+  uint8_t addressLow = 0;  //db1
   uint8_t db2 = 0;
-  uint8_t speedAndDirection = 0;
+  uint8_t speedAndDirection = 0; //db3
   uint8_t db4 = 0;
-  uint8_t f5f12 = 0;
-  uint8_t f13f20 = 0;
-  uint8_t f21f28 = 0;
+  uint8_t f5f12 = 0;    //db5
+  uint8_t f13f20 = 0;   //db6
+  uint8_t f21f28 = 0;   //db7
   uint8_t checksum = 0;
 
   LanXLocoInfo() :
@@ -1268,11 +1268,10 @@ struct LanXLocoInfo : LanX
     }
   }
 
-  void updateChecksum()
+  inline void updateChecksum()
   {
-    checksum = xheader;
-    for(uint8_t* db = &addressHigh; db < &checksum; db++)
-      checksum ^= *db;
+    //Data length - 7 Z21 header bytes + 1 byte for db0
+    LanX::updateChecksum(dataLen() - 6);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXLocoInfo) == 14);
