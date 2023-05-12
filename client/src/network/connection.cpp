@@ -35,9 +35,7 @@
 #include "method.hpp"
 #include "event.hpp"
 #include "tablemodel.hpp"
-#include "inputmonitor.hpp"
-#include "outputkeyboard.hpp"
-#include "outputmap.hpp"
+#include "createobject.hpp"
 #include "board.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
 #include <traintastic/enum/attributetype.hpp>
@@ -446,18 +444,7 @@ ObjectPtr Connection::readObject(const Message& message)
       }
       else
       {
-        const QString classId = QString::fromLatin1(message.read<QByteArray>());
-        if(classId == InputMonitor::classId)
-          p = new InputMonitor(shared_from_this(), handle, classId);
-        else if(classId == OutputKeyboard::classId)
-          p = new OutputKeyboard(shared_from_this(), handle, classId);
-        else if(classId.startsWith(OutputMap::classIdPrefix))
-          p = new OutputMap(shared_from_this(), handle, classId);
-        else if(classId == Board::classId)
-          p = new Board(shared_from_this(), handle);
-        else
-          p = new Object(shared_from_this(), handle, classId);
-
+        p = createObject(shared_from_this(), handle, QString::fromLatin1(message.read<QByteArray>()));
         m_handleCounter[handle] = 1;
       }
 
