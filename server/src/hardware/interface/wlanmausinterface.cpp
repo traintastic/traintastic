@@ -130,6 +130,8 @@ bool WlanMausInterface::setOnline(bool& value, bool simulation)
   }
   else if(m_kernel && !value)
   {
+    m_z21PropertyChanged.disconnect();
+
     m_kernel->stop();
     m_kernel.reset();
 
