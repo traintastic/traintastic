@@ -292,6 +292,9 @@ void ServerKernel::onStart()
 void ServerKernel::onStop()
 {
   m_inactiveClientPurgeTimer.cancel();
+
+  for(auto& it : m_decoderSubscriptions)
+    it.second.connection.disconnect();
 }
 
 void ServerKernel::sendTo(const Message& message, IOHandler::ClientId clientId)
