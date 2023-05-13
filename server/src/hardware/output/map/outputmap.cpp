@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -77,6 +77,13 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName) :
   Attributes::addDisplayName(removeOutput, DisplayName::List::remove);
   Attributes::addEnabled(removeOutput, editable);
   m_interfaceItems.add(removeOutput);
+}
+
+void OutputMap::destroying()
+{
+  for(auto& it : m_destroyingConnections)
+    it.second.disconnect();
+  SubObject::destroying();
 }
 
 void OutputMap::load(WorldLoader& loader, const nlohmann::json& data)
