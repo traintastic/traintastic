@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,7 +52,7 @@ DecouplerRailTile::DecouplerRailTile(World& world, std::string_view _id)
   m_interfaceItems.add(name);
 
   Attributes::addObjectEditor(state, false);
-  Attributes::addValues(state, std::array<DecouplerState, 2>{DecouplerState::Deactivated, DecouplerState::Activated});
+  Attributes::addValues(state, decouplerStateValues);
   m_interfaceItems.add(state);
 
   Attributes::addDisplayName(outputMap, DisplayName::BoardTile::outputMap);
