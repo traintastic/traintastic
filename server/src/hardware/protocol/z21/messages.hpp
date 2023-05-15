@@ -265,18 +265,15 @@ struct LanX : Message
   {
   }
 
-  void calcChecksum(uint8_t len)
+  void updateChecksum(uint8_t len);
+
+  inline void updateChecksum()
   {
-    uint8_t* checksum = &xheader + len + 1;
-    *checksum = xheader;
-    for(uint8_t* db = &xheader + 1; db < checksum; db++)
-      *checksum ^= *db;
+    updateChecksum(xheader & 0x0F);
   }
 
-  inline void calcChecksum()
-  {
-    calcChecksum(xheader & 0x0F);
-  }
+  static bool isChecksumValid(const LanX& lanX);
+
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanX) == 5);
 
@@ -402,7 +399,7 @@ struct LanXGetTurnoutInfo : LanX
     , db0(address >> 8)
     , db1(address & 0xFF)
   {
-    calcChecksum();
+    updateChecksum();
   }
 
   uint16_t address() const
@@ -436,7 +433,7 @@ struct LanXSetTurnout : LanX
     if(linearAddress & 0x0001)
       db2 |= db2Port;
 
-    calcChecksum();
+    updateChecksum();
   }
 
   uint16_t address() const
@@ -490,7 +487,7 @@ struct LanXGetLocoInfo : LanX
     LanX(sizeof(LanXGetLocoInfo),  0xE3)
   {
     setAddress(address, longAddress);
-    calcChecksum();
+    updateChecksum();
   }
 
   inline uint16_t address() const
@@ -508,11 +505,6 @@ struct LanXGetLocoInfo : LanX
     addressHigh = longAddress ? (0xC0 | (address >> 8)) : 0x00;
     addressLow = longAddress ? address & 0xFF : address & 0x7F;
   }
-
-  /*inline void calcChecksum()
-  {
-    checksum = xheader ^ db0 ^ addressHigh ^ addressLow;
-  }*/
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXGetLocoInfo) == 9);
 
@@ -641,7 +633,7 @@ struct LanXSetLocoFunction : LanX
     setAddress(address, longAddress);
     setFunctionIndex(functionIndex);
     setSwitchType(value);
-    calcChecksum();
+    updateChecksum();
   }
 
   inline uint16_t address() const
@@ -926,7 +918,7 @@ struct LanXGetVersionReply : LanX
   {
     setXBusVersion(_xBusVersion);
     commandStationId = _commandStationId;
-    calcChecksum();
+    updateChecksum();
   }
 
   inline uint8_t xBusVersion() const
@@ -962,7 +954,7 @@ struct LanXGetFirmwareVersionReply : LanX
   {
     setVersionMajor(_major);
     setVersionMinor(_minor);
-    calcChecksum();
+    updateChecksum();
   }
 
   inline uint8_t versionMajor() const
@@ -1271,7 +1263,7 @@ struct LanXLocoInfo : LanX
     }
   }
 
-  void calcChecksum()
+  void updateChecksum()
   {
     checksum = xheader;
     for(uint8_t* db = &addressHigh; db < &checksum; db++)

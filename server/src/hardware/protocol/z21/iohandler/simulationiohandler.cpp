@@ -60,7 +60,7 @@ bool SimulationIOHandler::send(const Message& message)
               response.db1 |= Z21_CENTRALSTATE_EMERGENCYSTOP;
             if(!m_trackPowerOn)
               response.db1 |= Z21_CENTRALSTATE_TRACKVOLTAGEOFF;
-            response.calcChecksum();
+            response.updateChecksum();
             reply(response);
           }
           else if(message == LanXSetTrackPowerOn())

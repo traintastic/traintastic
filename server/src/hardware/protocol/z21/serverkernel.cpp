@@ -109,7 +109,7 @@ void ServerKernel::receiveFrom(const Message& message, IOHandler::ClientId clien
               response.db1 |= Z21_CENTRALSTATE_EMERGENCYSTOP;
             if(m_trackPowerOn != TriState::True)
               response.db1 |= Z21_CENTRALSTATE_TRACKVOLTAGEOFF;
-            response.calcChecksum();
+            response.updateChecksum();
             sendTo(response, clientId);
           }
           else if(message == LanXSetTrackPowerOn())

@@ -21,6 +21,7 @@
  */
 
 #include "messages.hpp"
+#include "../xpressnet/messages.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../../core/objectproperty.tpp"
 #include "../../../utils/tohex.hpp"
@@ -291,7 +292,21 @@ LanXLocoInfo::LanXLocoInfo(const Decoder& decoder) :
     setSpeedStep(Decoder::throttleToSpeedStep(decoder.throttle, speedSteps()));
   for(const auto &function : *decoder.functions)
     setFunction(function->number, function->value);
-  calcChecksum();
+  updateChecksum();
+}
+
+void LanX::updateChecksum(uint8_t len)
+{
+  uint8_t val = XpressNet::calcChecksum(*reinterpret_cast<const XpressNet::Message*>(&xheader), len);
+  uint8_t* checksum = &xheader + len + 1;
+  *checksum = val;
+}
+
+bool LanX::isChecksumValid(const LanX &lanX)
+{
+  const XpressNet::Message& msg = *reinterpret_cast<const XpressNet::Message*>(&lanX.xheader);
+  int dataSize = msg.dataSize();
+  return XpressNet::isChecksumValid(msg, dataSize);
 }
 
 }

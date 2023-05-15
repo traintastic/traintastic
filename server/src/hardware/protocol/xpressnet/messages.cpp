@@ -25,10 +25,9 @@
 
 namespace XpressNet {
 
-uint8_t calcChecksum(const Message& msg)
+uint8_t calcChecksum(const Message& msg, const int dataSize)
 {
   const uint8_t* p = reinterpret_cast<const uint8_t*>(&msg);
-  const int dataSize = msg.dataSize();
   uint8_t checksum = p[0];
   for(int i = 1; i <= dataSize; i++)
     checksum ^= p[i];
@@ -40,9 +39,9 @@ void updateChecksum(Message& msg)
   *(reinterpret_cast<uint8_t*>(&msg) + msg.dataSize() + 1) = calcChecksum(msg);
 }
 
-bool isChecksumValid(const Message& msg)
+bool isChecksumValid(const Message& msg, const int dataSize)
 {
-  return calcChecksum(msg) == *(reinterpret_cast<const uint8_t*>(&msg) + msg.dataSize() + 1);
+  return calcChecksum(msg, dataSize) == *(reinterpret_cast<const uint8_t*>(&msg) + dataSize + 1);
 }
 
 std::string toString(const Message& message, bool raw)
