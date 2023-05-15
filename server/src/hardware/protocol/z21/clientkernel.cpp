@@ -22,7 +22,6 @@
 
 #include "clientkernel.hpp"
 #include "messages.hpp"
-#include "../xpressnet/messages.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../input/inputcontroller.hpp"
@@ -64,7 +63,7 @@ void ClientKernel::receive(const Message& message)
     {
       const auto& lanX = static_cast<const LanX&>(message);
 
-      if(!XpressNet::isChecksumValid(*reinterpret_cast<const XpressNet::Message*>(&lanX.xheader)))
+      if(!LanX::isChecksumValid(lanX))
         break;
 
       switch(lanX.xheader)
@@ -349,7 +348,7 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
       cmd.setSpeedStep(speedStep);
     }
 
-    cmd.checksum = XpressNet::calcChecksum(*reinterpret_cast<const XpressNet::Message*>(&cmd.xheader));
+    cmd.updateChecksum();
     postSend(cmd);
   }
   else if(has(changes, DecoderChangeFlags::FunctionValue))

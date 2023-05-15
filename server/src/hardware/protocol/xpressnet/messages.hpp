@@ -40,9 +40,14 @@ constexpr uint8_t idFeedbackBroadcast = 0x40;
 
 struct Message;
 
-uint8_t calcChecksum(const Message& msg);
+inline uint8_t calcChecksum(const Message& msg);
+uint8_t calcChecksum(const Message& msg, const int dataSize);
+
 void updateChecksum(Message& msg);
-bool isChecksumValid(const Message& msg);
+
+inline bool isChecksumValid(const Message& msg);
+bool isChecksumValid(const Message& msg, const int dataSize);
+
 std::string toString(const Message& message, bool raw = false);
 
 struct Message
@@ -589,6 +594,16 @@ namespace RoSoftS88XpressNetLI
       checksum = calcChecksum(*this);
     }
   };
+}
+
+inline uint8_t calcChecksum(const Message& msg)
+{
+  return calcChecksum(msg, msg.dataSize());
+}
+
+inline bool isChecksumValid(const Message& msg)
+{
+  return isChecksumValid(msg, msg.dataSize());
 }
 
 }
