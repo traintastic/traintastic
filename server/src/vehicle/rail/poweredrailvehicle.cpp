@@ -85,6 +85,7 @@ void PoweredRailVehicle::setSpeed(double kmph)
 
   if(almostZero(kmph))
   {
+    lastTrainSpeedStep = 0;
     decoder->throttle.setValue(0);
     return;
   }
@@ -97,11 +98,7 @@ void PoweredRailVehicle::setSpeed(double kmph)
     float val = 0;
     if(max > 0)
     {
-      const uint8_t steps = decoder->speedSteps;
-      if(steps == Decoder::speedStepsAuto)
-        val = kmph / max;
-      else
-        val = std::round(kmph / max * steps) / steps;
+      val = kmph / max;
     }
 
     //Remember last speed set by train, see lambda in 'PoweredRailVehicle::registerDecoder()'
@@ -153,6 +150,24 @@ void PoweredRailVehicle::registerDecoder()
 
         // No speed profile -> linear
         const double kmph = self.throttle * speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+
+        const double maxTrainSpeed = activeTrain.value()->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+        if(!almostZero(kmph - maxTrainSpeed) && kmph > maxTrainSpeed)
+        {
+          //Cut at train max speed
+          if(almostZero(activeTrain->throttleSpeed.value() - maxTrainSpeed))
+          {
+            //Train is already at maximum speed, reset our throttle
+            setSpeed(maxTrainSpeed);
+          }
+          else
+          {
+            //Set train to maximum speed
+            activeTrain.value()->throttleSpeed.setValue(maxTrainSpeed);
+          }
+          return;
+        }
+
         activeTrain.value()->throttleSpeed.setValue(kmph);
       }
 
