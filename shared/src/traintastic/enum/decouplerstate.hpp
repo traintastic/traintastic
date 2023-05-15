@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_DECOUPLERSTATE_HPP
 
 #include <cstdint>
+#include <array>
 #include "enum.hpp"
 
 enum class DecouplerState : uint8_t
