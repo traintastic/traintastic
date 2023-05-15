@@ -54,6 +54,7 @@
 #include "../hardware/output/list/outputlist.hpp"
 //#include "../hardware/output/outputcontroller.hpp"
 #include "../hardware/programming/lncv/lncvprogrammingcontroller.hpp"
+#include "../train/train.hpp"
 #include "../train/trainlist.hpp"
 #include "../vehicle/rail/railvehiclelist.hpp"
 #include "../lua/scriptlist.hpp"

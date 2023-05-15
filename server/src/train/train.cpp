@@ -33,6 +33,8 @@
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
 
+CREATE_IMPL(Train)
+
 static inline bool isPowered(const RailVehicle& vehicle)
 {
   return dynamic_cast<const PoweredRailVehicle*>(&vehicle);

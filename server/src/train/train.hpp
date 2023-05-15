@@ -71,7 +71,7 @@ class Train : public IdObject
 
   public:
     CLASS_ID("train")
-    CREATE(Train)
+    CREATE_DEF(Train)
 
     Property<std::string> name;
     LengthProperty lob;

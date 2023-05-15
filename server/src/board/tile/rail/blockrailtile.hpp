@@ -32,6 +32,7 @@
 #include "../../../hardware/input/map/blockinputmap.hpp"
 #include "../../../train/trainblockstatus.hpp"
 
+class Train;
 class BlockInputMapItem;
 
 class BlockRailTile : public RailTile
