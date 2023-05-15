@@ -133,19 +133,26 @@ void ClientKernel::receive(const Message& message)
               speed = reply.speedStep(), speedMax=reply.speedSteps(),
               dir = reply.direction(), val, maxFunc]()
               {
-                if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(address), address))
+                try
                 {
-                  float throttle = Decoder::speedStepToThrottle(speed, speedMax);
-
-                  decoder->emergencyStop = isEStop;
-                  decoder->direction = dir;
-
-                  decoder->throttle = throttle;
-
-                  for(int i = 0; i <= maxFunc; i++)
+                  if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(address), address))
                   {
-                    decoder->setFunctionValue(i, val[i]);
+                    float throttle = Decoder::speedStepToThrottle(speed, speedMax);
+
+                    decoder->emergencyStop = isEStop;
+                    decoder->direction = dir;
+
+                    decoder->throttle = throttle;
+
+                    for(int i = 0; i <= maxFunc; i++)
+                    {
+                      decoder->setFunctionValue(i, val[i]);
+                    }
                   }
+                }
+                catch(...)
+                {
+
                 }
               });
           }
