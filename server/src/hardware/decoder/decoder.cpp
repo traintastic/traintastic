@@ -35,6 +35,8 @@
 #include "../../utils/displayname.hpp"
 #include "../../utils/almostzero.hpp"
 
+CREATE_IMPL(Decoder)
+
 const std::shared_ptr<Decoder> Decoder::null;
 
 Decoder::Decoder(World& world, std::string_view _id) :

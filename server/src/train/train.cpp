@@ -32,6 +32,7 @@
 #include "../core/eventloop.hpp"
 #include "../board/tile/rail/blockrailtile.hpp"
 #include "../vehicle/rail/poweredrailvehicle.hpp"
+#include "../hardware/decoder/decoder.hpp"
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
 

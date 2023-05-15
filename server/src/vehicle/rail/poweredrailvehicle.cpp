@@ -26,6 +26,7 @@
 #include "../../utils/almostzero.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
+#include "../../hardware/decoder/decoder.hpp"
 #include "../../hardware/decoder/decoderchangeflags.hpp"
 #include "../../train/train.hpp"
 

@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_TRAIN_TRAINVEHICLELIST_HPP
 #define TRAINTASTIC_SERVER_TRAIN_TRAINVEHICLELIST_HPP
 
+#include "../core/method.hpp"
 #include "../core/objectlist.hpp"
 #include "../vehicle/rail/railvehicle.hpp"
 
