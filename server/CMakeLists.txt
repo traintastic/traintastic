@@ -172,6 +172,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DENABLE_LOG_DEBUG")
 
 if(UNIX AND NOT APPLE)
   set(LINUX TRUE)
+  list(APPEND SOURCES "src/os/linux/setbaudrate.hpp" "src/os/linux/setbaudrate.cpp")
 endif()
 
 if(UNIX)
