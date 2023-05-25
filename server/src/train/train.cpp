@@ -61,7 +61,7 @@ Train::Train(World& world, std::string_view _id) :
         vehicle->setDirection(value);
       updateEnabled();
     },
-    [this](Direction& value)
+    [](Direction& value)
     {
       // only accept valid direction values, don't accept Unknown direction
       return value == Direction::Forward || value == Direction::Reverse;
