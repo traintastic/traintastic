@@ -53,6 +53,10 @@ class ObjectVectorProperty : public AbstractVectorProperty
 
     [[nodiscard]] int getObject(int index, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
     [[nodiscard]] int getObjects(int startIndex, int endIndex, std::function<void(const std::vector<ObjectPtr>&, Message::ErrorCode)> callback);
+    [[nodiscard]] int getObjects(std::function<void(const std::vector<ObjectPtr>&, Message::ErrorCode)> callback)
+    {
+      return getObjects(0, size() - 1, std::move(callback));
+    }
 
     const QString& getObjectId(int index) const
     {

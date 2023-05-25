@@ -28,6 +28,10 @@
 #include "handle.hpp"
 #include "interfaceitems.hpp"
 
+#define CLASS_ID(id) \
+  public: \
+    inline static const QString classId = QStringLiteral(id);
+
 class Connection;
 class Message;
 class AbstractProperty;
@@ -48,6 +52,8 @@ class Object : public QObject
     const QString m_classId;
     InterfaceItems m_interfaceItems;
 
+    //! \brief Called once after the object and all interface items are created  .
+    virtual void created() {}
     virtual void processMessage(const Message& message);
 
   public:

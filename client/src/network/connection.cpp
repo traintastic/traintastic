@@ -622,6 +622,8 @@ ObjectPtr Connection::readObject(const Message& message)
       message.readBlockEnd(); // end item
     }
     message.readBlockEnd(); // end items
+
+    obj->created();
   }
   else
     m_handleCounter[handle]++;

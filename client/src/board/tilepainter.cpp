@@ -24,8 +24,11 @@
 #include <cmath>
 #include <QtMath>
 #include <QPainterPath>
+#include <traintastic/enum/blocktraindirection.hpp>
 #include "boardcolorscheme.hpp"
 #include "../network/object.tpp"
+#include "../network/object/blockrailtile.hpp"
+#include "../network/object/trainblockstatus.hpp"
 #include "../network/abstractvectorproperty.hpp"
 #include "../settings/boardsettings.hpp"
 #include "../utils/rectf.hpp"
@@ -1011,17 +1014,28 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, const Object
       }
     }
 
-    switch(state)
+    if(auto* block = dynamic_cast<BlockRailTile*>(blockTile.get()))
     {
-      case BlockState::Free:
-      case BlockState::Unknown:
-        label = blockTile->getPropertyValueString("name");
-        break;
+      if(block->trains().size() == 1)
+      {
+        if(auto* trainBlockStatus = dynamic_cast<TrainBlockStatus*>(block->trains()[0].get())) /*[[likely]]*/
+        {
+          if(const auto& train = trainBlockStatus->train()) /*[[likely]]*/
+          {
+            if(trainBlockStatus->direction() == BlockTrainDirection::TowardsA)
+              label += "< ";
 
-      case BlockState::Reserved:
-      case BlockState::Occupied:
-        break;
+            label += train->getPropertyValueString("name");
+
+            if(trainBlockStatus->direction() == BlockTrainDirection::TowardsB)
+              label +=  " >";
+          }
+        }
+      }
     }
+
+    if(label.isEmpty())
+      label = blockTile->getPropertyValueString("name");
   }
 
   setTrackPen();

@@ -30,6 +30,7 @@
 #include "getboardcolorscheme.hpp"
 #include "tilepainter.hpp"
 #include "../network/board.hpp"
+#include "../network/object/blockrailtile.hpp"
 #include "../network/abstractproperty.hpp"
 #include "../network/abstractvectorproperty.hpp"
 #include "../utils/rectf.hpp"
@@ -101,22 +102,24 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
 {
   const TileLocation l{x, y};
 
+  auto handler =
+    [this, l]()
+    {
+      try
+      {
+        const TileData& tileData = m_board.board().tileData().at(l);
+        update(updateTileRect(l.x - boardLeft(), l.y - boardTop(), tileData.width(), tileData.height(), getTileSize()));
+      }
+      catch(...)
+      {
+      }
+    };
+
   auto tryConnect =
-    [this, l, &object](const QString& name)
+    [this, handler, &object](const QString& name)
     {
       if(auto* property = dynamic_cast<BaseProperty*>(object->getInterfaceItem(name)))
-        connect(property, &BaseProperty::valueChanged, this,
-          [this, l]()
-          {
-            try
-            {
-              const TileData& tileData = m_board.board().tileData().at(l);
-              update(updateTileRect(l.x - boardLeft(), l.y - boardTop(), tileData.width(), tileData.height(), getTileSize()));
-            }
-            catch(...)
-            {
-            }
-          });
+        connect(property, &BaseProperty::valueChanged, this, handler);
     };
 
   switch(m_board.board().getTileId(l))
@@ -149,6 +152,8 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
       tryConnect("name");
       tryConnect("state");
       tryConnect("sensor_states");
+      if(auto* block = dynamic_cast<BlockRailTile*>(object.get())) /*[[likely]]*/
+        connect(block, &BlockRailTile::trainsChanged, this, handler);
       break;
 
     case TileId::PushButton:
