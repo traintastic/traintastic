@@ -99,6 +99,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
       assert(weakWorld.expired());
 #endif
       settings->lastWorld = "";
+      Log::log(*this, LogMessage::N1028_CLOSED_WORLD);
     }},
   restart{*this, "restart",
     [this]()
@@ -253,6 +254,7 @@ void Traintastic::loadWorldPath(const std::filesystem::path& path)
     assert(weakWorld.expired());
 #endif
     settings->lastWorld = world->uuid.value();
+    Log::log(*this, LogMessage::N1027_LOADED_WORLD_X, world->name.value());
   }
   catch(const LogMessageException& e)
   {
