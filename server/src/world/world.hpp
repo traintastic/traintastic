@@ -63,6 +63,7 @@ class LinkRailTileList;
 class World : public Object
 {
   friend class IdObject;
+  friend class StateObject;
   friend class Traintastic;
   friend class WorldLoader;
   friend class WorldSaver;

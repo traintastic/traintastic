@@ -107,6 +107,7 @@ void WorldLoader::load()
   m_states = json::object();
 
   json data;
+  json state;
 
   // load file(s):
   if(m_ctw)
@@ -114,9 +115,8 @@ void WorldLoader::load()
     if(!m_ctw->readFile(World::filename, data))
       throw std::runtime_error(std::string("can't read ").append(World::filename));
 
-    json state;
-    if(m_ctw->readFile(World::filenameState, state) && state["uuid"] == data["uuid"])
-        m_states = state["states"];
+    if(!m_ctw->readFile(World::filenameState, state))
+      throw std::runtime_error(std::string("can't read ").append(World::filenameState));
   }
   else
   {
@@ -126,14 +126,9 @@ void WorldLoader::load()
     data = json::parse(file);
 
     std::ifstream stateFile(m_path / World::filenameState);
-    if(stateFile.is_open())
-    {
-      json state = json::parse(stateFile);
-      if(state["uuid"] == data["uuid"])
-        m_states = state["states"];
-      else
-      {} /// @todo log warning
-    }
+    if(!stateFile.is_open())
+      throw std::runtime_error("can't open " + (m_path / World::filenameState).string());
+    state = json::parse(stateFile);
   }
 
   // check if UUID is valid:
@@ -161,6 +156,14 @@ void WorldLoader::load()
         }
       }
     }
+  }
+
+  // state data
+  if(state.is_object() && state["uuid"] == data["uuid"])
+  {
+    m_states = state["states"];
+    auto stateObjects = state.value("objects", json::array());
+    data["objects"].insert(data["objects"].end(), stateObjects.begin(), stateObjects.end());
   }
 
   // create a list of all objects
