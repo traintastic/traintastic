@@ -30,9 +30,9 @@
 #include "../core/weightproperty.hpp"
 #include "../enum/direction.hpp"
 #include "trainvehiclelist.hpp"
+#include "trainblockstatus.hpp"
 
 class PoweredRailVehicle;
-class BlockRailTile;
 
 class Train : public IdObject
 {
@@ -88,10 +88,10 @@ class Train : public IdObject
     Property<bool> powered;
     Property<bool> active;
 
-    //! \brief List of blocks the train is in
+    //! \brief List of block status the train is in
     //! Index 0 is the block where the head of the train is.
     //! If the train changes direction this list will be reversed.
-    ObjectVectorProperty<BlockRailTile> blocks;
+    ObjectVectorProperty<TrainBlockStatus> blocks;
     Property<std::string> notes;
 
     Train(World& world, std::string_view _id);

@@ -30,7 +30,7 @@
 #include "../../../core/vectorproperty.hpp"
 #include "../../../enum/blockstate.hpp"
 #include "../../../hardware/input/map/blockinputmap.hpp"
-#include "../../../train/train.hpp"
+#include "../../../train/trainblockstatus.hpp"
 
 class BlockInputMapItem;
 
@@ -38,7 +38,7 @@ class BlockRailTile : public RailTile
 {
   CLASS_ID("board_tile.rail.block")
   DEFAULT_ID("block")
-  CREATE(BlockRailTile)
+  CREATE_DEF(BlockRailTile)
 
   private:
     Node m_node;
@@ -62,7 +62,7 @@ class BlockRailTile : public RailTile
     ObjectProperty<BlockInputMap> inputMap;
     Property<BlockState> state;
     VectorProperty<SensorState> sensorStates;
-    ObjectVectorProperty<Train> trains;
+    ObjectVectorProperty<TrainBlockStatus> trains;
     Method<void(std::shared_ptr<Train>)> assignTrain;
     Method<void()> removeTrain;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onTrainAssigned;

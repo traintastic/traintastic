@@ -28,6 +28,7 @@
 #include "../tile/rail/onewayrailtile.hpp"
 #include "../tile/rail/linkrailtile.hpp"
 #include "../map/signalpath.hpp"
+#include "../../train/train.hpp" // FIXME: required due to forward declaration
 
 std::shared_ptr<Link> otherLink(const Node& node, const Link& link)
 {

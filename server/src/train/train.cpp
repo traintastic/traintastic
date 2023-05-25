@@ -53,9 +53,18 @@ Train::Train(World& world, std::string_view _id) :
   direction{this, "direction", Direction::Forward, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
     [this](Direction value)
     {
+      // update train direction from the block perspective:
+      for(auto& status : *blocks)
+        status->direction.setValueInternal(!status->direction.value());
+
       for(const auto& vehicle : m_poweredVehicles)
         vehicle->setDirection(value);
       updateEnabled();
+    },
+    [this](Direction& value)
+    {
+      // only accept valid direction values, don't accept Unknown direction
+      return value == Direction::Forward || value == Direction::Reverse;
     }},
   isStopped{this, "is_stopped", true, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   speed{*this, "speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadOnly | PropertyFlags::NoStore},

@@ -28,6 +28,7 @@
 #include "../../../utils/displayname.hpp"
 #include "../../../utils/sensor.hpp"
 #include "../../../board/tile/rail/blockrailtile.hpp"
+#include "../../../train/train.hpp" // FIXME: required due to forward declaration
 
 BlockInputMapItem::BlockInputMapItem(BlockInputMap& parent, uint32_t itemId) :
   m_parent{parent},

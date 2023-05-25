@@ -75,7 +75,7 @@ std::string TrainListTableModel::getText(uint32_t column, uint32_t row) const
         return train.active ? UTF8_CHECKMARK : "";
 
       case columnBlock:
-        return !train.blocks.empty() ? train.blocks[0]->name.value() : std::string{};
+        return !train.blocks.empty() ? train.blocks[0]->block->name.value() : std::string{};
 
       case columnLength:
         return toString(train.lob);

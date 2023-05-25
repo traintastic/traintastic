@@ -29,6 +29,8 @@
 #include "../../../train/train.hpp"
 #include "../../../utils/displayname.hpp"
 
+CREATE_IMPL(BlockRailTile)
+
 BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   RailTile(world, _id, TileId::RailBlock),
   m_node{*this, 2},
@@ -40,6 +42,9 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   , assignTrain{*this, "assign_train",
       [this](const std::shared_ptr<Train>& newTrain)
       {
+        if(!newTrain) /*[[unlikely]]*/
+          return;
+
         if(trains.empty())
         {
           if(!newTrain->active)
@@ -58,15 +63,18 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
           }
 
           const auto self = shared_ptr<BlockRailTile>();
+          BlockTrainDirection direction = (newTrain->direction == Direction::Reverse) ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA;
 
-          trains.appendInternal(newTrain);
           if(!newTrain->blocks.empty())
           {
             //! \todo check if block is connected to the head or tail block of the train
+            //! \todo update direction
             return; // not yet supported
           }
-          else
-            newTrain->blocks.appendInternal(self);
+
+          auto status = TrainBlockStatus::create(*this, *newTrain, direction);
+          newTrain->blocks.appendInternal(status);
+          trains.appendInternal(status);
 
           updateTrainMethodEnabled();
           if(state == BlockState::Free || state == BlockState::Unknown)
@@ -94,14 +102,25 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   , removeTrain{*this, "remove_train",
       [this]()
       {
-        if(trains.size() == 1 && trains[0]->isStopped)
+        if(trains.size() == 1 && trains[0]->train->isStopped)
         {
           const auto self = shared_ptr<BlockRailTile>();
-          auto oldTrain = trains[0];
-          if(!oldTrain->blocks.empty() && self != *oldTrain->blocks.begin() && self != *oldTrain->blocks.rbegin())
+          auto oldTrain = trains[0]->train.value();
+          if(!oldTrain->blocks.empty() && self != (**oldTrain->blocks.begin()).block.value() && self != (**oldTrain->blocks.rbegin()).block.value())
             return; // only possible to remove the train from the head or tail block
-          oldTrain->blocks.removeInternal(self);
-          trains.clearInternal();
+
+          const auto it = std::find_if(trains.begin(), trains.end(),
+            [&oldTrain](auto& status)
+            {
+              return status->train.value() == oldTrain;
+            });
+
+          if(it == trains.end()) /*[[unlikely]]*/
+            return; // can't remove a train that isn't in the block
+
+          oldTrain->blocks.removeInternal(*it);
+          trains.removeInternal(*it);
+
           updateTrainMethodEnabled();
           if(state == BlockState::Reserved)
             updateState();
@@ -243,8 +262,8 @@ void BlockRailTile::loaded()
 void BlockRailTile::destroying()
 {
   const auto self = shared_ptr<BlockRailTile>();
-  for(const auto& train : *trains)
-    train->blocks.removeInternal(self);
+  for(const auto& status : *trains)
+    status->train->blocks.removeInternal(status);
 
   RailTile::destroying();
 }
