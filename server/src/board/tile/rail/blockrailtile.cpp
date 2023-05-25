@@ -143,6 +143,19 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
           fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(onTrainRemoved, oldTrain, self);
         }
       }}
+  , flipTrain{*this, "flip_train",
+      [this]()
+      {
+        if(trains.size() == 1)
+        {
+          assert(trains[0]->train);
+          const auto& train = *trains[0]->train;
+          if(train.isStopped && train.blocks.size() == 1 && train.blocks[0]->block.operator->() == this)
+          {
+            trains[0]->direction.setValueInternal(!trains[0]->direction.value());
+          }
+        }
+      }}
   , onTrainAssigned{*this, "on_train_assigned", EventFlags::Scriptable}
   , onTrainRemoved{*this, "on_train_removed", EventFlags::Scriptable}
 {
@@ -175,6 +188,10 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   Attributes::addEnabled(removeTrain, false);
   Attributes::addObjectEditor(removeTrain, false);
   m_interfaceItems.add(removeTrain);
+
+  Attributes::addEnabled(flipTrain, false);
+  Attributes::addObjectEditor(flipTrain, false);
+  m_interfaceItems.add(flipTrain);
 
   m_interfaceItems.add(onTrainAssigned);
   m_interfaceItems.add(onTrainRemoved);
@@ -232,6 +249,7 @@ void BlockRailTile::updateTrainMethodEnabled()
 {
   Attributes::setEnabled(assignTrain, trains.empty());
   Attributes::setEnabled(removeTrain, trains.size() == 1);
+  Attributes::setEnabled(flipTrain, trains.size() == 1);
 }
 
 void BlockRailTile::setState(BlockState value)

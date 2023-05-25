@@ -11,6 +11,7 @@ board_settings.color_scheme:light=Light
 board_tile.misc.push_button:color=Color
 
 board_tile.rail.block:assign_train=Assign train
+board_tile.rail.block:flip_train=Flip train
 board_tile.rail.block:input_map=Sensors
 board_tile.rail.block:remove_train=Remove train
 

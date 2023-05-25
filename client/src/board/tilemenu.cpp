@@ -40,6 +40,8 @@ std::unique_ptr<QMenu> TileMenu::getBlockRailTileMenu(const ObjectPtr& tile, QWi
       }));
   if(auto* removeTrain = tile->getMethod("remove_train"))
     menu->addAction(new MethodAction(*removeTrain));
+  if(auto* flipTrain = tile->getMethod("flip_train"))
+    menu->addAction(new MethodAction(*flipTrain));
 
   return menu;
 }
