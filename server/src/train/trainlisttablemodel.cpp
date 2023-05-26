@@ -23,6 +23,7 @@
 #include "trainlisttablemodel.hpp"
 #include "trainlist.hpp"
 #include "../board/tile/rail/blockrailtile.hpp"
+#include "../core/objectproperty.tpp"
 #include "../utils/displayname.hpp"
 #include "../utils/utf8.hpp"
 
