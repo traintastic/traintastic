@@ -46,7 +46,11 @@ void TableModel::setRegion(const Region& value)
       m_region = value;
 
       if(updateRegion)
+      {
+        update.columnMax = std::min(update.columnMax, static_cast<uint32_t>(m_columnHeaders.size()) - 1);
+        update.rowMax = std::min(update.rowMax, m_rowCount > 0 ? m_rowCount - 1 : 0);
         updateRegion(shared_ptr<TableModel>(), update);
+      }
     }
     else
       m_region = value;
