@@ -5,6 +5,11 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/traintastic/traintastic)](https://github.com/traintastic/traintastic/graphs/commit-activity)
 [![Coverage Status](https://coveralls.io/repos/github/traintastic/traintastic/badge.svg?branch=master)](https://coveralls.io/github/traintastic/traintastic?branch=master)
 
+![POEditor](https://img.shields.io/poeditor/progress/622757/en-us?token=8cf32915a5cebef66cd19b3403a69c02)
+![POEditor](https://img.shields.io/poeditor/progress/622757/nl?token=8cf32915a5cebef66cd19b3403a69c02)
+![POEditor](https://img.shields.io/poeditor/progress/622757/de?token=8cf32915a5cebef66cd19b3403a69c02)
+![POEditor](https://img.shields.io/poeditor/progress/622757/it?token=8cf32915a5cebef66cd19b3403a69c02)
+
 ## About The Project
 Traintastic is a client/server software application to control a model railway. It is in an early stage of development, it contains very limited functionality.
 
