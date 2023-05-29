@@ -36,55 +36,10 @@ ArchitecturesAllowed=x64
 MinVersion=10.0
 
 [Languages]
-Name: en; MessagesFile: "compiler:Default.isl"
-Name: nl; MessagesFile: "compiler:Languages\Dutch.isl"
-Name: de; MessagesFile: "compiler:Languages\German.isl"
-Name: it; MessagesFile: "compiler:Languages\Italian.isl"
-
-[CustomMessages]
-; English
-en.ClientAndServer=Client and server
-en.ClientAndServerDesc=For the computer connected to the command station.
-en.ClientOnly=Client only
-en.ClientOnlyDesc=For additional computers to operate the model railyway layout.
-en.WindowsFirewall=Windows Firewall:
-en.FirewallAllowTraintasticClient=Allow Traintastic client
-en.AddFirewallRuleTraintasticClient=Add firewall rule for Traintastic client
-en.FirewallAllowWLANmausZ21=Allow WLANmaus/Z21
-en.AddFirewallRuleWLANmausZ21=Add firewall rule for WLANmaus/Z21
-
-; Dutch
-nl.ClientAndServer=Client en server
-nl.ClientAndServerDesc=Voor de computer die verbonden is met de centrale.
-nl.ClientOnly=Alleen client
-nl.ClientOnlyDesc=Voor extra computers om de modelspoorbaan te besturen.
-nl.WindowsFirewall=Windows Firewall:
-nl.FirewallAllowTraintasticClient=Sta Traintastic client toe
-;nl.AddFirewallRuleTraintasticClient=
-nl.FirewallAllowWLANmausZ21=Sta WLANmaus/Z21 toe
-;nl.AddFirewallRuleWLANmausZ21=
-
-; German
-;de.ClientAndServer=
-;de.ClientAndServerDesc=
-;de.ClientOnly=
-;de.ClientOnlyDesc=
-;de.WindowsFirewall=
-;de.FirewallAllowTraintasticClient=
-;de.AddFirewallRuleTraintasticClient=
-;de.FirewallAllowWLANmausZ21=
-;de.AddFirewallRuleWLANmausZ21=
-
-; Italian
-it.ClientAndServer=Client e Server
-it.ClientAndServerDesc=Per il computer connesso alla centralina di comando
-it.ClientOnly=Solo Client
-it.ClientOnlyDesc=Per computer aggiuntivi che operano nel plastico
-it.WindowsFirewall=Windows Firewall:
-it.FirewallAllowTraintasticClient=Abilita Traintastic client
-it.AddFirewallRuleTraintasticClient=Aggiungi regola del firewall per Traintastic client
-it.FirewallAllowWLANmausZ21=Abilita WLANmaus/Z21
-it.AddFirewallRuleWLANmausZ21=Aggiungi regola del firewall per WLANmaus/Z21
+Name: en; MessagesFile: "compiler:Default.isl,en-us.isl"
+Name: nl; MessagesFile: "compiler:Languages\Dutch.isl,nl-nl.isl"
+Name: de; MessagesFile: "compiler:Languages\German.isl,de-de.isl"
+Name: it; MessagesFile: "compiler:Languages\Italian.isl,it-it.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
