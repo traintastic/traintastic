@@ -1,0 +1,2426 @@
+[
+  {
+    "term": "board:delete_tile",
+    "definition": "Delete tile"
+  },
+  {
+    "term": "board:move_tile",
+    "definition": "Move tile"
+  },
+  {
+    "term": "board:resize_tile",
+    "definition": "Resize tile"
+  },
+  {
+    "term": "board:resize_to_contents",
+    "definition": "Resize to contents"
+  },
+  {
+    "term": "board_settings.color_scheme:dark",
+    "definition": "Dark"
+  },
+  {
+    "term": "board_settings.color_scheme:light",
+    "definition": "Light"
+  },
+  {
+    "term": "board_tile.misc.push_button:color",
+    "definition": "Color"
+  },
+  {
+    "term": "board_tile.rail.block:assign_train",
+    "definition": "Assign train"
+  },
+  {
+    "term": "board_tile.rail.block:flip_train",
+    "definition": "Flip train"
+  },
+  {
+    "term": "board_tile.rail.block:input_map",
+    "definition": "Sensors"
+  },
+  {
+    "term": "board_tile.rail.block:remove_train",
+    "definition": "Remove train"
+  },
+  {
+    "term": "board_tile.rail.direction_control:state",
+    "definition": "State"
+  },
+  {
+    "term": "board_tile.rail.direction_control:use_a_to_b",
+    "definition": "Use: A \u2192 B"
+  },
+  {
+    "term": "board_tile.rail.direction_control:use_b_to_a",
+    "definition": "Use: A \u2190 B"
+  },
+  {
+    "term": "board_tile.rail.direction_control:use_both",
+    "definition": "Use: A \u21c4 B"
+  },
+  {
+    "term": "board_tile.rail.direction_control:use_none",
+    "definition": "Use: A \ud83d\udec7 B"
+  },
+  {
+    "term": "board_tile.rail.link:link",
+    "definition": "Link"
+  },
+  {
+    "term": "board_tile.rail.sensor:input",
+    "definition": "Input"
+  },
+  {
+    "term": "board_tile.rail.sensor:invert",
+    "definition": "Invert"
+  },
+  {
+    "term": "board_tile.rail.sensor:type",
+    "definition": "Type"
+  },
+  {
+    "term": "board_tile:output_map",
+    "definition": "Outputs"
+  },
+  {
+    "term": "category:cargo",
+    "definition": "Cargo"
+  },
+  {
+    "term": "category:developer",
+    "definition": "Developer"
+  },
+  {
+    "term": "category:general",
+    "definition": "General"
+  },
+  {
+    "term": "category:info",
+    "definition": "Info"
+  },
+  {
+    "term": "category:log",
+    "definition": "Log"
+  },
+  {
+    "term": "category:network",
+    "definition": "Network"
+  },
+  {
+    "term": "class_id:board_tile.misc.push_button",
+    "definition": "Push button"
+  },
+  {
+    "term": "class_id:board_tile.rail.block",
+    "definition": "Block"
+  },
+  {
+    "term": "class_id:board_tile.rail.bridge_45_left",
+    "definition": "Bridge 45\u00b0 (left)"
+  },
+  {
+    "term": "class_id:board_tile.rail.bridge_45_right",
+    "definition": "Bridge 45\u00b0 (right)"
+  },
+  {
+    "term": "class_id:board_tile.rail.bridge_90",
+    "definition": "Bridge 90\u00b0"
+  },
+  {
+    "term": "class_id:board_tile.rail.buffer_stop",
+    "definition": "Buffer stop"
+  },
+  {
+    "term": "class_id:board_tile.rail.cross_45",
+    "definition": "Crossover 45\u00b0"
+  },
+  {
+    "term": "class_id:board_tile.rail.cross_90",
+    "definition": "Crossover 90\u00b0"
+  },
+  {
+    "term": "class_id:board_tile.rail.curve_45",
+    "definition": "Curved track 45\u00b0"
+  },
+  {
+    "term": "class_id:board_tile.rail.curve_90",
+    "definition": "Curved track 90\u00b0"
+  },
+  {
+    "term": "class_id:board_tile.rail.decoupler",
+    "definition": "Decoupler"
+  },
+  {
+    "term": "class_id:board_tile.rail.direction_control",
+    "definition": "Direction control"
+  },
+  {
+    "term": "class_id:board_tile.rail.link",
+    "definition": "Link"
+  },
+  {
+    "term": "class_id:board_tile.rail.one_way",
+    "definition": "One way"
+  },
+  {
+    "term": "class_id:board_tile.rail.sensor",
+    "definition": "Sensor"
+  },
+  {
+    "term": "class_id:board_tile.rail.signal_2_aspect",
+    "definition": "Signal (2 aspects)"
+  },
+  {
+    "term": "class_id:board_tile.rail.signal_3_aspect",
+    "definition": "Signal (3 aspects)"
+  },
+  {
+    "term": "class_id:board_tile.rail.straight",
+    "definition": "Straight track"
+  },
+  {
+    "term": "class_id:board_tile.rail.tunnel",
+    "definition": "Tunnel"
+  },
+  {
+    "term": "class_id:board_tile.rail.turnout_3way",
+    "definition": "Turnout 3-way"
+  },
+  {
+    "term": "class_id:board_tile.rail.turnout_doubleslip",
+    "definition": "Double slip"
+  },
+  {
+    "term": "class_id:board_tile.rail.turnout_left_45",
+    "definition": "Turnout left 45\u00b0"
+  },
+  {
+    "term": "class_id:board_tile.rail.turnout_left_90",
+    "definition": "Turnout left 90\u00b0"
+  },
+  {
+    "term": "class_id:board_tile.rail.turnout_left_curved",
+    "definition": "Turnout left curved"
+  },
+  {
+    "term": "class_id:board_tile.rail.turnout_right_45",
+    "definition": "Turnout right 45\u00b0"
+  },
+  {
+    "term": "class_id:board_tile.rail.turnout_right_90",
+    "definition": "Turnout right 90\u00b0"
+  },
+  {
+    "term": "class_id:board_tile.rail.turnout_right_curved",
+    "definition": "Turnout right curved"
+  },
+  {
+    "term": "class_id:board_tile.rail.turnout_singleslip",
+    "definition": "Single slip"
+  },
+  {
+    "term": "class_id:board_tile.rail.turnout_wye",
+    "definition": "Turnout wye"
+  },
+  {
+    "term": "class_id:interface.dccplusplus",
+    "definition": "DCC++"
+  },
+  {
+    "term": "class_id:interface.ecos",
+    "definition": "ECoS"
+  },
+  {
+    "term": "class_id:interface.hsi88",
+    "definition": "HSI-88"
+  },
+  {
+    "term": "class_id:interface.loconet",
+    "definition": "LocoNet"
+  },
+  {
+    "term": "class_id:interface.traintastic_diy",
+    "definition": "Traintastic DIY"
+  },
+  {
+    "term": "class_id:interface.withrottle",
+    "definition": "WiThrottle"
+  },
+  {
+    "term": "class_id:interface.wlanmaus",
+    "definition": "WLANmaus"
+  },
+  {
+    "term": "class_id:interface.xpressnet",
+    "definition": "XpressNet"
+  },
+  {
+    "term": "class_id:interface.z21",
+    "definition": "Z21"
+  },
+  {
+    "term": "class_id:vehicle.rail.freight_wagon",
+    "definition": "Freight wagon"
+  },
+  {
+    "term": "class_id:vehicle.rail.locomotive",
+    "definition": "Locomotive"
+  },
+  {
+    "term": "class_id:vehicle.rail.multiple_unit",
+    "definition": "Multiple unit"
+  },
+  {
+    "term": "class_id:vehicle.rail.tank_wagon",
+    "definition": "Tank wagon"
+  },
+  {
+    "term": "clock:day",
+    "definition": "Day"
+  },
+  {
+    "term": "clock:debug_log",
+    "definition": "Debug log"
+  },
+  {
+    "term": "clock:freeze",
+    "definition": "Freeze"
+  },
+  {
+    "term": "clock:hour",
+    "definition": "Hour"
+  },
+  {
+    "term": "clock:minute",
+    "definition": "Minute"
+  },
+  {
+    "term": "clock:month",
+    "definition": "Month"
+  },
+  {
+    "term": "clock:multiplier",
+    "definition": "Multiplier"
+  },
+  {
+    "term": "clock:year",
+    "definition": "Year"
+  },
+  {
+    "term": "color:aqua",
+    "definition": "Aqua"
+  },
+  {
+    "term": "color:black",
+    "definition": "Black"
+  },
+  {
+    "term": "color:blue",
+    "definition": "Blue"
+  },
+  {
+    "term": "color:fuchsia",
+    "definition": "Fuchsia"
+  },
+  {
+    "term": "color:gray",
+    "definition": "Gray"
+  },
+  {
+    "term": "color:green",
+    "definition": "Green"
+  },
+  {
+    "term": "color:lime",
+    "definition": "Lime"
+  },
+  {
+    "term": "color:maroon",
+    "definition": "Maroon"
+  },
+  {
+    "term": "color:navy",
+    "definition": "Navy"
+  },
+  {
+    "term": "color:olive",
+    "definition": "Olive"
+  },
+  {
+    "term": "color:purple",
+    "definition": "Purple"
+  },
+  {
+    "term": "color:red",
+    "definition": "Red"
+  },
+  {
+    "term": "color:silver",
+    "definition": "Silver"
+  },
+  {
+    "term": "color:teal",
+    "definition": "Teal"
+  },
+  {
+    "term": "color:white",
+    "definition": "White"
+  },
+  {
+    "term": "color:yellow",
+    "definition": "Yellow"
+  },
+  {
+    "term": "dccplusplus_channel:dcc_accessory",
+    "definition": "DCC accessory"
+  },
+  {
+    "term": "dccplusplus_channel:output",
+    "definition": "Output"
+  },
+  {
+    "term": "dccplusplus_channel:turnout",
+    "definition": "Turnout"
+  },
+  {
+    "term": "dccplusplus_settings:startup_delay",
+    "definition": "Startup delay"
+  },
+  {
+    "term": "dccplusplus_settings:use_ex",
+    "definition": "Use DCC++EX commands"
+  },
+  {
+    "term": "decoder:functions",
+    "definition": "Functions"
+  },
+  {
+    "term": "decoder:long_address",
+    "definition": "DCC long address"
+  },
+  {
+    "term": "decoder:protocol",
+    "definition": "Protocol"
+  },
+  {
+    "term": "decoder_function:function",
+    "definition": "Function"
+  },
+  {
+    "term": "decoder_function:number",
+    "definition": "Number"
+  },
+  {
+    "term": "decoder_function:type",
+    "definition": "Type"
+  },
+  {
+    "term": "decoder_function_function:generic",
+    "definition": "Generic"
+  },
+  {
+    "term": "decoder_function_function:light",
+    "definition": "Light"
+  },
+  {
+    "term": "decoder_function_function:mute",
+    "definition": "Mute"
+  },
+  {
+    "term": "decoder_function_function:smoke",
+    "definition": "Smoke"
+  },
+  {
+    "term": "decoder_function_function:sound",
+    "definition": "Sound"
+  },
+  {
+    "term": "decoder_function_type:always_off",
+    "definition": "Always off"
+  },
+  {
+    "term": "decoder_function_type:always_on",
+    "definition": "Always on"
+  },
+  {
+    "term": "decoder_function_type:hold",
+    "definition": "Push 'n hold"
+  },
+  {
+    "term": "decoder_function_type:momentary",
+    "definition": "Momentary"
+  },
+  {
+    "term": "decoder_function_type:on_off",
+    "definition": "On/Of"
+  },
+  {
+    "term": "decoder_protocol:auto",
+    "definition": "Auto"
+  },
+  {
+    "term": "decoder_protocol:custom",
+    "definition": "Custom"
+  },
+  {
+    "term": "decoder_protocol:dcc",
+    "definition": "DCC"
+  },
+  {
+    "term": "decoupler_state:activated",
+    "definition": "Activated"
+  },
+  {
+    "term": "decoupler_state:deactivated",
+    "definition": "Deactivated"
+  },
+  {
+    "term": "direction:forward",
+    "definition": "Forward"
+  },
+  {
+    "term": "direction:reverse",
+    "definition": "Reverse"
+  },
+  {
+    "term": "direction_control_state:a_to_b",
+    "definition": "A \u2192 B"
+  },
+  {
+    "term": "direction_control_state:b_to_a",
+    "definition": "A \u2190 B"
+  },
+  {
+    "term": "direction_control_state:both",
+    "definition": "A \u21c4 B"
+  },
+  {
+    "term": "direction_control_state:none",
+    "definition": "A \ud83d\udec7 B"
+  },
+  {
+    "term": "ecos_channel:ecos_detector",
+    "definition": "ECoS Detector"
+  },
+  {
+    "term": "hardware:address",
+    "definition": "Address"
+  },
+  {
+    "term": "hardware:channel",
+    "definition": "Channel"
+  },
+  {
+    "term": "hardware:command_station",
+    "definition": "Command station"
+  },
+  {
+    "term": "hardware:dcc",
+    "definition": "DCC"
+  },
+  {
+    "term": "hardware:dccplusplus",
+    "definition": "DCC++"
+  },
+  {
+    "term": "hardware:debug_log_input",
+    "definition": "Log input changes"
+  },
+  {
+    "term": "hardware:debug_log_output",
+    "definition": "Log output changes"
+  },
+  {
+    "term": "hardware:debug_log_rx_tx",
+    "definition": "Log all communication"
+  },
+  {
+    "term": "hardware:decoders",
+    "definition": "Decoders"
+  },
+  {
+    "term": "hardware:ecos",
+    "definition": "ECoS"
+  },
+  {
+    "term": "hardware:identifications",
+    "definition": "Identifications"
+  },
+  {
+    "term": "hardware:input_monitor",
+    "definition": "Input monitor"
+  },
+  {
+    "term": "hardware:inputs",
+    "definition": "Inputs"
+  },
+  {
+    "term": "hardware:interface",
+    "definition": "Interface"
+  },
+  {
+    "term": "hardware:loconet",
+    "definition": "LocoNet"
+  },
+  {
+    "term": "hardware:motorola",
+    "definition": "Motorola"
+  },
+  {
+    "term": "hardware:output_keyboard",
+    "definition": "Output keyboard"
+  },
+  {
+    "term": "hardware:outputs",
+    "definition": "Outputs"
+  },
+  {
+    "term": "hardware:s88",
+    "definition": "S88"
+  },
+  {
+    "term": "hardware:speed_steps",
+    "definition": "Speed steps"
+  },
+  {
+    "term": "hardware:throttles",
+    "definition": "Throttles"
+  },
+  {
+    "term": "hardware:xpressnet",
+    "definition": "XpressNet"
+  },
+  {
+    "term": "hardware:z21",
+    "definition": "Z21"
+  },
+  {
+    "term": "hsi88:s88_left",
+    "definition": "S88 left"
+  },
+  {
+    "term": "hsi88:s88_middle",
+    "definition": "S88 middle"
+  },
+  {
+    "term": "hsi88:s88_right",
+    "definition": "S88 right"
+  },
+  {
+    "term": "identification:opc_multi_sense_direction",
+    "definition": "OPC_MULTI_SENSE direction"
+  },
+  {
+    "term": "input_list:bus",
+    "definition": "Bus"
+  },
+  {
+    "term": "input_map_item.block:input",
+    "definition": "Input"
+  },
+  {
+    "term": "input_map_item.block:invert",
+    "definition": "Invert"
+  },
+  {
+    "term": "input_map_item.block:type",
+    "definition": "Type"
+  },
+  {
+    "term": "interface.dccplusplus:dcc_plus_plus",
+    "definition": "DCC++(EX)"
+  },
+  {
+    "term": "interface.ecos:ecos",
+    "definition": "ECoS"
+  },
+  {
+    "term": "interface.ecos:ecos",
+    "definition": "ECoS"
+  },
+  {
+    "term": "interface.ecos:ecos_detector",
+    "definition": "ECoS detector"
+  },
+  {
+    "term": "interface.ecos:s88",
+    "definition": "S88"
+  },
+  {
+    "term": "interface.hsi88:modules_left",
+    "definition": "Modules left"
+  },
+  {
+    "term": "interface.hsi88:modules_middle",
+    "definition": "Modules middle"
+  },
+  {
+    "term": "interface.hsi88:modules_right",
+    "definition": "Modules right"
+  },
+  {
+    "term": "interface.loconet:interface",
+    "definition": "Interface"
+  },
+  {
+    "term": "interface.traintastic_diy:traintastic_diy",
+    "definition": "Traintastic DIY"
+  },
+  {
+    "term": "interface.withrottle:withrottle",
+    "definition": "WiThrottle"
+  },
+  {
+    "term": "interface.xpressnet:interface",
+    "definition": "Interface"
+  },
+  {
+    "term": "interface.xpressnet:s88_module_count",
+    "definition": "S88 module count"
+  },
+  {
+    "term": "interface.xpressnet:s88_start_address",
+    "definition": "S88 start address"
+  },
+  {
+    "term": "interface.z21:firmware_version",
+    "definition": "Firmware version"
+  },
+  {
+    "term": "interface.z21:hardware_type",
+    "definition": "Hardware type"
+  },
+  {
+    "term": "interface.z21:serial_number",
+    "definition": "Serial number"
+  },
+  {
+    "term": "interface:online",
+    "definition": "Online"
+  },
+  {
+    "term": "interface:status",
+    "definition": "Status"
+  },
+  {
+    "term": "interface:type",
+    "definition": "Type"
+  },
+  {
+    "term": "interface_state:error",
+    "definition": "Error"
+  },
+  {
+    "term": "interface_state:initializing",
+    "definition": "Initializing"
+  },
+  {
+    "term": "interface_state:offline",
+    "definition": "Offline"
+  },
+  {
+    "term": "interface_state:online",
+    "definition": "Online"
+  },
+  {
+    "term": "ip:hostname",
+    "definition": "Hostname"
+  },
+  {
+    "term": "ip:port",
+    "definition": "Port"
+  },
+  {
+    "term": "language:de-de",
+    "definition": "German"
+  },
+  {
+    "term": "language:en-us",
+    "definition": "English (US)"
+  },
+  {
+    "term": "language:it-it",
+    "definition": "Italian"
+  },
+  {
+    "term": "language:nl-nl",
+    "definition": "Dutch"
+  },
+  {
+    "term": "length_unit:cm",
+    "definition": "cm"
+  },
+  {
+    "term": "length_unit:ft",
+    "definition": "ft"
+  },
+  {
+    "term": "length_unit:in",
+    "definition": "in"
+  },
+  {
+    "term": "length_unit:m",
+    "definition": "m"
+  },
+  {
+    "term": "length_unit:mm",
+    "definition": "mm"
+  },
+  {
+    "term": "length_unit:yd",
+    "definition": "yd"
+  },
+  {
+    "term": "list.train_vehicle:reverse",
+    "definition": "Reverse"
+  },
+  {
+    "term": "list:add",
+    "definition": "Add"
+  },
+  {
+    "term": "list:create",
+    "definition": "Create"
+  },
+  {
+    "term": "list:delete",
+    "definition": "Delete"
+  },
+  {
+    "term": "list:edit",
+    "definition": "Edit"
+  },
+  {
+    "term": "list:move_down",
+    "definition": "Move down"
+  },
+  {
+    "term": "list:move_up",
+    "definition": "Move up"
+  },
+  {
+    "term": "list:remove",
+    "definition": "Remove"
+  },
+  {
+    "term": "lncv_programmer:description",
+    "definition": "Description"
+  },
+  {
+    "term": "lncv_programmer:lncv_programmer",
+    "definition": "LNCV programmer"
+  },
+  {
+    "term": "lncv_programmer:module",
+    "definition": "Module"
+  },
+  {
+    "term": "lncv_programmer:other_module",
+    "definition": "Other module"
+  },
+  {
+    "term": "lncv_programmer:read",
+    "definition": "Read"
+  },
+  {
+    "term": "lncv_programmer:reading_lncv_x",
+    "definition": "Reading LNCV %1"
+  },
+  {
+    "term": "lncv_programmer:reading_lncv_x_failed",
+    "definition": "Reading LNCV %1 failed"
+  },
+  {
+    "term": "lncv_programmer:sending_start",
+    "definition": "Sending start"
+  },
+  {
+    "term": "lncv_programmer:start",
+    "definition": "Start"
+  },
+  {
+    "term": "lncv_programmer:stop",
+    "definition": "Stop"
+  },
+  {
+    "term": "lncv_programmer:use_broadcast_address",
+    "definition": "Use broadcast address"
+  },
+  {
+    "term": "lncv_programmer:value",
+    "definition": "Value"
+  },
+  {
+    "term": "lncv_programmer:waiting_for_module_to_respond",
+    "definition": "Waiting for module to respond"
+  },
+  {
+    "term": "lncv_programmer:write",
+    "definition": "Write"
+  },
+  {
+    "term": "lncv_programmer:writing_lncv_x",
+    "definition": "Writing LNCV %1"
+  },
+  {
+    "term": "loconet_command_station:custom",
+    "definition": "Custom"
+  },
+  {
+    "term": "loconet_command_station:digikeijs_dr5000",
+    "definition": "Digikeijs DR5000"
+  },
+  {
+    "term": "loconet_command_station:uhlenbrock_ibcom",
+    "definition": "Uhlenbrock IB-Com"
+  },
+  {
+    "term": "loconet_command_station:uhlenbrock_intellibox",
+    "definition": "Uhlenbrock Intellibox"
+  },
+  {
+    "term": "loconet_f9_f28:imm_packet",
+    "definition": "Direct (OPC_IMM_PACKET)"
+  },
+  {
+    "term": "loconet_f9_f28:uhlenbrock_extended",
+    "definition": "Uhlenbrock extended (OPC_A3, OPC_D4)"
+  },
+  {
+    "term": "loconet_fastclock:master",
+    "definition": "Master (Traintatic controls the clock)"
+  },
+  {
+    "term": "loconet_fastclock:off",
+    "definition": "Off"
+  },
+  {
+    "term": "loconet_interface_type:lbserver",
+    "definition": "LBServer"
+  },
+  {
+    "term": "loconet_interface_type:serial",
+    "definition": "Serial"
+  },
+  {
+    "term": "loconet_interface_type:tcp_binary",
+    "definition": "TCP binary"
+  },
+  {
+    "term": "loconet_interface_type:z21",
+    "definition": "Z21"
+  },
+  {
+    "term": "loconet_serial_interface:custom",
+    "definition": "Custom"
+  },
+  {
+    "term": "loconet_serial_interface:digikeijs_dr5000",
+    "definition": "Digikeijs DR5000"
+  },
+  {
+    "term": "loconet_serial_interface:rosoft_loconet_interface",
+    "definition": "RoSoft LocoNet interface"
+  },
+  {
+    "term": "loconet_settings:command_station",
+    "definition": "Command station"
+  },
+  {
+    "term": "loconet_settings:echo_timeout",
+    "definition": "Echo timeout"
+  },
+  {
+    "term": "loconet_settings:f9_f28",
+    "definition": "F9-F28"
+  },
+  {
+    "term": "loconet_settings:fast_clock",
+    "definition": "Fast clock"
+  },
+  {
+    "term": "loconet_settings:fast_clock_sync_enabled",
+    "definition": "Fast clock sync enabled"
+  },
+  {
+    "term": "loconet_settings:fast_clock_sync_interval",
+    "definition": "Fast clock sync interval"
+  },
+  {
+    "term": "loconet_settings:locomotive_slots",
+    "definition": "Locomotive slots"
+  },
+  {
+    "term": "loconet_settings:pcap",
+    "definition": "PCAP"
+  },
+  {
+    "term": "loconet_settings:pcap_output",
+    "definition": "PCAP output"
+  },
+  {
+    "term": "loconet_settings:response_timeout",
+    "definition": "Response timeout"
+  },
+  {
+    "term": "lua.script:disabled",
+    "definition": "Disabled"
+  },
+  {
+    "term": "lua.script:start",
+    "definition": "Start"
+  },
+  {
+    "term": "lua.script:stop",
+    "definition": "Stop"
+  },
+  {
+    "term": "lua.script_list:start_all",
+    "definition": "Start all"
+  },
+  {
+    "term": "lua.script_list:stop_all",
+    "definition": "Stop all"
+  },
+  {
+    "term": "lua_script:state",
+    "definition": "State"
+  },
+  {
+    "term": "lua_script_state:disabled",
+    "definition": "Disabled"
+  },
+  {
+    "term": "lua_script_state:error",
+    "definition": "Error"
+  },
+  {
+    "term": "lua_script_state:running",
+    "definition": "Running"
+  },
+  {
+    "term": "lua_script_state:stopped",
+    "definition": "Stopped"
+  },
+  {
+    "term": "message:C1001",
+    "definition": "Loading world failed (%1)"
+  },
+  {
+    "term": "message:C1002",
+    "definition": "Creating client failed (%1)"
+  },
+  {
+    "term": "message:C1003",
+    "definition": "Can't write to settings file (%1)"
+  },
+  {
+    "term": "message:C1004",
+    "definition": "Reading world failed (%1) (%2)"
+  },
+  {
+    "term": "message:C1005",
+    "definition": "Saving world failed (%1)"
+  },
+  {
+    "term": "message:C1006",
+    "definition": "Creating world backup failed (%1)"
+  },
+  {
+    "term": "message:C1007",
+    "definition": "Creating world backup directory failed (%1)"
+  },
+  {
+    "term": "message:C1008",
+    "definition": "Creating backup directory failed (%1)"
+  },
+  {
+    "term": "message:C1009",
+    "definition": "Creating settings backup failed (%1)"
+  },
+  {
+    "term": "message:C1010",
+    "definition": "Exporting world failed (%1)"
+  },
+  {
+    "term": "message:C1011",
+    "definition": "Importing world failed (%1)"
+  },
+  {
+    "term": "message:C1012",
+    "definition": "Unknown class '%1', can't recreate object '%2'"
+  },
+  {
+    "term": "message:C1013",
+    "definition": "Can't load world saved with newer version, requires at least: %1"
+  },
+  {
+    "term": "message:C2001",
+    "definition": "Address already used at #%1"
+  },
+  {
+    "term": "message:C2002",
+    "definition": "DCC++ only supports the DCC protocol"
+  },
+  {
+    "term": "message:C2003",
+    "definition": "DCC++ doesn't support DCC long addresses below 128"
+  },
+  {
+    "term": "message:C2004",
+    "definition": "Can't get free slot"
+  },
+  {
+    "term": "message:C9999",
+    "definition": "%1"
+  },
+  {
+    "term": "message:D0000",
+    "definition": "%1"
+  },
+  {
+    "term": "message:D1001",
+    "definition": "Resume %1 (multiplier: %2)"
+  },
+  {
+    "term": "message:D1002",
+    "definition": "Tick %1 (error: %2us)"
+  },
+  {
+    "term": "message:D1003",
+    "definition": "Freeze %1"
+  },
+  {
+    "term": "message:D2001",
+    "definition": "TX: %1"
+  },
+  {
+    "term": "message:D2002",
+    "definition": "RX: %1"
+  },
+  {
+    "term": "message:D2003",
+    "definition": "Unknown xHeader 0x%1"
+  },
+  {
+    "term": "message:D2004",
+    "definition": "%1 TX: %2"
+  },
+  {
+    "term": "message:D2005",
+    "definition": "%1 RX: %2"
+  },
+  {
+    "term": "message:D2006",
+    "definition": "Unknown message: %1"
+  },
+  {
+    "term": "message:D2007",
+    "definition": "Input %1 = %2"
+  },
+  {
+    "term": "message:D2008",
+    "definition": "Output %1 = %1"
+  },
+  {
+    "term": "message:D2009",
+    "definition": "Slot %1 = %2"
+  },
+  {
+    "term": "message:D2010",
+    "definition": "Slot %1 = Free"
+  },
+  {
+    "term": "message:D9999",
+    "definition": "%1"
+  },
+  {
+    "term": "message:E1001",
+    "definition": "Invalid world UUID: %1"
+  },
+  {
+    "term": "message:E1002",
+    "definition": "World %1 doesn't exist"
+  },
+  {
+    "term": "message:E1003",
+    "definition": "UDP receive error (%1)"
+  },
+  {
+    "term": "message:E1004",
+    "definition": "TCP accept error (%1)"
+  },
+  {
+    "term": "message:E1005",
+    "definition": "Socket shutdown failed (%1)"
+  },
+  {
+    "term": "message:E1006",
+    "definition": "Socket write failed (%1)"
+  },
+  {
+    "term": "message:E1007",
+    "definition": "Socket read failed (%1)"
+  },
+  {
+    "term": "message:E1008",
+    "definition": "Socket acceptor cancel failed (%1)"
+  },
+  {
+    "term": "message:E2001",
+    "definition": "Serial write failed (%1)"
+  },
+  {
+    "term": "message:E2002",
+    "definition": "Serial read failed (%1)"
+  },
+  {
+    "term": "message:E2003",
+    "definition": "Make address failed (%1)"
+  },
+  {
+    "term": "message:E2004",
+    "definition": "Socket open failed (%1)"
+  },
+  {
+    "term": "message:E2005",
+    "definition": "Socket connect failed (%1)"
+  },
+  {
+    "term": "message:E2006",
+    "definition": "Socket bind failed (%1)"
+  },
+  {
+    "term": "message:E2007",
+    "definition": "Socket write failed (%1)"
+  },
+  {
+    "term": "message:E2008",
+    "definition": "Socket read failed (%1)"
+  },
+  {
+    "term": "message:E2009",
+    "definition": "Socket receive failed (%1)"
+  },
+  {
+    "term": "message:E2010",
+    "definition": "Serial port open failed (%1)"
+  },
+  {
+    "term": "message:E2011",
+    "definition": "Socket send failed (%1)"
+  },
+  {
+    "term": "message:E2012",
+    "definition": "Function number already in use"
+  },
+  {
+    "term": "message:E2013",
+    "definition": "Serial port set baudrate failed (%1)"
+  },
+  {
+    "term": "message:E2014",
+    "definition": "Serial port set data bits failed (%1)"
+  },
+  {
+    "term": "message:E2015",
+    "definition": "Serial port set stop bits failed (%1)"
+  },
+  {
+    "term": "message:E2016",
+    "definition": "Serial port set parity failed (%1)"
+  },
+  {
+    "term": "message:E2017",
+    "definition": "Serial port set flow control failed (%1)"
+  },
+  {
+    "term": "message:E2018",
+    "definition": "Timeout, no echo within %1ms"
+  },
+  {
+    "term": "message:E2019",
+    "definition": "Timeout, no response within %1ms"
+  },
+  {
+    "term": "message:E2020",
+    "definition": "Total number of modules may not exceed %1"
+  },
+  {
+    "term": "message:E2021",
+    "definition": "Staring PCAP log failed: %1"
+  },
+  {
+    "term": "message:E9001",
+    "definition": "%1 (During execution of %2 event handler)"
+  },
+  {
+    "term": "message:E9999",
+    "definition": "%1"
+  },
+  {
+    "term": "message:F1001",
+    "definition": "Opening TCP socket failed (%1)"
+  },
+  {
+    "term": "message:F1002",
+    "definition": "TCP socket address reuse failed (%1)"
+  },
+  {
+    "term": "message:F1003",
+    "definition": "Binding TCP socket failed (%1)"
+  },
+  {
+    "term": "message:F1004",
+    "definition": "TCP socket listen failed (%1)"
+  },
+  {
+    "term": "message:F1005",
+    "definition": "Opening UDP socket failed (%1)"
+  },
+  {
+    "term": "message:F1006",
+    "definition": "UDP socket address reuse failed (%1)"
+  },
+  {
+    "term": "message:F1007",
+    "definition": "Binding udp socket failed (%1)"
+  },
+  {
+    "term": "message:F9001",
+    "definition": "Creating Lua state failed"
+  },
+  {
+    "term": "message:F9002",
+    "definition": "Running script failed (%1)"
+  },
+  {
+    "term": "message:F9003",
+    "definition": "Calling function failed (%1)"
+  },
+  {
+    "term": "message:F9999",
+    "definition": "%1"
+  },
+  {
+    "term": "message:I1001",
+    "definition": "Traintastic v%1"
+  },
+  {
+    "term": "message:I1002",
+    "definition": "Settings file not found, using defaults"
+  },
+  {
+    "term": "message:I1003",
+    "definition": "Client connected"
+  },
+  {
+    "term": "message:I1004",
+    "definition": "Connection lost"
+  },
+  {
+    "term": "message:I1005",
+    "definition": "Building world index"
+  },
+  {
+    "term": "message:I1006",
+    "definition": "%1"
+  },
+  {
+    "term": "message:I1007",
+    "definition": "%1"
+  },
+  {
+    "term": "message:I1008",
+    "definition": "%1"
+  },
+  {
+    "term": "message:I2001",
+    "definition": "Unknown loco address: %1"
+  },
+  {
+    "term": "message:I2002",
+    "definition": "Hardware type: %1"
+  },
+  {
+    "term": "message:I2003",
+    "definition": "Firmware version: %1"
+  },
+  {
+    "term": "message:I2004",
+    "definition": "HSI-88: %1"
+  },
+  {
+    "term": "message:I2005",
+    "definition": "%1"
+  },
+  {
+    "term": "message:I9001",
+    "definition": "Stopped script"
+  },
+  {
+    "term": "message:I9002",
+    "definition": "%1"
+  },
+  {
+    "term": "message:I9999",
+    "definition": "%1"
+  },
+  {
+    "term": "message:N1001",
+    "definition": "Received signal: %1"
+  },
+  {
+    "term": "message:N1002",
+    "definition": "Created new world"
+  },
+  {
+    "term": "message:N1003",
+    "definition": "Restaring"
+  },
+  {
+    "term": "message:N1004",
+    "definition": "Shutting down"
+  },
+  {
+    "term": "message:N1005",
+    "definition": "Discovery enabled"
+  },
+  {
+    "term": "message:N1006",
+    "definition": "Discovery disabled"
+  },
+  {
+    "term": "message:N1007",
+    "definition": "Listening at %1:%2"
+  },
+  {
+    "term": "message:N1008",
+    "definition": "Loaded settings"
+  },
+  {
+    "term": "message:N1009",
+    "definition": "Saved settings"
+  },
+  {
+    "term": "message:N1010",
+    "definition": "Edit mode: enabled"
+  },
+  {
+    "term": "message:N1011",
+    "definition": "Edit mode: disabled"
+  },
+  {
+    "term": "message:N1012",
+    "definition": "Communication: enabled"
+  },
+  {
+    "term": "message:N1013",
+    "definition": "Communication: disabled"
+  },
+  {
+    "term": "message:N1014",
+    "definition": "Power: on"
+  },
+  {
+    "term": "message:N1015",
+    "definition": "Power: off"
+  },
+  {
+    "term": "message:N1016",
+    "definition": "Running"
+  },
+  {
+    "term": "message:N1017",
+    "definition": "Stopped"
+  },
+  {
+    "term": "message:N1018",
+    "definition": "Mute: enabled"
+  },
+  {
+    "term": "message:N1019",
+    "definition": "Mute: disabled"
+  },
+  {
+    "term": "message:N1020",
+    "definition": "Smoke: enabled"
+  },
+  {
+    "term": "message:N1021",
+    "definition": "Smoke: disabled"
+  },
+  {
+    "term": "message:N1022",
+    "definition": "Saved world: %1"
+  },
+  {
+    "term": "message:N1023",
+    "definition": "Simulation: disabled"
+  },
+  {
+    "term": "message:N1024",
+    "definition": "Simulation: enabled"
+  },
+  {
+    "term": "message:N1025",
+    "definition": "Exported world successfully"
+  },
+  {
+    "term": "message:N1026",
+    "definition": "Imported world successfully"
+  },
+  {
+    "term": "message:N1027",
+    "definition": "Loaded world: %1"
+  },
+  {
+    "term": "message:N1028",
+    "definition": "Closed world"
+  },
+  {
+    "term": "message:N2001",
+    "definition": "Simulation not supported"
+  },
+  {
+    "term": "message:N2002",
+    "definition": "No response from LNCV module %1 with address %2"
+  },
+  {
+    "term": "message:N2003",
+    "definition": "Stopped sending fast clock sync"
+  },
+  {
+    "term": "message:N2004",
+    "definition": "Starting PCAP file log: %1"
+  },
+  {
+    "term": "message:N2005",
+    "definition": "Starting PCAP log pipe: %1"
+  },
+  {
+    "term": "message:N3001",
+    "definition": "Assigned train %1 to block %2"
+  },
+  {
+    "term": "message:N3002",
+    "definition": "Removed train %1 from block %2"
+  },
+  {
+    "term": "message:N9001",
+    "definition": "Starting script"
+  },
+  {
+    "term": "message:N9999",
+    "definition": "%1"
+  },
+  {
+    "term": "message:W1001",
+    "definition": "Discovery disabled, only allowed on port %1"
+  },
+  {
+    "term": "message:W1002",
+    "definition": "Setting %1 doesnt exist"
+  },
+  {
+    "term": "message:W1003",
+    "definition": "Reading world %1 failed (libarchive error %2: %3)"
+  },
+  {
+    "term": "message:W2001",
+    "definition": "Received malformed data dropped %1 bytes"
+  },
+  {
+    "term": "message:W2002",
+    "definition": "Command station doesn't support functions above F%1"
+  },
+  {
+    "term": "message:W2003",
+    "definition": "Command station doesn't support %1 speedsteps using %2"
+  },
+  {
+    "term": "message:W2004",
+    "definition": "Input address %1 is invalid"
+  },
+  {
+    "term": "message:W2005",
+    "definition": "Output address %1 is invalid"
+  },
+  {
+    "term": "message:W2006",
+    "definition": "Command station does not support loco slot %1"
+  },
+  {
+    "term": "message:W2007",
+    "definition": "Command station does not support the fast clock slot"
+  },
+  {
+    "term": "message:W2018",
+    "definition": "Timeout, no echo within %1ms"
+  },
+  {
+    "term": "message:W2019",
+    "definition": "Z21 broadcast flags do not match requested ones"
+  },
+  {
+    "term": "message:W9999",
+    "definition": "%1"
+  },
+  {
+    "term": "object:id",
+    "definition": "Id"
+  },
+  {
+    "term": "object:name",
+    "definition": "Name"
+  },
+  {
+    "term": "object:notes",
+    "definition": "Notes"
+  },
+  {
+    "term": "opc_multi_sense_direction:in_sensor_address",
+    "definition": "In sensor address"
+  },
+  {
+    "term": "opc_multi_sense_direction:in_transponder_address",
+    "definition": "In transponder address (Bl\u00fccher GBM16XN)"
+  },
+  {
+    "term": "opc_multi_sense_direction:none",
+    "definition": "None"
+  },
+  {
+    "term": "output_action:none",
+    "definition": "None"
+  },
+  {
+    "term": "output_action:off",
+    "definition": "Off"
+  },
+  {
+    "term": "output_action:on",
+    "definition": "On"
+  },
+  {
+    "term": "output_action:pulse",
+    "definition": "Pulse"
+  },
+  {
+    "term": "output_list:bus",
+    "definition": "Bus"
+  },
+  {
+    "term": "output_map.decoupler:key",
+    "definition": "State"
+  },
+  {
+    "term": "output_map.signal:key",
+    "definition": "Aspect"
+  },
+  {
+    "term": "output_map.turnout:key",
+    "definition": "Position"
+  },
+  {
+    "term": "output_map:use",
+    "definition": "Use"
+  },
+  {
+    "term": "pcap_output:file",
+    "definition": "File"
+  },
+  {
+    "term": "pcap_output:pipe",
+    "definition": "Pipe"
+  },
+  {
+    "term": "power_unit:hp",
+    "definition": "hp"
+  },
+  {
+    "term": "power_unit:kw",
+    "definition": "kW"
+  },
+  {
+    "term": "power_unit:mw",
+    "definition": "MW"
+  },
+  {
+    "term": "power_unit:w",
+    "definition": "W"
+  },
+  {
+    "term": "qtapp.connect_dialog:connect",
+    "definition": "Connect"
+  },
+  {
+    "term": "qtapp.connect_dialog:connect_to_server",
+    "definition": "Connect to server"
+  },
+  {
+    "term": "qtapp.connect_dialog:connected",
+    "definition": "Connected"
+  },
+  {
+    "term": "qtapp.connect_dialog:connecting",
+    "definition": "Connecting"
+  },
+  {
+    "term": "qtapp.connect_dialog:password",
+    "definition": "Password"
+  },
+  {
+    "term": "qtapp.connect_dialog:server",
+    "definition": "Server"
+  },
+  {
+    "term": "qtapp.connect_dialog:username",
+    "definition": "Username"
+  },
+  {
+    "term": "qtapp.error:cant_read_from_file_x",
+    "definition": "Can't read from file: %1"
+  },
+  {
+    "term": "qtapp.error:cant_write_to_file_x",
+    "definition": "Can't write to file: %1"
+  },
+  {
+    "term": "qtapp.error:server_error_x",
+    "definition": "Server error %1"
+  },
+  {
+    "term": "qtapp.mainmenu:about",
+    "definition": "About"
+  },
+  {
+    "term": "qtapp.mainmenu:close_world",
+    "definition": "Close world"
+  },
+  {
+    "term": "qtapp.mainmenu:connect_to_server",
+    "definition": "Connect to server"
+  },
+  {
+    "term": "qtapp.mainmenu:connection",
+    "definition": "Connection"
+  },
+  {
+    "term": "qtapp.mainmenu:disconnect_from_server",
+    "definition": "Disconnect from server"
+  },
+  {
+    "term": "qtapp.mainmenu:export_world",
+    "definition": "Export world"
+  },
+  {
+    "term": "qtapp.mainmenu:file",
+    "definition": "File"
+  },
+  {
+    "term": "qtapp.mainmenu:fullscreen",
+    "definition": "Fullscreen"
+  },
+  {
+    "term": "qtapp.mainmenu:hardware",
+    "definition": "Hardware"
+  },
+  {
+    "term": "qtapp.mainmenu:help",
+    "definition": "Help"
+  },
+  {
+    "term": "qtapp.mainmenu:import_world",
+    "definition": "Import world"
+  },
+  {
+    "term": "qtapp.mainmenu:load_world",
+    "definition": "Load world"
+  },
+  {
+    "term": "qtapp.mainmenu:new_world",
+    "definition": "New world"
+  },
+  {
+    "term": "qtapp.mainmenu:objects",
+    "definition": "Objects"
+  },
+  {
+    "term": "qtapp.mainmenu:power",
+    "definition": "Power"
+  },
+  {
+    "term": "qtapp.mainmenu:programming",
+    "definition": "Programming"
+  },
+  {
+    "term": "qtapp.mainmenu:quit",
+    "definition": "Quit"
+  },
+  {
+    "term": "qtapp.mainmenu:restart_server",
+    "definition": "Restart server"
+  },
+  {
+    "term": "qtapp.mainmenu:restart_server_question",
+    "definition": "Are you sure you want to restart the server?"
+  },
+  {
+    "term": "qtapp.mainmenu:save_world",
+    "definition": "Save world"
+  },
+  {
+    "term": "qtapp.mainmenu:server",
+    "definition": "Server"
+  },
+  {
+    "term": "qtapp.mainmenu:server_log",
+    "definition": "Server log"
+  },
+  {
+    "term": "qtapp.mainmenu:server_settings",
+    "definition": "Server settings"
+  },
+  {
+    "term": "qtapp.mainmenu:settings",
+    "definition": "Settings"
+  },
+  {
+    "term": "qtapp.mainmenu:shutdown_server",
+    "definition": "Shutdown server"
+  },
+  {
+    "term": "qtapp.mainmenu:shutdown_server_question",
+    "definition": "Are you sure you want to shutdown the server?"
+  },
+  {
+    "term": "qtapp.mainmenu:toolbar",
+    "definition": "Toolbar"
+  },
+  {
+    "term": "qtapp.mainmenu:tools",
+    "definition": "Tools"
+  },
+  {
+    "term": "qtapp.mainmenu:view",
+    "definition": "View"
+  },
+  {
+    "term": "qtapp.mainmenu:world",
+    "definition": "World"
+  },
+  {
+    "term": "qtapp.mainmenu:world_properties",
+    "definition": "World properties"
+  },
+  {
+    "term": "qtapp.message_box:no",
+    "definition": "No"
+  },
+  {
+    "term": "qtapp.message_box:yes",
+    "definition": "Yes"
+  },
+  {
+    "term": "qtapp.object_select_list_dialog:cancel",
+    "definition": "Cancel"
+  },
+  {
+    "term": "qtapp.object_select_list_dialog:ok",
+    "definition": "Ok"
+  },
+  {
+    "term": "qtapp.object_select_list_dialog:select_object",
+    "definition": "Select object"
+  },
+  {
+    "term": "qtapp.settings.board:color_scheme",
+    "definition": "Color scheme"
+  },
+  {
+    "term": "qtapp.settings.board:show_block_sensor_states",
+    "definition": "Show block sensor states"
+  },
+  {
+    "term": "qtapp.settings.board:turnout_draw_state",
+    "definition": "Draw turnout state"
+  },
+  {
+    "term": "qtapp.settings.developer:dont_load_fallback_language",
+    "definition": "Don't load fallback language"
+  },
+  {
+    "term": "qtapp.settings.developer:log_missing_strings",
+    "definition": "Log missing translations"
+  },
+  {
+    "term": "qtapp.settings.developer:log_missing_strings_dir",
+    "definition": "Missing translations log directory"
+  },
+  {
+    "term": "qtapp.settings.general:language",
+    "definition": "Language"
+  },
+  {
+    "term": "qtapp.settings.statusbar:show_clock",
+    "definition": "Show clock"
+  },
+  {
+    "term": "qtapp.settings.statusbar:show_statuses",
+    "definition": "Show statuses"
+  },
+  {
+    "term": "qtapp.settings:board",
+    "definition": "Board"
+  },
+  {
+    "term": "qtapp.settings:developer",
+    "definition": "Developer"
+  },
+  {
+    "term": "qtapp.settings:general",
+    "definition": "General"
+  },
+  {
+    "term": "qtapp.settings:statusbar",
+    "definition": "Status bar"
+  },
+  {
+    "term": "qtapp.world_list_dialog:cancel",
+    "definition": "Cancel"
+  },
+  {
+    "term": "qtapp.world_list_dialog:load",
+    "definition": "Load"
+  },
+  {
+    "term": "qtapp.world_list_dialog:world_list",
+    "definition": "World list"
+  },
+  {
+    "term": "qtapp:board_properties",
+    "definition": "Board properties"
+  },
+  {
+    "term": "qtapp:export_world_failed",
+    "definition": "Export world failed"
+  },
+  {
+    "term": "qtapp:grid",
+    "definition": "Grid"
+  },
+  {
+    "term": "qtapp:grid_dot",
+    "definition": "Dot"
+  },
+  {
+    "term": "qtapp:grid_line",
+    "definition": "Line"
+  },
+  {
+    "term": "qtapp:grid_none",
+    "definition": "None"
+  },
+  {
+    "term": "qtapp:import_world_failed",
+    "definition": "Import world failed"
+  },
+  {
+    "term": "qtapp:next",
+    "definition": "Next"
+  },
+  {
+    "term": "qtapp:previous",
+    "definition": "Previous"
+  },
+  {
+    "term": "qtapp:toggle_mute",
+    "definition": "Toggle mute"
+  },
+  {
+    "term": "qtapp:toggle_offline_online",
+    "definition": "Toggle connection"
+  },
+  {
+    "term": "qtapp:toggle_power",
+    "definition": "Toggle power"
+  },
+  {
+    "term": "qtapp:toggle_smoke",
+    "definition": "Toggle smoke"
+  },
+  {
+    "term": "qtapp:traintastic_world",
+    "definition": "Traintastic world"
+  },
+  {
+    "term": "qtapp:zoom_in",
+    "definition": "Zoom in"
+  },
+  {
+    "term": "qtapp:zoom_out",
+    "definition": "Zoom out"
+  },
+  {
+    "term": "rail_vehicle_list:type",
+    "definition": "Type"
+  },
+  {
+    "term": "ratio_unit:percent",
+    "definition": "%"
+  },
+  {
+    "term": "ratio_unit:ratio",
+    "definition": ""
+  },
+  {
+    "term": "sensor_type:occupy_detector",
+    "definition": "Occupy detector"
+  },
+  {
+    "term": "sensor_type:reed_switch",
+    "definition": "Reed switch"
+  },
+  {
+    "term": "serial:baudrate",
+    "definition": "Baudrate"
+  },
+  {
+    "term": "serial:device",
+    "definition": "Device"
+  },
+  {
+    "term": "serial:flow_control",
+    "definition": "Flow control"
+  },
+  {
+    "term": "serial:port",
+    "definition": "Port"
+  },
+  {
+    "term": "serial_flow_control:hardware",
+    "definition": "Hardware"
+  },
+  {
+    "term": "serial_flow_control:none",
+    "definition": "None"
+  },
+  {
+    "term": "server_log:code",
+    "definition": "Code"
+  },
+  {
+    "term": "server_log:message",
+    "definition": "Message"
+  },
+  {
+    "term": "server_log:object",
+    "definition": "Object"
+  },
+  {
+    "term": "server_log:time",
+    "definition": "Time"
+  },
+  {
+    "term": "settings:allow_client_server_restart",
+    "definition": "Allow client server restart"
+  },
+  {
+    "term": "settings:allow_client_server_shutdown",
+    "definition": "Allow client server shutdown"
+  },
+  {
+    "term": "settings:auto_save_world_on_exit",
+    "definition": "Auto save world on exit"
+  },
+  {
+    "term": "settings:discoverable",
+    "definition": "Discoverable"
+  },
+  {
+    "term": "settings:enable_file_logger",
+    "definition": "Enable file logger"
+  },
+  {
+    "term": "settings:localhost_only",
+    "definition": "Localhost only"
+  },
+  {
+    "term": "settings:memory_logger_size",
+    "definition": "Memory logger size"
+  },
+  {
+    "term": "settings:port",
+    "definition": "Port"
+  },
+  {
+    "term": "settings:save_world_uncompressed",
+    "definition": "Save world uncompressed"
+  },
+  {
+    "term": "signal_aspect:proceed",
+    "definition": "Proceed"
+  },
+  {
+    "term": "signal_aspect:proceed_reduced_speed",
+    "definition": "Proceed, reduced speed"
+  },
+  {
+    "term": "signal_aspect:stop",
+    "definition": "Stop"
+  },
+  {
+    "term": "speed_unit:kmph",
+    "definition": "km/h"
+  },
+  {
+    "term": "speed_unit:mph",
+    "definition": "mph"
+  },
+  {
+    "term": "speed_unit:mps",
+    "definition": "m/s"
+  },
+  {
+    "term": "throttle_object_list:throttle",
+    "definition": "Throttle"
+  },
+  {
+    "term": "train:active",
+    "definition": "Active"
+  },
+  {
+    "term": "train:block",
+    "definition": "Block"
+  },
+  {
+    "term": "train:lob",
+    "definition": "Length over buffers"
+  },
+  {
+    "term": "train:mode",
+    "definition": "Mode"
+  },
+  {
+    "term": "train:override_length",
+    "definition": "Override length"
+  },
+  {
+    "term": "train:override_weight",
+    "definition": "Override weight"
+  },
+  {
+    "term": "train:speed_max",
+    "definition": "Maximum speed"
+  },
+  {
+    "term": "train:vehicles",
+    "definition": "Vehicles"
+  },
+  {
+    "term": "train:weight",
+    "definition": "Weight"
+  },
+  {
+    "term": "traintastic_diy_interface_type:network_tcp",
+    "definition": "Network (TCP)"
+  },
+  {
+    "term": "traintastic_diy_interface_type:serial",
+    "definition": "Serial"
+  },
+  {
+    "term": "traintastic_diy_settings:debug_log_heartbeat",
+    "definition": "Log heartbeat communication"
+  },
+  {
+    "term": "traintastic_diy_settings:heartbeat_timeout",
+    "definition": "Heartbeat timeout"
+  },
+  {
+    "term": "turnout_position:left",
+    "definition": "Left"
+  },
+  {
+    "term": "turnout_position:right",
+    "definition": "Right"
+  },
+  {
+    "term": "turnout_position:straight",
+    "definition": "Straight"
+  },
+  {
+    "term": "vehicle.rail.freight_wagon:cargo_weight",
+    "definition": "Cargo weight"
+  },
+  {
+    "term": "vehicle.rail.tank_wagon:cargo_volume",
+    "definition": "Cargo volume"
+  },
+  {
+    "term": "vehicle.rail:cargo_capacity",
+    "definition": "Cargo capacity"
+  },
+  {
+    "term": "vehicle.rail:cargo_loaded",
+    "definition": "Cargo loaded"
+  },
+  {
+    "term": "vehicle.rail:decoder",
+    "definition": "Decoder"
+  },
+  {
+    "term": "vehicle.rail:lob",
+    "definition": "LOB"
+  },
+  {
+    "term": "vehicle.rail:power",
+    "definition": "Power"
+  },
+  {
+    "term": "vehicle.rail:speed_max",
+    "definition": "Maximum speed"
+  },
+  {
+    "term": "vehicle.rail:total_weight",
+    "definition": "Total weight"
+  },
+  {
+    "term": "vehicle.rail:train",
+    "definition": "Train"
+  },
+  {
+    "term": "vehicle.rail:weight",
+    "definition": "Weight"
+  },
+  {
+    "term": "volume_unit:gallon_uk",
+    "definition": "gal (UK)"
+  },
+  {
+    "term": "volume_unit:gallon_us",
+    "definition": "gal (US)"
+  },
+  {
+    "term": "volume_unit:l",
+    "definition": "l"
+  },
+  {
+    "term": "volume_unit:m3",
+    "definition": "m\u00b3"
+  },
+  {
+    "term": "weight_unit:kg",
+    "definition": "kg"
+  },
+  {
+    "term": "weight_unit:long_tons",
+    "definition": "Long tons"
+  },
+  {
+    "term": "weight_unit:short_tons",
+    "definition": "Short tons"
+  },
+  {
+    "term": "weight_unit:ton",
+    "definition": "ton"
+  },
+  {
+    "term": "world:boards",
+    "definition": "Boards"
+  },
+  {
+    "term": "world:clock",
+    "definition": "Clock"
+  },
+  {
+    "term": "world:decoders",
+    "definition": "Decoders"
+  },
+  {
+    "term": "world:edit",
+    "definition": "Edit world"
+  },
+  {
+    "term": "world:inputs",
+    "definition": "Inputs"
+  },
+  {
+    "term": "world:interfaces",
+    "definition": "Interfaces"
+  },
+  {
+    "term": "world:lua_scripts",
+    "definition": "Lua scripts"
+  },
+  {
+    "term": "world:mute",
+    "definition": "Mute"
+  },
+  {
+    "term": "world:no_smoke",
+    "definition": "No smoke"
+  },
+  {
+    "term": "world:offline",
+    "definition": "Disconnect"
+  },
+  {
+    "term": "world:online",
+    "definition": "Connect"
+  },
+  {
+    "term": "world:outputs",
+    "definition": "Outputs"
+  },
+  {
+    "term": "world:power_off",
+    "definition": "Power off"
+  },
+  {
+    "term": "world:power_on",
+    "definition": "Power on"
+  },
+  {
+    "term": "world:rail_vehicles",
+    "definition": "Rail vehicles"
+  },
+  {
+    "term": "world:run",
+    "definition": "Run"
+  },
+  {
+    "term": "world:scale",
+    "definition": "Scale"
+  },
+  {
+    "term": "world:scale_ratio",
+    "definition": "Scale ratio"
+  },
+  {
+    "term": "world:simulation",
+    "definition": "Simulation"
+  },
+  {
+    "term": "world:stop",
+    "definition": "Stop"
+  },
+  {
+    "term": "world:trains",
+    "definition": "Trains"
+  },
+  {
+    "term": "world:uuid",
+    "definition": "UUID"
+  },
+  {
+    "term": "world_scale:custom",
+    "definition": "Custom"
+  },
+  {
+    "term": "world_scale:h0",
+    "definition": "H0 (1:87)"
+  },
+  {
+    "term": "world_scale:n",
+    "definition": "N (1:160)"
+  },
+  {
+    "term": "world_scale:tt",
+    "definition": "TT (1:120)"
+  },
+  {
+    "term": "world_scale:z",
+    "definition": "Z (1:220)"
+  },
+  {
+    "term": "xpressnet_command_station:custom",
+    "definition": "Custom"
+  },
+  {
+    "term": "xpressnet_command_station:digikeijs_dr5000",
+    "definition": "Digikeijs DR5000"
+  },
+  {
+    "term": "xpressnet_command_station:roco_10764",
+    "definition": "Roco 10764"
+  },
+  {
+    "term": "xpressnet_interface_type:network",
+    "definition": "Network"
+  },
+  {
+    "term": "xpressnet_interface_type:serial",
+    "definition": "Serial"
+  },
+  {
+    "term": "xpressnet_serial_interface_type:custom",
+    "definition": "Custom"
+  },
+  {
+    "term": "xpressnet_serial_interface_type:digikeijs_dr5000",
+    "definition": "Digikeijs DR5000"
+  },
+  {
+    "term": "xpressnet_serial_interface_type:lenz_li100",
+    "definition": "Lenz LI100"
+  },
+  {
+    "term": "xpressnet_serial_interface_type:lenz_li100f",
+    "definition": "Lenz LI100F"
+  },
+  {
+    "term": "xpressnet_serial_interface_type:lenz_li101f",
+    "definition": "Lenz LI101F"
+  },
+  {
+    "term": "xpressnet_serial_interface_type:lenz_liusb",
+    "definition": "Lenz LIUSB"
+  },
+  {
+    "term": "xpressnet_serial_interface_type:rosoft_s88xpressnetli",
+    "definition": "RoSoft s88XpressNetLI"
+  },
+  {
+    "term": "xpressnet_settings:use_emergency_stop_locomotive_command",
+    "definition": "Use short emergency stop locomotive command"
+  },
+  {
+    "term": "xpressnet_settings:use_roco_f13_f20_command",
+    "definition": "Use Roco F13-F20 command"
+  },
+  {
+    "term": "z21_channel:rbus",
+    "definition": "R-Bus"
+  },
+  {
+    "term": "z21_settings.server:allow_emergency_stop",
+    "definition": "Allow emergency stop"
+  },
+  {
+    "term": "z21_settings.server:allow_track_power_off",
+    "definition": "Allow power off"
+  },
+  {
+    "term": "z21_settings.server:allow_track_power_on_release_emergency_stop",
+    "definition": "Allow power on/emergency stop release"
+  },
+  {
+    "term": "train_mode:manual_protected",
+    "definition": "Manual (protected)"
+  },
+  {
+    "term": "train_mode:manual_unprotected",
+    "definition": "Manual (unprotected)"
+  },
+  {
+    "term": "train_mode:automatic",
+    "definition": "Automatic"
+  },
+  {
+    "term": "list.train_vehicle:move",
+    "definition": "Move"
+  }
+]

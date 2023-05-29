@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,22 +46,19 @@ Locale::Locale(std::filesystem::path _filename, Locale* fallback) :
     const char* pEnd = m_data.data() + m_data.size();
     while(p < pEnd)
     {
-      if(*p == '#')
-      {
-        while(*(++p) != '\n'); // seek end of line
-        p++;
-      }
-      else if(*p == '\n' || *p == '\r')
-        p++; // next line
-      else
-      {
-        const auto* start = p;
-        while(*(++p) != '='); // seek =
-        std::string_view id{start, static_cast<size_t>(p - start)};
-        start = ++p;
-        while(*(++p) != '\n'); // seek end of line
-        m_strings.insert({id, {start, static_cast<size_t>(p - start)}});
-      }
+      size_t len = *reinterpret_cast<const uint32_t*>(p);
+      p += sizeof(uint32_t);
+      std::string_view id{p, len};
+      p += len;
+      if(len % 4 != 0)
+        p += 4 - (len % 4);
+
+      len = *reinterpret_cast<const uint32_t*>(p);
+      p += sizeof(uint32_t);
+      m_strings.insert({id, {p, len}});
+      p += len;
+      if(len % 4 != 0)
+        p += 4 - (len % 4);
     }
   }
 }

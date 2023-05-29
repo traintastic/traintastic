@@ -1,0 +1,934 @@
+[
+  {
+    "term": "board_tile.misc.push_button:color",
+    "definition": "Farbe"
+  },
+  {
+    "term": "board_tile.rail.direction_control:use_a_to_b",
+    "definition": "Use: A \u2192 B"
+  },
+  {
+    "term": "board_tile.rail.direction_control:use_b_to_a",
+    "definition": "Use: A \u2190 B"
+  },
+  {
+    "term": "board_tile.rail.direction_control:use_both",
+    "definition": "Use: A \u21c4 B"
+  },
+  {
+    "term": "board_tile.rail.direction_control:use_none",
+    "definition": "Use: A \ud83d\udec7 B"
+  },
+  {
+    "term": "board_tile.rail.sensor:input",
+    "definition": "Eingang"
+  },
+  {
+    "term": "board_tile.rail.sensor:invert",
+    "definition": "Umkehren"
+  },
+  {
+    "term": "board_tile:output_map",
+    "definition": "Ausg\u00e4nge"
+  },
+  {
+    "term": "category:network",
+    "definition": "Netzwerk"
+  },
+  {
+    "term": "class_id:board_tile.misc.push_button",
+    "definition": "Druckknopf"
+  },
+  {
+    "term": "class_id:board_tile.rail.sensor",
+    "definition": "Sensor"
+  },
+  {
+    "term": "class_id:board_tile.rail.tunnel",
+    "definition": "Tunnel"
+  },
+  {
+    "term": "class_id:interface.dccplusplus",
+    "definition": "DCC++"
+  },
+  {
+    "term": "class_id:interface.ecos",
+    "definition": "ECoS"
+  },
+  {
+    "term": "class_id:interface.hsi88",
+    "definition": "HSI-88"
+  },
+  {
+    "term": "class_id:interface.loconet",
+    "definition": "LocoNet"
+  },
+  {
+    "term": "class_id:interface.traintastic_diy",
+    "definition": "Traintastic DIY"
+  },
+  {
+    "term": "class_id:interface.withrottle",
+    "definition": "WiThrottle"
+  },
+  {
+    "term": "class_id:interface.wlanmaus",
+    "definition": "WLANmaus"
+  },
+  {
+    "term": "class_id:interface.xpressnet",
+    "definition": "XpressNet"
+  },
+  {
+    "term": "class_id:interface.z21",
+    "definition": "Z21"
+  },
+  {
+    "term": "class_id:vehicle.rail.locomotive",
+    "definition": "Lokomotive"
+  },
+  {
+    "term": "clock:day",
+    "definition": "Tag"
+  },
+  {
+    "term": "clock:hour",
+    "definition": "Stunde"
+  },
+  {
+    "term": "clock:minute",
+    "definition": "Minute"
+  },
+  {
+    "term": "clock:month",
+    "definition": "Monat"
+  },
+  {
+    "term": "clock:multiplier",
+    "definition": "Multiplikator"
+  },
+  {
+    "term": "clock:year",
+    "definition": "Jahr"
+  },
+  {
+    "term": "color:aqua",
+    "definition": "Aqua"
+  },
+  {
+    "term": "color:black",
+    "definition": "Schwarz"
+  },
+  {
+    "term": "color:blue",
+    "definition": "Blau"
+  },
+  {
+    "term": "color:fuchsia",
+    "definition": "Fuchsie"
+  },
+  {
+    "term": "color:gray",
+    "definition": "Grau"
+  },
+  {
+    "term": "color:green",
+    "definition": "Gr\u00fcn"
+  },
+  {
+    "term": "color:lime",
+    "definition": "Lime"
+  },
+  {
+    "term": "color:maroon",
+    "definition": "Maroon"
+  },
+  {
+    "term": "color:navy",
+    "definition": "Navy"
+  },
+  {
+    "term": "color:olive",
+    "definition": "Olive"
+  },
+  {
+    "term": "color:purple",
+    "definition": "Violett"
+  },
+  {
+    "term": "color:red",
+    "definition": "Rot"
+  },
+  {
+    "term": "color:silver",
+    "definition": "Silber"
+  },
+  {
+    "term": "color:teal",
+    "definition": "Blaugr\u00fcn"
+  },
+  {
+    "term": "color:white",
+    "definition": "Wei\u00df"
+  },
+  {
+    "term": "color:yellow",
+    "definition": "Gelb"
+  },
+  {
+    "term": "dccplusplus_channel:output",
+    "definition": "Ausgang"
+  },
+  {
+    "term": "decoder_function:function",
+    "definition": "Funktion"
+  },
+  {
+    "term": "decoder_function:number",
+    "definition": "Nummer"
+  },
+  {
+    "term": "decoder_function:type",
+    "definition": "Typ"
+  },
+  {
+    "term": "decoupler_state:activated",
+    "definition": "Aktiviert"
+  },
+  {
+    "term": "decoupler_state:deactivated",
+    "definition": "Deaktiviert"
+  },
+  {
+    "term": "direction:forward",
+    "definition": "Vorw\u00e4rts"
+  },
+  {
+    "term": "direction:reverse",
+    "definition": "R\u00fcckg\u00e4ng"
+  },
+  {
+    "term": "direction_control_state:a_to_b",
+    "definition": "A \u2192 B"
+  },
+  {
+    "term": "direction_control_state:b_to_a",
+    "definition": "A \u2190 B"
+  },
+  {
+    "term": "direction_control_state:both",
+    "definition": "A \u21c4 B"
+  },
+  {
+    "term": "direction_control_state:none",
+    "definition": "A \ud83d\udec7 B"
+  },
+  {
+    "term": "ecos_channel:ecos_detector",
+    "definition": "ECoS Detector"
+  },
+  {
+    "term": "hardware:address",
+    "definition": "Adresse"
+  },
+  {
+    "term": "hardware:command_station",
+    "definition": "Zentrale"
+  },
+  {
+    "term": "hardware:dcc",
+    "definition": "DCC"
+  },
+  {
+    "term": "hardware:dccplusplus",
+    "definition": "DCC++"
+  },
+  {
+    "term": "hardware:ecos",
+    "definition": "ECoS"
+  },
+  {
+    "term": "hardware:inputs",
+    "definition": "Eing\u00e4nge"
+  },
+  {
+    "term": "hardware:loconet",
+    "definition": "LocoNet"
+  },
+  {
+    "term": "hardware:motorola",
+    "definition": "Motorola"
+  },
+  {
+    "term": "hardware:outputs",
+    "definition": "Ausg\u00e4nge"
+  },
+  {
+    "term": "hardware:s88",
+    "definition": "S88"
+  },
+  {
+    "term": "hardware:xpressnet",
+    "definition": "XpressNet"
+  },
+  {
+    "term": "hardware:z21",
+    "definition": "Z21"
+  },
+  {
+    "term": "hsi88:s88_left",
+    "definition": "S88 Links"
+  },
+  {
+    "term": "hsi88:s88_middle",
+    "definition": "S88 Mitte"
+  },
+  {
+    "term": "hsi88:s88_right",
+    "definition": "S88 Rechts"
+  },
+  {
+    "term": "identification:opc_multi_sense_direction",
+    "definition": "OPC_MULTI_SENSE Richtung"
+  },
+  {
+    "term": "input_map_item.block:input",
+    "definition": "Eing\u00e4ng"
+  },
+  {
+    "term": "input_map_item.block:invert",
+    "definition": "Umkehren"
+  },
+  {
+    "term": "input_map_item.block:type",
+    "definition": "Typ"
+  },
+  {
+    "term": "interface.dccplusplus:dcc_plus_plus",
+    "definition": "DCC++(EX)"
+  },
+  {
+    "term": "interface.ecos:ecos",
+    "definition": "ECoS"
+  },
+  {
+    "term": "interface.ecos:ecos_detector",
+    "definition": "ECoS detector"
+  },
+  {
+    "term": "interface.ecos:s88",
+    "definition": "S88"
+  },
+  {
+    "term": "interface.z21:serial_number",
+    "definition": "Seriennummer"
+  },
+  {
+    "term": "interface:type",
+    "definition": "Typ"
+  },
+  {
+    "term": "ip:hostname",
+    "definition": "Hostname"
+  },
+  {
+    "term": "ip:port",
+    "definition": "Port"
+  },
+  {
+    "term": "language:de-de",
+    "definition": "Deutsch (Deutschland)"
+  },
+  {
+    "term": "language:en-us",
+    "definition": "Englisch (USA)"
+  },
+  {
+    "term": "language:it-it",
+    "definition": "Italienisch"
+  },
+  {
+    "term": "language:nl-nl",
+    "definition": "Niederl\u00e4ndisch (Die Niederlande)"
+  },
+  {
+    "term": "length_unit:cm",
+    "definition": "cm"
+  },
+  {
+    "term": "length_unit:ft",
+    "definition": "ft"
+  },
+  {
+    "term": "length_unit:in",
+    "definition": "in"
+  },
+  {
+    "term": "length_unit:m",
+    "definition": "m"
+  },
+  {
+    "term": "length_unit:mm",
+    "definition": "mm"
+  },
+  {
+    "term": "length_unit:yd",
+    "definition": "yd"
+  },
+  {
+    "term": "list:add",
+    "definition": "Addieren"
+  },
+  {
+    "term": "lncv_programmer:description",
+    "definition": "Beschreibung"
+  },
+  {
+    "term": "lncv_programmer:read",
+    "definition": "Lesen"
+  },
+  {
+    "term": "lncv_programmer:reading_lncv_x",
+    "definition": "LNCV %1 Lesen"
+  },
+  {
+    "term": "lncv_programmer:reading_lncv_x_failed",
+    "definition": "Lesen von LNCV %1 fehlgeschlagen"
+  },
+  {
+    "term": "lncv_programmer:start",
+    "definition": "Start"
+  },
+  {
+    "term": "lncv_programmer:value",
+    "definition": "Wert"
+  },
+  {
+    "term": "lncv_programmer:write",
+    "definition": "Schreiben"
+  },
+  {
+    "term": "lncv_programmer:writing_lncv_x",
+    "definition": "LNCV %1 Schreiben"
+  },
+  {
+    "term": "loconet_command_station:digikeijs_dr5000",
+    "definition": "Digikeijs DR5000"
+  },
+  {
+    "term": "loconet_command_station:uhlenbrock_ibcom",
+    "definition": "Uhlenbrock IB-Com"
+  },
+  {
+    "term": "loconet_command_station:uhlenbrock_intellibox",
+    "definition": "Uhlenbrock Intellibox"
+  },
+  {
+    "term": "loconet_fastclock:master",
+    "definition": "Meister (Traintatic steuert die Uhr)"
+  },
+  {
+    "term": "loconet_fastclock:off",
+    "definition": "Aus"
+  },
+  {
+    "term": "loconet_interface_type:lbserver",
+    "definition": "LBServer"
+  },
+  {
+    "term": "loconet_interface_type:serial",
+    "definition": "Serielle"
+  },
+  {
+    "term": "loconet_interface_type:tcp_binary",
+    "definition": "TCP bin\u00e4r"
+  },
+  {
+    "term": "loconet_interface_type:z21",
+    "definition": "Z21"
+  },
+  {
+    "term": "loconet_serial_interface:digikeijs_dr5000",
+    "definition": "Digikeijs DR5000"
+  },
+  {
+    "term": "loconet_serial_interface:rosoft_loconet_interface",
+    "definition": "RoSoft LocoNet interface"
+  },
+  {
+    "term": "loconet_settings:command_station",
+    "definition": "Zentrale"
+  },
+  {
+    "term": "loconet_settings:f9_f28",
+    "definition": "F9-F28"
+  },
+  {
+    "term": "lua.script:disabled",
+    "definition": "Deaktiviert"
+  },
+  {
+    "term": "lua.script:start",
+    "definition": "Start"
+  },
+  {
+    "term": "lua.script_list:start_all",
+    "definition": "Alle starten"
+  },
+  {
+    "term": "lua_script_state:disabled",
+    "definition": "Deaktiviert"
+  },
+  {
+    "term": "lua_script_state:error",
+    "definition": "Fehler"
+  },
+  {
+    "term": "message:C1001",
+    "definition": "Laden der Welt fehlgeschlagen (%1)"
+  },
+  {
+    "term": "message:C1003",
+    "definition": "Schreiben in Einstellungsdatei (%1) nicht m\u00f6glich"
+  },
+  {
+    "term": "message:C9999",
+    "definition": "%1"
+  },
+  {
+    "term": "message:D0000",
+    "definition": "%1"
+  },
+  {
+    "term": "message:D9999",
+    "definition": "%1"
+  },
+  {
+    "term": "message:E9999",
+    "definition": "%1"
+  },
+  {
+    "term": "message:F9999",
+    "definition": "%1"
+  },
+  {
+    "term": "message:I1001",
+    "definition": "Traintastic v%1 %2"
+  },
+  {
+    "term": "message:I1002",
+    "definition": "Einstellungsdatei nicht gefunden, Standardwerte werden verwendet"
+  },
+  {
+    "term": "message:N9999",
+    "definition": "%1"
+  },
+  {
+    "term": "message:W2004",
+    "definition": "Eingangsadresse %1 ist ung\u00fcltig"
+  },
+  {
+    "term": "message:W2005",
+    "definition": "Ausgangsadresse %1 ist ung\u00fcltig"
+  },
+  {
+    "term": "message:W9999",
+    "definition": "%1"
+  },
+  {
+    "term": "object:id",
+    "definition": "Id"
+  },
+  {
+    "term": "object:name",
+    "definition": "Name"
+  },
+  {
+    "term": "object:notes",
+    "definition": "Notizen"
+  },
+  {
+    "term": "opc_multi_sense_direction:in_sensor_address",
+    "definition": "In Sensoradresse"
+  },
+  {
+    "term": "opc_multi_sense_direction:in_transponder_address",
+    "definition": "In Transponderadresse (Bl\u00fccher GBM16XN)"
+  },
+  {
+    "term": "opc_multi_sense_direction:none",
+    "definition": "Keiner"
+  },
+  {
+    "term": "output_action:none",
+    "definition": "Kein"
+  },
+  {
+    "term": "output_action:off",
+    "definition": "Aus"
+  },
+  {
+    "term": "output_action:on",
+    "definition": "Auf"
+  },
+  {
+    "term": "output_action:pulse",
+    "definition": "Puls"
+  },
+  {
+    "term": "output_map:use",
+    "definition": "Benutzen"
+  },
+  {
+    "term": "protocol.loconet:command_station",
+    "definition": "Zentrale"
+  },
+  {
+    "term": "qtapp.connect_dialog:connect",
+    "definition": "Verbinden"
+  },
+  {
+    "term": "qtapp.connect_dialog:connect_to_server",
+    "definition": "Verbinden zum Server"
+  },
+  {
+    "term": "qtapp.connect_dialog:connected",
+    "definition": "Verbunden"
+  },
+  {
+    "term": "qtapp.connect_dialog:connecting",
+    "definition": "Verbinden"
+  },
+  {
+    "term": "qtapp.connect_dialog:password",
+    "definition": "Password"
+  },
+  {
+    "term": "qtapp.connect_dialog:server",
+    "definition": "Server"
+  },
+  {
+    "term": "qtapp.mainmenu:about",
+    "definition": "\u00dcber"
+  },
+  {
+    "term": "qtapp.mainmenu:connect_to_server",
+    "definition": "Verbinden zum Server"
+  },
+  {
+    "term": "qtapp.mainmenu:connection",
+    "definition": "Verbindung"
+  },
+  {
+    "term": "qtapp.mainmenu:export_world",
+    "definition": "Welt exportieren"
+  },
+  {
+    "term": "qtapp.mainmenu:file",
+    "definition": "Datei"
+  },
+  {
+    "term": "qtapp.mainmenu:fullscreen",
+    "definition": "Vollbildschirm"
+  },
+  {
+    "term": "qtapp.mainmenu:help",
+    "definition": "Hilfe"
+  },
+  {
+    "term": "qtapp.mainmenu:import_world",
+    "definition": "Welt importieren"
+  },
+  {
+    "term": "qtapp.mainmenu:load_world",
+    "definition": "Welt laden"
+  },
+  {
+    "term": "qtapp.mainmenu:new_world",
+    "definition": "Neue Welt"
+  },
+  {
+    "term": "qtapp.mainmenu:restart_server",
+    "definition": "Server neu starten"
+  },
+  {
+    "term": "qtapp.mainmenu:restart_server_question",
+    "definition": "M\u00f6chten Sie den Server wirklich neu starten?"
+  },
+  {
+    "term": "qtapp.mainmenu:save_world",
+    "definition": "Welt speichern"
+  },
+  {
+    "term": "qtapp.mainmenu:server",
+    "definition": "Server"
+  },
+  {
+    "term": "qtapp.mainmenu:server_settings",
+    "definition": "Server Einstellungen"
+  },
+  {
+    "term": "qtapp.mainmenu:settings",
+    "definition": "Einstellungen"
+  },
+  {
+    "term": "qtapp.mainmenu:shutdown_server",
+    "definition": "Server herunterfahren"
+  },
+  {
+    "term": "qtapp.mainmenu:shutdown_server_question",
+    "definition": "M\u00f6chten Sie den Server wirklich herunterfahren?"
+  },
+  {
+    "term": "qtapp.mainmenu:toolbar",
+    "definition": "Symbolleiste"
+  },
+  {
+    "term": "qtapp.mainmenu:world",
+    "definition": "Welt"
+  },
+  {
+    "term": "qtapp.mainmenu:world_properties",
+    "definition": "Welteigenschaften"
+  },
+  {
+    "term": "qtapp.message_box:no",
+    "definition": "Nein"
+  },
+  {
+    "term": "qtapp.message_box:yes",
+    "definition": "Jawohl"
+  },
+  {
+    "term": "qtapp.object_select_list_dialog:cancel",
+    "definition": "Abbrechen"
+  },
+  {
+    "term": "qtapp.object_select_list_dialog:ok",
+    "definition": "OK"
+  },
+  {
+    "term": "qtapp.settings.general:language",
+    "definition": "Sprache"
+  },
+  {
+    "term": "qtapp.settings:board",
+    "definition": "Schalttafel"
+  },
+  {
+    "term": "qtapp.settings:developer",
+    "definition": "Entwickler"
+  },
+  {
+    "term": "qtapp.settings:general",
+    "definition": "Allgemein"
+  },
+  {
+    "term": "qtapp.world_list_dialog:cancel",
+    "definition": "Abbrechen"
+  },
+  {
+    "term": "qtapp:zoom_in",
+    "definition": "Hineinzoomen"
+  },
+  {
+    "term": "qtapp:zoom_out",
+    "definition": "Rauszoomen"
+  },
+  {
+    "term": "serial:baudrate",
+    "definition": "Baudrate"
+  },
+  {
+    "term": "serial_flow_control:hardware",
+    "definition": "Hardware"
+  },
+  {
+    "term": "serial_flow_control:none",
+    "definition": "Kein"
+  },
+  {
+    "term": "server_log:code",
+    "definition": "Code"
+  },
+  {
+    "term": "server_log:message",
+    "definition": "Meldung"
+  },
+  {
+    "term": "server_log:object",
+    "definition": "Objekt"
+  },
+  {
+    "term": "server_log:time",
+    "definition": "Zeit"
+  },
+  {
+    "term": "settings:port",
+    "definition": "Port"
+  },
+  {
+    "term": "speed_unit:kmph",
+    "definition": "km/h"
+  },
+  {
+    "term": "speed_unit:mph",
+    "definition": "mph"
+  },
+  {
+    "term": "speed_unit:mps",
+    "definition": "m/s"
+  },
+  {
+    "term": "train:lob",
+    "definition": "L\u00e4nge \u00fcber Puffer"
+  },
+  {
+    "term": "train:speed_max",
+    "definition": "Maximale Geschwindigkeit"
+  },
+  {
+    "term": "train:weight",
+    "definition": "Gewicht"
+  },
+  {
+    "term": "traintastic_diy_interface_type:network_tcp",
+    "definition": "Netzwerk (TCP)"
+  },
+  {
+    "term": "turnout_position:left",
+    "definition": "Links"
+  },
+  {
+    "term": "turnout_position:right",
+    "definition": "Recht"
+  },
+  {
+    "term": "turnout_position:straight",
+    "definition": "Gerade"
+  },
+  {
+    "term": "vehicle.rail:speed_max",
+    "definition": "Maximale Geschwindigkeit"
+  },
+  {
+    "term": "vehicle.rail:total_weight",
+    "definition": "Total weight"
+  },
+  {
+    "term": "vehicle.rail:train",
+    "definition": "Zug"
+  },
+  {
+    "term": "vehicle.rail:weight",
+    "definition": "Gewicht"
+  },
+  {
+    "term": "weight_unit:kg",
+    "definition": "kg"
+  },
+  {
+    "term": "weight_unit:ton",
+    "definition": "ton"
+  },
+  {
+    "term": "world:clock",
+    "definition": "Uhr"
+  },
+  {
+    "term": "world:inputs",
+    "definition": "Eing\u00e4nge"
+  },
+  {
+    "term": "world:interfaces",
+    "definition": "Schnittstellen"
+  },
+  {
+    "term": "world:lua_scripts",
+    "definition": "Lua-Skripte"
+  },
+  {
+    "term": "world:offline",
+    "definition": "Trennen"
+  },
+  {
+    "term": "world:online",
+    "definition": "Verbinden"
+  },
+  {
+    "term": "world:scale",
+    "definition": "Ma\u00dfstab"
+  },
+  {
+    "term": "world:scale_ratio",
+    "definition": "Ma\u00dfstabsverh\u00e4ltnis"
+  },
+  {
+    "term": "world:simulation",
+    "definition": "Simulation"
+  },
+  {
+    "term": "world:stop",
+    "definition": "Halt"
+  },
+  {
+    "term": "world:trains",
+    "definition": "Z\u00fcge"
+  },
+  {
+    "term": "world:uuid",
+    "definition": "UUID"
+  },
+  {
+    "term": "world_scale:h0",
+    "definition": "H0 (1:87)"
+  },
+  {
+    "term": "world_scale:n",
+    "definition": "N (1:160)"
+  },
+  {
+    "term": "world_scale:tt",
+    "definition": "TT (1:120)"
+  },
+  {
+    "term": "world_scale:z",
+    "definition": "Z (1:220)"
+  },
+  {
+    "term": "xpressnet_command_station:digikeijs_dr5000",
+    "definition": "Digikeijs DR5000"
+  },
+  {
+    "term": "xpressnet_command_station:roco_10764",
+    "definition": "Roco 10764"
+  },
+  {
+    "term": "xpressnet_interface_type:network",
+    "definition": "Netzwerk"
+  },
+  {
+    "term": "xpressnet_interface_type:serial",
+    "definition": "Serielle"
+  },
+  {
+    "term": "xpressnet_serial_interface:lenz_li100",
+    "definition": "Lenz LI100"
+  },
+  {
+    "term": "xpressnet_serial_interface:lenz_li100f",
+    "definition": "Lenz LI100F"
+  },
+  {
+    "term": "xpressnet_serial_interface:lenz_li101f",
+    "definition": "Lenz LI101F"
+  },
+  {
+    "term": "xpressnet_serial_interface:rosoft_s88xpressnetli",
+    "definition": "RoSoft s88XpressNetLI"
+  },
+  {
+    "term": "z21_channel:rbus",
+    "definition": "R-Bus"
+  }
+]

@@ -46,4 +46,4 @@ CMakeLists.txt.*
 *.pyc
 .vs
 .DS_Store
-
+shared/translations/*.lang
