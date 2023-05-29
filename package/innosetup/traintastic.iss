@@ -75,6 +75,13 @@ Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""T
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (UDP)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=UDP localport=5740 action=allow"; StatusMsg: "{cm:AddFirewallRuleTraintasticClient} (UDP)"; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (WLANmaus/Z21)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=UDP localport=21105 action=allow"; StatusMsg: "{cm:AddFirewallRuleWLANmausZ21}"; Flags: runhidden; Check: InstallServer; Tasks: firewall_wlanmaus
 
+[InstallDelete]
+; Delete old translation files (TODO: remove in 0.4)
+Type: files; Name: "{commonappdata}\traintastic\translations\en-us.txt"
+Type: files; Name: "{commonappdata}\traintastic\translations\nl-nl.txt"
+Type: files; Name: "{commonappdata}\traintastic\translations\de-de.txt"
+Type: files; Name: "{commonappdata}\traintastic\translations\it-it.txt"
+
 [UninstallRun]
 Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""Traintastic server (TCP)"""; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
 Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""Traintastic server (UDP)"""; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
