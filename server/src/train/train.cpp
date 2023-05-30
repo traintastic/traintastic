@@ -136,6 +136,7 @@ Train::Train(World& world, std::string_view _id) :
       updateSpeed();
     },
     std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
+  mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
@@ -179,6 +180,9 @@ Train::Train(World& world, std::string_view _id) :
 
   Attributes::addEnabled(active, true);
   m_interfaceItems.add(active);
+
+  Attributes::addValues(mode, trainModeValues);
+  m_interfaceItems.add(mode);
 
   Attributes::addObjectEditor(blocks, false);
   m_interfaceItems.add(blocks);

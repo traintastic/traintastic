@@ -25,6 +25,7 @@
 
 #include "../core/idobject.hpp"
 #include <boost/asio/steady_timer.hpp>
+#include <traintastic/enum/trainmode.hpp>
 #include "../core/lengthproperty.hpp"
 #include "../core/speedproperty.hpp"
 #include "../core/weightproperty.hpp"
@@ -87,6 +88,7 @@ class Train : public IdObject
     ObjectProperty<TrainVehicleList> vehicles;
     Property<bool> powered;
     Property<bool> active;
+    Property<TrainMode> mode;
 
     //! \brief List of block status the train is in
     //! Index 0 is the block where the head of the train is.
