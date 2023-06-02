@@ -1888,6 +1888,10 @@
         "comment": ""
     },
     {
+        "term": "loconet_settings:listen_only",
+        "definition": "Listen only"
+    },
+    {
         "term": "loconet_settings:locomotive_slots",
         "definition": "Locomotive slots",
         "context": "",
@@ -2990,6 +2994,14 @@
         "term_plural": "",
         "reference": "",
         "comment": ""
+    },
+    {
+        "term": "message:N2006",
+        "definition": "Listen only mode: activated"
+    },
+    {
+        "term": "message:N2007",
+        "definition": "Listen only mode: deactivated"
     },
     {
         "term": "message:N3001",

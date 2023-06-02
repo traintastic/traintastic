@@ -50,6 +50,7 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
         Attributes::setEnabled(pcapOutput, value);
       }}
   , pcapOutput{this, "pcap_output", PCAPOutput::File, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , listenOnly{this, "listen_only", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   Attributes::addDisplayName(commandStation, DisplayName::Hardware::commandStation);
   Attributes::addValues(commandStation, LocoNetCommandStationValues);
@@ -101,6 +102,9 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   //Attributes::addGroup(pcapOutput, Group::developer);
   Attributes::addValues(pcapOutput, pcapOutputValues);
   m_interfaceItems.add(pcapOutput);
+
+  //Attributes::addGroup(listenOnly, Group::developer);
+  m_interfaceItems.add(listenOnly);
 }
 
 Config Settings::config() const
@@ -122,6 +126,7 @@ Config Settings::config() const
   config.debugLogRXTX = debugLogRXTX;
   config.pcap = pcap;
   config.pcapOutput = pcapOutput;
+  config.listenOnly = listenOnly;
 
   return config;
 }

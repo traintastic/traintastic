@@ -121,6 +121,8 @@ enum class LogMessage : uint32_t
   N2003_STOPPED_SENDING_FAST_CLOCK_SYNC = LogMessageOffset::notice + 2003,
   N2004_STARTING_PCAP_FILE_LOG_X = LogMessageOffset::notice + 2004,
   N2005_STARTING_PCAP_LOG_PIPE_X = LogMessageOffset::notice + 2005,
+  N2006_LISTEN_ONLY_MODE_ACTIVATED = LogMessageOffset::notice + 2006,
+  N2007_LISTEN_ONLY_MODE_DEACTIVATED = LogMessageOffset::notice + 2007,
   N3001_ASSIGNED_TRAIN_X_TO_BLOCK_X = LogMessageOffset::notice + 3001,
   N3002_REMOVED_TRAIN_X_FROM_BLOCK_X = LogMessageOffset::notice + 3002,
   N9001_STARTING_SCRIPT = LogMessageOffset::notice + 9001,

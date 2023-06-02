@@ -118,6 +118,26 @@ void Kernel::setConfig(const Config& config)
         startPCAP(newConfig.pcapOutput);
       }
 
+      if(newConfig.listenOnly && !m_config.listenOnly)
+      {
+        for(auto& queue : m_sendQueue)
+          queue.clear();
+
+        EventLoop::call(
+          [this]()
+          {
+            Log::log(m_logId, LogMessage::N2006_LISTEN_ONLY_MODE_ACTIVATED);
+          });
+      }
+      else if(!newConfig.listenOnly && m_config.listenOnly)
+      {
+        EventLoop::call(
+          [this]()
+          {
+            Log::log(m_logId, LogMessage::N2007_LISTEN_ONLY_MODE_DEACTIVATED);
+          });
+      }
+
       if(m_config.fastClock == LocoNetFastClock::Master && newConfig.fastClock == LocoNetFastClock::Off)
       {
         setFastClockMaster(false);
@@ -219,6 +239,9 @@ void Kernel::start()
   m_pendingSlotMessages.clear();
   m_inputValues.fill(TriState::Undefined);
   m_outputValues.fill(TriState::Undefined);
+
+  if(m_config.listenOnly)
+    Log::log(m_logId, LogMessage::N2006_LISTEN_ONLY_MODE_ACTIVATED);
 
   m_thread = std::thread(
     [this]()
@@ -1276,6 +1299,9 @@ void Kernel::send(const Message& message, Priority priority)
 {
   assert(isKernelThread());
 
+  if(m_config.listenOnly)
+    return; // drop it
+
   if(!m_sendQueue[priority].append(message))
   {
     // TODO: log message
@@ -1567,6 +1593,11 @@ void Kernel::SendQueue::pop()
     memmove(m_buffer.data(), m_front, m_bytes);
     m_front = m_buffer.data();
   }
+}
+
+void Kernel::SendQueue::clear()
+{
+  m_bytes = 0;
 }
 
 }

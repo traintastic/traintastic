@@ -93,6 +93,8 @@ class Kernel
         bool append(const Message& message);
 
         void pop();
+
+        void clear();
     };
 
     struct LocoSlot

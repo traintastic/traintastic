@@ -54,6 +54,7 @@ class Settings final : public SubObject
     Property<bool> debugLogRXTX;
     Property<bool> pcap;
     Property<PCAPOutput> pcapOutput;
+    Property<bool> listenOnly;
 
     Settings(Object& _parent, std::string_view parentPropertyName);
 
