@@ -227,7 +227,10 @@ World::World(Private /*unused*/) :
         WorldSaver saver(*this, savePath);
 
         if(Traintastic::instance)
+        {
           Traintastic::instance->settings->lastWorld = uuid.value();
+          Traintastic::instance->worldList->update(*this, savePath);
+        }
 
         Log::log(*this, LogMessage::N1022_SAVED_WORLD_X, name.value());
       }
