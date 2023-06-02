@@ -905,7 +905,7 @@
     },
     {
         "term": "decoder_function_type:on_off",
-        "definition": "ein\/aus",
+        "definition": "Ein\/aus",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1321,7 +1321,7 @@
     },
     {
         "term": "interface.traintastic_diy:traintastic_diy",
-        "definition": "Traintastisch DIY",
+        "definition": "Traintastic DIY",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2225,7 +2225,7 @@
     },
     {
         "term": "message:D2007",
-        "definition": "Eingabe %1 = %2",
+        "definition": "Eingang %1 = %2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2233,7 +2233,7 @@
     },
     {
         "term": "message:D2008",
-        "definition": "Ausgabe %1 = %1",
+        "definition": "Ausgang %1 = %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3833,7 +3833,7 @@
     },
     {
         "term": "qtapp:grid_none",
-        "definition": "Keine",
+        "definition": "Kein",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3897,7 +3897,7 @@
     },
     {
         "term": "qtapp:traintastic_world",
-        "definition": "Traintastische Welt",
+        "definition": "Traintastic Welt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3985,7 +3985,7 @@
     },
     {
         "term": "serial:port",
-        "definition": "Hafen",
+        "definition": "Schnittstelle",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4569,7 +4569,7 @@
     },
     {
         "term": "world:run",
-        "definition": "ausf\u00fchren.",
+        "definition": "Ausf\u00fchren",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4809,7 +4809,7 @@
     },
     {
         "term": "train_mode:manual_protected",
-        "definition": "Handbuch (gesch\u00fctzt)",
+        "definition": "Manuell (gesch\u00fctzt)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4881,6 +4881,30 @@
     },
     {
         "term": "settings:select_folder",
+        "definition": null,
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:listen_only",
+        "definition": null,
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2006",
+        "definition": null,
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2007",
         "definition": null,
         "context": "",
         "term_plural": "",

@@ -1888,10 +1888,6 @@
         "comment": ""
     },
     {
-        "term": "loconet_settings:listen_only",
-        "definition": "Listen only"
-    },
-    {
         "term": "loconet_settings:locomotive_slots",
         "definition": "Locomotive slots",
         "context": "",
@@ -2994,14 +2990,6 @@
         "term_plural": "",
         "reference": "",
         "comment": ""
-    },
-    {
-        "term": "message:N2006",
-        "definition": "Listen only mode: activated"
-    },
-    {
-        "term": "message:N2007",
-        "definition": "Listen only mode: deactivated"
     },
     {
         "term": "message:N3001",
@@ -4853,7 +4841,7 @@
     },
     {
         "term": "protocol.loconet:command_station",
-        "definition": null,
+        "definition": "Command station",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4861,7 +4849,7 @@
     },
     {
         "term": "xpressnet_serial_interface:lenz_li100",
-        "definition": null,
+        "definition": "Lenz LI100",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4869,7 +4857,7 @@
     },
     {
         "term": "xpressnet_serial_interface:lenz_li100f",
-        "definition": null,
+        "definition": "Lenz LI100F",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4877,7 +4865,7 @@
     },
     {
         "term": "xpressnet_serial_interface:lenz_li101f",
-        "definition": null,
+        "definition": "Lenz LI101F",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4885,7 +4873,7 @@
     },
     {
         "term": "xpressnet_serial_interface:rosoft_s88xpressnetli",
-        "definition": null,
+        "definition": "RoSoft s88XPressNetLI",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4893,7 +4881,31 @@
     },
     {
         "term": "settings:select_folder",
-        "definition": null,
+        "definition": "Select folder",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:listen_only",
+        "definition": "Listen only",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2006",
+        "definition": "Listen only mode: activated",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2007",
+        "definition": "Listen only mode: deactivated",
         "context": "",
         "term_plural": "",
         "reference": "",

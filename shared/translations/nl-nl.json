@@ -4886,5 +4886,29 @@
         "term_plural": "",
         "reference": "",
         "comment": ""
+    },
+    {
+        "term": "loconet_settings:listen_only",
+        "definition": null,
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2006",
+        "definition": null,
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2007",
+        "definition": null,
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
     }
 ]
