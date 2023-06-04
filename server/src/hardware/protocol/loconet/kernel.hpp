@@ -30,6 +30,7 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/signals2/connection.hpp>
+#include <tcb/span.hpp>
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include "config.hpp"
@@ -451,9 +452,11 @@ class Kernel
      */
     void resume();
 
-    //TriState getInput(uint16_t address) const;
-
-    //TriState getOutput(uint16_t address) const;
+    //! \brief Send immediate DCC packet
+    //! \param[in] dccPacket DCC packet byte, exluding checksum. Length is limited to 5.
+    //! \param[in] repeat DCC packet repeat count 0..7
+    //! \return \c true if send to command station, \c false otherwise.
+    bool immPacket(tcb::span<uint8_t> dccPacket, uint8_t repeat);
 
     /**
      *

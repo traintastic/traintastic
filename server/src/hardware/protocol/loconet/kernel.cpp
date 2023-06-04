@@ -953,6 +953,17 @@ void Kernel::resume()
     });
 }
 
+bool Kernel::immPacket(tcb::span<uint8_t> dccPacket, uint8_t repeat)
+{
+  assert(isEventLoopThread());
+
+  if(dccPacket.size() > ImmPacket::dccPacketSizeMax || repeat > ImmPacket::repeatMax)
+    return false;
+
+  postSend(ImmPacket(dccPacket, repeat));
+  return true;
+}
+
 void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   assert(isEventLoopThread());

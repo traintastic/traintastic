@@ -35,6 +35,7 @@
 #include "../../core/objectproperty.hpp"
 #include "../../enum/loconetinterfacetype.hpp"
 #include "../../enum/serialflowcontrol.hpp"
+#include <tcb/span.hpp>
 
 /**
  * @brief LocoNet hardware interface
@@ -77,6 +78,12 @@ class LocoNetInterface final
     ObjectProperty<LocoNet::Settings> loconet;
 
     LocoNetInterface(World& world, std::string_view _id);
+
+    //! \brief Send immediate DCC packet
+    //! \param[in] dccPacket DCC packet byte, exluding checksum. Length is limited to 5.
+    //! \param[in] repeat DCC packet repeat count 0..7
+    //! \return \c true if send to command station, \c false otherwise.
+    bool immPacket(tcb::span<uint8_t> dccPacket, uint8_t repeat);
 
     // DecoderController:
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;

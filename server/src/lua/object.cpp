@@ -23,6 +23,7 @@
 #include "object.hpp"
 #include "object/object.hpp"
 #include "object/objectlist.hpp"
+#include "object/loconetinterface.hpp"
 
 namespace Lua::Object {
 
@@ -32,6 +33,7 @@ void registerTypes(lua_State* L)
 {
   Object::registerType(L);
   ObjectList::registerType(L);
+  LocoNetInterface::registerType(L);
 
   // weak table for object userdata:
   lua_newtable(L);
@@ -58,7 +60,10 @@ void push(lua_State* L, const ObjectPtr& value)
     {
       lua_pop(L, 1); // remove nil
       new(lua_newuserdata(L, sizeof(ObjectPtrWeak))) ObjectPtrWeak(value);
-      if(dynamic_cast<AbstractObjectList*>(value.get()))
+
+      if(dynamic_cast<::LocoNetInterface*>(value.get()))
+        luaL_setmetatable(L, LocoNetInterface::metaTableName);
+      else if(dynamic_cast<AbstractObjectList*>(value.get()))
         luaL_setmetatable(L, ObjectList::metaTableName);
       else
         luaL_setmetatable(L, Object::metaTableName);
