@@ -22,7 +22,7 @@
 
 #include "class.hpp"
 #include "push.hpp"
-#include "object.hpp"
+#include "test.hpp"
 #include "checkarguments.hpp"
 #include "sandbox.hpp"
 
@@ -245,7 +245,7 @@ int Class::__tostring(lua_State* L)
 int Class::getClass(lua_State* L)
 {
   checkArguments(L, 1);
-  if(auto object = Object::test(L, 1))
+  if(auto object = test<::Object>(L, 1))
     push(L, object);
   else
     lua_pushnil(L);

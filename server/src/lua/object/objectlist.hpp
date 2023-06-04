@@ -1,5 +1,5 @@
 /**
- * server/src/lua/object.hpp
+ * server/src/lua/object/objectlist.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,18 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_LUA_OBJECT_HPP
-#define TRAINTASTIC_SERVER_LUA_OBJECT_HPP
+#ifndef TRAINTASTIC_SERVER_LUA_OBJECT_OBJECTLIST_HPP
+#define TRAINTASTIC_SERVER_LUA_OBJECT_OBJECTLIST_HPP
 
 #include <lua.hpp>
-#include "../core/objectptr.hpp"
+#include "../../core/abstractobjectlist.hpp"
+
+class AbstractObjectList;
 
 namespace Lua::Object {
 
-void registerTypes(lua_State* L);
+class ObjectList
+{
+private:
+  static int __index(lua_State* L);
+  static int __len(lua_State* L);
 
-void push(lua_State* L, ::Object& value);
-void push(lua_State* L, const ObjectPtr& value);
+public:
+  static constexpr char const* metaTableName = "object.object_list";
+
+  static void registerType(lua_State* L);
+
+  static int index(lua_State* L, ::AbstractObjectList& object);
+};
 
 }
 

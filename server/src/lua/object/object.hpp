@@ -1,5 +1,5 @@
 /**
- * server/src/lua/object.hpp
+ * server/src/lua/object/object.hpp - Lua object wrapper
  *
  * This file is part of the traintastic source code.
  *
@@ -20,18 +20,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_LUA_OBJECT_HPP
-#define TRAINTASTIC_SERVER_LUA_OBJECT_HPP
+#ifndef TRAINTASTIC_SERVER_LUA_OBJECT_OBJECT_HPP
+#define TRAINTASTIC_SERVER_LUA_OBJECT_OBJECT_HPP
 
 #include <lua.hpp>
-#include "../core/objectptr.hpp"
+
+#define LUA_OBJECT_METHOD(func) \
+  if(key == #func) \
+  { \
+    push(L, object); \
+    lua_pushcclosure(L, func, 1); \
+    return 1; \
+  }
+
+class Object;
 
 namespace Lua::Object {
 
-void registerTypes(lua_State* L);
+class Object
+{
+private:
+  static int __gc(lua_State* L);
+  static int __index(lua_State* L);
+  static int __newindex(lua_State* L);
 
-void push(lua_State* L, ::Object& value);
-void push(lua_State* L, const ObjectPtr& value);
+public:
+  static constexpr char const* metaTableName = "object";
+
+  static int index(lua_State* L, ::Object& object);
+  static int newindex(lua_State* L, ::Object& object);
+
+  static void registerType(lua_State* L);
+};
 
 }
 

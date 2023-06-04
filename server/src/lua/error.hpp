@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,6 +33,8 @@ namespace Lua {
 // Lua's error funtions aren't marked as noreturn functions, but they are.
 
 [[noreturn]] inline void errorArgumentOutOfRange(lua_State* L, int arg) { luaL_argerror(L, arg, "out of range"); abort(); }
+[[noreturn]] inline void errorArgumentExpectedObject(lua_State* L, int arg) { luaL_argerror(L, arg, "expected object"); abort(); }
+[[noreturn]] inline void errorArgumentInvalidObject(lua_State* L, int arg) { luaL_argerror(L, arg, "invalid object"); abort(); }
 
 [[noreturn]] inline void errorCantSetNonExistingProperty(lua_State* L) { luaL_error(L, "can't set non existing property"); abort(); }
 [[noreturn]] inline void errorCantSetReadOnlyProperty(lua_State* L) { luaL_error(L, "can't set read only property"); abort(); }

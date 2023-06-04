@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,7 +22,6 @@
 
 #include "sandbox.hpp"
 #include "push.hpp"
-#include "object.hpp"
 #include "method.hpp"
 #include "event.hpp"
 #include "eventhandler.hpp"
@@ -30,6 +29,7 @@
 #include "class.hpp"
 #include "to.hpp"
 #include "type.hpp"
+#include "object.hpp"
 #include "enums.hpp"
 #include "sets.hpp"
 #include "getversion.hpp"
@@ -162,7 +162,7 @@ SandboxPtr Sandbox::create(Script& script)
   // register types:
   Enums::registerTypes<LUA_ENUMS>(L);
   Sets::registerTypes<LUA_SETS>(L);
-  Object::registerType(L);
+  Object::registerTypes(L);
   Method::registerType(L);
   Event::registerType(L);
 

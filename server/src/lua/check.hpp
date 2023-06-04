@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,11 +29,14 @@
 #include "error.hpp"
 #include "enum.hpp"
 #include "set.hpp"
+#include "metatable.hpp"
+#include "../core/object.hpp"
+#include "../utils/startswith.hpp"
 
 namespace Lua {
 
 template<typename T>
-T check(lua_State* L, int index)
+std::conditional_t<std::is_base_of_v<::Object, T>, std::shared_ptr<T>, T> check(lua_State* L, int index)
 {
   if constexpr(std::is_same_v<T, bool>)
   {
@@ -71,8 +74,26 @@ T check(lua_State* L, int index)
     const char* s = luaL_checklstring(L, index, &l);
     return T{s, l};
   }
-  //else if constexpr(std::is_same_v<T, ObjectPtr>)
-   // Object::push(L, value);
+  else if constexpr(std::is_same_v<T, ::Object> || std::is_base_of_v<::Object, T>)
+  {
+    auto name = MetaTable::getName(L, index);
+    if(name == "object" || startsWith(name, "object."))
+    {
+      auto object = static_cast<ObjectPtrWeak*>(lua_touserdata(L, index))->lock();
+
+      if(!object)
+        errorDeadObject(L);
+
+      if constexpr(std::is_same_v<T, ::Object>)
+        return object;
+
+      if(auto objectT = std::dynamic_pointer_cast<T>(object))
+        return objectT;
+
+      errorArgumentInvalidObject(L, index);
+    }
+    errorArgumentExpectedObject(L, index);
+  }
   else
     static_assert(sizeof(T) != sizeof(T), "don't know how to check type");
 }
