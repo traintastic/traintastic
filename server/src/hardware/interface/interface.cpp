@@ -29,17 +29,17 @@
 
 Interface::Interface(World& world, std::string_view _id)
   : IdObject(world, _id)
-  , name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store,
+  , name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly,
     [this](const std::string& value)
     {
       status->label.setValueInternal(value);
     }}
-  , online{this, "online", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore, nullptr,
+  , online{this, "online", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly, nullptr,
       [this](bool& value)
       {
         return setOnline(value, contains(m_world.state.value(), WorldState::Simulation));
       }}
-  , status{this, "status", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
+  , status{this, "status", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   status.setValueInternal(std::make_shared<InterfaceStatus>(*this, status.name()));

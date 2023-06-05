@@ -179,6 +179,7 @@ void Class::registerValues(lua_State* L)
   registerValue<WiThrottleInterface>(L, "WITHROTTLE");
   registerValue<WlanMausInterface>(L, "WLANMAUS");
   registerValue<Z21Interface>(L, "Z21");
+  registerValue<InterfaceStatus>(L, "INTERFACE_STATUS");
 
   registerValue<DecoderFunction>(L, "DECODER_FUNCTION");
   registerValue<DecoderList>(L, "DECODER_LIST");

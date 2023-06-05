@@ -25,7 +25,7 @@
 
 InterfaceStatus::InterfaceStatus(Object& parent_, std::string_view parentPropertyName_)
   : Status(parent_, parentPropertyName_)
-  , state(this, "state", InterfaceState::Offline, PropertyFlags::ReadOnly | PropertyFlags::NoStore)
+  , state(this, "state", InterfaceState::Offline, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly)
 {
   Attributes::addValues(state, interfaceStateValues);
   m_interfaceItems.add(state);
