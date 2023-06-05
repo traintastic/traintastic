@@ -86,7 +86,7 @@ jobs:
     # Windows only:
     - name: Install Qt
       if: startswith(matrix.config.os, 'windows')
-      uses: jurplel/install-qt-action@v2
+      uses: jurplel/install-qt-action@v3
       with:
         cached: ${{steps.cache-qt.outputs.cache-hit}}
 
