@@ -401,6 +401,12 @@ jobs:
     - name: Checkout LFS objects
       run: git lfs checkout
 
+    - name: "Download artifact: lang"
+      uses: actions/download-artifact@v2
+      with:
+        name: traintastic-lang
+        path: ${{github.workspace}}/shared/translations
+
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/shared/build
 
@@ -408,12 +414,6 @@ jobs:
       shell: bash
       working-directory: ${{github.workspace}}/shared/build
       run: cmake $GITHUB_WORKSPACE/shared ${{matrix.config.defines}}
-
-    - name: "Download artifact: lang"
-      uses: actions/download-artifact@v2
-      with:
-        name: traintastic-lang
-        path: ${{github.workspace}}/shared/translations
 
     - name: Build debian package
       working-directory: ${{github.workspace}}/shared/build
