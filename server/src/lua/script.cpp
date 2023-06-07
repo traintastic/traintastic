@@ -148,8 +148,37 @@ void Script::updateEnabled()
 
 void Script::setState(LuaScriptState value)
 {
+  const LuaScriptState oldValue = state;
+  if(oldValue == value)
+    return;
+
   state.setValueInternal(value);
   updateEnabled();
+
+  // update global lua status:
+  {
+    auto& status = m_world.luaScripts->status;
+
+    if(oldValue == LuaScriptState::Running) // was running
+    {
+      assert(status->running != 0);
+      status->running.setValueInternal(status->running - 1);
+    }
+    if(oldValue == LuaScriptState::Error) // was error
+    {
+      assert(status->error != 0);
+      status->error.setValueInternal(status->error - 1);
+    }
+
+    if(state == LuaScriptState::Running) // is running
+    {
+      status->running.setValueInternal(status->running + 1);
+    }
+    if(state == LuaScriptState::Error) // is error
+    {
+      status->error.setValueInternal(status->error + 1);
+    }
+  }
 }
 
 void Script::startSandbox()
