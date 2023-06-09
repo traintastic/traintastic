@@ -34,6 +34,7 @@
 #include "sets.hpp"
 #include "getversion.hpp"
 #include "script.hpp"
+#include "vectorproperty.hpp"
 #include <version.hpp>
 #include <traintastic/utils/str.hpp>
 #include "../world/world.hpp"
@@ -163,6 +164,7 @@ SandboxPtr Sandbox::create(Script& script)
   Enums::registerTypes<LUA_ENUMS>(L);
   Sets::registerTypes<LUA_SETS>(L);
   Object::registerTypes(L);
+  VectorProperty::registerType(L);
   Method::registerType(L);
   Event::registerType(L);
 

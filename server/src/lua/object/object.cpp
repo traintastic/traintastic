@@ -26,8 +26,10 @@
 #include "../to.hpp"
 #include "../method.hpp"
 #include "../event.hpp"
+#include "../vectorproperty.hpp"
 #include "../../core/object.hpp"
 #include "../../core/abstractproperty.hpp"
+#include "../../core/abstractvectorproperty.hpp"
 #include "../../core/abstractmethod.hpp"
 #include "../../core/abstractevent.hpp"
 
@@ -97,6 +99,13 @@ int Object::index(lua_State* L, ::Object& object)
             break;
         }
       }
+      else
+        lua_pushnil(L);
+    }
+    else if(auto* vectorProperty = dynamic_cast<AbstractVectorProperty*>(item))
+    {
+      if(vectorProperty->isScriptReadable())
+        VectorProperty::push(L, *vectorProperty);
       else
         lua_pushnil(L);
     }
