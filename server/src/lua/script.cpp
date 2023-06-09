@@ -123,7 +123,14 @@ void Script::loaded()
   if(state == LuaScriptState::Disabled)
     disabled.setValueInternal(true);
   else if(state == LuaScriptState::Running)
+  {
     startSandbox();
+    if(state == LuaScriptState::Running)
+    {
+      auto& running = m_world.luaScripts->status->running;
+      running.setValueInternal(running + 1); // setState doesn't increment because the state is already running
+    }
+  }
 }
 
 void Script::worldEvent(WorldState worldState, WorldEvent worldEvent)
