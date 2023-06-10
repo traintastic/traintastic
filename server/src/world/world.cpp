@@ -43,6 +43,7 @@
 #include "../core/controllerlist.hpp"
 
 #include "../hardware/input/input.hpp"
+#include "../hardware/input/monitor/inputmonitor.hpp"
 #include "../hardware/input/list/inputlist.hpp"
 #include "../hardware/identification/identification.hpp"
 #include "../hardware/identification/list/identificationlist.hpp"
