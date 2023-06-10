@@ -25,6 +25,8 @@
 #include "../decoder/list/decoderlisttablemodel.hpp"
 #include "../input/list/inputlist.hpp"
 #include "../output/list/outputlist.hpp"
+#include "../protocol/dccplusplus/kernel.hpp"
+#include "../protocol/dccplusplus/settings.hpp"
 #include "../protocol/dccplusplus/messages.hpp"
 #include "../protocol/dccplusplus/iohandler/serialiohandler.hpp"
 #include "../protocol/dccplusplus/iohandler/simulationiohandler.hpp"
@@ -40,6 +42,8 @@
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Channel | OutputListColumn::Address;
+
+CREATE_IMPL(DCCPlusPlusInterface)
 
 DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   : Interface(world, _id)
@@ -78,10 +82,25 @@ void DCCPlusPlusInterface::decoderChanged(const Decoder& decoder, DecoderChangeF
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
+std::pair<uint32_t, uint32_t> DCCPlusPlusInterface::inputAddressMinMax(uint32_t) const
+{
+  return {DCCPlusPlus::Kernel::idMin, DCCPlusPlus::Kernel::idMax};
+}
+
 void DCCPlusPlusInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address, action);
+}
+
+const std::vector<uint32_t> *DCCPlusPlusInterface::outputChannels() const
+{
+  return &DCCPlusPlus::Kernel::outputChannels;
+}
+
+const std::vector<std::string_view> *DCCPlusPlusInterface::outputChannelNames() const
+{
+  return &DCCPlusPlus::Kernel::outputChannelNames;
 }
 
 std::pair<uint32_t, uint32_t> DCCPlusPlusInterface::outputAddressMinMax(uint32_t channel) const

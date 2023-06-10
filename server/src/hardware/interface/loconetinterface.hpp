@@ -24,8 +24,6 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_LOCONETINTERFACE_HPP
 
 #include "interface.hpp"
-#include "../protocol/loconet/kernel.hpp"
-#include "../protocol/loconet/settings.hpp"
 #include "../decoder/decodercontroller.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
@@ -36,6 +34,11 @@
 #include "../../enum/loconetinterfacetype.hpp"
 #include "../../enum/serialflowcontrol.hpp"
 #include <tcb/span.hpp>
+
+namespace LocoNet {
+class Kernel;
+class Settings;
+}
 
 /**
  * @brief LocoNet hardware interface
@@ -94,15 +97,15 @@ class LocoNetInterface final
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
-    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final { return {LocoNet::Kernel::inputAddressMin, LocoNet::Kernel::inputAddressMax}; }
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final;
     void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
 
     // OutputController:
-    std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final { return {LocoNet::Kernel::outputAddressMin, LocoNet::Kernel::outputAddressMax}; }
+    std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final;
     [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 
     // IdentificationController:
-    std::pair<uint32_t, uint32_t> identificationAddressMinMax(uint32_t /*channel*/) const final { return {LocoNet::Kernel::identificationAddressMin, LocoNet::Kernel::identificationAddressMax}; }
+    std::pair<uint32_t, uint32_t> identificationAddressMinMax(uint32_t /*channel*/) const final;
     void identificationEvent(uint32_t channel, uint32_t address, IdentificationEventType eventType, uint16_t identifier, Direction direction, uint8_t category) final;
 
     // LNCVProgrammingController:

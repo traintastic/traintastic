@@ -23,6 +23,7 @@
 #include "withrottleinterface.hpp"
 #include "../throttle/list/throttlelistcolumn.hpp"
 #include "../protocol/withrottle/kernel.hpp"
+#include "../protocol/withrottle/settings.hpp"
 #include "../protocol/withrottle/iohandler/tcpiohandler.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/objectproperty.tpp"
@@ -32,6 +33,8 @@
 #include "../../world/world.hpp"
 
 static constexpr auto throttleListColumns = ThrottleListColumn::Id | ThrottleListColumn::Name;
+
+CREATE_IMPL(WiThrottleInterface)
 
 WiThrottleInterface::WiThrottleInterface(World& world, std::string_view _id)
   : Interface(world, _id)

@@ -24,12 +24,15 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_Z21INTERFACE_HPP
 
 #include "interface.hpp"
-#include "../protocol/z21/clientkernel.hpp"
-#include "../protocol/z21/clientsettings.hpp"
 #include "../decoder/decodercontroller.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
 #include "../../core/objectproperty.hpp"
+
+namespace Z21 {
+class ClientKernel;
+class ClientSettings;
+}
 
 /**
  * @brief Z21 hardware interface
@@ -42,7 +45,7 @@ class Z21Interface final
 {
   CLASS_ID("interface.z21")
   DEFAULT_ID("z21")
-  CREATE(Z21Interface)
+  CREATE_DEF(Z21Interface)
 
   private:
     std::unique_ptr<Z21::ClientKernel> m_kernel;
@@ -73,13 +76,13 @@ class Z21Interface final
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
-    const std::vector<uint32_t>* inputChannels() const final { return &Z21::ClientKernel::inputChannels; }
-    const std::vector<std::string_view>* inputChannelNames() const final { return &Z21::ClientKernel::inputChannelNames; }
+    const std::vector<uint32_t>* inputChannels() const final;
+    const std::vector<std::string_view>* inputChannelNames() const final;
     std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t channel) const final;
     void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
 
     // OutputController:
-    std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final { return {Z21::ClientKernel::outputAddressMin, Z21::ClientKernel::outputAddressMax}; }
+    std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final;
     [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 };
 
