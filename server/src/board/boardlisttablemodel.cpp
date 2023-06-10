@@ -21,6 +21,7 @@
  */
 
 #include "boardlisttablemodel.hpp"
+#include "board.hpp"
 #include "boardlist.hpp"
 #include "../utils/displayname.hpp"
 

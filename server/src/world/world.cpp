@@ -42,6 +42,7 @@
 #include "../traintastic/traintastic.hpp"
 
 #include "../clock/clock.hpp"
+#include "../board/board.hpp"
 #include "../board/boardlist.hpp"
 #include "../board/list/linkrailtilelist.hpp"
 #include "../hardware/interface/interfacelist.hpp"

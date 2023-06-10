@@ -32,6 +32,8 @@
 #include "../utils/displayname.hpp"
 #include <cassert>
 
+CREATE_IMPL(Board)
+
 Board::Board(World& world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},

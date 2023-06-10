@@ -25,7 +25,8 @@
 
 #include "../core/objectlist.hpp"
 #include "../core/method.hpp"
-#include "board.hpp"
+
+class Board;
 
 class BoardList : public ObjectList<Board>
 {

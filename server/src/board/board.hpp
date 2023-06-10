@@ -59,7 +59,7 @@ class Board : public IdObject
     static constexpr int16_t sizeMin = -sizeMax;
 
     CLASS_ID("board")
-    CREATE(Board)
+    CREATE_DEF(Board)
 
     Property<std::string> name;
     Property<int16_t> left;
