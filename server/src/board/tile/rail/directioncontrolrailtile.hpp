@@ -32,7 +32,7 @@ class DirectionControlRailTile final : public StraightRailTile
 {
   CLASS_ID("board_tile.rail.direction_control")
   DEFAULT_ID("direction")
-  CREATE(DirectionControlRailTile)
+  CREATE_DEF(DirectionControlRailTile)
 
   private:
     Node m_node;

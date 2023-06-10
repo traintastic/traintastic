@@ -23,6 +23,7 @@
 #include "board.hpp"
 #include "boardlist.hpp"
 #include "boardlisttablemodel.hpp"
+#include "../core/method.tpp"
 #include "../world/getworld.hpp"
 #include "../core/attributes.hpp"
 #include "../utils/displayname.hpp"

@@ -34,6 +34,7 @@
 #include "../utils/displayname.hpp"
 #include "../traintastic/traintastic.hpp"
 
+#include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
 #include "../core/objectvectorproperty.tpp"
 #include "../core/objectlisttablemodel.hpp"

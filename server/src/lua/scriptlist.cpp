@@ -24,6 +24,7 @@
 #include "scriptlisttablemodel.hpp"
 #include "../world/getworld.hpp"
 #include "../core/attributes.hpp"
+#include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
 #include "../utils/displayname.hpp"
 

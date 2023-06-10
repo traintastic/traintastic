@@ -26,6 +26,7 @@
 #include "interfaceitem.hpp"
 #include "abstractobjectproperty.hpp"
 #include "method.hpp"
+#include "object.hpp"
 #include "property.hpp"
 #include "unitproperty.hpp"
 #include "vectorproperty.hpp"

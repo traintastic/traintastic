@@ -27,6 +27,7 @@
 #include "trainblockstatus.hpp"
 #include "trainlisttablemodel.hpp"
 #include "../core/attributes.hpp"
+#include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
 #include "../core/objectvectorproperty.tpp"
 #include "../core/eventloop.hpp"

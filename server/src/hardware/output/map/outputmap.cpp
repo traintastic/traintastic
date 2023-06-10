@@ -24,6 +24,7 @@
 #include <cassert>
 #include "outputmapitem.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../core/method.tpp"
 #include "../../../world/getworld.hpp"
 #include "../../../world/worldloader.hpp"
 #include "../../../world/worldsaver.hpp"

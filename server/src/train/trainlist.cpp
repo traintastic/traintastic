@@ -26,6 +26,7 @@
 #include "../world/world.hpp"
 #include "../world/getworld.hpp"
 #include "../core/attributes.hpp"
+#include "../core/method.tpp"
 #include "../utils/displayname.hpp"
 
 TrainList::TrainList(Object& _parent, std::string_view parentPropertyName) :

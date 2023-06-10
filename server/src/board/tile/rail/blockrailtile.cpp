@@ -21,6 +21,7 @@
  */
 
 #include "blockrailtile.hpp"
+#include "../../../core/method.tpp"
 #include "../../../core/objectproperty.tpp"
 #include "../../../core/objectvectorproperty.tpp"
 #include "../../../world/world.hpp"

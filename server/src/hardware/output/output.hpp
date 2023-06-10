@@ -39,7 +39,7 @@ class Output final : public IdObject
 {
   CLASS_ID("output")
   DEFAULT_ID("output")
-  CREATE(Output)
+  CREATE_DEF(Output)
 
   friend class OutputController;
 

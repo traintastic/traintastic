@@ -22,6 +22,7 @@
 
 #include "outputmapoutputaction.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../core/method.tpp"
 #include "../../../world/getworld.hpp"
 
 #include <thread> //! @todo remove

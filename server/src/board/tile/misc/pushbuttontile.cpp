@@ -22,8 +22,11 @@
 
 #include "pushbuttontile.hpp"
 #include "../../../world/world.hpp"
+#include "../../../core/method.tpp"
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
+
+CREATE_IMPL(PushButtonTile)
 
 PushButtonTile::PushButtonTile(World& world, std::string_view _id)
   : Tile(world, _id, TileId::PushButton)

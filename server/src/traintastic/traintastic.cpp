@@ -31,6 +31,7 @@
 #include "../core/eventloop.hpp"
 #include "../network/server.hpp"
 #include "../core/attributes.hpp"
+#include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
 #include "../world/world.hpp"
 #include "../world/worldlist.hpp"

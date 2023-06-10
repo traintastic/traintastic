@@ -32,7 +32,7 @@ class PushButtonTile : public Tile
 {
   CLASS_ID("board_tile.misc.push_button")
   DEFAULT_ID("push_button")
-  CREATE(PushButtonTile)
+  CREATE_DEF(PushButtonTile)
 
   protected:
     void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
