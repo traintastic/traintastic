@@ -33,9 +33,9 @@
 #include "../core/speedproperty.hpp"
 #include "../core/weightproperty.hpp"
 #include "../enum/direction.hpp"
-#include "trainblockstatus.hpp"
 
 class TrainVehicleList;
+class TrainBlockStatus;
 class PoweredRailVehicle;
 
 class Train : public IdObject

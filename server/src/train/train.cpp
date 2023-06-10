@@ -24,6 +24,7 @@
 #include "trainlist.hpp"
 #include "trainvehiclelist.hpp"
 #include "../world/world.hpp"
+#include "trainblockstatus.hpp"
 #include "trainlisttablemodel.hpp"
 #include "../core/attributes.hpp"
 #include "../core/objectproperty.tpp"

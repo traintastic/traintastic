@@ -41,6 +41,7 @@
 #include "../hardware/identification/identification.hpp"
 #include "../vehicle/rail/railvehicles.hpp"
 #include "../train/train.hpp"
+#include "../train/trainblockstatus.hpp"
 #include "../lua/script.hpp"
 
 using nlohmann::json;

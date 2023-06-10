@@ -27,6 +27,7 @@
 #include "../../../core/attributes.hpp"
 #include "../../../log/log.hpp"
 #include "../../../train/train.hpp"
+#include "../../../train/trainblockstatus.hpp"
 #include "../../../utils/displayname.hpp"
 
 CREATE_IMPL(BlockRailTile)
