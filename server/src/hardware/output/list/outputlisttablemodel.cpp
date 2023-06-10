@@ -22,6 +22,7 @@
 
 #include "outputlisttablemodel.hpp"
 #include "outputlist.hpp"
+#include "../outputcontroller.hpp"
 #include "../../../core/objectproperty.tpp"
 #include "../../../utils/displayname.hpp"
 

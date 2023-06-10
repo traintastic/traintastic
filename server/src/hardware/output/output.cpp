@@ -21,6 +21,7 @@
  */
 
 #include "output.hpp"
+#include "outputcontroller.hpp"
 #include "list/outputlist.hpp"
 #include "../../world/world.hpp"
 #include "list/outputlisttablemodel.hpp"

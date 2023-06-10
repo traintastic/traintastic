@@ -47,6 +47,7 @@
 #include "../hardware/input/list/inputlist.hpp"
 #include "../hardware/identification/identification.hpp"
 #include "../hardware/identification/list/identificationlist.hpp"
+#include "../hardware/output/keyboard/outputkeyboard.hpp"
 #include "../hardware/output/list/outputlist.hpp"
 #include "../hardware/interface/interfacelist.hpp"
 #include "../hardware/decoder/list/decoderlist.hpp"

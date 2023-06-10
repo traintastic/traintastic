@@ -27,7 +27,8 @@
 #include "outputlistcolumn.hpp"
 #include "../../../core/method.hpp"
 #include "../output.hpp"
-#include "../keyboard/outputkeyboard.hpp"
+
+class OutputKeyboard;
 
 class OutputList : public ObjectList<Output>
 {

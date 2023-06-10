@@ -23,6 +23,7 @@
 #include "outputlist.hpp"
 #include "outputlisttablemodel.hpp"
 #include "../outputcontroller.hpp"
+#include "../keyboard/outputkeyboard.hpp"
 #include "../../../world/getworld.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../core/method.tpp"
