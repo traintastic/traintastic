@@ -36,6 +36,7 @@ ClientKernel::ClientKernel(std::string logId_, const ClientConfig& config, bool 
   : Kernel(std::move(logId_))
   , m_simulation{simulation}
   , m_keepAliveTimer(m_ioContext)
+  , m_inactiveDecoderPurgeTimer(m_ioContext)
   , m_config{config}
 {
 }
@@ -128,10 +129,41 @@ void ClientKernel::receive(const Message& message)
               val[i] = reply.getFunction(i);
             }
 
+            LocoCache *cache = getLocoCache(reply.address());
+
+            bool changed = false;
+            if(reply.isEmergencyStop() || (std::chrono::steady_clock::now() - cache->lastSetTime) > std::chrono::seconds(2))
+            {
+              if(reply.speedSteps() != cache->speedSteps)
+              {
+                cache->speedSteps = reply.speedSteps();
+                cache->speedStep = reply.speedStep();
+                cache->direction = reply.direction();
+                changed = true;
+              }
+              else if(reply.speedStep() != cache->speedStep || reply.direction() != cache->direction)
+              {
+                if((std::chrono::steady_clock::now() - cache->lastSetTime) > std::chrono::seconds(2))
+                {
+                  cache->speedStep = reply.speedStep();
+                  cache->direction = reply.direction();
+                  changed = true;
+                }
+              }
+
+              if(reply.isEmergencyStop() != cache->isEStop)
+              {
+                cache->isEStop = reply.isEmergencyStop();
+                changed = true;
+              }
+
+              //Do not update last seen time to avoid ignoring genuine user commands
+            }
+
             EventLoop::call(
               [this, address=reply.address(), isEStop=reply.isEmergencyStop(),
               speed = reply.speedStep(), speedMax=reply.speedSteps(),
-              dir = reply.direction(), val, maxFunc]()
+              dir = reply.direction(), val, maxFunc, changed]()
               {
                 try
                 {
@@ -139,10 +171,12 @@ void ClientKernel::receive(const Message& message)
                   {
                     float throttle = Decoder::speedStepToThrottle(speed, speedMax);
 
-                    decoder->emergencyStop = isEStop;
-                    decoder->direction = dir;
-
-                    decoder->throttle = throttle;
+                    if(changed)
+                    {
+                      decoder->emergencyStop = isEStop;
+                      decoder->direction = dir;
+                      decoder->throttle = throttle;
+                    }
 
                     for(int i = 0; i <= maxFunc; i++)
                     {
@@ -374,38 +408,81 @@ void ClientKernel::emergencyStop()
 
 void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
-  if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Direction | DecoderChangeFlags::Throttle | DecoderChangeFlags::SpeedSteps))
-  {
-    LanXSetLocoDrive cmd;
-    cmd.setAddress(decoder.address, decoder.protocol == DecoderProtocol::DCCLong);
-    cmd.setDirection(decoder.direction);
+  const uint16_t addr = decoder.address;
+  const bool longAddr = decoder.protocol == DecoderProtocol::DCCLong;
 
-    // Decoder max speed steps must be set for the message to be correctly
-    // distinguished from LAN_X_SET_LOCO_FUNCTION
-    cmd.setSpeedSteps(decoder.speedSteps);
+  const Direction direction = decoder.direction;
+  const float throttle = decoder.throttle;
+  const int speedSteps = decoder.speedSteps;
+  const bool isEStop = decoder.emergencyStop;
 
-    if(decoder.emergencyStop)
+  TriState funcVal = TriState::Undefined;
+  if(const auto& f = decoder.getFunction(functionNumber))
+    funcVal = toTriState(f->value);
+
+  m_ioContext.post([this, addr, longAddr, direction, throttle, speedSteps, isEStop, changes, functionNumber, funcVal]()
     {
-        cmd.setEmergencyStop();
-    }
-    else
-    {
-      const uint8_t speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, cmd.speedSteps());
+      LanXSetLocoDrive cmd;
+      cmd.setAddress(addr, longAddr);
+      cmd.setSpeedSteps(speedSteps);
+      int speedStep = Decoder::throttleToSpeedStep(throttle, cmd.speedSteps());
+
+      // Decoder max speed steps must be set for the message to be correctly
+      // distinguished from LAN_X_SET_LOCO_FUNCTION
       cmd.setSpeedStep(speedStep);
-    }
+      cmd.setDirection(direction);
 
-    cmd.updateChecksum();
-    postSend(cmd);
-  }
-  else if(has(changes, DecoderChangeFlags::FunctionValue))
-  {
-    if(functionNumber <= LanXSetLocoFunction::functionNumberMax)
-      if(const auto& f = decoder.getFunction(functionNumber))
-        postSend(LanXSetLocoFunction(
-          decoder.address, decoder.protocol == DecoderProtocol::DCCLong,
-          static_cast<uint8_t>(functionNumber),
-          f->value ? LanXSetLocoFunction::SwitchType::On : LanXSetLocoFunction::SwitchType::Off));
-  }
+      LocoCache *cache = getLocoCache(addr);
+
+      bool changed = false;
+      if(has(changes, DecoderChangeFlags::Direction) && cache->direction != direction)
+      {
+        changed = true;
+      }
+
+      if(has(changes, DecoderChangeFlags::Throttle | DecoderChangeFlags::SpeedSteps | DecoderChangeFlags::EmergencyStop))
+      {
+        if(has(changes, DecoderChangeFlags::EmergencyStop) && isEStop != cache->isEStop)
+        {
+          if(isEStop)
+            cmd.setEmergencyStop();
+          changed = true;
+        }
+
+        if(!isEStop && (speedSteps != cache->speedSteps || speedStep != cache->speedStep))
+        {
+          changed = true;
+        }
+      }
+
+      if(has(changes, DecoderChangeFlags::FunctionValue))
+      {
+        //This is independent of LanXSetLocoDrive
+        if(functionNumber <= LanXSetLocoFunction::functionNumberMax && funcVal != TriState::Undefined)
+        {
+          send(LanXSetLocoFunction(
+            addr, longAddr,
+            static_cast<uint8_t>(functionNumber),
+            funcVal == TriState::True ? LanXSetLocoFunction::SwitchType::On : LanXSetLocoFunction::SwitchType::Off));
+        }
+      }
+
+      if(changed)
+      {
+        cache->speedSteps = cmd.speedSteps();
+        cache->speedStep = cmd.speedStep();
+        cache->direction = cmd.direction();
+        cache->isEStop = cmd.isEmergencyStop();
+
+        //Update last seen time to ignore feedback messages of our own changes
+        //This potentially ignores also user commands coming from Z21 if issued
+        //In less than 2 seconds from now
+        cache->lastSetTime = std::chrono::steady_clock::now();
+
+        cmd.updateChecksum();
+        send(cmd);
+      }
+    });
 }
 
 bool ClientKernel::setOutput(uint16_t address, bool value)
@@ -526,11 +603,16 @@ void ClientKernel::onStart()
   send(LanSystemStateGetData());
 
   startKeepAliveTimer();
+  startInactiveDecoderPurgeTimer();
 }
 
 void ClientKernel::onStop()
 {
   send(LanLogoff());
+
+  m_keepAliveTimer.cancel();
+  m_inactiveDecoderPurgeTimer.cancel();
+  m_locoCache.clear();
 }
 
 void ClientKernel::send(const Message& message)
@@ -590,6 +672,49 @@ void ClientKernel::keepAliveTimerExpired(const boost::system::error_code& ec)
   }
 
   startKeepAliveTimer();
+}
+
+void ClientKernel::startInactiveDecoderPurgeTimer()
+{
+  assert(ClientConfig::purgeInactiveDecoderInternal > 0);
+  m_inactiveDecoderPurgeTimer.expires_after(boost::asio::chrono::seconds(ClientConfig::purgeInactiveDecoderInternal));
+  m_inactiveDecoderPurgeTimer.async_wait(std::bind(&ClientKernel::inactiveDecoderPurgeTimerExpired, this, std::placeholders::_1));
+}
+
+void ClientKernel::inactiveDecoderPurgeTimerExpired(const boost::system::error_code& ec)
+{
+  if(ec)
+    return;
+
+  const auto purgeTime = std::chrono::steady_clock::now() - std::chrono::seconds(ClientConfig::purgeInactiveDecoderInternal);
+
+  auto it = m_locoCache.begin();
+  while(it != m_locoCache.end())
+  {
+    if(it->second.lastSetTime < purgeTime)
+    {
+      it = m_locoCache.erase(it);
+    }
+    else
+    {
+      it++;
+    }
+  }
+
+  startInactiveDecoderPurgeTimer();
+}
+
+ClientKernel::LocoCache *ClientKernel::getLocoCache(uint16_t dccAddr)
+{
+  auto it = m_locoCache.find(dccAddr);
+  if(it == m_locoCache.end())
+  {
+    LocoCache item;
+    item.dccAddress = dccAddr;
+    it = m_locoCache.emplace(dccAddr, item).first;
+  }
+
+  return &it->second;
 }
 
 }
