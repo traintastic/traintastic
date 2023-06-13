@@ -78,6 +78,7 @@ local header_values =
 }
 
 local LAN_X_SET_LOCO = 0xe4
+local LAN_X_SET_LOCO_FUNCTION = 0xf8 -- db0
 local LAN_X_LOCO_INFO = 0xef
 
 
@@ -110,6 +111,14 @@ local direction_string_table =
   [2] = "Reverse"
 }
 
+local func_value_string_table =
+{
+  [0] = "OFF",
+  [1] = "ON",
+  [2] = "TOGGLE",
+  [3] = "INVALID"
+}
+
 local z21 = Proto("z21", "Z21 protocol")
 
 local pf_data_len = ProtoField.uint16("z21.data_len", "DataLen", base.HEX)
@@ -122,6 +131,11 @@ local pf_loco_busy = ProtoField.bool("z21.loco_busy", "Loco Busy")
 local pf_dcc_steps = ProtoField.uint8("z21.dcc_steps", "DCC Steps", base.DEC)
 local pf_loco_direction = ProtoField.bool("z21.loco_direction", "Loco Direction", base.BIN, direction_string_table)
 local pf_loco_speed = ProtoField.uint8("z21.loco_speed", "Loco Speed", base.DEC)
+local pf_loco_estop = ProtoField.bool("z21.loco_estop", "Emergency Stop")
+local pf_loco_raw_speed = ProtoField.uint8("z21.loco_raw_speed", "Loco Raw Speed", base.HEX)
+
+local pf_loco_func_number = ProtoField.uint8("z21.loco_func_number", "Function No", base.DEC)
+local pf_loco_func_value = ProtoField.uint8("z21.loco_func_value", "Function Val", base.BIN, func_value_string_table)
 
 local pf_cs_state = ProtoField.uint8("z21.cs_state", "CS State", base.HEX)
 local pf_cs_state_ex = ProtoField.uint8("z21.cs_state_ex", "CS State Ex", base.HEX)
@@ -147,6 +161,10 @@ z21.fields = {
   pf_dcc_steps,
   pf_loco_direction,
   pf_loco_speed,
+  pf_loco_estop,
+  pf_loco_raw_speed,
+  pf_loco_func_number,
+  pf_loco_func_value,
   pf_cs_state,
   pf_cs_state_ex,
   pf_cs_capabilities,
@@ -159,6 +177,70 @@ z21.prefs.port = Pref.uint("Port number", default_settings.port, "The UDP port n
 function parseAddress(loco_addrMSB, loco_addrLSB)
   local loco_addr = bit.lshift(bit.band(loco_addrMSB, 0x3F), 8) + loco_addrLSB
   return loco_addr
+end
+
+function parseSpeedStep(max_steps, step)
+  local real_step = step
+  if (max_steps == 14 or max_steps == 128) and real_step >= 1 then
+    real_step = real_step - 1 -- Skip E-Stop step
+  else
+    local a = bit.lshift(bit.band(step, 0x0f), 1)
+    local b = bit.rshift(bit.band(step, 0x10), 4)
+    real_step = bit.bor(a, b)
+    if real_step >= 3 then
+      real_step = real_step - 1 -- Skip 2 values of E-Stop and another value for Stop
+    end
+  end
+  return real_step
+end
+
+function parseEStop(max_steps, step)
+  local estop = false
+  if step == 0x01 or (max_steps == 28 and step == 0x01) then
+    estop = true
+  end
+  return estop
+end
+
+function parseSetLoco(tree, tvbuf, xitem)
+  local loco_addrMSB = tvbuf:range(6, 1):uint()
+  local loco_addrLSB = tvbuf:range(7, 1):uint()
+  local loco_addr = parseAddress(loco_addrMSB, loco_addrLSB)
+  tree:add(pf_loco_address, loco_addr)
+
+  local db0 = tvbuf:range(5, 1):uint()
+  local db3 = tvbuf:range(8, 1):uint()
+
+  if bit.band(db0, 0xF0) == 0x10 then
+    xitem:set_text("LAN_X_SET_LOCO_DRIVE")
+
+    local max_steps = 128
+    if db0 == 0x12 then
+      max_steps = 28
+    elseif db0 == 0x10 then
+      max_steps = 14
+    end
+    tree:add(pf_dcc_steps, max_steps)
+
+    local dir = bit.band(db3, 0x80)
+    local speed = bit.band(db3, 0x7f)
+    local estop = parseEStop(max_steps, speed)
+    local real_step = parseSpeedStep(max_steps, speed)
+
+    tree:add(pf_loco_direction, dir)
+    tree:add(pf_loco_speed, real_step)
+    tree:add(pf_loco_estop, estop)
+    tree:add(pf_loco_raw_speed, speed)
+
+  elseif db0 == LAN_X_SET_LOCO_FUNCTION then
+    xitem:set_text("LAN_X_SET_LOCO_FUNCTION")
+
+    local val = bit.rshift(db3, 6)
+    local func = bit.band(db3, 0x3F)
+
+    tree:add(pf_loco_func_number, func)
+    tree:add(pf_loco_func_value, val)
+  end
 end
 
 function parseLocoInfo(tree, tvbuf)
@@ -181,11 +263,16 @@ function parseLocoInfo(tree, tvbuf)
   tree:add(pf_dcc_steps, max_steps)
 
   local db3 = tvbuf:range(8, 1):uint()
-  local direction = bit.band(db3, 0x80)
-  tree:add(pf_loco_direction, direction)
 
+  local dir = bit.band(db3, 0x80)
   local speed = bit.band(db3, 0x7f)
-  tree:add(pf_loco_speed, speed)
+  local estop = parseEStop(max_steps, speed)
+  local real_step = parseSpeedStep(max_steps, speed)
+
+  tree:add(pf_loco_direction, dir)
+  tree:add(pf_loco_speed, real_step)
+  tree:add(pf_loco_estop, estop)
+  tree:add(pf_loco_raw_speed, speed)
 end
 
 function parseStatusChanged(tree, tvbuf)
@@ -247,10 +334,7 @@ function z21.dissector(tvbuf, pktinfo, root)
       local xitem = tree:add(pf_lanx_header, xheader)
 
       if xheader:le_uint() == LAN_X_SET_LOCO then
-        local loco_addrMSB = tvbuf:range(6, 1):uint()
-        local loco_addrLSB = tvbuf:range(7, 1):uint()
-        local loco_addr = bit.lshift(bit.band(loco_addrMSB, 0x3F), 8) + loco_addrLSB
-        tree:add(pf_loco_address, loco_addr)
+        parseSetLoco(tree, tvbuf, xitem)
       elseif xheader:le_uint() == LAN_X_LOCO_INFO then
         parseLocoInfo(tree, tvbuf)
       elseif xheader:le_uint() == LAN_X_STATUS_CHANGED then
@@ -258,20 +342,20 @@ function z21.dissector(tvbuf, pktinfo, root)
       elseif xheader:le_uint() == 0x21 then
         local db0 = tvbuf:range(4, 1):uint()
         if db0 == 0x80 then
-          xitem.set_text("LAN_X_SET_TRACK_POWER_OFF")
+          xitem:set_text("LAN_X_SET_TRACK_POWER_OFF")
         elseif db0 == 0x81 then
-          xitem.set_text("LAN_X_SET_TRACK_POWER_ON")
+          xitem:set_text("LAN_X_SET_TRACK_POWER_ON")
         end
       elseif xheader:le_uint() == 0x61 then
         local db0 = tvbuf:range(4, 1):uint()
         if db0 == 0x00 then
-          xitem.set_text("LAN_X_BC_TRACK_POWER_OFF")
+          xitem:set_text("LAN_X_BC_TRACK_POWER_OFF")
         elseif db0 == 0x01 then
-          xitem.set_text("LAN_X_BC_TRACK_POWER_ON")
+          xitem:set_text("LAN_X_BC_TRACK_POWER_ON")
         elseif db0 == 0x02 then
-          xitem.set_text("LAN_X_SET_PROGRAMMING_MODE")
+          xitem:set_text("LAN_X_SET_PROGRAMMING_MODE")
         elseif db0 == 0x08 then
-          xitem.set_text("LAN_X_BC_TRACK_SHORT_CIRCUIT")
+          xitem:set_text("LAN_X_BC_TRACK_SHORT_CIRCUIT")
         end
       end
     end
