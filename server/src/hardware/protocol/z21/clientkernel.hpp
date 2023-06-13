@@ -62,6 +62,7 @@ class ClientKernel final : public Kernel
   private:
     const bool m_simulation;
     boost::asio::steady_timer m_keepAliveTimer;
+    boost::asio::steady_timer m_inactiveDecoderPurgeTimer;
     BroadcastFlags m_broadcastFlags;
     int m_broadcastFlagsRetryCount;
     static constexpr int maxBroadcastFlagsRetryCount = 10;
@@ -87,6 +88,18 @@ class ClientKernel final : public Kernel
     std::function<void()> m_onEmergencyStop;
 
     DecoderController* m_decoderController = nullptr;
+
+    struct LocoCache
+    {
+      uint16_t dccAddress = 0;
+      uint8_t speedStep = 0;
+      uint8_t speedSteps = 0;
+      bool isEStop = false;
+      Direction direction = Direction::Unknown;
+      std::chrono::steady_clock::time_point lastSetTime;
+    };
+
+    std::unordered_map<uint16_t, LocoCache> m_locoCache;
 
     InputController* m_inputController = nullptr;
     std::array<TriState, rbusAddressMax - rbusAddressMin + 1> m_rbusFeedbackStatus;
@@ -116,7 +129,11 @@ class ClientKernel final : public Kernel
     void startKeepAliveTimer();
     void keepAliveTimerExpired(const boost::system::error_code& ec);
 
-  public:
+    void startInactiveDecoderPurgeTimer();
+    void inactiveDecoderPurgeTimerExpired(const boost::system::error_code &ec);
+
+    LocoCache *getLocoCache(uint16_t dccAddr);
+public:
     /**
      * @brief Create kernel and IO handler
      * @param[in] config Z21 client configuration
