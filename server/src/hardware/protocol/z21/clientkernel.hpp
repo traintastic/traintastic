@@ -119,6 +119,7 @@ class ClientKernel final : public Kernel
     };
 
     std::unordered_map<uint16_t, LocoCache> m_locoCache;
+    bool isUpdatingDecoderFromKernel = false;
 
     InputController* m_inputController = nullptr;
     std::array<TriState, rbusAddressMax - rbusAddressMin + 1> m_rbusFeedbackStatus;
