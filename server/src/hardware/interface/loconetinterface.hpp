@@ -79,6 +79,11 @@ class LocoNetInterface final
 
     LocoNetInterface(World& world, std::string_view _id);
 
+    //! \brief Send LocoNet packet
+    //! \param[in] packet LocoNet packet bytes, exluding checksum.
+    //! \return \c true if send, \c false otherwise.
+    bool send(tcb::span<uint8_t> packet);
+
     //! \brief Send immediate DCC packet
     //! \param[in] dccPacket DCC packet byte, exluding checksum. Length is limited to 5.
     //! \param[in] repeat DCC packet repeat count 0..7

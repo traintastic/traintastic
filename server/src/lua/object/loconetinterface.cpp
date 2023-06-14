@@ -42,6 +42,7 @@ void LocoNetInterface::registerType(lua_State* L)
 int LocoNetInterface::index(lua_State* L, ::LocoNetInterface& object)
 {
   const auto key = to<std::string_view>(L, 2);
+  LUA_OBJECT_METHOD(send)
   LUA_OBJECT_METHOD(imm_packet)
   return Object::index(L, object);
 }
@@ -49,6 +50,15 @@ int LocoNetInterface::index(lua_State* L, ::LocoNetInterface& object)
 int LocoNetInterface::__index(lua_State* L)
 {
   return index(L, *check<::LocoNetInterface>(L, 1));
+}
+
+int LocoNetInterface::send(lua_State* L)
+{
+  checkArguments(L, 1);
+  auto interface = check<::LocoNetInterface>(L, lua_upvalueindex(1));
+  auto packet = checkVector<uint8_t>(L, 1);
+  Lua::push(L, interface->send(packet));
+  return 1;
 }
 
 int LocoNetInterface::imm_packet(lua_State* L)

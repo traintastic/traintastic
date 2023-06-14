@@ -114,6 +114,13 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   typeChanged();
 }
 
+bool LocoNetInterface::send(tcb::span<uint8_t> packet)
+{
+  if(m_kernel)
+    return m_kernel->send(packet);
+  return false;
+}
+
 bool LocoNetInterface::immPacket(tcb::span<uint8_t> dccPacket, uint8_t repeat)
 {
   if(m_kernel)

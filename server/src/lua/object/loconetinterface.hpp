@@ -33,6 +33,7 @@ class LocoNetInterface
 private:
   static int __index(lua_State* L);
 
+  static int send(lua_State* L);
   static int imm_packet(lua_State* L);
 
 public:

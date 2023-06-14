@@ -953,6 +953,28 @@ void Kernel::resume()
     });
 }
 
+bool Kernel::send(tcb::span<uint8_t> packet)
+{
+  assert(isEventLoopThread());
+
+  if(reinterpret_cast<Message*>(packet.data())->size() != packet.size() + 1) // verify packet length, must be all bytes excluding checksum
+    return false;
+
+  std::vector<uint8_t> data(packet.data(), packet.data() + packet.size());
+  data.push_back(calcChecksum(*reinterpret_cast<Message*>(data.data())));
+
+  if(!isValid(*reinterpret_cast<Message*>(data.data())))
+    return false;
+
+  m_ioContext.post(
+    [this, message=std::move(data)]()
+    {
+      send(*reinterpret_cast<const Message*>(message.data()));
+    });
+
+  return true;
+}
+
 bool Kernel::immPacket(tcb::span<uint8_t> dccPacket, uint8_t repeat)
 {
   assert(isEventLoopThread());
