@@ -169,13 +169,22 @@ void ClientKernel::receive(const Message& message)
                 {
                   if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(address), address))
                   {
-                    float throttle = Decoder::speedStepToThrottle(speed, speedMax);
+                    float throttle = Decoder::speedStepToThrottle(speed, speedMax);         
 
                     if(changed)
                     {
+                      //Set the bool guard for each change
+                      isUpdatingDecoderFromKernel = true;
                       decoder->emergencyStop = isEStop;
+
+                      isUpdatingDecoderFromKernel = true;
                       decoder->direction = dir;
+
+                      isUpdatingDecoderFromKernel = true;
                       decoder->throttle = throttle;
+
+                      //Reset at end
+                      isUpdatingDecoderFromKernel = false;
                     }
 
                     for(int i = 0; i <= maxFunc; i++)
@@ -420,10 +429,23 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
   if(const auto& f = decoder.getFunction(functionNumber))
     funcVal = toTriState(f->value);
 
+  if(isUpdatingDecoderFromKernel)
+  {
+    //This change was caused by Z21 message so there is not point
+    //on informing back Z21 with another message
+    //Skip updating LocoCache again which might already be
+    //at a new value (EventLoop is slower to process callbacks)
+    //But reset the guard to allow Train and other parts of code
+    //to react to this change and further edit decoder state
+    isUpdatingDecoderFromKernel = false;
+    return;
+  }
+
   m_ioContext.post([this, addr, longAddr, direction, throttle, speedSteps, isEStop, changes, functionNumber, funcVal]()
     {
       LanXSetLocoDrive cmd;
       cmd.setAddress(addr, longAddr);
+
       cmd.setSpeedSteps(speedSteps);
       int speedStep = Decoder::throttleToSpeedStep(throttle, cmd.speedSteps());
 
