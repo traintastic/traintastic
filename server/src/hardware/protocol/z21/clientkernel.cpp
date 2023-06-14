@@ -131,62 +131,90 @@ void ClientKernel::receive(const Message& message)
 
             LocoCache *cache = getLocoCache(reply.address());
 
-            bool changed = false;
-            if(reply.isEmergencyStop() || (std::chrono::steady_clock::now() - cache->lastSetTime) > std::chrono::seconds(2))
+            DecoderChangeFlags changes = DecoderChangeFlags(0);
+
+            if(reply.speedSteps() != cache->speedSteps || reply.speedStep() != cache->speedStep)
             {
-              if(reply.speedSteps() != cache->speedSteps)
+              // Use a timeout of 1 second to prevent reacting to Z21 feedback messages
+              // of our own changes. This would be problematic because in the meatime our
+              // changes were sent to Z21 processed and received back here, decoder state
+              // might have changed (and sent again to Z21) so we should discard "old" state.
+              // This has the potential of ignoring genuine user changes for this decoder
+              // (made by a physical throttle or other hardware connected to Z21) but
+              // being the timeout short it should rarely happen.
+              // Theoretically the timeout should only be of Train::updateSpeed() timer timeout
+              // (100ms) because values will be refreshed and timeout restarted by Train itself
+              // but we need to accout also for network trasmission and Z21 processing time.
+
+              if((std::chrono::steady_clock::now() - cache->lastSetTime) > std::chrono::seconds(1))
               {
+                if(reply.speedSteps() != cache->speedSteps)
+                {
+                  changes = changes | DecoderChangeFlags::SpeedSteps;
+                }
+                if(reply.speedStep() != cache->speedStep)
+                {
+                  changes = changes | DecoderChangeFlags::Throttle;
+                }
+
                 cache->speedSteps = reply.speedSteps();
                 cache->speedStep = reply.speedStep();
-                cache->direction = reply.direction();
-                changed = true;
               }
-              else if(reply.speedStep() != cache->speedStep || reply.direction() != cache->direction)
-              {
-                if((std::chrono::steady_clock::now() - cache->lastSetTime) > std::chrono::seconds(2))
-                {
-                  cache->speedStep = reply.speedStep();
-                  cache->direction = reply.direction();
-                  changed = true;
-                }
-              }
-
-              if(reply.isEmergencyStop() != cache->isEStop)
-              {
-                cache->isEStop = reply.isEmergencyStop();
-                changed = true;
-              }
-
-              //Do not update last seen time to avoid ignoring genuine user commands
             }
+
+            //Emergency stop is urgent so bypass timeout
+            //Direction is not propagated back so it shouldn't start looping
+            //We bypass timeout also for Direction change.
+            //It can at worst cause a short flickering changing direction n times and then settle down
+            if(reply.direction() != cache->direction)
+            {
+              changes = changes | DecoderChangeFlags::Direction;
+              cache->direction = reply.direction();
+            }
+            if(reply.isEmergencyStop() || reply.isEmergencyStop() != cache->isEStop)
+            {
+              //Force change when emergency stop is set to be sure it gets received
+              //as soon as possible
+              changes = changes | DecoderChangeFlags::EmergencyStop;
+              cache->isEStop = reply.isEmergencyStop();
+            }
+
+            //Do not update last seen time to avoid ignoring genuine user commands
 
             EventLoop::call(
               [this, address=reply.address(), isEStop=reply.isEmergencyStop(),
               speed = reply.speedStep(), speedMax=reply.speedSteps(),
-              dir = reply.direction(), val, maxFunc, changed]()
+              dir = reply.direction(), val, maxFunc, changes]()
               {
                 try
                 {
                   if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(address), address))
                   {
-                    float throttle = Decoder::speedStepToThrottle(speed, speedMax);         
+                    float throttle = Decoder::speedStepToThrottle(speed, speedMax);
 
-                    if(changed)
+                    if(has(changes, DecoderChangeFlags::EmergencyStop))
                     {
-                      //Set the bool guard for each change
                       isUpdatingDecoderFromKernel = true;
                       decoder->emergencyStop = isEStop;
-
-                      isUpdatingDecoderFromKernel = true;
-                      decoder->direction = dir;
-
-                      isUpdatingDecoderFromKernel = true;
-                      decoder->throttle = throttle;
-
-                      //Reset at end
-                      isUpdatingDecoderFromKernel = false;
                     }
 
+                    if(has(changes, DecoderChangeFlags::Direction))
+                    {
+                      isUpdatingDecoderFromKernel = true;
+                      decoder->direction = dir;
+                    }
+
+                    if(has(changes, DecoderChangeFlags::Throttle | DecoderChangeFlags::SpeedSteps))
+                    {
+                      isUpdatingDecoderFromKernel = true;
+                      decoder->throttle = throttle;
+                    }
+
+                    //Reset flag guard at end
+                    isUpdatingDecoderFromKernel = false;
+
+                    //Function get always updated because we do not store a copy in cache
+                    //so there is no way to tell in advance if they changed
                     for(int i = 0; i <= maxFunc; i++)
                     {
                       decoder->setFunctionValue(i, val[i]);
