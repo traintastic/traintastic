@@ -70,9 +70,11 @@ std::string TrainVehicleListItem::getObjectId() const
 
 void TrainVehicleListItem::destroying()
 {
+  //NOTE: we cannot normally set vehicle to nullptr (rejected by OnSet callback)
+  //So we mirror cleanup operations and manually reset value at end
   if(vehicle)
     disconnectVehicle(*vehicle.value());
-  vehicle = nullptr;
+  vehicle.setValueInternal(nullptr);
 
   Object::destroying();
 }
