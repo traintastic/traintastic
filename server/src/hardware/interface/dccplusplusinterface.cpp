@@ -31,6 +31,7 @@
 #include "../protocol/dccplusplus/iohandler/serialiohandler.hpp"
 #include "../protocol/dccplusplus/iohandler/simulationiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"

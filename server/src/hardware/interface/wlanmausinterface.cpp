@@ -25,6 +25,7 @@
 #include "../protocol/z21/serversettings.hpp"
 #include "../protocol/z21/iohandler/udpserveriohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"

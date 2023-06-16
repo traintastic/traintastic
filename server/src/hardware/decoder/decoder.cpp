@@ -31,6 +31,7 @@
 #include "../../world/world.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../core/attributes.hpp"
+#include "../../core/method.tpp"
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/almostzero.hpp"

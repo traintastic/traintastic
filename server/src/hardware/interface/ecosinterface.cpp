@@ -30,6 +30,7 @@
 #include "../protocol/ecos/iohandler/tcpiohandler.hpp"
 #include "../protocol/ecos/iohandler/simulationiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
