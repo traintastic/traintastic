@@ -210,6 +210,7 @@ class Kernel
     template<class T>
     void postSend(const T& message)
     {
+      assert(sizeof(message) == message.size());
       m_ioContext.post(
         [this, message]()
         {
@@ -219,6 +220,7 @@ class Kernel
     template<class T>
     void postSend(const T& message, Priority priority)
     {
+      assert(sizeof(message) == message.size());
       m_ioContext.post(
         [this, message, priority]()
         {
