@@ -133,6 +133,26 @@ void ClientKernel::receive(const Message& message)
 
             DecoderChangeFlags changes = DecoderChangeFlags(0);
 
+            //Rescale everything to 126 steps
+            int currentSpeedStep = reply.speedStep();
+            if(reply.speedSteps() != 126)
+            {
+              currentSpeedStep = float(currentSpeedStep) / float(reply.speedSteps()) * 126.0;
+              if(abs(currentSpeedStep - cache->lastReceivedSpeedStep) < 5)
+                currentSpeedStep = cache->lastReceivedSpeedStep; //Consider it a rounding error
+            }
+
+            int targetSpeedStep = cache->speedStep;
+            if(cache->speedSteps != 126)
+            {
+              targetSpeedStep = float(targetSpeedStep) / float(cache->speedSteps) * 126.0;
+            }
+
+            if(cache->lastReceivedSpeedStep <= currentSpeedStep)
+              cache->speedTrend = LocoCache::Trend::Ascending;
+            else
+              cache->speedTrend = LocoCache::Trend::Descending;
+
             if(reply.speedSteps() != cache->speedSteps || reply.speedStep() != cache->speedStep)
             {
               // Use a timeout of 1 second to prevent reacting to Z21 feedback messages
@@ -146,7 +166,7 @@ void ClientKernel::receive(const Message& message)
               // (100ms) because values will be refreshed and timeout restarted by Train itself
               // but we need to accout also for network trasmission and Z21 processing time.
 
-              if((std::chrono::steady_clock::now() - cache->lastSetTime) > std::chrono::seconds(1))
+              if((std::chrono::steady_clock::now() - cache->lastSetTime) > std::chrono::milliseconds(1000))
               {
                 if(reply.speedSteps() != cache->speedSteps)
                 {
@@ -159,6 +179,27 @@ void ClientKernel::receive(const Message& message)
 
                 cache->speedSteps = reply.speedSteps();
                 cache->speedStep = reply.speedStep();
+              }
+              else
+              {
+                bool maybeOldFeedback = false;
+
+                if((cache->speedTrend == LocoCache::Trend::Ascending && currentSpeedStep <= targetSpeedStep)
+                    || (cache->speedTrend == LocoCache::Trend::Descending && currentSpeedStep >= targetSpeedStep))
+                {
+                  //When accelerating or decelerating ignore all speeds between original speed and target speed.
+                  //These messages are probably feedback of our own changes arrived with some delay.
+                  //If we get values outside this range or changing trend we pass them to let Train adjust.
+                  maybeOldFeedback = true;
+                }
+
+                if(!maybeOldFeedback)
+                {
+                  changes = changes | DecoderChangeFlags::Throttle;
+                  changes = changes | DecoderChangeFlags::SpeedSteps;
+                  cache->speedSteps = reply.speedSteps();
+                  cache->speedStep = reply.speedStep();
+                }
               }
             }
 
@@ -180,6 +221,8 @@ void ClientKernel::receive(const Message& message)
             }
 
             //Do not update last seen time to avoid ignoring genuine user commands
+            //Store last received speed step converted to 126 steps scale
+            cache->lastReceivedSpeedStep = currentSpeedStep;
 
             EventLoop::call(
               [this, address=reply.address(), isEStop=reply.isEmergencyStop(),
@@ -517,6 +560,19 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
         }
       }
 
+      //Rescale everything to 126 steps
+      int oldTargetSpeedStep = cache->speedStep;
+      if(cache->speedSteps != 126)
+      {
+        oldTargetSpeedStep = float(oldTargetSpeedStep) / float(cache->speedSteps) * 126.0;
+      }
+
+      int newTargetSpeedStep = cmd.speedStep();
+      if(cmd.speedSteps() != 126)
+      {
+        newTargetSpeedStep = float(newTargetSpeedStep) / float(cmd.speedSteps()) * 126.0;
+      }
+
       if(changed)
       {
         cache->speedSteps = cmd.speedSteps();
@@ -524,11 +580,27 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
         cache->direction = cmd.direction();
         cache->isEStop = cmd.isEmergencyStop();
 
+        if(newTargetSpeedStep >= oldTargetSpeedStep)
+        {
+          cache->speedTrend = LocoCache::Trend::Ascending;
+          if(cache->lastReceivedSpeedStep > newTargetSpeedStep)
+            cache->lastReceivedSpeedStep = 0; //Reset to minimum
+        }
+        else
+        {
+          cache->speedTrend = LocoCache::Trend::Descending;
+          if(cache->lastReceivedSpeedStep < newTargetSpeedStep)
+            cache->lastReceivedSpeedStep = 126; //Reset to maximum
+        }
+
         //Update last seen time to ignore feedback messages of our own changes
         //This potentially ignores also user commands coming from Z21 if issued
-        //In less than 2 seconds from now
+        //In less than 1 seconds from now
         cache->lastSetTime = std::chrono::steady_clock::now();
+      }
 
+      if(changed)
+      {
         cmd.updateChecksum();
         send(cmd);
       }

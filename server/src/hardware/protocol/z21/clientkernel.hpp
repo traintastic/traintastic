@@ -91,10 +91,18 @@ class ClientKernel final : public Kernel
 
     struct LocoCache
     {
+      enum class Trend : bool
+      {
+          Ascending = 0,
+          Descending
+      };
+
       uint16_t dccAddress = 0;
+      bool isEStop = false;
       uint8_t speedStep = 0;
       uint8_t speedSteps = 0;
-      bool isEStop = false;
+      uint8_t lastReceivedSpeedStep = 0; //Always in 126 steps
+      Trend speedTrend = Trend::Ascending;
       Direction direction = Direction::Unknown;
       std::chrono::steady_clock::time_point lastSetTime;
     };
