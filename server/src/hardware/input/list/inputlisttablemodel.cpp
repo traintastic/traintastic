@@ -22,6 +22,7 @@
 
 #include "inputlisttablemodel.hpp"
 #include "inputlist.hpp"
+#include "../inputcontroller.hpp"
 #include "../../../core/objectproperty.tpp"
 #include "../../../utils/displayname.hpp"
 

@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/output/map/decoupleroutputmapitem.cpp
+ * server/src/enum/simulateinputaction.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2023 Filippo Gentile
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,10 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "decoupleroutputmapitem.hpp"
-#include "../../../core/method.tpp"
+#ifndef TRAINTASTIC_SERVER_ENUM_SIMULATEINPUTACTION_HPP
+#define TRAINTASTIC_SERVER_ENUM_SIMULATEINPUTACTION_HPP
 
-DecouplerOutputMapItem::DecouplerOutputMapItem(Object& map, DecouplerState state) :
-  OutputMapItemBase(map, state)
+enum class SimulateInputAction
 {
-}
+    SetFalse,
+    SetTrue,
+    Toggle,
+};
+
+#endif

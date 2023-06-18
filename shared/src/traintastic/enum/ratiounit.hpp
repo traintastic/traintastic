@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_RATIOUNIT_HPP
 
 #include <cstdint>
+#include "enum.hpp"
 
 enum class RatioUnit
 {

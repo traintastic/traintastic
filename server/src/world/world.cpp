@@ -21,39 +21,46 @@
  */
 
 #include "world.hpp"
+
 #include <boost/algorithm/string.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
+
 #include "worldsaver.hpp"
-#include "../board/tile/rail/blockrailtile.hpp"
-#include "../board/tile/rail/linkrailtile.hpp"
-#include "../core/objectproperty.tpp"
-#include "../core/objectvectorproperty.tpp"
-#include "../core/objectlisttablemodel.hpp"
-#include "../core/attributes.hpp"
-#include "../core/abstractvectorproperty.hpp"
-#include "../hardware/input/input.hpp"
-#include "../hardware/identification/identification.hpp"
-#include "../hardware/programming/lncv/lncvprogrammer.hpp"
+
 #include "../log/log.hpp"
 #include "../utils/datetimestr.hpp"
 #include "../utils/displayname.hpp"
 #include "../traintastic/traintastic.hpp"
 
-#include "../clock/clock.hpp"
-#include "../board/boardlist.hpp"
-#include "../board/list/linkrailtilelist.hpp"
+#include "../core/method.tpp"
+#include "../core/objectproperty.tpp"
+#include "../core/objectvectorproperty.tpp"
+#include "../core/objectlisttablemodel.hpp"
+#include "../core/attributes.hpp"
+#include "../core/abstractvectorproperty.hpp"
+#include "../core/controllerlist.hpp"
+
+#include "../hardware/input/input.hpp"
+#include "../hardware/input/monitor/inputmonitor.hpp"
+#include "../hardware/input/list/inputlist.hpp"
+#include "../hardware/identification/identification.hpp"
+#include "../hardware/identification/list/identificationlist.hpp"
+#include "../hardware/output/keyboard/outputkeyboard.hpp"
+#include "../hardware/output/list/outputlist.hpp"
 #include "../hardware/interface/interfacelist.hpp"
 #include "../hardware/decoder/list/decoderlist.hpp"
-//#include "../hardware/decoder/decodercontroller.hpp"
-#include "../hardware/identification/list/identificationlist.hpp"
-//#include "../hardware/identification/identificationcontroller.hpp"
-#include "../hardware/input/list/inputlist.hpp"
-//#include "../hardware/input/inputcontroller.hpp"
-#include "../hardware/output/list/outputlist.hpp"
-//#include "../hardware/output/outputcontroller.hpp"
+#include "../hardware/programming/lncv/lncvprogrammer.hpp"
 #include "../hardware/programming/lncv/lncvprogrammingcontroller.hpp"
+
+#include "../clock/clock.hpp"
+
+#include "../board/board.hpp"
+#include "../board/boardlist.hpp"
+#include "../board/list/linkrailtilelist.hpp"
+
+#include "../train/train.hpp"
 #include "../train/trainlist.hpp"
 #include "../vehicle/rail/railvehiclelist.hpp"
 #include "../lua/scriptlist.hpp"

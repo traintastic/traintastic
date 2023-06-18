@@ -22,16 +22,22 @@
 
 #include "train.hpp"
 #include "trainlist.hpp"
+#include "trainvehiclelist.hpp"
 #include "../world/world.hpp"
+#include "trainblockstatus.hpp"
 #include "trainlisttablemodel.hpp"
 #include "../core/attributes.hpp"
+#include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
 #include "../core/objectvectorproperty.tpp"
 #include "../core/eventloop.hpp"
 #include "../board/tile/rail/blockrailtile.hpp"
 #include "../vehicle/rail/poweredrailvehicle.hpp"
+#include "../hardware/decoder/decoder.hpp"
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
+
+CREATE_IMPL(Train)
 
 static inline bool isPowered(const RailVehicle& vehicle)
 {

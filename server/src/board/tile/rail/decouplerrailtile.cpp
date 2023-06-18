@@ -21,10 +21,13 @@
  */
 
 #include "decouplerrailtile.hpp"
+#include "../../../core/method.tpp"
 #include "../../../core/objectproperty.tpp"
 #include "../../../world/world.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
+
+CREATE_IMPL(DecouplerRailTile)
 
 DecouplerRailTile::DecouplerRailTile(World& world, std::string_view _id)
   : StraightRailTile(world, _id, TileId::RailDecoupler)

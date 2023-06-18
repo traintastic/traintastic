@@ -21,7 +21,9 @@
  */
 
 #include "trainlisttablemodel.hpp"
+#include "train.hpp"
 #include "trainlist.hpp"
+#include "trainblockstatus.hpp"
 #include "../board/tile/rail/blockrailtile.hpp"
 #include "../core/objectproperty.tpp"
 #include "../utils/displayname.hpp"

@@ -21,13 +21,16 @@
  */
 
 #include "input.hpp"
-#include "../../world/world.hpp"
+#include "inputcontroller.hpp"
 #include "list/inputlist.hpp"
 #include "list/inputlisttablemodel.hpp"
+#include "../../world/world.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
+
+CREATE_IMPL(Input)
 
 Input::Input(World& world, std::string_view _id)
   : IdObject(world, _id)

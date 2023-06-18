@@ -22,6 +22,7 @@
 
 #include "lncvprogrammer.hpp"
 #include "lncvprogrammingcontroller.hpp"
+#include "../../../core/method.tpp"
 
 LNCVProgrammer::LNCVProgrammer(LNCVProgrammingController& controller)
   : m_controller{controller}

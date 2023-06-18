@@ -22,6 +22,7 @@
 
 #include <catch2/catch.hpp>
 #include "../../src/world/world.hpp"
+#include "../../src/core/method.tpp"
 #include "../../src/core/objectproperty.tpp"
 #include "../../src/lua/scriptlist.hpp"
 

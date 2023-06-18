@@ -22,9 +22,12 @@
 
 #include "directioncontrolrailtile.hpp"
 #include "../../../world/world.hpp"
+#include "../../../core/method.tpp"
 #include "../../../core/attributes.hpp"
 #include "../../../utils/sensor.hpp"
 #include "../../../utils/displayname.hpp"
+
+CREATE_IMPL(DirectionControlRailTile)
 
 DirectionControlRailTile::DirectionControlRailTile(World& world, std::string_view _id)
   : StraightRailTile(world, _id, TileId::RailDirectionControl)

@@ -23,8 +23,10 @@
 #include "inputlist.hpp"
 #include "inputlisttablemodel.hpp"
 #include "../inputcontroller.hpp"
+#include "../monitor/inputmonitor.hpp"
 #include "../../../world/getworld.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../core/method.tpp"
 #include "../../../core/objectproperty.tpp"
 #include "../../../utils/displayname.hpp"
 

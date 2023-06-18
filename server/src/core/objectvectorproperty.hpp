@@ -123,6 +123,12 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
       }
     }
 
+    void reverseInternal()
+    {
+      std::reverse(m_values.begin(), m_values.end());
+      changed();
+    }
+
     void clearInternal()
     {
       if(empty())

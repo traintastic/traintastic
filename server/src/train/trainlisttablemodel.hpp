@@ -24,8 +24,8 @@
 #define TRAINTASTIC_SERVER_TRAIN_TRAINLISTTABLEMODEL_HPP
 
 #include "../core/objectlisttablemodel.hpp"
-#include "train.hpp"
 
+class Train;
 class TrainList;
 
 class TrainListTableModel : public ObjectListTableModel<Train>

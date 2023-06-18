@@ -27,6 +27,7 @@
 #include "list/decoderlisttablemodel.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/objectproperty.tpp"
+#include "../../core/controllerlist.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/almostzero.hpp"
 #include "../../world/world.hpp"

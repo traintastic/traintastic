@@ -118,7 +118,7 @@ class ObjectList : public AbstractObjectList
     ObjectList(Object& _parent, std::string_view parentPropertyName) :
       AbstractObjectList{_parent, parentPropertyName}
     {
-      assert((std::is_base_of_v<IdObject, T> || std::is_base_of_v<SubObject, T>));
+      static_assert(std::is_base_of_v<IdObject, T> || std::is_base_of_v<SubObject, T>);
     }
 
     ~ObjectList()

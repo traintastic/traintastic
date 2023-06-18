@@ -58,7 +58,7 @@ class Decoder : public IdObject
 
   public:
     CLASS_ID("decoder")
-    CREATE(Decoder)
+    CREATE_DEF(Decoder)
 
     static constexpr uint8_t speedStepsAuto = 0;
     static constexpr float throttleMin = 0;

@@ -22,6 +22,7 @@
 
 #include "throttlefunction.hpp"
 #include "throttle.hpp"
+#include "../../core/method.tpp"
 #include "../decoder/decoder.hpp"
 
 ThrottleFunction::ThrottleFunction(Throttle& throttle, uint32_t number_)

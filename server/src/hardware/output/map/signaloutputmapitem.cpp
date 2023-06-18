@@ -22,6 +22,7 @@
 
 #include "signaloutputmapitem.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../core/method.tpp"
 
 SignalOutputMapItem::SignalOutputMapItem(Object& map, SignalAspect aspect) :
   OutputMapItemBase(map, aspect)

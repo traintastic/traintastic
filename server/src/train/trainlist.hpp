@@ -25,7 +25,8 @@
 
 #include "../core/objectlist.hpp"
 #include "../core/method.hpp"
-#include "train.hpp"
+
+class Train;
 
 class TrainList : public ObjectList<Train>
 {

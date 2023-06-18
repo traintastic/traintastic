@@ -23,6 +23,8 @@
 #include "traintasticdiyinterface.hpp"
 #include "../input/list/inputlist.hpp"
 #include "../output/list/outputlist.hpp"
+#include "../protocol/traintasticdiy/kernel.hpp"
+#include "../protocol/traintasticdiy/settings.hpp"
 #include "../protocol/traintasticdiy/messages.hpp"
 #include "../protocol/traintasticdiy/iohandler/serialiohandler.hpp"
 #include "../protocol/traintasticdiy/iohandler/simulationiohandler.hpp"
@@ -37,6 +39,8 @@
 
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
+
+CREATE_IMPL(TraintasticDIYInterface)
 
 TraintasticDIYInterface::TraintasticDIYInterface(World& world, std::string_view _id)
   : Interface(world, _id)
@@ -96,18 +100,28 @@ TraintasticDIYInterface::TraintasticDIYInterface(World& world, std::string_view 
   updateVisible();
 }
 
+std::pair<uint32_t, uint32_t> TraintasticDIYInterface::inputAddressMinMax(uint32_t) const
+{
+  return {TraintasticDIY::Kernel::ioAddressMin, TraintasticDIY::Kernel::ioAddressMax};
+}
+
 void TraintasticDIYInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, outputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address, action);
 }
 
+std::pair<uint32_t, uint32_t> TraintasticDIYInterface::outputAddressMinMax(uint32_t) const
+{
+  return {TraintasticDIY::Kernel::ioAddressMin, TraintasticDIY::Kernel::ioAddressMax};
+}
+
 bool TraintasticDIYInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
 {
   assert(isOutputChannel(channel));
   return
-    m_kernel &&
-    inRange(address, outputAddressMinMax(channel)) &&
+      m_kernel &&
+      inRange(address, outputAddressMinMax(channel)) &&
     m_kernel->setOutput(static_cast<uint16_t>(address), value);
 }
 

@@ -25,9 +25,12 @@
 
 #include "interface.hpp"
 #include "../throttle/throttlecontroller.hpp"
-#include "../protocol/withrottle/kernel.hpp"
-#include "../protocol/withrottle/settings.hpp"
 #include "../../core/objectproperty.hpp"
+
+namespace WiThrottle {
+class Kernel;
+class Settings;
+}
 
 /**
  * \brief WiThrottle hardware interface
@@ -38,7 +41,7 @@ class WiThrottleInterface
 {
   CLASS_ID("interface.withrottle")
   DEFAULT_ID("withrottle")
-  CREATE(WiThrottleInterface)
+  CREATE_DEF(WiThrottleInterface)
 
   private:
     std::unique_ptr<WiThrottle::Kernel> m_kernel;

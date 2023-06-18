@@ -25,9 +25,12 @@
 #include "../decoder/list/decoderlisttablemodel.hpp"
 #include "../input/list/inputlist.hpp"
 #include "../output/list/outputlist.hpp"
+#include "../protocol/ecos/kernel.hpp"
+#include "../protocol/ecos/settings.hpp"
 #include "../protocol/ecos/iohandler/tcpiohandler.hpp"
 #include "../protocol/ecos/iohandler/simulationiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
@@ -39,6 +42,8 @@
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Channel | OutputListColumn::Address;
+
+CREATE_IMPL(ECoSInterface)
 
 ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   : Interface(world, _id)
@@ -70,6 +75,16 @@ void ECoSInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags ch
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
+const std::vector<uint32_t> *ECoSInterface::inputChannels() const
+{
+  return &ECoS::Kernel::inputChannels;
+}
+
+const std::vector<std::string_view> *ECoSInterface::inputChannelNames() const
+{
+  return &ECoS::Kernel::inputChannelNames;
+}
+
 std::pair<uint32_t, uint32_t> ECoSInterface::inputAddressMinMax(uint32_t channel) const
 {
   using namespace ECoS;
@@ -91,6 +106,16 @@ void ECoSInterface::inputSimulateChange(uint32_t channel, uint32_t address, Simu
 {
   if(m_kernel && inRange(address, outputAddressMinMax(channel)))
     m_kernel->simulateInputChange(channel, address, action);
+}
+
+const std::vector<uint32_t> *ECoSInterface::outputChannels() const
+{
+  return &ECoS::Kernel::outputChannels;
+}
+
+const std::vector<std::string_view> *ECoSInterface::outputChannelNames() const
+{
+  return &ECoS::Kernel::outputChannelNames;
 }
 
 std::pair<uint32_t, uint32_t> ECoSInterface::outputAddressMinMax(uint32_t channel) const

@@ -24,10 +24,13 @@
 #include "../decoder/list/decoderlist.hpp"
 #include "../input/list/inputlist.hpp"
 #include "../output/list/outputlist.hpp"
+#include "../protocol/z21/clientkernel.hpp"
+#include "../protocol/z21/clientsettings.hpp"
 #include "../protocol/z21/messages.hpp"
 #include "../protocol/z21/iohandler/simulationiohandler.hpp"
 #include "../protocol/z21/iohandler/udpclientiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
@@ -39,6 +42,8 @@
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
+
+CREATE_IMPL(Z21Interface)
 
 Z21Interface::Z21Interface(World& world, std::string_view _id)
   : Interface(world, _id)
@@ -88,6 +93,16 @@ void Z21Interface::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
+const std::vector<uint32_t> *Z21Interface::inputChannels() const
+{
+  return &Z21::ClientKernel::inputChannels;
+}
+
+const std::vector<std::string_view> *Z21Interface::inputChannelNames() const
+{
+  return &Z21::ClientKernel::inputChannelNames;
+}
+
 std::pair<uint32_t, uint32_t> Z21Interface::inputAddressMinMax(uint32_t channel) const
 {
   using namespace Z21;
@@ -111,12 +126,17 @@ void Z21Interface::inputSimulateChange(uint32_t channel, uint32_t address, Simul
     m_kernel->simulateInputChange(channel, address, action);
 }
 
+std::pair<uint32_t, uint32_t> Z21Interface::outputAddressMinMax(uint32_t) const
+{
+  return {Z21::ClientKernel::outputAddressMin, Z21::ClientKernel::outputAddressMax};
+}
+
 bool Z21Interface::setOutputValue(uint32_t channel, uint32_t address, bool value)
 {
   return
-    m_kernel &&
-    inRange(address, outputAddressMinMax(channel)) &&
-    m_kernel->setOutput(static_cast<uint16_t>(address), value);
+      m_kernel &&
+      inRange(address, outputAddressMinMax(channel)) &&
+      m_kernel->setOutput(static_cast<uint16_t>(address), value);
 }
 
 bool Z21Interface::setOnline(bool& value, bool simulation)

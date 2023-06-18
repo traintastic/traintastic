@@ -23,6 +23,7 @@
 #include "railvehicle.hpp"
 #include "railvehiclelist.hpp"
 #include "railvehiclelisttablemodel.hpp"
+#include "../../hardware/decoder/decoder.hpp"
 #include "../../world/world.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/objectproperty.tpp"

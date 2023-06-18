@@ -30,8 +30,9 @@
 #include "../../../core/vectorproperty.hpp"
 #include "../../../enum/blockstate.hpp"
 #include "../../../hardware/input/map/blockinputmap.hpp"
-#include "../../../train/trainblockstatus.hpp"
 
+class Train;
+class TrainBlockStatus;
 class BlockInputMapItem;
 
 class BlockRailTile : public RailTile
