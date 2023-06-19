@@ -148,10 +148,15 @@ void ClientKernel::receive(const Message& message)
               targetSpeedStep = float(targetSpeedStep) / float(cache->speedSteps) * 126.0;
             }
 
-            if(cache->lastReceivedSpeedStep <= currentSpeedStep)
-              cache->speedTrend = LocoCache::Trend::Ascending;
-            else
-              cache->speedTrend = LocoCache::Trend::Descending;
+            if(!cache->speedTrendExplicitlySet)
+            {
+              //Calculate new speed trend
+              if(cache->lastReceivedSpeedStep <= currentSpeedStep)
+                cache->speedTrend = LocoCache::Trend::Ascending;
+              else
+                cache->speedTrend = LocoCache::Trend::Descending;
+            }
+            cache->speedTrendExplicitlySet = false;
 
             if(reply.speedSteps() != cache->speedSteps || reply.speedStep() != cache->speedStep)
             {
@@ -592,6 +597,7 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
           if(cache->lastReceivedSpeedStep < newTargetSpeedStep)
             cache->lastReceivedSpeedStep = 126; //Reset to maximum
         }
+        cache->speedTrendExplicitlySet = true;
 
         //Update last seen time to ignore feedback messages of our own changes
         //This potentially ignores also user commands coming from Z21 if issued

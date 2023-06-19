@@ -103,6 +103,7 @@ class ClientKernel final : public Kernel
       uint8_t speedSteps = 0;
       uint8_t lastReceivedSpeedStep = 0; //Always in 126 steps
       Trend speedTrend = Trend::Ascending;
+      bool speedTrendExplicitlySet = false;
       Direction direction = Direction::Unknown;
       std::chrono::steady_clock::time_point lastSetTime;
     };
