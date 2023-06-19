@@ -24,6 +24,7 @@
 #include "messages.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
+#include "../../protocol/dcc/dcc.hpp"
 #include "../../input/inputcontroller.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
@@ -112,6 +113,44 @@ void ClientKernel::receive(const Message& message)
                 });
           }
           break;
+
+        case LAN_X_LOCO_INFO:
+        {
+          const int n = message.dataLen() - 7;
+          if(n >= 7 && n <= 14)
+          {
+            const auto& reply = static_cast<const LanXLocoInfo&>(message);
+
+            bool val[31 + 1] = {};
+            const int maxFunc = (n >= 8) ? 31 : 28;
+            for(int i = 0; i <= maxFunc; i++)
+            {
+              val[i] = reply.getFunction(i);
+            }
+
+            EventLoop::call(
+              [this, address=reply.address(), isEStop=reply.isEmergencyStop(),
+              speed = reply.speedStep(), speedMax=reply.speedSteps(),
+              dir = reply.direction(), val, maxFunc]()
+              {
+                if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(address), address))
+                {
+                  float throttle = Decoder::speedStepToThrottle(speed, speedMax);
+
+                  decoder->emergencyStop = isEStop;
+                  decoder->direction = dir;
+
+                  decoder->throttle = throttle;
+
+                  for(int i = 0; i <= maxFunc; i++)
+                  {
+                    decoder->setFunctionValue(i, val[i]);
+                  }
+                }
+              });
+          }
+          break;
+        }
       }
       break;
     }
