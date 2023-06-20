@@ -66,7 +66,7 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , baudrate{this, "baudrate", 19200, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , flowControl{this, "flow_control", SerialFlowControl::None, PropertyFlags::ReadWrite | PropertyFlags::Store}
-  , hostname{this, "hostname", "192.168.1.203", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , port{this, "port", 5550, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , loconet{this, "loconet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
