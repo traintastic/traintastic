@@ -50,7 +50,7 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
   , DecoderController(*this, decoderListColumns)
   , InputController(static_cast<IdObject&>(*this))
   , OutputController(static_cast<IdObject&>(*this))
-  , hostname{this, "hostname", "192.168.1.203", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , port{this, "port", 21105, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , z21{this, "z21", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , hardwareType{this, "hardware_type", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
