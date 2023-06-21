@@ -27,7 +27,7 @@
 #include <string>
 #include <memory>
 #include "attribute.hpp"
-#include "arrayattribute.hpp"
+#include "spanattribute.hpp"
 #include "vectorattribute.hpp"
 #include "vectorrefattribute.hpp"
 
@@ -53,11 +53,17 @@ class InterfaceItem
       m_attributes.emplace(name, std::make_unique<Attribute<T>>(*this, name, value));
     }
 
+    template<typename T>
+    void addAttribute(AttributeName name, tcb::span<const T> values)
+    {
+      assert(m_attributes.find(name) == m_attributes.end());
+      m_attributes.emplace(name, std::make_unique<SpanAttribute<T>>(*this, name, values));
+    }
+
     template<typename T, size_t N>
     void addAttribute(AttributeName name, const std::array<T, N>& values)
     {
-      assert(m_attributes.find(name) == m_attributes.end());
-      m_attributes.emplace(name, std::make_unique<ArrayAttribute<T, N>>(*this, name, values));
+      addAttribute(name, tcb::span<const T>{values.data(), values.size()});
     }
 
     template<typename T>
@@ -79,6 +85,13 @@ class InterfaceItem
     {
       assert(m_attributes.find(name) != m_attributes.end());
       static_cast<Attribute<T>*>(m_attributes[name].get())->setValue(value);
+    }
+
+    template<typename T>
+    void setAttribute(AttributeName name, tcb::span<const T> values)
+    {
+      assert(m_attributes.find(name) != m_attributes.end());
+      static_cast<SpanAttribute<T>*>(m_attributes[name].get())->setValues(values);
     }
 
     template<typename T>
@@ -129,6 +142,14 @@ class InterfaceItem
     {
       assert(m_attributes.find(name) != m_attributes.end());
       return static_cast<const Attribute<T>*>(m_attributes.at(name).get())->value();
+    }
+
+    template<typename T>
+    const SpanAttribute<T>& getSpanAttribute(AttributeName name) const
+    {
+      assert(m_attributes.find(name) != m_attributes.end());
+      assert(dynamic_cast<const SpanAttribute<T>*>(m_attributes.at(name).get()));
+      return *static_cast<const SpanAttribute<T>*>(m_attributes.at(name).get());
     }
 
     template<typename T>
