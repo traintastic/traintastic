@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,6 +52,12 @@ class Decoder : public IdObject
     void loaded() final;
     void destroying() override;
     void worldEvent(WorldState state, WorldEvent event) final;
+
+    //! \brief Check and correct protocol
+    //! If the current value isn't in the list of valid protocols the protocol is set the the first valid one.
+    //! \return \c true if adjusted, \c false if unchanged
+    bool checkProtocol();
+
     void updateEditable();
     void updateEditable(bool editable);
     void changed(DecoderChangeFlags changes, uint32_t functionNumber = 0);

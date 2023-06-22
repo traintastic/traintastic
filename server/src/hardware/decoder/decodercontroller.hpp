@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,7 @@
 #include <cstdint>
 #include <vector>
 #include <memory>
+#include <tcb/span.hpp>
 #include "../../core/objectproperty.hpp"
 
 #ifdef interface
@@ -63,6 +64,10 @@ class DecoderController
 
   public:
     ObjectProperty<DecoderList> decoders;
+
+    //! \brief Get supported protocols
+    //! \return Supported protocols, may not be empty and must be constant for the instance!
+    virtual tcb::span<const DecoderProtocol> decoderProtocols() const = 0;
 
     [[nodiscard]] bool addDecoder(Decoder& decoder);
     [[nodiscard]] bool removeDecoder(Decoder& decoder);

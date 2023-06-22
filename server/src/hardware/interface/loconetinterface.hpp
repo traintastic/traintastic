@@ -94,6 +94,7 @@ class LocoNetInterface final
     bool immPacket(tcb::span<uint8_t> dccPacket, uint8_t repeat);
 
     // DecoderController:
+    tcb::span<const DecoderProtocol> decoderProtocols() const final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:

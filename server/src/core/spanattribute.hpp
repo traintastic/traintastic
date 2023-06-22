@@ -70,6 +70,11 @@ class SpanAttribute : public AbstractValuesAttribute
       return to<std::string>(m_values[index]);
     }
 
+    tcb::span<const T> values() const
+    {
+      return m_values;
+    }
+
     void setValues(tcb::span<const T> values)
     {
       if(m_values.size() != values.size() || std::memcmp(m_values.data(), values.data(), m_values.size()) != 0)

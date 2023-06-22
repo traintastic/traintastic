@@ -73,6 +73,7 @@ class ECoSInterface final
     ECoSInterface(World& world, std::string_view _id);
 
     // DecoderController:
+    tcb::span<const DecoderProtocol> decoderProtocols() const final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:

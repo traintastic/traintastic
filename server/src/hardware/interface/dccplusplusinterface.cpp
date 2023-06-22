@@ -77,6 +77,12 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(outputs, notes);
 }
 
+tcb::span<const DecoderProtocol> DCCPlusPlusInterface::decoderProtocols() const
+{
+  static constexpr std::array<DecoderProtocol, 1> protocols{DecoderProtocol::DCC};
+  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+}
+
 void DCCPlusPlusInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(m_kernel)

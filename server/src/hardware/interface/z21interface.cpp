@@ -87,6 +87,12 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(firmwareVersion, notes);
 }
 
+tcb::span<const DecoderProtocol> Z21Interface::decoderProtocols() const
+{
+  static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCC, DecoderProtocol::Motorola};
+  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+}
+
 void Z21Interface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(m_kernel)
