@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -119,6 +119,31 @@ class Property : public AbstractProperty
                 throw out_of_range_error();
             }
             else
+              throw out_of_range_error();
+          }
+        }
+      }
+
+      if constexpr(std::is_enum_v<T> && !is_set_v<T>)
+      {
+        if(auto it = m_attributes.find(AttributeName::Values); it != m_attributes.end())
+        {
+          if(auto* span = dynamic_cast<SpanAttribute<T>*>(it->second.get()))
+          {
+            const auto values = span->values();
+            if(std::find(values.begin(), values.end(), value) == values.end())
+              throw out_of_range_error();
+          }
+          else if(auto* vectorRef = dynamic_cast<VectorRefAttribute<T>*>(it->second.get()))
+          {
+            const auto* values = vectorRef->values();
+            if(!values || std::find(values->begin(), values->end(), value) == values->end())
+              throw out_of_range_error();
+          }
+          else if(auto* vector = dynamic_cast<VectorAttribute<T>*>(it->second.get()))
+          {
+            const auto& values = vector->values();
+            if(std::find(values.begin(), values.end(), value) == values.end())
               throw out_of_range_error();
           }
         }

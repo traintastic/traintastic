@@ -73,15 +73,6 @@ Decoder::Decoder(World& world, std::string_view _id) :
       if(value == DecoderProtocol::DCC && DCC::isLongAddress(address))
         longAddress = true;
       updateEditable();
-    },
-    [this](DecoderProtocol& value)
-    {
-      if(interface)
-      {
-        const auto protocols = interface->decoderProtocols();
-        return std::find(protocols.begin(), protocols.end(), value) != protocols.end();
-      }
-      return false;
     }},
   address{this, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](const uint16_t& value)
