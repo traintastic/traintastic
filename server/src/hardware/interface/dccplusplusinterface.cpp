@@ -282,9 +282,6 @@ void DCCPlusPlusInterface::check() const
 
 void DCCPlusPlusInterface::checkDecoder(const Decoder& decoder) const
 {
-  if(decoder.protocol != DecoderProtocol::Auto && decoder.protocol != DecoderProtocol::DCC)
-    Log::log(decoder, LogMessage::C2002_DCCPLUSPLUS_ONLY_SUPPORTS_THE_DCC_PROTOCOL);
-
   if(decoder.protocol == DecoderProtocol::DCC && decoder.address <= 127 && decoder.longAddress)
     Log::log(decoder, LogMessage::C2003_DCCPLUSPLUS_DOESNT_SUPPORT_DCC_LONG_ADDRESSES_BELOW_128);
 

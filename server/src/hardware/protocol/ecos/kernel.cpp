@@ -67,7 +67,7 @@ static constexpr DecoderProtocol toDecoderProtocol(LocomotiveProtocol value)
     case LocomotiveProtocol::MMFKT:
       break;
   }
-  return DecoderProtocol::Custom;
+  return DecoderProtocol::None;
 }
 
 Kernel::Kernel(const Config& config, bool simulation)
@@ -264,7 +264,7 @@ Locomotive* Kernel::getLocomotive(DecoderProtocol protocol, uint16_t address, ui
       auto* l = dynamic_cast<Locomotive*>(item.second.get());
       return
         l &&
-        (protocol == DecoderProtocol::Auto || protocol == toDecoderProtocol(l->protocol())) &&
+        protocol == toDecoderProtocol(l->protocol()) &&
         address == l->address()  &&
         (speedSteps == 0 || speedSteps == l->speedSteps());
     });

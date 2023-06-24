@@ -26,7 +26,7 @@
 #include <type_traits>
 #include "../../core/idobject.hpp"
 #include "../../core/objectproperty.hpp"
-#include "../../enum/decoderprotocol.hpp"
+#include <traintastic/enum/decoderprotocol.hpp>
 #include "../../enum/direction.hpp"
 #include "decodercontroller.hpp"
 #include "decoderfunctions.hpp"

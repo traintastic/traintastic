@@ -72,7 +72,7 @@ class DecoderController
     [[nodiscard]] bool addDecoder(Decoder& decoder);
     [[nodiscard]] bool removeDecoder(Decoder& decoder);
 
-    const std::shared_ptr<Decoder>& getDecoder(DecoderProtocol protocol, uint16_t address, bool dccLongAddress = false, bool fallbackToProtocolAuto = false);
+    const std::shared_ptr<Decoder>& getDecoder(DecoderProtocol protocol, uint16_t address, bool dccLongAddress = false);//, bool fallbackToProtocolAuto = false);
 
     virtual void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) = 0;
 };

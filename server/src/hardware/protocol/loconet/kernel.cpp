@@ -1317,7 +1317,7 @@ void Kernel::clearLocoSlot(uint8_t slot)
 std::shared_ptr<Decoder> Kernel::getDecoder(uint16_t address)
 {
   assert(isEventLoopThread());
-  return m_decoderController->getDecoder(DecoderProtocol::DCC, address, DCC::isLongAddress(address), true);
+  return m_decoderController->getDecoder(DecoderProtocol::DCC, address, DCC::isLongAddress(address));
 }
 
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)

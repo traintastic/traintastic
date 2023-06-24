@@ -2112,14 +2112,6 @@
         "comment": ""
     },
     {
-        "term": "message:C2002",
-        "definition": "DCC++ only supports the DCC protocol",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "message:C2003",
         "definition": "DCC++ doesn't support DCC long addresses below 128",
         "context": "",

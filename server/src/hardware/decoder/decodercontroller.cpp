@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,9 +42,7 @@ DecoderController::DecoderController(IdObject& interface, DecoderListColumn colu
 
 bool DecoderController::addDecoder(Decoder& decoder)
 {
-  if(decoder.protocol != DecoderProtocol::Auto && findDecoder(decoder) != m_decoders.end())
-    return false;
-  if(findDecoder(DecoderProtocol::Auto, decoder.address) != m_decoders.end())
+  if(findDecoder(decoder) != m_decoders.end())
     return false;
 
   m_decoders.emplace_back(decoder.shared_ptr<Decoder>());
@@ -64,12 +62,10 @@ bool DecoderController::removeDecoder(Decoder& decoder)
   return false;
 }
 
-const std::shared_ptr<Decoder>& DecoderController::getDecoder(DecoderProtocol protocol, uint16_t address, bool dccLongAddress, bool fallbackToProtocolAuto)
+const std::shared_ptr<Decoder>& DecoderController::getDecoder(DecoderProtocol protocol, uint16_t address, bool dccLongAddress)
 {
   auto it = findDecoder(protocol, address, dccLongAddress);
   if(it != m_decoders.end())
-    return *it;
-  if(fallbackToProtocolAuto && protocol != DecoderProtocol::Auto && (it = findDecoder(DecoderProtocol::Auto, address)) != m_decoders.end())
     return *it;
 
   return Decoder::null;

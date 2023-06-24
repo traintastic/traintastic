@@ -2112,14 +2112,6 @@
         "comment": ""
     },
     {
-        "term": "message:C2002",
-        "definition": "DCC++ supporta solo il protocollo DCC",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "message:C2003",
         "definition": "DCC++ non supporta indirizzi estesi DCC inferiori a 128",
         "context": "",

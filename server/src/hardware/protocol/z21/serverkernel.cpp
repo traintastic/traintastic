@@ -335,8 +335,6 @@ std::shared_ptr<Decoder> ServerKernel::getDecoder(uint16_t address, bool longAdd
 {
   auto decoder = m_decoderList->getDecoder(DecoderProtocol::DCC, address, longAddress);
   if(!decoder)
-    decoder = m_decoderList->getDecoder(DecoderProtocol::Auto, address);
-  if(!decoder)
     decoder = m_decoderList->getDecoder(address);
   return decoder;
 }

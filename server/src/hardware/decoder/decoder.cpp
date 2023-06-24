@@ -67,7 +67,7 @@ Decoder::Decoder(World& world, std::string_view _id) :
       }
       return false;
     }},
-  protocol{this, "protocol", DecoderProtocol::Auto, PropertyFlags::ReadWrite | PropertyFlags::Store,
+  protocol{this, "protocol", DecoderProtocol::None, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](const DecoderProtocol& value)
     {
       if(value == DecoderProtocol::DCC && DCC::isLongAddress(address))

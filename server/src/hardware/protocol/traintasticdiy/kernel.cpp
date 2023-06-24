@@ -477,8 +477,6 @@ std::shared_ptr<Decoder> Kernel::getDecoder(uint16_t address, bool longAddress) 
   if(longAddress)
     decoder = decoderList.getDecoder(DecoderProtocol::DCC, address, longAddress);
   if(!decoder)
-    decoder = decoderList.getDecoder(DecoderProtocol::Auto, address);
-  if(!decoder)
     decoder = decoderList.getDecoder(address);
   return decoder;
 }

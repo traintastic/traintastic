@@ -55,8 +55,6 @@ Throttle::AcquireResult HardwareThrottle::acquire(DecoderProtocol protocol, uint
 
   auto decoder = decoderList.getDecoder(protocol, address, isDCCLongAddress);
   if(!decoder)
-    decoder = decoderList.getDecoder(DecoderProtocol::Auto, address);
-  if(!decoder)
     decoder = decoderList.getDecoder(address);
   if(!decoder)
     return AcquireResult::FailedNonExisting;

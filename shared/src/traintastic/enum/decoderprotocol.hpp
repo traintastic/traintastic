@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,26 +24,32 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_DECODERPROTOCOL_HPP
 
 #include <cstdint>
+#include <array>
 #include "enum.hpp"
 
 enum class DecoderProtocol : uint8_t
 {
-  Auto = 0,
+  None = 0,
   DCC = 1,
   Motorola = 2,
   //MFX = 3,
   Selectrix = 4,
   //FMZ = 5,
-  Custom = 255,
 };
 
-TRAINTASTIC_ENUM(DecoderProtocol, "decoder_protocol", 5,
+TRAINTASTIC_ENUM(DecoderProtocol, "decoder_protocol", 4,
 {
-  {DecoderProtocol::Auto, "auto"},
+  {DecoderProtocol::None, "none"},
   {DecoderProtocol::DCC, "dcc"},
   {DecoderProtocol::Motorola, "motorola"},
   {DecoderProtocol::Selectrix, "selectrix"},
-  {DecoderProtocol::Custom, "custom"},
 });
+
+inline constexpr std::array<DecoderProtocol, 4> decoderProtocolValues{{
+  DecoderProtocol::None,
+  DecoderProtocol::DCC,
+  DecoderProtocol::Motorola,
+  DecoderProtocol::Selectrix,
+}};
 
 #endif
