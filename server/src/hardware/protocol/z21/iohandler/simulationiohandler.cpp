@@ -99,7 +99,7 @@ bool SimulationIOHandler::send(const Message& message)
           }
           break;
 
-        case 0xE3:
+        case LAN_X_GET_LOCO_INFO:
           if(const auto& getLocoInfo = static_cast<const LanXGetLocoInfo&>(message);
               getLocoInfo.db0 == 0xF0)
           {
@@ -107,7 +107,7 @@ bool SimulationIOHandler::send(const Message& message)
           }
           break;
 
-        case 0xE4:
+        case LAN_X_SET_LOCO:
           if(const auto& setLocoDrive = static_cast<const LanXSetLocoDrive&>(message);
               setLocoDrive.db0 >= 0x10 && setLocoDrive.db0 <= 0x13)
           {
@@ -121,7 +121,7 @@ bool SimulationIOHandler::send(const Message& message)
           }
           break;
 
-        case 0xF1:
+        case LAN_X_GET_FIRMWARE_VERSION:
           if(message == LanXGetFirmwareVersion())
           {
             reply(LanXGetFirmwareVersionReply(firmwareVersionMajor, ServerConfig::firmwareVersionMinor));

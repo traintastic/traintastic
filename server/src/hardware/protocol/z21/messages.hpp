@@ -142,18 +142,37 @@ enum LocoMode : uint8_t
   Motorola = 1,
 };
 
-static constexpr uint8_t LAN_X_SET_STOP = 0x80;
 static constexpr uint8_t LAN_X_TURNOUT_INFO = 0x43;
+static constexpr uint8_t LAN_X_SET_TURNOUT = 0x53;
+
 static constexpr uint8_t LAN_X_BC = 0x61;
+
+static constexpr uint8_t LAN_X_STATUS_CHANGED = 0x62;
+static constexpr uint8_t LAN_X_GET_VERSION_REPLY = 0x63;
+
+//static constexpr uint8_t LAN_X_CV_NACK_SC = 0x12;
+//static constexpr uint8_t LAN_X_CV_NACK = 0x13;
+//static constexpr uint8_t LAN_X_UNKNOWN_COMMAND = 0x82;
+
+static constexpr uint8_t LAN_X_SET_STOP = 0x80;
+static constexpr uint8_t LAN_X_BC_STOPPED = 0x81;
+
+static constexpr uint8_t LAN_X_GET_LOCO_INFO = 0xE3;
+static constexpr uint8_t LAN_X_SET_LOCO = 0xE4;
+static constexpr uint8_t LAN_X_LOCO_INFO = 0xEF;
+
+static constexpr uint8_t LAN_X_GET_FIRMWARE_VERSION = 0xF1;
+static constexpr uint8_t LAN_X_GET_FIRMWARE_VERSION_REPLY = 0xF3;
+
+// db0 for xHeader 0x21
+static constexpr uint8_t LAN_X_SET_TRACK_POWER_OFF = 0x80;
+static constexpr uint8_t LAN_X_SET_TRACK_POWER_ON = 0x81;
+
+// db0 for xHeader LAN_X_BC
 static constexpr uint8_t LAN_X_BC_TRACK_POWER_OFF = 0x00;
 static constexpr uint8_t LAN_X_BC_TRACK_POWER_ON = 0x01;
 //static constexpr uint8_t LAN_X_BC_PROGRAMMING_MODE = 0x02;
 static constexpr uint8_t LAN_X_BC_TRACK_SHORT_CIRCUIT = 0x08;
-//static constexpr uint8_t LAN_X_CV_NACK_SC = 0x12;
-//static constexpr uint8_t LAN_X_CV_NACK = 0x13;
-//static constexpr uint8_t LAN_X_UNKNOWN_COMMAND = 0x82;
-static constexpr uint8_t LAN_X_BC_STOPPED = 0x81;
-static constexpr uint8_t LAN_X_LOCO_INFO = 0xEF;
 
 enum HardwareType : uint32_t
 {
@@ -332,7 +351,7 @@ struct LanXGetFirmwareVersion : LanX
   uint8_t checksum = 0xFB;
 
   LanXGetFirmwareVersion() :
-    LanX(sizeof(LanXGetFirmwareVersion), 0xF1)
+    LanX(sizeof(LanXGetFirmwareVersion), LAN_X_GET_FIRMWARE_VERSION)
   {
   }
 } ATTRIBUTE_PACKED;
@@ -354,7 +373,7 @@ static_assert(sizeof(LanXGetStatus) == 7);
 // LAN_X_SET_TRACK_POWER_OFF
 struct LanXSetTrackPowerOff : LanX
 {
-  uint8_t db0 = 0x80;
+  uint8_t db0 = LAN_X_SET_TRACK_POWER_OFF;
   uint8_t checksum = 0xa1;
 
   LanXSetTrackPowerOff() :
@@ -367,7 +386,7 @@ static_assert(sizeof(LanXSetTrackPowerOff) == 7);
 // LAN_X_SET_TRACK_POWER_ON
 struct LanXSetTrackPowerOn : LanX
 {
-  uint8_t db0 = 0x81;
+  uint8_t db0 = LAN_X_SET_TRACK_POWER_OFF;
   uint8_t checksum = 0xa0;
 
   LanXSetTrackPowerOn() :
@@ -422,7 +441,7 @@ struct LanXSetTurnout : LanX
   uint8_t checksum;
 
   LanXSetTurnout(uint16_t linearAddress, bool activate, bool queue = false)
-    : LanX(sizeof(LanXSetTurnout), 0x53)
+    : LanX(sizeof(LanXSetTurnout), LAN_X_SET_TURNOUT)
     , db0(linearAddress >> 9)
     , db1((linearAddress >> 1) & 0xFF)
   {
@@ -484,7 +503,7 @@ struct LanXGetLocoInfo : LanX
   uint8_t checksum;
 
   LanXGetLocoInfo(uint16_t address, bool longAddress) :
-    LanX(sizeof(LanXGetLocoInfo),  0xE3)
+    LanX(sizeof(LanXGetLocoInfo), LAN_X_GET_LOCO_INFO)
   {
     setAddress(address, longAddress);
     updateChecksum();
@@ -518,7 +537,7 @@ struct LanXSetLocoDrive : LanX
   uint8_t checksum;
 
   LanXSetLocoDrive() :
-    LanX(sizeof(LanXSetLocoDrive), 0xE4)
+    LanX(sizeof(LanXSetLocoDrive), LAN_X_SET_LOCO)
   {
   }
 
@@ -623,7 +642,7 @@ struct LanXSetLocoFunction : LanX
   uint8_t checksum;
 
   LanXSetLocoFunction() :
-    LanX(sizeof(LanXSetLocoFunction), 0xE4)
+    LanX(sizeof(LanXSetLocoFunction), LAN_X_SET_LOCO)
   {
   }
 
@@ -909,7 +928,7 @@ struct LanXGetVersionReply : LanX
   uint8_t checksum;
 
   LanXGetVersionReply()
-    : LanX(sizeof(LanXGetVersionReply), 0x63)
+    : LanX(sizeof(LanXGetVersionReply), LAN_X_GET_VERSION_REPLY)
   {
   }
 
@@ -945,7 +964,7 @@ struct LanXGetFirmwareVersionReply : LanX
   uint8_t checksum;
 
   LanXGetFirmwareVersionReply() :
-    LanX(sizeof(LanXGetFirmwareVersionReply), 0xF3)
+    LanX(sizeof(LanXGetFirmwareVersionReply), LAN_X_GET_FIRMWARE_VERSION_REPLY)
   {
   }
 
@@ -1068,7 +1087,7 @@ struct LanXStatusChanged : LanX
   uint8_t checksum;
 
   LanXStatusChanged() :
-    LanX(sizeof(LanXStatusChanged), 0x62)
+    LanX(sizeof(LanXStatusChanged), LAN_X_STATUS_CHANGED)
   {
   }
 } ATTRIBUTE_PACKED;
