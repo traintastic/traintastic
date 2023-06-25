@@ -24,32 +24,26 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_DECODERPROTOCOL_HPP
 
 #include <cstdint>
-#include <array>
 #include "enum.hpp"
 
 enum class DecoderProtocol : uint8_t
 {
   None = 0,
-  DCC = 1,
+  DCCShort = 1,
   Motorola = 2,
   //MFX = 3,
   Selectrix = 4,
   //FMZ = 5,
+  DCCLong = 6,
 };
 
-TRAINTASTIC_ENUM(DecoderProtocol, "decoder_protocol", 4,
+TRAINTASTIC_ENUM(DecoderProtocol, "decoder_protocol", 5,
 {
   {DecoderProtocol::None, "none"},
-  {DecoderProtocol::DCC, "dcc"},
+  {DecoderProtocol::DCCShort, "dcc_short"},
   {DecoderProtocol::Motorola, "motorola"},
   {DecoderProtocol::Selectrix, "selectrix"},
+  {DecoderProtocol::DCCLong, "dcc_long"},
 });
-
-inline constexpr std::array<DecoderProtocol, 4> decoderProtocolValues{{
-  DecoderProtocol::None,
-  DecoderProtocol::DCC,
-  DecoderProtocol::Motorola,
-  DecoderProtocol::Selectrix,
-}};
 
 #endif

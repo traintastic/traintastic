@@ -158,7 +158,7 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
 
 tcb::span<const DecoderProtocol> XpressNetInterface::decoderProtocols() const
 {
-  static constexpr std::array<DecoderProtocol, 1> protocols{DecoderProtocol::DCC};
+  static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};
   return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 

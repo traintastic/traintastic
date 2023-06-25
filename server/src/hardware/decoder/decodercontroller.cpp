@@ -62,9 +62,9 @@ bool DecoderController::removeDecoder(Decoder& decoder)
   return false;
 }
 
-const std::shared_ptr<Decoder>& DecoderController::getDecoder(DecoderProtocol protocol, uint16_t address, bool dccLongAddress)
+const std::shared_ptr<Decoder>& DecoderController::getDecoder(DecoderProtocol protocol, uint16_t address)
 {
-  auto it = findDecoder(protocol, address, dccLongAddress);
+  auto it = findDecoder(protocol, address);
   if(it != m_decoders.end())
     return *it;
 
@@ -92,20 +92,11 @@ void DecoderController::destroying()
 
 DecoderController::DecoderVector::iterator DecoderController::findDecoder(const Decoder& decoder)
 {
-  return findDecoder(decoder.protocol, decoder.address, decoder.longAddress);
+  return findDecoder(decoder.protocol, decoder.address);
 }
 
-DecoderController::DecoderVector::iterator DecoderController::findDecoder(DecoderProtocol protocol, uint16_t address, bool dccLongAddress)
+DecoderController::DecoderVector::iterator DecoderController::findDecoder(DecoderProtocol protocol, uint16_t address)
 {
-  if(protocol == DecoderProtocol::DCC)
-  {
-    return std::find_if(m_decoders.begin(), m_decoders.end(),
-      [address, dccLongAddress](const auto& it)
-      {
-        return it->protocol == DecoderProtocol::DCC && it->address == address && it->longAddress == dccLongAddress;
-      });
-  }
-
   return std::find_if(m_decoders.begin(), m_decoders.end(),
     [protocol, address](const auto& it)
     {

@@ -70,21 +70,9 @@ Decoder::Decoder(World& world, std::string_view _id) :
   protocol{this, "protocol", DecoderProtocol::None, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](const DecoderProtocol& value)
     {
-      if(value == DecoderProtocol::DCC && DCC::isLongAddress(address))
-        longAddress = true;
       updateEditable();
     }},
-  address{this, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](const uint16_t& value)
-    {
-      if(protocol == DecoderProtocol::DCC)
-      {
-        if(DCC::isLongAddress(value))
-          longAddress = true;
-        updateEditable();
-      }
-    }},
-  longAddress{this, "long_address", false, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  address{this, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
   emergencyStop{this, "emergency_stop", false, PropertyFlags::ReadWrite,
     [this](const bool& /*value*/)
     {
@@ -142,8 +130,6 @@ Decoder::Decoder(World& world, std::string_view _id) :
   Attributes::addEnabled(address, false);
   m_interfaceItems.add(address);
 
-  Attributes::addEnabled(longAddress, false);
-  m_interfaceItems.add(longAddress);
   Attributes::addObjectEditor(emergencyStop, false);
   m_interfaceItems.add(emergencyStop);
 
@@ -371,7 +357,6 @@ void Decoder::updateEditable(bool editable)
   Attributes::setEnabled(interface, stopped);
   Attributes::setEnabled(protocol, stopped && protocol.getSpanAttribute<DecoderProtocol>(AttributeName::Values).length() > 1);
   Attributes::setEnabled(address, stopped);
-  Attributes::setEnabled(longAddress, stopped && protocol == DecoderProtocol::DCC && !DCC::isLongAddress(address));
   Attributes::setEnabled(speedSteps, stopped);
 }
 

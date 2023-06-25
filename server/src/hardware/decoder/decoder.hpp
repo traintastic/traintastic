@@ -90,7 +90,6 @@ class Decoder : public IdObject
     ObjectProperty<DecoderController> interface;
     Property<DecoderProtocol> protocol;
     Property<uint16_t> address;
-    Property<bool> longAddress;
     Property<bool> emergencyStop;
     Property<Direction> direction;
     Method<void()> toggleDirection;

@@ -25,6 +25,7 @@
 #include "../decoder/list/decoderlisttablemodel.hpp"
 #include "../input/list/inputlist.hpp"
 #include "../output/list/outputlist.hpp"
+#include "../protocol/dcc/dcc.hpp"
 #include "../protocol/dccplusplus/kernel.hpp"
 #include "../protocol/dccplusplus/settings.hpp"
 #include "../protocol/dccplusplus/messages.hpp"
@@ -79,7 +80,7 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
 
 tcb::span<const DecoderProtocol> DCCPlusPlusInterface::decoderProtocols() const
 {
-  static constexpr std::array<DecoderProtocol, 1> protocols{DecoderProtocol::DCC};
+  static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};
   return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
@@ -282,7 +283,7 @@ void DCCPlusPlusInterface::check() const
 
 void DCCPlusPlusInterface::checkDecoder(const Decoder& decoder) const
 {
-  if(decoder.protocol == DecoderProtocol::DCC && decoder.address <= 127 && decoder.longAddress)
+  if(decoder.protocol == DecoderProtocol::DCCLong && decoder.address < DCC::addressLongStart)
     Log::log(decoder, LogMessage::C2003_DCCPLUSPLUS_DOESNT_SUPPORT_DCC_LONG_ADDRESSES_BELOW_128);
 
   if(decoder.speedSteps != Decoder::speedStepsAuto && decoder.speedSteps != dccplusplus->speedSteps)

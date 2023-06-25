@@ -46,7 +46,7 @@ class DecoderList : public ObjectList<Decoder>
     TableModelPtr getModel() final;
 
     std::shared_ptr<Decoder> getDecoder(uint16_t address) const;
-    std::shared_ptr<Decoder> getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress = false) const;
+    std::shared_ptr<Decoder> getDecoder(DecoderProtocol protocol, uint16_t address) const;
 };
 
 #endif

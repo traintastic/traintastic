@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCC_DCC_HPP
 
 #include <cstdint>
+#include <traintastic/enum/decoderprotocol.hpp>
 #include "../../../utils/inrange.hpp"
 
 namespace DCC {
@@ -37,6 +38,11 @@ constexpr uint16_t addressLongMax = 10239;
 constexpr bool isLongAddress(uint16_t address)
 {
   return inRange(address, addressLongStart, addressLongMax);
+}
+
+constexpr DecoderProtocol getProtocol(uint16_t address)
+{
+  return isLongAddress(address) ? DecoderProtocol::DCCLong : DecoderProtocol::DCCShort;
 }
 
 }

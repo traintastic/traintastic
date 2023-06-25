@@ -133,7 +133,7 @@ bool LocoNetInterface::immPacket(tcb::span<uint8_t> dccPacket, uint8_t repeat)
 
 tcb::span<const DecoderProtocol> LocoNetInterface::decoderProtocols() const
 {
-  static constexpr std::array<DecoderProtocol, 1> protocols{DecoderProtocol::DCC};
+  static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};
   return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 

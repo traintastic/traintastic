@@ -30,6 +30,7 @@
 #include "object/switchmanager.hpp"
 #include "object/feedbackmanager.hpp"
 #include "object/feedback.hpp"
+#include "../../protocol/dcc/dcc.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../input/inputcontroller.hpp"
@@ -46,14 +47,14 @@
 
 namespace ECoS {
 
-static constexpr DecoderProtocol toDecoderProtocol(LocomotiveProtocol value)
+static constexpr DecoderProtocol toDecoderProtocol(LocomotiveProtocol locomotiveProtocol, uint16_t address)
 {
-  switch(value)
+  switch(locomotiveProtocol)
   {
     case LocomotiveProtocol::DCC14:
     case LocomotiveProtocol::DCC28:
     case LocomotiveProtocol::DCC128:
-      return DecoderProtocol::DCC;
+      return DCC::getProtocol(address);
 
     case LocomotiveProtocol::MM14:
     case LocomotiveProtocol::MM27:
@@ -264,7 +265,7 @@ Locomotive* Kernel::getLocomotive(DecoderProtocol protocol, uint16_t address, ui
       auto* l = dynamic_cast<Locomotive*>(item.second.get());
       return
         l &&
-        protocol == toDecoderProtocol(l->protocol()) &&
+        protocol == toDecoderProtocol(l->protocol(), l->address()) &&
         address == l->address()  &&
         (speedSteps == 0 || speedSteps == l->speedSteps());
     });

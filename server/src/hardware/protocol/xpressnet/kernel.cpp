@@ -266,9 +266,11 @@ void Kernel::stopAllLocomotives()
 
 void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
+  const bool longAddress = decoder.protocol == DecoderProtocol::DCCLong;
+
   if(m_config.useEmergencyStopLocomotiveCommand && changes == DecoderChangeFlags::EmergencyStop && decoder.emergencyStop)
   {
-    postSend(EmergencyStopLocomotive(decoder.address, decoder.longAddress));
+    postSend(EmergencyStopLocomotive(decoder.address, longAddress));
   }
   else if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Direction | DecoderChangeFlags::Throttle | DecoderChangeFlags::SpeedSteps))
   {
@@ -277,7 +279,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       case 14:
         postSend(SpeedAndDirectionInstruction14(
           decoder.address,
-          decoder.longAddress,
+          longAddress,
           decoder.emergencyStop,
           decoder.direction,
           Decoder::throttleToSpeedStep(decoder.throttle, 14),
@@ -287,7 +289,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       case 27:
         postSend(SpeedAndDirectionInstruction27(
           decoder.address,
-          decoder.longAddress,
+          longAddress,
           decoder.emergencyStop,
           decoder.direction,
           Decoder::throttleToSpeedStep(decoder.throttle, 27)));
@@ -296,7 +298,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       case 28:
         postSend(SpeedAndDirectionInstruction28(
           decoder.address,
-          decoder.longAddress,
+          longAddress,
           decoder.emergencyStop,
           decoder.direction,
           Decoder::throttleToSpeedStep(decoder.throttle, 28)));
@@ -307,7 +309,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       default:
         postSend(SpeedAndDirectionInstruction128(
           decoder.address,
-          decoder.longAddress,
+          longAddress,
           decoder.emergencyStop,
           decoder.direction,
           Decoder::throttleToSpeedStep(decoder.throttle, 126)));
@@ -320,7 +322,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
     {
       postSend(FunctionInstructionGroup1(
         decoder.address,
-        decoder.longAddress,
+        longAddress,
         decoder.getFunctionValue(0),
         decoder.getFunctionValue(1),
         decoder.getFunctionValue(2),
@@ -331,7 +333,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
     {
       postSend(FunctionInstructionGroup2(
         decoder.address,
-        decoder.longAddress,
+        longAddress,
         decoder.getFunctionValue(5),
         decoder.getFunctionValue(6),
         decoder.getFunctionValue(7),
@@ -341,7 +343,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
     {
       postSend(FunctionInstructionGroup3(
         decoder.address,
-        decoder.longAddress,
+        longAddress,
         decoder.getFunctionValue(9),
         decoder.getFunctionValue(10),
         decoder.getFunctionValue(11),
@@ -353,7 +355,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       {
         postSend(RocoMultiMAUS::FunctionInstructionF13F20(
           decoder.address,
-          decoder.longAddress,
+          longAddress,
           decoder.getFunctionValue(13),
           decoder.getFunctionValue(14),
           decoder.getFunctionValue(15),
@@ -367,7 +369,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       {
         postSend(FunctionInstructionGroup4(
           decoder.address,
-          decoder.longAddress,
+          longAddress,
           decoder.getFunctionValue(13),
           decoder.getFunctionValue(14),
           decoder.getFunctionValue(15),
@@ -382,7 +384,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
     {
       postSend(FunctionInstructionGroup5(
         decoder.address,
-        decoder.longAddress,
+        longAddress,
         decoder.getFunctionValue(21),
         decoder.getFunctionValue(22),
         decoder.getFunctionValue(23),

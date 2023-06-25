@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,7 +47,7 @@ class HardwareThrottle : public Throttle
 
     HardwareThrottle(std::shared_ptr<ThrottleController> controller, World& world, std::string_view _id);
 
-    AcquireResult acquire(DecoderProtocol protocol, uint16_t address, bool isDCCLongAddress = false, bool steal = false);
+    AcquireResult acquire(DecoderProtocol protocol, uint16_t address, bool steal = false);
 };
 
 #endif

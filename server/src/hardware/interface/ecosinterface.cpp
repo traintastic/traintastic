@@ -71,7 +71,7 @@ ECoSInterface::ECoSInterface(World& world, std::string_view _id)
 
 tcb::span<const DecoderProtocol> ECoSInterface::decoderProtocols() const
 {
-  static constexpr std::array<DecoderProtocol, 3> protocols{DecoderProtocol::DCC, DecoderProtocol::Motorola, DecoderProtocol::Selectrix};
+  static constexpr std::array<DecoderProtocol, 4> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong, DecoderProtocol::Motorola, DecoderProtocol::Selectrix};
   return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 

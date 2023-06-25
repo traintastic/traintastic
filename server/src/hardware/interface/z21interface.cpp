@@ -89,7 +89,7 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
 
 tcb::span<const DecoderProtocol> Z21Interface::decoderProtocols() const
 {
-  static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCC, DecoderProtocol::Motorola};
+  static constexpr std::array<DecoderProtocol, 3> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong, DecoderProtocol::Motorola};
   return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
