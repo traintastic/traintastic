@@ -63,11 +63,18 @@ class DecoderController
     void restoreDecoderSpeed();
 
   public:
+    static constexpr std::pair<uint16_t, uint16_t> noAddressMinMax{std::numeric_limits<uint16_t>::max(), std::numeric_limits<uint16_t>::min()};
+
     ObjectProperty<DecoderList> decoders;
 
     //! \brief Get supported protocols
     //! \return Supported protocols, may not be empty and must be constant for the instance!
     virtual tcb::span<const DecoderProtocol> decoderProtocols() const = 0;
+
+    //! \brief Get address range for given protocol
+    //! \param[in] protocol The decoder protocol
+    //! \return Address range or \c noAddressMinMax if address isn't supported for the given protocol
+    virtual std::pair<uint16_t, uint16_t> decoderAddressMinMax(DecoderProtocol protocol) const;
 
     [[nodiscard]] bool addDecoder(Decoder& decoder);
     [[nodiscard]] bool removeDecoder(Decoder& decoder);

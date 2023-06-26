@@ -103,6 +103,12 @@ struct Attributes
     property.addAttribute(AttributeName::Max, max);
   }
 
+  template<typename T>
+  static inline void addMinMax(Property<T>& property, std::pair<T, T> range)
+  {
+    addMinMax(property, range.first, range.second);
+  }
+
   template<class T, class Unit>
   static inline void addMinMax(UnitProperty<T, Unit>& property, T min, T max, Unit unit)
   {
@@ -145,6 +151,12 @@ struct Attributes
     static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
     property.setAttribute(AttributeName::Min, min);
     property.setAttribute(AttributeName::Max, max);
+  }
+
+  template<typename T>
+  static inline void setMinMax(Property<T>& property, std::pair<T, T> range)
+  {
+    setMinMax(property, range.first, range.second);
   }
 
   template<class T, class Unit>

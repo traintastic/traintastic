@@ -50,7 +50,8 @@ Decoder::Decoder(World& world, std::string_view _id) :
       {
         assert(!value->decoderProtocols().empty());
         Attributes::setValues(protocol, value->decoderProtocols());
-        checkProtocol();
+        if(!checkProtocol())
+          protocolChanged();
         Attributes::setVisible(protocol, true);
       }
       else
@@ -70,6 +71,7 @@ Decoder::Decoder(World& world, std::string_view _id) :
   protocol{this, "protocol", DecoderProtocol::None, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](const DecoderProtocol& /*value*/)
     {
+      protocolChanged();
       updateEditable();
     }},
   address{this, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
@@ -128,6 +130,8 @@ Decoder::Decoder(World& world, std::string_view _id) :
 
   Attributes::addDisplayName(address, DisplayName::Hardware::address);
   Attributes::addEnabled(address, false);
+  Attributes::addMinMax(address, std::pair<uint16_t, uint16_t>(0, 0));
+  Attributes::addVisible(address, false);
   m_interfaceItems.add(address);
 
   Attributes::addObjectEditor(emergencyStop, false);
@@ -169,6 +173,7 @@ void Decoder::loaded()
     Attributes::setValues(protocol, interface->decoderProtocols());
     Attributes::setVisible(protocol, true);
     checkProtocol(); //! \todo log something if protocol is changed??
+    protocolChanged();
 
     if(!interface->addDecoder(*this))
     {
@@ -333,6 +338,25 @@ void Decoder::worldEvent(WorldState state, WorldEvent event)
   }
 }
 
+void Decoder::protocolChanged()
+{
+  if(interface)
+  {
+    const auto addressRange = interface->decoderAddressMinMax(protocol);
+    const bool hasAddress = addressRange.first <= addressRange.second;
+    Attributes::setVisible(address, hasAddress);
+    if(hasAddress)
+    {
+      Attributes::setMinMax(address, addressRange);
+      checkAddress();
+    }
+    else
+      Attributes::setMinMax(address, std::pair<uint16_t, uint16_t>(0, 0));
+  }
+  else
+    Attributes::setVisible(address, false);
+}
+
 bool Decoder::checkProtocol()
 {
   const auto protocols = protocol.getSpanAttribute<DecoderProtocol>(AttributeName::Values).values();
@@ -340,6 +364,18 @@ bool Decoder::checkProtocol()
   if(auto it = std::find(protocols.begin(), protocols.end(), protocol); it == protocols.end())
   {
     protocol = protocols.front();
+    return true;
+  }
+  return false;
+}
+
+bool Decoder::checkAddress()
+{
+  const auto addressMin = address.getAttribute<uint16_t>(AttributeName::Min);
+  const auto addressMax = address.getAttribute<uint16_t>(AttributeName::Max);
+  if(!inRange(address.value(), addressMin, addressMax))
+  {
+    address = std::clamp(address.value(), addressMin, addressMax);
     return true;
   }
   return false;

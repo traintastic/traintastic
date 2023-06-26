@@ -53,10 +53,17 @@ class Decoder : public IdObject
     void destroying() override;
     void worldEvent(WorldState state, WorldEvent event) final;
 
+    void protocolChanged();
+
     //! \brief Check and correct protocol
     //! If the current value isn't in the list of valid protocols the protocol is set the the first valid one.
     //! \return \c true if adjusted, \c false if unchanged
     bool checkProtocol();
+
+    //! \brief Check and correct address
+    //! If the current value isn't within the protocol address range, the value is set to the nearest valid one.
+    //! \return \c true if adjusted, \c false if unchanged
+    bool checkAddress();
 
     void updateEditable();
     void updateEditable(bool editable);

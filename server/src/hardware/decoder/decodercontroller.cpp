@@ -25,6 +25,7 @@
 #include "decoderchangeflags.hpp"
 #include "list/decoderlist.hpp"
 #include "list/decoderlisttablemodel.hpp"
+#include "../protocol/dcc/dcc.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../core/controllerlist.hpp"
@@ -38,6 +39,29 @@ DecoderController::DecoderController(IdObject& interface, DecoderListColumn colu
   decoders.setValueInternal(std::make_shared<DecoderList>(interface, decoders.name(), columns));
 
   Attributes::addDisplayName(decoders, DisplayName::Hardware::decoders);
+}
+
+std::pair<uint16_t, uint16_t> DecoderController::decoderAddressMinMax(DecoderProtocol protocol) const
+{
+  switch(protocol)
+  {
+    case DecoderProtocol::DCCShort:
+      return {DCC::addressMin, DCC::addressShortMax};
+
+    case DecoderProtocol::DCCLong:
+      return {DCC::addressMin, DCC::addressLongMax};
+
+    case DecoderProtocol::Motorola:
+      return {1, 80};
+
+    case DecoderProtocol::Selectrix:
+      return {1, 112};
+
+    case DecoderProtocol::None:
+      return noAddressMinMax;
+  }
+  assert(false);
+  return noAddressMinMax;
 }
 
 bool DecoderController::addDecoder(Decoder& decoder)
