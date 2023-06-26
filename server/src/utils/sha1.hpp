@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,12 +47,12 @@ struct Sha1
       {
       }
 
-      bool operator ==(const Digest& other)
+      bool operator ==(const Digest& other) const
       {
         return std::memcmp(this, &other, sizeof(Digest)) == 0;
       }
 
-      bool operator !=(const Digest& other)
+      bool operator !=(const Digest& other) const
       {
         return !operator ==(other);
       }
