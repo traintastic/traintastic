@@ -191,7 +191,6 @@ enum class LogMessage : uint32_t
   C1012_UNKNOWN_CLASS_X_CANT_RECREATE_OBJECT_X = LogMessageOffset::critical + 1012,
   C1013_CANT_LOAD_WORLD_SAVED_WITH_NEWER_VERSION_REQUIRES_AT_LEAST_X = LogMessageOffset::critical + 1013,
   C2001_ADDRESS_ALREADY_USED_AT_X = LogMessageOffset::critical + 2001,
-  C2003_DCCPLUSPLUS_DOESNT_SUPPORT_DCC_LONG_ADDRESSES_BELOW_128 = LogMessageOffset::critical + 2003,
   C2004_CANT_GET_FREE_SLOT = LogMessageOffset::critical + 2004,
   C9999_X = LogMessageOffset::critical + 9999,
 

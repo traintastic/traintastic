@@ -84,6 +84,13 @@ tcb::span<const DecoderProtocol> DCCPlusPlusInterface::decoderProtocols() const
   return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
+std::pair<uint16_t, uint16_t> DCCPlusPlusInterface::decoderAddressMinMax(DecoderProtocol protocol) const
+{
+  if(protocol == DecoderProtocol::DCCLong)
+    return {DCC::addressLongStart, DCC::addressLongMax}; // DCC++ considers all addresses below 128 as short.
+  return DecoderController::decoderAddressMinMax(protocol);
+}
+
 void DCCPlusPlusInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(m_kernel)
@@ -283,9 +290,6 @@ void DCCPlusPlusInterface::check() const
 
 void DCCPlusPlusInterface::checkDecoder(const Decoder& decoder) const
 {
-  if(decoder.protocol == DecoderProtocol::DCCLong && decoder.address < DCC::addressLongStart)
-    Log::log(decoder, LogMessage::C2003_DCCPLUSPLUS_DOESNT_SUPPORT_DCC_LONG_ADDRESSES_BELOW_128);
-
   if(decoder.speedSteps != Decoder::speedStepsAuto && decoder.speedSteps != dccplusplus->speedSteps)
     Log::log(decoder, LogMessage::W2003_COMMAND_STATION_DOESNT_SUPPORT_X_SPEEDSTEPS_USING_X, decoder.speedSteps.value(), dccplusplus->speedSteps.value());
 

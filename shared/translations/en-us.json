@@ -2112,14 +2112,6 @@
         "comment": ""
     },
     {
-        "term": "message:C2003",
-        "definition": "DCC++ doesn't support DCC long addresses below 128",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "message:C2004",
         "definition": "Can't get free slot",
         "context": "",
