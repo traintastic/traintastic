@@ -153,6 +153,18 @@ jobs:
       fail-fast: false
       matrix:
         config:
+        - name: "windows_x64_msvc"
+          os: windows-2022
+          generator: "Visual Studio 17 2022"
+          arch: "-A x64"
+          toolset: ""
+          target: ALL_BUILD
+          jobs: 2
+          build_type: Release
+          build_deb: false
+          defines: ""
+          ccov: false
+
         - name: "windows_x64_clang"
           os: windows-2022
           generator: "Visual Studio 17 2022"
