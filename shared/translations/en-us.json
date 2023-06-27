@@ -928,14 +928,6 @@
         "comment": ""
     },
     {
-        "term": "decoder_protocol:dcc",
-        "definition": "DCC",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "decoupler_state:activated",
         "definition": "Activated",
         "context": "",
@@ -4902,5 +4894,21 @@
     {
         "term": "status.lua:x_in_error",
         "definition": "%1 in error"
+    },
+    {
+        "term": "decoder_protocol:dcc_short",
+        "definition": "DCC (Short address)"
+    },
+    {
+        "term": "decoder_protocol:dcc_long",
+        "definition": "DCC (Long address)"
+    },
+    {
+        "term": "decoder_protocol:motorola",
+        "definition": "Motorola"
+    },
+    {
+        "term": "decoder_protocol:selectrix",
+        "definition": "Selectrix"
     }
 ]
