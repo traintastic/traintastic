@@ -267,7 +267,7 @@ Locomotive* Kernel::getLocomotive(DecoderProtocol protocol, uint16_t address, ui
         l &&
         protocol == toDecoderProtocol(l->protocol(), l->address()) &&
         address == l->address()  &&
-        (speedSteps == 0 || speedSteps == l->speedSteps());
+        speedSteps == l->speedSteps();
     });
 
   if(it != m_objects.end())

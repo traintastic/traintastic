@@ -75,6 +75,21 @@ tcb::span<const DecoderProtocol> ECoSInterface::decoderProtocols() const
   return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
+tcb::span<const uint8_t> ECoSInterface::decoderSpeedSteps(DecoderProtocol protocol) const
+{
+  static constexpr std::array<uint8_t, 3> dccSpeedSteps{{14, 28, 128}}; // ECoS doesn't support 27 steps
+
+  switch(protocol)
+  {
+    case DecoderProtocol::DCCShort:
+    case DecoderProtocol::DCCLong:
+      return dccSpeedSteps;
+
+    default:
+      return DecoderController::decoderSpeedSteps(protocol);
+  }
+}
+
 void ECoSInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(m_kernel)
