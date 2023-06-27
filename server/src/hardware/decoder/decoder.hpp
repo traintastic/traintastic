@@ -65,6 +65,11 @@ class Decoder : public IdObject
     //! \return \c true if adjusted, \c false if unchanged
     bool checkAddress();
 
+    //! \brief Check and correct speed steps
+    //! If the current value isn't a valid speed step value, the value is set to the highest valid one.
+    //! \return \c true if adjusted, \c false if unchanged
+    bool checkSpeedSteps();
+
     void updateEditable();
     void updateEditable(bool editable);
     void changed(DecoderChangeFlags changes, uint32_t functionNumber = 0);

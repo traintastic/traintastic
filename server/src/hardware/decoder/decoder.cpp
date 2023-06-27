@@ -146,6 +146,8 @@ Decoder::Decoder(World& world, std::string_view _id) :
 
   Attributes::addDisplayName(speedSteps, DisplayName::Hardware::speedSteps);
   Attributes::addEnabled(speedSteps, false);
+  Attributes::addValues(speedSteps, tcb::span<const uint8_t>{});
+  Attributes::addVisible(speedSteps, false);
   m_interfaceItems.add(speedSteps);
 
   Attributes::addMinMax(throttle, throttleMin, throttleMax);
@@ -342,6 +344,7 @@ void Decoder::protocolChanged()
 {
   if(interface)
   {
+    // address:
     const auto addressRange = interface->decoderAddressMinMax(protocol);
     const bool hasAddress = addressRange.first <= addressRange.second;
     Attributes::setVisible(address, hasAddress);
@@ -352,9 +355,23 @@ void Decoder::protocolChanged()
     }
     else
       Attributes::setMinMax(address, std::pair<uint16_t, uint16_t>(0, 0));
+
+    // speed steps:
+    const auto values = interface->decoderSpeedSteps(protocol);
+    Attributes::setVisible(speedSteps, !values.empty());
+    if(!values.empty())
+    {
+      Attributes::setValues(speedSteps, values);
+      checkSpeedSteps();
+    }
+    else
+      Attributes::setValues(speedSteps, tcb::span<const uint8_t>{});
   }
   else
+  {
     Attributes::setVisible(address, false);
+    Attributes::setVisible(speedSteps, false);
+  }
 }
 
 bool Decoder::checkProtocol()
@@ -381,6 +398,17 @@ bool Decoder::checkAddress()
   return false;
 }
 
+bool Decoder::checkSpeedSteps()
+{
+  const auto values = speedSteps.getSpanAttribute<uint8_t>(AttributeName::Values).values();
+  if(auto it = std::find(values.begin(), values.end(), speedSteps); it == values.end())
+  {
+    speedSteps = values.back();
+    return true;
+  }
+  return false;
+}
+
 void Decoder::updateEditable()
 {
   updateEditable(contains(m_world.state.value(), WorldState::Edit));
@@ -393,7 +421,7 @@ void Decoder::updateEditable(bool editable)
   Attributes::setEnabled(interface, stopped);
   Attributes::setEnabled(protocol, stopped && protocol.getSpanAttribute<DecoderProtocol>(AttributeName::Values).length() > 1);
   Attributes::setEnabled(address, stopped);
-  Attributes::setEnabled(speedSteps, stopped);
+  Attributes::setEnabled(speedSteps, stopped && speedSteps.getSpanAttribute<uint8_t>(AttributeName::Values).length() > 1);
 }
 
 void Decoder::changed(DecoderChangeFlags changes, uint32_t functionNumber)

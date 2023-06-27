@@ -64,6 +64,31 @@ std::pair<uint16_t, uint16_t> DecoderController::decoderAddressMinMax(DecoderPro
   return noAddressMinMax;
 }
 
+tcb::span<const uint8_t> DecoderController::decoderSpeedSteps(DecoderProtocol protocol) const
+{
+  static constexpr std::array<uint8_t, 4> dccSpeedSteps{{14, 27, 28, 128}};
+  static constexpr std::array<uint8_t, 3> motorolaSpeedSteps{{14, 27, 28}};
+  static constexpr std::array<uint8_t, 1> selectrixSpeedSteps{{32}};
+
+  switch(protocol)
+  {
+    case DecoderProtocol::DCCShort:
+    case DecoderProtocol::DCCLong:
+      return dccSpeedSteps;
+
+    case DecoderProtocol::Motorola:
+      return motorolaSpeedSteps;
+
+    case DecoderProtocol::Selectrix:
+      return selectrixSpeedSteps;
+
+    case DecoderProtocol::None:
+      return {};
+  }
+  assert(false);
+  return {};
+}
+
 bool DecoderController::addDecoder(Decoder& decoder)
 {
   if(findDecoder(decoder) != m_decoders.end())

@@ -30,7 +30,7 @@
 #include "../../core/objectproperty.hpp"
 
 #ifdef interface
-  #undef interface // interface is defined in combaseapi.h
+#undef interface // interface is defined in combaseapi.h
 #endif
 
 class IdObject;
@@ -75,6 +75,11 @@ class DecoderController
     //! \param[in] protocol The decoder protocol
     //! \return Address range or \c noAddressMinMax if address isn't supported for the given protocol
     virtual std::pair<uint16_t, uint16_t> decoderAddressMinMax(DecoderProtocol protocol) const;
+
+    //! \brief Get speed step options for given protocol
+    //! \param[in] protocol The decoder protocol
+    //! \return Speed step options for the given protocol
+    virtual tcb::span<const uint8_t> decoderSpeedSteps(DecoderProtocol protocol) const;
 
     [[nodiscard]] bool addDecoder(Decoder& decoder);
     [[nodiscard]] bool removeDecoder(Decoder& decoder);
