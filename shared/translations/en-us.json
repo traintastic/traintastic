@@ -3040,14 +3040,6 @@
         "comment": ""
     },
     {
-        "term": "message:W2003",
-        "definition": "Command station doesn't support %1 speedsteps using %2",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "message:W2004",
         "definition": "Input address %1 is invalid",
         "context": "",

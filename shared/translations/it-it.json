@@ -3048,14 +3048,6 @@
         "comment": ""
     },
     {
-        "term": "message:W2003",
-        "definition": "La centralina di comando non supporta %1 passi velocit\u00e0, utilizzo %2",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "message:W2004",
         "definition": "Input indirizzo %1 non valido",
         "context": "",

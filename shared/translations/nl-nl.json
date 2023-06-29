@@ -3048,14 +3048,6 @@
         "comment": ""
     },
     {
-        "term": "message:W2003",
-        "definition": "Commando station ondersteunt %1 speedsteps niet met %2",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "message:W2004",
         "definition": "Ingang adres %1 is ongeldig",
         "context": "",
