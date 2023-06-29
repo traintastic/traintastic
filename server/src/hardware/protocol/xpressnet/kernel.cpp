@@ -304,15 +304,17 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
           Decoder::throttleToSpeedStep(decoder.throttle, 28)));
         break;
 
-      case 126:
       case 128:
-      default:
         postSend(SpeedAndDirectionInstruction128(
           decoder.address,
           longAddress,
           decoder.emergencyStop,
           decoder.direction,
           Decoder::throttleToSpeedStep(decoder.throttle, 126)));
+        break;
+
+      default:
+        assert(false);
         break;
     }
   }
