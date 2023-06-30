@@ -52,7 +52,7 @@ std::pair<uint16_t, uint16_t> DecoderController::decoderAddressMinMax(DecoderPro
       return {DCC::addressMin, DCC::addressLongMax};
 
     case DecoderProtocol::Motorola:
-      return {1, 80};
+      return {1, 255};
 
     case DecoderProtocol::Selectrix:
       return {1, 112};
