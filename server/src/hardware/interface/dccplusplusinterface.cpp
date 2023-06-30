@@ -88,7 +88,7 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
         // update speedsteps of all decoders, DCC++ only has a global speedsteps setting
         const auto values = decoderSpeedSteps(DecoderProtocol::DCCShort); // identical for DCCLong
         assert(values.size() == 1);
-        for(auto& decoder : *decoders)
+        for(const auto& decoder : *decoders)
         {
           Attributes::setValues(decoder->speedSteps, values);
           decoder->speedSteps.setValueInternal(values.front());
@@ -114,6 +114,7 @@ std::pair<uint16_t, uint16_t> DCCPlusPlusInterface::decoderAddressMinMax(Decoder
 
 tcb::span<const uint8_t> DCCPlusPlusInterface::decoderSpeedSteps(DecoderProtocol protocol) const
 {
+  (void)protocol; // silence unused warning for release build
   assert(protocol == DecoderProtocol::DCCShort || protocol == DecoderProtocol::DCCLong);
   const auto& speedStepValues = DCCPlusPlus::Settings::speedStepValues;
   // find value in array so we can create a span, using a span of a variable won't work due to the compare with prevous value in the attribute setter
