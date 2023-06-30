@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,44 +21,184 @@
  */
 
 #include "train.hpp"
+#include "trainlist.hpp"
+#include "trainvehiclelist.hpp"
 #include "../world/world.hpp"
+#include "trainblockstatus.hpp"
 #include "trainlisttablemodel.hpp"
 #include "../core/attributes.hpp"
+#include "../core/method.tpp"
+#include "../core/objectproperty.tpp"
+#include "../core/objectvectorproperty.tpp"
+#include "../core/eventloop.hpp"
+#include "../board/tile/rail/blockrailtile.hpp"
+#include "../vehicle/rail/poweredrailvehicle.hpp"
+#include "../hardware/decoder/decoder.hpp"
+#include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
+
+CREATE_IMPL(Train)
+
+static inline bool isPowered(const RailVehicle& vehicle)
+{
+  return dynamic_cast<const PoweredRailVehicle*>(&vehicle);
+}
 
 Train::Train(World& world, std::string_view _id) :
   IdObject(world, _id),
+  m_speedTimer{EventLoop::ioContext},
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
-  lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadOnly | PropertyFlags::Store},
-  direction{this, "direction", Direction::Forward, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
+  lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  overrideLength{this, "override_length", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
+    [this](bool value)
+    {
+      Attributes::setEnabled(lob, value);
+      if(!value)
+        updateLength();
+    }},
+  direction{this, "direction", Direction::Forward, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
+    [this](Direction value)
+    {
+      // update train direction from the block perspective:
+      for(auto& status : *blocks)
+        status->direction.setValueInternal(!status->direction.value());
+
+      for(const auto& vehicle : m_poweredVehicles)
+        vehicle->setDirection(value);
+      updateEnabled();
+    },
+    [](Direction& value)
+    {
+      // only accept valid direction values, don't accept Unknown direction
+      return value == Direction::Forward || value == Direction::Reverse;
+    }},
+  isStopped{this, "is_stopped", true, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   speed{*this, "speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
-  speedMax{*this, "speed_max", 120, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::Store},
-  throttleSpeed{*this, "throttle_speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::StoreState},
-  weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadOnly | PropertyFlags::Store},
+  speedMax{*this, "speed_max", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
+  throttleSpeed{*this, "throttle_speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
+    [this](double value, SpeedUnit unit)
+    {
+      const double currentSpeed = speed.getValue(unit);
+
+      emergencyStop.setValueInternal(false);
+
+      if(value > currentSpeed) // Accelerate
+      {
+        if(m_speedState == SpeedState::Accelerate)
+          return;
+
+        m_speedTimer.cancel();
+        m_speedState = SpeedState::Accelerate;
+        updateSpeed();
+      }
+      else if(value < currentSpeed) // brake
+      {
+        if(m_speedState == SpeedState::Braking)
+          return;
+
+        m_speedTimer.cancel();
+        m_speedState = SpeedState::Braking;
+        updateSpeed();
+      }
+    }},
+  stop{*this, "stop", MethodFlags::ScriptCallable,
+    [this]()
+    {
+      throttleSpeed.setValue(0);
+    }},
+  emergencyStop{this, "emergency_stop", true, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadWrite,
+    [this](bool value)
+    {
+      if(value)
+      {
+        m_speedState = SpeedState::Idle;
+        m_speedTimer.cancel();
+        throttleSpeed.setValueInternal(0);
+        speed.setValueInternal(0);
+        isStopped.setValueInternal(true);
+        updateEnabled();
+      }
+
+      if(active)
+      {
+        //Propagate to all vehicles in this Train
+        for(const auto& vehicle : m_poweredVehicles)
+          vehicle->setEmergencyStop(value);
+      }
+    }},
+  weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  overrideWeight{this, "override_weight", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
+    [this](bool value)
+    {
+      Attributes::setEnabled(weight, value);
+      if(!value)
+        updateWeight();
+    }},
   vehicles{this, "vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
+  powered{this, "powered", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
+  active{this, "active", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly,
+    [this](bool)
+    {
+      updateSpeed();
+    },
+    std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
+  mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+  blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
-  vehicles.setValueInternal(std::make_shared<RailVehicleList>(*this, vehicles.name()));
-
-  const bool editable = contains(m_world.state.value(), WorldState::Edit);
+  vehicles.setValueInternal(std::make_shared<TrainVehicleList>(*this, vehicles.name()));
 
   Attributes::addDisplayName(name, DisplayName::Object::name);
-  Attributes::addEnabled(name, editable);
+  Attributes::addEnabled(name, false);
   m_interfaceItems.add(name);
+  Attributes::addEnabled(lob, overrideLength);
   m_interfaceItems.add(lob);
+  m_interfaceItems.add(overrideLength);
+  Attributes::addEnabled(direction, false);
   Attributes::addValues(direction, DirectionValues);
   Attributes::addObjectEditor(direction, false);
   m_interfaceItems.add(direction);
+
+  Attributes::addObjectEditor(isStopped, false);
+  m_interfaceItems.add(isStopped);
+
   Attributes::addObjectEditor(speed, false);
+  Attributes::addMinMax(speed, 0., 0., SpeedUnit::KiloMeterPerHour);
   m_interfaceItems.add(speed);
-  Attributes::addEnabled(speedMax, editable);
   m_interfaceItems.add(speedMax);
+  Attributes::addMinMax(throttleSpeed, 0., 0., SpeedUnit::KiloMeterPerHour);
+  Attributes::addEnabled(throttleSpeed, false);
   Attributes::addObjectEditor(throttleSpeed, false);
   m_interfaceItems.add(throttleSpeed);
+
+  Attributes::addEnabled(stop, false);
+  Attributes::addObjectEditor(stop, false);
+  m_interfaceItems.add(stop);
+
+  Attributes::addEnabled(emergencyStop, false);
+  Attributes::addObjectEditor(emergencyStop, false);
+  m_interfaceItems.add(emergencyStop);
+
+  Attributes::addEnabled(weight, overrideWeight);
   m_interfaceItems.add(weight);
+  m_interfaceItems.add(overrideWeight);
   m_interfaceItems.add(vehicles);
+
+  Attributes::addEnabled(active, true);
+  m_interfaceItems.add(active);
+
+  Attributes::addValues(mode, trainModeValues);
+  m_interfaceItems.add(mode);
+
+  Attributes::addObjectEditor(blocks, false);
+  m_interfaceItems.add(blocks);
+
+  Attributes::addObjectEditor(powered, false);
+  m_interfaceItems.add(powered);
   Attributes::addDisplayName(notes, DisplayName::Object::notes);
   m_interfaceItems.add(notes);
+
+  updateEnabled();
 }
 
 void Train::addToWorld()
@@ -73,12 +213,209 @@ void Train::destroying()
   IdObject::destroying();
 }
 
+void Train::loaded()
+{
+  IdObject::loaded();
+
+  Attributes::setEnabled(lob, overrideLength);
+  Attributes::setEnabled(weight, overrideWeight);
+
+  vehiclesChanged();
+}
+
 void Train::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);
 
-  const bool editable = contains(state, WorldState::Edit);
+  updateEnabled();
+}
 
-  Attributes::setEnabled(name, editable);
-  Attributes::setEnabled(speedMax, editable);
+void Train::setSpeed(const double kmph)
+{
+  for(const auto& vehicle : m_poweredVehicles)
+    vehicle->setSpeed(kmph);
+  speed.setValueInternal(convertUnit(kmph, SpeedUnit::KiloMeterPerHour, speed.unit()));
+  updateEnabled();
+}
+
+void Train::updateSpeed()
+{
+  if(m_speedState == SpeedState::Idle)
+    return;
+
+  if(m_speedState == SpeedState::Accelerate && !active)
+    return;
+
+  const double targetSpeed = throttleSpeed.getValue(SpeedUnit::MeterPerSecond);
+  double currentSpeed = speed.getValue(SpeedUnit::MeterPerSecond);
+
+  double acceleration = 0;
+  if(m_speedState == SpeedState::Accelerate)
+  {
+    //! \todo add realistic acceleration
+    acceleration = 1; // m/s^2
+  }
+  else if(m_speedState == SpeedState::Braking)
+  {
+    //! \todo add realistic braking
+    acceleration = -0.5; // m/s^2
+  }
+  else
+    assert(false);
+
+  currentSpeed += acceleration * 0.1; // x 100ms
+
+  if((m_speedState == SpeedState::Accelerate && currentSpeed >= targetSpeed) ||
+      (m_speedState == SpeedState::Braking && currentSpeed <= targetSpeed))
+  {
+    m_speedState = SpeedState::Idle;
+    setSpeed(convertUnit(targetSpeed, SpeedUnit::MeterPerSecond, SpeedUnit::KiloMeterPerHour));
+    currentSpeed = targetSpeed;
+  }
+  else
+  {
+    using namespace std::literals;
+    setSpeed(convertUnit(currentSpeed, SpeedUnit::MeterPerSecond, SpeedUnit::KiloMeterPerHour));
+    m_speedTimer.expires_after(100ms);
+    m_speedTimer.async_wait(
+      [this](const boost::system::error_code& ec)
+      {
+        if(!ec)
+          updateSpeed();
+      });
+  }
+
+  const bool currentValue = isStopped;
+  isStopped.setValueInternal(m_speedState == SpeedState::Idle && almostZero(currentSpeed) && almostZero(targetSpeed));
+  if(currentValue != isStopped)
+    updateEnabled();
+}
+
+void Train::vehiclesChanged()
+{
+  updateLength();
+  updateWeight();
+  updatePowered();
+  updateSpeedMax();
+}
+
+void Train::updateLength()
+{
+  if(overrideLength)
+    return;
+
+  double mm = 0;
+  for(const auto& vehicle : *vehicles)
+    mm += vehicle->lob.getValue(LengthUnit::MilliMeter);
+  lob.setValueInternal(convertUnit(mm, LengthUnit::MilliMeter, lob.unit()));
+}
+
+void Train::updateWeight()
+{
+  if(overrideWeight)
+    return;
+
+  double ton = 0;
+  for(const auto& vehicle : *vehicles)
+    ton += vehicle->totalWeight.getValue(WeightUnit::Ton);
+  weight.setValueInternal(convertUnit(ton, WeightUnit::Ton, weight.unit()));
+}
+
+void Train::updatePowered()
+{
+  m_poweredVehicles.clear();
+  for(const auto& vehicle : *vehicles)
+    if(auto poweredVehicle = std::dynamic_pointer_cast<PoweredRailVehicle>(vehicle))
+      m_poweredVehicles.emplace_back(poweredVehicle);
+  powered.setValueInternal(!m_poweredVehicles.empty());
+}
+
+void Train::updateSpeedMax()
+{
+  if(!vehicles->empty() && powered)
+  {
+    const auto itEnd = vehicles->end();
+    auto it = vehicles->begin();
+    double kmph = (*it)->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+    for(; it != itEnd; ++it)
+    {
+      const double v = (*it)->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+      if((v > 0 || isPowered(**it)) && v < kmph)
+        kmph = v;
+    }
+    speedMax.setValueInternal(convertUnit(kmph, SpeedUnit::KiloMeterPerHour, speedMax.unit()));
+  }
+  else
+    speedMax.setValueInternal(0);
+
+  speed.setUnit(speedMax.unit());
+  Attributes::setMax(speed, speedMax.value(), speedMax.unit());
+  throttleSpeed.setUnit(speedMax.unit());
+  Attributes::setMax(throttleSpeed, speedMax.value(), speedMax.unit());
+}
+
+void Train::updateEnabled()
+{
+  const bool stopped = isStopped;
+  const bool editable = contains(m_world.state, WorldState::Edit);
+
+  Attributes::setEnabled(name, stopped && editable);
+  Attributes::setEnabled(direction, stopped && powered);
+  Attributes::setEnabled(throttleSpeed, powered);
+  Attributes::setEnabled(stop, powered);
+  Attributes::setEnabled(emergencyStop, powered);
+  Attributes::setEnabled(vehicles->add, stopped);
+  Attributes::setEnabled(vehicles->remove, stopped);
+  Attributes::setEnabled(vehicles->move, stopped);
+  Attributes::setEnabled(vehicles->reverse, stopped);
+}
+
+bool Train::setTrainActive(bool val)
+{
+  auto self = this->shared_ptr<Train>();
+
+  if(val)
+  {
+    //To activate a train, ensure all vehicles are stopped and free
+    for(const auto& vehicle : *vehicles)
+    {
+      assert(vehicle->activeTrain.value() != self);
+      if(vehicle->activeTrain.value())
+      {
+        return false; //Not free
+      }
+
+      if(auto decoder = vehicle->decoder.value(); decoder && !almostZero(decoder->throttle.value()))
+      {
+        return false; //Already running
+      }
+    }
+
+    //Now really activate
+    //Register this train as activeTrain
+    for(const auto& vehicle : *vehicles)
+    {
+      vehicle->activeTrain.setValueInternal(self);
+    }
+
+    //Sync Emergency Stop state
+    const bool stopValue = emergencyStop;
+    for(const auto& vehicle : m_poweredVehicles)
+      vehicle->setEmergencyStop(stopValue);
+  }
+  else
+  {
+    //To deactivate a Train it must be stopped first
+    if(!isStopped)
+      return false;
+
+    //Deactivate all vehicles
+    for(const auto& vehicle : *vehicles)
+    {
+      assert(vehicle->activeTrain.value() == self);
+      vehicle->activeTrain.setValueInternal(nullptr);
+    }
+  }
+
+  return true;
 }

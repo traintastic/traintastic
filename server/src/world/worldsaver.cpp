@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <version.hpp>
 #include "world.hpp"
+#include "../core/stateobject.hpp"
 #include "../utils/sha1.hpp"
 #include "ctwwriter.hpp"
 
@@ -62,14 +63,24 @@ WorldSaver::WorldSaver(const World& world)
 
   {
     json objects = json::array();
+    json stateObjects = json::array();
 
     for(const auto& it : world.m_objects)
     {
       if(ObjectPtr object = it.second.lock())
       {
-        json data = saveObject(object);
-        if(!data.empty())
-          objects.push_back(std::move(data));
+        if(auto stateObject = std::dynamic_pointer_cast<StateObject>(object))
+        {
+          json data = saveStateObject(stateObject);
+          if(!data.empty())
+            stateObjects.push_back(std::move(data));
+        }
+        else
+        {
+          json data = saveObject(object);
+          if(!data.empty())
+            objects.push_back(std::move(data));
+        }
       }
     }
 
@@ -80,6 +91,7 @@ WorldSaver::WorldSaver(const World& world)
       });
 
     m_data["objects"] = objects;
+    m_state["objects"] = stateObjects;
     m_state["states"] = m_states;
   }
 }
@@ -127,6 +139,13 @@ json WorldSaver::saveObject(const ObjectPtr& object)
     m_states[object->getObjectId()] = objectState;
 
   return objectData;
+}
+
+json WorldSaver::saveStateObject(const std::shared_ptr<StateObject>& object)
+{
+  json objectState = json::object();
+  static_cast<Object&>(*object).save(*this, objectState, objectState);
+  return objectState;
 }
 
 void WorldSaver::deleteFile(std::filesystem::path filename)

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,15 @@ MethodAction::MethodAction(Method& method, QObject* parent) :
   m_forceDisabled{false}
 {
   init();
+}
+
+MethodAction::MethodAction(Method& method, std::function<void()> triggered, QObject* parent)
+  : QAction(parent)
+  , m_method{method}
+  , m_forceDisabled{false}
+{
+  init(false);
+  connect(this, &QAction::triggered, std::move(triggered));
 }
 
 MethodAction::MethodAction(const QIcon &icon, Method& method, QObject* parent) :

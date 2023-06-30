@@ -35,6 +35,18 @@
       return obj; \
     }
 
+#define CREATE_DEF(T) \
+  public: \
+    static std::shared_ptr<T> create(World& world, std::string_view _id);
+
+#define CREATE_IMPL(T) \
+std::shared_ptr<T> T::create(World& world, std::string_view _id) \
+{ \
+  auto obj = std::make_shared<T>(world, _id); \
+  obj->addToWorld(); \
+  return obj; \
+}
+
 #define DEFAULT_ID(id) \
    public: \
     static constexpr std::string_view defaultId = id;

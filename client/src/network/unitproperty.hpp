@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,8 @@
 
 #include "property.hpp"
 
+template<typename T> struct EnumName;
+
 class UnitProperty : public Property
 {
   Q_OBJECT
@@ -41,6 +43,14 @@ class UnitProperty : public Property
 
     const QString& unitName() const { return m_unitName; }
     qint64 unitValue() const { return m_unitValue; }
+
+    template<typename T>
+    T unit() const
+    {
+      static_assert(std::is_enum_v<T>);
+      assert(EnumName<T>::value == m_unitName);
+      return static_cast<T>(unitValue());
+    }
 
     void setUnitValue(qint64 value);
 };

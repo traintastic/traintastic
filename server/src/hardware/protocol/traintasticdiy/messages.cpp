@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,19 @@
 #include "../../../utils/tohex.hpp"
 
 namespace TraintasticDIY {
+
+static constexpr std::string_view toString(ThrottleSubUnsub::Action action)
+{
+  switch(action)
+  {
+    case ThrottleSubUnsub::Unsubscribe:
+      return "unsub";
+
+    case ThrottleSubUnsub::Subscribe:
+      return "sub";
+  }
+  return {};
+}
 
 Checksum calcChecksum(const Message& message)
 {
@@ -84,11 +97,12 @@ std::string toString(const Message& message)
       s.append(" state=").append(::toString(setOutputState.state));
       break;
     }
-    case OpCode::ThrottleUnsubscribe:
+    case OpCode::ThrottleSubUnsub:
     {
-      const auto& throttleUnsubscribe = static_cast<const ThrottleUnsubscribe&>(message);
-      s.append(" throttle=").append(std::to_string(throttleUnsubscribe.throttleId()));
-      s.append(" address=").append(std::to_string(throttleUnsubscribe.address()));
+      const auto& throttleSubUnsub = static_cast<const ThrottleSubUnsub&>(message);
+      s.append(" throttle=").append(std::to_string(throttleSubUnsub.throttleId()));
+      s.append(" address=").append(std::to_string(throttleSubUnsub.address()));
+      s.append(" action=").append(toString(throttleSubUnsub.action()));
       break;
     }
     case OpCode::ThrottleSetFunction:

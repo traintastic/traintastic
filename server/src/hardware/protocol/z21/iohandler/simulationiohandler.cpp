@@ -86,7 +86,7 @@ bool SimulationIOHandler::send(const Message& message)
           }
           break;
 
-        case 0x80:
+        case LAN_X_SET_STOP:
           if(message == LanXSetStop())
           {
             const bool changed = !m_emergencyStop;

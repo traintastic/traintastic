@@ -1,9 +1,9 @@
 /**
- * server/src/lua/object.hpp - Lua object wrapper
+ * server/src/lua/object.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,34 +24,14 @@
 #define TRAINTASTIC_SERVER_LUA_OBJECT_HPP
 
 #include <lua.hpp>
-#include <memory>
 #include "../core/objectptr.hpp"
-#include "../core/abstractobjectlist.hpp"
 
-namespace Lua {
+namespace Lua::Object {
 
-class Object
-{
-  private:
-    static int __gc(lua_State* L);
-    static int __index(lua_State* L);
-    static int __newindex(lua_State* L);
-    static int __len(lua_State* L);
+void registerTypes(lua_State* L);
 
-  public:
-    static constexpr char const* metaTableName = "object";
-    static constexpr char const* metaTableNameList = "object_list";
-
-    static ObjectPtr check(lua_State* L, int index);
-    static std::shared_ptr<AbstractObjectList> checkList(lua_State* L, int index);
-
-    static ObjectPtr test(lua_State* L, int index);
-    static std::shared_ptr<AbstractObjectList> testList(lua_State* L, int index);
-
-    static void push(lua_State* L, const ObjectPtr& value);
-
-    static void registerType(lua_State* L);
-};
+void push(lua_State* L, ::Object& value);
+void push(lua_State* L, const ObjectPtr& value);
 
 }
 

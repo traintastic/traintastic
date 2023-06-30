@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -149,7 +149,7 @@ TEMPLATE_TEST_CASE("Lua::push<>", "[lua][lua-push]", World)
   lua_State* L = luaL_newstate();
   const int top = lua_gettop(L);
 
-  Lua::Object::registerType(L);
+  Lua::Object::registerTypes(L);
 
   Lua::push(L, World::create());
   REQUIRE(lua_type(L, -1) == LUA_TUSERDATA);

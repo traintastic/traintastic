@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,18 +25,21 @@
 
 #include "railtile.hpp"
 #include "../../map/node.hpp"
+#include "../../../core/method.hpp"
 #include "../../../core/objectproperty.hpp"
 #include "../../../core/vectorproperty.hpp"
 #include "../../../enum/blockstate.hpp"
 #include "../../../hardware/input/map/blockinputmap.hpp"
 
+class Train;
+class TrainBlockStatus;
 class BlockInputMapItem;
 
 class BlockRailTile : public RailTile
 {
   CLASS_ID("board_tile.rail.block")
   DEFAULT_ID("block")
-  CREATE(BlockRailTile)
+  CREATE_DEF(BlockRailTile)
 
   private:
     Node m_node;
@@ -46,9 +49,11 @@ class BlockRailTile : public RailTile
   protected:
     void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
     void loaded() final;
+    void destroying() final;
     void setRotate(TileRotate value) final;
 
     void updateState();
+    void updateTrainMethodEnabled();
     void setState(BlockState value);
 
   public:
@@ -58,6 +63,12 @@ class BlockRailTile : public RailTile
     ObjectProperty<BlockInputMap> inputMap;
     Property<BlockState> state;
     VectorProperty<SensorState> sensorStates;
+    ObjectVectorProperty<TrainBlockStatus> trains;
+    Method<void(std::shared_ptr<Train>)> assignTrain;
+    Method<void()> removeTrain;
+    Method<void()> flipTrain;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onTrainAssigned;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onTrainRemoved;
 
     BlockRailTile(World& world, std::string_view _id);
 

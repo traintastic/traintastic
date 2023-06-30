@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,11 +39,11 @@ class ItemsEditWidget : public AbstractEditWidget
 
   private:
     ObjectVectorProperty* m_propertyItems;
-    Method* m_methodAdd;
-    Method* m_methodRemove;
+    Method* m_methodCreate;
+    Method* m_methodDelete;
     Method* m_methodMoveUp;
     Method* m_methodMoveDown;
-    MethodAction* m_actionRemove;
+    MethodAction* m_actionDelete;
     MethodAction* m_actionMoveUp;
     MethodAction* m_actionMoveDown;
     QStackedWidget* m_stack;

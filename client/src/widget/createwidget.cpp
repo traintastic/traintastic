@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,7 +40,7 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
 
   if(classId == "command_station_list")
     return new ObjectListWidget(object, parent); // todo remove
-  else if(classId == "decoder_list")
+  else if(classId == "decoder_list" || classId == "list.train")
     return new ThrottleObjectListWidget(object, parent); // todo remove
   else if(classId == "controller_list")
     return new ObjectListWidget(object, parent); // todo remove

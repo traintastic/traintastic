@@ -28,12 +28,14 @@
 #include <QWheelEvent>
 #include <QPainter>
 #include <traintastic/enum/decoderfunctionfunction.hpp>
+#include <traintastic/enum/speedunit.hpp>
 #include "../../network/connection.hpp"
 #include "../../network/object.hpp"
 #include "../../network/objectproperty.hpp"
 #include "../../network/abstractproperty.hpp"
 #include "../../network/objectvectorproperty.hpp"
 #include "../../network/method.hpp"
+#include "../../network/unitproperty.hpp"
 #include "throttledirectionbutton.hpp"
 #include "throttlefunctionbutton.hpp"
 #include "throttlestopbutton.hpp"
@@ -43,8 +45,6 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
   : QWidget(parent)
   , m_object{std::move(object)}
   , m_functionsRequestId{Connection::invalidRequestId}
-  , m_speed{nullptr}
-  , m_throttle{nullptr}
   , m_toggleDirection{m_object->getMethod("toggle_direction")}
   , m_nameLabel{new QLabel("", this)}
   , m_functionGrid{new QGridLayout()}
@@ -63,11 +63,39 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
     connect(name, &AbstractProperty::valueChangedString, m_nameLabel, &QLabel::setText);
   }
 
-  if((m_speed = m_object->getProperty("speed")))
+  if((m_speed = m_object->getUnitProperty("speed")) &&
+    (m_throttleSpeed = m_object->getUnitProperty("throttle_speed"))) // train
   {
-    //! \todo m_speed for locomotive / train
+    m_speedoMeter->setUnit("km/h");
+    m_speedoMeter->setSpeedMax(m_speed->getAttributeDouble(AttributeName::Max, 0));
+    m_speedoMeter->setSpeed(m_speed->toDouble());
+    m_speedoMeter->setSpeedTarget(m_throttleSpeed->toDouble());
+
+    connect(m_speed, &AbstractProperty::valueChangedDouble, this,
+      [this](double value)
+      {
+        m_speedoMeter->setSpeed(value);
+      });
+    connect(m_speed, &InterfaceItem::attributeChanged, this,
+      [this](AttributeName name, const QVariant& value)
+      {
+        switch(name)
+        {
+          case AttributeName::Max:
+            m_speedoMeter->setSpeedMax(value.toDouble());
+            break;
+
+          default:
+            break;
+        }
+      });
+    connect(m_throttleSpeed, &AbstractProperty::valueChangedDouble, this,
+      [this](double value)
+      {
+        m_speedoMeter->setSpeedTarget(value);
+      });
   }
-  else if((m_throttle = m_object->getProperty("throttle")))
+  else if((m_throttle = m_object->getProperty("throttle"))) // decoder
   {
     m_speedoMeter->setUnit("%");
     m_speedoMeter->setSpeedMax(m_throttle->getAttributeDouble(AttributeName::Max, 0) * 100);
@@ -238,7 +266,28 @@ void ThrottleWidget::changeSpeed(bool up)
   if(up && m_emergencyStop && m_emergencyStop->toBool())
     return;
 
-  if(m_throttle)
+  if(m_throttleSpeed)
+  {
+    double throttle = m_throttleSpeed->toDouble();
+    double step = 0;
+    switch(m_throttleSpeed->unit<SpeedUnit>())
+    {
+      case SpeedUnit::KiloMeterPerHour:
+        step = ((throttle < 40) || (!up && qFuzzyCompare(throttle, 40))) ? 2 : 5;
+        break;
+
+      case SpeedUnit::MilePerHour:
+        step = ((throttle < 30) || (!up && qFuzzyCompare(throttle, 30))) ? 2 : 5;
+        break;
+
+      case SpeedUnit::MeterPerSecond:
+        step = ((throttle < 10) || (!up && qFuzzyCompare(throttle, 10))) ? 0.5 : 1;
+        break;
+    }
+    throttle += up ? step : -step;
+    m_throttleSpeed->setValueDouble(std::clamp(throttle, m_throttleSpeed->getAttributeDouble(AttributeName::Min, 0), m_throttleSpeed->getAttributeDouble(AttributeName::Max, 1)));
+  }
+  else if(m_throttle)
   {
     static constexpr double throttleStep = 0.02; // 2%
     static constexpr double throttleStepHalf = throttleStep / 2;

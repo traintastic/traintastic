@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +27,9 @@
 #include "../../utils/makearray.hpp"
 
 #include "locomotive.hpp"
-#include "freightcar.hpp"
+#include "multipleunit.hpp"
+#include "freightwagon.hpp"
+#include "tankwagon.hpp"
 
 struct RailVehicles
 {
@@ -35,7 +37,9 @@ struct RailVehicles
 
   static constexpr auto classList = makeArray(
     Locomotive::classId,
-    FreightCar::classId
+    MultipleUnit::classId,
+    FreightWagon::classId,
+    TankWagon::classId
   );
 
   static std::shared_ptr<RailVehicle> create(World& world, std::string_view classId, std::string_view id);

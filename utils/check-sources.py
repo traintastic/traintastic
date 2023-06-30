@@ -74,7 +74,7 @@ def check_sources(path, fix=False):
             is_cpp = filename.endswith('.cpp')
             if is_hpp or is_cpp:
                 filepath = os.path.join(subdir, filename)
-                with open(filepath, 'r') as f:
+                with open(filepath, 'r', encoding='utf8') as f:
                     text = text_org = f.read()
                 filepath_project = os.path.relpath(filepath, PROJECT_ROOT)
 

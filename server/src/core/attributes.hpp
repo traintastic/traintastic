@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,9 +26,11 @@
 #include "interfaceitem.hpp"
 #include "abstractobjectproperty.hpp"
 #include "method.hpp"
+#include "object.hpp"
 #include "property.hpp"
 #include "unitproperty.hpp"
 #include "vectorproperty.hpp"
+#include <tcb/span.hpp>
 
 struct Attributes
 {
@@ -182,6 +184,12 @@ struct Attributes
     method.addAttribute(AttributeName::Values, values);
   }
 
+  template<typename T>
+  static inline void addValues(Property<T>& property, tcb::span<const T> values)
+  {
+    property.addAttribute(AttributeName::Values, values);
+  }
+
   template<typename T, size_t N>
   static inline void addValues(Property<T>& property, const std::array<T, N>& values)
   {
@@ -216,6 +224,12 @@ struct Attributes
   static inline void addValues(Method<R(T)>& method, std::vector<T> values)
   {
     method.addAttribute(AttributeName::Values, std::move(values));
+  }
+
+  template<typename T>
+  static inline void setValues(Property<T>& property, tcb::span<const T> values)
+  {
+    property.setAttribute(AttributeName::Values, values);
   }
 
   template<typename T>

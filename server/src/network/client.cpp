@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -49,14 +49,14 @@ Client::Client(Server& server, boost::asio::ip::tcp::socket socket)
 {
   assert(isEventLoopThread());
 
-  m_socket.set_option(boost::asio::socket_base::linger(true, 0));
-  m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
-
   Log::log(m_id, LogMessage::I1003_CLIENT_CONNECTED);
 
   m_server.m_ioContext.post(
     [this]()
     {
+      m_socket.set_option(boost::asio::socket_base::linger(true, 0));
+      m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
+
       doReadHeader();
     });
 }
@@ -158,7 +158,7 @@ void Client::doWrite()
       else if(ec != boost::asio::error::operation_aborted)
       {
         Log::log(m_id, LogMessage::E1006_SOCKET_WRITE_FAILED_X, ec);
-        disconnect();
+        EventLoop::call(std::bind(&Client::disconnect, this));
       }
     });
 }
@@ -229,14 +229,22 @@ void Client::disconnect()
 
   m_session.reset();
 
-  if(m_socket.is_open())
-  {
-    boost::system::error_code ec;
-    m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-    if(ec && ec != boost::asio::error::not_connected)
-      Log::log(m_id, LogMessage::E1005_SOCKET_SHUTDOWN_FAILED_X, ec);
-    m_socket.close();
-  }
+  m_server.m_ioContext.post(
+    [this]()
+    {
+      if(m_socket.is_open())
+      {
+        boost::system::error_code ec;
+        m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+        if(ec && ec != boost::asio::error::not_connected)
+          Log::log(m_id, LogMessage::E1005_SOCKET_SHUTDOWN_FAILED_X, ec);
+        m_socket.close();
+      }
 
-  m_server.clientGone(shared_from_this());
+      EventLoop::call(
+        [this]()
+        {
+          m_server.clientGone(shared_from_this());
+        });
+    });
 }

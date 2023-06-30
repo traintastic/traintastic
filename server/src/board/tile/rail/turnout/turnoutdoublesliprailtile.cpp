@@ -22,14 +22,24 @@
 
 #include "turnoutdoublesliprailtile.hpp"
 #include "../../../../core/attributes.hpp"
+#include "../../../../core/objectproperty.tpp"
 
-static const std::array<TurnoutPosition, 3> positionValues = {TurnoutPosition::Crossed, TurnoutPosition::Diverged, TurnoutPosition::Unknown};
-static const std::array<TurnoutPosition, 2> setPositionValues = {TurnoutPosition::Crossed, TurnoutPosition::Diverged};
+static const std::array<TurnoutPosition, 7> positionValues = {TurnoutPosition::Left, TurnoutPosition::Right,
+                                                              TurnoutPosition::Crossed, TurnoutPosition::Diverged,
+                                                              TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB,
+                                                              TurnoutPosition::Unknown};
+static const std::array<TurnoutPosition, 6> setPositionValues = {TurnoutPosition::Left, TurnoutPosition::Right,
+                                                                 TurnoutPosition::Crossed, TurnoutPosition::Diverged,
+                                                                 TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB};
 
 TurnoutDoubleSlipRailTile::TurnoutDoubleSlipRailTile(World& world, std::string_view _id)
   : TurnoutRailTile(world, _id, TileId::RailTurnoutDoubleSlip, 4)
 {
-  outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Crossed, TurnoutPosition::Diverged}));
+  outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(),
+                                                                std::initializer_list<TurnoutPosition>{
+                                                                    TurnoutPosition::Left, TurnoutPosition::Right,
+                                                                    TurnoutPosition::Crossed, TurnoutPosition::Diverged,
+                                                                    TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB}));
 
   Attributes::addValues(position, positionValues);
   m_interfaceItems.add(position);

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,11 +21,16 @@
  */
 
 #include "traintasticdiyinterface.hpp"
+#include "../input/list/inputlist.hpp"
+#include "../output/list/outputlist.hpp"
+#include "../protocol/traintasticdiy/kernel.hpp"
+#include "../protocol/traintasticdiy/settings.hpp"
 #include "../protocol/traintasticdiy/messages.hpp"
 #include "../protocol/traintasticdiy/iohandler/serialiohandler.hpp"
 #include "../protocol/traintasticdiy/iohandler/simulationiohandler.hpp"
 #include "../protocol/traintasticdiy/iohandler/tcpiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
@@ -34,6 +39,8 @@
 
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
+
+CREATE_IMPL(TraintasticDIYInterface)
 
 TraintasticDIYInterface::TraintasticDIYInterface(World& world, std::string_view _id)
   : Interface(world, _id)
@@ -93,18 +100,28 @@ TraintasticDIYInterface::TraintasticDIYInterface(World& world, std::string_view 
   updateVisible();
 }
 
-void TraintasticDIYInterface::inputSimulateChange(uint32_t channel, uint32_t address)
+std::pair<uint32_t, uint32_t> TraintasticDIYInterface::inputAddressMinMax(uint32_t) const
+{
+  return {TraintasticDIY::Kernel::ioAddressMin, TraintasticDIY::Kernel::ioAddressMax};
+}
+
+void TraintasticDIYInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, outputAddressMinMax(channel)))
-    m_kernel->simulateInputChange(address);
+    m_kernel->simulateInputChange(address, action);
+}
+
+std::pair<uint32_t, uint32_t> TraintasticDIYInterface::outputAddressMinMax(uint32_t) const
+{
+  return {TraintasticDIY::Kernel::ioAddressMin, TraintasticDIY::Kernel::ioAddressMax};
 }
 
 bool TraintasticDIYInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
 {
   assert(isOutputChannel(channel));
   return
-    m_kernel &&
-    inRange(address, outputAddressMinMax(channel)) &&
+      m_kernel &&
+      inRange(address, outputAddressMinMax(channel)) &&
     m_kernel->setOutput(static_cast<uint16_t>(address), value);
 }
 
@@ -138,13 +155,13 @@ bool TraintasticDIYInterface::setOnline(bool& value, bool simulation)
         return false;
       }
 
-      status.setValueInternal(InterfaceStatus::Initializing);
+      setState(InterfaceState::Initializing);
 
       m_kernel->setLogId(id.value());
       m_kernel->setOnStarted(
         [this]()
         {
-          status.setValueInternal(InterfaceStatus::Online);
+          setState(InterfaceState::Online);
         });
 
       m_kernel->setInputController(this);
@@ -161,7 +178,7 @@ bool TraintasticDIYInterface::setOnline(bool& value, bool simulation)
     }
     catch(const LogMessageException& e)
     {
-      status.setValueInternal(InterfaceStatus::Offline);
+      setState(InterfaceState::Offline);
       Log::log(*this, e.message(), e.args());
       return false;
     }
@@ -175,7 +192,7 @@ bool TraintasticDIYInterface::setOnline(bool& value, bool simulation)
     m_kernel->stop();
     m_kernel.reset();
 
-    status.setValueInternal(InterfaceStatus::Offline);
+    setState(InterfaceState::Offline);
   }
   return true;
 }

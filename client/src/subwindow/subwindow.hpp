@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,8 @@ class Connection;
 
 class SubWindow : public QMdiSubWindow
 {
+  Q_OBJECT
+
   private:
     const SubWindowType m_type;
     std::shared_ptr<Connection> m_connection;
@@ -55,7 +57,13 @@ class SubWindow : public QMdiSubWindow
   public:
     ~SubWindow() override;
 
+    inline const QString& id() const { return m_id; }
     inline SubWindowType type() const { return m_type; }
+    inline QString windowId() const { return windowId(m_type, m_id); }
+    inline static QString windowId(SubWindowType type, const QString& id) { return toString(type).append("/").append(id); }
+
+  signals:
+    void objectIdChanged(SubWindow* window, const QString& id);
 };
 
 #endif

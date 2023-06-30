@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,11 +21,16 @@
  */
 
 #include "input.hpp"
-#include "../../world/world.hpp"
+#include "inputcontroller.hpp"
+#include "list/inputlist.hpp"
 #include "list/inputlisttablemodel.hpp"
+#include "../../world/world.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
+
+CREATE_IMPL(Input)
 
 Input::Input(World& world, std::string_view _id)
   : IdObject(world, _id)
@@ -118,6 +123,14 @@ Input::Input(World& world, std::string_view _id)
   m_interfaceItems.add(consumers);
 
   m_interfaceItems.add(onValueChanged);
+}
+
+void Input::simulateChange(SimulateInputAction action)
+{
+  assert(m_world.simulation.value()); // should only be called in simulation mode
+
+  if(interface)
+    interface->inputSimulateChange(channel, address, action);
 }
 
 void Input::addToWorld()

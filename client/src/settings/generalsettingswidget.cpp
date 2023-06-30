@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -49,7 +49,7 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget* parent)
   // language:
   {
     QComboBox* cb = new QComboBox(this);
-    QDirIterator it(QString::fromStdString(getLocalePath().string()), {"*.txt"}, QDir::Files | QDir::Readable);
+    QDirIterator it(QString::fromStdString(getLocalePath().string()), {"*.lang"}, QDir::Files | QDir::Readable);
     while(it.hasNext())
     {
       const QString filename = it.next();

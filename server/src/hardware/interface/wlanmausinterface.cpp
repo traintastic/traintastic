@@ -21,12 +21,18 @@
  */
 
 #include "wlanmausinterface.hpp"
+#include "../protocol/z21/serverkernel.hpp"
+#include "../protocol/z21/serversettings.hpp"
 #include "../protocol/z21/iohandler/udpserveriohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/method.tpp"
+#include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
+
+CREATE_IMPL(WlanMausInterface)
 
 WlanMausInterface::WlanMausInterface(World& world, std::string_view _id)
   : Interface(world, _id)
@@ -80,13 +86,13 @@ bool WlanMausInterface::setOnline(bool& value, bool simulation)
     {
       m_kernel = Z21::ServerKernel::create<Z21::UDPServerIOHandler>(z21->config(), m_world.decoders.value());
 
-      status.setValueInternal(InterfaceStatus::Initializing);
+      setState(InterfaceState::Initializing);
 
       m_kernel->setLogId(id.value());
       m_kernel->setOnStarted(
         [this]()
         {
-          status.setValueInternal(InterfaceStatus::Online);
+          setState(InterfaceState::Online);
         });
 
       m_kernel->setOnTrackPowerOff(
@@ -122,17 +128,19 @@ bool WlanMausInterface::setOnline(bool& value, bool simulation)
     }
     catch(const LogMessageException& e)
     {
-      status.setValueInternal(InterfaceStatus::Offline);
+      setState(InterfaceState::Offline);
       Log::log(*this, e.message(), e.args());
       return false;
     }
   }
   else if(m_kernel && !value)
   {
+    m_z21PropertyChanged.disconnect();
+
     m_kernel->stop();
     m_kernel.reset();
 
-    status.setValueInternal(InterfaceStatus::Offline);
+    setState(InterfaceState::Offline);
   }
   return true;
 }

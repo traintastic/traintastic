@@ -22,6 +22,8 @@
 
 #include "inputlisttablemodel.hpp"
 #include "inputlist.hpp"
+#include "../inputcontroller.hpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../utils/displayname.hpp"
 
 bool InputListTableModel::isListedProperty(std::string_view name)

@@ -338,14 +338,37 @@ bool Kernel::setOutput(uint32_t channel, uint16_t address, bool value)
   return false;
 }
 
-void Kernel::simulateInputChange(uint16_t address)
+void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
 {
   if(m_simulation)
     m_ioContext.post(
-      [this, address]()
+      [this, address, action]()
       {
+        bool value;
         auto it = m_inputValues.find(address);
-        receive(Ex::sensorTransition(address, it != m_inputValues.end() ? !it->second : true));
+        switch(action)
+        {
+          case SimulateInputAction::SetFalse:
+            if(it != m_inputValues.end() && !it->second)
+              return; // no change
+            value = false;
+            break;
+
+          case SimulateInputAction::SetTrue:
+            if(it != m_inputValues.end() && it->second)
+              return; // no change
+            value = true;
+            break;
+
+          case SimulateInputAction::Toggle:
+            value = it != m_inputValues.end() ? !it->second : true;
+            break;
+
+          default:
+            assert(false);
+            return;
+        }
+        receive(Ex::sensorTransition(address, value));
       });
 }
 

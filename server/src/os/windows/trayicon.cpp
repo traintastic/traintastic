@@ -26,6 +26,8 @@
 #include "consolewindow.hpp"
 #include "registry.hpp"
 #include "../../core/eventloop.hpp"
+#include "../../core/method.tpp"
+#include "../../core/objectproperty.tpp"
 #include "../../traintastic/traintastic.hpp"
 #include "../../utils/setthreadname.hpp"
 
@@ -34,6 +36,7 @@ namespace Windows {
 std::unique_ptr<std::thread> TrayIcon::s_thread;
 HWND TrayIcon::s_window = nullptr;
 HMENU TrayIcon::s_menu = nullptr;
+HMENU TrayIcon::s_menuSettings = nullptr;
 
 void TrayIcon::add(bool isRestart)
 {
@@ -77,19 +80,25 @@ void TrayIcon::run(bool isRestart)
 
   // create menu:
   s_menu = CreatePopupMenu();
-  menuAddItem(MenuItem::ShowHideConsole, "Show/hide console", hasConsoleWindow());
-  menuAddSeperator();
-  menuAddItem(MenuItem::AllowClientServerRestart, "Allow client to restart server");
-  menuAddItem(MenuItem::AllowClientServerShutdown, "Allow client to shutdown server");
-  menuAddSeperator();
-  menuAddItem(MenuItem::StartAutomaticallyAtLogon, "Start automatically at logon");
-  menuAddSeperator();
-  menuAddItem(MenuItem::Restart, "Restart");
-  menuAddItem(MenuItem::Shutdown, "Shutdown");
+  menuAddItem(s_menu, MenuItem::ShowHideConsole, "Show/hide console", hasConsoleWindow());
+  menuAddSeperator(s_menu);
+  
+  s_menuSettings = menuAddSubMenu(s_menu, "Settings");
+  menuAddItem(s_menuSettings, MenuItem::AllowClientServerRestart, "Allow client to restart server");
+  menuAddItem(s_menuSettings, MenuItem::AllowClientServerShutdown, "Allow client to shutdown server");
+  menuAddSeperator(s_menuSettings);
+  menuAddItem(s_menuSettings, MenuItem::StartAutomaticallyAtLogon, "Start automatically at logon");  
+  
+  HMENU menuAdvanced = menuAddSubMenu(s_menu, "Advanced");
+  menuAddItem(menuAdvanced, MenuItem::OpenDataDirectory, "Open data directory");
+
+  menuAddSeperator(s_menu);
+  menuAddItem(s_menu, MenuItem::Restart, "Restart");
+  menuAddItem(s_menu, MenuItem::Shutdown, "Shutdown");
 
   bool startUpApproved = false;
   Registry::getStartUpApproved(startUpApproved);
-  menuSetItemChecked(MenuItem::StartAutomaticallyAtLogon, startUpApproved);
+  menuSetItemChecked(s_menuSettings, MenuItem::StartAutomaticallyAtLogon, startUpApproved);
 
   // setup tray icon:
   static NOTIFYICONDATA notifyIconData;
@@ -219,12 +228,18 @@ LRESULT CALLBACK TrayIcon::windowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARA
       }
       case MenuItem::StartAutomaticallyAtLogon:
       {
-        bool startUpApproved = !menuGetItemChecked(MenuItem::StartAutomaticallyAtLogon);
+        bool startUpApproved = !menuGetItemChecked(s_menuSettings, MenuItem::StartAutomaticallyAtLogon);
         if(startUpApproved)
           Registry::addRun();
         Registry::setStartUpApproved(startUpApproved);
         if(Registry::getStartUpApproved(startUpApproved))
-          menuSetItemChecked(MenuItem::StartAutomaticallyAtLogon, startUpApproved);
+          menuSetItemChecked(s_menuSettings, MenuItem::StartAutomaticallyAtLogon, startUpApproved);
+        break;
+      }
+      case MenuItem::OpenDataDirectory:
+      {
+        const auto dataDir = Traintastic::instance->dataDir().string();
+        ShellExecuteA(nullptr, "open", dataDir.c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
         break;
       }
     }
@@ -233,49 +248,66 @@ LRESULT CALLBACK TrayIcon::windowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARA
     case WM_TRAINTASTIC_SETTINGS:
     {
       std::lock_guard lock{s_settings.mutex};
-      menuSetItemChecked(MenuItem::AllowClientServerRestart, s_settings.allowClientServerRestart);
-      menuSetItemChecked(MenuItem::AllowClientServerShutdown, s_settings.allowClientServerShutdown);
+      menuSetItemChecked(s_menuSettings, MenuItem::AllowClientServerRestart, s_settings.allowClientServerRestart);
+      menuSetItemChecked(s_menuSettings, MenuItem::AllowClientServerShutdown, s_settings.allowClientServerShutdown);
       break;
     }
   }
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-void TrayIcon::menuAddItem(MenuItem id, const LPCSTR text, bool enabled)
+void TrayIcon::menuAddItem(HMENU menu, MenuItem id, const LPCSTR text, bool enabled)
 {
-  assert(s_menu);
+  assert(menu);
   MENUITEMINFO item;
   memset(&item, 0, sizeof(item));
   item.cbSize = sizeof(item);
   item.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
-  item.fType = 0;
+  item.fType = MFT_STRING;
   item.fState = enabled ? MFS_ENABLED : MFS_DISABLED;
   item.wID = static_cast<UINT>(id);
   item.dwTypeData = const_cast<LPSTR>(text);
-  InsertMenuItem(s_menu, GetMenuItemCount(s_menu), TRUE, &item);
+  int n = GetMenuItemCount(menu);
+  InsertMenuItem(menu, n, TRUE, &item);
 }
 
-void TrayIcon::menuAddSeperator()
+void TrayIcon::menuAddSeperator(HMENU menu)
 {
-  assert(s_menu);
+  assert(menu);
   MENUITEMINFO item;
   memset(&item, 0, sizeof(item));
   item.cbSize = sizeof(item);
   item.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
   item.fType = MFT_SEPARATOR;
-  InsertMenuItem(s_menu, GetMenuItemCount(s_menu), TRUE, &item);
+  InsertMenuItem(menu, GetMenuItemCount(menu), TRUE, &item);
 }
 
-bool TrayIcon::menuGetItemChecked(MenuItem id)
+HMENU TrayIcon::menuAddSubMenu(HMENU menu, const LPCSTR text)
 {
-  assert(s_menu);
-  return GetMenuState(s_menu, static_cast<UINT>(id), MF_BYCOMMAND) & MF_CHECKED;
+  assert(menu);
+  HMENU subMenu = CreatePopupMenu();
+  MENUITEMINFO item;
+  memset(&item, 0, sizeof(item));
+  item.cbSize = sizeof(item);
+  item.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE | MIIM_SUBMENU;
+  item.fType = MFT_STRING;
+  item.fState = MFS_ENABLED;
+  item.hSubMenu = subMenu;
+  item.dwTypeData = const_cast<LPSTR>(text);
+  InsertMenuItem(menu, GetMenuItemCount(menu), TRUE, &item);
+  return subMenu;
 }
 
-void TrayIcon::menuSetItemChecked(MenuItem id, bool checked)
+bool TrayIcon::menuGetItemChecked(HMENU menu, MenuItem id)
 {
-  assert(s_menu);
-  CheckMenuItem(s_menu, static_cast<UINT>(id), checked ? MF_CHECKED : MF_UNCHECKED);
+  assert(menu);
+  return GetMenuState(menu, static_cast<UINT>(id), MF_BYCOMMAND) & MF_CHECKED;
+}
+
+void TrayIcon::menuSetItemChecked(HMENU menu, MenuItem id, bool checked)
+{
+  assert(menu);
+  CheckMenuItem(menu, static_cast<UINT>(id), checked ? MF_CHECKED : MF_UNCHECKED);
 }
 
 void TrayIcon::getSettings()

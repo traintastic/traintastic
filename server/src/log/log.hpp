@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,9 @@
 #include <vector>
 #include <traintastic/enum/logmessage.hpp>
 #include "appendarguments.hpp"
+#ifdef ENABLE_LOG_DEBUG
+  #include "joinarguments.hpp"
+#endif
 
 class Logger;
 class MemoryLogger;
@@ -124,6 +127,22 @@ class Log
     {
       log(object.getObjectId(), message, std::forward<const Args&>(args)...);
     }
+
+#ifdef ENABLE_LOG_DEBUG
+    template<class... Args>
+    inline static void debug(const Args&... args)
+    {
+      std::string s;
+      joinArguments(s, std::forward<const Args&>(args)...);
+      log(std::string(), LogMessage::D0000_X, s);
+    }
+#endif
 };
+
+#ifdef ENABLE_LOG_DEBUG
+  #define LOG_DEBUG(...) Log::debug(__VA_ARGS__);
+#else
+  #define LOG_DEBUG(...)
+#endif
 
 #endif

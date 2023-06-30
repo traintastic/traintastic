@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,7 +40,7 @@ struct LogMessageOffset
 /**
  * 1xxx = general
  * 2xxx = hardware
- * 3xxx
+ * 3xxx = trains
  * 4xxx
  * 5xxx
  * 6xxx
@@ -51,6 +51,9 @@ struct LogMessageOffset
 enum class LogMessage : uint32_t
 {
   // Debug:
+#ifdef ENABLE_LOG_DEBUG
+  D0000_X = LogMessageOffset::debug,
+#endif
   D1001_RESUME_X_MULTIPLIER_X = LogMessageOffset::debug + 1001,
   D1002_TICK_X_ERROR_X_US = LogMessageOffset::debug + 1002,
   D1003_FREEZE_X = LogMessageOffset::debug + 1003,
@@ -111,9 +114,17 @@ enum class LogMessage : uint32_t
   N1024_SIMULATION_ENABLED = LogMessageOffset::notice + 1024,
   N1025_EXPORTED_WORLD_SUCCESSFULLY = LogMessageOffset::notice + 1025,
   N1026_IMPORTED_WORLD_SUCCESSFULLY = LogMessageOffset::notice + 1026,
+  N1027_LOADED_WORLD_X = LogMessageOffset::notice + 1027,
+  N1028_CLOSED_WORLD = LogMessageOffset::notice + 1028,
   N2001_SIMULATION_NOT_SUPPORTED = LogMessageOffset::notice + 2001,
   N2002_NO_RESPONSE_FROM_LNCV_MODULE_X_WITH_ADDRESS_X = LogMessageOffset::notice + 2002,
   N2003_STOPPED_SENDING_FAST_CLOCK_SYNC = LogMessageOffset::notice + 2003,
+  N2004_STARTING_PCAP_FILE_LOG_X = LogMessageOffset::notice + 2004,
+  N2005_STARTING_PCAP_LOG_PIPE_X = LogMessageOffset::notice + 2005,
+  N2006_LISTEN_ONLY_MODE_ACTIVATED = LogMessageOffset::notice + 2006,
+  N2007_LISTEN_ONLY_MODE_DEACTIVATED = LogMessageOffset::notice + 2007,
+  N3001_ASSIGNED_TRAIN_X_TO_BLOCK_X = LogMessageOffset::notice + 3001,
+  N3002_REMOVED_TRAIN_X_FROM_BLOCK_X = LogMessageOffset::notice + 3002,
   N9001_STARTING_SCRIPT = LogMessageOffset::notice + 9001,
   N9999_X = LogMessageOffset::notice + 9999,
 
@@ -129,6 +140,7 @@ enum class LogMessage : uint32_t
   W2006_COMMAND_STATION_DOES_NOT_SUPPORT_LOCO_SLOT_X = LogMessageOffset::warning + 2006,
   W2007_COMMAND_STATION_DOES_NOT_SUPPORT_THE_FAST_CLOCK_SLOT = LogMessageOffset::warning + 2007,
   W2018_TIMEOUT_NO_ECHO_WITHIN_X_MS = LogMessageOffset::warning + 2018,
+  W2019_Z21_BROADCAST_FLAG_MISMATCH = LogMessageOffset::warning + 2019,
   W9999_X = LogMessageOffset::warning + 9999,
 
   // Error:
@@ -160,6 +172,7 @@ enum class LogMessage : uint32_t
   E2018_TIMEOUT_NO_ECHO_WITHIN_X_MS = LogMessageOffset::error + 2018,
   E2019_TIMEOUT_NO_RESPONSE_WITHIN_X_MS = LogMessageOffset::error + 2019,
   E2020_TOTAL_NUMBER_OF_MODULES_MAY_NOT_EXCEED_X  = LogMessageOffset::error + 2020,
+  E2021_STARTING_PCAP_LOG_FAILED_X = LogMessageOffset::error + 2021,
   E9001_X_DURING_EXECUTION_OF_X_EVENT_HANDLER = LogMessageOffset::error + 9001,
   E9999_X = LogMessageOffset::error + 9999,
 

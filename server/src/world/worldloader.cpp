@@ -41,6 +41,7 @@
 #include "../hardware/identification/identification.hpp"
 #include "../vehicle/rail/railvehicles.hpp"
 #include "../train/train.hpp"
+#include "../train/trainblockstatus.hpp"
 #include "../lua/script.hpp"
 
 using nlohmann::json;
@@ -107,6 +108,7 @@ void WorldLoader::load()
   m_states = json::object();
 
   json data;
+  json state;
 
   // load file(s):
   if(m_ctw)
@@ -114,9 +116,8 @@ void WorldLoader::load()
     if(!m_ctw->readFile(World::filename, data))
       throw std::runtime_error(std::string("can't read ").append(World::filename));
 
-    json state;
-    if(m_ctw->readFile(World::filenameState, state) && state["uuid"] == data["uuid"])
-        m_states = state["states"];
+    if(!m_ctw->readFile(World::filenameState, state))
+      throw std::runtime_error(std::string("can't read ").append(World::filenameState));
   }
   else
   {
@@ -126,14 +127,9 @@ void WorldLoader::load()
     data = json::parse(file);
 
     std::ifstream stateFile(m_path / World::filenameState);
-    if(stateFile.is_open())
-    {
-      json state = json::parse(stateFile);
-      if(state["uuid"] == data["uuid"])
-        m_states = state["states"];
-      else
-      {} /// @todo log warning
-    }
+    if(!stateFile.is_open())
+      throw std::runtime_error("can't open " + (m_path / World::filenameState).string());
+    state = json::parse(stateFile);
   }
 
   // check if UUID is valid:
@@ -161,6 +157,14 @@ void WorldLoader::load()
         }
       }
     }
+  }
+
+  // state data
+  if(state.is_object() && state["uuid"] == data["uuid"])
+  {
+    m_states = state["states"];
+    auto stateObjects = state.value("objects", json::array());
+    data["objects"].insert(data["objects"].end(), stateObjects.begin(), stateObjects.end());
   }
 
   // create a list of all objects
@@ -225,9 +229,20 @@ void WorldLoader::createObject(ObjectData& objectData)
     }
   }
   else if(startsWith(classId, RailVehicles::classIdPrefix))
+  {
+    if(classId == "vehicle.rail.freight_car") { classId = FreightWagon::classId; } //! \todo Remove in v0.4
     objectData.object = RailVehicles::create(*m_world, classId, id);
+  }
   else if(classId == Train::classId)
     objectData.object = Train::create(*m_world, id);
+  else if(classId == TrainBlockStatus::classId)
+  {
+    auto block = std::dynamic_pointer_cast<BlockRailTile>(getObject(objectData.json["block"].get<std::string_view>()));
+    auto train = std::dynamic_pointer_cast<Train>(getObject(objectData.json["train"].get<std::string_view>()));
+
+    if(block && train) /*[[likely]]*/
+      objectData.object = TrainBlockStatus::create(*block, *train, to<BlockTrainDirection>(objectData.json["direction"]), id);
+  }
   else if(classId == Lua::Script::classId)
     objectData.object = Lua::Script::create(*m_world, id);
 

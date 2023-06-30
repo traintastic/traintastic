@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,6 +54,9 @@ class Object : public std::enable_shared_from_this<Object>
   friend class WorldSaver;
 
   private:
+    static nlohmann::json toJSON(WorldSaver& saver, const BaseProperty& baseProperty);
+    static void loadJSON(WorldLoader& loader, BaseProperty& baseProperty, const nlohmann::json& value);
+
     bool m_dying; // TODO: atomic??
 
   protected:
@@ -65,7 +68,6 @@ class Object : public std::enable_shared_from_this<Object>
       event.fire(std::forward<Args>(args)...);
     }
 
-    inline bool dying() const noexcept { return m_dying; }
     virtual void destroying() {}
     virtual void load(WorldLoader& loader, const nlohmann::json& data);
     virtual void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const;
@@ -84,6 +86,7 @@ class Object : public std::enable_shared_from_this<Object>
     Object();
     virtual ~Object() = default;
 
+    inline bool dying() const noexcept { return m_dying; }
     void destroy();
 
     template <typename Derived>

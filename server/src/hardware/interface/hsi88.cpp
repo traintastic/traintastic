@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -102,11 +102,12 @@ std::pair<uint32_t, uint32_t> HSI88Interface::inputAddressMinMax(uint32_t channe
   return {inputAddressMin, inputAddressMax};
 }
 
-void HSI88Interface::inputSimulateChange(uint32_t channel, uint32_t address)
+void HSI88Interface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
   //! \todo add simulation support
   (void)channel;
   (void)address;
+  (void)action;
 }
 
 void HSI88Interface::addToWorld()

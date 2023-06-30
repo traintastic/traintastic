@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +28,7 @@
 ThrottleStopButton::ThrottleStopButton(ObjectPtr object, QWidget* parent)
   : AbstractThrottleButton(std::move(object), parent)
   , m_throttle{m_object->getProperty("throttle")}
+  , m_throttleSpeed{m_object->getProperty("throttle_speed")}
   , m_emergencyStop{m_object->getProperty("emergency_stop")}
 {
   setText("0");
@@ -37,13 +38,17 @@ void ThrottleStopButton::click()
 {
   if(m_emergencyStop && m_emergencyStop->toBool())
   {
-    if(m_throttle)
+    if(m_throttleSpeed)
+      m_throttleSpeed->setValueDouble(0);
+    else if(m_throttle)
       m_throttle->setValueDouble(0);
     m_emergencyStop->setValueBool(false);
   }
   else
   {
-    if(m_throttle && !qFuzzyIsNull(m_throttle->toDouble()))
+    if(m_throttleSpeed && !qFuzzyIsNull(m_throttleSpeed->toDouble()))
+      m_throttleSpeed->setValueDouble(0);
+    else if(m_throttle && !qFuzzyIsNull(m_throttle->toDouble()))
       m_throttle->setValueDouble(0);
     else if(m_emergencyStop)
       m_emergencyStop->setValueBool(true);

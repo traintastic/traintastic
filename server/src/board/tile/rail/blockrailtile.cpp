@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,9 +21,17 @@
  */
 
 #include "blockrailtile.hpp"
+#include "../../../core/method.tpp"
+#include "../../../core/objectproperty.tpp"
+#include "../../../core/objectvectorproperty.tpp"
 #include "../../../world/world.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../log/log.hpp"
+#include "../../../train/train.hpp"
+#include "../../../train/trainblockstatus.hpp"
 #include "../../../utils/displayname.hpp"
+
+CREATE_IMPL(BlockRailTile)
 
 BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   RailTile(world, _id, TileId::RailBlock),
@@ -32,6 +40,126 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   inputMap{this, "input_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   state{this, "state", BlockState::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState},
   sensorStates{*this, "sensor_states", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
+  , trains{*this, "trains", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
+  , assignTrain{*this, "assign_train",
+      [this](const std::shared_ptr<Train>& newTrain)
+      {
+        if(!newTrain) /*[[unlikely]]*/
+          return;
+
+        if(trains.empty())
+        {
+          if(!newTrain->active)
+          {
+            try
+            {
+              newTrain->active = true;
+            }
+            catch(...)
+            {
+              //! \todo report reason back to caller
+            }
+
+            if(!newTrain->active)
+              return;
+          }
+
+          const auto self = shared_ptr<BlockRailTile>();
+          BlockTrainDirection direction = (newTrain->direction == Direction::Reverse) ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA;
+
+          if(!newTrain->blocks.empty())
+          {
+            //! \todo check if block is connected to the head or tail block of the train
+            //! \todo update direction
+            return; // not yet supported
+          }
+
+          auto status = TrainBlockStatus::create(*this, *newTrain, direction);
+          newTrain->blocks.appendInternal(status);
+          trains.appendInternal(status);
+
+          updateTrainMethodEnabled();
+          if(state == BlockState::Free || state == BlockState::Unknown)
+            updateState();
+          Log::log(*this, LogMessage::N3001_ASSIGNED_TRAIN_X_TO_BLOCK_X, newTrain->name.value(), name.value());
+
+          if(m_world.simulation)
+          {
+            // TODO: use train length if block has multiple occupy sensors, center train in block
+            for(const auto& item : *inputMap)
+            {
+              if(item->input && item->input->interface)
+              {
+                if(item->type == SensorType::OccupyDetector)
+                  item->input->simulateChange(item->invert.value() ? SimulateInputAction::SetFalse : SimulateInputAction::SetTrue);
+                else
+                  assert(false); // not yet implemented
+              }
+            }
+          }
+
+          fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(onTrainAssigned, newTrain, self);
+        }
+      }}
+  , removeTrain{*this, "remove_train",
+      [this]()
+      {
+        if(trains.size() == 1 && trains[0]->train->isStopped)
+        {
+          const auto self = shared_ptr<BlockRailTile>();
+          auto oldTrain = trains[0]->train.value();
+          if(!oldTrain->blocks.empty() && self != (**oldTrain->blocks.begin()).block.value() && self != (**oldTrain->blocks.rbegin()).block.value())
+            return; // only possible to remove the train from the head or tail block
+
+          const auto it = std::find_if(trains.begin(), trains.end(),
+            [&oldTrain](auto& status)
+            {
+              return status->train.value() == oldTrain;
+            });
+
+          if(it == trains.end()) /*[[unlikely]]*/
+            return; // can't remove a train that isn't in the block
+
+          oldTrain->blocks.removeInternal(*it);
+          trains.removeInternal(*it);
+
+          updateTrainMethodEnabled();
+          if(state == BlockState::Reserved)
+            updateState();
+          Log::log(*this, LogMessage::N3002_REMOVED_TRAIN_X_FROM_BLOCK_X, oldTrain->name.value(), name.value());
+
+          if(m_world.simulation)
+          {
+            for(const auto& item : *inputMap)
+            {
+              if(item->input && item->input->interface)
+              {
+                if(item->type == SensorType::OccupyDetector)
+                  item->input->simulateChange(item->invert.value() ? SimulateInputAction::SetTrue : SimulateInputAction::SetFalse);
+                else
+                  assert(false); // not yet implemented
+              }
+            }
+          }
+
+          fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(onTrainRemoved, oldTrain, self);
+        }
+      }}
+  , flipTrain{*this, "flip_train",
+      [this]()
+      {
+        if(trains.size() == 1)
+        {
+          assert(trains[0]->train);
+          const auto& train = *trains[0]->train;
+          if(train.isStopped && train.blocks.size() == 1 && train.blocks[0]->block.operator->() == this)
+          {
+            trains[0]->direction.setValueInternal(!trains[0]->direction.value());
+          }
+        }
+      }}
+  , onTrainAssigned{*this, "on_train_assigned", EventFlags::Scriptable}
+  , onTrainRemoved{*this, "on_train_removed", EventFlags::Scriptable}
 {
   inputMap.setValueInternal(std::make_shared<BlockInputMap>(*this, inputMap.name()));
 
@@ -50,6 +178,25 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   Attributes::addObjectEditor(sensorStates, false);
   Attributes::addValues(sensorStates, sensorStateValues);
   m_interfaceItems.add(sensorStates);
+
+  Attributes::addObjectEditor(trains, false);
+  m_interfaceItems.add(trains);
+
+  Attributes::addEnabled(assignTrain, true);
+  Attributes::addObjectEditor(assignTrain, false);
+  Attributes::addObjectList(assignTrain, world.trains);
+  m_interfaceItems.add(assignTrain);
+
+  Attributes::addEnabled(removeTrain, false);
+  Attributes::addObjectEditor(removeTrain, false);
+  m_interfaceItems.add(removeTrain);
+
+  Attributes::addEnabled(flipTrain, false);
+  Attributes::addObjectEditor(flipTrain, false);
+  m_interfaceItems.add(flipTrain);
+
+  m_interfaceItems.add(onTrainAssigned);
+  m_interfaceItems.add(onTrainRemoved);
 
   updateHeightWidthMax();
 }
@@ -92,12 +239,19 @@ void BlockRailTile::updateState()
 
     if(allFree)
     {
-      setState(BlockState::Free);
+      setState(trains.empty() ? BlockState::Free : BlockState::Reserved);
       return;
     }
   }
 
-  setState(BlockState::Unknown);
+  setState(trains.empty() ? BlockState::Unknown : BlockState::Reserved);
+}
+
+void BlockRailTile::updateTrainMethodEnabled()
+{
+  Attributes::setEnabled(assignTrain, trains.empty());
+  Attributes::setEnabled(removeTrain, trains.size() == 1);
+  Attributes::setEnabled(flipTrain, trains.size() == 1);
 }
 
 void BlockRailTile::setState(BlockState value)
@@ -121,7 +275,17 @@ void BlockRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
 void BlockRailTile::loaded()
 {
   RailTile::loaded();
+  updateTrainMethodEnabled();
   updateHeightWidthMax();
+}
+
+void BlockRailTile::destroying()
+{
+  const auto self = shared_ptr<BlockRailTile>();
+  for(const auto& status : *trains)
+    status->train->blocks.removeInternal(status);
+
+  RailTile::destroying();
 }
 
 void BlockRailTile::getConnectors(std::vector<Connector>& connectors) const

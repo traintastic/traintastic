@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,6 +37,7 @@
 
 // include all message headers:
 #include "message/fastclock.hpp"
+#include "message/immpacket.hpp"
 #include "message/locof9f12imm.hpp"
 #include "message/locof13f20imm.hpp"
 #include "message/locof21f28imm.hpp"
@@ -62,6 +63,7 @@ constexpr uint8_t SLOT_UNKNOWN = 255; //!< placeholder to indicate invalid slot
 
 constexpr uint8_t SPEED_STOP = 0;
 constexpr uint8_t SPEED_ESTOP = 1;
+constexpr uint8_t SPEED_MIN = 2;
 constexpr uint8_t SPEED_MAX = 127;
 
 constexpr uint8_t SL_CONUP = 0x40;
@@ -498,6 +500,8 @@ static_assert(sizeof(LocoF9F12) == 4);
 
 struct InputRep : Message
 {
+  static constexpr uint8_t control = 0x40;
+
   uint8_t in1;
   uint8_t in2;
   uint8_t checksum;
@@ -516,6 +520,7 @@ struct InputRep : Message
       in2 |= 0x20;
     if(value_)
       in2 |= 0x10;
+    in2 |= control; // set, 0 is reserved
     checksum = calcChecksum(*this);
   }
 
@@ -527,6 +532,11 @@ struct InputRep : Message
   inline uint16_t address() const
   {
     return (in1 & 0x7F) | (static_cast<uint16_t>(in2 & 0x0F) << 7);
+  }
+
+  inline bool isControlSet() const
+  {
+    return in2 & control;
   }
 
   inline bool isSwitchInput() const

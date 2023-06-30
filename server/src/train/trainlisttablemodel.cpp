@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,17 +21,30 @@
  */
 
 #include "trainlisttablemodel.hpp"
+#include "train.hpp"
 #include "trainlist.hpp"
+#include "trainblockstatus.hpp"
+#include "../board/tile/rail/blockrailtile.hpp"
+#include "../core/objectproperty.tpp"
 #include "../utils/displayname.hpp"
+#include "../utils/utf8.hpp"
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
+constexpr uint32_t columnActive = 2;
+constexpr uint32_t columnBlock = 3;
+constexpr uint32_t columnLength = 4;
+constexpr uint32_t columnWeight = 5;
 
 bool TrainListTableModel::isListedProperty(std::string_view name)
 {
   return
     name == "id" ||
-    name == "name";
+    name == "name" ||
+    name == "active" ||
+    name == "blocks" ||
+    name == "lob" ||
+    name == "weight";
 }
 
 TrainListTableModel::TrainListTableModel(TrainList& list) :
@@ -40,6 +53,10 @@ TrainListTableModel::TrainListTableModel(TrainList& list) :
   setColumnHeaders({
     DisplayName::Object::id,
     DisplayName::Object::name,
+    "train:active",
+    "train:block",
+    "train:lob",
+    "train:weight"
     });
 }
 
@@ -57,6 +74,18 @@ std::string TrainListTableModel::getText(uint32_t column, uint32_t row) const
       case columnName:
         return train.name;
 
+      case columnActive:
+        return train.active ? UTF8_CHECKMARK : "";
+
+      case columnBlock:
+        return !train.blocks.empty() ? train.blocks[0]->block->name.value() : std::string{};
+
+      case columnLength:
+        return toString(train.lob);
+
+      case columnWeight:
+        return toString(train.weight);
+
       default:
         assert(false);
         break;
@@ -72,4 +101,12 @@ void TrainListTableModel::propertyChanged(BaseProperty& property, uint32_t row)
     changed(row, columnId);
   else if(property.name() == "name")
     changed(row, columnName);
+  else if(property.name() == "active")
+    changed(row, columnActive);
+  else if(property.name() == "blocks")
+    changed(row, columnBlock);
+  else if(property.name() == "lob")
+    changed(row, columnLength);
+  else if(property.name() == "weight")
+    changed(row, columnWeight);
 }

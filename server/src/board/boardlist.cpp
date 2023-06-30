@@ -20,31 +20,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "board.hpp"
 #include "boardlist.hpp"
 #include "boardlisttablemodel.hpp"
+#include "../core/method.tpp"
 #include "../world/getworld.hpp"
 #include "../core/attributes.hpp"
 #include "../utils/displayname.hpp"
 
 BoardList::BoardList(Object& _parent, std::string_view parentPropertyName) :
   ObjectList<Board>(_parent, parentPropertyName),
-  add{*this, "add",
+  create{*this, "create",
     [this]()
     {
       auto& world = getWorld(parent());
       return Board::create(world, world.getUniqueId("board"));
     }}
-  , remove{*this, "remove", std::bind(&BoardList::removeMethodHandler, this, std::placeholders::_1)}
+  , delete_{*this, "delete", std::bind(&BoardList::deleteMethodHandler, this, std::placeholders::_1)}
 {
   const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
-  Attributes::addDisplayName(add, DisplayName::List::add);
-  Attributes::addEnabled(add, editable);
-  m_interfaceItems.add(add);
+  Attributes::addDisplayName(create, DisplayName::List::create);
+  Attributes::addEnabled(create, editable);
+  m_interfaceItems.add(create);
 
-  Attributes::addDisplayName(remove, DisplayName::List::remove);
-  Attributes::addEnabled(remove, editable);
-  m_interfaceItems.add(remove);
+  Attributes::addDisplayName(delete_, DisplayName::List::remove);
+  Attributes::addEnabled(delete_, editable);
+  m_interfaceItems.add(delete_);
 }
 
 TableModelPtr BoardList::getModel()
@@ -58,8 +60,8 @@ void BoardList::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  Attributes::setEnabled(add, editable);
-  Attributes::setEnabled(remove, editable);
+  Attributes::setEnabled(create, editable);
+  Attributes::setEnabled(delete_, editable);
 }
 
 bool BoardList::isListedProperty(std::string_view name)

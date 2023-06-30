@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,7 @@
 #include "readonlytable.hpp"
 #include "sandbox.hpp"
 #include "script.hpp"
-#include "object.hpp"
+#include "test.hpp"
 #include "method.hpp"
 #include "event.hpp"
 #include "../log/log.hpp"
@@ -76,7 +76,7 @@ int Log::log(lua_State* L, LogMessage code)
           break;
 
         case LUA_TUSERDATA:
-          if(ObjectPtr object = Object::test(L, i))
+          if(ObjectPtr object = test<::Object>(L, i))
             message += object->getClassId();
           else if(Method::test(L, i))
             message += "method";

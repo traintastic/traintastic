@@ -86,7 +86,7 @@ jobs:
     # Windows only:
     - name: Install Qt
       if: startswith(matrix.config.os, 'windows')
-      uses: jurplel/install-qt-action@v2
+      uses: jurplel/install-qt-action@v3
       with:
         cached: ${{steps.cache-qt.outputs.cache-hit}}
 
@@ -372,6 +372,7 @@ jobs:
   build-data:
     name: shared data ${{matrix.config.name}}
     runs-on: ${{matrix.config.os}}
+    needs: [build-lang]
     strategy:
       fail-fast: false
       matrix:
@@ -400,6 +401,12 @@ jobs:
     - name: Checkout LFS objects
       run: git lfs checkout
 
+    - name: "Download artifact: lang"
+      uses: actions/download-artifact@v2
+      with:
+        name: traintastic-lang
+        path: ${{github.workspace}}/shared/translations
+
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/shared/build
 
@@ -417,6 +424,32 @@ jobs:
       with:
         name: traintastic-data-deb
         path: ${{github.workspace}}/shared/build/*.deb
+
+  build-lang:
+    name: manual
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: FranzDiebold/github-env-vars-action@v2
+
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        lfs: true
+        submodules: recursive
+
+    - name: Checkout LFS objects
+      run: git lfs checkout
+
+    - name: Build language files
+      working-directory: ${{github.workspace}}/shared/translations
+      run: python3 json2lang.py
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: traintastic-lang
+        path: ${{github.workspace}}/shared/translations/*.lang
 
   build-manual:
     name: manual
@@ -450,7 +483,7 @@ jobs:
   package-innosetup:
     name: package innosetup
     runs-on: windows-2019
-    needs: [build-client, build-server]
+    needs: [build-client, build-server, build-lang]
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -475,6 +508,12 @@ jobs:
       with:
         name: traintastic-server
         path: ${{github.workspace}}/server/build
+
+    - name: "Download artifact: lang"
+      uses: actions/download-artifact@v2
+      with:
+        name: traintastic-lang
+        path: ${{github.workspace}}/shared/translations
 
     - name: "Download artifact: manual"
       uses: actions/download-artifact@v2
@@ -506,37 +545,37 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: package-innosetup
-        path: ${{github.workspace}}/dist
+        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
     - name: Download artifacts 2/6
       uses: actions/download-artifact@v2
       with:
         name: traintastic-client-deb
-        path: ${{github.workspace}}/dist
+        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
     - name: Download artifacts 3/6
       uses: actions/download-artifact@v2
       with:
         name: traintastic-server-deb
-        path: ${{github.workspace}}/dist
+        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
     - name: Download artifacts 4/6
       uses: actions/download-artifact@v2
       with:
         name: traintastic-server-test-code-coverage
-        path: ${{github.workspace}}/dist/ccov
+        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}/ccov
 
     - name: Download artifacts 5/6
       uses: actions/download-artifact@v2
       with:
         name: traintastic-manual
-        path: ${{github.workspace}}/dist/manual
+        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}/manual
 
     - name: Download artifacts 6/6
       uses: actions/download-artifact@v2
       with:
         name: traintastic-data-deb
-        path: ${{github.workspace}}/dist
+        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
     - uses: easingthemes/ssh-deploy@v2.2.11
       env:
@@ -546,7 +585,7 @@ jobs:
           REMOTE_HOST: ${{secrets.REMOTE_HOST}}
           REMOTE_PORT: ${{secrets.REMOTE_PORT}}
           REMOTE_USER: ${{secrets.REMOTE_USER}}
-          TARGET: ${{secrets.REMOTE_TARGET}}/traintastic/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}/
+          TARGET: ${{secrets.REMOTE_TARGET}}/traintastic/
 
   update-readme-contributors:
     runs-on: ubuntu-latest

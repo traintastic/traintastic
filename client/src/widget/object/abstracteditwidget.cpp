@@ -82,7 +82,9 @@ AbstractEditWidget::AbstractEditWidget(ObjectProperty& property, QWidget* parent
 
 AbstractEditWidget::~AbstractEditWidget()
 {
-  m_object->connection()->cancelRequest(m_requestId);
+  if(m_requestId != Connection::invalidRequestId)
+    if(const auto& connection = MainWindow::instance->connection())
+      connection->cancelRequest(m_requestId);
 }
 
 void AbstractEditWidget::setIdAsWindowTitle()

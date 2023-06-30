@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,6 +34,7 @@ class SpeedoMeterWidget : public QWidget
     double m_speed;
     double m_speedMax;
     double m_speedLimit;
+    double m_speedTarget;
     QString m_unit;
 
   protected:
@@ -57,6 +58,7 @@ class SpeedoMeterWidget : public QWidget
     void setSpeed(double value);
     void setSpeedMax(double value);
     void setSpeedLimit(double value);
+    void setSpeedTarget(double value);
     void setUnit(QString value);
 };
 

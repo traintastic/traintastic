@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,11 +21,18 @@
  */
 
 #include "dccplusplusinterface.hpp"
+#include "../decoder/list/decoderlist.hpp"
 #include "../decoder/list/decoderlisttablemodel.hpp"
+#include "../input/list/inputlist.hpp"
+#include "../output/list/outputlist.hpp"
+#include "../protocol/dccplusplus/kernel.hpp"
+#include "../protocol/dccplusplus/settings.hpp"
 #include "../protocol/dccplusplus/messages.hpp"
 #include "../protocol/dccplusplus/iohandler/serialiohandler.hpp"
 #include "../protocol/dccplusplus/iohandler/simulationiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/method.tpp"
+#include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
@@ -36,6 +43,8 @@
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Channel | OutputListColumn::Address;
+
+CREATE_IMPL(DCCPlusPlusInterface)
 
 DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   : Interface(world, _id)
@@ -74,10 +83,25 @@ void DCCPlusPlusInterface::decoderChanged(const Decoder& decoder, DecoderChangeF
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-void DCCPlusPlusInterface::inputSimulateChange(uint32_t channel, uint32_t address)
+std::pair<uint32_t, uint32_t> DCCPlusPlusInterface::inputAddressMinMax(uint32_t) const
+{
+  return {DCCPlusPlus::Kernel::idMin, DCCPlusPlus::Kernel::idMax};
+}
+
+void DCCPlusPlusInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
-    m_kernel->simulateInputChange(address);
+    m_kernel->simulateInputChange(address, action);
+}
+
+const std::vector<uint32_t> *DCCPlusPlusInterface::outputChannels() const
+{
+  return &DCCPlusPlus::Kernel::outputChannels;
+}
+
+const std::vector<std::string_view> *DCCPlusPlusInterface::outputChannelNames() const
+{
+  return &DCCPlusPlus::Kernel::outputChannelNames;
 }
 
 std::pair<uint32_t, uint32_t> DCCPlusPlusInterface::outputAddressMinMax(uint32_t channel) const
@@ -121,13 +145,13 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
         m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SerialIOHandler>(dccplusplus->config(), device.value(), baudrate.value(), SerialFlowControl::None);
       }
 
-      status.setValueInternal(InterfaceStatus::Initializing);
+      setState(InterfaceState::Initializing);
 
       m_kernel->setLogId(id.value());
       m_kernel->setOnStarted(
         [this]()
         {
-          status.setValueInternal(InterfaceStatus::Online);
+          setState(InterfaceState::Online);
 
           const bool powerOn = contains(m_world.state.value(), WorldState::PowerOn);
 
@@ -169,7 +193,7 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
     }
     catch(const LogMessageException& e)
     {
-      status.setValueInternal(InterfaceStatus::Offline);
+      setState(InterfaceState::Offline);
       Log::log(*this, e.message(), e.args());
       return false;
     }
@@ -183,7 +207,7 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
     m_kernel->stop();
     m_kernel.reset();
 
-    status.setValueInternal(InterfaceStatus::Offline);
+    setState(InterfaceState::Offline);
   }
   return true;
 }

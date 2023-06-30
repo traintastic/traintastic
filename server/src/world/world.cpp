@@ -21,24 +21,49 @@
  */
 
 #include "world.hpp"
-#include <fstream>
-#include <iomanip>
+
 #include <boost/algorithm/string.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
+
 #include "worldsaver.hpp"
-#include "../board/tile/rail/linkrailtile.hpp"
+
+#include "../log/log.hpp"
+#include "../utils/datetimestr.hpp"
+#include "../utils/displayname.hpp"
+#include "../traintastic/traintastic.hpp"
+
+#include "../core/method.tpp"
+#include "../core/objectproperty.tpp"
+#include "../core/objectvectorproperty.tpp"
 #include "../core/objectlisttablemodel.hpp"
 #include "../core/attributes.hpp"
 #include "../core/abstractvectorproperty.hpp"
+#include "../core/controllerlist.hpp"
+
 #include "../hardware/input/input.hpp"
+#include "../hardware/input/monitor/inputmonitor.hpp"
+#include "../hardware/input/list/inputlist.hpp"
 #include "../hardware/identification/identification.hpp"
+#include "../hardware/identification/list/identificationlist.hpp"
+#include "../hardware/output/keyboard/outputkeyboard.hpp"
+#include "../hardware/output/list/outputlist.hpp"
+#include "../hardware/interface/interfacelist.hpp"
+#include "../hardware/decoder/list/decoderlist.hpp"
 #include "../hardware/programming/lncv/lncvprogrammer.hpp"
-#include "../log/log.hpp"
-#include "../os/localtime.hpp"
-#include "../utils/displayname.hpp"
-#include "../traintastic/traintastic.hpp"
+#include "../hardware/programming/lncv/lncvprogrammingcontroller.hpp"
+
+#include "../clock/clock.hpp"
+
+#include "../board/board.hpp"
+#include "../board/boardlist.hpp"
+#include "../board/list/linkrailtilelist.hpp"
+
+#include "../train/train.hpp"
+#include "../train/trainlist.hpp"
+#include "../vehicle/rail/railvehiclelist.hpp"
+#include "../lua/scriptlist.hpp"
 
 using nlohmann::json;
 
@@ -48,10 +73,10 @@ constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name
 constexpr auto identificationListColumns = IdentificationListColumn::Id | IdentificationListColumn::Name | IdentificationListColumn::Interface /*| IdentificationListColumn::Channel*/ | IdentificationListColumn::Address;
 
 template<class T>
-inline static void removeAll(T& objectList)
+inline static void deleteAll(T& objectList)
 {
   while(!objectList.empty())
-    objectList.remove(objectList.front());
+    objectList.delete_(objectList.front());
 }
 
 std::shared_ptr<World> World::create()
@@ -104,6 +129,7 @@ World::World(Private /*unused*/) :
   railVehicles{this, "rail_vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   linkRailTiles{this, "link_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  statuses(*this, "statuses", {}, PropertyFlags::ReadOnly | PropertyFlags::Store),
   hardwareThrottles{this, "hardware_throttles", 0, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::NoScript},
   state{this, "state", WorldState(), PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   edit{this, "edit", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
@@ -175,15 +201,6 @@ World::World(Private /*unused*/) :
         // backup world:
         const std::filesystem::path worldDir = Traintastic::instance->worldDir();
         const std::filesystem::path worldBackupDir = Traintastic::instance->worldBackupDir();
-        auto dateTimeStr =
-          []()
-          {
-            const auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-            std::stringstream ss;
-            tm tm;
-            ss << std::put_time(localTime(&now, &tm), "_%Y%m%d_%H%M%S");
-            return ss.str();
-          };
 
         if(!std::filesystem::is_directory(worldBackupDir))
         {
@@ -217,7 +234,10 @@ World::World(Private /*unused*/) :
         WorldSaver saver(*this, savePath);
 
         if(Traintastic::instance)
+        {
           Traintastic::instance->settings->lastWorld = uuid.value();
+          Traintastic::instance->worldList->update(*this, savePath);
+        }
 
         Log::log(*this, LogMessage::N1022_SAVED_WORLD_X, name.value());
       }
@@ -287,6 +307,9 @@ World::World(Private /*unused*/) :
   Attributes::addObjectEditor(linkRailTiles, false);
   m_interfaceItems.add(linkRailTiles);
 
+  Attributes::addObjectEditor(statuses, false);
+  m_interfaceItems.add(statuses);
+
   Attributes::addObjectEditor(hardwareThrottles, false);
   m_interfaceItems.add(hardwareThrottles);
 
@@ -329,15 +352,15 @@ World::World(Private /*unused*/) :
 
 World::~World()
 {
-  removeAll(*interfaces);
-  removeAll(*decoders);
-  removeAll(*inputs);
-  removeAll(*outputs);
-  removeAll(*identifications);
-  removeAll(*boards);
-  removeAll(*trains);
-  removeAll(*railVehicles);
-  removeAll(*luaScripts);
+  deleteAll(*interfaces);
+  deleteAll(*decoders);
+  deleteAll(*inputs);
+  deleteAll(*outputs);
+  deleteAll(*identifications);
+  deleteAll(*boards);
+  deleteAll(*trains);
+  deleteAll(*railVehicles);
+  deleteAll(*luaScripts);
 }
 
 std::string World::getUniqueId(std::string_view prefix) const

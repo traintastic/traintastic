@@ -1,9 +1,9 @@
 /**
- * server/src/lua/object.cpp - Lua object wrapper
+ * server/src/lua/object.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,112 +21,19 @@
  */
 
 #include "object.hpp"
-#include "push.hpp"
-#include "check.hpp"
-#include "to.hpp"
-#include "method.hpp"
-#include "event.hpp"
-#include "error.hpp"
-#include "../core/object.hpp"
-#include "../core/abstractproperty.hpp"
-#include "../core/abstractmethod.hpp"
-#include "../core/abstractevent.hpp"
+#include "object/object.hpp"
+#include "object/objectlist.hpp"
+#include "object/loconetinterface.hpp"
 
-namespace Lua {
+namespace Lua::Object {
 
-ObjectPtr Object::check(lua_State* L, int index)
+constexpr char const* objectsGlobal = "objects";
+
+void registerTypes(lua_State* L)
 {
-  auto* data = static_cast<ObjectPtrWeak*>(luaL_testudata(L, index, metaTableNameList));
-  if(!data)
-    data = static_cast<ObjectPtrWeak*>(luaL_checkudata(L, index, metaTableName));
-
-  if(ObjectPtr object = data->lock())
-    return object;
-
-  errorDeadObject(L);
-}
-
-std::shared_ptr<AbstractObjectList> Object::checkList(lua_State* L, int index)
-{
-  auto& data = *static_cast<ObjectPtrWeak*>(luaL_checkudata(L, index, metaTableNameList));
-  if(ObjectPtr object = data.lock())
-    return std::static_pointer_cast<AbstractObjectList>(object);
-
-  errorDeadObject(L);
-}
-
-ObjectPtr Object::test(lua_State* L, int index)
-{
-  auto* data = static_cast<ObjectPtrWeak*>(luaL_testudata(L, index, metaTableName));
-  if(!data)
-    data = static_cast<ObjectPtrWeak*>(luaL_testudata(L, index, metaTableNameList));
-
-  if(!data)
-    return {};
-  if(ObjectPtr object = data->lock())
-    return object;
-
-  errorDeadObject(L);
-}
-
-std::shared_ptr<AbstractObjectList> Object::testList(lua_State* L, int index)
-{
-  auto* data = static_cast<ObjectPtrWeak*>(luaL_testudata(L, index, metaTableNameList));
-  if(!data)
-    return {};
-  if(ObjectPtr object = data->lock())
-    return std::static_pointer_cast<AbstractObjectList>(object);
-
-  errorDeadObject(L);
-}
-
-void Object::push(lua_State* L, const ObjectPtr& value)
-{
-  if(value)
-  {
-    lua_getglobal(L, metaTableName);
-    lua_rawgetp(L, -1, value.get());
-    if(lua_isnil(L, -1)) // object not in table
-    {
-      lua_pop(L, 1); // remove nil
-      new(lua_newuserdata(L, sizeof(ObjectPtrWeak))) ObjectPtrWeak(value);
-      if(dynamic_cast<AbstractObjectList*>(value.get()))
-        luaL_setmetatable(L, metaTableNameList);
-      else
-        luaL_setmetatable(L, metaTableName);
-      lua_pushvalue(L, -1); // copy userdata on stack
-      lua_rawsetp(L, -3, value.get()); // add object to table
-    }
-    lua_insert(L, lua_gettop(L) - 1); // swap table and userdata
-    lua_pop(L, 1); // remove table
-  }
-  else
-    lua_pushnil(L);
-}
-
-void Object::registerType(lua_State* L)
-{
-  // metatable for object userdata:
-  luaL_newmetatable(L, metaTableName);
-  lua_pushcfunction(L, __gc);
-  lua_setfield(L, -2, "__gc");
-  lua_pushcfunction(L, __index);
-  lua_setfield(L, -2, "__index");
-  lua_pushcfunction(L, __newindex);
-  lua_setfield(L, -2, "__newindex");
-  lua_pop(L, 1);
-
-  // metatable for object list userdata:
-  luaL_newmetatable(L, metaTableNameList);
-  lua_pushcfunction(L, __gc);
-  lua_setfield(L, -2, "__gc");
-  lua_pushcfunction(L, __index);
-  lua_setfield(L, -2, "__index");
-  lua_pushcfunction(L, __newindex);
-  lua_setfield(L, -2, "__newindex");
-  lua_pushcfunction(L, __len);
-  lua_setfield(L, -2, "__len");
-  lua_pop(L, 1);
+  Object::registerType(L);
+  ObjectList::registerType(L);
+  LocoNetInterface::registerType(L);
 
   // weak table for object userdata:
   lua_newtable(L);
@@ -135,170 +42,40 @@ void Object::registerType(lua_State* L)
   lua_pushliteral(L, "v");
   lua_rawset(L, -3);
   lua_setmetatable(L, -2);
-  lua_setglobal(L, metaTableName);
+  lua_setglobal(L, objectsGlobal);
 }
 
-int Object::__gc(lua_State* L)
+void push(lua_State* L, ::Object& value)
 {
-  static_cast<ObjectPtrWeak*>(lua_touserdata(L, 1))->~ObjectPtrWeak();
-  return 0;
+  push(L, value.shared_from_this());
 }
 
-int Object::__index(lua_State* L)
+void push(lua_State* L, const ObjectPtr& value)
 {
-  ObjectPtr object{check(L, 1)};
-
-  // handle list[index]:
+  if(value)
   {
-    lua_Integer index;
-    if(to(L, 2, index))
+    lua_getglobal(L, objectsGlobal);
+    lua_rawgetp(L, -1, value.get());
+    if(lua_isnil(L, -1)) // object not in table
     {
-      if(auto list = std::dynamic_pointer_cast<AbstractObjectList>(object))
-      {
-        if(index >= 1 && index <= list->length)
-          push(L, list->getObject(static_cast<uint32_t>(index - 1)));
-        else
-          lua_pushnil(L);
-        return 1;
-      }
-    }
-  }
+      lua_pop(L, 1); // remove nil
+      new(lua_newuserdata(L, sizeof(ObjectPtrWeak))) ObjectPtrWeak(value);
 
-  std::string_view name{to<std::string_view>(L, 2)};
-
-  if(InterfaceItem* item = object->getItem(name))
-  {
-    if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(item))
-    {
-      if(property->isScriptReadable())
-      {
-        switch(property->type())
-        {
-          case ValueType::Boolean:
-            Lua::push(L, property->toBool());
-            break;
-
-          case ValueType::Enum:
-            // EnumName<T>::value assigned to the std::string_view is NUL terminated,
-            // so it can be used as const char* however it is a bit tricky :)
-            assert(*(property->enumName().data() + property->enumName().size()) == '\0');
-            pushEnum(L, property->enumName().data(), static_cast<lua_Integer>(property->toInt64()));
-            break;
-
-          case ValueType::Integer:
-            Lua::push(L, property->toInt64());
-            break;
-
-          case ValueType::Float:
-            Lua::push(L, property->toDouble());
-            break;
-
-          case ValueType::String:
-            Lua::push(L, property->toString());
-            break;
-
-          case ValueType::Object:
-            push(L, property->toObject());
-            break;
-
-          case ValueType::Set:
-            // set_name<T>::value assigned to the std::string_view is NUL terminated,
-            // so it can be used as const char* however it is a bit tricky :)
-            assert(*(property->setName().data() + property->setName().size()) == '\0');
-            pushSet(L, property->setName().data(), static_cast<lua_Integer>(property->toInt64()));
-            break;
-
-          default:
-            assert(false);
-            lua_pushnil(L);
-            break;
-        }
-      }
+      if(dynamic_cast<::LocoNetInterface*>(value.get()))
+        luaL_setmetatable(L, LocoNetInterface::metaTableName);
+      else if(dynamic_cast<AbstractObjectList*>(value.get()))
+        luaL_setmetatable(L, ObjectList::metaTableName);
       else
-        lua_pushnil(L);
+        luaL_setmetatable(L, Object::metaTableName);
+
+      lua_pushvalue(L, -1); // copy userdata on stack
+      lua_rawsetp(L, -3, value.get()); // add object to table
     }
-    else if(AbstractMethod* method = dynamic_cast<AbstractMethod*>(item))
-    {
-      if(method->isScriptCallable())
-        Method::push(L, *method);
-      else
-        lua_pushnil(L);
-    }
-    else if(auto* event = dynamic_cast<AbstractEvent*>(item))
-    {
-      if(event->isScriptable())
-        Event::push(L, *event);
-      else
-        lua_pushnil(L);
-    }
-    else
-    {
-      assert(false); // it must be a property or method
-      lua_pushnil(L);
-    }
+    lua_insert(L, lua_gettop(L) - 1); // swap table and userdata
+    lua_pop(L, 1); // remove table
   }
   else
     lua_pushnil(L);
-
-  return 1;
-}
-
-int Object::__newindex(lua_State* L)
-{
-  ObjectPtr object{check(L, 1)};
-  const std::string name{lua_tostring(L, 2)};
-
-  if(AbstractProperty* property = object->getProperty(name))
-  {
-    if(!property->isScriptWriteable() || !property->isWriteable())
-      errorCantSetReadOnlyProperty(L);
-
-    try
-    {
-      switch(property->type())
-      {
-        case ValueType::Boolean:
-          property->fromBool(Lua::check<bool>(L, 2));
-          break;
-
-        case ValueType::Integer:
-          property->fromInt64(Lua::check<int64_t>(L, 2));
-          break;
-
-        case ValueType::Float:
-          property->fromDouble(Lua::check<double>(L, 2));
-          break;
-
-        case ValueType::String:
-          property->fromString(Lua::check<std::string>(L, 2));
-          break;
-
-        case ValueType::Object:
-          property->fromObject(check(L, 2));
-          break;
-
-        default:
-          assert(false);
-          errorInternal(L);
-      }
-      return 0;
-    }
-    catch(const std::exception& e)
-    {
-      errorException(L, e);
-    }
-  }
-
-  errorCantSetNonExistingProperty(L);
-}
-
-int Object::__len(lua_State* L)
-{
-  auto list{checkList(L, 1)};
-
-  Lua::push(L, list->length.value());
-
-  return 1;
 }
 
 }

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,11 +31,14 @@ struct BoardColorScheme
   static const BoardColorScheme light;
 
   const QColor background;
+  const QColor foreground;
   const QColor track;
   const QColor trackDisabled;
   const QColor blockFree;
+  const QColor blockReserved;
   const QColor blockOccupied;
   const QColor blockUnknown;
+  const QColor blockText;
   const QColor sensorFree;
   const QColor sensorOccupied;
   const QColor sensorIdle;

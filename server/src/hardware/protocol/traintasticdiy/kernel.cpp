@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,11 +24,13 @@
 #include "messages.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
+#include "../../decoder/list/decoderlist.hpp"
 #include "../../input/inputcontroller.hpp"
 #include "../../output/outputcontroller.hpp"
 #include "../../../utils/inrange.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../core/eventloop.hpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../log/log.hpp"
 #include "../../../world/world.hpp"
 
@@ -237,14 +239,44 @@ void Kernel::receive(const Message& message)
       }
       break;
     }
-    case OpCode::ThrottleUnsubscribe:
+    case OpCode::ThrottleSubUnsub:
     {
       if(!m_featureFlagsSet || !hasFeatureThrottle())
         break;
 
-      const auto& unsubscribe = static_cast<const ThrottleUnsubscribe&>(message);
-      throttleUnsubscribe(unsubscribe.throttleId(), {unsubscribe.address(), unsubscribe.isLongAddress()});
-      send(unsubscribe);
+      const auto& subUnsub = static_cast<const ThrottleSubUnsub&>(message);
+      switch(subUnsub.action())
+      {
+        case ThrottleSubUnsub::Unsubscribe:
+          throttleUnsubscribe(subUnsub.throttleId(), {subUnsub.address(), subUnsub.isLongAddress()});
+          send(subUnsub);
+          break;
+
+        case ThrottleSubUnsub::Subscribe:
+          throttleSubscribe(subUnsub.throttleId(), {subUnsub.address(), subUnsub.isLongAddress()});
+          EventLoop::call(
+            [this, subUnsub]()
+            {
+              if(auto decoder = getDecoder(subUnsub.address(), subUnsub.isLongAddress()))
+              {
+                uint8_t speedMax = 0;
+                uint8_t speed = 0;
+
+                if(!decoder->emergencyStop)
+                {
+                  speedMax = decoder->speedSteps.value();
+                  if(speedMax == Decoder::speedStepsAuto)
+                    speedMax = std::numeric_limits<uint8_t>::max();
+                  speed = Decoder::throttleToSpeedStep(decoder->throttle, speedMax);
+                }
+
+                postSend(ThrottleSetSpeedDirection(subUnsub.throttleId(), subUnsub.address(), subUnsub.isLongAddress(), speed, speedMax, decoder->direction));
+                for(const auto& function : *decoder->functions)
+                  postSend(ThrottleSetFunction(subUnsub.throttleId(), subUnsub.address(), subUnsub.isLongAddress(), function->number, function->value));
+              }
+            });
+          break;
+      }
       break;
     }
     case OpCode::ThrottleSetFunction:
@@ -367,14 +399,37 @@ bool Kernel::setOutput(uint16_t address, bool value)
   return true;
 }
 
-void Kernel::simulateInputChange(uint16_t address)
+void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
 {
   if(m_simulation)
     m_ioContext.post(
-      [this, address]()
+      [this, address, action]()
       {
+        TraintasticDIY::InputState state;
         auto it = m_inputValues.find(address);
-        receive(SetInputState(address, (it == m_inputValues.end() || it->second == InputState::True) ? InputState::False : InputState::True));
+        switch(action)
+        {
+          case SimulateInputAction::SetFalse:
+            if(it != m_inputValues.end() && it->second == InputState::False)
+              return; // no change
+            state = InputState::False;
+            break;
+
+          case SimulateInputAction::SetTrue:
+            if(it != m_inputValues.end() && it->second == InputState::True)
+              return; // no change
+            state = InputState::True;
+            break;
+
+          case SimulateInputAction::Toggle:
+            state = (it == m_inputValues.end() || it->second == InputState::True) ? InputState::False : InputState::True;
+            break;
+
+          default:
+            assert(false);
+            return;
+        }
+        receive(SetInputState(address, state));
       });
 }
 

@@ -22,8 +22,9 @@
 
 #include "class.hpp"
 #include "push.hpp"
-#include "object.hpp"
+#include "test.hpp"
 #include "checkarguments.hpp"
+#include "sandbox.hpp"
 
 #include "../board/board.hpp"
 #include "../board/boardlist.hpp"
@@ -86,7 +87,7 @@
 
 #include "../vehicle/rail/railvehiclelist.hpp"
 #include "../vehicle/rail/locomotive.hpp"
-#include "../vehicle/rail/freightcar.hpp"
+#include "../vehicle/rail/freightwagon.hpp"
 
 #include "../train/train.hpp"
 #include "../train/trainlist.hpp"
@@ -180,6 +181,7 @@ void Class::registerValues(lua_State* L)
   registerValue<WiThrottleInterface>(L, "WITHROTTLE");
   registerValue<WlanMausInterface>(L, "WLANMAUS");
   registerValue<Z21Interface>(L, "Z21");
+  registerValue<InterfaceStatus>(L, "INTERFACE_STATUS");
 
   registerValue<DecoderFunction>(L, "DECODER_FUNCTION");
   registerValue<DecoderList>(L, "DECODER_LIST");
@@ -194,7 +196,7 @@ void Class::registerValues(lua_State* L)
 
   registerValue<RailVehicleList>(L, "RAIL_VEHICLE_LIST");
   registerValue<Locomotive>(L, "LOCOMOTIVE");
-  registerValue<FreightCar>(L, "FREIGHT_CAR");
+  registerValue<FreightWagon>(L, "FREIGHT_WAGON");
 
   registerValue<Train>(L, "TRAIN");
   registerValue<TrainList>(L, "TRAIN_LIST");
@@ -246,7 +248,7 @@ int Class::__tostring(lua_State* L)
 int Class::getClass(lua_State* L)
 {
   checkArguments(L, 1);
-  if(auto object = Object::test(L, 1))
+  if(auto object = test<::Object>(L, 1))
     push(L, object);
   else
     lua_pushnil(L);

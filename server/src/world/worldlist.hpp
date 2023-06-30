@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,7 @@
 #include <vector>
 #include <boost/uuid/uuid.hpp>
 
+class World;
 class WorldListTableModel;
 
 class WorldList : public Object, public Table
@@ -67,6 +68,8 @@ class WorldList : public Object, public Table
     const WorldInfo* find(const boost::uuids::uuid& uuid);
 
     void buildIndex();
+
+    void update(World& world, const std::filesystem::path& path);
 
     TableModelPtr getModel() final;
 };

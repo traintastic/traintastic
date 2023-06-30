@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,10 +21,17 @@
  */
 
 #include "ecosinterface.hpp"
+#include "../decoder/list/decoderlist.hpp"
 #include "../decoder/list/decoderlisttablemodel.hpp"
+#include "../input/list/inputlist.hpp"
+#include "../output/list/outputlist.hpp"
+#include "../protocol/ecos/kernel.hpp"
+#include "../protocol/ecos/settings.hpp"
 #include "../protocol/ecos/iohandler/tcpiohandler.hpp"
 #include "../protocol/ecos/iohandler/simulationiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/method.tpp"
+#include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
@@ -35,6 +42,8 @@
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Channel | OutputListColumn::Address;
+
+CREATE_IMPL(ECoSInterface)
 
 ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   : Interface(world, _id)
@@ -66,6 +75,16 @@ void ECoSInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags ch
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
+const std::vector<uint32_t> *ECoSInterface::inputChannels() const
+{
+  return &ECoS::Kernel::inputChannels;
+}
+
+const std::vector<std::string_view> *ECoSInterface::inputChannelNames() const
+{
+  return &ECoS::Kernel::inputChannelNames;
+}
+
 std::pair<uint32_t, uint32_t> ECoSInterface::inputAddressMinMax(uint32_t channel) const
 {
   using namespace ECoS;
@@ -83,10 +102,20 @@ std::pair<uint32_t, uint32_t> ECoSInterface::inputAddressMinMax(uint32_t channel
   return {0, 0};
 }
 
-void ECoSInterface::inputSimulateChange(uint32_t channel, uint32_t address)
+void ECoSInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, outputAddressMinMax(channel)))
-    m_kernel->simulateInputChange(channel, address);
+    m_kernel->simulateInputChange(channel, address, action);
+}
+
+const std::vector<uint32_t> *ECoSInterface::outputChannels() const
+{
+  return &ECoS::Kernel::outputChannels;
+}
+
+const std::vector<std::string_view> *ECoSInterface::outputChannelNames() const
+{
+  return &ECoS::Kernel::outputChannelNames;
 }
 
 std::pair<uint32_t, uint32_t> ECoSInterface::outputAddressMinMax(uint32_t channel) const
@@ -125,13 +154,13 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
       else
         m_kernel = ECoS::Kernel::create<ECoS::TCPIOHandler>(ecos->config(), hostname.value());
 
-      status.setValueInternal(InterfaceStatus::Initializing);
+      setState(InterfaceState::Initializing);
 
       m_kernel->setLogId(id.value());
       m_kernel->setOnStarted(
         [this]()
         {
-          status.setValueInternal(InterfaceStatus::Online);
+          setState(InterfaceState::Online);
         });
       m_kernel->setOnEmergencyStop(
         [this]()
@@ -165,7 +194,7 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
     }
     catch(const LogMessageException& e)
     {
-      status.setValueInternal(InterfaceStatus::Offline);
+      setState(InterfaceState::Offline);
       Log::log(*this, e.message(), e.args());
       return false;
     }
@@ -179,7 +208,7 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
     m_kernel->stop(simulation ? nullptr : &m_simulation);
     m_kernel.reset();
 
-    status.setValueInternal(InterfaceStatus::Offline);
+    setState(InterfaceState::Offline);
   }
   return true;
 }

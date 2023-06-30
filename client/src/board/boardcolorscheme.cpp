@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,11 +24,14 @@
 
 const BoardColorScheme BoardColorScheme::dark = {
   /*.background =*/ {0x10, 0x10, 0x10},
+  /*.foreground =*/ {0xFF, 0xFF, 0xFF},
   /*.track =*/ {0xC0, 0xC0, 0xC0},
   /*.trackDisabled =*/ {0x40, 0x40, 0x40},
   /*.blockFree =*/ {0x66, 0xC6, 0x66},
+  /*.blockReserved =*/ {Qt::yellow},
   /*.blockOccupied =*/ {0xC6, 0x66, 0x66},
   /*.blockUnknown =*/ {0x66, 0x66, 0x66},
+  /*.blockText =*/ {Qt::black},
   /*.sensorFree =*/ {0x66, 0xC6, 0x66},
   /*.sensorOccupied =*/ {0xC6, 0x66, 0x66},
   /*.sensorIdle =*/ {0x40, 0x40, 0x40},
@@ -41,11 +44,14 @@ const BoardColorScheme BoardColorScheme::dark = {
 
 const BoardColorScheme BoardColorScheme::light = {
   /*.background =*/ {0xF5, 0xF5, 0xF5},
+  /*.foreground =*/ {0x00, 0x00, 0x00},
   /*.track =*/ {0x00, 0x00, 0x00},
   /*.trackDisabled =*/ {0xA0, 0xA0, 0xA0},
   /*.blockFree =*/ {0x44, 0xC6, 0x44},
+  /*.blockReserved =*/ {Qt::yellow},
   /*.blockOccupied =*/ {0xC6, 0x44, 0x44},
   /*.blockUnknown =*/ {0x88, 0x88, 0x88},
+  /*.blockText =*/ {Qt::white},
   /*.sensorFree =*/ {0x44, 0xC6, 0x44},
   /*.sensorOccupied =*/ {0xC6, 0x44, 0x44},
   /*.sensorIdle =*/ {0x40, 0x40, 0x40},

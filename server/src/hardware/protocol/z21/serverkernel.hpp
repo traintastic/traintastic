@@ -29,6 +29,7 @@
 #include <unordered_map>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/signals2/signal.hpp>
+#include <traintastic/enum/tristate.hpp>
 #include "messages.hpp"
 
 class DecoderList;

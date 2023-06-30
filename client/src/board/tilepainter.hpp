@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,6 +36,7 @@
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/turnoutposition.hpp>
 #include "../enum/color.hpp"
+#include "../network/objectptr.hpp"
 
 struct BoardColorScheme;
 
@@ -47,6 +48,7 @@ class TilePainter
     inline static const QColor signalGreen{0, 192, 0};
 
     const BoardColorScheme& m_colorScheme;
+    const bool m_showBlockSensorStates;
     const bool m_turnoutDrawState;
     const int m_trackWidth;
     const int m_turnoutMargin;
@@ -81,8 +83,9 @@ class TilePainter
 
     void drawSignal2Aspect(QRectF r, TileRotate rotate, SignalAspect aspect);
     void drawSignal3Aspect(QRectF r, TileRotate rotate, SignalAspect aspect);
+    void drawSignalDirection(QRectF r, TileRotate rotate);
 
-    void drawRailBlock(const QRectF& r, TileRotate rotate, BlockState state = BlockState::Unknown, const std::vector<SensorState> subStates = {});
+    void drawRailBlock(const QRectF& r, TileRotate rotate, const ObjectPtr& blockTile = {});
 
   public:
     TilePainter(QPainter& painter, int tileSize, const BoardColorScheme& colorScheme);
@@ -92,7 +95,7 @@ class TilePainter
     void drawDirectionControl(TileId id, const QRectF& r, TileRotate rotate, DirectionControlState state = DirectionControlState::Both);
     void drawTurnout(TileId id, const QRectF& r, TileRotate rotate, TurnoutPosition position = TurnoutPosition::Unknown);
     void drawSignal(TileId id, const QRectF& r, TileRotate rotate, SignalAspect aspect = SignalAspect::Unknown);
-    void drawBlock(TileId id, const QRectF& r, TileRotate rotate, BlockState state = BlockState::Unknown, const std::vector<SensorState> subStates = {});
+    void drawBlock(TileId id, const QRectF& r, TileRotate rotate, const ObjectPtr& blockTile = {});
 
     void drawPushButton(const QRectF& r, Color color = Color::Yellow);
 

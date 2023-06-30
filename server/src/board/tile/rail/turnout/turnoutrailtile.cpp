@@ -21,7 +21,9 @@
  */
 
 #include "turnoutrailtile.hpp"
+#include "../../../../core/objectproperty.tpp"
 #include "../../../../core/attributes.hpp"
+#include "../../../../core/method.tpp"
 #include "../../../../world/world.hpp"
 #include "../../../../utils/displayname.hpp"
 

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,7 +34,7 @@ enum class OpCode : uint8_t
   SetInputState = 0x13,
   GetOutputState = 0x22,
   SetOutputState = 0x23,
-  ThrottleUnsubscribe = 0x34,
+  ThrottleSubUnsub = 0x34,
   ThrottleSetFunction = 0x35,
   ThrottleSetSpeedDirection = 0x37,
   GetFeatures = 0xE0,
@@ -66,8 +66,8 @@ constexpr std::string_view toString(TraintasticDIY::OpCode value)
     case OpCode::SetOutputState:
       return "SetOutputState";
 
-    case OpCode::ThrottleUnsubscribe:
-      return "ThrottleUnsubscribe";
+    case OpCode::ThrottleSubUnsub:
+      return "ThrottleSubUnsub";
 
     case OpCode::ThrottleSetFunction:
       return "ThrottleSetFunction";

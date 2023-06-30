@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@ SpeedoMeterWidget::SpeedoMeterWidget(QWidget* parent)
   , m_speed{0.0}
   , m_speedMax{1.0}
   , m_speedLimit{std::numeric_limits<double>::quiet_NaN()}
+  , m_speedTarget{std::numeric_limits<double>::quiet_NaN()}
   , m_unit{""}
 {
 }
@@ -70,6 +71,15 @@ void SpeedoMeterWidget::setSpeedLimit(double value)
   }
 }
 
+void SpeedoMeterWidget::setSpeedTarget(double value)
+{
+  if(m_speedTarget != value)
+  {
+    m_speedTarget = value;
+    update();
+  }
+}
+
 void SpeedoMeterWidget::setUnit(QString value)
 {
   if(m_unit != value)
@@ -86,6 +96,7 @@ void SpeedoMeterWidget::paintEvent(QPaintEvent*)
   const QColor barColorOff{0x00, 0x40, 0x40};
   const QColor barColorLimit{0x80, 0x00, 0x00};
   const QColor barColorLimitOverride{0xFF, 0x00, 0x00};
+  const QColor barColorTarget{0xFF, 0xFF, 0xFF};
 
   QPainter painter(this);
   painter.setRenderHint(QPainter::Antialiasing, true);
@@ -108,12 +119,13 @@ void SpeedoMeterWidget::paintEvent(QPaintEvent*)
   const int stepLimitOverride = std::isfinite(m_speedLimit) && (m_speed > m_speedLimit) ? qRound(m_speedLimit / m_speedMax * steps) : -1;
   const int stepLimit = std::isfinite(m_speedLimit) ? qRound((m_speed > m_speedLimit ? m_speed : m_speedLimit) / m_speedMax * steps) : -1;
   const int stepOff = !std::isfinite(m_speedLimit) || (m_speed < m_speedLimit) ? qRound(m_speed / m_speedMax * steps) : -1;
+  const int stepTarget = std::isfinite(m_speedTarget) ? qRound(m_speedTarget / m_speedMax * steps) : -1;
 
   painter.translate(borderRect.center()); // circle center is now 0,0
   painter.rotate(angleStart);
   painter.setPen(QPen(barColorOn, penWidth));
 
-  for(int i = 0; i < steps; i++)
+  for(int i = 0; i <= steps; i++)
   {
     if(i == stepLimitOverride)
       painter.setPen(QPen(barColorLimitOverride, penWidth));
@@ -122,7 +134,17 @@ void SpeedoMeterWidget::paintEvent(QPaintEvent*)
     else if(i == stepOff)
       painter.setPen(QPen(barColorOff, penWidth));
 
+    if(i == stepTarget)
+    {
+      painter.save();
+      painter.setPen(QPen(barColorTarget, penWidth));
+    }
+
     painter.drawLine(p1, p2);
+
+    if(i == stepTarget)
+      painter.restore();
+
     painter.rotate(angleStep);
   }
 

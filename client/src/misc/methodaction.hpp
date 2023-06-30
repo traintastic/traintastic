@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,6 +46,7 @@ class MethodAction : public QAction
 
   public:
     MethodAction(Method& method, QObject* parent = nullptr);
+    MethodAction(Method& method, std::function<void()> triggered, QObject* parent = nullptr);
     MethodAction(const QIcon &icon, Method& method, QObject* parent = nullptr);
     MethodAction(const QIcon &icon, Method& method, std::function<void()> triggered, QObject* parent = nullptr);
 

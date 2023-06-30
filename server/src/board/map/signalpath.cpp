@@ -21,12 +21,14 @@
  */
 
 #include "signalpath.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../tile/rail/blockrailtile.hpp"
 #include "../tile/rail/turnout/turnoutrailtile.hpp"
 #include "../tile/rail/directioncontrolrailtile.hpp"
 #include "../tile/rail/onewayrailtile.hpp"
 #include "../tile/rail/linkrailtile.hpp"
 #include "../map/signalpath.hpp"
+#include "../../train/train.hpp" // FIXME: required due to forward declaration
 
 std::shared_ptr<Link> otherLink(const Node& node, const Link& link)
 {
@@ -190,23 +192,41 @@ std::unique_ptr<const SignalPath::Item> SignalPath::findBlocks(const Node& node,
         {
           next.emplace(TurnoutPosition::Crossed, findBlocks(nextNode, nextNode.getLink(2), blocksAhead));
           next.emplace(TurnoutPosition::Diverged, findBlocks(nextNode, nextNode.getLink(1), blocksAhead));
+          next.emplace(TurnoutPosition::DoubleSlipStraightA, findBlocks(nextNode, nextNode.getLink(2), blocksAhead));
+          if(turnout->tileId() == TileId::RailTurnoutDoubleSlip)
+          {
+            next.emplace(TurnoutPosition::Left, findBlocks(nextNode, nextNode.getLink(1), blocksAhead));
+          }
         }
         else if(nextNode.getLink(1).get() == &link)
         {
           next.emplace(TurnoutPosition::Crossed, findBlocks(nextNode, nextNode.getLink(3), blocksAhead));
           next.emplace(TurnoutPosition::Diverged, findBlocks(nextNode, nextNode.getLink(0), blocksAhead));
+          next.emplace(TurnoutPosition::DoubleSlipStraightB, findBlocks(nextNode, nextNode.getLink(3), blocksAhead));
+          if(turnout->tileId() == TileId::RailTurnoutDoubleSlip)
+          {
+            next.emplace(TurnoutPosition::Left, findBlocks(nextNode, nextNode.getLink(0), blocksAhead));
+          }
         }
         else if(nextNode.getLink(2).get() == &link)
         {
           next.emplace(TurnoutPosition::Crossed, findBlocks(nextNode, nextNode.getLink(0), blocksAhead));
+          next.emplace(TurnoutPosition::DoubleSlipStraightA, findBlocks(nextNode, nextNode.getLink(0), blocksAhead));
           if(turnout->tileId() == TileId::RailTurnoutDoubleSlip)
+          {
             next.emplace(TurnoutPosition::Diverged, findBlocks(nextNode, nextNode.getLink(3), blocksAhead));
+            next.emplace(TurnoutPosition::Right, findBlocks(nextNode, nextNode.getLink(3), blocksAhead));
+          }
         }
         else if(nextNode.getLink(3).get() == &link)
         {
           next.emplace(TurnoutPosition::Crossed, findBlocks(nextNode, nextNode.getLink(1), blocksAhead));
+          next.emplace(TurnoutPosition::DoubleSlipStraightB, findBlocks(nextNode, nextNode.getLink(1), blocksAhead));
           if(turnout->tileId() == TileId::RailTurnoutDoubleSlip)
+          {
             next.emplace(TurnoutPosition::Diverged, findBlocks(nextNode, nextNode.getLink(2), blocksAhead));
+            next.emplace(TurnoutPosition::Right, findBlocks(nextNode, nextNode.getLink(2), blocksAhead));
+          }
         }
         else
         {
@@ -282,7 +302,7 @@ std::unique_ptr<const SignalPath::Item> SignalPath::findBlocks(const Node& node,
       if(&nextNode == &m_signalNode)
         return {}; // we're reached oursels
 
-      return findBlocks(nextNode, *nextLink, blocksAhead - 1);
+      return findBlocks(nextNode, *nextLink, blocksAhead);
     }
     assert(false); // unhandled rail tile
   }

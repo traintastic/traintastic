@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,13 +31,15 @@ enum class BlockState : uint8_t
   Unknown = 0,
   Occupied = 1,
   Free = 2,
+  Reserved = 3,
 };
 
-TRAINTASTIC_ENUM(BlockState, "block_state", 3,
+TRAINTASTIC_ENUM(BlockState, "block_state", 4,
 {
   {BlockState::Unknown, "unknown"},
   {BlockState::Occupied, "occupied"},
   {BlockState::Free, "free"},
+  {BlockState::Reserved, "reserved"},
 });
 
 #endif

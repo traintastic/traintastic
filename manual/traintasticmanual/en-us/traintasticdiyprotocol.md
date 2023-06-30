@@ -53,9 +53,9 @@ Some messages are sent unsolicited by the DIY device to Traintastic if changes a
 | [Set input state](#tdiyp-set-input-state)   | Mandatory if input feature flag is set  |
 | [Get output state](#tdiyp-get-output-state) | Mandatory if output feature flag is set |
 | [Set output state](#tdiyp-set-output-state) | Mandatory if output feature flag is set |
-| [Throttle set function](#tdiyp-throttle-set-function) | |
-| [Throttle set speed/direction](#tdiyp-throttle-set-speed-direction) | |
-| [Throttle unsubscribe](#tdiyp-throttle-unsubscribe) | |
+| [Throttle set function](#tdiyp-throttle-set-function) | Mandatory if throttle feature flag is set |
+| [Throttle set speed/direction](#tdiyp-throttle-set-speed-direction) | Mandatory if throttle feature flag is set |
+| [Throttle subscribe/unsubscribe](#tdiyp-throttle-sub-unsub) | Mandatory if throttle feature flag is set |
 
 **Badges**:
 - The $badge:since:v0.2$ badge indicates in which version of Traintastic the message is added.
@@ -155,7 +155,7 @@ Sent by the DIY device as response to the *[get input state](#tdiyp-get-input-st
   - `0x03` if input is invalid (only as response to a *[get input state](#tdiyp-get-input-state)* message)
   - `0x04`...`0xFF` are reserved, do not use
 
-Examples:
+#### Examples
 ```
 0x13 0x00 0x12 0x02 0x03
 ```
@@ -213,11 +213,11 @@ Sent by the DIY device as response to the *[get output state](#tdiyp-get-output-
 Set locomotive decoder speed and/or direction.
 
 Once a *Throttle set speed/direction* message is sent, the *throttle id* will automatically be subscribed for speed, direction and function changes of the locomotive decoder specified by the *decoder address*.
-To stop receiving these changes a [throttle unsubscribe](#tdiyp-throttle-unsubscribe) message has to be send to Traintastic by the DIY device.
+To stop receiving these changes a *[throttle unsubscribe](#tdiyp-throttle-sub-unsub)* message has to be send to Traintastic by the DIY device.
 
 #### Message
 ```
-0x37 <TH> <TL> <AH> <AL> <FN> <SP> <SM> <FL> <checksum>
+0x37 <TH> <TL> <AH> <AL> <SP> <SM> <FL> <checksum>
 ```
 
 - `<TH>` high byte of 16bit throttle id
@@ -229,11 +229,28 @@ To stop receiving these changes a [throttle unsubscribe](#tdiyp-throttle-unsubsc
 - `<AL>` lowest 8bit of 14bit decoder address
 - `<SP>` speed (step), `0`...`<SM>`
 - `<SM>` maximum speed (step), set to `0` for emergency stop
-- `<FL>` flage:
+- `<FL>` flags:
   - bit 0: direction `1`=forward, `0`=reverse
   - bit 1...5: reserved, must be `0`
   - bit 6: set to set direction
   - bit 7: set to set speed
+
+*Throttle id* can be used to distinguish different throttles within the DIY device if it represents multiple throttles. If the DIY device is a single throttle use `0x00` `0x00` as *throttle id*.
+
+Internally Traintastic uses a value between `0` and `1` for the speed where `0` is stop and `1` is full speed. To determine a value between `0` and `1` Traintastic calculates `<SP> / <SM>`. Set `<SP>` and `<SM>` both to zero for an emergency stop.
+
+Using the *flags* bit 6 and 7 it is possible to set speed and direction, just the speed, just the direction or nothing. Setting nothing still subscribes the *throttle id* for speed, direction and function changes.
+
+#### Examples
+```
+0x37 0x00 0x01 0x00 0x03 0x07 0x0E 0xC1 0xFD
+```
+Set speed to 50% (= 7 / 14) in forward direction for decoder with address 3.
+
+```
+0x37 0x00 0x01 0x00 0x03 0x00 0x00 0x80 0xB5
+```
+Emergency stop decoder with address 3, don't change direction.
 
 
 ### Throttle set function $badge:since:v0.2$ {#tdiyp-throttle-set-function}
@@ -241,7 +258,7 @@ To stop receiving these changes a [throttle unsubscribe](#tdiyp-throttle-unsubsc
 Enable/disable locomotive decoder function.
 
 Once a *Throttle set function* message is sent, the *throttle id* will automatically be subscribed for speed, direction and function changes of the locomotive decoder specified by the *decoder address*.
-To stop receiving these changes a [throttle unsubscribe](#tdiyp-throttle-unsubscribe) message has to be send to Traintastic by the DIY device.
+To stop receiving these changes a *[throttle unsubscribe](#tdiyp-throttle-sub-unsub)* message has to be send to Traintastic by the DIY device.
 
 #### Message
 ```
@@ -259,8 +276,7 @@ To stop receiving these changes a [throttle unsubscribe](#tdiyp-throttle-unsubsc
   - bit 0...6: function number
   - bit 7: function value
 
-
-Examples:
+#### Examples
 ```
 0x35 0x00 0x01 0x00 0x03 0x80 0xB7
 ```
@@ -272,7 +288,11 @@ Enable F0 for decoder with address 3.
 Disable F1 for decoder with long address 5.
 
 
-## Throttle unsubscribe $badge:since:v0.2$ {#tdiyp-throttle-unsubscribe}
+### Throttle subscribe/unsubscribe $badge:since:v0.2$ {#tdiyp-throttle-sub-unsub}
+
+Subscribe/unsubscribe for change events. Traintastic will send a *[throttle set speed/direction](#tdiyp-throttle-set-speed-direction)* message whenever speed or direction changes and a *[throttle set function](#tdiyp-throttle-set-function)* message for every function that changes state.
+
+Note: Subscribe is supported since $badge:since:v0.3$, older version only support unsubscribe.
 
 #### Message
 ```
@@ -283,6 +303,10 @@ Disable F1 for decoder with long address 5.
 - `<TL>` low byte of 16bit throttle id
 - `<AH>`:
   - bit 0...5: highest 6bit of 14bit decoder address
-  - bit 6: reserved and must be `0`
+  - bit 6: action: `0` = Unsubscribe, `1` = Subscribe
   - bit 7: set to force a *DCC long address*
 - `<AL>` lowest 8bit of 14bit decoder address
+
+When *subscribing* Traintastic will reply with a *[throttle set speed/direction](#tdiyp-throttle-set-speed-direction)* and a *[throttle set function](#tdiyp-throttle-set-function)* message for every function that is known for the address.
+
+When *unsubscribing* Traintastic will reply with the same message to confirm the unsubscribe.

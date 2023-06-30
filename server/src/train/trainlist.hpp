@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,19 +25,19 @@
 
 #include "../core/objectlist.hpp"
 #include "../core/method.hpp"
-#include "train.hpp"
+
+class Train;
 
 class TrainList : public ObjectList<Train>
 {
   protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
     bool isListedProperty(std::string_view name) final;
 
   public:
     CLASS_ID("list.train")
 
-    Method<std::shared_ptr<Train>()> add;
-    Method<void(const std::shared_ptr<Train>&)> remove;
+    Method<std::shared_ptr<Train>()> create;
+    Method<void(const std::shared_ptr<Train>&)> delete_;
 
     TrainList(Object& _parent, std::string_view parentPropertyName);
 

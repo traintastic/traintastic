@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,8 @@
 #include "../core/eventloop.hpp"
 #include "../network/server.hpp"
 #include "../core/attributes.hpp"
+#include "../core/method.tpp"
+#include "../core/objectproperty.tpp"
 #include "../world/world.hpp"
 #include "../world/worldlist.hpp"
 #include "../world/worldloader.hpp"
@@ -47,6 +49,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_dataDir{std::filesystem::absolute(dataDir)},
   m_signalSet(EventLoop::ioContext),
   settings{this, "settings", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
+  version{this, "version", TRAINTASTIC_VERSION_FULL, PropertyFlags::ReadOnly},
   world{this, "world", nullptr, PropertyFlags::ReadWrite,
     [this](const std::shared_ptr<World>& /*newWorld*/)
     {
@@ -97,6 +100,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
       assert(weakWorld.expired());
 #endif
       settings->lastWorld = "";
+      Log::log(*this, LogMessage::N1028_CLOSED_WORLD);
     }},
   restart{*this, "restart",
     [this]()
@@ -127,6 +131,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_signalSet.async_wait(&Traintastic::signalHandler);
 
   m_interfaceItems.add(settings);
+  m_interfaceItems.add(version);
   m_interfaceItems.add(world);
   m_interfaceItems.add(worldList);
   m_interfaceItems.add(newWorld);
@@ -250,6 +255,7 @@ void Traintastic::loadWorldPath(const std::filesystem::path& path)
     assert(weakWorld.expired());
 #endif
     settings->lastWorld = world->uuid.value();
+    Log::log(*this, LogMessage::N1027_LOADED_WORLD_X, world->name.value());
   }
   catch(const LogMessageException& e)
   {

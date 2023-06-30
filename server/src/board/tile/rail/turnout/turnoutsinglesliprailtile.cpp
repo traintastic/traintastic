@@ -22,14 +22,21 @@
 
 #include "turnoutsinglesliprailtile.hpp"
 #include "../../../../core/attributes.hpp"
+#include "../../../../core/objectproperty.tpp"
 
-static const std::array<TurnoutPosition, 3> positionValues = {TurnoutPosition::Crossed, TurnoutPosition::Diverged, TurnoutPosition::Unknown};
-static const std::array<TurnoutPosition, 2> setPositionValues = {TurnoutPosition::Crossed, TurnoutPosition::Diverged};
+static const std::array<TurnoutPosition, 5> positionValues = {TurnoutPosition::Crossed, TurnoutPosition::Diverged,
+                                                              TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB,
+                                                              TurnoutPosition::Unknown};
+static const std::array<TurnoutPosition, 4> setPositionValues = {TurnoutPosition::Crossed, TurnoutPosition::Diverged,
+                                                                 TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB};
 
 TurnoutSingleSlipRailTile::TurnoutSingleSlipRailTile(World& world, std::string_view _id)
   : TurnoutRailTile(world, _id, TileId::RailTurnoutSingleSlip, 4)
 {
-  outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Crossed, TurnoutPosition::Diverged}));
+  outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(),
+                                                                  std::initializer_list<TurnoutPosition>{
+                                                                    TurnoutPosition::Crossed, TurnoutPosition::Diverged,
+                                                                    TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB}));
 
   Attributes::addValues(position, positionValues);
   m_interfaceItems.add(position);

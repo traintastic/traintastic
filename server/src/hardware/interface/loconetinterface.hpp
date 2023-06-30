@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,8 +24,6 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_LOCONETINTERFACE_HPP
 
 #include "interface.hpp"
-#include "../protocol/loconet/kernel.hpp"
-#include "../protocol/loconet/settings.hpp"
 #include "../decoder/decodercontroller.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
@@ -35,6 +33,12 @@
 #include "../../core/objectproperty.hpp"
 #include "../../enum/loconetinterfacetype.hpp"
 #include "../../enum/serialflowcontrol.hpp"
+#include <tcb/span.hpp>
+
+namespace LocoNet {
+class Kernel;
+class Settings;
+}
 
 /**
  * @brief LocoNet hardware interface
@@ -49,7 +53,7 @@ class LocoNetInterface final
 {
   CLASS_ID("interface.loconet")
   DEFAULT_ID("loconet")
-  CREATE(LocoNetInterface)
+  CREATE_DEF(LocoNetInterface)
 
   private:
     std::unique_ptr<LocoNet::Kernel> m_kernel;
@@ -78,19 +82,30 @@ class LocoNetInterface final
 
     LocoNetInterface(World& world, std::string_view _id);
 
+    //! \brief Send LocoNet packet
+    //! \param[in] packet LocoNet packet bytes, exluding checksum.
+    //! \return \c true if send, \c false otherwise.
+    bool send(tcb::span<uint8_t> packet);
+
+    //! \brief Send immediate DCC packet
+    //! \param[in] dccPacket DCC packet byte, exluding checksum. Length is limited to 5.
+    //! \param[in] repeat DCC packet repeat count 0..7
+    //! \return \c true if send to command station, \c false otherwise.
+    bool immPacket(tcb::span<uint8_t> dccPacket, uint8_t repeat);
+
     // DecoderController:
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
-    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final { return {LocoNet::Kernel::inputAddressMin, LocoNet::Kernel::inputAddressMax}; }
-    void inputSimulateChange(uint32_t channel, uint32_t address) final;
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final;
+    void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
 
     // OutputController:
-    std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final { return {LocoNet::Kernel::outputAddressMin, LocoNet::Kernel::outputAddressMax}; }
+    std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final;
     [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 
     // IdentificationController:
-    std::pair<uint32_t, uint32_t> identificationAddressMinMax(uint32_t /*channel*/) const final { return {LocoNet::Kernel::identificationAddressMin, LocoNet::Kernel::identificationAddressMax}; }
+    std::pair<uint32_t, uint32_t> identificationAddressMinMax(uint32_t /*channel*/) const final;
     void identificationEvent(uint32_t channel, uint32_t address, IdentificationEventType eventType, uint16_t identifier, Direction direction, uint8_t category) final;
 
     // LNCVProgrammingController:

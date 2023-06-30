@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,6 +35,7 @@
 #include "../alertwidget.hpp"
 #include "../../theme/theme.hpp"
 #include "../../misc/methodaction.hpp"
+#include "../../dialog/objectselectlistdialog.hpp"
 
 
 #include "../../mainwindow.hpp"
@@ -52,8 +53,8 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
   m_requestIdOutputKeyboard{Connection::invalidRequestId},
   m_object{object},
   m_toolbar{new QToolBar()},
-  m_buttonAdd{nullptr},
-  m_actionAdd{nullptr},
+  m_buttonCreate{nullptr},
+  m_actionCreate{nullptr},
   m_actionEdit{nullptr},
   m_actionDelete{nullptr},
   m_actionInputMonitor{nullptr},
@@ -62,6 +63,8 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
   m_actionOutputKeyboardChannel{nullptr},
   m_tableWidget{new TableWidget()}
 {
+  setWindowIcon(Theme::getIconForClassId(m_object->classId()));
+
   m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 
   QVBoxLayout* layout = new QVBoxLayout();
@@ -95,21 +98,21 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
         static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(errorCodeToText(ec)));
     });
 
-  if(Method* method = m_object->getMethod("add");
+  if(Method* method = m_object->getMethod("create");
      method && method->resultType() == ValueType::Object)
   {
-    if(method->argumentTypes().size() == 0) // Add method witout argument
+    if(method->argumentTypes().size() == 0) // Create method witout argument
     {
-      m_actionAdd = m_toolbar->addAction(Theme::getIcon("add"), method->displayName(),
+      m_actionCreate = m_toolbar->addAction(Theme::getIcon("add"), method->displayName(),
         [this, method]()
         {
-          if(m_requestIdAdd != Connection::invalidRequestId)
-            m_object->connection()->cancelRequest(m_requestIdAdd);
+          if(m_requestIdCreate != Connection::invalidRequestId)
+            m_object->connection()->cancelRequest(m_requestIdCreate);
 
-          m_requestIdAdd = method->call(
+          m_requestIdCreate = method->call(
             [this](const ObjectPtr& addedObject, Message::ErrorCode /*ec*/)
             {
-              m_requestIdAdd = Connection::invalidRequestId;
+              m_requestIdCreate = Connection::invalidRequestId;
               if(addedObject)
               {
                 MainWindow::instance->showObject(addedObject);
@@ -117,22 +120,22 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
               // TODO: show error
             });
         });
-      m_actionAdd->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
+      m_actionCreate->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
       connect(method, &Method::attributeChanged, this,
         [this](AttributeName name, QVariant value)
         {
           if(name == AttributeName::Enabled)
-            m_actionAdd->setEnabled(value.toBool());
+            m_actionCreate->setEnabled(value.toBool());
         });
     }
     else if(method->argumentTypes().size() == 1 && method->argumentTypes()[0] == ValueType::String)
     {
-      m_buttonAdd = new QToolButton(m_toolbar);
-      m_buttonAdd->setIcon(Theme::getIcon("add"));
-      m_buttonAdd->setText(method->displayName());
-      m_buttonAdd->setPopupMode(QToolButton::InstantPopup);
+      m_buttonCreate = new QToolButton(m_toolbar);
+      m_buttonCreate->setIcon(Theme::getIcon("add"));
+      m_buttonCreate->setText(method->displayName());
+      m_buttonCreate->setPopupMode(QToolButton::InstantPopup);
 
-      QMenu* menu = new QMenu(m_buttonAdd);
+      QMenu* menu = new QMenu(m_buttonCreate);
 
       QStringList classList = method->getAttribute(AttributeName::ClassList, QVariant()).toStringList();
       for(const QString& classId : classList)
@@ -142,13 +145,13 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
         connect(action, &QAction::triggered, this,
           [this, method, action]()
           {
-            if(m_requestIdAdd != Connection::invalidRequestId)
-              m_object->connection()->cancelRequest(m_requestIdAdd);
+            if(m_requestIdCreate != Connection::invalidRequestId)
+              m_object->connection()->cancelRequest(m_requestIdCreate);
 
-            m_requestIdAdd = method->call(action->data().toString(),
+            m_requestIdCreate = method->call(action->data().toString(),
               [this](const ObjectPtr& addedObject, Message::ErrorCode /*ec*/)
               {
-                m_requestIdAdd = Connection::invalidRequestId;
+                m_requestIdCreate = Connection::invalidRequestId;
                 if(addedObject)
                 {
                   MainWindow::instance->showObject(addedObject);
@@ -158,20 +161,39 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
           });
       }
 
-      m_buttonAdd->setMenu(menu);
+      m_buttonCreate->setMenu(menu);
 
-      m_toolbar->addWidget(m_buttonAdd);
+      m_toolbar->addWidget(m_buttonCreate);
 
-      m_buttonAdd->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
+      m_buttonCreate->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
       connect(method, &Method::attributeChanged, this,
         [this](AttributeName name, QVariant value)
         {
           if(name == AttributeName::Enabled)
-            m_buttonAdd->setEnabled(value.toBool());
+            m_buttonCreate->setEnabled(value.toBool());
         });
     }
     else
       Q_ASSERT(false); // unsupported method prototype
+  }
+
+  if(Method* method = m_object->getMethod("add");
+     method &&
+     method->argumentTypes().size() == 1 &&  method->argumentTypes()[0] == ValueType::Object &&
+     method->resultType() == ValueType::Invalid)
+  {
+    m_actionAdd = m_toolbar->addAction(Theme::getIcon("add"), method->displayName(),
+      [this, method]()
+      {
+        std::make_unique<ObjectSelectListDialog>(*method, this)->exec();
+      });
+    m_actionAdd->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
+    connect(method, &Method::attributeChanged, this,
+      [this](AttributeName name, QVariant value)
+      {
+        if(name == AttributeName::Enabled)
+          m_actionAdd->setEnabled(value.toBool());
+      });
   }
 
   m_actionEdit = m_toolbar->addAction(Theme::getIcon("edit"), Locale::tr("list:edit"),
@@ -184,6 +206,18 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
 
   if(Method* method = m_object->getMethod("remove"))
   {
+    m_actionRemove = new MethodAction(Theme::getIcon("remove"), *method,
+      [this]()
+      {
+        for(const QString& id : getSelectedObjectIds())
+          callMethod(m_actionRemove->method(), nullptr, id);
+      });
+    m_actionRemove->setForceDisabled(true);
+    m_toolbar->addAction(m_actionRemove);
+  }
+
+  if(Method* method = m_object->getMethod("delete"))
+  {
     m_actionDelete = new MethodAction(Theme::getIcon("delete"), *method,
       [this]()
       {
@@ -192,6 +226,48 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
       });
     m_actionDelete->setForceDisabled(true);
     m_toolbar->addAction(m_actionDelete);
+  }
+
+  if(Method* move = m_object->getMethod("move"))
+  {
+    m_actionMoveUp = new MethodAction(Theme::getIcon("up"), *move,
+      [this]()
+      {
+        if(auto* model = m_tableWidget->selectionModel(); model && model->hasSelection())
+        {
+          if(const auto rows = model->selectedRows(); !rows.empty())
+          {
+            const int row = rows[0].row();
+            callMethod(m_actionMoveUp->method(), nullptr, row, row - 1);
+            m_tableWidget->selectRow(row - 1);
+          }
+        }
+      });
+    //Override default method name
+    m_actionMoveUp->setText(Locale::tr("list:move_up"));
+    m_actionMoveUp->setForceDisabled(true);
+
+    m_actionMoveDown = new MethodAction(Theme::getIcon("down"), *move,
+      [this]()
+      {
+        if(auto* model = m_tableWidget->selectionModel(); model && model->hasSelection())
+        {
+          if(const auto rows = model->selectedRows(); !rows.empty())
+          {
+            const int row = rows[0].row();
+            callMethod(m_actionMoveDown->method(), nullptr, row, row + 1);
+            m_tableWidget->selectRow(row + 1);
+          }
+        }
+      });
+    //Override default method name
+    m_actionMoveDown->setText(Locale::tr("list:move_down"));
+    m_actionMoveDown->setForceDisabled(true);
+  }
+
+  if(Method* method = m_object->getMethod("reverse"))
+  {
+    m_actionReverse = new MethodAction(Theme::getIcon("reverse"), *method);
   }
 
   if(Method* method = m_object->getMethod("input_monitor"))
@@ -224,7 +300,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
         else
           text = value.toString();
 
-        menu->addAction(text,
+        menu->addAction(text, this,
           [this, channel=value.toUInt()]()
           {
             //cancelRequest(m_requestIdInputMonitor);
@@ -278,7 +354,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
         else
           text = value.toString();
 
-        menu->addAction(text,
+        menu->addAction(text, this,
           [this, channel=value.toUInt()]()
           {
             //cancelRequest(m_requestIdOutputKeyboard);
@@ -297,6 +373,21 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
       m_actionOutputKeyboardChannel = new MethodAction(Theme::getIcon("output_keyboard"), *method);
       m_actionOutputKeyboardChannel->setMenu(menu);
     }
+  }
+
+  if(m_actionMoveUp || m_actionMoveDown)
+  {
+    m_toolbar->addSeparator();
+    if(m_actionMoveUp)
+      m_toolbar->addAction(m_actionMoveUp);
+    if(m_actionMoveDown)
+      m_toolbar->addAction(m_actionMoveDown);
+  }
+
+  if(m_actionReverse)
+  {
+    m_toolbar->addSeparator();
+    m_toolbar->addAction(m_actionReverse);
   }
 
   if(m_actionInputMonitor || m_actionInputMonitorChannel || m_actionOutputKeyboard || m_actionOutputKeyboardChannel)
@@ -381,6 +472,16 @@ void ObjectListWidget::tableSelectionChanged(bool hasSelection)
 {
   if(m_actionEdit)
     m_actionEdit->setEnabled(hasSelection);
+  if(m_actionRemove)
+    m_actionRemove->setForceDisabled(!hasSelection);
   if(m_actionDelete)
     m_actionDelete->setForceDisabled(!hasSelection);
+  if(m_actionMoveUp || m_actionMoveDown)
+  {
+    const int selectedRow = m_tableWidget->selectionModel() && m_tableWidget->selectionModel()->selectedRows().length() == 1 ? m_tableWidget->selectionModel()->selectedRows()[0].row() : -1;
+    if(m_actionMoveUp)
+      m_actionMoveUp->setForceDisabled(!hasSelection || selectedRow == 0);
+    if(m_actionMoveDown)
+      m_actionMoveDown->setForceDisabled(!hasSelection || selectedRow == (m_tableWidget->model()->rowCount() - 1));
+  }
 }

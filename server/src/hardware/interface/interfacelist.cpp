@@ -23,30 +23,41 @@
 #include "interfacelist.hpp"
 #include "interfacelisttablemodel.hpp"
 #include "interfaces.hpp"
+#include "../decoder/list/decoderlist.hpp"
+#include "../output/list/outputlist.hpp"
+#include "../input/list/inputlist.hpp"
 #include "../../world/world.hpp"
 #include "../../world/getworld.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/method.tpp"
+#include "../../core/objectproperty.tpp"
 #include "../../utils/displayname.hpp"
 
 InterfaceList::InterfaceList(Object& _parent, std::string_view parentPropertyName) :
   ObjectList<Interface>(_parent, parentPropertyName),
-  add{*this, "add",
+  create{*this, "create",
     [this](std::string_view interfaceClassId)
     {
       return Interfaces::create(getWorld(parent()), interfaceClassId);
     }},
-  remove{*this, "remove", std::bind(&InterfaceList::removeMethodHandler, this, std::placeholders::_1)}
+  delete_{*this, "delete", std::bind(&InterfaceList::deleteMethodHandler, this, std::placeholders::_1)}
 {
   const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
-  Attributes::addDisplayName(add, DisplayName::List::add);
-  Attributes::addEnabled(add, editable);
-  Attributes::addClassList(add, Interfaces::classList);
-  m_interfaceItems.add(add);
+  Attributes::addDisplayName(create, DisplayName::List::create);
+  Attributes::addEnabled(create, editable);
+  Attributes::addClassList(create, Interfaces::classList);
+  m_interfaceItems.add(create);
 
-  Attributes::addDisplayName(remove, DisplayName::List::remove);
-  Attributes::addEnabled(remove, editable);
-  m_interfaceItems.add(remove);
+  Attributes::addDisplayName(delete_, DisplayName::List::delete_);
+  Attributes::addEnabled(delete_, editable);
+  m_interfaceItems.add(delete_);
+}
+
+InterfaceList::~InterfaceList()
+{
+  for(auto& it : m_statusPropertyChanged)
+    it.second.disconnect();
 }
 
 TableModelPtr InterfaceList::getModel()
@@ -60,11 +71,38 @@ void InterfaceList::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  Attributes::setEnabled(add, editable);
-  Attributes::setEnabled(remove, editable);
+  Attributes::setEnabled(create, editable);
+  Attributes::setEnabled(delete_, editable);
 }
 
 bool InterfaceList::isListedProperty(std::string_view name)
 {
   return InterfaceListTableModel::isListedProperty(name);
+}
+
+void InterfaceList::objectAdded(const std::shared_ptr<Interface>& object)
+{
+  m_statusPropertyChanged.emplace(object.get(), object->status->propertyChanged.connect(std::bind(&InterfaceList::statusPropertyChanged, this, std::placeholders::_1)));
+}
+
+void InterfaceList::objectRemoved(const std::shared_ptr<Interface>& object)
+{
+  m_statusPropertyChanged[object.get()].disconnect();
+  m_statusPropertyChanged.erase(object.get());
+}
+
+void InterfaceList::statusPropertyChanged(BaseProperty& property)
+{
+  if(!m_models.empty() && property.name() == "state")
+  {
+    ObjectPtr obj = static_cast<SubObject&>(property.object()).parent().shared_from_this();
+    const uint32_t rows = static_cast<uint32_t>(m_items.size());
+    for(uint32_t row = 0; row < rows; row++)
+      if(m_items[row] == obj)
+      {
+        for(auto& model : m_models)
+          static_cast<InterfaceListTableModel*>(model)->changed(row, InterfaceListTableModel::columnStatus);
+        break;
+      }
+  }
 }

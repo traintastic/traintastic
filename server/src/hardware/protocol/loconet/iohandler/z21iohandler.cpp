@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -123,9 +123,12 @@ void Z21IOHandler::receive()
             case Z21::LAN_LOCONET_Z21_RX:
             case Z21::LAN_LOCONET_Z21_TX:
             case Z21::LAN_LOCONET_FROM_LAN:
-              m_kernel.receive(*reinterpret_cast<const Message*>(pos + sizeof(Z21::Message)));
+            {
+              const Message* msg = reinterpret_cast<const Message*>(pos + sizeof(Z21::Message));
+              if(isValid(*msg))
+                m_kernel.receive(*msg);
               break;
-
+            }
             default:
               break;
           }
@@ -141,6 +144,7 @@ void Z21IOHandler::receive()
           [this, ec]()
           {
             Log::log(m_kernel.logId(), LogMessage::E2009_SOCKET_RECEIVE_FAILED_X, ec);
+            m_kernel.error();
           });
       }
     });
@@ -177,7 +181,7 @@ void Z21IOHandler::send()
           [this, ec]()
           {
             Log::log(m_kernel.logId(), LogMessage::E2011_SOCKET_SEND_FAILED_X, ec);
-            // TODO interface status -> error
+            m_kernel.error();
           });
       }
     });

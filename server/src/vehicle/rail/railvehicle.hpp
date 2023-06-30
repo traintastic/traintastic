@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,11 +24,13 @@
 #define TRAINTASTIC_SERVER_VEHICLE_RAIL_RAILVEHICLE_HPP
 
 #include "../vehicle.hpp"
-#include "../../core/trainproperty.hpp"
+#include "../../core/objectproperty.hpp"
 #include "../../core/lengthproperty.hpp"
 #include "../../core/speedproperty.hpp"
 #include "../../core/weightproperty.hpp"
-#include "../../hardware/decoder/decoder.hpp"
+#include "../../core/trainproperty.hpp"
+
+class Decoder;
 
 class RailVehicle : public Vehicle
 {
@@ -37,6 +39,7 @@ class RailVehicle : public Vehicle
 
     void addToWorld() override;
     void destroying() override;
+    void loaded() override;
     void worldEvent(WorldState state, WorldEvent event) override;
 
     virtual double calcTotalWeight(WeightUnit unit) const;
@@ -44,11 +47,12 @@ class RailVehicle : public Vehicle
 
   public:
     ObjectProperty<Decoder> decoder;
-    TrainProperty train;
     LengthProperty lob;
     SpeedProperty speedMax;
     WeightProperty weight;
     WeightProperty totalWeight;
+
+    TrainProperty activeTrain;
 };
 
 #endif

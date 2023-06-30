@@ -24,8 +24,8 @@
 #define TRAINTASTIC_SERVER_BOARD_BOARDLISTTABLEMODEL_HPP
 
 #include "../core/objectlisttablemodel.hpp"
-#include "board.hpp"
 
+class Board;
 class BoardList;
 
 class BoardListTableModel : public ObjectListTableModel<Board>

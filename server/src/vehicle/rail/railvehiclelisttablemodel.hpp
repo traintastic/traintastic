@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,7 +40,7 @@ class RailVehicleListTableModel : public ObjectListTableModel<RailVehicle>
 
     static bool isListedProperty(std::string_view name);
 
-    RailVehicleListTableModel(RailVehicleList& list);
+    RailVehicleListTableModel(ObjectList<RailVehicle>& list);
 
     std::string getText(uint32_t column, uint32_t row) const final;
 };

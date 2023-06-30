@@ -45,7 +45,7 @@ class ObjectList : public AbstractObjectList
     std::unordered_map<Object*, boost::signals2::connection> m_propertyChanged;
     std::vector<ObjectListTableModel<T>*> m_models;
 
-    void removeMethodHandler(const std::shared_ptr<T>& object)
+    void deleteMethodHandler(const std::shared_ptr<T>& object)
     {
       if(containsObject(object))
       {
@@ -68,15 +68,35 @@ class ObjectList : public AbstractObjectList
 
     void setItems(const std::vector<ObjectPtr>& items)
     {
+      m_propertyChanged.clear();
       m_items.clear();
       m_items.reserve(items.size());
       for(auto& item : items)
         if(std::shared_ptr<T> t = std::dynamic_pointer_cast<T>(item))
-          m_items.emplace_back(std::move(t));
+          addObject(std::move(t));
       rowCountChanged();
     }
 
+    virtual void objectAdded(const std::shared_ptr<T>& /*object*/) {}
+    virtual void objectRemoved(const std::shared_ptr<T>& /*object*/) {}
+
     virtual bool isListedProperty(std::string_view name) = 0;
+
+    virtual void propertyChanged(BaseProperty& property)
+    {
+      if(!m_models.empty() && isListedProperty(property.name()))
+      {
+        ObjectPtr obj = property.object().shared_from_this();
+        const uint32_t rows = static_cast<uint32_t>(m_items.size());
+        for(uint32_t row = 0; row < rows; row++)
+          if(m_items[row] == obj)
+          {
+            for(auto& model : m_models)
+              model->propertyChanged(property, row);
+            break;
+          }
+      }
+    }
 
     void rowCountChanged()
     {
@@ -86,11 +106,19 @@ class ObjectList : public AbstractObjectList
         model->setRowCount(static_cast<uint32_t>(size));
     }
 
+    void rowsChanged(uint32_t first, uint32_t last)
+    {
+      for(auto& model : m_models)
+      {
+        model->rowsChanged(first, last);
+      }
+    }
+
   public:
     ObjectList(Object& _parent, std::string_view parentPropertyName) :
       AbstractObjectList{_parent, parentPropertyName}
     {
-      assert((std::is_base_of_v<IdObject, T> || std::is_base_of_v<SubObject, T>));
+      static_assert(std::is_base_of_v<IdObject, T> || std::is_base_of_v<SubObject, T>);
     }
 
     ~ObjectList()
@@ -122,25 +150,11 @@ class ObjectList : public AbstractObjectList
       return std::find(m_items.begin(), m_items.end(), object) != m_items.end();
     }
 
-    void addObject(const std::shared_ptr<T>& object)
+    void addObject(std::shared_ptr<T> object)
     {
-      m_items.push_back(object);
-      m_propertyChanged.emplace(object.get(), object->propertyChanged.connect(
-        [this](BaseProperty& property)
-        {
-          if(!m_models.empty() && isListedProperty(property.name()))
-          {
-            ObjectPtr obj = property.object().shared_from_this();
-            const uint32_t rows = static_cast<uint32_t>(m_items.size());
-            for(uint32_t row = 0; row < rows; row++)
-              if(m_items[row] == obj)
-              {
-                for(auto& model : m_models)
-                  model->propertyChanged(property, row);
-                break;
-              }
-          }
-        }));
+      m_propertyChanged.emplace(object.get(), object->propertyChanged.connect(std::bind(&ObjectList<T>::propertyChanged, this, std::placeholders::_1)));
+      m_items.emplace_back(std::move(object));
+      objectAdded(m_items.back());
       rowCountChanged();
     }
 
@@ -152,7 +166,14 @@ class ObjectList : public AbstractObjectList
         m_propertyChanged[object.get()].disconnect();
         m_propertyChanged.erase(object.get());
         m_items.erase(it);
+        objectRemoved(object);
         rowCountChanged();
+
+        uint32_t row = std::distance(m_items.begin(), it);
+        for(auto& model : m_models)
+        {
+          model->rowRemovedHack(row);
+        }
       }
     }
 };

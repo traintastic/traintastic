@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,19 +27,28 @@
 #include "../../core/method.hpp"
 #include "interface.hpp"
 
-class InterfaceList : public ObjectList<Interface>
+class InterfaceList final : public ObjectList<Interface>
 {
+  private:
+    std::unordered_map<Object*, boost::signals2::connection> m_statusPropertyChanged;
+
+    void statusPropertyChanged(BaseProperty& property);
+
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
     bool isListedProperty(std::string_view name) final;
 
+    void objectAdded(const std::shared_ptr<Interface>& object) final;
+    void objectRemoved(const std::shared_ptr<Interface>& object) final;
+
   public:
     CLASS_ID("list.interface")
 
-    Method<std::shared_ptr<Interface>(std::string_view)> add;
-    Method<void(const std::shared_ptr<Interface>&)> remove;
+    Method<std::shared_ptr<Interface>(std::string_view)> create;
+    Method<void(const std::shared_ptr<Interface>&)> delete_;
 
     InterfaceList(Object& _parent, std::string_view parentPropertyName);
+    ~InterfaceList() final;
 
     TableModelPtr getModel() final;
 };

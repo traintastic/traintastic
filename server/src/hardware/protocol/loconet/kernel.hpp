@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,9 +26,11 @@
 #include <array>
 #include <unordered_map>
 #include <thread>
+#include <filesystem>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/signals2/connection.hpp>
+#include <tcb/span.hpp>
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include "config.hpp"
@@ -38,9 +40,11 @@ class Clock;
 class Decoder;
 enum class DecoderChangeFlags;
 class DecoderController;
+enum class SimulateInputAction;
 class InputController;
 class OutputController;
 class IdentificationController;
+class PCAP;
 
 namespace LocoNet {
 
@@ -90,6 +94,8 @@ class Kernel
         bool append(const Message& message);
 
         void pop();
+
+        void clear();
     };
 
     struct LocoSlot
@@ -137,6 +143,7 @@ class Kernel
     std::thread m_thread;
     std::string m_logId;
     std::function<void()> m_onStarted;
+    std::function<void()> m_onError;
 
     std::array<SendQueue, 3> m_sendQueue;
     Priority m_sentMessagePriority;
@@ -176,6 +183,9 @@ class Kernel
 
     IdentificationController* m_identificationController;
 
+    const std::filesystem::path m_debugDir;
+    std::unique_ptr<PCAP> m_pcap;
+
     Config m_config;
 #ifndef NDEBUG
     bool m_started;
@@ -200,6 +210,7 @@ class Kernel
     template<class T>
     void postSend(const T& message)
     {
+      assert(sizeof(message) == message.size());
       m_ioContext.post(
         [this, message]()
         {
@@ -209,6 +220,7 @@ class Kernel
     template<class T>
     void postSend(const T& message, Priority priority)
     {
+      assert(sizeof(message) == message.size());
       m_ioContext.post(
         [this, message, priority]()
         {
@@ -247,6 +259,8 @@ class Kernel
     template<uint8_t First, uint8_t Last, class T>
     bool updateFunctions(LocoSlot& slot, const T& message);
 
+    void startPCAP(PCAPOutput pcapOutput);
+
   public:
     static constexpr uint16_t inputAddressMin = 1;
     static constexpr uint16_t inputAddressMax = 4096;
@@ -257,6 +271,7 @@ class Kernel
 
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
+    ~Kernel();
 
 #ifndef NDEBUG
     bool isKernelThread() const
@@ -329,6 +344,16 @@ class Kernel
      * @note This function may not be called when the kernel is running.
      */
     void setOnStarted(std::function<void()> callback);
+
+    /**
+     * \brief Register error handler
+     *
+     * Once this handler is called the LocoNet communication it stopped.
+     *
+     * \param[in] callback Handler to call in case of an error.
+     * \note This function may not be called when the kernel is running.
+     */
+    void setOnError(std::function<void()> callback);
 
     /**
      * @brief ...
@@ -406,6 +431,11 @@ class Kernel
      */
     void receive(const Message& message);
 
+    //! Must be called by the IO handler in case of a fatal error.
+    //! This will put the interface in error state
+    //! \note This function must run in the event loop thread
+    void error();
+
     /**
      *
      *
@@ -424,9 +454,16 @@ class Kernel
      */
     void resume();
 
-    //TriState getInput(uint16_t address) const;
+    //! \brief Send LocoNet packet
+    //! \param[in] packet LocoNet packet bytes, exluding checksum.
+    //! \return \c true if send, \c false otherwise.
+    bool send(tcb::span<uint8_t> packet);
 
-    //TriState getOutput(uint16_t address) const;
+    //! \brief Send immediate DCC packet
+    //! \param[in] dccPacket DCC packet byte, exluding checksum. Length is limited to 5.
+    //! \param[in] repeat DCC packet repeat count 0..7
+    //! \return \c true if send to command station, \c false otherwise.
+    bool immPacket(tcb::span<uint8_t> dccPacket, uint8_t repeat);
 
     /**
      *
@@ -445,8 +482,9 @@ class Kernel
     /**
      * \brief Simulate input change
      * \param[in] address Input address, 1..4096
+     * \param[in] action Simulation action to perform
      */
-    void simulateInputChange(uint16_t address);
+    void simulateInputChange(uint16_t address, SimulateInputAction action);
 
     void lncvStart(uint16_t moduleId, uint16_t moduleAddress);
     void lncvRead(uint16_t lncv);

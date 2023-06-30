@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,8 +25,9 @@
 
 #include "kernel.hpp"
 #include <boost/asio/steady_timer.hpp>
-#include "../../../enum/tristate.hpp"
+#include <traintastic/enum/tristate.hpp>
 
+enum class SimulateInputAction;
 class InputController;
 class OutputController;
 
@@ -61,6 +62,16 @@ class ClientKernel final : public Kernel
   private:
     const bool m_simulation;
     boost::asio::steady_timer m_keepAliveTimer;
+    BroadcastFlags m_broadcastFlags;
+    int m_broadcastFlagsRetryCount;
+    static constexpr int maxBroadcastFlagsRetryCount = 10;
+
+    static constexpr BroadcastFlags requiredBroadcastFlags =
+      BroadcastFlags::PowerLocoTurnoutChanges |
+      BroadcastFlags::RBusChanges |
+      BroadcastFlags::SystemStatusChanges |
+      BroadcastFlags::AllLocoChanges | // seems not to work with DR5000
+      BroadcastFlags::LocoNetDetector;
 
     uint32_t m_serialNumber;
     std::function<void(uint32_t)> m_onSerialNumberChanged;
@@ -238,7 +249,7 @@ class ClientKernel final : public Kernel
      */
     bool setOutput(uint16_t address, bool value);
 
-    void simulateInputChange(uint32_t channel, uint32_t address);
+    void simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action);
 };
 
 }

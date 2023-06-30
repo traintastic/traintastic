@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,6 @@
 #define TRAINTASTIC_SERVER_CORE_OBJECTPROPERTY_HPP
 
 #include "abstractobjectproperty.hpp"
-#include "to.hpp"
 #include <functional>
 
 template<class T>
@@ -40,138 +39,33 @@ class ObjectProperty : public AbstractObjectProperty
     OnSet m_onSet;
 
   public:
-    ObjectProperty(Object* object, std::string_view name, const std::shared_ptr<T>& value, PropertyFlags flags) :
-      AbstractObjectProperty(object, name, flags),
-      m_value{value}
-    {
-    }
+    ObjectProperty(Object* object, std::string_view name, const std::shared_ptr<T>& value, PropertyFlags flags);
+    ObjectProperty(Object* object, std::string_view name, std::nullptr_t, PropertyFlags flags);
+    ObjectProperty(Object* object, std::string_view name, const std::shared_ptr<T>& value, PropertyFlags flags, OnChanged onChanged, OnSet onSet);
+    ObjectProperty(Object* object, std::string_view name, std::nullptr_t, PropertyFlags flags, OnChanged onChanged, OnSet onSet);
+    ObjectProperty(Object* object, std::string_view name, const std::shared_ptr<T>& value, PropertyFlags flags, OnSet onSet);
+    ObjectProperty(Object* object, std::string_view name, std::nullptr_t, PropertyFlags flags, OnSet onSet);
 
-    ObjectProperty(Object* object, std::string_view name, std::nullptr_t, PropertyFlags flags) :
-      ObjectProperty(object, name, std::shared_ptr<T>(), flags)
-    {
-    }
+    const std::shared_ptr<T>& value() const;
+    void setValue(const std::shared_ptr<T>& value);
 
-    ObjectProperty(Object* object, std::string_view name, const std::shared_ptr<T>& value, PropertyFlags flags, OnChanged onChanged, OnSet onSet) :
-      ObjectProperty(object, name, value, flags)
-    {
-      m_onChanged = onChanged;
-      m_onSet = onSet;
-    }
+    void setValueInternal(std::nullptr_t);
+    void setValueInternal(const std::shared_ptr<T>& value);
 
-    ObjectProperty(Object* object, std::string_view name, std::nullptr_t, PropertyFlags flags, OnChanged onChanged, OnSet onSet) :
-      ObjectProperty(object, name, std::shared_ptr<T>(), flags, onChanged, onSet)
-    {
-    }
+    /*inline*/ const T* operator ->() const;
+    /*inline*/ T* operator ->();
+    /*inline*/ const T& operator *() const;
+    /*inline*/ T& operator *();
 
-    ObjectProperty(Object* object, std::string_view name, const std::shared_ptr<T>& value, PropertyFlags flags, OnSet onSet) :
-      ObjectProperty(object, name, value, flags)
-    {
-      m_onSet = onSet;
-    }
+    /*inline*/ operator bool() const;
+    ObjectProperty<T>& operator =(const std::shared_ptr<T>& value);
 
-    ObjectProperty(Object* object, std::string_view name, std::nullptr_t, PropertyFlags flags, OnSet onSet) :
-      ObjectProperty(object, name, std::shared_ptr<T>(), flags, onSet)
-    {
-    }
+    ObjectPtr toObject() const final;
 
-    const std::shared_ptr<T>& value() const
-    {
-      return m_value;
-    }
-
-    void setValue(const std::shared_ptr<T>& value)
-    {
-      assert(isWriteable());
-      if(m_value == value)
-        return;
-      else if(!isWriteable())
-        throw not_writable_error();
-      else if(!m_onSet || m_onSet(value))
-      {
-        m_value = value;
-        if(m_onChanged)
-          m_onChanged(m_value);
-        changed();
-      }
-      else
-        throw invalid_value_error();
-      /*
-      assert(isWriteable());
-      if(isWriteable() && (!m_onSet || m_onSet(value)))
-        setValueInternal(value);
-        */
-    }
-
-    void setValueInternal(const std::shared_ptr<T>& value)
-    {
-      if(m_value != value)
-      {
-        m_value = value;
-        changed();
-      }
-    }
-
-    inline const T* operator ->() const
-    {
-      return m_value.get();
-    }
-
-    inline T* operator ->()
-    {
-      return m_value.get();
-    }
-
-    inline const T& operator *() const
-    {
-      return *m_value;
-    }
-
-    inline T& operator *()
-    {
-      return *m_value;
-    }
-
-    inline operator bool() const
-    {
-      return m_value.operator bool();
-    }
-
-    ObjectProperty<T>& operator =(const std::shared_ptr<T>& value)
-    {
-      setValue(value);
-      return *this;
-    }
-
-    ObjectPtr toObject() const final
-    {
-      return std::dynamic_pointer_cast<Object>(m_value);
-    }
-
-    void fromObject(const ObjectPtr& value) final
-    {
-      if(value)
-      {
-        if(std::shared_ptr<T> v = std::dynamic_pointer_cast<T>(value))
-          setValue(v);
-        else
-          throw conversion_error();
-      }
-      else
-        setValue(nullptr);
-    }
-
-    void loadObject(const ObjectPtr& value) final
-    {
-      if(value)
-      {
-        if(std::shared_ptr<T> v = std::dynamic_pointer_cast<T>(value))
-          m_value = v;
-        else
-          throw conversion_error();
-      }
-      else
-        m_value.reset();
-    }
+    void fromObject(const ObjectPtr& value) final;
+    void loadObject(const ObjectPtr& value) final;
 };
+
+//#include "objectproperty.tpp"
 
 #endif

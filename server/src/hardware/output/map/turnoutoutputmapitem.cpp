@@ -22,6 +22,8 @@
 
 #include "turnoutoutputmapitem.hpp"
 
+#include "../../../core/method.tpp"
+
 TurnoutOutputMapItem::TurnoutOutputMapItem(Object& map, TurnoutPosition position) :
   OutputMapItemBase(map, position)
 {

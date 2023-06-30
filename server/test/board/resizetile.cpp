@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,14 +22,17 @@
 
 #include <catch2/catch.hpp>
 #include "../src/world/world.hpp"
+#include "../src/core/method.tpp"
+#include "../src/core/objectproperty.tpp"
 #include "../src/board/board.hpp"
+#include "../src/board/boardlist.hpp"
 #include "../src/board/tile/rail/blockrailtile.hpp"
 
 TEST_CASE("Board: Resize non existing tile", "[board][board-resize]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
-  auto board = world->boards->add();
+  auto board = world->boards->create();
   std::weak_ptr<Board> boardWeak = board;
 
   REQUIRE_FALSE(board->getTile({0, 0}));
@@ -48,7 +51,7 @@ TEST_CASE("Board: Resize block rail tile vertical", "[board][board-resize]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
-  auto board = world->boards->add();
+  auto board = world->boards->create();
   std::weak_ptr<Board> boardWeak = board;
 
   // add tile at 0,0
@@ -127,7 +130,7 @@ TEST_CASE("Board: Resize block rail tile horizontal", "[board][board-resize]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
-  auto board = world->boards->add();
+  auto board = world->boards->create();
   std::weak_ptr<Board> boardWeak = board;
 
   // add tile at 0,0

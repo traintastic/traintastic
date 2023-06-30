@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.9)
 include(../shared/traintastic.cmake)
 project(traintastic-server VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic server")
 include(GNUInstallDirs)
+include(../shared/translations/traintastic-lang.cmake)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
@@ -19,8 +20,8 @@ if(NOT DISABLE_CLANG_TIDY)
   set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*,-readability-braces-around-statements,-readability-implicit-bool-conversion,-readability-magic-numbers)
 endif()
 
-add_executable(traintastic-server src/main.cpp src/options.hpp)
-add_executable(traintastic-server-test test/main.cpp)
+add_executable(traintastic-server src/main.cpp src/options.hpp ${TRANSLATION_FILES})
+add_executable(traintastic-server-test test/main.cpp ${TRANSLATION_FILES})
 
 target_compile_definitions(traintastic-server-test PRIVATE -DTRAINTASTIC_TEST)
 
@@ -139,10 +140,16 @@ file(GLOB SOURCES
   "src/log/*.cpp"
   "src/lua/*.hpp"
   "src/lua/*.cpp"
+  "src/lua/object/*.hpp"
+  "src/lua/object/*.cpp"
   "src/network/*.hpp"
   "src/network/*.cpp"
   "src/os/*.hpp"
   "src/os/*.cpp"
+  "src/pcap/*.hpp"
+  "src/pcap/*.cpp"
+  "src/status/*.hpp"
+  "src/status/*.cpp"
   "src/train/*.hpp"
   "src/train/*.cpp"
   "src/traintastic/*.hpp"
@@ -166,10 +173,13 @@ file(GLOB TEST_SOURCES
   "test/objectcreatedestroy.cpp"
   )
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DENABLE_LOG_DEBUG")
+
 ### PLATFORM ###
 
 if(UNIX AND NOT APPLE)
   set(LINUX TRUE)
+  list(APPEND SOURCES "src/os/linux/setbaudrate.hpp" "src/os/linux/setbaudrate.cpp")
 endif()
 
 if(UNIX)
@@ -203,8 +213,11 @@ endif()
 if(MSVC)
 
 else()
-  #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
-  #set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
+  ### Enable ASAN and UBSAN
+  #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
+
+  ### Use the LLVM lld linker (faster than standard linker)
+  #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=lld")
 
   target_link_libraries(traintastic-server PRIVATE pthread)
   target_link_libraries(traintastic-server-test PRIVATE pthread)

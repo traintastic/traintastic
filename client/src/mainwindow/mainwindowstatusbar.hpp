@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,14 +32,22 @@ class MainWindowStatusBar : public QStatusBar
 {
   private:
     MainWindow& m_mainWindow;
+    QWidget* m_statuses;
     QLabel* m_clockLabel;
+    int m_statusesRequest;
 
     void settingsChanged();
+
     void clockChanged();
     void updateClock();
 
+    void clearStatuses();
+    void updateStatuses();
+
   public:
     MainWindowStatusBar(MainWindow& mainWindow);
+
+    void worldChanged();
 };
 
 #endif

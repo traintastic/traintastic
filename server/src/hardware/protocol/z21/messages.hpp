@@ -143,12 +143,12 @@ enum LocoMode : uint8_t
 };
 
 static constexpr uint8_t LAN_X_SET_STOP = 0x80;
-//static constexpr uint8_t LAN_X_TURNOUT_INFO = 0x43;
+static constexpr uint8_t LAN_X_TURNOUT_INFO = 0x43;
 static constexpr uint8_t LAN_X_BC = 0x61;
 static constexpr uint8_t LAN_X_BC_TRACK_POWER_OFF = 0x00;
 static constexpr uint8_t LAN_X_BC_TRACK_POWER_ON = 0x01;
 //static constexpr uint8_t LAN_X_BC_PROGRAMMING_MODE = 0x02;
-//static constexpr uint8_t LAN_X_BC_TRACK_SHORT_CIRCUIT = 0x08;
+static constexpr uint8_t LAN_X_BC_TRACK_SHORT_CIRCUIT = 0x08;
 //static constexpr uint8_t LAN_X_CV_NACK_SC = 0x12;
 //static constexpr uint8_t LAN_X_CV_NACK = 0x13;
 //static constexpr uint8_t LAN_X_UNKNOWN_COMMAND = 0x82;
@@ -163,6 +163,12 @@ enum HardwareType : uint32_t
   HWT_SMARTRAIL = 0x00000202, //!< SmartRail (from 2012)
   HWT_Z21_SMALL = 0x00000203, //!< „white z21” starter set variant (from 2013)
   HWT_Z21_START = 0x00000204, //!< „z21 start” starter set variant (from 2016)
+  HWT_SINGLE_BOOSTER = 0x00000205, //!< 10806 „Z21 Single Booster” (zLink)
+  HWT_DUAL_BOOSTER   = 0x00000206, //!< 10807 „Z21 Dual Booster” (zLink)
+  HWT_Z21_XL     = 0x00000211, //!< 10870 „Z21 XL Series” (from 2020)
+  HWT_XL_BOOSTER = 0x00000212, //!< 10869 „Z21 XL Booster” (from 2021, zLink)
+  HWT_Z21_SWITCH_DECODER = 0x00000301, //!< 10836 „Z21 SwitchDecoder” (zLink)
+  HWT_Z21_SIGNAL_DECODER = 0x00000302  //!< 10837 „Z21 SignalDecoder” (zLink)
 };
 
 constexpr std::string_view toString(HardwareType value)
@@ -183,6 +189,24 @@ constexpr std::string_view toString(HardwareType value)
 
     case HWT_Z21_START :
       return "Z21 start (starter set variant from 2016)";
+
+    case HWT_SINGLE_BOOSTER :
+      return "Z21 Single Booster (10806, zLink)";
+
+    case HWT_DUAL_BOOSTER :
+      return "Z21 Dual Booster (10807, zLink)";
+
+    case HWT_Z21_XL :
+      return "Z21 XL Series (from 2020)";
+
+    case HWT_XL_BOOSTER :
+      return "Z21 XL Booster (from 2021, zLink)";
+
+    case HWT_Z21_SWITCH_DECODER :
+      return "Z21 SwitchDecoder (zLink)";
+
+    case HWT_Z21_SIGNAL_DECODER :
+      return "Z21 SignalDecoder (zLink)";
 
     case HWT_UNKNOWN:
       break;
@@ -327,7 +351,7 @@ struct LanXGetStatus : LanX
     LanX(sizeof(LanXGetStatus), 0x21)
   {
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXGetStatus) == 7);
 
 // LAN_X_SET_TRACK_POWER_OFF
@@ -374,7 +398,7 @@ struct LanXGetTurnoutInfo : LanX
   uint8_t checksum;
 
   LanXGetTurnoutInfo(uint16_t address)
-    : LanX(sizeof(LanXGetTurnoutInfo), 0x43)
+    : LanX(sizeof(LanXGetTurnoutInfo), LAN_X_TURNOUT_INFO)
     , db0(address >> 8)
     , db1(address & 0xFF)
   {
@@ -745,7 +769,7 @@ struct LanRMBusGetData : Message
     , groupIndex{groupIndex_}
   {
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanRMBusGetData) == 5);
 
 // LAN_RMBUS_PROGRAMMODULE
@@ -897,10 +921,12 @@ struct LanXGetVersionReply : LanX
     assert(value < 100);
     xBusVersionBCD = Utils::toBCD(value);
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXGetVersionReply) == 9);
 
 // Reply to LAN_GET_CODE
+
+// LAN_X_GET_FIRMWARE_VERSION
 struct LanXGetFirmwareVersionReply : LanX
 {
   uint8_t db0 = 0x0A;
@@ -942,7 +968,7 @@ struct LanXGetFirmwareVersionReply : LanX
     assert(value < 100);
     minorBCD = Utils::toBCD(value);
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXGetFirmwareVersionReply) == 9);
 
 // Reply to LAN_GET_HWINFO
@@ -987,7 +1013,7 @@ struct LanXBCTrackPowerOff : LanX
     LanX(sizeof(LanXBCTrackPowerOff), LAN_X_BC)
   {
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXBCTrackPowerOff) == 7);
 
 // LAN_X_BC_TRACK_POWER_ON
@@ -1000,12 +1026,23 @@ struct LanXBCTrackPowerOn : LanX
     LanX(sizeof(LanXBCTrackPowerOn), LAN_X_BC)
   {
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXBCTrackPowerOn) == 7);
 
 // LAN_X_BC_PROGRAMMING_MODE
 
 // LAN_X_BC_TRACK_SHORT_CIRCUIT
+struct LanXBCTrackShortCircuit : LanX
+{
+  uint8_t db0 = LAN_X_BC_TRACK_SHORT_CIRCUIT;
+  uint8_t checksum = 0x69;
+
+  LanXBCTrackShortCircuit() :
+      LanX(sizeof(LanXBCTrackShortCircuit), LAN_X_BC)
+  {
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanXBCTrackShortCircuit) == 7);
 
 // LAN_X_CV_NACK_SC
 
@@ -1024,7 +1061,7 @@ struct LanXStatusChanged : LanX
     LanX(sizeof(LanXStatusChanged), 0x62)
   {
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXStatusChanged) == 8);
 
 // Reply to LAN_X_GET_VERSION
@@ -1035,13 +1072,13 @@ static_assert(sizeof(LanXStatusChanged) == 8);
 struct LanXBCStopped : LanX
 {
   uint8_t db0 = 0x00;
-  uint8_t checksum = 0x80;
+  uint8_t checksum = 0x81;
 
   LanXBCStopped() :
     LanX(sizeof(LanXBCStopped), LAN_X_BC_STOPPED)
   {
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXBCStopped) == 7);
 
 // LAN_X_LOCO_INFO
@@ -1228,6 +1265,22 @@ static_assert(sizeof(LanXLocoInfo) == 14);
 // Reply to LAN_X_GET_FIRMWARE_VERSION
 
 // Reply to LAN_GET_BROADCASTFLAGS
+struct LanGetBroadcastFlagsReply : Message
+{
+  BroadcastFlags broadcastFlagsLE; // LE
+
+  LanGetBroadcastFlagsReply(BroadcastFlags _broadcastFlags = BroadcastFlags::None) :
+      Message(sizeof(LanGetBroadcastFlagsReply), LAN_GET_BROADCASTFLAGS),
+      broadcastFlagsLE{host_to_le(_broadcastFlags)}
+  {
+  }
+
+  inline BroadcastFlags broadcastFlags() const
+  {
+    return le_to_host(broadcastFlagsLE);
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanGetBroadcastFlagsReply) == 8);
 
 // Reply to LAN_GET_LOCOMODE
 struct LanGetLocoModeReply : Message

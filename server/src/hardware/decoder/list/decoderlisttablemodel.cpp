@@ -22,6 +22,7 @@
 
 #include "decoderlisttablemodel.hpp"
 #include "decoderlist.hpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../utils/displayname.hpp"
 
 static std::string_view displayName(DecoderListColumn column)

@@ -23,6 +23,7 @@
 #include "decoderchangeflags.hpp"
 #include "../../world/world.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../utils/displayname.hpp"
 #include "../../log/logmessageexception.hpp"
 

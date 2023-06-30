@@ -27,7 +27,6 @@
 #include <thread>
 #include <boost/asio/io_context.hpp>
 
-#include <traintastic/enum/tristate.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
 

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +27,11 @@ std::shared_ptr<RailVehicle> RailVehicles::create(World& world, std::string_view
 {
   if(classId == Locomotive::classId)
     return Locomotive::create(world, id);
-  if(classId == FreightCar::classId)
-    return FreightCar::create(world, id);
+  if(classId == MultipleUnit::classId)
+    return MultipleUnit::create(world, id);
+  if(classId == FreightWagon::classId)
+    return FreightWagon::create(world, id);
+  if(classId == TankWagon::classId)
+    return TankWagon::create(world, id);
   return std::shared_ptr<RailVehicle>();
 }

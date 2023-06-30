@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_LENGTHUNIT_HPP
 
 #include <cstdint>
+#include "enum.hpp"
 
 enum class LengthUnit
 {

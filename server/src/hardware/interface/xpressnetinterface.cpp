@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,12 @@
  */
 
 #include "xpressnetinterface.hpp"
+#include "../decoder/list/decoderlist.hpp"
 #include "../input/input.hpp"
+#include "../input/list/inputlist.hpp"
+#include "../output/list/outputlist.hpp"
+#include "../protocol/xpressnet/kernel.hpp"
+#include "../protocol/xpressnet/settings.hpp"
 #include "../protocol/xpressnet/messages.hpp"
 #include "../protocol/xpressnet/iohandler/serialiohandler.hpp"
 #include "../protocol/xpressnet/iohandler/simulationiohandler.hpp"
@@ -29,6 +34,8 @@
 #include "../protocol/xpressnet/iohandler/rosofts88xpressnetliiohandler.hpp"
 #include "../protocol/xpressnet/iohandler/tcpiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/method.tpp"
+#include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
@@ -38,6 +45,8 @@
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
+
+CREATE_IMPL(XpressNetInterface)
 
 XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   : Interface(world, _id)
@@ -81,7 +90,7 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , baudrate{this, "baudrate", 19200, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , flowControl{this, "flow_control", SerialFlowControl::None, PropertyFlags::ReadWrite | PropertyFlags::Store}
-  , hostname{this, "hostname", "192.168.1.203", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , port{this, "port", 5550, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , s88StartAddress{this, "s88_start_address", XpressNet::RoSoftS88XpressNetLI::S88StartAddress::startAddressDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , s88ModuleCount{this, "s88_module_count", XpressNet::RoSoftS88XpressNetLI::S88ModuleCount::moduleCountDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -153,18 +162,28 @@ void XpressNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFla
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-void XpressNetInterface::inputSimulateChange(uint32_t channel, uint32_t address)
+std::pair<uint32_t, uint32_t> XpressNetInterface::inputAddressMinMax(uint32_t) const
+{
+  return {XpressNet::Kernel::ioAddressMin, XpressNet::Kernel::ioAddressMax};
+}
+
+void XpressNetInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, outputAddressMinMax(channel)))
-    m_kernel->simulateInputChange(address);
+    m_kernel->simulateInputChange(address, action);
+}
+
+std::pair<uint32_t, uint32_t> XpressNetInterface::outputAddressMinMax(uint32_t) const
+{
+  return {XpressNet::Kernel::ioAddressMin, XpressNet::Kernel::ioAddressMax};
 }
 
 bool XpressNetInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
 {
   assert(isOutputChannel(channel));
   return
-    m_kernel &&
-    inRange(address, outputAddressMinMax(channel)) &&
+      m_kernel &&
+      inRange(address, outputAddressMinMax(channel)) &&
     m_kernel->setOutput(static_cast<uint16_t>(address), value);
 }
 
@@ -214,13 +233,19 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
         return false;
       }
 
-      status.setValueInternal(InterfaceStatus::Initializing);
+      setState(InterfaceState::Initializing);
 
       m_kernel->setLogId(id.value());
       m_kernel->setOnStarted(
         [this]()
         {
-          status.setValueInternal(InterfaceStatus::Online);
+          setState(InterfaceState::Online);
+        });
+      m_kernel->setOnError(
+        [this]()
+        {
+          setState(InterfaceState::Error);
+          online = false; // communication no longer possible
         });
       m_kernel->setOnNormalOperationResumed(
         [this]()
@@ -267,7 +292,7 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
     }
     catch(const LogMessageException& e)
     {
-      status.setValueInternal(InterfaceStatus::Offline);
+      setState(InterfaceState::Offline);
       Log::log(*this, e.message(), e.args());
       return false;
     }
@@ -281,7 +306,7 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
     m_kernel->stop();
     m_kernel.reset();
 
-    status.setValueInternal(InterfaceStatus::Offline);
+    setState(InterfaceState::Offline);
   }
   return true;
 }

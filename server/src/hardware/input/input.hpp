@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,17 +28,19 @@
 #include "../../core/objectvectorproperty.hpp"
 #include "../../core/event.hpp"
 #include "../../enum/tristate.hpp"
-#include "inputcontroller.hpp"
+#include "../../enum/simulateinputaction.hpp"
 
 #ifdef interface
   #undef interface // interface is defined in combaseapi.h
 #endif
 
+class InputController;
+
 class Input : public IdObject
 {
   CLASS_ID("input")
   DEFAULT_ID("input")
-  CREATE(Input)
+  CREATE_DEF(Input)
 
   friend class InputController;
 
@@ -69,6 +71,8 @@ class Input : public IdObject
     Event<bool> onValueChanged;
 
     Input(World& world, std::string_view _id);
+
+    void simulateChange(SimulateInputAction action);
 };
 
 #endif

@@ -21,6 +21,7 @@
  */
 
 #include "decoupleroutputmapitem.hpp"
+#include "../../../core/method.tpp"
 
 DecouplerOutputMapItem::DecouplerOutputMapItem(Object& map, DecouplerState state) :
   OutputMapItemBase(map, state)

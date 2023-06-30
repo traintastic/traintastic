@@ -37,6 +37,7 @@ class AbstractVectorProperty : public BaseProperty
     }
 
   public:
+    bool empty() const { return size() == 0; }
     virtual int size() const = 0;
 
     virtual bool getBool(int /*index*/) const { Q_ASSERT(false); return false; }

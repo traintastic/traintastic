@@ -46,6 +46,7 @@
 #include "network/connection.hpp"
 #include "network/object.hpp"
 #include "network/property.hpp"
+#include "network/objectvectorproperty.hpp"
 #include "network/method.hpp"
 #include "programming/lncv/lncvprogrammer.hpp"
 #include "subwindow/objectsubwindow.hpp"
@@ -111,6 +112,8 @@ MainWindow::MainWindow(QWidget* parent) :
   updateWindowTitle();
 
   QMenu* menu;
+  QAction* boardsAction;
+  QAction* trainsAction;
 
   m_mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   m_mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -383,9 +386,9 @@ MainWindow::MainWindow(QWidget* parent) :
     menu->addAction(Locale::tr("world:inputs") + "...", [this](){ showObject("world.inputs", Locale::tr("world:inputs")); });
     menu->addAction(Locale::tr("world:outputs") + "...", [this](){ showObject("world.outputs", Locale::tr("world:outputs")); });
     menu->addAction(Locale::tr("hardware:identifications") + "...", [this](){ showObject("world.identifications", Locale::tr("hardware:identifications")); });
-    m_menuObjects->addAction(Locale::tr("world:boards") + "...", [this](){ showObject("world.boards", Locale::tr("world:boards")); });
+    boardsAction = m_menuObjects->addAction(Theme::getIcon("board"), Locale::tr("world:boards") + "...", [this](){ showObject("world.boards", Locale::tr("world:boards")); });
     m_menuObjects->addAction(Theme::getIcon("clock"), Locale::tr("world:clock") + "...", [this](){ showObject("world.clock", Locale::tr("world:clock")); });
-    m_menuObjects->addAction(Locale::tr("world:trains") + "...", [this](){ showObject("world.trains", Locale::tr("world:trains")); });
+    trainsAction = m_menuObjects->addAction(Theme::getIcon("train"), Locale::tr("world:trains") + "...", [this](){ showObject("world.trains", Locale::tr("world:trains")); });
     m_menuObjects->addAction(Locale::tr("world:rail_vehicles") + "...", [this](){ showObject("world.rail_vehicles", Locale::tr("world:rail_vehicles")); });
     m_actionLuaScript = m_menuObjects->addAction(Theme::getIcon("lua"), Locale::tr("world:lua_scripts") + "...", [this](){ showObject("world.lua_scripts", Locale::tr("world:lua_scripts")); });
 
@@ -438,14 +441,14 @@ MainWindow::MainWindow(QWidget* parent) :
       });
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:help"));
-    menu->addAction(Locale::tr("qtapp.mainmenu:help"), 
+    menu->addAction(Locale::tr("qtapp.mainmenu:help"),
       []()
       {
         const auto manual = QString::fromStdString((getManualPath() / "en-us.html").string());
         if(QFile::exists(manual))
           QDesktopServices::openUrl(QUrl::fromLocalFile(manual));
         else
-          QDesktopServices::openUrl(QString("https://traintastic.org/manual?version=" TRAINTASTIC_VERSION_FULL)); 
+          QDesktopServices::openUrl(QString("https://traintastic.org/manual?version=" TRAINTASTIC_VERSION_FULL));
       })->setShortcut(QKeySequence::HelpContents);
     //menu->addSeparator();
     //menu->addAction(Locale::tr("qtapp.mainmenu:about_qt") + "...", qApp, &QApplication::aboutQt);
@@ -506,6 +509,14 @@ MainWindow::MainWindow(QWidget* parent) :
   spacer->show();
   m_toolbar->addWidget(spacer);
 
+  m_toolbar->addAction(boardsAction);
+  m_toolbar->addAction(trainsAction);
+
+  spacer = new QWidget(this);
+  spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+  spacer->show();
+  m_toolbar->addWidget(spacer);
+
   m_toolbar->addAction(m_worldEditAction);
 
   QVBoxLayout* l = new QVBoxLayout();
@@ -538,6 +549,12 @@ MainWindow::~MainWindow()
 {
   for(SubWindow* window : m_subWindows)
     disconnect(window, &QMdiSubWindow::destroyed, nullptr, nullptr);
+}
+
+const ObjectPtr& MainWindow::world() const
+{
+  static const ObjectPtr null;
+  return m_connection ? m_connection->world() : null;
 }
 
 void MainWindow::connectToServer(const QString& url)
@@ -642,6 +659,7 @@ void MainWindow::worldChanged()
     }
   }
 
+  static_cast<MainWindowStatusBar*>(statusBar())->worldChanged();
   updateWindowTitle();
 }
 
@@ -735,24 +753,10 @@ void MainWindow::showObject(const ObjectPtr& object, SubWindowType type)
 {
   QString windowId;
   if(auto* property = object->getProperty("id"))
-    windowId = toString(type).append("/").append(property->toString());
+    windowId = SubWindow::windowId(type, property->toString());
   if(windowId.isEmpty() || !m_subWindows.contains(windowId))
   {
-    SubWindow* window = createSubWindow(type, object);
-    if(!window)
-      return;
-    m_mdiArea->addSubWindow(window);
-    window->setAttribute(Qt::WA_DeleteOnClose);
-    if(!windowId.isEmpty())
-    {
-      m_subWindows[windowId] = window;
-      connect(window, &QMdiSubWindow::destroyed, this,
-        [this, windowId](QObject*)
-        {
-          m_subWindows.remove(windowId);
-        });
-    }
-    window->show();
+    addSubWindow(windowId, createSubWindow(type, object));
   }
   else
     m_mdiArea->setActiveSubWindow(m_subWindows[windowId]);
@@ -760,26 +764,54 @@ void MainWindow::showObject(const ObjectPtr& object, SubWindowType type)
 
 void MainWindow::showObject(const QString& id, const QString& title, SubWindowType type)
 {
-  const QString windowId{toString(type).append("/").append(id)};
+  const QString windowId = SubWindow::windowId(type, id);
   if(!m_subWindows.contains(windowId))
   {
     SubWindow* window = createSubWindow(type, m_connection, id);
-    if(!window)
-      return;
-    if(!title.isEmpty())
+    if(window && !title.isEmpty())
       window->setWindowTitle(title);
-    m_subWindows[windowId] = window;
-    m_mdiArea->addSubWindow(window);
-    window->setAttribute(Qt::WA_DeleteOnClose);
-    connect(window, &QMdiSubWindow::destroyed, this,
-      [this, windowId](QObject*)
-      {
-        m_subWindows.remove(windowId);
-      });
-    window->show();
+    addSubWindow(windowId, window);
   }
   else
     m_mdiArea->setActiveSubWindow(m_subWindows[windowId]);
+}
+
+void MainWindow::addSubWindow(const QString& windowId, SubWindow* window)
+{
+  if(!window)
+    return;
+  m_mdiArea->addSubWindow(window);
+  window->setAttribute(Qt::WA_DeleteOnClose);
+  if(!windowId.isEmpty())
+  {
+    m_subWindows[windowId] = window;
+    connect(window, &QMdiSubWindow::destroyed, this,
+      [this](QObject* object)
+      {
+        for(auto it = m_subWindows.begin(); it != m_subWindows.end(); it++)
+        {
+          if(static_cast<QObject*>(it.value()) == object)
+          {
+            m_subWindows.erase(it);
+            break;
+          }
+        }
+      });
+    connect(window, &SubWindow::objectIdChanged, this,
+      [this](SubWindow* subWindow, const QString& newObjectId)
+      {
+        for(auto it = m_subWindows.begin(); it != m_subWindows.end(); it++)
+        {
+          if(it.value() == subWindow)
+          {
+            m_subWindows.erase(it);
+            m_subWindows[SubWindow::windowId(subWindow->type(), newObjectId)] = subWindow;
+            break;
+          }
+        }
+      });
+  }
+  window->show();
 }
 
 void MainWindow::showAbout()

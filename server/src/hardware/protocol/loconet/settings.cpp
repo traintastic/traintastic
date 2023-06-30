@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,6 +44,13 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   , debugLogInput{this, "debug_log_input", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogOutput{this, "debug_log_output", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , pcap{this, "pcap", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
+      [this](bool value)
+      {
+        Attributes::setEnabled(pcapOutput, value);
+      }}
+  , pcapOutput{this, "pcap_output", PCAPOutput::File, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , listenOnly{this, "listen_only", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   Attributes::addDisplayName(commandStation, DisplayName::Hardware::commandStation);
   Attributes::addValues(commandStation, LocoNetCommandStationValues);
@@ -87,6 +94,17 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   Attributes::addDisplayName(debugLogRXTX, DisplayName::Hardware::debugLogRXTX);
   //Attributes::addGroup(debugLogRXTX, Group::debug);
   m_interfaceItems.add(debugLogRXTX);
+
+  //Attributes::addGroup(pcap, Group::developer);
+  m_interfaceItems.add(pcap);
+
+  Attributes::addEnabled(pcapOutput, pcap);
+  //Attributes::addGroup(pcapOutput, Group::developer);
+  Attributes::addValues(pcapOutput, pcapOutputValues);
+  m_interfaceItems.add(pcapOutput);
+
+  //Attributes::addGroup(listenOnly, Group::developer);
+  m_interfaceItems.add(listenOnly);
 }
 
 Config Settings::config() const
@@ -106,6 +124,9 @@ Config Settings::config() const
   config.debugLogInput = debugLogInput;
   config.debugLogOutput = debugLogOutput;
   config.debugLogRXTX = debugLogRXTX;
+  config.pcap = pcap;
+  config.pcapOutput = pcapOutput;
+  config.listenOnly = listenOnly;
 
   return config;
 }
@@ -115,6 +136,7 @@ void Settings::loaded()
   SubObject::loaded();
 
   Attributes::setEnabled(fastClockSyncInterval, fastClockSyncEnabled);
+  Attributes::setEnabled(pcapOutput, pcap);
 
   commandStationChanged(commandStation);
 }

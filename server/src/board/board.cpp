@@ -21,14 +21,19 @@
  */
 
 #include "board.hpp"
+#include "boardlist.hpp"
 #include "boardlisttablemodel.hpp"
 #include "map/link.hpp"
 #include "tile/tiles.hpp"
+#include "../core/method.tpp"
+#include "../core/objectproperty.tpp"
 #include "../world/world.hpp"
 #include "../world/worldloader.hpp"
 #include "../core/attributes.hpp"
 #include "../utils/displayname.hpp"
 #include <cassert>
+
+CREATE_IMPL(Board)
 
 Board::Board(World& world, std::string_view _id) :
   IdObject(world, _id),

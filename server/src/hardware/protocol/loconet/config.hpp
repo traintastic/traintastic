@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 
 #include <traintastic/enum/loconetf9f28.hpp>
 #include <traintastic/enum/loconetfastclock.hpp>
+#include <traintastic/enum/pcapoutput.hpp>
 
 namespace LocoNet {
 
@@ -46,6 +47,10 @@ struct Config
   bool debugLogInput;
   bool debugLogOutput;
   bool debugLogRXTX;
+
+  bool pcap;
+  PCAPOutput pcapOutput;
+  bool listenOnly; //!< If enabled Traintastic will not send any message to the LocoNet, just for using Traintastic as LocoNet monitor.
 };
 
 }

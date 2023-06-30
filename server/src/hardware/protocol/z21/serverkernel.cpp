@@ -134,7 +134,7 @@ void ServerKernel::receiveFrom(const Message& message, IOHandler::ClientId clien
           }
           break;
 
-        case 0x80:
+        case LAN_X_SET_STOP:
           if(message == LanXSetStop())
           {
             if(m_config.allowEmergencyStop && m_emergencyStop != TriState::True && m_onEmergencyStop)
@@ -292,6 +292,9 @@ void ServerKernel::onStart()
 void ServerKernel::onStop()
 {
   m_inactiveClientPurgeTimer.cancel();
+
+  for(auto& it : m_decoderSubscriptions)
+    it.second.connection.disconnect();
 }
 
 void ServerKernel::sendTo(const Message& message, IOHandler::ClientId clientId)

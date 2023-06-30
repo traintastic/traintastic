@@ -39,12 +39,17 @@
 #include <traintastic/enum/marklincaninterfacetype.hpp>
 #include <traintastic/enum/opcmultisensedirection.hpp>
 #include <traintastic/enum/outputaction.hpp>
+#include <traintastic/enum/pcapoutput.hpp>
+#include <traintastic/enum/powerunit.hpp>
+#include <traintastic/enum/ratiounit.hpp>
 #include <traintastic/enum/sensortype.hpp>
 #include <traintastic/enum/serialflowcontrol.hpp>
 #include <traintastic/enum/signalaspect.hpp>
 #include <traintastic/enum/speedunit.hpp>
+#include <traintastic/enum/trainmode.hpp>
 #include <traintastic/enum/traintasticdiyinterfacetype.hpp>
 #include <traintastic/enum/turnoutposition.hpp>
+#include <traintastic/enum/volumeunit.hpp>
 #include <traintastic/enum/weightunit.hpp>
 #include <traintastic/enum/worldscale.hpp>
 #include <traintastic/enum/xpressnetcommandstation.hpp>
@@ -64,7 +69,10 @@ QVector<qint64> enumValues(const QString& enumName)
 {
   QVector<qint64> values;
   GET_ENUM_VALUES(LengthUnit)
+  GET_ENUM_VALUES(PowerUnit)
+  GET_ENUM_VALUES(RatioUnit)
   GET_ENUM_VALUES(SpeedUnit)
+  GET_ENUM_VALUES(VolumeUnit)
   GET_ENUM_VALUES(WeightUnit)
   {} // fix final else
   return values;
@@ -93,12 +101,17 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(MarklinCANInterfaceType)
   TRANSLATE_ENUM(OPCMultiSenseDirection)
   TRANSLATE_ENUM(OutputAction)
+  TRANSLATE_ENUM(PCAPOutput)
+  TRANSLATE_ENUM(PowerUnit)
+  TRANSLATE_ENUM(RatioUnit)
   TRANSLATE_ENUM(SensorType)
   TRANSLATE_ENUM(SerialFlowControl)
   TRANSLATE_ENUM(SignalAspect)
   TRANSLATE_ENUM(SpeedUnit)
+  TRANSLATE_ENUM(TrainMode)
   TRANSLATE_ENUM(TraintasticDIYInterfaceType)
   TRANSLATE_ENUM(TurnoutPosition)
+  TRANSLATE_ENUM(VolumeUnit)
   TRANSLATE_ENUM(WeightUnit)
   TRANSLATE_ENUM(WorldScale)
   TRANSLATE_ENUM(XpressNetCommandStation)

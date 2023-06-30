@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,13 +22,16 @@
 
 #include <catch2/catch.hpp>
 #include "../../src/world/world.hpp"
+#include "../../src/core/method.tpp"
+#include "../../src/core/objectproperty.tpp"
+#include "../../src/lua/scriptlist.hpp"
 
 TEST_CASE("Lua script: no code, start/stop, disable", "[lua][lua-script]")
 {
   auto world = World::create();
   REQUIRE(world);
 
-  auto script = world->luaScripts->add();
+  auto script = world->luaScripts->create();
   REQUIRE(script);
 
   REQUIRE_FALSE(script->disabled.value());

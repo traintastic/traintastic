@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,11 +38,11 @@ constexpr int objectIdRole = Qt::UserRole;
 
 ItemsEditWidget::ItemsEditWidget(const ObjectPtr& object, QWidget* parent) :
   AbstractEditWidget(object, parent),
-  m_methodAdd{nullptr},
-  m_methodRemove{nullptr},
+  m_methodCreate{nullptr},
+  m_methodDelete{nullptr},
   m_methodMoveUp{nullptr},
   m_methodMoveDown{nullptr},
-  m_actionRemove{nullptr},
+  m_actionDelete{nullptr},
   m_actionMoveUp{nullptr},
   m_actionMoveDown{nullptr},
   m_stack{nullptr},
@@ -53,11 +53,11 @@ ItemsEditWidget::ItemsEditWidget(const ObjectPtr& object, QWidget* parent) :
 
 ItemsEditWidget::ItemsEditWidget(const QString& id, QWidget* parent) :
   AbstractEditWidget(id, parent),
-  m_methodAdd{nullptr},
-  m_methodRemove{nullptr},
+  m_methodCreate{nullptr},
+  m_methodDelete{nullptr},
   m_methodMoveUp{nullptr},
   m_methodMoveDown{nullptr},
-  m_actionRemove{nullptr},
+  m_actionDelete{nullptr},
   m_actionMoveUp{nullptr},
   m_actionMoveDown{nullptr},
   m_stack{nullptr},
@@ -71,8 +71,8 @@ void ItemsEditWidget::buildForm()
   setWindowIcon(Theme::getIconForClassId(m_object->classId()));
 
   m_propertyItems = dynamic_cast<ObjectVectorProperty*>(m_object->getVectorProperty("items"));
-  m_methodAdd = m_object->getMethod("add");
-  m_methodRemove = m_object->getMethod("remove");
+  m_methodCreate = m_object->getMethod("create");
+  m_methodDelete = m_object->getMethod("delete");
   m_methodMoveUp = m_object->getMethod("move_up");
   m_methodMoveDown = m_object->getMethod("move_down");
 
@@ -83,18 +83,18 @@ void ItemsEditWidget::buildForm()
 
   QToolBar* toolbar = new QToolBar(this);
 
-  if(m_methodAdd)
-    toolbar->addAction(new MethodAction(Theme::getIcon("add"), *m_methodAdd, toolbar));
+  if(m_methodCreate)
+    toolbar->addAction(new MethodAction(Theme::getIcon("add"), *m_methodCreate, toolbar));
 
-  if(m_methodRemove)
+  if(m_methodDelete)
   {
-    m_actionRemove = new MethodAction(Theme::getIcon("remove"), *m_methodRemove,
+    m_actionDelete = new MethodAction(Theme::getIcon("delete"), *m_methodDelete,
       [this]()
       {
         if(auto* item = m_list->currentItem())
-          callMethod(*m_methodRemove, nullptr, item->data(objectIdRole).toString());
+          callMethod(*m_methodDelete, nullptr, item->data(objectIdRole).toString());
       }, toolbar);
-    toolbar->addAction(m_actionRemove);
+    toolbar->addAction(m_actionDelete);
   }
 
   if(m_methodMoveUp)
@@ -172,8 +172,8 @@ void ItemsEditWidget::updateListItems()
     }
   }
 
-  if(m_actionRemove)
-    m_actionRemove->setForceDisabled(m_list->count() == 0);
+  if(m_actionDelete)
+    m_actionDelete->setForceDisabled(m_list->count() == 0);
 }
 
 void ItemsEditWidget::itemsChanged()
