@@ -119,7 +119,7 @@ tcb::span<const uint8_t> DCCPlusPlusInterface::decoderSpeedSteps(DecoderProtocol
   const auto& speedStepValues = DCCPlusPlus::Settings::speedStepValues;
   // find value in array so we can create a span, using a span of a variable won't work due to the compare with prevous value in the attribute setter
   if(auto it = std::find(speedStepValues.begin(), speedStepValues.end(), dccplusplus->speedSteps); it != speedStepValues.end()) /*[[likely]]/*/
-    return {it, 1};
+    return {&(*it), 1};
   assert(false);
   return {};
 }
