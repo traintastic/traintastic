@@ -177,6 +177,21 @@ std::pair<uint16_t, uint16_t> XpressNetInterface::decoderAddressMinMax(DecoderPr
   }
 }
 
+tcb::span<const uint8_t> XpressNetInterface::decoderSpeedSteps(DecoderProtocol protocol) const
+{
+  static constexpr std::array<uint8_t, 4> dccSpeedSteps{{14, 27, 28, 128}}; // XpressNet also support 27 steps
+
+  switch(protocol)
+  {
+    case DecoderProtocol::DCCShort:
+    case DecoderProtocol::DCCLong:
+      return dccSpeedSteps;
+
+    default: /*[[unlikely]]*/
+      return DecoderController::decoderSpeedSteps(protocol);
+  }
+}
+
 void XpressNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(m_kernel)

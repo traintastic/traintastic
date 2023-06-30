@@ -147,21 +147,6 @@ std::pair<uint16_t, uint16_t> LocoNetInterface::decoderAddressMinMax(DecoderProt
   return DecoderController::decoderAddressMinMax(protocol);
 }
 
-tcb::span<const uint8_t> LocoNetInterface::decoderSpeedSteps(DecoderProtocol protocol) const
-{
-  static constexpr std::array<uint8_t, 3> dccSpeedSteps{{14, 28, 128}}; // LocoNet doesn't support 27 steps
-
-  switch(protocol)
-  {
-    case DecoderProtocol::DCCShort:
-    case DecoderProtocol::DCCLong:
-      return dccSpeedSteps;
-
-    default:
-      return DecoderController::decoderSpeedSteps(protocol);
-  }
-}
-
 void LocoNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(m_kernel)
