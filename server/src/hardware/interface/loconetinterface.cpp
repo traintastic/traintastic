@@ -29,6 +29,7 @@
 #include "../identification/list/identificationlist.hpp"
 #include "../identification/identification.hpp"
 #include "../programming/lncv/lncvprogrammer.hpp"
+#include "../protocol/dcc/dcc.hpp"
 #include "../protocol/loconet/kernel.hpp"
 #include "../protocol/loconet/settings.hpp"
 #include "../protocol/loconet/iohandler/serialiohandler.hpp"
@@ -135,6 +136,15 @@ tcb::span<const DecoderProtocol> LocoNetInterface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};
   return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+}
+
+std::pair<uint16_t, uint16_t> LocoNetInterface::decoderAddressMinMax(DecoderProtocol protocol) const
+{
+  if(protocol == DecoderProtocol::DCCLong)
+  {
+    return {DCC::addressLongStart, DCC::addressLongMax};
+  }
+  return DecoderController::decoderAddressMinMax(protocol);
 }
 
 tcb::span<const uint8_t> LocoNetInterface::decoderSpeedSteps(DecoderProtocol protocol) const
