@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
   Locale* fallback = nullptr;
   if(language != languageDefault && !DeveloperSettings::instance().dontLoadFallbackLanguage)
   {
-    fallback = new Locale(getLocalePath() / languageDefault.toStdString().append(".txt"));
+    fallback = new Locale(getLocalePath() / languageDefault.toStdString().append(".lang"));
     if(logMissingStrings)
       fallback->enableMissingLogging();
   }
