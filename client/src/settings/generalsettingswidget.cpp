@@ -30,13 +30,13 @@
 
 static QString getLanguageName(const QString& filename)
 {
-  QFile file(filename);
-  if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+  try
   {
-    const QString header = QStringLiteral("## Traintastic language file: ");
-    QString line = QString::fromUtf8(file.readLine());
-    if(line.startsWith(header))
-      return line.remove(0, header.length()).trimmed();
+    Locale locale(getLocalePath() / filename.toStdString());
+    return locale.translate(QString("language:").append(QFileInfo(filename).baseName()));
+  }
+  catch(...)
+  {
   }
   return "";
 }
