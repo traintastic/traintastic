@@ -4918,5 +4918,13 @@
     {
         "term": "status.lua:x_in_error",
         "definition": "%1 in error"
+    },
+    {
+        "term": "qtapp.settings:restart_required",
+        "definition": "Restart required"
+    },
+    {
+        "term": "qtapp.settings.general:language_changed_restart_required",
+        "definition": "Traintastic client must be restarted for the language change to take effect."
     }
 ]

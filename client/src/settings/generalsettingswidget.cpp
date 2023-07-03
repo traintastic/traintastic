@@ -24,6 +24,7 @@
 #include <QComboBox>
 #include <QDir>
 #include <QDirIterator>
+#include <QMessageBox>
 #include <traintastic/locale/locale.hpp>
 #include "generalsettings.hpp"
 #include <traintastic/utils/standardpaths.hpp>
@@ -62,9 +63,10 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget* parent)
       }
     }
     connect(cb, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-      [cb](int index)
+      [this, cb](int index)
       {
         GeneralSettings::instance().language.setValue(cb->itemData(index).toString());
+        QMessageBox::information(this, Locale::tr("qtapp.settings:restart_required"), Locale::tr("qtapp.settings.general:language_changed_restart_required"));
       });
     add(s.language.name(), cb);
   }
