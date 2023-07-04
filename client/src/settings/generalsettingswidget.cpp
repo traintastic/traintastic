@@ -54,6 +54,8 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget* parent)
     while(it.hasNext())
     {
       const QString filename = it.next();
+      if(QFileInfo(filename).baseName() == "neutral")
+        continue;
       const QString label = getLanguageName(filename);
       if(!label.isEmpty())
       {

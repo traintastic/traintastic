@@ -86,7 +86,8 @@ int main(int argc, char* argv[])
   }
 #endif
 
-  Locale::instance = new Locale(getLocalePath() / "en-us.lang");
+  const auto localePath = getLocalePath();
+  Locale::instance = new Locale(localePath / "en-us.lang", new Locale(localePath / "neutral.lang"));
 
   if(enableConsoleLogger)
     Log::enableConsoleLogger();

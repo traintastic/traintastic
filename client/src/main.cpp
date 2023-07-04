@@ -99,15 +99,16 @@ int main(int argc, char* argv[])
 
   const bool logMissingStrings = !DeveloperSettings::instance().logMissingStringsDir.value().isEmpty();
 
-  Locale* fallback = nullptr;
+  const auto localePath = getLocalePath();
+  Locale* fallback = new Locale(localePath / "neutral.lang");
   if(language != languageDefault && !DeveloperSettings::instance().dontLoadFallbackLanguage)
   {
-    fallback = new Locale(getLocalePath() / languageDefault.toStdString().append(".lang"));
+    fallback = new Locale(localePath / languageDefault.toStdString().append(".lang"), fallback);
     if(logMissingStrings)
       fallback->enableMissingLogging();
   }
 
-  Locale::instance = new Locale(getLocalePath() / language.toStdString().append(".lang"), fallback);
+  Locale::instance = new Locale(localePath / language.toStdString().append(".lang"), fallback);
   if(logMissingStrings)
     const_cast<Locale*>(Locale::instance)->enableMissingLogging();
 
