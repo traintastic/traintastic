@@ -448,78 +448,6 @@
         "comment": ""
     },
     {
-        "term": "class_id:interface.dccplusplus",
-        "definition": "DCC++",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "class_id:interface.ecos",
-        "definition": "ECoS",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "class_id:interface.hsi88",
-        "definition": "HSI-88",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "class_id:interface.loconet",
-        "definition": "LocoNet",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "class_id:interface.traintastic_diy",
-        "definition": "Traintastic DIY",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "class_id:interface.withrottle",
-        "definition": "WiThrottle",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "class_id:interface.wlanmaus",
-        "definition": "WLANmaus",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "class_id:interface.xpressnet",
-        "definition": "XpressNet",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "class_id:interface.z21",
-        "definition": "Z21",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "class_id:vehicle.rail.freight_wagon",
         "definition": "Carro merce",
         "context": "",
@@ -928,14 +856,6 @@
         "comment": ""
     },
     {
-        "term": "decoder_protocol:dcc",
-        "definition": "DCC",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "decoupler_state:activated",
         "definition": "Attivato",
         "context": "",
@@ -962,38 +882,6 @@
     {
         "term": "direction:reverse",
         "definition": "Indietro",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "direction_control_state:a_to_b",
-        "definition": "A \u2192 B",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "direction_control_state:b_to_a",
-        "definition": "A \u2190 B",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "direction_control_state:both",
-        "definition": "A \u21c4 B",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "direction_control_state:none",
-        "definition": "A \ud83d\udec7 B",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1032,22 +920,6 @@
         "comment": ""
     },
     {
-        "term": "hardware:dcc",
-        "definition": "DCC",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "hardware:dccplusplus",
-        "definition": "DCC++",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "hardware:debug_log_input",
         "definition": "Log cambiamenti input",
         "context": "",
@@ -1074,14 +946,6 @@
     {
         "term": "hardware:decoders",
         "definition": "Decoders",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "hardware:ecos",
-        "definition": "ECoS",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1120,22 +984,6 @@
         "comment": ""
     },
     {
-        "term": "hardware:loconet",
-        "definition": "LocoNet",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "hardware:motorola",
-        "definition": "Motorola",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "hardware:output_keyboard",
         "definition": "Pulsantiera Output",
         "context": "",
@@ -1152,14 +1000,6 @@
         "comment": ""
     },
     {
-        "term": "hardware:s88",
-        "definition": "S88",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "hardware:speed_steps",
         "definition": "Step Velocit\u00e0",
         "context": "",
@@ -1170,22 +1010,6 @@
     {
         "term": "hardware:throttles",
         "definition": "Throttles",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "hardware:xpressnet",
-        "definition": "XpressNet",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "hardware:z21",
-        "definition": "Z21",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1256,32 +1080,8 @@
         "comment": ""
     },
     {
-        "term": "interface.dccplusplus:dcc_plus_plus",
-        "definition": "DCC++(EX)",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "interface.ecos:ecos",
-        "definition": "ECoS",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "interface.ecos:ecos_detector",
         "definition": "ECoS detector",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "interface.ecos:s88",
-        "definition": "S88",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1314,22 +1114,6 @@
     {
         "term": "interface.loconet:interface",
         "definition": "Interfaccia",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "interface.traintastic_diy:traintastic_diy",
-        "definition": "Traintastic DIY",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "interface.withrottle:withrottle",
-        "definition": "WiThrottle",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1482,54 +1266,6 @@
     {
         "term": "language:nl-nl",
         "definition": "Olandese",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "length_unit:cm",
-        "definition": "cm",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "length_unit:ft",
-        "definition": "ft",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "length_unit:in",
-        "definition": "in",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "length_unit:m",
-        "definition": "m",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "length_unit:mm",
-        "definition": "mm",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "length_unit:yd",
-        "definition": "yd",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1728,30 +1464,6 @@
         "comment": ""
     },
     {
-        "term": "loconet_command_station:digikeijs_dr5000",
-        "definition": "Digikeijs DR5000",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "loconet_command_station:uhlenbrock_ibcom",
-        "definition": "Uhlenbrock IB-Com",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "loconet_command_station:uhlenbrock_intellibox",
-        "definition": "Uhlenbrock Intellibox",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "loconet_f9_f28:imm_packet",
         "definition": "Direct (OPC_IMM_PACKET)",
         "context": "",
@@ -1784,14 +1496,6 @@
         "comment": ""
     },
     {
-        "term": "loconet_interface_type:lbserver",
-        "definition": "LBServer",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "loconet_interface_type:serial",
         "definition": "Serial",
         "context": "",
@@ -1808,32 +1512,8 @@
         "comment": ""
     },
     {
-        "term": "loconet_interface_type:z21",
-        "definition": "Z21",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "loconet_serial_interface:custom",
         "definition": "Custom",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "loconet_serial_interface:digikeijs_dr5000",
-        "definition": "Digikeijs DR5000",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "loconet_serial_interface:rosoft_loconet_interface",
-        "definition": "RoSoft LocoNet interface",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1850,14 +1530,6 @@
     {
         "term": "loconet_settings:echo_timeout",
         "definition": "Echo timeout",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "loconet_settings:f9_f28",
-        "definition": "F9-F28",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1890,14 +1562,6 @@
     {
         "term": "loconet_settings:locomotive_slots",
         "definition": "Slots Locomotive",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "loconet_settings:pcap",
-        "definition": "PCAP",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2136,22 +1800,6 @@
         "comment": ""
     },
     {
-        "term": "message:C9999",
-        "definition": "%1",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "message:D0000",
-        "definition": "%1",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "message:D1001",
         "definition": "Riprendi %1 (moltiplicatore: %2)",
         "context": "",
@@ -2250,14 +1898,6 @@
     {
         "term": "message:D2010",
         "definition": "Slot %1 = Libero",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "message:D9999",
-        "definition": "%1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2504,14 +2144,6 @@
         "comment": ""
     },
     {
-        "term": "message:E9999",
-        "definition": "%1",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "message:F1001",
         "definition": "Opening TCP socket fallita (%1)",
         "context": "",
@@ -2592,22 +2224,6 @@
         "comment": ""
     },
     {
-        "term": "message:F9999",
-        "definition": "%1",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "message:I1001",
-        "definition": "Traintastic v%1",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "message:I1002",
         "definition": "File impostazioni non trovato, utilizzo valori default",
         "context": "",
@@ -2640,30 +2256,6 @@
         "comment": ""
     },
     {
-        "term": "message:I1006",
-        "definition": "%1",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "message:I1007",
-        "definition": "%1",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "message:I1008",
-        "definition": "%1",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "message:I2001",
         "definition": "Indirizzo locomotiva non noto: %1",
         "context": "",
@@ -2688,40 +2280,8 @@
         "comment": ""
     },
     {
-        "term": "message:I2004",
-        "definition": "HSI-88: %1",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "message:I2005",
-        "definition": "%1",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "message:I9001",
         "definition": "Script interrotto",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "message:I9002",
-        "definition": "%1",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "message:I9999",
-        "definition": "%1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3016,14 +2576,6 @@
         "comment": ""
     },
     {
-        "term": "message:N9999",
-        "definition": "%1",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "message:W1001",
         "definition": "Discovery disabilitata, consentita solo sulla porta %1",
         "context": "",
@@ -3114,14 +2666,6 @@
     {
         "term": "message:W2019",
         "definition": "I flag di trasmissione Z21 non corrispondono a quelli richiesti",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "message:W9999",
-        "definition": "%1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3258,38 +2802,6 @@
     {
         "term": "pcap_output:pipe",
         "definition": "Tubo",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "power_unit:hp",
-        "definition": "CV",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "power_unit:kw",
-        "definition": "kW",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "power_unit:mw",
-        "definition": "MW",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "power_unit:w",
-        "definition": "W",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3928,22 +3440,6 @@
         "comment": ""
     },
     {
-        "term": "ratio_unit:percent",
-        "definition": "%",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "ratio_unit:ratio",
-        "definition": null,
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "sensor_type:occupy_detector",
         "definition": "Rilevatore occupazione",
         "context": "",
@@ -4136,30 +3632,6 @@
         "comment": ""
     },
     {
-        "term": "speed_unit:kmph",
-        "definition": "km\/h",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "speed_unit:mph",
-        "definition": "mph",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "speed_unit:mps",
-        "definition": "m\/s",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "throttle_object_list:throttle",
         "definition": "Throttle",
         "context": "",
@@ -4234,14 +3706,6 @@
     {
         "term": "train:weight",
         "definition": "Peso",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "traintastic_diy_interface_type:network_tcp",
-        "definition": "Rete (TCP)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4378,70 +3842,6 @@
     {
         "term": "vehicle.rail:weight",
         "definition": "Peso",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "volume_unit:gallon_uk",
-        "definition": "gal (UK)",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "volume_unit:gallon_us",
-        "definition": "gal (USA)",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "volume_unit:l",
-        "definition": "l",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "volume_unit:m3",
-        "definition": "m\u00b3",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "weight_unit:kg",
-        "definition": "kg",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "weight_unit:long_tons",
-        "definition": "Long tons",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "weight_unit:short_tons",
-        "definition": "Short tons",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "weight_unit:ton",
-        "definition": "ton",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4632,56 +4032,8 @@
         "comment": ""
     },
     {
-        "term": "world_scale:h0",
-        "definition": "H0 (1:87)",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "world_scale:n",
-        "definition": "N (1:160)",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "world_scale:tt",
-        "definition": "TT (1:120)",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "world_scale:z",
-        "definition": "Z (1:220)",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "xpressnet_command_station:custom",
         "definition": "Custom",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "xpressnet_command_station:digikeijs_dr5000",
-        "definition": "Digikeijs DR5000",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "xpressnet_command_station:roco_10764",
-        "definition": "Roco 10764",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4706,54 +4058,6 @@
     {
         "term": "xpressnet_serial_interface_type:custom",
         "definition": "Custom",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "xpressnet_serial_interface_type:digikeijs_dr5000",
-        "definition": "Digikeijs DR5000",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "xpressnet_serial_interface_type:lenz_li100",
-        "definition": "Lenz LI100",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "xpressnet_serial_interface_type:lenz_li100f",
-        "definition": "Lenz LI100F",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "xpressnet_serial_interface_type:lenz_li101f",
-        "definition": "Lenz LI101F",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "xpressnet_serial_interface_type:lenz_liusb",
-        "definition": "Lenz LIUSB",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "xpressnet_serial_interface_type:rosoft_s88xpressnetli",
-        "definition": "RoSoft s88XpressNetLI",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4841,39 +4145,7 @@
     },
     {
         "term": "protocol.loconet:command_station",
-        "definition": null,
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "xpressnet_serial_interface:lenz_li100",
-        "definition": null,
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "xpressnet_serial_interface:lenz_li100f",
-        "definition": null,
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "xpressnet_serial_interface:lenz_li101f",
-        "definition": null,
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "xpressnet_serial_interface:rosoft_s88xpressnetli",
-        "definition": null,
+        "definition": "",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4889,7 +4161,7 @@
     },
     {
         "term": "loconet_settings:listen_only",
-        "definition": null,
+        "definition": "",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4897,7 +4169,7 @@
     },
     {
         "term": "message:N2006",
-        "definition": null,
+        "definition": "",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4905,7 +4177,55 @@
     },
     {
         "term": "message:N2007",
-        "definition": null,
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "status.lua:x_running",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "status.lua:x_in_error",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1008",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings:restart_required",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.general:language_changed_restart_required",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "traintastic_diy_interface_type:network_tcp",
+        "definition": "",
         "context": "",
         "term_plural": "",
         "reference": "",

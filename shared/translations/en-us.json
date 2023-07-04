@@ -856,14 +856,6 @@
         "comment": ""
     },
     {
-        "term": "decoder_protocol:dcc",
-        "definition": "DCC",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "decoupler_state:activated",
         "definition": "Activated",
         "context": "",
@@ -1096,14 +1088,6 @@
         "comment": ""
     },
     {
-        "term": "interface.ecos:s88",
-        "definition": "S88",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "interface.hsi88:modules_left",
         "definition": "Modules left",
         "context": "",
@@ -1282,14 +1266,6 @@
     {
         "term": "language:nl-nl",
         "definition": "Dutch",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "length_unit:cm",
-        "definition": "cm",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3736,14 +3712,6 @@
         "comment": ""
     },
     {
-        "term": "traintastic_diy_interface_type:network_tcp",
-        "definition": "Network (TCP)",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "traintastic_diy_interface_type:serial",
         "definition": "Serial",
         "context": "",
@@ -4217,18 +4185,50 @@
     },
     {
         "term": "status.lua:x_running",
-        "definition": "%1 running"
+        "definition": "%1 running",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
     },
     {
         "term": "status.lua:x_in_error",
-        "definition": "%1 in error"
+        "definition": "%1 in error",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1008",
+        "definition": "Eventloop crashed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
     },
     {
         "term": "qtapp.settings:restart_required",
-        "definition": "Restart required"
+        "definition": "Restart required",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
     },
     {
         "term": "qtapp.settings.general:language_changed_restart_required",
-        "definition": "Traintastic client must be restarted for the language change to take effect."
+        "definition": "Traintastic client must be restarted for the language change to take effect.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "traintastic_diy_interface_type:network_tcp",
+        "definition": "Network (TCP)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
     }
 ]
