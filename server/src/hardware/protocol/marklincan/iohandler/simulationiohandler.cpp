@@ -62,8 +62,18 @@ bool SimulationIOHandler::send(const Message& message)
     case Command::ReadConfig:
     case Command::WriteConfig:
     case Command::AccessoryControl:
+    case Command::AccessoryConfig:
     case Command::S88Polling:
+    case Command::FeedbackEvent:
+    case Command::SX1Event:
     case Command::Ping:
+    case Command::Update:
+    case Command::ReadConfigData:
+    case Command::BootloaderCAN:
+    case Command::BootloaderTrack:
+    case Command::StatusDataConfig:
+    case Command::ConfigData:
+    case Command::ConfigDataStream:
       // not (yet) implemented
       break;
   }

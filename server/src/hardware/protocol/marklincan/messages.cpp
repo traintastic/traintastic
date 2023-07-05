@@ -178,12 +178,52 @@ std::string toString(const Message& message)
       s.append("AccessoryControl");
       break;
 
+    case Command::AccessoryConfig:
+      s.append("AccessoryConfig");
+      break;
+
     case Command::S88Polling:
       s.append("S88Polling");
       break;
 
+    case Command::FeedbackEvent:
+      s.append("FeedbackEvent");
+      break;
+
+    case Command::SX1Event:
+      s.append("SX1Event");
+      break;
+
     case Command::Ping:
       s.append("Ping");
+      break;
+
+    case Command::Update:
+      s.append("Update");
+      break;
+
+    case Command::ReadConfigData:
+      s.append("ReadConfigData");
+      break;
+
+    case Command::BootloaderCAN:
+      s.append("BootloaderCAN");
+      break;
+
+    case Command::BootloaderTrack:
+      s.append("BootloaderTrack");
+      break;
+
+    case Command::StatusDataConfig:
+      s.append("StatusDataConfig");
+      break;
+
+    case Command::ConfigData:
+      s.append("ConfigData");
+      break;
+
+    case Command::ConfigDataStream:
+      s.append("ConfigDataStream");
       break;
   }
 

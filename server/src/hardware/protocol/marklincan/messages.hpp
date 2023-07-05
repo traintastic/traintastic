@@ -55,8 +55,18 @@ enum class Command : uint8_t
   ReadConfig = 0x07,
   WriteConfig = 0x08,
   AccessoryControl = 0x0B,
+  AccessoryConfig = 0x0C,
   S88Polling = 0x10,
-  Ping = 0x18,
+  FeedbackEvent = 0x11,
+  SX1Event = 0x12,
+  Ping = 0x18, // or SoftwareVersionRequest
+  Update = 0x19,
+  ReadConfigData = 0x1A,
+  BootloaderCAN = 0x1B,
+  BootloaderTrack = 0x1C,
+  StatusDataConfig = 0x1D,
+  ConfigData = 0x20,
+  ConfigDataStream = 0x21,
 };
 
 enum class SystemSubCommand : uint8_t
