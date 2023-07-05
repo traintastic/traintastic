@@ -76,8 +76,8 @@ struct Message
   static constexpr uint32_t responseMask = 0x00010000;
 
   uint32_t id = 0;
-  uint8_t dlc = 0;
   uint8_t data[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+  uint8_t dlc = 0;
 
   Message() = default;
 
