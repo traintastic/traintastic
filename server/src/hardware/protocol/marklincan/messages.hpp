@@ -55,6 +55,7 @@ enum class Command : uint8_t
   ReadConfig = 0x07,
   WriteConfig = 0x08,
   AccessoryControl = 0x0B,
+  S88Polling = 0x10,
   Ping = 0x18,
 };
 
@@ -330,6 +331,74 @@ struct LocomotiveFunction : UidMessage
     assert(hasValue());
     assert(value <= valueOnMax);
     data[5] = value;
+  }
+};
+
+struct S88ModuleCount : UidMessage
+{
+  S88ModuleCount(uint32_t uid, uint8_t count_)
+    : UidMessage(Command::S88Polling, false, uid)
+  {
+    dlc = 5;
+    setCount(count_);
+  }
+
+  uint8_t count() const
+  {
+    return data[5];
+  }
+
+  void setCount(uint8_t value)
+  {
+    data[5] = value;
+  }
+};
+
+struct S88ModuleState : UidMessage
+{
+  //! \todo verify state endianess, asume big endian for now.
+
+  S88ModuleState(uint32_t uid, uint8_t module_)
+    : UidMessage(Command::S88Polling, true, uid)
+  {
+    dlc = 7;
+    setModule(module_);
+  }
+
+  uint8_t module() const
+  {
+    return data[5];
+  }
+
+  void setModule(uint8_t value)
+  {
+    data[5] = value;
+  }
+
+  uint16_t state() const
+  {
+    return to16(data[7], data[6]);
+  }
+
+  void setState(uint16_t value)
+  {
+    data[6] = low8(value);
+    data[7] = high8(value);
+  }
+
+  bool getState(uint8_t index) const
+  {
+    assert(index < 16);
+    return state() & (1 << index);
+  }
+
+  void setState(uint8_t index, bool value)
+  {
+    assert(index < 16);
+    if(value)
+      setState(state() | (1 << index));
+    else
+      setState(state() & ~(1 << index));
   }
 };
 

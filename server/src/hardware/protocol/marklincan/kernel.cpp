@@ -270,6 +270,7 @@ void Kernel::receive(const Message& message)
     case Command::ReadConfig:
     case Command::WriteConfig:
     case Command::AccessoryControl:
+    case Command::S88Polling:
     case Command::Ping:
       // not (yet) implemented
       break;

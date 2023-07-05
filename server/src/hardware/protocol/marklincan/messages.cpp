@@ -178,6 +178,10 @@ std::string toString(const Message& message)
       s.append("AccessoryControl");
       break;
 
+    case Command::S88Polling:
+      s.append("S88Polling");
+      break;
+
     case Command::Ping:
       s.append("Ping");
       break;
