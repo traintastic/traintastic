@@ -30,7 +30,7 @@ if __name__ == "__main__":
     import re
     path = os.path.realpath(os.path.dirname(__file__))
     for item in os.scandir(path):
-        if re.match(r'^[a-z]{2}-[a-z]{2}\.json$', item.name) is not None:
+        if re.match(r'^([a-z]{2}-[a-z]{2}|neutral)\.json$', item.name) is not None:
             filename_json = os.path.join(path, item.name)
             filename_lang = os.path.splitext(filename_json)[0] + '.lang'
             if not os.path.exists(filename_lang) or os.path.getmtime(filename_json) > os.path.getmtime(filename_lang):

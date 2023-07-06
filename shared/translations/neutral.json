@@ -1,0 +1,350 @@
+[
+    {
+        "term": "class_id:interface.dccplusplus",
+        "definition": "DCC++"
+    },
+    {
+        "term": "class_id:interface.ecos",
+        "definition": "ECoS"
+    },
+    {
+        "term": "class_id:interface.hsi88",
+        "definition": "HSI-88"
+    },
+    {
+        "term": "class_id:interface.loconet",
+        "definition": "LocoNet"
+    },
+    {
+        "term": "class_id:interface.traintastic_diy",
+        "definition": "Traintastic DIY"
+    },
+    {
+        "term": "class_id:interface.withrottle",
+        "definition": "WiThrottle"
+    },
+    {
+        "term": "class_id:interface.wlanmaus",
+        "definition": "WLANmaus"
+    },
+    {
+        "term": "class_id:interface.xpressnet",
+        "definition": "XpressNet"
+    },
+    {
+        "term": "class_id:interface.z21",
+        "definition": "Z21"
+    },
+    {
+        "term": "direction_control_state:a_to_b",
+        "definition": "A \u2192 B"
+    },
+    {
+        "term": "direction_control_state:b_to_a",
+        "definition": "A \u2190 B"
+    },
+    {
+        "term": "direction_control_state:both",
+        "definition": "A \u21c4 B"
+    },
+    {
+        "term": "direction_control_state:none",
+        "definition": "A \ud83d\udec7 B"
+    },
+    {
+        "term": "hardware:dcc",
+        "definition": "DCC"
+    },
+    {
+        "term": "hardware:dccplusplus",
+        "definition": "DCC++"
+    },
+    {
+        "term": "hardware:ecos",
+        "definition": "ECoS"
+    },
+    {
+        "term": "hardware:loconet",
+        "definition": "LocoNet"
+    },
+    {
+        "term": "hardware:motorola",
+        "definition": "Motorola"
+    },
+    {
+        "term": "hardware:s88",
+        "definition": "S88"
+    },
+    {
+        "term": "hardware:xpressnet",
+        "definition": "XpressNet"
+    },
+    {
+        "term": "hardware:z21",
+        "definition": "Z21"
+    },
+    {
+        "term": "interface.dccplusplus:dcc_plus_plus",
+        "definition": "DCC++(EX)"
+    },
+    {
+        "term": "interface.ecos:ecos",
+        "definition": "ECoS"
+    },
+    {
+        "term": "interface.traintastic_diy:traintastic_diy",
+        "definition": "Traintastic DIY"
+    },
+    {
+        "term": "interface.withrottle:withrottle",
+        "definition": "WiThrottle"
+    },
+    {
+        "term": "length_unit:ft",
+        "definition": "ft"
+    },
+    {
+        "term": "length_unit:in",
+        "definition": "in"
+    },
+    {
+        "term": "length_unit:m",
+        "definition": "m"
+    },
+    {
+        "term": "length_unit:mm",
+        "definition": "mm"
+    },
+    {
+        "term": "length_unit:yd",
+        "definition": "yd"
+    },
+    {
+        "term": "loconet_command_station:digikeijs_dr5000",
+        "definition": "Digikeijs DR5000"
+    },
+    {
+        "term": "loconet_command_station:uhlenbrock_ibcom",
+        "definition": "Uhlenbrock IB-Com"
+    },
+    {
+        "term": "loconet_command_station:uhlenbrock_intellibox",
+        "definition": "Uhlenbrock Intellibox"
+    },
+    {
+        "term": "loconet_interface_type:lbserver",
+        "definition": "LBServer"
+    },
+    {
+        "term": "loconet_interface_type:z21",
+        "definition": "Z21"
+    },
+    {
+        "term": "loconet_serial_interface:digikeijs_dr5000",
+        "definition": "Digikeijs DR5000"
+    },
+    {
+        "term": "loconet_serial_interface:rosoft_loconet_interface",
+        "definition": "RoSoft LocoNet interface"
+    },
+    {
+        "term": "loconet_settings:f9_f28",
+        "definition": "F9-F28"
+    },
+    {
+        "term": "loconet_settings:pcap",
+        "definition": "PCAP"
+    },
+    {
+        "term": "message:C9999",
+        "definition": "%1"
+    },
+    {
+        "term": "message:D0000",
+        "definition": "%1"
+    },
+    {
+        "term": "message:D9999",
+        "definition": "%1"
+    },
+    {
+        "term": "message:E9999",
+        "definition": "%1"
+    },
+    {
+        "term": "message:F9999",
+        "definition": "%1"
+    },
+    {
+        "term": "message:I1001",
+        "definition": "Traintastic v%1"
+    },
+    {
+        "term": "message:I1006",
+        "definition": "%1"
+    },
+    {
+        "term": "message:I1007",
+        "definition": "%1"
+    },
+    {
+        "term": "message:I1008",
+        "definition": "%1"
+    },
+    {
+        "term": "message:I2004",
+        "definition": "HSI-88: %1"
+    },
+    {
+        "term": "message:I2005",
+        "definition": "%1"
+    },
+    {
+        "term": "message:I9002",
+        "definition": "%1"
+    },
+    {
+        "term": "message:I9999",
+        "definition": "%1"
+    },
+    {
+        "term": "message:N9999",
+        "definition": "%1"
+    },
+    {
+        "term": "message:W9999",
+        "definition": "%1"
+    },
+    {
+        "term": "power_unit:hp",
+        "definition": "hp"
+    },
+    {
+        "term": "power_unit:kw",
+        "definition": "kW"
+    },
+    {
+        "term": "power_unit:mw",
+        "definition": "MW"
+    },
+    {
+        "term": "power_unit:w",
+        "definition": "W"
+    },
+    {
+        "term": "ratio_unit:percent",
+        "definition": "%"
+    },
+    {
+        "term": "ratio_unit:ratio",
+        "definition": ""
+    },
+    {
+        "term": "speed_unit:kmph",
+        "definition": "km\/h"
+    },
+    {
+        "term": "speed_unit:mph",
+        "definition": "mph"
+    },
+    {
+        "term": "speed_unit:mps",
+        "definition": "m\/s"
+    },
+    {
+        "term": "volume_unit:gallon_uk",
+        "definition": "gal (UK)"
+    },
+    {
+        "term": "volume_unit:gallon_us",
+        "definition": "gal (US)"
+    },
+    {
+        "term": "volume_unit:l",
+        "definition": "l"
+    },
+    {
+        "term": "volume_unit:m3",
+        "definition": "m\u00b3"
+    },
+    {
+        "term": "weight_unit:kg",
+        "definition": "kg"
+    },
+    {
+        "term": "weight_unit:long_tons",
+        "definition": "Long tons"
+    },
+    {
+        "term": "weight_unit:short_tons",
+        "definition": "Short tons"
+    },
+    {
+        "term": "weight_unit:ton",
+        "definition": "ton"
+    },
+    {
+        "term": "world_scale:h0",
+        "definition": "H0 (1:87)"
+    },
+    {
+        "term": "world_scale:n",
+        "definition": "N (1:160)"
+    },
+    {
+        "term": "world_scale:tt",
+        "definition": "TT (1:120)"
+    },
+    {
+        "term": "world_scale:z",
+        "definition": "Z (1:220)"
+    },
+    {
+        "term": "xpressnet_command_station:digikeijs_dr5000",
+        "definition": "Digikeijs DR5000"
+    },
+    {
+        "term": "xpressnet_command_station:roco_10764",
+        "definition": "Roco 10764"
+    },
+    {
+        "term": "xpressnet_serial_interface_type:digikeijs_dr5000",
+        "definition": "Digikeijs DR5000"
+    },
+    {
+        "term": "xpressnet_serial_interface_type:lenz_li100",
+        "definition": "Lenz LI100"
+    },
+    {
+        "term": "xpressnet_serial_interface_type:lenz_li100f",
+        "definition": "Lenz LI100F"
+    },
+    {
+        "term": "xpressnet_serial_interface_type:lenz_li101f",
+        "definition": "Lenz LI101F"
+    },
+    {
+        "term": "xpressnet_serial_interface_type:lenz_liusb",
+        "definition": "Lenz LIUSB"
+    },
+    {
+        "term": "xpressnet_serial_interface_type:rosoft_s88xpressnetli",
+        "definition": "RoSoft s88XpressNetLI"
+    },
+    {
+        "term": "xpressnet_serial_interface:lenz_li100",
+        "definition": "Lenz LI100"
+    },
+    {
+        "term": "xpressnet_serial_interface:lenz_li100f",
+        "definition": "Lenz LI100F"
+    },
+    {
+        "term": "xpressnet_serial_interface:lenz_li101f",
+        "definition": "Lenz LI101F"
+    },
+    {
+        "term": "xpressnet_serial_interface:rosoft_s88xpressnetli",
+        "definition": "RoSoft s88XPressNetLI"
+    }
+]

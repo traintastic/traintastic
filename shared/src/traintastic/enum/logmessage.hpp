@@ -201,6 +201,7 @@ enum class LogMessage : uint32_t
   F1005_OPENING_UDP_SOCKET_FAILED_X = LogMessageOffset::fatal + 1005,
   F1006_UDP_SOCKET_ADDRESS_REUSE_FAILED_X = LogMessageOffset::fatal + 1006,
   F1007_BINDING_UDP_SOCKET_FAILED_X = LogMessageOffset::fatal + 1007,
+  F1008_EVENTLOOP_CRASHED_X = LogMessageOffset::fatal + 1008,
   F9001_CREATING_LUA_STATE_FAILED = LogMessageOffset::fatal + 9001,
   F9002_RUNNING_SCRIPT_FAILED_X = LogMessageOffset::fatal + 9002,
   F9003_CALLING_FUNCTION_FAILED_X = LogMessageOffset::fatal + 9003,
