@@ -174,22 +174,6 @@ class Property : public AbstractProperty
       return m_value;
     }
 
-    inline bool operator ==(const T& value) const
-    {
-      return m_value == value;
-    }
-
-    template<typename Tother>
-    inline bool operator ==(const Tother& value) const
-    {
-      return m_value == value;
-    }
-
-    inline bool operator !=(const T& value) const
-    {
-      return m_value != value;
-    }
-
     Property<T>& operator =(const T& value) // REMOVE !!!!!!
     {
       setValue(value);
