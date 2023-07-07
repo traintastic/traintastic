@@ -1029,7 +1029,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       {
         case LocoNetF9F28::IMMPacket:
         {
-          const bool longAddress = (decoder.address > DCC::addressShortMax) || decoder.longAddress;
+          const bool longAddress = decoder.protocol == DecoderProtocol::DCCLong;
 
           if(functionNumber <= 12)
           {
@@ -1317,7 +1317,7 @@ void Kernel::clearLocoSlot(uint8_t slot)
 std::shared_ptr<Decoder> Kernel::getDecoder(uint16_t address)
 {
   assert(isEventLoopThread());
-  return m_decoderController->getDecoder(DecoderProtocol::DCC, address, DCC::isLongAddress(address), true);
+  return m_decoderController->getDecoder(DCC::getProtocol(address), address);
 }
 
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)

@@ -1776,22 +1776,6 @@
         "comment": ""
     },
     {
-        "term": "message:C2002",
-        "definition": "DCC++ unterst\u00fctzt nur das DCC-Protokoll",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "message:C2003",
-        "definition": "DCC++ unterst\u00fctzt keine langen DCC-Adressen unter 128",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "message:C2004",
         "definition": "Kann keinen freien Slot bekommen",
         "context": "",
@@ -2610,14 +2594,6 @@
     {
         "term": "message:W2002",
         "definition": "Die Kommandozentrale unterst\u00fctzt keine Funktionen \u00fcber F%1",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "message:W2003",
-        "definition": "Die Zentrale unterst\u00fctzt nicht %1 Geschwindigkeitsschritte mit %2",
         "context": "",
         "term_plural": "",
         "reference": "",

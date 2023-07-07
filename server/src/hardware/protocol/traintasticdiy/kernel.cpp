@@ -473,11 +473,7 @@ void Kernel::heartbeatTimeoutExpired(const boost::system::error_code& ec)
 std::shared_ptr<Decoder> Kernel::getDecoder(uint16_t address, bool longAddress) const
 {
   const auto& decoderList = *m_world.decoders;
-  std::shared_ptr<Decoder> decoder;
-  if(longAddress)
-    decoder = decoderList.getDecoder(DecoderProtocol::DCC, address, longAddress);
-  if(!decoder)
-    decoder = decoderList.getDecoder(DecoderProtocol::Auto, address);
+  std::shared_ptr<Decoder> decoder = decoderList.getDecoder(longAddress ? DecoderProtocol::DCCLong : DecoderProtocol::DCCShort, address);
   if(!decoder)
     decoder = decoderList.getDecoder(address);
   return decoder;
@@ -530,7 +526,7 @@ void Kernel::throttleUnsubscribe(uint16_t throttleId, std::pair<uint16_t, bool> 
 
 void Kernel::throttleDecoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
-  const std::pair<uint16_t, bool> key(decoder.address, decoder.longAddress);
+  const std::pair<uint16_t, bool> key(decoder.address, decoder.protocol == DecoderProtocol::DCCLong);
 
   if(has(changes, DecoderChangeFlags::Direction | DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::SpeedSteps | DecoderChangeFlags::Throttle))
   {

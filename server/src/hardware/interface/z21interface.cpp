@@ -24,6 +24,7 @@
 #include "../decoder/list/decoderlist.hpp"
 #include "../input/list/inputlist.hpp"
 #include "../output/list/outputlist.hpp"
+#include "../protocol/dcc/dcc.hpp"
 #include "../protocol/z21/clientkernel.hpp"
 #include "../protocol/z21/clientsettings.hpp"
 #include "../protocol/z21/messages.hpp"
@@ -85,6 +86,21 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
 
   Attributes::addCategory(firmwareVersion, Category::info);
   m_interfaceItems.insertBefore(firmwareVersion, notes);
+}
+
+tcb::span<const DecoderProtocol> Z21Interface::decoderProtocols() const
+{
+  static constexpr std::array<DecoderProtocol, 3> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong, DecoderProtocol::Motorola};
+  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+}
+
+std::pair<uint16_t, uint16_t> Z21Interface::decoderAddressMinMax(DecoderProtocol protocol) const
+{
+  if(protocol == DecoderProtocol::DCCLong)
+  {
+    return {DCC::addressLongStart, DCC::addressLongMax};
+  }
+  return DecoderController::decoderAddressMinMax(protocol);
 }
 
 void Z21Interface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)

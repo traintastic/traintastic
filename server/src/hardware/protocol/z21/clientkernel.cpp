@@ -328,7 +328,7 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
   if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Direction | DecoderChangeFlags::Throttle | DecoderChangeFlags::SpeedSteps))
   {
     LanXSetLocoDrive cmd;
-    cmd.setAddress(decoder.address, decoder.longAddress);
+    cmd.setAddress(decoder.address, decoder.protocol == DecoderProtocol::DCCLong);
 
     switch(decoder.speedSteps)
     {
@@ -381,7 +381,7 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
     if(functionNumber <= LanXSetLocoFunction::functionNumberMax)
       if(const auto& f = decoder.getFunction(functionNumber))
         postSend(LanXSetLocoFunction(
-          decoder.address, decoder.longAddress,
+          decoder.address, decoder.protocol == DecoderProtocol::DCCLong,
           static_cast<uint8_t>(functionNumber),
           f->value ? LanXSetLocoFunction::SwitchType::On : LanXSetLocoFunction::SwitchType::Off));
   }

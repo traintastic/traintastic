@@ -1776,22 +1776,6 @@
         "comment": ""
     },
     {
-        "term": "message:C2002",
-        "definition": "DCC++ supporta solo il protocollo DCC",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "message:C2003",
-        "definition": "DCC++ non supporta indirizzi estesi DCC inferiori a 128",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "message:C2004",
         "definition": "Impossibile ottenere slot libero",
         "context": "",
@@ -2610,14 +2594,6 @@
     {
         "term": "message:W2002",
         "definition": "La centralina di comando non supporta funzioni superiori a F%1",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "message:W2003",
-        "definition": "La centralina di comando non supporta %1 passi velocit\u00e0, utilizzo %2",
         "context": "",
         "term_plural": "",
         "reference": "",
