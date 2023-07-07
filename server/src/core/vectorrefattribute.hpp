@@ -70,6 +70,11 @@ class VectorRefAttribute : public AbstractValuesAttribute
       return to<std::string>((*m_values)[index]);
     }
 
+    const std::vector<T>* values() const
+    {
+      return m_values;
+    }
+
     void setValues(const std::vector<T>* values)
     {
       if(m_values != values)

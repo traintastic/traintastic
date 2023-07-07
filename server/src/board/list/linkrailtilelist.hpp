@@ -24,7 +24,6 @@
 #define TRAINTASTIC_SERVER_BOARD_LIST_LINKRAILTILELIST_HPP
 
 #include "../../core/objectlist.hpp"
-#include "../../core/method.hpp"
 #include "../tile/rail/linkrailtile.hpp"
 
 class LinkRailTileList : public ObjectList<LinkRailTile>

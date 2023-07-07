@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -99,15 +99,16 @@ int main(int argc, char* argv[])
 
   const bool logMissingStrings = !DeveloperSettings::instance().logMissingStringsDir.value().isEmpty();
 
-  Locale* fallback = nullptr;
+  const auto localePath = getLocalePath();
+  Locale* fallback = new Locale(localePath / "neutral.lang");
   if(language != languageDefault && !DeveloperSettings::instance().dontLoadFallbackLanguage)
   {
-    fallback = new Locale(getLocalePath() / languageDefault.toStdString().append(".txt"));
+    fallback = new Locale(localePath / languageDefault.toStdString().append(".lang"), fallback);
     if(logMissingStrings)
       fallback->enableMissingLogging();
   }
 
-  Locale::instance = new Locale(getLocalePath() / language.toStdString().append(".txt"), fallback);
+  Locale::instance = new Locale(localePath / language.toStdString().append(".lang"), fallback);
   if(logMissingStrings)
     const_cast<Locale*>(Locale::instance)->enableMissingLogging();
 

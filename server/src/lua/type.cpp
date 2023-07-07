@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@
  */
 
 #include "type.hpp"
-#include "object.hpp"
+#include "test.hpp"
 #include "class.hpp"
 #include "sandbox.hpp"
 
@@ -33,7 +33,7 @@ int type(lua_State* L)
 
   if(tp == LUA_TUSERDATA)
   {
-    if(auto object = Object::test(L, 1))
+    if(auto object = test<::Object>(L, 1))
     {
       lua_pushstring(L, "object");
       Class::push(L, object);

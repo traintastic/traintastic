@@ -23,6 +23,7 @@
 #include "inputmonitor.hpp"
 #include "../inputcontroller.hpp"
 #include "../input.hpp"
+#include "../../../core/method.tpp"
 
 InputMonitor::InputMonitor(InputController& controller, uint32_t channel)
   : m_controller{controller}

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -80,12 +80,25 @@ SensorRailTile::SensorRailTile(World& world, std::string_view _id) :
   m_interfaceItems.add(state);
 }
 
+SensorRailTile::~SensorRailTile()
+{
+  assert(!input);
+  assert(!m_inputPropertyChanged.connected());
+  assert(!m_inputDestroying.connected());
+}
+
 void SensorRailTile::loaded()
 {
   StraightRailTile::loaded();
 
   if(input)
     connectInput(*input);
+}
+
+void SensorRailTile::destroying()
+{
+  input = nullptr;
+  StraightRailTile::destroying();
 }
 
 void SensorRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)

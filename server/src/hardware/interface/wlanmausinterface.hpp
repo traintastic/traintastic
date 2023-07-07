@@ -24,9 +24,12 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_WLANMAUSINTERFACE_HPP
 
 #include "interface.hpp"
-#include "../protocol/z21/serverkernel.hpp"
-#include "../protocol/z21/serversettings.hpp"
 #include "../../core/objectproperty.hpp"
+
+namespace Z21 {
+class ServerKernel;
+class ServerSettings;
+}
 
 /**
  * @brief WLANmaus/Z21 app hardware interface
@@ -35,7 +38,7 @@ class WlanMausInterface : public Interface
 {
   CLASS_ID("interface.wlanmaus")
   DEFAULT_ID("wlanmaus")
-  CREATE(WlanMausInterface)
+  CREATE_DEF(WlanMausInterface)
 
   private:
     std::unique_ptr<Z21::ServerKernel> m_kernel;

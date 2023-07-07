@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #include "messages.hpp"
 #include "../xpressnet/messages.hpp"
 #include "../../decoder/list/decoderlist.hpp"
+#include "../../protocol/dcc/dcc.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 
@@ -134,7 +135,7 @@ void ServerKernel::receiveFrom(const Message& message, IOHandler::ClientId clien
           }
           break;
 
-        case 0x80:
+        case LAN_X_SET_STOP:
           if(message == LanXSetStop())
           {
             if(m_config.allowEmergencyStop && m_emergencyStop != TriState::True && m_onEmergencyStop)
@@ -292,6 +293,9 @@ void ServerKernel::onStart()
 void ServerKernel::onStop()
 {
   m_inactiveClientPurgeTimer.cancel();
+
+  for(auto& it : m_decoderSubscriptions)
+    it.second.connection.disconnect();
 }
 
 void ServerKernel::sendTo(const Message& message, IOHandler::ClientId clientId)
@@ -330,9 +334,7 @@ LanSystemStateDataChanged ServerKernel::getLanSystemStateDataChanged() const
 
 std::shared_ptr<Decoder> ServerKernel::getDecoder(uint16_t address, bool longAddress) const
 {
-  auto decoder = m_decoderList->getDecoder(DecoderProtocol::DCC, address, longAddress);
-  if(!decoder)
-    decoder = m_decoderList->getDecoder(DecoderProtocol::Auto, address);
+  auto decoder = m_decoderList->getDecoder(longAddress ? DecoderProtocol::DCCLong : DecoderProtocol::DCCShort, address);
   if(!decoder)
     decoder = m_decoderList->getDecoder(address);
   return decoder;
@@ -395,7 +397,7 @@ void ServerKernel::unsubscribe(IOHandler::ClientId clientId, std::pair<uint16_t,
 
 void ServerKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags /*changes*/, uint32_t /*functionNumber*/)
 {
-  const std::pair<uint16_t, bool> key(decoder.address, decoder.longAddress);
+  const std::pair<uint16_t, bool> key(decoder.address, decoder.protocol == DecoderProtocol::DCCLong);
   const LanXLocoInfo message(decoder);
 
   EventLoop::call(

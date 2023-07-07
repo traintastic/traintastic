@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,10 +25,11 @@
 
 #include <lua.hpp>
 #include "enum.hpp"
-#include "../../src/enum/decoderprotocol.hpp"
+#include <traintastic/enum/decoderprotocol.hpp>
 #include "../../src/enum/direction.hpp"
 #include "../../src/enum/directioncontrolstate.hpp"
 #include <traintastic/enum/identificationeventtype.hpp>
+#include <traintastic/enum/interfacestate.hpp>
 #include "../../src/enum/tristate.hpp"
 #include "../../src/enum/turnoutposition.hpp"
 #include "../../src/enum/signalaspect.hpp"
@@ -40,6 +41,7 @@
   Direction, \
   DirectionControlState, \
   IdentificationEventType, \
+  InterfaceState, \
   TriState, \
   TurnoutPosition, \
   SignalAspect, \

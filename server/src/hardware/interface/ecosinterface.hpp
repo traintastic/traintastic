@@ -24,13 +24,16 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOSINTERFACE_HPP
 
 #include "interface.hpp"
-#include "../protocol/ecos/kernel.hpp"
-#include "../protocol/ecos/settings.hpp"
 #include "../protocol/ecos/simulation.hpp"
 #include "../decoder/decodercontroller.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
 #include "../../core/objectproperty.hpp"
+
+namespace ECoS {
+class Kernel;
+class Settings;
+}
 
 /**
  * @brief ECoS hardware interface
@@ -43,7 +46,7 @@ class ECoSInterface final
 {
   CLASS_ID("interface.ecos")
   DEFAULT_ID("ecos")
-  CREATE(ECoSInterface)
+  CREATE_DEF(ECoSInterface)
 
   private:
     std::unique_ptr<ECoS::Kernel> m_kernel;
@@ -70,17 +73,18 @@ class ECoSInterface final
     ECoSInterface(World& world, std::string_view _id);
 
     // DecoderController:
+    std::span<const DecoderProtocol> decoderProtocols() const final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
-    const std::vector<uint32_t>* inputChannels() const final { return &ECoS::Kernel::inputChannels; }
-    const std::vector<std::string_view>* inputChannelNames() const final { return &ECoS::Kernel::inputChannelNames; }
+    const std::vector<uint32_t>* inputChannels() const final;
+    const std::vector<std::string_view>* inputChannelNames() const final;
     std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t channel) const final;
     void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
 
     // OutputController:
-    const std::vector<uint32_t>* outputChannels() const final { return &ECoS::Kernel::outputChannels; }
-    const std::vector<std::string_view>* outputChannelNames() const final { return &ECoS::Kernel::outputChannelNames; }
+    const std::vector<uint32_t>* outputChannels() const final;
+    const std::vector<std::string_view>* outputChannelNames() const final;
     std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t channel) const final;
     [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 };

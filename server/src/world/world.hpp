@@ -27,10 +27,8 @@
 #include "../core/property.hpp"
 #include "../core/objectproperty.hpp"
 #include "../core/objectvectorproperty.hpp"
-#include "../core/controllerlist.hpp"
 #include "../core/method.hpp"
 #include "../core/event.hpp"
-#include <traintastic/utils/stdfilesystem.hpp>
 #include <unordered_map>
 #include <boost/uuid/uuid.hpp>
 #include <traintastic/enum/worldevent.hpp>
@@ -39,7 +37,6 @@
 #include <traintastic/set/worldstate.hpp>
 
 class WorldLoader;
-class LinkRailTile;
 class LNCVProgrammer;
 class DecoderController;
 class InputController;
@@ -52,17 +49,22 @@ class InputList;
 class OutputList;
 class IdentificationList;
 class BoardList;
+class LinkRailTileList;
 class Clock;
 class TrainList;
 class RailVehicleList;
+
+template <typename T>
+class ControllerList;
+
 namespace Lua {
   class ScriptList;
 }
-class LinkRailTileList;
 
 class World : public Object
 {
   friend class IdObject;
+  friend class StateObject;
   friend class Traintastic;
   friend class WorldLoader;
   friend class WorldSaver;

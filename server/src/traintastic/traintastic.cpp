@@ -31,6 +31,7 @@
 #include "../core/eventloop.hpp"
 #include "../network/server.hpp"
 #include "../core/attributes.hpp"
+#include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
 #include "../world/world.hpp"
 #include "../world/worldlist.hpp"
@@ -99,6 +100,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
       assert(weakWorld.expired());
 #endif
       settings->lastWorld = "";
+      Log::log(*this, LogMessage::N1028_CLOSED_WORLD);
     }},
   restart{*this, "restart",
     [this]()
@@ -214,7 +216,15 @@ Traintastic::RunStatus Traintastic::run(const std::string& worldUUID, bool simul
       world->powerOn();
   }
 
-  EventLoop::exec();
+  try
+  {
+    EventLoop::exec();
+  }
+  catch(const std::exception& e)
+  {
+    Log::log(id, LogMessage::F1008_EVENTLOOP_CRASHED_X, e.what());
+    return ExitFailure;
+  }
 
   return m_restart ? Restart : ExitSuccess;
 }
@@ -252,6 +262,7 @@ void Traintastic::loadWorldPath(const std::filesystem::path& path)
     assert(weakWorld.expired());
 #endif
     settings->lastWorld = world->uuid.value();
+    Log::log(*this, LogMessage::N1027_LOADED_WORLD_X, world->name.value());
   }
   catch(const LogMessageException& e)
   {

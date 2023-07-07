@@ -1,9 +1,9 @@
 /**
- * server/src/enum/decoderprotocol.hpp
+ * server/src/hardware/protocol/xpressnet/iohandler/liusbiohandler.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,18 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_ENUM_DECODERPROTOCOL_HPP
-#define TRAINTASTIC_SERVER_ENUM_DECODERPROTOCOL_HPP
+#include "liusbiohandler.hpp"
 
-#include <traintastic/enum/decoderprotocol.hpp>
-#include <array>
+namespace XpressNet {
 
-inline constexpr std::array<DecoderProtocol, 5> decoderProtocolValues{{
-  DecoderProtocol::Auto,
-  DecoderProtocol::DCC,
-  DecoderProtocol::Motorola,
-  DecoderProtocol::Selectrix,
-  DecoderProtocol::Custom,
-}};
+LIUSBIOHandler::LIUSBIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate, SerialFlowControl flowControl)
+  : SerialIOHandler(kernel, device, baudrate, flowControl)
+{
+  m_extraHeader = true;
+}
 
-#endif
+}

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_DECOUPLERSTATE_HPP
 
 #include <cstdint>
+#include <array>
 #include "enum.hpp"
 
 enum class DecouplerState : uint8_t
@@ -37,5 +38,11 @@ TRAINTASTIC_ENUM(DecouplerState, "decoupler_state", 2,
   {DecouplerState::Deactivated, "deactivated"},
   {DecouplerState::Activated, "activated"}
 });
+
+constexpr std::array<DecouplerState, 2> decouplerStateValues
+{
+  DecouplerState::Deactivated,
+  DecouplerState::Activated,
+};
 
 #endif

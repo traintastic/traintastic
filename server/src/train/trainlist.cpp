@@ -20,11 +20,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "train.hpp"
 #include "trainlist.hpp"
 #include "trainlisttablemodel.hpp"
 #include "../world/world.hpp"
 #include "../world/getworld.hpp"
 #include "../core/attributes.hpp"
+#include "../core/method.tpp"
 #include "../utils/displayname.hpp"
 
 TrainList::TrainList(Object& _parent, std::string_view parentPropertyName) :

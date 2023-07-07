@@ -30,6 +30,7 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/signals2/connection.hpp>
+#include <span>
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include "config.hpp"
@@ -93,6 +94,8 @@ class Kernel
         bool append(const Message& message);
 
         void pop();
+
+        void clear();
     };
 
     struct LocoSlot
@@ -207,6 +210,7 @@ class Kernel
     template<class T>
     void postSend(const T& message)
     {
+      assert(sizeof(message) == message.size());
       m_ioContext.post(
         [this, message]()
         {
@@ -216,6 +220,7 @@ class Kernel
     template<class T>
     void postSend(const T& message, Priority priority)
     {
+      assert(sizeof(message) == message.size());
       m_ioContext.post(
         [this, message, priority]()
         {
@@ -426,6 +431,11 @@ class Kernel
      */
     void receive(const Message& message);
 
+    //! Must be called by the IO handler in case of a fatal error.
+    //! This will put the interface in error state
+    //! \note This function must run in the event loop thread
+    void error();
+
     /**
      *
      *
@@ -444,9 +454,16 @@ class Kernel
      */
     void resume();
 
-    //TriState getInput(uint16_t address) const;
+    //! \brief Send LocoNet packet
+    //! \param[in] packet LocoNet packet bytes, exluding checksum.
+    //! \return \c true if send, \c false otherwise.
+    bool send(std::span<uint8_t> packet);
 
-    //TriState getOutput(uint16_t address) const;
+    //! \brief Send immediate DCC packet
+    //! \param[in] dccPacket DCC packet byte, exluding checksum. Length is limited to 5.
+    //! \param[in] repeat DCC packet repeat count 0..7
+    //! \return \c true if send to command station, \c false otherwise.
+    bool immPacket(std::span<uint8_t> dccPacket, uint8_t repeat);
 
     /**
      *

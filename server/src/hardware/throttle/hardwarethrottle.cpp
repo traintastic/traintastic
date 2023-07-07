@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -48,14 +48,12 @@ HardwareThrottle::HardwareThrottle(std::shared_ptr<ThrottleController> controlle
   m_interfaceItems.add(interface);
 }
 
-Throttle::AcquireResult HardwareThrottle::acquire(DecoderProtocol protocol, uint16_t address, bool isDCCLongAddress, bool steal)
+Throttle::AcquireResult HardwareThrottle::acquire(DecoderProtocol protocol, uint16_t address, bool steal)
 {
   assert(m_world.decoders.value());
   auto& decoderList = *m_world.decoders.value();
 
-  auto decoder = decoderList.getDecoder(protocol, address, isDCCLongAddress);
-  if(!decoder)
-    decoder = decoderList.getDecoder(DecoderProtocol::Auto, address);
+  auto decoder = decoderList.getDecoder(protocol, address);
   if(!decoder)
     decoder = decoderList.getDecoder(address);
   if(!decoder)

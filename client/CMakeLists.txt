@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.9)
 include(../shared/traintastic.cmake)
 project(traintastic-client VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic client")
 include(GNUInstallDirs)
+include(../shared/translations/traintastic-lang.cmake)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -21,7 +22,8 @@ endif()
 add_executable(traintastic-client
   gfx/common.qrc
   gfx/dark/dark.qrc
-  gfx/light/light.qrc)
+  gfx/light/light.qrc
+  ${TRANSLATION_FILES})
 
 add_definitions(-DQT_DEPRECATED_WARNINGS)
 
@@ -48,6 +50,8 @@ file(GLOB SOURCES
   "src/misc/*.cpp"
   "src/network/*.hpp"
   "src/network/*.cpp"
+  "src/network/object/*.hpp"
+  "src/network/object/*.cpp"
   "src/programming/lncv/*.hpp"
   "src/programming/lncv/*.cpp"
   "src/settings/*.hpp"

@@ -25,6 +25,7 @@
 #include "railvehicles.hpp"
 #include "../../world/getworld.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/method.tpp"
 #include "../../utils/displayname.hpp"
 
 RailVehicleList::RailVehicleList(Object& _parent, std::string_view parentPropertyName) :

@@ -4,7 +4,7 @@ project(traintastic-data VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic
 
 ### INSTALL ###
 
-file(GLOB TRANSLATION_FILES "translations/*.txt")
+file(GLOB TRANSLATION_FILES "translations/*.lang")
 install(FILES ${TRANSLATION_FILES} DESTINATION "/opt/traintastic/translations")
 
 file(GLOB LNCV_XML_FILES "data/lncv/xml/*.xml")

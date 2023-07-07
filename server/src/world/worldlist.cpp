@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -102,6 +102,21 @@ void WorldList::buildIndex()
 
   //for(auto& model : m_models)
   //  model->setRowCount(m_items.size());
+}
+
+void WorldList::update(World& world, const std::filesystem::path& path)
+{
+  const auto uuid = boost::uuids::string_generator()(world.uuid.value());
+
+  if(auto it = std::find_if(m_items.begin(), m_items.end(), [&uuid](const auto& item){ return item.uuid == uuid; }); it != m_items.end())
+  {
+    it->name = world.name;
+    it->path = path;
+  }
+  else // new world
+  {
+    m_items.emplace_back(WorldInfo{uuid, world.name.value(), path});
+  }
 }
 
 TableModelPtr WorldList::getModel()

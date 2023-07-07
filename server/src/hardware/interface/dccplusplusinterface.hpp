@@ -24,14 +24,17 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_DCCPLUSPLUSINTERFACE_HPP
 
 #include "interface.hpp"
-#include "../protocol/dccplusplus/kernel.hpp"
-#include "../protocol/dccplusplus/settings.hpp"
 #include "../decoder/decodercontroller.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
 #include "../../core/serialdeviceproperty.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../enum/serialflowcontrol.hpp"
+
+namespace DCCPlusPlus {
+class Kernel;
+class Settings;
+}
 
 /**
  * @brief DCC++(EX) hardware interface
@@ -43,8 +46,8 @@ class DCCPlusPlusInterface final
   , public OutputController
 {
   CLASS_ID("interface.dccplusplus")
-  CREATE(DCCPlusPlusInterface)
   DEFAULT_ID("dccplusplus")
+  CREATE_DEF(DCCPlusPlusInterface)
 
   private:
     std::unique_ptr<DCCPlusPlus::Kernel> m_kernel;
@@ -60,6 +63,8 @@ class DCCPlusPlusInterface final
 
     void idChanged(const std::string& newId) final;
 
+    void updateEnabled();
+
   protected:
     bool setOnline(bool& value, bool simulation) final;
 
@@ -71,15 +76,18 @@ class DCCPlusPlusInterface final
     DCCPlusPlusInterface(World& world, std::string_view _id);
 
     // DecoderController:
+    std::span<const DecoderProtocol> decoderProtocols() const final;
+    std::pair<uint16_t, uint16_t> decoderAddressMinMax(DecoderProtocol protocol) const final;
+    std::span<const uint8_t> decoderSpeedSteps(DecoderProtocol protocol) const final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
-    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final { return {DCCPlusPlus::Kernel::idMin, DCCPlusPlus::Kernel::idMax}; }
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final;
     void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
 
     // OutputController:
-    const std::vector<uint32_t>* outputChannels() const final { return &DCCPlusPlus::Kernel::outputChannels; }
-    const std::vector<std::string_view>* outputChannelNames() const final { return &DCCPlusPlus::Kernel::outputChannelNames; }
+    const std::vector<uint32_t>* outputChannels() const final;
+    const std::vector<std::string_view>* outputChannelNames() const final;
     std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t channel) const final;
     [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 };

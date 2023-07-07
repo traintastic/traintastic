@@ -32,7 +32,7 @@ class DecouplerRailTile final : public StraightRailTile
 {
   CLASS_ID("board_tile.rail.decoupler")
   DEFAULT_ID("decoupler")
-  CREATE(DecouplerRailTile)
+  CREATE_DEF(DecouplerRailTile)
 
   private:
     Node m_node;

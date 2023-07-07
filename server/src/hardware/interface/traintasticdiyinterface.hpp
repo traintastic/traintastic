@@ -24,14 +24,17 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_TRAINTASTICDIYINTERFACE_HPP
 
 #include "interface.hpp"
-#include "../protocol/traintasticdiy/kernel.hpp"
-#include "../protocol/traintasticdiy/settings.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
 #include "../../core/serialdeviceproperty.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../enum/traintasticdiyinterfacetype.hpp"
 #include "../../enum/serialflowcontrol.hpp"
+
+namespace TraintasticDIY {
+class Kernel;
+class Settings;
+}
 
 /**
  * \brief Traintastic DIY hardware interface
@@ -43,7 +46,7 @@ class TraintasticDIYInterface final
 {
   CLASS_ID("interface.traintastic_diy")
   DEFAULT_ID("traintastic_diy")
-  CREATE(TraintasticDIYInterface)
+  CREATE_DEF(TraintasticDIYInterface)
 
   private:
     std::unique_ptr<TraintasticDIY::Kernel> m_kernel;
@@ -72,11 +75,11 @@ class TraintasticDIYInterface final
     TraintasticDIYInterface(World& world, std::string_view _id);
 
     // InputController:
-    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final { return {TraintasticDIY::Kernel::ioAddressMin, TraintasticDIY::Kernel::ioAddressMax}; }
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final;
     void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
 
     // OutputController:
-    std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final { return {TraintasticDIY::Kernel::ioAddressMin, TraintasticDIY::Kernel::ioAddressMax}; }
+    std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final;
     [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 };
 

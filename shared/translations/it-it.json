@@ -1,0 +1,4210 @@
+[
+    {
+        "term": "board:delete_tile",
+        "definition": "Elimina mattonella",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board:move_tile",
+        "definition": "Sposta mattonella",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board:resize_tile",
+        "definition": "Ridimensiona mattonella",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board:resize_to_contents",
+        "definition": "Ridimensiona al contenuto",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_settings.color_scheme:dark",
+        "definition": "Scuro",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_settings.color_scheme:light",
+        "definition": "Chiaro",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.misc.push_button:color",
+        "definition": "Colore",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.block:assign_train",
+        "definition": "Assegnazione del treno",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.block:flip_train",
+        "definition": "Treno a scorrimento",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.block:input_map",
+        "definition": "Sensori",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.block:remove_train",
+        "definition": "Rimuovere il treno",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.direction_control:state",
+        "definition": "Stato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_a_to_b",
+        "definition": "Usa: A \u2192 B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_b_to_a",
+        "definition": "Usa: A \u2190 B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_both",
+        "definition": "Usa: A \u21c4 B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_none",
+        "definition": "Usa: A \ud83d\udec7 B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.link:link",
+        "definition": "Link",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.sensor:input",
+        "definition": "Input",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.sensor:invert",
+        "definition": "Inverti",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.sensor:type",
+        "definition": "Tipo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile:output_map",
+        "definition": "Outputs",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:cargo",
+        "definition": "Cargo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:developer",
+        "definition": "Sviluppatore",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:general",
+        "definition": "Generale",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:info",
+        "definition": "Info",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:log",
+        "definition": "Log",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:network",
+        "definition": "Rete",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.misc.push_button",
+        "definition": "Bottone",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.block",
+        "definition": "Blocco",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.bridge_45_left",
+        "definition": "Ponte 45\u00b0 (sinistra)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.bridge_45_right",
+        "definition": "Ponte 45\u00b0 (destra)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.bridge_90",
+        "definition": "Ponte 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.buffer_stop",
+        "definition": "Ferma carri",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.cross_45",
+        "definition": "Incrocio 45\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.cross_90",
+        "definition": "Incrocio 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.curve_45",
+        "definition": "Binario curvo 45\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.curve_90",
+        "definition": "Binario curvo 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.decoupler",
+        "definition": "Sganciatore",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.direction_control",
+        "definition": "Controllo Direzione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.link",
+        "definition": "Link",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.one_way",
+        "definition": "Senso unico",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.sensor",
+        "definition": "Sensore",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.signal_2_aspect",
+        "definition": "Segnale (2 aspetti)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.signal_3_aspect",
+        "definition": "Segnale (3 aspetti)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.straight",
+        "definition": "Binario dritto",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.tunnel",
+        "definition": "Tunnel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_3way",
+        "definition": "Deviatoio triplo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_doubleslip",
+        "definition": "Deviatoio inglese doppio",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_left_45",
+        "definition": "Deviatoio sinistro 45\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_left_90",
+        "definition": "Deviatoio sinistro 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_left_curved",
+        "definition": "Deviatoio curvo sinistro",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_right_45",
+        "definition": "Deviatoio destro 45\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_right_90",
+        "definition": "Deviatoio destro 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_right_curved",
+        "definition": "Deviatoio curvo destro",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_singleslip",
+        "definition": "Deviatoio inglese singolo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_wye",
+        "definition": "Deviatoio Y",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:vehicle.rail.freight_wagon",
+        "definition": "Carro merce",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:vehicle.rail.locomotive",
+        "definition": "Locomotiva",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:vehicle.rail.multiple_unit",
+        "definition": "Unit\u00e0 multipla",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:vehicle.rail.tank_wagon",
+        "definition": "Carro armato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:day",
+        "definition": "Giorno",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:debug_log",
+        "definition": "Debug log",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:freeze",
+        "definition": "Blocca",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:hour",
+        "definition": "Ora",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:minute",
+        "definition": "Minuto",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:month",
+        "definition": "Mese",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:multiplier",
+        "definition": "Moltiplicatore",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:year",
+        "definition": "Anno",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:aqua",
+        "definition": "Aqua",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:black",
+        "definition": "Nero",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:blue",
+        "definition": "Blu",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:fuchsia",
+        "definition": "Fuchsia",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:gray",
+        "definition": "Grigio",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:green",
+        "definition": "Verde",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:lime",
+        "definition": "Lime",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:maroon",
+        "definition": "Marrone",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:navy",
+        "definition": "Navy",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:olive",
+        "definition": "Verde oliva",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:purple",
+        "definition": "Viola",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:red",
+        "definition": "Rosso",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:silver",
+        "definition": "Argento",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:teal",
+        "definition": "Teal",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:white",
+        "definition": "Bianco",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:yellow",
+        "definition": "Giallo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "dccplusplus_channel:dcc_accessory",
+        "definition": "DCC accessorio",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "dccplusplus_channel:output",
+        "definition": "Output",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "dccplusplus_channel:turnout",
+        "definition": "Deviatoio",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "dccplusplus_settings:startup_delay",
+        "definition": "Ritardo accensione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "dccplusplus_settings:use_ex",
+        "definition": "Usa comandi DCC++EX",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder:functions",
+        "definition": "Funzioni",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder:long_address",
+        "definition": "DCC indirizzo esteso",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder:protocol",
+        "definition": "Protocollo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function:function",
+        "definition": "Funzione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function:number",
+        "definition": "Numero",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function:type",
+        "definition": "Tipo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_function:generic",
+        "definition": "Generica",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_function:light",
+        "definition": "Luci",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_function:mute",
+        "definition": "Mute",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_function:smoke",
+        "definition": "Fumo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_function:sound",
+        "definition": "Suoni",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_type:always_off",
+        "definition": "Sempre spenta",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_type:always_on",
+        "definition": "Sempre accesa",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_type:hold",
+        "definition": "Premi e mantieni",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_type:momentary",
+        "definition": "Momentanea",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_type:on_off",
+        "definition": "On\/Of",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_protocol:auto",
+        "definition": "Auto",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_protocol:custom",
+        "definition": "Custom",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoupler_state:activated",
+        "definition": "Attivato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoupler_state:deactivated",
+        "definition": "Disattivato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "direction:forward",
+        "definition": "Avanti",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "direction:reverse",
+        "definition": "Indietro",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "ecos_channel:ecos_detector",
+        "definition": "ECoS Detector",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:address",
+        "definition": "Indirizzo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:channel",
+        "definition": "Canale",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:command_station",
+        "definition": "Centralina di comando",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:debug_log_input",
+        "definition": "Log cambiamenti input",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:debug_log_output",
+        "definition": "Log cambiamenti output",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:debug_log_rx_tx",
+        "definition": "Log tutte le communicazioni",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:decoders",
+        "definition": "Decoders",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:identifications",
+        "definition": "Identificazioni",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:input_monitor",
+        "definition": "Monitor Input",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:inputs",
+        "definition": "Inputs",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:interface",
+        "definition": "Interfaccia",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:output_keyboard",
+        "definition": "Pulsantiera Output",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:outputs",
+        "definition": "Outputs",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:speed_steps",
+        "definition": "Step Velocit\u00e0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:throttles",
+        "definition": "Throttles",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hsi88:s88_left",
+        "definition": "S88 sinistra",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hsi88:s88_middle",
+        "definition": "S88 centrale",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hsi88:s88_right",
+        "definition": "S88 destra",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "identification:opc_multi_sense_direction",
+        "definition": "OPC_MULTI_SENSE direction",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "input_list:bus",
+        "definition": "Bus",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "input_map_item.block:input",
+        "definition": "Input",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "input_map_item.block:invert",
+        "definition": "Inverti",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "input_map_item.block:type",
+        "definition": "Tipo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.ecos:ecos_detector",
+        "definition": "ECoS detector",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.hsi88:modules_left",
+        "definition": "Moduli sinistra",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.hsi88:modules_middle",
+        "definition": "Moduli centrali",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.hsi88:modules_right",
+        "definition": "Moduli destra",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.loconet:interface",
+        "definition": "Interfaccia",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.xpressnet:interface",
+        "definition": "Interfaccia",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.xpressnet:s88_module_count",
+        "definition": "S88 conteggio moduli",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.xpressnet:s88_start_address",
+        "definition": "S88 indirizzo di partenza",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.z21:firmware_version",
+        "definition": "Versione Firmware",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.z21:hardware_type",
+        "definition": "Tipologia Hardware",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.z21:serial_number",
+        "definition": "Numero Seriale",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface:online",
+        "definition": "Online",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface:status",
+        "definition": "Stato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface:type",
+        "definition": "Tipo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface_state:error",
+        "definition": "Errore",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface_state:initializing",
+        "definition": "Inizializzando",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface_state:offline",
+        "definition": "Offline",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface_state:online",
+        "definition": "Online",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "ip:hostname",
+        "definition": "Hostname",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "ip:port",
+        "definition": "Porta",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "language:de-de",
+        "definition": "Tedesco",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "language:en-us",
+        "definition": "Inglese (US)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "language:it-it",
+        "definition": "Italiano",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "language:nl-nl",
+        "definition": "Olandese",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list.train_vehicle:reverse",
+        "definition": "Inverso",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:add",
+        "definition": "Aggiungi",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:create",
+        "definition": "Creare",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:delete",
+        "definition": "Cancellare",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:edit",
+        "definition": "Modifica",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:move_down",
+        "definition": "Sposta gi\u00f9",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:move_up",
+        "definition": "Sposta su",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:remove",
+        "definition": "Rimuovi",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:description",
+        "definition": "Descrizione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:lncv_programmer",
+        "definition": "LNCV programmer",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:module",
+        "definition": "Modulo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:other_module",
+        "definition": "Secondo modulo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:read",
+        "definition": "Leggi",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:reading_lncv_x",
+        "definition": "Lettura LNCV %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:reading_lncv_x_failed",
+        "definition": "Lettura LNCV %1 fallita",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:sending_start",
+        "definition": "Invio start",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:start",
+        "definition": "Start",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:stop",
+        "definition": "Stop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:use_broadcast_address",
+        "definition": "Usa indirizzo broadcast",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:value",
+        "definition": "Valore",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:waiting_for_module_to_respond",
+        "definition": "In attesa della risposta dal modulo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:write",
+        "definition": "Scrivi",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:writing_lncv_x",
+        "definition": "Scrittura LNCV %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_command_station:custom",
+        "definition": "Custom",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_f9_f28:imm_packet",
+        "definition": "Direct (OPC_IMM_PACKET)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_f9_f28:uhlenbrock_extended",
+        "definition": "Uhlenbrock extended (OPC_A3, OPC_D4)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_fastclock:master",
+        "definition": "Master (Traintatic controlla l'orologio)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_fastclock:off",
+        "definition": "Off",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_interface_type:serial",
+        "definition": "Serial",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_interface_type:tcp_binary",
+        "definition": "TCP binary",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_serial_interface:custom",
+        "definition": "Custom",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:command_station",
+        "definition": "Centralina di comando",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:echo_timeout",
+        "definition": "Echo timeout",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:fast_clock",
+        "definition": "Orologio Accelerato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:fast_clock_sync_enabled",
+        "definition": "Fast clock sync abilitato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:fast_clock_sync_interval",
+        "definition": "Fast clock intervallo di sync",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:locomotive_slots",
+        "definition": "Slots Locomotive",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:pcap_output",
+        "definition": "Uscita PCAP",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:response_timeout",
+        "definition": "Timeout di risposta",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua.script:disabled",
+        "definition": "Disabilitato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua.script:start",
+        "definition": "Esegui",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua.script:stop",
+        "definition": "Stop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua.script_list:start_all",
+        "definition": "Esegui tutti",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua.script_list:stop_all",
+        "definition": "Stoppa tutti",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua_script:state",
+        "definition": "Stato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua_script_state:disabled",
+        "definition": "Disabilitato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua_script_state:error",
+        "definition": "Errore",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua_script_state:running",
+        "definition": "In esecuzione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua_script_state:stopped",
+        "definition": "Stoppato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1001",
+        "definition": "Caricamento mondo fallito (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1002",
+        "definition": "Creazione client fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1003",
+        "definition": "Impossibile scrivere nel file impostazioni (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1004",
+        "definition": "Lettura mondo fallita (%1) (%2)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1005",
+        "definition": "Salvataggio mondo fallito (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1006",
+        "definition": "Creazione backup mondo fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1007",
+        "definition": "Creazione cartella di backup mondi fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1008",
+        "definition": "Creazione cartella di backup fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1009",
+        "definition": "Creazione backup delle impostazioni fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1010",
+        "definition": "Esportazione mondo fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1011",
+        "definition": "Importazione mondo fallito (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1012",
+        "definition": "Classe '%1' non nota, impossibile ricreare oggetto '%2'",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1013",
+        "definition": "Impossibile caricare mondo salvato con una versione pi\u00f9 recente, necessaria almeno: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C2001",
+        "definition": "Indirizzo gi\u00e0 usato in #%1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C2004",
+        "definition": "Impossibile ottenere slot libero",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D1001",
+        "definition": "Riprendi %1 (moltiplicatore: %2)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D1002",
+        "definition": "Tick %1 (errore: %2us)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D1003",
+        "definition": "Congela %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2001",
+        "definition": "TX: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2002",
+        "definition": "RX: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2003",
+        "definition": "Unknown xHeader 0x%1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2004",
+        "definition": "%1 TX: %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2005",
+        "definition": "%1 RX: %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2006",
+        "definition": "Messaggio non noto: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2007",
+        "definition": "Input %1 = %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2008",
+        "definition": "Output %1 = %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2009",
+        "definition": "Slot %1 = %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2010",
+        "definition": "Slot %1 = Libero",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1001",
+        "definition": "UUID Mondo non valido: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1002",
+        "definition": "Il Mondo %1 non esiste",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1003",
+        "definition": "UDP errore ricezione (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1004",
+        "definition": "TCP errore accept (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1005",
+        "definition": "Socket shutdown fallito (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1006",
+        "definition": "Socket write fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1007",
+        "definition": "Socket read fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1008",
+        "definition": "Socket acceptor cancel fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2001",
+        "definition": "Serial write fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2002",
+        "definition": "Serial read fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2003",
+        "definition": "Make address fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2004",
+        "definition": "Socket open fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2005",
+        "definition": "Socket connect fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2006",
+        "definition": "Socket bind fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2007",
+        "definition": "Socket write fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2008",
+        "definition": "Socket read fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2009",
+        "definition": "Socket receive fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2010",
+        "definition": "Serial port open fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2011",
+        "definition": "Socket send fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2012",
+        "definition": "Numero Funzione gi\u00e0 in uso",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2013",
+        "definition": "Porta Seriale impostazione baudrate fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2014",
+        "definition": "Porta Seriale port set data bits fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2015",
+        "definition": "Porta Seriale set stop bits fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2016",
+        "definition": "Porta Seriale set parity fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2017",
+        "definition": "Porta Seriale set flow control fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2018",
+        "definition": "Timeout, nessun eco entro %1ms",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2019",
+        "definition": "Timeout, nessuna risposta entro %1ms",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2020",
+        "definition": "Il numero totale di moduli non pu\u00f2 superare %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2021",
+        "definition": "La ricerca del registro PCAP non \u00e8 andata a buon fine: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E9001",
+        "definition": "%1 (Durante l'esecuzione dell'event handler %2)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1001",
+        "definition": "Opening TCP socket fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1002",
+        "definition": "TCP socket address reuse fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1003",
+        "definition": "Binding TCP socket fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1004",
+        "definition": "TCP socket listen fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1005",
+        "definition": "Opening UDP socket fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1006",
+        "definition": "UDP socket address reuse fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1007",
+        "definition": "Binding udp socket fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F9001",
+        "definition": "Creazione Lua state fallita",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F9002",
+        "definition": "Esecuzione script fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F9003",
+        "definition": "Chaiamata funzione fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I1002",
+        "definition": "File impostazioni non trovato, utilizzo valori default",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I1003",
+        "definition": "Client connesso",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I1004",
+        "definition": "Connessione persa",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I1005",
+        "definition": "Costruzione index mondo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I2001",
+        "definition": "Indirizzo locomotiva non noto: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I2002",
+        "definition": "Tipologia Hardware: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I2003",
+        "definition": "Versione Firmware: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I9001",
+        "definition": "Script interrotto",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1001",
+        "definition": "Ricevuto segnale: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1002",
+        "definition": "Nuovo mondo creato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1003",
+        "definition": "Riavvio",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1004",
+        "definition": "Spegnimento",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1005",
+        "definition": "Discovery abilitata",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1006",
+        "definition": "Discovery disabilitata",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1007",
+        "definition": "Ascolto a %1:%2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1008",
+        "definition": "Impostazioni caricate",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1009",
+        "definition": "Impostazioni salvate",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1010",
+        "definition": "Modalit\u00e0 Modifica: abilitata",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1011",
+        "definition": "Modalit\u00e0 Modifica: disabilitata",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1012",
+        "definition": "Comunicazione: abilitata",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1013",
+        "definition": "Comunicazione: disabilitata",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1014",
+        "definition": "Power: on",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1015",
+        "definition": "Power: off",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1016",
+        "definition": "In Esecuzione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1017",
+        "definition": "Interrotto",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1018",
+        "definition": "Mute: abilitata",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1019",
+        "definition": "Mute: disabilitato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1020",
+        "definition": "Fumo: abilitata",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1021",
+        "definition": "Fumo: disabilitato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1022",
+        "definition": "Mondo salvato: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1023",
+        "definition": "Simulazione: disabilitata",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1024",
+        "definition": "Simulazione: abilitata",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1025",
+        "definition": "Mondo esportato con successo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1026",
+        "definition": "Mondo importato con successo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1027",
+        "definition": "Mondo caricato: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1028",
+        "definition": "Mondo chiuso",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2001",
+        "definition": "Simulazione non supportata",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2002",
+        "definition": "Nessuna risposta dal modulo LNCV %1 con indirizzo %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2003",
+        "definition": "Interrotto invio Fast Clock Sync",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2004",
+        "definition": "Avvio del registro dei file PCAP: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2005",
+        "definition": "Avvio della pipe di log PCAP: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N3001",
+        "definition": "Assegnato il treno %1 al blocco %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N3002",
+        "definition": "Rimosso il treno %1 dal blocco %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N9001",
+        "definition": "Avvio script",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W1001",
+        "definition": "Discovery disabilitata, consentita solo sulla porta %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W1002",
+        "definition": "Impostazione %1 non esistente",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W1003",
+        "definition": "Lettura Mondo %1 fallita (libarchive error %2: %3)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2001",
+        "definition": "Ricevuti dati malformati ignorati %1 bytes",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2002",
+        "definition": "La centralina di comando non supporta funzioni superiori a F%1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2004",
+        "definition": "Input indirizzo %1 non valido",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2005",
+        "definition": "Output indirizzo %1 non valido",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2006",
+        "definition": "La centralina di comando non supporta slot locomotiva %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2007",
+        "definition": "La centralina di comando non supporta slot Fast Clock",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2018",
+        "definition": "Timeout, no echo within %1ms",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2019",
+        "definition": "I flag di trasmissione Z21 non corrispondono a quelli richiesti",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "object:id",
+        "definition": "Id",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "object:name",
+        "definition": "Nome",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "object:notes",
+        "definition": "Note",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "opc_multi_sense_direction:in_sensor_address",
+        "definition": "Indirizzo sensore ingresso",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "opc_multi_sense_direction:in_transponder_address",
+        "definition": "Indirizzo transponder ingresso (Bl\u00fccher GBM16XN)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "opc_multi_sense_direction:none",
+        "definition": "Nessuna",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_action:none",
+        "definition": "Nessuna",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_action:off",
+        "definition": "Off",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_action:on",
+        "definition": "On",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_action:pulse",
+        "definition": "Impulsa",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_list:bus",
+        "definition": "Bus",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_map.decoupler:key",
+        "definition": "Stato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_map.signal:key",
+        "definition": "Aspetto",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_map.turnout:key",
+        "definition": "Posizione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_map:use",
+        "definition": "Usa",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "pcap_output:file",
+        "definition": "File",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "pcap_output:pipe",
+        "definition": "Tubo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:connect",
+        "definition": "Connetti",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:connect_to_server",
+        "definition": "Connetti al Server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:connected",
+        "definition": "Connesso",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:connecting",
+        "definition": "Connessione in corso",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:password",
+        "definition": "Password",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:server",
+        "definition": "Server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:username",
+        "definition": "Nome utente",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.error:cant_read_from_file_x",
+        "definition": "Impossibile leggere file: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.error:cant_write_to_file_x",
+        "definition": "Impossibile scrivere file: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.error:server_error_x",
+        "definition": "Errore Server %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:about",
+        "definition": "Informazioni",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:close_world",
+        "definition": "Chiudi mondo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:connect_to_server",
+        "definition": "Connetti al Server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:connection",
+        "definition": "Connessione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:disconnect_from_server",
+        "definition": "Disconnetti dal Server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:export_world",
+        "definition": "Esporta mondo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:file",
+        "definition": "File",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:fullscreen",
+        "definition": "Schermo intero",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:hardware",
+        "definition": "Hardware",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:help",
+        "definition": "Aiuto",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:import_world",
+        "definition": "Importa mondo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:load_world",
+        "definition": "Carica mondo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:new_world",
+        "definition": "Nuovo mondo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:objects",
+        "definition": "Oggetti",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:power",
+        "definition": "Power",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:programming",
+        "definition": "Programmazione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:quit",
+        "definition": "Esci",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:restart_server",
+        "definition": "Riavvia server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:restart_server_question",
+        "definition": "Sei sicuro di voler riavviare il server?",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:save_world",
+        "definition": "Salva mondo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:server",
+        "definition": "Server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:server_log",
+        "definition": "Server log",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:server_settings",
+        "definition": "Impostazioni Server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:settings",
+        "definition": "Impostazioni",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:shutdown_server",
+        "definition": "Spegni server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:shutdown_server_question",
+        "definition": "Sei sicuro di voler spegnere il server?",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:toolbar",
+        "definition": "Barra degli Strumenti",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:tools",
+        "definition": "Strumenti",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:view",
+        "definition": "Visualizza",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:world",
+        "definition": "Mondo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:world_properties",
+        "definition": "Propriet\u00e0 mondo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.message_box:no",
+        "definition": "No",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.message_box:yes",
+        "definition": "S\u00ec",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.object_select_list_dialog:cancel",
+        "definition": "Annulla",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.object_select_list_dialog:ok",
+        "definition": "Ok",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.object_select_list_dialog:select_object",
+        "definition": "Seleziona oggetto",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.board:color_scheme",
+        "definition": "Schema colori",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.board:show_block_sensor_states",
+        "definition": "Mostra stato dei sensori di blocco",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.board:turnout_draw_state",
+        "definition": "Disegna stato del deviatoio",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.developer:dont_load_fallback_language",
+        "definition": "Non caricare lingua di fallback",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.developer:log_missing_strings",
+        "definition": "Log traduzioni mancanti",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.developer:log_missing_strings_dir",
+        "definition": "Cartella log traduzioni mancanti",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.general:language",
+        "definition": "Lingua",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.statusbar:show_clock",
+        "definition": "Mostra orologio",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.statusbar:show_statuses",
+        "definition": "Mostra gli stati",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings:board",
+        "definition": "Lavagna",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings:developer",
+        "definition": "Sviluppatore",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings:general",
+        "definition": "Generale",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings:statusbar",
+        "definition": "Barra di Stato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.world_list_dialog:cancel",
+        "definition": "Annulla",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.world_list_dialog:load",
+        "definition": "Carica",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.world_list_dialog:world_list",
+        "definition": "Lista mondi",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:board_properties",
+        "definition": "Propriet\u00e0 Lavagna",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:export_world_failed",
+        "definition": "Esportazione mondo fallita",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:grid",
+        "definition": "Griglia",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:grid_dot",
+        "definition": "Punto",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:grid_line",
+        "definition": "Linea",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:grid_none",
+        "definition": "Nessuna",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:import_world_failed",
+        "definition": "Importazione mondo fallita",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:next",
+        "definition": "Successivo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:previous",
+        "definition": "Precedente",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:toggle_mute",
+        "definition": "Mute\/Unmute",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:toggle_offline_online",
+        "definition": "Abilita\/Disabilita connessione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:toggle_power",
+        "definition": "On\/Off power",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:toggle_smoke",
+        "definition": "Abilita\/Disabilita fumo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:traintastic_world",
+        "definition": "Mondo Traintastic",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:zoom_in",
+        "definition": "Zoom in",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:zoom_out",
+        "definition": "Zoom out",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "rail_vehicle_list:type",
+        "definition": "Tipo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "sensor_type:occupy_detector",
+        "definition": "Rilevatore occupazione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "sensor_type:reed_switch",
+        "definition": "Interruttore Reed",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial:baudrate",
+        "definition": "Baudrate",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial:device",
+        "definition": "Dispositivo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial:flow_control",
+        "definition": "Flow control",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial:port",
+        "definition": "Porta",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial_flow_control:hardware",
+        "definition": "Hardware",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial_flow_control:none",
+        "definition": "Nessuno",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "server_log:code",
+        "definition": "Codice",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "server_log:message",
+        "definition": "Messaggio",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "server_log:object",
+        "definition": "Oggetto",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "server_log:time",
+        "definition": "Tempo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:allow_client_server_restart",
+        "definition": "Permetti al client di riavviare il server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:allow_client_server_shutdown",
+        "definition": "Permetti al client di spegnere il server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:auto_save_world_on_exit",
+        "definition": "Salvataggio automatico del mondo all'uscita",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:discoverable",
+        "definition": "Individuabile",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:enable_file_logger",
+        "definition": "Abilita logger file",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:localhost_only",
+        "definition": "Solo Localhost",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:memory_logger_size",
+        "definition": "Dimensione logger in memoria",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:port",
+        "definition": "Porta",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:save_world_uncompressed",
+        "definition": "Salva mondo non compresso",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect:proceed",
+        "definition": "Via libera",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect:proceed_reduced_speed",
+        "definition": "Via libera con riduzione di velocit\u00e0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect:stop",
+        "definition": "Via impedita",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "throttle_object_list:throttle",
+        "definition": "Throttle",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:active",
+        "definition": "Attivo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:block",
+        "definition": "Blocco",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:lob",
+        "definition": "Lunghezza con respingenti",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:mode",
+        "definition": "Modalit\u00e0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:override_length",
+        "definition": "Lunghezza di sovrascrittura",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:override_weight",
+        "definition": "Superare il peso",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:speed_max",
+        "definition": "Velocit\u00e0 massima",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:vehicles",
+        "definition": "Rotabili",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:weight",
+        "definition": "Peso",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "traintastic_diy_interface_type:serial",
+        "definition": "Seriale",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "traintastic_diy_settings:debug_log_heartbeat",
+        "definition": "Log communicazione di heartbeat",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "traintastic_diy_settings:heartbeat_timeout",
+        "definition": "Timeout Heartbeat",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "turnout_position:left",
+        "definition": "Sinistra",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "turnout_position:right",
+        "definition": "Destra",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "turnout_position:straight",
+        "definition": "Corretto tracciato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail.freight_wagon:cargo_weight",
+        "definition": "Peso del carico",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail.tank_wagon:cargo_volume",
+        "definition": "Volume di carico",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:cargo_capacity",
+        "definition": "Capacit\u00e0 di carico",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:cargo_loaded",
+        "definition": "Carico presente",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:decoder",
+        "definition": "Decoder",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:lob",
+        "definition": "Lunghezza veicolo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:power",
+        "definition": "Potenza",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:speed_max",
+        "definition": "Velocit\u00e0 massima",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:total_weight",
+        "definition": "Peso Totale",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:train",
+        "definition": "Treno",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:weight",
+        "definition": "Peso",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:boards",
+        "definition": "Lavagne",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:clock",
+        "definition": "Orologio",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:decoders",
+        "definition": "Decoders",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:edit",
+        "definition": "Modifica mondo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:inputs",
+        "definition": "Inputs",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:interfaces",
+        "definition": "Interfacce",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:lua_scripts",
+        "definition": "Script Lua",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:mute",
+        "definition": "Mute",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:no_smoke",
+        "definition": "No fumo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:offline",
+        "definition": "Disconnetti",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:online",
+        "definition": "Connetti",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:outputs",
+        "definition": "Outputs",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:power_off",
+        "definition": "Spegni",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:power_on",
+        "definition": "Accendi",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:rail_vehicles",
+        "definition": "Rotabili",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:run",
+        "definition": "Esegui",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:scale",
+        "definition": "Scala",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:scale_ratio",
+        "definition": "Rapporto Scala",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:simulation",
+        "definition": "Simulazione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:stop",
+        "definition": "Stop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:trains",
+        "definition": "Treni",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:uuid",
+        "definition": "UUID",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world_scale:custom",
+        "definition": "Custom",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_command_station:custom",
+        "definition": "Custom",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_interface_type:network",
+        "definition": "Rete",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_interface_type:serial",
+        "definition": "Seriale",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_serial_interface_type:custom",
+        "definition": "Custom",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_settings:use_emergency_stop_locomotive_command",
+        "definition": "Usa comando stoppa locomotive emergenza corto circuito",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_settings:use_roco_f13_f20_command",
+        "definition": "Usa comandi Roco F13-F20",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "z21_channel:rbus",
+        "definition": "R-Bus",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "z21_settings.server:allow_emergency_stop",
+        "definition": "Permetti stop di emergenza",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "z21_settings.server:allow_track_power_off",
+        "definition": "Permetti spegnimento",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "z21_settings.server:allow_track_power_on_release_emergency_stop",
+        "definition": "Permetti accensione\/rilascio stop di emergenza",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train_mode:manual_protected",
+        "definition": "Manuale (protetto)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train_mode:manual_unprotected",
+        "definition": "Manuale (non protetto)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train_mode:automatic",
+        "definition": "Automatico",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list.train_vehicle:move",
+        "definition": "Muoversi",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "protocol.loconet:command_station",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:select_folder",
+        "definition": "Seleziona cartella",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:listen_only",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2006",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2007",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "status.lua:x_running",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "status.lua:x_in_error",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1008",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings:restart_required",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.general:language_changed_restart_required",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "traintastic_diy_interface_type:network_tcp",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    }
+]

@@ -50,6 +50,7 @@ struct Config
 
   bool pcap;
   PCAPOutput pcapOutput;
+  bool listenOnly; //!< If enabled Traintastic will not send any message to the LocoNet, just for using Traintastic as LocoNet monitor.
 };
 
 }

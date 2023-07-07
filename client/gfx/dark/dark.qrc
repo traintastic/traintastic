@@ -86,5 +86,7 @@
         <file>interface_state.initializing.svg</file>
         <file>interface_state.offline.svg</file>
         <file>interface_state.online.svg</file>
+        <file>board.svg</file>
+        <file>train.svg</file>
     </qresource>
 </RCC>

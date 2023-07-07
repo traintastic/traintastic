@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/xpressnet/iohandler/luisbiohandler.cpp
+ * server/src/enum/simulateinputaction.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2023 Filippo Gentile
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,14 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "liusbiohandler.hpp"
+#ifndef TRAINTASTIC_SERVER_ENUM_SIMULATEINPUTACTION_HPP
+#define TRAINTASTIC_SERVER_ENUM_SIMULATEINPUTACTION_HPP
 
-namespace XpressNet {
-
-LIUSBIOHandler::LIUSBIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate, SerialFlowControl flowControl)
-  : SerialIOHandler(kernel, device, baudrate, flowControl)
+enum class SimulateInputAction
 {
-  m_extraHeader = true;
-}
+    SetFalse,
+    SetTrue,
+    Toggle,
+};
 
-}
+#endif

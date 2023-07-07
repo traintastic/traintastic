@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,6 +39,8 @@ class Settings : public SubObject
     static constexpr uint16_t startupDelayMax = 60'000;
 
   public:
+    static constexpr std::array<uint8_t, 2> speedStepValues{28, 128};
+
     Property<bool> useEx;
     Property<uint8_t> speedSteps;
     Property<uint16_t> startupDelay;

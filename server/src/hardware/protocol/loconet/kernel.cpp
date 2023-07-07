@@ -118,6 +118,26 @@ void Kernel::setConfig(const Config& config)
         startPCAP(newConfig.pcapOutput);
       }
 
+      if(newConfig.listenOnly && !m_config.listenOnly)
+      {
+        for(auto& queue : m_sendQueue)
+          queue.clear();
+
+        EventLoop::call(
+          [this]()
+          {
+            Log::log(m_logId, LogMessage::N2006_LISTEN_ONLY_MODE_ACTIVATED);
+          });
+      }
+      else if(!newConfig.listenOnly && m_config.listenOnly)
+      {
+        EventLoop::call(
+          [this]()
+          {
+            Log::log(m_logId, LogMessage::N2007_LISTEN_ONLY_MODE_DEACTIVATED);
+          });
+      }
+
       if(m_config.fastClock == LocoNetFastClock::Master && newConfig.fastClock == LocoNetFastClock::Off)
       {
         setFastClockMaster(false);
@@ -219,6 +239,9 @@ void Kernel::start()
   m_pendingSlotMessages.clear();
   m_inputValues.fill(TriState::Undefined);
   m_outputValues.fill(TriState::Undefined);
+
+  if(m_config.listenOnly)
+    Log::log(m_logId, LogMessage::N2006_LISTEN_ONLY_MODE_ACTIVATED);
 
   m_thread = std::thread(
     [this]()
@@ -874,6 +897,13 @@ void Kernel::receive(const Message& message)
   }
 }
 
+void Kernel::error()
+{
+  assert(isEventLoopThread());
+  if(m_onError)
+    m_onError();
+}
+
 void Kernel::setPowerOn(bool value)
 {
   assert(isEventLoopThread());
@@ -923,6 +953,39 @@ void Kernel::resume()
     });
 }
 
+bool Kernel::send(std::span<uint8_t> packet)
+{
+  assert(isEventLoopThread());
+
+  if(reinterpret_cast<Message*>(packet.data())->size() != packet.size() + 1) // verify packet length, must be all bytes excluding checksum
+    return false;
+
+  std::vector<uint8_t> data(packet.data(), packet.data() + packet.size());
+  data.push_back(calcChecksum(*reinterpret_cast<Message*>(data.data())));
+
+  if(!isValid(*reinterpret_cast<Message*>(data.data())))
+    return false;
+
+  m_ioContext.post(
+    [this, message=std::move(data)]()
+    {
+      send(*reinterpret_cast<const Message*>(message.data()));
+    });
+
+  return true;
+}
+
+bool Kernel::immPacket(std::span<uint8_t> dccPacket, uint8_t repeat)
+{
+  assert(isEventLoopThread());
+
+  if(dccPacket.size() > ImmPacket::dccPacketSizeMax || repeat > ImmPacket::repeatMax)
+    return false;
+
+  postSend(ImmPacket(dccPacket, repeat));
+  return true;
+}
+
 void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   assert(isEventLoopThread());
@@ -966,7 +1029,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       {
         case LocoNetF9F28::IMMPacket:
         {
-          const bool longAddress = (decoder.address > DCC::addressShortMax) || decoder.longAddress;
+          const bool longAddress = decoder.protocol == DecoderProtocol::DCCLong;
 
           if(functionNumber <= 12)
           {
@@ -1254,7 +1317,7 @@ void Kernel::clearLocoSlot(uint8_t slot)
 std::shared_ptr<Decoder> Kernel::getDecoder(uint16_t address)
 {
   assert(isEventLoopThread());
-  return m_decoderController->getDecoder(DecoderProtocol::DCC, address, DCC::isLongAddress(address), true);
+  return m_decoderController->getDecoder(DCC::getProtocol(address), address);
 }
 
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
@@ -1268,6 +1331,9 @@ void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
 void Kernel::send(const Message& message, Priority priority)
 {
   assert(isKernelThread());
+
+  if(m_config.listenOnly)
+    return; // drop it
 
   if(!m_sendQueue[priority].append(message))
   {
@@ -1385,8 +1451,7 @@ void Kernel::waitingForResponseTimerExpired(const boost::system::error_code& ec)
       [this]()
       {
         Log::log(m_logId, LogMessage::E2019_TIMEOUT_NO_RESPONSE_WITHIN_X_MS, m_config.responseTimeout);
-        if(m_onError)
-          m_onError();
+        error();
       });
   }
 }
@@ -1561,6 +1626,11 @@ void Kernel::SendQueue::pop()
     memmove(m_buffer.data(), m_front, m_bytes);
     m_front = m_buffer.data();
   }
+}
+
+void Kernel::SendQueue::clear()
+{
+  m_bytes = 0;
 }
 
 }

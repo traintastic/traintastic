@@ -30,6 +30,7 @@
 #include "../network/objectvectorproperty.hpp"
 #include "../settings/statusbarsettings.hpp"
 #include "../widget/status/interfacestatuswidget.hpp"
+#include "../widget/status/luastatuswidget.hpp"
 
 MainWindowStatusBar::MainWindowStatusBar(MainWindow& mainWindow)
   : QStatusBar(&mainWindow)
@@ -141,7 +142,12 @@ void MainWindowStatusBar::updateStatuses()
           return;
 
         for(const auto& object : objects)
-          m_statuses->layout()->addWidget(new InterfaceStatusWidget(object, this));
+        {
+          if(object->classId() == "status.interface")
+            m_statuses->layout()->addWidget(new InterfaceStatusWidget(object, this));
+          else if(object->classId() == "status.lua")
+            m_statuses->layout()->addWidget(new LuaStatusWidget(object, this));
+        }
       });
   }
 }

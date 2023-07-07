@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,19 +24,20 @@
 #include <QComboBox>
 #include <QDir>
 #include <QDirIterator>
+#include <QMessageBox>
 #include <traintastic/locale/locale.hpp>
 #include "generalsettings.hpp"
 #include <traintastic/utils/standardpaths.hpp>
 
 static QString getLanguageName(const QString& filename)
 {
-  QFile file(filename);
-  if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+  try
   {
-    const QString header = QStringLiteral("## Traintastic language file: ");
-    QString line = QString::fromUtf8(file.readLine());
-    if(line.startsWith(header))
-      return line.remove(0, header.length()).trimmed();
+    Locale locale(getLocalePath() / filename.toStdString());
+    return locale.translate(QString("language:").append(QFileInfo(filename).baseName()));
+  }
+  catch(...)
+  {
   }
   return "";
 }
@@ -49,10 +50,12 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget* parent)
   // language:
   {
     QComboBox* cb = new QComboBox(this);
-    QDirIterator it(QString::fromStdString(getLocalePath().string()), {"*.txt"}, QDir::Files | QDir::Readable);
+    QDirIterator it(QString::fromStdString(getLocalePath().string()), {"*.lang"}, QDir::Files | QDir::Readable);
     while(it.hasNext())
     {
       const QString filename = it.next();
+      if(QFileInfo(filename).baseName() == "neutral")
+        continue;
       const QString label = getLanguageName(filename);
       if(!label.isEmpty())
       {
@@ -62,9 +65,10 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget* parent)
       }
     }
     connect(cb, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-      [cb](int index)
+      [this, cb](int index)
       {
         GeneralSettings::instance().language.setValue(cb->itemData(index).toString());
+        QMessageBox::information(this, Locale::tr("qtapp.settings:restart_required"), Locale::tr("qtapp.settings.general:language_changed_restart_required"));
       });
     add(s.language.name(), cb);
   }

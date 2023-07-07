@@ -1,6 +1,6 @@
 ; Inno Setup Script for Traintastic
 
-#define VersionInfoBinary "..\..\server\build\traintastic-server.exe" 
+#define VersionInfoBinary "..\..\server\build\traintastic-server.exe"
 
 #define Name "Traintastic"
 #define Version GetFileVersion(VersionInfoBinary)
@@ -36,55 +36,10 @@ ArchitecturesAllowed=x64
 MinVersion=10.0
 
 [Languages]
-Name: en; MessagesFile: "compiler:Default.isl"
-Name: nl; MessagesFile: "compiler:Languages\Dutch.isl"
-Name: de; MessagesFile: "compiler:Languages\German.isl"
-Name: it; MessagesFile: "compiler:Languages\Italian.isl"
-
-[CustomMessages]
-; English
-en.ClientAndServer=Client and server
-en.ClientAndServerDesc=For the computer connected to the command station.
-en.ClientOnly=Client only
-en.ClientOnlyDesc=For additional computers to operate the model railyway layout.
-en.WindowsFirewall=Windows Firewall:
-en.FirewallAllowTraintasticClient=Allow Traintastic client
-en.AddFirewallRuleTraintasticClient=Add firewall rule for Traintastic client
-en.FirewallAllowWLANmausZ21=Allow WLANmaus/Z21
-en.AddFirewallRuleWLANmausZ21=Add firewall rule for WLANmaus/Z21
-
-; Dutch
-nl.ClientAndServer=Client en server
-nl.ClientAndServerDesc=Voor de computer die verbonden is met de centrale.
-nl.ClientOnly=Alleen client
-nl.ClientOnlyDesc=Voor extra computers om de modelspoorbaan te besturen.
-nl.WindowsFirewall=Windows Firewall:
-nl.FirewallAllowTraintasticClient=Sta Traintastic client toe
-;nl.AddFirewallRuleTraintasticClient=
-nl.FirewallAllowWLANmausZ21=Sta WLANmaus/Z21 toe
-;nl.AddFirewallRuleWLANmausZ21=
-
-; German
-;de.ClientAndServer=
-;de.ClientAndServerDesc=
-;de.ClientOnly=
-;de.ClientOnlyDesc=
-;de.WindowsFirewall=
-;de.FirewallAllowTraintasticClient=
-;de.AddFirewallRuleTraintasticClient=
-;de.FirewallAllowWLANmausZ21=
-;de.AddFirewallRuleWLANmausZ21=
-
-; Italian
-it.ClientAndServer=Client e Server
-it.ClientAndServerDesc=Per il computer connesso alla centralina di comando
-it.ClientOnly=Solo Client
-it.ClientOnlyDesc=Per computer aggiuntivi che operano nel plastico
-it.WindowsFirewall=Windows Firewall:
-it.FirewallAllowTraintasticClient=Abilita Traintastic client
-it.AddFirewallRuleTraintasticClient=Aggiungi regola del firewall per Traintastic client
-it.FirewallAllowWLANmausZ21=Abilita WLANmaus/Z21
-it.AddFirewallRuleWLANmausZ21=Aggiungi regola del firewall per WLANmaus/Z21
+Name: en; MessagesFile: "compiler:Default.isl,en-us.isl"
+Name: nl; MessagesFile: "compiler:Languages\Dutch.isl,nl-nl.isl"
+Name: de; MessagesFile: "compiler:Languages\German.isl,de-de.isl"
+Name: it; MessagesFile: "compiler:Languages\Italian.isl,it-it.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -105,7 +60,7 @@ Source: "..\..\client\build\Release\imageformats\*.dll"; DestDir: "{app}\client\
 Source: "..\..\client\build\Release\platforms\*.dll"; DestDir: "{app}\client\platforms"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\styles\*.dll"; DestDir: "{app}\client\styles"; Flags: ignoreversion; Check: InstallClient
 ; Shared
-Source: "..\..\shared\translations\*.txt"; DestDir: "{commonappdata}\traintastic\translations"; Flags: ignoreversion;
+Source: "..\..\shared\translations\*.lang"; DestDir: "{commonappdata}\traintastic\translations"; Flags: ignoreversion;
 ; Manual
 Source: "..\..\manual\build\*"; DestDir: "{commonappdata}\traintastic\manual"; Flags: ignoreversion recursesubdirs
 ; LNCV XML
@@ -119,6 +74,13 @@ Filename: "{tmp}\vc_redist.x64.exe"; StatusMsg: "Installing VC++ redistributable
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (TCP)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=TCP localport=5740 action=allow"; StatusMsg: "{cm:AddFirewallRuleTraintasticClient} (TCP)"; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (UDP)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=UDP localport=5740 action=allow"; StatusMsg: "{cm:AddFirewallRuleTraintasticClient} (UDP)"; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (WLANmaus/Z21)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=UDP localport=21105 action=allow"; StatusMsg: "{cm:AddFirewallRuleWLANmausZ21}"; Flags: runhidden; Check: InstallServer; Tasks: firewall_wlanmaus
+
+[InstallDelete]
+; Delete old translation files (TODO: remove in 0.4)
+Type: files; Name: "{commonappdata}\traintastic\translations\en-us.txt"
+Type: files; Name: "{commonappdata}\traintastic\translations\nl-nl.txt"
+Type: files; Name: "{commonappdata}\traintastic\translations\de-de.txt"
+Type: files; Name: "{commonappdata}\traintastic\translations\it-it.txt"
 
 [UninstallRun]
 Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""Traintastic server (TCP)"""; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
@@ -145,12 +107,12 @@ var
 function InstallClient : Boolean;
 begin
   Result := ClientAndServerRadioButton.Checked or ClientOnlyRadioButton.Checked;
-end;  
+end;
 
 function InstallServer : Boolean;
 begin
   Result := ClientAndServerRadioButton.Checked;
-end;  
+end;
 
 procedure RegWriteTraintasticComponents(Value: String);
 begin
@@ -162,7 +124,7 @@ begin
   if not RegQueryStringValue(HKEY_LOCAL_MACHINE, InstallerSubKeyName, TraintasticComponentsValueName, Result) then
     Result := '';
 end;
-  
+
 procedure ComponentsPageUpdateNextButtonEnabled;
 begin
   Wizardform.NextButton.Enabled := ClientAndServerRadioButton.Checked or ClientOnlyRadioButton.Checked;
@@ -172,7 +134,7 @@ procedure ComponentRadioButtonClick(Sender: TObject);
 begin
   ComponentsPageUpdateNextButtonEnabled;
 end;
-  
+
 procedure CurPageChanged(CurPageID: Integer);
 begin
   if CurPageID = ComponentsPage.ID then
@@ -188,7 +150,7 @@ begin
       RegWriteTraintasticComponents('ClientOnly');
   end;
   Result := True;
-end; 
+end;
 
 procedure InitializeWizard;
 var
@@ -198,7 +160,7 @@ begin
   Components := RegReadTraintasticComponents;
 
   ComponentsPage := CreateCustomPage(wpSelectComponents, SetupMessage(msgWizardSelectComponents), SetupMessage(msgSelectComponentsDesc));
-  
+
   ClientAndServerRadioButton := TNewRadioButton.Create(ComponentsPage);
   ClientAndServerRadioButton.Caption := ExpandConstant('{cm:ClientAndServer}');
   ClientAndServerRadioButton.Checked := (Components = 'ClientAndServer');
@@ -206,14 +168,14 @@ begin
   ClientAndServerRadioButton.Height := ScaleY(23);
   ClientAndServerRadioButton.Parent := ComponentsPage.Surface;
   ClientAndServerRadioButton.OnClick := @ComponentRadioButtonClick;
-  
+
   Lbl := TLabel.Create(ComponentsPage);
   Lbl.Caption := ExpandConstant('{cm:ClientAndServerDesc}');
   Lbl.Top := ClientAndServerRadioButton.Top + ClientAndServerRadioButton.Height;
   Lbl.Left := ScaleX(17);
   Lbl.Height := ScaleY(23);
   Lbl.Parent := ComponentsPage.Surface;
-  
+
   ClientOnlyRadioButton := TNewRadioButton.Create(ComponentsPage);
   ClientOnlyRadioButton.Caption := ExpandConstant('{cm:ClientOnly}');
   ClientOnlyRadioButton.Checked := (Components = 'ClientOnly');
@@ -222,9 +184,9 @@ begin
   ClientOnlyRadioButton.Height := ScaleY(23);
   ClientOnlyRadioButton.Parent := ComponentsPage.Surface;
   ClientOnlyRadioButton.OnClick := @ComponentRadioButtonClick;
-  
+
   Lbl := TLabel.Create(ComponentsPage);
-  Lbl.Caption := ExpandConstant('{cm:ClientOnlyDesc}');  
+  Lbl.Caption := ExpandConstant('{cm:ClientOnlyDesc}');
   Lbl.Top := ClientOnlyRadioButton.Top + ClientOnlyRadioButton.Height;
   Lbl.Left := ScaleX(17);
   Lbl.Height := ScaleY(23);

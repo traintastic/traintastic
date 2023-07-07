@@ -33,7 +33,7 @@ class BlockInputMap : public InputMap
   CLASS_ID("input_map.block")
 
   private:
-    unsigned int getItemId() const;
+    uint32_t getItemId() const;
 
   protected:
     void load(WorldLoader& loader, const nlohmann::json& data) final;

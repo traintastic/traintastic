@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -76,6 +76,13 @@ BlockInputMapItem::BlockInputMapItem(BlockInputMap& parent, uint32_t itemId) :
   m_interfaceItems.add(invert);
 }
 
+BlockInputMapItem::~BlockInputMapItem()
+{
+  assert(!input);
+  assert(!m_inputPropertyChanged.connected());
+  assert(!m_inputDestroying.connected());
+}
+
 std::string BlockInputMapItem::getObjectId() const
 {
   return m_parent.getObjectId().append(".").append(m_parent.items.name()).append(".item").append(std::to_string(m_itemId));
@@ -93,6 +100,12 @@ void BlockInputMapItem::loaded()
 
   if(input)
     connectInput(*input);
+}
+
+void BlockInputMapItem::destroying()
+{
+  input = nullptr;
+  InputMapItem::destroying();
 }
 
 void BlockInputMapItem::worldEvent(WorldState state, WorldEvent event)

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,10 +26,11 @@
 #include <cstdint>
 #include <vector>
 #include <memory>
+#include <span>
 #include "../../core/objectproperty.hpp"
 
 #ifdef interface
-  #undef interface // interface is defined in combaseapi.h
+#undef interface // interface is defined in combaseapi.h
 #endif
 
 class IdObject;
@@ -56,18 +57,34 @@ class DecoderController
     void destroying();
 
     DecoderVector::iterator findDecoder(const Decoder& decoder);
-    DecoderVector::iterator findDecoder(DecoderProtocol protocol, uint16_t address, bool dccLongAddress = false);
+    DecoderVector::iterator findDecoder(DecoderProtocol protocol, uint16_t address);
 
     /// \brief restore speed of all decoders that are not (emergency) stopped
     void restoreDecoderSpeed();
 
   public:
+    static constexpr std::pair<uint16_t, uint16_t> noAddressMinMax{std::numeric_limits<uint16_t>::max(), std::numeric_limits<uint16_t>::min()};
+
     ObjectProperty<DecoderList> decoders;
+
+    //! \brief Get supported protocols
+    //! \return Supported protocols, may not be empty and must be constant for the instance!
+    virtual std::span<const DecoderProtocol> decoderProtocols() const = 0;
+
+    //! \brief Get address range for given protocol
+    //! \param[in] protocol The decoder protocol
+    //! \return Address range or \c noAddressMinMax if address isn't supported for the given protocol
+    virtual std::pair<uint16_t, uint16_t> decoderAddressMinMax(DecoderProtocol protocol) const;
+
+    //! \brief Get speed step options for given protocol
+    //! \param[in] protocol The decoder protocol
+    //! \return Speed step options for the given protocol
+    virtual std::span<const uint8_t> decoderSpeedSteps(DecoderProtocol protocol) const;
 
     [[nodiscard]] bool addDecoder(Decoder& decoder);
     [[nodiscard]] bool removeDecoder(Decoder& decoder);
 
-    const std::shared_ptr<Decoder>& getDecoder(DecoderProtocol protocol, uint16_t address, bool dccLongAddress = false, bool fallbackToProtocolAuto = false);
+    const std::shared_ptr<Decoder>& getDecoder(DecoderProtocol protocol, uint16_t address);
 
     virtual void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) = 0;
 };

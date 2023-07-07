@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,7 +86,8 @@ int main(int argc, char* argv[])
   }
 #endif
 
-  Locale::instance = new Locale(getLocalePath() / "en-us.txt");
+  const auto localePath = getLocalePath();
+  Locale::instance = new Locale(localePath / "en-us.lang", new Locale(localePath / "neutral.lang"));
 
   if(enableConsoleLogger)
     Log::enableConsoleLogger();

@@ -86,7 +86,7 @@ jobs:
     # Windows only:
     - name: Install Qt
       if: startswith(matrix.config.os, 'windows')
-      uses: jurplel/install-qt-action@v2
+      uses: jurplel/install-qt-action@v3
       with:
         cached: ${{steps.cache-qt.outputs.cache-hit}}
 
@@ -384,6 +384,7 @@ jobs:
   build-data:
     name: shared data ${{matrix.config.name}}
     runs-on: ${{matrix.config.os}}
+    needs: [build-lang]
     strategy:
       fail-fast: false
       matrix:
@@ -412,6 +413,12 @@ jobs:
     - name: Checkout LFS objects
       run: git lfs checkout
 
+    - name: "Download artifact: lang"
+      uses: actions/download-artifact@v2
+      with:
+        name: traintastic-lang
+        path: ${{github.workspace}}/shared/translations
+
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/shared/build
 
@@ -429,6 +436,32 @@ jobs:
       with:
         name: traintastic-data-deb
         path: ${{github.workspace}}/shared/build/*.deb
+
+  build-lang:
+    name: manual
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: FranzDiebold/github-env-vars-action@v2
+
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        lfs: true
+        submodules: recursive
+
+    - name: Checkout LFS objects
+      run: git lfs checkout
+
+    - name: Build language files
+      working-directory: ${{github.workspace}}/shared/translations
+      run: python3 json2lang.py
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: traintastic-lang
+        path: ${{github.workspace}}/shared/translations/*.lang
 
   build-manual:
     name: manual
@@ -462,7 +495,7 @@ jobs:
   package-innosetup:
     name: package innosetup
     runs-on: windows-2019
-    needs: [build-client, build-server]
+    needs: [build-client, build-server, build-lang]
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -487,6 +520,12 @@ jobs:
       with:
         name: traintastic-server
         path: ${{github.workspace}}/server/build
+
+    - name: "Download artifact: lang"
+      uses: actions/download-artifact@v2
+      with:
+        name: traintastic-lang
+        path: ${{github.workspace}}/shared/translations
 
     - name: "Download artifact: manual"
       uses: actions/download-artifact@v2

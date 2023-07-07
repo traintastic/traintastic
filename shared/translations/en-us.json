@@ -1,0 +1,4226 @@
+[
+    {
+        "term": "board:delete_tile",
+        "definition": "Delete tile",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board:move_tile",
+        "definition": "Move tile",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board:resize_tile",
+        "definition": "Resize tile",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board:resize_to_contents",
+        "definition": "Resize to contents",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_settings.color_scheme:dark",
+        "definition": "Dark",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_settings.color_scheme:light",
+        "definition": "Light",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.misc.push_button:color",
+        "definition": "Color",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.block:assign_train",
+        "definition": "Assign train",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.block:flip_train",
+        "definition": "Flip train",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.block:input_map",
+        "definition": "Sensors",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.block:remove_train",
+        "definition": "Remove train",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.direction_control:state",
+        "definition": "State",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_a_to_b",
+        "definition": "Use: A \u2192 B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_b_to_a",
+        "definition": "Use: A \u2190 B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_both",
+        "definition": "Use: A \u21c4 B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_none",
+        "definition": "Use: A \ud83d\udec7 B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.link:link",
+        "definition": "Link",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.sensor:input",
+        "definition": "Input",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.sensor:invert",
+        "definition": "Invert",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.sensor:type",
+        "definition": "Type",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile:output_map",
+        "definition": "Outputs",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:cargo",
+        "definition": "Cargo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:developer",
+        "definition": "Developer",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:general",
+        "definition": "General",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:info",
+        "definition": "Info",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:log",
+        "definition": "Log",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:network",
+        "definition": "Network",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.misc.push_button",
+        "definition": "Push button",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.block",
+        "definition": "Block",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.bridge_45_left",
+        "definition": "Bridge 45\u00b0 (left)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.bridge_45_right",
+        "definition": "Bridge 45\u00b0 (right)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.bridge_90",
+        "definition": "Bridge 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.buffer_stop",
+        "definition": "Buffer stop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.cross_45",
+        "definition": "Crossover 45\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.cross_90",
+        "definition": "Crossover 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.curve_45",
+        "definition": "Curved track 45\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.curve_90",
+        "definition": "Curved track 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.decoupler",
+        "definition": "Decoupler",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.direction_control",
+        "definition": "Direction control",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.link",
+        "definition": "Link",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.one_way",
+        "definition": "One way",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.sensor",
+        "definition": "Sensor",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.signal_2_aspect",
+        "definition": "Signal (2 aspects)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.signal_3_aspect",
+        "definition": "Signal (3 aspects)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.straight",
+        "definition": "Straight track",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.tunnel",
+        "definition": "Tunnel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_3way",
+        "definition": "Turnout 3-way",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_doubleslip",
+        "definition": "Double slip",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_left_45",
+        "definition": "Turnout left 45\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_left_90",
+        "definition": "Turnout left 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_left_curved",
+        "definition": "Turnout left curved",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_right_45",
+        "definition": "Turnout right 45\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_right_90",
+        "definition": "Turnout right 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_right_curved",
+        "definition": "Turnout right curved",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_singleslip",
+        "definition": "Single slip",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_wye",
+        "definition": "Turnout wye",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:vehicle.rail.freight_wagon",
+        "definition": "Freight wagon",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:vehicle.rail.locomotive",
+        "definition": "Locomotive",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:vehicle.rail.multiple_unit",
+        "definition": "Multiple unit",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:vehicle.rail.tank_wagon",
+        "definition": "Tank wagon",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:day",
+        "definition": "Day",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:debug_log",
+        "definition": "Debug log",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:freeze",
+        "definition": "Freeze",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:hour",
+        "definition": "Hour",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:minute",
+        "definition": "Minute",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:month",
+        "definition": "Month",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:multiplier",
+        "definition": "Multiplier",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:year",
+        "definition": "Year",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:aqua",
+        "definition": "Aqua",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:black",
+        "definition": "Black",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:blue",
+        "definition": "Blue",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:fuchsia",
+        "definition": "Fuchsia",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:gray",
+        "definition": "Gray",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:green",
+        "definition": "Green",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:lime",
+        "definition": "Lime",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:maroon",
+        "definition": "Maroon",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:navy",
+        "definition": "Navy",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:olive",
+        "definition": "Olive",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:purple",
+        "definition": "Purple",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:red",
+        "definition": "Red",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:silver",
+        "definition": "Silver",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:teal",
+        "definition": "Teal",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:white",
+        "definition": "White",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:yellow",
+        "definition": "Yellow",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "dccplusplus_channel:dcc_accessory",
+        "definition": "DCC accessory",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "dccplusplus_channel:output",
+        "definition": "Output",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "dccplusplus_channel:turnout",
+        "definition": "Turnout",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "dccplusplus_settings:startup_delay",
+        "definition": "Startup delay",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "dccplusplus_settings:use_ex",
+        "definition": "Use DCC++EX commands",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder:functions",
+        "definition": "Functions",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder:long_address",
+        "definition": "DCC long address",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder:protocol",
+        "definition": "Protocol",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function:function",
+        "definition": "Function",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function:number",
+        "definition": "Number",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function:type",
+        "definition": "Type",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_function:generic",
+        "definition": "Generic",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_function:light",
+        "definition": "Light",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_function:mute",
+        "definition": "Mute",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_function:smoke",
+        "definition": "Smoke",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_function:sound",
+        "definition": "Sound",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_type:always_off",
+        "definition": "Always off",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_type:always_on",
+        "definition": "Always on",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_type:hold",
+        "definition": "Push 'n hold",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_type:momentary",
+        "definition": "Momentary",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_type:on_off",
+        "definition": "On\/Of",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_protocol:auto",
+        "definition": "Auto",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_protocol:custom",
+        "definition": "Custom",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoupler_state:activated",
+        "definition": "Activated",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoupler_state:deactivated",
+        "definition": "Deactivated",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "direction:forward",
+        "definition": "Forward",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "direction:reverse",
+        "definition": "Reverse",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "ecos_channel:ecos_detector",
+        "definition": "ECoS Detector",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:address",
+        "definition": "Address",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:channel",
+        "definition": "Channel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:command_station",
+        "definition": "Command station",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:debug_log_input",
+        "definition": "Log input changes",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:debug_log_output",
+        "definition": "Log output changes",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:debug_log_rx_tx",
+        "definition": "Log all communication",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:decoders",
+        "definition": "Decoders",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:identifications",
+        "definition": "Identifications",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:input_monitor",
+        "definition": "Input monitor",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:inputs",
+        "definition": "Inputs",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:interface",
+        "definition": "Interface",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:output_keyboard",
+        "definition": "Output keyboard",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:outputs",
+        "definition": "Outputs",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:speed_steps",
+        "definition": "Speed steps",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:throttles",
+        "definition": "Throttles",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hsi88:s88_left",
+        "definition": "S88 left",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hsi88:s88_middle",
+        "definition": "S88 middle",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hsi88:s88_right",
+        "definition": "S88 right",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "identification:opc_multi_sense_direction",
+        "definition": "OPC_MULTI_SENSE direction",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "input_list:bus",
+        "definition": "Bus",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "input_map_item.block:input",
+        "definition": "Input",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "input_map_item.block:invert",
+        "definition": "Invert",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "input_map_item.block:type",
+        "definition": "Type",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.ecos:ecos_detector",
+        "definition": "ECoS detector",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.hsi88:modules_left",
+        "definition": "Modules left",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.hsi88:modules_middle",
+        "definition": "Modules middle",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.hsi88:modules_right",
+        "definition": "Modules right",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.loconet:interface",
+        "definition": "Interface",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.xpressnet:interface",
+        "definition": "Interface",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.xpressnet:s88_module_count",
+        "definition": "S88 module count",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.xpressnet:s88_start_address",
+        "definition": "S88 start address",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.z21:firmware_version",
+        "definition": "Firmware version",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.z21:hardware_type",
+        "definition": "Hardware type",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.z21:serial_number",
+        "definition": "Serial number",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface:online",
+        "definition": "Online",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface:status",
+        "definition": "Status",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface:type",
+        "definition": "Type",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface_state:error",
+        "definition": "Error",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface_state:initializing",
+        "definition": "Initializing",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface_state:offline",
+        "definition": "Offline",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface_state:online",
+        "definition": "Online",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "ip:hostname",
+        "definition": "Hostname",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "ip:port",
+        "definition": "Port",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "language:de-de",
+        "definition": "German",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "language:en-us",
+        "definition": "English (US)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "language:it-it",
+        "definition": "Italian",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "language:nl-nl",
+        "definition": "Dutch",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list.train_vehicle:reverse",
+        "definition": "Reverse",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:add",
+        "definition": "Add",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:create",
+        "definition": "Create",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:delete",
+        "definition": "Delete",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:edit",
+        "definition": "Edit",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:move_down",
+        "definition": "Move down",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:move_up",
+        "definition": "Move up",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:remove",
+        "definition": "Remove",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:description",
+        "definition": "Description",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:lncv_programmer",
+        "definition": "LNCV programmer",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:module",
+        "definition": "Module",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:other_module",
+        "definition": "Other module",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:read",
+        "definition": "Read",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:reading_lncv_x",
+        "definition": "Reading LNCV %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:reading_lncv_x_failed",
+        "definition": "Reading LNCV %1 failed",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:sending_start",
+        "definition": "Sending start",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:start",
+        "definition": "Start",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:stop",
+        "definition": "Stop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:use_broadcast_address",
+        "definition": "Use broadcast address",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:value",
+        "definition": "Value",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:waiting_for_module_to_respond",
+        "definition": "Waiting for module to respond",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:write",
+        "definition": "Write",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:writing_lncv_x",
+        "definition": "Writing LNCV %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_command_station:custom",
+        "definition": "Custom",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_f9_f28:imm_packet",
+        "definition": "Direct (OPC_IMM_PACKET)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_f9_f28:uhlenbrock_extended",
+        "definition": "Uhlenbrock extended (OPC_A3, OPC_D4)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_fastclock:master",
+        "definition": "Master (Traintatic controls the clock)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_fastclock:off",
+        "definition": "Off",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_interface_type:serial",
+        "definition": "Serial",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_interface_type:tcp_binary",
+        "definition": "TCP binary",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_serial_interface:custom",
+        "definition": "Custom",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:command_station",
+        "definition": "Command station",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:echo_timeout",
+        "definition": "Echo timeout",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:fast_clock",
+        "definition": "Fast clock",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:fast_clock_sync_enabled",
+        "definition": "Fast clock sync enabled",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:fast_clock_sync_interval",
+        "definition": "Fast clock sync interval",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:locomotive_slots",
+        "definition": "Locomotive slots",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:pcap_output",
+        "definition": "PCAP output",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:response_timeout",
+        "definition": "Response timeout",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua.script:disabled",
+        "definition": "Disabled",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua.script:start",
+        "definition": "Start",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua.script:stop",
+        "definition": "Stop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua.script_list:start_all",
+        "definition": "Start all",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua.script_list:stop_all",
+        "definition": "Stop all",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua_script:state",
+        "definition": "State",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua_script_state:disabled",
+        "definition": "Disabled",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua_script_state:error",
+        "definition": "Error",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua_script_state:running",
+        "definition": "Running",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua_script_state:stopped",
+        "definition": "Stopped",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1001",
+        "definition": "Loading world failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1002",
+        "definition": "Creating client failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1003",
+        "definition": "Can't write to settings file (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1004",
+        "definition": "Reading world failed (%1) (%2)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1005",
+        "definition": "Saving world failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1006",
+        "definition": "Creating world backup failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1007",
+        "definition": "Creating world backup directory failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1008",
+        "definition": "Creating backup directory failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1009",
+        "definition": "Creating settings backup failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1010",
+        "definition": "Exporting world failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1011",
+        "definition": "Importing world failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1012",
+        "definition": "Unknown class '%1', can't recreate object '%2'",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1013",
+        "definition": "Can't load world saved with newer version, requires at least: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C2001",
+        "definition": "Address already used at #%1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C2004",
+        "definition": "Can't get free slot",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D1001",
+        "definition": "Resume %1 (multiplier: %2)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D1002",
+        "definition": "Tick %1 (error: %2us)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D1003",
+        "definition": "Freeze %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2001",
+        "definition": "TX: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2002",
+        "definition": "RX: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2003",
+        "definition": "Unknown xHeader 0x%1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2004",
+        "definition": "%1 TX: %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2005",
+        "definition": "%1 RX: %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2006",
+        "definition": "Unknown message: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2007",
+        "definition": "Input %1 = %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2008",
+        "definition": "Output %1 = %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2009",
+        "definition": "Slot %1 = %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2010",
+        "definition": "Slot %1 = Free",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1001",
+        "definition": "Invalid world UUID: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1002",
+        "definition": "World %1 doesn't exist",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1003",
+        "definition": "UDP receive error (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1004",
+        "definition": "TCP accept error (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1005",
+        "definition": "Socket shutdown failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1006",
+        "definition": "Socket write failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1007",
+        "definition": "Socket read failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1008",
+        "definition": "Socket acceptor cancel failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2001",
+        "definition": "Serial write failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2002",
+        "definition": "Serial read failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2003",
+        "definition": "Make address failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2004",
+        "definition": "Socket open failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2005",
+        "definition": "Socket connect failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2006",
+        "definition": "Socket bind failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2007",
+        "definition": "Socket write failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2008",
+        "definition": "Socket read failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2009",
+        "definition": "Socket receive failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2010",
+        "definition": "Serial port open failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2011",
+        "definition": "Socket send failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2012",
+        "definition": "Function number already in use",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2013",
+        "definition": "Serial port set baudrate failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2014",
+        "definition": "Serial port set data bits failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2015",
+        "definition": "Serial port set stop bits failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2016",
+        "definition": "Serial port set parity failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2017",
+        "definition": "Serial port set flow control failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2018",
+        "definition": "Timeout, no echo within %1ms",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2019",
+        "definition": "Timeout, no response within %1ms",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2020",
+        "definition": "Total number of modules may not exceed %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2021",
+        "definition": "Staring PCAP log failed: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E9001",
+        "definition": "%1 (During execution of %2 event handler)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1001",
+        "definition": "Opening TCP socket failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1002",
+        "definition": "TCP socket address reuse failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1003",
+        "definition": "Binding TCP socket failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1004",
+        "definition": "TCP socket listen failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1005",
+        "definition": "Opening UDP socket failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1006",
+        "definition": "UDP socket address reuse failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1007",
+        "definition": "Binding udp socket failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F9001",
+        "definition": "Creating Lua state failed",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F9002",
+        "definition": "Running script failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F9003",
+        "definition": "Calling function failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I1002",
+        "definition": "Settings file not found, using defaults",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I1003",
+        "definition": "Client connected",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I1004",
+        "definition": "Connection lost",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I1005",
+        "definition": "Building world index",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I2001",
+        "definition": "Unknown loco address: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I2002",
+        "definition": "Hardware type: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I2003",
+        "definition": "Firmware version: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I9001",
+        "definition": "Stopped script",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1001",
+        "definition": "Received signal: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1002",
+        "definition": "Created new world",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1003",
+        "definition": "Restaring",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1004",
+        "definition": "Shutting down",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1005",
+        "definition": "Discovery enabled",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1006",
+        "definition": "Discovery disabled",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1007",
+        "definition": "Listening at %1:%2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1008",
+        "definition": "Loaded settings",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1009",
+        "definition": "Saved settings",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1010",
+        "definition": "Edit mode: enabled",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1011",
+        "definition": "Edit mode: disabled",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1012",
+        "definition": "Communication: enabled",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1013",
+        "definition": "Communication: disabled",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1014",
+        "definition": "Power: on",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1015",
+        "definition": "Power: off",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1016",
+        "definition": "Running",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1017",
+        "definition": "Stopped",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1018",
+        "definition": "Mute: enabled",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1019",
+        "definition": "Mute: disabled",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1020",
+        "definition": "Smoke: enabled",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1021",
+        "definition": "Smoke: disabled",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1022",
+        "definition": "Saved world: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1023",
+        "definition": "Simulation: disabled",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1024",
+        "definition": "Simulation: enabled",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1025",
+        "definition": "Exported world successfully",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1026",
+        "definition": "Imported world successfully",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1027",
+        "definition": "Loaded world: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1028",
+        "definition": "Closed world",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2001",
+        "definition": "Simulation not supported",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2002",
+        "definition": "No response from LNCV module %1 with address %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2003",
+        "definition": "Stopped sending fast clock sync",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2004",
+        "definition": "Starting PCAP file log: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2005",
+        "definition": "Starting PCAP log pipe: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N3001",
+        "definition": "Assigned train %1 to block %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N3002",
+        "definition": "Removed train %1 from block %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N9001",
+        "definition": "Starting script",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W1001",
+        "definition": "Discovery disabled, only allowed on port %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W1002",
+        "definition": "Setting %1 doesnt exist",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W1003",
+        "definition": "Reading world %1 failed (libarchive error %2: %3)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2001",
+        "definition": "Received malformed data dropped %1 bytes",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2002",
+        "definition": "Command station doesn't support functions above F%1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2004",
+        "definition": "Input address %1 is invalid",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2005",
+        "definition": "Output address %1 is invalid",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2006",
+        "definition": "Command station does not support loco slot %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2007",
+        "definition": "Command station does not support the fast clock slot",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2018",
+        "definition": "Timeout, no echo within %1ms",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2019",
+        "definition": "Z21 broadcast flags do not match requested ones",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "object:id",
+        "definition": "Id",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "object:name",
+        "definition": "Name",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "object:notes",
+        "definition": "Notes",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "opc_multi_sense_direction:in_sensor_address",
+        "definition": "In sensor address",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "opc_multi_sense_direction:in_transponder_address",
+        "definition": "In transponder address (Bl\u00fccher GBM16XN)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "opc_multi_sense_direction:none",
+        "definition": "None",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_action:none",
+        "definition": "None",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_action:off",
+        "definition": "Off",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_action:on",
+        "definition": "On",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_action:pulse",
+        "definition": "Pulse",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_list:bus",
+        "definition": "Bus",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_map.decoupler:key",
+        "definition": "State",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_map.signal:key",
+        "definition": "Aspect",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_map.turnout:key",
+        "definition": "Position",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_map:use",
+        "definition": "Use",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "pcap_output:file",
+        "definition": "File",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "pcap_output:pipe",
+        "definition": "Pipe",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:connect",
+        "definition": "Connect",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:connect_to_server",
+        "definition": "Connect to server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:connected",
+        "definition": "Connected",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:connecting",
+        "definition": "Connecting",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:password",
+        "definition": "Password",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:server",
+        "definition": "Server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:username",
+        "definition": "Username",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.error:cant_read_from_file_x",
+        "definition": "Can't read from file: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.error:cant_write_to_file_x",
+        "definition": "Can't write to file: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.error:server_error_x",
+        "definition": "Server error %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:about",
+        "definition": "About",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:close_world",
+        "definition": "Close world",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:connect_to_server",
+        "definition": "Connect to server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:connection",
+        "definition": "Connection",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:disconnect_from_server",
+        "definition": "Disconnect from server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:export_world",
+        "definition": "Export world",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:file",
+        "definition": "File",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:fullscreen",
+        "definition": "Fullscreen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:hardware",
+        "definition": "Hardware",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:help",
+        "definition": "Help",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:import_world",
+        "definition": "Import world",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:load_world",
+        "definition": "Load world",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:new_world",
+        "definition": "New world",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:objects",
+        "definition": "Objects",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:power",
+        "definition": "Power",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:programming",
+        "definition": "Programming",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:quit",
+        "definition": "Quit",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:restart_server",
+        "definition": "Restart server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:restart_server_question",
+        "definition": "Are you sure you want to restart the server?",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:save_world",
+        "definition": "Save world",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:server",
+        "definition": "Server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:server_log",
+        "definition": "Server log",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:server_settings",
+        "definition": "Server settings",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:settings",
+        "definition": "Settings",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:shutdown_server",
+        "definition": "Shutdown server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:shutdown_server_question",
+        "definition": "Are you sure you want to shutdown the server?",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:toolbar",
+        "definition": "Toolbar",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:tools",
+        "definition": "Tools",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:view",
+        "definition": "View",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:world",
+        "definition": "World",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:world_properties",
+        "definition": "World properties",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.message_box:no",
+        "definition": "No",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.message_box:yes",
+        "definition": "Yes",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.object_select_list_dialog:cancel",
+        "definition": "Cancel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.object_select_list_dialog:ok",
+        "definition": "Ok",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.object_select_list_dialog:select_object",
+        "definition": "Select object",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.board:color_scheme",
+        "definition": "Color scheme",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.board:show_block_sensor_states",
+        "definition": "Show block sensor states",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.board:turnout_draw_state",
+        "definition": "Draw turnout state",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.developer:dont_load_fallback_language",
+        "definition": "Don't load fallback language",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.developer:log_missing_strings",
+        "definition": "Log missing translations",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.developer:log_missing_strings_dir",
+        "definition": "Missing translations log directory",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.general:language",
+        "definition": "Language",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.statusbar:show_clock",
+        "definition": "Show clock",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.statusbar:show_statuses",
+        "definition": "Show statuses",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings:board",
+        "definition": "Board",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings:developer",
+        "definition": "Developer",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings:general",
+        "definition": "General",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings:statusbar",
+        "definition": "Status bar",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.world_list_dialog:cancel",
+        "definition": "Cancel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.world_list_dialog:load",
+        "definition": "Load",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.world_list_dialog:world_list",
+        "definition": "World list",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:board_properties",
+        "definition": "Board properties",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:export_world_failed",
+        "definition": "Export world failed",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:grid",
+        "definition": "Grid",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:grid_dot",
+        "definition": "Dot",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:grid_line",
+        "definition": "Line",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:grid_none",
+        "definition": "None",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:import_world_failed",
+        "definition": "Import world failed",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:next",
+        "definition": "Next",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:previous",
+        "definition": "Previous",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:toggle_mute",
+        "definition": "Toggle mute",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:toggle_offline_online",
+        "definition": "Toggle connection",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:toggle_power",
+        "definition": "Toggle power",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:toggle_smoke",
+        "definition": "Toggle smoke",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:traintastic_world",
+        "definition": "Traintastic world",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:zoom_in",
+        "definition": "Zoom in",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:zoom_out",
+        "definition": "Zoom out",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "rail_vehicle_list:type",
+        "definition": "Type",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "sensor_type:occupy_detector",
+        "definition": "Occupy detector",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "sensor_type:reed_switch",
+        "definition": "Reed switch",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial:baudrate",
+        "definition": "Baudrate",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial:device",
+        "definition": "Device",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial:flow_control",
+        "definition": "Flow control",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial:port",
+        "definition": "Port",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial_flow_control:hardware",
+        "definition": "Hardware",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial_flow_control:none",
+        "definition": "None",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "server_log:code",
+        "definition": "Code",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "server_log:message",
+        "definition": "Message",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "server_log:object",
+        "definition": "Object",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "server_log:time",
+        "definition": "Time",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:allow_client_server_restart",
+        "definition": "Allow client server restart",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:allow_client_server_shutdown",
+        "definition": "Allow client server shutdown",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:auto_save_world_on_exit",
+        "definition": "Auto save world on exit",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:discoverable",
+        "definition": "Discoverable",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:enable_file_logger",
+        "definition": "Enable file logger",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:localhost_only",
+        "definition": "Localhost only",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:memory_logger_size",
+        "definition": "Memory logger size",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:port",
+        "definition": "Port",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:save_world_uncompressed",
+        "definition": "Save world uncompressed",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect:proceed",
+        "definition": "Proceed",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect:proceed_reduced_speed",
+        "definition": "Proceed, reduced speed",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect:stop",
+        "definition": "Stop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "throttle_object_list:throttle",
+        "definition": "Throttle",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:active",
+        "definition": "Active",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:block",
+        "definition": "Block",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:lob",
+        "definition": "Length over buffers",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:mode",
+        "definition": "Mode",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:override_length",
+        "definition": "Override length",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:override_weight",
+        "definition": "Override weight",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:speed_max",
+        "definition": "Maximum speed",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:vehicles",
+        "definition": "Vehicles",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:weight",
+        "definition": "Weight",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "traintastic_diy_interface_type:serial",
+        "definition": "Serial",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "traintastic_diy_settings:debug_log_heartbeat",
+        "definition": "Log heartbeat communication",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "traintastic_diy_settings:heartbeat_timeout",
+        "definition": "Heartbeat timeout",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "turnout_position:left",
+        "definition": "Left",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "turnout_position:right",
+        "definition": "Right",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "turnout_position:straight",
+        "definition": "Straight",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail.freight_wagon:cargo_weight",
+        "definition": "Cargo weight",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail.tank_wagon:cargo_volume",
+        "definition": "Cargo volume",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:cargo_capacity",
+        "definition": "Cargo capacity",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:cargo_loaded",
+        "definition": "Cargo loaded",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:decoder",
+        "definition": "Decoder",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:lob",
+        "definition": "LOB",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:power",
+        "definition": "Power",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:speed_max",
+        "definition": "Maximum speed",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:total_weight",
+        "definition": "Total weight",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:train",
+        "definition": "Train",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:weight",
+        "definition": "Weight",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:boards",
+        "definition": "Boards",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:clock",
+        "definition": "Clock",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:decoders",
+        "definition": "Decoders",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:edit",
+        "definition": "Edit world",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:inputs",
+        "definition": "Inputs",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:interfaces",
+        "definition": "Interfaces",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:lua_scripts",
+        "definition": "Lua scripts",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:mute",
+        "definition": "Mute",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:no_smoke",
+        "definition": "No smoke",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:offline",
+        "definition": "Disconnect",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:online",
+        "definition": "Connect",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:outputs",
+        "definition": "Outputs",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:power_off",
+        "definition": "Power off",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:power_on",
+        "definition": "Power on",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:rail_vehicles",
+        "definition": "Rail vehicles",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:run",
+        "definition": "Run",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:scale",
+        "definition": "Scale",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:scale_ratio",
+        "definition": "Scale ratio",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:simulation",
+        "definition": "Simulation",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:stop",
+        "definition": "Stop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:trains",
+        "definition": "Trains",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:uuid",
+        "definition": "UUID",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world_scale:custom",
+        "definition": "Custom",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_command_station:custom",
+        "definition": "Custom",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_interface_type:network",
+        "definition": "Network",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_interface_type:serial",
+        "definition": "Serial",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_serial_interface_type:custom",
+        "definition": "Custom",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_settings:use_emergency_stop_locomotive_command",
+        "definition": "Use short emergency stop locomotive command",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_settings:use_roco_f13_f20_command",
+        "definition": "Use Roco F13-F20 command",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "z21_channel:rbus",
+        "definition": "R-Bus",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "z21_settings.server:allow_emergency_stop",
+        "definition": "Allow emergency stop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "z21_settings.server:allow_track_power_off",
+        "definition": "Allow power off",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "z21_settings.server:allow_track_power_on_release_emergency_stop",
+        "definition": "Allow power on\/emergency stop release",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train_mode:manual_protected",
+        "definition": "Manual (protected)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train_mode:manual_unprotected",
+        "definition": "Manual (unprotected)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train_mode:automatic",
+        "definition": "Automatic",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list.train_vehicle:move",
+        "definition": "Move",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "protocol.loconet:command_station",
+        "definition": "Command station",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:select_folder",
+        "definition": "Select folder",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:listen_only",
+        "definition": "Listen only",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2006",
+        "definition": "Listen only mode: activated",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2007",
+        "definition": "Listen only mode: deactivated",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "status.lua:x_running",
+        "definition": "%1 running",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "status.lua:x_in_error",
+        "definition": "%1 in error",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_protocol:dcc_short",
+        "definition": "DCC (Short address)"
+    },
+    {
+        "term": "decoder_protocol:dcc_long",
+        "definition": "DCC (Long address)"
+    },
+    {
+        "term": "decoder_protocol:motorola",
+        "definition": "Motorola"
+    },
+    {
+        "term": "decoder_protocol:selectrix",
+        "definition": "Selectrix"
+    },
+    {
+        "term": "message:F1008",
+        "definition": "Eventloop crashed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings:restart_required",
+        "definition": "Restart required",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.general:language_changed_restart_required",
+        "definition": "Traintastic client must be restarted for the language change to take effect.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "traintastic_diy_interface_type:network_tcp",
+        "definition": "Network (TCP)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    }
+]

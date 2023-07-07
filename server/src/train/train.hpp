@@ -25,12 +25,17 @@
 
 #include "../core/idobject.hpp"
 #include <boost/asio/steady_timer.hpp>
+#include <traintastic/enum/trainmode.hpp>
+#include "../core/method.hpp"
+#include "../core/objectproperty.hpp"
+#include "../core/objectvectorproperty.hpp"
 #include "../core/lengthproperty.hpp"
 #include "../core/speedproperty.hpp"
 #include "../core/weightproperty.hpp"
 #include "../enum/direction.hpp"
-#include "trainvehiclelist.hpp"
 
+class TrainVehicleList;
+class TrainBlockStatus;
 class PoweredRailVehicle;
 
 class Train : public IdObject
@@ -69,7 +74,7 @@ class Train : public IdObject
 
   public:
     CLASS_ID("train")
-    CREATE(Train)
+    CREATE_DEF(Train)
 
     Property<std::string> name;
     LengthProperty lob;
@@ -86,6 +91,12 @@ class Train : public IdObject
     ObjectProperty<TrainVehicleList> vehicles;
     Property<bool> powered;
     Property<bool> active;
+    Property<TrainMode> mode;
+
+    //! \brief List of block status the train is in
+    //! Index 0 is the block where the head of the train is.
+    //! If the train changes direction this list will be reversed.
+    ObjectVectorProperty<TrainBlockStatus> blocks;
     Property<std::string> notes;
 
     Train(World& world, std::string_view _id);

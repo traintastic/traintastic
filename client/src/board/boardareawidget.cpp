@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@
 #include "getboardcolorscheme.hpp"
 #include "tilepainter.hpp"
 #include "../network/board.hpp"
+#include "../network/object/blockrailtile.hpp"
 #include "../network/abstractproperty.hpp"
 #include "../network/abstractvectorproperty.hpp"
 #include "../utils/rectf.hpp"
@@ -101,22 +102,24 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
 {
   const TileLocation l{x, y};
 
+  auto handler =
+    [this, l]()
+    {
+      try
+      {
+        const TileData& tileData = m_board.board().tileData().at(l);
+        update(updateTileRect(l.x - boardLeft(), l.y - boardTop(), tileData.width(), tileData.height(), getTileSize()));
+      }
+      catch(...)
+      {
+      }
+    };
+
   auto tryConnect =
-    [this, l, &object](const QString& name)
+    [this, handler, &object](const QString& name)
     {
       if(auto* property = dynamic_cast<BaseProperty*>(object->getInterfaceItem(name)))
-        connect(property, &BaseProperty::valueChanged, this,
-          [this, l]()
-          {
-            try
-            {
-              const TileData& tileData = m_board.board().tileData().at(l);
-              update(updateTileRect(l.x - boardLeft(), l.y - boardTop(), tileData.width(), tileData.height(), getTileSize()));
-            }
-            catch(...)
-            {
-            }
-          });
+        connect(property, &BaseProperty::valueChanged, this, handler);
     };
 
   switch(m_board.board().getTileId(l))
@@ -146,8 +149,11 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
       break;
 
     case TileId::RailBlock:
+      tryConnect("name");
       tryConnect("state");
       tryConnect("sensor_states");
+      if(auto* block = dynamic_cast<BlockRailTile*>(object.get())) /*[[likely]]*/
+        connect(block, &BlockRailTile::trainsChanged, this, handler);
       break;
 
     case TileId::PushButton:
@@ -279,28 +285,6 @@ TurnoutPosition BoardAreaWidget::getTurnoutPosition(const TileLocation& l) const
     if(const auto* p = object->getProperty("position"))
       return p->toEnum<TurnoutPosition>();
   return TurnoutPosition::Unknown;
-}
-
-BlockState BoardAreaWidget::getBlockState(const TileLocation& l) const
-{
-  if(ObjectPtr object = m_board.board().getTileObject(l))
-    if(const auto* p = object->getProperty("state"))
-      return p->toEnum<BlockState>();
-  return BlockState::Unknown;
-}
-
-std::vector<SensorState> BoardAreaWidget::getBlockSensorStates(const TileLocation& l) const
-{
-  if(ObjectPtr object = m_board.board().getTileObject(l))
-    if(const auto* p = object->getVectorProperty("sensor_states"))
-    {
-      const int size = p->size();
-      std::vector<SensorState> sensorStates(static_cast<size_t>(size));
-      for(int i = 0; i < size; i++)
-        sensorStates[i] = p->getEnum<SensorState>(i);
-      return sensorStates;
-    }
-  return {};
 }
 
 SensorState BoardAreaWidget::getSensorState(const TileLocation& l) const
@@ -461,7 +445,6 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 {
   assert(m_colorScheme);
 
-  const bool showBlockSensorStates = BoardSettings::instance().showBlockSensorStates;
   const QColor backgroundColor50{0x10, 0x10, 0x10, 0x80};
   const QColor backgroundColorError50{0xff, 0x00, 0x00, 0x80};
   const QColor gridColor{0x40, 0x40, 0x40};
@@ -561,7 +544,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           break;
 
         case TileId::RailBlock:
-          tilePainter.drawBlock(id, r, a, getBlockState(it.first), showBlockSensorStates ? getBlockSensorStates(it.first) : std::vector<SensorState>());
+          tilePainter.drawBlock(id, r, a, m_board.board().getTileObject(it.first));
           break;
 
         case TileId::RailDirectionControl:

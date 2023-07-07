@@ -1,0 +1,4210 @@
+[
+    {
+        "term": "board:delete_tile",
+        "definition": "Verwijder tegel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board:move_tile",
+        "definition": "Verplaats tegel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board:resize_tile",
+        "definition": "Tegel formaat aanpassen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board:resize_to_contents",
+        "definition": "Formaat naar inhoud aanpassen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_settings.color_scheme:dark",
+        "definition": "Donker",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_settings.color_scheme:light",
+        "definition": "Licht",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.misc.push_button:color",
+        "definition": "Kleur",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.block:assign_train",
+        "definition": "Trein toewijzen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.block:flip_train",
+        "definition": "Flip trein",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.block:input_map",
+        "definition": "Sensoren",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.block:remove_train",
+        "definition": "Verwijder trein",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.direction_control:state",
+        "definition": "Stand",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_a_to_b",
+        "definition": "Gebruik: A \u2192 B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_b_to_a",
+        "definition": "Gebruik: A \u2190 B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_both",
+        "definition": "Gebruik: A \u21c4 B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_none",
+        "definition": "Gebruik: A \ud83d\udec7 B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.link:link",
+        "definition": "Link",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.sensor:input",
+        "definition": "Ingang",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.sensor:invert",
+        "definition": "Omdraaien",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.sensor:type",
+        "definition": "Type",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile:output_map",
+        "definition": "Uitgangen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:cargo",
+        "definition": "Cargo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:developer",
+        "definition": "Ontwikkelaar",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:general",
+        "definition": "Algemeen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:info",
+        "definition": "Informatie",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:log",
+        "definition": "Log",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "category:network",
+        "definition": "Netwerk",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.misc.push_button",
+        "definition": "Drukknop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.block",
+        "definition": "Blok",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.bridge_45_left",
+        "definition": "Brug 45\u00b0 (links)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.bridge_45_right",
+        "definition": "Brug 45\u00b0 (rechts)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.bridge_90",
+        "definition": "Brug 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.buffer_stop",
+        "definition": "Stootjuk",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.cross_45",
+        "definition": "Kruising 45\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.cross_90",
+        "definition": "Kruising 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.curve_45",
+        "definition": "Bocht 45\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.curve_90",
+        "definition": "Bocht 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.decoupler",
+        "definition": "Ontkoppelaar",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.direction_control",
+        "definition": "Richting besturing",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.link",
+        "definition": "Link",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.one_way",
+        "definition": "Eenrichting",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.sensor",
+        "definition": "Sensor",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.signal_2_aspect",
+        "definition": "Sein (2 standen)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.signal_3_aspect",
+        "definition": "Sein (3 standen)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.straight",
+        "definition": "Recht",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.tunnel",
+        "definition": "Tunnel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_3way",
+        "definition": "Driewegwissel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_doubleslip",
+        "definition": "Engelse wissel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_left_45",
+        "definition": "Wissel links 45\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_left_90",
+        "definition": "Wissel links 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_left_curved",
+        "definition": "Wissel links gebogen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_right_45",
+        "definition": "Wissel rechts 45\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_right_90",
+        "definition": "Wissel rechts 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_right_curved",
+        "definition": "Wissel rechts gebogen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_singleslip",
+        "definition": "Half engelse wissel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_wye",
+        "definition": "Y-wissel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:vehicle.rail.freight_wagon",
+        "definition": "Goederenwagon",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:vehicle.rail.locomotive",
+        "definition": "Locomotief",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:vehicle.rail.multiple_unit",
+        "definition": "Meervoudige eenheid",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:vehicle.rail.tank_wagon",
+        "definition": "Ketelwagen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:day",
+        "definition": "Dag",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:debug_log",
+        "definition": "Debug log",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:freeze",
+        "definition": "Bevriezen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:hour",
+        "definition": "Uur",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:minute",
+        "definition": "Minuut",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:month",
+        "definition": "Maand",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:multiplier",
+        "definition": "Vermenigvuldiger",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "clock:year",
+        "definition": "Jaar",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:aqua",
+        "definition": "Aqua",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:black",
+        "definition": "Zwart",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:blue",
+        "definition": "Blauw",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:fuchsia",
+        "definition": "Fuchsia",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:gray",
+        "definition": "Grijs",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:green",
+        "definition": "Groen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:lime",
+        "definition": "Limoen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:maroon",
+        "definition": "Kastanjebruine",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:navy",
+        "definition": "Marine blauw",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:olive",
+        "definition": "Olijf",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:purple",
+        "definition": "Paars",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:red",
+        "definition": "Rood",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:silver",
+        "definition": "Zilver",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:teal",
+        "definition": "Teal",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:white",
+        "definition": "Wit",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "color:yellow",
+        "definition": "Geel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "dccplusplus_channel:dcc_accessory",
+        "definition": "DCC accesoire",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "dccplusplus_channel:output",
+        "definition": "Uitgang",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "dccplusplus_channel:turnout",
+        "definition": "Wissel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "dccplusplus_settings:startup_delay",
+        "definition": "Opstart vertraging",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "dccplusplus_settings:use_ex",
+        "definition": "Gebruik DCC++EX commando's",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder:functions",
+        "definition": "Functies",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder:long_address",
+        "definition": "Lang DCC adres",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder:protocol",
+        "definition": "Protocol",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function:function",
+        "definition": "Functie",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function:number",
+        "definition": "Nummer",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function:type",
+        "definition": "Type",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_function:generic",
+        "definition": "Algemeen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_function:light",
+        "definition": "Licht",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_function:mute",
+        "definition": "Mute",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_function:smoke",
+        "definition": "Rook",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_function:sound",
+        "definition": "Geluid",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_type:always_off",
+        "definition": "Altijd uit",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_type:always_on",
+        "definition": "Altijd aan",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_type:hold",
+        "definition": "Indrukken en vasthouden",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_type:momentary",
+        "definition": "Druk",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_function_type:on_off",
+        "definition": "Aan\/Uit",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_protocol:auto",
+        "definition": "Automatische",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_protocol:custom",
+        "definition": "Aangepast",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoupler_state:activated",
+        "definition": "Geactiveerd",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoupler_state:deactivated",
+        "definition": "Gedeactiveerd",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "direction:forward",
+        "definition": "Vooruit",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "direction:reverse",
+        "definition": "Achteruit",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "ecos_channel:ecos_detector",
+        "definition": "ECoS Detector",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:address",
+        "definition": "Adres",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:channel",
+        "definition": "Kanaal",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:command_station",
+        "definition": "Centrale",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:debug_log_input",
+        "definition": "Log ingang veranderingen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:debug_log_output",
+        "definition": "Log uitgang veranderingen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:debug_log_rx_tx",
+        "definition": "Log alle communicatie",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:decoders",
+        "definition": "Decoders",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:identifications",
+        "definition": "Identificatie",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:input_monitor",
+        "definition": "Ingang monitor",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:inputs",
+        "definition": "Ingangen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:interface",
+        "definition": "Interface",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:output_keyboard",
+        "definition": "Uitgang toetsenbord",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:outputs",
+        "definition": "Uitgangen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:speed_steps",
+        "definition": "Snelheid stappen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hardware:throttles",
+        "definition": "Regelaars",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hsi88:s88_left",
+        "definition": "S88 links",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hsi88:s88_middle",
+        "definition": "S88 midden",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "hsi88:s88_right",
+        "definition": "S88 rechts",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "identification:opc_multi_sense_direction",
+        "definition": "OPC_MULTI_SENSE richting",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "input_list:bus",
+        "definition": "Bus",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "input_map_item.block:input",
+        "definition": "Ingang",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "input_map_item.block:invert",
+        "definition": "Omdraaien",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "input_map_item.block:type",
+        "definition": "Type",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.ecos:ecos_detector",
+        "definition": "ECoS detector",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.hsi88:modules_left",
+        "definition": "Modules links",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.hsi88:modules_middle",
+        "definition": "Modulles midden",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.hsi88:modules_right",
+        "definition": "Modules rechts",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.loconet:interface",
+        "definition": "Interface",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.xpressnet:interface",
+        "definition": "Interface",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.xpressnet:s88_module_count",
+        "definition": "Aantal S88 modules",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.xpressnet:s88_start_address",
+        "definition": "S88 start adress",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.z21:firmware_version",
+        "definition": "Firmware versie",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.z21:hardware_type",
+        "definition": "Hardware type",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.z21:serial_number",
+        "definition": "Serienummer",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface:online",
+        "definition": "Online",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface:status",
+        "definition": "Status",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface:type",
+        "definition": "Type",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface_state:error",
+        "definition": "Fout",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface_state:initializing",
+        "definition": "Initialiseren",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface_state:offline",
+        "definition": "Offline",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface_state:online",
+        "definition": "Online",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "ip:hostname",
+        "definition": "Hostnaam",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "ip:port",
+        "definition": "Poort",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "language:de-de",
+        "definition": "Duits (Duitsland)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "language:en-us",
+        "definition": "Engels (VS)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "language:it-it",
+        "definition": "Italiaans (Itali\u00eb)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "language:nl-nl",
+        "definition": "Nederlands (Nederland)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list.train_vehicle:reverse",
+        "definition": "Omgekeerd",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:add",
+        "definition": "Toevoegen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:create",
+        "definition": "Maak",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:delete",
+        "definition": "Verwijder",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:edit",
+        "definition": "Bewerken",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:move_down",
+        "definition": "Omlaag verplaatsen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:move_up",
+        "definition": "Omhoog verplaatsen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list:remove",
+        "definition": "Verwijderen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:description",
+        "definition": "Beschrijving",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:lncv_programmer",
+        "definition": "LNCV programmeren",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:module",
+        "definition": "Module",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:other_module",
+        "definition": "Andere module",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:read",
+        "definition": "Lezen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:reading_lncv_x",
+        "definition": "LNCV %1 lezen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:reading_lncv_x_failed",
+        "definition": "LNCV %1 lezen mislukt",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:sending_start",
+        "definition": "Start verzenden",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:start",
+        "definition": "Start",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:stop",
+        "definition": "Stop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:use_broadcast_address",
+        "definition": "Gebruik adres zoeken",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:value",
+        "definition": "Waarde",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:waiting_for_module_to_respond",
+        "definition": "Wachten op antwoord van de module",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:write",
+        "definition": "Schrijf",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lncv_programmer:writing_lncv_x",
+        "definition": "LNCV %1 schrijven",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_command_station:custom",
+        "definition": "Anders",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_f9_f28:imm_packet",
+        "definition": "Direct (OPC_IMM_PACKET)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_f9_f28:uhlenbrock_extended",
+        "definition": "Uhlenbrock uitbereiding (OPC_A3, OPC_D4)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_fastclock:master",
+        "definition": "Master (Traintatic stuurt de klok)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_fastclock:off",
+        "definition": "Uit",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_interface_type:serial",
+        "definition": "Serieel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_interface_type:tcp_binary",
+        "definition": "TCP binear",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_serial_interface:custom",
+        "definition": "Anders",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:command_station",
+        "definition": "Centrale",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:echo_timeout",
+        "definition": "Echo time-out",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:fast_clock",
+        "definition": "Fast clock",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:fast_clock_sync_enabled",
+        "definition": "Snelle kloksynchronisatie ingeschakeld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:fast_clock_sync_interval",
+        "definition": "Snelle kloksynchronisatie-interval",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:locomotive_slots",
+        "definition": "Locomotief slots",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:pcap_output",
+        "definition": "PCAP-uitgang",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:response_timeout",
+        "definition": "Antwoord time-out",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua.script:disabled",
+        "definition": "Uitgeschakeld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua.script:start",
+        "definition": "Start",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua.script:stop",
+        "definition": "Stop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua.script_list:start_all",
+        "definition": "Start alle",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua.script_list:stop_all",
+        "definition": "Stop alle",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua_script:state",
+        "definition": "Status",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua_script_state:disabled",
+        "definition": "Uitgeschakeld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua_script_state:error",
+        "definition": "Fout",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua_script_state:running",
+        "definition": "Actief",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "lua_script_state:stopped",
+        "definition": "Gestopt",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1001",
+        "definition": "Wereld laden mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1002",
+        "definition": "Aanmaken client mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1003",
+        "definition": "Kan niet schrijven naar instellingen bestand (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1004",
+        "definition": "Wereld laden is mislukt (%1) (%2)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1005",
+        "definition": "Wereld opslaan is mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1006",
+        "definition": "Aanmaken wereld reserve kopie is mislukt(%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1007",
+        "definition": "Aanmaken wereld reserve kopie map is mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1008",
+        "definition": "Aanmaken reserve kopie map is mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1009",
+        "definition": "Het maken van een back-up van instellingen is mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1010",
+        "definition": "Wereld exporteren mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1011",
+        "definition": "Wereld importeren mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1012",
+        "definition": "Klasse '%1' is onbekend, kan object '%2' niet maken",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1013",
+        "definition": "Wereld kan niet geladen worden, de wereld is opgeslagen met een nieuwere versie, minimaal %1 vereist",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C2001",
+        "definition": "Adres is al in gebruikt door #%1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C2004",
+        "definition": "Kan geen gratis slot krijgen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D1001",
+        "definition": "Hervatten %1 (vermenigvuldiger: %2)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D1002",
+        "definition": "Tik %1 (fout: %2us)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D1003",
+        "definition": "Bevries %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2001",
+        "definition": "TX: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2002",
+        "definition": "RX: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2003",
+        "definition": "Onbekende xHeader 0x%1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2004",
+        "definition": "%1 TX: %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2005",
+        "definition": "%1 RX: %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2006",
+        "definition": "Onbekend bericht: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2007",
+        "definition": "Ingang %1 = %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2008",
+        "definition": "Uitgang %1 = %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2009",
+        "definition": "Slot %1 = %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:D2010",
+        "definition": "Slot %1 = Vrij",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1001",
+        "definition": "Wereld UUID ongeldig: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1002",
+        "definition": "Wereld %1 bestaat niet",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1003",
+        "definition": "UDP ontvangst fout (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1004",
+        "definition": "TCP accepteert fout (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1005",
+        "definition": "Socket shutdown mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1006",
+        "definition": "Socket schrijven mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1007",
+        "definition": "Socket lezen mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E1008",
+        "definition": "Socket acceptor annuleren is mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2001",
+        "definition": "Serieel schrijven mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2002",
+        "definition": "Serieel lezen mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2003",
+        "definition": "Adres maken mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2004",
+        "definition": "Socket open mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2005",
+        "definition": "Socket connect mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2006",
+        "definition": "Socket bind mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2007",
+        "definition": "Socket schrijven mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2008",
+        "definition": "Socket lezen mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2009",
+        "definition": "Socket ontvangst mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2010",
+        "definition": "Seri\u00eble poort open mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2011",
+        "definition": "Socket verzenden mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2012",
+        "definition": "Functienummer reeds in gebruik",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2013",
+        "definition": "Seri\u00eble poort ingesteld baudrate mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2014",
+        "definition": "Serial port set data bits failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2015",
+        "definition": "Serial port set stop bits failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2016",
+        "definition": "Serial port set parity failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2017",
+        "definition": "Serial port set flow control failed (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2018",
+        "definition": "Time-out, geen echo binnen %1ms",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2019",
+        "definition": "Time-out, geen reactie binnen %1ms",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2020",
+        "definition": "Het totale aantal modules mag niet groter zijn dan %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2021",
+        "definition": "Staring PCAP log mislukt: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E9001",
+        "definition": "%1 (Tijdens de uitvoering van %2 event handler)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1001",
+        "definition": "Het openen van TCP socket is mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1002",
+        "definition": "TCP socket adres hergebruik mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1003",
+        "definition": "Binding TCP socket mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1004",
+        "definition": "TCP socket luisteren is mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1005",
+        "definition": "Het openen van UDP socket is mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1006",
+        "definition": "UDP socket adres hergebruik mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1007",
+        "definition": "Bindende udp socket mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F9001",
+        "definition": "Aanmaken Lua staat mislukt",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F9002",
+        "definition": "Het uitvoeren van het script is mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F9003",
+        "definition": "Aanroepende functie is mislukt (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I1002",
+        "definition": "Instellingen bestand niet gevonden, standaard instellingen worden gebruikt",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I1003",
+        "definition": "Klant aangesloten",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I1004",
+        "definition": "Verbinding verbroken",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I1005",
+        "definition": "Bouw wereld index",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I2001",
+        "definition": "Onbekend locomotief adres: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I2002",
+        "definition": "Hardware type: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I2003",
+        "definition": "Firmware verie: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:I9001",
+        "definition": "Script gestopt",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1001",
+        "definition": "Ontvangen signaal: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1002",
+        "definition": "Nieuwe wereld aangemaakt",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1003",
+        "definition": "Herstarten",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1004",
+        "definition": "Afsluiten",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1005",
+        "definition": "Ontdekking ingeschakeld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1006",
+        "definition": "Ontdekking uitgeschakeld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1007",
+        "definition": "Luisteren naar %1:%2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1008",
+        "definition": "Instellingen geladen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1009",
+        "definition": "Instellingen opgeslagen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1010",
+        "definition": "Bewerkingsmodus: ingeschakeld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1011",
+        "definition": "Bewerkingsmodus: uitgeschakeld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1012",
+        "definition": "Communicatie: aan",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1013",
+        "definition": "Communicatie: uit",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1014",
+        "definition": "Vermogen: aan",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1015",
+        "definition": "Vermogen: uit",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1016",
+        "definition": "Running",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1017",
+        "definition": "Gestopt",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1018",
+        "definition": "Mute: aan",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1019",
+        "definition": "Mute: uit",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1020",
+        "definition": "Rook: aan",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1021",
+        "definition": "Rook: uit",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1022",
+        "definition": "Wereld opgeslagen: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1023",
+        "definition": "Simulatie: uitgeschakeld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1024",
+        "definition": "Simulatie: actief",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1025",
+        "definition": "Wereld succesvol geexporteerd",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1026",
+        "definition": "Wereld succevol geimporteerd",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1027",
+        "definition": "Geladen wereld: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N1028",
+        "definition": "Gesloten wereld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2001",
+        "definition": "Simulatie wordt niet ondersteund",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2002",
+        "definition": "Geen antwoord van LNCV module %1 met adres %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2003",
+        "definition": "Gestopt met verzenden van fast clock sync",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2004",
+        "definition": "Starten van PCAP bestand log: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2005",
+        "definition": "Start PCAP log pipe: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N3001",
+        "definition": "Trein %1 toegewezen aan blok %2",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N3002",
+        "definition": "Trein %1 uit blok %2 verwijderd",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N9001",
+        "definition": "Script gestart",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W1001",
+        "definition": "Ontdekking uitgeschakeld, alleen toegestaan op poort %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W1002",
+        "definition": "Instelling %1 bestaat niet",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W1003",
+        "definition": "Inlezen wereld %1 is mislukt (libarchive fout %2: %3)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2001",
+        "definition": "Ongeldige data ontvangen, %1 bytes weggegooid",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2002",
+        "definition": "Commandopost ondersteunt geen functies boven F%1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2004",
+        "definition": "Ingang adres %1 is ongeldig",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2005",
+        "definition": "Uitgang adres %1 is ongeldig",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2006",
+        "definition": "Locomotief slot %1 wordt niet ondersteund door de centrale",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2007",
+        "definition": "Fast clock slot wordt niet ondersteund door de centrale",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2018",
+        "definition": "Time-out, geen echo binnen %1ms",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2019",
+        "definition": "Z21 uitzendvlaggen komen niet overeen met de gevraagde vlaggen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "object:id",
+        "definition": "Id",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "object:name",
+        "definition": "Naam",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "object:notes",
+        "definition": "Notities",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "opc_multi_sense_direction:in_sensor_address",
+        "definition": "In sensor adres",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "opc_multi_sense_direction:in_transponder_address",
+        "definition": "In transponder adres (Bl\u00fccher GBM16XN)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "opc_multi_sense_direction:none",
+        "definition": "Geen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_action:none",
+        "definition": "Geen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_action:off",
+        "definition": "Uit",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_action:on",
+        "definition": "Aan",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_action:pulse",
+        "definition": "Puls",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_list:bus",
+        "definition": "Bus",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_map.decoupler:key",
+        "definition": "Stand",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_map.signal:key",
+        "definition": "Stand",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_map.turnout:key",
+        "definition": "Stand",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "output_map:use",
+        "definition": "Gebruik",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "pcap_output:file",
+        "definition": "Bestand",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "pcap_output:pipe",
+        "definition": "Pijp",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:connect",
+        "definition": "Verbind",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:connect_to_server",
+        "definition": "Verbind met server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:connected",
+        "definition": "Verbonden",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:connecting",
+        "definition": "Bezig met verbinden",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:password",
+        "definition": "Wachtwoord",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:server",
+        "definition": "Server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.connect_dialog:username",
+        "definition": "Gebruikersnaam",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.error:cant_read_from_file_x",
+        "definition": "Kan niet lezen van bestand: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.error:cant_write_to_file_x",
+        "definition": "Kan niet schrijven naar bestand: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.error:server_error_x",
+        "definition": "Serverfout %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:about",
+        "definition": "Over",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:close_world",
+        "definition": "Sluit wereld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:connect_to_server",
+        "definition": "Verbind met server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:connection",
+        "definition": "Verbinding",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:disconnect_from_server",
+        "definition": "Verbreek server verbinding",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:export_world",
+        "definition": "Exporteer wereld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:file",
+        "definition": "Bestand",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:fullscreen",
+        "definition": "Volledigscherm",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:hardware",
+        "definition": "Hardware",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:help",
+        "definition": "Help",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:import_world",
+        "definition": "Importeer wereld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:load_world",
+        "definition": "Wereld laden",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:new_world",
+        "definition": "Nieuwe wereld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:objects",
+        "definition": "Objecten",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:power",
+        "definition": "Vermogen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:programming",
+        "definition": "Programmeren",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:quit",
+        "definition": "Afsluiten",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:restart_server",
+        "definition": "Herstart server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:restart_server_question",
+        "definition": "Weet je zeker dat je de server wil herstarten?",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:save_world",
+        "definition": "Wereld opslaan",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:server",
+        "definition": "Server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:server_log",
+        "definition": "Server log",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:server_settings",
+        "definition": "Server instellingen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:settings",
+        "definition": "Instellingen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:shutdown_server",
+        "definition": "Server afsluiten",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:shutdown_server_question",
+        "definition": "Weet je zeker dat je de server wil afsluiten?",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:toolbar",
+        "definition": "Werkbalk",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:tools",
+        "definition": "Gereedschappen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:view",
+        "definition": "Beeld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:world",
+        "definition": "Wereld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:world_properties",
+        "definition": "Wereld eigenschappen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.message_box:no",
+        "definition": "Nee",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.message_box:yes",
+        "definition": "Ja",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.object_select_list_dialog:cancel",
+        "definition": "Annuleren",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.object_select_list_dialog:ok",
+        "definition": "Ok",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.object_select_list_dialog:select_object",
+        "definition": "Selecteer object",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.board:color_scheme",
+        "definition": "Kleurschema",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.board:show_block_sensor_states",
+        "definition": "Toon blok sensor status",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.board:turnout_draw_state",
+        "definition": "Teken wissel stand",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.developer:dont_load_fallback_language",
+        "definition": "Geen fallback-taal laden",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.developer:log_missing_strings",
+        "definition": "Logboek ontbrekende vertalingen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.developer:log_missing_strings_dir",
+        "definition": "Ontbrekende vertalingen log directory",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.general:language",
+        "definition": "Taal",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.statusbar:show_clock",
+        "definition": "Toon klok",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.statusbar:show_statuses",
+        "definition": "Statussen tonen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings:board",
+        "definition": "Bord",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings:developer",
+        "definition": "Ontwikkelaar",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings:general",
+        "definition": "Algemeen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings:statusbar",
+        "definition": "Status balk",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.world_list_dialog:cancel",
+        "definition": "Annuleren",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.world_list_dialog:load",
+        "definition": "Laad",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.world_list_dialog:world_list",
+        "definition": "Wereld lijst",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:board_properties",
+        "definition": "Bord eigenschappen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:export_world_failed",
+        "definition": "Wereld exporteren mislukt",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:grid",
+        "definition": "Raster",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:grid_dot",
+        "definition": "Stip",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:grid_line",
+        "definition": "Lijn",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:grid_none",
+        "definition": "Geen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:import_world_failed",
+        "definition": "Wereld importeren mislukt",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:next",
+        "definition": "Volgende",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:previous",
+        "definition": "Vorige",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:toggle_mute",
+        "definition": "Toggle mute",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:toggle_offline_online",
+        "definition": "Schakelverbinding",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:toggle_power",
+        "definition": "Toggle power",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:toggle_smoke",
+        "definition": "Roken",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:traintastic_world",
+        "definition": "Traintastic wereld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:zoom_in",
+        "definition": "Vergroten",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp:zoom_out",
+        "definition": "Verkleinen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "rail_vehicle_list:type",
+        "definition": "Type",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "sensor_type:occupy_detector",
+        "definition": "Bezetmelder",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "sensor_type:reed_switch",
+        "definition": "Reedcontact",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial:baudrate",
+        "definition": "Baudrate",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial:device",
+        "definition": "Apparaat",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial:flow_control",
+        "definition": "Stroomregeling",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial:port",
+        "definition": "Poort",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial_flow_control:hardware",
+        "definition": "Hardware",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "serial_flow_control:none",
+        "definition": "Geen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "server_log:code",
+        "definition": "Code",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "server_log:message",
+        "definition": "Bericht",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "server_log:object",
+        "definition": "Object",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "server_log:time",
+        "definition": "Tijd",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:allow_client_server_restart",
+        "definition": "Sta een herstart van de client-server toe",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:allow_client_server_shutdown",
+        "definition": "Afsluiting van de client-server toestaan",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:auto_save_world_on_exit",
+        "definition": "Automatisch wereld opslaan bij afsluiten",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:discoverable",
+        "definition": "Ontdekbaar",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:enable_file_logger",
+        "definition": "Bestandslogger inschakelen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:localhost_only",
+        "definition": "Alleen localhost",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:memory_logger_size",
+        "definition": "Geheugen logger grootte",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:port",
+        "definition": "Poort",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:save_world_uncompressed",
+        "definition": "Wereld ongecomprimeerd opslaan",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect:proceed",
+        "definition": "Rijden",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect:proceed_reduced_speed",
+        "definition": "Rijden met snelheid beperking",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect:stop",
+        "definition": "Stop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "throttle_object_list:throttle",
+        "definition": "Regelaar",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:active",
+        "definition": "Actief",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:block",
+        "definition": "Blok",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:lob",
+        "definition": "Lengte over de buffers",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:mode",
+        "definition": "Modus",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:override_length",
+        "definition": "Overschrijdingslengte",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:override_weight",
+        "definition": "Overschrijving gewicht",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:speed_max",
+        "definition": "Maximale snelheid",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:vehicles",
+        "definition": "Voertuigen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train:weight",
+        "definition": "Massa",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "traintastic_diy_interface_type:serial",
+        "definition": "Serieel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "traintastic_diy_settings:debug_log_heartbeat",
+        "definition": "Log heartbeat communicatie",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "traintastic_diy_settings:heartbeat_timeout",
+        "definition": "Heartbeat time-out",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "turnout_position:left",
+        "definition": "Links",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "turnout_position:right",
+        "definition": "Rechts",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "turnout_position:straight",
+        "definition": "Rechtdoor",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail.freight_wagon:cargo_weight",
+        "definition": "Gewicht lading",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail.tank_wagon:cargo_volume",
+        "definition": "Laadvolume",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:cargo_capacity",
+        "definition": "Laadvermogen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:cargo_loaded",
+        "definition": "Vracht geladen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:decoder",
+        "definition": "Decoder",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:lob",
+        "definition": "LOB",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:power",
+        "definition": "Vermogen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:speed_max",
+        "definition": "Maximale snelheid",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:total_weight",
+        "definition": "Totale gewicht",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:train",
+        "definition": "Trein",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "vehicle.rail:weight",
+        "definition": "Gewicht",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:boards",
+        "definition": "Borden",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:clock",
+        "definition": "Klok",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:decoders",
+        "definition": "Decoders",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:edit",
+        "definition": "Bewerk wereld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:inputs",
+        "definition": "Ingangen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:interfaces",
+        "definition": "Interfaces",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:lua_scripts",
+        "definition": "Lua scripts",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:mute",
+        "definition": "Mute",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:no_smoke",
+        "definition": "Geen rook",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:offline",
+        "definition": "Verbinding verbreken",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:online",
+        "definition": "Verbinden",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:outputs",
+        "definition": "Uitgangen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:power_off",
+        "definition": "Uitschakelen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:power_on",
+        "definition": "Aanzetten",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:rail_vehicles",
+        "definition": "Spoorvoertuigen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:run",
+        "definition": "Ren",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:scale",
+        "definition": "Schaal",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:scale_ratio",
+        "definition": "Schaalverhouding",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:simulation",
+        "definition": "Simulatie",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:stop",
+        "definition": "Stop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:trains",
+        "definition": "Treinen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:uuid",
+        "definition": "UUID",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world_scale:custom",
+        "definition": "Aangepast",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_command_station:custom",
+        "definition": "Anders",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_interface_type:network",
+        "definition": "Netwerk",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_interface_type:serial",
+        "definition": "Serieel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_serial_interface_type:custom",
+        "definition": "Anders",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_settings:use_emergency_stop_locomotive_command",
+        "definition": "Gebruik kort noodstopcommando locomotief",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "xpressnet_settings:use_roco_f13_f20_command",
+        "definition": "Gebruik Roco F13-F20 commando",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "z21_channel:rbus",
+        "definition": "R-Bus",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "z21_settings.server:allow_emergency_stop",
+        "definition": "Noodstop toestaan",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "z21_settings.server:allow_track_power_off",
+        "definition": "Uitschakelen toestaan",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "z21_settings.server:allow_track_power_on_release_emergency_stop",
+        "definition": "Laat inschakelen\/noodstop ontgrendeling toe",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train_mode:manual_protected",
+        "definition": "Handmatig (beschermd)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train_mode:manual_unprotected",
+        "definition": "Handmatig (onbeschermd)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "train_mode:automatic",
+        "definition": "Automatisch",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "list.train_vehicle:move",
+        "definition": "Verplaats",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "protocol.loconet:command_station",
+        "definition": "Centrale",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "settings:select_folder",
+        "definition": "Selecteer map",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "loconet_settings:listen_only",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2006",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:N2007",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "status.lua:x_running",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "status.lua:x_in_error",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:F1008",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings:restart_required",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.general:language_changed_restart_required",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "traintastic_diy_interface_type:network_tcp",
+        "definition": "Netwerk (TCP)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    }
+]

@@ -37,6 +37,7 @@
 
 // include all message headers:
 #include "message/fastclock.hpp"
+#include "message/immpacket.hpp"
 #include "message/locof9f12imm.hpp"
 #include "message/locof13f20imm.hpp"
 #include "message/locof21f28imm.hpp"

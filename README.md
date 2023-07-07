@@ -5,6 +5,11 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/traintastic/traintastic)](https://github.com/traintastic/traintastic/graphs/commit-activity)
 [![Coverage Status](https://coveralls.io/repos/github/traintastic/traintastic/badge.svg?branch=master)](https://coveralls.io/github/traintastic/traintastic?branch=master)
 
+![POEditor](https://img.shields.io/poeditor/progress/622757/en-us?token=6428931964d7cdf58536a518443ebe16)
+![POEditor](https://img.shields.io/poeditor/progress/622757/nl?token=6428931964d7cdf58536a518443ebe16)
+![POEditor](https://img.shields.io/poeditor/progress/622757/de?token=6428931964d7cdf58536a518443ebe16)
+![POEditor](https://img.shields.io/poeditor/progress/622757/it?token=6428931964d7cdf58536a518443ebe16)
+
 ## About The Project
 Traintastic is a client/server software application to control a model railway. It is in an early stage of development, it contains very limited functionality.
 
@@ -38,6 +43,13 @@ See [BUILDING.md](BUILDING.md).
     <td align="center">
         <a href="https://github.com/gfgit">
             <img src="https://avatars.githubusercontent.com/u/42845724?v=4" width="100;" alt="gfgit"/>
+            <br />
+            <sub><b>Null</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/memen45">
+            <img src="https://avatars.githubusercontent.com/u/27782135?v=4" width="100;" alt="memen45"/>
             <br />
             <sub><b>Null</b></sub>
         </a>

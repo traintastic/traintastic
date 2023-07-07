@@ -25,6 +25,8 @@
 #include "../input/input.hpp"
 #include "../input/list/inputlist.hpp"
 #include "../output/list/outputlist.hpp"
+#include "../protocol/xpressnet/kernel.hpp"
+#include "../protocol/xpressnet/settings.hpp"
 #include "../protocol/xpressnet/messages.hpp"
 #include "../protocol/xpressnet/iohandler/serialiohandler.hpp"
 #include "../protocol/xpressnet/iohandler/simulationiohandler.hpp"
@@ -32,6 +34,7 @@
 #include "../protocol/xpressnet/iohandler/rosofts88xpressnetliiohandler.hpp"
 #include "../protocol/xpressnet/iohandler/tcpiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
@@ -42,6 +45,8 @@
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
+
+CREATE_IMPL(XpressNetInterface)
 
 XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   : Interface(world, _id)
@@ -85,7 +90,7 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , baudrate{this, "baudrate", 19200, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , flowControl{this, "flow_control", SerialFlowControl::None, PropertyFlags::ReadWrite | PropertyFlags::Store}
-  , hostname{this, "hostname", "192.168.1.203", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , port{this, "port", 5550, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , s88StartAddress{this, "s88_start_address", XpressNet::RoSoftS88XpressNetLI::S88StartAddress::startAddressDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , s88ModuleCount{this, "s88_module_count", XpressNet::RoSoftS88XpressNetLI::S88ModuleCount::moduleCountDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -151,10 +156,51 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   updateVisible();
 }
 
+std::span<const DecoderProtocol> XpressNetInterface::decoderProtocols() const
+{
+  static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};
+  return std::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+}
+
+std::pair<uint16_t, uint16_t> XpressNetInterface::decoderAddressMinMax(DecoderProtocol protocol) const
+{
+  switch(protocol)
+  {
+    case DecoderProtocol::DCCShort:
+      return {XpressNet::shortAddressMin, XpressNet::shortAddressMax};
+
+    case DecoderProtocol::DCCLong:
+      return {XpressNet::longAddressMin, XpressNet::longAddressMax};
+
+    default: /*[[unlikely]]*/
+      return DecoderController::decoderAddressMinMax(protocol);
+  }
+}
+
+std::span<const uint8_t> XpressNetInterface::decoderSpeedSteps(DecoderProtocol protocol) const
+{
+  static constexpr std::array<uint8_t, 4> dccSpeedSteps{{14, 27, 28, 128}}; // XpressNet also support 27 steps
+
+  switch(protocol)
+  {
+    case DecoderProtocol::DCCShort:
+    case DecoderProtocol::DCCLong:
+      return dccSpeedSteps;
+
+    default: /*[[unlikely]]*/
+      return DecoderController::decoderSpeedSteps(protocol);
+  }
+}
+
 void XpressNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(m_kernel)
     m_kernel->decoderChanged(decoder, changes, functionNumber);
+}
+
+std::pair<uint32_t, uint32_t> XpressNetInterface::inputAddressMinMax(uint32_t) const
+{
+  return {XpressNet::Kernel::ioAddressMin, XpressNet::Kernel::ioAddressMax};
 }
 
 void XpressNetInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
@@ -163,12 +209,17 @@ void XpressNetInterface::inputSimulateChange(uint32_t channel, uint32_t address,
     m_kernel->simulateInputChange(address, action);
 }
 
+std::pair<uint32_t, uint32_t> XpressNetInterface::outputAddressMinMax(uint32_t) const
+{
+  return {XpressNet::Kernel::ioAddressMin, XpressNet::Kernel::ioAddressMax};
+}
+
 bool XpressNetInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
 {
   assert(isOutputChannel(channel));
   return
-    m_kernel &&
-    inRange(address, outputAddressMinMax(channel)) &&
+      m_kernel &&
+      inRange(address, outputAddressMinMax(channel)) &&
     m_kernel->setOutput(static_cast<uint16_t>(address), value);
 }
 
@@ -225,6 +276,12 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
         [this]()
         {
           setState(InterfaceState::Online);
+        });
+      m_kernel->setOnError(
+        [this]()
+        {
+          setState(InterfaceState::Error);
+          online = false; // communication no longer possible
         });
       m_kernel->setOnNormalOperationResumed(
         [this]()

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,8 @@
 #include <boost/asio/write.hpp>
 #include "../kernel.hpp"
 #include "../messages.hpp"
+#include "../../../../core/eventloop.hpp"
+#include "../../../../log/log.hpp"
 
 namespace LocoNet {
 
@@ -87,11 +89,11 @@ void TCPBinaryIOHandler::read()
 
           if(drop != 0)
           {
-            //EventLoop::call(
-            //  [this, drop]()
-            //  {
-                //Log::log(*this, LogMessage::W2001_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES, drop);
-            //  });
+            EventLoop::call(
+              [this, drop]()
+              {
+                Log::log(m_kernel.logId(), LogMessage::W2001_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES, drop);
+              });
           }
           else if(message->size() <= bytesTransferred)
           {
@@ -109,13 +111,15 @@ void TCPBinaryIOHandler::read()
 
         read();
       }
-      else{}
-        //EventLoop::call(
-       //   [this, ec]()
-         // {
-            //Log::log(*this, LogMessage::E2002_SERIAL_READ_FAILED_X, ec);
-            //online = false;
-          //});
+      else
+      {
+        EventLoop::call(
+          [this, ec]()
+          {
+            Log::log(m_kernel.logId(), LogMessage::E2008_SOCKET_READ_FAILED_X, ec);
+            m_kernel.error();
+          });
+      }
     });
 }
 
@@ -137,7 +141,12 @@ void TCPBinaryIOHandler::write()
       }
       else if(ec != boost::asio::error::operation_aborted)
       {
-        // LogMessage::E1006_SOCKET_WRITE_FAILED_X, ec
+        EventLoop::call(
+          [this, ec]()
+          {
+            Log::log(m_kernel.logId(), LogMessage::E2007_SOCKET_WRITE_FAILED_X, ec);
+            m_kernel.error();
+          });
       }
     });
 }

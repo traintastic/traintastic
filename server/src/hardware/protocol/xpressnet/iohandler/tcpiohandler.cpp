@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -79,8 +79,8 @@ void TCPIOHandler::read()
         EventLoop::call(
           [this, ec]()
           {
-            Log::log(m_kernel.logId(), LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
-            // TODO interface status -> error
+            Log::log(m_kernel.logId(), LogMessage::E2008_SOCKET_READ_FAILED_X, ec);
+            m_kernel.error();
           });
       }
     });
@@ -106,8 +106,8 @@ void TCPIOHandler::write()
         EventLoop::call(
           [this, ec]()
           {
-            Log::log(m_kernel.logId(), LogMessage::E1006_SOCKET_WRITE_FAILED_X, ec);
-            // TODO interface status -> error
+            Log::log(m_kernel.logId(), LogMessage::E2007_SOCKET_WRITE_FAILED_X, ec);
+            m_kernel.error();
           });
       }
     });

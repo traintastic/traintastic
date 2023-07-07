@@ -24,18 +24,21 @@
 #include "scriptlisttablemodel.hpp"
 #include "../world/getworld.hpp"
 #include "../core/attributes.hpp"
+#include "../core/method.tpp"
+#include "../core/objectproperty.tpp"
 #include "../utils/displayname.hpp"
 
 namespace Lua {
 
-ScriptList::ScriptList(Object& _parent, std::string_view parentPropertyName) :
-  ObjectList<Script>(_parent, parentPropertyName),
-  create{*this, "create",
-    [this]()
-    {
-      auto& world = getWorld(parent());
-      return Script::create(world, world.getUniqueId("script"));
-    }}
+ScriptList::ScriptList(Object& _parent, std::string_view parentPropertyName)
+  : ObjectList<Script>(_parent, parentPropertyName)
+  , status{this, "status", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject | PropertyFlags::NoScript}
+  , create{*this, "create",
+      [this]()
+      {
+        auto& world = getWorld(parent());
+        return Script::create(world, world.getUniqueId("script"));
+      }}
   , delete_{*this, "delete", std::bind(&ScriptList::deleteMethodHandler, this, std::placeholders::_1)}
   , startAll{*this, "start_all",
       [this]()
@@ -52,6 +55,8 @@ ScriptList::ScriptList(Object& _parent, std::string_view parentPropertyName) :
             script->stop();
       }}
 {
+  status.setValueInternal(std::make_shared<LuaStatus>(*this, status.name()));
+
   const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(create, DisplayName::List::create);
@@ -62,9 +67,16 @@ ScriptList::ScriptList(Object& _parent, std::string_view parentPropertyName) :
   Attributes::addEnabled(delete_, editable);
   m_interfaceItems.add(delete_);
 
+  Attributes::addEnabled(startAll, false);
   m_interfaceItems.add(startAll);
 
+  Attributes::addEnabled(stopAll, false);
   m_interfaceItems.add(stopAll);
+}
+
+ScriptList::~ScriptList()
+{
+  getWorld(parent()).statuses.removeInternal(status.value());
 }
 
 TableModelPtr ScriptList::getModel()
@@ -80,6 +92,26 @@ void ScriptList::worldEvent(WorldState state, WorldEvent event)
 
   Attributes::setEnabled(create, editable);
   Attributes::setEnabled(delete_, editable);
+}
+
+void ScriptList::objectAdded(const std::shared_ptr<Script>& /*object*/)
+{
+  if(m_items.size() == 1)
+  {
+    Attributes::setEnabled(startAll, true);
+    Attributes::setEnabled(stopAll, true);
+    getWorld(parent()).statuses.appendInternal(status.value());
+  }
+}
+
+void ScriptList::objectRemoved(const std::shared_ptr<Script>& /*object*/)
+{
+  if(empty())
+  {
+    Attributes::setEnabled(startAll, false);
+    Attributes::setEnabled(stopAll, false);
+    getWorld(parent()).statuses.removeInternal(status.value());
+  }
 }
 
 bool ScriptList::isListedProperty(std::string_view name)

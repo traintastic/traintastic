@@ -25,6 +25,7 @@
 #include "list/outputlisttablemodel.hpp"
 #include "keyboard/outputkeyboard.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/controllerlist.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"

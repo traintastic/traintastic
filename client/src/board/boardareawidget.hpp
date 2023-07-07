@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +27,6 @@
 #include <traintastic/board/tileid.hpp>
 #include <traintastic/board/tilelocation.hpp>
 #include <traintastic/enum/tilerotate.hpp>
-#include <traintastic/enum/blockstate.hpp>
 #include <traintastic/enum/decouplerstate.hpp>
 #include <traintastic/enum/directioncontrolstate.hpp>
 #include <traintastic/enum/sensorstate.hpp>
@@ -98,8 +97,6 @@ class BoardAreaWidget : public QWidget
     static constexpr int getTileSize(int zoomLevel) { return 25 + zoomLevel * 5; }
     int getTileSize() const { return getTileSize(m_zoomLevel); }
     TurnoutPosition getTurnoutPosition(const TileLocation& l) const;
-    BlockState getBlockState(const TileLocation& l) const;
-    std::vector<SensorState> getBlockSensorStates(const TileLocation& l) const;
     SensorState getSensorState(const TileLocation& l) const;
     DirectionControlState getDirectionControlState(const TileLocation& l) const;
     SignalAspect getSignalAspect(const TileLocation& l) const;

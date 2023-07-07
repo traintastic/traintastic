@@ -26,6 +26,9 @@
 #include "../world/getworld.hpp"
 #include "../world/world.hpp"
 #include "../core/attributes.hpp"
+#include "../core/method.tpp"
+#include "../core/objectproperty.tpp"
+#include "../core/objectvectorproperty.tpp"
 #include "../utils/displayname.hpp"
 
 TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropertyName)

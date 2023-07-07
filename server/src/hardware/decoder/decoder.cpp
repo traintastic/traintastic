@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,16 +31,33 @@
 #include "../../world/world.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../core/attributes.hpp"
+#include "../../core/method.tpp"
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/almostzero.hpp"
+
+CREATE_IMPL(Decoder)
 
 const std::shared_ptr<Decoder> Decoder::null;
 
 Decoder::Decoder(World& world, std::string_view _id) :
   IdObject(world, _id),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
-  interface{this, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
+  interface{this, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
+    [this](const std::shared_ptr<DecoderController>& value)
+    {
+      if(value)
+      {
+        assert(!value->decoderProtocols().empty());
+        Attributes::setValues(protocol, value->decoderProtocols());
+        if(!checkProtocol())
+          protocolChanged();
+        Attributes::setVisible(protocol, true);
+      }
+      else
+        Attributes::setVisible(protocol, false);
+      updateEditable();
+    },
     [this](const std::shared_ptr<DecoderController>& newValue)
     {
       if(!newValue || newValue->addDecoder(*this))
@@ -51,24 +68,13 @@ Decoder::Decoder(World& world, std::string_view _id) :
       }
       return false;
     }},
-  protocol{this, "protocol", DecoderProtocol::Auto, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](const DecoderProtocol& value)
+  protocol{this, "protocol", DecoderProtocol::None, PropertyFlags::ReadWrite | PropertyFlags::Store,
+    [this](const DecoderProtocol& /*value*/)
     {
-      if(value == DecoderProtocol::DCC && DCC::isLongAddress(address))
-        longAddress = true;
+      protocolChanged();
       updateEditable();
     }},
-  address{this, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](const uint16_t& value)
-    {
-      if(protocol == DecoderProtocol::DCC)
-      {
-        if(DCC::isLongAddress(value))
-          longAddress = true;
-        updateEditable();
-      }
-    }},
-  longAddress{this, "long_address", false, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  address{this, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
   emergencyStop{this, "emergency_stop", false, PropertyFlags::ReadWrite,
     [this](const bool& /*value*/)
     {
@@ -118,15 +124,16 @@ Decoder::Decoder(World& world, std::string_view _id) :
   m_interfaceItems.add(interface);
 
   Attributes::addEnabled(protocol, false);
-  Attributes::addValues(protocol, decoderProtocolValues);
+  Attributes::addValues(protocol, std::span<const DecoderProtocol>{});
+  Attributes::addVisible(protocol, false);
   m_interfaceItems.add(protocol);
 
   Attributes::addDisplayName(address, DisplayName::Hardware::address);
   Attributes::addEnabled(address, false);
+  Attributes::addMinMax(address, std::pair<uint16_t, uint16_t>(0, 0));
+  Attributes::addVisible(address, false);
   m_interfaceItems.add(address);
 
-  Attributes::addEnabled(longAddress, false);
-  m_interfaceItems.add(longAddress);
   Attributes::addObjectEditor(emergencyStop, false);
   m_interfaceItems.add(emergencyStop);
 
@@ -139,6 +146,8 @@ Decoder::Decoder(World& world, std::string_view _id) :
 
   Attributes::addDisplayName(speedSteps, DisplayName::Hardware::speedSteps);
   Attributes::addEnabled(speedSteps, false);
+  Attributes::addValues(speedSteps, std::span<const uint8_t>{});
+  Attributes::addVisible(speedSteps, false);
   m_interfaceItems.add(speedSteps);
 
   Attributes::addMinMax(throttle, throttleMin, throttleMax);
@@ -163,6 +172,11 @@ void Decoder::loaded()
   IdObject::loaded();
   if(interface)
   {
+    Attributes::setValues(protocol, interface->decoderProtocols());
+    Attributes::setVisible(protocol, true);
+    checkProtocol(); //! \todo log something if protocol is changed??
+    protocolChanged();
+
     if(!interface->addDecoder(*this))
     {
       if(auto object = std::dynamic_pointer_cast<Object>(interface.value()))
@@ -326,6 +340,75 @@ void Decoder::worldEvent(WorldState state, WorldEvent event)
   }
 }
 
+void Decoder::protocolChanged()
+{
+  if(interface)
+  {
+    // address:
+    const auto addressRange = interface->decoderAddressMinMax(protocol);
+    const bool hasAddress = addressRange.first <= addressRange.second;
+    Attributes::setVisible(address, hasAddress);
+    if(hasAddress)
+    {
+      Attributes::setMinMax(address, addressRange);
+      checkAddress();
+    }
+    else
+      Attributes::setMinMax(address, std::pair<uint16_t, uint16_t>(0, 0));
+
+    // speed steps:
+    const auto values = interface->decoderSpeedSteps(protocol);
+    Attributes::setVisible(speedSteps, !values.empty());
+    if(!values.empty())
+    {
+      Attributes::setValues(speedSteps, values);
+      checkSpeedSteps();
+    }
+    else
+      Attributes::setValues(speedSteps, std::span<const uint8_t>{});
+  }
+  else
+  {
+    Attributes::setVisible(address, false);
+    Attributes::setVisible(speedSteps, false);
+  }
+}
+
+bool Decoder::checkProtocol()
+{
+  const auto protocols = protocol.getSpanAttribute<DecoderProtocol>(AttributeName::Values).values();
+  assert(!protocols.empty());
+  if(auto it = std::find(protocols.begin(), protocols.end(), protocol); it == protocols.end())
+  {
+    protocol = protocols.front();
+    return true;
+  }
+  return false;
+}
+
+bool Decoder::checkAddress()
+{
+  const auto addressMin = address.getAttribute<uint16_t>(AttributeName::Min);
+  const auto addressMax = address.getAttribute<uint16_t>(AttributeName::Max);
+  if(!inRange(address.value(), addressMin, addressMax))
+  {
+    address = std::clamp(address.value(), addressMin, addressMax);
+    return true;
+  }
+  return false;
+}
+
+bool Decoder::checkSpeedSteps()
+{
+  const auto values = speedSteps.getSpanAttribute<uint8_t>(AttributeName::Values).values();
+  if(auto it = std::find(values.begin(), values.end(), speedSteps); it == values.end())
+  {
+    speedSteps = values.back();
+    return true;
+  }
+  return false;
+}
+
 void Decoder::updateEditable()
 {
   updateEditable(contains(m_world.state.value(), WorldState::Edit));
@@ -336,10 +419,9 @@ void Decoder::updateEditable(bool editable)
   const bool stopped = editable && almostZero(throttle.value());
   Attributes::setEnabled(name, editable);
   Attributes::setEnabled(interface, stopped);
-  Attributes::setEnabled(protocol, stopped);
+  Attributes::setEnabled(protocol, stopped && protocol.getSpanAttribute<DecoderProtocol>(AttributeName::Values).length() > 1);
   Attributes::setEnabled(address, stopped);
-  Attributes::setEnabled(longAddress, stopped && protocol == DecoderProtocol::DCC && !DCC::isLongAddress(address));
-  Attributes::setEnabled(speedSteps, stopped);
+  Attributes::setEnabled(speedSteps, stopped && speedSteps.getSpanAttribute<uint8_t>(AttributeName::Values).length() > 1);
 }
 
 void Decoder::changed(DecoderChangeFlags changes, uint32_t functionNumber)

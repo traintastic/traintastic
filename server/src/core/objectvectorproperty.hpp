@@ -40,6 +40,7 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
 
   public:
     using const_iterator = typename std::vector<std::shared_ptr<T>>::const_iterator;
+    using const_reverse_iterator = typename std::vector<std::shared_ptr<T>>::const_reverse_iterator;
 
     ObjectVectorProperty(Object& object, std::string_view name, std::initializer_list<std::shared_ptr<T>> values, PropertyFlags flags) :
       AbstractObjectVectorProperty(object, name, flags),
@@ -49,6 +50,8 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
 
     inline const_iterator begin() const { return m_values.begin(); }
     inline const_iterator end() const { return m_values.end(); }
+    inline const_reverse_iterator rbegin() const { return m_values.rbegin(); }
+    inline const_reverse_iterator rend() const { return m_values.rend(); }
 
     const std::shared_ptr<T>& operator [](size_t index) const
     {
@@ -84,24 +87,8 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
       return m_values.size();
     }
 
-    ObjectPtr getObject(size_t index) const final
-    {
-      assert(index < size());
-      return std::dynamic_pointer_cast<Object>(m_values[index]);
-    }
-
-    void setObject(size_t index, const ObjectPtr& value) final
-    {
-      if(value)
-      {
-        if(std::shared_ptr<T> v = std::dynamic_pointer_cast<T>(value))
-          setValue(index, v);
-        else
-          throw conversion_error();
-      }
-      else
-        setValue(index, nullptr);
-    }
+    ObjectPtr getObject(size_t index) const final;
+    void setObject(size_t index, const ObjectPtr& value) final;
 
     void appendInternal(std::shared_ptr<T> value)
     {
@@ -136,6 +123,12 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
       }
     }
 
+    void reverseInternal()
+    {
+      std::reverse(m_values.begin(), m_values.end());
+      changed();
+    }
+
     void clearInternal()
     {
       if(empty())
@@ -150,17 +143,7 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
       m_values = std::move(values);
     }
 
-    void loadObjects(std::span<ObjectPtr> values) final
-    {
-      std::vector<std::shared_ptr<T>> objects;
-      objects.reserve(values.size());
-      for(const auto& object : values)
-        if(auto v = std::dynamic_pointer_cast<T>(object))
-          objects.emplace_back(v);
-        else
-          throw conversion_error();
-      m_values = std::move(objects);
-    }
+    void loadObjects(std::span<ObjectPtr> values) final;
 };
 
 #endif

@@ -24,10 +24,14 @@
 #include "../decoder/list/decoderlist.hpp"
 #include "../input/list/inputlist.hpp"
 #include "../output/list/outputlist.hpp"
+#include "../protocol/dcc/dcc.hpp"
+#include "../protocol/z21/clientkernel.hpp"
+#include "../protocol/z21/clientsettings.hpp"
 #include "../protocol/z21/messages.hpp"
 #include "../protocol/z21/iohandler/simulationiohandler.hpp"
 #include "../protocol/z21/iohandler/udpclientiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
@@ -40,12 +44,14 @@ constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::N
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
 
+CREATE_IMPL(Z21Interface)
+
 Z21Interface::Z21Interface(World& world, std::string_view _id)
   : Interface(world, _id)
   , DecoderController(*this, decoderListColumns)
   , InputController(static_cast<IdObject&>(*this))
   , OutputController(static_cast<IdObject&>(*this))
-  , hostname{this, "hostname", "192.168.1.203", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , port{this, "port", 21105, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , z21{this, "z21", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , hardwareType{this, "hardware_type", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
@@ -82,10 +88,35 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(firmwareVersion, notes);
 }
 
+std::span<const DecoderProtocol> Z21Interface::decoderProtocols() const
+{
+  static constexpr std::array<DecoderProtocol, 3> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong, DecoderProtocol::Motorola};
+  return std::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+}
+
+std::pair<uint16_t, uint16_t> Z21Interface::decoderAddressMinMax(DecoderProtocol protocol) const
+{
+  if(protocol == DecoderProtocol::DCCLong)
+  {
+    return {DCC::addressLongStart, DCC::addressLongMax};
+  }
+  return DecoderController::decoderAddressMinMax(protocol);
+}
+
 void Z21Interface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(m_kernel)
     m_kernel->decoderChanged(decoder, changes, functionNumber);
+}
+
+const std::vector<uint32_t> *Z21Interface::inputChannels() const
+{
+  return &Z21::ClientKernel::inputChannels;
+}
+
+const std::vector<std::string_view> *Z21Interface::inputChannelNames() const
+{
+  return &Z21::ClientKernel::inputChannelNames;
 }
 
 std::pair<uint32_t, uint32_t> Z21Interface::inputAddressMinMax(uint32_t channel) const
@@ -111,12 +142,17 @@ void Z21Interface::inputSimulateChange(uint32_t channel, uint32_t address, Simul
     m_kernel->simulateInputChange(channel, address, action);
 }
 
+std::pair<uint32_t, uint32_t> Z21Interface::outputAddressMinMax(uint32_t) const
+{
+  return {Z21::ClientKernel::outputAddressMin, Z21::ClientKernel::outputAddressMax};
+}
+
 bool Z21Interface::setOutputValue(uint32_t channel, uint32_t address, bool value)
 {
   return
-    m_kernel &&
-    inRange(address, outputAddressMinMax(channel)) &&
-    m_kernel->setOutput(static_cast<uint16_t>(address), value);
+      m_kernel &&
+      inRange(address, outputAddressMinMax(channel)) &&
+      m_kernel->setOutput(static_cast<uint16_t>(address), value);
 }
 
 bool Z21Interface::setOnline(bool& value, bool simulation)

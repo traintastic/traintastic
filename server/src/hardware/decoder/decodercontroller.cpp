@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,8 +25,10 @@
 #include "decoderchangeflags.hpp"
 #include "list/decoderlist.hpp"
 #include "list/decoderlisttablemodel.hpp"
+#include "../protocol/dcc/dcc.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/objectproperty.tpp"
+#include "../../core/controllerlist.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/almostzero.hpp"
 #include "../../world/world.hpp"
@@ -39,11 +41,57 @@ DecoderController::DecoderController(IdObject& interface, DecoderListColumn colu
   Attributes::addDisplayName(decoders, DisplayName::Hardware::decoders);
 }
 
+std::pair<uint16_t, uint16_t> DecoderController::decoderAddressMinMax(DecoderProtocol protocol) const
+{
+  switch(protocol)
+  {
+    case DecoderProtocol::DCCShort:
+      return {DCC::addressMin, DCC::addressShortMax};
+
+    case DecoderProtocol::DCCLong:
+      return {DCC::addressMin, DCC::addressLongMax};
+
+    case DecoderProtocol::Motorola:
+      return {1, 255};
+
+    case DecoderProtocol::Selectrix:
+      return {1, 112};
+
+    case DecoderProtocol::None:
+      return noAddressMinMax;
+  }
+  assert(false);
+  return noAddressMinMax;
+}
+
+std::span<const uint8_t> DecoderController::decoderSpeedSteps(DecoderProtocol protocol) const
+{
+  static constexpr std::array<uint8_t, 3> dccSpeedSteps{{14, 28, 128}};
+  static constexpr std::array<uint8_t, 3> motorolaSpeedSteps{{14, 27, 28}};
+  static constexpr std::array<uint8_t, 1> selectrixSpeedSteps{{32}};
+
+  switch(protocol)
+  {
+    case DecoderProtocol::DCCShort:
+    case DecoderProtocol::DCCLong:
+      return dccSpeedSteps;
+
+    case DecoderProtocol::Motorola:
+      return motorolaSpeedSteps;
+
+    case DecoderProtocol::Selectrix:
+      return selectrixSpeedSteps;
+
+    case DecoderProtocol::None:
+      return {};
+  }
+  assert(false);
+  return {};
+}
+
 bool DecoderController::addDecoder(Decoder& decoder)
 {
-  if(decoder.protocol != DecoderProtocol::Auto && findDecoder(decoder) != m_decoders.end())
-    return false;
-  if(findDecoder(DecoderProtocol::Auto, decoder.address) != m_decoders.end())
+  if(findDecoder(decoder) != m_decoders.end())
     return false;
 
   m_decoders.emplace_back(decoder.shared_ptr<Decoder>());
@@ -63,12 +111,10 @@ bool DecoderController::removeDecoder(Decoder& decoder)
   return false;
 }
 
-const std::shared_ptr<Decoder>& DecoderController::getDecoder(DecoderProtocol protocol, uint16_t address, bool dccLongAddress, bool fallbackToProtocolAuto)
+const std::shared_ptr<Decoder>& DecoderController::getDecoder(DecoderProtocol protocol, uint16_t address)
 {
-  auto it = findDecoder(protocol, address, dccLongAddress);
+  auto it = findDecoder(protocol, address);
   if(it != m_decoders.end())
-    return *it;
-  if(fallbackToProtocolAuto && protocol != DecoderProtocol::Auto && (it = findDecoder(DecoderProtocol::Auto, address)) != m_decoders.end())
     return *it;
 
   return Decoder::null;
@@ -95,20 +141,11 @@ void DecoderController::destroying()
 
 DecoderController::DecoderVector::iterator DecoderController::findDecoder(const Decoder& decoder)
 {
-  return findDecoder(decoder.protocol, decoder.address, decoder.longAddress);
+  return findDecoder(decoder.protocol, decoder.address);
 }
 
-DecoderController::DecoderVector::iterator DecoderController::findDecoder(DecoderProtocol protocol, uint16_t address, bool dccLongAddress)
+DecoderController::DecoderVector::iterator DecoderController::findDecoder(DecoderProtocol protocol, uint16_t address)
 {
-  if(protocol == DecoderProtocol::DCC)
-  {
-    return std::find_if(m_decoders.begin(), m_decoders.end(),
-      [address, dccLongAddress](const auto& it)
-      {
-        return it->protocol == DecoderProtocol::DCC && it->address == address && it->longAddress == dccLongAddress;
-      });
-  }
-
   return std::find_if(m_decoders.begin(), m_decoders.end(),
     [protocol, address](const auto& it)
     {

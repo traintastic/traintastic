@@ -21,15 +21,20 @@
  */
 
 #include "trainlisttablemodel.hpp"
+#include "train.hpp"
 #include "trainlist.hpp"
+#include "trainblockstatus.hpp"
+#include "../board/tile/rail/blockrailtile.hpp"
+#include "../core/objectproperty.tpp"
 #include "../utils/displayname.hpp"
 #include "../utils/utf8.hpp"
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
 constexpr uint32_t columnActive = 2;
-constexpr uint32_t columnLength = 3;
-constexpr uint32_t columnWeight = 4;
+constexpr uint32_t columnBlock = 3;
+constexpr uint32_t columnLength = 4;
+constexpr uint32_t columnWeight = 5;
 
 bool TrainListTableModel::isListedProperty(std::string_view name)
 {
@@ -37,6 +42,7 @@ bool TrainListTableModel::isListedProperty(std::string_view name)
     name == "id" ||
     name == "name" ||
     name == "active" ||
+    name == "blocks" ||
     name == "lob" ||
     name == "weight";
 }
@@ -48,6 +54,7 @@ TrainListTableModel::TrainListTableModel(TrainList& list) :
     DisplayName::Object::id,
     DisplayName::Object::name,
     "train:active",
+    "train:block",
     "train:lob",
     "train:weight"
     });
@@ -69,6 +76,9 @@ std::string TrainListTableModel::getText(uint32_t column, uint32_t row) const
 
       case columnActive:
         return train.active ? UTF8_CHECKMARK : "";
+
+      case columnBlock:
+        return !train.blocks.empty() ? train.blocks[0]->block->name.value() : std::string{};
 
       case columnLength:
         return toString(train.lob);
@@ -93,6 +103,8 @@ void TrainListTableModel::propertyChanged(BaseProperty& property, uint32_t row)
     changed(row, columnName);
   else if(property.name() == "active")
     changed(row, columnActive);
+  else if(property.name() == "blocks")
+    changed(row, columnBlock);
   else if(property.name() == "lob")
     changed(row, columnLength);
   else if(property.name() == "weight")

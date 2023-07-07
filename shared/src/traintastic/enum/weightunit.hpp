@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_WEIGHTUNIT_HPP
 
 #include <cstdint>
+#include "enum.hpp"
 
 enum class WeightUnit
 {

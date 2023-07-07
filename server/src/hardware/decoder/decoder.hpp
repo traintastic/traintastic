@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@
 #include <type_traits>
 #include "../../core/idobject.hpp"
 #include "../../core/objectproperty.hpp"
-#include "../../enum/decoderprotocol.hpp"
+#include <traintastic/enum/decoderprotocol.hpp>
 #include "../../enum/direction.hpp"
 #include "decodercontroller.hpp"
 #include "decoderfunctions.hpp"
@@ -52,13 +52,31 @@ class Decoder : public IdObject
     void loaded() final;
     void destroying() override;
     void worldEvent(WorldState state, WorldEvent event) final;
+
+    void protocolChanged();
+
+    //! \brief Check and correct protocol
+    //! If the current value isn't in the list of valid protocols the protocol is set the the first valid one.
+    //! \return \c true if adjusted, \c false if unchanged
+    bool checkProtocol();
+
+    //! \brief Check and correct address
+    //! If the current value isn't within the protocol address range, the value is set to the nearest valid one.
+    //! \return \c true if adjusted, \c false if unchanged
+    bool checkAddress();
+
+    //! \brief Check and correct speed steps
+    //! If the current value isn't a valid speed step value, the value is set to the highest valid one.
+    //! \return \c true if adjusted, \c false if unchanged
+    bool checkSpeedSteps();
+
     void updateEditable();
     void updateEditable(bool editable);
     void changed(DecoderChangeFlags changes, uint32_t functionNumber = 0);
 
   public:
     CLASS_ID("decoder")
-    CREATE(Decoder)
+    CREATE_DEF(Decoder)
 
     static constexpr uint8_t speedStepsAuto = 0;
     static constexpr float throttleMin = 0;
@@ -84,7 +102,6 @@ class Decoder : public IdObject
     ObjectProperty<DecoderController> interface;
     Property<DecoderProtocol> protocol;
     Property<uint16_t> address;
-    Property<bool> longAddress;
     Property<bool> emergencyStop;
     Property<Direction> direction;
     Method<void()> toggleDirection;

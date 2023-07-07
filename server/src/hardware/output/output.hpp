@@ -29,17 +29,18 @@
 #include "../../core/method.hpp"
 #include "../../core/event.hpp"
 #include "../../enum/tristate.hpp"
-#include "outputcontroller.hpp"
 
 #ifdef interface
   #undef interface // interface is defined in combaseapi.h
 #endif
 
+class OutputController;
+
 class Output final : public IdObject
 {
   CLASS_ID("output")
   DEFAULT_ID("output")
-  CREATE(Output)
+  CREATE_DEF(Output)
 
   friend class OutputController;
 

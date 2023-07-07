@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,22 +28,22 @@
 
 enum class DecoderProtocol : uint8_t
 {
-  Auto = 0,
-  DCC = 1,
+  None = 0,
+  DCCShort = 1,
   Motorola = 2,
   //MFX = 3,
   Selectrix = 4,
   //FMZ = 5,
-  Custom = 255,
+  DCCLong = 6,
 };
 
 TRAINTASTIC_ENUM(DecoderProtocol, "decoder_protocol", 5,
 {
-  {DecoderProtocol::Auto, "auto"},
-  {DecoderProtocol::DCC, "dcc"},
+  {DecoderProtocol::None, "none"},
+  {DecoderProtocol::DCCShort, "dcc_short"},
   {DecoderProtocol::Motorola, "motorola"},
   {DecoderProtocol::Selectrix, "selectrix"},
-  {DecoderProtocol::Custom, "custom"},
+  {DecoderProtocol::DCCLong, "dcc_long"},
 });
 
 #endif

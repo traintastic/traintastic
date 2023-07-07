@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -90,13 +90,6 @@ std::string toString(const Message& message, bool raw)
             raw = true;
           break;
 
-        case 0x43:
-        {
-          const auto& getTurnoutInfo = static_cast<const LanXGetTurnoutInfo&>(message);
-          s = "LAN_X_GET_TURNOUT_INFO";
-          s.append(" address=").append(std::to_string(getTurnoutInfo.address()));
-          break;
-        }
         case 0x53:
         {
           const auto& setTurnout = static_cast<const LanXSetTurnout&>(message);
@@ -108,11 +101,13 @@ std::string toString(const Message& message, bool raw)
           s.append(" queue=").append(setTurnout.queue() ? "yes" : "no");
           break;
         }
-        case 0x61:
+        case LAN_X_BC:
           if(message == LanXBCTrackPowerOff())
             s = "LAN_X_BC_TRACK_POWER_OFF";
           else if(message == LanXBCTrackPowerOn())
             s = "LAN_X_BC_TRACK_POWER_ON";
+          else if(message == LanXBCTrackShortCircuit())
+            s = "LAN_X_BC_TRACK_SHORT_CIRCUIT";
           else
             raw = true;
           break;
@@ -130,9 +125,16 @@ std::string toString(const Message& message, bool raw)
             raw = true;
           break;
 
-        case 0x80:
+        case LAN_X_SET_STOP:
           if(message == LanXSetStop())
             s = "LAN_X_SET_STOP";
+          else
+            raw = true;
+          break;
+
+        case LAN_X_BC_STOPPED:
+          if(message == LanXBCStopped())
+            s = "LAN_X_BC_STOPPED";
           else
             raw = true;
           break;
@@ -221,7 +223,13 @@ std::string toString(const Message& message, bool raw)
       break;
 
     case LAN_GET_BROADCASTFLAGS:
-      if(message == LanGetBroadcastFlags())
+      if(message.dataLen() == sizeof(LanGetBroadcastFlagsReply))
+      {
+        const auto& reply = static_cast<const LanGetBroadcastFlagsReply&>(message);
+        s = "LAN_GET_BROADCASTFLAGS (Reply)";
+        s.append(" flags=0x").append(toHex(static_cast<std::underlying_type_t<BroadcastFlags>>(reply.broadcastFlags())));
+      }
+      else if(message == LanGetBroadcastFlags())
         s = "LAN_GET_BROADCASTFLAGS";
       else
         raw = true;
@@ -274,14 +282,14 @@ std::string toString(const Message& message, bool raw)
 LanXLocoInfo::LanXLocoInfo(const Decoder& decoder) :
   LanXLocoInfo()
 {
-  setAddress(decoder.address, decoder.longAddress);
+  setAddress(decoder.address, decoder.protocol == DecoderProtocol::DCCLong);
   setSpeedSteps(decoder.speedSteps);
   setDirection(decoder.direction);
   if(decoder.emergencyStop)
     setEmergencyStop();
   else
     setSpeedStep(Decoder::throttleToSpeedStep(decoder.throttle, speedSteps()));
-  for(auto function : *decoder.functions)
+  for(const auto &function : *decoder.functions)
     setFunction(function->number, function->value);
   calcChecksum();
 }

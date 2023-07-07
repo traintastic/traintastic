@@ -121,7 +121,14 @@ bool Session::processMessage(const Message& message)
       if(counter == m_handles.getCounter(handle))
       {
         m_handles.removeHandle(handle);
-        m_objectSignals.erase(handle);
+
+        auto it = m_objectSignals.find(handle);
+        while(it != m_objectSignals.end())
+        {
+          it->second.disconnect();
+          m_objectSignals.erase(it);
+          it = m_objectSignals.find(handle);
+        }
 
         auto event = Message::newEvent(message.command(), sizeof(Handle));
         event->write(handle);

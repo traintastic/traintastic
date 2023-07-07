@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@
 
 #include "method.hpp"
 #include "push.hpp"
+#include "check.hpp"
 #include "error.hpp"
 #include "to.hpp"
 #include "../core/abstractmethod.hpp"
@@ -124,7 +125,11 @@ int Method::__call(lua_State* L)
           break;
 
         case ValueType::Object:
-          errorInternal(L); // not yet implemented
+          if(lua_isnil(L, index))
+            args.emplace_back(ObjectPtr());
+          else
+            args.emplace_back(Lua::check<::Object>(L, index));
+          break;
 
         case ValueType::Set:
           args.emplace_back(static_cast<int64_t>(checkSet(L, index, info.setName.data())));

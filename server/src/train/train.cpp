@@ -22,14 +22,22 @@
 
 #include "train.hpp"
 #include "trainlist.hpp"
+#include "trainvehiclelist.hpp"
 #include "../world/world.hpp"
+#include "trainblockstatus.hpp"
 #include "trainlisttablemodel.hpp"
 #include "../core/attributes.hpp"
+#include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
+#include "../core/objectvectorproperty.tpp"
 #include "../core/eventloop.hpp"
+#include "../board/tile/rail/blockrailtile.hpp"
 #include "../vehicle/rail/poweredrailvehicle.hpp"
+#include "../hardware/decoder/decoder.hpp"
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
+
+CREATE_IMPL(Train)
 
 static inline bool isPowered(const RailVehicle& vehicle)
 {
@@ -51,9 +59,18 @@ Train::Train(World& world, std::string_view _id) :
   direction{this, "direction", Direction::Forward, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
     [this](Direction value)
     {
+      // update train direction from the block perspective:
+      for(auto& status : *blocks)
+        status->direction.setValueInternal(!status->direction.value());
+
       for(const auto& vehicle : m_poweredVehicles)
         vehicle->setDirection(value);
       updateEnabled();
+    },
+    [](Direction& value)
+    {
+      // only accept valid direction values, don't accept Unknown direction
+      return value == Direction::Forward || value == Direction::Reverse;
     }},
   isStopped{this, "is_stopped", true, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   speed{*this, "speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
@@ -125,6 +142,8 @@ Train::Train(World& world, std::string_view _id) :
       updateSpeed();
     },
     std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
+  mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+  blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   vehicles.setValueInternal(std::make_shared<TrainVehicleList>(*this, vehicles.name()));
@@ -167,6 +186,12 @@ Train::Train(World& world, std::string_view _id) :
 
   Attributes::addEnabled(active, true);
   m_interfaceItems.add(active);
+
+  Attributes::addValues(mode, trainModeValues);
+  m_interfaceItems.add(mode);
+
+  Attributes::addObjectEditor(blocks, false);
+  m_interfaceItems.add(blocks);
 
   Attributes::addObjectEditor(powered, false);
   m_interfaceItems.add(powered);

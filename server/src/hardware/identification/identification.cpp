@@ -27,6 +27,7 @@
 #include "../interface/loconetinterface.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/objectproperty.tpp"
+#include "../../core/objectvectorproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
 
