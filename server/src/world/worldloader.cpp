@@ -207,7 +207,16 @@ void WorldLoader::createObject(ObjectData& objectData)
   if(startsWith(classId, Interfaces::classIdPrefix))
     objectData.object = Interfaces::create(*m_world, classId, id);
   else if(classId == Decoder::classId)
+  {
+    if(objectData.json["protocol"].get<std::string_view>() == "dcc") //! \todo Remove in v0.4
+    {
+      if(objectData.json["long_address"].get<bool>())
+        objectData.json["protocol"] = "dcc_long";
+      else
+        objectData.json["protocol"] = "dcc_short";
+    }
     objectData.object = Decoder::create(*m_world, id);
+  }
   else if(classId == Input::classId)
     objectData.object = Input::create(*m_world, id);
   else if(classId == Output::classId)

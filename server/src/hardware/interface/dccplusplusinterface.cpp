@@ -25,6 +25,7 @@
 #include "../decoder/list/decoderlisttablemodel.hpp"
 #include "../input/list/inputlist.hpp"
 #include "../output/list/outputlist.hpp"
+#include "../protocol/dcc/dcc.hpp"
 #include "../protocol/dccplusplus/kernel.hpp"
 #include "../protocol/dccplusplus/settings.hpp"
 #include "../protocol/dccplusplus/messages.hpp"
@@ -75,6 +76,52 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(inputs, notes);
 
   m_interfaceItems.insertBefore(outputs, notes);
+
+  m_dccplusplusPropertyChanged = dccplusplus->propertyChanged.connect(
+    [this](BaseProperty& property)
+    {
+      if(m_kernel && &property != &dccplusplus->startupDelay)
+        m_kernel->setConfig(dccplusplus->config());
+
+      if(&property == &dccplusplus->speedSteps)
+      {
+        // update speedsteps of all decoders, DCC++ only has a global speedsteps setting
+        const auto values = decoderSpeedSteps(DecoderProtocol::DCCShort); // identical for DCCLong
+        assert(values.size() == 1);
+        for(const auto& decoder : *decoders)
+        {
+          Attributes::setValues(decoder->speedSteps, values);
+          decoder->speedSteps.setValueInternal(values.front());
+        }
+      }
+    });
+
+  updateEnabled();
+}
+
+tcb::span<const DecoderProtocol> DCCPlusPlusInterface::decoderProtocols() const
+{
+  static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};
+  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+}
+
+std::pair<uint16_t, uint16_t> DCCPlusPlusInterface::decoderAddressMinMax(DecoderProtocol protocol) const
+{
+  if(protocol == DecoderProtocol::DCCLong)
+    return {DCC::addressLongStart, DCC::addressLongMax}; // DCC++ considers all addresses below 128 as short.
+  return DecoderController::decoderAddressMinMax(protocol);
+}
+
+tcb::span<const uint8_t> DCCPlusPlusInterface::decoderSpeedSteps(DecoderProtocol protocol) const
+{
+  (void)protocol; // silence unused warning for release build
+  assert(protocol == DecoderProtocol::DCCShort || protocol == DecoderProtocol::DCCLong);
+  const auto& speedStepValues = DCCPlusPlus::Settings::speedStepValues;
+  // find value in array so we can create a span, using a span of a variable won't work due to the compare with prevous value in the attribute setter
+  if(auto it = std::find(speedStepValues.begin(), speedStepValues.end(), dccplusplus->speedSteps); it != speedStepValues.end()) /*[[likely]]/*/
+    return {&(*it), 1};
+  assert(false);
+  return {};
 }
 
 void DCCPlusPlusInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
@@ -182,13 +229,6 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
       m_kernel->setOutputController(this);
       m_kernel->start();
 
-      m_dccplusplusPropertyChanged = dccplusplus->propertyChanged.connect(
-        [this](BaseProperty& property)
-        {
-          if(&property != &dccplusplus->startupDelay)
-            m_kernel->setConfig(dccplusplus->config());
-        });
-
       Attributes::setEnabled({device, baudrate}, false);
     }
     catch(const LogMessageException& e)
@@ -201,8 +241,6 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
   else if(m_kernel && !value)
   {
     Attributes::setEnabled({device, baudrate}, true);
-
-    m_dccplusplusPropertyChanged.disconnect();
 
     m_kernel->stop();
     m_kernel.reset();
@@ -225,10 +263,12 @@ void DCCPlusPlusInterface::loaded()
   Interface::loaded();
 
   check();
+  updateEnabled();
 }
 
 void DCCPlusPlusInterface::destroying()
 {
+  m_dccplusplusPropertyChanged.disconnect();
   OutputController::destroying();
   InputController::destroying();
   DecoderController::destroying();
@@ -239,32 +279,48 @@ void DCCPlusPlusInterface::worldEvent(WorldState state, WorldEvent event)
 {
   Interface::worldEvent(state, event);
 
-  if(m_kernel)
+  switch(event)
   {
-    switch(event)
-    {
-      case WorldEvent::PowerOff:
+    case WorldEvent::EditEnabled:
+    case WorldEvent::EditDisabled:
+      updateEnabled();
+      break;
+
+    case WorldEvent::PowerOff:
+      if(m_kernel)
+      {
         m_kernel->powerOff();
         m_kernel->emergencyStop();
-        break;
+      }
+      break;
 
-      case WorldEvent::PowerOn:
+    case WorldEvent::PowerOn:
+      if(m_kernel)
+      {
         m_kernel->powerOn();
-        break;
+      }
+      break;
 
-      case WorldEvent::Stop:
+    case WorldEvent::Stop:
+      if(m_kernel)
+      {
         m_kernel->emergencyStop();
-        break;
+      }
+      updateEnabled();
+      break;
 
-      case WorldEvent::Run:
+    case WorldEvent::Run:
+      if(m_kernel)
+      {
         m_kernel->powerOn();
         m_kernel->clearEmergencyStop();
-        restoreDecoderSpeed();
-        break;
+      }
+      restoreDecoderSpeed();
+      updateEnabled();
+      break;
 
-      default:
-        break;
-    }
+    default:
+      break;
   }
 }
 
@@ -276,15 +332,6 @@ void DCCPlusPlusInterface::check() const
 
 void DCCPlusPlusInterface::checkDecoder(const Decoder& decoder) const
 {
-  if(decoder.protocol != DecoderProtocol::Auto && decoder.protocol != DecoderProtocol::DCC)
-    Log::log(decoder, LogMessage::C2002_DCCPLUSPLUS_ONLY_SUPPORTS_THE_DCC_PROTOCOL);
-
-  if(decoder.protocol == DecoderProtocol::DCC && decoder.address <= 127 && decoder.longAddress)
-    Log::log(decoder, LogMessage::C2003_DCCPLUSPLUS_DOESNT_SUPPORT_DCC_LONG_ADDRESSES_BELOW_128);
-
-  if(decoder.speedSteps != Decoder::speedStepsAuto && decoder.speedSteps != dccplusplus->speedSteps)
-    Log::log(decoder, LogMessage::W2003_COMMAND_STATION_DOESNT_SUPPORT_X_SPEEDSTEPS_USING_X, decoder.speedSteps.value(), dccplusplus->speedSteps.value());
-
   for(const auto& function : *decoder.functions)
     if(function->number > DCCPlusPlus::Config::functionNumberMax)
     {
@@ -297,4 +344,12 @@ void DCCPlusPlusInterface::idChanged(const std::string& newId)
 {
   if(m_kernel)
     m_kernel->setLogId(newId);
+}
+
+void DCCPlusPlusInterface::updateEnabled()
+{
+  const bool editable = contains(m_world.state, WorldState::Edit);
+  const bool stopped = !contains(m_world.state, WorldState::Run);
+
+  Attributes::setEnabled(dccplusplus->speedSteps, editable && stopped);
 }

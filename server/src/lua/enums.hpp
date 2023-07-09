@@ -25,7 +25,7 @@
 
 #include <lua.hpp>
 #include "enum.hpp"
-#include "../../src/enum/decoderprotocol.hpp"
+#include <traintastic/enum/decoderprotocol.hpp>
 #include "../../src/enum/direction.hpp"
 #include "../../src/enum/directioncontrolstate.hpp"
 #include <traintastic/enum/identificationeventtype.hpp>

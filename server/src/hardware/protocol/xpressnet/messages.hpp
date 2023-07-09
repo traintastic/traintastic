@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,11 @@
 #include "../../../enum/direction.hpp"
 
 namespace XpressNet {
+
+constexpr uint16_t shortAddressMin = 1;
+constexpr uint16_t shortAddressMax = 99;
+constexpr uint16_t longAddressMin = 100;
+constexpr uint16_t longAddressMax = 9999;
 
 constexpr uint8_t idFeedbackBroadcast = 0x40;
 
@@ -238,18 +243,18 @@ struct EmergencyStopLocomotive : Message
   uint8_t addressLow;
   uint8_t checksum;
 
-  EmergencyStopLocomotive(uint16_t address, bool longAddress)
+  EmergencyStopLocomotive(uint16_t address)
   {
     header = 0x92;
-    if(longAddress)
+    if(address >= longAddressMin)
     {
-      assert(address >= 1 && address <= 9999);
+      assert(address >= longAddressMin && address <= longAddressMax);
       addressHigh = 0xC0 | address >> 8;
       addressLow = address & 0xff;
     }
     else
     {
-      assert(address >= 1 && address <= 127);
+      assert(address >= shortAddressMin && address <= shortAddressMax);
       addressHigh = 0x00;
       addressLow = address & 0x7f;
     }
@@ -263,18 +268,18 @@ struct LocomotiveInstruction : Message
   uint8_t addressHigh;
   uint8_t addressLow;
 
-  LocomotiveInstruction(uint16_t address, bool longAddress)
+  LocomotiveInstruction(uint16_t address)
   {
     header = 0xE4;
-    if(longAddress)
+    if(address >= longAddressMin)
     {
-      assert(address >= 1 && address <= 9999);
+      assert(address >= longAddressMin && address <= longAddressMax);
       addressHigh = 0xc0 | address >> 8;
       addressLow = address & 0xff;
     }
     else
     {
-      assert(address >= 1 && address <= 127);
+      assert(address >= shortAddressMin && address <= shortAddressMax);
       addressHigh = 0x00;
       addressLow = address & 0x7f;
     }
@@ -287,8 +292,8 @@ struct SpeedAndDirectionInstruction : LocomotiveInstruction
   uint8_t speedAndDirection;
   uint8_t checksum;
 
-  SpeedAndDirectionInstruction(uint16_t address, bool longAddress, bool emergencyStop, Direction direction) :
-    LocomotiveInstruction(address, longAddress)
+  SpeedAndDirectionInstruction(uint16_t address, bool emergencyStop, Direction direction) :
+    LocomotiveInstruction(address)
   {
     assert(direction != Direction::Unknown);
     speedAndDirection = emergencyStop ? 0x01 : 0x00;
@@ -299,8 +304,8 @@ struct SpeedAndDirectionInstruction : LocomotiveInstruction
 
 struct SpeedAndDirectionInstruction14 : SpeedAndDirectionInstruction
 {
-  SpeedAndDirectionInstruction14(uint16_t address, bool longAddress, bool emergencyStop, Direction direction, uint8_t speedStep, bool fl) :
-    SpeedAndDirectionInstruction(address, longAddress, emergencyStop, direction)
+  SpeedAndDirectionInstruction14(uint16_t address, bool emergencyStop, Direction direction, uint8_t speedStep, bool fl) :
+    SpeedAndDirectionInstruction(address, emergencyStop, direction)
   {
     assert(speedStep <= 14);
     identification = 0x10;
@@ -314,8 +319,8 @@ struct SpeedAndDirectionInstruction14 : SpeedAndDirectionInstruction
 
 struct SpeedAndDirectionInstruction27 : SpeedAndDirectionInstruction
 {
-  SpeedAndDirectionInstruction27(uint16_t address, bool longAddress, bool emergencyStop, Direction direction, uint8_t speedStep) :
-    SpeedAndDirectionInstruction(address, longAddress, emergencyStop, direction)
+  SpeedAndDirectionInstruction27(uint16_t address, bool emergencyStop, Direction direction, uint8_t speedStep) :
+    SpeedAndDirectionInstruction(address, emergencyStop, direction)
   {
     assert(speedStep <= 27);
     identification = 0x11;
@@ -327,8 +332,8 @@ struct SpeedAndDirectionInstruction27 : SpeedAndDirectionInstruction
 
 struct SpeedAndDirectionInstruction28 : SpeedAndDirectionInstruction
 {
-  SpeedAndDirectionInstruction28(uint16_t address, bool longAddress, bool emergencyStop, Direction direction, uint8_t speedStep) :
-    SpeedAndDirectionInstruction(address, longAddress, emergencyStop, direction)
+  SpeedAndDirectionInstruction28(uint16_t address, bool emergencyStop, Direction direction, uint8_t speedStep) :
+    SpeedAndDirectionInstruction(address, emergencyStop, direction)
   {
     assert(speedStep <= 28);
     identification = 0x12;
@@ -340,8 +345,8 @@ struct SpeedAndDirectionInstruction28 : SpeedAndDirectionInstruction
 
 struct SpeedAndDirectionInstruction128 : SpeedAndDirectionInstruction
 {
-  SpeedAndDirectionInstruction128(uint16_t address, bool longAddress, bool emergencyStop, Direction direction, uint8_t speedStep) :
-    SpeedAndDirectionInstruction(address, longAddress, emergencyStop, direction)
+  SpeedAndDirectionInstruction128(uint16_t address, bool emergencyStop, Direction direction, uint8_t speedStep) :
+    SpeedAndDirectionInstruction(address, emergencyStop, direction)
   {
     assert(speedStep <= 126);
     identification = 0x13;
@@ -356,8 +361,8 @@ struct FunctionInstructionGroup : LocomotiveInstruction
   uint8_t functions = 0x00;
   uint8_t checksum;
 
-  FunctionInstructionGroup(uint16_t address, bool longAddress, uint8_t group) :
-    LocomotiveInstruction(address, longAddress)
+  FunctionInstructionGroup(uint16_t address, uint8_t group) :
+    LocomotiveInstruction(address)
   {
     assert(group >= 1 && group <= 5);
     identification = (group == 5) ? 0x28 : (0x1F + group);
@@ -366,8 +371,8 @@ struct FunctionInstructionGroup : LocomotiveInstruction
 
 struct FunctionInstructionGroup1 : FunctionInstructionGroup
 {
-  FunctionInstructionGroup1(uint16_t address, bool longAddress, bool f0, bool f1, bool f2, bool f3, bool f4) :
-    FunctionInstructionGroup(address, longAddress, 1)
+  FunctionInstructionGroup1(uint16_t address, bool f0, bool f1, bool f2, bool f3, bool f4) :
+    FunctionInstructionGroup(address, 1)
   {
     if(f0)
       functions |= 0x10;
@@ -386,8 +391,8 @@ struct FunctionInstructionGroup1 : FunctionInstructionGroup
 
 struct FunctionInstructionGroup2 : FunctionInstructionGroup
 {
-  FunctionInstructionGroup2(uint16_t address, bool longAddress, bool f5, bool f6, bool f7, bool f8) :
-    FunctionInstructionGroup(address, longAddress, 2)
+  FunctionInstructionGroup2(uint16_t address, bool f5, bool f6, bool f7, bool f8) :
+    FunctionInstructionGroup(address, 2)
   {
     if(f5)
       functions |= 0x01;
@@ -404,8 +409,8 @@ struct FunctionInstructionGroup2 : FunctionInstructionGroup
 
 struct FunctionInstructionGroup3 : FunctionInstructionGroup
 {
-  FunctionInstructionGroup3(uint16_t address, bool longAddress, bool f9, bool f10, bool f11, bool f12) :
-    FunctionInstructionGroup(address, longAddress, 3)
+  FunctionInstructionGroup3(uint16_t address, bool f9, bool f10, bool f11, bool f12) :
+    FunctionInstructionGroup(address, 3)
   {
     if(f9)
       functions |= 0x01;
@@ -422,8 +427,8 @@ struct FunctionInstructionGroup3 : FunctionInstructionGroup
 
 struct FunctionInstructionGroup4 : FunctionInstructionGroup
 {
-  FunctionInstructionGroup4(uint16_t address, bool longAddress, bool f13, bool f14, bool f15, bool f16, bool f17, bool f18, bool f19, bool f20) :
-    FunctionInstructionGroup(address, longAddress, 4)
+  FunctionInstructionGroup4(uint16_t address, bool f13, bool f14, bool f15, bool f16, bool f17, bool f18, bool f19, bool f20) :
+    FunctionInstructionGroup(address, 4)
   {
     if(f13)
       functions |= 0x01;
@@ -448,8 +453,8 @@ struct FunctionInstructionGroup4 : FunctionInstructionGroup
 
 struct FunctionInstructionGroup5 : FunctionInstructionGroup
 {
-  FunctionInstructionGroup5(uint16_t address, bool longAddress, bool f21, bool f22, bool f23, bool f24, bool f25, bool f26, bool f27, bool f28) :
-    FunctionInstructionGroup(address, longAddress, 5)
+  FunctionInstructionGroup5(uint16_t address, bool f21, bool f22, bool f23, bool f24, bool f25, bool f26, bool f27, bool f28) :
+    FunctionInstructionGroup(address, 5)
   {
     if(f21)
       functions |= 0x01;
@@ -514,8 +519,8 @@ namespace RocoMultiMAUS
     uint8_t functions = 0x00;
     uint8_t checksum;
 
-    FunctionInstructionF13F20(uint16_t address, bool longAddress, bool f13, bool f14, bool f15, bool f16, bool f17, bool f18, bool f19, bool f20) :
-      LocomotiveInstruction(address, longAddress)
+    FunctionInstructionF13F20(uint16_t address, bool f13, bool f14, bool f15, bool f16, bool f17, bool f18, bool f19, bool f20) :
+      LocomotiveInstruction(address)
     {
       identification = 0xF3;
 

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -282,7 +282,7 @@ std::string toString(const Message& message, bool raw)
 LanXLocoInfo::LanXLocoInfo(const Decoder& decoder) :
   LanXLocoInfo()
 {
-  setAddress(decoder.address, decoder.longAddress);
+  setAddress(decoder.address, decoder.protocol == DecoderProtocol::DCCLong);
   setSpeedSteps(decoder.speedSteps);
   setDirection(decoder.direction);
   if(decoder.emergencyStop)

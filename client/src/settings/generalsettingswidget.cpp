@@ -24,19 +24,20 @@
 #include <QComboBox>
 #include <QDir>
 #include <QDirIterator>
+#include <QMessageBox>
 #include <traintastic/locale/locale.hpp>
 #include "generalsettings.hpp"
 #include <traintastic/utils/standardpaths.hpp>
 
 static QString getLanguageName(const QString& filename)
 {
-  QFile file(filename);
-  if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+  try
   {
-    const QString header = QStringLiteral("## Traintastic language file: ");
-    QString line = QString::fromUtf8(file.readLine());
-    if(line.startsWith(header))
-      return line.remove(0, header.length()).trimmed();
+    Locale locale(getLocalePath() / filename.toStdString());
+    return locale.translate(QString("language:").append(QFileInfo(filename).baseName()));
+  }
+  catch(...)
+  {
   }
   return "";
 }
@@ -53,6 +54,8 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget* parent)
     while(it.hasNext())
     {
       const QString filename = it.next();
+      if(QFileInfo(filename).baseName() == "neutral")
+        continue;
       const QString label = getLanguageName(filename);
       if(!label.isEmpty())
       {
@@ -62,9 +65,10 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget* parent)
       }
     }
     connect(cb, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-      [cb](int index)
+      [this, cb](int index)
       {
         GeneralSettings::instance().language.setValue(cb->itemData(index).toString());
+        QMessageBox::information(this, Locale::tr("qtapp.settings:restart_required"), Locale::tr("qtapp.settings.general:language_changed_restart_required"));
       });
     add(s.language.name(), cb);
   }

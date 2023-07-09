@@ -69,6 +69,12 @@ ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(outputs, notes);
 }
 
+tcb::span<const DecoderProtocol> ECoSInterface::decoderProtocols() const
+{
+  static constexpr std::array<DecoderProtocol, 4> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong, DecoderProtocol::Motorola, DecoderProtocol::Selectrix};
+  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+}
+
 void ECoSInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(m_kernel)

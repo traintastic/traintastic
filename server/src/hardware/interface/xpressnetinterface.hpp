@@ -82,6 +82,9 @@ class XpressNetInterface final
     XpressNetInterface(World& world, std::string_view _id);
 
     // DecoderController:
+    tcb::span<const DecoderProtocol> decoderProtocols() const final;
+    std::pair<uint16_t, uint16_t> decoderAddressMinMax(DecoderProtocol protocol) const final;
+    tcb::span<const uint8_t> decoderSpeedSteps(DecoderProtocol protocol) const final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:

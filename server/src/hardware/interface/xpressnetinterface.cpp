@@ -156,6 +156,42 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   updateVisible();
 }
 
+tcb::span<const DecoderProtocol> XpressNetInterface::decoderProtocols() const
+{
+  static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};
+  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+}
+
+std::pair<uint16_t, uint16_t> XpressNetInterface::decoderAddressMinMax(DecoderProtocol protocol) const
+{
+  switch(protocol)
+  {
+    case DecoderProtocol::DCCShort:
+      return {XpressNet::shortAddressMin, XpressNet::shortAddressMax};
+
+    case DecoderProtocol::DCCLong:
+      return {XpressNet::longAddressMin, XpressNet::longAddressMax};
+
+    default: /*[[unlikely]]*/
+      return DecoderController::decoderAddressMinMax(protocol);
+  }
+}
+
+tcb::span<const uint8_t> XpressNetInterface::decoderSpeedSteps(DecoderProtocol protocol) const
+{
+  static constexpr std::array<uint8_t, 4> dccSpeedSteps{{14, 27, 28, 128}}; // XpressNet also support 27 steps
+
+  switch(protocol)
+  {
+    case DecoderProtocol::DCCShort:
+    case DecoderProtocol::DCCLong:
+      return dccSpeedSteps;
+
+    default: /*[[unlikely]]*/
+      return DecoderController::decoderSpeedSteps(protocol);
+  }
+}
+
 void XpressNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(m_kernel)

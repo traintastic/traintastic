@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -306,7 +306,7 @@ void Kernel::receiveFrom(std::string_view message, IOHandler::ClientId clientId)
               if(!throttle)
                 return;
 
-              switch(throttle->acquire(DecoderProtocol::DCC, address.address, address.isLong, steal))
+              switch(throttle->acquire(address.isLong ? DecoderProtocol::DCCLong : DecoderProtocol::DCCShort, address.address, steal))
               {
                 case Throttle::AcquireResult::Success:
                 {

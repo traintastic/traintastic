@@ -217,7 +217,15 @@ Traintastic::RunStatus Traintastic::run(const std::string& worldUUID, bool simul
       world->powerOn();
   }
 
-  EventLoop::exec();
+  try
+  {
+    EventLoop::exec();
+  }
+  catch(const std::exception& e)
+  {
+    Log::log(id, LogMessage::F1008_EVENTLOOP_CRASHED_X, e.what());
+    return ExitFailure;
+  }
 
   return m_restart ? Restart : ExitSuccess;
 }

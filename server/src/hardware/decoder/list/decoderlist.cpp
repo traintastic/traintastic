@@ -74,15 +74,14 @@ std::shared_ptr<Decoder> DecoderList::getDecoder(uint16_t address) const
   return {};
 }
 
-std::shared_ptr<Decoder> DecoderList::getDecoder(DecoderProtocol protocol, uint16_t address, bool longAddress) const
+std::shared_ptr<Decoder> DecoderList::getDecoder(DecoderProtocol protocol, uint16_t address) const
 {
   auto it = std::find_if(begin(), end(),
-    [protocol, address, longAddress](const auto& decoder)
+    [protocol, address](const auto& decoder)
     {
       return
         decoder->protocol.value() == protocol &&
-        decoder->address.value() == address &&
-        (protocol != DecoderProtocol::DCC || decoder->longAddress == longAddress);
+        decoder->address.value() == address;
     });
   if(it != end())
     return *it;
