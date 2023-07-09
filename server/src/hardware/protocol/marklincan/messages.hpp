@@ -412,6 +412,107 @@ struct S88ModuleState : UidMessage
   }
 };
 
+struct FeedbackMessage : UidMessage
+{
+  FeedbackMessage(uint16_t deviceId_, uint16_t contactId_, bool response)
+    : UidMessage(Command::FeedbackEvent, response, 0)
+  {
+    dlc = 4;
+    setDeviceId(deviceId_);
+    setContactId(contactId_);
+  }
+
+  uint16_t deviceId() const
+  {
+    return to16(data[1], data[0]);
+  }
+
+  void setDeviceId(uint16_t value)
+  {
+    data[0] = high8(value);
+    data[1] = low8(value);
+  }
+
+  uint16_t contactId() const
+  {
+    return to16(data[3], data[2]);
+  }
+
+  void setContactId(uint16_t value)
+  {
+    data[2] = high8(value);
+    data[3] = low8(value);
+  }
+};
+
+struct FeedbackStateRequest : FeedbackMessage
+{
+  FeedbackStateRequest(uint16_t deviceId_, uint16_t contactId_)
+    : FeedbackMessage(deviceId_, contactId_, false)
+  {
+  }
+};
+
+struct FeedbackStateParameter : FeedbackMessage
+{
+  FeedbackStateParameter(uint16_t deviceId_, uint16_t contactId_, uint8_t parameter_)
+    : FeedbackMessage(deviceId_, contactId_, false)
+  {
+    dlc = 5;
+    setParameter(parameter_);
+  }
+
+  uint8_t parameter() const
+  {
+    return data[4];
+  }
+
+  void setParameter(uint8_t value)
+  {
+    data[4] = value;
+  }
+};
+
+struct FeedbackState : FeedbackMessage
+{
+  FeedbackState(uint16_t deviceId_, uint16_t contactId_)
+    : FeedbackMessage(deviceId_, contactId_, true)
+  {
+    dlc = 8;
+  }
+
+  uint8_t stateOld() const
+  {
+    return data[4];
+  }
+
+  void setStateOld(uint8_t value)
+  {
+    data[4] = value;
+  }
+
+  uint8_t stateNew() const
+  {
+    return data[5];
+  }
+
+  void setStateNew(uint8_t value)
+  {
+    data[5] = value;
+  }
+
+  uint16_t time() const
+  {
+    return to16(data[7], data[6]);
+  }
+
+  void setTime(uint16_t value)
+  {
+    data[6] = high8(value);
+    data[7] = low8(value);
+  }
+};
+
 }
 
 #endif

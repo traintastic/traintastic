@@ -24,14 +24,17 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_KERNEL_HPP
 
 #include <memory>
+#include <array>
 #include <thread>
 #include <boost/asio/io_context.hpp>
+#include <traintastic/enum/tristate.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
 
 class Decoder;
 enum class DecoderChangeFlags;
 class DecoderController;
+class InputController;
 
 namespace MarklinCAN {
 
@@ -39,6 +42,10 @@ struct Message;
 
 class Kernel
 {
+  public:
+    static constexpr uint16_t s88AddressMin = 1;
+    static constexpr uint16_t s88AddressMax = 16384;
+
   private:
     boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
@@ -47,7 +54,10 @@ class Kernel
     std::string m_logId;
     std::function<void()> m_onStarted;
 
-    DecoderController* m_decoderController;
+    DecoderController* m_decoderController = nullptr;
+
+    InputController* m_inputController = nullptr;
+    std::array<TriState, s88AddressMax - s88AddressMin + 1> m_inputValues;
 
     Config m_config;
 #ifndef NDEBUG
@@ -145,6 +155,14 @@ class Kernel
      * \note This function may not be called when the kernel is running.
      */
     void setDecoderController(DecoderController* decoderController);
+
+    /**
+     * \brief Set the input controller
+     *
+     * \param[in] inputController The input controller
+     * \note This function may not be called when the kernel is running.
+     */
+    void setInputController(InputController* inputController);
 
     /**
      * \brief Start the kernel and IO handler

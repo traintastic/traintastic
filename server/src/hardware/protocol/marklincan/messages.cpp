@@ -187,9 +187,27 @@ std::string toString(const Message& message)
       break;
 
     case Command::FeedbackEvent:
+    {
       s.append("FeedbackEvent");
-      break;
 
+      const auto& feedbackEvent = static_cast<const FeedbackMessage&>(message);
+      s.append(" device_id=").append(std::to_string(feedbackEvent.deviceId()));
+      s.append(" contact_id=").append(std::to_string(feedbackEvent.contactId()));
+
+      if(message.dlc == 5)
+      {
+        const auto& feedbackStateParameter = static_cast<const FeedbackStateParameter&>(message);
+        s.append(" parameter=").append(std::to_string(feedbackStateParameter.parameter()));
+      }
+      else if(message.dlc == 8)
+      {
+        const auto& feedbackState = static_cast<const FeedbackState&>(message);
+        s.append(" state_old=").append(std::to_string(feedbackState.stateOld()));
+        s.append(" state_new=").append(std::to_string(feedbackState.stateNew()));
+        s.append(" time=").append(std::to_string(feedbackState.time()));
+      }
+      break;
+    }
     case Command::SX1Event:
       s.append("SX1Event");
       break;

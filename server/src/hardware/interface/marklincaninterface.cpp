@@ -23,6 +23,8 @@
 #include "marklincaninterface.hpp"
 #include "../decoder/list/decoderlist.hpp" // ????
 #include "../decoder/list/decoderlisttablemodel.hpp"
+#include "../input/input.hpp"
+#include "../input/list/inputlist.hpp"
 #include "../protocol/marklincan/iohandler/simulationiohandler.hpp"
 #include "../protocol/marklincan/iohandler/tcpiohandler.hpp"
 #include "../protocol/marklincan/iohandler/udpiohandler.hpp"
@@ -32,10 +34,12 @@
 #include "../../utils/displayname.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
 
 MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , DecoderController(*this, decoderListColumns)
+  , InputController(static_cast<IdObject&>(*this))
   , type{this, "type", MarklinCANInterfaceType::TCP, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
@@ -51,12 +55,19 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(hostname, notes);
 
   m_interfaceItems.insertBefore(decoders, notes);
+
+  m_interfaceItems.insertBefore(inputs, notes);
 }
 
 void MarklinCANInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(m_kernel)
     m_kernel->decoderChanged(decoder, changes, functionNumber);
+}
+
+std::pair<uint32_t, uint32_t> MarklinCANInterface::inputAddressMinMax(uint32_t /*channel*/) const
+{
+  return {MarklinCAN::Kernel::s88AddressMin, MarklinCAN::Kernel::s88AddressMax};
 }
 
 bool MarklinCANInterface::setOnline(bool& value, bool simulation)
@@ -97,6 +108,7 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
         });
 
       m_kernel->setDecoderController(this);
+      m_kernel->setInputController(this);
 
       m_kernel->start();
 
@@ -125,10 +137,12 @@ void MarklinCANInterface::addToWorld()
 {
   Interface::addToWorld();
   DecoderController::addToWorld();
+  InputController::addToWorld(inputListColumns);
 }
 
 void MarklinCANInterface::destroying()
 {
+  InputController::destroying();
   DecoderController::destroying();
   Interface::destroying();
 }

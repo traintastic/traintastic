@@ -27,6 +27,7 @@
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../decoder/decodercontroller.hpp"
+#include "../../input/inputcontroller.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 #include "../../../utils/inrange.hpp"
@@ -78,8 +79,16 @@ void Kernel::setOnStarted(std::function<void()> callback)
 
 void Kernel::setDecoderController(DecoderController* decoderController)
 {
+  assert(isEventLoopThread());
   assert(!m_started);
   m_decoderController = decoderController;
+}
+
+void Kernel::setInputController(InputController* inputController)
+{
+  assert(isEventLoopThread());
+  assert(!m_started);
+  m_inputController = inputController;
 }
 
 void Kernel::start()
@@ -87,6 +96,9 @@ void Kernel::start()
   assert(isEventLoopThread());
   assert(m_ioHandler);
   assert(!m_started);
+
+  // reset all state values
+  m_inputValues.fill(TriState::Undefined);
 
   m_thread = std::thread(
     [this]()
@@ -272,7 +284,34 @@ void Kernel::receive(const Message& message)
     case Command::AccessoryControl:
     case Command::AccessoryConfig:
     case Command::S88Polling:
+      // not (yet) implemented
+      break;
+
     case Command::FeedbackEvent:
+      if(message.dlc == 8)
+      {
+        if(m_inputController)
+        {
+          const auto& feedbackState = static_cast<const FeedbackState&>(message);
+
+          if(feedbackState.deviceId() == 0) //! \todo what about other values?
+          {
+            const auto value = feedbackState.stateNew() == 0 ? TriState::False : TriState::True;
+            if(inRange(feedbackState.contactId(), s88AddressMin, s88AddressMax) && m_inputValues[feedbackState.contactId() - s88AddressMin] != value)
+            {
+              m_inputValues[feedbackState.contactId() - s88AddressMin] = value;
+
+              EventLoop::call(
+                [this, address=feedbackState.contactId(), value]()
+                {
+                  m_inputController->updateInputValue(InputController::defaultInputChannel, address, value);
+                });
+            }
+          }
+        }
+      }
+      break;
+
     case Command::SX1Event:
     case Command::Ping:
     case Command::Update:
