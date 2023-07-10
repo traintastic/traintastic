@@ -358,13 +358,5 @@
     {
         "term": "decoder_protocol:selectrix",
         "definition": "Selectrix"
-    },
-    {
-        "term": "marklin_can_interface_type:tcp",
-        "definition": "TCP"
-    },
-    {
-        "term": "marklin_can_interface_type:udp",
-        "definition": "UDP"
     }
 ]

@@ -40,7 +40,7 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , DecoderController(*this, decoderListColumns)
   , InputController(static_cast<IdObject&>(*this))
-  , type{this, "type", MarklinCANInterfaceType::TCP, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , type{this, "type", MarklinCANInterfaceType::NetworkTCP, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   name = "M\u00E4rklin CAN";
@@ -106,11 +106,11 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
       {
         switch(type.value())
         {
-          case MarklinCANInterfaceType::TCP:
+          case MarklinCANInterfaceType::NetworkTCP:
             m_kernel = MarklinCAN::Kernel::create<MarklinCAN::TCPIOHandler>(config, hostname.value());
             break;
 
-          case MarklinCANInterfaceType::UDP:
+          case MarklinCANInterfaceType::NetworkUDP:
             m_kernel = MarklinCAN::Kernel::create<MarklinCAN::UDPIOHandler>(config, hostname.value());
             break;
         }
