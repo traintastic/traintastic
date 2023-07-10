@@ -59,6 +59,26 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(inputs, notes);
 }
 
+tcb::span<const DecoderProtocol> MarklinCANInterface::decoderProtocols() const
+{
+  static constexpr std::array<DecoderProtocol, 4> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong, DecoderProtocol::MFX, DecoderProtocol::Motorola};
+  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+}
+
+tcb::span<const uint8_t> MarklinCANInterface::decoderSpeedSteps(DecoderProtocol protocol) const
+{
+  static constexpr std::array<uint8_t, 4> dccLongSpeedSteps{{28, 128}}; // 14 not supported for long addresses
+
+  switch(protocol)
+  {
+    case DecoderProtocol::DCCLong:
+      return dccLongSpeedSteps;
+
+    default:
+      return DecoderController::decoderSpeedSteps(protocol);
+  }
+}
+
 void MarklinCANInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(m_kernel)

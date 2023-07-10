@@ -57,6 +57,7 @@ std::pair<uint16_t, uint16_t> DecoderController::decoderAddressMinMax(DecoderPro
     case DecoderProtocol::Selectrix:
       return {1, 112};
 
+    case DecoderProtocol::MFX:
     case DecoderProtocol::None:
       return noAddressMinMax;
   }
@@ -69,6 +70,7 @@ tcb::span<const uint8_t> DecoderController::decoderSpeedSteps(DecoderProtocol pr
   static constexpr std::array<uint8_t, 3> dccSpeedSteps{{14, 28, 128}};
   static constexpr std::array<uint8_t, 3> motorolaSpeedSteps{{14, 27, 28}};
   static constexpr std::array<uint8_t, 1> selectrixSpeedSteps{{32}};
+  static constexpr std::array<uint8_t, 1> mfxSpeedSteps{{126}};
 
   switch(protocol)
   {
@@ -81,6 +83,9 @@ tcb::span<const uint8_t> DecoderController::decoderSpeedSteps(DecoderProtocol pr
 
     case DecoderProtocol::Selectrix:
       return selectrixSpeedSteps;
+
+    case DecoderProtocol::MFX:
+      return mfxSpeedSteps;
 
     case DecoderProtocol::None:
       return {};

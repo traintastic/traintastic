@@ -42,9 +42,15 @@ static std::tuple<bool, DecoderProtocol, uint16_t> uidToProtocolAddress(uint32_t
   if(inRange(uid, UID::Range::locomotiveMFX))
     return {true, DecoderProtocol::MFX, uid - UID::Range::locomotiveMFX.first};
   if(inRange(uid, UID::Range::locomotiveDCC))
-    return {true, DecoderProtocol::DCC, uid - UID::Range::locomotiveDCC.first};
-
-  return {false, DecoderProtocol::Auto, 0};
+  {
+    //! \todo Handle long address < 128
+    const uint16_t address = uid - UID::Range::locomotiveDCC.first;
+    if(address <= DCC::addressShortMax)
+      return {true, DecoderProtocol::DCCShort, address};
+    else
+      return {true, DecoderProtocol::DCCLong, address};
+  }
+  return {false, DecoderProtocol::None, 0};
 }
 
 Kernel::Kernel(const Config& config, bool simulation)
@@ -175,8 +181,7 @@ void Kernel::receive(const Message& message)
               EventLoop::call(
                 [this, protocol=protocol, address=address]()
                 {
-                  const bool longAddress = (protocol == DecoderProtocol::DCC) && DCC::isLongAddress(address);
-                  if(const auto& decoder = m_decoderController->getDecoder(protocol, address, longAddress))
+                  if(const auto& decoder = m_decoderController->getDecoder(protocol, address))
                     decoder->emergencyStop.setValueInternal(true);
                 });
             }
@@ -209,8 +214,7 @@ void Kernel::receive(const Message& message)
             EventLoop::call(
               [this, protocol=protocol, address=address, throttle=Decoder::speedStepToThrottle(locomotiveSpeed.speed(), LocomotiveSpeed::speedMax)]()
               {
-                const bool longAddress = (protocol == DecoderProtocol::DCC) && DCC::isLongAddress(address);
-                if(const auto& decoder = m_decoderController->getDecoder(protocol, address, longAddress))
+                if(const auto& decoder = m_decoderController->getDecoder(protocol, address))
                 {
                   decoder->emergencyStop.setValueInternal(false);
                   decoder->throttle.setValueInternal(throttle);
@@ -249,8 +253,7 @@ void Kernel::receive(const Message& message)
             EventLoop::call(
               [this, protocol=protocol, address=address, direction]()
               {
-                const bool longAddress = (protocol == DecoderProtocol::DCC) && DCC::isLongAddress(address);
-                if(const auto& decoder = m_decoderController->getDecoder(protocol, address, longAddress))
+                if(const auto& decoder = m_decoderController->getDecoder(protocol, address))
                   decoder->direction.setValueInternal(direction);
               });
           }
@@ -270,8 +273,7 @@ void Kernel::receive(const Message& message)
             EventLoop::call(
               [this, protocol=protocol, address=address, number=locomotiveFunction.number(), value=locomotiveFunction.isOn()]()
               {
-                const bool longAddress = (protocol == DecoderProtocol::DCC) && DCC::isLongAddress(address);
-                if(const auto& decoder = m_decoderController->getDecoder(protocol, address, longAddress))
+                if(const auto& decoder = m_decoderController->getDecoder(protocol, address))
                   decoder->setFunctionValue(number, value);
               });
           }
@@ -363,7 +365,8 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
 
   switch(decoder.protocol.value())
   {
-    case DecoderProtocol::DCC:
+    case DecoderProtocol::DCCShort:
+    case DecoderProtocol::DCCLong:
       uid = UID::locomotiveDCC(decoder.address);
       break;
 
@@ -375,9 +378,9 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       uid = UID::locomotiveMFX(decoder.address);
       break;
 
-    case DecoderProtocol::Auto:
+    case DecoderProtocol::None:
     case DecoderProtocol::Selectrix:
-    case DecoderProtocol::Custom:
+      assert(false);
       break;
   }
 
