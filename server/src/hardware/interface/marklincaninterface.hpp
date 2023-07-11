@@ -28,6 +28,7 @@
 #include "../decoder/decodercontroller.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../protocol/marklincan/kernel.hpp"
+#include "../protocol/marklincan/settings.hpp"
 
 /**
  * @brief Märklin CAN hardware interface
@@ -43,6 +44,7 @@ class MarklinCANInterface final
 
   private:
     std::unique_ptr<MarklinCAN::Kernel> m_kernel;
+    boost::signals2::connection m_marklinCANPropertyChanged;
 
     void addToWorld() final;
     void destroying() final;
@@ -56,6 +58,7 @@ class MarklinCANInterface final
   public:
     Property<MarklinCANInterfaceType> type;
     Property<std::string> hostname;
+    ObjectProperty<MarklinCAN::Settings> marklinCAN;
 
     MarklinCANInterface(World& world, std::string_view _id);
 

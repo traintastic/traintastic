@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,6 +53,7 @@ namespace DisplayName
     constexpr std::string_view inputs = "hardware:inputs";
     constexpr std::string_view interface = "hardware:interface";
     constexpr std::string_view loconet = "hardware:loconet";
+    constexpr std::string_view marklinCAN = "hardware:marklin_can";
     constexpr std::string_view outputKeyboard = "hardware:output_keyboard";
     constexpr std::string_view outputs = "hardware:outputs";
     constexpr std::string_view speedSteps = "hardware:speed_steps";

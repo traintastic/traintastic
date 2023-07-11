@@ -358,5 +358,9 @@
     {
         "term": "decoder_protocol:selectrix",
         "definition": "Selectrix"
+    },
+    {
+        "term": "hardware:marklin_can",
+        "definition": "Märklin CAN"
     }
 ]

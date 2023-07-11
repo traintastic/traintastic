@@ -28,7 +28,10 @@
 #include "../protocol/marklincan/iohandler/simulationiohandler.hpp"
 #include "../protocol/marklincan/iohandler/tcpiohandler.hpp"
 #include "../protocol/marklincan/iohandler/udpiohandler.hpp"
+#include "../protocol/marklincan/kernel.hpp"
+#include "../protocol/marklincan/settings.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
@@ -42,8 +45,10 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   , InputController(static_cast<IdObject&>(*this))
   , type{this, "type", MarklinCANInterfaceType::NetworkTCP, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , marklinCAN{this, "marklin_can", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "M\u00E4rklin CAN";
+  marklinCAN.setValueInternal(std::make_shared<MarklinCAN::Settings>(*this, marklinCAN.name()));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
   Attributes::addEnabled(type, !online);
@@ -53,6 +58,9 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
   Attributes::addEnabled(hostname, !online);
   m_interfaceItems.insertBefore(hostname, notes);
+
+  Attributes::addDisplayName(marklinCAN, DisplayName::Hardware::marklinCAN);
+  m_interfaceItems.insertBefore(marklinCAN, notes);
 
   m_interfaceItems.insertBefore(decoders, notes);
 
@@ -96,22 +104,20 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
   {
     try
     {
-      const MarklinCAN::Config config{true};
-
       if(simulation)
       {
-        m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SimulationIOHandler>(config);
+        m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SimulationIOHandler>(marklinCAN->config());
       }
       else
       {
         switch(type.value())
         {
           case MarklinCANInterfaceType::NetworkTCP:
-            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::TCPIOHandler>(config, hostname.value());
+            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::TCPIOHandler>(marklinCAN->config(), hostname.value());
             break;
 
           case MarklinCANInterfaceType::NetworkUDP:
-            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::UDPIOHandler>(config, hostname.value());
+            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::UDPIOHandler>(marklinCAN->config(), hostname.value());
             break;
         }
       }
@@ -132,6 +138,12 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
 
       m_kernel->start();
 
+      m_marklinCANPropertyChanged = marklinCAN->propertyChanged.connect(
+        [this](BaseProperty& /*property*/)
+        {
+          m_kernel->setConfig(marklinCAN->config());
+        });
+
       Attributes::setEnabled({type, hostname}, false);
     }
     catch(const LogMessageException& e)
@@ -144,6 +156,8 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
   else if(m_kernel && !value)
   {
     Attributes::setEnabled({type, hostname}, true);
+
+    m_marklinCANPropertyChanged.disconnect();
 
     m_kernel->stop();
     m_kernel.reset();
