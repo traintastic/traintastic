@@ -362,5 +362,9 @@
     {
         "term": "hardware:marklin_can",
         "definition": "Märklin CAN"
+    },
+    {
+        "term": "marklin_can_interface_type:socket_can",
+        "definition": "SocketCAN (Linux only)"
     }
 ]

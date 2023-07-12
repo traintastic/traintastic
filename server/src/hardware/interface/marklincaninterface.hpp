@@ -47,10 +47,12 @@ class MarklinCANInterface final
     boost::signals2::connection m_marklinCANPropertyChanged;
 
     void addToWorld() final;
+    void loaded() final;
     void destroying() final;
     void worldEvent(WorldState state, WorldEvent event) final;
 
     void idChanged(const std::string& newId) final;
+    void typeChanged();
 
   protected:
     bool setOnline(bool& value, bool simulation) final;
@@ -58,6 +60,7 @@ class MarklinCANInterface final
   public:
     Property<MarklinCANInterfaceType> type;
     Property<std::string> hostname;
+    Property<std::string> interface;
     ObjectProperty<MarklinCAN::Settings> marklinCAN;
 
     MarklinCANInterface(World& world, std::string_view _id);

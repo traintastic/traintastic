@@ -4230,5 +4230,17 @@
     {
         "term": "marklin_can_interface_type:network_udp",
         "definition": "Network (UDP)"
+    },
+    {
+        "term": "message:E2022",
+        "definition": "Socket create failed (%1)"
+    },
+    {
+        "term": "message:E2023",
+        "definition": "Socket ioctl failed (%1)"
+    },
+    {
+        "term": "message:C2005",
+        "definition": "SocketCAN is only available on Linux"
     }
 ]

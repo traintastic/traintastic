@@ -198,6 +198,10 @@ if(LINUX)
     target_link_libraries(traintastic-server PRIVATE PkgConfig::LIBSYSTEMD)
     target_link_libraries(traintastic-server-test PRIVATE PkgConfig::LIBSYSTEMD)
   endif()
+else()
+  # socket CAN is only available on linux:
+  file(GLOB SOCKET_CAN_SOURCES "src/hardware/protocol/marklincan/iohandler/socketcaniohandler.*")
+  list(REMOVE_ITEM SOURCES ${SOCKET_CAN_SOURCES})
 endif()
 
 if(WIN32)

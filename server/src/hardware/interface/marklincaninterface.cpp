@@ -28,6 +28,9 @@
 #include "../protocol/marklincan/iohandler/simulationiohandler.hpp"
 #include "../protocol/marklincan/iohandler/tcpiohandler.hpp"
 #include "../protocol/marklincan/iohandler/udpiohandler.hpp"
+#ifdef __linux__
+  #include "../protocol/marklincan/iohandler/socketcaniohandler.hpp"
+#endif
 #include "../protocol/marklincan/kernel.hpp"
 #include "../protocol/marklincan/settings.hpp"
 #include "../../core/attributes.hpp"
@@ -43,8 +46,13 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , DecoderController(*this, decoderListColumns)
   , InputController(static_cast<IdObject&>(*this))
-  , type{this, "type", MarklinCANInterfaceType::NetworkTCP, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , type{this, "type", MarklinCANInterfaceType::NetworkTCP, PropertyFlags::ReadWrite | PropertyFlags::Store,
+      [this](MarklinCANInterfaceType /*value*/)
+      {
+        typeChanged();
+      }}
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , interface{this, "interface", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , marklinCAN{this, "marklin_can", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "M\u00E4rklin CAN";
@@ -57,7 +65,13 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
 
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
   Attributes::addEnabled(hostname, !online);
+  Attributes::addVisible(hostname, false);
   m_interfaceItems.insertBefore(hostname, notes);
+
+  Attributes::addDisplayName(interface, DisplayName::Hardware::interface);
+  Attributes::addEnabled(interface, !online);
+  Attributes::addVisible(interface, false);
+  m_interfaceItems.insertBefore(interface, notes);
 
   Attributes::addDisplayName(marklinCAN, DisplayName::Hardware::marklinCAN);
   m_interfaceItems.insertBefore(marklinCAN, notes);
@@ -65,6 +79,8 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(decoders, notes);
 
   m_interfaceItems.insertBefore(inputs, notes);
+
+  typeChanged();
 }
 
 tcb::span<const DecoderProtocol> MarklinCANInterface::decoderProtocols() const
@@ -119,6 +135,16 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
           case MarklinCANInterfaceType::NetworkUDP:
             m_kernel = MarklinCAN::Kernel::create<MarklinCAN::UDPIOHandler>(marklinCAN->config(), hostname.value());
             break;
+
+          case MarklinCANInterfaceType::SocketCAN:
+#ifdef __linux__
+            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SocketCANIOHandler>(marklinCAN->config(), interface.value());
+            break;
+#else
+            setState(InterfaceState::Error);
+            Log::log(*this, LogMessage::C2005_SOCKETCAN_IS_ONLY_AVAILABLE_ON_LINUX);
+            return false;
+#endif
         }
       }
       assert(m_kernel);
@@ -144,7 +170,7 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
           m_kernel->setConfig(marklinCAN->config());
         });
 
-      Attributes::setEnabled({type, hostname}, false);
+      Attributes::setEnabled({type, hostname, interface}, false);
     }
     catch(const LogMessageException& e)
     {
@@ -155,14 +181,15 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
   }
   else if(m_kernel && !value)
   {
-    Attributes::setEnabled({type, hostname}, true);
+    Attributes::setEnabled({type, hostname, interface}, true);
 
     m_marklinCANPropertyChanged.disconnect();
 
     m_kernel->stop();
     m_kernel.reset();
 
-    setState(InterfaceState::Offline);
+    if(status->state != InterfaceState::Error)
+      setState(InterfaceState::Offline);
   }
   return true;
 }
@@ -172,6 +199,13 @@ void MarklinCANInterface::addToWorld()
   Interface::addToWorld();
   DecoderController::addToWorld();
   InputController::addToWorld(inputListColumns);
+}
+
+void MarklinCANInterface::loaded()
+{
+  Interface::loaded();
+
+  typeChanged();
 }
 
 void MarklinCANInterface::destroying()
@@ -216,4 +250,10 @@ void MarklinCANInterface::idChanged(const std::string& newId)
 {
   if(m_kernel)
     m_kernel->setLogId(newId);
+}
+
+void MarklinCANInterface::typeChanged()
+{
+  Attributes::setVisible(hostname, isNetwork(type));
+  Attributes::setVisible(interface, type == MarklinCANInterfaceType::SocketCAN);
 }
