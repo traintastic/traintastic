@@ -76,7 +76,7 @@ bool SocketCANIOHandler::send(const Message& message)
 
   auto& frame = m_writeBuffer[m_writeBufferOffset];
   frame.can_id = CAN_EFF_FLAG | (message.id & CAN_EFF_MASK);
-  frame.len = message.dlc;
+  frame.can_dlc = message.dlc;
   std::memcpy(frame.data, message.data, message.dlc);
 
   m_writeBufferOffset++;
@@ -102,8 +102,8 @@ void SocketCANIOHandler::read()
         {
           Message message;
           message.id = frame->can_id & CAN_EFF_MASK;
-          message.dlc = frame->len;
-          std::memcpy(message.data, frame->data, frame->len);
+          message.dlc = frame->can_dlc;
+          std::memcpy(message.data, frame->data, message.dlc);
           m_kernel.receive(message);
           frame++;
           framesTransferred--;
