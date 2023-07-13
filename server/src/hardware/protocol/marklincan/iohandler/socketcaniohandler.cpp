@@ -43,7 +43,8 @@ SocketCANIOHandler::SocketCANIOHandler(Kernel& kernel, const std::string& interf
     throw LogMessageException(LogMessage::E2022_SOCKET_CREATE_FAILED_X, std::string_view(strerror(errno)));
 
   struct ifreq ifr;
-  std::strncpy(ifr.ifr_name, interface.c_str(), IFNAMSIZ);
+  std::strncpy(ifr.ifr_name, interface.c_str(), IFNAMSIZ - 1);
+  ifr.ifr_name[IFNAMSIZ - 1] = '\0';
   if(ioctl(fd, SIOCGIFINDEX, &ifr) < 0)
     throw LogMessageException(LogMessage::E2023_SOCKET_IOCTL_FAILED_X, std::string_view(strerror(errno)));
 
