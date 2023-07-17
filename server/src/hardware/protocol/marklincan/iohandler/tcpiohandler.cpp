@@ -63,7 +63,7 @@ void TCPIOHandler::read()
         const std::byte* pos = m_readBuffer.data();
         bytesTransferred += m_readBufferOffset;
 
-        while(bytesTransferred > sizeof(NetworkMessage))
+        while(bytesTransferred >= sizeof(NetworkMessage))
         {
           m_kernel.receive(toMessage(*reinterpret_cast<const NetworkMessage*>(pos)));
           pos += sizeof(NetworkMessage);
