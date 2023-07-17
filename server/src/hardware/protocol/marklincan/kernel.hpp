@@ -35,6 +35,7 @@ class Decoder;
 enum class DecoderChangeFlags;
 class DecoderController;
 class InputController;
+class OutputController;
 
 namespace MarklinCAN {
 
@@ -45,6 +46,32 @@ class Kernel
   public:
     static constexpr uint16_t s88AddressMin = 1;
     static constexpr uint16_t s88AddressMax = 16384;
+
+    static constexpr uint16_t outputMotorolaAddressMin = 1;
+    static constexpr uint16_t outputMotorolaAddressMax = 1024 * 2;
+    static constexpr uint16_t outputDCCAddressMin = 1;
+    static constexpr uint16_t outputDCCAddressMax = 2048 * 2;
+    static constexpr uint16_t outputSX1AddressMin = 1;
+    static constexpr uint16_t outputSX1AddressMax = 1024 * 2;
+
+    struct OutputChannel
+    {
+      static constexpr uint32_t motorola = 1;
+      static constexpr uint32_t dcc = 2;
+      static constexpr uint32_t sx1 = 3;
+    };
+
+    inline static const std::vector<uint32_t> outputChannels = {
+      OutputChannel::motorola,
+      OutputChannel::dcc,
+      OutputChannel::sx1,
+    };
+
+    inline static const std::vector<std::string_view> outputChannelNames = {
+      "$hardware:motorola$",
+      "$hardware::dcc$",
+      "SX1",
+    };
 
   private:
     boost::asio::io_context m_ioContext;
@@ -58,6 +85,11 @@ class Kernel
 
     InputController* m_inputController = nullptr;
     std::array<TriState, s88AddressMax - s88AddressMin + 1> m_inputValues;
+
+    OutputController* m_outputController = nullptr;
+    std::array<TriState, outputMotorolaAddressMax - outputMotorolaAddressMin + 1> m_outputValuesMotorola;
+    std::array<TriState, outputDCCAddressMax - outputDCCAddressMin + 1> m_outputValuesDCC;
+    std::array<TriState, outputSX1AddressMax - outputSX1AddressMin + 1> m_outputValuesSX1;
 
     Config m_config;
 #ifndef NDEBUG
@@ -165,6 +197,14 @@ class Kernel
     void setInputController(InputController* inputController);
 
     /**
+     * \brief Set the output controller
+     *
+     * \param[in] outputController The output controller
+     * \note This function may not be called when the kernel is running.
+     */
+    void setOutputController(OutputController* outputController);
+
+    /**
      * \brief Start the kernel and IO handler
      */
     void start();
@@ -189,6 +229,15 @@ class Kernel
     void systemHalt();
 
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
+
+    /**
+     * \brief ...
+     * \param[in] channel Channel
+     * \param[in] address Output address
+     * \param[in] value Output value: \c true is on, \c false is off.
+     * \return \c true if send successful, \c false otherwise.
+     */
+    bool setOutput(uint32_t channel, uint16_t address, bool value);
 };
 
 }

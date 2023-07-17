@@ -344,6 +344,62 @@ struct LocomotiveFunction : UidMessage
   }
 };
 
+struct AccessoryControl : UidMessage
+{
+  static constexpr uint8_t positionOff = 0;
+  static constexpr uint8_t positionOn = 1;
+
+  AccessoryControl(uint32_t uid_, bool response = false)
+    : UidMessage(Command::AccessoryControl, response, uid_)
+  {
+    dlc = 6;
+  }
+
+  uint8_t position() const
+  {
+    return data[4];
+  }
+
+  void setPosition(uint8_t value)
+  {
+    data[4] = value;
+  }
+
+  uint8_t current() const
+  {
+    return data[5];
+  }
+
+  void setCurrent(uint8_t value)
+  {
+    assert(value <= 31);
+    data[5] = value;
+  }
+
+  bool isDefaultSwitchTime() const
+  {
+    return dlc == 6;
+  }
+
+  void setDefaultSwitchTime()
+  {
+    dlc = 6;
+  }
+
+  uint16_t switchTime() const
+  {
+    assert(dlc == 8);
+    return to16(data[7], data[6]);
+  }
+
+  void setSwitchTime(uint16_t value)
+  {
+    dlc = 8;
+    data[6] = high8(value);
+    data[7] = low8(value);
+  }
+};
+
 struct S88ModuleCount : UidMessage
 {
   S88ModuleCount(uint32_t uid, uint8_t count_)

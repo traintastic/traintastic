@@ -35,6 +35,13 @@ std::string toString(uint32_t uid)
   if(inRange<uint32_t>(uid, Range::locomotiveDCC))
     return std::string("DCC(").append(std::to_string(uid - Range::locomotiveDCC.first)).append(")");
 
+  if(inRange(uid, Range::accessoryMotorola))
+    return std::string("Motorola(").append(std::to_string(uid - Range::accessoryMotorola.first + 1)).append(")");
+  if(inRange(uid, Range::accessoryDCC))
+    return std::string("DCC(").append(std::to_string(uid - Range::accessoryDCC.first + 1)).append(")");
+  if(inRange(uid, Range::accessorySX1))
+    return std::string("SX1(").append(std::to_string(uid - Range::accessorySX1.first + 1)).append(")");
+
   return std::string("uid=").append(toHex(uid));
 }
 

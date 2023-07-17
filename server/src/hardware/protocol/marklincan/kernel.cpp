@@ -97,6 +97,13 @@ void Kernel::setInputController(InputController* inputController)
   m_inputController = inputController;
 }
 
+void Kernel::setOutputController(OutputController* outputController)
+{
+  assert(isEventLoopThread());
+  assert(!m_started);
+  m_outputController = outputController;
+}
+
 void Kernel::start()
 {
   assert(isEventLoopThread());
@@ -105,6 +112,9 @@ void Kernel::start()
 
   // reset all state values
   m_inputValues.fill(TriState::Undefined);
+  m_outputValuesMotorola.fill(TriState::Undefined);
+  m_outputValuesDCC.fill(TriState::Undefined);
+  m_outputValuesSX1.fill(TriState::Undefined);
 
   m_thread = std::thread(
     [this]()
@@ -416,6 +426,52 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
 
   if(has(changes, DecoderChangeFlags::FunctionValue) && functionNumber <= std::numeric_limits<uint8_t>::max())
     postSend(LocomotiveFunction(uid, functionNumber, decoder.getFunctionValue(functionNumber)));
+}
+
+bool Kernel::setOutput(uint32_t channel, uint16_t address, bool value)
+{
+  assert(isEventLoopThread());
+
+  m_ioContext.post(
+    [this, channel, address, value]()
+    {
+      uint32_t uid = 0;
+
+      switch(channel)
+      {
+        case OutputChannel::motorola:
+          assert(inRange(address, outputMotorolaAddressMin, outputMotorolaAddressMax));
+          if(m_outputValuesMotorola[address - 1] == toTriState(value))
+            return;
+          uid = MarklinCAN::UID::accessoryMotorola((address + 1) >> 1);
+          break;
+
+        case OutputChannel::dcc:
+          assert(inRange(address, outputDCCAddressMin, outputDCCAddressMax));
+          if(m_outputValuesDCC[address - 1] == toTriState(value))
+            return;
+          uid = MarklinCAN::UID::accessoryDCC((address + 1) >> 1);
+          break;
+
+        case OutputChannel::sx1:
+          assert(inRange(address, outputSX1AddressMin, outputSX1AddressMax));
+          if(m_outputValuesSX1[address - 1] == toTriState(value))
+            return;
+          uid = MarklinCAN::UID::accessorySX1((address + 1) >> 1);
+          break;
+
+        default: /*[[unlikely]]*/
+          return;
+      }
+      assert(uid != 0);
+
+      MarklinCAN::AccessoryControl cmd(uid);
+      cmd.setPosition((address & 0x1) ? MarklinCAN::AccessoryControl::positionOn : MarklinCAN::AccessoryControl::positionOff);
+      cmd.setCurrent(value ? 1 : 0);
+      send(cmd);
+    });
+
+  return true;
 }
 
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)

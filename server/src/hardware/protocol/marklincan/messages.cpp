@@ -175,9 +175,21 @@ std::string toString(const Message& message)
       break;
 
     case Command::AccessoryControl:
+    {
       s.append("AccessoryControl");
-      break;
 
+      const auto& accessoryControl = static_cast<const AccessoryControl&>(message);
+      s.append(" ").append(UID::toString(accessoryControl.uid()));
+      s.append(" position=").append(std::to_string(accessoryControl.position()));
+      s.append(" current=").append(std::to_string(accessoryControl.current()));
+      s.append(" switch_time=");
+      if(accessoryControl.isDefaultSwitchTime())
+        s.append("default");
+      else
+        s.append(std::to_string(accessoryControl.switchTime()));
+
+      break;
+    }
     case Command::AccessoryConfig:
       s.append("AccessoryConfig");
       break;

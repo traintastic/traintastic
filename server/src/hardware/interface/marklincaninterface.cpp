@@ -25,6 +25,7 @@
 #include "../decoder/list/decoderlisttablemodel.hpp"
 #include "../input/input.hpp"
 #include "../input/list/inputlist.hpp"
+#include "../output/list/outputlist.hpp"
 #include "../protocol/marklincan/iohandler/simulationiohandler.hpp"
 #include "../protocol/marklincan/iohandler/tcpiohandler.hpp"
 #include "../protocol/marklincan/iohandler/udpiohandler.hpp"
@@ -38,14 +39,17 @@
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
+#include "../../utils/inrange.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
+constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Channel | OutputListColumn::Address;
 
 MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , DecoderController(*this, decoderListColumns)
   , InputController(static_cast<IdObject&>(*this))
+  , OutputController(static_cast<IdObject&>(*this))
   , type{this, "type", MarklinCANInterfaceType::NetworkTCP, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](MarklinCANInterfaceType /*value*/)
       {
@@ -80,6 +84,8 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
 
   m_interfaceItems.insertBefore(inputs, notes);
 
+  m_interfaceItems.insertBefore(outputs, notes);
+
   typeChanged();
 }
 
@@ -112,6 +118,44 @@ void MarklinCANInterface::decoderChanged(const Decoder& decoder, DecoderChangeFl
 std::pair<uint32_t, uint32_t> MarklinCANInterface::inputAddressMinMax(uint32_t /*channel*/) const
 {
   return {MarklinCAN::Kernel::s88AddressMin, MarklinCAN::Kernel::s88AddressMax};
+}
+
+const std::vector<uint32_t>* MarklinCANInterface::outputChannels() const
+{
+  return &MarklinCAN::Kernel::outputChannels;
+}
+
+const std::vector<std::string_view>* MarklinCANInterface::outputChannelNames() const
+{
+  return &MarklinCAN::Kernel::outputChannelNames;
+}
+
+std::pair<uint32_t, uint32_t> MarklinCANInterface::outputAddressMinMax(uint32_t channel) const
+{
+  using namespace MarklinCAN;
+
+  switch(channel)
+  {
+    case Kernel::OutputChannel::motorola:
+      return {Kernel::outputMotorolaAddressMin, Kernel::outputMotorolaAddressMax};
+
+    case Kernel::OutputChannel::dcc:
+      return {Kernel::outputDCCAddressMin, Kernel::outputDCCAddressMax};
+
+    case Kernel::OutputChannel::sx1:
+      return {Kernel::outputSX1AddressMin, Kernel::outputSX1AddressMax};
+  }
+
+  assert(false);
+  return {0, 0};
+}
+
+bool MarklinCANInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
+{
+  return
+    m_kernel &&
+    inRange(address, outputAddressMinMax(channel)) &&
+    m_kernel->setOutput(channel, static_cast<uint16_t>(address), value);
 }
 
 bool MarklinCANInterface::setOnline(bool& value, bool simulation)
@@ -161,6 +205,7 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
 
       m_kernel->setDecoderController(this);
       m_kernel->setInputController(this);
+      m_kernel->setOutputController(this);
 
       m_kernel->start();
 
@@ -199,6 +244,7 @@ void MarklinCANInterface::addToWorld()
   Interface::addToWorld();
   DecoderController::addToWorld();
   InputController::addToWorld(inputListColumns);
+  OutputController::addToWorld(outputListColumns);
 }
 
 void MarklinCANInterface::loaded()
@@ -210,6 +256,7 @@ void MarklinCANInterface::loaded()
 
 void MarklinCANInterface::destroying()
 {
+  OutputController::destroying();
   InputController::destroying();
   DecoderController::destroying();
   Interface::destroying();

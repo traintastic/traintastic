@@ -33,6 +33,9 @@ namespace MarklinCAN::UID {
 namespace Range
 {
   constexpr std::pair<uint32_t, uint32_t> locomotiveMotorola{0x000, 0x03FF};
+  constexpr std::pair<uint32_t, uint32_t> accessorySX1{0x0800, 0x0BFF};
+  constexpr std::pair<uint32_t, uint32_t> accessoryMotorola{0x3000, 0x33FF};
+  constexpr std::pair<uint32_t, uint32_t> accessoryDCC{0x3800, 0x3FFF};
   constexpr std::pair<uint32_t, uint32_t> locomotiveMFX{0x4000, 0x7FFF};
   constexpr std::pair<uint32_t, uint32_t> locomotiveDCC{0xC000, 0xFFFF};
 }
@@ -40,6 +43,21 @@ namespace Range
 constexpr uint32_t locomotiveMotorola(uint16_t address)
 {
   return (Range::locomotiveMotorola.first | address);
+}
+
+constexpr uint32_t accessorySX1(uint16_t address)
+{
+  return (Range::accessorySX1.first | (address - 1));
+}
+
+constexpr uint32_t accessoryMotorola(uint16_t address)
+{
+  return (Range::accessoryMotorola.first | (address - 1));
+}
+
+constexpr uint32_t accessoryDCC(uint16_t address)
+{
+  return (Range::accessoryDCC.first | (address - 1));
 }
 
 constexpr uint32_t locomotiveMFX(uint16_t address)

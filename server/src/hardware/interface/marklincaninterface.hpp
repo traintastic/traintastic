@@ -27,6 +27,7 @@
 #include <traintastic/enum/marklincaninterfacetype.hpp>
 #include "../decoder/decodercontroller.hpp"
 #include "../input/inputcontroller.hpp"
+#include "../output/outputcontroller.hpp"
 #include "../protocol/marklincan/kernel.hpp"
 #include "../protocol/marklincan/settings.hpp"
 
@@ -37,6 +38,7 @@ class MarklinCANInterface final
   : public Interface
   , public DecoderController
   , public InputController
+  , public OutputController
 {
   CLASS_ID("interface.marklin_can")
   CREATE(MarklinCANInterface)
@@ -72,6 +74,12 @@ class MarklinCANInterface final
 
     // InputController:
     std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final;
+
+    // OutputController:
+    const std::vector<uint32_t>* outputChannels() const final;
+    const std::vector<std::string_view>* outputChannelNames() const final;
+    std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t channel) const final;
+    [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
 };
 
 #endif
