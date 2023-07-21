@@ -24,12 +24,17 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_IOHANDLER_SIMULATIONIOHANDLER_HPP
 
 #include "iohandler.hpp"
+#include <chrono>
 
 namespace MarklinCAN {
 
 class SimulationIOHandler final : public IOHandler
 {
   private:
+    static constexpr auto defaultSwitchTime = std::chrono::milliseconds(1000);
+
+    std::chrono::milliseconds m_switchTime = defaultSwitchTime;
+
     void reply(const Message& message);
 
   public:

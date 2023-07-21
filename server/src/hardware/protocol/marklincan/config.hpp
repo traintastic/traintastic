@@ -27,6 +27,7 @@ namespace MarklinCAN {
 
 struct Config
 {
+  uint32_t defaultSwitchTime; //!< Default switch time in ms
   bool debugLogRXTX;
 };
 

@@ -28,8 +28,13 @@ namespace MarklinCAN {
 
 Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
+  , defaultSwitchTime{this, "default_switch_time", 0, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
+  Attributes::addMinMax<uint32_t>(defaultSwitchTime, 0, 163'000);
+  //Attributes::addStep(defaultSwitchTime, 10);
+  m_interfaceItems.add(defaultSwitchTime);
+
   Attributes::addDisplayName(debugLogRXTX, DisplayName::Hardware::debugLogRXTX);
   m_interfaceItems.add(debugLogRXTX);
 }
@@ -38,6 +43,7 @@ Config Settings::config() const
 {
   Config config;
 
+  config.defaultSwitchTime = defaultSwitchTime;
   config.debugLogRXTX = debugLogRXTX;
 
   return config;

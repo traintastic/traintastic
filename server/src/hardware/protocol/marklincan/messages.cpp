@@ -58,6 +58,16 @@ std::string toString(const Message& message)
         case SystemSubCommand::LocomotiveCycleEnd:
           break;
 
+        case SystemSubCommand::AccessorySwitchTime:
+        {
+          const auto& accessorySwitchTime = static_cast<const AccessorySwitchTime&>(message);
+          s.append(" switch_time=").append(std::to_string(accessorySwitchTime.switchTime()));
+          if(accessorySwitchTime.switchTime() == 0)
+            s.append(" (default)");
+          else
+            s.append(" (").append(std::to_string(accessorySwitchTime.switchTime() * 10)).append("ms)");
+          break;
+        }
         case SystemSubCommand::Overload:
           break;
 

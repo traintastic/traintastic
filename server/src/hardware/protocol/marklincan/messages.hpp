@@ -76,6 +76,7 @@ enum class SystemSubCommand : uint8_t
   SystemHalt = 0x02,
   LocomotiveEmergencyStop = 0x03,
   LocomotiveCycleEnd = 0x04,
+  AccessorySwitchTime = 0x06,
   //Neuanmeldezahler = 0x09,
   Overload = 0x0A,
   Status = 0x0B,
@@ -193,6 +194,28 @@ struct LocomotiveEmergencyStop : SystemMessage
   LocomotiveEmergencyStop(uint32_t uid)
     : SystemMessage(SystemSubCommand::LocomotiveEmergencyStop, uid)
   {
+  }
+};
+
+struct AccessorySwitchTime : SystemMessage
+{
+  AccessorySwitchTime(uint16_t switchTime_, uint32_t uid = 0)
+    : SystemMessage(SystemSubCommand::AccessorySwitchTime, uid)
+  {
+    dlc = 7;
+    setSwitchTime(switchTime_);
+  }
+
+  uint16_t switchTime() const
+  {
+    return to16(data[6], data[5]);
+  }
+
+  void setSwitchTime(uint16_t value)
+  {
+    assert(value <= 16300); // 163s in 10ms steps
+    data[5] = high8(value);
+    data[6] = low8(value);
   }
 };
 

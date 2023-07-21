@@ -72,6 +72,9 @@ void Kernel::setConfig(const Config& config)
   m_ioContext.post(
     [this, newConfig=config]()
     {
+      if(m_config.defaultSwitchTime != newConfig.defaultSwitchTime)
+        send(AccessorySwitchTime(newConfig.defaultSwitchTime / 10));
+
       m_config = newConfig;
     });
 }
@@ -128,6 +131,8 @@ void Kernel::start()
     [this]()
     {
       m_ioHandler->start();
+
+      send(AccessorySwitchTime(m_config.defaultSwitchTime / 10));
 
       if(m_onStarted)
         EventLoop::call(
@@ -199,6 +204,7 @@ void Kernel::receive(const Message& message)
           break;
 
         case SystemSubCommand::LocomotiveCycleEnd:
+        case SystemSubCommand::AccessorySwitchTime:
         case SystemSubCommand::Overload:
         case SystemSubCommand::Status:
           // not (yet) implemented

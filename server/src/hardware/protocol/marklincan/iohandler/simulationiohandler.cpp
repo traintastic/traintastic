@@ -46,6 +46,19 @@ bool SimulationIOHandler::send(const Message& message)
         case SystemSubCommand::SystemHalt:
         case SystemSubCommand::LocomotiveEmergencyStop:
         case SystemSubCommand::LocomotiveCycleEnd:
+          // not (yet) implemented
+          break;
+
+        case SystemSubCommand::AccessorySwitchTime:
+          if(!message.isResponse() && message.dlc == 7)
+          {
+            auto response = static_cast<const AccessorySwitchTime&>(message);
+            m_switchTime = std::chrono::milliseconds(response.switchTime() * 10);
+            response.setResponse(true);
+            reply(response);
+          }
+          break;
+
         case SystemSubCommand::Overload:
         case SystemSubCommand::Status:
           // not (yet) implemented

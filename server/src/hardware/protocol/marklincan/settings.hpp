@@ -34,6 +34,7 @@ class Settings final : public SubObject
   public:
     CLASS_ID("marklincan_settings")
 
+    Property<uint32_t> defaultSwitchTime;
     Property<bool> debugLogRXTX;
 
     Settings(Object& _parent, std::string_view parentPropertyName);
