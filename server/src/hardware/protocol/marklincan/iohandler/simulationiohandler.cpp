@@ -22,13 +22,21 @@
 
 #include "simulationiohandler.hpp"
 #include "../kernel.hpp"
-#include "../messages.hpp"
 
 namespace MarklinCAN {
 
 SimulationIOHandler::SimulationIOHandler(Kernel& kernel)
   : IOHandler(kernel)
+  , m_delayedMessageTimer{kernel.ioContext()}
 {
+}
+
+void SimulationIOHandler::stop()
+{
+  while(!m_delayedMessages.empty())
+    m_delayedMessages.pop();
+
+  m_delayedMessageTimer.cancel();
 }
 
 bool SimulationIOHandler::send(const Message& message)
@@ -74,7 +82,32 @@ bool SimulationIOHandler::send(const Message& message)
     case Command::LocomotiveFunction:
     case Command::ReadConfig:
     case Command::WriteConfig:
+      // not (yet) implemented
+      break;
+
     case Command::AccessoryControl:
+      if(!message.isResponse() && (message.dlc == 6 || message.dlc == 8))
+      {
+        // confirm switch command:
+        AccessoryControl response{static_cast<const AccessoryControl&>(message)};
+        response.setResponse(true);
+        reply(response);
+
+        // handle switch time:
+        if(response.current() != 0 && (response.isDefaultSwitchTime() || response.switchTime() > 0))
+        {
+          const auto switchTime = response.isDefaultSwitchTime() ? m_switchTime : std::chrono::milliseconds(response.switchTime() * 10);
+
+          response.setResponse(false);
+          response.setCurrent(0);
+          reply(response, switchTime);
+
+          response.setResponse(true);
+          reply(response, switchTime + std::chrono::milliseconds(1));
+        }
+      }
+      break;
+
     case Command::AccessoryConfig:
     case Command::S88Polling:
     case Command::FeedbackEvent:
@@ -100,6 +133,37 @@ void SimulationIOHandler::reply(const Message& message)
     [this, message]()
     {
       m_kernel.receive(message);
+    });
+}
+
+void SimulationIOHandler::reply(const Message& message, std::chrono::milliseconds delay)
+{
+  const auto time = std::chrono::steady_clock::now() + delay;
+  const bool restartTimer = m_delayedMessages.empty() || m_delayedMessages.top().time > time;
+  m_delayedMessages.push({time, message});
+  if(restartTimer)
+    restartDelayedMessageTimer();
+}
+
+void SimulationIOHandler::restartDelayedMessageTimer()
+{
+  assert(!m_delayedMessages.empty());
+  m_delayedMessageTimer.cancel();
+  m_delayedMessageTimer.expires_after(m_delayedMessages.top().time - std::chrono::steady_clock::now());
+  m_delayedMessageTimer.async_wait(
+    [this](const boost::system::error_code& ec)
+    {
+      if(!ec)
+      {
+        while(!m_delayedMessages.empty() && m_delayedMessages.top().time <= std::chrono::steady_clock::now())
+        {
+          reply(m_delayedMessages.top().message);
+          m_delayedMessages.pop();
+        }
+      }
+
+      if(ec != boost::asio::error::operation_aborted && !m_delayedMessages.empty())
+        restartDelayedMessageTimer();
     });
 }
 
