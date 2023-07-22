@@ -486,7 +486,7 @@ bool Kernel::setOutput(uint32_t channel, uint16_t address, bool value)
       assert(uid != 0);
 
       MarklinCAN::AccessoryControl cmd(uid);
-      cmd.setPosition((address & 0x1) ? MarklinCAN::AccessoryControl::positionOn : MarklinCAN::AccessoryControl::positionOff);
+      cmd.setPosition((address & 0x1) ? MarklinCAN::AccessoryControl::positionOff : MarklinCAN::AccessoryControl::positionOn);
       cmd.setCurrent(value ? 1 : 0);
       send(cmd);
     });
