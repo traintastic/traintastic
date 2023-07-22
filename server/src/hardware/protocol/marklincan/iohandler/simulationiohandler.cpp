@@ -61,7 +61,10 @@ bool SimulationIOHandler::send(const Message& message)
           if(!message.isResponse() && message.dlc == 7)
           {
             auto response = static_cast<const AccessorySwitchTime&>(message);
-            m_switchTime = std::chrono::milliseconds(response.switchTime() * 10);
+            if(response.switchTime() == 0)
+              m_switchTime = defaultSwitchTime;
+            else
+              m_switchTime = std::chrono::milliseconds(response.switchTime() * 10);
             response.setResponse(true);
             reply(response);
           }
