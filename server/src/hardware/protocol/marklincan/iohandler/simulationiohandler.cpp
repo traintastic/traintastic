@@ -72,6 +72,7 @@ bool SimulationIOHandler::send(const Message& message)
 
         case SystemSubCommand::Overload:
         case SystemSubCommand::Status:
+        case SystemSubCommand::ModelClock:
           // not (yet) implemented
           break;
       }

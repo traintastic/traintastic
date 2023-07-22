@@ -215,6 +215,7 @@ void Kernel::receive(const Message& message)
         case SystemSubCommand::AccessorySwitchTime:
         case SystemSubCommand::Overload:
         case SystemSubCommand::Status:
+        case SystemSubCommand::ModelClock:
           // not (yet) implemented
           break;
       }

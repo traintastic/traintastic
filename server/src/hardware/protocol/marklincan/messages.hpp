@@ -80,6 +80,7 @@ enum class SystemSubCommand : uint8_t
   //Neuanmeldezahler = 0x09,
   Overload = 0x0A,
   Status = 0x0B,
+  ModelClock = 0x20,
 };
 
 struct Message
@@ -186,6 +187,51 @@ struct SystemHalt : SystemMessage
   SystemHalt(uint32_t uid = 0)
     : SystemMessage(SystemSubCommand::SystemHalt, uid)
   {
+  }
+};
+
+struct ModelClock : SystemMessage
+{
+  ModelClock(uint32_t uid, uint8_t hour_, uint8_t minute_, uint8_t factor_)
+    : SystemMessage(SystemSubCommand::ModelClock, uid)
+  {
+    dlc = 8;
+    setHour(hour_);
+    setMinute(minute_);
+    setFactor(factor_);
+  }
+
+  uint8_t hour() const
+  {
+    return data[5];
+  }
+
+  void setHour(uint8_t value)
+  {
+    assert(value < 24);
+    data[5] = value;
+  }
+
+  uint8_t minute() const
+  {
+    return data[6];
+  }
+
+  void setMinute(uint8_t value)
+  {
+    assert(value < 60);
+    data[6] = value;
+  }
+
+  uint8_t factor() const
+  {
+    return data[7];
+  }
+
+  void setFactor(uint8_t value)
+  {
+    assert(value <= 60);
+    data[7] = value;
   }
 };
 

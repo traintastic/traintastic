@@ -34,32 +34,33 @@ std::string toString(const Message& message)
   {
     case Command::System:
     {
-      s.append("System");
-
       const auto& system = static_cast<const SystemMessage&>(message);
 
       switch(system.subCommand())
       {
         case SystemSubCommand::SystemStop:
-          s.append(" stop");
+          s.append("SystemStop");
           break;
 
         case SystemSubCommand::SystemGo:
-          s.append(" go");
+          s.append("SystemGo");
           break;
 
         case SystemSubCommand::SystemHalt:
-          s.append(" halt");
+          s.append("SystemHalt");
           break;
 
         case SystemSubCommand::LocomotiveEmergencyStop:
+          s.append("LocomotiveEmergencyStop");
           break;
 
         case SystemSubCommand::LocomotiveCycleEnd:
+          s.append("LocomotiveCycleEnd");
           break;
 
         case SystemSubCommand::AccessorySwitchTime:
         {
+          s.append("AccessorySwitchTime");
           const auto& accessorySwitchTime = static_cast<const AccessorySwitchTime&>(message);
           s.append(" switch_time=").append(std::to_string(accessorySwitchTime.switchTime()));
           if(accessorySwitchTime.switchTime() == 0)
@@ -69,9 +70,23 @@ std::string toString(const Message& message)
           break;
         }
         case SystemSubCommand::Overload:
+          s.append("Overload");
           break;
 
         case SystemSubCommand::Status:
+          s.append("Status");
+          break;
+
+        case SystemSubCommand::ModelClock:
+          s.append("ModelClock");
+          if(message.dlc == 8)
+          {
+            const auto& modelClock = static_cast<const ModelClock&>(message);
+            s.append(" ").append(UID::toString(modelClock.uid()));
+            s.append(" hour=").append(std::to_string(modelClock.hour()));
+            s.append(" minute=").append(std::to_string(modelClock.minute()));
+            s.append(" factor=").append(std::to_string(modelClock.factor()));
+          }
           break;
       }
       break;
