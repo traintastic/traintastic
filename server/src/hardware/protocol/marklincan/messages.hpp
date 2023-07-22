@@ -83,6 +83,16 @@ enum class SystemSubCommand : uint8_t
   ModelClock = 0x20,
 };
 
+enum class DeviceId : uint16_t
+{
+  GleisFormatProzessorOrBooster= 0x0000, //!< Gleis Format Prozessor 60213,60214 / Booster 60173, 60174
+  Gleisbox = 0x0010, //!< Gleisbox 60112 und 60113
+  Connect6021 = 0x0020, //!< Connect 6021 Art-Nr.60128
+  MS2 = 0x0030, //!< MS 2 60653, Txxxxx
+  WirelessDevices = 0xFFE0, //!< Wireless Devices
+  CS2GUI = 0xFFFF //!< CS2-GUI (Master)
+};
+
 struct Message
 {
   static constexpr uint32_t responseMask = 0x00010000;
@@ -637,6 +647,52 @@ struct FeedbackState : FeedbackMessage
     data[7] = low8(value);
   }
 };
+
+struct Ping : Message
+{
+  Ping()
+    : Message(Command::Ping, false)
+  {
+  }
+};
+
+struct PingReply : UidMessage
+{
+  PingReply(uint32_t uid)
+    : UidMessage(Command::Ping, true, uid)
+  {
+    dlc = 8;
+  }
+
+  uint8_t softwareVersionMajor() const
+  {
+    return data[4];
+  }
+
+  uint8_t softwareVersionMinor() const
+  {
+    return data[5];
+  }
+
+  void setSoftwareVersion(uint8_t major, uint8_t minor)
+  {
+    data[4] = major;
+    data[5] = minor;
+  }
+
+  DeviceId deviceId() const
+  {
+    return static_cast<DeviceId>(to16(data[7], data[6]));
+  }
+
+  void setDeviceId(DeviceId value)
+  {
+    data[6] = high8(static_cast<uint16_t>(value));
+    data[7] = low8(static_cast<uint16_t>(value));
+  }
+};
+
+std::string_view toString(MarklinCAN::DeviceId value);
 
 }
 

@@ -251,6 +251,14 @@ std::string toString(const Message& message)
 
     case Command::Ping:
       s.append("Ping");
+      if(message.dlc == 8)
+      {
+        const auto& pingReply = static_cast<const PingReply&>(message);
+        s.append(" ").append(UID::toString(pingReply.uid()));
+        s.append(" software_version=").append(std::to_string(pingReply.softwareVersionMajor())).append(".").append(std::to_string(pingReply.softwareVersionMinor()));
+        s.append(" device_id=0x").append(toHex(static_cast<uint16_t>(pingReply.deviceId())));
+        s.append(" (").append(toString(pingReply.deviceId())).append(")");
+      }
       break;
 
     case Command::Update:
@@ -293,6 +301,32 @@ std::string toString(const Message& message)
   s.append("]");
 
   return s;
+}
+
+std::string_view toString(MarklinCAN::DeviceId value)
+{
+  switch(value)
+  {
+    case DeviceId::GleisFormatProzessorOrBooster:
+      return "Gleis Format Prozessor 60213,60214 / Booster 60173, 60174";
+
+    case DeviceId::Gleisbox:
+      return "Gleisbox 60112 und 60113";
+
+    case DeviceId::Connect6021:
+      return "Connect 6021 Art-Nr.60128";
+
+    case DeviceId::MS2:
+      return "MS 2 60653, Txxxxx";
+
+    case DeviceId::WirelessDevices:
+      return "Wireless Devices";
+
+    case DeviceId::CS2GUI:
+      return "CS2-GUI (Master)";
+  }
+  assert(false);
+  return {};
 }
 
 }
