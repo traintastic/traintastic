@@ -28,6 +28,7 @@
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../decoder/decodercontroller.hpp"
 #include "../../input/inputcontroller.hpp"
+#include "../../output/outputcontroller.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 #include "../../../utils/inrange.hpp"
@@ -306,7 +307,57 @@ void Kernel::receive(const Message& message)
 
     case Command::ReadConfig:
     case Command::WriteConfig:
+      // not (yet) implemented
+      break;
+
     case Command::AccessoryControl:
+      if(message.isResponse() && (message.dlc == 6 || message.dlc == 8))
+      {
+        const auto& accessoryControl = static_cast<const AccessoryControl&>(message);
+        if(accessoryControl.position() != AccessoryControl::positionOff &&
+            accessoryControl.position() != AccessoryControl::positionOn)
+          break;
+
+        uint32_t channel = 0;
+        uint32_t address = accessoryControl.position() == AccessoryControl::positionOff ? 1 : 2;
+        const auto value = toTriState(accessoryControl.current() != 0);
+
+        if(inRange(accessoryControl.uid(), UID::Range::accessoryMotorola))
+        {
+          channel = OutputChannel::motorola;
+          address += (accessoryControl.uid() - UID::Range::accessoryMotorola.first) << 1;
+          if(address > m_outputValuesMotorola.size() || m_outputValuesMotorola[address - 1] == value)
+            break;
+          m_outputValuesMotorola[address - 1] = value;
+        }
+        else if(inRange(accessoryControl.uid(), UID::Range::accessoryDCC))
+        {
+          channel = OutputChannel::dcc;
+          address += (accessoryControl.uid() - UID::Range::accessoryDCC.first) << 1;
+          if(address > m_outputValuesDCC.size() || m_outputValuesDCC[address - 1] == value)
+            break;
+          m_outputValuesDCC[address - 1] = value;
+        }
+        else if(inRange(accessoryControl.uid(), UID::Range::accessorySX1))
+        {
+          channel = OutputChannel::sx1;
+          address += (accessoryControl.uid() - UID::Range::accessorySX1.first) << 1;
+          if(address > m_outputValuesSX1.size() || m_outputValuesSX1[address - 1] == value)
+            break;
+          m_outputValuesSX1[address - 1] = value;
+        }
+
+        if(channel != 0)
+        {
+          EventLoop::call(
+            [this, channel, address, value]()
+            {
+              m_outputController->updateOutputValue(channel, address, value);
+            });
+        }
+      }
+      break;
+
     case Command::AccessoryConfig:
     case Command::S88Polling:
       // not (yet) implemented
