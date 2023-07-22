@@ -46,13 +46,19 @@ SocketCANIOHandler::SocketCANIOHandler(Kernel& kernel, const std::string& interf
   std::strncpy(ifr.ifr_name, interface.c_str(), IFNAMSIZ - 1);
   ifr.ifr_name[IFNAMSIZ - 1] = '\0';
   if(ioctl(fd, SIOCGIFINDEX, &ifr) < 0)
+  {
+    close(fd);
     throw LogMessageException(LogMessage::E2023_SOCKET_IOCTL_FAILED_X, std::string_view(strerror(errno)));
+  }
 
   struct sockaddr_can addr;
   addr.can_family = AF_CAN;
   addr.can_ifindex = ifr.ifr_ifindex;
   if(bind(fd, reinterpret_cast<struct sockaddr*>(&addr), sizeof(addr)) < 0)
+  {
+    close(fd);
     throw LogMessageException(LogMessage::E2006_SOCKET_BIND_FAILED_X, std::string_view(strerror(errno)));
+  }
 
   m_stream.assign(fd);
 }
