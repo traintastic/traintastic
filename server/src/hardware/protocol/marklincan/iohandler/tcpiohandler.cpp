@@ -23,6 +23,8 @@
 #include "tcpiohandler.hpp"
 #include "../kernel.hpp"
 #include "../messages.hpp"
+#include "../../../../core/eventloop.hpp"
+#include "../../../../log/log.hpp"
 #include "../../../../log/logmessageexception.hpp"
 
 namespace MarklinCAN {
@@ -50,7 +52,8 @@ TCPIOHandler::TCPIOHandler(Kernel& kernel, const std::string& hostname)
 
 void TCPIOHandler::stop()
 {
-  //! \todo implement
+  m_socket.cancel();
+  m_socket.close();
 }
 
 void TCPIOHandler::read()
@@ -76,13 +79,15 @@ void TCPIOHandler::read()
 
         read();
       }
-      else{}
-        //EventLoop::call(
-       //   [this, ec]()
-         // {
-            //Log::log(*this, LogMessage::E2002_SERIAL_READ_FAILED_X, ec);
-            //online = false;
-          //});
+      else if(ec != boost::asio::error::operation_aborted)
+      {
+        EventLoop::call(
+          [this, ec]()
+          {
+            Log::log(m_kernel.logId(), LogMessage::E2008_SOCKET_READ_FAILED_X, ec);
+            m_kernel.error();
+          });
+      }
     });
 }
 
@@ -104,7 +109,12 @@ void TCPIOHandler::write()
       }
       else if(ec != boost::asio::error::operation_aborted)
       {
-        // LogMessage::E1006_SOCKET_WRITE_FAILED_X, ec
+        EventLoop::call(
+          [this, ec]()
+          {
+            Log::log(m_kernel.logId(), LogMessage::E2007_SOCKET_WRITE_FAILED_X, ec);
+            m_kernel.error();
+          });
       }
     });
 }

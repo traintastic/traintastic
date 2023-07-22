@@ -29,6 +29,7 @@
 #include <linux/can/raw.h>
 #include "../kernel.hpp"
 #include "../messages.hpp"
+#include "../../../../core/eventloop.hpp"
 #include "../../../../log/log.hpp"
 #include "../../../../log/logmessageexception.hpp"
 
@@ -124,8 +125,12 @@ void SocketCANIOHandler::read()
       }
       else if(ec != boost::asio::error::operation_aborted)
       {
-        Log::log(m_kernel.logId(), LogMessage::E2008_SOCKET_READ_FAILED_X, ec);
-        //! \todo LogMessage
+        EventLoop::call(
+          [this, ec]()
+          {
+            Log::log(m_kernel.logId(), LogMessage::E2008_SOCKET_READ_FAILED_X, ec);
+            m_kernel.error();
+          });
       }
     });
 }
@@ -149,8 +154,12 @@ void SocketCANIOHandler::write()
       }
       else if(ec != boost::asio::error::operation_aborted)
       {
-        Log::log(m_kernel.logId(), LogMessage::E2007_SOCKET_WRITE_FAILED_X, ec);
-        //! \todo LogMessage
+        EventLoop::call(
+          [this, ec]()
+          {
+            Log::log(m_kernel.logId(), LogMessage::E2007_SOCKET_WRITE_FAILED_X, ec);
+            m_kernel.error();
+          });
       }
     });
 }

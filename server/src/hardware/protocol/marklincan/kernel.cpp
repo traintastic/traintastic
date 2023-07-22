@@ -86,6 +86,13 @@ void Kernel::setOnStarted(std::function<void()> callback)
   m_onStarted = std::move(callback);
 }
 
+void Kernel::setOnError(std::function<void()> callback)
+{
+  assert(isEventLoopThread());
+  assert(!m_started);
+  m_onError = std::move(callback);
+}
+
 void Kernel::setDecoderController(DecoderController* decoderController)
 {
   assert(isEventLoopThread());
@@ -342,6 +349,13 @@ void Kernel::receive(const Message& message)
       // not (yet) implemented
       break;
   }
+}
+
+void Kernel::error()
+{
+  assert(isEventLoopThread());
+  if(m_onError)
+    m_onError();
 }
 
 void Kernel::systemStop()

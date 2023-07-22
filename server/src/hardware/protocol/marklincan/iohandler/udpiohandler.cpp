@@ -67,7 +67,10 @@ UDPIOHandler::UDPIOHandler(Kernel& kernel, const std::string& hostname)
 
 void UDPIOHandler::stop()
 {
-  //! \todo implement
+  m_readSocket.cancel();
+  m_writeSocket.cancel();
+  m_readSocket.close();
+  m_writeSocket.close();
 }
 
 void UDPIOHandler::read()
@@ -84,12 +87,13 @@ void UDPIOHandler::read()
 
         read();
       }
-      else
+      else if(ec != boost::asio::error::operation_aborted)
       {
         EventLoop::call(
           [this, ec]()
           {
             Log::log(m_kernel.logId(), LogMessage::E2009_SOCKET_RECEIVE_FAILED_X, ec);
+            m_kernel.error();
           });
       }
     });
@@ -121,7 +125,7 @@ void UDPIOHandler::write()
           [this, ec]()
           {
             Log::log(m_kernel.logId(), LogMessage::E2011_SOCKET_SEND_FAILED_X, ec);
-            // TODO interface status -> error
+            m_kernel.error();
           });
       }
     });
