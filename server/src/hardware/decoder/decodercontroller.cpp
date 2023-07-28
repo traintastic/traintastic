@@ -58,6 +58,8 @@ std::pair<uint16_t, uint16_t> DecoderController::decoderAddressMinMax(DecoderPro
       return {1, 112};
 
     case DecoderProtocol::MFX:
+      return {1, 16383}; // MFX UID = 0x4000 .. 0x7FFF (zero unused??)
+
     case DecoderProtocol::None:
       return noAddressMinMax;
   }
