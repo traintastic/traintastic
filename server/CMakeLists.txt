@@ -281,6 +281,17 @@ else()
   list(APPEND SOURCES ${SOURCES_BOOST})
 endif()
 
+# zlib
+if(WIN32)
+  # TODO
+else()
+  find_package(ZLIB REQUIRED)
+endif()
+target_include_directories(traintastic-server PRIVATE ${ZLIB_INCLUDE_DIRS})
+target_link_libraries(traintastic-server PRIVATE ${ZLIB_LIBRARIES})
+target_include_directories(traintastic-server-test PRIVATE ${ZLIB_INCLUDE_DIRS})
+target_link_libraries(traintastic-server-test PRIVATE ${ZLIB_LIBRARIES})
+
 # libarchive
 if(WIN32)
   set(LibArchive_INCLUDE_DIRS "thirdparty/libarchive/include")
