@@ -36,6 +36,7 @@ class Settings final : public SubObject
 
     Property<uint32_t> defaultSwitchTime;
     Property<bool> debugLogRXTX;
+    Property<bool> debugConfigStream;
 
     Settings(Object& _parent, std::string_view parentPropertyName);
 

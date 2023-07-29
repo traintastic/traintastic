@@ -26,10 +26,12 @@
 #include <memory>
 #include <array>
 #include <thread>
+#include <filesystem>
 #include <boost/asio/io_context.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
+#include "configdatastreamcollector.hpp"
 
 class Decoder;
 enum class DecoderChangeFlags;
@@ -40,6 +42,7 @@ class OutputController;
 namespace MarklinCAN {
 
 struct Message;
+class LocomotiveList;
 
 class Kernel
 {
@@ -81,6 +84,7 @@ class Kernel
     std::string m_logId;
     std::function<void()> m_onStarted;
     std::function<void()> m_onError;
+    std::function<void(const std::shared_ptr<LocomotiveList>&)> m_onLocomotiveListChanged;
 
     DecoderController* m_decoderController = nullptr;
 
@@ -91,6 +95,10 @@ class Kernel
     std::array<TriState, outputMotorolaAddressMax - outputMotorolaAddressMin + 1> m_outputValuesMotorola;
     std::array<TriState, outputDCCAddressMax - outputDCCAddressMin + 1> m_outputValuesDCC;
     std::array<TriState, outputSX1AddressMax - outputSX1AddressMin + 1> m_outputValuesSX1;
+
+    std::unique_ptr<ConfigDataStreamCollector> m_configDataStreamCollector;
+
+    const std::filesystem::path m_debugDir;
 
     Config m_config;
 #ifndef NDEBUG
@@ -103,6 +111,8 @@ class Kernel
 
     void send(const Message& message);
     void postSend(const Message& message);
+
+    void receiveConfigData(std::unique_ptr<ConfigDataStreamCollector> configData);
 
   public:
     Kernel(const Kernel&) = delete;
@@ -191,6 +201,11 @@ class Kernel
      * \note This function may not be called when the kernel is running.
      */
     void setOnError(std::function<void()> callback);
+
+    /**
+     *
+     */
+    void setOnLocomotiveListChanged(std::function<void(const std::shared_ptr<LocomotiveList>&)> callback);
 
     /**
      * \brief Set the decoder controller

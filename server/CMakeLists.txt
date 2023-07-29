@@ -116,6 +116,8 @@ file(GLOB SOURCES
   "src/hardware/protocol/marklincan/*.cpp"
   "src/hardware/protocol/marklincan/iohandler/*.hpp"
   "src/hardware/protocol/marklincan/iohandler/*.cpp"
+  "src/hardware/protocol/marklincan/message/*.hpp"
+  "src/hardware/protocol/marklincan/message/*.cpp"
   "src/hardware/protocol/traintasticdiy/*.hpp"
   "src/hardware/protocol/traintasticdiy/*.cpp"
   "src/hardware/protocol/traintasticdiy/iohandler/*.hpp"

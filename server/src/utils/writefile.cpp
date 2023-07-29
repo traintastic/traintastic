@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/marklincan/config.hpp
+ * server/src/utils/writefile.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,18 +20,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_CONFIG_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_CONFIG_HPP
+#include "writefile.hpp"
+#include <fstream>
 
-namespace MarklinCAN {
-
-struct Config
+bool writeFile(const std::filesystem::path& filename, const void* data, size_t dataSize)
 {
-  uint32_t defaultSwitchTime; //!< Default switch time in ms
-  bool debugLogRXTX;
-  bool debugConfigStream;
-};
+  // try create directory if it doesn't exist
+  const auto path = filename.parent_path();
+  if(!std::filesystem::is_directory(path))
+  {
+    std::error_code ec;
+    std::filesystem::create_directories(path, ec);
+    if(ec)
+      return false;
+  }
 
+  std::ofstream file;
+  file.open(filename, std::ios::binary | std::ios::out | std::ios::trunc);
+  if(!file.is_open())
+    return false;
+
+  file.write(reinterpret_cast<const char*>(data), dataSize);
+
+  return true;
 }
 
-#endif

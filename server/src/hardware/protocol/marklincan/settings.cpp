@@ -30,6 +30,7 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , defaultSwitchTime{this, "default_switch_time", 0, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , debugConfigStream{this, "debug_config_stream", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   Attributes::addMinMax<uint32_t>(defaultSwitchTime, 0, 163'000);
   //Attributes::addStep(defaultSwitchTime, 10);
@@ -37,6 +38,8 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
 
   Attributes::addDisplayName(debugLogRXTX, DisplayName::Hardware::debugLogRXTX);
   m_interfaceItems.add(debugLogRXTX);
+
+  m_interfaceItems.add(debugConfigStream);
 }
 
 Config Settings::config() const
@@ -45,6 +48,7 @@ Config Settings::config() const
 
   config.defaultSwitchTime = defaultSwitchTime;
   config.debugLogRXTX = debugLogRXTX;
+  config.debugConfigStream = debugConfigStream;
 
   return config;
 }

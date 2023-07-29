@@ -22,6 +22,8 @@
 
 #include "kernel.hpp"
 #include "messages.hpp"
+#include "message/configdata.hpp"
+#include "locomotivelist.hpp"
 #include "uid.hpp"
 #include "../dcc/dcc.hpp"
 #include "../../decoder/decoder.hpp"
@@ -31,8 +33,11 @@
 #include "../../output/outputcontroller.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
+#include "../../../traintastic/traintastic.hpp"
 #include "../../../utils/inrange.hpp"
 #include "../../../utils/setthreadname.hpp"
+#include "../../../utils/writefile.hpp"
+#include "../../../utils/zlib.hpp"
 
 namespace MarklinCAN {
 
@@ -57,6 +62,7 @@ static std::tuple<bool, DecoderProtocol, uint16_t> uidToProtocolAddress(uint32_t
 Kernel::Kernel(const Config& config, bool simulation)
   : m_ioContext{1}
   , m_simulation{simulation}
+  , m_debugDir{Traintastic::instance->debugDir()}
   , m_config{config}
 #ifndef NDEBUG
   , m_started{false}
@@ -92,6 +98,13 @@ void Kernel::setOnError(std::function<void()> callback)
   assert(isEventLoopThread());
   assert(!m_started);
   m_onError = std::move(callback);
+}
+
+void Kernel::setOnLocomotiveListChanged(std::function<void(const std::shared_ptr<LocomotiveList>&)> callback)
+{
+  assert(isEventLoopThread());
+  assert(!m_started);
+  m_onLocomotiveListChanged = std::move(callback);
 }
 
 void Kernel::setDecoderController(DecoderController* decoderController)
@@ -141,6 +154,8 @@ void Kernel::start()
       m_ioHandler->start();
 
       send(AccessorySwitchTime(m_config.defaultSwitchTime / 10));
+
+      send(ConfigData("loks"));
 
       if(m_onStarted)
         EventLoop::call(
@@ -396,9 +411,32 @@ void Kernel::receive(const Message& message)
     case Command::BootloaderCAN:
     case Command::BootloaderTrack:
     case Command::StatusDataConfig:
-    case Command::ConfigData:
-    case Command::ConfigDataStream:
       // not (yet) implemented
+      break;
+
+    case Command::ConfigData:
+      if(message.isResponse() && message.dlc == 8)
+      {
+        m_configDataStreamCollector = std::make_unique<ConfigDataStreamCollector>(std::string{static_cast<const ConfigData&>(message).name()});
+      }
+      break;
+
+    case Command::ConfigDataStream:
+      if(m_configDataStreamCollector) /*[[likely]]*/
+      {
+        const auto status = m_configDataStreamCollector->process(static_cast<const ConfigDataStream&>(message));
+        if(status != ConfigDataStreamCollector::Collecting)
+        {
+          if(status == ConfigDataStreamCollector::Complete)
+          {
+            receiveConfigData(std::move(m_configDataStreamCollector));
+          }
+          else // error
+          {
+            m_configDataStreamCollector.reset();
+          }
+        }
+      }
       break;
   }
 }
@@ -571,6 +609,37 @@ void Kernel::postSend(const Message& message)
     {
       send(message);
     });
+}
+
+void Kernel::receiveConfigData(std::unique_ptr<ConfigDataStreamCollector> configData)
+{
+  const auto basename = m_debugDir / m_logId / "configstream" / configData->name;
+  if(m_config.debugConfigStream)
+  {
+    writeFile(std::filesystem::path(basename).concat(".bin"), configData->bytes());
+  }
+
+  if(configData->name == "loks")
+  {
+    const size_t uncompressedSize = be_to_host(*reinterpret_cast<const uint32_t*>(configData->data()));
+    std::string locList;
+    if(ZLib::Uncompress::toString(configData->data() + sizeof(uint32_t), configData->dataSize() - sizeof(uint32_t), uncompressedSize, locList))
+    {
+      if(m_config.debugConfigStream)
+      {
+        writeFile(std::filesystem::path(basename).concat(".txt"), locList);
+      }
+
+      if(m_onLocomotiveListChanged)
+      {
+        EventLoop::call(
+          [this, list=std::make_shared<LocomotiveList>(locList)]()
+          {
+            m_onLocomotiveListChanged(list);
+          });
+      }
+    }
+  }
 }
 
 }
