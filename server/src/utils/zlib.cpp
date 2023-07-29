@@ -28,8 +28,9 @@ namespace ZLib::Uncompress {
 bool toString(const void* src, size_t srcSize, size_t dstSize, std::string& out)
 {
   out.resize(dstSize);
-  int r = uncompress(reinterpret_cast<Bytef*>(out.data()), &dstSize, reinterpret_cast<const Bytef*>(src), srcSize);
-  out.resize(dstSize);
+  uLongf outSize = out.size();
+  int r = uncompress(reinterpret_cast<Bytef*>(out.data()), &outSize, reinterpret_cast<const Bytef*>(src), srcSize);
+  out.resize(outSize);
   return r == Z_OK;
 }
 

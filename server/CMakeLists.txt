@@ -283,7 +283,22 @@ endif()
 
 # zlib
 if(WIN32)
-  # TODO
+  set(ZLIB_INCLUDE_DIRS "thirdparty/zlib/include")
+
+  if(MSVC)
+      set(ZLIB_LIBRARIES zlib1)
+      add_custom_command(TARGET traintastic-server PRE_LINK
+        COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/zlib/bin/zlib1.def" /out:zlib1.lib /machine:x64)
+      add_custom_command(TARGET traintastic-server-test PRE_LINK
+        COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/zlib/bin/zlib1.def" /out:zlib1.lib /machine:x64)
+  else()
+      # MinGW can directly link .dll without import lib
+      set(LibArchive_LIBRARIES "${PROJECT_SOURCE_DIR}/thirdparty/zlib/bin/zlib1.dll")
+  endif()
+
+  # copy archive.dll to build directory:
+  add_custom_command(TARGET traintastic-server POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/zlib/bin/zlib1.dll" .)
 else()
   find_package(ZLIB REQUIRED)
 endif()
