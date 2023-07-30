@@ -295,7 +295,7 @@ if(WIN32)
         COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/zlib/bin/zlib1.def" /out:zlib1.lib /machine:x64)
   else()
       # MinGW can directly link .dll without import lib
-      set(LibArchive_LIBRARIES "${PROJECT_SOURCE_DIR}/thirdparty/zlib/bin/zlib1.dll")
+      set(ZLIB_LIBRARIES "${PROJECT_SOURCE_DIR}/thirdparty/zlib/bin/zlib1.dll")
   endif()
 
   # copy archive.dll to build directory:
