@@ -298,7 +298,7 @@ if(WIN32)
       set(ZLIB_LIBRARIES "${PROJECT_SOURCE_DIR}/thirdparty/zlib/bin/zlib1.dll")
   endif()
 
-  # copy archive.dll to build directory:
+  # copy zlib1.dll to build directory:
   add_custom_command(TARGET traintastic-server POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/zlib/bin/zlib1.dll" .)
 else()
