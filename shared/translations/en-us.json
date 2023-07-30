@@ -4242,5 +4242,21 @@
     {
         "term": "message:C2005",
         "definition": "SocketCAN is only available on Linux"
+    },
+    {
+        "term": "marklin_can_interface_type:socket_can",
+        "definition": "SocketCAN (Linux only)"
+    },
+    {
+        "term": "interface.marklin_can:marklin_can_locomotive_list",
+        "definition": "Märklin CAN: Locomotive list"
+    },
+    {
+        "term": "marklincan_settings:default_switch_time",
+        "definition": "Default switch time"
+    },
+    {
+        "term": "marklincan_settings:debug_config_stream",
+        "definition": "Debug: Config stream"
     }
 ]

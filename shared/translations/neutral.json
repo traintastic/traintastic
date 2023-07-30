@@ -364,7 +364,7 @@
         "definition": "Märklin CAN"
     },
     {
-        "term": "marklin_can_interface_type:socket_can",
-        "definition": "SocketCAN (Linux only)"
+        "term": "decoder:mfx_uid",
+        "definition": "MFX UID"
     }
 ]

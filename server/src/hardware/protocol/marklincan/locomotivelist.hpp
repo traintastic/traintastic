@@ -53,10 +53,22 @@ class LocomotiveList
     };
 
   private:
-    std::vector<Locomotive> m_locomotives;
+    static std::vector<Locomotive> build(std::string_view list);
+
+    const std::vector<Locomotive> m_locomotives;
 
   public:
     LocomotiveList(std::string_view list = {});
+
+    const Locomotive& operator [](size_t index) const
+    {
+      return m_locomotives[index];
+    }
+
+    inline size_t size() const
+    {
+      return m_locomotives.size();
+    }
 };
 
 }

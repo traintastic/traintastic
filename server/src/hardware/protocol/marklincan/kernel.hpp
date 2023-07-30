@@ -72,7 +72,7 @@ class Kernel
 
     inline static const std::vector<std::string_view> outputChannelNames = {
       "$hardware:motorola$",
-      "$hardware::dcc$",
+      "$hardware:dcc$",
       "SX1",
     };
 

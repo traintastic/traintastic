@@ -84,6 +84,8 @@ file(GLOB SOURCES
   "src/hardware/input/monitor/*.cpp"
   "src/hardware/interface/*.hpp"
   "src/hardware/interface/*.cpp"
+  "src/hardware/interface/marklincan/*.hpp"
+  "src/hardware/interface/marklincan/*.cpp"
   "src/hardware/output/*.hpp"
   "src/hardware/output/*.cpp"
   "src/hardware/output/keyboard/*.hpp"

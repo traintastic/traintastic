@@ -41,12 +41,18 @@ static bool readLine(std::string_view& src, std::string_view& line)
 }
 
 LocomotiveList::LocomotiveList(std::string_view list)
+  : m_locomotives{build(list)}
+{
+}
+
+std::vector<LocomotiveList::Locomotive> LocomotiveList::build(std::string_view list)
 {
   std::string_view line;
 
-  if(!readLine(list, line) || line != "[lokomotive]")
-    return;
+  if(list.empty() || !readLine(list, line) || line != "[lokomotive]")
+    return {};
 
+  std::vector<Locomotive> locomotives;
   while(readLine(list, line))
   {
     if(line == "lokomotive")
@@ -138,9 +144,11 @@ LocomotiveList::LocomotiveList(std::string_view list)
         locomotive.protocol = DecoderProtocol::DCCLong;
       }
 
-      m_locomotives.emplace_back(std::move(locomotive));
+      locomotives.emplace_back(std::move(locomotive));
     }
   }
+
+  return locomotives;
 }
 
 }

@@ -58,9 +58,11 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , interface{this, "interface", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , marklinCAN{this, "marklin_can", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
+  , marklinCANLocomotiveList{this, "marklin_can_locomotive_list", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
   name = "M\u00E4rklin CAN";
   marklinCAN.setValueInternal(std::make_shared<MarklinCAN::Settings>(*this, marklinCAN.name()));
+  marklinCANLocomotiveList.setValueInternal(std::make_shared<MarklinCANLocomotiveList>(*this, marklinCANLocomotiveList.name()));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
   Attributes::addEnabled(type, !online);
@@ -79,6 +81,8 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
 
   Attributes::addDisplayName(marklinCAN, DisplayName::Hardware::marklinCAN);
   m_interfaceItems.insertBefore(marklinCAN, notes);
+
+  m_interfaceItems.insertBefore(marklinCANLocomotiveList, notes);
 
   m_interfaceItems.insertBefore(decoders, notes);
 
@@ -207,6 +211,11 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
         {
           setState(InterfaceState::Error);
           online = false; // communication no longer possible
+        });
+      m_kernel->setOnLocomotiveListChanged(
+        [this](const std::shared_ptr<MarklinCAN::LocomotiveList>& list)
+        {
+          marklinCANLocomotiveList->setData(list);
         });
 
       m_kernel->setDecoderController(this);
