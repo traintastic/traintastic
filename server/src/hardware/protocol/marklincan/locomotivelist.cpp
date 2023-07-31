@@ -40,6 +40,97 @@ static bool readLine(std::string_view& src, std::string_view& line)
   return true;
 }
 
+//! \brief Function types used by CS2 (and CS3?)
+//! \note Values based on tests with CS2
+enum class FunctionType : uint8_t
+{
+  Light = 1,
+  CabLight = 48,
+  F0 = 50,
+  F1 = 51,
+  F2 = 52,
+  F3 = 53,
+  F4 = 54,
+  F5 = 55,
+  F6 = 56,
+  F7 = 57,
+  F8 = 58,
+  F9 = 59,
+  F10 = 60,
+  F11 = 61,
+  F12 = 62,
+  F13 = 63,
+  F14 = 64,
+  F15 = 65,
+  F16 = 66,
+  F17 = 67,
+  F18 = 68,
+  F19 = 69,
+  F20 = 70,
+  F21 = 71,
+  F22 = 72,
+  F23 = 73,
+  F24 = 74,
+  F25 = 75,
+  F26 = 76,
+  F27 = 77,
+  F28 = 78,
+  Mute = 109,
+};
+
+constexpr DecoderFunctionFunction toDecoderFunctionFunction(uint8_t typ)
+{
+  // lowest 7 bit only (at least for the CS2)
+  switch(static_cast<FunctionType>(typ & 0x7F))
+  {
+    case FunctionType::Light:
+      return DecoderFunctionFunction::Light;
+
+    case FunctionType::Mute:
+      return DecoderFunctionFunction::Mute;
+
+    case FunctionType::CabLight:
+    case FunctionType::F0:
+    case FunctionType::F1:
+    case FunctionType::F2:
+    case FunctionType::F3:
+    case FunctionType::F4:
+    case FunctionType::F5:
+    case FunctionType::F6:
+    case FunctionType::F7:
+    case FunctionType::F8:
+    case FunctionType::F9:
+    case FunctionType::F10:
+    case FunctionType::F11:
+    case FunctionType::F12:
+    case FunctionType::F13:
+    case FunctionType::F14:
+    case FunctionType::F15:
+    case FunctionType::F16:
+    case FunctionType::F17:
+    case FunctionType::F18:
+    case FunctionType::F19:
+    case FunctionType::F20:
+    case FunctionType::F21:
+    case FunctionType::F22:
+    case FunctionType::F23:
+    case FunctionType::F24:
+    case FunctionType::F25:
+    case FunctionType::F26:
+    case FunctionType::F27:
+    case FunctionType::F28:
+      break; // Generic
+  }
+  return DecoderFunctionFunction::Generic;
+}
+
+constexpr DecoderFunctionType toDecoderFunctionType(uint8_t typ)
+{
+  // higest bit is used to indicate it is a momentary function (at least for the CS2)
+  return (typ & 0x80) ? DecoderFunctionType::Momentary : DecoderFunctionType::OnOff;
+}
+
+
 LocomotiveList::LocomotiveList(std::string_view list)
   : m_locomotives{build(list)}
 {
@@ -98,6 +189,7 @@ std::vector<LocomotiveList::Locomotive> LocomotiveList::build(std::string_view l
           }
           else if(line == "funktionen")
           {
+            bool hasTyp = false; // if typ is missing the function is unused
             Function function;
             function.nr = 0xFF;
 
@@ -112,10 +204,12 @@ std::vector<LocomotiveList::Locomotive> LocomotiveList::build(std::string_view l
                 }
                 else if(startsWith(line, "typ="))
                 {
+                  hasTyp = true;
                   uint8_t typ;
                   if(fromChars(line.substr(4), typ).ec == std::errc())
                   {
-                    (void)typ; //! \todo convert value to type/function (if constant)
+                    function.type = toDecoderFunctionType(typ);
+                    function.function = toDecoderFunctionFunction(typ);
                   }
                 }
               }
@@ -126,7 +220,7 @@ std::vector<LocomotiveList::Locomotive> LocomotiveList::build(std::string_view l
               }
             }
 
-            if(function.nr != 0xFF)
+            if(function.nr != 0xFF && hasTyp)
             {
               locomotive.functions.push_back(function);
             }
