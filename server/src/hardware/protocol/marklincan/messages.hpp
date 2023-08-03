@@ -81,6 +81,7 @@ enum class SystemSubCommand : uint8_t
   Overload = 0x0A,
   Status = 0x0B,
   ModelClock = 0x20,
+  MFXSeek = 0x30,
 };
 
 enum class DeviceId : uint16_t

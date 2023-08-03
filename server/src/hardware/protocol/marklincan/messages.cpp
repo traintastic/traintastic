@@ -88,6 +88,10 @@ std::string toString(const Message& message)
             s.append(" factor=").append(std::to_string(modelClock.factor()));
           }
           break;
+
+        case SystemSubCommand::MFXSeek:
+          s.append("MFXSeek");
+          break;
       }
       break;
     }
