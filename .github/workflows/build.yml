@@ -162,7 +162,7 @@ jobs:
           jobs: 2
           build_type: Release
           build_deb: false
-          defines: ""
+          defines: "-DENABLE_CLANG_TIDY=ON"
           ccov: false
 
         - name: "windows_x64_mingw"
@@ -174,7 +174,7 @@ jobs:
           jobs: 2
           build_type: Release
           build_deb: false
-          defines: "-DDISABLE_CLANG_TIDY=ON"
+          defines: ""
           ccov: false
 
         - name: "ubuntu_20.04"
@@ -186,7 +186,7 @@ jobs:
           jobs: 2
           build_type: Release
           build_deb: true
-          defines: ""
+          defines: "-DENABLE_CLANG_TIDY=ON"
           ccov: false
 
         - name: "ubuntu_22.04"
@@ -198,7 +198,7 @@ jobs:
           jobs: 2
           build_type: Release
           build_deb: true
-          defines: ""
+          defines: "-DENABLE_CLANG_TIDY=ON"
           ccov: false
 
         - name: "ubuntu_20.04 (debug+ccov)"
@@ -210,7 +210,7 @@ jobs:
           jobs: 2
           build_type: Debug
           build_deb: false
-          defines: "-DCODE_COVERAGE=ON"
+          defines: "-DENABLE_CLANG_TIDY=ON -DCODE_COVERAGE=ON"
           ccov: true
 
         - name: "raspberrypios_arm7"
@@ -222,7 +222,7 @@ jobs:
           jobs: 3
           build_type: Release
           build_deb: true
-          defines: "-DDISABLE_CLANG_TIDY=ON"
+          defines: ""
           ccov: false
 
         - name: "raspberrypios_arm64"
@@ -234,7 +234,7 @@ jobs:
           jobs: 3
           build_type: Release
           build_deb: true
-          defines: "-DDISABLE_CLANG_TIDY=ON"
+          defines: ""
           ccov: false
 
         - name: "macos-11"
@@ -246,7 +246,7 @@ jobs:
           jobs: 3
           build_type: Release
           build_deb: false
-          defines: "-DDISABLE_CLANG_TIDY=ON"
+          defines: ""
           ccov: false
 
         - name: "macos-12"
@@ -258,7 +258,7 @@ jobs:
           jobs: 3
           build_type: Release
           build_deb: false
-          defines: "-DDISABLE_CLANG_TIDY=ON"
+          defines: ""
           ccov: false
 
     steps:
