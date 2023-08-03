@@ -21,8 +21,10 @@
  */
 
 #include "kernel.hpp"
+#include <version.hpp>
 #include "messages.hpp"
 #include "message/configdata.hpp"
+#include "message/statusdataconfig.hpp"
 #include "locomotivelist.hpp"
 #include "uid.hpp"
 #include "../dcc/dcc.hpp"
@@ -405,13 +407,42 @@ void Kernel::receive(const Message& message)
       break;
 
     case Command::SX1Event:
+      // not (yet) implemented
+      break;
+
     case Command::Ping:
+      if(message.dlc == 0)
+      {
+        send(PingReply(m_config.nodeUID, TRAINTASTIC_VERSION_MAJOR, TRAINTASTIC_VERSION_MINOR, DeviceId::Traintastic));
+      }
+      break;
+
     case Command::Update:
     case Command::ReadConfigData:
     case Command::BootloaderCAN:
     case Command::BootloaderTrack:
-    case Command::StatusDataConfig:
       // not (yet) implemented
+      break;
+
+    case Command::StatusDataConfig:
+      if(message.dlc == 5 && !message.isResponse() && static_cast<const UidMessage&>(message).uid() == m_config.nodeUID)
+      {
+        const uint32_t uid = static_cast<const UidMessage&>(message).uid();
+        const uint8_t index = message.data[4];
+        switch(index)
+        {
+          case 0x00:
+          {
+            StatusData::DeviceDescription desc;
+            desc.serialNumber = m_config.nodeSerialNumber;
+            desc.articleNumber[0] = '1';
+            desc.deviceName = "Traintastic";
+            for(const auto& reply : statusDataConfigReply(m_config.nodeUID, uid, index, desc))
+              send(reply);
+            break;
+          }
+        }
+      }
       break;
 
     case Command::ConfigData:

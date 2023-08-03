@@ -31,10 +31,16 @@ namespace MarklinCAN {
 
 class Settings final : public SubObject
 {
+  private:
+    static constexpr uint32_t nodeSerialNumberRandomMin = 1000;
+    static constexpr uint32_t nodeSerialNumberRandomMax = 9999;
+
   public:
     CLASS_ID("marklincan_settings")
 
     Property<uint32_t> defaultSwitchTime;
+    Property<uint32_t> nodeUID;
+    Property<uint32_t> nodeSerialNumber;
     Property<bool> debugLogRXTX;
     Property<bool> debugConfigStream;
 

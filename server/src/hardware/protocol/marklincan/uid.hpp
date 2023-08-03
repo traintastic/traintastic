@@ -34,6 +34,7 @@ namespace Range
 {
   constexpr std::pair<uint32_t, uint32_t> locomotiveMotorola{0x000, 0x03FF};
   constexpr std::pair<uint32_t, uint32_t> accessorySX1{0x0800, 0x0BFF};
+  constexpr std::pair<uint32_t, uint32_t> manufacturer{0x1C00, 0x1FFF};
   constexpr std::pair<uint32_t, uint32_t> accessoryMotorola{0x3000, 0x33FF};
   constexpr std::pair<uint32_t, uint32_t> accessoryDCC{0x3800, 0x3FFF};
   constexpr std::pair<uint32_t, uint32_t> locomotiveMFX{0x4000, 0x7FFF};

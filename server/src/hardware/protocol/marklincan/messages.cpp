@@ -319,13 +319,15 @@ std::string_view toString(MarklinCAN::DeviceId value)
     case DeviceId::MS2:
       return "MS 2 60653, Txxxxx";
 
+    case DeviceId::Traintastic:
+      return "Traintastic";
+
     case DeviceId::WirelessDevices:
       return "Wireless Devices";
 
     case DeviceId::CS2GUI:
       return "CS2-GUI (Master)";
   }
-  assert(false);
   return {};
 }
 

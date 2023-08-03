@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/marklincan/config.hpp
+ * server/src/utils/random.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,20 +20,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_CONFIG_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_CONFIG_HPP
+#ifndef TRAINTASTIC_SERVER_UTILS_RANDOM_HPP
+#define TRAINTASTIC_SERVER_UTILS_RANDOM_HPP
 
-namespace MarklinCAN {
+#include <ctime>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
 
-struct Config
+class Random
 {
-  uint32_t defaultSwitchTime; //!< Default switch time in ms
-  uint32_t nodeUID;
-  uint32_t nodeSerialNumber;
-  bool debugLogRXTX;
-  bool debugConfigStream;
-};
+  private:
+    inline static boost::random::mt19937 s_gen{static_cast<unsigned int>(time(nullptr))};
 
-}
+    Random() = default;
+
+  public:
+    template<typename T>
+    static T value(T min, T max)
+    {
+      boost::random::uniform_int_distribution<T> dist(min, max);
+      return dist(s_gen);
+    }
+
+    template<typename T>
+    static T value(std::pair<T, T> range)
+    {
+      return value(range.first, range.second);
+    }
+};
 
 #endif

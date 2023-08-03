@@ -89,12 +89,14 @@ enum class DeviceId : uint16_t
   Gleisbox = 0x0010, //!< Gleisbox 60112 und 60113
   Connect6021 = 0x0020, //!< Connect 6021 Art-Nr.60128
   MS2 = 0x0030, //!< MS 2 60653, Txxxxx
+  Traintastic = 0x5740, //!< Device id for Traintastic (unofficial)
   WirelessDevices = 0xFFE0, //!< Wireless Devices
   CS2GUI = 0xFFFF //!< CS2-GUI (Master)
 };
 
 struct Message
 {
+  static constexpr uint32_t hashMask = 0x0000FFFF;
   static constexpr uint32_t responseMask = 0x00010000;
 
   uint32_t id = 0;
@@ -102,6 +104,11 @@ struct Message
   uint8_t dlc = 0;
 
   Message() = default;
+
+  Message(uint32_t hashUID, Command command, bool response)
+  {
+    id = (static_cast<uint32_t>(command) << 17) | (response ? responseMask : 0) | calcHash(hashUID);
+  }
 
   Message(Command command, bool response, uint32_t uid = 0)
   {
@@ -142,12 +149,30 @@ struct Message
 
   uint16_t hash() const
   {
-    return id & 0xFFFF;
+    return id & hashMask;
+  }
+
+  void setHash(uint16_t value)
+  {
+    id &= ~hashMask;
+    id |= value;
+  }
+
+  void setHashUID(uint32_t value)
+  {
+    setHash(calcHash(value));
   }
 };
 
 struct UidMessage : Message
 {
+  UidMessage(uint32_t hashUID, Command command, bool response, uint32_t uid)
+    : Message(hashUID, command, response)
+  {
+    dlc = 4;
+    *reinterpret_cast<uint32_t*>(&data[0]) = host_to_be(uid);
+  }
+
   UidMessage(Command command, bool response, uint32_t uid)
     : Message(command, response, uid)
   {
@@ -158,6 +183,11 @@ struct UidMessage : Message
   uint32_t uid() const
   {
     return be_to_host(*reinterpret_cast<const uint32_t*>(&data[0]));
+  }
+
+  void setUID(uint32_t value)
+  {
+    *reinterpret_cast<uint32_t*>(&data[0]) = host_to_be(value);
   }
 };
 
@@ -658,10 +688,12 @@ struct Ping : Message
 
 struct PingReply : UidMessage
 {
-  PingReply(uint32_t uid)
-    : UidMessage(Command::Ping, true, uid)
+  PingReply(uint32_t hashUID, uint8_t softwareVersionMajor_, uint8_t softwareVersionMinor_, DeviceId deviceId_)
+    : UidMessage(Command::Ping, true, hashUID)
   {
     dlc = 8;
+    setSoftwareVersion(softwareVersionMajor_, softwareVersionMinor_);
+    setDeviceId(deviceId_);
   }
 
   uint8_t softwareVersionMajor() const
