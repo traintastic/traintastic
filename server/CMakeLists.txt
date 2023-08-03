@@ -16,7 +16,7 @@ else()
   add_compile_options(-Wall -Wextra -Wpedantic -Wshadow -Werror)
 endif()
 
-if(NOT DISABLE_CLANG_TIDY)
+if(ENABLE_CLANG_TIDY)
   set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*,-readability-braces-around-statements,-readability-implicit-bool-conversion,-readability-magic-numbers)
 endif()
 
