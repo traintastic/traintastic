@@ -187,7 +187,7 @@ std::vector<LocomotiveList::Locomotive> LocomotiveList::build(std::string_view l
           {
             fromChars(line.substr(9), locomotive.mfxUID, 16);
           }
-          else if(line == "funktionen")
+          else if(line == "funktionen" || line == "funktionen_2")
           {
             bool hasTyp = false; // if typ is missing the function is unused
             Function function;
