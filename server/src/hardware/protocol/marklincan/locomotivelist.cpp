@@ -174,7 +174,7 @@ std::vector<LocomotiveList::Locomotive> LocomotiveList::build(std::string_view l
             {
               locomotive.protocol = DecoderProtocol::DCCShort; // or DCCLong (handled later)
             }
-            else if(typ == "mm2_dil8" || typ == "mm2_prg")
+            else if(typ == "mm2_dil8" || typ == "mm2_prg" || typ == "mm_prg")
             {
               locomotive.protocol = DecoderProtocol::Motorola;
             }
