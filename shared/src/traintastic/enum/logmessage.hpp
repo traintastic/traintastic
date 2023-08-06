@@ -78,6 +78,7 @@ enum class LogMessage : uint32_t
   I1006_X = LogMessageOffset::info + 1006, //!< boost version
   I1007_X = LogMessageOffset::info + 1007, //!< nlohmann::json version
   I1008_X = LogMessageOffset::info + 1008, //!< LibArchive version
+  I1009_ZLIB_X = LogMessageOffset::info + 1009, //!< zlib version
   I2001_UNKNOWN_LOCO_ADDRESS_X = LogMessageOffset::info + 2001,
   I2002_HARDWARE_TYPE_X = LogMessageOffset::info + 2002,
   I2003_FIRMWARE_VERSION_X = LogMessageOffset::info + 2003,
