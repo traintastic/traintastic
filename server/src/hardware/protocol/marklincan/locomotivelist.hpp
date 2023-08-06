@@ -60,6 +60,14 @@ class LocomotiveList
   public:
     LocomotiveList(std::string_view list = {});
 
+    auto begin() const { return m_locomotives.begin(); }
+    auto end() const { return m_locomotives.end(); }
+
+    bool empty() const
+    {
+      return m_locomotives.empty();
+    }
+
     const Locomotive& operator [](size_t index) const
     {
       return m_locomotives[index];

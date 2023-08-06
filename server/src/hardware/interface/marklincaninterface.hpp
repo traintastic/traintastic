@@ -45,6 +45,8 @@ class MarklinCANInterface final
   CREATE(MarklinCANInterface)
   DEFAULT_ID("marklin_can")
 
+  friend class MarklinCANLocomotiveList;
+
   private:
     std::unique_ptr<MarklinCAN::Kernel> m_kernel;
     boost::signals2::connection m_marklinCANPropertyChanged;

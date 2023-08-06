@@ -259,6 +259,8 @@ class Kernel
     void systemGo();
     void systemHalt();
 
+    void getLocomotiveList();
+
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 
     /**

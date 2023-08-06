@@ -22,11 +22,60 @@
 
 #include "marklincanlocomotivelist.hpp"
 #include "marklincanlocomotivelisttablemodel.hpp"
-#include "../../protocol/marklincan/locomotivelist.hpp"
+#include "../marklincaninterface.hpp"
+#include "../../decoder/list/decoderlist.hpp"
+#include "../../../core/attributes.hpp"
+#include "../../../core/method.tpp"
+#include "../../../world/getworld.hpp"
+#include "../../../world/world.hpp"
 
 MarklinCANLocomotiveList::MarklinCANLocomotiveList(Object& parent_, std::string_view parentPropertyName)
   : SubObject(parent_, parentPropertyName)
+  , importOrSync{*this, "import_or_sync",
+      [this](const std::string& name)
+      {
+        if(!m_data)
+          return;
+
+        auto it = std::find_if(m_data->begin(), m_data->end(),
+          [&name](auto item)
+          {
+            return item.name == name;
+          });
+
+        if(it != m_data->end())
+        {
+          import(*it);
+        }
+      }}
+  , importOrSyncAll{*this, "import_or_sync_all",
+      [this]()
+      {
+        if(!m_data)
+          return;
+
+        for(const auto& locomotive : *m_data)
+        {
+          import(locomotive);
+        }
+      }}
+  , reload{*this, "reload",
+      [this]()
+      {
+        if(const auto& kernel = interface().m_kernel)
+        {
+          kernel->getLocomotiveList();
+        }
+      }}
 {
+  Attributes::addEnabled(importOrSync, false);
+  m_interfaceItems.add(importOrSync);
+
+  Attributes::addEnabled(importOrSyncAll, false);
+  m_interfaceItems.add(importOrSyncAll);
+
+  Attributes::addEnabled(reload, false);
+  m_interfaceItems.add(reload);
 }
 
 void MarklinCANLocomotiveList::setData(std::shared_ptr<MarklinCAN::LocomotiveList> value)
@@ -44,4 +93,99 @@ void MarklinCANLocomotiveList::setData(std::shared_ptr<MarklinCAN::LocomotiveLis
 TableModelPtr MarklinCANLocomotiveList::getModel()
 {
   return std::make_shared<MarklinCANLocomotiveListTableModel>(*this);
+}
+
+void MarklinCANLocomotiveList::worldEvent(WorldState state, WorldEvent event)
+{
+  SubObject::worldEvent(state, event);
+
+  updateEnabled();
+}
+
+void MarklinCANLocomotiveList::clear()
+{
+  m_data.reset();
+  for(auto& model : m_models)
+  {
+    model->setRowCount(0);
+  }
+  updateEnabled();
+}
+
+MarklinCANInterface& MarklinCANLocomotiveList::interface()
+{
+  assert(dynamic_cast<MarklinCANInterface*>(&parent()));
+  return dynamic_cast<MarklinCANInterface&>(parent());
+}
+
+void MarklinCANLocomotiveList::import(const MarklinCAN::LocomotiveList::Locomotive& locomotive)
+{
+  auto& decoders = *interface().decoders;
+  std::shared_ptr<Decoder> decoder;
+
+  // 1. try to find by MFX UID:
+  if(locomotive.protocol == DecoderProtocol::MFX && locomotive.mfxUID != 0)
+  {
+    auto it = std::find_if(decoders.begin(), decoders.end(),
+      [&locomotive](const auto& item)
+      {
+        return item->protocol == DecoderProtocol::MFX && item->mfxUID == locomotive.mfxUID;
+      });
+
+    if(it != decoders.end())
+      decoder = *it;
+  }
+
+  // 2. try to find by name:
+  if(!decoder)
+  {
+    auto it = std::find_if(decoders.begin(), decoders.end(),
+      [&locomotive](const auto& item)
+      {
+        return item->name.value() == locomotive.name;
+      });
+
+    if(it != decoders.end())
+      decoder = *it;
+  }
+
+  // 3. try to find by protocol / address (only: motorola or DCC)
+  if(!decoder && locomotive.protocol != DecoderProtocol::MFX)
+  {
+    auto it = std::find_if(decoders.begin(), decoders.end(),
+      [&locomotive](const auto& item)
+      {
+        return item->protocol == locomotive.protocol && item->address == locomotive.address;
+      });
+
+    if(it != decoders.end())
+      decoder = *it;
+  }
+
+  if(!decoder) // not found, create a new one
+  {
+    decoder = decoders.create();
+  }
+
+  // update it:
+  decoder->name = locomotive.name;
+  decoder->protocol = locomotive.protocol;
+  if(decoder->protocol == DecoderProtocol::MFX)
+  {
+    decoder->address = locomotive.sid;
+    decoder->mfxUID = locomotive.mfxUID;
+  }
+  else // motorola or DCC
+  {
+    decoder->address = locomotive.address;
+  }
+
+  //! \todo create/update locomotive
+}
+
+void MarklinCANLocomotiveList::updateEnabled()
+{
+  const auto worldState = getWorld(parent()).state.value();
+  const bool enabled = m_data && !m_data->empty() && contains(worldState, WorldState::Edit) && !contains(worldState, WorldState::Run);
+  Attributes::setEnabled({importOrSync, importOrSyncAll}, enabled);
 }

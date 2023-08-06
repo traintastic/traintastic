@@ -157,7 +157,7 @@ void Kernel::start()
 
       send(AccessorySwitchTime(m_config.defaultSwitchTime / 10));
 
-      send(ConfigData("loks"));
+      send(ConfigData(ConfigDataName::loks));
 
       if(m_onStarted)
         EventLoop::call(
@@ -510,6 +510,16 @@ void Kernel::systemHalt()
     });
 }
 
+void Kernel::getLocomotiveList()
+{
+  assert(isEventLoopThread());
+  m_ioContext.post(
+    [this]()
+    {
+      send(ConfigData(ConfigDataName::loks));
+    });
+}
+
 void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   assert(isEventLoopThread());
@@ -651,7 +661,7 @@ void Kernel::receiveConfigData(std::unique_ptr<ConfigDataStreamCollector> config
     writeFile(std::filesystem::path(basename).concat(".bin"), configData->bytes());
   }
 
-  if(configData->name == "loks")
+  if(configData->name == ConfigDataName::loks)
   {
     const size_t uncompressedSize = be_to_host(*reinterpret_cast<const uint32_t*>(configData->data()));
     std::string locList;

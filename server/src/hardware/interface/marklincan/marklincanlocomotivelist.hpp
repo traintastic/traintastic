@@ -25,25 +25,36 @@
 
 #include "../../../core/subobject.hpp"
 #include "../../../core/table.hpp"
+#include "../../../core/method.hpp"
+#include "../../protocol/marklincan/locomotivelist.hpp"
 #include <memory>
 
+class MarklinCANInterface;
 class MarklinCANLocomotiveListTableModel;
-
-namespace MarklinCAN {
-  class LocomotiveList;
-}
 
 class MarklinCANLocomotiveList : public SubObject, public Table
 {
   CLASS_ID("marklin_can_locomotive_list")
 
+  friend class MarklinCANInterface;
   friend class MarklinCANLocomotiveListTableModel;
 
   private:
     std::shared_ptr<MarklinCAN::LocomotiveList> m_data;
     std::vector<MarklinCANLocomotiveListTableModel*> m_models;
 
+    void worldEvent(WorldState state, WorldEvent event) override;
+
+    void clear();
+    MarklinCANInterface& interface();
+    void import(const MarklinCAN::LocomotiveList::Locomotive& locomotive);
+    void updateEnabled();
+
   public:
+    Method<void(const std::string&)> importOrSync;
+    Method<void()> importOrSyncAll;
+    Method<void()> reload;
+
     MarklinCANLocomotiveList(Object& parent_, std::string_view parentPropertyName);
 
     const std::shared_ptr<MarklinCAN::LocomotiveList>& data() const

@@ -25,10 +25,19 @@
 
 #include "listwidget.hpp"
 
+class QToolBar;
+class MethodAction;
+
 class MarklinCANLocomotiveListWidget : public ListWidget
 {
+  private:
+    static constexpr int columnName = 0;
+
+    QToolBar* m_toolbar;
+    MethodAction* m_importOrSyncAction;
+
   protected:
-    void tableSelectionChanged() final {}
+    void tableSelectionChanged() final;
 
   public:
     explicit MarklinCANLocomotiveListWidget(const ObjectPtr& object, QWidget* parent = nullptr);

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -69,6 +69,7 @@ class TableModel : public QAbstractTableModel
     QVariant data(const QModelIndex& index, int role) const final;
 
     QString getRowObjectId(int row) const;
+    QString getValue(int column, int row) const;
 
     void setRegion(int columnMin, int columnMax, int rowMin, int rowMax);
 };
