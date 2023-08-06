@@ -24,8 +24,11 @@
 #include "marklincanlocomotivelisttablemodel.hpp"
 #include "../marklincaninterface.hpp"
 #include "../../decoder/list/decoderlist.hpp"
+#include "../../input/list/inputlist.hpp"
+#include "../../output/list/outputlist.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../core/method.tpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../world/getworld.hpp"
 #include "../../../world/world.hpp"
 
