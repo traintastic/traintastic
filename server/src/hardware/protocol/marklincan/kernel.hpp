@@ -25,6 +25,7 @@
 
 #include <memory>
 #include <array>
+#include <unordered_map>
 #include <thread>
 #include <filesystem>
 #include <queue>
