@@ -4278,5 +4278,25 @@
     {
         "term": "marklin_can_locomotive_list:reload",
         "definition": "Reload"
+    },
+    {
+        "term": "interface.marklin_can:marklin_can_node_list",
+        "definition": "Märklin CAN: Node list"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:device_name",
+        "definition": "Device name"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:article_number",
+        "definition": "Article number"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:serial_number",
+        "definition": "Serial number"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:software_version",
+        "definition": "Software version"
     }
 ]

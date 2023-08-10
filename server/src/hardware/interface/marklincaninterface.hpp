@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLINCANINTERFACE_HPP
 
 #include "interface.hpp"
+#include "marklincan/marklincannodelist.hpp"
 #include "marklincan/marklincanlocomotivelist.hpp"
 #include <traintastic/enum/marklincaninterfacetype.hpp>
 #include "../decoder/decodercontroller.hpp"
@@ -67,6 +68,7 @@ class MarklinCANInterface final
     Property<std::string> hostname;
     Property<std::string> interface;
     ObjectProperty<MarklinCAN::Settings> marklinCAN;
+    ObjectProperty<MarklinCANNodeList> marklinCANNodeList;
     ObjectProperty<MarklinCANLocomotiveList> marklinCANLocomotiveList;
 
     MarklinCANInterface(World& world, std::string_view _id);

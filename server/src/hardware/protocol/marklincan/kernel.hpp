@@ -27,9 +27,12 @@
 #include <array>
 #include <thread>
 #include <filesystem>
+#include <queue>
 #include <boost/asio/io_context.hpp>
+#include <boost/asio/steady_timer.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include "config.hpp"
+#include "node.hpp"
 #include "iohandler/iohandler.hpp"
 #include "configdatastreamcollector.hpp"
 
@@ -84,7 +87,13 @@ class Kernel
     std::string m_logId;
     std::function<void()> m_onStarted;
     std::function<void()> m_onError;
+    std::function<void(const Node& node)> m_onNodeChanged;
+    std::queue<uint32_t> m_statusDataConfigRequestQueue; //<! UID's to request config data from
+    boost::asio::steady_timer m_statusDataConfigRequestTimer;
+
     std::function<void(const std::shared_ptr<LocomotiveList>&)> m_onLocomotiveListChanged;
+
+    std::unordered_map<uint32_t, Node> m_nodes;
 
     DecoderController* m_decoderController = nullptr;
 
@@ -96,6 +105,7 @@ class Kernel
     std::array<TriState, outputDCCAddressMax - outputDCCAddressMin + 1> m_outputValuesDCC;
     std::array<TriState, outputSX1AddressMax - outputSX1AddressMin + 1> m_outputValuesSX1;
 
+    std::vector<std::byte> m_statusConfigData;
     std::unique_ptr<ConfigDataStreamCollector> m_configDataStreamCollector;
 
     const std::filesystem::path m_debugDir;
@@ -112,7 +122,10 @@ class Kernel
     void send(const Message& message);
     void postSend(const Message& message);
 
+    void receiveStatusDataConfig(uint32_t nodeUID, uint8_t index, const std::vector<std::byte>& statusConfigData);
     void receiveConfigData(std::unique_ptr<ConfigDataStreamCollector> configData);
+
+    void restartStatusDataConfigTimer();
 
   public:
     Kernel(const Kernel&) = delete;
@@ -206,6 +219,11 @@ class Kernel
      *
      */
     void setOnLocomotiveListChanged(std::function<void(const std::shared_ptr<LocomotiveList>&)> callback);
+
+    /**
+     *
+     */
+    void setOnNodeChanged(std::function<void(const Node& node)> callback);
 
     /**
      * \brief Set the decoder controller

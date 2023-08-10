@@ -64,6 +64,7 @@ static std::tuple<bool, DecoderProtocol, uint16_t> uidToProtocolAddress(uint32_t
 Kernel::Kernel(const Config& config, bool simulation)
   : m_ioContext{1}
   , m_simulation{simulation}
+  , m_statusDataConfigRequestTimer{m_ioContext}
   , m_debugDir{Traintastic::instance->debugDir()}
   , m_config{config}
 #ifndef NDEBUG
@@ -107,6 +108,13 @@ void Kernel::setOnLocomotiveListChanged(std::function<void(const std::shared_ptr
   assert(isEventLoopThread());
   assert(!m_started);
   m_onLocomotiveListChanged = std::move(callback);
+}
+
+void Kernel::setOnNodeChanged(std::function<void(const Node& node)> callback)
+{
+  assert(isEventLoopThread());
+  assert(!m_started);
+  m_onNodeChanged = std::move(callback);
 }
 
 void Kernel::setDecoderController(DecoderController* decoderController)
@@ -416,6 +424,33 @@ void Kernel::receive(const Message& message)
       {
         send(PingReply(m_config.nodeUID, TRAINTASTIC_VERSION_MAJOR, TRAINTASTIC_VERSION_MINOR, DeviceId::Traintastic));
       }
+#if 1
+      else if(message.dlc == 8)
+      {
+        const auto& pingReply = static_cast<const PingReply&>(message);
+
+        if(auto it = m_nodes.find(pingReply.uid()); it == m_nodes.end() || it->second.deviceName.empty())
+        {
+          if(it == m_nodes.end()) // new node
+          {
+            Node node;
+            node.uid = pingReply.uid();
+            node.softwareVersionMajor = pingReply.softwareVersionMajor();
+            node.softwareVersionMinor = pingReply.softwareVersionMinor();
+            node.deviceId = pingReply.deviceId();
+            m_nodes.emplace(pingReply.uid(), node);
+          }
+
+          if(pingReply.uid() != m_config.nodeUID)
+          {
+            // queue the requests and wait for some time before sending them.
+            // multiple transfer don't work well at the same time.
+            m_statusDataConfigRequestQueue.emplace(pingReply.uid());
+            restartStatusDataConfigTimer();
+          }
+        }
+      }
+#endif
       break;
 
     case Command::Update:
@@ -443,6 +478,37 @@ void Kernel::receive(const Message& message)
             break;
           }
         }
+      }
+      else if(message.dlc == 5 && message.isResponse())
+      {
+        const auto& configReply = static_cast<const StatusDataConfig&>(message);
+        receiveStatusDataConfig(configReply.uid(), configReply.index(), m_statusConfigData);
+        m_statusConfigData.clear();
+      }
+      else if(message.dlc == 6 && message.isResponse())
+      {
+        const auto& configReply = static_cast<const StatusDataConfigReply&>(message);
+        if(m_statusConfigData.size() / 8 == configReply.packetCount())
+        {
+          receiveStatusDataConfig(configReply.uid(), configReply.index(), m_statusConfigData);
+        }
+        m_statusConfigData.clear();
+      }
+      else if(message.dlc == 8 && message.isResponse())
+      {
+        const auto& configData = static_cast<const StatusDataConfigReplyData&>(message);
+        if(m_statusConfigData.empty() && configData.hash() == StatusDataConfigReplyData::startHash)
+        {
+          m_statusConfigData.resize(8);
+          std::memcpy(m_statusConfigData.data(), configData.data, 8);
+        }
+        else if((m_statusConfigData.size() / 8 + StatusDataConfigReplyData::startHash) == configData.hash())
+        {
+          m_statusConfigData.resize(m_statusConfigData.size() + 8);
+          std::memcpy(m_statusConfigData.data() + m_statusConfigData.size() - 8, configData.data, 8);
+        }
+        else
+          m_statusConfigData.clear(); // invalid data -> reset
       }
       break;
 
@@ -653,6 +719,40 @@ void Kernel::postSend(const Message& message)
     });
 }
 
+void Kernel::receiveStatusDataConfig(uint32_t nodeUID, uint8_t index, const std::vector<std::byte>& statusConfigData)
+{
+  auto it = m_nodes.find(nodeUID);
+  if(it == m_nodes.end())
+    return;
+
+  if(!m_statusDataConfigRequestQueue.empty() && m_statusDataConfigRequestQueue.front() == nodeUID)
+  {
+    m_statusDataConfigRequestQueue.pop();
+    if(!m_statusDataConfigRequestQueue.empty())
+      restartStatusDataConfigTimer();
+  }
+
+  Node& node = it->second;
+
+  if(index == 0)
+  {
+    const auto devDesc = StatusData::DeviceDescription::decode(statusConfigData);
+    node.serialNumber = devDesc.serialNumber;
+    node.articleNumber.assign(devDesc.articleNumber, strnlen(devDesc.articleNumber, sizeof(devDesc.articleNumber)));
+    node.deviceName = devDesc.deviceName;
+
+    if(m_onNodeChanged)
+    {
+      EventLoop::call(
+        [this, node=node]()
+        {
+          static_assert(!std::is_reference_v<decltype(node)>);
+          m_onNodeChanged(node);
+        });
+    }
+  }
+}
+
 void Kernel::receiveConfigData(std::unique_ptr<ConfigDataStreamCollector> configData)
 {
   const auto basename = m_debugDir / m_logId / "configstream" / configData->name;
@@ -682,6 +782,27 @@ void Kernel::receiveConfigData(std::unique_ptr<ConfigDataStreamCollector> config
       }
     }
   }
+}
+
+void Kernel::restartStatusDataConfigTimer()
+{
+  assert(!m_statusDataConfigRequestQueue.empty());
+  m_statusDataConfigRequestTimer.cancel();
+  m_statusDataConfigRequestTimer.expires_after(std::chrono::milliseconds(100));
+  m_statusDataConfigRequestTimer.async_wait(
+    [this](const boost::system::error_code& ec)
+    {
+      if(!ec)
+      {
+        if(!m_statusConfigData.empty())
+          return; // if in progress, don't request, when finished it will start the timer again
+
+        send(StatusDataConfig(m_config.nodeUID, m_statusDataConfigRequestQueue.front(), 0));
+      }
+
+      if(ec != boost::asio::error::operation_aborted && m_statusDataConfigRequestQueue.size() > 1)
+        restartStatusDataConfigTimer();
+    });
 }
 
 }
