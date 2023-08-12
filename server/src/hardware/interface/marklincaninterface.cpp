@@ -254,6 +254,7 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
     Attributes::setEnabled({type, hostname, interface}, true);
     Attributes::setEnabled(marklinCANLocomotiveList->reload, false);
 
+    marklinCANNodeList->clear();
     marklinCANLocomotiveList->clear();
 
     m_marklinCANPropertyChanged.disconnect();
