@@ -173,6 +173,27 @@ void Kernel::start()
           {
             m_onStarted();
           });
+
+      // add Traintastic to the node list
+      {
+        Node node;
+        node.uid = m_config.nodeUID;
+        node.deviceName = nodeDeviceName;
+        node.articleNumber = nodeArticleNumber;
+        node.serialNumber = m_config.nodeSerialNumber;
+        node.softwareVersionMajor = TRAINTASTIC_VERSION_MAJOR;
+        node.softwareVersionMinor = TRAINTASTIC_VERSION_MINOR;
+        node.deviceId = DeviceId::Traintastic;
+
+        if(m_onNodeChanged) /*[[likely]]*/
+          EventLoop::call(
+            [this, node]()
+            {
+              m_onNodeChanged(node);
+            });
+
+        m_nodes.emplace(m_config.nodeUID, node);
+      }
     });
 
 #ifndef NDEBUG
@@ -424,7 +445,6 @@ void Kernel::receive(const Message& message)
       {
         send(PingReply(m_config.nodeUID, TRAINTASTIC_VERSION_MAJOR, TRAINTASTIC_VERSION_MINOR, DeviceId::Traintastic));
       }
-#if 1
       else if(message.dlc == 8)
       {
         const auto& pingReply = static_cast<const PingReply&>(message);
@@ -450,7 +470,6 @@ void Kernel::receive(const Message& message)
           }
         }
       }
-#endif
       break;
 
     case Command::Update:
@@ -471,8 +490,8 @@ void Kernel::receive(const Message& message)
           {
             StatusData::DeviceDescription desc;
             desc.serialNumber = m_config.nodeSerialNumber;
-            desc.articleNumber[0] = '1';
-            desc.deviceName = "Traintastic";
+            memcpy(desc.articleNumber, nodeArticleNumber.data(), std::min(nodeArticleNumber.size(), sizeof(desc.articleNumber)));
+            desc.deviceName = nodeDeviceName;
             for(const auto& reply : statusDataConfigReply(m_config.nodeUID, uid, index, desc))
               send(reply);
             break;

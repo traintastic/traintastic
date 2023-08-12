@@ -51,6 +51,9 @@ class LocomotiveList;
 class Kernel
 {
   public:
+    static constexpr std::string_view nodeDeviceName = "Traintastic";
+    static constexpr std::string_view nodeArticleNumber = "1";
+
     static constexpr uint16_t s88AddressMin = 1;
     static constexpr uint16_t s88AddressMax = 16384;
 
