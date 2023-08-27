@@ -4298,5 +4298,9 @@
     {
         "term": "table_model.marklin_can_node_list:software_version",
         "definition": "Software version"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:device_id",
+        "definition": "Device Id"
     }
 ]

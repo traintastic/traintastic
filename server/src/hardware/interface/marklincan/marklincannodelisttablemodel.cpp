@@ -30,6 +30,7 @@ constexpr uint32_t columnName = 1;
 constexpr uint32_t columnArticleNumber = 2;
 constexpr uint32_t columnSerialNumber = 3;
 constexpr uint32_t columnSoftwareVersion = 4;
+constexpr uint32_t columnDeviceId = 5;
 
 MarklinCANNodeListTableModel::MarklinCANNodeListTableModel(MarklinCANNodeList& list)
   : m_list{list.shared_ptr<MarklinCANNodeList>()}
@@ -42,7 +43,8 @@ MarklinCANNodeListTableModel::MarklinCANNodeListTableModel(MarklinCANNodeList& l
     std::string_view{"table_model.marklin_can_node_list:device_name"},
     std::string_view{"table_model.marklin_can_node_list:article_number"},
     std::string_view{"table_model.marklin_can_node_list:serial_number"},
-    std::string_view{"table_model.marklin_can_node_list:software_version"}
+    std::string_view{"table_model.marklin_can_node_list:software_version"},
+    std::string_view{"table_model.marklin_can_node_list:device_id"}
     });
 
   setRowCount(m_list->m_nodes.size());
@@ -73,10 +75,15 @@ std::string MarklinCANNodeListTableModel::getText(uint32_t column, uint32_t row)
         return node.articleNumber;
 
       case columnSerialNumber:
+        if(node.serialNumber == 0)
+          return {};
         return std::to_string(node.serialNumber);
 
       case columnSoftwareVersion:
         return std::to_string(node.softwareVersionMajor).append(".").append(std::to_string(node.softwareVersionMinor));
+
+      case columnDeviceId:
+        return toHex(static_cast<uint16_t>(node.deviceId));
     }
   }
   return {};
