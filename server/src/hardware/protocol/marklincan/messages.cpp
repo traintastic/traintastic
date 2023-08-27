@@ -39,17 +39,26 @@ std::string toString(const Message& message)
       switch(system.subCommand())
       {
         case SystemSubCommand::SystemStop:
+        {
           s.append("SystemStop");
+          const auto& systemStop = static_cast<const SystemStop&>(message);
+          s.append(" ").append(UID::toString(systemStop.uid()));
           break;
-
+        }
         case SystemSubCommand::SystemGo:
+        {
           s.append("SystemGo");
+          const auto& systemGo = static_cast<const SystemGo&>(message);
+          s.append(" ").append(UID::toString(systemGo.uid()));
           break;
-
+        }
         case SystemSubCommand::SystemHalt:
+        {
           s.append("SystemHalt");
+          const auto& systemHalt = static_cast<const SystemHalt&>(message);
+          s.append(" ").append(UID::toString(systemHalt.uid()));
           break;
-
+        }
         case SystemSubCommand::LocomotiveEmergencyStop:
           s.append("LocomotiveEmergencyStop");
           break;
