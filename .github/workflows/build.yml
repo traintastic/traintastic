@@ -509,7 +509,7 @@ jobs:
   package-innosetup:
     name: package innosetup
     runs-on: windows-2019
-    needs: [build-client, build-server, build-lang, traintastic-manual, traintastic-manual-lua]
+    needs: [build-client, build-server, build-lang, build-manual, build-manual-lua]
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
