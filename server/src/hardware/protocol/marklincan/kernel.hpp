@@ -84,15 +84,29 @@ class Kernel
     };
 
   private:
+    //! Startup states, executed in order.
+    enum class State
+    {
+      Initial, // must be first
+      DiscoverNodes,
+      SetAccessorySwitchTime,
+      DownloadLokList,
+      Started // must be last
+    };
+
+    static constexpr int statusDataConfigRequestRetryCount = 10;
+
     boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
     std::thread m_thread;
     std::string m_logId;
+    State m_state = State::Initial;
     std::function<void()> m_onStarted;
     std::function<void()> m_onError;
     std::function<void(const Node& node)> m_onNodeChanged;
     std::queue<uint32_t> m_statusDataConfigRequestQueue; //<! UID's to request config data from
+    int m_statusDataConfigRequestRetries = statusDataConfigRequestRetryCount;
     boost::asio::steady_timer m_statusDataConfigRequestTimer;
 
     std::function<void(const std::shared_ptr<LocomotiveList>&)> m_onLocomotiveListChanged;
@@ -130,6 +144,14 @@ class Kernel
     void receiveConfigData(std::unique_ptr<ConfigDataStreamCollector> configData);
 
     void restartStatusDataConfigTimer();
+
+
+    void changeState(State value);
+    inline void nextState()
+    {
+      assert(m_state != State::Started);
+      changeState(static_cast<State>(static_cast<std::underlying_type_t<State>>(m_state) + 1));
+    }
 
   public:
     Kernel(const Kernel&) = delete;

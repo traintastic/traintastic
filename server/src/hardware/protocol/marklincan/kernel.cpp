@@ -163,17 +163,6 @@ void Kernel::start()
     {
       m_ioHandler->start();
 
-      send(AccessorySwitchTime(m_config.defaultSwitchTime / 10));
-
-      send(ConfigData(ConfigDataName::loks));
-
-      if(m_onStarted)
-        EventLoop::call(
-          [this]()
-          {
-            m_onStarted();
-          });
-
       // add Traintastic to the node list
       {
         Node node;
@@ -194,6 +183,8 @@ void Kernel::start()
 
         m_nodes.emplace(m_config.nodeUID, node);
       }
+
+      nextState();
     });
 
 #ifndef NDEBUG
@@ -258,7 +249,13 @@ void Kernel::receive(const Message& message)
           break;
 
         case SystemSubCommand::LocomotiveCycleEnd:
+          // not (yet) implemented
+          break;
         case SystemSubCommand::AccessorySwitchTime:
+          if(message.isResponse() && m_state == State::SetAccessorySwitchTime)
+            nextState();
+          break;
+
         case SystemSubCommand::Overload:
         case SystemSubCommand::Status:
         case SystemSubCommand::ModelClock:
@@ -449,7 +446,7 @@ void Kernel::receive(const Message& message)
       {
         const auto& pingReply = static_cast<const PingReply&>(message);
 
-        if(auto it = m_nodes.find(pingReply.uid()); it == m_nodes.end() || it->second.deviceName.empty())
+        if(auto it = m_nodes.find(pingReply.uid()); it == m_nodes.end())
         {
           if(it == m_nodes.end()) // new node
           {
@@ -747,8 +744,11 @@ void Kernel::receiveStatusDataConfig(uint32_t nodeUID, uint8_t index, const std:
   if(!m_statusDataConfigRequestQueue.empty() && m_statusDataConfigRequestQueue.front() == nodeUID)
   {
     m_statusDataConfigRequestQueue.pop();
+    m_statusDataConfigRequestRetries = statusDataConfigRequestRetryCount;
     if(!m_statusDataConfigRequestQueue.empty())
       restartStatusDataConfigTimer();
+    else if(m_state == State::DiscoverNodes)
+      nextState();
   }
 
   Node& node = it->second;
@@ -800,6 +800,9 @@ void Kernel::receiveConfigData(std::unique_ptr<ConfigDataStreamCollector> config
           });
       }
     }
+
+    if(m_state == State::DownloadLokList)
+      nextState();
   }
 }
 
@@ -816,12 +819,78 @@ void Kernel::restartStatusDataConfigTimer()
         if(!m_statusConfigData.empty())
           return; // if in progress, don't request, when finished it will start the timer again
 
-        send(StatusDataConfig(m_config.nodeUID, m_statusDataConfigRequestQueue.front(), 0));
+        if(m_statusDataConfigRequestRetries == 0)
+        {
+          // give up, no response
+
+          if(m_onNodeChanged) /*[[likely]]*/
+          {
+            if(auto it = m_nodes.find(m_statusDataConfigRequestQueue.front()); it != m_nodes.end()) /*[[likely]]*/
+            {
+              EventLoop::call(
+                [this, node=it->second]()
+                {
+                  static_assert(!std::is_reference_v<decltype(node)>);
+                  m_onNodeChanged(node);
+               });
+            }
+          }
+
+          m_statusDataConfigRequestQueue.pop();
+          m_statusDataConfigRequestRetries = statusDataConfigRequestRetryCount;
+
+          /* remove */ send(Ping());
+        }
+        else
+        {
+          send(StatusDataConfig(m_config.nodeUID, m_statusDataConfigRequestQueue.front(), 0));
+          m_statusDataConfigRequestRetries--;
+        }
       }
 
-      if(ec != boost::asio::error::operation_aborted && m_statusDataConfigRequestQueue.size() > 1)
-        restartStatusDataConfigTimer();
+      if(ec != boost::asio::error::operation_aborted)
+      {
+        if(!m_statusDataConfigRequestQueue.empty())
+          restartStatusDataConfigTimer();
+        else if(m_state == State::DiscoverNodes)
+          nextState();
+      }
     });
+}
+
+void Kernel::changeState(State value)
+{
+  assert(isKernelThread());
+  assert(m_state != value);
+
+  m_state = value;
+
+  switch(m_state)
+  {
+    case State::Initial:
+      break;
+
+    case State::DiscoverNodes:
+      send(Ping());
+      break;
+
+    case State::SetAccessorySwitchTime:
+      send(AccessorySwitchTime(m_config.defaultSwitchTime / 10));
+      break;
+
+    case State::DownloadLokList:
+      send(ConfigData(ConfigDataName::loks));
+      break;
+
+    case State::Started:
+      if(m_onStarted) /*[[likely]]*/
+        EventLoop::call(
+          [this]()
+          {
+            m_onStarted();
+          });
+      break;
+  }
 }
 
 }
