@@ -74,9 +74,15 @@ std::string toString(const Message& message)
           break;
 
         case SystemSubCommand::Status:
+        {
           s.append("Status");
+          const auto& systemStatus = static_cast<const SystemStatus&>(message);
+          s.append(" ").append(UID::toString(systemStatus.uid()));
+          s.append(" channel=").append(std::to_string(systemStatus.channel()));
+          if(message.dlc == 8)
+            s.append(" value=").append(std::to_string(static_cast<const SystemStatusResponse&>(message).value()));
           break;
-
+        }
         case SystemSubCommand::ModelClock:
           s.append("ModelClock");
           if(message.dlc == 8)

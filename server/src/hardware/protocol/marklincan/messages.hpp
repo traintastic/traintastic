@@ -231,6 +231,41 @@ struct SystemHalt : SystemMessage
   }
 };
 
+struct SystemStatus : SystemMessage
+{
+  uint8_t channel() const
+  {
+    assert(dlc > 5);
+    return data[5];
+  }
+
+  void setChannel(uint8_t value)
+  {
+    assert(dlc > 5);
+    data[5] = value;
+  }
+};
+
+struct SystemStatusRequest : SystemStatus
+{
+};
+
+struct SystemStatusResponse : SystemStatus
+{
+  uint16_t value() const
+  {
+    assert(dlc == 8);
+    return to16(data[7], data[6]);
+  }
+
+  void setValue(uint16_t value_)
+  {
+    assert(dlc == 8);
+    data[6] = high8(value_);
+    data[7] = low8(value_);
+  }
+};
+
 struct ModelClock : SystemMessage
 {
   ModelClock(uint32_t uid, uint8_t hour_, uint8_t minute_, uint8_t factor_)
