@@ -1,0 +1,172 @@
+{
+  "get": {
+    "type": "function",
+    "parameters": [
+      {
+        "name": "object"
+      }
+    ],
+    "return_values": 1,
+    "examples": [
+      {
+        "code": "class.get(world) -- returns: class.WORLD"
+      }
+    ]
+  },
+  "BOARD": {
+    "type": "constant"
+  },
+  "BOARD_LIST": {
+    "type": "constant"
+  },
+  "STRAIGHT_RAIL_TILE": {
+    "type": "constant"
+  },
+  "TUNNEL_RAIL_TILE": {
+    "type": "constant"
+  },
+  "BUFFER_STOP_RAIL_TILE": {
+    "type": "constant"
+  },
+  "CURVE_45_RAIL_TILE": {
+    "type": "constant"
+  },
+  "CURVE_90_RAIL_TILE": {
+    "type": "constant"
+  },
+  "CROSS_45_RAIL_TILE": {
+    "type": "constant"
+  },
+  "CROSS_90_RAIL_TILE": {
+    "type": "constant"
+  },
+  "BRIDGE_45_RIGHT_RAIL_TILE": {
+    "type": "constant"
+  },
+  "BRIDGE_45_LEFT_RAIL_TILE": {
+    "type": "constant"
+  },
+  "BRIDGE_90_RAIL_TILE": {
+    "type": "constant"
+  },
+  "TURNOUT_SINGLE_SLIP_RAIL_TILE": {
+    "type": "constant"
+  },
+  "TURNOUT_LEFT_90_RAIL_TILE": {
+    "type": "constant"
+  },
+  "TURNOUT_RIGHT_45_RAIL_TILE": {
+    "type": "constant"
+  },
+  "TURNOUT_LEFT_45_RAIL_TILE": {
+    "type": "constant"
+  },
+  "TURNOUT_RIGHT_90_RAIL_TILE": {
+    "type": "constant"
+  },
+  "TURNOUT_DOUBLE_SLIP_RAIL_TILE": {
+    "type": "constant"
+  },
+  "TURNOUT_WYE_RAIL_TILE": {
+    "type": "constant"
+  },
+  "TURNOUT__RAIL_TILE": {
+    "type": "constant"
+  },
+  "TURNOUT_3WAY_RAIL_TILE": {
+    "type": "constant"
+  },
+  "TURNOUT_RIGHT_CURVED_RAIL_TILE": {
+    "type": "constant"
+  },
+  "SIGNAL_2_ASPECT_RAIL_TILE": {
+    "type": "constant"
+  },
+  "SIGNAL_3_ASPECT_RAIL_TILE": {
+    "type": "constant"
+  },
+  "SENSOR_RAIL_TILE": {
+    "type": "constant"
+  },
+  "BLOCK_RAIL_TILE": {
+    "type": "constant"
+  },
+  "CLOCK": {
+    "type": "constant"
+  },
+  "DCCPLUSPLUS": {
+    "type": "constant"
+  },
+  "ECOS": {
+    "type": "constant"
+  },
+  "HSI88": {
+    "type": "constant"
+  },
+  "LOCONET": {
+    "type": "constant"
+  },
+  "MARKLIN_CAN": {
+    "type": "constant"
+  },
+  "TRAINTASTIC_DIY": {
+    "type": "constant"
+  },
+  "XPRESSNET": {
+    "type": "constant"
+  },
+  "WITHROTTLE": {
+    "type": "constant"
+  },
+  "WLANMAUS": {
+    "type": "constant"
+  },
+  "Z21": {
+    "type": "constant"
+  },
+  "INTERFACE_STATUS": {
+    "type": "constant"
+  },
+  "DECODER_FUNCTION": {
+    "type": "constant"
+  },
+  "DECODER_LIST": {
+    "type": "constant"
+  },
+  "DECODER": {
+    "type": "constant"
+  },
+  "DECODER_FUNCTIONS": {
+    "type": "constant"
+  },
+  "INPUT": {
+    "type": "constant"
+  },
+  "INPUT_LIST": {
+    "type": "constant"
+  },
+  "OUTPUT": {
+    "type": "constant"
+  },
+  "OUTPUT_LIST": {
+    "type": "constant"
+  },
+  "RAIL_VEHICLE_LIST": {
+    "type": "constant"
+  },
+  "LOCOMOTIVE": {
+    "type": "constant"
+  },
+  "FREIGHT_WAGON": {
+    "type": "constant"
+  },
+  "TRAIN": {
+    "type": "constant"
+  },
+  "TRAIN_LIST": {
+    "type": "constant"
+  },
+  "WORLD": {
+    "type": "constant"
+  }
+}

@@ -1,0 +1,234 @@
+{
+  "abs": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [
+      {
+        "name": "number"
+      }
+    ],
+    "return_values": 1
+  },
+  "acos": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [
+      {
+        "name": "number"
+      }
+    ],
+    "return_values": 1
+  },
+  "asin": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [
+      {
+        "name": "number"
+      }
+    ],
+    "return_values": 1
+  },
+  "atan": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [
+      {
+        "name": "number"
+      }
+    ],
+    "return_values": 1
+  },
+  "ceil": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [
+      {
+        "name": "number"
+      }
+    ],
+    "return_values": 1
+  },
+  "cos": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [
+      {
+        "name": "number"
+      }
+    ],
+    "return_values": 1
+  },
+  "deg": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [
+      {
+        "name": "number"
+      }
+    ],
+    "return_values": 1
+  },
+  "exp": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [
+      {
+        "name": "number"
+      }
+    ],
+    "return_values": 1
+  },
+  "floor": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [
+      {
+        "name": "number"
+      }
+    ],
+    "return_values": 1
+  },
+  "fmod": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [
+      {
+        "name": "divided"
+      },
+      {
+        "name": "divisor"
+      }
+    ],
+    "return_values": 1
+  },
+  "huge": {
+    "is_lua_builtin": true,
+    "type": "constant"
+  },
+  "log": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [
+      {
+        "name": "number"
+      },
+      {
+        "name": "base",
+        "optional": true
+      }
+    ],
+    "return_values": 0
+  },
+  "max": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [
+      {
+        "name": "number"
+      },
+      {
+        "name": "..."
+      }
+    ],
+    "return_values": 0
+  },
+  "maxinteger": {
+    "is_lua_builtin": true,
+    "type": "constant"
+  },
+  "min": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [
+      {
+        "name": "number"
+      },
+      {
+        "name": "..."
+      }
+    ],
+    "return_values": 0
+  },
+  "mininteger": {
+    "is_lua_builtin": true,
+    "type": "constant"
+  },
+  "modf": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [
+      {
+        "name": "number"
+      }
+    ],
+    "return_values": 2
+  },
+  "pi": {
+    "is_lua_builtin": true,
+    "type": "constant"
+  },
+  "rad": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "random": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [
+      {
+        "name": "m",
+        "optional": true
+      },
+      {
+        "name": "n",
+        "optional": true
+      }
+    ],
+    "return_values": 0
+  },
+  "randomseed": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "sin": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "sqrt": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "tan": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "tointeger": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "type": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "ult": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  }
+}

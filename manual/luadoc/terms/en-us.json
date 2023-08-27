@@ -1,0 +1,1606 @@
+[
+  {
+    "term": "index:title",
+    "definition": "Traintastic Lua scripting"
+  },
+  {
+    "term": "index:nav",
+    "definition": "Index"
+  },
+  {
+    "term": "contents",
+    "definition": "Contents"
+  },
+  {
+    "term": "value",
+    "definition": "Value"
+  },
+  {
+    "term": "description",
+    "definition": "Description"
+  },
+  {
+    "term": "constants",
+    "definition": "Constants"
+  },
+  {
+    "term": "libraries",
+    "definition": "Libraries"
+  },
+  {
+    "term": "objects",
+    "definition": "Objects"
+  },
+  {
+    "term": "functions",
+    "definition": "Functions"
+  },
+  {
+    "term": "methods",
+    "definition": "Methods"
+  },
+  {
+    "term": "example",
+    "definition": "Example"
+  },
+  {
+    "term": "examples",
+    "definition": "Examples"
+  },
+  {
+    "term": "properties",
+    "definition": "Properties"
+  },
+  {
+    "term": "events",
+    "definition": "Events"
+  },
+  {
+    "term": "functions",
+    "definition": "Functions"
+  },
+  {
+    "term": "parameters",
+    "definition": "Parameters"
+  },
+  {
+    "term": "return_values",
+    "definition": "Return values"
+  },
+  {
+    "term": "enum:title",
+    "definition": "Enum library"
+  },
+  {
+    "term": "enum:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.decoder_protocol:title",
+    "definition": "Decoder protocol"
+  },
+  {
+    "term": "enum.direction:title",
+    "definition": "Direction"
+  },
+  {
+    "term": "enum.direction_control_state:title",
+    "definition": "Direction control state"
+  },
+  {
+    "term": "enum.identification_event_type:title",
+    "definition": "Identification event type"
+  },
+  {
+    "term": "enum.interface_state:title",
+    "definition": "Interface state"
+  },
+  {
+    "term": "enum.tri_state:title",
+    "definition": "Tristate"
+  },
+  {
+    "term": "enum.turnout_position:title",
+    "definition": "Turnout position"
+  },
+  {
+    "term": "enum.signal_aspect:title",
+    "definition": "Signal aspect"
+  },
+  {
+    "term": "enum.world_event:title",
+    "definition": "World event"
+  },
+  {
+    "term": "enum.world_scale:title",
+    "definition": "World scale"
+  },
+  {
+    "term": "enum.decoder_protocol:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.decoder_protocol.none:description",
+    "definition": "None or invalid protocol"
+  },
+  {
+    "term": "enum.decoder_protocol.dcc_short:description",
+    "definition": "Lenz DCC protocol with 7 bit short address"
+  },
+  {
+    "term": "enum.decoder_protocol.motorola:description",
+    "definition": "Märklin Motorola protocol"
+  },
+  {
+    "term": "enum.decoder_protocol.selectrix:description",
+    "definition": "Selectrix protocol"
+  },
+  {
+    "term": "enum.decoder_protocol.mfx:description",
+    "definition": "Märklin MFX protocol"
+  },
+  {
+    "term": "enum.decoder_protocol.dcc_long:description",
+    "definition": "Lenz DCC protocol with 14 bit long address"
+  },
+  {
+    "term": "enum.direction:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.direction.forward:description",
+    "definition": "Forward direction"
+  },
+  {
+    "term": "enum.direction.reverse:description",
+    "definition": "Reverse direction"
+  },
+  {
+    "term": "enum.direction.unknown:description",
+    "definition": "Unknown or invalid direction"
+  },
+  {
+    "term": "enum.direction_control_state:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.direction_control_state.none:description",
+    "definition": "A to B and B to A are not allowed"
+  },
+  {
+    "term": "enum.direction_control_state.a_to_b:description",
+    "definition": "A to B is allowed, B to A is not allowed"
+  },
+  {
+    "term": "enum.direction_control_state.b_to_a:description",
+    "definition": "B to A is allowed, A to B is not allowed"
+  },
+  {
+    "term": "enum.direction_control_state.both:description",
+    "definition": "A to B and B to A are allowed"
+  },
+  {
+    "term": "enum.identification_event_type:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.identification_event_type.present:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.identification_event_type.absent:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.identification_event_type.seen:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.interface_state:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.interface_state.offline:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.interface_state.initializing:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.interface_state.online:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.interface_state.error:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.tri_state:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.tri_state.undefined:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.tri_state.false:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.tri_state.true:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.turnout_position:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.turnout_position.unknown:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.turnout_position.straight:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.turnout_position.left:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.turnout_position.right:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.turnout_position.crossed:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.turnout_position.diverged:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.turnout_position.double_slip_straight_a:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.turnout_position.double_slip_straight_b:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.signal_aspect:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.signal_aspect.unknown:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.signal_aspect.stop:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.signal_aspect.proceed:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.signal_aspect.proceed_reduced_speed:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_event:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_event.edit_disabled:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_event.edit_enabled:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_event.offline:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_event.online:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_event.power_off:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_event.power_on:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_event.stop:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_event.run:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_event.unmute:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_event.mute:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_event.no_smoke:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_event.smoke:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_event.simulation_disabled:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_event.simulation_enabled:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_scale:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_scale.h0:description",
+    "definition": "H0 scale (1:87)"
+  },
+  {
+    "term": "enum.world_scale.n:description",
+    "definition": "N scale (1:160)"
+  },
+  {
+    "term": "enum.world_scale.tt:description",
+    "definition": "TT scale (1:120)"
+  },
+  {
+    "term": "enum.world_scale.z:description",
+    "definition": "Z scale (1:220)"
+  },
+  {
+    "term": "enum.world_scale.custom:description",
+    "definition": ""
+  },
+  {
+    "term": "set:title",
+    "definition": "Set library"
+  },
+  {
+    "term": "set:description",
+    "definition": ""
+  },
+  {
+    "term": "set.world_state:title",
+    "definition": "World state"
+  },
+  {
+    "term": "set.world_state:description",
+    "definition": ""
+  },
+  {
+    "term": "set.world_state.edit:description",
+    "definition": ""
+  },
+  {
+    "term": "set.world_state.online:description",
+    "definition": ""
+  },
+  {
+    "term": "set.world_state.power_on:description",
+    "definition": ""
+  },
+  {
+    "term": "set.world_state.run:description",
+    "definition": ""
+  },
+  {
+    "term": "set.world_state.mute:description",
+    "definition": ""
+  },
+  {
+    "term": "set.world_state.no_smoke:description",
+    "definition": ""
+  },
+  {
+    "term": "set.world_state.simulation:description",
+    "definition": ""
+  },
+  {
+    "term": "index-az:title",
+    "definition": "Index A-Z"
+  },
+  {
+    "term": "index:description",
+    "definition": ""
+  },
+  {
+    "term": "globals:title",
+    "definition": "Globals"
+  },
+  {
+    "term": "class:title",
+    "definition": "Class library"
+  },
+  {
+    "term": "log:title",
+    "definition": "Log library"
+  },
+  {
+    "term": "math:title",
+    "definition": "Math library"
+  },
+  {
+    "term": "string:title",
+    "definition": "String library"
+  },
+  {
+    "term": "table:title",
+    "definition": "Table library"
+  },
+  {
+    "term": "index-az:description",
+    "definition": ""
+  },
+  {
+    "term": "math.abs:description",
+    "definition": "Computes the absolute value of `number`."
+  },
+  {
+    "term": "math.abs.parameter.number:description",
+    "definition": "A numberic value."
+  },
+  {
+    "term": "math.abs:return_values",
+    "definition": "The absolute value of `number`."
+  },
+  {
+    "term": "globals:description",
+    "definition": ""
+  },
+  {
+    "term": "globals.lua_version:description",
+    "definition": "Lua version and copyright, e.g. `\"Lua 5.3.3  Copyright (C) 1994-2016 Lua.org, PUC-Rio\"`"
+  },
+  {
+    "term": "globals.version:description",
+    "definition": "Traintastic version, e.g. `\"0.1.0-master-380-e669a73b\"`"
+  },
+  {
+    "term": "globals.version_major:description",
+    "definition": "Traintastic major version, e.g. `0`"
+  },
+  {
+    "term": "globals.version_minor:description",
+    "definition": "Traintastic minor version, e.g. `1`"
+  },
+  {
+    "term": "globals.version_patch:description",
+    "definition": "Traintastic patch level, e.g. `0`"
+  },
+  {
+    "term": "globals.world:description",
+    "definition": "The global {ref:object.world} object."
+  },
+  {
+    "term": "globals.assert:description",
+    "definition": ""
+  },
+  {
+    "term": "globals.ipairs:description",
+    "definition": ""
+  },
+  {
+    "term": "globals.next:description",
+    "definition": ""
+  },
+  {
+    "term": "globals.pairs:description",
+    "definition": ""
+  },
+  {
+    "term": "globals.tonumber:description",
+    "definition": ""
+  },
+  {
+    "term": "globals.tostring:description",
+    "definition": ""
+  },
+  {
+    "term": "globals.type:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_state:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_state.edit:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_state.online:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_state.power_on:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_state.run:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_state.mute:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_state.no_smoke:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.world_state.simulation:description",
+    "definition": ""
+  },
+  {
+    "term": "math:description",
+    "definition": ""
+  },
+  {
+    "term": "math.huge:description",
+    "definition": ""
+  },
+  {
+    "term": "math.maxinteger:description",
+    "definition": ""
+  },
+  {
+    "term": "math.mininteger:description",
+    "definition": ""
+  },
+  {
+    "term": "math.pi:description",
+    "definition": ""
+  },
+  {
+    "term": "math.acos:description",
+    "definition": "Returns the arc cosine of `number`."
+  },
+  {
+    "term": "math.acos.parameter.number:description",
+    "definition": ""
+  },
+  {
+    "term": "math.acos:return_values",
+    "definition": ""
+  },
+  {
+    "term": "math.asin:description",
+    "definition": "Returns the arc sine of `number`."
+  },
+  {
+    "term": "math.asin.parameter.number:description",
+    "definition": ""
+  },
+  {
+    "term": "math.asin:return_values",
+    "definition": ""
+  },
+  {
+    "term": "math.atan:description",
+    "definition": ""
+  },
+  {
+    "term": "math.atan.parameter.number:description",
+    "definition": ""
+  },
+  {
+    "term": "math.atan:return_values",
+    "definition": ""
+  },
+  {
+    "term": "math.ceil:description",
+    "definition": " Returns the smallest integral value larger than or equal to `number`. "
+  },
+  {
+    "term": "math.ceil.parameter.number:description",
+    "definition": ""
+  },
+  {
+    "term": "math.ceil:return_values",
+    "definition": ""
+  },
+  {
+    "term": "math.cos:description",
+    "definition": "Returns the cosine of `number."
+  },
+  {
+    "term": "math.cos.parameter.number:description",
+    "definition": ""
+  },
+  {
+    "term": "math.cos:return_values",
+    "definition": ""
+  },
+  {
+    "term": "math.deg:description",
+    "definition": ""
+  },
+  {
+    "term": "math.deg.parameter.number:description",
+    "definition": ""
+  },
+  {
+    "term": "math.deg:return_values",
+    "definition": ""
+  },
+  {
+    "term": "math.exp:description",
+    "definition": ""
+  },
+  {
+    "term": "math.exp.parameter.number:description",
+    "definition": ""
+  },
+  {
+    "term": "math.exp:return_values",
+    "definition": ""
+  },
+  {
+    "term": "math.floor:description",
+    "definition": ""
+  },
+  {
+    "term": "math.floor.parameter.number:description",
+    "definition": ""
+  },
+  {
+    "term": "math.floor:return_values",
+    "definition": ""
+  },
+  {
+    "term": "math.fmod:description",
+    "definition": ""
+  },
+  {
+    "term": "math.fmod.parameter.divided:description",
+    "definition": ""
+  },
+  {
+    "term": "math.fmod.parameter.divisor:description",
+    "definition": ""
+  },
+  {
+    "term": "math.fmod:return_values",
+    "definition": ""
+  },
+  {
+    "term": "math.log:description",
+    "definition": ""
+  },
+  {
+    "term": "math.log.parameter.number:description",
+    "definition": ""
+  },
+  {
+    "term": "math.log.parameter.base:description",
+    "definition": ""
+  },
+  {
+    "term": "math.max:description",
+    "definition": ""
+  },
+  {
+    "term": "math.max.parameter.number:description",
+    "definition": ""
+  },
+  {
+    "term": "math.max.parameter....:description",
+    "definition": ""
+  },
+  {
+    "term": "math.min:description",
+    "definition": ""
+  },
+  {
+    "term": "math.min.parameter.number:description",
+    "definition": ""
+  },
+  {
+    "term": "math.min.parameter....:description",
+    "definition": ""
+  },
+  {
+    "term": "math.modf:description",
+    "definition": ""
+  },
+  {
+    "term": "math.modf.parameter.number:description",
+    "definition": ""
+  },
+  {
+    "term": "math.modf:return_values",
+    "definition": ""
+  },
+  {
+    "term": "math.rad:description",
+    "definition": ""
+  },
+  {
+    "term": "math.random:description",
+    "definition": ""
+  },
+  {
+    "term": "math.random.parameter.m:description",
+    "definition": ""
+  },
+  {
+    "term": "math.random.parameter.n:description",
+    "definition": ""
+  },
+  {
+    "term": "math.randomseed:description",
+    "definition": ""
+  },
+  {
+    "term": "math.sin:description",
+    "definition": ""
+  },
+  {
+    "term": "math.sqrt:description",
+    "definition": ""
+  },
+  {
+    "term": "math.tan:description",
+    "definition": ""
+  },
+  {
+    "term": "math.tointeger:description",
+    "definition": ""
+  },
+  {
+    "term": "math.type:description",
+    "definition": ""
+  },
+  {
+    "term": "math.ult:description",
+    "definition": ""
+  },
+  {
+    "term": "string:description",
+    "definition": ""
+  },
+  {
+    "term": "string.byte:description",
+    "definition": ""
+  },
+  {
+    "term": "string.char:description",
+    "definition": ""
+  },
+  {
+    "term": "string.find:description",
+    "definition": ""
+  },
+  {
+    "term": "string.format:description",
+    "definition": ""
+  },
+  {
+    "term": "string.gmatch:description",
+    "definition": ""
+  },
+  {
+    "term": "string.gsub:description",
+    "definition": ""
+  },
+  {
+    "term": "string.len:description",
+    "definition": ""
+  },
+  {
+    "term": "string.lower:description",
+    "definition": ""
+  },
+  {
+    "term": "string.match:description",
+    "definition": ""
+  },
+  {
+    "term": "string.pack:description",
+    "definition": ""
+  },
+  {
+    "term": "string.packsize:description",
+    "definition": ""
+  },
+  {
+    "term": "string.rep:description",
+    "definition": ""
+  },
+  {
+    "term": "string.reverse:description",
+    "definition": ""
+  },
+  {
+    "term": "string.sub:description",
+    "definition": ""
+  },
+  {
+    "term": "string.unpack:description",
+    "definition": ""
+  },
+  {
+    "term": "string.upper:description",
+    "definition": ""
+  },
+  {
+    "term": "table:description",
+    "definition": ""
+  },
+  {
+    "term": "table.concat:description",
+    "definition": ""
+  },
+  {
+    "term": "table.insert:description",
+    "definition": ""
+  },
+  {
+    "term": "table.move:description",
+    "definition": ""
+  },
+  {
+    "term": "table.pack:description",
+    "definition": ""
+  },
+  {
+    "term": "table.remove:description",
+    "definition": ""
+  },
+  {
+    "term": "table.sort:description",
+    "definition": ""
+  },
+  {
+    "term": "table.unpack:description",
+    "definition": ""
+  },
+  {
+    "term": "log:description",
+    "definition": ""
+  },
+  {
+    "term": "log.critical:description",
+    "definition": ""
+  },
+  {
+    "term": "log.critical.parameter.message:description",
+    "definition": ""
+  },
+  {
+    "term": "log.critical.parameter....:description",
+    "definition": ""
+  },
+  {
+    "term": "log.debug:description",
+    "definition": ""
+  },
+  {
+    "term": "log.debug.parameter.message:description",
+    "definition": ""
+  },
+  {
+    "term": "log.debug.parameter....:description",
+    "definition": ""
+  },
+  {
+    "term": "log.error:description",
+    "definition": ""
+  },
+  {
+    "term": "log.error.parameter.message:description",
+    "definition": ""
+  },
+  {
+    "term": "log.error.parameter....:description",
+    "definition": ""
+  },
+  {
+    "term": "log.fatal:description",
+    "definition": ""
+  },
+  {
+    "term": "log.fatal.parameter.message:description",
+    "definition": ""
+  },
+  {
+    "term": "log.fatal.parameter....:description",
+    "definition": ""
+  },
+  {
+    "term": "log.info:description",
+    "definition": ""
+  },
+  {
+    "term": "log.info.parameter.message:description",
+    "definition": ""
+  },
+  {
+    "term": "log.info.parameter....:description",
+    "definition": ""
+  },
+  {
+    "term": "log.notice:description",
+    "definition": ""
+  },
+  {
+    "term": "log.notice.parameter.message:description",
+    "definition": ""
+  },
+  {
+    "term": "log.notice.parameter....:description",
+    "definition": ""
+  },
+  {
+    "term": "log.warning:description",
+    "definition": ""
+  },
+  {
+    "term": "log.warning.parameter.message:description",
+    "definition": ""
+  },
+  {
+    "term": "log.warning.parameter....:description",
+    "definition": ""
+  },
+  {
+    "term": "class:description",
+    "definition": ""
+  },
+  {
+    "term": "class.block_rail_tile:description",
+    "definition": ""
+  },
+  {
+    "term": "class.board:description",
+    "definition": ""
+  },
+  {
+    "term": "class.board_list:description",
+    "definition": ""
+  },
+  {
+    "term": "class.buffer_stop_rail_tile:description",
+    "definition": ""
+  },
+  {
+    "term": "class.clock:description",
+    "definition": ""
+  },
+  {
+    "term": "class.dccplusplus:description",
+    "definition": ""
+  },
+  {
+    "term": "class.decoder:description",
+    "definition": ""
+  },
+  {
+    "term": "class.decoder_function:description",
+    "definition": ""
+  },
+  {
+    "term": "class.decoder_functions:description",
+    "definition": ""
+  },
+  {
+    "term": "class.decoder_list:description",
+    "definition": ""
+  },
+  {
+    "term": "class.ecos:description",
+    "definition": ""
+  },
+  {
+    "term": "class.freight_wagon:description",
+    "definition": ""
+  },
+  {
+    "term": "class.input:description",
+    "definition": ""
+  },
+  {
+    "term": "class.input_list:description",
+    "definition": ""
+  },
+  {
+    "term": "class.interface_status:description",
+    "definition": ""
+  },
+  {
+    "term": "class.locomotive:description",
+    "definition": ""
+  },
+  {
+    "term": "class.loconet:description",
+    "definition": ""
+  },
+  {
+    "term": "class.marklin_can:description",
+    "definition": ""
+  },
+  {
+    "term": "class.output:description",
+    "definition": ""
+  },
+  {
+    "term": "class.output_list:description",
+    "definition": ""
+  },
+  {
+    "term": "class.rail_vehicle_list:description",
+    "definition": ""
+  },
+  {
+    "term": "class.sensor_rail_tile:description",
+    "definition": ""
+  },
+  {
+    "term": "class.straight_rail_tile:description",
+    "definition": ""
+  },
+  {
+    "term": "class.train:description",
+    "definition": ""
+  },
+  {
+    "term": "class.traintastic_diy:description",
+    "definition": ""
+  },
+  {
+    "term": "class.train_list:description",
+    "definition": ""
+  },
+  {
+    "term": "class.tunnel_rail_tile:description",
+    "definition": ""
+  },
+  {
+    "term": "class.turnout_double_slip_rail_tile:description",
+    "definition": ""
+  },
+  {
+    "term": "class.turnout_right_curved_rail_tile:description",
+    "definition": ""
+  },
+  {
+    "term": "class.turnout_single_slip_rail_tile:description",
+    "definition": ""
+  },
+  {
+    "term": "class.turnout_wye_rail_tile:description",
+    "definition": ""
+  },
+  {
+    "term": "class.turnout__rail_tile:description",
+    "definition": ""
+  },
+  {
+    "term": "class.withrottle:description",
+    "definition": ""
+  },
+  {
+    "term": "class.wlanmaus:description",
+    "definition": ""
+  },
+  {
+    "term": "class.world:description",
+    "definition": ""
+  },
+  {
+    "term": "class.xpressnet:description",
+    "definition": ""
+  },
+  {
+    "term": "class.get:description",
+    "definition": "Get the class type of an object."
+  },
+  {
+    "term": "class.get.parameter.object:description",
+    "definition": "The object to get class type of."
+  },
+  {
+    "term": "class.get:return_values",
+    "definition": "The class type of `object`, or `nil` if `object` isn't a valid object."
+  },
+  {
+    "term": "object.world.get_object:description",
+    "definition": "Get object with `id`."
+  },
+  {
+    "term": "object.world.power_off:description",
+    "definition": "Stop all vehicles and power off, identical to pressing power off in the Traintastic client application."
+  },
+  {
+    "term": "object.world.stop:description",
+    "definition": "Stop all vehicles, identical to pressing stop in the Traintastic client application."
+  },
+  {
+    "term": "object.world.get_object.parameter.id:description",
+    "definition": "Object id"
+  },
+  {
+    "term": "object.world.get_object:return_values",
+    "definition": "Object if it exists with the given `id`, else it returns `nil`."
+  },
+  {
+    "term": "object.world.on_event:description",
+    "definition": "Fired when the world state changes, e.g. when pressing the power on, power off, stop, run etc. button in the Traintastic client application or calling `world.stop()`."
+  },
+  {
+    "term": "event.parameter.user_data:description",
+    "definition": "User data that was set or `nil` if no user data was set during connect."
+  },
+  {
+    "term": "object:title",
+    "definition": "Objects"
+  },
+  {
+    "term": "object:description",
+    "definition": ""
+  },
+  {
+    "term": "object.board:title",
+    "definition": "Board"
+  },
+  {
+    "term": "object.boardlist:title",
+    "definition": "Board list"
+  },
+  {
+    "term": "object.straightrailtile:title",
+    "definition": "Straight rail tile"
+  },
+  {
+    "term": "object.tunnelrailtile:title",
+    "definition": "Tunnel rail tile"
+  },
+  {
+    "term": "object.bufferstoprailtile:title",
+    "definition": "Buffer stop rail tile"
+  },
+  {
+    "term": "object.turnoutsinglesliprailtile:title",
+    "definition": "Single slip turnout rail tile"
+  },
+  {
+    "term": "object.turnoutdoublesliprailtile:title",
+    "definition": "Double slip turnout rail tile"
+  },
+  {
+    "term": "object.turnoutwyerailtile:title",
+    "definition": "Wye turnout rail tile"
+  },
+  {
+    "term": "object.turnoutleftcurvedrailtile:title",
+    "definition": "Curved left turnout left rail tile"
+  },
+  {
+    "term": "object.turnoutrightcurvedrailtile:title",
+    "definition": "Curved right turnout rail tile"
+  },
+  {
+    "term": "object.sensorrailtile:title",
+    "definition": "Sensor rail tile"
+  },
+  {
+    "term": "object.blockrailtile:title",
+    "definition": "Block rail tile"
+  },
+  {
+    "term": "object.clock:title",
+    "definition": "Clock"
+  },
+  {
+    "term": "object.clock:description",
+    "definition": "The clock object represents the time of the world. There is only one clock object, it can be accessed using `world.clock`."
+  },
+  {
+    "term": "object.dccplusplusinterface:title",
+    "definition": "DCC++ interface"
+  },
+  {
+    "term": "object.ecosinterface:title",
+    "definition": "ECoS interface"
+  },
+  {
+    "term": "object.loconetinterface:title",
+    "definition": "LocoNet interface"
+  },
+  {
+    "term": "object.loconetinterface:description",
+    "definition": "Interface for communicating with a LocoNet network."
+  },
+  {
+    "term": "object.marklincaninterface:title",
+    "definition": "Märklin CAN interface"
+  },
+  {
+    "term": "object.traintasticdiyinterface:title",
+    "definition": "TraintasticDIY interface"
+  },
+  {
+    "term": "object.xpressnetinterface:title",
+    "definition": "XpressNet interface"
+  },
+  {
+    "term": "object.withrottleinterface:title",
+    "definition": "WiThrottle interface"
+  },
+  {
+    "term": "object.wlanmausinterface:title",
+    "definition": "WLANmaus interface"
+  },
+  {
+    "term": "object.interfacestatus:title",
+    "definition": "Interface status"
+  },
+  {
+    "term": "object.decoderfunction:title",
+    "definition": "Decoder function"
+  },
+  {
+    "term": "object.decoderlist:title",
+    "definition": "Decoder list"
+  },
+  {
+    "term": "object.decoder:title",
+    "definition": "Decoder"
+  },
+  {
+    "term": "object.decoderfunctions:title",
+    "definition": "Decoder functions"
+  },
+  {
+    "term": "object.input:title",
+    "definition": "Input"
+  },
+  {
+    "term": "object.inputlist:title",
+    "definition": "Input list"
+  },
+  {
+    "term": "object.output:title",
+    "definition": "Output"
+  },
+  {
+    "term": "object.outputlist:title",
+    "definition": "Output list"
+  },
+  {
+    "term": "object.railvehiclelist:title",
+    "definition": "Rail vehicle list"
+  },
+  {
+    "term": "object.locomotive:title",
+    "definition": "Locomotive"
+  },
+  {
+    "term": "object.freightwagon:title",
+    "definition": "Freight wagon"
+  },
+  {
+    "term": "object.train:title",
+    "definition": "Train"
+  },
+  {
+    "term": "object.trainlist:title",
+    "definition": "Train list"
+  },
+  {
+    "term": "object.world:title",
+    "definition": "World"
+  },
+  {
+    "term": "object.idobject.id:description",
+    "definition": "Object id, each object has a unique id."
+  },
+  {
+    "term": "object.board.name:description",
+    "definition": ""
+  },
+  {
+    "term": "object.turnoutrailtile.name:description",
+    "definition": ""
+  },
+  {
+    "term": "object.turnoutrailtile.position:description",
+    "definition": ""
+  },
+  {
+    "term": "object.turnoutrailtile.set_position:description",
+    "definition": ""
+  },
+  {
+    "term": "object.turnoutrailtile.set_position.parameter.position:description",
+    "definition": ""
+  },
+  {
+    "term": "object.turnoutrailtile.set_position:return_values",
+    "definition": ""
+  },
+  {
+    "term": "object.blockrailtile.on_train_assigned:description",
+    "definition": ""
+  },
+  {
+    "term": "object.blockrailtile.on_train_assigned.parameter.train:description",
+    "definition": "{ref:object.train} that is assigned to the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_assigned.parameter.block:description",
+    "definition": "The block that the train is assigned to."
+  },
+  {
+    "term": "object.blockrailtile.on_train_removed:description",
+    "definition": ""
+  },
+  {
+    "term": "object.blockrailtile.on_train_removed.parameter.train:description",
+    "definition": "{ref:object.train} that is removed from the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_removed.parameter.block:description",
+    "definition": "The block that the train is assigned to."
+  },
+  {
+    "term": "object.clock.freeze:description",
+    "definition": "`true` if clock is frozen, the clock does not tick."
+  },
+  {
+    "term": "object.clock.hour:description",
+    "definition": "Hour, `0`...`23`."
+  },
+  {
+    "term": "object.clock.minute:description",
+    "definition": "Minute, `0`...`59`."
+  },
+  {
+    "term": "object.clock.multiplier:description",
+    "definition": "Fast clock multiplier rate. That is, one minute in real time represents `multiplier` minutes of world time."
+  },
+  {
+    "term": "object.clock.running:description",
+    "definition": "`true` if clock is running, `false` if the clock is frozen or the world is not running."
+  },
+  {
+    "term": "object.clock.time:description",
+    "definition": "Current time in ticks since midnight, each tick is one fast clock minute,  e.g. `383` is `6:23` (AM)"
+  },
+  {
+    "term": "object.clock.on_freeze:description",
+    "definition": "Fired when the clock is frozen or stopped."
+  },
+  {
+    "term": "object.clock.on_freeze.parameter.time:description",
+    "definition": "Current time in ticks since midnight."
+  },
+  {
+    "term": "object.clock.on_freeze.parameter.clock:description",
+    "definition": ""
+  },
+  {
+    "term": "object.clock.on_resume:description",
+    "definition": "Fired when the clock resumes."
+  },
+  {
+    "term": "object.clock.on_resume.parameter.time:description",
+    "definition": "Current time in ticks since midnight."
+  },
+  {
+    "term": "object.clock.on_resume.parameter.multiplier:description",
+    "definition": "Fast clock multiplier rate."
+  },
+  {
+    "term": "object.clock.on_resume.parameter.clock:description",
+    "definition": ""
+  },
+  {
+    "term": "object.clock.on_tick:description",
+    "definition": "Fired when the clock ticks, once every fast clock minute."
+  },
+  {
+    "term": "object.clock.on_tick.parameter.time:description",
+    "definition": "Current time in ticks since midnight."
+  },
+  {
+    "term": "object.clock.on_tick.parameter.clock:description",
+    "definition": ""
+  },
+  {
+    "term": "object.interface.name:description",
+    "definition": "Interface name"
+  },
+  {
+    "term": "object.interface.online:description",
+    "definition": "`true` if interface is online, `false` otherwise. Read `status` for more information."
+  },
+  {
+    "term": "object.interface.status:description",
+    "definition": "{ref:object.interfacestatus} object."
+  },
+  {
+    "term": "object.interfacestatus.state:description",
+    "definition": "Interface state, a {ref:enum.interface_state} value."
+  },
+  {
+    "term": "object.input.name:description",
+    "definition": ""
+  },
+  {
+    "term": "object.input.value:description",
+    "definition": ""
+  },
+  {
+    "term": "object.input.on_value_changed:description",
+    "definition": ""
+  },
+  {
+    "term": "object.input.on_value_changed.parameter.value:description",
+    "definition": ""
+  },
+  {
+    "term": "object.input.on_value_changed.parameter.input:description",
+    "definition": ""
+  },
+  {
+    "term": "object.output.name:description",
+    "definition": "Output name"
+  },
+  {
+    "term": "object.output.value:description",
+    "definition": "Current output value, a {ref:enum.tri_state} value. `TRUE` means high, `FALSE` means low, `UNDEFINED` means that the output value isn't known."
+  },
+  {
+    "term": "object.output.set_value:description",
+    "definition": "Set the output value."
+  },
+  {
+    "term": "object.output.set_value.parameter.value:description",
+    "definition": "The output value to set, `true` means high, `false` means low."
+  },
+  {
+    "term": "object.output.set_value:return_values",
+    "definition": "`true` if request is sent, `false` otherwise. Note: It might take some time for the hardware to process the request."
+  },
+  {
+    "term": "object.output.on_value_changed:description",
+    "definition": "Fired if the output value changes."
+  },
+  {
+    "term": "object.output.on_value_changed.parameter.value:description",
+    "definition": "The new output value, `true` means high, `false` means low."
+  },
+  {
+    "term": "object.output.on_value_changed.parameter.output:description",
+    "definition": "The output object that changed."
+  },
+  {
+    "term": "object.vehicle.name:description",
+    "definition": "Vehicle name."
+  },
+  {
+    "term": "object.train.active:description",
+    "definition": ""
+  },
+  {
+    "term": "object.train.emergency_stop:description",
+    "definition": "`true` if emergency stop is active, `false` otherwise."
+  },
+  {
+    "term": "object.train.is_stopped:description",
+    "definition": "`true` if the train's velocity is zero, `false` if the train's velocity is greater than zero."
+  },
+  {
+    "term": "object.train.mode:description",
+    "definition": ""
+  },
+  {
+    "term": "object.train.name:description",
+    "definition": "Train name"
+  },
+  {
+    "term": "object.train.powered:description",
+    "definition": "`true` if the train contains a rail vehicle that can power the train, `false` otherwise."
+  },
+  {
+    "term": "object.train.stop:description",
+    "definition": "Stop the train, sets the speed to zero."
+  },
+  {
+    "term": "object.world.boards:description",
+    "definition": "{ref:object.boardlist} object."
+  },
+  {
+    "term": "object.world.clock:description",
+    "definition": "{ref:object.clock} object."
+  },
+  {
+    "term": "object.world.name:description",
+    "definition": "World name"
+  },
+  {
+    "term": "object.world.rail_vehicles:description",
+    "definition": "{ref:object.railvehiclelist} object."
+  },
+  {
+    "term": "object.world.scale:description",
+    "definition": "{ref:enum.world_scale}."
+  },
+  {
+    "term": "object.world.scale_ratio:description",
+    "definition": "World scale, e.g. `87` means `1:87` (H0 scale)"
+  },
+  {
+    "term": "object.world.state:description",
+    "definition": "World state, a combination of {ref:set.world_state} values."
+  },
+  {
+    "term": "object.world.trains:description",
+    "definition": "{ref:object.trainlist} object."
+  },
+  {
+    "term": "object.world.uuid:description",
+    "definition": "World UUID, unique for each world."
+  },
+  {
+    "term": "object.world.on_event.parameter.state:description",
+    "definition": "World state, a combination of {ref:set.world_state} values."
+  },
+  {
+    "term": "object.world.on_event.parameter.event:description",
+    "definition": "The {ref:enum.world_event}."
+  },
+  {
+    "term": "object.world.on_event.parameter.world:description",
+    "definition": ""
+  },
+  {
+    "term": "object.loconetinterface.imm_packet:description",
+    "definition": "Request the LocoNet command station to send a DCC packet to the track (`OPC_IMM_PACKET`). This isn't supported by all LocoNet command stations."
+  },
+  {
+    "term": "object.loconetinterface.imm_packet.parameter.dcc_packet:description",
+    "definition": "Table containing up to five DCC packet bytes to send excluding checksum byte."
+  },
+  {
+    "term": "object.loconetinterface.imm_packet.parameter.repeat:description",
+    "definition": "Number of times to repeat the packet on the track. (1...7)"
+  },
+  {
+    "term": "object.loconetinterface.imm_packet:return_values",
+    "definition": "`true` if send to the command station, `false` otherwise."
+  },
+  {
+    "term": "object.loconetinterface.send:description",
+    "definition": "Send LocoNet packet"
+  },
+  {
+    "term": "object.loconetinterface.send.parameter.packet:description",
+    "definition": "LocoNet packet bytes, excluding checksum."
+  },
+  {
+    "term": "object.loconetinterface.send:return_values",
+    "definition": "`true` if send, `false` otherwise."
+  }
+]

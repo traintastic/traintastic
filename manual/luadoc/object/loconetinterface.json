@@ -1,0 +1,21 @@
+{
+  "send": {
+    "parameters": [
+      {
+        "name": "packet"
+      }
+    ],
+    "return_values": 1
+  },
+  "imm_packet": {
+    "parameters": [
+      {
+        "name": "dcc_packet"
+      },
+      {
+        "name": "repeat"
+      }
+    ],
+    "return_values": 1
+  }
+}

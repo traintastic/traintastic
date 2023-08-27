@@ -1,0 +1,14 @@
+{
+  "name": {},
+  "value": {},
+  "on_value_changed": {
+    "parameters": [
+      {
+        "name": "value"
+      },
+      {
+        "name": "input"
+      }
+    ]
+  }
+}

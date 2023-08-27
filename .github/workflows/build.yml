@@ -426,7 +426,7 @@ jobs:
         path: ${{github.workspace}}/shared/build/*.deb
 
   build-lang:
-    name: manual
+    name: language files
     runs-on: ubuntu-latest
 
     steps:
@@ -480,10 +480,36 @@ jobs:
         name: traintastic-manual
         path: ${{github.workspace}}/manual/build/*
 
+  build-manual-lua:
+    name: manual lua
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: FranzDiebold/github-env-vars-action@v2
+
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        lfs: true
+        submodules: recursive
+
+    - name: Checkout LFS objects
+      run: git lfs checkout
+
+    - name: Build manual
+      working-directory: ${{github.workspace}}/manual
+      run: ./buildluadoc.py
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: traintastic-manual-lua
+        path: ${{github.workspace}}/manual/build.luadoc/*
+
   package-innosetup:
     name: package innosetup
     runs-on: windows-2019
-    needs: [build-client, build-server, build-lang]
+    needs: [build-client, build-server, build-lang, traintastic-manual, traintastic-manual-lua]
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -521,6 +547,12 @@ jobs:
         name: traintastic-manual
         path: ${{github.workspace}}/manual/build
 
+    - name: "Download artifact: manual-lua"
+      uses: actions/download-artifact@v2
+      with:
+        name: traintastic-manual-lua
+        path: ${{github.workspace}}/manual/build.luadoc
+
     - name: Build installer
       shell: cmd
       run: |
@@ -536,7 +568,7 @@ jobs:
     name: Deploy to website
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-20.04
-    needs: [package-innosetup, build-server, build-client, build-data, build-manual]
+    needs: [package-innosetup, build-server, build-client, build-data, build-manual, build-manual-lua]
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -576,6 +608,12 @@ jobs:
       with:
         name: traintastic-data-deb
         path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
+
+    - name: "Download artifact: manual-lua"
+      uses: actions/download-artifact@v2
+      with:
+        name: traintastic-manual-lua
+        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}/manual-lua
 
     - uses: easingthemes/ssh-deploy@v2.2.11
       env:

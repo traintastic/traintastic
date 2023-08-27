@@ -1,0 +1,33 @@
+{
+  "uuid": {},
+  "name": {},
+  "scale": {},
+  "scale_ratio": {},
+  "boards": {},
+  "clock": {},
+  "trains": {},
+  "rail_vehicles": {},
+  "state": {},
+  "power_off": {},
+  "stop": {},
+  "get_object": {
+    "parameters": [
+      {
+        "name": "id"
+      }
+    ]
+  },
+  "on_event": {
+    "parameters": [
+      {
+        "name": "state"
+      },
+      {
+        "name": "event"
+      },
+      {
+        "name": "world"
+      }
+    ]
+  }
+}

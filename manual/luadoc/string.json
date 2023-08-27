@@ -1,0 +1,98 @@
+{
+  "byte": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "char": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "find": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "format": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "gmatch": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "gsub": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "len": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "lower": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "match": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "pack": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "packsize": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "rep": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "reverse": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "sub": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "unpack": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "upper": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  }
+}
