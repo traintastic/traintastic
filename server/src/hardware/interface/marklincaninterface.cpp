@@ -32,6 +32,7 @@
 #ifdef __linux__
   #include "../protocol/marklincan/iohandler/socketcaniohandler.hpp"
 #endif
+#include "../protocol/marklincan/iohandler/serialiohandler.hpp"
 #include "../protocol/marklincan/kernel.hpp"
 #include "../protocol/marklincan/settings.hpp"
 #include "../../core/attributes.hpp"
@@ -57,6 +58,9 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
       }}
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , interface{this, "interface", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , baudrate{this, "baudrate", 115'200, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , flowControl{this, "flow_control", SerialFlowControl::None, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , marklinCAN{this, "marklin_can", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , marklinCANNodeList{this, "marklin_can_node_list", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , marklinCANLocomotiveList{this, "marklin_can_locomotive_list", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
@@ -80,6 +84,21 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   Attributes::addEnabled(interface, !online);
   Attributes::addVisible(interface, false);
   m_interfaceItems.insertBefore(interface, notes);
+
+  Attributes::addEnabled(device, !online);
+  Attributes::addVisible(device, false);
+  m_interfaceItems.insertBefore(device, notes);
+
+  Attributes::addDisplayName(baudrate, DisplayName::Serial::baudrate);
+  Attributes::addEnabled(baudrate, !online);
+  Attributes::addVisible(baudrate, false);
+  m_interfaceItems.insertBefore(baudrate, notes);
+
+  Attributes::addDisplayName(flowControl, DisplayName::Serial::flowControl);
+  Attributes::addEnabled(flowControl, !online);
+  Attributes::addValues(flowControl, SerialFlowControlValues);
+  Attributes::addVisible(flowControl, false);
+  m_interfaceItems.insertBefore(flowControl, notes);
 
   Attributes::addDisplayName(marklinCAN, DisplayName::Hardware::marklinCAN);
   m_interfaceItems.insertBefore(marklinCAN, notes);
@@ -197,6 +216,9 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
             Log::log(*this, LogMessage::C2005_SOCKETCAN_IS_ONLY_AVAILABLE_ON_LINUX);
             return false;
 #endif
+          case MarklinCANInterfaceType::Serial:
+            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SerialIOHandler>(marklinCAN->config(), device.value(), baudrate.value(), flowControl.value());
+            break;
         }
       }
       assert(m_kernel);
@@ -240,7 +262,7 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
           m_kernel->setConfig(marklinCAN->config());
         });
 
-      Attributes::setEnabled({type, hostname, interface}, false);
+      Attributes::setEnabled({type, hostname, interface, device, baudrate, flowControl}, false);
     }
     catch(const LogMessageException& e)
     {
@@ -251,7 +273,7 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
   }
   else if(m_kernel && !value)
   {
-    Attributes::setEnabled({type, hostname, interface}, true);
+    Attributes::setEnabled({type, hostname, interface, device, baudrate, flowControl}, true);
     Attributes::setEnabled(marklinCANLocomotiveList->reload, false);
 
     marklinCANNodeList->clear();
@@ -332,4 +354,5 @@ void MarklinCANInterface::typeChanged()
 {
   Attributes::setVisible(hostname, isNetwork(type));
   Attributes::setVisible(interface, type == MarklinCANInterfaceType::SocketCAN);
+  Attributes::setVisible({device, baudrate, flowControl}, type == MarklinCANInterfaceType::Serial);
 }

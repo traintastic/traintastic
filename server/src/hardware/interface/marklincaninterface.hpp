@@ -32,6 +32,8 @@
 #include "../output/outputcontroller.hpp"
 #include "../protocol/marklincan/kernel.hpp"
 #include "../protocol/marklincan/settings.hpp"
+#include "../../core/serialdeviceproperty.hpp"
+#include "../../enum/serialflowcontrol.hpp"
 
 /**
  * @brief Märklin CAN hardware interface
@@ -67,6 +69,9 @@ class MarklinCANInterface final
     Property<MarklinCANInterfaceType> type;
     Property<std::string> hostname;
     Property<std::string> interface;
+    SerialDeviceProperty device;
+    Property<uint32_t> baudrate;
+    Property<SerialFlowControl> flowControl;
     ObjectProperty<MarklinCAN::Settings> marklinCAN;
     ObjectProperty<MarklinCANNodeList> marklinCANNodeList;
     ObjectProperty<MarklinCANLocomotiveList> marklinCANLocomotiveList;

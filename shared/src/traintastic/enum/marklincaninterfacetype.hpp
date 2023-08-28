@@ -32,19 +32,22 @@ enum class MarklinCANInterfaceType : uint16_t
   NetworkTCP = 0,
   NetworkUDP = 1,
   SocketCAN = 2,
+  Serial = 3,
 };
 
-TRAINTASTIC_ENUM(MarklinCANInterfaceType, "marklin_can_interface_type", 3,
+TRAINTASTIC_ENUM(MarklinCANInterfaceType, "marklin_can_interface_type", 4,
 {
   {MarklinCANInterfaceType::NetworkTCP, "network_tcp"},
   {MarklinCANInterfaceType::NetworkUDP, "network_udp"},
   {MarklinCANInterfaceType::SocketCAN, "socket_can"},
+  {MarklinCANInterfaceType::Serial, "serial"},
 });
 
-inline constexpr std::array<MarklinCANInterfaceType, 3> marklinCANInterfaceTypeValues{{
+inline constexpr std::array<MarklinCANInterfaceType, 4> marklinCANInterfaceTypeValues{{
   MarklinCANInterfaceType::NetworkTCP,
   MarklinCANInterfaceType::NetworkUDP,
   MarklinCANInterfaceType::SocketCAN,
+  MarklinCANInterfaceType::Serial,
 }};
 
 constexpr bool isNetwork(MarklinCANInterfaceType value)
