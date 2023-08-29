@@ -26,6 +26,7 @@
 #include "iohandler.hpp"
 #include <chrono>
 #include <queue>
+#include <set>
 #include <boost/asio/steady_timer.hpp>
 #include "../messages.hpp"
 
@@ -34,7 +35,13 @@ namespace MarklinCAN {
 class SimulationIOHandler final : public IOHandler
 {
   private:
+    static constexpr auto bootstrapCANInterval = std::chrono::milliseconds(11500);
+    static constexpr auto pingInterval = std::chrono::milliseconds(11500);
     static constexpr auto defaultSwitchTime = std::chrono::milliseconds(1000);
+
+    static constexpr uint32_t gfpUID = 0x4353A442;
+    static constexpr uint32_t guiUID = gfpUID + 1;
+    static constexpr uint32_t linkS88UID = 0x5339BBD1;
 
     struct DelayedMessage
     {
@@ -53,17 +60,23 @@ class SimulationIOHandler final : public IOHandler
 
     std::chrono::milliseconds m_switchTime = defaultSwitchTime;
     std::priority_queue<DelayedMessage, std::vector<DelayedMessage>, DelayedMessageCompare> m_delayedMessages;
+    boost::asio::steady_timer m_pingTimer;
+    boost::asio::steady_timer m_bootloaderCANTimer;
     boost::asio::steady_timer m_delayedMessageTimer;
+    std::set<uint32_t> m_knownPingUIDs;
 
     void reply(const Message& message);
     void reply(const Message& message, std::chrono::milliseconds delay);
+    void replyPing();
 
+    void startBootloaderCANTimer(std::chrono::milliseconds expireAfter = bootstrapCANInterval);
+    void startPingTimer(std::chrono::milliseconds expireAfter = pingInterval);
     void restartDelayedMessageTimer();
 
   public:
     SimulationIOHandler(Kernel& kernel);
 
-    void start() final {}
+    void start() final;
     void stop() final;
 
     bool send(const Message& message) final;

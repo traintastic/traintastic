@@ -438,11 +438,11 @@ void Kernel::receive(const Message& message)
       break;
 
     case Command::Ping:
-      if(message.dlc == 0)
+      if(message.dlc == 0 && !message.isResponse())
       {
         send(PingReply(m_config.nodeUID, TRAINTASTIC_VERSION_MAJOR, TRAINTASTIC_VERSION_MINOR, DeviceId::Traintastic));
       }
-      else if(message.dlc == 8)
+      else if(message.dlc == 8 && message.isResponse())
       {
         const auto& pingReply = static_cast<const PingReply&>(message);
 
@@ -598,7 +598,7 @@ void Kernel::getLocomotiveList()
   m_ioContext.post(
     [this]()
     {
-      send(ConfigData(ConfigDataName::loks));
+      send(ConfigData(m_config.nodeUID, ConfigDataName::loks));
     });
 }
 
@@ -879,7 +879,7 @@ void Kernel::changeState(State value)
       break;
 
     case State::DownloadLokList:
-      send(ConfigData(ConfigDataName::loks));
+      send(ConfigData(m_config.nodeUID, ConfigDataName::loks));
       break;
 
     case State::Started:

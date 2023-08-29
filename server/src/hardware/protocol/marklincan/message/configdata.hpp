@@ -23,14 +23,20 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_MESSAGE_CONFIGDATA_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_MESSAGE_CONFIGDATA_HPP
 
+#include <cstddef>
+#include <vector>
 #include "../messages.hpp"
 
 namespace MarklinCAN {
 
+namespace ConfigDataName {
+  constexpr std::string_view loks = "loks";
+}
+
 struct ConfigData : Message
 {
-  ConfigData(std::string_view name_)
-    : Message(Command::ConfigData, false)
+  ConfigData(uint32_t hashUID, std::string_view name_, bool response = false)
+    : Message(hashUID, Command::ConfigData, response)
   {
     assert(name_.size() <= 8);
     dlc = 8;
@@ -46,6 +52,21 @@ struct ConfigData : Message
 
 struct ConfigDataStream : Message
 {
+  ConfigDataStream(uint32_t hashUID, uint32_t length_, uint16_t crc_)
+    : Message(hashUID, Command::ConfigDataStream, false)
+  {
+    dlc = 6;
+    *reinterpret_cast<uint32_t*>(data) = host_to_be(length_);
+    *reinterpret_cast<uint16_t*>(data + sizeof(uint32_t)) = host_to_be(crc_);
+  }
+
+  ConfigDataStream(uint32_t hashUID, const void* buffer, size_t size)
+    : Message(hashUID, Command::ConfigDataStream, false)
+  {
+    dlc = 8;
+    std::memcpy(data, buffer, std::min<size_t>(size, dlc));
+  }
+
   bool isStart() const
   {
     return dlc == 6 || dlc == 7;
@@ -68,6 +89,8 @@ struct ConfigDataStream : Message
     return dlc == 8;
   }
 };
+
+uint16_t crc16(const std::vector<std::byte>& data);
 
 }
 

@@ -24,57 +24,6 @@
 
 namespace MarklinCAN {
 
-//! CRC algorithm as documented by Marklin in the CS2 CAN documentation
-static uint16_t crc16(uint16_t crc, uint8_t value)
-{
-  constexpr uint16_t poly = 0x1021;
-
-  // Create the CRC "dividend" for polynomial arithmetic (binary arithmetic with no carries)
-  crc = crc ^ (static_cast<uint16_t>(value) << 8);
-
-  // "Divide" the poly into the dividend using CRC XOR subtraction CRC_acc holds the
-  // "remainder" of each divide. Only complete this division for 8 bits since input is 1 byte
-  for (int i = 0; i < 8; i++)
-  {
-    // Check if the MSB is set (if MSB is 1, then the POLY can "divide" into the "dividend")
-    if((crc & 0x8000) == 0x8000)
-    {
-      // if so, shift the CRC value, and XOR "subtract" the poly
-      crc = crc << 1;
-      crc ^= poly;
-    }
-    else
-    {
-      // if not, just shift the CRC value
-      crc = crc << 1;
-    }
-  }
-
-  // Return the final remainder (CRC value)
-  return crc;
-}
-
-static uint16_t crc16(const std::vector<std::byte>& data)
-{
-  uint16_t crc = 0xFFFF;
-
-  for(auto value : data)
-  {
-    crc = crc16(crc, static_cast<uint8_t>(value));
-  }
-
-  if(data.size() % 8 != 0)
-  {
-    // unused nul bytes must be included in CRC:
-    const size_t n = 8 - (data.size() % 8);
-    for(size_t i = 0; i < n; i++)
-      crc = crc16(crc, 0x00);
-  }
-
-  return crc;
-}
-
-
 ConfigDataStreamCollector::ConfigDataStreamCollector(std::string name_)
   : name{std::move(name_)}
 {

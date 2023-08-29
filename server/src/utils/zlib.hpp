@@ -23,12 +23,19 @@
 #ifndef TRAINTASTIC_SERVER_UTILS_ZLIB_HPP
 #define TRAINTASTIC_SERVER_UTILS_ZLIB_HPP
 
+#include <cstddef>
 #include <string>
+#include <string_view>
+#include <vector>
 
-namespace ZLib::Uncompress {
+namespace ZLib {
+
+bool compressString(std::string_view src, std::vector<std::byte>& out);
+
+namespace Uncompress {
 
 bool toString(const void* src, size_t srcSize, size_t dstSize, std::string& out);
 
-}
+}}
 
 #endif

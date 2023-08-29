@@ -22,13 +22,63 @@
 
 #include "simulationiohandler.hpp"
 #include "../kernel.hpp"
+#include "../message/statusdataconfig.hpp"
+#include "../../../../utils/random.hpp"
+#include "../../../../utils/zlib.hpp"
 
 namespace MarklinCAN {
 
 SimulationIOHandler::SimulationIOHandler(Kernel& kernel)
   : IOHandler(kernel)
+  , m_pingTimer{kernel.ioContext()}
+  , m_bootloaderCANTimer{kernel.ioContext()}
   , m_delayedMessageTimer{kernel.ioContext()}
 {
+}
+
+void SimulationIOHandler::start()
+{
+  using namespace std::chrono_literals;
+  auto expireAfter = std::chrono::milliseconds(Random::value<int>(0, bootstrapCANInterval.count()));
+  startBootloaderCANTimer(expireAfter);
+  startPingTimer(expireAfter + 1s);
+}
+
+void SimulationIOHandler::startBootloaderCANTimer(std::chrono::milliseconds expireAfter)
+{
+  m_bootloaderCANTimer.expires_after(expireAfter);
+  m_bootloaderCANTimer.async_wait(
+    [this](const boost::system::error_code& ec)
+    {
+      if(!ec)
+      {
+        reply(BootloaderCAN(guiUID));
+      }
+
+      if(ec != boost::asio::error::operation_aborted)
+      {
+        startBootloaderCANTimer();
+      }
+    });
+}
+
+void SimulationIOHandler::startPingTimer(std::chrono::milliseconds expireAfter)
+{
+  m_pingTimer.expires_after(expireAfter);
+  m_pingTimer.async_wait(
+    [this](const boost::system::error_code& ec)
+    {
+      if(!ec)
+      {
+        reply(Ping(guiUID));
+        replyPing();
+      }
+
+      if(ec != boost::asio::error::operation_aborted)
+      {
+        startPingTimer();
+      }
+    });
 }
 
 void SimulationIOHandler::stop()
@@ -36,6 +86,8 @@ void SimulationIOHandler::stop()
   while(!m_delayedMessages.empty())
     m_delayedMessages.pop();
 
+  m_bootloaderCANTimer.cancel();
+  m_pingTimer.cancel();
   m_delayedMessageTimer.cancel();
 }
 
@@ -117,13 +169,116 @@ bool SimulationIOHandler::send(const Message& message)
     case Command::S88Polling:
     case Command::FeedbackEvent:
     case Command::SX1Event:
+      // not (yet) implemented
+      break;
+
     case Command::Ping:
+      if(message.dlc == 0 && !message.isResponse())
+      {
+        replyPing();
+        reply(PingReply(guiUID, 4, 3, DeviceId::CS2GUI));
+      }
+      else if(message.dlc == 8 && message.isResponse())
+      {
+        const auto& pingReply = static_cast<const PingReply&>(message);
+        if(m_knownPingUIDs.count(pingReply.uid()) == 0)
+        {
+          m_knownPingUIDs.emplace(pingReply.uid());
+          reply(StatusDataConfig(guiUID, pingReply.uid(), 0));
+        }
+      }
+      break;
+
     case Command::Update:
     case Command::ReadConfigData:
     case Command::BootloaderCAN:
     case Command::BootloaderTrack:
+      // not (yet) implemented
+      break;
+
     case Command::StatusDataConfig:
+      if(message.dlc == 5 && !message.isResponse())
+      {
+        const uint32_t uid = static_cast<const UidMessage&>(message).uid();
+        const uint8_t index = message.data[4];
+        switch(index)
+        {
+          case 0x00:
+          {
+            StatusData::DeviceDescription desc;
+            switch(uid)
+            {
+              case gfpUID:
+                desc.numberOfReadings = 4;
+                desc.numberOfConfigurationChannels = 2;
+                desc.serialNumber = 12345;
+                desc.articleNumber[0] = '6';
+                desc.articleNumber[1] = '0';
+                desc.articleNumber[2] = '2';
+                desc.articleNumber[3] = '1';
+                desc.articleNumber[4] = '4';
+                desc.deviceName = "Central Station";
+                break;
+
+              case linkS88UID:
+                desc.numberOfReadings = 0;
+                desc.numberOfConfigurationChannels = 12;
+                desc.serialNumber = 1234;
+                desc.articleNumber[0] = '6';
+                desc.articleNumber[1] = '0';
+                desc.articleNumber[2] = '8';
+                desc.articleNumber[3] = '8';
+                desc.articleNumber[4] = '3';
+                desc.deviceName = "Link S88";
+                break;
+
+              case guiUID: // CS2 GUI doesn't respond to this request
+              default:
+                // no response
+                return true;
+            }
+            for(const auto& msg : statusDataConfigReply(uid, uid, index, desc))
+              reply(msg);
+            break;
+          }
+        }
+      }
+      break;
+
     case Command::ConfigData:
+      if(message.dlc == 8 && !message.isResponse())
+      {
+        const auto& configData = static_cast<const ConfigData&>(message);
+
+        if(configData.name() == ConfigDataName::loks)
+        {
+          static constexpr std::string_view emptyLoks = "[lokomotive]\nversion\n .minor=4\nsession\n .id=13749\n";
+
+          // compress:
+          std::vector<std::byte> data;
+          data.resize(emptyLoks.size());
+          if(!ZLib::compressString(emptyLoks, data))
+            data.resize(data.size() * 2); // retry with larger buffer
+          if(!ZLib::compressString(emptyLoks, data))
+            break;
+
+          // prepend uncompressed size (big endian):
+          uint32_t uncompressedSize = host_to_be<uint32_t>(emptyLoks.size());
+          for(int i = sizeof(uncompressedSize) - 1; i >= 0; i--)
+            data.insert(data.begin(), reinterpret_cast<const std::byte*>(&uncompressedSize)[i]);
+
+          reply(ConfigData(guiUID, configData.name(), true));
+          reply(ConfigDataStream(guiUID, data.size(), crc16(data)));
+
+          const std::byte* end = data.data() + data.size();
+          for(std::byte* p = data.data(); p < end; p += 8)
+          {
+            reply(ConfigDataStream(guiUID, p, std::min<size_t>(end - p, 8)));
+          }
+        }
+      }
+      break;
+
     case Command::ConfigDataStream:
       // not (yet) implemented
       break;
@@ -148,6 +303,12 @@ void SimulationIOHandler::reply(const Message& message, std::chrono::millisecond
   m_delayedMessages.push({time, message});
   if(restartTimer)
     restartDelayedMessageTimer();
+}
+
+void SimulationIOHandler::replyPing()
+{
+  reply(PingReply(gfpUID, 3, 85, DeviceId::GleisFormatProzessorOrBooster));
+  reply(PingReply(linkS88UID, 1, 1, static_cast<DeviceId>(64)));
 }
 
 void SimulationIOHandler::restartDelayedMessageTimer()

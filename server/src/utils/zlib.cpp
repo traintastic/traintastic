@@ -23,7 +23,17 @@
 #include "zlib.hpp"
 #include <zlib.h>
 
-namespace ZLib::Uncompress {
+namespace ZLib {
+
+bool compressString(std::string_view src, std::vector<std::byte>& out)
+{
+  uLongf destLen = out.size();
+  const int r = compress(reinterpret_cast<Bytef*>(out.data()), &destLen, reinterpret_cast<const Bytef*>(src.data()), src.size());
+  out.resize(destLen);
+  return r == Z_OK;
+}
+
+namespace Uncompress {
 
 bool toString(const void* src, size_t srcSize, size_t dstSize, std::string& out)
 {
@@ -34,4 +44,4 @@ bool toString(const void* src, size_t srcSize, size_t dstSize, std::string& out)
   return r == Z_OK;
 }
 
-}
+}}

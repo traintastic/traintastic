@@ -29,10 +29,6 @@
 
 namespace MarklinCAN {
 
-namespace ConfigDataName {
-  constexpr std::string_view loks = "loks";
-}
-
 class ConfigDataStreamCollector
 {
   private:

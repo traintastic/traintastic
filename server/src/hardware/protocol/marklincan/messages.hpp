@@ -720,6 +720,11 @@ struct Ping : Message
     : Message(Command::Ping, false)
   {
   }
+
+  Ping(uint32_t hashUID)
+    : Message(hashUID, Command::Ping, false)
+  {
+  }
 };
 
 struct PingReply : UidMessage
@@ -757,6 +762,14 @@ struct PingReply : UidMessage
   {
     data[6] = high8(static_cast<uint16_t>(value));
     data[7] = low8(static_cast<uint16_t>(value));
+  }
+};
+
+struct BootloaderCAN : Message
+{
+  BootloaderCAN(uint32_t hashUID)
+    : Message(hashUID, Command::BootloaderCAN, false)
+  {
   }
 };
 
