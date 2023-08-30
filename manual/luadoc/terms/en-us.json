@@ -1169,7 +1169,7 @@
   },
   {
     "term": "object.boardlist:description",
-    "definition": "List of all boards, it can be accessed using `world.boards`."
+    "definition": "List of all boards, it can be accessed using {ref:object.world#boards|`world.boards`}."
   },
   {
     "term": "object.straightrailtile:title",
@@ -1217,7 +1217,7 @@
   },
   {
     "term": "object.clock:description",
-    "definition": "The clock object represents the time of the world. There is only one clock object, it can be accessed using `world.clock`."
+    "definition": "The clock object represents the time of the world. There is only one clock object, it can be accessed using {ref:object.world#clock|`world.clock`}."
   },
   {
     "term": "object.dccplusplusinterface:title",

@@ -48,7 +48,7 @@ class LuaDoc:
 
         definition = self._terms[term]
         definition = re.sub(r'`(.+?)`', r'<code>\1</code>', definition)
-        definition = re.sub(r'{ref:([a-z0-9_\.]+?)}', self._ref_link, definition)
+        definition = re.sub(r'{ref:([a-z0-9_\.]+?)(|#[a-z0-9_]+)(|\|.+?)}', self._ref_link, definition)
         return definition
 
     def _load_terms(language: str) -> dict:
@@ -60,20 +60,22 @@ class LuaDoc:
 
     def _ref_link(self, m: re.Match) -> str:
         id = m.group(1)
+        fragment = m.group(2)
+        title = m.group(3).lstrip('|')
         if id.startswith('enum.'):
             id = id.removeprefix('enum.')
             for enum in self._enums:
                 if enum['lua_name'] == id:
-                    return '<a href="' + enum['filename'] + '">' + self._get_term(enum['name']) + '</a>'
+                    return '<a href="' + enum['filename'] + fragment + '">' + (self._get_term(enum['name']) if title == '' else title) + '</a>'
         elif id.startswith('set.'):
             id = id.removeprefix('set.')
             for set in self._sets:
                 if set['lua_name'] == id:
-                    return '<a href="' + set['filename'] + '">' + self._get_term(set['name']) + '</a>'
+                    return '<a href="' + set['filename'] + fragment + '">' + (self._get_term(set['name']) if title == '' else title) + '</a>'
         elif id.startswith('object.'):
             for object in self._objects:
                 if object['lua_name'] == id:
-                    return '<a href="' + object['filename'] + '">' + self._get_term(object['name']) + '</a>'
+                    return '<a href="' + object['filename'] + fragment + '">' + (self._get_term(object['name']) if title == '' else title) + '</a>'
 
         return '<span style="color:red">' + m.group(0) + '</span>'
 
