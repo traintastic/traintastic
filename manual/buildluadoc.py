@@ -310,6 +310,7 @@ class LuaDoc:
     def _find_object_items(cpp_classes: dict, cpp_name: str) -> list:
         items = []
         cpp_class = cpp_classes[cpp_name]
+        term_prefix = 'object.' + cpp_name.lower() + '.'
         filename_hpp = cpp_class['filename_hpp']
         filename_cpp = os.path.splitext(filename_hpp)[0] + '.cpp'
         hpp = LuaDoc._read_file(filename_hpp)
@@ -324,7 +325,7 @@ class LuaDoc:
                 'cpp_type': cpp_type,
                 'cpp_template_type': cpp_template_type,
                 'lua_name': m.group(2),
-                'term_prefix': 'object.' + cpp_name.lower() + '.'
+                'term_prefix': term_prefix
                 }
 
             if cpp_type in ['Property', 'VectorProperty', 'ObjectProperty', 'ObjectVectorProperty']:
@@ -346,16 +347,31 @@ class LuaDoc:
             for method_name in re.findall(r'static\s+int\s+([a-z][a-z0-9_]*)\(\s*lua_State\s*\*\s*L\s*\)', hpp):
                 item = {
                         'lua_name': method_name,
-                        'term_prefix': 'object.' + cpp_name.lower() + '.',
+                        'term_prefix': term_prefix,
                         'type': 'method'
                         }
                 items.append(item)
 
         item = LuaDoc._load_data(items, os.path.join(os.path.join(os.path.dirname(__file__), 'luadoc', 'object', cpp_name.lower() + '.json')))
 
+        # get special items that aren't detected:
+        items += LuaDoc._get_special_object_items(cpp_name, term_prefix)
+
         for cpp_base_class in cpp_class['base_classes']: # todo cache this
             items += LuaDoc._find_object_items(cpp_classes, cpp_base_class)
 
+        return items
+
+    def _get_special_object_items(cpp_name: str, term_prefix: str) -> list:
+        items = []
+        if cpp_name == 'ObjectList':
+            items.append({
+                'lua_name': '__get',
+                'type': 'method',
+                'term_prefix': term_prefix,
+                'parameters': [{'name': 'index'}],
+                'return_values': 1,
+                })
         return items
 
     def build(self, output_dir: str) -> None:
@@ -436,9 +452,19 @@ class LuaDoc:
                 for item in functions:
                     item_term_prefix = item['term_prefix'] if 'term_prefix' in item else term_prefix
 
-                    html += '<h3 id="' + item['lua_name'] + '"><code>' + item['lua_name'] + '</code></h3>' + os.linesep
+                    html += '<h3 id="' + item['lua_name'] + '"><code>'
+                    if item['lua_name'] == '__get':
+                        html += '[]'
+                    else:
+                        html += item['lua_name']
+                    html += '</code></h3>' + os.linesep
 
-                    html += '<code>' + lua_prefix + item['lua_name'] + '('
+                    html += '<code>' + lua_prefix
+                    if item['lua_name'] == '__get':
+                        html += '['
+                    else:
+                        html += item['lua_name'] + '('
+
                     optional = 0
                     for p in item['parameters']:
                         is_first = p == item['parameters'][0]
@@ -449,7 +475,11 @@ class LuaDoc:
                             html += ', '
                         html += p['name']
                     html += ']' * optional
-                    html += ')</code>' + os.linesep
+                    if item['lua_name'] == '__get':
+                        html += ']'
+                    else:
+                        html += ')'
+                    html += '</code>' + os.linesep
 
                     html += '<p>' + self._get_term(item_term_prefix + item['lua_name'].lower() + ':description') + '</p>' + os.linesep
 

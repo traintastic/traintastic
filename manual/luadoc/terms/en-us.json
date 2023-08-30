@@ -1168,6 +1168,10 @@
     "definition": "Board list"
   },
   {
+    "term": "object.boardlist:description",
+    "definition": "List of all boards, it can be accessed using `world.boards`."
+  },
+  {
     "term": "object.straightrailtile:title",
     "definition": "Straight rail tile"
   },
@@ -1602,5 +1606,17 @@
   {
     "term": "object.loconetinterface.send:return_values",
     "definition": "`true` if send, `false` otherwise."
+  },
+  {
+    "term": "object.objectlist.__get:description",
+    "definition": "Get object at `index`."
+  },
+  {
+    "term": "object.objectlist.__get.parameter.index:description",
+    "definition": "Index, 1...length."
+  },
+  {
+    "term": "object.objectlist.__get:return_values",
+    "definition": "Object at index or `nil` if index isn't valid."
   }
 ]
