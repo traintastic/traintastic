@@ -94,6 +94,18 @@ class Kernel
       Started // must be last
     };
 
+    struct StatusDataConfigRequest
+    {
+      uint32_t uid;
+      uint8_t index;
+
+      StatusDataConfigRequest(uint32_t uid_, uint8_t index_)
+        : uid{uid_}
+        , index{index_}
+      {
+      }
+    };
+
     static constexpr int statusDataConfigRequestRetryCount = 10;
 
     boost::asio::io_context m_ioContext;
@@ -105,7 +117,7 @@ class Kernel
     std::function<void()> m_onStarted;
     std::function<void()> m_onError;
     std::function<void(const Node& node)> m_onNodeChanged;
-    std::queue<uint32_t> m_statusDataConfigRequestQueue; //<! UID's to request config data from
+    std::queue<StatusDataConfigRequest> m_statusDataConfigRequestQueue; //<! UID+index to request config data from
     int m_statusDataConfigRequestRetries = statusDataConfigRequestRetryCount;
     boost::asio::steady_timer m_statusDataConfigRequestTimer;
 

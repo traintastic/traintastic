@@ -39,6 +39,8 @@ struct Node
   uint32_t serialNumber = 0;
   std::string articleNumber;
   std::string deviceName;
+  uint8_t numberOfReadings = 0;
+  uint8_t numberOfConfigurationChannels = 0;
 };
 
 }

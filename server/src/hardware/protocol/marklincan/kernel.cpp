@@ -462,7 +462,7 @@ void Kernel::receive(const Message& message)
           {
             // queue the requests and wait for some time before sending them.
             // multiple transfer don't work well at the same time.
-            m_statusDataConfigRequestQueue.emplace(pingReply.uid());
+            m_statusDataConfigRequestQueue.emplace(pingReply.uid(), 0);
             restartStatusDataConfigTimer();
           }
         }
@@ -741,16 +741,6 @@ void Kernel::receiveStatusDataConfig(uint32_t nodeUID, uint8_t index, const std:
   if(it == m_nodes.end())
     return;
 
-  if(!m_statusDataConfigRequestQueue.empty() && m_statusDataConfigRequestQueue.front() == nodeUID)
-  {
-    m_statusDataConfigRequestQueue.pop();
-    m_statusDataConfigRequestRetries = statusDataConfigRequestRetryCount;
-    if(!m_statusDataConfigRequestQueue.empty())
-      restartStatusDataConfigTimer();
-    else if(m_state == State::DiscoverNodes)
-      nextState();
-  }
-
   Node& node = it->second;
 
   if(index == 0)
@@ -759,6 +749,12 @@ void Kernel::receiveStatusDataConfig(uint32_t nodeUID, uint8_t index, const std:
     node.serialNumber = devDesc.serialNumber;
     node.articleNumber.assign(devDesc.articleNumber, strnlen(devDesc.articleNumber, sizeof(devDesc.articleNumber)));
     node.deviceName = devDesc.deviceName;
+    node.numberOfReadings = devDesc.numberOfReadings;
+    node.numberOfConfigurationChannels = devDesc.numberOfConfigurationChannels;
+
+    const uint8_t lastIndex = devDesc.numberOfReadings + devDesc.numberOfConfigurationChannels;
+    for(uint8_t i = 1; i <= lastIndex; i++)
+      m_statusDataConfigRequestQueue.emplace(node.uid, i);
 
     if(m_onNodeChanged)
     {
@@ -769,6 +765,26 @@ void Kernel::receiveStatusDataConfig(uint32_t nodeUID, uint8_t index, const std:
           m_onNodeChanged(node);
         });
     }
+  }
+#if 0
+  else if(index <= node.numberOfReadings)
+  {
+    //! \todo
+  }
+  else if(index <= node.numberOfReadings + node.numberOfConfigurationChannels)
+  {
+    //! \todo
+  }
+#endif
+
+  if(!m_statusDataConfigRequestQueue.empty() && m_statusDataConfigRequestQueue.front().uid == nodeUID && m_statusDataConfigRequestQueue.front().index == index)
+  {
+    m_statusDataConfigRequestQueue.pop();
+    m_statusDataConfigRequestRetries = statusDataConfigRequestRetryCount;
+    if(!m_statusDataConfigRequestQueue.empty())
+      restartStatusDataConfigTimer();
+    else if(m_state == State::DiscoverNodes)
+      nextState();
   }
 }
 
@@ -825,7 +841,7 @@ void Kernel::restartStatusDataConfigTimer()
 
           if(m_onNodeChanged) /*[[likely]]*/
           {
-            if(auto it = m_nodes.find(m_statusDataConfigRequestQueue.front()); it != m_nodes.end()) /*[[likely]]*/
+            if(auto it = m_nodes.find(m_statusDataConfigRequestQueue.front().uid); it != m_nodes.end()) /*[[likely]]*/
             {
               EventLoop::call(
                 [this, node=it->second]()
@@ -843,7 +859,8 @@ void Kernel::restartStatusDataConfigTimer()
         }
         else
         {
-          send(StatusDataConfig(m_config.nodeUID, m_statusDataConfigRequestQueue.front(), 0));
+          const auto& request = m_statusDataConfigRequestQueue.front();
+          send(StatusDataConfig(m_config.nodeUID, request.uid, request.index));
           m_statusDataConfigRequestRetries--;
         }
       }
