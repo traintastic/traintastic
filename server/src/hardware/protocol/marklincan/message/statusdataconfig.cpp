@@ -119,6 +119,56 @@ namespace StatusData
     read(p, deviceName, p - bytes.data());
     read(p, nickname, p - bytes.data());
   }
+
+  void ReadingDescription::fromBytes(const std::vector<std::byte>& bytes)
+  {
+    const std::byte* p = bytes.data();
+    read(p, channel);
+    read(p, power);
+    read(p, color);
+    read(p, zero);
+    read(p, rangeEnd);
+    read(p, description, p - bytes.data());
+    read(p, labelStart, p - bytes.data());
+    read(p, labelEnd, p - bytes.data());
+    read(p, unit, p - bytes.data());
+  }
+
+  void ConfigurationDescription::fromBytes(const std::vector<std::byte>& bytes)
+  {
+    const std::byte* p = bytes.data();
+    read(p, channel);
+    read(p, type);
+
+    switch(type)
+    {
+      case Type::List:
+      {
+        uint8_t itemCount;
+        read(p, itemCount);
+        read(p, default_);
+        uint32_t reserved;
+        read(p, reserved);
+        read(p, description, p - bytes.data());
+        for(uint8_t i = 0; i < itemCount; i++)
+        {
+          std::string item;
+          read(p, item, p - bytes.data());
+          listItems.emplace_back(item);
+        }
+        break;
+      }
+      case Type::Number:
+        read(p, valueMin);
+        read(p, valueMax);
+        read(p, value);
+        read(p, description, p - bytes.data());
+        read(p, labelStart, p - bytes.data());
+        read(p, labelEnd, p - bytes.data());
+        read(p, unit, p - bytes.data());
+        break;
+    }
+  }
 }
 
 }

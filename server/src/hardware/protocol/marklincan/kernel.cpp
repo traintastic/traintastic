@@ -752,6 +752,7 @@ void Kernel::receiveStatusDataConfig(uint32_t nodeUID, uint8_t index, const std:
     node.numberOfReadings = devDesc.numberOfReadings;
     node.numberOfConfigurationChannels = devDesc.numberOfConfigurationChannels;
 
+    // schedule read of reading/configuration descriptions:
     const uint8_t lastIndex = devDesc.numberOfReadings + devDesc.numberOfConfigurationChannels;
     for(uint8_t i = 1; i <= lastIndex; i++)
       m_statusDataConfigRequestQueue.emplace(node.uid, i);
@@ -766,16 +767,24 @@ void Kernel::receiveStatusDataConfig(uint32_t nodeUID, uint8_t index, const std:
         });
     }
   }
-#if 0
   else if(index <= node.numberOfReadings)
   {
-    //! \todo
+    node.readings.emplace_back(StatusData::ReadingDescription::decode(statusConfigData));
   }
   else if(index <= node.numberOfReadings + node.numberOfConfigurationChannels)
   {
-    //! \todo
+    node.configurations.emplace_back(StatusData::ConfigurationDescription::decode(statusConfigData));
   }
-#endif
+
+  if(index == node.numberOfReadings + node.numberOfConfigurationChannels && m_onNodeChanged)
+  {
+    EventLoop::call(
+      [this, node=node]()
+      {
+        static_assert(!std::is_reference_v<decltype(node)>);
+        m_onNodeChanged(node);
+      });
+  }
 
   if(!m_statusDataConfigRequestQueue.empty() && m_statusDataConfigRequestQueue.front().uid == nodeUID && m_statusDataConfigRequestQueue.front().index == index)
   {

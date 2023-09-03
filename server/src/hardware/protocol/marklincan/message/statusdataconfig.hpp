@@ -124,6 +124,62 @@ namespace StatusData
     std::vector<std::byte> toBytes() const;
     void fromBytes(const std::vector<std::byte>& bytes);
   };
+
+  struct ReadingDescription
+  {
+    inline static ReadingDescription decode(const std::vector<std::byte>& bytes)
+    {
+      ReadingDescription desc;
+      desc.fromBytes(bytes);
+      return desc;
+    }
+
+    uint8_t channel;
+    int8_t power;
+    uint8_t color[4];
+    uint16_t zero;
+    uint16_t rangeEnd[4];
+    std::string description;
+    std::string labelStart;
+    std::string labelEnd;
+    std::string unit;
+
+    void fromBytes(const std::vector<std::byte>& bytes);
+  };
+
+  struct ConfigurationDescription
+  {
+    enum class Type : uint8_t
+    {
+      List = 1,
+      Number = 2,
+    };
+
+    inline static ConfigurationDescription decode(const std::vector<std::byte>& bytes)
+    {
+      ConfigurationDescription desc;
+      desc.fromBytes(bytes);
+      return desc;
+    }
+
+    uint8_t channel;
+    Type type;
+    std::string description;
+
+    // list:
+    uint8_t default_;
+    std::vector<std::string> listItems;
+
+    // number:
+    uint16_t valueMin;
+    uint16_t valueMax;
+    uint16_t value;
+    std::string labelStart;
+    std::string labelEnd;
+    std::string unit;
+
+    void fromBytes(const std::vector<std::byte>& bytes);
+  };
 }
 
 }

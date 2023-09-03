@@ -25,6 +25,7 @@
 
 #include <string>
 #include <cstdint>
+#include "message/statusdataconfig.hpp"
 
 namespace MarklinCAN {
 
@@ -40,7 +41,9 @@ struct Node
   std::string articleNumber;
   std::string deviceName;
   uint8_t numberOfReadings = 0;
+  std::vector<StatusData::ReadingDescription> readings;
   uint8_t numberOfConfigurationChannels = 0;
+  std::vector<StatusData::ConfigurationDescription> configurations;
 };
 
 }
