@@ -109,6 +109,8 @@ namespace StatusData
   void DeviceDescription::fromBytes(const std::vector<std::byte>& bytes)
   {
     const std::byte* p = bytes.data();
+    const std::byte* const end = p + bytes.size();
+
     read(p, numberOfReadings);
     read(p, numberOfConfigurationChannels);
     read(p, userDefined);
@@ -116,27 +118,31 @@ namespace StatusData
     read(p, serialNumber);
     serialNumber = be_to_host(serialNumber);
     read(p, articleNumber);
-    read(p, deviceName, p - bytes.data());
-    read(p, nickname, p - bytes.data());
+    read(p, deviceName, end - p);
+    read(p, nickname, end - p);
   }
 
   void ReadingDescription::fromBytes(const std::vector<std::byte>& bytes)
   {
     const std::byte* p = bytes.data();
+    const std::byte* const end = p + bytes.size();
+
     read(p, channel);
     read(p, power);
     read(p, color);
     read(p, zero);
     read(p, rangeEnd);
-    read(p, description, p - bytes.data());
-    read(p, labelStart, p - bytes.data());
-    read(p, labelEnd, p - bytes.data());
-    read(p, unit, p - bytes.data());
+    read(p, description, end - p);
+    read(p, labelStart, end - p);
+    read(p, labelEnd, end - p);
+    read(p, unit, end - p);
   }
 
   void ConfigurationDescription::fromBytes(const std::vector<std::byte>& bytes)
   {
     const std::byte* p = bytes.data();
+    const std::byte* const end = p + bytes.size();
+
     read(p, channel);
     read(p, type);
 
@@ -149,11 +155,11 @@ namespace StatusData
         read(p, default_);
         uint32_t reserved;
         read(p, reserved);
-        read(p, description, p - bytes.data());
+        read(p, description, end - p);
         for(uint8_t i = 0; i < itemCount; i++)
         {
           std::string item;
-          read(p, item, p - bytes.data());
+          read(p, item, end - p);
           listItems.emplace_back(item);
         }
         break;
@@ -162,10 +168,10 @@ namespace StatusData
         read(p, valueMin);
         read(p, valueMax);
         read(p, value);
-        read(p, description, p - bytes.data());
-        read(p, labelStart, p - bytes.data());
-        read(p, labelEnd, p - bytes.data());
-        read(p, unit, p - bytes.data());
+        read(p, description, end - p);
+        read(p, labelStart, end - p);
+        read(p, labelEnd, end - p);
+        read(p, unit, end - p);
         break;
     }
   }

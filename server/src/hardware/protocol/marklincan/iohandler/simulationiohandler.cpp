@@ -217,7 +217,7 @@ bool SimulationIOHandler::send(const Message& message)
                 desc.articleNumber[2] = '2';
                 desc.articleNumber[3] = '1';
                 desc.articleNumber[4] = '4';
-                desc.deviceName = "Central Station";
+                desc.deviceName = "Central Station 2";
                 break;
 
               case linkS88UID:
