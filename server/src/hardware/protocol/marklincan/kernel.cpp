@@ -835,7 +835,7 @@ void Kernel::restartStatusDataConfigTimer()
 {
   assert(!m_statusDataConfigRequestQueue.empty());
   m_statusDataConfigRequestTimer.cancel();
-  m_statusDataConfigRequestTimer.expires_after(std::chrono::milliseconds(100));
+  m_statusDataConfigRequestTimer.expires_after(std::chrono::milliseconds(50));
   m_statusDataConfigRequestTimer.async_wait(
     [this](const boost::system::error_code& ec)
     {
@@ -843,6 +843,9 @@ void Kernel::restartStatusDataConfigTimer()
       {
         if(!m_statusConfigData.empty())
           return; // if in progress, don't request, when finished it will start the timer again
+
+        if(m_statusDataConfigRequestRetries > 0) /*[[likely]]*/
+          m_statusDataConfigRequestRetries--;
 
         if(m_statusDataConfigRequestRetries == 0)
         {
@@ -863,14 +866,11 @@ void Kernel::restartStatusDataConfigTimer()
 
           m_statusDataConfigRequestQueue.pop();
           m_statusDataConfigRequestRetries = statusDataConfigRequestRetryCount;
-
-          /* remove */ send(Ping());
         }
         else
         {
           const auto& request = m_statusDataConfigRequestQueue.front();
           send(StatusDataConfig(m_config.nodeUID, request.uid, request.index));
-          m_statusDataConfigRequestRetries--;
         }
       }
 

@@ -106,7 +106,7 @@ class Kernel
       }
     };
 
-    static constexpr int statusDataConfigRequestRetryCount = 10;
+    static constexpr int statusDataConfigRequestRetryCount = 3;
 
     boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
