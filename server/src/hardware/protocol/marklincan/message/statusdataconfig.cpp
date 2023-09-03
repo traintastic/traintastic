@@ -131,7 +131,10 @@ namespace StatusData
     read(p, power);
     read(p, color);
     read(p, zero);
+    zero = be_to_host(zero);
     read(p, rangeEnd);
+    for(size_t i = 0; i < sizeof(rangeEnd) / sizeof(*rangeEnd); i++)
+      rangeEnd[i] = be_to_host(rangeEnd[i]);
     read(p, description, end - p);
     read(p, labelStart, end - p);
     read(p, labelEnd, end - p);
@@ -166,8 +169,11 @@ namespace StatusData
       }
       case Type::Number:
         read(p, valueMin);
+        valueMin = be_to_host(valueMin);
         read(p, valueMax);
+        valueMax = be_to_host(valueMax);
         read(p, value);
+        value = be_to_host(value);
         read(p, description, end - p);
         read(p, labelStart, end - p);
         read(p, labelEnd, end - p);
