@@ -34,6 +34,7 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   , nodeUID{this, "node_uid", Random::value(UID::Range::manufacturer), PropertyFlags::ReadWrite | PropertyFlags::Store}
   , nodeSerialNumber{this, "node_serial_number", Random::value(nodeSerialNumberRandomMin, nodeSerialNumberRandomMax), PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , debugStatusDataConfig{this, "debug_status_data_config", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugConfigStream{this, "debug_config_stream", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   Attributes::addMinMax<uint32_t>(defaultSwitchTime, 0, 163'000);
@@ -48,6 +49,8 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   Attributes::addDisplayName(debugLogRXTX, DisplayName::Hardware::debugLogRXTX);
   m_interfaceItems.add(debugLogRXTX);
 
+  m_interfaceItems.add(debugStatusDataConfig);
+
   m_interfaceItems.add(debugConfigStream);
 }
 
@@ -59,6 +62,7 @@ Config Settings::config() const
   config.nodeUID = nodeUID;
   config.nodeSerialNumber = nodeSerialNumber;
   config.debugLogRXTX = debugLogRXTX;
+  config.debugStatusDataConfig = debugStatusDataConfig;
   config.debugConfigStream = debugConfigStream;
 
   return config;

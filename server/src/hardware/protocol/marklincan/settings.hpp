@@ -42,6 +42,7 @@ class Settings final : public SubObject
     Property<uint32_t> nodeUID;
     Property<uint32_t> nodeSerialNumber;
     Property<bool> debugLogRXTX;
+    Property<bool> debugStatusDataConfig;
     Property<bool> debugConfigStream;
 
     Settings(Object& _parent, std::string_view parentPropertyName);

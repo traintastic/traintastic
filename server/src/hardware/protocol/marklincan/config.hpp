@@ -31,6 +31,7 @@ struct Config
   uint32_t nodeUID;
   uint32_t nodeSerialNumber;
   bool debugLogRXTX;
+  bool debugStatusDataConfig;
   bool debugConfigStream;
 };
 

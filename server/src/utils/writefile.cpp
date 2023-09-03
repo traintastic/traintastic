@@ -23,10 +23,9 @@
 #include "writefile.hpp"
 #include <fstream>
 
-bool writeFile(const std::filesystem::path& filename, const void* data, size_t dataSize)
+//! \brief Try to create directories if they doesn't exist already
+static bool createDirectories(const std::filesystem::path& path)
 {
-  // try create directory if it doesn't exist
-  const auto path = filename.parent_path();
   if(!std::filesystem::is_directory(path))
   {
     std::error_code ec;
@@ -34,6 +33,13 @@ bool writeFile(const std::filesystem::path& filename, const void* data, size_t d
     if(ec)
       return false;
   }
+  return true;
+}
+
+bool writeFile(const std::filesystem::path& filename, const void* data, size_t dataSize)
+{
+  if(!createDirectories(filename.parent_path()))
+    return false;
 
   std::ofstream file;
   file.open(filename, std::ios::binary | std::ios::out | std::ios::trunc);
@@ -45,3 +51,17 @@ bool writeFile(const std::filesystem::path& filename, const void* data, size_t d
   return true;
 }
 
+bool writeFileJSON(const std::filesystem::path& filename, const nlohmann::json& data)
+{
+  if(!createDirectories(filename.parent_path()))
+    return false;
+
+  std::ofstream file;
+  file.open(filename, std::ios::binary | std::ios::out | std::ios::trunc);
+  if(!file.is_open())
+    return false;
+
+  file << data.dump(2);
+
+  return true;
+}

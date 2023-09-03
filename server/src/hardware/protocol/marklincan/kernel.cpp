@@ -21,6 +21,7 @@
  */
 
 #include "kernel.hpp"
+#include <nlohmann/json.hpp>
 #include <version.hpp>
 #include "messages.hpp"
 #include "message/configdata.hpp"
@@ -38,6 +39,7 @@
 #include "../../../traintastic/traintastic.hpp"
 #include "../../../utils/inrange.hpp"
 #include "../../../utils/setthreadname.hpp"
+#include "../../../utils/tohex.hpp"
 #include "../../../utils/writefile.hpp"
 #include "../../../utils/zlib.hpp"
 
@@ -174,12 +176,7 @@ void Kernel::start()
         node.softwareVersionMinor = TRAINTASTIC_VERSION_MINOR;
         node.deviceId = DeviceId::Traintastic;
 
-        if(m_onNodeChanged) /*[[likely]]*/
-          EventLoop::call(
-            [this, node]()
-            {
-              m_onNodeChanged(node);
-            });
+        nodeChanged(node);
 
         m_nodes.emplace(m_config.nodeUID, node);
       }
@@ -756,16 +753,6 @@ void Kernel::receiveStatusDataConfig(uint32_t nodeUID, uint8_t index, const std:
     const uint8_t lastIndex = devDesc.numberOfReadings + devDesc.numberOfConfigurationChannels;
     for(uint8_t i = 1; i <= lastIndex; i++)
       m_statusDataConfigRequestQueue.emplace(node.uid, i);
-
-    if(m_onNodeChanged)
-    {
-      EventLoop::call(
-        [this, node=node]()
-        {
-          static_assert(!std::is_reference_v<decltype(node)>);
-          m_onNodeChanged(node);
-        });
-    }
   }
   else if(index <= node.numberOfReadings)
   {
@@ -776,14 +763,9 @@ void Kernel::receiveStatusDataConfig(uint32_t nodeUID, uint8_t index, const std:
     node.configurations.emplace_back(StatusData::ConfigurationDescription::decode(statusConfigData));
   }
 
-  if(index == node.numberOfReadings + node.numberOfConfigurationChannels && m_onNodeChanged)
+  if(index == node.numberOfReadings + node.numberOfConfigurationChannels)
   {
-    EventLoop::call(
-      [this, node=node]()
-      {
-        static_assert(!std::is_reference_v<decltype(node)>);
-        m_onNodeChanged(node);
-      });
+    nodeChanged(node);
   }
 
   if(!m_statusDataConfigRequestQueue.empty() && m_statusDataConfigRequestQueue.front().uid == nodeUID && m_statusDataConfigRequestQueue.front().index == index)
@@ -851,17 +833,9 @@ void Kernel::restartStatusDataConfigTimer()
         {
           // give up, no response
 
-          if(m_onNodeChanged) /*[[likely]]*/
+          if(auto it = m_nodes.find(m_statusDataConfigRequestQueue.front().uid); it != m_nodes.end()) /*[[likely]]*/
           {
-            if(auto it = m_nodes.find(m_statusDataConfigRequestQueue.front().uid); it != m_nodes.end()) /*[[likely]]*/
-            {
-              EventLoop::call(
-                [this, node=it->second]()
-                {
-                  static_assert(!std::is_reference_v<decltype(node)>);
-                  m_onNodeChanged(node);
-               });
-            }
+            nodeChanged(it->second);
           }
 
           m_statusDataConfigRequestQueue.pop();
@@ -882,6 +856,92 @@ void Kernel::restartStatusDataConfigTimer()
           nextState();
       }
     });
+}
+
+void Kernel::nodeChanged(const Node& node)
+{
+  assert(isKernelThread());
+
+  if(m_onNodeChanged) /*[[likely]]*/
+    EventLoop::call(
+      [this, node=node]()
+      {
+        static_assert(!std::is_reference_v<decltype(node)>);
+        m_onNodeChanged(node);
+      });
+
+  if(m_config.debugStatusDataConfig)
+  {
+    using namespace nlohmann;
+
+    // serialize into JSON:
+    auto data = json::object();
+    data["uid"] = node.uid;
+    data["software_version"] = std::to_string(node.softwareVersionMajor).append(".").append(std::to_string(node.softwareVersionMinor));
+    data["device_id"] = node.deviceId;
+    if(!node.deviceName.empty() || node.serialNumber != 0 || !node.articleNumber.empty() || node.numberOfReadings != 0 || node.numberOfConfigurationChannels != 0)
+    {
+      data["serial_number"] = node.serialNumber;
+      data["article_number"] = node.articleNumber;
+      data["device_name"] = node.deviceName;
+      data["number_of_readings"] = node.numberOfReadings;
+      auto readings = json::array();
+      for(const auto& reading : node.readings)
+      {
+        auto readingData = json::object();
+        readingData["channel"] = reading.channel;
+        readingData["power"] = reading.power;
+        readingData["color"] = reading.color;
+        readingData["zero"] = reading.zero;
+        readingData["rangeEnd"] = reading.rangeEnd;
+        readingData["description"] = reading.description;
+        readingData["labelStart"] = reading.labelStart;
+        readingData["labelEnd"] = reading.labelEnd;
+        readingData["unit"] = reading.unit;
+        readings.emplace_back(readingData);
+      }
+      data["readings"] = readings;
+      data["number_of_configuration_channels"] = node.numberOfConfigurationChannels;
+      auto configurations = json::array();
+      for(const auto& configuration : node.configurations)
+      {
+        auto configurationData = json::object();
+        configurationData["channel"] = configuration.channel;
+        configurationData["description"] = configuration.description;
+        switch(configuration.type)
+        {
+          case StatusData::ConfigurationDescription::Type::List:
+          {
+            configurationData["type"] = "list";
+            configurationData["default"] = configuration.default_;
+            auto items = json::array();
+            for(const auto& item : configuration.listItems)
+              items.emplace_back(item);
+            configurationData["items"] = items;
+            break;
+          }
+          case StatusData::ConfigurationDescription::Type::Number:
+            configurationData["type"] = "number";
+            configurationData["value_min"] = configuration.valueMin;
+            configurationData["value_max"] = configuration.valueMax;
+            configurationData["value"] = configuration.value;
+            configurationData["label_start"] = configuration.labelStart;
+            configurationData["label_end"] = configuration.labelEnd;
+            configurationData["unit"] = configuration.unit;
+            break;
+
+          default:
+            configurationData["type"] = static_cast<uint8_t>(configuration.type);
+            assert(false);
+            break;
+        }
+        configurations.emplace_back(configurationData);
+      }
+      data["configurations"] = configurations;
+    }
+
+    writeFileJSON(m_debugDir / m_logId / "statusdataconfig" / toHex(node.uid).append(".json"), data);
+  }
 }
 
 void Kernel::changeState(State value)

@@ -26,6 +26,7 @@
 #include <cstddef>
 #include <vector>
 #include <filesystem>
+#include <nlohmann/json.hpp>
 
 bool writeFile(const std::filesystem::path& filename, const void* data, size_t dataSize);
 
@@ -39,5 +40,7 @@ inline bool writeFile(const std::filesystem::path& filename, const std::vector<T
 {
   return writeFile(filename, data.data(), data.size() * sizeof(T));
 }
+
+bool writeFileJSON(const std::filesystem::path& filename, const nlohmann::json& data);
 
 #endif

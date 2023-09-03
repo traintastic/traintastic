@@ -157,6 +157,7 @@ class Kernel
 
     void restartStatusDataConfigTimer();
 
+    void nodeChanged(const Node& node);
 
     void changeState(State value);
     inline void nextState()
