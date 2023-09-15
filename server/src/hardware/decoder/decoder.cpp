@@ -361,6 +361,9 @@ void Decoder::protocolChanged()
     else
       Attributes::setMinMax(address, std::pair<uint16_t, uint16_t>(0, 0));
 
+    if(protocol == DecoderProtocol::MFX)
+      address = 0;
+
     // MFX:
     Attributes::setVisible(mfxUID, protocol == DecoderProtocol::MFX);
 

@@ -47,4 +47,21 @@ TRAINTASTIC_ENUM(DecoderProtocol, "decoder_protocol", 6,
   {DecoderProtocol::DCCLong, "dcc_long"},
 });
 
+constexpr bool hasAddress(DecoderProtocol value)
+{
+  switch(value)
+  {
+    case DecoderProtocol::DCCShort:
+    case DecoderProtocol::DCCLong:
+    case DecoderProtocol::Motorola:
+    case DecoderProtocol::Selectrix:
+      return true;
+
+    case DecoderProtocol::None:
+    case DecoderProtocol::MFX:
+      return false;
+  }
+  return false;
+}
+
 #endif

@@ -25,6 +25,7 @@
 
 #include <memory>
 #include <array>
+#include <map>
 #include <unordered_map>
 #include <thread>
 #include <filesystem>
@@ -126,6 +127,7 @@ class Kernel
     std::unordered_map<uint32_t, Node> m_nodes;
 
     DecoderController* m_decoderController = nullptr;
+    std::map<uint32_t, uint16_t> m_mfxUIDtoSID;
 
     InputController* m_inputController = nullptr;
     std::array<TriState, s88AddressMax - s88AddressMin + 1> m_inputValues;

@@ -175,7 +175,7 @@ void MarklinCANLocomotiveList::import(const MarklinCAN::LocomotiveList::Locomoti
   decoder->protocol = locomotive.protocol;
   if(decoder->protocol == DecoderProtocol::MFX)
   {
-    decoder->address = locomotive.sid;
+    decoder->address = 0;
     decoder->mfxUID = locomotive.mfxUID;
   }
   else // motorola or DCC

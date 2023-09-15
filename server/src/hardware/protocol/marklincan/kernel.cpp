@@ -616,7 +616,14 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       break;
 
     case DecoderProtocol::MFX:
-      uid = UID::locomotiveMFX(decoder.address);
+      if(const auto& it = m_mfxUIDtoSID.find(decoder.mfxUID); it != m_mfxUIDtoSID.end())
+      {
+        uid = UID::locomotiveMFX(it->second);
+      }
+      else
+      {
+        Log::log(m_logId, LogMessage::E2024_UNKNOWN_LOCOMOTIVE_MFX_UID_X, toHex(decoder.mfxUID.value()));
+      }
       break;
 
     case DecoderProtocol::None:
@@ -798,14 +805,17 @@ void Kernel::receiveConfigData(std::unique_ptr<ConfigDataStreamCollector> config
         writeFile(std::filesystem::path(basename).concat(".txt"), locList);
       }
 
-      if(m_onLocomotiveListChanged)
-      {
-        EventLoop::call(
-          [this, list=std::make_shared<LocomotiveList>(locList)]()
-          {
+      EventLoop::call(
+        [this, list=std::make_shared<LocomotiveList>(locList)]()
+        {
+          // update MFX UID to SID list:
+          m_mfxUIDtoSID.clear();
+          for(const auto& item : *list)
+            m_mfxUIDtoSID.emplace(item.mfxUID, item.sid);
+
+          if(m_onLocomotiveListChanged) /*[[likely]]*/
             m_onLocomotiveListChanged(list);
-          });
-      }
+        });
     }
 
     if(m_state == State::DownloadLokList)

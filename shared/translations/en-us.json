@@ -4306,5 +4306,9 @@
     {
         "term": "marklincan_settings:debug_status_data_config",
         "definition": "Debug: Status data config"
+    },
+    {
+        "term": "message:E2024",
+        "definition": "Unknown locomotive MFX UID: %1"
     }
 ]

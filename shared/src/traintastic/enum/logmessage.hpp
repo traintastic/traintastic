@@ -175,6 +175,7 @@ enum class LogMessage : uint32_t
   E2021_STARTING_PCAP_LOG_FAILED_X = LogMessageOffset::error + 2021,
   E2022_SOCKET_CREATE_FAILED_X = LogMessageOffset::error + 2022,
   E2023_SOCKET_IOCTL_FAILED_X = LogMessageOffset::error + 2023,
+  E2024_UNKNOWN_LOCOMOTIVE_MFX_UID_X = LogMessageOffset::error + 2024,
   E9001_X_DURING_EXECUTION_OF_X_EVENT_HANDLER = LogMessageOffset::error + 9001,
   E9999_X = LogMessageOffset::error + 9999,
 
