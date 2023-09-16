@@ -53,9 +53,9 @@ static void updateDecoderSpeed(const std::shared_ptr<Decoder>& decoder, uint8_t 
   else
   {
     speed--; // decrement one for ESTOP: 2..127 -> 1..126
-    const uint8_t currentStep = Decoder::throttleToSpeedStep(decoder->throttle.value(), SPEED_MAX - 1);
+    const uint8_t currentStep = Decoder::throttleToSpeedStep<uint8_t>(decoder->throttle.value(), SPEED_MAX - 1);
     if(currentStep != speed) // only update trottle if it is a different step
-      decoder->throttle.setValueInternal(Decoder::speedStepToThrottle(speed, SPEED_MAX - 1));
+      decoder->throttle.setValueInternal(Decoder::speedStepToThrottle<uint8_t>(speed, SPEED_MAX - 1));
   }
 }
 
@@ -992,7 +992,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
 
   if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Throttle))
   {
-    const uint8_t speedStep = Decoder::throttleToSpeedStep(decoder.throttle, SPEED_MAX - 1);
+    const uint8_t speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, SPEED_MAX - 1);
     if(m_emergencyStop == TriState::False || decoder.emergencyStop || speedStep == SPEED_STOP)
     {
       // only send speed updates if bus estop isn't active, except for speed STOP and ESTOP

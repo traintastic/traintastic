@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -65,6 +65,11 @@ QString TableModel::getRowObjectId(int row) const
     return m_texts.value(ColumnRow(1, row));
   else
     return m_texts.value(ColumnRow(0, row));
+}
+
+QString TableModel::getValue(int column, int row) const
+{
+  return m_texts.value(ColumnRow(column, row));
 }
 
 void TableModel::setRegion(int columnMin, int columnMax, int rowMin, int rowMax)

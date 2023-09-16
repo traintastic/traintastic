@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@ std::shared_ptr<Interface> Interfaces::create(World& world, std::string_view cla
   IF_CLASSID_CREATE(ECoSInterface)
   IF_CLASSID_CREATE(HSI88Interface)
   IF_CLASSID_CREATE(LocoNetInterface)
+  IF_CLASSID_CREATE(MarklinCANInterface)
   IF_CLASSID_CREATE(TraintasticDIYInterface)
   IF_CLASSID_CREATE(WiThrottleInterface)
   IF_CLASSID_CREATE(WlanMausInterface)

@@ -75,6 +75,7 @@ Decoder::Decoder(World& world, std::string_view _id) :
       updateEditable();
     }},
   address{this, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  mfxUID{this, "mfx_uid", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
   emergencyStop{this, "emergency_stop", false, PropertyFlags::ReadWrite,
     [this](const bool& /*value*/)
     {
@@ -133,6 +134,10 @@ Decoder::Decoder(World& world, std::string_view _id) :
   Attributes::addMinMax(address, std::pair<uint16_t, uint16_t>(0, 0));
   Attributes::addVisible(address, false);
   m_interfaceItems.add(address);
+
+  Attributes::addEnabled(mfxUID, false);
+  Attributes::addVisible(mfxUID, false);
+  m_interfaceItems.add(mfxUID);
 
   Attributes::addObjectEditor(emergencyStop, false);
   m_interfaceItems.add(emergencyStop);
@@ -356,6 +361,12 @@ void Decoder::protocolChanged()
     else
       Attributes::setMinMax(address, std::pair<uint16_t, uint16_t>(0, 0));
 
+    if(protocol == DecoderProtocol::MFX)
+      address = 0;
+
+    // MFX:
+    Attributes::setVisible(mfxUID, protocol == DecoderProtocol::MFX);
+
     // speed steps:
     const auto values = interface->decoderSpeedSteps(protocol);
     Attributes::setVisible(speedSteps, !values.empty());
@@ -370,6 +381,7 @@ void Decoder::protocolChanged()
   else
   {
     Attributes::setVisible(address, false);
+    Attributes::setVisible(mfxUID, false);
     Attributes::setVisible(speedSteps, false);
   }
 }

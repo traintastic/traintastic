@@ -279,7 +279,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
           decoder.address,
           decoder.emergencyStop,
           decoder.direction,
-          Decoder::throttleToSpeedStep(decoder.throttle, 14),
+          Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 14),
           decoder.getFunctionValue(0)));
         break;
 
@@ -288,7 +288,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
           decoder.address,
           decoder.emergencyStop,
           decoder.direction,
-          Decoder::throttleToSpeedStep(decoder.throttle, 27)));
+          Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 27)));
         break;
 
       case 28:
@@ -296,7 +296,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
           decoder.address,
           decoder.emergencyStop,
           decoder.direction,
-          Decoder::throttleToSpeedStep(decoder.throttle, 28)));
+          Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 28)));
         break;
 
       case 128:
@@ -304,7 +304,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
           decoder.address,
           decoder.emergencyStop,
           decoder.direction,
-          Decoder::throttleToSpeedStep(decoder.throttle, 126)));
+          Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 126)));
         break;
 
       default:

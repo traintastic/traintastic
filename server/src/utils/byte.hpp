@@ -40,4 +40,14 @@ constexpr uint16_t to16(const uint8_t valueLow, const uint8_t valueHigh)
   return (static_cast<uint16_t>(valueHigh) << 8) | valueLow;
 }
 
+constexpr uint16_t high16(const uint32_t value)
+{
+  return static_cast<uint16_t>(value >> 16);
+}
+
+constexpr uint16_t low16(const uint32_t value)
+{
+  return static_cast<uint16_t>(value & 0xFFFF);
+}
+
 #endif

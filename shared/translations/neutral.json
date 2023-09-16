@@ -346,5 +346,33 @@
     {
         "term": "xpressnet_serial_interface:rosoft_s88xpressnetli",
         "definition": "RoSoft s88XPressNetLI"
+    },
+    {
+        "term": "class_id:interface.marklin_can",
+        "definition": "Märklin CAN"
+    },
+    {
+        "term": "decoder_protocol:mfx",
+        "definition": "MFX"
+    },
+    {
+        "term": "decoder_protocol:selectrix",
+        "definition": "Selectrix"
+    },
+    {
+        "term": "hardware:marklin_can",
+        "definition": "Märklin CAN"
+    },
+    {
+        "term": "decoder:mfx_uid",
+        "definition": "MFX UID"
+    },
+    {
+        "term": "message:I1009",
+        "definition": "zlib %1"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:uid",
+        "definition": "UID"
     }
 ]

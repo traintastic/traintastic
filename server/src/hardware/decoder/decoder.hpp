@@ -83,17 +83,19 @@ class Decoder : public IdObject
     static constexpr float throttleStop = throttleMin;
     static constexpr float throttleMax = 1;
 
-    inline static uint8_t throttleToSpeedStep(float throttle, uint8_t speedStepMax)
+    template<class T, std::enable_if_t<std::is_unsigned<T>::value, bool> = true>
+    inline static T throttleToSpeedStep(float throttle, T speedStepMax)
     {
-      return static_cast<uint8_t>(std::lround(std::clamp(throttle, throttleMin, throttleMax) * speedStepMax));
+      return static_cast<T>(std::lround(std::clamp(throttle, throttleMin, throttleMax) * speedStepMax));
     }
 
-    inline static float speedStepToThrottle(uint8_t speedStep, uint8_t speedStepMax)
+    template<class T, std::enable_if_t<std::is_unsigned<T>::value, bool> = true>
+    inline static float speedStepToThrottle(T speedStep, T speedStepMax)
     {
       if(speedStepMax != 0)
-        return static_cast<float>(std::clamp<uint8_t>(speedStep, 0, speedStepMax)) / speedStepMax;
-      else
-        return 0;
+        return static_cast<float>(std::clamp<T>(speedStep, 0, speedStepMax)) / speedStepMax;
+
+      return 0;
     }
 
     static const std::shared_ptr<Decoder> null;
@@ -102,6 +104,7 @@ class Decoder : public IdObject
     ObjectProperty<DecoderController> interface;
     Property<DecoderProtocol> protocol;
     Property<uint16_t> address;
+    Property<uint32_t> mfxUID;
     Property<bool> emergencyStop;
     Property<Direction> direction;
     Method<void()> toggleDirection;

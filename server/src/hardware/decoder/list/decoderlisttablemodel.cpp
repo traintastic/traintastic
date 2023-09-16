@@ -38,6 +38,9 @@ static std::string_view displayName(DecoderListColumn column)
     case DecoderListColumn::Interface:
       return DisplayName::Hardware::interface;
 
+    case DecoderListColumn::Protocol:
+      return "decoder:protocol";
+
     case DecoderListColumn::Address:
       return DisplayName::Hardware::address;
   }
@@ -51,6 +54,7 @@ bool DecoderListTableModel::isListedProperty(std::string_view name)
     name == "id" ||
     name == "name" ||
     name == "interface" ||
+    name == "protocol" ||
     name == "address";
 }
 
@@ -96,8 +100,16 @@ std::string DecoderListTableModel::getText(uint32_t column, uint32_t row) const
         }
         return "";
 
+      case DecoderListColumn::Protocol:
+        if(const auto* it = EnumValues<DecoderProtocol>::value.find(decoder.protocol); it != EnumValues<DecoderProtocol>::value.end())
+          return std::string("$").append(EnumName<DecoderProtocol>::value).append(":").append(it->second).append("$");
+        break;
+
       case DecoderListColumn::Address:
-        return decoder.address.toString();
+        if(hasAddress(decoder.protocol.value()))
+          return decoder.address.toString();
+        else
+          return {};
 
       default:
         assert(false);
@@ -118,6 +130,8 @@ void DecoderListTableModel::propertyChanged(BaseProperty& property, uint32_t row
     changed(row, DecoderListColumn::Name);
   else if(name == "interface")
     changed(row, DecoderListColumn::Interface);
+  else if(name == "protocol")
+    changed(row, DecoderListColumn::Protocol);
   else if(name == "address")
     changed(row, DecoderListColumn::Address);
 }

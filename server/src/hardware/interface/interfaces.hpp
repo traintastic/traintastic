@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@
 #include "ecosinterface.hpp"
 #include "hsi88.hpp"
 #include "loconetinterface.hpp"
+#include "marklincaninterface.hpp"
 #include "traintasticdiyinterface.hpp"
 #include "withrottleinterface.hpp"
 #include "wlanmausinterface.hpp"
@@ -45,6 +46,7 @@ struct Interfaces
     ECoSInterface::classId,
     HSI88Interface::classId,
     LocoNetInterface::classId,
+    MarklinCANInterface::classId,
     TraintasticDIYInterface::classId,
     WiThrottleInterface::classId,
     WlanMausInterface::classId,
