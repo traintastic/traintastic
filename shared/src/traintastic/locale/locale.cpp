@@ -27,11 +27,11 @@
   #include <QRegularExpression>
 #endif
 
-const Locale* Locale::instance = nullptr;
+std::unique_ptr<const Locale> Locale::instance;
 
-Locale::Locale(std::filesystem::path _filename, Locale* fallback) :
-  m_fallback{fallback},
-  filename{std::move(_filename)}
+Locale::Locale(std::filesystem::path _filename, std::unique_ptr<const Locale> fallback)
+  : m_fallback{std::move(fallback)}
+  , filename{std::move(_filename)}
 {
   // read file into string:
   std::ifstream file{filename, std::ios::binary | std::ios::ate};

@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
 #endif
 
   const auto localePath = getLocalePath();
-  Locale::instance = new Locale(localePath / "en-us.lang", new Locale(localePath / "neutral.lang"));
+  Locale::instance = std::make_unique<Locale>(localePath / "en-us.lang", std::make_unique<Locale>(localePath / "neutral.lang"));
 
   if(enableConsoleLogger)
     Log::enableConsoleLogger();
