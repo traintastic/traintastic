@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include <map>
 #include <algorithm>
 #include <limits>
+#include <chrono>
 #include <cassert>
 #include <lua.hpp>
 
@@ -40,9 +41,14 @@ using SandboxPtr = std::unique_ptr<lua_State, void(*)(lua_State*)>;
 class Sandbox
 {
   private:
+    static constexpr auto pcallDurationMax = std::chrono::milliseconds(10); //!< Execution time limit
+    static constexpr auto pcallDurationWarning = pcallDurationMax / 2; //!< Execution time warning level
+
     static void close(lua_State* L);
     static int __index(lua_State* L);
     static int __newindex(lua_State* L);
+
+    static void hook(lua_State* L, lua_Debug* /*ar*/);
 
   public:
     class StateData
@@ -53,6 +59,9 @@ class Sandbox
         std::map<lua_Integer, std::shared_ptr<EventHandler>> m_eventHandlers;
 
       public:
+        std::chrono::time_point<std::chrono::steady_clock> pcallStart;
+        bool pcallExecutionTimeViolation;
+
         StateData(Script& script)
           : m_script{script}
           , m_eventHandlerId{1}

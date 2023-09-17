@@ -51,6 +51,7 @@ Name: "firewall_wlanmaus"; Description: "{cm:FirewallAllowWLANmausZ21}"; GroupDe
 Source: "..\..\server\build\{#ServerExeName}"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
 Source: "..\..\server\thirdparty\lua5.3\bin\win64\lua53.dll"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
 Source: "..\..\server\thirdparty\libarchive\bin\archive.dll"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
+Source: "..\..\server\thirdparty\zlib\bin\zlib1.dll"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
 ; Client
 Source: "..\..\client\build\Release\{#ClientExeName}"; DestDir: "{app}\client"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\*.dll"; DestDir: "{app}\client"; Flags: ignoreversion; Check: InstallClient
@@ -63,6 +64,7 @@ Source: "..\..\client\build\Release\styles\*.dll"; DestDir: "{app}\client\styles
 Source: "..\..\shared\translations\*.lang"; DestDir: "{commonappdata}\traintastic\translations"; Flags: ignoreversion;
 ; Manual
 Source: "..\..\manual\build\*"; DestDir: "{commonappdata}\traintastic\manual"; Flags: ignoreversion recursesubdirs
+Source: "..\..\manual\build.luadoc\*"; DestDir: "{commonappdata}\traintastic\manual-lua"; Flags: ignoreversion recursesubdirs
 ; LNCV XML
 Source: "..\..\shared\data\lncv\xml\*.xml"; DestDir: "{commonappdata}\traintastic\lncv"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\shared\data\lncv\xml\lncvmodule.xsd"; DestDir: "{commonappdata}\traintastic\lncv"; Flags: ignoreversion; Check: InstallClient

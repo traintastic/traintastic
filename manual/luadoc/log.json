@@ -1,0 +1,93 @@
+{
+  "debug": {
+    "type": "function",
+    "parameters": [
+      {
+        "name": "message"
+      },
+      {
+        "name": "...",
+        "optional": true
+      }
+    ],
+    "return_values": 0
+  },
+  "info": {
+    "type": "function",
+    "parameters": [
+      {
+        "name": "message"
+      },
+      {
+        "name": "...",
+        "optional": true
+      }
+    ],
+    "return_values": 0
+  },
+  "notice": {
+    "type": "function",
+    "parameters": [
+      {
+        "name": "message"
+      },
+      {
+        "name": "...",
+        "optional": true
+      }
+    ],
+    "return_values": 0
+  },
+  "warning": {
+    "type": "function",
+    "parameters": [
+      {
+        "name": "message"
+      },
+      {
+        "name": "...",
+        "optional": true
+      }
+    ],
+    "return_values": 0
+  },
+  "error": {
+    "type": "function",
+    "parameters": [
+      {
+        "name": "message"
+      },
+      {
+        "name": "...",
+        "optional": true
+      }
+    ],
+    "return_values": 0
+  },
+  "critical": {
+    "type": "function",
+    "parameters": [
+      {
+        "name": "message"
+      },
+      {
+        "name": "...",
+        "optional": true
+      }
+    ],
+    "return_values": 0
+  },
+  "fatal": {
+    "type": "function",
+    "parameters": [
+      {
+        "name": "message"
+      },
+      {
+        "name": "...",
+        "optional": true
+      }
+    ],
+    "return_values": 0
+  }
+}

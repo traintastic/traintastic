@@ -1,0 +1,41 @@
+{
+  "time": {},
+  "hour": {},
+  "minute": {},
+  "multiplier": {},
+  "freeze": {},
+  "running": {},
+  "on_resume": {
+    "parameters": [
+      {
+        "name": "time"
+      },
+      {
+        "name": "multiplier"
+      },
+      {
+        "name": "clock"
+      }
+    ]
+  },
+  "on_tick": {
+    "parameters": [
+      {
+        "name": "time"
+      },
+      {
+        "name": "clock"
+      }
+    ]
+  },
+  "on_freeze": {
+    "parameters": [
+      {
+        "name": "time"
+      },
+      {
+        "name": "clock"
+      }
+    ]
+  }
+}

@@ -36,6 +36,7 @@
 #include <traintastic/enum/loconetinterfacetype.hpp>
 #include <traintastic/enum/loconetcommandstation.hpp>
 #include <traintastic/enum/loconetserialinterface.hpp>
+#include <traintastic/enum/marklincaninterfacetype.hpp>
 #include <traintastic/enum/opcmultisensedirection.hpp>
 #include <traintastic/enum/outputaction.hpp>
 #include <traintastic/enum/pcapoutput.hpp>
@@ -97,6 +98,7 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(LocoNetCommandStation)
   TRANSLATE_ENUM(LocoNetInterfaceType)
   TRANSLATE_ENUM(LocoNetSerialInterface)
+  TRANSLATE_ENUM(MarklinCANInterfaceType)
   TRANSLATE_ENUM(OPCMultiSenseDirection)
   TRANSLATE_ENUM(OutputAction)
   TRANSLATE_ENUM(PCAPOutput)

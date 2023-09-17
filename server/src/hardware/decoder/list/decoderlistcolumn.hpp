@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,12 +32,14 @@ enum class DecoderListColumn
   Name = 1 << 1,
   Interface = 1 << 2,
   Address = 1 << 3,
+  Protocol = 1 << 4,
 };
 
-constexpr std::array<DecoderListColumn, 4> decoderListColumnValues = {
+constexpr std::array<DecoderListColumn, 5> decoderListColumnValues = {
   DecoderListColumn::Id,
   DecoderListColumn::Name,
   DecoderListColumn::Interface,
+  DecoderListColumn::Protocol,
   DecoderListColumn::Address,
 };
 

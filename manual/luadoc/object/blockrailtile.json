@@ -1,0 +1,28 @@
+{
+  "on_train_assigned": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "block"
+      },
+      {
+        "name": "block"
+      }
+    ]
+  },
+  "on_train_removed": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "block"
+      },
+      {
+        "name": "block"
+      }
+    ]
+  }
+}

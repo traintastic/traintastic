@@ -4222,5 +4222,97 @@
         "term_plural": "",
         "reference": "",
         "comment": ""
+    },
+    {
+        "term": "marklin_can_interface_type:network_tcp",
+        "definition": "Network (TCP)"
+    },
+    {
+        "term": "marklin_can_interface_type:network_udp",
+        "definition": "Network (UDP)"
+    },
+    {
+        "term": "message:E2022",
+        "definition": "Socket create failed (%1)"
+    },
+    {
+        "term": "message:E2023",
+        "definition": "Socket ioctl failed (%1)"
+    },
+    {
+        "term": "message:C2005",
+        "definition": "SocketCAN is only available on Linux"
+    },
+    {
+        "term": "marklin_can_interface_type:socket_can",
+        "definition": "SocketCAN (Linux only)"
+    },
+    {
+        "term": "interface.marklin_can:marklin_can_locomotive_list",
+        "definition": "Märklin CAN: Locomotive list"
+    },
+    {
+        "term": "marklincan_settings:default_switch_time",
+        "definition": "Default switch time"
+    },
+    {
+        "term": "marklincan_settings:debug_config_stream",
+        "definition": "Debug: Config stream"
+    },
+    {
+        "term": "marklincan_settings:node_uid",
+        "definition": "Node UID"
+    },
+    {
+        "term": "marklincan_settings:node_serial_number",
+        "definition": "Node serial number"
+    },
+    {
+        "term": "marklin_can_locomotive_list:import_or_sync",
+        "definition": "Import/sync"
+    },
+    {
+        "term": "marklin_can_locomotive_list:import_or_sync_all",
+        "definition": "Import/sync all"
+    },
+    {
+        "term": "marklin_can_locomotive_list:reload",
+        "definition": "Reload"
+    },
+    {
+        "term": "interface.marklin_can:marklin_can_node_list",
+        "definition": "Märklin CAN: Node list"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:device_name",
+        "definition": "Device name"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:article_number",
+        "definition": "Article number"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:serial_number",
+        "definition": "Serial number"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:software_version",
+        "definition": "Software version"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:device_id",
+        "definition": "Device Id"
+    },
+    {
+        "term": "marklincan_settings:debug_status_data_config",
+        "definition": "Debug: Status data config"
+    },
+    {
+        "term": "message:E2024",
+        "definition": "Unknown locomotive MFX UID: %1"
+    },
+    {
+        "term": "message:W9001",
+        "definition": "Execution took %1 us"
     }
 ]

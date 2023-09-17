@@ -21,6 +21,7 @@
  */
 
 #include "createwidget.hpp"
+#include "list/marklincanlocomotivelistwidget.hpp"
 #include "objectlist/throttleobjectlistwidget.hpp"
 #include "object/luascripteditwidget.hpp"
 #include "object/objecteditwidget.hpp"
@@ -58,6 +59,10 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
     return new OutputMapWidget(outputMap, parent);
   else if(classId == "input_map.block" || classId == "decoder_functions")
     return new ItemsEditWidget(object, parent);
+  else if(classId == "marklin_can_node_list")
+    return new ListWidget(object, parent);
+  else if(classId == "marklin_can_locomotive_list")
+    return new MarklinCANLocomotiveListWidget(object, parent);
   else
     return nullptr;
 }

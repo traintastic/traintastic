@@ -58,6 +58,7 @@ class DecoderController
 
     DecoderVector::iterator findDecoder(const Decoder& decoder);
     DecoderVector::iterator findDecoder(DecoderProtocol protocol, uint16_t address);
+    DecoderVector::iterator findDecoderMFX(uint32_t mfxUID);
 
     /// \brief restore speed of all decoders that are not (emergency) stopped
     void restoreDecoderSpeed();

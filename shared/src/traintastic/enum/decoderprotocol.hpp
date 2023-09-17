@@ -31,19 +31,37 @@ enum class DecoderProtocol : uint8_t
   None = 0,
   DCCShort = 1,
   Motorola = 2,
-  //MFX = 3,
+  MFX = 3,
   Selectrix = 4,
   //FMZ = 5,
   DCCLong = 6,
 };
 
-TRAINTASTIC_ENUM(DecoderProtocol, "decoder_protocol", 5,
+TRAINTASTIC_ENUM(DecoderProtocol, "decoder_protocol", 6,
 {
   {DecoderProtocol::None, "none"},
   {DecoderProtocol::DCCShort, "dcc_short"},
   {DecoderProtocol::Motorola, "motorola"},
+  {DecoderProtocol::MFX, "mfx"},
   {DecoderProtocol::Selectrix, "selectrix"},
   {DecoderProtocol::DCCLong, "dcc_long"},
 });
+
+constexpr bool hasAddress(DecoderProtocol value)
+{
+  switch(value)
+  {
+    case DecoderProtocol::DCCShort:
+    case DecoderProtocol::DCCLong:
+    case DecoderProtocol::Motorola:
+    case DecoderProtocol::Selectrix:
+      return true;
+
+    case DecoderProtocol::None:
+    case DecoderProtocol::MFX:
+      return false;
+  }
+  return false;
+}
 
 #endif

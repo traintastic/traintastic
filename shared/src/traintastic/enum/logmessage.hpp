@@ -78,6 +78,7 @@ enum class LogMessage : uint32_t
   I1006_X = LogMessageOffset::info + 1006, //!< boost version
   I1007_X = LogMessageOffset::info + 1007, //!< nlohmann::json version
   I1008_X = LogMessageOffset::info + 1008, //!< LibArchive version
+  I1009_ZLIB_X = LogMessageOffset::info + 1009, //!< zlib version
   I2001_UNKNOWN_LOCO_ADDRESS_X = LogMessageOffset::info + 2001,
   I2002_HARDWARE_TYPE_X = LogMessageOffset::info + 2002,
   I2003_FIRMWARE_VERSION_X = LogMessageOffset::info + 2003,
@@ -140,6 +141,7 @@ enum class LogMessage : uint32_t
   W2007_COMMAND_STATION_DOES_NOT_SUPPORT_THE_FAST_CLOCK_SLOT = LogMessageOffset::warning + 2007,
   W2018_TIMEOUT_NO_ECHO_WITHIN_X_MS = LogMessageOffset::warning + 2018,
   W2019_Z21_BROADCAST_FLAG_MISMATCH = LogMessageOffset::warning + 2019,
+  W9001_EXECUTION_TOOK_X_US = LogMessageOffset::warning + 9001,
   W9999_X = LogMessageOffset::warning + 9999,
 
   // Error:
@@ -172,6 +174,9 @@ enum class LogMessage : uint32_t
   E2019_TIMEOUT_NO_RESPONSE_WITHIN_X_MS = LogMessageOffset::error + 2019,
   E2020_TOTAL_NUMBER_OF_MODULES_MAY_NOT_EXCEED_X  = LogMessageOffset::error + 2020,
   E2021_STARTING_PCAP_LOG_FAILED_X = LogMessageOffset::error + 2021,
+  E2022_SOCKET_CREATE_FAILED_X = LogMessageOffset::error + 2022,
+  E2023_SOCKET_IOCTL_FAILED_X = LogMessageOffset::error + 2023,
+  E2024_UNKNOWN_LOCOMOTIVE_MFX_UID_X = LogMessageOffset::error + 2024,
   E9001_X_DURING_EXECUTION_OF_X_EVENT_HANDLER = LogMessageOffset::error + 9001,
   E9999_X = LogMessageOffset::error + 9999,
 
@@ -191,6 +196,7 @@ enum class LogMessage : uint32_t
   C1013_CANT_LOAD_WORLD_SAVED_WITH_NEWER_VERSION_REQUIRES_AT_LEAST_X = LogMessageOffset::critical + 1013,
   C2001_ADDRESS_ALREADY_USED_AT_X = LogMessageOffset::critical + 2001,
   C2004_CANT_GET_FREE_SLOT = LogMessageOffset::critical + 2004,
+  C2005_SOCKETCAN_IS_ONLY_AVAILABLE_ON_LINUX = LogMessageOffset::critical + 2005,
   C9999_X = LogMessageOffset::critical + 9999,
 
   // Fatal:

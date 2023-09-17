@@ -23,24 +23,21 @@
 #ifndef TRAINTASTIC_CLIENT_WIDGET_OBJECTLIST_OBJECTLISTWIDGET_HPP
 #define TRAINTASTIC_CLIENT_WIDGET_OBJECTLIST_OBJECTLISTWIDGET_HPP
 
-#include <QWidget>
+#include "../list/listwidget.hpp"
 #include "../../network/objectptr.hpp"
 
 class QToolBar;
 class QToolButton;
-class TableWidget;
 class MethodAction;
 
-class ObjectListWidget : public QWidget
+class ObjectListWidget : public ListWidget
 {
   Q_OBJECT
 
   private:
-    int m_requestId;
     int m_requestIdCreate;
     int m_requestIdInputMonitor;
     int m_requestIdOutputKeyboard;
-    ObjectPtr m_object;
     QToolBar* m_toolbar;
     QToolButton* m_buttonCreate;
     QAction* m_actionCreate;
@@ -55,16 +52,12 @@ class ObjectListWidget : public QWidget
     MethodAction* m_actionInputMonitorChannel;
     MethodAction* m_actionOutputKeyboard;
     MethodAction* m_actionOutputKeyboardChannel;
-    TableWidget* m_tableWidget;
-
-    void tableSelectionChanged();
-
-  private slots:
-    void tableDoubleClicked(const QModelIndex& index);
 
   protected:
-    const ObjectPtr& object() { return m_object; }
     QToolBar* toolbar() { return m_toolbar; }
+
+    void tableSelectionChanged() override;
+    void tableDoubleClicked(const QModelIndex& index) override;
 
     virtual void tableSelectionChanged(bool hasSelection);
     virtual void objectDoubleClicked(const QString& id);

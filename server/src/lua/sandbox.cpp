@@ -288,7 +288,43 @@ int Sandbox::pcall(lua_State* L, int nargs, int nresults, int errfunc)
       return LUA_ERRRUN;
     }
   }
-  return lua_pcall(L, nargs, nresults, errfunc);
+
+  // limit execution time:
+  // Only start for first pcall, a pcall can cause another pcall.
+  const bool firstCall = lua_gethook(L) == nullptr;
+  if(firstCall)
+  {
+    auto& stateData = getStateData(L);
+    stateData.pcallStart = std::chrono::steady_clock::now();
+    stateData.pcallExecutionTimeViolation = false;
+    lua_sethook(L, hook, LUA_MASKCOUNT, 1000);
+  }
+
+  const int r = lua_pcall(L, nargs, nresults, errfunc);
+
+  if(firstCall)
+  {
+    if(!getStateData(L).pcallExecutionTimeViolation)
+    {
+      const auto duration = (std::chrono::steady_clock::now() - getStateData(L).pcallStart);
+      if(duration >= pcallDurationWarning)
+      {
+        ::Log::log(getStateData(L).script(), LogMessage::W9001_EXECUTION_TOOK_X_US, std::chrono::duration_cast<std::chrono::microseconds>(duration).count());
+      }
+    }
+    lua_sethook(L, nullptr, 0, 0);
+  }
+
+  return r;
+}
+
+void Sandbox::hook(lua_State* L, lua_Debug* /*ar*/)
+{
+  if((std::chrono::steady_clock::now() - getStateData(L).pcallStart) > pcallDurationMax)
+  {
+    getStateData(L).pcallExecutionTimeViolation = true;
+    luaL_error(L, "Exceeded maximum execution time.");
+  }
 }
 
 Sandbox::StateData::~StateData()

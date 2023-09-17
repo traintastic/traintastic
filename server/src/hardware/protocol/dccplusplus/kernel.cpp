@@ -282,7 +282,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
 {
   if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Throttle | DecoderChangeFlags::Direction))
   {
-    const uint8_t speed = Decoder::throttleToSpeedStep(decoder.throttle, 126);
+    const uint8_t speed = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 126);
     m_ioContext.post(
       [this, address=decoder.address.value(), emergencyStop=decoder.emergencyStop.value(), speed, direction=decoder.direction.value()]()
       {

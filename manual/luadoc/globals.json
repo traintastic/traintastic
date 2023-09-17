@@ -1,0 +1,82 @@
+{
+  "assert": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "pairs": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "ipairs": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "next": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "tonumber": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "tostring": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "type": {
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "VERSION": {
+    "type": "constant"
+  },
+  "VERSION_MAJOR": {
+    "type": "constant"
+  },
+  "VERSION_MINOR": {
+    "type": "constant"
+  },
+  "VERSION_PATCH": {
+    "type": "constant"
+  },
+  "LUA_VERSION": {
+    "type": "constant"
+  },
+  "world": {
+    "type": "object"
+  },
+  "log": {
+    "type": "library"
+  },
+  "class": {
+    "type": "library"
+  },
+  "enum": {
+    "type": "library"
+  },
+  "math": {
+    "type": "library"
+  },
+  "set": {
+    "type": "library"
+  },
+  "string": {
+    "type": "library"
+  },
+  "table": {
+    "type": "library"
+  }
+}

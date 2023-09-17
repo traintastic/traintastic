@@ -24,15 +24,12 @@
 #include <QVBoxLayout>
 #include <QToolBar>
 #include <QTableView>
-#include <QtWaitingSpinner/waitingspinnerwidget.h>
 #include <traintastic/locale/locale.hpp>
 #include "../tablewidget.hpp"
 #include "../../network/connection.hpp"
 #include "../../network/object.hpp"
 #include "../../network/method.hpp"
-#include "../../network/utils.hpp"
 #include "../../network/callmethod.hpp"
-#include "../alertwidget.hpp"
 #include "../../theme/theme.hpp"
 #include "../../misc/methodaction.hpp"
 #include "../../dialog/objectselectlistdialog.hpp"
@@ -47,11 +44,10 @@
 
 
 
-ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
-  QWidget(parent),
+ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
+  ListWidget(object_, parent),
   m_requestIdInputMonitor{Connection::invalidRequestId},
   m_requestIdOutputKeyboard{Connection::invalidRequestId},
-  m_object{object},
   m_toolbar{new QToolBar()},
   m_buttonCreate{nullptr},
   m_actionCreate{nullptr},
@@ -60,45 +56,11 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
   m_actionInputMonitor{nullptr},
   m_actionInputMonitorChannel{nullptr},
   m_actionOutputKeyboard{nullptr},
-  m_actionOutputKeyboardChannel{nullptr},
-  m_tableWidget{new TableWidget()}
+  m_actionOutputKeyboardChannel{nullptr}
 {
-  setWindowIcon(Theme::getIconForClassId(m_object->classId()));
+  static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, m_toolbar);
 
-  m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-  QVBoxLayout* layout = new QVBoxLayout();
-  layout->setContentsMargins(0, 0, 0, 0);
-  layout->addWidget(m_toolbar);
-  layout->addWidget(m_tableWidget);
-  setLayout(layout);
-
-  auto* spinner = new WaitingSpinnerWidget(this, true, false);
-  spinner->start();
-
-  m_requestId = m_object->connection()->getTableModel(m_object,
-    [this, spinner](const TableModelPtr& tableModel, Message::ErrorCode ec)
-    {
-      if(tableModel)
-      {
-        m_requestId = Connection::invalidRequestId;
-
-        m_tableWidget->setTableModel(tableModel);
-        connect(m_tableWidget, &TableWidget::doubleClicked, this, &ObjectListWidget::tableDoubleClicked);
-        connect(m_tableWidget->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-          [this](const QItemSelection&, const QItemSelection&)
-          {
-            tableSelectionChanged();
-          });
-        tableSelectionChanged();
-
-        delete spinner;
-      }
-      else
-        static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(errorCodeToText(ec)));
-    });
-
-  if(Method* method = m_object->getMethod("create");
+  if(Method* method = object()->getMethod("create");
      method && method->resultType() == ValueType::Object)
   {
     if(method->argumentTypes().size() == 0) // Create method witout argument
@@ -107,7 +69,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
         [this, method]()
         {
           if(m_requestIdCreate != Connection::invalidRequestId)
-            m_object->connection()->cancelRequest(m_requestIdCreate);
+            object()->connection()->cancelRequest(m_requestIdCreate);
 
           m_requestIdCreate = method->call(
             [this](const ObjectPtr& addedObject, Message::ErrorCode /*ec*/)
@@ -146,7 +108,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
           [this, method, action]()
           {
             if(m_requestIdCreate != Connection::invalidRequestId)
-              m_object->connection()->cancelRequest(m_requestIdCreate);
+              object()->connection()->cancelRequest(m_requestIdCreate);
 
             m_requestIdCreate = method->call(action->data().toString(),
               [this](const ObjectPtr& addedObject, Message::ErrorCode /*ec*/)
@@ -177,7 +139,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
       Q_ASSERT(false); // unsupported method prototype
   }
 
-  if(Method* method = m_object->getMethod("add");
+  if(Method* method = object()->getMethod("add");
      method &&
      method->argumentTypes().size() == 1 &&  method->argumentTypes()[0] == ValueType::Object &&
      method->resultType() == ValueType::Invalid)
@@ -204,7 +166,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
     });
   m_actionEdit->setEnabled(false);
 
-  if(Method* method = m_object->getMethod("remove"))
+  if(Method* method = object()->getMethod("remove"))
   {
     m_actionRemove = new MethodAction(Theme::getIcon("remove"), *method,
       [this]()
@@ -216,7 +178,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
     m_toolbar->addAction(m_actionRemove);
   }
 
-  if(Method* method = m_object->getMethod("delete"))
+  if(Method* method = object()->getMethod("delete"))
   {
     m_actionDelete = new MethodAction(Theme::getIcon("delete"), *method,
       [this]()
@@ -228,7 +190,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
     m_toolbar->addAction(m_actionDelete);
   }
 
-  if(Method* move = m_object->getMethod("move"))
+  if(Method* move = object()->getMethod("move"))
   {
     m_actionMoveUp = new MethodAction(Theme::getIcon("up"), *move,
       [this]()
@@ -265,12 +227,12 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
     m_actionMoveDown->setForceDisabled(true);
   }
 
-  if(Method* method = m_object->getMethod("reverse"))
+  if(Method* method = object()->getMethod("reverse"))
   {
     m_actionReverse = new MethodAction(Theme::getIcon("reverse"), *method);
   }
 
-  if(Method* method = m_object->getMethod("input_monitor"))
+  if(Method* method = object()->getMethod("input_monitor"))
   {
     m_actionInputMonitor = new MethodAction(Theme::getIcon("input_monitor"), *method,
       [this]()
@@ -284,7 +246,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
       });
   }
 
-  if(Method* method = m_object->getMethod("input_monitor_channel"))
+  if(Method* method = object()->getMethod("input_monitor_channel"))
   {
     if(const auto values = method->getAttribute(AttributeName::Values, QVariant()).toList(); !values.isEmpty())
     {
@@ -321,7 +283,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
     }
   }
 
-  if(Method* method = m_object->getMethod("output_keyboard"))
+  if(Method* method = object()->getMethod("output_keyboard"))
   {
     m_actionOutputKeyboard = new MethodAction(Theme::getIcon("output_keyboard"), *method,
       [this]()
@@ -338,7 +300,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
       });
   }
 
-  if(Method* method = m_object->getMethod("output_keyboard_channel"))
+  if(Method* method = object()->getMethod("output_keyboard_channel"))
   {
     if(const auto values = method->getAttribute(AttributeName::Values, QVariant()).toList(); !values.isEmpty())
     {
@@ -413,11 +375,11 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
 
   {
     QAction* startAll = nullptr;
-    if(Method* method = m_object->getMethod("start_all"))
+    if(Method* method = object()->getMethod("start_all"))
       startAll = new MethodAction(Theme::getIcon("run"), *method);
 
     QAction* stopAll = nullptr;
-    if(Method* method = m_object->getMethod("stop_all"))
+    if(Method* method = object()->getMethod("stop_all"))
       stopAll = new MethodAction(Theme::getIcon("stop"), *method);
 
     if(startAll || stopAll)
@@ -433,13 +395,15 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object, QWidget* parent) :
 
 ObjectListWidget::~ObjectListWidget()
 {
-  m_object->connection()->cancelRequest(m_requestId);
+  object()->connection()->cancelRequest(m_requestIdCreate);
+  object()->connection()->cancelRequest(m_requestIdInputMonitor);
+  object()->connection()->cancelRequest(m_requestIdOutputKeyboard);
 }
 
 void ObjectListWidget::objectDoubleClicked(const QString& id)
 {
   SubWindowType type = SubWindowType::Object;
-  if(m_object->classId() == "list.board")
+  if(object()->classId() == "list.board")
     type = SubWindowType::Board;
   MainWindow::instance->showObject(id, "", type);
 }

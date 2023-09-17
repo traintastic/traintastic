@@ -1,0 +1,44 @@
+{
+  "concat": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "insert": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "pack": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "unpack": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "remove": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "move": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  },
+  "sort": {
+    "is_lua_builtin": true,
+    "type": "function",
+    "parameters": [],
+    "return_values": 0
+  }
+}

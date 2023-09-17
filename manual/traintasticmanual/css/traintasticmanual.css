@@ -76,13 +76,18 @@ img.img-float-right
 
 /** CONTENT ******************************************************************/
 
-.content
+.content,
+nav
 {
   margin: 0 auto;
   padding: 0 2em;
   max-width: 1000px;
-  margin-bottom: 50px;
   line-height: 1.6em;
+}
+
+.content
+{
+  margin-bottom: 50px;
 }
 
 .content .center
@@ -231,6 +236,70 @@ p.note span.label
   display: block;
   font-weight: bold;
   text-transform: uppercase;
+}
+
+/** LuaDoc *******************************************************************/
+
+nav ul
+{
+  list-style: none;
+  border-bottom: solid #808080 1px;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li
+{
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li:not(:last-child)::after
+{
+  content: '\00BB';
+  display: inline-block;
+}
+
+nav ul li a
+{
+  padding: 0 0.2em;
+  margin: 0;
+}
+
+div.index-az
+{
+  column-count: 3;
+}
+
+ul.index-az-nav
+{
+  list-style: none;
+}
+
+ul.index-az-nav li
+{
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+ul.index-az-nav li::before
+{
+  content: '\2022';
+  display: inline-block;
+}
+
+ul.index-az-nav li:last-child::after
+{
+  content: '\2022';
+  display: inline-block;
+}
+
+ul.index-az-nav li a
+{
+  padding: 0 0.2em 0 0;
+  margin: 0;
 }
 
 /** Lua **********************************************************************/

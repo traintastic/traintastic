@@ -177,6 +177,12 @@ struct Attributes
     item.setAttribute(AttributeName::Visible, value);
   }
 
+  static inline void setVisible(std::initializer_list<std::reference_wrapper<InterfaceItem>> items, bool value)
+  {
+    for(auto& item : items)
+      item.get().setAttribute(AttributeName::Visible, value);
+  }
+
   static inline void addObjectEditor(InterfaceItem& item, bool value)
   {
     item.addAttribute(AttributeName::ObjectEditor, value);
