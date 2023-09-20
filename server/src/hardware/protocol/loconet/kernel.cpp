@@ -36,6 +36,7 @@
 #include "../../../pcap/pcappipe.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
+#include "../../../log/logmessageexception.hpp"
 #include "../../../clock/clock.hpp"
 #include "../../../traintastic/traintastic.hpp"
 #include "../dcc/dcc.hpp"
@@ -260,7 +261,20 @@ void Kernel::start()
       if(m_config.pcap)
         startPCAP(m_config.pcapOutput);
 
-      m_ioHandler->start();
+      try
+      {
+        m_ioHandler->start();
+      }
+      catch(const LogMessageException& e)
+      {
+        EventLoop::call(
+          [this, e]()
+          {
+            Log::log(logId(), e.message(), e.args());
+            error();
+          });
+        return;
+      }
 
       if(m_config.fastClock == LocoNetFastClock::Master)
         setFastClockMaster(true);

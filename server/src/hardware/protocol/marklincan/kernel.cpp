@@ -36,6 +36,7 @@
 #include "../../output/outputcontroller.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
+#include "../../../log/logmessageexception.hpp"
 #include "../../../traintastic/traintastic.hpp"
 #include "../../../utils/inrange.hpp"
 #include "../../../utils/setthreadname.hpp"
@@ -163,7 +164,20 @@ void Kernel::start()
   m_ioContext.post(
     [this]()
     {
-      m_ioHandler->start();
+      try
+      {
+        m_ioHandler->start();
+      }
+      catch(const LogMessageException& e)
+      {
+        EventLoop::call(
+          [this, e]()
+          {
+            Log::log(logId(), e.message(), e.args());
+            error();
+          });
+        return;
+      }
 
       // add Traintastic to the node list
       {

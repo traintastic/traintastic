@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,7 @@
 #include "../../../utils/setthreadname.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
+#include "../../../log/logmessageexception.hpp"
 
 namespace Z21 {
 
@@ -56,7 +57,20 @@ void Kernel::start()
   m_ioContext.post(
     [this]()
     {
-      m_ioHandler->start();
+      try
+      {
+        m_ioHandler->start();
+      }
+      catch(const LogMessageException& e)
+      {
+        EventLoop::call(
+          [this, e]()
+          {
+            Log::log(logId(), e.message(), e.args());
+            //! \todo error();
+          });
+        return;
+      }
 
       onStart();
 

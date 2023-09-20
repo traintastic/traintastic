@@ -30,6 +30,7 @@
 #include "../../../core/method.tpp"
 #include "../../../clock/clock.hpp"
 #include "../../../log/log.hpp"
+#include "../../../log/logmessageexception.hpp"
 #include "../../../utils/fromchars.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../utils/startswith.hpp"
@@ -138,7 +139,20 @@ void Kernel::start()
   m_ioContext.post(
     [this]()
     {
-      m_ioHandler->start();
+      try
+      {
+        m_ioHandler->start();
+      }
+      catch(const LogMessageException& e)
+      {
+        EventLoop::call(
+          [this, e]()
+          {
+            Log::log(logId(), e.message(), e.args());
+            //! \todo error();
+          });
+        return;
+      }
 
       if(m_onStarted)
         EventLoop::call(

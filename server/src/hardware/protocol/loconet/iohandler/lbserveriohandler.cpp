@@ -77,18 +77,16 @@ static std::vector<std::byte> readHexBytes(std::string_view text)
 
 namespace LocoNet {
 
-LBServerIOHandler::LBServerIOHandler(Kernel& kernel, const std::string& hostname, uint16_t port)
-  : TCPIOHandler(kernel, hostname, port)
+LBServerIOHandler::LBServerIOHandler(Kernel& kernel, std::string hostname, uint16_t port)
+  : TCPIOHandler(kernel, std::move(hostname), port)
   , m_readBufferOffset{0}
-{
-}
-
-LBServerIOHandler::~LBServerIOHandler()
 {
 }
 
 void LBServerIOHandler::start()
 {
+  TCPIOHandler::start();
+
   read();
 }
 

@@ -32,6 +32,7 @@
 #include "../../../core/eventloop.hpp"
 #include "../../../core/objectproperty.tpp"
 #include "../../../log/log.hpp"
+#include "../../../log/logmessageexception.hpp"
 #include "../../../world/world.hpp"
 
 namespace TraintasticDIY {
@@ -119,7 +120,20 @@ void Kernel::start()
   m_ioContext.post(
     [this]()
     {
-      m_ioHandler->start();
+      try
+      {
+        m_ioHandler->start();
+      }
+      catch(const LogMessageException& e)
+      {
+        EventLoop::call(
+          [this, e]()
+          {
+            Log::log(logId(), e.message(), e.args());
+            //! \todo error();
+          });
+        return;
+      }
 
       send(GetInfo());
       send(GetFeatures());

@@ -29,19 +29,17 @@
 
 namespace LocoNet {
 
-TCPBinaryIOHandler::TCPBinaryIOHandler(Kernel& kernel, const std::string& hostname, uint16_t port)
-  : TCPIOHandler(kernel, hostname, port)
+TCPBinaryIOHandler::TCPBinaryIOHandler(Kernel& kernel, std::string hostname, uint16_t port)
+  : TCPIOHandler(kernel, std::move(hostname), port)
   , m_readBufferOffset{0}
   , m_writeBufferOffset{0}
 {
 }
 
-TCPBinaryIOHandler::~TCPBinaryIOHandler()
-{
-}
-
 void TCPBinaryIOHandler::start()
 {
+  TCPIOHandler::start();
+
   read();
 }
 

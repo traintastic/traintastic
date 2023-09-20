@@ -28,6 +28,7 @@
 #include "../../../utils/setthreadname.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
+#include "../../../log/logmessageexception.hpp"
 
 namespace XpressNet {
 
@@ -81,7 +82,20 @@ void Kernel::start()
   m_ioContext.post(
     [this]()
     {
-      m_ioHandler->start();
+      try
+      {
+        m_ioHandler->start();
+      }
+      catch(const LogMessageException& e)
+      {
+        EventLoop::call(
+          [this, e]()
+          {
+            Log::log(logId(), e.message(), e.args());
+            error();
+          });
+        return;
+      }
 
       if(m_onStarted)
         EventLoop::call(

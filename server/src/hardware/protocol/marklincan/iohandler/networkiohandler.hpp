@@ -59,7 +59,7 @@ class NetworkIOHandler : public IOHandler
     static void toNetworkMessage(const Message& message, NetworkMessage& networkMessage);
 
   public:
-    void start() final;
+    void start() override;
 
     bool send(const Message& message) final;
 };

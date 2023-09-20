@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,8 @@ namespace XpressNet {
 class TCPIOHandler final : public HardwareIOHandler
 {
   private:
+    const std::string m_hostname;
+    const uint16_t m_port;
     boost::asio::ip::tcp::socket m_socket;
     boost::asio::ip::tcp::endpoint m_endpoint;
 
@@ -38,8 +40,7 @@ class TCPIOHandler final : public HardwareIOHandler
     void write() final;
 
   public:
-    TCPIOHandler(Kernel& kernel, const std::string& hostname, uint16_t port);
-    ~TCPIOHandler() final;
+    TCPIOHandler(Kernel& kernel, std::string hostname, uint16_t port);
 
     void start() final;
     void stop() final;

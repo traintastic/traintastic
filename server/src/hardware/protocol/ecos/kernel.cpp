@@ -42,6 +42,7 @@
 #include "../../../utils/tohex.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
+#include "../../../log/logmessageexception.hpp"
 
 #define ASSERT_IS_KERNEL_THREAD assert(std::this_thread::get_id() == m_thread.get_id())
 
@@ -146,7 +147,20 @@ void Kernel::start()
   m_ioContext.post(
     [this]()
     {
-      m_ioHandler->start();
+      try
+      {
+        m_ioHandler->start();
+      }
+      catch(const LogMessageException& e)
+      {
+        EventLoop::call(
+          [this, e]()
+          {
+            Log::log(logId(), e.message(), e.args());
+            //! \todo error();
+          });
+        return;
+      }
 
       m_objects.add(std::make_unique<ECoS>(*this));
       m_objects.add(std::make_unique<LocomotiveManager>(*this));

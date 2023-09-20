@@ -29,16 +29,20 @@
 
 namespace MarklinCAN {
 
-TCPIOHandler::TCPIOHandler(Kernel& kernel, const std::string& hostname)
+TCPIOHandler::TCPIOHandler(Kernel& kernel, std::string hostname)
   : NetworkIOHandler(kernel)
+  , m_hostname{std::move(hostname)}
   , m_socket{m_kernel.ioContext()}
   , m_readBufferOffset{0}
+{
+}
 
+void TCPIOHandler::start()
 {
   boost::system::error_code ec;
 
   m_endpoint.port(port);
-  m_endpoint.address(boost::asio::ip::make_address(hostname, ec));
+  m_endpoint.address(boost::asio::ip::make_address(m_hostname, ec));
   if(ec)
     throw LogMessageException(LogMessage::E2003_MAKE_ADDRESS_FAILED_X, ec);
 
@@ -48,6 +52,8 @@ TCPIOHandler::TCPIOHandler(Kernel& kernel, const std::string& hostname)
 
   m_socket.set_option(boost::asio::socket_base::linger(true, 0));
   m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
+
+  NetworkIOHandler::start();
 }
 
 void TCPIOHandler::stop()
