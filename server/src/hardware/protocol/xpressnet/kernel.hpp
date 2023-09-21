@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_KERNEL_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_KERNEL_HPP
 
+#include "../kernelbase.hpp"
 #include <array>
 #include <thread>
 #include <boost/asio/io_context.hpp>
@@ -42,16 +43,13 @@ namespace XpressNet {
 
 struct Message;
 
-class Kernel
+class Kernel : public ::KernelBase
 {
   private:
     boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
     std::thread m_thread;
-    std::string m_logId;
-    std::function<void()> m_onStarted;
-    std::function<void()> m_onError;
 
     TriState m_trackPowerOn;
     TriState m_emergencyStop;
@@ -68,11 +66,8 @@ class Kernel
     //std::array<TriState, 2048> m_outputValues;
 
     Config m_config;
-#ifndef NDEBUG
-    bool m_started;
-#endif
 
-    Kernel(const Config& config, bool simulation);
+    Kernel(std::string logId_, const Config& config, bool simulation);
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
 
@@ -110,10 +105,10 @@ class Kernel
      * @return The kernel instance
      */
     template<class IOHandlerType, class... Args>
-    static std::unique_ptr<Kernel> create(const Config& config, Args... args)
+    static std::unique_ptr<Kernel> create(std::string logId_, const Config& config, Args... args)
     {
       static_assert(std::is_base_of_v<IOHandler, IOHandlerType>);
-      std::unique_ptr<Kernel> kernel{new Kernel(config, isSimulation<IOHandlerType>())};
+      std::unique_ptr<Kernel> kernel{new Kernel(std::move(logId_), config, isSimulation<IOHandlerType>())};
       kernel->setIOHandler(std::make_unique<IOHandlerType>(*kernel, std::forward<Args>(args)...));
       return kernel;
     }
@@ -132,45 +127,11 @@ class Kernel
     }
 
     /**
-     *
-     *
-     */
-    inline const std::string& logId() { return m_logId; }
-
-    /**
-     * @brief Set object id used for log messages
-     *
-     * @param[in] value The object id
-     */
-    inline void setLogId(std::string value)
-    {
-      m_logId = std::move(value);
-    }
-
-    /**
      * @brief Set XpressNet configuration
      *
      * @param[in] config The XpressNet configuration
      */
     void setConfig(const Config& config);
-
-    /**
-     * @brief ...
-     *
-     * @param[in] callback ...
-     * @note This function may not be called when the kernel is running.
-     */
-    inline void setOnStarted(std::function<void()> callback)
-    {
-      assert(!m_started);
-      m_onStarted = std::move(callback);
-    }
-
-    //! \brief Register error handler
-    //! Once this handler is called the XpressNet communication is stopped.
-    //! \param[in] callback Handler to call in case of an error.
-    //! \note This function may not be called when the kernel is running.
-    void setOnError(std::function<void()> callback);
 
     /**
      * @brief ...
@@ -263,11 +224,6 @@ class Kernel
      * @note This function must run in the kernel's IO context
      */
     void receive(const Message& message);
-
-    //! Must be called by the IO handler in case of a fatal error.
-    //! This will put the interface in error state
-    //! \note This function must run in the event loop thread
-    void error();
 
     /**
      *

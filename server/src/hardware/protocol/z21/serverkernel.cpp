@@ -30,8 +30,9 @@
 
 namespace Z21 {
 
-ServerKernel::ServerKernel(const ServerConfig& config, std::shared_ptr<DecoderList> decoderList)
-  : m_inactiveClientPurgeTimer{m_ioContext}
+ServerKernel::ServerKernel(std::string logId_, const ServerConfig& config, std::shared_ptr<DecoderList> decoderList)
+  : Kernel(std::move(logId_))
+  , m_inactiveClientPurgeTimer{m_ioContext}
   , m_config{config}
   , m_decoderList{std::move(decoderList)}
 {
@@ -80,7 +81,7 @@ void ServerKernel::receiveFrom(const Message& message, IOHandler::ClientId clien
     EventLoop::call(
       [this, clientId, msg=toString(message)]()
       {
-        Log::log(m_logId, LogMessage::D2005_X_RX_X, clientId, msg);
+        Log::log(logId, LogMessage::D2005_X_RX_X, clientId, msg);
       });
 
   m_clients[clientId].lastSeen = std::chrono::steady_clock::now();
@@ -306,7 +307,7 @@ void ServerKernel::sendTo(const Message& message, IOHandler::ClientId clientId)
       EventLoop::call(
         [this, clientId, msg=toString(message)]()
         {
-          Log::log(m_logId, LogMessage::D2004_X_TX_X, clientId, msg);
+          Log::log(logId, LogMessage::D2004_X_TX_X, clientId, msg);
         });
   }
   else

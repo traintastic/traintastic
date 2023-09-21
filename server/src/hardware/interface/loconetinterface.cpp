@@ -269,26 +269,26 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
     {
       if(simulation)
       {
-        m_kernel = LocoNet::Kernel::create<LocoNet::SimulationIOHandler>(loconet->config());
+        m_kernel = LocoNet::Kernel::create<LocoNet::SimulationIOHandler>(id.value(), loconet->config());
       }
       else
       {
         switch(type)
         {
           case LocoNetInterfaceType::Serial:
-            m_kernel = LocoNet::Kernel::create<LocoNet::SerialIOHandler>(loconet->config(), device.value(), baudrate.value(), flowControl.value());
+            m_kernel = LocoNet::Kernel::create<LocoNet::SerialIOHandler>(id.value(), loconet->config(), device.value(), baudrate.value(), flowControl.value());
             break;
 
           case LocoNetInterfaceType::TCPBinary:
-            m_kernel = LocoNet::Kernel::create<LocoNet::TCPBinaryIOHandler>(loconet->config(), hostname.value(), port.value());
+            m_kernel = LocoNet::Kernel::create<LocoNet::TCPBinaryIOHandler>(id.value(), loconet->config(), hostname.value(), port.value());
             break;
 
           case LocoNetInterfaceType::LBServer:
-            m_kernel = LocoNet::Kernel::create<LocoNet::LBServerIOHandler>(loconet->config(), hostname.value(), port.value());
+            m_kernel = LocoNet::Kernel::create<LocoNet::LBServerIOHandler>(id.value(), loconet->config(), hostname.value(), port.value());
             break;
 
           case LocoNetInterfaceType::Z21:
-            m_kernel = LocoNet::Kernel::create<LocoNet::Z21IOHandler>(loconet->config(), hostname.value());
+            m_kernel = LocoNet::Kernel::create<LocoNet::Z21IOHandler>(id.value(), loconet->config(), hostname.value());
             break;
 
           default:
@@ -299,7 +299,6 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
 
       setState(InterfaceState::Initializing);
 
-      m_kernel->setLogId(id.value());
       m_kernel->setOnStarted(
         [this]()
         {
@@ -445,12 +444,6 @@ void LocoNetInterface::worldEvent(WorldState state, WorldEvent event)
         break;
     }
   }
-}
-
-void LocoNetInterface::idChanged(const std::string& newId)
-{
-  if(m_kernel)
-    m_kernel->setLogId(newId);
 }
 
 void LocoNetInterface::typeChanged()

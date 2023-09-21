@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_KERNEL_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_KERNEL_HPP
 
+#include "../kernelbase.hpp"
 #include <thread>
 #include <unordered_map>
 #include <boost/asio/io_context.hpp>
@@ -48,7 +49,7 @@ class SwitchManager;
 class Feedback;
 struct Simulation;
 
-class Kernel
+class Kernel : public ::KernelBase
 {
   friend class Object;
   friend class ECoS;
@@ -112,8 +113,6 @@ class Kernel
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
     std::thread m_thread;
-    std::string m_logId;
-    std::function<void()> m_onStarted;
 
     Objects m_objects;
 
@@ -125,11 +124,8 @@ class Kernel
     OutputController* m_outputController;
 
     Config m_config;
-#ifndef NDEBUG
-    bool m_started;
-#endif
 
-    Kernel(const Config& config, bool simulation);
+    Kernel(std::string logId_, const Config& config, bool simulation);
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
 
@@ -169,10 +165,10 @@ class Kernel
      * @return The kernel instance
      */
     template<class IOHandlerType, class... Args>
-    static std::unique_ptr<Kernel> create(const Config& config, Args... args)
+    static std::unique_ptr<Kernel> create(std::string logId_, const Config& config, Args... args)
     {
       static_assert(std::is_base_of_v<IOHandler, IOHandlerType>);
-      std::unique_ptr<Kernel> kernel{new Kernel(config, isSimulation<IOHandlerType>())};
+      std::unique_ptr<Kernel> kernel{new Kernel(std::move(logId_), config, isSimulation<IOHandlerType>())};
       kernel->setIOHandler(std::make_unique<IOHandlerType>(*kernel, std::forward<Args>(args)...));
       return kernel;
     }
@@ -190,32 +186,10 @@ class Kernel
     }
 
     /**
-     * @brief Get object id used for log messages
-     * @return The object id
-     */
-    inline const std::string& logId()
-    {
-      return m_logId;
-    }
-
-    /**
-     * @brief Set object id used for log messages
-     * @param[in] value The object id
-     */
-    void setLogId(std::string value) { m_logId = std::move(value); }
-
-    /**
      * @brief Set ECoS configuration
      * @param[in] config The LocoNet configuration
      */
     void setConfig(const Config& config);
-
-    /**
-     * @brief ...
-     * @param[in] callback ...
-     * @note This function may not be called when the kernel is running.
-     */
-    void setOnStarted(std::function<void()> callback);
 
     /**
      * @brief ...

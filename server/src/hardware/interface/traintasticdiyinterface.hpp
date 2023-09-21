@@ -56,8 +56,6 @@ class TraintasticDIYInterface final
     void loaded() final;
     void destroying() final;
 
-    void idChanged(const std::string& newId) final;
-
     void updateVisible();
 
   protected:

@@ -59,7 +59,6 @@ class MarklinCANInterface final
     void destroying() final;
     void worldEvent(WorldState state, WorldEvent event) final;
 
-    void idChanged(const std::string& newId) final;
     void typeChanged();
 
   protected:

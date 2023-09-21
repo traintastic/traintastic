@@ -185,16 +185,15 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
     {
       if(simulation)
       {
-        m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SimulationIOHandler>(dccplusplus->config());
+        m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SimulationIOHandler>(id.value(), dccplusplus->config());
       }
       else
       {
-        m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SerialIOHandler>(dccplusplus->config(), device.value(), baudrate.value(), SerialFlowControl::None);
+        m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SerialIOHandler>(id.value(), dccplusplus->config(), device.value(), baudrate.value(), SerialFlowControl::None);
       }
 
       setState(InterfaceState::Initializing);
 
-      m_kernel->setLogId(id.value());
       m_kernel->setOnStarted(
         [this]()
         {
@@ -215,6 +214,12 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
 
           if(powerOn)
             m_kernel->powerOn();
+        });
+      m_kernel->setOnError(
+        [this]()
+        {
+          setState(InterfaceState::Error);
+          online = false; // communication no longer possible
         });
       m_kernel->setOnPowerOnChanged(
         [this](bool powerOn)
@@ -338,12 +343,6 @@ void DCCPlusPlusInterface::checkDecoder(const Decoder& decoder) const
       Log::log(decoder, LogMessage::W2002_COMMAND_STATION_DOESNT_SUPPORT_FUNCTIONS_ABOVE_FX, DCCPlusPlus::Config::functionNumberMax);
       break;
     }
-}
-
-void DCCPlusPlusInterface::idChanged(const std::string& newId)
-{
-  if(m_kernel)
-    m_kernel->setLogId(newId);
 }
 
 void DCCPlusPlusInterface::updateEnabled()

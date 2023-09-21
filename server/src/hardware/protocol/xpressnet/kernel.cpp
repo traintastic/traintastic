@@ -32,16 +32,14 @@
 
 namespace XpressNet {
 
-Kernel::Kernel(const Config& config, bool simulation)
-  : m_ioContext{1}
+Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
+  : KernelBase(std::move(logId_))
+  , m_ioContext{1}
   , m_simulation{simulation}
   , m_decoderController{nullptr}
   , m_inputController{nullptr}
   , m_outputController{nullptr}
   , m_config{config}
-#ifndef NDEBUG
-  , m_started{false}
-#endif
 {
 }
 
@@ -52,13 +50,6 @@ void Kernel::setConfig(const Config& config)
     {
       m_config = newConfig;
     });
-}
-
-void Kernel::setOnError(std::function<void()> callback)
-{
-  assert(isEventLoopThread());
-  assert(!m_started);
-  m_onError = std::move(callback);
 }
 
 void Kernel::start()
@@ -91,18 +82,13 @@ void Kernel::start()
         EventLoop::call(
           [this, e]()
           {
-            Log::log(logId(), e.message(), e.args());
+            Log::log(logId, e.message(), e.args());
             error();
           });
         return;
       }
 
-      if(m_onStarted)
-        EventLoop::call(
-          [this]()
-          {
-            m_onStarted();
-          });
+      started();
     });
 
 #ifndef NDEBUG
@@ -133,7 +119,7 @@ void Kernel::receive(const Message& message)
     EventLoop::call(
       [this, msg=toString(message)]()
       {
-        Log::log(m_logId, LogMessage::D2002_RX_X, msg);
+        Log::log(logId, LogMessage::D2002_RX_X, msg);
       });
 
   switch(message.identification())
@@ -168,7 +154,7 @@ void Kernel::receive(const Message& message)
                     EventLoop::call(
                       [this, address=1 + fullAddress, value]()
                       {
-                        Log::log(m_logId, LogMessage::D2007_INPUT_X_IS_X, address, value == TriState::True ? std::string_view{"1"} : std::string_view{"0"});
+                        Log::log(logId, LogMessage::D2007_INPUT_X_IS_X, address, value == TriState::True ? std::string_view{"1"} : std::string_view{"0"});
                       });
 
                   m_inputValues[fullAddress] = value;
@@ -239,13 +225,6 @@ void Kernel::receive(const Message& message)
       }
       break;
   }
-}
-
-void Kernel::error()
-{
-  assert(isEventLoopThread());
-  if(m_onError)
-    m_onError();
 }
 
 void Kernel::resumeOperations()
@@ -471,7 +450,7 @@ void Kernel::send(const Message& message)
       EventLoop::call(
         [this, msg=toString(message)]()
         {
-          Log::log(m_logId, LogMessage::D2001_TX_X, msg);
+          Log::log(logId, LogMessage::D2001_TX_X, msg);
         });
   }
   else

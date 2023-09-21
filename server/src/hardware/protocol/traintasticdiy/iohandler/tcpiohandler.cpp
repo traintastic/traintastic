@@ -76,8 +76,8 @@ void TCPIOHandler::read()
         EventLoop::call(
           [this, ec]()
           {
-            Log::log(m_kernel.logId(), LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
-            // TODO interface status -> error
+            Log::log(m_kernel.logId, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
+            m_kernel.error();
           });
       }
     });
@@ -103,8 +103,8 @@ void TCPIOHandler::write()
         EventLoop::call(
           [this, ec]()
           {
-            Log::log(m_kernel.logId(), LogMessage::E1006_SOCKET_WRITE_FAILED_X, ec);
-            // TODO interface status -> error
+            Log::log(m_kernel.logId, LogMessage::E1006_SOCKET_WRITE_FAILED_X, ec);
+            m_kernel.error();
           });
       }
     });

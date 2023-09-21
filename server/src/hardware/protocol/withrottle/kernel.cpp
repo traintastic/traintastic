@@ -88,8 +88,9 @@ static std::string buildName(std::string name, char multiThrottleId)
   return name;
 }
 
-Kernel::Kernel(const Config& config)
-  : m_config{config}
+Kernel::Kernel(std::string logId_, const Config& config)
+  : KernelBase(std::move(logId_))
+  , m_config{config}
 {
   assert(isEventLoopThread());
 }
@@ -148,18 +149,13 @@ void Kernel::start()
         EventLoop::call(
           [this, e]()
           {
-            Log::log(logId(), e.message(), e.args());
-            //! \todo error();
+            Log::log(logId, e.message(), e.args());
+            error();
           });
         return;
       }
 
-      if(m_onStarted)
-        EventLoop::call(
-          [this]()
-          {
-            m_onStarted();
-          });
+      started();
     });
 }
 
@@ -272,7 +268,7 @@ void Kernel::receiveFrom(std::string_view message, IOHandler::ClientId clientId)
     EventLoop::call(
       [this, clientId, msg=std::string(message)]()
       {
-        Log::log(m_logId, LogMessage::D2005_X_RX_X, clientId, msg);
+        Log::log(logId, LogMessage::D2005_X_RX_X, clientId, msg);
       });
 
   if(message[0] == 'M') // Multi throttle command
@@ -444,7 +440,7 @@ void Kernel::sendTo(std::string_view message, IOHandler::ClientId clientId)
       EventLoop::call(
         [this, clientId, msg=std::string(message)]()
         {
-          Log::log(m_logId, LogMessage::D2004_X_TX_X, clientId, msg);
+          Log::log(logId, LogMessage::D2004_X_TX_X, clientId, msg);
         });
   }
 }
@@ -459,7 +455,7 @@ void Kernel::sendToAll(std::string_view message)
       EventLoop::call(
         [this, msg=std::string(message)]()
         {
-          Log::log(m_logId, LogMessage::D2001_TX_X, msg);
+          Log::log(logId, LogMessage::D2001_TX_X, msg);
         });
   }
 }

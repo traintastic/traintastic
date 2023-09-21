@@ -231,7 +231,7 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
     {
       if(simulation)
       {
-        m_kernel = XpressNet::Kernel::create<XpressNet::SimulationIOHandler>(xpressnet->config());
+        m_kernel = XpressNet::Kernel::create<XpressNet::SimulationIOHandler>(id.value(), xpressnet->config());
       }
       else
       {
@@ -243,22 +243,22 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
               case XpressNetSerialInterfaceType::LenzLI100:
               case XpressNetSerialInterfaceType::LenzLI100F:
               case XpressNetSerialInterfaceType::LenzLI101F:
-                m_kernel = XpressNet::Kernel::create<XpressNet::SerialIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value());
+                m_kernel = XpressNet::Kernel::create<XpressNet::SerialIOHandler>(id.value(), xpressnet->config(), device.value(), baudrate.value(), flowControl.value());
                 break;
 
               case XpressNetSerialInterfaceType::RoSoftS88XPressNetLI:
-                m_kernel = XpressNet::Kernel::create<XpressNet::RoSoftS88XPressNetLIIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value(), s88StartAddress.value(), s88ModuleCount.value());
+                m_kernel = XpressNet::Kernel::create<XpressNet::RoSoftS88XPressNetLIIOHandler>(id.value(), xpressnet->config(), device.value(), baudrate.value(), flowControl.value(), s88StartAddress.value(), s88ModuleCount.value());
                 break;
 
               case XpressNetSerialInterfaceType::LenzLIUSB:
               case XpressNetSerialInterfaceType::DigikeijsDR5000:
-                m_kernel = XpressNet::Kernel::create<XpressNet::LIUSBIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value());
+                m_kernel = XpressNet::Kernel::create<XpressNet::LIUSBIOHandler>(id.value(), xpressnet->config(), device.value(), baudrate.value(), flowControl.value());
                 break;
             }
             break;
 
           case XpressNetInterfaceType::Network:
-            m_kernel = XpressNet::Kernel::create<XpressNet::TCPIOHandler>(xpressnet->config(), hostname.value(), port.value());
+            m_kernel = XpressNet::Kernel::create<XpressNet::TCPIOHandler>(id.value(), xpressnet->config(), hostname.value(), port.value());
             break;
         }
       }
@@ -271,7 +271,6 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
 
       setState(InterfaceState::Initializing);
 
-      m_kernel->setLogId(id.value());
       m_kernel->setOnStarted(
         [this]()
         {
@@ -401,12 +400,6 @@ void XpressNetInterface::worldEvent(WorldState state, WorldEvent event)
         break;
     }
   }
-}
-
-void XpressNetInterface::idChanged(const std::string& newId)
-{
-  if(m_kernel)
-    m_kernel->setLogId(newId);
 }
 
 void XpressNetInterface::updateVisible()

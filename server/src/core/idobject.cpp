@@ -28,10 +28,7 @@
 IdObject::IdObject(World& world, std::string_view _id) :
   m_world{world},
   id{this, "id", std::string(_id.data(), _id.size()), PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly,
-    [this](const std::string& value)
-    {
-      idChanged(value);
-    },
+    nullptr,
     [this](std::string& value)
     {
       if(!isValidObjectId(value))

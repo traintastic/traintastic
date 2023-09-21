@@ -64,15 +64,13 @@ static std::tuple<bool, DecoderProtocol, uint16_t> uidToProtocolAddress(uint32_t
   return {false, DecoderProtocol::None, 0};
 }
 
-Kernel::Kernel(const Config& config, bool simulation)
-  : m_ioContext{1}
+Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
+  : KernelBase(std::move(logId_))
+  , m_ioContext{1}
   , m_simulation{simulation}
   , m_statusDataConfigRequestTimer{m_ioContext}
   , m_debugDir{Traintastic::instance->debugDir()}
   , m_config{config}
-#ifndef NDEBUG
-  , m_started{false}
-#endif
 {
   assert(isEventLoopThread());
   (void)m_simulation;
@@ -90,20 +88,6 @@ void Kernel::setConfig(const Config& config)
 
       m_config = newConfig;
     });
-}
-
-void Kernel::setOnStarted(std::function<void()> callback)
-{
-  assert(isEventLoopThread());
-  assert(!m_started);
-  m_onStarted = std::move(callback);
-}
-
-void Kernel::setOnError(std::function<void()> callback)
-{
-  assert(isEventLoopThread());
-  assert(!m_started);
-  m_onError = std::move(callback);
 }
 
 void Kernel::setOnLocomotiveListChanged(std::function<void(const std::shared_ptr<LocomotiveList>&)> callback)
@@ -173,7 +157,7 @@ void Kernel::start()
         EventLoop::call(
           [this, e]()
           {
-            Log::log(logId(), e.message(), e.args());
+            Log::log(logId, e.message(), e.args());
             error();
           });
         return;
@@ -227,7 +211,7 @@ void Kernel::receive(const Message& message)
   assert(isKernelThread());
 
   if(m_config.debugLogRXTX)
-    EventLoop::call([this, msg=toString(message)](){ Log::log(m_logId, LogMessage::D2002_RX_X, msg); });
+    EventLoop::call([this, msg=toString(message)](){ Log::log(logId, LogMessage::D2002_RX_X, msg); });
 
   switch(message.command())
   {
@@ -566,13 +550,6 @@ void Kernel::receive(const Message& message)
   }
 }
 
-void Kernel::error()
-{
-  assert(isEventLoopThread());
-  if(m_onError)
-    m_onError();
-}
-
 void Kernel::systemStop()
 {
   assert(isEventLoopThread());
@@ -636,7 +613,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       }
       else
       {
-        Log::log(m_logId, LogMessage::E2024_UNKNOWN_LOCOMOTIVE_MFX_UID_X, toHex(decoder.mfxUID.value()));
+        Log::log(logId, LogMessage::E2024_UNKNOWN_LOCOMOTIVE_MFX_UID_X, toHex(decoder.mfxUID.value()));
       }
       break;
 
@@ -739,7 +716,7 @@ void Kernel::send(const Message& message)
   assert(isKernelThread());
 
   if(m_config.debugLogRXTX)
-    EventLoop::call([this, msg=toString(message)](){ Log::log(m_logId, LogMessage::D2001_TX_X, msg); });
+    EventLoop::call([this, msg=toString(message)](){ Log::log(logId, LogMessage::D2001_TX_X, msg); });
 
   m_ioHandler->send(message);
 }
@@ -802,7 +779,7 @@ void Kernel::receiveStatusDataConfig(uint32_t nodeUID, uint8_t index, const std:
 
 void Kernel::receiveConfigData(std::unique_ptr<ConfigDataStreamCollector> configData)
 {
-  const auto basename = m_debugDir / m_logId / "configstream" / configData->name;
+  const auto basename = m_debugDir / logId / "configstream" / configData->name;
   if(m_config.debugConfigStream)
   {
     writeFile(std::filesystem::path(basename).concat(".bin"), configData->bytes());
@@ -964,7 +941,7 @@ void Kernel::nodeChanged(const Node& node)
       data["configurations"] = configurations;
     }
 
-    writeFileJSON(m_debugDir / m_logId / "statusdataconfig" / toHex(node.uid).append(".json"), data);
+    writeFileJSON(m_debugDir / logId / "statusdataconfig" / toHex(node.uid).append(".json"), data);
   }
 }
 
@@ -993,12 +970,7 @@ void Kernel::changeState(State value)
       break;
 
     case State::Started:
-      if(m_onStarted) /*[[likely]]*/
-        EventLoop::call(
-          [this]()
-          {
-            m_onStarted();
-          });
+      started();
       break;
   }
 }

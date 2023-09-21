@@ -133,18 +133,18 @@ bool TraintasticDIYInterface::setOnline(bool& value, bool simulation)
     {
       if(simulation)
       {
-        m_kernel = TraintasticDIY::Kernel::create<TraintasticDIY::SimulationIOHandler>(m_world, traintasticDIY->config());
+        m_kernel = TraintasticDIY::Kernel::create<TraintasticDIY::SimulationIOHandler>(id.value(), m_world, traintasticDIY->config());
       }
       else
       {
         switch(type)
         {
           case TraintasticDIYInterfaceType::Serial:
-            m_kernel = TraintasticDIY::Kernel::create<TraintasticDIY::SerialIOHandler>(m_world, traintasticDIY->config(), device.value(), baudrate.value(), flowControl.value());
+            m_kernel = TraintasticDIY::Kernel::create<TraintasticDIY::SerialIOHandler>(id.value(), m_world, traintasticDIY->config(), device.value(), baudrate.value(), flowControl.value());
             break;
 
           case TraintasticDIYInterfaceType::NetworkTCP:
-            m_kernel = TraintasticDIY::Kernel::create<TraintasticDIY::TCPIOHandler>(m_world, traintasticDIY->config(), hostname.value(), port.value());
+            m_kernel = TraintasticDIY::Kernel::create<TraintasticDIY::TCPIOHandler>(id.value(), m_world, traintasticDIY->config(), hostname.value(), port.value());
             break;
         }
       }
@@ -157,13 +157,17 @@ bool TraintasticDIYInterface::setOnline(bool& value, bool simulation)
 
       setState(InterfaceState::Initializing);
 
-      m_kernel->setLogId(id.value());
       m_kernel->setOnStarted(
         [this]()
         {
           setState(InterfaceState::Online);
         });
-
+      m_kernel->setOnError(
+        [this]()
+        {
+          setState(InterfaceState::Error);
+          online = false; // communication no longer possible
+        });
       m_kernel->setInputController(this);
       m_kernel->setOutputController(this);
       m_kernel->start();
@@ -216,12 +220,6 @@ void TraintasticDIYInterface::destroying()
   OutputController::destroying();
   InputController::destroying();
   Interface::destroying();
-}
-
-void TraintasticDIYInterface::idChanged(const std::string& newId)
-{
-  if(m_kernel)
-    m_kernel->setLogId(newId);
 }
 
 void TraintasticDIYInterface::updateVisible()

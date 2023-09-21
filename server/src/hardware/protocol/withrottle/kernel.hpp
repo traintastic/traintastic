@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_WITHROTTLE_KERNEL_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_WITHROTTLE_KERNEL_HPP
 
+#include "../kernelbase.hpp"
 #include <thread>
 #include <unordered_map>
 #include <boost/asio/io_context.hpp>
@@ -40,7 +41,7 @@ namespace WiThrottle {
 enum class ThrottleCommand : char;
 struct Address;
 
-class Kernel
+class Kernel : public ::KernelBase
 {
   private:
     struct MultiThrottle
@@ -60,8 +61,6 @@ class Kernel
     boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
     std::thread m_thread;
-    std::string m_logId;
-    std::function<void()> m_onStarted;
 
     TriState m_powerOn;
 
@@ -74,7 +73,7 @@ class Kernel
     Config m_config;
     bool m_running = false;
 
-    Kernel(const Config& config);
+    Kernel(std::string logId_, const Config& config);
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
 
@@ -133,28 +132,12 @@ class Kernel
      * \return The kernel instance
      */
     template<class IOHandlerType, class... Args>
-    static std::unique_ptr<Kernel> create(const Config& config, Args... args)
+    static std::unique_ptr<Kernel> create(std::string logId_, const Config& config, Args... args)
     {
       static_assert(std::is_base_of_v<IOHandler, IOHandlerType>);
-      std::unique_ptr<Kernel> kernel{new Kernel(config)};
+      std::unique_ptr<Kernel> kernel{new Kernel(std::move(logId_), config)};
       kernel->setIOHandler(std::make_unique<IOHandlerType>(*kernel, std::forward<Args>(args)...));
       return kernel;
-    }
-
-    /**
-     *
-     *
-     */
-    inline const std::string& logId() { return m_logId; }
-
-    /**
-     * \brief Set object id used for log messages
-     *
-     * \param[in] value The object id
-     */
-    inline void setLogId(std::string value)
-    {
-      m_logId = std::move(value);
     }
 
     /**
@@ -163,18 +146,6 @@ class Kernel
      * \param[in] config The WiThrottle configuration
      */
     void setConfig(const Config& config);
-
-    /**
-     * \brief ...
-     *
-     * \param[in] callback ...
-     * \note This function may not be called when the kernel is running.
-     */
-    inline void setOnStarted(std::function<void()> callback)
-    {
-      assert(!m_running);
-      m_onStarted = std::move(callback);
-    }
 
     /**
      * \brief Set clock for LocoNet fast clock

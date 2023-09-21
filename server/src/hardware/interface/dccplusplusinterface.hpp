@@ -61,8 +61,6 @@ class DCCPlusPlusInterface final
     void check() const;
     void checkDecoder(const Decoder& decoder) const;
 
-    void idChanged(const std::string& newId) final;
-
     void updateEnabled();
 
   protected:

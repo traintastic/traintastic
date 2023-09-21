@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -62,7 +62,6 @@ class IdObject : public Object
     void destroying() override;
     virtual void addToWorld();
     void worldEvent(WorldState state, WorldEvent event) override;
-    virtual void idChanged(const std::string& /*newId*/) {}
 
   public:
     Property<std::string> id;

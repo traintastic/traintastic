@@ -96,7 +96,7 @@ class ClientKernel final : public Kernel
 
     ClientConfig m_config;
 
-    ClientKernel(const ClientConfig& config, bool simulation);
+    ClientKernel(std::string logId_, const ClientConfig& config, bool simulation);
 
     void onStart() final;
     void onStop() final;
@@ -124,10 +124,10 @@ class ClientKernel final : public Kernel
      * @return The kernel instance
      */
     template<class IOHandlerType, class... Args>
-    static std::unique_ptr<ClientKernel> create(const ClientConfig& config, Args... args)
+    static std::unique_ptr<ClientKernel> create(std::string logId_, const ClientConfig& config, Args... args)
     {
       static_assert(std::is_base_of_v<IOHandler, IOHandlerType>);
-      std::unique_ptr<ClientKernel> kernel{new ClientKernel(config, isSimulation<IOHandlerType>())};
+      std::unique_ptr<ClientKernel> kernel{new ClientKernel(std::move(logId_), config, isSimulation<IOHandlerType>())};
       kernel->setIOHandler(std::make_unique<IOHandlerType>(*kernel, std::forward<Args>(args)...));
       return kernel;
     }

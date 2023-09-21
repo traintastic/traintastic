@@ -90,7 +90,7 @@ void TCPBinaryIOHandler::read()
             EventLoop::call(
               [this, drop]()
               {
-                Log::log(m_kernel.logId(), LogMessage::W2001_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES, drop);
+                Log::log(m_kernel.logId, LogMessage::W2001_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES, drop);
               });
           }
           else if(message->size() <= bytesTransferred)
@@ -114,7 +114,7 @@ void TCPBinaryIOHandler::read()
         EventLoop::call(
           [this, ec]()
           {
-            Log::log(m_kernel.logId(), LogMessage::E2008_SOCKET_READ_FAILED_X, ec);
+            Log::log(m_kernel.logId, LogMessage::E2008_SOCKET_READ_FAILED_X, ec);
             m_kernel.error();
           });
       }
@@ -142,7 +142,7 @@ void TCPBinaryIOHandler::write()
         EventLoop::call(
           [this, ec]()
           {
-            Log::log(m_kernel.logId(), LogMessage::E2007_SOCKET_WRITE_FAILED_X, ec);
+            Log::log(m_kernel.logId, LogMessage::E2007_SOCKET_WRITE_FAILED_X, ec);
             m_kernel.error();
           });
       }

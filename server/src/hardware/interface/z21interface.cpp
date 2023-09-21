@@ -162,17 +162,22 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
     try
     {
       if(simulation)
-        m_kernel = Z21::ClientKernel::create<Z21::SimulationIOHandler>(z21->config());
+        m_kernel = Z21::ClientKernel::create<Z21::SimulationIOHandler>(id.value(), z21->config());
       else
-        m_kernel = Z21::ClientKernel::create<Z21::UDPClientIOHandler>(z21->config(), hostname.value(), port.value());
+        m_kernel = Z21::ClientKernel::create<Z21::UDPClientIOHandler>(id.value(), z21->config(), hostname.value(), port.value());
 
       setState(InterfaceState::Initializing);
 
-      m_kernel->setLogId(id.value());
       m_kernel->setOnStarted(
         [this]()
         {
           setState(InterfaceState::Online);
+        });
+      m_kernel->setOnError(
+        [this]()
+        {
+          setState(InterfaceState::Error);
+          online = false; // communication no longer possible
         });
       m_kernel->setOnSerialNumberChanged(
         [this](uint32_t newValue)
@@ -304,10 +309,4 @@ void Z21Interface::worldEvent(WorldState state, WorldEvent event)
         break;
     }
   }
-}
-
-void Z21Interface::idChanged(const std::string& newId)
-{
-  if(m_kernel)
-    m_kernel->setLogId(newId);
 }

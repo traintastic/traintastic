@@ -65,8 +65,9 @@ constexpr Kernel::Priority& operator ++(Kernel::Priority& value)
   return (value = static_cast<Kernel::Priority>(static_cast<std::underlying_type_t<Kernel::Priority>>(value) + 1));
 }
 
-Kernel::Kernel(const Config& config, bool simulation)
-  : m_ioContext{1}
+Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
+  : KernelBase(std::move(logId_))
+  , m_ioContext{1}
   , m_simulation{simulation}
   , m_waitingForEcho{false}
   , m_waitingForEchoTimer{m_ioContext}
@@ -79,9 +80,6 @@ Kernel::Kernel(const Config& config, bool simulation)
   , m_identificationController{nullptr}
   , m_debugDir{Traintastic::instance->debugDir()}
   , m_config{config}
-#ifndef NDEBUG
-  , m_started{false}
-#endif
 {
   assert(isEventLoopThread());
 }
@@ -127,7 +125,7 @@ void Kernel::setConfig(const Config& config)
         EventLoop::call(
           [this]()
           {
-            Log::log(m_logId, LogMessage::N2006_LISTEN_ONLY_MODE_ACTIVATED);
+            Log::log(logId, LogMessage::N2006_LISTEN_ONLY_MODE_ACTIVATED);
           });
       }
       else if(!newConfig.listenOnly && m_config.listenOnly)
@@ -135,7 +133,7 @@ void Kernel::setConfig(const Config& config)
         EventLoop::call(
           [this]()
           {
-            Log::log(m_logId, LogMessage::N2007_LISTEN_ONLY_MODE_DEACTIVATED);
+            Log::log(logId, LogMessage::N2007_LISTEN_ONLY_MODE_DEACTIVATED);
           });
       }
 
@@ -159,20 +157,6 @@ void Kernel::setConfig(const Config& config)
       }
       m_config = newConfig;
     });
-}
-
-void Kernel::setOnStarted(std::function<void()> callback)
-{
-  assert(isEventLoopThread());
-  assert(!m_started);
-  m_onStarted = std::move(callback);
-}
-
-void Kernel::setOnError(std::function<void()> callback)
-{
-  assert(isEventLoopThread());
-  assert(!m_started);
-  m_onError = std::move(callback);
 }
 
 void Kernel::setOnGlobalPowerChanged(std::function<void(bool)> callback)
@@ -242,7 +226,7 @@ void Kernel::start()
   m_outputValues.fill(TriState::Undefined);
 
   if(m_config.listenOnly)
-    Log::log(m_logId, LogMessage::N2006_LISTEN_ONLY_MODE_ACTIVATED);
+    Log::log(logId, LogMessage::N2006_LISTEN_ONLY_MODE_ACTIVATED);
 
   m_thread = std::thread(
     [this]()
@@ -270,7 +254,7 @@ void Kernel::start()
         EventLoop::call(
           [this, e]()
           {
-            Log::log(logId(), e.message(), e.args());
+            Log::log(logId, e.message(), e.args());
             error();
           });
         return;
@@ -285,12 +269,7 @@ void Kernel::start()
       for(uint8_t slot = SLOT_LOCO_MIN; slot <= m_config.locomotiveSlots; slot++)
         send(RequestSlotData(slot), LowPriority);
 
-      if(m_onStarted)
-        EventLoop::call(
-          [this]()
-          {
-            m_onStarted();
-          });
+      started();
     });
 
 #ifndef NDEBUG
@@ -332,7 +311,7 @@ void Kernel::receive(const Message& message)
     m_pcap->writeRecord(&message, message.size());
 
   if(m_config.debugLogRXTX)
-    EventLoop::call([this, msg=toString(message)](){ Log::log(m_logId, LogMessage::D2002_RX_X, msg); });
+    EventLoop::call([this, msg=toString(message)](){ Log::log(logId, LogMessage::D2002_RX_X, msg); });
 
   bool isResponse = false;
   if(m_waitingForEcho && message == lastSentMessage())
@@ -492,7 +471,7 @@ void Kernel::receive(const Message& message)
               EventLoop::call(
                 [this, address=1 + inputRep.fullAddress(), value=inputRep.value()]()
                 {
-                  Log::log(m_logId, LogMessage::D2007_INPUT_X_IS_X, address, value ? std::string_view{"1"} : std::string_view{"0"});
+                  Log::log(logId, LogMessage::D2007_INPUT_X_IS_X, address, value ? std::string_view{"1"} : std::string_view{"0"});
                 });
 
             m_inputValues[inputRep.fullAddress()] = value;
@@ -518,7 +497,7 @@ void Kernel::receive(const Message& message)
             EventLoop::call(
               [this, address=1 + switchRequest.fullAddress(), on=switchRequest.on()]()
               {
-                Log::log(m_logId, LogMessage::D2008_OUTPUT_X_IS_X, address, on ? std::string_view{"1"} : std::string_view{"0"});
+                Log::log(logId, LogMessage::D2008_OUTPUT_X_IS_X, address, on ? std::string_view{"1"} : std::string_view{"0"});
               });
 
           m_outputValues[switchRequest.fullAddress()] = on;
@@ -615,7 +594,7 @@ void Kernel::receive(const Message& message)
         EventLoop::call(
           [this]()
           {
-            Log::log(m_logId, LogMessage::C2004_CANT_GET_FREE_SLOT);
+            Log::log(logId, LogMessage::C2004_CANT_GET_FREE_SLOT);
           });
       }
       else if(longAck.respondingOpCode() == OPC_RQ_SL_DATA && longAck.ack1 == 0 && lastSentMessage().opCode == OPC_RQ_SL_DATA)
@@ -627,7 +606,7 @@ void Kernel::receive(const Message& message)
           EventLoop::call(
             [this, slot]()
             {
-              Log::log(m_logId, LogMessage::W2006_COMMAND_STATION_DOES_NOT_SUPPORT_LOCO_SLOT_X, slot);
+              Log::log(logId, LogMessage::W2006_COMMAND_STATION_DOES_NOT_SUPPORT_LOCO_SLOT_X, slot);
             });
         }
         else if(slot == SLOT_FAST_CLOCK)
@@ -639,9 +618,9 @@ void Kernel::receive(const Message& message)
           EventLoop::call(
             [this, stoppedFastClockSyncTimer=m_config.fastClockSyncEnabled]()
             {
-              Log::log(m_logId, LogMessage::W2007_COMMAND_STATION_DOES_NOT_SUPPORT_THE_FAST_CLOCK_SLOT);
+              Log::log(logId, LogMessage::W2007_COMMAND_STATION_DOES_NOT_SUPPORT_THE_FAST_CLOCK_SLOT);
               if(stoppedFastClockSyncTimer)
-                Log::log(m_logId, LogMessage::N2003_STOPPED_SENDING_FAST_CLOCK_SYNC);
+                Log::log(logId, LogMessage::N2003_STOPPED_SENDING_FAST_CLOCK_SYNC);
             });
         }
       }
@@ -909,13 +888,6 @@ void Kernel::receive(const Message& message)
     m_sendQueue[m_sentMessagePriority].pop();
     sendNextMessage();
   }
-}
-
-void Kernel::error()
-{
-  assert(isEventLoopThread());
-  if(m_onError)
-    m_onError();
 }
 
 void Kernel::setPowerOn(bool value)
@@ -1401,7 +1373,7 @@ void Kernel::sendNextMessage()
       const Message& message = m_sendQueue[priority].front();
 
       if(m_config.debugLogRXTX)
-        EventLoop::call([this, msg=toString(message)](){ Log::log(m_logId, LogMessage::D2001_TX_X, msg); });
+        EventLoop::call([this, msg=toString(message)](){ Log::log(logId, LogMessage::D2001_TX_X, msg); });
 
       if(m_ioHandler->send(message))
       {
@@ -1435,7 +1407,7 @@ void Kernel::waitingForEchoTimerExpired(const boost::system::error_code& ec)
   EventLoop::call(
     [this]()
     {
-      Log::log(m_logId, LogMessage::W2018_TIMEOUT_NO_ECHO_WITHIN_X_MS, m_config.echoTimeout);
+      Log::log(logId, LogMessage::W2018_TIMEOUT_NO_ECHO_WITHIN_X_MS, m_config.echoTimeout);
     });
 }
 
@@ -1451,7 +1423,7 @@ void Kernel::waitingForResponseTimerExpired(const boost::system::error_code& ec)
     EventLoop::call(
       [this, lncvStart=static_cast<const Uhlenbrock::LNCVStart&>(lastSentMessage())]()
       {
-        Log::log(m_logId, LogMessage::N2002_NO_RESPONSE_FROM_LNCV_MODULE_X_WITH_ADDRESS_X, lncvStart.moduleId(), lncvStart.address());
+        Log::log(logId, LogMessage::N2002_NO_RESPONSE_FROM_LNCV_MODULE_X_WITH_ADDRESS_X, lncvStart.moduleId(), lncvStart.address());
 
         if(m_onLNCVReadResponse && m_lncvModuleId == lncvStart.moduleId())
           m_onLNCVReadResponse(false, lncvStart.address(), 0);
@@ -1464,7 +1436,7 @@ void Kernel::waitingForResponseTimerExpired(const boost::system::error_code& ec)
     EventLoop::call(
       [this]()
       {
-        Log::log(m_logId, LogMessage::E2019_TIMEOUT_NO_RESPONSE_WITHIN_X_MS, m_config.responseTimeout);
+        Log::log(logId, LogMessage::E2019_TIMEOUT_NO_RESPONSE_WITHIN_X_MS, m_config.responseTimeout);
         error();
       });
   }
@@ -1579,11 +1551,11 @@ void Kernel::startPCAP(PCAPOutput pcapOutput)
     {
       case PCAPOutput::File:
       {
-        const auto filename = m_debugDir / m_logId += dateTimeStr() += ".pcap";
+        const auto filename = m_debugDir / logId += dateTimeStr() += ".pcap";
         EventLoop::call(
           [this, filename]()
           {
-            Log::log(m_logId, LogMessage::N2004_STARTING_PCAP_FILE_LOG_X, filename);
+            Log::log(logId, LogMessage::N2004_STARTING_PCAP_FILE_LOG_X, filename);
           });
         m_pcap = std::make_unique<PCAPFile>(filename, DLT_USER0);
         break;
@@ -1594,12 +1566,12 @@ void Kernel::startPCAP(PCAPOutput pcapOutput)
 #ifdef WIN32
         return; //! \todo Implement
 #else // unix
-        pipe = std::filesystem::temp_directory_path() / "traintastic-server" / m_logId;
+        pipe = std::filesystem::temp_directory_path() / "traintastic-server" / logId;
 #endif
         EventLoop::call(
           [this, pipe]()
           {
-            Log::log(m_logId, LogMessage::N2005_STARTING_PCAP_LOG_PIPE_X, pipe);
+            Log::log(logId, LogMessage::N2005_STARTING_PCAP_LOG_PIPE_X, pipe);
           });
         m_pcap = std::make_unique<PCAPPipe>(std::move(pipe), DLT_USER0);
         break;
@@ -1611,7 +1583,7 @@ void Kernel::startPCAP(PCAPOutput pcapOutput)
     EventLoop::call(
       [this, what=std::string(e.what())]()
       {
-        Log::log(m_logId, LogMessage::E2021_STARTING_PCAP_LOG_FAILED_X, what);
+        Log::log(logId, LogMessage::E2021_STARTING_PCAP_LOG_FAILED_X, what);
       });
   }
 }

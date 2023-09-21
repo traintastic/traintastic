@@ -33,11 +33,9 @@
 
 namespace Z21 {
 
-Kernel::Kernel()
-  : m_ioContext{1}
-#ifndef NDEBUG
-  , m_started{false}
-#endif
+Kernel::Kernel(std::string logId_)
+  : KernelBase(std::move(logId_))
+  , m_ioContext{1}
 {
 }
 
@@ -66,20 +64,15 @@ void Kernel::start()
         EventLoop::call(
           [this, e]()
           {
-            Log::log(logId(), e.message(), e.args());
-            //! \todo error();
+            Log::log(logId, e.message(), e.args());
+            error();
           });
         return;
       }
 
       onStart();
 
-      if(m_onStarted)
-        EventLoop::call(
-          [this]()
-          {
-            m_onStarted();
-          });
+      started();
     });
 
 #ifndef NDEBUG

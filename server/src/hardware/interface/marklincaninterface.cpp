@@ -193,23 +193,23 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
     {
       if(simulation)
       {
-        m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SimulationIOHandler>(marklinCAN->config());
+        m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SimulationIOHandler>(id.value(), marklinCAN->config());
       }
       else
       {
         switch(type.value())
         {
           case MarklinCANInterfaceType::NetworkTCP:
-            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::TCPIOHandler>(marklinCAN->config(), hostname.value());
+            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::TCPIOHandler>(id.value(), marklinCAN->config(), hostname.value());
             break;
 
           case MarklinCANInterfaceType::NetworkUDP:
-            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::UDPIOHandler>(marklinCAN->config(), hostname.value());
+            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::UDPIOHandler>(id.value(), marklinCAN->config(), hostname.value());
             break;
 
           case MarklinCANInterfaceType::SocketCAN:
 #ifdef __linux__
-            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SocketCANIOHandler>(marklinCAN->config(), interface.value());
+            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SocketCANIOHandler>(id.value(), marklinCAN->config(), interface.value());
             break;
 #else
             setState(InterfaceState::Error);
@@ -217,15 +217,13 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
             return false;
 #endif
           case MarklinCANInterfaceType::Serial:
-            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SerialIOHandler>(marklinCAN->config(), device.value(), baudrate.value(), flowControl.value());
+            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SerialIOHandler>(id.value(), marklinCAN->config(), device.value(), baudrate.value(), flowControl.value());
             break;
         }
       }
       assert(m_kernel);
 
       setState(InterfaceState::Initializing);
-
-      m_kernel->setLogId(id.value());
 
       m_kernel->setOnStarted(
         [this]()
@@ -342,12 +340,6 @@ void MarklinCANInterface::worldEvent(WorldState state, WorldEvent event)
         break;
     }
   }
-}
-
-void MarklinCANInterface::idChanged(const std::string& newId)
-{
-  if(m_kernel)
-    m_kernel->setLogId(newId);
 }
 
 void MarklinCANInterface::typeChanged()

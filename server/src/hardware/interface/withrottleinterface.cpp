@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,16 +86,20 @@ bool WiThrottleInterface::setOnline(bool& value, bool simulation)
 
     try
     {
-      m_kernel = WiThrottle::Kernel::create<WiThrottle::TCPIOHandler>(wiThrottle->config(), port.value());
+      m_kernel = WiThrottle::Kernel::create<WiThrottle::TCPIOHandler>(id.value(), wiThrottle->config(), port.value());
 
       setState(InterfaceState::Initializing);
-
-      m_kernel->setLogId(id.value());
 
       m_kernel->setOnStarted(
         [this]()
         {
           setState(InterfaceState::Online);
+        });
+      m_kernel->setOnError(
+        [this]()
+        {
+          setState(InterfaceState::Error);
+          online = false; // communication no longer possible
         });
 
       m_kernel->setClock(world().clock.value());
