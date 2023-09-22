@@ -9,6 +9,7 @@ import json
 import operator
 import shutil
 import datetime
+from traintasticmanualbuilder.utils import highlight_lua
 
 
 class LuaDoc:
@@ -22,6 +23,7 @@ class LuaDoc:
     FILENAME_ENUM = 'enum.html'
     FILENAME_SET = 'set.html'
     FILENAME_OBJECT = 'object.html'
+    FILENAME_EXAMPLE = 'example.html'
     FILENAME_INDEX_AZ = 'index-az.html'
 
     missing_terms = []
@@ -33,6 +35,7 @@ class LuaDoc:
         self._sets = LuaDoc._find_sets(project_root)
         self._libs = LuaDoc._find_libs(project_root)
         self._objects = LuaDoc._find_objects(project_root)
+        self._examples = LuaDoc._find_examples(project_root)
         self.set_language(LuaDoc.DEFAULT_LANGUAGE)
 
     def set_language(self, language: str) -> None:
@@ -364,6 +367,22 @@ class LuaDoc:
 
         return items
 
+    def _find_examples(project_root: str) -> dict:
+        examples = {}
+        for root, dirs, files in os.walk(os.path.join(project_root, 'manual', 'luadoc', 'example')):
+            for file in files:
+                if not file.endswith('.lua'):
+                    continue
+
+                id = os.path.splitext(file)[0]
+                examples[id] = {
+                    'id': id,
+                    'name': 'example.' + id + ':title',
+                    'filename': 'example.' + id + '.html',
+                    'code': LuaDoc._read_file(os.path.join(root,file))}
+
+        return examples
+
     def _get_special_object_items(cpp_name: str, term_prefix: str) -> list:
         items = []
         if cpp_name == 'ObjectList':
@@ -396,6 +415,7 @@ class LuaDoc:
         for _, lib in self._libs.items():
             self._build_lib(output_dir, nav, lib)
         self._build_objects(output_dir, nav)
+        self._build_examples(output_dir, nav)
         self._build_index_az(output_dir, nav)
 
     def _build_items_html(self, items: list, term_prefix: str, lua_prefix: str = '') -> str:
@@ -544,6 +564,7 @@ class LuaDoc:
                 lib = self._libs[k]
                 html += '  <li><a href="' + lib['filename'] + '">' + self._get_term(lib['name']) + '</a></li>' + os.linesep
         html += '  <li><a href="' + LuaDoc.FILENAME_OBJECT + '">' + self._get_term('object:title') + '</a></li>' + os.linesep
+        html += '  <li><a href="' + LuaDoc.FILENAME_EXAMPLE + '">' + self._get_term('example:title') + '</a></li>' + os.linesep
         html += '  <li><a href="' + LuaDoc.FILENAME_INDEX_AZ + '">' + self._get_term('index-az:title') + '</a></li>' + os.linesep
         html += '</ul>' + os.linesep
         html += '</div>' + os.linesep
@@ -621,6 +642,31 @@ class LuaDoc:
         html += '<p>' + self._get_term(object['term_prefix'].rstrip('.') + ':description') + '</p>' + os.linesep
         html += self._build_items_html(object['items'], object['term_prefix'])
         LuaDoc._write_file(os.path.join(output_dir, object['filename']), self._add_toc(html))
+
+    def _build_examples(self, output_dir: str, nav: list) -> None:
+        title = self._get_term('example:title')
+        nav_examples = nav + [{'title': title, 'href': LuaDoc.FILENAME_EXAMPLE}]
+        html = self._get_header(title, nav_examples)
+        html += '<p>' + self._get_term('example:description') + '</p>' + os.linesep
+        html += '<ul>' + os.linesep
+        items = []
+        for example in self._examples.values():
+            items.append({'href': example['filename'], 'title': self._get_term(example['name'])})
+        for item in sorted(items, key=operator.itemgetter('title')):
+            html += '  <li><a href="' + item['href'] + '">' + item['title'] + '</a></li>' + os.linesep
+        html += '</ul>' + os.linesep
+        html += self._get_footer()
+        LuaDoc._write_file(os.path.join(output_dir, LuaDoc.FILENAME_EXAMPLE), html)
+
+        for example in self._examples.values():
+            self._build_example(output_dir, nav_examples, example)
+
+    def _build_example(self, output_dir: str, nav: list, example: dict) -> None:
+        title = self._get_term(example['name'])
+        html = self._get_header(title, nav + [{'title': title, 'href': example['filename']}])
+        html += '<p>' + self._get_term('example.' + example['id'] + ':description') + '</p>' + os.linesep
+        html += '<pre lang="lua"><code>' + highlight_lua(example['code']) + '</code></pre>'
+        LuaDoc._write_file(os.path.join(output_dir, example['filename']), html)
 
     def _build_index_az(self, output_dir: str, nav: list) -> None:
         alphabet = list(string.ascii_uppercase)
