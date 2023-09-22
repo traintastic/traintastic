@@ -1,9 +1,9 @@
 /**
- * server/src/network/client.hpp
+ * server/src/network/connection.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_NETWORK_CLIENT_HPP
-#define TRAINTASTIC_SERVER_NETWORK_CLIENT_HPP
+#ifndef TRAINTASTIC_SERVER_NETWORK_CONNECTION_HPP
+#define TRAINTASTIC_SERVER_NETWORK_CONNECTION_HPP
 
 #include <memory>
 #include <queue>
@@ -32,7 +32,7 @@
 class Server;
 class Session;
 
-class Client : public std::enable_shared_from_this<Client>
+class Connection : public std::enable_shared_from_this<Connection>
 {
   friend class Session;
 
@@ -62,8 +62,8 @@ class Client : public std::enable_shared_from_this<Client>
     void connectionLost();
 
   public:
-    Client(Server& server, boost::asio::ip::tcp::socket socket);
-    virtual ~Client();
+    Connection(Server& server, boost::asio::ip::tcp::socket socket);
+    virtual ~Connection();
 
     void disconnect();
 };

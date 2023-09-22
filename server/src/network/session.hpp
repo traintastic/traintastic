@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@
 #include "../core/tablemodelptr.hpp"
 #include "../core/argument.hpp"
 
-class Client;
+class Connection;
 class MemoryLogger;
 class BaseProperty;
 class AbstractProperty;
@@ -50,7 +50,7 @@ struct TileData;
 
 class Session : public std::enable_shared_from_this<Session>
 {
-  friend class Client;
+  friend class Connection;
 
   private:
     static void writePropertyValue(Message& message, const AbstractProperty& property);
@@ -64,7 +64,7 @@ class Session : public std::enable_shared_from_this<Session>
     using Handle = uint32_t;
     using Handles = HandleList<Handle, ObjectPtr>;
 
-    std::shared_ptr<Client> m_client;
+    std::shared_ptr<Connection> m_connection;
     boost::uuids::uuid m_uuid;
     Handles m_handles;
     std::unordered_multimap<Handle, boost::signals2::connection> m_objectSignals;
@@ -92,7 +92,7 @@ class Session : public std::enable_shared_from_this<Session>
     void outputMapOutputsChanged(OutputMap& outputMap);
 
   public:
-    Session(const std::shared_ptr<Client>& client);
+    Session(const std::shared_ptr<Connection>& connection);
     ~Session();
 
     const boost::uuids::uuid& uuid() const { return m_uuid; }

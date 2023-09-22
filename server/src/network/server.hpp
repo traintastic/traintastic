@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,12 +31,12 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ip/udp.hpp>
 
-class Client;
+class Connection;
 class Message;
 
 class Server : public std::enable_shared_from_this<Server>
 {
-  friend class Client;
+  friend class Connection;
 
   private:
     boost::asio::io_context m_ioContext;
@@ -47,13 +47,13 @@ class Server : public std::enable_shared_from_this<Server>
     std::array<char, 8> m_udpBuffer;
     boost::asio::ip::udp::endpoint m_remoteEndpoint;
     const bool m_localhostOnly;
-    std::list<std::shared_ptr<Client>> m_clients;
+    std::list<std::shared_ptr<Connection>> m_connections;
 
     void doReceive();
     std::unique_ptr<Message> processMessage(const Message& message);
     void doAccept();
 
-    void clientGone(const std::shared_ptr<Client>& client);
+    void connectionGone(const std::shared_ptr<Connection>& connection);
 
   public:
     static constexpr std::string_view id{"server"};

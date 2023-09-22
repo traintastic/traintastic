@@ -23,7 +23,7 @@
 #include "server.hpp"
 #include <traintastic/network/message.hpp>
 #include <version.hpp>
-#include "client.hpp"
+#include "connection.hpp"
 #include "../core/eventloop.hpp"
 #include "../log/log.hpp"
 #include "../log/logmessageexception.hpp"
@@ -129,15 +129,15 @@ Server::~Server()
   if(m_thread.joinable())
     m_thread.join();
 
-  while(!m_clients.empty())
-    m_clients.front()->disconnect();
+  while(!m_connections.empty())
+    m_connections.front()->disconnect();
 }
 
-void Server::clientGone(const std::shared_ptr<Client>& client)
+void Server::connectionGone(const std::shared_ptr<Connection>& connection)
 {
   assert(isEventLoopThread());
 
-  m_clients.erase(std::find(m_clients.begin(), m_clients.end(), client));
+  m_connections.erase(std::find(m_connections.begin(), m_connections.end(), connection));
 }
 
 void Server::doReceive()
@@ -212,11 +212,11 @@ void Server::doAccept()
           {
             try
             {
-              m_clients.emplace_back(std::make_shared<Client>(*this, std::move(*socket)));
+              m_connections.emplace_back(std::make_shared<Connection>(*this, std::move(*socket)));
             }
             catch(const std::exception& e)
             {
-              Log::log(id, LogMessage::C1002_CREATING_CLIENT_FAILED_X, e.what());
+              Log::log(id, LogMessage::C1002_CREATING_CONNECTION_FAILED_X, e.what());
             }
           });
 

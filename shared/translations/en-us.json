@@ -1673,7 +1673,7 @@
     },
     {
         "term": "message:C1002",
-        "definition": "Creating client failed (%1)",
+        "definition": "Creating connection failed (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2217,7 +2217,7 @@
     },
     {
         "term": "message:I1003",
-        "definition": "Client connected",
+        "definition": "New connection",
         "context": "",
         "term_plural": "",
         "reference": "",

@@ -72,7 +72,7 @@ enum class LogMessage : uint32_t
   // Info:
   I1001_TRAINTASTIC_VX = LogMessageOffset::info + 1001,
   I1002_SETTING_FILE_NOT_FOUND_USING_DEFAULTS = LogMessageOffset::info + 1002,
-  I1003_CLIENT_CONNECTED = LogMessageOffset::info + 1003,
+  I1003_NEW_CONNECTION = LogMessageOffset::info + 1003,
   I1004_CONNECTION_LOST = LogMessageOffset::info + 1004,
   I1005_BUILDING_WORLD_INDEX = LogMessageOffset::info + 1005,
   I1006_X = LogMessageOffset::info + 1006, //!< boost version
@@ -182,7 +182,7 @@ enum class LogMessage : uint32_t
 
   // Critical:
   C1001_LOADING_WORLD_FAILED_X = LogMessageOffset::critical + 1001,
-  C1002_CREATING_CLIENT_FAILED_X = LogMessageOffset::critical + 1002,
+  C1002_CREATING_CONNECTION_FAILED_X = LogMessageOffset::critical + 1002,
   C1003_CANT_WRITE_TO_SETTINGS_FILE_X = LogMessageOffset::critical + 1003,
   C1004_READING_WORLD_FAILED_X_X = LogMessageOffset::critical + 1004,
   C1005_SAVING_WORLD_FAILED_X = LogMessageOffset::critical + 1005,
