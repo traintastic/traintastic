@@ -66,7 +66,6 @@ static std::tuple<bool, DecoderProtocol, uint16_t> uidToProtocolAddress(uint32_t
 
 Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
-  , m_ioContext{1}
   , m_simulation{simulation}
   , m_statusDataConfigRequestTimer{m_ioContext}
   , m_debugDir{Traintastic::instance->debugDir()}

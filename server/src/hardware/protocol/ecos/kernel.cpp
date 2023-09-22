@@ -74,7 +74,6 @@ static constexpr DecoderProtocol toDecoderProtocol(LocomotiveProtocol locomotive
 
 Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
-  , m_ioContext{1}
   , m_simulation{simulation}
   , m_decoderController{nullptr}
   , m_inputController{nullptr}

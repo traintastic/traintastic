@@ -25,8 +25,6 @@
 
 #include "../kernelbase.hpp"
 #include <array>
-#include <thread>
-#include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include "config.hpp"
@@ -46,10 +44,8 @@ struct Message;
 class Kernel : public ::KernelBase
 {
   private:
-    boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
-    std::thread m_thread;
 
     TriState m_trackPowerOn;
     TriState m_emergencyStop;
@@ -89,13 +85,6 @@ class Kernel : public ::KernelBase
 
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
-
-    /**
-     * @brief IO context for XpressNet kernel and IO handler
-     *
-     * @return The IO context
-     */
-    boost::asio::io_context& ioContext() { return m_ioContext; }
 
     /**
      * @brief Create kernel and IO handler

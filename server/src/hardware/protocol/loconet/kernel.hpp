@@ -26,9 +26,7 @@
 #include "../kernelbase.hpp"
 #include <array>
 #include <unordered_map>
-#include <thread>
 #include <filesystem>
-#include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/signals2/connection.hpp>
 #include <tcb/span.hpp>
@@ -138,10 +136,8 @@ class Kernel : public ::KernelBase
     };
     static_assert(sizeof(FastClock) == 4);
 
-    boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
-    std::thread m_thread;
 
     std::array<SendQueue, 3> m_sendQueue;
     Priority m_sentMessagePriority;
@@ -274,13 +270,6 @@ class Kernel : public ::KernelBase
       return std::this_thread::get_id() == m_thread.get_id();
     }
 #endif
-
-    /**
-     * @brief IO context for LocoNet kernel and IO handler
-     *
-     * @return The IO context
-     */
-    boost::asio::io_context& ioContext() { return m_ioContext; }
 
     /**
      * @brief Create kernel and IO handler

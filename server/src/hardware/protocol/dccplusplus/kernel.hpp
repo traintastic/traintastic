@@ -25,9 +25,7 @@
 
 #include "../kernelbase.hpp"
 #include <array>
-#include <thread>
 #include <unordered_map>
-#include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include "config.hpp"
@@ -72,10 +70,8 @@ class Kernel : public ::KernelBase
     };
 
   private:
-    boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
-    std::thread m_thread;
     boost::asio::steady_timer m_startupDelayTimer;
 
     TriState m_powerOn;
@@ -111,13 +107,6 @@ class Kernel : public ::KernelBase
   public:
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
-
-    /**
-     * @brief IO context for DCC++ kernel and IO handler
-     *
-     * @return The IO context
-     */
-    boost::asio::io_context& ioContext() { return m_ioContext; }
 
     /**
      * @brief Create kernel and IO handler

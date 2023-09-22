@@ -67,7 +67,6 @@ constexpr Kernel::Priority& operator ++(Kernel::Priority& value)
 
 Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
-  , m_ioContext{1}
   , m_simulation{simulation}
   , m_waitingForEcho{false}
   , m_waitingForEchoTimer{m_ioContext}

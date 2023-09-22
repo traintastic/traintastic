@@ -24,7 +24,8 @@
 #include "../../core/eventloop.hpp"
 
 KernelBase::KernelBase(std::string logId_)
-  : logId{logId_}
+  : m_ioContext{1}
+  , logId{logId_}
 {
 }
 

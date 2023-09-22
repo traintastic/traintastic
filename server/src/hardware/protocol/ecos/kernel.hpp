@@ -24,9 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_KERNEL_HPP
 
 #include "../kernelbase.hpp"
-#include <thread>
 #include <unordered_map>
-#include <boost/asio/io_context.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
 #include "config.hpp"
@@ -109,10 +107,8 @@ class Kernel : public ::KernelBase
         }
     };
 
-    boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
-    std::thread m_thread;
 
     Objects m_objects;
 
@@ -151,12 +147,6 @@ class Kernel : public ::KernelBase
   public:
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
-
-    /**
-     * @brief IO context for ECoS kernel and IO handler
-     * @return The IO context
-     */
-    boost::asio::io_context& ioContext() { return m_ioContext; }
 
     /**
      * @brief Create kernel and IO handler

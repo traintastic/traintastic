@@ -38,7 +38,6 @@ namespace DCCPlusPlus {
 
 Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
-  , m_ioContext{1}
   , m_simulation{simulation}
   , m_startupDelayTimer{m_ioContext}
   , m_decoderController{nullptr}

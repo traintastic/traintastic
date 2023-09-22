@@ -74,7 +74,6 @@ constexpr TriState toTriState(OutputState value)
 Kernel::Kernel(std::string logId_, World& world, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
   , m_world{world}
-  , m_ioContext{1}
   , m_simulation{simulation}
   , m_heartbeatTimeout{m_ioContext}
   , m_inputController{nullptr}

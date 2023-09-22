@@ -26,8 +26,6 @@
 #include "../kernelbase.hpp"
 #include <unordered_map>
 #include <set>
-#include <thread>
-#include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/signals2/signal.hpp>
 #include <traintastic/enum/tristate.hpp>
@@ -58,10 +56,8 @@ class Kernel : public ::KernelBase
     };
 
     World& m_world;
-    boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
-    std::thread m_thread;
     std::string m_logId;
     boost::asio::steady_timer m_heartbeatTimeout;
 
@@ -117,13 +113,6 @@ class Kernel : public ::KernelBase
 
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
-
-    /**
-     * \brief IO context for TraintasticDIY kernel and IO handler
-     *
-     * \return The IO context
-     */
-    boost::asio::io_context& ioContext() { return m_ioContext; }
 
     /**
      * \brief Create kernel and IO handler

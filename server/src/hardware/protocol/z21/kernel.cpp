@@ -35,7 +35,6 @@ namespace Z21 {
 
 Kernel::Kernel(std::string logId_)
   : KernelBase(std::move(logId_))
-  , m_ioContext{1}
 {
 }
 

@@ -28,10 +28,8 @@
 #include <array>
 #include <map>
 #include <unordered_map>
-#include <thread>
 #include <filesystem>
 #include <queue>
-#include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include "config.hpp"
@@ -110,10 +108,8 @@ class Kernel : public ::KernelBase
 
     static constexpr int statusDataConfigRequestRetryCount = 3;
 
-    boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
-    std::thread m_thread;
     State m_state = State::Initial;
     std::function<void(const Node& node)> m_onNodeChanged;
     std::queue<StatusDataConfigRequest> m_statusDataConfigRequestQueue; //<! UID+index to request config data from
@@ -173,13 +169,6 @@ class Kernel : public ::KernelBase
       return std::this_thread::get_id() == m_thread.get_id();
     }
 #endif
-
-    /**
-     * \brief IO context for kernel and IO handler
-     *
-     * \return The IO context
-     */
-    boost::asio::io_context& ioContext() { return m_ioContext; }
 
     /**
      * \brief Create kernel and IO handler

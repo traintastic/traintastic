@@ -26,8 +26,6 @@
 #include "../kernelbase.hpp"
 
 #include <array>
-#include <thread>
-#include <boost/asio/io_context.hpp>
 
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
@@ -43,11 +41,7 @@ enum HardwareType : uint32_t;
 
 class Kernel : public ::KernelBase
 {
-  private:
-    std::thread m_thread;
-
   protected:
-    boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
 
     Kernel(std::string logId_);
@@ -61,13 +55,6 @@ class Kernel : public ::KernelBase
   public:
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
-
-    /**
-     * @brief IO context for Z21 kernel and IO handler
-     *
-     * @return The IO context
-     */
-    boost::asio::io_context& ioContext() { return m_ioContext; }
 
     /**
      * @brief Start the kernel and IO handler

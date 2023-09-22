@@ -24,9 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_WITHROTTLE_KERNEL_HPP
 
 #include "../kernelbase.hpp"
-#include <thread>
 #include <unordered_map>
-#include <boost/asio/io_context.hpp>
 #include <boost/signals2/connection.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include "config.hpp"
@@ -58,9 +56,7 @@ class Kernel : public ::KernelBase
       std::unordered_map<char, MultiThrottle> multiThrottles;
     };
 
-    boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
-    std::thread m_thread;
 
     TriState m_powerOn;
 
@@ -117,13 +113,6 @@ class Kernel : public ::KernelBase
       return std::this_thread::get_id() == m_thread.get_id();
     }
 #endif
-
-    /**
-     * \brief IO context for WiThrottle kernel and IO handler
-     *
-     * \return The IO context
-     */
-    boost::asio::io_context& ioContext() { return m_ioContext; }
 
     /**
      * \brief Create kernel and IO handler

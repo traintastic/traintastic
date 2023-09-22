@@ -25,6 +25,8 @@
 
 #include <string>
 #include <functional>
+#include <thread>
+#include <boost/asio/io_context.hpp>
 
 class KernelBase
 {
@@ -33,6 +35,9 @@ class KernelBase
     std::function<void()> m_onError;
 
   protected:
+    boost::asio::io_context m_ioContext;
+    std::thread m_thread;
+
 #ifndef NDEBUG
     bool m_started = false;
 #endif
@@ -43,6 +48,16 @@ class KernelBase
 
   public:
     const std::string logId; //!< Object id for log messages.
+
+    /**
+     * \brief IO context for LocoNet kernel and IO handler
+     *
+     * \return The IO context
+     */
+    boost::asio::io_context& ioContext()
+    {
+      return m_ioContext;
+    }
 
     /**
      * \brief ...
