@@ -32,7 +32,7 @@ namespace Lua {
 
 ScriptList::ScriptList(Object& _parent, std::string_view parentPropertyName)
   : ObjectList<Script>(_parent, parentPropertyName)
-  , status{this, "status", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject | PropertyFlags::NoScript}
+  , status{this, "status", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject | PropertyFlags::NoScript | PropertyFlags::Internal}
   , create{*this, "create",
       [this]()
       {
@@ -58,6 +58,8 @@ ScriptList::ScriptList(Object& _parent, std::string_view parentPropertyName)
   status.setValueInternal(std::make_shared<LuaStatus>(*this, status.name()));
 
   const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
+
+  m_interfaceItems.add(status);
 
   Attributes::addDisplayName(create, DisplayName::List::create);
   Attributes::addEnabled(create, editable);
