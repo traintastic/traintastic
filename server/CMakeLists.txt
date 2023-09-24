@@ -176,6 +176,7 @@ file(GLOB TEST_SOURCES
   "test/hardware/*.cpp"
   "test/lua/*.cpp"
   "test/lua/script/*.cpp"
+  "test/train/*.cpp"
   "test/objectcreatedestroy.cpp"
   )
 
