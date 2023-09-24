@@ -520,7 +520,7 @@ class LuaDoc:
                     if 'examples' in item and len(item['examples']) != 0:
                         html += '<h4>' + self._get_term('example' if len(item['examples']) == 1 else 'examples') + '</h4>' + os.linesep
                         for example in item['examples']:
-                            html += '<pre lang="lua">' + example['code'] + '</pre>' + os.linesep
+                            html += '<pre lang="lua"><code>' + highlight_lua(example['code']) + '</code></pre>' + os.linesep
 
         events = [item for item in items if item['type'] == 'event']
         if len(events) > 0:
