@@ -25,9 +25,12 @@
 #include "railvehicles.hpp"
 #include "../../world/getworld.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../core/method.tpp"
 #include "../../utils/displayname.hpp"
 #include "../../log/logmessageexception.hpp"
+#include "../../train/train.hpp"
+#include "../../hardware/decoder/decoder.hpp"
 
 RailVehicleList::RailVehicleList(Object& _parent, std::string_view parentPropertyName) :
   ObjectList<RailVehicle>(_parent, parentPropertyName),
