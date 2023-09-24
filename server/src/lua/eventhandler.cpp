@@ -109,15 +109,16 @@ void EventHandler::execute(const Arguments& args)
     }
   }
 
-  push(m_L, m_event.object().shared_from_this());
   lua_rawgeti(m_L, LUA_REGISTRYINDEX, m_userData);
 
-  if(int r = Sandbox::pcall(m_L, args.size() + 2, 0, 0); r != LUA_OK)
+  if(Sandbox::pcall(m_L, args.size() + 1, 0, 0) != LUA_OK)
+  {
     Log::log(
       Sandbox::getStateData(m_L).script().id,
       LogMessage::E9001_X_DURING_EXECUTION_OF_X_EVENT_HANDLER,
       to<std::string_view>(m_L, -1),
       m_event.object().getObjectId().append(".").append(m_event.name()));
+  }
 }
 
 bool EventHandler::disconnect()

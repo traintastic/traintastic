@@ -12,9 +12,6 @@
       },
       {
         "name": "multiplier"
-      },
-      {
-        "name": "clock"
       }
     ]
   },
@@ -22,9 +19,6 @@
     "parameters": [
       {
         "name": "time"
-      },
-      {
-        "name": "clock"
       }
     ]
   },
@@ -32,9 +26,6 @@
     "parameters": [
       {
         "name": "time"
-      },
-      {
-        "name": "clock"
       }
     ]
   }

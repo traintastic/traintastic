@@ -342,7 +342,7 @@ class LuaDoc:
                 item['return_values'] = 0 if cpp_template_type.startswith('void') else 1
             elif cpp_type == 'Event':
                 item['type'] = 'event'
-                item['parameters'] = [{}] * (1 if cpp_template_type == '' else len(cpp_template_type.split(',')) + 1)
+                item['parameters'] = [{}] * (0 if cpp_template_type == '' else len(cpp_template_type.split(',')))
 
             items.append(item)
 

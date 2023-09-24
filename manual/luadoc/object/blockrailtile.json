@@ -6,9 +6,6 @@
       },
       {
         "name": "block"
-      },
-      {
-        "name": "block"
       }
     ]
   },
@@ -16,9 +13,6 @@
     "parameters": [
       {
         "name": "train"
-      },
-      {
-        "name": "block"
       },
       {
         "name": "block"

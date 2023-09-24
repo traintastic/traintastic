@@ -174,7 +174,7 @@ void Output::updateValue(TriState _value)
 {
   value.setValueInternal(_value);
   if(value != TriState::Undefined)
-    fireEvent(onValueChanged, value == TriState::True);
+    fireEvent<bool, const std::shared_ptr<Output>&>(onValueChanged, value == TriState::True, shared_ptr<Output>());
 }
 
 void Output::interfaceChanged()
