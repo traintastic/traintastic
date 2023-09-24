@@ -33,6 +33,7 @@
 #include "../core/objectproperty.tpp"
 #include "../core/tablemodel.hpp"
 #include "../log/log.hpp"
+#include "../log/logmessageexception.hpp"
 #include "../log/memorylogger.hpp"
 #include "../board/board.hpp"
 #include "../board/tile/tiles.hpp"
@@ -383,6 +384,26 @@ bool Session::processMessage(const Message& message)
 
               m_connection->sendMessage(std::move(response));
               return true;
+            }
+          }
+          catch(const LogMessageException& e)
+          {
+            if(message.isRequest())
+            {
+              auto response = Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::LogMessageException);
+              response->write(static_cast<uint32_t>(e.message()));
+              response->write(e.args().size());
+              for(const auto& arg : e.args())
+              {
+                response->write(arg);
+              }
+              m_connection->sendMessage(std::move(response));
+              return true;
+            }
+            else
+            {
+              // we can't report it back to the caller, so just log it.
+              Log::log(*object, e.message(), e.args());
             }
           }
           catch(const std::exception& e)

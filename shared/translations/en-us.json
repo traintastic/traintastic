@@ -4314,5 +4314,9 @@
     {
         "term": "message:W9001",
         "definition": "Execution took %1 us"
+    },
+    {
+        "term": "message:E3001",
+        "definition": "Can't delete rail vehicle when in active train"
     }
 ]

@@ -115,6 +115,7 @@ class Message
       InvalidProperty = 3,
       InvalidValue = 4,
 */
+      LogMessageException = 61,
       Other = 62,
       Unknown = 63
     };
