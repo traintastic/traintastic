@@ -376,6 +376,11 @@ bool Train::setTrainActive(bool val)
 
   if(val)
   {
+    if(vehicles->empty())
+    {
+      return false; // activating a train without vehicles is useless.
+    }
+
     //To activate a train, ensure all vehicles are stopped and free
     for(const auto& vehicle : *vehicles)
     {
