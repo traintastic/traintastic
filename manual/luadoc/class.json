@@ -151,6 +151,12 @@
   "OUTPUT_LIST": {
     "type": "constant"
   },
+  "IDENTIFICATION": {
+    "type": "constant"
+  },
+  "IDENTIFICATION_LIST": {
+    "type": "constant"
+  },
   "RAIL_VEHICLE_LIST": {
     "type": "constant"
   },

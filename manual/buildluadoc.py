@@ -701,6 +701,7 @@ class LuaDoc:
         # objects:
         for object in self._objects:
             name = self._get_term(object['name'])
+            print(name)
             letter = name[0].upper()
             index[letter].append({'title': name, 'sub_title': '<code>object</code>', 'href': object['filename']})
 

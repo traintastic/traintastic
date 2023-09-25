@@ -1638,5 +1638,13 @@
   {
     "term": "example.directioncontrolusinginput:description",
     "definition": "This example show how to use an input to control a direction control board element on the board. This can e.g. be used for physical control panels that control board elements."
+  },
+  {
+    "term": "object.identification:title",
+    "definition": "Identification"
+  },
+  {
+    "term": "object.identificationlist:title",
+    "definition": "Identification list"
   }
 ]

@@ -85,6 +85,9 @@
 #include "../hardware/output/map/turnoutoutputmapitem.hpp"
 #include "../hardware/output/map/signaloutputmapitem.hpp"
 
+#include "../hardware/identification/identification.hpp"
+#include "../hardware/identification/list/identificationlist.hpp"
+
 #include "../vehicle/rail/railvehiclelist.hpp"
 #include "../vehicle/rail/locomotive.hpp"
 #include "../vehicle/rail/freightwagon.hpp"
@@ -193,6 +196,10 @@ void Class::registerValues(lua_State* L)
 
   registerValue<Output>(L, "OUTPUT");
   registerValue<OutputList>(L, "OUTPUT_LIST");
+
+  // hardware - identification:
+  registerValue<Identification>(L, "IDENTIFICATION");
+  registerValue<IdentificationList>(L, "IDENTIFICATION_LIST");
 
   registerValue<RailVehicleList>(L, "RAIL_VEHICLE_LIST");
   registerValue<Locomotive>(L, "LOCOMOTIVE");
