@@ -174,16 +174,16 @@ void Class::registerValues(lua_State* L)
   registerValue<Clock>(L, "CLOCK");
 
   // hardware - interface:
-  registerValue<DCCPlusPlusInterface>(L, "DCCPLUSPLUS");
-  registerValue<ECoSInterface>(L, "ECOS");
-  registerValue<HSI88Interface>(L, "HSI88");
-  registerValue<LocoNetInterface>(L, "LOCONET");
-  registerValue<MarklinCANInterface>(L, "MARKLIN_CAN");
-  registerValue<TraintasticDIYInterface>(L, "TRAINTASTIC_DIY");
-  registerValue<XpressNetInterface>(L, "XPRESSNET");
-  registerValue<WiThrottleInterface>(L, "WITHROTTLE");
-  registerValue<WlanMausInterface>(L, "WLANMAUS");
-  registerValue<Z21Interface>(L, "Z21");
+  registerValue<DCCPlusPlusInterface>(L, "DCCPLUSPLUS_INTERFACE");
+  registerValue<ECoSInterface>(L, "ECOS_INTERFACE");
+  registerValue<HSI88Interface>(L, "HSI88_INTERFACE");
+  registerValue<LocoNetInterface>(L, "LOCONET_INTERFACE");
+  registerValue<MarklinCANInterface>(L, "MARKLIN_CAN_INTERFACE");
+  registerValue<TraintasticDIYInterface>(L, "TRAINTASTIC_DIY_INTERFACE");
+  registerValue<XpressNetInterface>(L, "XPRESSNET_INTERFACE");
+  registerValue<WiThrottleInterface>(L, "WITHROTTLE_INTERFACE");
+  registerValue<WlanMausInterface>(L, "WLANMAUS_INTERFACE");
+  registerValue<Z21Interface>(L, "Z21_INTERFACE");
   registerValue<InterfaceStatus>(L, "INTERFACE_STATUS");
 
   registerValue<DecoderFunction>(L, "DECODER_FUNCTION");

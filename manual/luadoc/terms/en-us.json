@@ -988,7 +988,7 @@
     "definition": ""
   },
   {
-    "term": "class.dccplusplus:description",
+    "term": "class.dccplusplus_interface:description",
     "definition": ""
   },
   {
@@ -1008,7 +1008,7 @@
     "definition": ""
   },
   {
-    "term": "class.ecos:description",
+    "term": "class.ecos_interface:description",
     "definition": ""
   },
   {
@@ -1032,11 +1032,11 @@
     "definition": ""
   },
   {
-    "term": "class.loconet:description",
+    "term": "class.loconet_interface:description",
     "definition": ""
   },
   {
-    "term": "class.marklin_can:description",
+    "term": "class.marklin_can_interface:description",
     "definition": ""
   },
   {
@@ -1064,7 +1064,7 @@
     "definition": ""
   },
   {
-    "term": "class.traintastic_diy:description",
+    "term": "class.traintastic_diy_interface:description",
     "definition": ""
   },
   {
@@ -1096,11 +1096,11 @@
     "definition": ""
   },
   {
-    "term": "class.withrottle:description",
+    "term": "class.withrottle_interface:description",
     "definition": ""
   },
   {
-    "term": "class.wlanmaus:description",
+    "term": "class.wlanmaus_interface:description",
     "definition": ""
   },
   {
@@ -1108,7 +1108,7 @@
     "definition": ""
   },
   {
-    "term": "class.xpressnet:description",
+    "term": "class.xpressnet_interface:description",
     "definition": ""
   },
   {

@@ -94,34 +94,34 @@
   "CLOCK": {
     "type": "constant"
   },
-  "DCCPLUSPLUS": {
+  "DCCPLUSPLUS_INTERFACE": {
     "type": "constant"
   },
-  "ECOS": {
+  "ECOS_INTERFACE": {
     "type": "constant"
   },
-  "HSI88": {
+  "HSI88_INTERFACE": {
     "type": "constant"
   },
-  "LOCONET": {
+  "LOCONET_INTERFACE": {
     "type": "constant"
   },
-  "MARKLIN_CAN": {
+  "MARKLIN_CAN_INTERFACE": {
     "type": "constant"
   },
-  "TRAINTASTIC_DIY": {
+  "TRAINTASTIC_DIY_INTERFACE": {
     "type": "constant"
   },
-  "XPRESSNET": {
+  "XPRESSNET_INTERFACE": {
     "type": "constant"
   },
-  "WITHROTTLE": {
+  "WITHROTTLE_INTERFACE": {
     "type": "constant"
   },
-  "WLANMAUS": {
+  "WLANMAUS_INTERFACE": {
     "type": "constant"
   },
-  "Z21": {
+  "Z21_INTERFACE": {
     "type": "constant"
   },
   "INTERFACE_STATUS": {
