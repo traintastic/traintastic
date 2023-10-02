@@ -283,7 +283,8 @@ class LuaDoc:
                     continue
                 base_classes = []
                 for base_class, _ in re.findall(r'public\s*([A-Za-z0-9]+)(<[A-Za-z0-9]+>|)', m.group(3)):
-                    base_classes.append(base_class)
+                    if not base_class.startswith('std'):
+                        base_classes.append(base_class)
                 lua_filename_hpp = os.path.join(project_root, 'server', 'src', 'lua', 'object', os.path.basename(filename_hpp))
                 if not os.path.exists(lua_filename_hpp):
                     lua_filename_hpp = None
