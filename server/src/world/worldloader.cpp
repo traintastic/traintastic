@@ -247,10 +247,19 @@ void WorldLoader::createObject(ObjectData& objectData)
   else if(classId == TrainBlockStatus::classId)
   {
     auto block = std::dynamic_pointer_cast<BlockRailTile>(getObject(objectData.json["block"].get<std::string_view>()));
-    auto train = std::dynamic_pointer_cast<Train>(getObject(objectData.json["train"].get<std::string_view>()));
 
-    if(block && train) /*[[likely]]*/
-      objectData.object = TrainBlockStatus::create(*block, *train, to<BlockTrainDirection>(objectData.json["direction"]), id);
+    if(block) /*[[likely]]*/
+    {
+      if(objectData.json["train"].is_string())
+      {
+        auto train = std::dynamic_pointer_cast<Train>(getObject(objectData.json["train"].get<std::string_view>()));
+        objectData.object = TrainBlockStatus::create(*block, *train, to<BlockTrainDirection>(objectData.json["direction"]), id);
+      }
+      else
+      {
+        objectData.object = TrainBlockStatus::create(*block, objectData.json["identification"].get<std::string>(), to<BlockTrainDirection>(objectData.json["direction"]), id);
+      }
+    }
   }
   else if(classId == Lua::Script::classId)
     objectData.object = Lua::Script::create(*m_world, id);
