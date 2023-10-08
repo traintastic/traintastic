@@ -37,6 +37,8 @@ private:
   std::string m_id;
 
 protected:
+  static void removeFromWorld(World& world, StateObject& object);
+
   void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
 
 public:

@@ -77,6 +77,7 @@ class BlockRailTile : public RailTile
     void getConnectors(std::vector<Connector>& connectors) const final;
 
     void inputItemValueChanged(BlockInputMapItem& item);
+    void identificationEvent(BlockInputMapItem& item, IdentificationEventType eventType, uint16_t identifier, Direction direction, uint8_t category);
 };
 
 #endif

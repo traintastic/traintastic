@@ -28,6 +28,7 @@
 #include "../input.hpp"
 #include "../../../enum/sensortype.hpp"
 #include "../../../enum/sensorstate.hpp"
+#include "../../identification/identification.hpp"
 
 class BlockInputMap;
 
@@ -40,11 +41,17 @@ class BlockInputMapItem final : public InputMapItem
     const uint32_t m_itemId;
     boost::signals2::connection m_inputDestroying;
     boost::signals2::connection m_inputPropertyChanged;
+    boost::signals2::connection m_identificationDestroying;
+    boost::signals2::connection m_identificationEvent;
     SensorState m_value;
 
     void connectInput(Input& object);
     void disconnectInput(Input& object);
     void inputPropertyChanged(BaseProperty& property);
+
+    void connectIdentification(Identification& object);
+    void disconnectIdentification(Identification& object);
+
     void setValue(SensorState value);
 
   protected:
@@ -58,6 +65,7 @@ class BlockInputMapItem final : public InputMapItem
     ObjectProperty<Input> input;
     Property<SensorType> type;
     Property<bool> invert;
+    ObjectProperty<Identification> identification;
 
     BlockInputMapItem(BlockInputMap& parent, uint32_t itemId);
     ~BlockInputMapItem() final;

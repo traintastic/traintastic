@@ -45,6 +45,14 @@ BlockTrainDirection TrainBlockStatus::direction() const
   return static_cast<BlockTrainDirection>(0);
 }
 
+QString TrainBlockStatus::identification() const
+{
+  if(m_identificationProperty) /*[[likely]]*/
+    return m_identificationProperty->toString();
+  assert(false);
+  return {};
+}
+
 void TrainBlockStatus::created()
 {
   Object::created();
@@ -52,6 +60,14 @@ void TrainBlockStatus::created()
   m_directionProperty = dynamic_cast<Property*>(getProperty("direction"));
   if(m_directionProperty)
     connect(m_directionProperty, &Property::valueChanged, this,
+      [this]()
+      {
+        emit changed();
+      });
+
+  m_identificationProperty = dynamic_cast<Property*>(getProperty("identification"));
+  if(m_identificationProperty)
+    connect(m_identificationProperty, &Property::valueChanged, this,
       [this]()
       {
         emit changed();

@@ -36,14 +36,19 @@ class TrainBlockStatus final : public StateObject
 {
   CLASS_ID("train_block_status");
 
+protected:
+  void destroying() final;
+
 public:
   static std::shared_ptr<TrainBlockStatus> create(BlockRailTile& block_, Train& train_, BlockTrainDirection direction_, std::string_view id = {});
+  static std::shared_ptr<TrainBlockStatus> create(BlockRailTile& block_, std::string identification_, BlockTrainDirection direction_, std::string_view id = {});
 
   ObjectProperty<BlockRailTile> block;
   ObjectProperty<Train> train;
+  Property<std::string> identification;
   Property<BlockTrainDirection> direction; //!< \brief Train direction from the block perspective
 
-  TrainBlockStatus(BlockRailTile& block_, Train& train_, BlockTrainDirection direction_, std::string id);
+  TrainBlockStatus(std::string id);
 };
 
 #endif

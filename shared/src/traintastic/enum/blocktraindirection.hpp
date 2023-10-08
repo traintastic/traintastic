@@ -29,24 +29,30 @@
 
 enum class BlockTrainDirection : uint8_t
 {
+  Unknown = 0,
   TowardsA = 1, //!< West for horizontal blocks, South for vertical blocks.
   TowardsB = 2, //!< East for horizontal blocks, North for vertical blocks.
 };
 
-TRAINTASTIC_ENUM(BlockTrainDirection, "block_train_direction", 2,
+TRAINTASTIC_ENUM(BlockTrainDirection, "block_train_direction", 3,
 {
+  {BlockTrainDirection::Unknown, "unknown"},
   {BlockTrainDirection::TowardsA, "towards_a"},
   {BlockTrainDirection::TowardsB, "towards_b"}
 });
 
-constexpr std::array<BlockTrainDirection, 2> blockTrainDirectionValues
+constexpr std::array<BlockTrainDirection, 3> blockTrainDirectionValues
 {
+  BlockTrainDirection::Unknown,
   BlockTrainDirection::TowardsA,
   BlockTrainDirection::TowardsB,
 };
 
 constexpr BlockTrainDirection operator !(BlockTrainDirection value)
 {
+  if(value == BlockTrainDirection::Unknown)
+    return BlockTrainDirection::Unknown;
+
   return (value == BlockTrainDirection::TowardsA) ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA;
 }
 

@@ -28,6 +28,11 @@ void StateObject::addToWorld(World& world, StateObject& object)
   world.m_objects.emplace(object.getObjectId(), object.weak_from_this());
 }
 
+void StateObject::removeFromWorld(World& world, StateObject& object)
+{
+  world.m_objects.erase(object.m_id);
+}
+
 StateObject::StateObject(std::string id)
   : m_id{std::move(id)}
 {
