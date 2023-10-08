@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +30,12 @@ class Event : public AbstractEvent
 {
   friend class Object;
 
+  public:
+    using Signal = typename boost::signals2::signal<void (Args...)>;
+
   private:
+    Signal m_signal;
+
     template<class T, class... Tn>
     inline void addArguments(Arguments& args, T value, Tn... others)
     {
@@ -46,6 +51,7 @@ class Event : public AbstractEvent
   protected:
     void fire(Args... args)
     {
+      m_signal(args...);
       Arguments arguments;
       if constexpr(sizeof...(Args) > 0)
       {
@@ -64,6 +70,11 @@ class Event : public AbstractEvent
     tcb::span<const TypeInfo> argumentTypeInfo() const final
     {
       return {typeInfoArray<Args...>};
+    }
+
+    inline auto connect(const typename Signal::slot_type& slot, boost::signals2::connect_position position = boost::signals2::at_back)
+    {
+      return m_signal.connect(slot, position);
     }
 };
 
