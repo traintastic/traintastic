@@ -678,7 +678,7 @@ void Kernel::receive(const Message& message)
           {
             m_identificationController->identificationEvent(
               IdentificationController::defaultIdentificationChannel,
-              multiSenseTransponder.sensorAddress(),
+              1 + multiSenseTransponder.sensorAddress(),
               multiSenseTransponder.isPresent() ? IdentificationEventType::Present : IdentificationEventType::Absent,
               multiSenseTransponder.transponderAddress(),
               Direction::Unknown,
@@ -771,7 +771,7 @@ void Kernel::receive(const Message& message)
           {
             m_identificationController->identificationEvent(
               IdentificationController::defaultIdentificationChannel,
-              multiSenseTransponder.sensorAddress(),
+              1 + multiSenseTransponder.sensorAddress(),
               multiSenseTransponder.isPresent() ? IdentificationEventType::Present : IdentificationEventType::Absent,
               multiSenseTransponder.transponderAddress(),
               multiSenseTransponder.transponderDirection(),
