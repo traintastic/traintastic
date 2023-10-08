@@ -216,7 +216,7 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
   updateState();
 }
 
-void BlockRailTile::identificationEvent(BlockInputMapItem& item, IdentificationEventType eventType, uint16_t identifier, Direction direction, uint8_t category)
+void BlockRailTile::identificationEvent(BlockInputMapItem& /*item*/, IdentificationEventType eventType, uint16_t identifier, Direction direction, uint8_t /*category*/)
 {
   const auto self = shared_ptr<BlockRailTile>();
   BlockTrainDirection blockDirection = BlockTrainDirection::Unknown;
@@ -248,7 +248,7 @@ void BlockRailTile::identificationEvent(BlockInputMapItem& item, IdentificationE
       case IdentificationEventType::Absent:
       {
         const auto identification = std::string("#").append(std::to_string(identifier));
-        for(auto& train : trains)
+        for(const auto& train : trains)
         {
           if(train->identification.value() == identification)
           {
