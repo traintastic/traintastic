@@ -334,7 +334,8 @@ void BlockRailTile::destroying()
 {
   const auto self = shared_ptr<BlockRailTile>();
   for(const auto& status : *trains)
-    status->train->blocks.removeInternal(status);
+    if(status->train)
+      status->train->blocks.removeInternal(status);
 
   RailTile::destroying();
 }
