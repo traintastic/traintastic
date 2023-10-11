@@ -4322,5 +4322,9 @@
     {
         "term": "input_map_item.block:identification",
         "definition": "Identification"
+    },
+    {
+        "term": "message:E3002",
+        "definition": "Can't delete active train"
     }
 ]

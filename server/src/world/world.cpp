@@ -76,7 +76,17 @@ template<class T>
 inline static void deleteAll(T& objectList)
 {
   while(!objectList.empty())
+  {
+    if constexpr(std::is_same_v<T, TrainList>)
+    {
+      if(objectList.front()->active)
+      {
+        objectList.front()->emergencyStop = true;
+        objectList.front()->active = false;
+      }
+    }
     objectList.delete_(objectList.front());
+  }
 }
 
 std::shared_ptr<World> World::create()
