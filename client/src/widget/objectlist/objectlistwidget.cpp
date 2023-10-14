@@ -184,7 +184,15 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
       [this]()
       {
         for(const QString& id : getSelectedObjectIds())
-          callMethod(m_actionDelete->method(), nullptr, id);
+          callMethod(m_actionDelete->method(),
+            [this](std::optional<const Error> error)
+            {
+              if(error)
+              {
+                error->show(this);
+              }
+            },
+            id);
       });
     m_actionDelete->setForceDisabled(true);
     m_toolbar->addAction(m_actionDelete);

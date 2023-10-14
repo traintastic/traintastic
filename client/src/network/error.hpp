@@ -30,6 +30,7 @@
 
 #include <traintastic/enum/logmessage.hpp>
 
+class QWidget;
 class Message;
 
 struct Error
@@ -40,6 +41,7 @@ struct Error
   Error(const Message& message);
 
   QString toString() const;
+  void show(QWidget* parent = nullptr) const;
 };
 
 #endif

@@ -21,6 +21,7 @@
  */
 
 #include "error.hpp"
+#include <QMessageBox>
 #include <traintastic/network/message.hpp>
 #include <traintastic/locale/locale.hpp>
 
@@ -40,4 +41,24 @@ QString Error::toString() const
   for(const auto& arg : args)
     str = str.arg(arg);
   return str;
+}
+
+void Error::show(QWidget* parent) const
+{
+  if(isDebugLogMessage(code) || isInfoLogMessage(code) || isNoticeLogMessage(code))
+  {
+    QMessageBox::information(parent, logMessageCode(code), toString());
+  }
+  else if(isWarningLogMessage(code))
+  {
+    QMessageBox::warning(parent, logMessageCode(code), toString());
+  }
+  else if(isErrorLogMessage(code) || isCriticalLogMessage(code) || isFatalLogMessage(code))
+  {
+    QMessageBox::critical(parent, logMessageCode(code), toString());
+  }
+  else /*[[unlikely]]*/
+  {
+    assert(false);
+  }
 }
