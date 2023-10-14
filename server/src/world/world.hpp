@@ -151,7 +151,7 @@ class World : public Object
     ObjectPtr getObjectById(const std::string& _id) const;
     ObjectPtr getObjectByPath(std::string_view path) const;
 
-    bool export_(std::vector<std::byte>& data);
+    void export_(std::vector<std::byte>& data);
 };
 
 #endif

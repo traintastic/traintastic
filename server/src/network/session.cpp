@@ -108,8 +108,9 @@ bool Session::processMessage(const Message& message)
         m_connection->sendMessage(std::move(response));
       }
       else
-        m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::UnknownObject));
-
+      {
+        m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1015_UNKNOWN_OBJECT));
+      }
       return true;
     }
     case Message::Command::ReleaseObject:
@@ -172,7 +173,9 @@ bool Session::processMessage(const Message& message)
             catch(const std::exception& e) // set property failed
             {
               if(message.isRequest()) // send error response
-                m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), e.what()));
+              {
+                m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1018_EXCEPTION_X, e.what()));
+              }
               else // send changed event with current value:
                 objectPropertyChanged(*property);
             }
@@ -181,10 +184,14 @@ bool Session::processMessage(const Message& message)
               m_connection->sendMessage(Message::newResponse(message.command(), message.requestId()));
           }
           else if(message.isRequest()) // send error response
-            m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), "unknown property"));
+          {
+            m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1016_UNKNOWN_PROPERTY));
+          }
         }
         else if(message.isRequest()) // send error response
-          m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), "unknown object"));
+        {
+          m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1015_UNKNOWN_OBJECT));
+        }
       }
       return true;
     }
@@ -221,13 +228,13 @@ bool Session::processMessage(const Message& message)
               m_connection->sendMessage(std::move(response));
             }
             else
-              m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::UnknownObject));
+              m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1015_UNKNOWN_OBJECT));
           }
           else // send error response
-            m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), "unknown property"));
+            m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1016_UNKNOWN_PROPERTY));
         }
         else // send error response
-          m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), "unknown object"));
+          m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1015_UNKNOWN_OBJECT));
 
         return true;
       }
@@ -251,13 +258,13 @@ bool Session::processMessage(const Message& message)
               m_connection->sendMessage(std::move(response));
             }
             else // send error response
-              m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), "invalid indices"));
+              m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1017_INVALID_INDICES));
           }
           else // send error response
-            m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), "unknown property"));
+            m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1016_UNKNOWN_PROPERTY));
         }
         else // send error response
-          m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), "unknown object"));
+          m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1015_UNKNOWN_OBJECT));
 
         return true;
       }
@@ -390,14 +397,7 @@ bool Session::processMessage(const Message& message)
           {
             if(message.isRequest())
             {
-              auto response = Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::LogMessageException);
-              response->write(static_cast<uint32_t>(e.message()));
-              response->write(e.args().size());
-              for(const auto& arg : e.args())
-              {
-                response->write(arg);
-              }
-              m_connection->sendMessage(std::move(response));
+              m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), e.message(), e.args()));
               return true;
             }
             else
@@ -410,7 +410,7 @@ bool Session::processMessage(const Message& message)
           {
             if(message.isRequest())
             {
-              m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::Failed));
+              m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1018_EXCEPTION_X, e.what()));
               return true;
             }
           }
@@ -467,7 +467,7 @@ bool Session::processMessage(const Message& message)
           return true;
         }
       }
-      m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::ObjectNotTable));
+      m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1019_OBJECT_NOT_A_TABLE));
       return true;
     }
     case Message::Command::ReleaseTableModel:
@@ -616,12 +616,17 @@ bool Session::processMessage(const Message& message)
     case Message::Command::ImportWorld:
       if(message.isRequest())
       {
-        std::vector<std::byte> worldData;
-        message.read(worldData);
-        if(Traintastic::instance->importWorld(worldData))
+        try
+        {
+          std::vector<std::byte> worldData;
+          message.read(worldData);
+          Traintastic::instance->importWorld(worldData);
           m_connection->sendMessage(Message::newResponse(message.command(), message.requestId()));
-        else
-          m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::Failed));
+        }
+        catch(const LogMessageException& e)
+        {
+          m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), e.message(), e.args()));
+        }
       }
       break;
 
@@ -630,16 +635,23 @@ bool Session::processMessage(const Message& message)
       {
         if(Traintastic::instance->world)
         {
-          std::vector<std::byte> worldData;
-          if(Traintastic::instance->world->export_(worldData))
+          try
           {
+            std::vector<std::byte> worldData;
+            Traintastic::instance->world->export_(worldData);
             auto response = Message::newResponse(message.command(), message.requestId());
             response->write(worldData);
             m_connection->sendMessage(std::move(response));
-            return true;
+          }
+          catch(const LogMessageException& e)
+          {
+            m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), e.message(), e.args()));
           }
         }
-        m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), Message::ErrorCode::Failed));
+        else
+        {
+          m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1010_EXPORTING_WORLD_FAILED_X, "nullptr"));
+        }
         return true;
       }
       break;

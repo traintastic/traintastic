@@ -4326,5 +4326,29 @@
     {
         "term": "message:E3002",
         "definition": "Can't delete active train"
+    },
+    {
+        "term": "message:C1014",
+        "definition": "Invalid command"
+    },
+    {
+        "term": "message:C1015",
+        "definition": "Unknown object"
+    },
+    {
+        "term": "message:C1016",
+        "definition": "Unknown property"
+    },
+    {
+        "term": "message:C1017",
+        "definition": "Invalid indeces"
+    },
+    {
+        "term": "message:C1018",
+        "definition": "Exception: %1"
+    },
+    {
+        "term": "message:C1019",
+        "definition": "Object not a table"
     }
 ]

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,7 @@
 #include "connection.hpp"
 #include "method.hpp"
 #include "object.hpp"
+#include "error.hpp"
 #include <traintastic/network/message.hpp>
 #include <traintastic/utils/valuetypetraits.hpp>
 
@@ -68,7 +69,7 @@ inline R getResult(Connection& connection, const Message& message)
 }
 
 template<class R, class... A>
-int callMethod(Connection& connection, Method& method, std::function<void(const R&, Message::ErrorCode)> callback, A... args)
+int callMethod(Connection& connection, Method& method, std::function<void(const R&, std::optional<const Error>)> callback, A... args)
 {
   auto request = Message::newRequest(Message::Command::ObjectCallMethod);
   request->write(method.object().handle());
@@ -83,17 +84,21 @@ int callMethod(Connection& connection, Method& method, std::function<void(const 
   connection.send(request,
     [&connection, callback](const std::shared_ptr<Message> message)
     {
-      R r;
       if(!message->isError())
-        r = getResult<R>(connection, *message);
-      callback(r, message->errorCode());
+      {
+        callback(getResult<R>(connection, *message), {});
+      }
+      else
+      {
+        callback(R(), *message);
+      }
     });
 
   return request->requestId();
 }
 
 template<class R, class... A>
-int callMethodR(Method& method, std::function<void(const R&, Message::ErrorCode)> callback, A... args)
+int callMethodR(Method& method, std::function<void(const R&, std::optional<const Error>)> callback, A... args)
 {
   auto request = Message::newRequest(Message::Command::ObjectCallMethod);
   request->write(method.object().handle());
@@ -109,17 +114,21 @@ int callMethodR(Method& method, std::function<void(const R&, Message::ErrorCode)
   c->send(request,
     [c, callback=std::move(callback)](const std::shared_ptr<Message> message)
     {
-      R r;
       if(!message->isError())
-        r = getResult<R>(*c, *message);
-      callback(r, message->errorCode());
+      {
+        callback(getResult<R>(*c, *message), {});
+      }
+      else
+      {
+        callback(R(), *message);
+      }
     });
 
   return request->requestId();
 }
 
 template<class... A>
-int callMethod(Method& method, std::function<void(Message::ErrorCode)> callback, A... args)
+int callMethod(Method& method, std::function<void(std::optional<const Error>)> callback, A... args)
 {
   auto request = Message::newRequest(Message::Command::ObjectCallMethod);
   request->write(method.object().handle());
@@ -133,7 +142,7 @@ int callMethod(Method& method, std::function<void(Message::ErrorCode)> callback,
   method.object().connection()->send(request,
     [callback=std::move(callback)](const std::shared_ptr<Message> message)
     {
-      callback(message->errorCode());
+      callback(message->isError() ? std::optional<const Error>(*message) : std::nullopt);
     });
 
   return request->requestId();

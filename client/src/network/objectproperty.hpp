@@ -27,6 +27,8 @@
 #include "objectptr.hpp"
 #include <traintastic/network/message.hpp>
 
+struct Error;
+
 class ObjectProperty : public AbstractProperty
 {
   friend class Connection;
@@ -42,7 +44,7 @@ class ObjectProperty : public AbstractProperty
       return !m_id.isEmpty();
     }
 
-    [[nodiscard]] int getObject(std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
+    [[nodiscard]] int getObject(std::function<void(const ObjectPtr&, std::optional<const Error>)> callback);
     const QString& objectId() const { return m_id; }
     void setByObjectId(const QString& value);
 };

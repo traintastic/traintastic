@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -143,7 +143,7 @@ LNCVProgrammer::LNCVProgrammer(std::shared_ptr<Connection> connection, QWidget* 
         if(auto* getLNCVProgrammer = world->getMethod("get_lncv_programmer"))
         {
           callMethodR<ObjectPtr>(*getLNCVProgrammer,
-            [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+            [this](const ObjectPtr& object, std::optional<const Error> /*error*/)
             {
               if(object)
               {
@@ -227,7 +227,7 @@ LNCVProgrammer::LNCVProgrammer(std::shared_ptr<Connection> connection, QWidget* 
                   setState(State::WaitForStart);
 
                   callMethodR<bool>(*start,
-                    [this](const bool sent, Message::ErrorCode /*ec*/)
+                    [this](const bool sent, std::optional<const Error> /*error*/)
                     {
                       if(sent)
                       {
@@ -356,13 +356,13 @@ LNCVProgrammer::~LNCVProgrammer()
 void LNCVProgrammer::loadInterfaces()
 {
   m_requestId = m_connection->getObject("world.lncv_programming_controllers",
-    [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+    [this](const ObjectPtr& object, std::optional<const Error> /*error*/)
     {
       m_requestId = Connection::invalidRequestId;
 
       if(object)
         m_requestId = m_connection->getTableModel(object,
-          [this](const TableModelPtr& table, Message::ErrorCode /*ec*/)
+          [this](const TableModelPtr& table, std::optional<const Error> /*error*/)
           {
             m_requestId = Connection::invalidRequestId;
 

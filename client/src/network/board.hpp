@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,11 +26,13 @@
 #include "object.hpp"
 #include <QString>
 #include <unordered_map>
+#include <optional>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/board/tilelocation.hpp>
 #include <traintastic/board/tiledata.hpp>
-#include <traintastic/network/message.hpp>
 #include "objectptr.hpp"
+
+struct Error;
 
 class Board final : public Object
 {
@@ -75,10 +77,10 @@ class Board final : public Object
     TileId getTileId(TileLocation l) const;
     ObjectPtr getTileObject(TileLocation l) const;
 
-    int addTile(int16_t x, int16_t y, TileRotate rotate, const QString& id, bool replace, std::function<void(const bool&, Message::ErrorCode)> callback);
-    int moveTile(int16_t xFrom, int16_t yFrom, int16_t xTo, int16_t yTo, TileRotate rotate, bool replace, std::function<void(const bool&, Message::ErrorCode)> callback);
-    int resizeTile(int16_t x, int16_t y, uint8_t w, uint8_t h, std::function<void(const bool&, Message::ErrorCode)> callback);
-    int deleteTile(int16_t x, int16_t y, std::function<void(const bool&, Message::ErrorCode)> callback);
+    int addTile(int16_t x, int16_t y, TileRotate rotate, const QString& id, bool replace, std::function<void(const bool&, std::optional<const Error>)> callback);
+    int moveTile(int16_t xFrom, int16_t yFrom, int16_t xTo, int16_t yTo, TileRotate rotate, bool replace, std::function<void(const bool&, std::optional<const Error>)> callback);
+    int resizeTile(int16_t x, int16_t y, uint8_t w, uint8_t h, std::function<void(const bool&, std::optional<const Error>)> callback);
+    int deleteTile(int16_t x, int16_t y, std::function<void(const bool&, std::optional<const Error>)> callback);
 
   signals:
     void tileDataChanged();

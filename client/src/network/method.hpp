@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,10 +24,12 @@
 #define TRAINTASTIC_CLIENT_NETWORK_METHOD_HPP
 
 #include "interfaceitem.hpp"
+#include <optional>
 #include <QVector>
 #include <traintastic/enum/valuetype.hpp>
 #include "objectptr.hpp"
-#include <traintastic/network/message.hpp>
+
+struct Error;
 
 class Method : public InterfaceItem
 {
@@ -43,8 +45,8 @@ class Method : public InterfaceItem
 
     void call();
     void call(const QString& arg);
-    [[nodiscard]] int call(std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
-    [[nodiscard]] int call(const QString& arg, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
+    [[nodiscard]] int call(std::function<void(const ObjectPtr&, std::optional<const Error>)> callback);
+    [[nodiscard]] int call(const QString& arg, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback);
 };
 
 #endif

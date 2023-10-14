@@ -93,7 +93,7 @@ class Traintastic final : public Object
 
     std::filesystem::path debugDir() const { return dataDir() / "debug"; }
 
-    bool importWorld(const std::vector<std::byte>& worldData);
+    void importWorld(const std::vector<std::byte>& worldData);
 
     RunStatus run(const std::string& worldUUID = {}, bool simulate = false, bool online = false, bool power = false, bool run = false);
     void exit();

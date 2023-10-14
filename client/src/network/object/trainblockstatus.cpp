@@ -24,6 +24,7 @@
 #include "../connection.hpp"
 #include "../property.hpp"
 #include "../objectproperty.hpp"
+#include "../error.hpp"
 
 TrainBlockStatus::TrainBlockStatus(const std::shared_ptr<Connection>& connection, Handle handle, const QString& classId_)
   : Object(connection, handle, classId_)
@@ -91,7 +92,7 @@ void TrainBlockStatus::updateTrain()
   }
 
   m_requestId = m_trainProperty->getObject(
-    [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+    [this](const ObjectPtr& object, std::optional<const Error> /*error*/)
     {
       m_requestId = Connection::invalidRequestId;
       m_train = object;

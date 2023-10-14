@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "property.hpp"
 #include "connection.hpp"
 #include "object.hpp"
+#include "error.hpp"
 
 template<class T>
 static void setPropertyValue(Property& property, const T& value)
@@ -58,7 +59,7 @@ static void setPropertyValue(Property& property, const T& value)
 }
 
 template<class T>
-[[nodiscard]] static int setPropertyValue(Property& property, const T& value, std::function<void(const QString& error)> callback)
+[[nodiscard]] static int setPropertyValue(Property& property, const T& value, std::function<void(std::optional<Error>)> callback)
 {
   auto request = Message::newRequest(Message::Command::ObjectSetProperty);
   request->write(static_cast<Object*>(property.parent())->handle());
@@ -90,15 +91,14 @@ template<class T>
   property.object().connection()->send(request,
     [callback](const std::shared_ptr<Message> message)
     {
-      QString error;
       if(message->isError())
       {
-        if(message->errorCode() == Message::ErrorCode::Other)
-          error = QString::fromLatin1(message->read<QByteArray>());
-        else
-          error = QString("error %1").arg(static_cast<int>(message->errorCode()));
+        callback(*message);
       }
-      callback(error);
+      else // success
+      {
+        callback({});
+      }
     });
 
   return request->requestId();
@@ -136,22 +136,22 @@ void Property::setValueString(const QString& value)
   setPropertyValue(*this, value);
 }
 
-int Property::setValueBool(bool value, std::function<void(const QString& error)> callback)
+int Property::setValueBool(bool value, std::function<void(std::optional<Error> error)> callback)
 {
   return setPropertyValue(*this, value, std::move(callback));
 }
 
-int Property::setValueInt64(int64_t value, std::function<void(const QString& error)> callback)
+int Property::setValueInt64(int64_t value, std::function<void(std::optional<Error> error)> callback)
 {
   return setPropertyValue(*this, value, std::move(callback));
 }
 
-int Property::setValueDouble(double value, std::function<void(const QString& error)> callback)
+int Property::setValueDouble(double value, std::function<void(std::optional<Error> error)> callback)
 {
   return setPropertyValue(*this, value, std::move(callback));
 }
 
-int Property::setValueString(const QString& value, std::function<void(const QString& error)> callback)
+int Property::setValueString(const QString& value, std::function<void(std::optional<Error> error)> callback)
 {
   return setPropertyValue(*this, value, std::move(callback));
 }

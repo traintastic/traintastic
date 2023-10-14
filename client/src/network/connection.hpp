@@ -26,6 +26,7 @@
 #include <QObject>
 #include <memory>
 #include <unordered_map>
+#include <optional>
 #include <QAbstractSocket>
 #include <QMap>
 #include <QUuid>
@@ -45,6 +46,7 @@ class InputMonitor;
 class OutputKeyboard;
 class Board;
 class OutputMap;
+struct Error;
 
 class Connection : public QObject, public std::enable_shared_from_this<Connection>
 {
@@ -133,10 +135,10 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
 
     void serverLog(ServerLogTableModel& model, bool enable);
 
-    [[nodiscard]] int getObject(const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
-    [[nodiscard]] int getObject(const ObjectProperty& property, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
-    [[nodiscard]] int getObject(const ObjectVectorProperty& property, uint32_t index, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
-    [[nodiscard]] int getObjects(const ObjectVectorProperty& property, uint32_t startIndex, uint32_t endIndex, std::function<void(const std::vector<ObjectPtr>&, Message::ErrorCode)> callback);
+    [[nodiscard]] int getObject(const QString& id, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback);
+    [[nodiscard]] int getObject(const ObjectProperty& property, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback);
+    [[nodiscard]] int getObject(const ObjectVectorProperty& property, uint32_t index, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback);
+    [[nodiscard]] int getObjects(const ObjectVectorProperty& property, uint32_t startIndex, uint32_t endIndex, std::function<void(const std::vector<ObjectPtr>&, std::optional<const Error>)> callback);
     void releaseObject(Object* object);
 
     void setUnitPropertyUnit(UnitProperty& property, int64_t value);
@@ -145,10 +147,10 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
 
     void callMethod(Method& method);
     void callMethod(Method& method, const QString& arg);
-    [[nodiscard]] int callMethod(Method& method, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
-    [[nodiscard]] int callMethod(Method& method, const QString& arg, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback);
+    [[nodiscard]] int callMethod(Method& method, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback);
+    [[nodiscard]] int callMethod(Method& method, const QString& arg, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback);
 
-    [[nodiscard]] int getTableModel(const ObjectPtr& object, std::function<void(const TableModelPtr&, Message::ErrorCode)> callback);
+    [[nodiscard]] int getTableModel(const ObjectPtr& object, std::function<void(const TableModelPtr&, std::optional<const Error>)> callback);
     void releaseTableModel(TableModel* tableModel);
     void setTableModelRegion(TableModel* tableModel, int columnMin, int columnMax, int rowMin, int rowMax);
 

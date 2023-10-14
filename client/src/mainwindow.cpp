@@ -48,6 +48,7 @@
 #include "network/property.hpp"
 #include "network/objectvectorproperty.hpp"
 #include "network/method.hpp"
+#include "network/error.hpp"
 #include "programming/lncv/lncvprogrammer.hpp"
 #include "subwindow/objectsubwindow.hpp"
 #include "subwindow/boardsubwindow.hpp"
@@ -184,7 +185,7 @@ MainWindow::MainWindow(QWidget* parent) :
                   QMessageBox::critical(
                     this,
                     Locale::tr("qtapp:import_world_failed"),
-                    Locale::tr("qtapp.error:server_error_x").arg(static_cast<std::underlying_type_t<Message::ErrorCode>>(response->errorCode())));
+                    Error(*response).toString());
                 }
               });
           }
@@ -267,7 +268,7 @@ MainWindow::MainWindow(QWidget* parent) :
                   QMessageBox::critical(
                     this,
                     Locale::tr("qtapp:export_world_failed"),
-                    Locale::tr("qtapp.error:server_error_x").arg(static_cast<std::underlying_type_t<Message::ErrorCode>>(response->errorCode())));
+                    Error(*response).toString());
                 }
               });
           }
@@ -617,10 +618,10 @@ void MainWindow::worldChanged()
     m_world = m_connection->world();
 
     m_clockRequest = m_connection->getObject("world.clock",
-      [this](const ObjectPtr& object, Message::ErrorCode ec)
+      [this](const ObjectPtr& object, std::optional<const Error> error)
       {
         m_clockRequest = Connection::invalidRequestId;
-        if(object && !ec)
+        if(object && !error)
         {
           if(auto* freeze = object->getProperty("freeze"))
           {

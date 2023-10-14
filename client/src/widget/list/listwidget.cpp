@@ -27,8 +27,8 @@
 #include "../tablewidget.hpp"
 #include "../../network/connection.hpp"
 #include "../../network/object.hpp"
+#include "../../network/error.hpp"
 #include "../../theme/theme.hpp"
-#include "../../network/utils.hpp"
 
 ListWidget::ListWidget(const ObjectPtr& object, QWidget* parent)
   : QWidget(parent)
@@ -48,7 +48,7 @@ ListWidget::ListWidget(const ObjectPtr& object, QWidget* parent)
   spinner->start();
 
   m_requestId = m_object->connection()->getTableModel(m_object,
-    [this, spinner](const TableModelPtr& tableModel, Message::ErrorCode ec)
+    [this, spinner](const TableModelPtr& tableModel, std::optional<const Error> error)
     {
       if(tableModel)
       {
@@ -69,8 +69,14 @@ ListWidget::ListWidget(const ObjectPtr& object, QWidget* parent)
 
         delete spinner;
       }
-      else
-        static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(errorCodeToText(ec)));
+      else if(error)
+      {
+        static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(error->toString()));
+      }
+      else /*[[unlikely]]*/
+      {
+        assert(false);
+      }
     });
 }
 

@@ -1,9 +1,9 @@
 /**
- * client/src/network/utils.hpp
+ * client/src/network/error.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,11 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_NETWORK_UTILS_HPP
-#define TRAINTASTIC_CLIENT_NETWORK_UTILS_HPP
+#ifndef TRAINTASTIC_CLIENT_NETWORK_ERROR_HPP
+#define TRAINTASTIC_CLIENT_NETWORK_ERROR_HPP
 
-#include <traintastic/network/message.hpp>
+#include <vector>
+#include <string>
 
-QString errorCodeToText(Message::ErrorCode ec);
+#include <QString>
+
+#include <traintastic/enum/logmessage.hpp>
+
+class Message;
+
+struct Error
+{
+  LogMessage code;
+  std::vector<QString> args;
+
+  Error(const Message& message);
+
+  QString toString() const;
+};
 
 #endif

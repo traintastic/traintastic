@@ -197,7 +197,7 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
   if(message->type() == Message::Type::Request)
   {
     //assert(false);
-    sendMessage(Message::newErrorResponse(message->command(), message->requestId(), Message::ErrorCode::InvalidCommand));
+    sendMessage(Message::newErrorResponse(message->command(), message->requestId(), LogMessage::C1014_INVALID_COMMAND));
   }
 }
 

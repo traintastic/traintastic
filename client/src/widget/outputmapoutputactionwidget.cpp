@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,10 +34,10 @@ OutputMapOutputActionWidget::OutputMapOutputActionWidget(const ObjectPtr& item, 
   if(auto* m = item->getMethod("get_output_action"))
   {
     m_getOutputActionRequestId = callMethodR<ObjectPtr>(*m,
-      [this](const ObjectPtr& r, Message::ErrorCode ec)
+      [this](const ObjectPtr& r, std::optional<const Error> error)
       {
         m_getOutputActionRequestId = Connection::invalidRequestId;
-        if(Q_LIKELY(r && !ec))
+        if(Q_LIKELY(r && !error))
         {
           m_object = r;
 

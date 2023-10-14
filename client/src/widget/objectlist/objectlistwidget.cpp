@@ -72,7 +72,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
             object()->connection()->cancelRequest(m_requestIdCreate);
 
           m_requestIdCreate = method->call(
-            [this](const ObjectPtr& addedObject, Message::ErrorCode /*ec*/)
+            [this](const ObjectPtr& addedObject, std::optional<const Error> /*error*/)
             {
               m_requestIdCreate = Connection::invalidRequestId;
               if(addedObject)
@@ -111,7 +111,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
               object()->connection()->cancelRequest(m_requestIdCreate);
 
             m_requestIdCreate = method->call(action->data().toString(),
-              [this](const ObjectPtr& addedObject, Message::ErrorCode /*ec*/)
+              [this](const ObjectPtr& addedObject, std::optional<const Error> /*error*/)
               {
                 m_requestIdCreate = Connection::invalidRequestId;
                 if(addedObject)
@@ -238,7 +238,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
       [this]()
       {
         m_requestIdInputMonitor = m_actionInputMonitor->method().call(
-          [](const ObjectPtr& inputMonitor, Message::ErrorCode)
+          [](const ObjectPtr& inputMonitor, std::optional<const Error>)
           {
             if(inputMonitor)
               MainWindow::instance->showObject(inputMonitor);
@@ -268,7 +268,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
             //cancelRequest(m_requestIdInputMonitor);
 
             m_requestIdInputMonitor = callMethodR<ObjectPtr>(m_actionInputMonitorChannel->method(),
-              [this](const ObjectPtr& inputMonitor, Message::ErrorCode /*ec*/)
+              [this](const ObjectPtr& inputMonitor, std::optional<const Error> /*error*/)
               {
                 m_requestIdInputMonitor = Connection::invalidRequestId;
                 if(inputMonitor)
@@ -291,7 +291,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
         //cancelRequest(m_requestIdOutputKeyboard);
 
         m_requestIdOutputKeyboard = m_actionOutputKeyboard->method().call(
-          [this](const ObjectPtr& outputKeyboard, Message::ErrorCode)
+          [this](const ObjectPtr& outputKeyboard, std::optional<const Error>)
           {
             m_requestIdOutputKeyboard = Connection::invalidRequestId;
             if(outputKeyboard)
@@ -322,7 +322,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
             //cancelRequest(m_requestIdOutputKeyboard);
 
             m_requestIdOutputKeyboard = callMethodR<ObjectPtr>(m_actionOutputKeyboardChannel->method(),
-              [this](const ObjectPtr& outputKeyboard, Message::ErrorCode /*ec*/)
+              [this](const ObjectPtr& outputKeyboard, std::optional<const Error> /*error*/)
               {
                 m_requestIdOutputKeyboard = Connection::invalidRequestId;
                 if(outputKeyboard)

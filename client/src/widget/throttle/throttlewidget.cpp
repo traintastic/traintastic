@@ -36,6 +36,7 @@
 #include "../../network/objectvectorproperty.hpp"
 #include "../../network/method.hpp"
 #include "../../network/unitproperty.hpp"
+#include "../../network/error.hpp"
 #include "throttledirectionbutton.hpp"
 #include "throttlefunctionbutton.hpp"
 #include "throttlestopbutton.hpp"
@@ -130,7 +131,7 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
   if(auto* p = dynamic_cast<ObjectProperty*>(m_object->getProperty("functions")))
   {
     m_functionsRequestId = p->getObject(
-      [this](const ObjectPtr& functions, Message::ErrorCode /*ec*/)
+      [this](const ObjectPtr& functions, std::optional<const Error> /*error*/)
       {
         m_functionsRequestId = Connection::invalidRequestId;
 
@@ -143,7 +144,7 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
           for(const QString& id : *items)
           {
             const int functionRequestId = functions->connection()->getObject(id,
-              [this, i](const ObjectPtr& function, Message::ErrorCode /*ec*/)
+              [this, i](const ObjectPtr& function, std::optional<const Error> /*error*/)
               {
                 m_functionRequestIds.erase(i);
 

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "methodpushbutton.hpp"
 #include "../network/connection.hpp"
 #include "../network/method.hpp"
+#include "../network/error.hpp"
 #include "../mainwindow.hpp"
 
 MethodPushButton::MethodPushButton(Method& method, QWidget* parent) :
@@ -61,7 +62,7 @@ MethodPushButton::MethodPushButton(Method& method, QWidget* parent) :
 
           case ValueType::Object:
             m_requestId = m_method.call(
-              [this](const ObjectPtr& object, Message::ErrorCode)
+              [this](const ObjectPtr& object, std::optional<const Error> /*error*/)
               {
                 if(object)
                   MainWindow::instance->showObject(object);

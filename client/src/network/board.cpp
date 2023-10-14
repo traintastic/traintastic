@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -91,22 +91,22 @@ ObjectPtr Board::getTileObject(TileLocation l) const
     return ObjectPtr();
 }
 
-int Board::addTile(int16_t x, int16_t y, TileRotate rotate, const QString& id, bool replace, std::function<void(const bool&, Message::ErrorCode)> callback)
+int Board::addTile(int16_t x, int16_t y, TileRotate rotate, const QString& id, bool replace, std::function<void(const bool&, std::optional<const Error>)> callback)
 {
   return ::callMethod(*m_connection, *getMethod("add_tile"), std::move(callback), x, y, rotate, id, replace);
 }
 
-int Board::moveTile(int16_t xFrom, int16_t yFrom, int16_t xTo, int16_t yTo, TileRotate rotate, bool replace, std::function<void(const bool&, Message::ErrorCode)> callback)
+int Board::moveTile(int16_t xFrom, int16_t yFrom, int16_t xTo, int16_t yTo, TileRotate rotate, bool replace, std::function<void(const bool&, std::optional<const Error>)> callback)
 {
   return ::callMethod(*m_connection, *getMethod("move_tile"), std::move(callback), xFrom, yFrom, xTo, yTo, rotate, replace);
 }
 
-int Board::resizeTile(int16_t x, int16_t y, uint8_t w, uint8_t h, std::function<void(const bool&, Message::ErrorCode)> callback)
+int Board::resizeTile(int16_t x, int16_t y, uint8_t w, uint8_t h, std::function<void(const bool&, std::optional<const Error>)> callback)
 {
   return ::callMethod(*m_connection, *getMethod("resize_tile"), std::move(callback), x, y, w, h);
 }
 
-int Board::deleteTile(int16_t x, int16_t y, std::function<void(const bool&, Message::ErrorCode)> callback)
+int Board::deleteTile(int16_t x, int16_t y, std::function<void(const bool&, std::optional<const Error>)> callback)
 {
   return ::callMethod(*m_connection, *getMethod("delete_tile"), std::move(callback), x, y);
 }

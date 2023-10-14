@@ -25,6 +25,7 @@
 #include "../network/connection.hpp"
 #include "../network/objectproperty.hpp"
 #include "../network/object.hpp"
+#include "../network/error.hpp"
 #include "../dialog/objectselectlistdialog.hpp"
 #include "../mainwindow.hpp"
 #include "../theme/theme.hpp"
@@ -103,7 +104,7 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
         m_property.object().connection()->cancelRequest(m_editObjectRequestId);
 
       m_editObjectRequestId = m_property.getObject(
-        [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+        [this](const ObjectPtr& object, std::optional<const Error> /*error*/)
         {
           m_editObjectRequestId = Connection::invalidRequestId;
 

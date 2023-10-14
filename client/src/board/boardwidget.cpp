@@ -467,7 +467,7 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
       else // drop
       {
         m_object->moveTile(m_tileMoveX, m_tileMoveY, x, y, m_boardArea->mouseMoveTileRotate(), false,
-          [this](const bool& /*r*/, Message::ErrorCode /*ec*/)
+          [this](const bool& /*r*/, std::optional<const Error> /*error*/)
           {
           });
         m_tileMoveStarted = false;
@@ -513,7 +513,7 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
             h >= 1 && h <= std::numeric_limits<uint8_t>::max())
         {
           m_object->resizeTile(m_tileResizeX, m_tileResizeY, w, h,
-            [this](const bool& /*r*/, Message::ErrorCode /*ec*/)
+            [this](const bool& /*r*/, std::optional<const Error> /*error*/)
             {
             });
 
@@ -525,7 +525,7 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
     else if(act == m_editActionDelete)
     {
       m_object->deleteTile(x, y,
-        [this](const bool& /*r*/, Message::ErrorCode /*ec*/)
+        [this](const bool& /*r*/, std::optional<const Error> /*error*/)
         {
         });
     }
@@ -535,7 +535,7 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
       const Qt::KeyboardModifiers kbMod = QApplication::keyboardModifiers();
       if(kbMod == Qt::NoModifier || kbMod == Qt::ControlModifier)
         m_object->addTile(x, y, m_boardArea->mouseMoveTileRotate(), classId, kbMod == Qt::ControlModifier,
-          [this](const bool& /*r*/, Message::ErrorCode /*ec*/)
+          [this](const bool& /*r*/, std::optional<const Error> /*error*/)
           {
           });
     }

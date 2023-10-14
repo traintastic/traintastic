@@ -144,7 +144,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_interfaceItems.add(shutdown);
 }
 
-bool Traintastic::importWorld(const std::vector<std::byte>& worldData)
+void Traintastic::importWorld(const std::vector<std::byte>& worldData)
 {
   try
   {
@@ -156,17 +156,15 @@ bool Traintastic::importWorld(const std::vector<std::byte>& worldData)
     assert(weakWorld.expired());
 #endif
     Log::log(*this, LogMessage::N1026_IMPORTED_WORLD_SUCCESSFULLY);
-    return true;
   }
   catch(const LogMessageException& e)
   {
-    Log::log(*this, e.message(), e.args());
+    throw e;
   }
   catch(const std::exception& e)
   {
-    Log::log(*this, LogMessage::C1011_IMPORTING_WORLD_FAILED_X, e.what());
+    throw LogMessageException(LogMessage::C1011_IMPORTING_WORLD_FAILED_X, e.what());
   }
-  return false;
 }
 
 Traintastic::RunStatus Traintastic::run(const std::string& worldUUID, bool simulate, bool online, bool power, bool run)

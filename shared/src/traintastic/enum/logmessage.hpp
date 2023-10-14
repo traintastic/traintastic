@@ -25,6 +25,10 @@
 
 #include <cstdint>
 
+#ifdef QT_CORE_LIB
+  #include <QString>
+#endif
+
 struct LogMessageOffset
 {
   static constexpr uint32_t blockSize = 1'000'000;
@@ -196,6 +200,12 @@ enum class LogMessage : uint32_t
   C1011_IMPORTING_WORLD_FAILED_X = LogMessageOffset::critical + 1011,
   C1012_UNKNOWN_CLASS_X_CANT_RECREATE_OBJECT_X = LogMessageOffset::critical + 1012,
   C1013_CANT_LOAD_WORLD_SAVED_WITH_NEWER_VERSION_REQUIRES_AT_LEAST_X = LogMessageOffset::critical + 1013,
+  C1014_INVALID_COMMAND = LogMessageOffset::critical + 1014,
+  C1015_UNKNOWN_OBJECT = LogMessageOffset::critical + 1015,
+  C1016_UNKNOWN_PROPERTY = LogMessageOffset::critical + 1016,
+  C1017_INVALID_INDICES = LogMessageOffset::critical + 1017,
+  C1018_EXCEPTION_X = LogMessageOffset::critical + 1018,
+  C1019_OBJECT_NOT_A_TABLE = LogMessageOffset::critical + 1019,
   C2001_ADDRESS_ALREADY_USED_AT_X = LogMessageOffset::critical + 2001,
   C2004_CANT_GET_FREE_SLOT = LogMessageOffset::critical + 2004,
   C2005_SOCKETCAN_IS_ONLY_AVAILABLE_ON_LINUX = LogMessageOffset::critical + 2005,
@@ -275,5 +285,12 @@ constexpr uint32_t logMessageNumber(LogMessage message)
 {
   return static_cast<std::underlying_type_t<decltype(message)>>(message) % LogMessageOffset::blockSize;
 }
+
+#ifdef QT_CORE_LIB
+inline QString logMessageCode(LogMessage message)
+{
+  return QString(logMessageChar(message)).append(QString::number(logMessageNumber(message)).rightJustified(4, '0'));
+}
+#endif
 
 #endif
