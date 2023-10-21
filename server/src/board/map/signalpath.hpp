@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_BOARD_MAP_SIGNALPATH_HPP
 #define TRAINTASTIC_SERVER_BOARD_MAP_SIGNALPATH_HPP
 
+#include "path.hpp"
 #include "link.hpp"
 #include <map>
 #include <boost/signals2/connection.hpp>
@@ -34,7 +35,7 @@ enum class TurnoutPosition : uint8_t;
 class DirectionControlRailTile;
 enum class DirectionControlState : uint8_t;
 
-class SignalPath
+class SignalPath : public Path
 {
   private:
     class Item

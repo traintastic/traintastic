@@ -34,6 +34,7 @@
 class Train;
 class TrainBlockStatus;
 class BlockInputMapItem;
+class BlockPath;
 
 class BlockRailTile : public RailTile
 {
@@ -43,6 +44,7 @@ class BlockRailTile : public RailTile
 
   private:
     Node m_node;
+    std::vector<std::unique_ptr<BlockPath>> m_paths;
 
     void updateHeightWidthMax();
 
@@ -51,6 +53,7 @@ class BlockRailTile : public RailTile
     void loaded() final;
     void destroying() final;
     void setRotate(TileRotate value) final;
+    void boardModified() final;
 
     void updateState();
     void updateTrainMethodEnabled();

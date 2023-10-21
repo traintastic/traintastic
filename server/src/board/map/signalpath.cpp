@@ -30,17 +30,6 @@
 #include "../map/signalpath.hpp"
 #include "../../train/train.hpp" // FIXME: required due to forward declaration
 
-std::shared_ptr<Link> otherLink(const Node& node, const Link& link)
-{
-  static const std::shared_ptr<Link> noLink{};
-  const auto& links = node.links();
-  if(links.size() == 2)
-    return links[(links[0].get() == &link) ? 1 : 0];
-  assert(false);
-  return noLink;
-}
-
-
 SignalPath::SignalPath(const Node& signalNode, size_t blocksAhead, std::function<void(const std::vector<BlockState>&)> onEvaluated)
   : m_signalNode{signalNode}
   , m_onEvaluated{std::move(onEvaluated)}
@@ -97,147 +86,9 @@ std::unique_ptr<const SignalPath::Item> SignalPath::findBlocks(const Node& node,
       }));
 
     std::map<TurnoutPosition, std::unique_ptr<const Item>> next;
-    switch(turnout->tileId())
+    for (const auto& tpl : getTurnoutLinks(*turnout, link))
     {
-      case TileId::RailTurnoutLeft45:
-      case TileId::RailTurnoutLeft90:
-      case TileId::RailTurnoutLeftCurved:
-        //  1  2
-        //   \ |
-        //    \|
-        //     0
-        if(nextNode.getLink(0).get() == &link)
-        {
-          next.emplace(TurnoutPosition::Left, findBlocks(nextNode, nextNode.getLink(1), blocksAhead));
-          next.emplace(TurnoutPosition::Straight, findBlocks(nextNode, nextNode.getLink(2), blocksAhead));
-        }
-        else
-        {
-          assert(nextNode.getLink(1).get() == &link || nextNode.getLink(2).get() == &link);
-          next.emplace(nextNode.getLink(1).get() == &link ? TurnoutPosition::Left : TurnoutPosition::Straight, findBlocks(nextNode, nextNode.getLink(0), blocksAhead));
-        }
-        break;
-
-      case TileId::RailTurnoutRight45:
-      case TileId::RailTurnoutRight90:
-      case TileId::RailTurnoutRightCurved:
-        //  1  2
-        //  | /
-        //  |/
-        //  0
-        if(nextNode.getLink(0).get() == &link)
-        {
-          next.emplace(TurnoutPosition::Straight, findBlocks(nextNode, nextNode.getLink(1), blocksAhead));
-          next.emplace(TurnoutPosition::Right, findBlocks(nextNode, nextNode.getLink(2), blocksAhead));
-        }
-        else
-        {
-          assert(nextNode.getLink(1).get() == &link || nextNode.getLink(2).get() == &link);
-          next.emplace(nextNode.getLink(1).get() == &link ? TurnoutPosition::Straight : TurnoutPosition::Right, findBlocks(nextNode, nextNode.getLink(0), blocksAhead));
-        }
-        break;
-
-      case TileId::RailTurnoutWye:
-        //  1     2
-        //   \   /
-        //    \ /
-        //     0
-        if(nextNode.getLink(0).get() == &link)
-        {
-          next.emplace(TurnoutPosition::Left, findBlocks(nextNode, nextNode.getLink(1), blocksAhead));
-          next.emplace(TurnoutPosition::Right, findBlocks(nextNode, nextNode.getLink(2), blocksAhead));
-        }
-        else
-        {
-          assert(nextNode.getLink(1).get() == &link || nextNode.getLink(2).get() == &link);
-          next.emplace(nextNode.getLink(1).get() == &link ? TurnoutPosition::Left : TurnoutPosition::Right, findBlocks(nextNode, nextNode.getLink(0), blocksAhead));
-        }
-        break;
-
-      case TileId::RailTurnout3Way:
-        //  1  2  3
-        //   \ | /
-        //    \|/
-        //     0
-        if(nextNode.getLink(0).get() == &link)
-        {
-          next.emplace(TurnoutPosition::Left, findBlocks(nextNode, nextNode.getLink(1), blocksAhead));
-          next.emplace(TurnoutPosition::Straight, findBlocks(nextNode, nextNode.getLink(2), blocksAhead));
-          next.emplace(TurnoutPosition::Right, findBlocks(nextNode, nextNode.getLink(3), blocksAhead));
-        }
-        else
-        {
-          TurnoutPosition position = TurnoutPosition::Unknown;
-          if(nextNode.getLink(1).get() == &link)
-            position = TurnoutPosition::Left;
-          else if(nextNode.getLink(2).get() == &link)
-            position = TurnoutPosition::Straight;
-          else if(nextNode.getLink(3).get() == &link)
-            position = TurnoutPosition::Right;
-
-          assert(position != TurnoutPosition::Unknown);
-          next.emplace(position, findBlocks(nextNode, nextNode.getLink(0), blocksAhead));
-        }
-        break;
-
-      case TileId::RailTurnoutDoubleSlip:
-      case TileId::RailTurnoutSingleSlip:
-        //  Double:      Single:
-        //      2            2
-        //      |\           |
-        //  1 --+-- 3    1 --+-- 3
-        //     \|           \|
-        //      0            0
-        if(nextNode.getLink(0).get() == &link)
-        {
-          next.emplace(TurnoutPosition::Crossed, findBlocks(nextNode, nextNode.getLink(2), blocksAhead));
-          next.emplace(TurnoutPosition::Diverged, findBlocks(nextNode, nextNode.getLink(1), blocksAhead));
-          next.emplace(TurnoutPosition::DoubleSlipStraightA, findBlocks(nextNode, nextNode.getLink(2), blocksAhead));
-          if(turnout->tileId() == TileId::RailTurnoutDoubleSlip)
-          {
-            next.emplace(TurnoutPosition::Left, findBlocks(nextNode, nextNode.getLink(1), blocksAhead));
-          }
-        }
-        else if(nextNode.getLink(1).get() == &link)
-        {
-          next.emplace(TurnoutPosition::Crossed, findBlocks(nextNode, nextNode.getLink(3), blocksAhead));
-          next.emplace(TurnoutPosition::Diverged, findBlocks(nextNode, nextNode.getLink(0), blocksAhead));
-          next.emplace(TurnoutPosition::DoubleSlipStraightB, findBlocks(nextNode, nextNode.getLink(3), blocksAhead));
-          if(turnout->tileId() == TileId::RailTurnoutDoubleSlip)
-          {
-            next.emplace(TurnoutPosition::Left, findBlocks(nextNode, nextNode.getLink(0), blocksAhead));
-          }
-        }
-        else if(nextNode.getLink(2).get() == &link)
-        {
-          next.emplace(TurnoutPosition::Crossed, findBlocks(nextNode, nextNode.getLink(0), blocksAhead));
-          next.emplace(TurnoutPosition::DoubleSlipStraightA, findBlocks(nextNode, nextNode.getLink(0), blocksAhead));
-          if(turnout->tileId() == TileId::RailTurnoutDoubleSlip)
-          {
-            next.emplace(TurnoutPosition::Diverged, findBlocks(nextNode, nextNode.getLink(3), blocksAhead));
-            next.emplace(TurnoutPosition::Right, findBlocks(nextNode, nextNode.getLink(3), blocksAhead));
-          }
-        }
-        else if(nextNode.getLink(3).get() == &link)
-        {
-          next.emplace(TurnoutPosition::Crossed, findBlocks(nextNode, nextNode.getLink(1), blocksAhead));
-          next.emplace(TurnoutPosition::DoubleSlipStraightB, findBlocks(nextNode, nextNode.getLink(1), blocksAhead));
-          if(turnout->tileId() == TileId::RailTurnoutDoubleSlip)
-          {
-            next.emplace(TurnoutPosition::Diverged, findBlocks(nextNode, nextNode.getLink(2), blocksAhead));
-            next.emplace(TurnoutPosition::Right, findBlocks(nextNode, nextNode.getLink(2), blocksAhead));
-          }
-        }
-        else
-        {
-          assert(false);
-          return {};
-        }
-        break;
-
-      default:
-        assert(false);
-        return {};
+      next.emplace(tpl.turnoutPosition, findBlocks(nextNode, nextNode.getLink(tpl.linkIndex), blocksAhead));
     }
 
     if(!next.empty())

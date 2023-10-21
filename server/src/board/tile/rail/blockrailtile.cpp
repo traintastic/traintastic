@@ -30,6 +30,7 @@
 #include "../../../train/train.hpp"
 #include "../../../train/trainblockstatus.hpp"
 #include "../../../utils/displayname.hpp"
+#include "../../map/blockpath.hpp"
 
 CREATE_IMPL(BlockRailTile)
 
@@ -371,6 +372,11 @@ void BlockRailTile::setRotate(TileRotate value)
 
     updateHeightWidthMax();
   }
+}
+
+void BlockRailTile::boardModified()
+{
+  m_paths = BlockPath::find(*this);
 }
 
 void BlockRailTile::updateHeightWidthMax()

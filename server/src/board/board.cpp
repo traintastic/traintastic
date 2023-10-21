@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -358,11 +358,6 @@ void Board::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(resizeTile, editable && stopped);
   Attributes::setEnabled(deleteTile, editable && stopped);
   Attributes::setEnabled(resizeToContents, editable);
-
-  if(event == WorldEvent::EditDisabled || event == WorldEvent::Run)
-  {
-    modified();
-  }
 }
 
 void Board::loaded()
