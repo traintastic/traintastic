@@ -41,6 +41,7 @@
 #include "message/locof9f12imm.hpp"
 #include "message/locof13f20imm.hpp"
 #include "message/locof21f28imm.hpp"
+#include "message/multisenselong.hpp"
 #include "message/uhlenbrock.hpp"
 
 namespace LocoNet {
@@ -110,6 +111,7 @@ constexpr uint8_t SW2_DIR = 0x20;
 constexpr uint8_t MULTI_SENSE_TYPE_MASK = 0xE0;
 constexpr uint8_t MULTI_SENSE_TYPE_TRANSPONDER_GONE = 0x00;
 constexpr uint8_t MULTI_SENSE_TYPE_TRANSPONDER_PRESENT = 0x20;
+constexpr uint8_t MULTI_SENSE_LONG_TYPE_RAILCOM_APP_DYN = 0x40;
 constexpr uint8_t MULTI_SENSE_TRANSPONDER_ADDRESS_SHORT = 0xFD;
 
 struct SlotMessage : Message
@@ -1058,64 +1060,6 @@ struct MultiSenseTransponder : MultiSense
   }
 };
 static_assert(sizeof(MultiSenseTransponder) == 6);
-
-struct MultiSenseLong : Message
-{
-  uint8_t len;
-  uint8_t data1;
-  uint8_t data2;
-  uint8_t data3;
-  uint8_t data4;
-  uint8_t data5;
-  uint8_t data6;
-  uint8_t checksum;
-
-  MultiSenseLong() :
-    Message(OPC_MULTI_SENSE_LONG),
-    len{9}
-  {
-  }
-
-  bool isTransponder() const
-  {
-    return
-      ((data1 & MULTI_SENSE_TYPE_MASK) == MULTI_SENSE_TYPE_TRANSPONDER_GONE) ||
-      ((data1 & MULTI_SENSE_TYPE_MASK) == MULTI_SENSE_TYPE_TRANSPONDER_PRESENT);
-  }
-};
-static_assert(sizeof(MultiSenseLong) == 9);
-
-struct MultiSenseLongTransponder : MultiSenseLong
-{
-  bool isPresent() const
-  {
-    return (data1 & MULTI_SENSE_TYPE_MASK) == MULTI_SENSE_TYPE_TRANSPONDER_PRESENT;
-  }
-
-  uint16_t sensorAddress() const
-  {
-    return (static_cast<uint16_t>(data1 & 0x1F) << 7) | (data2 & 0x7F);
-  }
-
-  uint16_t transponderAddress() const
-  {
-    if(isTransponderAddressLong())
-      return (static_cast<uint16_t>(data3 & 0x7F) << 7) | (data4 & 0x7F);
-    else
-      return (data4 & 0x7F);
-  }
-
-  bool isTransponderAddressLong() const
-  {
-    return data3 != MULTI_SENSE_TRANSPONDER_ADDRESS_SHORT;
-  }
-
-  Direction transponderDirection() const
-  {
-    return (data5 & 0x40) ? Direction::Forward : Direction::Reverse;
-  }
-};
-static_assert(sizeof(MultiSenseLongTransponder) == 9);
 
 struct SlotReadDataBase : Message
 {

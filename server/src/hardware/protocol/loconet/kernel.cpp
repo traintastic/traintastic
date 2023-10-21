@@ -764,17 +764,17 @@ void Kernel::receive(const Message& message)
     case OPC_MULTI_SENSE_LONG:
     {
       const MultiSenseLong& multiSense = static_cast<const MultiSenseLong&>(message);
-      if(multiSense.isTransponder())
+      if(multiSense.code() == MultiSenseLong::Code::ReleaseTransponder || multiSense.code() == MultiSenseLong::Code::DetectTransponder)
       {
         EventLoop::call(
-          [this, multiSenseTransponder=static_cast<const MultiSenseLongTransponder&>(multiSense)]()
+          [this, multiSense]()
           {
             m_identificationController->identificationEvent(
               IdentificationController::defaultIdentificationChannel,
-              1 + multiSenseTransponder.sensorAddress(),
-              multiSenseTransponder.isPresent() ? IdentificationEventType::Present : IdentificationEventType::Absent,
-              multiSenseTransponder.transponderAddress(),
-              multiSenseTransponder.transponderDirection(),
+              1 + multiSense.sensorAddress(),
+              multiSense.code()  == MultiSenseLong::Code::DetectTransponder ? IdentificationEventType::Present : IdentificationEventType::Absent,
+              multiSense.transponderAddress(),
+              multiSense.transponderDirection(),
               0);
           });
       }

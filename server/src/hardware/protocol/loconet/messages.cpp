@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -357,13 +357,26 @@ std::string toString(const Message& message)
     case OPC_MULTI_SENSE_LONG:
     {
       const MultiSenseLong& multiSense = static_cast<const MultiSenseLong&>(message);
-      if(multiSense.isTransponder())
+      s.append(::toString(multiSense.code()));
+      s.append(" sensorAddress=").append(std::to_string(multiSense.sensorAddress()));
+      s.append(" transponderAddress=").append(std::to_string(multiSense.transponderAddress()));
+      s.append(" transponderDirection=").append(multiSense.transponderDirection() == Direction::Forward ? "fwd" : "rev");
+      if(multiSense.code() == MultiSenseLong::Code::RailComAppDyn)
       {
-        const MultiSenseLongTransponder& multiSenseTransponder = static_cast<const MultiSenseLongTransponder&>(multiSense);
-        s.append(multiSenseTransponder.isPresent() ? " present" : " absent");
-        s.append(" sensorAddress=").append(std::to_string(multiSenseTransponder.sensorAddress()));
-        s.append(" transponderAddress=").append(std::to_string(multiSenseTransponder.transponderAddress()));
-        s.append(" transponderDirection=").append(multiSenseTransponder.transponderDirection() == Direction::Forward ? "fwd" : "rev");
+        const auto& multiSenseRailComAppDyn = static_cast<const MultiSenseLongRailComAppDyn&>(multiSense);
+        s.append(" app_dyn=").append(std::to_string(static_cast<uint8_t>(multiSenseRailComAppDyn.appDynId())));
+        if(auto sv = ::toString(multiSenseRailComAppDyn.appDynId()); !sv.empty())
+        {
+          s.append(" ()").append(sv).append(")");
+        }
+        if(RailCom::isAppDynActualSpeed(multiSenseRailComAppDyn.appDynId()))
+        {
+          s.append(" actual_speed=").append(std::to_string(static_cast<const MultiSenseLongRailComAppDynActualSpeed&>(multiSenseRailComAppDyn).actualSpeed()));
+        }
+        else
+        {
+          s.append(" value=").append(std::to_string(multiSenseRailComAppDyn.value()));
+        }
       }
       break;
     }
