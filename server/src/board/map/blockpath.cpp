@@ -79,6 +79,10 @@ std::vector<std::unique_ptr<BlockPath>> BlockPath::find(BlockRailTile& startBloc
     {
       case TileId::RailBlock:
       {
+        // temp dummy use to fix warnings:
+        (void)current.path->m_fromBlock;
+        (void)current.path->m_fromSide;
+
         auto& block = static_cast<BlockRailTile&>(tile);
         current.path->m_toBlock = block.shared_ptr<BlockRailTile>();
         current.path->m_toSide = nextNode.getLink(0).get() == current.link ? Side::A : Side::B;
