@@ -31,6 +31,7 @@
 #include "tilepainter.hpp"
 #include "../network/board.hpp"
 #include "../network/object/blockrailtile.hpp"
+#include "../network/object/nxbuttonrailtile.hpp"
 #include "../network/abstractproperty.hpp"
 #include "../network/abstractvectorproperty.hpp"
 #include "../utils/rectf.hpp"
@@ -158,6 +159,13 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
 
     case TileId::PushButton:
       tryConnect("color");
+      break;
+
+    case TileId::RailNXButton:
+      if(auto* nxButton = dynamic_cast<NXButtonRailTile*>(object.get())) /*[[likely]]*/
+      {
+        connect(nxButton, &NXButtonRailTile::isPressedChanged, this, handler);
+      }
       break;
 
     case TileId::None:
@@ -325,6 +333,15 @@ DecouplerState BoardAreaWidget::getDecouplerState(const TileLocation& l) const
     if(const auto* p = object->getProperty("state"))
       return p->toEnum<DecouplerState>();
   return DecouplerState::Deactivated;
+}
+
+bool BoardAreaWidget::getNXButtonPressed(const TileLocation& l) const
+{
+  if(auto object = std::dynamic_pointer_cast<NXButtonRailTile>(m_board.board().getTileObject(l)))
+  {
+    return object->isPressed();
+  }
+  return false;
 }
 
 TileLocation BoardAreaWidget::pointToTileLocation(const QPoint& p)
@@ -557,6 +574,10 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
         case TileId::RailDecoupler:
           tilePainter.drawRailDecoupler(r, a, getDecouplerState(it.first));
+          break;
+
+        case TileId::RailNXButton:
+          tilePainter.drawRailNX(r, a, getNXButtonPressed(it.first));
           break;
 
         case TileId::None:

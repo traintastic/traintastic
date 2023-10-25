@@ -50,6 +50,7 @@ class OutputList;
 class IdentificationList;
 class BoardList;
 class LinkRailTileList;
+class NXManager;
 class Clock;
 class TrainList;
 class RailVehicleList;
@@ -117,6 +118,7 @@ class World : public Object
     ObjectProperty<Lua::ScriptList> luaScripts;
 
     ObjectProperty<LinkRailTileList> linkRailTiles;
+    ObjectProperty<NXManager> nxManager;
 
     ObjectVectorProperty<Status> statuses;
     Property<uint32_t> hardwareThrottles; //<! number of connected hardware throttles

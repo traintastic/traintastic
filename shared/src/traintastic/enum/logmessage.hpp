@@ -145,6 +145,8 @@ enum class LogMessage : uint32_t
   W2007_COMMAND_STATION_DOES_NOT_SUPPORT_THE_FAST_CLOCK_SLOT = LogMessageOffset::warning + 2007,
   W2018_TIMEOUT_NO_ECHO_WITHIN_X_MS = LogMessageOffset::warning + 2018,
   W2019_Z21_BROADCAST_FLAG_MISMATCH = LogMessageOffset::warning + 2019,
+  W3001_NX_BUTTON_CONNECTED_TO_TWO_BLOCKS = LogMessageOffset::warning + 3001,
+  W3002_NX_BUTTON_NOT_CONNECTED_TO_ANY_BLOCK = LogMessageOffset::warning + 3002,
   W9001_EXECUTION_TOOK_X_US = LogMessageOffset::warning + 9001,
   W9999_X = LogMessageOffset::warning + 9999,
 

@@ -4350,5 +4350,13 @@
     {
         "term": "message:C1019",
         "definition": "Object not a table"
+    },
+    {
+        "term": "message:W3001",
+        "definition": "NX button connected to two blocks"
+    },
+    {
+        "term": "message:W3002",
+        "definition": "NX button not connected to any block"
     }
 ]

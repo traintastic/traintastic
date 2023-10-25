@@ -60,6 +60,8 @@
 #include "../board/board.hpp"
 #include "../board/boardlist.hpp"
 #include "../board/list/linkrailtilelist.hpp"
+#include "../board/nx/nxmanager.hpp"
+#include "../board/tile/rail/nxbuttonrailtile.hpp"
 
 #include "../train/train.hpp"
 #include "../train/trainlist.hpp"
@@ -117,6 +119,7 @@ void World::init(World& world)
   world.luaScripts.setValueInternal(std::make_shared<Lua::ScriptList>(world, world.luaScripts.name()));
 
   world.linkRailTiles.setValueInternal(std::make_shared<LinkRailTileList>(world, world.linkRailTiles.name()));
+  world.nxManager.setValueInternal(std::make_shared<NXManager>(world, world.nxManager.name()));
 }
 
 World::World(Private /*unused*/) :
@@ -140,6 +143,7 @@ World::World(Private /*unused*/) :
   railVehicles{this, "rail_vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   linkRailTiles{this, "link_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  nxManager{this, "nx_manager", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   statuses(*this, "statuses", {}, PropertyFlags::ReadOnly | PropertyFlags::Store),
   hardwareThrottles{this, "hardware_throttles", 0, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::NoScript},
   state{this, "state", WorldState(), PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
@@ -317,6 +321,8 @@ World::World(Private /*unused*/) :
 
   Attributes::addObjectEditor(linkRailTiles, false);
   m_interfaceItems.add(linkRailTiles);
+  Attributes::addObjectEditor(nxManager, false);
+  m_interfaceItems.add(nxManager);
 
   Attributes::addObjectEditor(statuses, false);
   m_interfaceItems.add(statuses);

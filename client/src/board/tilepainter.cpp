@@ -190,6 +190,10 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate)
       drawRailDecoupler(r, rotate);
       break;
 
+    case TileId::RailNXButton:
+      drawRailNX(r, rotate);
+      break;
+
     case TileId::None:
     case TileId::ReservedForFutureExpension:
       break;
@@ -1131,4 +1135,11 @@ void TilePainter::drawRailDecoupler(const QRectF& r, TileRotate rotate, Decouple
   m_painter.setBrush(state == DecouplerState::Activated ? m_colorScheme.decouplerActivated : m_colorScheme.decouplerDeactivated);
   m_painter.drawRect(QRectF(-w / 2, -h / 2, w, h));
   m_painter.restore();
+}
+
+void TilePainter::drawRailNX(const QRectF& r, TileRotate rotate, bool pressed)
+{
+  setTrackPen();
+  drawStraight(r, rotate);
+  drawPushButton(r, pressed ? Color::White : Color::Blue);
 }

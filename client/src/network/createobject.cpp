@@ -26,6 +26,7 @@
 #include "outputmap.hpp"
 #include "board.hpp"
 #include "object/blockrailtile.hpp"
+#include "object/nxbuttonrailtile.hpp"
 #include "object/trainblockstatus.hpp"
 
 Object* createObject(std::shared_ptr<Connection> connection, Handle handle, const QString& classId)
@@ -40,6 +41,8 @@ Object* createObject(std::shared_ptr<Connection> connection, Handle handle, cons
     return new Board(std::move(connection), handle);
   if(classId == BlockRailTile::classId)
     return new BlockRailTile(std::move(connection), handle, classId);
+  if(classId == NXButtonRailTile::classId)
+    return new NXButtonRailTile(std::move(connection), handle, classId);
   if(classId == TrainBlockStatus::classId)
     return new TrainBlockStatus(std::move(connection), handle, classId);
 

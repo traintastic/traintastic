@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020,2022 Reinder Feenstra
+ * Copyright (C) 2020,2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,13 +35,20 @@ class QActionGroup;
 class QStatusBar;
 class QLabel;
 struct TileInfo;
+class NXButtonRailTile;
 
 class BoardWidget : public QWidget
 {
   Q_OBJECT
 
+  private:
+    static constexpr unsigned int nxButtonHoldTime = 3000; // ms
+    static constexpr unsigned int nxButtonReleaseDelay = 200; // ms
+
   protected:
     std::shared_ptr<Board> m_object;
+    std::shared_ptr<Object> m_nxManager;
+    int m_nxManagerRequestId;
     BoardAreaWidget* m_boardArea;
     QStatusBar* m_statusBar;
     QLabel* m_statusBarMessage;
@@ -69,10 +76,12 @@ class BoardWidget : public QWidget
     int16_t m_tileResizeY;
     uint8_t m_tileRotates = 0; //!< allowed rotate for add/move tile
     TileRotate m_tileRotateLast = TileRotate::Deg0; //!< Last used tile rotate for add/move
+    std::weak_ptr<NXButtonRailTile> m_nxButtonPressed;
 
     void actionSelected(const Board::TileInfo* tile);
     void keyPressEvent(QKeyEvent* event) override;
     void rotateTile(bool ccw = false);
+    void releaseNXButton(const std::shared_ptr<NXButtonRailTile>& nxButton);
 
   protected slots:
     void worldEditChanged(bool value);
@@ -83,6 +92,7 @@ class BoardWidget : public QWidget
 
   public:
     BoardWidget(std::shared_ptr<Board> object, QWidget* parent = nullptr);
+    ~BoardWidget() override;
 
     Board& board() { return *m_object; }
 };

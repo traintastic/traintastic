@@ -34,6 +34,7 @@
 #include <QApplication>
 #include <QKeyEvent>
 #include <QPainter>
+#include <QTimer>
 #include <traintastic/locale/locale.hpp>
 #include "getboardcolorscheme.hpp"
 #include "tilepainter.hpp"
@@ -43,6 +44,7 @@
 #include "../network/property.hpp"
 #include "../network/method.hpp"
 #include "../network/callmethod.hpp"
+#include "../network/object/nxbuttonrailtile.hpp"
 #include "../theme/theme.hpp"
 #include "../utils/enum.hpp"
 #include "../settings/boardsettings.hpp"
@@ -81,6 +83,7 @@ inline void validRotate(TileRotate& rotate, uint8_t rotates)
 BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   QWidget(parent),
   m_object{std::move(object)},
+  m_nxManagerRequestId{Connection::invalidRequestId},
   m_boardArea{new BoardAreaWidget(*this, this)},
   m_statusBar{new QStatusBar(this)},
   m_statusBarMessage{new QLabel(this)},
@@ -366,6 +369,17 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
 
   m_object->getTileData();
 
+  m_nxManagerRequestId = m_object->connection()->getObject("world.nx_manager",
+    [this](const ObjectPtr& nxManager, std::optional<const Error> /*error*/)
+    {
+      m_nxManagerRequestId = Connection::invalidRequestId;
+
+      if(nxManager)
+      {
+        m_nxManager = nxManager;
+      }
+    });
+
   connect(m_object.get(), &Board::tileDataChanged, this, [this](){ m_boardArea->update(); });
   connect(m_object.get(), &Board::tileObjectAdded, m_boardArea, &BoardAreaWidget::tileObjectAdded);
   connect(m_boardArea, &BoardAreaWidget::gridChanged, this, &BoardWidget::gridChanged);
@@ -380,7 +394,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
         m_statusBarCoords->setText(QString::number(x) + ", " + QString::number(y));
 
         const auto tileId = m_object->getTileId(tl);
-        if((!m_toolbarEdit->isVisible() && (isRailTurnout(tileId) || isRailSignal(tileId) || tileId == TileId::RailDirectionControl || tileId == TileId::RailDecoupler || tileId == TileId::PushButton)) ||
+        if((!m_toolbarEdit->isVisible() && (isRailTurnout(tileId) || isRailSignal(tileId) || tileId == TileId::RailDirectionControl || tileId == TileId::RailDecoupler || tileId == TileId::PushButton || tileId == TileId::RailNXButton)) ||
             (m_toolbarEdit->isVisible() && isActive(tileId) && m_editActions->checkedAction() == m_editActionNone))
           setCursor(Qt::PointingHandCursor);
         else
@@ -393,6 +407,14 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   m_boardArea->setMouseTracking(true);
   gridChanged(m_boardArea->grid());
   zoomLevelChanged(m_boardArea->zoomLevel());
+}
+
+BoardWidget::~BoardWidget()
+{
+  if(m_nxManagerRequestId != Connection::invalidRequestId)
+  {
+    m_object->connection()->cancelRequest(m_nxManagerRequestId);
+  }
 }
 
 void BoardWidget::worldEditChanged(bool value)
@@ -571,6 +593,59 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
       {
         TileMenu::getBlockRailTileMenu(obj, this)->exec(QCursor::pos());
       }
+      else if(tileId == TileId::RailNXButton)
+      {
+        if(auto nxButton = std::dynamic_pointer_cast<NXButtonRailTile>(obj)) /*[[likely]]*/
+        {
+          if(nxButton->isPressed())
+          {
+            releaseNXButton(nxButton);
+          }
+          else
+          {
+            nxButton->setPressed(true);
+          }
+
+          if(auto firstButton = m_nxButtonPressed.lock())
+          {
+            if(m_nxManager) /*[[likely]]*/
+            {
+              if(auto* method = m_nxManager->getMethod("select")) /*[[likely]]*/
+              {
+                callMethod(*method, nullptr, firstButton, nxButton);
+              }
+            }
+
+            m_nxButtonPressed.reset();
+
+            QTimer::singleShot(nxButtonReleaseDelay, this,
+              [this, weak1=std::weak_ptr<NXButtonRailTile>(firstButton), weak2=std::weak_ptr<NXButtonRailTile>(nxButton)]()
+              {
+                if(auto btn = weak1.lock())
+                {
+                  releaseNXButton(btn);
+                }
+                if(auto btn = weak2.lock())
+                {
+                  releaseNXButton(btn);
+                }
+              });
+          }
+          else
+          {
+            m_nxButtonPressed = nxButton;
+
+            QTimer::singleShot(nxButtonHoldTime, this,
+              [this, weak=std::weak_ptr<NXButtonRailTile>(nxButton)]()
+              {
+                if(auto btn = weak.lock())
+                {
+                  releaseNXButton(btn);
+                }
+              });
+          }
+        }
+      }
       else
       {
         AbstractProperty* value = nullptr;
@@ -708,5 +783,15 @@ void BoardWidget::rotateTile(bool ccw)
       m_boardArea->setMouseMoveTileSize(m_boardArea->mouseMoveTileHeight(), m_boardArea->mouseMoveTileWidth());
 
     m_tileRotateLast = m_boardArea->mouseMoveTileRotate();
+  }
+}
+
+void BoardWidget::releaseNXButton(const std::shared_ptr<NXButtonRailTile>& nxButton)
+{
+  nxButton->setPressed(false);
+
+  if(m_nxButtonPressed.lock() == nxButton)
+  {
+    m_nxButtonPressed.reset();
   }
 }

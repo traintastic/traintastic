@@ -31,6 +31,7 @@
 #include "../tile/rail/signal/signalrailtile.hpp"
 #include "../tile/rail/turnout/turnoutrailtile.hpp"
 #include "../tile/rail/linkrailtile.hpp"
+#include "../tile/rail/nxbuttonrailtile.hpp"
 #include "../../core/objectproperty.tpp"
 
 std::vector<std::unique_ptr<BlockPath>> BlockPath::find(BlockRailTile& startBlock)
@@ -82,6 +83,11 @@ std::vector<std::unique_ptr<BlockPath>> BlockPath::find(BlockRailTile& startBloc
         // temp dummy use to fix warnings:
         (void)current.path->m_fromBlock;
         (void)current.path->m_fromSide;
+
+        if(current.node->tile().tileId() == TileId::RailNXButton)
+        {
+          current.path->m_nxButtonTo = current.node->tile().shared_ptr<NXButtonRailTile>();
+        }
 
         auto& block = static_cast<BlockRailTile&>(tile);
         current.path->m_toBlock = block.shared_ptr<BlockRailTile>();
@@ -223,6 +229,15 @@ std::vector<std::unique_ptr<BlockPath>> BlockPath::find(BlockRailTile& startBloc
         current.link = otherLink(nextNode, *current.link).get();
         break;
 
+      case TileId::RailNXButton:
+        if(&current.node->tile() == &startBlock)
+        {
+          current.path->m_nxButtonFrom = nextNode.tile().shared_ptr<NXButtonRailTile>();
+        }
+        current.node = &nextNode;
+        current.link = otherLink(nextNode, *current.link).get();
+        break;
+
       default: // passive or non rail tiles
         assert(false); // this should never happen
         todo.pop(); // drop it in case it does, however that is a bug!
@@ -238,4 +253,14 @@ BlockPath::BlockPath(BlockRailTile& block, Side side)
   , m_fromSide{side}
   , m_toSide{static_cast<Side>(-1)}
 {
+}
+
+std::shared_ptr<NXButtonRailTile> BlockPath::nxButtonFrom() const
+{
+  return m_nxButtonFrom.lock();
+}
+
+std::shared_ptr<NXButtonRailTile> BlockPath::nxButtonTo() const
+{
+  return m_nxButtonTo.lock();
 }

@@ -51,6 +51,8 @@ file(GLOB SOURCES
   "src/board/list/*.cpp"
   "src/board/map/*.hpp"
   "src/board/map/*.cpp"
+  "src/board/nx/*.hpp"
+  "src/board/nx/*.cpp"
   "src/board/tile/*.hpp"
   "src/board/tile/*.cpp"
   "src/board/tile/misc/*.hpp"

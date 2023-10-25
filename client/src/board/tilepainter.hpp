@@ -100,6 +100,8 @@ class TilePainter
     void drawPushButton(const QRectF& r, Color color = Color::Yellow);
 
     void drawRailDecoupler(const QRectF& r, TileRotate rotate, DecouplerState active = DecouplerState::Deactivated);
+
+    void drawRailNX(const QRectF& r, TileRotate rotate, bool pressed = false);
 };
 
 #endif

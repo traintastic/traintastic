@@ -79,6 +79,11 @@ class BlockRailTile : public RailTile
     std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
     void getConnectors(std::vector<Connector>& connectors) const final;
 
+    const std::vector<std::unique_ptr<BlockPath>>& paths() const
+    {
+      return m_paths;
+    }
+
     void inputItemValueChanged(BlockInputMapItem& item);
     void identificationEvent(BlockInputMapItem& item, IdentificationEventType eventType, uint16_t identifier, Direction direction, uint8_t category);
 };
