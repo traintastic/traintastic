@@ -135,14 +135,40 @@ tcb::span<const Path::TurnoutPositionLink> Path::getTurnoutLinks(TurnoutRailTile
       }
       break;
 
-    case TileId::RailTurnoutDoubleSlip:
     case TileId::RailTurnoutSingleSlip:
-      //  Double:      Single:
-      //      2            2
-      //      |\           |
-      //  1 --+-- 3    1 --+-- 3
-      //     \|           \|
-      //      0            0
+      //      2
+      //      |
+      //  1 --+-- 3
+      //     \|
+      //      0
+      if(node.getLink(0).get() == &link)
+      {
+        static constexpr std::array<TurnoutPositionLink, 2> links{{{TurnoutPosition::DoubleSlipStraightA, 2}, {TurnoutPosition::Diverged, 1}}};
+        return links;
+      }
+      else if(node.getLink(1).get() == &link)
+      {
+        static constexpr std::array<TurnoutPositionLink, 2> links{{{TurnoutPosition::DoubleSlipStraightB, 3}, {TurnoutPosition::Diverged, 0}}};
+        return links;
+      }
+      else if(node.getLink(2).get() == &link)
+      {
+        static constexpr std::array<TurnoutPositionLink, 1> links{{{TurnoutPosition::DoubleSlipStraightA, 0}}};
+        return links;
+      }
+      else if(node.getLink(3).get() == &link)
+      {
+        static constexpr std::array<TurnoutPositionLink, 1> links{{{TurnoutPosition::DoubleSlipStraightB, 1}}};
+        return links;
+      }
+      break;
+
+    case TileId::RailTurnoutDoubleSlip:
+      //      2
+      //      |\                                     (line may not end with a backslash)
+      //  1 --+-- 3
+      //     \|
+      //      0
       if(node.getLink(0).get() == &link)
       {
         static constexpr std::array<TurnoutPositionLink, 2> links{{{TurnoutPosition::DoubleSlipStraightA, 2}, {TurnoutPosition::Left, 1}}};
@@ -150,28 +176,18 @@ tcb::span<const Path::TurnoutPositionLink> Path::getTurnoutLinks(TurnoutRailTile
       }
       else if(node.getLink(1).get() == &link)
       {
-        static constexpr std::array<TurnoutPositionLink, 2> links{{{TurnoutPosition::DoubleSlipStraightA, 3}, {TurnoutPosition::Left, 0}}};
+        static constexpr std::array<TurnoutPositionLink, 2> links{{{TurnoutPosition::DoubleSlipStraightB, 3}, {TurnoutPosition::Left, 0}}};
         return links;
       }
       else if(node.getLink(2).get() == &link)
       {
-        if(turnout.tileId() == TileId::RailTurnoutSingleSlip)
-        {
-          static constexpr std::array<TurnoutPositionLink, 1> linksSingle{{{TurnoutPosition::DoubleSlipStraightB, 0}}};
-          return linksSingle;
-        }
-        static constexpr std::array<TurnoutPositionLink, 2> linksDouble{{{TurnoutPosition::DoubleSlipStraightB, 0}, {TurnoutPosition::Right, 3}}};
-        return linksDouble;
+        static constexpr std::array<TurnoutPositionLink, 2> links{{{TurnoutPosition::DoubleSlipStraightA, 0}, {TurnoutPosition::Right, 3}}};
+        return links;
       }
       else if(node.getLink(3).get() == &link)
       {
-        if(turnout.tileId() == TileId::RailTurnoutSingleSlip)
-        {
-          static constexpr std::array<TurnoutPositionLink, 1> linksSingle{{{TurnoutPosition::DoubleSlipStraightB, 1}}};
-          return linksSingle;
-        }
-        static constexpr std::array<TurnoutPositionLink, 2> linksDouble{{{TurnoutPosition::DoubleSlipStraightB, 1}, {TurnoutPosition::Right, 2}}};
-        return linksDouble;
+        static constexpr std::array<TurnoutPositionLink, 2> links{{{TurnoutPosition::DoubleSlipStraightB, 1}, {TurnoutPosition::Right, 2}}};
+        return links;
       }
       break;
 
