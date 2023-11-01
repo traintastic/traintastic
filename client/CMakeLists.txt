@@ -23,7 +23,9 @@ add_executable(traintastic-client
   gfx/common.qrc
   gfx/dark/dark.qrc
   gfx/light/light.qrc
-  ${TRANSLATION_FILES})
+)
+
+add_dependencies(traintastic-client traintastic-lang)
 
 add_definitions(-DQT_DEPRECATED_WARNINGS)
 

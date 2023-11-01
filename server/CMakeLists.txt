@@ -20,8 +20,11 @@ if(ENABLE_CLANG_TIDY)
   set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*,-readability-braces-around-statements,-readability-implicit-bool-conversion,-readability-magic-numbers)
 endif()
 
-add_executable(traintastic-server src/main.cpp src/options.hpp ${TRANSLATION_FILES})
-add_executable(traintastic-server-test test/main.cpp ${TRANSLATION_FILES})
+add_executable(traintastic-server src/main.cpp src/options.hpp)
+add_executable(traintastic-server-test test/main.cpp)
+
+add_dependencies(traintastic-server traintastic-lang)
+add_dependencies(traintastic-server-test traintastic-lang)
 
 target_compile_definitions(traintastic-server-test PRIVATE -DTRAINTASTIC_TEST)
 
