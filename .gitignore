@@ -47,3 +47,4 @@ CMakeLists.txt.*
 .vs
 .DS_Store
 shared/translations/*.lang
+CMakeSettings.json
