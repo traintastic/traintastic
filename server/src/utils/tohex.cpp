@@ -21,6 +21,7 @@
  */
 
 #include "tohex.hpp"
+#include <cstdint>
 
 std::string toHex(const void* buffer, const size_t size)
 {
