@@ -22,6 +22,7 @@
 
 #include "tile.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../board.hpp"
 #include "../boardlist.hpp"
 #include "../../world/world.hpp"
