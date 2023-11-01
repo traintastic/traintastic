@@ -34,6 +34,8 @@ struct BoardColorScheme
   const QColor foreground;
   const QColor track;
   const QColor trackDisabled;
+  const QColor trackReserved;
+  const QColor trackReservedDisabled;
   const QColor blockFree;
   const QColor blockReserved;
   const QColor blockOccupied;

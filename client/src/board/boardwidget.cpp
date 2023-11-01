@@ -695,11 +695,11 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
               image.fill(Qt::transparent);
 
               if(isRailTurnout(tileId))
-                tilePainter.drawTurnout(tileId, image.rect(), tileRotate, static_cast<TurnoutPosition>(n));
+                tilePainter.drawTurnout(tileId, image.rect(), tileRotate, TurnoutPosition::Unknown, static_cast<TurnoutPosition>(n));
               else if(isRailSignal(tileId))
-                tilePainter.drawSignal(tileId, image.rect(), tileRotate, static_cast<SignalAspect>(n));
+                tilePainter.drawSignal(tileId, image.rect(), tileRotate, false, static_cast<SignalAspect>(n));
               else if(tileId == TileId::RailDirectionControl)
-                tilePainter.drawDirectionControl(tileId, image.rect(), tileRotate, static_cast<DirectionControlState>(n));
+                tilePainter.drawDirectionControl(tileId, image.rect(), tileRotate, false, static_cast<DirectionControlState>(n));
 
               connect(menu.addAction(QIcon(QPixmap::fromImage(image)), translateEnum(value->enumName(), n)), &QAction::triggered,
                 [this, setValue, n]()

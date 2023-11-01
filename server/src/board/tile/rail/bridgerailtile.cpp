@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,4 +27,21 @@ BridgeRailTile::BridgeRailTile(World& world, std::string_view _id, TileId tileId
   , m_node{*this, 4}
 {
   assert(isRailBridge(tileId_));
+}
+
+bool BridgeRailTile::reserve(BridgePath path, bool dryRun)
+{
+  const uint8_t mask = 1 << static_cast<uint8_t>(path);
+
+  if((reservedState() & mask))
+  {
+    return false; // already reserved
+  }
+
+  if(!dryRun)
+  {
+    RailTile::reserve(reservedState() | mask);
+  }
+
+  return true;
 }

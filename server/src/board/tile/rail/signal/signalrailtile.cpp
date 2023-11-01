@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,6 +53,17 @@ SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId
 }
 
 SignalRailTile::~SignalRailTile() = default; // default here, so we can use a forward declaration of SignalPath in the header.
+
+bool SignalRailTile::reserve(Pass, bool dryRun)
+{
+  // no conditions yet...
+
+  if(!dryRun)
+  {
+    RailTile::reserve();
+  }
+  return true;
+}
 
 void SignalRailTile::worldEvent(WorldState state, WorldEvent event)
 {

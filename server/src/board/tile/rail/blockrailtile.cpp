@@ -159,6 +159,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
         }
       }}
   , onTrainAssigned{*this, "on_train_assigned", EventFlags::Scriptable}
+  , onTrainReserved{*this, "on_train_reserved", EventFlags::Scriptable}
   , onTrainRemoved{*this, "on_train_removed", EventFlags::Scriptable}
 {
   inputMap.setValueInternal(std::make_shared<BlockInputMap>(*this, inputMap.name()));
@@ -196,6 +197,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   m_interfaceItems.add(flipTrain);
 
   m_interfaceItems.add(onTrainAssigned);
+  m_interfaceItems.add(onTrainReserved);
   m_interfaceItems.add(onTrainRemoved);
 
   updateHeightWidthMax();
@@ -267,6 +269,56 @@ void BlockRailTile::identificationEvent(BlockInputMapItem& /*item*/, Identificat
         break;
     }
   }
+}
+
+bool BlockRailTile::reserve(const std::shared_ptr<Train>& train, BlockSide side, bool dryRun)
+{
+  const uint8_t mask = 1 << static_cast<uint8_t>(side);
+
+  if(state == BlockState::Unknown)
+  {
+    return false; // can't reserve block with unknown state
+  }
+
+  if((reservedState() & mask))
+  {
+    return false; // already reserved
+  }
+
+  if(state != BlockState::Free)
+  {
+    if(trains.empty())
+    {
+      return false; // not free block, but no train
+    }
+
+    const auto& status = (side == BlockSide::A) ? *trains.front() : *trains.back();
+    if(!status.train || status.train.value() != train)
+    {
+      return false; // no train or other train assigned to block
+    }
+
+    if((side == BlockSide::A && status.direction != BlockTrainDirection::TowardsA) ||
+        (side == BlockSide::B && status.direction != BlockTrainDirection::TowardsB))
+    {
+      //! \todo allow direction change, add block property, automatic for dead ends
+      return false; // invalid train direction
+    }
+  }
+
+  if(!dryRun)
+  {
+    RailTile::reserve(reservedState() | mask);
+    if(state == BlockState::Free)
+    {
+      const auto direction = side == BlockSide::A ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA;
+      trains.appendInternal(TrainBlockStatus::create(*this, *train, direction));
+      fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(onTrainReserved, train, shared_ptr<BlockRailTile>(), direction);
+    }
+    updateState();
+  }
+
+  return true;
 }
 
 void BlockRailTile::updateState()

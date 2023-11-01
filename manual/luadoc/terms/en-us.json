@@ -1365,7 +1365,7 @@
   },
   {
     "term": "object.blockrailtile.on_train_removed.parameter.block:description",
-    "definition": "The block that the train is assigned to."
+    "definition": "The block that the train is removed from."
   },
   {
     "term": "object.clock.freeze:description",
@@ -1646,5 +1646,41 @@
   {
     "term": "object.identificationlist:title",
     "definition": "Identification list"
+  },
+  {
+    "term": "enum.block_train_direction:title",
+    "definition": "Block train direction"
+  },
+  {
+    "term": "enum.block_train_direction:description",
+    "definition": "Train direction from the block perspective."
+  },
+  {
+    "term": "enum.block_train_direction.towards_a:description",
+    "definition": "Towards the west for horizontal blocks, towards the south for vertical blocks."
+  },
+  {
+    "term": "enum.block_train_direction.towards_b:description",
+    "definition": "Towards the east for horizontal blocks, towards the north for vertical blocks."
+  },
+  {
+    "term": "enum.block_train_direction.unknown:description",
+    "definition": "Unknown or invalid direction."
+  },
+  {
+    "term": "object.blockrailtile.on_train_reserved:description",
+    "definition": "Fired when a {ref:object.train} reserves the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_reserved.parameter.train:description",
+    "definition": "{ref:object.train} that is reserved the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_reserved.parameter.block:description",
+    "definition": "The block that is reserved."
+  },
+  {
+    "term": "object.blockrailtile.on_train_reserved.parameter.direction:description",
+    "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
   }
 ]

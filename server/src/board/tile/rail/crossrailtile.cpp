@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,10 +21,28 @@
  */
 
 #include "crossrailtile.hpp"
+#include <traintastic/enum/crossstate.hpp>
 
 CrossRailTile::CrossRailTile(World& world, std::string_view _id, TileId tileId_)
   : RailTile(world, _id, tileId_)
   , m_node{*this, 4}
+  , m_crossState{CrossState::Unset}
 {
   assert(isRailCross(tileId_));
+}
+
+bool CrossRailTile::reserve(CrossState crossState, bool dryRun)
+{
+  if(m_crossState != CrossState::Unset)
+  {
+    return false;
+  }
+
+  if(!dryRun)
+  {
+    m_crossState = crossState;
+    RailTile::reserve(static_cast<uint8_t>(m_crossState));
+  }
+
+  return true;
 }

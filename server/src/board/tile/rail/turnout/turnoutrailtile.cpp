@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,6 +53,24 @@ TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tile
   // setPosition is added by sub class
 }
 
+bool TurnoutRailTile::reserve(TurnoutPosition turnoutPosition, bool dryRun)
+{
+  if(!isValidPosition(turnoutPosition))
+  {
+    return false;
+  }
+  if(!dryRun)
+  {
+    if(!doSetPosition(turnoutPosition)) /*[[unlikely]]*/
+    {
+      return false;
+    }
+
+    RailTile::reserve(static_cast<uint8_t>(turnoutPosition));
+  }
+  return true;
+}
+
 void TurnoutRailTile::worldEvent(WorldState state, WorldEvent event)
 {
   RailTile::worldEvent(state, event);
@@ -62,12 +80,19 @@ void TurnoutRailTile::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(name, editable);
 }
 
-bool TurnoutRailTile::doSetPosition(TurnoutPosition value)
+bool TurnoutRailTile::isValidPosition(TurnoutPosition value)
 {
   const auto* values = setPosition.tryGetValuesAttribute(AttributeName::Values);
   assert(values);
-  if(!values->contains(static_cast<int64_t>(value)))
+  return values->contains(static_cast<int64_t>(value));
+}
+
+bool TurnoutRailTile::doSetPosition(TurnoutPosition value)
+{
+  if(!isValidPosition(value))
+  {
     return false;
+  }
   (*outputMap)[value]->execute();
   position.setValueInternal(value);
   positionChanged(*this, value);

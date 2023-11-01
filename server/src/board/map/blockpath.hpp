@@ -29,8 +29,12 @@
 #include <array>
 #include <vector>
 #include <utility>
+#include "../../enum/blockside.hpp"
 
+class RailTile;
 class BlockRailTile;
+class BridgeRailTile;
+enum class BridgePath : uint8_t;
 class CrossRailTile;
 enum class CrossState : uint8_t;
 class DirectionControlRailTile;
@@ -39,35 +43,31 @@ class SignalRailTile;
 class NXButtonRailTile;
 class Node;
 class Link;
+class Train;
 
 /**
  * \brief A path between two blocks
  */
 class BlockPath : public Path
 {
-  public:
-    enum class Side
-    {
-      A = 0,
-      B = 1,
-    };
-
   private:
-    BlockRailTile const& m_fromBlock;
-    const Side m_fromSide;
+    BlockRailTile& m_fromBlock;
+    const BlockSide m_fromSide;
     std::weak_ptr<BlockRailTile> m_toBlock;
-    Side m_toSide;
+    BlockSide m_toSide;
+    std::vector<std::weak_ptr<RailTile>> m_tiles; //!< passive tiles to reserve
     std::vector<std::pair<std::weak_ptr<TurnoutRailTile>, TurnoutPosition>> m_turnouts; //!< required turnout positions for the path
     std::vector<std::pair<std::weak_ptr<DirectionControlRailTile>, DirectionControlState>> m_directionControls; //!< required direction control states for the path
     std::vector<std::pair<std::weak_ptr<CrossRailTile>, CrossState>> m_crossings; //!< required crossing states for the path
+    std::vector<std::pair<std::weak_ptr<BridgeRailTile>, BridgePath>> m_bridges; //!< bridges to reserve
     std::vector<std::weak_ptr<SignalRailTile>> m_signals; //!< signals in path
     std::weak_ptr<NXButtonRailTile> m_nxButtonFrom;
     std::weak_ptr<NXButtonRailTile> m_nxButtonTo;
 
   public:
-    static std::vector<std::unique_ptr<BlockPath>> find(BlockRailTile& block);
+    static std::vector<std::shared_ptr<BlockPath>> find(BlockRailTile& block);
 
-    BlockPath(BlockRailTile& block, Side side);
+    BlockPath(BlockRailTile& block, BlockSide side);
 
     bool hasNXButtons() const
     {
@@ -79,13 +79,25 @@ class BlockPath : public Path
       return m_fromBlock;
     }
 
+    BlockSide fromSide() const
+    {
+      return m_fromSide;
+    }
+
     std::shared_ptr<BlockRailTile> toBlock() const
     {
       return m_toBlock.lock();
     }
 
+    BlockSide toSide() const
+    {
+      return m_toSide;
+    }
+
     std::shared_ptr<NXButtonRailTile> nxButtonFrom() const;
     std::shared_ptr<NXButtonRailTile> nxButtonTo() const;
+
+    bool reserve(const std::shared_ptr<Train>& train, bool dryRun = false);
 };
 
 #endif

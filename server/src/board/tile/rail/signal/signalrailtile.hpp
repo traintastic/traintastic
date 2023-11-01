@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,6 +47,10 @@ class SignalRailTile : public StraightRailTile
     virtual bool doSetAspect(SignalAspect value);
 
   public:
+    struct Pass
+    {
+    };
+
     Property<std::string> name;
     Property<SignalAspect> aspect;
     ObjectProperty<SignalOutputMap> outputMap;
@@ -56,6 +60,8 @@ class SignalRailTile : public StraightRailTile
 
     std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }
     std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
+
+    bool reserve(Pass, bool dryRun = false);
 };
 
 #endif

@@ -28,7 +28,7 @@
 
 enum class CrossState : uint8_t
 {
-  Unknown = 0,
+  Unset = 0,
   AC = 1,
   BD = 2,
 };

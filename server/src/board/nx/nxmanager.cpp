@@ -27,6 +27,7 @@
 #include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
+#include "../../train/trainblockstatus.hpp"
 #include "../../world/getworld.hpp"
 
 NXManager::NXManager(Object& parent_, std::string_view parentPropertyName)
@@ -91,14 +92,30 @@ void NXManager::released(NXButtonRailTile& button)
 
 bool NXManager::selectPath(const NXButtonRailTile& from, const NXButtonRailTile& to)
 {
-  for(const auto& path : from.block->paths())
+  for(auto& path : from.block->paths())
   {
     if(path->nxButtonTo().get() == &to && path->nxButtonFrom().get() == &from)
     {
-      LOG_DEBUG("Path selected:", path->fromBlock().name.value(), "->", path->toBlock()->name.value());
+      LOG_DEBUG("Path found:", path->fromBlock().name.value(), "->", path->toBlock()->name.value());
+
+      if(from.block->trains.empty())
+      {
+        continue; // no train in from block
+      }
+
+      const auto& status = path->fromSide() == BlockSide::A ? from.block->trains.front() : from.block->trains.back();
+      if(!status->train)
+      {
+        continue; // no train assigned in from block
+      }
+
+      if(!path->reserve(status->train.value()))
+      {
+        continue; // can't reserve path
+      }
 
       return true;
     }
   }
-  return false;
+  return false; // no path found
 }

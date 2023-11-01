@@ -25,6 +25,7 @@
 
 #include <lua.hpp>
 #include "enum.hpp"
+#include <traintastic/enum/blocktraindirection.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
 #include "../../src/enum/direction.hpp"
 #include "../../src/enum/directioncontrolstate.hpp"
@@ -37,6 +38,7 @@
 #include "../../src/enum/worldscale.hpp"
 
 #define LUA_ENUMS \
+  BlockTrainDirection, \
   DecoderProtocol, \
   Direction, \
   DirectionControlState, \

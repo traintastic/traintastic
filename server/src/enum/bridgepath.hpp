@@ -1,9 +1,9 @@
 /**
- * server/src/board/tile/rail/crossrailtile.hpp
+ * server/src/enum/bridgepath.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,28 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_CROSSRAILTILE_HPP
-#define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_CROSSRAILTILE_HPP
+#ifndef TRAINTASTIC_SERVER_ENUM_BRIDGEPATH_HPP
+#define TRAINTASTIC_SERVER_ENUM_BRIDGEPATH_HPP
 
-#include "railtile.hpp"
-#include "../../map/node.hpp"
+#include <cstdint>
 
-enum class CrossState : uint8_t;
-
-class CrossRailTile : public RailTile
+enum class BridgePath : uint8_t
 {
-  private:
-    Node m_node;
-    CrossState m_crossState; //!< indicates which path is reserved
-
-  protected:
-    CrossRailTile(World& world, std::string_view _id, TileId tileId_);
-
-  public:
-    std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }
-    std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
-
-    bool reserve(CrossState crossState, bool dryRun = false);
+  AC = 0,
+  BD = 1,
 };
 
 #endif

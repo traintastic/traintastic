@@ -9,6 +9,19 @@
       }
     ]
   },
+  "on_train_reserved": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "block"
+      },
+      {
+        "name": "direction"
+      }
+    ]
+  },
   "on_train_removed": {
     "parameters": [
       {

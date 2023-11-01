@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,6 +42,7 @@ class TurnoutRailTile : public RailTile
 
     void worldEvent(WorldState state, WorldEvent event) override;
 
+    bool isValidPosition(TurnoutPosition value);
     virtual bool doSetPosition(TurnoutPosition value);
 
   public:
@@ -54,6 +55,8 @@ class TurnoutRailTile : public RailTile
 
     std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }
     std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
+
+    virtual bool reserve(TurnoutPosition turnoutPosition, bool dryRun = false);
 };
 
 #endif
