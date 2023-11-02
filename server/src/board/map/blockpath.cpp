@@ -36,6 +36,17 @@
 #include "../../core/objectproperty.tpp"
 #include "../../enum/bridgepath.hpp"
 
+template<class T1, typename T2>
+static bool contains(const std::vector<std::pair<std::weak_ptr<T1>, T2>>& values, const std::shared_ptr<T1>& value)
+{
+  const auto it = std::find_if(values.begin(), values.end(),
+    [&value](const auto& item)
+    {
+      return item.first.lock() == value;
+    });
+  return it != values.end();
+}
+
 std::vector<std::shared_ptr<BlockPath>> BlockPath::find(BlockRailTile& startBlock)
 {
   const auto& node = startBlock.node()->get();
@@ -111,7 +122,12 @@ std::vector<std::shared_ptr<BlockPath>> BlockPath::find(BlockRailTile& startBloc
       case TileId::RailTurnoutSingleSlip:
       case TileId::RailTurnoutDoubleSlip:
       {
-        auto* turnout = static_cast<TurnoutRailTile*>(&tile);
+        auto turnout = tile.shared_ptr<TurnoutRailTile>();
+        if(contains(current.path->m_turnouts, turnout))
+        {
+          todo.pop(); // drop it, can't pass turnout twice
+          break;
+        }
         auto links = getTurnoutLinks(*turnout, *current.link);
         assert(!links.empty());
 
@@ -120,14 +136,14 @@ std::vector<std::shared_ptr<BlockPath>> BlockPath::find(BlockRailTile& startBloc
           for(size_t i = 1; i < links.size(); ++i)
           {
             auto path = std::make_shared<BlockPath>(*current.path); // "fork" path
-            path->m_turnouts.emplace_back(turnout->shared_ptr<TurnoutRailTile>(), links[i].turnoutPosition);
+            path->m_turnouts.emplace_back(turnout, links[i].turnoutPosition);
             todo.emplace(Position{std::move(path), &nextNode, nextNode.getLink(links[i].linkIndex).get()});
           }
         }
 
         current.node = &nextNode;
         current.link = nextNode.getLink(links[0].linkIndex).get();
-        current.path->m_turnouts.emplace_back(turnout->shared_ptr<TurnoutRailTile>(), links[0].turnoutPosition);
+        current.path->m_turnouts.emplace_back(turnout, links[0].turnoutPosition);
         break;
       }
       case TileId::RailOneWay:
@@ -183,23 +199,31 @@ std::vector<std::shared_ptr<BlockPath>> BlockPath::find(BlockRailTile& startBloc
 
       case TileId::RailCross45:
       case TileId::RailCross90:
+      {
         //     2        2 3
         //     |        |/
         // 1 --+-- 3    |
         //     |       /|
         //     0      1 0
+        auto cross = tile.shared_ptr<CrossRailTile>();
+        if(contains(current.path->m_crossings, cross))
+        {
+          todo.pop(); // drop it, can't pass crossing twice
+          break;
+        }
+
         for(size_t i = 0; i < 4; i++)
         {
           if(nextNode.getLink(i).get() == current.link)
           {
             current.node = &nextNode;
             current.link = nextNode.getLink((i + 2) % 4).get(); // opposite
-            current.path->m_crossings.emplace_back(tile.shared_ptr<CrossRailTile>(), i % 2 == 0 ? CrossState::AC : CrossState::BD);
+            current.path->m_crossings.emplace_back(cross, i % 2 == 0 ? CrossState::AC : CrossState::BD);
             break;
           }
         }
         break;
-
+      }
       case TileId::RailLink:
       {
         auto& linkTile = static_cast<LinkRailTile&>(tile);
