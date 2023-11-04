@@ -109,7 +109,7 @@ void ServerKernel::receiveFrom(const Message& message, IOHandler::ClientId clien
               response.db1 |= Z21_CENTRALSTATE_EMERGENCYSTOP;
             if(m_trackPowerOn != TriState::True)
               response.db1 |= Z21_CENTRALSTATE_TRACKVOLTAGEOFF;
-            response.calcChecksum();
+            response.updateChecksum();
             sendTo(response, clientId);
           }
           else if(message == LanXSetTrackPowerOn())
@@ -150,7 +150,7 @@ void ServerKernel::receiveFrom(const Message& message, IOHandler::ClientId clien
           }
           break;
 
-        case 0xE3:
+        case LAN_X_GET_LOCO_INFO:
           if(const auto& getLocoInfo = static_cast<const LanXGetLocoInfo&>(message);
               getLocoInfo.db0 == 0xF0)
           {
@@ -165,7 +165,7 @@ void ServerKernel::receiveFrom(const Message& message, IOHandler::ClientId clien
           }
           break;
 
-        case 0xE4:
+        case LAN_X_SET_LOCO:
           if(const auto& setLocoDrive = static_cast<const LanXSetLocoDrive&>(message);
               setLocoDrive.db0 >= 0x10 && setLocoDrive.db0 <= 0x13)
           {
@@ -221,7 +221,7 @@ void ServerKernel::receiveFrom(const Message& message, IOHandler::ClientId clien
           }
           break;
 
-        case 0xF1:
+        case LAN_X_GET_FIRMWARE_VERSION:
           if(message == LanXGetFirmwareVersion())
             sendTo(LanXGetFirmwareVersionReply(ServerConfig::firmwareVersionMajor, ServerConfig::firmwareVersionMinor), clientId);
           break;

@@ -81,7 +81,24 @@ class ClientKernel final : public Kernel
     uint8_t m_firmwareVersionMinor;
     std::function<void(HardwareType, uint8_t, uint8_t)> m_onHardwareInfoChanged;
 
+    /*!
+     * \brief m_trackPowerOn caches command station track power state.
+     *
+     * NOTE: it must be accessed only from event loop thread or from
+     * Z21::ClientKernel::onStart().
+     *
+     * \sa EventLoop
+     */
     TriState m_trackPowerOn;
+
+    /*!
+     * \brief m_emergencyStop caches command station emergency stop state.
+     *
+     * NOTE: it must be accessed only from event loop thread or from
+     * Z21::ClientKernel::onStart().
+     *
+     * \sa EventLoop
+     */
     TriState m_emergencyStop;
     std::function<void(bool)> m_onTrackPowerOnChanged;
     std::function<void()> m_onEmergencyStop;

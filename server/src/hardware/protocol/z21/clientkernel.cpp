@@ -22,7 +22,6 @@
 
 #include "clientkernel.hpp"
 #include "messages.hpp"
-#include "../xpressnet/messages.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../input/inputcontroller.hpp"
@@ -53,9 +52,9 @@ void ClientKernel::receive(const Message& message)
 {
   if(m_config.debugLogRXTX)
     EventLoop::call(
-      [this, msg=toString(message)]()
+      [logId_=logId, msg=toString(message)]()
       {
-        Log::log(logId, LogMessage::D2002_RX_X, msg);
+        Log::log(logId_, LogMessage::D2002_RX_X, msg);
       });
 
   switch(message.header())
@@ -64,7 +63,7 @@ void ClientKernel::receive(const Message& message)
     {
       const auto& lanX = static_cast<const LanX&>(message);
 
-      if(!XpressNet::isChecksumValid(*reinterpret_cast<const XpressNet::Message*>(&lanX.xheader)))
+      if(!LanX::isChecksumValid(lanX))
         break;
 
       switch(lanX.xheader)
@@ -72,48 +71,45 @@ void ClientKernel::receive(const Message& message)
         case LAN_X_BC:
           if(message == LanXBCTrackPowerOff() || message == LanXBCTrackShortCircuit())
           {
-            if(m_trackPowerOn != TriState::False)
-            {
-              m_trackPowerOn = TriState::False;
-
-              if(m_onTrackPowerOnChanged)
-                EventLoop::call(
-                  [this]()
-                  {
+            EventLoop::call(
+              [this]()
+              {
+                if(m_trackPowerOn != TriState::False)
+                {
+                  m_trackPowerOn = TriState::False;
+                  if(m_onTrackPowerOnChanged)
                     m_onTrackPowerOnChanged(false);
-                  });
-            }
+                }
+              });
           }
           else if(message == LanXBCTrackPowerOn())
           {
-            if(m_trackPowerOn != TriState::True)
-            {
-              m_trackPowerOn = TriState::True;
-
-              if(m_onTrackPowerOnChanged)
-                EventLoop::call(
-                  [this]()
-                  {
+            EventLoop::call(
+              [this]()
+              {
+                if(m_trackPowerOn != TriState::True)
+                {
+                  m_trackPowerOn = TriState::True;
+                  if(m_onTrackPowerOnChanged)
                     m_onTrackPowerOnChanged(true);
-                  });
-            }
+                }
+              });
           }
           break;
 
         case LAN_X_BC_STOPPED:
           if(message == LanXBCStopped())
           {
-            if(m_emergencyStop != TriState::True)
-            {
-              m_emergencyStop = TriState::True;
-
-              if(m_onEmergencyStop)
-                EventLoop::call(
-                  [this]()
-                  {
+            EventLoop::call(
+              [this]()
+              {
+                if(m_emergencyStop != TriState::True)
+                {
+                  m_emergencyStop = TriState::True;
+                  if(m_onEmergencyStop)
                     m_onEmergencyStop();
-                  });
-            }
+                }
+              });
           }
           break;
       }
@@ -246,29 +242,23 @@ void ClientKernel::receive(const Message& message)
                                     && (reply.centralState & Z21_CENTRALSTATE_SHORTCIRCUIT) == 0;
 
         const TriState trackPowerOn = toTriState(isTrackPowerOn);
-        if(m_trackPowerOn != trackPowerOn)
-        {
-          m_trackPowerOn = trackPowerOn;
+        const TriState stopState = toTriState(isStop);
 
-          if(m_onTrackPowerOnChanged)
-            EventLoop::call(
-              [this, isTrackPowerOn]()
-              {
-                m_onTrackPowerOnChanged(isTrackPowerOn);
-              });
-        }
+        EventLoop::call([this, trackPowerOn, stopState]()
+          {
+            if(m_trackPowerOn != trackPowerOn)
+            {
+              m_trackPowerOn = trackPowerOn;
+              if(m_onTrackPowerOnChanged)
+                m_onTrackPowerOnChanged(trackPowerOn == TriState::True);
+            }
 
-        if(m_emergencyStop != TriState::True && isStop)
-        {
-          m_emergencyStop = TriState::True;
-
-          if(m_onEmergencyStop)
-            EventLoop::call(
-              [this]()
-              {
-                m_onEmergencyStop();
-              });
-        }
+            if(m_emergencyStop != stopState)
+            {
+              m_emergencyStop = stopState;
+              m_onEmergencyStop();
+            }
+          });
       }
       break;
     }
@@ -296,32 +286,44 @@ void ClientKernel::receive(const Message& message)
 
 void ClientKernel::trackPowerOn()
 {
-  m_ioContext.post(
-    [this]()
-    {
-      if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::False)
+  assert(isEventLoopThread());
+
+  if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::False)
+  {
+    m_ioContext.post(
+      [this]()
+      {
         send(LanXSetTrackPowerOn());
-    });
+      });
+  }
 }
 
 void ClientKernel::trackPowerOff()
 {
-  m_ioContext.post(
-    [this]()
-    {
-      if(m_trackPowerOn != TriState::False)
+  assert(isEventLoopThread());
+
+  if(m_trackPowerOn != TriState::False)
+  {
+    m_ioContext.post(
+      [this]()
+      {
         send(LanXSetTrackPowerOff());
-    });
+      });
+  }
 }
 
 void ClientKernel::emergencyStop()
 {
-  m_ioContext.post(
-    [this]()
-    {
-      if(m_emergencyStop != TriState::True)
+  assert(isEventLoopThread());
+
+  if(m_emergencyStop != TriState::True)
+  {
+    m_ioContext.post(
+      [this]()
+      {
         send(LanXSetStop());
-    });
+      });
+  }
 }
 
 void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
@@ -330,51 +332,23 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
   {
     LanXSetLocoDrive cmd;
     cmd.setAddress(decoder.address, decoder.protocol == DecoderProtocol::DCCLong);
+    cmd.setDirection(decoder.direction);
 
-    switch(decoder.speedSteps)
+    // Decoder max speed steps must be set for the message to be correctly
+    // distinguished from LAN_X_SET_LOCO_FUNCTION
+    cmd.setSpeedSteps(decoder.speedSteps);
+
+    if(decoder.emergencyStop)
     {
-      case 14:
-      {
-        const uint8_t speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 14);
-        cmd.db0 = 0x10;
-        if(decoder.emergencyStop)
-          cmd.speedAndDirection = 0x01;
-        else if(speedStep > 0)
-          cmd.speedAndDirection = speedStep + 1;
-        break;
-      }
-      case 28:
-      {
-        uint8_t speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 28);
-        cmd.db0 = 0x12;
-        if(decoder.emergencyStop)
-          cmd.speedAndDirection = 0x01;
-        else if(speedStep > 0)
-        {
-          speedStep++;
-          cmd.speedAndDirection = ((speedStep & 0x01) << 4) | (speedStep >> 1);
-        }
-        break;
-      }
-      case 126:
-      case 128:
-      default:
-      {
-        const uint8_t speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 126);
-        cmd.db0 = 0x13;
-        if(decoder.emergencyStop)
-          cmd.speedAndDirection = 0x01;
-        else if(speedStep > 0)
-          cmd.speedAndDirection = speedStep + 1;
-        break;
-      }
+        cmd.setEmergencyStop();
+    }
+    else
+    {
+      const uint8_t speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, cmd.speedSteps());
+      cmd.setSpeedStep(speedStep);
     }
 
-    assert(decoder.direction.value() != Direction::Unknown);
-    if(decoder.direction.value() == Direction::Forward)
-      cmd.speedAndDirection |= 0x80;
-
-    cmd.checksum = XpressNet::calcChecksum(*reinterpret_cast<const XpressNet::Message*>(&cmd.xheader));
+    cmd.updateChecksum();
     postSend(cmd);
   }
   else if(has(changes, DecoderChangeFlags::FunctionValue))
@@ -519,9 +493,9 @@ void ClientKernel::send(const Message& message)
   {
     if(m_config.debugLogRXTX)
       EventLoop::call(
-        [this, msg=toString(message)]()
+        [logId_=logId, msg=toString(message)]()
         {
-          Log::log(logId, LogMessage::D2001_TX_X, msg);
+          Log::log(logId_, LogMessage::D2001_TX_X, msg);
         });
   }
   else

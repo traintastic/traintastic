@@ -142,18 +142,37 @@ enum LocoMode : uint8_t
   Motorola = 1,
 };
 
-static constexpr uint8_t LAN_X_SET_STOP = 0x80;
 static constexpr uint8_t LAN_X_TURNOUT_INFO = 0x43;
+static constexpr uint8_t LAN_X_SET_TURNOUT = 0x53;
+
 static constexpr uint8_t LAN_X_BC = 0x61;
+
+static constexpr uint8_t LAN_X_STATUS_CHANGED = 0x62;
+static constexpr uint8_t LAN_X_GET_VERSION_REPLY = 0x63;
+
+//static constexpr uint8_t LAN_X_CV_NACK_SC = 0x12;
+//static constexpr uint8_t LAN_X_CV_NACK = 0x13;
+//static constexpr uint8_t LAN_X_UNKNOWN_COMMAND = 0x82;
+
+static constexpr uint8_t LAN_X_SET_STOP = 0x80;
+static constexpr uint8_t LAN_X_BC_STOPPED = 0x81;
+
+static constexpr uint8_t LAN_X_GET_LOCO_INFO = 0xE3;
+static constexpr uint8_t LAN_X_SET_LOCO = 0xE4;
+static constexpr uint8_t LAN_X_LOCO_INFO = 0xEF;
+
+static constexpr uint8_t LAN_X_GET_FIRMWARE_VERSION = 0xF1;
+static constexpr uint8_t LAN_X_GET_FIRMWARE_VERSION_REPLY = 0xF3;
+
+// db0 for xHeader 0x21
+static constexpr uint8_t LAN_X_SET_TRACK_POWER_OFF = 0x80;
+static constexpr uint8_t LAN_X_SET_TRACK_POWER_ON = 0x81;
+
+// db0 for xHeader LAN_X_BC
 static constexpr uint8_t LAN_X_BC_TRACK_POWER_OFF = 0x00;
 static constexpr uint8_t LAN_X_BC_TRACK_POWER_ON = 0x01;
 //static constexpr uint8_t LAN_X_BC_PROGRAMMING_MODE = 0x02;
 static constexpr uint8_t LAN_X_BC_TRACK_SHORT_CIRCUIT = 0x08;
-//static constexpr uint8_t LAN_X_CV_NACK_SC = 0x12;
-//static constexpr uint8_t LAN_X_CV_NACK = 0x13;
-//static constexpr uint8_t LAN_X_UNKNOWN_COMMAND = 0x82;
-static constexpr uint8_t LAN_X_BC_STOPPED = 0x81;
-static constexpr uint8_t LAN_X_LOCO_INFO = 0xEF;
 
 enum HardwareType : uint32_t
 {
@@ -265,18 +284,15 @@ struct LanX : Message
   {
   }
 
-  void calcChecksum(uint8_t len)
+  void updateChecksum(uint8_t len);
+
+  inline void updateChecksum()
   {
-    uint8_t* checksum = &xheader + len + 1;
-    *checksum = xheader;
-    for(uint8_t* db = &xheader + 1; db < checksum; db++)
-      *checksum ^= *db;
+    updateChecksum(xheader & 0x0F);
   }
 
-  inline void calcChecksum()
-  {
-    calcChecksum(xheader & 0x0F);
-  }
+  static bool isChecksumValid(const LanX& lanX);
+
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanX) == 5);
 
@@ -335,7 +351,7 @@ struct LanXGetFirmwareVersion : LanX
   uint8_t checksum = 0xFB;
 
   LanXGetFirmwareVersion() :
-    LanX(sizeof(LanXGetFirmwareVersion), 0xF1)
+    LanX(sizeof(LanXGetFirmwareVersion), LAN_X_GET_FIRMWARE_VERSION)
   {
   }
 } ATTRIBUTE_PACKED;
@@ -357,7 +373,7 @@ static_assert(sizeof(LanXGetStatus) == 7);
 // LAN_X_SET_TRACK_POWER_OFF
 struct LanXSetTrackPowerOff : LanX
 {
-  uint8_t db0 = 0x80;
+  uint8_t db0 = LAN_X_SET_TRACK_POWER_OFF;
   uint8_t checksum = 0xa1;
 
   LanXSetTrackPowerOff() :
@@ -370,7 +386,7 @@ static_assert(sizeof(LanXSetTrackPowerOff) == 7);
 // LAN_X_SET_TRACK_POWER_ON
 struct LanXSetTrackPowerOn : LanX
 {
-  uint8_t db0 = 0x81;
+  uint8_t db0 = LAN_X_SET_TRACK_POWER_OFF;
   uint8_t checksum = 0xa0;
 
   LanXSetTrackPowerOn() :
@@ -402,7 +418,7 @@ struct LanXGetTurnoutInfo : LanX
     , db0(address >> 8)
     , db1(address & 0xFF)
   {
-    calcChecksum();
+    updateChecksum();
   }
 
   uint16_t address() const
@@ -425,7 +441,7 @@ struct LanXSetTurnout : LanX
   uint8_t checksum;
 
   LanXSetTurnout(uint16_t linearAddress, bool activate, bool queue = false)
-    : LanX(sizeof(LanXSetTurnout), 0x53)
+    : LanX(sizeof(LanXSetTurnout), LAN_X_SET_TURNOUT)
     , db0(linearAddress >> 9)
     , db1((linearAddress >> 1) & 0xFF)
   {
@@ -436,7 +452,7 @@ struct LanXSetTurnout : LanX
     if(linearAddress & 0x0001)
       db2 |= db2Port;
 
-    calcChecksum();
+    updateChecksum();
   }
 
   uint16_t address() const
@@ -487,10 +503,10 @@ struct LanXGetLocoInfo : LanX
   uint8_t checksum;
 
   LanXGetLocoInfo(uint16_t address, bool longAddress) :
-    LanX(sizeof(LanXGetLocoInfo),  0xE3)
+    LanX(sizeof(LanXGetLocoInfo), LAN_X_GET_LOCO_INFO)
   {
     setAddress(address, longAddress);
-    calcChecksum();
+    updateChecksum();
   }
 
   inline uint16_t address() const
@@ -508,11 +524,6 @@ struct LanXGetLocoInfo : LanX
     addressHigh = longAddress ? (0xC0 | (address >> 8)) : 0x00;
     addressLow = longAddress ? address & 0xFF : address & 0x7F;
   }
-
-  /*inline void calcChecksum()
-  {
-    checksum = xheader ^ db0 ^ addressHigh ^ addressLow;
-  }*/
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXGetLocoInfo) == 9);
 
@@ -526,7 +537,7 @@ struct LanXSetLocoDrive : LanX
   uint8_t checksum;
 
   LanXSetLocoDrive() :
-    LanX(sizeof(LanXSetLocoDrive), 0xE4)
+    LanX(sizeof(LanXSetLocoDrive), LAN_X_SET_LOCO)
   {
   }
 
@@ -544,6 +555,24 @@ struct LanXSetLocoDrive : LanX
   {
     addressHigh = longAddress ? (0xC0 | (address >> 8)) : 0x00;
     addressLow = longAddress ? address & 0xFF : address & 0x7F;
+  }
+
+  inline void setSpeedSteps(uint8_t steps)
+  {
+    switch(steps)
+    {
+    case 14:
+      db0 = 0x10;
+      break;
+    case 28:
+      db0 = 0x12;
+      break;
+    case 126:
+    case 128:
+    default:
+      db0 = 0x13;
+      break;
+    }
   }
 
   inline uint8_t speedSteps() const
@@ -613,7 +642,7 @@ struct LanXSetLocoFunction : LanX
   uint8_t checksum;
 
   LanXSetLocoFunction() :
-    LanX(sizeof(LanXSetLocoFunction), 0xE4)
+    LanX(sizeof(LanXSetLocoFunction), LAN_X_SET_LOCO)
   {
   }
 
@@ -623,7 +652,7 @@ struct LanXSetLocoFunction : LanX
     setAddress(address, longAddress);
     setFunctionIndex(functionIndex);
     setSwitchType(value);
-    calcChecksum();
+    updateChecksum();
   }
 
   inline uint16_t address() const
@@ -899,7 +928,7 @@ struct LanXGetVersionReply : LanX
   uint8_t checksum;
 
   LanXGetVersionReply()
-    : LanX(sizeof(LanXGetVersionReply), 0x63)
+    : LanX(sizeof(LanXGetVersionReply), LAN_X_GET_VERSION_REPLY)
   {
   }
 
@@ -908,7 +937,7 @@ struct LanXGetVersionReply : LanX
   {
     setXBusVersion(_xBusVersion);
     commandStationId = _commandStationId;
-    calcChecksum();
+    updateChecksum();
   }
 
   inline uint8_t xBusVersion() const
@@ -935,7 +964,7 @@ struct LanXGetFirmwareVersionReply : LanX
   uint8_t checksum;
 
   LanXGetFirmwareVersionReply() :
-    LanX(sizeof(LanXGetFirmwareVersionReply), 0xF3)
+    LanX(sizeof(LanXGetFirmwareVersionReply), LAN_X_GET_FIRMWARE_VERSION_REPLY)
   {
   }
 
@@ -944,7 +973,7 @@ struct LanXGetFirmwareVersionReply : LanX
   {
     setVersionMajor(_major);
     setVersionMinor(_minor);
-    calcChecksum();
+    updateChecksum();
   }
 
   inline uint8_t versionMajor() const
@@ -1058,7 +1087,7 @@ struct LanXStatusChanged : LanX
   uint8_t checksum;
 
   LanXStatusChanged() :
-    LanX(sizeof(LanXStatusChanged), 0x62)
+    LanX(sizeof(LanXStatusChanged), LAN_X_STATUS_CHANGED)
   {
   }
 } ATTRIBUTE_PACKED;
@@ -1094,14 +1123,14 @@ struct LanXLocoInfo : LanX
   static constexpr uint8_t flagF0 = 0x10;
   static constexpr uint8_t functionIndexMax = 28;
 
-  uint8_t addressHigh = 0;
-  uint8_t addressLow = 0;
+  uint8_t addressHigh = 0; //db0
+  uint8_t addressLow = 0;  //db1
   uint8_t db2 = 0;
-  uint8_t speedAndDirection = 0;
+  uint8_t speedAndDirection = 0; //db3
   uint8_t db4 = 0;
-  uint8_t f5f12 = 0;
-  uint8_t f13f20 = 0;
-  uint8_t f21f28 = 0;
+  uint8_t f5f12 = 0;    //db5
+  uint8_t f13f20 = 0;   //db6
+  uint8_t f21f28 = 0;   //db7
   uint8_t checksum = 0;
 
   LanXLocoInfo() :
@@ -1253,11 +1282,10 @@ struct LanXLocoInfo : LanX
     }
   }
 
-  void calcChecksum()
+  inline void updateChecksum()
   {
-    checksum = xheader;
-    for(uint8_t* db = &addressHigh; db < &checksum; db++)
-      checksum ^= *db;
+    //Data length - 7 Z21 header bytes + 1 byte for db0
+    LanX::updateChecksum(dataLen() - 6);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXLocoInfo) == 14);
