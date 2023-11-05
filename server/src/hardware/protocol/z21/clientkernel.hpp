@@ -87,7 +87,7 @@ class ClientKernel final : public Kernel
     /*!
      * \brief m_trackPowerOn caches command station track power state.
      *
-     * NOTE: it must be accessed only from event loop thread or from
+     * \note It must be accessed only from event loop thread or from
      * Z21::ClientKernel::onStart().
      *
      * \sa EventLoop
@@ -97,7 +97,7 @@ class ClientKernel final : public Kernel
     /*!
      * \brief m_emergencyStop caches command station emergency stop state.
      *
-     * NOTE: it must be accessed only from event loop thread or from
+     * \note It must be accessed only from event loop thread or from
      * Z21::ClientKernel::onStart().
      *
      * \sa EventLoop
