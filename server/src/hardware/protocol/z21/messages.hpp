@@ -1121,7 +1121,7 @@ struct LanXLocoInfo : LanX
   static constexpr uint8_t directionFlag = 0x80;
   static constexpr uint8_t speedStepMask = 0x7F;
   static constexpr uint8_t flagF0 = 0x10;
-  static constexpr uint8_t functionIndexMax = 28;
+  static constexpr uint8_t supportedFunctionIndexMax = 31; ///< \sa functionIndexMax
 
   static constexpr uint8_t minMessageSize = 7 + 7;
   static constexpr uint8_t maxMessageSize = 7 + 14;
@@ -1131,11 +1131,11 @@ struct LanXLocoInfo : LanX
   uint8_t db2 = 0;
   uint8_t speedAndDirection = 0; //db3
   uint8_t db4 = 0;
-  uint8_t f5f12 = 0;    //db5
-  uint8_t f13f20 = 0;   //db6
-  uint8_t f21f28 = 0;   //db7
-  uint8_t f29f31 = 0;   //db8 (firmware >= 1.42)
-  uint8_t checksum = 0;
+  uint8_t f5f12 = 0;  //db5
+  uint8_t f13f20 = 0; //db6
+  uint8_t f21f28 = 0; //db7
+  uint8_t db8 = 0;    //db8 is f29f31 (firmware >= 1.42) otherwise checksum
+  uint8_t db9 = 0;    //checksum (firmware >= 1.42)
 
   LanXLocoInfo() :
     LanX(sizeof(LanXLocoInfo), LAN_X_LOCO_INFO)
@@ -1233,6 +1233,28 @@ struct LanXLocoInfo : LanX
     return dataLen() >= 15;
   }
 
+  /*!
+   * \brief Get maximum fuction index stored in this message
+   * \return Maximum index
+   *
+   * \note There is also a function at index 0 so count it
+   *
+   * Maximum function index depends on Z21 firmware protocol version
+   * versions <  1.42 support up to F28
+   * versions >= 1.42 support up to F31
+   *
+   * Messages are backward compatible but older version will only read
+   * up to their maximum function number
+   *
+   * We currently support up to F31 in trasmission and reception \sa supportedFunctionIndexMax
+   */
+  inline uint8_t functionIndexMax() const
+  {
+    if(supportsF29F31())
+      return 31;
+    return 28;
+  }
+
   bool getFunction(uint8_t index) const
   {
     if(index == 0)
@@ -1246,7 +1268,7 @@ struct LanXLocoInfo : LanX
     else if(index <= 28)
       return f21f28 & (1 << (index - 21));
     else if(index <= 31 && supportsF29F31())
-      return f29f31 & (1 << (index - 29));
+      return db8 & (1 << (index - 29));
     else
       return false;
   }
@@ -1296,9 +1318,9 @@ struct LanXLocoInfo : LanX
     {
       const uint8_t flag = (1 << (index - 29));
       if(value)
-        f29f31 |= flag;
+        db8 |= flag;
       else
-        f29f31 &= ~flag;
+        db8 &= ~flag;
     }
   }
 
