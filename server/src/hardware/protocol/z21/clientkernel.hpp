@@ -161,7 +161,8 @@ class ClientKernel final : public Kernel
     void startInactiveDecoderPurgeTimer();
     void inactiveDecoderPurgeTimerExpired(const boost::system::error_code &ec);
 
-    LocoCache *getLocoCache(uint16_t dccAddr);
+    LocoCache &getLocoCache(uint16_t dccAddr);
+
 public:
     /**
      * @brief Create kernel and IO handler

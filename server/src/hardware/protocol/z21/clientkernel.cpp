@@ -130,7 +130,7 @@ void ClientKernel::receive(const Message& message)
               val[i] = reply.getFunction(i);
             }
 
-            LocoCache *cache = getLocoCache(reply.address());
+            LocoCache &cache = getLocoCache(reply.address());
 
             DecoderChangeFlags changes = DecoderChangeFlags(0);
 
@@ -139,27 +139,27 @@ void ClientKernel::receive(const Message& message)
             if(reply.speedSteps() != 126)
             {
               currentSpeedStep = float(currentSpeedStep) / float(reply.speedSteps()) * 126.0;
-              if(abs(currentSpeedStep - cache->lastReceivedSpeedStep) < 5)
-                currentSpeedStep = cache->lastReceivedSpeedStep; //Consider it a rounding error
+              if(abs(currentSpeedStep - cache.lastReceivedSpeedStep) < 5)
+                currentSpeedStep = cache.lastReceivedSpeedStep; //Consider it a rounding error
             }
 
-            int targetSpeedStep = cache->speedStep;
-            if(cache->speedSteps != 126)
+            int targetSpeedStep = cache.speedStep;
+            if(cache.speedSteps != 126)
             {
-              targetSpeedStep = float(targetSpeedStep) / float(cache->speedSteps) * 126.0;
+              targetSpeedStep = float(targetSpeedStep) / float(cache.speedSteps) * 126.0;
             }
 
-            if(!cache->speedTrendExplicitlySet)
+            if(!cache.speedTrendExplicitlySet)
             {
               //Calculate new speed trend
-              if(cache->lastReceivedSpeedStep <= currentSpeedStep)
-                cache->speedTrend = LocoCache::Trend::Ascending;
+              if(cache.lastReceivedSpeedStep <= currentSpeedStep)
+                cache.speedTrend = LocoCache::Trend::Ascending;
               else
-                cache->speedTrend = LocoCache::Trend::Descending;
+                cache.speedTrend = LocoCache::Trend::Descending;
             }
-            cache->speedTrendExplicitlySet = false;
+            cache.speedTrendExplicitlySet = false;
 
-            if(reply.speedSteps() != cache->speedSteps || reply.speedStep() != cache->speedStep)
+            if(reply.speedSteps() != cache.speedSteps || reply.speedStep() != cache.speedStep)
             {
               // Use a timeout of 1 second to prevent reacting to Z21 feedback messages
               // of our own changes. This would be problematic because in the meatime our
@@ -172,26 +172,26 @@ void ClientKernel::receive(const Message& message)
               // (100ms) because values will be refreshed and timeout restarted by Train itself
               // but we need to accout also for network trasmission and Z21 processing time.
 
-              if((std::chrono::steady_clock::now() - cache->lastSetTime) > std::chrono::milliseconds(1000))
+              if((std::chrono::steady_clock::now() - cache.lastSetTime) > std::chrono::milliseconds(1000))
               {
-                if(reply.speedSteps() != cache->speedSteps)
+                if(reply.speedSteps() != cache.speedSteps)
                 {
                   changes |= DecoderChangeFlags::SpeedSteps;
                 }
-                if(reply.speedStep() != cache->speedStep)
+                if(reply.speedStep() != cache.speedStep)
                 {
                   changes |= DecoderChangeFlags::Throttle;
                 }
 
-                cache->speedSteps = reply.speedSteps();
-                cache->speedStep = reply.speedStep();
+                cache.speedSteps = reply.speedSteps();
+                cache.speedStep = reply.speedStep();
               }
               else
               {
                 bool maybeOldFeedback = false;
 
-                if((cache->speedTrend == LocoCache::Trend::Ascending && currentSpeedStep <= targetSpeedStep)
-                    || (cache->speedTrend == LocoCache::Trend::Descending && currentSpeedStep >= targetSpeedStep))
+                if((cache.speedTrend == LocoCache::Trend::Ascending && currentSpeedStep <= targetSpeedStep)
+                    || (cache.speedTrend == LocoCache::Trend::Descending && currentSpeedStep >= targetSpeedStep))
                 {
                   //When accelerating or decelerating ignore all speeds between original speed and target speed.
                   //These messages are probably feedback of our own changes arrived with some delay.
@@ -202,8 +202,8 @@ void ClientKernel::receive(const Message& message)
                 if(!maybeOldFeedback)
                 {
                   changes |= DecoderChangeFlags::Throttle | DecoderChangeFlags::SpeedSteps;
-                  cache->speedSteps = reply.speedSteps();
-                  cache->speedStep = reply.speedStep();
+                  cache.speedSteps = reply.speedSteps();
+                  cache.speedStep = reply.speedStep();
                 }
               }
             }
@@ -212,22 +212,22 @@ void ClientKernel::receive(const Message& message)
             //Direction is not propagated back so it shouldn't start looping
             //We bypass timeout also for Direction change.
             //It can at worst cause a short flickering changing direction n times and then settle down
-            if(reply.direction() != cache->direction)
+            if(reply.direction() != cache.direction)
             {
               changes |= DecoderChangeFlags::Direction;
-              cache->direction = reply.direction();
+              cache.direction = reply.direction();
             }
-            if(reply.isEmergencyStop() || reply.isEmergencyStop() != cache->isEStop)
+            if(reply.isEmergencyStop() || reply.isEmergencyStop() != cache.isEStop)
             {
               //Force change when emergency stop is set to be sure it gets received
               //as soon as possible
               changes |= DecoderChangeFlags::EmergencyStop;
-              cache->isEStop = reply.isEmergencyStop();
+              cache.isEStop = reply.isEmergencyStop();
             }
 
             //Do not update last seen time to avoid ignoring genuine user commands
             //Store last received speed step converted to 126 steps scale
-            cache->lastReceivedSpeedStep = currentSpeedStep;
+            cache.lastReceivedSpeedStep = currentSpeedStep;
 
             EventLoop::call(
               [this, address=reply.address(), isEStop=reply.isEmergencyStop(),
@@ -530,24 +530,24 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
       cmd.setSpeedStep(speedStep);
       cmd.setDirection(direction);
 
-      LocoCache *cache = getLocoCache(addr);
+      LocoCache &cache = getLocoCache(addr);
 
       bool changed = false;
-      if(has(changes, DecoderChangeFlags::Direction) && cache->direction != direction)
+      if(has(changes, DecoderChangeFlags::Direction) && cache.direction != direction)
       {
         changed = true;
       }
 
       if(has(changes, DecoderChangeFlags::Throttle | DecoderChangeFlags::SpeedSteps | DecoderChangeFlags::EmergencyStop))
       {
-        if(has(changes, DecoderChangeFlags::EmergencyStop) && isEStop != cache->isEStop)
+        if(has(changes, DecoderChangeFlags::EmergencyStop) && isEStop != cache.isEStop)
         {
           if(isEStop)
             cmd.setEmergencyStop();
           changed = true;
         }
 
-        if(!isEStop && (speedSteps != cache->speedSteps || speedStep != cache->speedStep))
+        if(!isEStop && (speedSteps != cache.speedSteps || speedStep != cache.speedStep))
         {
           changed = true;
         }
@@ -566,10 +566,10 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
       }
 
       //Rescale everything to 126 steps
-      int oldTargetSpeedStep = cache->speedStep;
-      if(cache->speedSteps != 126)
+      int oldTargetSpeedStep = cache.speedStep;
+      if(cache.speedSteps != 126)
       {
-        oldTargetSpeedStep = float(oldTargetSpeedStep) / float(cache->speedSteps) * 126.0;
+        oldTargetSpeedStep = float(oldTargetSpeedStep) / float(cache.speedSteps) * 126.0;
       }
 
       int newTargetSpeedStep = cmd.speedStep();
@@ -580,29 +580,29 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
 
       if(changed)
       {
-        cache->speedSteps = cmd.speedSteps();
-        cache->speedStep = cmd.speedStep();
-        cache->direction = cmd.direction();
-        cache->isEStop = cmd.isEmergencyStop();
+        cache.speedSteps = cmd.speedSteps();
+        cache.speedStep = cmd.speedStep();
+        cache.direction = cmd.direction();
+        cache.isEStop = cmd.isEmergencyStop();
 
         if(newTargetSpeedStep >= oldTargetSpeedStep)
         {
-          cache->speedTrend = LocoCache::Trend::Ascending;
-          if(cache->lastReceivedSpeedStep > newTargetSpeedStep)
-            cache->lastReceivedSpeedStep = 0; //Reset to minimum
+          cache.speedTrend = LocoCache::Trend::Ascending;
+          if(cache.lastReceivedSpeedStep > newTargetSpeedStep)
+            cache.lastReceivedSpeedStep = 0; //Reset to minimum
         }
         else
         {
-          cache->speedTrend = LocoCache::Trend::Descending;
-          if(cache->lastReceivedSpeedStep < newTargetSpeedStep)
-            cache->lastReceivedSpeedStep = 126; //Reset to maximum
+          cache.speedTrend = LocoCache::Trend::Descending;
+          if(cache.lastReceivedSpeedStep < newTargetSpeedStep)
+            cache.lastReceivedSpeedStep = 126; //Reset to maximum
         }
-        cache->speedTrendExplicitlySet = true;
+        cache.speedTrendExplicitlySet = true;
 
         //Update last seen time to ignore feedback messages of our own changes
         //This potentially ignores also user commands coming from Z21 if issued
         //In less than 1 seconds from now
-        cache->lastSetTime = std::chrono::steady_clock::now();
+        cache.lastSetTime = std::chrono::steady_clock::now();
       }
 
       if(changed)
@@ -832,7 +832,7 @@ void ClientKernel::inactiveDecoderPurgeTimerExpired(const boost::system::error_c
   startInactiveDecoderPurgeTimer();
 }
 
-ClientKernel::LocoCache *ClientKernel::getLocoCache(uint16_t dccAddr)
+ClientKernel::LocoCache& ClientKernel::getLocoCache(uint16_t dccAddr)
 {
   auto it = m_locoCache.find(dccAddr);
   if(it == m_locoCache.end())
@@ -842,7 +842,7 @@ ClientKernel::LocoCache *ClientKernel::getLocoCache(uint16_t dccAddr)
     it = m_locoCache.emplace(dccAddr, item).first;
   }
 
-  return &it->second;
+  return it->second;
 }
 
 }
