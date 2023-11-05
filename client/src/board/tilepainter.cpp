@@ -1289,9 +1289,9 @@ void TilePainter::drawRailDecoupler(const QRectF& r, TileRotate rotate, bool isR
   m_painter.restore();
 }
 
-void TilePainter::drawRailNX(const QRectF& r, TileRotate rotate, bool isReserved, bool pressed)
+void TilePainter::drawRailNX(const QRectF& r, TileRotate rotate, bool isReserved, bool isEnabled, bool pressed)
 {
   setTrackPen(isReserved);
   drawStraight(r, rotate);
-  drawPushButton(r, pressed ? Color::White : Color::Blue);
+  drawPushButton(r, pressed ? Color::White : (isEnabled ? Color::Blue : Color::Gray));
 }

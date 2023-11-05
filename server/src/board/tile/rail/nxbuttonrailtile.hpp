@@ -45,6 +45,8 @@ class NXButtonRailTile final : public StraightRailTile
     void connectInput(Input& object);
     void disconnectInput(Input& object);
 
+    void updateEnabled();
+
   protected:
     void loaded() final;
     void destroying() final;
@@ -53,6 +55,7 @@ class NXButtonRailTile final : public StraightRailTile
 
   public:
     Property<std::string> name;
+    Property<bool> enabled;
     ObjectProperty<BlockRailTile> block;
     ObjectProperty<Input> input;
 

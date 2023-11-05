@@ -162,6 +162,7 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
       break;
 
     case TileId::RailNXButton:
+      tryConnect("enabled");
       if(auto* nxButton = dynamic_cast<NXButtonRailTile*>(object.get())) /*[[likely]]*/
       {
         connect(nxButton, &NXButtonRailTile::isPressedChanged, this, handler);
@@ -333,6 +334,15 @@ DecouplerState BoardAreaWidget::getDecouplerState(const TileLocation& l) const
     if(const auto* p = object->getProperty("state"))
       return p->toEnum<DecouplerState>();
   return DecouplerState::Deactivated;
+}
+
+bool BoardAreaWidget::getNXButtonEnabled(const TileLocation& l) const
+{
+  if(auto object = std::dynamic_pointer_cast<NXButtonRailTile>(m_board.board().getTileObject(l)))
+  {
+    return object->getPropertyValueBool("enabled", false);
+  }
+  return false;
 }
 
 bool BoardAreaWidget::getNXButtonPressed(const TileLocation& l) const
@@ -585,7 +595,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           break;
 
         case TileId::RailNXButton:
-          tilePainter.drawRailNX(r, a, isReserved, getNXButtonPressed(it.first));
+          tilePainter.drawRailNX(r, a, isReserved, getNXButtonEnabled(it.first), getNXButtonPressed(it.first));
           break;
 
         case TileId::None:

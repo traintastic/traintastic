@@ -49,6 +49,7 @@ NXButtonRailTile::NXButtonRailTile(World& world, std::string_view id_)
   : StraightRailTile(world, id_, TileId::RailNXButton)
   , m_node{*this, 2}
   , name{this, "name", std::string{id_}, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , enabled{this, "enabled", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , block{this, "block", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , input{this, "input", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
       [this](const std::shared_ptr<Input>& value)
@@ -69,6 +70,9 @@ NXButtonRailTile::NXButtonRailTile(World& world, std::string_view id_)
   Attributes::addEnabled(name, editable);
   Attributes::addDisplayName(name, DisplayName::Object::name);
   m_interfaceItems.add(name);
+
+  Attributes::addObjectEditor(enabled, false);
+  m_interfaceItems.add(enabled);
 
   m_interfaceItems.add(block);
 
@@ -91,6 +95,8 @@ void NXButtonRailTile::loaded()
 
   if(input)
     connectInput(*input);
+
+  updateEnabled();
 }
 
 void NXButtonRailTile::destroying()
@@ -107,6 +113,8 @@ void NXButtonRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
 
   Attributes::setEnabled(name, editable);
   Attributes::setEnabled(input, editable);
+
+  updateEnabled();
 }
 
 void NXButtonRailTile::boardModified()
@@ -132,6 +140,8 @@ void NXButtonRailTile::boardModified()
     block.setValueInternal(nullptr);
     Log::log(*this, LogMessage::W3002_NX_BUTTON_NOT_CONNECTED_TO_ANY_BLOCK);
   }
+
+  updateEnabled();
 }
 
 void NXButtonRailTile::connectInput(Input& object)
@@ -146,9 +156,9 @@ void NXButtonRailTile::connectInput(Input& object)
   m_inputValueChanged = object.onValueChanged.connect(
     [this](bool value, const std::shared_ptr<Input>& /*input*/)
     {
-      if(!block)
+      if(!enabled)
       {
-        return; // no block, no action
+        return; // not enabled, no action
       }
 
       if(value)
@@ -167,4 +177,9 @@ void NXButtonRailTile::disconnectInput(Input& object)
   m_inputValueChanged.disconnect();
   m_inputDestroying.disconnect();
   object.consumers.removeInternal(shared_from_this());
+}
+
+void NXButtonRailTile::updateEnabled()
+{
+  enabled.setValueInternal(block && contains(m_world.state, WorldState::Run));
 }

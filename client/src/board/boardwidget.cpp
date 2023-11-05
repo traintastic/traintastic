@@ -394,11 +394,35 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
         m_statusBarCoords->setText(QString::number(x) + ", " + QString::number(y));
 
         const auto tileId = m_object->getTileId(tl);
-        if((!m_toolbarEdit->isVisible() && (isRailTurnout(tileId) || isRailSignal(tileId) || tileId == TileId::RailDirectionControl || tileId == TileId::RailDecoupler || tileId == TileId::PushButton || tileId == TileId::RailNXButton)) ||
-            (m_toolbarEdit->isVisible() && isActive(tileId) && m_editActions->checkedAction() == m_editActionNone))
-          setCursor(Qt::PointingHandCursor);
-        else
-          setCursor(Qt::ArrowCursor);
+        auto cursorShape = Qt::ArrowCursor;
+
+        if(m_toolbarEdit->isVisible()) // Edit mode
+        {
+          if(isActive(tileId) && m_editActions->checkedAction() == m_editActionNone)
+          {
+            cursorShape = Qt::PointingHandCursor;
+          }
+        }
+        else // Operate mode
+        {
+          if(isRailTurnout(tileId) ||
+              isRailSignal(tileId) ||
+              tileId == TileId::RailDirectionControl ||
+              tileId == TileId::RailDecoupler ||
+              tileId == TileId::PushButton)
+          {
+            cursorShape = Qt::PointingHandCursor;
+          }
+          else if(tileId == TileId::RailNXButton)
+          {
+            if(auto nxButton = m_object->getTileObject(tl); nxButton && nxButton->getPropertyValueBool("enabled", false))
+            {
+              cursorShape = Qt::PointingHandCursor;
+            }
+          }
+        }
+
+        setCursor(cursorShape);
       }
       else
         m_statusBarCoords->setText("");
@@ -597,6 +621,11 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
       {
         if(auto nxButton = std::dynamic_pointer_cast<NXButtonRailTile>(obj)) /*[[likely]]*/
         {
+          if(!nxButton->getPropertyValueBool("enabled", false))
+          {
+            return; // not enabled, no action
+          }
+
           if(nxButton->isPressed())
           {
             releaseNXButton(nxButton);

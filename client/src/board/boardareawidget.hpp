@@ -102,6 +102,7 @@ class BoardAreaWidget : public QWidget
     SignalAspect getSignalAspect(const TileLocation& l) const;
     Color getColor(const TileLocation& l) const;
     DecouplerState getDecouplerState(const TileLocation& l) const;
+    bool getNXButtonEnabled(const TileLocation& l) const;
     bool getNXButtonPressed(const TileLocation& l) const;
     TileLocation pointToTileLocation(const QPoint& p);
 

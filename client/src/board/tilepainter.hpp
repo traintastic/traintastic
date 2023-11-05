@@ -110,7 +110,7 @@ class TilePainter
 
     void drawRailDecoupler(const QRectF& r, TileRotate rotate, bool isReserved = false, DecouplerState active = DecouplerState::Deactivated);
 
-    void drawRailNX(const QRectF& r, TileRotate rotate, bool isReserved = false, bool pressed = false);
+    void drawRailNX(const QRectF& r, TileRotate rotate, bool isReserved = false, bool isEnabled = false, bool pressed = false);
 };
 
 #endif
