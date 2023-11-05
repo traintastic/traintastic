@@ -493,8 +493,8 @@ void ClientKernel::emergencyStop()
 
 void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
-  const uint16_t addr = decoder.address;
-  const bool longAddr = decoder.protocol == DecoderProtocol::DCCLong;
+  const uint16_t address = decoder.address;
+  const bool longAddress = decoder.protocol == DecoderProtocol::DCCLong;
 
   const Direction direction = decoder.direction;
   const float throttle = decoder.throttle;
@@ -517,10 +517,10 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
     return;
   }
 
-  m_ioContext.post([this, addr, longAddr, direction, throttle, speedSteps, isEStop, changes, functionNumber, funcVal]()
+  m_ioContext.post([this, address, longAddress, direction, throttle, speedSteps, isEStop, changes, functionNumber, funcVal]()
     {
       LanXSetLocoDrive cmd;
-      cmd.setAddress(addr, longAddr);
+      cmd.setAddress(address, longAddress);
 
       cmd.setSpeedSteps(speedSteps);
       int speedStep = Decoder::throttleToSpeedStep(throttle, cmd.speedSteps());
@@ -530,7 +530,7 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
       cmd.setSpeedStep(speedStep);
       cmd.setDirection(direction);
 
-      LocoCache &cache = getLocoCache(addr);
+      LocoCache &cache = getLocoCache(address);
 
       bool changed = false;
       if(has(changes, DecoderChangeFlags::Direction) && cache.direction != direction)
@@ -559,7 +559,7 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
         if(functionNumber <= LanXSetLocoFunction::functionNumberMax && funcVal != TriState::Undefined)
         {
           send(LanXSetLocoFunction(
-            addr, longAddr,
+            address, longAddress,
             static_cast<uint8_t>(functionNumber),
             funcVal == TriState::True ? LanXSetLocoFunction::SwitchType::On : LanXSetLocoFunction::SwitchType::Off));
         }
