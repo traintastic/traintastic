@@ -241,24 +241,24 @@ void ClientKernel::receive(const Message& message)
 
                     if(has(changes, DecoderChangeFlags::EmergencyStop))
                     {
-                      isUpdatingDecoderFromKernel = true;
+                      m_isUpdatingDecoderFromKernel = true;
                       decoder->emergencyStop = isEStop;
                     }
 
                     if(has(changes, DecoderChangeFlags::Direction))
                     {
-                      isUpdatingDecoderFromKernel = true;
+                      m_isUpdatingDecoderFromKernel = true;
                       decoder->direction = dir;
                     }
 
                     if(has(changes, DecoderChangeFlags::Throttle | DecoderChangeFlags::SpeedSteps))
                     {
-                      isUpdatingDecoderFromKernel = true;
+                      m_isUpdatingDecoderFromKernel = true;
                       decoder->throttle = throttle;
                     }
 
                     //Reset flag guard at end
-                    isUpdatingDecoderFromKernel = false;
+                    m_isUpdatingDecoderFromKernel = false;
 
                     //Function get always updated because we do not store a copy in cache
                     //so there is no way to tell in advance if they changed
@@ -504,7 +504,7 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
   if(const auto& f = decoder.getFunction(functionNumber))
     funcVal = toTriState(f->value);
 
-  if(isUpdatingDecoderFromKernel)
+  if(m_isUpdatingDecoderFromKernel)
   {
     //This change was caused by Z21 message so there is not point
     //on informing back Z21 with another message
@@ -512,7 +512,7 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
     //at a new value (EventLoop is slower to process callbacks)
     //But reset the guard to allow Train and other parts of code
     //to react to this change and further edit decoder state
-    isUpdatingDecoderFromKernel = false;
+    m_isUpdatingDecoderFromKernel = false;
     return;
   }
 
