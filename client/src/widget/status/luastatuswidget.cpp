@@ -45,7 +45,7 @@ LuaStatusWidget::LuaStatusWidget(const ObjectPtr& object, QWidget* parent)
   m_errorLabel->setStyleSheet("QLabel { color: #DC143C; }");
 
   auto* l = new QHBoxLayout();
-  l->setMargin(0);
+  l->setContentsMargins(0, 0, 0, 0);
   l->addWidget(m_svg);
   l->addWidget(m_runningLabel);
   l->addWidget(m_errorLabel);

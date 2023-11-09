@@ -42,7 +42,7 @@ MainWindowStatusBar::MainWindowStatusBar(MainWindow& mainWindow)
 {
   // statuses:
   m_statuses->setLayout(new QHBoxLayout());
-  m_statuses->layout()->setMargin(0);
+  m_statuses->layout()->setContentsMargins(0, 0, 0, 0);
   addPermanentWidget(m_statuses);
 
   // clock:
