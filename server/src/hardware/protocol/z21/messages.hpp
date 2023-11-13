@@ -1121,17 +1121,21 @@ struct LanXLocoInfo : LanX
   static constexpr uint8_t directionFlag = 0x80;
   static constexpr uint8_t speedStepMask = 0x7F;
   static constexpr uint8_t flagF0 = 0x10;
-  static constexpr uint8_t functionIndexMax = 28;
+  static constexpr uint8_t supportedFunctionIndexMax = 31; ///< \sa functionIndexMax
+
+  static constexpr uint8_t minMessageSize = 7 + 7;
+  static constexpr uint8_t maxMessageSize = 7 + 14;
 
   uint8_t addressHigh = 0; //db0
   uint8_t addressLow = 0;  //db1
   uint8_t db2 = 0;
   uint8_t speedAndDirection = 0; //db3
   uint8_t db4 = 0;
-  uint8_t f5f12 = 0;    //db5
-  uint8_t f13f20 = 0;   //db6
-  uint8_t f21f28 = 0;   //db7
-  uint8_t checksum = 0;
+  uint8_t f5f12 = 0;  //db5
+  uint8_t f13f20 = 0; //db6
+  uint8_t f21f28 = 0; //db7
+  uint8_t db8 = 0;    //db8 is f29f31 (firmware >= 1.42) otherwise checksum
+  uint8_t db9 = 0;    //checksum (firmware >= 1.42)
 
   LanXLocoInfo() :
     LanX(sizeof(LanXLocoInfo), LAN_X_LOCO_INFO)
@@ -1223,6 +1227,34 @@ struct LanXLocoInfo : LanX
     Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
   }
 
+  inline bool supportsF29F31() const
+  {
+    //Firmware >= 1.42 adds db8 to store F29-F31 so dataLen increases to 15
+    return dataLen() >= 15;
+  }
+
+  /*!
+   * \brief Get maximum fuction index stored in this message
+   * \return Maximum index
+   *
+   * \note There is also a function at index 0 so count it
+   *
+   * Maximum function index depends on Z21 firmware protocol version
+   * versions <  1.42 support up to F28
+   * versions >= 1.42 support up to F31
+   *
+   * Messages are backward compatible but older version will only read
+   * up to their maximum function number
+   *
+   * We currently support up to F31 in trasmission and reception \sa supportedFunctionIndexMax
+   */
+  inline uint8_t functionIndexMax() const
+  {
+    if(supportsF29F31())
+      return 31;
+    return 28;
+  }
+
   bool getFunction(uint8_t index) const
   {
     if(index == 0)
@@ -1235,6 +1267,8 @@ struct LanXLocoInfo : LanX
       return f13f20 & (1 << (index - 13));
     else if(index <= 28)
       return f21f28 & (1 << (index - 21));
+    else if(index <= 31 && supportsF29F31())
+      return db8 & (1 << (index - 29));
     else
       return false;
   }
@@ -1280,6 +1314,14 @@ struct LanXLocoInfo : LanX
       else
         f21f28 &= ~flag;
     }
+    else if(index <= 31 && supportsF29F31())
+    {
+      const uint8_t flag = (1 << (index - 29));
+      if(value)
+        db8 |= flag;
+      else
+        db8 &= ~flag;
+    }
   }
 
   inline void updateChecksum()
@@ -1288,7 +1330,8 @@ struct LanXLocoInfo : LanX
     LanX::updateChecksum(dataLen() - 6);
   }
 } ATTRIBUTE_PACKED;
-static_assert(sizeof(LanXLocoInfo) == 14);
+static_assert(sizeof(LanXLocoInfo) >= LanXLocoInfo::minMessageSize &&
+              sizeof(LanXLocoInfo) <= LanXLocoInfo::maxMessageSize);
 
 // Reply to LAN_X_GET_FIRMWARE_VERSION
 

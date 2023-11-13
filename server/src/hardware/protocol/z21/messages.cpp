@@ -195,7 +195,8 @@ std::string toString(const Message& message, bool raw)
             s.append("estop");
           else
             s.append(std::to_string(locoInfo.speedStep())).append("/").append(std::to_string(locoInfo.speedSteps()));
-          for(uint8_t i = 0; i <= LanXLocoInfo::functionIndexMax; i++)
+          const uint8_t functionIndexMax = locoInfo.functionIndexMax();
+          for(uint8_t i = 0; i <= functionIndexMax; i++)
             s.append(" f").append(std::to_string(i)).append("=").append(locoInfo.getFunction(i) ? "1" : "0");
           s.append(" busy=").append(locoInfo.isBusy() ? "1" : "0");
           break;

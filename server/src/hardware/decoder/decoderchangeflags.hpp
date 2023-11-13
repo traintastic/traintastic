@@ -40,6 +40,11 @@ constexpr DecoderChangeFlags operator| (const DecoderChangeFlags& lhs, const Dec
   return static_cast<DecoderChangeFlags>(static_cast<std::underlying_type_t<DecoderChangeFlags>>(lhs) | static_cast<std::underlying_type_t<DecoderChangeFlags>>(rhs));
 }
 
+constexpr void operator|= (DecoderChangeFlags& lhs, const DecoderChangeFlags& rhs)
+{
+  lhs = lhs | rhs;
+}
+
 constexpr bool has(const DecoderChangeFlags& value, const DecoderChangeFlags& mask)
 {
   return (static_cast<std::underlying_type_t<DecoderChangeFlags>>(value) & static_cast<std::underlying_type_t<DecoderChangeFlags>>(mask)) != 0;
