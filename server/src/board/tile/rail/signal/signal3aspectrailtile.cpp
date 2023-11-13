@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,13 +21,53 @@
  */
 
 #include "signal3aspectrailtile.hpp"
-#include "../../../map/signalpath.hpp"
+#include "../../../map/abstractsignalpath.hpp"
+#include "../../../map/blockpath.hpp"
 #include "../../../../core/attributes.hpp"
 #include "../../../../core/method.tpp"
 #include "../../../../core/objectproperty.tpp"
 
 static const std::array<SignalAspect, 4> aspectValues = {SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed, SignalAspect::Unknown};
 static const std::array<SignalAspect, 3> setAspectValues = {SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed};
+
+namespace
+{
+  class SignalPath : public AbstractSignalPath
+  {
+    protected:
+      SignalAspect determineAspect() const final
+      {
+        std::array<BlockState, 2> states;
+        getBlockStates(states);
+
+        if(!requireReservation() && states[0] == BlockState::Free)
+        {
+          if(states[1] == BlockState::Free)
+          {
+            return SignalAspect::Proceed;
+          }
+          return SignalAspect::ProceedReducedSpeed;
+        }
+        if(states[0] == BlockState::Reserved)
+        {
+          const auto path = signal().reservedPath();
+          if(path && path->toBlock() == getBlock(0))
+          {
+            //! \todo check next block reserved and signal state
+
+            return SignalAspect::ProceedReducedSpeed;
+          }
+        }
+        return SignalAspect::Stop;
+      }
+
+    public:
+      SignalPath(Signal3AspectRailTile& signal)
+        : AbstractSignalPath(signal, 2)
+      {
+      }
+  };
+}
 
 Signal3AspectRailTile::Signal3AspectRailTile(World& world, std::string_view _id) :
   SignalRailTile(world, _id, TileId::RailSignal3Aspect)
@@ -43,17 +83,6 @@ Signal3AspectRailTile::Signal3AspectRailTile(World& world, std::string_view _id)
 
 void Signal3AspectRailTile::boardModified()
 {
-  m_signalPath = std::make_unique<SignalPath>(m_node, 2,
-    [this](const std::vector<BlockState>& states)
-    {
-      if(!states.empty() && states[0] == BlockState::Free)
-      {
-        if(states.size() >= 2 && states[1] == BlockState::Free)
-          setAspect(SignalAspect::Proceed);
-        else
-          setAspect(SignalAspect::ProceedReducedSpeed);
-      }
-      else
-        setAspect(SignalAspect::Stop);
-    });
+  m_signalPath = std::make_unique<SignalPath>(*this);
+  SignalRailTile::boardModified();
 }

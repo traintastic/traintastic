@@ -401,7 +401,7 @@ bool BlockPath::reserve(const std::shared_ptr<Train>& train, bool dryRun)
   {
     if(auto signal = signalWeak.lock())
     {
-      if(!signal->reserve(SignalRailTile::Pass{}, dryRun))
+      if(!signal->reserve(shared_from_this(), dryRun))
       {
         assert(dryRun);
         return false;

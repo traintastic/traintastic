@@ -48,7 +48,7 @@ class Train;
 /**
  * \brief A path between two blocks
  */
-class BlockPath : public Path
+class BlockPath : public Path, public std::enable_shared_from_this<BlockPath>
 {
   private:
     BlockRailTile& m_fromBlock;

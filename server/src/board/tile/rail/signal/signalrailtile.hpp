@@ -24,13 +24,15 @@
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_SIGNAL_SIGNALRAILTILE_HPP
 
 #include "../straightrailtile.hpp"
+#include <traintastic/enum/autoyesno.hpp>
 #include "../../../map/node.hpp"
 #include "../../../../core/method.hpp"
 #include "../../../../enum/signalaspect.hpp"
 #include "../../../../core/objectproperty.hpp"
 #include "../../../../hardware/output/map/signaloutputmap.hpp"
 
-class SignalPath;
+class AbstractSignalPath;
+class BlockPath;
 
 class SignalRailTile : public StraightRailTile
 {
@@ -38,20 +40,22 @@ class SignalRailTile : public StraightRailTile
 
   protected:
     Node m_node;
-    std::unique_ptr<SignalPath> m_signalPath;
+    std::unique_ptr<AbstractSignalPath> m_signalPath;
+    std::weak_ptr<BlockPath> m_blockPath;
 
     SignalRailTile(World& world, std::string_view _id, TileId tileId);
 
     void worldEvent(WorldState state, WorldEvent event) override;
 
+    void boardModified() override;
+
     virtual bool doSetAspect(SignalAspect value);
 
-  public:
-    struct Pass
-    {
-    };
+    void evaluate();
 
+  public:
     Property<std::string> name;
+    Property<AutoYesNo> requireReservation;
     Property<SignalAspect> aspect;
     ObjectProperty<SignalOutputMap> outputMap;
     Method<bool(SignalAspect)> setAspect;
@@ -61,7 +65,10 @@ class SignalRailTile : public StraightRailTile
     std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }
     std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
 
-    bool reserve(Pass, bool dryRun = false);
+    bool hasReservedPath() const noexcept;
+    std::shared_ptr<BlockPath> reservedPath() const noexcept;
+
+    bool reserve(const std::shared_ptr<BlockPath>& blockPath, bool dryRun = false);
 };
 
 #endif

@@ -21,7 +21,7 @@
  */
 
 #include "signalrailtile.hpp"
-#include "../../../map/signalpath.hpp"
+#include "../../../map/abstractsignalpath.hpp"
 #include "../../../../core/attributes.hpp"
 #include "../../../../core/method.tpp"
 #include "../../../../core/objectproperty.tpp"
@@ -32,6 +32,7 @@ SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId
   StraightRailTile(world, _id, tileId),
   m_node{*this, 2},
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
+  requireReservation{this, "require_reservation", AutoYesNo::Auto, PropertyFlags::ReadWrite | PropertyFlags::Store},
   aspect{this, "aspect", SignalAspect::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
   setAspect{*this, "set_aspect", MethodFlags::ScriptCallable, [this](SignalAspect value) { return doSetAspect(value); }}
@@ -41,6 +42,10 @@ SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
+
+  Attributes::addEnabled(requireReservation, editable);
+  Attributes::addValues(requireReservation, autoYesNoValues);
+  m_interfaceItems.add(requireReservation);
 
   Attributes::addObjectEditor(aspect, false);
   // aspect is added by sub class
@@ -54,13 +59,25 @@ SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId
 
 SignalRailTile::~SignalRailTile() = default; // default here, so we can use a forward declaration of SignalPath in the header.
 
-bool SignalRailTile::reserve(Pass, bool dryRun)
+bool SignalRailTile::hasReservedPath() const noexcept
+{
+  return !m_blockPath.expired();
+}
+
+std::shared_ptr<BlockPath> SignalRailTile::reservedPath() const noexcept
+{
+  return m_blockPath.lock();
+}
+
+bool SignalRailTile::reserve(const std::shared_ptr<BlockPath>& blockPath, bool dryRun)
 {
   // no conditions yet...
 
   if(!dryRun)
   {
+    m_blockPath = blockPath;
     RailTile::reserve();
+    evaluate();
   }
   return true;
 }
@@ -70,8 +87,24 @@ void SignalRailTile::worldEvent(WorldState state, WorldEvent event)
   StraightRailTile::worldEvent(state, event);
 
   const bool editable = contains(state, WorldState::Edit);
+  const bool editableAndStopped = editable && !contains(state, WorldState::Run);
 
   Attributes::setEnabled(name, editable);
+  Attributes::setEnabled(requireReservation, editableAndStopped);
+
+  if(event == WorldEvent::Run)
+  {
+    evaluate();
+  }
+}
+
+void SignalRailTile::boardModified()
+{
+  if(m_signalPath)
+  {
+    m_signalPath->evaluate();
+  }
+  StraightRailTile::boardModified();
 }
 
 bool SignalRailTile::doSetAspect(SignalAspect value)
@@ -83,4 +116,16 @@ bool SignalRailTile::doSetAspect(SignalAspect value)
   (*outputMap)[value]->execute();
   aspect.setValueInternal(value);
   return true;
+}
+
+void SignalRailTile::evaluate()
+{
+  if(m_signalPath) /*[[likely]]*/
+  {
+    m_signalPath->evaluate();
+  }
+  else
+  {
+    setAspect(SignalAspect::Stop);
+  }
 }

@@ -34,9 +34,19 @@ class TurnoutRailTile;
 enum class TurnoutPosition : uint8_t;
 class DirectionControlRailTile;
 enum class DirectionControlState : uint8_t;
+class SignalRailTile;
+enum class SignalAspect : uint8_t;
 
-class SignalPath : public Path
+class AbstractSignalPath : public Path
 {
+  private:
+    SignalRailTile& m_signal;
+
+    AbstractSignalPath(const AbstractSignalPath&) = delete;
+    AbstractSignalPath& operator =(const AbstractSignalPath&) = delete;
+
+    void setAspect(SignalAspect value) const;
+
   private:
     class Item
     {
@@ -73,6 +83,7 @@ class SignalPath : public Path
           return m_next;
         }
 
+        std::shared_ptr<BlockRailTile> block() const noexcept;
         BlockState blockState() const;
     };
 
@@ -110,15 +121,10 @@ class SignalPath : public Path
         const std::unique_ptr<const Item>& next() const final;
     };
 
-    const Node& m_signalNode;
     std::unique_ptr<const Item> m_root;
+    bool m_requireReservation = false;
     std::vector<boost::signals2::connection> m_connections;
-    std::function<void(const std::vector<BlockState>&)> m_onEvaluated;
 
-    SignalPath(const SignalPath&) = delete;
-    SignalPath& operator =(const SignalPath&) = delete;
-
-    void evaluate();
     std::unique_ptr<const Item> findBlocks(const Node& node, const Link& link, size_t blocksAhead);
 
     inline std::unique_ptr<const Item> findBlocks(const Node& node, const std::shared_ptr<const Link>& link, size_t blocksAhead)
@@ -128,9 +134,25 @@ class SignalPath : public Path
       return {};
     }
 
+  protected:
+    inline const SignalRailTile& signal() const
+    {
+      return m_signal;
+    }
+
+    bool requireReservation() const;
+
+    virtual SignalAspect determineAspect() const = 0;
+
+    void getBlockStates(tcb::span<BlockState> blockStates) const;
+    std::shared_ptr<BlockRailTile> getBlock(size_t index) const;
+
   public:
-    SignalPath(const Node& signalNode, size_t blocksAhead, std::function<void(const std::vector<BlockState>&)> onEvaluated);
-    ~SignalPath();
+    AbstractSignalPath(SignalRailTile& signal);
+    AbstractSignalPath(SignalRailTile& signal, size_t blocksAhead);
+    ~AbstractSignalPath();
+
+    void evaluate();
 };
 
 #endif

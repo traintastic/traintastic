@@ -23,6 +23,7 @@
 #include "enum.hpp"
 #include "../network/abstractproperty.hpp"
 #include <traintastic/locale/locale.hpp>
+#include <traintastic/enum/autoyesno.hpp>
 #include <traintastic/enum/color.hpp>
 #include <traintastic/enum/decoderfunctionfunction.hpp>
 #include <traintastic/enum/decoderfunctiontype.hpp>
@@ -85,6 +86,7 @@ QVector<qint64> enumValues(const QString& enumName)
 
 QString translateEnum(const QString& enumName, qint64 value)
 {
+  TRANSLATE_ENUM(AutoYesNo)
   TRANSLATE_ENUM(Color)
   TRANSLATE_ENUM(DecoderFunctionFunction)
   TRANSLATE_ENUM(DecoderFunctionType)

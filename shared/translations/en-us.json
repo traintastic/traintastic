@@ -4358,5 +4358,21 @@
     {
         "term": "message:W3002",
         "definition": "NX button not connected to any block"
+    },
+    {
+        "term": "auto_yes_no:auto",
+        "definition": "Auto detect"
+    },
+    {
+        "term": "auto_yes_no:yes",
+        "definition": "Yes"
+    },
+    {
+        "term": "auto_yes_no:no",
+        "definition": "No"
+    },
+    {
+        "term": "board_tile.rail.signal_3_aspect:require_reservation",
+        "definition": "Require reservation"
     }
 ]

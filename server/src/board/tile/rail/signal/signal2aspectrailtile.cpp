@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,13 +21,47 @@
  */
 
 #include "signal2aspectrailtile.hpp"
-#include "../../../map/signalpath.hpp"
+#include "../../../map/abstractsignalpath.hpp"
+#include "../../../map/blockpath.hpp"
 #include "../../../../core/attributes.hpp"
 #include "../../../../core/method.tpp"
 #include "../../../../core/objectproperty.tpp"
 
 static const std::array<SignalAspect, 3> aspectValues = {SignalAspect::Stop, SignalAspect::Proceed, SignalAspect::Unknown};
 static const std::array<SignalAspect, 2> setAspectValues = {SignalAspect::Stop, SignalAspect::Proceed};
+
+namespace
+{
+  class SignalPath : public AbstractSignalPath
+  {
+    protected:
+      SignalAspect determineAspect() const final
+      {
+        std::array<BlockState, 1> states;
+        getBlockStates(states);
+
+        if(!requireReservation() && states[0] == BlockState::Free)
+        {
+          return SignalAspect::Proceed;
+        }
+        if(states[0] == BlockState::Reserved)
+        {
+          const auto path = signal().reservedPath();
+          if(path && path->toBlock() == getBlock(0))
+          {
+            return SignalAspect::Proceed;
+          }
+        }
+        return SignalAspect::Stop;
+      }
+
+    public:
+      SignalPath(Signal2AspectRailTile& signal)
+        : AbstractSignalPath(signal, 1)
+      {
+      }
+  };
+}
 
 Signal2AspectRailTile::Signal2AspectRailTile(World& world, std::string_view _id) :
   SignalRailTile(world, _id, TileId::RailSignal2Aspect)
@@ -43,9 +77,6 @@ Signal2AspectRailTile::Signal2AspectRailTile(World& world, std::string_view _id)
 
 void Signal2AspectRailTile::boardModified()
 {
-  m_signalPath = std::make_unique<SignalPath>(m_node, 1,
-    [this](const std::vector<BlockState>& states)
-    {
-      setAspect(!states.empty() && states[0] == BlockState::Free ? SignalAspect::Proceed : SignalAspect::Stop);
-    });
+  m_signalPath = std::make_unique<SignalPath>(*this);
+  SignalRailTile::boardModified();
 }

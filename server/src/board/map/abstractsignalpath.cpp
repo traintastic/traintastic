@@ -1,5 +1,5 @@
 /**
- * server/src/board/map/signalpath.cpp
+ * server/src/board/map/abstractsignalpath.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,45 +20,108 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "signalpath.hpp"
+#include "abstractsignalpath.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../tile/rail/blockrailtile.hpp"
 #include "../tile/rail/turnout/turnoutrailtile.hpp"
 #include "../tile/rail/directioncontrolrailtile.hpp"
 #include "../tile/rail/onewayrailtile.hpp"
 #include "../tile/rail/linkrailtile.hpp"
-#include "../map/signalpath.hpp"
+#include "../tile/rail/signal/signalrailtile.hpp"
+#include "../map/abstractsignalpath.hpp"
 #include "../../train/train.hpp" // FIXME: required due to forward declaration
 
-SignalPath::SignalPath(const Node& signalNode, size_t blocksAhead, std::function<void(const std::vector<BlockState>&)> onEvaluated)
-  : m_signalNode{signalNode}
-  , m_onEvaluated{std::move(onEvaluated)}
+AbstractSignalPath::AbstractSignalPath(SignalRailTile& signal)
+  : m_signal{signal}
 {
-  if(auto link = signalNode.getLink(1))
-    m_root = findBlocks(signalNode, *link, blocksAhead);
-  evaluate();
 }
 
-SignalPath::~SignalPath()
+AbstractSignalPath::AbstractSignalPath(SignalRailTile& signal, size_t blocksAhead)//, std::function<void(const std::vector<BlockState>&)> onEvaluated)
+  : AbstractSignalPath(signal)
+{
+  const auto& signalNode = signal.node()->get();
+  if(auto link = signalNode.getLink(1); link && blocksAhead != 0)
+    m_root = findBlocks(signalNode, *link, blocksAhead);
+
+  {
+    // Require a reserved path if there is at least one turnout in the path to the next block.
+    // NOTE: this can be overriden using the signal's requireReservation property.
+    const AbstractSignalPath::Item* item = m_root.get();
+    while(item)
+    {
+      if(dynamic_cast<const BlockItem*>(item))
+      {
+        break;
+      }
+      if(dynamic_cast<const TurnoutItem*>(item))
+      {
+        m_requireReservation = true;
+        break;
+      }
+      item = item->next().get();
+    }
+  }
+}
+
+AbstractSignalPath::~AbstractSignalPath()
 {
   for(auto& connection : m_connections)
+  {
     connection.disconnect();
+  }
 }
 
-void SignalPath::evaluate()
+void AbstractSignalPath::evaluate()
 {
-  std::vector<BlockState> blockStates;
+  const bool stop = !signal().hasReservedPath() && requireReservation();
+
+  setAspect(stop ? SignalAspect::Stop : determineAspect());
+}
+
+bool AbstractSignalPath::requireReservation() const
+{
+  return (m_signal.requireReservation == AutoYesNo::Yes || (m_signal.requireReservation == AutoYesNo::Auto && m_requireReservation));
+}
+
+void AbstractSignalPath::getBlockStates(tcb::span<BlockState> blockStates) const
+{
+  size_t i = 0;
+  const Item* item = m_root.get();
+  while(item && i < blockStates.size())
+  {
+    if(const auto* blockItem = dynamic_cast<const BlockItem*>(item))
+    {
+      blockStates[i] = blockItem->blockState();
+      i++;
+    }
+    item = item->next().get();
+  }
+
+  if(i < blockStates.size())
+  {
+    std::fill(blockStates.data() + i, blockStates.data() + blockStates.size(), BlockState::Unknown);
+  }
+}
+
+std::shared_ptr<BlockRailTile> AbstractSignalPath::getBlock(size_t index) const
+{
   const Item* item = m_root.get();
   while(item)
   {
     if(const auto* blockItem = dynamic_cast<const BlockItem*>(item))
-      blockStates.emplace_back(blockItem->blockState());
+    {
+      if(index == 0)
+      {
+        return blockItem->block();
+      }
+      index--;
+    }
     item = item->next().get();
   }
-  m_onEvaluated(blockStates);
+  return {};
 }
 
-std::unique_ptr<const SignalPath::Item> SignalPath::findBlocks(const Node& node, const Link& link, size_t blocksAhead)
+std::unique_ptr<const AbstractSignalPath::Item> AbstractSignalPath::findBlocks(const Node& node, const Link& link, size_t blocksAhead)
 {
   const auto& nextNode = link.getNext(node);
   auto tile = nextNode.tile().shared_ptr<Tile>();
@@ -75,7 +138,7 @@ std::unique_ptr<const SignalPath::Item> SignalPath::findBlocks(const Node& node,
     if(blocksAhead > 1)
       if(const auto& nextLink = otherLink(nextNode, link))
         next = findBlocks(nextNode, *nextLink, blocksAhead - 1);
-    return std::unique_ptr<const SignalPath::Item>{new BlockItem(block, std::move(next))};
+    return std::unique_ptr<const AbstractSignalPath::Item>{new BlockItem(block, std::move(next))};
   }
   if(auto turnout = std::dynamic_pointer_cast<TurnoutRailTile>(tile))
   {
@@ -92,7 +155,7 @@ std::unique_ptr<const SignalPath::Item> SignalPath::findBlocks(const Node& node,
     }
 
     if(!next.empty())
-      return std::unique_ptr<const SignalPath::Item>{new TurnoutItem(turnout, std::move(next))};
+      return std::unique_ptr<const AbstractSignalPath::Item>{new TurnoutItem(turnout, std::move(next))};
   }
   else if(auto direction = std::dynamic_pointer_cast<DirectionControlRailTile>(tile))
   {
@@ -109,7 +172,7 @@ std::unique_ptr<const SignalPath::Item> SignalPath::findBlocks(const Node& node,
           evaluate();
         }));
 
-      return std::unique_ptr<const SignalPath::Item>{
+      return std::unique_ptr<const AbstractSignalPath::Item>{
         new DirectionControlItem(
           direction,
           nextNode.getLink(0).get() == &link ? DirectionControlState::AtoB : DirectionControlState::BtoA,
@@ -150,7 +213,7 @@ std::unique_ptr<const SignalPath::Item> SignalPath::findBlocks(const Node& node,
   {
     if(const auto& nextLink = otherLink(nextNode, link))
     {
-      if(&nextNode == &m_signalNode)
+      if(&nextNode == &m_signal.node()->get())
         return {}; // we're reached oursels
 
       return findBlocks(nextNode, *nextLink, blocksAhead);
@@ -161,15 +224,27 @@ std::unique_ptr<const SignalPath::Item> SignalPath::findBlocks(const Node& node,
   return {};
 }
 
-
-BlockState SignalPath::BlockItem::blockState() const
+void AbstractSignalPath::setAspect(SignalAspect value) const
 {
-  if(auto block = m_block.lock())
-    return block->state;
+  m_signal.setAspect(value);
+}
+
+
+std::shared_ptr<BlockRailTile> AbstractSignalPath::BlockItem::block() const noexcept
+{
+  return m_block.lock();
+}
+
+BlockState AbstractSignalPath::BlockItem::blockState() const
+{
+  if(auto blk = block())
+  {
+    return blk->state;
+  }
   return BlockState::Unknown;
 }
 
-const std::unique_ptr<const SignalPath::Item>& SignalPath::DirectionControlItem::next() const
+const std::unique_ptr<const AbstractSignalPath::Item>& AbstractSignalPath::DirectionControlItem::next() const
 {
   if(auto directionControl = m_directionControl.lock())
   {
@@ -180,7 +255,7 @@ const std::unique_ptr<const SignalPath::Item>& SignalPath::DirectionControlItem:
   return noItem;
 }
 
-const std::unique_ptr<const SignalPath::Item>& SignalPath::TurnoutItem::next() const
+const std::unique_ptr<const AbstractSignalPath::Item>& AbstractSignalPath::TurnoutItem::next() const
 {
   if(auto turnout = m_turnout.lock())
     if(auto it = m_next.find(turnout->position.value()); it != m_next.end())
