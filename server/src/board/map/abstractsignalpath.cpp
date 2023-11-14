@@ -22,6 +22,7 @@
 
 #include "abstractsignalpath.hpp"
 #include "../../core/objectproperty.tpp"
+#include "../../core/method.tpp"
 #include "../tile/rail/blockrailtile.hpp"
 #include "../tile/rail/turnout/turnoutrailtile.hpp"
 #include "../tile/rail/directioncontrolrailtile.hpp"
