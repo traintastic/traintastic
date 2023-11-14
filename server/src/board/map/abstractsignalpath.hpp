@@ -150,7 +150,7 @@ class AbstractSignalPath : public Path
   public:
     AbstractSignalPath(SignalRailTile& signal);
     AbstractSignalPath(SignalRailTile& signal, size_t blocksAhead);
-    ~AbstractSignalPath();
+    virtual ~AbstractSignalPath();
 
     void evaluate();
 };
