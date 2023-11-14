@@ -42,7 +42,7 @@ class Server : public std::enable_shared_from_this<Server>
     boost::asio::io_context m_ioContext;
     std::thread m_thread;
     boost::asio::ip::tcp::acceptor m_acceptor;
-    std::shared_ptr<boost::asio::ip::tcp::socket> m_socketTCP;
+    std::unique_ptr<boost::asio::ip::tcp::socket> m_socketTCP;
     boost::asio::ip::udp::socket m_socketUDP;
     std::array<char, 8> m_udpBuffer;
     boost::asio::ip::udp::endpoint m_remoteEndpoint;

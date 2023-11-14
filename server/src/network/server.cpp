@@ -200,7 +200,7 @@ void Server::doAccept()
   assert(IS_SERVER_THREAD);
 
   assert(!m_socketTCP);
-  m_socketTCP = std::make_shared<boost::asio::ip::tcp::socket>(m_ioContext);
+  m_socketTCP = std::make_unique<boost::asio::ip::tcp::socket>(m_ioContext);
 
   m_acceptor.async_accept(*m_socketTCP,
     [this](boost::system::error_code ec)
@@ -208,19 +208,23 @@ void Server::doAccept()
       if(!ec)
       {
         EventLoop::call(
-          [this, socket=std::move(m_socketTCP)]()
+          [this]()
           {
             try
             {
-              m_connections.emplace_back(std::make_shared<Connection>(*this, std::move(*socket)));
+              m_connections.emplace_back(std::make_shared<Connection>(*this, std::move(m_socketTCP)));
             }
             catch(const std::exception& e)
             {
               Log::log(id, LogMessage::C1002_CREATING_CONNECTION_FAILED_X, e.what());
             }
-          });
 
-        doAccept();
+            m_ioContext.post(
+              [this]()
+              {
+                doAccept();
+              });
+          });
       }
       else
       {

@@ -40,7 +40,7 @@ class Connection : public std::enable_shared_from_this<Connection>
     using ObjectHandle = uint32_t;
 
     Server& m_server;
-    boost::asio::ip::tcp::socket m_socket;
+    std::unique_ptr<boost::asio::ip::tcp::socket> m_socket;
     const std::string m_id;
     struct
     {
@@ -62,7 +62,7 @@ class Connection : public std::enable_shared_from_this<Connection>
     void connectionLost();
 
   public:
-    Connection(Server& server, boost::asio::ip::tcp::socket socket);
+    Connection(Server& server, std::unique_ptr<boost::asio::ip::tcp::socket> socket);
     virtual ~Connection();
 
     void disconnect();
