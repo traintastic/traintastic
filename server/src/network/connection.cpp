@@ -31,20 +31,10 @@
   #define IS_SERVER_THREAD (std::this_thread::get_id() == m_server.threadId())
 #endif
 
-std::string connectionId(const boost::asio::ip::tcp::socket& socket)
-{
-  return
-    std::string("connection[")
-      .append(socket.remote_endpoint().address().to_string())
-      .append(":")
-      .append(std::to_string(socket.remote_endpoint().port()))
-      .append("]");
-}
-
-Connection::Connection(Server& server, std::unique_ptr<boost::asio::ip::tcp::socket> socket)
+Connection::Connection(Server& server, std::unique_ptr<boost::asio::ip::tcp::socket> socket, std::string id)
   : m_server{server}
   , m_socket(std::move(socket))
-  , m_id{connectionId(*m_socket)}
+  , m_id{std::move(id)}
   , m_authenticated{false}
 {
   assert(isEventLoopThread());

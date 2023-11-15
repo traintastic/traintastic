@@ -207,12 +207,18 @@ void Server::doAccept()
     {
       if(!ec)
       {
+        const auto connectionId = std::string("connection[")
+          .append(m_socketTCP->remote_endpoint().address().to_string())
+          .append(":")
+          .append(std::to_string(m_socketTCP->remote_endpoint().port()))
+          .append("]");
+
         EventLoop::call(
-          [this]()
+          [this, connectionId]()
           {
             try
             {
-              m_connections.emplace_back(std::make_shared<Connection>(*this, std::move(m_socketTCP)));
+              m_connections.emplace_back(std::make_shared<Connection>(*this, std::move(m_socketTCP), connectionId));
             }
             catch(const std::exception& e)
             {

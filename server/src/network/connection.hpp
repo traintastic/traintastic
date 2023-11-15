@@ -62,7 +62,7 @@ class Connection : public std::enable_shared_from_this<Connection>
     void connectionLost();
 
   public:
-    Connection(Server& server, std::unique_ptr<boost::asio::ip::tcp::socket> socket);
+    Connection(Server& server, std::unique_ptr<boost::asio::ip::tcp::socket> socket, std::string id);
     virtual ~Connection();
 
     void disconnect();
