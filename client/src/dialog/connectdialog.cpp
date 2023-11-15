@@ -175,6 +175,18 @@ void ConnectDialog::stateChanged()
       QTimer::singleShot(300, this, &ConnectDialog::accept);
       break;
 
+    case Connection::State::Authenticating:
+      m_status->setText(Locale::tr("qtapp.connect_dialog:authenticating"));
+      break;
+
+    case Connection::State::CreatingSession:
+      m_status->setText(Locale::tr("qtapp.connect_dialog:creating_session"));
+      break;
+
+    case Connection::State::FetchingWorld:
+      m_status->setText(Locale::tr("qtapp.connect_dialog:fetching_world"));
+      break;
+
     case Connection::State::SocketError:
       m_status->setText(m_connection->errorString());
       setControlsEnabled(true);

@@ -693,7 +693,7 @@ void Connection::getWorld()
         m_worldRequestId = invalidRequestId;
         setWorld(object);
         // TODO: show error??
-        if(m_state == State::Connecting)
+        if(m_state == State::FetchingWorld)
           setState(State::Connected);
       });
 }
@@ -987,6 +987,7 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
 
 void Connection::socketConnected()
 {
+  setState(State::Authenticating);
   std::unique_ptr<Message> loginRequest{Message::newRequest(Message::Command::Login)};
   loginRequest->write(m_username.toUtf8());
   loginRequest->write(m_password);
@@ -995,6 +996,7 @@ void Connection::socketConnected()
     {
       if(loginResponse && loginResponse->isResponse() && !loginResponse->isError())
       {
+        setState(State::CreatingSession);
         std::unique_ptr<Message> newSessionRequest{Message::newRequest(Message::Command::NewSession)};
         send(newSessionRequest,
           [this](const std::shared_ptr<Message> newSessionResonse)
@@ -1037,7 +1039,10 @@ void Connection::socketConnected()
               }
 
               if(m_worldProperty->hasObject())
+              {
+                setState(State::FetchingWorld);
                 getWorld();
+              }
               else
                 setState(State::Connected);
             }

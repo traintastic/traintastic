@@ -60,13 +60,16 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
   public:
     enum class State
     {
-      Disconnected = 0,
-      Disconnecting = 1,
-      Connected = 2,
-      Connecting = 3,
-      SocketError = 4,
-      ErrorAuthenticationFailed = 5,
-      ErrorNewSessionFailed = 6,
+      Disconnected,
+      Disconnecting,
+      Connected,
+      Connecting,
+      Authenticating,
+      CreatingSession,
+      FetchingWorld,
+      SocketError,
+      ErrorAuthenticationFailed,
+      ErrorNewSessionFailed,
     };
 
     using SocketError = QAbstractSocket::SocketError;
