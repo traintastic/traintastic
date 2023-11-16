@@ -61,7 +61,7 @@ void Connection::doReadHeader()
 
   boost::asio::async_read(m_socket,
     boost::asio::buffer(&m_readBuffer.header, sizeof(m_readBuffer.header)),
-      [this, weak=weak_from_this()](const boost::system::error_code& ec, std::size_t bytesReceived)
+      [this, weak=weak_from_this()](const boost::system::error_code& ec, std::size_t /*bytesReceived*/)
       {
         if(weak.expired())
           return;
