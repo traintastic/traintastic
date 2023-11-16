@@ -199,43 +199,39 @@ void Server::doAccept()
 {
   assert(IS_SERVER_THREAD);
 
-  assert(!m_socketTCP);
-  m_socketTCP = std::make_unique<boost::asio::ip::tcp::socket>(m_ioContext);
-
-  m_acceptor.async_accept(*m_socketTCP,
-    [this](boost::system::error_code ec)
+  m_acceptor.async_accept(
+    [this](boost::system::error_code ec, boost::asio::ip::tcp::socket socket)
     {
       if(!ec)
       {
-        const auto connectionId = std::string("connection[")
-          .append(m_socketTCP->remote_endpoint().address().to_string())
-          .append(":")
-          .append(std::to_string(m_socketTCP->remote_endpoint().port()))
-          .append("]");
+        try
+        {
+          const auto connectionId = std::string("connection[")
+            .append(socket.remote_endpoint().address().to_string())
+            .append(":")
+            .append(std::to_string(socket.remote_endpoint().port()))
+            .append("]");
 
-        EventLoop::call(
-          [this, connectionId]()
-          {
-            try
-            {
-              m_connections.emplace_back(std::make_shared<Connection>(*this, std::move(m_socketTCP), connectionId));
-            }
-            catch(const std::exception& e)
-            {
-              Log::log(id, LogMessage::C1002_CREATING_CONNECTION_FAILED_X, e.what());
-            }
+          auto connection = std::make_shared<Connection>(*this, std::move(socket), connectionId);
+          connection->start();
 
-            m_ioContext.post(
-              [this]()
-              {
-                doAccept();
-              });
-          });
+          EventLoop::call(
+            [this, connection]()
+            {
+              Log::log(connection->id, LogMessage::I1003_NEW_CONNECTION);
+              m_connections.push_back(connection);
+            });
+        }
+        catch(const std::exception& e)
+        {
+          Log::log(id, LogMessage::C1002_CREATING_CONNECTION_FAILED_X, e.what());
+        }
+
+        doAccept();
       }
       else
       {
         Log::log(id, LogMessage::E1004_TCP_ACCEPT_ERROR_X, ec.message());
-        m_socketTCP.reset();
       }
     });
 }
