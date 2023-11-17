@@ -47,7 +47,7 @@ Connection::~Connection()
 {
   assert(isEventLoopThread());
   assert(!m_session);
-  assert(!m_socket->is_open());
+  assert(!m_socket.is_open());
 }
 
 void Connection::start()
