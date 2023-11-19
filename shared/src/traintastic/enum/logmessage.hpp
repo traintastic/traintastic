@@ -71,6 +71,8 @@ enum class LogMessage : uint32_t
   D2008_OUTPUT_X_IS_X = LogMessageOffset::debug + 2008,
   D2009_SLOT_X_IS_X = LogMessageOffset::debug + 2009,
   D2010_SLOT_X_IS_FREE = LogMessageOffset::debug + 2010,
+  D2011_WRITE_SXX_X_X_X = LogMessageOffset::debug + 2011,
+  D2012_READ_SXX_X_X_X = LogMessageOffset::debug + 2012,
   D9999_X = LogMessageOffset::debug + 9999,
 
   // Info:

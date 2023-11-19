@@ -31,6 +31,7 @@
 #include "hsi88.hpp"
 #include "loconetinterface.hpp"
 #include "marklincaninterface.hpp"
+#include "selectrixinterface.hpp"
 #include "traintasticdiyinterface.hpp"
 #include "withrottleinterface.hpp"
 #include "wlanmausinterface.hpp"
@@ -47,6 +48,7 @@ struct Interfaces
     HSI88Interface::classId,
     LocoNetInterface::classId,
     MarklinCANInterface::classId,
+    SelectrixInterface::classId,
     TraintasticDIYInterface::classId,
     WiThrottleInterface::classId,
     WlanMausInterface::classId,

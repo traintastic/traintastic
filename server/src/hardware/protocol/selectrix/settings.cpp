@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/interface/interfaces.cpp
+ * server/src/hardware/protocol/selectrix/settings.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,22 +20,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "interfaces.hpp"
-#include "../../utils/ifclassidcreate.hpp"
-#include "../../world/world.hpp"
+#include "settings.hpp"
+#include "../../../core/attributes.hpp"
+#include "../../../utils/displayname.hpp"
 
-std::shared_ptr<Interface> Interfaces::create(World& world, std::string_view classId, std::string_view id)
+namespace Selectrix {
+
+Settings::Settings(Object& _parent, std::string_view parentPropertyName)
+  : SubObject(_parent, parentPropertyName)
+  , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
-  IF_CLASSID_CREATE(DCCPlusPlusInterface)
-  IF_CLASSID_CREATE(ECoSInterface)
-  IF_CLASSID_CREATE(HSI88Interface)
-  IF_CLASSID_CREATE(LocoNetInterface)
-  IF_CLASSID_CREATE(MarklinCANInterface)
-  IF_CLASSID_CREATE(SelectrixInterface)
-  IF_CLASSID_CREATE(TraintasticDIYInterface)
-  IF_CLASSID_CREATE(WiThrottleInterface)
-  IF_CLASSID_CREATE(WlanMausInterface)
-  IF_CLASSID_CREATE(XpressNetInterface)
-  IF_CLASSID_CREATE(Z21Interface)
-  return std::shared_ptr<Interface>();
+  Attributes::addDisplayName(debugLogRXTX, DisplayName::Hardware::debugLogRXTX);
+  //Attributes::addGroup(debugLogRXTX, Group::debug);
+  m_interfaceItems.add(debugLogRXTX);
+}
+
+Config Settings::config() const
+{
+  Config config;
+
+  config.debugLogRXTX = debugLogRXTX;
+
+  return config;
+}
+
 }
