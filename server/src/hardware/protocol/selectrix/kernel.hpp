@@ -112,3 +112,8 @@ class Kernel : public ::KernelBase
      *
      */
     void setTrackPower(bool value);
+};
+
+}
+
+#endif
