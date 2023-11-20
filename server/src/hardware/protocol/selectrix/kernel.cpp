@@ -36,6 +36,7 @@ Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   , m_config{config}
 {
   assert(isEventLoopThread());
+  (void)m_simulation; // silence unused warning
 }
 
 Kernel::~Kernel() = default;
