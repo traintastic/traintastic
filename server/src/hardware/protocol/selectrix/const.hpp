@@ -29,6 +29,7 @@ namespace Selectrix {
 
 namespace Address
 {
+  constexpr uint8_t locomotiveMax = 103;
   constexpr uint8_t selectSXBus = 126;
   constexpr uint8_t trackPower = 127;
 
@@ -40,6 +41,17 @@ namespace TrackPower
 {
   constexpr uint8_t on = 0x80;
   constexpr uint8_t off = 0x00;
+}
+
+namespace Locomotive
+{
+  constexpr uint8_t speedStepMax = 31;
+  constexpr uint8_t speedMask = 0x1F;
+  constexpr uint8_t directionMask = 0x20;
+  constexpr uint8_t directionForward = 0x20;
+  constexpr uint8_t directionReverse = 0x00;
+  constexpr uint8_t f0 = 0x40;
+  constexpr uint8_t f1 = 0x80;
 }
 
 }

@@ -42,6 +42,7 @@ namespace Selectrix {
  */
 class SelectrixInterface final
   : public Interface
+  , public DecoderController
 {
   CLASS_ID("interface.selectrix")
   DEFAULT_ID("selectrix")
@@ -67,6 +68,9 @@ class SelectrixInterface final
 
     SelectrixInterface(World& world, std::string_view _id);
 
+    // DecoderController:
+    tcb::span<const DecoderProtocol> decoderProtocols() const final;
+    void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 };
 
 #endif

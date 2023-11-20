@@ -21,6 +21,8 @@
  */
 
 #include "selectrixinterface.hpp"
+#include "../decoder/list/decoderlist.hpp"
+#include "../decoder/list/decoderlisttablemodel.hpp"
 #include "../protocol/selectrix/kernel.hpp"
 #include "../protocol/selectrix/settings.hpp"
 #include "../protocol/selectrix/iohandler/serialiohandler.hpp"
@@ -33,10 +35,13 @@
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
 
+constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
+
 CREATE_IMPL(SelectrixInterface)
 
 SelectrixInterface::SelectrixInterface(World& world, std::string_view _id)
   : Interface(world, _id)
+  , DecoderController(*this, decoderListColumns)
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , baudrate{this, "baudrate", 9600, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , flowControl{this, "flow_control", SerialFlowControl::None, PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -62,6 +67,20 @@ SelectrixInterface::SelectrixInterface(World& world, std::string_view _id)
 
   Attributes::addDisplayName(selectrix, DisplayName::Hardware::selectrix);
   m_interfaceItems.insertBefore(selectrix, notes);
+
+  m_interfaceItems.insertBefore(decoders, notes);
+}
+
+tcb::span<const DecoderProtocol> SelectrixInterface::decoderProtocols() const
+{
+  static constexpr std::array<DecoderProtocol, 1> protocols{DecoderProtocol::Selectrix};
+  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+}
+
+void SelectrixInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
+{
+  if(m_kernel)
+    m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
 bool SelectrixInterface::setOnline(bool& value, bool simulation)
@@ -100,6 +119,7 @@ bool SelectrixInterface::setOnline(bool& value, bool simulation)
           else if(!powerOn && contains(m_world.state.value(), WorldState::PowerOn))
             m_world.powerOff();
         });
+      m_kernel->setDecoderController(this);
 
       m_kernel->start();
 
@@ -137,6 +157,7 @@ bool SelectrixInterface::setOnline(bool& value, bool simulation)
 void SelectrixInterface::addToWorld()
 {
   Interface::addToWorld();
+  DecoderController::addToWorld();
 }
 
 void SelectrixInterface::loaded()
@@ -146,6 +167,7 @@ void SelectrixInterface::loaded()
 
 void SelectrixInterface::destroying()
 {
+  DecoderController::destroying();
   Interface::destroying();
 }
 

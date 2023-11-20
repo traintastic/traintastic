@@ -29,6 +29,10 @@
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
 
+class Decoder;
+enum class DecoderChangeFlags;
+class DecoderController;
+
 namespace Selectrix {
 
 struct Message;
@@ -43,6 +47,8 @@ class Kernel : public ::KernelBase
     TriState m_trackPower;
     std::function<void(bool)> m_onTrackPowerChanged;
 
+    DecoderController* m_decoderController = nullptr;
+
     Config m_config;
 
     Kernel(std::string logId_, const Config& config, bool simulation);
@@ -53,6 +59,15 @@ class Kernel : public ::KernelBase
     bool read(Bus bus, uint8_t address, uint8_t& value);
     bool write(Bus bus, uint8_t address, uint8_t value);
     bool write(uint8_t address, uint8_t value);
+
+    inline void postWrite(Bus bus, uint8_t address, uint8_t value)
+    {
+      m_ioContext.post(
+        [this, bus, address, value]()
+        {
+          write(bus, address, value);
+        });
+    }
 
   public:
     Kernel(const Kernel&) = delete;
@@ -98,6 +113,14 @@ class Kernel : public ::KernelBase
     void setOnTrackPowerChanged(std::function<void(bool)> callback);
 
     /**
+     * \brief Set the decoder controller
+     *
+     * \param[in] decoderController The decoder controller
+     * \note This function may not be called when the kernel is running.
+     */
+    void setDecoderController(DecoderController* decoderController);
+
+    /**
      * \brief Start the kernel and IO handler
      */
     void start();
@@ -112,6 +135,12 @@ class Kernel : public ::KernelBase
      *
      */
     void setTrackPower(bool value);
+
+    /**
+     *
+     *
+     */
+    void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
 };
 
 }

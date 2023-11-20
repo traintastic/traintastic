@@ -22,6 +22,8 @@
 
 #include "kernel.hpp"
 #include "const.hpp"
+#include "../../decoder/decoderchangeflags.hpp"
+#include "../../decoder/decoder.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 #include "../../../log/logmessageexception.hpp"
@@ -57,6 +59,13 @@ void Kernel::setOnTrackPowerChanged(std::function<void(bool)> callback)
   assert(isEventLoopThread());
   assert(!m_started);
   m_onTrackPowerChanged = std::move(callback);
+}
+
+void Kernel::setDecoderController(DecoderController* decoderController)
+{
+  assert(isEventLoopThread());
+  assert(!m_started);
+  m_decoderController = decoderController;
 }
 
 void Kernel::start()
@@ -154,6 +163,42 @@ void Kernel::setTrackPower(bool enable)
     });
 }
 
+void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
+{
+  assert(isEventLoopThread());
+
+  if(has(changes, DecoderChangeFlags::FunctionValue) && functionNumber > 1)
+  {
+    return; // Selectrix only supports two functions.
+  }
+
+  if(decoder.address > Address::locomotiveMax) /*[[unlikely]]*/
+  {
+    return;
+  }
+
+  uint8_t value = 0x00;
+
+  if(!decoder.emergencyStop)
+  {
+    value |= Decoder::throttleToSpeedStep(decoder.throttle, Locomotive::speedStepMax);
+  }
+  if(decoder.direction == Direction::Forward)
+  {
+    value |= Locomotive::directionForward;
+  }
+  if(decoder.getFunctionValue(0))
+  {
+    value |= Locomotive::f0;
+  }
+  if(decoder.getFunctionValue(1))
+  {
+    value |= Locomotive::f1;
+  }
+
+  postWrite(Bus::SX0, static_cast<uint8_t>(decoder.address.value()), value);
+}
+
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
 {
   assert(isEventLoopThread());
@@ -164,6 +209,8 @@ void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
 
 bool Kernel::selectBus(Bus bus)
 {
+  assert(isKernelThread());
+
   if(m_bus == bus)
   {
     return true;
@@ -181,6 +228,8 @@ bool Kernel::selectBus(Bus bus)
 
 bool Kernel::read(Bus bus, uint8_t address, uint8_t& value)
 {
+  assert(isKernelThread());
+
   if(!selectBus(bus))
   {
     return false;
@@ -202,11 +251,15 @@ bool Kernel::read(Bus bus, uint8_t address, uint8_t& value)
 
 bool Kernel::write(Bus bus, uint8_t address, uint8_t value)
 {
+  assert(isKernelThread());
+
   return selectBus(bus) && write(address, value);
 }
 
 bool Kernel::write(uint8_t address, uint8_t value)
 {
+  assert(isKernelThread());
+
   if(m_config.debugLogRXTX)
   {
     EventLoop::call(
