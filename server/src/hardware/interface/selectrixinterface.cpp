@@ -23,8 +23,12 @@
 #include "selectrixinterface.hpp"
 #include "../decoder/list/decoderlist.hpp"
 #include "../decoder/list/decoderlisttablemodel.hpp"
+#include "../input/input.hpp"
+#include "../input/list/inputlist.hpp"
 #include "../protocol/selectrix/kernel.hpp"
 #include "../protocol/selectrix/settings.hpp"
+#include "../protocol/selectrix/addresstype.hpp"
+#include "../protocol/selectrix/utils.hpp"
 #include "../protocol/selectrix/iohandler/serialiohandler.hpp"
 #include "../protocol/selectrix/iohandler/simulationiohandler.hpp"
 #include "../../core/attributes.hpp"
@@ -33,15 +37,23 @@
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
+#include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
+constexpr bool operator <(const SelectrixInterface::BusAddress& lhs, const SelectrixInterface::BusAddress& rhs)
+{
+  return lhs.bus < rhs.bus || (lhs.bus == rhs.bus && lhs.address < rhs.address);
+}
+
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
 
 CREATE_IMPL(SelectrixInterface)
 
 SelectrixInterface::SelectrixInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , DecoderController(*this, decoderListColumns)
+  , InputController(static_cast<IdObject&>(*this))
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , baudrate{this, "baudrate", 9600, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , flowControl{this, "flow_control", SerialFlowControl::None, PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -69,6 +81,8 @@ SelectrixInterface::SelectrixInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(selectrix, notes);
 
   m_interfaceItems.insertBefore(decoders, notes);
+
+  m_interfaceItems.insertBefore(inputs, notes);
 }
 
 tcb::span<const DecoderProtocol> SelectrixInterface::decoderProtocols() const
@@ -81,6 +95,46 @@ void SelectrixInterface::decoderChanged(const Decoder& decoder, DecoderChangeFla
 {
   if(m_kernel)
     m_kernel->decoderChanged(decoder, changes, functionNumber);
+}
+
+std::pair<uint32_t, uint32_t> SelectrixInterface::inputAddressMinMax(uint32_t channel) const
+{
+  assert(
+    channel == InputChannel::sx0 ||
+    channel == InputChannel::sx1 ||
+    channel == InputChannel::sx2);
+
+  if(Selectrix::toBus(channel) == Selectrix::Bus::SX0)
+  {
+    return {inputAddressMin, inputAddressMaxSX0};
+  }
+  else
+  {
+    return {inputAddressMin, inputAddressMax};
+  }
+}
+
+bool SelectrixInterface::isInputAddressAvailable(uint32_t channel, uint32_t address) const
+{
+  if(!InputController::isInputAddressAvailable(channel, address))
+  {
+    return false;
+  }
+
+  if(auto it = m_usedBusAddresses.find({Selectrix::toBus(channel), Selectrix::toBusAddress(address)}); it != m_usedBusAddresses.end())
+  {
+    return it->second.type == Selectrix::AddressType::Input;
+  }
+
+  return true;
+}
+
+void SelectrixInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+{
+  if(m_kernel && inRange(address, inputAddressMinMax(channel)))
+  {
+    m_kernel->simulateInputChange(Selectrix::toBus(channel), address, action);
+  }
 }
 
 bool SelectrixInterface::setOnline(bool& value, bool simulation)
@@ -120,8 +174,14 @@ bool SelectrixInterface::setOnline(bool& value, bool simulation)
             m_world.powerOff();
         });
       m_kernel->setDecoderController(this);
+      m_kernel->setInputController(this);
 
       m_kernel->start();
+
+      for(const auto& it : m_usedBusAddresses)
+      {
+        m_kernel->addPollAddress(it.first.bus, it.first.address, it.second.type);
+      }
 
       m_selectrixPropertyChanged = selectrix->propertyChanged.connect(
         [this](BaseProperty& /*property*/)
@@ -154,10 +214,51 @@ bool SelectrixInterface::setOnline(bool& value, bool simulation)
   return true;
 }
 
+void SelectrixInterface::inputAdded(Input& input)
+{
+  const BusAddress key{Selectrix::toBus(input.channel), Selectrix::toBusAddress(input.address)};
+  const uint8_t portBit = 1 << Selectrix::toPort(input.address);
+
+  if(auto it = m_usedBusAddresses.find(key); it != m_usedBusAddresses.end())
+  {
+    assert(it->second.type == Selectrix::AddressType::Input);
+    it->second.mask |= portBit;
+  }
+  else
+  {
+    m_usedBusAddresses.insert({key, {Selectrix::AddressType::Input, portBit}});
+    if(m_kernel)
+    {
+      m_kernel->addPollAddress(key.bus, key.address, Selectrix::AddressType::Input);
+    }
+  }
+}
+
+void SelectrixInterface::inputRemoved(Input& input)
+{
+  const BusAddress key{Selectrix::toBus(input.channel), Selectrix::toBusAddress(input.address)};
+  const uint8_t portBit = 1 << Selectrix::toPort(input.address);
+
+  if(auto it = m_usedBusAddresses.find(key); it != m_usedBusAddresses.end()) /*[[likely]]*/
+  {
+    assert(it->second.type == Selectrix::AddressType::Input);
+    it->second.mask &= ~portBit;
+    if(it->second.mask == 0x00)
+    {
+      m_usedBusAddresses.erase(it);
+      if(m_kernel)
+      {
+        m_kernel->removePollAddress(key.bus, key.address);
+      }
+    }
+  }
+}
+
 void SelectrixInterface::addToWorld()
 {
   Interface::addToWorld();
   DecoderController::addToWorld();
+  InputController::addToWorld(inputListColumns);
 }
 
 void SelectrixInterface::loaded()
@@ -167,6 +268,7 @@ void SelectrixInterface::loaded()
 
 void SelectrixInterface::destroying()
 {
+  InputController::destroying();
   DecoderController::destroying();
   Interface::destroying();
 }

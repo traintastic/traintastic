@@ -22,8 +22,11 @@
 
 #include "kernel.hpp"
 #include "const.hpp"
+#include "utils.hpp"
+#include "iohandler/simulationiohandler.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../decoder/decoder.hpp"
+#include "../../input/inputcontroller.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 #include "../../../log/logmessageexception.hpp"
@@ -35,10 +38,10 @@ namespace Selectrix {
 Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
   , m_simulation{simulation}
+  , m_pollTimer{ioContext()}
   , m_config{config}
 {
   assert(isEventLoopThread());
-  (void)m_simulation; // silence unused warning
 }
 
 Kernel::~Kernel() = default;
@@ -68,6 +71,13 @@ void Kernel::setDecoderController(DecoderController* decoderController)
   m_decoderController = decoderController;
 }
 
+void Kernel::setInputController(InputController* inputController)
+{
+  assert(isEventLoopThread());
+  assert(!m_started);
+  m_inputController = inputController;
+}
+
 void Kernel::start()
 {
   assert(isEventLoopThread());
@@ -93,6 +103,9 @@ void Kernel::start()
         m_ioHandler->start();
 
         write(Address::selectSXBus, static_cast<uint8_t>(m_bus));
+
+        m_nextPoll = std::chrono::steady_clock::now();
+        startPollTimer();
       }
       catch(const LogMessageException& e)
       {
@@ -120,6 +133,7 @@ void Kernel::stop()
   m_ioContext.post(
     [this]()
     {
+      m_pollTimer.cancel();
       m_ioHandler->stop();
     });
 
@@ -199,6 +213,66 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   postWrite(Bus::SX0, static_cast<uint8_t>(decoder.address.value()), value);
 }
 
+void Kernel::simulateInputChange(Bus bus, uint16_t address, SimulateInputAction action)
+{
+  assert(isEventLoopThread());
+
+  if(m_simulation)
+  {
+    m_ioContext.post(
+      [this, bus, address, action]()
+      {
+        auto it = std::find_if(m_pollAddresses.begin(), m_pollAddresses.end(),
+          [bus, busAddress=toBusAddress(address)](const auto& info)
+          {
+            return bus == info.bus && busAddress == info.address;
+          });
+
+        if(it != m_pollAddresses.end() && it->type == AddressType::Input) // check if bus/address is for input
+        {
+          static_cast<SimulationIOHandler&>(*m_ioHandler).simulateInputChange(bus, address, action);
+        }
+      });
+  }
+}
+
+void Kernel::addPollAddress(Bus bus, uint8_t address, AddressType type)
+{
+  assert(isEventLoopThread());
+
+  m_ioContext.post(
+    [this, bus, address, type]()
+    {
+      // insert sorted on bus (minimize number of bus select commands)
+      auto it = std::upper_bound(m_pollAddresses.begin(), m_pollAddresses.end(), bus,
+        [](Bus b, const PollInfo& info)
+        {
+          return b < info.bus;
+        });
+      m_pollAddresses.emplace(it, PollInfo{bus, address, type, 0x00, false});
+    });
+}
+
+void Kernel::removePollAddress(Bus bus, uint8_t address)
+{
+  assert(isEventLoopThread());
+
+  m_ioContext.post(
+    [this, bus, address]()
+    {
+      auto it = std::find_if(m_pollAddresses.begin(), m_pollAddresses.end(),
+        [bus, address](const auto& info)
+        {
+          return bus == info.bus && address == info.address;
+        });
+
+      if(it != m_pollAddresses.end()) /*[[likely]]*/
+      {
+        m_pollAddresses.erase(it);
+      }
+    });
+}
+
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
 {
   assert(isEventLoopThread());
@@ -270,6 +344,75 @@ bool Kernel::write(uint8_t address, uint8_t value)
   }
 
   return m_ioHandler->write(address, value);
+}
+
+void Kernel::startPollTimer()
+{
+  assert(isKernelThread());
+  m_nextPoll += m_config.pollInterval;
+  m_pollTimer.expires_after(m_nextPoll - std::chrono::steady_clock::now());
+  m_pollTimer.async_wait(std::bind(&Kernel::poll, this, std::placeholders::_1));
+}
+
+void Kernel::poll(const boost::system::error_code& ec)
+{
+  assert(isKernelThread());
+
+  if(ec)
+    return;
+
+  uint8_t value;
+
+  // read track power status:
+  if(read(Bus::SX0, Address::trackPower, value))
+  {
+    const bool trackPower = value == TrackPower::on;
+    if(m_trackPower != trackPower)
+    {
+      m_trackPower = toTriState(trackPower);
+      if(m_onTrackPowerChanged) /*[[likely]]*/
+      {
+        EventLoop::call(
+          [this, trackPower]()
+          {
+            m_onTrackPowerChanged(trackPower);
+          });
+      }
+    }
+  }
+
+  for(auto& pollInfo : m_pollAddresses)
+  {
+    if(read(pollInfo.bus, pollInfo.address, value) && (pollInfo.lastValue != value || !pollInfo.lastValueValid))
+    {
+      switch(pollInfo.type)
+      {
+        case AddressType::Locomotive:
+          break;
+
+        case AddressType::Input:
+          EventLoop::call(
+            [this, bus=pollInfo.bus, address=pollInfo.address, value]()
+            {
+              if(m_inputController) /*[[likely]]*/
+              {
+                const uint32_t channel = 1 + static_cast<uint8_t>(bus);
+                const uint32_t baseAddress = 1 + static_cast<uint32_t>(address) * 8;
+
+                for(uint_least8_t i = 0; i < 8; ++i)
+                {
+                  m_inputController->updateInputValue(channel, baseAddress + i, toTriState(value & (1 << i)));
+                }
+              }
+            });
+          break;
+      }
+      pollInfo.lastValue = value;
+      pollInfo.lastValueValid = true;
+    }
+  }
+
+  startPollTimer();
 }
 
 }

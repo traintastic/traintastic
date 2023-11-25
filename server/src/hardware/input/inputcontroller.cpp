@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -91,6 +91,7 @@ bool InputController::addInput(Input& input)
     m_inputs.insert({{input.channel, input.address}, input.shared_ptr<Input>()});
     input.value.setValueInternal(TriState::Undefined);
     inputs->addObject(input.shared_ptr<Input>());
+    inputAdded(input);
     return true;
   }
   return false;
@@ -105,6 +106,7 @@ bool InputController::removeInput(Input& input)
     m_inputs.erase(it);
     input.value.setValueInternal(TriState::Undefined);
     inputs->removeObject(input.shared_ptr<Input>());
+    inputRemoved(input);
     return true;
   }
   return false;

@@ -36,4 +36,9 @@ enum class Bus : uint8_t
 
 }
 
+constexpr bool operator <(const Selectrix::Bus lhs, const Selectrix::Bus rhs)
+{
+  return static_cast<uint8_t>(lhs) < static_cast<uint8_t>(rhs);
+}
+
 #endif

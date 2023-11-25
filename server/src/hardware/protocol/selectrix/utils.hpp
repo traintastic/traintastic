@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/selectrix/config.hpp
+ * server/src/hardware/protocol/selectrix/utils.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,17 +20,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_CONFIG_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_CONFIG_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_UTILS_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_UTILS_HPP
+
+#include "bus.hpp"
 
 namespace Selectrix {
 
-struct Config
+constexpr Bus toBus(uint32_t channel)
 {
-  static constexpr auto pollInterval = std::chrono::milliseconds(100);
+  return static_cast<Bus>(channel - 1);
+}
 
-  bool debugLogRXTX;
-};
+constexpr uint32_t toChannel(Bus bus)
+{
+  return 1 + static_cast<uint8_t>(bus);
+}
+
+constexpr uint8_t toBusAddress(uint32_t flatAddress)
+{
+  return (flatAddress - 1) / 8;
+}
+
+constexpr uint8_t toPort(uint32_t flatAddress)
+{
+  return (flatAddress - 1) % 8;
+}
+
+constexpr uint32_t toFlatAddress(uint8_t busAddress, uint8_t port)
+{
+  return 1 + static_cast<uint32_t>(busAddress * 8) + port;
+}
 
 }
 

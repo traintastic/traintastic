@@ -28,6 +28,8 @@
 #include "../bus.hpp"
 #include "../const.hpp"
 
+enum class SimulateInputAction;
+
 namespace Selectrix {
 
 class SimulationIOHandler final : public IOHandler
@@ -42,6 +44,11 @@ class SimulationIOHandler final : public IOHandler
       return m_busValues[static_cast<uint8_t>(m_bus)];
     }
 
+    inline BusValues& busValues(Bus bus)
+    {
+      return m_busValues[static_cast<uint8_t>(bus)];
+    }
+
   public:
     SimulationIOHandler(Kernel& kernel);
 
@@ -50,6 +57,8 @@ class SimulationIOHandler final : public IOHandler
 
     bool read(uint8_t address, uint8_t& value) final;
     bool write(uint8_t address, uint8_t value) final;
+
+    void simulateInputChange(Bus bus, uint16_t inputAddress, SimulateInputAction action);
 };
 
 template<>

@@ -24,7 +24,9 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_KERNEL_HPP
 
 #include "../kernelbase.hpp"
+#include <boost/asio/steady_timer.hpp>
 #include <traintastic/enum/tristate.hpp>
+#include "addresstype.hpp"
 #include "bus.hpp"
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
@@ -32,14 +34,23 @@
 class Decoder;
 enum class DecoderChangeFlags;
 class DecoderController;
+enum class SimulateInputAction;
+class InputController;
 
 namespace Selectrix {
-
-struct Message;
 
 class Kernel : public ::KernelBase
 {
   private:
+    struct PollInfo
+    {
+      Bus bus;
+      uint8_t address;
+      AddressType type;
+      uint8_t lastValue;
+      bool lastValueValid;
+    };
+
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
     Bus m_bus = Bus::SX0;
@@ -47,7 +58,13 @@ class Kernel : public ::KernelBase
     TriState m_trackPower;
     std::function<void(bool)> m_onTrackPowerChanged;
 
+    boost::asio::steady_timer m_pollTimer;
+    std::chrono::time_point<std::chrono::steady_clock> m_nextPoll;
+    std::vector<PollInfo> m_pollAddresses;
+
     DecoderController* m_decoderController = nullptr;
+
+    InputController* m_inputController = nullptr;
 
     Config m_config;
 
@@ -68,6 +85,9 @@ class Kernel : public ::KernelBase
           write(bus, address, value);
         });
     }
+
+    void startPollTimer();
+    void poll(const boost::system::error_code& ec);
 
   public:
     Kernel(const Kernel&) = delete;
@@ -121,6 +141,14 @@ class Kernel : public ::KernelBase
     void setDecoderController(DecoderController* decoderController);
 
     /**
+     * \brief Set the input controller
+     *
+     * \param[in] inputController The input controller
+     * \note This function may not be called when the kernel is running.
+     */
+    void setInputController(InputController* inputController);
+
+    /**
      * \brief Start the kernel and IO handler
      */
     void start();
@@ -141,6 +169,17 @@ class Kernel : public ::KernelBase
      *
      */
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
+
+    /**
+     * \brief Simulate input change
+     * \param[in] bus SX-bus.
+     * \param[in] address Input address
+     * \param[in] action Simulation action to perform
+     */
+    void simulateInputChange(Bus bus, uint16_t address, SimulateInputAction action);
+
+    void addPollAddress(Bus bus, uint8_t address, AddressType type);
+    void removePollAddress(Bus bus, uint8_t address);
 };
 
 }

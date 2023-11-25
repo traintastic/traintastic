@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/selectrix/config.hpp
+ * server/src/hardware/protocol/selectrix/bus.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,16 +20,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_CONFIG_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_CONFIG_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_ADDRESSTYPE_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_ADDRESSTYPE_HPP
+
+#include <cstdint>
 
 namespace Selectrix {
 
-struct Config
+enum class AddressType : uint8_t
 {
-  static constexpr auto pollInterval = std::chrono::milliseconds(100);
-
-  bool debugLogRXTX;
+  Locomotive,
+  Input,
 };
 
 }

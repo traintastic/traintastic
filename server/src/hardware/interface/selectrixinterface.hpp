@@ -35,6 +35,8 @@
 namespace Selectrix {
   class Kernel;
   class Settings;
+  enum class Bus : uint8_t;
+  enum class AddressType : uint8_t;
 }
 
 /**
@@ -43,22 +45,65 @@ namespace Selectrix {
 class SelectrixInterface final
   : public Interface
   , public DecoderController
+  , public InputController
 {
   CLASS_ID("interface.selectrix")
   DEFAULT_ID("selectrix")
   CREATE_DEF(SelectrixInterface)
 
   private:
+    static constexpr uint32_t inputAddressMin = 1;
+    static constexpr uint32_t inputAddressMax = 112 * 8;  // Address: 0 .. 111, 8 inputs per address
+    static constexpr uint32_t inputAddressMaxSX0 = 104 * 8; // Address: 0 .. 103, 8 inputs per address
+
+    struct BusAddress
+    {
+      Selectrix::Bus bus;
+      uint8_t address;
+    };
+    friend constexpr bool operator <(const SelectrixInterface::BusAddress& lhs, const SelectrixInterface::BusAddress& rhs);
+
+    struct BusAddressUsage
+    {
+      Selectrix::AddressType type;
+      uint8_t mask;
+    };
+
+    struct InputChannel
+    {
+      // zero is reserved for the defaultChannel
+      static constexpr uint32_t sx0 = 1;
+      static constexpr uint32_t sx1 = 2;
+      static constexpr uint32_t sx2 = 3;
+    };
+
+    inline static const std::vector<uint32_t> channels = {
+      InputChannel::sx0,
+      InputChannel::sx1,
+      InputChannel::sx2,
+    };
+
+    inline static const std::vector<std::string_view> channelNames = {
+      "SX0",
+      "SX1",
+      "SX2",
+    };
+
     std::unique_ptr<Selectrix::Kernel> m_kernel;
     boost::signals2::connection m_selectrixPropertyChanged;
+    std::map<BusAddress, BusAddressUsage> m_usedBusAddresses;
 
+  protected:
     void addToWorld() final;
     void loaded() final;
     void destroying() final;
     void worldEvent(WorldState state, WorldEvent event) final;
 
-  protected:
     bool setOnline(bool& value, bool simulation) final;
+
+    // InputController:
+    void inputAdded(Input& input) final;
+    void inputRemoved(Input& input) final;
 
   public:
     SerialDeviceProperty device;
@@ -71,6 +116,13 @@ class SelectrixInterface final
     // DecoderController:
     tcb::span<const DecoderProtocol> decoderProtocols() const final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
+
+    // InputController:
+    const std::vector<uint32_t>* inputChannels() const final { return &channels; }
+    const std::vector<std::string_view>* inputChannelNames() const final { return &channelNames; }
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t channel) const final;
+    [[nodiscard]] bool isInputAddressAvailable(uint32_t channel, uint32_t address) const final;
+    void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
 };
 
 #endif

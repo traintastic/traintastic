@@ -24,6 +24,8 @@
 #include <cstddef>
 #include <cassert>
 #include <thread>
+#include "../utils.hpp"
+#include "../../../../enum/simulateinputaction.hpp"
 
 namespace Selectrix {
 
@@ -66,6 +68,26 @@ bool SimulationIOHandler::write(uint8_t address, uint8_t value)
     busValues()[address] = value;
   }
   return true;
+}
+
+void SimulationIOHandler::simulateInputChange(Bus bus, uint16_t inputAddress, SimulateInputAction action)
+{
+  assert(inputAddress > 0);
+  const uint8_t address = toBusAddress(inputAddress);
+  const uint8_t valueMask = 1 << toPort(inputAddress);
+
+  const bool setBit =
+    (action == SimulateInputAction::SetTrue) ||
+    (action == SimulateInputAction::Toggle && !(busValues(bus)[address] & valueMask));
+
+  if(setBit)
+  {
+    busValues(bus)[address] |= valueMask;
+  }
+  else // clear bit
+  {
+    busValues(bus)[address] &= ~valueMask;
+  }
 }
 
 }

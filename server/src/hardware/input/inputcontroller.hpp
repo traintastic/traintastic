@@ -79,6 +79,9 @@ class InputController
     void addToWorld(InputListColumn columns);
     void destroying();
 
+    virtual void inputAdded(Input& /*input*/) {}
+    virtual void inputRemoved(Input& /*input*/) {}
+
   public:
     static constexpr std::vector<uint32_t>* noInputChannels = nullptr;
     static constexpr uint32_t defaultInputChannel = 0;
