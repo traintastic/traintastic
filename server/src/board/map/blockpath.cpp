@@ -310,7 +310,7 @@ bool BlockPath::reserve(const std::shared_ptr<Train>& train, bool dryRun)
     return false;
   }
 
-  if(!m_fromBlock.reserve(train, m_fromSide, dryRun))
+  if(!m_fromBlock.reserve(shared_from_this(), train, m_fromSide, dryRun))
   {
     assert(dryRun);
     return false;
@@ -318,7 +318,7 @@ bool BlockPath::reserve(const std::shared_ptr<Train>& train, bool dryRun)
 
   if(auto toBlock = m_toBlock.lock()) /*[[likely]]*/
   {
-    if(!toBlock->reserve(train, m_toSide, dryRun))
+    if(!toBlock->reserve(shared_from_this(), train, m_toSide, dryRun))
     {
       assert(dryRun);
       return false;

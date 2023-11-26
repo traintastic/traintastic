@@ -271,7 +271,13 @@ void BlockRailTile::identificationEvent(BlockInputMapItem& /*item*/, Identificat
   }
 }
 
-bool BlockRailTile::reserve(const std::shared_ptr<Train>& train, BlockSide side, bool dryRun)
+const std::shared_ptr<BlockPath> BlockRailTile::getReservedPath(BlockSide side) const
+{
+  assert(side == BlockSide::A || side == BlockSide::B);
+  return m_reservedPaths[static_cast<uint8_t>(side)].lock();
+}
+
+bool BlockRailTile::reserve(const std::shared_ptr<BlockPath>& blockPath, const std::shared_ptr<Train>& train, BlockSide side, bool dryRun)
 {
   const uint8_t mask = 1 << static_cast<uint8_t>(side);
 
@@ -308,6 +314,7 @@ bool BlockRailTile::reserve(const std::shared_ptr<Train>& train, BlockSide side,
 
   if(!dryRun)
   {
+    m_reservedPaths[static_cast<uint8_t>(side)] = blockPath;
     RailTile::reserve(reservedState() | mask);
     if(state == BlockState::Free)
     {

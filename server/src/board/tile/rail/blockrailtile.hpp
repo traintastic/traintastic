@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_BLOCKRAILTILE_HPP
 
 #include "railtile.hpp"
+#include <array>
 #include <traintastic/enum/blocktraindirection.hpp>
 #include "../../map/node.hpp"
 #include "../../../core/method.hpp"
@@ -47,6 +48,7 @@ class BlockRailTile : public RailTile
   private:
     Node m_node;
     std::vector<std::shared_ptr<BlockPath>> m_paths;
+    std::array<std::weak_ptr<BlockPath>, 2> m_reservedPaths; // index is BlockSide
 
     void updateHeightWidthMax();
 
@@ -90,7 +92,8 @@ class BlockRailTile : public RailTile
     void inputItemValueChanged(BlockInputMapItem& item);
     void identificationEvent(BlockInputMapItem& item, IdentificationEventType eventType, uint16_t identifier, Direction direction, uint8_t category);
 
-    bool reserve(const std::shared_ptr<Train>& train, BlockSide side, bool dryRun = false);
+    const std::shared_ptr<BlockPath> getReservedPath(BlockSide side) const;
+    bool reserve(const std::shared_ptr<BlockPath>& blockPath, const std::shared_ptr<Train>& train, BlockSide side, bool dryRun = false);
 };
 
 #endif

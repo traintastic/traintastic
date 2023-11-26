@@ -84,6 +84,36 @@ bool AbstractSignalPath::requireReservation() const
   return (m_signal.requireReservation == AutoYesNo::Yes || (m_signal.requireReservation == AutoYesNo::Auto && m_requireReservation));
 }
 
+const AbstractSignalPath::BlockItem* AbstractSignalPath::nextBlock(const Item* item) const
+{
+  while(item)
+  {
+    if(const auto* blockItem = dynamic_cast<const BlockItem*>(item))
+    {
+      return blockItem;
+    }
+    item = item->next().get();
+  }
+  return nullptr;
+}
+
+std::tuple<const AbstractSignalPath::BlockItem*, const AbstractSignalPath::SignalItem*> AbstractSignalPath::nextBlockOrSignal(const Item* item) const
+{
+  while(item)
+  {
+    if(const auto* blockItem = dynamic_cast<const BlockItem*>(item))
+    {
+      return {blockItem, nullptr};
+    }
+    if(const auto* signalItem = dynamic_cast<const SignalItem*>(item))
+    {
+      return {nullptr, signalItem};
+    }
+    item = item->next().get();
+  }
+  return {nullptr, nullptr};
+}
+
 void AbstractSignalPath::getBlockStates(tcb::span<BlockState> blockStates) const
 {
   size_t i = 0;
@@ -135,13 +165,30 @@ std::unique_ptr<const AbstractSignalPath::Item> AbstractSignalPath::findBlocks(c
         evaluate();
       }));
 
+    const auto enterSide = (nextNode.getLink(0).get() == &link) ? BlockSide::A : BlockSide::B;
     std::unique_ptr<const Item> next;
     if(blocksAhead > 1)
       if(const auto& nextLink = otherLink(nextNode, link))
         next = findBlocks(nextNode, *nextLink, blocksAhead - 1);
-    return std::unique_ptr<const AbstractSignalPath::Item>{new BlockItem(block, std::move(next))};
+    return std::unique_ptr<const AbstractSignalPath::Item>{new BlockItem(block, enterSide, std::move(next))};
   }
-  if(auto turnout = std::dynamic_pointer_cast<TurnoutRailTile>(tile))
+  if(auto signal = std::dynamic_pointer_cast<SignalRailTile>(tile))
+  {
+    if(const auto& nextLink = otherLink(nextNode, link))
+    {
+      m_connections.emplace_back(signal->aspectChanged.connect(
+        [this](const SignalRailTile& /*tile*/, SignalAspect /*aspect*/)
+        {
+          evaluate();
+        }));
+
+      return std::unique_ptr<const AbstractSignalPath::Item>{
+        new SignalItem(
+          signal,
+          findBlocks(nextNode, *nextLink, blocksAhead))};
+    }
+  }
+  else if(auto turnout = std::dynamic_pointer_cast<TurnoutRailTile>(tile))
   {
     m_connections.emplace_back(turnout->positionChanged.connect(
       [this](const TurnoutRailTile& /*tile*/, TurnoutPosition /*position*/)

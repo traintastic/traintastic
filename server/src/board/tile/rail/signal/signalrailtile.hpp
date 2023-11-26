@@ -54,6 +54,8 @@ class SignalRailTile : public StraightRailTile
     void evaluate();
 
   public:
+    boost::signals2::signal<void (const SignalRailTile&, SignalAspect)> aspectChanged;
+
     Property<std::string> name;
     Property<AutoYesNo> requireReservation;
     Property<SignalAspect> aspect;

@@ -21,6 +21,7 @@
  */
 
 #include "signal3aspectrailtile.hpp"
+#include "../blockrailtile.hpp"
 #include "../../../map/abstractsignalpath.hpp"
 #include "../../../map/blockpath.hpp"
 #include "../../../../core/attributes.hpp"
@@ -34,29 +35,64 @@ namespace
 {
   class SignalPath : public AbstractSignalPath
   {
+    private:
+      static bool hasSignalReservedPathToBlock(const SignalRailTile& signalTile, const BlockRailTile& blockTile)
+      {
+        const auto path = signalTile.reservedPath();
+        return path && path->toBlock().get() == &blockTile;
+      }
+
+      static bool isPathReserved(const BlockRailTile& from, BlockSide fromSide, const BlockRailTile& to)
+      {
+        if(const auto path = from.getReservedPath(fromSide))
+        {
+          return (&to == path->toBlock().get());
+        }
+        return false;
+      }
+
     protected:
       SignalAspect determineAspect() const final
       {
-        std::array<BlockState, 2> states;
-        getBlockStates(states);
-
-        if(!requireReservation() && states[0] == BlockState::Free)
+        const auto* blockItem = nextBlock();
+        if(!blockItem)
         {
-          if(states[1] == BlockState::Free)
+          return SignalAspect::Stop;
+        }
+        const auto blockState = blockItem->blockState();
+
+        if((!requireReservation() && blockState == BlockState::Free) ||
+            (blockState == BlockState::Reserved && hasSignalReservedPathToBlock(signal(), *blockItem->block())))
+        {
+          auto [blockItem2, signalItem2] = nextBlockOrSignal(blockItem->next().get());
+          if(blockItem2)
           {
-            return SignalAspect::Proceed;
+            const auto blockState2 = blockItem2->blockState();
+
+            if(blockState2 == BlockState::Free ||
+                (blockState2 == BlockState::Reserved && isPathReserved(*blockItem->block(), ~blockItem->enterSide(), *blockItem2->block())))
+            {
+              return SignalAspect::Proceed;
+            }
+          }
+          else if(signalItem2)
+          {
+            auto signalTile = signalItem2->signal();
+            if(signalTile && signalTile->aspect != SignalAspect::Unknown && signalTile->aspect != SignalAspect::Stop)
+            {
+              switch(signalTile->aspect.value())
+              {
+                case SignalAspect::ProceedReducedSpeed:
+                case SignalAspect::Proceed:
+                  return SignalAspect::Proceed;
+
+                case SignalAspect::Stop:
+                case SignalAspect::Unknown:
+                  break;
+              }
+            }
           }
           return SignalAspect::ProceedReducedSpeed;
-        }
-        if(states[0] == BlockState::Reserved)
-        {
-          const auto path = signal().reservedPath();
-          if(path && path->toBlock() == getBlock(0))
-          {
-            //! \todo check next block reserved and signal state
-
-            return SignalAspect::ProceedReducedSpeed;
-          }
         }
         return SignalAspect::Stop;
       }

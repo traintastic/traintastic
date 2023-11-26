@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_BOARD_MAP_SIGNALPATH_HPP
-#define TRAINTASTIC_SERVER_BOARD_MAP_SIGNALPATH_HPP
+#ifndef TRAINTASTIC_SERVER_BOARD_MAP_ABSTRACTSIGNALPATH_HPP
+#define TRAINTASTIC_SERVER_BOARD_MAP_ABSTRACTSIGNALPATH_HPP
 
 #include "path.hpp"
 #include "link.hpp"
@@ -30,6 +30,7 @@
 #include <traintastic/enum/blockstate.hpp>
 
 class BlockRailTile;
+enum class BlockSide : uint8_t;
 class TurnoutRailTile;
 enum class TurnoutPosition : uint8_t;
 class DirectionControlRailTile;
@@ -47,7 +48,7 @@ class AbstractSignalPath : public Path
 
     void setAspect(SignalAspect value) const;
 
-  private:
+  protected:
     class Item
     {
       private:
@@ -69,11 +70,13 @@ class AbstractSignalPath : public Path
     {
       private:
         std::weak_ptr<BlockRailTile> m_block;
+        BlockSide m_enterSide;
         std::unique_ptr<const Item> m_next;
 
       public:
-        BlockItem(std::weak_ptr<BlockRailTile> block, std::unique_ptr<const Item> next_)
+        BlockItem(std::weak_ptr<BlockRailTile> block, BlockSide enterSide_, std::unique_ptr<const Item> next_)
           : m_block{std::move(block)}
+          , m_enterSide{enterSide_}
           , m_next{std::move(next_)}
         {
         }
@@ -85,6 +88,34 @@ class AbstractSignalPath : public Path
 
         std::shared_ptr<BlockRailTile> block() const noexcept;
         BlockState blockState() const;
+        BlockSide enterSide() const
+        {
+          return m_enterSide;
+        }
+    };
+
+    class SignalItem : public Item
+    {
+      private:
+        std::weak_ptr<SignalRailTile> m_signal;
+        std::unique_ptr<const Item> m_next;
+
+      public:
+        SignalItem(std::weak_ptr<SignalRailTile> signal, std::unique_ptr<const Item> next_)
+          : m_signal{std::move(signal)}
+          , m_next{std::move(next_)}
+        {
+        }
+
+        const std::unique_ptr<const Item>& next() const final
+        {
+          return m_next;
+        }
+
+        std::shared_ptr<SignalRailTile> signal() const
+        {
+          return m_signal.lock();
+        }
     };
 
     class TurnoutItem : public Item
@@ -121,6 +152,7 @@ class AbstractSignalPath : public Path
         const std::unique_ptr<const Item>& next() const final;
     };
 
+  private:
     std::unique_ptr<const Item> m_root;
     bool m_requireReservation = false;
     std::vector<boost::signals2::connection> m_connections;
@@ -143,6 +175,23 @@ class AbstractSignalPath : public Path
     bool requireReservation() const;
 
     virtual SignalAspect determineAspect() const = 0;
+
+    const Item* root() const
+    {
+      return m_root.get();
+    }
+
+    const BlockItem* nextBlock(const Item* item) const;
+    inline const BlockItem* nextBlock() const
+    {
+      return nextBlock(root());
+    }
+
+    std::tuple<const BlockItem*, const SignalItem*> nextBlockOrSignal(const Item* item) const;
+    inline std::tuple<const BlockItem*, const SignalItem*> nextBlockOrSignal() const
+    {
+      return nextBlockOrSignal(root());
+    }
 
     void getBlockStates(tcb::span<BlockState> blockStates) const;
     std::shared_ptr<BlockRailTile> getBlock(size_t index) const;
