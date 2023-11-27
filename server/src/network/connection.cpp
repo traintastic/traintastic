@@ -31,38 +31,35 @@
   #define IS_SERVER_THREAD (std::this_thread::get_id() == m_server.threadId())
 #endif
 
-Connection::Connection(Server& server, std::unique_ptr<boost::asio::ip::tcp::socket> socket, std::string id)
+Connection::Connection(Server& server, boost::asio::ip::tcp::socket socket, std::string id_)
   : m_server{server}
   , m_socket(std::move(socket))
-  , m_id{std::move(id)}
   , m_authenticated{false}
+  , id{std::move(id_)}
 {
-  assert(isEventLoopThread());
+  assert(IS_SERVER_THREAD);
 
-  Log::log(m_id, LogMessage::I1003_NEW_CONNECTION);
-
-  m_server.m_ioContext.post(
-    [this]()
-    {
-      m_socket->set_option(boost::asio::socket_base::linger(true, 0));
-      m_socket->set_option(boost::asio::ip::tcp::no_delay(true));
-
-      doReadHeader();
-    });
+  m_socket.set_option(boost::asio::socket_base::linger(true, 0));
+  m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
 }
 
 Connection::~Connection()
 {
   assert(isEventLoopThread());
   assert(!m_session);
-  assert(!m_socket->is_open());
+  assert(!m_socket.is_open());
+}
+
+void Connection::start()
+{
+  doReadHeader();
 }
 
 void Connection::doReadHeader()
 {
   assert(IS_SERVER_THREAD);
 
-  boost::asio::async_read(*m_socket,
+  boost::asio::async_read(m_socket,
     boost::asio::buffer(&m_readBuffer.header, sizeof(m_readBuffer.header)),
       [this, weak=weak_from_this()](const boost::system::error_code& ec, std::size_t /*bytesReceived*/)
       {
@@ -90,7 +87,7 @@ void Connection::doReadHeader()
         }
         else if(ec != boost::asio::error::operation_aborted)
         {
-          Log::log(m_id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
+          Log::log(id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
           EventLoop::call(std::bind(&Connection::disconnect, this));
         }
       });
@@ -100,7 +97,7 @@ void Connection::doReadData()
 {
   assert(IS_SERVER_THREAD);
 
-  boost::asio::async_read(*m_socket,
+  boost::asio::async_read(m_socket,
     boost::asio::buffer(m_readBuffer.message->data(), m_readBuffer.message->dataSize()),
       //m_strand.wrap(
         [this, weak=weak_from_this()](const boost::system::error_code& ec, std::size_t /*bytesReceived*/)
@@ -123,7 +120,7 @@ void Connection::doReadData()
           }
           else if(ec != boost::asio::error::operation_aborted)
           {
-            Log::log(m_id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
+            Log::log(id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
             EventLoop::call(std::bind(&Connection::disconnect, this));
           }
         });
@@ -133,7 +130,7 @@ void Connection::doWrite()
 {
   assert(IS_SERVER_THREAD);
 
-  boost::asio::async_write(*m_socket, boost::asio::buffer(**m_writeQueue.front(), m_writeQueue.front()->size()),
+  boost::asio::async_write(m_socket, boost::asio::buffer(**m_writeQueue.front(), m_writeQueue.front()->size()),
     [this, weak=weak_from_this()](const boost::system::error_code& ec, std::size_t /*bytesTransferred*/)
     {
       if(weak.expired())
@@ -147,7 +144,7 @@ void Connection::doWrite()
       }
       else if(ec != boost::asio::error::operation_aborted)
       {
-        Log::log(m_id, LogMessage::E1006_SOCKET_WRITE_FAILED_X, ec);
+        Log::log(id, LogMessage::E1006_SOCKET_WRITE_FAILED_X, ec);
         EventLoop::call(std::bind(&Connection::disconnect, this));
       }
     });
@@ -209,7 +206,7 @@ void Connection::connectionLost()
 {
   assert(isEventLoopThread());
 
-  Log::log(m_id, LogMessage::I1004_CONNECTION_LOST);
+  Log::log(id, LogMessage::I1004_CONNECTION_LOST);
   disconnect();
 }
 
@@ -222,13 +219,13 @@ void Connection::disconnect()
   m_server.m_ioContext.post(
     [this]()
     {
-      if(m_socket->is_open())
+      if(m_socket.is_open())
       {
         boost::system::error_code ec;
-        m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+        m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
         if(ec && ec != boost::asio::error::not_connected)
-          Log::log(m_id, LogMessage::E1005_SOCKET_SHUTDOWN_FAILED_X, ec);
-        m_socket->close();
+          Log::log(id, LogMessage::E1005_SOCKET_SHUTDOWN_FAILED_X, ec);
+        m_socket.close();
       }
 
       EventLoop::call(
