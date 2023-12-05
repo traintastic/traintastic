@@ -65,7 +65,7 @@ void HardwareIOHandler::processRead(size_t bytesTransferred)
     while(drop < bytesTransferred)
     {
       message = reinterpret_cast<const Message*>(pos);
-      if(message->size() <= bytesTransferred && isChecksumValid(*message))
+      if(message->size() > bytesTransferred || isChecksumValid(*message))
         break;
 
       drop++;
