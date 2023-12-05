@@ -4378,5 +4378,9 @@
     {
         "term": "board_tile.rail.signal_3_aspect:require_reservation",
         "definition": "Require reservation"
+    },
+    {
+        "term": "traintastic_diy_settings:startup_delay",
+        "definition": "Startup delay"
     }
 ]

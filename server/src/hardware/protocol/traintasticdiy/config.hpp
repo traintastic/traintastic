@@ -30,6 +30,7 @@ namespace TraintasticDIY {
 struct Config
 {
   std::chrono::milliseconds heartbeatTimeout;
+  std::chrono::milliseconds startupDelay;
 
   bool debugLogRXTX;
   bool debugLogHeartbeat;

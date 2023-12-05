@@ -75,6 +75,7 @@ Kernel::Kernel(std::string logId_, World& world, const Config& config, bool simu
   : KernelBase(std::move(logId_))
   , m_world{world}
   , m_simulation{simulation}
+  , m_startupDelayTimer{m_ioContext}
   , m_heartbeatTimeout{m_ioContext}
   , m_inputController{nullptr}
   , m_outputController{nullptr}
@@ -132,12 +133,8 @@ void Kernel::start()
         return;
       }
 
-      send(GetInfo());
-      send(GetFeatures());
-
-      restartHeartbeatTimeout();
-
-      started();
+      m_startupDelayTimer.expires_after(boost::asio::chrono::milliseconds(m_config.startupDelay));
+      m_startupDelayTimer.async_wait(std::bind(&Kernel::startupDelayExpired, this, std::placeholders::_1));
     });
 
 #ifndef NDEBUG
@@ -459,6 +456,19 @@ void Kernel::send(const Message& message)
   }
   else
   {} // log message and go to error state
+}
+
+void Kernel::startupDelayExpired(const boost::system::error_code& ec)
+{
+  if(ec)
+    return;
+
+  send(GetInfo());
+  send(GetFeatures());
+
+  restartHeartbeatTimeout();
+
+  started();
 }
 
 void Kernel::restartHeartbeatTimeout()

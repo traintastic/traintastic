@@ -59,6 +59,7 @@ class Kernel : public ::KernelBase
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
     std::string m_logId;
+    boost::asio::steady_timer m_startupDelayTimer;
     boost::asio::steady_timer m_heartbeatTimeout;
 
     bool m_featureFlagsSet;
@@ -97,6 +98,8 @@ class Kernel : public ::KernelBase
     inline bool hasFeatureInput() const { return contains(m_featureFlags1, FeatureFlags1::Input); }
     inline bool hasFeatureOutput() const { return contains(m_featureFlags1, FeatureFlags1::Output); }
     inline bool hasFeatureThrottle() const { return contains(m_featureFlags1, FeatureFlags1::Throttle); }
+
+    void startupDelayExpired(const boost::system::error_code& ec);
 
     void restartHeartbeatTimeout();
     void heartbeatTimeoutExpired(const boost::system::error_code& ec);
