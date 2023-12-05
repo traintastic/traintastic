@@ -2600,6 +2600,10 @@
         "comment": ""
     },
     {
+        "term": "message:W2003",
+        "definition": "Received malformed data dropped %1 bytes [%2]"
+    },
+    {
         "term": "message:W2004",
         "definition": "Input address %1 is invalid",
         "context": "",

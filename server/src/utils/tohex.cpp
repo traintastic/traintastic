@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,13 +23,17 @@
 #include "tohex.hpp"
 #include <cstdint>
 
-std::string toHex(const void* buffer, const size_t size)
+std::string toHex(const void* buffer, const size_t size, const bool addSpaceSeperator)
 {
   std::string s;
-  s.reserve(size * 2);
+  s.reserve(size * (addSpaceSeperator ? 3 : 2));
   const uint8_t* p = reinterpret_cast<const uint8_t*>(buffer);
   for(size_t i = 0; i < size; i++, p++)
   {
+    if(addSpaceSeperator && i != 0)
+    {
+      s.push_back(' ');
+    }
     s.push_back(toHexDigits[*p >> 4]);
     s.push_back(toHexDigits[*p & 0x0F]);
   }
