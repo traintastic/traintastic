@@ -303,6 +303,13 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
         [this]()
         {
           setState(InterfaceState::Online);
+
+          m_kernel->setPowerOn(contains(m_world.state.value(), WorldState::PowerOn));
+
+          if(contains(m_world.state.value(), WorldState::Run))
+            m_kernel->resume();
+          else
+            m_kernel->emergencyStop();
         });
       m_kernel->setOnError(
         [this]()
@@ -344,13 +351,6 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
         {
           m_kernel->setConfig(loconet->config());
         });
-
-      m_kernel->setPowerOn(contains(m_world.state.value(), WorldState::PowerOn));
-
-      if(contains(m_world.state.value(), WorldState::Run))
-        m_kernel->resume();
-      else
-        m_kernel->emergencyStop();
 
       Attributes::setEnabled(type, false);
       Attributes::setEnabled(device, false);
