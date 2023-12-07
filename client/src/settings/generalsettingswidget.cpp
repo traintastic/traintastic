@@ -73,5 +73,7 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget* parent)
     add(s.language.name(), cb);
   }
 
+  addSetting(s.connectAutomaticallyToDiscoveredServer);
+
   done();
 }

@@ -4382,5 +4382,9 @@
     {
         "term": "traintastic_diy_settings:startup_delay",
         "definition": "Startup delay"
+    },
+    {
+        "term": "qtapp.settings.general:connect_automatically_to_discovered_server",
+        "definition": "Connect automatically to discovered server"
     }
 ]
