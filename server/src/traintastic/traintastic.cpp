@@ -28,6 +28,7 @@
 #include <archive.h>
 #include <zlib.h>
 #include <version.hpp>
+#include <traintastic/copyright.hpp>
 #include <traintastic/utils/str.hpp>
 #include "../core/eventloop.hpp"
 #include "../network/server.hpp"
@@ -43,12 +44,33 @@
 
 using nlohmann::json;
 
+constexpr std::string_view versionCopyrightAndLicense{
+  "<h2>Traintastic v" TRAINTASTIC_VERSION " <small>"
+#ifdef TRAINTASTIC_VERSION_EXTRA_NODASH
+  TRAINTASTIC_VERSION_EXTRA_NODASH
+#else
+  TRAINTASTIC_CODENAME
+#endif
+  "</small></h2>"
+  "<p>" TRAINTASTIC_COPYRIGHT "</p>"
+  "<p>This program is free software; you can redistribute it and/or"
+  " modify it under the terms of the GNU General Public License"
+  " as published by the Free Software Foundation; either version 2"
+  " of the License, or (at your option) any later version.</p>"
+  "<p>This program is distributed in the hope that it will be useful,"
+  " but WITHOUT ANY WARRANTY; without even the implied warranty of"
+  " MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the"
+  " GNU General Public License for more details.</p>"
+  "<p><a href=\"https://traintastic.org\">traintastic.org</a></p>"
+};
+
 std::shared_ptr<Traintastic> Traintastic::instance;
 
 Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_restart{false},
   m_dataDir{std::filesystem::absolute(dataDir)},
   m_signalSet(EventLoop::ioContext),
+  about{this, "about", std::string(versionCopyrightAndLicense), PropertyFlags::ReadOnly},
   settings{this, "settings", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
   version{this, "version", TRAINTASTIC_VERSION_FULL, PropertyFlags::ReadOnly},
   world{this, "world", nullptr, PropertyFlags::ReadWrite,
@@ -131,6 +153,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
 
   m_signalSet.async_wait(&Traintastic::signalHandler);
 
+  m_interfaceItems.add(about);
   m_interfaceItems.add(settings);
   m_interfaceItems.add(version);
   m_interfaceItems.add(world);

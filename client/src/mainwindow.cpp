@@ -430,6 +430,19 @@ MainWindow::MainWindow(QWidget* parent) :
             if(Method* method = traintastic->getMethod("shutdown"))
               method->call();
       });
+    m_menuServer->addAction(Locale::tr("qtapp.mainmenu:about_server"), this,
+      [this]()
+      {
+        if(m_connection)
+        {
+          if(const ObjectPtr& traintastic = m_connection->traintastic())
+          {
+            QMessageBox::about(this, Locale::tr("qtapp.about:traintastic_server"),
+              traintastic->getPropertyValueString("about").replace("(c)", "&copy;"));
+          }
+        }
+      });
+
     m_menuProgramming = menu->addMenu(Locale::tr("qtapp.mainmenu:programming"));
     m_menuProgramming->addAction(Locale::tr("lncv_programmer:lncv_programmer") + "...",
       [this]()

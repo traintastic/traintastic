@@ -4386,5 +4386,14 @@
     {
         "term": "qtapp.settings.general:connect_automatically_to_discovered_server",
         "definition": "Connect automatically to discovered server"
+    },
+    {
+        "term": "qtapp.mainmenu:about_server",
+        "definition": "About server"
+    },
+    {
+        "term": "qtapp.about:traintastic_server",
+        "definition": "About Traintastic server"
     }
+
 ]
