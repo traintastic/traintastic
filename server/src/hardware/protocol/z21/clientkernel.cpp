@@ -421,7 +421,10 @@ void ClientKernel::receive(const Message& message)
             if(m_emergencyStop != stopState)
             {
               m_emergencyStop = stopState;
-              m_onEmergencyStop();
+              if(m_onEmergencyStop && m_emergencyStop == TriState::True)
+              {
+                m_onEmergencyStop();
+              }
             }
           });
       }
