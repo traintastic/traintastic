@@ -99,6 +99,9 @@ class World : public Object
     Property<std::string> name;
     Property<WorldScale> scale;
     Property<double> scaleRatio;
+    Property<bool> onlineWhenLoaded;
+    Property<bool> powerOnWhenLoaded;
+    Property<bool> runWhenLoaded;
 
     ObjectProperty<ControllerList<DecoderController>> decoderControllers;
     ObjectProperty<ControllerList<InputController>> inputControllers;

@@ -127,6 +127,23 @@ World::World(Private /*unused*/) :
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   scale{this, "scale", WorldScale::H0, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly, [this](WorldScale /*value*/){ updateScaleRatio(); }},
   scaleRatio{this, "scale_ratio", 87, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
+  onlineWhenLoaded{this, "online_when_loaded", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
+  powerOnWhenLoaded{this, "power_on_when_loaded", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript,
+    [this](bool value)
+    {
+      if(!value)
+      {
+        runWhenLoaded = false; // can't run without power
+      }
+    }},
+  runWhenLoaded{this, "run_when_loaded", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript,
+    [this](bool value)
+    {
+      if(value)
+      {
+        powerOnWhenLoaded = true; // can't run without power
+      }
+    }},
   decoderControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   inputControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   outputControllers{this, "output_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
@@ -286,6 +303,10 @@ World::World(Private /*unused*/) :
   Attributes::addMinMax(scaleRatio, 1., 1000.);
   Attributes::addVisible(scaleRatio, false);
   m_interfaceItems.add(scaleRatio);
+
+  m_interfaceItems.add(onlineWhenLoaded);
+  m_interfaceItems.add(powerOnWhenLoaded);
+  m_interfaceItems.add(runWhenLoaded);
 
   Attributes::addObjectEditor(decoderControllers, false);
   m_interfaceItems.add(decoderControllers);

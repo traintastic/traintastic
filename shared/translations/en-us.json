@@ -4394,6 +4394,17 @@
     {
         "term": "qtapp.about:traintastic_server",
         "definition": "About Traintastic server"
+    },
+    {
+        "term": "world:online_when_loaded",
+        "definition": "Go online when loaded"
+    },
+    {
+        "term": "world:power_on_when_loaded",
+        "definition": "Power on when loaded"
+    },
+    {
+        "term": "world:run_when_loaded",
+        "definition": "Run when loaded"
     }
-
 ]

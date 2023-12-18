@@ -287,6 +287,24 @@ void Traintastic::loadWorldPath(const std::filesystem::path& path)
 #endif
     settings->lastWorld = world->uuid.value();
     Log::log(*this, LogMessage::N1027_LOADED_WORLD_X, world->name.value());
+
+    if(world->onlineWhenLoaded)
+    {
+      world->online();
+    }
+
+    if(world->powerOnWhenLoaded)
+    {
+      if(world->runWhenLoaded)
+      {
+        world->run();
+      }
+      else
+      {
+        world->powerOn();
+      }
+    }
+
   }
   catch(const LogMessageException& e)
   {
