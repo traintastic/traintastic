@@ -50,6 +50,7 @@ class BlockRailTile : public RailTile
     std::vector<std::shared_ptr<BlockPath>> m_paths;
     std::array<std::weak_ptr<BlockPath>, 2> m_reservedPaths; // index is BlockSide
 
+    void updatePaths();
     void updateHeightWidthMax();
 
   protected:

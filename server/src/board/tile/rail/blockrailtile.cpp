@@ -450,7 +450,35 @@ void BlockRailTile::setRotate(TileRotate value)
 
 void BlockRailTile::boardModified()
 {
-  m_paths = BlockPath::find(*this);
+  updatePaths(); //! \todo improvement: only update if a connected tile is changed
+}
+
+void BlockRailTile::updatePaths()
+{
+  auto current = std::move(m_paths);
+  m_paths.clear(); // make sure it is empty, it problably is after the move
+  auto found = BlockPath::find(*this);
+
+  while(!current.empty())
+  {
+    auto it = std::find_if(found.begin(), found.end(),
+      [&currentPath=*current.front()](const auto& foundPath)
+      {
+        return currentPath == *foundPath;
+      });
+
+    if(it != found.end())
+    {
+      found.erase(it);
+      m_paths.emplace_back(std::move(current.front()));
+    }
+    current.erase(current.begin());
+  }
+
+  for(auto& path : found)
+  {
+    m_paths.emplace_back(std::move(path));
+  }
 }
 
 void BlockRailTile::updateHeightWidthMax()

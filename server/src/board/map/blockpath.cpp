@@ -47,6 +47,12 @@ static bool contains(const std::vector<std::pair<std::weak_ptr<T1>, T2>>& values
   return it != values.end();
 }
 
+template <typename T>
+static inline bool operator ==(const std::weak_ptr<T>& a, const std::weak_ptr<T>& b)
+{
+    return !a.owner_before(b) && !b.owner_before(a);
+}
+
 std::vector<std::shared_ptr<BlockPath>> BlockPath::find(BlockRailTile& startBlock)
 {
   const auto& node = startBlock.node()->get();
@@ -291,6 +297,23 @@ BlockPath::BlockPath(BlockRailTile& block, BlockSide side)
   , m_fromSide{side}
   , m_toSide{static_cast<BlockSide>(-1)}
 {
+}
+
+bool BlockPath::operator ==(const BlockPath& other) const noexcept
+{
+  return
+    (&m_fromBlock == &other.m_fromBlock) &&
+    (m_fromSide == other.m_fromSide) &&
+    (m_toBlock == other.m_toBlock) &&
+    (m_toSide == other.m_toSide) &&
+    (m_tiles == other.m_tiles) &&
+    (m_turnouts == other.m_turnouts) &&
+    (m_directionControls == other.m_directionControls) &&
+    (m_crossings == other.m_crossings) &&
+    (m_bridges == other.m_bridges) &&
+    (m_signals == other.m_signals) &&
+    (m_nxButtonFrom == other.m_nxButtonFrom) &&
+    (m_nxButtonTo == other.m_nxButtonTo);
 }
 
 std::shared_ptr<NXButtonRailTile> BlockPath::nxButtonFrom() const

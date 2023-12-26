@@ -69,6 +69,8 @@ class BlockPath : public Path, public std::enable_shared_from_this<BlockPath>
 
     BlockPath(BlockRailTile& block, BlockSide side);
 
+    bool operator ==(const BlockPath& other) const noexcept;
+
     bool hasNXButtons() const
     {
       return !m_nxButtonFrom.expired() && !m_nxButtonTo.expired();
