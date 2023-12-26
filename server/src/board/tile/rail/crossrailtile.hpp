@@ -42,6 +42,7 @@ class CrossRailTile : public RailTile
     std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
 
     bool reserve(CrossState crossState, bool dryRun = false);
+    bool release(bool dryRun = false);
 };
 
 #endif

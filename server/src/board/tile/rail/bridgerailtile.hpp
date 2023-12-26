@@ -41,6 +41,7 @@ class BridgeRailTile : public RailTile
     std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
 
     bool reserve(BridgePath path, bool dryRun = false);
+    void release(BridgePath path);
 };
 
 #endif

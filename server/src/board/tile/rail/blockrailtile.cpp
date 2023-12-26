@@ -32,6 +32,11 @@
 #include "../../../utils/displayname.hpp"
 #include "../../map/blockpath.hpp"
 
+constexpr uint8_t toMask(BlockSide side)
+{
+  return 1 << static_cast<uint8_t>(side);
+}
+
 CREATE_IMPL(BlockRailTile)
 
 BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
@@ -279,7 +284,7 @@ const std::shared_ptr<BlockPath> BlockRailTile::getReservedPath(BlockSide side) 
 
 bool BlockRailTile::reserve(const std::shared_ptr<BlockPath>& blockPath, const std::shared_ptr<Train>& train, BlockSide side, bool dryRun)
 {
-  const uint8_t mask = 1 << static_cast<uint8_t>(side);
+  const uint8_t mask = toMask(side);
 
   if(state == BlockState::Unknown)
   {
@@ -315,7 +320,7 @@ bool BlockRailTile::reserve(const std::shared_ptr<BlockPath>& blockPath, const s
   if(!dryRun)
   {
     m_reservedPaths[static_cast<uint8_t>(side)] = blockPath;
-    RailTile::reserve(reservedState() | mask);
+    RailTile::setReservedState(reservedState() | mask);
     if(state == BlockState::Free)
     {
       const auto direction = side == BlockSide::A ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA;
@@ -325,6 +330,16 @@ bool BlockRailTile::reserve(const std::shared_ptr<BlockPath>& blockPath, const s
     updateState();
   }
 
+  return true;
+}
+
+bool BlockRailTile::release(BlockSide side, bool dryRun)
+{
+  if(!dryRun)
+  {
+    m_reservedPaths[static_cast<uint8_t>(side)].reset();
+    RailTile::setReservedState(reservedState() & ~toMask(side));
+  }
   return true;
 }
 

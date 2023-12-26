@@ -66,7 +66,18 @@ bool TurnoutRailTile::reserve(TurnoutPosition turnoutPosition, bool dryRun)
       return false;
     }
 
-    RailTile::reserve(static_cast<uint8_t>(turnoutPosition));
+    RailTile::setReservedState(static_cast<uint8_t>(turnoutPosition));
+  }
+  return true;
+}
+
+bool TurnoutRailTile::release(bool dryRun)
+{
+  //! \todo check occupy sensor, once supported
+
+  if(!dryRun)
+  {
+    RailTile::release();
   }
   return true;
 }

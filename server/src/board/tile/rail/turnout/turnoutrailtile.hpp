@@ -57,6 +57,7 @@ class TurnoutRailTile : public RailTile
     std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
 
     virtual bool reserve(TurnoutPosition turnoutPosition, bool dryRun = false);
+    bool release(bool dryRun = false);
 };
 
 #endif

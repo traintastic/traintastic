@@ -28,12 +28,6 @@ RailTile::RailTile(World& world, std::string_view _id, TileId tileId) :
 {
 }
 
-void RailTile::reserve(uint8_t state)
-{
-  assert(state != 0);
-  setReservedState(state);
-}
-
 void RailTile::setReservedState(uint8_t value)
 {
   if(m_reservedState != value)

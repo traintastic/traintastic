@@ -30,8 +30,6 @@ class RailTile : public Tile
   private:
     uint8_t m_reservedState = 0;
 
-    void setReservedState(uint8_t value);
-
   protected:
     RailTile(World& world, std::string_view _id, TileId tileId);
 
@@ -40,12 +38,17 @@ class RailTile : public Tile
       return m_reservedState;
     }
 
-    void reserve(uint8_t state);
+    void setReservedState(uint8_t value);
 
   public:
     inline void reserve()
     {
-      reserve(1);
+      setReservedState(1);
+    }
+
+    inline void release()
+    {
+      setReservedState(0);
     }
 };
 

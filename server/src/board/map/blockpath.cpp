@@ -437,3 +437,111 @@ bool BlockPath::reserve(const std::shared_ptr<Train>& train, bool dryRun)
 
   return true;
 }
+
+bool BlockPath::release(bool dryRun)
+{
+  if(!dryRun && !release(true)) // dry run first, to make sure it will succeed (else we need rollback support)
+  {
+    return false;
+  }
+
+  if(!m_fromBlock.release(m_fromSide, dryRun))
+  {
+    assert(dryRun);
+    return false;
+  }
+
+  if(auto toBlock = m_toBlock.lock()) /*[[likely]]*/
+  {
+    if(!toBlock->release(m_toSide, dryRun))
+    {
+      assert(dryRun);
+      return false;
+    }
+  }
+  else
+  {
+    return false;
+  }
+
+  for(const auto& item : m_turnouts)
+  {
+    if(auto turnout = item.first.lock())
+    {
+      if(!turnout->release(dryRun))
+      {
+        assert(dryRun);
+        return false;
+      }
+    }
+    else /*[[unlikely]]*/
+    {
+      assert(dryRun);
+      return false;
+    }
+  }
+
+  for(const auto& item : m_crossings)
+  {
+    if(auto cross = item.first.lock())
+    {
+      if(!cross->release(dryRun))
+      {
+        assert(dryRun);
+        return false;
+      }
+    }
+    else /*[[unlikely]]*/
+    {
+      assert(dryRun);
+      return false;
+    }
+  }
+
+  if(!dryRun)
+  {
+    for(const auto& item : m_directionControls)
+    {
+      if(auto directionControl = item.first.lock()) /*[[likely]]*/
+      {
+        directionControl->release();
+      }
+    }
+
+    for(const auto& [bridgeWeak, path] : m_bridges)
+    {
+      if(auto bridge = bridgeWeak.lock()) /*[[likely]]*/
+      {
+        bridge->release(path);
+      }
+    }
+
+    for(const auto& signalWeak : m_signals)
+    {
+      if(auto signal = signalWeak.lock()) /*[[likely]]*/
+      {
+        signal->release();
+      }
+    }
+
+    for(const auto& tileWeak : m_tiles)
+    {
+      if(auto tile = tileWeak.lock()) /*[[likely]]*/
+      {
+        static_cast<RailTile&>(*tile).release();
+      }
+    }
+
+    if(auto nxButton = m_nxButtonFrom.lock())
+    {
+      nxButton->release();
+    }
+
+    if(auto nxButton = m_nxButtonTo.lock())
+    {
+      nxButton->release();
+    }
+  }
+
+  return true;
+}

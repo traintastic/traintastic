@@ -98,6 +98,7 @@ class BlockPath : public Path, public std::enable_shared_from_this<BlockPath>
     std::shared_ptr<NXButtonRailTile> nxButtonTo() const;
 
     bool reserve(const std::shared_ptr<Train>& train, bool dryRun = false);
+    bool release(bool dryRun = false);
 };
 
 #endif
