@@ -463,7 +463,7 @@ void BlockRailTile::updatePaths()
   m_paths.clear(); // make sure it is empty, it problably is after the move
   auto found = BlockPath::find(*this);
 
-  while(!current.empty())
+  while(!current.empty()) // handle existing paths
   {
     auto it = std::find_if(found.begin(), found.end(),
       [&currentPath=*current.front()](const auto& foundPath)
@@ -479,8 +479,18 @@ void BlockRailTile::updatePaths()
     current.erase(current.begin());
   }
 
-  for(auto& path : found)
+  for(auto& path : current) // no longer existing paths
   {
+    auto& pathsIn = path->toBlock()->m_pathsIn;
+    if(auto it = std::find(pathsIn.begin(), pathsIn.end(), path); it != pathsIn.end())
+    {
+      pathsIn.erase(it);
+    }
+  }
+
+  for(auto& path : found) // new paths
+  {
+    path->toBlock()->m_pathsIn.emplace_back(path);
     m_paths.emplace_back(std::move(path));
   }
 }

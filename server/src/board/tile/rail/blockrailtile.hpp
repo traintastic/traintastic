@@ -46,8 +46,11 @@ class BlockRailTile : public RailTile
   CREATE_DEF(BlockRailTile)
 
   private:
+    using Paths = std::vector<std::shared_ptr<BlockPath>>;
+
     Node m_node;
-    std::vector<std::shared_ptr<BlockPath>> m_paths;
+    Paths m_paths; //!< Paths from this block to other block
+    Paths m_pathsIn; //!< Paths from other blocks to this block
     std::array<std::weak_ptr<BlockPath>, 2> m_reservedPaths; // index is BlockSide
 
     void updatePaths();
