@@ -243,7 +243,7 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
         const BlockSide enterSide = (&item == inputMap->items.front().get()) ? BlockSide::A : BlockSide::B;
 
         std::shared_ptr<Train> train;
-        BlockTrainDirection direction;
+        BlockTrainDirection direction = BlockTrainDirection::Unknown;
 
         for(const auto& path : m_pathsIn)
         {
