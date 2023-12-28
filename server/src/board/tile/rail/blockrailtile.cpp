@@ -37,6 +37,13 @@ constexpr uint8_t toMask(BlockSide side)
   return 1 << static_cast<uint8_t>(side);
 }
 
+constexpr bool isDirectionTowardsSide(BlockTrainDirection direction, BlockSide side)
+{
+  return
+    (direction == BlockTrainDirection::TowardsA && side == BlockSide::A) ||
+    (direction == BlockTrainDirection::TowardsB && side == BlockSide::B);
+}
+
 CREATE_IMPL(BlockRailTile)
 
 BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
