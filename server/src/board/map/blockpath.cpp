@@ -316,6 +316,37 @@ bool BlockPath::operator ==(const BlockPath& other) const noexcept
     (m_nxButtonTo == other.m_nxButtonTo);
 }
 
+bool BlockPath::isReady() const
+{
+  for(const auto& [turnoutWeak, position] : m_turnouts)
+  {
+    auto turnout = turnoutWeak.lock();
+    if(!turnout) /*[[unlikely]]*/
+    {
+      return false;
+    }
+    if(turnout->position != position)
+    {
+      return false;
+    }
+  }
+
+  for(const auto& [directionControlWeak, state] : m_directionControls)
+  {
+    auto directionControl = directionControlWeak.lock();
+    if(!directionControl) /*[[unlikely]]*/
+    {
+      return false;
+    }
+    if(directionControl->state != state && directionControl->state != DirectionControlState::Both)
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 std::shared_ptr<NXButtonRailTile> BlockPath::nxButtonFrom() const
 {
   return m_nxButtonFrom.lock();

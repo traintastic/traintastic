@@ -214,6 +214,81 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
 
 void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
 {
+  if(item.value() == SensorState::Occupied)
+  {
+    switch(state.value())
+    {
+      case BlockState::Free:
+      case BlockState::Unknown:
+      {
+        // Something entered the block, try to determine what it is.
+
+        if(inputMap->items.size() > 2 && (&item != inputMap->items.front().get()) && (&item != inputMap->items.back().get()))
+        {
+          // Non block edge sensor.
+
+          //! \todo log something (at least in debug)
+
+          break;
+        }
+
+        const bool anySide = inputMap->items.size() == 1; // block with one sensor
+        const BlockSide enterSide = (&item == inputMap->items.front().get()) ? BlockSide::A : BlockSide::B;
+
+        std::shared_ptr<Train> train;
+        BlockTrainDirection direction;
+
+        for(const auto& path : m_pathsIn)
+        {
+          if(path->toBlock().get() == this && (anySide || path->toSide() == enterSide) && !path->fromBlock().trains.empty() && path->isReady())
+          {
+            const auto status = path->fromSide() == BlockSide::A ? path->fromBlock().trains.front() : path->fromBlock().trains.back();
+
+            if(isDirectionTowardsSide(status->direction, path->fromSide()) &&
+                status->train &&
+                status->train->powered &&
+                status->train->mode == TrainMode::ManualUnprotected &&
+                !status->train->isStopped)
+            {
+              if(train) // another train?? then we don't know
+              {
+                train.reset();
+                //! \todo log something (at least in debug)
+                break;
+              }
+              else
+              {
+                train = status->train.value();
+                direction = path->toSide() == BlockSide::A ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA;
+              }
+            }
+          }
+        }
+
+        if(train)
+        {
+          auto blockStatus = TrainBlockStatus::create(*this, *train, direction);
+
+          blockStatus->train->blocks.insertInternal(0, blockStatus); // head of train
+          trains.appendInternal(blockStatus);
+          updateTrainMethodEnabled();
+
+          fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(
+            onTrainEntered,
+            blockStatus->train.value(),
+            shared_ptr<BlockRailTile>(),
+            blockStatus->direction.value());
+        }
+        break;
+      }
+      case BlockState::Reserved:
+        break;
+
+      case BlockState::Occupied:
+        break;
+    }
+  }
+
   if(inputMap->items.size() != sensorStates.size())
   {
     std::vector<SensorState> values;
@@ -226,6 +301,40 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
     sensorStates.setValueInternal(inputMap->items.indexOf(item), item.value());
 
   updateState();
+
+  if(item.value() == SensorState::Free && state.value() == BlockState::Reserved)
+  {
+    if(trains.size() == 1)
+    {
+      auto blockStatus = trains.front();
+
+      // Train must be in at least two blocks, else we loose it.
+      // Release tailing block of train only. (When using current detection not all wagons might consume power.)
+      if(blockStatus->train &&
+          blockStatus->train->blocks.size() > 1 &&
+          blockStatus->train->blocks.back() == blockStatus)
+      {
+        blockStatus->train->blocks.removeInternal(blockStatus);
+        trains.removeInternal(blockStatus);
+        updateTrainMethodEnabled();
+
+        updateState();
+
+        fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(
+          onTrainLeft,
+          blockStatus->train.value(),
+          shared_ptr<BlockRailTile>(),
+          blockStatus->direction.value());
+
+        blockStatus->destroy();
+#ifndef NDEBUG
+        std::weak_ptr<TrainBlockStatus> blockStatusWeak = blockStatus;
+        blockStatus.reset();
+        assert(blockStatusWeak.expired());
+#endif
+      }
+    }
+  }
 }
 
 void BlockRailTile::identificationEvent(BlockInputMapItem& /*item*/, IdentificationEventType eventType, uint16_t identifier, Direction direction, uint8_t /*category*/)
