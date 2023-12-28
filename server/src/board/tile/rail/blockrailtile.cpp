@@ -165,6 +165,8 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
       }}
   , onTrainAssigned{*this, "on_train_assigned", EventFlags::Scriptable}
   , onTrainReserved{*this, "on_train_reserved", EventFlags::Scriptable}
+  , onTrainEntered{*this, "on_train_entered", EventFlags::Scriptable}
+  , onTrainLeft{*this, "on_train_left", EventFlags::Scriptable}
   , onTrainRemoved{*this, "on_train_removed", EventFlags::Scriptable}
 {
   inputMap.setValueInternal(std::make_shared<BlockInputMap>(*this, inputMap.name()));
@@ -203,6 +205,8 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
 
   m_interfaceItems.add(onTrainAssigned);
   m_interfaceItems.add(onTrainReserved);
+  m_interfaceItems.add(onTrainEntered);
+  m_interfaceItems.add(onTrainLeft);
   m_interfaceItems.add(onTrainRemoved);
 
   updateHeightWidthMax();

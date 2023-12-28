@@ -1682,5 +1682,37 @@
   {
     "term": "object.blockrailtile.on_train_reserved.parameter.direction:description",
     "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
+  },
+  {
+    "term": "object.blockrailtile.on_train_entered:description",
+    "definition": "Fired when a {ref:object.train} enters the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_entered.parameter.train:description",
+    "definition": "{ref:object.train} that entered the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_entered.parameter.block:description",
+    "definition": "The block that is entered."
+  },
+  {
+    "term": "object.blockrailtile.on_train_entered.parameter.direction:description",
+    "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
+  },
+  {
+    "term": "object.blockrailtile.on_train_left:description",
+    "definition": "Fired when a {ref:object.train} has left the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_left.parameter.train:description",
+    "definition": "{ref:object.train} that entered the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_left.parameter.block:description",
+    "definition": "The block that the train left."
+  },
+  {
+    "term": "object.blockrailtile.on_train_left.parameter.direction:description",
+    "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
   }
 ]

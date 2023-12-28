@@ -77,6 +77,8 @@ class BlockRailTile : public RailTile
     Method<void()> flipTrain;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onTrainAssigned;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onTrainReserved;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onTrainEntered;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onTrainLeft;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onTrainRemoved;
 
     BlockRailTile(World& world, std::string_view _id);
