@@ -1714,5 +1714,77 @@
   {
     "term": "object.blockrailtile.on_train_left.parameter.direction:description",
     "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
+  },
+  {
+    "term": "object.curve45railtile:title",
+    "definition": "Curve 45° rail tile"
+  },
+  {
+    "term": "object.curve90railtile:title",
+    "definition": "Curve 90° rail tile"
+  },
+  {
+    "term": "object.bridge45leftrailtile:title",
+    "definition": "Bridge 45° left rail tile"
+  },
+  {
+    "term": "object.bridge45rightrailtile:title",
+    "definition": "Bridge 45° right rail tile"
+  },
+  {
+    "term": "object.bridge90railtile:title",
+    "definition": "Bridge 90° rail tile"
+  },
+  {
+    "term": "object.cross45railtile:title",
+    "definition": "Cross 45° rail tile"
+  },
+  {
+    "term": "object.cross90railtile:title",
+    "definition": "Cross 90° rail tile"
+  },
+  {
+    "term": "object.hsi88interface:title",
+    "definition": "HSI88 interface"
+  },
+  {
+    "term": "object.signal2aspectrailtile:title",
+    "definition": "Signal 2 aspect rail tile"
+  },
+  {
+    "term": "object.signal3aspectrailtile:title",
+    "definition": "Signal 3 aspect rail tile"
+  },
+  {
+    "term": "object.turnout3wayrailtile:title",
+    "definition": "Turnout 3 way rail tile"
+  },
+  {
+    "term": "object.turnoutleft45railtile:title",
+    "definition": "Turnout left 45° rail tile"
+  },
+  {
+    "term": "object.turnoutleft90railtile:title",
+    "definition": "Turnout left 90° rail tile"
+  },
+  {
+    "term": "object.turnoutright45railtile:title",
+    "definition": "Turnout right 45° rail tile"
+  },
+  {
+    "term": "object.turnoutright90railtile:title",
+    "definition": "Turnout right 90° rail tile"
+  },
+  {
+    "term": "object.z21interface:title",
+    "definition": "Z21 interface"
+  },
+  {
+    "term": "object.nxbuttonrailtile:title",
+    "definition": "NX button rail tile"
+  },
+  {
+    "term": "object.pushbuttontile:title",
+    "definition": "Push button tile"
   }
 ]

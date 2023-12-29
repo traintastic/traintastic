@@ -295,7 +295,7 @@ class LuaDoc:
 
         # indentify those that can be used in Lua:
         class_cpp = LuaDoc._read_file(os.path.join(project_root, 'server', 'src', 'lua', 'class.cpp'))
-        for cpp_name in re.findall(r'registerValue<([a-zA-Z0-9]+)>\(\s*L\s*,\s*"[A-Z_]+"\s*\);', class_cpp):
+        for cpp_name in re.findall(r'registerValue<([a-zA-Z0-9]+)>\(\s*L\s*,\s*"[A-Z0-9_]+"\s*\);', class_cpp):
             if cpp_name not in cpp_classes:
                 raise RuntimeError('class {:s} not found'.format(cpp_name))
 
