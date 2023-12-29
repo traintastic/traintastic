@@ -725,9 +725,9 @@ class LuaDoc:
         # objects:
         for object in self._objects:
             name = self._get_term(object['name'])
-            print(name)
             letter = name[0].upper()
-            index[letter].append({'title': name, 'sub_title': '<code>object</code>', 'href': object['filename']})
+            if letter in index:
+                index[letter].append({'title': name, 'sub_title': '<code>object</code>', 'href': object['filename']})
 
         title = self._get_term('index-az:title')
         html = self._get_header(title, nav + [{'title': title, 'href': set['filename']}])
