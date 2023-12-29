@@ -111,7 +111,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
             }
           }
 
-          fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(onTrainAssigned, newTrain, self);
+          fireEvent(onTrainAssigned, newTrain, self);
         }
       }}
   , removeTrain{*this, "remove_train",
@@ -154,7 +154,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
             }
           }
 
-          fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(onTrainRemoved, oldTrain, self);
+          fireEvent(onTrainRemoved, oldTrain, self);
         }
       }}
   , flipTrain{*this, "flip_train",
@@ -280,7 +280,7 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
           trains.appendInternal(blockStatus);
           updateTrainMethodEnabled();
 
-          fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(
+          fireEvent(
             onTrainEntered,
             blockStatus->train.value(),
             shared_ptr<BlockRailTile>(),
@@ -327,7 +327,7 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
 
         updateState();
 
-        fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(
+        fireEvent(
           onTrainLeft,
           blockStatus->train.value(),
           shared_ptr<BlockRailTile>(),
@@ -445,7 +445,7 @@ bool BlockRailTile::reserve(const std::shared_ptr<BlockPath>& blockPath, const s
     {
       const auto direction = side == BlockSide::A ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA;
       trains.appendInternal(TrainBlockStatus::create(*this, *train, direction));
-      fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(onTrainReserved, train, shared_ptr<BlockRailTile>(), direction);
+      fireEvent(onTrainReserved, train, shared_ptr<BlockRailTile>(), direction);
     }
     updateState();
   }
