@@ -68,6 +68,12 @@ class Object : public std::enable_shared_from_this<Object>
       event.fire(std::forward<Args>(args)...);
     }
 
+    template<class T, class... Args>
+    inline void fireEvent(Event<const std::shared_ptr<T>&, Args...>& event, const std::shared_ptr<T>& object, Args... args)
+    {
+      event.fire(object, std::forward<Args>(args)...);
+    }
+
     virtual void destroying() {}
     virtual void load(WorldLoader& loader, const nlohmann::json& data);
     virtual void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const;

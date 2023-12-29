@@ -61,6 +61,7 @@ class SignalRailTile : public StraightRailTile
     Property<SignalAspect> aspect;
     ObjectProperty<SignalOutputMap> outputMap;
     Method<bool(SignalAspect)> setAspect;
+    Event<const std::shared_ptr<SignalRailTile>&, SignalAspect> onAspectChanged;
 
     ~SignalRailTile() override;
 

@@ -36,6 +36,7 @@ SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId
   aspect{this, "aspect", SignalAspect::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
   setAspect{*this, "set_aspect", MethodFlags::ScriptCallable, [this](SignalAspect value) { return doSetAspect(value); }}
+  , onAspectChanged{*this, "on_aspect_changed", EventFlags::Scriptable}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
@@ -55,6 +56,8 @@ SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId
 
   Attributes::addObjectEditor(setAspect, false);
   // setAspect is added by sub class
+
+  m_interfaceItems.add(onAspectChanged);
 }
 
 SignalRailTile::~SignalRailTile() = default; // default here, so we can use a forward declaration of SignalPath in the header.
@@ -118,6 +121,7 @@ bool SignalRailTile::doSetAspect(SignalAspect value)
   {
     aspect.setValueInternal(value);
     aspectChanged(*this, value);
+    fireEvent(onAspectChanged, shared_ptr<SignalRailTile>(), value);
   }
   return true;
 }
