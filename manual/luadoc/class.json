@@ -176,5 +176,12 @@
   "WORLD": {
     "type": "constant",
     "since": "0.1"
+  },
+  "PUSH_BUTTON_TILE": {
+    "type": "constant"
+  },
+  "NX_BUTTON_RAIL_TILE": {
+    "type": "constant",
+    "since": "0.3"
   }
 }
