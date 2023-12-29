@@ -116,9 +116,9 @@ bool SignalRailTile::doSetAspect(SignalAspect value)
   assert(values);
   if(!values->contains(static_cast<int64_t>(value)))
     return false;
-  (*outputMap)[value]->execute();
   if(aspect != value)
   {
+    (*outputMap)[value]->execute();
     aspect.setValueInternal(value);
     aspectChanged(*this, value);
     fireEvent(onAspectChanged, shared_ptr<SignalRailTile>(), value);
