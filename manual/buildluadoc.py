@@ -321,7 +321,7 @@ class LuaDoc:
         filename_cpp = os.path.splitext(filename_hpp)[0] + '.cpp'
         hpp = LuaDoc._read_file(filename_hpp)
         cpp = LuaDoc._read_file(filename_cpp) if os.path.exists(filename_cpp) else hpp
-        for cpp_type, cpp_template_type, cpp_item_name in re.findall(r'(Property|VectorProperty|ObjectProperty|ObjectVectorProperty|Method|Event)<(.+?)>\s+([A-Za-z0-9_]+);', hpp):
+        for cpp_type, cpp_template_type, cpp_item_name in re.findall(r'(Property|VectorProperty|ObjectProperty|ObjectVectorProperty|Method|Event)<(.*?)>\s+([A-Za-z0-9_]+);', hpp):
             m = re.search(cpp_item_name + r'({|\()\s*[\*]?this\s*,\s*"([a-z0-9_]+)"[^}]*(PropertyFlags::ScriptReadOnly|PropertyFlags::ScriptReadWrite|MethodFlags::ScriptCallable|EventFlags::Scriptable)[^}]*}', cpp)
             if m is None:
                 continue
