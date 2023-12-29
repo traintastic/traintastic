@@ -429,7 +429,12 @@ class LuaDoc:
             html += '<dl>' + os.linesep
             for item in constants:
                 item_term_prefix = item['term_prefix'] if 'term_prefix' in item else term_prefix
-                html += '  <dt id="' + item['lua_name'] + '"><code>' + lua_prefix + item['lua_name'] + '</code></dt>' + os.linesep
+                html += '  <dt id="' + item['lua_name'] + '"><code>' + lua_prefix + item['lua_name'] + '</code>'
+                if 'since' in item:
+                    html += ' <span class="badge badge-since">&ge; ' + item['since'] + '</span>'
+                if 'is_lua_builtin' in item and item['is_lua_builtin']:
+                    html += ' <span class="badge badge-lua">Lua</span>'
+                html += '</dt>' + os.linesep
                 html += '  <dd>' + self._get_term(item_term_prefix + item['lua_name'].lower() + ':description') + '</dd>' + os.linesep
             html += '</dl>' + os.linesep
 
@@ -438,7 +443,12 @@ class LuaDoc:
             html += '<h2 id="libraries">' + self._get_term('libraries') + '</h2>' + os.linesep
             html += '<dl>' + os.linesep
             for item in libraries:
-                html += '  <dt id="' + item['lua_name'] + '"><code>' + lua_prefix + item['lua_name'] + '</code></dt>' + os.linesep
+                html += '  <dt id="' + item['lua_name'] + '"><code>' + lua_prefix + item['lua_name'] + '</code>'
+                if 'since' in item:
+                    html += ' <span class="badge badge-since">&ge; ' + item['since'] + '</span>'
+                if 'is_lua_builtin' in item and item['is_lua_builtin']:
+                    html += ' <span class="badge badge-lua">Lua</span>'
+                html += '</dt>' + os.linesep
                 if item['lua_name'] == 'enum':
                     href = LuaDoc.FILENAME_ENUM
                 elif item['lua_name'] == 'set':
@@ -454,7 +464,10 @@ class LuaDoc:
             html += '<dl>' + os.linesep
             for item in objects:
                 item_term_prefix = item['term_prefix'] if 'term_prefix' in item else term_prefix
-                html += '  <dt id="' + item['lua_name'] + '"><code>' + lua_prefix + item['lua_name'] + '</code></dt>' + os.linesep
+                html += '  <dt id="' + item['lua_name'] + '"><code>' + lua_prefix + item['lua_name'] + '</code>'
+                if 'since' in item:
+                    html += ' <span class="badge badge-since">&ge; ' + item['since'] + '</span>'
+                html += '</dt>' + os.linesep
                 html += '  <dd>' + self._get_term(item_term_prefix + item['lua_name'].lower() + ':description') + '</dd>' + os.linesep
             html += '</dl>' + os.linesep
 
@@ -464,7 +477,10 @@ class LuaDoc:
             html += '<dl>' + os.linesep
             for item in properties:
                 item_term_prefix = item['term_prefix'] if 'term_prefix' in item else term_prefix
-                html += '  <dt id="' + item['lua_name'] + '"><code>' + lua_prefix + item['lua_name'] + '</code></dt>' + os.linesep
+                html += '  <dt id="' + item['lua_name'] + '"><code>' + lua_prefix + item['lua_name'] + '</code>'
+                if 'since' in item:
+                    html += ' <span class="badge badge-since">&ge; ' + item['since'] + '</span>'
+                html += '</dt>' + os.linesep
                 html += '  <dd>' + self._get_term(item_term_prefix + item['lua_name'].lower() + ':description') + '</dd>' + os.linesep
             html += '</dl>' + os.linesep
 
@@ -480,6 +496,10 @@ class LuaDoc:
                         html += '[]'
                     else:
                         html += item['lua_name']
+                    if 'since' in item:
+                        html += ' <span class="badge badge-since">&ge; ' + item['since'] + '</span>'
+                    if 'is_lua_builtin' in item and item['is_lua_builtin']:
+                        html += ' <span class="badge badge-lua">Lua</span>'
                     html += '</code></h3>' + os.linesep
 
                     html += '<code>' + lua_prefix
@@ -529,7 +549,10 @@ class LuaDoc:
             for item in events:
                 item_term_prefix = item['term_prefix'] if 'term_prefix' in item else term_prefix
 
-                html += '<h3 id="' + item['lua_name'] + '"><code>' + item['lua_name'] + '</code></h3>' + os.linesep
+                html += '<h3 id="' + item['lua_name'] + '"><code>' + item['lua_name'] + '</code>'
+                if 'since' in item:
+                    html += ' <span class="badge badge-since">&ge; ' + item['since'] + '</span>'
+                html += '</h3>' + os.linesep
                 html += '<p>' + self._get_term(term_prefix + item['lua_name'].lower() + ':description') + '</p>' + os.linesep
 
                 html += 'Handler: <code>function ('
@@ -731,6 +754,8 @@ class LuaDoc:
         for tag, id, title in re.findall(r'<(h2|h3|dt) id="(.+?)">(.+?)</\1>', html):
             title = re.sub(r'<a[^>]*>(.*?)</a>', r'\1', title)  # remove links
             title = re.sub(r'^(<code>)[a-z0-9_\.]+\.', r'\1', title)  # remove Lua lib stuff
+            title = re.sub(r'<span class="badge.+?</span>', '', title)  # remove badges
+            title = title.strip()  # remove leading/tailing spaces
             depth = 2 if tag == 'h2' else 3
             if depth > current_depth:
                 toc += '<ul>'

@@ -1,21 +1,40 @@
 {
-  "uuid": {},
-  "name": {},
-  "scale": {},
-  "scale_ratio": {},
-  "boards": {},
-  "clock": {},
+  "uuid": {
+    "since": "0.1"
+  },
+  "name": {
+    "since": "0.1"
+  },
+  "scale": {
+    "since": "0.1"
+  },
+  "scale_ratio": {
+    "since": "0.1"
+  },
+  "boards": {
+    "since": "0.1"
+  },
+  "clock": {
+    "since": "0.2"
+  },
   "trains": {},
   "rail_vehicles": {},
-  "state": {},
-  "power_off": {},
-  "stop": {},
+  "state": {
+    "since": "0.1"
+  },
+  "power_off": {
+    "since": "0.1"
+  },
+  "stop": {
+    "since": "0.1"
+  },
   "get_object": {
     "parameters": [
       {
         "name": "id"
       }
-    ]
+    ],
+    "since": "0.1"
   },
   "on_event": {
     "parameters": [
@@ -25,6 +44,7 @@
       {
         "name": "event"
       }
-    ]
+    ],
+    "since": "0.1"
   }
 }

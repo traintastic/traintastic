@@ -1,10 +1,22 @@
 {
-  "time": {},
-  "hour": {},
-  "minute": {},
-  "multiplier": {},
-  "freeze": {},
-  "running": {},
+  "time": {
+    "since": "0.2"
+  },
+  "hour": {
+    "since": "0.2"
+  },
+  "minute": {
+    "since": "0.2"
+  },
+  "multiplier": {
+    "since": "0.2"
+  },
+  "freeze": {
+    "since": "0.2"
+  },
+  "running": {
+    "since": "0.2"
+  },
   "on_resume": {
     "parameters": [
       {
@@ -13,20 +25,23 @@
       {
         "name": "multiplier"
       }
-    ]
+    ],
+    "since": "0.2"
   },
   "on_tick": {
     "parameters": [
       {
         "name": "time"
       }
-    ]
+    ],
+    "since": "0.2"
   },
   "on_freeze": {
     "parameters": [
       {
         "name": "time"
       }
-    ]
+    ],
+    "since": "0.2"
   }
 }

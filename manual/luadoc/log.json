@@ -10,7 +10,8 @@
         "optional": true
       }
     ],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "info": {
     "type": "function",
@@ -23,7 +24,8 @@
         "optional": true
       }
     ],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "notice": {
     "type": "function",
@@ -36,7 +38,8 @@
         "optional": true
       }
     ],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "warning": {
     "type": "function",
@@ -49,7 +52,8 @@
         "optional": true
       }
     ],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "error": {
     "type": "function",
@@ -62,7 +66,8 @@
         "optional": true
       }
     ],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "critical": {
     "type": "function",
@@ -75,7 +80,8 @@
         "optional": true
       }
     ],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "fatal": {
     "type": "function",
@@ -88,6 +94,7 @@
         "optional": true
       }
     ],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   }
 }

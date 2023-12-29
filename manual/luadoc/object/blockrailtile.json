@@ -20,7 +20,8 @@
       {
         "name": "direction"
       }
-    ]
+    ],
+    "since": "0.3"
   },
   "on_train_removed": {
     "parameters": [
