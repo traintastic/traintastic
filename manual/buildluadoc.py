@@ -734,11 +734,18 @@ class LuaDoc:
         html += '<p>' + self._get_term('index-az:description') + '</p>' + os.linesep
         html += '<ul class="index-az-nav">' + os.linesep
         for letter in alphabet:
-            html += '  <li><a href="#' + letter + '">' + letter + '</a></li>' + os.linesep
+            if len(index[letter]) != 0:
+                html += '  <li><a href="#' + letter + '">' + letter + '</a></li>' + os.linesep
+            else:
+                html += '  <li style="color:#888;">' + letter + '</li>' + os.linesep
+
         html += '</ul>' + os.linesep
         html += '<div class="index-az">' + os.linesep
         for letter in alphabet:
-            html += '<h4 id="' + letter + '">' + letter + '</h4>' + os.linesep
+            html += '<h4 id="' + letter + '"'
+            if len(index[letter]) == 0:
+                html += ' style="color:#888;"'
+            html += '>' + letter + '</h4>' + os.linesep
             if len(index[letter]) != 0:
                 html += '<ul>' + os.linesep
                 for item in sorted(index[letter], key=operator.itemgetter('title', 'sub_title')):
