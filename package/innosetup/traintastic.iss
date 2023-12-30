@@ -11,6 +11,9 @@
 #define ServerExeName "traintastic-server.exe"
 #define ClientExeName "traintastic-client.exe"
 
+#define CompanySubKey "SOFTWARE\traintastic.org"
+#define AppSubKey CompanySubKey + "\Traintastic"
+
 [Setup]
 AppId={{7E509202-257F-4859-B8FA-D87D636342BB}
 AppName={#Name}
@@ -97,10 +100,13 @@ Name: "{autodesktop}\{#Name} server"; Filename: "{app}\server\{#ServerExeName}";
 Name: "{autoprograms}\{#Name}\{#Name} client"; Filename: "{app}\client\{#ClientExeName}"; Check: InstallClient
 Name: "{autodesktop}\{#Name} client"; Filename: "{app}\client\{#ClientExeName}"; Tasks: desktopicon; Check: InstallClient
 
+[Registry]
+Root: HKLM; Subkey: "{#CompanySubKey}"; Flags: uninsdeletekeyifempty
+Root: HKLM; Subkey: "{#AppSubKey}"; Flags: uninsdeletekey
+
 [Code]
 const
-  InstallerSubKeyName = 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{7E509202-257F-4859-B8FA-D87D636342BB}_is1';
-  TraintasticComponentsValueName = 'TraintasticComponents';
+  ComponentsValueName = 'Components';
 var
   ComponentsPage : TWizardPage;
   ClientAndServerRadioButton : TRadioButton;
@@ -118,12 +124,12 @@ end;
 
 procedure RegWriteTraintasticComponents(Value: String);
 begin
-  RegWriteStringValue(HKEY_LOCAL_MACHINE, InstallerSubKeyName, TraintasticComponentsValueName, Value);
+  RegWriteStringValue(HKEY_LOCAL_MACHINE, '{#AppSubKey}', ComponentsValueName, Value);
 end;
 
 function RegReadTraintasticComponents: String;
 begin
-  if not RegQueryStringValue(HKEY_LOCAL_MACHINE, InstallerSubKeyName, TraintasticComponentsValueName, Result) then
+  if not RegQueryStringValue(HKEY_LOCAL_MACHINE, '{#AppSubKey}', ComponentsValueName, Result) then
     Result := '';
 end;
 
