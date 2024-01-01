@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -391,7 +391,7 @@ MainWindow::MainWindow(QWidget* parent) :
     m_menuObjects->addAction(Theme::getIcon("clock"), Locale::tr("world:clock") + "...", [this](){ showObject("world.clock", Locale::tr("world:clock")); });
     trainsAction = m_menuObjects->addAction(Theme::getIcon("train"), Locale::tr("world:trains") + "...", [this](){ showObject("world.trains", Locale::tr("world:trains")); });
     m_menuObjects->addAction(Locale::tr("world:rail_vehicles") + "...", [this](){ showObject("world.rail_vehicles", Locale::tr("world:rail_vehicles")); });
-    m_actionLuaScript = m_menuObjects->addAction(Theme::getIcon("lua"), Locale::tr("world:lua_scripts") + "...", [this](){ showObject("world.lua_scripts", Locale::tr("world:lua_scripts")); });
+    m_actionLuaScript = m_menuObjects->addAction(Theme::getIcon("lua"), Locale::tr("world:lua_scripts") + "...", this, &MainWindow::showLuaScriptsList);
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:tools"));
     menu->addAction(Locale::tr("qtapp.mainmenu:settings") + "...",
@@ -569,6 +569,11 @@ const ObjectPtr& MainWindow::world() const
 {
   static const ObjectPtr null;
   return m_connection ? m_connection->world() : null;
+}
+
+void MainWindow::showLuaScriptsList()
+{
+  showObject("world.lua_scripts", Locale::tr("world:lua_scripts"));
 }
 
 void MainWindow::connectToServer(const QString& url)
