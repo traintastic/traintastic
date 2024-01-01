@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -289,8 +289,32 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
         break;
       }
       case BlockState::Reserved:
-        break;
+      {
+        const bool inputA = (inputMap->items.front().get() == &item);
+        const auto pathA = inputA ? m_reservedPaths[0].lock() : nullptr;
+        const bool enterA = pathA && pathA->toBlock().get() == this;
 
+        const bool inputB = (inputMap->items.back().get() == &item);
+        const auto pathB = inputB ? m_reservedPaths[1].lock() : nullptr;
+        const bool enterB = pathB && pathB->toBlock().get() == this;
+
+        if(enterA != enterB)
+        {
+          auto& blockStatus = enterA ? trains.front() : trains.back();
+          blockStatus->train->blocks.insertInternal(0, blockStatus);
+
+          fireEvent(
+            onTrainEntered,
+            blockStatus->train.value(),
+            shared_ptr<BlockRailTile>(),
+            blockStatus->direction.value());
+        }
+        else
+        {
+          // assignment or something is wrong
+        }
+        break;
+      }
       case BlockState::Occupied:
         break;
     }
