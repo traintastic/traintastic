@@ -25,6 +25,7 @@ def highlight_lua(code: str) -> str:
     code = re.sub(r'\b(math|table|string|class|enum|set|log|world)\b', r'<span class="global">\1</span>', code)  # globals
     code = re.sub(r'\b([A-Z_][A-Z0-9_]*)\b', r'<span class="const">\1</span>', code)  # CONSTANTS
     code = re.sub(r'\b(and|break|do|else|elseif|end|false|for|function|goto|if|in|local|nil|not|or|repeat|return|then|true|until|while)\b', r'<span class="keyword">\1</span>', code)  # keywords
+    code = re.sub(r'\b([a-zA-Z_][a-zA-Z0-9_]*)(?=\()', r'<span class="function">\1</span>', code)  # functions
     code = re.sub(r'(\a.*?[^\\]\a|\a\a)', lambda m: highlight_replace(m.group(1), 'text'), code)
     code = re.sub(r"('.*?[^\\]'|'')", lambda m: highlight_replace(m.group(1), 'text'), code)
     code = re.sub(r'(--.*)$', lambda m: highlight_replace(m.group(1), 'comment'), code, flags=re.MULTILINE)  # single line comments

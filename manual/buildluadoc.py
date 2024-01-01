@@ -737,19 +737,19 @@ class LuaDoc:
             if len(index[letter]) != 0:
                 html += '  <li><a href="#' + letter + '">' + letter + '</a></li>' + os.linesep
             else:
-                html += '  <li style="color:#888;">' + letter + '</li>' + os.linesep
+                html += '  <li class="dim">' + letter + '</li>' + os.linesep
 
         html += '</ul>' + os.linesep
         html += '<div class="index-az">' + os.linesep
         for letter in alphabet:
             html += '<h4 id="' + letter + '"'
             if len(index[letter]) == 0:
-                html += ' style="color:#888;"'
+                html += ' class="dim"'
             html += '>' + letter + '</h4>' + os.linesep
             if len(index[letter]) != 0:
                 html += '<ul>' + os.linesep
                 for item in sorted(index[letter], key=operator.itemgetter('title', 'sub_title')):
-                    html += '  <li><a href="' + item['href'] + '">' + item['title'] + '</a> <small style="color:#444;">' + item['sub_title'] + '</small></li>' + os.linesep
+                    html += '  <li><a href="' + item['href'] + '">' + item['title'] + '</a> <small class="dim">' + item['sub_title'] + '</small></li>' + os.linesep
                 html += '</ul>' + os.linesep
         html += '</div>' + os.linesep
         LuaDoc._write_file(os.path.join(output_dir, LuaDoc.FILENAME_INDEX_AZ), html)
