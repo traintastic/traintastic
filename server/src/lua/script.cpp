@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -121,16 +121,28 @@ void Script::loaded()
 {
   IdObject::loaded();
 
-  if(state == LuaScriptState::Disabled)
-    disabled.setValueInternal(true);
-  else if(state == LuaScriptState::Running)
+  switch(state)
   {
-    startSandbox();
-    if(state == LuaScriptState::Running)
-    {
-      auto& running = m_world.luaScripts->status->running;
-      running.setValueInternal(running + 1); // setState doesn't increment because the state is already running
-    }
+    case LuaScriptState::Error:
+      state.setValueInternal(LuaScriptState::Stopped);
+      break;
+
+    case LuaScriptState::Disabled:
+      disabled.setValueInternal(true);
+      break;
+
+    case LuaScriptState::Running:
+      startSandbox();
+      if(state == LuaScriptState::Running)
+      {
+        updateEnabled(); // setState doesn't updateEnabled() because the state is already running
+        auto& running = m_world.luaScripts->status->running;
+        running.setValueInternal(running + 1); // setState doesn't increment because the state is already running
+      }
+      break;
+
+    case LuaScriptState::Stopped:
+      break; // nothing to do
   }
 }
 
