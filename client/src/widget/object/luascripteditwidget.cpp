@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,10 @@
 #include <QFormLayout>
 #include <QToolBar>
 #include <QPlainTextEdit>
+#include <QDesktopServices>
+#include <version.hpp>
 #include <traintastic/locale/locale.hpp>
+#include <traintastic/utils/standardpaths.hpp>
 #include "../../network/object.hpp"
 #include "../../network/property.hpp"
 #include "../../network/method.hpp"
@@ -104,7 +107,21 @@ void LuaScriptEditWidget::buildForm()
         m_stop->setEnabled(value.toBool());
     });
 
-  toolbar->addSeparator();
+  QWidget* spacer = new QWidget(this);
+  spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+  spacer->show();
+  toolbar->addWidget(spacer);
+
+  toolbar->addAction(Theme::getIcon("help"), Locale::tr("qtapp.mainmenu:help"),
+    []()
+    {
+      const auto manual = QString::fromStdString((getLuaManualPath() / "index.html").string());
+      if(QFile::exists(manual))
+        QDesktopServices::openUrl(QUrl::fromLocalFile(manual));
+      else
+        QDesktopServices::openUrl(QString("https://traintastic.org/manual-lua?version=" TRAINTASTIC_VERSION_FULL));
+    });
+
   l->addLayout(form);
 
   l->addWidget(toolbar);

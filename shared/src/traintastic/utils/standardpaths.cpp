@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -79,6 +79,15 @@ std::filesystem::path getManualPath()
 {
 #ifdef WIN32
   return getProgramDataPath() / "traintastic" / "manual";
+#else
+  return {};
+#endif
+}
+
+std::filesystem::path getLuaManualPath()
+{
+#ifdef WIN32
+  return getProgramDataPath() / "traintastic" / "manual-lua";
 #else
   return {};
 #endif
