@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -198,6 +198,9 @@ PropertyLuaCodeEdit::Highlighter::Highlighter(QTextDocument* parent) :
 
   // string
   m_rules.append(Rule("(\".*?[^\\\\]\"|\"\")", Qt::darkGreen));
+
+  // single line comment
+  m_rules.append(Rule("--+.*", Qt::gray));
 
   /*
     HighlightingRule rule;
