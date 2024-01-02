@@ -88,5 +88,6 @@
         <file>interface_state.online.svg</file>
         <file>board.svg</file>
         <file>train.svg</file>
+        <file>help.svg</file>
     </qresource>
 </RCC>

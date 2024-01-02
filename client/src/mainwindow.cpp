@@ -455,7 +455,7 @@ MainWindow::MainWindow(QWidget* parent) :
       });
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:help"));
-    menu->addAction(Locale::tr("qtapp.mainmenu:help"),
+    menu->addAction(Theme::getIcon("help"), Locale::tr("qtapp.mainmenu:help"),
       []()
       {
         const auto manual = QString::fromStdString((getManualPath() / "en-us.html").string());
