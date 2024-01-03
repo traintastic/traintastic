@@ -323,6 +323,11 @@ pre[lang="lua"] code span.keyword
   color: blue;
 }
 
+pre[lang="lua"] code span.number
+{
+  color: magenta;
+}
+
 pre[lang="lua"] code span.global
 {
   color: chocolate;
@@ -333,7 +338,8 @@ pre[lang="lua"] code span.text
   color: darkgreen;
 }
 
-pre[lang="lua"] code span.comment
+pre[lang="lua"] code span.comment,
+pre[lang="lua"] code span.comment a
 {
   color: gray;
 }
