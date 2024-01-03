@@ -510,13 +510,16 @@ class LuaDoc:
 
                     optional = 0
                     for p in item['parameters']:
+                        is_optional = 'optional' in p and p['optional']
                         is_first = p == item['parameters'][0]
-                        if 'optional' in p and p['optional']:
+                        if is_optional:
                             html += '[' if is_first else ' ['
                             optional += 1
                         if not is_first:
                             html += ', '
                         html += p['name']
+                        if is_optional and 'default' in p:
+                            html += ' = ' + str(p['default'])
                     html += ']' * optional
                     if item['lua_name'] == '__get':
                         html += ']'

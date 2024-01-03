@@ -63,10 +63,11 @@ int LocoNetInterface::send(lua_State* L)
 
 int LocoNetInterface::imm_packet(lua_State* L)
 {
-  checkArguments(L, 2);
+  const uint8_t defaultRepeat = 2;
+  const int argc = checkArguments(L, 1, 2);
   auto interface = check<::LocoNetInterface>(L, lua_upvalueindex(1));
   auto dccPacket = checkVector<uint8_t>(L, 1);
-  auto repeat = check<uint8_t>(L, 2);
+  auto repeat = (argc >= 2) ? check<uint8_t>(L, 2) : defaultRepeat;
   Lua::push(L, interface->immPacket(dccPacket, repeat));
   return 1;
 }
