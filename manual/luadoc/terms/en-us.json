@@ -1786,5 +1786,13 @@
   {
     "term": "object.pushbuttontile:title",
     "definition": "Push button tile"
+  },
+  {
+    "term": "example.dccextsignalloconet:title",
+    "definition": "DCCext signal control (LocoNet)"
+  },
+  {
+    "term": "example.dccextsignalloconet:description",
+    "definition": "This examples shows how a signal can be controlled with DCCext commands (via LocoNet) as demonstration how custom control can be implemented. Traintastic will offcourse support DCCext natively in the future."
   }
 ]
