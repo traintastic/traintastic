@@ -17,7 +17,7 @@
     },
     {
         "term": "board:resize_tile",
-        "definition": "Tegel formaat aanpassen",
+        "definition": "Tegelformaat aanpassen",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -673,7 +673,7 @@
     },
     {
         "term": "dccplusplus_channel:dcc_accessory",
-        "definition": "DCC accesoire",
+        "definition": "DCC accessoire",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -697,7 +697,7 @@
     },
     {
         "term": "dccplusplus_settings:startup_delay",
-        "definition": "Opstart vertraging",
+        "definition": "Opstartvertraging",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1001,7 +1001,7 @@
     },
     {
         "term": "hardware:speed_steps",
-        "definition": "Snelheid stappen",
+        "definition": "Snelheidsstappen",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1097,7 +1097,7 @@
     },
     {
         "term": "interface.hsi88:modules_middle",
-        "definition": "Modulles midden",
+        "definition": "Modules midden",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1137,7 +1137,7 @@
     },
     {
         "term": "interface.xpressnet:s88_start_address",
-        "definition": "S88 start adress",
+        "definition": "S88 startadres",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1145,7 +1145,7 @@
     },
     {
         "term": "interface.z21:firmware_version",
-        "definition": "Firmware versie",
+        "definition": "Firmwareversie",
         "context": "",
         "term_plural": "",
         "reference": "",
