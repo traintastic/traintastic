@@ -833,7 +833,7 @@
     },
     {
         "term": "decoder_function_type:on_off",
-        "definition": "On\/Of",
+        "definition": "On\/Off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1249,7 +1249,7 @@
     },
     {
         "term": "language:en-us",
-        "definition": "English (US)",
+        "definition": "English (USA)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2289,7 +2289,7 @@
     },
     {
         "term": "message:N1003",
-        "definition": "Restaring",
+        "definition": "Restarting",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4345,7 +4345,7 @@
     },
     {
         "term": "message:C1017",
-        "definition": "Invalid indeces"
+        "definition": "Invalid indexes"
     },
     {
         "term": "message:C1018",
