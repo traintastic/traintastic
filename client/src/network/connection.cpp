@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1015,7 +1015,7 @@ void Connection::socketConnected()
                 auto request{Message::newRequest(Message::Command::BoardGetTileInfo)};
 
                 send(request,
-                  [this](const std::shared_ptr<Message> boardGetTileInfoResponse)
+                  [](const std::shared_ptr<Message> boardGetTileInfoResponse)
                   {
                     if(boardGetTileInfoResponse->isResponse() && !boardGetTileInfoResponse->isError())
                     {
