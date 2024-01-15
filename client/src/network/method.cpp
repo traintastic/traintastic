@@ -23,6 +23,7 @@
 #include "method.hpp"
 #include "object.hpp"
 #include "connection.hpp"
+#include "error.hpp"
 
 Method::Method(Object& object, const QString& name, ValueType resultType, const QVector<ValueType>& argumentTypes) :
   InterfaceItem(object, name),

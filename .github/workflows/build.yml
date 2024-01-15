@@ -59,7 +59,27 @@ jobs:
           build_type: Release
           build_deb: true
           defines: ""
+          
+        - name: "macos-11"
+          os: "macos-11"
+          generator: "Unix Makefiles"
+          arch: ""
+          target: traintastic-client
+          jobs: 3
+          build_type: Release
+          build_deb: false
+          defines: ""
 
+        - name: "macos-12"
+          os: "macos-12"
+          generator: "Unix Makefiles"
+          arch: ""
+          target: traintastic-client
+          jobs: 3
+          build_type: Release
+          build_deb: false
+          defines: ""
+          
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
 
@@ -74,18 +94,18 @@ jobs:
     - name: Checkout LFS objects
       run: git lfs checkout
 
-    # Windows only:
+    # Windows/macOS only:
     - name: Cache Qt
-      if: startswith(matrix.config.os, 'windows')
+      if: startswith(matrix.config.os, 'windows') || startswith(matrix.config.os, 'macos')
       id: cache-qt
       uses: actions/cache@v3
       with:
         path: ../Qt
         key: ${{runner.os}}-QtCache
 
-    # Windows only:
+    # Windows/macOS only:
     - name: Install Qt
-      if: startswith(matrix.config.os, 'windows')
+      if: startswith(matrix.config.os, 'windows') || startswith(matrix.config.os, 'macos')
       uses: jurplel/install-qt-action@v3
       with:
         cached: ${{steps.cache-qt.outputs.cache-hit}}
