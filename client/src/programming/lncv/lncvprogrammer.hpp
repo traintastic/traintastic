@@ -25,6 +25,7 @@
 
 #include <QWidget>
 #include <memory>
+#include <unordered_map>
 #include "../../network/objectptr.hpp"
 
 class Connection;
