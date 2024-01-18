@@ -15,7 +15,7 @@ jobs:
           generator: "Visual Studio 16 2019"
           arch: "-A x64"
           target: traintastic-client
-          jobs: 2
+          jobs: 4
           build_type: Release
           build_deb: false
           defines: ""
@@ -25,7 +25,7 @@ jobs:
           generator: "Unix Makefiles"
           arch: ""
           target: traintastic-client
-          jobs: 2
+          jobs: 4
           build_type: Release
           build_deb: true
           defines: ""
@@ -35,7 +35,7 @@ jobs:
           generator: "Unix Makefiles"
           arch: ""
           target: traintastic-client
-          jobs: 2
+          jobs: 4
           build_type: Release
           build_deb: true
           defines: ""
@@ -179,7 +179,7 @@ jobs:
           arch: "-A x64"
           toolset: "-T ClangCL"
           target: ALL_BUILD
-          jobs: 2
+          jobs: 4
           build_type: Release
           build_deb: false
           defines: "-DENABLE_CLANG_TIDY=ON"
@@ -191,7 +191,7 @@ jobs:
           arch: ""
           toolset: ""
           target: all
-          jobs: 2
+          jobs: 4
           build_type: Release
           build_deb: false
           defines: ""
@@ -203,7 +203,7 @@ jobs:
           arch: ""
           toolset: ""
           target: all
-          jobs: 2
+          jobs: 4
           build_type: Release
           build_deb: true
           defines: "-DENABLE_CLANG_TIDY=ON"
@@ -215,7 +215,7 @@ jobs:
           arch: ""
           toolset: ""
           target: all
-          jobs: 2
+          jobs: 4
           build_type: Release
           build_deb: true
           defines: "-DENABLE_CLANG_TIDY=ON"
@@ -227,7 +227,7 @@ jobs:
           arch: ""
           toolset: ""
           target: traintastic-server-test
-          jobs: 2
+          jobs: 4
           build_type: Debug
           build_deb: false
           defines: "-DENABLE_CLANG_TIDY=ON -DCODE_COVERAGE=ON"
