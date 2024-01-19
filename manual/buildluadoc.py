@@ -650,13 +650,39 @@ class LuaDoc:
         nav_objects = nav + [{'title': title, 'href': LuaDoc.FILENAME_OBJECT}]
         html = self._get_header(title, nav_objects)
         html += '<p>' + self._get_term('object:description') + '</p>' + os.linesep
-        html += '<ul>' + os.linesep
+
         items = []
         for object in self._objects:
-            items.append({'href': object['filename'], 'title': self._get_term(object['name'])})
-        for item in sorted(items, key=operator.itemgetter('title')):
-            html += '  <li><a href="' + item['href'] + '">' + item['title'] + '</a></li>' + os.linesep
-        html += '</ul>' + os.linesep
+            items.append({'id': object['cpp_name'].lower(), 'href': object['filename'], 'title': self._get_term(object['name'])})
+
+        categories = json.loads(LuaDoc._read_file(os.path.join(os.path.dirname(__file__), 'luadoc', 'object.categories.json')))
+
+        for key, category in categories.items():
+            category['id'] = key
+            category['title'] = self._get_term('object.category.' + key + ':title')
+            category['items'] = []
+            for object in category['objects']:
+                print(object)
+                for item in items:
+                    if item['id'] == object:
+                        category['items'].append(item)
+                        items = [v for v in items if v['id'] != object]
+                        break
+
+        for category in sorted(categories.values(), key=operator.itemgetter('title')):
+            html += '<h2 id="' + key + '">' + category['title'] + '</h2>'
+            html += '<ul>' + os.linesep
+            for item in sorted(category['items'], key=operator.itemgetter('title')):
+                html += '  <li><a href="' + item['href'] + '">' + item['title'] + '</a></li>' + os.linesep
+            html += '</ul>' + os.linesep
+
+        if len(items) > 0:
+            html += '<h2>' + self._get_term('object.category.other:title') + '</h2>'
+            html += '<ul>' + os.linesep
+            for item in sorted(items, key=operator.itemgetter('title')):
+                html += '  <li><a href="' + item['href'] + '">' + item['title'] + '</a></li>' + os.linesep
+            html += '</ul>' + os.linesep
+
         html += self._get_footer()
         LuaDoc._write_file(os.path.join(output_dir, LuaDoc.FILENAME_OBJECT), html)
 
