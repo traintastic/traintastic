@@ -1272,6 +1272,14 @@
         "comment": ""
     },
     {
+        "term": "language:fr-fr",
+        "definition": "French",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "list.train_vehicle:reverse",
         "definition": "Reverse",
         "context": "",

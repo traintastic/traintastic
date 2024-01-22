@@ -6,6 +6,7 @@ trans.nl = shared/translations/nl-nl.json
 trans.de = shared/translations/de-de.json
 trans.it = shared/translations/it-it.json
 trans.sv = shared/translations/sv-se.json
+trans.fr = shared/translations/fr-fr.json
 
 [project.traintastic-innosetup]
 project_id = 623125
