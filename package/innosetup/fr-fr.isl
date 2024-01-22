@@ -1,4 +1,4 @@
-[CustomMessages]
+﻿[CustomMessages]
 ClientAndServer=Client et serveur
 ClientAndServerDesc=Pour l'ordinateur connecté à la station de commande.
 ClientOnly=Client uniquement
