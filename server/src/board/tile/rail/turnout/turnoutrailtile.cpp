@@ -73,7 +73,7 @@ bool TurnoutRailTile::reserve(TurnoutPosition turnoutPosition, bool dryRun)
 
 bool TurnoutRailTile::release(bool dryRun)
 {
-  //! \todo check occupy sensor, once supported
+  //! \todo check occupancy sensor, once supported
 
   if(!dryRun)
   {

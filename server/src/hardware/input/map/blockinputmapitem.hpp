@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -55,6 +55,7 @@ class BlockInputMapItem final : public InputMapItem
     void setValue(SensorState value);
 
   protected:
+    void load(WorldLoader& loader, const nlohmann::json& data) final;
     void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const final;
     void loaded() final;
     void destroying() final;

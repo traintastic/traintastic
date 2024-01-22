@@ -3428,7 +3428,7 @@
         "comment": ""
     },
     {
-        "term": "sensor_type:occupy_detector",
+        "term": "sensor_type:occupancy_detector",
         "definition": "Occupy detektor",
         "context": "",
         "term_plural": "",

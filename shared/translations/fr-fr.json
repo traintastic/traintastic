@@ -3432,7 +3432,7 @@
         "comment": ""
     },
     {
-        "term": "sensor_type:occupy_detector",
+        "term": "sensor_type:occupancy_detector",
         "definition": "D\u00e9tecteur de pr\u00e9sence",
         "context": "",
         "term_plural": "",

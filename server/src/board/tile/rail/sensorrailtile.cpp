@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021,2023 Reinder Feenstra
+ * Copyright (C) 2020-2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -48,7 +48,7 @@ SensorRailTile::SensorRailTile(World& world, std::string_view _id) :
 
       return true;
     }},
-  type{this, "type", SensorType::OccupyDetector, PropertyFlags::ReadWrite | PropertyFlags::Store,
+  type{this, "type", SensorType::OccupancyDetector, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](SensorType /*value*/)
     {
       if(input)
@@ -85,6 +85,21 @@ SensorRailTile::~SensorRailTile()
   assert(!input);
   assert(!m_inputPropertyChanged.connected());
   assert(!m_inputDestroying.connected());
+}
+
+//! \todo Remove in v0.4
+void SensorRailTile::load(WorldLoader& loader, const nlohmann::json& data)
+{
+  if(data["type"] == "occupy_detector")
+  {
+    nlohmann::json dataCopy = data;
+    dataCopy["type"] == "occupancy_detector";
+    StraightRailTile::load(loader, dataCopy);
+  }
+  else
+  {
+    StraightRailTile::load(loader, data);
+  }
 }
 
 void SensorRailTile::loaded()

@@ -3428,8 +3428,8 @@
         "comment": ""
     },
     {
-        "term": "sensor_type:occupy_detector",
-        "definition": "Occupy detector",
+        "term": "sensor_type:occupancy_detector",
+        "definition": "Occupancy detector",
         "context": "",
         "term_plural": "",
         "reference": "",
