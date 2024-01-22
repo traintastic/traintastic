@@ -44,6 +44,7 @@ Name: nl; MessagesFile: "compiler:Languages\Dutch.isl,nl-nl.isl"
 Name: de; MessagesFile: "compiler:Languages\German.isl,de-de.isl"
 Name: it; MessagesFile: "compiler:Languages\Italian.isl,it-it.isl"
 Name: sv; MessagesFile: "Languages\Swedish.isl,sv-se.isl"
+Name: fr; MessagesFile: "compiler:Languages\French.isl,fr-fr.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
