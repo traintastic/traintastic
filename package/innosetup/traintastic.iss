@@ -106,6 +106,9 @@ Name: "{autodesktop}\{#Name} client"; Filename: "{app}\client\{#ClientExeName}";
 Root: HKLM; Subkey: "{#CompanySubKey}"; Flags: uninsdeletekeyifempty
 Root: HKLM; Subkey: "{#AppSubKey}"; Flags: uninsdeletekey
 
+[INI]
+Filename: {commonappdata}\traintastic\traintastic-client.ini; Section: general_; Key: language; String: {code:GetTraintasticClientLanguage}; Flags: uninsdeleteentry uninsdeletesectionifempty;
+
 [Code]
 const
   ComponentsValueName = 'Components';
@@ -201,6 +204,19 @@ begin
   Lbl.Left := ScaleX(17);
   Lbl.Height := ScaleY(23);
   Lbl.Parent := ComponentsPage.Surface;
+end;
+
+function GetTraintasticClientLanguage(Param: String) : String;
+begin
+  case ActiveLanguage of
+    'nl': Result := 'nl-nl';
+    'de': Result := 'de-de';
+    'it': Result := 'it-it';
+    'sv': Result := 'sv-se';
+    'fr': Result := 'fr-fr';
+  else
+    Result := 'en-us';
+  end;
 end;
 
 function VC2019RedistNeedsInstall: Boolean;

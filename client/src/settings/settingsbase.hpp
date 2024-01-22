@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,6 +34,7 @@ class SettingsBase : public QObject
   friend class Setting;
 
   private:
+    QSettings m_systemSettings;
     QSettings m_settings;
 
     template<class T>
@@ -69,7 +70,9 @@ class SettingsBase : public QObject
   protected:
     SettingsBase(const QString& group)
       : QObject()
+      , m_systemSettings(QSettings::SystemScope)
     {
+      m_systemSettings.beginGroup(group);
       m_settings.beginGroup(group);
     }
 
