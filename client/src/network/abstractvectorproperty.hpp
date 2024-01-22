@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -60,6 +60,12 @@ class AbstractVectorProperty : public BaseProperty
       static_assert(is_set_v<T>);
       return static_cast<T>(getInt64(index));
     }
+
+    virtual void setBool(int /*index*/, bool /*value*/) { Q_ASSERT(false); }
+    virtual void setInt(int /*index*/, int /*value*/) { Q_ASSERT(false); }
+    virtual void setInt64(int /*index*/, qint64 /*value*/) { Q_ASSERT(false); }
+    virtual void setDouble(int /*index*/, double /*value*/) { Q_ASSERT(false); }
+    virtual void setString(int /*index*/, const QString& /*value*/) { Q_ASSERT(false); }
 };
 
 #endif

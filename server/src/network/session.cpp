@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -164,6 +164,65 @@ bool Session::processMessage(const Message& message)
 
                 case ValueType::String:
                   property->fromString(message.read<std::string>());
+                  break;
+
+                default:
+                  throw std::runtime_error("invalid value type");
+              }
+            }
+            catch(const std::exception& e) // set property failed
+            {
+              if(message.isRequest()) // send error response
+              {
+                m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1018_EXCEPTION_X, e.what()));
+              }
+              else // send changed event with current value:
+                objectPropertyChanged(*property);
+            }
+
+            if(message.isRequest()) // send success response
+              m_connection->sendMessage(Message::newResponse(message.command(), message.requestId()));
+          }
+          else if(message.isRequest()) // send error response
+          {
+            m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1016_UNKNOWN_PROPERTY));
+          }
+        }
+        else if(message.isRequest()) // send error response
+        {
+          m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1015_UNKNOWN_OBJECT));
+        }
+      }
+      return true;
+    }
+    case Message::Command::ObjectSetVectorProperty:
+    {
+      if(message.isRequest() || message.isEvent())
+      {
+        if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
+        {
+          if(AbstractVectorProperty* property = object->getVectorProperty(message.read<std::string>()); property && !property->isInternal())
+          {
+            try
+            {
+              const size_t index = message.read<uint32_t>();
+
+              switch(message.read<ValueType>())
+              {
+                case ValueType::Boolean:
+                  property->setBool(index, message.read<bool>());
+                  break;
+
+                case ValueType::Integer:
+                  property->setInt64(index, message.read<int64_t>());
+                  break;
+
+                case ValueType::Float:
+                  property->setDouble(index, message.read<double>());
+                  break;
+
+                case ValueType::String:
+                  property->setString(index, message.read<std::string>());
                   break;
 
                 default:
