@@ -93,7 +93,7 @@ void SensorRailTile::load(WorldLoader& loader, const nlohmann::json& data)
   if(data["type"] == "occupy_detector")
   {
     nlohmann::json dataCopy = data;
-    dataCopy["type"] == "occupancy_detector";
+    dataCopy["type"] = "occupancy_detector";
     StraightRailTile::load(loader, dataCopy);
   }
   else
