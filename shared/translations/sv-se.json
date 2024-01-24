@@ -1280,6 +1280,14 @@
         "comment": ""
     },
     {
+        "term": "language:sv-se",
+        "definition": "Svenska",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "list.train_vehicle:reverse",
         "definition": "Omv\u00e4nd",
         "context": "",

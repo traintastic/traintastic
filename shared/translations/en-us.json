@@ -1280,6 +1280,14 @@
         "comment": ""
     },
     {
+        "term": "language:sv-se",
+        "definition": "Swedish",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "list.train_vehicle:reverse",
         "definition": "Reverse",
         "context": "",
@@ -4414,5 +4422,17 @@
     {
         "term": "world:run_when_loaded",
         "definition": "Run when loaded"
+    },
+    {
+        "term": "qtapp.connect_dialog:authenticating",
+        "definition": "Authenticating"
+    },
+    {
+        "term": "qtapp.connect_dialog:creating_session",
+        "definition": "Creating session"
+    },
+    {
+        "term": "qtapp.connect_dialog:fetching_world",
+        "definition": "Fetching world"
     }
 ]
