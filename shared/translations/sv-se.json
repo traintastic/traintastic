@@ -2869,7 +2869,7 @@
     },
     {
         "term": "qtapp.mainmenu:about",
-        "definition": "Handla om",
+        "definition": "Om",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2997,7 +2997,7 @@
     },
     {
         "term": "qtapp.mainmenu:quit",
-        "definition": "Sluta",
+        "definition": "Avsluta",
         "context": "",
         "term_plural": "",
         "reference": "",
