@@ -529,6 +529,7 @@ ObjectPtr Connection::readObject(const Message& message)
             else
             {
               VectorProperty* p = new VectorProperty(*obj, name, valueType, flags, readArray(message, valueType, length));
+              assert(p->size() == length);
               if(valueType == ValueType::Enum || valueType == ValueType::Set)
                 p->m_enumOrSetName = enumOrSetName;
               item = p;

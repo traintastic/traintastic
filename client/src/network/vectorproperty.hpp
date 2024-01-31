@@ -40,9 +40,9 @@ class VectorProperty : public AbstractVectorProperty
 
   public:
     VectorProperty(Object& object, const QString& name, ValueType type, PropertyFlags flags, QVariantList values) :
-      AbstractVectorProperty(object, name, type, flags),
-      m_values{std::move(values)}
+      AbstractVectorProperty(object, name, type, flags)
     {
+      m_values = std::move(values); // Somehow m_values{std::move(values)} doesn't work, don't know why yet.
     }
 
     const QString& enumName() const final
