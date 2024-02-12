@@ -203,7 +203,7 @@ if(LINUX)
   find_package(PkgConfig REQUIRED)
 
   # libsystemd:
-  pkg_check_modules(LIBSYSTEMD REQUIRED IMPORTED_TARGET libsystemd)
+  pkg_check_modules(LIBSYSTEMD IMPORTED_TARGET libsystemd)
   if(${LIBSYSTEMD_FOUND})
     add_definitions(-DHAS_LIBSYSTEMD)
     list(APPEND SOURCES "src/os/linux/serialportlistimplsystemd.hpp" "src/os/linux/serialportlistimplsystemd.cpp")
