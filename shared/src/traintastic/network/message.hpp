@@ -74,17 +74,10 @@ class Message
       InputMonitorInputValueChanged = 32,
 
       OutputKeyboardGetOutputInfo = 33,
-      OutputKeyboardSetOutputValue = 34,
-      OutputKeyboardOutputIdChanged = 35,
-      OutputKeyboardOutputValueChanged = 36,
 
       BoardGetTileData = 37,
       BoardTileDataChanged = 38,
       BoardGetTileInfo = 43,
-
-      OutputMapGetItems = 39,
-      OutputMapGetOutputs = 40,
-      OutputMapOutputsChanged = 41,
 
       ObjectGetObjectPropertyObject = 44,
       ObjectGetObjectVectorPropertyObject = 45,

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +27,9 @@
 
 #include "kernel.hpp"
 #include <boost/asio/steady_timer.hpp>
+#include <traintastic/enum/outputchannel.hpp>
 #include <traintastic/enum/tristate.hpp>
+#include "../../output/outputvalue.hpp"
 
 enum class SimulateInputAction;
 class InputController;
@@ -294,7 +296,7 @@ public:
      * @param[in] value Output value: \c true is on, \c false is off.
      * @return \c true if send successful, \c false otherwise.
      */
-    bool setOutput(uint16_t address, bool value);
+    bool setOutput(OutputChannel channel, uint16_t address, OutputValue value);
 
     void simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action);
 };

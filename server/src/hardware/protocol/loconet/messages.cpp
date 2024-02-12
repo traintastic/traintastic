@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -284,7 +284,6 @@ std::string toString(const Message& message)
     case OPC_SW_REQ:
     {
       const SwitchRequest& switchRequest = static_cast<const SwitchRequest&>(message);
-      s.append(" fullAddress=").append(std::to_string(switchRequest.fullAddress()));
       s.append(" address=").append(std::to_string(switchRequest.address()));
       s.append(" dir=").append(switchRequest.dir() ? "closed/green" : "thrown/red");
       s.append(" on=").append(switchRequest.on() ? "high" : "low");

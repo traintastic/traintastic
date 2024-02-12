@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , commandStation{this, "command_station", XpressNetCommandStation::Custom, PropertyFlags::ReadWrite | PropertyFlags::Store, std::bind(&Settings::commandStationChanged, this, std::placeholders::_1)}
   , useEmergencyStopLocomotiveCommand{this, "use_emergency_stop_locomotive_command", false, PropertyFlags::ReadWrite | PropertyFlags::Store, std::bind(&Settings::setCommandStationCustom, this)}
+  , useRocoAccessoryAddressing{this, "use_roco_accessory_addressing", false, PropertyFlags::ReadWrite | PropertyFlags::Store, std::bind(&Settings::setCommandStationCustom, this)}
   , useRocoF13F20Command{this, "use_roco_f13_f20_command", false, PropertyFlags::ReadWrite | PropertyFlags::Store, std::bind(&Settings::setCommandStationCustom, this)}
   , debugLogInput{this, "debug_log_input", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -39,6 +40,8 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   m_interfaceItems.add(commandStation);
 
   m_interfaceItems.add(useEmergencyStopLocomotiveCommand);
+
+  m_interfaceItems.add(useRocoAccessoryAddressing);
 
   m_interfaceItems.add(useRocoF13F20Command);
 
@@ -54,6 +57,7 @@ Config Settings::config() const
   Config config;
 
   config.useEmergencyStopLocomotiveCommand = useEmergencyStopLocomotiveCommand;
+  config.useRocoAccessoryAddressing = useRocoAccessoryAddressing;
   config.useRocoF13F20Command = useRocoF13F20Command;
 
   config.debugLogInput = debugLogInput;

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@
 #include "utils.hpp"
 #include "../../../utils/packed.hpp"
 #include "../../../utils/endian.hpp"
+#include "../../../utils/byte.hpp"
 
 class Decoder;
 
@@ -144,6 +145,7 @@ enum LocoMode : uint8_t
 
 static constexpr uint8_t LAN_X_TURNOUT_INFO = 0x43;
 static constexpr uint8_t LAN_X_SET_TURNOUT = 0x53;
+static constexpr uint8_t LAN_X_SET_EXT_ACCESSORY = 0x54;
 
 static constexpr uint8_t LAN_X_BC = 0x61;
 
@@ -173,6 +175,7 @@ static constexpr uint8_t LAN_X_BC_TRACK_POWER_OFF = 0x00;
 static constexpr uint8_t LAN_X_BC_TRACK_POWER_ON = 0x01;
 //static constexpr uint8_t LAN_X_BC_PROGRAMMING_MODE = 0x02;
 static constexpr uint8_t LAN_X_BC_TRACK_SHORT_CIRCUIT = 0x08;
+static constexpr uint8_t LAN_X_UNKNOWN_COMMAND = 0x82;
 
 enum HardwareType : uint32_t
 {
@@ -435,21 +438,21 @@ struct LanXSetTurnout : LanX
   static constexpr uint8_t db2Activate = 0x08;
   static constexpr uint8_t db2Queue = 0x20;
 
-  uint8_t db0;
-  uint8_t db1;
+  uint8_t addressMSB;
+  uint8_t addressLSB;
   uint8_t db2 = 0x80;
   uint8_t checksum;
 
-  LanXSetTurnout(uint16_t linearAddress, bool activate, bool queue = false)
+  LanXSetTurnout(uint16_t address, bool port, bool activate, bool queue = false)
     : LanX(sizeof(LanXSetTurnout), LAN_X_SET_TURNOUT)
-    , db0(linearAddress >> 9)
-    , db1((linearAddress >> 1) & 0xFF)
   {
+    setAddress(address);
+
     if(queue)
       db2 |= db2Queue;
     if(activate)
       db2 |= db2Activate;
-    if(linearAddress & 0x0001)
+    if(port)
       db2 |= db2Port;
 
     updateChecksum();
@@ -457,12 +460,15 @@ struct LanXSetTurnout : LanX
 
   uint16_t address() const
   {
-    return (static_cast<uint16_t>(db0) << 8) | db1;
+    return 1 + to16(addressLSB, addressMSB);
   }
 
-  uint16_t linearAddress() const
+  void setAddress(uint16_t value)
   {
-    return (address() << 1) | port();
+    assert(value >= 1 && value <= 2048);
+    value--;
+    addressMSB = high8(value);
+    addressLSB = low8(value);
   }
 
   bool activate() const
@@ -475,12 +481,59 @@ struct LanXSetTurnout : LanX
     return db2 & db2Queue;
   }
 
-  uint8_t port() const
+  bool port() const
   {
     return db2 & db2Port;
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXSetTurnout) == 9);
+
+// LAN_X_SET_EXT_ACCESSORY
+struct LanXSetExtAccessory : LanX
+{
+  uint8_t addressMSB;
+  uint8_t addressLSB;
+  uint8_t db2;
+  uint8_t db3 = 0x00; // must be 0x00
+  uint8_t checksum;
+
+  LanXSetExtAccessory(uint16_t address)
+    : LanX(sizeof(LanXSetExtAccessory), LAN_X_SET_EXT_ACCESSORY)
+    , addressMSB(high8(address + 3))
+    , addressLSB(low8(address + 3))
+  {
+  }
+
+  LanXSetExtAccessory(uint16_t address, uint8_t aspect)
+    : LanXSetExtAccessory(address)
+  {
+    db2 = aspect;
+    updateChecksum();
+  }
+
+  LanXSetExtAccessory(uint16_t address, bool dir, uint8_t powerOnTime)
+    : LanXSetExtAccessory(address)
+  {
+    assert(powerOnTime <= 127);
+    db2 = powerOnTime & 0x7F;
+    if(dir)
+    {
+      db2 |= 0x80;
+    }
+    updateChecksum();
+  }
+
+  inline uint16_t rawAddress() const
+  {
+    return to16(addressLSB, addressMSB);
+  }
+
+  inline uint16_t address() const
+  {
+    return rawAddress() + 3;
+  }
+};
+static_assert(sizeof(LanXSetExtAccessory) == 10);
 
 // LAN_X_SET_STOP
 struct LanXSetStop : LanX
@@ -1078,6 +1131,17 @@ static_assert(sizeof(LanXBCTrackShortCircuit) == 7);
 // LAN_X_CV_NACK
 
 // LAN_X_UNKNOWN_COMMAND
+struct LanXUnknownCommand : LanX
+{
+  uint8_t db0 = LAN_X_UNKNOWN_COMMAND;
+  uint8_t checksum = xheader ^ db0;
+
+  LanXUnknownCommand() :
+      LanX(sizeof(LanXUnknownCommand), LAN_X_BC)
+  {
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanXUnknownCommand) == 7);
 
 // LAN_X_STATUS_CHANGED
 struct LanXStatusChanged : LanX

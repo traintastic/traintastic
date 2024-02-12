@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,10 +37,10 @@ SwitchManager::SwitchManager(Kernel& kernel)
   send(queryObjects(m_id, Switch::options));
 }
 
-void SwitchManager::setSwitch(SwitchProtocol protocol, uint16_t address)
+void SwitchManager::setSwitch(SwitchProtocol protocol, uint16_t address, bool port)
 {
-  if(protocol == SwitchProtocol::DCC || protocol == SwitchProtocol::Motorola)
-    send(set(m_id, Option::switch_, std::string((protocol == SwitchProtocol::Motorola) ? "MOT" : "DCC").append(std::to_string(1 + ((address - 1) >> 1))).append(((address - 1) & 1) ? "g" : "r")));
+  if(protocol == SwitchProtocol::DCC || protocol == SwitchProtocol::Motorola) /*[[likely]]*/
+    send(set(m_id, Option::switch_, std::string((protocol == SwitchProtocol::Motorola) ? "MOT" : "DCC").append(std::to_string(address)).append(port ? "g" : "r")));
 }
 
 bool SwitchManager::receiveReply(const Reply& reply)

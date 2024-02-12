@@ -1,9 +1,9 @@
 /**
- * shared/src/traintastic/enum/outputaction.hpp
+ * server/src/hardware/output/outputvalue.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,26 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_OUTPUTACTION_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_OUTPUTACTION_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_OUTPUTVALUE_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_OUTPUTVALUE_HPP
 
+#include <variant>
 #include <cstdint>
-#include "enum.hpp"
+#include <traintastic/enum/tristate.hpp>
+#include <traintastic/enum/outputpairvalue.hpp>
 
-enum class OutputAction : uint8_t
-{
-  None = 0,
-  Off = 1,
-  On = 2,
-  Pulse = 3,
-};
-
-TRAINTASTIC_ENUM(OutputAction, "output_action", 4,
-{
-  {OutputAction::None, "none"},
-  {OutputAction::Off, "off"},
-  {OutputAction::On, "on"},
-  {OutputAction::Pulse, "pulse"},
-});
+using OutputValue = std::variant<TriState, OutputPairValue, int16_t>;
 
 #endif

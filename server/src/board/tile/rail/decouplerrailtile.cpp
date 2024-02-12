@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 #include "../../../core/objectproperty.tpp"
 #include "../../../world/world.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../hardware/output/outputcontroller.hpp"
 #include "../../../utils/displayname.hpp"
 
 CREATE_IMPL(DecouplerRailTile)

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,9 @@
 #include "../../src/enum/directioncontrolstate.hpp"
 #include <traintastic/enum/identificationeventtype.hpp>
 #include <traintastic/enum/interfacestate.hpp>
+#include <traintastic/enum/outputchannel.hpp>
+#include <traintastic/enum/outputtype.hpp>
+#include <traintastic/enum/outputpairvalue.hpp>
 #include "../../src/enum/tristate.hpp"
 #include "../../src/enum/turnoutposition.hpp"
 #include "../../src/enum/signalaspect.hpp"
@@ -44,6 +47,9 @@
   DirectionControlState, \
   IdentificationEventType, \
   InterfaceState, \
+  OutputChannel, \
+  OutputType, \
+  OutputPairValue, \
   TriState, \
   TurnoutPosition, \
   SignalAspect, \

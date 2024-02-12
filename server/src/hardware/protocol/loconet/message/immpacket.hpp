@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,7 +56,7 @@ struct ImmPacket : Message
   uint8_t im[5];
   uint8_t checksum;
 
-  ImmPacket(tcb::span<uint8_t> dccPacket, uint8_t repeat)
+  ImmPacket(tcb::span<const uint8_t> dccPacket, uint8_t repeat)
     : Message(OPC_IMM_PACKET)
     , len{11}
     , header{0x7F}

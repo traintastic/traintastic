@@ -1794,5 +1794,85 @@
   {
     "term": "example.dccextsignalloconet:description",
     "definition": "This examples shows how a signal can be controlled with DCCext commands (via LocoNet) as demonstration how custom control can be implemented. Traintastic will offcourse support DCCext natively in the future."
+  },
+  {
+    "term": "object.singleoutput:title",
+    "definition": "Single output"
+  },
+  {
+    "term": "object.singleoutput:description",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput:title",
+    "definition": "Pair output"
+  },
+  {
+    "term": "object.pairoutput:description",
+    "definition": ""
+  },
+  {
+    "term": "object.output.type:description",
+    "definition": "{ref:enum.output_type}."
+  },
+  {
+    "term": "object.pairoutput.value:description",
+    "definition": "Current output value, a {ref:enum.output_type} value."
+  },
+  {
+    "term": "object.pairoutput.set_value:description",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput.set_value.parameter.value:description",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput.set_value:return_values",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput.on_value_changed:description",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput.on_value_changed.parameter.value:description",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput.on_value_changed.parameter.output:description",
+    "definition": ""
+  },
+  {
+    "term": "object.aspectoutput:title",
+    "definition": "Aspect output"
+  },
+  {
+    "term": "object.aspectoutput:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.output_type:title",
+    "definition": "Output type"
+  },
+  {
+    "term": "enum.output_channel:title",
+    "definition": "Output channel"
+  },
+  {
+    "term": "object.interface.get_output:description",
+    "definition": "Get an output object."
+  },
+  {
+    "term": "object.interface.get_output.parameter.channel:description",
+    "definition": "Output channel, a {ref:enum.output_channel} value."
+  },
+  {
+    "term": "object.interface.get_output.parameter.address:description",
+    "definition": "Output address, valid range depends on `channel`."
+  },
+  {
+    "term": "object.interface.get_output:return_values",
+    "definition": "{ref:object.singleoutput}, {ref:object.pairoutput} or {ref:object.aspectoutput} object depending on `channel` or `nil` if `channel`/`address` combination is invalid."
   }
 ]

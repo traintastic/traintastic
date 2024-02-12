@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -232,11 +232,11 @@ void Kernel::receive(const Message& message)
             {
               if(state == OutputState::Invalid)
               {
-                if(m_outputController->outputMap().count({OutputController::defaultOutputChannel, address}) != 0)
+                if(m_outputController->outputMap().count({OutputChannel::Output, address}) != 0)
                   Log::log(logId, LogMessage::W2005_OUTPUT_ADDRESS_X_IS_INVALID, address);
               }
               else
-                m_outputController->updateOutputValue(OutputController::defaultOutputChannel, address, toTriState(state));
+                m_outputController->updateOutputValue(OutputChannel::Output, address, toTriState(state));
             });
         }
       }

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -63,6 +63,11 @@ QVariant InterfaceItem::getAttribute(AttributeName name, const QVariant& default
 bool InterfaceItem::getAttributeBool(AttributeName name, bool default_) const
 {
   return m_attributes.value(name, default_).toBool();
+}
+
+int InterfaceItem::getAttributeInt(AttributeName name, int default_) const
+{
+  return m_attributes.value(name, default_).toInt();
 }
 
 qint64 InterfaceItem::getAttributeInt64(AttributeName name, qint64 default_) const

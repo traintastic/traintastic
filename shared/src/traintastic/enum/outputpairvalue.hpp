@@ -1,9 +1,9 @@
 /**
- * server/src/enum/outputaction.hpp
+ * shared/src/traintastic/enum/outputpairvalue.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,17 +20,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_ENUM_OUTPUTACTION_HPP
-#define TRAINTASTIC_SERVER_ENUM_OUTPUTACTION_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_OUTPUTPAIRVALUE_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_OUTPUTPAIRVALUE_HPP
 
-#include <traintastic/enum/outputaction.hpp>
+#include <cstdint>
 #include <array>
+#include "enum.hpp"
 
-inline constexpr std::array<OutputAction, 4> OutputActionValues{{
-  OutputAction::None,
-  OutputAction::Off,
-  OutputAction::On,
-  OutputAction::Pulse,
+enum class OutputPairValue : uint8_t
+{
+  Undefined = 0,
+  First = 1,
+  Second = 2,
+};
+
+TRAINTASTIC_ENUM(OutputPairValue, "output_pair_value", 3,
+{
+  {OutputPairValue::Undefined, "undefined"},
+  {OutputPairValue::First, "first"},
+  {OutputPairValue::Second, "second"},
+});
+
+inline constexpr std::array<OutputPairValue, 3> outputPairValueValues{{
+  OutputPairValue::Undefined,
+  OutputPairValue::First,
+  OutputPairValue::Second,
 }};
 
 #endif

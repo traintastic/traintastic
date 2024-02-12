@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,12 +36,13 @@
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
+#include "../../utils/makearray.hpp"
 #include "../../world/world.hpp"
 #include "../../world/worldloader.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Protocol | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
-constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Channel | OutputListColumn::Address;
+constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 
 CREATE_IMPL(ECoSInterface)
 
@@ -110,43 +111,22 @@ std::pair<uint32_t, uint32_t> ECoSInterface::inputAddressMinMax(uint32_t channel
 
 void ECoSInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
-  if(m_kernel && inRange(address, outputAddressMinMax(channel)))
+  if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(channel, address, action);
 }
 
-const std::vector<uint32_t> *ECoSInterface::outputChannels() const
+tcb::span<const OutputChannel> ECoSInterface::outputChannels() const
 {
-  return &ECoS::Kernel::outputChannels;
+  static const auto values = makeArray(OutputChannel::AccessoryDCC, OutputChannel::AccessoryMotorola);
+  return values;
 }
 
-const std::vector<std::string_view> *ECoSInterface::outputChannelNames() const
-{
-  return &ECoS::Kernel::outputChannelNames;
-}
-
-std::pair<uint32_t, uint32_t> ECoSInterface::outputAddressMinMax(uint32_t channel) const
-{
-  using namespace ECoS;
-
-  switch(channel)
-  {
-    case Kernel::OutputChannel::dcc:
-      return {Kernel::outputDCCAddressMin, Kernel::outputDCCAddressMax};
-
-    case Kernel::OutputChannel::motorola:
-      return {Kernel::outputMotorolaAddressMin, Kernel::outputMotorolaAddressMax};
-  }
-
-  assert(false);
-  return {0, 0};
-}
-
-bool ECoSInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
+bool ECoSInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
 {
   return
     m_kernel &&
     inRange(address, outputAddressMinMax(channel)) &&
-    m_kernel->setOutput(channel, static_cast<uint16_t>(address), value);
+    m_kernel->setOutput(channel, static_cast<uint16_t>(address), std::get<OutputPairValue>(value));
 }
 
 bool ECoSInterface::setOnline(bool& value, bool simulation)

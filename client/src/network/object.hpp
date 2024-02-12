@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,6 +36,7 @@ class Connection;
 class Message;
 class AbstractProperty;
 class AbstractVectorProperty;
+class ObjectVectorProperty;
 class UnitProperty;
 class Method;
 class Event;
@@ -106,6 +107,8 @@ class Object : public QObject
     inline bool hasVectorProperty(const QString& name) const { return getVectorProperty(name); }
     const AbstractVectorProperty* getVectorProperty(const QString& name) const;
     AbstractVectorProperty* getVectorProperty(const QString& name);
+
+    ObjectVectorProperty* getObjectVectorProperty(const QString& name);
 
     const UnitProperty* getUnitProperty(const QString& name) const;
     UnitProperty* getUnitProperty(const QString& name);

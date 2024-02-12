@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -74,6 +74,11 @@ struct Attributes
     item.addAttribute(AttributeName::DisplayName, value);
   }
 
+  static inline void setDisplayName(InterfaceItem& item, std::string_view value)
+  {
+    item.setAttribute(AttributeName::DisplayName, value);
+  }
+
   static inline void addEnabled(InterfaceItem& item, bool value)
   {
     item.addAttribute(AttributeName::Enabled, value);
@@ -118,6 +123,14 @@ struct Attributes
   }
 
   template<typename T>
+  static inline void addMinMax(VectorProperty<T>& property, T min, T max)
+  {
+    static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
+    property.addAttribute(AttributeName::Min, min);
+    property.addAttribute(AttributeName::Max, max);
+  }
+
+  template<typename T>
   static inline void setMin(Property<T>& property, T value)
   {
     static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
@@ -146,11 +159,35 @@ struct Attributes
   }
 
   template<typename T>
+  static inline void getMinMax(const Property<T>& property, T& min, T& max)
+  {
+    static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
+    min = property.template getAttribute<T>(AttributeName::Min);
+    max = property.template getAttribute<T>(AttributeName::Max);
+  }
+
+  template<typename T>
   static inline void setMinMax(Property<T>& property, T min, T max)
   {
     static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
     property.setAttribute(AttributeName::Min, min);
     property.setAttribute(AttributeName::Max, max);
+  }
+
+  template<typename T>
+  static inline void setMinMax(VectorProperty<T>& property, T min, T max)
+  {
+    static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
+    property.setAttribute(AttributeName::Min, min);
+    property.setAttribute(AttributeName::Max, max);
+  }
+
+  template<typename T>
+  static inline std::pair<T, T> getMinMax(const Property<T>& property)
+  {
+    std::pair<T, T> range;
+    getMinMax(property, range.first, range.second);
+    return range;
   }
 
   template<typename T>
@@ -165,6 +202,12 @@ struct Attributes
     static_assert(std::is_floating_point_v<T>);
     property.setAttribute(AttributeName::Min, convertUnit(min, unit, property.unit()));
     property.setAttribute(AttributeName::Max, convertUnit(max, unit, property.unit()));
+  }
+
+  template<typename T>
+  static inline void setMinMax(VectorProperty<T>& property, std::pair<T, T> range)
+  {
+    setMinMax(property, range.first, range.second);
   }
 
   static inline void addVisible(InterfaceItem& item, bool value)
@@ -198,6 +241,12 @@ struct Attributes
 
   template<class R, class T, size_t N>
   static inline void addValues(Method<R(T)>& method, const std::array<T, N>& values)
+  {
+    method.addAttribute(AttributeName::Values, values);
+  }
+
+  template<class R, class T>
+  static inline void addValues(Method<R(T)>& method, tcb::span<const T> values)
   {
     method.addAttribute(AttributeName::Values, values);
   }

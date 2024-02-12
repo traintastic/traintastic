@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "turnout3wayrailtile.hpp"
 #include "../../../../core/objectproperty.tpp"
 #include "../../../../core/attributes.hpp"
+#include "../../../../hardware/output/outputcontroller.hpp"
 
 static const std::array<TurnoutPosition, 4> positionValues = {TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right, TurnoutPosition::Unknown};
 static const std::array<TurnoutPosition, 3> setPositionValues = {TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right};

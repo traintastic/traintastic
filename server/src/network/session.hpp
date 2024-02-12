@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -84,12 +84,7 @@ class Session : public std::enable_shared_from_this<Session>
     void inputMonitorInputIdChanged(InputMonitor& inputMonitor, uint32_t address, std::string_view id);
     void inputMonitorInputValueChanged(InputMonitor& inputMonitor, uint32_t address, TriState value);
 
-    void outputKeyboardOutputIdChanged(OutputKeyboard& outputKeyboard, uint32_t address, std::string_view id);
-    void outputKeyboardOutputValueChanged(OutputKeyboard& outputKeyboard, uint32_t address, TriState value);
-
     void boardTileDataChanged(Board& board, const TileLocation& location, const TileData& data);
-
-    void outputMapOutputsChanged(OutputMap& outputMap);
 
   public:
     Session(const std::shared_ptr<Connection>& connection);

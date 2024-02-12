@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,17 +22,26 @@
 
 #include "outputmapwidget.hpp"
 #include <QVBoxLayout>
+#include <QFormLayout>
 #include <QToolBar>
 #include <QTableWidget>
 #include <QHeaderView>
 #include <QPushButton>
 #include <traintastic/locale/locale.hpp>
+#include "interfaceitemnamelabel.hpp"
 #include "propertycheckbox.hpp"
+#include "propertycombobox.hpp"
+#include "propertyspinbox.hpp"
+#include "propertyobjectedit.hpp"
+#include "propertyaddresses.hpp"
 #include "outputmapoutputactionwidget.hpp"
 #include "../dialog/objectselectlistdialog.hpp"
 #include "../network/callmethod.hpp"
 #include "../network/method.hpp"
 #include "../network/property.hpp"
+#include "../network/objectproperty.hpp"
+#include "../network/vectorproperty.hpp"
+#include "../network/objectvectorproperty.hpp"
 #include "../utils/enum.hpp"
 #include "../theme/theme.hpp"
 #include "../misc/methodaction.hpp"
@@ -42,71 +51,58 @@ constexpr int columnUse = 0;
 constexpr int columnKey = 1;
 constexpr int columnOutputFirst = 2;
 
-OutputMapWidget::OutputMapWidget(std::shared_ptr<OutputMap> object, QWidget* parent) :
-  QWidget(parent),
-  m_object{std::move(object)},
-  m_table{new QTableWidget(this)}
+OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
+  : QWidget(parent)
+  , m_object{std::move(object)}
+  , m_addresses{m_object->getVectorProperty("addresses")}
+  , m_items{m_object->getObjectVectorProperty("items")}
+  , m_table{new QTableWidget(this)}
 {
   QVBoxLayout* l = new QVBoxLayout();
 
-  QToolBar* toolbar = new QToolBar(this);
-
-  if((m_methodAdd = m_object->getMethod("add_output")))
-    toolbar->addAction(new MethodAction(Theme::getIcon("add"), *m_methodAdd,
-      [this]()
-      {
-        std::make_unique<ObjectSelectListDialog>(*m_methodAdd, this)->exec();
-      }, toolbar));
-
-  if((m_methodRemove = m_object->getMethod("remove_output")))
+  QFormLayout* form = new QFormLayout();
+  if(auto* interface = dynamic_cast<ObjectProperty*>(m_object->getProperty("interface")))
   {
-    m_actionRemove = new MethodAction(Theme::getIcon("remove"), *m_methodRemove,
-      [this]()
-      {
-        const int index = m_table->currentColumn() - columnOutputFirst;
-        if(index >= 0)
-          callMethod(*m_methodRemove, nullptr, m_object->outputs()[index]);
-      }, toolbar);
-    m_actionRemove->setForceDisabled(true);
-    toolbar->addAction(m_actionRemove);
+    form->addRow(new InterfaceItemNameLabel(*interface, this), new PropertyObjectEdit(*interface, this));
   }
-
-  l->addWidget(toolbar);
+  if(auto* channel = dynamic_cast<Property*>(m_object->getProperty("channel")))
+  {
+    form->addRow(new InterfaceItemNameLabel(*channel, this), new PropertyComboBox(*channel, this));
+  }
+  if(m_addresses)
+  {
+    form->addRow(new InterfaceItemNameLabel(*m_addresses, this), new PropertyAddresses(*m_addresses, m_object->getMethod("add_address"), m_object->getMethod("remove_address"), this));
+    connect(m_addresses, &AbstractVectorProperty::valueChanged, this, &OutputMapWidget::updateTableOutputColumns);
+  }
+  l->addLayout(form);
 
   m_table->setColumnCount(columnCountNonOutput);
   m_table->setRowCount(0);
   m_table->setHorizontalHeaderLabels({Locale::tr("output_map:use"), Locale::tr(m_object->classId() + ":key")});
   m_table->verticalHeader()->setVisible(false);
   m_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  m_table->setSelectionMode(QAbstractItemView::SingleSelection);
-  m_table->setSelectionBehavior(QAbstractItemView::SelectColumns);
-  connect(m_table, &QTableWidget::itemSelectionChanged, this,
-    [this]()
-    {
-      m_actionRemove->setForceDisabled(m_table->currentColumn() < columnOutputFirst);
-    });
 
   l->addWidget(m_table);
 
   setLayout(l);
 
-  connect(m_object.get(), &OutputMap::itemsChanged, this, &OutputMapWidget::updateItems);
-  if(m_object->items().empty())
-    m_object->getItems();
-  else
-    updateItems();
-
-  connect(m_object.get(), &OutputMap::outputsChanged, this, &OutputMapWidget::updateOutputs);
-  if(m_object->outputs().empty())
-    m_object->getOutputs();
-  else
-    updateOutputs();
+  if(m_items) /*[[likely]]*/
+  {
+    m_getItemsRequestId = m_items->getObjects(
+      [this](const std::vector<ObjectPtr>& objects, std::optional<const Error> ec)
+      {
+        if(!ec)
+        {
+          updateItems(objects);
+        }
+      });
+  }
 }
 
-void OutputMapWidget::updateItems()
+void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
 {
-  const auto& items = m_object->items();
   m_table->setRowCount(items.size());
+  m_actions.resize(items.size());
   for(size_t i = 0; i < items.size(); i++)
   {
     if(auto* p = dynamic_cast<Property*>(items[i]->getProperty("use")))
@@ -121,26 +117,64 @@ void OutputMapWidget::updateItems()
 
     if(auto* p = items[i]->getProperty("key"))
       m_table->setItem(i, columnKey, new QTableWidgetItem(translateEnum(*p)));
+
+    if(auto* outputActions = dynamic_cast<ObjectVectorProperty*>(items[i]->getVectorProperty("output_actions")))
+    {
+      updateTableOutputActions(*outputActions, i);
+
+      connect(outputActions, &AbstractVectorProperty::valueChanged, this,
+        [this, row=i]()
+        {
+          updateTableOutputActions(*dynamic_cast<ObjectVectorProperty*>(sender()), row);
+        });
+    }
+  }
+
+  updateTableOutputColumns();
+}
+
+void OutputMapWidget::updateTableOutputColumns()
+{
+  if(!m_addresses) /*[[unlikely]]*/
+  {
+    return;
+  }
+
+  const auto size = m_addresses->size();
+
+  m_table->setColumnCount(columnCountNonOutput + size);
+  for(int i = 0; i < size; i++)
+  {
+    const int column = columnCountNonOutput + i;
+    m_table->setHorizontalHeaderItem(column, new QTableWidgetItem(QString("#%1").arg(m_addresses->getInt(i))));
   }
 }
 
-void OutputMapWidget::updateOutputs()
+void OutputMapWidget::updateTableOutputActions(ObjectVectorProperty& property, int row)
 {
-  const auto& items = m_object->items();
-  const auto& outputs = m_object->outputs();
-  m_table->setColumnCount(columnCountNonOutput + outputs.size());
-
-  int column = columnOutputFirst;
-  for(auto& output : outputs)
+  if(!property.empty())
   {
-    if(auto* p = output->getProperty("name"))
-      m_table->setHorizontalHeaderItem(column, new QTableWidgetItem(p->toString()));
-
-    for(int row = 0; row < m_table->rowCount(); row++)
-    {
-      m_table->setCellWidget(row, column, new OutputMapOutputActionWidget(items[row], output, this));
-    }
-
-    column++;
+    m_dummy = property.getObjects(
+      [this, row](const std::vector<ObjectPtr>& objects, std::optional<const Error> /*ec*/)
+      {
+        auto& rowActions = m_actions[row];
+        int column = columnCountNonOutput;
+        for(auto& object : objects)
+        {
+          if(column >= static_cast<int>(rowActions.size()) || object.get() != rowActions[column].get())
+          {
+            if(auto* action = dynamic_cast<Property*>(object->getProperty("action")))
+            {
+              m_table->setCellWidget(row, column, new PropertyComboBox(*action, this));
+            }
+            else if(auto* aspect = dynamic_cast<Property*>(object->getProperty("aspect")))
+            {
+              m_table->setCellWidget(row, column, new PropertySpinBox(*aspect, this));
+            }
+          }
+          column++;
+        }
+        rowActions = objects;
+      });
   }
 }

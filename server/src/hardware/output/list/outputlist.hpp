@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,16 +35,12 @@ class OutputList : public ObjectList<Output>
   CLASS_ID("list.output")
 
   protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
     bool isListedProperty(std::string_view name) final;
 
   public:
     const OutputListColumn columns;
 
-    Method<std::shared_ptr<Output>()> create;
-    Method<void(const std::shared_ptr<Output>&)> delete_;
-    Method<std::shared_ptr<OutputKeyboard>()> outputKeyboard;
-    Method<std::shared_ptr<OutputKeyboard>(uint32_t)> outputKeyboardChannel;
+    Method<std::shared_ptr<OutputKeyboard>(OutputChannel)> outputKeyboard;
 
     OutputList(Object& _parent, std::string_view parentPropertyName, OutputListColumn _columns);
 

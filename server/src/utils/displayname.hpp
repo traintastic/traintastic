@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,6 +39,7 @@ namespace DisplayName
   namespace Hardware
   {
     constexpr std::string_view address = "hardware:address";
+    constexpr std::string_view addresses = "hardware:addresses";
     constexpr std::string_view channel = "hardware:channel";
     constexpr std::string_view commandStation = "hardware:command_station";
     constexpr std::string_view dccplusplus = "hardware:dccplusplus";

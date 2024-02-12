@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -369,108 +369,6 @@ TEMPLATE_TEST_CASE("Create world, interface and input => destroy input", "[objec
   REQUIRE(worldWeak.lock()->interfaces->length == 1);
   REQUIRE(worldWeak.lock()->inputs->length == 0);
   REQUIRE(interfaceWeak.lock()->inputs->length == 0);
-
-  world.reset();
-  REQUIRE(interfaceWeak.expired());
-  REQUIRE(worldWeak.expired());
-}
-#endif
-
-TEST_CASE("Create world and output => destroy world", "[object-create-destroy]")
-{
-  auto world = World::create();
-  std::weak_ptr<World> worldWeak = world;
-  REQUIRE_FALSE(worldWeak.expired());
-
-  std::weak_ptr<Output> outputWeak = world->outputs->create();
-  REQUIRE_FALSE(outputWeak.expired());
-  REQUIRE(outputWeak.lock()->getClassId() == Output::classId);
-
-  world.reset();
-  REQUIRE(outputWeak.expired());
-  REQUIRE(worldWeak.expired());
-}
-
-TEST_CASE("Create world and output => destroy output", "[object-create-destroy]")
-{
-  auto world = World::create();
-  std::weak_ptr<World> worldWeak = world;
-  REQUIRE_FALSE(worldWeak.expired());
-  REQUIRE(worldWeak.lock()->outputs->length == 0);
-
-  std::weak_ptr<Output> outputWeak = world->outputs->create();
-  REQUIRE_FALSE(outputWeak.expired());
-  REQUIRE(worldWeak.lock()->outputs->length == 1);
-
-  world->outputs->delete_(outputWeak.lock());
-  REQUIRE(outputWeak.expired());
-  REQUIRE(worldWeak.lock()->outputs->length == 0);
-
-  world.reset();
-  REQUIRE(worldWeak.expired());
-}
-
-#ifndef __aarch64__
-TEMPLATE_TEST_CASE("Create world, interface and output => destroy interface", "[object-create-destroy]", INTERFACES_OUTPUT)
-{
-  auto world = World::create();
-  std::weak_ptr<World> worldWeak = world;
-  REQUIRE_FALSE(worldWeak.expired());
-  REQUIRE(worldWeak.lock()->interfaces->length == 0);
-  REQUIRE(worldWeak.lock()->outputs->length == 0);
-
-  std::weak_ptr<TestType> interfaceWeak = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
-  REQUIRE_FALSE(interfaceWeak.expired());
-  REQUIRE(worldWeak.lock()->interfaces->length == 1);
-  REQUIRE(worldWeak.lock()->outputs->length == 0);
-  REQUIRE(interfaceWeak.lock()->outputs->length == 0);
-
-  std::weak_ptr<Output> outputWeak = interfaceWeak.lock()->outputs->create();
-  REQUIRE_FALSE(outputWeak.expired());
-  REQUIRE(outputWeak.lock()->interface.value() == std::dynamic_pointer_cast<OutputController>(interfaceWeak.lock()));
-  REQUIRE(worldWeak.lock()->interfaces->length == 1);
-  REQUIRE(worldWeak.lock()->outputs->length == 1);
-  REQUIRE(interfaceWeak.lock()->outputs->length == 1);
-
-  world->interfaces->delete_(interfaceWeak.lock());
-  REQUIRE(interfaceWeak.expired());
-  REQUIRE_FALSE(outputWeak.expired());
-  REQUIRE_FALSE(outputWeak.lock()->interface.value().operator bool());
-  REQUIRE(worldWeak.lock()->interfaces->length == 0);
-  REQUIRE(worldWeak.lock()->outputs->length == 1);
-
-  world.reset();
-  REQUIRE(outputWeak.expired());
-  REQUIRE(worldWeak.expired());
-}
-
-TEMPLATE_TEST_CASE("Create world, interface and output => destroy output", "[object-create-destroy]", INTERFACES_OUTPUT)
-{
-  auto world = World::create();
-  std::weak_ptr<World> worldWeak = world;
-  REQUIRE_FALSE(worldWeak.expired());
-  REQUIRE(worldWeak.lock()->interfaces->length == 0);
-  REQUIRE(worldWeak.lock()->outputs->length == 0);
-
-  std::weak_ptr<TestType> interfaceWeak = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
-  REQUIRE_FALSE(interfaceWeak.expired());
-  REQUIRE(worldWeak.lock()->interfaces->length == 1);
-  REQUIRE(worldWeak.lock()->outputs->length == 0);
-  REQUIRE(interfaceWeak.lock()->outputs->length == 0);
-
-  std::weak_ptr<Output> outputWeak = interfaceWeak.lock()->outputs->create();
-  REQUIRE_FALSE(outputWeak.expired());
-  REQUIRE(outputWeak.lock()->interface.value() == std::dynamic_pointer_cast<OutputController>(interfaceWeak.lock()));
-  REQUIRE(worldWeak.lock()->interfaces->length == 1);
-  REQUIRE(worldWeak.lock()->outputs->length == 1);
-  REQUIRE(interfaceWeak.lock()->outputs->length == 1);
-
-  world->outputs->delete_(outputWeak.lock());
-  REQUIRE_FALSE(interfaceWeak.expired());
-  REQUIRE(outputWeak.expired());
-  REQUIRE(worldWeak.lock()->interfaces->length == 1);
-  REQUIRE(worldWeak.lock()->outputs->length == 0);
-  REQUIRE(interfaceWeak.lock()->outputs->length == 0);
 
   world.reset();
   REQUIRE(interfaceWeak.expired());

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -343,32 +343,33 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   }
 }
 
-bool Kernel::setOutput(uint32_t channel, uint16_t address, bool value)
+bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputPairValue value)
 {
-  if(value)
-  {
-    switch(channel)
-    {
-      case OutputChannel::dcc:
-        m_ioContext.post(
-          [this, address]()
-          {
-            switchManager().setSwitch(SwitchProtocol::DCC, address);
-          });
-        return true;
+  auto switchProtocol = SwitchProtocol::Unknown;
 
-      case OutputChannel::motorola:
-        m_ioContext.post(
-          [this, address]()
-          {
-            switchManager().setSwitch(SwitchProtocol::Motorola, address);
-          });
-        return true;
-    }
-    assert(false);
+  switch(channel)
+  {
+    case OutputChannel::AccessoryDCC:
+      switchProtocol = SwitchProtocol::DCC;
+      break;
+
+    case OutputChannel::AccessoryMotorola:
+      switchProtocol = SwitchProtocol::Motorola;
+      break;
+
+    default: /*[[unlikely]]*/
+      assert(false);
+      return false;
   }
 
-  return false;
+  assert(switchProtocol != SwitchProtocol::Unknown);
+
+  m_ioContext.post(
+    [this, switchProtocol, address, value]()
+    {
+      switchManager().setSwitch(switchProtocol, address, value == OutputPairValue::Second);
+    });
+  return true;
 }
 
 void Kernel::simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action)
@@ -455,8 +456,8 @@ void Kernel::switchManagerSwitched(SwitchProtocol protocol, uint16_t address)
       EventLoop::call(
         [this, address]()
         {
-          m_outputController->updateOutputValue(OutputChannel::dcc, address, TriState::True);
-          m_outputController->updateOutputValue(OutputChannel::dcc, (address & 1) ? (address + 1) : (address - 1), TriState::False);
+          m_outputController->updateOutputValue(OutputChannel::AccessoryDCC, address, TriState::True);
+          m_outputController->updateOutputValue(OutputChannel::AccessoryDCC, (address & 1) ? (address + 1) : (address - 1), TriState::False);
         });
       break;
 
@@ -464,8 +465,8 @@ void Kernel::switchManagerSwitched(SwitchProtocol protocol, uint16_t address)
       EventLoop::call(
         [this, address]()
         {
-          m_outputController->updateOutputValue(OutputChannel::motorola, address, TriState::True);
-          m_outputController->updateOutputValue(OutputChannel::motorola, (address & 1) ? (address + 1) : (address - 1), TriState::False);
+          m_outputController->updateOutputValue(OutputChannel::AccessoryMotorola, address, TriState::True);
+          m_outputController->updateOutputValue(OutputChannel::AccessoryMotorola, (address & 1) ? (address + 1) : (address - 1), TriState::False);
         });
       break;
 

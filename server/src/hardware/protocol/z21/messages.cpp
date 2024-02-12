@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -95,14 +95,20 @@ std::string toString(const Message& message, bool raw)
         {
           const auto& setTurnout = static_cast<const LanXSetTurnout&>(message);
           s = "LAN_X_SET_TURNOUT";
-          s.append(" linear_address=").append(std::to_string(setTurnout.linearAddress()));
           s.append(" address=").append(std::to_string(setTurnout.address()));
-          s.append(" port=").append(std::to_string(setTurnout.port()));
+          s.append(" port=").append(setTurnout.port() ? "1" : "2");
           s.append(" activate=").append(setTurnout.activate() ? "yes" : "no");
           s.append(" queue=").append(setTurnout.queue() ? "yes" : "no");
           break;
         }
-
+        case LAN_X_SET_EXT_ACCESSORY:
+        {
+          const auto& setExtAccessory = static_cast<const LanXSetExtAccessory&>(message);
+          s = "LAN_X_SET_EXT_ACCESSORY";
+          s.append(" address=").append(std::to_string(setExtAccessory.address()));
+          s.append(" db2=").append(std::to_string(setExtAccessory.db2));
+          break;
+        }
         case LAN_X_BC:
           if(message == LanXBCTrackPowerOff())
             s = "LAN_X_BC_TRACK_POWER_OFF";
@@ -110,6 +116,8 @@ std::string toString(const Message& message, bool raw)
             s = "LAN_X_BC_TRACK_POWER_ON";
           else if(message == LanXBCTrackShortCircuit())
             s = "LAN_X_BC_TRACK_SHORT_CIRCUIT";
+          else if(message == LanXUnknownCommand())
+            s = "LAN_X_UNKNOWN_COMMAND";
           else
             raw = true;
           break;
@@ -308,7 +316,7 @@ void LanX::updateChecksum(uint8_t len)
 #endif
   *checksum = val;
 #ifdef __MINGW32__
-  #pragma GCC diagnostic pop  
+  #pragma GCC diagnostic pop
 #endif
 }
 

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -966,10 +966,7 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
       case Message::Command::ObjectEventFired:
       case Message::Command::InputMonitorInputIdChanged:
       case Message::Command::InputMonitorInputValueChanged:
-      case Message::Command::OutputKeyboardOutputIdChanged:
-      case Message::Command::OutputKeyboardOutputValueChanged:
       case Message::Command::BoardTileDataChanged:
-      case Message::Command::OutputMapOutputsChanged:
       {
         const auto handle = message->read<Handle>();
         if(auto object = m_objects.value(handle).lock())

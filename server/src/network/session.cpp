@@ -571,28 +571,31 @@ bool Session::processMessage(const Message& message)
       auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(m_handles.getItem(message.read<Handle>()));
       if(outputKeyboard)
       {
+        const auto outputType = outputKeyboard->outputType.value();
         auto outputInfo = outputKeyboard->getOutputInfo();
         auto response = Message::newResponse(message.command(), message.requestId());
         response->write<uint32_t>(outputInfo.size());
         for(auto& info : outputInfo)
         {
           response->write(info.address);
-          response->write(info.id);
-          response->write(info.value);
+          response->write(info.used);
+          switch(outputType)
+          {
+            case OutputType::Single:
+              response->write(std::get<TriState>(info.value));
+              break;
+
+            case OutputType::Pair:
+              response->write(std::get<OutputPairValue>(info.value));
+              break;
+
+            case OutputType::Aspect: /*[[unlikely]]*/
+              assert(false);
+              break;
+          }
         }
         m_connection->sendMessage(std::move(response));
         return true;
-      }
-      break;
-    }
-    case Message::Command::OutputKeyboardSetOutputValue:
-    {
-      auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(m_handles.getItem(message.read<Handle>()));
-      if(outputKeyboard)
-      {
-        const uint32_t address = message.read<uint32_t>();
-        const bool value = message.read<bool>();
-        outputKeyboard->setOutputValue(address, value);
       }
       break;
     }
@@ -634,30 +637,6 @@ bool Session::processMessage(const Message& message)
       }
       m_connection->sendMessage(std::move(response));
       return true;
-    }
-    case Message::Command::OutputMapGetItems:
-    {
-      if(auto outputMap = std::dynamic_pointer_cast<OutputMap>(m_handles.getItem(message.read<Handle>())))
-      {
-        auto response = Message::newResponse(message.command(), message.requestId());
-        for(auto& item : outputMap->items())
-          writeObject(*response, item);
-        m_connection->sendMessage(std::move(response));
-        return true;
-      }
-      break;
-    }
-    case Message::Command::OutputMapGetOutputs:
-    {
-      if(auto outputMap = std::dynamic_pointer_cast<OutputMap>(m_handles.getItem(message.read<Handle>())))
-      {
-        auto response = Message::newResponse(message.command(), message.requestId());
-        for(const auto& item : outputMap->outputs())
-          writeObject(*response, item);
-        m_connection->sendMessage(std::move(response));
-        return true;
-      }
-      break;
     }
     case Message::Command::ServerLog:
       if(message.read<bool>())
@@ -741,18 +720,9 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
       m_objectSignals.emplace(handle, inputMonitor->inputIdChanged.connect(std::bind(&Session::inputMonitorInputIdChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
       m_objectSignals.emplace(handle, inputMonitor->inputValueChanged.connect(std::bind(&Session::inputMonitorInputValueChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
     }
-    else if(auto* outputKeyboard = dynamic_cast<OutputKeyboard*>(object.get()))
-    {
-      m_objectSignals.emplace(handle, outputKeyboard->outputIdChanged.connect(std::bind(&Session::outputKeyboardOutputIdChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-      m_objectSignals.emplace(handle, outputKeyboard->outputValueChanged.connect(std::bind(&Session::outputKeyboardOutputValueChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-    }
     else if(auto* board = dynamic_cast<Board*>(object.get()))
     {
       m_objectSignals.emplace(handle, board->tileDataChanged.connect(std::bind(&Session::boardTileDataChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-    }
-    else if(auto* outputMap = dynamic_cast<OutputMap*>(object.get()))
-    {
-      m_objectSignals.emplace(handle, outputMap->outputsChanged.connect(std::bind(&Session::outputMapOutputsChanged, this, std::placeholders::_1)));
     }
 
     bool hasPublicEvents = false;
@@ -1161,24 +1131,6 @@ void Session::inputMonitorInputValueChanged(InputMonitor& inputMonitor, const ui
   m_connection->sendMessage(std::move(event));
 }
 
-void Session::outputKeyboardOutputIdChanged(OutputKeyboard& outputKeyboard, const uint32_t address, std::string_view id)
-{
-  auto event = Message::newEvent(Message::Command::OutputKeyboardOutputIdChanged);
-  event->write(m_handles.getHandle(outputKeyboard.shared_from_this()));
-  event->write(address);
-  event->write(id);
-  m_connection->sendMessage(std::move(event));
-}
-
-void Session::outputKeyboardOutputValueChanged(OutputKeyboard& outputKeyboard, const uint32_t address, const TriState value)
-{
-  auto event = Message::newEvent(Message::Command::OutputKeyboardOutputValueChanged);
-  event->write(m_handles.getHandle(outputKeyboard.shared_from_this()));
-  event->write(address);
-  event->write(value);
-  m_connection->sendMessage(std::move(event));
-}
-
 void Session::boardTileDataChanged(Board& board, const TileLocation& location, const TileData& data)
 {
   auto event = Message::newEvent(Message::Command::BoardTileDataChanged);
@@ -1192,14 +1144,5 @@ void Session::boardTileDataChanged(Board& board, const TileLocation& location, c
     assert(tile);
     writeObject(*event, tile);
   }
-  m_connection->sendMessage(std::move(event));
-}
-
-void Session::outputMapOutputsChanged(OutputMap& outputMap)
-{
-  auto event = Message::newEvent(Message::Command::OutputMapOutputsChanged);
-  event->write(m_handles.getHandle(outputMap.shared_from_this()));
-  for(const auto& item : outputMap.outputs())
-    writeObject(*event, item);
   m_connection->sendMessage(std::move(event));
 }

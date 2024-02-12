@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -219,8 +219,6 @@ void WorldLoader::createObject(ObjectData& objectData)
   }
   else if(classId == Input::classId)
     objectData.object = Input::create(*m_world, id);
-  else if(classId == Output::classId)
-    objectData.object = Output::create(*m_world, id);
   else if(classId == Identification::classId)
     objectData.object = Identification::create(*m_world, id);
   else if(classId == Board::classId)

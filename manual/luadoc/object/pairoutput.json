@@ -1,0 +1,20 @@
+{
+  "value": {},
+  "set_value": {
+    "parameters": [
+      {
+        "name": "value"
+      }
+    ]
+  },
+  "on_value_changed": {
+    "parameters": [
+      {
+        "name": "value"
+      },
+      {
+        "name": "output"
+      }
+    ]
+  }
+}

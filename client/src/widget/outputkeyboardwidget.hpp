@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,10 +26,13 @@
 #include <QWidget>
 #include <memory>
 #include <array>
+#include <traintastic/enum/outputchannel.hpp>
 
 class OutputKeyboard;
 class LEDWidget;
 class AbstractProperty;
+class Method;
+class Event;
 
 class OutputKeyboardWidget : public QWidget
 {
@@ -38,8 +41,10 @@ class OutputKeyboardWidget : public QWidget
     static constexpr uint32_t rows = 8;
 
     std::shared_ptr<OutputKeyboard> m_object;
+    const OutputChannel m_channel;
     AbstractProperty* m_addressMin;
     AbstractProperty* m_addressMax;
+    Method* m_setOutputValue;
     std::array<LEDWidget*, columns * rows> m_leds;
     QAction* m_previousPage;
     QAction* m_nextPage;
@@ -52,6 +57,7 @@ class OutputKeyboardWidget : public QWidget
     void setGroupBy(uint32_t value);
 
     LEDWidget* getLED(uint32_t address);
+    std::pair<LEDWidget*, LEDWidget*> getLEDs(uint32_t address);
     void updateLEDs();
 
   protected:

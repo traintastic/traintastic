@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,9 +27,10 @@
 #include <array>
 #include <unordered_map>
 #include <boost/asio/steady_timer.hpp>
-#include <traintastic/enum/tristate.hpp>
+#include <traintastic/enum/outputchannel.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
+#include "../../output/outputvalue.hpp"
 
 class Decoder;
 enum class DecoderChangeFlags;
@@ -47,27 +48,6 @@ class Kernel : public ::KernelBase
   public:
     static constexpr uint32_t idMin = 0;
     static constexpr uint32_t idMax = 32767;
-    static constexpr uint16_t dccAccessoryAddressMin = 1;
-    static constexpr uint16_t dccAccessoryAddressMax = 2044;
-
-    struct OutputChannel
-    {
-      static constexpr uint32_t dccAccessory = 1;
-      static constexpr uint32_t turnout = 2;
-      static constexpr uint32_t output = 3;
-    };
-
-    inline static const std::vector<uint32_t> outputChannels = {
-      OutputChannel::dccAccessory,
-      OutputChannel::turnout,
-      OutputChannel::output,
-    };
-
-    inline static const std::vector<std::string_view> outputChannelNames = {
-      "$dccplusplus_channel:dcc_accessory$ <a>",
-      "$dccplusplus_channel:turnout$ <T>",
-      "$dccplusplus_channel:output$ <Z>",
-    };
 
   private:
     std::unique_ptr<IOHandler> m_ioHandler;
@@ -244,12 +224,12 @@ class Kernel : public ::KernelBase
 
     /**
      *
-     * @param[in] channel Output channel, see #OutputChannel
-     * @param[in] address Output address, #outputAddressMin..#outputAddressMax
-     * @param[in] value Output value: \c true is on, \c false is off.
+     * @param[in] channel Output channel
+     * @param[in] address Output address
+     * @param[in] value Output value
      * @return \c true if send successful, \c false otherwise.
      */
-    bool setOutput(uint32_t channel, uint16_t address, bool value);
+    bool setOutput(OutputChannel channel, uint16_t address, OutputValue value);
 
     /**
      * \brief Simulate input change
