@@ -24,6 +24,7 @@
 #include "outputcontroller.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/method.tpp"
+#include "../../core/objectproperty.tpp"
 #include "../../utils/inrange.hpp"
 
 AspectOutput::AspectOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, uint32_t address_)

@@ -24,6 +24,7 @@
 #include "outputcontroller.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/method.tpp"
+#include "../../core/objectproperty.tpp"
 
 SingleOutput::SingleOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, uint32_t address_)
   : Output(std::move(outputController), channel_, OutputType::Pair, address_)
