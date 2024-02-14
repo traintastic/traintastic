@@ -17,7 +17,7 @@
     },
     {
         "term": "board:resize_tile",
-        "definition": "\u00c4ndra storlek p\u00e5 brickan",
+        "definition": "Ändra storlek på brickan",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -25,7 +25,7 @@
     },
     {
         "term": "board:resize_to_contents",
-        "definition": "\u00c4ndra storlek till inneh\u00e5ll",
+        "definition": "Ändra storlek till innehåll",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -33,7 +33,7 @@
     },
     {
         "term": "board_settings.color_scheme:dark",
-        "definition": "M\u00f6rk",
+        "definition": "Mörk",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -49,7 +49,7 @@
     },
     {
         "term": "board_tile.misc.push_button:color",
-        "definition": "F\u00e4rg",
+        "definition": "Färg",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -57,7 +57,7 @@
     },
     {
         "term": "board_tile.rail.block:assign_train",
-        "definition": "Tilldela t\u00e5g",
+        "definition": "Tilldela tåg",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -65,7 +65,7 @@
     },
     {
         "term": "board_tile.rail.block:flip_train",
-        "definition": "V\u00e4nd t\u00e5g",
+        "definition": "Vänd tåg",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -81,7 +81,7 @@
     },
     {
         "term": "board_tile.rail.block:remove_train",
-        "definition": "Ta bort t\u00e5get",
+        "definition": "Ta bort tåget",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -89,7 +89,7 @@
     },
     {
         "term": "board_tile.rail.direction_control:state",
-        "definition": "Tillst\u00e5nd",
+        "definition": "Tillstånd",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -97,7 +97,7 @@
     },
     {
         "term": "board_tile.rail.direction_control:use_a_to_b",
-        "definition": "Anv\u00e4nd: A \u2192 B",
+        "definition": "Använd: A \u2192 B",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -105,7 +105,7 @@
     },
     {
         "term": "board_tile.rail.direction_control:use_b_to_a",
-        "definition": "Anv\u00e4nd: A \u2190 B",
+        "definition": "Använd: A \u2190 B",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -113,7 +113,7 @@
     },
     {
         "term": "board_tile.rail.direction_control:use_both",
-        "definition": "Anv\u00e4nd: A \u21c4 B",
+        "definition": "Använd: A \u21c4 B",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -121,7 +121,7 @@
     },
     {
         "term": "board_tile.rail.direction_control:use_none",
-        "definition": "Anv\u00e4nd: A \ud83d\udec7 B",
+        "definition": "Använd: A \ud83d\udec7 B",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -129,7 +129,7 @@
     },
     {
         "term": "board_tile.rail.link:link",
-        "definition": "L\u00e4nk",
+        "definition": "Länk",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -161,7 +161,7 @@
     },
     {
         "term": "board_tile:output_map",
-        "definition": "Utg\u00e5ngar",
+        "definition": "Utgångar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -185,7 +185,7 @@
     },
     {
         "term": "category:general",
-        "definition": "Allm\u00e4n",
+        "definition": "Allmänt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -209,7 +209,7 @@
     },
     {
         "term": "category:network",
-        "definition": "N\u00e4tverk",
+        "definition": "Nätverk",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -225,7 +225,7 @@
     },
     {
         "term": "class_id:board_tile.rail.block",
-        "definition": "Blockera",
+        "definition": "Block",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -233,7 +233,7 @@
     },
     {
         "term": "class_id:board_tile.rail.bridge_45_left",
-        "definition": "Bro 45\u00b0 (v\u00e4nster)",
+        "definition": "Bro 45\u00b0 (vänster)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -241,7 +241,7 @@
     },
     {
         "term": "class_id:board_tile.rail.bridge_45_right",
-        "definition": "Bro 45\u00b0 (h\u00f6ger)",
+        "definition": "Bro 45\u00b0 (höger)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -281,7 +281,7 @@
     },
     {
         "term": "class_id:board_tile.rail.curve_45",
-        "definition": "B\u00f6jt sp\u00e5r 45\u00b0",
+        "definition": "Böjt spår 45\u00b0",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -289,7 +289,7 @@
     },
     {
         "term": "class_id:board_tile.rail.curve_90",
-        "definition": "B\u00f6jt sp\u00e5r 90\u00b0",
+        "definition": "Böjt spår 90\u00b0",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -313,7 +313,7 @@
     },
     {
         "term": "class_id:board_tile.rail.link",
-        "definition": "L\u00e4nk",
+        "definition": "Länk",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -353,7 +353,7 @@
     },
     {
         "term": "class_id:board_tile.rail.straight",
-        "definition": "Raka sp\u00e5ret",
+        "definition": "Raka spåret",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -369,7 +369,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_3way",
-        "definition": "V\u00e4xel 3-v\u00e4gs",
+        "definition": "Växel 3-vägs",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -385,7 +385,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_45",
-        "definition": "V\u00e4xel v\u00e4nster 45\u00b0",
+        "definition": "Växel vänster 45\u00b0",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -393,7 +393,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_90",
-        "definition": "V\u00e4xel v\u00e4nster 90\u00b0",
+        "definition": "Växel vänster 90\u00b0",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -401,7 +401,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_curved",
-        "definition": "V\u00e4nsterb\u00f6jd v\u00e4nster",
+        "definition": "Vänsterböjd vänster",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -409,7 +409,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_45",
-        "definition": "V\u00e4xel h\u00f6ger 45\u00b0",
+        "definition": "Växel höger 45\u00b0",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -417,7 +417,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_90",
-        "definition": "V\u00e4xel h\u00f6ger 90\u00b0",
+        "definition": "Växel höger 90\u00b0",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -425,7 +425,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_curved",
-        "definition": "V\u00e4xel h\u00f6gerb\u00f6jd",
+        "definition": "Växel högerböjd",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -441,7 +441,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_wye",
-        "definition": "V\u00e4xel wye",
+        "definition": "Växel wye",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -489,7 +489,7 @@
     },
     {
         "term": "clock:debug_log",
-        "definition": "Fels\u00f6kningslogg",
+        "definition": "Felsökningslogg",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -521,7 +521,7 @@
     },
     {
         "term": "clock:month",
-        "definition": "M\u00e5nad",
+        "definition": "Månad",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -537,7 +537,7 @@
     },
     {
         "term": "clock:year",
-        "definition": "\u00c5r",
+        "definition": "År",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -561,7 +561,7 @@
     },
     {
         "term": "color:blue",
-        "definition": "Bl\u00e5",
+        "definition": "Blå",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -577,7 +577,7 @@
     },
     {
         "term": "color:gray",
-        "definition": "Gr\u00e5",
+        "definition": "Grå",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -585,7 +585,7 @@
     },
     {
         "term": "color:green",
-        "definition": "Gr\u00f6n",
+        "definition": "Grön",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -601,7 +601,7 @@
     },
     {
         "term": "color:maroon",
-        "definition": "R\u00f6dbrun",
+        "definition": "Rödbrun",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -633,7 +633,7 @@
     },
     {
         "term": "color:red",
-        "definition": "R\u00f6d",
+        "definition": "Röd",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -673,7 +673,7 @@
     },
     {
         "term": "dccplusplus_channel:dcc_accessory",
-        "definition": "DCC tillbeh\u00f6r",
+        "definition": "DCC tillbehör",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -689,7 +689,7 @@
     },
     {
         "term": "dccplusplus_channel:turnout",
-        "definition": "V\u00e4xel",
+        "definition": "Växel",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -697,7 +697,7 @@
     },
     {
         "term": "dccplusplus_settings:startup_delay",
-        "definition": "Startf\u00f6rdr\u00f6jning",
+        "definition": "Startfördröjning",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -705,7 +705,7 @@
     },
     {
         "term": "dccplusplus_settings:use_ex",
-        "definition": "Anv\u00e4nd DCC++EX-kommandon",
+        "definition": "Använd DCC++EX-kommandon",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -721,7 +721,7 @@
     },
     {
         "term": "decoder:long_address",
-        "definition": "DCC l\u00e5ng adress",
+        "definition": "DCC lång adress",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -777,7 +777,7 @@
     },
     {
         "term": "decoder_function_function:mute",
-        "definition": "Stum",
+        "definition": "Dämpa",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -785,7 +785,7 @@
     },
     {
         "term": "decoder_function_function:smoke",
-        "definition": "R\u00f6k",
+        "definition": "Rök",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -801,7 +801,7 @@
     },
     {
         "term": "decoder_function_type:always_off",
-        "definition": "Alltid avst\u00e4ngd",
+        "definition": "Alltid avstängd",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -809,7 +809,7 @@
     },
     {
         "term": "decoder_function_type:always_on",
-        "definition": "Alltid p\u00e5",
+        "definition": "Alltid på",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -817,7 +817,7 @@
     },
     {
         "term": "decoder_function_type:hold",
-        "definition": "Tryck och h\u00e5ll",
+        "definition": "Tryck och håll",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -825,7 +825,7 @@
     },
     {
         "term": "decoder_function_type:momentary",
-        "definition": "Tillf\u00e4llig",
+        "definition": "Tillfällig",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -833,7 +833,7 @@
     },
     {
         "term": "decoder_function_type:on_off",
-        "definition": "P\u00e5\/Av",
+        "definition": "På\/Av",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -841,7 +841,7 @@
     },
     {
         "term": "decoder_protocol:auto",
-        "definition": "Bil",
+        "definition": "Automatiskt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -849,7 +849,7 @@
     },
     {
         "term": "decoder_protocol:custom",
-        "definition": "Best\u00e4llnings",
+        "definition": "Anpassat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -873,7 +873,7 @@
     },
     {
         "term": "direction:forward",
-        "definition": "Fram",
+        "definition": "Framåt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -881,7 +881,7 @@
     },
     {
         "term": "direction:reverse",
-        "definition": "Omv\u00e4nd",
+        "definition": "Bakåt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -921,7 +921,7 @@
     },
     {
         "term": "hardware:debug_log_input",
-        "definition": "Logginmatning \u00e4ndras",
+        "definition": "Logginmatning ändras",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -929,7 +929,7 @@
     },
     {
         "term": "hardware:debug_log_output",
-        "definition": "Loggutg\u00e5ngs\u00e4ndringar",
+        "definition": "Loggutgångsändringar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -961,7 +961,7 @@
     },
     {
         "term": "hardware:input_monitor",
-        "definition": "Ing\u00e5ngsmonitor",
+        "definition": "Ingångsmonitor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -969,7 +969,7 @@
     },
     {
         "term": "hardware:inputs",
-        "definition": "Ing\u00e5ngar",
+        "definition": "Ingångar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -977,7 +977,7 @@
     },
     {
         "term": "hardware:interface",
-        "definition": "Gr\u00e4nssnitt",
+        "definition": "Gränssnitt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -993,7 +993,7 @@
     },
     {
         "term": "hardware:outputs",
-        "definition": "Utg\u00e5ngar",
+        "definition": "Utgångar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1017,7 +1017,7 @@
     },
     {
         "term": "hsi88:s88_left",
-        "definition": "S88 kvar",
+        "definition": "S88 vänster",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1033,7 +1033,7 @@
     },
     {
         "term": "hsi88:s88_right",
-        "definition": "S88 h\u00f6ger",
+        "definition": "S88 höger",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1089,7 +1089,7 @@
     },
     {
         "term": "interface.hsi88:modules_left",
-        "definition": "Moduler kvar",
+        "definition": "Moduler vänster",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1105,7 +1105,7 @@
     },
     {
         "term": "interface.hsi88:modules_right",
-        "definition": "Moduler r\u00e4tt",
+        "definition": "Moduler höger",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1113,7 +1113,7 @@
     },
     {
         "term": "interface.loconet:interface",
-        "definition": "Gr\u00e4nssnitt",
+        "definition": "Gränssnitt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1121,7 +1121,7 @@
     },
     {
         "term": "interface.xpressnet:interface",
-        "definition": "Gr\u00e4nssnitt",
+        "definition": "Gränssnitt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1153,7 +1153,7 @@
     },
     {
         "term": "interface.z21:hardware_type",
-        "definition": "H\u00e5rdvarutyp",
+        "definition": "Hårdvarutyp",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1177,7 +1177,7 @@
     },
     {
         "term": "interface:status",
-        "definition": "Tillst\u00e5ndus",
+        "definition": "Status",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1225,7 +1225,7 @@
     },
     {
         "term": "ip:hostname",
-        "definition": "V\u00e4rdnamn",
+        "definition": "Värdnamn",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1265,7 +1265,7 @@
     },
     {
         "term": "language:nl-nl",
-        "definition": "Nederl\u00e4ndska",
+        "definition": "Nederländska",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1289,7 +1289,7 @@
     },
     {
         "term": "list.train_vehicle:reverse",
-        "definition": "Omv\u00e4nd",
+        "definition": "Bakåt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1297,7 +1297,7 @@
     },
     {
         "term": "list:add",
-        "definition": "L\u00e4gg till",
+        "definition": "Lägg till",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1345,7 +1345,7 @@
     },
     {
         "term": "list:remove",
-        "definition": "Avl\u00e4gsna",
+        "definition": "Ta bort",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1385,7 +1385,7 @@
     },
     {
         "term": "lncv_programmer:read",
-        "definition": "L\u00e4sa",
+        "definition": "Läsa",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1393,7 +1393,7 @@
     },
     {
         "term": "lncv_programmer:reading_lncv_x",
-        "definition": "L\u00e4ser LNCV %1",
+        "definition": "Läser LNCV %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1401,7 +1401,7 @@
     },
     {
         "term": "lncv_programmer:reading_lncv_x_failed",
-        "definition": "Det gick inte att l\u00e4sa LNCV %1",
+        "definition": "Det gick inte att läsa LNCV %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1425,7 +1425,7 @@
     },
     {
         "term": "lncv_programmer:stop",
-        "definition": "Sluta",
+        "definition": "Stopp",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1433,7 +1433,7 @@
     },
     {
         "term": "lncv_programmer:use_broadcast_address",
-        "definition": "Anv\u00e4nd s\u00e4ndningsadress",
+        "definition": "Använd sändningsadress",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1441,7 +1441,7 @@
     },
     {
         "term": "lncv_programmer:value",
-        "definition": "V\u00e4rde",
+        "definition": "Värde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1449,7 +1449,7 @@
     },
     {
         "term": "lncv_programmer:waiting_for_module_to_respond",
-        "definition": "V\u00e4ntar p\u00e5 att modulen ska svara",
+        "definition": "Väntar på att modulen ska svara",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1473,7 +1473,7 @@
     },
     {
         "term": "loconet_command_station:custom",
-        "definition": "Best\u00e4llnings",
+        "definition": "Anpassad",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1489,7 +1489,7 @@
     },
     {
         "term": "loconet_f9_f28:uhlenbrock_extended",
-        "definition": "Uhlenbrock f\u00f6rl\u00e4ngd (OPC_A3, OPC_D4)",
+        "definition": "Uhlenbrock förlängd (OPC_A3, OPC_D4)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1497,7 +1497,7 @@
     },
     {
         "term": "loconet_fastclock:master",
-        "definition": "Master (Traintatic styr klockan)",
+        "definition": "Master (Traintastic styr klockan)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1513,7 +1513,7 @@
     },
     {
         "term": "loconet_interface_type:serial",
-        "definition": "Serie",
+        "definition": "Seriell",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1521,7 +1521,7 @@
     },
     {
         "term": "loconet_interface_type:tcp_binary",
-        "definition": "TCP bin\u00e4r",
+        "definition": "TCP binär",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1529,7 +1529,7 @@
     },
     {
         "term": "loconet_serial_interface:custom",
-        "definition": "Best\u00e4llnings",
+        "definition": "Anpoassad",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1585,7 +1585,7 @@
     },
     {
         "term": "loconet_settings:pcap_output",
-        "definition": "PCAP-utg\u00e5ng",
+        "definition": "PCAP-utgång",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1593,7 +1593,7 @@
     },
     {
         "term": "loconet_settings:response_timeout",
-        "definition": "Timeout f\u00f6r svar",
+        "definition": "Timeout för svar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1617,7 +1617,7 @@
     },
     {
         "term": "lua.script:stop",
-        "definition": "Sluta",
+        "definition": "Stopp",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1625,7 +1625,7 @@
     },
     {
         "term": "lua.script_list:start_all",
-        "definition": "B\u00f6rja allt",
+        "definition": "Börja allt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1641,7 +1641,7 @@
     },
     {
         "term": "lua_script:state",
-        "definition": "Tillst\u00e5nd",
+        "definition": "Status",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1665,7 +1665,7 @@
     },
     {
         "term": "lua_script_state:running",
-        "definition": "Ig\u00e5ng",
+        "definition": "Igång",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1673,7 +1673,7 @@
     },
     {
         "term": "lua_script_state:stopped",
-        "definition": "Slutade",
+        "definition": "Stoppad",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1681,7 +1681,7 @@
     },
     {
         "term": "message:C1001",
-        "definition": "Det gick inte att ladda v\u00e4rlden (%1)",
+        "definition": "Det gick inte att ladda världen (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1697,7 +1697,7 @@
     },
     {
         "term": "message:C1003",
-        "definition": "Kan inte skriva till inst\u00e4llningsfilen (%1)",
+        "definition": "Kan inte skriva till inställningsfilen (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1705,7 +1705,7 @@
     },
     {
         "term": "message:C1004",
-        "definition": "L\u00e4sv\u00e4rlden misslyckades (%1) (%2)",
+        "definition": "Läsvärlden misslyckades (%1) (%2)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1713,7 +1713,7 @@
     },
     {
         "term": "message:C1005",
-        "definition": "Det gick inte att r\u00e4dda v\u00e4rlden (%1)",
+        "definition": "Det gick inte att rädda världen (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1721,7 +1721,7 @@
     },
     {
         "term": "message:C1006",
-        "definition": "Det gick inte att skapa v\u00e4rldss\u00e4kerhetskopiering (%1)",
+        "definition": "Det gick inte att skapa världssäkerhetskopiering (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1729,7 +1729,7 @@
     },
     {
         "term": "message:C1007",
-        "definition": "Det gick inte att skapa v\u00e4rldsbackupkatalog (%1)",
+        "definition": "Det gick inte att skapa världsbackupkatalog (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1737,7 +1737,7 @@
     },
     {
         "term": "message:C1008",
-        "definition": "Det gick inte att skapa s\u00e4kerhetskopieringskatalog (%1)",
+        "definition": "Det gick inte att skapa säkerhetskopieringskatalog (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1745,7 +1745,7 @@
     },
     {
         "term": "message:C1009",
-        "definition": "Det gick inte att skapa s\u00e4kerhetskopiering av inst\u00e4llningar (%1)",
+        "definition": "Det gick inte att skapa säkerhetskopiering av inställningar (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1753,7 +1753,7 @@
     },
     {
         "term": "message:C1010",
-        "definition": "Det gick inte att exportera v\u00e4rlden (%1)",
+        "definition": "Det gick inte att exportera världen (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1761,7 +1761,7 @@
     },
     {
         "term": "message:C1011",
-        "definition": "Det gick inte att importera v\u00e4rlden (%1)",
+        "definition": "Det gick inte att importera världen (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1769,7 +1769,7 @@
     },
     {
         "term": "message:C1012",
-        "definition": "Ok\u00e4nd klass '%1', kan inte \u00e5terskapa objektet '%2'",
+        "definition": "Okänd klass '%1', kan inte återskapa objektet '%2'",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1777,7 +1777,7 @@
     },
     {
         "term": "message:C1013",
-        "definition": "Kan inte ladda v\u00e4rlden sparad med nyare version, kr\u00e4ver minst: %1",
+        "definition": "Kan inte ladda världen sparad med nyare version, kräver minst: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1785,7 +1785,7 @@
     },
     {
         "term": "message:C2001",
-        "definition": "Adressen anv\u00e4nds redan p\u00e5 #%1",
+        "definition": "Adressen används redan på #%1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1793,7 +1793,7 @@
     },
     {
         "term": "message:C2004",
-        "definition": "Kan inte f\u00e5 gratis slot",
+        "definition": "Kan inte få gratis slot",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1801,7 +1801,7 @@
     },
     {
         "term": "message:D1001",
-        "definition": "\u00c5teruppta %1 (multiplikator: %2)",
+        "definition": "Återuppta %1 (multiplikator: %2)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1809,7 +1809,7 @@
     },
     {
         "term": "message:D1002",
-        "definition": "Markera %1 (fel: %2us)",
+        "definition": "Bock %1 (fel: %2μs)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1841,7 +1841,7 @@
     },
     {
         "term": "message:D2003",
-        "definition": "Ok\u00e4nd xHeader 0x%1",
+        "definition": "Okänd xHeader 0x%1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1865,7 +1865,7 @@
     },
     {
         "term": "message:D2006",
-        "definition": "Ok\u00e4nt meddelande: %1",
+        "definition": "Okänt meddelande: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1905,7 +1905,7 @@
     },
     {
         "term": "message:E1001",
-        "definition": "Ogiltigt v\u00e4rlds-UUID: %1",
+        "definition": "Ogiltigt världs-UUID: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1913,7 +1913,7 @@
     },
     {
         "term": "message:E1002",
-        "definition": "V\u00e4rlden %1 existerar inte",
+        "definition": "Världen %1 existerar inte",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1937,7 +1937,7 @@
     },
     {
         "term": "message:E1005",
-        "definition": "Socketavst\u00e4ngning misslyckades (%1)",
+        "definition": "Socketavstängning misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1953,7 +1953,7 @@
     },
     {
         "term": "message:E1007",
-        "definition": "Socket-l\u00e4sning misslyckades (%1)",
+        "definition": "Socket-läsning misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1977,7 +1977,7 @@
     },
     {
         "term": "message:E2002",
-        "definition": "Seriell l\u00e4sning misslyckades (%1)",
+        "definition": "Seriell läsning misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1993,7 +1993,7 @@
     },
     {
         "term": "message:E2004",
-        "definition": "Det gick inte att \u00f6ppna uttaget (%1)",
+        "definition": "Det gick inte att öppna uttaget (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2025,7 +2025,7 @@
     },
     {
         "term": "message:E2008",
-        "definition": "Socket-l\u00e4sning misslyckades (%1)",
+        "definition": "Socket-läsning misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2041,7 +2041,7 @@
     },
     {
         "term": "message:E2010",
-        "definition": "Det gick inte att \u00f6ppna serieporten (%1)",
+        "definition": "Det gick inte att öppna serieporten (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2049,7 +2049,7 @@
     },
     {
         "term": "message:E2011",
-        "definition": "Socket-s\u00e4ndning misslyckades (%1)",
+        "definition": "Socket-sändning misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2057,7 +2057,7 @@
     },
     {
         "term": "message:E2012",
-        "definition": "Funktionsnummer anv\u00e4nds redan",
+        "definition": "Funktionsnummer används redan",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2065,7 +2065,7 @@
     },
     {
         "term": "message:E2013",
-        "definition": "Serieportupps\u00e4ttningens baudrate misslyckades (%1)",
+        "definition": "Serieportuppsättningens baudrate misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2073,7 +2073,7 @@
     },
     {
         "term": "message:E2014",
-        "definition": "Seriella portupps\u00e4ttningsdatabitar misslyckades (%1)",
+        "definition": "Seriella portuppsättningsdatabitar misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2081,7 +2081,7 @@
     },
     {
         "term": "message:E2015",
-        "definition": "Serieportupps\u00e4ttningens stoppbitar misslyckades (%1)",
+        "definition": "Serieportuppsättningens stoppbitar misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2097,7 +2097,7 @@
     },
     {
         "term": "message:E2017",
-        "definition": "Fl\u00f6deskontroll f\u00f6r serieportupps\u00e4ttning misslyckades (%1)",
+        "definition": "Flödeskontroll för serieportuppsättning misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2121,7 +2121,7 @@
     },
     {
         "term": "message:E2020",
-        "definition": "Det totala antalet moduler f\u00e5r inte \u00f6verstiga %1",
+        "definition": "Det totala antalet moduler får inte överstiga %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2137,7 +2137,7 @@
     },
     {
         "term": "message:E9001",
-        "definition": "%1 (Under k\u00f6rning av %2 h\u00e4ndelsehanterare)",
+        "definition": "%1 (Under körning av %2 händelsehanterare)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2145,7 +2145,7 @@
     },
     {
         "term": "message:F1001",
-        "definition": "Det gick inte att \u00f6ppna TCP-socket (%1)",
+        "definition": "Det gick inte att öppna TCP-socket (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2153,7 +2153,7 @@
     },
     {
         "term": "message:F1002",
-        "definition": "\u00c5teranv\u00e4ndning av TCP-socketadress misslyckades (%1)",
+        "definition": "Återanvändning av TCP-socketadress misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2177,7 +2177,7 @@
     },
     {
         "term": "message:F1005",
-        "definition": "Det gick inte att \u00f6ppna UDP-socket (%1)",
+        "definition": "Det gick inte att öppna UDP-socket (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2185,7 +2185,7 @@
     },
     {
         "term": "message:F1006",
-        "definition": "\u00c5teranv\u00e4ndning av UDP-socketadress misslyckades (%1)",
+        "definition": "Återanvändning av UDP-socketadress misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2201,7 +2201,7 @@
     },
     {
         "term": "message:F9001",
-        "definition": "Det gick inte att skapa Lua-tillst\u00e5nd",
+        "definition": "Det gick inte att skapa Lua-tillstånd",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2209,7 +2209,7 @@
     },
     {
         "term": "message:F9002",
-        "definition": "Det gick inte att k\u00f6ra skriptet (%1)",
+        "definition": "Det gick inte att köra skriptet (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2225,7 +2225,7 @@
     },
     {
         "term": "message:I1002",
-        "definition": "Inst\u00e4llningsfilen hittades inte, med standardinst\u00e4llningar",
+        "definition": "Inställningsfilen hittades inte, med standardinställningar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2241,7 +2241,7 @@
     },
     {
         "term": "message:I1004",
-        "definition": "Anslutning f\u00f6rlorad",
+        "definition": "Anslutning förlorad",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2249,7 +2249,7 @@
     },
     {
         "term": "message:I1005",
-        "definition": "Bygga v\u00e4rldsindex",
+        "definition": "Bygga världsindex",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2257,7 +2257,7 @@
     },
     {
         "term": "message:I2001",
-        "definition": "Ok\u00e4nd lokadress: %1",
+        "definition": "Okänd lokadress: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2297,7 +2297,7 @@
     },
     {
         "term": "message:N1002",
-        "definition": "Skapat en ny v\u00e4rld",
+        "definition": "Skapat en ny värld",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2313,7 +2313,7 @@
     },
     {
         "term": "message:N1004",
-        "definition": "St\u00e4nger ner",
+        "definition": "Stänger ner",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2321,7 +2321,7 @@
     },
     {
         "term": "message:N1005",
-        "definition": "Uppt\u00e4ckt aktiverat",
+        "definition": "Upptäckt aktiverat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2337,7 +2337,7 @@
     },
     {
         "term": "message:N1007",
-        "definition": "Lyssnar p\u00e5 %1:%2",
+        "definition": "Lyssnar på %1:%2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2345,7 +2345,7 @@
     },
     {
         "term": "message:N1008",
-        "definition": "Laddade inst\u00e4llningar",
+        "definition": "Laddade inställningar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2353,7 +2353,7 @@
     },
     {
         "term": "message:N1009",
-        "definition": "Sparade inst\u00e4llningar",
+        "definition": "Sparade inställningar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2361,7 +2361,7 @@
     },
     {
         "term": "message:N1010",
-        "definition": "Redigeringsl\u00e4ge: aktiverat",
+        "definition": "Redigeringsläge: aktiverat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2369,7 +2369,7 @@
     },
     {
         "term": "message:N1011",
-        "definition": "Redigeringsl\u00e4ge: inaktiverat",
+        "definition": "Redigeringsläge: inaktiverat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2393,7 +2393,7 @@
     },
     {
         "term": "message:N1014",
-        "definition": "Str\u00f6m p\u00e5",
+        "definition": "Ström på",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2401,7 +2401,7 @@
     },
     {
         "term": "message:N1015",
-        "definition": "St\u00e4ng av",
+        "definition": "Stäng av",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2409,7 +2409,7 @@
     },
     {
         "term": "message:N1016",
-        "definition": "Ig\u00e5ng",
+        "definition": "Igång",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2441,7 +2441,7 @@
     },
     {
         "term": "message:N1020",
-        "definition": "R\u00f6k: aktiverad",
+        "definition": "Rök: aktiverad",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2449,7 +2449,7 @@
     },
     {
         "term": "message:N1021",
-        "definition": "R\u00f6k: funktionshindrade",
+        "definition": "Rök: funktionshindrade",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2457,7 +2457,7 @@
     },
     {
         "term": "message:N1022",
-        "definition": "Sparad v\u00e4rld: %1",
+        "definition": "Sparad värld: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2481,7 +2481,7 @@
     },
     {
         "term": "message:N1025",
-        "definition": "Exporterade v\u00e4rlden framg\u00e5ngsrikt",
+        "definition": "Exporterade världen framgångsrikt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2489,7 +2489,7 @@
     },
     {
         "term": "message:N1026",
-        "definition": "Importerad v\u00e4rld framg\u00e5ngsrikt",
+        "definition": "Importerad värld framgångsrikt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2497,7 +2497,7 @@
     },
     {
         "term": "message:N1027",
-        "definition": "Laddad v\u00e4rld: %1",
+        "definition": "Laddad värld: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2505,7 +2505,7 @@
     },
     {
         "term": "message:N1028",
-        "definition": "Sluten v\u00e4rld",
+        "definition": "Sluten värld",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2513,7 +2513,7 @@
     },
     {
         "term": "message:N2001",
-        "definition": "Simulering st\u00f6ds inte",
+        "definition": "Simulering stöds inte",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2521,7 +2521,7 @@
     },
     {
         "term": "message:N2002",
-        "definition": "Inget svar fr\u00e5n LNCV-modul %1 med adress %2",
+        "definition": "Inget svar från LNCV-modul %1 med adress %2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2545,7 +2545,7 @@
     },
     {
         "term": "message:N2005",
-        "definition": "Startar PCAP-loggr\u00f6r: %1",
+        "definition": "Startar PCAP-loggrör: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2553,7 +2553,7 @@
     },
     {
         "term": "message:N3001",
-        "definition": "Tilldelade t\u00e5get %1 till blocket %2",
+        "definition": "Tilldelade tåget %1 till blocket %2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2561,7 +2561,7 @@
     },
     {
         "term": "message:N3002",
-        "definition": "Tog bort t\u00e5get %1 fr\u00e5n blocket %2",
+        "definition": "Tog bort tåget %1 från blocket %2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2577,7 +2577,7 @@
     },
     {
         "term": "message:W1001",
-        "definition": "Discovery inaktiverad, endast till\u00e5ten p\u00e5 port %1",
+        "definition": "Discovery inaktiverad, endast tillåten på port %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2585,7 +2585,7 @@
     },
     {
         "term": "message:W1002",
-        "definition": "Inst\u00e4llningen %1 finns inte",
+        "definition": "Inställningen %1 finns inte",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2593,7 +2593,7 @@
     },
     {
         "term": "message:W1003",
-        "definition": "Det gick inte att l\u00e4sa v\u00e4rlden %1 (libarchive error %2: %3)",
+        "definition": "Det gick inte att läsa världen %1 (libarchive error %2: %3)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2609,7 +2609,7 @@
     },
     {
         "term": "message:W2002",
-        "definition": "Kommandostationen st\u00f6der inte funktioner \u00f6ver F%1",
+        "definition": "Kommandostationen stöder inte funktioner över F%1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2621,7 +2621,7 @@
     },
     {
         "term": "message:W2004",
-        "definition": "Inmatningsadressen %1 \u00e4r ogiltig",
+        "definition": "Inmatningsadressen %1 är ogiltig",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2629,7 +2629,7 @@
     },
     {
         "term": "message:W2005",
-        "definition": "Utdataadressen %1 \u00e4r ogiltig",
+        "definition": "Utdataadressen %1 är ogiltig",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2637,7 +2637,7 @@
     },
     {
         "term": "message:W2006",
-        "definition": "Kommandostationen st\u00f6der inte lokplats %1",
+        "definition": "Kommandostationen stöder inte lokplats %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2645,7 +2645,7 @@
     },
     {
         "term": "message:W2007",
-        "definition": "Kommandostationen st\u00f6der inte snabbklockan",
+        "definition": "Kommandostationen stöder inte snabbklockan",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2661,7 +2661,7 @@
     },
     {
         "term": "message:W2019",
-        "definition": "Z21-s\u00e4ndningsflaggor matchar inte de beg\u00e4rda",
+        "definition": "Z21-sändningsflaggor matchar inte de begärda",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2733,7 +2733,7 @@
     },
     {
         "term": "output_action:on",
-        "definition": "P\u00e5",
+        "definition": "På",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2757,7 +2757,7 @@
     },
     {
         "term": "output_map.decoupler:key",
-        "definition": "Tillst\u00e5nd",
+        "definition": "Status",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2781,7 +2781,7 @@
     },
     {
         "term": "output_map:use",
-        "definition": "Anv\u00e4nda sig av",
+        "definition": "Använda sig av",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2797,7 +2797,7 @@
     },
     {
         "term": "pcap_output:pipe",
-        "definition": "R\u00f6r",
+        "definition": "Rör",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2837,7 +2837,7 @@
     },
     {
         "term": "qtapp.connect_dialog:password",
-        "definition": "L\u00f6senord",
+        "definition": "Lösenord",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2853,7 +2853,7 @@
     },
     {
         "term": "qtapp.connect_dialog:username",
-        "definition": "Anv\u00e4ndarnamn",
+        "definition": "Användarnamn",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2861,7 +2861,7 @@
     },
     {
         "term": "qtapp.error:cant_read_from_file_x",
-        "definition": "Kan inte l\u00e4sa fr\u00e5n filen: %1",
+        "definition": "Kan inte läsa från filen: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2885,7 +2885,7 @@
     },
     {
         "term": "qtapp.mainmenu:about",
-        "definition": "Handla om",
+        "definition": "Om",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2893,7 +2893,7 @@
     },
     {
         "term": "qtapp.mainmenu:close_world",
-        "definition": "N\u00e4ra v\u00e4rld",
+        "definition": "Stäng världen",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2909,7 +2909,7 @@
     },
     {
         "term": "qtapp.mainmenu:connection",
-        "definition": "F\u00f6rbindelse",
+        "definition": "Förbindelse",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2917,7 +2917,7 @@
     },
     {
         "term": "qtapp.mainmenu:disconnect_from_server",
-        "definition": "Koppla fr\u00e5n servern",
+        "definition": "Koppla från servern",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2925,7 +2925,7 @@
     },
     {
         "term": "qtapp.mainmenu:export_world",
-        "definition": "Export v\u00e4rlden",
+        "definition": "Exportera världen",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2941,7 +2941,7 @@
     },
     {
         "term": "qtapp.mainmenu:fullscreen",
-        "definition": "Fullsk\u00e4rm",
+        "definition": "Fullskärm",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2949,7 +2949,7 @@
     },
     {
         "term": "qtapp.mainmenu:hardware",
-        "definition": "H\u00e5rdvara",
+        "definition": "Hårdvara",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2957,7 +2957,7 @@
     },
     {
         "term": "qtapp.mainmenu:help",
-        "definition": "Hj\u00e4lp",
+        "definition": "Hjälp",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2965,7 +2965,7 @@
     },
     {
         "term": "qtapp.mainmenu:import_world",
-        "definition": "Importera v\u00e4rlden",
+        "definition": "Importera världen",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2973,7 +2973,7 @@
     },
     {
         "term": "qtapp.mainmenu:load_world",
-        "definition": "Ladda v\u00e4rlden",
+        "definition": "Ladda världen",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2981,7 +2981,7 @@
     },
     {
         "term": "qtapp.mainmenu:new_world",
-        "definition": "Ny v\u00e4rld",
+        "definition": "Ny värld",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2989,7 +2989,7 @@
     },
     {
         "term": "qtapp.mainmenu:objects",
-        "definition": "F\u00f6rem\u00e5l",
+        "definition": "Föremål",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3013,7 +3013,7 @@
     },
     {
         "term": "qtapp.mainmenu:quit",
-        "definition": "Sluta",
+        "definition": "Avsluta",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3029,7 +3029,7 @@
     },
     {
         "term": "qtapp.mainmenu:restart_server_question",
-        "definition": "\u00c4r du s\u00e4ker p\u00e5 att du vill starta om servern?",
+        "definition": "Är du säker på att du vill starta om servern?",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3037,7 +3037,7 @@
     },
     {
         "term": "qtapp.mainmenu:save_world",
-        "definition": "R\u00e4dda v\u00e4rlden",
+        "definition": "Rädda världen",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3061,7 +3061,7 @@
     },
     {
         "term": "qtapp.mainmenu:server_settings",
-        "definition": "Serverinst\u00e4llningar",
+        "definition": "Serverinställningar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3069,7 +3069,7 @@
     },
     {
         "term": "qtapp.mainmenu:settings",
-        "definition": "Inst\u00e4llningar",
+        "definition": "Inställningar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3077,7 +3077,7 @@
     },
     {
         "term": "qtapp.mainmenu:shutdown_server",
-        "definition": "Avst\u00e4ngning av server",
+        "definition": "Avstängning av server",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3085,7 +3085,7 @@
     },
     {
         "term": "qtapp.mainmenu:shutdown_server_question",
-        "definition": "\u00c4r du s\u00e4ker p\u00e5 att du vill st\u00e4nga av servern?",
+        "definition": "Är du säker på att du vill stänga av servern?",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3093,7 +3093,7 @@
     },
     {
         "term": "qtapp.mainmenu:toolbar",
-        "definition": "Verktygsf\u00e4lt",
+        "definition": "Verktygsfält",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3117,7 +3117,7 @@
     },
     {
         "term": "qtapp.mainmenu:world",
-        "definition": "V\u00e4rld",
+        "definition": "Värld",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3125,7 +3125,7 @@
     },
     {
         "term": "qtapp.mainmenu:world_properties",
-        "definition": "V\u00e4rldsegenskaper",
+        "definition": "Världsegenskaper",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3165,7 +3165,7 @@
     },
     {
         "term": "qtapp.object_select_list_dialog:select_object",
-        "definition": "V\u00e4lj objekt",
+        "definition": "Välj objekt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3173,7 +3173,7 @@
     },
     {
         "term": "qtapp.settings.board:color_scheme",
-        "definition": "F\u00e4rgschema",
+        "definition": "Färgschema",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3181,7 +3181,7 @@
     },
     {
         "term": "qtapp.settings.board:show_block_sensor_states",
-        "definition": "Visa blocksensortillst\u00e5nd",
+        "definition": "Visa blocksensortillstånd",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3189,7 +3189,7 @@
     },
     {
         "term": "qtapp.settings.board:turnout_draw_state",
-        "definition": "Rita valdeltagande tillst\u00e5nd",
+        "definition": "Rita valdeltagande tillstånd",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3197,7 +3197,7 @@
     },
     {
         "term": "qtapp.settings.developer:dont_load_fallback_language",
-        "definition": "Ladda inte reservspr\u00e5k",
+        "definition": "Ladda inte reservspråk",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3205,7 +3205,7 @@
     },
     {
         "term": "qtapp.settings.developer:log_missing_strings",
-        "definition": "Logga saknade \u00f6vers\u00e4ttningar",
+        "definition": "Logga saknade översättningar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3213,7 +3213,7 @@
     },
     {
         "term": "qtapp.settings.developer:log_missing_strings_dir",
-        "definition": "\u00d6vers\u00e4ttningsloggkatalog saknas",
+        "definition": "Översättningsloggkatalog saknas",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3221,7 +3221,7 @@
     },
     {
         "term": "qtapp.settings.general:language",
-        "definition": "Spr\u00e5k",
+        "definition": "Språk",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3245,7 +3245,7 @@
     },
     {
         "term": "qtapp.settings:board",
-        "definition": "Styrelse",
+        "definition": "Tavla",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3261,7 +3261,7 @@
     },
     {
         "term": "qtapp.settings:general",
-        "definition": "Allm\u00e4n",
+        "definition": "Allmänt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3269,7 +3269,7 @@
     },
     {
         "term": "qtapp.settings:statusbar",
-        "definition": "Tillst\u00e5ndusf\u00e4ltet",
+        "definition": "Statusfältet",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3293,7 +3293,7 @@
     },
     {
         "term": "qtapp.world_list_dialog:world_list",
-        "definition": "V\u00e4rldslista",
+        "definition": "Världslista",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3301,7 +3301,7 @@
     },
     {
         "term": "qtapp:board_properties",
-        "definition": "Styrelseegenskaper",
+        "definition": "Tavla egenskaper",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3309,7 +3309,7 @@
     },
     {
         "term": "qtapp:export_world_failed",
-        "definition": "Exportv\u00e4rlden misslyckades",
+        "definition": "Exportvärlden misslyckades",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3317,7 +3317,7 @@
     },
     {
         "term": "qtapp:grid",
-        "definition": "Rutn\u00e4t",
+        "definition": "Rutnät",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3349,7 +3349,7 @@
     },
     {
         "term": "qtapp:import_world_failed",
-        "definition": "Importv\u00e4rlden misslyckades",
+        "definition": "Import av världen misslyckades",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3357,7 +3357,7 @@
     },
     {
         "term": "qtapp:next",
-        "definition": "N\u00e4sta",
+        "definition": "Nästa",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3373,7 +3373,7 @@
     },
     {
         "term": "qtapp:toggle_mute",
-        "definition": "Sl\u00e5 av ljudet",
+        "definition": "Dämpa ljudet",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3381,7 +3381,7 @@
     },
     {
         "term": "qtapp:toggle_offline_online",
-        "definition": "V\u00e4xla anslutning",
+        "definition": "Växla anslutning",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3389,7 +3389,7 @@
     },
     {
         "term": "qtapp:toggle_power",
-        "definition": "V\u00e4xla str\u00f6m",
+        "definition": "Växla ström",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3397,7 +3397,7 @@
     },
     {
         "term": "qtapp:toggle_smoke",
-        "definition": "V\u00e4xla r\u00f6k",
+        "definition": "Växla rök",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3405,7 +3405,7 @@
     },
     {
         "term": "qtapp:traintastic_world",
-        "definition": "Traintastic v\u00e4rld",
+        "definition": "Traintastic värld",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3437,7 +3437,7 @@
     },
     {
         "term": "sensor_type:occupancy_detector",
-        "definition": "Occupy detektor",
+        "definition": "Närvarodetektor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3445,7 +3445,7 @@
     },
     {
         "term": "sensor_type:reed_switch",
-        "definition": "Reed switch",
+        "definition": "Reed kontakt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3469,7 +3469,7 @@
     },
     {
         "term": "serial:flow_control",
-        "definition": "Fl\u00f6deskontroll",
+        "definition": "Flödeskontroll",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3477,7 +3477,7 @@
     },
     {
         "term": "serial:port",
-        "definition": "Hamn",
+        "definition": "Port",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3485,7 +3485,7 @@
     },
     {
         "term": "serial_flow_control:hardware",
-        "definition": "H\u00e5rdvara",
+        "definition": "Hårdvara",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3501,7 +3501,7 @@
     },
     {
         "term": "server_log:code",
-        "definition": "Koda",
+        "definition": "Kod",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3533,7 +3533,7 @@
     },
     {
         "term": "settings:allow_client_server_restart",
-        "definition": "Till\u00e5t omstart av klientservern",
+        "definition": "Tillåt omstart av klientservern",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3541,7 +3541,7 @@
     },
     {
         "term": "settings:allow_client_server_shutdown",
-        "definition": "Till\u00e5t avst\u00e4ngning av klientserver",
+        "definition": "Tillåt avstängning av klientserver",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3549,7 +3549,7 @@
     },
     {
         "term": "settings:auto_save_world_on_exit",
-        "definition": "Spara v\u00e4rlden automatiskt vid utg\u00e5ng",
+        "definition": "Spara världen automatiskt vid utgång",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3557,7 +3557,7 @@
     },
     {
         "term": "settings:discoverable",
-        "definition": "Uppt\u00e4ckbar",
+        "definition": "Upptäckbar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3573,7 +3573,7 @@
     },
     {
         "term": "settings:localhost_only",
-        "definition": "Endast lokal v\u00e4rd",
+        "definition": "Endast lokal värd",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3581,7 +3581,7 @@
     },
     {
         "term": "settings:memory_logger_size",
-        "definition": "Storlek p\u00e5 minneslogger",
+        "definition": "Storlek på minneslogger",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3589,7 +3589,7 @@
     },
     {
         "term": "settings:port",
-        "definition": "Hamn",
+        "definition": "Port",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3597,7 +3597,7 @@
     },
     {
         "term": "settings:save_world_uncompressed",
-        "definition": "R\u00e4dda v\u00e4rlden okomprimerad",
+        "definition": "Spara världen okomprimerad",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3605,7 +3605,7 @@
     },
     {
         "term": "signal_aspect:proceed",
-        "definition": "Forts\u00e4tt",
+        "definition": "Fortsätt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3613,7 +3613,7 @@
     },
     {
         "term": "signal_aspect:proceed_reduced_speed",
-        "definition": "Forts\u00e4tt, minska hastigheten",
+        "definition": "Fortsätt, minska hastigheten",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3621,7 +3621,7 @@
     },
     {
         "term": "signal_aspect:stop",
-        "definition": "Sluta",
+        "definition": "Stopp",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3637,7 +3637,7 @@
     },
     {
         "term": "train:active",
-        "definition": "Aktiva",
+        "definition": "Aktivt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3645,7 +3645,7 @@
     },
     {
         "term": "train:block",
-        "definition": "Blockera",
+        "definition": "Block",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3653,7 +3653,7 @@
     },
     {
         "term": "train:lob",
-        "definition": "L\u00e4ngd \u00f6ver buffertar",
+        "definition": "Längd över buffertar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3661,7 +3661,7 @@
     },
     {
         "term": "train:mode",
-        "definition": "L\u00e4ge",
+        "definition": "Läge",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3669,7 +3669,7 @@
     },
     {
         "term": "train:override_length",
-        "definition": "\u00c5sidos\u00e4tt l\u00e4ngd",
+        "definition": "Åsidosätt längd",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3677,7 +3677,7 @@
     },
     {
         "term": "train:override_weight",
-        "definition": "\u00c5sidos\u00e4tt vikt",
+        "definition": "Åsidosätt vikt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3693,7 +3693,7 @@
     },
     {
         "term": "train:vehicles",
-        "definition": "Fordon",
+        "definition": "Vagnar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3709,7 +3709,7 @@
     },
     {
         "term": "traintastic_diy_interface_type:serial",
-        "definition": "Serie",
+        "definition": "Seriell",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3717,7 +3717,7 @@
     },
     {
         "term": "traintastic_diy_settings:debug_log_heartbeat",
-        "definition": "Logga hj\u00e4rtslagskommunikation",
+        "definition": "Logga hjärtslagskommunikation",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3725,7 +3725,7 @@
     },
     {
         "term": "traintastic_diy_settings:heartbeat_timeout",
-        "definition": "Timeout f\u00f6r hj\u00e4rtslag",
+        "definition": "Timeout för hjärtslag",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3733,7 +3733,7 @@
     },
     {
         "term": "turnout_position:left",
-        "definition": "V\u00e4nster",
+        "definition": "Vänster",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3741,7 +3741,7 @@
     },
     {
         "term": "turnout_position:right",
-        "definition": "H\u00f6ger",
+        "definition": "Höger",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3749,7 +3749,7 @@
     },
     {
         "term": "turnout_position:straight",
-        "definition": "Hetero",
+        "definition": "Rak",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3829,7 +3829,7 @@
     },
     {
         "term": "vehicle.rail:train",
-        "definition": "T\u00e5g",
+        "definition": "Tåg",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3845,7 +3845,7 @@
     },
     {
         "term": "world:boards",
-        "definition": "Br\u00e4dor",
+        "definition": "Tavlor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3869,7 +3869,7 @@
     },
     {
         "term": "world:edit",
-        "definition": "Redigera v\u00e4rld",
+        "definition": "Redigera värld",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3877,7 +3877,7 @@
     },
     {
         "term": "world:inputs",
-        "definition": "Ing\u00e5ngar",
+        "definition": "Ingångar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3885,7 +3885,7 @@
     },
     {
         "term": "world:interfaces",
-        "definition": "Gr\u00e4nssnitt",
+        "definition": "Gränssnitt",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3901,7 +3901,7 @@
     },
     {
         "term": "world:mute",
-        "definition": "Stum",
+        "definition": "Dämpa",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3909,7 +3909,7 @@
     },
     {
         "term": "world:no_smoke",
-        "definition": "Ingen r\u00f6k",
+        "definition": "Ingen rök",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3917,7 +3917,7 @@
     },
     {
         "term": "world:offline",
-        "definition": "Koppla ifr\u00e5n",
+        "definition": "Koppla ifrån",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3933,7 +3933,7 @@
     },
     {
         "term": "world:outputs",
-        "definition": "Utg\u00e5ngar",
+        "definition": "Utgångar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3941,7 +3941,7 @@
     },
     {
         "term": "world:power_off",
-        "definition": "St\u00e4ng av",
+        "definition": "Stäng av",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3949,7 +3949,7 @@
     },
     {
         "term": "world:power_on",
-        "definition": "Str\u00f6m p\u00e5",
+        "definition": "Ström på",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3957,7 +3957,7 @@
     },
     {
         "term": "world:rail_vehicles",
-        "definition": "J\u00e4rnv\u00e4gsfordon",
+        "definition": "Järnvägsfordon",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3965,7 +3965,7 @@
     },
     {
         "term": "world:run",
-        "definition": "K\u00f6r",
+        "definition": "Kör",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3981,7 +3981,7 @@
     },
     {
         "term": "world:scale_ratio",
-        "definition": "Skalf\u00f6rh\u00e5llande",
+        "definition": "Skalförhållande",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4005,7 +4005,7 @@
     },
     {
         "term": "world:trains",
-        "definition": "T\u00e5g",
+        "definition": "Tåg",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4021,7 +4021,7 @@
     },
     {
         "term": "world_scale:custom",
-        "definition": "Best\u00e4llnings",
+        "definition": "Anpassad",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4029,7 +4029,7 @@
     },
     {
         "term": "xpressnet_command_station:custom",
-        "definition": "Best\u00e4llnings",
+        "definition": "Anpassad",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4037,7 +4037,7 @@
     },
     {
         "term": "xpressnet_interface_type:network",
-        "definition": "N\u00e4tverk",
+        "definition": "Nätverk",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4045,7 +4045,7 @@
     },
     {
         "term": "xpressnet_interface_type:serial",
-        "definition": "Serie",
+        "definition": "Seriell",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4053,7 +4053,7 @@
     },
     {
         "term": "xpressnet_serial_interface_type:custom",
-        "definition": "Best\u00e4llnings",
+        "definition": "Anpassad",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4061,7 +4061,7 @@
     },
     {
         "term": "xpressnet_settings:use_emergency_stop_locomotive_command",
-        "definition": "Anv\u00e4nd kort n\u00f6dstoppslokkommando",
+        "definition": "Använd kort nödstoppslokkommando",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4069,7 +4069,7 @@
     },
     {
         "term": "xpressnet_settings:use_roco_f13_f20_command",
-        "definition": "Anv\u00e4nd kommandot Roco F13-F20",
+        "definition": "Använd kommandot Roco F13-F20",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4085,7 +4085,7 @@
     },
     {
         "term": "z21_settings.server:allow_emergency_stop",
-        "definition": "Till\u00e5t n\u00f6dstopp",
+        "definition": "Tillåt nödstopp",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4093,7 +4093,7 @@
     },
     {
         "term": "z21_settings.server:allow_track_power_off",
-        "definition": "L\u00e5t str\u00f6mmen st\u00e4ngas av",
+        "definition": "Låt strömmen stängas av",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4101,7 +4101,7 @@
     },
     {
         "term": "z21_settings.server:allow_track_power_on_release_emergency_stop",
-        "definition": "Till\u00e5t str\u00f6m p\u00e5\/n\u00f6dstopp",
+        "definition": "Tillåt ström på\/nödstopp",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4149,7 +4149,7 @@
     },
     {
         "term": "settings:select_folder",
-        "definition": "V\u00e4lj mapp",
+        "definition": "Välj mapp",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4165,7 +4165,7 @@
     },
     {
         "term": "message:N2006",
-        "definition": "Endast lyssningsl\u00e4ge: aktiverat",
+        "definition": "Endast lyssningsläge: aktiverat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4173,7 +4173,7 @@
     },
     {
         "term": "message:N2007",
-        "definition": "Endast lyssningsl\u00e4ge: avaktiverat",
+        "definition": "Endast lyssningsläge: avaktiverat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4181,7 +4181,7 @@
     },
     {
         "term": "status.lua:x_running",
-        "definition": "%1 k\u00f6rs",
+        "definition": "%1 körs",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4201,7 +4201,7 @@
     },
     {
         "term": "decoder_protocol:dcc_long",
-        "definition": "DCC (l\u00e5ng adress)"
+        "definition": "DCC (lång adress)"
     },
     {
         "term": "decoder_protocol:motorola",
@@ -4221,7 +4221,7 @@
     },
     {
         "term": "qtapp.settings:restart_required",
-        "definition": "Omstart kr\u00e4vs",
+        "definition": "Omstart krävs",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4229,7 +4229,7 @@
     },
     {
         "term": "qtapp.settings.general:language_changed_restart_required",
-        "definition": "Traintastic-klienten m\u00e5ste startas om f\u00f6r att spr\u00e5k\u00e4ndringen ska tr\u00e4da i kraft.",
+        "definition": "Traintastic-klienten måste startas om för att språkändringen ska träda i kraft.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4237,7 +4237,7 @@
     },
     {
         "term": "traintastic_diy_interface_type:network_tcp",
-        "definition": "N\u00e4tverk (TCP)",
+        "definition": "Nätverk (TCP)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4245,11 +4245,11 @@
     },
     {
         "term": "marklin_can_interface_type:network_tcp",
-        "definition": "N\u00e4tverk (TCP)"
+        "definition": "Nätverk (TCP)"
     },
     {
         "term": "marklin_can_interface_type:network_udp",
-        "definition": "N\u00e4tverk (UDP)"
+        "definition": "Nätverk (UDP)"
     },
     {
         "term": "message:E2022",
@@ -4261,7 +4261,7 @@
     },
     {
         "term": "message:C2005",
-        "definition": "SocketCAN \u00e4r endast tillg\u00e4ngligt p\u00e5 Linux"
+        "definition": "SocketCAN är endast tillgängligt på Linux"
     },
     {
         "term": "marklin_can_interface_type:socket_can",
@@ -4269,7 +4269,7 @@
     },
     {
         "term": "interface.marklin_can:marklin_can_locomotive_list",
-        "definition": "M\u00e4rklin CAN: Loklista"
+        "definition": "Märklin CAN: Loklista"
     },
     {
         "term": "marklincan_settings:default_switch_time",
@@ -4277,7 +4277,7 @@
     },
     {
         "term": "marklincan_settings:debug_config_stream",
-        "definition": "Fels\u00f6kning: Konfigurationsstr\u00f6m"
+        "definition": "Felsökning: Konfigurationsström"
     },
     {
         "term": "marklincan_settings:node_uid",
@@ -4301,7 +4301,7 @@
     },
     {
         "term": "interface.marklin_can:marklin_can_node_list",
-        "definition": "M\u00e4rklin CAN: Nodlista"
+        "definition": "Märklin CAN: Nodlista"
     },
     {
         "term": "table_model.marklin_can_node_list:device_name",
@@ -4325,19 +4325,19 @@
     },
     {
         "term": "marklincan_settings:debug_status_data_config",
-        "definition": "Debug: Tillst\u00e5ndusdatakonfiguration"
+        "definition": "Debug: Statusdatakonfiguration"
     },
     {
         "term": "message:E2024",
-        "definition": "Ok\u00e4nd MFX-UID f\u00f6r lokomotiv: %1"
+        "definition": "Okänd MFX-UID för lokomotiv: %1"
     },
     {
         "term": "message:W9001",
-        "definition": "K\u00f6rningen tog %1 oss"
+        "definition": "Körningen tog %1 μs"
     },
     {
         "term": "message:E3001",
-        "definition": "Det g\u00e5r inte att ta bort j\u00e4rnv\u00e4gsfordon n\u00e4r det \u00e4r aktivt t\u00e5g"
+        "definition": "Det går inte att ta bort järnvägsfordon när det är aktivt tåg"
     },
     {
         "term": "input_map_item.block:identification",
@@ -4345,7 +4345,7 @@
     },
     {
         "term": "message:E3002",
-        "definition": "Det g\u00e5r inte att ta bort aktivt t\u00e5g"
+        "definition": "Det går inte att ta bort aktivt tåg"
     },
     {
         "term": "message:C1014",
@@ -4353,11 +4353,11 @@
     },
     {
         "term": "message:C1015",
-        "definition": "Ok\u00e4nt objekt"
+        "definition": "Okänt objekt"
     },
     {
         "term": "message:C1016",
-        "definition": "Ok\u00e4nd egendom"
+        "definition": "Okänd egendom"
     },
     {
         "term": "message:C1017",
@@ -4373,15 +4373,15 @@
     },
     {
         "term": "message:W3001",
-        "definition": "NX-knapp kopplad till tv\u00e5 block"
+        "definition": "NX-knapp kopplad till två block"
     },
     {
         "term": "message:W3002",
-        "definition": "NX-knappen \u00e4r inte ansluten till n\u00e5got block"
+        "definition": "NX-knappen är inte ansluten till något block"
     },
     {
         "term": "auto_yes_no:auto",
-        "definition": "Autoavk\u00e4nning"
+        "definition": "Autoavkänning"
     },
     {
         "term": "auto_yes_no:yes",
@@ -4393,15 +4393,15 @@
     },
     {
         "term": "board_tile.rail.signal_3_aspect:require_reservation",
-        "definition": "Kr\u00e4v reservation"
+        "definition": "Kräv reservation"
     },
     {
         "term": "traintastic_diy_settings:startup_delay",
-        "definition": "Startf\u00f6rdr\u00f6jning"
+        "definition": "Startfördröjning"
     },
     {
         "term": "qtapp.settings.general:connect_automatically_to_discovered_server",
-        "definition": "Anslut automatiskt till uppt\u00e4ckt server"
+        "definition": "Anslut automatiskt till upptäckt server"
     },
     {
         "term": "qtapp.mainmenu:about_server",
@@ -4413,14 +4413,14 @@
     },
     {
         "term": "world:online_when_loaded",
-        "definition": "G\u00e5 online n\u00e4r den \u00e4r laddad"
+        "definition": "Gå online när den är laddad"
     },
     {
         "term": "world:power_on_when_loaded",
-        "definition": "Str\u00f6m p\u00e5 n\u00e4r den \u00e4r laddad"
+        "definition": "Ström på när den är laddad"
     },
     {
         "term": "world:run_when_loaded",
-        "definition": "K\u00f6r n\u00e4r den \u00e4r laddad"
+        "definition": "Kör när den är laddad"
     }
 ]
