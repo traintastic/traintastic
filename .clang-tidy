@@ -4,4 +4,5 @@ Checks: >
   readability-*,
   -readability-braces-around-statements,
   -readability-implicit-bool-conversion,
+  -readability-identifier-length,
   -readability-magic-numbers
