@@ -302,14 +302,19 @@ void LanX::updateChecksum(uint8_t len)
 {
   uint8_t val = XpressNet::calcChecksum(*reinterpret_cast<const XpressNet::Message*>(&xheader), len);
   uint8_t* checksum = &xheader + len + 1;
-#if (defined(__GNUC__) || defined(__MINGW32__)) && defined(__has_warning)
+#ifdef __MINGW32__
+  #pragma GCC diagnostic push
+  #pragma GCC diagnostic ignored "-Wstringop-overflow"
+#elif defined(__GNUC__) && defined(__has_warning)
   #if __has_warning("-Wstringop-overflow")
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wstringop-overflow"
   #endif
 #endif
   *checksum = val;
-#if (defined(__GNUC__) || defined(__MINGW32__)) && defined(__has_warning)
+#ifdef __MINGW32__
+  #pragma GCC diagnostic pop
+#elif defined(__GNUC__) && defined(__has_warning)
   #if __has_warning("-Wstringop-overflow")
     #pragma GCC diagnostic pop
   #endif
