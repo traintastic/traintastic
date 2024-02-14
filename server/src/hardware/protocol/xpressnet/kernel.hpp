@@ -66,7 +66,7 @@ class Kernel : public ::KernelBase
     std::array<TriState, inputAddressMax - inputAddressMin + 1> m_inputValues;
 
     OutputController* m_outputController;
-    std::array<OutputPairValue, accessoryOutputAddressMax - accessoryOutputAddressMin + 1> m_outputValues;
+    //std::array<OutputPairValue, accessoryOutputAddressMax - accessoryOutputAddressMin + 1> m_outputValues;
 
     Config m_config;
 
