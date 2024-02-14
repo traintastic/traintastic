@@ -17,7 +17,7 @@ else()
 endif()
 
 if(ENABLE_CLANG_TIDY)
-  set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*,-readability-braces-around-statements,-readability-implicit-bool-conversion,-readability-magic-numbers)
+  set(CMAKE_CXX_CLANG_TIDY clang-tidy)
 endif()
 
 add_executable(traintastic-server src/main.cpp src/options.hpp)
