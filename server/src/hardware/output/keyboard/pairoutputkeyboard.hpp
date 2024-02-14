@@ -33,7 +33,7 @@ class PairOutputKeyboard : public OutputKeyboard
   CLASS_ID("output_keyboard.pair")
 
   public:
-    Method<void(uint32_t, OutputPairValue)> setOutputValue;
+    Method<bool(uint32_t, OutputPairValue)> setOutputValue;
     Event<uint32_t, OutputPairValue> outputValueChanged;
 
     PairOutputKeyboard(OutputController& controller, OutputChannel channel_);

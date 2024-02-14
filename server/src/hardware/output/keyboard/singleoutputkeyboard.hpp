@@ -33,7 +33,7 @@ class SingleOutputKeyboard : public OutputKeyboard
   CLASS_ID("output_keyboard.single")
 
   public:
-    Method<void(uint32_t, bool)> setOutputValue;
+    Method<bool(uint32_t, bool)> setOutputValue;
     Event<uint32_t, TriState> outputValueChanged;
 
     SingleOutputKeyboard(OutputController& controller, OutputChannel channel_);

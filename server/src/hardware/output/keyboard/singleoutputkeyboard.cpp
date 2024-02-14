@@ -30,7 +30,7 @@ SingleOutputKeyboard::SingleOutputKeyboard(OutputController& controller, OutputC
   , setOutputValue(*this, "set_output_value",
       [this](uint32_t address, bool value)
       {
-        m_controller.setOutputValue(channel, address, value);
+        return m_controller.setOutputValue(channel, address, value);
       })
   , outputValueChanged(*this, "output_value_changed", EventFlags::Public)
 {
