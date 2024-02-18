@@ -395,6 +395,10 @@ install(TARGETS traintastic-server
     RUNTIME DESTINATION "/opt/traintastic/bin/"
 )
 
+if(INSTALL_SYSTEMD_SERVICE)
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/debian/traintastic-server.service DESTINATION "/lib/systemd/system")
+endif()
+
 ### TEST ###
 
 include(CTest)
@@ -430,5 +434,6 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Reinder Feenstra")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://traintastic.org")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "traintastic-data (>= ${CPACK_PACKAGE_VERSION})")
+set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/debian/postinst")
 
 include(CPack)

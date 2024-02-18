@@ -59,7 +59,7 @@ jobs:
           build_type: Release
           build_deb: true
           defines: ""
-          
+
         - name: "macos-11"
           os: "macos-11"
           generator: "Unix Makefiles"
@@ -79,7 +79,7 @@ jobs:
           build_type: Release
           build_deb: false
           defines: ""
-          
+
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
 
@@ -206,7 +206,7 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: true
-          defines: "-DENABLE_CLANG_TIDY=ON"
+          defines: "-DENABLE_CLANG_TIDY=ON -DINSTALL_SYSTEMD_SERVICE=ON"
           ccov: false
 
         - name: "ubuntu_22.04"
@@ -218,7 +218,7 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: true
-          defines: "-DENABLE_CLANG_TIDY=ON"
+          defines: "-DENABLE_CLANG_TIDY=ON -DINSTALL_SYSTEMD_SERVICE=ON"
           ccov: false
 
         - name: "ubuntu_20.04 (debug+ccov)"
@@ -242,7 +242,7 @@ jobs:
           jobs: 3
           build_type: Release
           build_deb: true
-          defines: ""
+          defines: " -DINSTALL_SYSTEMD_SERVICE=ON"
           ccov: false
 
         - name: "raspberrypios_arm64"
@@ -254,7 +254,7 @@ jobs:
           jobs: 3
           build_type: Release
           build_deb: true
-          defines: ""
+          defines: "-DINSTALL_SYSTEMD_SERVICE=ON"
           ccov: false
 
         - name: "macos-11"
