@@ -43,6 +43,8 @@ Name: en; MessagesFile: "compiler:Default.isl,en-us.isl"
 Name: nl; MessagesFile: "compiler:Languages\Dutch.isl,nl-nl.isl"
 Name: de; MessagesFile: "compiler:Languages\German.isl,de-de.isl"
 Name: it; MessagesFile: "compiler:Languages\Italian.isl,it-it.isl"
+Name: sv; MessagesFile: "Languages\Swedish.isl,sv-se.isl"
+Name: fr; MessagesFile: "compiler:Languages\French.isl,fr-fr.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -103,6 +105,9 @@ Name: "{autodesktop}\{#Name} client"; Filename: "{app}\client\{#ClientExeName}";
 [Registry]
 Root: HKLM; Subkey: "{#CompanySubKey}"; Flags: uninsdeletekeyifempty
 Root: HKLM; Subkey: "{#AppSubKey}"; Flags: uninsdeletekey
+
+[INI]
+Filename: {commonappdata}\traintastic\traintastic-client.ini; Section: general_; Key: language; String: {code:GetTraintasticClientLanguage}; Flags: uninsdeleteentry uninsdeletesectionifempty;
 
 [Code]
 const
@@ -199,6 +204,19 @@ begin
   Lbl.Left := ScaleX(17);
   Lbl.Height := ScaleY(23);
   Lbl.Parent := ComponentsPage.Surface;
+end;
+
+function GetTraintasticClientLanguage(Param: String) : String;
+begin
+  case ActiveLanguage of
+    'nl': Result := 'nl-nl';
+    'de': Result := 'de-de';
+    'it': Result := 'it-it';
+    'sv': Result := 'sv-se';
+    'fr': Result := 'fr-fr';
+  else
+    Result := 'en-us';
+  end;
 end;
 
 function VC2019RedistNeedsInstall: Boolean;

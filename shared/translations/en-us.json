@@ -833,7 +833,7 @@
     },
     {
         "term": "decoder_function_type:on_off",
-        "definition": "On\/Of",
+        "definition": "On\/Off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1249,7 +1249,7 @@
     },
     {
         "term": "language:en-us",
-        "definition": "English (US)",
+        "definition": "English (USA)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1266,6 +1266,22 @@
     {
         "term": "language:nl-nl",
         "definition": "Dutch",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "language:fr-fr",
+        "definition": "French",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "language:sv-se",
+        "definition": "Swedish",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1481,7 +1497,7 @@
     },
     {
         "term": "loconet_fastclock:master",
-        "definition": "Master (Traintatic controls the clock)",
+        "definition": "Master (Traintastic controls the clock)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2289,7 +2305,7 @@
     },
     {
         "term": "message:N1003",
-        "definition": "Restaring",
+        "definition": "Restarting",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3424,8 +3440,8 @@
         "comment": ""
     },
     {
-        "term": "sensor_type:occupy_detector",
-        "definition": "Occupy detector",
+        "term": "sensor_type:occupancy_detector",
+        "definition": "Occupancy detector",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4349,7 +4365,7 @@
     },
     {
         "term": "message:C1017",
-        "definition": "Invalid indeces"
+        "definition": "Invalid indexes"
     },
     {
         "term": "message:C1018",
@@ -4410,6 +4426,18 @@
     {
         "term": "world:run_when_loaded",
         "definition": "Run when loaded"
+    },
+    {
+        "term": "qtapp.connect_dialog:authenticating",
+        "definition": "Authenticating"
+    },
+    {
+        "term": "qtapp.connect_dialog:creating_session",
+        "definition": "Creating session"
+    },
+    {
+        "term": "qtapp.connect_dialog:fetching_world",
+        "definition": "Fetching world"
     },
     {
         "term": "pair_output_action:none",

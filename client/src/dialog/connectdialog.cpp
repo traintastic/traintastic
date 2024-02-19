@@ -219,8 +219,11 @@ void ConnectDialog::stateChanged()
 
 void ConnectDialog::serverIndexChanged(int index)
 {
-  m_url = m_server->itemData(index).toUrl();
-  m_connect->setEnabled(m_url.isValid());
+  if(auto itemData = m_server->itemData(index); itemData.isValid())
+  {
+    m_url = itemData.toUrl();
+    m_connect->setEnabled(m_url.isValid());
+  }
 }
 
 void ConnectDialog::serverTextChanged(const QString& text)

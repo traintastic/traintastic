@@ -1013,7 +1013,7 @@ void Connection::socketConnected()
                 auto request{Message::newRequest(Message::Command::BoardGetTileInfo)};
 
                 send(request,
-                  [this](const std::shared_ptr<Message> boardGetTileInfoResponse)
+                  [](const std::shared_ptr<Message> boardGetTileInfoResponse)
                   {
                     if(boardGetTileInfoResponse->isResponse() && !boardGetTileInfoResponse->isError())
                     {

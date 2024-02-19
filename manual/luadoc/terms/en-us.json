@@ -1796,6 +1796,14 @@
     "definition": "This examples shows how a signal can be controlled with DCCext commands (via LocoNet) as demonstration how custom control can be implemented. Traintastic will offcourse support DCCext natively in the future."
   },
   {
+    "term": "object.category.interfaces:title",
+    "definition": "Interfaces"
+  },
+  {
+    "term": "object.category.other:title",
+    "definition": "Other"
+  },
+  {
     "term": "object.singleoutput:title",
     "definition": "Single output"
   },

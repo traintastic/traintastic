@@ -98,12 +98,12 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
 
           if(m_world.simulation)
           {
-            // TODO: use train length if block has multiple occupy sensors, center train in block
+            // TODO: use train length if block has multiple occupancy sensors, center train in block
             for(const auto& item : *inputMap)
             {
               if(item->input && item->input->interface)
               {
-                if(item->type == SensorType::OccupyDetector)
+                if(item->type == SensorType::OccupancyDetector)
                   item->input->simulateChange(item->invert.value() ? SimulateInputAction::SetFalse : SimulateInputAction::SetTrue);
                 else
                   assert(false); // not yet implemented
@@ -146,7 +146,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
             {
               if(item->input && item->input->interface)
               {
-                if(item->type == SensorType::OccupyDetector)
+                if(item->type == SensorType::OccupancyDetector)
                   item->input->simulateChange(item->invert.value() ? SimulateInputAction::SetTrue : SimulateInputAction::SetFalse);
                 else
                   assert(false); // not yet implemented

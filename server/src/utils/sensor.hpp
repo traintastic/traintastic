@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@ constexpr SensorState toSensorState(const SensorType type, const TriState value)
   {
     switch(type)
     {
-      case SensorType::OccupyDetector:
+      case SensorType::OccupancyDetector:
         return value == TriState::True ? SensorState::Occupied : SensorState::Free;
 
       case SensorType::ReedSwitch:

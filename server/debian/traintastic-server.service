@@ -1,0 +1,12 @@
+[Unit]
+Description = Traintastic server daemon
+After = network.target
+
+[Service]
+Type = forking
+PIDFile = /run/traintastic-server.pid
+ExecStart = /opt/traintastic/bin/traintastic-server -d -u traintastic -g traintastic -D /var/opt/traintastic -P
+Restart = on-abort
+
+[Install]
+WantedBy = multi-user.target

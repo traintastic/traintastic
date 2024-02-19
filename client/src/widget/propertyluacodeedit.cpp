@@ -268,7 +268,7 @@ PropertyLuaCodeEdit::Highlighter::Highlighter(QTextDocument* parent) :
 //! [7]
 void PropertyLuaCodeEdit::Highlighter::highlightBlock(const QString &text)
 {
-    for (const Rule &rule : qAsConst(m_rules)) {
+    for (const Rule &rule : std::as_const(m_rules)) {
         QRegularExpressionMatchIterator matchIterator = rule.regex.globalMatch(text);
         while (matchIterator.hasNext()) {
             QRegularExpressionMatch match = matchIterator.next();

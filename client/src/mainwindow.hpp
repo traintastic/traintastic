@@ -43,7 +43,7 @@ class LuaScriptsSubWindow;
 class ServerSettingsSubWindow;
 class ServerLogWidget;
 
-class MainWindow : public QMainWindow
+class MainWindow final : public QMainWindow
 {
   Q_OBJECT
 

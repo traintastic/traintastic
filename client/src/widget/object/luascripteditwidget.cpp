@@ -25,6 +25,7 @@
 #include <QToolBar>
 #include <QPlainTextEdit>
 #include <QDesktopServices>
+#include <QFile>
 #include <version.hpp>
 #include <traintastic/locale/locale.hpp>
 #include <traintastic/utils/standardpaths.hpp>

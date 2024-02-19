@@ -410,6 +410,7 @@ void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
         const uint8_t index = static_cast<uint8_t>((address - 1) & 0x0003);
 
         std::byte message[sizeof(FeedbackBroadcast) + sizeof(FeedbackBroadcast::Pair) + 1];
+        memset(message, 0, sizeof(message));
         auto* feedbackBroadcast = reinterpret_cast<FeedbackBroadcast*>(&message);
         feedbackBroadcast->header = idFeedbackBroadcast;
         feedbackBroadcast->setPairCount(1);

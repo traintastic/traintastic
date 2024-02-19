@@ -1,7 +1,7 @@
 [
     {
         "term": "board:delete_tile",
-        "definition": "Kachel l\u00f6schen",
+        "definition": "Supprimer tuile",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -9,7 +9,7 @@
     },
     {
         "term": "board:move_tile",
-        "definition": "Fliese verschieben",
+        "definition": "D\u00e9placer tuile",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -17,7 +17,7 @@
     },
     {
         "term": "board:resize_tile",
-        "definition": "Gr\u00f6\u00dfe der Kachel \u00e4ndern",
+        "definition": "Redimensionner tuile",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -25,7 +25,7 @@
     },
     {
         "term": "board:resize_to_contents",
-        "definition": "Gr\u00f6\u00dfe an Inhalt anpassen",
+        "definition": "Ajuster au contenu",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -33,7 +33,7 @@
     },
     {
         "term": "board_settings.color_scheme:dark",
-        "definition": "Dunkel",
+        "definition": "Sombre",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -41,7 +41,7 @@
     },
     {
         "term": "board_settings.color_scheme:light",
-        "definition": "Licht",
+        "definition": "Clair",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -49,7 +49,7 @@
     },
     {
         "term": "board_tile.misc.push_button:color",
-        "definition": "Farbe",
+        "definition": "Couleur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -57,7 +57,7 @@
     },
     {
         "term": "board_tile.rail.block:assign_train",
-        "definition": "Zug zuweisen",
+        "definition": "Assigner train",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -65,7 +65,7 @@
     },
     {
         "term": "board_tile.rail.block:flip_train",
-        "definition": "Flipper-Zug",
+        "definition": "Inverser train",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -73,7 +73,7 @@
     },
     {
         "term": "board_tile.rail.block:input_map",
-        "definition": "Sensoren",
+        "definition": "Capteurs",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -81,7 +81,7 @@
     },
     {
         "term": "board_tile.rail.block:remove_train",
-        "definition": "Zug entfernen",
+        "definition": "Supprimer train",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -89,7 +89,7 @@
     },
     {
         "term": "board_tile.rail.direction_control:state",
-        "definition": "Staat",
+        "definition": "\u00c9tat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -97,7 +97,7 @@
     },
     {
         "term": "board_tile.rail.direction_control:use_a_to_b",
-        "definition": "Use: A \u2192 B",
+        "definition": "Utiliser: A \u2192 B",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -105,7 +105,7 @@
     },
     {
         "term": "board_tile.rail.direction_control:use_b_to_a",
-        "definition": "Use: A \u2190 B",
+        "definition": "Utiliser: A \u2190 B",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -121,7 +121,7 @@
     },
     {
         "term": "board_tile.rail.direction_control:use_none",
-        "definition": "Use: A \ud83d\udec7 B",
+        "definition": "Utiliser: A \ud83d\udec7 B",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -129,7 +129,7 @@
     },
     {
         "term": "board_tile.rail.link:link",
-        "definition": "Link",
+        "definition": "Lien",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -137,7 +137,7 @@
     },
     {
         "term": "board_tile.rail.sensor:input",
-        "definition": "Eingang",
+        "definition": "Entr\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -145,7 +145,7 @@
     },
     {
         "term": "board_tile.rail.sensor:invert",
-        "definition": "Umkehren",
+        "definition": "Inverser",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -153,7 +153,7 @@
     },
     {
         "term": "board_tile.rail.sensor:type",
-        "definition": "Typ",
+        "definition": "Type",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -161,7 +161,7 @@
     },
     {
         "term": "board_tile:output_map",
-        "definition": "Ausg\u00e4nge",
+        "definition": "Sorties",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -169,7 +169,7 @@
     },
     {
         "term": "category:cargo",
-        "definition": "Fracht",
+        "definition": "Cargo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -177,7 +177,7 @@
     },
     {
         "term": "category:developer",
-        "definition": "Entwickler",
+        "definition": "D\u00e9veloppeur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -185,7 +185,7 @@
     },
     {
         "term": "category:general",
-        "definition": "Allgemein",
+        "definition": "G\u00e9n\u00e9ral",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -193,7 +193,7 @@
     },
     {
         "term": "category:info",
-        "definition": "Infos",
+        "definition": "Info",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -201,7 +201,7 @@
     },
     {
         "term": "category:log",
-        "definition": "Protokoll",
+        "definition": "Journaux",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -209,7 +209,7 @@
     },
     {
         "term": "category:network",
-        "definition": "Netzwerk",
+        "definition": "R\u00e9seau",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -217,7 +217,7 @@
     },
     {
         "term": "class_id:board_tile.misc.push_button",
-        "definition": "Druckknopf",
+        "definition": "Bouton poussoir",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -225,7 +225,7 @@
     },
     {
         "term": "class_id:board_tile.rail.block",
-        "definition": "Block",
+        "definition": "Butoir",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -233,7 +233,7 @@
     },
     {
         "term": "class_id:board_tile.rail.bridge_45_left",
-        "definition": "Br\u00fccke 45\u00b0 (links)",
+        "definition": "Pont 45\u00b0 (gauche)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -241,7 +241,7 @@
     },
     {
         "term": "class_id:board_tile.rail.bridge_45_right",
-        "definition": "Br\u00fccke 45\u00b0 (rechts)",
+        "definition": "Pont 45\u00b0 (droite)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -249,7 +249,7 @@
     },
     {
         "term": "class_id:board_tile.rail.bridge_90",
-        "definition": "Br\u00fccke 90\u00b0",
+        "definition": "Pont 90\u00b0",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -257,7 +257,7 @@
     },
     {
         "term": "class_id:board_tile.rail.buffer_stop",
-        "definition": "Pufferstop",
+        "definition": "Tampon",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -265,7 +265,7 @@
     },
     {
         "term": "class_id:board_tile.rail.cross_45",
-        "definition": "Kreuzung 45\u00b0",
+        "definition": "Croisement 45\u00b0",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -273,7 +273,7 @@
     },
     {
         "term": "class_id:board_tile.rail.cross_90",
-        "definition": "Kreuzung 90\u00b0",
+        "definition": "Croisement 90\u00b0",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -281,7 +281,7 @@
     },
     {
         "term": "class_id:board_tile.rail.curve_45",
-        "definition": "Gebogenes Gleis 45\u00b0",
+        "definition": "Courbe 45\u00b0",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -289,7 +289,7 @@
     },
     {
         "term": "class_id:board_tile.rail.curve_90",
-        "definition": "Gebogenes Gleis 90\u00b0",
+        "definition": "Courbe 90%",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -297,7 +297,7 @@
     },
     {
         "term": "class_id:board_tile.rail.decoupler",
-        "definition": "Entkoppler",
+        "definition": "D\u00e9teleur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -305,7 +305,7 @@
     },
     {
         "term": "class_id:board_tile.rail.direction_control",
-        "definition": "Richtungskontrolle",
+        "definition": "Contr\u00f4le direction",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -313,7 +313,7 @@
     },
     {
         "term": "class_id:board_tile.rail.link",
-        "definition": "Link",
+        "definition": "Lien",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -321,7 +321,7 @@
     },
     {
         "term": "class_id:board_tile.rail.one_way",
-        "definition": "Ein Weg",
+        "definition": "Sens unique",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -329,7 +329,7 @@
     },
     {
         "term": "class_id:board_tile.rail.sensor",
-        "definition": "Sensor",
+        "definition": "Capteur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -337,7 +337,7 @@
     },
     {
         "term": "class_id:board_tile.rail.signal_2_aspect",
-        "definition": "Signal (2 Aspekte)",
+        "definition": "Signal (2 feux)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -345,7 +345,7 @@
     },
     {
         "term": "class_id:board_tile.rail.signal_3_aspect",
-        "definition": "Signal (3 Aspekte)",
+        "definition": "Signal (3 feux)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -353,7 +353,7 @@
     },
     {
         "term": "class_id:board_tile.rail.straight",
-        "definition": "Gerade Strecke",
+        "definition": "Rail droit",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -369,7 +369,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_3way",
-        "definition": "Weiche 3-fach",
+        "definition": "Aiguillage 3 voies",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -377,7 +377,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_doubleslip",
-        "definition": "Doppelter Schlupf",
+        "definition": "Jonction double",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -385,7 +385,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_45",
-        "definition": "Weiche links 45\u00b0",
+        "definition": "Aiguillage 45\u00b0 gauche",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -393,7 +393,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_90",
-        "definition": "Weiche links 90\u00b0",
+        "definition": "Aiguillage 90\u00b0 droite",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -401,7 +401,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_curved",
-        "definition": "Weiche links gebogen",
+        "definition": "Aiguillage courbe gauche",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -409,7 +409,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_45",
-        "definition": "Abzweigung rechts 45\u00b0",
+        "definition": "Aiguillage 45\u00b0 droite",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -417,7 +417,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_90",
-        "definition": "Weiche rechts 90\u00b0",
+        "definition": "Aiguillage 90\u00b0 droite",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -425,7 +425,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_curved",
-        "definition": "Weiche rechts gebogen",
+        "definition": "Aiguillage courbe droite",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -433,7 +433,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_singleslip",
-        "definition": "Einzelner Beleg",
+        "definition": "Jonction simple",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -441,7 +441,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_wye",
-        "definition": "Weichen-Achse",
+        "definition": "Aiguillage Y",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -449,7 +449,7 @@
     },
     {
         "term": "class_id:vehicle.rail.freight_wagon",
-        "definition": "G\u00fcterwaggon",
+        "definition": "Wagon de marchandises",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -457,7 +457,7 @@
     },
     {
         "term": "class_id:vehicle.rail.locomotive",
-        "definition": "Lokomotive",
+        "definition": "Locomotive",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -465,7 +465,7 @@
     },
     {
         "term": "class_id:vehicle.rail.multiple_unit",
-        "definition": "Triebwagen",
+        "definition": "Unit\u00e9 multiple",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -473,7 +473,7 @@
     },
     {
         "term": "class_id:vehicle.rail.tank_wagon",
-        "definition": "Kesselwagen",
+        "definition": "Wagon citerne",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -481,7 +481,7 @@
     },
     {
         "term": "clock:day",
-        "definition": "Tag",
+        "definition": "Jour",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -489,7 +489,7 @@
     },
     {
         "term": "clock:debug_log",
-        "definition": "Debug-Protokoll",
+        "definition": "Journal de d\u00e9bogage",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -497,7 +497,7 @@
     },
     {
         "term": "clock:freeze",
-        "definition": "Einfrieren",
+        "definition": "Geler",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -505,7 +505,7 @@
     },
     {
         "term": "clock:hour",
-        "definition": "Stunde",
+        "definition": "Heure",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -521,7 +521,7 @@
     },
     {
         "term": "clock:month",
-        "definition": "Monat",
+        "definition": "Mois",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -529,7 +529,7 @@
     },
     {
         "term": "clock:multiplier",
-        "definition": "Multiplikator",
+        "definition": "Multiplicateur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -537,7 +537,7 @@
     },
     {
         "term": "clock:year",
-        "definition": "Jahr",
+        "definition": "Ann\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -553,7 +553,7 @@
     },
     {
         "term": "color:black",
-        "definition": "Schwarz",
+        "definition": "Noir",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -561,7 +561,7 @@
     },
     {
         "term": "color:blue",
-        "definition": "Blau",
+        "definition": "Bleu",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -569,7 +569,7 @@
     },
     {
         "term": "color:fuchsia",
-        "definition": "Fuchsie",
+        "definition": "Fuchia",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -577,7 +577,7 @@
     },
     {
         "term": "color:gray",
-        "definition": "Grau",
+        "definition": "Gris",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -585,7 +585,7 @@
     },
     {
         "term": "color:green",
-        "definition": "Gr\u00fcn",
+        "definition": "Vert",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -593,7 +593,7 @@
     },
     {
         "term": "color:lime",
-        "definition": "Lime",
+        "definition": "Citron",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -601,7 +601,7 @@
     },
     {
         "term": "color:maroon",
-        "definition": "Maroon",
+        "definition": "Marron",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -609,7 +609,7 @@
     },
     {
         "term": "color:navy",
-        "definition": "Navy",
+        "definition": "Marine",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -625,7 +625,7 @@
     },
     {
         "term": "color:purple",
-        "definition": "Violett",
+        "definition": "Violet",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -633,7 +633,7 @@
     },
     {
         "term": "color:red",
-        "definition": "Rot",
+        "definition": "Rouge",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -641,7 +641,7 @@
     },
     {
         "term": "color:silver",
-        "definition": "Silber",
+        "definition": "Argent",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -649,7 +649,7 @@
     },
     {
         "term": "color:teal",
-        "definition": "Blaugr\u00fcn",
+        "definition": "Canard",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -657,7 +657,7 @@
     },
     {
         "term": "color:white",
-        "definition": "Wei\u00df",
+        "definition": "Blanc",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -665,7 +665,7 @@
     },
     {
         "term": "color:yellow",
-        "definition": "Gelb",
+        "definition": "Jaune",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -673,7 +673,7 @@
     },
     {
         "term": "dccplusplus_channel:dcc_accessory",
-        "definition": "DCC-Zubeh\u00f6r",
+        "definition": "Accessoire DCC",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -681,7 +681,7 @@
     },
     {
         "term": "dccplusplus_channel:output",
-        "definition": "Ausgang",
+        "definition": "Sortie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -689,7 +689,7 @@
     },
     {
         "term": "dccplusplus_channel:turnout",
-        "definition": "Weiche",
+        "definition": "Aiguillage",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -697,7 +697,7 @@
     },
     {
         "term": "dccplusplus_settings:startup_delay",
-        "definition": "Verz\u00f6gerung bei der Inbetriebnahme",
+        "definition": "D\u00e9lai de d\u00e9marrage",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -705,7 +705,7 @@
     },
     {
         "term": "dccplusplus_settings:use_ex",
-        "definition": "DCC++EX-Befehle verwenden",
+        "definition": "Utiliser les commandes DCC++EX",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -713,7 +713,7 @@
     },
     {
         "term": "decoder:functions",
-        "definition": "Funktionen",
+        "definition": "Fonctions",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -721,7 +721,7 @@
     },
     {
         "term": "decoder:long_address",
-        "definition": "DCC-Langadresse",
+        "definition": "Adresse DCC longue",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -729,7 +729,7 @@
     },
     {
         "term": "decoder:protocol",
-        "definition": "Protokoll",
+        "definition": "Protocole",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -737,7 +737,7 @@
     },
     {
         "term": "decoder_function:function",
-        "definition": "Funktion",
+        "definition": "Fonction",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -745,7 +745,7 @@
     },
     {
         "term": "decoder_function:number",
-        "definition": "Nummer",
+        "definition": "Num\u00e9ro",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -753,7 +753,7 @@
     },
     {
         "term": "decoder_function:type",
-        "definition": "Typ",
+        "definition": "Type",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -761,7 +761,7 @@
     },
     {
         "term": "decoder_function_function:generic",
-        "definition": "Allgemein",
+        "definition": "G\u00e9n\u00e9rique",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -769,7 +769,7 @@
     },
     {
         "term": "decoder_function_function:light",
-        "definition": "Licht",
+        "definition": "Lumi\u00e8re",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -777,7 +777,7 @@
     },
     {
         "term": "decoder_function_function:mute",
-        "definition": "Stummschalten",
+        "definition": "Silence",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -785,7 +785,7 @@
     },
     {
         "term": "decoder_function_function:smoke",
-        "definition": "Rauch",
+        "definition": "Fum\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -793,7 +793,7 @@
     },
     {
         "term": "decoder_function_function:sound",
-        "definition": "Ton",
+        "definition": "Son",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -801,7 +801,7 @@
     },
     {
         "term": "decoder_function_type:always_off",
-        "definition": "Immer aus",
+        "definition": "Toujours off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -809,7 +809,7 @@
     },
     {
         "term": "decoder_function_type:always_on",
-        "definition": "Immer eingeschaltet",
+        "definition": "Toujours on",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -817,7 +817,7 @@
     },
     {
         "term": "decoder_function_type:hold",
-        "definition": "Dr\u00fccken und halten",
+        "definition": "Garder appuy\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -825,7 +825,7 @@
     },
     {
         "term": "decoder_function_type:momentary",
-        "definition": "Momentan",
+        "definition": "Momentan\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -833,7 +833,7 @@
     },
     {
         "term": "decoder_function_type:on_off",
-        "definition": "Ein\/aus",
+        "definition": "On\/Off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -849,7 +849,7 @@
     },
     {
         "term": "decoder_protocol:custom",
-        "definition": "Benutzerdefiniert",
+        "definition": "Personnalis\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -857,7 +857,7 @@
     },
     {
         "term": "decoupler_state:activated",
-        "definition": "Aktiviert",
+        "definition": "Activ\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -865,7 +865,7 @@
     },
     {
         "term": "decoupler_state:deactivated",
-        "definition": "Deaktiviert",
+        "definition": "D\u00e9sactiv\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -873,7 +873,7 @@
     },
     {
         "term": "direction:forward",
-        "definition": "Vorw\u00e4rts",
+        "definition": "Avant",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -881,7 +881,7 @@
     },
     {
         "term": "direction:reverse",
-        "definition": "R\u00fcckg\u00e4ng",
+        "definition": "Arri\u00e8re",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -889,7 +889,7 @@
     },
     {
         "term": "ecos_channel:ecos_detector",
-        "definition": "ECoS Detector",
+        "definition": "D\u00e9tecteur ECoS",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -905,7 +905,7 @@
     },
     {
         "term": "hardware:channel",
-        "definition": "Kanal",
+        "definition": "Canal",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -913,7 +913,7 @@
     },
     {
         "term": "hardware:command_station",
-        "definition": "Zentrale",
+        "definition": "Station de commande",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -921,7 +921,7 @@
     },
     {
         "term": "hardware:debug_log_input",
-        "definition": "Eingabe\u00e4nderungen protokollieren",
+        "definition": "Journaliser les entr\u00e9es",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -929,7 +929,7 @@
     },
     {
         "term": "hardware:debug_log_output",
-        "definition": "\u00c4nderungen der Protokollausgabe",
+        "definition": "Journaliser les sorties",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -937,7 +937,7 @@
     },
     {
         "term": "hardware:debug_log_rx_tx",
-        "definition": "Protokollierung der gesamten Kommunikation",
+        "definition": "Journaliser toutes les communications",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -945,7 +945,7 @@
     },
     {
         "term": "hardware:decoders",
-        "definition": "Dekodierer",
+        "definition": "D\u00e9codeurs",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -953,7 +953,7 @@
     },
     {
         "term": "hardware:identifications",
-        "definition": "Kennzeichnungen",
+        "definition": "Identifications",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -961,7 +961,7 @@
     },
     {
         "term": "hardware:input_monitor",
-        "definition": "Eingangsmonitor",
+        "definition": "Moniteur d'entr\u00e9es",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -969,7 +969,7 @@
     },
     {
         "term": "hardware:inputs",
-        "definition": "Eing\u00e4nge",
+        "definition": "Entr\u00e9es",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -977,7 +977,7 @@
     },
     {
         "term": "hardware:interface",
-        "definition": "Schnittstelle",
+        "definition": "Interface",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -985,7 +985,7 @@
     },
     {
         "term": "hardware:output_keyboard",
-        "definition": "Ausgang Tastatur",
+        "definition": "Clavier de sortie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -993,7 +993,7 @@
     },
     {
         "term": "hardware:outputs",
-        "definition": "Ausg\u00e4nge",
+        "definition": "Sorties",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1001,7 +1001,7 @@
     },
     {
         "term": "hardware:speed_steps",
-        "definition": "Geschwindigkeitsstufen",
+        "definition": "Crans de vitesse",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1009,7 +1009,7 @@
     },
     {
         "term": "hardware:throttles",
-        "definition": "Drosseln",
+        "definition": "R\u00e9gulateurs",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1017,7 +1017,7 @@
     },
     {
         "term": "hsi88:s88_left",
-        "definition": "S88 Links",
+        "definition": "S88 gauche",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1025,7 +1025,7 @@
     },
     {
         "term": "hsi88:s88_middle",
-        "definition": "S88 Mitte",
+        "definition": "S88 milieu",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1033,7 +1033,7 @@
     },
     {
         "term": "hsi88:s88_right",
-        "definition": "S88 Rechts",
+        "definition": "S88 droite",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1041,7 +1041,7 @@
     },
     {
         "term": "identification:opc_multi_sense_direction",
-        "definition": "OPC_MULTI_SENSE Richtung",
+        "definition": "OPC_MULTI_SENSE direction",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1057,7 +1057,7 @@
     },
     {
         "term": "input_map_item.block:input",
-        "definition": "Eing\u00e4ng",
+        "definition": "Entr\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1065,7 +1065,7 @@
     },
     {
         "term": "input_map_item.block:invert",
-        "definition": "Umkehren",
+        "definition": "Inverser",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1073,7 +1073,7 @@
     },
     {
         "term": "input_map_item.block:type",
-        "definition": "Typ",
+        "definition": "Type",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1081,7 +1081,7 @@
     },
     {
         "term": "interface.ecos:ecos_detector",
-        "definition": "ECoS detector",
+        "definition": "D\u00e9tecteur ECoS",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1089,7 +1089,7 @@
     },
     {
         "term": "interface.hsi88:modules_left",
-        "definition": "Module links",
+        "definition": "Modules gauche",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1097,7 +1097,7 @@
     },
     {
         "term": "interface.hsi88:modules_middle",
-        "definition": "Module Mitte",
+        "definition": "Modules milieu",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1105,7 +1105,7 @@
     },
     {
         "term": "interface.hsi88:modules_right",
-        "definition": "Module rechts",
+        "definition": "Modules droite",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1113,7 +1113,7 @@
     },
     {
         "term": "interface.loconet:interface",
-        "definition": "Schnittstelle",
+        "definition": "Interface",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1121,7 +1121,7 @@
     },
     {
         "term": "interface.xpressnet:interface",
-        "definition": "Schnittstelle",
+        "definition": "Interface",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1129,7 +1129,7 @@
     },
     {
         "term": "interface.xpressnet:s88_module_count",
-        "definition": "Anzahl der S88-Module",
+        "definition": "Nombre de modules S88",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1137,7 +1137,7 @@
     },
     {
         "term": "interface.xpressnet:s88_start_address",
-        "definition": "S88-Startadresse",
+        "definition": "Adresse de d\u00e9part S88",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1145,7 +1145,7 @@
     },
     {
         "term": "interface.z21:firmware_version",
-        "definition": "Firmware-Version",
+        "definition": "Version micrologiciel",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1153,7 +1153,7 @@
     },
     {
         "term": "interface.z21:hardware_type",
-        "definition": "Hardware-Typ",
+        "definition": "Type mat\u00e9riel",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1161,7 +1161,7 @@
     },
     {
         "term": "interface.z21:serial_number",
-        "definition": "Seriennummer",
+        "definition": "N\u00b0 de s\u00e9rie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1169,7 +1169,7 @@
     },
     {
         "term": "interface:online",
-        "definition": "Online",
+        "definition": "En ligne",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1177,7 +1177,7 @@
     },
     {
         "term": "interface:status",
-        "definition": "Status",
+        "definition": "\u00c9tat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1185,7 +1185,7 @@
     },
     {
         "term": "interface:type",
-        "definition": "Typ",
+        "definition": "Type",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1193,7 +1193,7 @@
     },
     {
         "term": "interface_state:error",
-        "definition": "Fehler",
+        "definition": "Erreur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1201,7 +1201,7 @@
     },
     {
         "term": "interface_state:initializing",
-        "definition": "Initialisierung",
+        "definition": "Initialisation",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1209,7 +1209,7 @@
     },
     {
         "term": "interface_state:offline",
-        "definition": "Offline",
+        "definition": "Hors ligne",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1217,7 +1217,7 @@
     },
     {
         "term": "interface_state:online",
-        "definition": "Online",
+        "definition": "En ligne",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1225,7 +1225,7 @@
     },
     {
         "term": "ip:hostname",
-        "definition": "Hostname",
+        "definition": "Nom d'h\u00f4te",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1241,7 +1241,7 @@
     },
     {
         "term": "language:de-de",
-        "definition": "Deutsch (Deutschland)",
+        "definition": "Allemand",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1249,7 +1249,7 @@
     },
     {
         "term": "language:en-us",
-        "definition": "Englisch (USA)",
+        "definition": "Anglais (USA)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1257,7 +1257,7 @@
     },
     {
         "term": "language:it-it",
-        "definition": "Italienisch",
+        "definition": "Italien",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1265,7 +1265,7 @@
     },
     {
         "term": "language:nl-nl",
-        "definition": "Niederl\u00e4ndisch (Die Niederlande)",
+        "definition": "Allemand",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1273,7 +1273,7 @@
     },
     {
         "term": "language:fr-fr",
-        "definition": "Französisch",
+        "definition": "Français",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1281,7 +1281,7 @@
     },
     {
         "term": "list.train_vehicle:reverse",
-        "definition": "Umgekehrt",
+        "definition": "Arri\u00e8re",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1289,7 +1289,7 @@
     },
     {
         "term": "list:add",
-        "definition": "Addieren",
+        "definition": "Ajouter",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1297,7 +1297,7 @@
     },
     {
         "term": "list:create",
-        "definition": "erstellen.",
+        "definition": "Cr\u00e9er",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1305,7 +1305,7 @@
     },
     {
         "term": "list:delete",
-        "definition": "L\u00f6schen",
+        "definition": "Supprimer",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1313,7 +1313,7 @@
     },
     {
         "term": "list:edit",
-        "definition": "Bearbeiten",
+        "definition": "Modifier",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1321,7 +1321,7 @@
     },
     {
         "term": "list:move_down",
-        "definition": "Nach unten gehen",
+        "definition": "Descendre",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1329,7 +1329,7 @@
     },
     {
         "term": "list:move_up",
-        "definition": "Nachr\u00fccken",
+        "definition": "Monter",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1337,7 +1337,7 @@
     },
     {
         "term": "list:remove",
-        "definition": "entfernen",
+        "definition": "Supprimer",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1345,7 +1345,7 @@
     },
     {
         "term": "lncv_programmer:description",
-        "definition": "Beschreibung",
+        "definition": "Description",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1353,7 +1353,7 @@
     },
     {
         "term": "lncv_programmer:lncv_programmer",
-        "definition": "LNCV-Programmierer",
+        "definition": "Programmateur LNCV",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1361,7 +1361,7 @@
     },
     {
         "term": "lncv_programmer:module",
-        "definition": "Modul",
+        "definition": "Module",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1369,7 +1369,7 @@
     },
     {
         "term": "lncv_programmer:other_module",
-        "definition": "Anderes Modul",
+        "definition": "Autre module",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1377,7 +1377,7 @@
     },
     {
         "term": "lncv_programmer:read",
-        "definition": "Lesen",
+        "definition": "Lire",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1385,7 +1385,7 @@
     },
     {
         "term": "lncv_programmer:reading_lncv_x",
-        "definition": "LNCV %1 Lesen",
+        "definition": "Lecture LNCV %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1393,7 +1393,7 @@
     },
     {
         "term": "lncv_programmer:reading_lncv_x_failed",
-        "definition": "Lesen von LNCV %1 fehlgeschlagen",
+        "definition": "\u00c9chec de lecture LNCV %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1401,7 +1401,7 @@
     },
     {
         "term": "lncv_programmer:sending_start",
-        "definition": "Start der Sendung",
+        "definition": "Envoi d\u00e9marr\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1409,7 +1409,7 @@
     },
     {
         "term": "lncv_programmer:start",
-        "definition": "Start",
+        "definition": "D\u00e9marrer",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1417,7 +1417,7 @@
     },
     {
         "term": "lncv_programmer:stop",
-        "definition": "Stopp",
+        "definition": "Arr\u00eater",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1425,7 +1425,7 @@
     },
     {
         "term": "lncv_programmer:use_broadcast_address",
-        "definition": "Broadcast-Adresse verwenden",
+        "definition": "Utiliser l'adresse de diffusion",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1433,7 +1433,7 @@
     },
     {
         "term": "lncv_programmer:value",
-        "definition": "Wert",
+        "definition": "Valeur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1441,7 +1441,7 @@
     },
     {
         "term": "lncv_programmer:waiting_for_module_to_respond",
-        "definition": "Warten auf die Antwort des Moduls",
+        "definition": "Attente de la r\u00e9ponse du module",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1449,7 +1449,7 @@
     },
     {
         "term": "lncv_programmer:write",
-        "definition": "Schreiben",
+        "definition": "Ecrire",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1457,7 +1457,7 @@
     },
     {
         "term": "lncv_programmer:writing_lncv_x",
-        "definition": "LNCV %1 Schreiben",
+        "definition": "Ecriture LNCV %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1465,7 +1465,7 @@
     },
     {
         "term": "loconet_command_station:custom",
-        "definition": "Benutzerdefiniert",
+        "definition": "Personnalis\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1473,7 +1473,7 @@
     },
     {
         "term": "loconet_f9_f28:imm_packet",
-        "definition": "Direkt (OPC_IMM_PACKET)",
+        "definition": "Direct (OPC_IMM_PACKET)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1481,7 +1481,7 @@
     },
     {
         "term": "loconet_f9_f28:uhlenbrock_extended",
-        "definition": "Uhlenbrock erweitert (OPC_A3, OPC_D4)",
+        "definition": "Uhlenbrock \u00e9tendu (OPC_A3, OPC_D4)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1489,7 +1489,7 @@
     },
     {
         "term": "loconet_fastclock:master",
-        "definition": "Meister (Traintatic steuert die Uhr)",
+        "definition": "Ma\u00eetre (Traintastic controls the clock)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1497,7 +1497,7 @@
     },
     {
         "term": "loconet_fastclock:off",
-        "definition": "Aus",
+        "definition": "Off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1505,7 +1505,7 @@
     },
     {
         "term": "loconet_interface_type:serial",
-        "definition": "Serielle",
+        "definition": "S\u00e9rie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1513,7 +1513,7 @@
     },
     {
         "term": "loconet_interface_type:tcp_binary",
-        "definition": "TCP bin\u00e4r",
+        "definition": "TCP binaire",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1521,7 +1521,7 @@
     },
     {
         "term": "loconet_serial_interface:custom",
-        "definition": "Benutzerdefiniert",
+        "definition": "Personnalis\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1529,7 +1529,7 @@
     },
     {
         "term": "loconet_settings:command_station",
-        "definition": "Zentrale",
+        "definition": "Station de commande",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1537,7 +1537,7 @@
     },
     {
         "term": "loconet_settings:echo_timeout",
-        "definition": "Echo-Timeout",
+        "definition": "Timeout \u00e9cho",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1545,7 +1545,7 @@
     },
     {
         "term": "loconet_settings:fast_clock",
-        "definition": "Schnelle Uhr",
+        "definition": "Horloge rapide",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1553,7 +1553,7 @@
     },
     {
         "term": "loconet_settings:fast_clock_sync_enabled",
-        "definition": "Schnelle Taktsynchronisation aktiviert",
+        "definition": "Synchro horloge rapide activ\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1561,7 +1561,7 @@
     },
     {
         "term": "loconet_settings:fast_clock_sync_interval",
-        "definition": "Schnelles Taktsynchronisationsintervall",
+        "definition": "Intervalle horloge rapide",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1569,7 +1569,7 @@
     },
     {
         "term": "loconet_settings:locomotive_slots",
-        "definition": "Lokomotiv-Steckpl\u00e4tze",
+        "definition": "Emplacements de locomotive",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1577,7 +1577,7 @@
     },
     {
         "term": "loconet_settings:pcap_output",
-        "definition": "PCAP-Ausgang",
+        "definition": "Sortie PCAP",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1585,7 +1585,7 @@
     },
     {
         "term": "loconet_settings:response_timeout",
-        "definition": "Zeit\u00fcberschreitung bei der Antwort",
+        "definition": "D\u00e9lai d'attente r\u00e9ponse",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1593,7 +1593,7 @@
     },
     {
         "term": "lua.script:disabled",
-        "definition": "Deaktiviert",
+        "definition": "D\u00e9sactiv\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1601,7 +1601,7 @@
     },
     {
         "term": "lua.script:start",
-        "definition": "Start",
+        "definition": "D\u00e9marrer",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1609,7 +1609,7 @@
     },
     {
         "term": "lua.script:stop",
-        "definition": "Stopp",
+        "definition": "Arr\u00eater",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1617,7 +1617,7 @@
     },
     {
         "term": "lua.script_list:start_all",
-        "definition": "Alle starten",
+        "definition": "D\u00e9marrer tout",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1625,7 +1625,7 @@
     },
     {
         "term": "lua.script_list:stop_all",
-        "definition": "Alle anhalten",
+        "definition": "Arr\u00eater tout",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1633,7 +1633,7 @@
     },
     {
         "term": "lua_script:state",
-        "definition": "Staat",
+        "definition": "\u00c9tat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1641,7 +1641,7 @@
     },
     {
         "term": "lua_script_state:disabled",
-        "definition": "Deaktiviert",
+        "definition": "D\u00e9sactiv\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1649,7 +1649,7 @@
     },
     {
         "term": "lua_script_state:error",
-        "definition": "Fehler",
+        "definition": "Erreur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1657,7 +1657,7 @@
     },
     {
         "term": "lua_script_state:running",
-        "definition": "Laufen",
+        "definition": "En cours",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1665,7 +1665,7 @@
     },
     {
         "term": "lua_script_state:stopped",
-        "definition": "Gestoppt",
+        "definition": "Arr\u00eat\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1673,7 +1673,7 @@
     },
     {
         "term": "message:C1001",
-        "definition": "Laden der Welt fehlgeschlagen (%1)",
+        "definition": "Erreur de chargement du monde (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1681,7 +1681,7 @@
     },
     {
         "term": "message:C1002",
-        "definition": "Erstellen des Clients fehlgeschlagen (%1)",
+        "definition": "Erreur de cr\u00e9ation de la connexion (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1689,7 +1689,7 @@
     },
     {
         "term": "message:C1003",
-        "definition": "Schreiben in Einstellungsdatei (%1) nicht m\u00f6glich",
+        "definition": "Impossible d'\u00e9crite dans le fichier de param\u00e9trage (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1697,7 +1697,7 @@
     },
     {
         "term": "message:C1004",
-        "definition": "Welt lesen fehlgeschlagen (%1) (%2)",
+        "definition": "Erreur de lecture du monde (%1) (%2)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1705,7 +1705,7 @@
     },
     {
         "term": "message:C1005",
-        "definition": "Speichern der Welt fehlgeschlagen (%1)",
+        "definition": "\u00c9chec d'enregistrement du monde (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1713,7 +1713,7 @@
     },
     {
         "term": "message:C1006",
-        "definition": "Erstellen der Weltsicherung fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de sauvegarde du monde (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1721,7 +1721,7 @@
     },
     {
         "term": "message:C1007",
-        "definition": "Erstellen des Welt-Backup-Verzeichnisses fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de cr\u00e9ation du r\u00e9pertoire de sauvegarde du monde (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1729,7 +1729,7 @@
     },
     {
         "term": "message:C1008",
-        "definition": "Erstellen des Sicherungsverzeichnisses fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de cr\u00e9ation du r\u00e9pertoire de sauvegarde (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1737,7 +1737,7 @@
     },
     {
         "term": "message:C1009",
-        "definition": "Erstellen einer Einstellungssicherung fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de cr\u00e9ation de la sauvegarde des param\u00e8tres (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1745,7 +1745,7 @@
     },
     {
         "term": "message:C1010",
-        "definition": "Export der Welt gescheitert (%1)",
+        "definition": "\u00c9chec de l'export du monde (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1753,7 +1753,7 @@
     },
     {
         "term": "message:C1011",
-        "definition": "Importieren der Welt fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de l'importation du monde (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1761,7 +1761,7 @@
     },
     {
         "term": "message:C1012",
-        "definition": "Unbekannte Klasse '%1', kann Objekt '%2' nicht neu erstellen",
+        "definition": "Classe '%1' inconnue, impossible de recr\u00e9er l'objet '%2'",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1769,7 +1769,7 @@
     },
     {
         "term": "message:C1013",
-        "definition": "Kann die Welt nicht laden, die mit einer neueren Version gespeichert wurde, ben\u00f6tigt mindestens: %1",
+        "definition": "Impossible de charger un monde enregistr\u00e9 avec une version plus r\u00e9cente, requiert au minimum : %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1777,7 +1777,7 @@
     },
     {
         "term": "message:C2001",
-        "definition": "Adresse bereits verwendet bei #%1",
+        "definition": "Adresse d\u00e9j\u00e0 utilis\u00e9e \u00e0 #%1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1785,7 +1785,7 @@
     },
     {
         "term": "message:C2004",
-        "definition": "Kann keinen freien Slot bekommen",
+        "definition": "Impossible d'obtenir un emplacement libre",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1793,7 +1793,7 @@
     },
     {
         "term": "message:D1001",
-        "definition": "Fortsetzen %1 (Multiplikator: %2)",
+        "definition": "Resume %1 (multiplier: %2)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1801,7 +1801,7 @@
     },
     {
         "term": "message:D1002",
-        "definition": "Tick %1 (Fehler: %2us)",
+        "definition": "Tick %1 (error: %2us)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1809,7 +1809,7 @@
     },
     {
         "term": "message:D1003",
-        "definition": "Einfrieren %1",
+        "definition": "Freeze %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1817,7 +1817,7 @@
     },
     {
         "term": "message:D2001",
-        "definition": "SENDEN: %1",
+        "definition": "TX: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1833,7 +1833,7 @@
     },
     {
         "term": "message:D2003",
-        "definition": "Unbekannter xHeader 0x%1",
+        "definition": "Ent\u00eate inconnue 0x%1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1841,7 +1841,7 @@
     },
     {
         "term": "message:D2004",
-        "definition": "%1 SENDEN: %2",
+        "definition": "%1 TX: %2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1857,7 +1857,7 @@
     },
     {
         "term": "message:D2006",
-        "definition": "Unbekannte Nachricht: %1",
+        "definition": "Message inconnu: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1865,7 +1865,7 @@
     },
     {
         "term": "message:D2007",
-        "definition": "Eingang %1 = %2",
+        "definition": "Entr\u00e9e %1 = %2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1873,7 +1873,7 @@
     },
     {
         "term": "message:D2008",
-        "definition": "Ausgang %1 = %1",
+        "definition": "Sortie %1 = %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1881,7 +1881,7 @@
     },
     {
         "term": "message:D2009",
-        "definition": "Steckplatz %1 = %2",
+        "definition": "Emplacement %1 = %2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1889,7 +1889,7 @@
     },
     {
         "term": "message:D2010",
-        "definition": "Steckplatz %1 = Frei",
+        "definition": "Entr\u00e9e %1 = Libre",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1897,7 +1897,7 @@
     },
     {
         "term": "message:E1001",
-        "definition": "Ung\u00fcltige Welt-UUID: %1",
+        "definition": "UUID monde invalide: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1905,7 +1905,7 @@
     },
     {
         "term": "message:E1002",
-        "definition": "Die Welt %1 existiert nicht",
+        "definition": "Le monde %1 n'existe pas",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1913,7 +1913,7 @@
     },
     {
         "term": "message:E1003",
-        "definition": "UDP-Empfangsfehler (%1)",
+        "definition": "Erreur r\u00e9ception UDP (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1921,7 +1921,7 @@
     },
     {
         "term": "message:E1004",
-        "definition": "TCP-Akzeptanzfehler (%1)",
+        "definition": "Erreur TCP accept (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1929,7 +1929,7 @@
     },
     {
         "term": "message:E1005",
-        "definition": "Socket-Shutdown fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de fermeture du socket (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1937,7 +1937,7 @@
     },
     {
         "term": "message:E1006",
-        "definition": "Socket-Schreiben fehlgeschlagen (%1)",
+        "definition": "\u00c9chec d'\u00e9criture sur le socket (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1945,7 +1945,7 @@
     },
     {
         "term": "message:E1007",
-        "definition": "Socket-Lesen fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de lecture sur le socket (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1953,7 +1953,7 @@
     },
     {
         "term": "message:E1008",
-        "definition": "Socket Acceptor Cancel fehlgeschlagen (%1)",
+        "definition": "Socket acceptor cancel failed (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1961,7 +1961,7 @@
     },
     {
         "term": "message:E2001",
-        "definition": "Serielles Schreiben fehlgeschlagen (%1)",
+        "definition": "\u00c9chec d'\u00e9criture sur le port s\u00e9rie (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1969,7 +1969,7 @@
     },
     {
         "term": "message:E2002",
-        "definition": "Serielles Lesen fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de lecture sur le port s\u00e9rie (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1977,7 +1977,7 @@
     },
     {
         "term": "message:E2003",
-        "definition": "Adresse herstellen fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de cr\u00e9ation d'adresse (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1985,7 +1985,7 @@
     },
     {
         "term": "message:E2004",
-        "definition": "Socket \u00f6ffnen fehlgeschlagen (%1)",
+        "definition": "\u00c9chec d'ouverture du socket (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1993,7 +1993,7 @@
     },
     {
         "term": "message:E2005",
-        "definition": "Socket-Verbindung fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de connexion au socket (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2001,7 +2001,7 @@
     },
     {
         "term": "message:E2006",
-        "definition": "Socket-Bindung fehlgeschlagen (%1)",
+        "definition": "\u00c9chec d'\u00e9coute sur le socket (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2009,7 +2009,7 @@
     },
     {
         "term": "message:E2007",
-        "definition": "Socket-Schreiben fehlgeschlagen (%1)",
+        "definition": "\u00c9chec d'\u00e9criture sur le socket (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2017,7 +2017,7 @@
     },
     {
         "term": "message:E2008",
-        "definition": "Socket-Lesen fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de lecture sur le socket (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2025,7 +2025,7 @@
     },
     {
         "term": "message:E2009",
-        "definition": "Socket-Empfang fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de r\u00e9ception sur le socket (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2033,7 +2033,7 @@
     },
     {
         "term": "message:E2010",
-        "definition": "\u00d6ffnen der seriellen Schnittstelle fehlgeschlagen (%1)",
+        "definition": "\u00c9chec d'ouverture du port s\u00e9rie (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2041,7 +2041,7 @@
     },
     {
         "term": "message:E2011",
-        "definition": "Socket-Sendung fehlgeschlagen (%1)",
+        "definition": "\u00c9chec d'envoi sur le socket (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2049,7 +2049,7 @@
     },
     {
         "term": "message:E2012",
-        "definition": "Bereits verwendete Funktionsnummer",
+        "definition": "Num\u00e9ro de fonction d\u00e9j\u00e0 utilis\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2057,7 +2057,7 @@
     },
     {
         "term": "message:E2013",
-        "definition": "Baudrate der seriellen Schnittstelle falsch eingestellt (%1)",
+        "definition": "\u00c9chec de r\u00e9glage du d\u00e9bit du port s\u00e9rie (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2065,7 +2065,7 @@
     },
     {
         "term": "message:E2014",
-        "definition": "Datenbits der seriellen Schnittstelle nicht gesetzt (%1)",
+        "definition": "\u00c9chec de r\u00e9glage du nombre bits de donn\u00e9es du port s\u00e9rie (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2073,7 +2073,7 @@
     },
     {
         "term": "message:E2015",
-        "definition": "Stoppbits der seriellen Schnittstelle nicht gesetzt (%1)",
+        "definition": "\u00c9chec de r\u00e9glage des bits stop du port s\u00e9rie (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2081,7 +2081,7 @@
     },
     {
         "term": "message:E2016",
-        "definition": "Parit\u00e4tseinstellung der seriellen Schnittstelle fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de r\u00e9glage des bites de parit\u00e9 du port s\u00e9rie (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2089,7 +2089,7 @@
     },
     {
         "term": "message:E2017",
-        "definition": "Flusskontrolle der seriellen Schnittstelle fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de r\u00e9glage du contr\u00f4le de flux du port s\u00e9rie (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2097,7 +2097,7 @@
     },
     {
         "term": "message:E2018",
-        "definition": "Zeit\u00fcberschreitung, kein Echo innerhalb von %1ms",
+        "definition": "D\u00e9lai d'attente d\u00e9passe, pas d'\u00e9cho apr\u00e8s %1ms",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2105,7 +2105,7 @@
     },
     {
         "term": "message:E2019",
-        "definition": "Timeout, keine Antwort innerhalb von %1ms",
+        "definition": "D\u00e9lai d'attente d\u00e9passe, pas de r\u00e9ponse apr\u00e8s %1ms",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2113,7 +2113,7 @@
     },
     {
         "term": "message:E2020",
-        "definition": "Die Gesamtzahl der Module darf %1 nicht \u00fcberschreiten.",
+        "definition": "Le nombre total de modules ne peut pas exc\u00e9der %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2121,7 +2121,7 @@
     },
     {
         "term": "message:E2021",
-        "definition": "Starten des PCAP-Protokolls fehlgeschlagen: %1",
+        "definition": "\u00c9chec de staring du journal PCAP: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2129,7 +2129,7 @@
     },
     {
         "term": "message:E9001",
-        "definition": "%1 (W\u00e4hrend der Ausf\u00fchrung von %2 Event-Handler)",
+        "definition": "%1 (Durant l\u2019ex\u00e9cution du gestionnaire d'\u00e9v\u00e9nements %2)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2137,7 +2137,7 @@
     },
     {
         "term": "message:F1001",
-        "definition": "\u00d6ffnen des TCP-Sockets fehlgeschlagen (%1)",
+        "definition": "\u00c9chec d'ouverture du socket TCP (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2145,7 +2145,7 @@
     },
     {
         "term": "message:F1002",
-        "definition": "Wiederverwendung der TCP-Socket-Adresse fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de la r\u00e9utilisation de l'adresse du socket TCP (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2153,7 +2153,7 @@
     },
     {
         "term": "message:F1003",
-        "definition": "Binden des TCP-Sockets fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de liaison du socket TCP (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2161,7 +2161,7 @@
     },
     {
         "term": "message:F1004",
-        "definition": "TCP-Socket-Listening fehlgeschlagen (%1)",
+        "definition": "\u00c9chec d'\u00e9coute du socket TCP (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2169,7 +2169,7 @@
     },
     {
         "term": "message:F1005",
-        "definition": "\u00d6ffnen des UDP-Sockets fehlgeschlagen (%1)",
+        "definition": "\u00c9chec d'ouverture du socket UDP (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2177,7 +2177,7 @@
     },
     {
         "term": "message:F1006",
-        "definition": "Wiederverwendung der UDP-Socket-Adresse fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de la r\u00e9utilisation de l'adresse du socket UDP (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2185,7 +2185,7 @@
     },
     {
         "term": "message:F1007",
-        "definition": "Binden des UDP-Sockets fehlgeschlagen (%1)",
+        "definition": "\u00c9chec de liaison du socket UDP (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2193,7 +2193,7 @@
     },
     {
         "term": "message:F9001",
-        "definition": "Erstellen des Lua-Status fehlgeschlagen",
+        "definition": "\u00c9chec de cr\u00e9ation de l'\u00e9tat Lua",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2201,7 +2201,7 @@
     },
     {
         "term": "message:F9002",
-        "definition": "Skriptausf\u00fchrung fehlgeschlagen (%1)",
+        "definition": "\u00c9chec d\u2019ex\u00e9cution du script (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2209,7 +2209,7 @@
     },
     {
         "term": "message:F9003",
-        "definition": "Funktionsaufruf fehlgeschlagen (%1)",
+        "definition": "\u00c9chec d'appel de la fonction (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2217,7 +2217,7 @@
     },
     {
         "term": "message:I1002",
-        "definition": "Einstellungsdatei nicht gefunden, Standardwerte werden verwendet",
+        "definition": "Fichier de param\u00e8tres non trouv\u00e9, utilisation des param\u00e8tres par d\u00e9faut",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2225,7 +2225,7 @@
     },
     {
         "term": "message:I1003",
-        "definition": "Client verbunden",
+        "definition": "Nouvelle connexion",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2233,7 +2233,7 @@
     },
     {
         "term": "message:I1004",
-        "definition": "Verbindung verloren",
+        "definition": "Connexion perdue",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2241,7 +2241,7 @@
     },
     {
         "term": "message:I1005",
-        "definition": "Weltindex aufbauen",
+        "definition": "Construction de l'index du monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2249,7 +2249,7 @@
     },
     {
         "term": "message:I2001",
-        "definition": "Unbekannte Lokadresse: %1",
+        "definition": "Adresse loco inconnue: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2257,7 +2257,7 @@
     },
     {
         "term": "message:I2002",
-        "definition": "Hardware-Typ: %1",
+        "definition": "Type de mat\u00e9riel: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2265,7 +2265,7 @@
     },
     {
         "term": "message:I2003",
-        "definition": "Firmware-Version: %1",
+        "definition": "Version de micrologiciel: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2273,7 +2273,7 @@
     },
     {
         "term": "message:I9001",
-        "definition": "Angehaltenes Skript",
+        "definition": "Script arr\u00eat\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2281,7 +2281,7 @@
     },
     {
         "term": "message:N1001",
-        "definition": "Empfangenes Signal: %1",
+        "definition": "Signal re\u00e7u: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2289,7 +2289,7 @@
     },
     {
         "term": "message:N1002",
-        "definition": "Eine neue Welt geschaffen",
+        "definition": "Nouveau monde cr\u00e9\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2297,7 +2297,7 @@
     },
     {
         "term": "message:N1003",
-        "definition": "Restaring",
+        "definition": "Red\u00e9marrage",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2305,7 +2305,7 @@
     },
     {
         "term": "message:N1004",
-        "definition": "Herunterfahren",
+        "definition": "Arr\u00eat en cours",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2313,7 +2313,7 @@
     },
     {
         "term": "message:N1005",
-        "definition": "Entdeckung aktiviert",
+        "definition": "D\u00e9couverte activ\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2321,7 +2321,7 @@
     },
     {
         "term": "message:N1006",
-        "definition": "Entdeckung deaktiviert",
+        "definition": "D\u00e9couverte d\u00e9sactiv\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2329,7 +2329,7 @@
     },
     {
         "term": "message:N1007",
-        "definition": "Mith\u00f6ren bei %1:%2",
+        "definition": "\u00c9coute sur %1:%2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2337,7 +2337,7 @@
     },
     {
         "term": "message:N1008",
-        "definition": "Geladene Einstellungen",
+        "definition": "Param\u00e8tres charg\u00e9s",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2345,7 +2345,7 @@
     },
     {
         "term": "message:N1009",
-        "definition": "Gespeicherte Einstellungen",
+        "definition": "Param\u00e8tres enregistr\u00e9s",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2353,7 +2353,7 @@
     },
     {
         "term": "message:N1010",
-        "definition": "Bearbeitungsmodus: aktiviert",
+        "definition": "Mode \u00e9dition: activ\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2361,7 +2361,7 @@
     },
     {
         "term": "message:N1011",
-        "definition": "Bearbeitungsmodus: deaktiviert",
+        "definition": "Mode \u00e9dition: d\u00e9sactiv\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2369,7 +2369,7 @@
     },
     {
         "term": "message:N1012",
-        "definition": "Kommunikation: aktiviert",
+        "definition": "Communications: activ\u00e9es",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2377,7 +2377,7 @@
     },
     {
         "term": "message:N1013",
-        "definition": "Kommunikation: deaktiviert",
+        "definition": "Communications: d\u00e9sactiv\u00e9es",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2385,7 +2385,7 @@
     },
     {
         "term": "message:N1014",
-        "definition": "Strom: an",
+        "definition": "Alimentation : activ\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2393,7 +2393,7 @@
     },
     {
         "term": "message:N1015",
-        "definition": "Strom: aus",
+        "definition": "Alimentation : d\u00e9sactiv\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2401,7 +2401,7 @@
     },
     {
         "term": "message:N1016",
-        "definition": "Laufen",
+        "definition": "Ex\u00e9cution en cours",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2409,7 +2409,7 @@
     },
     {
         "term": "message:N1017",
-        "definition": "Gestoppt",
+        "definition": "Arr\u00eat\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2417,7 +2417,7 @@
     },
     {
         "term": "message:N1018",
-        "definition": "Stummschaltung: aktiviert",
+        "definition": "Sourdine: activ\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2425,7 +2425,7 @@
     },
     {
         "term": "message:N1019",
-        "definition": "Stummschaltung: deaktiviert",
+        "definition": "Sourdine: d\u00e9sactiv\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2433,7 +2433,7 @@
     },
     {
         "term": "message:N1020",
-        "definition": "Rauchen: aktiviert",
+        "definition": "Fum\u00e9e: activ\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2441,7 +2441,7 @@
     },
     {
         "term": "message:N1021",
-        "definition": "Rauchen: deaktiviert",
+        "definition": "Fum\u00e9e: d\u00e9sactiv\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2449,7 +2449,7 @@
     },
     {
         "term": "message:N1022",
-        "definition": "Gespeicherte Welt: %1",
+        "definition": "Monde enregistr\u00e9: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2457,7 +2457,7 @@
     },
     {
         "term": "message:N1023",
-        "definition": "Simulation: deaktiviert",
+        "definition": "Simulation: d\u00e9sactiv\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2465,7 +2465,7 @@
     },
     {
         "term": "message:N1024",
-        "definition": "Simulation: aktiviert",
+        "definition": "Simulation: activ\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2473,7 +2473,7 @@
     },
     {
         "term": "message:N1025",
-        "definition": "Welt erfolgreich exportiert",
+        "definition": "Monde export\u00e9 avec succ\u00e8s",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2481,7 +2481,7 @@
     },
     {
         "term": "message:N1026",
-        "definition": "Welt erfolgreich importiert",
+        "definition": "Monde import\u00e9 avec succ\u00e8s",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2489,7 +2489,7 @@
     },
     {
         "term": "message:N1027",
-        "definition": "Geladene Welt: %1",
+        "definition": "Monde charg\u00e9: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2497,7 +2497,7 @@
     },
     {
         "term": "message:N1028",
-        "definition": "Geschlossene Welt",
+        "definition": "Monde ferm\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2505,7 +2505,7 @@
     },
     {
         "term": "message:N2001",
-        "definition": "Simulation nicht unterst\u00fctzt",
+        "definition": "Simulation non support\u00e9es",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2513,7 +2513,7 @@
     },
     {
         "term": "message:N2002",
-        "definition": "Keine Antwort von LNCV-Modul %1 mit Adresse %2",
+        "definition": "Pas de r\u00e9ponse du module LNCV %1 \u00e0 l'adresse %2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2521,7 +2521,7 @@
     },
     {
         "term": "message:N2003",
-        "definition": "Schnelle Taktsynchronisation wird nicht mehr gesendet",
+        "definition": "Arr\u00eat de l'envoi de la synchro de l'horloge rapide",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2529,7 +2529,7 @@
     },
     {
         "term": "message:N2004",
-        "definition": "PCAP-Dateiprotokoll wird gestartet: %1",
+        "definition": "D\u00e9marrage journalisation fichier PCAP: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2537,7 +2537,7 @@
     },
     {
         "term": "message:N2005",
-        "definition": "PCAP-Log-Pipe wird gestartet: %1",
+        "definition": "D\u00e9marrage journalisation pipe PCAP: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2545,7 +2545,7 @@
     },
     {
         "term": "message:N3001",
-        "definition": "Zug %1 dem Block %2 zugewiesen",
+        "definition": "Train %1 assign\u00e9 au bloc %2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2553,7 +2553,7 @@
     },
     {
         "term": "message:N3002",
-        "definition": "Zug %1 aus Block %2 entfernt",
+        "definition": "Train %1 retir\u00e9 du bloc %2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2561,7 +2561,7 @@
     },
     {
         "term": "message:N9001",
-        "definition": "Skript starten",
+        "definition": "D\u00e9marrage du script",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2569,7 +2569,7 @@
     },
     {
         "term": "message:W1001",
-        "definition": "Erkennung deaktiviert, nur auf Port %1 erlaubt",
+        "definition": "D\u00e9couverte d\u00e9sactiv\u00e9e, autoris\u00e9e uniquement sur port %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2577,7 +2577,7 @@
     },
     {
         "term": "message:W1002",
-        "definition": "Einstellung %1 existiert nicht",
+        "definition": "Param\u00e8tre %1 inexistant",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2585,7 +2585,7 @@
     },
     {
         "term": "message:W1003",
-        "definition": "Lesen von Welt %1 fehlgeschlagen (Libarchive-Fehler %2: %3)",
+        "definition": "\u00c9chec de la lecture du monde %1 (erreur libarchive %2: %3)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2593,7 +2593,7 @@
     },
     {
         "term": "message:W2001",
-        "definition": "Empfangene fehlerhafte Daten haben %1 Bytes verloren",
+        "definition": "Paquets malform\u00e9s re\u00e7us, %1 octets rejet\u00e9s",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2601,7 +2601,15 @@
     },
     {
         "term": "message:W2002",
-        "definition": "Die Kommandozentrale unterst\u00fctzt keine Funktionen \u00fcber F%1",
+        "definition": "Fonctions au-del\u00e0 de F%1 non support\u00e9es par la station de commande",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W2003",
+        "definition": "Paquets malform\u00e9s re\u00e7us, %1 octets rejet\u00e9s [%2]",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2609,7 +2617,7 @@
     },
     {
         "term": "message:W2004",
-        "definition": "Eingangsadresse %1 ist ung\u00fcltig",
+        "definition": "Adresse d'entr\u00e9e %1 invalide",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2617,7 +2625,7 @@
     },
     {
         "term": "message:W2005",
-        "definition": "Ausgangsadresse %1 ist ung\u00fcltig",
+        "definition": "Adresse de sortie %1 invalide",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2625,7 +2633,7 @@
     },
     {
         "term": "message:W2006",
-        "definition": "Die Zentrale unterst\u00fctzt den Lokschacht %1 nicht",
+        "definition": "Emplacement de locomotive %1 non support\u00e9 par la station de commande",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2633,7 +2641,7 @@
     },
     {
         "term": "message:W2007",
-        "definition": "Die Zentrale unterst\u00fctzt den Fast-Clock-Slot nicht",
+        "definition": "Horloge rapide non support\u00e9e par la station de commande",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2641,7 +2649,7 @@
     },
     {
         "term": "message:W2018",
-        "definition": "Zeit\u00fcberschreitung, kein Echo innerhalb von %1ms",
+        "definition": "D\u00e9lai d'attente d\u00e9passe, pas d'\u00e9cho apr\u00e8s %1ms",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2649,7 +2657,7 @@
     },
     {
         "term": "message:W2019",
-        "definition": "Z21-Rundfunkflags stimmen nicht mit den angeforderten Flags \u00fcberein",
+        "definition": "Les signaux de broadcast Z21 ne correspondent pas \u00e0 ceux requis",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2665,7 +2673,7 @@
     },
     {
         "term": "object:name",
-        "definition": "Name",
+        "definition": "Nom",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2673,7 +2681,7 @@
     },
     {
         "term": "object:notes",
-        "definition": "Notizen",
+        "definition": "Notes",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2681,7 +2689,7 @@
     },
     {
         "term": "opc_multi_sense_direction:in_sensor_address",
-        "definition": "In Sensoradresse",
+        "definition": "Adresse capteur d'entr\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2689,7 +2697,7 @@
     },
     {
         "term": "opc_multi_sense_direction:in_transponder_address",
-        "definition": "In Transponderadresse (Bl\u00fccher GBM16XN)",
+        "definition": "Addresse transpondeur entr\u00e9e (Bl\u00fccher GBM16XN)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2697,7 +2705,7 @@
     },
     {
         "term": "opc_multi_sense_direction:none",
-        "definition": "Keiner",
+        "definition": "Aucune",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2705,7 +2713,7 @@
     },
     {
         "term": "output_action:none",
-        "definition": "Kein",
+        "definition": "Aucune",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2713,7 +2721,7 @@
     },
     {
         "term": "output_action:off",
-        "definition": "Aus",
+        "definition": "Off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2721,7 +2729,7 @@
     },
     {
         "term": "output_action:on",
-        "definition": "Auf",
+        "definition": "On",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2729,7 +2737,7 @@
     },
     {
         "term": "output_action:pulse",
-        "definition": "Puls",
+        "definition": "Impulsion",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2745,7 +2753,7 @@
     },
     {
         "term": "output_map.decoupler:key",
-        "definition": "Staat",
+        "definition": "\u00c9tat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2753,7 +2761,7 @@
     },
     {
         "term": "output_map.signal:key",
-        "definition": "Aspekt",
+        "definition": "Aspect",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2769,7 +2777,7 @@
     },
     {
         "term": "output_map:use",
-        "definition": "Benutzen",
+        "definition": "Utiliser",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2777,7 +2785,7 @@
     },
     {
         "term": "pcap_output:file",
-        "definition": "Datei",
+        "definition": "Fichier",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2785,7 +2793,7 @@
     },
     {
         "term": "pcap_output:pipe",
-        "definition": "Rohrleitung",
+        "definition": "Pipe",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2793,7 +2801,7 @@
     },
     {
         "term": "qtapp.connect_dialog:connect",
-        "definition": "Verbinden",
+        "definition": "Connexion",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2801,7 +2809,7 @@
     },
     {
         "term": "qtapp.connect_dialog:connect_to_server",
-        "definition": "Verbinden zum Server",
+        "definition": "Connexion au serveur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2809,7 +2817,7 @@
     },
     {
         "term": "qtapp.connect_dialog:connected",
-        "definition": "Verbunden",
+        "definition": "Connect\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2817,7 +2825,7 @@
     },
     {
         "term": "qtapp.connect_dialog:connecting",
-        "definition": "Verbinden",
+        "definition": "Connexion en cours",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2825,7 +2833,7 @@
     },
     {
         "term": "qtapp.connect_dialog:password",
-        "definition": "Password",
+        "definition": "Mot de passse",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2833,7 +2841,7 @@
     },
     {
         "term": "qtapp.connect_dialog:server",
-        "definition": "Server",
+        "definition": "Serveur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2841,7 +2849,7 @@
     },
     {
         "term": "qtapp.connect_dialog:username",
-        "definition": "Benutzername",
+        "definition": "Utilisateur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2849,7 +2857,7 @@
     },
     {
         "term": "qtapp.error:cant_read_from_file_x",
-        "definition": "Kann nicht aus der Datei gelesen werden: %1",
+        "definition": "Lecture impossible depuis le fichier: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2857,7 +2865,7 @@
     },
     {
         "term": "qtapp.error:cant_write_to_file_x",
-        "definition": "Kann nicht in die Datei schreiben: %1",
+        "definition": "\u00c9criture impossible dans le fichier: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2865,7 +2873,7 @@
     },
     {
         "term": "qtapp.error:server_error_x",
-        "definition": "Server-Fehler %1",
+        "definition": "Erreur serveur %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2873,7 +2881,7 @@
     },
     {
         "term": "qtapp.mainmenu:about",
-        "definition": "\u00dcber",
+        "definition": "A propos",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2881,7 +2889,7 @@
     },
     {
         "term": "qtapp.mainmenu:close_world",
-        "definition": "Welt der N\u00e4he",
+        "definition": "Fermer le monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2889,7 +2897,7 @@
     },
     {
         "term": "qtapp.mainmenu:connect_to_server",
-        "definition": "Verbinden zum Server",
+        "definition": "Connexion au serveur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2897,7 +2905,7 @@
     },
     {
         "term": "qtapp.mainmenu:connection",
-        "definition": "Verbindung",
+        "definition": "Connexion",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2905,7 +2913,7 @@
     },
     {
         "term": "qtapp.mainmenu:disconnect_from_server",
-        "definition": "Trennen Sie die Verbindung zum Server",
+        "definition": "D\u00e9connexion du serveur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2913,7 +2921,7 @@
     },
     {
         "term": "qtapp.mainmenu:export_world",
-        "definition": "Welt exportieren",
+        "definition": "Exporter le monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2921,7 +2929,7 @@
     },
     {
         "term": "qtapp.mainmenu:file",
-        "definition": "Datei",
+        "definition": "Fichier",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2929,7 +2937,7 @@
     },
     {
         "term": "qtapp.mainmenu:fullscreen",
-        "definition": "Vollbildschirm",
+        "definition": "Plein \u00e9cran",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2937,7 +2945,7 @@
     },
     {
         "term": "qtapp.mainmenu:hardware",
-        "definition": "Hardware",
+        "definition": "Mat\u00e9riel",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2945,7 +2953,7 @@
     },
     {
         "term": "qtapp.mainmenu:help",
-        "definition": "Hilfe",
+        "definition": "Aide",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2953,7 +2961,7 @@
     },
     {
         "term": "qtapp.mainmenu:import_world",
-        "definition": "Welt importieren",
+        "definition": "Importer le monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2961,7 +2969,7 @@
     },
     {
         "term": "qtapp.mainmenu:load_world",
-        "definition": "Welt laden",
+        "definition": "Charger le monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2969,7 +2977,7 @@
     },
     {
         "term": "qtapp.mainmenu:new_world",
-        "definition": "Neue Welt",
+        "definition": "Nouveau monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2977,7 +2985,7 @@
     },
     {
         "term": "qtapp.mainmenu:objects",
-        "definition": "Objekte",
+        "definition": "Objets",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2985,7 +2993,7 @@
     },
     {
         "term": "qtapp.mainmenu:power",
-        "definition": "Strom",
+        "definition": "Alimentation",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2993,7 +3001,7 @@
     },
     {
         "term": "qtapp.mainmenu:programming",
-        "definition": "Programmierung",
+        "definition": "Programmation",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3001,7 +3009,7 @@
     },
     {
         "term": "qtapp.mainmenu:quit",
-        "definition": "Beenden Sie",
+        "definition": "Quitter",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3009,7 +3017,7 @@
     },
     {
         "term": "qtapp.mainmenu:restart_server",
-        "definition": "Server neu starten",
+        "definition": "Red\u00e9marrer le serveur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3017,7 +3025,7 @@
     },
     {
         "term": "qtapp.mainmenu:restart_server_question",
-        "definition": "M\u00f6chten Sie den Server wirklich neu starten?",
+        "definition": "\u00cates-vous s\u00fbr de vouloir red\u00e9marrer le serveur ?",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3025,7 +3033,7 @@
     },
     {
         "term": "qtapp.mainmenu:save_world",
-        "definition": "Welt speichern",
+        "definition": "Enregistrer le monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3033,7 +3041,7 @@
     },
     {
         "term": "qtapp.mainmenu:server",
-        "definition": "Server",
+        "definition": "Serveur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3041,7 +3049,7 @@
     },
     {
         "term": "qtapp.mainmenu:server_log",
-        "definition": "Server-Protokoll",
+        "definition": "Journal serveur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3049,7 +3057,7 @@
     },
     {
         "term": "qtapp.mainmenu:server_settings",
-        "definition": "Server Einstellungen",
+        "definition": "Param\u00e8tres du serveur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3057,7 +3065,7 @@
     },
     {
         "term": "qtapp.mainmenu:settings",
-        "definition": "Einstellungen",
+        "definition": "Param\u00e8tres",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3065,7 +3073,7 @@
     },
     {
         "term": "qtapp.mainmenu:shutdown_server",
-        "definition": "Server herunterfahren",
+        "definition": "Arr\u00eater le serveur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3073,7 +3081,7 @@
     },
     {
         "term": "qtapp.mainmenu:shutdown_server_question",
-        "definition": "M\u00f6chten Sie den Server wirklich herunterfahren?",
+        "definition": "\u00cates-vous s\u00fbr de vouloir arr\u00eater le serveur ?",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3081,7 +3089,7 @@
     },
     {
         "term": "qtapp.mainmenu:toolbar",
-        "definition": "Symbolleiste",
+        "definition": "Barre d'outils",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3089,7 +3097,7 @@
     },
     {
         "term": "qtapp.mainmenu:tools",
-        "definition": "Werkzeuge",
+        "definition": "Outils",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3097,7 +3105,7 @@
     },
     {
         "term": "qtapp.mainmenu:view",
-        "definition": "Siehe",
+        "definition": "Affichage",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3105,7 +3113,7 @@
     },
     {
         "term": "qtapp.mainmenu:world",
-        "definition": "Welt",
+        "definition": "Monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3113,7 +3121,7 @@
     },
     {
         "term": "qtapp.mainmenu:world_properties",
-        "definition": "Welteigenschaften",
+        "definition": "Propri\u00e9t\u00e9s du monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3121,7 +3129,7 @@
     },
     {
         "term": "qtapp.message_box:no",
-        "definition": "Nein",
+        "definition": "Non",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3129,7 +3137,7 @@
     },
     {
         "term": "qtapp.message_box:yes",
-        "definition": "Jawohl",
+        "definition": "Oui",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3137,7 +3145,7 @@
     },
     {
         "term": "qtapp.object_select_list_dialog:cancel",
-        "definition": "Abbrechen",
+        "definition": "Abandonner",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3145,7 +3153,7 @@
     },
     {
         "term": "qtapp.object_select_list_dialog:ok",
-        "definition": "OK",
+        "definition": "Ok",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3153,7 +3161,7 @@
     },
     {
         "term": "qtapp.object_select_list_dialog:select_object",
-        "definition": "Objekt ausw\u00e4hlen",
+        "definition": "Choisir objet",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3161,7 +3169,7 @@
     },
     {
         "term": "qtapp.settings.board:color_scheme",
-        "definition": "Farbschema",
+        "definition": "Th\u00e8me de couleurs",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3169,7 +3177,7 @@
     },
     {
         "term": "qtapp.settings.board:show_block_sensor_states",
-        "definition": "Blocksensorzust\u00e4nde anzeigen",
+        "definition": "Afficher l'\u00e9tat des capteurs",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3177,7 +3185,7 @@
     },
     {
         "term": "qtapp.settings.board:turnout_draw_state",
-        "definition": "Auslosung Weichenstatus",
+        "definition": "Dessiner l'\u00e9tat de l'aiguillage",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3185,7 +3193,7 @@
     },
     {
         "term": "qtapp.settings.developer:dont_load_fallback_language",
-        "definition": "Fallback-Sprache nicht laden",
+        "definition": "Ne pas charger la langue par d\u00e9faut",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3193,7 +3201,7 @@
     },
     {
         "term": "qtapp.settings.developer:log_missing_strings",
-        "definition": "Fehlende \u00dcbersetzungen protokollieren",
+        "definition": "Journaliser les traductions manquantes",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3201,7 +3209,7 @@
     },
     {
         "term": "qtapp.settings.developer:log_missing_strings_dir",
-        "definition": "Fehlendes \u00dcbersetzungsprotokollverzeichnis",
+        "definition": "R\u00e9pertoire de journalisation des traductions manquantes non trouv\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3209,7 +3217,7 @@
     },
     {
         "term": "qtapp.settings.general:language",
-        "definition": "Sprache",
+        "definition": "Langue",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3217,7 +3225,7 @@
     },
     {
         "term": "qtapp.settings.statusbar:show_clock",
-        "definition": "Uhr anzeigen",
+        "definition": "Afficher l'horloge",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3225,7 +3233,7 @@
     },
     {
         "term": "qtapp.settings.statusbar:show_statuses",
-        "definition": "Status anzeigen",
+        "definition": "Afficher les \u00e9tats",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3233,7 +3241,7 @@
     },
     {
         "term": "qtapp.settings:board",
-        "definition": "Schalttafel",
+        "definition": "Circuit",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3241,7 +3249,7 @@
     },
     {
         "term": "qtapp.settings:developer",
-        "definition": "Entwickler",
+        "definition": "D\u00e9veloppeur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3249,7 +3257,7 @@
     },
     {
         "term": "qtapp.settings:general",
-        "definition": "Allgemein",
+        "definition": "G\u00e9n\u00e9ral",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3257,7 +3265,7 @@
     },
     {
         "term": "qtapp.settings:statusbar",
-        "definition": "Statusleiste",
+        "definition": "Barre d'\u00e9tat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3265,7 +3273,7 @@
     },
     {
         "term": "qtapp.world_list_dialog:cancel",
-        "definition": "Abbrechen",
+        "definition": "Abandonner",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3273,7 +3281,7 @@
     },
     {
         "term": "qtapp.world_list_dialog:load",
-        "definition": "Laden Sie",
+        "definition": "Charger",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3281,7 +3289,7 @@
     },
     {
         "term": "qtapp.world_list_dialog:world_list",
-        "definition": "Weltweite Liste",
+        "definition": "Liste des mondes",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3289,7 +3297,7 @@
     },
     {
         "term": "qtapp:board_properties",
-        "definition": "Eigenschaften des Vorstands",
+        "definition": "Propri\u00e9t\u00e9s du circuit",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3297,7 +3305,7 @@
     },
     {
         "term": "qtapp:export_world_failed",
-        "definition": "Exportwelt gescheitert",
+        "definition": "\u00c9chec de l'export du monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3305,7 +3313,7 @@
     },
     {
         "term": "qtapp:grid",
-        "definition": "Raster",
+        "definition": "Grille",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3313,7 +3321,7 @@
     },
     {
         "term": "qtapp:grid_dot",
-        "definition": "Punkt",
+        "definition": "Points",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3321,7 +3329,7 @@
     },
     {
         "term": "qtapp:grid_line",
-        "definition": "Leitung",
+        "definition": "Ligne",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3329,7 +3337,7 @@
     },
     {
         "term": "qtapp:grid_none",
-        "definition": "Kein",
+        "definition": "Aucune",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3337,7 +3345,7 @@
     },
     {
         "term": "qtapp:import_world_failed",
-        "definition": "Importwelt gescheitert",
+        "definition": "\u00c9chec de l'import du monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3345,7 +3353,7 @@
     },
     {
         "term": "qtapp:next",
-        "definition": "Weiter",
+        "definition": "Suivant",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3353,7 +3361,7 @@
     },
     {
         "term": "qtapp:previous",
-        "definition": "Vorherige",
+        "definition": "Pr\u00e9c\u00e9dent",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3361,7 +3369,7 @@
     },
     {
         "term": "qtapp:toggle_mute",
-        "definition": "Stummschaltung umschalten",
+        "definition": "Inverser sourdine",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3369,7 +3377,7 @@
     },
     {
         "term": "qtapp:toggle_offline_online",
-        "definition": "Verbindung umschalten",
+        "definition": "Inverser connexion",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3377,7 +3385,7 @@
     },
     {
         "term": "qtapp:toggle_power",
-        "definition": "Leistung umschalten",
+        "definition": "Inverser alimentation",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3385,7 +3393,7 @@
     },
     {
         "term": "qtapp:toggle_smoke",
-        "definition": "Rauch umschalten",
+        "definition": "Inverser fum\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3393,7 +3401,7 @@
     },
     {
         "term": "qtapp:traintastic_world",
-        "definition": "Traintastic Welt",
+        "definition": "Monde Traintastic",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3401,7 +3409,7 @@
     },
     {
         "term": "qtapp:zoom_in",
-        "definition": "Hineinzoomen",
+        "definition": "Zoomer",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3409,7 +3417,7 @@
     },
     {
         "term": "qtapp:zoom_out",
-        "definition": "Rauszoomen",
+        "definition": "D\u00e9zoomer",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3417,7 +3425,7 @@
     },
     {
         "term": "rail_vehicle_list:type",
-        "definition": "Typ",
+        "definition": "Type",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3425,7 +3433,7 @@
     },
     {
         "term": "sensor_type:occupancy_detector",
-        "definition": "Detektor besetzen",
+        "definition": "D\u00e9tecteur de pr\u00e9sence",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3433,7 +3441,7 @@
     },
     {
         "term": "sensor_type:reed_switch",
-        "definition": "Reed-Schalter",
+        "definition": "Contact Reed",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3441,7 +3449,7 @@
     },
     {
         "term": "serial:baudrate",
-        "definition": "Baudrate",
+        "definition": "Vitesse de transmission",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3449,7 +3457,7 @@
     },
     {
         "term": "serial:device",
-        "definition": "Ger\u00e4t",
+        "definition": "P\u00e9riph\u00e9rique",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3457,7 +3465,7 @@
     },
     {
         "term": "serial:flow_control",
-        "definition": "Durchflusskontrolle",
+        "definition": "Contr\u00f4le de flux",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3465,7 +3473,7 @@
     },
     {
         "term": "serial:port",
-        "definition": "Schnittstelle",
+        "definition": "Port",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3473,7 +3481,7 @@
     },
     {
         "term": "serial_flow_control:hardware",
-        "definition": "Hardware",
+        "definition": "Mat\u00e9riel",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3481,7 +3489,7 @@
     },
     {
         "term": "serial_flow_control:none",
-        "definition": "Kein",
+        "definition": "Aucun",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3497,7 +3505,7 @@
     },
     {
         "term": "server_log:message",
-        "definition": "Meldung",
+        "definition": "Message",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3505,7 +3513,7 @@
     },
     {
         "term": "server_log:object",
-        "definition": "Objekt",
+        "definition": "Objet",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3513,7 +3521,7 @@
     },
     {
         "term": "server_log:time",
-        "definition": "Zeit",
+        "definition": "Heure",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3521,7 +3529,7 @@
     },
     {
         "term": "settings:allow_client_server_restart",
-        "definition": "Neustart des Client-Servers zulassen",
+        "definition": "Autoriser le red\u00e9marrage du serveur par le client",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3529,7 +3537,7 @@
     },
     {
         "term": "settings:allow_client_server_shutdown",
-        "definition": "Herunterfahren des Client-Servers zulassen",
+        "definition": "Autoriser l'arr\u00eat du serveur par le client",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3537,7 +3545,7 @@
     },
     {
         "term": "settings:auto_save_world_on_exit",
-        "definition": "Welt beim Beenden automatisch speichern",
+        "definition": "Enregistrer automatique le monde \u00e0 la sortie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3545,7 +3553,7 @@
     },
     {
         "term": "settings:discoverable",
-        "definition": "Auffindbar",
+        "definition": "D\u00e9couvrable",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3553,7 +3561,7 @@
     },
     {
         "term": "settings:enable_file_logger",
-        "definition": "Dateilogger einschalten",
+        "definition": "Activer la journalisation fichier",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3561,7 +3569,7 @@
     },
     {
         "term": "settings:localhost_only",
-        "definition": "Nur Localhost",
+        "definition": "H\u00f4te local uniquement",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3569,7 +3577,7 @@
     },
     {
         "term": "settings:memory_logger_size",
-        "definition": "Gr\u00f6\u00dfe des Speicherloggers",
+        "definition": "Taille du journal m\u00e9moire",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3585,7 +3593,7 @@
     },
     {
         "term": "settings:save_world_uncompressed",
-        "definition": "Welt unkomprimiert speichern",
+        "definition": "Sauvegarder non compress\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3593,7 +3601,7 @@
     },
     {
         "term": "signal_aspect:proceed",
-        "definition": "Weiter",
+        "definition": "Voie libre",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3601,7 +3609,7 @@
     },
     {
         "term": "signal_aspect:proceed_reduced_speed",
-        "definition": "Weiterfahren, reduzierte Geschwindigkeit",
+        "definition": "Approche au ralenti",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3609,7 +3617,7 @@
     },
     {
         "term": "signal_aspect:stop",
-        "definition": "Stopp",
+        "definition": "Stop",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3617,7 +3625,7 @@
     },
     {
         "term": "throttle_object_list:throttle",
-        "definition": "Drosselklappe",
+        "definition": "R\u00e9gulateur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3625,7 +3633,7 @@
     },
     {
         "term": "train:active",
-        "definition": "Aktiv",
+        "definition": "Actif",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3633,7 +3641,7 @@
     },
     {
         "term": "train:block",
-        "definition": "Block",
+        "definition": "Butoir",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3641,7 +3649,7 @@
     },
     {
         "term": "train:lob",
-        "definition": "L\u00e4nge \u00fcber Puffer",
+        "definition": "Longueur avec tampons",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3649,7 +3657,7 @@
     },
     {
         "term": "train:mode",
-        "definition": "Modus",
+        "definition": "Mode",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3657,7 +3665,7 @@
     },
     {
         "term": "train:override_length",
-        "definition": "\u00dcberschreiten der L\u00e4nge",
+        "definition": "Outrepasser la longeur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3665,7 +3673,7 @@
     },
     {
         "term": "train:override_weight",
-        "definition": "Gewicht \u00fcberschreiben",
+        "definition": "Outrepasser le poids",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3673,7 +3681,7 @@
     },
     {
         "term": "train:speed_max",
-        "definition": "Maximale Geschwindigkeit",
+        "definition": "Vitesse maximale",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3681,7 +3689,7 @@
     },
     {
         "term": "train:vehicles",
-        "definition": "Fahrzeuge",
+        "definition": "V\u00e9hicules",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3689,7 +3697,7 @@
     },
     {
         "term": "train:weight",
-        "definition": "Gewicht",
+        "definition": "Poids",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3697,7 +3705,7 @@
     },
     {
         "term": "traintastic_diy_interface_type:serial",
-        "definition": "Serienm\u00e4\u00dfig",
+        "definition": "S\u00e9rie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3705,7 +3713,7 @@
     },
     {
         "term": "traintastic_diy_settings:debug_log_heartbeat",
-        "definition": "Heartbeat-Kommunikation protokollieren",
+        "definition": "Journaliser les communications heartbeat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3713,7 +3721,7 @@
     },
     {
         "term": "traintastic_diy_settings:heartbeat_timeout",
-        "definition": "Zeit\u00fcberschreitung beim Heartbeat",
+        "definition": "D\u00e9lai d'attente heartbeat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3721,7 +3729,7 @@
     },
     {
         "term": "turnout_position:left",
-        "definition": "Links",
+        "definition": "Gauche",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3729,7 +3737,7 @@
     },
     {
         "term": "turnout_position:right",
-        "definition": "Recht",
+        "definition": "Droite",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3737,7 +3745,7 @@
     },
     {
         "term": "turnout_position:straight",
-        "definition": "Gerade",
+        "definition": "Droit",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3745,7 +3753,7 @@
     },
     {
         "term": "vehicle.rail.freight_wagon:cargo_weight",
-        "definition": "Gewicht der Ladung",
+        "definition": "Poids cargaison",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3753,7 +3761,7 @@
     },
     {
         "term": "vehicle.rail.tank_wagon:cargo_volume",
-        "definition": "Ladevolumen",
+        "definition": "Volume cargaison",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3761,7 +3769,7 @@
     },
     {
         "term": "vehicle.rail:cargo_capacity",
-        "definition": "Ladekapazit\u00e4t",
+        "definition": "Capacit\u00e9 cargaison",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3769,7 +3777,7 @@
     },
     {
         "term": "vehicle.rail:cargo_loaded",
-        "definition": "Ladung geladen",
+        "definition": "Cargaison charg\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3777,7 +3785,7 @@
     },
     {
         "term": "vehicle.rail:decoder",
-        "definition": "Decoder",
+        "definition": "D\u00e9codeur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3785,7 +3793,7 @@
     },
     {
         "term": "vehicle.rail:lob",
-        "definition": "LOB",
+        "definition": "Longueur avec tampons",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3793,7 +3801,7 @@
     },
     {
         "term": "vehicle.rail:power",
-        "definition": "Strom",
+        "definition": "Alimentation",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3801,7 +3809,7 @@
     },
     {
         "term": "vehicle.rail:speed_max",
-        "definition": "Maximale Geschwindigkeit",
+        "definition": "Vitesse maximale",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3809,7 +3817,7 @@
     },
     {
         "term": "vehicle.rail:total_weight",
-        "definition": "Total weight",
+        "definition": "Poids total",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3817,7 +3825,7 @@
     },
     {
         "term": "vehicle.rail:train",
-        "definition": "Zug",
+        "definition": "Train",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3825,7 +3833,7 @@
     },
     {
         "term": "vehicle.rail:weight",
-        "definition": "Gewicht",
+        "definition": "Poids",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3833,7 +3841,7 @@
     },
     {
         "term": "world:boards",
-        "definition": "Bretter",
+        "definition": "Circuits",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3841,7 +3849,7 @@
     },
     {
         "term": "world:clock",
-        "definition": "Uhr",
+        "definition": "Horlogie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3849,7 +3857,7 @@
     },
     {
         "term": "world:decoders",
-        "definition": "Dekodierer",
+        "definition": "D\u00e9codeurs",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3857,7 +3865,7 @@
     },
     {
         "term": "world:edit",
-        "definition": "Welt bearbeiten",
+        "definition": "Editer le monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3865,7 +3873,7 @@
     },
     {
         "term": "world:inputs",
-        "definition": "Eing\u00e4nge",
+        "definition": "Entr\u00e9es",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3873,7 +3881,7 @@
     },
     {
         "term": "world:interfaces",
-        "definition": "Schnittstellen",
+        "definition": "Interfaces",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3881,7 +3889,7 @@
     },
     {
         "term": "world:lua_scripts",
-        "definition": "Lua-Skripte",
+        "definition": "Scripts Lua",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3889,7 +3897,7 @@
     },
     {
         "term": "world:mute",
-        "definition": "Stummschalten",
+        "definition": "Sourdine",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3897,7 +3905,7 @@
     },
     {
         "term": "world:no_smoke",
-        "definition": "Kein Rauch",
+        "definition": "Pas de fum\u00e9e",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3905,7 +3913,7 @@
     },
     {
         "term": "world:offline",
-        "definition": "Trennen",
+        "definition": "D\u00e9connexion",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3913,7 +3921,7 @@
     },
     {
         "term": "world:online",
-        "definition": "Verbinden",
+        "definition": "Connexion",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3921,7 +3929,7 @@
     },
     {
         "term": "world:outputs",
-        "definition": "Ausg\u00e4nge",
+        "definition": "Sorties",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3929,7 +3937,7 @@
     },
     {
         "term": "world:power_off",
-        "definition": "Ausschalten",
+        "definition": "Alimentation off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3937,7 +3945,7 @@
     },
     {
         "term": "world:power_on",
-        "definition": "Einschalten",
+        "definition": "Alimentation on",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3945,7 +3953,7 @@
     },
     {
         "term": "world:rail_vehicles",
-        "definition": "Schienenfahrzeuge",
+        "definition": "V\u00e9hicules sur rail",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3953,7 +3961,7 @@
     },
     {
         "term": "world:run",
-        "definition": "Ausf\u00fchren",
+        "definition": "D\u00e9marrer",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3961,7 +3969,7 @@
     },
     {
         "term": "world:scale",
-        "definition": "Ma\u00dfstab",
+        "definition": "\u00c9chelle",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3969,7 +3977,7 @@
     },
     {
         "term": "world:scale_ratio",
-        "definition": "Ma\u00dfstabsverh\u00e4ltnis",
+        "definition": "Ratio",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3985,7 +3993,7 @@
     },
     {
         "term": "world:stop",
-        "definition": "Halt",
+        "definition": "Arr\u00eater",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3993,7 +4001,7 @@
     },
     {
         "term": "world:trains",
-        "definition": "Z\u00fcge",
+        "definition": "Trains",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4009,7 +4017,7 @@
     },
     {
         "term": "world_scale:custom",
-        "definition": "Benutzerdefiniert",
+        "definition": "Personnalis\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4017,7 +4025,7 @@
     },
     {
         "term": "xpressnet_command_station:custom",
-        "definition": "Benutzerdefiniert",
+        "definition": "Personnalis\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4025,7 +4033,7 @@
     },
     {
         "term": "xpressnet_interface_type:network",
-        "definition": "Netzwerk",
+        "definition": "R\u00e9seau",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4033,7 +4041,7 @@
     },
     {
         "term": "xpressnet_interface_type:serial",
-        "definition": "Serielle",
+        "definition": "S\u00e9rie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4041,7 +4049,7 @@
     },
     {
         "term": "xpressnet_serial_interface_type:custom",
-        "definition": "Benutzerdefiniert",
+        "definition": "Personnalis\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4049,7 +4057,7 @@
     },
     {
         "term": "xpressnet_settings:use_emergency_stop_locomotive_command",
-        "definition": "Kurzen Nothalt-Lokbefehl verwenden",
+        "definition": "Utiliser le code court pour l'arr\u00eat d'urgence de la locomotive",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4057,7 +4065,7 @@
     },
     {
         "term": "xpressnet_settings:use_roco_f13_f20_command",
-        "definition": "Roco-Befehl F13-F20 verwenden",
+        "definition": "Utiliser les commandes Roco F13-F20",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4073,7 +4081,7 @@
     },
     {
         "term": "z21_settings.server:allow_emergency_stop",
-        "definition": "Nothalt zulassen",
+        "definition": "Autoriser l'arr\u00eat d'urgence",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4081,7 +4089,7 @@
     },
     {
         "term": "z21_settings.server:allow_track_power_off",
-        "definition": "Ausschalten zulassen",
+        "definition": "Autoriser la coupure de l'alimentation",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4089,7 +4097,7 @@
     },
     {
         "term": "z21_settings.server:allow_track_power_on_release_emergency_stop",
-        "definition": "Einschalten\/Notabschaltung zulassen",
+        "definition": "Autoriser alimentation \/ lib\u00e9ration apr\u00e8s arr\u00eat d'urgence",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4097,7 +4105,7 @@
     },
     {
         "term": "train_mode:manual_protected",
-        "definition": "Manuell (gesch\u00fctzt)",
+        "definition": "Manuel (prot\u00e9g\u00e9)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4105,7 +4113,7 @@
     },
     {
         "term": "train_mode:manual_unprotected",
-        "definition": "Manuell (ungesch\u00fctzt)",
+        "definition": "Manuel (non prot\u00e9g\u00e9)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4113,7 +4121,7 @@
     },
     {
         "term": "train_mode:automatic",
-        "definition": "Automatisch",
+        "definition": "Automatique",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4121,7 +4129,7 @@
     },
     {
         "term": "list.train_vehicle:move",
-        "definition": "Verschieben",
+        "definition": "D\u00e9placer",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4129,7 +4137,7 @@
     },
     {
         "term": "protocol.loconet:command_station",
-        "definition": "Zentrale",
+        "definition": "Station de commande",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4137,7 +4145,7 @@
     },
     {
         "term": "settings:select_folder",
-        "definition": "",
+        "definition": "Choisir r\u00e9pertoire",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4145,7 +4153,7 @@
     },
     {
         "term": "loconet_settings:listen_only",
-        "definition": "",
+        "definition": "\u00c9coute uniquement",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4153,7 +4161,7 @@
     },
     {
         "term": "message:N2006",
-        "definition": "",
+        "definition": "Mode \u00e9coute uniquement: activ\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4161,7 +4169,7 @@
     },
     {
         "term": "message:N2007",
-        "definition": "",
+        "definition": "Mode \u00e9coute uniquement: d\u00e9sactiv\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4169,7 +4177,7 @@
     },
     {
         "term": "status.lua:x_running",
-        "definition": "",
+        "definition": "%1 en cours d\u2019ex\u00e9cution",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4177,7 +4185,39 @@
     },
     {
         "term": "status.lua:x_in_error",
-        "definition": "",
+        "definition": "%1 en erreur",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_protocol:dcc_short",
+        "definition": "DCC (Adresse courte)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_protocol:dcc_long",
+        "definition": "DCC (Adresse longue)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_protocol:motorola",
+        "definition": "Motorola",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "decoder_protocol:selectrix",
+        "definition": "Selectrix",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4185,7 +4225,7 @@
     },
     {
         "term": "message:F1008",
-        "definition": "",
+        "definition": "Crash dans la boucle d'\u00e9v\u00e9nements (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4193,7 +4233,7 @@
     },
     {
         "term": "qtapp.settings:restart_required",
-        "definition": "",
+        "definition": "Red\u00e9marrage requis",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4201,7 +4241,7 @@
     },
     {
         "term": "qtapp.settings.general:language_changed_restart_required",
-        "definition": "",
+        "definition": "Le client Traintastic doit \u00eatre red\u00e9marr\u00e9 pour le changement de langue.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4209,7 +4249,367 @@
     },
     {
         "term": "traintastic_diy_interface_type:network_tcp",
-        "definition": "Netzwerk (TCP)",
+        "definition": "R\u00e9seau (TCP)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "marklin_can_interface_type:network_tcp",
+        "definition": "R\u00e9seau (TCP)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "marklin_can_interface_type:network_udp",
+        "definition": "R\u00e9seau (UDP)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2022",
+        "definition": "\u00c9chec de la cr\u00e9ation du socket (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2023",
+        "definition": "Echec ioctl sur socket (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C2005",
+        "definition": "SocketCAN est disponible uniquement sous Linux",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "marklin_can_interface_type:socket_can",
+        "definition": "SocketCAN (Linux uniquement)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.marklin_can:marklin_can_locomotive_list",
+        "definition": "M\u00e4rklin CAN: Liste des locomotives",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "marklincan_settings:default_switch_time",
+        "definition": "Temps de switch par d\u00e9faut",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "marklincan_settings:debug_config_stream",
+        "definition": "D\u00e9bogage: Flux de configuration",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "marklincan_settings:node_uid",
+        "definition": "UID du noeud",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "marklincan_settings:node_serial_number",
+        "definition": "N\u00b0 de s\u00e9rie du noeud",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "marklin_can_locomotive_list:import_or_sync",
+        "definition": "Importer\/synchroniser",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "marklin_can_locomotive_list:import_or_sync_all",
+        "definition": "Importer\/synchroniser tout",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "marklin_can_locomotive_list:reload",
+        "definition": "Recharger",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "interface.marklin_can:marklin_can_node_list",
+        "definition": "M\u00e4rklin CAN: Liste des noeuds",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "table_model.marklin_can_node_list:device_name",
+        "definition": "Nom p\u00e9riph\u00e9rique",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "table_model.marklin_can_node_list:article_number",
+        "definition": "Num\u00e9ro d'article",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "table_model.marklin_can_node_list:serial_number",
+        "definition": "N\u00b0 de s\u00e9rie",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "table_model.marklin_can_node_list:software_version",
+        "definition": "Version logicielle",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "table_model.marklin_can_node_list:device_id",
+        "definition": "Identifiant p\u00e9riph\u00e9rique",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "marklincan_settings:debug_status_data_config",
+        "definition": "D\u00e9bogage: Configuration des donn\u00e9es d'\u00e9tat",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E2024",
+        "definition": "UID locomotive MFX inconnu: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W9001",
+        "definition": "Dur\u00e9e d\u2019ex\u00e9cution %1 us",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E3001",
+        "definition": "Impossible de supprimer un v\u00e9hicule d'un train actif",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "input_map_item.block:identification",
+        "definition": "Identification",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:E3002",
+        "definition": "Impossible de supprimer un train actif",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1014",
+        "definition": "Commande invalide",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1015",
+        "definition": "Objet inconnue",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1016",
+        "definition": "Propri\u00e9t\u00e9 inconnue",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1017",
+        "definition": "Index invalides",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1018",
+        "definition": "Exception: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:C1019",
+        "definition": "L'objet n'est pas une table",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W3001",
+        "definition": "Bouton NX connect\u00e9 \u00e0 deux blocs",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "message:W3002",
+        "definition": "Bouton NX connect\u00e9 \u00e0 aucun bloc",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "auto_yes_no:auto",
+        "definition": "D\u00e9tection automatique",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "auto_yes_no:yes",
+        "definition": "Oui",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "auto_yes_no:no",
+        "definition": "Non",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.signal_3_aspect:require_reservation",
+        "definition": "R\u00e9servation requise",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "traintastic_diy_settings:startup_delay",
+        "definition": "D\u00e9lai de d\u00e9marrage",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.settings.general:connect_automatically_to_discovered_server",
+        "definition": "Connexion automatique au serveur d\u00e9couvert",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.mainmenu:about_server",
+        "definition": "A propos du serveur",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "qtapp.about:traintastic_server",
+        "definition": "A propos du serveur Traintastic",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:online_when_loaded",
+        "definition": "Se mettre en ligne au chargement",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:power_on_when_loaded",
+        "definition": "Alimenter au chargement",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:run_when_loaded",
+        "definition": "D\u00e9marrer au chargement",
         "context": "",
         "term_plural": "",
         "reference": "",

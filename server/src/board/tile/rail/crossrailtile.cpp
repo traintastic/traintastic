@@ -49,7 +49,7 @@ bool CrossRailTile::reserve(CrossState crossState, bool dryRun)
 
 bool CrossRailTile::release(bool dryRun)
 {
-  //! \todo check occupy sensor, once supported
+  //! \todo check occupancy sensor, once supported
 
   if(!dryRun)
   {

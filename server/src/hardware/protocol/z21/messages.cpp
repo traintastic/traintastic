@@ -308,16 +308,7 @@ LanXLocoInfo::LanXLocoInfo(const Decoder& decoder) :
 
 void LanX::updateChecksum(uint8_t len)
 {
-  uint8_t val = XpressNet::calcChecksum(*reinterpret_cast<const XpressNet::Message*>(&xheader), len);
-  uint8_t* checksum = &xheader + len + 1;
-#ifdef __MINGW32__
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wstringop-overflow"
-#endif
-  *checksum = val;
-#ifdef __MINGW32__
-  #pragma GCC diagnostic pop
-#endif
+  *(reinterpret_cast<uint8_t*>(this) + sizeof(LanX) + len) = XpressNet::calcChecksum(*reinterpret_cast<const XpressNet::Message*>(&xheader), len);
 }
 
 bool LanX::isChecksumValid(const LanX &lanX)

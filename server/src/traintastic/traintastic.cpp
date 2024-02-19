@@ -218,7 +218,13 @@ Traintastic::RunStatus Traintastic::run(const std::string& worldUUID, bool simul
 
   try
   {
-    m_server = std::make_shared<Server>(settings->localhostOnly, settings->port, settings->discoverable);
+    m_server = std::make_shared<Server>(
+#ifndef NO_LOCALHOST_ONLY_SETTING
+      settings->localhostOnly,
+#else
+      true,
+#endif
+      settings->port, settings->discoverable);
   }
   catch(const LogMessageException& e)
   {
