@@ -49,7 +49,6 @@
 constexpr int columnCountNonOutput = 2;
 constexpr int columnUse = 0;
 constexpr int columnKey = 1;
-constexpr int columnOutputFirst = 2;
 
 OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
   : QWidget(parent)
