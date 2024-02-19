@@ -87,8 +87,7 @@ void SwitchManager::update(std::string_view option, std::string_view value)
       uint16_t address;
       if(auto r = fromChars(value, address); r.ec == std::errc() && r.ptr < value.data() + value.size())
       {
-        address = (address << 1) - ((*r.ptr == 'r') ? 1 : 0);
-        m_kernel.switchManagerSwitched(protocol, address);
+        m_kernel.switchManagerSwitched(protocol, address, (*r.ptr == 'r') ? OutputPairValue::First : OutputPairValue::Second);
       }
     }
   }

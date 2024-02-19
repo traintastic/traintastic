@@ -247,7 +247,7 @@ class Kernel : public ::KernelBase
 
     void simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action);
 
-    void switchManagerSwitched(SwitchProtocol protocol, uint16_t address);
+    void switchManagerSwitched(SwitchProtocol protocol, uint16_t address, OutputPairValue value);
 
     void feedbackStateChanged(Feedback& object, uint8_t port, TriState value);
 };

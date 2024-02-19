@@ -443,7 +443,7 @@ void Kernel::simulateInputChange(uint32_t channel, uint32_t address, SimulateInp
     });
 }
 
-void Kernel::switchManagerSwitched(SwitchProtocol protocol, uint16_t address)
+void Kernel::switchManagerSwitched(SwitchProtocol protocol, uint16_t address, OutputPairValue value)
 {
   ASSERT_IS_KERNEL_THREAD;
 
@@ -454,19 +454,17 @@ void Kernel::switchManagerSwitched(SwitchProtocol protocol, uint16_t address)
   {
     case SwitchProtocol::DCC:
       EventLoop::call(
-        [this, address]()
+        [this, address, value]()
         {
-          m_outputController->updateOutputValue(OutputChannel::AccessoryDCC, address, TriState::True);
-          m_outputController->updateOutputValue(OutputChannel::AccessoryDCC, (address & 1) ? (address + 1) : (address - 1), TriState::False);
+          m_outputController->updateOutputValue(OutputChannel::AccessoryDCC, address, value);
         });
       break;
 
     case SwitchProtocol::Motorola:
       EventLoop::call(
-        [this, address]()
+        [this, address, value]()
         {
-          m_outputController->updateOutputValue(OutputChannel::AccessoryMotorola, address, TriState::True);
-          m_outputController->updateOutputValue(OutputChannel::AccessoryMotorola, (address & 1) ? (address + 1) : (address - 1), TriState::False);
+          m_outputController->updateOutputValue(OutputChannel::AccessoryMotorola, address, value);
         });
       break;
 
