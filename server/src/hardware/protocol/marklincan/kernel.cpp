@@ -358,13 +358,13 @@ void Kernel::receive(const Message& message)
           break;
 
         OutputChannel channel;
-        uint32_t address = accessoryControl.position() == AccessoryControl::positionOff ? 1 : 2;
-        const auto value = toTriState(accessoryControl.current() != 0);
+        uint32_t address;
+        const auto value = accessoryControl.position() == AccessoryControl::positionOff ? OutputPairValue::First : OutputPairValue::Second;
 
         if(inRange(accessoryControl.uid(), UID::Range::accessoryMotorola))
         {
           channel = OutputChannel::AccessoryMotorola;
-          address += (accessoryControl.uid() - UID::Range::accessoryMotorola.first) << 1;
+          address = 1 + (accessoryControl.uid() - UID::Range::accessoryMotorola.first);
           //if(address > m_outputValuesMotorola.size() || m_outputValuesMotorola[address - 1] == value)
           //  break;
           //m_outputValuesMotorola[address - 1] = value;
@@ -372,7 +372,7 @@ void Kernel::receive(const Message& message)
         else if(inRange(accessoryControl.uid(), UID::Range::accessoryDCC))
         {
           channel = OutputChannel::AccessoryDCC;
-          address += (accessoryControl.uid() - UID::Range::accessoryDCC.first) << 1;
+          address = 1 + (accessoryControl.uid() - UID::Range::accessoryDCC.first);
           //if(address > m_outputValuesDCC.size() || m_outputValuesDCC[address - 1] == value)
           //  break;
           //m_outputValuesDCC[address - 1] = value;
