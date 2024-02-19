@@ -187,6 +187,13 @@ file(GLOB TEST_SOURCES
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DENABLE_LOG_DEBUG")
 
+### OPTIONS ###
+
+if(NO_LOCALHOST_ONLY_SETTING)
+  message(STATUS "Setting localhost only removed")
+  add_definitions(-DNO_LOCALHOST_ONLY_SETTING)
+endif()
+
 ### PLATFORM ###
 
 if(UNIX AND NOT APPLE)

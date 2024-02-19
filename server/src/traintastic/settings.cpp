@@ -48,7 +48,9 @@ Settings::PreStart Settings::getPreStartSettings(const std::filesystem::path& pa
 
 Settings::Settings(const std::filesystem::path& path)
   : m_filename{path / filename}
+#ifndef NO_LOCALHOST_ONLY_SETTING
   , localhostOnly{this, "localhost_only", true, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
+#endif
   , port{this, "port", Server::defaultPort, PropertyFlags::ReadWrite, [this](const uint16_t& /*value*/){ saveToFile(); }}
   , discoverable{this, "discoverable", true, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
   , lastWorld{this, "last_world", "", PropertyFlags::ReadWrite | PropertyFlags::Internal, [this](const std::string& /*value*/){ saveToFile(); }}
@@ -64,8 +66,10 @@ Settings::Settings(const std::filesystem::path& path)
   m_interfaceItems.add(loadLastWorldOnStartup);
   m_interfaceItems.add(autoSaveWorldOnExit);
 
+#ifndef NO_LOCALHOST_ONLY_SETTING
   Attributes::addCategory(localhostOnly, Category::network);
   m_interfaceItems.add(localhostOnly);
+#endif
   Attributes::addCategory(port, Category::network);
   m_interfaceItems.add(port);
   Attributes::addCategory(discoverable, Category::network);

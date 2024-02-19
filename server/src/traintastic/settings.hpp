@@ -63,7 +63,9 @@ class Settings : public Object
 
     static PreStart getPreStartSettings(const std::filesystem::path& path);
 
+#ifndef NO_LOCALHOST_ONLY_SETTING
     Property<bool> localhostOnly;
+#endif
     Property<uint16_t> port;
     Property<bool> discoverable;
     Property<std::string> lastWorld;
