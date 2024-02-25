@@ -148,6 +148,15 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
         [this]()
         {
           setState(InterfaceState::Online);
+
+          if(contains(m_world.state.value(), WorldState::Run))
+          {
+            m_kernel->go();
+          }
+          else
+          {
+            m_kernel->emergencyStop();
+          }
         });
       m_kernel->setOnError(
         [this]()
@@ -177,11 +186,6 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
         {
           m_kernel->setConfig(ecos->config());
         });
-
-      if(contains(m_world.state.value(), WorldState::Run))
-        m_kernel->go();
-      else
-        m_kernel->emergencyStop();
 
       Attributes::setEnabled(hostname, false);
     }
