@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -81,6 +81,11 @@ bool Object::objectExists(uint16_t objectId) const
 void Object::addObject(std::unique_ptr<Object> object)
 {
   m_kernel.m_objects.add(std::move(object));
+}
+
+void Object::removeObject(uint16_t objectId)
+{
+  m_kernel.m_objects.erase(objectId);
 }
 
 void Object::update(const std::vector<std::string_view>& lines)

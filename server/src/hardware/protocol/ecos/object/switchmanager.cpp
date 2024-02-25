@@ -27,6 +27,7 @@
 #include "../messages.hpp"
 #include "../../../../utils/fromchars.hpp"
 #include "../../../../utils/startswith.hpp"
+#include "../../../../utils/endswith.hpp"
 
 namespace ECoS {
 
@@ -34,7 +35,7 @@ SwitchManager::SwitchManager(Kernel& kernel)
   : Object(kernel, ObjectId::switchManager)
 {
   requestView();
-  send(queryObjects(m_id, Switch::options));
+  send(queryObjects(m_id, {Option::type}));
 }
 
 void SwitchManager::setSwitch(SwitchProtocol protocol, uint16_t address, bool port)
@@ -53,7 +54,25 @@ bool SwitchManager::receiveReply(const Reply& reply)
     {
       Line data;
       if(parseLine(line, data) && !objectExists(data.objectId))
-        addObject(std::make_unique<Switch>(m_kernel, data));
+      {
+        SwitchType type = SwitchType::Unknown;
+        if(auto it = data.values.find(Option::type); it != data.values.end() && fromString(it->second, type))
+        {
+          switch(type)
+          {
+            case SwitchType::Accessory:
+              addObject(std::make_unique<Switch>(m_kernel, data.objectId));
+              break;
+
+            case SwitchType::Turntable:
+              break; // not yet supported
+
+            case SwitchType::Unknown:
+              assert(false);
+              break;
+          }
+        }
+      }
     }
     return true;
   }
@@ -65,6 +84,37 @@ bool SwitchManager::receiveEvent(const Event& event)
 {
   assert(event.objectId == m_id);
 
+  if(!event.lines.empty())
+  {
+    Line firstLine;
+    if(parseLine(event.lines.front(), firstLine))
+    {
+      if(firstLine.objectId == m_id) // TODO: msg[LIST_CHANGED]
+      {
+        if(auto msg = firstLine.values.find("msg"); msg != firstLine.values.end() && msg->second == "LIST_CHANGED")
+        {
+          auto it = event.lines.begin();
+          it++; // skip first line
+          for(; it != event.lines.end(); it++)
+          {
+            Line line;
+            if(parseLine(*it, line) && line.objectId != m_id)
+            {
+              if(endsWith(*it, "appended") && !objectExists(line.objectId))
+              {
+                // FIXME: check type for accessory/turntable
+                addObject(std::make_unique<Switch>(m_kernel, line.objectId));
+              }
+              else if(endsWith(*it, "removed"))
+              {
+                removeObject(line.objectId);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
   return Object::receiveEvent(event);
 }

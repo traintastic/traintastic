@@ -293,3 +293,20 @@ bool WorldLoader::readFile(const std::filesystem::path& filename, std::string& d
   }
   return true;
 }
+
+bool WorldLoader::readFile(const std::filesystem::path& filename, nlohmann::json& data)
+{
+  std::string text;
+  if(readFile(filename, text))
+  {
+    try
+    {
+      data = nlohmann::json::parse(text);
+      return true;
+    }
+    catch(...)
+    {
+    }
+  }
+  return false;
+}

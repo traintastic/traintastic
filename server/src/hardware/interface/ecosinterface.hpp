@@ -61,6 +61,8 @@ class ECoSInterface final
 
     void typeChanged();
 
+    std::filesystem::path simulationDataFilename() const;
+
   protected:
     bool setOnline(bool& value, bool simulation) final;
 

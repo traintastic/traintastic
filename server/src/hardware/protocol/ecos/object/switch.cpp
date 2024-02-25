@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,11 +23,11 @@
 #include "switch.hpp"
 #include <cassert>
 #include "../messages.hpp"
+#include "../kernel.hpp"
 #include "../../../../utils/fromchars.hpp"
+#include "../../../../utils/inrange.hpp"
 
 namespace ECoS {
-
-const std::initializer_list<std::string_view> Switch::options = {Option::addr, Option::protocol};
 
 static bool fromString(std::string_view text, Switch::Mode& mode)
 {
@@ -44,17 +44,20 @@ Switch::Switch(Kernel& kernel, uint16_t id)
   : Object(kernel, id)
 {
   requestView();
-  send(get(m_id, {Option::state, Option::mode, Option::duration}));
-}
 
-Switch::Switch(Kernel& kernel, const Line& data)
-  : Switch(kernel, data.objectId)
-{
-  const auto values = data.values;
-  if(auto addr = values.find(Option::addr); addr != values.end())
-    fromChars(addr->second, m_address);
-  if(auto protocol = values.find(Option::protocol); protocol != values.end())
-    fromString(protocol->second, m_protocol);
+  send(get(m_id, {
+    Option::name1,
+    Option::name2,
+    Option::name3,
+    Option::type,
+    Option::symbol,
+    Option::addr,
+    Option::protocol,
+    Option::state,
+    Option::mode,
+    Option::duration,
+    Option::variant,
+    }));
 }
 
 bool Switch::receiveReply(const Reply& reply)
@@ -75,11 +78,49 @@ bool Switch::receiveEvent(const Event& event)
   return Object::receiveEvent(event);
 }
 
+void Switch::setState(uint8_t value)
+{
+  send(set(m_id, Option::state, value));
+}
+
 void Switch::update(std::string_view option, std::string_view value)
 {
-  if(option == Option::state)
+  if(option == Option::name1)
   {
-    (void)value; //! \todo implement
+    m_name1 = value;
+  }
+  else if(option == Option::name2)
+  {
+    m_name2 = value;
+  }
+  else if(option == Option::name3)
+  {
+    m_name3 = value;
+  }
+  else if(option == Option::addr)
+  {
+    fromChars(value, m_address);
+  }
+  else if(option == Option::symbol)
+  {
+    std::underlying_type_t<Symbol> n;
+    fromChars(value, n);
+    m_symbol = static_cast<Symbol>(n);
+  }
+  else if(option == Option::type)
+  {
+    fromString(value, m_type);
+  }
+  else if(option == Option::protocol)
+  {
+    fromString(value, m_protocol);
+  }
+  else if(option == Option::state)
+  {
+    fromChars(value, m_state);
+
+    // calulate switched accessory (needs verification):
+    m_kernel.switchManagerSwitched(m_protocol, m_address + (m_state / 2), (m_state & 0x01) ? OutputPairValue::First : OutputPairValue::Second);
   }
   else if(option == Option::mode)
   {
@@ -87,7 +128,11 @@ void Switch::update(std::string_view option, std::string_view value)
   }
   else if(option == Option::duration)
   {
-    (void)value; //! \todo implement
+    fromChars(value, m_duration);
+  }
+  else if(option == Option::variant)
+  {
+    fromChars(value, m_variant);
   }
 }
 

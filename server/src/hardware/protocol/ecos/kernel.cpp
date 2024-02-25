@@ -182,11 +182,35 @@ void Kernel::stop(Simulation* simulation)
   {
     simulation->clear();
 
-    // Locomotives:
+    // Locomotives / switches:
     for(const auto& it : m_objects)
     {
       if(const auto* locomotive = dynamic_cast<const Locomotive*>(it.second.get()))
-        simulation->locomotives.emplace_back(Simulation::Locomotive{{locomotive->id()}, locomotive->protocol(), locomotive->address()});
+      {
+        simulation->locomotives.emplace_back(
+          Simulation::Locomotive{
+            {locomotive->id()},
+            locomotive->protocol(),
+            locomotive->address()});
+      }
+      else if(const auto* sw = dynamic_cast<const Switch*>(it.second.get()))
+      {
+        simulation->switches.emplace_back(
+          Simulation::Switch{
+            {sw->id()},
+            sw->name1(),
+            sw->name2(),
+            sw->name3(),
+            sw->address(),
+            std::string{toString(sw->type())},
+            static_cast<int>(sw->symbol()),
+            std::string{toString(sw->protocol())},
+            sw->state(),
+            std::string{toString(sw->mode())},
+            sw->duration(),
+            sw->variant()
+            });
+      }
     }
 
     // S88:

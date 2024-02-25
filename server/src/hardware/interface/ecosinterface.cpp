@@ -27,6 +27,7 @@
 #include "../output/list/outputlist.hpp"
 #include "../protocol/ecos/kernel.hpp"
 #include "../protocol/ecos/settings.hpp"
+#include "../protocol/ecos/messages.hpp"
 #include "../protocol/ecos/iohandler/tcpiohandler.hpp"
 #include "../protocol/ecos/iohandler/simulationiohandler.hpp"
 #include "../../core/attributes.hpp"
@@ -39,6 +40,7 @@
 #include "../../utils/makearray.hpp"
 #include "../../world/world.hpp"
 #include "../../world/worldloader.hpp"
+#include "../../world/worldsaver.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Protocol | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
@@ -224,36 +226,65 @@ void ECoSInterface::load(WorldLoader& loader, const nlohmann::json& data)
 {
   Interface::load(loader, data);
 
-  using nlohmann::json;
-
-  json state = loader.getState(getObjectId());
   // load simulation data:
-  if(json simulation = state.value("simulation", json::object()); !simulation.empty())
   {
-    using namespace ECoS;
+    using namespace nlohmann;
 
-    if(json locomotives = simulation.value("locomotives", json::array()); !locomotives.empty())
+    json simulation;
+    if(loader.readFile(simulationDataFilename(), simulation))
     {
-      for(const json& object : locomotives)
+      using namespace ECoS;
+
+      if(json locomotives = simulation.value("locomotives", json::array()); !locomotives.empty())
       {
-        const uint16_t objectId = object.value("id", 0U);
-        LocomotiveProtocol protocol;
-        const uint16_t address = object.value("address", 0U);
-        if(objectId != 0 && fromString(object.value("protocol", ""), protocol) && address != 0)
-          m_simulation.locomotives.emplace_back(Simulation::Locomotive{{objectId}, protocol, address});
+        for(const json& object : locomotives)
+        {
+          const uint16_t objectId = object.value("id", 0U);
+          LocomotiveProtocol protocol;
+          const uint16_t address = object.value("address", 0U);
+          if(objectId != 0 && fromString(object.value("protocol", ""), protocol) && address != 0)
+            m_simulation.locomotives.emplace_back(Simulation::Locomotive{{objectId}, protocol, address});
+        }
       }
-    }
 
-    if(json s88 = simulation.value("s88", json::array()); !s88.empty())
-    {
-      for(const json& object : s88)
+      if(json switches = simulation.value("switches", json::array()); !switches.empty())
       {
-        const uint16_t objectId = object.value("id", 0U);
-        const uint8_t ports = object.value("ports", 0U);
-        if(objectId != 0 && (ports == 8 || ports == 16))
-          m_simulation.s88.emplace_back(Simulation::S88{{objectId}, ports});
-        else
-          break;
+        for(const json& object : switches)
+        {
+          const uint16_t objectId = object.value("id", 0U);
+          const uint16_t address = object.value("address", 0U);
+          if(objectId != 0 && address != 0)
+          {
+            m_simulation.switches.emplace_back(
+              Simulation::Switch{
+                {objectId},
+                object.value("name1", ""),
+                object.value("name2", ""),
+                object.value("name3", ""),
+                address,
+                object.value("type", ""),
+                object.value("symbol", -1),
+                object.value("protocol", ""),
+                object.value<uint8_t>("state", 0U),
+                object.value("mode", ""),
+                object.value<uint16_t>("duration", 0U),
+                object.value<uint8_t>("variant", 0U)
+                });
+          }
+        }
+      }
+
+      if(json s88 = simulation.value("s88", json::array()); !s88.empty())
+      {
+        for(const json& object : s88)
+        {
+          const uint16_t objectId = object.value("id", 0U);
+          const uint8_t ports = object.value("ports", 0U);
+          if(objectId != 0 && (ports == 8 || ports == 16))
+            m_simulation.s88.emplace_back(Simulation::S88{{objectId}, ports});
+          else
+            break;
+        }
       }
     }
   }
@@ -276,6 +307,30 @@ void ECoSInterface::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json
     simulation["locomotives"] = objects;
   }
 
+  if(!m_simulation.switches.empty())
+  {
+    json objects = json::array();
+    for(const auto& sw : m_simulation.switches)
+    {
+      objects.emplace_back(
+        json::object({
+          {"id", sw.id},
+          {"name1", sw.name1},
+          {"name2", sw.name2},
+          {"name3", sw.name3},
+          {"address", sw.address},
+          {"type", sw.type},
+          {"symbol", sw.symbol},
+          {"protocol", sw.protocol},
+          {"state", sw.state},
+          {"mode", sw.mode},
+          {"duration", sw.duration},
+          {"variant", sw.variant}
+          }));
+    }
+    simulation["switches"] = objects;
+  }
+
   if(!m_simulation.s88.empty())
   {
     json objects = json::array();
@@ -285,7 +340,9 @@ void ECoSInterface::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json
   }
 
   if(!simulation.empty())
-    state["simulation"] = simulation;
+  {
+    saver.writeFile(simulationDataFilename(), simulation.dump(2));
+  }
 }
 
 void ECoSInterface::worldEvent(WorldState state, WorldEvent event)
@@ -311,4 +368,9 @@ void ECoSInterface::worldEvent(WorldState state, WorldEvent event)
         break;
     }
   }
+}
+
+std::filesystem::path ECoSInterface::simulationDataFilename() const
+{
+  return (std::filesystem::path("simulation") / id.value()) += ".json";
 }

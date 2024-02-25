@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,6 +37,7 @@ class SimulationIOHandler final : public IOHandler
 
     bool reply(std::string_view message);
     bool replyOk(std::string_view request);
+    bool replyErrorUnknownOption(std::string_view request, std::string_view option);
 
     static std::string replyHeader(std::string_view request);
 
