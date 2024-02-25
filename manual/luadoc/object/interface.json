@@ -2,6 +2,7 @@
   "name": {},
   "online": {},
   "status": {},
+  "output_channels": {},
   "get_output": {
     "parameters": [
       {

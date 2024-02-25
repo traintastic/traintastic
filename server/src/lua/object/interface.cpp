@@ -47,8 +47,21 @@ void Interface::registerType(lua_State* L)
 int Interface::index(lua_State* L, ::Interface& object)
 {
   const auto key = to<std::string_view>(L, 2);
-  if(dynamic_cast<::OutputController*>(&object))
+  if(auto* outputController = dynamic_cast<::OutputController*>(&object))
   {
+    LUA_OBJECT_PROPERTY(output_channels)
+    {
+      auto channels = outputController->outputChannels();
+      lua_createtable(L, static_cast<int>(channels.size()), 0);
+      lua_Integer n = 1;
+      for(auto channel : channels)
+      {
+        Enum<std::remove_const_t<decltype(channels)::element_type>>::push(L, channel);
+        lua_rawseti(L, -2, n);
+        n++;
+      }
+      return 1;
+    }
     LUA_OBJECT_METHOD(get_output)
   }
   return Object::index(L, object);

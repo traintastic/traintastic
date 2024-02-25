@@ -286,11 +286,11 @@ class LuaDoc:
                     if not base_class.startswith('std'):
                         base_classes.append(base_class)
                 lua_filename_hpp = os.path.join(project_root, 'server', 'src', 'lua', 'object', os.path.basename(filename_hpp))
-                if not os.path.exists(lua_filename_hpp):
-                    lua_filename_hpp = None
+                lua_filename_cpp = os.path.splitext(lua_filename_hpp)[0] + '.cpp'
                 cpp_classes[m.group(1)] = {
                     'filename_hpp': filename_hpp,
-                    'lua_filename_hpp': lua_filename_hpp,
+                    'lua_filename_hpp': lua_filename_hpp if os.path.exists(lua_filename_hpp) else None,
+                    'lua_filename_cpp': lua_filename_cpp if os.path.exists(lua_filename_cpp) else None,
                     'base_classes': base_classes}
 
         # indentify those that can be used in Lua:
@@ -355,6 +355,16 @@ class LuaDoc:
                         'lua_name': method_name,
                         'term_prefix': term_prefix,
                         'type': 'method'
+                        }
+                items.append(item)
+
+        if cpp_class['lua_filename_cpp'] is not None:
+            cpp = LuaDoc._read_file(cpp_class['lua_filename_cpp'])
+            for property_name in re.findall(r'LUA_OBJECT_PROPERTY\(([a-z][a-z0-9_]*)\)', cpp):
+                item = {
+                        'lua_name': property_name,
+                        'term_prefix': term_prefix,
+                        'type': 'property'
                         }
                 items.append(item)
 
