@@ -28,6 +28,7 @@
 #include "object/locomotivemanager.hpp"
 #include "object/locomotive.hpp"
 #include "object/switchmanager.hpp"
+#include "object/switch.hpp"
 #include "object/feedbackmanager.hpp"
 #include "object/feedback.hpp"
 #include "../../protocol/dcc/dcc.hpp"
