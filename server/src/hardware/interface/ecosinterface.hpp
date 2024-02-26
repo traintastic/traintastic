@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOSINTERFACE_HPP
 
 #include "interface.hpp"
+#include <filesystem>
 #include "../protocol/ecos/simulation.hpp"
 #include "../decoder/decodercontroller.hpp"
 #include "../input/inputcontroller.hpp"
