@@ -103,7 +103,7 @@ void Switch::update(std::string_view option, std::string_view value)
   }
   else if(option == Option::symbol)
   {
-    std::underlying_type_t<Symbol> n;
+    std::underlying_type_t<Symbol> n = 0;
     fromChars(value, n);
     m_symbol = static_cast<Symbol>(n);
   }
