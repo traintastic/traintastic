@@ -25,6 +25,7 @@
 #include <charconv>
 #include "../../../utils/startswith.hpp"
 #include "../../../utils/fromchars.hpp"
+#include "../../../utils/rtrim.hpp"
 
 namespace ECoS {
 
@@ -130,7 +131,7 @@ bool parseReply(std::string_view message, Reply& reply)
   {
     while((pos = message.find('\n', n)) < end)
     {
-      reply.lines.emplace_back(&message[n], pos - n);
+      reply.lines.emplace_back(rtrim({&message[n], pos - n}, '\r'));
       n = pos + 1;
     }
   }
@@ -192,7 +193,7 @@ bool parseEvent(std::string_view message, Event& event)
   {
     while((pos = message.find('\n', n)) < end)
     {
-      event.lines.emplace_back(&message[n], pos - n);
+      event.lines.emplace_back(rtrim({&message[n], pos - n}, '\r'));
       n = pos + 1;
     }
   }
