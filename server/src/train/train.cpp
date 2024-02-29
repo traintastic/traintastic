@@ -21,11 +21,12 @@
  */
 
 #include "train.hpp"
-#include "trainlist.hpp"
-#include "trainvehiclelist.hpp"
-#include "../world/world.hpp"
 #include "trainblockstatus.hpp"
+#include "trainlist.hpp"
 #include "trainlisttablemodel.hpp"
+#include "trainvehiclelist.hpp"
+#include "trainvehiclelistitem.hpp"
+#include "../world/world.hpp"
 #include "../core/attributes.hpp"
 #include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
@@ -64,8 +65,7 @@ Train::Train(World& world, std::string_view _id) :
         status->direction.setValueInternal(!status->direction.value());
       blocks.reverseInternal(); // index 0 is head of train
 
-      for(const auto& vehicle : m_poweredVehicles)
-        vehicle->setDirection(value);
+      propagateDirection(value);
       updateEnabled();
     },
     [](Direction& value)
@@ -140,6 +140,7 @@ Train::Train(World& world, std::string_view _id) :
   active{this, "active", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly,
     [this](bool)
     {
+      propagateDirection(direction); //Sync all vehicles direction
       updateSpeed();
     },
     std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
@@ -307,8 +308,8 @@ void Train::updateLength()
     return;
 
   double mm = 0;
-  for(const auto& vehicle : *vehicles)
-    mm += vehicle->lob.getValue(LengthUnit::MilliMeter);
+  for(const auto& item : *vehicles)
+    mm += item->vehicle->lob.getValue(LengthUnit::MilliMeter);
   lob.setValueInternal(convertUnit(mm, LengthUnit::MilliMeter, lob.unit()));
 }
 
@@ -318,16 +319,16 @@ void Train::updateWeight()
     return;
 
   double ton = 0;
-  for(const auto& vehicle : *vehicles)
-    ton += vehicle->totalWeight.getValue(WeightUnit::Ton);
+  for(const auto& item : *vehicles)
+    ton += item->vehicle->totalWeight.getValue(WeightUnit::Ton);
   weight.setValueInternal(convertUnit(ton, WeightUnit::Ton, weight.unit()));
 }
 
 void Train::updatePowered()
 {
   m_poweredVehicles.clear();
-  for(const auto& vehicle : *vehicles)
-    if(auto poweredVehicle = std::dynamic_pointer_cast<PoweredRailVehicle>(vehicle))
+  for(const auto& item : *vehicles)
+    if(auto poweredVehicle = std::dynamic_pointer_cast<PoweredRailVehicle>(item->vehicle.value()))
       m_poweredVehicles.emplace_back(poweredVehicle);
   powered.setValueInternal(!m_poweredVehicles.empty());
 }
@@ -338,11 +339,11 @@ void Train::updateSpeedMax()
   {
     const auto itEnd = vehicles->end();
     auto it = vehicles->begin();
-    double kmph = (*it)->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+    double kmph = (*it)->vehicle->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
     for(; it != itEnd; ++it)
     {
-      const double v = (*it)->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
-      if((v > 0 || isPowered(**it)) && v < kmph)
+      const double v = (*it)->vehicle->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+      if((v > 0 || isPowered(*(*it)->vehicle)) && v < kmph)
         kmph = v;
     }
     speedMax.setValueInternal(convertUnit(kmph, SpeedUnit::KiloMeterPerHour, speedMax.unit()));
@@ -370,6 +371,12 @@ void Train::updateEnabled()
   Attributes::setEnabled(vehicles->remove, stopped);
   Attributes::setEnabled(vehicles->move, stopped);
   Attributes::setEnabled(vehicles->reverse, stopped);
+
+  for(const auto& item : *vehicles)
+  {
+    Attributes::setEnabled(item->vehicle, stopped);
+    Attributes::setEnabled(item->invertDirection, stopped);
+  }
 }
 
 bool Train::setTrainActive(bool val)
@@ -384,15 +391,15 @@ bool Train::setTrainActive(bool val)
     }
 
     //To activate a train, ensure all vehicles are stopped and free
-    for(const auto& vehicle : *vehicles)
+    for(const auto& item : *vehicles)
     {
-      assert(vehicle->activeTrain.value() != self);
-      if(vehicle->activeTrain.value())
+      assert(item->vehicle->activeTrain.value() != self);
+      if(item->vehicle->activeTrain.value())
       {
         return false; //Not free
       }
 
-      if(auto decoder = vehicle->decoder.value(); decoder && !almostZero(decoder->throttle.value()))
+      if(auto decoder = item->vehicle->decoder.value(); decoder && !almostZero(decoder->throttle.value()))
       {
         return false; //Already running
       }
@@ -400,9 +407,9 @@ bool Train::setTrainActive(bool val)
 
     //Now really activate
     //Register this train as activeTrain
-    for(const auto& vehicle : *vehicles)
+    for(const auto& item : *vehicles)
     {
-      vehicle->activeTrain.setValueInternal(self);
+      item->vehicle->activeTrain.setValueInternal(self);
     }
 
     //Sync Emergency Stop state
@@ -417,12 +424,60 @@ bool Train::setTrainActive(bool val)
       return false;
 
     //Deactivate all vehicles
-    for(const auto& vehicle : *vehicles)
+    for(const auto& item : *vehicles)
     {
-      assert(vehicle->activeTrain.value() == self);
-      vehicle->activeTrain.setValueInternal(nullptr);
+      assert(item->vehicle->activeTrain.value() == self);
+      item->vehicle->activeTrain.setValueInternal(nullptr);
     }
   }
 
   return true;
+}
+
+void Train::propagateDirection(Direction newDirection)
+{
+  if(!active)
+    return;
+
+  const Direction oppositeDirection = newDirection == Direction::Forward ? Direction::Reverse : Direction::Forward;
+  for(const auto& item : *vehicles)
+  {
+    Direction dir = newDirection;
+    if(item->invertDirection)
+      dir = oppositeDirection;
+
+    auto poweredVehicle = std::dynamic_pointer_cast<PoweredRailVehicle>(item->vehicle.value());
+    if(poweredVehicle)
+    {
+      poweredVehicle->lastTrainSetDirection = dir;
+      poweredVehicle->setDirection(dir);
+    }
+  }
+}
+
+void Train::handleDecoderDirection(const std::shared_ptr<PoweredRailVehicle>& vehicle, Direction newDirection)
+{
+  //! \todo assert vehicle contained in train?
+  if(!active || newDirection == Direction::Unknown)
+    return;
+
+  //Check if vehicle is inverted
+  bool isInverted = false;
+  for(const auto& item : *vehicles)
+  {
+    if(item->vehicle.value() == vehicle)
+    {
+      if(item->invertDirection)
+        isInverted = true;
+      break;
+    }
+  }
+
+  if(isInverted)
+    newDirection = newDirection == Direction::Forward ? Direction::Reverse : Direction::Forward;
+
+  if(direction == newDirection)
+    return; //No change
+
+  direction = newDirection;
 }

@@ -30,7 +30,6 @@
 #include "../../hardware/decoder/decoderchangeflags.hpp"
 #include "../../train/train.hpp"
 
-
 PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   : RailVehicle(world, id_)
   , power{*this, "power", 0, PowerUnit::KiloWatt, PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -40,6 +39,31 @@ PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   Attributes::addDisplayName(power, DisplayName::Vehicle::Rail::power);
   Attributes::addEnabled(power, editable);
   m_interfaceItems.add(power);
+
+  propertyChanged.connect(
+    [this](BaseProperty &prop)
+    {
+      if(prop.name() == "decoder")
+        registerDecoder();
+    });
+}
+
+PoweredRailVehicle::~PoweredRailVehicle()
+{
+  assert(!decoder);
+  assert(!decoderConnection.connected());
+}
+
+void PoweredRailVehicle::destroying()
+{
+  decoder = nullptr;
+  RailVehicle::destroying();
+}
+
+void PoweredRailVehicle::loaded()
+{
+  RailVehicle::loaded();
+  registerDecoder();
 }
 
 void PoweredRailVehicle::setDirection(Direction value)
@@ -61,6 +85,7 @@ void PoweredRailVehicle::setSpeed(double kmph)
 
   if(almostZero(kmph))
   {
+    lastTrainSpeedStep = 0;
     decoder->throttle.setValue(0);
     return;
   }
@@ -70,16 +95,15 @@ void PoweredRailVehicle::setSpeed(double kmph)
   // No speed profile -> linear
   {
     const double max = speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+    float val = 0;
     if(max > 0)
     {
-      const uint8_t steps = decoder->speedSteps;
-      if(steps == Decoder::speedStepsAuto)
-        decoder->throttle.setValue(kmph / max);
-      else
-        decoder->throttle.setValue(std::round(kmph / max * steps) / steps);
+      val = kmph / max;
     }
-    else
-      decoder->throttle.setValue(0);
+
+    //Remember last speed set by train, see lambda in 'PoweredRailVehicle::registerDecoder()'
+    lastTrainSpeedStep = val;
+    decoder->throttle.setValue(val);
   }
 }
 
@@ -90,4 +114,68 @@ void PoweredRailVehicle::worldEvent(WorldState state, WorldEvent event)
   const bool editable = contains(state, WorldState::Edit);
 
   Attributes::setEnabled(power, editable);
+}
+
+void PoweredRailVehicle::registerDecoder()
+{
+  //Disconnect from previous decoder
+  decoderConnection.disconnect();
+
+  auto decoderVal = decoder.value();
+  if(!decoderVal)
+    return;
+
+  //Connect to new decoder
+  decoderConnection = decoderVal->decoderChanged.connect(
+    [this](Decoder& self, DecoderChangeFlags flags, uint32_t /*functionNumber*/)
+    {
+      if(!activeTrain)
+        return;
+
+      if(has(flags, DecoderChangeFlags::EmergencyStop))
+      {
+        activeTrain.value()->emergencyStop.setValue(self.emergencyStop);
+      }
+      else if(has(flags, DecoderChangeFlags::Throttle))
+      {
+        if(almostZero(lastTrainSpeedStep - self.throttle))
+        {
+          //When train speed changes, decoder throttle is updated
+          //Do not update train speed back when this happens
+          //Otherwise an infinite recursion would be triggered
+          return;
+        }
+
+        //! \todo Implement speed profile
+
+        // No speed profile -> linear
+        const double kmph = self.throttle * speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+
+        const double maxTrainSpeed = activeTrain.value()->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+        if(!almostZero(kmph - maxTrainSpeed) && kmph > maxTrainSpeed)
+        {
+          //Cut at train max speed
+          if(almostZero(activeTrain->throttleSpeed.value() - maxTrainSpeed))
+          {
+            //Train is already at maximum speed, reset our throttle
+            setSpeed(maxTrainSpeed);
+          }
+          else
+          {
+            //Set train to maximum speed
+            activeTrain.value()->throttleSpeed.setValue(maxTrainSpeed);
+          }
+          return;
+        }
+
+        activeTrain.value()->throttleSpeed.setValue(kmph);
+      }
+
+      if(has(flags, DecoderChangeFlags::Direction))
+      {
+        if(self.direction == lastTrainSetDirection)
+          return; //Direction change was caused by Train itself, no need propagate back
+        activeTrain->handleDecoderDirection(this->shared_ptr<PoweredRailVehicle>(), self.direction);
+      }
+    });
 }
