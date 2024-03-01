@@ -45,7 +45,7 @@
 #include "../../../log/log.hpp"
 #include "../../../log/logmessageexception.hpp"
 
-#define ASSERT_IS_KERNEL_THREAD assert(std::this_thread::get_id() == m_thread.get_id())
+#define ASSERT_IS_KERNEL_THREAD assert(isKernelThread())
 
 namespace ECoS {
 
@@ -183,6 +183,17 @@ void Kernel::stop(Simulation* simulation)
   {
     simulation->clear();
 
+    // ECoS:
+    {
+      simulation->ecos.commandStationType = toString(ecos().model());
+      simulation->ecos.protocolVersion = ::toString(ecos().protocolVersion());
+      simulation->ecos.hardwareVersion = ::toString(ecos().hardwareVersion());
+      simulation->ecos.applicationVersion = ::toString(ecos().applicationVersion());
+      simulation->ecos.applicationVersionSuffix = ecos().applicationVersionSuffix();
+      simulation->ecos.railcom = ecos().railcom();
+      simulation->ecos.railcomPlus = ecos().railcomPlus();
+    }
+
     // Locomotives / switches:
     for(const auto& it : m_objects)
     {
@@ -263,7 +274,7 @@ void Kernel::receive(std::string_view message)
 
 ECoS& Kernel::ecos()
 {
-  ASSERT_IS_KERNEL_THREAD;
+  assert(isKernelThread() || m_ioContext.stopped());
 
   return static_cast<ECoS&>(*m_objects[ObjectId::ecos]);
 }

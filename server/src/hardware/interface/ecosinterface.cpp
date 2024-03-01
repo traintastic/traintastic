@@ -239,6 +239,18 @@ void ECoSInterface::load(WorldLoader& loader, const nlohmann::json& data)
     {
       using namespace ECoS;
 
+      // ECoS:
+      if(json object = simulation.value("ecos", json::object()); !object.empty())
+      {
+        m_simulation.ecos.commandStationType = object.value("command_station_type", "");
+        m_simulation.ecos.applicationVersion = object.value("application_version", "");
+        m_simulation.ecos.applicationVersionSuffix = object.value("application_version_suffix", "");
+        m_simulation.ecos.hardwareVersion = object.value("hardware_version", "");
+        m_simulation.ecos.protocolVersion = object.value("protocol_version", "");
+        m_simulation.ecos.railcom = object.value("railcom", false);
+        m_simulation.ecos.railcomPlus = object.value("railcom_plus", false);
+      }
+
       if(json locomotives = simulation.value("locomotives", json::array()); !locomotives.empty())
       {
         for(const json& object : locomotives)
@@ -302,6 +314,19 @@ void ECoSInterface::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json
 
   // save data for simulation:
   json simulation = json::object();
+
+  // ECoS:
+  {
+    simulation["ecos"] = {
+      {"command_station_type", m_simulation.ecos.commandStationType},
+      {"application_version", m_simulation.ecos.applicationVersion},
+      {"application_version_suffix", m_simulation.ecos.applicationVersionSuffix},
+      {"hardware_version", m_simulation.ecos.hardwareVersion},
+      {"protocol_version", m_simulation.ecos.protocolVersion},
+      {"railcom", m_simulation.ecos.railcom},
+      {"railcom_plus", m_simulation.ecos.railcomPlus},
+      };
+  }
 
   if(!m_simulation.locomotives.empty())
   {

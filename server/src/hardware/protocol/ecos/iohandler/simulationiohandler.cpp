@@ -27,6 +27,43 @@
 
 namespace ECoS {
 
+static bool appendOption(std::string& response, const Simulation::ECoS& ecos, std::string_view option)
+{
+  if(option == Option::commandstationtype)
+  {
+    response.append("\"").append(ecos.commandStationType).append("\"");
+  }
+  else if(option == Option::protocolversion)
+  {
+    response.append(ecos.protocolVersion);
+  }
+  else if(option == Option::hardwareversion)
+  {
+    response.append(ecos.hardwareVersion);
+  }
+  else if(option == Option::applicationversion)
+  {
+    response.append(ecos.applicationVersion);
+  }
+  else if(option == Option::applicationversionsuffix)
+  {
+    response.append("\"").append(ecos.applicationVersionSuffix).append("\"");
+  }
+  else if(option == Option::railcom)
+  {
+    response.append(ecos.railcom ? "1" : "0");
+  }
+  else if(option == Option::railcomplus)
+  {
+    response.append(ecos.railcomPlus ? "1" : "0");
+  }
+  else
+  {
+    return false;
+  }
+  return true;
+}
+
 static bool appendOption(std::string& response, const Simulation::Switch& sw, std::string_view option)
 {
   if(option == Option::name1)
@@ -100,15 +137,21 @@ bool SimulationIOHandler::send(std::string_view message)
 
   if(request.objectId == ObjectId::ecos)
   {
-    if(request.command == Command::get && request.options.size() == 1 && request.options[0] == Option::info)
+    if(request.command == Command::get)
     {
-      return reply(
-        "<REPLY get(1, info)>\r\n"
-        "1 ECoS2\r\n"
-        "1 ProtocolVersion[0.5]\r\n"
-        "1 ApplicationVersion[4.2.6]\r\n"
-        "1 HardwareVersion[2.0]\r\n"
-        "<END 0 (OK)>\r\n");
+      std::string response{replyHeader(message)};
+      for(auto option : request.options)
+      {
+        response.append(std::to_string(request.objectId)).append(" ").append(option).append("[");
+        if(!appendOption(response, m_simulation.ecos, option))
+        {
+          return replyErrorUnknownOption(message, option);
+        }
+        response.append("]\r\n");
+      }
+      response.append("<END 0 (OK)>\r\n");
+
+      return reply(response);
     }
     if(request.command == Command::set && request.options.size() == 1 && (request.options[0] == Option::stop || request.options[0] == Option::go))
     {

@@ -37,6 +37,28 @@ struct Simulation
     uint16_t id;
   };
 
+  struct ECoS
+  {
+    std::string commandStationType;
+    std::string protocolVersion;
+    std::string hardwareVersion;
+    std::string applicationVersion;
+    std::string applicationVersionSuffix;
+    bool railcom;
+    bool railcomPlus;
+
+    void clear()
+    {
+      commandStationType.clear();
+      protocolVersion.clear();
+      hardwareVersion.clear();
+      applicationVersion.clear();
+      applicationVersionSuffix.clear();
+      railcom = false;
+      railcomPlus = false;
+    }
+  };
+
   struct Locomotive : Object
   {
     LocomotiveProtocol protocol;
@@ -63,12 +85,14 @@ struct Simulation
     uint8_t ports;
   };
 
+  ECoS ecos;
   std::vector<Locomotive> locomotives;
   std::vector<Switch> switches;
   std::vector<S88> s88;
 
   void clear()
   {
+    ecos.clear();
     locomotives.clear();
     switches.clear();
     s88.clear();

@@ -129,6 +129,13 @@ class Kernel : public ::KernelBase
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
 
+#ifndef NDEBUG
+    bool isKernelThread() const
+    {
+      return std::this_thread::get_id() == m_thread.get_id();
+    }
+#endif
+
     /**
      * @brief Create kernel and IO handler
      * @param[in] config LocoNet configuration
