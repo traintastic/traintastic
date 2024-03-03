@@ -222,7 +222,7 @@ Traintastic::RunStatus Traintastic::run(const std::string& worldUUID, bool simul
 #ifndef NO_LOCALHOST_ONLY_SETTING
       settings->localhostOnly,
 #else
-      true,
+      false,
 #endif
       settings->port, settings->discoverable);
   }
