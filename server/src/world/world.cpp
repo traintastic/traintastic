@@ -398,6 +398,7 @@ World::~World()
   deleteAll(*trains);
   deleteAll(*railVehicles);
   deleteAll(*luaScripts);
+  luaScripts.setValueInternal(nullptr);
 }
 
 std::string World::getUniqueId(std::string_view prefix) const
