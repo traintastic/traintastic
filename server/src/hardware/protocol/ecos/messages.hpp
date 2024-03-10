@@ -68,6 +68,7 @@ struct ObjectId
 struct Option
 {
   static constexpr std::string_view addr = "addr";
+  static constexpr std::string_view addrext = "addrext";
   static constexpr std::string_view applicationversion = "applicationversion";
   static constexpr std::string_view applicationversionsuffix = "applicationversionsuffix";
   static constexpr std::string_view commandstationtype = "commandstationtype";

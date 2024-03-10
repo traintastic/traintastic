@@ -28,6 +28,8 @@
 #include "switchtype.hpp"
 #include "../messages.hpp"
 
+enum class OutputPairValue : uint8_t;
+
 namespace ECoS {
 
 class Kernel;
@@ -58,6 +60,7 @@ class Switch final : public Object
     std::string m_name3;
     SwitchType m_type = SwitchType::Unknown;
     uint16_t m_address = 0;
+    std::vector<std::pair<uint16_t, OutputPairValue>> m_addrext;
     Symbol m_symbol = Symbol::None;
     SwitchProtocol m_protocol = SwitchProtocol::Unknown;
     uint8_t m_state = 0;

@@ -52,6 +52,7 @@ Switch::Switch(Kernel& kernel, uint16_t id)
     Option::type,
     Option::symbol,
     Option::addr,
+    Option::addrext,
     Option::protocol,
     Option::state,
     Option::mode,
@@ -101,6 +102,32 @@ void Switch::update(std::string_view option, std::string_view value)
   {
     fromChars(value, m_address);
   }
+  else if(option == Option::addrext)
+  {
+    m_addrext.clear();
+    while(!value.empty())
+    {
+      decltype(m_addrext)::value_type port;
+      auto r = fromChars(value, port.first);
+      if(r.ec != std::errc())
+      {
+        break;
+      }
+      value.remove_prefix(r.ptr - value.data());
+      if(value.empty() || (value[0] != 'r' && value[0] != 'g'))
+      {
+        break;
+      }
+      port.second = (value[0] == 'r') ? OutputPairValue::First : OutputPairValue::Second;
+      value.remove_prefix(sizeof(char)); // remove: r/g
+      m_addrext.emplace_back(port);
+      if(value.empty() || value[0] != ',')
+      {
+        break;
+      }
+      value.remove_prefix(sizeof(char)); // remove: ,
+    }
+  }
   else if(option == Option::symbol)
   {
     std::underlying_type_t<Symbol> n = 0;
@@ -119,8 +146,11 @@ void Switch::update(std::string_view option, std::string_view value)
   {
     fromChars(value, m_state);
 
-    // calulate switched accessory (needs verification):
-    m_kernel.switchManagerSwitched(m_protocol, m_address + (m_state / 2), (m_state & 0x01) ? OutputPairValue::First : OutputPairValue::Second);
+    if(m_state < m_addrext.size())
+    {
+      const auto& port = m_addrext[m_state];
+      m_kernel.switchManagerSwitched(m_protocol, port.first, port.second);
+    }
   }
   else if(option == Option::mode)
   {
