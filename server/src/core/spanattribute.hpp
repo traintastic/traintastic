@@ -77,8 +77,9 @@ class SpanAttribute : public AbstractValuesAttribute
 
     void setValues(tcb::span<const T> values)
     {
-      if(m_values.size() != values.size() || (!m_values.empty() && !values.empty() && std::memcmp(m_values.data(), values.data(), m_values.size()) != 0))
+      if(m_values.size() != values.size() || !std::equal(m_values.begin(), m_values.end(), values.begin()) || m_values.data() == values.data())
       {
+        // if data() and size() are equal asume it has changed, we can't test it.
         m_values = values;
         changed();
       }
