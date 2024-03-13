@@ -30,6 +30,7 @@
 #include "../protocol/ecos/messages.hpp"
 #include "../protocol/ecos/iohandler/tcpiohandler.hpp"
 #include "../protocol/ecos/iohandler/simulationiohandler.hpp"
+#include "../protocol/ecos/object/switch.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
@@ -119,16 +120,34 @@ void ECoSInterface::inputSimulateChange(uint32_t channel, uint32_t address, Simu
 
 tcb::span<const OutputChannel> ECoSInterface::outputChannels() const
 {
-  static const auto values = makeArray(OutputChannel::AccessoryDCC, OutputChannel::AccessoryMotorola);
+  static const auto values = makeArray(OutputChannel::AccessoryDCC, OutputChannel::AccessoryMotorola, OutputChannel::ECoSObject);
   return values;
 }
 
-bool ECoSInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
+std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> ECoSInterface::getOutputECoSObjects(OutputChannel channel) const
+{
+  if(channel == OutputChannel::ECoSObject) /*[[likely]]*/
+  {
+    return {m_outputECoSObjectIds, m_outputECoSObjectNames};
+  }
+  return OutputController::getOutputECoSObjects(channel);
+}
+
+bool ECoSInterface::isOutputId(OutputChannel channel, uint32_t outputId) const
+{
+  if(channel == OutputChannel::ECoSObject)
+  {
+    return inRange<uint32_t>(outputId, ECoS::ObjectId::switchMin, ECoS::ObjectId::switchMax);
+  }
+  return OutputController::isOutputId(channel, outputId);
+}
+
+bool ECoSInterface::setOutputValue(OutputChannel channel, uint32_t outputId, OutputValue value)
 {
   return
     m_kernel &&
-    inRange(address, outputAddressMinMax(channel)) &&
-    m_kernel->setOutput(channel, static_cast<uint16_t>(address), std::get<OutputPairValue>(value));
+    isOutputId(channel, outputId) &&
+    m_kernel->setOutput(channel, outputId, value);
 }
 
 bool ECoSInterface::setOnline(bool& value, bool simulation)
@@ -176,6 +195,38 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
           if(!contains(m_world.state.value(), WorldState::Run))
             m_world.run();
         });
+      m_kernel->setOnObjectChanged(
+        [this](std::size_t typeHash, uint16_t objectId, const std::string& objectName)
+        {
+          if(typeHash == typeid(ECoS::Switch).hash_code())
+          {
+            if(auto it = std::find(m_outputECoSObjectIds.begin(), m_outputECoSObjectIds.end(), objectId); it != m_outputECoSObjectIds.end())
+            {
+              const std::size_t index = std::distance(m_outputECoSObjectIds.begin(), it);
+              m_outputECoSObjectNames[index] = objectName;
+            }
+            else
+            {
+              m_outputECoSObjectIds.emplace_back(objectId);
+              m_outputECoSObjectNames.emplace_back(objectName);
+            }
+            assert(m_outputECoSObjectIds.size() == m_outputECoSObjectNames.size());
+            outputECoSObjectsChanged();
+          }
+        });
+      m_kernel->setOnObjectRemoved(
+        [this](uint16_t objectId)
+        {
+          assert(objectId == 0);
+          if(auto it = std::find(m_outputECoSObjectIds.begin(), m_outputECoSObjectIds.end(), objectId); it != m_outputECoSObjectIds.end())
+          {
+            const std::size_t index = std::distance(m_outputECoSObjectIds.begin(), it);
+            m_outputECoSObjectIds.erase(it);
+            m_outputECoSObjectNames.erase(std::next(m_outputECoSObjectNames.begin(), index));
+            assert(m_outputECoSObjectIds.size() == m_outputECoSObjectNames.size());
+            outputECoSObjectsChanged();
+          }
+        });
       m_kernel->setDecoderController(this);
       m_kernel->setInputController(this);
       m_kernel->setOutputController(this);
@@ -186,6 +237,10 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
         {
           m_kernel->setConfig(ecos->config());
         });
+
+      // Reset output object list:
+      m_outputECoSObjectIds.assign({0});
+      m_outputECoSObjectNames.assign({{}});
 
       Attributes::setEnabled(hostname, false);
     }

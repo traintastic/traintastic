@@ -31,18 +31,15 @@
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
 
-Output::Output(std::shared_ptr<OutputController> outputController, OutputChannel channel_, OutputType type_, uint32_t address_)
+Output::Output(std::shared_ptr<OutputController> outputController, OutputChannel channel_, OutputType type_)
   : interface{this, "interface", std::move(outputController), PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , channel{this, "channel", channel_, PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , type{this, "type", type_, PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
-  , address{this, "address", address_, PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
 {
   m_interfaceItems.add(interface);
 
   Attributes::addValues(channel, outputChannelValues);
   m_interfaceItems.add(channel);
-
-  m_interfaceItems.add(address);
 }
 
 std::string Output::getObjectId() const

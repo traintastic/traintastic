@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/output/aspectoutput.cpp
+ * server/src/hardware/output/ecosstateoutput.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,28 +20,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "aspectoutput.hpp"
+#include "ecosstateoutput.hpp"
 #include "outputcontroller.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
 #include "../../utils/inrange.hpp"
 
-AspectOutput::AspectOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, uint32_t address_)
-  : AddressOutput(std::move(outputController), channel_, OutputType::Pair, address_)
-  , value{this, "value", -1, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
+ECoSStateOutput::ECoSStateOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, uint16_t ecosObjectId_)
+  : Output(std::move(outputController), channel_, OutputType::ECoSState)
+  , ecosObjectId{this, "ecos_object_id", ecosObjectId_, PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
+  , value{this, "value", 0, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
   , setValue{*this, "set_value", MethodFlags::ScriptCallable,
-      [this](int16_t newValue)
+      [this](uint8_t newValue)
       {
         assert(interface);
-        return
-          inRange(newValue, Attributes::getMinMax(value)) &&
-          interface->setOutputValue(channel, address, newValue);
+        return interface->setOutputValue(channel, ecosObjectId, newValue);
       }}
   , onValueChanged{*this, "on_value_changed", EventFlags::Scriptable}
 {
   Attributes::addObjectEditor(value, false);
-  Attributes::addMinMax<int16_t>(value, 0, 255);
+  Attributes::addMinMax<uint8_t>(value, std::numeric_limits<uint8_t>::min(), std::numeric_limits<uint8_t>::max());
   m_interfaceItems.add(value);
 
   Attributes::addObjectEditor(setValue, false);
@@ -50,8 +49,8 @@ AspectOutput::AspectOutput(std::shared_ptr<OutputController> outputController, O
   m_interfaceItems.add(onValueChanged);
 }
 
-void AspectOutput::updateValue(int16_t newValue)
+void ECoSStateOutput::updateValue(uint8_t newValue)
 {
   value.setValueInternal(newValue);
-  fireEvent(onValueChanged, newValue, shared_ptr<AspectOutput>());
+  fireEvent(onValueChanged, newValue, shared_ptr<ECoSStateOutput>());
 }

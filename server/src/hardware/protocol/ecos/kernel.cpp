@@ -22,6 +22,7 @@
 
 #include "kernel.hpp"
 #include <algorithm>
+#include <typeinfo>
 #include "messages.hpp"
 #include "simulation.hpp"
 #include "object/ecos.hpp"
@@ -104,6 +105,17 @@ void Kernel::setOnGo(std::function<void()> callback)
   m_onGo = std::move(callback);
 }
 
+void Kernel::setOnObjectChanged(OnObjectChanged callback)
+{
+  assert(!m_started);
+  m_onObjectChanged = std::move(callback);
+}
+
+void Kernel::setOnObjectRemoved(OnObjectRemoved callback)
+{
+  assert(!m_started);
+  m_onObjectRemoved = std::move(callback);
+}
 void Kernel::setDecoderController(DecoderController* decoderController)
 {
   assert(!m_started);
@@ -379,33 +391,44 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   }
 }
 
-bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputPairValue value)
+bool Kernel::setOutput(OutputChannel channel, uint32_t id, OutputValue value)
 {
-  auto switchProtocol = SwitchProtocol::Unknown;
+  assert(isEventLoopThread());
 
   switch(channel)
   {
     case OutputChannel::AccessoryDCC:
-      switchProtocol = SwitchProtocol::DCC;
-      break;
-
     case OutputChannel::AccessoryMotorola:
-      switchProtocol = SwitchProtocol::Motorola;
-      break;
-
+    {
+      const auto switchProtocol = (channel == OutputChannel::AccessoryDCC) ? SwitchProtocol::DCC : SwitchProtocol::Motorola;
+      m_ioContext.post(
+        [this, switchProtocol, address=id, port=(std::get<OutputPairValue>(value) == OutputPairValue::Second)]()
+        {
+          switchManager().setSwitch(switchProtocol, address, port);
+        });
+      return true;
+    }
+    case OutputChannel::ECoSObject:
+    {
+      m_ioContext.post(
+        [this, id, state=std::get<uint8_t>(value)]()
+        {
+          if(auto it = m_objects.find(id); it != m_objects.end())
+          {
+            if(auto* sw = dynamic_cast<Switch*>(it->second.get()))
+            {
+              sw->setState(state);
+            }
+          }
+        });
+      return true;
+    }
     default: /*[[unlikely]]*/
       assert(false);
-      return false;
+      break;
   }
 
-  assert(switchProtocol != SwitchProtocol::Unknown);
-
-  m_ioContext.post(
-    [this, switchProtocol, address, value]()
-    {
-      switchManager().setSwitch(switchProtocol, address, value == OutputPairValue::Second);
-    });
-  return true;
+  return false;
 }
 
 void Kernel::simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action)
@@ -510,6 +533,20 @@ void Kernel::switchManagerSwitched(SwitchProtocol protocol, uint16_t address, Ou
   }
 }
 
+void Kernel::switchStateChanged(uint16_t objectId, uint8_t state)
+{
+  ASSERT_IS_KERNEL_THREAD;
+
+  if(!m_outputController)
+    return;
+
+  EventLoop::call(
+    [this, objectId, state]()
+    {
+      m_outputController->updateOutputValue(OutputChannel::ECoSObject, objectId, state);
+    });
+}
+
 void Kernel::feedbackStateChanged(Feedback& object, uint8_t port, TriState value)
 {
   if(!m_inputController)
@@ -561,6 +598,46 @@ void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
   assert(handler);
   assert(!m_ioHandler);
   m_ioHandler = std::move(handler);
+}
+
+bool Kernel::objectExists(uint16_t objectId) const
+{
+  return m_objects.find(objectId) != m_objects.end();
+}
+
+void Kernel::addObject(std::unique_ptr<Object> object)
+{
+  objectChanged(*object);
+  m_objects.add(std::move(object));
+}
+
+void Kernel::objectChanged(Object& object)
+{
+  if(!m_onObjectChanged) /*[[unlikely]]*/
+  {
+    return;
+  }
+
+  std::string objectName;
+  if(auto* sw = dynamic_cast<const Switch*>(&object))
+  {
+    objectName = sw->nameUI();
+  }
+
+  EventLoop::call(
+    [this, typeHash=typeid(object).hash_code(), objectId=object.id(), objectName]()
+    {
+      m_onObjectChanged(typeHash, objectId, objectName);
+    });
+}
+
+void Kernel::removeObject(uint16_t objectId)
+{
+  m_objects.erase(objectId);
+  if(m_onObjectRemoved) /*[[likely]]*/
+  {
+    m_onObjectRemoved(objectId);
+  }
 }
 
 void Kernel::send(std::string_view message)

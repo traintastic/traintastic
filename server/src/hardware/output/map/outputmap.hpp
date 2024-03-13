@@ -47,6 +47,14 @@ class OutputMap : public SubObject
     static constexpr size_t addressesSizeMin = 1;
     static constexpr size_t addressesSizeMax = 8;
 
+    boost::signals2::connection m_interfaceDestroying;
+    boost::signals2::connection m_outputECoSObjectsChanged;
+
+    void addOutput(OutputChannel ch, uint32_t id);
+    void addOutput(OutputChannel ch, uint32_t id, OutputController& outputController);
+    std::shared_ptr<Output> getOutput(OutputChannel ch, uint32_t id, OutputController& outputController);
+    void releaseOutput(Output& output);
+
   protected:
     Outputs m_outputs;
 
@@ -57,6 +65,8 @@ class OutputMap : public SubObject
     void interfaceChanged();
     void channelChanged();
     void addressesSizeChanged();
+    void updateOutputActions();
+    void updateOutputActions(OutputType outputType);
     void updateEnabled();
 
     uint32_t getUnusedAddress() const;
@@ -66,11 +76,13 @@ class OutputMap : public SubObject
     ObjectProperty<OutputController> interface;
     Property<OutputChannel> channel;
     VectorProperty<uint32_t> addresses;
+    Property<uint16_t> ecosObject;
     ObjectVectorProperty<OutputMapItem> items;
     Method<void()> addAddress;
     Method<void()> removeAddress;
 
     OutputMap(Object& _parent, std::string_view parentPropertyName);
+    ~OutputMap() override;
 
     const std::shared_ptr<Output>& output(size_t index) const
     {

@@ -58,6 +58,22 @@ struct Attributes
     property.setAttribute(AttributeName::AliasValues, values);
   }
 
+  template<class T>
+  static inline void addAliases(Property<T>& property, tcb::span<const T> keys, tcb::span<const std::string> values)
+  {
+    assert(keys.size() == values.size());
+    property.addAttribute(AttributeName::AliasKeys, keys);
+    property.addAttribute(AttributeName::AliasValues, values);
+  }
+
+  template<class T>
+  static inline void setAliases(Property<T>& property, tcb::span<const T> keys, tcb::span<const std::string> values)
+  {
+    assert(keys.size() == values.size());
+    property.setAttribute(AttributeName::AliasKeys, keys);
+    property.setAttribute(AttributeName::AliasValues, values);
+  }
+
   static inline void addCategory(InterfaceItem& item, std::string_view value)
   {
     item.addAttribute(AttributeName::Category, value);

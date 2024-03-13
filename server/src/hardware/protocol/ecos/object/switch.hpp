@@ -77,6 +77,7 @@ class Switch final : public Object
     bool receiveReply(const Reply& reply) final;
     bool receiveEvent(const Event& event) final;
 
+    std::string nameUI() const;
     const std::string& name1() const { return m_name1; }
     const std::string& name2() const { return m_name2; }
     const std::string& name3() const { return m_name3; }

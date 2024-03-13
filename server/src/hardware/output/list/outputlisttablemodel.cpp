@@ -22,6 +22,7 @@
 
 #include "outputlisttablemodel.hpp"
 #include "outputlist.hpp"
+#include "../addressoutput.hpp"
 #include "../outputcontroller.hpp"
 #include "../../../core/objectproperty.tpp"
 #include "../../../utils/displayname.hpp"
@@ -95,7 +96,11 @@ std::string OutputListTableModel::getText(uint32_t column, uint32_t row) const
         break;
 
       case OutputListColumn::Address:
-        return std::to_string(output.address.value());
+        if(auto* addressOutput = dynamic_cast<const AddressOutput*>(&output))
+        {
+          return std::to_string(addressOutput->address.value());
+        }
+        return {};
     }
     assert(false);
   }

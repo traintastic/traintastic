@@ -23,11 +23,11 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_ASPECTOUTPUT_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_ASPECTOUTPUT_HPP
 
-#include "output.hpp"
+#include "addressoutput.hpp"
 #include "../../core/method.hpp"
 #include "../../core/event.hpp"
 
-class AspectOutput final : public Output
+class AspectOutput final : public AddressOutput
 {
   friend class OutputController;
 

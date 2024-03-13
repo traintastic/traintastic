@@ -48,6 +48,7 @@ class Object
 
     bool objectExists(uint16_t objectId) const;
     void addObject(std::unique_ptr<Object> object);
+    void nameChanged();
     void removeObject(uint16_t objectId);
 
     virtual void update(std::string_view /*option*/, std::string_view /*value*/){}// = 0;

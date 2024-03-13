@@ -24,6 +24,7 @@
 #include "singleoutput.hpp"
 #include "pairoutput.hpp"
 #include "aspectoutput.hpp"
+#include "ecosstateoutput.hpp"
 #include "list/outputlist.hpp"
 #include "list/outputlisttablemodel.hpp"
 #include "keyboard/singleoutputkeyboard.hpp"
@@ -59,6 +60,9 @@ OutputType OutputController::outputType(OutputChannel channel) const
 
     case OutputChannel::DCCext:
       return OutputType::Aspect;
+
+    case OutputChannel::ECoSObject:
+      return OutputType::ECoSState;
   }
   assert(false);
   return static_cast<OutputType>(0);
@@ -80,9 +84,18 @@ std::pair<uint32_t, uint32_t> OutputController::outputAddressMinMax(OutputChanne
     case OutputChannel::Accessory:
     case OutputChannel::Turnout:
       break;
+
+    case OutputChannel::ECoSObject:
+      return noAddressMinMax;
   }
   assert(false);
   return {0, 0};
+}
+
+std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> OutputController::getOutputECoSObjects(OutputChannel /*channel*/) const
+{
+  assert(false);
+  return {{}, {}};
 }
 
 bool OutputController::isOutputChannel(OutputChannel channel) const
@@ -99,12 +112,31 @@ bool OutputController::isOutputChannel(OutputChannel channel) const
   return false;
 }
 
-bool OutputController::isOutputAddressAvailable(OutputChannel channel, uint32_t address) const
+bool OutputController::isOutputId(OutputChannel channel, uint32_t id) const
+{
+  switch(channel)
+  {
+    case OutputChannel::AccessoryDCC:
+    case OutputChannel::DCCext:
+    case OutputChannel::AccessoryMotorola:
+    case OutputChannel::Output:
+    case OutputChannel::Accessory:
+    case OutputChannel::Turnout:
+      return inRange(id, outputAddressMinMax(channel)); // id == address
+
+    case OutputChannel::ECoSObject:
+      assert(false);
+      break;
+  }
+  return false;
+}
+
+bool OutputController::isOutputAvailable(OutputChannel channel, uint32_t id) const
 {
   assert(isOutputChannel(channel));
   return
-    inRange(address, outputAddressMinMax(channel)) &&
-    m_outputs.find({channel, address}) == m_outputs.end();
+    isOutputId(channel, id) &&
+    m_outputs.find({channel, id}) == m_outputs.end();
 }
 
 uint32_t OutputController::getUnusedOutputAddress(OutputChannel channel) const
@@ -115,18 +147,18 @@ uint32_t OutputController::getUnusedOutputAddress(OutputChannel channel) const
   for(uint32_t address = range.first; address < range.second; address++)
     if(m_outputs.find({channel, address}) == end)
       return address;
-  return Output::invalidAddress;
+  return AddressOutput::invalidAddress;
 }
 
-std::shared_ptr<Output> OutputController::getOutput(OutputChannel channel, uint32_t address, Object& usedBy)
+std::shared_ptr<Output> OutputController::getOutput(OutputChannel channel, uint32_t id, Object& usedBy)
 {
-  if(!isOutputChannel(channel) || !inRange(address, outputAddressMinMax(channel)))
+  if(!isOutputChannel(channel) || !isOutputId(channel, id))
   {
     return {};
   }
 
   // Check if already exists:
-  if(auto it = m_outputs.find({channel, address}); it != m_outputs.end())
+  if(auto it = m_outputs.find({channel, id}); it != m_outputs.end())
   {
     it->second->m_usedBy.emplace(usedBy.shared_from_this());
     return it->second;
@@ -137,20 +169,24 @@ std::shared_ptr<Output> OutputController::getOutput(OutputChannel channel, uint3
   switch(outputType(channel))
   {
     case OutputType::Single:
-      output = std::make_shared<SingleOutput>(shared_ptr(), channel, address);
+      output = std::make_shared<SingleOutput>(shared_ptr(), channel, id);
       break;
 
     case OutputType::Pair:
-      output = std::make_shared<PairOutput>(shared_ptr(), channel, address);
+      output = std::make_shared<PairOutput>(shared_ptr(), channel, id);
       break;
 
     case OutputType::Aspect:
-      output = std::make_shared<AspectOutput>(shared_ptr(), channel, address);
+      output = std::make_shared<AspectOutput>(shared_ptr(), channel, id);
+      break;
+
+    case OutputType::ECoSState:
+      output = std::make_shared<ECoSStateOutput>(shared_ptr(), channel, id);
       break;
   }
   assert(output);
   output->m_usedBy.emplace(usedBy.shared_from_this());
-  m_outputs.emplace(OutputMapKey{channel, address}, output);
+  m_outputs.emplace(OutputMapKey{channel, id}, output);
   outputs->addObject(output);
   getWorld(outputs.object()).outputs->addObject(output);
   return output;
@@ -162,7 +198,7 @@ void OutputController::releaseOutput(Output& output, Object& usedBy)
   output.m_usedBy.erase(usedBy.shared_from_this());
   if(output.m_usedBy.empty())
   {
-    m_outputs.erase({output.channel.value(), output.address.value()});
+    m_outputs.erase({output.channel.value(), output.id()});
     outputs->removeObject(outputShared);
     getWorld(outputs.object()).outputs->removeObject(outputShared);
     outputShared->destroy();
@@ -170,10 +206,10 @@ void OutputController::releaseOutput(Output& output, Object& usedBy)
   }
 }
 
-void OutputController::updateOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
+void OutputController::updateOutputValue(OutputChannel channel, uint32_t id, OutputValue value)
 {
   assert(isOutputChannel(channel));
-  if(auto it = m_outputs.find({channel, address}); it != m_outputs.end())
+  if(auto it = m_outputs.find({channel, id}); it != m_outputs.end())
   {
     if(auto* single = dynamic_cast<SingleOutput*>(it->second.get()))
     {
@@ -187,11 +223,15 @@ void OutputController::updateOutputValue(OutputChannel channel, uint32_t address
     {
       aspect->updateValue(std::get<int16_t>(value));
     }
+    else if(auto* ecosState = dynamic_cast<ECoSStateOutput*>(it->second.get()))
+    {
+      ecosState->updateValue(std::get<uint8_t>(value));
+    }
   }
 
   if(auto keyboard = m_outputKeyboards[channel].lock())
   {
-    keyboard->fireOutputValueChanged(address, value);
+    keyboard->fireOutputValueChanged(id, value);
   }
 }
 
@@ -205,6 +245,7 @@ bool OutputController::hasOutputKeyboard(OutputChannel channel) const
       return true;
 
     case OutputType::Aspect:
+    case OutputType::ECoSState:
       return false;
   }
   assert(false);
@@ -228,6 +269,7 @@ std::shared_ptr<OutputKeyboard> OutputController::outputKeyboard(OutputChannel c
         break;
 
       case OutputType::Aspect: /*[[unlikely]]*/
+      case OutputType::ECoSState: /*[[unlikely]]*/
         break; // not supported (yet)
     }
     assert(keyboard);
@@ -250,7 +292,8 @@ void OutputController::destroying()
   {
     const auto& output = outputs->front();
     assert(output->interface.value() == std::dynamic_pointer_cast<OutputController>(object.shared_from_this()));
-    output->interface = nullptr; // removes object form the list
+    output->interface.setValueInternal(nullptr);
+    outputs->removeObject(output);
   }
   object.world().outputControllers->remove(std::dynamic_pointer_cast<OutputController>(object.shared_from_this()));
 }

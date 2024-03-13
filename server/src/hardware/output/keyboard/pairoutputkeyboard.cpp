@@ -45,7 +45,8 @@ std::vector<OutputKeyboard::OutputInfo> PairOutputKeyboard::getOutputInfo() cons
   {
     if(it.second->channel == channel)
     {
-      states.emplace_back(OutputInfo{it.second->address.value(), true, static_cast<const PairOutput&>(*it.second).value.value()});
+      const auto& output = static_cast<const PairOutput&>(*it.second);
+      states.emplace_back(OutputInfo{output.address.value(), true, output.value.value()});
     }
   }
   return states;

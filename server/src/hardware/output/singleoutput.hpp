@@ -23,12 +23,12 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_SINGLEOUTPUT_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_SINGLEOUTPUT_HPP
 
-#include "output.hpp"
+#include "addressoutput.hpp"
 #include "../../core/method.hpp"
 #include "../../core/event.hpp"
 #include "../../enum/tristate.hpp"
 
-class SingleOutput : public Output
+class SingleOutput : public AddressOutput
 {
   friend class OutputController;
 

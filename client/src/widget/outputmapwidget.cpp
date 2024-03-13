@@ -54,6 +54,7 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
   : QWidget(parent)
   , m_object{std::move(object)}
   , m_addresses{m_object->getVectorProperty("addresses")}
+  , m_ecosObject{dynamic_cast<Property*>(m_object->getProperty("ecos_object"))}
   , m_items{m_object->getObjectVectorProperty("items")}
   , m_table{new QTableWidget(this)}
 {
@@ -72,6 +73,11 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
   {
     form->addRow(new InterfaceItemNameLabel(*m_addresses, this), new PropertyAddresses(*m_addresses, m_object->getMethod("add_address"), m_object->getMethod("remove_address"), this));
     connect(m_addresses, &AbstractVectorProperty::valueChanged, this, &OutputMapWidget::updateTableOutputColumns);
+  }
+  if(m_ecosObject)
+  {
+    form->addRow(new InterfaceItemNameLabel(*m_ecosObject, this), new PropertyComboBox(*m_ecosObject, this));
+    connect(m_ecosObject, &AbstractVectorProperty::valueChanged, this, &OutputMapWidget::updateTableOutputColumns);
   }
   l->addLayout(form);
 
@@ -135,18 +141,25 @@ void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
 
 void OutputMapWidget::updateTableOutputColumns()
 {
-  if(!m_addresses) /*[[unlikely]]*/
+  if(m_addresses && m_addresses->getAttributeBool(AttributeName::Visible, true))
   {
-    return;
+    const auto size = m_addresses->size();
+
+    m_table->setColumnCount(columnCountNonOutput + size);
+    for(int i = 0; i < size; i++)
+    {
+      const int column = columnCountNonOutput + i;
+      m_table->setHorizontalHeaderItem(column, new QTableWidgetItem(QString("#%1").arg(m_addresses->getInt(i))));
+    }
   }
-
-  const auto size = m_addresses->size();
-
-  m_table->setColumnCount(columnCountNonOutput + size);
-  for(int i = 0; i < size; i++)
+  else if(m_ecosObject && m_ecosObject->getAttributeBool(AttributeName::Visible, true))
   {
-    const int column = columnCountNonOutput + i;
-    m_table->setHorizontalHeaderItem(column, new QTableWidgetItem(QString("#%1").arg(m_addresses->getInt(i))));
+    m_table->setColumnCount(columnCountNonOutput + 1);
+    m_table->setHorizontalHeaderItem(columnCountNonOutput, new QTableWidgetItem(Locale::tr("output.ecos_object:state")));
+  }
+  else
+  {
+    m_table->setColumnCount(columnCountNonOutput);
   }
 }
 
@@ -170,6 +183,10 @@ void OutputMapWidget::updateTableOutputActions(ObjectVectorProperty& property, i
             else if(auto* aspect = dynamic_cast<Property*>(object->getProperty("aspect")))
             {
               m_table->setCellWidget(row, column, new PropertySpinBox(*aspect, this));
+            }
+            else if(auto* state = dynamic_cast<Property*>(object->getProperty("state")))
+            {
+              m_table->setCellWidget(row, column, new PropertySpinBox(*state, this));
             }
           }
           column++;

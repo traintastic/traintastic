@@ -28,6 +28,6 @@
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/outputpairvalue.hpp>
 
-using OutputValue = std::variant<TriState, OutputPairValue, int16_t>;
+using OutputValue = std::variant<TriState, OutputPairValue, uint8_t, int16_t>;
 
 #endif

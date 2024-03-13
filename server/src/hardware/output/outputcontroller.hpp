@@ -27,6 +27,7 @@
 #include <vector>
 #include <unordered_map>
 #include <memory>
+#include <boost/signals2/signal.hpp>
 #include <tcb/span.hpp>
 #include <traintastic/enum/outputchannel.hpp>
 #include <traintastic/enum/outputtype.hpp>
@@ -46,14 +47,16 @@ enum class OutputListColumn;
 class OutputController
 {
   public:
+    static constexpr std::pair<uint32_t, uint32_t> noAddressMinMax{std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::min()};
+
     struct OutputMapKey
     {
       OutputChannel channel;
-      uint32_t address;
+      uint32_t id;
 
       inline bool operator ==(const OutputMapKey other) const noexcept
       {
-        return channel == other.channel && address == other.address;
+        return channel == other.channel && id == other.id;
       }
     };
     static_assert(sizeof(OutputMapKey) == sizeof(uint64_t));
@@ -62,7 +65,7 @@ class OutputController
     {
       std::size_t operator()(const OutputMapKey& value) const noexcept
       {
-        return (static_cast<uint64_t>(value.channel) << (8 * sizeof(value.address))) | value.address;
+        return (static_cast<uint64_t>(value.channel) << (8 * sizeof(value.id))) | value.id;
       }
     };
 
@@ -82,6 +85,8 @@ class OutputController
     void destroying();
 
   public:
+    boost::signals2::signal<void()> outputECoSObjectsChanged;
+
     ObjectProperty<OutputList> outputs;
 
     /**
@@ -102,6 +107,11 @@ class OutputController
     /**
      *
      */
+    virtual bool isOutputId(OutputChannel channel, uint32_t id) const;
+
+    /**
+     *
+     */
     virtual OutputType outputType(OutputChannel channel) const;
 
     /**
@@ -112,7 +122,12 @@ class OutputController
     /**
      *
      */
-    [[nodiscard]] virtual bool isOutputAddressAvailable(OutputChannel channel, uint32_t address) const;
+    virtual std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> getOutputECoSObjects(OutputChannel channel) const;
+
+    /**
+     *
+     */
+    [[nodiscard]] virtual bool isOutputAvailable(OutputChannel channel, uint32_t id) const;
 
     /**
      * \brief Get the next unused output address
@@ -125,18 +140,18 @@ class OutputController
     /**
      * \brief Get an output.
      *
-     * For each channel/address combination an output object is create once,
+     * For each channel/id combination an output object is create once,
      * if an output is requested multiple time they all share the same instance.
      * Once the object the uses the output is no longer using it,
      * it must be released using \ref releaseOutput .
      * The output object will be destroyed when the are zero users.
      *
      * \param[in] channel The output channel.
-     * \param[in] address The output address.
+     * \param[in] id The output id.
      * \param[in] usedBy The object the will use the output.
-     * \return An output object if the channel/address combination is valid, \c nullptr otherwise.
+     * \return An output object if the channel/id combination is valid, \c nullptr otherwise.
      */
-    std::shared_ptr<Output> getOutput(OutputChannel channel, uint32_t address, Object& usedBy);
+    std::shared_ptr<Output> getOutput(OutputChannel channel, uint32_t id, Object& usedBy);
 
     /**
      * \brief Release an output.
@@ -150,7 +165,7 @@ class OutputController
     /**
      * @brief ...
      */
-    [[nodiscard]] virtual bool setOutputValue(OutputChannel /*channel*/, uint32_t /*address*/, OutputValue /*value*/) = 0;
+    [[nodiscard]] virtual bool setOutputValue(OutputChannel /*channel*/, uint32_t /*id*/, OutputValue /*value*/) = 0;
 
     /**
      * @brief Update the output value
@@ -158,10 +173,10 @@ class OutputController
      * This function should be called by the hardware layer whenever the output value changes.
      *
      * @param[in] channel Output channel
-     * @param[in] address Output address
+     * @param[in] id Output id
      * @param[in] value New output value
      */
-    void updateOutputValue(OutputChannel channel, uint32_t address, OutputValue value);
+    void updateOutputValue(OutputChannel channel, uint32_t id, OutputValue value);
 
     /**
      * \brief Check is there is an output keyboard available for the channel.

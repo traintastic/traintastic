@@ -373,7 +373,7 @@ void Kernel::receive(const Message& message)
           [this]()
           {
             for(const auto& it : m_outputController->outputMap())
-              postSend(GetOutputState(static_cast<uint16_t>(it.first.address)));
+              postSend(GetOutputState(static_cast<uint16_t>(it.first.id)));
           });
       break;
     }

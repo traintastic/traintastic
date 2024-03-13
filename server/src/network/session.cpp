@@ -590,6 +590,7 @@ bool Session::processMessage(const Message& message)
               break;
 
             case OutputType::Aspect: /*[[unlikely]]*/
+            case OutputType::ECoSState: /*[[unlikely]]*/
               assert(false);
               break;
           }

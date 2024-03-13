@@ -1,5 +1,5 @@
 /**
- * shared/src/traintastic/enum/outputtype.hpp
+ * server/src/hardware/output/map/outputmapecosstateoutputaction.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,35 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_OUTPUTTYPE_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_OUTPUTTYPE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_OUTPUTMAPECOSSTATEOUTPUTACTION_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_OUTPUTMAPECOSSTATEOUTPUTACTION_HPP
 
-#include <cstdint>
-#include <array>
-#include "enum.hpp"
+#include "outputmapoutputaction.hpp"
 
+class ECoSStateOutput;
 
-enum class OutputType : uint8_t
+class OutputMapECoSStateOutputAction final : public OutputMapOutputAction
 {
-  Single = 1,
-  Pair = 2,
-  Aspect = 3,
-  ECoSState = 4,
+  CLASS_ID("output_map_output_action.aspect")
+
+  private:
+    ECoSStateOutput& ecosStateOutput();
+
+  protected:
+    void worldEvent(WorldState worldState, WorldEvent event) final;
+
+  public:
+    Property<uint8_t> state;
+
+    OutputMapECoSStateOutputAction(OutputMap& _parent, size_t outputIndex);
+
+    void execute() final;
 };
-
-TRAINTASTIC_ENUM(OutputType, "output_type", 4,
-{
-  {OutputType::Single, "single"},
-  {OutputType::Pair, "pair"},
-  {OutputType::Aspect, "aspect"},
-  {OutputType::ECoSState, "ecos_state"}
-});
-
-inline constexpr std::array<OutputType, 4> outputTypeValues{{
-  OutputType::Single,
-  OutputType::Pair,
-  OutputType::Aspect,
-  OutputType::ECoSState,
-}};
 
 #endif

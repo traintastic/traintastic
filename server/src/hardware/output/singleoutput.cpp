@@ -27,14 +27,14 @@
 #include "../../core/objectproperty.tpp"
 
 SingleOutput::SingleOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, uint32_t address_)
-  : Output(std::move(outputController), channel_, OutputType::Pair, address_)
+  : AddressOutput(std::move(outputController), channel_, OutputType::Pair, address_)
   , value{this, "value", TriState::Undefined, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
   , setValue{*this, "set_value", MethodFlags::ScriptCallable,
       [this](bool newValue)
       {
         return
           interface &&
-          interface->setOutputValue(channel, address, newValue);
+          interface->setOutputValue(channel, address, toTriState(newValue));
       }}
   , onValueChanged{*this, "on_value_changed", EventFlags::Scriptable}
 {

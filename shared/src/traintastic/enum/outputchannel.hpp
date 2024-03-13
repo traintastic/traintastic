@@ -35,9 +35,10 @@ enum class OutputChannel : uint16_t
   AccessoryMotorola = 4,
   DCCext = 5, //!< DCCext, see RCN-213
   Turnout = 6, //!< DCC-EX turnout
+  ECoSObject = 7, //!< ECoS switch object
 };
 
-TRAINTASTIC_ENUM(OutputChannel, "output_channel", 6,
+TRAINTASTIC_ENUM(OutputChannel, "output_channel", 7,
 {
   {OutputChannel::Output, "output"},
   {OutputChannel::Accessory, "accessory"},
@@ -45,15 +46,17 @@ TRAINTASTIC_ENUM(OutputChannel, "output_channel", 6,
   {OutputChannel::AccessoryMotorola, "accessory_motorola"},
   {OutputChannel::DCCext, "dcc_ext"},
   {OutputChannel::Turnout, "turnout"},
+  {OutputChannel::ECoSObject, "ecos_object"},
 });
 
-inline constexpr std::array<OutputChannel, 6> outputChannelValues{{
+inline constexpr std::array<OutputChannel, 7> outputChannelValues{{
   OutputChannel::Output,
   OutputChannel::Accessory,
   OutputChannel::AccessoryDCC,
   OutputChannel::AccessoryMotorola,
   OutputChannel::DCCext,
   OutputChannel::Turnout,
+  OutputChannel::ECoSObject,
 }};
 
 constexpr bool isAccessory(OutputChannel value)

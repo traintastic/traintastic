@@ -41,13 +41,10 @@ class Output : public Object
   friend class OutputController;
 
   private:
-    static constexpr uint32_t addressMinDefault = 0;
-    static constexpr uint32_t addressMaxDefault = 1'000'000;
-
     std::set<std::shared_ptr<Object>> m_usedBy; //!< Objects that use the output.
 
   protected:
-    Output(std::shared_ptr<OutputController> outputController, OutputChannel channel_, OutputType type_, uint32_t address_);
+    Output(std::shared_ptr<OutputController> outputController, OutputChannel channel_, OutputType type_);
 
   public:
     static constexpr uint32_t invalidAddress = std::numeric_limits<uint32_t>::max();
@@ -55,7 +52,13 @@ class Output : public Object
     ObjectProperty<OutputController> interface;
     Property<OutputChannel> channel;
     Property<OutputType> type;
-    Property<uint32_t> address;
+
+    /**
+     * \brief Unique identifier for the output within the channel.
+     *
+     * \return Unique identifier, can be any number/mask.
+     */
+    virtual uint32_t id() const = 0;
 
     std::string getObjectId() const final;
 };

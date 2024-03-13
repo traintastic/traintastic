@@ -171,6 +171,7 @@ OutputKeyboardWidget::OutputKeyboardWidget(std::shared_ptr<OutputKeyboard> objec
       break;
 
     case OutputType::Aspect:
+    case OutputType::ECoSState:
       assert(false); // not (yet) supported
       break;
   }
@@ -210,6 +211,7 @@ OutputKeyboardWidget::OutputKeyboardWidget(std::shared_ptr<OutputKeyboard> objec
           break;
         }
         case OutputType::Aspect: /*[[unlikely]]*/
+        case OutputType::ECoSState: /*[[unlikely]]*/
           assert(false);
           break;
       }
@@ -350,6 +352,7 @@ void OutputKeyboardWidget::updateLEDs()
       break;
     }
     case OutputType::Aspect: /*[[unlikely]]*/
+    case OutputType::ECoSState: /*[[unlikely]]*/
       assert(false);
       break;
   }

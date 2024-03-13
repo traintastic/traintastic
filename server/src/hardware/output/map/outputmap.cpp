@@ -26,7 +26,9 @@
 #include "outputmapsingleoutputaction.hpp"
 #include "outputmappairoutputaction.hpp"
 #include "outputmapaspectoutputaction.hpp"
+#include "outputmapecosstateoutputaction.hpp"
 #include "../outputcontroller.hpp"
+#include "../../interface/interface.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../core/method.tpp"
 #include "../../../core/objectproperty.tpp"
@@ -46,8 +48,19 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
       },
       [this](const std::shared_ptr<OutputController>& newValue)
       {
+        m_interfaceDestroying.disconnect();
+
         if(newValue)
         {
+          if(auto* object = dynamic_cast<Object*>(newValue.get())) /*[[likely]]*/
+          {
+            m_interfaceDestroying = object->onDestroying.connect(
+              [this](Object& /*object*/)
+              {
+                interface = nullptr;
+              });
+          }
+
           if(!interface)
           {
             // No interface was assigned.
@@ -81,21 +94,36 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
           {
             assert(addresses.empty());
             assert(m_outputs.empty());
-            const uint32_t address = newValue->getUnusedOutputAddress(channel);
-            addresses.appendInternal(address);
-            m_outputs.emplace_back(newValue->getOutput(channel, address, parent()));
-            const auto outputType = newValue->outputType(channel);
-            for(auto& item : items)
+
+            switch(channel)
             {
-              item->outputActions.appendInternal(createOutputAction(outputType, 0));
+              case OutputChannel::Output:
+              case OutputChannel::Accessory:
+              case OutputChannel::AccessoryDCC:
+              case OutputChannel::AccessoryMotorola:
+              case OutputChannel::DCCext:
+              case OutputChannel::Turnout:
+              {
+                const uint32_t address = newValue->getUnusedOutputAddress(channel);
+                addresses.appendInternal(address);
+                addOutput(channel, address, *newValue);
+                break;
+              }
+              case OutputChannel::ECoSObject:
+                if(newValue->isOutputId(channel, ecosObject))
+                {
+                  addOutput(channel, ecosObject, *newValue);
+                }
+                break;
             }
+            updateOutputActions(newValue->outputType(channel));
           }
         }
         else // no interface
         {
           for(auto& output : m_outputs)
           {
-            if(output)
+            if(output) /*[[likely]]*/
             {
               interface->releaseOutput(*output, parent());
             }
@@ -120,9 +148,28 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
         }
 
         // Get outputs for current channel:
-        for(uint32_t address : addresses)
+        switch(newValue)
         {
-          m_outputs.emplace_back(interface->getOutput(newValue, address, parent()));
+          case OutputChannel::Output:
+          case OutputChannel::Accessory:
+          case OutputChannel::AccessoryDCC:
+          case OutputChannel::AccessoryMotorola:
+          case OutputChannel::DCCext:
+          case OutputChannel::Turnout:
+            ecosObject.setValueInternal(0);
+            for(uint32_t address : addresses)
+            {
+              addOutput(newValue, address);
+            }
+            break;
+
+          case OutputChannel::ECoSObject:
+            addresses.clearInternal();
+            if(interface->isOutputId(newValue, ecosObject))
+            {
+              addOutput(newValue, ecosObject);
+            }
+            break;
         }
 
         channelChanged();
@@ -160,7 +207,7 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
           return false; // Duplicate addresses aren't allowed.
         }
 
-        auto output = interface->getOutput(channel, value, parent());
+        auto output = getOutput(channel, value, *interface);
         if(!output) /*[[unlikely]]*/
         {
           return false; // Output doesn't exist.
@@ -168,12 +215,38 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
 
         if(index < m_outputs.size() && m_outputs[index])
         {
-          interface->releaseOutput(*m_outputs[index], parent());
+          releaseOutput(*m_outputs[index]);
         }
 
         m_outputs[index] = output;
 
         return true;
+      }}
+  , ecosObject{this, "ecos_object", 0, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript,
+      nullptr,
+      [this](uint16_t& value)
+      {
+        if(!interface) /*[[unlikely]]*/
+        {
+          return false;
+        }
+
+        if(value == 0 || interface->isOutputId(channel, value)) // 0 = no object
+        {
+          if(!m_outputs.empty())
+          {
+            releaseOutput(*m_outputs.front());
+            m_outputs.clear();
+          }
+          if(value != 0)
+          {
+            addOutput(channel, value);
+          }
+          updateOutputActions();
+          return true;
+        }
+
+        return false;
       }}
   , items{*this, "items", {}, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , addAddress{*this, "add_address", MethodFlags::NoScript,
@@ -189,7 +262,7 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
           }
           const uint32_t address = getUnusedAddress();
           addresses.appendInternal(address);
-          m_outputs.emplace_back(interface->getOutput(channel, address, parent()));
+          addOutput(channel, address);
           addressesSizeChanged();
         }
       }}
@@ -201,7 +274,7 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
           addresses.eraseInternal(addresses.size() - 1);
           if(m_outputs.back())
           {
-            interface->releaseOutput(*m_outputs.back(), parent());
+            releaseOutput(*m_outputs.back());
           }
           m_outputs.pop_back();
           addressesSizeChanged();
@@ -228,6 +301,12 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
   Attributes::addMinMax<uint32_t>(addresses, 0, 0);
   m_interfaceItems.add(addresses);
 
+  Attributes::addAliases(ecosObject, tcb::span<const uint16_t>{}, tcb::span<const std::string>{});
+  Attributes::addEnabled(ecosObject, editable);
+  Attributes::addValues(ecosObject, tcb::span<const uint16_t>{});
+  Attributes::addVisible(ecosObject, false);
+  m_interfaceItems.add(ecosObject);
+
   m_interfaceItems.add(items);
 
   Attributes::addEnabled(addAddress, false);
@@ -241,26 +320,41 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
   updateEnabled();
 }
 
+OutputMap::~OutputMap()
+{
+  m_interfaceDestroying.disconnect();
+  m_outputECoSObjectsChanged.disconnect();
+}
+
 void OutputMap::load(WorldLoader& loader, const nlohmann::json& data)
 {
   SubObject::load(loader, data);
 
   if(interface)
   {
-    for(uint32_t address : addresses)
+    switch(channel)
     {
-      m_outputs.emplace_back(interface->getOutput(channel, address, parent()));
+      case OutputChannel::Output:
+      case OutputChannel::Accessory:
+      case OutputChannel::AccessoryDCC:
+      case OutputChannel::AccessoryMotorola:
+      case OutputChannel::DCCext:
+      case OutputChannel::Turnout:
+        for(uint32_t address : addresses)
+        {
+          addOutput(channel, address);
+        }
+        break;
+
+      case OutputChannel::ECoSObject:
+        if(interface->isOutputId(channel, ecosObject))
+        {
+          addOutput(channel, ecosObject);
+        }
+        break;
     }
 
-    const auto outputType = interface->outputType(channel);
-    const auto addressCount = addresses.size();
-    for(auto& item : items)
-    {
-      for(size_t i = 0; i < addressCount; i++)
-      {
-        item->outputActions.appendInternal(createOutputAction(outputType, i));
-      }
-    }
+    updateOutputActions();
   }
 }
 
@@ -282,11 +376,22 @@ void OutputMap::worldEvent(WorldState state, WorldEvent event)
 
 void OutputMap::interfaceChanged()
 {
-  Attributes::setValues(channel, interface ? interface->outputChannels() : tcb::span<const OutputChannel>{});
+  const auto outputChannels = interface ? interface->outputChannels() : tcb::span<const OutputChannel>{};
+  Attributes::setValues(channel, outputChannels);
   Attributes::setVisible(channel, interface);
-  Attributes::setVisible(addresses, interface);
-  Attributes::setVisible(addAddress, interface);
-  Attributes::setVisible(removeAddress, interface);
+
+  m_outputECoSObjectsChanged.disconnect();
+
+  if(std::find(outputChannels.begin(), outputChannels.end(), OutputChannel::ECoSObject))
+  {
+    m_outputECoSObjectsChanged = interface->outputECoSObjectsChanged.connect(
+      [this]()
+      {
+        const auto aliases = interface->getOutputECoSObjects(OutputChannel::ECoSObject);
+        Attributes::setAliases(ecosObject, aliases.first, aliases.second);
+        Attributes::setValues(ecosObject, aliases.first);
+      });
+  }
 
   channelChanged();
 }
@@ -295,29 +400,68 @@ void OutputMap::channelChanged()
 {
   if(interface)
   {
-    const auto addressRange = interface->outputAddressMinMax(channel);
-    const uint32_t addressCount = (addressRange.second - addressRange.first + 1);
-    Attributes::setMinMax(addresses, addressRange);
-
-    while(addressCount < addresses.size()) // Reduce number of addresses if larger than address space.
+    switch(channel.value())
     {
-      addresses.eraseInternal(addresses.size() - 1);
-    }
-
-    // Make sure all addresses are in range:
-    for(size_t i = 0; i < addresses.size(); i++)
-    {
-      if(!inRange(addresses[i], addressRange))
+      case OutputChannel::Output:
+      case OutputChannel::Accessory:
+      case OutputChannel::AccessoryDCC:
+      case OutputChannel::AccessoryMotorola:
+      case OutputChannel::DCCext:
+      case OutputChannel::Turnout:
       {
-        addresses.setValueInternal(i, getUnusedAddress());
+        Attributes::setVisible({addresses, addAddress, removeAddress}, true);
+        Attributes::setVisible(ecosObject, false);
+        Attributes::setAliases(ecosObject, tcb::span<const uint16_t>{}, tcb::span<const std::string>{});
+        Attributes::setValues(ecosObject, tcb::span<const uint16_t>{});
+
+        if(addresses.empty())
+        {
+          const auto address = interface->getUnusedOutputAddress(channel);
+          addresses.appendInternal(address);
+          addOutput(channel, address);
+          updateOutputActions();
+        }
+
+        const auto addressRange = interface->outputAddressMinMax(channel);
+        const uint32_t addressCount = (addressRange.second - addressRange.first + 1);
+        Attributes::setMinMax(addresses, addressRange);
+
+        while(addressCount < addresses.size()) // Reduce number of addresses if larger than address space.
+        {
+          addresses.eraseInternal(addresses.size() - 1);
+        }
+
+        // Make sure all addresses are in range:
+        for(size_t i = 0; i < addresses.size(); i++)
+        {
+          if(!inRange(addresses[i], addressRange))
+          {
+            addresses.setValueInternal(i, getUnusedAddress());
+          }
+        }
+
+        addressesSizeChanged();
+        break;
+      }
+      case OutputChannel::ECoSObject:
+      {
+        Attributes::setVisible({addresses, addAddress, removeAddress}, false);
+        Attributes::setVisible(ecosObject, true);
+        const auto aliases = interface->getOutputECoSObjects(channel);
+        Attributes::setAliases(ecosObject, aliases.first, aliases.second);
+        Attributes::setValues(ecosObject, aliases.first);
+
+        updateOutputActions();
+        break;
       }
     }
-
-    addressesSizeChanged();
   }
   else
   {
+    Attributes::setVisible({addresses, addAddress, removeAddress, ecosObject}, false);
     Attributes::setMinMax(addresses, std::numeric_limits<uint32_t>::min(), std::numeric_limits<uint32_t>::max());
+    Attributes::setAliases(ecosObject, tcb::span<const uint16_t>{}, tcb::span<const std::string>{});
+    Attributes::setValues(ecosObject, tcb::span<const uint16_t>{});
   }
 }
 
@@ -326,26 +470,36 @@ void OutputMap::addressesSizeChanged()
   Attributes::setDisplayName(addresses, addresses.size() == 1 ? DisplayName::Hardware::address : DisplayName::Hardware::addresses);
   assert(addresses.size() == m_outputs.size());
 
-  const auto outputType = interface->outputType(channel);
+  updateOutputActions();
+
+  updateEnabled();
+}
+
+void OutputMap::updateOutputActions()
+{
+  assert(interface);
+  updateOutputActions(interface->outputType(channel));
+}
+
+void OutputMap::updateOutputActions(OutputType outputType)
+{
   for(const auto& item : items)
   {
-    while(addresses.size() > item->outputActions.size())
+    while(m_outputs.size() > item->outputActions.size())
     {
       std::shared_ptr<OutputMapOutputAction> outputAction = createOutputAction(outputType, item->outputActions.size());
       assert(outputAction);
       item->outputActions.appendInternal(outputAction);
     }
 
-    while(addresses.size() < item->outputActions.size())
+    while(m_outputs.size() < item->outputActions.size())
     {
       item->outputActions.back()->destroy();
       item->outputActions.removeInternal(item->outputActions.back());
     }
 
-    assert(addresses.size() == item->outputActions.size());
+    assert(m_outputs.size() == item->outputActions.size());
   }
-
-  updateEnabled();
 }
 
 void OutputMap::updateEnabled()
@@ -357,6 +511,7 @@ void OutputMap::updateEnabled()
   Attributes::setEnabled(addresses, editable);
   Attributes::setEnabled(addAddress, editable && addresses.size() < addressesSizeMax);
   Attributes::setEnabled(removeAddress, editable && addresses.size() > addressesSizeMin);
+  Attributes::setEnabled(ecosObject, editable);
 }
 
 uint32_t OutputMap::getUnusedAddress() const
@@ -390,7 +545,34 @@ std::shared_ptr<OutputMapOutputAction> OutputMap::createOutputAction(OutputType 
 
     case OutputType::Aspect:
       return std::make_shared<OutputMapAspectOutputAction>(*this, index);
+
+    case OutputType::ECoSState:
+      return std::make_shared<OutputMapECoSStateOutputAction>(*this, index);
   }
   assert(false);
   return {};
+}
+
+void OutputMap::addOutput(OutputChannel ch, uint32_t id)
+{
+  addOutput(ch, id, *interface);
+}
+
+void OutputMap::addOutput(OutputChannel ch, uint32_t id, OutputController& outputController)
+{
+  m_outputs.emplace_back(getOutput(ch, id, outputController));
+  assert(m_outputs.back());
+}
+
+std::shared_ptr<Output> OutputMap::getOutput(OutputChannel ch, uint32_t id, OutputController& outputController)
+{
+  auto output = outputController.getOutput(ch, id, parent());
+  // TODO: connect output value changed
+  return output;
+}
+
+void OutputMap::releaseOutput(Output& output)
+{
+  // TODO: disconnect output value changed
+  interface->releaseOutput(output, parent());
 }

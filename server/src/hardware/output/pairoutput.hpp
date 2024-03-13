@@ -23,12 +23,12 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_PAIROUTPUT_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_PAIROUTPUT_HPP
 
-#include "output.hpp"
+#include "addressoutput.hpp"
 #include <traintastic/enum/outputpairvalue.hpp>
 #include "../../core/method.hpp"
 #include "../../core/event.hpp"
 
-class PairOutput final : public Output
+class PairOutput final : public AddressOutput
 {
   friend class OutputController;
 

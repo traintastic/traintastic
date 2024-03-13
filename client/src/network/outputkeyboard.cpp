@@ -54,6 +54,7 @@ OutputKeyboard::OutputKeyboard(std::shared_ptr<Connection> connection, Handle ha
               break;
 
             case OutputType::Aspect: /*[[unlikely]]*/
+            case OutputType::ECoSState: /*[[unlikely]]*/
               assert(false);
               break;
           }
@@ -118,6 +119,7 @@ void OutputKeyboard::created()
           break;
 
         case OutputType::Aspect: /*[[unlikely]]*/
+        case OutputType::ECoSState: /*[[unlikely]]*/
           assert(false);
           break;
       }

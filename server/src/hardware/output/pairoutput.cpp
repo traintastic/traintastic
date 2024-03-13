@@ -27,7 +27,7 @@
 #include "../../core/objectproperty.tpp"
 
 PairOutput::PairOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, uint32_t address_)
-  : Output(std::move(outputController), channel_, OutputType::Pair, address_)
+  : AddressOutput(std::move(outputController), channel_, OutputType::Pair, address_)
   , value{this, "value", OutputPairValue::Undefined, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
   , setValue{*this, "set_value", MethodFlags::ScriptCallable,
       [this](OutputPairValue newValue)

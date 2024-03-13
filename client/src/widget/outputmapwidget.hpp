@@ -29,8 +29,10 @@
 class QTableWidget;
 class Method;
 class MethodAction;
+class AbstractProperty;
 class AbstractVectorProperty;
 class ObjectVectorProperty;
+class Property;
 
 class OutputMapWidget : public QWidget
 {
@@ -39,6 +41,7 @@ class OutputMapWidget : public QWidget
   protected:
     ObjectPtr m_object;
     AbstractVectorProperty* m_addresses;
+    Property* m_ecosObject;
     ObjectVectorProperty* m_items;
     QTableWidget* m_table;
     std::vector<ObjectPtr> m_itemObjects;

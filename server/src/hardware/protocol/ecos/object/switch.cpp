@@ -79,6 +79,17 @@ bool Switch::receiveEvent(const Event& event)
   return Object::receiveEvent(event);
 }
 
+std::string Switch::nameUI() const
+{
+  return
+    std::string(m_name1)
+      .append(" (")
+      .append(toString(m_protocol))
+      .append(" ")
+      .append(std::to_string(m_address))
+      .append(")");
+}
+
 void Switch::setState(uint8_t value)
 {
   send(set(m_id, Option::state, value));
@@ -89,6 +100,7 @@ void Switch::update(std::string_view option, std::string_view value)
   if(option == Option::name1)
   {
     m_name1 = value;
+    nameChanged();
   }
   else if(option == Option::name2)
   {
@@ -101,6 +113,7 @@ void Switch::update(std::string_view option, std::string_view value)
   else if(option == Option::addr)
   {
     fromChars(value, m_address);
+    nameChanged();
   }
   else if(option == Option::addrext)
   {
@@ -141,10 +154,13 @@ void Switch::update(std::string_view option, std::string_view value)
   else if(option == Option::protocol)
   {
     fromString(value, m_protocol);
+    nameChanged();
   }
   else if(option == Option::state)
   {
     fromChars(value, m_state);
+
+    m_kernel.switchStateChanged(m_id, m_state);
 
     if(m_state < m_addrext.size())
     {

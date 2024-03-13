@@ -55,6 +55,9 @@ class Kernel : public ::KernelBase
   friend class ECoS;
 
   public:
+    using OnObjectChanged = std::function<void(std::size_t, uint16_t, const std::string&)>;
+    using OnObjectRemoved = std::function<void(uint16_t)>;
+
     static constexpr uint16_t s88AddressMin = 1;
     static constexpr uint16_t s88AddressMax = 1000; //!< \todo what is the maximum
     static constexpr uint16_t ecosDetectorAddressMin = 1;
@@ -95,6 +98,8 @@ class Kernel : public ::KernelBase
 
     std::function<void()> m_onGo;
     std::function<void()> m_onEmergencyStop;
+    OnObjectChanged m_onObjectChanged;
+    OnObjectRemoved m_onObjectRemoved;
 
     DecoderController* m_decoderController;
     InputController* m_inputController;
@@ -106,6 +111,12 @@ class Kernel : public ::KernelBase
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
 
+    bool objectExists(uint16_t objectId) const;
+    void addObject(std::unique_ptr<Object> object);
+    void objectChanged(Object& object);
+    void removeObject(uint16_t objectId);
+
+    //const std::unique_ptr<ECoS&> ecos();
     ECoS& ecos();
     void ecosGoChanged(TriState value);
 
@@ -183,6 +194,9 @@ class Kernel : public ::KernelBase
      */
     void setOnGo(std::function<void()> callback);
 
+    void setOnObjectChanged(OnObjectChanged callback);
+    void setOnObjectRemoved(OnObjectRemoved callback);
+
     /**
      * @brief Set the decoder controller
      * @param[in] decoderController The decoder controller
@@ -246,15 +260,16 @@ class Kernel : public ::KernelBase
     /**
      * @brief ...
      * @param[in] channel Channel
-     * @param[in] address Output address
+     * @param[in] id Output id/address
      * @param[in] value Output value
      * @return \c true if send successful, \c false otherwise.
      */
-    bool setOutput(OutputChannel channel, uint16_t address, OutputPairValue value);
+    bool setOutput(OutputChannel channel, uint32_t id, OutputValue value);
 
     void simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action);
 
     void switchManagerSwitched(SwitchProtocol protocol, uint16_t address, OutputPairValue value);
+    void switchStateChanged(uint16_t objectId, uint8_t state);
 
     void feedbackStateChanged(Feedback& object, uint8_t port, TriState value);
 };

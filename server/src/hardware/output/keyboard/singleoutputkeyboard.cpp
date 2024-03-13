@@ -30,7 +30,7 @@ SingleOutputKeyboard::SingleOutputKeyboard(OutputController& controller, OutputC
   , setOutputValue(*this, "set_output_value",
       [this](uint32_t address, bool value)
       {
-        return m_controller.setOutputValue(channel, address, value);
+        return m_controller.setOutputValue(channel, address, toTriState(value));
       })
   , outputValueChanged(*this, "output_value_changed", EventFlags::Public)
 {
@@ -45,7 +45,8 @@ std::vector<OutputKeyboard::OutputInfo> SingleOutputKeyboard::getOutputInfo() co
   {
     if(it.second->channel == channel)
     {
-      states.emplace_back(OutputInfo{it.second->address.value(), true, static_cast<const SingleOutput&>(*it.second).value.value()});
+      const auto& output = static_cast<const SingleOutput&>(*it.second);
+      states.emplace_back(OutputInfo{output.address.value(), true, output.value.value()});
     }
   }
   return states;

@@ -78,9 +78,9 @@ int Interface::get_output(lua_State* L)
   auto outputController = std::dynamic_pointer_cast<::OutputController>(check<::Interface>(L, lua_upvalueindex(1)));
   assert(outputController);
   auto channel = check<::OutputChannel>(L, 1);
-  auto address = check<uint32_t>(L, 2);
-  auto& stateData =  Lua::Sandbox::getStateData(L);
-  auto output = outputController->getOutput(channel, address, stateData.script());
+  auto id = check<uint32_t>(L, 2);
+  auto& stateData = Lua::Sandbox::getStateData(L);
+  auto output = outputController->getOutput(channel, id, stateData.script());
   if(output)
   {
     stateData.registerOutput(outputController, output);

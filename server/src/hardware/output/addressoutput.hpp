@@ -1,5 +1,5 @@
 /**
- * shared/src/traintastic/enum/outputtype.hpp
+ * server/src/hardware/output/addressoutput.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,35 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_OUTPUTTYPE_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_OUTPUTTYPE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_ADDRESSOUTPUT_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_ADDRESSOUTPUT_HPP
 
-#include <cstdint>
-#include <array>
-#include "enum.hpp"
+#include "output.hpp"
 
-
-enum class OutputType : uint8_t
+class AddressOutput : public Output
 {
-  Single = 1,
-  Pair = 2,
-  Aspect = 3,
-  ECoSState = 4,
+  friend class OutputController;
+
+  protected:
+    AddressOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, OutputType type_, uint32_t address_);
+
+  public:
+    Property<uint32_t> address;
+
+    uint32_t id() const final
+    {
+      return address.value();
+    }
 };
-
-TRAINTASTIC_ENUM(OutputType, "output_type", 4,
-{
-  {OutputType::Single, "single"},
-  {OutputType::Pair, "pair"},
-  {OutputType::Aspect, "aspect"},
-  {OutputType::ECoSState, "ecos_state"}
-});
-
-inline constexpr std::array<OutputType, 4> outputTypeValues{{
-  OutputType::Single,
-  OutputType::Pair,
-  OutputType::Aspect,
-  OutputType::ECoSState,
-}};
 
 #endif

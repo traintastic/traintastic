@@ -53,6 +53,8 @@ class ECoSInterface final
     std::unique_ptr<ECoS::Kernel> m_kernel;
     boost::signals2::connection m_ecosPropertyChanged;
     ECoS::Simulation m_simulation;
+    std::vector<uint16_t> m_outputECoSObjectIds;
+    std::vector<std::string> m_outputECoSObjectNames;
 
     void addToWorld() final;
     void destroying() final;
@@ -85,7 +87,9 @@ class ECoSInterface final
 
     // OutputController:
     tcb::span<const OutputChannel> outputChannels() const final;
-    [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t address, OutputValue value) final;
+    std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> getOutputECoSObjects(OutputChannel channel) const final;
+    bool isOutputId(OutputChannel channel, uint32_t id) const final;
+    [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t outputId, OutputValue value) final;
 };
 
 #endif
