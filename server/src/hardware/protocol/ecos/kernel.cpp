@@ -226,6 +226,7 @@ void Kernel::stop(Simulation* simulation)
             sw->name2(),
             sw->name3(),
             sw->address(),
+            toString(sw->addrext()),
             std::string{toString(sw->type())},
             static_cast<int>(sw->symbol()),
             std::string{toString(sw->protocol())},

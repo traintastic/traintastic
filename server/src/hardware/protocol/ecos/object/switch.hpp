@@ -38,6 +38,8 @@ struct Line;
 class Switch final : public Object
 {
   public:
+    using AddrExt = std::vector<std::pair<uint16_t, OutputPairValue>>;
+
     enum class Mode
     {
       Unknown = 0,
@@ -60,7 +62,7 @@ class Switch final : public Object
     std::string m_name3;
     SwitchType m_type = SwitchType::Unknown;
     uint16_t m_address = 0;
-    std::vector<std::pair<uint16_t, OutputPairValue>> m_addrext;
+    AddrExt m_addrext;
     Symbol m_symbol = Symbol::None;
     SwitchProtocol m_protocol = SwitchProtocol::Unknown;
     uint8_t m_state = 0;
@@ -83,6 +85,7 @@ class Switch final : public Object
     const std::string& name3() const { return m_name3; }
     SwitchType type() const { return m_type; }
     uint16_t address() const { return m_address; }
+    const AddrExt& addrext() const { return m_addrext; }
     Symbol symbol() const { return m_symbol; }
     SwitchProtocol protocol() const { return m_protocol; }
     uint8_t state() const { return m_state; }
@@ -92,6 +95,8 @@ class Switch final : public Object
 
     void setState(uint8_t value);
 };
+
+std::string toString(const Switch::AddrExt& values);
 
 constexpr std::string_view toString(Switch::Mode value)
 {

@@ -82,6 +82,10 @@ static bool appendOption(std::string& response, const Simulation::Switch& sw, st
   {
     response.append(std::to_string(sw.address));
   }
+  else if(option == Option::addrext)
+  {
+    response.append(sw.addrext);
+  }
   else if(option == Option::symbol)
   {
     response.append(std::to_string(sw.symbol));

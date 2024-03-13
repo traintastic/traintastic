@@ -182,4 +182,19 @@ void Switch::update(std::string_view option, std::string_view value)
   }
 }
 
+std::string toString(const Switch::AddrExt& values)
+{
+  std::string s;
+  for(const auto& value : values)
+  {
+    if(!s.empty())
+    {
+      s.append(",");
+    }
+    s.append(std::to_string(value.first));
+    s.append(value.second == OutputPairValue::First ? "r" : "g");
+  }
+  return s;
+}
+
 }

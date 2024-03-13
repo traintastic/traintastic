@@ -71,6 +71,7 @@ struct Simulation
     std::string name2;
     std::string name3;
     uint16_t address;
+    std::string addrext;
     std::string type;
     int symbol;
     std::string protocol;
