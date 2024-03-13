@@ -101,6 +101,7 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
 void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
 {
   m_table->setRowCount(items.size());
+  m_itemObjects = items;
   m_actions.resize(items.size());
   for(size_t i = 0; i < items.size(); i++)
   {
@@ -121,7 +122,7 @@ void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
     {
       updateTableOutputActions(*outputActions, i);
 
-      connect(outputActions, &AbstractVectorProperty::valueChanged, this,
+      connect(outputActions, &ObjectVectorProperty::valueChanged, this,
         [this, row=i]()
         {
           updateTableOutputActions(*dynamic_cast<ObjectVectorProperty*>(sender()), row);

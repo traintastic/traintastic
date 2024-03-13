@@ -41,6 +41,7 @@ class OutputMapWidget : public QWidget
     AbstractVectorProperty* m_addresses;
     ObjectVectorProperty* m_items;
     QTableWidget* m_table;
+    std::vector<ObjectPtr> m_itemObjects;
     std::vector<std::vector<ObjectPtr>> m_actions;
     int m_getItemsRequestId;
     int m_dummy;
