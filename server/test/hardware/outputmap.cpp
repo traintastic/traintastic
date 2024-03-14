@@ -21,6 +21,7 @@
  */
 
 #include <catch2/catch.hpp>
+#include "../../src/core/method.tpp"
 #include "../../src/core/objectproperty.tpp"
 #include "../../src/world/world.hpp"
 #include "../../src/hardware/interface/interfacelist.hpp"
