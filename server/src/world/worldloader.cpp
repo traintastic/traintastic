@@ -171,6 +171,12 @@ void WorldLoader::load()
   m_objects.insert({m_world->getObjectId(), {data, m_world, false}});
   for(json object : data["objects"])
   {
+    //! \todo Remove in v0.4
+    if(object["class_id"].get<std::string_view>() == "output") // don't create Output objects, no longer stored in file.
+    {
+      continue;
+    }
+
     if(auto it = object.find("id"); it != object.end())
     {
       auto id = it.value().get<std::string>();
