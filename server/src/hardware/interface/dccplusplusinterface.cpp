@@ -100,10 +100,10 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   updateEnabled();
 }
 
-tcb::span<const DecoderProtocol> DCCPlusPlusInterface::decoderProtocols() const
+std::span<const DecoderProtocol> DCCPlusPlusInterface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};
-  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+  return std::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
 std::pair<uint16_t, uint16_t> DCCPlusPlusInterface::decoderAddressMinMax(DecoderProtocol protocol) const
@@ -113,7 +113,7 @@ std::pair<uint16_t, uint16_t> DCCPlusPlusInterface::decoderAddressMinMax(Decoder
   return DecoderController::decoderAddressMinMax(protocol);
 }
 
-tcb::span<const uint8_t> DCCPlusPlusInterface::decoderSpeedSteps(DecoderProtocol protocol) const
+std::span<const uint8_t> DCCPlusPlusInterface::decoderSpeedSteps(DecoderProtocol protocol) const
 {
   (void)protocol; // silence unused warning for release build
   assert(protocol == DecoderProtocol::DCCShort || protocol == DecoderProtocol::DCCLong);
@@ -142,7 +142,7 @@ void DCCPlusPlusInterface::inputSimulateChange(uint32_t channel, uint32_t addres
     m_kernel->simulateInputChange(address, action);
 }
 
-tcb::span<const OutputChannel> DCCPlusPlusInterface::outputChannels() const
+std::span<const OutputChannel> DCCPlusPlusInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::Accessory, OutputChannel::Turnout, OutputChannel::Output, OutputChannel::DCCext);
   return values;

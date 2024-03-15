@@ -23,18 +23,18 @@
 #ifndef TRAINTASTIC_SERVER_CORE_SPANATTRIBUTE_HPP
 #define TRAINTASTIC_SERVER_CORE_SPANATTRIBUTE_HPP
 
-#include <tcb/span.hpp>
 #include "abstractvaluesattribute.hpp"
+#include <span>
 #include "to.hpp"
 
 template<typename T>
 class SpanAttribute : public AbstractValuesAttribute
 {
   protected:
-    tcb::span<const T> m_values;
+    std::span<const T> m_values;
 
   public:
-    SpanAttribute(InterfaceItem& _item, AttributeName _name, tcb::span<const T> values) :
+    SpanAttribute(InterfaceItem& _item, AttributeName _name, std::span<const T> values) :
       AbstractValuesAttribute(_item, _name, value_type_v<T>),
       m_values{values}
     {
@@ -70,12 +70,12 @@ class SpanAttribute : public AbstractValuesAttribute
       return to<std::string>(m_values[index]);
     }
 
-    tcb::span<const T> values() const
+    std::span<const T> values() const
     {
       return m_values;
     }
 
-    void setValues(tcb::span<const T> values)
+    void setValues(std::span<const T> values)
     {
       if(m_values.size() != values.size() || !std::equal(m_values.begin(), m_values.end(), values.begin()) || m_values.data() == values.data())
       {

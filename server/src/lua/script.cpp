@@ -181,12 +181,12 @@ void Script::setState(LuaScriptState value)
 
     if(oldValue == LuaScriptState::Running) // was running
     {
-      assert(status->running != 0);
+      assert(status->running != 0u);
       status->running.setValueInternal(status->running - 1);
     }
     if(oldValue == LuaScriptState::Error) // was error
     {
-      assert(status->error != 0);
+      assert(status->error != 0u);
       status->error.setValueInternal(status->error - 1);
     }
 

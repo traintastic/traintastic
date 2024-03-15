@@ -24,7 +24,7 @@
 #define TRAINTASTIC_SERVER_BOARD_MAP_PATH_HPP
 
 #include <memory>
-#include <tcb/span.hpp>
+#include <span>
 
 class TurnoutRailTile;
 enum class TurnoutPosition : uint8_t;
@@ -41,7 +41,7 @@ protected:
   };
 
   static const std::shared_ptr<Link>& otherLink(const Node& node, const Link& link);
-  static tcb::span<const TurnoutPositionLink> getTurnoutLinks(TurnoutRailTile& turnout, const Link& link);
+  static std::span<const TurnoutPositionLink> getTurnoutLinks(TurnoutRailTile& turnout, const Link& link);
 };
 
 #endif

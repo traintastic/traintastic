@@ -30,7 +30,7 @@
 #include "property.hpp"
 #include "unitproperty.hpp"
 #include "vectorproperty.hpp"
-#include <tcb/span.hpp>
+#include <span>
 
 struct Attributes
 {
@@ -59,7 +59,7 @@ struct Attributes
   }
 
   template<class T>
-  static inline void addAliases(Property<T>& property, tcb::span<const T> keys, tcb::span<const std::string> values)
+  static inline void addAliases(Property<T>& property, std::span<const T> keys, std::span<const std::string> values)
   {
     assert(keys.size() == values.size());
     property.addAttribute(AttributeName::AliasKeys, keys);
@@ -67,7 +67,7 @@ struct Attributes
   }
 
   template<class T>
-  static inline void setAliases(Property<T>& property, tcb::span<const T> keys, tcb::span<const std::string> values)
+  static inline void setAliases(Property<T>& property, std::span<const T> keys, std::span<const std::string> values)
   {
     assert(keys.size() == values.size());
     property.setAttribute(AttributeName::AliasKeys, keys);
@@ -262,13 +262,13 @@ struct Attributes
   }
 
   template<class R, class T>
-  static inline void addValues(Method<R(T)>& method, tcb::span<const T> values)
+  static inline void addValues(Method<R(T)>& method, std::span<const T> values)
   {
     method.addAttribute(AttributeName::Values, values);
   }
 
   template<typename T>
-  static inline void addValues(Property<T>& property, tcb::span<const T> values)
+  static inline void addValues(Property<T>& property, std::span<const T> values)
   {
     property.addAttribute(AttributeName::Values, values);
   }
@@ -310,7 +310,7 @@ struct Attributes
   }
 
   template<typename T>
-  static inline void setValues(Property<T>& property, tcb::span<const T> values)
+  static inline void setValues(Property<T>& property, std::span<const T> values)
   {
     property.setAttribute(AttributeName::Values, values);
   }

@@ -47,7 +47,7 @@ void ObjectVectorProperty<T>::setObject(size_t index, const ObjectPtr& value)
 }
 
 template<class T>
-void ObjectVectorProperty<T>::loadObjects(tcb::span<ObjectPtr> values)
+void ObjectVectorProperty<T>::loadObjects(std::span<ObjectPtr> values)
 {
   std::vector<std::shared_ptr<T>> objects;
   objects.reserve(values.size());

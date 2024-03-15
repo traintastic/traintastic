@@ -119,24 +119,24 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   typeChanged();
 }
 
-bool LocoNetInterface::send(tcb::span<uint8_t> packet)
+bool LocoNetInterface::send(std::span<uint8_t> packet)
 {
   if(m_kernel)
     return m_kernel->send(packet);
   return false;
 }
 
-bool LocoNetInterface::immPacket(tcb::span<uint8_t> dccPacket, uint8_t repeat)
+bool LocoNetInterface::immPacket(std::span<uint8_t> dccPacket, uint8_t repeat)
 {
   if(m_kernel)
     return m_kernel->immPacket(dccPacket, repeat);
   return false;
 }
 
-tcb::span<const DecoderProtocol> LocoNetInterface::decoderProtocols() const
+std::span<const DecoderProtocol> LocoNetInterface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};
-  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+  return std::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
 std::pair<uint16_t, uint16_t> LocoNetInterface::decoderAddressMinMax(DecoderProtocol protocol) const
@@ -165,7 +165,7 @@ void LocoNetInterface::inputSimulateChange(uint32_t channel, uint32_t address, S
     m_kernel->simulateInputChange(address, action);
 }
 
-tcb::span<const OutputChannel> LocoNetInterface::outputChannels() const
+std::span<const OutputChannel> LocoNetInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::Accessory, OutputChannel::DCCext);
   return values;

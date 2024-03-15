@@ -111,7 +111,7 @@ R Method<R(A...)>::operator()(A... args)
 }
 
 template<class R, class... A>
-tcb::span<const TypeInfo> Method<R(A...)>::argumentTypeInfo() const
+std::span<const TypeInfo> Method<R(A...)>::argumentTypeInfo() const
 {
   return {typeInfoArray<A...>};
 }

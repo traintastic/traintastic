@@ -117,13 +117,13 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   typeChanged();
 }
 
-tcb::span<const DecoderProtocol> MarklinCANInterface::decoderProtocols() const
+std::span<const DecoderProtocol> MarklinCANInterface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 4> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong, DecoderProtocol::MFX, DecoderProtocol::Motorola};
-  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+  return std::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
-tcb::span<const uint8_t> MarklinCANInterface::decoderSpeedSteps(DecoderProtocol protocol) const
+std::span<const uint8_t> MarklinCANInterface::decoderSpeedSteps(DecoderProtocol protocol) const
 {
   static constexpr std::array<uint8_t, 2> dccLongSpeedSteps{{28, 128}}; // 14 not supported for long addresses
 
@@ -148,7 +148,7 @@ std::pair<uint32_t, uint32_t> MarklinCANInterface::inputAddressMinMax(uint32_t /
   return {MarklinCAN::Kernel::s88AddressMin, MarklinCAN::Kernel::s88AddressMax};
 }
 
-tcb::span<const OutputChannel> MarklinCANInterface::outputChannels() const
+std::span<const OutputChannel> MarklinCANInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::AccessoryMotorola, OutputChannel::AccessoryDCC);
   return values;

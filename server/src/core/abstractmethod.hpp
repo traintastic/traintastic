@@ -28,7 +28,7 @@
 #include <vector>
 #include <variant>
 #include <stdexcept>
-#include <tcb/span.hpp>
+#include <span>
 #include "argument.hpp"
 #include "typeinfo.hpp"
 
@@ -113,7 +113,7 @@ class AbstractMethod : public InterfaceItem
 
     inline MethodFlags flags() const { return m_flags; }
 
-    virtual tcb::span<const TypeInfo> argumentTypeInfo() const = 0;
+    virtual std::span<const TypeInfo> argumentTypeInfo() const = 0;
     virtual TypeInfo resultTypeInfo() const = 0;
     virtual Result call(const Arguments& args) = 0;
 };

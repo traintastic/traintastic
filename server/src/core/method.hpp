@@ -57,7 +57,7 @@ class Method<R(A...)> : public AbstractMethod
 
     R operator()(A... args);
 
-    tcb::span<const TypeInfo> argumentTypeInfo() const final;
+    std::span<const TypeInfo> argumentTypeInfo() const final;
 
     TypeInfo resultTypeInfo() const final;
 

@@ -25,7 +25,7 @@
 
 #include <string>
 #include <string_view>
-#include <tcb/span.hpp>
+#include <span>
 #include <version.hpp>
 #include <traintastic/enum/direction.hpp>
 
@@ -66,7 +66,7 @@ constexpr std::string_view protocolVersion()
   return "VN2.0";
 }
 
-inline std::string rosterList(tcb::span<const RosterListEntry> list)
+inline std::string rosterList(std::span<const RosterListEntry> list)
 {
   std::string s{"RL"};
   s.append(std::to_string(list.size()));

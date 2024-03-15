@@ -935,7 +935,7 @@ void Kernel::resume()
     });
 }
 
-bool Kernel::send(tcb::span<uint8_t> packet)
+bool Kernel::send(std::span<uint8_t> packet)
 {
   assert(isEventLoopThread());
 
@@ -957,7 +957,7 @@ bool Kernel::send(tcb::span<uint8_t> packet)
   return true;
 }
 
-bool Kernel::immPacket(tcb::span<const uint8_t> dccPacket, uint8_t repeat)
+bool Kernel::immPacket(std::span<const uint8_t> dccPacket, uint8_t repeat)
 {
   assert(isEventLoopThread());
 

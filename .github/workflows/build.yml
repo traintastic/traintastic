@@ -20,16 +20,6 @@ jobs:
           build_deb: false
           defines: ""
 
-        - name: "ubuntu_20.04"
-          os: ubuntu-20.04
-          generator: "Unix Makefiles"
-          arch: ""
-          target: traintastic-client
-          jobs: 4
-          build_type: Release
-          build_deb: true
-          defines: ""
-
         - name: "ubuntu_22.04"
           os: ubuntu-22.04
           generator: "Unix Makefiles"
@@ -173,9 +163,21 @@ jobs:
       fail-fast: false
       matrix:
         config:
+        - name: "windows_x64_msvc"
+          os: windows-2022
+          generator: "Visual Studio 17 2022"
+          arch: "-A x64"
+          toolset: "-DENABLE_CLANG_TIDY=ON"
+          target: ALL_BUILD
+          jobs: 2
+          build_type: Release
+          build_deb: false
+          defines: ""
+          ccov: false
+
         - name: "windows_x64_clang"
-          os: windows-2019
-          generator: "Visual Studio 16 2019"
+          os: windows-2022
+          generator: "Visual Studio 17 2022"
           arch: "-A x64"
           toolset: "-T ClangCL"
           target: ALL_BUILD
@@ -197,18 +199,6 @@ jobs:
           defines: ""
           ccov: false
 
-        - name: "ubuntu_20.04"
-          os: ubuntu-20.04
-          generator: "Unix Makefiles"
-          arch: ""
-          toolset: ""
-          target: all
-          jobs: 4
-          build_type: Release
-          build_deb: true
-          defines: "-DENABLE_CLANG_TIDY=ON -DINSTALL_SYSTEMD_SERVICE=ON"
-          ccov: false
-
         - name: "ubuntu_22.04"
           os: ubuntu-22.04
           generator: "Unix Makefiles"
@@ -221,8 +211,8 @@ jobs:
           defines: "-DENABLE_CLANG_TIDY=ON -DINSTALL_SYSTEMD_SERVICE=ON"
           ccov: false
 
-        - name: "ubuntu_20.04 (debug+ccov)"
-          os: ubuntu-20.04
+        - name: "ubuntu_22.04 (debug+ccov)"
+          os: ubuntu-22.04
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
@@ -473,7 +463,7 @@ jobs:
 
   build-manual:
     name: manual
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2

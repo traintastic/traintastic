@@ -332,7 +332,7 @@ class VectorProperty : public AbstractVectorProperty
         throw conversion_error();
     }
 
-    void loadObjects(tcb::span<ObjectPtr> /*values*/) final
+    void loadObjects(std::span<ObjectPtr> /*values*/) final
     {
       throw conversion_error();
     }

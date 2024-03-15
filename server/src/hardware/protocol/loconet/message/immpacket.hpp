@@ -24,7 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_MESSAGE_IMMPACKET_HPP
 
 #include "message.hpp"
-#include <tcb/span.hpp>
+#include <span>
 #include "../checksum.hpp"
 #include "../signature.hpp"
 
@@ -56,7 +56,7 @@ struct ImmPacket : Message
   uint8_t im[5];
   uint8_t checksum;
 
-  ImmPacket(tcb::span<const uint8_t> dccPacket, uint8_t repeat)
+  ImmPacket(std::span<const uint8_t> dccPacket, uint8_t repeat)
     : Message(OPC_IMM_PACKET)
     , len{11}
     , header{0x7F}
