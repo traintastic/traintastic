@@ -1272,6 +1272,14 @@
         "comment": ""
     },
     {
+        "term": "language:fr-fr",
+        "definition": "Französisch",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "list.train_vehicle:reverse",
         "definition": "Umgekehrt",
         "context": "",
@@ -3416,7 +3424,7 @@
         "comment": ""
     },
     {
-        "term": "sensor_type:occupy_detector",
+        "term": "sensor_type:occupancy_detector",
         "definition": "Detektor besetzen",
         "context": "",
         "term_plural": "",

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -91,6 +91,18 @@ namespace Version
 
     return r;
   }
+}
+
+template<typename T>
+inline std::string toString(const Version::MajorMinor<T>& version)
+{
+  return std::to_string(version.major).append(".").append(std::to_string(version.minor));
+}
+
+template<typename T>
+inline std::string toString(const Version::MajorMinorPatch<T>& version)
+{
+  return toString(static_cast<const Version::MajorMinor<T>&>(version)).append(".").append(std::to_string(version.patch));
 }
 
 #endif

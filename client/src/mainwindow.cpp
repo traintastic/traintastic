@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -48,6 +48,7 @@
 #include "network/property.hpp"
 #include "network/objectvectorproperty.hpp"
 #include "network/method.hpp"
+#include "network/error.hpp"
 #include "programming/lncv/lncvprogrammer.hpp"
 #include "subwindow/objectsubwindow.hpp"
 #include "subwindow/boardsubwindow.hpp"
@@ -184,7 +185,7 @@ MainWindow::MainWindow(QWidget* parent) :
                   QMessageBox::critical(
                     this,
                     Locale::tr("qtapp:import_world_failed"),
-                    Locale::tr("qtapp.error:server_error_x").arg(static_cast<std::underlying_type_t<Message::ErrorCode>>(response->errorCode())));
+                    Error(*response).toString());
                 }
               });
           }
@@ -267,7 +268,7 @@ MainWindow::MainWindow(QWidget* parent) :
                   QMessageBox::critical(
                     this,
                     Locale::tr("qtapp:export_world_failed"),
-                    Locale::tr("qtapp.error:server_error_x").arg(static_cast<std::underlying_type_t<Message::ErrorCode>>(response->errorCode())));
+                    Error(*response).toString());
                 }
               });
           }
@@ -390,7 +391,7 @@ MainWindow::MainWindow(QWidget* parent) :
     m_menuObjects->addAction(Theme::getIcon("clock"), Locale::tr("world:clock") + "...", [this](){ showObject("world.clock", Locale::tr("world:clock")); });
     trainsAction = m_menuObjects->addAction(Theme::getIcon("train"), Locale::tr("world:trains") + "...", [this](){ showObject("world.trains", Locale::tr("world:trains")); });
     m_menuObjects->addAction(Locale::tr("world:rail_vehicles") + "...", [this](){ showObject("world.rail_vehicles", Locale::tr("world:rail_vehicles")); });
-    m_actionLuaScript = m_menuObjects->addAction(Theme::getIcon("lua"), Locale::tr("world:lua_scripts") + "...", [this](){ showObject("world.lua_scripts", Locale::tr("world:lua_scripts")); });
+    m_actionLuaScript = m_menuObjects->addAction(Theme::getIcon("lua"), Locale::tr("world:lua_scripts") + "...", this, &MainWindow::showLuaScriptsList);
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:tools"));
     menu->addAction(Locale::tr("qtapp.mainmenu:settings") + "...",
@@ -410,7 +411,7 @@ MainWindow::MainWindow(QWidget* parent) :
     m_actionServerRestart = m_menuServer->addAction(Locale::tr("qtapp.mainmenu:restart_server"), this,
       [this]()
       {
-        if(QMessageBox::question(this, Locale::tr("qtapp.mainmenu:restart_server"), Locale::tr("qtapp.mainmenu:restart_server_question"), Locale::tr("qtapp.message_box:yes"), Locale::tr("qtapp.message_box:no"), "", 0, 1) != 0)
+        if(QMessageBox::question(this, Locale::tr("qtapp.mainmenu:restart_server"), Locale::tr("qtapp.mainmenu:restart_server_question")) != QMessageBox::Yes)
           return;
 
         if(m_connection)
@@ -421,7 +422,7 @@ MainWindow::MainWindow(QWidget* parent) :
     m_actionServerShutdown = m_menuServer->addAction(Locale::tr("qtapp.mainmenu:shutdown_server"), this,
       [this]()
       {
-        if(QMessageBox::question(this, Locale::tr("qtapp.mainmenu:shutdown_server"), Locale::tr("qtapp.mainmenu:shutdown_server_question"), Locale::tr("qtapp.message_box:yes"), Locale::tr("qtapp.message_box:no"), "", 0, 1) != 0)
+        if(QMessageBox::question(this, Locale::tr("qtapp.mainmenu:shutdown_server"), Locale::tr("qtapp.mainmenu:shutdown_server_question")) != QMessageBox::Yes)
           return;
 
         if(m_connection)
@@ -429,6 +430,19 @@ MainWindow::MainWindow(QWidget* parent) :
             if(Method* method = traintastic->getMethod("shutdown"))
               method->call();
       });
+    m_menuServer->addAction(Locale::tr("qtapp.mainmenu:about_server"), this,
+      [this]()
+      {
+        if(m_connection)
+        {
+          if(const ObjectPtr& traintastic = m_connection->traintastic())
+          {
+            QMessageBox::about(this, Locale::tr("qtapp.about:traintastic_server"),
+              traintastic->getPropertyValueString("about").replace("(c)", "&copy;"));
+          }
+        }
+      });
+
     m_menuProgramming = menu->addMenu(Locale::tr("qtapp.mainmenu:programming"));
     m_menuProgramming->addAction(Locale::tr("lncv_programmer:lncv_programmer") + "...",
       [this]()
@@ -441,7 +455,7 @@ MainWindow::MainWindow(QWidget* parent) :
       });
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:help"));
-    menu->addAction(Locale::tr("qtapp.mainmenu:help"),
+    menu->addAction(Theme::getIcon("help"), Locale::tr("qtapp.mainmenu:help"),
       []()
       {
         const auto manual = QString::fromStdString((getManualPath() / "en-us.html").string());
@@ -557,6 +571,11 @@ const ObjectPtr& MainWindow::world() const
   return m_connection ? m_connection->world() : null;
 }
 
+void MainWindow::showLuaScriptsList()
+{
+  showObject("world.lua_scripts", Locale::tr("world:lua_scripts"));
+}
+
 void MainWindow::connectToServer(const QString& url)
 {
   if(m_connection)
@@ -617,10 +636,10 @@ void MainWindow::worldChanged()
     m_world = m_connection->world();
 
     m_clockRequest = m_connection->getObject("world.clock",
-      [this](const ObjectPtr& object, Message::ErrorCode ec)
+      [this](const ObjectPtr& object, std::optional<const Error> error)
       {
         m_clockRequest = Connection::invalidRequestId;
-        if(object && !ec)
+        if(object && !error)
         {
           if(auto* freeze = object->getProperty("freeze"))
           {

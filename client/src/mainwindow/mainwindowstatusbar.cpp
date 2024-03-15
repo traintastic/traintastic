@@ -28,6 +28,7 @@
 #include "../network/object.hpp"
 #include "../network/abstractproperty.hpp"
 #include "../network/objectvectorproperty.hpp"
+#include "../network/error.hpp"
 #include "../settings/statusbarsettings.hpp"
 #include "../widget/status/interfacestatuswidget.hpp"
 #include "../widget/status/luastatuswidget.hpp"
@@ -41,7 +42,7 @@ MainWindowStatusBar::MainWindowStatusBar(MainWindow& mainWindow)
 {
   // statuses:
   m_statuses->setLayout(new QHBoxLayout());
-  m_statuses->layout()->setMargin(0);
+  m_statuses->layout()->setContentsMargins(0, 0, 0, 0);
   addPermanentWidget(m_statuses);
 
   // clock:
@@ -134,11 +135,11 @@ void MainWindowStatusBar::updateStatuses()
       return;
 
     m_statusesRequest = statuses->getObjects(0, statuses->size() - 1,
-      [this](const std::vector<ObjectPtr>& objects, Message::ErrorCode ec)
+      [this](const std::vector<ObjectPtr>& objects, std::optional<const Error> error)
       {
         m_statusesRequest = Connection::invalidRequestId;
         clearStatuses();
-        if(!!ec || objects.empty())
+        if(error || objects.empty())
           return;
 
         for(const auto& object : objects)

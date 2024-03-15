@@ -28,6 +28,7 @@
 #include "../../core/attributes.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../utils/displayname.hpp"
+#include "../../train/train.hpp"
 
 RailVehicle::RailVehicle(World& world, std::string_view _id) :
   Vehicle(world, _id),

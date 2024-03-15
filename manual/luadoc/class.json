@@ -11,7 +11,8 @@
       {
         "code": "class.get(world) -- returns: class.WORLD"
       }
-    ]
+    ],
+    "since": "0.1"
   },
   "BOARD": {
     "type": "constant"
@@ -94,34 +95,34 @@
   "CLOCK": {
     "type": "constant"
   },
-  "DCCPLUSPLUS": {
+  "DCCPLUSPLUS_INTERFACE": {
     "type": "constant"
   },
-  "ECOS": {
+  "ECOS_INTERFACE": {
     "type": "constant"
   },
-  "HSI88": {
+  "HSI88_INTERFACE": {
     "type": "constant"
   },
-  "LOCONET": {
+  "LOCONET_INTERFACE": {
     "type": "constant"
   },
-  "MARKLIN_CAN": {
+  "MARKLIN_CAN_INTERFACE": {
     "type": "constant"
   },
-  "TRAINTASTIC_DIY": {
+  "TRAINTASTIC_DIY_INTERFACE": {
     "type": "constant"
   },
-  "XPRESSNET": {
+  "XPRESSNET_INTERFACE": {
     "type": "constant"
   },
-  "WITHROTTLE": {
+  "WITHROTTLE_INTERFACE": {
     "type": "constant"
   },
-  "WLANMAUS": {
+  "WLANMAUS_INTERFACE": {
     "type": "constant"
   },
-  "Z21": {
+  "Z21_INTERFACE": {
     "type": "constant"
   },
   "INTERFACE_STATUS": {
@@ -145,10 +146,25 @@
   "INPUT_LIST": {
     "type": "constant"
   },
-  "OUTPUT": {
-    "type": "constant"
+  "SINGLE_OUTPUT": {
+    "type": "constant",
+    "since": "0.3"
+  },
+  "PAIR_OUTPUT": {
+    "type": "constant",
+    "since": "0.3"
+  },
+  "ASPECT_OUTPUT": {
+    "type": "constant",
+    "since": "0.3"
   },
   "OUTPUT_LIST": {
+    "type": "constant"
+  },
+  "IDENTIFICATION": {
+    "type": "constant"
+  },
+  "IDENTIFICATION_LIST": {
     "type": "constant"
   },
   "RAIL_VEHICLE_LIST": {
@@ -167,6 +183,14 @@
     "type": "constant"
   },
   "WORLD": {
+    "type": "constant",
+    "since": "0.1"
+  },
+  "PUSH_BUTTON_TILE": {
     "type": "constant"
+  },
+  "NX_BUTTON_RAIL_TILE": {
+    "type": "constant",
+    "since": "0.3"
   }
 }

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,10 +41,11 @@
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
+#include "../../utils/makearray.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Protocol | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
-constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Channel | OutputListColumn::Address;
+constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 
 MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   : Interface(world, _id)
@@ -124,7 +125,7 @@ std::span<const DecoderProtocol> MarklinCANInterface::decoderProtocols() const
 
 std::span<const uint8_t> MarklinCANInterface::decoderSpeedSteps(DecoderProtocol protocol) const
 {
-  static constexpr std::array<uint8_t, 4> dccLongSpeedSteps{{28, 128}}; // 14 not supported for long addresses
+  static constexpr std::array<uint8_t, 2> dccLongSpeedSteps{{28, 128}}; // 14 not supported for long addresses
 
   switch(protocol)
   {
@@ -147,42 +148,18 @@ std::pair<uint32_t, uint32_t> MarklinCANInterface::inputAddressMinMax(uint32_t /
   return {MarklinCAN::Kernel::s88AddressMin, MarklinCAN::Kernel::s88AddressMax};
 }
 
-const std::vector<uint32_t>* MarklinCANInterface::outputChannels() const
+tcb::span<const OutputChannel> MarklinCANInterface::outputChannels() const
 {
-  return &MarklinCAN::Kernel::outputChannels;
+  static const auto values = makeArray(OutputChannel::AccessoryMotorola, OutputChannel::AccessoryDCC);
+  return values;
 }
 
-const std::vector<std::string_view>* MarklinCANInterface::outputChannelNames() const
-{
-  return &MarklinCAN::Kernel::outputChannelNames;
-}
-
-std::pair<uint32_t, uint32_t> MarklinCANInterface::outputAddressMinMax(uint32_t channel) const
-{
-  using namespace MarklinCAN;
-
-  switch(channel)
-  {
-    case Kernel::OutputChannel::motorola:
-      return {Kernel::outputMotorolaAddressMin, Kernel::outputMotorolaAddressMax};
-
-    case Kernel::OutputChannel::dcc:
-      return {Kernel::outputDCCAddressMin, Kernel::outputDCCAddressMax};
-
-    case Kernel::OutputChannel::sx1:
-      return {Kernel::outputSX1AddressMin, Kernel::outputSX1AddressMax};
-  }
-
-  assert(false);
-  return {0, 0};
-}
-
-bool MarklinCANInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
+bool MarklinCANInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
 {
   return
     m_kernel &&
     inRange(address, outputAddressMinMax(channel)) &&
-    m_kernel->setOutput(channel, static_cast<uint16_t>(address), value);
+    m_kernel->setOutput(channel, static_cast<uint16_t>(address), std::get<OutputPairValue>(value));
 }
 
 bool MarklinCANInterface::setOnline(bool& value, bool simulation)
@@ -193,23 +170,23 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
     {
       if(simulation)
       {
-        m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SimulationIOHandler>(marklinCAN->config());
+        m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SimulationIOHandler>(id.value(), marklinCAN->config());
       }
       else
       {
         switch(type.value())
         {
           case MarklinCANInterfaceType::NetworkTCP:
-            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::TCPIOHandler>(marklinCAN->config(), hostname.value());
+            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::TCPIOHandler>(id.value(), marklinCAN->config(), hostname.value());
             break;
 
           case MarklinCANInterfaceType::NetworkUDP:
-            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::UDPIOHandler>(marklinCAN->config(), hostname.value());
+            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::UDPIOHandler>(id.value(), marklinCAN->config(), hostname.value());
             break;
 
           case MarklinCANInterfaceType::SocketCAN:
 #ifdef __linux__
-            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SocketCANIOHandler>(marklinCAN->config(), interface.value());
+            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SocketCANIOHandler>(id.value(), marklinCAN->config(), interface.value());
             break;
 #else
             setState(InterfaceState::Error);
@@ -217,15 +194,13 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
             return false;
 #endif
           case MarklinCANInterfaceType::Serial:
-            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SerialIOHandler>(marklinCAN->config(), device.value(), baudrate.value(), flowControl.value());
+            m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SerialIOHandler>(id.value(), marklinCAN->config(), device.value(), baudrate.value(), flowControl.value());
             break;
         }
       }
       assert(m_kernel);
 
       setState(InterfaceState::Initializing);
-
-      m_kernel->setLogId(id.value());
 
       m_kernel->setOnStarted(
         [this]()
@@ -342,12 +317,6 @@ void MarklinCANInterface::worldEvent(WorldState state, WorldEvent event)
         break;
     }
   }
-}
-
-void MarklinCANInterface::idChanged(const std::string& newId)
-{
-  if(m_kernel)
-    m_kernel->setLogId(newId);
 }
 
 void MarklinCANInterface::typeChanged()

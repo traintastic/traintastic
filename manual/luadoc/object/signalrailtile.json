@@ -1,0 +1,22 @@
+{
+  "name": {},
+  "aspect": {},
+  "set_aspect": {
+    "parameters": [
+      {
+        "name": "aspect"
+      }
+    ]
+  },
+  "on_aspect_changed": {
+    "parameters": [
+      {
+        "name": "signal"
+      },
+      {
+        "name": "aspect"
+      }
+    ],
+    "since": "0.3"
+  }
+}

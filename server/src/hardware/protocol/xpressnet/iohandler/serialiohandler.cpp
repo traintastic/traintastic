@@ -67,7 +67,7 @@ void SerialIOHandler::read()
         EventLoop::call(
           [this, ec]()
           {
-            Log::log(m_kernel.logId(), LogMessage::E2002_SERIAL_READ_FAILED_X, ec);
+            Log::log(m_kernel.logId, LogMessage::E2002_SERIAL_READ_FAILED_X, ec);
             m_kernel.error();
           });
       }
@@ -95,7 +95,7 @@ void SerialIOHandler::write()
         EventLoop::call(
           [this, ec]()
           {
-            Log::log(m_kernel.logId(), LogMessage::E2001_SERIAL_WRITE_FAILED_X, ec);
+            Log::log(m_kernel.logId, LogMessage::E2001_SERIAL_WRITE_FAILED_X, ec);
             m_kernel.error();
           });
       }

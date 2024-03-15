@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,6 +35,8 @@
   #include <QByteArray>
   #include <QUuid>
 #endif
+
+#include "../enum/logmessage.hpp"
 
 class Message
 {
@@ -72,20 +74,14 @@ class Message
       InputMonitorInputValueChanged = 32,
 
       OutputKeyboardGetOutputInfo = 33,
-      OutputKeyboardSetOutputValue = 34,
-      OutputKeyboardOutputIdChanged = 35,
-      OutputKeyboardOutputValueChanged = 36,
 
       BoardGetTileData = 37,
       BoardTileDataChanged = 38,
       BoardGetTileInfo = 43,
 
-      OutputMapGetItems = 39,
-      OutputMapGetOutputs = 40,
-      OutputMapOutputsChanged = 41,
-
       ObjectGetObjectPropertyObject = 44,
       ObjectGetObjectVectorPropertyObject = 45,
+      ObjectSetVectorProperty = 46,
 
       Discover = 255,
     };
@@ -96,29 +92,6 @@ class Message
       Response = 2,
       Event = 3,
     };
-
-    enum class ErrorCode : uint8_t
-    {
-      None = 0,
-      InvalidCommand = 1,
-      Failed = 2,
-      AuthenticationFailed = 3,
-      InvalidSession = 4,
-      UnknownObject = 5,
-      ObjectNotTable = 6,
-      UnknownClassId = 7,
-
-
-      /*
-      UnknownObjectId = 1,
-      InvalidHandle = 2,
-      InvalidProperty = 3,
-      InvalidValue = 4,
-*/
-      Other = 62,
-      Unknown = 63
-    };
-
 #ifdef _MSC_VER
   #pragma pack(push, 1)
 #endif
@@ -127,7 +100,8 @@ class Message
       Command command;
       struct Flags
       {
-        uint8_t errorCode : 6;
+        uint8_t reserved : 5; // must be zero
+        uint8_t error : 1;
         uint8_t type : 2;
       } flags;
       uint16_t requestId;
@@ -146,8 +120,6 @@ class Message
     inline static std::atomic<uint16_t> s_requestId{0};
 
   protected:
-    using Length = uint32_t;
-
     std::vector<uint8_t> m_data;
     mutable uint32_t m_readPosition;
     mutable std::stack<uint32_t> m_block;
@@ -161,6 +133,8 @@ class Message
     }
 
   public:
+    using Length = uint32_t;
+
     static std::unique_ptr<Message> newRequest(Command command, size_t capacity = 0)
     {
       return std::make_unique<Message>(command, Type::Request, ++s_requestId, capacity);
@@ -171,19 +145,35 @@ class Message
       return std::make_unique<Message>(command, Type::Response, requestId, capacity);
     }
 
-    static std::unique_ptr<Message> newErrorResponse(Command command, uint16_t requestId, ErrorCode errorCode)
+    static std::unique_ptr<Message> newErrorResponse(Command command, uint16_t requestId, LogMessage code)
     {
-      assert(errorCode != ErrorCode::None && errorCode != ErrorCode::Other);
       std::unique_ptr<Message> message = std::make_unique<Message>(command, Type::Response, requestId);
-      message->header().flags.errorCode = static_cast<uint8_t>(errorCode);
+      message->header().flags.error = 1;
+      message->write(code);
+      message->write<Length>(0); // no args
       return message;
     }
 
-    static std::unique_ptr<Message> newErrorResponse(Command command, uint16_t requestId, std::string_view error)
+    static std::unique_ptr<Message> newErrorResponse(Command command, uint16_t requestId, LogMessage code, std::string_view arg)
     {
       std::unique_ptr<Message> message = std::make_unique<Message>(command, Type::Response, requestId);
-      message->header().flags.errorCode = static_cast<uint8_t>(ErrorCode::Other);
-      message->write(error);
+      message->header().flags.error = 1;
+      message->write(code);
+      message->write<Length>(1);
+      message->write(arg);
+      return message;
+    }
+
+    static std::unique_ptr<Message> newErrorResponse(Command command, uint16_t requestId, LogMessage code, const std::vector<std::string>& args)
+    {
+      std::unique_ptr<Message> message = std::make_unique<Message>(command, Type::Response, requestId);
+      message->header().flags.error = 1;
+      message->write(code);
+      message->write<Length>(args.size());
+      for(const auto& arg : args)
+      {
+        message->write(arg);
+      }
       return message;
     }
 
@@ -204,7 +194,8 @@ class Message
       m_readPosition{0}
     {
       header().command = command;
-      header().flags.errorCode = static_cast<uint8_t>(ErrorCode::None);
+      header().flags.reserved = 0;
+      header().flags.error = 0;
       header().flags.type = static_cast<uint8_t>(type);
       header().requestId = requestId;
       header().dataSize = 0;
@@ -228,8 +219,7 @@ class Message
     inline bool isRequest() const { return type() == Type::Request; }
     inline bool isResponse() const  { return type() == Type::Response; }
     inline bool isEvent() const { return type() == Type::Event; }
-    inline ErrorCode errorCode() const { return static_cast<ErrorCode>(header().flags.errorCode); }
-    inline bool isError() const { return errorCode() != ErrorCode::None; }
+    inline bool isError() const { return header().flags.error; }
     inline uint16_t requestId() const { return header().requestId; }
 
     const void* operator*() const { return m_data.data(); }
@@ -402,10 +392,5 @@ class Message
       m_block.pop();
     }
 };
-
-constexpr bool operator!(Message::ErrorCode ec)
-{
-  return ec == Message::ErrorCode::None;
-}
 
 #endif

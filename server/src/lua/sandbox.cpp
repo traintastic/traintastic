@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,6 +38,7 @@
 #include <version.hpp>
 #include <traintastic/utils/str.hpp>
 #include "../world/world.hpp"
+#include "../hardware/output/outputcontroller.hpp"
 
 #define LUA_SANDBOX "_sandbox"
 #define LUA_SANDBOX_GLOBALS "_sandbox_globals"
@@ -334,6 +335,21 @@ Sandbox::StateData::~StateData()
     auto handler = m_eventHandlers.begin()->second;
     m_eventHandlers.erase(m_eventHandlers.begin());
     handler->disconnect();
+  }
+
+  // Release outputs:
+  for(auto& it : m_outputs)
+  {
+    if(auto outputController = it.first.lock())
+    {
+      for(auto& outputWeak : it.second)
+      {
+        if(auto output = outputWeak.lock())
+        {
+          outputController->releaseOutput(*output, m_script);
+        }
+      }
+    }
   }
 }
 

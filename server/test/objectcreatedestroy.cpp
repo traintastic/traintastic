@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,6 +32,10 @@
 #include "../src/hardware/input/list/inputlist.hpp"
 #include "../src/hardware/output/list/outputlist.hpp"
 #include "hardware/interfaces.hpp"
+#include "../src/vehicle/rail/railvehiclelist.hpp"
+#include "vehicle/rail/railvehicles.hpp"
+#include "../src/train/trainlist.hpp"
+#include "../src/train/train.hpp"
 
 TEST_CASE("Create world => destroy world", "[object-create-destroy]")
 {
@@ -372,104 +376,72 @@ TEMPLATE_TEST_CASE("Create world, interface and input => destroy input", "[objec
 }
 #endif
 
-TEST_CASE("Create world and output => destroy world", "[object-create-destroy]")
+TEMPLATE_TEST_CASE("Create world and rail vehicle => destroy world", "[object-create-destroy]", RAIL_VEHICLES)
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
 
-  std::weak_ptr<Output> outputWeak = world->outputs->create();
-  REQUIRE_FALSE(outputWeak.expired());
-  REQUIRE(outputWeak.lock()->getClassId() == Output::classId);
+  std::weak_ptr<TestType> railVehicleWeak = std::dynamic_pointer_cast<TestType>(world->railVehicles->create(TestType::classId));
+  REQUIRE_FALSE(railVehicleWeak.expired());
+  REQUIRE(railVehicleWeak.lock()->getClassId() == TestType::classId);
 
   world.reset();
-  REQUIRE(outputWeak.expired());
+  REQUIRE(railVehicleWeak.expired());
   REQUIRE(worldWeak.expired());
 }
 
-TEST_CASE("Create world and output => destroy output", "[object-create-destroy]")
+TEMPLATE_TEST_CASE("Create world and rail vehicle => destroy interface", "[object-create-destroy]", RAIL_VEHICLES)
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
-  REQUIRE(worldWeak.lock()->outputs->length == 0);
+  REQUIRE(worldWeak.lock()->railVehicles->length == 0);
 
-  std::weak_ptr<Output> outputWeak = world->outputs->create();
-  REQUIRE_FALSE(outputWeak.expired());
-  REQUIRE(worldWeak.lock()->outputs->length == 1);
+  std::weak_ptr<TestType> railVehicleWeak = std::dynamic_pointer_cast<TestType>(world->railVehicles->create(TestType::classId));
+  REQUIRE_FALSE(railVehicleWeak.expired());
+  REQUIRE(worldWeak.lock()->railVehicles->length == 1);
 
-  world->outputs->delete_(outputWeak.lock());
-  REQUIRE(outputWeak.expired());
-  REQUIRE(worldWeak.lock()->outputs->length == 0);
+  world->railVehicles->delete_(railVehicleWeak.lock());
+  REQUIRE(railVehicleWeak.expired());
+  REQUIRE(worldWeak.lock()->railVehicles->length == 0);
 
   world.reset();
   REQUIRE(worldWeak.expired());
 }
 
-#ifndef __aarch64__
-TEMPLATE_TEST_CASE("Create world, interface and output => destroy interface", "[object-create-destroy]", INTERFACES_OUTPUT)
+TEST_CASE("Create world and train => destroy world", "[object-create-destroy]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
-  REQUIRE(worldWeak.lock()->interfaces->length == 0);
-  REQUIRE(worldWeak.lock()->outputs->length == 0);
+  REQUIRE(worldWeak.lock()->trains->length == 0);
 
-  std::weak_ptr<TestType> interfaceWeak = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
-  REQUIRE_FALSE(interfaceWeak.expired());
-  REQUIRE(worldWeak.lock()->interfaces->length == 1);
-  REQUIRE(worldWeak.lock()->outputs->length == 0);
-  REQUIRE(interfaceWeak.lock()->outputs->length == 0);
-
-  std::weak_ptr<Output> outputWeak = interfaceWeak.lock()->outputs->create();
-  REQUIRE_FALSE(outputWeak.expired());
-  REQUIRE(outputWeak.lock()->interface.value() == std::dynamic_pointer_cast<OutputController>(interfaceWeak.lock()));
-  REQUIRE(worldWeak.lock()->interfaces->length == 1);
-  REQUIRE(worldWeak.lock()->outputs->length == 1);
-  REQUIRE(interfaceWeak.lock()->outputs->length == 1);
-
-  world->interfaces->delete_(interfaceWeak.lock());
-  REQUIRE(interfaceWeak.expired());
-  REQUIRE_FALSE(outputWeak.expired());
-  REQUIRE_FALSE(outputWeak.lock()->interface.value().operator bool());
-  REQUIRE(worldWeak.lock()->interfaces->length == 0);
-  REQUIRE(worldWeak.lock()->outputs->length == 1);
+  std::weak_ptr<Train> trainWeak = world->trains->create();
+  REQUIRE_FALSE(trainWeak.expired());
+  REQUIRE(trainWeak.lock()->getClassId() == Train::classId);
+  REQUIRE(worldWeak.lock()->trains->length == 1);
 
   world.reset();
-  REQUIRE(outputWeak.expired());
+  REQUIRE(trainWeak.expired());
   REQUIRE(worldWeak.expired());
 }
 
-TEMPLATE_TEST_CASE("Create world, interface and output => destroy output", "[object-create-destroy]", INTERFACES_OUTPUT)
+TEST_CASE("Create world and train => destroy train", "[object-create-destroy]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
-  REQUIRE(worldWeak.lock()->interfaces->length == 0);
-  REQUIRE(worldWeak.lock()->outputs->length == 0);
+  REQUIRE(worldWeak.lock()->boards->length == 0);
 
-  std::weak_ptr<TestType> interfaceWeak = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
-  REQUIRE_FALSE(interfaceWeak.expired());
-  REQUIRE(worldWeak.lock()->interfaces->length == 1);
-  REQUIRE(worldWeak.lock()->outputs->length == 0);
-  REQUIRE(interfaceWeak.lock()->outputs->length == 0);
+  std::weak_ptr<Train> trainWeak = world->trains->create();
+  REQUIRE_FALSE(trainWeak.expired());
+  REQUIRE(worldWeak.lock()->trains->length == 1);
 
-  std::weak_ptr<Output> outputWeak = interfaceWeak.lock()->outputs->create();
-  REQUIRE_FALSE(outputWeak.expired());
-  REQUIRE(outputWeak.lock()->interface.value() == std::dynamic_pointer_cast<OutputController>(interfaceWeak.lock()));
-  REQUIRE(worldWeak.lock()->interfaces->length == 1);
-  REQUIRE(worldWeak.lock()->outputs->length == 1);
-  REQUIRE(interfaceWeak.lock()->outputs->length == 1);
-
-  world->outputs->delete_(outputWeak.lock());
-  REQUIRE_FALSE(interfaceWeak.expired());
-  REQUIRE(outputWeak.expired());
-  REQUIRE(worldWeak.lock()->interfaces->length == 1);
-  REQUIRE(worldWeak.lock()->outputs->length == 0);
-  REQUIRE(interfaceWeak.lock()->outputs->length == 0);
+  world->trains->delete_(trainWeak.lock());
+  REQUIRE(trainWeak.expired());
+  REQUIRE(worldWeak.lock()->trains->length == 0);
 
   world.reset();
-  REQUIRE(interfaceWeak.expired());
   REQUIRE(worldWeak.expired());
 }
-#endif

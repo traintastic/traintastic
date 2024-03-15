@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@
 #include "worldsaver.hpp"
 
 #include "../log/log.hpp"
+#include "../log/logmessageexception.hpp"
 #include "../utils/datetimestr.hpp"
 #include "../utils/displayname.hpp"
 #include "../traintastic/traintastic.hpp"
@@ -59,6 +60,8 @@
 #include "../board/board.hpp"
 #include "../board/boardlist.hpp"
 #include "../board/list/linkrailtilelist.hpp"
+#include "../board/nx/nxmanager.hpp"
+#include "../board/tile/rail/nxbuttonrailtile.hpp"
 
 #include "../train/train.hpp"
 #include "../train/trainlist.hpp"
@@ -69,14 +72,24 @@ using nlohmann::json;
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Interface | DecoderListColumn::Protocol | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Interface | InputListColumn::Channel | InputListColumn::Address;
-constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Interface | OutputListColumn::Channel | OutputListColumn::Address;
+constexpr auto outputListColumns = OutputListColumn::Interface | OutputListColumn::Channel | OutputListColumn::Address;
 constexpr auto identificationListColumns = IdentificationListColumn::Id | IdentificationListColumn::Name | IdentificationListColumn::Interface /*| IdentificationListColumn::Channel*/ | IdentificationListColumn::Address;
 
 template<class T>
 inline static void deleteAll(T& objectList)
 {
   while(!objectList.empty())
+  {
+    if constexpr(std::is_same_v<T, TrainList>)
+    {
+      if(objectList.front()->active)
+      {
+        objectList.front()->emergencyStop = true;
+        objectList.front()->active = false;
+      }
+    }
     objectList.delete_(objectList.front());
+  }
 }
 
 std::shared_ptr<World> World::create()
@@ -106,6 +119,7 @@ void World::init(World& world)
   world.luaScripts.setValueInternal(std::make_shared<Lua::ScriptList>(world, world.luaScripts.name()));
 
   world.linkRailTiles.setValueInternal(std::make_shared<LinkRailTileList>(world, world.linkRailTiles.name()));
+  world.nxManager.setValueInternal(std::make_shared<NXManager>(world, world.nxManager.name()));
 }
 
 World::World(Private /*unused*/) :
@@ -113,6 +127,23 @@ World::World(Private /*unused*/) :
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   scale{this, "scale", WorldScale::H0, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly, [this](WorldScale /*value*/){ updateScaleRatio(); }},
   scaleRatio{this, "scale_ratio", 87, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
+  onlineWhenLoaded{this, "online_when_loaded", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
+  powerOnWhenLoaded{this, "power_on_when_loaded", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript,
+    [this](bool value)
+    {
+      if(!value)
+      {
+        runWhenLoaded = false; // can't run without power
+      }
+    }},
+  runWhenLoaded{this, "run_when_loaded", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript,
+    [this](bool value)
+    {
+      if(value)
+      {
+        powerOnWhenLoaded = true; // can't run without power
+      }
+    }},
   decoderControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   inputControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   outputControllers{this, "output_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
@@ -129,6 +160,7 @@ World::World(Private /*unused*/) :
   railVehicles{this, "rail_vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   linkRailTiles{this, "link_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  nxManager{this, "nx_manager", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   statuses(*this, "statuses", {}, PropertyFlags::ReadOnly | PropertyFlags::Store),
   hardwareThrottles{this, "hardware_throttles", 0, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::NoScript},
   state{this, "state", WorldState(), PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
@@ -272,6 +304,10 @@ World::World(Private /*unused*/) :
   Attributes::addVisible(scaleRatio, false);
   m_interfaceItems.add(scaleRatio);
 
+  m_interfaceItems.add(onlineWhenLoaded);
+  m_interfaceItems.add(powerOnWhenLoaded);
+  m_interfaceItems.add(runWhenLoaded);
+
   Attributes::addObjectEditor(decoderControllers, false);
   m_interfaceItems.add(decoderControllers);
   Attributes::addObjectEditor(inputControllers, false);
@@ -306,6 +342,8 @@ World::World(Private /*unused*/) :
 
   Attributes::addObjectEditor(linkRailTiles, false);
   m_interfaceItems.add(linkRailTiles);
+  Attributes::addObjectEditor(nxManager, false);
+  m_interfaceItems.add(nxManager);
 
   Attributes::addObjectEditor(statuses, false);
   m_interfaceItems.add(statuses);
@@ -355,12 +393,12 @@ World::~World()
   deleteAll(*interfaces);
   deleteAll(*decoders);
   deleteAll(*inputs);
-  deleteAll(*outputs);
   deleteAll(*identifications);
   deleteAll(*boards);
   deleteAll(*trains);
   deleteAll(*railVehicles);
   deleteAll(*luaScripts);
+  luaScripts.setValueInternal(nullptr);
 }
 
 std::string World::getUniqueId(std::string_view prefix) const
@@ -425,19 +463,18 @@ ObjectPtr World::getObjectByPath(std::string_view path) const
   return obj;
 }
 
-bool World::export_(std::vector<std::byte>& data)
+void World::export_(std::vector<std::byte>& data)
 {
   try
   {
     WorldSaver saver(*this, data);
     Log::log(*this, LogMessage::N1025_EXPORTED_WORLD_SUCCESSFULLY);
-    return true;
+    //return true;
   }
   catch(const std::exception& e)
   {
-    Log::log(*this, LogMessage::C1010_EXPORTING_WORLD_FAILED_X, e);
+    throw LogMessageException(LogMessage::C1010_EXPORTING_WORLD_FAILED_X, e);
   }
-  return false;
 }
 
 void World::loaded()

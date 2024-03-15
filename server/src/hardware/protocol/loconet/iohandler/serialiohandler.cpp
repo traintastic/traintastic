@@ -97,7 +97,7 @@ void SerialIOHandler::read()
             EventLoop::call(
               [this, drop]()
               {
-                Log::log(m_kernel.logId(), LogMessage::W2001_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES, drop);
+                Log::log(m_kernel.logId, LogMessage::W2001_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES, drop);
               });
           }
           else if(message->size() <= bytesTransferred)
@@ -121,7 +121,7 @@ void SerialIOHandler::read()
         EventLoop::call(
           [this, ec]()
           {
-            Log::log(m_kernel.logId(), LogMessage::E2002_SERIAL_READ_FAILED_X, ec);
+            Log::log(m_kernel.logId, LogMessage::E2002_SERIAL_READ_FAILED_X, ec);
             m_kernel.error();
           });
       }
@@ -149,7 +149,7 @@ void SerialIOHandler::write()
         EventLoop::call(
           [this, ec]()
           {
-            Log::log(m_kernel.logId(), LogMessage::E2001_SERIAL_WRITE_FAILED_X, ec);
+            Log::log(m_kernel.logId, LogMessage::E2001_SERIAL_WRITE_FAILED_X, ec);
             m_kernel.error();
           });
       }

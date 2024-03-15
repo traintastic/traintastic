@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,8 @@
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../input/inputcontroller.hpp"
 #include "../../output/outputcontroller.hpp"
+#include "../../protocol/dcc/dcc.hpp"
+#include "../../protocol/dcc/messages.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../utils/rtrim.hpp"
 #include "../../../core/eventloop.hpp"
@@ -36,17 +38,14 @@
 
 namespace DCCPlusPlus {
 
-Kernel::Kernel(const Config& config, bool simulation)
-  : m_ioContext{1}
+Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
+  : KernelBase(std::move(logId_))
   , m_simulation{simulation}
   , m_startupDelayTimer{m_ioContext}
   , m_decoderController{nullptr}
   , m_inputController{nullptr}
   , m_outputController{nullptr}
   , m_config{config}
-#ifndef NDEBUG
-  , m_started{false}
-#endif
 {
 }
 
@@ -119,7 +118,7 @@ void Kernel::receive(std::string_view message)
     EventLoop::call(
       [this, msg=std::string(rtrim(message, '\n'))]()
       {
-        Log::log(m_logId, LogMessage::D2002_RX_X, msg);
+        Log::log(logId, LogMessage::D2002_RX_X, msg);
       });
 
   if(message.size() > 1 && message[0] == '<')
@@ -144,7 +143,7 @@ void Kernel::receive(std::string_view message)
             EventLoop::call(
               [this, id, value]()
               {
-                m_outputController->updateOutputValue(OutputChannel::turnout, id, value);
+                m_outputController->updateOutputValue(OutputChannel::Turnout, id, value);
               });
           }
         }
@@ -222,7 +221,7 @@ void Kernel::receive(std::string_view message)
             EventLoop::call(
               [this, id, value]()
               {
-                m_outputController->updateOutputValue(OutputChannel::output, id, value);
+                m_outputController->updateOutputValue(OutputChannel::Output, id, value);
               });
           }
         }
@@ -295,43 +294,62 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   }
 }
 
-bool Kernel::setOutput(uint32_t channel, uint16_t address, bool value)
+bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputValue value)
 {
   switch(channel)
   {
-    case OutputChannel::dccAccessory:
-      assert(inRange<uint32_t>(address, dccAccessoryAddressMin, dccAccessoryAddressMax));
+    case OutputChannel::Accessory:
+      assert(inRange<uint32_t>(address, DCC::Accessory::addressMin, DCC::Accessory::addressMax));
+      assert(std::get<OutputPairValue>(value) != OutputPairValue::Undefined);
       m_ioContext.post(
         [this, address, value]()
         {
-          send(Ex::setAccessory(address, value));
+          send(Ex::setAccessory(address, std::get<OutputPairValue>(value) == OutputPairValue::Second));
 
           // no response for accessory command, assume it succeeds:
           EventLoop::call(
             [this, address, value]()
             {
-              m_outputController->updateOutputValue(OutputChannel::dccAccessory, address, toTriState(value));
+              m_outputController->updateOutputValue(OutputChannel::Accessory, address, value);
             });
         });
       return true;
 
-    case OutputChannel::turnout:
+    case OutputChannel::DCCext:
+      assert(inRange(address, DCC::Accessory::addressMin, DCC::Accessory::addressMax));
+      if(inRange<int16_t>(std::get<int16_t>(value), std::numeric_limits<uint8_t>::min(), std::numeric_limits<uint8_t>::max())) /*[[likely]]*/
+      {
+        m_ioContext.post(
+          [this, address, data=static_cast<uint8_t>(std::get<int16_t>(value))]()
+          {
+            send(Ex::dccPacket(DCC::SetAdvancedAccessoryValue(address, data)));
+          });
+        return true;
+      }
+      return false;
+
+    case OutputChannel::Turnout:
       assert(inRange<uint32_t>(address, idMin, idMax));
+      assert(std::get<TriState>(value) != TriState::Undefined);
       m_ioContext.post(
         [this, address, value]()
         {
-          send(Ex::setTurnout(address, value));
+          send(Ex::setTurnout(address, std::get<TriState>(value) == TriState::True));
         });
       return true;
 
-    case OutputChannel::output:
+    case OutputChannel::Output:
       assert(inRange<uint32_t>(address, idMin, idMax));
+      assert(std::get<TriState>(value) != TriState::Undefined);
       m_ioContext.post(
         [this, address, value]()
         {
-          send(Ex::setOutput(address, value));
+          send(Ex::setOutput(address, std::get<TriState>(value) == TriState::True));
         });
       return true;
+
+    default:
+      break;
   }
 
   assert(false);
@@ -387,7 +405,7 @@ void Kernel::send(std::string_view message)
       EventLoop::call(
         [this, msg=std::string(rtrim(message, '\n'))]()
         {
-          Log::log(m_logId, LogMessage::D2001_TX_X, msg);
+          Log::log(logId, LogMessage::D2001_TX_X, msg);
         });
   }
   else
@@ -399,7 +417,7 @@ void Kernel::startupDelayExpired(const boost::system::error_code& ec)
   if(ec)
     return;
 
-  m_onStarted();
+  started();
 }
 
 }

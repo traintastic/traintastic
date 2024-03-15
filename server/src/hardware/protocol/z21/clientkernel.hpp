@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,9 +23,13 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_CLIENTKERNEL_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_CLIENTKERNEL_HPP
 
+#include <unordered_map>
+
 #include "kernel.hpp"
 #include <boost/asio/steady_timer.hpp>
+#include <traintastic/enum/outputchannel.hpp>
 #include <traintastic/enum/tristate.hpp>
+#include "../../output/outputvalue.hpp"
 
 enum class SimulateInputAction;
 class InputController;
@@ -62,6 +66,7 @@ class ClientKernel final : public Kernel
   private:
     const bool m_simulation;
     boost::asio::steady_timer m_keepAliveTimer;
+    boost::asio::steady_timer m_inactiveDecoderPurgeTimer;
     BroadcastFlags m_broadcastFlags;
     int m_broadcastFlagsRetryCount;
     static constexpr int maxBroadcastFlagsRetryCount = 10;
@@ -81,12 +86,51 @@ class ClientKernel final : public Kernel
     uint8_t m_firmwareVersionMinor;
     std::function<void(HardwareType, uint8_t, uint8_t)> m_onHardwareInfoChanged;
 
+    /*!
+     * \brief m_trackPowerOn caches command station track power state.
+     *
+     * \note It must be accessed only from event loop thread or from
+     * Z21::ClientKernel::onStart().
+     *
+     * \sa EventLoop
+     */
     TriState m_trackPowerOn;
+
+    /*!
+     * \brief m_emergencyStop caches command station emergency stop state.
+     *
+     * \note It must be accessed only from event loop thread or from
+     * Z21::ClientKernel::onStart().
+     *
+     * \sa EventLoop
+     */
     TriState m_emergencyStop;
     std::function<void(bool)> m_onTrackPowerOnChanged;
     std::function<void()> m_onEmergencyStop;
 
     DecoderController* m_decoderController = nullptr;
+
+    struct LocoCache
+    {
+      enum class Trend : bool
+      {
+          Ascending = 0,
+          Descending
+      };
+
+      uint16_t dccAddress = 0;
+      bool isEStop = false;
+      uint8_t speedStep = 0;
+      uint8_t speedSteps = 0;
+      uint8_t lastReceivedSpeedStep = 0; //Always in 126 steps
+      Trend speedTrend = Trend::Ascending;
+      bool speedTrendExplicitlySet = false;
+      Direction direction = Direction::Unknown;
+      std::chrono::steady_clock::time_point lastSetTime;
+    };
+
+    std::unordered_map<uint16_t, LocoCache> m_locoCache;
+    bool m_isUpdatingDecoderFromKernel = false;
 
     InputController* m_inputController = nullptr;
     std::array<TriState, rbusAddressMax - rbusAddressMin + 1> m_rbusFeedbackStatus;
@@ -96,7 +140,7 @@ class ClientKernel final : public Kernel
 
     ClientConfig m_config;
 
-    ClientKernel(const ClientConfig& config, bool simulation);
+    ClientKernel(std::string logId_, const ClientConfig& config, bool simulation);
 
     void onStart() final;
     void onStop() final;
@@ -116,7 +160,12 @@ class ClientKernel final : public Kernel
     void startKeepAliveTimer();
     void keepAliveTimerExpired(const boost::system::error_code& ec);
 
-  public:
+    void startInactiveDecoderPurgeTimer();
+    void inactiveDecoderPurgeTimerExpired(const boost::system::error_code &ec);
+
+    LocoCache &getLocoCache(uint16_t dccAddr);
+
+public:
     /**
      * @brief Create kernel and IO handler
      * @param[in] config Z21 client configuration
@@ -124,10 +173,10 @@ class ClientKernel final : public Kernel
      * @return The kernel instance
      */
     template<class IOHandlerType, class... Args>
-    static std::unique_ptr<ClientKernel> create(const ClientConfig& config, Args... args)
+    static std::unique_ptr<ClientKernel> create(std::string logId_, const ClientConfig& config, Args... args)
     {
       static_assert(std::is_base_of_v<IOHandler, IOHandlerType>);
-      std::unique_ptr<ClientKernel> kernel{new ClientKernel(config, isSimulation<IOHandlerType>())};
+      std::unique_ptr<ClientKernel> kernel{new ClientKernel(std::move(logId_), config, isSimulation<IOHandlerType>())};
       kernel->setIOHandler(std::make_unique<IOHandlerType>(*kernel, std::forward<Args>(args)...));
       return kernel;
     }
@@ -247,7 +296,7 @@ class ClientKernel final : public Kernel
      * @param[in] value Output value: \c true is on, \c false is off.
      * @return \c true if send successful, \c false otherwise.
      */
-    bool setOutput(uint16_t address, bool value);
+    bool setOutput(OutputChannel channel, uint16_t address, OutputValue value);
 
     void simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action);
 };

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,12 +26,14 @@
 #include <QFormLayout>
 #include <QComboBox>
 #include <QLineEdit>
+#include <QCheckBox>
 #include <QLabel>
 #include <QPushButton>
 #include <QUrl>
 #include <QTimer>
 #include "../network/connection.hpp"
 #include "../network/object.hpp"
+#include "../settings/generalsettings.hpp"
 #include <traintastic/locale/locale.hpp>
 
 ConnectDialog::ConnectDialog(QWidget* parent, const QString& url) :
@@ -41,6 +43,7 @@ ConnectDialog::ConnectDialog(QWidget* parent, const QString& url) :
   m_server{new QComboBox()},
   m_username{new QLineEdit()},
   m_password{new QLineEdit()},
+  m_connectAutomatically{new QCheckBox(Locale::tr("qtapp.settings.general:connect_automatically_to_discovered_server"))},
   m_status{new QLabel()},
   m_connect{new QPushButton(Locale::tr("qtapp.connect_dialog:connect"))}
 {
@@ -52,6 +55,13 @@ ConnectDialog::ConnectDialog(QWidget* parent, const QString& url) :
 
   m_password->setEchoMode(QLineEdit::Password);
 
+  m_connectAutomatically->setChecked(GeneralSettings::instance().connectAutomaticallyToDiscoveredServer.value());
+  connect(m_connectAutomatically, &QCheckBox::stateChanged, this,
+    [](int state)
+    {
+      GeneralSettings::instance().connectAutomaticallyToDiscoveredServer.setValue(state == Qt::Checked);
+    });
+
   m_status->setAlignment(Qt::AlignCenter);
   m_status->setMinimumWidth(400);
 
@@ -62,6 +72,7 @@ ConnectDialog::ConnectDialog(QWidget* parent, const QString& url) :
   formLayout->addRow(Locale::tr("qtapp.connect_dialog:username"), m_username);
   formLayout->addRow(Locale::tr("qtapp.connect_dialog:password"), m_password);
 */
+  formLayout->addRow("", m_connectAutomatically);
 
   QVBoxLayout* layout = new QVBoxLayout();
   layout->addLayout(formLayout);
@@ -147,6 +158,10 @@ void ConnectDialog::socketReadyRead()
       {
         m_servers[url] = {name, defaultTTL};
         m_server->addItem(url.host() + (url.port() != Connection::defaultPort ? ":" + QString::number(url.port()) : "") + " (" + name + ")", url);
+        if(m_connectAutomatically->isChecked() && m_connect->isEnabled())
+        {
+          m_connect->click();
+        }
       }
       else
         it->second = defaultTTL;
@@ -175,6 +190,18 @@ void ConnectDialog::stateChanged()
       QTimer::singleShot(300, this, &ConnectDialog::accept);
       break;
 
+    case Connection::State::Authenticating:
+      m_status->setText(Locale::tr("qtapp.connect_dialog:authenticating"));
+      break;
+
+    case Connection::State::CreatingSession:
+      m_status->setText(Locale::tr("qtapp.connect_dialog:creating_session"));
+      break;
+
+    case Connection::State::FetchingWorld:
+      m_status->setText(Locale::tr("qtapp.connect_dialog:fetching_world"));
+      break;
+
     case Connection::State::SocketError:
       m_status->setText(m_connection->errorString());
       setControlsEnabled(true);
@@ -192,8 +219,11 @@ void ConnectDialog::stateChanged()
 
 void ConnectDialog::serverIndexChanged(int index)
 {
-  m_url = m_server->itemData(index).toUrl();
-  m_connect->setEnabled(m_url.isValid());
+  if(auto itemData = m_server->itemData(index); itemData.isValid())
+  {
+    m_url = itemData.toUrl();
+    m_connect->setEnabled(m_url.isValid());
+  }
 }
 
 void ConnectDialog::serverTextChanged(const QString& text)

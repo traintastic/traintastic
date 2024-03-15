@@ -25,6 +25,7 @@
   #include <QSettings>
 #endif
 #include <QCommandLineParser>
+#include <QMessageBox>
 #include <version.hpp>
 #include "mainwindow.hpp"
 #include "settings/generalsettings.hpp"
@@ -100,17 +101,27 @@ int main(int argc, char* argv[])
   const bool logMissingStrings = !DeveloperSettings::instance().logMissingStringsDir.value().isEmpty();
 
   const auto localePath = getLocalePath();
-  Locale* fallback = new Locale(localePath / "neutral.lang");
-  if(language != languageDefault && !DeveloperSettings::instance().dontLoadFallbackLanguage)
+  try
   {
-    fallback = new Locale(localePath / languageDefault.toStdString().append(".lang"), fallback);
-    if(logMissingStrings)
-      fallback->enableMissingLogging();
+    Locale::instance = std::make_unique<Locale>(localePath / "neutral.lang");
+
+    if(language != languageDefault && !DeveloperSettings::instance().dontLoadFallbackLanguage)
+    {
+      Locale::instance = std::make_unique<Locale>(localePath / languageDefault.toStdString().append(".lang"), std::move(Locale::instance));
+      if(logMissingStrings)
+        const_cast<Locale*>(Locale::instance.get())->enableMissingLogging();
+    }
+
+    Locale::instance = std::make_unique<Locale>(localePath / language.toStdString().append(".lang"), std::move(Locale::instance));
+  }
+  catch(const std::exception& e)
+  {
+    QMessageBox::critical(nullptr, "Error", QString::fromLatin1(e.what()));
+    return EXIT_FAILURE;
   }
 
-  Locale::instance = new Locale(localePath / language.toStdString().append(".lang"), fallback);
   if(logMissingStrings)
-    const_cast<Locale*>(Locale::instance)->enableMissingLogging();
+    const_cast<Locale*>(Locale::instance.get())->enableMissingLogging();
 
   // Auto select icon set based on background color lightness:
   const qreal backgroundLightness = QApplication::style()->standardPalette().window().color().lightnessF();
@@ -132,8 +143,8 @@ int main(int argc, char* argv[])
     auto dir = DeveloperSettings::instance().logMissingStringsDir.value();
     if(QDir(dir).exists())
     {
-      if(fallback)
-        saveMissing(dir, *fallback);
+      if(Locale::instance->fallback())
+        saveMissing(dir, *Locale::instance->fallback());
       saveMissing(dir, *Locale::instance);
     }
   }

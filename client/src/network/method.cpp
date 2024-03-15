@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "method.hpp"
 #include "object.hpp"
 #include "connection.hpp"
+#include "error.hpp"
 
 Method::Method(Object& object, const QString& name, ValueType resultType, const QVector<ValueType>& argumentTypes) :
   InterfaceItem(object, name),
@@ -41,12 +42,12 @@ void Method::call(const QString& arg)
   object().connection()->callMethod(*this, arg);
 }
 
-int Method::call(std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+int Method::call(std::function<void(const ObjectPtr&, std::optional<const Error>)> callback)
 {
   return object().connection()->callMethod(*this, std::move(callback));
 }
 
-int Method::call(const QString& arg, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+int Method::call(const QString& arg, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback)
 {
   return object().connection()->callMethod(*this, arg, std::move(callback));
 }

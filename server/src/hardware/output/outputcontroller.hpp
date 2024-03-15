@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,8 +27,12 @@
 #include <vector>
 #include <unordered_map>
 #include <memory>
+#include <boost/signals2/signal.hpp>
+#include <tcb/span.hpp>
+#include <traintastic/enum/outputchannel.hpp>
+#include <traintastic/enum/outputtype.hpp>
+#include "outputvalue.hpp"
 #include "../../core/objectproperty.hpp"
-#include "../../enum/tristate.hpp"
 
 #ifdef interface
   #undef interface // interface is defined in combaseapi.h
@@ -43,14 +47,16 @@ enum class OutputListColumn;
 class OutputController
 {
   public:
+    static constexpr std::pair<uint32_t, uint32_t> noAddressMinMax{std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::min()};
+
     struct OutputMapKey
     {
-      uint32_t channel;
-      uint32_t address;
+      OutputChannel channel;
+      uint32_t id;
 
       inline bool operator ==(const OutputMapKey other) const noexcept
       {
-        return channel == other.channel && address == other.address;
+        return channel == other.channel && id == other.id;
       }
     };
     static_assert(sizeof(OutputMapKey) == sizeof(uint64_t));
@@ -59,18 +65,19 @@ class OutputController
     {
       std::size_t operator()(const OutputMapKey& value) const noexcept
       {
-        return std::hash<uint64_t>{}(*reinterpret_cast<const uint64_t*>(&value));
+        return (static_cast<uint64_t>(value.channel) << (8 * sizeof(value.id))) | value.id;
       }
     };
 
     using OutputMap = std::unordered_map<OutputMapKey, std::shared_ptr<Output>, OutputMapKeyHash>;
 
   private:
+    std::shared_ptr<OutputController> shared_ptr();
     IdObject& interface();
 
   protected:
     OutputMap m_outputs;
-    std::unordered_map<uint32_t, std::weak_ptr<OutputKeyboard>> m_outputKeyboards;
+    std::unordered_map<OutputChannel, std::weak_ptr<OutputKeyboard>> m_outputKeyboards;
 
     OutputController(IdObject& interface);
 
@@ -78,8 +85,7 @@ class OutputController
     void destroying();
 
   public:
-    static constexpr std::vector<uint32_t>* noOutputChannels = nullptr;
-    static constexpr uint32_t defaultOutputChannel = 0;
+    boost::signals2::signal<void()> outputECoSObjectsChanged;
 
     ObjectProperty<OutputList> outputs;
 
@@ -91,57 +97,75 @@ class OutputController
     /**
      *
      */
-    virtual const std::vector<uint32_t>* outputChannels() const { return noOutputChannels; }
+    virtual tcb::span<const OutputChannel> outputChannels() const = 0;
 
     /**
      *
      */
-    virtual const std::vector<std::string_view>* outputChannelNames() const { return nullptr; }
+    bool isOutputChannel(OutputChannel channel) const;
 
     /**
      *
      */
-    bool isOutputChannel(uint32_t channel) const;
+    virtual bool isOutputId(OutputChannel channel, uint32_t id) const;
 
     /**
      *
      */
-    virtual std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t channel) const = 0;
+    virtual OutputType outputType(OutputChannel channel) const;
 
     /**
      *
      */
-    [[nodiscard]] virtual bool isOutputAddressAvailable(uint32_t channel, uint32_t address) const;
-
-    /**
-     * @brief Get the next unused output address
-     *
-     * @return An usused address or Output::invalidAddress if no unused address is available.
-     */
-    uint32_t getUnusedOutputAddress(uint32_t channel) const;
+    virtual std::pair<uint32_t, uint32_t> outputAddressMinMax(OutputChannel channel) const;
 
     /**
      *
-     * @return \c true if changed, \c false otherwise.
      */
-    [[nodiscard]] virtual bool changeOutputChannelAddress(Output& output, uint32_t newChannel, uint32_t newAddress);
+    virtual std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> getOutputECoSObjects(OutputChannel channel) const;
 
     /**
      *
-     * @return \c true if added, \c false otherwise.
      */
-    [[nodiscard]] bool addOutput(Output& output);
+    [[nodiscard]] virtual bool isOutputAvailable(OutputChannel channel, uint32_t id) const;
 
     /**
+     * \brief Get the next unused output address
      *
-     * @return \c true if removed, \c false otherwise.
+     * \param[in] channel The output channel.
+     * \return An usused address or Output::invalidAddress if no unused address is available.
      */
-    [[nodiscard]] bool removeOutput(Output& output);
+    uint32_t getUnusedOutputAddress(OutputChannel channel) const;
+
+    /**
+     * \brief Get an output.
+     *
+     * For each channel/id combination an output object is create once,
+     * if an output is requested multiple time they all share the same instance.
+     * Once the object the uses the output is no longer using it,
+     * it must be released using \ref releaseOutput .
+     * The output object will be destroyed when the are zero users.
+     *
+     * \param[in] channel The output channel.
+     * \param[in] id The output id.
+     * \param[in] usedBy The object the will use the output.
+     * \return An output object if the channel/id combination is valid, \c nullptr otherwise.
+     */
+    std::shared_ptr<Output> getOutput(OutputChannel channel, uint32_t id, Object& usedBy);
+
+    /**
+     * \brief Release an output.
+     *
+     * \param[in] output The output to release.
+     * \param[in] usedBy The object no longer using the output.
+     * \see getOutput
+     */
+    void releaseOutput(Output& output, Object& usedBy);
 
     /**
      * @brief ...
      */
-    [[nodiscard]] virtual bool setOutputValue(uint32_t channel, uint32_t address, bool value) = 0;
+    [[nodiscard]] virtual bool setOutputValue(OutputChannel /*channel*/, uint32_t /*id*/, OutputValue /*value*/) = 0;
 
     /**
      * @brief Update the output value
@@ -149,16 +173,26 @@ class OutputController
      * This function should be called by the hardware layer whenever the output value changes.
      *
      * @param[in] channel Output channel
-     * @param[in] address Output address
+     * @param[in] id Output id
      * @param[in] value New output value
      */
-    void updateOutputValue(uint32_t channel, uint32_t address, TriState value);
+    void updateOutputValue(OutputChannel channel, uint32_t id, OutputValue value);
 
     /**
+     * \brief Check is there is an output keyboard available for the channel.
      *
-     *
+     * \param[in] channel The output channel
+     * \return \c true if available, \c false if not.
      */
-    std::shared_ptr<OutputKeyboard> outputKeyboard(uint32_t channel);
+    bool hasOutputKeyboard(OutputChannel channel) const;
+
+    /**
+     * \brief Get an output keyboard for the channel if available.
+     *
+     * \param[in] channel The output channel
+     * \return An output keyboard if available, \c nullptr otherwise.
+     */
+    std::shared_ptr<OutputKeyboard> outputKeyboard(OutputChannel channel);
 };
 
 #endif

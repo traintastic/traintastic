@@ -310,7 +310,7 @@ pre[lang="lua"]
   background-color: #f8f8f8;
   font-size: 80%;
   line-height: normal;
-  padding: 0.2em 0.3em 0.2em 0.3em;
+  padding: 0.4em;
 }
 
 pre[lang="lua"] code span.const
@@ -323,6 +323,11 @@ pre[lang="lua"] code span.keyword
   color: blue;
 }
 
+pre[lang="lua"] code span.number
+{
+  color: magenta;
+}
+
 pre[lang="lua"] code span.global
 {
   color: chocolate;
@@ -333,14 +338,15 @@ pre[lang="lua"] code span.text
   color: darkgreen;
 }
 
-pre[lang="lua"] code span.comment
+pre[lang="lua"] code span.comment,
+pre[lang="lua"] code span.comment a
 {
-  color: darkslategray;
+  color: gray;
 }
 
-code.lua span.keyword
+pre[lang="lua"] code span.function
 {
-  color: #000080;
+  color: teal;
 }
 
 /** MEDIA BREAKPOINTS ********************************************************/
@@ -355,5 +361,79 @@ code.lua span.keyword
   #toc
   {
     display: none;
+  }
+}
+
+/** Dark mode **/
+
+@media (prefers-color-scheme: dark)
+{
+  body
+  {
+      background-color: #111;
+      color: #eee;
+  }
+
+  a
+  {
+    color: rgb(47, 129, 247)
+  }
+
+  #toc
+  {
+    border-color: #555;
+    color: #ccc;
+  }
+
+  #toc a:hover,
+  #toc a.selected
+  {
+    color: #fff;
+  }
+
+  .content table thead tr
+  {
+    background: #222;
+  }
+
+  .content table tbody tr:nth-child(even)
+  {
+    background: #222;
+  }
+
+  p.note
+  {
+    border-left-color: blue;
+  }
+
+  pre[lang="lua"]
+  {
+    border-color: gray;
+    background-color: #222;
+  }
+
+  pre[lang="lua"] code span.const
+  {
+    color: violet;
+  }
+
+  pre[lang="lua"] code span.text
+  {
+    color: lawngreen;
+  }
+
+  pre[lang="lua"] code span.keyword
+  {
+    color: cyan;
+  }
+
+  pre[lang="lua"] code span.global
+  {
+    color: orange;
+  }
+
+  pre[lang="lua"] code span.function
+  {
+    color: #66CDAA;
   }
 }

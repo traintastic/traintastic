@@ -11,6 +11,9 @@
 #define ServerExeName "traintastic-server.exe"
 #define ClientExeName "traintastic-client.exe"
 
+#define CompanySubKey "SOFTWARE\traintastic.org"
+#define AppSubKey CompanySubKey + "\Traintastic"
+
 [Setup]
 AppId={{7E509202-257F-4859-B8FA-D87D636342BB}
 AppName={#Name}
@@ -40,6 +43,8 @@ Name: en; MessagesFile: "compiler:Default.isl,en-us.isl"
 Name: nl; MessagesFile: "compiler:Languages\Dutch.isl,nl-nl.isl"
 Name: de; MessagesFile: "compiler:Languages\German.isl,de-de.isl"
 Name: it; MessagesFile: "compiler:Languages\Italian.isl,it-it.isl"
+Name: sv; MessagesFile: "Languages\Swedish.isl,sv-se.isl"
+Name: fr; MessagesFile: "compiler:Languages\French.isl,fr-fr.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -97,10 +102,16 @@ Name: "{autodesktop}\{#Name} server"; Filename: "{app}\server\{#ServerExeName}";
 Name: "{autoprograms}\{#Name}\{#Name} client"; Filename: "{app}\client\{#ClientExeName}"; Check: InstallClient
 Name: "{autodesktop}\{#Name} client"; Filename: "{app}\client\{#ClientExeName}"; Tasks: desktopicon; Check: InstallClient
 
+[Registry]
+Root: HKLM; Subkey: "{#CompanySubKey}"; Flags: uninsdeletekeyifempty
+Root: HKLM; Subkey: "{#AppSubKey}"; Flags: uninsdeletekey
+
+[INI]
+Filename: {commonappdata}\traintastic\traintastic-client.ini; Section: general_; Key: language; String: {code:GetTraintasticClientLanguage}; Flags: uninsdeleteentry uninsdeletesectionifempty;
+
 [Code]
 const
-  InstallerSubKeyName = 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{7E509202-257F-4859-B8FA-D87D636342BB}_is1';
-  TraintasticComponentsValueName = 'TraintasticComponents';
+  ComponentsValueName = 'Components';
 var
   ComponentsPage : TWizardPage;
   ClientAndServerRadioButton : TRadioButton;
@@ -118,12 +129,12 @@ end;
 
 procedure RegWriteTraintasticComponents(Value: String);
 begin
-  RegWriteStringValue(HKEY_LOCAL_MACHINE, InstallerSubKeyName, TraintasticComponentsValueName, Value);
+  RegWriteStringValue(HKEY_LOCAL_MACHINE, '{#AppSubKey}', ComponentsValueName, Value);
 end;
 
 function RegReadTraintasticComponents: String;
 begin
-  if not RegQueryStringValue(HKEY_LOCAL_MACHINE, InstallerSubKeyName, TraintasticComponentsValueName, Result) then
+  if not RegQueryStringValue(HKEY_LOCAL_MACHINE, '{#AppSubKey}', ComponentsValueName, Result) then
     Result := '';
 end;
 
@@ -193,6 +204,19 @@ begin
   Lbl.Left := ScaleX(17);
   Lbl.Height := ScaleY(23);
   Lbl.Parent := ComponentsPage.Surface;
+end;
+
+function GetTraintasticClientLanguage(Param: String) : String;
+begin
+  case ActiveLanguage of
+    'nl': Result := 'nl-nl';
+    'de': Result := 'de-de';
+    'it': Result := 'it-it';
+    'sv': Result := 'sv-se';
+    'fr': Result := 'fr-fr';
+  else
+    Result := 'en-us';
+  end;
 end;
 
 function VC2019RedistNeedsInstall: Boolean;

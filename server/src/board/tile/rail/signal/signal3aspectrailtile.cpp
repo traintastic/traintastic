@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,13 +21,90 @@
  */
 
 #include "signal3aspectrailtile.hpp"
-#include "../../../map/signalpath.hpp"
+#include "../blockrailtile.hpp"
+#include "../../../map/abstractsignalpath.hpp"
+#include "../../../map/blockpath.hpp"
 #include "../../../../core/attributes.hpp"
 #include "../../../../core/method.tpp"
 #include "../../../../core/objectproperty.tpp"
+#include "../../../../hardware/output/outputcontroller.hpp"
 
 static const std::array<SignalAspect, 4> aspectValues = {SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed, SignalAspect::Unknown};
 static const std::array<SignalAspect, 3> setAspectValues = {SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed};
+
+namespace
+{
+  class SignalPath : public AbstractSignalPath
+  {
+    private:
+      static bool hasSignalReservedPathToBlock(const SignalRailTile& signalTile, const BlockRailTile& blockTile)
+      {
+        const auto path = signalTile.reservedPath();
+        return path && path->toBlock().get() == &blockTile;
+      }
+
+      static bool isPathReserved(const BlockRailTile& from, BlockSide fromSide, const BlockRailTile& to)
+      {
+        if(const auto path = from.getReservedPath(fromSide))
+        {
+          return (&to == path->toBlock().get());
+        }
+        return false;
+      }
+
+    protected:
+      SignalAspect determineAspect() const final
+      {
+        const auto* blockItem = nextBlock();
+        if(!blockItem)
+        {
+          return SignalAspect::Stop;
+        }
+        const auto blockState = blockItem->blockState();
+
+        if((!requireReservation() && blockState == BlockState::Free) ||
+            (blockState == BlockState::Reserved && hasSignalReservedPathToBlock(signal(), *blockItem->block())))
+        {
+          auto [blockItem2, signalItem2] = nextBlockOrSignal(blockItem->next().get());
+          if(blockItem2)
+          {
+            const auto blockState2 = blockItem2->blockState();
+
+            if(blockState2 == BlockState::Free ||
+                (blockState2 == BlockState::Reserved && isPathReserved(*blockItem->block(), ~blockItem->enterSide(), *blockItem2->block())))
+            {
+              return SignalAspect::Proceed;
+            }
+          }
+          else if(signalItem2)
+          {
+            auto signalTile = signalItem2->signal();
+            if(signalTile && signalTile->aspect != SignalAspect::Unknown && signalTile->aspect != SignalAspect::Stop)
+            {
+              switch(signalTile->aspect.value())
+              {
+                case SignalAspect::ProceedReducedSpeed:
+                case SignalAspect::Proceed:
+                  return SignalAspect::Proceed;
+
+                case SignalAspect::Stop:
+                case SignalAspect::Unknown:
+                  break;
+              }
+            }
+          }
+          return SignalAspect::ProceedReducedSpeed;
+        }
+        return SignalAspect::Stop;
+      }
+
+    public:
+      SignalPath(Signal3AspectRailTile& signal)
+        : AbstractSignalPath(signal, 2)
+      {
+      }
+  };
+}
 
 Signal3AspectRailTile::Signal3AspectRailTile(World& world, std::string_view _id) :
   SignalRailTile(world, _id, TileId::RailSignal3Aspect)
@@ -43,17 +120,6 @@ Signal3AspectRailTile::Signal3AspectRailTile(World& world, std::string_view _id)
 
 void Signal3AspectRailTile::boardModified()
 {
-  m_signalPath = std::make_unique<SignalPath>(m_node, 2,
-    [this](const std::vector<BlockState>& states)
-    {
-      if(!states.empty() && states[0] == BlockState::Free)
-      {
-        if(states.size() >= 2 && states[1] == BlockState::Free)
-          setAspect(SignalAspect::Proceed);
-        else
-          setAspect(SignalAspect::ProceedReducedSpeed);
-      }
-      else
-        setAspect(SignalAspect::Stop);
-    });
+  m_signalPath = std::make_unique<SignalPath>(*this);
+  SignalRailTile::boardModified();
 }

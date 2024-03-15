@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@
 class QUdpSocket;
 class QComboBox;
 class QLineEdit;
+class QCheckBox;
 class QLabel;
 class QPushButton;
 class Connection;
@@ -51,6 +52,7 @@ class ConnectDialog : public QDialog
     QComboBox* m_server;
     QLineEdit* m_username;
     QLineEdit* m_password;
+    QCheckBox* m_connectAutomatically;
     QLabel* m_status;
     QPushButton* m_connect;
     QUrl m_url;

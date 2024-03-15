@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,12 +38,13 @@
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
+#include "../../utils/makearray.hpp"
 #include "../../utils/serialport.hpp"
 #include "../../world/world.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
-constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Channel | OutputListColumn::Address;
+constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 
 CREATE_IMPL(DCCPlusPlusInterface)
 
@@ -141,35 +142,31 @@ void DCCPlusPlusInterface::inputSimulateChange(uint32_t channel, uint32_t addres
     m_kernel->simulateInputChange(address, action);
 }
 
-const std::vector<uint32_t> *DCCPlusPlusInterface::outputChannels() const
+tcb::span<const OutputChannel> DCCPlusPlusInterface::outputChannels() const
 {
-  return &DCCPlusPlus::Kernel::outputChannels;
+  static const auto values = makeArray(OutputChannel::Accessory, OutputChannel::Turnout, OutputChannel::Output, OutputChannel::DCCext);
+  return values;
 }
 
-const std::vector<std::string_view> *DCCPlusPlusInterface::outputChannelNames() const
-{
-  return &DCCPlusPlus::Kernel::outputChannelNames;
-}
-
-std::pair<uint32_t, uint32_t> DCCPlusPlusInterface::outputAddressMinMax(uint32_t channel) const
+std::pair<uint32_t, uint32_t> DCCPlusPlusInterface::outputAddressMinMax(OutputChannel channel) const
 {
   using namespace DCCPlusPlus;
 
   switch(channel)
   {
-    case Kernel::OutputChannel::dccAccessory:
-      return {Kernel::dccAccessoryAddressMin, Kernel::dccAccessoryAddressMax};
+    case OutputChannel::Accessory:
+      return OutputController::outputAddressMinMax(OutputChannel::AccessoryDCC);
 
-    case Kernel::OutputChannel::turnout:
-    case Kernel::OutputChannel::output:
+    case OutputChannel::Turnout:
+    case OutputChannel::Output:
       return {Kernel::idMin, Kernel::idMax};
-  }
 
-  assert(false);
-  return {0, 0};
+    default:
+      return OutputController::outputAddressMinMax(channel);
+  }
 }
 
-bool DCCPlusPlusInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
+bool DCCPlusPlusInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
 {
   return
     m_kernel &&
@@ -185,16 +182,15 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
     {
       if(simulation)
       {
-        m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SimulationIOHandler>(dccplusplus->config());
+        m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SimulationIOHandler>(id.value(), dccplusplus->config());
       }
       else
       {
-        m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SerialIOHandler>(dccplusplus->config(), device.value(), baudrate.value(), SerialFlowControl::None);
+        m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SerialIOHandler>(id.value(), dccplusplus->config(), device.value(), baudrate.value(), SerialFlowControl::None);
       }
 
       setState(InterfaceState::Initializing);
 
-      m_kernel->setLogId(id.value());
       m_kernel->setOnStarted(
         [this]()
         {
@@ -215,6 +211,12 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
 
           if(powerOn)
             m_kernel->powerOn();
+        });
+      m_kernel->setOnError(
+        [this]()
+        {
+          setState(InterfaceState::Error);
+          online = false; // communication no longer possible
         });
       m_kernel->setOnPowerOnChanged(
         [this](bool powerOn)
@@ -338,12 +340,6 @@ void DCCPlusPlusInterface::checkDecoder(const Decoder& decoder) const
       Log::log(decoder, LogMessage::W2002_COMMAND_STATION_DOESNT_SUPPORT_FUNCTIONS_ABOVE_FX, DCCPlusPlus::Config::functionNumberMax);
       break;
     }
-}
-
-void DCCPlusPlusInterface::idChanged(const std::string& newId)
-{
-  if(m_kernel)
-    m_kernel->setLogId(newId);
 }
 
 void DCCPlusPlusInterface::updateEnabled()

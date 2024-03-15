@@ -24,16 +24,20 @@
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_BLOCKRAILTILE_HPP
 
 #include "railtile.hpp"
+#include <array>
+#include <traintastic/enum/blocktraindirection.hpp>
 #include "../../map/node.hpp"
 #include "../../../core/method.hpp"
 #include "../../../core/objectproperty.hpp"
 #include "../../../core/vectorproperty.hpp"
+#include "../../../enum/blockside.hpp"
 #include "../../../enum/blockstate.hpp"
 #include "../../../hardware/input/map/blockinputmap.hpp"
 
 class Train;
 class TrainBlockStatus;
 class BlockInputMapItem;
+class BlockPath;
 
 class BlockRailTile : public RailTile
 {
@@ -42,8 +46,14 @@ class BlockRailTile : public RailTile
   CREATE_DEF(BlockRailTile)
 
   private:
-    Node m_node;
+    using Paths = std::vector<std::shared_ptr<BlockPath>>;
 
+    Node m_node;
+    Paths m_paths; //!< Paths from this block to other block
+    Paths m_pathsIn; //!< Paths from other blocks to this block
+    std::array<std::weak_ptr<BlockPath>, 2> m_reservedPaths; // index is BlockSide
+
+    void updatePaths();
     void updateHeightWidthMax();
 
   protected:
@@ -51,6 +61,7 @@ class BlockRailTile : public RailTile
     void loaded() final;
     void destroying() final;
     void setRotate(TileRotate value) final;
+    void boardModified() final;
 
     void updateState();
     void updateTrainMethodEnabled();
@@ -68,6 +79,9 @@ class BlockRailTile : public RailTile
     Method<void()> removeTrain;
     Method<void()> flipTrain;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onTrainAssigned;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onTrainReserved;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onTrainEntered;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onTrainLeft;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onTrainRemoved;
 
     BlockRailTile(World& world, std::string_view _id);
@@ -76,7 +90,17 @@ class BlockRailTile : public RailTile
     std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
     void getConnectors(std::vector<Connector>& connectors) const final;
 
+    const std::vector<std::shared_ptr<BlockPath>>& paths() const
+    {
+      return m_paths;
+    }
+
     void inputItemValueChanged(BlockInputMapItem& item);
+    void identificationEvent(BlockInputMapItem& item, IdentificationEventType eventType, uint16_t identifier, Direction direction, uint8_t category);
+
+    const std::shared_ptr<BlockPath> getReservedPath(BlockSide side) const;
+    bool reserve(const std::shared_ptr<BlockPath>& blockPath, const std::shared_ptr<Train>& train, BlockSide side, bool dryRun = false);
+    bool release(BlockSide side, bool dryRun = false);
 };
 
 #endif

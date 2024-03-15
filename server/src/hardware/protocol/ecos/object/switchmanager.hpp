@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,7 +38,7 @@ class SwitchManager final : public Object
   public:
     SwitchManager(Kernel& kernel);
 
-    void setSwitch(SwitchProtocol protocol, uint16_t address);
+    void setSwitch(SwitchProtocol protocol, uint16_t address, bool port);
 
     bool receiveReply(const Reply& reply) final;
     bool receiveEvent(const Event& event) final;

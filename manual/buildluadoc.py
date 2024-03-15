@@ -9,6 +9,7 @@ import json
 import operator
 import shutil
 import datetime
+from traintasticmanualbuilder.utils import highlight_lua
 
 
 class LuaDoc:
@@ -22,6 +23,7 @@ class LuaDoc:
     FILENAME_ENUM = 'enum.html'
     FILENAME_SET = 'set.html'
     FILENAME_OBJECT = 'object.html'
+    FILENAME_EXAMPLE = 'example.html'
     FILENAME_INDEX_AZ = 'index-az.html'
 
     missing_terms = []
@@ -33,6 +35,7 @@ class LuaDoc:
         self._sets = LuaDoc._find_sets(project_root)
         self._libs = LuaDoc._find_libs(project_root)
         self._objects = LuaDoc._find_objects(project_root)
+        self._examples = LuaDoc._find_examples(project_root)
         self.set_language(LuaDoc.DEFAULT_LANGUAGE)
 
     def set_language(self, language: str) -> None:
@@ -280,18 +283,19 @@ class LuaDoc:
                     continue
                 base_classes = []
                 for base_class, _ in re.findall(r'public\s*([A-Za-z0-9]+)(<[A-Za-z0-9]+>|)', m.group(3)):
-                    base_classes.append(base_class)
+                    if not base_class.startswith('std'):
+                        base_classes.append(base_class)
                 lua_filename_hpp = os.path.join(project_root, 'server', 'src', 'lua', 'object', os.path.basename(filename_hpp))
-                if not os.path.exists(lua_filename_hpp):
-                    lua_filename_hpp = None
+                lua_filename_cpp = os.path.splitext(lua_filename_hpp)[0] + '.cpp'
                 cpp_classes[m.group(1)] = {
                     'filename_hpp': filename_hpp,
-                    'lua_filename_hpp': lua_filename_hpp,
+                    'lua_filename_hpp': lua_filename_hpp if os.path.exists(lua_filename_hpp) else None,
+                    'lua_filename_cpp': lua_filename_cpp if os.path.exists(lua_filename_cpp) else None,
                     'base_classes': base_classes}
 
         # indentify those that can be used in Lua:
         class_cpp = LuaDoc._read_file(os.path.join(project_root, 'server', 'src', 'lua', 'class.cpp'))
-        for cpp_name in re.findall(r'registerValue<([a-zA-Z0-9]+)>\(\s*L\s*,\s*"[A-Z_]+"\s*\);', class_cpp):
+        for cpp_name in re.findall(r'registerValue<([a-zA-Z0-9]+)>\(\s*L\s*,\s*"[A-Z0-9_]+"\s*\);', class_cpp):
             if cpp_name not in cpp_classes:
                 raise RuntimeError('class {:s} not found'.format(cpp_name))
 
@@ -317,7 +321,7 @@ class LuaDoc:
         filename_cpp = os.path.splitext(filename_hpp)[0] + '.cpp'
         hpp = LuaDoc._read_file(filename_hpp)
         cpp = LuaDoc._read_file(filename_cpp) if os.path.exists(filename_cpp) else hpp
-        for cpp_type, cpp_template_type, cpp_item_name in re.findall(r'(Property|VectorProperty|ObjectProperty|ObjectVectorProperty|Method|Event)<(.+?)>\s+([A-Za-z0-9_]+);', hpp):
+        for cpp_type, cpp_template_type, cpp_item_name in re.findall(r'(Property|VectorProperty|ObjectProperty|ObjectVectorProperty|Method|Event)<(.*?)>\s+([A-Za-z0-9_]+);', hpp):
             m = re.search(cpp_item_name + r'({|\()\s*[\*]?this\s*,\s*"([a-z0-9_]+)"[^}]*(PropertyFlags::ScriptReadOnly|PropertyFlags::ScriptReadWrite|MethodFlags::ScriptCallable|EventFlags::Scriptable)[^}]*}', cpp)
             if m is None:
                 continue
@@ -339,7 +343,7 @@ class LuaDoc:
                 item['return_values'] = 0 if cpp_template_type.startswith('void') else 1
             elif cpp_type == 'Event':
                 item['type'] = 'event'
-                item['parameters'] = [{}] * (1 if cpp_template_type == '' else len(cpp_template_type.split(',')) + 1)
+                item['parameters'] = [{}] * (0 if cpp_template_type == '' else len(cpp_template_type.split(',')))
 
             items.append(item)
 
@@ -354,6 +358,16 @@ class LuaDoc:
                         }
                 items.append(item)
 
+        if cpp_class['lua_filename_cpp'] is not None:
+            cpp = LuaDoc._read_file(cpp_class['lua_filename_cpp'])
+            for property_name in re.findall(r'LUA_OBJECT_PROPERTY\(([a-z][a-z0-9_]*)\)', cpp):
+                item = {
+                        'lua_name': property_name,
+                        'term_prefix': term_prefix,
+                        'type': 'property'
+                        }
+                items.append(item)
+
         item = LuaDoc._load_data(items, os.path.join(os.path.join(os.path.dirname(__file__), 'luadoc', 'object', cpp_name.lower() + '.json')))
 
         # get special items that aren't detected:
@@ -363,6 +377,22 @@ class LuaDoc:
             items += LuaDoc._find_object_items(cpp_classes, cpp_base_class)
 
         return items
+
+    def _find_examples(project_root: str) -> dict:
+        examples = {}
+        for root, dirs, files in os.walk(os.path.join(project_root, 'manual', 'luadoc', 'example')):
+            for file in files:
+                if not file.endswith('.lua'):
+                    continue
+
+                id = os.path.splitext(file)[0]
+                examples[id] = {
+                    'id': id,
+                    'name': 'example.' + id + ':title',
+                    'filename': 'example.' + id + '.html',
+                    'code': LuaDoc._read_file(os.path.join(root,file))}
+
+        return examples
 
     def _get_special_object_items(cpp_name: str, term_prefix: str) -> list:
         items = []
@@ -396,6 +426,7 @@ class LuaDoc:
         for _, lib in self._libs.items():
             self._build_lib(output_dir, nav, lib)
         self._build_objects(output_dir, nav)
+        self._build_examples(output_dir, nav)
         self._build_index_az(output_dir, nav)
 
     def _build_items_html(self, items: list, term_prefix: str, lua_prefix: str = '') -> str:
@@ -408,7 +439,12 @@ class LuaDoc:
             html += '<dl>' + os.linesep
             for item in constants:
                 item_term_prefix = item['term_prefix'] if 'term_prefix' in item else term_prefix
-                html += '  <dt id="' + item['lua_name'] + '"><code>' + lua_prefix + item['lua_name'] + '</code></dt>' + os.linesep
+                html += '  <dt id="' + item['lua_name'] + '"><code>' + lua_prefix + item['lua_name'] + '</code>'
+                if 'since' in item:
+                    html += ' <span class="badge badge-since">&ge; ' + item['since'] + '</span>'
+                if 'is_lua_builtin' in item and item['is_lua_builtin']:
+                    html += ' <span class="badge badge-lua">Lua</span>'
+                html += '</dt>' + os.linesep
                 html += '  <dd>' + self._get_term(item_term_prefix + item['lua_name'].lower() + ':description') + '</dd>' + os.linesep
             html += '</dl>' + os.linesep
 
@@ -417,7 +453,12 @@ class LuaDoc:
             html += '<h2 id="libraries">' + self._get_term('libraries') + '</h2>' + os.linesep
             html += '<dl>' + os.linesep
             for item in libraries:
-                html += '  <dt id="' + item['lua_name'] + '"><code>' + lua_prefix + item['lua_name'] + '</code></dt>' + os.linesep
+                html += '  <dt id="' + item['lua_name'] + '"><code>' + lua_prefix + item['lua_name'] + '</code>'
+                if 'since' in item:
+                    html += ' <span class="badge badge-since">&ge; ' + item['since'] + '</span>'
+                if 'is_lua_builtin' in item and item['is_lua_builtin']:
+                    html += ' <span class="badge badge-lua">Lua</span>'
+                html += '</dt>' + os.linesep
                 if item['lua_name'] == 'enum':
                     href = LuaDoc.FILENAME_ENUM
                 elif item['lua_name'] == 'set':
@@ -433,7 +474,10 @@ class LuaDoc:
             html += '<dl>' + os.linesep
             for item in objects:
                 item_term_prefix = item['term_prefix'] if 'term_prefix' in item else term_prefix
-                html += '  <dt id="' + item['lua_name'] + '"><code>' + lua_prefix + item['lua_name'] + '</code></dt>' + os.linesep
+                html += '  <dt id="' + item['lua_name'] + '"><code>' + lua_prefix + item['lua_name'] + '</code>'
+                if 'since' in item:
+                    html += ' <span class="badge badge-since">&ge; ' + item['since'] + '</span>'
+                html += '</dt>' + os.linesep
                 html += '  <dd>' + self._get_term(item_term_prefix + item['lua_name'].lower() + ':description') + '</dd>' + os.linesep
             html += '</dl>' + os.linesep
 
@@ -443,7 +487,10 @@ class LuaDoc:
             html += '<dl>' + os.linesep
             for item in properties:
                 item_term_prefix = item['term_prefix'] if 'term_prefix' in item else term_prefix
-                html += '  <dt id="' + item['lua_name'] + '"><code>' + lua_prefix + item['lua_name'] + '</code></dt>' + os.linesep
+                html += '  <dt id="' + item['lua_name'] + '"><code>' + lua_prefix + item['lua_name'] + '</code>'
+                if 'since' in item:
+                    html += ' <span class="badge badge-since">&ge; ' + item['since'] + '</span>'
+                html += '</dt>' + os.linesep
                 html += '  <dd>' + self._get_term(item_term_prefix + item['lua_name'].lower() + ':description') + '</dd>' + os.linesep
             html += '</dl>' + os.linesep
 
@@ -459,6 +506,10 @@ class LuaDoc:
                         html += '[]'
                     else:
                         html += item['lua_name']
+                    if 'since' in item:
+                        html += ' <span class="badge badge-since">&ge; ' + item['since'] + '</span>'
+                    if 'is_lua_builtin' in item and item['is_lua_builtin']:
+                        html += ' <span class="badge badge-lua">Lua</span>'
                     html += '</code></h3>' + os.linesep
 
                     html += '<code>' + lua_prefix
@@ -469,13 +520,16 @@ class LuaDoc:
 
                     optional = 0
                     for p in item['parameters']:
+                        is_optional = 'optional' in p and p['optional']
                         is_first = p == item['parameters'][0]
-                        if 'optional' in p and p['optional']:
+                        if is_optional:
                             html += '[' if is_first else ' ['
                             optional += 1
                         if not is_first:
                             html += ', '
                         html += p['name']
+                        if is_optional and 'default' in p:
+                            html += ' = ' + str(p['default'])
                     html += ']' * optional
                     if item['lua_name'] == '__get':
                         html += ']'
@@ -500,7 +554,7 @@ class LuaDoc:
                     if 'examples' in item and len(item['examples']) != 0:
                         html += '<h4>' + self._get_term('example' if len(item['examples']) == 1 else 'examples') + '</h4>' + os.linesep
                         for example in item['examples']:
-                            html += '<pre lang="lua">' + example['code'] + '</pre>' + os.linesep
+                            html += '<pre lang="lua"><code>' + highlight_lua(example['code']) + '</code></pre>' + os.linesep
 
         events = [item for item in items if item['type'] == 'event']
         if len(events) > 0:
@@ -508,7 +562,10 @@ class LuaDoc:
             for item in events:
                 item_term_prefix = item['term_prefix'] if 'term_prefix' in item else term_prefix
 
-                html += '<h3 id="' + item['lua_name'] + '"><code>' + item['lua_name'] + '</code></h3>' + os.linesep
+                html += '<h3 id="' + item['lua_name'] + '"><code>' + item['lua_name'] + '</code>'
+                if 'since' in item:
+                    html += ' <span class="badge badge-since">&ge; ' + item['since'] + '</span>'
+                html += '</h3>' + os.linesep
                 html += '<p>' + self._get_term(term_prefix + item['lua_name'].lower() + ':description') + '</p>' + os.linesep
 
                 html += 'Handler: <code>function ('
@@ -544,6 +601,7 @@ class LuaDoc:
                 lib = self._libs[k]
                 html += '  <li><a href="' + lib['filename'] + '">' + self._get_term(lib['name']) + '</a></li>' + os.linesep
         html += '  <li><a href="' + LuaDoc.FILENAME_OBJECT + '">' + self._get_term('object:title') + '</a></li>' + os.linesep
+        html += '  <li><a href="' + LuaDoc.FILENAME_EXAMPLE + '">' + self._get_term('example:title') + '</a></li>' + os.linesep
         html += '  <li><a href="' + LuaDoc.FILENAME_INDEX_AZ + '">' + self._get_term('index-az:title') + '</a></li>' + os.linesep
         html += '</ul>' + os.linesep
         html += '</div>' + os.linesep
@@ -602,13 +660,39 @@ class LuaDoc:
         nav_objects = nav + [{'title': title, 'href': LuaDoc.FILENAME_OBJECT}]
         html = self._get_header(title, nav_objects)
         html += '<p>' + self._get_term('object:description') + '</p>' + os.linesep
-        html += '<ul>' + os.linesep
+
         items = []
         for object in self._objects:
-            items.append({'href': object['filename'], 'title': self._get_term(object['name'])})
-        for item in sorted(items, key=operator.itemgetter('title')):
-            html += '  <li><a href="' + item['href'] + '">' + item['title'] + '</a></li>' + os.linesep
-        html += '</ul>' + os.linesep
+            items.append({'id': object['cpp_name'].lower(), 'href': object['filename'], 'title': self._get_term(object['name'])})
+
+        categories = json.loads(LuaDoc._read_file(os.path.join(os.path.dirname(__file__), 'luadoc', 'object.categories.json')))
+
+        for key, category in categories.items():
+            category['id'] = key
+            category['title'] = self._get_term('object.category.' + key + ':title')
+            category['items'] = []
+            for object in category['objects']:
+                print(object)
+                for item in items:
+                    if item['id'] == object:
+                        category['items'].append(item)
+                        items = [v for v in items if v['id'] != object]
+                        break
+
+        for category in sorted(categories.values(), key=operator.itemgetter('title')):
+            html += '<h2 id="' + key + '">' + category['title'] + '</h2>'
+            html += '<ul>' + os.linesep
+            for item in sorted(category['items'], key=operator.itemgetter('title')):
+                html += '  <li><a href="' + item['href'] + '">' + item['title'] + '</a></li>' + os.linesep
+            html += '</ul>' + os.linesep
+
+        if len(items) > 0:
+            html += '<h2>' + self._get_term('object.category.other:title') + '</h2>'
+            html += '<ul>' + os.linesep
+            for item in sorted(items, key=operator.itemgetter('title')):
+                html += '  <li><a href="' + item['href'] + '">' + item['title'] + '</a></li>' + os.linesep
+            html += '</ul>' + os.linesep
+
         html += self._get_footer()
         LuaDoc._write_file(os.path.join(output_dir, LuaDoc.FILENAME_OBJECT), html)
 
@@ -621,6 +705,31 @@ class LuaDoc:
         html += '<p>' + self._get_term(object['term_prefix'].rstrip('.') + ':description') + '</p>' + os.linesep
         html += self._build_items_html(object['items'], object['term_prefix'])
         LuaDoc._write_file(os.path.join(output_dir, object['filename']), self._add_toc(html))
+
+    def _build_examples(self, output_dir: str, nav: list) -> None:
+        title = self._get_term('example:title')
+        nav_examples = nav + [{'title': title, 'href': LuaDoc.FILENAME_EXAMPLE}]
+        html = self._get_header(title, nav_examples)
+        html += '<p>' + self._get_term('example:description') + '</p>' + os.linesep
+        html += '<ul>' + os.linesep
+        items = []
+        for example in self._examples.values():
+            items.append({'href': example['filename'], 'title': self._get_term(example['name'])})
+        for item in sorted(items, key=operator.itemgetter('title')):
+            html += '  <li><a href="' + item['href'] + '">' + item['title'] + '</a></li>' + os.linesep
+        html += '</ul>' + os.linesep
+        html += self._get_footer()
+        LuaDoc._write_file(os.path.join(output_dir, LuaDoc.FILENAME_EXAMPLE), html)
+
+        for example in self._examples.values():
+            self._build_example(output_dir, nav_examples, example)
+
+    def _build_example(self, output_dir: str, nav: list, example: dict) -> None:
+        title = self._get_term(example['name'])
+        html = self._get_header(title, nav + [{'title': title, 'href': example['filename']}])
+        html += '<p>' + self._get_term('example.' + example['id'] + ':description') + '</p>' + os.linesep
+        html += '<pre lang="lua"><code>' + highlight_lua(example['code']) + '</code></pre>'
+        LuaDoc._write_file(os.path.join(output_dir, example['filename']), html)
 
     def _build_index_az(self, output_dir: str, nav: list) -> None:
         alphabet = list(string.ascii_uppercase)
@@ -656,22 +765,30 @@ class LuaDoc:
         for object in self._objects:
             name = self._get_term(object['name'])
             letter = name[0].upper()
-            index[letter].append({'title': name, 'sub_title': '<code>object</code>', 'href': object['filename']})
+            if letter in index:
+                index[letter].append({'title': name, 'sub_title': '<code>object</code>', 'href': object['filename']})
 
         title = self._get_term('index-az:title')
         html = self._get_header(title, nav + [{'title': title, 'href': set['filename']}])
         html += '<p>' + self._get_term('index-az:description') + '</p>' + os.linesep
         html += '<ul class="index-az-nav">' + os.linesep
         for letter in alphabet:
-            html += '  <li><a href="#' + letter + '">' + letter + '</a></li>' + os.linesep
+            if len(index[letter]) != 0:
+                html += '  <li><a href="#' + letter + '">' + letter + '</a></li>' + os.linesep
+            else:
+                html += '  <li class="dim">' + letter + '</li>' + os.linesep
+
         html += '</ul>' + os.linesep
         html += '<div class="index-az">' + os.linesep
         for letter in alphabet:
-            html += '<h4 id="' + letter + '">' + letter + '</h4>' + os.linesep
+            html += '<h4 id="' + letter + '"'
+            if len(index[letter]) == 0:
+                html += ' class="dim"'
+            html += '>' + letter + '</h4>' + os.linesep
             if len(index[letter]) != 0:
                 html += '<ul>' + os.linesep
                 for item in sorted(index[letter], key=operator.itemgetter('title', 'sub_title')):
-                    html += '  <li><a href="' + item['href'] + '">' + item['title'] + '</a> <small style="color:#444;">' + item['sub_title'] + '</small></li>' + os.linesep
+                    html += '  <li><a href="' + item['href'] + '">' + item['title'] + '</a> <small class="dim">' + item['sub_title'] + '</small></li>' + os.linesep
                 html += '</ul>' + os.linesep
         html += '</div>' + os.linesep
         LuaDoc._write_file(os.path.join(output_dir, LuaDoc.FILENAME_INDEX_AZ), html)
@@ -683,6 +800,8 @@ class LuaDoc:
         for tag, id, title in re.findall(r'<(h2|h3|dt) id="(.+?)">(.+?)</\1>', html):
             title = re.sub(r'<a[^>]*>(.*?)</a>', r'\1', title)  # remove links
             title = re.sub(r'^(<code>)[a-z0-9_\.]+\.', r'\1', title)  # remove Lua lib stuff
+            title = re.sub(r'<span class="badge.+?</span>', '', title)  # remove badges
+            title = title.strip()  # remove leading/tailing spaces
             depth = 2 if tag == 'h2' else 3
             if depth > current_depth:
                 toc += '<ul>'

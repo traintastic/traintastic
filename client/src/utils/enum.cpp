@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "enum.hpp"
 #include "../network/abstractproperty.hpp"
 #include <traintastic/locale/locale.hpp>
+#include <traintastic/enum/autoyesno.hpp>
 #include <traintastic/enum/color.hpp>
 #include <traintastic/enum/decoderfunctionfunction.hpp>
 #include <traintastic/enum/decoderfunctiontype.hpp>
@@ -38,13 +39,15 @@
 #include <traintastic/enum/loconetserialinterface.hpp>
 #include <traintastic/enum/marklincaninterfacetype.hpp>
 #include <traintastic/enum/opcmultisensedirection.hpp>
-#include <traintastic/enum/outputaction.hpp>
+#include <traintastic/enum/outputchannel.hpp>
+#include <traintastic/enum/pairoutputaction.hpp>
 #include <traintastic/enum/pcapoutput.hpp>
 #include <traintastic/enum/powerunit.hpp>
 #include <traintastic/enum/ratiounit.hpp>
 #include <traintastic/enum/sensortype.hpp>
 #include <traintastic/enum/serialflowcontrol.hpp>
 #include <traintastic/enum/signalaspect.hpp>
+#include <traintastic/enum/singleoutputaction.hpp>
 #include <traintastic/enum/speedunit.hpp>
 #include <traintastic/enum/trainmode.hpp>
 #include <traintastic/enum/traintasticdiyinterfacetype.hpp>
@@ -79,12 +82,16 @@ QVector<qint64> enumValues(const QString& enumName)
 }
 
 #define TRANSLATE_ENUM(_type) \
-  if(enumName == EnumName<_type>::value) \
-  { return Locale::tr(enumName + ":" + EnumValues<_type>::value.at(static_cast<_type>(value))); } \
+  if(enumName == EnumName<_type>::value) { \
+    if(auto it = EnumValues<_type>::value.find(static_cast<_type>(value)); it != EnumValues<_type>::value.end()) /*[[likely]]*/ { \
+      return Locale::tr(enumName + ":" + EnumValues<_type>::value.at(static_cast<_type>(value))); } \
+    return QString("value#%1").arg(value); \
+  } \
   else
 
 QString translateEnum(const QString& enumName, qint64 value)
 {
+  TRANSLATE_ENUM(AutoYesNo)
   TRANSLATE_ENUM(Color)
   TRANSLATE_ENUM(DecoderFunctionFunction)
   TRANSLATE_ENUM(DecoderFunctionType)
@@ -100,12 +107,14 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(LocoNetSerialInterface)
   TRANSLATE_ENUM(MarklinCANInterfaceType)
   TRANSLATE_ENUM(OPCMultiSenseDirection)
-  TRANSLATE_ENUM(OutputAction)
+  TRANSLATE_ENUM(OutputChannel)
+  TRANSLATE_ENUM(PairOutputAction)
   TRANSLATE_ENUM(PCAPOutput)
   TRANSLATE_ENUM(PowerUnit)
   TRANSLATE_ENUM(RatioUnit)
   TRANSLATE_ENUM(SensorType)
   TRANSLATE_ENUM(SerialFlowControl)
+  TRANSLATE_ENUM(SingleOutputAction)
   TRANSLATE_ENUM(SignalAspect)
   TRANSLATE_ENUM(SpeedUnit)
   TRANSLATE_ENUM(TrainMode)

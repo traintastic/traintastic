@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,49 +24,28 @@
 #define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_OUTPUTMAPBASE_HPP
 
 #include "outputmap.hpp"
-#include <unordered_map>
 #include <initializer_list>
 #include "outputmapoutputaction.hpp"
 
 template<class Key, class Value>
 class OutputMapBase : public OutputMap
 {
-  public:
-    using ItemMap = std::unordered_map<Key, std::shared_ptr<Value>>;
-
   protected:
     const std::vector<Key> m_keys;
-    ItemMap m_items;
 
     void load(WorldLoader& loader, const nlohmann::json& data) override
     {
       OutputMap::load(loader, data);
-      nlohmann::json items = data.value("items", nlohmann::json::array());
-      for(auto& [_, item] : items.items())
+
+      nlohmann::json itemsData = data.value("items", nlohmann::json::array());
+      for(auto& [_, item] : itemsData.items())
       {
         static_cast<void>(_); // silence unused warning
-        Key k = to<Key>(item["key"]);
-        m_items[k]->load(loader, item);
+        if(auto object = operator[](to<Key>(item["key"]))) /*[[likely]]*/
+        {
+          object->load(loader, item);
+        }
       }
-    }
-
-    void worldEvent(WorldState state, WorldEvent event) override
-    {
-      OutputMap::worldEvent(state, event);
-      for(const auto& it : m_items)
-        it.second->worldEvent(state, event);
-    }
-
-    void outputAdded(const std::shared_ptr<Output>& output) final
-    {
-      for(const auto& it : m_items)
-        it.second->addOutput(output);
-    }
-
-    void outputRemoved(const std::shared_ptr<Output>& output) final
-    {
-      for(const auto& it : m_items)
-        it.second->removeOutput(output);
     }
 
   public:
@@ -75,21 +54,22 @@ class OutputMapBase : public OutputMap
       m_keys{keys}
     {
       for(auto k : keys)
-        m_items.emplace(k, std::make_shared<Value>(*this, k));
+      {
+        items.appendInternal(std::make_shared<Value>(*this, k));
+      }
     }
 
     const std::shared_ptr<Value> operator [](Key key) const
     {
-      return m_items.at(key);
-    }
-
-    Items items() const final
-    {
-      Items items;
-      items.reserve(m_keys.size());
-      for(auto k : m_keys)
-        items.emplace_back(m_items.at(k));
-      return items;
+      for(auto item : items)
+      {
+        if(static_cast<Value&>(*item).key == key)
+        {
+          return std::static_pointer_cast<Value>(item);
+        }
+      }
+      assert(false);
+      return {};
     }
 };
 

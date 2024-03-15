@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@
  */
 
 #include "messages.hpp"
+#include "../xpressnet/messages.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../../core/objectproperty.tpp"
 #include "../../../utils/tohex.hpp"
@@ -70,7 +71,7 @@ std::string toString(const Message& message, bool raw)
   switch(message.header())
   {
     case LAN_LOGOFF:
-      if(message.dataLen() != sizeof(Z21::LanLogoff))
+      if(message.dataLen() != sizeof(LanLogoff))
         raw = true;
       break;
 
@@ -90,15 +91,22 @@ std::string toString(const Message& message, bool raw)
             raw = true;
           break;
 
-        case 0x53:
+        case LAN_X_SET_TURNOUT:
         {
           const auto& setTurnout = static_cast<const LanXSetTurnout&>(message);
           s = "LAN_X_SET_TURNOUT";
-          s.append(" linear_address=").append(std::to_string(setTurnout.linearAddress()));
           s.append(" address=").append(std::to_string(setTurnout.address()));
-          s.append(" port=").append(std::to_string(setTurnout.port()));
+          s.append(" port=").append(setTurnout.port() ? "1" : "2");
           s.append(" activate=").append(setTurnout.activate() ? "yes" : "no");
           s.append(" queue=").append(setTurnout.queue() ? "yes" : "no");
+          break;
+        }
+        case LAN_X_SET_EXT_ACCESSORY:
+        {
+          const auto& setExtAccessory = static_cast<const LanXSetExtAccessory&>(message);
+          s = "LAN_X_SET_EXT_ACCESSORY";
+          s.append(" address=").append(std::to_string(setExtAccessory.address()));
+          s.append(" db2=").append(std::to_string(setExtAccessory.db2));
           break;
         }
         case LAN_X_BC:
@@ -108,11 +116,13 @@ std::string toString(const Message& message, bool raw)
             s = "LAN_X_BC_TRACK_POWER_ON";
           else if(message == LanXBCTrackShortCircuit())
             s = "LAN_X_BC_TRACK_SHORT_CIRCUIT";
+          else if(message == LanXUnknownCommand())
+            s = "LAN_X_UNKNOWN_COMMAND";
           else
             raw = true;
           break;
 
-        case 0x62:
+        case LAN_X_STATUS_CHANGED:
           if(const LanXStatusChanged& statusChanged = static_cast<const LanXStatusChanged&>(message); statusChanged.db0 == 0x22)
           {
             s = "LAN_X_STATUS_CHANGED";
@@ -139,7 +149,7 @@ std::string toString(const Message& message, bool raw)
             raw = true;
           break;
 
-        case 0xE3:
+        case LAN_X_GET_LOCO_INFO:
           if(const auto& getLocoInfo = static_cast<const LanXGetLocoInfo&>(message); getLocoInfo.db0 == 0xF0)
           {
             s = "LAN_X_GET_LOCO_INFO";
@@ -151,7 +161,7 @@ std::string toString(const Message& message, bool raw)
             raw = true;
           break;
 
-        case 0xE4:
+        case LAN_X_SET_LOCO:
           if(const auto& setLocoDrive = static_cast<const LanXSetLocoDrive&>(message);
               setLocoDrive.db0 >= 0x10 && setLocoDrive.db0 <= 0x13)
           {
@@ -180,7 +190,7 @@ std::string toString(const Message& message, bool raw)
             raw = true;
           break;
 
-        case 0xEF:
+        case LAN_X_LOCO_INFO:
         {
           const auto& locoInfo = static_cast<const LanXLocoInfo&>(message);
           s = "LAN_X_LOCO_INFO";
@@ -193,19 +203,21 @@ std::string toString(const Message& message, bool raw)
             s.append("estop");
           else
             s.append(std::to_string(locoInfo.speedStep())).append("/").append(std::to_string(locoInfo.speedSteps()));
-          for(uint8_t i = 0; i <= LanXLocoInfo::functionIndexMax; i++)
+          const uint8_t functionIndexMax = locoInfo.functionIndexMax();
+          for(uint8_t i = 0; i <= functionIndexMax; i++)
             s.append(" f").append(std::to_string(i)).append("=").append(locoInfo.getFunction(i) ? "1" : "0");
           s.append(" busy=").append(locoInfo.isBusy() ? "1" : "0");
           break;
         }
-        case 0xF1:
+
+        case LAN_X_GET_FIRMWARE_VERSION:
           if(message == LanXGetFirmwareVersion())
             s = "LAN_X_GET_FIRMWARE_VERSION";
           else
             raw = true;
           break;
 
-        case 0xF3:
+        case LAN_X_GET_FIRMWARE_VERSION_REPLY:
           if(message.dataLen() == sizeof(LanXGetFirmwareVersionReply))
           {
             const auto& getFirmwareVersion = static_cast<const LanXGetFirmwareVersionReply&>(message);
@@ -236,7 +248,7 @@ std::string toString(const Message& message, bool raw)
       break;
 
     case LAN_SET_BROADCASTFLAGS:
-      if(message.dataLen() == sizeof(Z21::LanSetBroadcastFlags))
+      if(message.dataLen() == sizeof(LanSetBroadcastFlags))
       {
         s = "LAN_SET_BROADCASTFLAGS";
         s.append(" flags=0x").append(toHex(static_cast<std::underlying_type_t<BroadcastFlags>>(static_cast<const LanSetBroadcastFlags&>(message).broadcastFlags())));
@@ -291,7 +303,25 @@ LanXLocoInfo::LanXLocoInfo(const Decoder& decoder) :
     setSpeedStep(Decoder::throttleToSpeedStep(decoder.throttle, speedSteps()));
   for(const auto &function : *decoder.functions)
     setFunction(function->number, function->value);
-  calcChecksum();
+  updateChecksum();
+}
+
+void LanX::updateChecksum(uint8_t len)
+{
+  *(reinterpret_cast<uint8_t*>(this) + sizeof(LanX) + len) = XpressNet::calcChecksum(*reinterpret_cast<const XpressNet::Message*>(&xheader), len);
+}
+
+bool LanX::isChecksumValid(const LanX &lanX)
+{
+  const XpressNet::Message& msg = *reinterpret_cast<const XpressNet::Message*>(&lanX.xheader);
+  int dataSize = msg.dataSize();
+  if(lanX.xheader == LAN_X_LOCO_INFO)
+  {
+    //Special case for variable length message
+    dataSize = lanX.dataLen() - 6;
+  }
+
+  return XpressNet::isChecksumValid(msg, dataSize);
 }
 
 }

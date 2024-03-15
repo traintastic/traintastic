@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,6 +32,7 @@
 #include "../../../core/eventloop.hpp"
 #include "../../../core/objectproperty.tpp"
 #include "../../../log/log.hpp"
+#include "../../../log/logmessageexception.hpp"
 #include "../../../world/world.hpp"
 
 namespace TraintasticDIY {
@@ -70,17 +71,15 @@ constexpr TriState toTriState(OutputState value)
   return TriState::Undefined;
 }
 
-Kernel::Kernel(World& world, const Config& config, bool simulation)
-  : m_world{world}
-  , m_ioContext{1}
+Kernel::Kernel(std::string logId_, World& world, const Config& config, bool simulation)
+  : KernelBase(std::move(logId_))
+  , m_world{world}
   , m_simulation{simulation}
+  , m_startupDelayTimer{m_ioContext}
   , m_heartbeatTimeout{m_ioContext}
   , m_inputController{nullptr}
   , m_outputController{nullptr}
   , m_config{config}
-#ifndef NDEBUG
-  , m_started{false}
-#endif
 {
 }
 
@@ -119,19 +118,23 @@ void Kernel::start()
   m_ioContext.post(
     [this]()
     {
-      m_ioHandler->start();
-
-      send(GetInfo());
-      send(GetFeatures());
-
-      restartHeartbeatTimeout();
-
-      if(m_onStarted)
+      try
+      {
+        m_ioHandler->start();
+      }
+      catch(const LogMessageException& e)
+      {
         EventLoop::call(
-          [this]()
+          [this, e]()
           {
-            m_onStarted();
+            Log::log(logId, e.message(), e.args());
+            error();
           });
+        return;
+      }
+
+      m_startupDelayTimer.expires_after(boost::asio::chrono::milliseconds(m_config.startupDelay));
+      m_startupDelayTimer.async_wait(std::bind(&Kernel::startupDelayExpired, this, std::placeholders::_1));
     });
 
 #ifndef NDEBUG
@@ -171,7 +174,7 @@ void Kernel::receive(const Message& message)
     EventLoop::call(
       [this, msg=toString(message)]()
       {
-        Log::log(m_logId, LogMessage::D2002_RX_X, msg);
+        Log::log(logId, LogMessage::D2002_RX_X, msg);
       });
 
   restartHeartbeatTimeout();
@@ -201,7 +204,7 @@ void Kernel::receive(const Message& message)
               if(state == InputState::Invalid)
               {
                 if(m_inputController->inputMap().count({InputController::defaultInputChannel, address}) != 0)
-                  Log::log(m_logId, LogMessage::W2004_INPUT_ADDRESS_X_IS_INVALID, address);
+                  Log::log(logId, LogMessage::W2004_INPUT_ADDRESS_X_IS_INVALID, address);
               }
               else
                 m_inputController->updateInputValue(InputController::defaultInputChannel, address, toTriState(state));
@@ -229,11 +232,11 @@ void Kernel::receive(const Message& message)
             {
               if(state == OutputState::Invalid)
               {
-                if(m_outputController->outputMap().count({OutputController::defaultOutputChannel, address}) != 0)
-                  Log::log(m_logId, LogMessage::W2005_OUTPUT_ADDRESS_X_IS_INVALID, address);
+                if(m_outputController->outputMap().count({OutputChannel::Output, address}) != 0)
+                  Log::log(logId, LogMessage::W2005_OUTPUT_ADDRESS_X_IS_INVALID, address);
               }
               else
-                m_outputController->updateOutputValue(OutputController::defaultOutputChannel, address, toTriState(state));
+                m_outputController->updateOutputValue(OutputChannel::Output, address, toTriState(state));
             });
         }
       }
@@ -370,7 +373,7 @@ void Kernel::receive(const Message& message)
           [this]()
           {
             for(const auto& it : m_outputController->outputMap())
-              postSend(GetOutputState(static_cast<uint16_t>(it.first.address)));
+              postSend(GetOutputState(static_cast<uint16_t>(it.first.id)));
           });
       break;
     }
@@ -380,7 +383,7 @@ void Kernel::receive(const Message& message)
       EventLoop::call(
         [this, text=std::string(info.text())]()
         {
-          Log::log(m_logId, LogMessage::I2005_X, text);
+          Log::log(logId, LogMessage::I2005_X, text);
         });
       break;
     }
@@ -448,11 +451,24 @@ void Kernel::send(const Message& message)
       EventLoop::call(
         [this, msg=toString(message)]()
         {
-          Log::log(m_logId, LogMessage::D2001_TX_X, msg);
+          Log::log(logId, LogMessage::D2001_TX_X, msg);
         });
   }
   else
   {} // log message and go to error state
+}
+
+void Kernel::startupDelayExpired(const boost::system::error_code& ec)
+{
+  if(ec)
+    return;
+
+  send(GetInfo());
+  send(GetFeatures());
+
+  restartHeartbeatTimeout();
+
+  started();
 }
 
 void Kernel::restartHeartbeatTimeout()

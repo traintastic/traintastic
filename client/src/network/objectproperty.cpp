@@ -23,6 +23,7 @@
 #include "objectproperty.hpp"
 #include "object.hpp"
 #include "connection.hpp"
+#include "error.hpp"
 
 ObjectProperty::ObjectProperty(Object& object, const QString& name, PropertyFlags flags, const QString& id) :
   AbstractProperty(object, name, ValueType::Object, flags),
@@ -30,7 +31,7 @@ ObjectProperty::ObjectProperty(Object& object, const QString& name, PropertyFlag
 {
 }
 
-int ObjectProperty::getObject(std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+int ObjectProperty::getObject(std::function<void(const ObjectPtr&, std::optional<const Error>)> callback)
 {
   return object().connection()->getObject(*this, std::move(callback));
 }

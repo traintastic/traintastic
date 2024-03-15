@@ -13,7 +13,9 @@
         "name": "dcc_packet"
       },
       {
-        "name": "repeat"
+        "name": "repeat",
+        "optional": true,
+        "default": 2
       }
     ],
     "return_values": 1

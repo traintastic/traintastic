@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,20 +23,23 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_KERNEL_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_KERNEL_HPP
 
+#include "../kernelbase.hpp"
 #include <memory>
 #include <array>
 #include <map>
 #include <unordered_map>
-#include <thread>
 #include <filesystem>
 #include <queue>
-#include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <traintastic/enum/tristate.hpp>
+#include <traintastic/enum/outputchannel.hpp>
 #include "config.hpp"
 #include "node.hpp"
 #include "iohandler/iohandler.hpp"
 #include "configdatastreamcollector.hpp"
+#include "../dcc/dcc.hpp"
+#include "../motorola/motorola.hpp"
+#include "../../output/outputvalue.hpp"
 
 class Decoder;
 enum class DecoderChangeFlags;
@@ -49,7 +52,7 @@ namespace MarklinCAN {
 struct Message;
 class LocomotiveList;
 
-class Kernel
+class Kernel : public ::KernelBase
 {
   public:
     static constexpr std::string_view nodeDeviceName = "Traintastic";
@@ -57,32 +60,6 @@ class Kernel
 
     static constexpr uint16_t s88AddressMin = 1;
     static constexpr uint16_t s88AddressMax = 16384;
-
-    static constexpr uint16_t outputMotorolaAddressMin = 1;
-    static constexpr uint16_t outputMotorolaAddressMax = 1024 * 2;
-    static constexpr uint16_t outputDCCAddressMin = 1;
-    static constexpr uint16_t outputDCCAddressMax = 2048 * 2;
-    static constexpr uint16_t outputSX1AddressMin = 1;
-    static constexpr uint16_t outputSX1AddressMax = 1024 * 2;
-
-    struct OutputChannel
-    {
-      static constexpr uint32_t motorola = 1;
-      static constexpr uint32_t dcc = 2;
-      static constexpr uint32_t sx1 = 3;
-    };
-
-    inline static const std::vector<uint32_t> outputChannels = {
-      OutputChannel::motorola,
-      OutputChannel::dcc,
-      OutputChannel::sx1,
-    };
-
-    inline static const std::vector<std::string_view> outputChannelNames = {
-      "$hardware:motorola$",
-      "$hardware:dcc$",
-      "SX1",
-    };
 
   private:
     //! Startup states, executed in order.
@@ -109,14 +86,9 @@ class Kernel
 
     static constexpr int statusDataConfigRequestRetryCount = 3;
 
-    boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
-    std::thread m_thread;
-    std::string m_logId;
     State m_state = State::Initial;
-    std::function<void()> m_onStarted;
-    std::function<void()> m_onError;
     std::function<void(const Node& node)> m_onNodeChanged;
     std::queue<StatusDataConfigRequest> m_statusDataConfigRequestQueue; //<! UID+index to request config data from
     int m_statusDataConfigRequestRetries = statusDataConfigRequestRetryCount;
@@ -133,9 +105,8 @@ class Kernel
     std::array<TriState, s88AddressMax - s88AddressMin + 1> m_inputValues;
 
     OutputController* m_outputController = nullptr;
-    std::array<TriState, outputMotorolaAddressMax - outputMotorolaAddressMin + 1> m_outputValuesMotorola;
-    std::array<TriState, outputDCCAddressMax - outputDCCAddressMin + 1> m_outputValuesDCC;
-    std::array<TriState, outputSX1AddressMax - outputSX1AddressMin + 1> m_outputValuesSX1;
+    std::array<OutputPairValue, Motorola::Accessory::addressMax - Motorola::Accessory::addressMin + 1> m_outputValuesMotorola;
+    std::array<OutputPairValue, DCC::Accessory::addressMax - DCC::Accessory::addressMin + 1> m_outputValuesDCC;
 
     std::vector<std::byte> m_statusConfigData;
     std::unique_ptr<ConfigDataStreamCollector> m_configDataStreamCollector;
@@ -143,11 +114,8 @@ class Kernel
     const std::filesystem::path m_debugDir;
 
     Config m_config;
-#ifndef NDEBUG
-    bool m_started;
-#endif
 
-    Kernel(const Config& config, bool simulation);
+    Kernel(std::string logId_, const Config& config, bool simulation);
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
 
@@ -180,13 +148,6 @@ class Kernel
 #endif
 
     /**
-     * \brief IO context for kernel and IO handler
-     *
-     * \return The IO context
-     */
-    boost::asio::io_context& ioContext() { return m_ioContext; }
-
-    /**
      * \brief Create kernel and IO handler
      *
      * \param[in] config Configuration
@@ -194,10 +155,10 @@ class Kernel
      * \return The kernel instance
      */
     template<class IOHandlerType, class... Args>
-    static std::unique_ptr<Kernel> create(const Config& config, Args... args)
+    static std::unique_ptr<Kernel> create(std::string logId_, const Config& config, Args... args)
     {
       static_assert(std::is_base_of_v<IOHandler, IOHandlerType>);
-      std::unique_ptr<Kernel> kernel{new Kernel(config, isSimulation<IOHandlerType>())};
+      std::unique_ptr<Kernel> kernel{new Kernel(std::move(logId_), config, isSimulation<IOHandlerType>())};
       kernel->setIOHandler(std::make_unique<IOHandlerType>(*kernel, std::forward<Args>(args)...));
       return kernel;
     }
@@ -216,45 +177,11 @@ class Kernel
     }
 
     /**
-     * \brief Get object id used for log messages
-     * \return The object id
-     */
-    inline const std::string& logId()
-    {
-      return m_logId;
-    }
-
-    /**
-     * \brief Set object id used for log messages
-     *
-     * \param[in] value The object id
-     */
-    void setLogId(std::string value) { m_logId = std::move(value); }
-
-    /**
      * \brief Set configuration
      *
      * \param[in] config The configuration
      */
     void setConfig(const Config& config);
-
-    /**
-     * \brief ...
-     *
-     * \param[in] callback ...
-     * \note This function may not be called when the kernel is running.
-     */
-    void setOnStarted(std::function<void()> callback);
-
-    /**
-     * \brief Register error handler
-     *
-     * Once this handler is called the LocoNet communication it stopped.
-     *
-     * \param[in] callback Handler to call in case of an error.
-     * \note This function may not be called when the kernel is running.
-     */
-    void setOnError(std::function<void()> callback);
 
     /**
      *
@@ -309,11 +236,6 @@ class Kernel
      */
     void receive(const Message& message);
 
-    //! Must be called by the IO handler in case of a fatal error.
-    //! This will put the interface in error state
-    //! \note This function must run in the event loop thread
-    void error();
-
     void systemStop();
     void systemGo();
     void systemHalt();
@@ -326,10 +248,10 @@ class Kernel
      * \brief ...
      * \param[in] channel Channel
      * \param[in] address Output address
-     * \param[in] value Output value: \c true is on, \c false is off.
+     * \param[in] value Output value
      * \return \c true if send successful, \c false otherwise.
      */
-    bool setOutput(uint32_t channel, uint16_t address, bool value);
+    bool setOutput(OutputChannel channel, uint16_t address, OutputPairValue value);
 };
 
 }

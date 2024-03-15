@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,8 @@
 #include "../board/board.hpp"
 #include "../board/boardlist.hpp"
 
+#include "../board/tile/misc/pushbuttontile.hpp"
+#include "../board/tile/rail/nxbuttonrailtile.hpp"
 #include "../board/tile/rail/sensorrailtile.hpp"
 #include "../board/tile/rail/straightrailtile.hpp"
 #include "../board/tile/rail/cross45railtile.hpp"
@@ -77,13 +79,18 @@
 #include "../hardware/input/map/blockinputmap.hpp"
 #include "../hardware/input/map/blockinputmapitem.hpp"
 
-#include "../hardware/output/output.hpp"
+#include "../hardware/output/singleoutput.hpp"
+#include "../hardware/output/pairoutput.hpp"
+#include "../hardware/output/aspectoutput.hpp"
 #include "../hardware/output/list/outputlist.hpp"
 #include "../hardware/output/map/outputmapoutputaction.hpp"
 #include "../hardware/output/map/signaloutputmap.hpp"
 #include "../hardware/output/map/turnoutoutputmap.hpp"
 #include "../hardware/output/map/turnoutoutputmapitem.hpp"
 #include "../hardware/output/map/signaloutputmapitem.hpp"
+
+#include "../hardware/identification/identification.hpp"
+#include "../hardware/identification/list/identificationlist.hpp"
 
 #include "../vehicle/rail/railvehiclelist.hpp"
 #include "../vehicle/rail/locomotive.hpp"
@@ -143,6 +150,8 @@ void Class::registerValues(lua_State* L)
   registerValue<Board>(L, "BOARD");
   registerValue<BoardList>(L, "BOARD_LIST");
 
+  registerValue<PushButtonTile>(L, "PUSH_BUTTON_TILE");
+  registerValue<NXButtonRailTile>(L, "NX_BUTTON_RAIL_TILE");
   registerValue<StraightRailTile>(L, "STRAIGHT_RAIL_TILE");
   registerValue<TunnelRailTile>(L, "TUNNEL_RAIL_TILE");
   registerValue<BufferStopRailTile>(L, "BUFFER_STOP_RAIL_TILE");
@@ -171,16 +180,16 @@ void Class::registerValues(lua_State* L)
   registerValue<Clock>(L, "CLOCK");
 
   // hardware - interface:
-  registerValue<DCCPlusPlusInterface>(L, "DCCPLUSPLUS");
-  registerValue<ECoSInterface>(L, "ECOS");
-  registerValue<HSI88Interface>(L, "HSI88");
-  registerValue<LocoNetInterface>(L, "LOCONET");
-  registerValue<MarklinCANInterface>(L, "MARKLIN_CAN");
-  registerValue<TraintasticDIYInterface>(L, "TRAINTASTIC_DIY");
-  registerValue<XpressNetInterface>(L, "XPRESSNET");
-  registerValue<WiThrottleInterface>(L, "WITHROTTLE");
-  registerValue<WlanMausInterface>(L, "WLANMAUS");
-  registerValue<Z21Interface>(L, "Z21");
+  registerValue<DCCPlusPlusInterface>(L, "DCCPLUSPLUS_INTERFACE");
+  registerValue<ECoSInterface>(L, "ECOS_INTERFACE");
+  registerValue<HSI88Interface>(L, "HSI88_INTERFACE");
+  registerValue<LocoNetInterface>(L, "LOCONET_INTERFACE");
+  registerValue<MarklinCANInterface>(L, "MARKLIN_CAN_INTERFACE");
+  registerValue<TraintasticDIYInterface>(L, "TRAINTASTIC_DIY_INTERFACE");
+  registerValue<XpressNetInterface>(L, "XPRESSNET_INTERFACE");
+  registerValue<WiThrottleInterface>(L, "WITHROTTLE_INTERFACE");
+  registerValue<WlanMausInterface>(L, "WLANMAUS_INTERFACE");
+  registerValue<Z21Interface>(L, "Z21_INTERFACE");
   registerValue<InterfaceStatus>(L, "INTERFACE_STATUS");
 
   registerValue<DecoderFunction>(L, "DECODER_FUNCTION");
@@ -191,8 +200,14 @@ void Class::registerValues(lua_State* L)
   registerValue<Input>(L, "INPUT");
   registerValue<InputList>(L, "INPUT_LIST");
 
-  registerValue<Output>(L, "OUTPUT");
+  registerValue<SingleOutput>(L, "SINGLE_OUTPUT");
+  registerValue<PairOutput>(L, "PAIR_OUTPUT");
+  registerValue<AspectOutput>(L, "ASPECT_OUTPUT");
   registerValue<OutputList>(L, "OUTPUT_LIST");
+
+  // hardware - identification:
+  registerValue<Identification>(L, "IDENTIFICATION");
+  registerValue<IdentificationList>(L, "IDENTIFICATION_LIST");
 
   registerValue<RailVehicleList>(L, "RAIL_VEHICLE_LIST");
   registerValue<Locomotive>(L, "LOCOMOTIVE");

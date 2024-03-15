@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,16 +30,46 @@
 template<typename T>
 class VectorProperty : public AbstractVectorProperty
 {
+  public:
+    using OnChanged = std::function<void(uint32_t, std::conditional_t<valueTypeByRef<T>(), const T&, T>  value)>;
+    using OnSet = std::function<bool(uint32_t, T& value)>;
+
   private:
     std::vector<T> m_values;
+    OnChanged m_onChanged;
+    OnSet m_onSet;
 
   public:
     using const_iterator = typename std::vector<T>::const_iterator;
+
+    VectorProperty(Object& object, std::string_view name, PropertyFlags flags)
+      : AbstractVectorProperty(object, name, value_type<T>::value, flags)
+    {
+    }
 
     VectorProperty(Object& object, std::string_view name, std::initializer_list<T> values, PropertyFlags flags) :
       AbstractVectorProperty(object, name, value_type<T>::value, flags),
       m_values{values}
     {
+    }
+
+    VectorProperty(Object& object, std::string_view name, std::initializer_list<T> values, PropertyFlags flags, OnChanged onChanged)
+      : VectorProperty(object, name, values, flags)
+    {
+       m_onChanged = std::move(onChanged);
+    }
+
+    VectorProperty(Object& object, std::string_view name, std::initializer_list<T> values, PropertyFlags flags, OnChanged onChanged, OnSet onSet)
+      : VectorProperty(object, name, values, flags)
+    {
+       m_onChanged = std::move(onChanged);
+       m_onSet = std::move(onSet);
+    }
+
+    VectorProperty(Object& object, std::string_view name, std::initializer_list<T> values, PropertyFlags flags, std::nullptr_t, OnSet onSet)
+      : VectorProperty(object, name, values, flags)
+    {
+       m_onSet = std::move(onSet);
     }
 
     inline const_iterator begin() const { return m_values.begin(); }
@@ -63,11 +93,81 @@ class VectorProperty : public AbstractVectorProperty
         return;
       else if(!isWriteable())
         throw not_writable_error();
-      else
+
+      if constexpr(std::is_integral_v<T> || std::is_floating_point_v<T>)
+      {
+        if(auto it = m_attributes.find(AttributeName::Min); it != m_attributes.end())
+        {
+          const T min = static_cast<Attribute<T>&>(*it->second).value();
+
+          if(value < min)
+          {
+            if constexpr(std::is_floating_point_v<T>)
+            {
+              if(value > min - std::numeric_limits<T>::epsilon() * 100)
+                value = min;
+              else
+                throw out_of_range_error();
+            }
+            else
+              throw out_of_range_error();
+          }
+        }
+
+        if(auto it = m_attributes.find(AttributeName::Max); it != m_attributes.end())
+        {
+          const T max = static_cast<Attribute<T>&>(*it->second).value();
+
+          if(value > max)
+          {
+            if constexpr(std::is_floating_point_v<T>)
+            {
+              if(value < max + std::numeric_limits<T>::epsilon() * 100)
+                value = max;
+              else
+                throw out_of_range_error();
+            }
+            else
+              throw out_of_range_error();
+          }
+        }
+      }
+
+      if constexpr(std::is_enum_v<T> && !is_set_v<T>)
+      {
+        if(auto it = m_attributes.find(AttributeName::Values); it != m_attributes.end())
+        {
+          if(auto* span = dynamic_cast<SpanAttribute<T>*>(it->second.get()))
+          {
+            const auto values = span->values();
+            if(std::find(values.begin(), values.end(), value) == values.end())
+              throw out_of_range_error();
+          }
+          else if(auto* vectorRef = dynamic_cast<VectorRefAttribute<T>*>(it->second.get()))
+          {
+            const auto* values = vectorRef->values();
+            if(!values || std::find(values->begin(), values->end(), value) == values->end())
+              throw out_of_range_error();
+          }
+          else if(auto* vector = dynamic_cast<VectorAttribute<T>*>(it->second.get()))
+          {
+            const auto& values = vector->values();
+            if(std::find(values.begin(), values.end(), value) == values.end())
+              throw out_of_range_error();
+          }
+        }
+      }
+
+      if(!m_onSet || m_onSet(index, value))
       {
         m_values[index] = value;
+        if(m_onChanged)
+          m_onChanged(index, m_values[index]);
         changed();
+        return;
       }
+
+      throw invalid_value_error();
     }
 
     void setValuesInternal(std::vector<T> values)
@@ -112,6 +212,12 @@ class VectorProperty : public AbstractVectorProperty
       changed();
     }
 
+    void clearInternal()
+    {
+      m_values.clear();
+      changed();
+    }
+
     std::string_view enumName() const final
     {
       if constexpr(std::is_enum_v<T> && !is_set_v<T>)
@@ -128,6 +234,26 @@ class VectorProperty : public AbstractVectorProperty
 
       assert(false);
       return "";
+    }
+
+    inline const T& front() const
+    {
+      return m_values.front();
+    }
+
+    inline T& front()
+    {
+      return m_values.front();
+    }
+
+    inline const T& back() const
+    {
+      return m_values.back();
+    }
+
+    inline T& back()
+    {
+      return m_values.back();
     }
 
     inline size_t size() const final

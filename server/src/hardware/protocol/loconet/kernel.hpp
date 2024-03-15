@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,18 +23,19 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_KERNEL_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_KERNEL_HPP
 
+#include "../kernelbase.hpp"
 #include <array>
 #include <unordered_map>
-#include <thread>
 #include <filesystem>
-#include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/signals2/connection.hpp>
 #include <span>
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/tristate.hpp>
+#include <traintastic/enum/outputchannel.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
+#include "../../output/outputvalue.hpp"
 
 class Clock;
 class Decoder;
@@ -50,10 +51,13 @@ namespace LocoNet {
 
 struct Message;
 
-class Kernel
+class Kernel : public ::KernelBase
 {
   public:
     using OnLNCVReadResponse = std::function<void(bool, uint16_t, uint16_t)>;
+
+    static constexpr uint16_t accessoryOutputAddressMin = 1;
+    static constexpr uint16_t accessoryOutputAddressMax = 2048;
 
   private:
     enum Priority
@@ -137,13 +141,8 @@ class Kernel
     };
     static_assert(sizeof(FastClock) == 4);
 
-    boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
-    std::thread m_thread;
-    std::string m_logId;
-    std::function<void()> m_onStarted;
-    std::function<void()> m_onError;
 
     std::array<SendQueue, 3> m_sendQueue;
     Priority m_sentMessagePriority;
@@ -179,7 +178,7 @@ class Kernel
     std::array<TriState, 4096> m_inputValues;
 
     OutputController* m_outputController;
-    std::array<TriState, 4096> m_outputValues;
+    std::array<OutputPairValue, accessoryOutputAddressMax - accessoryOutputAddressMin + 1> m_outputValues;
 
     IdentificationController* m_identificationController;
 
@@ -187,11 +186,8 @@ class Kernel
     std::unique_ptr<PCAP> m_pcap;
 
     Config m_config;
-#ifndef NDEBUG
-    bool m_started;
-#endif
 
-    Kernel(const Config& config, bool simulation);
+    Kernel(std::string logId_, const Config& config, bool simulation);
 
     LocoSlot* getLocoSlot(uint8_t slot, bool sendSlotDataRequestIfNew = true);
     LocoSlot* getLocoSlotByAddress(uint16_t address);
@@ -264,8 +260,6 @@ class Kernel
   public:
     static constexpr uint16_t inputAddressMin = 1;
     static constexpr uint16_t inputAddressMax = 4096;
-    static constexpr uint16_t outputAddressMin = 1;
-    static constexpr uint16_t outputAddressMax = 4096;
     static constexpr uint16_t identificationAddressMin = 1;
     static constexpr uint16_t identificationAddressMax = 4096;
 
@@ -281,13 +275,6 @@ class Kernel
 #endif
 
     /**
-     * @brief IO context for LocoNet kernel and IO handler
-     *
-     * @return The IO context
-     */
-    boost::asio::io_context& ioContext() { return m_ioContext; }
-
-    /**
      * @brief Create kernel and IO handler
      *
      * @param[in] config LocoNet configuration
@@ -295,10 +282,10 @@ class Kernel
      * @return The kernel instance
      */
     template<class IOHandlerType, class... Args>
-    static std::unique_ptr<Kernel> create(const Config& config, Args... args)
+    static std::unique_ptr<Kernel> create(std::string logId_, const Config& config, Args... args)
     {
       static_assert(std::is_base_of_v<IOHandler, IOHandlerType>);
-      std::unique_ptr<Kernel> kernel{new Kernel(config, isSimulation<IOHandlerType>())};
+      std::unique_ptr<Kernel> kernel{new Kernel(std::move(logId_), config, isSimulation<IOHandlerType>())};
       kernel->setIOHandler(std::make_unique<IOHandlerType>(*kernel, std::forward<Args>(args)...));
       return kernel;
     }
@@ -316,44 +303,12 @@ class Kernel
       return static_cast<T&>(*m_ioHandler);
     }
 
-    /// @brief Get object id used for log messages
-    /// @return The object id
-    inline const std::string& logId()
-    {
-      return m_logId;
-    }
-
-    /**
-     * @brief Set object id used for log messages
-     *
-     * @param[in] value The object id
-     */
-    void setLogId(std::string value) { m_logId = std::move(value); }
-
     /**
      * @brief Set LocoNet configuration
      *
      * @param[in] config The LocoNet configuration
      */
     void setConfig(const Config& config);
-
-    /**
-     * @brief ...
-     *
-     * @param[in] callback ...
-     * @note This function may not be called when the kernel is running.
-     */
-    void setOnStarted(std::function<void()> callback);
-
-    /**
-     * \brief Register error handler
-     *
-     * Once this handler is called the LocoNet communication it stopped.
-     *
-     * \param[in] callback Handler to call in case of an error.
-     * \note This function may not be called when the kernel is running.
-     */
-    void setOnError(std::function<void()> callback);
 
     /**
      * @brief ...
@@ -431,11 +386,6 @@ class Kernel
      */
     void receive(const Message& message);
 
-    //! Must be called by the IO handler in case of a fatal error.
-    //! This will put the interface in error state
-    //! \note This function must run in the event loop thread
-    void error();
-
     /**
      *
      *
@@ -463,7 +413,13 @@ class Kernel
     //! \param[in] dccPacket DCC packet byte, exluding checksum. Length is limited to 5.
     //! \param[in] repeat DCC packet repeat count 0..7
     //! \return \c true if send to command station, \c false otherwise.
-    bool immPacket(std::span<uint8_t> dccPacket, uint8_t repeat);
+    bool immPacket(std::span<const uint8_t> dccPacket, uint8_t repeat);
+
+    template<class T, std::enable_if_t<std::is_trivially_copyable_v<T> && sizeof(T) <= 5, bool> = true>
+    bool immPacket(const T& dccPacket, uint8_t repeat)
+    {
+      return immPacket(std::span<const uint8_t>(reinterpret_cast<const uint8_t*>(&dccPacket), sizeof(T)), repeat);
+    }
 
     /**
      *
@@ -473,11 +429,12 @@ class Kernel
 
     /**
      *
-     * @param[in] address Output address, 1..4096
-     * @param[in] value Output value: \c true is on, \c false is off.
+     * \param[in] channel Output channel
+     * @param[in] address Output address
+     * @param[in] value Output value
      * @return \c true if send successful, \c false otherwise.
      */
-    bool setOutput(uint16_t address, bool value);
+    bool setOutput(OutputChannel channel, uint16_t address, OutputValue value);
 
     /**
      * \brief Simulate input change

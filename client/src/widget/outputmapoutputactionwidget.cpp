@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,24 +27,24 @@
 #include "../network/property.hpp"
 #include "propertycombobox.hpp"
 
-OutputMapOutputActionWidget::OutputMapOutputActionWidget(const ObjectPtr& item, const ObjectPtr& output, QWidget* parent) :
+OutputMapOutputActionWidget::OutputMapOutputActionWidget(const ObjectPtr& item, uint32_t outputIndex, QWidget* parent) :
   QWidget(parent),
   m_getOutputActionRequestId{Connection::invalidRequestId}
 {
   if(auto* m = item->getMethod("get_output_action"))
   {
     m_getOutputActionRequestId = callMethodR<ObjectPtr>(*m,
-      [this](const ObjectPtr& r, Message::ErrorCode ec)
+      [this](const ObjectPtr& r, std::optional<const Error> error)
       {
         m_getOutputActionRequestId = Connection::invalidRequestId;
-        if(Q_LIKELY(r && !ec))
+        if(Q_LIKELY(r && !error))
         {
           m_object = r;
 
           if(auto* p = dynamic_cast<Property*>(m_object->getProperty("action")))
             layout()->addWidget(new PropertyComboBox(*p, this));
         }
-      }, output);
+      }, outputIndex);
   }
 
   QVBoxLayout* l = new QVBoxLayout();

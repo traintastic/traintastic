@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@
 #include "utils.hpp"
 #include "../../../utils/packed.hpp"
 #include "../../../utils/endian.hpp"
+#include "../../../utils/byte.hpp"
 
 class Decoder;
 
@@ -142,18 +143,39 @@ enum LocoMode : uint8_t
   Motorola = 1,
 };
 
-static constexpr uint8_t LAN_X_SET_STOP = 0x80;
 static constexpr uint8_t LAN_X_TURNOUT_INFO = 0x43;
+static constexpr uint8_t LAN_X_SET_TURNOUT = 0x53;
+static constexpr uint8_t LAN_X_SET_EXT_ACCESSORY = 0x54;
+
 static constexpr uint8_t LAN_X_BC = 0x61;
+
+static constexpr uint8_t LAN_X_STATUS_CHANGED = 0x62;
+static constexpr uint8_t LAN_X_GET_VERSION_REPLY = 0x63;
+
+//static constexpr uint8_t LAN_X_CV_NACK_SC = 0x12;
+//static constexpr uint8_t LAN_X_CV_NACK = 0x13;
+//static constexpr uint8_t LAN_X_UNKNOWN_COMMAND = 0x82;
+
+static constexpr uint8_t LAN_X_SET_STOP = 0x80;
+static constexpr uint8_t LAN_X_BC_STOPPED = 0x81;
+
+static constexpr uint8_t LAN_X_GET_LOCO_INFO = 0xE3;
+static constexpr uint8_t LAN_X_SET_LOCO = 0xE4;
+static constexpr uint8_t LAN_X_LOCO_INFO = 0xEF;
+
+static constexpr uint8_t LAN_X_GET_FIRMWARE_VERSION = 0xF1;
+static constexpr uint8_t LAN_X_GET_FIRMWARE_VERSION_REPLY = 0xF3;
+
+// db0 for xHeader 0x21
+static constexpr uint8_t LAN_X_SET_TRACK_POWER_OFF = 0x80;
+static constexpr uint8_t LAN_X_SET_TRACK_POWER_ON = 0x81;
+
+// db0 for xHeader LAN_X_BC
 static constexpr uint8_t LAN_X_BC_TRACK_POWER_OFF = 0x00;
 static constexpr uint8_t LAN_X_BC_TRACK_POWER_ON = 0x01;
 //static constexpr uint8_t LAN_X_BC_PROGRAMMING_MODE = 0x02;
 static constexpr uint8_t LAN_X_BC_TRACK_SHORT_CIRCUIT = 0x08;
-//static constexpr uint8_t LAN_X_CV_NACK_SC = 0x12;
-//static constexpr uint8_t LAN_X_CV_NACK = 0x13;
-//static constexpr uint8_t LAN_X_UNKNOWN_COMMAND = 0x82;
-static constexpr uint8_t LAN_X_BC_STOPPED = 0x81;
-static constexpr uint8_t LAN_X_LOCO_INFO = 0xEF;
+static constexpr uint8_t LAN_X_UNKNOWN_COMMAND = 0x82;
 
 enum HardwareType : uint32_t
 {
@@ -265,18 +287,15 @@ struct LanX : Message
   {
   }
 
-  void calcChecksum(uint8_t len)
+  void updateChecksum(uint8_t len);
+
+  inline void updateChecksum()
   {
-    uint8_t* checksum = &xheader + len + 1;
-    *checksum = xheader;
-    for(uint8_t* db = &xheader + 1; db < checksum; db++)
-      *checksum ^= *db;
+    updateChecksum(xheader & 0x0F);
   }
 
-  inline void calcChecksum()
-  {
-    calcChecksum(xheader & 0x0F);
-  }
+  static bool isChecksumValid(const LanX& lanX);
+
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanX) == 5);
 
@@ -335,7 +354,7 @@ struct LanXGetFirmwareVersion : LanX
   uint8_t checksum = 0xFB;
 
   LanXGetFirmwareVersion() :
-    LanX(sizeof(LanXGetFirmwareVersion), 0xF1)
+    LanX(sizeof(LanXGetFirmwareVersion), LAN_X_GET_FIRMWARE_VERSION)
   {
   }
 } ATTRIBUTE_PACKED;
@@ -357,7 +376,7 @@ static_assert(sizeof(LanXGetStatus) == 7);
 // LAN_X_SET_TRACK_POWER_OFF
 struct LanXSetTrackPowerOff : LanX
 {
-  uint8_t db0 = 0x80;
+  uint8_t db0 = LAN_X_SET_TRACK_POWER_OFF;
   uint8_t checksum = 0xa1;
 
   LanXSetTrackPowerOff() :
@@ -370,7 +389,7 @@ static_assert(sizeof(LanXSetTrackPowerOff) == 7);
 // LAN_X_SET_TRACK_POWER_ON
 struct LanXSetTrackPowerOn : LanX
 {
-  uint8_t db0 = 0x81;
+  uint8_t db0 = LAN_X_SET_TRACK_POWER_OFF;
   uint8_t checksum = 0xa0;
 
   LanXSetTrackPowerOn() :
@@ -402,7 +421,7 @@ struct LanXGetTurnoutInfo : LanX
     , db0(address >> 8)
     , db1(address & 0xFF)
   {
-    calcChecksum();
+    updateChecksum();
   }
 
   uint16_t address() const
@@ -419,34 +438,37 @@ struct LanXSetTurnout : LanX
   static constexpr uint8_t db2Activate = 0x08;
   static constexpr uint8_t db2Queue = 0x20;
 
-  uint8_t db0;
-  uint8_t db1;
+  uint8_t addressMSB;
+  uint8_t addressLSB;
   uint8_t db2 = 0x80;
   uint8_t checksum;
 
-  LanXSetTurnout(uint16_t linearAddress, bool activate, bool queue = false)
-    : LanX(sizeof(LanXSetTurnout), 0x53)
-    , db0(linearAddress >> 9)
-    , db1((linearAddress >> 1) & 0xFF)
+  LanXSetTurnout(uint16_t address, bool port, bool activate, bool queue = false)
+    : LanX(sizeof(LanXSetTurnout), LAN_X_SET_TURNOUT)
   {
+    setAddress(address);
+
     if(queue)
       db2 |= db2Queue;
     if(activate)
       db2 |= db2Activate;
-    if(linearAddress & 0x0001)
+    if(port)
       db2 |= db2Port;
 
-    calcChecksum();
+    updateChecksum();
   }
 
   uint16_t address() const
   {
-    return (static_cast<uint16_t>(db0) << 8) | db1;
+    return 1 + to16(addressLSB, addressMSB);
   }
 
-  uint16_t linearAddress() const
+  void setAddress(uint16_t value)
   {
-    return (address() << 1) | port();
+    assert(value >= 1 && value <= 2048);
+    value--;
+    addressMSB = high8(value);
+    addressLSB = low8(value);
   }
 
   bool activate() const
@@ -459,12 +481,59 @@ struct LanXSetTurnout : LanX
     return db2 & db2Queue;
   }
 
-  uint8_t port() const
+  bool port() const
   {
     return db2 & db2Port;
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXSetTurnout) == 9);
+
+// LAN_X_SET_EXT_ACCESSORY
+struct LanXSetExtAccessory : LanX
+{
+  uint8_t addressMSB;
+  uint8_t addressLSB;
+  uint8_t db2;
+  uint8_t db3 = 0x00; // must be 0x00
+  uint8_t checksum;
+
+  LanXSetExtAccessory(uint16_t address)
+    : LanX(sizeof(LanXSetExtAccessory), LAN_X_SET_EXT_ACCESSORY)
+    , addressMSB(high8(address + 3))
+    , addressLSB(low8(address + 3))
+  {
+  }
+
+  LanXSetExtAccessory(uint16_t address, uint8_t aspect)
+    : LanXSetExtAccessory(address)
+  {
+    db2 = aspect;
+    updateChecksum();
+  }
+
+  LanXSetExtAccessory(uint16_t address, bool dir, uint8_t powerOnTime)
+    : LanXSetExtAccessory(address)
+  {
+    assert(powerOnTime <= 127);
+    db2 = powerOnTime & 0x7F;
+    if(dir)
+    {
+      db2 |= 0x80;
+    }
+    updateChecksum();
+  }
+
+  inline uint16_t rawAddress() const
+  {
+    return to16(addressLSB, addressMSB);
+  }
+
+  inline uint16_t address() const
+  {
+    return rawAddress() + 3;
+  }
+};
+static_assert(sizeof(LanXSetExtAccessory) == 10);
 
 // LAN_X_SET_STOP
 struct LanXSetStop : LanX
@@ -487,10 +556,10 @@ struct LanXGetLocoInfo : LanX
   uint8_t checksum;
 
   LanXGetLocoInfo(uint16_t address, bool longAddress) :
-    LanX(sizeof(LanXGetLocoInfo),  0xE3)
+    LanX(sizeof(LanXGetLocoInfo), LAN_X_GET_LOCO_INFO)
   {
     setAddress(address, longAddress);
-    calcChecksum();
+    updateChecksum();
   }
 
   inline uint16_t address() const
@@ -508,11 +577,6 @@ struct LanXGetLocoInfo : LanX
     addressHigh = longAddress ? (0xC0 | (address >> 8)) : 0x00;
     addressLow = longAddress ? address & 0xFF : address & 0x7F;
   }
-
-  /*inline void calcChecksum()
-  {
-    checksum = xheader ^ db0 ^ addressHigh ^ addressLow;
-  }*/
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXGetLocoInfo) == 9);
 
@@ -526,7 +590,7 @@ struct LanXSetLocoDrive : LanX
   uint8_t checksum;
 
   LanXSetLocoDrive() :
-    LanX(sizeof(LanXSetLocoDrive), 0xE4)
+    LanX(sizeof(LanXSetLocoDrive), LAN_X_SET_LOCO)
   {
   }
 
@@ -544,6 +608,24 @@ struct LanXSetLocoDrive : LanX
   {
     addressHigh = longAddress ? (0xC0 | (address >> 8)) : 0x00;
     addressLow = longAddress ? address & 0xFF : address & 0x7F;
+  }
+
+  inline void setSpeedSteps(uint8_t steps)
+  {
+    switch(steps)
+    {
+    case 14:
+      db0 = 0x10;
+      break;
+    case 28:
+      db0 = 0x12;
+      break;
+    case 126:
+    case 128:
+    default:
+      db0 = 0x13;
+      break;
+    }
   }
 
   inline uint8_t speedSteps() const
@@ -613,7 +695,7 @@ struct LanXSetLocoFunction : LanX
   uint8_t checksum;
 
   LanXSetLocoFunction() :
-    LanX(sizeof(LanXSetLocoFunction), 0xE4)
+    LanX(sizeof(LanXSetLocoFunction), LAN_X_SET_LOCO)
   {
   }
 
@@ -623,7 +705,7 @@ struct LanXSetLocoFunction : LanX
     setAddress(address, longAddress);
     setFunctionIndex(functionIndex);
     setSwitchType(value);
-    calcChecksum();
+    updateChecksum();
   }
 
   inline uint16_t address() const
@@ -899,7 +981,7 @@ struct LanXGetVersionReply : LanX
   uint8_t checksum;
 
   LanXGetVersionReply()
-    : LanX(sizeof(LanXGetVersionReply), 0x63)
+    : LanX(sizeof(LanXGetVersionReply), LAN_X_GET_VERSION_REPLY)
   {
   }
 
@@ -908,7 +990,7 @@ struct LanXGetVersionReply : LanX
   {
     setXBusVersion(_xBusVersion);
     commandStationId = _commandStationId;
-    calcChecksum();
+    updateChecksum();
   }
 
   inline uint8_t xBusVersion() const
@@ -935,7 +1017,7 @@ struct LanXGetFirmwareVersionReply : LanX
   uint8_t checksum;
 
   LanXGetFirmwareVersionReply() :
-    LanX(sizeof(LanXGetFirmwareVersionReply), 0xF3)
+    LanX(sizeof(LanXGetFirmwareVersionReply), LAN_X_GET_FIRMWARE_VERSION_REPLY)
   {
   }
 
@@ -944,7 +1026,7 @@ struct LanXGetFirmwareVersionReply : LanX
   {
     setVersionMajor(_major);
     setVersionMinor(_minor);
-    calcChecksum();
+    updateChecksum();
   }
 
   inline uint8_t versionMajor() const
@@ -1049,6 +1131,17 @@ static_assert(sizeof(LanXBCTrackShortCircuit) == 7);
 // LAN_X_CV_NACK
 
 // LAN_X_UNKNOWN_COMMAND
+struct LanXUnknownCommand : LanX
+{
+  uint8_t db0 = LAN_X_UNKNOWN_COMMAND;
+  uint8_t checksum = xheader ^ db0;
+
+  LanXUnknownCommand() :
+      LanX(sizeof(LanXUnknownCommand), LAN_X_BC)
+  {
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanXUnknownCommand) == 7);
 
 // LAN_X_STATUS_CHANGED
 struct LanXStatusChanged : LanX
@@ -1058,7 +1151,7 @@ struct LanXStatusChanged : LanX
   uint8_t checksum;
 
   LanXStatusChanged() :
-    LanX(sizeof(LanXStatusChanged), 0x62)
+    LanX(sizeof(LanXStatusChanged), LAN_X_STATUS_CHANGED)
   {
   }
 } ATTRIBUTE_PACKED;
@@ -1092,17 +1185,21 @@ struct LanXLocoInfo : LanX
   static constexpr uint8_t directionFlag = 0x80;
   static constexpr uint8_t speedStepMask = 0x7F;
   static constexpr uint8_t flagF0 = 0x10;
-  static constexpr uint8_t functionIndexMax = 28;
+  static constexpr uint8_t supportedFunctionIndexMax = 31; ///< \sa functionIndexMax
 
-  uint8_t addressHigh = 0;
-  uint8_t addressLow = 0;
+  static constexpr uint8_t minMessageSize = 7 + 7;
+  static constexpr uint8_t maxMessageSize = 7 + 14;
+
+  uint8_t addressHigh = 0; //db0
+  uint8_t addressLow = 0;  //db1
   uint8_t db2 = 0;
-  uint8_t speedAndDirection = 0;
+  uint8_t speedAndDirection = 0; //db3
   uint8_t db4 = 0;
-  uint8_t f5f12 = 0;
-  uint8_t f13f20 = 0;
-  uint8_t f21f28 = 0;
-  uint8_t checksum = 0;
+  uint8_t f5f12 = 0;  //db5
+  uint8_t f13f20 = 0; //db6
+  uint8_t f21f28 = 0; //db7
+  uint8_t db8 = 0;    //db8 is f29f31 (firmware >= 1.42) otherwise checksum
+  uint8_t db9 = 0;    //checksum (firmware >= 1.42)
 
   LanXLocoInfo() :
     LanX(sizeof(LanXLocoInfo), LAN_X_LOCO_INFO)
@@ -1194,6 +1291,34 @@ struct LanXLocoInfo : LanX
     Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
   }
 
+  inline bool supportsF29F31() const
+  {
+    //Firmware >= 1.42 adds db8 to store F29-F31 so dataLen increases to 15
+    return dataLen() >= 15;
+  }
+
+  /*!
+   * \brief Get maximum fuction index stored in this message
+   * \return Maximum index
+   *
+   * \note There is also a function at index 0 so count it
+   *
+   * Maximum function index depends on Z21 firmware protocol version
+   * versions <  1.42 support up to F28
+   * versions >= 1.42 support up to F31
+   *
+   * Messages are backward compatible but older version will only read
+   * up to their maximum function number
+   *
+   * We currently support up to F31 in trasmission and reception \sa supportedFunctionIndexMax
+   */
+  inline uint8_t functionIndexMax() const
+  {
+    if(supportsF29F31())
+      return 31;
+    return 28;
+  }
+
   bool getFunction(uint8_t index) const
   {
     if(index == 0)
@@ -1206,6 +1331,8 @@ struct LanXLocoInfo : LanX
       return f13f20 & (1 << (index - 13));
     else if(index <= 28)
       return f21f28 & (1 << (index - 21));
+    else if(index <= 31 && supportsF29F31())
+      return db8 & (1 << (index - 29));
     else
       return false;
   }
@@ -1251,16 +1378,24 @@ struct LanXLocoInfo : LanX
       else
         f21f28 &= ~flag;
     }
+    else if(index <= 31 && supportsF29F31())
+    {
+      const uint8_t flag = (1 << (index - 29));
+      if(value)
+        db8 |= flag;
+      else
+        db8 &= ~flag;
+    }
   }
 
-  void calcChecksum()
+  inline void updateChecksum()
   {
-    checksum = xheader;
-    for(uint8_t* db = &addressHigh; db < &checksum; db++)
-      checksum ^= *db;
+    //Data length - 7 Z21 header bytes + 1 byte for db0
+    LanX::updateChecksum(dataLen() - 6);
   }
 } ATTRIBUTE_PACKED;
-static_assert(sizeof(LanXLocoInfo) == 14);
+static_assert(sizeof(LanXLocoInfo) >= LanXLocoInfo::minMessageSize &&
+              sizeof(LanXLocoInfo) <= LanXLocoInfo::maxMessageSize);
 
 // Reply to LAN_X_GET_FIRMWARE_VERSION
 

@@ -32,6 +32,9 @@ class TCPIOHandler final : public IOHandler
 {
   private:
     static constexpr uint32_t transferWindow = 25;
+
+    const std::string m_hostname;
+    const uint16_t m_port;
     boost::asio::ip::tcp::socket m_socket;
     boost::asio::ip::tcp::endpoint m_endpoint;
     std::array<char, 32 * 1024> m_readBuffer;
@@ -49,7 +52,7 @@ class TCPIOHandler final : public IOHandler
     void write();
 
   public:
-    TCPIOHandler(Kernel& kernel, const std::string& hostname, uint16_t port = 15471);
+    TCPIOHandler(Kernel& kernel, std::string hostname, uint16_t port = 15471);
     ~TCPIOHandler() final;
 
     void start() final;

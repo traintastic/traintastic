@@ -24,6 +24,7 @@
 #include "trainblockstatus.hpp"
 #include "../connection.hpp"
 #include "../objectvectorproperty.hpp"
+#include "../error.hpp"
 
 BlockRailTile::BlockRailTile(const std::shared_ptr<Connection>& connection, Handle handle, const QString& classId_)
   : Object(connection, handle, classId_)
@@ -59,7 +60,7 @@ void BlockRailTile::updateTrains()
   }
 
   m_requestId = m_trainsProperty->getObjects(
-    [this](const std::vector<ObjectPtr>& objects, Message::ErrorCode /*ec*/)
+    [this](const std::vector<ObjectPtr>& objects, std::optional<const Error> /*error*/)
     {
       m_requestId = Connection::invalidRequestId;
       m_trains = objects;

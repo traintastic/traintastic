@@ -1,5 +1,17 @@
 {
   "name": {},
   "online": {},
-  "status": {}
+  "status": {},
+  "output_channels": {},
+  "get_output": {
+    "parameters": [
+      {
+        "name": "channel"
+      },
+      {
+        "name": "address"
+      }
+    ],
+    "return_values": 1
+  }
 }

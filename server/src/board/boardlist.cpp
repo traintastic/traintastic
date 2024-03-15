@@ -27,6 +27,9 @@
 #include "../world/getworld.hpp"
 #include "../core/attributes.hpp"
 #include "../utils/displayname.hpp"
+#ifdef ENABLE_LOG_DEBUG
+  #include "../log/log.hpp"
+#endif
 
 BoardList::BoardList(Object& _parent, std::string_view parentPropertyName) :
   ObjectList<Board>(_parent, parentPropertyName),
@@ -62,6 +65,39 @@ void BoardList::worldEvent(WorldState state, WorldEvent event)
 
   Attributes::setEnabled(create, editable);
   Attributes::setEnabled(delete_, editable);
+
+  // handle board modified:
+  if(event == WorldEvent::EditDisabled || event == WorldEvent::Run)
+  {
+#ifdef ENABLE_LOG_DEBUG
+    const auto start = std::chrono::steady_clock::now();
+#endif
+
+    // due to link tile a change on one board might require an update on another board.
+    // for now update all board if one board is changed (should be improved!)
+    bool boardModified = false;
+    for(auto& board : m_items)
+    {
+      if(board->m_modified)
+      {
+        boardModified = true;
+        break;
+      }
+    }
+    if(boardModified)
+    {
+      for(auto& board : m_items)
+      {
+        board->m_modified = true;
+        board->modified();
+      }
+    }
+
+#ifdef ENABLE_LOG_DEBUG
+  const auto duration = std::chrono::steady_clock::now() - start;
+  Log::debug("Board modified took", std::chrono::duration_cast<std::chrono::microseconds>(duration).count() / 1e3 , "ms");
+#endif
+  }
 }
 
 bool BoardList::isListedProperty(std::string_view name)

@@ -62,6 +62,7 @@ Train::Train(World& world, std::string_view _id) :
       // update train direction from the block perspective:
       for(auto& status : *blocks)
         status->direction.setValueInternal(!status->direction.value());
+      blocks.reverseInternal(); // index 0 is head of train
 
       for(const auto& vehicle : m_poweredVehicles)
         vehicle->setDirection(value);
@@ -297,6 +298,7 @@ void Train::vehiclesChanged()
   updateWeight();
   updatePowered();
   updateSpeedMax();
+  updateEnabled();
 }
 
 void Train::updateLength()
@@ -376,6 +378,11 @@ bool Train::setTrainActive(bool val)
 
   if(val)
   {
+    if(vehicles->empty())
+    {
+      return false; // activating a train without vehicles is useless.
+    }
+
     //To activate a train, ensure all vehicles are stopped and free
     for(const auto& vehicle : *vehicles)
     {

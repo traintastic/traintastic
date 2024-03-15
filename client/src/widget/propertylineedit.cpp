@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 #include "../network/property.hpp"
 #include "../network/object.hpp"
 #include "../network/connection.hpp"
+#include "../network/error.hpp"
 #include <traintastic/locale/locale.hpp>
 
 PropertyLineEdit::PropertyLineEdit(Property& property, QWidget* parent) :
@@ -64,9 +65,10 @@ PropertyLineEdit::PropertyLineEdit(Property& property, QWidget* parent) :
     {
       cancelRequest();
       m_requestId = m_property.setValueString(value,
-        [this](const QString& error)
+        [this](std::optional<const Error> error)
         {
-          showError(error);
+          if(error)
+            showError(error->toString());
         });
     });
 }

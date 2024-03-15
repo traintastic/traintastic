@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -75,12 +75,22 @@ void Object::send(std::string_view message)
 
 bool Object::objectExists(uint16_t objectId) const
 {
-  return m_kernel.m_objects.find(objectId) != m_kernel.m_objects.end();
+  return m_kernel.objectExists(objectId);
 }
 
 void Object::addObject(std::unique_ptr<Object> object)
 {
-  m_kernel.m_objects.add(std::move(object));
+  m_kernel.addObject(std::move(object));
+}
+
+void Object::nameChanged()
+{
+  m_kernel.objectChanged(*this);
+}
+
+void Object::removeObject(uint16_t objectId)
+{
+  m_kernel.removeObject(objectId);
 }
 
 void Object::update(const std::vector<std::string_view>& lines)

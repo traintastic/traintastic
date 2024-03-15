@@ -3,80 +3,103 @@
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "pairs": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "ipairs": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "next": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "tonumber": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "tostring": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "type": {
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "VERSION": {
-    "type": "constant"
+    "type": "constant",
+    "since": "0.1"
   },
   "VERSION_MAJOR": {
-    "type": "constant"
+    "type": "constant",
+    "since": "0.1"
   },
   "VERSION_MINOR": {
-    "type": "constant"
+    "type": "constant",
+    "since": "0.1"
   },
   "VERSION_PATCH": {
-    "type": "constant"
+    "type": "constant",
+    "since": "0.1"
   },
   "LUA_VERSION": {
-    "type": "constant"
+    "type": "constant",
+    "since": "0.1"
   },
   "world": {
-    "type": "object"
+    "type": "object",
+    "since": "0.1"
   },
   "log": {
-    "type": "library"
+    "type": "library",
+    "since": "0.1"
   },
   "class": {
-    "type": "library"
+    "type": "library",
+    "since": "0.1"
   },
   "enum": {
-    "type": "library"
+    "type": "library",
+    "since": "0.1"
   },
   "math": {
-    "type": "library"
+    "is_lua_builtin": true,
+    "type": "library",
+    "since": "0.1"
   },
   "set": {
-    "type": "library"
+    "type": "library",
+    "since": "0.1"
   },
   "string": {
-    "type": "library"
+    "is_lua_builtin": true,
+    "type": "library",
+    "since": "0.1"
   },
   "table": {
-    "type": "library"
+    "is_lua_builtin": true,
+    "type": "library",
+    "since": "0.1"
   }
 }

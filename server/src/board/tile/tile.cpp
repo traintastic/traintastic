@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,10 @@
 
 #include "tile.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
+#include "../board.hpp"
+#include "../boardlist.hpp"
+#include "../../world/world.hpp"
 
 Tile::Tile(World& world, std::string_view _id, TileId tileId)
   : IdObject(world, _id)
@@ -49,6 +53,19 @@ Tile::Tile(World& world, std::string_view _id, TileId tileId)
   Attributes::addObjectEditor(width, false);
   Attributes::addMinMax<uint8_t>(width, 1, 1);
   m_interfaceItems.add(width);
+}
+
+Board& Tile::getBoard()
+{
+  for(const auto& board : *m_world.boards)
+  {
+    if(board->getTile(location()).get() == this)
+    {
+      return *board;
+    }
+  }
+  assert(false);
+  abort();
 }
 
 bool Tile::resize(uint8_t w, uint8_t h)

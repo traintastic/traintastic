@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,10 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_LOGMESSAGE_HPP
 
 #include <cstdint>
+
+#ifdef QT_CORE_LIB
+  #include <QString>
+#endif
 
 struct LogMessageOffset
 {
@@ -72,7 +76,7 @@ enum class LogMessage : uint32_t
   // Info:
   I1001_TRAINTASTIC_VX = LogMessageOffset::info + 1001,
   I1002_SETTING_FILE_NOT_FOUND_USING_DEFAULTS = LogMessageOffset::info + 1002,
-  I1003_CLIENT_CONNECTED = LogMessageOffset::info + 1003,
+  I1003_NEW_CONNECTION = LogMessageOffset::info + 1003,
   I1004_CONNECTION_LOST = LogMessageOffset::info + 1004,
   I1005_BUILDING_WORLD_INDEX = LogMessageOffset::info + 1005,
   I1006_X = LogMessageOffset::info + 1006, //!< boost version
@@ -135,12 +139,16 @@ enum class LogMessage : uint32_t
   W1003_READING_WORLD_X_FAILED_LIBARCHIVE_ERROR_X_X = LogMessageOffset::warning + 1003,
   W2001_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES = LogMessageOffset::warning + 2001,
   W2002_COMMAND_STATION_DOESNT_SUPPORT_FUNCTIONS_ABOVE_FX = LogMessageOffset::warning + 2002,
+  W2003_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES_X = LogMessageOffset::warning + 2003,
   W2004_INPUT_ADDRESS_X_IS_INVALID = LogMessageOffset::warning + 2004,
   W2005_OUTPUT_ADDRESS_X_IS_INVALID = LogMessageOffset::warning + 2005,
   W2006_COMMAND_STATION_DOES_NOT_SUPPORT_LOCO_SLOT_X = LogMessageOffset::warning + 2006,
   W2007_COMMAND_STATION_DOES_NOT_SUPPORT_THE_FAST_CLOCK_SLOT = LogMessageOffset::warning + 2007,
   W2018_TIMEOUT_NO_ECHO_WITHIN_X_MS = LogMessageOffset::warning + 2018,
   W2019_Z21_BROADCAST_FLAG_MISMATCH = LogMessageOffset::warning + 2019,
+  W2020_DCCEXT_RCN213_IS_NOT_SUPPORTED = LogMessageOffset::warning + 2020,
+  W3001_NX_BUTTON_CONNECTED_TO_TWO_BLOCKS = LogMessageOffset::warning + 3001,
+  W3002_NX_BUTTON_NOT_CONNECTED_TO_ANY_BLOCK = LogMessageOffset::warning + 3002,
   W9001_EXECUTION_TOOK_X_US = LogMessageOffset::warning + 9001,
   W9999_X = LogMessageOffset::warning + 9999,
 
@@ -177,12 +185,14 @@ enum class LogMessage : uint32_t
   E2022_SOCKET_CREATE_FAILED_X = LogMessageOffset::error + 2022,
   E2023_SOCKET_IOCTL_FAILED_X = LogMessageOffset::error + 2023,
   E2024_UNKNOWN_LOCOMOTIVE_MFX_UID_X = LogMessageOffset::error + 2024,
+  E3001_CANT_DELETE_RAIL_VEHICLE_WHEN_IN_ACTIVE_TRAIN = LogMessageOffset::error + 3001,
+  E3002_CANT_DELETE_ACTIVE_TRAIN = LogMessageOffset::error + 3002,
   E9001_X_DURING_EXECUTION_OF_X_EVENT_HANDLER = LogMessageOffset::error + 9001,
   E9999_X = LogMessageOffset::error + 9999,
 
   // Critical:
   C1001_LOADING_WORLD_FAILED_X = LogMessageOffset::critical + 1001,
-  C1002_CREATING_CLIENT_FAILED_X = LogMessageOffset::critical + 1002,
+  C1002_CREATING_CONNECTION_FAILED_X = LogMessageOffset::critical + 1002,
   C1003_CANT_WRITE_TO_SETTINGS_FILE_X = LogMessageOffset::critical + 1003,
   C1004_READING_WORLD_FAILED_X_X = LogMessageOffset::critical + 1004,
   C1005_SAVING_WORLD_FAILED_X = LogMessageOffset::critical + 1005,
@@ -194,6 +204,12 @@ enum class LogMessage : uint32_t
   C1011_IMPORTING_WORLD_FAILED_X = LogMessageOffset::critical + 1011,
   C1012_UNKNOWN_CLASS_X_CANT_RECREATE_OBJECT_X = LogMessageOffset::critical + 1012,
   C1013_CANT_LOAD_WORLD_SAVED_WITH_NEWER_VERSION_REQUIRES_AT_LEAST_X = LogMessageOffset::critical + 1013,
+  C1014_INVALID_COMMAND = LogMessageOffset::critical + 1014,
+  C1015_UNKNOWN_OBJECT = LogMessageOffset::critical + 1015,
+  C1016_UNKNOWN_PROPERTY = LogMessageOffset::critical + 1016,
+  C1017_INVALID_INDICES = LogMessageOffset::critical + 1017,
+  C1018_EXCEPTION_X = LogMessageOffset::critical + 1018,
+  C1019_OBJECT_NOT_A_TABLE = LogMessageOffset::critical + 1019,
   C2001_ADDRESS_ALREADY_USED_AT_X = LogMessageOffset::critical + 2001,
   C2004_CANT_GET_FREE_SLOT = LogMessageOffset::critical + 2004,
   C2005_SOCKETCAN_IS_ONLY_AVAILABLE_ON_LINUX = LogMessageOffset::critical + 2005,
@@ -273,5 +289,12 @@ constexpr uint32_t logMessageNumber(LogMessage message)
 {
   return static_cast<std::underlying_type_t<decltype(message)>>(message) % LogMessageOffset::blockSize;
 }
+
+#ifdef QT_CORE_LIB
+inline QString logMessageCode(LogMessage message)
+{
+  return QString(logMessageChar(message)).append(QString::number(logMessageNumber(message)).rightJustified(4, '0'));
+}
+#endif
 
 #endif

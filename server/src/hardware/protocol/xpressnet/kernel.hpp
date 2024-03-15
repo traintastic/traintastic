@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,11 +23,11 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_KERNEL_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_KERNEL_HPP
 
+#include "../kernelbase.hpp"
 #include <array>
-#include <thread>
-#include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <traintastic/enum/tristate.hpp>
+#include <traintastic/enum/outputpairvalue.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
 
@@ -42,16 +42,17 @@ namespace XpressNet {
 
 struct Message;
 
-class Kernel
+class Kernel : public ::KernelBase
 {
+  public:
+    static constexpr uint16_t inputAddressMin = 1;
+    static constexpr uint16_t inputAddressMax = 2048;
+    static constexpr uint16_t accessoryOutputAddressMin = 1;
+    static constexpr uint16_t accessoryOutputAddressMax = 1024;
+
   private:
-    boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
-    std::thread m_thread;
-    std::string m_logId;
-    std::function<void()> m_onStarted;
-    std::function<void()> m_onError;
 
     TriState m_trackPowerOn;
     TriState m_emergencyStop;
@@ -62,17 +63,14 @@ class Kernel
     DecoderController* m_decoderController;
 
     InputController* m_inputController;
-    std::array<TriState, 2048> m_inputValues;
+    std::array<TriState, inputAddressMax - inputAddressMin + 1> m_inputValues;
 
     OutputController* m_outputController;
-    //std::array<TriState, 2048> m_outputValues;
+    //std::array<OutputPairValue, accessoryOutputAddressMax - accessoryOutputAddressMin + 1> m_outputValues;
 
     Config m_config;
-#ifndef NDEBUG
-    bool m_started;
-#endif
 
-    Kernel(const Config& config, bool simulation);
+    Kernel(std::string logId_, const Config& config, bool simulation);
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
 
@@ -89,18 +87,8 @@ class Kernel
     void send(const Message& message);
 
   public:
-    static constexpr uint16_t ioAddressMin = 1;
-    static constexpr uint16_t ioAddressMax = 2048;
-
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
-
-    /**
-     * @brief IO context for XpressNet kernel and IO handler
-     *
-     * @return The IO context
-     */
-    boost::asio::io_context& ioContext() { return m_ioContext; }
 
     /**
      * @brief Create kernel and IO handler
@@ -110,10 +98,10 @@ class Kernel
      * @return The kernel instance
      */
     template<class IOHandlerType, class... Args>
-    static std::unique_ptr<Kernel> create(const Config& config, Args... args)
+    static std::unique_ptr<Kernel> create(std::string logId_, const Config& config, Args... args)
     {
       static_assert(std::is_base_of_v<IOHandler, IOHandlerType>);
-      std::unique_ptr<Kernel> kernel{new Kernel(config, isSimulation<IOHandlerType>())};
+      std::unique_ptr<Kernel> kernel{new Kernel(std::move(logId_), config, isSimulation<IOHandlerType>())};
       kernel->setIOHandler(std::make_unique<IOHandlerType>(*kernel, std::forward<Args>(args)...));
       return kernel;
     }
@@ -132,45 +120,11 @@ class Kernel
     }
 
     /**
-     *
-     *
-     */
-    inline const std::string& logId() { return m_logId; }
-
-    /**
-     * @brief Set object id used for log messages
-     *
-     * @param[in] value The object id
-     */
-    inline void setLogId(std::string value)
-    {
-      m_logId = std::move(value);
-    }
-
-    /**
      * @brief Set XpressNet configuration
      *
      * @param[in] config The XpressNet configuration
      */
     void setConfig(const Config& config);
-
-    /**
-     * @brief ...
-     *
-     * @param[in] callback ...
-     * @note This function may not be called when the kernel is running.
-     */
-    inline void setOnStarted(std::function<void()> callback)
-    {
-      assert(!m_started);
-      m_onStarted = std::move(callback);
-    }
-
-    //! \brief Register error handler
-    //! Once this handler is called the XpressNet communication is stopped.
-    //! \param[in] callback Handler to call in case of an error.
-    //! \note This function may not be called when the kernel is running.
-    void setOnError(std::function<void()> callback);
 
     /**
      * @brief ...
@@ -264,11 +218,6 @@ class Kernel
      */
     void receive(const Message& message);
 
-    //! Must be called by the IO handler in case of a fatal error.
-    //! This will put the interface in error state
-    //! \note This function must run in the event loop thread
-    void error();
-
     /**
      *
      *
@@ -295,15 +244,15 @@ class Kernel
 
     /**
      *
-     * @param[in] address Output address, #ioAddressMin..#ioAddressMax
-     * @param[in] value Output value: \c true is on, \c false is off.
+     * @param[in] address Output address, #accessoryOutputAddressMin..#accessoryOutputAddressMax
+     * @param[in] value Output value: \c First or \c Second .
      * @return \c true if send successful, \c false otherwise.
      */
-    bool setOutput(uint16_t address, bool value);
+    bool setOutput(uint16_t address, OutputPairValue value);
 
     /**
      * \brief Simulate input change
-     * \param[in] address Input address, #ioAddressMin..#ioAddressMax
+     * \param[in] address Input address, #inputAddressMin..#inputAddressMax
      * \param[in] action Simulation action to perform
      */
     void simulateInputChange(uint16_t address, SimulateInputAction action);

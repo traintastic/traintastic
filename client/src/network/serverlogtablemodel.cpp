@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,11 +26,6 @@
 #include "../theme/theme.hpp"
 #include <traintastic/locale/locale.hpp>
 #include <traintastic/enum/logmessage.hpp>
-
-static QString toCodeString(LogMessage code)
-{
-  return QString(logMessageChar(code)).append(QString::number(logMessageNumber(code)).rightJustified(4, '0'));
-}
 
 ServerLogTableModel::ServerLogTableModel(std::shared_ptr<Connection> connection)
   : m_columnHeaders{Locale::tr("server_log:time"), Locale::tr("server_log:object"), Locale::tr("server_log:code"), Locale::tr("server_log:message")}
@@ -79,7 +74,7 @@ QVariant ServerLogTableModel::data(const QModelIndex& index, int role) const
         return log.object;
 
       case columnCode:
-        return toCodeString(log.code);
+        return logMessageCode(log.code);
 
       case columnMessage:
         return log.message;
@@ -122,7 +117,7 @@ void ServerLogTableModel::processMessage(const Message& message)
     log.time = message.read<int64_t>();
     log.object = QString::fromLatin1(message.read<QByteArray>());
     log.code = message.read<LogMessage>();
-    log.message = Locale::tr("message:" + toCodeString(log.code));
+    log.message = Locale::tr("message:" + logMessageCode(log.code));
     const int argc = message.read<uint8_t>();
     for(int j = 0; j < argc; j++)
       log.message = log.message.arg(QString::fromUtf8(message.read<QByteArray>()));

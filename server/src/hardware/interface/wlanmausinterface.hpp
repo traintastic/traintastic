@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,7 +46,6 @@ class WlanMausInterface : public Interface
 
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
-    void idChanged(const std::string& newId) final;
     bool setOnline(bool& value, bool simulation) final;
 
   public:

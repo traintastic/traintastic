@@ -24,13 +24,13 @@
 #include "object.hpp"
 #include "connection.hpp"
 
-int ObjectVectorProperty::getObject(int index, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+int ObjectVectorProperty::getObject(int index, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback)
 {
   assert(index >= 0 && index < size());
   return object().connection()->getObject(*this, static_cast<uint32_t>(index), std::move(callback));
 }
 
-int ObjectVectorProperty::getObjects(int startIndex, int endIndex, std::function<void(const std::vector<ObjectPtr>&, Message::ErrorCode)> callback)
+int ObjectVectorProperty::getObjects(int startIndex, int endIndex, std::function<void(const std::vector<ObjectPtr>&, std::optional<const Error>)> callback)
 {
   assert(startIndex >= 0 && startIndex < size());
   assert(endIndex >= 0 && endIndex < size());

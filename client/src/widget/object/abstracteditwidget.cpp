@@ -25,6 +25,7 @@
 #include "../../network/connection.hpp"
 #include "../../network/object.hpp"
 #include "../../network/objectproperty.hpp"
+#include "../../network/error.hpp"
 #include "../../mainwindow.hpp"
 
 AbstractEditWidget::AbstractEditWidget(const ObjectPtr& object, QWidget* parent) :
@@ -43,7 +44,7 @@ AbstractEditWidget::AbstractEditWidget(const QString& id, QWidget* parent) :
   spinner->start();
 
   m_requestId = MainWindow::instance->connection()->getObject(id,
-    [this, spinner](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+    [this, spinner](const ObjectPtr& object, std::optional<const Error> /*error*/)
     {
       m_requestId = Connection::invalidRequestId;
       if(object)
@@ -66,7 +67,7 @@ AbstractEditWidget::AbstractEditWidget(ObjectProperty& property, QWidget* parent
   spinner->start();
 
   m_requestId = property.getObject(
-    [this, spinner](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+    [this, spinner](const ObjectPtr& object, std::optional<const Error> /*error*/)
     {
       m_requestId = Connection::invalidRequestId;
       if(object)

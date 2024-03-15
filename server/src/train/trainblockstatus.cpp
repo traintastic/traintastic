@@ -30,21 +30,49 @@
 std::shared_ptr<TrainBlockStatus> TrainBlockStatus::create(BlockRailTile& block_, Train& train_, BlockTrainDirection direction_, std::string_view id)
 {
   World& world = block_.world();
-  auto p = std::make_shared<TrainBlockStatus>(block_, train_, direction_, id.empty() ? world.getUniqueId(TrainBlockStatus::classId) : std::string{id});
+  auto p = std::make_shared<TrainBlockStatus>(id.empty() ? world.getUniqueId(TrainBlockStatus::classId) : std::string{id});
+  p->block.setValueInternal(block_.shared_ptr<BlockRailTile>());
+  p->train.setValueInternal(train_.shared_ptr<Train>());
+  p->direction.setValueInternal(direction_);
   TrainBlockStatus::addToWorld(world, *p);
   return p;
 }
 
-TrainBlockStatus::TrainBlockStatus(BlockRailTile& block_, Train& train_, BlockTrainDirection direction_, std::string id)
+std::shared_ptr<TrainBlockStatus> TrainBlockStatus::create(BlockRailTile& block_, std::string identification_, BlockTrainDirection direction_, std::string_view id)
+{
+  World& world = block_.world();
+  auto p = std::make_shared<TrainBlockStatus>(id.empty() ? world.getUniqueId(TrainBlockStatus::classId) : std::string{id});
+  p->block.setValueInternal(block_.shared_ptr<BlockRailTile>());
+  p->identification.setValueInternal(std::move(identification_));
+  p->direction.setValueInternal(direction_);
+  TrainBlockStatus::addToWorld(world, *p);
+  return p;
+}
+
+TrainBlockStatus::TrainBlockStatus(std::string id)
   : StateObject(std::move(id))
-  , block{this, "block", block_.shared_ptr<BlockRailTile>(), PropertyFlags::ReadOnly | PropertyFlags::StoreState}
-  , train{this, "train", train_.shared_ptr<Train>(), PropertyFlags::ReadOnly | PropertyFlags::StoreState}
-  , direction{this, "direction", direction_, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
+  , block{this, "block", nullptr, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
+  , train{this, "train", nullptr, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
+  , identification{this, "identification", "", PropertyFlags::ReadOnly | PropertyFlags::StoreState}
+  , direction{this, "direction", BlockTrainDirection::TowardsA, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
 {
   m_interfaceItems.add(block);
 
   m_interfaceItems.add(train);
 
+  m_interfaceItems.add(identification);
+
   Attributes::addValues(direction, blockTrainDirectionValues);
   m_interfaceItems.add(direction);
+}
+
+void TrainBlockStatus::destroying()
+{
+  auto self = shared_ptr<TrainBlockStatus>();
+  if(block)
+    block->trains.removeInternal(self);
+  if(train)
+    train->blocks.removeInternal(self);
+  removeFromWorld(block->world(), *this);
+  StateObject::destroying();
 }

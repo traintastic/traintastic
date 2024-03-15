@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,11 +25,17 @@
 
 #include "../../../core/subobject.hpp"
 #include <vector>
+#include <unordered_map>
 #include <boost/signals2/signal.hpp>
 #include "../../../core/method.hpp"
+#include "../../../core/objectproperty.hpp"
+#include "../../../core/vectorproperty.hpp"
+#include "../../../core/objectvectorproperty.hpp"
 #include "../output.hpp"
 
+class OutputController;
 class OutputMapItem;
+class OutputMapOutputAction;
 
 class OutputMap : public SubObject
 {
@@ -38,29 +44,51 @@ class OutputMap : public SubObject
     using Outputs = std::vector<std::shared_ptr<Output>>;
 
   private:
-    std::map<std::shared_ptr<Output>, boost::signals2::connection> m_destroyingConnections;
+    static constexpr size_t addressesSizeMin = 1;
+    static constexpr size_t addressesSizeMax = 8;
+
+    boost::signals2::connection m_interfaceDestroying;
+    boost::signals2::connection m_outputECoSObjectsChanged;
+
+    void addOutput(OutputChannel ch, uint32_t id);
+    void addOutput(OutputChannel ch, uint32_t id, OutputController& outputController);
+    std::shared_ptr<Output> getOutput(OutputChannel ch, uint32_t id, OutputController& outputController);
+    void releaseOutput(Output& output);
 
   protected:
     Outputs m_outputs;
 
-    void destroying() override;
     void load(WorldLoader& loader, const nlohmann::json& data) override;
-    void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
+    void loaded() override;
     void worldEvent(WorldState state, WorldEvent event) override;
 
-    virtual void outputAdded(const std::shared_ptr<Output>& output) = 0;
-    virtual void outputRemoved(const std::shared_ptr<Output>& output) = 0;
+    void interfaceChanged();
+    void channelChanged();
+    void addressesSizeChanged();
+    void updateOutputActions();
+    void updateOutputActions(OutputType outputType);
+    void updateEnabled();
+
+    uint32_t getUnusedAddress() const;
+    std::shared_ptr<OutputMapOutputAction> createOutputAction(OutputType outputType, size_t index);
 
   public:
-    boost::signals2::signal<void (OutputMap&)> outputsChanged;
-
-    Method<void(std::shared_ptr<Output>)> addOutput;
-    Method<void(const std::shared_ptr<Output>&)> removeOutput;
+    ObjectProperty<OutputController> interface;
+    Property<OutputChannel> channel;
+    VectorProperty<uint32_t> addresses;
+    Property<uint16_t> ecosObject;
+    ObjectVectorProperty<OutputMapItem> items;
+    Method<void()> addAddress;
+    Method<void()> removeAddress;
 
     OutputMap(Object& _parent, std::string_view parentPropertyName);
+    ~OutputMap() override;
 
-    virtual Items items() const = 0;
-    const Outputs& outputs() const { return m_outputs; }
+    const std::shared_ptr<Output>& output(size_t index) const
+    {
+      assert(index < m_outputs.size());
+      return m_outputs[index];
+    }
 };
 
 #endif

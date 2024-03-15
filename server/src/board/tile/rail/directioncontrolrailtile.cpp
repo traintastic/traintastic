@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -117,6 +117,21 @@ DirectionControlRailTile::DirectionControlRailTile(World& world, std::string_vie
 
   updateEnabled();
   updateStateValues();
+}
+
+bool DirectionControlRailTile::reserve(DirectionControlState directionControlState, bool dryRun)
+{
+  if(state != directionControlState && state != DirectionControlState::Both)
+  {
+    return false;
+  }
+
+  if(!dryRun)
+  {
+    StraightRailTile::reserve();
+  }
+
+  return true;
 }
 
 void DirectionControlRailTile::loaded()

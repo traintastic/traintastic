@@ -50,6 +50,7 @@ class OutputList;
 class IdentificationList;
 class BoardList;
 class LinkRailTileList;
+class NXManager;
 class Clock;
 class TrainList;
 class RailVehicleList;
@@ -98,6 +99,9 @@ class World : public Object
     Property<std::string> name;
     Property<WorldScale> scale;
     Property<double> scaleRatio;
+    Property<bool> onlineWhenLoaded;
+    Property<bool> powerOnWhenLoaded;
+    Property<bool> runWhenLoaded;
 
     ObjectProperty<ControllerList<DecoderController>> decoderControllers;
     ObjectProperty<ControllerList<InputController>> inputControllers;
@@ -117,6 +121,7 @@ class World : public Object
     ObjectProperty<Lua::ScriptList> luaScripts;
 
     ObjectProperty<LinkRailTileList> linkRailTiles;
+    ObjectProperty<NXManager> nxManager;
 
     ObjectVectorProperty<Status> statuses;
     Property<uint32_t> hardwareThrottles; //<! number of connected hardware throttles
@@ -151,7 +156,7 @@ class World : public Object
     ObjectPtr getObjectById(const std::string& _id) const;
     ObjectPtr getObjectByPath(std::string_view path) const;
 
-    bool export_(std::vector<std::byte>& data);
+    void export_(std::vector<std::byte>& data);
 };
 
 #endif

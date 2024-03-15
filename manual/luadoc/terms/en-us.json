@@ -988,7 +988,7 @@
     "definition": ""
   },
   {
-    "term": "class.dccplusplus:description",
+    "term": "class.dccplusplus_interface:description",
     "definition": ""
   },
   {
@@ -1008,7 +1008,7 @@
     "definition": ""
   },
   {
-    "term": "class.ecos:description",
+    "term": "class.ecos_interface:description",
     "definition": ""
   },
   {
@@ -1032,11 +1032,11 @@
     "definition": ""
   },
   {
-    "term": "class.loconet:description",
+    "term": "class.loconet_interface:description",
     "definition": ""
   },
   {
-    "term": "class.marklin_can:description",
+    "term": "class.marklin_can_interface:description",
     "definition": ""
   },
   {
@@ -1064,7 +1064,7 @@
     "definition": ""
   },
   {
-    "term": "class.traintastic_diy:description",
+    "term": "class.traintastic_diy_interface:description",
     "definition": ""
   },
   {
@@ -1096,11 +1096,11 @@
     "definition": ""
   },
   {
-    "term": "class.withrottle:description",
+    "term": "class.withrottle_interface:description",
     "definition": ""
   },
   {
-    "term": "class.wlanmaus:description",
+    "term": "class.wlanmaus_interface:description",
     "definition": ""
   },
   {
@@ -1108,7 +1108,7 @@
     "definition": ""
   },
   {
-    "term": "class.xpressnet:description",
+    "term": "class.xpressnet_interface:description",
     "definition": ""
   },
   {
@@ -1365,7 +1365,7 @@
   },
   {
     "term": "object.blockrailtile.on_train_removed.parameter.block:description",
-    "definition": "The block that the train is assigned to."
+    "definition": "The block that the train is removed from."
   },
   {
     "term": "object.clock.freeze:description",
@@ -1618,5 +1618,269 @@
   {
     "term": "object.objectlist.__get:return_values",
     "definition": "Object at index or `nil` if index isn't valid."
+  },
+  {
+    "term": "example:title",
+    "definition": "Examples"
+  },
+  {
+    "term": "example.controloutputworldrunstop:title",
+    "definition": "Control output on world run/stop"
+  },
+  {
+    "term": "example.controloutputworldrunstop:description",
+    "definition": "This examples monitors the world state and controls an output based on the `RUN` flag. If the world is in `RUN` state the output is off, if the world is stopped the output is on, e.g. for controller a red lamp."
+  },
+  {
+    "term": "example.directioncontrolusinginput:title",
+    "definition": "Direction control using an input"
+  },
+  {
+    "term": "example.directioncontrolusinginput:description",
+    "definition": "This example show how to use an input to control a direction control board element on the board. This can e.g. be used for physical control panels that control board elements."
+  },
+  {
+    "term": "object.identification:title",
+    "definition": "Identification"
+  },
+  {
+    "term": "object.identificationlist:title",
+    "definition": "Identification list"
+  },
+  {
+    "term": "enum.block_train_direction:title",
+    "definition": "Block train direction"
+  },
+  {
+    "term": "enum.block_train_direction:description",
+    "definition": "Train direction from the block perspective."
+  },
+  {
+    "term": "enum.block_train_direction.towards_a:description",
+    "definition": "Towards the west for horizontal blocks, towards the south for vertical blocks."
+  },
+  {
+    "term": "enum.block_train_direction.towards_b:description",
+    "definition": "Towards the east for horizontal blocks, towards the north for vertical blocks."
+  },
+  {
+    "term": "enum.block_train_direction.unknown:description",
+    "definition": "Unknown or invalid direction."
+  },
+  {
+    "term": "object.blockrailtile.on_train_reserved:description",
+    "definition": "Fired when a {ref:object.train} reserves the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_reserved.parameter.train:description",
+    "definition": "{ref:object.train} that is reserved the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_reserved.parameter.block:description",
+    "definition": "The block that is reserved."
+  },
+  {
+    "term": "object.blockrailtile.on_train_reserved.parameter.direction:description",
+    "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
+  },
+  {
+    "term": "object.blockrailtile.on_train_entered:description",
+    "definition": "Fired when a {ref:object.train} enters the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_entered.parameter.train:description",
+    "definition": "{ref:object.train} that entered the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_entered.parameter.block:description",
+    "definition": "The block that is entered."
+  },
+  {
+    "term": "object.blockrailtile.on_train_entered.parameter.direction:description",
+    "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
+  },
+  {
+    "term": "object.blockrailtile.on_train_left:description",
+    "definition": "Fired when a {ref:object.train} has left the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_left.parameter.train:description",
+    "definition": "{ref:object.train} that entered the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_left.parameter.block:description",
+    "definition": "The block that the train left."
+  },
+  {
+    "term": "object.blockrailtile.on_train_left.parameter.direction:description",
+    "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
+  },
+  {
+    "term": "object.curve45railtile:title",
+    "definition": "Curve 45° rail tile"
+  },
+  {
+    "term": "object.curve90railtile:title",
+    "definition": "Curve 90° rail tile"
+  },
+  {
+    "term": "object.bridge45leftrailtile:title",
+    "definition": "Bridge 45° left rail tile"
+  },
+  {
+    "term": "object.bridge45rightrailtile:title",
+    "definition": "Bridge 45° right rail tile"
+  },
+  {
+    "term": "object.bridge90railtile:title",
+    "definition": "Bridge 90° rail tile"
+  },
+  {
+    "term": "object.cross45railtile:title",
+    "definition": "Cross 45° rail tile"
+  },
+  {
+    "term": "object.cross90railtile:title",
+    "definition": "Cross 90° rail tile"
+  },
+  {
+    "term": "object.hsi88interface:title",
+    "definition": "HSI88 interface"
+  },
+  {
+    "term": "object.signal2aspectrailtile:title",
+    "definition": "Signal 2 aspect rail tile"
+  },
+  {
+    "term": "object.signal3aspectrailtile:title",
+    "definition": "Signal 3 aspect rail tile"
+  },
+  {
+    "term": "object.turnout3wayrailtile:title",
+    "definition": "Turnout 3 way rail tile"
+  },
+  {
+    "term": "object.turnoutleft45railtile:title",
+    "definition": "Turnout left 45° rail tile"
+  },
+  {
+    "term": "object.turnoutleft90railtile:title",
+    "definition": "Turnout left 90° rail tile"
+  },
+  {
+    "term": "object.turnoutright45railtile:title",
+    "definition": "Turnout right 45° rail tile"
+  },
+  {
+    "term": "object.turnoutright90railtile:title",
+    "definition": "Turnout right 90° rail tile"
+  },
+  {
+    "term": "object.z21interface:title",
+    "definition": "Z21 interface"
+  },
+  {
+    "term": "object.nxbuttonrailtile:title",
+    "definition": "NX button rail tile"
+  },
+  {
+    "term": "object.pushbuttontile:title",
+    "definition": "Push button tile"
+  },
+  {
+    "term": "example.dccextsignalloconet:title",
+    "definition": "DCCext signal control (LocoNet)"
+  },
+  {
+    "term": "example.dccextsignalloconet:description",
+    "definition": "This examples shows how a signal can be controlled with DCCext commands (via LocoNet) as demonstration how custom control can be implemented. Traintastic will offcourse support DCCext natively in the future."
+  },
+  {
+    "term": "object.category.interfaces:title",
+    "definition": "Interfaces"
+  },
+  {
+    "term": "object.category.other:title",
+    "definition": "Other"
+  },
+  {
+    "term": "object.singleoutput:title",
+    "definition": "Single output"
+  },
+  {
+    "term": "object.singleoutput:description",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput:title",
+    "definition": "Pair output"
+  },
+  {
+    "term": "object.pairoutput:description",
+    "definition": ""
+  },
+  {
+    "term": "object.output.type:description",
+    "definition": "{ref:enum.output_type}."
+  },
+  {
+    "term": "object.pairoutput.value:description",
+    "definition": "Current output value, a {ref:enum.output_type} value."
+  },
+  {
+    "term": "object.pairoutput.set_value:description",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput.set_value.parameter.value:description",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput.set_value:return_values",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput.on_value_changed:description",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput.on_value_changed.parameter.value:description",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput.on_value_changed.parameter.output:description",
+    "definition": ""
+  },
+  {
+    "term": "object.aspectoutput:title",
+    "definition": "Aspect output"
+  },
+  {
+    "term": "object.aspectoutput:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.output_type:title",
+    "definition": "Output type"
+  },
+  {
+    "term": "enum.output_channel:title",
+    "definition": "Output channel"
+  },
+  {
+    "term": "object.interface.get_output:description",
+    "definition": "Get an output object."
+  },
+  {
+    "term": "object.interface.get_output.parameter.channel:description",
+    "definition": "Output channel, a {ref:enum.output_channel} value."
+  },
+  {
+    "term": "object.interface.get_output.parameter.address:description",
+    "definition": "Output address, valid range depends on `channel`."
+  },
+  {
+    "term": "object.interface.get_output:return_values",
+    "definition": "{ref:object.singleoutput}, {ref:object.pairoutput} or {ref:object.aspectoutput} object depending on `channel` or `nil` if `channel`/`address` combination is invalid."
   }
 ]

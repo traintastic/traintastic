@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,15 +23,16 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_KERNEL_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_KERNEL_HPP
 
-#include <thread>
+#include "../kernelbase.hpp"
 #include <unordered_map>
-#include <boost/asio/io_context.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
+#include <traintastic/enum/outputchannel.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
 #include "object/object.hpp"
 #include "object/switchprotocol.hpp"
+#include "../../output/outputvalue.hpp"
 
 class Decoder;
 enum class DecoderChangeFlags;
@@ -48,12 +49,15 @@ class SwitchManager;
 class Feedback;
 struct Simulation;
 
-class Kernel
+class Kernel : public ::KernelBase
 {
   friend class Object;
   friend class ECoS;
 
   public:
+    using OnObjectChanged = std::function<void(std::size_t, uint16_t, const std::string&)>;
+    using OnObjectRemoved = std::function<void(uint16_t)>;
+
     static constexpr uint16_t s88AddressMin = 1;
     static constexpr uint16_t s88AddressMax = 1000; //!< \todo what is the maximum
     static constexpr uint16_t ecosDetectorAddressMin = 1;
@@ -75,27 +79,6 @@ class Kernel
       "$ecos_channel:ecos_detector$",
     };
 
-    static constexpr uint16_t outputDCCAddressMin = 1;
-    static constexpr uint16_t outputDCCAddressMax = 1000; //!< \todo what is the maximum
-    static constexpr uint16_t outputMotorolaAddressMin = 1;
-    static constexpr uint16_t outputMotorolaAddressMax = 1000; //!< \todo what is the maximum
-
-    struct OutputChannel
-    {
-      static constexpr uint32_t dcc = 1;
-      static constexpr uint32_t motorola = 2;
-    };
-
-    inline static const std::vector<uint32_t> outputChannels = {
-      OutputChannel::dcc,
-      OutputChannel::motorola,
-    };
-
-    inline static const std::vector<std::string_view> outputChannelNames = {
-      "$hardware:dcc$",
-      "$hardware:motorola$",
-    };
-
   private:
     class Objects : public std::unordered_map<uint16_t, std::unique_ptr<Object>>
     {
@@ -108,31 +91,32 @@ class Kernel
         }
     };
 
-    boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
-    std::thread m_thread;
-    std::string m_logId;
-    std::function<void()> m_onStarted;
 
     Objects m_objects;
 
     std::function<void()> m_onGo;
     std::function<void()> m_onEmergencyStop;
+    OnObjectChanged m_onObjectChanged;
+    OnObjectRemoved m_onObjectRemoved;
 
     DecoderController* m_decoderController;
     InputController* m_inputController;
     OutputController* m_outputController;
 
     Config m_config;
-#ifndef NDEBUG
-    bool m_started;
-#endif
 
-    Kernel(const Config& config, bool simulation);
+    Kernel(std::string logId_, const Config& config, bool simulation);
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
 
+    bool objectExists(uint16_t objectId) const;
+    void addObject(std::unique_ptr<Object> object);
+    void objectChanged(Object& object);
+    void removeObject(uint16_t objectId);
+
+    //const std::unique_ptr<ECoS&> ecos();
     ECoS& ecos();
     void ecosGoChanged(TriState value);
 
@@ -156,11 +140,12 @@ class Kernel
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
 
-    /**
-     * @brief IO context for ECoS kernel and IO handler
-     * @return The IO context
-     */
-    boost::asio::io_context& ioContext() { return m_ioContext; }
+#ifndef NDEBUG
+    bool isKernelThread() const
+    {
+      return std::this_thread::get_id() == m_thread.get_id();
+    }
+#endif
 
     /**
      * @brief Create kernel and IO handler
@@ -169,10 +154,10 @@ class Kernel
      * @return The kernel instance
      */
     template<class IOHandlerType, class... Args>
-    static std::unique_ptr<Kernel> create(const Config& config, Args... args)
+    static std::unique_ptr<Kernel> create(std::string logId_, const Config& config, Args... args)
     {
       static_assert(std::is_base_of_v<IOHandler, IOHandlerType>);
-      std::unique_ptr<Kernel> kernel{new Kernel(config, isSimulation<IOHandlerType>())};
+      std::unique_ptr<Kernel> kernel{new Kernel(std::move(logId_), config, isSimulation<IOHandlerType>())};
       kernel->setIOHandler(std::make_unique<IOHandlerType>(*kernel, std::forward<Args>(args)...));
       return kernel;
     }
@@ -190,32 +175,10 @@ class Kernel
     }
 
     /**
-     * @brief Get object id used for log messages
-     * @return The object id
-     */
-    inline const std::string& logId()
-    {
-      return m_logId;
-    }
-
-    /**
-     * @brief Set object id used for log messages
-     * @param[in] value The object id
-     */
-    void setLogId(std::string value) { m_logId = std::move(value); }
-
-    /**
      * @brief Set ECoS configuration
      * @param[in] config The LocoNet configuration
      */
     void setConfig(const Config& config);
-
-    /**
-     * @brief ...
-     * @param[in] callback ...
-     * @note This function may not be called when the kernel is running.
-     */
-    void setOnStarted(std::function<void()> callback);
 
     /**
      * @brief ...
@@ -230,6 +193,9 @@ class Kernel
      * @note This function may not be called when the kernel is running.
      */
     void setOnGo(std::function<void()> callback);
+
+    void setOnObjectChanged(OnObjectChanged callback);
+    void setOnObjectRemoved(OnObjectRemoved callback);
 
     /**
      * @brief Set the decoder controller
@@ -294,15 +260,16 @@ class Kernel
     /**
      * @brief ...
      * @param[in] channel Channel
-     * @param[in] address Output address
-     * @param[in] value Output value: \c true is on, \c false is off.
+     * @param[in] id Output id/address
+     * @param[in] value Output value
      * @return \c true if send successful, \c false otherwise.
      */
-    bool setOutput(uint32_t channel, uint16_t address, bool value);
+    bool setOutput(OutputChannel channel, uint32_t id, OutputValue value);
 
     void simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action);
 
-    void switchManagerSwitched(SwitchProtocol protocol, uint16_t address);
+    void switchManagerSwitched(SwitchProtocol protocol, uint16_t address, OutputPairValue value);
+    void switchStateChanged(uint16_t objectId, uint8_t state);
 
     void feedbackStateChanged(Feedback& object, uint8_t port, TriState value);
 };

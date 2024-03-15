@@ -23,7 +23,9 @@ add_executable(traintastic-client
   gfx/common.qrc
   gfx/dark/dark.qrc
   gfx/light/light.qrc
-  ${TRANSLATION_FILES})
+)
+
+add_dependencies(traintastic-client traintastic-lang)
 
 add_definitions(-DQT_DEPRECATED_WARNINGS)
 
@@ -82,12 +84,19 @@ file(GLOB SOURCES
   "thirdparty/QtWaitingSpinner/*.cpp")
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets Network Svg Xml)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Network Svg Xml)
+if(QT_VERSION_MAJOR EQUAL 5)
+  find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Network Svg Xml)
+else()
+  find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Network Svg Xml SvgWidgets)
+endif()
 message(STATUS "Found Qt ${QT_VERSION}")
 
 target_sources(traintastic-client PRIVATE ${SOURCES})
 
 target_link_libraries(traintastic-client PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network Qt${QT_VERSION_MAJOR}::Svg Qt${QT_VERSION_MAJOR}::Xml)
+if(QT_VERSION_MAJOR GREATER 5)
+  target_link_libraries(traintastic-client PRIVATE Qt${QT_VERSION_MAJOR}::SvgWidgets)
+endif()
 
 ### PLATFORM ###
 

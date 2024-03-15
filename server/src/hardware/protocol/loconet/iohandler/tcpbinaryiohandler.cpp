@@ -29,19 +29,17 @@
 
 namespace LocoNet {
 
-TCPBinaryIOHandler::TCPBinaryIOHandler(Kernel& kernel, const std::string& hostname, uint16_t port)
-  : TCPIOHandler(kernel, hostname, port)
+TCPBinaryIOHandler::TCPBinaryIOHandler(Kernel& kernel, std::string hostname, uint16_t port)
+  : TCPIOHandler(kernel, std::move(hostname), port)
   , m_readBufferOffset{0}
   , m_writeBufferOffset{0}
 {
 }
 
-TCPBinaryIOHandler::~TCPBinaryIOHandler()
-{
-}
-
 void TCPBinaryIOHandler::start()
 {
+  TCPIOHandler::start();
+
   read();
 }
 
@@ -92,7 +90,7 @@ void TCPBinaryIOHandler::read()
             EventLoop::call(
               [this, drop]()
               {
-                Log::log(m_kernel.logId(), LogMessage::W2001_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES, drop);
+                Log::log(m_kernel.logId, LogMessage::W2001_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES, drop);
               });
           }
           else if(message->size() <= bytesTransferred)
@@ -116,7 +114,7 @@ void TCPBinaryIOHandler::read()
         EventLoop::call(
           [this, ec]()
           {
-            Log::log(m_kernel.logId(), LogMessage::E2008_SOCKET_READ_FAILED_X, ec);
+            Log::log(m_kernel.logId, LogMessage::E2008_SOCKET_READ_FAILED_X, ec);
             m_kernel.error();
           });
       }
@@ -144,7 +142,7 @@ void TCPBinaryIOHandler::write()
         EventLoop::call(
           [this, ec]()
           {
-            Log::log(m_kernel.logId(), LogMessage::E2007_SOCKET_WRITE_FAILED_X, ec);
+            Log::log(m_kernel.logId, LogMessage::E2007_SOCKET_WRITE_FAILED_X, ec);
             m_kernel.error();
           });
       }

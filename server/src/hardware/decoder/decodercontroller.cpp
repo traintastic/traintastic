@@ -146,11 +146,11 @@ void DecoderController::destroying()
 
 DecoderController::DecoderVector::iterator DecoderController::findDecoder(const Decoder& decoder)
 {
-  if(decoder.protocol == DecoderProtocol::MFX)
-  {
-    return findDecoderMFX(decoder.mfxUID);
-  }
-  return findDecoder(decoder.protocol, decoder.address);
+  return std::find_if(m_decoders.begin(), m_decoders.end(),
+    [ptr=&decoder](const auto& it)
+    {
+      return ptr == it.get();
+    });
 }
 
 DecoderController::DecoderVector::iterator DecoderController::findDecoder(DecoderProtocol protocol, uint16_t address)

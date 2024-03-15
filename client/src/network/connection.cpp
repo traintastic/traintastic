@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,6 +37,7 @@
 #include "tablemodel.hpp"
 #include "createobject.hpp"
 #include "board.hpp"
+#include "error.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
 #include <traintastic/enum/attributetype.hpp>
 #include <traintastic/locale/locale.hpp>
@@ -211,22 +212,26 @@ void Connection::serverLog(ServerLogTableModel& model, bool enable)
   send(request);
 }
 
-int Connection::getObject(const QString& id, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+int Connection::getObject(const QString& id, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback)
 {
   std::unique_ptr<Message> request{Message::newRequest(Message::Command::GetObject)};
   request->write(id.toLatin1());
   send(request,
     [this, callback](const std::shared_ptr<Message> message)
     {
-      ObjectPtr object;
       if(!message->isError())
-        object = readObject(*message);
-      callback(object, message->errorCode());
+      {
+        callback(readObject(*message), {});
+      }
+      else
+      {
+        callback({}, *message);
+      }
     });
   return request->requestId();
 }
 
-int Connection::getObject(const ObjectProperty& property, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+int Connection::getObject(const ObjectProperty& property, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback)
 {
   std::unique_ptr<Message> request{Message::newRequest(Message::Command::ObjectGetObjectPropertyObject)};
   request->write(property.object().handle());
@@ -234,15 +239,19 @@ int Connection::getObject(const ObjectProperty& property, std::function<void(con
   send(request,
     [this, callback](const std::shared_ptr<Message> message)
     {
-      ObjectPtr object;
       if(!message->isError())
-        object = readObject(*message);
-      callback(object, message->errorCode());
+      {
+        callback(readObject(*message), {});
+      }
+      else
+      {
+        callback({}, *message);
+      }
     });
   return request->requestId();
 }
 
-int Connection::getObject(const ObjectVectorProperty& property, uint32_t index, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+int Connection::getObject(const ObjectVectorProperty& property, uint32_t index, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback)
 {
   std::unique_ptr<Message> request{Message::newRequest(Message::Command::ObjectGetObjectVectorPropertyObject)};
   request->write(property.object().handle());
@@ -252,15 +261,19 @@ int Connection::getObject(const ObjectVectorProperty& property, uint32_t index, 
   send(request,
     [this, callback](const std::shared_ptr<Message> message)
     {
-      ObjectPtr object;
       if(!message->isError())
-        object = readObject(*message);
-      callback(object, message->errorCode());
+      {
+        callback(readObject(*message), {});
+      }
+      else
+      {
+        callback({}, *message);
+      }
     });
   return request->requestId();
 }
 
-int Connection::getObjects(const ObjectVectorProperty& property, uint32_t startIndex, uint32_t endIndex, std::function<void(const std::vector<ObjectPtr>&, Message::ErrorCode)> callback)
+int Connection::getObjects(const ObjectVectorProperty& property, uint32_t startIndex, uint32_t endIndex, std::function<void(const std::vector<ObjectPtr>&, std::optional<const Error>)> callback)
 {
   std::unique_ptr<Message> request{Message::newRequest(Message::Command::ObjectGetObjectVectorPropertyObject)};
   request->write(property.object().handle());
@@ -270,12 +283,18 @@ int Connection::getObjects(const ObjectVectorProperty& property, uint32_t startI
   send(request,
     [this, size=(endIndex - startIndex + 1), callback](const std::shared_ptr<Message> message)
     {
-      std::vector<ObjectPtr> objects;
-      objects.reserve(size);
       if(!message->isError())
+      {
+        std::vector<ObjectPtr> objects;
+        objects.reserve(size);
         for(uint32_t i = 0; i < size; i++)
           objects.emplace_back(readObject(*message));
-      callback(objects, message->errorCode());
+        callback(objects, {});
+      }
+      else
+      {
+        callback({}, *message);
+      }
     });
   return request->requestId();
 }
@@ -320,7 +339,7 @@ void Connection::callMethod(Method& method, const QString& arg)
   send(event);
 }
 
-int Connection::callMethod(Method& method, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+int Connection::callMethod(Method& method, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback)
 {
   auto request = Message::newRequest(Message::Command::ObjectCallMethod);
   request->write(method.object().handle());
@@ -332,13 +351,18 @@ int Connection::callMethod(Method& method, std::function<void(const ObjectPtr&, 
     {
       ObjectPtr object;
       if(!message->isError())
-        object = readObject(*message);
-      callback(object, message->errorCode());
+      {
+        callback(readObject(*message), {});
+      }
+      else
+      {
+        callback({}, *message);
+      }
     });
   return request->requestId();
 }
 
-int Connection::callMethod(Method& method, const QString& arg, std::function<void(const ObjectPtr&, Message::ErrorCode)> callback)
+int Connection::callMethod(Method& method, const QString& arg, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback)
 {
   auto request = Message::newRequest(Message::Command::ObjectCallMethod);
   request->write(method.object().handle());
@@ -350,28 +374,35 @@ int Connection::callMethod(Method& method, const QString& arg, std::function<voi
   send(request,
     [this, callback](const std::shared_ptr<Message> message)
     {
-      ObjectPtr object;
       if(!message->isError())
-        object = readObject(*message);
-      callback(object, message->errorCode());
+      {
+        callback(readObject(*message), {});
+      }
+      else
+      {
+        callback({}, *message);
+      }
     });
   return request->requestId();
 }
 
-int Connection::getTableModel(const ObjectPtr& object, std::function<void(const TableModelPtr&, Message::ErrorCode)> callback)
+int Connection::getTableModel(const ObjectPtr& object, std::function<void(const TableModelPtr&, std::optional<const Error>)> callback)
 {
   std::unique_ptr<Message> request{Message::newRequest(Message::Command::GetTableModel)};
   request->write(object->handle());
   send(request,
     [this, callback](const std::shared_ptr<Message> message)
     {
-      TableModelPtr tableModel;
       if(!message->isError())
       {
-        tableModel = readTableModel(*message);
+        auto tableModel = readTableModel(*message);
         m_tableModels[tableModel->handle()] = tableModel.get();
+        callback(tableModel, {});
       }
-      callback(tableModel, message->errorCode());
+      else
+      {
+        callback({}, *message);
+      }
     });
   return request->requestId();
 }
@@ -498,6 +529,7 @@ ObjectPtr Connection::readObject(const Message& message)
             else
             {
               VectorProperty* p = new VectorProperty(*obj, name, valueType, flags, readArray(message, valueType, length));
+              assert(p->size() == length);
               if(valueType == ValueType::Enum || valueType == ValueType::Set)
                 p->m_enumOrSetName = enumOrSetName;
               item = p;
@@ -657,12 +689,12 @@ void Connection::getWorld()
     setWorld(nullptr);
   else
     m_worldRequestId = m_worldProperty->getObject(
-      [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+      [this](const ObjectPtr& object, std::optional<const Error> /*error*/)
       {
         m_worldRequestId = invalidRequestId;
         setWorld(object);
         // TODO: show error??
-        if(m_state == State::Connecting)
+        if(m_state == State::FetchingWorld)
           setState(State::Connected);
       });
 }
@@ -934,10 +966,7 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
       case Message::Command::ObjectEventFired:
       case Message::Command::InputMonitorInputIdChanged:
       case Message::Command::InputMonitorInputValueChanged:
-      case Message::Command::OutputKeyboardOutputIdChanged:
-      case Message::Command::OutputKeyboardOutputValueChanged:
       case Message::Command::BoardTileDataChanged:
-      case Message::Command::OutputMapOutputsChanged:
       {
         const auto handle = message->read<Handle>();
         if(auto object = m_objects.value(handle).lock())
@@ -956,6 +985,7 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
 
 void Connection::socketConnected()
 {
+  setState(State::Authenticating);
   std::unique_ptr<Message> loginRequest{Message::newRequest(Message::Command::Login)};
   loginRequest->write(m_username.toUtf8());
   loginRequest->write(m_password);
@@ -964,6 +994,7 @@ void Connection::socketConnected()
     {
       if(loginResponse && loginResponse->isResponse() && !loginResponse->isError())
       {
+        setState(State::CreatingSession);
         std::unique_ptr<Message> newSessionRequest{Message::newRequest(Message::Command::NewSession)};
         send(newSessionRequest,
           [this](const std::shared_ptr<Message> newSessionResonse)
@@ -982,7 +1013,7 @@ void Connection::socketConnected()
                 auto request{Message::newRequest(Message::Command::BoardGetTileInfo)};
 
                 send(request,
-                  [this](const std::shared_ptr<Message> boardGetTileInfoResponse)
+                  [](const std::shared_ptr<Message> boardGetTileInfoResponse)
                   {
                     if(boardGetTileInfoResponse->isResponse() && !boardGetTileInfoResponse->isError())
                     {
@@ -1006,7 +1037,10 @@ void Connection::socketConnected()
               }
 
               if(m_worldProperty->hasObject())
+              {
+                setState(State::FetchingWorld);
                 getWorld();
+              }
               else
                 setState(State::Connected);
             }

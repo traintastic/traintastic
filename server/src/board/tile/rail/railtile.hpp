@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,8 +27,29 @@
 
 class RailTile : public Tile
 {
+  private:
+    uint8_t m_reservedState = 0;
+
   protected:
     RailTile(World& world, std::string_view _id, TileId tileId);
+
+    uint8_t reservedState() const final
+    {
+      return m_reservedState;
+    }
+
+    void setReservedState(uint8_t value);
+
+  public:
+    inline void reserve()
+    {
+      setReservedState(1);
+    }
+
+    inline void release()
+    {
+      setReservedState(0);
+    }
 };
 
 #endif

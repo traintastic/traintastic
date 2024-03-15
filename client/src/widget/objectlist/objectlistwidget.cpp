@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 #include <QToolBar>
 #include <QTableView>
 #include <traintastic/locale/locale.hpp>
+#include <traintastic/enum/outputchannel.hpp>
 #include "../tablewidget.hpp"
 #include "../../network/connection.hpp"
 #include "../../network/object.hpp"
@@ -33,6 +34,7 @@
 #include "../../theme/theme.hpp"
 #include "../../misc/methodaction.hpp"
 #include "../../dialog/objectselectlistdialog.hpp"
+#include "../../utils/enum.hpp"
 
 
 #include "../../mainwindow.hpp"
@@ -48,18 +50,8 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
   ListWidget(object_, parent),
   m_requestIdInputMonitor{Connection::invalidRequestId},
   m_requestIdOutputKeyboard{Connection::invalidRequestId},
-  m_toolbar{new QToolBar()},
-  m_buttonCreate{nullptr},
-  m_actionCreate{nullptr},
-  m_actionEdit{nullptr},
-  m_actionDelete{nullptr},
-  m_actionInputMonitor{nullptr},
-  m_actionInputMonitorChannel{nullptr},
-  m_actionOutputKeyboard{nullptr},
-  m_actionOutputKeyboardChannel{nullptr}
+  m_toolbar{new QToolBar()}
 {
-  static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, m_toolbar);
-
   if(Method* method = object()->getMethod("create");
      method && method->resultType() == ValueType::Object)
   {
@@ -72,7 +64,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
             object()->connection()->cancelRequest(m_requestIdCreate);
 
           m_requestIdCreate = method->call(
-            [this](const ObjectPtr& addedObject, Message::ErrorCode /*ec*/)
+            [this](const ObjectPtr& addedObject, std::optional<const Error> /*error*/)
             {
               m_requestIdCreate = Connection::invalidRequestId;
               if(addedObject)
@@ -111,7 +103,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
               object()->connection()->cancelRequest(m_requestIdCreate);
 
             m_requestIdCreate = method->call(action->data().toString(),
-              [this](const ObjectPtr& addedObject, Message::ErrorCode /*ec*/)
+              [this](const ObjectPtr& addedObject, std::optional<const Error> /*error*/)
               {
                 m_requestIdCreate = Connection::invalidRequestId;
                 if(addedObject)
@@ -158,13 +150,16 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
       });
   }
 
-  m_actionEdit = m_toolbar->addAction(Theme::getIcon("edit"), Locale::tr("list:edit"),
-    [this]()
-    {
-      for(const QString& id : getSelectedObjectIds())
-        MainWindow::instance->showObject(id);
-    });
-  m_actionEdit->setEnabled(false);
+  if(hasEdit())
+  {
+    m_actionEdit = m_toolbar->addAction(Theme::getIcon("edit"), Locale::tr("list:edit"),
+      [this]()
+      {
+        for(const QString& id : getSelectedObjectIds())
+          MainWindow::instance->showObject(id);
+      });
+    m_actionEdit->setEnabled(false);
+  }
 
   if(Method* method = object()->getMethod("remove"))
   {
@@ -184,7 +179,15 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
       [this]()
       {
         for(const QString& id : getSelectedObjectIds())
-          callMethod(m_actionDelete->method(), nullptr, id);
+          callMethod(m_actionDelete->method(),
+            [this](std::optional<const Error> error)
+            {
+              if(error)
+              {
+                error->show(this);
+              }
+            },
+            id);
       });
     m_actionDelete->setForceDisabled(true);
     m_toolbar->addAction(m_actionDelete);
@@ -238,7 +241,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
       [this]()
       {
         m_requestIdInputMonitor = m_actionInputMonitor->method().call(
-          [](const ObjectPtr& inputMonitor, Message::ErrorCode)
+          [](const ObjectPtr& inputMonitor, std::optional<const Error>)
           {
             if(inputMonitor)
               MainWindow::instance->showObject(inputMonitor);
@@ -268,7 +271,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
             //cancelRequest(m_requestIdInputMonitor);
 
             m_requestIdInputMonitor = callMethodR<ObjectPtr>(m_actionInputMonitorChannel->method(),
-              [this](const ObjectPtr& inputMonitor, Message::ErrorCode /*ec*/)
+              [this](const ObjectPtr& inputMonitor, std::optional<const Error> /*error*/)
               {
                 m_requestIdInputMonitor = Connection::invalidRequestId;
                 if(inputMonitor)
@@ -285,44 +288,19 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
 
   if(Method* method = object()->getMethod("output_keyboard"))
   {
-    m_actionOutputKeyboard = new MethodAction(Theme::getIcon("output_keyboard"), *method,
-      [this]()
-      {
-        //cancelRequest(m_requestIdOutputKeyboard);
-
-        m_requestIdOutputKeyboard = m_actionOutputKeyboard->method().call(
-          [this](const ObjectPtr& outputKeyboard, Message::ErrorCode)
-          {
-            m_requestIdOutputKeyboard = Connection::invalidRequestId;
-            if(outputKeyboard)
-              MainWindow::instance->showObject(outputKeyboard);
-          });
-      });
-  }
-
-  if(Method* method = object()->getMethod("output_keyboard_channel"))
-  {
-    if(const auto values = method->getAttribute(AttributeName::Values, QVariant()).toList(); !values.isEmpty())
+    const auto values = method->getAttribute(AttributeName::Values, QVariant()).toList();
+    if(values.size() > 1)
     {
-      const QVariantList aliasKeys = method->getAttribute(AttributeName::AliasKeys, QVariant()).toList();
-      const QVariantList aliasValues = method->getAttribute(AttributeName::AliasValues, QVariant()).toList();
-
       QMenu* menu = new QMenu(this);
       for(const auto& value : values)
       {
-        QString text;
-        if(int index = aliasKeys.indexOf(value); index != -1)
-          text = Locale::instance->parse(aliasValues[index].toString());
-        else
-          text = value.toString();
-
-        menu->addAction(text, this,
-          [this, channel=value.toUInt()]()
+        menu->addAction(translateEnum(EnumName<OutputChannel>::value, value.toLongLong()), this,
+          [this, channel=static_cast<OutputChannel>(value.toUInt())]()
           {
             //cancelRequest(m_requestIdOutputKeyboard);
 
-            m_requestIdOutputKeyboard = callMethodR<ObjectPtr>(m_actionOutputKeyboardChannel->method(),
-              [this](const ObjectPtr& outputKeyboard, Message::ErrorCode /*ec*/)
+            m_requestIdOutputKeyboard = callMethodR<ObjectPtr>(m_actionOutputKeyboard->method(),
+              [this](const ObjectPtr& outputKeyboard, std::optional<const Error> /*error*/)
               {
                 m_requestIdOutputKeyboard = Connection::invalidRequestId;
                 if(outputKeyboard)
@@ -332,8 +310,25 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
           });
       }
 
-      m_actionOutputKeyboardChannel = new MethodAction(Theme::getIcon("output_keyboard"), *method);
-      m_actionOutputKeyboardChannel->setMenu(menu);
+      m_actionOutputKeyboard = new MethodAction(Theme::getIcon("output_keyboard"), *method);
+      m_actionOutputKeyboard->setMenu(menu);
+    }
+    else if(!values.empty())
+    {
+      m_actionOutputKeyboard = new MethodAction(Theme::getIcon("output_keyboard"), *method,
+          [this, channel=static_cast<OutputChannel>(values.first().toUInt())]()
+          {
+            //cancelRequest(m_requestIdOutputKeyboard);
+
+            m_requestIdOutputKeyboard = callMethodR<ObjectPtr>(m_actionOutputKeyboard->method(),
+              [this](const ObjectPtr& outputKeyboard, std::optional<const Error> /*error*/)
+              {
+                m_requestIdOutputKeyboard = Connection::invalidRequestId;
+                if(outputKeyboard)
+                  MainWindow::instance->showObject(outputKeyboard);
+              },
+              channel);
+          });
     }
   }
 
@@ -352,9 +347,12 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
     m_toolbar->addAction(m_actionReverse);
   }
 
-  if(m_actionInputMonitor || m_actionInputMonitorChannel || m_actionOutputKeyboard || m_actionOutputKeyboardChannel)
+  if(m_actionInputMonitor || m_actionInputMonitorChannel || m_actionOutputKeyboard)
   {
-    m_toolbar->addSeparator();
+    if(!m_toolbar->actions().empty())
+    {
+      m_toolbar->addSeparator();
+    }
     if(m_actionInputMonitor)
       m_toolbar->addAction(m_actionInputMonitor);
     if(m_actionInputMonitorChannel)
@@ -364,12 +362,10 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
         connect(m_actionInputMonitorChannel, &QAction::triggered, button, &QToolButton::showMenu);
     }
     if(m_actionOutputKeyboard)
-      m_toolbar->addAction(m_actionOutputKeyboard);
-    if(m_actionOutputKeyboardChannel)
     {
-      m_toolbar->addAction(m_actionOutputKeyboardChannel);
-      if(auto* button = qobject_cast<QToolButton*>(m_toolbar->widgetForAction(m_actionOutputKeyboardChannel)))
-        connect(m_actionOutputKeyboardChannel, &QAction::triggered, button, &QToolButton::showMenu);
+      m_toolbar->addAction(m_actionOutputKeyboard);
+      if(auto* button = qobject_cast<QToolButton*>(m_toolbar->widgetForAction(m_actionOutputKeyboard)))
+        connect(m_actionOutputKeyboard, &QAction::triggered, button, &QToolButton::showMenu);
     }
   }
 
@@ -390,6 +386,16 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
       if(stopAll)
         m_toolbar->addAction(stopAll);
     }
+  }
+
+  if(!m_toolbar->actions().empty())
+  {
+    static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, m_toolbar);
+  }
+  else
+  {
+    delete m_toolbar;
+    m_toolbar = nullptr;
   }
 }
 
@@ -448,4 +454,13 @@ void ObjectListWidget::tableSelectionChanged(bool hasSelection)
     if(m_actionMoveDown)
       m_actionMoveDown->setForceDisabled(!hasSelection || selectedRow == (m_tableWidget->model()->rowCount() - 1));
   }
+}
+
+bool ObjectListWidget::hasEdit() const
+{
+  if(object()->classId() == "list.output")
+  {
+    return false;
+  }
+  return true;
 }

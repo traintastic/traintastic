@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,14 +23,14 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_KERNEL_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_KERNEL_HPP
 
+#include "../kernelbase.hpp"
 #include <array>
-#include <thread>
 #include <unordered_map>
-#include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
-#include <traintastic/enum/tristate.hpp>
+#include <traintastic/enum/outputchannel.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
+#include "../../output/outputvalue.hpp"
 
 class Decoder;
 enum class DecoderChangeFlags;
@@ -43,41 +43,16 @@ namespace DCCPlusPlus {
 
 struct Message;
 
-class Kernel
+class Kernel : public ::KernelBase
 {
   public:
     static constexpr uint32_t idMin = 0;
     static constexpr uint32_t idMax = 32767;
-    static constexpr uint16_t dccAccessoryAddressMin = 1;
-    static constexpr uint16_t dccAccessoryAddressMax = 2044;
-
-    struct OutputChannel
-    {
-      static constexpr uint32_t dccAccessory = 1;
-      static constexpr uint32_t turnout = 2;
-      static constexpr uint32_t output = 3;
-    };
-
-    inline static const std::vector<uint32_t> outputChannels = {
-      OutputChannel::dccAccessory,
-      OutputChannel::turnout,
-      OutputChannel::output,
-    };
-
-    inline static const std::vector<std::string_view> outputChannelNames = {
-      "$dccplusplus_channel:dcc_accessory$ <a>",
-      "$dccplusplus_channel:turnout$ <T>",
-      "$dccplusplus_channel:output$ <Z>",
-    };
 
   private:
-    boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
-    std::thread m_thread;
-    std::string m_logId;
     boost::asio::steady_timer m_startupDelayTimer;
-    std::function<void()> m_onStarted;
 
     TriState m_powerOn;
     TriState m_emergencyStop;
@@ -91,11 +66,8 @@ class Kernel
     OutputController* m_outputController;
 
     Config m_config;
-#ifndef NDEBUG
-    bool m_started;
-#endif
 
-    Kernel(const Config& config, bool simulation);
+    Kernel(std::string logId_, const Config& config, bool simulation);
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
 
@@ -117,13 +89,6 @@ class Kernel
     Kernel& operator =(const Kernel&) = delete;
 
     /**
-     * @brief IO context for DCC++ kernel and IO handler
-     *
-     * @return The IO context
-     */
-    boost::asio::io_context& ioContext() { return m_ioContext; }
-
-    /**
      * @brief Create kernel and IO handler
      *
      * @param[in] config DCC++ configuration
@@ -131,10 +96,10 @@ class Kernel
      * @return The kernel instance
      */
     template<class IOHandlerType, class... Args>
-    static std::unique_ptr<Kernel> create(const Config& config, Args... args)
+    static std::unique_ptr<Kernel> create(std::string logId_, const Config& config, Args... args)
     {
       static_assert(std::is_base_of_v<IOHandler, IOHandlerType>);
-      std::unique_ptr<Kernel> kernel{new Kernel(config, isSimulation<IOHandlerType>())};
+      std::unique_ptr<Kernel> kernel{new Kernel(std::move(logId_), config, isSimulation<IOHandlerType>())};
       kernel->setIOHandler(std::make_unique<IOHandlerType>(*kernel, std::forward<Args>(args)...));
       return kernel;
     }
@@ -153,39 +118,11 @@ class Kernel
     }
 
     /**
-     *
-     *
-     */
-    inline const std::string& logId() { return m_logId; }
-
-    /**
-     * @brief Set object id used for log messages
-     *
-     * @param[in] value The object id
-     */
-    inline void setLogId(std::string value)
-    {
-      m_logId = std::move(value);
-    }
-
-    /**
      * @brief Set DCC++ configuration
      *
      * @param[in] config The DCC++ configuration
      */
     void setConfig(const Config& config);
-
-    /**
-     * @brief ...
-     *
-     * @param[in] callback ...
-     * @note This function may not be called when the kernel is running.
-     */
-    inline void setOnStarted(std::function<void()> callback)
-    {
-      assert(!m_started);
-      m_onStarted = std::move(callback);
-    }
 
     /**
      * @brief ...
@@ -287,12 +224,12 @@ class Kernel
 
     /**
      *
-     * @param[in] channel Output channel, see #OutputChannel
-     * @param[in] address Output address, #outputAddressMin..#outputAddressMax
-     * @param[in] value Output value: \c true is on, \c false is off.
+     * @param[in] channel Output channel
+     * @param[in] address Output address
+     * @param[in] value Output value
      * @return \c true if send successful, \c false otherwise.
      */
-    bool setOutput(uint32_t channel, uint16_t address, bool value);
+    bool setOutput(OutputChannel channel, uint16_t address, OutputValue value);
 
     /**
      * \brief Simulate input change

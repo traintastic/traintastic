@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,11 +44,12 @@
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
+#include "../../utils/makearray.hpp"
 #include "../../world/world.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
-constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
+constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 constexpr auto identificationListColumns = IdentificationListColumn::Id | IdentificationListColumn::Name | IdentificationListColumn::Interface | IdentificationListColumn::Address;
 
 CREATE_IMPL(LocoNetInterface)
@@ -160,21 +161,31 @@ std::pair<uint32_t, uint32_t> LocoNetInterface::inputAddressMinMax(uint32_t) con
 
 void LocoNetInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
-  if(m_kernel && inRange(address, outputAddressMinMax(channel)))
+  if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address, action);
 }
 
-std::pair<uint32_t, uint32_t> LocoNetInterface::outputAddressMinMax(uint32_t) const
+tcb::span<const OutputChannel> LocoNetInterface::outputChannels() const
 {
-  return {LocoNet::Kernel::outputAddressMin, LocoNet::Kernel::outputAddressMax};
+  static const auto values = makeArray(OutputChannel::Accessory, OutputChannel::DCCext);
+  return values;
 }
 
-bool LocoNetInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
+std::pair<uint32_t, uint32_t> LocoNetInterface::outputAddressMinMax(OutputChannel channel) const
+{
+  if(channel == OutputChannel::Accessory)
+  {
+    return {LocoNet::Kernel::accessoryOutputAddressMin, LocoNet::Kernel::accessoryOutputAddressMax};
+  }
+  return OutputController::outputAddressMinMax(channel);
+}
+
+bool LocoNetInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
 {
   return
       m_kernel &&
       inRange(address, outputAddressMinMax(channel)) &&
-    m_kernel->setOutput(static_cast<uint16_t>(address), value);
+      m_kernel->setOutput(channel, static_cast<uint16_t>(address), value);
 }
 
 std::pair<uint32_t, uint32_t> LocoNetInterface::identificationAddressMinMax(uint32_t) const
@@ -269,26 +280,26 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
     {
       if(simulation)
       {
-        m_kernel = LocoNet::Kernel::create<LocoNet::SimulationIOHandler>(loconet->config());
+        m_kernel = LocoNet::Kernel::create<LocoNet::SimulationIOHandler>(id.value(), loconet->config());
       }
       else
       {
         switch(type)
         {
           case LocoNetInterfaceType::Serial:
-            m_kernel = LocoNet::Kernel::create<LocoNet::SerialIOHandler>(loconet->config(), device.value(), baudrate.value(), flowControl.value());
+            m_kernel = LocoNet::Kernel::create<LocoNet::SerialIOHandler>(id.value(), loconet->config(), device.value(), baudrate.value(), flowControl.value());
             break;
 
           case LocoNetInterfaceType::TCPBinary:
-            m_kernel = LocoNet::Kernel::create<LocoNet::TCPBinaryIOHandler>(loconet->config(), hostname.value(), port.value());
+            m_kernel = LocoNet::Kernel::create<LocoNet::TCPBinaryIOHandler>(id.value(), loconet->config(), hostname.value(), port.value());
             break;
 
           case LocoNetInterfaceType::LBServer:
-            m_kernel = LocoNet::Kernel::create<LocoNet::LBServerIOHandler>(loconet->config(), hostname.value(), port.value());
+            m_kernel = LocoNet::Kernel::create<LocoNet::LBServerIOHandler>(id.value(), loconet->config(), hostname.value(), port.value());
             break;
 
           case LocoNetInterfaceType::Z21:
-            m_kernel = LocoNet::Kernel::create<LocoNet::Z21IOHandler>(loconet->config(), hostname.value());
+            m_kernel = LocoNet::Kernel::create<LocoNet::Z21IOHandler>(id.value(), loconet->config(), hostname.value());
             break;
 
           default:
@@ -299,11 +310,17 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
 
       setState(InterfaceState::Initializing);
 
-      m_kernel->setLogId(id.value());
       m_kernel->setOnStarted(
         [this]()
         {
           setState(InterfaceState::Online);
+
+          m_kernel->setPowerOn(contains(m_world.state.value(), WorldState::PowerOn));
+
+          if(contains(m_world.state.value(), WorldState::Run))
+            m_kernel->resume();
+          else
+            m_kernel->emergencyStop();
         });
       m_kernel->setOnError(
         [this]()
@@ -345,13 +362,6 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
         {
           m_kernel->setConfig(loconet->config());
         });
-
-      m_kernel->setPowerOn(contains(m_world.state.value(), WorldState::PowerOn));
-
-      if(contains(m_world.state.value(), WorldState::Run))
-        m_kernel->resume();
-      else
-        m_kernel->emergencyStop();
 
       Attributes::setEnabled(type, false);
       Attributes::setEnabled(device, false);
@@ -445,12 +455,6 @@ void LocoNetInterface::worldEvent(WorldState state, WorldEvent event)
         break;
     }
   }
-}
-
-void LocoNetInterface::idChanged(const std::string& newId)
-{
-  if(m_kernel)
-    m_kernel->setLogId(newId);
 }
 
 void LocoNetInterface::typeChanged()

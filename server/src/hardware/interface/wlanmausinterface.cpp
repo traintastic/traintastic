@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -66,12 +66,6 @@ void WlanMausInterface::worldEvent(WorldState state, WorldEvent event)
   }
 }
 
-void WlanMausInterface::idChanged(const std::string& newId)
-{
-  if(m_kernel)
-    m_kernel->setLogId(newId);
-}
-
 bool WlanMausInterface::setOnline(bool& value, bool simulation)
 {
   if(simulation)
@@ -84,17 +78,21 @@ bool WlanMausInterface::setOnline(bool& value, bool simulation)
   {
     try
     {
-      m_kernel = Z21::ServerKernel::create<Z21::UDPServerIOHandler>(z21->config(), m_world.decoders.value());
+      m_kernel = Z21::ServerKernel::create<Z21::UDPServerIOHandler>(id.value(), z21->config(), m_world.decoders.value());
 
       setState(InterfaceState::Initializing);
 
-      m_kernel->setLogId(id.value());
       m_kernel->setOnStarted(
         [this]()
         {
           setState(InterfaceState::Online);
         });
-
+      m_kernel->setOnError(
+        [this]()
+        {
+          setState(InterfaceState::Error);
+          online = false; // communication no longer possible
+        });
       m_kernel->setOnTrackPowerOff(
         [this]()
         {

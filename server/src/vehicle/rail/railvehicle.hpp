@@ -28,9 +28,9 @@
 #include "../../core/lengthproperty.hpp"
 #include "../../core/speedproperty.hpp"
 #include "../../core/weightproperty.hpp"
-#include "../../core/trainproperty.hpp"
 
 class Decoder;
+class Train;
 
 class RailVehicle : public Vehicle
 {
@@ -52,7 +52,7 @@ class RailVehicle : public Vehicle
     WeightProperty weight;
     WeightProperty totalWeight;
 
-    TrainProperty activeTrain;
+    ObjectProperty<Train> activeTrain;
 };
 
 #endif

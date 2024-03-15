@@ -833,7 +833,7 @@
     },
     {
         "term": "decoder_function_type:on_off",
-        "definition": "On\/Of",
+        "definition": "On\/Off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1249,7 +1249,7 @@
     },
     {
         "term": "language:en-us",
-        "definition": "English (US)",
+        "definition": "English (USA)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1266,6 +1266,22 @@
     {
         "term": "language:nl-nl",
         "definition": "Dutch",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "language:fr-fr",
+        "definition": "French",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "language:sv-se",
+        "definition": "Swedish",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1481,7 +1497,7 @@
     },
     {
         "term": "loconet_fastclock:master",
-        "definition": "Master (Traintatic controls the clock)",
+        "definition": "Master (Traintastic controls the clock)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1673,7 +1689,7 @@
     },
     {
         "term": "message:C1002",
-        "definition": "Creating client failed (%1)",
+        "definition": "Creating connection failed (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2217,7 +2233,7 @@
     },
     {
         "term": "message:I1003",
-        "definition": "Client connected",
+        "definition": "New connection",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2289,7 +2305,7 @@
     },
     {
         "term": "message:N1003",
-        "definition": "Restaring",
+        "definition": "Restarting",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2600,6 +2616,10 @@
         "comment": ""
     },
     {
+        "term": "message:W2003",
+        "definition": "Received malformed data dropped %1 bytes [%2]"
+    },
+    {
         "term": "message:W2004",
         "definition": "Input address %1 is invalid",
         "context": "",
@@ -2646,6 +2666,10 @@
         "term_plural": "",
         "reference": "",
         "comment": ""
+    },
+    {
+        "term": "message:W2020",
+        "definition": "DCCext (RCN-213) is not supported"
     },
     {
         "term": "object:id",
@@ -3416,8 +3440,8 @@
         "comment": ""
     },
     {
-        "term": "sensor_type:occupy_detector",
-        "definition": "Occupy detector",
+        "term": "sensor_type:occupancy_detector",
+        "definition": "Occupancy detector",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4314,5 +4338,153 @@
     {
         "term": "message:W9001",
         "definition": "Execution took %1 us"
+    },
+    {
+        "term": "message:E3001",
+        "definition": "Can't delete rail vehicle when in active train"
+    },
+    {
+        "term": "input_map_item.block:identification",
+        "definition": "Identification"
+    },
+    {
+        "term": "message:E3002",
+        "definition": "Can't delete active train"
+    },
+    {
+        "term": "message:C1014",
+        "definition": "Invalid command"
+    },
+    {
+        "term": "message:C1015",
+        "definition": "Unknown object"
+    },
+    {
+        "term": "message:C1016",
+        "definition": "Unknown property"
+    },
+    {
+        "term": "message:C1017",
+        "definition": "Invalid indexes"
+    },
+    {
+        "term": "message:C1018",
+        "definition": "Exception: %1"
+    },
+    {
+        "term": "message:C1019",
+        "definition": "Object not a table"
+    },
+    {
+        "term": "message:W3001",
+        "definition": "NX button connected to two blocks"
+    },
+    {
+        "term": "message:W3002",
+        "definition": "NX button not connected to any block"
+    },
+    {
+        "term": "auto_yes_no:auto",
+        "definition": "Auto detect"
+    },
+    {
+        "term": "auto_yes_no:yes",
+        "definition": "Yes"
+    },
+    {
+        "term": "auto_yes_no:no",
+        "definition": "No"
+    },
+    {
+        "term": "board_tile.rail.signal_3_aspect:require_reservation",
+        "definition": "Require reservation"
+    },
+    {
+        "term": "traintastic_diy_settings:startup_delay",
+        "definition": "Startup delay"
+    },
+    {
+        "term": "qtapp.settings.general:connect_automatically_to_discovered_server",
+        "definition": "Connect automatically to discovered server"
+    },
+    {
+        "term": "qtapp.mainmenu:about_server",
+        "definition": "About server"
+    },
+    {
+        "term": "qtapp.about:traintastic_server",
+        "definition": "About Traintastic server"
+    },
+    {
+        "term": "world:online_when_loaded",
+        "definition": "Go online when loaded"
+    },
+    {
+        "term": "world:power_on_when_loaded",
+        "definition": "Power on when loaded"
+    },
+    {
+        "term": "world:run_when_loaded",
+        "definition": "Run when loaded"
+    },
+    {
+        "term": "qtapp.connect_dialog:authenticating",
+        "definition": "Authenticating"
+    },
+    {
+        "term": "qtapp.connect_dialog:creating_session",
+        "definition": "Creating session"
+    },
+    {
+        "term": "qtapp.connect_dialog:fetching_world",
+        "definition": "Fetching world"
+    },
+    {
+        "term": "pair_output_action:none",
+        "definition": "None"
+    },
+    {
+        "term": "pair_output_action:first",
+        "definition": "First (Red)"
+    },
+    {
+        "term": "pair_output_action:second",
+        "definition": "Second (Green)"
+    },
+    {
+        "term": "hardware:addresses",
+        "definition": "Addresses"
+    },
+    {
+        "term": "output_channel:accessory",
+        "definition": "Accessory"
+    },
+    {
+        "term": "output_channel:accessory_dcc",
+        "definition": "Accessory (DCC)"
+    },
+    {
+        "term": "output_channel:accessory_motorola",
+        "definition": "Accessory (Motorola)"
+    },
+    {
+        "term": "output_channel:ecos_object",
+        "definition": "ECoS object"
+    },
+    {
+        "term": "output_map.signal:add_address",
+        "definition": "Add address"
+    },
+    {
+        "term": "output_map.signal:remove_address",
+        "definition": "Remove address"
+    },
+    {
+        "term": "output_map.signal:ecos_object",
+        "definition": "ECoS object"
+    },
+    {
+        "term": "output.ecos_object:state",
+        "definition": "State"
     }
 ]

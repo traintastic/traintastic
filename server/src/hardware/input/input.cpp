@@ -179,7 +179,7 @@ void Input::updateValue(TriState _value)
   // todo: delay in ms for 0->1 || 1->0
   value.setValueInternal(_value);
   if(value != TriState::Undefined)
-    fireEvent(onValueChanged, value == TriState::True);
+    fireEvent<bool, const std::shared_ptr<Input>&>(onValueChanged, value == TriState::True, shared_ptr<Input>());
 }
 
 void Input::interfaceChanged()

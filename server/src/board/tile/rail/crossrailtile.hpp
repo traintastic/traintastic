@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,10 +26,13 @@
 #include "railtile.hpp"
 #include "../../map/node.hpp"
 
+enum class CrossState : uint8_t;
+
 class CrossRailTile : public RailTile
 {
   private:
     Node m_node;
+    CrossState m_crossState; //!< indicates which path is reserved
 
   protected:
     CrossRailTile(World& world, std::string_view _id, TileId tileId_);
@@ -37,6 +40,9 @@ class CrossRailTile : public RailTile
   public:
     std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }
     std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
+
+    bool reserve(CrossState crossState, bool dryRun = false);
+    bool release(bool dryRun = false);
 };
 
 #endif

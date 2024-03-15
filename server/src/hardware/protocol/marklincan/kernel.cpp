@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,7 @@
 #include "locomotivelist.hpp"
 #include "uid.hpp"
 #include "../dcc/dcc.hpp"
+#include "../motorola/motorola.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../decoder/decodercontroller.hpp"
@@ -36,6 +37,7 @@
 #include "../../output/outputcontroller.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
+#include "../../../log/logmessageexception.hpp"
 #include "../../../traintastic/traintastic.hpp"
 #include "../../../utils/inrange.hpp"
 #include "../../../utils/setthreadname.hpp"
@@ -63,15 +65,12 @@ static std::tuple<bool, DecoderProtocol, uint16_t> uidToProtocolAddress(uint32_t
   return {false, DecoderProtocol::None, 0};
 }
 
-Kernel::Kernel(const Config& config, bool simulation)
-  : m_ioContext{1}
+Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
+  : KernelBase(std::move(logId_))
   , m_simulation{simulation}
   , m_statusDataConfigRequestTimer{m_ioContext}
   , m_debugDir{Traintastic::instance->debugDir()}
   , m_config{config}
-#ifndef NDEBUG
-  , m_started{false}
-#endif
 {
   assert(isEventLoopThread());
   (void)m_simulation;
@@ -89,20 +88,6 @@ void Kernel::setConfig(const Config& config)
 
       m_config = newConfig;
     });
-}
-
-void Kernel::setOnStarted(std::function<void()> callback)
-{
-  assert(isEventLoopThread());
-  assert(!m_started);
-  m_onStarted = std::move(callback);
-}
-
-void Kernel::setOnError(std::function<void()> callback)
-{
-  assert(isEventLoopThread());
-  assert(!m_started);
-  m_onError = std::move(callback);
 }
 
 void Kernel::setOnLocomotiveListChanged(std::function<void(const std::shared_ptr<LocomotiveList>&)> callback)
@@ -148,9 +133,8 @@ void Kernel::start()
 
   // reset all state values
   m_inputValues.fill(TriState::Undefined);
-  m_outputValuesMotorola.fill(TriState::Undefined);
-  m_outputValuesDCC.fill(TriState::Undefined);
-  m_outputValuesSX1.fill(TriState::Undefined);
+  m_outputValuesMotorola.fill(OutputPairValue::Undefined);
+  m_outputValuesDCC.fill(OutputPairValue::Undefined);
 
   m_thread = std::thread(
     [this]()
@@ -163,7 +147,20 @@ void Kernel::start()
   m_ioContext.post(
     [this]()
     {
-      m_ioHandler->start();
+      try
+      {
+        m_ioHandler->start();
+      }
+      catch(const LogMessageException& e)
+      {
+        EventLoop::call(
+          [this, e]()
+          {
+            Log::log(logId, e.message(), e.args());
+            error();
+          });
+        return;
+      }
 
       // add Traintastic to the node list
       {
@@ -213,7 +210,7 @@ void Kernel::receive(const Message& message)
   assert(isKernelThread());
 
   if(m_config.debugLogRXTX)
-    EventLoop::call([this, msg=toString(message)](){ Log::log(m_logId, LogMessage::D2002_RX_X, msg); });
+    EventLoop::call([this, msg=toString(message)](){ Log::log(logId, LogMessage::D2002_RX_X, msg); });
 
   switch(message.command())
   {
@@ -360,43 +357,36 @@ void Kernel::receive(const Message& message)
             accessoryControl.position() != AccessoryControl::positionOn)
           break;
 
-        uint32_t channel = 0;
-        uint32_t address = accessoryControl.position() == AccessoryControl::positionOff ? 1 : 2;
-        const auto value = toTriState(accessoryControl.current() != 0);
+        OutputChannel channel;
+        uint32_t address;
+        const auto value = accessoryControl.position() == AccessoryControl::positionOff ? OutputPairValue::First : OutputPairValue::Second;
 
         if(inRange(accessoryControl.uid(), UID::Range::accessoryMotorola))
         {
-          channel = OutputChannel::motorola;
-          address += (accessoryControl.uid() - UID::Range::accessoryMotorola.first) << 1;
-          if(address > m_outputValuesMotorola.size() || m_outputValuesMotorola[address - 1] == value)
-            break;
-          m_outputValuesMotorola[address - 1] = value;
+          channel = OutputChannel::AccessoryMotorola;
+          address = 1 + (accessoryControl.uid() - UID::Range::accessoryMotorola.first);
+          //if(address > m_outputValuesMotorola.size() || m_outputValuesMotorola[address - 1] == value)
+          //  break;
+          //m_outputValuesMotorola[address - 1] = value;
         }
         else if(inRange(accessoryControl.uid(), UID::Range::accessoryDCC))
         {
-          channel = OutputChannel::dcc;
-          address += (accessoryControl.uid() - UID::Range::accessoryDCC.first) << 1;
-          if(address > m_outputValuesDCC.size() || m_outputValuesDCC[address - 1] == value)
-            break;
-          m_outputValuesDCC[address - 1] = value;
+          channel = OutputChannel::AccessoryDCC;
+          address = 1 + (accessoryControl.uid() - UID::Range::accessoryDCC.first);
+          //if(address > m_outputValuesDCC.size() || m_outputValuesDCC[address - 1] == value)
+          //  break;
+          //m_outputValuesDCC[address - 1] = value;
         }
-        else if(inRange(accessoryControl.uid(), UID::Range::accessorySX1))
+        else
         {
-          channel = OutputChannel::sx1;
-          address += (accessoryControl.uid() - UID::Range::accessorySX1.first) << 1;
-          if(address > m_outputValuesSX1.size() || m_outputValuesSX1[address - 1] == value)
-            break;
-          m_outputValuesSX1[address - 1] = value;
+          break;
         }
 
-        if(channel != 0)
-        {
-          EventLoop::call(
-            [this, channel, address, value]()
-            {
-              m_outputController->updateOutputValue(channel, address, value);
-            });
-        }
+        EventLoop::call(
+          [this, channel, address, value]()
+          {
+            m_outputController->updateOutputValue(channel, address, value);
+          });
       }
       break;
 
@@ -552,13 +542,6 @@ void Kernel::receive(const Message& message)
   }
 }
 
-void Kernel::error()
-{
-  assert(isEventLoopThread());
-  if(m_onError)
-    m_onError();
-}
-
 void Kernel::systemStop()
 {
   assert(isEventLoopThread());
@@ -622,7 +605,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       }
       else
       {
-        Log::log(m_logId, LogMessage::E2024_UNKNOWN_LOCOMOTIVE_MFX_UID_X, toHex(decoder.mfxUID.value()));
+        Log::log(logId, LogMessage::E2024_UNKNOWN_LOCOMOTIVE_MFX_UID_X, toHex(decoder.mfxUID.value()));
       }
       break;
 
@@ -666,9 +649,10 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
     postSend(LocomotiveFunction(uid, functionNumber, decoder.getFunctionValue(functionNumber)));
 }
 
-bool Kernel::setOutput(uint32_t channel, uint16_t address, bool value)
+bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputPairValue value)
 {
   assert(isEventLoopThread());
+  assert(value == OutputPairValue::First || value == OutputPairValue::Second);
 
   m_ioContext.post(
     [this, channel, address, value]()
@@ -677,35 +661,29 @@ bool Kernel::setOutput(uint32_t channel, uint16_t address, bool value)
 
       switch(channel)
       {
-        case OutputChannel::motorola:
-          assert(inRange(address, outputMotorolaAddressMin, outputMotorolaAddressMax));
-          if(m_outputValuesMotorola[address - 1] == toTriState(value))
+        case OutputChannel::AccessoryMotorola:
+          assert(inRange(address, Motorola::Accessory::addressMin, Motorola::Accessory::addressMax));
+          if(m_outputValuesMotorola[address - Motorola::Accessory::addressMin] == value)
             return;
-          uid = MarklinCAN::UID::accessoryMotorola((address + 1) >> 1);
+          uid = MarklinCAN::UID::accessoryMotorola(address);
           break;
 
-        case OutputChannel::dcc:
-          assert(inRange(address, outputDCCAddressMin, outputDCCAddressMax));
-          if(m_outputValuesDCC[address - 1] == toTriState(value))
+        case OutputChannel::AccessoryDCC:
+          assert(inRange(address, DCC::Accessory::addressMin, DCC::Accessory::addressMax));
+          if(m_outputValuesDCC[address - DCC::Accessory::addressMin] == value)
             return;
-          uid = MarklinCAN::UID::accessoryDCC((address + 1) >> 1);
-          break;
-
-        case OutputChannel::sx1:
-          assert(inRange(address, outputSX1AddressMin, outputSX1AddressMax));
-          if(m_outputValuesSX1[address - 1] == toTriState(value))
-            return;
-          uid = MarklinCAN::UID::accessorySX1((address + 1) >> 1);
+          uid = MarklinCAN::UID::accessoryDCC(address);
           break;
 
         default: /*[[unlikely]]*/
+          assert(false);
           return;
       }
       assert(uid != 0);
 
       MarklinCAN::AccessoryControl cmd(uid);
-      cmd.setPosition((address & 0x1) ? MarklinCAN::AccessoryControl::positionOff : MarklinCAN::AccessoryControl::positionOn);
-      cmd.setCurrent(value ? 1 : 0);
+      cmd.setPosition(value == OutputPairValue::First ? MarklinCAN::AccessoryControl::positionOff : MarklinCAN::AccessoryControl::positionOn);
+      //cmd.setCurrent(value ? 1 : 0);
       send(cmd);
     });
 
@@ -725,7 +703,7 @@ void Kernel::send(const Message& message)
   assert(isKernelThread());
 
   if(m_config.debugLogRXTX)
-    EventLoop::call([this, msg=toString(message)](){ Log::log(m_logId, LogMessage::D2001_TX_X, msg); });
+    EventLoop::call([this, msg=toString(message)](){ Log::log(logId, LogMessage::D2001_TX_X, msg); });
 
   m_ioHandler->send(message);
 }
@@ -788,7 +766,7 @@ void Kernel::receiveStatusDataConfig(uint32_t nodeUID, uint8_t index, const std:
 
 void Kernel::receiveConfigData(std::unique_ptr<ConfigDataStreamCollector> configData)
 {
-  const auto basename = m_debugDir / m_logId / "configstream" / configData->name;
+  const auto basename = m_debugDir / logId / "configstream" / configData->name;
   if(m_config.debugConfigStream)
   {
     writeFile(std::filesystem::path(basename).concat(".bin"), configData->bytes());
@@ -950,7 +928,7 @@ void Kernel::nodeChanged(const Node& node)
       data["configurations"] = configurations;
     }
 
-    writeFileJSON(m_debugDir / m_logId / "statusdataconfig" / toHex(node.uid).append(".json"), data);
+    writeFileJSON(m_debugDir / logId / "statusdataconfig" / toHex(node.uid).append(".json"), data);
   }
 }
 
@@ -979,12 +957,7 @@ void Kernel::changeState(State value)
       break;
 
     case State::Started:
-      if(m_onStarted) /*[[likely]]*/
-        EventLoop::call(
-          [this]()
-          {
-            m_onStarted();
-          });
+      started();
       break;
   }
 }

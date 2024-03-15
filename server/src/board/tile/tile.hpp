@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@
 #include "../../enum/tilerotate.hpp"
 
 class Node;
+class Board;
 
 class Tile : public IdObject
 {
@@ -41,6 +42,13 @@ class Tile : public IdObject
     const TileId m_tileId;
 
     Tile(World& world, std::string_view _id, TileId tileId);
+
+    Board& getBoard();
+
+    virtual uint8_t reservedState() const
+    {
+      return 0;
+    }
 
     virtual void boardModified() {}
     virtual void setRotate(TileRotate value) { rotate.setValueInternal(value); }
@@ -57,7 +65,7 @@ class Tile : public IdObject
 
     TileId tileId() const { return m_tileId; }
     inline TileLocation location() const { return {x.value(), y.value()}; }
-    inline TileData data() const { return TileData{m_tileId, rotate, width, height}; }
+    inline TileData data() const { return TileData{m_tileId, rotate, width, height, reservedState()}; }
 
     virtual std::optional<std::reference_wrapper<const Node>> node() const { return {}; }
     virtual std::optional<std::reference_wrapper<Node>> node() { return {}; }

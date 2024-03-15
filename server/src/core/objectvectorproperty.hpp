@@ -53,6 +53,16 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
     inline const_reverse_iterator rbegin() const { return m_values.rbegin(); }
     inline const_reverse_iterator rend() const { return m_values.rend(); }
 
+    inline const std::shared_ptr<T>& front() const
+    {
+      return m_values.front();
+    }
+
+    inline const std::shared_ptr<T>& back() const
+    {
+      return m_values.back();
+    }
+
     const std::shared_ptr<T>& operator [](size_t index) const
     {
       return m_values[index];
@@ -93,6 +103,12 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
     void appendInternal(std::shared_ptr<T> value)
     {
       m_values.emplace_back(std::move(value));
+      changed();
+    }
+
+    void insertInternal(size_t index, std::shared_ptr<T> value)
+    {
+      m_values.emplace(m_values.begin() + std::min(index, m_values.size()), std::move(value));
       changed();
     }
 

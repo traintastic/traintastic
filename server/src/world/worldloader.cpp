@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -171,6 +171,12 @@ void WorldLoader::load()
   m_objects.insert({m_world->getObjectId(), {data, m_world, false}});
   for(json object : data["objects"])
   {
+    //! \todo Remove in v0.4
+    if(object["class_id"].get<std::string_view>() == "output") // don't create Output objects, no longer stored in file.
+    {
+      continue;
+    }
+
     if(auto it = object.find("id"); it != object.end())
     {
       auto id = it.value().get<std::string>();
@@ -219,8 +225,6 @@ void WorldLoader::createObject(ObjectData& objectData)
   }
   else if(classId == Input::classId)
     objectData.object = Input::create(*m_world, id);
-  else if(classId == Output::classId)
-    objectData.object = Output::create(*m_world, id);
   else if(classId == Identification::classId)
     objectData.object = Identification::create(*m_world, id);
   else if(classId == Board::classId)
@@ -247,10 +251,19 @@ void WorldLoader::createObject(ObjectData& objectData)
   else if(classId == TrainBlockStatus::classId)
   {
     auto block = std::dynamic_pointer_cast<BlockRailTile>(getObject(objectData.json["block"].get<std::string_view>()));
-    auto train = std::dynamic_pointer_cast<Train>(getObject(objectData.json["train"].get<std::string_view>()));
 
-    if(block && train) /*[[likely]]*/
-      objectData.object = TrainBlockStatus::create(*block, *train, to<BlockTrainDirection>(objectData.json["direction"]), id);
+    if(block) /*[[likely]]*/
+    {
+      if(objectData.json["train"].is_string())
+      {
+        auto train = std::dynamic_pointer_cast<Train>(getObject(objectData.json["train"].get<std::string_view>()));
+        objectData.object = TrainBlockStatus::create(*block, *train, to<BlockTrainDirection>(objectData.json["direction"]), id);
+      }
+      else
+      {
+        objectData.object = TrainBlockStatus::create(*block, objectData.json["identification"].get<std::string>(), to<BlockTrainDirection>(objectData.json["direction"]), id);
+      }
+    }
   }
   else if(classId == Lua::Script::classId)
     objectData.object = Lua::Script::create(*m_world, id);
@@ -285,4 +298,21 @@ bool WorldLoader::readFile(const std::filesystem::path& filename, std::string& d
     file.read(data.data(), size);
   }
   return true;
+}
+
+bool WorldLoader::readFile(const std::filesystem::path& filename, nlohmann::json& data)
+{
+  std::string text;
+  if(readFile(filename, text))
+  {
+    try
+    {
+      data = nlohmann::json::parse(text);
+      return true;
+    }
+    catch(...)
+    {
+    }
+  }
+  return false;
 }

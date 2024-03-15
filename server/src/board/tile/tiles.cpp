@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "tiles.hpp"
 #include "rail/decouplerrailtile.hpp"
 #include "rail/linkrailtile.hpp"
+#include "rail/nxbuttonrailtile.hpp"
 #include "../../utils/ifclassidcreate.hpp"
 #include "../../world/world.hpp"
 
@@ -57,6 +58,7 @@ std::shared_ptr<Tile> Tiles::create(World& world, std::string_view classId, std:
   IF_CLASSID_CREATE(LinkRailTile)
   IF_CLASSID_CREATE(PushButtonTile)
   IF_CLASSID_CREATE(DecouplerRailTile)
+  IF_CLASSID_CREATE(NXButtonRailTile)
   return std::shared_ptr<Tile>();
 }
 
@@ -84,6 +86,7 @@ const std::vector<Tiles::Info>& Tiles::getInfo()
     Info{DirectionControlRailTile::classId, TileId::RailDirectionControl, rotateHalf, {straight}},
     Info{LinkRailTile::classId, TileId::RailLink, rotateFull, {straight}},
     Info{DecouplerRailTile::classId, TileId::RailDecoupler, rotateHalf, {straight}},
+    Info{NXButtonRailTile::classId, TileId::RailNXButton, rotateHalf, {straight}},
 
     Info{Curve45RailTile::classId, TileId::RailCurve45, rotateFull, {curve}},
     Info{Curve90RailTile::classId, TileId::RailCurve90, rotateFull, {curve}},
@@ -127,5 +130,6 @@ bool Tiles::canUpgradeStraightRail(std::string_view classId)
     (classId == SensorRailTile::classId) ||
     (classId == Signal2AspectRailTile::classId) ||
     (classId == Signal3AspectRailTile::classId) ||
-    (classId == DecouplerRailTile::classId);
+    (classId == DecouplerRailTile::classId) ||
+    (classId == NXButtonRailTile::classId);
 }

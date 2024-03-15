@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -91,7 +91,7 @@ void UDPClientIOHandler::send()
         EventLoop::call(
           [this, ec]()
           {
-            Log::log(m_kernel.logId(), LogMessage::E2011_SOCKET_SEND_FAILED_X, ec);
+            Log::log(m_kernel.logId, LogMessage::E2011_SOCKET_SEND_FAILED_X, ec);
             // TODO interface status -> error
           });
       }

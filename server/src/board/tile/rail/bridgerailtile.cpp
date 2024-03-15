@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,9 +22,37 @@
 
 #include "bridgerailtile.hpp"
 
+constexpr uint8_t toMask(BridgePath path)
+{
+  return 1 << static_cast<uint8_t>(path);
+}
+
+
 BridgeRailTile::BridgeRailTile(World& world, std::string_view _id, TileId tileId_)
   : RailTile(world, _id, tileId_)
   , m_node{*this, 4}
 {
   assert(isRailBridge(tileId_));
+}
+
+bool BridgeRailTile::reserve(BridgePath path, bool dryRun)
+{
+  const uint8_t mask = toMask(path);
+
+  if((reservedState() & mask))
+  {
+    return false; // already reserved
+  }
+
+  if(!dryRun)
+  {
+    RailTile::setReservedState(reservedState() | mask);
+  }
+
+  return true;
+}
+
+void BridgeRailTile::release(BridgePath path)
+{
+  RailTile::setReservedState(reservedState() & ~toMask(path));
 }

@@ -3,96 +3,112 @@
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "char": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "find": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "format": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "gmatch": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "gsub": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "len": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "lower": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "match": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "pack": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "packsize": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "rep": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "reverse": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "sub": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "unpack": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   },
   "upper": {
     "is_lua_builtin": true,
     "type": "function",
     "parameters": [],
-    "return_values": 0
+    "return_values": 0,
+    "since": "0.1"
   }
 }

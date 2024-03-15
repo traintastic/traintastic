@@ -30,8 +30,9 @@
 
 namespace Z21 {
 
-ServerKernel::ServerKernel(const ServerConfig& config, std::shared_ptr<DecoderList> decoderList)
-  : m_inactiveClientPurgeTimer{m_ioContext}
+ServerKernel::ServerKernel(std::string logId_, const ServerConfig& config, std::shared_ptr<DecoderList> decoderList)
+  : Kernel(std::move(logId_))
+  , m_inactiveClientPurgeTimer{m_ioContext}
   , m_config{config}
   , m_decoderList{std::move(decoderList)}
 {
@@ -80,7 +81,7 @@ void ServerKernel::receiveFrom(const Message& message, IOHandler::ClientId clien
     EventLoop::call(
       [this, clientId, msg=toString(message)]()
       {
-        Log::log(m_logId, LogMessage::D2005_X_RX_X, clientId, msg);
+        Log::log(logId, LogMessage::D2005_X_RX_X, clientId, msg);
       });
 
   m_clients[clientId].lastSeen = std::chrono::steady_clock::now();
@@ -108,7 +109,7 @@ void ServerKernel::receiveFrom(const Message& message, IOHandler::ClientId clien
               response.db1 |= Z21_CENTRALSTATE_EMERGENCYSTOP;
             if(m_trackPowerOn != TriState::True)
               response.db1 |= Z21_CENTRALSTATE_TRACKVOLTAGEOFF;
-            response.calcChecksum();
+            response.updateChecksum();
             sendTo(response, clientId);
           }
           else if(message == LanXSetTrackPowerOn())
@@ -149,7 +150,7 @@ void ServerKernel::receiveFrom(const Message& message, IOHandler::ClientId clien
           }
           break;
 
-        case 0xE3:
+        case LAN_X_GET_LOCO_INFO:
           if(const auto& getLocoInfo = static_cast<const LanXGetLocoInfo&>(message);
               getLocoInfo.db0 == 0xF0)
           {
@@ -164,7 +165,7 @@ void ServerKernel::receiveFrom(const Message& message, IOHandler::ClientId clien
           }
           break;
 
-        case 0xE4:
+        case LAN_X_SET_LOCO:
           if(const auto& setLocoDrive = static_cast<const LanXSetLocoDrive&>(message);
               setLocoDrive.db0 >= 0x10 && setLocoDrive.db0 <= 0x13)
           {
@@ -220,7 +221,7 @@ void ServerKernel::receiveFrom(const Message& message, IOHandler::ClientId clien
           }
           break;
 
-        case 0xF1:
+        case LAN_X_GET_FIRMWARE_VERSION:
           if(message == LanXGetFirmwareVersion())
             sendTo(LanXGetFirmwareVersionReply(ServerConfig::firmwareVersionMajor, ServerConfig::firmwareVersionMinor), clientId);
           break;
@@ -306,7 +307,7 @@ void ServerKernel::sendTo(const Message& message, IOHandler::ClientId clientId)
       EventLoop::call(
         [this, clientId, msg=toString(message)]()
         {
-          Log::log(m_logId, LogMessage::D2004_X_TX_X, clientId, msg);
+          Log::log(logId, LogMessage::D2004_X_TX_X, clientId, msg);
         });
   }
   else

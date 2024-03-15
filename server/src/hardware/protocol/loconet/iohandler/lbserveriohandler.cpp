@@ -77,18 +77,16 @@ static std::vector<std::byte> readHexBytes(std::string_view text)
 
 namespace LocoNet {
 
-LBServerIOHandler::LBServerIOHandler(Kernel& kernel, const std::string& hostname, uint16_t port)
-  : TCPIOHandler(kernel, hostname, port)
+LBServerIOHandler::LBServerIOHandler(Kernel& kernel, std::string hostname, uint16_t port)
+  : TCPIOHandler(kernel, std::move(hostname), port)
   , m_readBufferOffset{0}
-{
-}
-
-LBServerIOHandler::~LBServerIOHandler()
 {
 }
 
 void LBServerIOHandler::start()
 {
+  TCPIOHandler::start();
+
   read();
 }
 
@@ -162,7 +160,7 @@ void LBServerIOHandler::read()
         EventLoop::call(
           [this, ec]()
           {
-            Log::log(m_kernel.logId(), LogMessage::E2008_SOCKET_READ_FAILED_X, ec);
+            Log::log(m_kernel.logId, LogMessage::E2008_SOCKET_READ_FAILED_X, ec);
             m_kernel.error();
           });
       }
@@ -181,7 +179,7 @@ void LBServerIOHandler::write()
         EventLoop::call(
           [this, ec]()
           {
-            Log::log(m_kernel.logId(), LogMessage::E2007_SOCKET_WRITE_FAILED_X, ec);
+            Log::log(m_kernel.logId, LogMessage::E2007_SOCKET_WRITE_FAILED_X, ec);
             m_kernel.error();
           });
       }

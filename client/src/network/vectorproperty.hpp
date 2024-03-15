@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,9 +40,9 @@ class VectorProperty : public AbstractVectorProperty
 
   public:
     VectorProperty(Object& object, const QString& name, ValueType type, PropertyFlags flags, QVariantList values) :
-      AbstractVectorProperty(object, name, type, flags),
-      m_values{std::move(values)}
+      AbstractVectorProperty(object, name, type, flags)
     {
+      m_values = std::move(values); // Somehow m_values{std::move(values)} doesn't work, don't know why yet.
     }
 
     const QString& enumName() const final
@@ -99,6 +99,12 @@ class VectorProperty : public AbstractVectorProperty
       Q_ASSERT(index >= 0 && index < size());
       return m_values[index];
     }
+
+    void setBool(int index, bool value) final;
+    void setInt(int index, int value) final;
+    void setInt64(int index, qint64 value) final;
+    void setDouble(int index, double value) final;
+    void setString(int index, const QString& value) final;
 };
 
 #endif

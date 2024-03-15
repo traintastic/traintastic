@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,9 +23,9 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_KERNEL_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_KERNEL_HPP
 
+#include "../kernelbase.hpp"
+
 #include <array>
-#include <thread>
-#include <boost/asio/io_context.hpp>
 
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
@@ -39,21 +39,12 @@ namespace Z21 {
 struct Message;
 enum HardwareType : uint32_t;
 
-class Kernel
+class Kernel : public ::KernelBase
 {
-  private:
-    std::thread m_thread;
-    std::function<void()> m_onStarted;
-
   protected:
-    boost::asio::io_context m_ioContext;
     std::unique_ptr<IOHandler> m_ioHandler;
-    std::string m_logId;
-#ifndef NDEBUG
-    bool m_started;
-#endif
 
-    Kernel();
+    Kernel(std::string logId_);
     virtual ~Kernel() = default;
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
@@ -64,42 +55,6 @@ class Kernel
   public:
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
-
-    /**
-     * @brief IO context for Z21 kernel and IO handler
-     *
-     * @return The IO context
-     */
-    boost::asio::io_context& ioContext() { return m_ioContext; }
-
-    /**
-     * @brief Get object id used for log messages
-     * @return The object id
-     */
-    inline const std::string& logId()
-    {
-      return m_logId;
-    }
-
-    /**
-     * @brief Set object id used for log messages
-     * @param[in] value The object id
-     */
-    inline void setLogId(std::string value)
-    {
-      m_logId = std::move(value);
-    }
-
-    /**
-     * @brief ...
-     * @param[in] callback ...
-     * @note This function may not be called when the kernel is running.
-     */
-    inline void setOnStarted(std::function<void()> callback)
-    {
-      assert(!m_started);
-      m_onStarted = std::move(callback);
-    }
 
     /**
      * @brief Start the kernel and IO handler

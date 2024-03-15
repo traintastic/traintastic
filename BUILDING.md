@@ -105,6 +105,10 @@ For *Debug builds* see Client section of MinGW
 
 ### Linux
 
+Install dependecies, for Ubuntu:
+- `sudo apt install libboost-dev libboost-program-options-dev liblua5.3-dev zlib1g-dev libarchive-dev` (required)
+- `sudo apt install libsystemd-dev` (optional, for serial port listing)
+
 In the *build* directory:
 - Configure CMake: `cmake ../ -DCMAKE_BUILD_TYPE=Release`
 - Build traintastic-server: `cmake --build . --config Release --target traintastic-server`

@@ -23,7 +23,7 @@
 #include "server.hpp"
 #include <traintastic/network/message.hpp>
 #include <version.hpp>
-#include "client.hpp"
+#include "connection.hpp"
 #include "../core/eventloop.hpp"
 #include "../log/log.hpp"
 #include "../log/logmessageexception.hpp"
@@ -129,15 +129,15 @@ Server::~Server()
   if(m_thread.joinable())
     m_thread.join();
 
-  while(!m_clients.empty())
-    m_clients.front()->disconnect();
+  while(!m_connections.empty())
+    m_connections.front()->disconnect();
 }
 
-void Server::clientGone(const std::shared_ptr<Client>& client)
+void Server::connectionGone(const std::shared_ptr<Connection>& connection)
 {
   assert(isEventLoopThread());
 
-  m_clients.erase(std::find(m_clients.begin(), m_clients.end(), client));
+  m_connections.erase(std::find(m_connections.begin(), m_connections.end(), connection));
 }
 
 void Server::doReceive()
@@ -199,33 +199,39 @@ void Server::doAccept()
 {
   assert(IS_SERVER_THREAD);
 
-  assert(!m_socketTCP);
-  m_socketTCP = std::make_shared<boost::asio::ip::tcp::socket>(m_ioContext);
-
-  m_acceptor.async_accept(*m_socketTCP,
-    [this](boost::system::error_code ec)
+  m_acceptor.async_accept(
+    [this](boost::system::error_code ec, boost::asio::ip::tcp::socket socket)
     {
       if(!ec)
       {
-        EventLoop::call(
-          [this, socket=std::move(m_socketTCP)]()
-          {
-            try
+        try
+        {
+          const auto connectionId = std::string("connection[")
+            .append(socket.remote_endpoint().address().to_string())
+            .append(":")
+            .append(std::to_string(socket.remote_endpoint().port()))
+            .append("]");
+
+          auto connection = std::make_shared<Connection>(*this, std::move(socket), connectionId);
+          connection->start();
+
+          EventLoop::call(
+            [this, connection]()
             {
-              m_clients.emplace_back(std::make_shared<Client>(*this, std::move(*socket)));
-            }
-            catch(const std::exception& e)
-            {
-              Log::log(id, LogMessage::C1002_CREATING_CLIENT_FAILED_X, e.what());
-            }
-          });
+              Log::log(connection->id, LogMessage::I1003_NEW_CONNECTION);
+              m_connections.push_back(connection);
+            });
+        }
+        catch(const std::exception& e)
+        {
+          Log::log(id, LogMessage::C1002_CREATING_CONNECTION_FAILED_X, e.what());
+        }
 
         doAccept();
       }
       else
       {
         Log::log(id, LogMessage::E1004_TCP_ACCEPT_ERROR_X, ec.message());
-        m_socketTCP.reset();
       }
     });
 }

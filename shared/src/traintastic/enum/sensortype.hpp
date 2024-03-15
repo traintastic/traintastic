@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,13 +28,13 @@
 
 enum class SensorType : uint8_t
 {
-  OccupyDetector = 0,
+  OccupancyDetector = 0,
   ReedSwitch = 1,
 };
 
 TRAINTASTIC_ENUM(SensorType, "sensor_type", 2,
 {
-  {SensorType::OccupyDetector, "occupy_detector"},
+  {SensorType::OccupancyDetector, "occupancy_detector"},
   {SensorType::ReedSwitch, "reed_switch"},
 });
 

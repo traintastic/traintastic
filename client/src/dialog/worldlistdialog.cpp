@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@
 #include "../network/connection.hpp"
 #include "../network/object.hpp"
 #include "../network/tablemodel.hpp"
-#include "../network/utils.hpp"
+#include "../network/error.hpp"
 #include "../widget/alertwidget.hpp"
 #include <traintastic/locale/locale.hpp>
 
@@ -63,14 +63,14 @@ WorldListDialog::WorldListDialog(std::shared_ptr<Connection> connection, QWidget
   spinner->start();
 
   m_requestId = m_connection->getObject("traintastic.world_list",
-    [this, spinner](const ObjectPtr& object, Message::ErrorCode ec)
+    [this, spinner](const ObjectPtr& object, std::optional<const Error> error)
     {
       if(object)
       {
         m_object = object;
 
         m_requestId = m_connection->getTableModel(m_object,
-          [this, spinner](const TableModelPtr& tableModel, Message::ErrorCode errorCode)
+          [this, spinner](const TableModelPtr& tableModel, std::optional<const Error> err)
           {
             if(tableModel)
             {
@@ -92,12 +92,24 @@ WorldListDialog::WorldListDialog(std::shared_ptr<Connection> connection, QWidget
 
               delete spinner;
             }
+            else if(err)
+            {
+              static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(err->toString()));
+            }
             else
-              static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(errorCodeToText(errorCode)));
+            {
+              assert(false);
+            }
           });
       }
+      else if(error)
+      {
+        static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(error->toString()));
+      }
       else
-        static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, AlertWidget::error(errorCodeToText(ec)));
+      {
+        assert(false);
+      }
     });
 }
 

@@ -24,6 +24,7 @@
 #include "../connection.hpp"
 #include "../property.hpp"
 #include "../objectproperty.hpp"
+#include "../error.hpp"
 
 TrainBlockStatus::TrainBlockStatus(const std::shared_ptr<Connection>& connection, Handle handle, const QString& classId_)
   : Object(connection, handle, classId_)
@@ -45,6 +46,14 @@ BlockTrainDirection TrainBlockStatus::direction() const
   return static_cast<BlockTrainDirection>(0);
 }
 
+QString TrainBlockStatus::identification() const
+{
+  if(m_identificationProperty) /*[[likely]]*/
+    return m_identificationProperty->toString();
+  assert(false);
+  return {};
+}
+
 void TrainBlockStatus::created()
 {
   Object::created();
@@ -52,6 +61,14 @@ void TrainBlockStatus::created()
   m_directionProperty = dynamic_cast<Property*>(getProperty("direction"));
   if(m_directionProperty)
     connect(m_directionProperty, &Property::valueChanged, this,
+      [this]()
+      {
+        emit changed();
+      });
+
+  m_identificationProperty = dynamic_cast<Property*>(getProperty("identification"));
+  if(m_identificationProperty)
+    connect(m_identificationProperty, &Property::valueChanged, this,
       [this]()
       {
         emit changed();
@@ -75,7 +92,7 @@ void TrainBlockStatus::updateTrain()
   }
 
   m_requestId = m_trainProperty->getObject(
-    [this](const ObjectPtr& object, Message::ErrorCode /*ec*/)
+    [this](const ObjectPtr& object, std::optional<const Error> /*error*/)
     {
       m_requestId = Connection::invalidRequestId;
       m_train = object;

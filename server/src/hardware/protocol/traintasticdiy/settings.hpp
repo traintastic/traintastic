@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,11 +34,15 @@ class Settings final : public SubObject
   CLASS_ID("traintastic_diy_settings")
 
   private:
+    static constexpr uint16_t startupDelayMin = 0;
+    static constexpr uint16_t startupDelayDefault = 500;
+    static constexpr uint16_t startupDelayMax = 60'000;
     static constexpr uint16_t heartbeatTimeoutMin = 100;
     static constexpr uint16_t heartbeatTimeoutDefault = 1'000;
     static constexpr uint16_t heartbeatTimeoutMax = 60'000;
 
   public:
+    Property<uint16_t> startupDelay;
     Property<uint16_t> heartbeatTimeout;
     Property<bool> debugLogRXTX;
     Property<bool> debugLogHeartbeat;

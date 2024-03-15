@@ -35,6 +35,7 @@ struct Config
 struct ClientConfig : Config
 {
   static constexpr uint16_t keepAliveInterval = 15; //!< sec
+  static constexpr uint16_t purgeInactiveDecoderInternal = 5 * 60; //!< sec
 };
 
 struct ServerConfig : Config

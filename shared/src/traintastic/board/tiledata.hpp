@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2021,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,12 +33,12 @@ struct TileData
 
   uint16_t _header;
   uint8_t _size;
-  uint8_t _reserved;
+  uint8_t state;
 
-  inline TileData(TileId _id = TileId::None, TileRotate _rotate = TileRotate::Deg0, uint8_t _width = 1, uint8_t _height = 1) :
+  inline TileData(TileId _id = TileId::None, TileRotate _rotate = TileRotate::Deg0, uint8_t _width = 1, uint8_t _height = 1, uint8_t state_ = 0) :
     _header{static_cast<uint16_t>((static_cast<uint16_t>(_id) << 4) | (static_cast<uint16_t>(_rotate) << 1) | (::isActive(_id) ? 1 : 0))},
     _size{0},
-    _reserved{0}
+    state{state_}
   {
     setSize(_width, _height);
   }

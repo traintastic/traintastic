@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@
 
 #include "outputlisttablemodel.hpp"
 #include "outputlist.hpp"
+#include "../addressoutput.hpp"
 #include "../outputcontroller.hpp"
 #include "../../../core/objectproperty.tpp"
 #include "../../../utils/displayname.hpp"
@@ -29,8 +30,6 @@
 bool OutputListTableModel::isListedProperty(std::string_view name)
 {
   return
-    name == "id" ||
-    name == "name" ||
     name == "interface" ||
     name == "channel" ||
     name == "address";
@@ -40,12 +39,6 @@ static std::string_view displayName(OutputListColumn column)
 {
   switch(column)
   {
-    case OutputListColumn::Id:
-      return DisplayName::Object::id;
-
-    case OutputListColumn::Name:
-      return DisplayName::Object::name;
-
     case OutputListColumn::Interface:
       return DisplayName::Hardware::interface;
 
@@ -85,12 +78,6 @@ std::string OutputListTableModel::getText(uint32_t column, uint32_t row) const
     assert(column < m_columns.size());
     switch(m_columns[column])
     {
-      case OutputListColumn::Id:
-        return output.id;
-
-      case OutputListColumn::Name:
-        return output.name;
-
       case OutputListColumn::Interface:
         if(const auto& interface = std::dynamic_pointer_cast<Object>(output.interface.value()))
         {
@@ -102,26 +89,18 @@ std::string OutputListTableModel::getText(uint32_t column, uint32_t row) const
         return "";
 
       case OutputListColumn::Channel:
-      {
-        const uint32_t channel = output.channel.value();
-        if(channel == OutputController::defaultOutputChannel)
-          return "";
-
-        if(const auto* aliasKeys = output.channel.tryGetValuesAttribute(AttributeName::AliasKeys))
+        if(const auto* it = EnumValues<OutputChannel>::value.find(output.channel); it != EnumValues<OutputChannel>::value.end()) /*[[likely]]*/
         {
-          if(const auto* aliasValues = output.channel.tryGetValuesAttribute(AttributeName::AliasValues))
-          {
-            assert(aliasKeys->length() == aliasValues->length());
-            for(uint32_t i = 0; i < aliasKeys->length(); i++)
-              if(aliasKeys->getInt64(i) == channel)
-                return aliasValues->getString(i);
-          }
+          return std::string("$").append(EnumName<OutputChannel>::value).append(":").append(it->second).append("$");
         }
+        break;
 
-        return std::to_string(channel);
-      }
       case OutputListColumn::Address:
-        return std::to_string(output.address.value());
+        if(auto* addressOutput = dynamic_cast<const AddressOutput*>(&output))
+        {
+          return std::to_string(addressOutput->address.value());
+        }
+        return {};
     }
     assert(false);
   }
@@ -133,11 +112,7 @@ void OutputListTableModel::propertyChanged(BaseProperty& property, uint32_t row)
 {
   std::string_view name = property.name();
 
-  if(name == "id")
-    changed(row, OutputListColumn::Id);
-  else if(name == "name")
-    changed(row, OutputListColumn::Name);
-  else if(name == "interface")
+  if(name == "interface")
     changed(row, OutputListColumn::Interface);
   else if(name == "channel")
     changed(row, OutputListColumn::Channel);

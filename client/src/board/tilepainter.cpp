@@ -42,68 +42,42 @@ TilePainter::TilePainter(QPainter& painter, int tileSize, const BoardColorScheme
   m_blockPen{m_colorScheme.track},
   m_trackPen(m_colorScheme.track, m_trackWidth, Qt::SolidLine, Qt::FlatCap),
   m_trackDisabledPen(m_colorScheme.trackDisabled, m_trackWidth, Qt::SolidLine, Qt::FlatCap),
+  m_trackReservedPen(m_colorScheme.trackReserved, m_trackWidth, Qt::SolidLine, Qt::FlatCap),
+  m_trackReservedDisabledPen(m_colorScheme.trackReservedDisabled, m_trackWidth, Qt::SolidLine, Qt::FlatCap),
   m_trackErasePen(m_colorScheme.background, m_trackWidth * 2, Qt::SolidLine, Qt::FlatCap),
   m_turnoutStatePen(m_colorScheme.turnoutState, (m_trackWidth + 1) / 2, Qt::SolidLine, Qt::FlatCap),
   m_painter{painter}
 {
 }
 
-void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate)
+void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate, bool isReserved)
 {
   switch(id)
   {
     case TileId::RailStraight:
-      setTrackPen();
+      setTrackPen(isReserved);
       drawStraight(r, rotate);
       break;
 
     case TileId::RailCurve45:
-      setTrackPen();
+      setTrackPen(isReserved);
       drawCurve45(r, rotate);
       break;
 
     case TileId::RailCurve90:
-      setTrackPen();
+      setTrackPen(isReserved);
       drawCurve90(r, rotate);
       break;
 
     case TileId::RailCross45:
-      setTrackPen();
-      drawStraight(r, rotate);
-      drawStraight(r, rotate - TileRotate::Deg45);
-      break;
-
     case TileId::RailCross90:
-      setTrackPen();
-      drawStraight(r, rotate);
-      drawStraight(r, rotate + TileRotate::Deg90);
+      drawCross(id, r, rotate);
       break;
 
     case TileId::RailBridge45Left:
-      setTrackPen();
-      drawStraight(r, rotate);
-      setTrackErasePen();
-      drawStraight(r, rotate - TileRotate::Deg45);
-      setTrackPen();
-      drawStraight(r, rotate - TileRotate::Deg45);
-      break;
-
     case TileId::RailBridge45Right:
-      setTrackPen();
-      drawStraight(r, rotate);
-      setTrackErasePen();
-      drawStraight(r, rotate + TileRotate::Deg45);
-      setTrackPen();
-      drawStraight(r, rotate + TileRotate::Deg45);
-      break;
-
     case TileId::RailBridge90:
-      setTrackPen();
-      drawStraight(r, rotate);
-      setTrackErasePen();
-      drawStraight(r, rotate + TileRotate::Deg90);
-      setTrackPen();
-      drawStraight(r, rotate + TileRotate::Deg90);
+      drawBridge(id, r, rotate);
       break;
 
     case TileId::RailTurnoutLeft45:
@@ -124,13 +98,13 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate)
       break;
 
     case TileId::RailBufferStop:
-      setTrackPen();
+      setTrackPen(isReserved);
       drawBufferStop(r, rotate);
       break;
 
     case TileId::RailSignal2Aspect:
     case TileId::RailSignal3Aspect:
-      drawSignal(id, r, rotate);
+      drawSignal(id, r, rotate, isReserved);
       break;
 
     case TileId::RailBlock:
@@ -139,7 +113,7 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate)
 
     case TileId::RailTunnel:
     {
-      setTrackPen();
+      setTrackPen(isReserved);
       drawStraight(r, rotate);
 
       // tunnel arc:
@@ -155,14 +129,14 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate)
       break;
     }
     case TileId::RailDirectionControl:
-      drawDirectionControl(id, r, rotate);
+      drawDirectionControl(id, r, rotate, isReserved);
       break;
 
     case TileId::RailOneWay:
     {
-      setTrackPen();
+      setTrackPen(isReserved);
       drawStraight(r, rotate);
-      m_painter.setBrush(m_trackPen.color());
+      m_painter.setBrush(m_painter.pen().color());
 
       const qreal m = r.width() / 4;
       QRectF rTriangle = r.adjusted(m, m, -m, -m);
@@ -182,12 +156,16 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate)
       break;
 
     case TileId::RailLink:
-      setTrackPen();
+      setTrackPen(isReserved);
       drawLink(r, rotate);
       break;
 
     case TileId::RailDecoupler:
-      drawRailDecoupler(r, rotate);
+      drawRailDecoupler(r, rotate, isReserved);
+      break;
+
+    case TileId::RailNXButton:
+      drawRailNX(r, rotate, isReserved);
       break;
 
     case TileId::None:
@@ -196,13 +174,118 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate)
   }
 }
 
-void TilePainter::drawSensor(TileId id, const QRectF& r, TileRotate rotate, SensorState state)
+void TilePainter::drawBridge(TileId id, const QRectF& r, TileRotate rotate, bool isReservedAC, bool isReservedBD)
+{
+  switch(id)
+  {
+    case TileId::RailBridge45Left:
+      setTrackPen(isReservedAC);
+      drawStraight(r, rotate);
+      setTrackErasePen();
+      drawStraight(r, rotate - TileRotate::Deg45);
+      setTrackPen(isReservedBD);
+      drawStraight(r, rotate - TileRotate::Deg45);
+      break;
+
+    case TileId::RailBridge45Right:
+      setTrackPen(isReservedAC);
+      drawStraight(r, rotate);
+      setTrackErasePen();
+      drawStraight(r, rotate + TileRotate::Deg45);
+      setTrackPen(isReservedBD);
+      drawStraight(r, rotate + TileRotate::Deg45);
+      break;
+
+    case TileId::RailBridge90:
+      setTrackPen(isReservedAC);
+      drawStraight(r, rotate);
+      setTrackErasePen();
+      drawStraight(r, rotate + TileRotate::Deg90);
+      setTrackPen(isReservedBD);
+      drawStraight(r, rotate + TileRotate::Deg90);
+      break;
+
+    default:
+      break;
+  }
+}
+
+void TilePainter::drawCross(TileId id, const QRectF& r, TileRotate rotate, CrossState reservedState)
+{
+  switch(id)
+  {
+    case TileId::RailCross45:
+      setTrackPen();
+      if(reservedState != CrossState::AC)
+      {
+        drawStraight(r, rotate);
+      }
+      if(reservedState != CrossState::BD)
+      {
+        drawStraight(r, rotate - TileRotate::Deg45);
+      }
+
+      if(reservedState != CrossState::Unset)
+      {
+        setTrackPen(true);
+        switch(reservedState)
+        {
+          case CrossState::AC:
+            drawStraight(r, rotate);
+            break;
+
+          case CrossState::BD:
+            drawStraight(r, rotate - TileRotate::Deg45);
+            break;
+
+          default:
+            break;
+        }
+      }
+      break;
+
+    case TileId::RailCross90:
+      setTrackPen();
+      if(reservedState != CrossState::AC)
+      {
+        drawStraight(r, rotate);
+      }
+      if(reservedState != CrossState::BD)
+      {
+        drawStraight(r, rotate - TileRotate::Deg90);
+      }
+
+      if(reservedState != CrossState::Unset)
+      {
+        setTrackPen(true);
+        switch(reservedState)
+        {
+          case CrossState::AC:
+            drawStraight(r, rotate);
+            break;
+
+          case CrossState::BD:
+            drawStraight(r, rotate - TileRotate::Deg90);
+            break;
+
+          default:
+            break;
+        }
+      }
+      break;
+
+    default:
+      break;
+  }
+}
+
+void TilePainter::drawSensor(TileId id, const QRectF& r, TileRotate rotate, bool isReserved, SensorState state)
 {
   switch(id)
   {
     case TileId::RailSensor:
     {
-      setTrackPen();
+      setTrackPen(isReserved);
       drawStraight(r, rotate);
       const qreal sz = r.width() / 4;
       drawLED(r.adjusted(sz, sz, -sz, -sz), sensorStateToColor(state), m_colorScheme.track);
@@ -213,13 +296,13 @@ void TilePainter::drawSensor(TileId id, const QRectF& r, TileRotate rotate, Sens
   }
 }
 
-void TilePainter::drawDirectionControl(TileId id, const QRectF& r, TileRotate rotate, DirectionControlState state)
+void TilePainter::drawDirectionControl(TileId id, const QRectF& r, TileRotate rotate, bool isReserved, DirectionControlState state)
 {
   switch(id)
   {
     case TileId::RailDirectionControl:
     {
-      setTrackPen();
+      setTrackPen(isReserved);
       drawStraight(r, rotate);
 
       QPen pen{m_trackPen};
@@ -282,253 +365,24 @@ void TilePainter::drawDirectionControl(TileId id, const QRectF& r, TileRotate ro
   }
 }
 
-void TilePainter::drawTurnout(TileId id, const QRectF& r, TileRotate rotate, TurnoutPosition position)
+void TilePainter::drawTurnout(TileId id, const QRectF& r, TileRotate rotate, TurnoutPosition reservedPosition, TurnoutPosition position)
 {
   switch(id)
   {
     case TileId::RailTurnoutLeft45:
-      setTurnoutPen();
-      drawStraight(r, rotate);
-      drawCurve45(r, rotate);
-
-      setTurnoutStatePen();
-      switch(position)
-      {
-        case TurnoutPosition::Straight:
-          drawStraight(turnoutStateRect(r), rotate);
-          break;
-
-        case TurnoutPosition::Left:
-          drawCurve45(turnoutStateRect(r), rotate);
-          break;
-
-        default:
-          break;
-      }
-      break;
-
     case TileId::RailTurnoutLeft90:
-      setTurnoutPen();
-      drawStraight(r, rotate);
-      drawCurve90(r, rotate);
-
-      setTurnoutStatePen();
-      switch(position)
-      {
-        case TurnoutPosition::Straight:
-          drawStraight(turnoutStateRect(r), rotate);
-          break;
-
-        case TurnoutPosition::Left:
-          drawCurve90(turnoutStateRect(r), rotate);
-          break;
-
-        default:
-          break;
-      }
-      break;
-
     case TileId::RailTurnoutLeftCurved:
-      setTurnoutPen();
-      drawCurve45(r, rotate);
-      drawCurve90(r, rotate);
-
-      setTurnoutStatePen();
-      switch(position)
-      {
-        case TurnoutPosition::Straight:
-          drawCurve45(turnoutStateRect(r), rotate);
-          break;
-
-        case TurnoutPosition::Left:
-          drawCurve90(turnoutStateRect(r), rotate);
-          break;
-
-        default:
-          break;
-      }
-      break;
-
     case TileId::RailTurnoutRight45:
-      setTurnoutPen();
-      drawStraight(r, rotate);
-      drawCurve45(r, rotate + TileRotate::Deg225);
-
-      setTurnoutStatePen();
-      switch(position)
-      {
-        case TurnoutPosition::Straight:
-          drawStraight(turnoutStateRect(r), rotate);
-          break;
-
-        case TurnoutPosition::Right:
-          drawCurve45(turnoutStateRect(r), rotate + TileRotate::Deg225);
-          break;
-
-        default:
-          break;
-      }
-      break;
-
     case TileId::RailTurnoutRight90:
-      setTurnoutPen();
-      drawStraight(r, rotate);
-      drawCurve90(r, rotate + TileRotate::Deg270);
-
-      setTurnoutStatePen();
-      switch(position)
-      {
-        case TurnoutPosition::Straight:
-          drawStraight(turnoutStateRect(r), rotate);
-          break;
-
-        case TurnoutPosition::Right:
-          drawCurve90(turnoutStateRect(r), rotate + TileRotate::Deg270);
-          break;
-
-        default:
-          break;
-      }
-      break;
-
     case TileId::RailTurnoutRightCurved:
-      setTurnoutPen();
-      drawCurve45(r, rotate + TileRotate::Deg225);
-      drawCurve90(r, rotate + TileRotate::Deg270);
-
-      setTurnoutStatePen();
-      switch(position)
-      {
-        case TurnoutPosition::Straight:
-          drawCurve45(turnoutStateRect(r), rotate + TileRotate::Deg225);
-          break;
-
-        case TurnoutPosition::Right:
-          drawCurve90(turnoutStateRect(r), rotate + TileRotate::Deg270);
-          break;
-
-        default:
-          break;
-      }
-      break;
-
     case TileId::RailTurnoutWye:
-      setTurnoutPen();
-      drawCurve45(r, rotate);
-      drawCurve45(r, rotate + TileRotate::Deg225);
-
-      setTurnoutStatePen();
-      switch(position)
-      {
-        case TurnoutPosition::Left:
-          drawCurve45(turnoutStateRect(r), rotate);
-          break;
-
-        case TurnoutPosition::Right:
-          drawCurve45(turnoutStateRect(r), rotate + TileRotate::Deg225);
-          break;
-
-        default:
-          break;
-      }
-      break;
-
     case TileId::RailTurnout3Way:
-      setTurnoutPen();
-      drawStraight(r, rotate);
-      drawCurve45(r, rotate);
-      drawCurve45(r, rotate + TileRotate::Deg225);
-
-      setTurnoutStatePen();
-      switch(position)
-      {
-        case TurnoutPosition::Straight:
-          drawStraight(turnoutStateRect(r), rotate);
-          break;
-
-        case TurnoutPosition::Left:
-          drawCurve45(turnoutStateRect(r), rotate);
-          break;
-
-        case TurnoutPosition::Right:
-          drawCurve45(turnoutStateRect(r), rotate + TileRotate::Deg225);
-          break;
-
-        default:
-          break;
-      }
+      drawTurnoutStandard(id, r, rotate, reservedPosition, position);
       break;
 
     case TileId::RailTurnoutSingleSlip:
-      setTurnoutPen();
-      drawStraight(r, rotate);
-      drawStraight(r, rotate - TileRotate::Deg45);
-      drawCurve45(r, rotate);
-
-      setTurnoutStatePen();
-      switch(position)
-      {
-        case TurnoutPosition::Crossed:
-          drawStraight(turnoutStateRect(r), rotate);
-          drawStraight(turnoutStateRect(r), rotate - TileRotate::Deg45);
-          break;
-
-        case TurnoutPosition::Diverged:
-          drawCurve45(turnoutStateRect(r), rotate);
-          break;
-
-        case TurnoutPosition::DoubleSlipStraightA:
-          drawStraight(turnoutStateRect(r), rotate);
-          break;
-
-        case TurnoutPosition::DoubleSlipStraightB:
-          drawStraight(turnoutStateRect(r), rotate - TileRotate::Deg45);
-          break;
-
-        default:
-          break;
-      }
-      break;
-
     case TileId::RailTurnoutDoubleSlip:
-      setTurnoutPen();
-      drawStraight(r, rotate);
-      drawStraight(r, rotate - TileRotate::Deg45);
-      drawCurve45(r, rotate);
-      drawCurve45(r, rotate + TileRotate::Deg180);
-
-      setTurnoutStatePen();
-      switch(position)
-      {
-        case TurnoutPosition::Left:
-          drawCurve45(turnoutStateRect(r), rotate);
-          break;
-
-        case TurnoutPosition::Right:
-          drawCurve45(turnoutStateRect(r), rotate + TileRotate::Deg180);
-          break;
-
-        case TurnoutPosition::Crossed:
-          drawStraight(turnoutStateRect(r), rotate);
-          drawStraight(turnoutStateRect(r), rotate - TileRotate::Deg45);
-          break;
-
-        case TurnoutPosition::Diverged:
-          drawCurve45(turnoutStateRect(r), rotate);
-          drawCurve45(turnoutStateRect(r), rotate + TileRotate::Deg180);
-          break;
-
-        case TurnoutPosition::DoubleSlipStraightA:
-          drawStraight(turnoutStateRect(r), rotate);
-          break;
-
-        case TurnoutPosition::DoubleSlipStraightB:
-          drawStraight(turnoutStateRect(r), rotate - TileRotate::Deg45);
-          break;
-
-        default:
-          break;
-      }
+      drawTurnoutSlip(id, r, rotate, reservedPosition, position);
       break;
 
     default:
@@ -537,19 +391,19 @@ void TilePainter::drawTurnout(TileId id, const QRectF& r, TileRotate rotate, Tur
   }
 }
 
-void TilePainter::drawSignal(TileId id, const QRectF& r, TileRotate rotate, SignalAspect aspect)
+void TilePainter::drawSignal(TileId id, const QRectF& r, TileRotate rotate, bool isReserved, SignalAspect aspect)
 {
   switch(id)
   {
     case TileId::RailSignal2Aspect:
-      setTrackPen();
+      setTrackPen(isReserved);
       drawStraight(r, rotate);
       drawSignalDirection(r, rotate);
       drawSignal2Aspect(r, rotate, aspect);
       break;
 
     case TileId::RailSignal3Aspect:
-      setTrackPen();
+      setTrackPen(isReserved);
       drawStraight(r, rotate);
       drawSignalDirection(r, rotate);
       drawSignal3Aspect(r, rotate, aspect);
@@ -561,12 +415,12 @@ void TilePainter::drawSignal(TileId id, const QRectF& r, TileRotate rotate, Sign
   }
 }
 
-void TilePainter::drawBlock(TileId id, const QRectF& r, TileRotate rotate, const ObjectPtr& blockTile)
+void TilePainter::drawBlock(TileId id, const QRectF& r, TileRotate rotate, bool isReservedA, bool isReservedB, const ObjectPtr& blockTile)
 {
   switch(id)
   {
     case TileId::RailBlock:
-      drawRailBlock(r, rotate, blockTile);
+      drawRailBlock(r, rotate, isReservedA, isReservedB, blockTile);
       break;
 
     default:
@@ -918,6 +772,302 @@ void TilePainter::drawLED(const QRectF& r, const QColor& color, const QColor& bo
   m_painter.drawEllipse(r);
 }
 
+void TilePainter::drawTurnoutStandard(TileId id, const QRectF& r, TileRotate rotate, TurnoutPosition reservedPosition, TurnoutPosition position)
+{
+  const bool hasLeft90 =
+    id == TileId::RailTurnoutLeft90 ||
+    id == TileId::RailTurnoutLeftCurved;
+
+  const bool hasLeft =
+    hasLeft90 ||
+    id == TileId::RailTurnoutLeft45 ||
+    id == TileId::RailTurnoutWye ||
+    id == TileId::RailTurnout3Way;
+
+  const bool hasStraight =
+    id == TileId::RailTurnoutLeft45 ||
+    id == TileId::RailTurnoutLeft90 ||
+    id == TileId::RailTurnoutLeftCurved ||
+    id == TileId::RailTurnoutRight45 ||
+    id == TileId::RailTurnoutRight90 ||
+    id == TileId::RailTurnoutRightCurved ||
+    id == TileId::RailTurnout3Way;
+
+  const bool hasRight90 =
+    id == TileId::RailTurnoutRight90 ||
+    id == TileId::RailTurnoutRightCurved;
+
+  const bool hasRight =
+    hasRight90 ||
+    id == TileId::RailTurnoutRight45 ||
+    id == TileId::RailTurnoutWye ||
+    id == TileId::RailTurnout3Way;
+
+  setTurnoutPen();
+  if(hasLeft && (m_turnoutDrawState || position != TurnoutPosition::Left) && reservedPosition != TurnoutPosition::Left)
+  {
+    if(hasLeft90)
+    {
+      drawCurve90(r, rotate);
+    }
+    else
+    {
+      drawCurve45(r, rotate);
+    }
+  }
+  if(hasStraight && (m_turnoutDrawState || position != TurnoutPosition::Straight) && reservedPosition != TurnoutPosition::Straight)
+  {
+    if(id == TileId::RailTurnoutLeftCurved)
+    {
+      drawCurve45(r, rotate);
+    }
+    else if(id == TileId::RailTurnoutRightCurved)
+    {
+      drawCurve45(r, rotate + TileRotate::Deg225);
+    }
+    else
+    {
+      drawStraight(r, rotate);
+    }
+  }
+  if(hasRight && (m_turnoutDrawState || position != TurnoutPosition::Right) && reservedPosition != TurnoutPosition::Right)
+  {
+    if(hasRight90)
+    {
+      drawCurve90(r, rotate + TileRotate::Deg270);
+    }
+    else
+    {
+      drawCurve45(r, rotate + TileRotate::Deg225);
+    }
+  }
+
+  if(reservedPosition != TurnoutPosition::Unknown)
+  {
+    m_painter.setPen(position == reservedPosition ? m_trackReservedPen : m_trackReservedDisabledPen);
+
+    switch(reservedPosition)
+    {
+      case TurnoutPosition::Left:
+        if(hasLeft90)
+        {
+          drawCurve90(r, rotate);
+        }
+        else
+        {
+          drawCurve45(r, rotate);
+        }
+        break;
+
+      case TurnoutPosition::Straight:
+        if(id == TileId::RailTurnoutLeftCurved)
+        {
+          drawCurve45(r, rotate);
+        }
+        else if(id == TileId::RailTurnoutRightCurved)
+        {
+          drawCurve45(r, rotate + TileRotate::Deg225);
+        }
+        else
+        {
+          drawStraight(r, rotate);
+        }
+        break;
+
+      case TurnoutPosition::Right:
+        if(hasRight90)
+        {
+          drawCurve90(r, rotate + TileRotate::Deg270);
+        }
+        else
+        {
+          drawCurve45(r, rotate + TileRotate::Deg225);
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  if(m_turnoutDrawState || position != reservedPosition)
+  {
+    setTurnoutStatePen();
+    switch(position)
+    {
+      case TurnoutPosition::Left:
+        if(hasLeft90)
+        {
+          drawCurve90(turnoutStateRect(r), rotate);
+        }
+        else
+        {
+          drawCurve45(turnoutStateRect(r), rotate);
+        }
+        break;
+
+      case TurnoutPosition::Straight:
+        if(id == TileId::RailTurnoutLeftCurved)
+        {
+          drawCurve45(turnoutStateRect(r), rotate);
+        }
+        else if(id == TileId::RailTurnoutRightCurved)
+        {
+          drawCurve45(turnoutStateRect(r), rotate + TileRotate::Deg225);
+        }
+        else
+        {
+          drawStraight(turnoutStateRect(r), rotate);
+        }
+        break;
+
+      case TurnoutPosition::Right:
+        if(hasRight90)
+        {
+          drawCurve90(turnoutStateRect(r), rotate + TileRotate::Deg270);
+        }
+        else
+        {
+          drawCurve45(turnoutStateRect(r), rotate + TileRotate::Deg225);
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
+}
+
+void TilePainter::drawTurnoutSlip(TileId id, const QRectF& r, TileRotate rotate, TurnoutPosition reservedPosition, TurnoutPosition position)
+{
+  //  Double:      Single:
+  //      C            C
+  //      |\           |
+  //  B --+-- D    B --+-- D
+  //     \|           \|
+  //      A            A
+
+  const bool isDoubleSlip = id == TileId::RailTurnoutDoubleSlip;
+
+  const bool positionAB = position == TurnoutPosition::Left || position == TurnoutPosition::Diverged;
+  const bool positionAC = position == TurnoutPosition::DoubleSlipStraightA || position == TurnoutPosition::Crossed;
+  const bool positionBD = position == TurnoutPosition::DoubleSlipStraightB || position == TurnoutPosition::Crossed;
+  const bool positionCD = isDoubleSlip && (position == TurnoutPosition::Right || position == TurnoutPosition::Diverged);
+
+  const bool reservedPositionAB = reservedPosition == TurnoutPosition::Left || reservedPosition == TurnoutPosition::Diverged;
+  const bool reservedPositionAC = reservedPosition == TurnoutPosition::DoubleSlipStraightA || reservedPosition == TurnoutPosition::Crossed;
+  const bool reservedPositionBD = reservedPosition == TurnoutPosition::DoubleSlipStraightB || reservedPosition == TurnoutPosition::Crossed;
+  const bool reservedPositionCD = isDoubleSlip && (reservedPosition == TurnoutPosition::Right || reservedPosition == TurnoutPosition::Diverged);
+
+  setTurnoutPen();
+  if((m_turnoutDrawState || !positionAB) && !reservedPositionAB)
+  {
+    drawCurve45(r, rotate);
+  }
+  if((m_turnoutDrawState || !positionAC) && !reservedPositionAC)
+  {
+    drawStraight(r, rotate);
+  }
+  if((m_turnoutDrawState || !positionBD) && !reservedPositionBD)
+  {
+    drawStraight(r, rotate - TileRotate::Deg45);
+  }
+  if(isDoubleSlip && (m_turnoutDrawState || !positionCD) && !reservedPositionCD)
+  {
+    drawCurve45(r, rotate + TileRotate::Deg180);
+  }
+
+  if(!m_turnoutDrawState)
+  {
+    setTrackPen();
+    if(position == TurnoutPosition::Crossed)
+    {
+      if(!reservedPositionAC)
+      {
+        drawStraight(r, rotate);
+      }
+      if(!reservedPositionBD)
+      {
+        drawStraight(r, rotate - TileRotate::Deg45);
+      }
+    }
+    else if(position == TurnoutPosition::Diverged)
+    {
+      if(!reservedPositionAB)
+      {
+        drawCurve45(r, rotate);
+      }
+      if(isDoubleSlip && !reservedPositionCD)
+      {
+        drawCurve45(r, rotate + TileRotate::Deg180);
+      }
+    }
+  }
+
+  if(reservedPosition != TurnoutPosition::Unknown)
+  {
+    if(reservedPositionAB && !positionAB)
+    {
+      m_painter.setPen(m_trackReservedDisabledPen);
+      drawCurve45(r, rotate);
+    }
+    if(reservedPositionAC && !positionAC)
+    {
+      m_painter.setPen(m_trackReservedDisabledPen);
+      drawStraight(r, rotate);
+    }
+    if(reservedPositionBD && !positionBD)
+    {
+      m_painter.setPen(m_trackReservedDisabledPen);
+      drawStraight(r, rotate - TileRotate::Deg45);
+    }
+    if(reservedPositionCD && !positionCD)
+    {
+      m_painter.setPen(m_trackReservedDisabledPen);
+      drawCurve45(r, rotate + TileRotate::Deg180);
+    }
+
+    if(reservedPositionAB && positionAB)
+    {
+      m_painter.setPen(m_trackReservedPen);
+      drawCurve45(r, rotate);
+    }
+    if(reservedPositionAC && positionAC)
+    {
+      m_painter.setPen(m_trackReservedPen);
+      drawStraight(r, rotate);
+    }
+    if(reservedPositionBD && positionBD)
+    {
+      m_painter.setPen(m_trackReservedPen);
+      drawStraight(r, rotate - TileRotate::Deg45);
+    }
+    if(reservedPositionCD && positionCD)
+    {
+      m_painter.setPen(m_trackReservedPen);
+      drawCurve45(r, rotate + TileRotate::Deg180);
+    }
+  }
+
+  setTurnoutStatePen();
+  if(positionAB && (m_turnoutDrawState || reservedPositionAC || reservedPositionBD || (!reservedPositionAB && position != TurnoutPosition::Diverged)))
+  {
+    drawCurve45(turnoutStateRect(r), rotate);
+  }
+  if(positionAC && (m_turnoutDrawState || reservedPositionAB || reservedPositionCD || (!reservedPositionAC && position != TurnoutPosition::Crossed)))
+  {
+    drawStraight(turnoutStateRect(r), rotate);
+  }
+  if(positionBD && (m_turnoutDrawState || reservedPositionAB || reservedPositionCD || (!reservedPositionBD && position != TurnoutPosition::Crossed)))
+  {
+    drawStraight(turnoutStateRect(r), rotate - TileRotate::Deg45);
+  }
+  if(positionCD && (m_turnoutDrawState || reservedPositionAC || reservedPositionBD || (!reservedPositionCD && position != TurnoutPosition::Diverged)))
+  {
+    drawCurve45(turnoutStateRect(r), rotate + TileRotate::Deg180);
+  }
+}
+
 void TilePainter::drawSignal3Aspect(QRectF r, TileRotate rotate, SignalAspect aspect)
 {
   m_painter.save();
@@ -995,7 +1145,7 @@ void TilePainter::drawSignalDirection(QRectF r, TileRotate rotate)
   m_painter.restore();
 }
 
-void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, const ObjectPtr& blockTile)
+void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, bool isReservedA, bool isReservedB, const ObjectPtr& blockTile)
 {
   const BlockState state = blockTile ? blockTile->getPropertyValueEnum<BlockState>("state", BlockState::Unknown) : BlockState::Unknown;
   std::vector<SensorState> subStates;
@@ -1020,12 +1170,22 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, const Object
       {
         if(auto* trainBlockStatus = dynamic_cast<TrainBlockStatus*>(block->trains()[0].get())) /*[[likely]]*/
         {
-          if(const auto& train = trainBlockStatus->train()) /*[[likely]]*/
+          if(const auto& train = trainBlockStatus->train())
           {
             if(trainBlockStatus->direction() == BlockTrainDirection::TowardsA)
               label += "< ";
 
             label += train->getPropertyValueString("name");
+
+            if(trainBlockStatus->direction() == BlockTrainDirection::TowardsB)
+              label +=  " >";
+          }
+          else if(auto identification = trainBlockStatus->identification(); !identification.isEmpty())
+          {
+            if(trainBlockStatus->direction() == BlockTrainDirection::TowardsA)
+              label += "< ";
+
+            label += identification;
 
             if(trainBlockStatus->direction() == BlockTrainDirection::TowardsB)
               label +=  " >";
@@ -1038,11 +1198,13 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, const Object
       label = blockTile->getPropertyValueString("name");
   }
 
-  setTrackPen();
-
   if(rotate == TileRotate::Deg0)
   {
-    m_painter.drawLine(topCenter(r), bottomCenter(r));
+    setTrackPen(isReservedA);
+    m_painter.drawLine(topCenter(r), r.center());
+    setTrackPen(isReservedB);
+    m_painter.drawLine(r.center(), bottomCenter(r));
+
     setBlockStateBrush(state);
     m_painter.setPen(m_blockPen);
     const qreal m = 0.5 + qFloor(r.width() / 10);
@@ -1075,7 +1237,11 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, const Object
   }
   else if(rotate == TileRotate::Deg90)
   {
-    m_painter.drawLine(centerLeft(r), centerRight(r));
+    setTrackPen(isReservedA);
+    m_painter.drawLine(centerLeft(r), r.center());
+    setTrackPen(isReservedB);
+    m_painter.drawLine(r.center(), centerRight(r));
+
     setBlockStateBrush(state);
     m_painter.setPen(m_blockPen);
     const qreal m = 0.5 + qFloor(r.height() / 10);
@@ -1107,9 +1273,9 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, const Object
     assert(false);
 }
 
-void TilePainter::drawRailDecoupler(const QRectF& r, TileRotate rotate, DecouplerState state)
+void TilePainter::drawRailDecoupler(const QRectF& r, TileRotate rotate, bool isReserved, DecouplerState state)
 {
-  setTrackPen();
+  setTrackPen(isReserved);
   drawStraight(r, rotate);
 
   m_painter.save();
@@ -1121,4 +1287,11 @@ void TilePainter::drawRailDecoupler(const QRectF& r, TileRotate rotate, Decouple
   m_painter.setBrush(state == DecouplerState::Activated ? m_colorScheme.decouplerActivated : m_colorScheme.decouplerDeactivated);
   m_painter.drawRect(QRectF(-w / 2, -h / 2, w, h));
   m_painter.restore();
+}
+
+void TilePainter::drawRailNX(const QRectF& r, TileRotate rotate, bool isReserved, bool isEnabled, bool pressed)
+{
+  setTrackPen(isReserved);
+  drawStraight(r, rotate);
+  drawPushButton(r, pressed ? Color::White : (isEnabled ? Color::Blue : Color::Gray));
 }

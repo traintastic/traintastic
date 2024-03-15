@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,11 +40,12 @@
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
+#include "../../utils/makearray.hpp"
 #include "../../world/world.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
-constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
+constexpr auto outputListColumns = OutputListColumn::Address;
 
 CREATE_IMPL(XpressNetInterface)
 
@@ -200,27 +201,33 @@ void XpressNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFla
 
 std::pair<uint32_t, uint32_t> XpressNetInterface::inputAddressMinMax(uint32_t) const
 {
-  return {XpressNet::Kernel::ioAddressMin, XpressNet::Kernel::ioAddressMax};
+  return {XpressNet::Kernel::inputAddressMin, XpressNet::Kernel::inputAddressMax};
 }
 
 void XpressNetInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
-  if(m_kernel && inRange(address, outputAddressMinMax(channel)))
+  if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address, action);
 }
 
-std::pair<uint32_t, uint32_t> XpressNetInterface::outputAddressMinMax(uint32_t) const
+tcb::span<const OutputChannel> XpressNetInterface::outputChannels() const
 {
-  return {XpressNet::Kernel::ioAddressMin, XpressNet::Kernel::ioAddressMax};
+  static const auto values = makeArray(OutputChannel::Accessory);
+  return values;
 }
 
-bool XpressNetInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
+std::pair<uint32_t, uint32_t> XpressNetInterface::outputAddressMinMax(OutputChannel /*channel*/) const
+{
+  return {XpressNet::Kernel::accessoryOutputAddressMin, XpressNet::Kernel::accessoryOutputAddressMax};
+}
+
+bool XpressNetInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
 {
   assert(isOutputChannel(channel));
   return
       m_kernel &&
       inRange(address, outputAddressMinMax(channel)) &&
-    m_kernel->setOutput(static_cast<uint16_t>(address), value);
+      m_kernel->setOutput(static_cast<uint16_t>(address), std::get<OutputPairValue>(value));
 }
 
 bool XpressNetInterface::setOnline(bool& value, bool simulation)
@@ -231,7 +238,7 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
     {
       if(simulation)
       {
-        m_kernel = XpressNet::Kernel::create<XpressNet::SimulationIOHandler>(xpressnet->config());
+        m_kernel = XpressNet::Kernel::create<XpressNet::SimulationIOHandler>(id.value(), xpressnet->config());
       }
       else
       {
@@ -243,22 +250,22 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
               case XpressNetSerialInterfaceType::LenzLI100:
               case XpressNetSerialInterfaceType::LenzLI100F:
               case XpressNetSerialInterfaceType::LenzLI101F:
-                m_kernel = XpressNet::Kernel::create<XpressNet::SerialIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value());
+                m_kernel = XpressNet::Kernel::create<XpressNet::SerialIOHandler>(id.value(), xpressnet->config(), device.value(), baudrate.value(), flowControl.value());
                 break;
 
               case XpressNetSerialInterfaceType::RoSoftS88XPressNetLI:
-                m_kernel = XpressNet::Kernel::create<XpressNet::RoSoftS88XPressNetLIIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value(), s88StartAddress.value(), s88ModuleCount.value());
+                m_kernel = XpressNet::Kernel::create<XpressNet::RoSoftS88XPressNetLIIOHandler>(id.value(), xpressnet->config(), device.value(), baudrate.value(), flowControl.value(), s88StartAddress.value(), s88ModuleCount.value());
                 break;
 
               case XpressNetSerialInterfaceType::LenzLIUSB:
               case XpressNetSerialInterfaceType::DigikeijsDR5000:
-                m_kernel = XpressNet::Kernel::create<XpressNet::LIUSBIOHandler>(xpressnet->config(), device.value(), baudrate.value(), flowControl.value());
+                m_kernel = XpressNet::Kernel::create<XpressNet::LIUSBIOHandler>(id.value(), xpressnet->config(), device.value(), baudrate.value(), flowControl.value());
                 break;
             }
             break;
 
           case XpressNetInterfaceType::Network:
-            m_kernel = XpressNet::Kernel::create<XpressNet::TCPIOHandler>(xpressnet->config(), hostname.value(), port.value());
+            m_kernel = XpressNet::Kernel::create<XpressNet::TCPIOHandler>(id.value(), xpressnet->config(), hostname.value(), port.value());
             break;
         }
       }
@@ -271,7 +278,6 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
 
       setState(InterfaceState::Initializing);
 
-      m_kernel->setLogId(id.value());
       m_kernel->setOnStarted(
         [this]()
         {
@@ -401,12 +407,6 @@ void XpressNetInterface::worldEvent(WorldState state, WorldEvent event)
         break;
     }
   }
-}
-
-void XpressNetInterface::idChanged(const std::string& newId)
-{
-  if(m_kernel)
-    m_kernel->setLogId(newId);
 }
 
 void XpressNetInterface::updateVisible()

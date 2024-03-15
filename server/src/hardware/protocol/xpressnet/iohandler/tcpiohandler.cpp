@@ -30,16 +30,21 @@
 
 namespace XpressNet {
 
-TCPIOHandler::TCPIOHandler(Kernel& kernel, const std::string& hostname, uint16_t port)
+TCPIOHandler::TCPIOHandler(Kernel& kernel, std::string hostname, uint16_t port)
   : HardwareIOHandler(kernel)
+  , m_hostname{std::move(hostname)}
+  , m_port{port}
   , m_socket{m_kernel.ioContext()}
 {
   m_extraHeader = true;
+}
 
+void TCPIOHandler::start()
+{
   boost::system::error_code ec;
 
-  m_endpoint.port(port);
-  m_endpoint.address(boost::asio::ip::make_address(hostname, ec));
+  m_endpoint.port(m_port);
+  m_endpoint.address(boost::asio::ip::make_address(m_hostname, ec));
   if(ec)
     throw LogMessageException(LogMessage::E2003_MAKE_ADDRESS_FAILED_X, ec);
 
@@ -49,14 +54,7 @@ TCPIOHandler::TCPIOHandler(Kernel& kernel, const std::string& hostname, uint16_t
 
   m_socket.set_option(boost::asio::socket_base::linger(true, 0));
   m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
-}
 
-TCPIOHandler::~TCPIOHandler()
-{
-}
-
-void TCPIOHandler::start()
-{
   read();
 }
 
@@ -79,7 +77,7 @@ void TCPIOHandler::read()
         EventLoop::call(
           [this, ec]()
           {
-            Log::log(m_kernel.logId(), LogMessage::E2008_SOCKET_READ_FAILED_X, ec);
+            Log::log(m_kernel.logId, LogMessage::E2008_SOCKET_READ_FAILED_X, ec);
             m_kernel.error();
           });
       }
@@ -106,7 +104,7 @@ void TCPIOHandler::write()
         EventLoop::call(
           [this, ec]()
           {
-            Log::log(m_kernel.logId(), LogMessage::E2007_SOCKET_WRITE_FAILED_X, ec);
+            Log::log(m_kernel.logId, LogMessage::E2007_SOCKET_WRITE_FAILED_X, ec);
             m_kernel.error();
           });
       }

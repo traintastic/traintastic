@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,11 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
-
 #ifndef TRAINTASTIC_SHARED_TRAINTASTIC_LOCALE_LOCALE_HPP
 #define TRAINTASTIC_SHARED_TRAINTASTIC_LOCALE_LOCALE_HPP
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <set>
@@ -36,13 +35,14 @@
 class Locale
 {
   protected:
-    const Locale* m_fallback;
+    const std::unique_ptr<const Locale> m_fallback;
     std::string m_data;
     std::unordered_map<std::string_view, std::string_view> m_strings;
     std::unique_ptr<std::set<std::string>> m_missing;
 
   public:
-    static const Locale* instance;
+    static std::unique_ptr<const Locale> instance;
+
 #ifdef QT_CORE_LIB
     inline static QString tr(const QString& id) { return instance ? instance->translate(id) : id; };
 #else
@@ -51,7 +51,12 @@ class Locale
 
     const std::filesystem::path filename;
 
-    Locale(std::filesystem::path _filename, Locale* fallback = nullptr);
+    Locale(std::filesystem::path _filename, std::unique_ptr<const Locale> fallback = {});
+
+    const std::unique_ptr<const Locale>& fallback() const
+    {
+      return m_fallback;
+    }
 
     const std::unique_ptr<std::set<std::string>>& missing() const { return m_missing; }
     void enableMissingLogging();

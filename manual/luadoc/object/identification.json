@@ -1,0 +1,19 @@
+{
+  "name": {},
+  "on_event": {
+    "parameters": [
+      {
+        "name": "type"
+      },
+      {
+        "name": "identifier"
+      },
+      {
+        "name": "direction"
+      },
+      {
+        "name": "category"
+      }
+    ]
+  }
+}

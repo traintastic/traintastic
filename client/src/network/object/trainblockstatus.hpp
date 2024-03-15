@@ -39,6 +39,7 @@ class TrainBlockStatus final : public Object
   private:
     int m_requestId;
     Property* m_directionProperty = nullptr;
+    Property* m_identificationProperty = nullptr;
     ObjectProperty* m_trainProperty = nullptr;
     ObjectPtr m_train;
 
@@ -52,6 +53,7 @@ class TrainBlockStatus final : public Object
     ~TrainBlockStatus() final;
 
     BlockTrainDirection direction() const;
+    QString identification() const;
 
     const ObjectPtr& train() const
     {

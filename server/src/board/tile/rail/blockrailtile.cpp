@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,19 @@
 #include "../../../train/train.hpp"
 #include "../../../train/trainblockstatus.hpp"
 #include "../../../utils/displayname.hpp"
+#include "../../map/blockpath.hpp"
+
+constexpr uint8_t toMask(BlockSide side)
+{
+  return 1 << static_cast<uint8_t>(side);
+}
+
+constexpr bool isDirectionTowardsSide(BlockTrainDirection direction, BlockSide side)
+{
+  return
+    (direction == BlockTrainDirection::TowardsA && side == BlockSide::A) ||
+    (direction == BlockTrainDirection::TowardsB && side == BlockSide::B);
+}
 
 CREATE_IMPL(BlockRailTile)
 
@@ -85,12 +98,12 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
 
           if(m_world.simulation)
           {
-            // TODO: use train length if block has multiple occupy sensors, center train in block
+            // TODO: use train length if block has multiple occupancy sensors, center train in block
             for(const auto& item : *inputMap)
             {
               if(item->input && item->input->interface)
               {
-                if(item->type == SensorType::OccupyDetector)
+                if(item->type == SensorType::OccupancyDetector)
                   item->input->simulateChange(item->invert.value() ? SimulateInputAction::SetFalse : SimulateInputAction::SetTrue);
                 else
                   assert(false); // not yet implemented
@@ -98,7 +111,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
             }
           }
 
-          fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(onTrainAssigned, newTrain, self);
+          fireEvent(onTrainAssigned, newTrain, self);
         }
       }}
   , removeTrain{*this, "remove_train",
@@ -120,8 +133,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
           if(it == trains.end()) /*[[unlikely]]*/
             return; // can't remove a train that isn't in the block
 
-          oldTrain->blocks.removeInternal(*it);
-          trains.removeInternal(*it);
+          (**it).destroy();
 
           updateTrainMethodEnabled();
           if(state == BlockState::Reserved)
@@ -134,7 +146,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
             {
               if(item->input && item->input->interface)
               {
-                if(item->type == SensorType::OccupyDetector)
+                if(item->type == SensorType::OccupancyDetector)
                   item->input->simulateChange(item->invert.value() ? SimulateInputAction::SetTrue : SimulateInputAction::SetFalse);
                 else
                   assert(false); // not yet implemented
@@ -142,7 +154,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
             }
           }
 
-          fireEvent<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&>(onTrainRemoved, oldTrain, self);
+          fireEvent(onTrainRemoved, oldTrain, self);
         }
       }}
   , flipTrain{*this, "flip_train",
@@ -159,6 +171,9 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
         }
       }}
   , onTrainAssigned{*this, "on_train_assigned", EventFlags::Scriptable}
+  , onTrainReserved{*this, "on_train_reserved", EventFlags::Scriptable}
+  , onTrainEntered{*this, "on_train_entered", EventFlags::Scriptable}
+  , onTrainLeft{*this, "on_train_left", EventFlags::Scriptable}
   , onTrainRemoved{*this, "on_train_removed", EventFlags::Scriptable}
 {
   inputMap.setValueInternal(std::make_shared<BlockInputMap>(*this, inputMap.name()));
@@ -196,6 +211,9 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   m_interfaceItems.add(flipTrain);
 
   m_interfaceItems.add(onTrainAssigned);
+  m_interfaceItems.add(onTrainReserved);
+  m_interfaceItems.add(onTrainEntered);
+  m_interfaceItems.add(onTrainLeft);
   m_interfaceItems.add(onTrainRemoved);
 
   updateHeightWidthMax();
@@ -203,6 +221,105 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
 
 void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
 {
+  if(item.value() == SensorState::Occupied)
+  {
+    switch(state.value())
+    {
+      case BlockState::Free:
+      case BlockState::Unknown:
+      {
+        // Something entered the block, try to determine what it is.
+
+        if(inputMap->items.size() > 2 && (&item != inputMap->items.front().get()) && (&item != inputMap->items.back().get()))
+        {
+          // Non block edge sensor.
+
+          //! \todo log something (at least in debug)
+
+          break;
+        }
+
+        const bool anySide = inputMap->items.size() == 1; // block with one sensor
+        const BlockSide enterSide = (&item == inputMap->items.front().get()) ? BlockSide::A : BlockSide::B;
+
+        std::shared_ptr<Train> train;
+        BlockTrainDirection direction = BlockTrainDirection::Unknown;
+
+        for(const auto& path : m_pathsIn)
+        {
+          if(path->toBlock().get() == this && (anySide || path->toSide() == enterSide) && !path->fromBlock().trains.empty() && path->isReady())
+          {
+            const auto status = path->fromSide() == BlockSide::A ? path->fromBlock().trains.front() : path->fromBlock().trains.back();
+
+            if(isDirectionTowardsSide(status->direction, path->fromSide()) &&
+                status->train &&
+                status->train->powered &&
+                status->train->mode == TrainMode::ManualUnprotected &&
+                !status->train->isStopped)
+            {
+              if(train) // another train?? then we don't know
+              {
+                train.reset();
+                //! \todo log something (at least in debug)
+                break;
+              }
+              else
+              {
+                train = status->train.value();
+                direction = path->toSide() == BlockSide::A ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA;
+              }
+            }
+          }
+        }
+
+        if(train)
+        {
+          auto blockStatus = TrainBlockStatus::create(*this, *train, direction);
+
+          blockStatus->train->blocks.insertInternal(0, blockStatus); // head of train
+          trains.appendInternal(blockStatus);
+          updateTrainMethodEnabled();
+
+          fireEvent(
+            onTrainEntered,
+            blockStatus->train.value(),
+            shared_ptr<BlockRailTile>(),
+            blockStatus->direction.value());
+        }
+        break;
+      }
+      case BlockState::Reserved:
+      {
+        const bool inputA = (inputMap->items.front().get() == &item);
+        const auto pathA = inputA ? m_reservedPaths[0].lock() : nullptr;
+        const bool enterA = pathA && pathA->toBlock().get() == this;
+
+        const bool inputB = (inputMap->items.back().get() == &item);
+        const auto pathB = inputB ? m_reservedPaths[1].lock() : nullptr;
+        const bool enterB = pathB && pathB->toBlock().get() == this;
+
+        if(enterA != enterB)
+        {
+          auto& blockStatus = enterA ? trains.front() : trains.back();
+          blockStatus->train->blocks.insertInternal(0, blockStatus);
+
+          fireEvent(
+            onTrainEntered,
+            blockStatus->train.value(),
+            shared_ptr<BlockRailTile>(),
+            blockStatus->direction.value());
+        }
+        else
+        {
+          // assignment or something is wrong
+        }
+        break;
+      }
+      case BlockState::Occupied:
+        break;
+    }
+  }
+
   if(inputMap->items.size() != sensorStates.size())
   {
     std::vector<SensorState> values;
@@ -215,6 +332,159 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
     sensorStates.setValueInternal(inputMap->items.indexOf(item), item.value());
 
   updateState();
+
+  if(item.value() == SensorState::Free && state.value() == BlockState::Reserved)
+  {
+    if(trains.size() == 1)
+    {
+      auto blockStatus = trains.front();
+
+      // Train must be in at least two blocks, else we loose it.
+      // Release tailing block of train only. (When using current detection not all wagons might consume power.)
+      if(blockStatus->train &&
+          blockStatus->train->blocks.size() > 1 &&
+          blockStatus->train->blocks.back() == blockStatus)
+      {
+        blockStatus->train->blocks.removeInternal(blockStatus);
+        trains.removeInternal(blockStatus);
+        updateTrainMethodEnabled();
+
+        updateState();
+
+        fireEvent(
+          onTrainLeft,
+          blockStatus->train.value(),
+          shared_ptr<BlockRailTile>(),
+          blockStatus->direction.value());
+
+        blockStatus->destroy();
+#ifndef NDEBUG
+        std::weak_ptr<TrainBlockStatus> blockStatusWeak = blockStatus;
+        blockStatus.reset();
+        assert(blockStatusWeak.expired());
+#endif
+      }
+    }
+  }
+}
+
+void BlockRailTile::identificationEvent(BlockInputMapItem& /*item*/, IdentificationEventType eventType, uint16_t identifier, Direction direction, uint8_t /*category*/)
+{
+  const auto self = shared_ptr<BlockRailTile>();
+  BlockTrainDirection blockDirection = BlockTrainDirection::Unknown;
+  if(direction != Direction::Unknown)
+    blockDirection = (direction == Direction::Reverse) ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA;
+
+  if(trains.empty())
+  {
+    switch(eventType)
+    {
+      case IdentificationEventType::Absent:
+        break; // nothing to do...its gone
+
+      case IdentificationEventType::Present:
+        //!< \todo assign train (if allowed and possible)
+        trains.appendInternal(TrainBlockStatus::create(*this, std::string("#").append(std::to_string(identifier)), blockDirection));
+        if(state == BlockState::Free || state == BlockState::Unknown)
+          updateState();
+        break;
+
+      case IdentificationEventType::Seen:
+        break;
+    }
+  }
+  else
+  {
+    switch(eventType)
+    {
+      case IdentificationEventType::Absent:
+      {
+        const auto identification = std::string("#").append(std::to_string(identifier));
+        for(const auto& train : trains)
+        {
+          if(train->identification.value() == identification)
+          {
+            train->destroy();
+            updateState();
+            break;
+          }
+        }
+        break;
+      }
+      case IdentificationEventType::Present:
+        break;
+
+      case IdentificationEventType::Seen:
+        break;
+    }
+  }
+}
+
+const std::shared_ptr<BlockPath> BlockRailTile::getReservedPath(BlockSide side) const
+{
+  assert(side == BlockSide::A || side == BlockSide::B);
+  return m_reservedPaths[static_cast<uint8_t>(side)].lock();
+}
+
+bool BlockRailTile::reserve(const std::shared_ptr<BlockPath>& blockPath, const std::shared_ptr<Train>& train, BlockSide side, bool dryRun)
+{
+  const uint8_t mask = toMask(side);
+
+  if(state == BlockState::Unknown)
+  {
+    return false; // can't reserve block with unknown state
+  }
+
+  if((reservedState() & mask))
+  {
+    return false; // already reserved
+  }
+
+  if(state != BlockState::Free)
+  {
+    if(trains.empty())
+    {
+      return false; // not free block, but no train
+    }
+
+    const auto& status = (side == BlockSide::A) ? *trains.front() : *trains.back();
+    if(!status.train || status.train.value() != train)
+    {
+      return false; // no train or other train assigned to block
+    }
+
+    if((side == BlockSide::A && status.direction != BlockTrainDirection::TowardsA) ||
+        (side == BlockSide::B && status.direction != BlockTrainDirection::TowardsB))
+    {
+      //! \todo allow direction change, add block property, automatic for dead ends
+      return false; // invalid train direction
+    }
+  }
+
+  if(!dryRun)
+  {
+    m_reservedPaths[static_cast<uint8_t>(side)] = blockPath;
+    RailTile::setReservedState(reservedState() | mask);
+    if(state == BlockState::Free)
+    {
+      const auto direction = side == BlockSide::A ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA;
+      trains.appendInternal(TrainBlockStatus::create(*this, *train, direction));
+      fireEvent(onTrainReserved, train, shared_ptr<BlockRailTile>(), direction);
+    }
+    updateState();
+  }
+
+  return true;
+}
+
+bool BlockRailTile::release(BlockSide side, bool dryRun)
+{
+  if(!dryRun)
+  {
+    m_reservedPaths[static_cast<uint8_t>(side)].reset();
+    RailTile::setReservedState(reservedState() & ~toMask(side));
+  }
+  return true;
 }
 
 void BlockRailTile::updateState()
@@ -283,7 +553,8 @@ void BlockRailTile::destroying()
 {
   const auto self = shared_ptr<BlockRailTile>();
   for(const auto& status : *trains)
-    status->train->blocks.removeInternal(status);
+    if(status->train)
+      status->train->blocks.removeInternal(status);
 
   RailTile::destroying();
 }
@@ -318,6 +589,49 @@ void BlockRailTile::setRotate(TileRotate value)
     width.setValueInternal(tmp);
 
     updateHeightWidthMax();
+  }
+}
+
+void BlockRailTile::boardModified()
+{
+  updatePaths(); //! \todo improvement: only update if a connected tile is changed
+}
+
+void BlockRailTile::updatePaths()
+{
+  auto current = std::move(m_paths);
+  m_paths.clear(); // make sure it is empty, it problably is after the move
+  auto found = BlockPath::find(*this);
+
+  while(!current.empty()) // handle existing paths
+  {
+    auto it = std::find_if(found.begin(), found.end(),
+      [&currentPath=*current.front()](const auto& foundPath)
+      {
+        return currentPath == *foundPath;
+      });
+
+    if(it != found.end())
+    {
+      found.erase(it);
+      m_paths.emplace_back(std::move(current.front()));
+    }
+    current.erase(current.begin());
+  }
+
+  for(auto& path : current) // no longer existing paths
+  {
+    auto& pathsIn = path->toBlock()->m_pathsIn;
+    if(auto it = std::find(pathsIn.begin(), pathsIn.end(), path); it != pathsIn.end())
+    {
+      pathsIn.erase(it);
+    }
+  }
+
+  for(auto& path : found) // new paths
+  {
+    path->toBlock()->m_pathsIn.emplace_back(path);
+    m_paths.emplace_back(std::move(path));
   }
 }
 

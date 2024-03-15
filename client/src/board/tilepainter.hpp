@@ -29,6 +29,7 @@
 #include <traintastic/board/tileid.hpp>
 #include <traintastic/enum/tilerotate.hpp>
 #include <traintastic/enum/blockstate.hpp>
+#include <traintastic/enum/crossstate.hpp>
 #include <traintastic/enum/decouplerstate.hpp>
 #include <traintastic/enum/directioncontrolstate.hpp>
 #include <traintastic/enum/sensorstate.hpp>
@@ -55,6 +56,8 @@ class TilePainter
     const QPen m_blockPen;
     const QPen m_trackPen;
     const QPen m_trackDisabledPen;
+    const QPen m_trackReservedPen;
+    const QPen m_trackReservedDisabledPen;
     const QPen m_trackErasePen;
     const QPen m_turnoutPen;
     const QPen m_turnoutStatePen;
@@ -62,6 +65,7 @@ class TilePainter
     QPainter& m_painter;
 
     inline void setTrackPen() { m_painter.setPen(m_trackPen); }
+    inline void setTrackPen(bool isReserved) { m_painter.setPen(isReserved ? m_trackReservedPen : m_trackPen); }
     inline void setTrackDisabledPen() { m_painter.setPen(m_trackDisabledPen); }
     inline void setTrackErasePen() { m_painter.setPen(m_trackErasePen); }
     inline void setTurnoutPen() { m_painter.setPen(m_turnoutDrawState ? m_trackPen : m_trackDisabledPen); }
@@ -81,25 +85,32 @@ class TilePainter
     void drawTriangle(const QRectF& r);
     void drawLED(const QRectF& r, const QColor& color, const QColor& borderColor);
 
+    void drawTurnoutStandard(TileId id, const QRectF& r, TileRotate rotate, TurnoutPosition reservedPosition = TurnoutPosition::Unknown, TurnoutPosition position = TurnoutPosition::Unknown);
+    void drawTurnoutSlip(TileId id, const QRectF& r, TileRotate rotate, TurnoutPosition reservedPosition = TurnoutPosition::Unknown, TurnoutPosition position = TurnoutPosition::Unknown);
+
     void drawSignal2Aspect(QRectF r, TileRotate rotate, SignalAspect aspect);
     void drawSignal3Aspect(QRectF r, TileRotate rotate, SignalAspect aspect);
     void drawSignalDirection(QRectF r, TileRotate rotate);
 
-    void drawRailBlock(const QRectF& r, TileRotate rotate, const ObjectPtr& blockTile = {});
+    void drawRailBlock(const QRectF& r, TileRotate rotate, bool isReservedA = false, bool isReservedB = false, const ObjectPtr& blockTile = {});
 
   public:
     TilePainter(QPainter& painter, int tileSize, const BoardColorScheme& colorScheme);
 
-    void draw(TileId id, const QRectF& r, TileRotate rotate);
-    void drawSensor(TileId id, const QRectF& r, TileRotate rotate, SensorState state = SensorState::Unknown);
-    void drawDirectionControl(TileId id, const QRectF& r, TileRotate rotate, DirectionControlState state = DirectionControlState::Both);
-    void drawTurnout(TileId id, const QRectF& r, TileRotate rotate, TurnoutPosition position = TurnoutPosition::Unknown);
-    void drawSignal(TileId id, const QRectF& r, TileRotate rotate, SignalAspect aspect = SignalAspect::Unknown);
-    void drawBlock(TileId id, const QRectF& r, TileRotate rotate, const ObjectPtr& blockTile = {});
+    void draw(TileId id, const QRectF& r, TileRotate rotate, bool isReserved = false);
+    void drawBridge(TileId id, const QRectF& r, TileRotate rotate, bool isReservedAC = false, bool isReservedBD = false);
+    void drawCross(TileId id, const QRectF& r, TileRotate rotate, CrossState reservedState = CrossState::Unset);
+    void drawSensor(TileId id, const QRectF& r, TileRotate rotate, bool isReserved = false, SensorState state = SensorState::Unknown);
+    void drawDirectionControl(TileId id, const QRectF& r, TileRotate rotate, bool isReserved = false, DirectionControlState state = DirectionControlState::Both);
+    void drawTurnout(TileId id, const QRectF& r, TileRotate rotate, TurnoutPosition reservedPosition = TurnoutPosition::Unknown, TurnoutPosition position = TurnoutPosition::Unknown);
+    void drawSignal(TileId id, const QRectF& r, TileRotate rotate, bool isReserved = false, SignalAspect aspect = SignalAspect::Unknown);
+    void drawBlock(TileId id, const QRectF& r, TileRotate rotate, bool isReservedA = false, bool isReservedB = false, const ObjectPtr& blockTile = {});
 
     void drawPushButton(const QRectF& r, Color color = Color::Yellow);
 
-    void drawRailDecoupler(const QRectF& r, TileRotate rotate, DecouplerState active = DecouplerState::Deactivated);
+    void drawRailDecoupler(const QRectF& r, TileRotate rotate, bool isReserved = false, DecouplerState active = DecouplerState::Deactivated);
+
+    void drawRailNX(const QRectF& r, TileRotate rotate, bool isReserved = false, bool isEnabled = false, bool pressed = false);
 };
 
 #endif

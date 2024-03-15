@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,8 +56,6 @@ class TraintasticDIYInterface final
     void loaded() final;
     void destroying() final;
 
-    void idChanged(const std::string& newId) final;
-
     void updateVisible();
 
   protected:
@@ -79,8 +77,9 @@ class TraintasticDIYInterface final
     void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
 
     // OutputController:
-    std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t /*channel*/) const final;
-    [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
+    tcb::span<const OutputChannel> outputChannels() const final;
+    std::pair<uint32_t, uint32_t> outputAddressMinMax(OutputChannel /*channel*/) const final;
+    [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t address, OutputValue value) final;
 };
 
 #endif

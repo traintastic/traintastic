@@ -61,7 +61,7 @@ constexpr bool isEmergencyStop(uint8_t db, uint8_t speedSteps)
 
 constexpr void setEmergencyStop(uint8_t& db)
 {
-  db = (db & directionFlag) | 0x01;
+  db = (db & directionFlag) | 0x01; // preserve direction flag
 }
 
 constexpr uint8_t getSpeedStep(uint8_t db, uint8_t speedSteps)
@@ -77,6 +77,8 @@ constexpr uint8_t getSpeedStep(uint8_t db, uint8_t speedSteps)
 
     case 28:
       db = ((db & 0x0F) << 1) | ((db & 0x10) >> 4); //! @todo check
+      if(db >= 3)
+          db -= 2;
       break;
 
     case 14:
@@ -86,7 +88,7 @@ constexpr uint8_t getSpeedStep(uint8_t db, uint8_t speedSteps)
     default:
       return 0;
   }
-  return db > 1 ? db - 1 : 0; // step 1 = EStop
+  return db >= 1 ? db - 1 : 0; // step 1 = EStop
 }
 
 constexpr void setSpeedStep(uint8_t& db, uint8_t speedSteps, uint8_t speedStep)
@@ -100,7 +102,8 @@ constexpr void setSpeedStep(uint8_t& db, uint8_t speedSteps, uint8_t speedStep)
         break;
 
       case 28:
-        db |= ((speedStep >> 1) & 0x0F) | ((speedStep << 4) & 0x01);
+        speedStep += 2;
+        db |= ((speedStep >> 1) & 0x0F) | ((speedStep & 0x01) << 4);
         break;
 
       case 14:

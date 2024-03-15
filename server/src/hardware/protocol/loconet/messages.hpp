@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,6 +41,7 @@
 #include "message/locof9f12imm.hpp"
 #include "message/locof13f20imm.hpp"
 #include "message/locof21f28imm.hpp"
+#include "message/multisenselong.hpp"
 #include "message/uhlenbrock.hpp"
 
 namespace LocoNet {
@@ -110,6 +111,7 @@ constexpr uint8_t SW2_DIR = 0x20;
 constexpr uint8_t MULTI_SENSE_TYPE_MASK = 0xE0;
 constexpr uint8_t MULTI_SENSE_TYPE_TRANSPONDER_GONE = 0x00;
 constexpr uint8_t MULTI_SENSE_TYPE_TRANSPONDER_PRESENT = 0x20;
+constexpr uint8_t MULTI_SENSE_LONG_TYPE_RAILCOM_APP_DYN = 0x40;
 constexpr uint8_t MULTI_SENSE_TRANSPONDER_ADDRESS_SHORT = 0xFD;
 
 struct SlotMessage : Message
@@ -600,32 +602,15 @@ struct SwitchRequest : Message
     updateChecksum(*this);
   }
 
-  SwitchRequest(uint16_t _fullAddress, bool _on) :
-    SwitchRequest()
-  {
-    setFullAddress(_fullAddress);
-    setOn(_on);
-    updateChecksum(*this);
-  }
-
-  inline uint16_t fullAddress() const
-  {
-    return (address() << 1) | (dir() ? 1 : 0);
-  }
-
-  inline void setFullAddress(uint16_t value)
-  {
-    setAddress(value >> 1);
-    setDir(value & 0x1);
-  }
-
   inline uint16_t address() const
   {
-    return (sw1 & 0x7F) | (static_cast<uint16_t>(sw2 & 0x0F) << 7);
+    return 1 + ((sw1 & 0x7F) | (static_cast<uint16_t>(sw2 & 0x0F) << 7));
   }
 
   inline void setAddress(uint16_t value)
   {
+    assert(value >= 1 && value <= 2048);
+    value--;
     sw1 = value & 0x7F;
     sw2 = (sw2 & 0x30) | ((value >> 7) & 0x0F);
   }
@@ -1058,64 +1043,6 @@ struct MultiSenseTransponder : MultiSense
   }
 };
 static_assert(sizeof(MultiSenseTransponder) == 6);
-
-struct MultiSenseLong : Message
-{
-  uint8_t len;
-  uint8_t data1;
-  uint8_t data2;
-  uint8_t data3;
-  uint8_t data4;
-  uint8_t data5;
-  uint8_t data6;
-  uint8_t checksum;
-
-  MultiSenseLong() :
-    Message(OPC_MULTI_SENSE_LONG),
-    len{9}
-  {
-  }
-
-  bool isTransponder() const
-  {
-    return
-      ((data1 & MULTI_SENSE_TYPE_MASK) == MULTI_SENSE_TYPE_TRANSPONDER_GONE) ||
-      ((data1 & MULTI_SENSE_TYPE_MASK) == MULTI_SENSE_TYPE_TRANSPONDER_PRESENT);
-  }
-};
-static_assert(sizeof(MultiSenseLong) == 9);
-
-struct MultiSenseLongTransponder : MultiSenseLong
-{
-  bool isPresent() const
-  {
-    return (data1 & MULTI_SENSE_TYPE_MASK) == MULTI_SENSE_TYPE_TRANSPONDER_PRESENT;
-  }
-
-  uint16_t sensorAddress() const
-  {
-    return (static_cast<uint16_t>(data1 & 0x1F) << 7) | (data2 & 0x7F);
-  }
-
-  uint16_t transponderAddress() const
-  {
-    if(isTransponderAddressLong())
-      return (static_cast<uint16_t>(data3 & 0x7F) << 7) | (data4 & 0x7F);
-    else
-      return (data4 & 0x7F);
-  }
-
-  bool isTransponderAddressLong() const
-  {
-    return data3 != MULTI_SENSE_TRANSPONDER_ADDRESS_SHORT;
-  }
-
-  Direction transponderDirection() const
-  {
-    return (data5 & 0x40) ? Direction::Forward : Direction::Reverse;
-  }
-};
-static_assert(sizeof(MultiSenseLongTransponder) == 9);
 
 struct SlotReadDataBase : Message
 {

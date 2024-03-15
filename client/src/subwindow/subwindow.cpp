@@ -28,7 +28,7 @@
 #include "../network/connection.hpp"
 #include "../network/object.hpp"
 #include "../network/property.hpp"
-#include "../network/utils.hpp"
+#include "../network/error.hpp"
 #include "../widget/alertwidget.hpp"
 
 SubWindow::SubWindow(SubWindowType type, QWidget* parent)
@@ -49,13 +49,19 @@ SubWindow::SubWindow(SubWindowType type, std::shared_ptr<Connection> connection,
   spinner->start();
 
   m_requestId = m_connection->getObject(id,
-    [this, spinner](const ObjectPtr& object, Message::ErrorCode ec)
+    [this, spinner](const ObjectPtr& object, std::optional<const Error> error)
     {
       m_requestId = Connection::invalidRequestId;
       if(object)
         setObject(object);
+      else if(error)
+      {
+        static_cast<QVBoxLayout*>(this->layout())->addWidget(AlertWidget::error(error->toString()));
+      }
       else
-        static_cast<QVBoxLayout*>(this->layout())->addWidget(AlertWidget::error(errorCodeToText(ec)));
+      {
+        assert(false);
+      }
       delete spinner;
     });
 }

@@ -25,8 +25,12 @@
 #include "railvehicles.hpp"
 #include "../../world/getworld.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/objectproperty.tpp"
 #include "../../core/method.tpp"
 #include "../../utils/displayname.hpp"
+#include "../../log/logmessageexception.hpp"
+#include "../../train/train.hpp"
+#include "../../hardware/decoder/decoder.hpp"
 
 RailVehicleList::RailVehicleList(Object& _parent, std::string_view parentPropertyName) :
   ObjectList<RailVehicle>(_parent, parentPropertyName),
@@ -36,7 +40,15 @@ RailVehicleList::RailVehicleList(Object& _parent, std::string_view parentPropert
       auto& world = getWorld(parent());
       return RailVehicles::create(world, railVehicleClassId, world.getUniqueId("vehicle"));
     }}
-  , delete_{*this, "delete", std::bind(&RailVehicleList::deleteMethodHandler, this, std::placeholders::_1)}
+  , delete_{*this, "delete",
+      [this](const std::shared_ptr<RailVehicle>& railVehicle)
+      {
+        if(railVehicle->activeTrain.value())
+        {
+          throw LogMessageException(LogMessage::E3001_CANT_DELETE_RAIL_VEHICLE_WHEN_IN_ACTIVE_TRAIN);
+        }
+        RailVehicleList::deleteMethodHandler(railVehicle);
+      }}
 {
   const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
 

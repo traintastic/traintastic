@@ -23,6 +23,7 @@
 #include "serialportlistimplsystemd.hpp"
 #include "../../core/eventloop.hpp"
 #include "../../utils/startswith.hpp"
+#include "../../utils/setthreadname.hpp"
 
 namespace Linux {
 
@@ -55,6 +56,8 @@ SerialPortListImplSystemD::SerialPortListImplSystemD(SerialPortList& list)
   , m_thread{
       [this]()
       {
+        setThreadName("serialport-sysd");
+
         sd_device_monitor* monitor = nullptr;
 
         if(sd_device_monitor_new(&monitor) == 0)
