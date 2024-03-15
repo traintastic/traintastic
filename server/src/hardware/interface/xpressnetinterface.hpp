@@ -90,7 +90,7 @@ class XpressNetInterface final
     void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
 
     // OutputController:
-    tcb::span<const OutputChannel> outputChannels() const final;
+    std::span<const OutputChannel> outputChannels() const final;
     std::pair<uint32_t, uint32_t> outputAddressMinMax(OutputChannel /*channel*/) const final;
     [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t address, OutputValue value) final;
 };

@@ -165,7 +165,7 @@ void LocoNetInterface::inputSimulateChange(uint32_t channel, uint32_t address, S
     m_kernel->simulateInputChange(address, action);
 }
 
-tcb::span<const OutputChannel> LocoNetInterface::outputChannels() const
+std::span<const OutputChannel> LocoNetInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::Accessory, OutputChannel::DCCext);
   return values;

@@ -143,7 +143,7 @@ void Z21Interface::inputSimulateChange(uint32_t channel, uint32_t address, Simul
     m_kernel->simulateInputChange(channel, address, action);
 }
 
-tcb::span<const OutputChannel> Z21Interface::outputChannels() const
+std::span<const OutputChannel> Z21Interface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::Accessory, OutputChannel::DCCext);
   return values;

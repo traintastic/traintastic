@@ -118,13 +118,13 @@ void ECoSInterface::inputSimulateChange(uint32_t channel, uint32_t address, Simu
     m_kernel->simulateInputChange(channel, address, action);
 }
 
-tcb::span<const OutputChannel> ECoSInterface::outputChannels() const
+std::span<const OutputChannel> ECoSInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::AccessoryDCC, OutputChannel::AccessoryMotorola, OutputChannel::ECoSObject);
   return values;
 }
 
-std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> ECoSInterface::getOutputECoSObjects(OutputChannel channel) const
+std::pair<std::span<const uint16_t>, std::span<const std::string>> ECoSInterface::getOutputECoSObjects(OutputChannel channel) const
 {
   if(channel == OutputChannel::ECoSObject) /*[[likely]]*/
   {

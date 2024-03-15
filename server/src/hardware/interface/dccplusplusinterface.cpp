@@ -142,7 +142,7 @@ void DCCPlusPlusInterface::inputSimulateChange(uint32_t channel, uint32_t addres
     m_kernel->simulateInputChange(address, action);
 }
 
-tcb::span<const OutputChannel> DCCPlusPlusInterface::outputChannels() const
+std::span<const OutputChannel> DCCPlusPlusInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::Accessory, OutputChannel::Turnout, OutputChannel::Output, OutputChannel::DCCext);
   return values;

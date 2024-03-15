@@ -210,7 +210,7 @@ void XpressNetInterface::inputSimulateChange(uint32_t channel, uint32_t address,
     m_kernel->simulateInputChange(address, action);
 }
 
-tcb::span<const OutputChannel> XpressNetInterface::outputChannels() const
+std::span<const OutputChannel> XpressNetInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::Accessory);
   return values;

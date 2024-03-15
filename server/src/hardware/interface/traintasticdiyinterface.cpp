@@ -112,7 +112,7 @@ void TraintasticDIYInterface::inputSimulateChange(uint32_t channel, uint32_t add
     m_kernel->simulateInputChange(address, action);
 }
 
-tcb::span<const OutputChannel> TraintasticDIYInterface::outputChannels() const
+std::span<const OutputChannel> TraintasticDIYInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::Output);
   return values;

@@ -114,7 +114,7 @@ std::tuple<const AbstractSignalPath::BlockItem*, const AbstractSignalPath::Signa
   return {nullptr, nullptr};
 }
 
-void AbstractSignalPath::getBlockStates(tcb::span<BlockState> blockStates) const
+void AbstractSignalPath::getBlockStates(std::span<BlockState> blockStates) const
 {
   size_t i = 0;
   const Item* item = m_root.get();

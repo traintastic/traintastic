@@ -86,8 +86,8 @@ class ECoSInterface final
     void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
 
     // OutputController:
-    tcb::span<const OutputChannel> outputChannels() const final;
-    std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> getOutputECoSObjects(OutputChannel channel) const final;
+    std::span<const OutputChannel> outputChannels() const final;
+    std::pair<std::span<const uint16_t>, std::span<const std::string>> getOutputECoSObjects(OutputChannel channel) const final;
     bool isOutputId(OutputChannel channel, uint32_t id) const final;
     [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t outputId, OutputValue value) final;
 };

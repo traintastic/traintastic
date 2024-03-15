@@ -148,7 +148,7 @@ std::pair<uint32_t, uint32_t> MarklinCANInterface::inputAddressMinMax(uint32_t /
   return {MarklinCAN::Kernel::s88AddressMin, MarklinCAN::Kernel::s88AddressMax};
 }
 
-tcb::span<const OutputChannel> MarklinCANInterface::outputChannels() const
+std::span<const OutputChannel> MarklinCANInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::AccessoryMotorola, OutputChannel::AccessoryDCC);
   return values;

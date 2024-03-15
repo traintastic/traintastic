@@ -193,7 +193,7 @@ class AbstractSignalPath : public Path
       return nextBlockOrSignal(root());
     }
 
-    void getBlockStates(tcb::span<BlockState> blockStates) const;
+    void getBlockStates(std::span<BlockState> blockStates) const;
     std::shared_ptr<BlockRailTile> getBlock(size_t index) const;
 
   public:

@@ -28,7 +28,7 @@
 #include <unordered_map>
 #include <memory>
 #include <boost/signals2/signal.hpp>
-#include <tcb/span.hpp>
+#include <span>
 #include <traintastic/enum/outputchannel.hpp>
 #include <traintastic/enum/outputtype.hpp>
 #include "outputvalue.hpp"
@@ -97,7 +97,7 @@ class OutputController
     /**
      *
      */
-    virtual tcb::span<const OutputChannel> outputChannels() const = 0;
+    virtual std::span<const OutputChannel> outputChannels() const = 0;
 
     /**
      *
@@ -122,7 +122,7 @@ class OutputController
     /**
      *
      */
-    virtual std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> getOutputECoSObjects(OutputChannel channel) const;
+    virtual std::pair<std::span<const uint16_t>, std::span<const std::string>> getOutputECoSObjects(OutputChannel channel) const;
 
     /**
      *

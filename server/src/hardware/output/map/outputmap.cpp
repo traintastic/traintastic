@@ -291,7 +291,7 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
 
   Attributes::addDisplayName(channel, DisplayName::Hardware::channel);
   Attributes::addEnabled(channel, editable);
-  Attributes::addValues(channel, tcb::span<const OutputChannel>());
+  Attributes::addValues(channel, std::span<const OutputChannel>());
   Attributes::addVisible(channel, false);
   m_interfaceItems.add(channel);
 
@@ -301,9 +301,9 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
   Attributes::addMinMax<uint32_t>(addresses, 0, 0);
   m_interfaceItems.add(addresses);
 
-  Attributes::addAliases(ecosObject, tcb::span<const uint16_t>{}, tcb::span<const std::string>{});
+  Attributes::addAliases(ecosObject, std::span<const uint16_t>{}, std::span<const std::string>{});
   Attributes::addEnabled(ecosObject, editable);
-  Attributes::addValues(ecosObject, tcb::span<const uint16_t>{});
+  Attributes::addValues(ecosObject, std::span<const uint16_t>{});
   Attributes::addVisible(ecosObject, false);
   m_interfaceItems.add(ecosObject);
 
@@ -376,13 +376,13 @@ void OutputMap::worldEvent(WorldState state, WorldEvent event)
 
 void OutputMap::interfaceChanged()
 {
-  const auto outputChannels = interface ? interface->outputChannels() : tcb::span<const OutputChannel>{};
+  const auto outputChannels = interface ? interface->outputChannels() : std::span<const OutputChannel>{};
   Attributes::setValues(channel, outputChannels);
   Attributes::setVisible(channel, interface);
 
   m_outputECoSObjectsChanged.disconnect();
 
-  if(std::find(outputChannels.begin(), outputChannels.end(), OutputChannel::ECoSObject))
+  if(std::find(outputChannels.data(), outputChannels.data() + outputChannels.size(), OutputChannel::ECoSObject))
   {
     m_outputECoSObjectsChanged = interface->outputECoSObjectsChanged.connect(
       [this]()
@@ -411,8 +411,8 @@ void OutputMap::channelChanged()
       {
         Attributes::setVisible({addresses, addAddress, removeAddress}, true);
         Attributes::setVisible(ecosObject, false);
-        Attributes::setAliases(ecosObject, tcb::span<const uint16_t>{}, tcb::span<const std::string>{});
-        Attributes::setValues(ecosObject, tcb::span<const uint16_t>{});
+        Attributes::setAliases(ecosObject, std::span<const uint16_t>{}, std::span<const std::string>{});
+        Attributes::setValues(ecosObject, std::span<const uint16_t>{});
 
         if(addresses.empty())
         {
@@ -460,8 +460,8 @@ void OutputMap::channelChanged()
   {
     Attributes::setVisible({addresses, addAddress, removeAddress, ecosObject}, false);
     Attributes::setMinMax(addresses, std::numeric_limits<uint32_t>::min(), std::numeric_limits<uint32_t>::max());
-    Attributes::setAliases(ecosObject, tcb::span<const uint16_t>{}, tcb::span<const std::string>{});
-    Attributes::setValues(ecosObject, tcb::span<const uint16_t>{});
+    Attributes::setAliases(ecosObject, std::span<const uint16_t>{}, std::span<const std::string>{});
+    Attributes::setValues(ecosObject, std::span<const uint16_t>{});
   }
 }
 
