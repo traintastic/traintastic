@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +28,7 @@ namespace XpressNet {
 struct Config
 {
   bool useEmergencyStopLocomotiveCommand;
+  bool useRocoAccessoryAddressing;
   bool useRocoF13F20Command;
 
   bool debugLogInput;

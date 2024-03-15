@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,30 +24,37 @@
 #define TRAINTASTIC_CLIENT_WIDGET_OUTPUTMAPWIDGET_HPP
 
 #include <QWidget>
-#include <memory>
-#include <QTableWidget>
-#include "../network/outputmap.hpp"
+#include "../network/objectptr.hpp"
 
+class QTableWidget;
 class Method;
 class MethodAction;
+class AbstractProperty;
+class AbstractVectorProperty;
+class ObjectVectorProperty;
+class Property;
 
 class OutputMapWidget : public QWidget
 {
   Q_OBJECT
 
   protected:
-    std::shared_ptr<OutputMap> m_object;
-    Method* m_methodAdd;
-    Method* m_methodRemove;
-    MethodAction* m_actionRemove;
+    ObjectPtr m_object;
+    AbstractVectorProperty* m_addresses;
+    Property* m_ecosObject;
+    ObjectVectorProperty* m_items;
     QTableWidget* m_table;
+    std::vector<ObjectPtr> m_itemObjects;
+    std::vector<std::vector<ObjectPtr>> m_actions;
+    int m_getItemsRequestId;
+    int m_dummy;
 
-  protected slots:
-    void updateItems();
-    void updateOutputs();
+    void updateTableOutputActions(ObjectVectorProperty& property, int row);
+    void updateItems(const std::vector<ObjectPtr>& items);
+    void updateTableOutputColumns();
 
   public:
-    explicit OutputMapWidget(std::shared_ptr<OutputMap> object, QWidget* parent = nullptr);
+    explicit OutputMapWidget(ObjectPtr object, QWidget* parent = nullptr);
 };
 
 #endif

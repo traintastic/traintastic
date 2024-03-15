@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -602,32 +602,15 @@ struct SwitchRequest : Message
     updateChecksum(*this);
   }
 
-  SwitchRequest(uint16_t _fullAddress, bool _on) :
-    SwitchRequest()
-  {
-    setFullAddress(_fullAddress);
-    setOn(_on);
-    updateChecksum(*this);
-  }
-
-  inline uint16_t fullAddress() const
-  {
-    return (address() << 1) | (dir() ? 1 : 0);
-  }
-
-  inline void setFullAddress(uint16_t value)
-  {
-    setAddress(value >> 1);
-    setDir(value & 0x1);
-  }
-
   inline uint16_t address() const
   {
-    return (sw1 & 0x7F) | (static_cast<uint16_t>(sw2 & 0x0F) << 7);
+    return 1 + ((sw1 & 0x7F) | (static_cast<uint16_t>(sw2 & 0x0F) << 7));
   }
 
   inline void setAddress(uint16_t value)
   {
+    assert(value >= 1 && value <= 2048);
+    value--;
     sw1 = value & 0x7F;
     sw2 = (sw2 & 0x30) | ((value >> 7) & 0x0F);
   }

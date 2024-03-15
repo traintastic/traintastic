@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,7 +42,7 @@ class OutputMapItemBase : public OutputMapItem
   public:
     Property<Key> key;
     Property<bool> use;
-    Method<std::shared_ptr<OutputMapOutputAction> (const std::shared_ptr<Output>&)> getOutputAction;
+    Method<std::shared_ptr<OutputMapOutputAction> (uint32_t)> getOutputAction;
 
     OutputMapItemBase(Object& map, Key _key) :
       OutputMapItem(map),
@@ -50,14 +50,9 @@ class OutputMapItemBase : public OutputMapItem
       key{this, "key", _key, PropertyFlags::ReadOnly | PropertyFlags::Store},
       use{this, "use", true, PropertyFlags::ReadWrite | PropertyFlags::Store},
       getOutputAction{*this, "get_output_action",
-        [this](const std::shared_ptr<Output>& output)
+        [this](uint32_t index)
         {
-          auto it = std::find_if(m_outputActions.begin(), m_outputActions.end(),
-            [output](const auto& item)
-            {
-              return item->output() == output;
-            });
-          return it != m_outputActions.end() ? *it : std::shared_ptr<OutputMapOutputAction>();
+          return index < outputActions.size() ? outputActions[index] : std::shared_ptr<OutputMapOutputAction>();
         }}
     {
       Attributes::addValues(key, m_keyValues);

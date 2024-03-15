@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022-2023 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,11 +25,15 @@
 
 #include <memory>
 #include <map>
+#include <set>
 #include <algorithm>
 #include <limits>
 #include <chrono>
 #include <cassert>
 #include <lua.hpp>
+
+class OutputController;
+class Output;
 
 namespace Lua {
 
@@ -57,6 +61,11 @@ class Sandbox
         Script& m_script;
         lua_Integer m_eventHandlerId;
         std::map<lua_Integer, std::shared_ptr<EventHandler>> m_eventHandlers;
+        std::map<
+          std::weak_ptr<OutputController>,
+          std::set<std::weak_ptr<Output>, std::owner_less<std::weak_ptr<Output>>>,
+          std::owner_less<std::weak_ptr<OutputController>>
+          > m_outputs;
 
       public:
         std::chrono::time_point<std::chrono::steady_clock> pcallStart;
@@ -109,6 +118,11 @@ class Sandbox
 
           if(it != m_eventHandlers.end())
             m_eventHandlers.erase(it);
+        }
+
+        void registerOutput(std::weak_ptr<OutputController> outputController, std::weak_ptr<Output> output)
+        {
+          m_outputs[outputController].emplace(output);
         }
     };
 

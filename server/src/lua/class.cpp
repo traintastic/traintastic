@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -79,7 +79,9 @@
 #include "../hardware/input/map/blockinputmap.hpp"
 #include "../hardware/input/map/blockinputmapitem.hpp"
 
-#include "../hardware/output/output.hpp"
+#include "../hardware/output/singleoutput.hpp"
+#include "../hardware/output/pairoutput.hpp"
+#include "../hardware/output/aspectoutput.hpp"
 #include "../hardware/output/list/outputlist.hpp"
 #include "../hardware/output/map/outputmapoutputaction.hpp"
 #include "../hardware/output/map/signaloutputmap.hpp"
@@ -198,7 +200,9 @@ void Class::registerValues(lua_State* L)
   registerValue<Input>(L, "INPUT");
   registerValue<InputList>(L, "INPUT_LIST");
 
-  registerValue<Output>(L, "OUTPUT");
+  registerValue<SingleOutput>(L, "SINGLE_OUTPUT");
+  registerValue<PairOutput>(L, "PAIR_OUTPUT");
+  registerValue<AspectOutput>(L, "ASPECT_OUTPUT");
   registerValue<OutputList>(L, "OUTPUT_LIST");
 
   // hardware - identification:

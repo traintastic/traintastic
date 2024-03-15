@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -119,49 +119,6 @@ TEMPLATE_TEST_CASE("Assign input to another interface", "[interface]", INTERFACE
   REQUIRE(interfaceWeak1.expired());
   REQUIRE(interfaceWeak2.expired());
   REQUIRE(inputWeak.expired());
-}
-
-TEMPLATE_TEST_CASE("Assign output to another interface", "[interface]", INTERFACES_OUTPUT)
-{
-  auto world = World::create();
-  std::weak_ptr<World> worldWeak = world;
-  REQUIRE_FALSE(worldWeak.expired());
-  REQUIRE(worldWeak.lock()->interfaces->length == 0);
-  REQUIRE(worldWeak.lock()->outputs->length == 0);
-
-  std::weak_ptr<TestType> interfaceWeak1 = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
-  REQUIRE_FALSE(interfaceWeak1.expired());
-  REQUIRE(worldWeak.lock()->interfaces->length == 1);
-  REQUIRE(worldWeak.lock()->outputs->length == 0);
-  REQUIRE(interfaceWeak1.lock()->outputs->length == 0);
-
-  std::weak_ptr<TestType> interfaceWeak2 = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
-  REQUIRE_FALSE(interfaceWeak2.expired());
-  REQUIRE(worldWeak.lock()->interfaces->length == 2);
-  REQUIRE(worldWeak.lock()->outputs->length == 0);
-  REQUIRE(interfaceWeak2.lock()->outputs->length == 0);
-
-  std::weak_ptr<Output> outputWeak = interfaceWeak1.lock()->outputs->create();
-  REQUIRE_FALSE(outputWeak.expired());
-  REQUIRE(outputWeak.lock()->interface.value() == std::dynamic_pointer_cast<OutputController>(interfaceWeak1.lock()));
-  REQUIRE(worldWeak.lock()->interfaces->length == 2);
-  REQUIRE(worldWeak.lock()->outputs->length == 1);
-  REQUIRE(interfaceWeak1.lock()->outputs->length == 1);
-  REQUIRE(interfaceWeak2.lock()->outputs->length == 0);
-
-  outputWeak.lock()->interface = interfaceWeak2.lock();
-  REQUIRE_FALSE(outputWeak.expired());
-  REQUIRE(outputWeak.lock()->interface.value() == std::dynamic_pointer_cast<OutputController>(interfaceWeak2.lock()));
-  REQUIRE(worldWeak.lock()->interfaces->length == 2);
-  REQUIRE(worldWeak.lock()->outputs->length == 1);
-  REQUIRE(interfaceWeak1.lock()->outputs->length == 0);
-  REQUIRE(interfaceWeak2.lock()->outputs->length == 1);
-
-  world.reset();
-  REQUIRE(worldWeak.expired());
-  REQUIRE(interfaceWeak1.expired());
-  REQUIRE(interfaceWeak2.expired());
-  REQUIRE(outputWeak.expired());
 }
 
 #ifndef __APPLE__

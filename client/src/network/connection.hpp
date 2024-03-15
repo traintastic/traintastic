@@ -45,7 +45,6 @@ class Method;
 class InputMonitor;
 class OutputKeyboard;
 class Board;
-class OutputMap;
 struct Error;
 
 class Connection : public QObject, public std::enable_shared_from_this<Connection>
@@ -55,7 +54,6 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
   template<typename R>
   friend R getResult(Connection&, const Message&);
   friend class Board;
-  friend class OutputMap;
 
   public:
     enum class State

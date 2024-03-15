@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@
  */
 
 #include "loconetinterface.hpp"
+#include "interface.hpp"
 #include "object.hpp"
 #include "../check.hpp"
 #include "../checkarguments.hpp"
@@ -33,7 +34,7 @@ namespace Lua::Object {
 
 void LocoNetInterface::registerType(lua_State* L)
 {
-  MetaTable::clone(L, Object::metaTableName, metaTableName);
+  MetaTable::clone(L, Interface::metaTableName, metaTableName);
   lua_pushcfunction(L, __index);
   lua_setfield(L, -2, "__index");
   lua_pop(L, 1);
@@ -44,7 +45,7 @@ int LocoNetInterface::index(lua_State* L, ::LocoNetInterface& object)
   const auto key = to<std::string_view>(L, 2);
   LUA_OBJECT_METHOD(send)
   LUA_OBJECT_METHOD(imm_packet)
-  return Object::index(L, object);
+  return Interface::index(L, object);
 }
 
 int LocoNetInterface::__index(lua_State* L)

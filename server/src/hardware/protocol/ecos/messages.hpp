@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,46 +45,67 @@ struct ObjectId
 {
   static constexpr uint16_t ecos = 1;
   static constexpr uint16_t programmingTrack = 5;
+  // unknown object: 7
   static constexpr uint16_t locomotiveManager = 10;
   static constexpr uint16_t switchManager = 11;
   static constexpr uint16_t shuttleTrainControl = 12;
+  // unknown object: 19
   static constexpr uint16_t deviceManager = 20;
   static constexpr uint16_t sniffer = 25;
   static constexpr uint16_t feedbackManager = 26;
   static constexpr uint16_t booster = 27;
   static constexpr uint16_t controlDesk = 31;
+  // unknown object: 40
   static constexpr uint16_t s88 = 100;
   static constexpr uint16_t ecosDetector = 200;
+
+  static constexpr uint16_t switchMin = 20000;
+  static constexpr uint16_t switchMax = 29999; // unsure, guessed it, turntable starts at 30000
+  static constexpr uint16_t turntableMin = 30000;
+  static constexpr uint16_t turntableMax = 39999; // unsure, guessed it, same range as switch
 };
 
 struct Option
 {
   static constexpr std::string_view addr = "addr";
-  static constexpr std::string_view applicationVersion = "ApplicationVersion";
+  static constexpr std::string_view addrext = "addrext";
+  static constexpr std::string_view applicationversion = "applicationversion";
+  static constexpr std::string_view applicationversionsuffix = "applicationversionsuffix";
+  static constexpr std::string_view commandstationtype = "commandstationtype";
   static constexpr std::string_view control = "control";
   static constexpr std::string_view dir = "dir";
   static constexpr std::string_view duration = "duration";
   static constexpr std::string_view force = "force";
   static constexpr std::string_view func = "func";
   static constexpr std::string_view go = "go";
-  static constexpr std::string_view hardwareVersion = "HardwareVersion";
-  static constexpr std::string_view info = "info";
+  static constexpr std::string_view hardwareversion = "hardwareversion";
   static constexpr std::string_view mode = "mode";
   static constexpr std::string_view name = "name";
+  static constexpr std::string_view name1 = "name1";
+  static constexpr std::string_view name2 = "name2";
+  static constexpr std::string_view name3 = "name3";
   static constexpr std::string_view ports = "ports";
   static constexpr std::string_view protocol = "protocol";
-  static constexpr std::string_view protocolVersion = "ProtocolVersion";
+  static constexpr std::string_view protocolversion = "protocolversion";
+  static constexpr std::string_view railcom = "railcom";
+  static constexpr std::string_view railcomplus = "railcomplus";
   static constexpr std::string_view speedStep = "speedstep";
   static constexpr std::string_view state = "state";
   static constexpr std::string_view status = "status";
   static constexpr std::string_view stop = "stop";
   static constexpr std::string_view switch_ = "switch";
+  static constexpr std::string_view symbol = "symbol";
+  static constexpr std::string_view type = "type";
+  static constexpr std::string_view variant = "variant";
   static constexpr std::string_view view = "view";
 };
 
 enum class Status : uint32_t
 {
   Ok = 0,
+  UnknownOption = 11,
+  UnknownObject = 15,
+  NoManagerObject = 22,
 };
 
 struct Request

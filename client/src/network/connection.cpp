@@ -529,6 +529,7 @@ ObjectPtr Connection::readObject(const Message& message)
             else
             {
               VectorProperty* p = new VectorProperty(*obj, name, valueType, flags, readArray(message, valueType, length));
+              assert(p->size() == length);
               if(valueType == ValueType::Enum || valueType == ValueType::Set)
                 p->m_enumOrSetName = enumOrSetName;
               item = p;
@@ -965,10 +966,7 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
       case Message::Command::ObjectEventFired:
       case Message::Command::InputMonitorInputIdChanged:
       case Message::Command::InputMonitorInputValueChanged:
-      case Message::Command::OutputKeyboardOutputIdChanged:
-      case Message::Command::OutputKeyboardOutputValueChanged:
       case Message::Command::BoardTileDataChanged:
-      case Message::Command::OutputMapOutputsChanged:
       {
         const auto handle = message->read<Handle>();
         if(auto object = m_objects.value(handle).lock())

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,6 +40,7 @@
 #include "../../../clock/clock.hpp"
 #include "../../../traintastic/traintastic.hpp"
 #include "../dcc/dcc.hpp"
+#include "../dcc/messages.hpp"
 
 namespace LocoNet {
 
@@ -222,7 +223,7 @@ void Kernel::start()
   m_slots.clear();
   m_pendingSlotMessages.clear();
   m_inputValues.fill(TriState::Undefined);
-  m_outputValues.fill(TriState::Undefined);
+  m_outputValues.fill(OutputPairValue::Undefined);
 
   if(m_config.listenOnly)
     Log::log(logId, LogMessage::N2006_LISTEN_ONLY_MODE_ACTIVATED);
@@ -489,23 +490,19 @@ void Kernel::receive(const Message& message)
       if(m_outputController)
       {
         const auto& switchRequest = static_cast<const SwitchRequest&>(message);
-        const auto on = toTriState(switchRequest.on());
-        if(m_outputValues[switchRequest.fullAddress()] != on)
+        if(switchRequest.on())
         {
-          if(m_config.debugLogOutput)
+          const auto value = switchRequest.dir() ? OutputPairValue::Second : OutputPairValue::First;
+          if(m_outputValues[switchRequest.address() - accessoryOutputAddressMin] != value)
+          {
+            m_outputValues[switchRequest.address() - accessoryOutputAddressMin] = value;
+
             EventLoop::call(
-              [this, address=1 + switchRequest.fullAddress(), on=switchRequest.on()]()
+              [this, address=switchRequest.address(), value]()
               {
-                Log::log(logId, LogMessage::D2008_OUTPUT_X_IS_X, address, on ? std::string_view{"1"} : std::string_view{"0"});
+                m_outputController->updateOutputValue(OutputChannel::Accessory, address, value);
               });
-
-          m_outputValues[switchRequest.fullAddress()] = on;
-
-          EventLoop::call(
-            [this, address=1 + switchRequest.fullAddress(), on]()
-            {
-              m_outputController->updateOutputValue(OutputController::defaultOutputChannel, address, on);
-            });
+          }
         }
       }
       break;
@@ -960,7 +957,7 @@ bool Kernel::send(tcb::span<uint8_t> packet)
   return true;
 }
 
-bool Kernel::immPacket(tcb::span<uint8_t> dccPacket, uint8_t repeat)
+bool Kernel::immPacket(tcb::span<const uint8_t> dccPacket, uint8_t repeat)
 {
   assert(isEventLoopThread());
 
@@ -1155,19 +1152,34 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   }
 }
 
-bool Kernel::setOutput(uint16_t address, bool value)
+bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputValue value)
 {
   assert(isEventLoopThread());
-  if(!inRange(address, outputAddressMin, outputAddressMax))
-    return false;
 
-  m_ioContext.post(
-    [this, address, value]()
-    {
-      send(SwitchRequest(address - 1, value));
-    });
+  switch(channel)
+  {
+    case OutputChannel::Accessory:
+      if(!inRange(address, accessoryOutputAddressMin, accessoryOutputAddressMax))
+        return false;
 
-  return true;
+      m_ioContext.post(
+        [this, address, dir=std::get<OutputPairValue>(value) == OutputPairValue::Second]()
+        {
+          send(SwitchRequest(address, dir, true));
+        });
+      return true;
+
+    case OutputChannel::DCCext:
+      return
+        inRange(address, DCC::Accessory::addressMin, DCC::Accessory::addressMax) &&
+        inRange<int16_t>(std::get<int16_t>(value), std::numeric_limits<uint8_t>::min(), std::numeric_limits<uint8_t>::max()) &&
+        immPacket(DCC::SetAdvancedAccessoryValue(address, static_cast<uint8_t>(std::get<int16_t>(value))), 2);
+
+    default: /*[[unlikely]]*/
+      assert(false);
+      break;
+  }
+  return false;
 }
 
 void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,6 +43,13 @@ constexpr bool isLongAddress(uint16_t address)
 constexpr DecoderProtocol getProtocol(uint16_t address)
 {
   return isLongAddress(address) ? DecoderProtocol::DCCLong : DecoderProtocol::DCCShort;
+}
+
+namespace Accessory {
+
+  constexpr uint16_t addressMin = 1;
+  constexpr uint16_t addressMax = 2044;
+
 }
 
 }

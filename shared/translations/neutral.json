@@ -374,5 +374,9 @@
     {
         "term": "table_model.marklin_can_node_list:uid",
         "definition": "UID"
+    },
+    {
+        "term": "output_channel:dcc_ext",
+        "definition": "DCCext (RCN-213)"
     }
 ]

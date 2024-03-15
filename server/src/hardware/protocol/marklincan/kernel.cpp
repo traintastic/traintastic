@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,7 @@
 #include "locomotivelist.hpp"
 #include "uid.hpp"
 #include "../dcc/dcc.hpp"
+#include "../motorola/motorola.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../decoder/decodercontroller.hpp"
@@ -132,9 +133,8 @@ void Kernel::start()
 
   // reset all state values
   m_inputValues.fill(TriState::Undefined);
-  m_outputValuesMotorola.fill(TriState::Undefined);
-  m_outputValuesDCC.fill(TriState::Undefined);
-  m_outputValuesSX1.fill(TriState::Undefined);
+  m_outputValuesMotorola.fill(OutputPairValue::Undefined);
+  m_outputValuesDCC.fill(OutputPairValue::Undefined);
 
   m_thread = std::thread(
     [this]()
@@ -357,43 +357,36 @@ void Kernel::receive(const Message& message)
             accessoryControl.position() != AccessoryControl::positionOn)
           break;
 
-        uint32_t channel = 0;
-        uint32_t address = accessoryControl.position() == AccessoryControl::positionOff ? 1 : 2;
-        const auto value = toTriState(accessoryControl.current() != 0);
+        OutputChannel channel;
+        uint32_t address;
+        const auto value = accessoryControl.position() == AccessoryControl::positionOff ? OutputPairValue::First : OutputPairValue::Second;
 
         if(inRange(accessoryControl.uid(), UID::Range::accessoryMotorola))
         {
-          channel = OutputChannel::motorola;
-          address += (accessoryControl.uid() - UID::Range::accessoryMotorola.first) << 1;
-          if(address > m_outputValuesMotorola.size() || m_outputValuesMotorola[address - 1] == value)
-            break;
-          m_outputValuesMotorola[address - 1] = value;
+          channel = OutputChannel::AccessoryMotorola;
+          address = 1 + (accessoryControl.uid() - UID::Range::accessoryMotorola.first);
+          //if(address > m_outputValuesMotorola.size() || m_outputValuesMotorola[address - 1] == value)
+          //  break;
+          //m_outputValuesMotorola[address - 1] = value;
         }
         else if(inRange(accessoryControl.uid(), UID::Range::accessoryDCC))
         {
-          channel = OutputChannel::dcc;
-          address += (accessoryControl.uid() - UID::Range::accessoryDCC.first) << 1;
-          if(address > m_outputValuesDCC.size() || m_outputValuesDCC[address - 1] == value)
-            break;
-          m_outputValuesDCC[address - 1] = value;
+          channel = OutputChannel::AccessoryDCC;
+          address = 1 + (accessoryControl.uid() - UID::Range::accessoryDCC.first);
+          //if(address > m_outputValuesDCC.size() || m_outputValuesDCC[address - 1] == value)
+          //  break;
+          //m_outputValuesDCC[address - 1] = value;
         }
-        else if(inRange(accessoryControl.uid(), UID::Range::accessorySX1))
+        else
         {
-          channel = OutputChannel::sx1;
-          address += (accessoryControl.uid() - UID::Range::accessorySX1.first) << 1;
-          if(address > m_outputValuesSX1.size() || m_outputValuesSX1[address - 1] == value)
-            break;
-          m_outputValuesSX1[address - 1] = value;
+          break;
         }
 
-        if(channel != 0)
-        {
-          EventLoop::call(
-            [this, channel, address, value]()
-            {
-              m_outputController->updateOutputValue(channel, address, value);
-            });
-        }
+        EventLoop::call(
+          [this, channel, address, value]()
+          {
+            m_outputController->updateOutputValue(channel, address, value);
+          });
       }
       break;
 
@@ -656,9 +649,10 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
     postSend(LocomotiveFunction(uid, functionNumber, decoder.getFunctionValue(functionNumber)));
 }
 
-bool Kernel::setOutput(uint32_t channel, uint16_t address, bool value)
+bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputPairValue value)
 {
   assert(isEventLoopThread());
+  assert(value == OutputPairValue::First || value == OutputPairValue::Second);
 
   m_ioContext.post(
     [this, channel, address, value]()
@@ -667,35 +661,29 @@ bool Kernel::setOutput(uint32_t channel, uint16_t address, bool value)
 
       switch(channel)
       {
-        case OutputChannel::motorola:
-          assert(inRange(address, outputMotorolaAddressMin, outputMotorolaAddressMax));
-          if(m_outputValuesMotorola[address - 1] == toTriState(value))
+        case OutputChannel::AccessoryMotorola:
+          assert(inRange(address, Motorola::Accessory::addressMin, Motorola::Accessory::addressMax));
+          if(m_outputValuesMotorola[address - Motorola::Accessory::addressMin] == value)
             return;
-          uid = MarklinCAN::UID::accessoryMotorola((address + 1) >> 1);
+          uid = MarklinCAN::UID::accessoryMotorola(address);
           break;
 
-        case OutputChannel::dcc:
-          assert(inRange(address, outputDCCAddressMin, outputDCCAddressMax));
-          if(m_outputValuesDCC[address - 1] == toTriState(value))
+        case OutputChannel::AccessoryDCC:
+          assert(inRange(address, DCC::Accessory::addressMin, DCC::Accessory::addressMax));
+          if(m_outputValuesDCC[address - DCC::Accessory::addressMin] == value)
             return;
-          uid = MarklinCAN::UID::accessoryDCC((address + 1) >> 1);
-          break;
-
-        case OutputChannel::sx1:
-          assert(inRange(address, outputSX1AddressMin, outputSX1AddressMax));
-          if(m_outputValuesSX1[address - 1] == toTriState(value))
-            return;
-          uid = MarklinCAN::UID::accessorySX1((address + 1) >> 1);
+          uid = MarklinCAN::UID::accessoryDCC(address);
           break;
 
         default: /*[[unlikely]]*/
+          assert(false);
           return;
       }
       assert(uid != 0);
 
       MarklinCAN::AccessoryControl cmd(uid);
-      cmd.setPosition((address & 0x1) ? MarklinCAN::AccessoryControl::positionOff : MarklinCAN::AccessoryControl::positionOn);
-      cmd.setCurrent(value ? 1 : 0);
+      cmd.setPosition(value == OutputPairValue::First ? MarklinCAN::AccessoryControl::positionOff : MarklinCAN::AccessoryControl::positionOn);
+      //cmd.setCurrent(value ? 1 : 0);
       send(cmd);
     });
 

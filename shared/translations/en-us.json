@@ -2668,6 +2668,10 @@
         "comment": ""
     },
     {
+        "term": "message:W2020",
+        "definition": "DCCext (RCN-213) is not supported"
+    },
+    {
         "term": "object:id",
         "definition": "Id",
         "context": "",
@@ -4434,5 +4438,53 @@
     {
         "term": "qtapp.connect_dialog:fetching_world",
         "definition": "Fetching world"
+    },
+    {
+        "term": "pair_output_action:none",
+        "definition": "None"
+    },
+    {
+        "term": "pair_output_action:first",
+        "definition": "First (Red)"
+    },
+    {
+        "term": "pair_output_action:second",
+        "definition": "Second (Green)"
+    },
+    {
+        "term": "hardware:addresses",
+        "definition": "Addresses"
+    },
+    {
+        "term": "output_channel:accessory",
+        "definition": "Accessory"
+    },
+    {
+        "term": "output_channel:accessory_dcc",
+        "definition": "Accessory (DCC)"
+    },
+    {
+        "term": "output_channel:accessory_motorola",
+        "definition": "Accessory (Motorola)"
+    },
+    {
+        "term": "output_channel:ecos_object",
+        "definition": "ECoS object"
+    },
+    {
+        "term": "output_map.signal:add_address",
+        "definition": "Add address"
+    },
+    {
+        "term": "output_map.signal:remove_address",
+        "definition": "Remove address"
+    },
+    {
+        "term": "output_map.signal:ecos_object",
+        "definition": "ECoS object"
+    },
+    {
+        "term": "output.ecos_object:state",
+        "definition": "State"
     }
 ]

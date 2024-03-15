@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #include "connection.hpp"
 #include "property.hpp"
 #include "abstractvectorproperty.hpp"
+#include "objectvectorproperty.hpp"
 #include "unitproperty.hpp"
 #include "method.hpp"
 #include "event.hpp"
@@ -95,6 +96,11 @@ const AbstractVectorProperty* Object::getVectorProperty(const QString& name) con
 AbstractVectorProperty* Object::getVectorProperty(const QString& name)
 {
   return dynamic_cast<AbstractVectorProperty*>(m_interfaceItems.find(name));
+}
+
+ObjectVectorProperty* Object::getObjectVectorProperty(const QString& name)
+{
+  return dynamic_cast<ObjectVectorProperty*>(m_interfaceItems.find(name));
 }
 
 void Object::setPropertyValue(const QString& name, bool value)

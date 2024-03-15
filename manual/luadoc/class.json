@@ -146,8 +146,17 @@
   "INPUT_LIST": {
     "type": "constant"
   },
-  "OUTPUT": {
-    "type": "constant"
+  "SINGLE_OUTPUT": {
+    "type": "constant",
+    "since": "0.3"
+  },
+  "PAIR_OUTPUT": {
+    "type": "constant",
+    "since": "0.3"
+  },
+  "ASPECT_OUTPUT": {
+    "type": "constant",
+    "since": "0.3"
   },
   "OUTPUT_LIST": {
     "type": "constant"

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,12 +38,13 @@
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
+#include "../../utils/makearray.hpp"
 #include "../../utils/serialport.hpp"
 #include "../../world/world.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
-constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Channel | OutputListColumn::Address;
+constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 
 CREATE_IMPL(DCCPlusPlusInterface)
 
@@ -141,35 +142,31 @@ void DCCPlusPlusInterface::inputSimulateChange(uint32_t channel, uint32_t addres
     m_kernel->simulateInputChange(address, action);
 }
 
-const std::vector<uint32_t> *DCCPlusPlusInterface::outputChannels() const
+tcb::span<const OutputChannel> DCCPlusPlusInterface::outputChannels() const
 {
-  return &DCCPlusPlus::Kernel::outputChannels;
+  static const auto values = makeArray(OutputChannel::Accessory, OutputChannel::Turnout, OutputChannel::Output, OutputChannel::DCCext);
+  return values;
 }
 
-const std::vector<std::string_view> *DCCPlusPlusInterface::outputChannelNames() const
-{
-  return &DCCPlusPlus::Kernel::outputChannelNames;
-}
-
-std::pair<uint32_t, uint32_t> DCCPlusPlusInterface::outputAddressMinMax(uint32_t channel) const
+std::pair<uint32_t, uint32_t> DCCPlusPlusInterface::outputAddressMinMax(OutputChannel channel) const
 {
   using namespace DCCPlusPlus;
 
   switch(channel)
   {
-    case Kernel::OutputChannel::dccAccessory:
-      return {Kernel::dccAccessoryAddressMin, Kernel::dccAccessoryAddressMax};
+    case OutputChannel::Accessory:
+      return OutputController::outputAddressMinMax(OutputChannel::AccessoryDCC);
 
-    case Kernel::OutputChannel::turnout:
-    case Kernel::OutputChannel::output:
+    case OutputChannel::Turnout:
+    case OutputChannel::Output:
       return {Kernel::idMin, Kernel::idMax};
-  }
 
-  assert(false);
-  return {0, 0};
+    default:
+      return OutputController::outputAddressMinMax(channel);
+  }
 }
 
-bool DCCPlusPlusInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
+bool DCCPlusPlusInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
 {
   return
     m_kernel &&

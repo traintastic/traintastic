@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,7 +50,6 @@ class Settings final : public SubObject
     Property<bool> fastClockSyncEnabled;
     Property<uint8_t> fastClockSyncInterval; //!< Fast clock sync interval in seconds
     Property<bool> debugLogInput;
-    Property<bool> debugLogOutput;
     Property<bool> debugLogRXTX;
     Property<bool> pcap;
     Property<PCAPOutput> pcapOutput;

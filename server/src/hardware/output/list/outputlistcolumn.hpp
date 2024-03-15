@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,16 +27,12 @@
 
 enum class OutputListColumn
 {
-  Id = 1 << 0,
-  Name = 1 << 1,
-  Interface = 1 << 2,
-  Channel = 1 << 3,
-  Address = 1 << 4,
+  Interface = 1 << 0,
+  Channel = 1 << 1,
+  Address = 1 << 2,
 };
 
-constexpr std::array<OutputListColumn, 5> outputListColumnValues = {
-  OutputListColumn::Id,
-  OutputListColumn::Name,
+constexpr std::array<OutputListColumn, 3> outputListColumnValues = {
   OutputListColumn::Interface,
   OutputListColumn::Channel,
   OutputListColumn::Address,

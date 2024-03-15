@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,12 +22,14 @@
 
 #include "kernel.hpp"
 #include <algorithm>
+#include <typeinfo>
 #include "messages.hpp"
 #include "simulation.hpp"
 #include "object/ecos.hpp"
 #include "object/locomotivemanager.hpp"
 #include "object/locomotive.hpp"
 #include "object/switchmanager.hpp"
+#include "object/switch.hpp"
 #include "object/feedbackmanager.hpp"
 #include "object/feedback.hpp"
 #include "../../protocol/dcc/dcc.hpp"
@@ -44,7 +46,7 @@
 #include "../../../log/log.hpp"
 #include "../../../log/logmessageexception.hpp"
 
-#define ASSERT_IS_KERNEL_THREAD assert(std::this_thread::get_id() == m_thread.get_id())
+#define ASSERT_IS_KERNEL_THREAD assert(isKernelThread())
 
 namespace ECoS {
 
@@ -103,6 +105,17 @@ void Kernel::setOnGo(std::function<void()> callback)
   m_onGo = std::move(callback);
 }
 
+void Kernel::setOnObjectChanged(OnObjectChanged callback)
+{
+  assert(!m_started);
+  m_onObjectChanged = std::move(callback);
+}
+
+void Kernel::setOnObjectRemoved(OnObjectRemoved callback)
+{
+  assert(!m_started);
+  m_onObjectRemoved = std::move(callback);
+}
 void Kernel::setDecoderController(DecoderController* decoderController)
 {
   assert(!m_started);
@@ -182,11 +195,47 @@ void Kernel::stop(Simulation* simulation)
   {
     simulation->clear();
 
-    // Locomotives:
+    // ECoS:
+    {
+      simulation->ecos.commandStationType = toString(ecos().model());
+      simulation->ecos.protocolVersion = ::toString(ecos().protocolVersion());
+      simulation->ecos.hardwareVersion = ::toString(ecos().hardwareVersion());
+      simulation->ecos.applicationVersion = ::toString(ecos().applicationVersion());
+      simulation->ecos.applicationVersionSuffix = ecos().applicationVersionSuffix();
+      simulation->ecos.railcom = ecos().railcom();
+      simulation->ecos.railcomPlus = ecos().railcomPlus();
+    }
+
+    // Locomotives / switches:
     for(const auto& it : m_objects)
     {
       if(const auto* locomotive = dynamic_cast<const Locomotive*>(it.second.get()))
-        simulation->locomotives.emplace_back(Simulation::Locomotive{{locomotive->id()}, locomotive->protocol(), locomotive->address()});
+      {
+        simulation->locomotives.emplace_back(
+          Simulation::Locomotive{
+            {locomotive->id()},
+            locomotive->protocol(),
+            locomotive->address()});
+      }
+      else if(const auto* sw = dynamic_cast<const Switch*>(it.second.get()))
+      {
+        simulation->switches.emplace_back(
+          Simulation::Switch{
+            {sw->id()},
+            sw->name1(),
+            sw->name2(),
+            sw->name3(),
+            sw->address(),
+            toString(sw->addrext()),
+            std::string{toString(sw->type())},
+            static_cast<int>(sw->symbol()),
+            std::string{toString(sw->protocol())},
+            sw->state(),
+            std::string{toString(sw->mode())},
+            sw->duration(),
+            sw->variant()
+            });
+      }
     }
 
     // S88:
@@ -238,7 +287,7 @@ void Kernel::receive(std::string_view message)
 
 ECoS& Kernel::ecos()
 {
-  ASSERT_IS_KERNEL_THREAD;
+  assert(isKernelThread() || m_ioContext.stopped());
 
   return static_cast<ECoS&>(*m_objects[ObjectId::ecos]);
 }
@@ -343,29 +392,41 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   }
 }
 
-bool Kernel::setOutput(uint32_t channel, uint16_t address, bool value)
+bool Kernel::setOutput(OutputChannel channel, uint32_t id, OutputValue value)
 {
-  if(value)
-  {
-    switch(channel)
-    {
-      case OutputChannel::dcc:
-        m_ioContext.post(
-          [this, address]()
-          {
-            switchManager().setSwitch(SwitchProtocol::DCC, address);
-          });
-        return true;
+  assert(isEventLoopThread());
 
-      case OutputChannel::motorola:
-        m_ioContext.post(
-          [this, address]()
-          {
-            switchManager().setSwitch(SwitchProtocol::Motorola, address);
-          });
-        return true;
+  switch(channel)
+  {
+    case OutputChannel::AccessoryDCC:
+    case OutputChannel::AccessoryMotorola:
+    {
+      const auto switchProtocol = (channel == OutputChannel::AccessoryDCC) ? SwitchProtocol::DCC : SwitchProtocol::Motorola;
+      m_ioContext.post(
+        [this, switchProtocol, address=id, port=(std::get<OutputPairValue>(value) == OutputPairValue::Second)]()
+        {
+          switchManager().setSwitch(switchProtocol, address, port);
+        });
+      return true;
     }
-    assert(false);
+    case OutputChannel::ECoSObject:
+    {
+      m_ioContext.post(
+        [this, id, state=std::get<uint8_t>(value)]()
+        {
+          if(auto it = m_objects.find(id); it != m_objects.end())
+          {
+            if(auto* sw = dynamic_cast<Switch*>(it->second.get()))
+            {
+              sw->setState(state);
+            }
+          }
+        });
+      return true;
+    }
+    default: /*[[unlikely]]*/
+      assert(false);
+      break;
   }
 
   return false;
@@ -442,7 +503,7 @@ void Kernel::simulateInputChange(uint32_t channel, uint32_t address, SimulateInp
     });
 }
 
-void Kernel::switchManagerSwitched(SwitchProtocol protocol, uint16_t address)
+void Kernel::switchManagerSwitched(SwitchProtocol protocol, uint16_t address, OutputPairValue value)
 {
   ASSERT_IS_KERNEL_THREAD;
 
@@ -453,19 +514,17 @@ void Kernel::switchManagerSwitched(SwitchProtocol protocol, uint16_t address)
   {
     case SwitchProtocol::DCC:
       EventLoop::call(
-        [this, address]()
+        [this, address, value]()
         {
-          m_outputController->updateOutputValue(OutputChannel::dcc, address, TriState::True);
-          m_outputController->updateOutputValue(OutputChannel::dcc, (address & 1) ? (address + 1) : (address - 1), TriState::False);
+          m_outputController->updateOutputValue(OutputChannel::AccessoryDCC, address, value);
         });
       break;
 
     case SwitchProtocol::Motorola:
       EventLoop::call(
-        [this, address]()
+        [this, address, value]()
         {
-          m_outputController->updateOutputValue(OutputChannel::motorola, address, TriState::True);
-          m_outputController->updateOutputValue(OutputChannel::motorola, (address & 1) ? (address + 1) : (address - 1), TriState::False);
+          m_outputController->updateOutputValue(OutputChannel::AccessoryMotorola, address, value);
         });
       break;
 
@@ -473,6 +532,20 @@ void Kernel::switchManagerSwitched(SwitchProtocol protocol, uint16_t address)
       assert(false);
       break;
   }
+}
+
+void Kernel::switchStateChanged(uint16_t objectId, uint8_t state)
+{
+  ASSERT_IS_KERNEL_THREAD;
+
+  if(!m_outputController)
+    return;
+
+  EventLoop::call(
+    [this, objectId, state]()
+    {
+      m_outputController->updateOutputValue(OutputChannel::ECoSObject, objectId, state);
+    });
 }
 
 void Kernel::feedbackStateChanged(Feedback& object, uint8_t port, TriState value)
@@ -526,6 +599,46 @@ void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
   assert(handler);
   assert(!m_ioHandler);
   m_ioHandler = std::move(handler);
+}
+
+bool Kernel::objectExists(uint16_t objectId) const
+{
+  return m_objects.find(objectId) != m_objects.end();
+}
+
+void Kernel::addObject(std::unique_ptr<Object> object)
+{
+  objectChanged(*object);
+  m_objects.add(std::move(object));
+}
+
+void Kernel::objectChanged(Object& object)
+{
+  if(!m_onObjectChanged) /*[[unlikely]]*/
+  {
+    return;
+  }
+
+  std::string objectName;
+  if(auto* sw = dynamic_cast<const Switch*>(&object))
+  {
+    objectName = sw->nameUI();
+  }
+
+  EventLoop::call(
+    [this, typeHash=typeid(object).hash_code(), objectId=object.id(), objectName]()
+    {
+      m_onObjectChanged(typeHash, objectId, objectName);
+    });
+}
+
+void Kernel::removeObject(uint16_t objectId)
+{
+  m_objects.erase(objectId);
+  if(m_onObjectRemoved) /*[[likely]]*/
+  {
+    m_onObjectRemoved(objectId);
+  }
 }
 
 void Kernel::send(std::string_view message)

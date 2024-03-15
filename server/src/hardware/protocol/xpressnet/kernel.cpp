@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -379,9 +379,20 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   }
 }
 
-bool Kernel::setOutput(uint16_t address, bool value)
+bool Kernel::setOutput(uint16_t address, OutputPairValue value)
 {
-  postSend(AccessoryDecoderOperationRequest(address - 1, value));
+  assert(isEventLoopThread());
+  assert(address >= accessoryOutputAddressMin && address <= accessoryOutputAddressMax);
+  assert(value == OutputPairValue::First || value == OutputPairValue::First);
+  m_ioContext.post(
+    [this, address, value]()
+    {
+      send(
+        AccessoryDecoderOperationRequest(
+          m_config.useRocoAccessoryAddressing ? address + 4 : address,
+          value == OutputPairValue::Second,
+          true));
+    });
   return true;
 }
 

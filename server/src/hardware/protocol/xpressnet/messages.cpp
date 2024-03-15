@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,29 +44,29 @@ bool isChecksumValid(const Message& msg, const int dataSize)
   return calcChecksum(msg, dataSize) == *(reinterpret_cast<const uint8_t*>(&msg) + dataSize + 1);
 }
 
-std::string toString(const Message& message, bool raw)
+std::string toString(const Message& message)
 {
   std::string s;
 
-  switch(message.identification())
+  // Human readable:
+  switch(message.header)
   {
-    default:
-      raw = true;
+    case 0x52:
+    {
+      const auto& req = static_cast<const AccessoryDecoderOperationRequest&>(message);
+      s.append("AccessoryDecoderOperationRequest");
+      s.append(" address=").append(std::to_string(req.address()));
+      s.append(" port=").append(req.port() ? "2" : "1");
+      s.append(req.activate() ? " activate" : " deactivate");
       break;
+    }
+    // FIXME: add all messages
   }
 
-  if(raw)
-  {
-    s.append("[");
-    const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&message);
-    for(int i = 0; i < message.size(); i++)
-    {
-      if(i != 0)
-        s.append(" ");
-      s.append(toHex(bytes[i]));
-    }
-    s.append("]");
-  }
+  // Raw data:
+  s.append(" [");
+  s.append(toHex(reinterpret_cast<const uint8_t*>(&message), message.size(), true));
+  s.append("]");
 
   return s;
 }
