@@ -1,9 +1,9 @@
 /**
- * client/src/widget/createwidget.hpp
+ * client/src/wizard/wizard.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020,2024 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,20 +20,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_CREATEWIDGET_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_CREATEWIDGET_HPP
+#include "wizard.hpp"
+#include "page/textpage.hpp"
+#include "page/propertypage.hpp"
 
-#include "../network/objectptr.hpp"
+Wizard::Wizard(QWidget* parent)
+  : QWizard(parent)
+{
+}
 
-class QWidget;
-class InterfaceItem;
-class AbstractProperty;
-class Property;
+TextPage* Wizard::addTextPage(const QString& title, const QString& text)
+{
+  auto* page = new TextPage(this);
+  page->setTitle(title);
+  page->setText(text);
+  addPage(page);
+  return page;
+}
 
-QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent = nullptr);
-QWidget* createWidget(const ObjectPtr& object, QWidget* parent = nullptr);
-QWidget* createWidget(InterfaceItem& item, QWidget* parent = nullptr);
-QWidget* createWidget(AbstractProperty& property, QWidget* parent = nullptr);
-QWidget* createWidget(Property& property, QWidget* parent = nullptr);
-
-#endif
+PropertyPage* Wizard::addPropertyPage(const QString& title, const QString& text, std::initializer_list<AbstractProperty*> properties)
+{
+  auto* page = new PropertyPage(this);
+  page->setTitle(title);
+  page->setText(text);
+  for(auto* property : properties)
+  {
+    if(property) /*[[likely]]*/
+    {
+      page->addProperty(*property);
+    }
+  }
+  addPage(page);
+  return page;
+}

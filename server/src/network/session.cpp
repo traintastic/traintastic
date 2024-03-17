@@ -444,7 +444,6 @@ bool Session::processMessage(const Message& message)
                   break;
 
                 case ValueType::Invalid:
-                  assert(false);
                   break;
               }
 

@@ -1,9 +1,9 @@
 /**
- * client/src/widget/createwidget.hpp
+ * client/src/wizard/newworldwizard.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020,2024 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,20 +20,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_CREATEWIDGET_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_CREATEWIDGET_HPP
+#ifndef TRAINTASTIC_CLIENT_WIZARD_NEWWORLDWIZARD_HPP
+#define TRAINTASTIC_CLIENT_WIZARD_NEWWORLDWIZARD_HPP
 
+#include "wizard.hpp"
+#include <traintastic/enum/worldscale.hpp>
 #include "../network/objectptr.hpp"
 
-class QWidget;
-class InterfaceItem;
-class AbstractProperty;
-class Property;
+class NewWorldWizard : public Wizard
+{
+  public:
+    NewWorldWizard(ObjectPtr world, QWidget* parent = nullptr);
 
-QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent = nullptr);
-QWidget* createWidget(const ObjectPtr& object, QWidget* parent = nullptr);
-QWidget* createWidget(InterfaceItem& item, QWidget* parent = nullptr);
-QWidget* createWidget(AbstractProperty& property, QWidget* parent = nullptr);
-QWidget* createWidget(Property& property, QWidget* parent = nullptr);
+  private:
+    AbstractProperty* m_name;
+    AbstractProperty* m_scale;
+    QString m_originalName;
+    WorldScale m_originalScale;
+};
 
 #endif
