@@ -1,9 +1,9 @@
 /**
- * client/src/widget/createwidget.hpp
+ * client/src/wizard/page/wizardpage.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020,2024 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,20 +20,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_CREATEWIDGET_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_CREATEWIDGET_HPP
+#ifndef TRAINTASTIC_CLIENT_WIZARD_PAGE_WIZARDPAGE_HPP
+#define TRAINTASTIC_CLIENT_WIZARD_PAGE_WIZARDPAGE_HPP
 
-#include "../network/objectptr.hpp"
+#include <QWizardPage>
 
-class QWidget;
-class InterfaceItem;
-class AbstractProperty;
-class Property;
-
-QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent = nullptr);
-QWidget* createWidget(const ObjectPtr& object, QWidget* parent = nullptr);
-QWidget* createWidget(InterfaceItem& item, QWidget* parent = nullptr);
-QWidget* createWidget(AbstractProperty& property, QWidget* parent = nullptr);
-QWidget* createWidget(Property& property, QWidget* parent = nullptr);
+class WizardPage : public QWizardPage
+{
+  public:
+    explicit WizardPage(QWidget* parent = nullptr)
+      : QWizardPage(parent)
+    {
+    }
+};
 
 #endif

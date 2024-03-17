@@ -29,11 +29,15 @@
 #include "inputmonitorwidget.hpp"
 #include "outputkeyboardwidget.hpp"
 #include "outputmapwidget.hpp"
+#include "propertycombobox.hpp"
+#include "propertydoublespinbox.hpp"
+#include "propertylineedit.hpp"
 #include "../board/boardwidget.hpp"
 #include "../network/object.hpp"
 #include "../network/inputmonitor.hpp"
 #include "../network/outputkeyboard.hpp"
 #include "../network/board.hpp"
+#include "../network/property.hpp"
 
 QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
 {
@@ -78,3 +82,42 @@ QWidget* createWidget(const ObjectPtr& object, QWidget* parent)
   else
     return new ObjectEditWidget(object, parent);
 }
+
+QWidget* createWidget(InterfaceItem& item, QWidget* parent)
+{
+  if(auto* baseProperty = dynamic_cast<AbstractProperty*>(&item))
+  {
+    return createWidget(*baseProperty, parent);
+  }
+  assert(false);
+  return nullptr;
+}
+
+QWidget* createWidget(AbstractProperty& baseProperty, QWidget* parent)
+{
+  if(auto* property = dynamic_cast<Property*>(&baseProperty))
+  {
+    return createWidget(*property, parent);
+  }
+  assert(false);
+  return nullptr;
+}
+
+QWidget* createWidget(Property& property, QWidget* parent)
+{
+  if(property.type() == ValueType::Float)
+  {
+    return new PropertyDoubleSpinBox(property, parent);
+  }
+  else if(property.type() == ValueType::Enum)
+  {
+    return new PropertyComboBox(property, parent);
+  }
+  else if(property.type() == ValueType::String)
+  {
+    return new PropertyLineEdit(property, parent);
+  }
+  assert(false);
+  return nullptr;
+}
+

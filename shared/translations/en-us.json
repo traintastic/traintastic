@@ -4486,5 +4486,41 @@
     {
         "term": "output.ecos_object:state",
         "definition": "State"
+    },
+    {
+        "term": "wizard.new_world:title",
+        "definition": "Setup new world"
+    },
+    {
+        "term": "wizard.new_world.introduction:title",
+        "definition": "New world"
+    },
+    {
+        "term": "wizard.new_world.introduction:text",
+        "definition": "This wizard will guide you to setup the basic world properties."
+    },
+    {
+        "term": "wizard.new_world.name:title",
+        "definition": "World name"
+    },
+    {
+        "term": "wizard.new_world.name:text",
+        "definition": "Give the world a name, this name will be visible when loading a world."
+    },
+    {
+        "term": "wizard.new_world.scale:title",
+        "definition": "World scale"
+    },
+    {
+        "term": "wizard.new_world.scale:text",
+        "definition": "Select the world scale, Traintastic will use this for distance and speed calcualtions."
+    },
+    {
+        "term": "wizard.new_world.finalization:title",
+        "definition": "World ready"
+    },
+    {
+        "term": "wizard.new_world.finalization:text",
+        "definition": "Basic world properties are now set, you can always change them later via the menu: World -> Properties."
     }
 ]

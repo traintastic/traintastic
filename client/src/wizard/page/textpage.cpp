@@ -1,9 +1,9 @@
 /**
- * client/src/widget/createwidget.hpp
+ * client/src/wizard/page/textpage.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020,2024 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,20 +20,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_CREATEWIDGET_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_CREATEWIDGET_HPP
+#include "textpage.hpp"
+#include <QVBoxLayout>
+#include <QLabel>
 
-#include "../network/objectptr.hpp"
+TextPage::TextPage(QWidget* parent)
+  : WizardPage(parent)
+  , m_text{new QLabel(this)}
+{
+    m_text->setWordWrap(true);
 
-class QWidget;
-class InterfaceItem;
-class AbstractProperty;
-class Property;
+    QVBoxLayout* l = new QVBoxLayout();
+    l->addWidget(m_text);
+    setLayout(l);
+}
 
-QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent = nullptr);
-QWidget* createWidget(const ObjectPtr& object, QWidget* parent = nullptr);
-QWidget* createWidget(InterfaceItem& item, QWidget* parent = nullptr);
-QWidget* createWidget(AbstractProperty& property, QWidget* parent = nullptr);
-QWidget* createWidget(Property& property, QWidget* parent = nullptr);
+QString TextPage::text() const
+{
+  return m_text->text();
+}
 
-#endif
+void TextPage::setText(const QString& value)
+{
+  m_text->setText(value);
+}

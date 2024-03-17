@@ -42,6 +42,7 @@ class HardwareListSubWindow;
 class LuaScriptsSubWindow;
 class ServerSettingsSubWindow;
 class ServerLogWidget;
+class NewWorldWizard;
 
 class MainWindow final : public QMainWindow
 {
@@ -50,6 +51,8 @@ class MainWindow final : public QMainWindow
   protected:
     std::shared_ptr<Connection> m_connection;
     ObjectPtr m_world;
+    bool m_newWorldRequested = false;
+    std::unique_ptr<NewWorldWizard> m_newWorldWizard;
     int m_clockRequest;
     ObjectPtr m_clock;
     QSplitter* m_splitter;

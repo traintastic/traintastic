@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2023 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -120,7 +120,7 @@ void ObjectEditWidget::buildForm()
                 w = new PropertySpinBox(*property, this);
             }
             else if(property->type() == ValueType::Float)
-              w = new PropertyDoubleSpinBox(*property, this);
+              w = createWidget(*property, this);
             else if(property->type() == ValueType::String)
             {
               if(property->name() == "notes")
@@ -142,14 +142,14 @@ void ObjectEditWidget::buildForm()
               else if(property->hasAttribute(AttributeName::Values))
                 w = new PropertyComboBox(*property, this);
               else
-                w = new PropertyLineEdit(*property, this);
+                w = createWidget(*property, this);
             }
             else if(property->type() == ValueType::Enum)
             {
               if(property->enumName() == EnumName<Direction>::value)
                 w = new PropertyDirectionControl(*property, this);
               else
-                w = new PropertyComboBox(*property, this);
+                w = createWidget(*property, this);
             }
           }
         }

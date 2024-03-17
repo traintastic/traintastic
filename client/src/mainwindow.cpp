@@ -49,6 +49,7 @@
 #include "network/objectvectorproperty.hpp"
 #include "network/method.hpp"
 #include "network/error.hpp"
+#include "network/callmethod.hpp"
 #include "programming/lncv/lncvprogrammer.hpp"
 #include "subwindow/objectsubwindow.hpp"
 #include "subwindow/boardsubwindow.hpp"
@@ -56,6 +57,7 @@
 #include "widget/serverlogwidget.hpp"
 #include "utils/menu.hpp"
 #include "theme/theme.hpp"
+#include "wizard/newworldwizard.hpp"
 
 
 #include <QDesktopServices>
@@ -130,10 +132,22 @@ MainWindow::MainWindow(QWidget* parent) :
     m_actionNewWorld = menu->addAction(Theme::getIcon("world_new"), Locale::tr("qtapp.mainmenu:new_world"),
       [this]()
       {
-        if(m_connection)
-          if(const ObjectPtr& traintastic = m_connection->traintastic())
-            if(Method* method = traintastic->getMethod("new_world"))
-              method->call();
+        if(!m_connection) /*[[unlikely]]*/
+        {
+          return;
+        }
+
+        if(const ObjectPtr& traintastic = m_connection->traintastic()) /*[[likely]]*/
+        {
+          if(Method* method = traintastic->getMethod("new_world")) /*[[likely]]*/
+          {
+            callMethod(*method,
+              [this](std::optional<const Error> error)
+              {
+                m_newWorldRequested = !error;
+              });
+          }
+        }
       });
     m_actionNewWorld->setShortcut(QKeySequence::New);
     m_actionLoadWorld = menu->addAction(Theme::getIcon("world_load"), Locale::tr("qtapp.mainmenu:load_world") + "...", this, &MainWindow::loadWorld);
@@ -620,6 +634,8 @@ void MainWindow::changeEvent(QEvent* event)
 
 void MainWindow::worldChanged()
 {
+  m_newWorldWizard.reset();
+
   if(m_world)
     m_mdiArea->closeAllSubWindows();
 
@@ -662,6 +678,11 @@ void MainWindow::worldChanged()
 
   if(m_world)
   {
+    if(auto* name = m_world->getProperty("name"))
+    {
+      connect(name, &AbstractProperty::valueChanged, this, &MainWindow::updateWindowTitle);
+    }
+
     if(auto* state = m_world->getProperty("state"))
       connect(state, &AbstractProperty::valueChangedInt64, this, &MainWindow::worldStateChanged);
 
@@ -680,6 +701,18 @@ void MainWindow::worldChanged()
 
   static_cast<MainWindowStatusBar*>(statusBar())->worldChanged();
   updateWindowTitle();
+
+  if(m_newWorldRequested && m_world)
+  {
+    m_newWorldRequested = false;
+    m_newWorldWizard = std::make_unique<NewWorldWizard>(m_world, this);
+    connect(m_newWorldWizard.get(), &NewWorldWizard::finished,
+      [this]()
+      {
+        m_newWorldWizard.release()->deleteLater();
+      });
+    m_newWorldWizard->open();
+  }
 }
 
 void MainWindow::updateWindowTitle()
