@@ -32,7 +32,7 @@
 #include "propertycheckbox.hpp"
 #include "propertycombobox.hpp"
 #include "propertyspinbox.hpp"
-#include "propertyobjectedit.hpp"
+#include "objectpropertycombobox.hpp"
 #include "propertyaddresses.hpp"
 #include "outputmapoutputactionwidget.hpp"
 #include "../dialog/objectselectlistdialog.hpp"
@@ -63,7 +63,7 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
   QFormLayout* form = new QFormLayout();
   if(auto* interface = dynamic_cast<ObjectProperty*>(m_object->getProperty("interface")))
   {
-    form->addRow(new InterfaceItemNameLabel(*interface, this), new PropertyObjectEdit(*interface, this));
+    form->addRow(new InterfaceItemNameLabel(*interface, this), new ObjectPropertyComboBox(*interface, this));
   }
   if(auto* channel = dynamic_cast<Property*>(m_object->getProperty("channel")))
   {
