@@ -50,6 +50,11 @@ constexpr int columnCountNonOutput = 2;
 constexpr int columnUse = 0;
 constexpr int columnKey = 1;
 
+static void setComboBoxMinimumWidth(QComboBox* comboBox)
+{
+  comboBox->setMinimumWidth(25 * comboBox->fontMetrics().averageCharWidth());
+}
+
 OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
   : QWidget(parent)
   , m_object{std::move(object)}
@@ -63,11 +68,15 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
   QFormLayout* form = new QFormLayout();
   if(auto* interface = dynamic_cast<ObjectProperty*>(m_object->getProperty("interface")))
   {
-    form->addRow(new InterfaceItemNameLabel(*interface, this), new ObjectPropertyComboBox(*interface, this));
+    auto* comboBox = new ObjectPropertyComboBox(*interface, this);
+    setComboBoxMinimumWidth(comboBox);
+    form->addRow(new InterfaceItemNameLabel(*interface, this), comboBox);
   }
   if(auto* channel = dynamic_cast<Property*>(m_object->getProperty("channel")))
   {
-    form->addRow(new InterfaceItemNameLabel(*channel, this), new PropertyComboBox(*channel, this));
+    auto* comboBox = new PropertyComboBox(*channel, this);
+    setComboBoxMinimumWidth(comboBox);
+    form->addRow(new InterfaceItemNameLabel(*channel, this), comboBox);
   }
   if(m_addresses)
   {
@@ -76,7 +85,9 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
   }
   if(m_ecosObject)
   {
-    form->addRow(new InterfaceItemNameLabel(*m_ecosObject, this), new PropertyComboBox(*m_ecosObject, this));
+    auto* comboBox = new PropertyComboBox(*m_ecosObject, this);
+    setComboBoxMinimumWidth(comboBox);
+    form->addRow(new InterfaceItemNameLabel(*m_ecosObject, this), comboBox);
     connect(m_ecosObject, &AbstractVectorProperty::valueChanged, this, &OutputMapWidget::updateTableOutputColumns);
   }
   l->addLayout(form);
