@@ -170,6 +170,12 @@ void OutputMapWidget::updateTableOutputActions(ObjectVectorProperty& property, i
     m_dummy = property.getObjects(
       [this, row](const std::vector<ObjectPtr>& objects, std::optional<const Error> /*ec*/)
       {
+        const int columnCount = static_cast<int>(columnCountNonOutput + objects.size());
+        if(columnCount > m_table->columnCount())
+        {
+          m_table->setColumnCount(columnCount);
+        }
+
         auto& rowActions = m_actions[row];
         int column = columnCountNonOutput;
         for(auto& object : objects)
