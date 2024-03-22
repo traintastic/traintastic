@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,45 @@
 #include <QResizeEvent>
 #include <QPainter>
 #include <QSvgRenderer>
+#include <QStylePainter>
+#include <QStyleOptionButton>
+#include <QStyle>
+
+class BigIconPushButton : public QPushButton
+{
+  protected:
+    void paintEvent(QPaintEvent* /*event*/) override
+    {
+      const int margin = height() / 8;
+      const int iconHeight = 64;
+      const int iconWidth = iconHeight;
+
+      QStylePainter painter(this);
+      QStyleOptionButton opt;
+      initStyleOption(&opt);
+
+      // Draw the button outline:
+      opt.text.clear();
+      opt.icon = QIcon();
+      painter.drawControl(QStyle::CE_PushButton, opt);
+
+      // Draw the icon:
+      painter.drawPixmap((width() - iconWidth) / 2, margin, icon().pixmap(iconWidth, iconHeight));
+
+      // Draw the text:
+      QRect textRect = opt.rect;
+      textRect.setBottom(textRect.bottom() - margin);
+      painter.drawText(textRect, Qt::AlignHCenter | Qt::AlignBottom, text());
+    }
+
+  public:
+    BigIconPushButton(const QIcon& icon, const QString& text, QWidget* parent)
+      : QPushButton(icon, text, parent)
+    {
+      setMinimumSize(120, 120);
+    }
+};
+
 
 MdiArea::MdiArea(QWidget* parent) :
   QMdiArea(parent),
@@ -35,9 +74,8 @@ MdiArea::MdiArea(QWidget* parent) :
 
 void MdiArea::addBackgroundAction(QAction* action)
 {
-  QPushButton* button = new QPushButton(action->icon(), action->text(), this);
+  QPushButton* button = new BigIconPushButton(action->icon(), action->text(), this);
   connect(button, &QPushButton::clicked, action, &QAction::trigger);
-  button->setMinimumSize(100, 100);
   button->show();
   m_backgroundActionButtons.emplace_back(action, button);
 
