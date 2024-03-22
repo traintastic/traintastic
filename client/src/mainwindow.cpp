@@ -962,11 +962,13 @@ void MainWindow::updateActions()
   {
     m_mdiArea->addBackgroundAction(m_actionNewWorld);
     m_mdiArea->addBackgroundAction(m_actionLoadWorld);
+    m_mdiArea->addBackgroundAction(m_actionImportWorld);
   }
   else
   {
     m_mdiArea->removeBackgroundAction(m_actionNewWorld);
     m_mdiArea->removeBackgroundAction(m_actionLoadWorld);
+    m_mdiArea->removeBackgroundAction(m_actionImportWorld);
   }
 }
 
