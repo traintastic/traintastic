@@ -31,6 +31,7 @@
 #include "../network/object.hpp"
 #include "../network/tablemodel.hpp"
 #include "../network/error.hpp"
+#include "../theme/theme.hpp"
 #include "../widget/alertwidget.hpp"
 #include <traintastic/locale/locale.hpp>
 
@@ -41,6 +42,7 @@ WorldListDialog::WorldListDialog(std::shared_ptr<Connection> connection, QWidget
   m_tableWidget{new TableWidget()}
 {
   setWindowTitle(Locale::tr("qtapp.world_list_dialog:world_list"));
+  setWindowIcon(Theme::getIcon("world_load"));
 
   m_buttons->setStandardButtons(QDialogButtonBox::Open | QDialogButtonBox::Cancel);
   m_buttons->button(QDialogButtonBox::Open)->setText(Locale::tr("qtapp.world_list_dialog:load"));
