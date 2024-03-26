@@ -1,5 +1,5 @@
 /**
- * client/src/wizard/page/textpage.cpp
+ * client/src/wizard/introductionwizard.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,28 +20,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "textpage.hpp"
-#include <QVBoxLayout>
-#include <QLabel>
+#include "introductionwizard.hpp"
+#include <traintastic/locale/locale.hpp>
 
-TextPage::TextPage(QWidget* parent)
-  : WizardPage(parent)
-  , m_text{new QLabel(this)}
+IntroductionWizard::IntroductionWizard(QWidget* parent)
+  : Wizard(parent)
 {
-    m_text->setWordWrap(true);
-    m_text->setOpenExternalLinks(true);
+  setWindowTitle(Locale::tr("wizard.introduction:title"));
 
-    QVBoxLayout* l = new QVBoxLayout();
-    l->addWidget(m_text);
-    setLayout(l);
-}
+  addTextPage(
+    Locale::tr("wizard.introduction.welcome:title"),
+    Locale::tr("wizard.introduction.welcome:text"));
 
-QString TextPage::text() const
-{
-  return m_text->text();
-}
+  addTextPage(
+    Locale::tr("wizard.introduction.world:title"),
+    Locale::tr("wizard.introduction.world:text"));
 
-void TextPage::setText(const QString& value)
-{
-  m_text->setText(value);
+  addTextPage(
+    Locale::tr("wizard.introduction.edit_mode:title"),
+    Locale::tr("wizard.introduction.edit_mode:text"));
+
+  addTextPage(
+    Locale::tr("wizard.introduction.forum:title"),
+    Locale::tr("wizard.introduction.forum:text"));
 }

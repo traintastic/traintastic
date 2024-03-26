@@ -57,6 +57,7 @@
 #include "widget/serverlogwidget.hpp"
 #include "utils/menu.hpp"
 #include "theme/theme.hpp"
+#include "wizard/introductionwizard.hpp"
 #include "wizard/newworldwizard.hpp"
 
 
@@ -478,6 +479,8 @@ MainWindow::MainWindow(QWidget* parent) :
         else
           QDesktopServices::openUrl(QString("https://traintastic.org/manual?version=" TRAINTASTIC_VERSION_FULL));
       })->setShortcut(QKeySequence::HelpContents);
+    auto* subMenu = menu->addMenu(Locale::tr("qtapp.mainmenu:wizard"));
+    subMenu->addAction(Locale::tr("wizard.introduction:title"), this, &MainWindow::showIntroductionWizard);
     //menu->addSeparator();
     //menu->addAction(Locale::tr("qtapp.mainmenu:about_qt") + "...", qApp, &QApplication::aboutQt);
     menu->addAction(Locale::tr("qtapp.mainmenu:about") + "...", this, &MainWindow::showAbout);
@@ -886,6 +889,14 @@ void MainWindow::showAbout()
     " MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the"
     " GNU General Public License for more details.</p>"
     "<p><a href=\"https://traintastic.org\">traintastic.org</a></p>");
+}
+
+IntroductionWizard* MainWindow::showIntroductionWizard()
+{
+  auto* introductionWizard = new IntroductionWizard(this);
+  introductionWizard->setAttribute(Qt::WA_DeleteOnClose);
+  introductionWizard->open();
+  return introductionWizard;
 }
 
 void MainWindow::connectionStateChanged()

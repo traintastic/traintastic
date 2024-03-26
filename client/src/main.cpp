@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@
 #include "style/materialdarkstyle.hpp"
 #include "style/materiallightstyle.hpp"
 #include "theme/theme.hpp"
+#include "wizard/introductionwizard.hpp"
 #include <traintastic/locale/locale.hpp>
 #include <traintastic/utils/standardpaths.hpp>
 
@@ -133,8 +134,23 @@ int main(int argc, char* argv[])
   else
     mw.show();
 
-  if(!mw.connection())
+  if(GeneralSettings::instance().showIntroductionWizard)
+  {
+    auto* introductionWizard = mw.showIntroductionWizard();
+    QObject::connect(introductionWizard, &IntroductionWizard::finished,
+      [&mw, connectTo=options.connectTo]()
+      {
+        if(!mw.connection())
+        {
+          mw.connectToServer(connectTo);
+        }
+      });
+    GeneralSettings::instance().showIntroductionWizard = false;
+  }
+  else if(!mw.connection())
+  {
     mw.connectToServer(options.connectTo);
+  }
 
   const unsigned  int r = app.exec();
 
