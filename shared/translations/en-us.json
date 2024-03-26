@@ -4522,5 +4522,45 @@
     {
         "term": "wizard.new_world.finalization:text",
         "definition": "Basic world properties are now set, you can always change them later via the menu: World -> Properties."
+    },
+    {
+        "term": "qtapp.mainmenu:wizard",
+        "definition": "Wizard"
+    },
+    {
+        "term": "wizard.introduction:title",
+        "definition": "Traintastic introduction"
+    },
+    {
+        "term": "wizard.introduction.welcome:title",
+        "definition": "Welcome!"
+    },
+    {
+        "term": "wizard.introduction.welcome:text",
+        "definition": "This wizard will explain Traintastic's basics. The next pages will help to get you started. If you want to view this wizard again, you can open it via the main menu: Help → Wizard → Traintastic introduction."
+    },
+    {
+        "term": "wizard.introduction.world:title",
+        "definition": "The world"
+    },
+    {
+        "term": "wizard.introduction.world:text",
+        "definition": "The world contains everything that is on the layout, like the command station, trains, signals, turnouts etc. If required multiple worlds can be created but only one can be in use at any time.\n\nWorlds are saved on the PC running the Traintastic server. When saving a world a backup is automatically created. Via the main menu: File → Export world option it is possible to get a copy of the world as additional backup or to transfer it to another Traintastic server."
+    },
+    {
+        "term": "wizard.introduction.edit_mode:title",
+        "definition": "Edit mode"
+    },
+    {
+        "term": "wizard.introduction.edit_mode:text",
+        "definition": "Traintastic has two modes of operation:\n• Edit mode\n• Operation mode\n\nIn operation mode only operating the layout is possible to prevent making accidential changes. e.g. to change a turnout address or modify the layout edit mode must be active.\n\nSwitching between operation and edit mode can be done using the pencil icon right on the main toolbar or via the main menu: World → Edit world."
+    },
+    {
+        "term": "wizard.introduction.forum:title",
+        "definition": "Traintastic forum"
+    },
+    {
+        "term": "wizard.introduction.forum:text",
+        "definition": "If you have any questions or suggestion please join the <a href=\"https://forum.traintastic.org\">Traintastic forum</a>."
     }
 ]
