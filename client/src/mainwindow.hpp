@@ -43,6 +43,7 @@ class LuaScriptsSubWindow;
 class ServerSettingsSubWindow;
 class ServerLogWidget;
 class NewWorldWizard;
+class IntroductionWizard;
 
 class MainWindow final : public QMainWindow
 {
@@ -132,6 +133,7 @@ class MainWindow final : public QMainWindow
     const ObjectPtr& world() const;
     const ObjectPtr& worldClock() const { return m_clock; }
 
+    IntroductionWizard* showIntroductionWizard();
     void showLuaScriptsList();
 
   public slots:

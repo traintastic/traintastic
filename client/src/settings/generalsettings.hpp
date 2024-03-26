@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@ class GeneralSettings  : public SettingsBase
   private:
     GeneralSettings()
       : SettingsBase("general_") // "general" is special in Qt!!
+      , showIntroductionWizard{*this, "show_introduction_wizard", true}
       , language{*this, "language", "en-us"}
       , connectAutomaticallyToDiscoveredServer{*this, "connect_automatically_to_discovered_server", true}
     {
@@ -43,6 +44,7 @@ class GeneralSettings  : public SettingsBase
       return settings;
     }
 
+    Setting<bool> showIntroductionWizard;
     Setting<QString> language;
     Setting<bool> connectAutomaticallyToDiscoveredServer;
 };

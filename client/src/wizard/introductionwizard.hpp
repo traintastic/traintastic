@@ -1,5 +1,5 @@
 /**
- * client/src/wizard/page/textpage.cpp
+ * client/src/wizard/introductionwizard.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,28 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "textpage.hpp"
-#include <QVBoxLayout>
-#include <QLabel>
+#ifndef TRAINTASTIC_CLIENT_WIZARD_INTRODUCTIONWIZARD_HPP
+#define TRAINTASTIC_CLIENT_WIZARD_INTRODUCTIONWIZARD_HPP
 
-TextPage::TextPage(QWidget* parent)
-  : WizardPage(parent)
-  , m_text{new QLabel(this)}
+#include "wizard.hpp"
+
+class IntroductionWizard : public Wizard
 {
-    m_text->setWordWrap(true);
-    m_text->setOpenExternalLinks(true);
+  public:
+    IntroductionWizard(QWidget* parent = nullptr);
+};
 
-    QVBoxLayout* l = new QVBoxLayout();
-    l->addWidget(m_text);
-    setLayout(l);
-}
-
-QString TextPage::text() const
-{
-  return m_text->text();
-}
-
-void TextPage::setText(const QString& value)
-{
-  m_text->setText(value);
-}
+#endif
