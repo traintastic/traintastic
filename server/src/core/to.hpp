@@ -79,25 +79,22 @@ To to(const From& value)
     return value;
   else if constexpr(std::is_integral_v<To> && std::is_enum_v<From>)
     return static_cast<To>(value);
-  else if constexpr(std::is_enum_v<To>)
+  else if constexpr(std::is_enum_v<To> && std::is_integral_v<From>) // int -> enum/set
   {
-    if constexpr(std::is_integral_v<From>)
-    {
-      // TODO: test if enum value is valid !!
-      return static_cast<To>(value);
-    }
-    else if constexpr(!is_set_v<To> && std::is_same_v<From, std::string>)
-    {
-      auto it = std::find_if(EnumValues<To>::value.begin(), EnumValues<To>::value.end(),
-        [&value](const auto& n)
-        {
-          return n.second == value;
-        });
-
-      if(it != EnumValues<To>::value.end())
+    // TODO: test if enum value is valid !!
+    return static_cast<To>(value);
+  }
+  else if constexpr(std::is_enum_v<To> && !is_set_v<To> && std::is_same_v<From, std::string>) // string -> enum
+  {
+    auto it = std::find_if(EnumValues<To>::value.begin(), EnumValues<To>::value.end(),
+      [&value](const auto& n)
       {
-        return it->first;
-      }
+        return n.second == value;
+      });
+
+    if(it != EnumValues<To>::value.end())
+    {
+      return it->first;
     }
   }
   else if constexpr(!std::is_same_v<To, bool> && std::is_integral_v<To> && !std::is_same_v<From, bool> && std::is_integral_v<From>)
