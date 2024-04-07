@@ -35,6 +35,7 @@
 class Connection;
 class Message;
 class AbstractProperty;
+class ObjectProperty;
 class AbstractVectorProperty;
 class ObjectVectorProperty;
 class UnitProperty;
@@ -103,6 +104,9 @@ class Object : public QObject
     //! \param[in] defaultValue Value to return if property doesn't exist or isn't an string
     //! \return Property value or \c defaultValue if property doesn't exist or isn't an string
     QString getPropertyValueString(const QString& name, const QString& defaultValue = {}) const;
+
+    ObjectProperty* getObjectProperty(const QString& name) const;
+    ObjectProperty* getObjectProperty(const QString& name);
 
     inline bool hasVectorProperty(const QString& name) const { return getVectorProperty(name); }
     const AbstractVectorProperty* getVectorProperty(const QString& name) const;
