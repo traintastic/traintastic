@@ -4653,7 +4653,7 @@
     },
     {
         "term": "wizard.add_interface.hostname_port:text",
-        "definition": "Enter the IP address port number of the %command_station% to connect to:"
+        "definition": "Enter the IP address and port number of the %command_station% to connect to:"
     },
     {
         "term": "wizard.add_interface.serial_port:title",
