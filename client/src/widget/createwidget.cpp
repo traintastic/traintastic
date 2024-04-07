@@ -31,6 +31,7 @@
 #include "outputmapwidget.hpp"
 #include "propertycombobox.hpp"
 #include "propertydoublespinbox.hpp"
+#include "propertyspinbox.hpp"
 #include "propertylineedit.hpp"
 #include "../board/boardwidget.hpp"
 #include "../network/object.hpp"
@@ -105,17 +106,39 @@ QWidget* createWidget(AbstractProperty& baseProperty, QWidget* parent)
 
 QWidget* createWidget(Property& property, QWidget* parent)
 {
-  if(property.type() == ValueType::Float)
+  switch(property.type())
   {
-    return new PropertyDoubleSpinBox(property, parent);
-  }
-  else if(property.type() == ValueType::Enum)
-  {
-    return new PropertyComboBox(property, parent);
-  }
-  else if(property.type() == ValueType::String)
-  {
-    return new PropertyLineEdit(property, parent);
+    case ValueType::Boolean:
+      break; // TODO
+
+    case ValueType::Enum:
+      return new PropertyComboBox(property, parent);
+
+    case ValueType::Integer:
+      if(property.hasAttribute(AttributeName::Values) && !property.hasAttribute(AttributeName::Min) && !property.hasAttribute(AttributeName::Max))
+      {
+        return new PropertyComboBox(property, parent);
+      }
+      return new PropertySpinBox(property, parent);
+
+    case ValueType::Float:
+      return new PropertyDoubleSpinBox(property, parent);
+
+    case ValueType::String:
+      if(property.hasAttribute(AttributeName::Values))
+      {
+        return new PropertyComboBox(property, parent);
+      }
+      return new PropertyLineEdit(property, parent);
+
+    case ValueType::Object:
+      break; // TODO
+
+    case ValueType::Set:
+      break; // TODO
+
+    case ValueType::Invalid: /*[[unlikely]]*/
+      break;
   }
   assert(false);
   return nullptr;
