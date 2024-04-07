@@ -114,10 +114,7 @@ void ObjectEditWidget::buildForm()
               w = new PropertyCheckBox(*property, this);
             else if(property->type() == ValueType::Integer)
             {
-              if(property->hasAttribute(AttributeName::Values) && !property->hasAttribute(AttributeName::Min) && !property->hasAttribute(AttributeName::Max))
-                w = new PropertyComboBox(*property, this);
-              else
-                w = new PropertySpinBox(*property, this);
+              w = createWidget(*property, this);
             }
             else if(property->type() == ValueType::Float)
               w = createWidget(*property, this);
@@ -139,8 +136,6 @@ void ObjectEditWidget::buildForm()
                 tabs.append(edit);
                 continue;
               }
-              else if(property->hasAttribute(AttributeName::Values))
-                w = new PropertyComboBox(*property, this);
               else
                 w = createWidget(*property, this);
             }
