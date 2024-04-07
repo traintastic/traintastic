@@ -4524,8 +4524,8 @@
         "definition": "Basic world properties are now set, you can always change them later via the menu: World -> Properties."
     },
     {
-        "term": "qtapp.mainmenu:wizard",
-        "definition": "Wizard"
+        "term": "qtapp.mainmenu:wizards",
+        "definition": "Wizards"
     },
     {
         "term": "wizard.introduction:title",
@@ -4562,5 +4562,129 @@
     {
         "term": "wizard.introduction.forum:text",
         "definition": "If you have any questions or suggestion please join the <a href=\"https://forum.traintastic.org\">Traintastic forum</a>."
+    },
+    {
+        "term": "wizard.add_interface.welcome:title",
+        "definition": "Add interface"
+    },
+    {
+        "term": "wizard.add_interface.welcome:text",
+        "definition": "This wizard will guide you to the interface setup process.\n\nIf you're running Traintastic server and Traintastic client on seperate PC's, make use the command station is connected to the PC running Traintastic server."
+    },
+    {
+        "term": "wizard.add_interface.command_station:title",
+        "definition": "Command Station"
+    },
+    {
+        "term": "wizard.add_interface.command_station:text",
+        "definition": "Please select your command station:"
+    },
+    {
+        "term": "wizard.add_interface.connection:title",
+        "definition": "Connection"
+    },
+    {
+        "term": "wizard.add_interface.connection:text",
+        "definition": "How is the %command_station% connected?"
+    },
+    {
+        "term": "wizard.add_interface.connection:command_station_serial_port",
+        "definition": "%command_station% serial port"
+    },
+    {
+        "term": "wizard.add_interface.connection:command_station_usb_port",
+        "definition": "%command_station% USB port"
+    },
+    {
+        "term": "wizard.add_interface.connection:network",
+        "definition": "Network"
+    },
+    {
+        "term": "wizard.add_interface.connection:not_yet_supported",
+        "definition": "Not yet supported"
+    },
+    {
+        "term": "wizard.add_interface.connection:can_interface",
+        "definition": "Additional CAN bus interface"
+    },
+    {
+        "term": "wizard.add_interface.connection:loconet_interface",
+        "definition": "Additional LocoNet interface"
+    },
+    {
+        "term": "wizard.add_interface.connection:xpressnet_interface",
+        "definition": "Additional XpressNet interface"
+    },
+    {
+        "term": "wizard.add_interface.protocol:title",
+        "definition": "Protocol"
+    },
+    {
+        "term": "wizard.add_interface.protocol:text",
+        "definition": "Please select the communication protocol for the connection:"
+    },
+    {
+        "term": "wizard.add_interface.interface_loconet:title",
+        "definition": "LocoNet interface"
+    },
+    {
+        "term": "wizard.add_interface.interface_loconet:text",
+        "definition": "Please select the LocoNet interface that is connected to the %command_station%:"
+    },
+    {
+        "term": "wizard.add_interface.interface_xpressnet:title",
+        "definition": "XpressNet interface"
+    },
+    {
+        "term": "wizard.add_interface.interface_xpressnet:text",
+        "definition": "Please select the XpressNet interface that is connected to the %command_station%:"
+    },
+    {
+        "term": "wizard.add_interface.hostname:title",
+        "definition": "IP address"
+    },
+    {
+        "term": "wizard.add_interface.hostname:text",
+        "definition": "Enter the IP address of the %command_station% to connect to:"
+    },
+    {
+        "term": "wizard.add_interface.hostname_port:title",
+        "definition": "IP address and port"
+    },
+    {
+        "term": "wizard.add_interface.hostname_port:text",
+        "definition": "Enter the IP address port number of the %command_station% to connect to:"
+    },
+    {
+        "term": "wizard.add_interface.serial_port:title",
+        "definition": "Serial port"
+    },
+    {
+        "term": "wizard.add_interface.serial_port:text",
+        "definition": "Select the serial port where the %command_station% is connected to:"
+    },
+    {
+        "term": "wizard.add_interface.serial_port_interface:text",
+        "definition": "Select the serial port where the %interface% is connected to:"
+    },
+    {
+        "term": "wizard.add_interface.name:title",
+        "definition": "Name"
+    },
+    {
+        "term": "wizard.add_interface.name:text",
+        "definition": "Enter a name for the connection:"
+    },
+    {
+        "term": "wizard.add_interface.finalization:title",
+        "definition": "Ready"
+    },
+    {
+        "term": "wizard.add_interface.finalization:text",
+        "definition": "The %command_station% setup is now ready, you can bring it online by using the connect option on the toolbar.\n\nIf you need to make additional changes you can find the interface via the menu: Object → Hardware → Interfaces."
+    },
+    {
+        "term": "wizard.page.list:search",
+        "definition": "Search"
     }
 ]
