@@ -23,6 +23,7 @@
 #include "object.hpp"
 #include "connection.hpp"
 #include "property.hpp"
+#include "objectproperty.hpp"
 #include "abstractvectorproperty.hpp"
 #include "objectvectorproperty.hpp"
 #include "unitproperty.hpp"
@@ -86,6 +87,16 @@ const UnitProperty* Object::getUnitProperty(const QString& name) const
 UnitProperty* Object::getUnitProperty(const QString& name)
 {
   return dynamic_cast<UnitProperty*>(m_interfaceItems.find(name));
+}
+
+ObjectProperty* Object::getObjectProperty(const QString& name) const
+{
+  return dynamic_cast<ObjectProperty*>(m_interfaceItems.find(name));
+}
+
+ObjectProperty* Object::getObjectProperty(const QString& name)
+{
+  return dynamic_cast<ObjectProperty*>(m_interfaceItems.find(name));
 }
 
 const AbstractVectorProperty* Object::getVectorProperty(const QString& name) const
