@@ -44,6 +44,7 @@ class ServerSettingsSubWindow;
 class ServerLogWidget;
 class NewWorldWizard;
 class IntroductionWizard;
+class AddInterfaceWizard;
 
 class MainWindow final : public QMainWindow
 {
@@ -134,6 +135,7 @@ class MainWindow final : public QMainWindow
     const ObjectPtr& worldClock() const { return m_clock; }
 
     IntroductionWizard* showIntroductionWizard();
+    AddInterfaceWizard* showAddInterfaceWizard();
     void showLuaScriptsList();
 
   public slots:

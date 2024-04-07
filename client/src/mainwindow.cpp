@@ -59,6 +59,7 @@
 #include "theme/theme.hpp"
 #include "wizard/introductionwizard.hpp"
 #include "wizard/newworldwizard.hpp"
+#include "wizard/addinterfacewizard.hpp"
 
 
 #include <QDesktopServices>
@@ -479,8 +480,9 @@ MainWindow::MainWindow(QWidget* parent) :
         else
           QDesktopServices::openUrl(QString("https://traintastic.org/manual?version=" TRAINTASTIC_VERSION_FULL));
       })->setShortcut(QKeySequence::HelpContents);
-    auto* subMenu = menu->addMenu(Locale::tr("qtapp.mainmenu:wizard"));
+    auto* subMenu = menu->addMenu(Locale::tr("qtapp.mainmenu:wizards"));
     subMenu->addAction(Locale::tr("wizard.introduction:title"), this, &MainWindow::showIntroductionWizard);
+    subMenu->addAction(Locale::tr("wizard.add_interface.welcome:title"), this, &MainWindow::showAddInterfaceWizard);
     //menu->addSeparator();
     //menu->addAction(Locale::tr("qtapp.mainmenu:about_qt") + "...", qApp, &QApplication::aboutQt);
     menu->addAction(Locale::tr("qtapp.mainmenu:about") + "...", this, &MainWindow::showAbout);
@@ -897,6 +899,19 @@ IntroductionWizard* MainWindow::showIntroductionWizard()
   introductionWizard->setAttribute(Qt::WA_DeleteOnClose);
   introductionWizard->open();
   return introductionWizard;
+}
+
+AddInterfaceWizard* MainWindow::showAddInterfaceWizard()
+{
+  if(!m_world) /*[[unlikely]]*/
+  {
+    return nullptr;
+  }
+
+  auto* addInterfaceWizard = new AddInterfaceWizard(m_world, this);
+  addInterfaceWizard->setAttribute(Qt::WA_DeleteOnClose);
+  addInterfaceWizard->open();
+  return addInterfaceWizard;
 }
 
 void MainWindow::connectionStateChanged()

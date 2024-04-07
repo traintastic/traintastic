@@ -20,6 +20,7 @@ else()
 endif()
 
 add_executable(traintastic-client
+  data/data.qrc
   gfx/common.qrc
   gfx/dark/dark.qrc
   gfx/light/light.qrc
@@ -52,6 +53,8 @@ file(GLOB SOURCES
   "src/misc/*.cpp"
   "src/network/*.hpp"
   "src/network/*.cpp"
+  "src/network/create/*.hpp"
+  "src/network/create/*.cpp"
   "src/network/object/*.hpp"
   "src/network/object/*.cpp"
   "src/programming/lncv/*.hpp"
