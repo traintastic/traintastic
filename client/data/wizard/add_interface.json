@@ -339,7 +339,7 @@
         "options": [
           {
             "name": "LocoNet Binary",
-            "next": "interface_hostname_port",
+            "next": "hostname_port",
             "actions": {
               "create_interface": {
                 "class_id": "interface.loconet",
@@ -352,7 +352,7 @@
           },
           {
             "name": "LB-server",
-            "next": "interface_hostname_port",
+            "next": "hostname_port",
             "actions": {
               "create_interface": {
                 "class_id": "interface.loconet",
@@ -365,7 +365,7 @@
           },
           {
             "name": "XpressNet",
-            "next": "interface_hostname_port",
+            "next": "hostname_port",
             "actions": {
               "create_interface": {
                 "class_id": "interface.xpressnet",
@@ -378,7 +378,7 @@
           },
           {
             "name": "Z21",
-            "next": "interface_hostname",
+            "next": "hostname",
             "actions": {
               "create_interface": {
                 "class_id": "interface.z21"
