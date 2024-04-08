@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/dccplusplus/iohandler/simulationiohandler.hpp
+ * server/src/hardware/protocol/dccex/iohandler/serialiohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,34 +20,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_IOHANDLER_SIMULATIONIOHANDLER_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_IOHANDLER_SIMULATIONIOHANDLER_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_IOHANDLER_SERIALIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_IOHANDLER_SERIALIOHANDLER_HPP
 
-#include "iohandler.hpp"
-#include <array>
-#include <cstddef>
+#include "hardwareiohandler.hpp"
+#include <boost/asio/serial_port.hpp>
+#include "../../../../enum/serialflowcontrol.hpp"
 
-namespace DCCPlusPlus {
+namespace DCCEX {
 
-class SimulationIOHandler final : public IOHandler
+class SerialIOHandler final : public HardwareIOHandler
 {
   private:
-    void reply(std::string_view message);
+    boost::asio::serial_port m_serialPort;
+
+    void read();
+
+  protected:
+    void write() final;
 
   public:
-    SimulationIOHandler(Kernel& kernel);
+    SerialIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate, SerialFlowControl flowControl);
+    ~SerialIOHandler() final;
 
-    void start() final {}
-    void stop() final {}
-
-    bool send(std::string_view message) final;
+    void start() final;
+    void stop() final;
 };
-
-template<>
-constexpr bool isSimulation<SimulationIOHandler>()
-{
-  return true;
-}
 
 }
 

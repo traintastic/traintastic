@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/dccplusplus/iohandler/serialiohandler.cpp
+ * server/src/hardware/protocol/dccex/iohandler/serialiohandler.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -27,7 +27,7 @@
 #include "../../../../log/log.hpp"
 #include "../../../../utils/serialport.hpp"
 
-namespace DCCPlusPlus {
+namespace DCCEX {
 
 SerialIOHandler::SerialIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate, SerialFlowControl flowControl)
   : HardwareIOHandler(kernel)

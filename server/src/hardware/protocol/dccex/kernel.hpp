@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/dccplusplus/kernel.hpp
+ * server/src/hardware/protocol/dccex/kernel.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_KERNEL_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_KERNEL_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_KERNEL_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_KERNEL_HPP
 
 #include "../kernelbase.hpp"
 #include <array>
@@ -39,7 +39,7 @@ enum class SimulateInputAction;
 class InputController;
 class OutputController;
 
-namespace DCCPlusPlus {
+namespace DCCEX {
 
 struct Message;
 
@@ -91,7 +91,7 @@ class Kernel : public ::KernelBase
     /**
      * @brief Create kernel and IO handler
      *
-     * @param[in] config DCC++ configuration
+     * @param[in] config DCC-EX configuration
      * @param[in] args IO handler arguments
      * @return The kernel instance
      */
@@ -118,9 +118,9 @@ class Kernel : public ::KernelBase
     }
 
     /**
-     * @brief Set DCC++ configuration
+     * @brief Set DCC-EX configuration
      *
-     * @param[in] config The DCC++ configuration
+     * @param[in] config The DCC-EX configuration
      */
     void setConfig(const Config& config);
 
@@ -185,9 +185,9 @@ class Kernel : public ::KernelBase
     /**
      * @brief ...
      *
-     * This must be called by the IO handler whenever a DCC++ message is received.
+     * This must be called by the IO handler whenever a DCC-EX message is received.
      *
-     * @param[in] message The received DCC++ message
+     * @param[in] message The received DCC-EX message
      * @note This function must run in the kernel's IO context
      */
     void receive(std::string_view message);

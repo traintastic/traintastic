@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/dccplusplus/settings.hpp
+ * server/src/hardware/protocol/dccex/settings.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,18 +20,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_SETTINGS_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_SETTINGS_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_SETTINGS_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_SETTINGS_HPP
 
 #include "../../../core/subobject.hpp"
 #include "../../../core/property.hpp"
 #include "config.hpp"
 
-namespace DCCPlusPlus {
+namespace DCCEX {
 
 class Settings : public SubObject
 {
-  CLASS_ID("dccplusplus_settings")
+  CLASS_ID("dccex_settings")
 
   private:
     static constexpr uint16_t startupDelayMin = 0;
@@ -41,7 +41,6 @@ class Settings : public SubObject
   public:
     static constexpr std::array<uint8_t, 2> speedStepValues{28, 128};
 
-    Property<bool> useEx;
     Property<uint8_t> speedSteps;
     Property<uint16_t> startupDelay;
     Property<bool> debugLogRXTX;

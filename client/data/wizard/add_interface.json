@@ -157,7 +157,7 @@
             "next": "serial_port",
             "actions": {
               "create_interface": {
-                "class_id": "interface.dccplusplus"
+                "class_id": "interface.dccex"
               }
             }
           },

@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/dccplusplus/iohandler/hardwareiohandler.cpp
+ * server/src/hardware/protocol/dccex/iohandler/hardwareiohandler.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -23,7 +23,7 @@
 #include "hardwareiohandler.hpp"
 #include "../kernel.hpp"
 
-namespace DCCPlusPlus {
+namespace DCCEX {
 
 HardwareIOHandler::HardwareIOHandler(Kernel& kernel)
   : IOHandler(kernel)
