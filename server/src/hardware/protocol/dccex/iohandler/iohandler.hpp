@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/dccplusplus/iohandler/hardwareiohandler.hpp
+ * server/src/hardware/protocol/dccex/iohandler/iohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,32 +20,43 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_IOHANDLER_HARDWAREIOHANDLER_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_IOHANDLER_HARDWAREIOHANDLER_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_IOHANDLER_IOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_IOHANDLER_IOHANDLER_HPP
 
-#include <array>
-#include "iohandler.hpp"
+#include <cstddef>
+#include <string_view>
 
-namespace DCCPlusPlus {
+namespace DCCEX {
 
 class Kernel;
 
-class HardwareIOHandler : public IOHandler
+class IOHandler
 {
   protected:
-    std::array<char, 1024> m_readBuffer;
-    size_t m_readBufferOffset;
-    std::array<char, 1024> m_writeBuffer;
-    size_t m_writeBufferOffset;
+    Kernel& m_kernel;
 
-    HardwareIOHandler(Kernel& kernel);
-
-    void processRead(size_t bytesTransferred);
-    virtual void write() = 0;
+    IOHandler(Kernel& kernel)
+      : m_kernel{kernel}
+    {
+    }
 
   public:
-    bool send(std::string_view message) final;
+    IOHandler(const IOHandler&) = delete;
+    IOHandler& operator =(const IOHandler&) = delete;
+
+    virtual ~IOHandler() = default;
+
+    virtual void start() = 0;
+    virtual void stop() = 0;
+
+    virtual bool send(std::string_view message) = 0;
 };
+
+template<class T>
+constexpr bool isSimulation()
+{
+  return false;
+}
 
 }
 

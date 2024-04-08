@@ -95,7 +95,7 @@
   "CLOCK": {
     "type": "constant"
   },
-  "DCCPLUSPLUS_INTERFACE": {
+  "DCCEX_INTERFACE": {
     "type": "constant"
   },
   "ECOS_INTERFACE": {

@@ -211,7 +211,16 @@ void WorldLoader::createObject(ObjectData& objectData)
   std::string_view id = objectData.json["id"].get<std::string_view>();
 
   if(startsWith(classId, Interfaces::classIdPrefix))
+  {
+    if(classId == "interface.dccplusplus") //! \todo Remove in v0.4
+    {
+      objectData.json["dccex"] = objectData.json["dccplusplus"];
+      objectData.json["dccex"]["class_id"] = "dccex_settings";
+      objectData.json.erase("dccplusplus");
+      classId = DCCEXInterface::classId;
+    }
     objectData.object = Interfaces::create(*m_world, classId, id);
+  }
   else if(classId == Decoder::classId)
   {
     if(objectData.json["protocol"].get<std::string_view>() == "dcc") //! \todo Remove in v0.4

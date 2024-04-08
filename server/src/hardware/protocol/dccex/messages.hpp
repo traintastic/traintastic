@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/dccplusplus/messages.hpp
+ * server/src/hardware/protocol/dccex/messages.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,17 +20,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_MESSAGES_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_MESSAGES_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_MESSAGES_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_MESSAGES_HPP
 
 #include <string_view>
 #include <span>
 #include <traintastic/enum/direction.hpp>
 #include "../../../utils/tohex.hpp"
 
-namespace DCCPlusPlus {
+namespace DCCEX {
 
-namespace Ex {
+namespace Messages {
   // see: https://dcc-ex.com/reference/software/command-reference.html
 
   enum class Track {
@@ -158,7 +158,7 @@ namespace Ex {
     return "<S>\n";
   }
 
-  //! DCC++ EX CommandStation Status
+  //! CommandStation Status
   constexpr std::string_view getStatus()
   {
     return "<s>\n";

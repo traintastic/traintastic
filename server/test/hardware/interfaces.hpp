@@ -23,7 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_TEST_HARDWARE_INTERFACES_HPP
 #define TRAINTASTIC_SERVER_TEST_HARDWARE_INTERFACES_HPP
 
-#include "../src/hardware/interface/dccplusplusinterface.hpp"
+#include "../src/hardware/interface/dccexinterface.hpp"
 #include "../src/hardware/interface/ecosinterface.hpp"
 #include "../src/hardware/interface/hsi88.hpp"
 #include "../src/hardware/interface/loconetinterface.hpp"
@@ -35,7 +35,7 @@
 #include "../src/hardware/interface/z21interface.hpp"
 
 #define INTERFACES \
-  DCCPlusPlusInterface, \
+  DCCEXInterface, \
   ECoSInterface, \
   HSI88Interface, \
   LocoNetInterface, \
@@ -47,7 +47,7 @@
   Z21Interface
 
 #define INTERFACES_DECODER \
-  DCCPlusPlusInterface, \
+  DCCEXInterface, \
   ECoSInterface, \
   LocoNetInterface, \
   MarklinCANInterface, \
@@ -55,7 +55,7 @@
   Z21Interface
 
 #define INTERFACES_INPUT \
-  DCCPlusPlusInterface, \
+  DCCEXInterface, \
   ECoSInterface, \
   HSI88Interface, \
   LocoNetInterface, \
@@ -64,7 +64,7 @@
   Z21Interface
 
 #define INTERFACES_OUTPUT \
-  DCCPlusPlusInterface, \
+  DCCEXInterface, \
   ECoSInterface, \
   LocoNetInterface, \
   TraintasticDIYInterface, \

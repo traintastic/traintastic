@@ -1220,8 +1220,8 @@
     "definition": "The clock object represents the time of the world. There is only one clock object, it can be accessed using {ref:object.world#clock|`world.clock`}."
   },
   {
-    "term": "object.dccplusplusinterface:title",
-    "definition": "DCC++ interface"
+    "term": "object.dccexinterface:title",
+    "definition": "DCC-EX interface"
   },
   {
     "term": "object.ecosinterface:title",

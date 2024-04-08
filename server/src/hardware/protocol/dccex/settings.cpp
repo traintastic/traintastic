@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/dccplusplus/settings.cpp
+ * server/src/hardware/protocol/dccex/settings.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -24,18 +24,14 @@
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
 
-namespace DCCPlusPlus {
+namespace DCCEX {
 
 Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
-  , useEx{this, "use_ex", true, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , speedSteps{this, "speed_steps", 128, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , startupDelay{this, "startup_delay", startupDelayDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogRXTX{this, "debug_log", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
-  Attributes::addEnabled(useEx, false); // disable for now, only ex is currently supported
-  m_interfaceItems.add(useEx);
-
   Attributes::addDisplayName(speedSteps, DisplayName::Hardware::speedSteps);
   Attributes::addEnabled(speedSteps, false);
   Attributes::addValues(speedSteps, speedStepValues);
@@ -51,7 +47,6 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
 Config Settings::config() const
 {
   Config config;
-  config.useEx = useEx;
   config.speedSteps = speedSteps;
   config.startupDelay = startupDelay;
   config.debugLogRXTX = debugLogRXTX;

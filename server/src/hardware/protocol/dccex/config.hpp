@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/dccplusplus/iohandler/serialiohandler.hpp
+ * server/src/hardware/protocol/dccex/config.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,34 +20,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_IOHANDLER_SERIALIOHANDLER_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCPLUSPLUS_IOHANDLER_SERIALIOHANDLER_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_CONFIG_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_CONFIG_HPP
 
-#include "hardwareiohandler.hpp"
-#include <boost/asio/serial_port.hpp>
-#include "../../../../enum/serialflowcontrol.hpp"
+#include <cstdint>
 
-namespace DCCPlusPlus {
+namespace DCCEX {
 
-class SerialIOHandler final : public HardwareIOHandler
+struct Config
 {
-  private:
-    boost::asio::serial_port m_serialPort;
+  static constexpr uint32_t functionNumberMax = 56;
 
-    void read();
-
-  protected:
-    void write() final;
-
-  public:
-    SerialIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate, SerialFlowControl flowControl);
-    ~SerialIOHandler() final;
-
-    void start() final;
-    void stop() final;
+  uint8_t speedSteps;
+  uint16_t startupDelay;
+  bool debugLogRXTX;
 };
 
 }
 
 #endif
-

@@ -42,7 +42,7 @@ namespace DisplayName
     constexpr std::string_view addresses = "hardware:addresses";
     constexpr std::string_view channel = "hardware:channel";
     constexpr std::string_view commandStation = "hardware:command_station";
-    constexpr std::string_view dccplusplus = "hardware:dccplusplus";
+    constexpr std::string_view dccex = "hardware:dccex";
     constexpr std::string_view debugLogInput = "hardware:debug_log_input";
     constexpr std::string_view debugLogOutput = "hardware:debug_log_output";
     constexpr std::string_view debugLogRXTX = "hardware:debug_log_rx_tx";

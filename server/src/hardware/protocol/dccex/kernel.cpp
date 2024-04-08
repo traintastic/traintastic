@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/dccplusplus/kernel.cpp
+ * server/src/hardware/protocol/dccex/kernel.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -36,7 +36,7 @@
 #include "../../../utils/fromchars.hpp"
 #include "../../../utils/displayname.hpp"
 
-namespace DCCPlusPlus {
+namespace DCCEX {
 
 Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
@@ -54,8 +54,8 @@ void Kernel::setConfig(const Config& config)
   m_ioContext.post(
     [this, newConfig=config]()
     {
-      if(newConfig.useEx && newConfig.speedSteps != m_config.speedSteps)
-        send(Ex::setSpeedSteps(newConfig.speedSteps));
+      if(newConfig.speedSteps != m_config.speedSteps)
+        send(Messages::setSpeedSteps(newConfig.speedSteps));
 
       m_config = newConfig;
     });
@@ -74,7 +74,7 @@ void Kernel::start()
   m_thread = std::thread(
     [this]()
     {
-      setThreadName("dcc++");
+      setThreadName("dcc-ex");
       auto work = std::make_shared<boost::asio::io_context::work>(m_ioContext);
       m_ioContext.run();
     });
@@ -238,7 +238,7 @@ void Kernel::powerOn()
     {
       if(m_powerOn != TriState::True)
       {
-        send(Ex::powerOn());
+        send(Messages::powerOn());
       }
     });
 }
@@ -250,7 +250,7 @@ void Kernel::powerOff()
     {
       if(m_powerOn != TriState::False)
       {
-        send(Ex::powerOff());
+        send(Messages::powerOff());
       }
     });
 }
@@ -263,7 +263,7 @@ void Kernel::emergencyStop()
       if(m_emergencyStop != TriState::True)
       {
         m_emergencyStop = TriState::True;
-        send(Ex::emergencyStop());
+        send(Messages::emergencyStop());
       }
     });
 }
@@ -285,12 +285,12 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
     m_ioContext.post(
       [this, address=decoder.address.value(), emergencyStop=decoder.emergencyStop.value(), speed, direction=decoder.direction.value()]()
       {
-        send(Ex::setLocoSpeedAndDirection(address, speed, emergencyStop | (m_emergencyStop != TriState::False), direction));
+        send(Messages::setLocoSpeedAndDirection(address, speed, emergencyStop | (m_emergencyStop != TriState::False), direction));
       });
   }
   else if(has(changes, DecoderChangeFlags::FunctionValue) && functionNumber <= Config::functionNumberMax)
   {
-    postSend(Ex::setLocoFunction(decoder.address, static_cast<uint8_t>(functionNumber), decoder.getFunctionValue(functionNumber)));
+    postSend(Messages::setLocoFunction(decoder.address, static_cast<uint8_t>(functionNumber), decoder.getFunctionValue(functionNumber)));
   }
 }
 
@@ -304,7 +304,7 @@ bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputValue valu
       m_ioContext.post(
         [this, address, value]()
         {
-          send(Ex::setAccessory(address, std::get<OutputPairValue>(value) == OutputPairValue::Second));
+          send(Messages::setAccessory(address, std::get<OutputPairValue>(value) == OutputPairValue::Second));
 
           // no response for accessory command, assume it succeeds:
           EventLoop::call(
@@ -322,7 +322,7 @@ bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputValue valu
         m_ioContext.post(
           [this, address, data=static_cast<uint8_t>(std::get<int16_t>(value))]()
           {
-            send(Ex::dccPacket(DCC::SetAdvancedAccessoryValue(address, data)));
+            send(Messages::dccPacket(DCC::SetAdvancedAccessoryValue(address, data)));
           });
         return true;
       }
@@ -334,7 +334,7 @@ bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputValue valu
       m_ioContext.post(
         [this, address, value]()
         {
-          send(Ex::setTurnout(address, std::get<TriState>(value) == TriState::True));
+          send(Messages::setTurnout(address, std::get<TriState>(value) == TriState::True));
         });
       return true;
 
@@ -344,7 +344,7 @@ bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputValue valu
       m_ioContext.post(
         [this, address, value]()
         {
-          send(Ex::setOutput(address, std::get<TriState>(value) == TriState::True));
+          send(Messages::setOutput(address, std::get<TriState>(value) == TriState::True));
         });
       return true;
 
@@ -386,7 +386,7 @@ void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
             assert(false);
             return;
         }
-        receive(Ex::sensorTransition(address, value));
+        receive(Messages::sensorTransition(address, value));
       });
 }
 

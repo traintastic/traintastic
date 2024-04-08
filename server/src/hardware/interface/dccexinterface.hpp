@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/dccplusplusinterface.hpp
+ * server/src/hardware/interface/dccexinterface.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_DCCPLUSPLUSINTERFACE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_DCCPLUSPLUSINTERFACE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_DCCEXINTERFACE_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_DCCEXINTERFACE_HPP
 
 #include "interface.hpp"
 #include "../decoder/decodercontroller.hpp"
@@ -31,27 +31,27 @@
 #include "../../core/objectproperty.hpp"
 #include "../../enum/serialflowcontrol.hpp"
 
-namespace DCCPlusPlus {
+namespace DCCEX {
 class Kernel;
 class Settings;
 }
 
 /**
- * @brief DCC++(EX) hardware interface
+ * @brief DCC-EX hardware interface
  */
-class DCCPlusPlusInterface final
+class DCCEXInterface final
   : public Interface
   , public DecoderController
   , public InputController
   , public OutputController
 {
-  CLASS_ID("interface.dccplusplus")
-  DEFAULT_ID("dccplusplus")
-  CREATE_DEF(DCCPlusPlusInterface)
+  CLASS_ID("interface.dccex")
+  DEFAULT_ID("dccex")
+  CREATE_DEF(DCCEXInterface)
 
   private:
-    std::unique_ptr<DCCPlusPlus::Kernel> m_kernel;
-    boost::signals2::connection m_dccplusplusPropertyChanged;
+    std::unique_ptr<DCCEX::Kernel> m_kernel;
+    boost::signals2::connection m_dccexPropertyChanged;
 
     void addToWorld() final;
     void loaded() final;
@@ -69,9 +69,9 @@ class DCCPlusPlusInterface final
   public:
     SerialDeviceProperty device;
     Property<uint32_t> baudrate;
-    ObjectProperty<DCCPlusPlus::Settings> dccplusplus;
+    ObjectProperty<DCCEX::Settings> dccex;
 
-    DCCPlusPlusInterface(World& world, std::string_view _id);
+    DCCEXInterface(World& world, std::string_view _id);
 
     // DecoderController:
     std::span<const DecoderProtocol> decoderProtocols() const final;

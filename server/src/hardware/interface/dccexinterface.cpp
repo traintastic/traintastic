@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/interface/dccplusplusinterface.cpp
+ * server/src/hardware/interface/dccexinterface.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,17 +20,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "dccplusplusinterface.hpp"
+#include "dccexinterface.hpp"
 #include "../decoder/list/decoderlist.hpp"
 #include "../decoder/list/decoderlisttablemodel.hpp"
 #include "../input/list/inputlist.hpp"
 #include "../output/list/outputlist.hpp"
 #include "../protocol/dcc/dcc.hpp"
-#include "../protocol/dccplusplus/kernel.hpp"
-#include "../protocol/dccplusplus/settings.hpp"
-#include "../protocol/dccplusplus/messages.hpp"
-#include "../protocol/dccplusplus/iohandler/serialiohandler.hpp"
-#include "../protocol/dccplusplus/iohandler/simulationiohandler.hpp"
+#include "../protocol/dccex/kernel.hpp"
+#include "../protocol/dccex/settings.hpp"
+#include "../protocol/dccex/messages.hpp"
+#include "../protocol/dccex/iohandler/serialiohandler.hpp"
+#include "../protocol/dccex/iohandler/simulationiohandler.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
@@ -46,19 +46,19 @@ constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::N
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 
-CREATE_IMPL(DCCPlusPlusInterface)
+CREATE_IMPL(DCCEXInterface)
 
-DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
+DCCEXInterface::DCCEXInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , DecoderController(*this, decoderListColumns)
   , InputController(static_cast<IdObject&>(*this))
   , OutputController(static_cast<IdObject&>(*this))
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , baudrate{this, "baudrate", 115200, PropertyFlags::ReadWrite | PropertyFlags::Store}
-  , dccplusplus{this, "dccplusplus", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
+  , dccex{this, "dccex", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
-  name = "DCC++";
-  dccplusplus.setValueInternal(std::make_shared<DCCPlusPlus::Settings>(*this, dccplusplus.name()));
+  name = "DCC-EX";
+  dccex.setValueInternal(std::make_shared<DCCEX::Settings>(*this, dccex.name()));
 
   Attributes::addEnabled(device, !online);
   m_interfaceItems.insertBefore(device, notes);
@@ -69,8 +69,8 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   Attributes::addValues(baudrate, SerialPort::baudrateValues);
   m_interfaceItems.insertBefore(baudrate, notes);
 
-  Attributes::addDisplayName(dccplusplus, DisplayName::Hardware::dccplusplus);
-  m_interfaceItems.insertBefore(dccplusplus, notes);
+  Attributes::addDisplayName(dccex, DisplayName::Hardware::dccex);
+  m_interfaceItems.insertBefore(dccex, notes);
 
   m_interfaceItems.insertBefore(decoders, notes);
 
@@ -78,15 +78,15 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
 
   m_interfaceItems.insertBefore(outputs, notes);
 
-  m_dccplusplusPropertyChanged = dccplusplus->propertyChanged.connect(
+  m_dccexPropertyChanged = dccex->propertyChanged.connect(
     [this](BaseProperty& property)
     {
-      if(m_kernel && &property != &dccplusplus->startupDelay)
-        m_kernel->setConfig(dccplusplus->config());
+      if(m_kernel && &property != &dccex->startupDelay)
+        m_kernel->setConfig(dccex->config());
 
-      if(&property == &dccplusplus->speedSteps)
+      if(&property == &dccex->speedSteps)
       {
-        // update speedsteps of all decoders, DCC++ only has a global speedsteps setting
+        // update speedsteps of all decoders, DCC-EX only has a global speedsteps setting
         const auto values = decoderSpeedSteps(DecoderProtocol::DCCShort); // identical for DCCLong
         assert(values.size() == 1);
         for(const auto& decoder : *decoders)
@@ -100,57 +100,57 @@ DCCPlusPlusInterface::DCCPlusPlusInterface(World& world, std::string_view _id)
   updateEnabled();
 }
 
-std::span<const DecoderProtocol> DCCPlusPlusInterface::decoderProtocols() const
+tcb::span<const DecoderProtocol> DCCEXInterface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};
-  return std::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
-std::pair<uint16_t, uint16_t> DCCPlusPlusInterface::decoderAddressMinMax(DecoderProtocol protocol) const
+std::pair<uint16_t, uint16_t> DCCEXInterface::decoderAddressMinMax(DecoderProtocol protocol) const
 {
   if(protocol == DecoderProtocol::DCCLong)
-    return {DCC::addressLongStart, DCC::addressLongMax}; // DCC++ considers all addresses below 128 as short.
+    return {DCC::addressLongStart, DCC::addressLongMax}; // DCC-EX considers all addresses below 128 as short.
   return DecoderController::decoderAddressMinMax(protocol);
 }
 
-std::span<const uint8_t> DCCPlusPlusInterface::decoderSpeedSteps(DecoderProtocol protocol) const
+tcb::span<const uint8_t> DCCEXInterface::decoderSpeedSteps(DecoderProtocol protocol) const
 {
   (void)protocol; // silence unused warning for release build
   assert(protocol == DecoderProtocol::DCCShort || protocol == DecoderProtocol::DCCLong);
-  const auto& speedStepValues = DCCPlusPlus::Settings::speedStepValues;
+  const auto& speedStepValues = DCCEX::Settings::speedStepValues;
   // find value in array so we can create a span, using a span of a variable won't work due to the compare with prevous value in the attribute setter
-  if(auto it = std::find(speedStepValues.begin(), speedStepValues.end(), dccplusplus->speedSteps); it != speedStepValues.end()) /*[[likely]]/*/
+  if(auto it = std::find(speedStepValues.begin(), speedStepValues.end(), dccex->speedSteps); it != speedStepValues.end()) /*[[likely]]/*/
     return {&(*it), 1};
   assert(false);
   return {};
 }
 
-void DCCPlusPlusInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
+void DCCEXInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(m_kernel)
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-std::pair<uint32_t, uint32_t> DCCPlusPlusInterface::inputAddressMinMax(uint32_t) const
+std::pair<uint32_t, uint32_t> DCCEXInterface::inputAddressMinMax(uint32_t) const
 {
-  return {DCCPlusPlus::Kernel::idMin, DCCPlusPlus::Kernel::idMax};
+  return {DCCEX::Kernel::idMin, DCCEX::Kernel::idMax};
 }
 
-void DCCPlusPlusInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+void DCCEXInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address, action);
 }
 
-std::span<const OutputChannel> DCCPlusPlusInterface::outputChannels() const
+tcb::span<const OutputChannel> DCCEXInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::Accessory, OutputChannel::Turnout, OutputChannel::Output, OutputChannel::DCCext);
   return values;
 }
 
-std::pair<uint32_t, uint32_t> DCCPlusPlusInterface::outputAddressMinMax(OutputChannel channel) const
+std::pair<uint32_t, uint32_t> DCCEXInterface::outputAddressMinMax(OutputChannel channel) const
 {
-  using namespace DCCPlusPlus;
+  using namespace DCCEX;
 
   switch(channel)
   {
@@ -166,7 +166,7 @@ std::pair<uint32_t, uint32_t> DCCPlusPlusInterface::outputAddressMinMax(OutputCh
   }
 }
 
-bool DCCPlusPlusInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
+bool DCCEXInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
 {
   return
     m_kernel &&
@@ -174,7 +174,7 @@ bool DCCPlusPlusInterface::setOutputValue(OutputChannel channel, uint32_t addres
     m_kernel->setOutput(channel, static_cast<uint16_t>(address), value);
 }
 
-bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
+bool DCCEXInterface::setOnline(bool& value, bool simulation)
 {
   if(!m_kernel && value)
   {
@@ -182,11 +182,11 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
     {
       if(simulation)
       {
-        m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SimulationIOHandler>(id.value(), dccplusplus->config());
+        m_kernel = DCCEX::Kernel::create<DCCEX::SimulationIOHandler>(id.value(), dccex->config());
       }
       else
       {
-        m_kernel = DCCPlusPlus::Kernel::create<DCCPlusPlus::SerialIOHandler>(id.value(), dccplusplus->config(), device.value(), baudrate.value(), SerialFlowControl::None);
+        m_kernel = DCCEX::Kernel::create<DCCEX::SerialIOHandler>(id.value(), dccex->config(), device.value(), baudrate.value(), SerialFlowControl::None);
       }
 
       setState(InterfaceState::Initializing);
@@ -252,7 +252,7 @@ bool DCCPlusPlusInterface::setOnline(bool& value, bool simulation)
   return true;
 }
 
-void DCCPlusPlusInterface::addToWorld()
+void DCCEXInterface::addToWorld()
 {
   Interface::addToWorld();
   DecoderController::addToWorld();
@@ -260,7 +260,7 @@ void DCCPlusPlusInterface::addToWorld()
   OutputController::addToWorld(outputListColumns);
 }
 
-void DCCPlusPlusInterface::loaded()
+void DCCEXInterface::loaded()
 {
   Interface::loaded();
 
@@ -268,16 +268,16 @@ void DCCPlusPlusInterface::loaded()
   updateEnabled();
 }
 
-void DCCPlusPlusInterface::destroying()
+void DCCEXInterface::destroying()
 {
-  m_dccplusplusPropertyChanged.disconnect();
+  m_dccexPropertyChanged.disconnect();
   OutputController::destroying();
   InputController::destroying();
   DecoderController::destroying();
   Interface::destroying();
 }
 
-void DCCPlusPlusInterface::worldEvent(WorldState state, WorldEvent event)
+void DCCEXInterface::worldEvent(WorldState state, WorldEvent event)
 {
   Interface::worldEvent(state, event);
 
@@ -326,26 +326,26 @@ void DCCPlusPlusInterface::worldEvent(WorldState state, WorldEvent event)
   }
 }
 
-void DCCPlusPlusInterface::check() const
+void DCCEXInterface::check() const
 {
   for(const auto& decoder : *decoders)
     checkDecoder(*decoder);
 }
 
-void DCCPlusPlusInterface::checkDecoder(const Decoder& decoder) const
+void DCCEXInterface::checkDecoder(const Decoder& decoder) const
 {
   for(const auto& function : *decoder.functions)
-    if(function->number > DCCPlusPlus::Config::functionNumberMax)
+    if(function->number > DCCEX::Config::functionNumberMax)
     {
-      Log::log(decoder, LogMessage::W2002_COMMAND_STATION_DOESNT_SUPPORT_FUNCTIONS_ABOVE_FX, DCCPlusPlus::Config::functionNumberMax);
+      Log::log(decoder, LogMessage::W2002_COMMAND_STATION_DOESNT_SUPPORT_FUNCTIONS_ABOVE_FX, DCCEX::Config::functionNumberMax);
       break;
     }
 }
 
-void DCCPlusPlusInterface::updateEnabled()
+void DCCEXInterface::updateEnabled()
 {
   const bool editable = contains(m_world.state, WorldState::Edit);
   const bool stopped = !contains(m_world.state, WorldState::Run);
 
-  Attributes::setEnabled(dccplusplus->speedSteps, editable && stopped);
+  Attributes::setEnabled(dccex->speedSteps, editable && stopped);
 }

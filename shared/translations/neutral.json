@@ -56,8 +56,8 @@
         "definition": "DCC"
     },
     {
-        "term": "hardware:dccplusplus",
-        "definition": "DCC++"
+        "term": "hardware:dccex",
+        "definition": "DCC-EX"
     },
     {
         "term": "hardware:ecos",

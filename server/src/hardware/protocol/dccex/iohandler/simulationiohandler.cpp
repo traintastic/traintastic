@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/dccplusplus/iohandler/simulationiohandler.cpp
+ * server/src/hardware/protocol/dccex/iohandler/simulationiohandler.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -26,7 +26,7 @@
 #include "../../../../utils/endswith.hpp"
 #include "../../../../utils/fromchars.hpp"
 
-namespace DCCPlusPlus {
+namespace DCCEX {
 
 SimulationIOHandler::SimulationIOHandler(Kernel& kernel)
   : IOHandler(kernel)
@@ -41,23 +41,23 @@ bool SimulationIOHandler::send(std::string_view message)
   switch(message[1])
   {
     case '0': // power off
-      if(message == Ex::powerOff())
-        reply(Ex::powerOffResponse());
-      else if(message == Ex::powerOff(Ex::Track::Main))
-        reply(Ex::powerOffResponse(Ex::Track::Main));
-      else if(message == Ex::powerOff(Ex::Track::Programming))
-        reply(Ex::powerOffResponse(Ex::Track::Programming));
+      if(message == Messages::powerOff())
+        reply(Messages::powerOffResponse());
+      else if(message == Messages::powerOff(Messages::Track::Main))
+        reply(Messages::powerOffResponse(Messages::Track::Main));
+      else if(message == Messages::powerOff(Messages::Track::Programming))
+        reply(Messages::powerOffResponse(Messages::Track::Programming));
       break;
 
     case '1': // power on
-      if(message == Ex::powerOn())
-        reply(Ex::powerOnResponse());
-      else if(message == Ex::powerOn(Ex::Track::Main))
-        reply(Ex::powerOnResponse(Ex::Track::Main));
-      else if(message == Ex::powerOn(Ex::Track::Programming))
-        reply(Ex::powerOnResponse(Ex::Track::Programming));
-      else if(message == Ex::powerOnJoin())
-        reply(Ex::powerOnJoinResponse());
+      if(message == Messages::powerOn())
+        reply(Messages::powerOnResponse());
+      else if(message == Messages::powerOn(Messages::Track::Main))
+        reply(Messages::powerOnResponse(Messages::Track::Main));
+      else if(message == Messages::powerOn(Messages::Track::Programming))
+        reply(Messages::powerOnResponse(Messages::Track::Programming));
+      else if(message == Messages::powerOnJoin())
+        reply(Messages::powerOnJoinResponse());
       break;
 
     case 'T': // Turnout
@@ -68,9 +68,9 @@ bool SimulationIOHandler::send(std::string_view message)
         const char state = *(r.ptr + 1);
 
         if(state == '0' || state == 'C')
-          reply(Ex::setTurnoutResponse(id, false));
+          reply(Messages::setTurnoutResponse(id, false));
         else if(state == '1' || state == 'T')
-          reply(Ex::setTurnoutResponse(id, true));
+          reply(Messages::setTurnoutResponse(id, true));
       }
       break;
     }
@@ -82,9 +82,9 @@ bool SimulationIOHandler::send(std::string_view message)
         const char state = *(r.ptr + 1);
 
         if(state == '0')
-          reply(Ex::setOutputResponse(id, false));
+          reply(Messages::setOutputResponse(id, false));
         else if(state == '1')
-          reply(Ex::setOutputResponse(id, true));
+          reply(Messages::setOutputResponse(id, true));
       }
       break;
     }
@@ -96,7 +96,7 @@ bool SimulationIOHandler::send(std::string_view message)
 void SimulationIOHandler::reply(std::string_view message)
 {
   // post the reply, so it has some delay
-  //! \todo better delay simulation? at least dcc++ message transfer time?
+  //! \todo better delay simulation? at least DCC-EX message transfer time?
   m_kernel.ioContext().post(
     [this, data=std::string(message)]()
     {
