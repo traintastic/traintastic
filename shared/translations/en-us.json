@@ -4561,7 +4561,7 @@
     },
     {
         "term": "wizard.add_interface.welcome:text",
-        "definition": "This wizard will guide you to the interface setup process.\n\nIf you're running Traintastic server and Traintastic client on seperate PC's, make use the command station is connected to the PC running Traintastic server."
+        "definition": "This wizard will guide you to the interface setup process.\n\nIf you're running Traintastic server and Traintastic client on seperate PC's, make sure the command station is connected to the PC running Traintastic server."
     },
     {
         "term": "wizard.add_interface.command_station:title",
