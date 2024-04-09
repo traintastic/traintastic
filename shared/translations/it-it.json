@@ -4137,7 +4137,7 @@
     },
     {
         "term": "protocol.loconet:command_station",
-        "definition": "",
+        "definition": "Centralina di comando",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4153,7 +4153,7 @@
     },
     {
         "term": "loconet_settings:listen_only",
-        "definition": "",
+        "definition": "Solo ascolto",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4161,7 +4161,7 @@
     },
     {
         "term": "message:N2006",
-        "definition": "",
+        "definition": "Modalit\u00e0 solo ascolto: attivata",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4169,7 +4169,7 @@
     },
     {
         "term": "message:N2007",
-        "definition": "",
+        "definition": "Modalit\u00e0 solo ascolto: disattivata",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4177,7 +4177,7 @@
     },
     {
         "term": "status.lua:x_running",
-        "definition": "",
+        "definition": "Esecuzione di %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4185,7 +4185,7 @@
     },
     {
         "term": "status.lua:x_in_error",
-        "definition": "",
+        "definition": "%1 in errore",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4209,7 +4209,7 @@
     },
     {
         "term": "message:F1008",
-        "definition": "",
+        "definition": "Crash Eventloop (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4217,7 +4217,7 @@
     },
     {
         "term": "qtapp.settings:restart_required",
-        "definition": "",
+        "definition": "Riavvio necessario",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4225,7 +4225,7 @@
     },
     {
         "term": "qtapp.settings.general:language_changed_restart_required",
-        "definition": "",
+        "definition": "Traintastic client deve essere riavviato affinch\u00e9 il cambio di lingua abbia effetto.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4233,7 +4233,7 @@
     },
     {
         "term": "traintastic_diy_interface_type:network_tcp",
-        "definition": "",
+        "definition": "Rete (TCP)",
         "context": "",
         "term_plural": "",
         "reference": "",
