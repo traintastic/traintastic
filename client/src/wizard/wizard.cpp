@@ -23,10 +23,15 @@
 #include "wizard.hpp"
 #include "page/textpage.hpp"
 #include "page/propertypage.hpp"
+#include <traintastic/locale/locale.hpp>
 
 Wizard::Wizard(QWidget* parent)
   : QWizard(parent)
 {
+  setButtonText(QWizard::BackButton, Locale::tr("wizard.button:back"));
+  setButtonText(QWizard::NextButton, Locale::tr("wizard.button:next"));
+  setButtonText(QWizard::FinishButton, Locale::tr("wizard.button:finish"));
+  setButtonText(QWizard::CancelButton, Locale::tr("wizard.button:cancel"));
 }
 
 TextPage* Wizard::addTextPage(const QString& title, const QString& text)
