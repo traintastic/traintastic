@@ -2608,6 +2608,10 @@
         "comment": ""
     },
     {
+        "term": "message:W2003",
+        "definition": "Ricevuti dati non validi, ignorati %1 bytes [%2]"
+    },
+    {
         "term": "message:W2004",
         "definition": "Input indirizzo %1 non valido",
         "context": "",
@@ -2654,6 +2658,10 @@
         "term_plural": "",
         "reference": "",
         "comment": ""
+    },
+    {
+        "term": "message:W2020",
+        "definition": "DCCext (RCN-213) non \u00e8 supportato"
     },
     {
         "term": "object:id",
