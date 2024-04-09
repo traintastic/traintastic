@@ -672,7 +672,7 @@
         "comment": ""
     },
     {
-        "term": "dccplusplus_channel:dcc_accessory",
+        "term": "dccex_channel:dcc_accessory",
         "definition": "DCC accessorio",
         "context": "",
         "term_plural": "",
@@ -680,7 +680,7 @@
         "comment": ""
     },
     {
-        "term": "dccplusplus_channel:output",
+        "term": "dccex_channel:output",
         "definition": "Output",
         "context": "",
         "term_plural": "",
@@ -688,7 +688,7 @@
         "comment": ""
     },
     {
-        "term": "dccplusplus_channel:turnout",
+        "term": "dccex_channel:turnout",
         "definition": "Deviatoio",
         "context": "",
         "term_plural": "",
@@ -696,16 +696,8 @@
         "comment": ""
     },
     {
-        "term": "dccplusplus_settings:startup_delay",
+        "term": "dccex_settings:startup_delay",
         "definition": "Ritardo accensione",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "dccplusplus_settings:use_ex",
-        "definition": "Usa comandi DCC++EX",
         "context": "",
         "term_plural": "",
         "reference": "",
