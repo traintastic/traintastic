@@ -4238,5 +4238,245 @@
         "term_plural": "",
         "reference": "",
         "comment": ""
+    },
+    {
+        "term": "marklin_can_interface_type:network_tcp",
+        "definition": "Rete (TCP)"
+    },
+    {
+        "term": "marklin_can_interface_type:network_udp",
+        "definition": "Rete (UDP)"
+    },
+    {
+        "term": "message:E2022",
+        "definition": "Creazione Socket fallita (%1)"
+    },
+    {
+        "term": "message:E2023",
+        "definition": "ioctl Socket fallito (%1)"
+    },
+    {
+        "term": "message:C2005",
+        "definition": "SocketCAN \u00e8 disponibile solo su Linux"
+    },
+    {
+        "term": "marklin_can_interface_type:socket_can",
+        "definition": "SocketCAN (Solo su Linux)"
+    },
+    {
+        "term": "interface.marklin_can:marklin_can_locomotive_list",
+        "definition": "Märklin CAN: Lista locomotive"
+    },
+    {
+        "term": "marklincan_settings:default_switch_time",
+        "definition": "Tempo di commutazione predefinito"
+    },
+    {
+        "term": "marklincan_settings:debug_config_stream",
+        "definition": "Debug: Config stream"
+    },
+    {
+        "term": "marklincan_settings:node_uid",
+        "definition": "UID nodo"
+    },
+    {
+        "term": "marklincan_settings:node_serial_number",
+        "definition": "Numero Seriale nodo"
+    },
+    {
+        "term": "marklin_can_locomotive_list:import_or_sync",
+        "definition": "Importa/sync"
+    },
+    {
+        "term": "marklin_can_locomotive_list:import_or_sync_all",
+        "definition": "Importa/sync tutti"
+    },
+    {
+        "term": "marklin_can_locomotive_list:reload",
+        "definition": "Ricarica"
+    },
+    {
+        "term": "interface.marklin_can:marklin_can_node_list",
+        "definition": "Märklin CAN: Lista Nodi"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:device_name",
+        "definition": "Nome Dispositivo"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:article_number",
+        "definition": "Numero Articolo"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:serial_number",
+        "definition": "Numero Seriale"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:software_version",
+        "definition": "Versione Software"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:device_id",
+        "definition": "Id Dispositivo"
+    },
+    {
+        "term": "marklincan_settings:debug_status_data_config",
+        "definition": "Debug: Status data config"
+    },
+    {
+        "term": "message:E2024",
+        "definition": "Locomotiva sconosciuta MFX UID: %1"
+    },
+    {
+        "term": "message:W9001",
+        "definition": "Durata esecuzione %1 us"
+    },
+    {
+        "term": "message:E3001",
+        "definition": "Impossibile eliminare un rotabile quando \u00e8 in un treno attivo"
+    },
+    {
+        "term": "input_map_item.block:identification",
+        "definition": "Identificazione"
+    },
+    {
+        "term": "message:E3002",
+        "definition": "Impossibile eliminare un treno attivo"
+    },
+    {
+        "term": "message:C1014",
+        "definition": "Comando non valido"
+    },
+    {
+        "term": "message:C1015",
+        "definition": "Oggetto sconosciuto"
+    },
+    {
+        "term": "message:C1016",
+        "definition": "Propriet\u00e0 sconosciuta"
+    },
+    {
+        "term": "message:C1017",
+        "definition": "Indici non validi"
+    },
+    {
+        "term": "message:C1018",
+        "definition": "Eccezione: %1"
+    },
+    {
+        "term": "message:C1019",
+        "definition": "L'Oggetto non \u00e8 una tabella"
+    },
+    {
+        "term": "message:W3001",
+        "definition": "Bottone NX connesso a due blocchi"
+    },
+    {
+        "term": "message:W3002",
+        "definition": "Bottone NX non connesso ad alcun blocco"
+    },
+    {
+        "term": "auto_yes_no:auto",
+        "definition": "Auto rileva"
+    },
+    {
+        "term": "auto_yes_no:yes",
+        "definition": "S\u00ec"
+    },
+    {
+        "term": "auto_yes_no:no",
+        "definition": "No"
+    },
+    {
+        "term": "board_tile.rail.signal_3_aspect:require_reservation",
+        "definition": "Richiedi prenotazione"
+    },
+    {
+        "term": "traintastic_diy_settings:startup_delay",
+        "definition": "Ritardo accensione"
+    },
+    {
+        "term": "qtapp.settings.general:connect_automatically_to_discovered_server",
+        "definition": "Connetti automaticamente al server individuato"
+    },
+    {
+        "term": "qtapp.mainmenu:about_server",
+        "definition": "Informazioni sul server"
+    },
+    {
+        "term": "qtapp.about:traintastic_server",
+        "definition": "Informazioni su Traintastic server"
+    },
+    {
+        "term": "world:online_when_loaded",
+        "definition": "Vai online quando caricato"
+    },
+    {
+        "term": "world:power_on_when_loaded",
+        "definition": "Accendi quando caricato"
+    },
+    {
+        "term": "world:run_when_loaded",
+        "definition": "Esegui quando caricato"
+    },
+    {
+        "term": "qtapp.connect_dialog:authenticating",
+        "definition": "Autenticazione"
+    },
+    {
+        "term": "qtapp.connect_dialog:creating_session",
+        "definition": "Creazione sessione"
+    },
+    {
+        "term": "qtapp.connect_dialog:fetching_world",
+        "definition": "Recupero mondo"
+    },
+    {
+        "term": "pair_output_action:none",
+        "definition": "Nessuna"
+    },
+    {
+        "term": "pair_output_action:first",
+        "definition": "Prima (Rosso)"
+    },
+    {
+        "term": "pair_output_action:second",
+        "definition": "Seconda (Verde)"
+    },
+    {
+        "term": "hardware:addresses",
+        "definition": "Indirizzi"
+    },
+    {
+        "term": "output_channel:accessory",
+        "definition": "Accessorio"
+    },
+    {
+        "term": "output_channel:accessory_dcc",
+        "definition": "Accessorio (DCC)"
+    },
+    {
+        "term": "output_channel:accessory_motorola",
+        "definition": "Accessorio (Motorola)"
+    },
+    {
+        "term": "output_channel:ecos_object",
+        "definition": "ECoS object"
+    },
+    {
+        "term": "output_map.signal:add_address",
+        "definition": "Aggiungi indirizzo"
+    },
+    {
+        "term": "output_map.signal:remove_address",
+        "definition": "Rimuovi indirizzo"
+    },
+    {
+        "term": "output_map.signal:ecos_object",
+        "definition": "ECoS object"
+    },
+    {
+        "term": "output.ecos_object:state",
+        "definition": "Stato"
     }
 ]
