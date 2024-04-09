@@ -169,7 +169,7 @@
     },
     {
         "term": "category:cargo",
-        "definition": "Cargo",
+        "definition": "Carico",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -673,7 +673,7 @@
     },
     {
         "term": "dccex_channel:dcc_accessory",
-        "definition": "DCC accessorio",
+        "definition": "Accessorio DCC",
         "context": "",
         "term_plural": "",
         "reference": "",
