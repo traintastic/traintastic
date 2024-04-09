@@ -825,7 +825,7 @@
     },
     {
         "term": "decoder_function_type:on_off",
-        "definition": "On\/Of",
+        "definition": "Accesa\/Spenta",
         "context": "",
         "term_plural": "",
         "reference": "",
