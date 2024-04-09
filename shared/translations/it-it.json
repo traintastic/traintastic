@@ -57,7 +57,7 @@
     },
     {
         "term": "board_tile.rail.block:assign_train",
-        "definition": "Assegnazione del treno",
+        "definition": "Assegna un treno",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -81,7 +81,7 @@
     },
     {
         "term": "board_tile.rail.block:remove_train",
-        "definition": "Rimuovere il treno",
+        "definition": "Rimuovi il treno",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1289,7 +1289,7 @@
     },
     {
         "term": "list:create",
-        "definition": "Creare",
+        "definition": "Crea",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1297,7 +1297,7 @@
     },
     {
         "term": "list:delete",
-        "definition": "Cancellare",
+        "definition": "Elimina",
         "context": "",
         "term_plural": "",
         "reference": "",
