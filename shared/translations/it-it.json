@@ -65,7 +65,7 @@
     },
     {
         "term": "board_tile.rail.block:flip_train",
-        "definition": "Treno a scorrimento",
+        "definition": "Inverti treno",
         "context": "",
         "term_plural": "",
         "reference": "",
