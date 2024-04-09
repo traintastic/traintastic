@@ -4678,5 +4678,21 @@
     {
         "term": "wizard.page.list:search",
         "definition": "Search"
+    },
+    {
+        "term": "wizard.button:back",
+        "definition": "Back"
+    },
+    {
+        "term": "wizard.button:next",
+        "definition": "Next"
+    },
+    {
+        "term": "wizard.button:finish",
+        "definition": "Finish"
+    },
+    {
+        "term": "wizard.button:cancel",
+        "definition": "Cancel"
     }
 ]
