@@ -1272,6 +1272,14 @@
         "comment": ""
     },
     {
+        "term": "language:sv-se",
+        "definition": "Svedese",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "list.train_vehicle:reverse",
         "definition": "Inverso",
         "context": "",
