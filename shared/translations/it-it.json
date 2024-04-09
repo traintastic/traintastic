@@ -57,7 +57,7 @@
     },
     {
         "term": "board_tile.rail.block:assign_train",
-        "definition": "Assegnazione del treno",
+        "definition": "Assegna un treno",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -65,7 +65,7 @@
     },
     {
         "term": "board_tile.rail.block:flip_train",
-        "definition": "Treno a scorrimento",
+        "definition": "Inverti treno",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -81,7 +81,7 @@
     },
     {
         "term": "board_tile.rail.block:remove_train",
-        "definition": "Rimuovere il treno",
+        "definition": "Rimuovi il treno",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -169,7 +169,7 @@
     },
     {
         "term": "category:cargo",
-        "definition": "Cargo",
+        "definition": "Carico",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -473,7 +473,7 @@
     },
     {
         "term": "class_id:vehicle.rail.tank_wagon",
-        "definition": "Carro armato",
+        "definition": "Carro cisterna",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -672,15 +672,15 @@
         "comment": ""
     },
     {
-        "term": "dccplusplus_channel:dcc_accessory",
-        "definition": "DCC accessorio",
+        "term": "dccex_channel:dcc_accessory",
+        "definition": "Accessorio DCC",
         "context": "",
         "term_plural": "",
         "reference": "",
         "comment": ""
     },
     {
-        "term": "dccplusplus_channel:output",
+        "term": "dccex_channel:output",
         "definition": "Output",
         "context": "",
         "term_plural": "",
@@ -688,7 +688,7 @@
         "comment": ""
     },
     {
-        "term": "dccplusplus_channel:turnout",
+        "term": "dccex_channel:turnout",
         "definition": "Deviatoio",
         "context": "",
         "term_plural": "",
@@ -696,16 +696,8 @@
         "comment": ""
     },
     {
-        "term": "dccplusplus_settings:startup_delay",
+        "term": "dccex_settings:startup_delay",
         "definition": "Ritardo accensione",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "dccplusplus_settings:use_ex",
-        "definition": "Usa comandi DCC++EX",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -833,7 +825,7 @@
     },
     {
         "term": "decoder_function_type:on_off",
-        "definition": "On\/Of",
+        "definition": "Accesa\/Spenta",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1280,6 +1272,14 @@
         "comment": ""
     },
     {
+        "term": "language:sv-se",
+        "definition": "Svedese",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "list.train_vehicle:reverse",
         "definition": "Inverso",
         "context": "",
@@ -1297,7 +1297,7 @@
     },
     {
         "term": "list:create",
-        "definition": "Creare",
+        "definition": "Crea",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1305,7 +1305,7 @@
     },
     {
         "term": "list:delete",
-        "definition": "Cancellare",
+        "definition": "Elimina",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2608,6 +2608,10 @@
         "comment": ""
     },
     {
+        "term": "message:W2003",
+        "definition": "Ricevuti dati non validi, ignorati %1 bytes [%2]"
+    },
+    {
         "term": "message:W2004",
         "definition": "Input indirizzo %1 non valido",
         "context": "",
@@ -2654,6 +2658,10 @@
         "term_plural": "",
         "reference": "",
         "comment": ""
+    },
+    {
+        "term": "message:W2020",
+        "definition": "DCCext (RCN-213) non \u00e8 supportato"
     },
     {
         "term": "object:id",
@@ -2729,7 +2737,7 @@
     },
     {
         "term": "output_action:pulse",
-        "definition": "Impulsa",
+        "definition": "Impulso",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4129,7 +4137,7 @@
     },
     {
         "term": "protocol.loconet:command_station",
-        "definition": "",
+        "definition": "Centralina di comando",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4145,7 +4153,7 @@
     },
     {
         "term": "loconet_settings:listen_only",
-        "definition": "",
+        "definition": "Solo ascolto",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4153,7 +4161,7 @@
     },
     {
         "term": "message:N2006",
-        "definition": "",
+        "definition": "Modalit\u00e0 solo ascolto: attivata",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4161,7 +4169,7 @@
     },
     {
         "term": "message:N2007",
-        "definition": "",
+        "definition": "Modalit\u00e0 solo ascolto: disattivata",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4169,7 +4177,7 @@
     },
     {
         "term": "status.lua:x_running",
-        "definition": "",
+        "definition": "Esecuzione di %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4177,15 +4185,31 @@
     },
     {
         "term": "status.lua:x_in_error",
-        "definition": "",
+        "definition": "%1 in errore",
         "context": "",
         "term_plural": "",
         "reference": "",
         "comment": ""
     },
     {
+        "term": "decoder_protocol:dcc_short",
+        "definition": "DCC (Indirizzo corto)"
+    },
+    {
+        "term": "decoder_protocol:dcc_long",
+        "definition": "DCC (Indirizzo esteso)"
+    },
+    {
+        "term": "decoder_protocol:motorola",
+        "definition": "Motorola"
+    },
+    {
+        "term": "decoder_protocol:selectrix",
+        "definition": "Selectrix"
+    },
+    {
         "term": "message:F1008",
-        "definition": "",
+        "definition": "Crash Eventloop (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4193,7 +4217,7 @@
     },
     {
         "term": "qtapp.settings:restart_required",
-        "definition": "",
+        "definition": "Riavvio necessario",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4201,7 +4225,7 @@
     },
     {
         "term": "qtapp.settings.general:language_changed_restart_required",
-        "definition": "",
+        "definition": "Traintastic client deve essere riavviato affinch\u00e9 il cambio di lingua abbia effetto.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4209,10 +4233,450 @@
     },
     {
         "term": "traintastic_diy_interface_type:network_tcp",
-        "definition": "",
+        "definition": "Rete (TCP)",
         "context": "",
         "term_plural": "",
         "reference": "",
         "comment": ""
+    },
+    {
+        "term": "marklin_can_interface_type:network_tcp",
+        "definition": "Rete (TCP)"
+    },
+    {
+        "term": "marklin_can_interface_type:network_udp",
+        "definition": "Rete (UDP)"
+    },
+    {
+        "term": "message:E2022",
+        "definition": "Creazione Socket fallita (%1)"
+    },
+    {
+        "term": "message:E2023",
+        "definition": "ioctl Socket fallito (%1)"
+    },
+    {
+        "term": "message:C2005",
+        "definition": "SocketCAN \u00e8 disponibile solo su Linux"
+    },
+    {
+        "term": "marklin_can_interface_type:socket_can",
+        "definition": "SocketCAN (Solo su Linux)"
+    },
+    {
+        "term": "interface.marklin_can:marklin_can_locomotive_list",
+        "definition": "Märklin CAN: Lista locomotive"
+    },
+    {
+        "term": "marklincan_settings:default_switch_time",
+        "definition": "Tempo di commutazione predefinito"
+    },
+    {
+        "term": "marklincan_settings:debug_config_stream",
+        "definition": "Debug: Config stream"
+    },
+    {
+        "term": "marklincan_settings:node_uid",
+        "definition": "UID nodo"
+    },
+    {
+        "term": "marklincan_settings:node_serial_number",
+        "definition": "Numero Seriale nodo"
+    },
+    {
+        "term": "marklin_can_locomotive_list:import_or_sync",
+        "definition": "Importa/sync"
+    },
+    {
+        "term": "marklin_can_locomotive_list:import_or_sync_all",
+        "definition": "Importa/sync tutti"
+    },
+    {
+        "term": "marklin_can_locomotive_list:reload",
+        "definition": "Ricarica"
+    },
+    {
+        "term": "interface.marklin_can:marklin_can_node_list",
+        "definition": "Märklin CAN: Lista Nodi"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:device_name",
+        "definition": "Nome Dispositivo"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:article_number",
+        "definition": "Numero Articolo"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:serial_number",
+        "definition": "Numero Seriale"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:software_version",
+        "definition": "Versione Software"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:device_id",
+        "definition": "Id Dispositivo"
+    },
+    {
+        "term": "marklincan_settings:debug_status_data_config",
+        "definition": "Debug: Status data config"
+    },
+    {
+        "term": "message:E2024",
+        "definition": "Locomotiva sconosciuta MFX UID: %1"
+    },
+    {
+        "term": "message:W9001",
+        "definition": "Durata esecuzione %1 us"
+    },
+    {
+        "term": "message:E3001",
+        "definition": "Impossibile eliminare un rotabile quando \u00e8 in un treno attivo"
+    },
+    {
+        "term": "input_map_item.block:identification",
+        "definition": "Identificazione"
+    },
+    {
+        "term": "message:E3002",
+        "definition": "Impossibile eliminare un treno attivo"
+    },
+    {
+        "term": "message:C1014",
+        "definition": "Comando non valido"
+    },
+    {
+        "term": "message:C1015",
+        "definition": "Oggetto sconosciuto"
+    },
+    {
+        "term": "message:C1016",
+        "definition": "Propriet\u00e0 sconosciuta"
+    },
+    {
+        "term": "message:C1017",
+        "definition": "Indici non validi"
+    },
+    {
+        "term": "message:C1018",
+        "definition": "Eccezione: %1"
+    },
+    {
+        "term": "message:C1019",
+        "definition": "L'Oggetto non \u00e8 una tabella"
+    },
+    {
+        "term": "message:W3001",
+        "definition": "Bottone NX connesso a due blocchi"
+    },
+    {
+        "term": "message:W3002",
+        "definition": "Bottone NX non connesso ad alcun blocco"
+    },
+    {
+        "term": "auto_yes_no:auto",
+        "definition": "Auto rileva"
+    },
+    {
+        "term": "auto_yes_no:yes",
+        "definition": "S\u00ec"
+    },
+    {
+        "term": "auto_yes_no:no",
+        "definition": "No"
+    },
+    {
+        "term": "board_tile.rail.signal_3_aspect:require_reservation",
+        "definition": "Richiedi prenotazione"
+    },
+    {
+        "term": "traintastic_diy_settings:startup_delay",
+        "definition": "Ritardo accensione"
+    },
+    {
+        "term": "qtapp.settings.general:connect_automatically_to_discovered_server",
+        "definition": "Connetti automaticamente al server individuato"
+    },
+    {
+        "term": "qtapp.mainmenu:about_server",
+        "definition": "Informazioni sul server"
+    },
+    {
+        "term": "qtapp.about:traintastic_server",
+        "definition": "Informazioni su Traintastic server"
+    },
+    {
+        "term": "world:online_when_loaded",
+        "definition": "Vai online quando caricato"
+    },
+    {
+        "term": "world:power_on_when_loaded",
+        "definition": "Accendi quando caricato"
+    },
+    {
+        "term": "world:run_when_loaded",
+        "definition": "Esegui quando caricato"
+    },
+    {
+        "term": "qtapp.connect_dialog:authenticating",
+        "definition": "Autenticazione"
+    },
+    {
+        "term": "qtapp.connect_dialog:creating_session",
+        "definition": "Creazione sessione"
+    },
+    {
+        "term": "qtapp.connect_dialog:fetching_world",
+        "definition": "Recupero mondo"
+    },
+    {
+        "term": "pair_output_action:none",
+        "definition": "Nessuna"
+    },
+    {
+        "term": "pair_output_action:first",
+        "definition": "Prima (Rosso)"
+    },
+    {
+        "term": "pair_output_action:second",
+        "definition": "Seconda (Verde)"
+    },
+    {
+        "term": "hardware:addresses",
+        "definition": "Indirizzi"
+    },
+    {
+        "term": "output_channel:accessory",
+        "definition": "Accessorio"
+    },
+    {
+        "term": "output_channel:accessory_dcc",
+        "definition": "Accessorio (DCC)"
+    },
+    {
+        "term": "output_channel:accessory_motorola",
+        "definition": "Accessorio (Motorola)"
+    },
+    {
+        "term": "output_channel:ecos_object",
+        "definition": "ECoS object"
+    },
+    {
+        "term": "output_map.signal:add_address",
+        "definition": "Aggiungi indirizzo"
+    },
+    {
+        "term": "output_map.signal:remove_address",
+        "definition": "Rimuovi indirizzo"
+    },
+    {
+        "term": "output_map.signal:ecos_object",
+        "definition": "ECoS object"
+    },
+    {
+        "term": "output.ecos_object:state",
+        "definition": "Stato"
+    },
+    {
+        "term": "wizard.new_world:title",
+        "definition": "Setup nuovo mondo"
+    },
+    {
+        "term": "wizard.new_world.introduction:title",
+        "definition": "Nuovo mondo"
+    },
+    {
+        "term": "wizard.new_world.introduction:text",
+        "definition": "Questa wizard ti guider\u00e0 nell'impostazione delle propriet\u00e0 base del mondo."
+    },
+    {
+        "term": "wizard.new_world.name:title",
+        "definition": "Nome mondo"
+    },
+    {
+        "term": "wizard.new_world.name:text",
+        "definition": "Dai un nome al mondo, questo nome sar\u00e0 visibile durante il caricamento del mondo."
+    },
+    {
+        "term": "wizard.new_world.scale:title",
+        "definition": "Scala mondo"
+    },
+    {
+        "term": "wizard.new_world.scale:text",
+        "definition": "Seleziona la scala del mondo, Traintastic la user\u00e0 per il calcolo di distanze e velocit\u00e0."
+    },
+    {
+        "term": "wizard.new_world.finalization:title",
+        "definition": "Mondo pronto"
+    },
+    {
+        "term": "wizard.new_world.finalization:text",
+        "definition": "Le propriet\u00e0 base del mondo sono ora impostate, puoi sempre cambiarle in futuro dal men\u00f9: Mondo -> Propriet\u00e0."
+    },
+    {
+        "term": "qtapp.mainmenu:wizards",
+        "definition": "Wizards"
+    },
+    {
+        "term": "wizard.introduction:title",
+        "definition": "Introduzione di Traintastic"
+    },
+    {
+        "term": "wizard.introduction.welcome:title",
+        "definition": "Benvenuti!"
+    },
+    {
+        "term": "wizard.introduction.welcome:text",
+        "definition": "Questa wizard illustrer\u00e0 le basi di Traintastic. La pagina successiva ti aiuter\u00e0 a cominciare. Se vuoi vedere ancora questa wizard, puoi aprirla dal men\u00f9 principale: Aiuto -> Wizard -> Introduzione di Traintastic."
+    },
+    {
+        "term": "wizard.introduction.world:title",
+        "definition": "Il Mondo"
+    },
+    {
+        "term": "wizard.introduction.world:text",
+        "definition": "Il Mondo contiene tutto ci\u00f2 che \u00e8 presente nel layout, come la centralina di comando, treni, segnali, deviatoi ecc. Se necessario diversi mondi possono essere creati ma se ne pu\u00f2 usare uno solo alla volta.\n\nI Mondi sono salvati nel PC che esegue il server di Traintastic. Quando il mondo viene salvato, un backup viene creato automaticamente. Dal men\u00f9 principale: File -> Esporta mondo \u00e8 possibile ottenere una copia del mondo come backup aggiuntivo o per trasferirlo ad un altro server Traintastic."
+    },
+    {
+        "term": "wizard.introduction.edit_mode:title",
+        "definition": "Modalit\u00e0 modifica"
+    },
+    {
+        "term": "wizard.introduction.edit_mode:text",
+        "definition": "Traintastic ha due modi di operare\n• Modalit\u00e0 modifica\n• Modalit\u00e0 Operativa\n\nNella modalit\u00e0 operativa \u00e8 solamente possibile operare il layout per impedire modifiche accidentali e.s. per cambiare l'indirizzo di un deviatoio o modificare il layout bisogna attivare la modalit\u00e0 modifica.\n\nPuoi passare dalla modalit\u00e0 operativa a quella di modifica tramite l'icona della matita nella barra degli strumenti principale o dal men\u00f9 principale: Mondo → Modifica mondo."
+    },
+    {
+        "term": "wizard.introduction.forum:title",
+        "definition": "Forum Traintastic"
+    },
+    {
+        "term": "wizard.introduction.forum:text",
+        "definition": "Se hai domande o consigli per favore unisciti al <a href=\"https://forum.traintastic.org\">Forum Traintastic</a>."
+    },
+    {
+        "term": "wizard.add_interface.welcome:title",
+        "definition": "Aggiungi interfaccia"
+    },
+    {
+        "term": "wizard.add_interface.welcome:text",
+        "definition": "Questa wizard illustrer\u00e0 il settaggio delle interfacce.\n\nSe stai eseguendo Traintastic server e Traintastic client in PC separati, assicurati che la centralina di comando sia connessa al PC che esegue Traintastic server."
+    },
+    {
+        "term": "wizard.add_interface.command_station:title",
+        "definition": "Centralina di comando"
+    },
+    {
+        "term": "wizard.add_interface.command_station:text",
+        "definition": "Per favore seleziona la tua centralina di comando:"
+    },
+    {
+        "term": "wizard.add_interface.connection:title",
+        "definition": "Connessione"
+    },
+    {
+        "term": "wizard.add_interface.connection:text",
+        "definition": "Com'\u00e8 connessa la %command_station%?"
+    },
+    {
+        "term": "wizard.add_interface.connection:command_station_serial_port",
+        "definition": "Porta seriale %command_station%"
+    },
+    {
+        "term": "wizard.add_interface.connection:command_station_usb_port",
+        "definition": "Porta USB %command_station%"
+    },
+    {
+        "term": "wizard.add_interface.connection:network",
+        "definition": "Rete"
+    },
+    {
+        "term": "wizard.add_interface.connection:not_yet_supported",
+        "definition": "Ancora non supportato"
+    },
+    {
+        "term": "wizard.add_interface.connection:can_interface",
+        "definition": "Interfaccia aggiuntiva CAN bus"
+    },
+    {
+        "term": "wizard.add_interface.connection:loconet_interface",
+        "definition": "Interfaccia aggiuntiva LocoNet"
+    },
+    {
+        "term": "wizard.add_interface.connection:xpressnet_interface",
+        "definition": "Interfaccia aggiuntiva XpressNet"
+    },
+    {
+        "term": "wizard.add_interface.protocol:title",
+        "definition": "Protocollo"
+    },
+    {
+        "term": "wizard.add_interface.protocol:text",
+        "definition": "Per favore seleziona il protocollo di comunicazione per la connessione:"
+    },
+    {
+        "term": "wizard.add_interface.interface_loconet:title",
+        "definition": "Interfaccia LocoNet"
+    },
+    {
+        "term": "wizard.add_interface.interface_loconet:text",
+        "definition": "Per favore seleziona l'interfaccia LocoNet connessa alla %command_station%:"
+    },
+    {
+        "term": "wizard.add_interface.interface_xpressnet:title",
+        "definition": "Interfaccia XpressNet"
+    },
+    {
+        "term": "wizard.add_interface.interface_xpressnet:text",
+        "definition": "Per favore seleziona l'interfaccia XpressNet connessa alla %command_station%:"
+    },
+    {
+        "term": "wizard.add_interface.hostname:title",
+        "definition": "Indirizzo IP"
+    },
+    {
+        "term": "wizard.add_interface.hostname:text",
+        "definition": "Inserisci l'indirizzo IP della %command_station% a cui connettersi:"
+    },
+    {
+        "term": "wizard.add_interface.hostname_port:title",
+        "definition": "Indirizzo IP e porta"
+    },
+    {
+        "term": "wizard.add_interface.hostname_port:text",
+        "definition": "Inserisci l'indirizzo IP e il numero della porta della %command_station% a cui connettersi:"
+    },
+    {
+        "term": "wizard.add_interface.serial_port:title",
+        "definition": "Porta Seriale"
+    },
+    {
+        "term": "wizard.add_interface.serial_port:text",
+        "definition": "Seleziona la porta seriale a cui \u00e8 connessa la %command_station%:"
+    },
+    {
+        "term": "wizard.add_interface.serial_port_interface:text",
+        "definition": "Seleziona la porta seriale a cui \u00e8 connessa la %interface%:"
+    },
+    {
+        "term": "wizard.add_interface.name:title",
+        "definition": "Nome"
+    },
+    {
+        "term": "wizard.add_interface.name:text",
+        "definition": "Inserisci un nome per la connessione:"
+    },
+    {
+        "term": "wizard.add_interface.finalization:title",
+        "definition": "Pronto"
+    },
+    {
+        "term": "wizard.add_interface.finalization:text",
+        "definition": "Il settaggio della %command_station% \u00e8 pronto, puoi portarla online usando l'opzione connetti nella barra degli strumenti.\n\nSe devi fare altre modifiche puoi trovare l'interfaccia tramite il men\u00f9: Oggetto → Hardware → Interfacce."
+    },
+    {
+        "term": "wizard.page.list:search",
+        "definition": "Cerca"
     }
 ]
