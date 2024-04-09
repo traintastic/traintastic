@@ -4192,6 +4192,22 @@
         "comment": ""
     },
     {
+        "term": "decoder_protocol:dcc_short",
+        "definition": "DCC (Indirizzo corto)"
+    },
+    {
+        "term": "decoder_protocol:dcc_long",
+        "definition": "DCC (Indirizzo esteso)"
+    },
+    {
+        "term": "decoder_protocol:motorola",
+        "definition": "Motorola"
+    },
+    {
+        "term": "decoder_protocol:selectrix",
+        "definition": "Selectrix"
+    },
+    {
         "term": "message:F1008",
         "definition": "",
         "context": "",
