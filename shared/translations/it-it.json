@@ -4478,5 +4478,205 @@
     {
         "term": "output.ecos_object:state",
         "definition": "Stato"
+    },
+    {
+        "term": "wizard.new_world:title",
+        "definition": "Setup nuovo mondo"
+    },
+    {
+        "term": "wizard.new_world.introduction:title",
+        "definition": "Nuovo mondo"
+    },
+    {
+        "term": "wizard.new_world.introduction:text",
+        "definition": "Questa wizard ti guider\u00e0 nell'impostazione delle propriet\u00e0 base del mondo."
+    },
+    {
+        "term": "wizard.new_world.name:title",
+        "definition": "Nome mondo"
+    },
+    {
+        "term": "wizard.new_world.name:text",
+        "definition": "Dai un nome al mondo, questo nome sar\u00e0 visibile durante il caricamento del mondo."
+    },
+    {
+        "term": "wizard.new_world.scale:title",
+        "definition": "Scala mondo"
+    },
+    {
+        "term": "wizard.new_world.scale:text",
+        "definition": "Seleziona la scala del mondo, Traintastic la user\u00e0 per il calcolo di distanze e velocit\u00e0."
+    },
+    {
+        "term": "wizard.new_world.finalization:title",
+        "definition": "Mondo pronto"
+    },
+    {
+        "term": "wizard.new_world.finalization:text",
+        "definition": "Le propriet\u00e0 base del mondo sono ora impostate, puoi sempre cambiarle in futuro dal men\u00f9: Mondo -> Propriet\u00e0."
+    },
+    {
+        "term": "qtapp.mainmenu:wizards",
+        "definition": "Wizards"
+    },
+    {
+        "term": "wizard.introduction:title",
+        "definition": "Introduzione di Traintastic"
+    },
+    {
+        "term": "wizard.introduction.welcome:title",
+        "definition": "Benvenuti!"
+    },
+    {
+        "term": "wizard.introduction.welcome:text",
+        "definition": "Questa wizard illustrer\u00e0 le basi di Traintastic. La pagina successiva ti aiuter\u00e0 a cominciare. Se vuoi vedere ancora questa wizard, puoi aprirla dal men\u00f9 principale: Aiuto -> Wizard -> Introduzione di Traintastic."
+    },
+    {
+        "term": "wizard.introduction.world:title",
+        "definition": "Il Mondo"
+    },
+    {
+        "term": "wizard.introduction.world:text",
+        "definition": "Il Mondo contiene tutto ci\u00f2 che \u00e8 presente nel layout, come la centralina di comando, treni, segnali, deviatoi ecc. Se necessario diversi mondi possono essere creati ma se ne pu\u00f2 usare uno solo alla volta.\n\nI Mondi sono salvati nel PC che esegue il server di Traintastic. Quando il mondo viene salvato, un backup viene creato automaticamente. Dal men\u00f9 principale: File -> Esporta mondo \u00e8 possibile ottenere una copia del mondo come backup aggiuntivo o per trasferirlo ad un altro server Traintastic."
+    },
+    {
+        "term": "wizard.introduction.edit_mode:title",
+        "definition": "Modalit\u00e0 modifica"
+    },
+    {
+        "term": "wizard.introduction.edit_mode:text",
+        "definition": "Traintastic ha due modi di operare\n• Modalit\u00e0 modifica\n• Modalit\u00e0 Operativa\n\nNella modalit\u00e0 operativa \u00e8 solamente possibile operare il layout per impedire modifiche accidentali e.s. per cambiare l'indirizzo di un deviatoio o modificare il layout bisogna attivare la modalit\u00e0 modifica.\n\nPuoi passare dalla modalit\u00e0 operativa a quella di modifica tramite l'icona della matita nella barra degli strumenti principale o dal men\u00f9 principale: Mondo → Modifica mondo."
+    },
+    {
+        "term": "wizard.introduction.forum:title",
+        "definition": "Forum Traintastic"
+    },
+    {
+        "term": "wizard.introduction.forum:text",
+        "definition": "Se hai domande o consigli per favore unisciti al <a href=\"https://forum.traintastic.org\">Forum Traintastic</a>."
+    },
+    {
+        "term": "wizard.add_interface.welcome:title",
+        "definition": "Aggiungi interfaccia"
+    },
+    {
+        "term": "wizard.add_interface.welcome:text",
+        "definition": "Questa wizard illustrer\u00e0 il settaggio delle interfacce.\n\nSe stai eseguendo Traintastic server e Traintastic client in PC separati, assicurati che la centralina di comando sia connessa al PC che esegue Traintastic server."
+    },
+    {
+        "term": "wizard.add_interface.command_station:title",
+        "definition": "Centralina di comando"
+    },
+    {
+        "term": "wizard.add_interface.command_station:text",
+        "definition": "Per favore seleziona la tua centralina di comando:"
+    },
+    {
+        "term": "wizard.add_interface.connection:title",
+        "definition": "Connessione"
+    },
+    {
+        "term": "wizard.add_interface.connection:text",
+        "definition": "Com'\u00e8 connessa la %command_station%?"
+    },
+    {
+        "term": "wizard.add_interface.connection:command_station_serial_port",
+        "definition": "Porta seriale %command_station%"
+    },
+    {
+        "term": "wizard.add_interface.connection:command_station_usb_port",
+        "definition": "Porta USB %command_station%"
+    },
+    {
+        "term": "wizard.add_interface.connection:network",
+        "definition": "Rete"
+    },
+    {
+        "term": "wizard.add_interface.connection:not_yet_supported",
+        "definition": "Ancora non supportato"
+    },
+    {
+        "term": "wizard.add_interface.connection:can_interface",
+        "definition": "Interfaccia aggiuntiva CAN bus"
+    },
+    {
+        "term": "wizard.add_interface.connection:loconet_interface",
+        "definition": "Interfaccia aggiuntiva LocoNet"
+    },
+    {
+        "term": "wizard.add_interface.connection:xpressnet_interface",
+        "definition": "Interfaccia aggiuntiva XpressNet"
+    },
+    {
+        "term": "wizard.add_interface.protocol:title",
+        "definition": "Protocollo"
+    },
+    {
+        "term": "wizard.add_interface.protocol:text",
+        "definition": "Per favore seleziona il protocollo di comunicazione per la connessione:"
+    },
+    {
+        "term": "wizard.add_interface.interface_loconet:title",
+        "definition": "Interfaccia LocoNet"
+    },
+    {
+        "term": "wizard.add_interface.interface_loconet:text",
+        "definition": "Per favore seleziona l'interfaccia LocoNet connessa alla %command_station%:"
+    },
+    {
+        "term": "wizard.add_interface.interface_xpressnet:title",
+        "definition": "Interfaccia XpressNet"
+    },
+    {
+        "term": "wizard.add_interface.interface_xpressnet:text",
+        "definition": "Per favore seleziona l'interfaccia XpressNet connessa alla %command_station%:"
+    },
+    {
+        "term": "wizard.add_interface.hostname:title",
+        "definition": "Indirizzo IP"
+    },
+    {
+        "term": "wizard.add_interface.hostname:text",
+        "definition": "Inserisci l'indirizzo IP della %command_station% a cui connettersi:"
+    },
+    {
+        "term": "wizard.add_interface.hostname_port:title",
+        "definition": "Indirizzo IP e porta"
+    },
+    {
+        "term": "wizard.add_interface.hostname_port:text",
+        "definition": "Inserisci l'indirizzo IP e il numero della porta della %command_station% a cui connettersi:"
+    },
+    {
+        "term": "wizard.add_interface.serial_port:title",
+        "definition": "Porta Seriale"
+    },
+    {
+        "term": "wizard.add_interface.serial_port:text",
+        "definition": "Seleziona la porta seriale a cui \u00e8 connessa la %command_station%:"
+    },
+    {
+        "term": "wizard.add_interface.serial_port_interface:text",
+        "definition": "Seleziona la porta seriale a cui \u00e8 connessa la %interface%:"
+    },
+    {
+        "term": "wizard.add_interface.name:title",
+        "definition": "Nome"
+    },
+    {
+        "term": "wizard.add_interface.name:text",
+        "definition": "Inserisci un nome per la connessione:"
+    },
+    {
+        "term": "wizard.add_interface.finalization:title",
+        "definition": "Pronto"
+    },
+    {
+        "term": "wizard.add_interface.finalization:text",
+        "definition": "Il settaggio della %command_station% \u00e8 pronto, puoi portarla online usando l'opzione connetti nella barra degli strumenti.\n\nSe devi fare altre modifiche puoi trovare l'interfaccia tramite il men\u00f9: Oggetto → Hardware → Interfacce."
+    },
+    {
+        "term": "wizard.page.list:search",
+        "definition": "Cerca"
     }
 ]
