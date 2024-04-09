@@ -473,7 +473,7 @@
     },
     {
         "term": "class_id:vehicle.rail.tank_wagon",
-        "definition": "Carro armato",
+        "definition": "Carro cisterna",
         "context": "",
         "term_plural": "",
         "reference": "",
