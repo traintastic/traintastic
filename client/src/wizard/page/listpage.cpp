@@ -45,6 +45,15 @@ ListPage::ListPage(QWidget* parent)
   l->addWidget(m_list);
 }
 
+int ListPage::selectedItemIndex() const
+{
+  if(const int row = m_list->currentIndex().row(); row >= 0)
+  {
+    return m_list->item(row)->data(originalIndexRole).toInt();
+  }
+  return -1; // none
+}
+
 void ListPage::setItems(QStringList items)
 {
   m_items = std::move(items);

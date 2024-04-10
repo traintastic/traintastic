@@ -140,14 +140,14 @@ class ListPageJSON : public ListPage, public PageJSON
 
     bool isComplete() const override
     {
-      return m_list->currentIndex().row() >= 0;
+      return selectedItemIndex() >= 0;
     }
 
     int nextId() const override
     {
       if(isComplete())
       {
-        auto next = m_pageData["options"].toArray()[m_list->currentIndex().row()].toObject()["next"].toString();
+        auto next = m_pageData["options"].toArray()[selectedItemIndex()].toObject()["next"].toString();
         return static_cast<JSONWizard*>(wizard())->getPageId(next);
       }
       return JSONWizard::errorPage;
@@ -156,7 +156,7 @@ class ListPageJSON : public ListPage, public PageJSON
     QJsonObject getActions() const override
     {
       assert(isComplete());
-      return m_pageData["options"].toArray()[m_list->currentIndex().row()].toObject()["actions"].toObject();
+      return m_pageData["options"].toArray()[selectedItemIndex()].toObject()["actions"].toObject();
     }
 };
 

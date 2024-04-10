@@ -41,6 +41,7 @@ class ListPage : public TextPage
   public:
     explicit ListPage(QWidget* parent = nullptr);
 
+    int selectedItemIndex() const;
     void setItems(QStringList items);
 };
 
