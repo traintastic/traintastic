@@ -1,5 +1,5 @@
 /**
- * client/src/network/create/createinterface.hpp
+ * client/src/network/create/setbjectproperties.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_NETWORK_CREATE_CREATEINTERFACE_HPP
-#define TRAINTASTIC_CLIENT_NETWORK_CREATE_CREATEINTERFACE_HPP
+#ifndef TRAINTASTIC_CLIENT_NETWORK_CREATE_SETOBJECTPROPERTIES_HPP
+#define TRAINTASTIC_CLIENT_NETWORK_CREATE_SETOBJECTPROPERTIES_HPP
 
 #include <memory>
 #include <QFuture>
@@ -30,25 +30,27 @@
 #include "properties.hpp"
 #include "../objectptr.hpp"
 
-class SetObjectProperties;
+class ObjectProperty;
 
-class CreateInterface : public std::enable_shared_from_this<CreateInterface>
+class SetObjectProperties : public std::enable_shared_from_this<SetObjectProperties>
 {
   private:
     QFutureInterface<ObjectPtr> m_promise;
-    ObjectPtr m_world;
-    ObjectPtr m_interfaceList;
-    ObjectPtr m_interface;
-    QString m_classId;
+    ObjectPtr m_object;
+    ObjectProperty* m_objectProperty = nullptr;
     Properties m_properties;
     int m_requestId;
-    std::shared_ptr<SetObjectProperties> m_setObjectProperties;
-    std::unique_ptr<QFutureWatcher<ObjectPtr>> m_setObjectPropertiesFutureWatcher;
+    std::vector<std::shared_ptr<SetObjectProperties>> m_setObjectProperties;
+    std::vector<std::unique_ptr<QFutureWatcher<ObjectPtr>>> m_setObjectPropertiesFutureWatcher;
+    size_t m_setObjectPropertiesFinishedCount = 0;
     bool m_canceled = false;
 
+    void setProperties();
+
   public:
-    CreateInterface(ObjectPtr world, QString classId, Properties properties);
-    ~CreateInterface();
+    SetObjectProperties(ObjectPtr object, Properties properties);
+    SetObjectProperties(ObjectProperty& objectProperty, Properties properties);
+    ~SetObjectProperties();
 
     void cancel();
 

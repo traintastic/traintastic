@@ -53,15 +53,15 @@ static void setTitleAndText(JSONWizard& wizard, TextPage* page, const QJsonObjec
   page->setText(wizard.translateAndReplaceVariables(object["text"].toString()));
 }
 
-static CreateInterface::Properties toProperties(const QJsonObject& object)
+static Properties toProperties(const QJsonObject& object)
 {
-  CreateInterface::Properties properties;
+  Properties properties;
   for(const auto& key : object.keys())
   {
     auto value = object[key];
     if(value.isBool() || value.isDouble() || value.isString())
     {
-      properties.emplace_back(key.toStdString(), value.toVariant());
+      properties.emplace_back(key, value.toVariant());
     }
     else
     {
