@@ -21,10 +21,12 @@
  */
 
 #include "createinterface.hpp"
+#include "setobjectproperties.hpp"
 #include "../connection.hpp"
 #include "../error.hpp"
 #include "../method.hpp"
 #include "../object.hpp"
+#include "../property.hpp"
 #include "../objectproperty.hpp"
 
 CreateInterface::CreateInterface(ObjectPtr world, QString classId, Properties properties)
@@ -66,45 +68,33 @@ CreateInterface::CreateInterface(ObjectPtr world, QString classId, Properties pr
                 }
                 else if(interface)
                 {
-                  for(const auto& it : m_properties)
+                  m_interface = interface;
+
+                  if(m_properties.empty())
                   {
-                    // a bit hacky but easier for now #FIXME
-                    auto event = Message::newEvent(Message::Command::ObjectSetProperty);
-                    event->write(interface->handle());
-                    event->write(it.first);
-
-                    switch(it.second.type())
-                    {
-                      case QVariant::Bool:
-                        event->write(ValueType::Boolean);
-                        event->write(it.second.toBool());
-                        break;
-
-                      case QVariant::Int:
-                      case QVariant::UInt:
-                      case QVariant::LongLong:
-                      case QVariant::ULongLong:
-                        event->write(ValueType::Integer);
-                        event->write(it.second.toLongLong());
-                        break;
-
-                      case QVariant::Double:
-                        event->write(ValueType::Float);
-                        event->write(it.second.toDouble());
-                        break;
-
-                      case QVariant::String:
-                        event->write(ValueType::String);
-                        event->write(it.second.toString().toUtf8());
-                        break;
-
-                      default: /*[[unlikely]]*/
-                        assert(false);
-                        continue;
-                    }
-                    interface->connection()->send(event);
+                    m_promise.reportFinished(&m_interface);
                   }
-                  m_promise.reportFinished(&interface);
+                  else
+                  {
+                    m_setObjectProperties = std::make_shared<SetObjectProperties>(m_interface, m_properties);
+                    if(m_setObjectProperties->future().isFinished())
+                    {
+                      m_promise.reportFinished(&m_interface);
+                    }
+                    else
+                    {
+                      m_setObjectPropertiesFutureWatcher = std::make_unique<QFutureWatcher<ObjectPtr>>();
+                      m_setObjectPropertiesFutureWatcher->setFuture(m_setObjectProperties->future());
+                      QObject::connect(m_setObjectPropertiesFutureWatcher.get(), &QFutureWatcher<ObjectPtr>::finished,
+                        [this]()
+                        {
+                          if(!m_canceled)
+                          {
+                            m_promise.reportFinished(&m_interface);
+                          }
+                        });
+                    }
+                  }
                 }
                 else
                 {
@@ -126,6 +116,10 @@ CreateInterface::~CreateInterface()
   if(!m_promise.isFinished() && !m_canceled)
   {
     cancel();
+  }
+  if(m_requestId != Connection::invalidRequestId)
+  {
+    m_world->connection()->cancelRequest(m_requestId);
   }
 }
 

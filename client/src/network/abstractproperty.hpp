@@ -93,6 +93,38 @@ class AbstractProperty : public BaseProperty
     virtual void setValueInt64(int64_t value)          { Q_ASSERT(value != value); }
     virtual void setValueDouble(double value)              { Q_ASSERT(value != value); }
     virtual void setValueString(const QString& value)  { Q_ASSERT(value != value); }
+
+    void setValueVariant(const QVariant& value)
+    {
+      switch(value.type())
+      {
+        case QVariant::Bool:
+          setValueBool(value.toBool());
+          break;
+
+        case QVariant::Int:
+          setValueInt(value.toInt());
+          break;
+
+        case QVariant::UInt:
+        case QVariant::LongLong:
+        case QVariant::ULongLong:
+          setValueInt64(value.toLongLong());
+          break;
+
+        case QVariant::Double:
+          setValueDouble(value.toDouble());
+          break;
+
+        case QVariant::String:
+          setValueString(value.toString());
+          break;
+
+        default: /*[[unlikely]]*/
+          assert(false);
+          break;
+      }
+    }
 };
 
 #endif

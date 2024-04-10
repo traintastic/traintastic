@@ -240,7 +240,7 @@
                   "type": "serial",
                   "baudrate": 115200,
                   "flow_control": "hardware",
-                  "settings.command_station": "%loconet_command_station%"
+                  "loconet.command_station": "%loconet_command_station%"
                 }
               }
             }
@@ -310,7 +310,7 @@
                   "type": "serial",
                   "baudrate": 115200,
                   "flow_control": "none",
-                  "settings.command_station": "digikeijs_dr5000"
+                  "loconet.command_station": "digikeijs_dr5000"
                 }
               }
             }
@@ -325,7 +325,7 @@
                   "type": "serial",
                   "baudrate": 115200,
                   "flow_control": "none",
-                  "settings.command_station": "digikeijs_dr5000"
+                  "xpressnet.command_station": "digikeijs_dr5000"
                 }
               }
             }
@@ -345,7 +345,7 @@
                 "class_id": "interface.loconet",
                 "properties": {
                   "type": "tcp_binary",
-                  "settings.command_station": "digikeijs_dr5000"
+                  "loconet.command_station": "digikeijs_dr5000"
                 }
               }
             }
@@ -358,7 +358,7 @@
                 "class_id": "interface.loconet",
                 "properties": {
                   "type": "lbserver",
-                  "settings.command_station": "digikeijs_dr5000"
+                  "loconet.command_station": "digikeijs_dr5000"
                 }
               }
             }
@@ -371,7 +371,7 @@
                 "class_id": "interface.xpressnet",
                 "properties": {
                   "type": "network",
-                  "settings.command_station": "digikeijs_dr5000"
+                  "xpressnet.command_station": "digikeijs_dr5000"
                 }
               }
             }
@@ -402,7 +402,7 @@
                   "type": "serial",
                   "baudrate": 19200,
                   "flowcontrol": "hardware",
-                  "settings.command_station": "%loconet_command_station%"
+                  "loconet.command_station": "%loconet_command_station%"
                 }
               },
               "set_variables": {
@@ -420,7 +420,7 @@
                   "type": "serial",
                   "baudrate": 115200,
                   "flowcontrol": "none",
-                  "settings.command_station": "%loconet_command_station%"
+                  "loconet.command_station": "%loconet_command_station%"
                 }
               },
               "set_variables": {
@@ -445,7 +445,7 @@
                   "type": "serial",
                   "baudrate": 9600,
                   "flowcontrol": "hardware",
-                  "settings.command_station": "%xpressnet_command_station%"
+                  "xpressnet.command_station": "%xpressnet_command_station%"
                 }
               },
               "set_variables": {
@@ -463,7 +463,7 @@
                   "type": "serial",
                   "baudrate": 19200,
                   "flowcontrol": "hardware",
-                  "settings.command_station": "%xpressnet_command_station%"
+                  "xpressnet.command_station": "%xpressnet_command_station%"
                 }
               },
               "set_variables": {
