@@ -4678,5 +4678,21 @@
     {
         "term": "wizard.page.list:search",
         "definition": "Cerca"
+    },
+    {
+        "term": "wizard.button:back",
+        "definition": "Indietro"
+    },
+    {
+        "term": "wizard.button:next",
+        "definition": "Avanti"
+    },
+    {
+        "term": "wizard.button:finish",
+        "definition": "Fine"
+    },
+    {
+        "term": "wizard.button:cancel",
+        "definition": "Annulla"
     }
 ]
