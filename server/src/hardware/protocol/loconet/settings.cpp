@@ -152,6 +152,8 @@ void Settings::commandStationChanged(LocoNetCommandStation value)
 
     case LocoNetCommandStation::UhlenbrockIntellibox:
     case LocoNetCommandStation::UhlenbrockIBCOM:
+    case LocoNetCommandStation::UhlenbrockIntelliboxIR:
+    case LocoNetCommandStation::UhlenbrockIntelliboxBasic:
       locomotiveSlots = 32;
       f9f28 = LocoNetF9F28::UhlenbrockExtended;
       break;
@@ -168,6 +170,8 @@ void Settings::commandStationChanged(LocoNetCommandStation value)
 
     case LocoNetCommandStation::UhlenbrockIntellibox:
     case LocoNetCommandStation::UhlenbrockIBCOM:
+    case LocoNetCommandStation::UhlenbrockIntelliboxIR:
+    case LocoNetCommandStation::UhlenbrockIntelliboxBasic:
       fastClockSyncEnabled = false;
       Attributes::setEnabled(fastClockSyncEnabled, false);
       break;

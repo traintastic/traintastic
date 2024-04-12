@@ -378,5 +378,13 @@
     {
         "term": "output_channel:dcc_ext",
         "definition": "DCCext (RCN-213)"
+    },
+    {
+        "term": "loconet_command_station:uhlenbrock_intellibox_ir",
+        "definition": "Uhlenbrock Intellibox IR"
+    },
+    {
+        "term": "loconet_command_station:uhlenbrock_intellibox_basic",
+        "definition": "Uhlenbrock Intellibox Basic"
     }
 ]

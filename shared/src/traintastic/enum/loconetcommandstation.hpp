@@ -33,21 +33,27 @@ enum class LocoNetCommandStation : uint16_t
   UhlenbrockIntellibox = 1,
   DigikeijsDR5000 = 2,
   UhlenbrockIBCOM = 3,
+  UhlenbrockIntelliboxIR = 4,
+  UhlenbrockIntelliboxBasic = 5,
 };
 
-TRAINTASTIC_ENUM(LocoNetCommandStation, "loconet_command_station", 4,
+TRAINTASTIC_ENUM(LocoNetCommandStation, "loconet_command_station", 6,
 {
   {LocoNetCommandStation::Custom, "custom"},
   {LocoNetCommandStation::UhlenbrockIntellibox, "uhlenbrock_intellibox"},
   {LocoNetCommandStation::DigikeijsDR5000, "digikeijs_dr5000"},
   {LocoNetCommandStation::UhlenbrockIBCOM, "uhlenbrock_ibcom"},
+  {LocoNetCommandStation::UhlenbrockIntelliboxIR, "uhlenbrock_intellibox_ir"},
+  {LocoNetCommandStation::UhlenbrockIntelliboxBasic, "uhlenbrock_intellibox_basic"},
 });
 
-inline constexpr std::array<LocoNetCommandStation, 4> LocoNetCommandStationValues{{
+inline constexpr std::array<LocoNetCommandStation, 6> LocoNetCommandStationValues{{
   LocoNetCommandStation::Custom,
   LocoNetCommandStation::DigikeijsDR5000,
   LocoNetCommandStation::UhlenbrockIntellibox,
   LocoNetCommandStation::UhlenbrockIBCOM,
+  LocoNetCommandStation::UhlenbrockIntelliboxIR,
+  LocoNetCommandStation::UhlenbrockIntelliboxBasic,
 }};
 
 #endif
