@@ -27,7 +27,9 @@
             "next": "connection_dr5000",
             "actions": {
               "set_variables": {
-                "command_station": "Digikeijs DR5000"
+                "command_station": "Digikeijs DR5000",
+                "loconet_command_station": "digikeijs_dr5000",
+                "xpressnet_command_station": "digikeijs_dr5000"
               }
             }
           },
@@ -87,7 +89,8 @@
             "next": "connection_ibusb",
             "actions": {
               "set_variables": {
-                "command_station": "Uhlenbrock IB-COM"
+                "command_station": "Uhlenbrock IB-COM",
+                "loconet_command_station": "uhlenbrock_ibcom"
               }
             }
           },
@@ -96,7 +99,8 @@
             "next": "connection_ib",
             "actions": {
               "set_variables": {
-                "command_station": "Uhlenbrock Intellibox"
+                "command_station": "Uhlenbrock Intellibox",
+                "loconet_command_station": "uhlenbrock_intellibox"
               }
             }
           },
@@ -105,7 +109,8 @@
             "next": "connection_ibusb",
             "actions": {
               "set_variables": {
-                "command_station": "Uhlenbrock Intellibox Basic"
+                "command_station": "Uhlenbrock Intellibox Basic",
+                "loconet_command_station": "uhlenbrock_intellibox_basic"
               }
             }
           },
@@ -114,7 +119,8 @@
             "next": "connection_ib",
             "actions": {
               "set_variables": {
-                "command_station": "Uhlenbrock Intellibox IR"
+                "command_station": "Uhlenbrock Intellibox IR",
+                "loconet_command_station": "uhlenbrock_intellibox_ir"
               }
             }
           },
@@ -123,7 +129,8 @@
             "next": "connection_z21",
             "actions": {
               "set_variables": {
-                "command_station": "z21 Start"
+                "command_station": "z21 Start",
+                "xpressnet_command_station": "z21"
               }
             }
           },
@@ -132,7 +139,8 @@
             "next": "connection_z21",
             "actions": {
               "set_variables": {
-                "command_station": "z21 ($color:white$)"
+                "command_station": "z21 ($color:white$)",
+                "xpressnet_command_station": "z21"
               }
             }
           },
@@ -141,7 +149,9 @@
             "next": "connection_z21black",
             "actions": {
               "set_variables": {
-                "command_station": "Z21 ($color:black$)"
+                "command_station": "Z21 ($color:black$)",
+                "loconet_command_station": "z21",
+                "xpressnet_command_station": "z21"
               }
             }
           }
