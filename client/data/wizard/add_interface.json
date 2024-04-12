@@ -200,7 +200,10 @@
             "next": "hostname",
             "actions": {
               "create_interface": {
-                "class_id": "interface.marklin_can"
+                "class_id": "interface.marklin_can",
+                "properties": {
+                  "name": "%command_station%"
+                }
               }
             }
           },
@@ -237,6 +240,7 @@
               "create_interface": {
                 "class_id": "interface.loconet",
                 "properties": {
+                  "name": "%command_station%",
                   "type": "serial",
                   "baudrate": 115200,
                   "flow_control": "hardware",
@@ -307,6 +311,7 @@
               "create_interface": {
                 "class_id": "interface.loconet",
                 "properties": {
+                  "name": "%command_station%",
                   "type": "serial",
                   "baudrate": 115200,
                   "flow_control": "none",
@@ -322,6 +327,7 @@
               "create_interface": {
                 "class_id": "interface.xpressnet",
                 "properties": {
+                  "name": "%command_station%",
                   "type": "serial",
                   "baudrate": 115200,
                   "flow_control": "none",
@@ -344,6 +350,7 @@
               "create_interface": {
                 "class_id": "interface.loconet",
                 "properties": {
+                  "name": "%command_station%",
                   "type": "tcp_binary",
                   "loconet.command_station": "digikeijs_dr5000"
                 }
@@ -357,6 +364,7 @@
               "create_interface": {
                 "class_id": "interface.loconet",
                 "properties": {
+                  "name": "%command_station%",
                   "type": "lbserver",
                   "loconet.command_station": "digikeijs_dr5000"
                 }
@@ -370,6 +378,7 @@
               "create_interface": {
                 "class_id": "interface.xpressnet",
                 "properties": {
+                  "name": "%command_station%",
                   "type": "network",
                   "xpressnet.command_station": "digikeijs_dr5000"
                 }
@@ -381,7 +390,10 @@
             "next": "hostname",
             "actions": {
               "create_interface": {
-                "class_id": "interface.z21"
+                "class_id": "interface.z21",
+                "properties": {
+                  "name": "%command_station%"
+                }
               }
             }
           }
@@ -399,6 +411,7 @@
               "create_interface": {
                 "class_id": "interface.loconet",
                 "properties": {
+                  "name": "%command_station%",
                   "type": "serial",
                   "baudrate": 19200,
                   "flowcontrol": "hardware",
@@ -417,6 +430,7 @@
               "create_interface": {
                 "class_id": "interface.loconet",
                 "properties": {
+                  "name": "%command_station%",
                   "type": "serial",
                   "baudrate": 115200,
                   "flowcontrol": "none",
@@ -442,6 +456,7 @@
               "create_interface": {
                 "class_id": "interface.xpressnet",
                 "properties": {
+                  "name": "%command_station%",
                   "type": "serial",
                   "baudrate": 9600,
                   "flowcontrol": "hardware",
@@ -460,6 +475,7 @@
               "create_interface": {
                 "class_id": "interface.xpressnet",
                 "properties": {
+                  "name": "%command_station%",
                   "type": "serial",
                   "baudrate": 19200,
                   "flowcontrol": "hardware",
