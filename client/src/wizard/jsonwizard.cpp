@@ -53,24 +53,6 @@ static void setTitleAndText(JSONWizard& wizard, TextPage* page, const QJsonObjec
   page->setText(wizard.translateAndReplaceVariables(object["text"].toString()));
 }
 
-static Properties toProperties(const QJsonObject& object)
-{
-  Properties properties;
-  for(const auto& key : object.keys())
-  {
-    auto value = object[key];
-    if(value.isBool() || value.isDouble() || value.isString())
-    {
-      properties.emplace_back(key, value.toVariant());
-    }
-    else
-    {
-      assert(false);
-    }
-  }
-  return properties;
-}
-
 class PageJSON
 {
   public:
@@ -321,6 +303,7 @@ JSONWizard::JSONWizard(const QString& filename, ObjectPtr world, QWidget* parent
 
 JSONWizard::~JSONWizard() = default;
 
+
 QString JSONWizard::translateAndReplaceVariables(const QString& text) const
 {
   auto result = Locale::instance->parse(text);
@@ -331,8 +314,9 @@ QString JSONWizard::translateAndReplaceVariables(const QString& text) const
   {
     if(auto it = m_variables.find(match.captured(1)); it != m_variables.end())
     {
-      result.replace(match.capturedStart(), match.capturedLength(), Locale::instance->parse(it->second));
-      match = re.match(result, match.capturedStart() + it->second.length());
+      auto value = it->second.toString();
+      result.replace(match.capturedStart(), match.capturedLength(), Locale::instance->parse(value));
+      match = re.match(result, match.capturedStart() + value.length());
     }
     else
     {
@@ -431,7 +415,7 @@ void JSONWizard::doActions(const QJsonObject& actions)
   {
     for(const auto& name : setVariables.keys())
     {
-      m_variables.emplace(name, setVariables[name].toString());
+      m_variables.emplace(name, setVariables[name].toVariant());
     }
   }
 }
@@ -452,4 +436,37 @@ void JSONWizard::undoActions(const QJsonObject& actions)
       m_variables.erase(name);
     }
   }
+}
+
+Properties JSONWizard::toProperties(const QJsonObject& object)
+{
+  Properties properties;
+  for(const auto& key : object.keys())
+  {
+    auto value = object[key];
+
+    if(value.isString())
+    {
+      static const QRegularExpression re{"^%([a-z_]+)%$"};
+      auto match = re.match(value.toString());
+      if(match.hasMatch())
+      {
+        if(auto it = m_variables.find(match.captured(1)); it != m_variables.end())
+        {
+          properties.emplace_back(key, it->second);
+          continue;
+        }
+      }
+    }
+
+    if(value.isBool() || value.isDouble() || value.isString())
+    {
+      properties.emplace_back(key, value.toVariant());
+    }
+    else
+    {
+      assert(false);
+    }
+  }
+  return properties;
 }

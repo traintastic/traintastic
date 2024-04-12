@@ -28,6 +28,7 @@
 #include <QJsonObject>
 #include <QFuture>
 #include "../network/objectptr.hpp"
+#include "../network/create/properties.hpp"
 
 class CreateInterface;
 
@@ -42,7 +43,7 @@ class JSONWizard : public Wizard
 
     ObjectPtr m_world;
     std::map<QString, QFuture<ObjectPtr>> m_objects;
-    std::map<QString, QString> m_variables;
+    std::map<QString, QVariant> m_variables;
     std::map<QString, PageInfo> m_pages;
     QVector<int> m_ids;
     std::shared_ptr<CreateInterface> m_createInterface;
@@ -51,6 +52,8 @@ class JSONWizard : public Wizard
 
     void doActions(const QJsonObject& actions);
     void undoActions(const QJsonObject& actions);
+
+    Properties toProperties(const QJsonObject& object);
 
   protected:
     void initializePage(int id) override;
