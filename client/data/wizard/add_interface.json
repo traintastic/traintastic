@@ -115,6 +115,16 @@
             }
           },
           {
+            "name": "Uhlenbrock Intellibox II",
+            "next": "connection_ibusb",
+            "actions": {
+              "set_variables": {
+                "command_station": "Uhlenbrock Intellibox II",
+                "loconet_command_station": "uhlenbrock_intellibox_2"
+              }
+            }
+          },
+          {
             "name": "Uhlenbrock Intellibox IR",
             "next": "connection_ib",
             "actions": {

@@ -146,6 +146,7 @@ void Settings::commandStationChanged(LocoNetCommandStation value)
       break;
 
     case LocoNetCommandStation::DigikeijsDR5000:
+    case LocoNetCommandStation::UhlenbrockIntelliboxII:
       locomotiveSlots = SLOT_LOCO_MAX;
       f9f28 = LocoNetF9F28::UhlenbrockExtended;
       break;
@@ -165,6 +166,7 @@ void Settings::commandStationChanged(LocoNetCommandStation value)
   {
     case LocoNetCommandStation::Custom:
     case LocoNetCommandStation::DigikeijsDR5000:
+    case LocoNetCommandStation::UhlenbrockIntelliboxII:
       Attributes::setEnabled(fastClockSyncEnabled, true);
       break;
 
