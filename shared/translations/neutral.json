@@ -386,5 +386,9 @@
     {
         "term": "loconet_command_station:uhlenbrock_intellibox_basic",
         "definition": "Uhlenbrock Intellibox Basic"
+    },
+    {
+        "term": "loconet_command_station:uhlenbrock_intellibox_2",
+        "definition": "Uhlenbrock Intellibox II"
     }
 ]
