@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,8 +27,11 @@
 #include "../../world/world.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/objectproperty.tpp"
+#include "../../core/objectvectorproperty.tpp"
+#include "../../core/method.tpp"
 #include "../../utils/displayname.hpp"
 #include "../../train/train.hpp"
+#include "../../train/trainvehiclelist.hpp"
 
 RailVehicle::RailVehicle(World& world, std::string_view _id) :
   Vehicle(world, _id),
@@ -38,6 +41,7 @@ RailVehicle::RailVehicle(World& world, std::string_view _id) :
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](double /*value*/, WeightUnit /*unit*/){ updateTotalWeight(); }},
   totalWeight{*this, "total_weight", 0, WeightUnit::Ton, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
   activeTrain{this, "active_train", nullptr, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::StoreState}
+  , trains{*this, "trains", {}, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::NoStore}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
@@ -65,6 +69,8 @@ RailVehicle::RailVehicle(World& world, std::string_view _id) :
   Attributes::addDisplayName(activeTrain, DisplayName::Vehicle::Rail::train); //TODO: "Active"
   Attributes::addEnabled(activeTrain, true);
   m_interfaceItems.insertBefore(activeTrain, notes);
+
+  m_interfaceItems.insertBefore(trains, notes);
 }
 
 void RailVehicle::addToWorld()
@@ -75,9 +81,14 @@ void RailVehicle::addToWorld()
 
 void RailVehicle::destroying()
 {
+  auto self = shared_ptr<RailVehicle>();
   if(decoder)
     decoder = nullptr;
-  m_world.railVehicles->removeObject(shared_ptr<RailVehicle>());
+  for(const auto& train : trains)
+  {
+    train->vehicles->remove(self);
+  }
+  m_world.railVehicles->removeObject(self);
   IdObject::destroying();
 }
 
