@@ -1,7 +1,7 @@
 [
     {
-        "term": "class_id:interface.dccplusplus",
-        "definition": "DCC++"
+        "term": "class_id:interface.dccex",
+        "definition": "DCC-EX"
     },
     {
         "term": "class_id:interface.ecos",
