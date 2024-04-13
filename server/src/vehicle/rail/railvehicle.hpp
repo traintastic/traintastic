@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 
 #include "../vehicle.hpp"
 #include "../../core/objectproperty.hpp"
+#include "../../core/objectvectorproperty.hpp"
 #include "../../core/lengthproperty.hpp"
 #include "../../core/speedproperty.hpp"
 #include "../../core/weightproperty.hpp"
@@ -53,6 +54,7 @@ class RailVehicle : public Vehicle
     WeightProperty totalWeight;
 
     ObjectProperty<Train> activeTrain;
+    ObjectVectorProperty<Train> trains;
 };
 
 #endif
