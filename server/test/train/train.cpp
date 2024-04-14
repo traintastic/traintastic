@@ -80,6 +80,37 @@ TEST_CASE("Delete active train", "[train]")
   REQUIRE(worldWeak.expired());
 }
 
+TEST_CASE("Delete inactive train", "[train]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(world->trains->length == 0);
+
+  std::weak_ptr<RailVehicle> locomotiveWeak = world->railVehicles->create(Locomotive::classId);
+  REQUIRE_FALSE(locomotiveWeak.expired());
+  REQUIRE(world->railVehicles->length == 1);
+
+  std::weak_ptr<Train> trainWeak = world->trains->create();
+  REQUIRE_FALSE(trainWeak.expired());
+  REQUIRE(world->trains->length == 1);
+
+  REQUIRE(trainWeak.lock()->vehicles->length == 0);
+  REQUIRE(locomotiveWeak.lock()->trains.size() == 0);
+  trainWeak.lock()->vehicles->add(locomotiveWeak.lock());
+  REQUIRE(trainWeak.lock()->vehicles->length == 1);
+  REQUIRE(locomotiveWeak.lock()->trains.size() == 1);
+
+  CHECK_NOTHROW(world->trains->delete_(trainWeak.lock()));
+  REQUIRE(world->trains->length == 0);
+  REQUIRE(trainWeak.expired());
+  REQUIRE(locomotiveWeak.lock()->trains.size() == 0);
+
+  world.reset();
+  REQUIRE(locomotiveWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
 TEST_CASE("Delete rail vehicle in active train", "[train]")
 {
   auto world = World::create();
