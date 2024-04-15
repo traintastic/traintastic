@@ -26,6 +26,7 @@
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../protocol/dcc/dcc.hpp"
 #include "../../input/inputcontroller.hpp"
+#include "../../output/outputcontroller.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 #include "../../../utils/inrange.hpp"
@@ -70,6 +71,24 @@ void ClientKernel::receive(const Message& message)
 
       switch(lanX.xheader)
       {
+        case LAN_X_TURNOUT_INFO:
+          if(message.dataLen() == sizeof(LanXTurnoutInfo))
+          {
+            const auto& reply = static_cast<const LanXTurnoutInfo&>(message);
+            OutputPairValue value = OutputPairValue::Undefined;
+            if(!reply.positionUnknown())
+            {
+              value = reply.state() ? OutputPairValue::Second : OutputPairValue::First;
+            }
+
+            EventLoop::call(
+              [this, address=reply.address(), value]()
+              {
+                m_outputController->updateOutputValue(OutputChannel::Accessory, address, value);
+              });
+          }
+          break;
+
         case LAN_X_BC:
           if(message == LanXBCTrackPowerOff() || message == LanXBCTrackShortCircuit())
           {
