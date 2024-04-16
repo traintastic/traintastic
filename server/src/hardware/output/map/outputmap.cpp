@@ -39,6 +39,12 @@
 #include "../../../utils/displayname.hpp"
 #include "../../../utils/inrange.hpp"
 
+//TODO: needed for connecting value changed signal. Can be avoided?
+#include "../singleoutput.hpp"
+#include "../pairoutput.hpp"
+#include "../aspectoutput.hpp"
+#include "../ecosstateoutput.hpp"
+
 OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , interface{this, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript,
@@ -123,16 +129,17 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
         }
         else // no interface
         {
-          for(auto& output : m_outputs)
+          for(auto& it : m_outputs)
           {
-            if(output) /*[[likely]]*/
+            if(it.first) /*[[likely]]*/
             {
-              interface->releaseOutput(*output, parent());
+              releaseOutput(it);
             }
-            m_outputs.clear();
-            addresses.clearInternal();
-            addressesSizeChanged();
           }
+
+          m_outputs.clear();
+          addresses.clearInternal();
+          addressesSizeChanged();
         }
         return true;
       }}
@@ -142,9 +149,9 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
         // Release outputs for previous channel:
         while(!m_outputs.empty())
         {
-          if(m_outputs.back()) /*[[likely]]*/
+          if(m_outputs.back().first) /*[[likely]]*/
           {
-            interface->releaseOutput(*m_outputs.back(), parent());
+            releaseOutput(m_outputs.back());
           }
           m_outputs.pop_back();
         }
@@ -209,18 +216,18 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
           return false; // Duplicate addresses aren't allowed.
         }
 
-        auto output = getOutput(channel, value, *interface);
-        if(!output) /*[[unlikely]]*/
+        auto outputConnPair = getOutput(channel, value, *interface);
+        if(!outputConnPair.first) /*[[unlikely]]*/
         {
           return false; // Output doesn't exist.
         }
 
-        if(index < m_outputs.size() && m_outputs[index])
+        if(index < m_outputs.size() && m_outputs[index].first)
         {
-          releaseOutput(*m_outputs[index]);
+          releaseOutput(m_outputs[index]);
         }
 
-        m_outputs[index] = output;
+        m_outputs[index] = outputConnPair;
 
         return true;
       }}
@@ -237,7 +244,7 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
         {
           if(!m_outputs.empty())
           {
-            releaseOutput(*m_outputs.front());
+            releaseOutput(m_outputs.front());
             m_outputs.clear();
           }
           if(value != 0)
@@ -274,9 +281,9 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
         if(interface && addresses.size() > addressesSizeMin) /*[[likely]]*/
         {
           addresses.eraseInternal(addresses.size() - 1);
-          if(m_outputs.back())
+          if(m_outputs.back().first)
           {
-            releaseOutput(*m_outputs.back());
+            releaseOutput(m_outputs.back());
           }
           m_outputs.pop_back();
           addressesSizeChanged();
@@ -583,6 +590,28 @@ std::shared_ptr<OutputMapOutputAction> OutputMap::createOutputAction(OutputType 
   return {};
 }
 
+int OutputMap::getMatchingActionOnCurrentState()
+{
+  int i = 0;
+  for(const auto& item : items)
+  {
+    TriState value = item->matchesCurrentOutputState();
+    if(value == TriState::True)
+    {
+      return i;
+    }
+
+    i++;
+  }
+
+  return -1; // No match found
+}
+
+void OutputMap::updateStateFromOutput()
+{
+  // Default implementation is no-op
+}
+
 void OutputMap::addOutput(OutputChannel ch, uint32_t id)
 {
   addOutput(ch, id, *interface);
@@ -591,18 +620,37 @@ void OutputMap::addOutput(OutputChannel ch, uint32_t id)
 void OutputMap::addOutput(OutputChannel ch, uint32_t id, OutputController& outputController)
 {
   m_outputs.emplace_back(getOutput(ch, id, outputController));
-  assert(m_outputs.back());
+  assert(m_outputs.back().first);
 }
 
-std::shared_ptr<Output> OutputMap::getOutput(OutputChannel ch, uint32_t id, OutputController& outputController)
+OutputMap::OutputConnectionPair OutputMap::getOutput(OutputChannel ch, uint32_t id, OutputController& outputController)
 {
   auto output = outputController.getOutput(ch, id, parent());
-  // TODO: connect output value changed
-  return output;
+
+  boost::signals2::connection conn;
+
+  if(auto *single = dynamic_cast<SingleOutput*>(output.get()))
+  {
+    conn = single->onValueChanged.connect([this](bool, const std::shared_ptr<SingleOutput>&){ updateStateFromOutput(); });
+  }
+  else if(auto* pair = dynamic_cast<PairOutput*>(output.get()))
+  {
+    conn = pair->onValueChanged.connect([this](OutputPairValue, const std::shared_ptr<PairOutput>&){ updateStateFromOutput(); });
+  }
+  else if(auto* aspect = dynamic_cast<AspectOutput*>(output.get()))
+  {
+    conn = aspect->onValueChanged.connect([this](int16_t, const std::shared_ptr<AspectOutput>&){ updateStateFromOutput(); });
+  }
+  else if(auto* ecosState = dynamic_cast<ECoSStateOutput*>(output.get()))
+  {
+    conn = ecosState->onValueChanged.connect([this](uint8_t, const std::shared_ptr<ECoSStateOutput>&){ updateStateFromOutput(); });
+  }
+
+  return {output, conn};
 }
 
-void OutputMap::releaseOutput(Output& output)
+void OutputMap::releaseOutput(OutputConnectionPair &outputConnPair)
 {
-  // TODO: disconnect output value changed
-  interface->releaseOutput(output, parent());
+  outputConnPair.second.disconnect();
+  interface->releaseOutput(*outputConnPair.first, parent());
 }
