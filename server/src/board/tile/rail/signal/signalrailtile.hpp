@@ -54,6 +54,8 @@ class SignalRailTile : public StraightRailTile
 
     void evaluate();
 
+    void connectOutputMap();
+
   public:
     static std::optional<OutputActionValue> getDefaultActionValue(SignalAspect signalAspect, OutputType outputType, size_t outputIndex);
 

@@ -185,3 +185,13 @@ void SignalRailTile::evaluate()
     setAspect(SignalAspect::Stop);
   }
 }
+
+void SignalRailTile::connectOutputMap()
+{
+    outputMap->onOutputStateMatchFound.connect([this](SignalAspect value)
+      {
+        doSetAspect(value);
+      });
+
+    //TODO: disconnect somewhere?
+}
