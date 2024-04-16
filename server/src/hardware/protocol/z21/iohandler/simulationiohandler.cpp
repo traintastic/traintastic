@@ -127,6 +127,30 @@ bool SimulationIOHandler::send(const Message& message)
             reply(LanXGetFirmwareVersionReply(firmwareVersionMajor, ServerConfig::firmwareVersionMinor));
           }
           break;
+
+        case LAN_X_SET_TURNOUT:
+        {
+          if(message.dataLen() == sizeof(LanXSetTurnout))
+          {
+            const auto& setTurnout = static_cast<const LanXSetTurnout&>(message);
+            if((m_broadcastFlags & BroadcastFlags::PowerLocoTurnoutChanges) == BroadcastFlags::PowerLocoTurnoutChanges)
+            {
+              // Client has subscribed to turnout changes
+              reply(LanXTurnoutInfo(setTurnout.address(), setTurnout.port(), false));
+            }
+          }
+          break;
+        }
+        case LAN_X_TURNOUT_INFO:
+        {
+          if(message.dataLen() == sizeof(LanXGetTurnoutInfo))
+          {
+            const auto& getTurnout = static_cast<const LanXGetTurnoutInfo&>(message);
+            //We do not keep a record of turnout states so send "Unknown Position"
+            reply(LanXTurnoutInfo(getTurnout.address(), false, true));
+          }
+          break;
+        }
       }
       break;
     }

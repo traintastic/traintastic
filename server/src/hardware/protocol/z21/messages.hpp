@@ -412,21 +412,33 @@ static_assert(sizeof(LanXSetTrackPowerOn) == 7);
 // LAN_X_GET_TURNOUT_INFO
 struct LanXGetTurnoutInfo : LanX
 {
-  uint8_t db0;
-  uint8_t db1;
+  uint8_t addressLSB;
+  uint8_t addressMSB;
   uint8_t checksum;
 
   LanXGetTurnoutInfo(uint16_t address)
     : LanX(sizeof(LanXGetTurnoutInfo), LAN_X_TURNOUT_INFO)
-    , db0(address >> 8)
-    , db1(address & 0xFF)
   {
+    setAddress(address);
     updateChecksum();
   }
 
-  uint16_t address() const
+  inline uint16_t rawAddress() const
   {
-    return (static_cast<uint16_t>(db0) << 8) | db1;
+    return to16(addressLSB, addressMSB);
+  }
+
+  inline uint16_t address() const
+  {
+    return 1 + rawAddress();
+  }
+
+  void setAddress(uint16_t value)
+  {
+    assert(value >= 1 && value <= 2048);
+    value--;
+    addressMSB = high8(value);
+    addressLSB = low8(value);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXGetTurnoutInfo) == 8);
@@ -458,9 +470,14 @@ struct LanXSetTurnout : LanX
     updateChecksum();
   }
 
-  uint16_t address() const
+  inline uint16_t rawAddress() const
   {
-    return 1 + to16(addressLSB, addressMSB);
+    return to16(addressLSB, addressMSB);
+  }
+
+  inline uint16_t address() const
+  {
+    return 1 + rawAddress();
   }
 
   void setAddress(uint16_t value)
@@ -471,17 +488,17 @@ struct LanXSetTurnout : LanX
     addressLSB = low8(value);
   }
 
-  bool activate() const
+  inline bool activate() const
   {
     return db2 & db2Queue;
   }
 
-  bool queue() const
+  inline bool queue() const
   {
     return db2 & db2Queue;
   }
 
-  bool port() const
+  inline bool port() const
   {
     return db2 & db2Port;
   }
@@ -1084,6 +1101,55 @@ struct LanGetHardwareInfoReply : Message
 static_assert(sizeof(LanGetHardwareInfoReply) == 12);
 
 // LAN_X_TURNOUT_INFO
+struct LanXTurnoutInfo : LanX
+{
+  uint8_t addressLSB;
+  uint8_t addressMSB;
+  uint8_t db2;
+  uint8_t checksum;
+
+  LanXTurnoutInfo(uint16_t address, bool port, bool isUnknown)
+    : LanX(sizeof(LanXTurnoutInfo), LAN_X_TURNOUT_INFO)
+  {
+    setAddress(address);
+
+    if(isUnknown)
+      db2 = 0;
+    else
+      db2 = port ? 0x02 : 0x01;
+
+    updateChecksum();
+  }
+
+  inline uint16_t rawAddress() const
+  {
+    return to16(addressLSB, addressMSB);
+  }
+
+  inline uint16_t address() const
+  {
+    return 1 + rawAddress();
+  }
+
+  inline bool positionUnknown() const
+  {
+    return db2 == 0;
+  }
+
+  inline bool state() const
+  {
+    return db2 == 0x02;
+  }
+
+  void setAddress(uint16_t value)
+  {
+    assert(value >= 1 && value <= 2048);
+    value--;
+    addressMSB = high8(value);
+    addressLSB = low8(value);
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanXTurnoutInfo) == 9);
 
 // LAN_X_BC_TRACK_POWER_OFF
 struct LanXBCTrackPowerOff : LanX

@@ -91,6 +91,25 @@ std::string toString(const Message& message, bool raw)
             raw = true;
           break;
 
+        case LAN_X_TURNOUT_INFO:
+        {
+          if(message.dataLen() == sizeof(LanXTurnoutInfo))
+          {
+            const auto& reply = static_cast<const LanXTurnoutInfo&>(message);
+            s = "LAN_X_TURNOUT_INFO";
+            s.append(" address=").append(std::to_string(reply.address()));
+            s.append(" port=").append(std::to_string(reply.state()));
+            s.append(" unknown=").append(std::to_string(reply.positionUnknown()));
+          }
+          else
+          {
+            const auto& getTurnoutInfo = static_cast<const LanXGetTurnoutInfo&>(message);
+            s = "LAN_X_GET_TURNOUT_INFO";
+            s.append(" address=").append(std::to_string(getTurnoutInfo.address()));
+          }
+          break;
+        }
+
         case LAN_X_SET_TURNOUT:
         {
           const auto& setTurnout = static_cast<const LanXSetTurnout&>(message);
