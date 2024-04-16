@@ -25,6 +25,7 @@
 
 #include "../../../core/object.hpp"
 #include "../../../core/objectvectorproperty.hpp"
+#include "traintastic/enum/tristate.hpp"
 
 class Output;
 class OutputMap;
@@ -45,6 +46,8 @@ class OutputMapItem : public Object
     OutputMapItem(Object& map);
 
     void execute();
+
+    TriState matchesCurrentOutputState() const;
 };
 
 #endif

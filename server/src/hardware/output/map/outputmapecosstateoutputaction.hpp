@@ -43,6 +43,8 @@ class OutputMapECoSStateOutputAction final : public OutputMapOutputAction
     OutputMapECoSStateOutputAction(OutputMap& _parent, size_t outputIndex);
 
     void execute() final;
+
+    bool matchesCurrentOutputState() final;
 };
 
 #endif
