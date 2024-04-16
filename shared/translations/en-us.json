@@ -4694,5 +4694,9 @@
     {
         "term": "wizard.button:cancel",
         "definition": "Cancel"
+    },
+    {
+        "term": "output_map:address_x",
+        "definition": "Address %1"
     }
 ]

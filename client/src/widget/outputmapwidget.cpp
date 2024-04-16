@@ -160,7 +160,10 @@ void OutputMapWidget::updateTableOutputColumns()
     for(int i = 0; i < size; i++)
     {
       const int column = columnCountNonOutput + i;
-      m_table->setHorizontalHeaderItem(column, new QTableWidgetItem(QString("#%1").arg(m_addresses->getInt(i))));
+      const int address = m_addresses->getInt(i);
+      auto* item = new QTableWidgetItem(QString("#%1").arg(address));
+      item->setToolTip(Locale::tr("output_map:address_x").arg(address));
+      m_table->setHorizontalHeaderItem(column, item);
     }
   }
   else if(m_ecosObject && m_ecosObject->getAttributeBool(AttributeName::Visible, true))
