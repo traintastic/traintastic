@@ -96,27 +96,53 @@ class AbstractProperty : public BaseProperty
 
     void setValueVariant(const QVariant& value)
     {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
       switch(value.typeId())
+#else
+      switch(value.type())
+#endif
       {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
         case QMetaType::Bool:
+#else
+        case QVariant::Bool:
+#endif
           setValueBool(value.toBool());
           break;
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
         case QMetaType::Int:
+#else
+        case QVariant::Int:
+#endif
           setValueInt(value.toInt());
           break;
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
         case QMetaType::UInt:
         case QMetaType::LongLong:
         case QMetaType::ULongLong:
+#else
+        case QVariant::UInt:
+        case QVariant::LongLong:
+        case QVariant::ULongLong:
+#endif
           setValueInt64(value.toLongLong());
           break;
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
         case QMetaType::Double:
+#else
+        case QVariant::Double:
+#endif
           setValueDouble(value.toDouble());
           break;
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
         case QMetaType::QString:
+#else
+        case QVariant::String:
+#endif
           setValueString(value.toString());
           break;
 
