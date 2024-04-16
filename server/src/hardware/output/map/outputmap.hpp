@@ -43,7 +43,8 @@ class OutputMap : public SubObject
 {
   public:
     using Items = std::vector<std::shared_ptr<OutputMapItem>>;
-    using Outputs = std::vector<std::shared_ptr<Output>>;
+    using OutputConnectionPair = std::pair<std::shared_ptr<Output>, boost::signals2::connection>;
+    using Outputs = std::vector<OutputConnectionPair>;
 
   private:
     static constexpr size_t addressesSizeMin = 1;
@@ -54,8 +55,8 @@ class OutputMap : public SubObject
 
     void addOutput(OutputChannel ch, uint32_t id);
     void addOutput(OutputChannel ch, uint32_t id, OutputController& outputController);
-    std::shared_ptr<Output> getOutput(OutputChannel ch, uint32_t id, OutputController& outputController);
-    void releaseOutput(Output& output);
+    OutputConnectionPair getOutput(OutputChannel ch, uint32_t id, OutputController& outputController);
+    void releaseOutput(OutputConnectionPair& outputConnPair);
 
   protected:
     Outputs m_outputs;
@@ -76,6 +77,10 @@ class OutputMap : public SubObject
 
     virtual std::optional<OutputActionValue> getDefaultOutputActionValue(const OutputMapItem& item, OutputType outputType, size_t outputIndex) = 0;
 
+    int getMatchingActionOnCurrentState();
+
+    virtual void updateStateFromOutput();
+
   public:
     ObjectProperty<OutputController> interface;
     Property<OutputChannel> channel;
@@ -91,7 +96,7 @@ class OutputMap : public SubObject
     const std::shared_ptr<Output>& output(size_t index) const
     {
       assert(index < m_outputs.size());
-      return m_outputs[index];
+      return m_outputs[index].first;
     }
 };
 

@@ -26,6 +26,7 @@
 #include "outputmap.hpp"
 #include <initializer_list>
 #include "outputmapoutputaction.hpp"
+#include "../../../core/event.hpp"
 
 template<class Key, class Value>
 class OutputMapBase : public OutputMap
@@ -58,10 +59,13 @@ class OutputMapBase : public OutputMap
     }
 
   public:
+    Event<Key> onOutputStateMatchFound;
+
     OutputMapBase(Object& _parent, std::string_view parentPropertyName, std::initializer_list<Key> keys, DefaultOutputActionGetter defaultOutputActionGetter) :
-      OutputMap(_parent, parentPropertyName),
-      m_keys{keys}
+      OutputMap(_parent, parentPropertyName)
+      , m_keys{keys}
       , m_defaultOutputActionGetter{defaultOutputActionGetter}
+      , onOutputStateMatchFound{*this, "on_match_found", EventFlags::Scriptable}
     {
       assert(m_defaultOutputActionGetter);
       for(auto k : keys)
@@ -81,6 +85,15 @@ class OutputMapBase : public OutputMap
       }
       assert(false);
       return {};
+    }
+
+    void updateStateFromOutput() override
+    {
+      int match = getMatchingActionOnCurrentState();
+      if(match < 0)
+        return; // No match found
+
+      fireEvent(onOutputStateMatchFound, m_keys[match]);
     }
 };
 
