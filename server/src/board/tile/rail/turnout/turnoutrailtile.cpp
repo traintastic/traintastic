@@ -98,14 +98,25 @@ bool TurnoutRailTile::isValidPosition(TurnoutPosition value)
   return values->contains(static_cast<int64_t>(value));
 }
 
-bool TurnoutRailTile::doSetPosition(TurnoutPosition value)
+bool TurnoutRailTile::doSetPosition(TurnoutPosition value, bool skipAction)
 {
   if(!isValidPosition(value))
   {
     return false;
   }
-  (*outputMap)[value]->execute();
+  if(!skipAction)
+    (*outputMap)[value]->execute();
   position.setValueInternal(value);
   positionChanged(*this, value);
   return true;
+}
+
+void TurnoutRailTile::connectOutputMap()
+{
+  outputMap->onOutputStateMatchFound.connect([this](TurnoutPosition pos)
+    {
+      doSetPosition(pos, true);
+    });
+
+  //TODO: disconnect somewhere?
 }

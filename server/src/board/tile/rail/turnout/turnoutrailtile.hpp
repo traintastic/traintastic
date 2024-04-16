@@ -43,7 +43,9 @@ class TurnoutRailTile : public RailTile
     void worldEvent(WorldState state, WorldEvent event) override;
 
     bool isValidPosition(TurnoutPosition value);
-    virtual bool doSetPosition(TurnoutPosition value);
+    virtual bool doSetPosition(TurnoutPosition value, bool skipAction = false);
+
+    void connectOutputMap();
 
   public:
     boost::signals2::signal<void (const TurnoutRailTile&, TurnoutPosition)> positionChanged;

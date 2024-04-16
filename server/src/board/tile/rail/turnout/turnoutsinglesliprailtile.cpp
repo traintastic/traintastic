@@ -54,6 +54,8 @@ TurnoutSingleSlipRailTile::TurnoutSingleSlipRailTile(World& world, std::string_v
 
   Attributes::addValues(setPosition, setPositionValues);
   m_interfaceItems.add(setPosition);
+
+  connectOutputMap();
 }
 
 void TurnoutSingleSlipRailTile::getConnectors(std::vector<Connector>& connectors) const
