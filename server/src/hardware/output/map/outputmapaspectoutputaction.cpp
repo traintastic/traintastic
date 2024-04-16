@@ -41,6 +41,11 @@ void OutputMapAspectOutputAction::execute()
   aspectOutput().setValue(aspect);
 }
 
+bool OutputMapAspectOutputAction::matchesCurrentOutputState()
+{
+  return aspectOutput().value.value() == aspect;
+}
+
 void OutputMapAspectOutputAction::worldEvent(WorldState state, WorldEvent event)
 {
   OutputMapOutputAction::worldEvent(state, event);
