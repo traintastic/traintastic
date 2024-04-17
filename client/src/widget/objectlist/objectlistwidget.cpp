@@ -408,10 +408,13 @@ ObjectListWidget::~ObjectListWidget()
 
 void ObjectListWidget::objectDoubleClicked(const QString& id)
 {
-  SubWindowType type = SubWindowType::Object;
-  if(object()->classId() == "list.board")
-    type = SubWindowType::Board;
-  MainWindow::instance->showObject(id, "", type);
+  if(hasEdit())
+  {
+    SubWindowType type = SubWindowType::Object;
+    if(object()->classId() == "list.board")
+      type = SubWindowType::Board;
+    MainWindow::instance->showObject(id, "", type);
+  }
 }
 
 void ObjectListWidget::tableDoubleClicked(const QModelIndex& index)
