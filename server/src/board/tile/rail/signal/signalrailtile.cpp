@@ -191,7 +191,15 @@ void SignalRailTile::connectOutputMap()
 {
     outputMap->onOutputStateMatchFound.connect([this](SignalAspect value)
       {
-        doSetAspect(value, true);
+        bool changed = (value == aspect);
+        if(doSetAspect(value, true))
+        {
+          // If we are in a signal path, re-evaluate our aspect
+          // This corrects accidental modifications of aspect done
+          // by the user with an handset or command station.
+          if(changed && m_signalPath)
+            evaluate();
+        }
       });
 
     //TODO: disconnect somewhere?
