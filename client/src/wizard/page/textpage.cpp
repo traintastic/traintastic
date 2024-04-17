@@ -28,6 +28,7 @@ TextPage::TextPage(QWidget* parent)
   : WizardPage(parent)
   , m_text{new QLabel(this)}
 {
+    m_text->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
     m_text->setWordWrap(true);
     m_text->setOpenExternalLinks(true);
 
