@@ -158,7 +158,7 @@ void SignalRailTile::boardModified()
   StraightRailTile::boardModified();
 }
 
-bool SignalRailTile::doSetAspect(SignalAspect value)
+bool SignalRailTile::doSetAspect(SignalAspect value, bool skipAction)
 {
   const auto* values = setAspect.tryGetValuesAttribute(AttributeName::Values);
   assert(values);
@@ -166,7 +166,8 @@ bool SignalRailTile::doSetAspect(SignalAspect value)
     return false;
   if(aspect != value)
   {
-    (*outputMap)[value]->execute();
+    if(!skipAction)
+      (*outputMap)[value]->execute();
     aspect.setValueInternal(value);
     aspectChanged(*this, value);
     fireEvent(onAspectChanged, shared_ptr<SignalRailTile>(), value);
@@ -190,7 +191,7 @@ void SignalRailTile::connectOutputMap()
 {
     outputMap->onOutputStateMatchFound.connect([this](SignalAspect value)
       {
-        doSetAspect(value);
+        doSetAspect(value, true);
       });
 
     //TODO: disconnect somewhere?
