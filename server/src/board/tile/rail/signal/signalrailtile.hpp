@@ -50,7 +50,7 @@ class SignalRailTile : public StraightRailTile
 
     void boardModified() override;
 
-    virtual bool doSetAspect(SignalAspect value);
+    virtual bool doSetAspect(SignalAspect value, bool skipAction = false);
 
     void evaluate();
 
