@@ -71,6 +71,8 @@ bool OutputMapSingleOutputAction::matchesCurrentOutputState()
   switch(action.value())
   {
     case SingleOutputAction::None:
+      return true; // None means "any state is ok"
+
     case SingleOutputAction::Pulse: //TODO: how to detect pulse???
       break;
 
