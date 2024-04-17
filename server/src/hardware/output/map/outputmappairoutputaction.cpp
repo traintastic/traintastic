@@ -59,7 +59,7 @@ bool OutputMapPairOutputAction::matchesCurrentOutputState()
   switch(action.value())
   {
     case PairOutputAction::None:
-      break;
+      return true; // None means "any state is ok"
 
     case PairOutputAction::First:
     {
