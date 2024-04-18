@@ -26,12 +26,14 @@
 #include "../../../core/subobject.hpp"
 #include <vector>
 #include <unordered_map>
+#include <optional>
 #include <boost/signals2/signal.hpp>
 #include "../../../core/method.hpp"
 #include "../../../core/objectproperty.hpp"
 #include "../../../core/vectorproperty.hpp"
 #include "../../../core/objectvectorproperty.hpp"
 #include "../output.hpp"
+#include "outputactionvalue.hpp"
 
 class OutputController;
 class OutputMapItem;
@@ -70,7 +72,9 @@ class OutputMap : public SubObject
     void updateEnabled();
 
     uint32_t getUnusedAddress() const;
-    std::shared_ptr<OutputMapOutputAction> createOutputAction(OutputType outputType, size_t index);
+    std::shared_ptr<OutputMapOutputAction> createOutputAction(OutputType outputType, size_t index, std::optional<OutputActionValue> actionValue);
+
+    virtual std::optional<OutputActionValue> getDefaultOutputActionValue(const OutputMapItem& item, OutputType outputType, size_t outputIndex) = 0;
 
   public:
     ObjectProperty<OutputController> interface;

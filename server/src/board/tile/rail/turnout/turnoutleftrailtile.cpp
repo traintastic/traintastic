@@ -28,10 +28,46 @@
 static const std::array<TurnoutPosition, 3> positionValues = {TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Unknown};
 static const std::array<TurnoutPosition, 2> setPositionValues = {TurnoutPosition::Straight, TurnoutPosition::Left};
 
+static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex)
+{
+  if(outputIndex == 0)
+  {
+    switch(outputType)
+    {
+      case OutputType::Pair:
+        if(turnoutPosition == TurnoutPosition::Straight)
+        {
+          return PairOutputAction::Second;
+        }
+        else if(turnoutPosition == TurnoutPosition::Left)
+        {
+          return PairOutputAction::First;
+        }
+        break;
+
+      case OutputType::Aspect:
+        // YaMoRC YD8116 defaults aspects:
+        if(turnoutPosition == TurnoutPosition::Straight)
+        {
+          return static_cast<int16_t>(0);
+        }
+        else if(turnoutPosition == TurnoutPosition::Left)
+        {
+          return static_cast<int16_t>(16);
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
+  return {};
+}
+
 TurnoutLeftRailTile::TurnoutLeftRailTile(World& world, std::string_view _id, TileId tileId)
   : TurnoutRailTile(world, _id, tileId, 3)
 {
-  outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Left}));
+  outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Left}, getDefaultActionValue));
 
   Attributes::addValues(position, positionValues);
   m_interfaceItems.add(position);

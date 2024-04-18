@@ -487,7 +487,7 @@ void OutputMap::updateOutputActions(OutputType outputType)
   {
     while(m_outputs.size() > item->outputActions.size())
     {
-      std::shared_ptr<OutputMapOutputAction> outputAction = createOutputAction(outputType, item->outputActions.size());
+      std::shared_ptr<OutputMapOutputAction> outputAction = createOutputAction(outputType, item->outputActions.size(), getDefaultOutputActionValue(*item, outputType, item->outputActions.size()));
       assert(outputAction);
       item->outputActions.appendInternal(outputAction);
     }
@@ -533,21 +533,46 @@ uint32_t OutputMap::getUnusedAddress() const
   return address;
 }
 
-std::shared_ptr<OutputMapOutputAction> OutputMap::createOutputAction(OutputType outputType, size_t index)
+std::shared_ptr<OutputMapOutputAction> OutputMap::createOutputAction(OutputType outputType, size_t index, std::optional<OutputActionValue> actionValue)
 {
   switch(outputType)
   {
     case OutputType::Single:
-      return std::make_shared<OutputMapSingleOutputAction>(*this, index);
-
+    {
+      auto singleOutputAction = std::make_shared<OutputMapSingleOutputAction>(*this, index);
+      if(actionValue)
+      {
+        singleOutputAction->action.setValueInternal(std::get<SingleOutputAction>(*actionValue));
+      }
+      return singleOutputAction;
+    }
     case OutputType::Pair:
-      return std::make_shared<OutputMapPairOutputAction>(*this, index);
-
+    {
+      auto pairOutputAction = std::make_shared<OutputMapPairOutputAction>(*this, index);
+      if(actionValue)
+      {
+        pairOutputAction->action.setValueInternal(std::get<PairOutputAction>(*actionValue));
+      }
+      return pairOutputAction;
+    }
     case OutputType::Aspect:
-      return std::make_shared<OutputMapAspectOutputAction>(*this, index);
-
+    {
+      auto aspectOutputAction = std::make_shared<OutputMapAspectOutputAction>(*this, index);
+      if(actionValue)
+      {
+        aspectOutputAction->aspect.setValueInternal(std::get<int16_t>(*actionValue));
+      }
+      return aspectOutputAction;
+    }
     case OutputType::ECoSState:
-      return std::make_shared<OutputMapECoSStateOutputAction>(*this, index);
+    {
+      auto ecosStateOutputAction = std::make_shared<OutputMapECoSStateOutputAction>(*this, index);
+      if(actionValue)
+      {
+        ecosStateOutputAction->state.setValueInternal(std::get<int16_t>(*actionValue));
+      }
+      return ecosStateOutputAction;
+    }
   }
   assert(false);
   return {};

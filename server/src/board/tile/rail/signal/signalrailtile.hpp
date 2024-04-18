@@ -55,6 +55,8 @@ class SignalRailTile : public StraightRailTile
     void evaluate();
 
   public:
+    static std::optional<OutputActionValue> getDefaultActionValue(SignalAspect signalAspect, OutputType outputType, size_t outputIndex);
+
     boost::signals2::signal<void (const SignalRailTile&, SignalAspect)> aspectChanged;
 
     Property<std::string> name;

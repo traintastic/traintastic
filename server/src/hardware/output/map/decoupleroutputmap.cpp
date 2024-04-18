@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,7 +22,16 @@
 
 #include "decoupleroutputmap.hpp"
 
+static std::optional<OutputActionValue> getDefaultActionValue(DecouplerState decouplerState, OutputType outputType, size_t outputIndex)
+{
+  // FIXME: implement defaults
+  (void)decouplerState;
+  (void)outputType;
+  (void)outputIndex;
+  return {};
+}
+
 DecouplerOutputMap::DecouplerOutputMap(Object& _parent, std::string_view parentPropertyName) :
-  OutputMapBase(_parent, parentPropertyName, {DecouplerState::Deactivated, DecouplerState::Activated})
+  OutputMapBase(_parent, parentPropertyName, {DecouplerState::Deactivated, DecouplerState::Activated}, getDefaultActionValue)
 {
 }

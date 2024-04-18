@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/output/map/turnoutoutputmap.hpp
+ * server/src/hardware/output/map/outputactionvalue.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2024 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,18 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_TURNOUTOUTPUTMAP_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_TURNOUTOUTPUTMAP_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_OUTPUTACTIONVALUE_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_OUTPUTACTIONVALUE_HPP
 
-#include "outputmapbase.hpp"
-#include "turnoutoutputmapitem.hpp"
+#include <cstdint>
+#include <variant>
+#include <traintastic/enum/singleoutputaction.hpp>
+#include <traintastic/enum/pairoutputaction.hpp>
 
-class TurnoutOutputMap : public OutputMapBase<TurnoutPosition, TurnoutOutputMapItem>
-{
-  CLASS_ID("output_map.turnout")
-
-  public:
-    TurnoutOutputMap(Object& _parent, std::string_view parentPropertyName, std::initializer_list<TurnoutPosition> positions, DefaultOutputActionGetter defaultOutputActionGetter);
-};
+using OutputActionValue = std::variant<SingleOutputAction, PairOutputAction, int16_t, uint8_t>;
 
 #endif

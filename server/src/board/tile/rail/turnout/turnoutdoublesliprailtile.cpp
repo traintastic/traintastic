@@ -33,6 +33,15 @@ static const std::array<TurnoutPosition, 6> setPositionValues = {TurnoutPosition
                                                                  TurnoutPosition::Crossed, TurnoutPosition::Diverged,
                                                                  TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB};
 
+static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex)
+{
+  // FIXME: implement defaults
+  (void)turnoutPosition;
+  (void)outputType;
+  (void)outputIndex;
+  return {};
+}
+
 TurnoutDoubleSlipRailTile::TurnoutDoubleSlipRailTile(World& world, std::string_view _id)
   : TurnoutRailTile(world, _id, TileId::RailTurnoutDoubleSlip, 4)
 {
@@ -40,7 +49,8 @@ TurnoutDoubleSlipRailTile::TurnoutDoubleSlipRailTile(World& world, std::string_v
                                                                 std::initializer_list<TurnoutPosition>{
                                                                     TurnoutPosition::Left, TurnoutPosition::Right,
                                                                     TurnoutPosition::Crossed, TurnoutPosition::Diverged,
-                                                                    TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB}));
+                                                                    TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB},
+                                                                getDefaultActionValue));
 
   Attributes::addValues(position, positionValues);
   m_interfaceItems.add(position);

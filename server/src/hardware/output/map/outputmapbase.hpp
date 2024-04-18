@@ -30,8 +30,12 @@
 template<class Key, class Value>
 class OutputMapBase : public OutputMap
 {
+  public:
+    using DefaultOutputActionGetter = std::optional<OutputActionValue>(*)(Key, OutputType, size_t);
+
   protected:
     const std::vector<Key> m_keys;
+    DefaultOutputActionGetter m_defaultOutputActionGetter;
 
     void load(WorldLoader& loader, const nlohmann::json& data) override
     {
@@ -48,11 +52,18 @@ class OutputMapBase : public OutputMap
       }
     }
 
+    std::optional<OutputActionValue> getDefaultOutputActionValue(const OutputMapItem& item, OutputType outputType, size_t outputIndex) override
+    {
+      return m_defaultOutputActionGetter(static_cast<const Value&>(item).key.value(), outputType, outputIndex);
+    }
+
   public:
-    OutputMapBase(Object& _parent, std::string_view parentPropertyName, std::initializer_list<Key> keys) :
+    OutputMapBase(Object& _parent, std::string_view parentPropertyName, std::initializer_list<Key> keys, DefaultOutputActionGetter defaultOutputActionGetter) :
       OutputMap(_parent, parentPropertyName),
       m_keys{keys}
+      , m_defaultOutputActionGetter{defaultOutputActionGetter}
     {
+      assert(m_defaultOutputActionGetter);
       for(auto k : keys)
       {
         items.appendInternal(std::make_shared<Value>(*this, k));
