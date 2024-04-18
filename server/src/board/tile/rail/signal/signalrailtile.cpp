@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,54 @@
 #include "../../../../core/objectproperty.tpp"
 #include "../../../../world/getworld.hpp"
 #include "../../../../utils/displayname.hpp"
+
+std::optional<OutputActionValue> SignalRailTile::getDefaultActionValue(SignalAspect signalAspect, OutputType outputType, size_t outputIndex)
+{
+  // FIXME: implement more defaults
+  switch(outputType)
+  {
+    case OutputType::Pair:
+      if(signalAspect == SignalAspect::Stop && outputIndex == 0)
+      {
+        return PairOutputAction::First;
+      }
+      else if(signalAspect == SignalAspect::ProceedReducedSpeed && outputIndex == 1)
+      {
+        return PairOutputAction::Second;
+      }
+      else if(signalAspect == SignalAspect::Proceed && outputIndex == 0)
+      {
+        return PairOutputAction::Second;
+      }
+      break;
+
+    case OutputType::Aspect:
+      if(outputIndex == 0)
+      {
+        // There is no official/defacto standard yet, until there is one use:
+        // https://www.z21.eu/de/produkte/z21-signal-decoder/signaltypen
+        // also used by YaMoRC YD8116.
+
+        if(signalAspect == SignalAspect::Stop)
+        {
+          return static_cast<int16_t>(0);
+        }
+        else if(signalAspect == SignalAspect::ProceedReducedSpeed)
+        {
+          return static_cast<int16_t>(1);
+        }
+        else if(signalAspect == SignalAspect::Proceed)
+        {
+          return static_cast<int16_t>(16);
+        }
+      }
+      break;
+
+    default:
+      break;
+  }
+  return {};
+}
 
 SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId) :
   StraightRailTile(world, _id, tileId),
