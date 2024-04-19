@@ -343,6 +343,21 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
           shared_ptr<BlockRailTile>(),
           blockStatus->direction.value());
 
+        const auto pathA = m_reservedPaths[0].lock();
+        const bool exitA = pathA && &pathA->fromBlock() == this;
+
+        const auto pathB = m_reservedPaths[1].lock();
+        const bool exitB = pathB && &pathB->fromBlock() == this;
+
+        if(blockStatus->direction.value() == BlockTrainDirection::TowardsA && exitA)
+        {
+          pathA->release();
+        }
+        else if(blockStatus->direction.value() == BlockTrainDirection::TowardsB && exitB)
+        {
+          pathB->release();
+        }
+
         blockStatus->destroy();
 #ifndef NDEBUG
         std::weak_ptr<TrainBlockStatus> blockStatusWeak = blockStatus;
