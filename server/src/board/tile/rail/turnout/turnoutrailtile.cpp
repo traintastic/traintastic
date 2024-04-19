@@ -35,6 +35,9 @@ TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tile
   outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
   setPosition{*this, "set_position", MethodFlags::ScriptCallable, [this](TurnoutPosition value)
     {
+      TurnoutPosition reservedPosition = getReservedPosition();
+      if(reservedPosition != TurnoutPosition::Unknown && reservedPosition != value)
+        return false; // Turnout is locked by reservation path
       return doSetPosition(value);
     }}
 {
@@ -148,6 +151,11 @@ void TurnoutRailTile::connectOutputMap()
   outputMap->onOutputStateMatchFound.connect([this](TurnoutPosition pos)
     {
       doSetPosition(pos, true);
+
+      // If turnout is inside a reserved path, force it to reserved position
+      TurnoutPosition reservedPosition = getReservedPosition();
+      if(reservedPosition != TurnoutPosition::Unknown && reservedPosition != position.value())
+          doSetPosition(reservedPosition, false);
     });
 
   //TODO: disconnect somewhere?
