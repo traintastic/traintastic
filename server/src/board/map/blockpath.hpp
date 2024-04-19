@@ -63,6 +63,7 @@ class BlockPath : public Path, public std::enable_shared_from_this<BlockPath>
     std::vector<std::weak_ptr<SignalRailTile>> m_signals; //!< signals in path
     std::weak_ptr<NXButtonRailTile> m_nxButtonFrom;
     std::weak_ptr<NXButtonRailTile> m_nxButtonTo;
+    bool m_isReserved;
 
   public:
     static std::vector<std::shared_ptr<BlockPath>> find(BlockRailTile& block);
@@ -97,6 +98,11 @@ class BlockPath : public Path, public std::enable_shared_from_this<BlockPath>
     BlockSide toSide() const
     {
       return m_toSide;
+    }
+
+    inline bool isReserved() const
+    {
+      return m_isReserved;
     }
 
     std::shared_ptr<NXButtonRailTile> nxButtonFrom() const;

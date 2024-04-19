@@ -296,6 +296,7 @@ BlockPath::BlockPath(BlockRailTile& block, BlockSide side)
   : m_fromBlock{block}
   , m_fromSide{side}
   , m_toSide{static_cast<BlockSide>(-1)}
+  , m_isReserved(false)
 {
 }
 
@@ -489,6 +490,9 @@ bool BlockPath::reserve(const std::shared_ptr<Train>& train, bool dryRun)
     }
   }
 
+  if(!dryRun)
+    m_isReserved = true;
+
   return true;
 }
 
@@ -596,6 +600,9 @@ bool BlockPath::release(bool dryRun)
       nxButton->release();
     }
   }
+
+  if(!dryRun)
+    m_isReserved = false;
 
   return true;
 }
