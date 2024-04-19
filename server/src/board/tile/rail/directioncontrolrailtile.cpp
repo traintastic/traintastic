@@ -61,6 +61,8 @@ DirectionControlRailTile::DirectionControlRailTile(World& world, std::string_vie
   , setState{*this, "set_state", MethodFlags::ScriptCallable,
       [this](DirectionControlState newState)
       {
+        if(reservedState())
+          return false; // Direction control is currently locked by reserved path
         const auto& states = setState.getVectorAttribute<DirectionControlState>(AttributeName::Values);
         if(std::find(states.begin(), states.end(), newState) == states.end())
           return false;
