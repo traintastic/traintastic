@@ -53,6 +53,7 @@ bool CrossRailTile::release(bool dryRun)
 
   if(!dryRun)
   {
+    m_crossState = CrossState::Unset;
     RailTile::release();
   }
   return true;
