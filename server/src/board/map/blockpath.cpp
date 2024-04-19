@@ -504,32 +504,44 @@ bool BlockPath::release(bool dryRun)
     return false;
   }
 
+  auto toBlock = m_toBlock.lock();
+  if(!toBlock) /*[[unlikely]]*/
+    return false;
+
+  BlockState fromState = m_fromBlock.state.value();
+  BlockState toState = toBlock->state.value();
+
+  if((fromState == BlockState::Occupied || fromState == BlockState::Unknown)
+      && (toState == BlockState::Occupied || toState == BlockState::Unknown)
+      && !m_fromBlock.trains.empty() && !toBlock->trains.empty())
+  {
+    // Check if train head is beyond toBlock while its end is still in fromBlock
+    const auto& status1 = fromSide() == BlockSide::A ? m_fromBlock.trains.front() : m_fromBlock.trains.back();
+    const auto& status2 = toSide() == BlockSide::A ? toBlock->trains.front() : toBlock->trains.back();
+
+    if(status1->train.value() == status2->train.value())
+      return false;
+  }
+
   if(!m_fromBlock.release(m_fromSide, dryRun))
   {
     assert(dryRun);
     return false;
   }
 
-  if(auto toBlock = m_toBlock.lock()) /*[[likely]]*/
+  if(!dryRun && toBlock->state.value() == BlockState::Reserved)
   {
-    if(!dryRun && toBlock->state.value() == BlockState::Reserved)
+    if(toBlock->trains.size() == 1)
     {
-      if(toBlock->trains.size() == 1)
-      {
-        //TODO: this bypasses some checks
-        toBlock->removeTrainInternal(toBlock->trains[0]);
-        //TODO: dryRun? what if it fails?
-      }
-    }
-
-    if(!toBlock->release(m_toSide, dryRun))
-    {
-      assert(dryRun);
-      return false;
+      //TODO: this bypasses some checks
+      toBlock->removeTrainInternal(toBlock->trains[0]);
+      //TODO: dryRun? what if it fails?
     }
   }
-  else
+
+  if(!toBlock->release(m_toSide, dryRun))
   {
+    assert(dryRun);
     return false;
   }
 
