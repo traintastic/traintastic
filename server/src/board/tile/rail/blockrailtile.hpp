@@ -102,6 +102,8 @@ class BlockRailTile : public RailTile
     const std::shared_ptr<BlockPath> getReservedPath(BlockSide side) const;
     bool reserve(const std::shared_ptr<BlockPath>& blockPath, const std::shared_ptr<Train>& train, BlockSide side, bool dryRun = false);
     bool release(BlockSide side, bool dryRun = false);
+
+    bool removeOneTrain(const std::shared_ptr<Train>& oldTrain);
 };
 
 #endif
