@@ -23,6 +23,7 @@
 #include <catch2/catch.hpp>
 #include "../../src/world/world.hpp"
 #include "../../src/core/method.tpp"
+#include "../../src/core/objectproperty.tpp"
 #include "../../src/board/board.hpp"
 #include "../../src/board/boardlist.hpp"
 #include "../../src/board/nx/nxmanager.hpp"
@@ -31,6 +32,7 @@
 #include "../../src/board/tile/rail/nxbuttonrailtile.hpp"
 #include "../../src/board/tile/rail/turnout/turnoutleft45railtile.hpp"
 #include "../../src/board/tile/rail/turnout/turnoutright45railtile.hpp"
+#include "../../src/hardware/decoder/decoder.hpp"
 #include "../../src/vehicle/rail/railvehiclelist.hpp"
 #include "../../src/vehicle/rail/locomotive.hpp"
 #include "../../src/train/trainlist.hpp"
