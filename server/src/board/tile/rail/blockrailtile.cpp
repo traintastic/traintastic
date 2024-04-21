@@ -552,10 +552,10 @@ void BlockRailTile::loaded()
 void BlockRailTile::destroying()
 {
   const auto self = shared_ptr<BlockRailTile>();
-  for(const auto& status : *trains)
-    if(status->train)
-      status->train->blocks.removeInternal(status);
-
+  while(!trains.empty())
+  {
+    trains.back()->destroy();
+  }
   RailTile::destroying();
 }
 
