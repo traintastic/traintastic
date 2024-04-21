@@ -170,6 +170,21 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
           }
         }
       }}
+  , setStateFree{*this, "set_state_free",
+      [this]()
+      {
+        if(trains.empty()) // No train may be assigned to or have reserved the block.
+        {
+          // Check sensor states, they may not be occupied:
+          if(sensorStates.empty())
+          {
+            setState(BlockState::Free);
+            return true;
+          }
+          // TODO: set sensors to free if none is occupied
+        }
+        return false;
+      }}
   , onTrainAssigned{*this, "on_train_assigned", EventFlags::Scriptable}
   , onTrainReserved{*this, "on_train_reserved", EventFlags::Scriptable}
   , onTrainEntered{*this, "on_train_entered", EventFlags::Scriptable}

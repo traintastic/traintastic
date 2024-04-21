@@ -78,6 +78,7 @@ class BlockRailTile : public RailTile
     Method<void(std::shared_ptr<Train>)> assignTrain;
     Method<void()> removeTrain;
     Method<void()> flipTrain;
+    Method<bool()> setStateFree;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onTrainAssigned;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onTrainReserved;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onTrainEntered;
