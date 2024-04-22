@@ -191,7 +191,7 @@ void SignalRailTile::connectOutputMap()
 {
     outputMap->onOutputStateMatchFound.connect([this](SignalAspect value)
       {
-        bool changed = (value == aspect);
+        bool changed = (value != aspect);
         if(doSetAspect(value, true))
         {
           // If we are in a signal path, re-evaluate our aspect
