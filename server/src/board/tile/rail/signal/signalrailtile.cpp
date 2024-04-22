@@ -79,6 +79,7 @@ std::optional<OutputActionValue> SignalRailTile::getDefaultActionValue(SignalAsp
 SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId) :
   StraightRailTile(world, _id, tileId),
   m_node{*this, 2},
+  m_retryCount(0),
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   requireReservation{this, "require_reservation", AutoYesNo::Auto, PropertyFlags::ReadWrite | PropertyFlags::Store},
   aspect{this, "aspect", SignalAspect::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
@@ -198,7 +199,20 @@ void SignalRailTile::connectOutputMap()
           // This corrects accidental modifications of aspect done
           // by the user with an handset or command station.
           if(changed && m_signalPath)
-            evaluate();
+          {
+            auto now = std::chrono::steady_clock::now();
+            if((now - m_lastRetryStart) >= RETRY_DURATION)
+            {
+                m_lastRetryStart = now;
+                m_retryCount = 0;
+            }
+
+            if(m_retryCount < MAX_RETRYCOUNT)
+            {
+                m_retryCount++;
+                evaluate();
+            }
+          }
         }
       });
 
