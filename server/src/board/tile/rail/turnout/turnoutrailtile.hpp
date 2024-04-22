@@ -62,6 +62,8 @@ class TurnoutRailTile : public RailTile
 
     virtual bool reserve(TurnoutPosition turnoutPosition, bool dryRun = false);
     bool release(bool dryRun = false);
+
+    TurnoutPosition getReservedPosition() const;
 };
 
 #endif

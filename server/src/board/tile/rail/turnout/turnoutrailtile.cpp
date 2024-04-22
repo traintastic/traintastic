@@ -33,7 +33,10 @@ TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tile
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   position{this, "position", TurnoutPosition::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
-  setPosition{*this, "set_position", MethodFlags::ScriptCallable, [this](TurnoutPosition value) { return doSetPosition(value); }}
+  setPosition{*this, "set_position", MethodFlags::ScriptCallable, [this](TurnoutPosition value)
+    {
+      return doSetPosition(value);
+    }}
 {
   assert(isRailTurnout(tileId_));
 
@@ -60,6 +63,17 @@ bool TurnoutRailTile::reserve(TurnoutPosition turnoutPosition, bool dryRun)
   {
     return false;
   }
+
+  const TurnoutPosition reservedPos = getReservedPosition();
+  if(reservedPos != TurnoutPosition::Unknown && reservedPos != turnoutPosition)
+  {
+    // TODO: what if 2 path reserve same turnout for same position?
+    // Upon release one path it will make turnout free while it's still reserved by second path
+
+    // Turnout is already reserved for another position
+    return false;
+  }
+
   if(!dryRun)
   {
     if(!doSetPosition(turnoutPosition)) /*[[unlikely]]*/
@@ -93,6 +107,11 @@ void TurnoutRailTile::addToWorld()
 {
   outputMap->parentObject.setValueInternal(shared_from_this());
   RailTile::addToWorld();
+}
+
+TurnoutPosition TurnoutRailTile::getReservedPosition() const
+{
+  return static_cast<TurnoutPosition>(RailTile::reservedState());
 }
 
 void TurnoutRailTile::worldEvent(WorldState state, WorldEvent event)
