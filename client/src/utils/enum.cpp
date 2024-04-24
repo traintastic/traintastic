@@ -49,6 +49,7 @@
 #include <traintastic/enum/signalaspect.hpp>
 #include <traintastic/enum/singleoutputaction.hpp>
 #include <traintastic/enum/speedunit.hpp>
+#include <traintastic/enum/textalign.hpp>
 #include <traintastic/enum/trainmode.hpp>
 #include <traintastic/enum/traintasticdiyinterfacetype.hpp>
 #include <traintastic/enum/turnoutposition.hpp>
@@ -117,6 +118,7 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(SingleOutputAction)
   TRANSLATE_ENUM(SignalAspect)
   TRANSLATE_ENUM(SpeedUnit)
+  TRANSLATE_ENUM(TextAlign)
   TRANSLATE_ENUM(TrainMode)
   TRANSLATE_ENUM(TraintasticDIYInterfaceType)
   TRANSLATE_ENUM(TurnoutPosition)
