@@ -225,7 +225,7 @@
     },
     {
         "term": "class_id:board_tile.rail.block",
-        "definition": "Butoir",
+        "definition": "Canton",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -257,7 +257,7 @@
     },
     {
         "term": "class_id:board_tile.rail.buffer_stop",
-        "definition": "Tampon",
+        "definition": "Heurtoir",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3641,7 +3641,7 @@
     },
     {
         "term": "train:block",
-        "definition": "Butoir",
+        "definition": "CantonCantonCanton",
         "context": "",
         "term_plural": "",
         "reference": "",
