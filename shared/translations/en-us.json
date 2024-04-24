@@ -4698,5 +4698,69 @@
     {
         "term": "output_map:address_x",
         "definition": "Address %1"
+    },
+    {
+        "term": "class_id:board_tile.rail.nx_button",
+        "definition": "NX button"
+    },
+    {
+        "term": "class_id:board_tile.misc.label",
+        "definition": "Label"
+    },
+    {
+        "term": "board_tile.misc.label:text",
+        "definition": "Text"
+    },
+    {
+        "term": "board_tile.misc.label:text_align",
+        "definition": "Text align"
+    },
+    {
+        "term": "board_tile.misc.label:text_color",
+        "definition": "Text color"
+    },
+    {
+        "term": "color:none",
+        "definition": "None"
+    },
+    {
+        "term": "board_tile.misc.label:background_color",
+        "definition": "Background color"
+    },
+    {
+        "term": "text_align:top_left",
+        "definition": "Top left"
+    },
+    {
+        "term": "text_align:top_center",
+        "definition": "Top center"
+    },
+    {
+        "term": "text_align:top_right",
+        "definition": "Top right"
+    },
+    {
+        "term": "text_align:center_left",
+        "definition": "Center left"
+    },
+    {
+        "term": "text_align:center",
+        "definition": "Center"
+    },
+    {
+        "term": "text_align:center_right",
+        "definition": "Center right"
+    },
+    {
+        "term": "text_align:bottom_left",
+        "definition": "Bottom left"
+    },
+    {
+        "term": "text_align:bottom_center",
+        "definition": "Bottom center"
+    },
+    {
+        "term": "text_align:bottom_right",
+        "definition": "Bottom right"
     }
 ]

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@
 #include "getboardcolorscheme.hpp"
 #include "tilepainter.hpp"
 #include "../network/board.hpp"
+#include "../network/object.tpp"
 #include "../network/object/blockrailtile.hpp"
 #include "../network/object/nxbuttonrailtile.hpp"
 #include "../network/abstractproperty.hpp"
@@ -183,6 +184,13 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
     case TileId::RailOneWay:
     case TileId::RailLink:
     case TileId::ReservedForFutureExpension:
+      break;
+
+    case TileId::Label:
+      tryConnect("background_color");
+      tryConnect("text");
+      tryConnect("text_align");
+      tryConnect("text_color");
       break;
   }
 }
@@ -598,6 +606,22 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           tilePainter.drawRailNX(r, a, isReserved, getNXButtonEnabled(it.first), getNXButtonPressed(it.first));
           break;
 
+        case TileId::Label:
+        {
+          if(auto label = m_board.board().getTileObject(it.first)) /*[[likely]]*/
+          {
+            tilePainter.drawLabel(r, a,
+              label->getPropertyValueString("text"),
+              label->getPropertyValueEnum<TextAlign>("text_align", TextAlign::Center),
+              label->getPropertyValueEnum<Color>("text_color", Color::None),
+              label->getPropertyValueEnum<Color>("background_color", Color::None));
+          }
+          else
+          {
+            tilePainter.drawLabel(r, a);
+          }
+          break;
+        }
         case TileId::None:
         case TileId::ReservedForFutureExpension:
         default:
