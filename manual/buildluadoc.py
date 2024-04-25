@@ -164,6 +164,8 @@ class LuaDoc:
                 if m is not None:
                     item['lua_name'] = m.group(1).upper()
 
+            items = filter(lambda item: 'lua_name' in item, items)
+
             enums.append({
                 'filename': 'enum.' + info.group(1).lower() + '.html',
                 'name': 'enum.' + info.group(1).lower() + ':title',
