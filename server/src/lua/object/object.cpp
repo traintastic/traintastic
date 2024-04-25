@@ -152,6 +152,13 @@ int Object::newindex(lua_State* L, ::Object& object)
           property->fromBool(Lua::check<bool>(L, 3));
           break;
 
+        case ValueType::Enum:
+          // EnumName<T>::value assigned to the std::string_view is NUL terminated,
+          // so it can be used as const char* however it is a bit tricky :)
+          assert(*(property->enumName().data() + property->enumName().size()) == '\0');
+          property->fromInt64(checkEnum(L, 3, property->enumName().data()));
+          break;
+
         case ValueType::Integer:
           property->fromInt64(Lua::check<int64_t>(L, 3));
           break;
