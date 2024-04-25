@@ -1,5 +1,11 @@
 {
   "name": {},
   "color": {},
-  "on_pressed": {}
+  "on_pressed": {
+    "parameters": [
+      {
+        "name": "push_button"
+      }
+    ]
+  }
 }
