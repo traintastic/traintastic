@@ -1882,5 +1882,9 @@
   {
     "term": "object.interface.get_output:return_values",
     "definition": "{ref:object.singleoutput}, {ref:object.pairoutput} or {ref:object.aspectoutput} object depending on `channel` or `nil` if `channel`/`address` combination is invalid."
+  },
+  {
+    "term": "object.labeltile:title",
+    "definition": "Label tile"
   }
 ]

@@ -104,6 +104,9 @@
   "HSI88_INTERFACE": {
     "type": "constant"
   },
+  "LABEL_TILE": {
+    "type": "constant"
+  },
   "LOCONET_INTERFACE": {
     "type": "constant"
   },

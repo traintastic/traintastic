@@ -29,6 +29,7 @@
 #include "../board/board.hpp"
 #include "../board/boardlist.hpp"
 
+#include "../board/tile/misc/labeltile.hpp"
 #include "../board/tile/misc/pushbuttontile.hpp"
 #include "../board/tile/rail/nxbuttonrailtile.hpp"
 #include "../board/tile/rail/sensorrailtile.hpp"
@@ -150,6 +151,7 @@ void Class::registerValues(lua_State* L)
   registerValue<Board>(L, "BOARD");
   registerValue<BoardList>(L, "BOARD_LIST");
 
+  registerValue<LabelTile>(L, "LABEL_TILE");
   registerValue<PushButtonTile>(L, "PUSH_BUTTON_TILE");
   registerValue<NXButtonRailTile>(L, "NX_BUTTON_RAIL_TILE");
   registerValue<StraightRailTile>(L, "STRAIGHT_RAIL_TILE");
