@@ -26,6 +26,7 @@
 #include <lua.hpp>
 #include "enum.hpp"
 #include <traintastic/enum/blocktraindirection.hpp>
+#include <traintastic/enum/color.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
 #include "../../src/enum/direction.hpp"
 #include "../../src/enum/directioncontrolstate.hpp"
@@ -34,6 +35,7 @@
 #include <traintastic/enum/outputchannel.hpp>
 #include <traintastic/enum/outputtype.hpp>
 #include <traintastic/enum/outputpairvalue.hpp>
+#include <traintastic/enum/textalign.hpp>
 #include "../../src/enum/tristate.hpp"
 #include "../../src/enum/turnoutposition.hpp"
 #include "../../src/enum/signalaspect.hpp"
@@ -42,6 +44,7 @@
 
 #define LUA_ENUMS \
   BlockTrainDirection, \
+  Color, \
   DecoderProtocol, \
   Direction, \
   DirectionControlState, \
@@ -50,6 +53,7 @@
   OutputChannel, \
   OutputType, \
   OutputPairValue, \
+  TextAlign, \
   TriState, \
   TurnoutPosition, \
   SignalAspect, \
