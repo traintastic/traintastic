@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,7 +41,7 @@ class PushButtonTile : public Tile
     Property<std::string> name;
     Property<Color> color;
     Method<void()> pressed;
-    Event<> onPressed;
+    Event<std::shared_ptr<PushButtonTile>> onPressed;
 
     PushButtonTile(World& world, std::string_view _id);
 };
