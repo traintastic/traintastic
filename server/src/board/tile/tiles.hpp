@@ -47,6 +47,7 @@
 #include "rail/turnout/turnoutdoublesliprailtile.hpp"
 #include "rail/signal/signal2aspectrailtile.hpp"
 #include "rail/signal/signal3aspectrailtile.hpp"
+#include "rail/signal/signalrailtile_ita.hpp"
 #include "rail/bufferstoprailtile.hpp"
 #include "rail/sensorrailtile.hpp"
 #include "rail/blockrailtile.hpp"

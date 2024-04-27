@@ -52,6 +52,7 @@ std::shared_ptr<Tile> Tiles::create(World& world, std::string_view classId, std:
   IF_CLASSID_CREATE(TurnoutDoubleSlipRailTile)
   IF_CLASSID_CREATE(Signal2AspectRailTile)
   IF_CLASSID_CREATE(Signal3AspectRailTile)
+  IF_CLASSID_CREATE(SignalRailTileITA)
   IF_CLASSID_CREATE(BufferStopRailTile)
   IF_CLASSID_CREATE(SensorRailTile)
   IF_CLASSID_CREATE(BlockRailTile)
@@ -116,6 +117,7 @@ const std::vector<Tiles::Info>& Tiles::getInfo()
 
     Info{Signal2AspectRailTile::classId, TileId::RailSignal2Aspect, rotateFull, {signal}},
     Info{Signal3AspectRailTile::classId, TileId::RailSignal3Aspect, rotateFull, {signal}},
+    Info{SignalRailTileITA::classId, TileId::RailSignal3Aspect, rotateFull, {signal}},
 
     Info{PushButtonTile::classId, TileId::PushButton, rotateNone, {miscellaneous}},
     Info{LabelTile::classId, TileId::Label, rotateFull90, {miscellaneous}},
@@ -134,6 +136,7 @@ bool Tiles::canUpgradeStraightRail(std::string_view classId)
     (classId == SensorRailTile::classId) ||
     (classId == Signal2AspectRailTile::classId) ||
     (classId == Signal3AspectRailTile::classId) ||
+    (classId == SignalRailTileITA::classId) ||
     (classId == DecouplerRailTile::classId) ||
     (classId == NXButtonRailTile::classId);
 }
