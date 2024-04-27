@@ -60,7 +60,7 @@ LuaScriptEditWidget::LuaScriptEditWidget(const QString& id, QWidget* parent) :
 
 void LuaScriptEditWidget::buildForm()
 {
-  setIdAsWindowTitle();
+  setObjectWindowTitle();
   setWindowIcon(Theme::getIconForClassId(m_object->classId()));
 
   m_propertyState = dynamic_cast<Property*>(m_object->getProperty("state"));
