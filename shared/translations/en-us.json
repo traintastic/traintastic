@@ -4762,5 +4762,53 @@
     {
         "term": "text_align:bottom_right",
         "definition": "Bottom right"
+    },
+    {
+        "term": "wizard.new_board:title",
+        "definition": "New board"
+    },
+    {
+        "term": "wizard.new_board.introduction:title",
+        "definition": "New board"
+    },
+    {
+        "term": "wizard.new_board.introduction.short:text",
+        "definition": "This wizard will help to set the basic board properties."
+    },
+    {
+        "term": "wizard.new_board.introduction.long:text",
+        "definition": "This wizard will explain the basics of the board."
+    },
+    {
+        "term": "wizard.new_board.editing:title",
+        "definition": "Editing"
+    },
+    {
+        "term": "wizard.new_board.editing:text",
+        "definition": "The board can only be modified if the world is in edit mode and is stopped. The toolbar with edit option will automatically appear when editing is possible."
+    },
+    {
+        "term": "wizard.new_board.adding:title",
+        "definition": "Adding elements"
+    },
+    {
+        "term": "wizard.new_board.adding:text",
+        "definition": "Adding new elements to the board can be done using the items available in serveral menu's. Use mouse left click to place an element, use mouse right click to rotate an element.\n\nTo replace an element with another element hold ctrl while left clicking, otherwise the old element must be deleted first."
+    },
+    {
+        "term": "wizard.new_board.name:title",
+        "definition": "Board name"
+    },
+    {
+        "term": "wizard.new_board.name:text",
+        "definition": "Give the board a name, e.g. Traintastic, Station Awesome or Staging area:"
+    },
+    {
+        "term": "wizard.new_board.finalization:title",
+        "definition": "Completed"
+    },
+    {
+        "term": "wizard.new_board.finalization:text",
+        "definition": "Lets go build the board!"
     }
 ]

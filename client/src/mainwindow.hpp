@@ -45,6 +45,7 @@ class ServerLogWidget;
 class NewWorldWizard;
 class IntroductionWizard;
 class AddInterfaceWizard;
+class NewBoardWizard;
 
 class MainWindow final : public QMainWindow
 {
@@ -136,6 +137,7 @@ class MainWindow final : public QMainWindow
 
     IntroductionWizard* showIntroductionWizard();
     AddInterfaceWizard* showAddInterfaceWizard();
+    NewBoardWizard* showNewBoardWizard(const ObjectPtr& board);
     void showLuaScriptsList();
 
   public slots:
