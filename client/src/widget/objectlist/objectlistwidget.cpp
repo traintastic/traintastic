@@ -69,7 +69,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
               m_requestIdCreate = Connection::invalidRequestId;
               if(addedObject)
               {
-                MainWindow::instance->showObject(addedObject);
+                objectCreated(addedObject);
               }
               // TODO: show error
             });
@@ -108,7 +108,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
                 m_requestIdCreate = Connection::invalidRequestId;
                 if(addedObject)
                 {
-                  MainWindow::instance->showObject(addedObject);
+                  objectCreated(addedObject);
                 }
                 // TODO: show error
               });
@@ -410,10 +410,7 @@ void ObjectListWidget::objectDoubleClicked(const QString& id)
 {
   if(hasEdit())
   {
-    SubWindowType type = SubWindowType::Object;
-    if(object()->classId() == "list.board")
-      type = SubWindowType::Board;
-    MainWindow::instance->showObject(id, "", type);
+    MainWindow::instance->showObject(id);
   }
 }
 
@@ -434,6 +431,11 @@ QStringList ObjectListWidget::getSelectedObjectIds() const
         ids.append(id);
 
   return ids;
+}
+
+void ObjectListWidget::objectCreated(const ObjectPtr& object)
+{
+  MainWindow::instance->showObject(object);
 }
 
 void ObjectListWidget::tableSelectionChanged()

@@ -22,6 +22,7 @@
 
 #include "createwidget.hpp"
 #include "list/marklincanlocomotivelistwidget.hpp"
+#include "objectlist/boardlistwidget.hpp"
 #include "objectlist/throttleobjectlistwidget.hpp"
 #include "object/luascripteditwidget.hpp"
 #include "object/objecteditwidget.hpp"
@@ -56,6 +57,10 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
     return new ObjectListWidget(object, parent); // todo remove
   else if(classId == "world_list")
     return new ObjectListWidget(object, parent);
+  if(classId == "list.board")
+  {
+    return new BoardListWidget(object, parent);
+  }
   else if(object->classId().startsWith("list."))
     return new ObjectListWidget(object, parent);
   else if(classId == "lua.script")

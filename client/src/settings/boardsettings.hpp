@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,6 +40,7 @@ class BoardSettings : public SettingsBase
   private:
     BoardSettings()
       : SettingsBase("board")
+      , showIntroductionWizard{*this, "show_introduction_wizard", true}
       , colorScheme{*this, "color_scheme", ColorScheme::Dark}
       , turnoutDrawState{*this, "turnout_draw_state", true}
       , showBlockSensorStates{*this, "show_block_sensor_states", true}
@@ -53,6 +54,7 @@ class BoardSettings : public SettingsBase
       return settings;
     }
 
+    Setting<bool> showIntroductionWizard;
     Setting<ColorScheme> colorScheme;
     Setting<bool> turnoutDrawState;
     Setting<bool> showBlockSensorStates;

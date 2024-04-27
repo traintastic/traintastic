@@ -64,6 +64,8 @@ class ObjectListWidget : public ListWidget
     virtual void objectDoubleClicked(const QString& id);
     QStringList getSelectedObjectIds() const;
 
+    virtual void objectCreated(const ObjectPtr &object);
+
   public:
     explicit ObjectListWidget(const ObjectPtr& object, QWidget* parent = nullptr);
     ~ObjectListWidget() override;

@@ -59,6 +59,7 @@
 #include "theme/theme.hpp"
 #include "wizard/introductionwizard.hpp"
 #include "wizard/newworldwizard.hpp"
+#include "wizard/newboardwizard.hpp"
 #include "wizard/addinterfacewizard.hpp"
 
 
@@ -912,6 +913,19 @@ AddInterfaceWizard* MainWindow::showAddInterfaceWizard()
   addInterfaceWizard->setAttribute(Qt::WA_DeleteOnClose);
   addInterfaceWizard->open();
   return addInterfaceWizard;
+}
+
+NewBoardWizard* MainWindow::showNewBoardWizard(const ObjectPtr& board)
+{
+  if(!board) /*[[unlikely]]*/
+  {
+    return nullptr;
+  }
+
+  auto* newBoardWizard = new NewBoardWizard(board, this);
+  newBoardWizard->setAttribute(Qt::WA_DeleteOnClose);
+  newBoardWizard->open();
+  return newBoardWizard;
 }
 
 void MainWindow::connectionStateChanged()
