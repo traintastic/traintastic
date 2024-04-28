@@ -21,6 +21,7 @@
  */
 
 #include "abstracteditwidget.hpp"
+#include <array>
 #include <QtWaitingSpinner/waitingspinnerwidget.h>
 #include "../../network/connection.hpp"
 #include "../../network/object.hpp"
