@@ -68,7 +68,7 @@ NewBoardWizard::NewBoardWizard(ObjectPtr world, QWidget* parent)
     Locale::tr("wizard.new_board.finalization:text"));
 
   connect(this, &NewBoardWizard::accepted,
-    [this]()
+    []()
     {
       BoardSettings::instance().showIntroductionWizard = false;
     });
