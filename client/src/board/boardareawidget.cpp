@@ -144,6 +144,10 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
       tryConnect("aspect");
       break;
 
+    case TileId::RailSignalAspectITA:
+      tryConnect("aspect_ita");
+      break;
+
     case TileId::RailSensor:
     case TileId::RailDirectionControl:
     case TileId::RailDecoupler:
@@ -323,8 +327,13 @@ DirectionControlState BoardAreaWidget::getDirectionControlState(const TileLocati
 SignalAspect BoardAreaWidget::getSignalAspect(const TileLocation& l) const
 {
   if(ObjectPtr object = m_board.board().getTileObject(l))
+  {
+    if(const auto* p = object->getProperty("aspect_ita"))
+      return static_cast<SignalAspect>(p->toEnum<SignalAspectITA>());
+
     if(const auto* p = object->getProperty("aspect"))
       return p->toEnum<SignalAspect>();
+  }
   return SignalAspect::Unknown;
 }
 

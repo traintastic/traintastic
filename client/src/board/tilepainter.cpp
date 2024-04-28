@@ -104,6 +104,7 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate, bool isRes
 
     case TileId::RailSignal2Aspect:
     case TileId::RailSignal3Aspect:
+    case TileId::RailSignalAspectITA:
       drawSignal(id, r, rotate, isReserved);
       break;
 
@@ -407,6 +408,13 @@ void TilePainter::drawSignal(TileId id, const QRectF& r, TileRotate rotate, bool
       break;
 
     case TileId::RailSignal3Aspect:
+      setTrackPen(isReserved);
+      drawStraight(r, rotate);
+      drawSignalDirection(r, rotate);
+      drawSignal3Aspect(r, rotate, aspect);
+      break;
+
+    case TileId::RailSignalAspectITA:
       setTrackPen(isReserved);
       drawStraight(r, rotate);
       drawSignalDirection(r, rotate);

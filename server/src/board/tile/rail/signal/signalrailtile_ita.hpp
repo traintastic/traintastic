@@ -35,6 +35,8 @@ class SignalRailTileITA : public SignalRailTile
 
   public:
     SignalRailTileITA(World& world, std::string_view _id);
+
+    Property<SignalAspectITA> aspectITA;
 };
 
 #endif

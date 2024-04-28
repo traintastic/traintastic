@@ -22,6 +22,7 @@
 
 #include "signalrailtile_ita.hpp"
 #include "../blockrailtile.hpp"
+#include "../turnout/turnoutrailtile.hpp"
 #include "../../../map/abstractsignalpath.hpp"
 #include "../../../map/blockpath.hpp"
 #include "../../../../core/attributes.hpp"
@@ -34,94 +35,248 @@ static const std::array<SignalAspect, 3> setAspectValues = {SignalAspect::Stop, 
 
 namespace
 {
-  class SignalPath : public AbstractSignalPath
-  {
-    private:
-      static bool hasSignalReservedPathToBlock(const SignalRailTile& signalTile, const BlockRailTile& blockTile)
-      {
+class SignalPath : public AbstractSignalPath
+{
+private:
+    static bool hasSignalReservedPathToBlock(const SignalRailTile& signalTile, const BlockRailTile& blockTile)
+    {
         const auto path = signalTile.reservedPath();
         return path && path->toBlock().get() == &blockTile;
-      }
+    }
 
-      static bool isPathReserved(const BlockRailTile& from, BlockSide fromSide, const BlockRailTile& to)
-      {
+    static bool isPathReserved(const BlockRailTile& from, BlockSide fromSide, const BlockRailTile& to)
+    {
         if(const auto path = from.getReservedPath(fromSide))
         {
-          return (&to == path->toBlock().get());
+            return (&to == path->toBlock().get());
         }
         return false;
-      }
+    }
 
-    protected:
-      SignalAspect determineAspect() const final
-      {
+protected:
+    int getTurnoutMaxSpeed(const std::shared_ptr<TurnoutRailTile>& turnout, bool &outDeviata) const
+    {
+        outDeviata = false;
+        switch (turnout->tileId())
+        {
+        case TileId::RailTurnoutLeft45:
+        case TileId::RailTurnoutRight45:
+        case TileId::RailTurnoutLeft90:
+        case TileId::RailTurnoutRight90:
+        case TileId::RailTurnoutLeftCurved:
+        case TileId::RailTurnoutRightCurved:
+        {
+            if(turnout->position.value() != TurnoutPosition::Straight)
+            {
+                outDeviata = true;
+                return 60;
+            }
+            break;
+        }
+
+        case TileId::RailTurnoutWye:
+        {
+            // Always non-straight
+            outDeviata = true;
+            return 100;
+        }
+        case TileId::RailTurnout3Way:
+        {
+            if(turnout->position.value() != TurnoutPosition::Straight)
+            {
+                outDeviata = true;
+                return 30;
+            }
+            break;
+        }
+        case TileId::RailTurnoutSingleSlip:
+        case TileId::RailTurnoutDoubleSlip:
+        {
+            auto pos = turnout->position.value();
+            if(pos == TurnoutPosition::Left || pos == TurnoutPosition::Right)
+            {
+                outDeviata = true;
+                return 30;
+            }
+            break;
+        }
+        default:
+            break;
+        }
+
+        return 0;
+    }
+
+    int getPathMaxSpeed(const Item* item, bool &outDeviata) const
+    {
+        outDeviata = false;
+        int maxSpeed = 0;
+
+        while(item)
+        {
+            if(const auto* turnoutItem = dynamic_cast<const TurnoutItem*>(item))
+            {
+                auto turnout = turnoutItem->turnout();
+
+                bool newDeviata = false;
+                int turnoutMaxSpeed = getTurnoutMaxSpeed(turnout, newDeviata);
+
+                if(maxSpeed == 0 || turnoutMaxSpeed < maxSpeed)
+                    maxSpeed = turnoutMaxSpeed;
+
+                outDeviata |= newDeviata;
+            }
+            if(const auto* signalItem = dynamic_cast<const SignalItem*>(item))
+            {
+                (void)signalItem;
+                break;
+            }
+            item = item->next().get();
+        }
+
+        return maxSpeed;
+    }
+
+    SignalAspectITA determineAspectITA() const
+    {
         const auto* blockItem = nextBlock();
         if(!blockItem)
         {
-          return SignalAspect::Stop;
+            return SignalAspectITA::ViaImpedita;
         }
         const auto blockState = blockItem->blockState();
+
+        auto [blockItem2, signalItem2] = nextBlockOrSignal(blockItem->next().get());
+
+        bool isDeviata = false;
+        int speedReduction = getPathMaxSpeed(root(), isDeviata);
+        SignalAspectITA_ingredients riduzione = SignalAspectITA_ingredients(0);
+        if(speedReduction > 0)
+        {
+            if(speedReduction < 60)
+                riduzione = SignalAspectITA_ingredients::Riduzione30;
+            else if(speedReduction < 100)
+                riduzione = SignalAspectITA_ingredients::Riduzione60;
+            else
+                riduzione = SignalAspectITA_ingredients::Riduzione100;
+        }
 
         if((!requireReservation() && blockState == BlockState::Free) ||
             (blockState == BlockState::Reserved && hasSignalReservedPathToBlock(signal(), *blockItem->block())))
         {
-          auto [blockItem2, signalItem2] = nextBlockOrSignal(blockItem->next().get());
-          if(blockItem2)
-          {
-            const auto blockState2 = blockItem2->blockState();
-
-            if(blockState2 == BlockState::Free ||
-                (blockState2 == BlockState::Reserved && isPathReserved(*blockItem->block(), ~blockItem->enterSide(), *blockItem2->block())))
+            if(blockItem2)
             {
-              return SignalAspect::Proceed;
-            }
-          }
-          else if(signalItem2)
-          {
-            auto signalTile = signalItem2->signal();
-            if(signalTile && signalTile->aspect != SignalAspect::Unknown && signalTile->aspect != SignalAspect::Stop)
-            {
-              switch(signalTile->aspect.value())
-              {
-                case SignalAspect::ProceedReducedSpeed:
-                case SignalAspect::Proceed:
-                  return SignalAspect::Proceed;
+                const auto blockState2 = blockItem2->blockState();
 
-                case SignalAspect::Stop:
-                case SignalAspect::Unknown:
-                  break;
-              }
+                if(blockState2 == BlockState::Free ||
+                    (blockState2 == BlockState::Reserved && isPathReserved(*blockItem->block(), ~blockItem->enterSide(), *blockItem2->block())))
+                {
+                    return SignalAspectITA(SignalAspectITA_ingredients::ViaLibera | riduzione);
+                }
+
+                // Nei segnali di protezione delle stazioni si usa sempre il rosso/giallo/giallo
+                if(requireReservation())
+                    return SignalAspectITA::BinarioIngombroTroncoDeviato;
+
+                // In linea si usa il giallo/giallo per avvisare di distanze ridottissime del blocco successivo
+                return SignalAspectITA::BinarioIngombroTronco;
             }
-          }
-          return SignalAspect::ProceedReducedSpeed;
+            else if(signalItem2)
+            {
+                auto signalTile = signalItem2->signal();
+
+                auto signal2ITA = std::dynamic_pointer_cast<SignalRailTileITA>(signalItem2->signal());
+                if(signal2ITA)
+                {
+                    SignalAspectITA nextAspect = signal2ITA->aspectITA.value();
+                    switch (nextAspect)
+                    {
+                    case SignalAspectITA::ViaImpedita:
+                    case SignalAspectITA::Unknown:
+                    {
+                        // Cannot allow 100 if next signal is Stop (See segnalifs.it)
+                        if(riduzione == SignalAspectITA_ingredients::Riduzione100)
+                            riduzione = SignalAspectITA_ingredients::Riduzione60;
+
+                        return SignalAspectITA(SignalAspectITA_ingredients::AvvisoViaImpedita | riduzione);
+                    }
+                    default:
+                        break;
+                    }
+
+                    // Extract next signal max allowed speed
+                    SignalAspectITA_ingredients nextSpeedReduction = SignalAspectITA_ingredients(int(nextAspect) & SignalAspectITA_ingredients::RiduzioneMASK);
+
+                    // Convert in avviso of next signal max speed
+                    SignalAspectITA_ingredients avvisoReduction = SignalAspectITA_ingredients(nextSpeedReduction << 2);
+
+                    return SignalAspectITA(SignalAspectITA_ingredients::ViaLibera | avvisoReduction | riduzione);
+                }
+
+                if(signalTile && signalTile->aspect != SignalAspect::Unknown && signalTile->aspect != SignalAspect::Stop)
+                {
+                    switch(signalTile->aspect.value())
+                    {
+                    case SignalAspect::ProceedReducedSpeed:
+                    case SignalAspect::Proceed:
+                        return SignalAspectITA::ViaLibera;
+
+                    case SignalAspect::Stop:
+                    case SignalAspect::Unknown:
+                        break;
+                    }
+                }
+            }
+            return SignalAspectITA::ViaLibera_AvvisoViaImpedita;
         }
-        return SignalAspect::Stop;
-      }
+        return SignalAspectITA::ViaImpedita;
+    }
 
-    public:
-      SignalPath(SignalRailTileITA& signal)
+    SignalAspect determineAspect() const final
+    {
+        SignalAspectITA aspectITA = determineAspectITA();
+
+        auto &signal_ = const_cast<SignalRailTile&>(signal());
+        static_cast<SignalRailTileITA &>(signal_).aspectITA.setValue(aspectITA);
+
+        switch (aspectITA)
+        {
+        case SignalAspectITA::ViaLibera:
+            return SignalAspect::Proceed;
+        case SignalAspectITA::ViaLibera_AvvisoViaImpedita:
+            return SignalAspect::ProceedReducedSpeed;
+        default:
+            break;
+        }
+
+        return SignalAspect::Stop;
+    }
+
+public:
+    SignalPath(SignalRailTileITA& signal)
         : AbstractSignalPath(signal, 2)
-      {
-      }
-  };
+    {
+    }
+};
 }
 
 SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
-  SignalRailTile(world, _id, TileId::RailSignal3Aspect)
+    SignalRailTile(world, _id, TileId::RailSignal3Aspect),
+    aspectITA{this, "aspect_ita", SignalAspectITA::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
 {
-  outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed}, getDefaultActionValue));
+    outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed}, getDefaultActionValue));
 
-  Attributes::addValues(aspect, aspectValues);
-  m_interfaceItems.add(aspect);
+    Attributes::addValues(aspect, aspectValues);
+    m_interfaceItems.add(aspect);
 
-  Attributes::addValues(setAspect, setAspectValues);
-  m_interfaceItems.add(setAspect);
+    Attributes::addValues(setAspect, setAspectValues);
+    m_interfaceItems.add(setAspect);
 
-  connectOutputMap();
+    connectOutputMap();
 }
 
 void SignalRailTileITA::boardModified()
 {
-  m_signalPath = std::make_unique<SignalPath>(*this);
-  SignalRailTile::boardModified();
+    m_signalPath = std::make_unique<SignalPath>(*this);
+    SignalRailTile::boardModified();
 }

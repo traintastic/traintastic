@@ -117,7 +117,7 @@ const std::vector<Tiles::Info>& Tiles::getInfo()
 
     Info{Signal2AspectRailTile::classId, TileId::RailSignal2Aspect, rotateFull, {signal}},
     Info{Signal3AspectRailTile::classId, TileId::RailSignal3Aspect, rotateFull, {signal}},
-    Info{SignalRailTileITA::classId, TileId::RailSignal3Aspect, rotateFull, {signal}},
+    Info{SignalRailTileITA::classId, TileId::RailSignalAspectITA, rotateFull, {signal}},
 
     Info{PushButtonTile::classId, TileId::PushButton, rotateNone, {miscellaneous}},
     Info{LabelTile::classId, TileId::Label, rotateFull90, {miscellaneous}},

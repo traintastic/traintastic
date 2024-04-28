@@ -251,6 +251,7 @@ std::vector<std::shared_ptr<BlockPath>> BlockPath::find(BlockRailTile& startBloc
       }
       case TileId::RailSignal2Aspect:
       case TileId::RailSignal3Aspect:
+      case TileId::RailSignalAspectITA:
         current.node = &nextNode;
         if(nextNode.getLink(0).get() == current.link) // 0 -> 1 = frontside of signal
         {
