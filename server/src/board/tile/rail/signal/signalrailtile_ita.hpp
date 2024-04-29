@@ -33,14 +33,12 @@ class SignalRailTileITA : public SignalRailTile
   protected:
     void boardModified() final;
 
-    bool doSetAspectITA(SignalAspectITA value);
-
     void calculateLampStates(SignalAspectITA value);
+
+    virtual bool doSetAspect(SignalAspect value, bool skipAction) override;
 
   public:
     SignalRailTileITA(World& world, std::string_view _id);
-
-    Method<bool(SignalAspectITA)> setAspectITA;
 
     Property<SignalAspectITA> aspectITA;
 

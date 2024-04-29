@@ -56,34 +56,6 @@ static const std::array<SignalAspectITA, 24> aspectValuesITA =
      SignalAspectITA::BinarioIngombroTronco,
      SignalAspectITA::BinarioIngombroTroncoDeviato};
 
-static const std::array<SignalAspectITA, 23> setAspectValuesITA =
-    {SignalAspectITA::ViaImpedita,
-     SignalAspectITA::ViaLibera,
-     SignalAspectITA::ViaLibera_AvvisoViaImpedita,
-     SignalAspectITA::ViaLibera_AvvisoRiduzione30,
-     SignalAspectITA::ViaLibera_AvvisoRiduzione60,
-     SignalAspectITA::ViaLibera_AvvisoRiduzione100,
-     SignalAspectITA::Riduzione30_AvvisoViaLibera,
-     SignalAspectITA::Riduzione60_AvvisoViaLibera,
-     SignalAspectITA::Riduzione100_AvvisoViaLibera,
-     SignalAspectITA::Riduzione30_AvvisoViaImpedita,
-     SignalAspectITA::Riduzione60_AvvisoViaImpedita,
-     SignalAspectITA::Riduzione100_AvvisoViaImpedita,
-     SignalAspectITA::Riduzione30_Avviso30,
-     SignalAspectITA::Riduzione60_Avviso30,
-     SignalAspectITA::Riduzione100_Avviso30,
-     SignalAspectITA::Riduzione30_Avviso60,
-     SignalAspectITA::Riduzione60_Avviso60,
-     SignalAspectITA::Riduzione100_Avviso60,
-     SignalAspectITA::Riduzione30_Avviso100,
-     SignalAspectITA::Riduzione60_Avviso100,
-     SignalAspectITA::Riduzione100_Avviso100,
-     SignalAspectITA::BinarioIngombroTronco,
-     SignalAspectITA::BinarioIngombroTroncoDeviato};
-
-static const std::array<SignalAspect, 4> aspectValues = {SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed, SignalAspect::Unknown};
-static const std::array<SignalAspect, 3> setAspectValues = {SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed};
-
 static const std::array<SignalAspectITALampState, 4> lampStateValues = {SignalAspectITALampState::Off,
                                                                         SignalAspectITALampState::On,
                                                                         SignalAspectITALampState::Blinking,
@@ -296,21 +268,7 @@ protected:
     SignalAspect determineAspect() const final
     {
         SignalAspectITA aspectITA = determineAspectITA();
-
-        auto &signal_ = const_cast<SignalRailTile&>(signal());
-        static_cast<SignalRailTileITA &>(signal_).setAspectITA(aspectITA);
-
-        switch (aspectITA)
-        {
-        case SignalAspectITA::ViaLibera:
-            return SignalAspect::Proceed;
-        case SignalAspectITA::ViaLibera_AvvisoViaImpedita:
-            return SignalAspect::ProceedReducedSpeed;
-        default:
-            break;
-        }
-
-        return SignalAspect::Stop;
+        return static_cast<SignalAspect>(aspectITA);
     }
 
 public:
@@ -323,7 +281,6 @@ public:
 
 SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
     SignalRailTile(world, _id, TileId::RailSignalAspectITA),
-    setAspectITA{*this, "set_aspect_ita", MethodFlags::ScriptCallable, [this](SignalAspectITA value){ return doSetAspectITA(value); }},
     aspectITA{this, "aspect_ita", SignalAspectITA::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
     lampState1{this, "lamp_state_1", SignalAspectITALampState::Off, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
     lampColor1{this, "lamp_color_1", SignalAspectITALampColor::Red, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
@@ -332,21 +289,24 @@ SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
     lampState3{this, "lamp_state_3", SignalAspectITALampState::Off, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
     lampColor3{this, "lamp_color_3", SignalAspectITALampColor::Red, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
 {
-    Attributes::addObjectEditor(aspectITA, false);
-    Attributes::addObjectEditor(setAspectITA, false);
 
     outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed}, getDefaultActionValue));
 
+    Attributes::addObjectEditor(aspectITA, false);
     Attributes::addValues(aspectITA, aspectValuesITA);
     m_interfaceItems.add(aspectITA);
 
-    Attributes::addValues(setAspectITA, setAspectValuesITA);
-    m_interfaceItems.add(setAspectITA);
+    // Cast values to SignalAspect
+    tcb::span<const SignalAspect, 24> aspectValues{reinterpret_cast<const SignalAspect *>(aspectValuesITA.begin()),
+                                                   reinterpret_cast<const SignalAspect *>(aspectValuesITA.end())};
 
-    Attributes::addValues(aspect, aspectValues);
+    // Chop first element ("Unknown" aspect)
+    tcb::span<const SignalAspect, 23> setAspectValues{aspectValues.begin() + 1, aspectValues.end()};
+
+    Attributes::addValues<SignalAspect>(aspect, aspectValues);
     m_interfaceItems.add(aspect);
 
-    Attributes::addValues(setAspect, setAspectValues);
+    Attributes::addValues<bool, SignalAspect>(setAspect, setAspectValues);
     m_interfaceItems.add(setAspect);
 
     auto addLamp = [this](auto &lampState, auto &lampColor)
@@ -365,16 +325,6 @@ SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
     addLamp(lampState3, lampColor3);
 
     connectOutputMap();
-}
-
-bool SignalRailTileITA::doSetAspectITA(SignalAspectITA value)
-{
-    calculateLampStates(value);
-
-    aspectITA.setValueInternal(value);
-
-    //TODO: aspectChanged is already called by setAspect()
-    return true;
 }
 
 void SignalRailTileITA::calculateLampStates(SignalAspectITA value)
@@ -485,6 +435,43 @@ void SignalRailTileITA::calculateLampStates(SignalAspectITA value)
             break;
         }
     }
+}
+
+bool SignalRailTileITA::doSetAspect(SignalAspect value, bool skipAction)
+{
+    SignalAspectITA valueITA = SignalAspectITA(value);
+    const auto* values = setAspect.tryGetValuesAttribute(AttributeName::Values);
+    assert(values);
+    if(!values->contains(static_cast<int64_t>(valueITA)))
+        return false;
+    if(aspectITA != valueITA)
+    {
+        calculateLampStates(valueITA);
+
+        if(!skipAction)
+            (*outputMap)[value]->execute();
+
+        // Convert to basic aspect to allow interacting with 3 aspect signals
+        switch (aspectITA)
+        {
+        case SignalAspectITA::ViaLibera:
+            value = SignalAspect::Proceed;
+            break;
+        case SignalAspectITA::ViaImpedita:
+            value = SignalAspect::Stop;
+            break;
+        default:
+            value = SignalAspect::ProceedReducedSpeed;
+            break;
+        }
+
+        // Store the "full" aspect in a custom property
+        aspectITA.setValueInternal(valueITA);
+        aspect.setValueInternal(value);
+        aspectChanged(*this, value);
+        fireEvent(onAspectChanged, shared_ptr<SignalRailTile>(), value);
+    }
+    return true;
 }
 
 void SignalRailTileITA::boardModified()
