@@ -30,6 +30,7 @@
 #include "../protocol/dccex/settings.hpp"
 #include "../protocol/dccex/messages.hpp"
 #include "../protocol/dccex/iohandler/serialiohandler.hpp"
+#include "../protocol/dccex/iohandler/tcpiohandler.hpp"
 #include "../protocol/dccex/iohandler/simulationiohandler.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/method.tpp"
@@ -53,21 +54,45 @@ DCCEXInterface::DCCEXInterface(World& world, std::string_view _id)
   , DecoderController(*this, decoderListColumns)
   , InputController(static_cast<IdObject&>(*this))
   , OutputController(static_cast<IdObject&>(*this))
+  , type{this, "type", DCCEXInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
+      [this](DCCEXInterfaceType /*value*/)
+      {
+        updateVisible();
+      }}
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , baudrate{this, "baudrate", 115200, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , hostname{this, "hostname", "192.168.4.1", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , port{this, "port", 2560, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , dccex{this, "dccex", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "DCC-EX";
   dccex.setValueInternal(std::make_shared<DCCEX::Settings>(*this, dccex.name()));
 
+  Attributes::addDisplayName(type, DisplayName::Interface::type);
+  Attributes::addEnabled(type, !online);
+  Attributes::addValues(type, DCCEXInterfaceTypeValues);
+  m_interfaceItems.insertBefore(type, notes);
+
   Attributes::addEnabled(device, !online);
+  Attributes::addVisible(device, false);
   m_interfaceItems.insertBefore(device, notes);
 
   Attributes::addDisplayName(baudrate, DisplayName::Serial::baudrate);
   Attributes::addEnabled(baudrate, !online);
+  Attributes::addVisible(baudrate, false);
   Attributes::addMinMax(baudrate, SerialPort::baudrateMin, SerialPort::baudrateMax);
   Attributes::addValues(baudrate, SerialPort::baudrateValues);
   m_interfaceItems.insertBefore(baudrate, notes);
+
+  Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
+  Attributes::addEnabled(hostname, !online);
+  Attributes::addVisible(hostname, false);
+  m_interfaceItems.insertBefore(hostname, notes);
+
+  Attributes::addDisplayName(port, DisplayName::IP::port);
+  Attributes::addEnabled(port, !online);
+  Attributes::addVisible(port, false);
+  m_interfaceItems.insertBefore(port, notes);
 
   Attributes::addDisplayName(dccex, DisplayName::Hardware::dccex);
   m_interfaceItems.insertBefore(dccex, notes);
@@ -186,7 +211,17 @@ bool DCCEXInterface::setOnline(bool& value, bool simulation)
       }
       else
       {
-        m_kernel = DCCEX::Kernel::create<DCCEX::SerialIOHandler>(id.value(), dccex->config(), device.value(), baudrate.value(), SerialFlowControl::None);
+        switch(type)
+        {
+          case DCCEXInterfaceType::Serial:
+            m_kernel = DCCEX::Kernel::create<DCCEX::SerialIOHandler>(id.value(), dccex->config(), device.value(), baudrate.value(), SerialFlowControl::None);
+            break;
+
+          case DCCEXInterfaceType::NetworkTCP:
+            m_kernel = DCCEX::Kernel::create<DCCEX::TCPIOHandler>(id.value(), dccex->config(), hostname.value(), port.value());
+            break;
+        }
+
       }
 
       setState(InterfaceState::Initializing);
@@ -231,7 +266,7 @@ bool DCCEXInterface::setOnline(bool& value, bool simulation)
       m_kernel->setOutputController(this);
       m_kernel->start();
 
-      Attributes::setEnabled({device, baudrate}, false);
+      Attributes::setEnabled({type, device, baudrate, hostname, port}, false);
     }
     catch(const LogMessageException& e)
     {
@@ -242,7 +277,7 @@ bool DCCEXInterface::setOnline(bool& value, bool simulation)
   }
   else if(m_kernel && !value)
   {
-    Attributes::setEnabled({device, baudrate}, true);
+    Attributes::setEnabled({type, device, baudrate, hostname, port}, true);
 
     m_kernel->stop();
     m_kernel.reset();
@@ -266,6 +301,7 @@ void DCCEXInterface::loaded()
 
   check();
   updateEnabled();
+  updateVisible();
 }
 
 void DCCEXInterface::destroying()
@@ -348,4 +384,15 @@ void DCCEXInterface::updateEnabled()
   const bool stopped = !contains(m_world.state, WorldState::Run);
 
   Attributes::setEnabled(dccex->speedSteps, editable && stopped);
+}
+
+void DCCEXInterface::updateVisible()
+{
+  const bool isSerial = (type == DCCEXInterfaceType::Serial);
+  Attributes::setVisible(device, isSerial);
+  Attributes::setVisible(baudrate, isSerial);
+
+  const bool isNetwork = (type == DCCEXInterfaceType::NetworkTCP);
+  Attributes::setVisible(hostname, isNetwork);
+  Attributes::setVisible(port, isNetwork);
 }

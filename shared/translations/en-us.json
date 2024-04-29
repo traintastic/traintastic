@@ -4420,6 +4420,14 @@
         "definition": "Run when loaded"
     },
     {
+        "term": "dccex_interface_type:serial",
+        "definition": "Serial"
+    },
+    {
+        "term": "dccex_interface_type:network_tcp",
+        "definition": "Network (TCP)"
+    },
+    {
         "term": "qtapp.connect_dialog:authenticating",
         "definition": "Authenticating"
     },

@@ -30,6 +30,7 @@
 #include "../../core/serialdeviceproperty.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../enum/serialflowcontrol.hpp"
+#include <traintastic/enum/dccexinterfacetype.hpp>
 
 namespace DCCEX {
 class Kernel;
@@ -63,12 +64,17 @@ class DCCEXInterface final
 
     void updateEnabled();
 
+    void updateVisible();
+
   protected:
     bool setOnline(bool& value, bool simulation) final;
 
   public:
+    Property<DCCEXInterfaceType> type;
     SerialDeviceProperty device;
     Property<uint32_t> baudrate;
+    Property<std::string> hostname;
+    Property<uint16_t> port;
     ObjectProperty<DCCEX::Settings> dccex;
 
     DCCEXInterface(World& world, std::string_view _id);
