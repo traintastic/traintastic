@@ -125,6 +125,22 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
       }
     };
 
+  auto handlerBlink =
+    [this, l, handler]()
+    {
+      // Only trigger update if signal is really blinking
+      auto aspect = getSignalAspectITA(l);
+      for(int i = 0; i < 3; i++)
+      {
+        if(aspect[i].first == SignalAspectITALampState::Blinking || aspect[i].first == SignalAspectITALampState::BlinkingInverse)
+        {
+          // Signal is blinking, update it
+          handler();
+          break;
+        }
+      }
+    };
+
   auto tryConnect =
     [this, handler, &object](const QString& name)
     {
@@ -154,7 +170,7 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
 
     case TileId::RailSignalAspectITA:
       tryConnect("aspect_ita");
-      connect(this, &BoardAreaWidget::blinkStateChanged, this, handler);
+      connect(this, &BoardAreaWidget::blinkStateChanged, this, handlerBlink);
       break;
 
     case TileId::RailSensor:
