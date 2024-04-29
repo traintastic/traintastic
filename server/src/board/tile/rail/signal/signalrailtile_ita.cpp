@@ -30,53 +30,69 @@
 #include "../../../../core/objectproperty.tpp"
 #include "../../../../hardware/output/outputcontroller.hpp"
 
-static const std::array<SignalAspectITA, 24> aspectValues = {SignalAspectITA::Unknown,
-                                                            SignalAspectITA::ViaImpedita,
-                                                            SignalAspectITA::ViaLibera,
-                                                            SignalAspectITA::ViaLibera_AvvisoViaImpedita,
-                                                            SignalAspectITA::ViaLibera_AvvisoRiduzione30,
-                                                            SignalAspectITA::ViaLibera_AvvisoRiduzione60,
-                                                            SignalAspectITA::ViaLibera_AvvisoRiduzione100,
-                                                            SignalAspectITA::Riduzione30_AvvisoViaLibera,
-                                                            SignalAspectITA::Riduzione60_AvvisoViaLibera,
-                                                            SignalAspectITA::Riduzione100_AvvisoViaLibera,
-                                                            SignalAspectITA::Riduzione30_AvvisoViaImpedita,
-                                                            SignalAspectITA::Riduzione60_AvvisoViaImpedita,
-                                                            SignalAspectITA::Riduzione100_AvvisoViaImpedita,
-                                                            SignalAspectITA::Riduzione30_Avviso30,
-                                                            SignalAspectITA::Riduzione60_Avviso30,
-                                                            SignalAspectITA::Riduzione100_Avviso30,
-                                                            SignalAspectITA::Riduzione30_Avviso60,
-                                                            SignalAspectITA::Riduzione60_Avviso60,
-                                                            SignalAspectITA::Riduzione100_Avviso60,
-                                                            SignalAspectITA::Riduzione30_Avviso100,
-                                                            SignalAspectITA::Riduzione60_Avviso100,
-                                                            SignalAspectITA::Riduzione100_Avviso100,
-                                                            SignalAspectITA::BinarioIngombroTronco,
-                                                            SignalAspectITA::BinarioIngombroTroncoDeviato};
-static const std::array<SignalAspectITA, 23> setAspectValues = {SignalAspectITA::ViaImpedita,
-                                                               SignalAspectITA::ViaLibera,
-                                                               SignalAspectITA::ViaLibera_AvvisoViaImpedita,
-                                                               SignalAspectITA::ViaLibera_AvvisoRiduzione30,
-                                                               SignalAspectITA::ViaLibera_AvvisoRiduzione60,
-                                                               SignalAspectITA::ViaLibera_AvvisoRiduzione100,
-                                                               SignalAspectITA::Riduzione30_AvvisoViaLibera,
-                                                               SignalAspectITA::Riduzione60_AvvisoViaLibera,
-                                                               SignalAspectITA::Riduzione100_AvvisoViaLibera,
-                                                               SignalAspectITA::Riduzione30_AvvisoViaImpedita,
-                                                               SignalAspectITA::Riduzione60_AvvisoViaImpedita,
-                                                               SignalAspectITA::Riduzione100_AvvisoViaImpedita,
-                                                               SignalAspectITA::Riduzione30_Avviso30,
-                                                               SignalAspectITA::Riduzione60_Avviso30,
-                                                               SignalAspectITA::Riduzione100_Avviso30,
-                                                               SignalAspectITA::Riduzione30_Avviso60,
-                                                               SignalAspectITA::Riduzione60_Avviso60,
-                                                               SignalAspectITA::Riduzione100_Avviso60,
-                                                               SignalAspectITA::Riduzione30_Avviso100,
-                                                               SignalAspectITA::Riduzione60_Avviso100,
-                                                               SignalAspectITA::Riduzione100_Avviso100,
-                                                               SignalAspectITA::BinarioIngombroTronco,
-                                                               SignalAspectITA::BinarioIngombroTroncoDeviato};
+static const std::array<SignalAspectITA, 24> aspectValuesITA =
+    {SignalAspectITA::Unknown,
+     SignalAspectITA::ViaImpedita,
+     SignalAspectITA::ViaLibera,
+     SignalAspectITA::ViaLibera_AvvisoViaImpedita,
+     SignalAspectITA::ViaLibera_AvvisoRiduzione30,
+     SignalAspectITA::ViaLibera_AvvisoRiduzione60,
+     SignalAspectITA::ViaLibera_AvvisoRiduzione100,
+     SignalAspectITA::Riduzione30_AvvisoViaLibera,
+     SignalAspectITA::Riduzione60_AvvisoViaLibera,
+     SignalAspectITA::Riduzione100_AvvisoViaLibera,
+     SignalAspectITA::Riduzione30_AvvisoViaImpedita,
+     SignalAspectITA::Riduzione60_AvvisoViaImpedita,
+     SignalAspectITA::Riduzione100_AvvisoViaImpedita,
+     SignalAspectITA::Riduzione30_Avviso30,
+     SignalAspectITA::Riduzione60_Avviso30,
+     SignalAspectITA::Riduzione100_Avviso30,
+     SignalAspectITA::Riduzione30_Avviso60,
+     SignalAspectITA::Riduzione60_Avviso60,
+     SignalAspectITA::Riduzione100_Avviso60,
+     SignalAspectITA::Riduzione30_Avviso100,
+     SignalAspectITA::Riduzione60_Avviso100,
+     SignalAspectITA::Riduzione100_Avviso100,
+     SignalAspectITA::BinarioIngombroTronco,
+     SignalAspectITA::BinarioIngombroTroncoDeviato};
+
+static const std::array<SignalAspectITA, 23> setAspectValuesITA =
+    {SignalAspectITA::ViaImpedita,
+     SignalAspectITA::ViaLibera,
+     SignalAspectITA::ViaLibera_AvvisoViaImpedita,
+     SignalAspectITA::ViaLibera_AvvisoRiduzione30,
+     SignalAspectITA::ViaLibera_AvvisoRiduzione60,
+     SignalAspectITA::ViaLibera_AvvisoRiduzione100,
+     SignalAspectITA::Riduzione30_AvvisoViaLibera,
+     SignalAspectITA::Riduzione60_AvvisoViaLibera,
+     SignalAspectITA::Riduzione100_AvvisoViaLibera,
+     SignalAspectITA::Riduzione30_AvvisoViaImpedita,
+     SignalAspectITA::Riduzione60_AvvisoViaImpedita,
+     SignalAspectITA::Riduzione100_AvvisoViaImpedita,
+     SignalAspectITA::Riduzione30_Avviso30,
+     SignalAspectITA::Riduzione60_Avviso30,
+     SignalAspectITA::Riduzione100_Avviso30,
+     SignalAspectITA::Riduzione30_Avviso60,
+     SignalAspectITA::Riduzione60_Avviso60,
+     SignalAspectITA::Riduzione100_Avviso60,
+     SignalAspectITA::Riduzione30_Avviso100,
+     SignalAspectITA::Riduzione60_Avviso100,
+     SignalAspectITA::Riduzione100_Avviso100,
+     SignalAspectITA::BinarioIngombroTronco,
+     SignalAspectITA::BinarioIngombroTroncoDeviato};
+
+static const std::array<SignalAspect, 4> aspectValues = {SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed, SignalAspect::Unknown};
+static const std::array<SignalAspect, 3> setAspectValues = {SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed};
+
+static const std::array<SignalAspectITALampState, 4> lampStateValues = {SignalAspectITALampState::Off,
+                                                                        SignalAspectITALampState::On,
+                                                                        SignalAspectITALampState::Blinking,
+                                                                        SignalAspectITALampState::BlinkingInverse};
+
+static const std::array<SignalAspectITALampColor, 4> lampColorValues = {SignalAspectITALampColor::Red,
+                                                                        SignalAspectITALampColor::Green,
+                                                                        SignalAspectITALampColor::Yellow};
+
 
 namespace
 {
@@ -321,11 +337,32 @@ SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
 
     outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed}, getDefaultActionValue));
 
-    Attributes::addValues(aspectITA, aspectValues);
+    Attributes::addValues(aspectITA, aspectValuesITA);
     m_interfaceItems.add(aspectITA);
 
-    Attributes::addValues(setAspectITA, setAspectValues);
+    Attributes::addValues(setAspectITA, setAspectValuesITA);
     m_interfaceItems.add(setAspectITA);
+
+    Attributes::addValues(aspect, aspectValues);
+    m_interfaceItems.add(aspect);
+
+    Attributes::addValues(setAspect, setAspectValues);
+    m_interfaceItems.add(setAspect);
+
+    auto addLamp = [this](auto &lampState, auto &lampColor)
+    {
+        Attributes::addObjectEditor(lampState, false);
+        Attributes::addValues(lampState, lampStateValues);
+        m_interfaceItems.add(lampState);
+
+        Attributes::addObjectEditor(lampColor, false);
+        Attributes::addValues(lampColor, lampColorValues);
+        m_interfaceItems.add(lampColor);
+    };
+
+    addLamp(lampState1, lampColor1);
+    addLamp(lampState2, lampColor2);
+    addLamp(lampState3, lampColor3);
 
     connectOutputMap();
 }
@@ -352,24 +389,24 @@ void SignalRailTileITA::calculateLampStates()
     case SignalAspectITA::ViaLibera:
     case SignalAspectITA::ViaLibera_AvvisoViaImpedita:
     {
-        lampState2.setValue(SignalAspectITALampState::Off);
-        lampState3.setValue(SignalAspectITALampState::Off);
+        lampState2.setValueInternal(SignalAspectITALampState::Off);
+        lampState3.setValueInternal(SignalAspectITALampState::Off);
 
         if(value == SignalAspectITA::Unknown)
-            lampState1.setValue(SignalAspectITALampState::Off);
+            lampState1.setValueInternal(SignalAspectITALampState::Off);
         else
         {
-            lampState1.setValue(SignalAspectITALampState::On);
+            lampState1.setValueInternal(SignalAspectITALampState::On);
             switch (value)
             {
             case SignalAspectITA::ViaImpedita:
-                lampColor1.setValue(SignalAspectITALampColor::Red);
+                lampColor1.setValueInternal(SignalAspectITALampColor::Red);
                 break;
             case SignalAspectITA::ViaLibera:
-                lampColor1.setValue(SignalAspectITALampColor::Green);
+                lampColor1.setValueInternal(SignalAspectITALampColor::Green);
                 break;
             case SignalAspectITA::ViaLibera_AvvisoViaImpedita:
-                lampColor1.setValue(SignalAspectITALampColor::Yellow);
+                lampColor1.setValueInternal(SignalAspectITALampColor::Yellow);
                 break;
             default:
                 assert(false);
@@ -386,8 +423,8 @@ void SignalRailTileITA::calculateLampStates()
     if((ingredients & RiduzioneMASK) != 0 || ingredients & Deviata)
     {
         // All begin with red lamp on top
-        lampState1.setValue(SignalAspectITALampState::On);
-        lampColor1.setValue(SignalAspectITALampColor::Red);
+        lampState1.setValueInternal(SignalAspectITALampState::On);
+        lampColor1.setValueInternal(SignalAspectITALampColor::Red);
 
         shiftByOne = true;
     }
@@ -402,44 +439,44 @@ void SignalRailTileITA::calculateLampStates()
 
     if(ingredients & SignalAspectITA_ingredients::BinarioIngombroTronco)
     {
-        firstLampState.setValue(SignalAspectITALampState::On);
-        firstLampColor.setValue(SignalAspectITALampColor::Yellow);
+        firstLampState.setValueInternal(SignalAspectITALampState::On);
+        firstLampColor.setValueInternal(SignalAspectITALampColor::Yellow);
 
-        secondLampState.setValue(SignalAspectITALampState::On);
-        secondLampColor.setValue(SignalAspectITALampColor::Yellow);
+        secondLampState.setValueInternal(SignalAspectITALampState::On);
+        secondLampColor.setValueInternal(SignalAspectITALampColor::Yellow);
     }
     else if(avviso == SignalAspectITA_ingredients::AvvisoViaImpedita
                || (avviso == SignalAspectITA_ingredients::ViaLibera && !avvisoRiduzione))
     {
-        firstLampState.setValue(SignalAspectITALampState::On);
+        firstLampState.setValueInternal(SignalAspectITALampState::On);
 
         if(avviso == SignalAspectITA_ingredients::AvvisoViaImpedita)
-            firstLampColor.setValue(SignalAspectITALampColor::Yellow);
+            firstLampColor.setValueInternal(SignalAspectITALampColor::Yellow);
         else
-            firstLampColor.setValue(SignalAspectITALampColor::Green);
+            firstLampColor.setValueInternal(SignalAspectITALampColor::Green);
 
-        secondLampState.setValue(SignalAspectITALampState::Off);
+        secondLampState.setValueInternal(SignalAspectITALampState::Off);
     }
     else if(avvisoRiduzione)
     {
-        firstLampColor.setValue(SignalAspectITALampColor::Yellow);
-        secondLampColor.setValue(SignalAspectITALampColor::Green);
+        firstLampColor.setValueInternal(SignalAspectITALampColor::Yellow);
+        secondLampColor.setValueInternal(SignalAspectITALampColor::Green);
 
         switch (avvisoRiduzione)
         {
         case SignalAspectITA_ingredients::AvvisoRiduzione30:
-            firstLampState.setValue(SignalAspectITALampState::On);
-            secondLampState.setValue(SignalAspectITALampState::On);
+            firstLampState.setValueInternal(SignalAspectITALampState::On);
+            secondLampState.setValueInternal(SignalAspectITALampState::On);
             break;
 
         case SignalAspectITA_ingredients::AvvisoRiduzione60:
-            firstLampState.setValue(SignalAspectITALampState::Blinking);
-            secondLampState.setValue(SignalAspectITALampState::Blinking);
+            firstLampState.setValueInternal(SignalAspectITALampState::Blinking);
+            secondLampState.setValueInternal(SignalAspectITALampState::Blinking);
             break;
 
         case SignalAspectITA_ingredients::AvvisoRiduzione100:
-            firstLampState.setValue(SignalAspectITALampState::BlinkingInverse);
-            secondLampState.setValue(SignalAspectITALampState::Blinking);
+            firstLampState.setValueInternal(SignalAspectITALampState::BlinkingInverse);
+            secondLampState.setValueInternal(SignalAspectITALampState::Blinking);
             break;
 
         default:
