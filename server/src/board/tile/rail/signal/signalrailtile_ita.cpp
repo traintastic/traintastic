@@ -182,7 +182,7 @@ protected:
                 bool newDeviata = false;
                 int turnoutMaxSpeed = getTurnoutMaxSpeed(turnout, newDeviata);
 
-                if(maxSpeed == 0 || turnoutMaxSpeed < maxSpeed)
+                if(maxSpeed == 0 || (turnoutMaxSpeed > 0 && turnoutMaxSpeed < maxSpeed))
                     maxSpeed = turnoutMaxSpeed;
 
                 outDeviata |= newDeviata;
