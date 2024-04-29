@@ -1187,7 +1187,7 @@ void TilePainter::drawSignalAspectITA_helper(QRectF r, TileRotate rotate, const 
         if((m_blinkState && pair.first == SignalAspectITALampState::Blinking) || (!m_blinkState && pair.first == SignalAspectITALampState::BlinkingInverse))
             blinkOn = true;
 
-        if(pair.first != SignalAspectITALampState::On || blinkOn)
+        if(pair.first == SignalAspectITALampState::On || blinkOn)
         {
             m_painter.drawEllipse(lampPos, lampRadius, lampRadius);
         }
