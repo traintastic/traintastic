@@ -38,6 +38,24 @@ class OutputMapBase : public OutputMap
     const std::vector<Key> m_keys;
     DefaultOutputActionGetter m_defaultOutputActionGetter;
 
+    template<typename Container>
+    OutputMapBase(Object& _parent, std::string_view parentPropertyName, DefaultOutputActionGetter defaultOutputActionGetter, const Container& keys) :
+      OutputMap(_parent, parentPropertyName)
+      , m_keys{keys.begin(), keys.end()}
+      , m_defaultOutputActionGetter{defaultOutputActionGetter}
+      , onOutputStateMatchFound{*this, "on_match_found", EventFlags::Scriptable}
+    {
+    }
+
+    void init()
+    {
+      assert(m_defaultOutputActionGetter);
+      for(auto k : m_keys)
+      {
+        items.appendInternal(std::make_shared<Value>(*this, k));
+      }
+    }
+
     void load(WorldLoader& loader, const nlohmann::json& data) override
     {
       OutputMap::load(loader, data);
@@ -62,16 +80,16 @@ class OutputMapBase : public OutputMap
     Event<Key> onOutputStateMatchFound;
 
     OutputMapBase(Object& _parent, std::string_view parentPropertyName, std::initializer_list<Key> keys, DefaultOutputActionGetter defaultOutputActionGetter) :
-      OutputMap(_parent, parentPropertyName)
-      , m_keys{keys}
-      , m_defaultOutputActionGetter{defaultOutputActionGetter}
-      , onOutputStateMatchFound{*this, "on_match_found", EventFlags::Scriptable}
+      OutputMapBase(_parent, parentPropertyName, defaultOutputActionGetter, keys)
     {
-      assert(m_defaultOutputActionGetter);
-      for(auto k : keys)
-      {
-        items.appendInternal(std::make_shared<Value>(*this, k));
-      }
+      init();
+    }
+
+    template<std::size_t SpanExtent>
+    OutputMapBase(Object& _parent, std::string_view parentPropertyName, const tcb::span<const Key, SpanExtent> &keys, DefaultOutputActionGetter defaultOutputActionGetter) :
+      OutputMapBase(_parent, parentPropertyName, defaultOutputActionGetter, keys)
+    {
+      init();
     }
 
     const std::shared_ptr<Value> operator [](Key key) const
