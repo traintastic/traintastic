@@ -282,7 +282,10 @@ bool DCCEXInterface::setOnline(bool& value, bool simulation)
     m_kernel->stop();
     m_kernel.reset();
 
-    setState(InterfaceState::Offline);
+    if(status->state != InterfaceState::Error)
+    {
+      setState(InterfaceState::Offline);
+    }
   }
   return true;
 }
