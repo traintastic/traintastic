@@ -724,7 +724,12 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
               if(isRailTurnout(tileId))
                 tilePainter.drawTurnout(tileId, image.rect(), tileRotate, TurnoutPosition::Unknown, static_cast<TurnoutPosition>(n));
               else if(isRailSignal(tileId))
-                tilePainter.drawSignal(tileId, image.rect(), tileRotate, false, static_cast<SignalAspect>(n));
+              {
+                if(tileId == TileId::RailSignalAspectITA)
+                  tilePainter.drawSignalAspectITA(tileId, image.rect(), tileRotate, false);
+                else
+                  tilePainter.drawSignal(tileId, image.rect(), tileRotate, false, static_cast<SignalAspect>(n));
+              }
               else if(tileId == TileId::RailDirectionControl)
                 tilePainter.drawDirectionControl(tileId, image.rect(), tileRotate, false, static_cast<DirectionControlState>(n));
 
