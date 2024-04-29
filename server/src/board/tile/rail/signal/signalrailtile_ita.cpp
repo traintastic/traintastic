@@ -289,13 +289,6 @@ SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
     lampState3{this, "lamp_state_3", SignalAspectITALampState::Off, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
     lampColor3{this, "lamp_color_3", SignalAspectITALampColor::Red, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
 {
-
-    outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed}, getDefaultActionValue));
-
-    Attributes::addObjectEditor(aspectITA, false);
-    Attributes::addValues(aspectITA, aspectValuesITA);
-    m_interfaceItems.add(aspectITA);
-
     // Cast values to SignalAspect
     tcb::span<const SignalAspect, 24> aspectValues{reinterpret_cast<const SignalAspect *>(aspectValuesITA.begin()),
                                                    reinterpret_cast<const SignalAspect *>(aspectValuesITA.end())};
@@ -303,8 +296,17 @@ SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
     // Chop first element ("Unknown" aspect)
     tcb::span<const SignalAspect, 23> setAspectValues{aspectValues.begin() + 1, aspectValues.end()};
 
+    //TODO: this crashes upon saving because SignalAspectITA is converted to SignalAspect and it cannot find enum values
+    //outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), setAspectValues, getDefaultActionValue));
+
+    outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed}, getDefaultActionValue));
+
     Attributes::addValues<SignalAspect>(aspect, aspectValues);
     m_interfaceItems.add(aspect);
+
+    Attributes::addObjectEditor(aspectITA, false);
+    Attributes::addValues(aspectITA, aspectValuesITA);
+    m_interfaceItems.add(aspectITA);
 
     Attributes::addValues<bool, SignalAspect>(setAspect, setAspectValues);
     m_interfaceItems.add(setAspect);
@@ -448,8 +450,10 @@ bool SignalRailTileITA::doSetAspect(SignalAspect value, bool skipAction)
     {
         calculateLampStates(valueITA);
 
-        if(!skipAction)
-            (*outputMap)[value]->execute();
+        //TODO: maybe do a custom OutputMapBase subclass
+        (void)skipAction;
+        //if(!skipAction)
+        //    (*outputMap)[value]->execute();
 
         // Convert to basic aspect to allow interacting with 3 aspect signals
         switch (aspectITA)
