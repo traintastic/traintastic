@@ -676,8 +676,16 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
         }
         else if(isRailSignal(tileId))
         {
-          value = obj->getProperty("aspect");
-          setValue = obj->getMethod("set_aspect");
+            if(tileId == TileId::RailSignalAspectITA)
+            {
+                value = obj->getProperty("aspect_ita");
+                setValue = obj->getMethod("set_aspect_ita");
+            }
+            else
+            {
+                value = obj->getProperty("aspect");
+                setValue = obj->getMethod("set_aspect");
+            }
         }
         else if(tileId == TileId::RailDirectionControl)
         {
@@ -704,7 +712,7 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
             QImage image(iconSize, iconSize, QImage::Format_ARGB32);
             QPainter painter{&image};
             painter.setRenderHint(QPainter::Antialiasing, true);
-            TilePainter tilePainter{painter, iconSize, *getBoardColorScheme(BoardSettings::instance().colorScheme.value())};
+            TilePainter tilePainter{painter, iconSize, *getBoardColorScheme(BoardSettings::instance().colorScheme.value()), true};
 
             QMenu menu(this);
             for(const auto& v : values)

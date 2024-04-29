@@ -33,7 +33,7 @@
 #include "../settings/boardsettings.hpp"
 #include "../utils/rectf.hpp"
 
-TilePainter::TilePainter(QPainter& painter, int tileSize, const BoardColorScheme& colorScheme) :
+TilePainter::TilePainter(QPainter& painter, int tileSize, const BoardColorScheme& colorScheme, bool blinkState) :
   m_colorScheme{colorScheme},
   m_showBlockSensorStates{BoardSettings::instance().showBlockSensorStates},
   m_turnoutDrawState{BoardSettings::instance().turnoutDrawState},
@@ -46,6 +46,7 @@ TilePainter::TilePainter(QPainter& painter, int tileSize, const BoardColorScheme
   m_trackReservedDisabledPen(m_colorScheme.trackReservedDisabled, m_trackWidth, Qt::SolidLine, Qt::FlatCap),
   m_trackErasePen(m_colorScheme.background, m_trackWidth * 2, Qt::SolidLine, Qt::FlatCap),
   m_turnoutStatePen(m_colorScheme.turnoutState, (m_trackWidth + 1) / 2, Qt::SolidLine, Qt::FlatCap),
+  m_blinkState(blinkState),
   m_painter{painter}
 {
 }
@@ -104,8 +105,11 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate, bool isRes
 
     case TileId::RailSignal2Aspect:
     case TileId::RailSignal3Aspect:
-    case TileId::RailSignalAspectITA:
       drawSignal(id, r, rotate, isReserved);
+      break;
+
+    case TileId::RailSignalAspectITA:
+      drawSignalAspectITA(id, r, rotate, isReserved);
       break;
 
     case TileId::RailBlock:
@@ -414,17 +418,20 @@ void TilePainter::drawSignal(TileId id, const QRectF& r, TileRotate rotate, bool
       drawSignal3Aspect(r, rotate, aspect);
       break;
 
-    case TileId::RailSignalAspectITA:
-      setTrackPen(isReserved);
-      drawStraight(r, rotate);
-      drawSignalDirection(r, rotate);
-      drawSignal3Aspect(r, rotate, aspect);
-      break;
-
     default:
       assert(false);
       break;
-  }
+    }
+}
+
+void TilePainter::drawSignalAspectITA(TileId id, const QRectF &r, TileRotate rotate, bool isReserved, std::array<SignalAspectITALampPair, 3> aspect)
+{
+    assert(id == TileId::RailSignalAspectITA);
+
+    setTrackPen(isReserved);
+    drawStraight(r, rotate);
+    drawSignalDirection(r, rotate);
+    drawSignalAspectITA_helper(r, rotate, aspect);
 }
 
 void TilePainter::drawBlock(TileId id, const QRectF& r, TileRotate rotate, bool isReservedA, bool isReservedB, const ObjectPtr& blockTile)
@@ -1126,7 +1133,69 @@ void TilePainter::drawSignal3Aspect(QRectF r, TileRotate rotate, SignalAspect as
       break;
   }
 
-  m_painter.restore();
+    m_painter.restore();
+}
+
+void TilePainter::drawSignalAspectITA_helper(QRectF r, TileRotate rotate, const std::array<SignalAspectITALampPair, 3> &aspect)
+{
+    m_painter.save();
+    m_painter.translate(r.center());
+    m_painter.rotate(toDeg(rotate));
+    r.moveCenter(QPointF{0, 0});
+
+    const qreal x1 = r.left() + r.width() * 0.3;
+    const qreal x2 = r.right() - r.width() * 0.3;
+    const qreal y1 = r.top() + r.height() * 0.3;
+    const qreal y2 = r.bottom() - r.height() * 0.3;
+    const qreal w = x2 - x1;
+    const qreal lampRadius = w / 4;
+
+    QPainterPath path;
+    path.moveTo(x1, y1);
+    path.lineTo(x1, y2);
+    path.arcTo(QRectF{x1, y2 - (w / 2), w, w}, 180, 180);
+    path.lineTo(x2, y1);
+    path.arcTo(QRectF{x1, y1 - (w / 2), w, w}, 0, 180);
+    m_painter.setPen(QPen{Qt::white, lampRadius / 2});
+    m_painter.fillPath(path, Qt::black);
+    m_painter.drawPath(path);
+
+    m_painter.setPen(Qt::NoPen);
+
+    QPointF lampPos{r.center().x(), r.center().y() - 2 * lampRadius};
+
+    for(int i = 0; i < 3; i++)
+    {
+        SignalAspectITALampPair pair = aspect[i];
+
+        switch (pair.second)
+        {
+        case SignalAspectITALampColor::Red:
+            m_painter.setBrush(signalRed);
+            break;
+        case SignalAspectITALampColor::Yellow:
+            m_painter.setBrush(signalYellow);
+            break;
+        case SignalAspectITALampColor::Green:
+            m_painter.setBrush(signalGreen);
+            break;
+        default:
+            break;
+        }
+
+        bool blinkOn = false;
+        if((m_blinkState && pair.first == SignalAspectITALampState::Blinking) || (!m_blinkState && pair.first == SignalAspectITALampState::BlinkingInverse))
+            blinkOn = true;
+
+        if(pair.first != SignalAspectITALampState::On || blinkOn)
+        {
+            m_painter.drawEllipse(lampPos, lampRadius, lampRadius);
+        }
+
+        lampPos.ry() += 2 * lampRadius;
+    }
+
+    m_painter.restore();
 }
 
 void TilePainter::drawSignalDirection(QRectF r, TileRotate rotate)

@@ -166,4 +166,6 @@ TRAINTASTIC_ENUM(SignalAspectITALampColor, "signal_ita_lamp_color", 3,
     {SignalAspectITALampColor::Yellow, "blink"}
 });
 
+typedef std::pair<SignalAspectITALampState, SignalAspectITALampColor> SignalAspectITALampPair;
+
 #endif
