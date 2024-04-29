@@ -136,4 +136,34 @@ TRAINTASTIC_ENUM(SignalAspectITA, "signal_aspect_ita", 24,
     {SignalAspectITA::BinarioIngombroTroncoDeviato, "bin_ingombro_dev"},
 });
 
+enum class SignalAspectITALampState
+{
+    Off = 0,
+    On = 1,
+    Blinking = 2,
+    BlinkingInverse = 3
+};
+
+TRAINTASTIC_ENUM(SignalAspectITALampState, "signal_ita_lamp_state", 4,
+{
+    {SignalAspectITALampState::Off, "off"},
+    {SignalAspectITALampState::On, "on"},
+    {SignalAspectITALampState::Blinking, "blink"},
+    {SignalAspectITALampState::BlinkingInverse, "blink_inverse"},
+});
+
+enum class SignalAspectITALampColor
+{
+    Red = 0,
+    Green = 1,
+    Yellow = 2
+};
+
+TRAINTASTIC_ENUM(SignalAspectITALampColor, "signal_ita_lamp_color", 3,
+{
+    {SignalAspectITALampColor::Red, "off"},
+    {SignalAspectITALampColor::Green, "on"},
+    {SignalAspectITALampColor::Yellow, "blink"}
+});
+
 #endif

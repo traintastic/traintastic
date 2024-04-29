@@ -36,7 +36,20 @@ class SignalRailTileITA : public SignalRailTile
   public:
     SignalRailTileITA(World& world, std::string_view _id);
 
+    void setAspectITA(SignalAspectITA value);
+
+    void calculateLampStates();
+
     Property<SignalAspectITA> aspectITA;
+
+    Property<SignalAspectITALampState> lampState1;
+    Property<SignalAspectITALampColor> lampColor1;
+
+    Property<SignalAspectITALampState> lampState2;
+    Property<SignalAspectITALampColor> lampColor2;
+
+    Property<SignalAspectITALampState> lampState3;
+    Property<SignalAspectITALampColor> lampColor3;
 };
 
 #endif

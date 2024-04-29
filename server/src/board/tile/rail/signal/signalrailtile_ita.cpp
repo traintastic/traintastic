@@ -237,7 +237,7 @@ protected:
         SignalAspectITA aspectITA = determineAspectITA();
 
         auto &signal_ = const_cast<SignalRailTile&>(signal());
-        static_cast<SignalRailTileITA &>(signal_).aspectITA.setValue(aspectITA);
+        static_cast<SignalRailTileITA &>(signal_).setAspectITA(aspectITA);
 
         switch (aspectITA)
         {
@@ -262,7 +262,13 @@ public:
 
 SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
     SignalRailTile(world, _id, TileId::RailSignal3Aspect),
-    aspectITA{this, "aspect_ita", SignalAspectITA::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
+    aspectITA{this, "aspect_ita", SignalAspectITA::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+    lampState1{this, "lamp_state_1", SignalAspectITALampState::Off, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+    lampColor1{this, "lamp_color_1", SignalAspectITALampColor::Red, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+    lampState2{this, "lamp_state_2", SignalAspectITALampState::Off, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+    lampColor2{this, "lamp_color_2", SignalAspectITALampColor::Red, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+    lampState3{this, "lamp_state_3", SignalAspectITALampState::Off, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+    lampColor3{this, "lamp_color_3", SignalAspectITALampColor::Red, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
 {
     outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed}, getDefaultActionValue));
 
@@ -273,6 +279,123 @@ SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
     m_interfaceItems.add(setAspect);
 
     connectOutputMap();
+}
+
+void SignalRailTileITA::setAspectITA(SignalAspectITA value)
+{
+    calculateLampStates();
+
+    aspectITA.setValueInternal(value);
+
+    //TODO: aspectChanged is already called by setAspect()
+}
+
+void SignalRailTileITA::calculateLampStates()
+{
+    SignalAspectITA value = aspectITA.value();
+    SignalAspectITA_ingredients ingredients = SignalAspectITA_ingredients(value);
+
+    switch (value)
+    {
+    case SignalAspectITA::Unknown:
+    case SignalAspectITA::ViaImpedita:
+    case SignalAspectITA::ViaLibera:
+    case SignalAspectITA::ViaLibera_AvvisoViaImpedita:
+    {
+        lampState2.setValue(SignalAspectITALampState::Off);
+        lampState3.setValue(SignalAspectITALampState::Off);
+
+        if(value == SignalAspectITA::Unknown)
+            lampState1.setValue(SignalAspectITALampState::Off);
+        else
+        {
+            lampState1.setValue(SignalAspectITALampState::On);
+            switch (value)
+            {
+            case SignalAspectITA::ViaImpedita:
+                lampColor1.setValue(SignalAspectITALampColor::Red);
+                break;
+            case SignalAspectITA::ViaLibera:
+                lampColor1.setValue(SignalAspectITALampColor::Green);
+                break;
+            case SignalAspectITA::ViaLibera_AvvisoViaImpedita:
+                lampColor1.setValue(SignalAspectITALampColor::Yellow);
+                break;
+            default:
+                assert(false);
+            }
+        }
+        return;
+    }
+    default:
+        break;
+    }
+
+    bool shiftByOne = false;
+
+    if((ingredients & RiduzioneMASK) != 0 || ingredients & Deviata)
+    {
+        // All begin with red lamp on top
+        lampState1.setValue(SignalAspectITALampState::On);
+        lampColor1.setValue(SignalAspectITALampColor::Red);
+
+        shiftByOne = true;
+    }
+
+    auto& firstLampState = shiftByOne ? lampState2 : lampState1;
+    auto& firstLampColor = shiftByOne ? lampColor2 : lampColor1;
+    auto& secondLampState = shiftByOne ? lampState3 : lampState2;
+    auto& secondLampColor = shiftByOne ? lampColor3 : lampColor2;
+
+    SignalAspectITA_ingredients avvisoRiduzione = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::AvvisoRiduzioneMASK);
+    SignalAspectITA_ingredients avviso = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::AvvisoMASK);
+
+    if(ingredients & SignalAspectITA_ingredients::BinarioIngombroTronco)
+    {
+        firstLampState.setValue(SignalAspectITALampState::On);
+        firstLampColor.setValue(SignalAspectITALampColor::Yellow);
+
+        secondLampState.setValue(SignalAspectITALampState::On);
+        secondLampColor.setValue(SignalAspectITALampColor::Yellow);
+    }
+    else if(avviso == SignalAspectITA_ingredients::AvvisoViaImpedita
+               || (avviso == SignalAspectITA_ingredients::ViaLibera && !avvisoRiduzione))
+    {
+        firstLampState.setValue(SignalAspectITALampState::On);
+
+        if(avviso == SignalAspectITA_ingredients::AvvisoViaImpedita)
+            firstLampColor.setValue(SignalAspectITALampColor::Yellow);
+        else
+            firstLampColor.setValue(SignalAspectITALampColor::Green);
+
+        secondLampState.setValue(SignalAspectITALampState::Off);
+    }
+    else if(avvisoRiduzione)
+    {
+        firstLampColor.setValue(SignalAspectITALampColor::Yellow);
+        secondLampColor.setValue(SignalAspectITALampColor::Green);
+
+        switch (avvisoRiduzione)
+        {
+        case SignalAspectITA_ingredients::AvvisoRiduzione30:
+            firstLampState.setValue(SignalAspectITALampState::On);
+            secondLampState.setValue(SignalAspectITALampState::On);
+            break;
+
+        case SignalAspectITA_ingredients::AvvisoRiduzione60:
+            firstLampState.setValue(SignalAspectITALampState::Blinking);
+            secondLampState.setValue(SignalAspectITALampState::Blinking);
+            break;
+
+        case SignalAspectITA_ingredients::AvvisoRiduzione100:
+            firstLampState.setValue(SignalAspectITALampState::BlinkingInverse);
+            secondLampState.setValue(SignalAspectITALampState::Blinking);
+            break;
+
+        default:
+            break;
+        }
+    }
 }
 
 void SignalRailTileITA::boardModified()
