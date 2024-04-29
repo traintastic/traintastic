@@ -322,7 +322,7 @@ public:
 }
 
 SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
-    SignalRailTile(world, _id, TileId::RailSignal3Aspect),
+    SignalRailTile(world, _id, TileId::RailSignalAspectITA),
     setAspectITA{*this, "set_aspect_ita", MethodFlags::ScriptCallable, [this](SignalAspectITA value){ return doSetAspectITA(value); }},
     aspectITA{this, "aspect_ita", SignalAspectITA::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
     lampState1{this, "lamp_state_1", SignalAspectITALampState::Off, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
