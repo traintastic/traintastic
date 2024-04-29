@@ -61,7 +61,7 @@ DCCEXInterface::DCCEXInterface(World& world, std::string_view _id)
       }}
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , baudrate{this, "baudrate", 115200, PropertyFlags::ReadWrite | PropertyFlags::Store}
-  , hostname{this, "hostname", "192.168.4.1", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , port{this, "port", 2560, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , dccex{this, "dccex", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
