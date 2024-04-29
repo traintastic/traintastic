@@ -369,7 +369,7 @@ SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
 
 bool SignalRailTileITA::doSetAspectITA(SignalAspectITA value)
 {
-    calculateLampStates();
+    calculateLampStates(value);
 
     aspectITA.setValueInternal(value);
 
@@ -377,9 +377,8 @@ bool SignalRailTileITA::doSetAspectITA(SignalAspectITA value)
     return true;
 }
 
-void SignalRailTileITA::calculateLampStates()
+void SignalRailTileITA::calculateLampStates(SignalAspectITA value)
 {
-    SignalAspectITA value = aspectITA.value();
     SignalAspectITA_ingredients ingredients = SignalAspectITA_ingredients(value);
 
     switch (value)
@@ -434,10 +433,13 @@ void SignalRailTileITA::calculateLampStates()
     auto& secondLampState = shiftByOne ? lampState3 : lampState2;
     auto& secondLampColor = shiftByOne ? lampColor3 : lampColor2;
 
+    if(!shiftByOne)
+        lampState3.setValueInternal(SignalAspectITALampState::Off); // Not used for this aspect
+
     SignalAspectITA_ingredients avvisoRiduzione = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::AvvisoRiduzioneMASK);
     SignalAspectITA_ingredients avviso = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::AvvisoMASK);
 
-    if(ingredients & SignalAspectITA_ingredients::BinarioIngombroTronco)
+    if((ingredients & SignalAspectITA_ingredients::BinarioIngombroTronco) == SignalAspectITA_ingredients::BinarioIngombroTronco)
     {
         firstLampState.setValueInternal(SignalAspectITALampState::On);
         firstLampColor.setValueInternal(SignalAspectITALampColor::Yellow);

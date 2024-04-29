@@ -59,7 +59,7 @@ enum SignalAspectITA_ingredients : uint8_t
     Riduzione30 = 1 << 5,
     Riduzione60 = 1 << 6,
     Riduzione100 = Riduzione30 | Riduzione60,
-    RiduzioneMASK = AvvisoRiduzione100,
+    RiduzioneMASK = Riduzione100,
 
     BinarioIngombroTronco = 1 << 7 | AvvisoViaImpedita
 };

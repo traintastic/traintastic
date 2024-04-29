@@ -35,7 +35,7 @@ class SignalRailTileITA : public SignalRailTile
 
     bool doSetAspectITA(SignalAspectITA value);
 
-    void calculateLampStates();
+    void calculateLampStates(SignalAspectITA value);
 
   public:
     SignalRailTileITA(World& world, std::string_view _id);
