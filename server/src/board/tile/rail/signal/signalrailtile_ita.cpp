@@ -30,8 +30,53 @@
 #include "../../../../core/objectproperty.tpp"
 #include "../../../../hardware/output/outputcontroller.hpp"
 
-static const std::array<SignalAspect, 4> aspectValues = {SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed, SignalAspect::Unknown};
-static const std::array<SignalAspect, 3> setAspectValues = {SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed};
+static const std::array<SignalAspectITA, 24> aspectValues = {SignalAspectITA::Unknown,
+                                                            SignalAspectITA::ViaImpedita,
+                                                            SignalAspectITA::ViaLibera,
+                                                            SignalAspectITA::ViaLibera_AvvisoViaImpedita,
+                                                            SignalAspectITA::ViaLibera_AvvisoRiduzione30,
+                                                            SignalAspectITA::ViaLibera_AvvisoRiduzione60,
+                                                            SignalAspectITA::ViaLibera_AvvisoRiduzione100,
+                                                            SignalAspectITA::Riduzione30_AvvisoViaLibera,
+                                                            SignalAspectITA::Riduzione60_AvvisoViaLibera,
+                                                            SignalAspectITA::Riduzione100_AvvisoViaLibera,
+                                                            SignalAspectITA::Riduzione30_AvvisoViaImpedita,
+                                                            SignalAspectITA::Riduzione60_AvvisoViaImpedita,
+                                                            SignalAspectITA::Riduzione100_AvvisoViaImpedita,
+                                                            SignalAspectITA::Riduzione30_Avviso30,
+                                                            SignalAspectITA::Riduzione60_Avviso30,
+                                                            SignalAspectITA::Riduzione100_Avviso30,
+                                                            SignalAspectITA::Riduzione30_Avviso60,
+                                                            SignalAspectITA::Riduzione60_Avviso60,
+                                                            SignalAspectITA::Riduzione100_Avviso60,
+                                                            SignalAspectITA::Riduzione30_Avviso100,
+                                                            SignalAspectITA::Riduzione60_Avviso100,
+                                                            SignalAspectITA::Riduzione100_Avviso100,
+                                                            SignalAspectITA::BinarioIngombroTronco,
+                                                            SignalAspectITA::BinarioIngombroTroncoDeviato};
+static const std::array<SignalAspectITA, 23> setAspectValues = {SignalAspectITA::ViaImpedita,
+                                                               SignalAspectITA::ViaLibera,
+                                                               SignalAspectITA::ViaLibera_AvvisoViaImpedita,
+                                                               SignalAspectITA::ViaLibera_AvvisoRiduzione30,
+                                                               SignalAspectITA::ViaLibera_AvvisoRiduzione60,
+                                                               SignalAspectITA::ViaLibera_AvvisoRiduzione100,
+                                                               SignalAspectITA::Riduzione30_AvvisoViaLibera,
+                                                               SignalAspectITA::Riduzione60_AvvisoViaLibera,
+                                                               SignalAspectITA::Riduzione100_AvvisoViaLibera,
+                                                               SignalAspectITA::Riduzione30_AvvisoViaImpedita,
+                                                               SignalAspectITA::Riduzione60_AvvisoViaImpedita,
+                                                               SignalAspectITA::Riduzione100_AvvisoViaImpedita,
+                                                               SignalAspectITA::Riduzione30_Avviso30,
+                                                               SignalAspectITA::Riduzione60_Avviso30,
+                                                               SignalAspectITA::Riduzione100_Avviso30,
+                                                               SignalAspectITA::Riduzione30_Avviso60,
+                                                               SignalAspectITA::Riduzione60_Avviso60,
+                                                               SignalAspectITA::Riduzione100_Avviso60,
+                                                               SignalAspectITA::Riduzione30_Avviso100,
+                                                               SignalAspectITA::Riduzione60_Avviso100,
+                                                               SignalAspectITA::Riduzione100_Avviso100,
+                                                               SignalAspectITA::BinarioIngombroTronco,
+                                                               SignalAspectITA::BinarioIngombroTroncoDeviato};
 
 namespace
 {
@@ -262,6 +307,7 @@ public:
 
 SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
     SignalRailTile(world, _id, TileId::RailSignal3Aspect),
+    setAspectITA{*this, "set_aspect_ita", MethodFlags::ScriptCallable, [this](SignalAspectITA value){ return doSetAspectITA(value); }},
     aspectITA{this, "aspect_ita", SignalAspectITA::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
     lampState1{this, "lamp_state_1", SignalAspectITALampState::Off, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
     lampColor1{this, "lamp_color_1", SignalAspectITALampColor::Red, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
@@ -270,24 +316,28 @@ SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
     lampState3{this, "lamp_state_3", SignalAspectITALampState::Off, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
     lampColor3{this, "lamp_color_3", SignalAspectITALampColor::Red, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
 {
+    Attributes::addObjectEditor(aspectITA, false);
+    Attributes::addObjectEditor(setAspectITA, false);
+
     outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed}, getDefaultActionValue));
 
-    Attributes::addValues(aspect, aspectValues);
-    m_interfaceItems.add(aspect);
+    Attributes::addValues(aspectITA, aspectValues);
+    m_interfaceItems.add(aspectITA);
 
-    Attributes::addValues(setAspect, setAspectValues);
-    m_interfaceItems.add(setAspect);
+    Attributes::addValues(setAspectITA, setAspectValues);
+    m_interfaceItems.add(setAspectITA);
 
     connectOutputMap();
 }
 
-void SignalRailTileITA::setAspectITA(SignalAspectITA value)
+bool SignalRailTileITA::doSetAspectITA(SignalAspectITA value)
 {
     calculateLampStates();
 
     aspectITA.setValueInternal(value);
 
     //TODO: aspectChanged is already called by setAspect()
+    return true;
 }
 
 void SignalRailTileITA::calculateLampStates()
