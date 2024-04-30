@@ -123,6 +123,7 @@ DCCEXInterface::DCCEXInterface(World& world, std::string_view _id)
     });
 
   updateEnabled();
+  updateVisible();
 }
 
 tcb::span<const DecoderProtocol> DCCEXInterface::decoderProtocols() const
