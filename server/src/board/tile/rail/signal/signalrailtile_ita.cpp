@@ -327,13 +327,7 @@ SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
 bool SignalRailTileITA::doSetAspect(SignalAspect value, bool skipAction)
 {
     SignalAspectITA valueITA = SignalAspectITA(value);
-
-    //TODO: robust logic to reject invalid aspects or impossible aspects due to lamps number/rappel/triangle
-    if(auxSpeedReduction.value() == SignalAspectITAAuxiliarySpeedReduction::Triangle30)
-    {
-        // Signal always shows reduction to 30 km/h
-    }
-
+    valueITA = adjustAspect(valueITA);
 
     const auto* values = setAspect.tryGetValuesAttribute(AttributeName::Values);
     assert(values);
@@ -367,6 +361,51 @@ bool SignalRailTileITA::doSetAspect(SignalAspect value, bool skipAction)
         fireEvent(onAspectChanged, shared_ptr<SignalRailTile>(), value);
     }
     return true;
+}
+
+SignalAspectITA SignalRailTileITA::adjustAspect(SignalAspectITA value) const
+{
+    //TODO: robust logic to reject invalid aspects or impossible aspects due to lamps number/rappel/triangle
+    if(auxSpeedReduction.value() == SignalAspectITAAuxiliarySpeedReduction::Triangle30 || auxSpeedReduction.value() == SignalAspectITAAuxiliarySpeedReduction::Triangle60)
+    {
+        // Signal always shows a speed reduction to 30 km/h (or 60 km/h if triangle has "60" inside it)
+        SignalAspectITA_ingredients ingredients = SignalAspectITA_ingredients(value);
+        SignalAspectITA_ingredients riduzione = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::RiduzioneMASK);
+
+        SignalAspectITA_ingredients newReduction = SignalAspectITA_ingredients::Riduzione30;
+
+        if(auxSpeedReduction.value() == SignalAspectITAAuxiliarySpeedReduction::Triangle60)
+        {
+            newReduction = SignalAspectITA_ingredients::Riduzione60;
+
+            // Refuse to show non-Stop aspect if required speed limit is lower than 60 km/h
+            // If this happens it means signal must be changed to Rappel or Triangle 30 km/h
+            if(riduzione == SignalAspectITA_ingredients::Riduzione30)
+                value = SignalAspectITA::ViaImpedita;
+        }
+
+        switch (value)
+        {
+        case SignalAspectITA::Unknown:
+        case SignalAspectITA::ViaImpedita:
+        case SignalAspectITA::BinarioIngombroTronco:
+        case SignalAspectITA::BinarioIngombroTroncoDeviato:
+            // These aspect do not need additional speed limit
+            break;
+
+        default:
+        {
+            // Remove current speed reduction
+            ingredients = SignalAspectITA_ingredients(ingredients & ~SignalAspectITA_ingredients::RiduzioneMASK);
+
+            // Add new speed reduction imposed by triangle
+            ingredients = SignalAspectITA_ingredients(ingredients | newReduction);
+            value = SignalAspectITA(ingredients);
+        }
+        }
+    }
+
+    return value;
 }
 
 void SignalRailTileITA::boardModified()

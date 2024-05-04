@@ -35,6 +35,8 @@ class SignalRailTileITA : public SignalRailTile
 
     virtual bool doSetAspect(SignalAspect value, bool skipAction) override;
 
+    SignalAspectITA adjustAspect(SignalAspectITA value) const;
+
   public:
     SignalRailTileITA(World& world, std::string_view _id);
 
