@@ -129,10 +129,14 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
     [this, l, handler]()
     {
       // Only trigger update if signal is really blinking
-      auto aspect = getSignalAspectITA(l);
+      auto [aspectITA, auxReduction] = getSignalAspectITA(l);
+      (void)auxReduction;
+
+      auto lamps = TilePainter::calculateLampStates(aspectITA);
+
       for(int i = 0; i < 3; i++)
       {
-        if(aspect[i].first == SignalAspectITALampState::Blinking || aspect[i].first == SignalAspectITALampState::BlinkingInverse)
+        if(lamps[i].state == SignalAspectITALampState::Blinking || lamps[i].state == SignalAspectITALampState::BlinkingInverse)
         {
           // Signal is blinking, update it
           handler();
@@ -357,33 +361,21 @@ SignalAspect BoardAreaWidget::getSignalAspect(const TileLocation& l) const
   return SignalAspect::Unknown;
 }
 
-std::array<SignalAspectITALampPair, 3> BoardAreaWidget::getSignalAspectITA(const TileLocation& l) const
+std::tuple<SignalAspectITA, SignalAspectITAAuxiliarySpeedReduction> BoardAreaWidget::getSignalAspectITA(const TileLocation& l) const
 {
-    constexpr SignalAspectITALampPair defaultState = {SignalAspectITALampState::Off, SignalAspectITALampColor::Red};
-    std::array<SignalAspectITALampPair, 3> state = {defaultState, defaultState, defaultState};
+    SignalAspectITA aspectITA = SignalAspectITA::Unknown;
+    SignalAspectITAAuxiliarySpeedReduction auxReduction = SignalAspectITAAuxiliarySpeedReduction::None;
 
     if(ObjectPtr object = m_board.board().getTileObject(l))
     {
-        if(const auto* p = object->getProperty("lamp_state_1"))
-            state[0].first = p->toEnum<SignalAspectITALampState>();
+        if(const auto* p = object->getProperty("aspect_ita"))
+            aspectITA = p->toEnum<SignalAspectITA>();
 
-        if(const auto* p = object->getProperty("lamp_color_1"))
-            state[0].second = p->toEnum<SignalAspectITALampColor>();
-
-        if(const auto* p = object->getProperty("lamp_state_2"))
-            state[1].first = p->toEnum<SignalAspectITALampState>();
-
-        if(const auto* p = object->getProperty("lamp_color_2"))
-            state[1].second = p->toEnum<SignalAspectITALampColor>();
-
-        if(const auto* p = object->getProperty("lamp_state_3"))
-            state[2].first = p->toEnum<SignalAspectITALampState>();
-
-        if(const auto* p = object->getProperty("lamp_color_3"))
-            state[2].second = p->toEnum<SignalAspectITALampColor>();
+        if(const auto* p = object->getProperty("aux_reduction"))
+            auxReduction = p->toEnum<SignalAspectITAAuxiliarySpeedReduction>();
     }
 
-    return state;
+    return {aspectITA, auxReduction};
 }
 
 Color BoardAreaWidget::getColor(const TileLocation& l) const
@@ -645,8 +637,11 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           break;
 
         case TileId::RailSignalAspectITA:
-          tilePainter.drawSignalAspectITA(id, r, a, isReserved, getSignalAspectITA(it.first));
+        {
+          auto [aspectITA, auxReduction] = getSignalAspectITA(it.first);
+          tilePainter.drawSignalAspectITA(id, r, a, isReserved, aspectITA, auxReduction);
           break;
+        }
 
         case TileId::RailBlock:
           tilePainter.drawBlock(id, r, a, state & 0x01, state & 0x02, m_board.board().getTileObject(it.first));

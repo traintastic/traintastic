@@ -65,6 +65,11 @@ static const std::array<SignalAspectITALampColor, 4> lampColorValues = {SignalAs
                                                                         SignalAspectITALampColor::Green,
                                                                         SignalAspectITALampColor::Yellow};
 
+static const std::array<SignalAspectITAAuxiliarySpeedReduction, 4> auxiliarySpeedReductionValues =
+    {SignalAspectITAAuxiliarySpeedReduction::None,
+     SignalAspectITAAuxiliarySpeedReduction::Rappel,
+     SignalAspectITAAuxiliarySpeedReduction::Triangle30,
+     SignalAspectITAAuxiliarySpeedReduction::Triangle60};
 
 namespace
 {
@@ -225,6 +230,8 @@ protected:
                     switch (nextAspect)
                     {
                     case SignalAspectITA::ViaImpedita:
+                    case SignalAspectITA::BinarioIngombroTronco:
+                    case SignalAspectITA::BinarioIngombroTroncoDeviato:
                     case SignalAspectITA::Unknown:
                     {
                         // Cannot allow 100 if next signal is Stop
@@ -283,12 +290,7 @@ public:
 SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
     SignalRailTile(world, _id, TileId::RailSignalAspectITA),
     aspectITA{this, "aspect_ita", SignalAspectITA::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
-    lampState1{this, "lamp_state_1", SignalAspectITALampState::Off, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
-    lampColor1{this, "lamp_color_1", SignalAspectITALampColor::Red, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
-    lampState2{this, "lamp_state_2", SignalAspectITALampState::Off, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
-    lampColor2{this, "lamp_color_2", SignalAspectITALampColor::Red, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
-    lampState3{this, "lamp_state_3", SignalAspectITALampState::Off, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
-    lampColor3{this, "lamp_color_3", SignalAspectITALampColor::Red, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
+    auxSpeedReduction{this, "aux_reduction", SignalAspectITAAuxiliarySpeedReduction::None, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
 {
     // Cast values to SignalAspect
     tcb::span<const SignalAspect, 24> aspectValues{reinterpret_cast<const SignalAspect *>(aspectValuesITA.begin()),
@@ -312,145 +314,30 @@ SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
     Attributes::addValues<bool, SignalAspect>(setAspect, setAspectValues);
     m_interfaceItems.add(setAspect);
 
-    auto addLamp = [this](auto &lampState, auto &lampColor)
-    {
-        Attributes::addObjectEditor(lampState, false);
-        Attributes::addValues(lampState, lampStateValues);
-        m_interfaceItems.add(lampState);
-
-        Attributes::addObjectEditor(lampColor, false);
-        Attributes::addValues(lampColor, lampColorValues);
-        m_interfaceItems.add(lampColor);
-    };
-
-    addLamp(lampState1, lampColor1);
-    addLamp(lampState2, lampColor2);
-    addLamp(lampState3, lampColor3);
+    Attributes::addObjectEditor(auxSpeedReduction, false);
+    Attributes::addValues(auxSpeedReduction, auxiliarySpeedReductionValues);
+    m_interfaceItems.add(auxSpeedReduction);
 
     connectOutputMap();
-}
-
-void SignalRailTileITA::calculateLampStates(SignalAspectITA value)
-{
-    SignalAspectITA_ingredients ingredients = SignalAspectITA_ingredients(value);
-
-    switch (value)
-    {
-    case SignalAspectITA::Unknown:
-    case SignalAspectITA::ViaImpedita:
-    case SignalAspectITA::ViaLibera:
-    case SignalAspectITA::ViaLibera_AvvisoViaImpedita:
-    {
-        lampState2.setValueInternal(SignalAspectITALampState::Off);
-        lampState3.setValueInternal(SignalAspectITALampState::Off);
-
-        if(value == SignalAspectITA::Unknown)
-            lampState1.setValueInternal(SignalAspectITALampState::Off);
-        else
-        {
-            lampState1.setValueInternal(SignalAspectITALampState::On);
-            switch (value)
-            {
-            case SignalAspectITA::ViaImpedita:
-                lampColor1.setValueInternal(SignalAspectITALampColor::Red);
-                break;
-            case SignalAspectITA::ViaLibera:
-                lampColor1.setValueInternal(SignalAspectITALampColor::Green);
-                break;
-            case SignalAspectITA::ViaLibera_AvvisoViaImpedita:
-                lampColor1.setValueInternal(SignalAspectITALampColor::Yellow);
-                break;
-            default:
-                assert(false);
-            }
-        }
-        return;
-    }
-    default:
-        break;
-    }
-
-    bool shiftByOne = false;
-
-    if((ingredients & RiduzioneMASK) != 0 || ingredients & Deviata)
-    {
-        // All begin with red lamp on top
-        lampState1.setValueInternal(SignalAspectITALampState::On);
-        lampColor1.setValueInternal(SignalAspectITALampColor::Red);
-
-        shiftByOne = true;
-    }
-
-    auto& firstLampState = shiftByOne ? lampState2 : lampState1;
-    auto& firstLampColor = shiftByOne ? lampColor2 : lampColor1;
-    auto& secondLampState = shiftByOne ? lampState3 : lampState2;
-    auto& secondLampColor = shiftByOne ? lampColor3 : lampColor2;
-
-    if(!shiftByOne)
-        lampState3.setValueInternal(SignalAspectITALampState::Off); // Not used for this aspect
-
-    SignalAspectITA_ingredients avvisoRiduzione = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::AvvisoRiduzioneMASK);
-    SignalAspectITA_ingredients avviso = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::AvvisoMASK);
-
-    if((ingredients & SignalAspectITA_ingredients::BinarioIngombroTronco) == SignalAspectITA_ingredients::BinarioIngombroTronco)
-    {
-        firstLampState.setValueInternal(SignalAspectITALampState::On);
-        firstLampColor.setValueInternal(SignalAspectITALampColor::Yellow);
-
-        secondLampState.setValueInternal(SignalAspectITALampState::On);
-        secondLampColor.setValueInternal(SignalAspectITALampColor::Yellow);
-    }
-    else if(avviso == SignalAspectITA_ingredients::AvvisoViaImpedita
-               || (avviso == SignalAspectITA_ingredients::ViaLibera && !avvisoRiduzione))
-    {
-        firstLampState.setValueInternal(SignalAspectITALampState::On);
-
-        if(avviso == SignalAspectITA_ingredients::AvvisoViaImpedita)
-            firstLampColor.setValueInternal(SignalAspectITALampColor::Yellow);
-        else
-            firstLampColor.setValueInternal(SignalAspectITALampColor::Green);
-
-        secondLampState.setValueInternal(SignalAspectITALampState::Off);
-    }
-    else if(avvisoRiduzione)
-    {
-        firstLampColor.setValueInternal(SignalAspectITALampColor::Yellow);
-        secondLampColor.setValueInternal(SignalAspectITALampColor::Green);
-
-        switch (avvisoRiduzione)
-        {
-        case SignalAspectITA_ingredients::AvvisoRiduzione30:
-            firstLampState.setValueInternal(SignalAspectITALampState::On);
-            secondLampState.setValueInternal(SignalAspectITALampState::On);
-            break;
-
-        case SignalAspectITA_ingredients::AvvisoRiduzione60:
-            firstLampState.setValueInternal(SignalAspectITALampState::Blinking);
-            secondLampState.setValueInternal(SignalAspectITALampState::Blinking);
-            break;
-
-        case SignalAspectITA_ingredients::AvvisoRiduzione100:
-            firstLampState.setValueInternal(SignalAspectITALampState::BlinkingInverse);
-            secondLampState.setValueInternal(SignalAspectITALampState::Blinking);
-            break;
-
-        default:
-            break;
-        }
-    }
 }
 
 bool SignalRailTileITA::doSetAspect(SignalAspect value, bool skipAction)
 {
     SignalAspectITA valueITA = SignalAspectITA(value);
+
+    //TODO: robust logic to reject invalid aspects or impossible aspects due to lamps number/rappel/triangle
+    if(auxSpeedReduction.value() == SignalAspectITAAuxiliarySpeedReduction::Triangle30)
+    {
+        // Signal always shows reduction to 30 km/h
+    }
+
+
     const auto* values = setAspect.tryGetValuesAttribute(AttributeName::Values);
     assert(values);
     if(!values->contains(static_cast<int64_t>(valueITA)))
         return false;
     if(aspectITA != valueITA)
     {
-        calculateLampStates(valueITA);
-
         //TODO: maybe do a custom OutputMapBase subclass
         (void)skipAction;
         //if(!skipAction)

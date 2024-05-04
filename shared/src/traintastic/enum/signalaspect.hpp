@@ -166,6 +166,20 @@ TRAINTASTIC_ENUM(SignalAspectITALampColor, "signal_ita_lamp_color", 3,
     {SignalAspectITALampColor::Yellow, "blink"}
 });
 
-typedef std::pair<SignalAspectITALampState, SignalAspectITALampColor> SignalAspectITALampPair;
+enum class SignalAspectITAAuxiliarySpeedReduction
+{
+    None = 0,
+    Rappel = 1,
+    Triangle30 = 2,
+    Triangle60 = 3
+};
+
+TRAINTASTIC_ENUM(SignalAspectITAAuxiliarySpeedReduction, "signal_ita_aux_speed", 4,
+{
+    {SignalAspectITAAuxiliarySpeedReduction::None, "none"},
+    {SignalAspectITAAuxiliarySpeedReduction::Rappel, "rappel"},
+    {SignalAspectITAAuxiliarySpeedReduction::Triangle30, "triangle_30"},
+    {SignalAspectITAAuxiliarySpeedReduction::Triangle60, "triangle_60"}
+});
 
 #endif

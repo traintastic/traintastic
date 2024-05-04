@@ -424,14 +424,14 @@ void TilePainter::drawSignal(TileId id, const QRectF& r, TileRotate rotate, bool
     }
 }
 
-void TilePainter::drawSignalAspectITA(TileId id, const QRectF &r, TileRotate rotate, bool isReserved, std::array<SignalAspectITALampPair, 3> aspect)
+void TilePainter::drawSignalAspectITA(TileId id, const QRectF &r, TileRotate rotate, bool isReserved, SignalAspectITA aspectITA, SignalAspectITAAuxiliarySpeedReduction auxReduction)
 {
     assert(id == TileId::RailSignalAspectITA);
 
     setTrackPen(isReserved);
     drawStraight(r, rotate);
     drawSignalDirection(r, rotate);
-    drawSignalAspectITA_helper(r, rotate, aspect);
+    drawSignalAspectITA_helper(r, rotate, aspectITA, auxReduction);
 }
 
 void TilePainter::drawBlock(TileId id, const QRectF& r, TileRotate rotate, bool isReservedA, bool isReservedB, const ObjectPtr& blockTile)
@@ -1136,7 +1136,119 @@ void TilePainter::drawSignal3Aspect(QRectF r, TileRotate rotate, SignalAspect as
     m_painter.restore();
 }
 
-void TilePainter::drawSignalAspectITA_helper(QRectF r, TileRotate rotate, const std::array<SignalAspectITALampPair, 3> &aspect)
+std::array<SignalAspectITALampPair_, 3> TilePainter::calculateLampStates(SignalAspectITA value)
+{
+    //TODO: consider lamp number, rappel, triangle
+    std::array<SignalAspectITALampPair_, 3> lamps = {};
+    SignalAspectITA_ingredients ingredients = SignalAspectITA_ingredients(value);
+
+    switch (value)
+    {
+    case SignalAspectITA::Unknown:
+    case SignalAspectITA::ViaImpedita:
+    case SignalAspectITA::ViaLibera:
+    case SignalAspectITA::ViaLibera_AvvisoViaImpedita:
+    {
+        lamps[1].state = SignalAspectITALampState::Off;
+        lamps[2].state = SignalAspectITALampState::Off;
+
+        if(value == SignalAspectITA::Unknown)
+            lamps[0].state = SignalAspectITALampState::Off;
+        else
+        {
+            lamps[0].state = SignalAspectITALampState::On;
+            switch (value)
+            {
+            case SignalAspectITA::ViaImpedita:
+                lamps[0].color = SignalAspectITALampColor::Red;
+                break;
+            case SignalAspectITA::ViaLibera:
+                lamps[0].color = SignalAspectITALampColor::Green;
+                break;
+            case SignalAspectITA::ViaLibera_AvvisoViaImpedita:
+                lamps[0].color = SignalAspectITALampColor::Yellow;
+                break;
+            default:
+                assert(false);
+            }
+        }
+        return lamps;
+    }
+    default:
+        break;
+    }
+
+    bool shiftByOne = false;
+
+    if((ingredients & RiduzioneMASK) != 0 || ingredients & Deviata)
+    {
+        // All begin with red lamp on top
+        lamps[0].state = SignalAspectITALampState::On;
+        lamps[0].color = SignalAspectITALampColor::Red;
+
+        shiftByOne = true;
+    }
+
+    auto& firstLamp = shiftByOne ? lamps[1] : lamps[0];
+    auto& secondLamp = shiftByOne ? lamps[2] : lamps[1];
+
+    if(!shiftByOne)
+        lamps[2].state = SignalAspectITALampState::Off; // Not used for this aspect
+
+    SignalAspectITA_ingredients avvisoRiduzione = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::AvvisoRiduzioneMASK);
+    SignalAspectITA_ingredients avviso = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::AvvisoMASK);
+
+    if((ingredients & SignalAspectITA_ingredients::BinarioIngombroTronco) == SignalAspectITA_ingredients::BinarioIngombroTronco)
+    {
+        firstLamp.state = SignalAspectITALampState::On;
+        firstLamp.color = SignalAspectITALampColor::Yellow;
+
+        secondLamp.state = SignalAspectITALampState::On;
+        secondLamp.color = SignalAspectITALampColor::Yellow;
+    }
+    else if(avviso == SignalAspectITA_ingredients::AvvisoViaImpedita
+             || (avviso == SignalAspectITA_ingredients::ViaLibera && !avvisoRiduzione))
+    {
+        firstLamp.state = SignalAspectITALampState::On;
+
+        if(avviso == SignalAspectITA_ingredients::AvvisoViaImpedita)
+            firstLamp.color = SignalAspectITALampColor::Yellow;
+        else
+            firstLamp.color = SignalAspectITALampColor::Green;
+
+        secondLamp.state = SignalAspectITALampState::Off;
+    }
+    else if(avvisoRiduzione)
+    {
+        firstLamp.color = SignalAspectITALampColor::Yellow;
+        secondLamp.color = SignalAspectITALampColor::Green;
+
+        switch (avvisoRiduzione)
+        {
+        case SignalAspectITA_ingredients::AvvisoRiduzione30:
+            firstLamp.state = SignalAspectITALampState::On;
+            secondLamp.state = SignalAspectITALampState::On;
+            break;
+
+        case SignalAspectITA_ingredients::AvvisoRiduzione60:
+            firstLamp.state = SignalAspectITALampState::Blinking;
+            secondLamp.state = SignalAspectITALampState::Blinking;
+            break;
+
+        case SignalAspectITA_ingredients::AvvisoRiduzione100:
+            firstLamp.state = SignalAspectITALampState::BlinkingInverse;
+            secondLamp.state = SignalAspectITALampState::Blinking;
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    return lamps;
+}
+
+void TilePainter::drawSignalAspectITA_helper(QRectF r, TileRotate rotate, SignalAspectITA aspectITA, SignalAspectITAAuxiliarySpeedReduction auxReduction)
 {
     m_painter.save();
     m_painter.translate(r.center());
@@ -1164,11 +1276,13 @@ void TilePainter::drawSignalAspectITA_helper(QRectF r, TileRotate rotate, const 
 
     QPointF lampPos{r.center().x(), r.center().y() - 2 * lampRadius};
 
+    auto lamps = calculateLampStates(aspectITA);
+
     for(int i = 0; i < 3; i++)
     {
-        SignalAspectITALampPair pair = aspect[i];
+        SignalAspectITALampPair_ lamp = lamps[i];
 
-        switch (pair.second)
+        switch (lamp.color)
         {
         case SignalAspectITALampColor::Red:
             m_painter.setBrush(signalRed);
@@ -1184,16 +1298,19 @@ void TilePainter::drawSignalAspectITA_helper(QRectF r, TileRotate rotate, const 
         }
 
         bool blinkOn = false;
-        if((m_blinkState && pair.first == SignalAspectITALampState::Blinking) || (!m_blinkState && pair.first == SignalAspectITALampState::BlinkingInverse))
+        if((m_blinkState && lamp.state == SignalAspectITALampState::Blinking) || (!m_blinkState && lamp.state == SignalAspectITALampState::BlinkingInverse))
             blinkOn = true;
 
-        if(pair.first == SignalAspectITALampState::On || blinkOn)
+        if(lamp.state == SignalAspectITALampState::On || blinkOn)
         {
             m_painter.drawEllipse(lampPos, lampRadius, lampRadius);
         }
 
         lampPos.ry() += 2 * lampRadius;
     }
+
+    //TODO: draw rappel/triangle
+    (void)auxReduction;
 
     m_painter.restore();
 }

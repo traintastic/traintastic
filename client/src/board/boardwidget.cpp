@@ -677,15 +677,10 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
         else if(isRailSignal(tileId))
         {
             if(tileId == TileId::RailSignalAspectITA)
-            {
                 value = obj->getProperty("aspect_ita");
-                setValue = obj->getMethod("set_aspect_ita");
-            }
             else
-            {
                 value = obj->getProperty("aspect");
-                setValue = obj->getMethod("set_aspect");
-            }
+            setValue = obj->getMethod("set_aspect");
         }
         else if(tileId == TileId::RailDirectionControl)
         {
@@ -725,8 +720,10 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
                 tilePainter.drawTurnout(tileId, image.rect(), tileRotate, TurnoutPosition::Unknown, static_cast<TurnoutPosition>(n));
               else if(isRailSignal(tileId))
               {
+                //TODO: consider lamp number, rappel, triangle etc
+                //TODO: add blinking
                 if(tileId == TileId::RailSignalAspectITA)
-                  tilePainter.drawSignalAspectITA(tileId, image.rect(), tileRotate, false);
+                  tilePainter.drawSignalAspectITA(tileId, image.rect(), tileRotate, false, static_cast<SignalAspectITA>(n));
                 else
                   tilePainter.drawSignal(tileId, image.rect(), tileRotate, false, static_cast<SignalAspect>(n));
               }

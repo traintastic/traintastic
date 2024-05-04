@@ -102,7 +102,7 @@ class BoardAreaWidget : public QWidget
     SensorState getSensorState(const TileLocation& l) const;
     DirectionControlState getDirectionControlState(const TileLocation& l) const;
     SignalAspect getSignalAspect(const TileLocation& l) const;
-    std::array<SignalAspectITALampPair, 3> getSignalAspectITA(const TileLocation &l) const;
+    std::tuple<SignalAspectITA, SignalAspectITAAuxiliarySpeedReduction> getSignalAspectITA(const TileLocation &l) const;
     Color getColor(const TileLocation& l) const;
     DecouplerState getDecouplerState(const TileLocation& l) const;
     bool getNXButtonEnabled(const TileLocation& l) const;
