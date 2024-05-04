@@ -106,7 +106,7 @@ class TilePainter
   public:
     TilePainter(QPainter& painter, int tileSize, const BoardColorScheme& colorScheme, bool blinkState);
 
-    static std::array<SignalAspectITALampPair_, 3> calculateLampStates(SignalAspectITA value);
+    static std::array<SignalAspectITALampPair_, 3> calculateLampStatesITSignal(SignalAspectITA value, SignalAspectITAAuxiliarySpeedReduction auxReduction);
 
     void draw(TileId id, const QRectF& r, TileRotate rotate, bool isReserved = false);
     void drawBridge(TileId id, const QRectF& r, TileRotate rotate, bool isReservedAC = false, bool isReservedBD = false);

@@ -132,7 +132,7 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
       auto [aspectITA, auxReduction] = getSignalAspectITA(l);
       (void)auxReduction;
 
-      auto lamps = TilePainter::calculateLampStates(aspectITA);
+      auto lamps = TilePainter::calculateLampStatesITSignal(aspectITA, auxReduction);
 
       for(int i = 0; i < 3; i++)
       {
@@ -174,6 +174,7 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
 
     case TileId::RailSignalAspectITA:
       tryConnect("aspect_ita");
+      tryConnect("aux_reduction");
       connect(this, &BoardAreaWidget::blinkStateChanged, this, handlerBlink);
       break;
 

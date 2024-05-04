@@ -1136,7 +1136,7 @@ void TilePainter::drawSignal3Aspect(QRectF r, TileRotate rotate, SignalAspect as
     m_painter.restore();
 }
 
-std::array<SignalAspectITALampPair_, 3> TilePainter::calculateLampStates(SignalAspectITA value)
+std::array<SignalAspectITALampPair_, 3> TilePainter::calculateLampStatesITSignal(SignalAspectITA value, SignalAspectITAAuxiliarySpeedReduction auxReduction)
 {
     //TODO: consider lamp number, rappel, triangle
     std::array<SignalAspectITALampPair_, 3> lamps = {};
@@ -1178,22 +1178,23 @@ std::array<SignalAspectITALampPair_, 3> TilePainter::calculateLampStates(SignalA
         break;
     }
 
-    bool shiftByOne = false;
+    bool shiftByOne = (ingredients & RiduzioneMASK) != 0 || ingredients & Deviata;
+    if(auxReduction == SignalAspectITAAuxiliarySpeedReduction::Triangle30 || auxReduction == SignalAspectITAAuxiliarySpeedReduction::Triangle60)
+        shiftByOne = false; // Triangle eats the red light on top
 
-    if((ingredients & RiduzioneMASK) != 0 || ingredients & Deviata)
+    if(shiftByOne)
     {
         // All begin with red lamp on top
         lamps[0].state = SignalAspectITALampState::On;
         lamps[0].color = SignalAspectITALampColor::Red;
-
-        shiftByOne = true;
+    }
+    else
+    {
+        lamps[2].state = SignalAspectITALampState::Off; // Not used for this aspect
     }
 
     auto& firstLamp = shiftByOne ? lamps[1] : lamps[0];
     auto& secondLamp = shiftByOne ? lamps[2] : lamps[1];
-
-    if(!shiftByOne)
-        lamps[2].state = SignalAspectITALampState::Off; // Not used for this aspect
 
     SignalAspectITA_ingredients avvisoRiduzione = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::AvvisoRiduzioneMASK);
     SignalAspectITA_ingredients avviso = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::AvvisoMASK);
@@ -1255,12 +1256,16 @@ void TilePainter::drawSignalAspectITA_helper(QRectF r, TileRotate rotate, Signal
     m_painter.rotate(toDeg(rotate));
     r.moveCenter(QPointF{0, 0});
 
-    const qreal x1 = r.left() + r.width() * 0.3;
-    const qreal x2 = r.right() - r.width() * 0.3;
-    const qreal y1 = r.top() + r.height() * 0.3;
-    const qreal y2 = r.bottom() - r.height() * 0.3;
+    const qreal x1 = r.left() + r.width() * 0.35;
+    const qreal x2 = r.right() - r.width() * 0.35;
+    const qreal y1 = r.top() + r.height() * 0.2;
+    const qreal y2 = r.bottom() - r.height() * 0.5;
+
+    const qreal y3 = r.bottom() - r.height() * 0.32;
+    const qreal y4 = r.bottom() - r.height() * 0.02;
+
     const qreal w = x2 - x1;
-    const qreal lampRadius = w / 4;
+    const qreal lampRadius = w * 0.3;
 
     QPainterPath path;
     path.moveTo(x1, y1);
@@ -1268,15 +1273,16 @@ void TilePainter::drawSignalAspectITA_helper(QRectF r, TileRotate rotate, Signal
     path.arcTo(QRectF{x1, y2 - (w / 2), w, w}, 180, 180);
     path.lineTo(x2, y1);
     path.arcTo(QRectF{x1, y1 - (w / 2), w, w}, 0, 180);
-    m_painter.setPen(QPen{Qt::white, lampRadius / 2});
+    m_painter.setPen(QPen{Qt::white, lampRadius / 3});
     m_painter.fillPath(path, Qt::black);
     m_painter.drawPath(path);
 
     m_painter.setPen(Qt::NoPen);
 
-    QPointF lampPos{r.center().x(), r.center().y() - 2 * lampRadius};
+    const qreal lampCenter = (y1 + y2) / 2;
+    QPointF lampPos{r.center().x(), lampCenter - 2 * lampRadius};
 
-    auto lamps = calculateLampStates(aspectITA);
+    auto lamps = calculateLampStatesITSignal(aspectITA, auxReduction);
 
     for(int i = 0; i < 3; i++)
     {
@@ -1307,6 +1313,75 @@ void TilePainter::drawSignalAspectITA_helper(QRectF r, TileRotate rotate, Signal
         }
 
         lampPos.ry() += 2 * lampRadius;
+    }
+
+    // Draw auxiliary speed reduction
+    if(auxReduction == SignalAspectITAAuxiliarySpeedReduction::Rappel)
+    {
+        // Draw rappel base
+        QRectF rappel{x1, y3, x2 - x1, y4 - y3};
+        m_painter.setPen(QPen{Qt::darkGray, lampRadius / 4});
+        m_painter.setBrush(Qt::NoBrush);
+        m_painter.fillRect(rappel, Qt::black);
+        m_painter.drawRect(rappel);
+
+        m_painter.setPen(QPen{Qt::white, lampRadius * 0.5});
+
+        const qreal rappelCenter = (y4 + y3) / 2;
+        const qreal rappelTopY = y3 + (y4 - y3) * 0.3;
+        const qreal rappelBottomY = y3 + (y4 - y3) * 0.7;
+        const qreal lineStartX = x1 + lampRadius / 4;
+        const qreal lineEndX = x2 - lampRadius / 4;
+
+        SignalAspectITA_ingredients ingredients = SignalAspectITA_ingredients(aspectITA);
+        SignalAspectITA_ingredients riduzione = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::RiduzioneMASK);
+
+        switch (riduzione)
+        {
+        case SignalAspectITA_ingredients::Riduzione30:
+        default:
+            // Rappel is Off, 30 km/h
+            break;
+
+        case SignalAspectITA_ingredients::Riduzione60:
+            // Rappel has 1 line, 60 km/h
+            m_painter.drawLine(QLineF(lineStartX, rappelCenter, lineEndX, rappelCenter));
+            break;
+
+        case SignalAspectITA_ingredients::Riduzione100:
+            // Rappel has 2 lines, 100 km/h
+            m_painter.drawLine(QLineF(lineStartX, rappelTopY, lineEndX, rappelTopY));
+            m_painter.drawLine(QLineF(lineStartX, rappelBottomY, lineEndX, rappelBottomY));
+            break;
+        }
+    }
+    else if(auxReduction == SignalAspectITAAuxiliarySpeedReduction::Triangle30 || auxReduction == SignalAspectITAAuxiliarySpeedReduction::Triangle60)
+    {
+        // Draw triangle
+        QPainterPath triangle;
+        triangle.moveTo(x1, y3);
+        triangle.lineTo(x2, y3);
+        triangle.lineTo(r.center().x(), y4);
+        triangle.lineTo(x1, y3);
+        m_painter.setPen(QPen{Qt::darkGray, lampRadius / 3});
+        m_painter.setBrush(Qt::NoBrush);
+        m_painter.fillPath(triangle, Qt::white);
+        m_painter.drawPath(triangle);
+
+        if(auxReduction == SignalAspectITAAuxiliarySpeedReduction::Triangle60)
+        {
+            // Draw a "6" inside which in reality is a "60" but there is not enough space in tile
+            // Use a bold font slightly smaller than triangle height
+            QFont font = m_painter.font();
+            font.setBold(true);
+            font.setPointSize((y4 - y3) * 0.55);
+            m_painter.setFont(font);
+            m_painter.setPen(Qt::black);
+
+            // Use top part of triangle (near it's base) because it has more space for text
+            QRectF textRect{x1, y3, x2 - x1, (y4 - y3) * 0.7};
+            m_painter.drawText(textRect, QLatin1String("6"), QTextOption(Qt::AlignCenter));
+        }
     }
 
     //TODO: draw rappel/triangle
