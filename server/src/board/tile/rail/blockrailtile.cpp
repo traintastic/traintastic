@@ -121,40 +121,11 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
         {
           const auto self = shared_ptr<BlockRailTile>();
           auto oldTrain = trains[0]->train.value();
-          if(!oldTrain->blocks.empty() && self != (**oldTrain->blocks.begin()).block.value() && self != (**oldTrain->blocks.rbegin()).block.value())
+          if(!oldTrain->blocks.empty() && self != (**oldTrain->blocks.begin()).block.value()
+              && self != (**oldTrain->blocks.rbegin()).block.value())
             return; // only possible to remove the train from the head or tail block
 
-          const auto it = std::find_if(trains.begin(), trains.end(),
-            [&oldTrain](auto& status)
-            {
-              return status->train.value() == oldTrain;
-            });
-
-          if(it == trains.end()) /*[[unlikely]]*/
-            return; // can't remove a train that isn't in the block
-
-          (**it).destroy();
-
-          updateTrainMethodEnabled();
-          if(state == BlockState::Reserved)
-            updateState();
-          Log::log(*this, LogMessage::N3002_REMOVED_TRAIN_X_FROM_BLOCK_X, oldTrain->name.value(), name.value());
-
-          if(m_world.simulation)
-          {
-            for(const auto& item : *inputMap)
-            {
-              if(item->input && item->input->interface)
-              {
-                if(item->type == SensorType::OccupancyDetector)
-                  item->input->simulateChange(item->invert.value() ? SimulateInputAction::SetTrue : SimulateInputAction::SetFalse);
-                else
-                  assert(false); // not yet implemented
-              }
-            }
-          }
-
-          fireEvent(onTrainRemoved, oldTrain, self);
+          removeOneTrain(oldTrain);
         }
       }}
   , flipTrain{*this, "flip_train",
@@ -372,6 +343,21 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
           shared_ptr<BlockRailTile>(),
           blockStatus->direction.value());
 
+        const auto pathA = m_reservedPaths[0].lock();
+        const bool exitA = pathA && &pathA->fromBlock() == this;
+
+        const auto pathB = m_reservedPaths[1].lock();
+        const bool exitB = pathB && &pathB->fromBlock() == this;
+
+        if(blockStatus->direction.value() == BlockTrainDirection::TowardsA && exitA)
+        {
+          pathA->release();
+        }
+        else if(blockStatus->direction.value() == BlockTrainDirection::TowardsB && exitB)
+        {
+          pathB->release();
+        }
+
         blockStatus->destroy();
 #ifndef NDEBUG
         std::weak_ptr<TrainBlockStatus> blockStatusWeak = blockStatus;
@@ -400,6 +386,7 @@ void BlockRailTile::identificationEvent(BlockInputMapItem& /*item*/, Identificat
       case IdentificationEventType::Present:
         //!< \todo assign train (if allowed and possible)
         trains.appendInternal(TrainBlockStatus::create(*this, std::string("#").append(std::to_string(identifier)), blockDirection));
+        updateTrainMethodEnabled();
         if(state == BlockState::Free || state == BlockState::Unknown)
           updateState();
         break;
@@ -484,6 +471,7 @@ bool BlockRailTile::reserve(const std::shared_ptr<BlockPath>& blockPath, const s
     {
       const auto direction = side == BlockSide::A ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA;
       trains.appendInternal(TrainBlockStatus::create(*this, *train, direction));
+      updateTrainMethodEnabled();
       fireEvent(onTrainReserved, train, shared_ptr<BlockRailTile>(), direction);
     }
     updateState();
@@ -499,6 +487,48 @@ bool BlockRailTile::release(BlockSide side, bool dryRun)
     m_reservedPaths[static_cast<uint8_t>(side)].reset();
     RailTile::setReservedState(reservedState() & ~toMask(side));
   }
+  return true;
+}
+
+bool BlockRailTile::removeOneTrain(const std::shared_ptr<Train> &oldTrain)
+{
+  if(!oldTrain)
+    return false;
+
+  const auto self = shared_ptr<BlockRailTile>();
+
+  const auto it = std::find_if(trains.begin(), trains.end(),
+    [&oldTrain](auto& status)
+    {
+      return status->train.value() == oldTrain;
+    });
+
+  if(it == trains.end()) /*[[unlikely]]*/
+    return false; // can't remove a train that isn't in the block
+
+  (**it).destroy();
+
+  updateTrainMethodEnabled();
+  if(state == BlockState::Reserved)
+    updateState();
+  Log::log(*this, LogMessage::N3002_REMOVED_TRAIN_X_FROM_BLOCK_X, oldTrain->name.value(), name.value());
+
+  if(m_world.simulation && trains.empty())
+  {
+    for(const auto& item : *inputMap)
+    {
+      if(item->input && item->input->interface)
+      {
+        if(item->type == SensorType::OccupancyDetector)
+          item->input->simulateChange(item->invert.value() ? SimulateInputAction::SetTrue : SimulateInputAction::SetFalse);
+        else
+          assert(false); // not yet implemented
+      }
+    }
+  }
+
+  fireEvent(onTrainRemoved, oldTrain, self);
+
   return true;
 }
 

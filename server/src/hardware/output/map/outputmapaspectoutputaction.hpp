@@ -43,6 +43,8 @@ class OutputMapAspectOutputAction final : public OutputMapOutputAction
     OutputMapAspectOutputAction(OutputMap& _parent, size_t outputIndex);
 
     void execute() final;
+
+    bool matchesCurrentOutputState() final;
 };
 
 #endif

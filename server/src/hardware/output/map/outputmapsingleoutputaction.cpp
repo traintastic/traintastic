@@ -66,6 +66,34 @@ void OutputMapSingleOutputAction::execute()
   }
 }
 
+bool OutputMapSingleOutputAction::matchesCurrentOutputState()
+{
+  switch(action.value())
+  {
+    case SingleOutputAction::None:
+      return true; // None means "any state is ok"
+
+    case SingleOutputAction::Pulse: //TODO: how to detect pulse???
+      break;
+
+    case SingleOutputAction::Off:
+    {
+      if(singleOutput().value.value() == TriState::False)
+        return true;
+      break;
+    }
+
+    case SingleOutputAction::On:
+    {
+      if(singleOutput().value.value() == TriState::True)
+        return true;
+      break;
+    }
+  }
+
+  return false;
+}
+
 void OutputMapSingleOutputAction::worldEvent(WorldState state, WorldEvent event)
 {
   OutputMapOutputAction::worldEvent(state, event);

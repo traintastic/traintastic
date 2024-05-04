@@ -79,6 +79,7 @@ std::optional<OutputActionValue> SignalRailTile::getDefaultActionValue(SignalAsp
 SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId) :
   StraightRailTile(world, _id, tileId),
   m_node{*this, 2},
+  m_retryCount(0),
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   requireReservation{this, "require_reservation", AutoYesNo::Auto, PropertyFlags::ReadWrite | PropertyFlags::Store},
   aspect{this, "aspect", SignalAspect::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
@@ -158,7 +159,7 @@ void SignalRailTile::boardModified()
   StraightRailTile::boardModified();
 }
 
-bool SignalRailTile::doSetAspect(SignalAspect value)
+bool SignalRailTile::doSetAspect(SignalAspect value, bool skipAction)
 {
   const auto* values = setAspect.tryGetValuesAttribute(AttributeName::Values);
   assert(values);
@@ -166,7 +167,8 @@ bool SignalRailTile::doSetAspect(SignalAspect value)
     return false;
   if(aspect != value)
   {
-    (*outputMap)[value]->execute();
+    if(!skipAction)
+      (*outputMap)[value]->execute();
     aspect.setValueInternal(value);
     aspectChanged(*this, value);
     fireEvent(onAspectChanged, shared_ptr<SignalRailTile>(), value);
@@ -184,4 +186,35 @@ void SignalRailTile::evaluate()
   {
     setAspect(SignalAspect::Stop);
   }
+}
+
+void SignalRailTile::connectOutputMap()
+{
+    outputMap->onOutputStateMatchFound.connect([this](SignalAspect value)
+      {
+        bool changed = (value != aspect);
+        if(doSetAspect(value, true))
+        {
+          // If we are in a signal path, re-evaluate our aspect
+          // This corrects accidental modifications of aspect done
+          // by the user with an handset or command station.
+          if(changed && m_signalPath)
+          {
+            auto now = std::chrono::steady_clock::now();
+            if((now - m_lastRetryStart) >= RETRY_DURATION)
+            {
+                m_lastRetryStart = now;
+                m_retryCount = 0;
+            }
+
+            if(m_retryCount < MAX_RETRYCOUNT)
+            {
+                m_retryCount++;
+                evaluate();
+            }
+          }
+        }
+      });
+
+    //TODO: disconnect somewhere?
 }

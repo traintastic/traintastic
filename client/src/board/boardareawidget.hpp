@@ -73,6 +73,8 @@ class BoardAreaWidget : public QWidget
     AbstractProperty* m_boardBottom;
     Grid m_grid;
     int m_zoomLevel;
+    int m_blinkTimerId = 0;
+    bool m_blinkState = false;
 
     bool m_mouseLeftButtonPressed;
     TileLocation m_mouseLeftButtonPressedTileLocation;
@@ -100,6 +102,7 @@ class BoardAreaWidget : public QWidget
     SensorState getSensorState(const TileLocation& l) const;
     DirectionControlState getDirectionControlState(const TileLocation& l) const;
     SignalAspect getSignalAspect(const TileLocation& l) const;
+    std::tuple<SignalAspectITA, SignalAspectITAAuxiliarySpeedReduction> getSignalAspectITA(const TileLocation &l) const;
     Color getColor(const TileLocation& l) const;
     DecouplerState getDecouplerState(const TileLocation& l) const;
     bool getNXButtonEnabled(const TileLocation& l) const;
@@ -113,6 +116,7 @@ class BoardAreaWidget : public QWidget
     void mouseMoveEvent(QMouseEvent* event) final;
     void wheelEvent(QWheelEvent* event) final;
     void paintEvent(QPaintEvent* event) final;
+    void timerEvent(QTimerEvent* event) final;
 
   protected slots:
     void settingsChanged();
@@ -123,6 +127,7 @@ class BoardAreaWidget : public QWidget
     static constexpr int zoomLevelMax = 15;
 
     BoardAreaWidget(BoardWidget& board, QWidget* parent = nullptr);
+    ~BoardAreaWidget();
 
     Grid grid() const { return m_grid; }
     void nextGrid();
@@ -139,7 +144,7 @@ class BoardAreaWidget : public QWidget
     void setMouseMoveHideTileLocation(TileLocation l);
     void setMouseMoveTileSizeMax(uint8_t width, uint8_t height);
 
-  public slots:
+public slots:
     void tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& object);
     void setGrid(Grid value);
     void setZoomLevel(int value);
@@ -152,6 +157,7 @@ class BoardAreaWidget : public QWidget
     void tileClicked(int16_t x, int16_t y);
     void rightClicked();
     void mouseTileLocationChanged(int16_t x, int16_t y);
+    void blinkStateChanged(bool blinkState);
 };
 
 #endif

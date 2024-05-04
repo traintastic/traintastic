@@ -54,6 +54,31 @@ void OutputMapPairOutputAction::execute()
   }
 }
 
+bool OutputMapPairOutputAction::matchesCurrentOutputState()
+{
+  switch(action.value())
+  {
+    case PairOutputAction::None:
+      return true; // None means "any state is ok"
+
+    case PairOutputAction::First:
+    {
+      if(pairOutput().value.value() == OutputPairValue::First)
+        return true;
+      break;
+    }
+
+    case PairOutputAction::Second:
+    {
+      if(pairOutput().value.value() == OutputPairValue::Second)
+        return true;
+      break;
+    }
+  }
+
+  return false;
+}
+
 void OutputMapPairOutputAction::worldEvent(WorldState state, WorldEvent event)
 {
   OutputMapOutputAction::worldEvent(state, event);

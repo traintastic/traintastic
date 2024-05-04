@@ -59,6 +59,7 @@ enum class TileId : uint16_t // 10 bit
   RailDecoupler = 29,
   RailNXButton = 30,
   Label = 31,
+  RailSignalAspectITA = 32,
 
   ReservedForFutureExpension = 1023
 };
@@ -80,6 +81,7 @@ constexpr bool isRail(TileId id)
     case TileId::RailTurnoutDoubleSlip:
     case TileId::RailSignal2Aspect:
     case TileId::RailSignal3Aspect:
+    case TileId::RailSignalAspectITA:
     case TileId::RailBufferStop:
     case TileId::RailSensor:
     case TileId::RailBlock:
@@ -161,6 +163,7 @@ constexpr bool isRailSignal(TileId id)
   {
     case TileId::RailSignal2Aspect:
     case TileId::RailSignal3Aspect:
+    case TileId::RailSignalAspectITA:
       return true;
 
     default:
@@ -185,6 +188,7 @@ constexpr bool isActive(TileId id)
     case TileId::RailTurnoutDoubleSlip:
     case TileId::RailSignal2Aspect:
     case TileId::RailSignal3Aspect:
+    case TileId::RailSignalAspectITA:
     case TileId::RailSensor:
     case TileId::RailBlock:
     case TileId::RailDirectionControl:

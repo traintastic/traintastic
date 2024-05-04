@@ -3624,6 +3624,190 @@
         "comment": ""
     },
     {
+        "term": "signal_aspect_ita:stop",
+        "definition": "Via impedita",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:proceed",
+        "definition": "Via libera",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:avv_stop",
+        "definition": "Via libera, avviso via impedita",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:avv_30",
+        "definition": "Via libera, successivo a 30 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:avv_60",
+        "definition": "Via libera, successivo a 60 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:avv_100",
+        "definition": "Via libera, successivo a 100 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_30",
+        "definition": "Via libera con riduzione 30 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_60",
+        "definition": "Via libera con riduzione 60 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_100",
+        "definition": "Via libera con riduzione 100 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_30_avv_stop",
+        "definition": "Avviso via impedita, riduzione 30 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_60_avv_stop",
+        "definition": "Avviso via impedita, riduzione 60 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_100_avv_stop",
+        "definition": "Avviso via impedita, riduzione 100 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_30_avv_30",
+        "definition": "Riduzione 30 km/h, successivo a 30 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_60_avv_30",
+        "definition": "Riduzione 60 km/h, successivo a 30 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_100_avv_30",
+        "definition": "Riduzione 100 km/h, successivo a 30 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_30_avv_60",
+        "definition": "Riduzione 30 km/h, successivo a 60 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_60_avv_60",
+        "definition": "Riduzione 60 km/h, successivo a 60 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_100_avv_60",
+        "definition": "Riduzione 100 km/h, successivo a 60 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_30_avv_100",
+        "definition": "Riduzione 30 km/h, successivo a 100 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_60_avv_100",
+        "definition": "Riduzione 60 km/h, successivo a 100 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_100_avv_100",
+        "definition": "Riduzione 100 km/h, successivo a 100 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:bin_ingombro",
+        "definition": "Binario parzialmente ingombro",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:bin_ingombro_dev",
+        "definition": "Binario deviato parzialmente ingombro",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "throttle_object_list:throttle",
         "definition": "Throttle",
         "context": "",

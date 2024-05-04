@@ -32,6 +32,12 @@ class SignalOutputMap : public OutputMapBase<SignalAspect, SignalOutputMapItem>
 
   public:
     SignalOutputMap(Object& _parent, std::string_view parentPropertyName, std::initializer_list<SignalAspect> aspects, DefaultOutputActionGetter defaultOutputActionGetter);
+
+    template<std::size_t SpanExtent>
+    SignalOutputMap(Object& _parent, std::string_view parentPropertyName, const tcb::span<const SignalAspect, SpanExtent> &aspects, DefaultOutputActionGetter defaultOutputActionGetter) :
+      OutputMapBase(_parent, parentPropertyName, aspects, defaultOutputActionGetter)
+    {
+    }
 };
 
 #endif

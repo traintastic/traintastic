@@ -47,6 +47,8 @@ class OutputMapOutputAction : public Object
     std::string getObjectId() const final;
 
     virtual void execute() = 0;
+
+    virtual bool matchesCurrentOutputState() = 0; //TODO: const
 };
 
 #endif

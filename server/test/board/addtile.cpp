@@ -88,6 +88,7 @@ TEMPLATE_TEST_CASE("Board: Add tile", "[board][board-add]"
   , TurnoutDoubleSlipRailTile
   , Signal2AspectRailTile
   , Signal3AspectRailTile
+  , SignalRailTileITA
   , BufferStopRailTile
   , SensorRailTile
   , BlockRailTile

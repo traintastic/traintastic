@@ -41,6 +41,11 @@ void OutputMapECoSStateOutputAction::execute()
   ecosStateOutput().setValue(state);
 }
 
+bool OutputMapECoSStateOutputAction::matchesCurrentOutputState()
+{
+  return ecosStateOutput().value.value() == state;
+}
+
 void OutputMapECoSStateOutputAction::worldEvent(WorldState worldState, WorldEvent event)
 {
   OutputMapOutputAction::worldEvent(worldState, event);

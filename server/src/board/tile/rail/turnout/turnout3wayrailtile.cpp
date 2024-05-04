@@ -47,6 +47,8 @@ Turnout3WayRailTile::Turnout3WayRailTile(World& world, std::string_view _id)
 
   Attributes::addValues(setPosition, setPositionValues);
   m_interfaceItems.add(setPosition);
+
+  connectOutputMap();
 }
 
 void Turnout3WayRailTile::getConnectors(std::vector<Connector>& connectors) const

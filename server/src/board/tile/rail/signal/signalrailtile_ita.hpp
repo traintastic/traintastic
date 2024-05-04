@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/output/map/outputmapsingleoutputaction.hpp
+ * server/src/board/tile/rail/signal/signal3aspectrailtile.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2020-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,32 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_OUTPUTMAPSINGLEOUTPUTACTION_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_OUTPUTMAPSINGLEOUTPUTACTION_HPP
+#ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_SIGNAL_SIGNALRAILTILE_ITA_HPP
+#define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_SIGNAL_SIGNALRAILTILE_ITA_HPP
 
-#include "outputmapoutputaction.hpp"
-#include <traintastic/enum/singleoutputaction.hpp>
+#include "signalrailtile.hpp"
 
-class SingleOutput;
-
-class OutputMapSingleOutputAction final : public OutputMapOutputAction
+class SignalRailTileITA : public SignalRailTile
 {
-  CLASS_ID("output_map_output_action.single")
-
-  private:
-    SingleOutput& singleOutput();
+  CLASS_ID("board_tile.rail.signal_ita")
+  CREATE(SignalRailTileITA)
 
   protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
+    void boardModified() final;
+
+    virtual bool doSetAspect(SignalAspect value, bool skipAction) override;
 
   public:
-    Property<SingleOutputAction> action;
+    SignalRailTileITA(World& world, std::string_view _id);
 
-    OutputMapSingleOutputAction(OutputMap& _parent, size_t outputIndex);
-
-    void execute() final;
-
-    bool matchesCurrentOutputState() final;
+    Property<SignalAspectITA> aspectITA;
+    Property<SignalAspectITAAuxiliarySpeedReduction> auxSpeedReduction;
 };
 
 #endif

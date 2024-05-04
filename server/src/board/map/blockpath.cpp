@@ -33,6 +33,7 @@
 #include "../tile/rail/turnout/turnoutrailtile.hpp"
 #include "../tile/rail/linkrailtile.hpp"
 #include "../tile/rail/nxbuttonrailtile.hpp"
+#include "../../train/trainblockstatus.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../enum/bridgepath.hpp"
 
@@ -250,6 +251,7 @@ std::vector<std::shared_ptr<BlockPath>> BlockPath::find(BlockRailTile& startBloc
       }
       case TileId::RailSignal2Aspect:
       case TileId::RailSignal3Aspect:
+      case TileId::RailSignalAspectITA:
         current.node = &nextNode;
         if(nextNode.getLink(0).get() == current.link) // 0 -> 1 = frontside of signal
         {
@@ -296,6 +298,7 @@ BlockPath::BlockPath(BlockRailTile& block, BlockSide side)
   : m_fromBlock{block}
   , m_fromSide{side}
   , m_toSide{static_cast<BlockSide>(-1)}
+  , m_isReserved(false)
 {
 }
 
@@ -489,6 +492,9 @@ bool BlockPath::reserve(const std::shared_ptr<Train>& train, bool dryRun)
     }
   }
 
+  if(!dryRun)
+    m_isReserved = true;
+
   return true;
 }
 
@@ -499,22 +505,45 @@ bool BlockPath::release(bool dryRun)
     return false;
   }
 
+  auto toBlock = m_toBlock.lock();
+  if(!toBlock) /*[[unlikely]]*/
+    return false;
+
+  BlockState fromState = m_fromBlock.state.value();
+  BlockState toState = toBlock->state.value();
+
+  if((fromState == BlockState::Occupied || fromState == BlockState::Unknown)
+      && (toState == BlockState::Occupied || toState == BlockState::Unknown)
+      && !m_fromBlock.trains.empty() && !toBlock->trains.empty())
+  {
+    // Check if train head is beyond toBlock while its end is still in fromBlock
+    const auto& status1 = fromSide() == BlockSide::A ? m_fromBlock.trains.front() : m_fromBlock.trains.back();
+    const auto& status2 = toSide() == BlockSide::A ? toBlock->trains.front() : toBlock->trains.back();
+
+    if(status1->train.value() == status2->train.value())
+      return false;
+  }
+
   if(!m_fromBlock.release(m_fromSide, dryRun))
   {
     assert(dryRun);
     return false;
   }
 
-  if(auto toBlock = m_toBlock.lock()) /*[[likely]]*/
+  if(!dryRun && toBlock->state.value() == BlockState::Reserved)
   {
-    if(!toBlock->release(m_toSide, dryRun))
+    if(toBlock->trains.size() == 1)
     {
-      assert(dryRun);
-      return false;
+      //TODO: this bypasses some checks
+      auto oldTrain = toBlock->trains[0]->train.value();
+      toBlock->removeOneTrain(oldTrain);
+      //TODO: dryRun? what if it fails?
     }
   }
-  else
+
+  if(!toBlock->release(m_toSide, dryRun))
   {
+    assert(dryRun);
     return false;
   }
 
@@ -596,6 +625,9 @@ bool BlockPath::release(bool dryRun)
       nxButton->release();
     }
   }
+
+  if(!dryRun)
+    m_isReserved = false;
 
   return true;
 }

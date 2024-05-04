@@ -33,7 +33,13 @@ TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tile
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   position{this, "position", TurnoutPosition::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
-  setPosition{*this, "set_position", MethodFlags::ScriptCallable, [this](TurnoutPosition value) { return doSetPosition(value); }}
+  setPosition{*this, "set_position", MethodFlags::ScriptCallable, [this](TurnoutPosition value)
+    {
+      TurnoutPosition reservedPosition = getReservedPosition();
+      if(reservedPosition != TurnoutPosition::Unknown && reservedPosition != value)
+        return false; // Turnout is locked by reservation path
+      return doSetPosition(value);
+    }}
 {
   assert(isRailTurnout(tileId));
 
@@ -59,6 +65,17 @@ bool TurnoutRailTile::reserve(TurnoutPosition turnoutPosition, bool dryRun)
   {
     return false;
   }
+
+  const TurnoutPosition reservedPos = getReservedPosition();
+  if(reservedPos != TurnoutPosition::Unknown && reservedPos != turnoutPosition)
+  {
+    // TODO: what if 2 path reserve same turnout for same position?
+    // Upon release one path it will make turnout free while it's still reserved by second path
+
+    // Turnout is already reserved for another position
+    return false;
+  }
+
   if(!dryRun)
   {
     if(!doSetPosition(turnoutPosition)) /*[[unlikely]]*/
@@ -82,6 +99,11 @@ bool TurnoutRailTile::release(bool dryRun)
   return true;
 }
 
+TurnoutPosition TurnoutRailTile::getReservedPosition() const
+{
+    return static_cast<TurnoutPosition>(RailTile::reservedState());
+}
+
 void TurnoutRailTile::worldEvent(WorldState state, WorldEvent event)
 {
   RailTile::worldEvent(state, event);
@@ -98,14 +120,30 @@ bool TurnoutRailTile::isValidPosition(TurnoutPosition value)
   return values->contains(static_cast<int64_t>(value));
 }
 
-bool TurnoutRailTile::doSetPosition(TurnoutPosition value)
+bool TurnoutRailTile::doSetPosition(TurnoutPosition value, bool skipAction)
 {
   if(!isValidPosition(value))
   {
     return false;
   }
-  (*outputMap)[value]->execute();
+  if(!skipAction)
+    (*outputMap)[value]->execute();
   position.setValueInternal(value);
   positionChanged(*this, value);
   return true;
+}
+
+void TurnoutRailTile::connectOutputMap()
+{
+  outputMap->onOutputStateMatchFound.connect([this](TurnoutPosition pos)
+    {
+      doSetPosition(pos, true);
+
+      // If turnout is inside a reserved path, force it to reserved position
+      TurnoutPosition reservedPosition = getReservedPosition();
+      if(reservedPosition != TurnoutPosition::Unknown && reservedPosition != position.value())
+          doSetPosition(reservedPosition, false);
+    });
+
+  //TODO: disconnect somewhere?
 }

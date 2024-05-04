@@ -98,6 +98,14 @@ BoardAreaWidget::BoardAreaWidget(BoardWidget& board, QWidget* parent) :
 
   settingsChanged();
   updateMinimumSize();
+
+  m_blinkTimerId = startTimer(1000);
+}
+
+BoardAreaWidget::~BoardAreaWidget()
+{
+    killTimer(m_blinkTimerId);
+    m_blinkTimerId = 0;
 }
 
 void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& object)
@@ -114,6 +122,26 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
       }
       catch(...)
       {
+      }
+    };
+
+  auto handlerBlink =
+    [this, l, handler]()
+    {
+      // Only trigger update if signal is really blinking
+      auto [aspectITA, auxReduction] = getSignalAspectITA(l);
+      (void)auxReduction;
+
+      auto lamps = TilePainter::calculateLampStates(aspectITA);
+
+      for(int i = 0; i < 3; i++)
+      {
+        if(lamps[i].state == SignalAspectITALampState::Blinking || lamps[i].state == SignalAspectITALampState::BlinkingInverse)
+        {
+          // Signal is blinking, update it
+          handler();
+          break;
+        }
       }
     };
 
@@ -142,6 +170,11 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
     case TileId::RailSignal2Aspect:
     case TileId::RailSignal3Aspect:
       tryConnect("aspect");
+      break;
+
+    case TileId::RailSignalAspectITA:
+      tryConnect("aspect_ita");
+      connect(this, &BoardAreaWidget::blinkStateChanged, this, handlerBlink);
       break;
 
     case TileId::RailSensor:
@@ -326,6 +359,23 @@ SignalAspect BoardAreaWidget::getSignalAspect(const TileLocation& l) const
     if(const auto* p = object->getProperty("aspect"))
       return p->toEnum<SignalAspect>();
   return SignalAspect::Unknown;
+}
+
+std::tuple<SignalAspectITA, SignalAspectITAAuxiliarySpeedReduction> BoardAreaWidget::getSignalAspectITA(const TileLocation& l) const
+{
+    SignalAspectITA aspectITA = SignalAspectITA::Unknown;
+    SignalAspectITAAuxiliarySpeedReduction auxReduction = SignalAspectITAAuxiliarySpeedReduction::None;
+
+    if(ObjectPtr object = m_board.board().getTileObject(l))
+    {
+        if(const auto* p = object->getProperty("aspect_ita"))
+            aspectITA = p->toEnum<SignalAspectITA>();
+
+        if(const auto* p = object->getProperty("aux_reduction"))
+            auxReduction = p->toEnum<SignalAspectITAAuxiliarySpeedReduction>();
+    }
+
+    return {aspectITA, auxReduction};
 }
 
 Color BoardAreaWidget::getColor(const TileLocation& l) const
@@ -519,7 +569,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
   painter.setRenderHint(QPainter::Antialiasing, true);
 
   // draw tiles:
-  TilePainter tilePainter{painter, tileSize, *m_colorScheme};
+  TilePainter tilePainter{painter, tileSize, *m_colorScheme, m_blinkState};
 
   const int tileOriginX = boardLeft();
   const int tileOriginY = boardTop();
@@ -585,6 +635,13 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
         case TileId::RailSignal3Aspect:
           tilePainter.drawSignal(id, r, a, isReserved, getSignalAspect(it.first));
           break;
+
+        case TileId::RailSignalAspectITA:
+        {
+          auto [aspectITA, auxReduction] = getSignalAspectITA(it.first);
+          tilePainter.drawSignalAspectITA(id, r, a, isReserved, aspectITA, auxReduction);
+          break;
+        }
 
         case TileId::RailBlock:
           tilePainter.drawBlock(id, r, a, state & 0x01, state & 0x02, m_board.board().getTileObject(it.first));
@@ -680,7 +737,20 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
     case MouseMoveAction::None:
       break;
-  }
+    }
+}
+
+void BoardAreaWidget::timerEvent(QTimerEvent *event)
+{
+    if(event->timerId() == m_blinkTimerId)
+    {
+        //Toggle blink state
+        m_blinkState = !m_blinkState;
+        emit blinkStateChanged(m_blinkState);
+        return;
+    }
+
+    QWidget::timerEvent(event);
 }
 
 void BoardAreaWidget::settingsChanged()

@@ -44,6 +44,8 @@ class OutputMapPairOutputAction final : public OutputMapOutputAction
     OutputMapPairOutputAction(OutputMap& _parent, size_t outputIndex);
 
     void execute() final;
+
+    bool matchesCurrentOutputState() final;
 };
 
 #endif

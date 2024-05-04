@@ -41,6 +41,34 @@ void OutputMapItem::execute()
   }
 }
 
+TriState OutputMapItem::matchesCurrentOutputState() const
+{
+  bool atLeastOneMatch = false;
+  bool atLeastOneDifference = false;
+
+  for(const auto& action : outputActions)
+  {
+    bool match = action->matchesCurrentOutputState();
+    if(match)
+    {
+      atLeastOneMatch = true;
+    }
+    else
+    {
+      atLeastOneDifference = true;
+    }
+
+    // This state could be the coorect one but output feedback is not yet arrived
+    // We will re-check when we receive output feedback from command station
+    if(atLeastOneMatch && atLeastOneDifference)
+      return TriState::Undefined;
+  }
+
+  if(atLeastOneMatch)
+    return TriState::True;
+  return TriState::False;
+}
+
 void OutputMapItem::worldEvent(WorldState state, WorldEvent event)
 {
   Object::worldEvent(state, event);

@@ -132,6 +132,11 @@ class AbstractSignalPath : public Path
         }
 
         const std::unique_ptr<const Item>& next() const final;
+
+        std::shared_ptr<TurnoutRailTile> turnout() const
+        {
+            return m_turnout.lock();
+        }
     };
 
     class DirectionControlItem : public Item

@@ -92,6 +92,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   m_editActions{new QActionGroup(this)}
   , m_tileMoveStarted{false}
   , m_tileResizeStarted{false}
+  , m_timer(nullptr)
 {
   setWindowIcon(Theme::getIconForClassId(object->classId));
   setFocusPolicy(Qt::StrongFocus);
@@ -435,6 +436,8 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
 
 BoardWidget::~BoardWidget()
 {
+  stopTimerAndReleaseButtons();
+
   if(m_nxManagerRequestId != Connection::invalidRequestId)
   {
     m_object->connection()->cancelRequest(m_nxManagerRequestId);
@@ -447,6 +450,10 @@ void BoardWidget::worldEditChanged(bool value)
     m_editActionNone->activate(QAction::Trigger);
   m_toolbarEdit->setVisible(value);
   m_statusBar->setVisible(value);
+
+  // Stop timers in edit mode
+  if(value)
+    stopTimerAndReleaseButtons();
 }
 
 void BoardWidget::gridChanged(BoardAreaWidget::Grid value)
@@ -628,7 +635,8 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
 
           if(nxButton->isPressed())
           {
-            releaseNXButton(nxButton);
+            stopTimerAndReleaseButtons();
+            return;
           }
           else
           {
@@ -647,31 +655,13 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
 
             m_nxButtonPressed.reset();
 
-            QTimer::singleShot(nxButtonReleaseDelay, this,
-              [this, weak1=std::weak_ptr<NXButtonRailTile>(firstButton), weak2=std::weak_ptr<NXButtonRailTile>(nxButton)]()
-              {
-                if(auto btn = weak1.lock())
-                {
-                  releaseNXButton(btn);
-                }
-                if(auto btn = weak2.lock())
-                {
-                  releaseNXButton(btn);
-                }
-              });
+            startReleaseTimer(firstButton, nxButton);
           }
           else
           {
             m_nxButtonPressed = nxButton;
 
-            QTimer::singleShot(nxButtonHoldTime, this,
-              [this, weak=std::weak_ptr<NXButtonRailTile>(nxButton)]()
-              {
-                if(auto btn = weak.lock())
-                {
-                  releaseNXButton(btn);
-                }
-              });
+            startHoldTimer(nxButton);
           }
         }
       }
@@ -686,8 +676,11 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
         }
         else if(isRailSignal(tileId))
         {
-          value = obj->getProperty("aspect");
-          setValue = obj->getMethod("set_aspect");
+            if(tileId == TileId::RailSignalAspectITA)
+                value = obj->getProperty("aspect_ita");
+            else
+                value = obj->getProperty("aspect");
+            setValue = obj->getMethod("set_aspect");
         }
         else if(tileId == TileId::RailDirectionControl)
         {
@@ -714,7 +707,7 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
             QImage image(iconSize, iconSize, QImage::Format_ARGB32);
             QPainter painter{&image};
             painter.setRenderHint(QPainter::Antialiasing, true);
-            TilePainter tilePainter{painter, iconSize, *getBoardColorScheme(BoardSettings::instance().colorScheme.value())};
+            TilePainter tilePainter{painter, iconSize, *getBoardColorScheme(BoardSettings::instance().colorScheme.value()), true};
 
             QMenu menu(this);
             for(const auto& v : values)
@@ -726,7 +719,14 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
               if(isRailTurnout(tileId))
                 tilePainter.drawTurnout(tileId, image.rect(), tileRotate, TurnoutPosition::Unknown, static_cast<TurnoutPosition>(n));
               else if(isRailSignal(tileId))
-                tilePainter.drawSignal(tileId, image.rect(), tileRotate, false, static_cast<SignalAspect>(n));
+              {
+                //TODO: consider lamp number, rappel, triangle etc
+                //TODO: add blinking
+                if(tileId == TileId::RailSignalAspectITA)
+                  tilePainter.drawSignalAspectITA(tileId, image.rect(), tileRotate, false, static_cast<SignalAspectITA>(n));
+                else
+                  tilePainter.drawSignal(tileId, image.rect(), tileRotate, false, static_cast<SignalAspect>(n));
+              }
               else if(tileId == TileId::RailDirectionControl)
                 tilePainter.drawDirectionControl(tileId, image.rect(), tileRotate, false, static_cast<DirectionControlState>(n));
 
@@ -750,6 +750,61 @@ void BoardWidget::rightClicked()
     rotateTile();
   else if(QApplication::keyboardModifiers() == Qt::ShiftModifier)
     rotateTile(true);
+}
+
+void BoardWidget::startHoldTimer(const std::shared_ptr<NXButtonRailTile>& nxButton)
+{
+  stopTimerAndReleaseButtons();
+
+  m_releaseButton1 = nxButton;
+
+  m_timer = new QTimer(this);
+  m_timer->setInterval(nxButtonHoldTime);
+  m_timer->setSingleShot(true);
+
+  connect(m_timer, &QTimer::timeout, this, &BoardWidget::stopTimerAndReleaseButtons);
+  m_timer->start();
+}
+
+void BoardWidget::startReleaseTimer(const std::shared_ptr<NXButtonRailTile> &firstButton,
+                                     const std::shared_ptr<NXButtonRailTile> &nxButton)
+{
+  // Do not release first button yet
+  m_releaseButton1.reset();
+
+  stopTimerAndReleaseButtons();
+
+  m_releaseButton1 = firstButton;
+  m_releaseButton2 = nxButton;
+
+  m_timer = new QTimer(this);
+  m_timer->setInterval(nxButtonReleaseDelay);
+  m_timer->setSingleShot(true);
+
+  connect(m_timer, &QTimer::timeout, this, &BoardWidget::stopTimerAndReleaseButtons);
+  m_timer->start();
+}
+
+void BoardWidget::stopTimerAndReleaseButtons()
+{
+  if(m_timer)
+  {
+    // Instantly release buttons
+    if(auto btn = m_releaseButton1.lock())
+    {
+        releaseNXButton(btn);
+    }
+    m_releaseButton1.reset();
+
+    if(auto btn = m_releaseButton2.lock())
+    {
+        releaseNXButton(btn);
+    }
+    m_releaseButton2.reset();
+
+    delete m_timer;
+    m_timer = nullptr;
+  }
 }
 
 void BoardWidget::actionSelected(const Board::TileInfo* info)

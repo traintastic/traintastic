@@ -56,6 +56,7 @@
 #include "../board/tile/rail/turnout/turnoutrightcurvedrailtile.hpp"
 #include "../board/tile/rail/signal/signal2aspectrailtile.hpp"
 #include "../board/tile/rail/signal/signal3aspectrailtile.hpp"
+#include "../board/tile/rail/signal/signalrailtile_ita.hpp"
 
 #include "../clock/clock.hpp"
 
@@ -176,6 +177,7 @@ void Class::registerValues(lua_State* L)
   registerValue<TurnoutRightCurvedRailTile>(L, "TURNOUT_RIGHT_CURVED_RAIL_TILE");
   registerValue<Signal2AspectRailTile>(L, "SIGNAL_2_ASPECT_RAIL_TILE");
   registerValue<Signal3AspectRailTile>(L, "SIGNAL_3_ASPECT_RAIL_TILE");
+  registerValue<SignalRailTileITA>(L, "SIGNAL_RAIL_TILE_ITA");
   registerValue<SensorRailTile>(L, "SENSOR_RAIL_TILE");
   registerValue<BlockRailTile>(L, "BLOCK_RAIL_TILE");
 
