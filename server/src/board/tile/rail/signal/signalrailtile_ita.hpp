@@ -38,6 +38,8 @@ class SignalRailTileITA : public SignalRailTile
   public:
     SignalRailTileITA(World& world, std::string_view _id);
 
+    void worldEvent(WorldState state, WorldEvent event) override;
+
     Property<SignalAspectITA> aspectITA;
     Property<SignalAspectITAAuxiliarySpeedReduction> auxSpeedReduction;
 };

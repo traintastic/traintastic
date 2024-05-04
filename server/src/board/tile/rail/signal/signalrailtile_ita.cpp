@@ -28,6 +28,7 @@
 #include "../../../../core/attributes.hpp"
 #include "../../../../core/method.tpp"
 #include "../../../../core/objectproperty.tpp"
+#include "../../../../world/getworld.hpp"
 #include "../../../../hardware/output/outputcontroller.hpp"
 
 static const std::array<SignalAspectITA, 24> aspectValuesITA =
@@ -290,8 +291,10 @@ public:
 SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
     SignalRailTile(world, _id, TileId::RailSignalAspectITA),
     aspectITA{this, "aspect_ita", SignalAspectITA::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
-    auxSpeedReduction{this, "aux_reduction", SignalAspectITAAuxiliarySpeedReduction::None, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
+    auxSpeedReduction{this, "aux_reduction", SignalAspectITAAuxiliarySpeedReduction::None, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
 {
+    const bool editable = contains(m_world.state.value(), WorldState::Edit);
+
     // Cast values to SignalAspect
     tcb::span<const SignalAspect, 24> aspectValues{reinterpret_cast<const SignalAspect *>(aspectValuesITA.begin()),
                                                    reinterpret_cast<const SignalAspect *>(aspectValuesITA.end())};
@@ -314,8 +317,8 @@ SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
     Attributes::addValues<bool, SignalAspect>(setAspect, setAspectValues);
     m_interfaceItems.add(setAspect);
 
-    Attributes::addObjectEditor(auxSpeedReduction, false);
     Attributes::addValues(auxSpeedReduction, auxiliarySpeedReductionValues);
+    Attributes::addEnabled(auxSpeedReduction, editable);
     m_interfaceItems.add(auxSpeedReduction);
 
     connectOutputMap();
@@ -370,4 +373,14 @@ void SignalRailTileITA::boardModified()
 {
     m_signalPath = std::make_unique<SignalPath>(*this);
     SignalRailTile::boardModified();
+}
+
+void SignalRailTileITA::worldEvent(WorldState state, WorldEvent event)
+{
+    SignalRailTile::worldEvent(state, event);
+
+    const bool editable = contains(state, WorldState::Edit);
+    const bool editableAndStopped = editable && !contains(state, WorldState::Run);
+
+    Attributes::setEnabled(auxSpeedReduction, editableAndStopped);
 }
