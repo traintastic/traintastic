@@ -227,7 +227,8 @@ protected:
                     case SignalAspectITA::ViaImpedita:
                     case SignalAspectITA::Unknown:
                     {
-                        // Cannot allow 100 if next signal is Stop (See segnalifs.it)
+                        // Cannot allow 100 if next signal is Stop
+                        // See https://www.segnalifs.it/sfi/it/sa/2016_sa_immagini_1ctg.htm#B9c
                         if(riduzione == SignalAspectITA_ingredients::Riduzione100)
                             riduzione = SignalAspectITA_ingredients::Riduzione60;
 
