@@ -352,6 +352,14 @@
         "comment": ""
     },
     {
+        "term": "class_id:board_tile.rail.signal_ita",
+        "definition": "Italian Light Signal",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "class_id:board_tile.rail.straight",
         "definition": "Straight track",
         "context": "",
@@ -3618,6 +3626,222 @@
     {
         "term": "signal_aspect:stop",
         "definition": "Stop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:stop",
+        "definition": "Stop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:proceed",
+        "definition": "Proceed",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:avv_stop",
+        "definition": "Proceed, expect Stop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:avv_30",
+        "definition": "Proceed, expect max speed 30 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:avv_60",
+        "definition": "Proceed, expect max speed 60 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:avv_100",
+        "definition": "Proceed, expect max speed 100 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_30",
+        "definition": "Proceed at 30 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_60",
+        "definition": "Proceed at 60 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_100",
+        "definition": "Proceed at 100 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_30_avv_stop",
+        "definition": "Expect stop, proceed at 30 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_60_avv_stop",
+        "definition": "Expect stop, proceed at 60 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_100_avv_stop",
+        "definition": "Expect stop, proceed at 100 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_30_avv_30",
+        "definition": "Proceed at 30 km/h, expect max speed 30 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_60_avv_30",
+        "definition": "Proceed at 60 km/h, expect max speed 30 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_100_avv_30",
+        "definition": "Proceed at 100 km/h, expect max speed 30 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_30_avv_60",
+        "definition": "Proceed at 30 km/h, expect max speed 60 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_60_avv_60",
+        "definition": "Proceed at 60 km/h, expect max speed 60 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_100_avv_60",
+        "definition": "Proceed at 100 km/h, expect max speed 60 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_30_avv_100",
+        "definition": "Proceed at 30 km/h, expect max speed 100 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_60_avv_100",
+        "definition": "Proceed at 60 km/h, expect max speed 100 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:rid_100_avv_100",
+        "definition": "Proceed at 100 km/h, expect max speed 100 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:bin_ingombro",
+        "definition": "Partially occupied track",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_aspect_ita:bin_ingombro_dev",
+        "definition": "Partially occupied non-straight track",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_ita_aux_speed:none",
+        "definition": "None",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_ita_aux_speed:rappel",
+        "definition": "Rappel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_ita_aux_speed:triangle_30",
+        "definition": "Triangle 30 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_ita_aux_speed:triangle_60",
+        "definition": "Triangle 60 km/h",
         "context": "",
         "term_plural": "",
         "reference": "",
