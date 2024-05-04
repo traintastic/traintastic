@@ -352,6 +352,14 @@
         "comment": ""
     },
     {
+        "term": "class_id:board_tile.rail.signal_ita",
+        "definition": "Segnale Luminoso Italiano",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "class_id:board_tile.rail.straight",
         "definition": "Binario dritto",
         "context": "",
@@ -3808,6 +3816,38 @@
         "comment": ""
     },
     {
+        "term": "signal_ita_aux_speed:none",
+        "definition": "Nessuna",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_ita_aux_speed:rappel",
+        "definition": "Rappel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_ita_aux_speed:triangle_30",
+        "definition": "Triangolo 30 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "signal_ita_aux_speed:triangle_60",
+        "definition": "Triangolo 60 km/h",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "throttle_object_list:throttle",
         "definition": "Throttle",
         "context": "",
@@ -4878,5 +4918,89 @@
     {
         "term": "wizard.button:cancel",
         "definition": "Annulla"
+    },
+    {
+        "term": "output_map:address_x",
+        "definition": "Indirizzo %1"
+    },
+    {
+        "term": "class_id:board_tile.rail.nx_button",
+        "definition": "Bottone NX"
+    },
+    {
+        "term": "class_id:board_tile.misc.label",
+        "definition": "Etichetta"
+    },
+    {
+        "term": "board_tile.misc.label:text",
+        "definition": "Testo"
+    },
+    {
+        "term": "board_tile.misc.label:text_align",
+        "definition": "Allineamento testo"
+    },
+    {
+        "term": "board_tile.misc.label:text_color",
+        "definition": "Colore testo"
+    },
+    {
+        "term": "color:none",
+        "definition": "Nessuno"
+    },
+    {
+        "term": "board_tile.misc.label:background_color",
+        "definition": "Colore sfondo"
+    },
+    {
+        "term": "text_align:top_left",
+        "definition": "Sinistra, alto"
+    },
+    {
+        "term": "text_align:top_center",
+        "definition": "Centrato, alto"
+    },
+    {
+        "term": "text_align:top_right",
+        "definition": "Destra, alto"
+    },
+    {
+        "term": "text_align:center_left",
+        "definition": "Centrato, sinistra"
+    },
+    {
+        "term": "text_align:center",
+        "definition": "Centrato"
+    },
+    {
+        "term": "text_align:center_right",
+        "definition": "Centrato, destra"
+    },
+    {
+        "term": "text_align:bottom_left",
+        "definition": "Gi\u00f9, sinistra"
+    },
+    {
+        "term": "text_align:bottom_center",
+        "definition": "Gi\u00f9, centrato"
+    },
+    {
+        "term": "text_align:bottom_right",
+        "definition": "Gi\u00f9, destra"
+    },
+    {
+        "term": "board_tile.rail.signal_ita:require_reservation",
+        "definition": "Richiedi prenotazione"
+    },
+    {
+        "term": "board_tile.rail.signal_ita:aux_reduction",
+        "definition": "Riduzione velocit\u00e0 ausiliaria"
+    },
+    {
+        "term": "board_tile.rail.nx_button:block",
+        "definition": "Blocco"
+    },
+    {
+        "term": "board_tile.rail.nx_button:input",
+        "definition": "Input"
     }
 ]
