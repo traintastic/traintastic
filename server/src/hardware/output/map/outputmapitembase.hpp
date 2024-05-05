@@ -66,7 +66,18 @@ class OutputMapItemBase : public OutputMapItem
     {
       std::string id{m_map.getObjectId()};
       id.append(".");
-      id.append(EnumValues<Key>::value.find(key)->second);
+      if constexpr(std::is_enum_v<Key>)
+      {
+        id.append(EnumValues<Key>::value.find(key)->second);
+      }
+      else if constexpr(std::is_same_v<Key, bool>)
+      {
+        id.append(key ? "true" : "false");
+      }
+      else
+      {
+        static_assert(sizeof(Key) != sizeof(Key));
+      }
       return id;
     }
 };

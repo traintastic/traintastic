@@ -302,6 +302,7 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
   m_interfaceItems.add(addresses);
 
   Attributes::addAliases(ecosObject, std::span<const uint16_t>{}, std::span<const std::string>{});
+  Attributes::addDisplayName(ecosObject, "output_map:ecos_object");
   Attributes::addEnabled(ecosObject, editable);
   Attributes::addValues(ecosObject, std::span<const uint16_t>{});
   Attributes::addVisible(ecosObject, false);
@@ -309,10 +310,12 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
 
   m_interfaceItems.add(items);
 
+  Attributes::addDisplayName(addAddress, "output_map:add_address");
   Attributes::addEnabled(addAddress, false);
   Attributes::addVisible(addAddress, false);
   m_interfaceItems.add(addAddress);
 
+  Attributes::addDisplayName(removeAddress, "output_map:remove_address");
   Attributes::addEnabled(removeAddress, false);
   Attributes::addVisible(removeAddress, false);
   m_interfaceItems.add(removeAddress);

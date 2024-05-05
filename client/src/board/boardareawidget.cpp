@@ -170,6 +170,12 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
       }
       break;
 
+    case TileId::Switch:
+      tryConnect("color_off");
+      tryConnect("color_on");
+      tryConnect("value");
+      break;
+
     case TileId::None:
     case TileId::RailStraight:
     case TileId::RailCurve45:
@@ -622,6 +628,20 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           }
           break;
         }
+        case TileId::Switch:
+          if(auto sw = m_board.board().getTileObject(it.first)) /*[[likely]]*/
+          {
+            tilePainter.drawSwitch(r,
+              sw->getPropertyValueBool("value", false),
+              sw->getPropertyValueEnum<Color>("color_on", Color::Yellow),
+              sw->getPropertyValueEnum<Color>("color_off", Color::Gray));
+          }
+          else
+          {
+            tilePainter.drawSwitch(r);
+          }
+          break;
+
         case TileId::None:
         case TileId::ReservedForFutureExpension:
         default:

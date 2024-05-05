@@ -409,7 +409,8 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
               isRailSignal(tileId) ||
               tileId == TileId::RailDirectionControl ||
               tileId == TileId::RailDecoupler ||
-              tileId == TileId::PushButton)
+              tileId == TileId::PushButton ||
+              tileId == TileId::Switch)
           {
             cursorShape = Qt::PointingHandCursor;
           }
@@ -596,6 +597,16 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
       {
         if(auto* m = obj->getMethod("pressed"))
           m->call();
+      }
+      else if(tileId == TileId::Switch)
+      {
+        if(auto* value = obj->getProperty("value")) /*[[likely]]*/
+        {
+          if(auto* setValue = obj->getMethod("set_value")) /*[[likely]]*/
+          {
+            callMethod(*setValue, nullptr, !value->toBool());
+          }
+        }
       }
       else if(tileId == TileId::RailDecoupler)
       {

@@ -25,6 +25,7 @@
 #include "rail/linkrailtile.hpp"
 #include "rail/nxbuttonrailtile.hpp"
 #include "misc/labeltile.hpp"
+#include "misc/switchtile.hpp"
 #include "../../utils/ifclassidcreate.hpp"
 #include "../../world/world.hpp"
 
@@ -61,6 +62,7 @@ std::shared_ptr<Tile> Tiles::create(World& world, std::string_view classId, std:
   IF_CLASSID_CREATE(DecouplerRailTile)
   IF_CLASSID_CREATE(NXButtonRailTile)
   IF_CLASSID_CREATE(LabelTile)
+  IF_CLASSID_CREATE(SwitchTile)
   return std::shared_ptr<Tile>();
 }
 
@@ -119,6 +121,7 @@ const std::vector<Tiles::Info>& Tiles::getInfo()
 
     Info{PushButtonTile::classId, TileId::PushButton, rotateNone, {miscellaneous}},
     Info{LabelTile::classId, TileId::Label, rotateFull90, {miscellaneous}},
+    Info{SwitchTile::classId, TileId::Switch, rotateNone, {miscellaneous}},
   }};
 
   return info;

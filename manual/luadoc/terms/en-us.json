@@ -1886,5 +1886,9 @@
   {
     "term": "object.labeltile:title",
     "definition": "Label tile"
+  },
+  {
+    "term": "object.switchtile:title",
+    "definition": "Switch tile"
   }
 ]

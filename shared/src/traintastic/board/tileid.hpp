@@ -59,6 +59,7 @@ enum class TileId : uint16_t // 10 bit
   RailDecoupler = 29,
   RailNXButton = 30,
   Label = 31,
+  Switch = 32,
 
   ReservedForFutureExpension = 1023
 };
@@ -193,6 +194,7 @@ constexpr bool isActive(TileId id)
     case TileId::RailDecoupler:
     case TileId::RailNXButton:
     case TileId::Label:
+    case TileId::Switch:
       return true;
 
     default:

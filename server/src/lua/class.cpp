@@ -31,6 +31,7 @@
 
 #include "../board/tile/misc/labeltile.hpp"
 #include "../board/tile/misc/pushbuttontile.hpp"
+#include "../board/tile/misc/switchtile.hpp"
 #include "../board/tile/rail/nxbuttonrailtile.hpp"
 #include "../board/tile/rail/sensorrailtile.hpp"
 #include "../board/tile/rail/straightrailtile.hpp"
@@ -153,6 +154,7 @@ void Class::registerValues(lua_State* L)
 
   registerValue<LabelTile>(L, "LABEL_TILE");
   registerValue<PushButtonTile>(L, "PUSH_BUTTON_TILE");
+  registerValue<SwitchTile>(L, "SWITCH_TILE");
   registerValue<NXButtonRailTile>(L, "NX_BUTTON_RAIL_TILE");
   registerValue<StraightRailTile>(L, "STRAIGHT_RAIL_TILE");
   registerValue<TunnelRailTile>(L, "TUNNEL_RAIL_TILE");
