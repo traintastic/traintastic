@@ -172,6 +172,10 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate, bool isRes
       drawLabel(r, rotate);
       break;
 
+    case TileId::Switch:
+      drawSwitch(r);
+      break;
+
     case TileId::None:
     case TileId::ReservedForFutureExpension:
       break;
@@ -439,6 +443,15 @@ void TilePainter::drawPushButton(const QRectF& r, Color color)
   m_painter.setBrush(toQColor(color));
   const qreal radius = r.width() * 0.4;
   m_painter.drawEllipse(r.center(), radius, radius);
+}
+
+void TilePainter::drawSwitch(const QRectF& r, bool value, Color colorOn, Color colorOff)
+{
+  m_painter.setPen(QPen(Qt::gray, r.width() / 10));
+  m_painter.setBrush(toQColor(value ? colorOn : colorOff));
+  const qreal margin = r.width() * 0.1;
+  const qreal radius = r.width() * 0.15;
+  m_painter.drawRoundedRect(r.adjusted(margin, margin, -margin, -margin), radius, radius);
 }
 
 //=============================================================================

@@ -1,0 +1,24 @@
+{
+  "name": {},
+  "color_on": {},
+  "color_off": {},
+  "value": {},
+  "toggle": {},
+  "set_value": {
+    "parameters": [
+      {
+        "name": "value"
+      }
+    ]
+  },
+  "on_value_changed": {
+    "parameters": [
+      {
+        "name": "switch"
+      },
+      {
+        "name": "value"
+      }
+    ]
+  }
+}

@@ -5373,7 +5373,7 @@
         "fuzzy": 0
     },
     {
-        "term": "output_map.signal:add_address",
+        "term": "output_map:add_address",
         "definition": "Adres toevoegen",
         "context": "",
         "term_plural": "",
@@ -5382,7 +5382,7 @@
         "fuzzy": 0
     },
     {
-        "term": "output_map.signal:remove_address",
+        "term": "output_map:remove_address",
         "definition": "Adres verwijderen",
         "context": "",
         "term_plural": "",
@@ -5391,7 +5391,7 @@
         "fuzzy": 0
     },
     {
-        "term": "output_map.signal:ecos_object",
+        "term": "output_map:ecos_object",
         "definition": "ECoS object",
         "context": "",
         "term_plural": "",

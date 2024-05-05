@@ -133,7 +133,23 @@ void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
     }
 
     if(auto* p = items[i]->getProperty("key"))
-      m_table->setItem(i, columnKey, new QTableWidgetItem(translateEnum(*p)));
+    {
+      QString text;
+      if(p->type() ==  ValueType::Enum)
+      {
+        text = translateEnum(*p);
+      }
+      else if(p->type() == ValueType::Boolean)
+      {
+        text = p->toBool() ? "true" : "false";
+      }
+      else /*[[unlikely]]*/
+      {
+        assert(false);
+        text = "?";
+      }
+      m_table->setItem(i, columnKey, new QTableWidgetItem(text));
+    }
 
     if(auto* outputActions = dynamic_cast<ObjectVectorProperty*>(items[i]->getVectorProperty("output_actions")))
     {
