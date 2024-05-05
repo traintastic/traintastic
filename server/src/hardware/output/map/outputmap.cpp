@@ -626,26 +626,10 @@ void OutputMap::addOutput(OutputChannel ch, uint32_t id, OutputController& outpu
 OutputMap::OutputConnectionPair OutputMap::getOutput(OutputChannel ch, uint32_t id, OutputController& outputController)
 {
   auto output = outputController.getOutput(ch, id, parent());
+  if(!output)
+    return {};
 
-  boost::signals2::connection conn;
-
-  if(auto *single = dynamic_cast<SingleOutput*>(output.get()))
-  {
-    conn = single->onValueChanged.connect([this](bool, const std::shared_ptr<SingleOutput>&){ updateStateFromOutput(); });
-  }
-  else if(auto* pair = dynamic_cast<PairOutput*>(output.get()))
-  {
-    conn = pair->onValueChanged.connect([this](OutputPairValue, const std::shared_ptr<PairOutput>&){ updateStateFromOutput(); });
-  }
-  else if(auto* aspect = dynamic_cast<AspectOutput*>(output.get()))
-  {
-    conn = aspect->onValueChanged.connect([this](int16_t, const std::shared_ptr<AspectOutput>&){ updateStateFromOutput(); });
-  }
-  else if(auto* ecosState = dynamic_cast<ECoSStateOutput*>(output.get()))
-  {
-    conn = ecosState->onValueChanged.connect([this](uint8_t, const std::shared_ptr<ECoSStateOutput>&){ updateStateFromOutput(); });
-  }
-
+  boost::signals2::connection conn = output->onValueChangedGeneric.connect([this](const std::shared_ptr<Output>&){ updateStateFromOutput(); });
   return {output, conn};
 }
 
