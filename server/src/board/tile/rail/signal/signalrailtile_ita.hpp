@@ -31,11 +31,13 @@ class SignalRailTileITA : public SignalRailTile
   CREATE(SignalRailTileITA)
 
   protected:
+    void loaded() override;
+
     void boardModified() final;
 
     virtual bool doSetAspect(SignalAspect value, bool skipAction) override;
 
-    SignalAspectITA adjustAspect(SignalAspectITA value) const;
+    void updateAuxReduction();
 
   public:
     SignalRailTileITA(World& world, std::string_view _id);
@@ -43,6 +45,7 @@ class SignalRailTileITA : public SignalRailTile
     void worldEvent(WorldState state, WorldEvent event) override;
 
     Property<SignalAspectITA> aspectITA;
+    Property<bool> onlyAnticipateNextSignal; // Segnale di Avviso TODO: max 2 lamps
     Property<SignalAspectITAAuxiliarySpeedReduction> auxSpeedReduction;
 };
 

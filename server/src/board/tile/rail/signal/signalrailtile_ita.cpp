@@ -92,6 +92,11 @@ private:
         return false;
     }
 
+    inline const SignalRailTileITA& signalITA() const
+    {
+        return static_cast<const SignalRailTileITA&>(signal());
+    }
+
 protected:
     int getTurnoutMaxSpeed(const std::shared_ptr<TurnoutRailTile>& turnout, bool &outDeviata) const
     {
@@ -178,6 +183,8 @@ protected:
 
     SignalAspectITA determineAspectITA() const
     {
+        const bool anticipationOnly = signalITA().onlyAnticipateNextSignal.value();
+
         const auto* blockItem = nextBlock();
         if(!blockItem)
         {
@@ -186,6 +193,19 @@ protected:
         const auto blockState = blockItem->blockState();
 
         auto [blockItem2, signalItem2] = nextBlockOrSignal(blockItem->next().get());
+
+
+        if(anticipationOnly)
+        {
+            // Anticipation-only signal only depent on their next 1st category signal
+            // of which they anticipate the aspect
+            // Try to get next signal BEFORE next block
+            auto signalBeforeBlock = std::get<1>(nextBlockOrSignal(root()));
+
+            auto signalBeforeBlockITA = signalBeforeBlock ? std::dynamic_pointer_cast<SignalRailTileITA>(signalBeforeBlock->signal()) : nullptr;
+            if(signalBeforeBlockITA)
+                signalItem2 = signalBeforeBlock;
+        }
 
         bool isDeviata = false;
         int speedReduction = getPathMaxSpeed(root(), isDeviata);
@@ -200,10 +220,12 @@ protected:
                 riduzione = SignalAspectITA_ingredients::Riduzione100;
         }
 
-        if((!requireReservation() && blockState == BlockState::Free) ||
+        // Anticipation-only signals do not require reservation
+        if(anticipationOnly || (!requireReservation() && blockState == BlockState::Free) ||
             (blockState == BlockState::Reserved && hasSignalReservedPathToBlock(signal(), *blockItem->block())))
         {
-            if(blockItem2)
+            // Anticipation-only signals do not depend on block state but only on 1st atecory signal aspects
+            if(blockItem2 && !anticipationOnly)
             {
                 const auto blockState2 = blockItem2->blockState();
 
@@ -222,7 +244,7 @@ protected:
             }
             else if(signalItem2)
             {
-                auto signalTile = signalItem2->signal();
+                auto signal2Tile = signalItem2->signal();
 
                 auto signal2ITA = std::dynamic_pointer_cast<SignalRailTileITA>(signalItem2->signal());
                 if(signal2ITA)
@@ -255,9 +277,9 @@ protected:
                     return SignalAspectITA(SignalAspectITA_ingredients::ViaLibera | avvisoReduction | riduzione);
                 }
 
-                if(signalTile && signalTile->aspect != SignalAspect::Unknown && signalTile->aspect != SignalAspect::Stop)
+                if(signal2Tile && signal2Tile->aspect != SignalAspect::Unknown && signal2Tile->aspect != SignalAspect::Stop)
                 {
-                    switch(signalTile->aspect.value())
+                    switch(signal2Tile->aspect.value())
                     {
                     case SignalAspect::ProceedReducedSpeed:
                     case SignalAspect::Proceed:
@@ -285,12 +307,82 @@ public:
         : AbstractSignalPath(signal, 2)
     {
     }
+
+
+
+    static SignalAspectITA adjustAspect(SignalAspectITA value, bool anticipateOnly, SignalAspectITAAuxiliarySpeedReduction auxReduction)
+    {
+        if(anticipateOnly)
+        {
+            SignalAspectITA_ingredients ingredients = SignalAspectITA_ingredients(value);
+
+            // We cannot show "Stop" or partially occupied track aspect
+            const bool isPartiallyOccupied = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::BinarioIngombroTronco) == SignalAspectITA_ingredients::BinarioIngombroTronco;
+            if(value == SignalAspectITA::ViaImpedita || isPartiallyOccupied)
+                return SignalAspectITA::ViaLibera_AvvisoViaImpedita;
+
+            // Remove speed reduction, keep "exected" anticipated speed reduction
+            ingredients = SignalAspectITA_ingredients(ingredients & ~SignalAspectITA_ingredients::RiduzioneMASK);
+
+            // Remove non-Straight path attribute
+            ingredients = SignalAspectITA_ingredients(ingredients & ~SignalAspectITA_ingredients::Deviata);
+
+            return SignalAspectITA(ingredients);
+        }
+
+        //TODO: robust logic to reject invalid aspects or impossible aspects due to lamps number/rappel/triangle
+        if(auxReduction == SignalAspectITAAuxiliarySpeedReduction::Triangle30 || auxReduction == SignalAspectITAAuxiliarySpeedReduction::Triangle60)
+        {
+            // Signal always shows a speed reduction to 30 km/h (or 60 km/h if triangle has "60" inside it)
+            SignalAspectITA_ingredients ingredients = SignalAspectITA_ingredients(value);
+            SignalAspectITA_ingredients riduzione = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::RiduzioneMASK);
+
+            SignalAspectITA_ingredients newReduction = SignalAspectITA_ingredients::Riduzione30;
+
+            if(auxReduction == SignalAspectITAAuxiliarySpeedReduction::Triangle60)
+            {
+                newReduction = SignalAspectITA_ingredients::Riduzione60;
+
+                // Refuse to show non-Stop aspect if required speed limit is lower than 60 km/h
+                // If this happens it means signal must be changed to Rappel or Triangle 30 km/h
+                if(riduzione == SignalAspectITA_ingredients::Riduzione30)
+                    value = SignalAspectITA::ViaImpedita;
+            }
+
+            switch (value)
+            {
+            case SignalAspectITA::Unknown:
+            case SignalAspectITA::ViaImpedita:
+            case SignalAspectITA::BinarioIngombroTronco:
+            case SignalAspectITA::BinarioIngombroTroncoDeviato:
+                // These aspect do not need additional speed limit
+                break;
+
+            default:
+            {
+                // Remove current speed reduction
+                ingredients = SignalAspectITA_ingredients(ingredients & ~SignalAspectITA_ingredients::RiduzioneMASK);
+
+                // Add new speed reduction imposed by triangle
+                ingredients = SignalAspectITA_ingredients(ingredients | newReduction);
+                value = SignalAspectITA(ingredients);
+            }
+            }
+        }
+
+        return value;
+    }
 };
 }
 
 SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
     SignalRailTile(world, _id, TileId::RailSignalAspectITA),
     aspectITA{this, "aspect_ita", SignalAspectITA::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+    onlyAnticipateNextSignal{this, "only_anticipate", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly,
+      [this](bool /*value*/) -> void
+      {
+        updateAuxReduction();
+      }},
     auxSpeedReduction{this, "aux_reduction", SignalAspectITAAuxiliarySpeedReduction::None, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
 {
     const bool editable = contains(m_world.state.value(), WorldState::Edit);
@@ -317,6 +409,9 @@ SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
     Attributes::addValues<bool, SignalAspect>(setAspect, setAspectValues);
     m_interfaceItems.add(setAspect);
 
+    Attributes::addEnabled(onlyAnticipateNextSignal, editable);
+    m_interfaceItems.add(onlyAnticipateNextSignal);
+
     Attributes::addValues(auxSpeedReduction, auxiliarySpeedReductionValues);
     Attributes::addEnabled(auxSpeedReduction, editable);
     m_interfaceItems.add(auxSpeedReduction);
@@ -327,7 +422,7 @@ SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
 bool SignalRailTileITA::doSetAspect(SignalAspect value, bool skipAction)
 {
     SignalAspectITA valueITA = SignalAspectITA(value);
-    valueITA = adjustAspect(valueITA);
+    valueITA = SignalPath::adjustAspect(valueITA, onlyAnticipateNextSignal, auxSpeedReduction);
 
     const auto* values = setAspect.tryGetValuesAttribute(AttributeName::Values);
     assert(values);
@@ -363,49 +458,22 @@ bool SignalRailTileITA::doSetAspect(SignalAspect value, bool skipAction)
     return true;
 }
 
-SignalAspectITA SignalRailTileITA::adjustAspect(SignalAspectITA value) const
+void SignalRailTileITA::updateAuxReduction()
 {
-    //TODO: robust logic to reject invalid aspects or impossible aspects due to lamps number/rappel/triangle
-    if(auxSpeedReduction.value() == SignalAspectITAAuxiliarySpeedReduction::Triangle30 || auxSpeedReduction.value() == SignalAspectITAAuxiliarySpeedReduction::Triangle60)
-    {
-        // Signal always shows a speed reduction to 30 km/h (or 60 km/h if triangle has "60" inside it)
-        SignalAspectITA_ingredients ingredients = SignalAspectITA_ingredients(value);
-        SignalAspectITA_ingredients riduzione = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::RiduzioneMASK);
+    const bool editable = contains(m_world.state.value(), WorldState::Edit);
+    const bool editableAndStopped = editable && !contains(m_world.state.value(), WorldState::Run);
 
-        SignalAspectITA_ingredients newReduction = SignalAspectITA_ingredients::Riduzione30;
+    // Only 1st category signal can have auxiliary speed reduction
+    Attributes::setEnabled(auxSpeedReduction, !onlyAnticipateNextSignal && editableAndStopped);
 
-        if(auxSpeedReduction.value() == SignalAspectITAAuxiliarySpeedReduction::Triangle60)
-        {
-            newReduction = SignalAspectITA_ingredients::Riduzione60;
+    if(onlyAnticipateNextSignal)
+        auxSpeedReduction = SignalAspectITAAuxiliarySpeedReduction::None;
+}
 
-            // Refuse to show non-Stop aspect if required speed limit is lower than 60 km/h
-            // If this happens it means signal must be changed to Rappel or Triangle 30 km/h
-            if(riduzione == SignalAspectITA_ingredients::Riduzione30)
-                value = SignalAspectITA::ViaImpedita;
-        }
-
-        switch (value)
-        {
-        case SignalAspectITA::Unknown:
-        case SignalAspectITA::ViaImpedita:
-        case SignalAspectITA::BinarioIngombroTronco:
-        case SignalAspectITA::BinarioIngombroTroncoDeviato:
-            // These aspect do not need additional speed limit
-            break;
-
-        default:
-        {
-            // Remove current speed reduction
-            ingredients = SignalAspectITA_ingredients(ingredients & ~SignalAspectITA_ingredients::RiduzioneMASK);
-
-            // Add new speed reduction imposed by triangle
-            ingredients = SignalAspectITA_ingredients(ingredients | newReduction);
-            value = SignalAspectITA(ingredients);
-        }
-        }
-    }
-
-    return value;
+void SignalRailTileITA::loaded()
+{
+    SignalRailTile::loaded();
+    updateAuxReduction();
 }
 
 void SignalRailTileITA::boardModified()
@@ -421,5 +489,7 @@ void SignalRailTileITA::worldEvent(WorldState state, WorldEvent event)
     const bool editable = contains(state, WorldState::Edit);
     const bool editableAndStopped = editable && !contains(state, WorldState::Run);
 
-    Attributes::setEnabled(auxSpeedReduction, editableAndStopped);
+    Attributes::setEnabled(onlyAnticipateNextSignal, editableAndStopped);
+
+    updateAuxReduction();
 }
