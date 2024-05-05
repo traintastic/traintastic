@@ -220,6 +220,25 @@ protected:
                 riduzione = SignalAspectITA_ingredients::Riduzione100;
         }
 
+        if(!anticipationOnly && blockState == BlockState::Occupied && (!requireReservation() || hasSignalReservedPathToBlock(signal(), *blockItem->block())))
+        {
+            // Next block is occupied, check if it's only partially occupied on exit side
+            const auto &inputMap = blockItem->block()->inputMap;
+            if(inputMap->items.size() < 2)
+                return SignalAspectITA::ViaImpedita; // Block must have at least 2 sub-sections
+
+            const auto sensor = blockItem->enterSide() == BlockSide::A ? inputMap->items.front() : inputMap->items.back();
+            if(!sensor || sensor->value() != SensorState::Free)
+                return SignalAspectITA::ViaImpedita; // Sub-sections on enter side must be free
+
+            // Signals protecting station entrance always put red on top
+            if(requireReservation())
+                return SignalAspectITA::BinarioIngombroTroncoDeviato;
+
+            // In railway lines this aspect it's used instead of plain yellow when distance from next block is extramely short.
+            return SignalAspectITA::BinarioIngombroTronco;
+        }
+
         // Anticipation-only signals do not require reservation
         if(anticipationOnly || (!requireReservation() && blockState == BlockState::Free) ||
             (blockState == BlockState::Reserved && hasSignalReservedPathToBlock(signal(), *blockItem->block())))
@@ -234,13 +253,6 @@ protected:
                 {
                     return SignalAspectITA(SignalAspectITA_ingredients::ViaLibera | riduzione);
                 }
-
-                // Nei segnali di protezione delle stazioni si usa sempre il rosso/giallo/giallo
-                if(requireReservation())
-                    return SignalAspectITA::BinarioIngombroTroncoDeviato;
-
-                // In linea si usa il giallo/giallo per avvisare di distanze ridottissime del blocco successivo
-                return SignalAspectITA::BinarioIngombroTronco;
             }
             else if(signalItem2)
             {
