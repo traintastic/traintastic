@@ -54,4 +54,5 @@ void AspectOutput::updateValue(int16_t newValue)
 {
   value.setValueInternal(newValue);
   fireEvent(onValueChanged, newValue, shared_ptr<AspectOutput>());
+  fireEvent(onValueChangedGeneric, shared_ptr<Output>());
 }

@@ -53,4 +53,5 @@ void ECoSStateOutput::updateValue(uint8_t newValue)
 {
   value.setValueInternal(newValue);
   fireEvent(onValueChanged, newValue, shared_ptr<ECoSStateOutput>());
+  fireEvent(onValueChangedGeneric, shared_ptr<Output>());
 }
