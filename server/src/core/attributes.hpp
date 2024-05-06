@@ -261,14 +261,14 @@ struct Attributes
     method.addAttribute(AttributeName::Values, values);
   }
 
-  template<class R, class T>
-  static inline void addValues(Method<R(T)>& method, std::span<const T> values)
+  template<class R, class T, size_t N>
+  static inline void addValues(Method<R(T)>& method, std::span<const T, N> values)
   {
     method.addAttribute(AttributeName::Values, values);
   }
 
-  template<typename T>
-  static inline void addValues(Property<T>& property, std::span<const T> values)
+  template<typename T, size_t N>
+  static inline void addValues(Property<T>& property, std::span<const T, N> values)
   {
     property.addAttribute(AttributeName::Values, values);
   }
@@ -309,8 +309,8 @@ struct Attributes
     method.addAttribute(AttributeName::Values, std::move(values));
   }
 
-  template<typename T>
-  static inline void setValues(Property<T>& property, std::span<const T> values)
+  template<typename T, size_t N>
+  static inline void setValues(Property<T>& property, std::span<const T, N> values)
   {
     property.setAttribute(AttributeName::Values, values);
   }
