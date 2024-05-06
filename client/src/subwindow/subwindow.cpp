@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -89,6 +89,7 @@ QString SubWindow::settingsGroupName() const
 
 void SubWindow::setObject(const ObjectPtr& object)
 {
+  connect(object.get(), &Object::dead, this, &SubWindow::close);
   m_connection = object->connection();
   if(auto* property = object->getProperty("id"))
   {
