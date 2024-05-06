@@ -129,8 +129,8 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
     [this, l, handler]()
     {
       // Only trigger update if signal is really blinking
-      auto [aspectITA, auxReduction] = getSignalAspectITA(l);
-      (void)auxReduction;
+      auto [aspectITA, auxReduction, lampsCount] = getSignalAspectITA(l);
+      (void)lampsCount;
 
       auto lamps = TilePainter::calculateLampStatesITSignal(aspectITA, auxReduction);
 
@@ -175,6 +175,7 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
     case TileId::RailSignalAspectITA:
       tryConnect("aspect_ita");
       tryConnect("aux_reduction");
+      tryConnect("lamps_count");
       connect(this, &BoardAreaWidget::blinkStateChanged, this, handlerBlink);
       break;
 
@@ -362,10 +363,11 @@ SignalAspect BoardAreaWidget::getSignalAspect(const TileLocation& l) const
   return SignalAspect::Unknown;
 }
 
-std::tuple<SignalAspectITA, SignalAspectITAAuxiliarySpeedReduction> BoardAreaWidget::getSignalAspectITA(const TileLocation& l) const
+std::tuple<SignalAspectITA, SignalAspectITAAuxiliarySpeedReduction, int> BoardAreaWidget::getSignalAspectITA(const TileLocation& l) const
 {
     SignalAspectITA aspectITA = SignalAspectITA::Unknown;
     SignalAspectITAAuxiliarySpeedReduction auxReduction = SignalAspectITAAuxiliarySpeedReduction::None;
+    int lampsCount = 3;
 
     if(ObjectPtr object = m_board.board().getTileObject(l))
     {
@@ -374,9 +376,12 @@ std::tuple<SignalAspectITA, SignalAspectITAAuxiliarySpeedReduction> BoardAreaWid
 
         if(const auto* p = object->getProperty("aux_reduction"))
             auxReduction = p->toEnum<SignalAspectITAAuxiliarySpeedReduction>();
+
+        if(const auto* p = object->getProperty("lamps_count"))
+            lampsCount = p->toInt();
     }
 
-    return {aspectITA, auxReduction};
+    return {aspectITA, auxReduction, lampsCount};
 }
 
 Color BoardAreaWidget::getColor(const TileLocation& l) const
@@ -639,8 +644,8 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
         case TileId::RailSignalAspectITA:
         {
-          auto [aspectITA, auxReduction] = getSignalAspectITA(it.first);
-          tilePainter.drawSignalAspectITA(id, r, a, isReserved, aspectITA, auxReduction);
+          auto [aspectITA, auxReduction, lampsCount] = getSignalAspectITA(it.first);
+          tilePainter.drawSignalAspectITA(id, r, a, isReserved, aspectITA, auxReduction, lampsCount);
           break;
         }
 

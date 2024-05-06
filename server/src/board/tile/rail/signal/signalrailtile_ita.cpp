@@ -322,12 +322,11 @@ public:
 
 
 
-    static SignalAspectITA adjustAspect(SignalAspectITA value, bool anticipateOnly, SignalAspectITAAuxiliarySpeedReduction auxReduction)
+    static SignalAspectITA adjustAspect(SignalAspectITA value, bool anticipateOnly, SignalAspectITAAuxiliarySpeedReduction auxReduction, int lampsCount)
     {
+        SignalAspectITA_ingredients ingredients = SignalAspectITA_ingredients(value);
         if(anticipateOnly)
         {
-            SignalAspectITA_ingredients ingredients = SignalAspectITA_ingredients(value);
-
             // We cannot show "Stop" or partially occupied track aspect
             const bool isPartiallyOccupied = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::BinarioIngombroTronco) == SignalAspectITA_ingredients::BinarioIngombroTronco;
             if(value == SignalAspectITA::ViaImpedita || isPartiallyOccupied)
@@ -339,14 +338,13 @@ public:
             // Remove non-Straight path attribute
             ingredients = SignalAspectITA_ingredients(ingredients & ~SignalAspectITA_ingredients::Deviata);
 
-            return SignalAspectITA(ingredients);
+            value = SignalAspectITA(ingredients);
         }
 
         //TODO: robust logic to reject invalid aspects or impossible aspects due to lamps number/rappel/triangle
-        if(auxReduction == SignalAspectITAAuxiliarySpeedReduction::Triangle30 || auxReduction == SignalAspectITAAuxiliarySpeedReduction::Triangle60)
+        if(hasTriangle(auxReduction))
         {
             // Signal always shows a speed reduction to 30 km/h (or 60 km/h if triangle has "60" inside it)
-            SignalAspectITA_ingredients ingredients = SignalAspectITA_ingredients(value);
             SignalAspectITA_ingredients riduzione = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::RiduzioneMASK);
 
             SignalAspectITA_ingredients newReduction = SignalAspectITA_ingredients::Riduzione30;
@@ -382,6 +380,32 @@ public:
             }
         }
 
+        // Calculate needed lamps to show this aspect
+        int neededLampsCount = 1;
+        SignalAspectITA_ingredients riduzione = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::RiduzioneMASK);
+        if(riduzione && !hasTriangle(auxReduction))
+            neededLampsCount += 1; // Shift by one
+
+        SignalAspectITA_ingredients avvisoRiduzione = SignalAspectITA_ingredients(ingredients & SignalAspectITA_ingredients::AvvisoRiduzioneMASK);
+        if(avvisoRiduzione)
+            neededLampsCount += 1; // 2 lights to anticipate next signal speed reduction
+
+        // Special case
+        if(value == SignalAspectITA::BinarioIngombroTronco)
+            neededLampsCount = 2;
+        else if (value == SignalAspectITA::BinarioIngombroTroncoDeviato)
+            neededLampsCount = 3;
+
+        if(lampsCount < neededLampsCount)
+        {
+            // We do not have enought lamps to show this aspect
+            // Default to "Stop" or "Expect Stop" for anticipation-only signals
+            if(anticipateOnly)
+                value = SignalAspectITA::ViaLibera_AvvisoViaImpedita;
+            else
+                value = SignalAspectITA::ViaImpedita;
+        }
+
         return value;
     }
 };
@@ -390,12 +414,18 @@ public:
 SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
     SignalRailTile(world, _id, TileId::RailSignalAspectITA),
     aspectITA{this, "aspect_ita", SignalAspectITA::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+    lampsCount{this, "lamps_count", 2, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
     onlyAnticipateNextSignal{this, "only_anticipate", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly,
       [this](bool /*value*/) -> void
       {
         updateAuxReduction();
+        updateLampsCount();
       }},
-    auxSpeedReduction{this, "aux_reduction", SignalAspectITAAuxiliarySpeedReduction::None, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
+    auxSpeedReduction{this, "aux_reduction", SignalAspectITAAuxiliarySpeedReduction::None, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly,
+      [this](SignalAspectITAAuxiliarySpeedReduction /*value*/) -> void
+      {
+        updateLampsCount();
+      }}
 {
     const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
@@ -421,6 +451,10 @@ SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
     Attributes::addValues<bool, SignalAspect>(setAspect, setAspectValues);
     m_interfaceItems.add(setAspect);
 
+    Attributes::addEnabled(lampsCount, editable);
+    Attributes::addMinMax(lampsCount, 1, 3);
+    m_interfaceItems.add(lampsCount);
+
     Attributes::addEnabled(onlyAnticipateNextSignal, editable);
     m_interfaceItems.add(onlyAnticipateNextSignal);
 
@@ -434,7 +468,7 @@ SignalRailTileITA::SignalRailTileITA(World& world, std::string_view _id) :
 bool SignalRailTileITA::doSetAspect(SignalAspect value, bool skipAction)
 {
     SignalAspectITA valueITA = SignalAspectITA(value);
-    valueITA = SignalPath::adjustAspect(valueITA, onlyAnticipateNextSignal, auxSpeedReduction);
+    valueITA = SignalPath::adjustAspect(valueITA, onlyAnticipateNextSignal, auxSpeedReduction, lampsCount);
 
     const auto* values = setAspect.tryGetValuesAttribute(AttributeName::Values);
     assert(values);
@@ -482,6 +516,23 @@ void SignalRailTileITA::updateAuxReduction()
         auxSpeedReduction = SignalAspectITAAuxiliarySpeedReduction::None;
 }
 
+void SignalRailTileITA::updateLampsCount()
+{
+    int maxLamps = 3;
+    if(onlyAnticipateNextSignal || hasTriangle(auxSpeedReduction))
+    {
+        // Anticipation-only signals do not show topmost red light
+        // and signals with triangle do not shift by one
+        // So they need just 1 or 2 lamps
+        maxLamps = 2;
+    }
+
+    if(lampsCount.value() > maxLamps)
+        lampsCount.setValueInternal(maxLamps);
+
+    Attributes::setMax(lampsCount, maxLamps);
+}
+
 void SignalRailTileITA::loaded()
 {
     SignalRailTile::loaded();
@@ -501,6 +552,7 @@ void SignalRailTileITA::worldEvent(WorldState state, WorldEvent event)
     const bool editable = contains(state, WorldState::Edit);
     const bool editableAndStopped = editable && !contains(state, WorldState::Run);
 
+    Attributes::setEnabled(lampsCount, editableAndStopped);
     Attributes::setEnabled(onlyAnticipateNextSignal, editableAndStopped);
 
     updateAuxReduction();

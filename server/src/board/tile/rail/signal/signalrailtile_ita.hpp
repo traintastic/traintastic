@@ -38,6 +38,7 @@ class SignalRailTileITA : public SignalRailTile
     virtual bool doSetAspect(SignalAspect value, bool skipAction) override;
 
     void updateAuxReduction();
+    void updateLampsCount();
 
   public:
     SignalRailTileITA(World& world, std::string_view _id);
@@ -45,6 +46,7 @@ class SignalRailTileITA : public SignalRailTile
     void worldEvent(WorldState state, WorldEvent event) override;
 
     Property<SignalAspectITA> aspectITA;
+    Property<int> lampsCount;
     Property<bool> onlyAnticipateNextSignal; // Segnale di Avviso TODO: max 2 lamps
     Property<SignalAspectITAAuxiliarySpeedReduction> auxSpeedReduction;
 };

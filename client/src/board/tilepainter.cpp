@@ -424,14 +424,14 @@ void TilePainter::drawSignal(TileId id, const QRectF& r, TileRotate rotate, bool
     }
 }
 
-void TilePainter::drawSignalAspectITA(TileId id, const QRectF &r, TileRotate rotate, bool isReserved, SignalAspectITA aspectITA, SignalAspectITAAuxiliarySpeedReduction auxReduction)
+void TilePainter::drawSignalAspectITA(TileId id, const QRectF &r, TileRotate rotate, bool isReserved, SignalAspectITA aspectITA, SignalAspectITAAuxiliarySpeedReduction auxReduction, int lampsCount)
 {
     assert(id == TileId::RailSignalAspectITA);
 
     setTrackPen(isReserved);
     drawStraight(r, rotate);
     drawSignalDirection(r, rotate);
-    drawSignalAspectITA_helper(r, rotate, aspectITA, auxReduction);
+    drawSignalAspectITA_helper(r, rotate, aspectITA, auxReduction, lampsCount);
 }
 
 void TilePainter::drawBlock(TileId id, const QRectF& r, TileRotate rotate, bool isReservedA, bool isReservedB, const ObjectPtr& blockTile)
@@ -1249,8 +1249,11 @@ std::array<SignalAspectITALampPair_, 3> TilePainter::calculateLampStatesITSignal
     return lamps;
 }
 
-void TilePainter::drawSignalAspectITA_helper(QRectF r, TileRotate rotate, SignalAspectITA aspectITA, SignalAspectITAAuxiliarySpeedReduction auxReduction)
+void TilePainter::drawSignalAspectITA_helper(QRectF r, TileRotate rotate, SignalAspectITA aspectITA, SignalAspectITAAuxiliarySpeedReduction auxReduction, int lampsCount)
 {
+    // Clamp lamps count
+    lampsCount = std::clamp(1, lampsCount, 3);
+
     m_painter.save();
     m_painter.translate(r.center());
     m_painter.rotate(toDeg(rotate));
@@ -1258,14 +1261,18 @@ void TilePainter::drawSignalAspectITA_helper(QRectF r, TileRotate rotate, Signal
 
     const qreal x1 = r.left() + r.width() * 0.35;
     const qreal x2 = r.right() - r.width() * 0.35;
-    const qreal y1 = r.top() + r.height() * 0.2;
-    const qreal y2 = r.bottom() - r.height() * 0.5;
-
-    const qreal y3 = r.bottom() - r.height() * 0.32;
-    const qreal y4 = r.bottom() - r.height() * 0.02;
 
     const qreal w = x2 - x1;
     const qreal lampRadius = w * 0.3;
+
+    // Shift up bottom part of signal if it has less than 3 lamps
+    const qreal lampShift = (3 - lampsCount) * 2 * lampRadius;
+
+    const qreal y1 = r.top() + r.height() * 0.2;
+    const qreal y2 = r.bottom() - r.height() * 0.5 - lampShift;
+
+    const qreal y3 = r.bottom() - r.height() * 0.32 - lampShift;
+    const qreal y4 = r.bottom() - r.height() * 0.02 - lampShift;
 
     QPainterPath path;
     path.moveTo(x1, y1);
@@ -1280,11 +1287,12 @@ void TilePainter::drawSignalAspectITA_helper(QRectF r, TileRotate rotate, Signal
     m_painter.setPen(Qt::NoPen);
 
     const qreal lampCenter = (y1 + y2) / 2;
-    QPointF lampPos{r.center().x(), lampCenter - 2 * lampRadius};
+
+    QPointF lampPos{r.center().x(), lampCenter - lampRadius * (lampsCount - 1)};
 
     auto lamps = calculateLampStatesITSignal(aspectITA, auxReduction);
 
-    for(int i = 0; i < 3; i++)
+    for(int i = 0; i < lampsCount; i++)
     {
         SignalAspectITALampPair_ lamp = lamps[i];
 

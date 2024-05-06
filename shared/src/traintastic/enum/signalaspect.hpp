@@ -182,4 +182,9 @@ TRAINTASTIC_ENUM(SignalAspectITAAuxiliarySpeedReduction, "signal_ita_aux_speed",
     {SignalAspectITAAuxiliarySpeedReduction::Triangle60, "triangle_60"}
 });
 
+constexpr inline bool hasTriangle(SignalAspectITAAuxiliarySpeedReduction value)
+{
+    return value == SignalAspectITAAuxiliarySpeedReduction::Triangle30 || value == SignalAspectITAAuxiliarySpeedReduction::Triangle60;
+}
+
 #endif

@@ -98,7 +98,7 @@ class TilePainter
 
     void drawSignal2Aspect(QRectF r, TileRotate rotate, SignalAspect aspect);
     void drawSignal3Aspect(QRectF r, TileRotate rotate, SignalAspect aspect);
-    void drawSignalAspectITA_helper(QRectF r, TileRotate rotate, SignalAspectITA aspectITA, SignalAspectITAAuxiliarySpeedReduction auxReduction);
+    void drawSignalAspectITA_helper(QRectF r, TileRotate rotate, SignalAspectITA aspectITA, SignalAspectITAAuxiliarySpeedReduction auxReduction, int lampsCount);
     void drawSignalDirection(QRectF r, TileRotate rotate);
 
     void drawRailBlock(const QRectF& r, TileRotate rotate, bool isReservedA = false, bool isReservedB = false, const ObjectPtr& blockTile = {});
@@ -115,7 +115,7 @@ class TilePainter
     void drawDirectionControl(TileId id, const QRectF& r, TileRotate rotate, bool isReserved = false, DirectionControlState state = DirectionControlState::Both);
     void drawTurnout(TileId id, const QRectF& r, TileRotate rotate, TurnoutPosition reservedPosition = TurnoutPosition::Unknown, TurnoutPosition position = TurnoutPosition::Unknown);
     void drawSignal(TileId id, const QRectF& r, TileRotate rotate, bool isReserved = false, SignalAspect aspect = SignalAspect::Unknown);
-    void drawSignalAspectITA(TileId id, const QRectF& r, TileRotate rotate, bool isReserved = false, SignalAspectITA aspectITA = SignalAspectITA::Unknown, SignalAspectITAAuxiliarySpeedReduction auxReduction = SignalAspectITAAuxiliarySpeedReduction::None);
+    void drawSignalAspectITA(TileId id, const QRectF& r, TileRotate rotate, bool isReserved = false, SignalAspectITA aspectITA = SignalAspectITA::Unknown, SignalAspectITAAuxiliarySpeedReduction auxReduction = SignalAspectITAAuxiliarySpeedReduction::None, int lampsCount = 3);
     void drawBlock(TileId id, const QRectF& r, TileRotate rotate, bool isReservedA = false, bool isReservedB = false, const ObjectPtr& blockTile = {});
 
     void drawPushButton(const QRectF& r, Color color = Color::Yellow);
