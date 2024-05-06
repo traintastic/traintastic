@@ -25,11 +25,9 @@
 #include "../../../../core/objectproperty.tpp"
 #include "../../../../hardware/output/outputcontroller.hpp"
 
-static const std::array<TurnoutPosition, 5> positionValues = {TurnoutPosition::Crossed, TurnoutPosition::Diverged,
-                                                              TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB,
-                                                              TurnoutPosition::Unknown};
-static const std::array<TurnoutPosition, 4> setPositionValues = {TurnoutPosition::Crossed, TurnoutPosition::Diverged,
-                                                                 TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB};
+static const std::array<TurnoutPosition, 5> positionValues = {TurnoutPosition::Unknown,
+                                                              TurnoutPosition::Crossed, TurnoutPosition::Diverged,
+                                                              TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB,};
 
 static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex)
 {
@@ -43,6 +41,9 @@ static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition tu
 TurnoutSingleSlipRailTile::TurnoutSingleSlipRailTile(World& world, std::string_view _id)
   : TurnoutRailTile(world, _id, TileId::RailTurnoutSingleSlip, 4)
 {
+  // Skip Unknown position
+  tcb::span<const TurnoutPosition, 4> setPositionValues = tcb::make_span(positionValues).subspan<1>();
+
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(),
                                                                   std::initializer_list<TurnoutPosition>{
                                                                     TurnoutPosition::Crossed, TurnoutPosition::Diverged,
