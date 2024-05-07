@@ -549,7 +549,7 @@ struct LanXSetExtAccessory : LanX
   {
     return rawAddress() + 3;
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXSetExtAccessory) == 10);
 
 // LAN_X_SET_STOP
@@ -1538,7 +1538,7 @@ struct LanRMBusDataChanged : Message
     else
       feedbackStatus[index >> 3] &= ~static_cast<uint8_t>(1 << (index & 0x7));
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanRMBusDataChanged) == 15);
 
 // LAN_SYSTEMSTATE_DATACHANGED
