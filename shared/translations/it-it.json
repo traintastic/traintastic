@@ -4612,7 +4612,7 @@
         "definition": "No"
     },
     {
-        "term": "board_tile.rail.signal_3_aspect:require_reservation",
+        "term": "board_tile:signal_require_reservation",
         "definition": "Richiedi prenotazione"
     },
     {
