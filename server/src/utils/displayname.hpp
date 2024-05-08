@@ -30,6 +30,7 @@ namespace DisplayName
   namespace BoardTile
   {
     constexpr std::string_view outputMap = "board_tile:output_map";
+    constexpr std::string_view signalRequireReservation = "board_tile:signal_require_reservation";
   }
   namespace Controller
   {

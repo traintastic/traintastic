@@ -93,6 +93,7 @@ SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
 
+  Attributes::addDisplayName(requireReservation, DisplayName::BoardTile::signalRequireReservation);
   Attributes::addEnabled(requireReservation, editable);
   Attributes::addValues(requireReservation, autoYesNoValues);
   m_interfaceItems.add(requireReservation);
