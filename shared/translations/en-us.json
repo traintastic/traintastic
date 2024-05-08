@@ -3848,6 +3848,22 @@
         "comment": ""
     },
     {
+        "term": "board_tile.rail.signal_ita:lamps_count",
+        "definition": "Number of Lamps",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "board_tile.rail.signal_ita:only_anticipate",
+        "definition": "Anticipation-olny Signal",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "throttle_object_list:throttle",
         "definition": "Throttle",
         "context": "",
