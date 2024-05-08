@@ -57,6 +57,8 @@
   TriState, \
   TurnoutPosition, \
   SignalAspect, \
+  SignalAspectITA, \
+  SignalAspectITAAuxiliarySpeedReduction, \
   WorldEvent, \
   WorldScale
 
