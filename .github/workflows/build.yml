@@ -38,7 +38,7 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: true
-          defines: ""
+          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
 
         - name: "raspberrypios_arm64"
           os: [self-hosted, ARM64, RaspberryPi]
@@ -48,7 +48,7 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: true
-          defines: ""
+          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
 
         - name: "macos-11"
           os: "macos-11"
@@ -232,7 +232,7 @@ jobs:
           jobs: 3
           build_type: Release
           build_deb: true
-          defines: " -DINSTALL_SYSTEMD_SERVICE=ON"
+          defines: "-DINSTALL_SYSTEMD_SERVICE=ON -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
           ccov: false
 
         - name: "raspberrypios_arm64"
