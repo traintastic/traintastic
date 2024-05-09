@@ -23,7 +23,11 @@
 #include "switchoutputmapitem.hpp"
 #include "../../../core/method.tpp"
 
+static constexpr std::array<bool, 2> keyAliasKeys{{false, true}};
+static const std::array<std::string, 2> keyAliasValues{{"$output_map_item.switch.key:off$", "$output_map_item.switch.key:on$"}};
+
 SwitchOutputMapItem::SwitchOutputMapItem(Object& map, bool value) :
   OutputMapItemBase(map, value)
 {
+  Attributes::addAliases(key, tcb::span<const bool>(keyAliasKeys), tcb::span<const std::string>(keyAliasValues));
 }

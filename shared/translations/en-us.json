@@ -4826,5 +4826,13 @@
     {
         "term": "output_map.switch:key",
         "definition": "Value"
+    },
+    {
+        "term": "output_map_item.switch.key:off",
+        "definition": "Off"
+    },
+    {
+        "term": "output_map_item.switch.key:on",
+        "definition": "On"
     }
 ]
