@@ -34,7 +34,6 @@ class OutputMapBase : public OutputMap
     using DefaultOutputActionGetter = std::optional<OutputActionValue>(*)(Key, OutputType, size_t);
 
   protected:
-    const std::vector<Key> m_keys;
     DefaultOutputActionGetter m_defaultOutputActionGetter;
 
     void load(WorldLoader& loader, const nlohmann::json& data) override
@@ -59,8 +58,7 @@ class OutputMapBase : public OutputMap
 
   public:
     OutputMapBase(Object& _parent, std::string_view parentPropertyName, std::initializer_list<Key> keys, DefaultOutputActionGetter defaultOutputActionGetter) :
-      OutputMap(_parent, parentPropertyName),
-      m_keys{keys}
+      OutputMap(_parent, parentPropertyName)
       , m_defaultOutputActionGetter{defaultOutputActionGetter}
     {
       assert(m_defaultOutputActionGetter);
