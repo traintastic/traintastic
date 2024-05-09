@@ -254,7 +254,7 @@ jobs:
           jobs: 3
           build_type: Release
           build_deb: true
-          defines: "-DINSTALL_SYSTEMD_SERVICE=ON"
+          defines: "-DINSTALL_SYSTEMD_SERVICE=ON -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
           ccov: false
 
         - name: "macos-11"
