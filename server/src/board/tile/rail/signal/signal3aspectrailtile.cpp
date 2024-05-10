@@ -29,8 +29,12 @@
 #include "../../../../core/objectproperty.tpp"
 #include "../../../../hardware/output/outputcontroller.hpp"
 
-static const std::array<SignalAspect, 4> aspectValues = {SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed, SignalAspect::Unknown};
-static const std::array<SignalAspect, 3> setAspectValues = {SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed};
+static constexpr std::array<SignalAspect, 4> aspectValues = {
+    SignalAspect::Unknown,
+    SignalAspect::Stop,
+    SignalAspect::ProceedReducedSpeed,
+    SignalAspect::Proceed
+};
 
 namespace
 {
@@ -109,6 +113,9 @@ namespace
 Signal3AspectRailTile::Signal3AspectRailTile(World& world, std::string_view _id) :
   SignalRailTile(world, _id, TileId::RailSignal3Aspect)
 {
+  // Skip Unknown aspect
+  tcb::span<const SignalAspect, 3> setAspectValues = tcb::make_span(aspectValues).subspan<1>();
+
   outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed}, getDefaultActionValue));
 
   Attributes::addValues(aspect, aspectValues);
