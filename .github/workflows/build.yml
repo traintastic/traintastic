@@ -387,12 +387,12 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - name: "ubuntu_20.04"
-          os: ubuntu-20.04
-          defines: ""
-
         - name: "ubuntu_22.04"
           os: ubuntu-22.04
+          defines: ""
+
+        - name: "ubuntu_24.04"
+          os: ubuntu-24.04
           defines: ""
 
         - name: "raspberrypios_10"
@@ -577,7 +577,7 @@ jobs:
   deploy:
     name: Deploy to website
     if: ${{ github.event_name == 'push' }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: [package-innosetup, build-server, build-client, build-data, build-manual, build-manual-lua]
 
     steps:
