@@ -20,8 +20,8 @@ jobs:
           build_deb: false
           defines: ""
 
-        - name: "ubuntu_22.04"
-          os: ubuntu-22.04
+        - name: "ubuntu_20.04"
+          os: ubuntu-20.04
           generator: "Unix Makefiles"
           arch: ""
           target: traintastic-client
@@ -199,8 +199,8 @@ jobs:
           defines: ""
           ccov: false
 
-        - name: "ubuntu_22.04"
-          os: ubuntu-22.04
+        - name: "ubuntu_20.04"
+          os: ubuntu-20.04
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
@@ -387,12 +387,12 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - name: "ubuntu_22.04"
-          os: ubuntu-22.04
+        - name: "ubuntu_20.04"
+          os: ubuntu-20.04
           defines: ""
 
-        - name: "ubuntu_24.04"
-          os: ubuntu-24.04
+        - name: "ubuntu_22.04"
+          os: ubuntu-22.04
           defines: ""
 
         - name: "raspberrypios_10"
@@ -463,7 +463,7 @@ jobs:
 
   build-manual:
     name: manual
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -577,7 +577,7 @@ jobs:
   deploy:
     name: Deploy to website
     if: ${{ github.event_name == 'push' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: [package-innosetup, build-server, build-client, build-data, build-manual, build-manual-lua]
 
     steps:
