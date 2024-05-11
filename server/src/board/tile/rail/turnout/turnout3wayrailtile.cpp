@@ -40,7 +40,7 @@ Turnout3WayRailTile::Turnout3WayRailTile(World& world, std::string_view _id)
   : TurnoutRailTile(world, _id, TileId::RailTurnout3Way, 4)
 {
   // Skip Unknown position
-  tcb::span<const TurnoutPosition, 3> setPositionValues = tcb::make_span(positionValues).subspan<1>();
+  std::span<const TurnoutPosition, 3> setPositionValues = std::span(positionValues).subspan<1>();
 
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right}, getDefaultActionValue));
 

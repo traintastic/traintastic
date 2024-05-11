@@ -27,11 +27,11 @@
 #include <span>
 #include "to.hpp"
 
-template<typename T, size_t N = tcb::dynamic_extent>
+template<typename T, size_t N = std::dynamic_extent>
 class SpanAttribute : public AbstractValuesAttribute
 {
   public:
-    typedef tcb::span<const T, N> Span;
+    typedef std::span<const T, N> Span;
 
   protected:
     Span m_values;

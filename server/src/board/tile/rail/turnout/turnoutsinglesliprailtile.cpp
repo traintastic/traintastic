@@ -42,7 +42,7 @@ TurnoutSingleSlipRailTile::TurnoutSingleSlipRailTile(World& world, std::string_v
   : TurnoutRailTile(world, _id, TileId::RailTurnoutSingleSlip, 4)
 {
   // Skip Unknown position
-  tcb::span<const TurnoutPosition, 4> setPositionValues = tcb::make_span(positionValues).subspan<1>();
+  std::span<const TurnoutPosition, 4> setPositionValues = std::span(positionValues).subspan<1>();
 
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(),
                                                                   std::initializer_list<TurnoutPosition>{

@@ -43,7 +43,7 @@ TurnoutDoubleSlipRailTile::TurnoutDoubleSlipRailTile(World& world, std::string_v
   : TurnoutRailTile(world, _id, TileId::RailTurnoutDoubleSlip, 4)
 {
   // Skip Unknown position
-  tcb::span<const TurnoutPosition, 6> setPositionValues = tcb::make_span(positionValues).subspan<1>();
+  std::span<const TurnoutPosition, 6> setPositionValues = std::span(positionValues).subspan<1>();
 
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(),
                                                                 std::initializer_list<TurnoutPosition>{

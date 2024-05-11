@@ -114,7 +114,7 @@ Signal3AspectRailTile::Signal3AspectRailTile(World& world, std::string_view _id)
   SignalRailTile(world, _id, TileId::RailSignal3Aspect)
 {
   // Skip Unknown aspect
-  tcb::span<const SignalAspect, 3> setAspectValues = tcb::make_span(aspectValues).subspan<1>();
+  std::span<const SignalAspect, 3> setAspectValues = std::span(aspectValues).subspan<1>();
 
   outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::ProceedReducedSpeed, SignalAspect::Proceed}, getDefaultActionValue));
 

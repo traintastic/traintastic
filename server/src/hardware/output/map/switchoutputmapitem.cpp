@@ -29,5 +29,5 @@ static const std::array<std::string, 2> keyAliasValues{{"$output_map_item.switch
 SwitchOutputMapItem::SwitchOutputMapItem(Object& map, bool value) :
   OutputMapItemBase(map, value)
 {
-  Attributes::addAliases(key, tcb::span<const bool>(keyAliasKeys), tcb::span<const std::string>(keyAliasValues));
+  Attributes::addAliases(key, std::span<const bool>(keyAliasKeys), std::span<const std::string>(keyAliasValues));
 }
