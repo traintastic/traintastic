@@ -1103,8 +1103,8 @@ static_assert(sizeof(LanGetHardwareInfoReply) == 12);
 // LAN_X_TURNOUT_INFO
 struct LanXTurnoutInfo : LanX
 {
-  uint8_t addressLSB;
   uint8_t addressMSB;
+  uint8_t addressLSB;
   uint8_t db2;
   uint8_t checksum;
 
