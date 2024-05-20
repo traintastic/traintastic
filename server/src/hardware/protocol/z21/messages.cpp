@@ -127,7 +127,7 @@ std::string toString(const Message& message, bool raw)
             const auto& reply = static_cast<const LanXExtAccessoryInfo&>(message);
             s = "LAN_X_EXT_ACCESSORY_INFO";
             s.append(" address=").append(std::to_string(reply.address()));
-            s.append(" aspect=").append(std::to_string(reply.aspect()));
+            s.append(" db2=").append(std::to_string(reply.aspect()));
             s.append(" unknown=").append(std::to_string(!reply.isDataValid()));
           }
           else
