@@ -89,6 +89,21 @@ void ClientKernel::receive(const Message& message)
           }
           break;
 
+        case LAN_X_EXT_ACCESSORY_INFO:
+          if(message.dataLen() == sizeof(LanXExtAccessoryInfo))
+          {
+            const auto& reply = static_cast<const LanXExtAccessoryInfo&>(message);
+            if(reply.isDataValid())
+            {
+              EventLoop::call(
+                [this, address=reply.address(), value=reply.aspect()]()
+                {
+                  m_outputController->updateOutputValue(OutputChannel::DCCext, address, value);
+                });
+            }
+          }
+          break;
+
         case LAN_X_BC:
           if(message == LanXBCTrackPowerOff() || message == LanXBCTrackShortCircuit())
           {

@@ -151,6 +151,29 @@ bool SimulationIOHandler::send(const Message& message)
           }
           break;
         }
+        case LAN_X_SET_EXT_ACCESSORY:
+        {
+          if(message.dataLen() == sizeof(LanXSetExtAccessory))
+          {
+            const auto& setAccessory = static_cast<const LanXSetExtAccessory&>(message);
+            if((m_broadcastFlags & BroadcastFlags::PowerLocoTurnoutChanges) == BroadcastFlags::PowerLocoTurnoutChanges)
+            {
+              // Client has subscribed to turnout changes
+              reply(LanXExtAccessoryInfo(setAccessory.address(), setAccessory.aspect(), false));
+            }
+          }
+          break;
+        }
+        case LAN_X_EXT_ACCESSORY_INFO:
+        {
+          if(message.dataLen() == sizeof(LanXGetExtAccessoryInfo))
+          {
+            const auto& getAccessory = static_cast<const LanXGetExtAccessoryInfo&>(message);
+            //We do not keep a record of accessory states so send "Unknown Position"
+            reply(LanXExtAccessoryInfo(getAccessory.address(), 0, true));
+          }
+          break;
+        }
       }
       break;
     }

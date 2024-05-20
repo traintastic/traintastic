@@ -120,6 +120,24 @@ std::string toString(const Message& message, bool raw)
           s.append(" queue=").append(setTurnout.queue() ? "yes" : "no");
           break;
         }
+        case LAN_X_EXT_ACCESSORY_INFO:
+        {
+          if(message.dataLen() == sizeof(LanXExtAccessoryInfo))
+          {
+            const auto& reply = static_cast<const LanXExtAccessoryInfo&>(message);
+            s = "LAN_X_EXT_ACCESSORY_INFO";
+            s.append(" address=").append(std::to_string(reply.address()));
+            s.append(" db2=").append(std::to_string(reply.aspect()));
+            s.append(" unknown=").append(std::to_string(!reply.isDataValid()));
+          }
+          else
+          {
+            const auto& getAccessoryInfo = static_cast<const LanXGetExtAccessoryInfo&>(message);
+            s = "LAN_X_GET_EXT_ACCESSORY_INFO";
+            s.append(" address=").append(std::to_string(getAccessoryInfo.address()));
+          }
+          break;
+        }
         case LAN_X_SET_EXT_ACCESSORY:
         {
           const auto& setExtAccessory = static_cast<const LanXSetExtAccessory&>(message);
