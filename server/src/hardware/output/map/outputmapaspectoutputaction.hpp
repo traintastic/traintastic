@@ -44,7 +44,7 @@ class OutputMapAspectOutputAction final : public OutputMapOutputAction
 
     void execute() final;
 
-    bool matchesCurrentOutputState() final;
+    bool matchesCurrentOutputState() const final;
 };
 
 #endif

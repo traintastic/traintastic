@@ -54,7 +54,7 @@ void OutputMapPairOutputAction::execute()
   }
 }
 
-bool OutputMapPairOutputAction::matchesCurrentOutputState()
+bool OutputMapPairOutputAction::matchesCurrentOutputState() const
 {
   switch(action.value())
   {

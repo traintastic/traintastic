@@ -66,7 +66,7 @@ void OutputMapSingleOutputAction::execute()
   }
 }
 
-bool OutputMapSingleOutputAction::matchesCurrentOutputState()
+bool OutputMapSingleOutputAction::matchesCurrentOutputState() const
 {
   switch(action.value())
   {

@@ -48,7 +48,7 @@ class OutputMapOutputAction : public Object
 
     virtual void execute() = 0;
 
-    virtual bool matchesCurrentOutputState() = 0; //TODO: const
+    virtual bool matchesCurrentOutputState() const = 0;
 };
 
 #endif

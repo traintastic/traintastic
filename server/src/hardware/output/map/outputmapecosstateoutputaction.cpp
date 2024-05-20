@@ -41,7 +41,7 @@ void OutputMapECoSStateOutputAction::execute()
   ecosStateOutput().setValue(state);
 }
 
-bool OutputMapECoSStateOutputAction::matchesCurrentOutputState()
+bool OutputMapECoSStateOutputAction::matchesCurrentOutputState() const
 {
   return ecosStateOutput().value.value() == state;
 }

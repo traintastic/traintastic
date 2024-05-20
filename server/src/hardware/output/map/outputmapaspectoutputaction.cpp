@@ -41,7 +41,7 @@ void OutputMapAspectOutputAction::execute()
   aspectOutput().setValue(aspect);
 }
 
-bool OutputMapAspectOutputAction::matchesCurrentOutputState()
+bool OutputMapAspectOutputAction::matchesCurrentOutputState() const
 {
   return aspectOutput().value.value() == aspect;
 }

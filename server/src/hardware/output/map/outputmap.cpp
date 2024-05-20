@@ -39,12 +39,6 @@
 #include "../../../utils/displayname.hpp"
 #include "../../../utils/inrange.hpp"
 
-//TODO: needed for connecting value changed signal. Can be avoided?
-#include "../singleoutput.hpp"
-#include "../pairoutput.hpp"
-#include "../aspectoutput.hpp"
-#include "../ecosstateoutput.hpp"
-
 OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , interface{this, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript,
