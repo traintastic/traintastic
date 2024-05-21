@@ -192,7 +192,8 @@ OutputKeyboardWidget::OutputKeyboardWidget(std::shared_ptr<OutputKeyboard> objec
           {
             const auto& outputState = m_object->getOutputState(address);
             led->setEnabled(outputState.used);
-            led->setState(triStateToState(std::get<TriState>(outputState.value)));
+            const auto value = std::holds_alternative<TriState>(outputState.value) ? std::get<TriState>(outputState.value) : TriState::Undefined;
+            led->setState(triStateToState(value));
           }
           break;
 
@@ -204,7 +205,7 @@ OutputKeyboardWidget::OutputKeyboardWidget(std::shared_ptr<OutputKeyboard> objec
             const auto& outputState = m_object->getOutputState(address);
             ledR->setEnabled(outputState.used);
             ledG->setEnabled(outputState.used);
-            const auto value = std::get<OutputPairValue>(outputState.value);
+            const auto value = std::holds_alternative<OutputPairValue>(outputState.value) ? std::get<OutputPairValue>(outputState.value) : OutputPairValue::Undefined;
             ledR->setState(outputPairValueToState(value, OutputPairValue::First));
             ledG->setState(outputPairValueToState(value, OutputPairValue::Second));
           }

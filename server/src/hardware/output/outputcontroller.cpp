@@ -189,6 +189,12 @@ std::shared_ptr<Output> OutputController::getOutput(OutputChannel channel, uint3
   m_outputs.emplace(OutputMapKey{channel, id}, output);
   outputs->addObject(output);
   getWorld(outputs.object()).outputs->addObject(output);
+
+  if(auto keyboard = m_outputKeyboards[channel].lock())
+  {
+    keyboard->fireOutputUsedChanged(id, true);
+  }
+
   return output;
 }
 
@@ -198,11 +204,19 @@ void OutputController::releaseOutput(Output& output, Object& usedBy)
   output.m_usedBy.erase(usedBy.shared_from_this());
   if(output.m_usedBy.empty())
   {
-    m_outputs.erase({output.channel.value(), output.id()});
+    const auto channel = output.channel.value();
+    const auto id = output.id();
+
+    m_outputs.erase({channel, id});
     outputs->removeObject(outputShared);
     getWorld(outputs.object()).outputs->removeObject(outputShared);
     outputShared->destroy();
     outputShared.reset();
+
+    if(auto keyboard = m_outputKeyboards[channel].lock())
+    {
+      keyboard->fireOutputUsedChanged(id, false);
+    }
   }
 }
 
