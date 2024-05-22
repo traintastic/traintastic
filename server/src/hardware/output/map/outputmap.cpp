@@ -90,6 +90,8 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
             }
           }
 
+          Attributes::setMinMax(addresses, newValue->outputAddressMinMax(channel));
+
           if(!interface) // No interface was assigned.
           {
             assert(addresses.empty());
