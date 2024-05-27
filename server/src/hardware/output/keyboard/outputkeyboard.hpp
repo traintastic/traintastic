@@ -29,6 +29,7 @@
 #include <traintastic/enum/outputtype.hpp>
 #include "../outputvalue.hpp"
 #include "../../../core/property.hpp"
+#include "../../../core/event.hpp"
 
 class OutputController;
 
@@ -51,10 +52,12 @@ class OutputKeyboard : public Object
     Property<OutputType> outputType;
     Property<uint32_t> addressMin;
     Property<uint32_t> addressMax;
+    Event<uint32_t, bool> outputUsedChanged;
 
     std::string getObjectId() const final;
 
     virtual std::vector<OutputInfo> getOutputInfo() const = 0;
+    void fireOutputUsedChanged(uint32_t id, bool used);
     virtual void fireOutputValueChanged(uint32_t address, OutputValue value) = 0;
 };
 

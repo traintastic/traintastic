@@ -4472,15 +4472,15 @@
         "definition": "ECoS object"
     },
     {
-        "term": "output_map.signal:add_address",
+        "term": "output_map:add_address",
         "definition": "Add address"
     },
     {
-        "term": "output_map.signal:remove_address",
+        "term": "output_map:remove_address",
         "definition": "Remove address"
     },
     {
-        "term": "output_map.signal:ecos_object",
+        "term": "output_map:ecos_object",
         "definition": "ECoS object"
     },
     {
@@ -4818,5 +4818,29 @@
     {
         "term": "wizard.new_board.finalization:text",
         "definition": "Lets go build the board!"
+    },
+    {
+        "term": "class_id:board_tile.misc.switch",
+        "definition": "Switch"
+    },
+    {
+        "term": "board_tile.misc.switch:color_on",
+        "definition": "Color when on"
+    },
+    {
+        "term": "board_tile.misc.switch:color_off",
+        "definition": "Color when off"
+    },
+    {
+        "term": "output_map.switch:key",
+        "definition": "Value"
+    },
+    {
+        "term": "output_map_item.switch.key:off",
+        "definition": "Off"
+    },
+    {
+        "term": "output_map_item.switch.key:on",
+        "definition": "On"
     }
 ]

@@ -126,6 +126,9 @@ class Object : public QObject
     Event* getEvent(const QString& name);
 
     void callMethod(const QString& name);
+
+  signals:
+    void dead(); // emitted when the object is deleted on the server
 };
 
 #endif

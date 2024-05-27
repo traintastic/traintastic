@@ -107,6 +107,9 @@
   "LABEL_TILE": {
     "type": "constant"
   },
+  "SWITCH_TILE": {
+    "type": "constant"
+  },
   "LOCONET_INTERFACE": {
     "type": "constant"
   },

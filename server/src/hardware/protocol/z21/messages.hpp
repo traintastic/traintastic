@@ -145,6 +145,8 @@ enum LocoMode : uint8_t
 
 static constexpr uint8_t LAN_X_TURNOUT_INFO = 0x43;
 static constexpr uint8_t LAN_X_SET_TURNOUT = 0x53;
+
+static constexpr uint8_t LAN_X_EXT_ACCESSORY_INFO = 0x44;
 static constexpr uint8_t LAN_X_SET_EXT_ACCESSORY = 0x54;
 
 static constexpr uint8_t LAN_X_BC = 0x61;
@@ -549,8 +551,108 @@ struct LanXSetExtAccessory : LanX
   {
     return rawAddress() + 3;
   }
-};
+
+  inline uint8_t aspect() const
+  {
+    return db2;
+  }
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXSetExtAccessory) == 10);
+
+// LAN_X_GET_EXT_ACCESSORY_INFO
+struct LanXGetExtAccessoryInfo : LanX
+{
+  uint8_t addressMSB;
+  uint8_t addressLSB;
+  uint8_t db2 = 0x00; // Reserved for future extension, must be 0x00
+  uint8_t checksum;
+
+  LanXGetExtAccessoryInfo(uint16_t address)
+    : LanX(sizeof(LanXGetExtAccessoryInfo), LAN_X_EXT_ACCESSORY_INFO)
+    , addressMSB(high8(address + 3))
+    , addressLSB(low8(address + 3))
+  {
+  }
+
+  inline uint16_t rawAddress() const
+  {
+    return to16(addressLSB, addressMSB);
+  }
+
+  inline uint16_t address() const
+  {
+    return rawAddress() + 3;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanXGetExtAccessoryInfo) == 9);
+
+// LAN_X_EXT_ACCESSORY_INFO
+struct LanXExtAccessoryInfo : LanX
+{
+  uint8_t addressMSB;
+  uint8_t addressLSB;
+  uint8_t db2;
+  uint8_t db3 = 0x00;
+  uint8_t checksum;
+
+  LanXExtAccessoryInfo(uint16_t address)
+    : LanX(sizeof(LanXExtAccessoryInfo), LAN_X_EXT_ACCESSORY_INFO)
+    , addressMSB(high8(address + 3))
+    , addressLSB(low8(address + 3))
+  {
+  }
+
+  LanXExtAccessoryInfo(uint16_t address, uint8_t aspect, bool isUnknown)
+    : LanXExtAccessoryInfo(address)
+  {
+    db2 = aspect;
+    db3 = isUnknown ? 0xFF : 0x00; // 0xFF represent Unknown Data
+    updateChecksum();
+  }
+
+  LanXExtAccessoryInfo(uint16_t address, bool dir, uint8_t powerOnTime)
+    : LanXExtAccessoryInfo(address)
+  {
+    assert(powerOnTime <= 127);
+    db2 = powerOnTime & 0x7F;
+    if(dir)
+    {
+      db2 |= 0x80;
+    }
+    updateChecksum();
+  }
+
+  inline uint16_t rawAddress() const
+  {
+    return to16(addressLSB, addressMSB);
+  }
+
+  inline uint16_t address() const
+  {
+    return rawAddress() + 3;
+  }
+
+  inline bool isDataValid() const
+  {
+    return db3 == 0x00;
+  }
+
+  inline uint8_t aspect() const
+  {
+    return db2;
+  }
+
+  inline bool direction() const
+  {
+    return db2 & 0x80;
+  }
+
+  inline bool powerOnTime() const
+  {
+    return db2 & 0x7F;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanXExtAccessoryInfo) == 10);
 
 // LAN_X_SET_STOP
 struct LanXSetStop : LanX
@@ -1103,8 +1205,8 @@ static_assert(sizeof(LanGetHardwareInfoReply) == 12);
 // LAN_X_TURNOUT_INFO
 struct LanXTurnoutInfo : LanX
 {
-  uint8_t addressLSB;
   uint8_t addressMSB;
+  uint8_t addressLSB;
   uint8_t db2;
   uint8_t checksum;
 
@@ -1538,7 +1640,7 @@ struct LanRMBusDataChanged : Message
     else
       feedbackStatus[index >> 3] &= ~static_cast<uint8_t>(1 << (index & 0x7));
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanRMBusDataChanged) == 15);
 
 // LAN_SYSTEMSTATE_DATACHANGED

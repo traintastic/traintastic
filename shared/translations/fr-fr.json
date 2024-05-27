@@ -289,7 +289,7 @@
     },
     {
         "term": "class_id:board_tile.rail.curve_90",
-        "definition": "Courbe 90%",
+        "definition": "Courbe 90\u00b0",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -392,8 +392,24 @@
         "comment": ""
     },
     {
+        "term": "class_id:board_tile.rail.nx_button:block",
+        "definition": "Canton",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "class_id:board_tile.rail.nx_button:input",
+        "definition": "Entr\u00e9e",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "class_id:board_tile.rail.turnout_left_90",
-        "definition": "Aiguillage 90\u00b0 droite",
+        "definition": "Aiguillage 90\u00b0 gauche",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3745,11 +3761,27 @@
     },
     {
         "term": "turnout_position:straight",
-        "definition": "Droit",
+        "definition": "Tout droit",
         "context": "",
         "term_plural": "",
         "reference": "",
         "comment": ""
+    },
+    {
+        "term": "turnout_position:crossed",
+        "definition": "Position croisement"
+    },
+    {
+        "term": "turnout_position : diverged   ",
+        "definition": "Position d \u00e9vi \u00e9e"
+    },
+    {
+        "term": "turnout_position:double_slip_straight_a",
+        "definition": "Tout droit A"
+    },
+    {
+        "term": "turnout_position:double_slip_straight_b",
+        "definition": "Tout droit B"
     },
     {
         "term": "vehicle.rail.freight_wagon:cargo_weight",
@@ -4622,5 +4654,29 @@
     {
         "term": "dccex_interface_type:network_tcp",
         "definition": "R\u00e9seau (TCP)"
+    },
+    {
+        "term": "board_tile.misc.label:text",
+        "definition": "Texte"
+    },
+    {
+        "term": "board_tile.misc.label:text_align",
+        "definition": "Alignement"
+    },
+    {
+        "term": "board_tile.misc.label:text_color",
+        "definition": "Couleur du texte"
+    },
+    {
+        "term": "board_tile.misc.label:background_color",
+        "definition": "Couleur du fond"
+    },
+    {
+        "term": "board_tile.misc.switch:color_on",
+        "definition": "Couleur en position ON"
+    },
+    {
+        "term": "board_tile.misc.switch:color_off",
+        "definition": "Couleur en position OFF"
     }
 ]

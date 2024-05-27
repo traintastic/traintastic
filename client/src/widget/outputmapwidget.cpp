@@ -133,7 +133,37 @@ void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
     }
 
     if(auto* p = items[i]->getProperty("key"))
-      m_table->setItem(i, columnKey, new QTableWidgetItem(translateEnum(*p)));
+    {
+      QString text;
+      if(p->type() ==  ValueType::Enum)
+      {
+        text = translateEnum(*p);
+      }
+      else if(p->type() == ValueType::Boolean)
+      {
+        text = p->toBool() ? "true" : "false";
+
+        if(p->hasAttribute(AttributeName::AliasKeys))
+        {
+          const QVariantList aliasKeys = p->getAttribute(AttributeName::AliasKeys, QVariant()).toList();
+          const QVariantList aliasValues = p->getAttribute(AttributeName::AliasValues, QVariant()).toList();
+
+          if(aliasKeys.size() == aliasValues.size()) /*[[likely]]*/
+          {
+            if(int index = aliasKeys.indexOf(p->toBool()); index != -1)
+            {
+              text = Locale::instance->parse(aliasValues[index].toString());
+            }
+          }
+        }
+      }
+      else /*[[unlikely]]*/
+      {
+        assert(false);
+        text = "?";
+      }
+      m_table->setItem(i, columnKey, new QTableWidgetItem(text));
+    }
 
     if(auto* outputActions = dynamic_cast<ObjectVectorProperty*>(items[i]->getVectorProperty("output_actions")))
     {

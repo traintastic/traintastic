@@ -32,6 +32,7 @@ OutputKeyboard::OutputKeyboard(OutputController& controller, OutputChannel chann
   , outputType{this, "output_type", outputType_, PropertyFlags::Constant | PropertyFlags::NoStore}
   , addressMin{this, "address_min", m_controller.outputAddressMinMax(channel).first, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , addressMax{this, "address_max", m_controller.outputAddressMinMax(channel).second, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
+  , outputUsedChanged(*this, "output_used_changed", EventFlags::Public)
 {
   Attributes::addValues(channel, outputChannelValues);
   m_interfaceItems.add(channel);
@@ -41,6 +42,8 @@ OutputKeyboard::OutputKeyboard(OutputController& controller, OutputChannel chann
 
   m_interfaceItems.add(addressMin);
   m_interfaceItems.add(addressMax);
+
+  m_interfaceItems.add(outputUsedChanged);
 }
 
 std::string OutputKeyboard::getObjectId() const
@@ -48,3 +51,7 @@ std::string OutputKeyboard::getObjectId() const
   return "";
 }
 
+void OutputKeyboard::fireOutputUsedChanged(uint32_t id, bool used)
+{
+  fireEvent(outputUsedChanged, id, used);
+}

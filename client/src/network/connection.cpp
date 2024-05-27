@@ -920,7 +920,10 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
 
       case Message::Command::ObjectDestroyed:
       {
-        //const Handle handle = message->read<Handle>();
+        if(ObjectPtr object = m_objects.value(message->read<Handle>()).lock())
+        {
+          emit object->dead();
+        }
         break;
       }
 

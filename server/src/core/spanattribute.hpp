@@ -27,14 +27,17 @@
 #include "abstractvaluesattribute.hpp"
 #include "to.hpp"
 
-template<typename T>
+template<typename T, size_t N = tcb::dynamic_extent>
 class SpanAttribute : public AbstractValuesAttribute
 {
+  public:
+    typedef tcb::span<const T, N> Span;
+
   protected:
-    tcb::span<const T> m_values;
+    Span m_values;
 
   public:
-    SpanAttribute(InterfaceItem& _item, AttributeName _name, tcb::span<const T> values) :
+    SpanAttribute(InterfaceItem& _item, AttributeName _name, Span values) :
       AbstractValuesAttribute(_item, _name, value_type_v<T>),
       m_values{values}
     {
@@ -70,12 +73,12 @@ class SpanAttribute : public AbstractValuesAttribute
       return to<std::string>(m_values[index]);
     }
 
-    tcb::span<const T> values() const
+    Span values() const
     {
       return m_values;
     }
 
-    void setValues(tcb::span<const T> values)
+    void setValues(Span values)
     {
       if(m_values.size() != values.size() || !std::equal(m_values.begin(), m_values.end(), values.begin()) || m_values.data() == values.data())
       {
