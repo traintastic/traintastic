@@ -64,6 +64,7 @@ class MainWindow final : public QMainWindow
     ServerLogWidget* m_serverLog;
     QMdiSubWindow* m_clockWindow = nullptr;
     QMap<QString, SubWindow*> m_subWindows;
+    QMdiSubWindow* m_trainAndRailVehiclesSubWindow = nullptr;
     // Main menu:
     QAction* m_actionConnectToServer;
     QAction* m_actionDisconnectFromServer;

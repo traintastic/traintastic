@@ -54,6 +54,7 @@
 #include "subwindow/objectsubwindow.hpp"
 #include "subwindow/boardsubwindow.hpp"
 #include "subwindow/throttlesubwindow.hpp"
+#include "widget/object/objecteditwidget.hpp"
 #include "widget/serverlogwidget.hpp"
 #include "utils/menu.hpp"
 #include "theme/theme.hpp"
@@ -406,8 +407,34 @@ MainWindow::MainWindow(QWidget* parent) :
     menu->addAction(Locale::tr("hardware:identifications") + "...", [this](){ showObject("world.identifications", Locale::tr("hardware:identifications")); });
     boardsAction = m_menuObjects->addAction(Theme::getIcon("board"), Locale::tr("world:boards") + "...", [this](){ showObject("world.boards", Locale::tr("world:boards")); });
     m_menuObjects->addAction(Theme::getIcon("clock"), Locale::tr("world:clock") + "...", [this](){ showObject("world.clock", Locale::tr("world:clock")); });
-    trainsAction = m_menuObjects->addAction(Theme::getIcon("train"), Locale::tr("world:trains") + "...", [this](){ showObject("world.trains", Locale::tr("world:trains")); });
-    m_menuObjects->addAction(Locale::tr("world:rail_vehicles") + "...", [this](){ showObject("world.rail_vehicles", Locale::tr("world:rail_vehicles")); });
+    trainsAction = m_menuObjects->addAction(Theme::getIcon("train"), Locale::tr("world:trains") + "...",
+      [this]()
+      {
+        // FIXME: just a quick implementation to test if gives a better UX (position/size save/restore doesn't work yet, should extend SubWindow, but that needs a refactor then)
+        if(!m_trainAndRailVehiclesSubWindow)
+        {
+          m_trainAndRailVehiclesSubWindow = new QMdiSubWindow(this);
+          connect(m_trainAndRailVehiclesSubWindow, &QMdiSubWindow::destroyed, this,
+            [this](QObject* /*object*/)
+            {
+              m_trainAndRailVehiclesSubWindow = nullptr;
+            });
+          m_trainAndRailVehiclesSubWindow->setWindowFlags(m_trainAndRailVehiclesSubWindow->windowFlags() & ~Qt::WindowMaximizeButtonHint);
+          m_trainAndRailVehiclesSubWindow->setWindowTitle(Locale::tr("world:trains"));
+          auto* tabs = new QTabWidget(m_trainAndRailVehiclesSubWindow);
+          tabs->addTab(new ObjectEditWidget("world.trains"), Locale::tr("world:trains"));
+          tabs->addTab(new ObjectEditWidget("world.rail_vehicles"), Locale::tr("world:rail_vehicles"));
+          m_trainAndRailVehiclesSubWindow->setWidget(tabs);
+          m_mdiArea->addSubWindow(m_trainAndRailVehiclesSubWindow);
+          m_trainAndRailVehiclesSubWindow->setAttribute(Qt::WA_DeleteOnClose);
+          m_trainAndRailVehiclesSubWindow->resize(500, 400);
+          m_trainAndRailVehiclesSubWindow->show();
+        }
+        else
+        {
+          m_mdiArea->setActiveSubWindow(m_trainAndRailVehiclesSubWindow);
+        }
+      });
     m_actionLuaScript = m_menuObjects->addAction(Theme::getIcon("lua"), Locale::tr("world:lua_scripts") + "...", this, &MainWindow::showLuaScriptsList);
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:tools"));
