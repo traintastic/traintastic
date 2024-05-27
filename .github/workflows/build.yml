@@ -131,7 +131,7 @@ jobs:
       if: startswith(matrix.config.os, 'ubuntu')
       run: |
         set CCACHE_DIR=${{github.workspace}}/.ccache
-        mkdir -p $CACHE_DIR
+        mkdir -p ${{github.workspace}}/.ccache
         ccache --max-size 1G
 
     # All:
