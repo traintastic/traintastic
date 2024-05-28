@@ -125,8 +125,9 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{github.workspace}}/.ccache
-        key: ccache-client-${{matrix.config.os}}
-        save-always: true
+        key: ccache-client-${{matrix.config.os}}-${{github.run_number}}
+        restore-keys: |
+          ccache-client-${{matrix.config.os}}-
 
     - name: Setup CCache
       if: startswith(matrix.config.os, 'ubuntu')
