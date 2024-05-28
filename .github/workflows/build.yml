@@ -120,9 +120,9 @@ jobs:
       if: startswith(matrix.config.os, 'ubuntu')
       run: sudo apt install qtbase5-dev qtbase5-dev-tools libqt5svg5-dev ccache
 
-    - name: Cache CCache
+    - name: Restore CCache
       if: startswith(matrix.config.os, 'ubuntu')
-      uses: actions/cache@v3
+      uses: actions/cache/restore@v4
       with:
         path: ${{github.workspace}}/.ccache
         key: ccache-client-${{matrix.config.os}}
@@ -180,6 +180,13 @@ jobs:
       with:
         name: traintastic-client-deb
         path: ${{github.workspace}}/client/build/*.deb
+
+    - name: Save CCache
+      if: startswith(matrix.config.os, 'ubuntu')
+      uses: actions/cache/save@v4
+      with:
+        path: ${{github.workspace}}/.ccache
+        key: ccache-client-${{matrix.config.os}}
 
   build-server:
     name: server ${{matrix.config.name}}
