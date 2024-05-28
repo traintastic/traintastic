@@ -125,11 +125,12 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ${{github.workspace}}/.ccache
-        key: ${{matrix.config.os}}-ccache-client
+        key: ccache-client-${{matrix.config.os}}
 
     - name: Setup CCache
       if: startswith(matrix.config.os, 'ubuntu')
       run: |
+        set CCACHE_BASEDIR=${{github.workspace}}
         set CCACHE_DIR=${{github.workspace}}/.ccache
         mkdir -p ${{github.workspace}}/.ccache
         ccache --max-size 1G
