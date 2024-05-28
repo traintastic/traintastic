@@ -126,6 +126,7 @@ jobs:
       with:
         path: ${{github.workspace}}/.ccache
         key: ccache-client-${{matrix.config.os}}
+        save-always: true
 
     - name: Setup CCache
       if: startswith(matrix.config.os, 'ubuntu')
