@@ -20,7 +20,7 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: false
-          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
+          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded -DCMAKE_POLICY_CMP0141=NEW"
           sccache: true
 
         - name: "ubuntu_20.04"
@@ -197,7 +197,7 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: false
-          defines: "-DENABLE_CLANG_TIDY=ON -DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
+          defines: "-DENABLE_CLANG_TIDY=ON -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded -DCMAKE_POLICY_CMP0141=NEW"
           ccov: false
           sccache: true
 
