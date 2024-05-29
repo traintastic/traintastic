@@ -186,7 +186,7 @@
           },
           {
             "name": "$wizard.add_interface.connection:network$",
-            "next": "hostname",
+            "next": "hostname_port",
             "actions": {
               "create_interface": {
                 "class_id": "interface.dccex",
