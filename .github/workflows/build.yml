@@ -182,6 +182,8 @@ jobs:
   build-server:
     name: server ${{matrix.config.name}}
     runs-on: ${{matrix.config.os}}
+    env:
+      SCCACHE_GHA_ENABLED: "true"
     strategy:
       fail-fast: false
       matrix:
@@ -195,8 +197,9 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: false
-          defines: "-DENABLE_CLANG_TIDY=ON"
+          defines: "-DENABLE_CLANG_TIDY=ON -DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
           ccov: false
+          sccache: true
 
         - name: "windows_x64_mingw"
           os: windows-2022
@@ -207,8 +210,9 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: false
-          defines: ""
+          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
           ccov: false
+          sccache: true
 
         - name: "ubuntu_20.04"
           os: ubuntu-20.04
@@ -219,8 +223,9 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: true
-          defines: "-DENABLE_CLANG_TIDY=ON -DINSTALL_SYSTEMD_SERVICE=ON"
+          defines: "-DENABLE_CLANG_TIDY=ON -DINSTALL_SYSTEMD_SERVICE=ON -DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
           ccov: false
+          sccache: true
 
         - name: "ubuntu_22.04"
           os: ubuntu-22.04
@@ -231,8 +236,9 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: true
-          defines: "-DENABLE_CLANG_TIDY=ON -DINSTALL_SYSTEMD_SERVICE=ON"
+          defines: "-DENABLE_CLANG_TIDY=ON -DINSTALL_SYSTEMD_SERVICE=ON -DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
           ccov: false
+          sccache: true
 
         - name: "ubuntu_20.04 (debug+ccov)"
           os: ubuntu-20.04
@@ -243,8 +249,9 @@ jobs:
           jobs: 4
           build_type: Debug
           build_deb: false
-          defines: "-DENABLE_CLANG_TIDY=ON -DCODE_COVERAGE=ON"
+          defines: "-DENABLE_CLANG_TIDY=ON -DCODE_COVERAGE=ON -DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
           ccov: true
+          sccache: true
 
         - name: "raspberrypios_arm7"
           os: [self-hosted, ARM, RaspberryPi]
@@ -257,6 +264,7 @@ jobs:
           build_deb: true
           defines: "-DINSTALL_SYSTEMD_SERVICE=ON -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
           ccov: false
+          sccache: false
 
         - name: "raspberrypios_arm64"
           os: [self-hosted, ARM64, RaspberryPi]
@@ -269,6 +277,7 @@ jobs:
           build_deb: true
           defines: "-DINSTALL_SYSTEMD_SERVICE=ON -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
           ccov: false
+          sccache: false
 
         - name: "macos-11"
           os: "macos-11"
@@ -279,8 +288,9 @@ jobs:
           jobs: 3
           build_type: Release
           build_deb: false
-          defines: ""
+          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
           ccov: false
+          sccache: true
 
         - name: "macos-12"
           os: "macos-12"
@@ -291,8 +301,9 @@ jobs:
           jobs: 3
           build_type: Release
           build_deb: false
-          defines: ""
+          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
           ccov: false
+          sccache: true
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -322,6 +333,10 @@ jobs:
     - name: Install brew packages
       if: startswith(matrix.config.os, 'macos')
       run: brew install libarchive lua@5.3
+
+    - name: Run sccache-cache
+      if: matrix.config.sccache
+      uses: mozilla-actions/sccache-action@v0.0.4
 
     # All:
     - name: Create Build Environment
