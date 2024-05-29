@@ -20,8 +20,8 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: false
-          defines: ""
-          sccache: false
+          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
+          sccache: true
 
         - name: "ubuntu_20.04"
           os: ubuntu-20.04
@@ -75,8 +75,8 @@ jobs:
           jobs: 3
           build_type: Release
           build_deb: false
-          defines: ""
-          sccache: false
+          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
+          sccache: true
 
         - name: "macos-12"
           os: "macos-12"
@@ -86,8 +86,8 @@ jobs:
           jobs: 3
           build_type: Release
           build_deb: false
-          defines: ""
-          sccache: false
+          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
+          sccache: true
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
