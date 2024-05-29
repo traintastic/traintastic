@@ -32,6 +32,7 @@
 #include "../../../utils/rtrim.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
+#include "../../../log/logmessageexception.hpp"
 #include "../../../utils/inrange.hpp"
 #include "../../../utils/fromchars.hpp"
 #include "../../../utils/displayname.hpp"
@@ -82,7 +83,20 @@ void Kernel::start()
   m_ioContext.post(
     [this]()
     {
-      m_ioHandler->start();
+      try
+      {
+        m_ioHandler->start();
+      }
+      catch(const LogMessageException& e)
+      {
+        EventLoop::call(
+          [this, e]()
+          {
+            Log::log(logId, e.message(), e.args());
+            error();
+          });
+        return;
+      }
 
       m_startupDelayTimer.expires_after(boost::asio::chrono::milliseconds(m_config.startupDelay));
       m_startupDelayTimer.async_wait(std::bind(&Kernel::startupDelayExpired, this, std::placeholders::_1));

@@ -4648,6 +4648,14 @@
         "comment": ""
     },
     {
+        "term": "dccex_interface_type:serial",
+        "definition": "S\u00e9rie"
+    },
+    {
+        "term": "dccex_interface_type:network_tcp",
+        "definition": "R\u00e9seau (TCP)"
+    },
+    {
         "term": "board_tile.misc.label:text",
         "definition": "Texte"
     },
