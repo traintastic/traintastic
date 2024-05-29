@@ -2,6 +2,9 @@ name: Build
 
 on: [push, pull_request]
 
+env:
+  SCCACHE_GHA_ENABLED: "true"
+
 jobs:
   build-client:
     name: client ${{matrix.config.name}}
@@ -19,6 +22,7 @@ jobs:
           build_type: Release
           build_deb: false
           defines: ""
+          sccache: false
 
         - name: "ubuntu_20.04"
           os: ubuntu-20.04
@@ -28,7 +32,8 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: true
-          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
+          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
+          sccache: true
 
         - name: "ubuntu_22.04"
           os: ubuntu-22.04
@@ -38,7 +43,8 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: true
-          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
+          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
+          sccache: true
 
         - name: "raspberrypios_arm7"
           os: [self-hosted, ARM, RaspberryPi]
@@ -49,6 +55,7 @@ jobs:
           build_type: Release
           build_deb: true
           defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
+          sccache: false
 
         - name: "raspberrypios_arm64"
           os: [self-hosted, ARM64, RaspberryPi]
@@ -59,6 +66,7 @@ jobs:
           build_type: Release
           build_deb: true
           defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
+          sccache: false
 
         - name: "macos-11"
           os: "macos-11"
@@ -69,6 +77,7 @@ jobs:
           build_type: Release
           build_deb: false
           defines: ""
+          sccache: false
 
         - name: "macos-12"
           os: "macos-12"
@@ -79,8 +88,9 @@ jobs:
           build_type: Release
           build_deb: false
           defines: ""
+          sccache: false
 
-    steps:
+   steps:
     - uses: FranzDiebold/github-env-vars-action@v2
 
     # All:
@@ -118,24 +128,11 @@ jobs:
     # Ubuntu only:
     - name: Install packages
       if: startswith(matrix.config.os, 'ubuntu')
-      run: sudo apt install qtbase5-dev qtbase5-dev-tools libqt5svg5-dev ccache
+      run: sudo apt install qtbase5-dev qtbase5-dev-tools libqt5svg5-dev
 
-    - name: Cache CCache
-      if: startswith(matrix.config.os, 'ubuntu')
-      uses: actions/cache@v4
-      with:
-        path: ${{github.workspace}}/.ccache
-        key: ccache-client-${{matrix.config.os}}-${{github.run_number}}
-        restore-keys: |
-          ccache-client-${{matrix.config.os}}-
-
-    - name: Setup CCache
-      if: startswith(matrix.config.os, 'ubuntu')
-      run: |
-        CCACHE_BASEDIR=${{github.workspace}}
-        CCACHE_DIR=${{github.workspace}}/.ccache
-        mkdir -p ${{github.workspace}}/.ccache
-        ccache --max-size 1G
+    - name: Run sccache-cache
+      if: matrix.config.sccache
+      uses: mozilla-actions/sccache-action@v0.0.4
 
     # All:
     - name: Create Build Environment
