@@ -421,6 +421,17 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
               cursorShape = Qt::PointingHandCursor;
             }
           }
+          else if(tileId == TileId::RailSensor)
+          {
+            if(auto sensor = m_object->getTileObject(tl))
+            {
+              if(auto* simulateTrigger = sensor->getMethod("simulate_trigger");
+                  simulateTrigger && simulateTrigger->getAttributeBool(AttributeName::Enabled, false))
+              {
+                cursorShape = Qt::PointingHandCursor;
+              }
+            }
+          }
         }
 
         setCursor(cursorShape);
@@ -685,6 +696,10 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
               });
           }
         }
+      }
+      else if(tileId == TileId::RailSensor)
+      {
+        obj->callMethod("simulate_trigger");
       }
       else
       {

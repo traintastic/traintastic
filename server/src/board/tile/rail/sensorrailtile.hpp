@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_SENSORRAILTILE_HPP
 
 #include "straightrailtile.hpp"
+#include "../../../core/method.hpp"
 #include "../../../core/objectproperty.hpp"
 #include "../../../hardware/input/input.hpp"
 #include "../../../enum/sensortype.hpp"
@@ -42,6 +43,7 @@ class SensorRailTile : public StraightRailTile
     void connectInput(Input& object);
     void disconnectInput(Input& object);
     void inputPropertyChanged(BaseProperty& property);
+    void updateSimulateTriggerEnabled();
 
   protected:
     void load(WorldLoader& loader, const nlohmann::json& data) override;
@@ -55,6 +57,7 @@ class SensorRailTile : public StraightRailTile
     Property<SensorType> type;
     Property<bool> invert;
     Property<SensorState> state;
+    Method<void()> simulateTrigger;
 
     SensorRailTile(World& world, std::string_view _id);
     ~SensorRailTile() override;
