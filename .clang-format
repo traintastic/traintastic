@@ -1,0 +1,78 @@
+---
+UseTab: Never
+UseCRLF: false
+TabWidth: 2
+Standard: c++17
+AllowShortLambdasOnASingleLine: None
+AllowShortLoopsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: None
+AllowShortEnumsOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
+AlwaysBreakAfterReturnType: None
+AlwaysBreakTemplateDeclarations: Yes
+BitFieldColonSpacing: Both
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterFunction: true
+  AfterNamespace: false
+  AfterObjCDeclaration: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: false
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeLambdaBody: true
+  BeforeWhile: true
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+  AfterEnum: true
+BreakBeforeBraces: Custom
+BreakBeforeTernaryOperators: false
+BreakInheritanceList: BeforeComma
+ColumnLimit: 160
+ContinuationIndentWidth: 2
+ConstructorInitializerIndentWidth: 2
+EmptyLineAfterAccessModifier: Never
+EmptyLineBeforeAccessModifier: Always
+FixNamespaceComments: false
+Language: Cpp
+MaxEmptyLinesToKeep: 2
+NamespaceIndentation: Inner
+SpaceBeforeCpp11BracedList: false
+SpaceInEmptyParentheses: false
+SpaceInEmptyBlock: false
+IndentCaseLabels: true
+LambdaBodyIndentation: Signature
+RemoveBracesLLVM: false
+ShortNamespaceLines: 0
+SortIncludes: Never
+SpaceAfterTemplateKeyword: false
+SpaceBeforeAssignmentOperators: true
+SpacesBeforeTrailingComments: 1
+SpacesInCStyleCastParentheses: false
+SpacesInConditionalStatement: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+PackConstructorInitializers: Never
+BreakConstructorInitializers: BeforeComma
+SpaceBeforeParensOptions: {}
+SpaceBeforeParens: Never
+IndentPPDirectives: BeforeHash
+InsertTrailingCommas: Wrapped
+BinPackArguments: false
+BinPackParameters: false
+PointerAlignment: Left
+IndentAccessModifiers: false
+AlignAfterOpenBracket: DontAlign
+
+# clang-format 15:
+#InsertBraces: true
+
+# clang-format 16:
+#InsertNewlineAtEOF: true
