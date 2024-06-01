@@ -28,7 +28,6 @@
 #include "../../../hardware/input/inputcontroller.hpp"
 #include "../../../utils/sensor.hpp"
 #include "../../../utils/displayname.hpp"
-#include "../../../world/world.hpp"
 
 SensorRailTile::SensorRailTile(World& world, std::string_view _id) :
   StraightRailTile(world, _id, TileId::RailSensor),
