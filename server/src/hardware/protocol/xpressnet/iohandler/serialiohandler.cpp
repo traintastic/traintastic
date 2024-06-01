@@ -39,7 +39,11 @@ SerialIOHandler::SerialIOHandler(Kernel& kernel, const std::string& device, uint
 SerialIOHandler::~SerialIOHandler()
 {
   if(m_serialPort.is_open())
-    m_serialPort.close();
+  {
+    boost::system::error_code ec;
+    m_serialPort.close(ec);
+    // ignore the error
+  }
 }
 
 void SerialIOHandler::start()
