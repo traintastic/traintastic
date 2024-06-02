@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -146,6 +146,8 @@ Train::Train(World& world, std::string_view _id) :
   mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , onBlockEntered{*this, "on_block_entered", EventFlags::Scriptable}
+  , onBlockLeft{*this, "on_block_left", EventFlags::Scriptable}
 {
   vehicles.setValueInternal(std::make_shared<TrainVehicleList>(*this, vehicles.name()));
 
@@ -199,7 +201,28 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addDisplayName(notes, DisplayName::Object::notes);
   m_interfaceItems.add(notes);
 
+  m_interfaceItems.add(onBlockEntered);
+  m_interfaceItems.add(onBlockLeft);
+
   updateEnabled();
+}
+
+void Train::blockEntered(BlockRailTile& block, BlockTrainDirection trainDirection)
+{
+  fireEvent(
+    onBlockEntered,
+    shared_ptr<Train>(),
+    block.shared_ptr<BlockRailTile>(),
+    trainDirection);
+}
+
+void Train::blockLeft(BlockRailTile& block, BlockTrainDirection trainDirection)
+{
+  fireEvent(
+    onBlockLeft,
+    shared_ptr<Train>(),
+    block.shared_ptr<BlockRailTile>(),
+    trainDirection);
 }
 
 void Train::addToWorld()

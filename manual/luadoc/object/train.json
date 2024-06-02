@@ -5,5 +5,33 @@
   "emergency_stop": {},
   "powered": {},
   "active": {},
-  "mode": {}
+  "mode": {},
+  "on_block_entered": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "block"
+      },
+      {
+        "name": "direction"
+      }
+    ],
+    "since": "0.3"
+  },
+  "on_block_left": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "block"
+      },
+      {
+        "name": "direction"
+      }
+    ],
+    "since": "0.3"
+  }
 }

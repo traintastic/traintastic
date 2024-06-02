@@ -295,6 +295,8 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
           trains.appendInternal(blockStatus);
           updateTrainMethodEnabled();
 
+          train->blockEntered(*this, direction);
+
           fireEvent(
             onTrainEntered,
             blockStatus->train.value(),
@@ -366,11 +368,16 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
 
         updateState();
 
+        auto train = blockStatus->train.value();
+        auto direction = blockStatus->direction.value();
+
+        train->blockLeft(*this, direction);
+
         fireEvent(
           onTrainLeft,
-          blockStatus->train.value(),
+          train,
           shared_ptr<BlockRailTile>(),
-          blockStatus->direction.value());
+          direction);
 
         blockStatus->destroy();
 #ifndef NDEBUG
