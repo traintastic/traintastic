@@ -24,6 +24,7 @@
 #include "../network/abstractproperty.hpp"
 #include <traintastic/locale/locale.hpp>
 #include <traintastic/enum/autoyesno.hpp>
+#include <traintastic/enum/blockstate.hpp>
 #include <traintastic/enum/color.hpp>
 #include <traintastic/enum/dccexinterfacetype.hpp>
 #include <traintastic/enum/decoderfunctionfunction.hpp>
@@ -45,6 +46,7 @@
 #include <traintastic/enum/pcapoutput.hpp>
 #include <traintastic/enum/powerunit.hpp>
 #include <traintastic/enum/ratiounit.hpp>
+#include <traintastic/enum/sensorstate.hpp>
 #include <traintastic/enum/sensortype.hpp>
 #include <traintastic/enum/serialflowcontrol.hpp>
 #include <traintastic/enum/signalaspect.hpp>
@@ -94,6 +96,7 @@ QVector<qint64> enumValues(const QString& enumName)
 QString translateEnum(const QString& enumName, qint64 value)
 {
   TRANSLATE_ENUM(AutoYesNo)
+  TRANSLATE_ENUM(BlockState)
   TRANSLATE_ENUM(Color)
   TRANSLATE_ENUM(DCCEXInterfaceType)
   TRANSLATE_ENUM(DecoderFunctionFunction)
@@ -115,6 +118,7 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(PCAPOutput)
   TRANSLATE_ENUM(PowerUnit)
   TRANSLATE_ENUM(RatioUnit)
+  TRANSLATE_ENUM(SensorState)
   TRANSLATE_ENUM(SensorType)
   TRANSLATE_ENUM(SerialFlowControl)
   TRANSLATE_ENUM(SingleOutputAction)

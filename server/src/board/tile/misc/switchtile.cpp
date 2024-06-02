@@ -30,6 +30,9 @@
 
 CREATE_IMPL(SwitchTile)
 
+static constexpr std::array<bool, 2> valueAliasKeys{{false, true}};
+static const std::array<std::string, 2> valueAliasValues{{"$output_map_item.switch.key:off$", "$output_map_item.switch.key:on$"}};
+
 SwitchTile::SwitchTile(World& world, std::string_view _id)
   : Tile(world, _id, TileId::Switch)
   , name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
@@ -71,6 +74,7 @@ SwitchTile::SwitchTile(World& world, std::string_view _id)
   m_interfaceItems.add(colorOff);
 
   Attributes::addObjectEditor(value, false);
+  Attributes::addAliases(value, tcb::span<const bool>(valueAliasKeys), tcb::span<const std::string>(valueAliasValues));
   m_interfaceItems.add(value);
 
   Attributes::addDisplayName(outputMap, DisplayName::BoardTile::outputMap);

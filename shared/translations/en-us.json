@@ -4842,5 +4842,45 @@
     {
         "term": "output_map_item.switch.key:on",
         "definition": "On"
+    },
+    {
+        "term": "board_tile.turnout:position",
+        "definition": "Position"
+    },
+    {
+        "term": "board_tile.rail.sensor:state",
+        "definition": "State"
+    },
+    {
+        "term": "sensor_state:free",
+        "definition": "Free"
+    },
+    {
+        "term": "sensor_state:occupied",
+        "definition": "Occupied"
+    },
+    {
+        "term": "sensor_state:unknown",
+        "definition": "Unknown"
+    },
+    {
+        "term": "board_tile.rail.block:state",
+        "definition": "State"
+    },
+    {
+        "term": "block_state:occupied",
+        "definition": "Occupied"
+    },
+    {
+        "term": "block_state:reserved",
+        "definition": "Reserved"
+    },
+    {
+        "term": "block_state:free",
+        "definition": "Free"
+    },
+    {
+        "term": "board_tile.misc.switch:value",
+        "definition": "Value"
     }
 ]

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -105,7 +105,9 @@ class BoardAreaWidget : public QWidget
     bool getNXButtonEnabled(const TileLocation& l) const;
     bool getNXButtonPressed(const TileLocation& l) const;
     TileLocation pointToTileLocation(const QPoint& p);
+    QString getTileToolTip(const TileLocation& l) const;
 
+    bool event(QEvent* event) final;
     void leaveEvent(QEvent *event) final;
     void keyPressEvent(QKeyEvent* event) final;
     void mousePressEvent(QMouseEvent* event) final;
