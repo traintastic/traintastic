@@ -796,7 +796,7 @@ class LuaDoc:
         LuaDoc._write_file(os.path.join(output_dir, LuaDoc.FILENAME_INDEX_AZ), html)
 
     def _add_toc(self, html: str) -> str:
-        toc = '<div id="toc"><span class="title" href="#">' + self._get_term('contents') + '</span>'
+        toc = '<div class="toc toc-right"><span class="title" href="#">' + self._get_term('contents') + '</span>'
 
         current_depth = 0
         for tag, id, title in re.findall(r'<(h2|h3|dt) id="(.+?)">(.+?)</\1>', html):
@@ -819,6 +819,19 @@ class LuaDoc:
         return html.replace('<!--TOC-->', toc)
 
     def _get_header(self, title: str, nav: list) -> str:
+        menu = '  <li><a href="' + LuaDoc.FILENAME_GLOBALS + '">' + self._get_term('globals:title') + '</a></li>' + os.linesep
+        for k in sorted(list(self._libs.keys()) + ['enum', 'set']):
+            if k == 'enum':
+                menu += '  <li><a href="' + LuaDoc.FILENAME_ENUM + '">' + self._get_term('enum:title') + '</a></li>' + os.linesep
+            elif k == 'set':
+                menu += '  <li><a href="' + LuaDoc.FILENAME_SET + '">' + self._get_term('set:title') + '</a></li>' + os.linesep
+            else:
+                lib = self._libs[k]
+                menu += '  <li><a href="' + lib['filename'] + '">' + self._get_term(lib['name']) + '</a></li>' + os.linesep
+        menu += '  <li><a href="' + LuaDoc.FILENAME_OBJECT + '">' + self._get_term('object:title') + '</a></li>' + os.linesep
+        menu += '  <li><a href="' + LuaDoc.FILENAME_EXAMPLE + '">' + self._get_term('example:title') + '</a></li>' + os.linesep
+        menu += '  <li><a href="' + LuaDoc.FILENAME_INDEX_AZ + '">' + self._get_term('index-az:title') + '</a></li>' + os.linesep
+
         nav_html = ''
         if len(nav) > 0:
             nav_html += '<nav><ul>' + os.linesep
@@ -840,12 +853,18 @@ class LuaDoc:
 </head>
 <body>
   <div id="layout">
+    <div class="toc toc-left">
+        <span class="title">Menu</span>
+        <ul>
+            {menu:s}
+        </ul>
+    </div>
     <!--TOC-->
-    <div id="main">
+    <div id="main" class="luadoc">
       {nav:s}
       <div class="content">
         <h1>{title:s}</h1>
-'''.format(language=self._language, title=title, nav=nav_html)
+'''.format(language=self._language, title=title, menu=menu, nav=nav_html)
 
     def _get_footer(self):
         return '''      </div>
