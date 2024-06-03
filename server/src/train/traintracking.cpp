@@ -35,6 +35,23 @@ void TrainTracking::enter(const std::shared_ptr<Train>& train, const std::shared
 
   train->fireBlockEntered(block, direction);
   block->fireTrainEntered(train, direction);
+
+  // Release any reserved tail blocks:
+  // - When there is an undetected section (e.g. turnouts) between blocks,
+  //   the train may leave the block before entering the next one causeing
+  //   previous block be reserved.
+  while(train->blocks.size() > 1)
+  {
+    const auto& tail = train->blocks.back();
+    if(tail->block->state.value() == BlockState::Reserved)
+    {
+      left(tail);
+    }
+    else
+    {
+      break;
+    }
+  }
 }
 
 void TrainTracking::left(std::shared_ptr<TrainBlockStatus> status)
