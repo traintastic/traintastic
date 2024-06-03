@@ -1,0 +1,61 @@
+/**
+ * server/src/train/traintracking.cpp
+ *
+ * This file is part of the traintastic source code.
+ *
+ * Copyright (C) 2024 Reinder Feenstra
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+#include "traintracking.hpp"
+#include "train.hpp"
+#include "trainblockstatus.hpp"
+#include "../board/tile/rail/blockrailtile.hpp"
+
+void TrainTracking::enter(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction)
+{
+  auto status = TrainBlockStatus::create(*block, *train, direction);
+  train->blocks.insertInternal(0, status); // head of train
+  block->trains.appendInternal(std::move(status));
+
+  block->updateTrainMethodEnabled();
+
+  train->fireBlockEntered(block, direction);
+  block->fireTrainEntered(train, direction);
+}
+
+void TrainTracking::left(std::shared_ptr<TrainBlockStatus> status)
+{
+  const auto& train = status->train.value();
+  const auto& block = status->block.value();
+  const auto direction = status->direction.value();
+
+  train->blocks.removeInternal(status);
+  block->trains.removeInternal(status);
+
+  block->updateTrainMethodEnabled();
+  block->updateState();
+
+  train->fireBlockLeft(block, direction);
+  block->fireTrainLeft(train, direction);
+
+  status->destroy();
+#ifndef NDEBUG
+  std::weak_ptr<TrainBlockStatus> statusWeak = status;
+  status.reset();
+  assert(statusWeak.expired());
+#endif
+}

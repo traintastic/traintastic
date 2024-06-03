@@ -29,6 +29,7 @@
 #include "../../../log/log.hpp"
 #include "../../../train/train.hpp"
 #include "../../../train/trainblockstatus.hpp"
+#include "../../../train/traintracking.hpp"
 #include "../../../utils/displayname.hpp"
 #include "../../map/blockpath.hpp"
 
@@ -289,19 +290,7 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
 
         if(train)
         {
-          auto blockStatus = TrainBlockStatus::create(*this, *train, direction);
-
-          blockStatus->train->blocks.insertInternal(0, blockStatus); // head of train
-          trains.appendInternal(blockStatus);
-          updateTrainMethodEnabled();
-
-          train->blockEntered(*this, direction);
-
-          fireEvent(
-            onTrainEntered,
-            blockStatus->train.value(),
-            shared_ptr<BlockRailTile>(),
-            blockStatus->direction.value());
+          TrainTracking::enter(train, shared_ptr<BlockRailTile>(), direction);
         }
         break;
       }
@@ -354,7 +343,7 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
   {
     if(trains.size() == 1)
     {
-      auto blockStatus = trains.front();
+      const auto& blockStatus = trains.front();
 
       // Train must be in at least two blocks, else we loose it.
       // Release tailing block of train only. (When using current detection not all wagons might consume power.)
@@ -362,29 +351,7 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
           blockStatus->train->blocks.size() > 1 &&
           blockStatus->train->blocks.back() == blockStatus)
       {
-        blockStatus->train->blocks.removeInternal(blockStatus);
-        trains.removeInternal(blockStatus);
-        updateTrainMethodEnabled();
-
-        updateState();
-
-        auto train = blockStatus->train.value();
-        auto direction = blockStatus->direction.value();
-
-        train->blockLeft(*this, direction);
-
-        fireEvent(
-          onTrainLeft,
-          train,
-          shared_ptr<BlockRailTile>(),
-          direction);
-
-        blockStatus->destroy();
-#ifndef NDEBUG
-        std::weak_ptr<TrainBlockStatus> blockStatusWeak = blockStatus;
-        blockStatus.reset();
-        assert(blockStatusWeak.expired());
-#endif
+        TrainTracking::left(blockStatus);
       }
     }
   }
@@ -662,4 +629,22 @@ void BlockRailTile::updateHeightWidthMax()
     const bool vertical = (rotate == TileRotate::Deg0);
     Attributes::setMax<uint8_t>(height, vertical ? TileData::heightMax : 1);
     Attributes::setMax<uint8_t>(width, !vertical ? TileData::widthMax : 1);
+}
+
+void BlockRailTile::fireTrainEntered(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection)
+{
+  fireEvent(
+    onTrainEntered,
+    train,
+    shared_ptr<BlockRailTile>(),
+    trainDirection);
+}
+
+void BlockRailTile::fireTrainLeft(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection)
+{
+  fireEvent(
+    onTrainLeft,
+    train,
+    shared_ptr<BlockRailTile>(),
+    trainDirection);
 }

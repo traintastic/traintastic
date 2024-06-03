@@ -44,6 +44,7 @@ class PoweredRailVehicle;
 class Train : public IdObject
 {
   friend class TrainVehicleList;
+  friend class TrainTracking;
 
   private:
     enum class SpeedState
@@ -68,6 +69,9 @@ class Train : public IdObject
     void updateSpeedMax();
     void updateEnabled();
     bool setTrainActive(bool val);
+
+    void fireBlockEntered(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
+    void fireBlockLeft(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
 
   protected:
     void addToWorld() override;
@@ -105,9 +109,6 @@ class Train : public IdObject
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onBlockLeft;
 
     Train(World& world, std::string_view _id);
-
-    void blockEntered(BlockRailTile& block, BlockTrainDirection trainDirection);
-    void blockLeft(BlockRailTile& block, BlockTrainDirection trainDirection);
 };
 
 #endif

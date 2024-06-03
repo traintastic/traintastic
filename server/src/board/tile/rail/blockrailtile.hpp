@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,6 +41,8 @@ class BlockPath;
 
 class BlockRailTile : public RailTile
 {
+  friend class TrainTracking;
+
   CLASS_ID("board_tile.rail.block")
   DEFAULT_ID("block")
   CREATE_DEF(BlockRailTile)
@@ -55,6 +57,9 @@ class BlockRailTile : public RailTile
 
     void updatePaths();
     void updateHeightWidthMax();
+
+    void fireTrainEntered(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection);
+    void fireTrainLeft(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection);
 
   protected:
     void worldEvent(WorldState worldState, WorldEvent worldEvent) final;

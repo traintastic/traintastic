@@ -207,21 +207,21 @@ Train::Train(World& world, std::string_view _id) :
   updateEnabled();
 }
 
-void Train::blockEntered(BlockRailTile& block, BlockTrainDirection trainDirection)
+void Train::fireBlockEntered(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection)
 {
   fireEvent(
     onBlockEntered,
     shared_ptr<Train>(),
-    block.shared_ptr<BlockRailTile>(),
+    block,
     trainDirection);
 }
 
-void Train::blockLeft(BlockRailTile& block, BlockTrainDirection trainDirection)
+void Train::fireBlockLeft(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection)
 {
   fireEvent(
     onBlockLeft,
     shared_ptr<Train>(),
-    block.shared_ptr<BlockRailTile>(),
+    block,
     trainDirection);
 }
 
