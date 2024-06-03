@@ -1890,5 +1890,37 @@
   {
     "term": "object.switchtile:title",
     "definition": "Switch tile"
+  },
+  {
+    "term": "object.train.on_block_entered:description",
+    "definition": "Fired when the train enters a {ref:object.blockrailtile|block}."
+  },
+  {
+    "term": "object.train.on_block_entered.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_block_entered.parameter.block:description",
+    "definition": "The {ref:object.blockrailtile|block} that is entered."
+  },
+  {
+    "term": "object.train.on_block_entered.parameter.direction:description",
+    "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
+  },
+  {
+    "term": "object.train.on_block_left:description",
+    "definition": "Fired when the train has left a {ref:object.blockrailtile|block}."
+  },
+  {
+    "term": "object.train.on_block_left.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_block_left.parameter.block:description",
+    "definition": "The {ref:object.blockrailtile|block} that the train left."
+  },
+  {
+    "term": "object.train.on_block_left.parameter.direction:description",
+    "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
   }
 ]
