@@ -24,6 +24,7 @@
 #include "train.hpp"
 #include "trainblockstatus.hpp"
 #include "../board/tile/rail/blockrailtile.hpp"
+#include "../core/objectproperty.tpp"
 
 void TrainTracking::enter(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction)
 {
