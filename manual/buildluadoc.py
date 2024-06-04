@@ -36,6 +36,7 @@ class LuaDoc:
         self._libs = LuaDoc._find_libs(project_root)
         self._objects = LuaDoc._find_objects(project_root)
         self._examples = LuaDoc._find_examples(project_root)
+        self._add_cross_references()
         self.set_language(LuaDoc.DEFAULT_LANGUAGE)
 
     def set_language(self, language: str) -> None:
@@ -60,6 +61,26 @@ class LuaDoc:
             if item['definition'] is not None and item['definition'] != '':
                 terms[item['term']] = item['definition']
         return terms
+
+    def _add_cross_references(self):
+        for object in self._objects:
+            for item in object['items']:
+                cpp_types = []
+                if item['type'] == 'property' and 'cpp_template_type' in item:
+                    cpp_types = [item['cpp_template_type']]
+                elif item['type'] == 'method' and 'cpp_template_type' in item:
+                    [result, args] = item['cpp_template_type'].rstrip(')').split('(')
+                    cpp_types = [result] + [s.strip() for s in args.split(',')]
+                elif item['type'] == 'event':
+                    cpp_types = [s.strip() for s in item['cpp_template_type'].split(',')]
+
+                for cpp_type in cpp_types:
+                    for enum in self._enums:
+                        if enum['cpp_name'] == cpp_type:
+                            enum['see_also'].append('<a href="' + object['filename'] + '#' + item['lua_name'] + '"><code>' + object['lua_name'] + '.' + item['lua_name'] + '</code></a>')
+                    for set in self._sets:
+                        if set['cpp_name'] == cpp_type:
+                            set['see_also'].append('<a href="' + object['filename'] + '#' + item['lua_name'] + '"><code>' + object['lua_name'] + '.' + item['lua_name'] + '</code></a>')
 
     def _ref_link(self, m: re.Match) -> str:
         id = m.group(1)
@@ -172,6 +193,7 @@ class LuaDoc:
                 'cpp_name': cpp_name,
                 'lua_name': info.group(1),
                 'items': items,
+                'see_also': []
                 })
 
         return enums
@@ -202,6 +224,7 @@ class LuaDoc:
                 'cpp_name': cpp_name,
                 'lua_name': info.group(1),
                 'items': items,
+                'see_also': []
                 })
 
         return sets
@@ -585,6 +608,15 @@ class LuaDoc:
 
         return html
 
+    def _build_see_also_html(self, items: list):
+        if len(items) == 0:
+            return ''
+        html = '<h2>' + self._get_term('see_also') + '</h2><ul>'
+        for item in items:
+            html += '<li>' + item + '</li>'
+        html += '</ul>'
+        return html
+
     def _build_index(self, output_dir: str) -> None:
         html = self._get_header(self._get_term('index:title'), [])
         html = html.replace('<h1>', '<h1 class="title">')
@@ -655,6 +687,8 @@ class LuaDoc:
         html = self._get_header(title, nav + [{'title': title, 'href': lib['filename']}])
         html += '<p>' + self._get_term(parent_lib + lib['lua_name'] + ':description') + '</p>' + os.linesep
         html += self._build_items_html(lib['items'], parent_lib + lib['lua_name'] + '.', parent_lib + lib['lua_name'] + '.')
+        if 'see_also' in lib:
+            html += self._build_see_also_html(lib['see_also'])
         LuaDoc._write_file(os.path.join(output_dir, lib['filename']), self._add_toc(html))
 
     def _build_objects(self, output_dir: str, nav: list) -> None:
