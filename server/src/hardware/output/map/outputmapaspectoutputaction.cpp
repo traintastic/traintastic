@@ -41,9 +41,9 @@ void OutputMapAspectOutputAction::execute()
   aspectOutput().setValue(aspect);
 }
 
-bool OutputMapAspectOutputAction::matchesCurrentOutputState() const
+TriState OutputMapAspectOutputAction::matchesCurrentOutputState() const
 {
-  return aspectOutput().value.value() == aspect;
+  return toTriState(aspectOutput().value.value() == aspect);
 }
 
 void OutputMapAspectOutputAction::worldEvent(WorldState state, WorldEvent event)

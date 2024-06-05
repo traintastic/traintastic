@@ -54,29 +54,29 @@ void OutputMapPairOutputAction::execute()
   }
 }
 
-bool OutputMapPairOutputAction::matchesCurrentOutputState() const
+TriState OutputMapPairOutputAction::matchesCurrentOutputState() const
 {
   switch(action.value())
   {
     case PairOutputAction::None:
-      return true; // None means "any state is ok"
+      return TriState::Undefined; // None means "any state is ok"
 
     case PairOutputAction::First:
     {
       if(pairOutput().value.value() == OutputPairValue::First)
-        return true;
+        return TriState::True;
       break;
     }
 
     case PairOutputAction::Second:
     {
       if(pairOutput().value.value() == OutputPairValue::Second)
-        return true;
+        return TriState::True;
       break;
     }
   }
 
-  return false;
+  return TriState::False;
 }
 
 void OutputMapPairOutputAction::worldEvent(WorldState state, WorldEvent event)

@@ -66,12 +66,12 @@ void OutputMapSingleOutputAction::execute()
   }
 }
 
-bool OutputMapSingleOutputAction::matchesCurrentOutputState() const
+TriState OutputMapSingleOutputAction::matchesCurrentOutputState() const
 {
   switch(action.value())
   {
     case SingleOutputAction::None:
-      return true; // None means "any state is ok"
+      return TriState::Undefined; // None means "any state is ok"
 
     case SingleOutputAction::Pulse: //TODO: how to detect pulse???
       break;
@@ -79,19 +79,19 @@ bool OutputMapSingleOutputAction::matchesCurrentOutputState() const
     case SingleOutputAction::Off:
     {
       if(singleOutput().value.value() == TriState::False)
-        return true;
+        return TriState::True;
       break;
     }
 
     case SingleOutputAction::On:
     {
       if(singleOutput().value.value() == TriState::True)
-        return true;
+        return TriState::True;
       break;
     }
   }
 
-  return false;
+  return TriState::False;
 }
 
 void OutputMapSingleOutputAction::worldEvent(WorldState state, WorldEvent event)

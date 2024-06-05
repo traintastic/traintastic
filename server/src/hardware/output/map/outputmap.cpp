@@ -587,16 +587,29 @@ std::shared_ptr<OutputMapOutputAction> OutputMap::createOutputAction(OutputType 
 int OutputMap::getMatchingActionOnCurrentState()
 {
   int i = 0;
+  int wildcardIdx = -1;
+
   for(const auto& item : items)
   {
-    TriState value = item->matchesCurrentOutputState();
-    if(value == TriState::True)
+    OutputMapItem::MatchResult value = item->matchesCurrentOutputState();
+    if(value == OutputMapItem::MatchResult::FullMatch)
     {
-      return i;
+      return i; // We got a full match
+    }
+    else if(value == OutputMapItem::MatchResult::WildcardMatch)
+    {
+      // We give wildcard matches a lower priority.
+      // Save it for later, in the meantime we check for a better full match
+      if(wildcardIdx == -1)
+        wildcardIdx = i;
     }
 
     i++;
   }
+
+  // No full match, do we have a wildcard match?
+  if(wildcardIdx != -1)
+    return wildcardIdx;
 
   return -1; // No match found
 }

@@ -41,13 +41,21 @@ class OutputMapItem : public Object
     void worldEvent(WorldState state, WorldEvent event) override;
 
   public:
+    enum class MatchResult
+    {
+      FullMatch = 0,     // Every action matches
+      PartialMatch = 1,  // Some actions do not match, probably switch operation is not completed yet
+      WildcardMatch = 2, // Some action are set to "None", they match any state but are ranked below others
+      NoMatch = 3        // None of the actions matches
+    };
+
     ObjectVectorProperty<OutputMapOutputAction> outputActions;
 
     OutputMapItem(Object& map);
 
     void execute();
 
-    TriState matchesCurrentOutputState() const;
+    MatchResult matchesCurrentOutputState() const;
 };
 
 #endif

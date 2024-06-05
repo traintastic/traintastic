@@ -25,6 +25,7 @@
 
 #include "../../../core/object.hpp"
 #include "../output.hpp"
+#include "traintastic/enum/tristate.hpp"
 
 class OutputMap;
 class World;
@@ -49,7 +50,7 @@ class OutputMapOutputAction : public Object
 
     virtual void execute() = 0;
 
-    virtual bool matchesCurrentOutputState() const = 0;
+    virtual TriState matchesCurrentOutputState() const = 0;
 };
 
 #endif

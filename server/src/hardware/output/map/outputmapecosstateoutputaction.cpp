@@ -41,9 +41,9 @@ void OutputMapECoSStateOutputAction::execute()
   ecosStateOutput().setValue(state);
 }
 
-bool OutputMapECoSStateOutputAction::matchesCurrentOutputState() const
+TriState OutputMapECoSStateOutputAction::matchesCurrentOutputState() const
 {
-  return ecosStateOutput().value.value() == state;
+  return toTriState(ecosStateOutput().value.value() == state);
 }
 
 void OutputMapECoSStateOutputAction::worldEvent(WorldState worldState, WorldEvent event)
