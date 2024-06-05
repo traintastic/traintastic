@@ -29,10 +29,21 @@
 void TrainTracking::enter(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction)
 {
   auto status = TrainBlockStatus::create(*block, *train, direction);
-  train->blocks.insertInternal(0, status); // head of train
-  block->trains.appendInternal(std::move(status));
+  block->trains.appendInternal(status);
 
   block->updateTrainMethodEnabled();
+
+  enter(status);
+}
+
+void TrainTracking::enter(const std::shared_ptr<TrainBlockStatus>& status)
+{
+  assert(status);
+  const auto& train = status->train.value();
+  const auto& block = status->block.value();
+  const auto direction = status->direction.value();
+
+  status->train->blocks.insertInternal(0, status); // head of train
 
   train->fireBlockEntered(block, direction);
   block->fireTrainEntered(train, direction);

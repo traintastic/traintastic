@@ -307,13 +307,7 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
         if(enterA != enterB)
         {
           auto& blockStatus = enterA ? trains.front() : trains.back();
-          blockStatus->train->blocks.insertInternal(0, blockStatus);
-
-          fireEvent(
-            onTrainEntered,
-            blockStatus->train.value(),
-            shared_ptr<BlockRailTile>(),
-            blockStatus->direction.value());
+          TrainTracking::enter(blockStatus);
         }
         else
         {
