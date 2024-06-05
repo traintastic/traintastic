@@ -4882,5 +4882,9 @@
     {
         "term": "board_tile.misc.switch:value",
         "definition": "Value"
+    },
+    {
+        "term": "list:setup_using_wizard",
+        "definition": "Setup using wizard"
     }
 ]
