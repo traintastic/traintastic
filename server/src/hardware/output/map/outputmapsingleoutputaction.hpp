@@ -34,6 +34,7 @@ class OutputMapSingleOutputAction final : public OutputMapOutputAction
 
   private:
     SingleOutput& singleOutput();
+    const SingleOutput& singleOutput() const;
 
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;

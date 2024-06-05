@@ -93,3 +93,9 @@ PairOutput& OutputMapPairOutputAction::pairOutput()
   assert(dynamic_cast<PairOutput*>(&output()));
   return static_cast<PairOutput&>(output());
 }
+
+const PairOutput& OutputMapPairOutputAction::pairOutput() const
+{
+    assert(dynamic_cast<const PairOutput*>(&output()));
+    return static_cast<const PairOutput&>(output());
+}

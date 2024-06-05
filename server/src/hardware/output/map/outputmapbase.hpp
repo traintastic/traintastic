@@ -25,7 +25,6 @@
 
 #include "outputmap.hpp"
 #include <initializer_list>
-#include "outputmapoutputaction.hpp"
 #include "../../../core/event.hpp"
 
 template<class Key, class Value>

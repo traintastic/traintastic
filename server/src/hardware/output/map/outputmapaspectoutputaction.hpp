@@ -33,6 +33,7 @@ class OutputMapAspectOutputAction final : public OutputMapOutputAction
 
   private:
     AspectOutput& aspectOutput();
+    const AspectOutput& aspectOutput() const;
 
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;

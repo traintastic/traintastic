@@ -33,6 +33,7 @@ class OutputMapECoSStateOutputAction final : public OutputMapOutputAction
 
   private:
     ECoSStateOutput& ecosStateOutput();
+    const ECoSStateOutput& ecosStateOutput() const;
 
   protected:
     void worldEvent(WorldState worldState, WorldEvent event) final;

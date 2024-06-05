@@ -108,3 +108,9 @@ SingleOutput& OutputMapSingleOutputAction::singleOutput()
   assert(dynamic_cast<SingleOutput*>(&output()));
   return static_cast<SingleOutput&>(output());
 }
+
+const SingleOutput& OutputMapSingleOutputAction::singleOutput() const
+{
+    assert(dynamic_cast<const SingleOutput*>(&output()));
+    return static_cast<const SingleOutput&>(output());
+}

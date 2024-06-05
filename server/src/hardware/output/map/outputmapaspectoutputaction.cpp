@@ -60,3 +60,9 @@ AspectOutput& OutputMapAspectOutputAction::aspectOutput()
   assert(dynamic_cast<AspectOutput*>(&output()));
   return static_cast<AspectOutput&>(output());
 }
+
+const AspectOutput& OutputMapAspectOutputAction::aspectOutput() const
+{
+    assert(dynamic_cast<const AspectOutput*>(&output()));
+    return static_cast<const AspectOutput&>(output());
+}

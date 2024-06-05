@@ -60,3 +60,9 @@ ECoSStateOutput& OutputMapECoSStateOutputAction::ecosStateOutput()
   assert(dynamic_cast<ECoSStateOutput*>(&output()));
   return static_cast<ECoSStateOutput&>(output());
 }
+
+const ECoSStateOutput& OutputMapECoSStateOutputAction::ecosStateOutput() const
+{
+    assert(dynamic_cast<const ECoSStateOutput*>(&output()));
+    return static_cast<const ECoSStateOutput&>(output());
+}

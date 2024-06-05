@@ -40,6 +40,7 @@ class OutputMapOutputAction : public Object
   protected:
     World& world();
     Output& output();
+    const Output& output() const;
 
   public:
     OutputMapOutputAction(OutputMap& _parent, size_t outputIndex);
