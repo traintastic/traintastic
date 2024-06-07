@@ -451,8 +451,7 @@ bool BlockRailTile::reserve(const std::shared_ptr<BlockPath>& blockPath, const s
     if(state == BlockState::Free)
     {
       const auto direction = side == BlockSide::A ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA;
-      trains.appendInternal(TrainBlockStatus::create(*this, *train, direction));
-      fireEvent(onTrainReserved, train, shared_ptr<BlockRailTile>(), direction);
+      TrainTracking::reserve(train, shared_ptr<BlockRailTile>(), direction);
     }
     updateState();
   }
@@ -623,6 +622,15 @@ void BlockRailTile::updateHeightWidthMax()
     const bool vertical = (rotate == TileRotate::Deg0);
     Attributes::setMax<uint8_t>(height, vertical ? TileData::heightMax : 1);
     Attributes::setMax<uint8_t>(width, !vertical ? TileData::widthMax : 1);
+}
+
+void BlockRailTile::fireTrainReserved(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection)
+{
+  fireEvent(
+    onTrainReserved,
+    train,
+    shared_ptr<BlockRailTile>(),
+    trainDirection);
 }
 
 void BlockRailTile::fireTrainEntered(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection)

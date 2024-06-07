@@ -70,6 +70,7 @@ class Train : public IdObject
     void updateEnabled();
     bool setTrainActive(bool val);
 
+    void fireBlockReserved(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
     void fireBlockEntered(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
     void fireBlockLeft(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
 
@@ -105,6 +106,7 @@ class Train : public IdObject
     //! If the train changes direction this list will be reversed.
     ObjectVectorProperty<TrainBlockStatus> blocks;
     Property<std::string> notes;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onBlockReserved;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onBlockEntered;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onBlockLeft;
 

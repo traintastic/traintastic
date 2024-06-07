@@ -38,6 +38,7 @@ private:
   TrainTracking& operator=(const TrainTracking&) = delete;
 
 public:
+  static void reserve(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction);
   static void enter(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction); // enter unreserved block
   static void enter(const std::shared_ptr<TrainBlockStatus>& status); // enter reserved block
   static void left(std::shared_ptr<TrainBlockStatus> status);

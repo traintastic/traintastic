@@ -26,6 +26,13 @@
 #include "../board/tile/rail/blockrailtile.hpp"
 #include "../core/objectproperty.tpp"
 
+void TrainTracking::reserve(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction)
+{
+  block->trains.appendInternal(TrainBlockStatus::create(*block, *train, direction));
+  train->fireBlockReserved(block, direction);
+  block->fireTrainReserved(train, direction);
+}
+
 void TrainTracking::enter(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction)
 {
   auto status = TrainBlockStatus::create(*block, *train, direction);

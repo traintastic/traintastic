@@ -146,6 +146,7 @@ Train::Train(World& world, std::string_view _id) :
   mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , onBlockReserved{*this, "on_block_reserved", EventFlags::Scriptable}
   , onBlockEntered{*this, "on_block_entered", EventFlags::Scriptable}
   , onBlockLeft{*this, "on_block_left", EventFlags::Scriptable}
 {
@@ -201,28 +202,11 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addDisplayName(notes, DisplayName::Object::notes);
   m_interfaceItems.add(notes);
 
+  m_interfaceItems.add(onBlockReserved);
   m_interfaceItems.add(onBlockEntered);
   m_interfaceItems.add(onBlockLeft);
 
   updateEnabled();
-}
-
-void Train::fireBlockEntered(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection)
-{
-  fireEvent(
-    onBlockEntered,
-    shared_ptr<Train>(),
-    block,
-    trainDirection);
-}
-
-void Train::fireBlockLeft(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection)
-{
-  fireEvent(
-    onBlockLeft,
-    shared_ptr<Train>(),
-    block,
-    trainDirection);
 }
 
 void Train::addToWorld()
@@ -453,4 +437,31 @@ bool Train::setTrainActive(bool val)
   }
 
   return true;
+}
+
+void Train::fireBlockReserved(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection)
+{
+  fireEvent(
+    onBlockReserved,
+    shared_ptr<Train>(),
+    block,
+    trainDirection);
+}
+
+void Train::fireBlockEntered(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection)
+{
+  fireEvent(
+    onBlockEntered,
+    shared_ptr<Train>(),
+    block,
+    trainDirection);
+}
+
+void Train::fireBlockLeft(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection)
+{
+  fireEvent(
+    onBlockLeft,
+    shared_ptr<Train>(),
+    block,
+    trainDirection);
 }

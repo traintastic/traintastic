@@ -6,6 +6,17 @@
   "powered": {},
   "active": {},
   "mode": {},
+  "on_block_assigned": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "block"
+      }
+    ],
+    "since": "0.3"
+  },
   "on_block_entered": {
     "parameters": [
       {

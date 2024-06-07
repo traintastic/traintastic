@@ -58,6 +58,7 @@ class BlockRailTile : public RailTile
     void updatePaths();
     void updateHeightWidthMax();
 
+    void fireTrainReserved(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection);
     void fireTrainEntered(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection);
     void fireTrainLeft(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection);
 
