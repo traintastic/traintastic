@@ -146,9 +146,11 @@ Train::Train(World& world, std::string_view _id) :
   mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , onBlockAssigned{*this, "on_block_assigned", EventFlags::Scriptable}
   , onBlockReserved{*this, "on_block_reserved", EventFlags::Scriptable}
   , onBlockEntered{*this, "on_block_entered", EventFlags::Scriptable}
   , onBlockLeft{*this, "on_block_left", EventFlags::Scriptable}
+  , onBlockRemoved{*this, "on_block_removed", EventFlags::Scriptable}
 {
   vehicles.setValueInternal(std::make_shared<TrainVehicleList>(*this, vehicles.name()));
 
@@ -202,9 +204,11 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addDisplayName(notes, DisplayName::Object::notes);
   m_interfaceItems.add(notes);
 
+  m_interfaceItems.add(onBlockAssigned);
   m_interfaceItems.add(onBlockReserved);
   m_interfaceItems.add(onBlockEntered);
   m_interfaceItems.add(onBlockLeft);
+  m_interfaceItems.add(onBlockRemoved);
 
   updateEnabled();
 }
@@ -439,6 +443,14 @@ bool Train::setTrainActive(bool val)
   return true;
 }
 
+void Train::fireBlockAssigned(const std::shared_ptr<BlockRailTile>& block)
+{
+  fireEvent(
+    onBlockAssigned,
+    shared_ptr<Train>(),
+    block);
+}
+
 void Train::fireBlockReserved(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection)
 {
   fireEvent(
@@ -464,4 +476,12 @@ void Train::fireBlockLeft(const std::shared_ptr<BlockRailTile>& block, BlockTrai
     shared_ptr<Train>(),
     block,
     trainDirection);
+}
+
+void Train::fireBlockRemoved(const std::shared_ptr<BlockRailTile>& block)
+{
+  fireEvent(
+    onBlockRemoved,
+    shared_ptr<Train>(),
+    block);
 }

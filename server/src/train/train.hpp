@@ -106,11 +106,16 @@ class Train : public IdObject
     //! If the train changes direction this list will be reversed.
     ObjectVectorProperty<TrainBlockStatus> blocks;
     Property<std::string> notes;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onBlockAssigned;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onBlockReserved;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onBlockEntered;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onBlockLeft;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onBlockRemoved;
 
     Train(World& world, std::string_view _id);
+
+    void fireBlockAssigned(const std::shared_ptr<BlockRailTile>& block);
+    void fireBlockRemoved(const std::shared_ptr<BlockRailTile>& block);
 };
 
 #endif

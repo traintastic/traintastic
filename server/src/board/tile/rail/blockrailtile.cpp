@@ -112,6 +112,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
             }
           }
 
+          newTrain->fireBlockAssigned(shared_ptr<BlockRailTile>());
           fireEvent(onTrainAssigned, newTrain, self);
         }
       }}
@@ -155,6 +156,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
             }
           }
 
+          oldTrain->fireBlockRemoved(shared_ptr<BlockRailTile>());
           fireEvent(onTrainRemoved, oldTrain, self);
         }
       }}
