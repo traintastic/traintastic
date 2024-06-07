@@ -17,6 +17,20 @@
     ],
     "since": "0.3"
   },
+  "on_block_reserved": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "block"
+      },
+      {
+        "name": "direction"
+      }
+    ],
+    "since": "0.3"
+  },
   "on_block_entered": {
     "parameters": [
       {
