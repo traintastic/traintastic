@@ -22,7 +22,7 @@
 
 #include "turnoutoutputmapitem.hpp"
 
-#include "../../../core/method.tpp"
+#include "outputmapitembase.tpp"
 
 TurnoutOutputMapItem::TurnoutOutputMapItem(Object& map, TurnoutPosition position) :
   OutputMapItemBase(map, position)

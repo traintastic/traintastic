@@ -30,6 +30,7 @@
 #ifndef NDEBUG
   #include "../core/eventloop.hpp" // for: isEventLoopThread()
 #endif
+#include "../core/abstractunitproperty.hpp"
 #include "../core/objectproperty.tpp"
 #include "../core/tablemodel.hpp"
 #include "../log/log.hpp"
