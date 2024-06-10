@@ -41,6 +41,11 @@ void OutputMapECoSStateOutputAction::execute()
   ecosStateOutput().setValue(state);
 }
 
+TriState OutputMapECoSStateOutputAction::matchesCurrentOutputState() const
+{
+  return toTriState(ecosStateOutput().value.value() == state);
+}
+
 void OutputMapECoSStateOutputAction::worldEvent(WorldState worldState, WorldEvent event)
 {
   OutputMapOutputAction::worldEvent(worldState, event);
@@ -54,4 +59,10 @@ ECoSStateOutput& OutputMapECoSStateOutputAction::ecosStateOutput()
 {
   assert(dynamic_cast<ECoSStateOutput*>(&output()));
   return static_cast<ECoSStateOutput&>(output());
+}
+
+const ECoSStateOutput& OutputMapECoSStateOutputAction::ecosStateOutput() const
+{
+    assert(dynamic_cast<const ECoSStateOutput*>(&output()));
+    return static_cast<const ECoSStateOutput&>(output());
 }

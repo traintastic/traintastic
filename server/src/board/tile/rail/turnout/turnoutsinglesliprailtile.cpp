@@ -27,7 +27,7 @@
 
 static const std::array<TurnoutPosition, 5> positionValues = {TurnoutPosition::Unknown,
                                                               TurnoutPosition::Crossed, TurnoutPosition::Diverged,
-                                                              TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB,};
+                                                              TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB};
 
 static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex)
 {
@@ -55,6 +55,8 @@ TurnoutSingleSlipRailTile::TurnoutSingleSlipRailTile(World& world, std::string_v
 
   Attributes::addValues(setPosition, setPositionValues);
   m_interfaceItems.add(setPosition);
+
+  connectOutputMap();
 }
 
 void TurnoutSingleSlipRailTile::getConnectors(std::vector<Connector>& connectors) const

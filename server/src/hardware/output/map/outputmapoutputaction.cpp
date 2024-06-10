@@ -48,3 +48,8 @@ Output& OutputMapOutputAction::output()
 {
   return *m_parent.output(m_outputIndex);
 }
+
+const Output& OutputMapOutputAction::output() const
+{
+    return *m_parent.output(m_outputIndex);
+}

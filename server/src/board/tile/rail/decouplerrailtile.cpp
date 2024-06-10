@@ -67,6 +67,11 @@ DecouplerRailTile::DecouplerRailTile(World& world, std::string_view _id)
 
   Attributes::addObjectEditor(deactivate, false);
   m_interfaceItems.add(deactivate);
+
+  outputMap->onOutputStateMatchFound.connect([this](DecouplerState value)
+    {
+      setState(value, true);
+    });
 }
 
 void DecouplerRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
@@ -78,11 +83,12 @@ void DecouplerRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
   Attributes::setEnabled(name, editable);
 }
 
-void DecouplerRailTile::setState(DecouplerState value)
+void DecouplerRailTile::setState(DecouplerState value, bool skipAction)
 {
   if(state != value)
   {
-    (*outputMap)[value]->execute();
+    if(!skipAction)
+      (*outputMap)[value]->execute();
     state.setValueInternal(value);
   }
 }

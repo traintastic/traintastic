@@ -54,5 +54,6 @@ void SingleOutput::updateValue(TriState _value)
   if(value != TriState::Undefined)
   {
     fireEvent(onValueChanged, value == TriState::True, shared_ptr<SingleOutput>());
+    fireEvent(onValueChangedGeneric, shared_ptr<Output>());
   }
 }

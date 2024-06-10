@@ -54,6 +54,31 @@ void OutputMapPairOutputAction::execute()
   }
 }
 
+TriState OutputMapPairOutputAction::matchesCurrentOutputState() const
+{
+  switch(action.value())
+  {
+    case PairOutputAction::None:
+      return TriState::Undefined; // None means "any state is ok"
+
+    case PairOutputAction::First:
+    {
+      if(pairOutput().value.value() == OutputPairValue::First)
+        return TriState::True;
+      break;
+    }
+
+    case PairOutputAction::Second:
+    {
+      if(pairOutput().value.value() == OutputPairValue::Second)
+        return TriState::True;
+      break;
+    }
+  }
+
+  return TriState::False;
+}
+
 void OutputMapPairOutputAction::worldEvent(WorldState state, WorldEvent event)
 {
   OutputMapOutputAction::worldEvent(state, event);
@@ -67,4 +92,10 @@ PairOutput& OutputMapPairOutputAction::pairOutput()
 {
   assert(dynamic_cast<PairOutput*>(&output()));
   return static_cast<PairOutput&>(output());
+}
+
+const PairOutput& OutputMapPairOutputAction::pairOutput() const
+{
+    assert(dynamic_cast<const PairOutput*>(&output()));
+    return static_cast<const PairOutput&>(output());
 }

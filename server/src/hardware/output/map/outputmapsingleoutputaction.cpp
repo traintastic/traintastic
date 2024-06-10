@@ -66,6 +66,34 @@ void OutputMapSingleOutputAction::execute()
   }
 }
 
+TriState OutputMapSingleOutputAction::matchesCurrentOutputState() const
+{
+  switch(action.value())
+  {
+    case SingleOutputAction::None:
+      return TriState::Undefined; // None means "any state is ok"
+
+    case SingleOutputAction::Pulse: //TODO: how to detect pulse???
+      break;
+
+    case SingleOutputAction::Off:
+    {
+      if(singleOutput().value.value() == TriState::False)
+        return TriState::True;
+      break;
+    }
+
+    case SingleOutputAction::On:
+    {
+      if(singleOutput().value.value() == TriState::True)
+        return TriState::True;
+      break;
+    }
+  }
+
+  return TriState::False;
+}
+
 void OutputMapSingleOutputAction::worldEvent(WorldState state, WorldEvent event)
 {
   OutputMapOutputAction::worldEvent(state, event);
@@ -79,4 +107,10 @@ SingleOutput& OutputMapSingleOutputAction::singleOutput()
 {
   assert(dynamic_cast<SingleOutput*>(&output()));
   return static_cast<SingleOutput&>(output());
+}
+
+const SingleOutput& OutputMapSingleOutputAction::singleOutput() const
+{
+    assert(dynamic_cast<const SingleOutput*>(&output()));
+    return static_cast<const SingleOutput&>(output());
 }

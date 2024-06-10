@@ -80,6 +80,8 @@ Signal2AspectRailTile::Signal2AspectRailTile(World& world, std::string_view _id)
 
   Attributes::addValues(setAspect, setAspectValues);
   m_interfaceItems.add(setAspect);
+
+  connectOutputMap();
 }
 
 void Signal2AspectRailTile::boardModified()

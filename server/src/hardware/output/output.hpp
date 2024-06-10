@@ -29,6 +29,7 @@
 #include <traintastic/enum/outputtype.hpp>
 #include "../../core/property.hpp"
 #include "../../core/objectproperty.hpp"
+#include "../../core/event.hpp"
 
 #ifdef interface
   #undef interface // interface is defined in combaseapi.h
@@ -52,6 +53,7 @@ class Output : public Object
     ObjectProperty<OutputController> interface;
     Property<OutputChannel> channel;
     Property<OutputType> type;
+    Event<const std::shared_ptr<Output>&> onValueChangedGeneric;
 
     /**
      * \brief Unique identifier for the output within the channel.

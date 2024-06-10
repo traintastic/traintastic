@@ -33,6 +33,7 @@ class OutputMapAspectOutputAction final : public OutputMapOutputAction
 
   private:
     AspectOutput& aspectOutput();
+    const AspectOutput& aspectOutput() const;
 
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
@@ -43,6 +44,8 @@ class OutputMapAspectOutputAction final : public OutputMapOutputAction
     OutputMapAspectOutputAction(OutputMap& _parent, size_t outputIndex);
 
     void execute() final;
+
+    TriState matchesCurrentOutputState() const final;
 };
 
 #endif

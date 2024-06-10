@@ -34,6 +34,7 @@ class OutputMapPairOutputAction final : public OutputMapOutputAction
 
   private:
     PairOutput& pairOutput();
+    const PairOutput& pairOutput() const;
 
   protected:
     void worldEvent(WorldState state, WorldEvent event) final;
@@ -44,6 +45,8 @@ class OutputMapPairOutputAction final : public OutputMapOutputAction
     OutputMapPairOutputAction(OutputMap& _parent, size_t outputIndex);
 
     void execute() final;
+
+    TriState matchesCurrentOutputState() const final;
 };
 
 #endif

@@ -49,6 +49,8 @@ TurnoutWyeRailTile::TurnoutWyeRailTile(World& world, std::string_view _id)
 
   Attributes::addValues(setPosition, setPositionValues);
   m_interfaceItems.add(setPosition);
+
+  connectOutputMap();
 }
 
 void TurnoutWyeRailTile::getConnectors(std::vector<Connector>& connectors) const

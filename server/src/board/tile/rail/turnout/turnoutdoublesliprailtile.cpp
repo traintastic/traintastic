@@ -57,6 +57,8 @@ TurnoutDoubleSlipRailTile::TurnoutDoubleSlipRailTile(World& world, std::string_v
 
   Attributes::addValues(setPosition, setPositionValues);
   m_interfaceItems.add(setPosition);
+
+  connectOutputMap();
 }
 
 void TurnoutDoubleSlipRailTile::getConnectors(std::vector<Connector>& connectors) const

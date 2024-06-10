@@ -33,6 +33,7 @@ class OutputMapECoSStateOutputAction final : public OutputMapOutputAction
 
   private:
     ECoSStateOutput& ecosStateOutput();
+    const ECoSStateOutput& ecosStateOutput() const;
 
   protected:
     void worldEvent(WorldState worldState, WorldEvent event) final;
@@ -43,6 +44,8 @@ class OutputMapECoSStateOutputAction final : public OutputMapOutputAction
     OutputMapECoSStateOutputAction(OutputMap& _parent, size_t outputIndex);
 
     void execute() final;
+
+    TriState matchesCurrentOutputState() const final;
 };
 
 #endif

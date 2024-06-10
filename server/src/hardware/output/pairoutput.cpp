@@ -55,5 +55,6 @@ void PairOutput::updateValue(OutputPairValue newValue)
   if(newValue != OutputPairValue::Undefined)
   {
     fireEvent(onValueChanged, newValue, shared_ptr<PairOutput>());
+    fireEvent(onValueChangedGeneric, shared_ptr<Output>());
   }
 }

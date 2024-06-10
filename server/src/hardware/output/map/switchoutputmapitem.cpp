@@ -21,7 +21,7 @@
  */
 
 #include "switchoutputmapitem.hpp"
-#include "../../../core/method.tpp"
+#include "outputmapitembase.tpp"
 
 static constexpr std::array<bool, 2> keyAliasKeys{{false, true}};
 static const std::array<std::string, 2> keyAliasValues{{"$output_map_item.switch.key:off$", "$output_map_item.switch.key:on$"}};

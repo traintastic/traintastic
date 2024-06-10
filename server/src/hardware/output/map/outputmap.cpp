@@ -123,16 +123,17 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
         }
         else // no interface
         {
-          for(auto& output : m_outputs)
+          for(auto& it : m_outputs)
           {
-            if(output) /*[[likely]]*/
+            if(it.first) /*[[likely]]*/
             {
-              interface->releaseOutput(*output, parent());
+              releaseOutput(it);
             }
-            m_outputs.clear();
-            addresses.clearInternal();
-            addressesSizeChanged();
           }
+
+          m_outputs.clear();
+          addresses.clearInternal();
+          addressesSizeChanged();
         }
         return true;
       }}
@@ -142,9 +143,9 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
         // Release outputs for previous channel:
         while(!m_outputs.empty())
         {
-          if(m_outputs.back()) /*[[likely]]*/
+          if(m_outputs.back().first) /*[[likely]]*/
           {
-            interface->releaseOutput(*m_outputs.back(), parent());
+            releaseOutput(m_outputs.back());
           }
           m_outputs.pop_back();
         }
@@ -209,18 +210,18 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
           return false; // Duplicate addresses aren't allowed.
         }
 
-        auto output = getOutput(channel, value, *interface);
-        if(!output) /*[[unlikely]]*/
+        auto outputConnPair = getOutput(channel, value, *interface);
+        if(!outputConnPair.first) /*[[unlikely]]*/
         {
           return false; // Output doesn't exist.
         }
 
-        if(index < m_outputs.size() && m_outputs[index])
+        if(index < m_outputs.size() && m_outputs[index].first)
         {
-          releaseOutput(*m_outputs[index]);
+          releaseOutput(m_outputs[index]);
         }
 
-        m_outputs[index] = output;
+        m_outputs[index] = outputConnPair;
 
         return true;
       }}
@@ -237,7 +238,7 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
         {
           if(!m_outputs.empty())
           {
-            releaseOutput(*m_outputs.front());
+            releaseOutput(m_outputs.front());
             m_outputs.clear();
           }
           if(value != 0)
@@ -274,9 +275,9 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
         if(interface && addresses.size() > addressesSizeMin) /*[[likely]]*/
         {
           addresses.eraseInternal(addresses.size() - 1);
-          if(m_outputs.back())
+          if(m_outputs.back().first)
           {
-            releaseOutput(*m_outputs.back());
+            releaseOutput(m_outputs.back());
           }
           m_outputs.pop_back();
           addressesSizeChanged();
@@ -583,6 +584,41 @@ std::shared_ptr<OutputMapOutputAction> OutputMap::createOutputAction(OutputType 
   return {};
 }
 
+int OutputMap::getMatchingActionOnCurrentState()
+{
+  int i = 0;
+  int wildcardIdx = -1;
+
+  for(const auto& item : items)
+  {
+    OutputMapItem::MatchResult value = item->matchesCurrentOutputState();
+    if(value == OutputMapItem::MatchResult::FullMatch)
+    {
+      return i; // We got a full match
+    }
+    else if(value == OutputMapItem::MatchResult::WildcardMatch)
+    {
+      // We give wildcard matches a lower priority.
+      // Save it for later, in the meantime we check for a better full match
+      if(wildcardIdx == -1)
+        wildcardIdx = i;
+    }
+
+    i++;
+  }
+
+  // No full match, do we have a wildcard match?
+  if(wildcardIdx != -1)
+    return wildcardIdx;
+
+  return -1; // No match found
+}
+
+void OutputMap::updateStateFromOutput()
+{
+  // Default implementation is no-op
+}
+
 void OutputMap::addOutput(OutputChannel ch, uint32_t id)
 {
   addOutput(ch, id, *interface);
@@ -591,18 +627,21 @@ void OutputMap::addOutput(OutputChannel ch, uint32_t id)
 void OutputMap::addOutput(OutputChannel ch, uint32_t id, OutputController& outputController)
 {
   m_outputs.emplace_back(getOutput(ch, id, outputController));
-  assert(m_outputs.back());
+  assert(m_outputs.back().first);
 }
 
-std::shared_ptr<Output> OutputMap::getOutput(OutputChannel ch, uint32_t id, OutputController& outputController)
+OutputMap::OutputConnectionPair OutputMap::getOutput(OutputChannel ch, uint32_t id, OutputController& outputController)
 {
   auto output = outputController.getOutput(ch, id, parent());
-  // TODO: connect output value changed
-  return output;
+  if(!output)
+    return {};
+
+  boost::signals2::connection conn = output->onValueChangedGeneric.connect([this](const std::shared_ptr<Output>&){ updateStateFromOutput(); });
+  return {output, conn};
 }
 
-void OutputMap::releaseOutput(Output& output)
+void OutputMap::releaseOutput(OutputConnectionPair &outputConnPair)
 {
-  // TODO: disconnect output value changed
-  interface->releaseOutput(output, parent());
+  outputConnPair.second.disconnect();
+  interface->releaseOutput(*outputConnPair.first, parent());
 }
