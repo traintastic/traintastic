@@ -374,6 +374,7 @@ void BlockRailTile::identificationEvent(BlockInputMapItem& /*item*/, Identificat
       case IdentificationEventType::Present:
         //!< \todo assign train (if allowed and possible)
         trains.appendInternal(TrainBlockStatus::create(*this, std::string("#").append(std::to_string(identifier)), blockDirection));
+        updateTrainMethodEnabled();
         if(state == BlockState::Free || state == BlockState::Unknown)
           updateState();
         break;

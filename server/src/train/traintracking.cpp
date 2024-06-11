@@ -29,6 +29,8 @@
 void TrainTracking::reserve(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction)
 {
   block->trains.appendInternal(TrainBlockStatus::create(*block, *train, direction));
+  block->updateTrainMethodEnabled();
+
   train->fireBlockReserved(block, direction);
   block->fireTrainReserved(train, direction);
 }
