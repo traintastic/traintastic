@@ -33,6 +33,7 @@
 #include "../tile/rail/turnout/turnoutrailtile.hpp"
 #include "../tile/rail/linkrailtile.hpp"
 #include "../tile/rail/nxbuttonrailtile.hpp"
+#include "../../train/trainblockstatus.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../enum/bridgepath.hpp"
 
@@ -511,6 +512,17 @@ bool BlockPath::release(bool dryRun)
 
   if(auto toBlock = m_toBlock.lock()) /*[[likely]]*/
   {
+    if(!dryRun && toBlock->state.value() == BlockState::Reserved)
+    {
+      if(toBlock->trains.size() == 1)
+      {
+        //TODO: this bypasses some checks
+        auto oldTrain = toBlock->trains[0]->train.value();
+        toBlock->removeOneTrain(oldTrain);
+        //TODO: dryRun? what if it fails?
+      }
+    }
+
     if(!toBlock->release(m_toSide, dryRun))
     {
       assert(dryRun);
