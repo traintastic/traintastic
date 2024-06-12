@@ -209,22 +209,41 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
           else
             firmwareVersion.setValueInternal("");
         });
-      m_kernel->setOnTrackPowerOnChanged(
-        [this](bool powerOn)
+      m_kernel->setOnTrackPowerChanged(
+        [this](bool powerOn, bool isStopped)
         {
-          if(powerOn == contains(m_world.state.value(), WorldState::PowerOn))
-            return;
-
           if(powerOn)
-            m_world.powerOn();
+          {
+              /* NOTE:
+               * Setting stop and powerOn together is not an atomic operation,
+               * so it would trigger 2 state changes with in the middle state.
+               * Fortunately this does not happen because at least one of the state is already set.
+               * Because if we are in Run state we go to PowerOn,
+               * and if we are on PowerOff then we go to PowerOn.
+               */
+
+              // First of all, stop if we have to, otherwhise we might inappropiately run trains
+              if(isStopped && contains(m_world.state.value(), WorldState::Run))
+              {
+                m_world.stop();
+              }
+              else if(!contains(m_world.state.value(), WorldState::Run) && !isStopped)
+              {
+                m_world.run(); // Run trains yay!
+              }
+
+              // EmergencyStop in Z21 also means power is still on
+              if(!contains(m_world.state.value(), WorldState::PowerOn) && isStopped)
+              {
+                m_world.powerOn(); // Just power on but keep stopped
+              }
+          }
           else
-            m_world.powerOff();
-        });
-      m_kernel->setOnEmergencyStop(
-        [this]()
-        {
-          if(contains(m_world.state.value(), WorldState::Run))
-            m_world.stop();
+          {
+              // Power off regardless of stop state
+              if(contains(m_world.state.value(), WorldState::PowerOn))
+                  m_world.powerOff();
+          }
         });
 
       m_kernel->setDecoderController(this);
@@ -239,13 +258,18 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
           m_kernel->setConfig(z21->config());
         });
 
+      // Avoid to set multiple power states in rapid succession
       if(contains(m_world.state.value(), WorldState::PowerOn))
-        m_kernel->trackPowerOn();
+      {
+        if(contains(m_world.state.value(), WorldState::Run))
+          m_kernel->trackPowerOn(); // Run trains
+        else
+          m_kernel->emergencyStop(); // Emergency stop with power on
+      }
       else
-        m_kernel->trackPowerOff();
-
-      if(!contains(m_world.state.value(), WorldState::Run))
-        m_kernel->emergencyStop();
+      {
+        m_kernel->trackPowerOff(); // Stop by powering off
+      }
 
       Attributes::setEnabled({hostname, port}, false);
     }
@@ -295,27 +319,42 @@ void Z21Interface::worldEvent(WorldState state, WorldEvent event)
 
   if(m_kernel)
   {
+    // Avoid to set multiple power states in rapid succession
     switch(event)
     {
       case WorldEvent::PowerOff:
+      {
         m_kernel->trackPowerOff();
         break;
-
+      }
       case WorldEvent::PowerOn:
-        m_kernel->trackPowerOn();
-        if(!contains(state, WorldState::Run))
-          m_kernel->emergencyStop();
+      {
+        if(contains(state, WorldState::Run))
+          m_kernel->trackPowerOn();
+        else
+          m_kernel->emergencyStop(); // In Z21 E-Stop means power on but not running
         break;
-
+      }
       case WorldEvent::Stop:
-        m_kernel->emergencyStop();
+      {
+        if(contains(state, WorldState::PowerOn))
+        {
+          // In Z21 E-Stop means power is on but trains are not running
+          m_kernel->emergencyStop();
+        }
+        else
+        {
+          // This Stops everything by removing power
+          m_kernel->trackPowerOff();
+        }
         break;
-
+      }
       case WorldEvent::Run:
+      {
         if(contains(state, WorldState::PowerOn))
           m_kernel->trackPowerOn();
         break;
-
+      }
       default:
         break;
     }
