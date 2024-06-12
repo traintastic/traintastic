@@ -34,7 +34,6 @@
 #include <QApplication>
 #include <QKeyEvent>
 #include <QPainter>
-#include <QTimer>
 #include <traintastic/locale/locale.hpp>
 #include "getboardcolorscheme.hpp"
 #include "tilepainter.hpp"
@@ -92,7 +91,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   m_editActions{new QActionGroup(this)}
   , m_tileMoveStarted{false}
   , m_tileResizeStarted{false}
-  , m_timer(nullptr)
+  , m_nxButtonTimerId(0)
 {
   setWindowIcon(Theme::getIconForClassId(object->classId));
   setFocusPolicy(Qt::StrongFocus);
@@ -774,12 +773,8 @@ void BoardWidget::startHoldTimer(const std::shared_ptr<NXButtonRailTile>& nxButt
 
   m_releaseButton1 = nxButton;
 
-  m_timer = new QTimer(this);
-  m_timer->setInterval(nxButtonHoldTime);
-  m_timer->setSingleShot(true);
-
-  connect(m_timer, &QTimer::timeout, this, &BoardWidget::stopTimerAndReleaseButtons);
-  m_timer->start();
+  assert(m_nxButtonTimerId == 0);
+  m_nxButtonTimerId = startTimer(nxButtonHoldTime);
 }
 
 void BoardWidget::startReleaseTimer(const std::shared_ptr<NXButtonRailTile> &firstButton,
@@ -793,17 +788,13 @@ void BoardWidget::startReleaseTimer(const std::shared_ptr<NXButtonRailTile> &fir
   m_releaseButton1 = firstButton;
   m_releaseButton2 = nxButton;
 
-  m_timer = new QTimer(this);
-  m_timer->setInterval(nxButtonReleaseDelay);
-  m_timer->setSingleShot(true);
-
-  connect(m_timer, &QTimer::timeout, this, &BoardWidget::stopTimerAndReleaseButtons);
-  m_timer->start();
+  assert(m_nxButtonTimerId == 0);
+  m_nxButtonTimerId = startTimer(nxButtonReleaseDelay);
 }
 
 void BoardWidget::stopTimerAndReleaseButtons()
 {
-  if(m_timer)
+  if(m_nxButtonTimerId)
   {
     // Instantly release buttons
     if(auto btn = m_releaseButton1.lock())
@@ -818,8 +809,8 @@ void BoardWidget::stopTimerAndReleaseButtons()
     }
     m_releaseButton2.reset();
 
-    delete m_timer;
-    m_timer = nullptr;
+    killTimer(m_nxButtonTimerId);
+    m_nxButtonTimerId = 0;
   }
 }
 
@@ -868,6 +859,17 @@ void BoardWidget::keyPressEvent(QKeyEvent* event)
       QWidget::keyPressEvent(event);
       break;
   }
+}
+
+void BoardWidget::timerEvent(QTimerEvent *e)
+{
+    if(e->timerId() == m_nxButtonTimerId)
+    {
+        stopTimerAndReleaseButtons();
+        return;
+    }
+
+    QWidget::timerEvent(e);
 }
 
 void BoardWidget::rotateTile(bool ccw)
