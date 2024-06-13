@@ -1,7 +1,7 @@
 [
     {
         "term": "board:delete_tile",
-        "definition": "Verwijder tegel",
+        "definition": "Borrar mosaico",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -10,7 +10,7 @@
     },
     {
         "term": "board:move_tile",
-        "definition": "Verplaats tegel",
+        "definition": "Mover mosaico",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -19,7 +19,7 @@
     },
     {
         "term": "board:resize_tile",
-        "definition": "Tegel formaat aanpassen",
+        "definition": "Redimensionar mosaico",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -28,7 +28,7 @@
     },
     {
         "term": "board:resize_to_contents",
-        "definition": "Formaat naar inhoud aanpassen",
+        "definition": "Redimensionar contenidos",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -37,7 +37,7 @@
     },
     {
         "term": "board_settings.color_scheme:dark",
-        "definition": "Donker",
+        "definition": "Oscuro",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -46,7 +46,7 @@
     },
     {
         "term": "board_settings.color_scheme:light",
-        "definition": "Licht",
+        "definition": "Claro",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -55,7 +55,7 @@
     },
     {
         "term": "board_tile.misc.push_button:color",
-        "definition": "Kleur",
+        "definition": "Color",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -64,7 +64,7 @@
     },
     {
         "term": "board_tile.rail.block:assign_train",
-        "definition": "Trein toewijzen",
+        "definition": "Asignar tren",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -73,7 +73,7 @@
     },
     {
         "term": "board_tile.rail.block:flip_train",
-        "definition": "Flip trein",
+        "definition": "Cambiar de tren",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -82,7 +82,7 @@
     },
     {
         "term": "board_tile.rail.block:input_map",
-        "definition": "Sensoren",
+        "definition": "Sensores",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -91,7 +91,7 @@
     },
     {
         "term": "board_tile.rail.block:remove_train",
-        "definition": "Verwijder trein",
+        "definition": "Quitar tren",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -100,7 +100,7 @@
     },
     {
         "term": "board_tile.rail.direction_control:state",
-        "definition": "Stand",
+        "definition": "Estado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -109,7 +109,7 @@
     },
     {
         "term": "board_tile.rail.direction_control:use_a_to_b",
-        "definition": "Gebruik: A \u2192 B",
+        "definition": "Usar: A \u2192 B",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -118,7 +118,7 @@
     },
     {
         "term": "board_tile.rail.direction_control:use_b_to_a",
-        "definition": "Gebruik: A \u2190 B",
+        "definition": "Usar A \u2190 B",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -127,7 +127,7 @@
     },
     {
         "term": "board_tile.rail.direction_control:use_both",
-        "definition": "Gebruik: A \u21c4 B",
+        "definition": "Usar: A \u21c4 B",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -136,7 +136,7 @@
     },
     {
         "term": "board_tile.rail.direction_control:use_none",
-        "definition": "Gebruik: A \ud83d\udec7 B",
+        "definition": "Usar: A \ud83d\udec7 B\n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -145,7 +145,7 @@
     },
     {
         "term": "board_tile.rail.link:link",
-        "definition": "Link",
+        "definition": "Unir",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -154,7 +154,7 @@
     },
     {
         "term": "board_tile.rail.sensor:input",
-        "definition": "Ingang",
+        "definition": "Entrada",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -163,7 +163,7 @@
     },
     {
         "term": "board_tile.rail.sensor:invert",
-        "definition": "Omdraaien",
+        "definition": "Invertir",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -172,7 +172,7 @@
     },
     {
         "term": "board_tile.rail.sensor:type",
-        "definition": "Type",
+        "definition": "Tipo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -181,7 +181,7 @@
     },
     {
         "term": "board_tile:output_map",
-        "definition": "Uitgangen",
+        "definition": "Salidas",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -190,7 +190,7 @@
     },
     {
         "term": "category:cargo",
-        "definition": "Cargo",
+        "definition": "Carga",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -199,7 +199,7 @@
     },
     {
         "term": "category:developer",
-        "definition": "Ontwikkelaar",
+        "definition": "Desarrollador",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -208,7 +208,7 @@
     },
     {
         "term": "category:general",
-        "definition": "Algemeen",
+        "definition": "General",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -217,7 +217,7 @@
     },
     {
         "term": "category:info",
-        "definition": "Informatie",
+        "definition": "Informaci\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -226,7 +226,7 @@
     },
     {
         "term": "category:log",
-        "definition": "Log",
+        "definition": "Registro",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -235,7 +235,7 @@
     },
     {
         "term": "category:network",
-        "definition": "Netwerk",
+        "definition": "Red",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -244,7 +244,7 @@
     },
     {
         "term": "class_id:board_tile.misc.push_button",
-        "definition": "Drukknop",
+        "definition": "Pulsar bot\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -253,7 +253,7 @@
     },
     {
         "term": "class_id:board_tile.rail.block",
-        "definition": "Blok",
+        "definition": "Cant\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -262,7 +262,7 @@
     },
     {
         "term": "class_id:board_tile.rail.bridge_45_left",
-        "definition": "Brug 45\u00b0 (links)",
+        "definition": "Puente 45\u00ba (izda.)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -271,7 +271,7 @@
     },
     {
         "term": "class_id:board_tile.rail.bridge_45_right",
-        "definition": "Brug 45\u00b0 (rechts)",
+        "definition": "Puente 45\u00ba (dcha.)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -280,7 +280,7 @@
     },
     {
         "term": "class_id:board_tile.rail.bridge_90",
-        "definition": "Brug 90\u00b0",
+        "definition": "Puente 90\u00ba",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -289,7 +289,7 @@
     },
     {
         "term": "class_id:board_tile.rail.buffer_stop",
-        "definition": "Stootjuk",
+        "definition": "Tope",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -298,7 +298,7 @@
     },
     {
         "term": "class_id:board_tile.rail.cross_45",
-        "definition": "Kruising 45\u00b0",
+        "definition": "Cruzamiento a 45\u00ba",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -307,7 +307,7 @@
     },
     {
         "term": "class_id:board_tile.rail.cross_90",
-        "definition": "Kruising 90\u00b0",
+        "definition": "Cruzamiento a 90\u00ba",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -316,7 +316,7 @@
     },
     {
         "term": "class_id:board_tile.rail.curve_45",
-        "definition": "Bocht 45\u00b0",
+        "definition": "V\u00eda curva 45\u00ba",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -325,7 +325,7 @@
     },
     {
         "term": "class_id:board_tile.rail.curve_90",
-        "definition": "Bocht 90\u00b0",
+        "definition": "V\u00eda curva 90\u00ba",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -334,7 +334,7 @@
     },
     {
         "term": "class_id:board_tile.rail.decoupler",
-        "definition": "Ontkoppelaar",
+        "definition": "Desacoplador",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -343,7 +343,7 @@
     },
     {
         "term": "class_id:board_tile.rail.direction_control",
-        "definition": "Richting besturing",
+        "definition": "Control de direcci\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -352,7 +352,7 @@
     },
     {
         "term": "class_id:board_tile.rail.link",
-        "definition": "Link",
+        "definition": "Uni\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -361,7 +361,7 @@
     },
     {
         "term": "class_id:board_tile.rail.one_way",
-        "definition": "Eenrichting",
+        "definition": "Sentido \u00fanico",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -379,7 +379,7 @@
     },
     {
         "term": "class_id:board_tile.rail.signal_2_aspect",
-        "definition": "Sein (2 standen)",
+        "definition": "Se\u00f1al (2 posiciones)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -388,7 +388,7 @@
     },
     {
         "term": "class_id:board_tile.rail.signal_3_aspect",
-        "definition": "Sein (3 standen)",
+        "definition": "Se\u00f1al (3 posiciones)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -397,7 +397,7 @@
     },
     {
         "term": "class_id:board_tile.rail.straight",
-        "definition": "Recht",
+        "definition": "V\u00eda recta",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -406,7 +406,7 @@
     },
     {
         "term": "class_id:board_tile.rail.tunnel",
-        "definition": "Tunnel",
+        "definition": "T\u00fanel",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -415,7 +415,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_3way",
-        "definition": "Driewegwissel",
+        "definition": "Desv\u00edo triple",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -424,7 +424,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_doubleslip",
-        "definition": "Engelse wissel",
+        "definition": "Cruce doble",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -433,7 +433,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_45",
-        "definition": "Wissel links 45\u00b0",
+        "definition": "Desv\u00edo izda. 45\u00ba",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -442,7 +442,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_90",
-        "definition": "Wissel links 90\u00b0",
+        "definition": "Desv\u00edo izda. 90\u00ba",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -451,7 +451,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_curved",
-        "definition": "Wissel links gebogen",
+        "definition": "Desv\u00edo curvo a izda.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -460,7 +460,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_45",
-        "definition": "Wissel rechts 45\u00b0",
+        "definition": "Desv\u00edo recto 45\u00ba",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -469,7 +469,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_90",
-        "definition": "Wissel rechts 90\u00b0",
+        "definition": "Desv\u00edo recto 90\u00ba",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -478,7 +478,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_curved",
-        "definition": "Wissel rechts gebogen",
+        "definition": "Desv\u00edo curvo a dcha.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -487,7 +487,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_singleslip",
-        "definition": "Half engelse wissel",
+        "definition": "Cruce sencillo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -496,7 +496,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_wye",
-        "definition": "Y-wissel",
+        "definition": "Cambio en Y",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -505,7 +505,7 @@
     },
     {
         "term": "class_id:vehicle.rail.freight_wagon",
-        "definition": "Goederenwagon",
+        "definition": "Vag\u00f3n de carga",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -514,7 +514,7 @@
     },
     {
         "term": "class_id:vehicle.rail.locomotive",
-        "definition": "Locomotief",
+        "definition": "Locomotora",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -523,7 +523,7 @@
     },
     {
         "term": "class_id:vehicle.rail.multiple_unit",
-        "definition": "Meervoudige eenheid",
+        "definition": "Composici\u00f3n m\u00faltiple",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -532,7 +532,7 @@
     },
     {
         "term": "class_id:vehicle.rail.tank_wagon",
-        "definition": "Ketelwagen",
+        "definition": "Vag\u00f3n tanque",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -541,7 +541,7 @@
     },
     {
         "term": "clock:day",
-        "definition": "Dag",
+        "definition": "D\u00eda",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -550,7 +550,7 @@
     },
     {
         "term": "clock:debug_log",
-        "definition": "Debug log",
+        "definition": "Registro de \nerrores",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -559,7 +559,7 @@
     },
     {
         "term": "clock:freeze",
-        "definition": "Bevriezen",
+        "definition": "Parar reloj",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -568,7 +568,7 @@
     },
     {
         "term": "clock:hour",
-        "definition": "Uur",
+        "definition": "Hora",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -577,7 +577,7 @@
     },
     {
         "term": "clock:minute",
-        "definition": "Minuut",
+        "definition": "Minuto",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -586,7 +586,7 @@
     },
     {
         "term": "clock:month",
-        "definition": "Maand",
+        "definition": "Mes",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -595,7 +595,7 @@
     },
     {
         "term": "clock:multiplier",
-        "definition": "Vermenigvuldiger",
+        "definition": "Multiplicador",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -604,7 +604,7 @@
     },
     {
         "term": "clock:year",
-        "definition": "Jaar",
+        "definition": "A\u00f1o",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -613,7 +613,7 @@
     },
     {
         "term": "color:aqua",
-        "definition": "Aqua",
+        "definition": "Aguamarina",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -622,7 +622,7 @@
     },
     {
         "term": "color:black",
-        "definition": "Zwart",
+        "definition": "Negro",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -631,7 +631,7 @@
     },
     {
         "term": "color:blue",
-        "definition": "Blauw",
+        "definition": "Azul",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -640,7 +640,7 @@
     },
     {
         "term": "color:fuchsia",
-        "definition": "Fuchsia",
+        "definition": "Fucsia",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -649,7 +649,7 @@
     },
     {
         "term": "color:gray",
-        "definition": "Grijs",
+        "definition": "Gris",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -658,7 +658,7 @@
     },
     {
         "term": "color:green",
-        "definition": "Groen",
+        "definition": "Verde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -667,7 +667,7 @@
     },
     {
         "term": "color:lime",
-        "definition": "Limoen",
+        "definition": "Lima",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -676,7 +676,7 @@
     },
     {
         "term": "color:maroon",
-        "definition": "Kastanjebruine",
+        "definition": "Bermell\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -685,7 +685,7 @@
     },
     {
         "term": "color:navy",
-        "definition": "Marine blauw",
+        "definition": "Azul marino",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -694,7 +694,7 @@
     },
     {
         "term": "color:olive",
-        "definition": "Olijf",
+        "definition": "Verde oliva",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -703,7 +703,7 @@
     },
     {
         "term": "color:purple",
-        "definition": "Paars",
+        "definition": "P\u00farpura",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -712,7 +712,7 @@
     },
     {
         "term": "color:red",
-        "definition": "Rood",
+        "definition": "Rojo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -721,7 +721,7 @@
     },
     {
         "term": "color:silver",
-        "definition": "Zilver",
+        "definition": "Plata",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -730,7 +730,7 @@
     },
     {
         "term": "color:teal",
-        "definition": "Teal",
+        "definition": "Verde azulado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -739,7 +739,7 @@
     },
     {
         "term": "color:white",
-        "definition": "Wit",
+        "definition": "Blanco",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -748,7 +748,7 @@
     },
     {
         "term": "color:yellow",
-        "definition": "Geel",
+        "definition": "Amarillo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -757,7 +757,7 @@
     },
     {
         "term": "dccplusplus_channel:dcc_accessory",
-        "definition": "DCC accesoire",
+        "definition": "Accesorio DCC",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -766,7 +766,7 @@
     },
     {
         "term": "dccplusplus_channel:output",
-        "definition": "Uitgang",
+        "definition": "Salida",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -775,7 +775,7 @@
     },
     {
         "term": "dccplusplus_channel:turnout",
-        "definition": "Wissel",
+        "definition": "Desv\u00edo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -784,7 +784,7 @@
     },
     {
         "term": "dccplusplus_settings:startup_delay",
-        "definition": "Opstart vertraging",
+        "definition": "Demora de arranque",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -793,7 +793,7 @@
     },
     {
         "term": "dccplusplus_settings:use_ex",
-        "definition": "Gebruik DCC++EX commando's",
+        "definition": "Use comandos DCC++EX",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -802,7 +802,7 @@
     },
     {
         "term": "decoder:functions",
-        "definition": "Functies",
+        "definition": "Funciones",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -811,7 +811,7 @@
     },
     {
         "term": "decoder:long_address",
-        "definition": "Lang DCC adres",
+        "definition": "Direcciones largas DCC",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -820,7 +820,7 @@
     },
     {
         "term": "decoder:protocol",
-        "definition": "Protocol",
+        "definition": "Protocolo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -829,7 +829,7 @@
     },
     {
         "term": "decoder_function:function",
-        "definition": "Functie",
+        "definition": "Funci\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -838,7 +838,7 @@
     },
     {
         "term": "decoder_function:number",
-        "definition": "Nummer",
+        "definition": "N\u00famero",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -847,7 +847,7 @@
     },
     {
         "term": "decoder_function:type",
-        "definition": "Type",
+        "definition": "Tipo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -856,7 +856,7 @@
     },
     {
         "term": "decoder_function_function:generic",
-        "definition": "Algemeen",
+        "definition": "Gen\u00e9rico",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -865,7 +865,7 @@
     },
     {
         "term": "decoder_function_function:light",
-        "definition": "Licht",
+        "definition": "Luz",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -874,7 +874,7 @@
     },
     {
         "term": "decoder_function_function:mute",
-        "definition": "Mute",
+        "definition": "Silencio",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -883,7 +883,7 @@
     },
     {
         "term": "decoder_function_function:smoke",
-        "definition": "Rook",
+        "definition": "Humo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -892,7 +892,7 @@
     },
     {
         "term": "decoder_function_function:sound",
-        "definition": "Geluid",
+        "definition": "Sonido",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -901,7 +901,7 @@
     },
     {
         "term": "decoder_function_type:always_off",
-        "definition": "Altijd uit",
+        "definition": "Siempre apagado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -910,7 +910,7 @@
     },
     {
         "term": "decoder_function_type:always_on",
-        "definition": "Altijd aan",
+        "definition": "Siempre encendido",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -919,7 +919,7 @@
     },
     {
         "term": "decoder_function_type:hold",
-        "definition": "Indrukken en vasthouden",
+        "definition": "Mantenga pulsado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -928,7 +928,7 @@
     },
     {
         "term": "decoder_function_type:momentary",
-        "definition": "Druk",
+        "definition": "Moment\u00e1neo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -937,7 +937,7 @@
     },
     {
         "term": "decoder_function_type:on_off",
-        "definition": "Aan\/Uit",
+        "definition": "On\/Off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -946,7 +946,7 @@
     },
     {
         "term": "decoder_protocol:auto",
-        "definition": "Automatische",
+        "definition": "Auto",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -955,7 +955,7 @@
     },
     {
         "term": "decoder_protocol:custom",
-        "definition": "Aangepast",
+        "definition": "Personalizado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -964,7 +964,7 @@
     },
     {
         "term": "decoupler_state:activated",
-        "definition": "Geactiveerd",
+        "definition": "Activado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -973,7 +973,7 @@
     },
     {
         "term": "decoupler_state:deactivated",
-        "definition": "Gedeactiveerd",
+        "definition": "Desactivado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -982,7 +982,7 @@
     },
     {
         "term": "direction:forward",
-        "definition": "Vooruit",
+        "definition": "Marcha adelante",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -991,7 +991,7 @@
     },
     {
         "term": "direction:reverse",
-        "definition": "Achteruit",
+        "definition": "Marcha atr\u00e1s",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1000,7 +1000,7 @@
     },
     {
         "term": "ecos_channel:ecos_detector",
-        "definition": "ECoS Detector",
+        "definition": "Detector ECoS",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1009,7 +1009,7 @@
     },
     {
         "term": "hardware:address",
-        "definition": "Adres",
+        "definition": "Direcci\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1018,7 +1018,7 @@
     },
     {
         "term": "hardware:channel",
-        "definition": "Kanaal",
+        "definition": "Canal",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1027,7 +1027,7 @@
     },
     {
         "term": "hardware:command_station",
-        "definition": "Centrale",
+        "definition": "Estaci\u00f3n Central",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1036,7 +1036,7 @@
     },
     {
         "term": "hardware:debug_log_input",
-        "definition": "Log ingang veranderingen",
+        "definition": "Registrarar cambios de entrada",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1045,7 +1045,7 @@
     },
     {
         "term": "hardware:debug_log_output",
-        "definition": "Log uitgang veranderingen",
+        "definition": "Registrar cambos de salida",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1054,7 +1054,7 @@
     },
     {
         "term": "hardware:debug_log_rx_tx",
-        "definition": "Log alle communicatie",
+        "definition": "Registrar toda comunicaci\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1063,7 +1063,7 @@
     },
     {
         "term": "hardware:decoders",
-        "definition": "Decoders",
+        "definition": "Decodificadores",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1072,7 +1072,7 @@
     },
     {
         "term": "hardware:identifications",
-        "definition": "Identificatie",
+        "definition": "Identificaciones",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1081,7 +1081,7 @@
     },
     {
         "term": "hardware:input_monitor",
-        "definition": "Ingang monitor",
+        "definition": "Monitor de entrada",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1090,7 +1090,7 @@
     },
     {
         "term": "hardware:inputs",
-        "definition": "Ingangen",
+        "definition": "Entradas",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1099,7 +1099,7 @@
     },
     {
         "term": "hardware:interface",
-        "definition": "Interface",
+        "definition": "Interfaz",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1108,7 +1108,7 @@
     },
     {
         "term": "hardware:output_keyboard",
-        "definition": "Uitgang toetsenbord",
+        "definition": "Teclado de salida",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1117,7 +1117,7 @@
     },
     {
         "term": "hardware:outputs",
-        "definition": "Uitgangen",
+        "definition": "Salidas",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1126,7 +1126,7 @@
     },
     {
         "term": "hardware:speed_steps",
-        "definition": "Snelheid stappen",
+        "definition": "Pasos de velocidad",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1135,7 +1135,7 @@
     },
     {
         "term": "hardware:throttles",
-        "definition": "Regelaars",
+        "definition": "Aceleradores",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1144,7 +1144,7 @@
     },
     {
         "term": "hsi88:s88_left",
-        "definition": "S88 links",
+        "definition": "S88 izda.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1153,7 +1153,7 @@
     },
     {
         "term": "hsi88:s88_middle",
-        "definition": "S88 midden",
+        "definition": "S88 media",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1162,7 +1162,7 @@
     },
     {
         "term": "hsi88:s88_right",
-        "definition": "S88 rechts",
+        "definition": "S88 dcha.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1171,7 +1171,7 @@
     },
     {
         "term": "identification:opc_multi_sense_direction",
-        "definition": "OPC_MULTI_SENSE richting",
+        "definition": "Direcci\u00f3n OPC_MULTI_SENSE",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1189,7 +1189,7 @@
     },
     {
         "term": "input_map_item.block:input",
-        "definition": "Ingang",
+        "definition": "Entrada",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1198,7 +1198,7 @@
     },
     {
         "term": "input_map_item.block:invert",
-        "definition": "Omdraaien",
+        "definition": "Invertir",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1207,7 +1207,7 @@
     },
     {
         "term": "input_map_item.block:type",
-        "definition": "Type",
+        "definition": "Tipo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1216,7 +1216,7 @@
     },
     {
         "term": "interface.ecos:ecos_detector",
-        "definition": "ECoS detector",
+        "definition": "Detector ECoS",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1225,7 +1225,7 @@
     },
     {
         "term": "interface.hsi88:modules_left",
-        "definition": "Modules links",
+        "definition": "M\u00f3dulos izda.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1234,7 +1234,7 @@
     },
     {
         "term": "interface.hsi88:modules_middle",
-        "definition": "Modulles midden",
+        "definition": "M\u00f3dulos centro",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1243,7 +1243,7 @@
     },
     {
         "term": "interface.hsi88:modules_right",
-        "definition": "Modules rechts",
+        "definition": "M\u00f3dulos derecha",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1252,7 +1252,7 @@
     },
     {
         "term": "interface.loconet:interface",
-        "definition": "Interface",
+        "definition": "Interfaz",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1261,7 +1261,7 @@
     },
     {
         "term": "interface.xpressnet:interface",
-        "definition": "Interface",
+        "definition": "Interfaz",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1270,7 +1270,7 @@
     },
     {
         "term": "interface.xpressnet:s88_module_count",
-        "definition": "Aantal S88 modules",
+        "definition": "S88 cuenta m\u00f3dulo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1279,7 +1279,7 @@
     },
     {
         "term": "interface.xpressnet:s88_start_address",
-        "definition": "S88 start adress",
+        "definition": "S88 direcci\u00f3n de arranque",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1288,7 +1288,7 @@
     },
     {
         "term": "interface.z21:firmware_version",
-        "definition": "Firmware versie",
+        "definition": "Versi\u00f3n de firmware",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1297,7 +1297,7 @@
     },
     {
         "term": "interface.z21:hardware_type",
-        "definition": "Hardware type",
+        "definition": "Tipo de hardware",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1306,7 +1306,7 @@
     },
     {
         "term": "interface.z21:serial_number",
-        "definition": "Serienummer",
+        "definition": "N\u00famero de serie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1324,7 +1324,7 @@
     },
     {
         "term": "interface:status",
-        "definition": "Status",
+        "definition": "Condici\u00f3n, estado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1333,7 +1333,7 @@
     },
     {
         "term": "interface:type",
-        "definition": "Type",
+        "definition": "Tipo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1342,7 +1342,7 @@
     },
     {
         "term": "interface_state:error",
-        "definition": "Fout",
+        "definition": "Error",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1351,7 +1351,7 @@
     },
     {
         "term": "interface_state:initializing",
-        "definition": "Initialiseren",
+        "definition": "Inicializando",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1378,7 +1378,7 @@
     },
     {
         "term": "ip:hostname",
-        "definition": "Hostnaam",
+        "definition": "Nombre del servidor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1387,7 +1387,7 @@
     },
     {
         "term": "ip:port",
-        "definition": "Poort",
+        "definition": "Puerto",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1396,7 +1396,7 @@
     },
     {
         "term": "language:de-de",
-        "definition": "Duits (Duitsland)",
+        "definition": "Alem\u00e1n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1405,7 +1405,7 @@
     },
     {
         "term": "language:en-us",
-        "definition": "Engels (VS)",
+        "definition": "Ingl\u00e9s",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1414,7 +1414,7 @@
     },
     {
         "term": "language:it-it",
-        "definition": "Italiaans (Itali\u00eb)",
+        "definition": "Italiano",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1423,7 +1423,7 @@
     },
     {
         "term": "language:nl-nl",
-        "definition": "Nederlands (Nederland)",
+        "definition": "Holand\u00e9s",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1432,7 +1432,7 @@
     },
     {
         "term": "list.train_vehicle:reverse",
-        "definition": "Omgekeerd",
+        "definition": "Marcha atr\u00e1s",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1441,7 +1441,7 @@
     },
     {
         "term": "list:add",
-        "definition": "Toevoegen",
+        "definition": "A\u00f1adir",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1450,7 +1450,7 @@
     },
     {
         "term": "list:create",
-        "definition": "Maak",
+        "definition": "Crear",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1459,7 +1459,7 @@
     },
     {
         "term": "list:delete",
-        "definition": "Verwijder",
+        "definition": "Borrar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1468,7 +1468,7 @@
     },
     {
         "term": "list:edit",
-        "definition": "Bewerken",
+        "definition": "Editar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1477,7 +1477,7 @@
     },
     {
         "term": "list:move_down",
-        "definition": "Omlaag verplaatsen",
+        "definition": "Mover abajo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1486,7 +1486,7 @@
     },
     {
         "term": "list:move_up",
-        "definition": "Omhoog verplaatsen",
+        "definition": "Mover arriba",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1495,7 +1495,7 @@
     },
     {
         "term": "list:remove",
-        "definition": "Verwijderen",
+        "definition": "Quitar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1504,7 +1504,7 @@
     },
     {
         "term": "lncv_programmer:description",
-        "definition": "Beschrijving",
+        "definition": "Descripci\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1513,7 +1513,7 @@
     },
     {
         "term": "lncv_programmer:lncv_programmer",
-        "definition": "LNCV programmeren",
+        "definition": "Programador LNCV",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1522,7 +1522,7 @@
     },
     {
         "term": "lncv_programmer:module",
-        "definition": "Module",
+        "definition": "M\u00f3dulo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1531,7 +1531,7 @@
     },
     {
         "term": "lncv_programmer:other_module",
-        "definition": "Andere module",
+        "definition": "Otro m\u00f3dulo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1540,7 +1540,7 @@
     },
     {
         "term": "lncv_programmer:read",
-        "definition": "Lezen",
+        "definition": "Leer",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1549,7 +1549,7 @@
     },
     {
         "term": "lncv_programmer:reading_lncv_x",
-        "definition": "LNCV %1 lezen",
+        "definition": "Leyendo LNCV %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1558,7 +1558,7 @@
     },
     {
         "term": "lncv_programmer:reading_lncv_x_failed",
-        "definition": "LNCV %1 lezen mislukt",
+        "definition": "Error leyendo LNCV %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1567,7 +1567,7 @@
     },
     {
         "term": "lncv_programmer:sending_start",
-        "definition": "Start verzenden",
+        "definition": "Enviar arranque",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1576,7 +1576,7 @@
     },
     {
         "term": "lncv_programmer:start",
-        "definition": "Start",
+        "definition": "Arranque",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1594,7 +1594,7 @@
     },
     {
         "term": "lncv_programmer:use_broadcast_address",
-        "definition": "Gebruik adres zoeken",
+        "definition": "Usar direcci\u00f3n emisi\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1603,7 +1603,7 @@
     },
     {
         "term": "lncv_programmer:value",
-        "definition": "Waarde",
+        "definition": "Valor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1612,7 +1612,7 @@
     },
     {
         "term": "lncv_programmer:waiting_for_module_to_respond",
-        "definition": "Wachten op antwoord van de module",
+        "definition": "Esperando respuesta del m\u00f3dulo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1621,7 +1621,7 @@
     },
     {
         "term": "lncv_programmer:write",
-        "definition": "Schrijf",
+        "definition": "Escribir",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1630,7 +1630,7 @@
     },
     {
         "term": "lncv_programmer:writing_lncv_x",
-        "definition": "LNCV %1 schrijven",
+        "definition": "Escribiendo LNCV %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1639,7 +1639,7 @@
     },
     {
         "term": "loconet_command_station:custom",
-        "definition": "Anders",
+        "definition": "Personalizado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1648,7 +1648,7 @@
     },
     {
         "term": "loconet_f9_f28:imm_packet",
-        "definition": "Direct (OPC_IMM_PACKET)",
+        "definition": "Directo (OPC_IMM_PACKET)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1657,7 +1657,7 @@
     },
     {
         "term": "loconet_f9_f28:uhlenbrock_extended",
-        "definition": "Uhlenbrock uitbereiding (OPC_A3, OPC_D4)",
+        "definition": "Uhlenbrock extendido (OPC_A3, OPC_D4)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1666,7 +1666,7 @@
     },
     {
         "term": "loconet_fastclock:master",
-        "definition": "Master (Traintatic stuurt de klok)",
+        "definition": "Master (Traintastic contola el reloj)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1675,7 +1675,7 @@
     },
     {
         "term": "loconet_fastclock:off",
-        "definition": "Uit",
+        "definition": "Off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1684,7 +1684,7 @@
     },
     {
         "term": "loconet_interface_type:serial",
-        "definition": "Serieel",
+        "definition": "Serie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1693,7 +1693,7 @@
     },
     {
         "term": "loconet_interface_type:tcp_binary",
-        "definition": "TCP binear",
+        "definition": "TCP binario",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1702,7 +1702,7 @@
     },
     {
         "term": "loconet_serial_interface:custom",
-        "definition": "Anders",
+        "definition": "Personalizado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1711,7 +1711,7 @@
     },
     {
         "term": "loconet_settings:command_station",
-        "definition": "Centrale",
+        "definition": "Estaci\u00f3n Central",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1720,7 +1720,7 @@
     },
     {
         "term": "loconet_settings:echo_timeout",
-        "definition": "Echo time-out",
+        "definition": "Eco caducado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1729,7 +1729,7 @@
     },
     {
         "term": "loconet_settings:fast_clock",
-        "definition": "Fast clock",
+        "definition": "Reloj r\u00e1pido",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1738,7 +1738,7 @@
     },
     {
         "term": "loconet_settings:fast_clock_sync_enabled",
-        "definition": "Snelle kloksynchronisatie ingeschakeld",
+        "definition": "Sincronizaci\u00f3n activada del reloj r\u00e1pido",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1747,7 +1747,7 @@
     },
     {
         "term": "loconet_settings:fast_clock_sync_interval",
-        "definition": "Snelle kloksynchronisatie-interval",
+        "definition": "Intervalo de sincronizaci\u00f3n del reloj r\u00e1pido",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1756,7 +1756,7 @@
     },
     {
         "term": "loconet_settings:locomotive_slots",
-        "definition": "Locomotief slots",
+        "definition": "Posici\u00f3n de la locomotora",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1765,7 +1765,7 @@
     },
     {
         "term": "loconet_settings:pcap_output",
-        "definition": "PCAP-uitgang",
+        "definition": "Salida de PCAP",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1774,7 +1774,7 @@
     },
     {
         "term": "loconet_settings:response_timeout",
-        "definition": "Antwoord time-out",
+        "definition": "Respuesta caducada",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1783,7 +1783,7 @@
     },
     {
         "term": "lua.script:disabled",
-        "definition": "Uitgeschakeld",
+        "definition": "Desactivado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1792,7 +1792,7 @@
     },
     {
         "term": "lua.script:start",
-        "definition": "Start",
+        "definition": "Arranque",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1801,7 +1801,7 @@
     },
     {
         "term": "lua.script:stop",
-        "definition": "Stop",
+        "definition": "Parada",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1810,7 +1810,7 @@
     },
     {
         "term": "lua.script_list:start_all",
-        "definition": "Start alle",
+        "definition": "Arrancar todo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1819,7 +1819,7 @@
     },
     {
         "term": "lua.script_list:stop_all",
-        "definition": "Stop alle",
+        "definition": "Parar todo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1828,7 +1828,7 @@
     },
     {
         "term": "lua_script:state",
-        "definition": "Status",
+        "definition": "Estado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1837,7 +1837,7 @@
     },
     {
         "term": "lua_script_state:disabled",
-        "definition": "Uitgeschakeld",
+        "definition": "Desactivado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1846,7 +1846,7 @@
     },
     {
         "term": "lua_script_state:error",
-        "definition": "Fout",
+        "definition": "Error",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1855,7 +1855,7 @@
     },
     {
         "term": "lua_script_state:running",
-        "definition": "Actief",
+        "definition": "En marcha",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1864,7 +1864,7 @@
     },
     {
         "term": "lua_script_state:stopped",
-        "definition": "Gestopt",
+        "definition": "Parado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1873,7 +1873,7 @@
     },
     {
         "term": "message:C1001",
-        "definition": "Wereld laden mislukt (%1)",
+        "definition": "Error cargando mundo (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1882,7 +1882,7 @@
     },
     {
         "term": "message:C1002",
-        "definition": "Aanmaken client mislukt (%1)",
+        "definition": "Error creando conexi\u00f3n (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1891,7 +1891,7 @@
     },
     {
         "term": "message:C1003",
-        "definition": "Kan niet schrijven naar instellingen bestand (%1)",
+        "definition": "No graba el fichero de ajustes (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1900,7 +1900,7 @@
     },
     {
         "term": "message:C1004",
-        "definition": "Wereld laden is mislukt (%1) (%2)",
+        "definition": "Error leyendo mundo (%1) (%2)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1909,7 +1909,7 @@
     },
     {
         "term": "message:C1005",
-        "definition": "Wereld opslaan is mislukt (%1)",
+        "definition": "Error guardando mundo (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1918,7 +1918,7 @@
     },
     {
         "term": "message:C1006",
-        "definition": "Aanmaken wereld reserve kopie is mislukt(%1)",
+        "definition": "Error creando respaldo de mundo (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1927,7 +1927,7 @@
     },
     {
         "term": "message:C1007",
-        "definition": "Aanmaken wereld reserve kopie map is mislukt (%1)",
+        "definition": "Error creando directorio del respaldo de mundo (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1936,7 +1936,7 @@
     },
     {
         "term": "message:C1008",
-        "definition": "Aanmaken reserve kopie map is mislukt (%1)",
+        "definition": "Error creando respaldo de directorio (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1945,7 +1945,7 @@
     },
     {
         "term": "message:C1009",
-        "definition": "Het maken van een back-up van instellingen is mislukt (%1)",
+        "definition": "Error creando respaldo de ajustes (%1)creando",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1954,7 +1954,7 @@
     },
     {
         "term": "message:C1010",
-        "definition": "Wereld exporteren mislukt (%1)",
+        "definition": "Error exportando mundo (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1963,7 +1963,7 @@
     },
     {
         "term": "message:C1011",
-        "definition": "Wereld importeren mislukt (%1)",
+        "definition": "Error importando mundo (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1972,7 +1972,7 @@
     },
     {
         "term": "message:C1012",
-        "definition": "Klasse '%1' is onbekend, kan object '%2' niet maken",
+        "definition": "Clase '%1' desconocida, no puede crear objeto '%2'",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1981,7 +1981,7 @@
     },
     {
         "term": "message:C1013",
-        "definition": "Wereld kan niet geladen worden, de wereld is opgeslagen met een nieuwere versie, minimaal %1 vereist",
+        "definition": "No puede cargar un mundo guardado con versi\u00f3n m\u00e1s reciente, requiere al menos %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1990,7 +1990,7 @@
     },
     {
         "term": "message:C2001",
-        "definition": "Adres is al in gebruikt door #%1",
+        "definition": "Direcci\u00f3n en uso en #%1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1999,7 +1999,7 @@
     },
     {
         "term": "message:C2002",
-        "definition": "DCC++ ondersteund alleen het DCC protocol",
+        "definition": "DCC++ s\u00f3lo soporta el protocolo DCC",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2008,7 +2008,7 @@
     },
     {
         "term": "message:C2003",
-        "definition": "DCC++ ondersteund geen lange adressen onder de 128",
+        "definition": "DCC++ no soporta direcciones DCC largas menores de 128",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2017,7 +2017,7 @@
     },
     {
         "term": "message:C2004",
-        "definition": "Kan geen gratis slot krijgen",
+        "definition": "No puede conseguir una posici\u00f3n libre",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2026,7 +2026,7 @@
     },
     {
         "term": "message:D1001",
-        "definition": "Hervatten %1 (vermenigvuldiger: %2)",
+        "definition": "Reanudar %1 (multiplicador: %2)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2035,7 +2035,7 @@
     },
     {
         "term": "message:D1002",
-        "definition": "Tik %1 (fout: %2us)",
+        "definition": "Marcar %1 (error: %2us)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2044,7 +2044,7 @@
     },
     {
         "term": "message:D1003",
-        "definition": "Bevries %1",
+        "definition": "Bloquear %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2071,7 +2071,7 @@
     },
     {
         "term": "message:D2003",
-        "definition": "Onbekende xHeader 0x%1",
+        "definition": "xHeader desconocido 0x%1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2098,7 +2098,7 @@
     },
     {
         "term": "message:D2006",
-        "definition": "Onbekend bericht: %1",
+        "definition": "Mensaje desconocido: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2107,7 +2107,7 @@
     },
     {
         "term": "message:D2007",
-        "definition": "Ingang %1 = %2",
+        "definition": "Entrada %1 = %2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2116,7 +2116,7 @@
     },
     {
         "term": "message:D2008",
-        "definition": "Uitgang %1 = %1",
+        "definition": "Salida %1 = %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2125,7 +2125,7 @@
     },
     {
         "term": "message:D2009",
-        "definition": "Slot %1 = %2",
+        "definition": "Posici\u00f3n %1 = %2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2134,7 +2134,7 @@
     },
     {
         "term": "message:D2010",
-        "definition": "Slot %1 = Vrij",
+        "definition": "Posici\u00f3n %1 = libre",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2143,7 +2143,7 @@
     },
     {
         "term": "message:E1001",
-        "definition": "Wereld UUID ongeldig: %1",
+        "definition": "Mundo inv\u00e1lido UUID: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2152,7 +2152,7 @@
     },
     {
         "term": "message:E1002",
-        "definition": "Wereld %1 bestaat niet",
+        "definition": "Mundo %1 no existe",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2161,7 +2161,7 @@
     },
     {
         "term": "message:E1003",
-        "definition": "UDP ontvangst fout (%1)",
+        "definition": "Error de recepci\u00f3n UDP (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2170,7 +2170,7 @@
     },
     {
         "term": "message:E1004",
-        "definition": "TCP accepteert fout (%1)",
+        "definition": "Error de recepci\u00f3n TCP",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2179,7 +2179,7 @@
     },
     {
         "term": "message:E1005",
-        "definition": "Socket shutdown mislukt (%1)",
+        "definition": "Error de apagado de conexi\u00f3n (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2188,7 +2188,7 @@
     },
     {
         "term": "message:E1006",
-        "definition": "Socket schrijven mislukt (%1)",
+        "definition": "Error de escritura de conexi\u00f3n (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2197,7 +2197,7 @@
     },
     {
         "term": "message:E1007",
-        "definition": "Socket lezen mislukt (%1)",
+        "definition": "Error de lectura de conexi\u00f3n (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2206,7 +2206,7 @@
     },
     {
         "term": "message:E1008",
-        "definition": "Socket acceptor annuleren is mislukt (%1)",
+        "definition": "Error de cancelaci\u00f3n del receptor de conexi\u00f3n (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2215,7 +2215,7 @@
     },
     {
         "term": "message:E2001",
-        "definition": "Serieel schrijven mislukt (%1)",
+        "definition": "Error de escritura serie (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2224,7 +2224,7 @@
     },
     {
         "term": "message:E2002",
-        "definition": "Serieel lezen mislukt (%1)",
+        "definition": "Error de lectura serie (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2233,7 +2233,7 @@
     },
     {
         "term": "message:E2003",
-        "definition": "Adres maken mislukt (%1)",
+        "definition": "Error crear direcci\u00f3n (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2242,7 +2242,7 @@
     },
     {
         "term": "message:E2004",
-        "definition": "Socket open mislukt (%1)",
+        "definition": "Error al abrir conexi\u00f3n (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2251,7 +2251,7 @@
     },
     {
         "term": "message:E2005",
-        "definition": "Socket connect mislukt (%1)",
+        "definition": "Error al conectar una conexi\u00f3n (%1) ",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2260,7 +2260,7 @@
     },
     {
         "term": "message:E2006",
-        "definition": "Socket bind mislukt (%1)",
+        "definition": "Error al emparejar conexi\u00f3n (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2269,7 +2269,7 @@
     },
     {
         "term": "message:E2007",
-        "definition": "Socket schrijven mislukt (%1)",
+        "definition": "Error al escribir una conexi\u00f3n (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2278,7 +2278,7 @@
     },
     {
         "term": "message:E2008",
-        "definition": "Socket lezen mislukt (%1)",
+        "definition": "Error de lectura de conexi\u00f3n (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2287,7 +2287,7 @@
     },
     {
         "term": "message:E2009",
-        "definition": "Socket ontvangst mislukt (%1)",
+        "definition": "Error recepci\u00f3n de conexi\u00f3n (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2296,7 +2296,7 @@
     },
     {
         "term": "message:E2010",
-        "definition": "Seri\u00eble poort open mislukt (%1)",
+        "definition": "Error al abrir el puerto serie (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2305,7 +2305,7 @@
     },
     {
         "term": "message:E2011",
-        "definition": "Socket verzenden mislukt (%1)",
+        "definition": "Error de env\u00edo a conexi\u00f3n (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2314,7 +2314,7 @@
     },
     {
         "term": "message:E2012",
-        "definition": "Functienummer reeds in gebruik",
+        "definition": "N\u00ba de funci\u00f3n en uso",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2323,7 +2323,7 @@
     },
     {
         "term": "message:E2013",
-        "definition": "Seri\u00eble poort ingesteld baudrate mislukt (%1)",
+        "definition": "Error al determinar tasa de baudios del puerto serie (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2332,7 +2332,7 @@
     },
     {
         "term": "message:E2014",
-        "definition": "Serial port set data bits failed (%1)",
+        "definition": "Error al ajustar los bits de datos del puerto serie (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2341,7 +2341,7 @@
     },
     {
         "term": "message:E2015",
-        "definition": "Serial port set stop bits failed (%1)",
+        "definition": "Error al ajustar los bit de stop del puerto serie (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2350,7 +2350,7 @@
     },
     {
         "term": "message:E2016",
-        "definition": "Serial port set parity failed (%1)",
+        "definition": "Error al ajustar la paridad el puerto serie (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2359,7 +2359,7 @@
     },
     {
         "term": "message:E2017",
-        "definition": "Serial port set flow control failed (%1)",
+        "definition": "Error al ajustar el control de flujo del puerto serie (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2368,7 +2368,7 @@
     },
     {
         "term": "message:E2018",
-        "definition": "Time-out, geen echo binnen %1ms",
+        "definition": "Tiempo de espera, sin eco durante %1ms",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2377,7 +2377,7 @@
     },
     {
         "term": "message:E2019",
-        "definition": "Time-out, geen reactie binnen %1ms",
+        "definition": "Tiempo de espera, sin respuesta durante %1ms",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2386,7 +2386,7 @@
     },
     {
         "term": "message:E2020",
-        "definition": "Het totale aantal modules mag niet groter zijn dan %1",
+        "definition": "Total de m\u00f3dulos no puede exceder %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2395,7 +2395,7 @@
     },
     {
         "term": "message:E2021",
-        "definition": "Staring PCAP log mislukt: %1",
+        "definition": "Error al arrancar el registro PCAP",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2404,7 +2404,7 @@
     },
     {
         "term": "message:E9001",
-        "definition": "%1 (Tijdens de uitvoering van %2 event handler)",
+        "definition": "%1 (en la ejecuci\u00f3n del gestor de eventos %2)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2413,7 +2413,7 @@
     },
     {
         "term": "message:F1001",
-        "definition": "Het openen van TCP socket is mislukt (%1)",
+        "definition": "Error apertura de conexi\u00f3n TCP (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2422,7 +2422,7 @@
     },
     {
         "term": "message:F1002",
-        "definition": "TCP socket adres hergebruik mislukt (%1)",
+        "definition": "Error al reutilizar la direcci\u00f3n de la conexi\u00f3n TCP (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2431,7 +2431,7 @@
     },
     {
         "term": "message:F1003",
-        "definition": "Binding TCP socket mislukt (%1)",
+        "definition": "Error al emparejar conexi\u00f3n TCP (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2440,7 +2440,7 @@
     },
     {
         "term": "message:F1004",
-        "definition": "TCP socket luisteren is mislukt (%1)",
+        "definition": "Error TCP socket (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2449,7 +2449,7 @@
     },
     {
         "term": "message:F1005",
-        "definition": "Het openen van UDP socket is mislukt (%1)",
+        "definition": "Error abriendo UDP socket (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2458,7 +2458,7 @@
     },
     {
         "term": "message:F1006",
-        "definition": "UDP socket adres hergebruik mislukt (%1)",
+        "definition": "Error al reutilizar la direcci\u00f3n UDP socket (%1) ",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2467,7 +2467,7 @@
     },
     {
         "term": "message:F1007",
-        "definition": "Bindende udp socket mislukt (%1)",
+        "definition": "Error al emparejar UDP socket (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2476,7 +2476,7 @@
     },
     {
         "term": "message:F9001",
-        "definition": "Aanmaken Lua staat mislukt",
+        "definition": "Error al crear un estado LUA",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2485,7 +2485,7 @@
     },
     {
         "term": "message:F9002",
-        "definition": "Het uitvoeren van het script is mislukt (%1)",
+        "definition": "Error funcionando el script (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2494,7 +2494,7 @@
     },
     {
         "term": "message:F9003",
-        "definition": "Aanroepende functie is mislukt (%1)",
+        "definition": "Error al llamar una funci\u00f3n (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2503,7 +2503,7 @@
     },
     {
         "term": "message:I1002",
-        "definition": "Instellingen bestand niet gevonden, standaard instellingen worden gebruikt",
+        "definition": "Fichero de ajustes no encontrado, usando ajustes por defecto.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2512,7 +2512,7 @@
     },
     {
         "term": "message:I1003",
-        "definition": "Klant aangesloten",
+        "definition": "Nueva conexi\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2521,7 +2521,7 @@
     },
     {
         "term": "message:I1004",
-        "definition": "Verbinding verbroken",
+        "definition": "Conexi\u00f3n perdida",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2530,7 +2530,7 @@
     },
     {
         "term": "message:I1005",
-        "definition": "Bouw wereld index",
+        "definition": "Creando \u00edndice del mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2539,7 +2539,7 @@
     },
     {
         "term": "message:I2001",
-        "definition": "Onbekend locomotief adres: %1",
+        "definition": "Direcci\u00f3n de locomotora desconocida: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2548,7 +2548,7 @@
     },
     {
         "term": "message:I2002",
-        "definition": "Hardware type: %1",
+        "definition": "Tipo de hardware: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2557,7 +2557,7 @@
     },
     {
         "term": "message:I2003",
-        "definition": "Firmware verie: %1",
+        "definition": "Versi\u00f3n de firmware: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2566,7 +2566,7 @@
     },
     {
         "term": "message:I9001",
-        "definition": "Script gestopt",
+        "definition": "Script parado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2575,7 +2575,7 @@
     },
     {
         "term": "message:N1001",
-        "definition": "Ontvangen signaal: %1",
+        "definition": "Se\u00f1al recibida: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2584,7 +2584,7 @@
     },
     {
         "term": "message:N1002",
-        "definition": "Nieuwe wereld aangemaakt",
+        "definition": "Nuevo mundo creado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2593,7 +2593,7 @@
     },
     {
         "term": "message:N1003",
-        "definition": "Herstarten",
+        "definition": "Rearrancando",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2602,7 +2602,7 @@
     },
     {
         "term": "message:N1004",
-        "definition": "Afsluiten",
+        "definition": "Apagando",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2611,7 +2611,7 @@
     },
     {
         "term": "message:N1005",
-        "definition": "Ontdekking ingeschakeld",
+        "definition": "Hallazgo activado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2620,7 +2620,7 @@
     },
     {
         "term": "message:N1006",
-        "definition": "Ontdekking uitgeschakeld",
+        "definition": "Hallazgo desactivado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2629,7 +2629,7 @@
     },
     {
         "term": "message:N1007",
-        "definition": "Luisteren naar %1:%2",
+        "definition": "Escuchando a %1:%2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2638,7 +2638,7 @@
     },
     {
         "term": "message:N1008",
-        "definition": "Instellingen geladen",
+        "definition": "Ajustes cargados",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2647,7 +2647,7 @@
     },
     {
         "term": "message:N1009",
-        "definition": "Instellingen opgeslagen",
+        "definition": "Ajustes guardados",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2656,7 +2656,7 @@
     },
     {
         "term": "message:N1010",
-        "definition": "Bewerkingsmodus: ingeschakeld",
+        "definition": "Modo edici\u00f3n: activado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2665,7 +2665,7 @@
     },
     {
         "term": "message:N1011",
-        "definition": "Bewerkingsmodus: uitgeschakeld",
+        "definition": "Modo edici\u00f3n: desactivado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2674,7 +2674,7 @@
     },
     {
         "term": "message:N1012",
-        "definition": "Communicatie: aan",
+        "definition": "Comunicaci\u00f3n: activada",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2683,7 +2683,7 @@
     },
     {
         "term": "message:N1013",
-        "definition": "Communicatie: uit",
+        "definition": "Comunicaci\u00f3n: desactivada",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2692,7 +2692,7 @@
     },
     {
         "term": "message:N1014",
-        "definition": "Vermogen: aan",
+        "definition": "Energ\u00eda: ON",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2701,7 +2701,7 @@
     },
     {
         "term": "message:N1015",
-        "definition": "Vermogen: uit",
+        "definition": "Energ\u00eda: OFF",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2710,7 +2710,7 @@
     },
     {
         "term": "message:N1016",
-        "definition": "Running",
+        "definition": "En marcha",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2719,7 +2719,7 @@
     },
     {
         "term": "message:N1017",
-        "definition": "Gestopt",
+        "definition": "Parado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2728,7 +2728,7 @@
     },
     {
         "term": "message:N1018",
-        "definition": "Mute: aan",
+        "definition": "Silencio: activado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2737,7 +2737,7 @@
     },
     {
         "term": "message:N1019",
-        "definition": "Mute: uit",
+        "definition": "Silencio: desactivado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2746,7 +2746,7 @@
     },
     {
         "term": "message:N1020",
-        "definition": "Rook: aan",
+        "definition": "Humo: activado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2755,7 +2755,7 @@
     },
     {
         "term": "message:N1021",
-        "definition": "Rook: uit",
+        "definition": "Humo: desactivado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2764,7 +2764,7 @@
     },
     {
         "term": "message:N1022",
-        "definition": "Wereld opgeslagen: %1",
+        "definition": "Mundo salvado: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2773,7 +2773,7 @@
     },
     {
         "term": "message:N1023",
-        "definition": "Simulatie: uitgeschakeld",
+        "definition": "Simulaci\u00f3n: desactivada",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2782,7 +2782,7 @@
     },
     {
         "term": "message:N1024",
-        "definition": "Simulatie: actief",
+        "definition": "Simulaci\u00f3n: activada",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2791,7 +2791,7 @@
     },
     {
         "term": "message:N1025",
-        "definition": "Wereld succesvol geexporteerd",
+        "definition": "Mundo exportado con \u00e9xito",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2800,7 +2800,7 @@
     },
     {
         "term": "message:N1026",
-        "definition": "Wereld succevol geimporteerd",
+        "definition": "Mundo importado con \u00e9xito",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2809,7 +2809,7 @@
     },
     {
         "term": "message:N1027",
-        "definition": "Geladen wereld: %1",
+        "definition": "Mundo cargado: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2818,7 +2818,7 @@
     },
     {
         "term": "message:N1028",
-        "definition": "Gesloten wereld",
+        "definition": "Mundo cerrado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2827,7 +2827,7 @@
     },
     {
         "term": "message:N2001",
-        "definition": "Simulatie wordt niet ondersteund",
+        "definition": "Simulaci\u00f3n no soportada",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2836,7 +2836,7 @@
     },
     {
         "term": "message:N2002",
-        "definition": "Geen antwoord van LNCV module %1 met adres %2",
+        "definition": "Sin respuesta del m\u00f3dulo LNCV %1 con direcci\u00f3n %2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2845,7 +2845,7 @@
     },
     {
         "term": "message:N2003",
-        "definition": "Gestopt met verzenden van fast clock sync",
+        "definition": "Detenido el env\u00edo de sincronizaci\u00f3n r\u00e1pida del reloj",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2854,7 +2854,7 @@
     },
     {
         "term": "message:N2004",
-        "definition": "Starten van PCAP bestand log: %1",
+        "definition": "Empieza registro archivo PCAP",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2863,7 +2863,7 @@
     },
     {
         "term": "message:N2005",
-        "definition": "Start PCAP log pipe: %1",
+        "definition": "Empieza PCAP log pipe: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2872,7 +2872,7 @@
     },
     {
         "term": "message:N3001",
-        "definition": "Trein %1 toegewezen aan blok %2",
+        "definition": "Tren %1 asignado a cant\u00f3n %2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2881,7 +2881,7 @@
     },
     {
         "term": "message:N3002",
-        "definition": "Trein %1 uit blok %2 verwijderd",
+        "definition": "Tren %1 retirado del cant\u00f3n %2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2890,7 +2890,7 @@
     },
     {
         "term": "message:N9001",
-        "definition": "Script gestart",
+        "definition": "Empieza secuencia de comandos",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2899,7 +2899,7 @@
     },
     {
         "term": "message:W1001",
-        "definition": "Ontdekking uitgeschakeld, alleen toegestaan op poort %1",
+        "definition": "Hallazgo desactivado, permitido s\u00f3lo en puerto %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2908,7 +2908,7 @@
     },
     {
         "term": "message:W1002",
-        "definition": "Instelling %1 bestaat niet",
+        "definition": "Ajuste %1 no existe",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2917,7 +2917,7 @@
     },
     {
         "term": "message:W1003",
-        "definition": "Inlezen wereld %1 is mislukt (libarchive fout %2: %3)",
+        "definition": "Error de lectura de mundo %1 (libarchive error %2:%3)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2926,7 +2926,7 @@
     },
     {
         "term": "message:W2001",
-        "definition": "Ongeldige data ontvangen, %1 bytes weggegooid",
+        "definition": "Recibidos datos err\u00f3neos, %1 bytes",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2935,7 +2935,7 @@
     },
     {
         "term": "message:W2002",
-        "definition": "Commandopost ondersteunt geen functies boven F%1",
+        "definition": "Estaci\u00f3n Central no soporta funciones por encima de F%1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2944,7 +2944,7 @@
     },
     {
         "term": "message:W2003",
-        "definition": "Commando station ondersteunt %1 speedsteps niet met %2",
+        "definition": "Estaci\u00f3n Central no soporta %1 pasos de velocidad usando %2",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2953,7 +2953,7 @@
     },
     {
         "term": "message:W2004",
-        "definition": "Ingang adres %1 is ongeldig",
+        "definition": "Direcci\u00f3n de entrada %1 no es v\u00e1lida",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2962,7 +2962,7 @@
     },
     {
         "term": "message:W2005",
-        "definition": "Uitgang adres %1 is ongeldig",
+        "definition": "Direcci\u00f3n de salida %1 no es v\u00e1lida",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2971,7 +2971,7 @@
     },
     {
         "term": "message:W2006",
-        "definition": "Locomotief slot %1 wordt niet ondersteund door de centrale",
+        "definition": "Estaci\u00f3n Central no soporta la posici\u00f3n de locomotora %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2980,7 +2980,7 @@
     },
     {
         "term": "message:W2007",
-        "definition": "Fast clock slot wordt niet ondersteund door de centrale",
+        "definition": "Estaci\u00f3n Central no soporta la posici\u00f3n de reloj r\u00e1pido",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2989,7 +2989,7 @@
     },
     {
         "term": "message:W2018",
-        "definition": "Time-out, geen echo binnen %1ms",
+        "definition": "Tiempo de espera, sin eco en %1ms",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2998,7 +2998,7 @@
     },
     {
         "term": "message:W2019",
-        "definition": "Z21 uitzendvlaggen komen niet overeen met de gevraagde vlaggen",
+        "definition": "Banderas de emisi\u00f3n Z21 no coinciden con las solicitadas",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3007,7 +3007,7 @@
     },
     {
         "term": "object:id",
-        "definition": "Id",
+        "definition": "id",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3016,7 +3016,7 @@
     },
     {
         "term": "object:name",
-        "definition": "Naam",
+        "definition": "Nombre",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3025,7 +3025,7 @@
     },
     {
         "term": "object:notes",
-        "definition": "Notities",
+        "definition": "Notas",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3034,7 +3034,7 @@
     },
     {
         "term": "opc_multi_sense_direction:in_sensor_address",
-        "definition": "In sensor adres",
+        "definition": "En la direcci\u00f3n del sensor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3043,7 +3043,7 @@
     },
     {
         "term": "opc_multi_sense_direction:in_transponder_address",
-        "definition": "In transponder adres (Bl\u00fccher GBM16XN)",
+        "definition": "En la direcci\u00f3n del transpondedor (Bl\u00fccher GMB16XN)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3052,7 +3052,7 @@
     },
     {
         "term": "opc_multi_sense_direction:none",
-        "definition": "Geen",
+        "definition": "Nada",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3061,7 +3061,7 @@
     },
     {
         "term": "output_action:none",
-        "definition": "Geen",
+        "definition": "Ninguna",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3070,7 +3070,7 @@
     },
     {
         "term": "output_action:off",
-        "definition": "Uit",
+        "definition": "Off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3079,7 +3079,7 @@
     },
     {
         "term": "output_action:on",
-        "definition": "Aan",
+        "definition": "On",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3088,7 +3088,7 @@
     },
     {
         "term": "output_action:pulse",
-        "definition": "Puls",
+        "definition": "Pulso",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3106,7 +3106,7 @@
     },
     {
         "term": "output_map.decoupler:key",
-        "definition": "Stand",
+        "definition": "Estado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3115,7 +3115,7 @@
     },
     {
         "term": "output_map.signal:key",
-        "definition": "Stand",
+        "definition": "Aspecto",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3124,7 +3124,7 @@
     },
     {
         "term": "output_map.turnout:key",
-        "definition": "Stand",
+        "definition": "Posici\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3133,7 +3133,7 @@
     },
     {
         "term": "output_map:use",
-        "definition": "Gebruik",
+        "definition": "Uso",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3142,7 +3142,7 @@
     },
     {
         "term": "pcap_output:file",
-        "definition": "Bestand",
+        "definition": "Archivo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3151,7 +3151,7 @@
     },
     {
         "term": "pcap_output:pipe",
-        "definition": "Pijp",
+        "definition": "Canal",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3160,7 +3160,7 @@
     },
     {
         "term": "qtapp.connect_dialog:connect",
-        "definition": "Verbind",
+        "definition": "Conectar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3169,7 +3169,7 @@
     },
     {
         "term": "qtapp.connect_dialog:connect_to_server",
-        "definition": "Verbind met server",
+        "definition": "Conectar al servidor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3178,7 +3178,7 @@
     },
     {
         "term": "qtapp.connect_dialog:connected",
-        "definition": "Verbonden",
+        "definition": "Conectado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3187,7 +3187,7 @@
     },
     {
         "term": "qtapp.connect_dialog:connecting",
-        "definition": "Bezig met verbinden",
+        "definition": "Conectando",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3196,7 +3196,7 @@
     },
     {
         "term": "qtapp.connect_dialog:password",
-        "definition": "Wachtwoord",
+        "definition": "Contrase\u00f1a",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3205,7 +3205,7 @@
     },
     {
         "term": "qtapp.connect_dialog:server",
-        "definition": "Server",
+        "definition": "Servidor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3214,7 +3214,7 @@
     },
     {
         "term": "qtapp.connect_dialog:username",
-        "definition": "Gebruikersnaam",
+        "definition": "Usuario",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3223,7 +3223,7 @@
     },
     {
         "term": "qtapp.error:cant_read_from_file_x",
-        "definition": "Kan niet lezen van bestand: %1",
+        "definition": "No puede leer el archivo: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3232,7 +3232,7 @@
     },
     {
         "term": "qtapp.error:cant_write_to_file_x",
-        "definition": "Kan niet schrijven naar bestand: %1",
+        "definition": "No puede escribir el archivo: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3241,7 +3241,7 @@
     },
     {
         "term": "qtapp.error:server_error_x",
-        "definition": "Serverfout %1",
+        "definition": "Error servidor %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3250,7 +3250,7 @@
     },
     {
         "term": "qtapp.mainmenu:about",
-        "definition": "Over",
+        "definition": "Acerca de",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3259,7 +3259,7 @@
     },
     {
         "term": "qtapp.mainmenu:close_world",
-        "definition": "Sluit wereld",
+        "definition": "Cerrar mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3268,7 +3268,7 @@
     },
     {
         "term": "qtapp.mainmenu:connect_to_server",
-        "definition": "Verbind met server",
+        "definition": "Conectar al servidor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3277,7 +3277,7 @@
     },
     {
         "term": "qtapp.mainmenu:connection",
-        "definition": "Verbinding",
+        "definition": "Conexi\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3286,7 +3286,7 @@
     },
     {
         "term": "qtapp.mainmenu:disconnect_from_server",
-        "definition": "Verbreek server verbinding",
+        "definition": "Desconectar del servidor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3295,7 +3295,7 @@
     },
     {
         "term": "qtapp.mainmenu:export_world",
-        "definition": "Exporteer wereld",
+        "definition": "Exportar mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3304,7 +3304,7 @@
     },
     {
         "term": "qtapp.mainmenu:file",
-        "definition": "Bestand",
+        "definition": "Archivo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3313,7 +3313,7 @@
     },
     {
         "term": "qtapp.mainmenu:fullscreen",
-        "definition": "Volledigscherm",
+        "definition": "Pantalla completa",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3331,7 +3331,7 @@
     },
     {
         "term": "qtapp.mainmenu:help",
-        "definition": "Help",
+        "definition": "Ayuda",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3340,7 +3340,7 @@
     },
     {
         "term": "qtapp.mainmenu:import_world",
-        "definition": "Importeer wereld",
+        "definition": "Importar mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3349,7 +3349,7 @@
     },
     {
         "term": "qtapp.mainmenu:load_world",
-        "definition": "Wereld laden",
+        "definition": "Cargar mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3358,7 +3358,7 @@
     },
     {
         "term": "qtapp.mainmenu:new_world",
-        "definition": "Nieuwe wereld",
+        "definition": "Nuevo mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3367,7 +3367,7 @@
     },
     {
         "term": "qtapp.mainmenu:objects",
-        "definition": "Objecten",
+        "definition": "Objetos",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3376,7 +3376,7 @@
     },
     {
         "term": "qtapp.mainmenu:power",
-        "definition": "Vermogen",
+        "definition": "Energ\u00eda",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3385,7 +3385,7 @@
     },
     {
         "term": "qtapp.mainmenu:programming",
-        "definition": "Programmeren",
+        "definition": "Programaci\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3394,7 +3394,7 @@
     },
     {
         "term": "qtapp.mainmenu:quit",
-        "definition": "Afsluiten",
+        "definition": "Salir",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3403,7 +3403,7 @@
     },
     {
         "term": "qtapp.mainmenu:restart_server",
-        "definition": "Herstart server",
+        "definition": "Rearrancar servidor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3412,7 +3412,7 @@
     },
     {
         "term": "qtapp.mainmenu:restart_server_question",
-        "definition": "Weet je zeker dat je de server wil herstarten?",
+        "definition": "Seguro que quiere rearrancar el servidor?",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3421,7 +3421,7 @@
     },
     {
         "term": "qtapp.mainmenu:save_world",
-        "definition": "Wereld opslaan",
+        "definition": "Guardar mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3430,7 +3430,7 @@
     },
     {
         "term": "qtapp.mainmenu:server",
-        "definition": "Server",
+        "definition": "Servidor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3439,7 +3439,7 @@
     },
     {
         "term": "qtapp.mainmenu:server_log",
-        "definition": "Server log",
+        "definition": "Registro del servidor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3448,7 +3448,7 @@
     },
     {
         "term": "qtapp.mainmenu:server_settings",
-        "definition": "Server instellingen",
+        "definition": "Ajustes del servidor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3457,7 +3457,7 @@
     },
     {
         "term": "qtapp.mainmenu:settings",
-        "definition": "Instellingen",
+        "definition": "Ajustes",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3466,7 +3466,7 @@
     },
     {
         "term": "qtapp.mainmenu:shutdown_server",
-        "definition": "Server afsluiten",
+        "definition": "Apagar servidor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3475,7 +3475,7 @@
     },
     {
         "term": "qtapp.mainmenu:shutdown_server_question",
-        "definition": "Weet je zeker dat je de server wil afsluiten?",
+        "definition": "Seguro que quiere apagar el servidor?",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3484,7 +3484,7 @@
     },
     {
         "term": "qtapp.mainmenu:toolbar",
-        "definition": "Werkbalk",
+        "definition": "Barra de herramientas",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3493,7 +3493,7 @@
     },
     {
         "term": "qtapp.mainmenu:tools",
-        "definition": "Gereedschappen",
+        "definition": "Herramientas",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3502,7 +3502,7 @@
     },
     {
         "term": "qtapp.mainmenu:view",
-        "definition": "Beeld",
+        "definition": "Vista",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3511,7 +3511,7 @@
     },
     {
         "term": "qtapp.mainmenu:world",
-        "definition": "Wereld",
+        "definition": "Mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3520,7 +3520,7 @@
     },
     {
         "term": "qtapp.mainmenu:world_properties",
-        "definition": "Wereld eigenschappen",
+        "definition": "Propiedades del mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3529,7 +3529,7 @@
     },
     {
         "term": "qtapp.message_box:no",
-        "definition": "Nee",
+        "definition": "No",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3538,7 +3538,7 @@
     },
     {
         "term": "qtapp.message_box:yes",
-        "definition": "Ja",
+        "definition": "Si",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3547,7 +3547,7 @@
     },
     {
         "term": "qtapp.object_select_list_dialog:cancel",
-        "definition": "Annuleren",
+        "definition": "Cancelar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3556,7 +3556,7 @@
     },
     {
         "term": "qtapp.object_select_list_dialog:ok",
-        "definition": "Ok",
+        "definition": "Correcto",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3565,7 +3565,7 @@
     },
     {
         "term": "qtapp.object_select_list_dialog:select_object",
-        "definition": "Selecteer object",
+        "definition": "Seleccione objeto",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3574,7 +3574,7 @@
     },
     {
         "term": "qtapp.settings.board:color_scheme",
-        "definition": "Kleurschema",
+        "definition": "Esquema de color",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3583,7 +3583,7 @@
     },
     {
         "term": "qtapp.settings.board:show_block_sensor_states",
-        "definition": "Toon blok sensor status",
+        "definition": "Mostra estado del sensor de cant\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3592,7 +3592,7 @@
     },
     {
         "term": "qtapp.settings.board:turnout_draw_state",
-        "definition": "Teken wissel stand",
+        "definition": "Dibujar estado del cambio",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3601,7 +3601,7 @@
     },
     {
         "term": "qtapp.settings.developer:dont_load_fallback_language",
-        "definition": "Geen fallback-taal laden",
+        "definition": "No cargue lenguaje alternativo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3610,7 +3610,7 @@
     },
     {
         "term": "qtapp.settings.developer:log_missing_strings",
-        "definition": "Logboek ontbrekende vertalingen",
+        "definition": "Traducciones de registro perdidas",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3619,7 +3619,7 @@
     },
     {
         "term": "qtapp.settings.developer:log_missing_strings_dir",
-        "definition": "Ontbrekende vertalingen log directory",
+        "definition": "Directorio de traducciones de registro perdidas",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3628,7 +3628,7 @@
     },
     {
         "term": "qtapp.settings.general:language",
-        "definition": "Taal",
+        "definition": "Idioma",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3637,7 +3637,7 @@
     },
     {
         "term": "qtapp.settings.statusbar:show_clock",
-        "definition": "Toon klok",
+        "definition": "Mostrar reloj",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3646,7 +3646,7 @@
     },
     {
         "term": "qtapp.settings.statusbar:show_statuses",
-        "definition": "Statussen tonen",
+        "definition": "Mostrar estados",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3655,7 +3655,7 @@
     },
     {
         "term": "qtapp.settings:board",
-        "definition": "Bord",
+        "definition": "Tablero",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3664,7 +3664,7 @@
     },
     {
         "term": "qtapp.settings:developer",
-        "definition": "Ontwikkelaar",
+        "definition": "Desarrollador",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3673,7 +3673,7 @@
     },
     {
         "term": "qtapp.settings:general",
-        "definition": "Algemeen",
+        "definition": "General",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3682,7 +3682,7 @@
     },
     {
         "term": "qtapp.settings:statusbar",
-        "definition": "Status balk",
+        "definition": "Barra de estado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3691,7 +3691,7 @@
     },
     {
         "term": "qtapp.world_list_dialog:cancel",
-        "definition": "Annuleren",
+        "definition": "Cancelar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3700,7 +3700,7 @@
     },
     {
         "term": "qtapp.world_list_dialog:load",
-        "definition": "Laad",
+        "definition": "Cargar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3709,7 +3709,7 @@
     },
     {
         "term": "qtapp.world_list_dialog:world_list",
-        "definition": "Wereld lijst",
+        "definition": "Lista de mundos",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3718,7 +3718,7 @@
     },
     {
         "term": "qtapp:board_properties",
-        "definition": "Bord eigenschappen",
+        "definition": "Propiedades del tablero",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3727,7 +3727,7 @@
     },
     {
         "term": "qtapp:export_world_failed",
-        "definition": "Wereld exporteren mislukt",
+        "definition": "Error exportando mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3736,7 +3736,7 @@
     },
     {
         "term": "qtapp:grid",
-        "definition": "Raster",
+        "definition": "Parrilla",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3745,7 +3745,7 @@
     },
     {
         "term": "qtapp:grid_dot",
-        "definition": "Stip",
+        "definition": "Punto",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3754,7 +3754,7 @@
     },
     {
         "term": "qtapp:grid_line",
-        "definition": "Lijn",
+        "definition": "L\u00ednea",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3763,7 +3763,7 @@
     },
     {
         "term": "qtapp:grid_none",
-        "definition": "Geen",
+        "definition": "Ninguno",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3772,7 +3772,7 @@
     },
     {
         "term": "qtapp:import_world_failed",
-        "definition": "Wereld importeren mislukt",
+        "definition": "Error importando mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3781,7 +3781,7 @@
     },
     {
         "term": "qtapp:next",
-        "definition": "Volgende",
+        "definition": "Siguiente",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3790,7 +3790,7 @@
     },
     {
         "term": "qtapp:previous",
-        "definition": "Vorige",
+        "definition": "Anterior",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3799,7 +3799,7 @@
     },
     {
         "term": "qtapp:toggle_mute",
-        "definition": "Toggle mute",
+        "definition": "Alternar silencio",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3808,7 +3808,7 @@
     },
     {
         "term": "qtapp:toggle_offline_online",
-        "definition": "Schakelverbinding",
+        "definition": "Alternar conexi\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3817,7 +3817,7 @@
     },
     {
         "term": "qtapp:toggle_power",
-        "definition": "Toggle power",
+        "definition": "Alternar energ\u00eda",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3826,7 +3826,7 @@
     },
     {
         "term": "qtapp:toggle_smoke",
-        "definition": "Roken",
+        "definition": "Alternar humo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3835,7 +3835,7 @@
     },
     {
         "term": "qtapp:traintastic_world",
-        "definition": "Traintastic wereld",
+        "definition": "Mundo Traintastic",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3844,7 +3844,7 @@
     },
     {
         "term": "qtapp:zoom_in",
-        "definition": "Vergroten",
+        "definition": "+ zoom",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3853,7 +3853,7 @@
     },
     {
         "term": "qtapp:zoom_out",
-        "definition": "Verkleinen",
+        "definition": "- zoom",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3862,7 +3862,7 @@
     },
     {
         "term": "rail_vehicle_list:type",
-        "definition": "Type",
+        "definition": "Tipo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3871,7 +3871,7 @@
     },
     {
         "term": "sensor_type:occupy_detector",
-        "definition": "Bezetmelder",
+        "definition": "Ocupar detector",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3880,7 +3880,7 @@
     },
     {
         "term": "sensor_type:reed_switch",
-        "definition": "Reedcontact",
+        "definition": "Interruptor \"reed\"",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3889,7 +3889,7 @@
     },
     {
         "term": "serial:baudrate",
-        "definition": "Baudrate",
+        "definition": "Tasa de baudios",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3898,7 +3898,7 @@
     },
     {
         "term": "serial:device",
-        "definition": "Apparaat",
+        "definition": "Dispositivo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3907,7 +3907,7 @@
     },
     {
         "term": "serial:flow_control",
-        "definition": "Stroomregeling",
+        "definition": "Control de flujo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3916,7 +3916,7 @@
     },
     {
         "term": "serial:port",
-        "definition": "Poort",
+        "definition": "Puerto",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3934,7 +3934,7 @@
     },
     {
         "term": "serial_flow_control:none",
-        "definition": "Geen",
+        "definition": "Ninguno",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3943,7 +3943,7 @@
     },
     {
         "term": "server_log:code",
-        "definition": "Code",
+        "definition": "C\u00f3digo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3952,7 +3952,7 @@
     },
     {
         "term": "server_log:message",
-        "definition": "Bericht",
+        "definition": "Mensaje",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3961,7 +3961,7 @@
     },
     {
         "term": "server_log:object",
-        "definition": "Object",
+        "definition": "Objeto",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3970,7 +3970,7 @@
     },
     {
         "term": "server_log:time",
-        "definition": "Tijd",
+        "definition": "Hora",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3979,7 +3979,7 @@
     },
     {
         "term": "settings:allow_client_server_restart",
-        "definition": "Sta een herstart van de client-server toe",
+        "definition": "Permitir rearranque cliente-servidor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3988,7 +3988,7 @@
     },
     {
         "term": "settings:allow_client_server_shutdown",
-        "definition": "Afsluiting van de client-server toestaan",
+        "definition": "Permitir apagado cliente-servidor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3997,7 +3997,7 @@
     },
     {
         "term": "settings:auto_save_world_on_exit",
-        "definition": "Automatisch wereld opslaan bij afsluiten",
+        "definition": "Autoguardar el mundo al salir",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4006,7 +4006,7 @@
     },
     {
         "term": "settings:discoverable",
-        "definition": "Ontdekbaar",
+        "definition": "Descubrible",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4015,7 +4015,7 @@
     },
     {
         "term": "settings:enable_file_logger",
-        "definition": "Bestandslogger inschakelen",
+        "definition": "Permitir registrar fichero",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4024,7 +4024,7 @@
     },
     {
         "term": "settings:localhost_only",
-        "definition": "Alleen localhost",
+        "definition": "S\u00f3lo host local",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4033,7 +4033,7 @@
     },
     {
         "term": "settings:memory_logger_size",
-        "definition": "Geheugen logger grootte",
+        "definition": "Tama\u00f1o registro de memoria",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4042,7 +4042,7 @@
     },
     {
         "term": "settings:port",
-        "definition": "Poort",
+        "definition": "Puerto",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4051,7 +4051,7 @@
     },
     {
         "term": "settings:save_world_uncompressed",
-        "definition": "Wereld ongecomprimeerd opslaan",
+        "definition": "Guardar mundo sin comprimir",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4060,7 +4060,7 @@
     },
     {
         "term": "signal_aspect:proceed",
-        "definition": "Rijden",
+        "definition": "Proceder",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4069,7 +4069,7 @@
     },
     {
         "term": "signal_aspect:proceed_reduced_speed",
-        "definition": "Rijden met snelheid beperking",
+        "definition": "Proceder, velocidad lenta",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4087,7 +4087,7 @@
     },
     {
         "term": "throttle_object_list:throttle",
-        "definition": "Regelaar",
+        "definition": "Acelerador",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4096,7 +4096,7 @@
     },
     {
         "term": "train:active",
-        "definition": "Actief",
+        "definition": "Activo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4105,7 +4105,7 @@
     },
     {
         "term": "train:block",
-        "definition": "Blok",
+        "definition": "Cant\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4114,7 +4114,7 @@
     },
     {
         "term": "train:lob",
-        "definition": "Lengte over de buffers",
+        "definition": "Longitud entre topes",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4123,7 +4123,7 @@
     },
     {
         "term": "train:mode",
-        "definition": "Modus",
+        "definition": "Modo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4132,7 +4132,7 @@
     },
     {
         "term": "train:override_length",
-        "definition": "Overschrijdingslengte",
+        "definition": "Invalidar longitud",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4141,7 +4141,7 @@
     },
     {
         "term": "train:override_weight",
-        "definition": "Overschrijving gewicht",
+        "definition": "Invalidar peso",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4150,7 +4150,7 @@
     },
     {
         "term": "train:speed_max",
-        "definition": "Maximale snelheid",
+        "definition": "Velicidad m\u00e1xima",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4159,7 +4159,7 @@
     },
     {
         "term": "train:vehicles",
-        "definition": "Voertuigen",
+        "definition": "Veh\u00edculos",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4168,7 +4168,7 @@
     },
     {
         "term": "train:weight",
-        "definition": "Massa",
+        "definition": "Peso",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4177,7 +4177,7 @@
     },
     {
         "term": "traintastic_diy_interface_type:serial",
-        "definition": "Serieel",
+        "definition": "Serie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4186,7 +4186,7 @@
     },
     {
         "term": "traintastic_diy_settings:debug_log_heartbeat",
-        "definition": "Log heartbeat communicatie",
+        "definition": "Comunicaci\u00f3n pulso del registro",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4195,7 +4195,7 @@
     },
     {
         "term": "traintastic_diy_settings:heartbeat_timeout",
-        "definition": "Heartbeat time-out",
+        "definition": "Tiempo de espera del pulso",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4204,7 +4204,7 @@
     },
     {
         "term": "turnout_position:left",
-        "definition": "Links",
+        "definition": "Izquierda",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4213,7 +4213,7 @@
     },
     {
         "term": "turnout_position:right",
-        "definition": "Rechts",
+        "definition": "Derecha",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4222,7 +4222,7 @@
     },
     {
         "term": "turnout_position:straight",
-        "definition": "Rechtdoor",
+        "definition": "Recto",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4231,7 +4231,7 @@
     },
     {
         "term": "vehicle.rail.freight_wagon:cargo_weight",
-        "definition": "Gewicht lading",
+        "definition": "Peso de la carga",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4240,7 +4240,7 @@
     },
     {
         "term": "vehicle.rail.tank_wagon:cargo_volume",
-        "definition": "Laadvolume",
+        "definition": "Volumen de la carga",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4249,7 +4249,7 @@
     },
     {
         "term": "vehicle.rail:cargo_capacity",
-        "definition": "Laadvermogen",
+        "definition": "Capacidad de carga",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4258,7 +4258,7 @@
     },
     {
         "term": "vehicle.rail:cargo_loaded",
-        "definition": "Vracht geladen",
+        "definition": "Cargado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4267,7 +4267,7 @@
     },
     {
         "term": "vehicle.rail:decoder",
-        "definition": "Decoder",
+        "definition": "Decodificador",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4276,7 +4276,7 @@
     },
     {
         "term": "vehicle.rail:lob",
-        "definition": "LOB",
+        "definition": "LOB, longitud entre topes",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4285,7 +4285,7 @@
     },
     {
         "term": "vehicle.rail:power",
-        "definition": "Vermogen",
+        "definition": "Energ\u00eda",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4294,7 +4294,7 @@
     },
     {
         "term": "vehicle.rail:speed_max",
-        "definition": "Maximale snelheid",
+        "definition": "Velocidad m\u00e1xima",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4303,7 +4303,7 @@
     },
     {
         "term": "vehicle.rail:total_weight",
-        "definition": "Totale gewicht",
+        "definition": "Peso total",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4312,7 +4312,7 @@
     },
     {
         "term": "vehicle.rail:train",
-        "definition": "Trein",
+        "definition": "Tren",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4321,7 +4321,7 @@
     },
     {
         "term": "vehicle.rail:weight",
-        "definition": "Gewicht",
+        "definition": "Peso",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4330,7 +4330,7 @@
     },
     {
         "term": "world:boards",
-        "definition": "Borden",
+        "definition": "Tableros",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4339,7 +4339,7 @@
     },
     {
         "term": "world:clock",
-        "definition": "Klok",
+        "definition": "Reloj",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4348,7 +4348,7 @@
     },
     {
         "term": "world:decoders",
-        "definition": "Decoders",
+        "definition": "Decodificadores",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4357,7 +4357,7 @@
     },
     {
         "term": "world:edit",
-        "definition": "Bewerk wereld",
+        "definition": "Editar mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4366,7 +4366,7 @@
     },
     {
         "term": "world:inputs",
-        "definition": "Ingangen",
+        "definition": "Entradas",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4384,7 +4384,7 @@
     },
     {
         "term": "world:lua_scripts",
-        "definition": "Lua scripts",
+        "definition": "LUA scripts",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4393,7 +4393,7 @@
     },
     {
         "term": "world:mute",
-        "definition": "Mute",
+        "definition": "Silencio",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4402,7 +4402,7 @@
     },
     {
         "term": "world:no_smoke",
-        "definition": "Geen rook",
+        "definition": "No fumar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4411,7 +4411,7 @@
     },
     {
         "term": "world:offline",
-        "definition": "Verbinding verbreken",
+        "definition": "Desconectar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4420,7 +4420,7 @@
     },
     {
         "term": "world:online",
-        "definition": "Verbinden",
+        "definition": "Conectar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4429,7 +4429,7 @@
     },
     {
         "term": "world:outputs",
-        "definition": "Uitgangen",
+        "definition": "Salidas",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4438,7 +4438,7 @@
     },
     {
         "term": "world:power_off",
-        "definition": "Uitschakelen",
+        "definition": "Apagar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4447,7 +4447,7 @@
     },
     {
         "term": "world:power_on",
-        "definition": "Aanzetten",
+        "definition": "Encender",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4456,7 +4456,7 @@
     },
     {
         "term": "world:rail_vehicles",
-        "definition": "Spoorvoertuigen",
+        "definition": "Veh\u00edculos de ra\u00edles",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4465,7 +4465,7 @@
     },
     {
         "term": "world:run",
-        "definition": "Ren",
+        "definition": "Marcha",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4474,7 +4474,7 @@
     },
     {
         "term": "world:scale",
-        "definition": "Schaal",
+        "definition": "Escala",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4483,7 +4483,7 @@
     },
     {
         "term": "world:scale_ratio",
-        "definition": "Schaalverhouding",
+        "definition": "Relacci\u00f3n de escala",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4492,7 +4492,7 @@
     },
     {
         "term": "world:simulation",
-        "definition": "Simulatie",
+        "definition": "Simulaci\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4510,7 +4510,7 @@
     },
     {
         "term": "world:trains",
-        "definition": "Treinen",
+        "definition": "Trenes",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4528,7 +4528,7 @@
     },
     {
         "term": "world_scale:custom",
-        "definition": "Aangepast",
+        "definition": "Cliente",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4537,7 +4537,7 @@
     },
     {
         "term": "xpressnet_command_station:custom",
-        "definition": "Anders",
+        "definition": "Cliente",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4546,7 +4546,7 @@
     },
     {
         "term": "xpressnet_interface_type:network",
-        "definition": "Netwerk",
+        "definition": "Red",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4555,7 +4555,7 @@
     },
     {
         "term": "xpressnet_interface_type:serial",
-        "definition": "Serieel",
+        "definition": "Serie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4564,7 +4564,7 @@
     },
     {
         "term": "xpressnet_serial_interface_type:custom",
-        "definition": "Anders",
+        "definition": "Cliente",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4573,7 +4573,7 @@
     },
     {
         "term": "xpressnet_settings:use_emergency_stop_locomotive_command",
-        "definition": "Gebruik kort noodstopcommando locomotief",
+        "definition": "Use el comando corto para parar locomotora",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4582,7 +4582,7 @@
     },
     {
         "term": "xpressnet_settings:use_roco_f13_f20_command",
-        "definition": "Gebruik Roco F13-F20 commando",
+        "definition": "Use el comando Rocco F13-F20",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4600,7 +4600,7 @@
     },
     {
         "term": "z21_settings.server:allow_emergency_stop",
-        "definition": "Noodstop toestaan",
+        "definition": "Permitir parada de emergencia",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4609,7 +4609,7 @@
     },
     {
         "term": "z21_settings.server:allow_track_power_off",
-        "definition": "Uitschakelen toestaan",
+        "definition": "Permitir quitar corriente",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4618,7 +4618,7 @@
     },
     {
         "term": "z21_settings.server:allow_track_power_on_release_emergency_stop",
-        "definition": "Laat inschakelen\/noodstop ontgrendeling toe",
+        "definition": "Permitir liberar encendido\/parada emergencia",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4627,7 +4627,7 @@
     },
     {
         "term": "train_mode:manual_protected",
-        "definition": "Handmatig (beschermd)",
+        "definition": "Manual (protegido)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4636,7 +4636,7 @@
     },
     {
         "term": "train_mode:manual_unprotected",
-        "definition": "Handmatig (onbeschermd)",
+        "definition": "Manual (no protegido)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4645,7 +4645,7 @@
     },
     {
         "term": "train_mode:automatic",
-        "definition": "Automatisch",
+        "definition": "Autom\u00e1tico",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4654,7 +4654,7 @@
     },
     {
         "term": "list.train_vehicle:move",
-        "definition": "Verplaats",
+        "definition": "Mover",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4663,7 +4663,7 @@
     },
     {
         "term": "protocol.loconet:command_station",
-        "definition": "Centrale",
+        "definition": "Estaci\u00f3n Central",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4672,7 +4672,7 @@
     },
     {
         "term": "settings:select_folder",
-        "definition": "Selecteer map",
+        "definition": "Seleccione carpeta",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4681,7 +4681,7 @@
     },
     {
         "term": "loconet_settings:listen_only",
-        "definition": "Alleen luisteren",
+        "definition": "S\u00f3lo escucha",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4690,7 +4690,7 @@
     },
     {
         "term": "message:N2006",
-        "definition": "Alleen luisteren modus: geactiveerd",
+        "definition": "Modo \"S\u00f3lo escucha\": activado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4699,7 +4699,7 @@
     },
     {
         "term": "message:N2007",
-        "definition": "Alleen luisteren modus: gedeactiveerd",
+        "definition": "Modo \"S\u00f3lo escucha\": desactivado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4708,7 +4708,7 @@
     },
     {
         "term": "status.lua:x_running",
-        "definition": "%1 actief",
+        "definition": "%1 en marcha",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4717,7 +4717,7 @@
     },
     {
         "term": "status.lua:x_in_error",
-        "definition": "%1 in fout",
+        "definition": "%1 en error",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4726,7 +4726,7 @@
     },
     {
         "term": "message:F1008",
-        "definition": "Eventlus gecrashed (%1)",
+        "definition": "Colisi\u00f3n de evento en bucle (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4735,7 +4735,7 @@
     },
     {
         "term": "qtapp.settings:restart_required",
-        "definition": "Herstart nodig",
+        "definition": "Rearranque requrido",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4744,7 +4744,7 @@
     },
     {
         "term": "qtapp.settings.general:language_changed_restart_required",
-        "definition": "Traintastic client moet opnieuw worden opgestart voordat de nieuwe taal actief wordt.",
+        "definition": "Cliente Traintastic debe rearrancarse para cambiar de idioma",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4753,7 +4753,7 @@
     },
     {
         "term": "traintastic_diy_interface_type:network_tcp",
-        "definition": "Netwerk (TCP)",
+        "definition": "Red (TCP)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4762,7 +4762,7 @@
     },
     {
         "term": "decoder_protocol:dcc_short",
-        "definition": "DCC (Kort adres)",
+        "definition": "DCC (direcci\u00f3n corta)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4771,7 +4771,7 @@
     },
     {
         "term": "decoder_protocol:dcc_long",
-        "definition": "DCC (Lang adres)",
+        "definition": "DCC (direcci\u00f3n larga)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4798,7 +4798,7 @@
     },
     {
         "term": "marklin_can_interface_type:network_tcp",
-        "definition": "Netwerk (TCP)",
+        "definition": "Red (TCP)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4807,7 +4807,7 @@
     },
     {
         "term": "marklin_can_interface_type:network_udp",
-        "definition": "Netwerk (UDP)",
+        "definition": "Red (UDP)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4816,7 +4816,7 @@
     },
     {
         "term": "message:E2022",
-        "definition": "Aanmaken socket misklukt (%1)",
+        "definition": "Error al crear conexi\u00f3n (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4825,7 +4825,7 @@
     },
     {
         "term": "message:E2023",
-        "definition": "Socket ioctl mislukt (%1)",
+        "definition": "Error ioctl de conexi\u00f3n (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4834,7 +4834,7 @@
     },
     {
         "term": "message:C2005",
-        "definition": "SocketCAN is alleen beschikbaar op Linux",
+        "definition": "SocketCAN s\u00f3lo disponible en LINUX",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4843,7 +4843,7 @@
     },
     {
         "term": "marklin_can_interface_type:socket_can",
-        "definition": "SocketCAN (Alleen Linux)",
+        "definition": "SocketCAN (s\u00f3lo LINUX)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4852,7 +4852,7 @@
     },
     {
         "term": "interface.marklin_can:marklin_can_locomotive_list",
-        "definition": "M\u00e4rklin CAN: Lokomotieflijst",
+        "definition": "M\u00e4rklin CAN: lista de locomotoras",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4861,7 +4861,7 @@
     },
     {
         "term": "marklincan_settings:default_switch_time",
-        "definition": "Standaard schakeltijd",
+        "definition": "Tiempo de interrupci\u00f3n por defecto",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4870,7 +4870,7 @@
     },
     {
         "term": "marklincan_settings:debug_config_stream",
-        "definition": "Debug: Configuratiestroom",
+        "definition": "Depurar: configurar transmisi\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4879,7 +4879,7 @@
     },
     {
         "term": "marklincan_settings:node_uid",
-        "definition": "Node UID",
+        "definition": "Nodo UID",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4888,7 +4888,7 @@
     },
     {
         "term": "marklincan_settings:node_serial_number",
-        "definition": "Node serienummer",
+        "definition": "N\u00famero de serie del nodo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4897,7 +4897,7 @@
     },
     {
         "term": "marklin_can_locomotive_list:import_or_sync",
-        "definition": "Importeer\/synchroniseer",
+        "definition": "Importar\/sincronizar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4906,7 +4906,7 @@
     },
     {
         "term": "marklin_can_locomotive_list:import_or_sync_all",
-        "definition": "Importeer\/synchroniseer alles",
+        "definition": "Importar\/sincronizar todo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4915,7 +4915,7 @@
     },
     {
         "term": "marklin_can_locomotive_list:reload",
-        "definition": "Verversen",
+        "definition": "Volver a cargar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4924,7 +4924,7 @@
     },
     {
         "term": "interface.marklin_can:marklin_can_node_list",
-        "definition": "M\u00e4rklin CAN: Node lijst",
+        "definition": "M\u00e4rklin CAN: lista de nodos",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4933,7 +4933,7 @@
     },
     {
         "term": "table_model.marklin_can_node_list:device_name",
-        "definition": "Apparaatnaam",
+        "definition": "Nombre dispositivo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4942,7 +4942,7 @@
     },
     {
         "term": "table_model.marklin_can_node_list:article_number",
-        "definition": "Artiekelnummer",
+        "definition": "N\u00famero de art\u00edculo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4951,7 +4951,7 @@
     },
     {
         "term": "table_model.marklin_can_node_list:serial_number",
-        "definition": "Serienummer",
+        "definition": "N\u00famero de serie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4960,7 +4960,7 @@
     },
     {
         "term": "table_model.marklin_can_node_list:software_version",
-        "definition": "Software versie",
+        "definition": "Versi\u00f3n de software",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4969,7 +4969,7 @@
     },
     {
         "term": "table_model.marklin_can_node_list:device_id",
-        "definition": "Apparaat Id",
+        "definition": "Id del dispositivo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4978,7 +4978,7 @@
     },
     {
         "term": "marklincan_settings:debug_status_data_config",
-        "definition": "Debug: Statusgegevens config",
+        "definition": "Depurar: configuraci\u00f3n del status de datos",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4987,7 +4987,7 @@
     },
     {
         "term": "message:E2024",
-        "definition": "Onbekend locomotief MFX UID: %1",
+        "definition": "Locomotora desconocida MFX UID: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4996,7 +4996,7 @@
     },
     {
         "term": "message:W9001",
-        "definition": "Uitvoeren duurde %1 us",
+        "definition": "La ejecucui\u00f3n tard\u00f3 %1 us",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5005,7 +5005,7 @@
     },
     {
         "term": "message:E3001",
-        "definition": "Kan spoorvoertuig niet verwijderen in actieve trein",
+        "definition": "No puede borrar un veh\u00edculo en la v\u00eda de un tren activo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5014,7 +5014,7 @@
     },
     {
         "term": "input_map_item.block:identification",
-        "definition": "Identificatie",
+        "definition": "Identificaci\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5023,7 +5023,7 @@
     },
     {
         "term": "message:E3002",
-        "definition": "Kan actieve trein niet verwijderen",
+        "definition": "No puede borrar un tren activo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5032,7 +5032,7 @@
     },
     {
         "term": "message:C1014",
-        "definition": "Ongeldig commando",
+        "definition": "Comando inv\u00e1lido",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5041,7 +5041,7 @@
     },
     {
         "term": "message:C1015",
-        "definition": "Onbekend object",
+        "definition": "Objeto desconocido",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5050,7 +5050,7 @@
     },
     {
         "term": "message:C1016",
-        "definition": "Onbekende eigenschap",
+        "definition": "Propiedad desconocida",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5059,7 +5059,7 @@
     },
     {
         "term": "message:C1017",
-        "definition": "Ongeldige indexes",
+        "definition": "Indices inv\u00e1lidos",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5068,7 +5068,7 @@
     },
     {
         "term": "message:C1018",
-        "definition": "Exceptie: %1",
+        "definition": "Excepci\u00f3n: %\u00ba1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5077,7 +5077,7 @@
     },
     {
         "term": "message:C1019",
-        "definition": "Object is geen tabel",
+        "definition": "El objeto no es una tabla",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5086,7 +5086,7 @@
     },
     {
         "term": "message:W3001",
-        "definition": "NX knop is verbonden met twee blokken",
+        "definition": "Bot\u00f3n NX conectado a dos cantones",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5095,7 +5095,7 @@
     },
     {
         "term": "message:W3002",
-        "definition": "NX knop is niet verbonden met een blok",
+        "definition": "Bot\u00f3n NX no conectado a ning\u00fan cant\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5104,7 +5104,7 @@
     },
     {
         "term": "auto_yes_no:auto",
-        "definition": "Automatische detecteren",
+        "definition": "Auto detectar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5113,7 +5113,7 @@
     },
     {
         "term": "auto_yes_no:yes",
-        "definition": "Ja",
+        "definition": "Si",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5122,7 +5122,7 @@
     },
     {
         "term": "auto_yes_no:no",
-        "definition": "Nee",
+        "definition": "No",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5131,7 +5131,7 @@
     },
     {
         "term": "board_tile.rail.signal_3_aspect:require_reservation",
-        "definition": "Reserveren verplicht",
+        "definition": "Requiere reserva",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5140,7 +5140,7 @@
     },
     {
         "term": "traintastic_diy_settings:startup_delay",
-        "definition": "Opstartvertraging",
+        "definition": "Retraso en arranque",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5149,7 +5149,7 @@
     },
     {
         "term": "qtapp.settings.general:connect_automatically_to_discovered_server",
-        "definition": "Automatisch verbinding maken met ontdekte server",
+        "definition": "Conectar autom\u00e1ticamente para encontrar servidor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5158,7 +5158,7 @@
     },
     {
         "term": "qtapp.mainmenu:about_server",
-        "definition": "Over server",
+        "definition": "Acerca del servvidor",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5167,7 +5167,7 @@
     },
     {
         "term": "qtapp.about:traintastic_server",
-        "definition": "Over Traintastic server",
+        "definition": "Acerca del servidor Traintastic",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5176,7 +5176,7 @@
     },
     {
         "term": "world:online_when_loaded",
-        "definition": "Ga online wanneer geladen",
+        "definition": "Ir online al cargar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5185,7 +5185,7 @@
     },
     {
         "term": "world:power_on_when_loaded",
-        "definition": "Ingeschakeld wanneer geladen",
+        "definition": "Encender al cargar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5194,7 +5194,7 @@
     },
     {
         "term": "world:run_when_loaded",
-        "definition": "Uitvoeren wanneer geladen",
+        "definition": "En marcha al cargar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5203,7 +5203,7 @@
     },
     {
         "term": "language:fr-fr",
-        "definition": "Frans",
+        "definition": "Franc\u00e9s",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5212,7 +5212,7 @@
     },
     {
         "term": "dccex_channel:dcc_accessory",
-        "definition": "DCC toebehoren",
+        "definition": "Accesorio DCC",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5221,7 +5221,7 @@
     },
     {
         "term": "dccex_channel:output",
-        "definition": "Uitgang",
+        "definition": "Salida",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5230,7 +5230,7 @@
     },
     {
         "term": "dccex_channel:turnout",
-        "definition": "Wissel",
+        "definition": "Desv\u00edo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5239,7 +5239,7 @@
     },
     {
         "term": "dccex_settings:startup_delay",
-        "definition": "Opstartvertraging",
+        "definition": "Retraso en arranque",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5248,7 +5248,7 @@
     },
     {
         "term": "language:sv-se",
-        "definition": "Zweeds",
+        "definition": "Sueco",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5257,7 +5257,7 @@
     },
     {
         "term": "message:W2020",
-        "definition": "DCCext (RCN-213) wordt niet ondersteund",
+        "definition": "DCCext (RCN-213) no soportado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5266,7 +5266,7 @@
     },
     {
         "term": "sensor_type:occupancy_detector",
-        "definition": "Bezetmelder",
+        "definition": "Detector de ocupaci\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5275,7 +5275,7 @@
     },
     {
         "term": "qtapp.connect_dialog:authenticating",
-        "definition": "Authenticeren",
+        "definition": "Autenticando",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5284,7 +5284,7 @@
     },
     {
         "term": "qtapp.connect_dialog:creating_session",
-        "definition": "Sessie maken",
+        "definition": "Creando sesi\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5293,7 +5293,7 @@
     },
     {
         "term": "qtapp.connect_dialog:fetching_world",
-        "definition": "Wereld ophalen",
+        "definition": "Trayendo mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5302,7 +5302,7 @@
     },
     {
         "term": "pair_output_action:none",
-        "definition": "Geen",
+        "definition": "Ninguno",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5311,7 +5311,7 @@
     },
     {
         "term": "pair_output_action:first",
-        "definition": "Eerste (Rood)",
+        "definition": "Primero (rojo)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5320,7 +5320,7 @@
     },
     {
         "term": "pair_output_action:second",
-        "definition": "Tweede (Groen)",
+        "definition": "Segundo (verde)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5329,7 +5329,7 @@
     },
     {
         "term": "hardware:addresses",
-        "definition": "Adres",
+        "definition": "Direcciones",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5338,7 +5338,7 @@
     },
     {
         "term": "output_channel:accessory",
-        "definition": "Accessoire",
+        "definition": "Accesorio",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5347,7 +5347,7 @@
     },
     {
         "term": "output_channel:accessory_dcc",
-        "definition": "Accessoire (DCC)",
+        "definition": "Accesorio DCC",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5356,7 +5356,7 @@
     },
     {
         "term": "output_channel:accessory_motorola",
-        "definition": "Accessoire (Motorola)",
+        "definition": "Accesorio Motorola",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5365,7 +5365,7 @@
     },
     {
         "term": "output_channel:ecos_object",
-        "definition": "ECoS object",
+        "definition": "Objeto ECoS",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5373,8 +5373,8 @@
         "fuzzy": 0
     },
     {
-        "term": "output_map:add_address",
-        "definition": "Adres toevoegen",
+        "term": "output_map.signal:add_address",
+        "definition": "A\u00f1adir direcci\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5382,8 +5382,8 @@
         "fuzzy": 0
     },
     {
-        "term": "output_map:remove_address",
-        "definition": "Adres verwijderen",
+        "term": "output_map.signal:remove_address",
+        "definition": "Quitar direcci\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5391,8 +5391,8 @@
         "fuzzy": 0
     },
     {
-        "term": "output_map:ecos_object",
-        "definition": "ECoS object",
+        "term": "output_map.signal:ecos_object",
+        "definition": "Objeto ECoS",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5401,7 +5401,7 @@
     },
     {
         "term": "output.ecos_object:state",
-        "definition": "Staat",
+        "definition": "Estado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5410,7 +5410,7 @@
     },
     {
         "term": "wizard.new_world:title",
-        "definition": "Nieuwe wereld opzetten",
+        "definition": "Configurar nuevo mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5419,7 +5419,7 @@
     },
     {
         "term": "wizard.new_world.introduction:title",
-        "definition": "Nieuwe wereld",
+        "definition": "Nuevo mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5428,7 +5428,7 @@
     },
     {
         "term": "wizard.new_world.introduction:text",
-        "definition": "Deze wizard helpt je om de basiseigenschappen van de wereld in te stellen.",
+        "definition": "Este asistente le guiar\u00e1 a configurar las propiedades b\u00e1sicas de un mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5437,7 +5437,7 @@
     },
     {
         "term": "wizard.new_world.name:title",
-        "definition": "Wereld naam",
+        "definition": "Nombre del mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5446,7 +5446,7 @@
     },
     {
         "term": "wizard.new_world.name:text",
-        "definition": "Geef de wereld een naam, deze naam zal zichtbaar zijn bij het laden van een wereld.",
+        "definition": "De nombre al mundo que ser\u00e1 visible al cargarlo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5455,7 +5455,7 @@
     },
     {
         "term": "wizard.new_world.scale:title",
-        "definition": "Wereld schaal",
+        "definition": "Escala del mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5464,7 +5464,7 @@
     },
     {
         "term": "wizard.new_world.scale:text",
-        "definition": "Selecteer de wereldschaal, Traintastic gebruikt deze voor afstands- en snelheidsberekeningen.",
+        "definition": "Seleccione la escala del mundo, Traintastic calcular\u00e1 la distancia y la velocidad",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5473,7 +5473,7 @@
     },
     {
         "term": "wizard.new_world.finalization:title",
-        "definition": "Klaar voor de wereld",
+        "definition": "Mundo preparado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5482,7 +5482,7 @@
     },
     {
         "term": "wizard.new_world.finalization:text",
-        "definition": "De basiseigenschappen van de wereld zijn nu ingesteld, je kunt ze later altijd nog wijzigen via het menu: Wereld -> Eigenschappen.",
+        "definition": "Propiedades b\u00e1sicas del mundo configuradas, las podr\u00e1 cambiar m\u00e1s tarde en el men\u00fa: Mundo -> Propiedades",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5491,7 +5491,7 @@
     },
     {
         "term": "qtapp.mainmenu:wizards",
-        "definition": "Tovenaars",
+        "definition": "Asistentes de instalaci\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5500,7 +5500,7 @@
     },
     {
         "term": "wizard.introduction:title",
-        "definition": "Traintastic introductie",
+        "definition": "Introducci\u00f3n a Traintastic",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5509,7 +5509,7 @@
     },
     {
         "term": "wizard.introduction.welcome:title",
-        "definition": "Welkom!",
+        "definition": "Bienvenido!",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5518,7 +5518,7 @@
     },
     {
         "term": "wizard.introduction.welcome:text",
-        "definition": "Deze wizard legt de basisprincipes van Traintastic uit. De volgende pagina's helpen je op weg. Als je deze wizard opnieuw wilt bekijken, kun je hem openen via het hoofdmenu: Help \u2192 Wizard \u2192 Traintastic introductie.",
+        "definition": "Este asistente explicar\u00e1 las bases de Traintastic. Las siguientes p\u00e1ginas le ayudar\u00e1n a empezar. Si quiere ver este asistente otra vez, puede abrirlo en el men\u00fa: Ayuda \u2192 Asistente \u2192 Introducci\u00f3n a Traintastic",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5527,7 +5527,7 @@
     },
     {
         "term": "wizard.introduction.world:title",
-        "definition": "De wereld",
+        "definition": "El mundo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5536,7 +5536,7 @@
     },
     {
         "term": "wizard.introduction.world:text",
-        "definition": "De wereld bevat alles wat zich op de baan bevindt, zoals de centrale, treinen, seinen, wissels etc. Indien nodig kunnen meerdere werelden worden gecre\u00eberd, maar er kan er altijd maar \u00e9\u00e9n in gebruik zijn.\n\nWerelden worden opgeslagen op de pc waarop de Traintastic server draait. Bij het opslaan van een wereld wordt automatisch een back-up gemaakt. Via het hoofdmenu: Bestand \u2192 Wereld exporteren optie is het mogelijk om een kopie van de wereld te krijgen als extra back-up of om deze over te zetten naar een andere Traintastic server.",
+        "definition": "El mundo contiene todo lo que hay en el trazado, como la Estaci\u00f3n Central, trenes, se\u00f1ales, desv\u00edos, etc. Si lo necesita, puede crear varios mundos pero s\u00f3lo uno puede estar activo.\n\nLos mundos se guardan en el PC en que funciona el servidor Traintastic. Cuando guarde un mundo se crear\u00e1, autom\u00e1ticamente, una copia de seguridad. En el men\u00fa principal: Archivo \u2192 Exportar mundo, es posible conseguir una copia del mundo como copia de seguridad adicional o transferirlo a otro servidor Traintastic.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5545,7 +5545,7 @@
     },
     {
         "term": "wizard.introduction.edit_mode:title",
-        "definition": "Bewerkmodus",
+        "definition": "Modo Edici\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5554,7 +5554,7 @@
     },
     {
         "term": "wizard.introduction.edit_mode:text",
-        "definition": "Traintastic heeft twee werkingsmodi:\n\u2022 Bewerkingsmodus\n\u2022 Operatie modus\n\nIn de bedieningsmodus is alleen bediening van de lay-out mogelijk om onbedoelde wijzigingen te voorkomen. bijv. Om een wisseladres te wijzigen of de lay-out te wijzigen moet de bewerkingsmodus actief zijn.\n\nSchakelen tussen bedienings- en bewerkingsmodus kan worden gedaan met behulp van het potloodpictogram direct op de hoofdwerkbalk of via het hoofdmenu: Wereld \u2192 Wereld bewerken.",
+        "definition": "Traintastic tiene dos modos de operaci\u00f3n:\n\u2022 Modo Edici\u00f3n\n\u2022 Modo Operaci\u00f3n\n\nEn modo Operaci\u00f3n, s\u00f3lo puede operar el trazado para evitar cambios accidentales. Para cambiar una direcci\u00f3n de un desv\u00edo o modificar el trazado debe estar activo el modo Edici\u00f3n.\n\nEl cambio entre ambos modos se puede hacer usando el icono L\u00e1piz en la barra principal de herramientas o en el men\u00fa principal: Mundo \u2192 Editar mundo.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5563,7 +5563,7 @@
     },
     {
         "term": "wizard.introduction.forum:title",
-        "definition": "Traintastic forum",
+        "definition": "Foro Traintastic",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5572,7 +5572,7 @@
     },
     {
         "term": "wizard.introduction.forum:text",
-        "definition": "Als u vragen of suggesties heeft, kunt u lid worden van het <a href=\"https:\/\/forum.traintastic.org\">Traintastic-forum<\/a>.",
+        "definition": "Si tiene alguna pregunta o sugerencia, por favor, \u00fanase a: <a href=\"https:\/\/forum.traintastic.org\">Traintastic forum<\/a>.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5581,7 +5581,7 @@
     },
     {
         "term": "wizard.add_interface.welcome:title",
-        "definition": "Interface toevoegen",
+        "definition": "A\u00f1adir interfaz",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5590,7 +5590,7 @@
     },
     {
         "term": "wizard.add_interface.welcome:text",
-        "definition": "Deze wizard begeleidt u bij het instellen van de interface.\n\nAls je Traintastic server en Traintastic client op aparte PC's gebruikt, zorg er dan voor dat het commandostation verbonden is met de PC waarop Traintastic server draait.",
+        "definition": "Este asistente le guiar\u00e1 al proceso de configurar la interfaz.\n\nSi est\u00e1 haciendo funcionar el servidor Traintastic y el cliente Traintastic en PCs separados, aseg\u00farese que la Estaci\u00f3n Central est\u00e1 conectada al PC en que funciona el servidor Traintastic.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5599,7 +5599,7 @@
     },
     {
         "term": "wizard.add_interface.command_station:title",
-        "definition": "Centrale",
+        "definition": "Estaci\u00f3n Central",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5608,7 +5608,7 @@
     },
     {
         "term": "wizard.add_interface.command_station:text",
-        "definition": "Selecteer je commandopost:",
+        "definition": "Por favor, seleccione su Estaci\u00f3n Central:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5617,7 +5617,7 @@
     },
     {
         "term": "wizard.add_interface.connection:title",
-        "definition": "Aansluiting",
+        "definition": "Conexi\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5626,7 +5626,7 @@
     },
     {
         "term": "wizard.add_interface.connection:text",
-        "definition": "Hoe is de %command_station% verbonden?",
+        "definition": "C\u00f3mo est\u00e1 conectada la %Estaci\u00f3n Central%?",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5635,7 +5635,7 @@
     },
     {
         "term": "wizard.add_interface.connection:command_station_serial_port",
-        "definition": "%command_station% seri\u00eble poort",
+        "definition": "Puerto serie de la %Estaci\u00f3n Central%",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5644,7 +5644,7 @@
     },
     {
         "term": "wizard.add_interface.connection:command_station_usb_port",
-        "definition": "%command_station% USB poort",
+        "definition": "Puerto USB de la %Estaci\u00f3n Central%",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5653,7 +5653,7 @@
     },
     {
         "term": "wizard.add_interface.connection:network",
-        "definition": "Netwerk",
+        "definition": "Red",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5662,7 +5662,7 @@
     },
     {
         "term": "wizard.add_interface.connection:not_yet_supported",
-        "definition": "Nog niet ondersteund",
+        "definition": "Todav\u00eda no soportado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5671,7 +5671,7 @@
     },
     {
         "term": "wizard.add_interface.connection:can_interface",
-        "definition": "Extra CAN-businterface",
+        "definition": "Interfaz adicional del bus CAN",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5680,7 +5680,7 @@
     },
     {
         "term": "wizard.add_interface.connection:loconet_interface",
-        "definition": "Extra LocoNet interface",
+        "definition": "Interfaz adicional de LocpNet",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5689,7 +5689,7 @@
     },
     {
         "term": "wizard.add_interface.connection:xpressnet_interface",
-        "definition": "Extra XpressNet interface",
+        "definition": "Interfaz adicional XpressNet",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5698,7 +5698,7 @@
     },
     {
         "term": "wizard.add_interface.protocol:title",
-        "definition": "Protocol",
+        "definition": "Protocolo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5707,7 +5707,7 @@
     },
     {
         "term": "wizard.add_interface.protocol:text",
-        "definition": "Selecteer het communicatieprotocol voor de verbinding:",
+        "definition": "Por favor, seleccione el protocolo de comunicaci\u00f3n de la conexi\u00f3n:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5716,7 +5716,7 @@
     },
     {
         "term": "wizard.add_interface.interface_loconet:title",
-        "definition": "LocoNet interface",
+        "definition": "Interfaz LocoNet",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5725,7 +5725,7 @@
     },
     {
         "term": "wizard.add_interface.interface_loconet:text",
-        "definition": "Selecteer de LocoNet interface die is aangesloten op het %command_station%:",
+        "definition": "Por favor, seleccione la interfaz LocoNet conectada a la %Estaci\u00f3n Central%:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5734,7 +5734,7 @@
     },
     {
         "term": "wizard.add_interface.interface_xpressnet:title",
-        "definition": "XpressNet interface",
+        "definition": "Interfaz XpressNet",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5743,7 +5743,7 @@
     },
     {
         "term": "wizard.add_interface.interface_xpressnet:text",
-        "definition": "Selecteer de XpressNet interface die verbonden is met het %command_station%:",
+        "definition": "Por favor, seleccione la interfaz XpressNet conectada ala %Estaci\u00f3n Central%:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5752,7 +5752,7 @@
     },
     {
         "term": "wizard.add_interface.hostname:title",
-        "definition": "IP adres",
+        "definition": "Direcci\u00f3n IP",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5761,7 +5761,7 @@
     },
     {
         "term": "wizard.add_interface.hostname:text",
-        "definition": "Voer het IP-adres in van het %command_station% waarmee verbinding moet worden gemaakt:",
+        "definition": "Introduzca la direcci\u00f3n IP de la %Estaci\u00f3n Central% a conectar:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5770,7 +5770,7 @@
     },
     {
         "term": "wizard.add_interface.hostname_port:title",
-        "definition": "IP adres en poort",
+        "definition": "Direcci\u00f3n y puerto IP",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5779,7 +5779,7 @@
     },
     {
         "term": "wizard.add_interface.hostname_port:text",
-        "definition": "Voer het IP-adres en poortnummer in van het %command_station% waarmee verbinding moet worden gemaakt:",
+        "definition": "Introduzca el n\u00famero de la direcci\u00f3n y del puerto IP de la %Estaci\u00f3n Central% a conectar:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5788,7 +5788,7 @@
     },
     {
         "term": "wizard.add_interface.serial_port:title",
-        "definition": "Seri\u00eble poort",
+        "definition": "Puerto serie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5797,7 +5797,7 @@
     },
     {
         "term": "wizard.add_interface.serial_port:text",
-        "definition": "Selecteer de seri\u00eble poort waarop het %command_station% is aangesloten:",
+        "definition": "Seleccione el puerto serie que est\u00e1 conectado a la %Estaci\u00f3n Central%:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5806,7 +5806,7 @@
     },
     {
         "term": "wizard.add_interface.serial_port_interface:text",
-        "definition": "Selecteer de seri\u00eble poort waarop de %interface% is aangesloten:",
+        "definition": "Seleccione el puerto serie a la que est\u00e1 conectada la %Interfaz%:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5815,7 +5815,7 @@
     },
     {
         "term": "wizard.add_interface.name:title",
-        "definition": "Naam",
+        "definition": "Nombre",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5824,7 +5824,7 @@
     },
     {
         "term": "wizard.add_interface.name:text",
-        "definition": "Voer een naam in voor de verbinding:",
+        "definition": "Introduzca un nombre para la conexi\u00f3n:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5833,7 +5833,7 @@
     },
     {
         "term": "wizard.add_interface.finalization:title",
-        "definition": "Klaar",
+        "definition": "Preparado",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5842,7 +5842,7 @@
     },
     {
         "term": "wizard.add_interface.finalization:text",
-        "definition": "De installatie van %command_station% is nu klaar. U kunt deze online brengen door de verbindingsoptie op de werkbalk te gebruiken.\n\nAls u nog meer wijzigingen moet aanbrengen, kunt u de interface vinden via het menu: Object \u2192 Hardware \u2192 Interfaces.",
+        "definition": "La configuraci\u00f3n de la %Estaci\u00f3n Central% ya est\u00e1 preparada. Puede ponerla online con la opci\u00f3n Conectar de la barra de herramientas.\n\nSi tiene que hacer m\u00e1s cambios, puede encontrar la interfaz en el men\u00fa: Objeto \u2192 Hardware \u2192 Interfaces.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5851,7 +5851,7 @@
     },
     {
         "term": "wizard.page.list:search",
-        "definition": "Zoek op",
+        "definition": "Buscar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5860,7 +5860,7 @@
     },
     {
         "term": "wizard.button:back",
-        "definition": "Terug",
+        "definition": "Atr\u00e1s",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5869,7 +5869,7 @@
     },
     {
         "term": "wizard.button:next",
-        "definition": "Volgende",
+        "definition": "Siguiente",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5878,7 +5878,7 @@
     },
     {
         "term": "wizard.button:finish",
-        "definition": "Afwerking",
+        "definition": "Final",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5887,7 +5887,7 @@
     },
     {
         "term": "wizard.button:cancel",
-        "definition": "Annuleren",
+        "definition": "Cancelar",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5896,7 +5896,7 @@
     },
     {
         "term": "output_map:address_x",
-        "definition": "Adres %1",
+        "definition": "Direcci\u00f3n %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5905,7 +5905,7 @@
     },
     {
         "term": "class_id:board_tile.rail.nx_button",
-        "definition": "NX-knop",
+        "definition": "Bot\u00f3n NX",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5914,7 +5914,7 @@
     },
     {
         "term": "class_id:board_tile.misc.label",
-        "definition": "Label",
+        "definition": "Etiqueta",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5923,7 +5923,7 @@
     },
     {
         "term": "board_tile.misc.label:text",
-        "definition": "Tekst",
+        "definition": "Texto",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5932,7 +5932,7 @@
     },
     {
         "term": "board_tile.misc.label:text_align",
-        "definition": "Tekst uitlijnen",
+        "definition": "Alinear texto",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5941,7 +5941,7 @@
     },
     {
         "term": "board_tile.misc.label:text_color",
-        "definition": "Kleur tekst",
+        "definition": "Color del texto",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5950,7 +5950,7 @@
     },
     {
         "term": "color:none",
-        "definition": "Geen",
+        "definition": "Ninguno",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5959,7 +5959,7 @@
     },
     {
         "term": "board_tile.misc.label:background_color",
-        "definition": "Achtergrondkleur",
+        "definition": "Color del fondo",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5968,7 +5968,7 @@
     },
     {
         "term": "text_align:top_left",
-        "definition": "Linksboven",
+        "definition": "Arriba a la izquierda",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5977,7 +5977,7 @@
     },
     {
         "term": "text_align:top_center",
-        "definition": "Topcentrum",
+        "definition": "Arriba al centro",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5986,7 +5986,7 @@
     },
     {
         "term": "text_align:top_right",
-        "definition": "Rechtsboven",
+        "definition": "Arriba a la derecha",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5995,7 +5995,7 @@
     },
     {
         "term": "text_align:center_left",
-        "definition": "Links midden",
+        "definition": "Centro izquierda",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6004,7 +6004,7 @@
     },
     {
         "term": "text_align:center",
-        "definition": "Midden",
+        "definition": "Centro",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6013,7 +6013,7 @@
     },
     {
         "term": "text_align:center_right",
-        "definition": "Rechts midden",
+        "definition": "Centro derecha",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6022,7 +6022,7 @@
     },
     {
         "term": "text_align:bottom_left",
-        "definition": "Linksonder",
+        "definition": "Abajo a la izquierda",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6031,7 +6031,7 @@
     },
     {
         "term": "text_align:bottom_center",
-        "definition": "Middenonder",
+        "definition": "Abajo al centro",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6040,7 +6040,7 @@
     },
     {
         "term": "text_align:bottom_right",
-        "definition": "Rechtsonder",
+        "definition": "Abajo a la derecha",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6049,7 +6049,7 @@
     },
     {
         "term": "wizard.new_board:title",
-        "definition": "Nieuw bord",
+        "definition": "Nuevo tablero",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6058,7 +6058,7 @@
     },
     {
         "term": "wizard.new_board.introduction:title",
-        "definition": "Nieuw bord",
+        "definition": "Nuevo tablero",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6067,7 +6067,7 @@
     },
     {
         "term": "wizard.new_board.introduction.short:text",
-        "definition": "Deze wizard helpt je om de basiseigenschappen van het bord in te stellen.",
+        "definition": "Este asistente le ayudar\u00e1 a configurar las propiedades b\u00e1sicas.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6076,7 +6076,7 @@
     },
     {
         "term": "wizard.new_board.introduction.long:text",
-        "definition": "Deze wizard legt de basisprincipes van het bord uit.",
+        "definition": "Este asistente explicar\u00e1 las bases del tablero",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6085,7 +6085,7 @@
     },
     {
         "term": "wizard.new_board.editing:title",
-        "definition": "Bewerken",
+        "definition": "Edici\u00f3n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6094,7 +6094,7 @@
     },
     {
         "term": "wizard.new_board.editing:text",
-        "definition": "Het bord kan alleen gewijzigd worden als de wereld in de bewerkmodus staat en gestopt is. De werkbalk met de bewerkoptie verschijnt automatisch als bewerken mogelijk is.",
+        "definition": "El tablero s\u00f3lo se puede modificar si el mundo est\u00e1 en modo Edici\u00f3n y parado. La barra de herramientas, con opci\u00f3n Edici\u00f3n, aparecer\u00e1, autom\u00e1ticamente, si la Edici\u00f3n es posible.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6103,7 +6103,7 @@
     },
     {
         "term": "wizard.new_board.adding:title",
-        "definition": "Elementen toevoegen",
+        "definition": "A\u00f1adir elementos",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6112,7 +6112,7 @@
     },
     {
         "term": "wizard.new_board.adding:text",
-        "definition": "Je kunt nieuwe elementen aan het bord toevoegen met behulp van de items in de verschillende menu's. Gebruik de linkermuisknop om een element te plaatsen, gebruik de rechtermuisknop om een element te draaien.\n\nOm een element te vervangen door een ander element moet je ctrl ingedrukt houden terwijl je met de linkermuisknop klikt, anders moet je eerst het oude element verwijderen.",
+        "definition": "A\u00f1adir nuevos elementos al tablero se puede hacer utilizando los disponibles en varios men\u00fas. Use el click izquierdo del rat\u00f3n para colocar un elemento. Use el click derecho del rat\u00f3n para girar un elemento.\n\nPara substituir un elemento con otro pulse Ctrl mientras hace click izquierdo. Tambi\u00e9n puede borrar primero el elemento viejo.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6121,7 +6121,7 @@
     },
     {
         "term": "wizard.new_board.name:title",
-        "definition": "Naam bestuur",
+        "definition": "Nombre del tablero",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6130,7 +6130,7 @@
     },
     {
         "term": "wizard.new_board.name:text",
-        "definition": "Geef het bord een naam, bijvoorbeeld Traintastic, Station Awesome of Staging Area:",
+        "definition": "D\u00e9 un nombre al tablero, p.ej. Traintastic, Estaci\u00f3n genial, Area de montaje:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6139,7 +6139,7 @@
     },
     {
         "term": "wizard.new_board.finalization:title",
-        "definition": "Voltooid",
+        "definition": "Completada",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6148,7 +6148,259 @@
     },
     {
         "term": "wizard.new_board.finalization:text",
-        "definition": "Laten we het bord gaan bouwen!",
+        "definition": "Construyamos el tablero!",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "dccex_interface_type:serial",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "dccex_interface_type:network_tcp",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map:add_address",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map:remove_address",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map:ecos_object",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.misc.switch",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.switch:color_on",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.switch:color_off",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map.switch:key",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map_item.switch.key:off",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map_item.switch.key:on",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.turnout:position",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.sensor:state",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "sensor_state:free",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "sensor_state:occupied",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "sensor_state:unknown",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.block:state",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "block_state:occupied",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "block_state:reserved",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "block_state:free",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.switch:value",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "list:setup_using_wizard",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.rail.nx_button:block",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.rail.nx_button:input",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "turnout_position:crossed",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "turnout_position:diverged",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "turnout_position:double_slip_straight_a",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "turnout_position:double_slip_straight_b",
+        "definition": "",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6157,7 +6409,7 @@
     },
     {
         "term": "language:es-es",
-        "definition": "Spaans",
+        "definition": "Espa\u00f1ol",
         "context": "",
         "term_plural": "",
         "reference": "",

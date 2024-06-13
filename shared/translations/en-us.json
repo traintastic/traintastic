@@ -4885,6 +4885,20 @@
     },
     {
         "term": "list:setup_using_wizard",
-        "definition": "Setup using wizard"
+        "definition": "Setup using wizard",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "language:es-es",
+        "definition": "Spanish",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     }
 ]
