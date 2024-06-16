@@ -361,9 +361,6 @@ if(WIN32)
   # copy archive.dll to build directory:
   add_custom_command(TARGET traintastic-server POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/libarchive/bin/archive.dll" .)
-elseif(APPLE)
-  set(LibArchive_INCLUDE_DIRS "/usr/local/opt/libarchive/include")
-  set(LibArchive_LIBRARIES "/usr/local/opt/libarchive/lib/libarchive.dylib")
 else()
   find_package(LibArchive REQUIRED)
 endif()
@@ -394,9 +391,6 @@ if(WIN32)
   # copy lua53.dll to build directory, to be able to run the tests:
   add_custom_command(TARGET traintastic-server-test POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.dll" .)
-elseif(APPLE)
-  set(LUA_INCLUDE_DIR "/usr/local/opt/lua@5.3/include/lua")
-  set(LUA_LIBRARIES "/usr/local/opt/lua@5.3/lib/liblua5.3.dylib")
 else()
   find_package(Lua 5.3 REQUIRED)
 endif()
