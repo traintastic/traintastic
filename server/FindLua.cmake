@@ -67,6 +67,7 @@ FIND_PATH(LUA_INCLUDE_DIR lua.h
   /usr/local
   /usr
   /sw # Fink
+  /opt/homebrew # Apple Homebrew
   /opt/local # DarwinPorts
   /opt/csw # Blastwave
   /opt
@@ -84,6 +85,7 @@ FIND_LIBRARY(LUA_LIBRARY
   /usr/local
   /usr
   /sw
+  /opt/homebrew
   /opt/local
   /opt/csw
   /opt
