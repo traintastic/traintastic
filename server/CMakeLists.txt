@@ -361,6 +361,19 @@ if(WIN32)
   # copy archive.dll to build directory:
   add_custom_command(TARGET traintastic-server POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/libarchive/bin/archive.dll" .)
+elseif(APPLE)
+  find_path(LibArchive_INCLUDE_DIR
+    NAMES archive.h
+    PATHS
+    "/usr/local/opt/libarchive/include" # x86_64
+    "/opt/homebrew/opt/libarchive/include" # arm64
+    )
+  find_library(LibArchive_LIBRARIES
+    NAMES archive libarchive
+    PATHS
+    "/usr/local/opt/libarchive/lib/" # x86_64
+    "/opt/homebrew/opt/libarchive/lib" # arm64
+    )
 else()
   find_package(LibArchive REQUIRED)
 endif()
