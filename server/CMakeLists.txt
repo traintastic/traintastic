@@ -222,6 +222,10 @@ else()
   list(REMOVE_ITEM SOURCES ${SOCKET_CAN_SOURCES})
 endif()
 
+if(APPLE)
+  add_definitions(-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION) # remove once boost is updated
+endif()
+
 if(WIN32)
   add_definitions(-D_WIN32_WINNT=0x0601)
   file(GLOB SOURCES_WINDOWS "src/os/windows/*.hpp" "src/os/windows/*.cpp")
