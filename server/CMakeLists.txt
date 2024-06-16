@@ -404,6 +404,19 @@ if(WIN32)
   # copy lua53.dll to build directory, to be able to run the tests:
   add_custom_command(TARGET traintastic-server-test POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.dll" .)
+elseif(APPLE)
+  find_path(LUA_INCLUDE_DIR
+    NAMES lua.h
+    PATHS
+    "/usr/local/opt/lua@5.3/include/lua" # x86_64
+    "/opt/homebrew/opt/lua@5.3/include/lua" # arm64
+    )
+  find_library(LUA_LIBRARIES
+    NAMES lua5.3 liblua5.3
+    PATHS
+    "/usr/local/opt/lua@5.3/lib" # x86_64
+    "/opt/homebrew/opt/lua@5.3/lib" # arm64
+    )
 else()
   find_package(Lua 5.3 REQUIRED)
 endif()
