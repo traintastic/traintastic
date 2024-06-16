@@ -58,6 +58,13 @@ See [BUILDING.md](BUILDING.md).
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/DrEVILish">
+            <img src="https://avatars.githubusercontent.com/u/6287003?v=4" width="100;" alt="DrEVILish"/>
+            <br />
+            <sub><b>Ryan Freeman</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/memen45">
             <img src="https://avatars.githubusercontent.com/u/27782135?v=4" width="100;" alt="memen45"/>
             <br />
