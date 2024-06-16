@@ -24,7 +24,7 @@ endif()
 
 # Debian package
 if(LINUX)
-  cmake_host_system_information(RESULT DISTRO QUERY DISTRIB_ID_LIKE)
+  cmake_host_system_information(RESULT DISTRO QUERY DISTRIB_ID)
   cmake_host_system_information(RESULT CODENAME QUERY DISTRIB_VERSION_CODENAME)
 
   message(STATUS "distro id is ${DISTRO}")
