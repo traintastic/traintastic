@@ -5031,6 +5031,10 @@
         "fuzzy": 0
     },
     {
+        "term": "message:W3003",
+        "definition": "Posizione modificata dall'esterno mentre era bloccato in un itinerario"
+    },
+    {
         "term": "auto_yes_no:auto",
         "definition": "Auto rileva",
         "context": "",

@@ -149,6 +149,7 @@ enum class LogMessage : uint32_t
   W2020_DCCEXT_RCN213_IS_NOT_SUPPORTED = LogMessageOffset::warning + 2020,
   W3001_NX_BUTTON_CONNECTED_TO_TWO_BLOCKS = LogMessageOffset::warning + 3001,
   W3002_NX_BUTTON_NOT_CONNECTED_TO_ANY_BLOCK = LogMessageOffset::warning + 3002,
+  W3003_LOCKED_OUTPUT_CHANGED = LogMessageOffset::warning + 3003,
   W9001_EXECUTION_TOOK_X_US = LogMessageOffset::warning + 9001,
   W9999_X = LogMessageOffset::warning + 9999,
 

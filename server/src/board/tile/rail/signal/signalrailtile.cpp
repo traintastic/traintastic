@@ -31,6 +31,7 @@
 #include "../blockrailtile.hpp"
 #include "../../../../train/trainblockstatus.hpp"
 #include "../../../../train/train.hpp"
+#include "../../../../log/log.hpp"
 
 std::optional<OutputActionValue> SignalRailTile::getDefaultActionValue(SignalAspect signalAspect, OutputType outputType, size_t outputIndex)
 {
@@ -230,6 +231,8 @@ void SignalRailTile::connectOutputMap()
             }
             else
             {
+              Log::log(id, LogMessage::W3003_LOCKED_OUTPUT_CHANGED);
+
               // We cannot lock this signal. Stop all trains in this path
               if(auto blockPath = reservedPath())
               {

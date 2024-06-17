@@ -5031,6 +5031,10 @@
         "fuzzy": 0
     },
     {
+        "term": "message:W3003",
+        "definition": "Position externally changed while locked in a path"
+    },
+    {
         "term": "auto_yes_no:auto",
         "definition": "Auto detect",
         "context": "",
