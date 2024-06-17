@@ -95,20 +95,11 @@ jobs:
       run: git lfs checkout
 
     # Windows/macOS only:
-    - name: Cache Qt
-      if: startswith(matrix.config.os, 'windows') || startswith(matrix.config.os, 'macos')
-      id: cache-qt
-      uses: actions/cache@v3
-      with:
-        path: ../Qt
-        key: ${{runner.os}}-QtCache
-
-    # Windows/macOS only:
     - name: Install Qt
       if: startswith(matrix.config.os, 'windows') || startswith(matrix.config.os, 'macos')
-      uses: jurplel/install-qt-action@v3
+      uses: jurplel/install-qt-action@v4
       with:
-        cached: ${{steps.cache-qt.outputs.cache-hit}}
+        cache: true
 
     # Ubuntu only:
     - name: apt update
