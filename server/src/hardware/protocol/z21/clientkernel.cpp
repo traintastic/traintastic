@@ -113,8 +113,9 @@ void ClientKernel::receive(const Message& message)
                 if(m_trackPowerOn != TriState::False)
                 {
                   m_trackPowerOn = TriState::False;
-                  if(m_onTrackPowerOnChanged)
-                    m_onTrackPowerOnChanged(false);
+                  m_emergencyStop = TriState::False;
+                  if(m_onTrackPowerChanged)
+                    m_onTrackPowerChanged(false, false);
                 }
               });
           }
@@ -123,11 +124,12 @@ void ClientKernel::receive(const Message& message)
             EventLoop::call(
               [this]()
               {
-                if(m_trackPowerOn != TriState::True)
+                if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::False)
                 {
                   m_trackPowerOn = TriState::True;
-                  if(m_onTrackPowerOnChanged)
-                    m_onTrackPowerOnChanged(true);
+                  m_emergencyStop = TriState::False;
+                  if(m_onTrackPowerChanged)
+                    m_onTrackPowerChanged(true, false);
                 }
               });
           }
@@ -142,8 +144,10 @@ void ClientKernel::receive(const Message& message)
                 if(m_emergencyStop != TriState::True)
                 {
                   m_emergencyStop = TriState::True;
-                  if(m_onEmergencyStop)
-                    m_onEmergencyStop();
+                  m_trackPowerOn = TriState::True;
+
+                  if(m_onTrackPowerChanged)
+                    m_onTrackPowerChanged(true, true);
                 }
               });
           }
@@ -445,20 +449,14 @@ void ClientKernel::receive(const Message& message)
 
         EventLoop::call([this, trackPowerOn, stopState]()
           {
-            if(m_trackPowerOn != trackPowerOn)
+            if(m_trackPowerOn != trackPowerOn || m_emergencyStop != stopState)
             {
               m_trackPowerOn = trackPowerOn;
-              if(m_onTrackPowerOnChanged)
-                m_onTrackPowerOnChanged(trackPowerOn == TriState::True);
-            }
-
-            if(m_emergencyStop != stopState)
-            {
               m_emergencyStop = stopState;
-              if(m_onEmergencyStop && m_emergencyStop == TriState::True)
-              {
-                m_onEmergencyStop();
-              }
+
+              if(m_onTrackPowerChanged)
+                m_onTrackPowerChanged(trackPowerOn == TriState::True,
+                                      stopState == TriState::True);
             }
           });
       }
@@ -504,7 +502,7 @@ void ClientKernel::trackPowerOff()
 {
   assert(isEventLoopThread());
 
-  if(m_trackPowerOn != TriState::False)
+  if(m_trackPowerOn != TriState::False || m_emergencyStop != TriState::False)
   {
     m_ioContext.post(
       [this]()
@@ -518,7 +516,7 @@ void ClientKernel::emergencyStop()
 {
   assert(isEventLoopThread());
 
-  if(m_emergencyStop != TriState::True)
+  if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::True)
   {
     m_ioContext.post(
       [this]()

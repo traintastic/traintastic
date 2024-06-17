@@ -94,7 +94,7 @@ class ClientKernel final : public Kernel
      *
      * \sa EventLoop
      */
-    TriState m_trackPowerOn;
+    TriState m_trackPowerOn = TriState::Undefined;
 
     /*!
      * \brief m_emergencyStop caches command station emergency stop state.
@@ -104,9 +104,19 @@ class ClientKernel final : public Kernel
      *
      * \sa EventLoop
      */
-    TriState m_emergencyStop;
-    std::function<void(bool)> m_onTrackPowerOnChanged;
-    std::function<void()> m_onEmergencyStop;
+    TriState m_emergencyStop = TriState::Undefined;
+
+    /*!
+     * \brief m_onTrackPowerChanged callback is called when Z21 power state changes.
+     *
+     * \note It is always called from event loop thread
+     * \note First argument is powerOn, second argument is isStopped
+     * In Z21 EmergencyStop is really PowerOn + EmergencyStop and
+     * PowerOn implicitly means Run so we cannot call \sa trackPowerOn() if world must be stopped
+     *
+     * \sa EventLoop
+     */
+    std::function<void(bool, bool)> m_onTrackPowerChanged;
 
     DecoderController* m_decoderController = nullptr;
 
@@ -222,10 +232,10 @@ public:
      * @param[in] callback ...
      * @note This function may not be called when the kernel is running.
      */
-    inline void setOnTrackPowerOnChanged(std::function<void(bool)> callback)
+    inline void setOnTrackPowerChanged(std::function<void(bool, bool)> callback)
     {
       assert(!m_started);
-      m_onTrackPowerOnChanged = std::move(callback);
+      m_onTrackPowerChanged = std::move(callback);
     }
 
     /**
@@ -239,17 +249,6 @@ public:
     /**
      */
     void emergencyStop();
-
-    /**
-     * @brief ...
-     * @param[in] callback ...
-     * @note This function may not be called when the kernel is running.
-     */
-    inline void setOnEmergencyStop(std::function<void()> callback)
-    {
-      assert(!m_started);
-      m_onEmergencyStop = std::move(callback);
-    }
 
     /**
      * @brief Set the decoder controller

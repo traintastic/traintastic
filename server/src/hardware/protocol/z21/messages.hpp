@@ -391,7 +391,7 @@ static_assert(sizeof(LanXSetTrackPowerOff) == 7);
 // LAN_X_SET_TRACK_POWER_ON
 struct LanXSetTrackPowerOn : LanX
 {
-  uint8_t db0 = LAN_X_SET_TRACK_POWER_OFF;
+  uint8_t db0 = LAN_X_SET_TRACK_POWER_ON;
   uint8_t checksum = 0xa0;
 
   LanXSetTrackPowerOn() :
