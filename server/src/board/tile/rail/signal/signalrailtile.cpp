@@ -22,11 +22,15 @@
 
 #include "signalrailtile.hpp"
 #include "../../../map/abstractsignalpath.hpp"
+#include "../../../map/blockpath.hpp"
 #include "../../../../core/attributes.hpp"
 #include "../../../../core/method.tpp"
 #include "../../../../core/objectproperty.tpp"
 #include "../../../../world/getworld.hpp"
 #include "../../../../utils/displayname.hpp"
+#include "../blockrailtile.hpp"
+#include "../../../../train/trainblockstatus.hpp"
+#include "../../../../train/train.hpp"
 
 std::optional<OutputActionValue> SignalRailTile::getDefaultActionValue(SignalAspect signalAspect, OutputType outputType, size_t outputIndex)
 {
@@ -210,7 +214,7 @@ void SignalRailTile::connectOutputMap()
           // If we are in a signal path, re-evaluate our aspect
           // This corrects accidental modifications of aspect done
           // by the user with an handset or command station.
-          if(changed && m_signalPath)
+          if(changed && m_signalPath && hasReservedPath())
           {
             auto now = std::chrono::steady_clock::now();
             if((now - m_lastRetryStart) >= RETRY_DURATION)
@@ -223,6 +227,26 @@ void SignalRailTile::connectOutputMap()
             {
                 m_retryCount++;
                 evaluate();
+            }
+            else
+            {
+              // We cannot lock this signal. Stop all trains in this path
+              if(auto blockPath = reservedPath())
+              {
+                for(auto it : blockPath->fromBlock().trains)
+                {
+                  it->train.value()->emergencyStop.setValue(true);
+                }
+
+                auto toBlock = blockPath->toBlock();
+                if(toBlock)
+                {
+                  for(auto it : blockPath->toBlock()->trains)
+                  {
+                    it->train.value()->emergencyStop.setValue(true);
+                  }
+                }
+              }
             }
           }
         }
