@@ -4376,6 +4376,10 @@
         "definition": "NX button not connected to any block"
     },
     {
+        "term": "message:W3003",
+        "definition": "Position externally changed while locked in a path"
+    },
+    {
         "term": "auto_yes_no:auto",
         "definition": "Auto detect"
     },

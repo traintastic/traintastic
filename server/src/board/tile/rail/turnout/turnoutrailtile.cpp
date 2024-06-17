@@ -30,6 +30,7 @@
 #include "../blockrailtile.hpp"
 #include "../../../../train/trainblockstatus.hpp"
 #include "../../../../train/train.hpp"
+#include "../../../../log/log.hpp"
 
 TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tileId, size_t connectors) :
   RailTile(world, _id, tileId),
@@ -170,6 +171,8 @@ void TurnoutRailTile::connectOutputMap()
           }
           else
           {
+            Log::log(id, LogMessage::W3003_LOCKED_OUTPUT_CHANGED);
+
             // We cannot lock this turnout. Stop all trains in this path
             if(auto blockPath = m_reservedPath.lock())
             {
