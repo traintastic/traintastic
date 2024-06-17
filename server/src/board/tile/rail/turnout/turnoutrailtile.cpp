@@ -26,6 +26,10 @@
 #include "../../../../core/method.tpp"
 #include "../../../../world/world.hpp"
 #include "../../../../utils/displayname.hpp"
+#include "../../../map/blockpath.hpp"
+#include "../blockrailtile.hpp"
+#include "../../../../train/trainblockstatus.hpp"
+#include "../../../../train/train.hpp"
 
 TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tileId_, size_t connectors) :
   RailTile(world, _id, tileId_),
@@ -60,7 +64,7 @@ TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tile
   // setPosition is added by sub class
 }
 
-bool TurnoutRailTile::reserve(TurnoutPosition turnoutPosition, bool dryRun)
+bool TurnoutRailTile::reserve(const std::shared_ptr<BlockPath> &blockPath, TurnoutPosition turnoutPosition, bool dryRun)
 {
   if(!isValidPosition(turnoutPosition))
   {
@@ -84,6 +88,8 @@ bool TurnoutRailTile::reserve(TurnoutPosition turnoutPosition, bool dryRun)
       return false;
     }
 
+    m_reservedPath = blockPath;
+
     RailTile::setReservedState(static_cast<uint8_t>(turnoutPosition));
   }
   return true;
@@ -95,6 +101,8 @@ bool TurnoutRailTile::release(bool dryRun)
 
   if(!dryRun)
   {
+    m_reservedPath.reset();
+
     RailTile::release();
   }
   return true;
@@ -150,12 +158,50 @@ void TurnoutRailTile::connectOutputMap()
 {
   outputMap->onOutputStateMatchFound.connect([this](TurnoutPosition pos)
     {
-      doSetPosition(pos, true);
+      bool changed = (pos != position);
+      if(doSetPosition(pos, true))
+      {
+        // If turnout is inside a reserved path, force it to reserved position
+        // This corrects accidental modifications of position done
+        // by the user with an handset or command station.
+        TurnoutPosition reservedPosition = getReservedPosition();
+        if(changed && reservedPosition != TurnoutPosition::Unknown && reservedPosition != position.value())
+        {
+          auto now = std::chrono::steady_clock::now();
+          if((now - m_lastRetryStart) >= RETRY_DURATION)
+          {
+            m_lastRetryStart = now;
+            m_retryCount = 0;
+          }
 
-      // If turnout is inside a reserved path, force it to reserved position
-      TurnoutPosition reservedPosition = getReservedPosition();
-      if(reservedPosition != TurnoutPosition::Unknown && reservedPosition != position.value())
-          doSetPosition(reservedPosition, false);
+          if(m_retryCount < MAX_RETRYCOUNT)
+          {
+            // Try again
+            m_retryCount++;
+            doSetPosition(reservedPosition, false);
+          }
+          else
+          {
+            // We cannot lock this turnout. Stop all trains in this path
+            if(auto blockPath = m_reservedPath.lock())
+            {
+              for(auto it : blockPath->fromBlock().trains)
+              {
+                it->train.value()->emergencyStop.setValue(true);
+              }
+
+              auto toBlock = blockPath->toBlock();
+              if(toBlock)
+              {
+                for(auto it : blockPath->toBlock()->trains)
+                {
+                  it->train.value()->emergencyStop.setValue(true);
+                }
+              }
+            }
+          }
+        }
+      }
     });
 
   //TODO: disconnect somewhere?

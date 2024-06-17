@@ -389,7 +389,7 @@ bool BlockPath::reserve(const std::shared_ptr<Train>& train, bool dryRun)
   {
     if(auto turnout = turnoutWeak.lock())
     {
-      if(!turnout->reserve(position, dryRun))
+      if(!turnout->reserve(shared_from_this(), position, dryRun))
       {
         assert(dryRun);
         return false;
