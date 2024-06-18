@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUT_TURNOUTRAILTILE_HPP
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUT_TURNOUTRAILTILE_HPP
 
+#include <chrono>
 #include "../railtile.hpp"
 #include "../../../map/node.hpp"
 #include "../../../../core/objectproperty.hpp"
