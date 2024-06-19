@@ -80,6 +80,16 @@ jobs:
           build_deb: false
           defines: ""
 
+        - name: "macos-14"
+          os: "macos-14"
+          generator: "Unix Makefiles"
+          arch: ""
+          target: traintastic-client
+          jobs: 3
+          build_type: Release
+          build_deb: false
+          defines: ""
+
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
 
@@ -94,12 +104,20 @@ jobs:
     - name: Checkout LFS objects
       run: git lfs checkout
 
-    # Windows/macOS only:
-    - name: Install Qt
-      if: startswith(matrix.config.os, 'windows') || startswith(matrix.config.os, 'macos')
+    # Windows only:
+    - name: Install Qt 5
+      if: startswith(matrix.config.os, 'windows')
       uses: jurplel/install-qt-action@v4
       with:
         cache: true
+
+    # macOS only:
+    - name: Install Qt 6.5
+      if: startswith(matrix.config.os, 'macos')
+      uses: jurplel/install-qt-action@v4
+      with:
+        cache: true
+        version: 6.5.*
 
     # Ubuntu only:
     - name: apt update
@@ -267,6 +285,18 @@ jobs:
           toolset: ""
           target: all
           jobs: 4
+          build_type: Release
+          build_deb: false
+          defines: ""
+          ccov: false
+
+        - name: "macos-14"
+          os: "macos-14"
+          generator: "Unix Makefiles"
+          arch: ""
+          toolset: ""
+          target: all
+          jobs: 3
           build_type: Release
           build_deb: false
           defines: ""
