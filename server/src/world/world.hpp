@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -49,6 +49,8 @@ class InputList;
 class OutputList;
 class IdentificationList;
 class BoardList;
+class ZoneList;
+class BlockRailTileList;
 class LinkRailTileList;
 class NXManager;
 class Clock;
@@ -115,11 +117,13 @@ class World : public Object
     ObjectProperty<OutputList> outputs;
     ObjectProperty<IdentificationList> identifications;
     ObjectProperty<BoardList> boards;
+    ObjectProperty<ZoneList> zones;
     ObjectProperty<Clock> clock;
     ObjectProperty<TrainList> trains;
     ObjectProperty<RailVehicleList> railVehicles;
     ObjectProperty<Lua::ScriptList> luaScripts;
 
+    ObjectProperty<BlockRailTileList> blockRailTiles;
     ObjectProperty<LinkRailTileList> linkRailTiles;
     ObjectProperty<NXManager> nxManager;
 

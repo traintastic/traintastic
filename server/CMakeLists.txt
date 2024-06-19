@@ -170,6 +170,8 @@ file(GLOB SOURCES
   "src/utils/*.cpp"
   "src/world/*.hpp"
   "src/world/*.cpp"
+  "src/zone/*.hpp"
+  "src/zone/*.cpp"
   "../shared/src/traintastic/locale/locale.cpp"
   "../shared/src/traintastic/utils/standardpaths.cpp")
 

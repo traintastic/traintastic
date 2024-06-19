@@ -69,5 +69,71 @@
       }
     ],
     "since": "0.3"
+  },
+  "on_zone_assigned": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "zone"
+      }
+    ],
+    "since": "0.3"
+  },
+  "on_zone_entering": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "zone"
+      }
+    ],
+    "since": "0.3"
+  },
+  "on_zone_entered": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "zone"
+      }
+    ],
+    "since": "0.3"
+  },
+  "on_zone_leaving": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "zone"
+      }
+    ],
+    "since": "0.3"
+  },
+  "on_zone_left": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "zone"
+      }
+    ],
+    "since": "0.3"
+  },
+  "on_zone_removed": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "zone"
+      }
+    ],
+    "since": "0.3"
   }
 }

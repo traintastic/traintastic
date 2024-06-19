@@ -4900,5 +4900,13 @@
         "reference": "",
         "comment": "",
         "fuzzy": 0
+    },
+    {
+        "term": "world:zones",
+        "definition": "Zones"
+    },
+    {
+        "term": "zone:blocks",
+        "definition": "Blocks"
     }
 ]

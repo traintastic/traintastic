@@ -38,8 +38,10 @@
 
 class TrainVehicleList;
 class TrainBlockStatus;
+class TrainZoneStatus;
 class BlockRailTile;
 class PoweredRailVehicle;
+class Zone;
 
 class Train : public IdObject
 {
@@ -74,6 +76,13 @@ class Train : public IdObject
     void fireBlockEntered(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
     void fireBlockLeft(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
 
+    void fireZoneAssigned(const std::shared_ptr<Zone>& zone);
+    void fireZoneEntering(const std::shared_ptr<Zone>& zone);
+    void fireZoneEntered(const std::shared_ptr<Zone>& zone);
+    void fireZoneLeaving(const std::shared_ptr<Zone>& zone);
+    void fireZoneLeft(const std::shared_ptr<Zone>& zone);
+    void fireZoneRemoved(const std::shared_ptr<Zone>& zone);
+
   protected:
     void addToWorld() override;
     void destroying() override;
@@ -105,12 +114,19 @@ class Train : public IdObject
     //! Index 0 is the block where the head of the train is.
     //! If the train changes direction this list will be reversed.
     ObjectVectorProperty<TrainBlockStatus> blocks;
+    ObjectVectorProperty<TrainZoneStatus> zones;
     Property<std::string> notes;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onBlockAssigned;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onBlockReserved;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onBlockEntered;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onBlockLeft;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onBlockRemoved;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onZoneAssigned;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onZoneEntering;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onZoneEntered;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onZoneLeaving;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onZoneLeft;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onZoneRemoved;
 
     Train(World& world, std::string_view _id);
 

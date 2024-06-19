@@ -36,6 +36,7 @@
 #include "../hardware/decoder/decoder.hpp"
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
+#include "../zone/zone.hpp"
 
 CREATE_IMPL(Train)
 
@@ -145,12 +146,19 @@ Train::Train(World& world, std::string_view _id) :
     std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
   mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState},
+  zones{*this, "zones", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , onBlockAssigned{*this, "on_block_assigned", EventFlags::Scriptable}
   , onBlockReserved{*this, "on_block_reserved", EventFlags::Scriptable}
   , onBlockEntered{*this, "on_block_entered", EventFlags::Scriptable}
   , onBlockLeft{*this, "on_block_left", EventFlags::Scriptable}
   , onBlockRemoved{*this, "on_block_removed", EventFlags::Scriptable}
+  , onZoneAssigned{*this, "on_zone_assigned", EventFlags::Scriptable}
+  , onZoneEntering{*this, "on_zone_entering", EventFlags::Scriptable}
+  , onZoneEntered{*this, "on_zone_entered", EventFlags::Scriptable}
+  , onZoneLeaving{*this, "on_zone_leaving", EventFlags::Scriptable}
+  , onZoneLeft{*this, "on_zone_left", EventFlags::Scriptable}
+  , onZoneRemoved{*this, "on_zone_removed", EventFlags::Scriptable}
 {
   vehicles.setValueInternal(std::make_shared<TrainVehicleList>(*this, vehicles.name()));
 
@@ -199,6 +207,9 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addObjectEditor(blocks, false);
   m_interfaceItems.add(blocks);
 
+  Attributes::addObjectEditor(zones, false);
+  m_interfaceItems.add(zones);
+
   Attributes::addObjectEditor(powered, false);
   m_interfaceItems.add(powered);
   Attributes::addDisplayName(notes, DisplayName::Object::notes);
@@ -209,6 +220,12 @@ Train::Train(World& world, std::string_view _id) :
   m_interfaceItems.add(onBlockEntered);
   m_interfaceItems.add(onBlockLeft);
   m_interfaceItems.add(onBlockRemoved);
+  m_interfaceItems.add(onZoneAssigned);
+  m_interfaceItems.add(onZoneEntering);
+  m_interfaceItems.add(onZoneEntered);
+  m_interfaceItems.add(onZoneLeaving);
+  m_interfaceItems.add(onZoneLeft);
+  m_interfaceItems.add(onZoneRemoved);
 
   updateEnabled();
 }
@@ -484,4 +501,34 @@ void Train::fireBlockRemoved(const std::shared_ptr<BlockRailTile>& block)
     onBlockRemoved,
     shared_ptr<Train>(),
     block);
+}
+
+void Train::fireZoneAssigned(const std::shared_ptr<Zone>& zone)
+{
+  fireEvent(onZoneAssigned, shared_ptr<Train>(), zone);
+}
+
+void Train::fireZoneEntering(const std::shared_ptr<Zone>& zone)
+{
+  fireEvent(onZoneEntering, shared_ptr<Train>(), zone);
+}
+
+void Train::fireZoneEntered(const std::shared_ptr<Zone>& zone)
+{
+  fireEvent(onZoneEntered, shared_ptr<Train>(), zone);
+}
+
+void Train::fireZoneLeaving(const std::shared_ptr<Zone>& zone)
+{
+  fireEvent(onZoneLeaving, shared_ptr<Train>(), zone);
+}
+
+void Train::fireZoneLeft(const std::shared_ptr<Zone>& zone)
+{
+  fireEvent(onZoneLeft, shared_ptr<Train>(), zone);
+}
+
+void Train::fireZoneRemoved(const std::shared_ptr<Zone>& zone)
+{
+  fireEvent(onZoneRemoved, shared_ptr<Train>(), zone);
 }

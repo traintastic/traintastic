@@ -406,6 +406,14 @@ MainWindow::MainWindow(QWidget* parent) :
     menu->addAction(Locale::tr("world:outputs") + "...", [this](){ showObject("world.outputs", Locale::tr("world:outputs")); });
     menu->addAction(Locale::tr("hardware:identifications") + "...", [this](){ showObject("world.identifications", Locale::tr("hardware:identifications")); });
     boardsAction = m_menuObjects->addAction(Theme::getIcon("board"), Locale::tr("world:boards") + "...", [this](){ showObject("world.boards", Locale::tr("world:boards")); });
+    m_menuObjects->addAction(
+      Theme::getIcon("zone"),
+      Locale::tr("world:zones") + "...",
+      [this]()
+      {
+        showObject("world.zones", Locale::tr("world:zones"));
+      }
+    );
     m_menuObjects->addAction(Theme::getIcon("clock"), Locale::tr("world:clock") + "...", [this](){ showObject("world.clock", Locale::tr("world:clock")); });
     trainsAction = m_menuObjects->addAction(Theme::getIcon("train"), Locale::tr("world:trains") + "...",
       [this]()
