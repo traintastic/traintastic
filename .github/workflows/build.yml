@@ -110,6 +110,7 @@ jobs:
       uses: jurplel/install-qt-action@v4
       with:
         cache: true
+        version: 6.5.*
 
     # Ubuntu only:
     - name: apt update
