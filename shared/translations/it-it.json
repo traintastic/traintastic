@@ -2560,6 +2560,14 @@
         "comment": ""
     },
     {
+        "term": "message:N3003",
+        "definition": "La posizione del deviatoio è stata riportata a quella riservata"
+    },
+    {
+        "term": "message:N3004",
+        "definition": "L'aspetto del segnale è stato riportato a quello riservato"
+    },
+    {
         "term": "message:N9001",
         "definition": "Avvio script",
         "context": "",
@@ -4344,6 +4352,14 @@
         "definition": "Impossibile eliminare un treno attivo"
     },
     {
+        "term": "message:E3003",
+        "definition": "Il treno \u00e8 stato stoppato d'emergenza per la modifica esterna della posizione del deviatoio %1"
+    },
+    {
+        "term": "message:E3004",
+        "definition": "Il treno \u00e8 stato stoppato d'emergenza per la modifica esterna dell'aspetto del segnale %1"
+    },
+    {
         "term": "message:C1014",
         "definition": "Comando non valido"
     },
@@ -4377,7 +4393,11 @@
     },
     {
         "term": "message:W3003",
-        "definition": "Posizione modificata dall'esterno mentre era bloccato in un itinerario"
+        "definition": "Posizione del deviatoio modificata dall'esterno mentre era bloccato in un itinerario"
+    },
+    {
+        "term": "message:W3004",
+        "definition": "Aspetto del segnale modificato dall'esterno mentre era bloccato in un itinerario"
     },
     {
         "term": "auto_yes_no:auto",
