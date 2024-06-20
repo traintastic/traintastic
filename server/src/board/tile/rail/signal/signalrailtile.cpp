@@ -217,6 +217,8 @@ void SignalRailTile::connectOutputMap()
           // by the user with an handset or command station.
           if(changed && m_signalPath && hasReservedPath())
           {
+            Log::log(id, LogMessage::W3004_LOCKED_SIGNAL_CHANGED);
+
             auto now = std::chrono::steady_clock::now();
             if((now - m_lastRetryStart) >= RETRY_DURATION)
             {
@@ -228,17 +230,21 @@ void SignalRailTile::connectOutputMap()
             {
                 m_retryCount++;
                 evaluate();
+
+                Log::log(id, LogMessage::N3004_SIGNAL_RESET_TO_RESERVED_ASPECT);
             }
             else
             {
-              Log::log(id, LogMessage::W3003_LOCKED_OUTPUT_CHANGED);
-
               // We cannot lock this signal. Stop all trains in this path
               if(auto blockPath = reservedPath())
-              {
+              { 
+                std::vector<std::shared_ptr<Train>> alreadyStoppedTrains;
+
                 for(auto it : blockPath->fromBlock().trains)
                 {
                   it->train.value()->emergencyStop.setValue(true);
+                  alreadyStoppedTrains.push_back(it->train.value());
+                  Log::log(it->train->id, LogMessage::E3004_TRAIN_STOPPED_ON_SIGNAL_X_CHANGED, id.value());
                 }
 
                 auto toBlock = blockPath->toBlock();
@@ -246,7 +252,11 @@ void SignalRailTile::connectOutputMap()
                 {
                   for(auto it : blockPath->toBlock()->trains)
                   {
+                    if(std::find(alreadyStoppedTrains.cbegin(), alreadyStoppedTrains.cend(), it->train.value()) != alreadyStoppedTrains.cend())
+                      continue; // Do not stop train twice
+
                     it->train.value()->emergencyStop.setValue(true);
+                    Log::log(it->train->id, LogMessage::E3004_TRAIN_STOPPED_ON_SIGNAL_X_CHANGED, id.value());
                   }
                 }
               }

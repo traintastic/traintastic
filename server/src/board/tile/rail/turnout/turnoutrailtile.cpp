@@ -168,6 +168,8 @@ void TurnoutRailTile::connectOutputMap()
         TurnoutPosition reservedPosition = getReservedPosition();
         if(changed && reservedPosition != TurnoutPosition::Unknown && reservedPosition != position.value())
         {
+          Log::log(id, LogMessage::W3003_LOCKED_TURNOUT_CHANGED);
+
           auto now = std::chrono::steady_clock::now();
           if((now - m_lastRetryStart) >= RETRY_DURATION)
           {
@@ -180,10 +182,12 @@ void TurnoutRailTile::connectOutputMap()
             // Try again
             m_retryCount++;
             doSetPosition(reservedPosition, false);
+
+            Log::log(id, LogMessage::N3003_TURNOUT_RESET_TO_RESERVED_POSITION);
           }
           else
           {
-            Log::log(id, LogMessage::W3003_LOCKED_OUTPUT_CHANGED);
+            std::vector<std::shared_ptr<Train>> alreadyStoppedTrains;
 
             // We cannot lock this turnout. Stop all trains in this path
             if(auto blockPath = m_reservedPath.lock())
@@ -191,6 +195,8 @@ void TurnoutRailTile::connectOutputMap()
               for(auto it : blockPath->fromBlock().trains)
               {
                 it->train.value()->emergencyStop.setValue(true);
+                alreadyStoppedTrains.push_back(it->train.value());
+                Log::log(it->train->id, LogMessage::E3003_TRAIN_STOPPED_ON_TURNOUT_X_CHANGED, id.value());
               }
 
               auto toBlock = blockPath->toBlock();
@@ -198,7 +204,11 @@ void TurnoutRailTile::connectOutputMap()
               {
                 for(auto it : blockPath->toBlock()->trains)
                 {
+                  if(std::find(alreadyStoppedTrains.cbegin(), alreadyStoppedTrains.cend(), it->train.value()) != alreadyStoppedTrains.cend())
+                    continue; // Do not stop train twice
+
                   it->train.value()->emergencyStop.setValue(true);
+                  Log::log(it->train->id, LogMessage::E3003_TRAIN_STOPPED_ON_TURNOUT_X_CHANGED, id.value());
                 }
               }
             }

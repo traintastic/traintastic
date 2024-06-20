@@ -2826,6 +2826,14 @@
         "fuzzy": 0
     },
     {
+        "term": "message:N3003",
+        "definition": "Turnout position was reset to reserved one"
+    },
+    {
+        "term": "message:N3004",
+        "definition": "Signal aspect was reset to reserved one"
+    },
+    {
         "term": "message:N9001",
         "definition": "Starting script",
         "context": "",
@@ -4959,6 +4967,14 @@
         "fuzzy": 0
     },
     {
+        "term": "message:E3003",
+        "definition": "Train was emergency stopped due to turnout %1 position externally changed"
+    },
+    {
+        "term": "message:E3004",
+        "definition": "Train was emergency stopped due to signal %1 aspect externally changed"
+    },
+    {
         "term": "message:C1014",
         "definition": "Invalid command",
         "context": "",
@@ -5032,7 +5048,11 @@
     },
     {
         "term": "message:W3003",
-        "definition": "Position externally changed while locked in a path"
+        "definition": "Turnout position externally changed while locked in a path"
+    },
+    {
+        "term": "message:W3004",
+        "definition": "Signal aspect externally changed while locked in a path"
     },
     {
         "term": "auto_yes_no:auto",
