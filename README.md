@@ -51,17 +51,17 @@ See [BUILDING.md](BUILDING.md).
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/cyrilpawelko">
-            <img src="https://avatars.githubusercontent.com/u/1159809?v=4" width="100;" alt="cyrilpawelko"/>
-            <br />
-            <sub><b>Cyril Pawelko</b></sub>
-        </a>
-    </td>
-    <td align="center">
         <a href="https://github.com/DrEVILish">
             <img src="https://avatars.githubusercontent.com/u/6287003?v=4" width="100;" alt="DrEVILish"/>
             <br />
             <sub><b>Ryan Freeman</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/cyrilpawelko">
+            <img src="https://avatars.githubusercontent.com/u/1159809?v=4" width="100;" alt="cyrilpawelko"/>
+            <br />
+            <sub><b>Cyril Pawelko</b></sub>
         </a>
     </td>
     <td align="center">
