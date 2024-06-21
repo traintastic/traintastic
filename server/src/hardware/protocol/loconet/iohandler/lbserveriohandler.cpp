@@ -145,8 +145,11 @@ void LBServerIOHandler::read()
             m_version = line.substr(7);
           }
 
-          pos += line.size();
-          bytesTransferred -= line.size();
+          pos = eol + 1; // Skip the newline character
+          if (pos < end && (*pos == '\n' || *pos == '\r') && *pos != *(pos - 1)) {
+            pos++; // Skip the second part of CRLF or LFCR
+          }
+          bytesTransferred = end - pos;
         }
 
         if(bytesTransferred != 0)
