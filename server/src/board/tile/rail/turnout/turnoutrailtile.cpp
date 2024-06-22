@@ -160,60 +160,89 @@ void TurnoutRailTile::connectOutputMap()
   outputMap->onOutputStateMatchFound.connect([this](TurnoutPosition pos)
     {
       bool changed = (pos != position);
-      if(doSetPosition(pos, true))
+      if(!doSetPosition(pos, true) || !changed)
+        return; // No change
+
+      TurnoutPosition reservedPosition = getReservedPosition();
+      if(reservedPosition == TurnoutPosition::Unknown || reservedPosition == position.value())
+        return; // Not locked
+
+      // If turnout is inside a reserved path, force it to reserved position
+      // This corrects accidental modifications of position done
+      // by the user with an handset or command station.
+      Log::log(id, LogMessage::W3003_LOCKED_TURNOUT_CHANGED);
+
+      if(m_world.correctOutputPosWhenLocked)
       {
-        // If turnout is inside a reserved path, force it to reserved position
-        // This corrects accidental modifications of position done
-        // by the user with an handset or command station.
-        TurnoutPosition reservedPosition = getReservedPosition();
-        if(changed && reservedPosition != TurnoutPosition::Unknown && reservedPosition != position.value())
+        auto now = std::chrono::steady_clock::now();
+        if((now - m_lastRetryStart) >= RETRY_DURATION)
         {
-          Log::log(id, LogMessage::W3003_LOCKED_TURNOUT_CHANGED);
+          // Reset retry count
+          m_lastRetryStart = now;
+          m_retryCount = 0;
+        }
 
-          auto now = std::chrono::steady_clock::now();
-          if((now - m_lastRetryStart) >= RETRY_DURATION)
+        if(m_retryCount < MAX_RETRYCOUNT)
+        {
+          // Try to reset output to reseved state
+          m_retryCount++;
+          doSetPosition(reservedPosition, false);
+
+          Log::log(id, LogMessage::N3003_TURNOUT_RESET_TO_RESERVED_POSITION);
+          return;
+        }
+      }
+
+      // We reached maximum retry count
+      // We cannot lock this turnout. Take action.
+      switch (m_world.extOutputChangeAction.value())
+      {
+      default:
+      case ExternalOutputChangeAction::DoNothing:
+      {
+        // Do nothing
+        break;
+      }
+      case ExternalOutputChangeAction::EmergencyStopTrain:
+      {
+        if(auto blockPath = m_reservedPath.lock())
+        {
+          std::vector<std::shared_ptr<Train>> alreadyStoppedTrains;
+
+          for(auto it : blockPath->fromBlock().trains)
           {
-            m_lastRetryStart = now;
-            m_retryCount = 0;
+            it->train.value()->emergencyStop.setValue(true);
+            alreadyStoppedTrains.push_back(it->train.value());
+            Log::log(it->train->id, LogMessage::E3003_TRAIN_STOPPED_ON_TURNOUT_X_CHANGED, id.value());
           }
 
-          if(m_retryCount < MAX_RETRYCOUNT)
+          auto toBlock = blockPath->toBlock();
+          if(toBlock)
           {
-            // Try again
-            m_retryCount++;
-            doSetPosition(reservedPosition, false);
-
-            Log::log(id, LogMessage::N3003_TURNOUT_RESET_TO_RESERVED_POSITION);
-          }
-          else
-          {
-            std::vector<std::shared_ptr<Train>> alreadyStoppedTrains;
-
-            // We cannot lock this turnout. Stop all trains in this path
-            if(auto blockPath = m_reservedPath.lock())
+            for(auto it : blockPath->toBlock()->trains)
             {
-              for(auto it : blockPath->fromBlock().trains)
-              {
-                it->train.value()->emergencyStop.setValue(true);
-                alreadyStoppedTrains.push_back(it->train.value());
-                Log::log(it->train->id, LogMessage::E3003_TRAIN_STOPPED_ON_TURNOUT_X_CHANGED, id.value());
-              }
+              if(std::find(alreadyStoppedTrains.cbegin(), alreadyStoppedTrains.cend(), it->train.value()) != alreadyStoppedTrains.cend())
+                continue; // Do not stop train twice
 
-              auto toBlock = blockPath->toBlock();
-              if(toBlock)
-              {
-                for(auto it : blockPath->toBlock()->trains)
-                {
-                  if(std::find(alreadyStoppedTrains.cbegin(), alreadyStoppedTrains.cend(), it->train.value()) != alreadyStoppedTrains.cend())
-                    continue; // Do not stop train twice
-
-                  it->train.value()->emergencyStop.setValue(true);
-                  Log::log(it->train->id, LogMessage::E3003_TRAIN_STOPPED_ON_TURNOUT_X_CHANGED, id.value());
-                }
-              }
+              it->train.value()->emergencyStop.setValue(true);
+              Log::log(it->train->id, LogMessage::E3003_TRAIN_STOPPED_ON_TURNOUT_X_CHANGED, id.value());
             }
           }
         }
+        break;
+      }
+      case ExternalOutputChangeAction::EmergencyStopWorld:
+      {
+        m_world.stop();
+        Log::log(m_world, LogMessage::E3007_WORLD_STOPPED_ON_TURNOUT_X_CHANGED, id.value());
+        break;
+      }
+      case ExternalOutputChangeAction::PowerOffWorld:
+      {
+        m_world.powerOff();
+        Log::log(m_world, LogMessage::E3009_WORLD_POWER_OFF_ON_TURNOUT_X_CHANGED, id.value());
+        break;
+      }
       }
     });
 

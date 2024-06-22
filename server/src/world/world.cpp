@@ -67,6 +67,7 @@
 #include "../train/trainlist.hpp"
 #include "../vehicle/rail/railvehiclelist.hpp"
 #include "../lua/scriptlist.hpp"
+#include "../utils/category.hpp"
 
 using nlohmann::json;
 
@@ -144,6 +145,8 @@ World::World(Private /*unused*/) :
         powerOnWhenLoaded = true; // can't run without power
       }
     }},
+  correctOutputPosWhenLocked{this, "correct_output_pos_when_locked", true, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
+  extOutputChangeAction{this, "ext_output_change_action", ExternalOutputChangeAction::EmergencyStopTrain, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
   decoderControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   inputControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   outputControllers{this, "output_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
@@ -307,6 +310,15 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(onlineWhenLoaded);
   m_interfaceItems.add(powerOnWhenLoaded);
   m_interfaceItems.add(runWhenLoaded);
+
+  Attributes::addCategory(correctOutputPosWhenLocked, Category::trains);
+  Attributes::addEnabled(correctOutputPosWhenLocked, true);
+  m_interfaceItems.add(correctOutputPosWhenLocked);
+
+  Attributes::addCategory(extOutputChangeAction, Category::trains);
+  Attributes::addEnabled(extOutputChangeAction, true);
+  Attributes::addValues(extOutputChangeAction, extOutputChangeActionValues);
+  m_interfaceItems.add(extOutputChangeAction);
 
   Attributes::addObjectEditor(decoderControllers, false);
   m_interfaceItems.add(decoderControllers);

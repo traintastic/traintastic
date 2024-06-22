@@ -210,58 +210,88 @@ void SignalRailTile::connectOutputMap()
     outputMap->onOutputStateMatchFound.connect([this](SignalAspect value)
       {
         bool changed = (value != aspect);
-        if(doSetAspect(value, true))
+        if(!doSetAspect(value, true) || !changed)
+          return; // No change
+
+        if(!m_signalPath || !hasReservedPath())
+          return; // Not locked
+
+        // If we are in a signal path, re-evaluate our aspect
+        // This corrects accidental modifications of aspect done
+        // by the user with an handset or command station.
+        Log::log(id, LogMessage::W3004_LOCKED_SIGNAL_CHANGED);
+
+        if(m_world.correctOutputPosWhenLocked)
         {
-          // If we are in a signal path, re-evaluate our aspect
-          // This corrects accidental modifications of aspect done
-          // by the user with an handset or command station.
-          if(changed && m_signalPath && hasReservedPath())
+          auto now = std::chrono::steady_clock::now();
+          if((now - m_lastRetryStart) >= RETRY_DURATION)
           {
-            Log::log(id, LogMessage::W3004_LOCKED_SIGNAL_CHANGED);
+            // Reset retry count
+            m_lastRetryStart = now;
+            m_retryCount = 0;
+          }
 
-            auto now = std::chrono::steady_clock::now();
-            if((now - m_lastRetryStart) >= RETRY_DURATION)
+          if(m_retryCount < MAX_RETRYCOUNT)
+          {
+            // Try to reset output to reseved state
+            m_retryCount++;
+            evaluate();
+
+            Log::log(id, LogMessage::N3004_SIGNAL_RESET_TO_RESERVED_ASPECT);
+            return;
+          }
+        }
+
+        // We reached maximum retry count
+        // We cannot lock this signal. Take action.
+        switch (m_world.extOutputChangeAction.value())
+        {
+        default:
+        case ExternalOutputChangeAction::DoNothing:
+        {
+          // Do nothing
+          break;
+        }
+        case ExternalOutputChangeAction::EmergencyStopTrain:
+        {
+          if(auto blockPath = reservedPath())
+          {
+            std::vector<std::shared_ptr<Train>> alreadyStoppedTrains;
+
+            for(auto it : blockPath->fromBlock().trains)
             {
-                m_lastRetryStart = now;
-                m_retryCount = 0;
+              it->train.value()->emergencyStop.setValue(true);
+              alreadyStoppedTrains.push_back(it->train.value());
+              Log::log(it->train->id, LogMessage::E3004_TRAIN_STOPPED_ON_SIGNAL_X_CHANGED, id.value());
             }
 
-            if(m_retryCount < MAX_RETRYCOUNT)
+            auto toBlock = blockPath->toBlock();
+            if(toBlock)
             {
-                m_retryCount++;
-                evaluate();
+              for(auto it : blockPath->toBlock()->trains)
+              {
+                if(std::find(alreadyStoppedTrains.cbegin(), alreadyStoppedTrains.cend(), it->train.value()) != alreadyStoppedTrains.cend())
+                  continue; // Do not stop train twice
 
-                Log::log(id, LogMessage::N3004_SIGNAL_RESET_TO_RESERVED_ASPECT);
-            }
-            else
-            {
-              // We cannot lock this signal. Stop all trains in this path
-              if(auto blockPath = reservedPath())
-              { 
-                std::vector<std::shared_ptr<Train>> alreadyStoppedTrains;
-
-                for(auto it : blockPath->fromBlock().trains)
-                {
-                  it->train.value()->emergencyStop.setValue(true);
-                  alreadyStoppedTrains.push_back(it->train.value());
-                  Log::log(it->train->id, LogMessage::E3004_TRAIN_STOPPED_ON_SIGNAL_X_CHANGED, id.value());
-                }
-
-                auto toBlock = blockPath->toBlock();
-                if(toBlock)
-                {
-                  for(auto it : blockPath->toBlock()->trains)
-                  {
-                    if(std::find(alreadyStoppedTrains.cbegin(), alreadyStoppedTrains.cend(), it->train.value()) != alreadyStoppedTrains.cend())
-                      continue; // Do not stop train twice
-
-                    it->train.value()->emergencyStop.setValue(true);
-                    Log::log(it->train->id, LogMessage::E3004_TRAIN_STOPPED_ON_SIGNAL_X_CHANGED, id.value());
-                  }
-                }
+                it->train.value()->emergencyStop.setValue(true);
+                Log::log(it->train->id, LogMessage::E3004_TRAIN_STOPPED_ON_SIGNAL_X_CHANGED, id.value());
               }
             }
           }
+          break;
+        }
+        case ExternalOutputChangeAction::EmergencyStopWorld:
+        {
+          m_world.stop();
+          Log::log(m_world, LogMessage::E3008_WORLD_STOPPED_ON_SIGNAL_X_CHANGED, id.value());
+          break;
+        }
+        case ExternalOutputChangeAction::PowerOffWorld:
+        {
+          m_world.powerOff();
+          Log::log(m_world, LogMessage::E3010_WORLD_POWER_OFF_ON_SIGNAL_X_CHANGED, id.value());
+          break;
+        }
         }
       });
 
