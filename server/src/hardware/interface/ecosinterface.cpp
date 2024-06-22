@@ -32,6 +32,7 @@
 #include "../protocol/ecos/iohandler/simulationiohandler.hpp"
 #include "../protocol/ecos/object/switch.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/eventloop.hpp"
 #include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
@@ -258,7 +259,7 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
     m_ecosPropertyChanged.disconnect();
 
     m_kernel->stop(simulation ? nullptr : &m_simulation);
-    m_kernel.reset();
+    EventLoop::deleteLater(m_kernel.release());
 
     setState(InterfaceState::Offline);
   }

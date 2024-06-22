@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,7 @@
 #include "../protocol/withrottle/settings.hpp"
 #include "../protocol/withrottle/iohandler/tcpiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/eventloop.hpp"
 #include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
@@ -123,7 +124,7 @@ bool WiThrottleInterface::setOnline(bool& value, bool simulation)
     Attributes::setEnabled(port, true);
 
     m_kernel->stop();
-    m_kernel.reset();
+    EventLoop::deleteLater(m_kernel.release());
 
     setState(InterfaceState::Offline);
   }

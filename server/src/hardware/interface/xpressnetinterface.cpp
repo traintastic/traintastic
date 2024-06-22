@@ -34,6 +34,7 @@
 #include "../protocol/xpressnet/iohandler/rosofts88xpressnetliiohandler.hpp"
 #include "../protocol/xpressnet/iohandler/tcpiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/eventloop.hpp"
 #include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
@@ -346,7 +347,7 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
     m_xpressnetPropertyChanged.disconnect();
 
     m_kernel->stop();
-    m_kernel.reset();
+    EventLoop::deleteLater(m_kernel.release());
 
     setState(InterfaceState::Offline);
   }
