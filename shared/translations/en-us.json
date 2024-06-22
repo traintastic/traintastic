@@ -216,6 +216,14 @@
         "comment": ""
     },
     {
+        "term": "category:trains",
+        "definition": "Trains",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "class_id:board_tile.misc.push_button",
         "definition": "Push button",
         "context": "",
@@ -878,6 +886,22 @@
         "term_plural": "",
         "reference": "",
         "comment": ""
+    },
+    {
+        "term": "ext_output_change_action:do_nothing",
+        "definition": "Do nothing"
+    },
+    {
+        "term": "ext_output_change_action:estop_train",
+        "definition": "Emergency stop trains in block path"
+    },
+    {
+        "term": "ext_output_change_action:estop_world",
+        "definition": "Emergency stop World"
+    },
+    {
+        "term": "ext_output_change_action:poweroff_world",
+        "definition": "Power off World"
     },
     {
         "term": "ecos_channel:ecos_detector",
@@ -4018,6 +4042,22 @@
     {
         "term": "world:uuid",
         "definition": "UUID",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:correct_output_pos_when_locked",
+        "definition": "Try to correct Ouput state when externally chaged while locked",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:ext_output_change_action",
+        "definition": "External Output Change Action",
         "context": "",
         "term_plural": "",
         "reference": "",
