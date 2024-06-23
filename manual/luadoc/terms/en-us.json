@@ -2030,5 +2030,77 @@
   {
     "term": "enum.zone_train_state:title",
     "definition": "Zone train state"
+  },
+  {
+    "term": "object.train.on_zone_assigned:description",
+    "definition": "Fired when the train is assigned to the first block of a zone."
+  },
+  {
+    "term": "object.train.on_zone_assigned.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_zone_assigned.parameter.zone:description",
+    "definition": "The {ref:object.zone|zone} that the train is assigned to."
+  },
+  {
+    "term": "object.train.on_zone_entered:description",
+    "definition": "Fired when the train is in a zone, the train is in a zone when it only occupies blocks that are part of a zone."
+  },
+  {
+    "term": "object.train.on_zone_entered.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_zone_entered.parameter.zone:description",
+    "definition": "The {ref:object.zone|zone} that the train has entered."
+  },
+  {
+    "term": "object.train.on_zone_entering:description",
+    "definition": "Fired when the train reserves or enters the first block of a zone it currently isn't in."
+  },
+  {
+    "term": "object.train.on_zone_entering.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_zone_entering.parameter.zone:description",
+    "definition": "The {ref:object.zone|zone} that the train is entering."
+  },
+  {
+    "term": "object.train.on_zone_leaving:description",
+    "definition": "Fired when the train reserves or enters a block that is not part of a zone it currently is in."
+  },
+  {
+    "term": "object.train.on_zone_leaving.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_zone_leaving.parameter.zone:description",
+    "definition": "The {ref:object.zone|zone} that the train is leaving."
+  },
+  {
+    "term": "object.train.on_zone_left:description",
+    "definition": "Fired when the train is no longer in a zone, the train is not longer in a zone when it doesn't occupy any block that is part of a zone."
+  },
+  {
+    "term": "object.train.on_zone_left.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_zone_left.parameter.zone:description",
+    "definition": "The {ref:object.zone|zone} that the train left."
+  },
+  {
+    "term": "object.train.on_zone_removed:description",
+    "definition": "Fired when the train is removed from the last block of a zone."
+  },
+  {
+    "term": "object.train.on_zone_removed.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_zone_removed.parameter.zone:description",
+    "definition": "The {ref:object.zone|zone} that the train is removed from."
   }
 ]
