@@ -51,6 +51,7 @@ SerialIOHandler::~SerialIOHandler()
 void SerialIOHandler::start()
 {
   read();
+  started();
 }
 
 void SerialIOHandler::stop()
@@ -126,7 +127,7 @@ void SerialIOHandler::read()
           [this, ec]()
           {
             Log::log(m_kernel.logId, LogMessage::E2002_SERIAL_READ_FAILED_X, ec);
-            m_kernel.error();
+            error();
           });
       }
     });
@@ -154,7 +155,7 @@ void SerialIOHandler::write()
           [this, ec]()
           {
             Log::log(m_kernel.logId, LogMessage::E2001_SERIAL_WRITE_FAILED_X, ec);
-            m_kernel.error();
+            error();
           });
       }
     });

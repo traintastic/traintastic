@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,14 +36,12 @@ class TCPBinaryIOHandler final : public TCPIOHandler
     std::array<std::byte, 1500> m_writeBuffer;
     size_t m_writeBufferOffset;
 
-    void read();
-    void write();
+  protected:
+    void read() final;
+    void write() final;
 
   public:
     TCPBinaryIOHandler(Kernel& kernel, std::string hostname, uint16_t port);
-
-    void start() final;
-    void stop() final;
 
     bool send(const Message& message) final;
 };

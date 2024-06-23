@@ -377,6 +377,15 @@ class Kernel : public ::KernelBase
     void stop();
 
     /**
+     * \brief ...
+     *
+     * This must be called by the IO handler when the connection is ready.
+     *
+     * \note This function must run in the kernel's IO context
+     */
+    void started() final;
+
+    /**
      * @brief ...
      *
      * This must be called by the IO handler whenever a LocoNet message is received.

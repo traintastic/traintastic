@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/loconet/iohandler/iohandler.hpp
+ * server/src/hardware/protocol/loconet/iohandler/iohandler.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2024 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,42 +20,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_IOHANDLER_IOHANDLER_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_IOHANDLER_IOHANDLER_HPP
+#include "iohandler.hpp"
+#include "../kernel.hpp"
 
 namespace LocoNet {
 
-class Kernel;
-struct Message;
-
-class IOHandler
+IOHandler::IOHandler(Kernel& kernel)
+  : m_kernel{kernel}
 {
-  protected:
-    Kernel& m_kernel;
+}
 
-    IOHandler(Kernel& kernel);
-
-    void started();
-    void error();
-
-  public:
-    IOHandler(const IOHandler&) = delete;
-    IOHandler& operator =(const IOHandler&) = delete;
-
-    virtual ~IOHandler() = default;
-
-    virtual void start() = 0;
-    virtual void stop() = 0;
-
-    virtual bool send(const Message& message) = 0;
-};
-
-template<class T>
-constexpr bool isSimulation()
+void IOHandler::started()
 {
-  return false;
+  m_kernel.started();
+}
+
+void IOHandler::error()
+{
+  m_kernel.error();
 }
 
 }
-
-#endif

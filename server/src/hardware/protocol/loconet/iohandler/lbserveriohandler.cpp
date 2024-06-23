@@ -83,23 +83,12 @@ LBServerIOHandler::LBServerIOHandler(Kernel& kernel, std::string hostname, uint1
 {
 }
 
-void LBServerIOHandler::start()
-{
-  TCPIOHandler::start();
-
-  read();
-}
-
-void LBServerIOHandler::stop()
-{
-}
-
 bool LBServerIOHandler::send(const Message& message)
 {
   const bool wasEmpty = m_writeQueue.empty();
   m_writeQueue.emplace(formatSend(message));
 
-  if(wasEmpty)
+  if(wasEmpty && connected())
     write();
 
   return true;
@@ -164,7 +153,7 @@ void LBServerIOHandler::read()
           [this, ec]()
           {
             Log::log(m_kernel.logId, LogMessage::E2008_SOCKET_READ_FAILED_X, ec);
-            m_kernel.error();
+            error();
           });
       }
     });
@@ -172,7 +161,11 @@ void LBServerIOHandler::read()
 
 void LBServerIOHandler::write()
 {
-  assert(!m_writeQueue.empty());
+  if(m_writeQueue.empty()) /*[[unlikely]]*/
+  {
+    return;
+  }
+
   const std::string& message = m_writeQueue.front();
   boost::asio::async_write(m_socket, boost::asio::buffer(message.data(), message.size()),
     [this](const boost::system::error_code& ec, std::size_t /*bytesTransferred*/)
@@ -183,7 +176,7 @@ void LBServerIOHandler::write()
           [this, ec]()
           {
             Log::log(m_kernel.logId, LogMessage::E2007_SOCKET_WRITE_FAILED_X, ec);
-            m_kernel.error();
+            error();
           });
       }
     });
