@@ -29,6 +29,7 @@
 #include <array>
 #include <vector>
 #include <utility>
+#include <boost/asio/steady_timer.hpp>
 #include "../../enum/blockside.hpp"
 
 class RailTile;
@@ -64,10 +65,15 @@ class BlockPath : public Path, public std::enable_shared_from_this<BlockPath>
     std::weak_ptr<NXButtonRailTile> m_nxButtonFrom;
     std::weak_ptr<NXButtonRailTile> m_nxButtonTo;
 
+    boost::asio::steady_timer m_delayReleaseTimer;
+    bool m_isReserved;
+    bool m_delayedReleaseScheduled;
+
   public:
     static std::vector<std::shared_ptr<BlockPath>> find(BlockRailTile& block);
 
     BlockPath(BlockRailTile& block, BlockSide side);
+    BlockPath(const BlockPath& other);
 
     bool operator ==(const BlockPath& other) const noexcept;
 
@@ -99,11 +105,17 @@ class BlockPath : public Path, public std::enable_shared_from_this<BlockPath>
       return m_toSide;
     }
 
+    inline bool isReserved() const
+    {
+      return m_isReserved;
+    }
+
     std::shared_ptr<NXButtonRailTile> nxButtonFrom() const;
     std::shared_ptr<NXButtonRailTile> nxButtonTo() const;
 
     bool reserve(const std::shared_ptr<Train>& train, bool dryRun = false);
     bool release(bool dryRun = false);
+    bool delayedRelease(uint16_t timeoutMillis);
 };
 
 #endif

@@ -78,10 +78,24 @@ class BoardWidget : public QWidget
     TileRotate m_tileRotateLast = TileRotate::Deg0; //!< Last used tile rotate for add/move
     std::weak_ptr<NXButtonRailTile> m_nxButtonPressed;
 
+    int m_nxButtonTimerId;
+    std::weak_ptr<NXButtonRailTile> m_releaseButton1;
+    std::weak_ptr<NXButtonRailTile> m_releaseButton2;
+
+    void startHoldTimer(const std::shared_ptr<NXButtonRailTile> &nxButton);
+    void startReleaseTimer(const std::shared_ptr<NXButtonRailTile> &firstButton,
+                           const std::shared_ptr<NXButtonRailTile> &nxButton);
+
     void actionSelected(const Board::TileInfo* tile);
+
     void keyPressEvent(QKeyEvent* event) override;
+    void timerEvent(QTimerEvent *e) override;
+
     void rotateTile(bool ccw = false);
     void releaseNXButton(const std::shared_ptr<NXButtonRailTile>& nxButton);
+
+  protected slots:
+    void stopTimerAndReleaseButtons();
 
   protected slots:
     void worldEditChanged(bool value);

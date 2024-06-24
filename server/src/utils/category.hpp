@@ -32,6 +32,7 @@ namespace Category
   constexpr std::string_view info = "category:info";
   constexpr std::string_view log = "category:log";
   constexpr std::string_view network = "category:network";
+  constexpr std::string_view trains = "category:trains";
 }
 
 #endif

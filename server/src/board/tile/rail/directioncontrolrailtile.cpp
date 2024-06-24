@@ -32,6 +32,7 @@ CREATE_IMPL(DirectionControlRailTile)
 DirectionControlRailTile::DirectionControlRailTile(World& world, std::string_view _id)
   : StraightRailTile(world, _id, TileId::RailDirectionControl)
   , m_node{*this, 2}
+  , m_reservedState(DirectionControlState::None)
   , name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
   , useNone{this, "use_none", true, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly,
       [this](const bool /*value*/)
@@ -61,6 +62,14 @@ DirectionControlRailTile::DirectionControlRailTile(World& world, std::string_vie
   , setState{*this, "set_state", MethodFlags::ScriptCallable,
       [this](DirectionControlState newState)
       {
+        if(reservedState() && newState != m_reservedState)
+        {
+          // Direction control is currently locked by reserved path
+          // Allow setting to Both directions unless reserved direction is None
+          if(m_reservedState == DirectionControlState::None || newState != DirectionControlState::Both)
+            return false;
+        }
+
         const auto& states = setState.getVectorAttribute<DirectionControlState>(AttributeName::Values);
         if(std::find(states.begin(), states.end(), newState) == states.end())
           return false;
@@ -121,13 +130,14 @@ DirectionControlRailTile::DirectionControlRailTile(World& world, std::string_vie
 
 bool DirectionControlRailTile::reserve(DirectionControlState directionControlState, bool dryRun)
 {
-  if(state != directionControlState && state != DirectionControlState::Both)
+  if(reservedState() || (state != directionControlState && state != DirectionControlState::Both))
   {
     return false;
   }
 
   if(!dryRun)
   {
+    m_reservedState = directionControlState;
     StraightRailTile::reserve();
   }
 

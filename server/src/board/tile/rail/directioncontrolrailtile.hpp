@@ -36,6 +36,7 @@ class DirectionControlRailTile final : public StraightRailTile
 
   private:
     Node m_node;
+    DirectionControlState m_reservedState;
 
     void updateEnabled();
     void updateStateValues();
