@@ -97,9 +97,6 @@ void Kernel::start()
           });
         return;
       }
-
-      m_startupDelayTimer.expires_after(boost::asio::chrono::milliseconds(m_config.startupDelay));
-      m_startupDelayTimer.async_wait(std::bind(&Kernel::startupDelayExpired, this, std::placeholders::_1));
     });
 
 #ifndef NDEBUG
@@ -124,6 +121,14 @@ void Kernel::stop()
 #ifndef NDEBUG
   m_started = false;
 #endif
+}
+
+void Kernel::started()
+{
+  assert(isKernelThread());
+
+  m_startupDelayTimer.expires_after(boost::asio::chrono::milliseconds(m_config.startupDelay));
+  m_startupDelayTimer.async_wait(std::bind(&Kernel::startupDelayExpired, this, std::placeholders::_1));
 }
 
 void Kernel::receive(std::string_view message)

@@ -88,6 +88,13 @@ class Kernel : public ::KernelBase
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
 
+#ifndef NDEBUG
+    bool isKernelThread() const
+    {
+      return std::this_thread::get_id() == m_thread.get_id();
+    }
+#endif
+
     /**
      * @brief Create kernel and IO handler
      *
@@ -181,6 +188,12 @@ class Kernel : public ::KernelBase
      * @brief Stop the kernel and IO handler
      */
     void stop();
+
+    /**
+     * \brief Notify kernel the IO handler is started.
+     * \note This function must run in the kernel's IO context
+     */
+    void started() final;
 
     /**
      * @brief ...
