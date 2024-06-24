@@ -329,11 +329,11 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
 
         if(blockTrainDirection == BlockTrainDirection::TowardsA && exitA)
         {
-          pathA->release();
+          pathA->delayedRelease(m_world.pathReleaseDelay);
         }
         else if(blockTrainDirection == BlockTrainDirection::TowardsB && exitB)
         {
-          pathB->release();
+          pathB->delayedRelease(m_world.pathReleaseDelay);
         }
       }
     }

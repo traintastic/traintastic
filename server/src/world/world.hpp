@@ -106,6 +106,7 @@ class World : public Object
 
     Property<bool> correctOutputPosWhenLocked;
     Property<ExternalOutputChangeAction> extOutputChangeAction;
+    Property<uint16_t> pathReleaseDelay;
 
     ObjectProperty<ControllerList<DecoderController>> decoderControllers;
     ObjectProperty<ControllerList<InputController>> inputControllers;
