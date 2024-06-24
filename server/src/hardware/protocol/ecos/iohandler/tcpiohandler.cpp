@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,20 +52,40 @@ void TCPIOHandler::start()
   if(ec)
     throw LogMessageException(LogMessage::E2003_MAKE_ADDRESS_FAILED_X, ec);
 
-  m_socket.connect(m_endpoint, ec);
-  if(ec)
-    throw LogMessageException(LogMessage::E2005_SOCKET_CONNECT_FAILED_X, ec);
+  m_socket.async_connect(m_endpoint,
+    [this](const boost::system::error_code& err)
+    {
+      if(!err)
+      {
+        m_socket.set_option(boost::asio::socket_base::linger(true, 0));
+        m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
 
+        m_connected = true;
 
-  m_socket.set_option(boost::asio::socket_base::linger(true, 0));
-  m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
+        read();
+        write();
 
-  read();
+        m_kernel.started();
+      }
+      else if(err != boost::asio::error::operation_aborted)
+      {
+        EventLoop::call(
+          [this, err]()
+          {
+            Log::log(m_kernel.logId, LogMessage::E2005_SOCKET_CONNECT_FAILED_X, err);
+            m_kernel.error();
+          });
+      }
+    });
 }
 
 void TCPIOHandler::stop()
 {
-  m_socket.close();
+  boost::system::error_code ec;
+  m_socket.cancel(ec);
+  m_socket.close(ec);
+  // ignore errors
+  m_connected = false;
 }
 
 bool TCPIOHandler::send(std::string_view message)
@@ -77,7 +97,7 @@ bool TCPIOHandler::send(std::string_view message)
   memcpy(m_writeBuffer.data() + m_writeBufferOffset, message.data(), message.size());
   m_writeBufferOffset += message.size();
 
-  if(wasEmpty)
+  if(wasEmpty && m_connected)
     write();
 
   return true;
@@ -171,6 +191,11 @@ void TCPIOHandler::receive(std::string_view message)
 
 void TCPIOHandler::write()
 {
+  if(m_writeBufferOffset == 0) /*[[unlikely]]*/
+  {
+    return;
+  }
+
   assert(!m_writing);
 
   m_writing = true;

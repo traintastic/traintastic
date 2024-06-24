@@ -44,7 +44,7 @@ class SimulationIOHandler final : public IOHandler
   public:
     SimulationIOHandler(Kernel& kernel, const Simulation& simulation);
 
-    void start() final {}
+    void start() final;
     void stop() final {}
 
     bool send(std::string_view message) final;
