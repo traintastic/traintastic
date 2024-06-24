@@ -4503,6 +4503,14 @@
         "comment": ""
     },
     {
+        "term": "world:path_release_delay",
+        "definition": "Ritardo nella liberazione dell'itinerario",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "world_scale:custom",
         "definition": "Custom",
         "context": "",

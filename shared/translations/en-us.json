@@ -4503,6 +4503,14 @@
         "comment": ""
     },
     {
+        "term": "world:path_release_delay",
+        "definition": "Block Path release delay",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "world_scale:custom",
         "definition": "Custom",
         "context": "",

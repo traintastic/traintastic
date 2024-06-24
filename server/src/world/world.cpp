@@ -147,6 +147,7 @@ World::World(Private /*unused*/) :
     }},
   correctOutputPosWhenLocked{this, "correct_output_pos_when_locked", true, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
   extOutputChangeAction{this, "ext_output_change_action", ExternalOutputChangeAction::EmergencyStopTrain, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
+  pathReleaseDelay{this, "path_release_delay", 5000, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
   decoderControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   inputControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   outputControllers{this, "output_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
@@ -319,6 +320,11 @@ World::World(Private /*unused*/) :
   Attributes::addEnabled(extOutputChangeAction, true);
   Attributes::addValues(extOutputChangeAction, extOutputChangeActionValues);
   m_interfaceItems.add(extOutputChangeAction);
+
+  Attributes::addCategory(pathReleaseDelay, Category::trains);
+  Attributes::addEnabled(pathReleaseDelay, true);
+  Attributes::addMinMax(pathReleaseDelay, {0, 15000}); // Up to 15 seconds
+  m_interfaceItems.add(pathReleaseDelay);
 
   Attributes::addObjectEditor(decoderControllers, false);
   m_interfaceItems.add(decoderControllers);
