@@ -433,10 +433,12 @@ void Kernel::send(std::string_view message)
 
 void Kernel::startupDelayExpired(const boost::system::error_code& ec)
 {
+  assert(isKernelThread());
+
   if(ec)
     return;
 
-  started();
+  KernelBase::started();
 }
 
 }
