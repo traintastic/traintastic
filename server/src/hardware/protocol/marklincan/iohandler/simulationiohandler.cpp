@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,6 +42,7 @@ void SimulationIOHandler::start()
   auto expireAfter = std::chrono::milliseconds(Random::value<int>(0, bootstrapCANInterval.count()));
   startBootloaderCANTimer(expireAfter);
   startPingTimer(expireAfter + 1s);
+  m_kernel.started();
 }
 
 void SimulationIOHandler::startBootloaderCANTimer(std::chrono::milliseconds expireAfter)
