@@ -142,6 +142,11 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
             updateState();
           Log::log(*this, LogMessage::N3002_REMOVED_TRAIN_X_FROM_BLOCK_X, oldTrain->name.value(), name.value());
 
+          if(oldTrain->blocks.empty())
+          {
+            oldTrain->active = false;
+          }
+
           if(m_world.simulation)
           {
             for(const auto& item : *inputMap)
