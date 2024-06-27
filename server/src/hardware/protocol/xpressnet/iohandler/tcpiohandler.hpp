@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,12 +35,14 @@ class TCPIOHandler final : public HardwareIOHandler
     const uint16_t m_port;
     boost::asio::ip::tcp::socket m_socket;
     boost::asio::ip::tcp::endpoint m_endpoint;
+    bool m_connected = false;
 
     void read();
     void write() final;
 
   public:
     TCPIOHandler(Kernel& kernel, std::string hostname, uint16_t port);
+    ~TCPIOHandler() final;
 
     void start() final;
     void stop() final;
