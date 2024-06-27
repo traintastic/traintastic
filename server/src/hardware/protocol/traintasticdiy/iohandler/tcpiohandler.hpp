@@ -42,6 +42,7 @@ class TCPIOHandler final : public HardwareIOHandler
 
   public:
     TCPIOHandler(Kernel& kernel, std::string hostname, uint16_t port);
+    ~TCPIOHandler() final;
 
     void start() final;
     void stop() final;
