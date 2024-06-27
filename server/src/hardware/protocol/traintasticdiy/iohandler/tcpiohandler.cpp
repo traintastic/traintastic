@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,6 +38,11 @@ TCPIOHandler::TCPIOHandler(Kernel& kernel, std::string hostname, uint16_t port)
 {
 }
 
+TCPIOHandler::~TCPIOHandler()
+{
+  assert(!m_socket.is_open());
+}
+
 void TCPIOHandler::start()
 {
   boost::system::error_code ec;
@@ -47,18 +52,40 @@ void TCPIOHandler::start()
   if(ec)
     throw LogMessageException(LogMessage::E2003_MAKE_ADDRESS_FAILED_X, ec);
 
-  m_socket.connect(m_endpoint, ec);
-  if(ec)
-    throw LogMessageException(LogMessage::E2005_SOCKET_CONNECT_FAILED_X, ec);
+  m_socket.async_connect(m_endpoint,
+    [this](const boost::system::error_code& err)
+    {
+      if(!err)
+      {
+        m_socket.set_option(boost::asio::socket_base::linger(true, 0));
+        m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
 
-  m_socket.set_option(boost::asio::socket_base::linger(true, 0));
-  m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
+        m_connected = true;
 
-  read();
+        read();
+        write();
+
+        m_kernel.started();
+      }
+      else if(err != boost::asio::error::operation_aborted)
+      {
+        EventLoop::call(
+          [this, err]()
+          {
+            Log::log(m_kernel.logId, LogMessage::E2005_SOCKET_CONNECT_FAILED_X, err);
+            m_kernel.error();
+          });
+      }
+    });
 }
 
 void TCPIOHandler::stop()
 {
+  boost::system::error_code ec;
+  m_socket.cancel(ec);
+  m_socket.close(ec);
+  // ignore errors
+  m_connected = false;
 }
 
 void TCPIOHandler::read()
@@ -85,6 +112,11 @@ void TCPIOHandler::read()
 
 void TCPIOHandler::write()
 {
+  if(m_writeBufferOffset == 0 || !m_connected)
+  {
+    return;
+  }
+
   m_socket.async_write_some(boost::asio::buffer(m_writeBuffer.data(), m_writeBufferOffset),
     [this](const boost::system::error_code& ec, std::size_t bytesTransferred)
     {
