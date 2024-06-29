@@ -1958,5 +1958,53 @@
   {
     "term": "object.z21interface:description",
     "definition": "Interface for communicating with a Z21, z21 or z21 start."
+  },
+  {
+    "term": "object.signal2aspectrailtile.on_aspect_changed:description",
+    "definition": "Fired when the signal aspect changes."
+  },
+  {
+    "term": "object.signal3aspectrailtile.on_aspect_changed:description",
+    "definition": "Fired when the signal aspect changes."
+  },
+  {
+    "term": "object.train.on_block_assigned:description",
+    "definition": "Fired when the train is assigned to a block."
+  },
+  {
+    "term": "object.train.on_block_assigned.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_block_assigned.parameter.block:description",
+    "definition": "The {ref:object.blockrailtile|block} the train is assigned to."
+  },
+  {
+    "term": "object.train.on_block_removed:description",
+    "definition": "Fired when the train is removed from a block."
+  },
+  {
+    "term": "object.train.on_block_removed.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_block_removed.parameter.block:description",
+    "definition": "The {ref:object.blockrailtile|block} the train is removed from."
+  },
+  {
+    "term": "object.train.on_block_reserved:description",
+    "definition": "Fired when the train reserves a block."
+  },
+  {
+    "term": "object.train.on_block_reserved.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_block_reserved.parameter.block:description",
+    "definition": "The {ref:object.blockrailtile|block} that is reserved by the train."
+  },
+  {
+    "term": "object.train.on_block_reserved.parameter.direction:description",
+    "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
   }
 ]
