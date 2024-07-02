@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022-2023 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -61,6 +61,16 @@ class EventLoop
     inline static void call(_Callable&& __f, _Args&&... __args)
     {
       ioContext.post(std::bind(__f, __args...));
+    }
+
+    template<typename T>
+    inline static void deleteLater(T* object)
+    {
+      ioContext.post(
+        [object]()
+        {
+          delete object;
+        });
     }
 };
 

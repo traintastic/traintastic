@@ -5,7 +5,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board:move_tile",
@@ -13,31 +14,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board:resize_tile",
-        "definition": "Ändra storlek på brickan",
+        "definition": "\u00c4ndra storlek p\u00e5 brickan",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board:resize_to_contents",
-        "definition": "Ändra storlek till innehåll",
+        "definition": "\u00c4ndra storlek till inneh\u00e5ll",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_settings.color_scheme:dark",
-        "definition": "Mörk",
+        "definition": "M\u00f6rk",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_settings.color_scheme:light",
@@ -45,31 +50,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.misc.push_button:color",
-        "definition": "Färg",
+        "definition": "F\u00e4rg",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.block:assign_train",
-        "definition": "Tilldela tåg",
+        "definition": "Tilldela t\u00e5g",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.block:flip_train",
-        "definition": "Vänd tåg",
+        "definition": "V\u00e4nd t\u00e5g",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.block:input_map",
@@ -77,63 +86,71 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.block:remove_train",
-        "definition": "Ta bort tåget",
+        "definition": "Ta bort t\u00e5get",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.direction_control:state",
-        "definition": "Tillstånd",
+        "definition": "Tillst\u00e5nd",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.direction_control:use_a_to_b",
-        "definition": "Använd: A \u2192 B",
+        "definition": "Anv\u00e4nd: A \u2192 B",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.direction_control:use_b_to_a",
-        "definition": "Använd: A \u2190 B",
+        "definition": "Anv\u00e4nd: A \u2190 B",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.direction_control:use_both",
-        "definition": "Använd: A \u21c4 B",
+        "definition": "Anv\u00e4nd: A \u21c4 B",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.direction_control:use_none",
-        "definition": "Använd: A \ud83d\udec7 B",
+        "definition": "Anv\u00e4nd: A \ud83d\udec7 B",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.link:link",
-        "definition": "Länk",
+        "definition": "L\u00e4nk",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.sensor:input",
@@ -141,7 +158,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.sensor:invert",
@@ -149,7 +167,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.sensor:type",
@@ -157,15 +176,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile:output_map",
-        "definition": "Utgångar",
+        "definition": "Utg\u00e5ngar",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "category:cargo",
@@ -173,7 +194,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "category:developer",
@@ -181,15 +203,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "category:general",
-        "definition": "Allmänt",
+        "definition": "Allm\u00e4nt",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "category:info",
@@ -197,7 +221,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "category:log",
@@ -205,15 +230,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "category:network",
-        "definition": "Nätverk",
+        "definition": "N\u00e4tverk",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.misc.push_button",
@@ -221,7 +248,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.block",
@@ -229,23 +257,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.bridge_45_left",
-        "definition": "Bro 45\u00b0 (vänster)",
+        "definition": "Bro 45\u00b0 (v\u00e4nster)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.bridge_45_right",
-        "definition": "Bro 45\u00b0 (höger)",
+        "definition": "Bro 45\u00b0 (h\u00f6ger)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.bridge_90",
@@ -253,7 +284,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.buffer_stop",
@@ -261,7 +293,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.cross_45",
@@ -269,7 +302,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.cross_90",
@@ -277,23 +311,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.curve_45",
-        "definition": "Böjt spår 45\u00b0",
+        "definition": "B\u00f6jt sp\u00e5r 45\u00b0",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.curve_90",
-        "definition": "Böjt spår 90\u00b0",
+        "definition": "B\u00f6jt sp\u00e5r 90\u00b0",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.decoupler",
@@ -301,7 +338,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.direction_control",
@@ -309,15 +347,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.link",
-        "definition": "Länk",
+        "definition": "L\u00e4nk",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.one_way",
@@ -325,7 +365,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.sensor",
@@ -333,7 +374,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.signal_2_aspect",
@@ -341,7 +383,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.signal_3_aspect",
@@ -349,15 +392,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.straight",
-        "definition": "Raka spåret",
+        "definition": "Raka sp\u00e5ret",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.tunnel",
@@ -365,15 +410,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_3way",
-        "definition": "Växel 3-vägs",
+        "definition": "V\u00e4xel 3-v\u00e4gs",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_doubleslip",
@@ -381,55 +428,62 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_45",
-        "definition": "Växel vänster 45\u00b0",
+        "definition": "V\u00e4xel v\u00e4nster 45\u00b0",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_90",
-        "definition": "Växel vänster 90\u00b0",
+        "definition": "V\u00e4xel v\u00e4nster 90\u00b0",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_curved",
-        "definition": "Vänsterböjd vänster",
+        "definition": "V\u00e4nsterb\u00f6jd v\u00e4nster",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_45",
-        "definition": "Växel höger 45\u00b0",
+        "definition": "V\u00e4xel h\u00f6ger 45\u00b0",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_90",
-        "definition": "Växel höger 90\u00b0",
+        "definition": "V\u00e4xel h\u00f6ger 90\u00b0",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_curved",
-        "definition": "Växel högerböjd",
+        "definition": "V\u00e4xel h\u00f6gerb\u00f6jd",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_singleslip",
@@ -437,15 +491,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_wye",
-        "definition": "Växel wye",
+        "definition": "V\u00e4xel wye",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:vehicle.rail.freight_wagon",
@@ -453,7 +509,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:vehicle.rail.locomotive",
@@ -461,7 +518,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:vehicle.rail.multiple_unit",
@@ -469,7 +527,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:vehicle.rail.tank_wagon",
@@ -477,7 +536,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "clock:day",
@@ -485,15 +545,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "clock:debug_log",
-        "definition": "Felsökningslogg",
+        "definition": "Fels\u00f6kningslogg",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "clock:freeze",
@@ -501,7 +563,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "clock:hour",
@@ -509,7 +572,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "clock:minute",
@@ -517,15 +581,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "clock:month",
-        "definition": "Månad",
+        "definition": "M\u00e5nad",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "clock:multiplier",
@@ -533,15 +599,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "clock:year",
-        "definition": "År",
+        "definition": "\u00c5r",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:aqua",
@@ -549,7 +617,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:black",
@@ -557,15 +626,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:blue",
-        "definition": "Blå",
+        "definition": "Bl\u00e5",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:fuchsia",
@@ -573,23 +644,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:gray",
-        "definition": "Grå",
+        "definition": "Gr\u00e5",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:green",
-        "definition": "Grön",
+        "definition": "Gr\u00f6n",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:lime",
@@ -597,15 +671,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:maroon",
-        "definition": "Rödbrun",
+        "definition": "R\u00f6dbrun",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:navy",
@@ -613,7 +689,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:olive",
@@ -621,7 +698,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:purple",
@@ -629,15 +707,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:red",
-        "definition": "Röd",
+        "definition": "R\u00f6d",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:silver",
@@ -645,7 +725,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:teal",
@@ -653,7 +734,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:white",
@@ -661,7 +743,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:yellow",
@@ -669,47 +752,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "dccplusplus_channel:dcc_accessory",
-        "definition": "DCC tillbehör",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "dccplusplus_channel:output",
-        "definition": "Produktion",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "dccplusplus_channel:turnout",
-        "definition": "Växel",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "dccplusplus_settings:startup_delay",
-        "definition": "Startfördröjning",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "dccplusplus_settings:use_ex",
-        "definition": "Använd DCC++EX-kommandon",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder:functions",
@@ -717,15 +761,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder:long_address",
-        "definition": "DCC lång adress",
+        "definition": "DCC l\u00e5ng adress",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder:protocol",
@@ -733,7 +779,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function:function",
@@ -741,7 +788,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function:number",
@@ -749,7 +797,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function:type",
@@ -757,7 +806,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_function:generic",
@@ -765,7 +815,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_function:light",
@@ -773,23 +824,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_function:mute",
-        "definition": "Dämpa",
+        "definition": "D\u00e4mpa",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_function:smoke",
-        "definition": "Rök",
+        "definition": "R\u00f6k",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_function:sound",
@@ -797,47 +851,53 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_type:always_off",
-        "definition": "Alltid avstängd",
+        "definition": "Alltid avst\u00e4ngd",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_type:always_on",
-        "definition": "Alltid på",
+        "definition": "Alltid p\u00e5",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_type:hold",
-        "definition": "Tryck och håll",
+        "definition": "Tryck och h\u00e5ll",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_type:momentary",
-        "definition": "Tillfällig",
+        "definition": "Tillf\u00e4llig",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_type:on_off",
-        "definition": "På\/Av",
+        "definition": "P\u00e5/Av",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_protocol:auto",
@@ -845,7 +905,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_protocol:custom",
@@ -853,7 +914,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoupler_state:activated",
@@ -861,7 +923,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoupler_state:deactivated",
@@ -869,23 +932,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "direction:forward",
-        "definition": "Framåt",
+        "definition": "Fram\u00e5t",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "direction:reverse",
-        "definition": "Bakåt",
+        "definition": "Bak\u00e5t",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "ecos_channel:ecos_detector",
@@ -893,7 +959,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:address",
@@ -901,7 +968,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:channel",
@@ -909,7 +977,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:command_station",
@@ -917,23 +986,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:debug_log_input",
-        "definition": "Logginmatning ändras",
+        "definition": "Logginmatning \u00e4ndras",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:debug_log_output",
-        "definition": "Loggutgångsändringar",
+        "definition": "Loggutg\u00e5ngs\u00e4ndringar",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:debug_log_rx_tx",
@@ -941,7 +1013,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:decoders",
@@ -949,7 +1022,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:identifications",
@@ -957,31 +1031,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:input_monitor",
-        "definition": "Ingångsmonitor",
+        "definition": "Ing\u00e5ngsmonitor",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:inputs",
-        "definition": "Ingångar",
+        "definition": "Ing\u00e5ngar",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:interface",
-        "definition": "Gränssnitt",
+        "definition": "Gr\u00e4nssnitt",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:output_keyboard",
@@ -989,15 +1067,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:outputs",
-        "definition": "Utgångar",
+        "definition": "Utg\u00e5ngar",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:speed_steps",
@@ -1005,7 +1085,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:throttles",
@@ -1013,15 +1094,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hsi88:s88_left",
-        "definition": "S88 vänster",
+        "definition": "S88 v\u00e4nster",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hsi88:s88_middle",
@@ -1029,15 +1112,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hsi88:s88_right",
-        "definition": "S88 höger",
+        "definition": "S88 h\u00f6ger",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "identification:opc_multi_sense_direction",
@@ -1045,7 +1130,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "input_list:bus",
@@ -1053,7 +1139,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "input_map_item.block:input",
@@ -1061,7 +1148,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "input_map_item.block:invert",
@@ -1069,7 +1157,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "input_map_item.block:type",
@@ -1077,7 +1166,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.ecos:ecos_detector",
@@ -1085,15 +1175,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.hsi88:modules_left",
-        "definition": "Moduler vänster",
+        "definition": "Moduler v\u00e4nster",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.hsi88:modules_middle",
@@ -1101,31 +1193,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.hsi88:modules_right",
-        "definition": "Moduler höger",
+        "definition": "Moduler h\u00f6ger",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.loconet:interface",
-        "definition": "Gränssnitt",
+        "definition": "Gr\u00e4nssnitt",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.xpressnet:interface",
-        "definition": "Gränssnitt",
+        "definition": "Gr\u00e4nssnitt",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.xpressnet:s88_module_count",
@@ -1133,7 +1229,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.xpressnet:s88_start_address",
@@ -1141,7 +1238,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.z21:firmware_version",
@@ -1149,15 +1247,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.z21:hardware_type",
-        "definition": "Hårdvarutyp",
+        "definition": "H\u00e5rdvarutyp",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.z21:serial_number",
@@ -1165,7 +1265,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface:online",
@@ -1173,7 +1274,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface:status",
@@ -1181,7 +1283,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface:type",
@@ -1189,7 +1292,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface_state:error",
@@ -1197,7 +1301,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface_state:initializing",
@@ -1205,7 +1310,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface_state:offline",
@@ -1213,7 +1319,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface_state:online",
@@ -1221,15 +1328,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "ip:hostname",
-        "definition": "Värdnamn",
+        "definition": "V\u00e4rdnamn",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "ip:port",
@@ -1237,7 +1346,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "language:de-de",
@@ -1245,7 +1355,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "language:en-us",
@@ -1253,7 +1364,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "language:it-it",
@@ -1261,47 +1373,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "language:nl-nl",
-        "definition": "Nederländska",
+        "definition": "Nederl\u00e4ndska",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "language:fr-fr",
-        "definition": "Franska",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "language:sv-se",
-        "definition": "Svenska",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list.train_vehicle:reverse",
-        "definition": "Bakåt",
+        "definition": "Bak\u00e5t",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list:add",
-        "definition": "Lägg till",
+        "definition": "L\u00e4gg till",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list:create",
@@ -1309,7 +1409,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list:delete",
@@ -1317,7 +1418,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list:edit",
@@ -1325,7 +1427,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list:move_down",
@@ -1333,7 +1436,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list:move_up",
@@ -1341,7 +1445,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list:remove",
@@ -1349,7 +1454,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:description",
@@ -1357,7 +1463,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:lncv_programmer",
@@ -1365,7 +1472,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:module",
@@ -1373,7 +1481,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:other_module",
@@ -1381,31 +1490,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:read",
-        "definition": "Läsa",
+        "definition": "L\u00e4sa",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:reading_lncv_x",
-        "definition": "Läser LNCV %1",
+        "definition": "L\u00e4ser LNCV %1",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:reading_lncv_x_failed",
-        "definition": "Det gick inte att läsa LNCV %1",
+        "definition": "Det gick inte att l\u00e4sa LNCV %1",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:sending_start",
@@ -1413,7 +1526,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:start",
@@ -1421,7 +1535,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:stop",
@@ -1429,31 +1544,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:use_broadcast_address",
-        "definition": "Använd sändningsadress",
+        "definition": "Anv\u00e4nd s\u00e4ndningsadress",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:value",
-        "definition": "Värde",
+        "definition": "V\u00e4rde",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:waiting_for_module_to_respond",
-        "definition": "Väntar på att modulen ska svara",
+        "definition": "V\u00e4ntar p\u00e5 att modulen ska svara",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:write",
@@ -1461,7 +1580,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:writing_lncv_x",
@@ -1469,7 +1589,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_command_station:custom",
@@ -1477,7 +1598,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_f9_f28:imm_packet",
@@ -1485,15 +1607,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_f9_f28:uhlenbrock_extended",
-        "definition": "Uhlenbrock förlängd (OPC_A3, OPC_D4)",
+        "definition": "Uhlenbrock f\u00f6rl\u00e4ngd (OPC_A3, OPC_D4)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_fastclock:master",
@@ -1501,7 +1625,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_fastclock:off",
@@ -1509,7 +1634,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_interface_type:serial",
@@ -1517,15 +1643,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_interface_type:tcp_binary",
-        "definition": "TCP binär",
+        "definition": "TCP bin\u00e4r",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_serial_interface:custom",
@@ -1533,7 +1661,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:command_station",
@@ -1541,7 +1670,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:echo_timeout",
@@ -1549,7 +1679,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:fast_clock",
@@ -1557,7 +1688,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:fast_clock_sync_enabled",
@@ -1565,7 +1697,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:fast_clock_sync_interval",
@@ -1573,7 +1706,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:locomotive_slots",
@@ -1581,23 +1715,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:pcap_output",
-        "definition": "PCAP-utgång",
+        "definition": "PCAP-utg\u00e5ng",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:response_timeout",
-        "definition": "Timeout för svar",
+        "definition": "Timeout f\u00f6r svar",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua.script:disabled",
@@ -1605,7 +1742,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua.script:start",
@@ -1613,7 +1751,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua.script:stop",
@@ -1621,15 +1760,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua.script_list:start_all",
-        "definition": "Börja allt",
+        "definition": "B\u00f6rja allt",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua.script_list:stop_all",
@@ -1637,7 +1778,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua_script:state",
@@ -1645,7 +1787,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua_script_state:disabled",
@@ -1653,7 +1796,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua_script_state:error",
@@ -1661,15 +1805,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua_script_state:running",
-        "definition": "Igång",
+        "definition": "Ig\u00e5ng",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua_script_state:stopped",
@@ -1677,15 +1823,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1001",
-        "definition": "Det gick inte att ladda världen (%1)",
+        "definition": "Det gick inte att ladda v\u00e4rlden (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1002",
@@ -1693,127 +1841,143 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1003",
-        "definition": "Kan inte skriva till inställningsfilen (%1)",
+        "definition": "Kan inte skriva till inst\u00e4llningsfilen (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1004",
-        "definition": "Läsvärlden misslyckades (%1) (%2)",
+        "definition": "L\u00e4sv\u00e4rlden misslyckades (%1) (%2)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1005",
-        "definition": "Det gick inte att rädda världen (%1)",
+        "definition": "Det gick inte att r\u00e4dda v\u00e4rlden (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1006",
-        "definition": "Det gick inte att skapa världssäkerhetskopiering (%1)",
+        "definition": "Det gick inte att skapa v\u00e4rldss\u00e4kerhetskopiering (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1007",
-        "definition": "Det gick inte att skapa världsbackupkatalog (%1)",
+        "definition": "Det gick inte att skapa v\u00e4rldsbackupkatalog (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1008",
-        "definition": "Det gick inte att skapa säkerhetskopieringskatalog (%1)",
+        "definition": "Det gick inte att skapa s\u00e4kerhetskopieringskatalog (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1009",
-        "definition": "Det gick inte att skapa säkerhetskopiering av inställningar (%1)",
+        "definition": "Det gick inte att skapa s\u00e4kerhetskopiering av inst\u00e4llningar (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1010",
-        "definition": "Det gick inte att exportera världen (%1)",
+        "definition": "Det gick inte att exportera v\u00e4rlden (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1011",
-        "definition": "Det gick inte att importera världen (%1)",
+        "definition": "Det gick inte att importera v\u00e4rlden (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1012",
-        "definition": "Okänd klass '%1', kan inte återskapa objektet '%2'",
+        "definition": "Ok\u00e4nd klass '%1', kan inte \u00e5terskapa objektet '%2'",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1013",
-        "definition": "Kan inte ladda världen sparad med nyare version, kräver minst: %1",
+        "definition": "Kan inte ladda v\u00e4rlden sparad med nyare version, kr\u00e4ver minst: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C2001",
-        "definition": "Adressen används redan på #%1",
+        "definition": "Adressen anv\u00e4nds redan p\u00e5 #%1",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C2004",
-        "definition": "Kan inte få gratis slot",
+        "definition": "Kan inte f\u00e5 gratis slot",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D1001",
-        "definition": "Återuppta %1 (multiplikator: %2)",
+        "definition": "\u00c5teruppta %1 (multiplikator: %2)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D1002",
-        "definition": "Bock %1 (fel: %2μs)",
+        "definition": "Bock %1 (fel: %2\u03bcs)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D1003",
@@ -1821,7 +1985,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2001",
@@ -1829,7 +1994,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2002",
@@ -1837,15 +2003,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2003",
-        "definition": "Okänd xHeader 0x%1",
+        "definition": "Ok\u00e4nd xHeader 0x%1",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2004",
@@ -1853,7 +2021,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2005",
@@ -1861,15 +2030,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2006",
-        "definition": "Okänt meddelande: %1",
+        "definition": "Ok\u00e4nt meddelande: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2007",
@@ -1877,7 +2048,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2008",
@@ -1885,7 +2057,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2009",
@@ -1893,7 +2066,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2010",
@@ -1901,23 +2075,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E1001",
-        "definition": "Ogiltigt världs-UUID: %1",
+        "definition": "Ogiltigt v\u00e4rlds-UUID: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E1002",
-        "definition": "Världen %1 existerar inte",
+        "definition": "V\u00e4rlden %1 existerar inte",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E1003",
@@ -1925,7 +2102,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E1004",
@@ -1933,15 +2111,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E1005",
-        "definition": "Socketavstängning misslyckades (%1)",
+        "definition": "Socketavst\u00e4ngning misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E1006",
@@ -1949,15 +2129,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E1007",
-        "definition": "Socket-läsning misslyckades (%1)",
+        "definition": "Socket-l\u00e4sning misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E1008",
@@ -1965,7 +2147,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2001",
@@ -1973,15 +2156,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2002",
-        "definition": "Seriell läsning misslyckades (%1)",
+        "definition": "Seriell l\u00e4sning misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2003",
@@ -1989,15 +2174,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2004",
-        "definition": "Det gick inte att öppna uttaget (%1)",
+        "definition": "Det gick inte att \u00f6ppna uttaget (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2005",
@@ -2005,7 +2192,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2006",
@@ -2013,7 +2201,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2007",
@@ -2021,15 +2210,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2008",
-        "definition": "Socket-läsning misslyckades (%1)",
+        "definition": "Socket-l\u00e4sning misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2009",
@@ -2037,55 +2228,62 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2010",
-        "definition": "Det gick inte att öppna serieporten (%1)",
+        "definition": "Det gick inte att \u00f6ppna serieporten (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2011",
-        "definition": "Socket-sändning misslyckades (%1)",
+        "definition": "Socket-s\u00e4ndning misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2012",
-        "definition": "Funktionsnummer används redan",
+        "definition": "Funktionsnummer anv\u00e4nds redan",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2013",
-        "definition": "Serieportuppsättningens baudrate misslyckades (%1)",
+        "definition": "Serieportupps\u00e4ttningens baudrate misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2014",
-        "definition": "Seriella portuppsättningsdatabitar misslyckades (%1)",
+        "definition": "Seriella portupps\u00e4ttningsdatabitar misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2015",
-        "definition": "Serieportuppsättningens stoppbitar misslyckades (%1)",
+        "definition": "Serieportupps\u00e4ttningens stoppbitar misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2016",
@@ -2093,15 +2291,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2017",
-        "definition": "Flödeskontroll för serieportuppsättning misslyckades (%1)",
+        "definition": "Fl\u00f6deskontroll f\u00f6r serieportupps\u00e4ttning misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2018",
@@ -2109,7 +2309,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2019",
@@ -2117,15 +2318,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2020",
-        "definition": "Det totala antalet moduler får inte överstiga %1",
+        "definition": "Det totala antalet moduler f\u00e5r inte \u00f6verstiga %1",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2021",
@@ -2133,31 +2336,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E9001",
-        "definition": "%1 (Under körning av %2 händelsehanterare)",
+        "definition": "%1 (Under k\u00f6rning av %2 h\u00e4ndelsehanterare)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F1001",
-        "definition": "Det gick inte att öppna TCP-socket (%1)",
+        "definition": "Det gick inte att \u00f6ppna TCP-socket (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F1002",
-        "definition": "Återanvändning av TCP-socketadress misslyckades (%1)",
+        "definition": "\u00c5teranv\u00e4ndning av TCP-socketadress misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F1003",
@@ -2165,7 +2372,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F1004",
@@ -2173,23 +2381,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F1005",
-        "definition": "Det gick inte att öppna UDP-socket (%1)",
+        "definition": "Det gick inte att \u00f6ppna UDP-socket (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F1006",
-        "definition": "Återanvändning av UDP-socketadress misslyckades (%1)",
+        "definition": "\u00c5teranv\u00e4ndning av UDP-socketadress misslyckades (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F1007",
@@ -2197,23 +2408,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F9001",
-        "definition": "Det gick inte att skapa Lua-tillstånd",
+        "definition": "Det gick inte att skapa Lua-tillst\u00e5nd",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F9002",
-        "definition": "Det gick inte att köra skriptet (%1)",
+        "definition": "Det gick inte att k\u00f6ra skriptet (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F9003",
@@ -2221,15 +2435,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:I1002",
-        "definition": "Inställningsfilen hittades inte, med standardinställningar",
+        "definition": "Inst\u00e4llningsfilen hittades inte, med standardinst\u00e4llningar",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:I1003",
@@ -2237,31 +2453,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:I1004",
-        "definition": "Anslutning förlorad",
+        "definition": "Anslutning f\u00f6rlorad",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:I1005",
-        "definition": "Bygga världsindex",
+        "definition": "Bygga v\u00e4rldsindex",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:I2001",
-        "definition": "Okänd lokadress: %1",
+        "definition": "Ok\u00e4nd lokadress: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:I2002",
@@ -2269,7 +2489,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:I2003",
@@ -2277,7 +2498,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:I9001",
@@ -2285,7 +2507,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1001",
@@ -2293,15 +2516,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1002",
-        "definition": "Skapat en ny värld",
+        "definition": "Skapat en ny v\u00e4rld",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1003",
@@ -2309,23 +2534,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1004",
-        "definition": "Stänger ner",
+        "definition": "St\u00e4nger ner",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1005",
-        "definition": "Upptäckt aktiverat",
+        "definition": "Uppt\u00e4ckt aktiverat",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1006",
@@ -2333,47 +2561,53 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1007",
-        "definition": "Lyssnar på %1:%2",
+        "definition": "Lyssnar p\u00e5 %1:%2",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1008",
-        "definition": "Laddade inställningar",
+        "definition": "Laddade inst\u00e4llningar",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1009",
-        "definition": "Sparade inställningar",
+        "definition": "Sparade inst\u00e4llningar",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1010",
-        "definition": "Redigeringsläge: aktiverat",
+        "definition": "Redigeringsl\u00e4ge: aktiverat",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1011",
-        "definition": "Redigeringsläge: inaktiverat",
+        "definition": "Redigeringsl\u00e4ge: inaktiverat",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1012",
@@ -2381,7 +2615,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1013",
@@ -2389,31 +2624,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1014",
-        "definition": "Ström på",
+        "definition": "Str\u00f6m p\u00e5",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1015",
-        "definition": "Stäng av",
+        "definition": "St\u00e4ng av",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1016",
-        "definition": "Igång",
+        "definition": "Ig\u00e5ng",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1017",
@@ -2421,7 +2660,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1018",
@@ -2429,7 +2669,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1019",
@@ -2437,31 +2678,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1020",
-        "definition": "Rök: aktiverad",
+        "definition": "R\u00f6k: aktiverad",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1021",
-        "definition": "Rök: funktionshindrade",
+        "definition": "R\u00f6k: funktionshindrade",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1022",
-        "definition": "Sparad värld: %1",
+        "definition": "Sparad v\u00e4rld: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1023",
@@ -2469,7 +2714,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1024",
@@ -2477,55 +2723,62 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1025",
-        "definition": "Exporterade världen framgångsrikt",
+        "definition": "Exporterade v\u00e4rlden framg\u00e5ngsrikt",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1026",
-        "definition": "Importerad värld framgångsrikt",
+        "definition": "Importerad v\u00e4rld framg\u00e5ngsrikt",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1027",
-        "definition": "Laddad värld: %1",
+        "definition": "Laddad v\u00e4rld: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1028",
-        "definition": "Sluten värld",
+        "definition": "Sluten v\u00e4rld",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N2001",
-        "definition": "Simulering stöds inte",
+        "definition": "Simulering st\u00f6ds inte",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N2002",
-        "definition": "Inget svar från LNCV-modul %1 med adress %2",
+        "definition": "Inget svar fr\u00e5n LNCV-modul %1 med adress %2",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N2003",
@@ -2533,7 +2786,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N2004",
@@ -2541,31 +2795,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N2005",
-        "definition": "Startar PCAP-loggrör: %1",
+        "definition": "Startar PCAP-loggr\u00f6r: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N3001",
-        "definition": "Tilldelade tåget %1 till blocket %2",
+        "definition": "Tilldelade t\u00e5get %1 till blocket %2",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N3002",
-        "definition": "Tog bort tåget %1 från blocket %2",
+        "definition": "Tog bort t\u00e5get %1 fr\u00e5n blocket %2",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N9001",
@@ -2573,31 +2831,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W1001",
-        "definition": "Discovery inaktiverad, endast tillåten på port %1",
+        "definition": "Discovery inaktiverad, endast till\u00e5ten p\u00e5 port %1",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W1002",
-        "definition": "Inställningen %1 finns inte",
+        "definition": "Inst\u00e4llningen %1 finns inte",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W1003",
-        "definition": "Det gick inte att läsa världen %1 (libarchive error %2: %3)",
+        "definition": "Det gick inte att l\u00e4sa v\u00e4rlden %1 (libarchive error %2: %3)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W2001",
@@ -2605,51 +2867,62 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W2002",
-        "definition": "Kommandostationen stöder inte funktioner över F%1",
+        "definition": "Kommandostationen st\u00f6der inte funktioner \u00f6ver F%1",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W2003",
-        "definition": "Mottagna felaktiga data tappade %1 byte [%2]"
+        "definition": "Mottagna felaktiga data tappade %1 byte [%2]",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W2004",
-        "definition": "Inmatningsadressen %1 är ogiltig",
+        "definition": "Inmatningsadressen %1 \u00e4r ogiltig",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W2005",
-        "definition": "Utdataadressen %1 är ogiltig",
+        "definition": "Utdataadressen %1 \u00e4r ogiltig",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W2006",
-        "definition": "Kommandostationen stöder inte lokplats %1",
+        "definition": "Kommandostationen st\u00f6der inte lokplats %1",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W2007",
-        "definition": "Kommandostationen stöder inte snabbklockan",
+        "definition": "Kommandostationen st\u00f6der inte snabbklockan",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W2018",
@@ -2657,15 +2930,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W2019",
-        "definition": "Z21-sändningsflaggor matchar inte de begärda",
+        "definition": "Z21-s\u00e4ndningsflaggor matchar inte de beg\u00e4rda",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "object:id",
@@ -2673,7 +2948,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "object:name",
@@ -2681,7 +2957,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "object:notes",
@@ -2689,7 +2966,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "opc_multi_sense_direction:in_sensor_address",
@@ -2697,7 +2975,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "opc_multi_sense_direction:in_transponder_address",
@@ -2705,7 +2984,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "opc_multi_sense_direction:none",
@@ -2713,7 +2993,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_action:none",
@@ -2721,7 +3002,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_action:off",
@@ -2729,15 +3011,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_action:on",
-        "definition": "På",
+        "definition": "P\u00e5",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_action:pulse",
@@ -2745,7 +3029,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_list:bus",
@@ -2753,7 +3038,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_map.decoupler:key",
@@ -2761,7 +3047,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_map.signal:key",
@@ -2769,7 +3056,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_map.turnout:key",
@@ -2777,15 +3065,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_map:use",
-        "definition": "Använda sig av",
+        "definition": "Anv\u00e4nda sig av",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "pcap_output:file",
@@ -2793,15 +3083,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "pcap_output:pipe",
-        "definition": "Rör",
+        "definition": "R\u00f6r",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.connect_dialog:connect",
@@ -2809,7 +3101,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.connect_dialog:connect_to_server",
@@ -2817,7 +3110,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.connect_dialog:connected",
@@ -2825,7 +3119,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.connect_dialog:connecting",
@@ -2833,15 +3128,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.connect_dialog:password",
-        "definition": "Lösenord",
+        "definition": "L\u00f6senord",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.connect_dialog:server",
@@ -2849,23 +3146,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.connect_dialog:username",
-        "definition": "Användarnamn",
+        "definition": "Anv\u00e4ndarnamn",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.error:cant_read_from_file_x",
-        "definition": "Kan inte läsa från filen: %1",
+        "definition": "Kan inte l\u00e4sa fr\u00e5n filen: %1",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.error:cant_write_to_file_x",
@@ -2873,7 +3173,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.error:server_error_x",
@@ -2881,7 +3182,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:about",
@@ -2889,15 +3191,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:close_world",
-        "definition": "Stäng världen",
+        "definition": "St\u00e4ng v\u00e4rlden",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:connect_to_server",
@@ -2905,31 +3209,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:connection",
-        "definition": "Förbindelse",
+        "definition": "F\u00f6rbindelse",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:disconnect_from_server",
-        "definition": "Koppla från servern",
+        "definition": "Koppla fr\u00e5n servern",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:export_world",
-        "definition": "Exportera världen",
+        "definition": "Exportera v\u00e4rlden",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:file",
@@ -2937,63 +3245,71 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:fullscreen",
-        "definition": "Fullskärm",
+        "definition": "Fullsk\u00e4rm",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:hardware",
-        "definition": "Hårdvara",
+        "definition": "H\u00e5rdvara",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:help",
-        "definition": "Hjälp",
+        "definition": "Hj\u00e4lp",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:import_world",
-        "definition": "Importera världen",
+        "definition": "Importera v\u00e4rlden",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:load_world",
-        "definition": "Ladda världen",
+        "definition": "Ladda v\u00e4rlden",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:new_world",
-        "definition": "Ny värld",
+        "definition": "Ny v\u00e4rld",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:objects",
-        "definition": "Föremål",
+        "definition": "F\u00f6rem\u00e5l",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:power",
@@ -3001,7 +3317,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:programming",
@@ -3009,7 +3326,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:quit",
@@ -3017,7 +3335,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:restart_server",
@@ -3025,23 +3344,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:restart_server_question",
-        "definition": "Är du säker på att du vill starta om servern?",
+        "definition": "\u00c4r du s\u00e4ker p\u00e5 att du vill starta om servern?",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:save_world",
-        "definition": "Rädda världen",
+        "definition": "R\u00e4dda v\u00e4rlden",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:server",
@@ -3049,7 +3371,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:server_log",
@@ -3057,47 +3380,53 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:server_settings",
-        "definition": "Serverinställningar",
+        "definition": "Serverinst\u00e4llningar",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:settings",
-        "definition": "Inställningar",
+        "definition": "Inst\u00e4llningar",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:shutdown_server",
-        "definition": "Avstängning av server",
+        "definition": "Avst\u00e4ngning av server",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:shutdown_server_question",
-        "definition": "Är du säker på att du vill stänga av servern?",
+        "definition": "\u00c4r du s\u00e4ker p\u00e5 att du vill st\u00e4nga av servern?",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:toolbar",
-        "definition": "Verktygsfält",
+        "definition": "Verktygsf\u00e4lt",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:tools",
@@ -3105,7 +3434,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:view",
@@ -3113,23 +3443,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:world",
-        "definition": "Värld",
+        "definition": "V\u00e4rld",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:world_properties",
-        "definition": "Världsegenskaper",
+        "definition": "V\u00e4rldsegenskaper",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.message_box:no",
@@ -3137,7 +3470,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.message_box:yes",
@@ -3145,7 +3479,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.object_select_list_dialog:cancel",
@@ -3153,7 +3488,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.object_select_list_dialog:ok",
@@ -3161,71 +3497,80 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.object_select_list_dialog:select_object",
-        "definition": "Välj objekt",
+        "definition": "V\u00e4lj objekt",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.board:color_scheme",
-        "definition": "Färgschema",
+        "definition": "F\u00e4rgschema",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.board:show_block_sensor_states",
-        "definition": "Visa blocksensortillstånd",
+        "definition": "Visa blocksensortillst\u00e5nd",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.board:turnout_draw_state",
-        "definition": "Rita valdeltagande tillstånd",
+        "definition": "Rita valdeltagande tillst\u00e5nd",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.developer:dont_load_fallback_language",
-        "definition": "Ladda inte reservspråk",
+        "definition": "Ladda inte reservspr\u00e5k",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.developer:log_missing_strings",
-        "definition": "Logga saknade översättningar",
+        "definition": "Logga saknade \u00f6vers\u00e4ttningar",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.developer:log_missing_strings_dir",
-        "definition": "Översättningsloggkatalog saknas",
+        "definition": "\u00d6vers\u00e4ttningsloggkatalog saknas",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.general:language",
-        "definition": "Språk",
+        "definition": "Spr\u00e5k",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.statusbar:show_clock",
@@ -3233,7 +3578,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.statusbar:show_statuses",
@@ -3241,7 +3587,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings:board",
@@ -3249,7 +3596,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings:developer",
@@ -3257,23 +3605,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings:general",
-        "definition": "Allmänt",
+        "definition": "Allm\u00e4nt",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings:statusbar",
-        "definition": "Statusfältet",
+        "definition": "Statusf\u00e4ltet",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.world_list_dialog:cancel",
@@ -3281,7 +3632,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.world_list_dialog:load",
@@ -3289,15 +3641,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.world_list_dialog:world_list",
-        "definition": "Världslista",
+        "definition": "V\u00e4rldslista",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:board_properties",
@@ -3305,23 +3659,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:export_world_failed",
-        "definition": "Exportvärlden misslyckades",
+        "definition": "Exportv\u00e4rlden misslyckades",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:grid",
-        "definition": "Rutnät",
+        "definition": "Rutn\u00e4t",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:grid_dot",
@@ -3329,7 +3686,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:grid_line",
@@ -3337,7 +3695,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:grid_none",
@@ -3345,23 +3704,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:import_world_failed",
-        "definition": "Import av världen misslyckades",
+        "definition": "Import av v\u00e4rlden misslyckades",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:next",
-        "definition": "Nästa",
+        "definition": "N\u00e4sta",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:previous",
@@ -3369,47 +3731,53 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:toggle_mute",
-        "definition": "Dämpa ljudet",
+        "definition": "D\u00e4mpa ljudet",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:toggle_offline_online",
-        "definition": "Växla anslutning",
+        "definition": "V\u00e4xla anslutning",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:toggle_power",
-        "definition": "Växla ström",
+        "definition": "V\u00e4xla str\u00f6m",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:toggle_smoke",
-        "definition": "Växla rök",
+        "definition": "V\u00e4xla r\u00f6k",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:traintastic_world",
-        "definition": "Traintastic värld",
+        "definition": "Traintastic v\u00e4rld",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:zoom_in",
@@ -3417,7 +3785,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:zoom_out",
@@ -3425,7 +3794,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "rail_vehicle_list:type",
@@ -3433,15 +3803,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "sensor_type:occupancy_detector",
-        "definition": "Närvarodetektor",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "sensor_type:reed_switch",
@@ -3449,7 +3812,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "serial:baudrate",
@@ -3457,7 +3821,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "serial:device",
@@ -3465,15 +3830,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "serial:flow_control",
-        "definition": "Flödeskontroll",
+        "definition": "Fl\u00f6deskontroll",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "serial:port",
@@ -3481,15 +3848,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "serial_flow_control:hardware",
-        "definition": "Hårdvara",
+        "definition": "H\u00e5rdvara",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "serial_flow_control:none",
@@ -3497,7 +3866,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "server_log:code",
@@ -3505,7 +3875,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "server_log:message",
@@ -3513,7 +3884,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "server_log:object",
@@ -3521,7 +3893,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "server_log:time",
@@ -3529,39 +3902,44 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:allow_client_server_restart",
-        "definition": "Tillåt omstart av klientservern",
+        "definition": "Till\u00e5t omstart av klientservern",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:allow_client_server_shutdown",
-        "definition": "Tillåt avstängning av klientserver",
+        "definition": "Till\u00e5t avst\u00e4ngning av klientserver",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:auto_save_world_on_exit",
-        "definition": "Spara världen automatiskt vid utgång",
+        "definition": "Spara v\u00e4rlden automatiskt vid utg\u00e5ng",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:discoverable",
-        "definition": "Upptäckbar",
+        "definition": "Uppt\u00e4ckbar",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:enable_file_logger",
@@ -3569,23 +3947,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:localhost_only",
-        "definition": "Endast lokal värd",
+        "definition": "Endast lokal v\u00e4rd",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:memory_logger_size",
-        "definition": "Storlek på minneslogger",
+        "definition": "Storlek p\u00e5 minneslogger",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:port",
@@ -3593,31 +3974,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:save_world_uncompressed",
-        "definition": "Spara världen okomprimerad",
+        "definition": "Spara v\u00e4rlden okomprimerad",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "signal_aspect:proceed",
-        "definition": "Fortsätt",
+        "definition": "Forts\u00e4tt",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "signal_aspect:proceed_reduced_speed",
-        "definition": "Fortsätt, minska hastigheten",
+        "definition": "Forts\u00e4tt, minska hastigheten",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "signal_aspect:stop",
@@ -3625,7 +4010,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "throttle_object_list:throttle",
@@ -3633,7 +4019,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:active",
@@ -3641,7 +4028,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:block",
@@ -3649,39 +4037,44 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:lob",
-        "definition": "Längd över buffertar",
+        "definition": "L\u00e4ngd \u00f6ver buffertar",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:mode",
-        "definition": "Läge",
+        "definition": "L\u00e4ge",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:override_length",
-        "definition": "Åsidosätt längd",
+        "definition": "\u00c5sidos\u00e4tt l\u00e4ngd",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:override_weight",
-        "definition": "Åsidosätt vikt",
+        "definition": "\u00c5sidos\u00e4tt vikt",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:speed_max",
@@ -3689,7 +4082,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:vehicles",
@@ -3697,7 +4091,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:weight",
@@ -3705,7 +4100,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "traintastic_diy_interface_type:serial",
@@ -3713,39 +4109,44 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "traintastic_diy_settings:debug_log_heartbeat",
-        "definition": "Logga hjärtslagskommunikation",
+        "definition": "Logga hj\u00e4rtslagskommunikation",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "traintastic_diy_settings:heartbeat_timeout",
-        "definition": "Timeout för hjärtslag",
+        "definition": "Timeout f\u00f6r hj\u00e4rtslag",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "turnout_position:left",
-        "definition": "Vänster",
+        "definition": "V\u00e4nster",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "turnout_position:right",
-        "definition": "Höger",
+        "definition": "H\u00f6ger",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "turnout_position:straight",
@@ -3753,7 +4154,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail.freight_wagon:cargo_weight",
@@ -3761,7 +4163,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail.tank_wagon:cargo_volume",
@@ -3769,7 +4172,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:cargo_capacity",
@@ -3777,7 +4181,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:cargo_loaded",
@@ -3785,7 +4190,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:decoder",
@@ -3793,7 +4199,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:lob",
@@ -3801,7 +4208,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:power",
@@ -3809,7 +4217,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:speed_max",
@@ -3817,7 +4226,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:total_weight",
@@ -3825,15 +4235,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:train",
-        "definition": "Tåg",
+        "definition": "T\u00e5g",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:weight",
@@ -3841,7 +4253,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:boards",
@@ -3849,7 +4262,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:clock",
@@ -3857,7 +4271,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:decoders",
@@ -3865,31 +4280,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:edit",
-        "definition": "Redigera värld",
+        "definition": "Redigera v\u00e4rld",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:inputs",
-        "definition": "Ingångar",
+        "definition": "Ing\u00e5ngar",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:interfaces",
-        "definition": "Gränssnitt",
+        "definition": "Gr\u00e4nssnitt",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:lua_scripts",
@@ -3897,31 +4316,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:mute",
-        "definition": "Dämpa",
+        "definition": "D\u00e4mpa",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:no_smoke",
-        "definition": "Ingen rök",
+        "definition": "Ingen r\u00f6k",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:offline",
-        "definition": "Koppla ifrån",
+        "definition": "Koppla ifr\u00e5n",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:online",
@@ -3929,47 +4352,53 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:outputs",
-        "definition": "Utgångar",
+        "definition": "Utg\u00e5ngar",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:power_off",
-        "definition": "Stäng av",
+        "definition": "St\u00e4ng av",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:power_on",
-        "definition": "Ström på",
+        "definition": "Str\u00f6m p\u00e5",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:rail_vehicles",
-        "definition": "Järnvägsfordon",
+        "definition": "J\u00e4rnv\u00e4gsfordon",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:run",
-        "definition": "Kör",
+        "definition": "K\u00f6r",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:scale",
@@ -3977,15 +4406,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:scale_ratio",
-        "definition": "Skalförhållande",
+        "definition": "Skalf\u00f6rh\u00e5llande",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:simulation",
@@ -3993,7 +4424,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:stop",
@@ -4001,15 +4433,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:trains",
-        "definition": "Tåg",
+        "definition": "T\u00e5g",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:uuid",
@@ -4017,7 +4451,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world_scale:custom",
@@ -4025,7 +4460,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "xpressnet_command_station:custom",
@@ -4033,15 +4469,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "xpressnet_interface_type:network",
-        "definition": "Nätverk",
+        "definition": "N\u00e4tverk",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "xpressnet_interface_type:serial",
@@ -4049,7 +4487,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "xpressnet_serial_interface_type:custom",
@@ -4057,23 +4496,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "xpressnet_settings:use_emergency_stop_locomotive_command",
-        "definition": "Använd kort nödstoppslokkommando",
+        "definition": "Anv\u00e4nd kort n\u00f6dstoppslokkommando",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "xpressnet_settings:use_roco_f13_f20_command",
-        "definition": "Använd kommandot Roco F13-F20",
+        "definition": "Anv\u00e4nd kommandot Roco F13-F20",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "z21_channel:rbus",
@@ -4081,31 +4523,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "z21_settings.server:allow_emergency_stop",
-        "definition": "Tillåt nödstopp",
+        "definition": "Till\u00e5t n\u00f6dstopp",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "z21_settings.server:allow_track_power_off",
-        "definition": "Låt strömmen stängas av",
+        "definition": "L\u00e5t str\u00f6mmen st\u00e4ngas av",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "z21_settings.server:allow_track_power_on_release_emergency_stop",
-        "definition": "Tillåt ström på\/nödstopp",
+        "definition": "Till\u00e5t str\u00f6m p\u00e5/n\u00f6dstopp",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train_mode:manual_protected",
@@ -4113,7 +4559,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train_mode:manual_unprotected",
@@ -4121,7 +4568,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train_mode:automatic",
@@ -4129,7 +4577,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list.train_vehicle:move",
@@ -4137,7 +4586,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "protocol.loconet:command_station",
@@ -4145,15 +4595,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:select_folder",
-        "definition": "Välj mapp",
+        "definition": "V\u00e4lj mapp",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:listen_only",
@@ -4161,31 +4613,35 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N2006",
-        "definition": "Endast lyssningsläge: aktiverat",
+        "definition": "Endast lyssningsl\u00e4ge: aktiverat",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N2007",
-        "definition": "Endast lyssningsläge: avaktiverat",
+        "definition": "Endast lyssningsl\u00e4ge: avaktiverat",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "status.lua:x_running",
-        "definition": "%1 körs",
+        "definition": "%1 k\u00f6rs",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "status.lua:x_in_error",
@@ -4193,23 +4649,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "decoder_protocol:dcc_short",
-        "definition": "DCC (kort adress)"
-    },
-    {
-        "term": "decoder_protocol:dcc_long",
-        "definition": "DCC (lång adress)"
-    },
-    {
-        "term": "decoder_protocol:motorola",
-        "definition": "Motorola"
-    },
-    {
-        "term": "decoder_protocol:selectrix",
-        "definition": "Selectrix"
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F1008",
@@ -4217,210 +4658,1654 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings:restart_required",
-        "definition": "Omstart krävs",
+        "definition": "Omstart kr\u00e4vs",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.general:language_changed_restart_required",
-        "definition": "Traintastic-klienten måste startas om för att språkändringen ska träda i kraft.",
+        "definition": "Traintastic-klienten m\u00e5ste startas om f\u00f6r att spr\u00e5k\u00e4ndringen ska tr\u00e4da i kraft.",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "traintastic_diy_interface_type:network_tcp",
-        "definition": "Nätverk (TCP)",
+        "definition": "N\u00e4tverk (TCP)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "decoder_protocol:dcc_short",
+        "definition": "DCC (kort adress)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "decoder_protocol:dcc_long",
+        "definition": "DCC (l\u00e5ng adress)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "decoder_protocol:motorola",
+        "definition": "Motorola",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "decoder_protocol:selectrix",
+        "definition": "Selectrix",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "marklin_can_interface_type:network_tcp",
-        "definition": "Nätverk (TCP)"
+        "definition": "N\u00e4tverk (TCP)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "marklin_can_interface_type:network_udp",
-        "definition": "Nätverk (UDP)"
+        "definition": "N\u00e4tverk (UDP)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2022",
-        "definition": "Det gick inte att skapa socket (%1)"
+        "definition": "Det gick inte att skapa socket (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2023",
-        "definition": "Socket ioctl misslyckades (%1)"
+        "definition": "Socket ioctl misslyckades (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C2005",
-        "definition": "SocketCAN är endast tillgängligt på Linux"
+        "definition": "SocketCAN \u00e4r endast tillg\u00e4ngligt p\u00e5 Linux",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "marklin_can_interface_type:socket_can",
-        "definition": "SocketCAN (endast Linux)"
+        "definition": "SocketCAN (endast Linux)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.marklin_can:marklin_can_locomotive_list",
-        "definition": "Märklin CAN: Loklista"
+        "definition": "M\u00e4rklin CAN: Loklista",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "marklincan_settings:default_switch_time",
-        "definition": "Standard omkopplingstid"
+        "definition": "Standard omkopplingstid",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "marklincan_settings:debug_config_stream",
-        "definition": "Felsökning: Konfigurationsström"
+        "definition": "Fels\u00f6kning: Konfigurationsstr\u00f6m",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "marklincan_settings:node_uid",
-        "definition": "Nod-UID"
+        "definition": "Nod-UID",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "marklincan_settings:node_serial_number",
-        "definition": "Nodens serienummer"
+        "definition": "Nodens serienummer",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "marklin_can_locomotive_list:import_or_sync",
-        "definition": "Importera\/synkronisera"
+        "definition": "Importera/synkronisera",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "marklin_can_locomotive_list:import_or_sync_all",
-        "definition": "Importera\/synkronisera alla"
+        "definition": "Importera/synkronisera alla",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "marklin_can_locomotive_list:reload",
-        "definition": "Ladda om"
+        "definition": "Ladda om",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.marklin_can:marklin_can_node_list",
-        "definition": "Märklin CAN: Nodlista"
+        "definition": "M\u00e4rklin CAN: Nodlista",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "table_model.marklin_can_node_list:device_name",
-        "definition": "Enhetsnamn"
+        "definition": "Enhetsnamn",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "table_model.marklin_can_node_list:article_number",
-        "definition": "Artikelnummer"
+        "definition": "Artikelnummer",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "table_model.marklin_can_node_list:serial_number",
-        "definition": "Serienummer"
+        "definition": "Serienummer",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "table_model.marklin_can_node_list:software_version",
-        "definition": "Mjukvaru-version"
+        "definition": "Mjukvaru-version",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "table_model.marklin_can_node_list:device_id",
-        "definition": "Enhets-ID"
+        "definition": "Enhets-ID",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "marklincan_settings:debug_status_data_config",
-        "definition": "Debug: Statusdatakonfiguration"
+        "definition": "Debug: Statusdatakonfiguration",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2024",
-        "definition": "Okänd MFX-UID för lokomotiv: %1"
+        "definition": "Ok\u00e4nd MFX-UID f\u00f6r lokomotiv: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W9001",
-        "definition": "Körningen tog %1 μs"
+        "definition": "K\u00f6rningen tog %1 \u03bcs",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E3001",
-        "definition": "Det går inte att ta bort järnvägsfordon när det är aktivt tåg"
+        "definition": "Det g\u00e5r inte att ta bort j\u00e4rnv\u00e4gsfordon n\u00e4r det \u00e4r aktivt t\u00e5g",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "input_map_item.block:identification",
-        "definition": "Identifiering"
+        "definition": "Identifiering",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E3002",
-        "definition": "Det går inte att ta bort aktivt tåg"
+        "definition": "Det g\u00e5r inte att ta bort aktivt t\u00e5g",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1014",
-        "definition": "Ogiltigt kommando"
+        "definition": "Ogiltigt kommando",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1015",
-        "definition": "Okänt objekt"
+        "definition": "Ok\u00e4nt objekt",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1016",
-        "definition": "Okänd egendom"
+        "definition": "Ok\u00e4nd egendom",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1017",
-        "definition": "Ogiltiga index"
+        "definition": "Ogiltiga index",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1018",
-        "definition": "Undantag: %1"
+        "definition": "Undantag: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1019",
-        "definition": "Objekt inte en tabell"
+        "definition": "Objekt inte en tabell",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W3001",
-        "definition": "NX-knapp kopplad till två block"
+        "definition": "NX-knapp kopplad till tv\u00e5 block",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W3002",
-        "definition": "NX-knappen är inte ansluten till något block"
+        "definition": "NX-knappen \u00e4r inte ansluten till n\u00e5got block",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "auto_yes_no:auto",
-        "definition": "Autoavkänning"
+        "definition": "Autoavk\u00e4nning",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "auto_yes_no:yes",
-        "definition": "Ja"
+        "definition": "Ja",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "auto_yes_no:no",
-        "definition": "Nej"
+        "definition": "Nej",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.signal_3_aspect:require_reservation",
-        "definition": "Kräv reservation"
+        "definition": "Kr\u00e4v reservation",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "traintastic_diy_settings:startup_delay",
-        "definition": "Startfördröjning"
+        "definition": "Startf\u00f6rdr\u00f6jning",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.general:connect_automatically_to_discovered_server",
-        "definition": "Anslut automatiskt till upptäckt server"
+        "definition": "Anslut automatiskt till uppt\u00e4ckt server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:about_server",
-        "definition": "Om servern"
+        "definition": "Om servern",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.about:traintastic_server",
-        "definition": "Om Traintastic server"
+        "definition": "Om Traintastic server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:online_when_loaded",
-        "definition": "Gå online när den är laddad"
+        "definition": "G\u00e5 online n\u00e4r den \u00e4r laddad",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:power_on_when_loaded",
-        "definition": "Ström på när den är laddad"
+        "definition": "Str\u00f6m p\u00e5 n\u00e4r den \u00e4r laddad",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:run_when_loaded",
-        "definition": "Kör när den är laddad"
+        "definition": "K\u00f6r n\u00e4r den \u00e4r laddad",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "language:fr-fr",
+        "definition": "Franska",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "sensor_type:occupancy_detector",
+        "definition": "N\u00e4rvarodetektor",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "language:sv-se",
+        "definition": "Svenska",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "dccex_channel:dcc_accessory",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "dccex_channel:output",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "dccex_channel:turnout",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "dccex_settings:startup_delay",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W2020",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "dccex_interface_type:serial",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "dccex_interface_type:network_tcp",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.connect_dialog:authenticating",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.connect_dialog:creating_session",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.connect_dialog:fetching_world",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "pair_output_action:none",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "pair_output_action:first",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "pair_output_action:second",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "hardware:addresses",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_channel:accessory",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_channel:accessory_dcc",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_channel:accessory_motorola",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_channel:ecos_object",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map:add_address",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map:remove_address",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map:ecos_object",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output.ecos_object:state",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.introduction:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.introduction:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.name:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.name:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.scale:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.scale:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.finalization:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.finalization:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:wizards",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.welcome:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.welcome:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.world:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.world:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.edit_mode:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.edit_mode:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.forum:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.forum:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.welcome:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.welcome:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.command_station:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.command_station:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:command_station_serial_port",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:command_station_usb_port",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:network",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:not_yet_supported",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:can_interface",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:loconet_interface",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:xpressnet_interface",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.protocol:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.protocol:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.interface_loconet:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.interface_loconet:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.interface_xpressnet:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.interface_xpressnet:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.hostname:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.hostname:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.hostname_port:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.hostname_port:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.serial_port:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.serial_port:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.serial_port_interface:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.name:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.name:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.finalization:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.finalization:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.page.list:search",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.button:back",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.button:next",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.button:finish",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.button:cancel",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map:address_x",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.rail.nx_button",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.misc.label",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.label:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.label:text_align",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.label:text_color",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "color:none",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.label:background_color",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:top_left",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:top_center",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:top_right",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:center_left",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:center",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:center_right",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:bottom_left",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:bottom_center",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:bottom_right",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.introduction:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.introduction.short:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.introduction.long:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.editing:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.editing:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.adding:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.adding:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.name:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.name:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.finalization:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.finalization:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.misc.switch",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.switch:color_on",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.switch:color_off",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map.switch:key",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map_item.switch.key:off",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map_item.switch.key:on",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.turnout:position",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.sensor:state",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "sensor_state:free",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "sensor_state:occupied",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "sensor_state:unknown",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.block:state",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "block_state:occupied",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "block_state:reserved",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "block_state:free",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.switch:value",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "list:setup_using_wizard",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "language:es-es",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.rail.nx_button:block",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.rail.nx_button:input",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "turnout_position:crossed",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "turnout_position:double_slip_straight_a",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "turnout_position:double_slip_straight_b",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     }
 ]

@@ -32,6 +32,7 @@
 #include "../../../utils/rtrim.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
+#include "../../../log/logmessageexception.hpp"
 #include "../../../utils/inrange.hpp"
 #include "../../../utils/fromchars.hpp"
 #include "../../../utils/displayname.hpp"
@@ -82,10 +83,20 @@ void Kernel::start()
   m_ioContext.post(
     [this]()
     {
-      m_ioHandler->start();
-
-      m_startupDelayTimer.expires_after(boost::asio::chrono::milliseconds(m_config.startupDelay));
-      m_startupDelayTimer.async_wait(std::bind(&Kernel::startupDelayExpired, this, std::placeholders::_1));
+      try
+      {
+        m_ioHandler->start();
+      }
+      catch(const LogMessageException& e)
+      {
+        EventLoop::call(
+          [this, e]()
+          {
+            Log::log(logId, e.message(), e.args());
+            error();
+          });
+        return;
+      }
     });
 
 #ifndef NDEBUG
@@ -110,6 +121,14 @@ void Kernel::stop()
 #ifndef NDEBUG
   m_started = false;
 #endif
+}
+
+void Kernel::started()
+{
+  assert(isKernelThread());
+
+  m_startupDelayTimer.expires_after(boost::asio::chrono::milliseconds(m_config.startupDelay));
+  m_startupDelayTimer.async_wait(std::bind(&Kernel::startupDelayExpired, this, std::placeholders::_1));
 }
 
 void Kernel::receive(std::string_view message)
@@ -414,10 +433,12 @@ void Kernel::send(std::string_view message)
 
 void Kernel::startupDelayExpired(const boost::system::error_code& ec)
 {
+  assert(isKernelThread());
+
   if(ec)
     return;
 
-  started();
+  KernelBase::started();
 }
 
 }

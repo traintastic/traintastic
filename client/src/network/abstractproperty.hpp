@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -76,6 +76,7 @@ class AbstractProperty : public BaseProperty
     }
 
     [[nodiscard]] virtual int setValueBool(bool value, std::function<void(std::optional<Error>)> /*callback*/) { Q_ASSERT(value != value); return -1; }
+    [[nodiscard]] virtual int setValueInt(int value, std::function<void(std::optional<Error>)> /*callback*/) { Q_ASSERT(value != value); return -1; }
     [[nodiscard]] virtual int setValueInt64(int64_t value, std::function<void(std::optional<Error>)> /*callback*/) { Q_ASSERT(value != value); return -1; }
     [[nodiscard]] virtual int setValueDouble(double value, std::function<void(std::optional<Error>)> /*callback*/) { Q_ASSERT(value != value); return -1; }
     [[nodiscard]] virtual int setValueString(const QString& value, std::function<void(std::optional<Error>)> /*callback*/) { Q_ASSERT(value != value); return -1; }

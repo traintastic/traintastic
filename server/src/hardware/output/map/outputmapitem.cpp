@@ -41,6 +41,41 @@ void OutputMapItem::execute()
   }
 }
 
+OutputMapItem::MatchResult OutputMapItem::matchesCurrentOutputState() const
+{
+  bool atLeastOneMatch = false;
+  bool atLeastOneDifference = false;
+  bool atLeastOneWildcard = false;
+
+  for(const auto& action : outputActions)
+  {
+    TriState match = action->matchesCurrentOutputState();
+    switch (match)
+    {
+    case TriState::Undefined:
+      atLeastOneWildcard = true;
+      break;
+    case TriState::False:
+      atLeastOneDifference = true;
+      break;
+    case TriState::True:
+      atLeastOneMatch = true;
+      break;
+    }
+
+    // This state could be the coorect one but output feedback is not yet arrived
+    // We will re-check when we receive output feedback from command station
+    if(atLeastOneDifference && (atLeastOneMatch || atLeastOneWildcard))
+      return MatchResult::PartialMatch;
+  }
+
+  if(atLeastOneWildcard)
+    return MatchResult::WildcardMatch;
+  if(atLeastOneMatch)
+    return MatchResult::FullMatch;
+  return MatchResult::NoMatch;
+}
+
 void OutputMapItem::worldEvent(WorldState state, WorldEvent event)
 {
   Object::worldEvent(state, event);

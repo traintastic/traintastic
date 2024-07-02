@@ -38,6 +38,7 @@
 #include "../protocol/loconet/iohandler/lbserveriohandler.hpp"
 #include "../protocol/loconet/iohandler/z21iohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/eventloop.hpp"
 #include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
@@ -389,7 +390,7 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
     m_loconetPropertyChanged.disconnect();
 
     m_kernel->stop();
-    m_kernel.reset();
+    EventLoop::deleteLater(m_kernel.release());
 
     if(status->state != InterfaceState::Error)
       setState(InterfaceState::Offline);

@@ -89,5 +89,8 @@
         <file>board.svg</file>
         <file>train.svg</file>
         <file>help.svg</file>
+        <file>board_tile.rail.nx_button.svg</file>
+        <file>board_tile.misc.switch.svg</file>
+        <file>board_tile.misc.label.svg</file>
     </qresource>
 </RCC>

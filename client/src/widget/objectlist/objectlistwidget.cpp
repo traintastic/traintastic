@@ -115,6 +115,16 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
           });
       }
 
+      if(object_->classId() == "list.interface")
+      {
+        menu->addSeparator();
+        menu->addAction(Theme::getIcon("wizard"), Locale::tr("list:setup_using_wizard") + "...",
+          []()
+          {
+            MainWindow::instance->showAddInterfaceWizard();
+          });
+      }
+
       m_buttonCreate->setMenu(menu);
 
       m_toolbar->addWidget(m_buttonCreate);

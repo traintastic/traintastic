@@ -23,8 +23,8 @@ jobs:
           defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded -DCMAKE_POLICY_CMP0141=NEW"
           sccache: true
 
-        - name: "ubuntu_20.04"
-          os: ubuntu-20.04
+        - name: "ubuntu_22.04"
+          os: ubuntu-22.04
           generator: "Unix Makefiles"
           arch: ""
           target: traintastic-client
@@ -34,8 +34,8 @@ jobs:
           defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
           sccache: true
 
-        - name: "ubuntu_22.04"
-          os: ubuntu-22.04
+        - name: "ubuntu_24.04"
+          os: ubuntu-24.04
           generator: "Unix Makefiles"
           arch: ""
           target: traintastic-client
@@ -67,8 +67,8 @@ jobs:
           defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
           sccache: false
 
-        - name: "macos-11"
-          os: "macos-11"
+        - name: "macos-12"
+          os: "macos-12"
           generator: "Unix Makefiles"
           arch: ""
           target: traintastic-client
@@ -78,8 +78,19 @@ jobs:
           defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
           sccache: true
 
-        - name: "macos-12"
-          os: "macos-12"
+        - name: "macos-13"
+          os: "macos-13"
+          generator: "Unix Makefiles"
+          arch: ""
+          target: traintastic-client
+          jobs: 4
+          build_type: Release
+          build_deb: false
+          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
+          sccache: true
+
+        - name: "macos-14"
+          os: "macos-14"
           generator: "Unix Makefiles"
           arch: ""
           target: traintastic-client
@@ -103,21 +114,20 @@ jobs:
     - name: Checkout LFS objects
       run: git lfs checkout
 
-    # Windows/macOS only:
-    - name: Cache Qt
-      if: startswith(matrix.config.os, 'windows') || startswith(matrix.config.os, 'macos')
-      id: cache-qt
-      uses: actions/cache@v3
+    # Windows only:
+    - name: Install Qt 5
+      if: startswith(matrix.config.os, 'windows')
+      uses: jurplel/install-qt-action@v4
       with:
-        path: ../Qt
-        key: ${{runner.os}}-QtCache
+        cache: true
 
-    # Windows/macOS only:
-    - name: Install Qt
-      if: startswith(matrix.config.os, 'windows') || startswith(matrix.config.os, 'macos')
-      uses: jurplel/install-qt-action@v3
+    # macOS only:
+    - name: Install Qt 6.5
+      if: startswith(matrix.config.os, 'macos')
+      uses: jurplel/install-qt-action@v4
       with:
-        cached: ${{steps.cache-qt.outputs.cache-hit}}
+        cache: true
+        version: 6.5.*
 
     # Ubuntu only:
     - name: apt update
@@ -214,19 +224,6 @@ jobs:
           ccov: false
           sccache: true
 
-        - name: "ubuntu_20.04"
-          os: ubuntu-20.04
-          generator: "Unix Makefiles"
-          arch: ""
-          toolset: ""
-          target: all
-          jobs: 4
-          build_type: Release
-          build_deb: true
-          defines: "-DENABLE_CLANG_TIDY=ON -DINSTALL_SYSTEMD_SERVICE=ON -DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
-          ccov: false
-          sccache: true
-
         - name: "ubuntu_22.04"
           os: ubuntu-22.04
           generator: "Unix Makefiles"
@@ -240,8 +237,21 @@ jobs:
           ccov: false
           sccache: true
 
-        - name: "ubuntu_20.04 (debug+ccov)"
-          os: ubuntu-20.04
+        - name: "ubuntu_24.04"
+          os: ubuntu-24.04
+          generator: "Unix Makefiles"
+          arch: ""
+          toolset: ""
+          target: all
+          jobs: 4
+          build_type: Release
+          build_deb: true
+          defines: "-DENABLE_CLANG_TIDY=ON -DINSTALL_SYSTEMD_SERVICE=ON -DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
+          ccov: false
+          sccache: true
+
+        - name: "ubuntu_latest (debug+ccov)"
+          os: ubuntu-latest
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
@@ -279,8 +289,8 @@ jobs:
           ccov: false
           sccache: false
 
-        - name: "macos-11"
-          os: "macos-11"
+        - name: "macos-12"
+          os: "macos-12"
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
@@ -292,8 +302,21 @@ jobs:
           ccov: false
           sccache: true
 
-        - name: "macos-12"
-          os: "macos-12"
+        - name: "macos-13"
+          os: "macos-13"
+          generator: "Unix Makefiles"
+          arch: ""
+          toolset: ""
+          target: all
+          jobs: 4
+          build_type: Release
+          build_deb: false
+          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
+          ccov: false
+          sccache: true
+
+        - name: "macos-14"
+          os: "macos-14"
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
@@ -425,12 +448,12 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - name: "ubuntu_20.04"
-          os: ubuntu-20.04
-          defines: ""
-
         - name: "ubuntu_22.04"
           os: ubuntu-22.04
+          defines: ""
+
+        - name: "ubuntu_24.04"
+          os: ubuntu-24.04
           defines: ""
 
         - name: "raspberrypios_10"
@@ -501,7 +524,7 @@ jobs:
 
   build-manual:
     name: manual
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -615,7 +638,7 @@ jobs:
   deploy:
     name: Deploy to website
     if: ${{ github.event_name == 'push' }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: [package-innosetup, build-server, build-client, build-data, build-manual, build-manual-lua]
 
     steps:

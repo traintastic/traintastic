@@ -187,6 +187,8 @@ enum class LogMessage : uint32_t
   E2024_UNKNOWN_LOCOMOTIVE_MFX_UID_X = LogMessageOffset::error + 2024,
   E3001_CANT_DELETE_RAIL_VEHICLE_WHEN_IN_ACTIVE_TRAIN = LogMessageOffset::error + 3001,
   E3002_CANT_DELETE_ACTIVE_TRAIN = LogMessageOffset::error + 3002,
+  E3003_CANT_REMOVE_TRAIN_TRAIN_MUST_BE_STOPPED_FIRST = LogMessageOffset::error + 3003,
+  E3004_CANT_REMOVE_TRAIN_TRAIN_CAN_ONLY_BE_REMOVED_FROM_HEAD_OR_TAIL_BLOCK = LogMessageOffset::error + 3004,
   E9001_X_DURING_EXECUTION_OF_X_EVENT_HANDLER = LogMessageOffset::error + 9001,
   E9999_X = LogMessageOffset::error + 9999,
 

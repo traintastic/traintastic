@@ -11,6 +11,7 @@
 ![POEditor](https://img.shields.io/poeditor/progress/622757/it?token=6428931964d7cdf58536a518443ebe16)
 ![POEditor](https://img.shields.io/poeditor/progress/622757/sv?token=6428931964d7cdf58536a518443ebe16)
 ![POEditor](https://img.shields.io/poeditor/progress/622757/fr?token=6428931964d7cdf58536a518443ebe16)
+![POEditor](https://img.shields.io/poeditor/progress/622757/es?token=6428931964d7cdf58536a518443ebe16)
 
 ## About The Project
 Traintastic is a client/server software application to control a model railway. It is in an early stage of development, it contains very limited functionality.
@@ -47,6 +48,13 @@ See [BUILDING.md](BUILDING.md).
             <img src="https://avatars.githubusercontent.com/u/42845724?v=4" width="100;" alt="gfgit"/>
             <br />
             <sub><b>Null</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/DrEVILish">
+            <img src="https://avatars.githubusercontent.com/u/6287003?v=4" width="100;" alt="DrEVILish"/>
+            <br />
+            <sub><b>Ryan Freeman</b></sub>
         </a>
     </td>
     <td align="center">

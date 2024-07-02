@@ -30,6 +30,10 @@ namespace DisplayName
   namespace BoardTile
   {
     constexpr std::string_view outputMap = "board_tile:output_map";
+    namespace Turnout
+    {
+      constexpr std::string_view position = "board_tile.turnout:position";
+    }
   }
   namespace Controller
   {

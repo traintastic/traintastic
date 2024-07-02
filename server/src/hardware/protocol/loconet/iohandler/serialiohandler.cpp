@@ -41,12 +41,17 @@ SerialIOHandler::SerialIOHandler(Kernel& kernel, const std::string& device, uint
 SerialIOHandler::~SerialIOHandler()
 {
   if(m_serialPort.is_open())
-    m_serialPort.close();
+  {
+    boost::system::error_code ec;
+    m_serialPort.close(ec);
+    // ignore the error
+  }
 }
 
 void SerialIOHandler::start()
 {
   read();
+  started();
 }
 
 void SerialIOHandler::stop()
@@ -122,7 +127,7 @@ void SerialIOHandler::read()
           [this, ec]()
           {
             Log::log(m_kernel.logId, LogMessage::E2002_SERIAL_READ_FAILED_X, ec);
-            m_kernel.error();
+            error();
           });
       }
     });
@@ -150,7 +155,7 @@ void SerialIOHandler::write()
           [this, ec]()
           {
             Log::log(m_kernel.logId, LogMessage::E2001_SERIAL_WRITE_FAILED_X, ec);
-            m_kernel.error();
+            error();
           });
       }
     });

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,9 @@ namespace LocoNet {
 
 class TCPIOHandler : public IOHandler
 {
+  private:
+    bool m_connected = false;
+
   protected:
     const std::string m_hostname;
     const uint16_t m_port;
@@ -38,10 +41,19 @@ class TCPIOHandler : public IOHandler
 
     TCPIOHandler(Kernel& kernel, std::string hostname, uint16_t port);
 
+    inline bool connected() const
+    {
+      return m_connected;
+    }
+
+    virtual void read() = 0;
+    virtual void write() = 0;
+
   public:
     ~TCPIOHandler() override;
 
-    void start() override;
+    void start() final;
+    void stop() final;
 };
 
 }

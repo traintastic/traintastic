@@ -5,5 +5,69 @@
   "emergency_stop": {},
   "powered": {},
   "active": {},
-  "mode": {}
+  "mode": {},
+  "on_block_assigned": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "block"
+      }
+    ],
+    "since": "0.3"
+  },
+  "on_block_reserved": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "block"
+      },
+      {
+        "name": "direction"
+      }
+    ],
+    "since": "0.3"
+  },
+  "on_block_entered": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "block"
+      },
+      {
+        "name": "direction"
+      }
+    ],
+    "since": "0.3"
+  },
+  "on_block_left": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "block"
+      },
+      {
+        "name": "direction"
+      }
+    ],
+    "since": "0.3"
+  },
+  "on_block_removed": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "block"
+      }
+    ],
+    "since": "0.3"
+  }
 }

@@ -76,4 +76,6 @@ TurnoutLeftRailTile::TurnoutLeftRailTile(World& world, std::string_view _id, Til
 
   Attributes::addValues(setPosition, setPositionValues);
   m_interfaceItems.add(setPosition);
+
+  connectOutputMap();
 }

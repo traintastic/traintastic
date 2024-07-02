@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -83,23 +83,12 @@ LBServerIOHandler::LBServerIOHandler(Kernel& kernel, std::string hostname, uint1
 {
 }
 
-void LBServerIOHandler::start()
-{
-  TCPIOHandler::start();
-
-  read();
-}
-
-void LBServerIOHandler::stop()
-{
-}
-
 bool LBServerIOHandler::send(const Message& message)
 {
   const bool wasEmpty = m_writeQueue.empty();
   m_writeQueue.emplace(formatSend(message));
 
-  if(wasEmpty)
+  if(wasEmpty && connected())
     write();
 
   return true;
@@ -145,8 +134,11 @@ void LBServerIOHandler::read()
             m_version = line.substr(7);
           }
 
-          pos += line.size();
-          bytesTransferred -= line.size();
+          pos = eol + 1; // Skip the newline character
+          if (pos < end && (*pos == '\n' || *pos == '\r') && *pos != *(pos - 1)) {
+            pos++; // Skip the second part of CRLF or LFCR
+          }
+          bytesTransferred = end - pos;
         }
 
         if(bytesTransferred != 0)
@@ -161,7 +153,7 @@ void LBServerIOHandler::read()
           [this, ec]()
           {
             Log::log(m_kernel.logId, LogMessage::E2008_SOCKET_READ_FAILED_X, ec);
-            m_kernel.error();
+            error();
           });
       }
     });
@@ -169,18 +161,22 @@ void LBServerIOHandler::read()
 
 void LBServerIOHandler::write()
 {
-  assert(!m_writeQueue.empty());
+  if(m_writeQueue.empty()) /*[[unlikely]]*/
+  {
+    return;
+  }
+
   const std::string& message = m_writeQueue.front();
   boost::asio::async_write(m_socket, boost::asio::buffer(message.data(), message.size()),
     [this](const boost::system::error_code& ec, std::size_t /*bytesTransferred*/)
     {
-      if(ec != boost::asio::error::operation_aborted)
+      if(ec && ec != boost::asio::error::operation_aborted)
       {
         EventLoop::call(
           [this, ec]()
           {
             Log::log(m_kernel.logId, LogMessage::E2007_SOCKET_WRITE_FAILED_X, ec);
-            m_kernel.error();
+            error();
           });
       }
     });

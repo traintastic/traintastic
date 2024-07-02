@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,17 +36,6 @@ TCPBinaryIOHandler::TCPBinaryIOHandler(Kernel& kernel, std::string hostname, uin
 {
 }
 
-void TCPBinaryIOHandler::start()
-{
-  TCPIOHandler::start();
-
-  read();
-}
-
-void TCPBinaryIOHandler::stop()
-{
-}
-
 bool TCPBinaryIOHandler::send(const Message& message)
 {
   if(m_writeBufferOffset + message.size() > m_writeBuffer.size())
@@ -56,7 +45,7 @@ bool TCPBinaryIOHandler::send(const Message& message)
   memcpy(m_writeBuffer.data() + m_writeBufferOffset, &message, message.size());
   m_writeBufferOffset += message.size();
 
-  if(wasEmpty)
+  if(wasEmpty && connected())
     write();
 
   return true;
@@ -115,7 +104,7 @@ void TCPBinaryIOHandler::read()
           [this, ec]()
           {
             Log::log(m_kernel.logId, LogMessage::E2008_SOCKET_READ_FAILED_X, ec);
-            m_kernel.error();
+            error();
           });
       }
     });
@@ -123,6 +112,11 @@ void TCPBinaryIOHandler::read()
 
 void TCPBinaryIOHandler::write()
 {
+  if(m_writeBufferOffset == 0) /*[[unlikely]]*/
+  {
+    return;
+  }
+
   m_socket.async_write_some(boost::asio::buffer(m_writeBuffer.data(), m_writeBufferOffset),
     [this](const boost::system::error_code& ec, std::size_t bytesTransferred)
     {
@@ -143,7 +137,7 @@ void TCPBinaryIOHandler::write()
           [this, ec]()
           {
             Log::log(m_kernel.logId, LogMessage::E2007_SOCKET_WRITE_FAILED_X, ec);
-            m_kernel.error();
+            error();
           });
       }
     });

@@ -177,13 +177,24 @@
             "next": "serial_port",
             "actions": {
               "create_interface": {
-                "class_id": "interface.dccex"
+                "class_id": "interface.dccex",
+                "properties": {
+                  "type": "serial"
+                }
               }
             }
           },
           {
-            "name": "$wizard.add_interface.connection:network$ ($wizard.add_interface.connection:not_yet_supported$)",
-            "disabled": true
+            "name": "$wizard.add_interface.connection:network$",
+            "next": "hostname_port",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.dccex",
+                "properties": {
+                  "type": "network_tcp"
+                }
+              }
+            }
           }
         ]
       },

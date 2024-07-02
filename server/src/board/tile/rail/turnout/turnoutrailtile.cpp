@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,6 +43,7 @@ TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tile
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
 
+  Attributes::addDisplayName(position, DisplayName::BoardTile::Turnout::position);
   Attributes::addObjectEditor(position, false);
   // position is added by sub class
 
@@ -98,14 +99,25 @@ bool TurnoutRailTile::isValidPosition(TurnoutPosition value)
   return values->contains(static_cast<int64_t>(value));
 }
 
-bool TurnoutRailTile::doSetPosition(TurnoutPosition value)
+bool TurnoutRailTile::doSetPosition(TurnoutPosition value, bool skipAction)
 {
   if(!isValidPosition(value))
   {
     return false;
   }
-  (*outputMap)[value]->execute();
+  if(!skipAction)
+    (*outputMap)[value]->execute();
   position.setValueInternal(value);
   positionChanged(*this, value);
   return true;
+}
+
+void TurnoutRailTile::connectOutputMap()
+{
+  outputMap->onOutputStateMatchFound.connect([this](TurnoutPosition pos)
+    {
+      doSetPosition(pos, true);
+    });
+
+  //TODO: disconnect somewhere?
 }

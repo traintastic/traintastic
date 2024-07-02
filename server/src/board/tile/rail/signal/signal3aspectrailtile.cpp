@@ -123,6 +123,8 @@ Signal3AspectRailTile::Signal3AspectRailTile(World& world, std::string_view _id)
 
   Attributes::addValues(setAspect, setAspectValues);
   m_interfaceItems.add(setAspect);
+
+  connectOutputMap();
 }
 
 void Signal3AspectRailTile::boardModified()

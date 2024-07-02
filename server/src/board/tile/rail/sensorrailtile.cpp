@@ -23,7 +23,9 @@
 #include "sensorrailtile.hpp"
 #include "../../../world/world.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../core/method.tpp"
 #include "../../../core/objectproperty.tpp"
+#include "../../../hardware/input/inputcontroller.hpp"
 #include "../../../utils/sensor.hpp"
 #include "../../../utils/displayname.hpp"
 
@@ -37,6 +39,8 @@ SensorRailTile::SensorRailTile(World& world, std::string_view _id) :
         inputPropertyChanged(input->value);
       else
         state.setValueInternal(SensorState::Unknown);
+
+      updateSimulateTriggerEnabled();
     },
     [this](const std::shared_ptr<Input>& value)
     {
@@ -61,6 +65,14 @@ SensorRailTile::SensorRailTile(World& world, std::string_view _id) :
         inputPropertyChanged(input->value);
     }},
   state{this, "state", SensorState::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
+  , simulateTrigger{*this, "simulate_trigger",
+      [this]()
+      {
+        if(input) /*[[likely]]*/
+        {
+          input->interface->inputSimulateChange(input->channel, input->address, SimulateInputAction::Toggle);
+        }
+      }}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
@@ -78,6 +90,10 @@ SensorRailTile::SensorRailTile(World& world, std::string_view _id) :
   Attributes::addObjectEditor(state, false);
   Attributes::addValues(state, sensorStateValues);
   m_interfaceItems.add(state);
+
+  Attributes::addEnabled(simulateTrigger, false);
+  Attributes::addObjectEditor(simulateTrigger, false);
+  m_interfaceItems.add(simulateTrigger);
 }
 
 SensorRailTile::~SensorRailTile()
@@ -108,6 +124,8 @@ void SensorRailTile::loaded()
 
   if(input)
     connectInput(*input);
+
+  updateSimulateTriggerEnabled();
 }
 
 void SensorRailTile::destroying()
@@ -126,6 +144,7 @@ void SensorRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
   Attributes::setEnabled(input, editable);
   Attributes::setEnabled(type, editable);
   Attributes::setEnabled(invert, editable);
+  updateSimulateTriggerEnabled();
 }
 
 void SensorRailTile::connectInput(Input& object)
@@ -152,4 +171,9 @@ void SensorRailTile::inputPropertyChanged(BaseProperty& property)
   assert(input);
   if(&property == static_cast<BaseProperty*>(&input->value))
     state.setValueInternal(toSensorState(type, input->value.value() ^ invert.value()));
+}
+
+void SensorRailTile::updateSimulateTriggerEnabled()
+{
+  Attributes::setEnabled(simulateTrigger, contains(m_world.state, WorldState::Online | WorldState::Simulation) && input);
 }

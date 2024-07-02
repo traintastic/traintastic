@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,15 +25,23 @@
 
 #include <QSpinBox>
 
-class AbstractProperty;
+class Property;
 
 class PropertySpinBox : public QSpinBox
 {
   protected:
-    AbstractProperty& m_property;
+    Property& m_property;
+    int m_requestId;
+
+    void cancelRequest();
+    void showError(const QString& error);
+
+  protected:
+    void focusOutEvent(QFocusEvent* event) override;
 
   public:
-    PropertySpinBox(AbstractProperty& property, QWidget* parent = nullptr);
+    PropertySpinBox(Property& property, QWidget* parent = nullptr);
+    ~PropertySpinBox() override;
 };
 
 #endif

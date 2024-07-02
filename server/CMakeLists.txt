@@ -222,6 +222,10 @@ else()
   list(REMOVE_ITEM SOURCES ${SOCKET_CAN_SOURCES})
 endif()
 
+if(APPLE)
+  add_definitions(-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION) # remove once boost is updated
+endif()
+
 if(WIN32)
   add_definitions(-D_WIN32_WINNT=0x0601)
   file(GLOB SOURCES_WINDOWS "src/os/windows/*.hpp" "src/os/windows/*.cpp")
@@ -358,8 +362,18 @@ if(WIN32)
   add_custom_command(TARGET traintastic-server POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/libarchive/bin/archive.dll" .)
 elseif(APPLE)
-  set(LibArchive_INCLUDE_DIRS "/usr/local/opt/libarchive/include")
-  set(LibArchive_LIBRARIES "/usr/local/opt/libarchive/lib/libarchive.dylib")
+  find_path(LibArchive_INCLUDE_DIRS
+    NAMES archive.h
+    PATHS
+    "/usr/local/opt/libarchive/include" # x86_64
+    "/opt/homebrew/opt/libarchive/include" # arm64
+    )
+  find_library(LibArchive_LIBRARIES
+    NAMES archive libarchive
+    PATHS
+    "/usr/local/opt/libarchive/lib/" # x86_64
+    "/opt/homebrew/opt/libarchive/lib" # arm64
+    )
 else()
   find_package(LibArchive REQUIRED)
 endif()
@@ -391,8 +405,18 @@ if(WIN32)
   add_custom_command(TARGET traintastic-server-test POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.dll" .)
 elseif(APPLE)
-  set(LUA_INCLUDE_DIR "/usr/local/opt/lua@5.3/include/lua")
-  set(LUA_LIBRARIES "/usr/local/opt/lua@5.3/lib/liblua5.3.dylib")
+  find_path(LUA_INCLUDE_DIR
+    NAMES lua.h
+    PATHS
+    "/usr/local/opt/lua@5.3/include/lua" # x86_64
+    "/opt/homebrew/opt/lua@5.3/include/lua" # arm64
+    )
+  find_library(LUA_LIBRARIES
+    NAMES lua5.3 liblua5.3
+    PATHS
+    "/usr/local/opt/lua@5.3/lib" # x86_64
+    "/opt/homebrew/opt/lua@5.3/lib" # arm64
+    )
 else()
   find_package(Lua 5.3 REQUIRED)
 endif()

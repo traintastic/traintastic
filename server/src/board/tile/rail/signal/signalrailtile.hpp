@@ -50,9 +50,11 @@ class SignalRailTile : public StraightRailTile
 
     void boardModified() override;
 
-    virtual bool doSetAspect(SignalAspect value);
+    virtual bool doSetAspect(SignalAspect value, bool skipAction = false);
 
     void evaluate();
+
+    void connectOutputMap();
 
   public:
     static std::optional<OutputActionValue> getDefaultActionValue(SignalAspect signalAspect, OutputType outputType, size_t outputIndex);

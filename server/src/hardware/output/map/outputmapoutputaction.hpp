@@ -25,6 +25,7 @@
 
 #include "../../../core/object.hpp"
 #include "../output.hpp"
+#include "traintastic/enum/tristate.hpp"
 
 class OutputMap;
 class World;
@@ -40,6 +41,7 @@ class OutputMapOutputAction : public Object
   protected:
     World& world();
     Output& output();
+    const Output& output() const;
 
   public:
     OutputMapOutputAction(OutputMap& _parent, size_t outputIndex);
@@ -47,6 +49,8 @@ class OutputMapOutputAction : public Object
     std::string getObjectId() const final;
 
     virtual void execute() = 0;
+
+    virtual TriState matchesCurrentOutputState() const = 0;
 };
 
 #endif

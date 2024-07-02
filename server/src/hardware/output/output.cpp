@@ -35,11 +35,14 @@ Output::Output(std::shared_ptr<OutputController> outputController, OutputChannel
   : interface{this, "interface", std::move(outputController), PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , channel{this, "channel", channel_, PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , type{this, "type", type_, PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
+  , onValueChangedGeneric{*this, "on_value_changed_generic", EventFlags::Public}
 {
   m_interfaceItems.add(interface);
 
   Attributes::addValues(channel, outputChannelValues);
   m_interfaceItems.add(channel);
+
+  m_interfaceItems.add(onValueChangedGeneric);
 }
 
 std::string Output::getObjectId() const

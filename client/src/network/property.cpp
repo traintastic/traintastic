@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -137,6 +137,11 @@ void Property::setValueString(const QString& value)
 }
 
 int Property::setValueBool(bool value, std::function<void(std::optional<Error> error)> callback)
+{
+  return setPropertyValue(*this, value, std::move(callback));
+}
+
+int Property::setValueInt(int value, std::function<void(std::optional<Error> error)> callback)
 {
   return setPropertyValue(*this, value, std::move(callback));
 }

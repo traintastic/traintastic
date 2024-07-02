@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -63,6 +63,7 @@ class Property : public AbstractProperty
     QVariant toVariant() const final { return m_value; }
 
     [[nodiscard]] int setValueBool(bool value, std::function<void(std::optional<Error>)> callback) final;
+    [[nodiscard]] int setValueInt(int value, std::function<void(std::optional<Error>)> callback) final;
     [[nodiscard]] int setValueInt64(int64_t value, std::function<void(std::optional<Error>)> callback) final;
     [[nodiscard]] int setValueDouble(double value, std::function<void(std::optional<Error>)> callback) final;
     [[nodiscard]] int setValueString(const QString& value, std::function<void(std::optional<Error>)> callback) final;

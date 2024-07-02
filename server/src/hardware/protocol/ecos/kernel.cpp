@@ -165,13 +165,6 @@ void Kernel::start()
           });
         return;
       }
-
-      m_objects.add(std::make_unique<ECoS>(*this));
-      m_objects.add(std::make_unique<LocomotiveManager>(*this));
-      m_objects.add(std::make_unique<SwitchManager>(*this));
-      m_objects.add(std::make_unique<FeedbackManager>(*this));
-
-      started();
     });
 
 #ifndef NDEBUG
@@ -258,6 +251,18 @@ void Kernel::stop(Simulation* simulation)
 #ifndef NDEBUG
   m_started = false;
 #endif
+}
+
+void Kernel::started()
+{
+  assert(isKernelThread());
+
+  m_objects.add(std::make_unique<ECoS>(*this));
+  m_objects.add(std::make_unique<LocomotiveManager>(*this));
+  m_objects.add(std::make_unique<SwitchManager>(*this));
+  m_objects.add(std::make_unique<FeedbackManager>(*this));
+
+  KernelBase::started();
 }
 
 void Kernel::receive(std::string_view message)

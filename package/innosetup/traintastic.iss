@@ -48,8 +48,8 @@ Name: fr; MessagesFile: "compiler:Languages\French.isl,fr-fr.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
-Name: "firewall_traintastic"; Description: "{cm:FirewallAllowTraintasticClient}"; GroupDescription: "{cm:WindowsFirewall}"; Check: InstallServer
-Name: "firewall_wlanmaus"; Description: "{cm:FirewallAllowWLANmausZ21}"; GroupDescription: "{cm:WindowsFirewall}"; Check: InstallServer
+Name: "firewall_traintastic"; Description: "{cm:firewall_allow_traintastic_client}"; GroupDescription: "{cm:windows_firewall}"; Check: InstallServer
+Name: "firewall_wlanmaus"; Description: "{cm:firewall_allow_wlanmaus_z21}"; GroupDescription: "{cm:windows_firewall}"; Check: InstallServer
 
 [Files]
 ; Server
@@ -78,9 +78,9 @@ Source: "..\..\client\build\Release\vc_redist.x64.exe"; DestDir: {tmp}; Flags: d
 
 [Run]
 Filename: "{tmp}\vc_redist.x64.exe"; StatusMsg: "Installing VC++ redistributables..."; Parameters: "/quiet /norestart"; Check: VC2019RedistNeedsInstall; Flags: waituntilterminated
-Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (TCP)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=TCP localport=5740 action=allow"; StatusMsg: "{cm:AddFirewallRuleTraintasticClient} (TCP)"; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
-Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (UDP)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=UDP localport=5740 action=allow"; StatusMsg: "{cm:AddFirewallRuleTraintasticClient} (UDP)"; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
-Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (WLANmaus/Z21)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=UDP localport=21105 action=allow"; StatusMsg: "{cm:AddFirewallRuleWLANmausZ21}"; Flags: runhidden; Check: InstallServer; Tasks: firewall_wlanmaus
+Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (TCP)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=TCP localport=5740 action=allow"; StatusMsg: "{cm:add_firewall_rule_traintastic_client} (TCP)"; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
+Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (UDP)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=UDP localport=5740 action=allow"; StatusMsg: "{cm:add_firewall_rule_traintastic_client} (UDP)"; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
+Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (WLANmaus/Z21)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=UDP localport=21105 action=allow"; StatusMsg: "{cm:add_firewall_rule_wlanmaus_z21}"; Flags: runhidden; Check: InstallServer; Tasks: firewall_wlanmaus
 
 [InstallDelete]
 ; Delete old translation files (TODO: remove in 0.4)
@@ -175,7 +175,7 @@ begin
   ComponentsPage := CreateCustomPage(wpSelectComponents, SetupMessage(msgWizardSelectComponents), SetupMessage(msgSelectComponentsDesc));
 
   ClientAndServerRadioButton := TNewRadioButton.Create(ComponentsPage);
-  ClientAndServerRadioButton.Caption := ExpandConstant('{cm:ClientAndServer}');
+  ClientAndServerRadioButton.Caption := ExpandConstant('{cm:client_and_server}');
   ClientAndServerRadioButton.Checked := (Components = 'ClientAndServer');
   ClientAndServerRadioButton.Font.Style := [fsBold];
   ClientAndServerRadioButton.Height := ScaleY(23);
@@ -183,14 +183,14 @@ begin
   ClientAndServerRadioButton.OnClick := @ComponentRadioButtonClick;
 
   Lbl := TLabel.Create(ComponentsPage);
-  Lbl.Caption := ExpandConstant('{cm:ClientAndServerDesc}');
+  Lbl.Caption := ExpandConstant('{cm:Client_and_server_desc}');
   Lbl.Top := ClientAndServerRadioButton.Top + ClientAndServerRadioButton.Height;
   Lbl.Left := ScaleX(17);
   Lbl.Height := ScaleY(23);
   Lbl.Parent := ComponentsPage.Surface;
 
   ClientOnlyRadioButton := TNewRadioButton.Create(ComponentsPage);
-  ClientOnlyRadioButton.Caption := ExpandConstant('{cm:ClientOnly}');
+  ClientOnlyRadioButton.Caption := ExpandConstant('{cm:client_only}');
   ClientOnlyRadioButton.Checked := (Components = 'ClientOnly');
   ClientOnlyRadioButton.Font.Style := [fsBold];
   ClientOnlyRadioButton.Top := Lbl.Top + Lbl.Height + ScaleY(10);
@@ -199,7 +199,7 @@ begin
   ClientOnlyRadioButton.OnClick := @ComponentRadioButtonClick;
 
   Lbl := TLabel.Create(ComponentsPage);
-  Lbl.Caption := ExpandConstant('{cm:ClientOnlyDesc}');
+  Lbl.Caption := ExpandConstant('{cm:client_only_desc}');
   Lbl.Top := ClientOnlyRadioButton.Top + ClientOnlyRadioButton.Height;
   Lbl.Left := ScaleX(17);
   Lbl.Height := ScaleY(23);

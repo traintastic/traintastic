@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,6 +38,7 @@ class TCPIOHandler final : public NetworkIOHandler
     boost::asio::ip::tcp::endpoint m_endpoint;
     std::array<std::byte, 1500> m_readBuffer;
     size_t m_readBufferOffset;
+    bool m_connected = false;
 
     void read() final;
     void write() final;
