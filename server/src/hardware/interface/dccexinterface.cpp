@@ -33,6 +33,7 @@
 #include "../protocol/dccex/iohandler/tcpiohandler.hpp"
 #include "../protocol/dccex/iohandler/simulationiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/eventloop.hpp"
 #include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
@@ -281,7 +282,7 @@ bool DCCEXInterface::setOnline(bool& value, bool simulation)
     Attributes::setEnabled({type, device, baudrate, hostname, port}, true);
 
     m_kernel->stop();
-    m_kernel.reset();
+    EventLoop::deleteLater(m_kernel.release());
 
     if(status->state != InterfaceState::Error)
     {

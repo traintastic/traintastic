@@ -128,6 +128,11 @@ SimulationIOHandler::SimulationIOHandler(Kernel& kernel, const Simulation& simul
 {
 }
 
+void SimulationIOHandler::start()
+{
+  m_kernel.started();
+}
+
 bool SimulationIOHandler::send(std::string_view message)
 {
   Request request;

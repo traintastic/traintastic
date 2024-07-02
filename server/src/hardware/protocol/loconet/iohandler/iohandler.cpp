@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/traintasticdiy/iohandler/simulationiohandler.hpp
+ * server/src/hardware/protocol/loconet/iohandler/iohandler.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022,2024 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,36 +20,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_TRAINTASTICDIY_IOHANDLER_SIMULATIONIOHANDLER_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_TRAINTASTICDIY_IOHANDLER_SIMULATIONIOHANDLER_HPP
-
 #include "iohandler.hpp"
-#include <array>
-#include <cstddef>
+#include "../kernel.hpp"
 
-namespace TraintasticDIY {
+namespace LocoNet {
 
-class SimulationIOHandler final : public IOHandler
+IOHandler::IOHandler(Kernel& kernel)
+  : m_kernel{kernel}
 {
-  private:
-    void reply(const Message& message);
+}
 
-  public:
-    SimulationIOHandler(Kernel& kernel);
-
-    void start() final;
-    void stop() final {}
-
-    bool send(const Message& message) final;
-};
-
-template<>
-constexpr bool isSimulation<SimulationIOHandler>()
+void IOHandler::started()
 {
-  return true;
+  m_kernel.started();
+}
+
+void IOHandler::error()
+{
+  m_kernel.error();
 }
 
 }
-
-#endif
-

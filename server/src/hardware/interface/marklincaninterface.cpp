@@ -36,6 +36,7 @@
 #include "../protocol/marklincan/kernel.hpp"
 #include "../protocol/marklincan/settings.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/eventloop.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
@@ -257,7 +258,7 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
     m_marklinCANPropertyChanged.disconnect();
 
     m_kernel->stop();
-    m_kernel.reset();
+    EventLoop::deleteLater(m_kernel.release());
 
     if(status->state != InterfaceState::Error)
       setState(InterfaceState::Offline);

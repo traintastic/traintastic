@@ -27,6 +27,7 @@
 #include "../../../world/world.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../log/log.hpp"
+#include "../../../log/logmessageexception.hpp"
 #include "../../../train/train.hpp"
 #include "../../../train/trainblockstatus.hpp"
 #include "../../../train/traintracking.hpp"
@@ -120,30 +121,33 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
         }
       }}
   , removeTrain{*this, "remove_train",
-      [this]()
+      [this](const std::shared_ptr<Train>& oldTrain)
       {
-        if(trains.size() == 1 && trains[0]->train->isStopped)
+        if(auto status = getBlockTrainStatus(oldTrain))
         {
+          if(!oldTrain->isStopped)
+          {
+            throw LogMessageException(LogMessage::E3003_CANT_REMOVE_TRAIN_TRAIN_MUST_BE_STOPPED_FIRST);
+          }
+
           const auto self = shared_ptr<BlockRailTile>();
-          auto oldTrain = trains[0]->train.value();
           if(!oldTrain->blocks.empty() && self != (**oldTrain->blocks.begin()).block.value() && self != (**oldTrain->blocks.rbegin()).block.value())
-            return; // only possible to remove the train from the head or tail block
+          {
+            throw LogMessageException(LogMessage::E3004_CANT_REMOVE_TRAIN_TRAIN_CAN_ONLY_BE_REMOVED_FROM_HEAD_OR_TAIL_BLOCK);
+          }
 
-          const auto it = std::find_if(trains.begin(), trains.end(),
-            [&oldTrain](auto& status)
-            {
-              return status->train.value() == oldTrain;
-            });
-
-          if(it == trains.end()) /*[[unlikely]]*/
-            return; // can't remove a train that isn't in the block
-
-          (**it).destroy();
+          status->destroy();
+          status.reset();
 
           updateTrainMethodEnabled();
           if(state == BlockState::Reserved)
             updateState();
           Log::log(*this, LogMessage::N3002_REMOVED_TRAIN_X_FROM_BLOCK_X, oldTrain->name.value(), name.value());
+
+          if(oldTrain->blocks.empty())
+          {
+            oldTrain->active = false;
+          }
 
           if(m_world.simulation)
           {
@@ -509,7 +513,7 @@ void BlockRailTile::updateState()
 void BlockRailTile::updateTrainMethodEnabled()
 {
   Attributes::setEnabled(assignTrain, trains.empty());
-  Attributes::setEnabled(removeTrain, trains.size() == 1);
+  Attributes::setEnabled(removeTrain, !trains.empty());
   Attributes::setEnabled(flipTrain, trains.size() == 1);
 }
 
@@ -592,6 +596,18 @@ void BlockRailTile::setRotate(TileRotate value)
 void BlockRailTile::boardModified()
 {
   updatePaths(); //! \todo improvement: only update if a connected tile is changed
+}
+
+std::shared_ptr<TrainBlockStatus> BlockRailTile::getBlockTrainStatus(const std::shared_ptr<Train>& train)
+{
+  for(const auto& status : trains)
+  {
+    if(status->train.value() == train)
+    {
+      return status;
+    }
+  }
+  return {};
 }
 
 void BlockRailTile::updatePaths()

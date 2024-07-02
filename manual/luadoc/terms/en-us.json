@@ -881,91 +881,91 @@
   },
   {
     "term": "log:description",
-    "definition": ""
+    "definition": "The log library provides 7 functions, each function takes all its arguments, concatenates them into a string then sends it to the Traintastic server log."
   },
   {
     "term": "log.critical:description",
-    "definition": ""
+    "definition": "Log a critical message."
   },
   {
     "term": "log.critical.parameter.message:description",
-    "definition": ""
+    "definition": "The message."
   },
   {
     "term": "log.critical.parameter....:description",
-    "definition": ""
+    "definition": "Additional values, all values are concatenated and seperated by a space."
   },
   {
     "term": "log.debug:description",
-    "definition": ""
+    "definition": "Log a debug message, useful when developing or testing a script."
   },
   {
     "term": "log.debug.parameter.message:description",
-    "definition": ""
+    "definition": "The message."
   },
   {
     "term": "log.debug.parameter....:description",
-    "definition": ""
+    "definition": "Additional values, all values are concatenated and seperated by a space."
   },
   {
     "term": "log.error:description",
-    "definition": ""
+    "definition": "Log an error message."
   },
   {
     "term": "log.error.parameter.message:description",
-    "definition": ""
+    "definition": "The message."
   },
   {
     "term": "log.error.parameter....:description",
-    "definition": ""
+    "definition": "Additional values, all values are concatenated and seperated by a space."
   },
   {
     "term": "log.fatal:description",
-    "definition": ""
+    "definition": "Log a fatal message, use this for unrecoverble errors only."
   },
   {
     "term": "log.fatal.parameter.message:description",
-    "definition": ""
+    "definition": "The message."
   },
   {
     "term": "log.fatal.parameter....:description",
-    "definition": ""
+    "definition": "Additional values, all values are concatenated and seperated by a space."
   },
   {
     "term": "log.info:description",
-    "definition": ""
+    "definition": "Log a info message."
   },
   {
     "term": "log.info.parameter.message:description",
-    "definition": ""
+    "definition": "The message."
   },
   {
     "term": "log.info.parameter....:description",
-    "definition": ""
+    "definition": "Additional values, all values are concatenated and seperated by a space."
   },
   {
     "term": "log.notice:description",
-    "definition": ""
+    "definition": "Log a notice message."
   },
   {
     "term": "log.notice.parameter.message:description",
-    "definition": ""
+    "definition": "The message."
   },
   {
     "term": "log.notice.parameter....:description",
-    "definition": ""
+    "definition": "Additional values, all values are concatenated and seperated by a space."
   },
   {
     "term": "log.warning:description",
-    "definition": ""
+    "definition": "Log a warning message."
   },
   {
     "term": "log.warning.parameter.message:description",
-    "definition": ""
+    "definition": "The message."
   },
   {
     "term": "log.warning.parameter....:description",
-    "definition": ""
+    "definition": "Additional values, all values are concatenated and seperated by a space."
   },
   {
     "term": "class:description",
@@ -1161,7 +1161,7 @@
   },
   {
     "term": "object:description",
-    "definition": ""
+    "definition": "List of all object that are available in Traintastic Lua scripting."
   },
   {
     "term": "object.board:title",
@@ -1925,6 +1925,86 @@
   },
   {
     "term": "object.train.on_block_left.parameter.direction:description",
+    "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
+  },
+  {
+    "term": "example:description",
+    "definition": "A collection of examples to help getting started with Traintastic Lua scripting."
+  },
+  {
+    "term": "object.ecosinterface:description",
+    "definition": "Interface for communicating with an ESU ECoS or ECoS 2."
+  },
+  {
+    "term": "object.interface.output_channels:description",
+    "definition": "Supported output channels, a table containing {ref:enum.output_channel|output channel} values."
+  },
+  {
+    "term": "object.hsi88interface:description",
+    "definition": "Interface for communicating with a LDT HSI-88."
+  },
+  {
+    "term": "object.marklincaninterface:description",
+    "definition": "Interface for communicating with a Märklin CS2/CS3."
+  },
+  {
+    "term": "object.traintasticdiyinterface:description",
+    "definition": "Interface for communicating with a Traintastic DIY compatible device."
+  },
+  {
+    "term": "object.xpressnetinterface:description",
+    "definition": "Interface for communicating with a XpressNet network."
+  },
+  {
+    "term": "object.z21interface:description",
+    "definition": "Interface for communicating with a Z21, z21 or z21 start."
+  },
+  {
+    "term": "object.signal2aspectrailtile.on_aspect_changed:description",
+    "definition": "Fired when the signal aspect changes."
+  },
+  {
+    "term": "object.signal3aspectrailtile.on_aspect_changed:description",
+    "definition": "Fired when the signal aspect changes."
+  },
+  {
+    "term": "object.train.on_block_assigned:description",
+    "definition": "Fired when the train is assigned to a block."
+  },
+  {
+    "term": "object.train.on_block_assigned.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_block_assigned.parameter.block:description",
+    "definition": "The {ref:object.blockrailtile|block} the train is assigned to."
+  },
+  {
+    "term": "object.train.on_block_removed:description",
+    "definition": "Fired when the train is removed from a block."
+  },
+  {
+    "term": "object.train.on_block_removed.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_block_removed.parameter.block:description",
+    "definition": "The {ref:object.blockrailtile|block} the train is removed from."
+  },
+  {
+    "term": "object.train.on_block_reserved:description",
+    "definition": "Fired when the train reserves a block."
+  },
+  {
+    "term": "object.train.on_block_reserved.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_block_reserved.parameter.block:description",
+    "definition": "The {ref:object.blockrailtile|block} that is reserved by the train."
+  },
+  {
+    "term": "object.train.on_block_reserved.parameter.direction:description",
     "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
   },
   {

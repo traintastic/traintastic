@@ -30,6 +30,7 @@
 #include "../protocol/traintasticdiy/iohandler/simulationiohandler.hpp"
 #include "../protocol/traintasticdiy/iohandler/tcpiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/eventloop.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
@@ -202,7 +203,7 @@ bool TraintasticDIYInterface::setOnline(bool& value, bool simulation)
     m_traintasticDIYPropertyChanged.disconnect();
 
     m_kernel->stop();
-    m_kernel.reset();
+    EventLoop::deleteLater(m_kernel.release());
 
     setState(InterfaceState::Offline);
   }

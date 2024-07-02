@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,9 +21,14 @@
  */
 
 #include "propertyspinbox.hpp"
-#include "../network/abstractproperty.hpp"
+#include <QToolTip>
+#include "../network/property.hpp"
+#include "../network/object.hpp"
+#include "../network/connection.hpp"
+#include "../network/error.hpp"
+#include <traintastic/locale/locale.hpp>
 
-PropertySpinBox::PropertySpinBox(AbstractProperty& property, QWidget* parent) :
+PropertySpinBox::PropertySpinBox(Property& property, QWidget* parent) :
   QSpinBox(parent),
   m_property{property}
 {
@@ -32,7 +37,14 @@ PropertySpinBox::PropertySpinBox(AbstractProperty& property, QWidget* parent) :
   setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
   setRange(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
   setValue(m_property.toInt());
-  connect(&m_property, &AbstractProperty::valueChangedInt, this, &PropertySpinBox::setValue);
+  connect(&m_property, &AbstractProperty::valueChangedInt, this,
+    [this](int value)
+    {
+      if(!hasFocus())
+      {
+        setValue(value);
+      }
+    });
   connect(&m_property, &AbstractProperty::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
@@ -50,5 +62,46 @@ PropertySpinBox::PropertySpinBox(AbstractProperty& property, QWidget* parent) :
           break;
       }
     });
-  connect(this, QOverload<int>::of(&PropertySpinBox::valueChanged), &m_property, &AbstractProperty::setValueInt);
+  connect(this, QOverload<int>::of(&PropertySpinBox::valueChanged),
+    [this](int value)
+    {
+      cancelRequest();
+      m_requestId = m_property.setValueInt(value,
+        [this](std::optional<const Error> error)
+        {
+          if(error)
+          {
+            showError(error->toString());
+          }
+        });
+    });
+}
+
+PropertySpinBox::~PropertySpinBox()
+{
+  cancelRequest();
+}
+
+void PropertySpinBox::cancelRequest()
+{
+  if(m_requestId != Connection::invalidRequestId)
+  {
+    m_property.object().connection()->cancelRequest(m_requestId);
+    m_requestId = Connection::invalidRequestId;
+  }
+}
+
+void PropertySpinBox::showError(const QString& error)
+{
+  // TODO: replace by a proper error tip
+  if(!error.isEmpty())
+    QToolTip::showText(mapToGlobal(rect().bottomLeft()), Locale::tr(error));
+  else
+    QToolTip::hideText();
+}
+
+void PropertySpinBox::focusOutEvent(QFocusEvent* event)
+{
+  QSpinBox::focusOutEvent(event);
+  setValue(m_property.toInt());
 }

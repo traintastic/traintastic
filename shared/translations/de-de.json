@@ -756,51 +756,6 @@
         "fuzzy": 0
     },
     {
-        "term": "dccplusplus_channel:dcc_accessory",
-        "definition": "DCC-Zubeh\u00f6r",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": "",
-        "fuzzy": 0
-    },
-    {
-        "term": "dccplusplus_channel:output",
-        "definition": "Ausgang",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": "",
-        "fuzzy": 0
-    },
-    {
-        "term": "dccplusplus_channel:turnout",
-        "definition": "Weiche",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": "",
-        "fuzzy": 0
-    },
-    {
-        "term": "dccplusplus_settings:startup_delay",
-        "definition": "Verz\u00f6gerung bei der Inbetriebnahme",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": "",
-        "fuzzy": 0
-    },
-    {
-        "term": "dccplusplus_settings:use_ex",
-        "definition": "DCC++EX-Befehle verwenden",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": "",
-        "fuzzy": 0
-    },
-    {
         "term": "decoder:functions",
         "definition": "Funktionen",
         "context": "",
@@ -937,7 +892,7 @@
     },
     {
         "term": "decoder_function_type:on_off",
-        "definition": "Ein\/aus",
+        "definition": "Ein/aus",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -1991,24 +1946,6 @@
     {
         "term": "message:C2001",
         "definition": "Adresse bereits verwendet bei #%1",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": "",
-        "fuzzy": 0
-    },
-    {
-        "term": "message:C2002",
-        "definition": "DCC++ unterst\u00fctzt nur das DCC-Protokoll",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": "",
-        "fuzzy": 0
-    },
-    {
-        "term": "message:C2003",
-        "definition": "DCC++ unterst\u00fctzt keine langen DCC-Adressen unter 128",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3870,15 +3807,6 @@
         "fuzzy": 0
     },
     {
-        "term": "sensor_type:occupy_detector",
-        "definition": "Detektor besetzen",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": "",
-        "fuzzy": 0
-    },
-    {
         "term": "sensor_type:reed_switch",
         "definition": "Reed-Schalter",
         "context": "",
@@ -4618,7 +4546,7 @@
     },
     {
         "term": "z21_settings.server:allow_track_power_on_release_emergency_stop",
-        "definition": "Einschalten\/Notabschaltung zulassen",
+        "definition": "Einschalten/Notabschaltung zulassen",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4897,7 +4825,7 @@
     },
     {
         "term": "marklin_can_locomotive_list:import_or_sync",
-        "definition": "Importieren\/Synchronisieren",
+        "definition": "Importieren/Synchronisieren",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4906,7 +4834,7 @@
     },
     {
         "term": "marklin_can_locomotive_list:import_or_sync_all",
-        "definition": "Alle importieren\/synchronisieren",
+        "definition": "Alle importieren/synchronisieren",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5211,6 +5139,24 @@
         "fuzzy": 0
     },
     {
+        "term": "sensor_type:occupancy_detector",
+        "definition": "Detektor besetzen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "language:sv-se",
+        "definition": "Schwedisch",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
         "term": "dccex_channel:dcc_accessory",
         "definition": "DCC-Zubeh\u00f6r",
         "context": "",
@@ -5247,15 +5193,6 @@
         "fuzzy": 0
     },
     {
-        "term": "language:sv-se",
-        "definition": "Schwedisch",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": "",
-        "fuzzy": 0
-    },
-    {
         "term": "message:W2020",
         "definition": "DCCext (RCN-213) wird nicht unterst\u00fctzt",
         "context": "",
@@ -5265,8 +5202,17 @@
         "fuzzy": 0
     },
     {
-        "term": "sensor_type:occupancy_detector",
-        "definition": "Detektor besetzen",
+        "term": "dccex_interface_type:serial",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "dccex_interface_type:network_tcp",
+        "definition": "",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5572,7 +5518,7 @@
     },
     {
         "term": "wizard.introduction.forum:text",
-        "definition": "Wenn Sie Fragen oder Anregungen haben, besuchen Sie bitte das <a href=\"https:\/\/forum.traintastic.org\">Traintastic Forum<\/a>.",
+        "definition": "Wenn Sie Fragen oder Anregungen haben, besuchen Sie bitte das <a href=\"https://forum.traintastic.org\">Traintastic Forum</a>.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6149,6 +6095,213 @@
     {
         "term": "wizard.new_board.finalization:text",
         "definition": "Lasst uns das Brett bauen!",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.misc.switch",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.switch:color_on",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.switch:color_off",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map.switch:key",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map_item.switch.key:off",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map_item.switch.key:on",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.turnout:position",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.sensor:state",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "sensor_state:free",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "sensor_state:occupied",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "sensor_state:unknown",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.block:state",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "block_state:occupied",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "block_state:reserved",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "block_state:free",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.switch:value",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "list:setup_using_wizard",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "language:es-es",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.rail.nx_button:block",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.rail.nx_button:input",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "turnout_position:crossed",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "turnout_position:double_slip_straight_a",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "turnout_position:double_slip_straight_b",
+        "definition": "",
         "context": "",
         "term_plural": "",
         "reference": "",

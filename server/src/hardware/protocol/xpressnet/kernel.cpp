@@ -86,8 +86,6 @@ void Kernel::start()
           });
         return;
       }
-
-      started();
     });
 
 #ifndef NDEBUG
@@ -110,6 +108,13 @@ void Kernel::stop()
 #ifndef NDEBUG
   m_started = false;
 #endif
+}
+
+void Kernel::started()
+{
+  assert(isKernelThread());
+
+  KernelBase::started();
 }
 
 void Kernel::receive(const Message& message)

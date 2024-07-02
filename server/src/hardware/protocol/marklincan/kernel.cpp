@@ -159,26 +159,7 @@ void Kernel::start()
             Log::log(logId, e.message(), e.args());
             error();
           });
-        return;
       }
-
-      // add Traintastic to the node list
-      {
-        Node node;
-        node.uid = m_config.nodeUID;
-        node.deviceName = nodeDeviceName;
-        node.articleNumber = nodeArticleNumber;
-        node.serialNumber = m_config.nodeSerialNumber;
-        node.softwareVersionMajor = TRAINTASTIC_VERSION_MAJOR;
-        node.softwareVersionMinor = TRAINTASTIC_VERSION_MINOR;
-        node.deviceId = DeviceId::Traintastic;
-
-        nodeChanged(node);
-
-        m_nodes.emplace(m_config.nodeUID, node);
-      }
-
-      nextState();
     });
 
 #ifndef NDEBUG
@@ -203,6 +184,27 @@ void Kernel::stop()
 #ifndef NDEBUG
   m_started = false;
 #endif
+}
+
+void Kernel::started()
+{
+  // add Traintastic to the node list
+  {
+    Node node;
+    node.uid = m_config.nodeUID;
+    node.deviceName = nodeDeviceName;
+    node.articleNumber = nodeArticleNumber;
+    node.serialNumber = m_config.nodeSerialNumber;
+    node.softwareVersionMajor = TRAINTASTIC_VERSION_MAJOR;
+    node.softwareVersionMinor = TRAINTASTIC_VERSION_MINOR;
+    node.deviceId = DeviceId::Traintastic;
+
+    nodeChanged(node);
+
+    m_nodes.emplace(m_config.nodeUID, node);
+  }
+
+  nextState();
 }
 
 void Kernel::receive(const Message& message)
@@ -957,7 +959,7 @@ void Kernel::changeState(State value)
       break;
 
     case State::Started:
-      started();
+      KernelBase::started();
       break;
   }
 }

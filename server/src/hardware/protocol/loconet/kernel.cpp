@@ -259,17 +259,6 @@ void Kernel::start()
           });
         return;
       }
-
-      if(m_config.fastClock == LocoNetFastClock::Master)
-        setFastClockMaster(true);
-
-      if(m_config.fastClockSyncEnabled)
-        startFastClockSyncTimer();
-
-      for(uint8_t slot = SLOT_LOCO_MIN; slot <= m_config.locomotiveSlots; slot++)
-        send(RequestSlotData(slot), LowPriority);
-
-      started();
     });
 
 #ifndef NDEBUG
@@ -300,6 +289,22 @@ void Kernel::stop()
 #ifndef NDEBUG
   m_started = false;
 #endif
+}
+
+void Kernel::started()
+{
+  assert(isKernelThread());
+
+  if(m_config.fastClock == LocoNetFastClock::Master)
+    setFastClockMaster(true);
+
+  if(m_config.fastClockSyncEnabled)
+    startFastClockSyncTimer();
+
+  for(uint8_t slot = SLOT_LOCO_MIN; slot <= m_config.locomotiveSlots; slot++)
+    send(RequestSlotData(slot), LowPriority);
+
+  KernelBase::started();
 }
 
 void Kernel::receive(const Message& message)

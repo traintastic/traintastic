@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,20 +46,37 @@ void TCPIOHandler::start()
   if(ec)
     throw LogMessageException(LogMessage::E2003_MAKE_ADDRESS_FAILED_X, ec);
 
-  m_socket.connect(m_endpoint, ec);
-  if(ec)
-    throw LogMessageException(LogMessage::E2005_SOCKET_CONNECT_FAILED_X, ec);
+ m_socket.async_connect(m_endpoint,
+    [this](const boost::system::error_code& err)
+    {
+      if(!err)
+      {
+        m_socket.set_option(boost::asio::socket_base::linger(true, 0));
+        m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
 
-  m_socket.set_option(boost::asio::socket_base::linger(true, 0));
-  m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
+        m_connected = true;
 
-  NetworkIOHandler::start();
+        write();
+
+        NetworkIOHandler::start();
+      }
+      else if(err != boost::asio::error::operation_aborted)
+      {
+        EventLoop::call(
+          [this, err]()
+          {
+            Log::log(m_kernel.logId, LogMessage::E2005_SOCKET_CONNECT_FAILED_X, err);
+            m_kernel.error();
+          });
+      }
+    });
 }
 
 void TCPIOHandler::stop()
 {
   m_socket.cancel();
   m_socket.close();
+  m_connected = false;
 }
 
 void TCPIOHandler::read()
@@ -99,6 +116,11 @@ void TCPIOHandler::read()
 
 void TCPIOHandler::write()
 {
+  if(m_writeBufferOffset == 0 || !m_connected)
+  {
+    return;
+  }
+
   m_socket.async_write_some(boost::asio::buffer(m_writeBuffer.data(), m_writeBufferOffset),
     [this](const boost::system::error_code& ec, std::size_t bytesTransferred)
     {
