@@ -6307,5 +6307,13 @@
         "reference": "",
         "comment": "",
         "fuzzy": 0
+    },
+    {
+        "term": "message:E3003",
+        "definition": "Can't remove train, train must be stopped first."
+    },
+    {
+        "term": "message:E3004",
+        "definition": "Can't remove train, train can only be removed from head or tail block."
     }
 ]

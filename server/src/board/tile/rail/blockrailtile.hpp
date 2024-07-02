@@ -55,6 +55,8 @@ class BlockRailTile : public RailTile
     Paths m_pathsIn; //!< Paths from other blocks to this block
     std::array<std::weak_ptr<BlockPath>, 2> m_reservedPaths; // index is BlockSide
 
+    std::shared_ptr<TrainBlockStatus> getBlockTrainStatus(const std::shared_ptr<Train>& train);
+
     void updatePaths();
     void updateHeightWidthMax();
 
@@ -82,7 +84,7 @@ class BlockRailTile : public RailTile
     VectorProperty<SensorState> sensorStates;
     ObjectVectorProperty<TrainBlockStatus> trains;
     Method<void(std::shared_ptr<Train>)> assignTrain;
-    Method<void()> removeTrain;
+    Method<void(std::shared_ptr<Train>)> removeTrain;
     Method<void()> flipTrain;
     Method<bool()> setStateFree;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onTrainAssigned;
