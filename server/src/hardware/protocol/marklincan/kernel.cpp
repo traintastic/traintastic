@@ -231,11 +231,11 @@ void Kernel::receive(const Message& message)
         case SystemSubCommand::LocomotiveEmergencyStop:
           if(m_decoderController && system.isResponse())
           {
-            auto [success, protocol, address] = uidToProtocolAddress(system.uid());
+            auto [success, proto, addr] = uidToProtocolAddress(system.uid());
             if(success)
             {
               EventLoop::call(
-                [this, protocol=protocol, address=address]()
+                [this, protocol=proto, address=addr]()
                 {
                   if(const auto& decoder = m_decoderController->getDecoder(protocol, address))
                     decoder->emergencyStop.setValueInternal(true);
@@ -273,11 +273,11 @@ void Kernel::receive(const Message& message)
         const auto& locomotiveSpeed = static_cast<const LocomotiveSpeed&>(message);
         if(locomotiveSpeed.isResponse() && locomotiveSpeed.hasSpeed())
         {
-          auto [success, protocol, address] = uidToProtocolAddress(locomotiveSpeed.uid());
+          auto [success, proto, addr] = uidToProtocolAddress(locomotiveSpeed.uid());
           if(success)
           {
             EventLoop::call(
-              [this, protocol=protocol, address=address, throttle=Decoder::speedStepToThrottle(locomotiveSpeed.speed(), LocomotiveSpeed::speedMax)]()
+              [this, protocol=proto, address=addr, throttle=Decoder::speedStepToThrottle(locomotiveSpeed.speed(), LocomotiveSpeed::speedMax)]()
               {
                 if(const auto& decoder = m_decoderController->getDecoder(protocol, address))
                 {
@@ -296,7 +296,7 @@ void Kernel::receive(const Message& message)
         const auto& locomotiveDirection = static_cast<const LocomotiveDirection&>(message);
         if(locomotiveDirection.isResponse() && locomotiveDirection.hasDirection())
         {
-          auto [success, protocol, address] = uidToProtocolAddress(locomotiveDirection.uid());
+          auto [success, proto, addr] = uidToProtocolAddress(locomotiveDirection.uid());
           if(success)
           {
             Direction direction = Direction::Unknown;
@@ -316,7 +316,7 @@ void Kernel::receive(const Message& message)
             }
 
             EventLoop::call(
-              [this, protocol=protocol, address=address, direction]()
+              [this, protocol=proto, address=addr, direction]()
               {
                 if(const auto& decoder = m_decoderController->getDecoder(protocol, address))
                   decoder->direction.setValueInternal(direction);
@@ -332,11 +332,11 @@ void Kernel::receive(const Message& message)
         const auto& locomotiveFunction = static_cast<const LocomotiveFunction&>(message);
         if(locomotiveFunction.isResponse() && locomotiveFunction.hasValue())
         {
-          auto [success, protocol, address] = uidToProtocolAddress(locomotiveFunction.uid());
+          auto [success, proto, addr] = uidToProtocolAddress(locomotiveFunction.uid());
           if(success)
           {
             EventLoop::call(
-              [this, protocol=protocol, address=address, number=locomotiveFunction.number(), value=locomotiveFunction.isOn()]()
+              [this, protocol=proto, address=addr, number=locomotiveFunction.number(), value=locomotiveFunction.isOn()]()
               {
                 if(const auto& decoder = m_decoderController->getDecoder(protocol, address))
                   decoder->setFunctionValue(number, value);

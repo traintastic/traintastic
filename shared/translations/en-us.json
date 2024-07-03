@@ -6309,11 +6309,11 @@
         "fuzzy": 0
     },
     {
-        "term": "message:E3003",
+        "term": "message:E3005",
         "definition": "Can't remove train, train must be stopped first."
     },
     {
-        "term": "message:E3004",
+        "term": "message:E3006",
         "definition": "Can't remove train, train can only be removed from head or tail block."
     },
     {

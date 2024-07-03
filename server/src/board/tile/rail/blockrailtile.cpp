@@ -127,13 +127,13 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
         {
           if(!oldTrain->isStopped)
           {
-            throw LogMessageException(LogMessage::E3003_CANT_REMOVE_TRAIN_TRAIN_MUST_BE_STOPPED_FIRST);
+            throw LogMessageException(LogMessage::E3005_CANT_REMOVE_TRAIN_TRAIN_MUST_BE_STOPPED_FIRST);
           }
 
           const auto self = shared_ptr<BlockRailTile>();
           if(!oldTrain->blocks.empty() && self != (**oldTrain->blocks.begin()).block.value() && self != (**oldTrain->blocks.rbegin()).block.value())
           {
-            throw LogMessageException(LogMessage::E3004_CANT_REMOVE_TRAIN_TRAIN_CAN_ONLY_BE_REMOVED_FROM_HEAD_OR_TAIL_BLOCK);
+            throw LogMessageException(LogMessage::E3006_CANT_REMOVE_TRAIN_TRAIN_CAN_ONLY_BE_REMOVED_FROM_HEAD_OR_TAIL_BLOCK);
           }
 
           status->destroy();
