@@ -317,8 +317,6 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
     {
       const auto& blockStatus = trains.front();
 
-      const auto blockTrainDirection = blockStatus->direction.value();
-
       // Train must be in at least two blocks, else we loose it.
       // Release tailing block of train only. (When using current detection not all wagons might consume power.)
       if(blockStatus->train &&
@@ -326,21 +324,6 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
           blockStatus->train->blocks.back() == blockStatus)
       {
         TrainTracking::left(blockStatus);
-
-        const auto pathA = m_reservedPaths[0].lock();
-        const bool exitA = pathA && &pathA->fromBlock() == this;
-
-        const auto pathB = m_reservedPaths[1].lock();
-        const bool exitB = pathB && &pathB->fromBlock() == this;
-
-        if(blockTrainDirection == BlockTrainDirection::TowardsA && exitA)
-        {
-          pathA->delayedRelease(m_world.pathReleaseDelay);
-        }
-        else if(blockTrainDirection == BlockTrainDirection::TowardsB && exitB)
-        {
-          pathB->delayedRelease(m_world.pathReleaseDelay);
-        }
       }
     }
   }

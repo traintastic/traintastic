@@ -24,7 +24,9 @@
 #include "train.hpp"
 #include "trainblockstatus.hpp"
 #include "../board/tile/rail/blockrailtile.hpp"
+#include "../board/map/blockpath.hpp"
 #include "../core/objectproperty.tpp"
+#include "../world/world.hpp"
 
 void TrainTracking::reserve(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction)
 {
@@ -89,6 +91,21 @@ void TrainTracking::left(std::shared_ptr<TrainBlockStatus> status)
 
   train->fireBlockLeft(block, direction);
   block->fireTrainLeft(train, direction);
+
+  const auto pathA = block->getReservedPath(BlockSide::A);
+  const bool exitA = pathA && &pathA->fromBlock() == block.get();
+
+  const auto pathB = block->getReservedPath(BlockSide::B);
+  const bool exitB = pathB && &pathB->fromBlock() == block.get();
+
+  if(direction == BlockTrainDirection::TowardsA && exitA)
+  {
+    pathA->delayedRelease(block->world().pathReleaseDelay);
+  }
+  else if(direction == BlockTrainDirection::TowardsB && exitB)
+  {
+    pathB->delayedRelease(block->world().pathReleaseDelay);
+  }
 
   status->destroy();
 #ifndef NDEBUG
