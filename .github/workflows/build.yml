@@ -97,12 +97,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        lfs: true
         submodules: recursive
-
-    # All:
-    - name: Checkout LFS objects
-      run: git lfs checkout
 
     # Windows only:
     - name: Install Qt 5
@@ -309,12 +304,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        lfs: true
         submodules: recursive
-
-    # All:
-    - name: Checkout LFS objects
-      run: git lfs checkout
 
     # Ubuntu only:
     - name: apt update
@@ -436,11 +426,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        lfs: true
         submodules: recursive
-
-    - name: Checkout LFS objects
-      run: git lfs checkout
 
     - name: "Download artifact: lang"
       uses: actions/download-artifact@v2
@@ -476,11 +462,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        lfs: true
         submodules: recursive
-
-    - name: Checkout LFS objects
-      run: git lfs checkout
 
     - name: Build language files
       working-directory: ${{github.workspace}}/shared/translations
@@ -502,11 +484,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        lfs: true
         submodules: recursive
-
-    - name: Checkout LFS objects
-      run: git lfs checkout
 
     - name: Install python packages
       run: sudo pip3 install cmarkgfm
@@ -531,11 +509,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        lfs: true
         submodules: recursive
-
-    - name: Checkout LFS objects
-      run: git lfs checkout
 
     - name: Build manual
       working-directory: ${{github.workspace}}/manual
@@ -558,11 +532,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        lfs: true
         submodules: recursive
-
-    - name: Checkout LFS objects
-      run: git lfs checkout
 
     - name: Download artifacts 1/2
       uses: actions/download-artifact@v2
