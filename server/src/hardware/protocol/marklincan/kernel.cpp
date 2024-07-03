@@ -235,7 +235,7 @@ void Kernel::receive(const Message& message)
             if(success)
             {
               EventLoop::call(
-                [this, protocol=protocol, address=address]()
+                [this, protocol, address]()
                 {
                   if(const auto& decoder = m_decoderController->getDecoder(protocol, address))
                     decoder->emergencyStop.setValueInternal(true);
@@ -277,7 +277,7 @@ void Kernel::receive(const Message& message)
           if(success)
           {
             EventLoop::call(
-              [this, protocol=protocol, address=address, throttle=Decoder::speedStepToThrottle(locomotiveSpeed.speed(), LocomotiveSpeed::speedMax)]()
+              [this, protocol, address, throttle=Decoder::speedStepToThrottle(locomotiveSpeed.speed(), LocomotiveSpeed::speedMax)]()
               {
                 if(const auto& decoder = m_decoderController->getDecoder(protocol, address))
                 {
@@ -316,7 +316,7 @@ void Kernel::receive(const Message& message)
             }
 
             EventLoop::call(
-              [this, protocol=protocol, address=address, direction]()
+              [this, protocol, address, direction]()
               {
                 if(const auto& decoder = m_decoderController->getDecoder(protocol, address))
                   decoder->direction.setValueInternal(direction);
@@ -336,7 +336,7 @@ void Kernel::receive(const Message& message)
           if(success)
           {
             EventLoop::call(
-              [this, protocol=protocol, address=address, number=locomotiveFunction.number(), value=locomotiveFunction.isOn()]()
+              [this, protocol, address, number=locomotiveFunction.number(), value=locomotiveFunction.isOn()]()
               {
                 if(const auto& decoder = m_decoderController->getDecoder(protocol, address))
                   decoder->setFunctionValue(number, value);
