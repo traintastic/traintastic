@@ -6315,5 +6315,13 @@
     {
         "term": "message:E3006",
         "definition": "Can't remove train, train can only be removed from head or tail block."
+    },
+    {
+        "term": "board_tile.rail.turnout_singleslip:dual_motor",
+        "definition": "Dual motor/coil"
+    },
+    {
+        "term": "turnout_position:diverged",
+        "definition": "Diverged"
     }
 ]

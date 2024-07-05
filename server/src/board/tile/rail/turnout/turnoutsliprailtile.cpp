@@ -1,9 +1,9 @@
 /**
- * server/src/board/tile/rail/turnout/turnoutdoublesliprailtile.hpp
+ * server/src/board/tile/rail/turnout/turnoutsliprailtile.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022,2024 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,23 +20,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUT_TURNOUTDOUBLESLIPRAILTILE_HPP
-#define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUT_TURNOUTDOUBLESLIPRAILTILE_HPP
-
 #include "turnoutsliprailtile.hpp"
 
-class TurnoutDoubleSlipRailTile : public TurnoutSlipRailTile
+TurnoutSlipRailTile::TurnoutSlipRailTile(World& world, std::string_view _id, TileId tileId)
+  : TurnoutRailTile(world, _id, tileId, 4)
+  , dualMotor{this, "dual_motor", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly,
+      [this](bool /*value*/)
+      {
+        dualMotorChanged();
+      }}
 {
-  CLASS_ID("board_tile.rail.turnout_doubleslip")
-  CREATE(TurnoutDoubleSlipRailTile)
+  m_interfaceItems.add(dualMotor);
+}
 
-protected:
-  void dualMotorChanged() final;
-
-  public:
-    TurnoutDoubleSlipRailTile(World& world, std::string_view _id);
-
-    void getConnectors(std::vector<Connector>& connectors) const final;
-};
-
-#endif
+void TurnoutSlipRailTile::loaded()
+{
+  TurnoutRailTile::loaded();
+  dualMotorChanged();
+}

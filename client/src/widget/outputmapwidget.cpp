@@ -165,6 +165,17 @@ void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
       m_table->setItem(i, columnKey, new QTableWidgetItem(text));
     }
 
+    if(auto* p = items[i]->getProperty("visible"))
+    {
+      m_table->setRowHidden(i, !p->toBool());
+
+      connect(p, &Property::valueChangedBool, this,
+        [this, row=i](bool value)
+        {
+          m_table->setRowHidden(row, !value);
+        });
+    }
+
     if(auto* outputActions = dynamic_cast<ObjectVectorProperty*>(items[i]->getVectorProperty("output_actions")))
     {
       updateTableOutputActions(*outputActions, i);
