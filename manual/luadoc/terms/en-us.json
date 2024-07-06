@@ -2006,5 +2006,29 @@
   {
     "term": "object.train.on_block_reserved.parameter.direction:description",
     "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
+  },
+  {
+    "term": "object.turnoutsliprailtile.dual_motor:description",
+    "definition": "`true` if the slip turnout has two motors/coils, `false` if it has one motor/coil."
+  },
+  {
+    "term": "object.turnoutrailtile.name:description",
+    "definition": "Turnout name."
+  },
+  {
+    "term": "object.turnoutrailtile.position:description",
+    "definition": "Current turnout position, a {ref:enum.turnout_position} value. To change the turnout position call [`set_position`](#set_position)."
+  },
+  {
+    "term": "object.turnoutrailtile.set_position:description",
+    "definition": "Change turnout position."
+  },
+  {
+    "term": "object.turnoutrailtile.set_position.parameter.position:description",
+    "definition": "Requested turnout position, a {ref:enum.turnout_position} value."
+  },
+  {
+    "term": "object.turnoutrailtile.set_position:return_values",
+    "definition": "`true` if the position is changed, `false` if position value is invalid or turnout is locked e.g. due to a reserved path."
   }
 ]
