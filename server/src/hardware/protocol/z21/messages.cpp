@@ -375,6 +375,7 @@ MessageReplyType getReplyType(const Message &message)
       reply.setPriority(MessageReplyType::Priority::Low);
       return reply;
     }
+
     case LAN_GET_BROADCASTFLAGS:
     case LAN_LOCONET_DETECTOR:
     case LAN_CAN_DETECTOR:
