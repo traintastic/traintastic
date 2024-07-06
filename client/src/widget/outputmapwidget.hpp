@@ -40,6 +40,8 @@ class OutputMapWidget : public QWidget
 
   protected:
     ObjectPtr m_object;
+    const bool m_hasUseColumn;
+    const int m_columnCountNonOutput;
     AbstractVectorProperty* m_addresses;
     Property* m_ecosObject;
     ObjectVectorProperty* m_items;

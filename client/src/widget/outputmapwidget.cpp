@@ -46,9 +46,12 @@
 #include "../theme/theme.hpp"
 #include "../misc/methodaction.hpp"
 
-constexpr int columnCountNonOutput = 2;
-constexpr int columnUse = 0;
-constexpr int columnKey = 1;
+constexpr int columnKey = 0;
+
+static bool hasUseColumn(const QString& classId)
+{
+  return classId == "output_map.signal";
+}
 
 static void setComboBoxMinimumWidth(QComboBox* comboBox)
 {
@@ -58,6 +61,8 @@ static void setComboBoxMinimumWidth(QComboBox* comboBox)
 OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
   : QWidget(parent)
   , m_object{std::move(object)}
+  , m_hasUseColumn{hasUseColumn(m_object->classId())}
+  , m_columnCountNonOutput{m_hasUseColumn ? 2 : 1}
   , m_addresses{m_object->getVectorProperty("addresses")}
   , m_ecosObject{dynamic_cast<Property*>(m_object->getProperty("ecos_object"))}
   , m_items{m_object->getObjectVectorProperty("items")}
@@ -92,9 +97,15 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
   }
   l->addLayout(form);
 
-  m_table->setColumnCount(columnCountNonOutput);
+  m_table->setColumnCount(m_columnCountNonOutput);
   m_table->setRowCount(0);
-  m_table->setHorizontalHeaderLabels({Locale::tr("output_map:use"), Locale::tr(m_object->classId() + ":key")});
+  QStringList labels;
+  labels.append(Locale::tr(m_object->classId() + ":key"));
+  if(m_hasUseColumn)
+  {
+    labels.append(Locale::tr("output_map:use"));
+  }
+  m_table->setHorizontalHeaderLabels(labels);
   m_table->verticalHeader()->setVisible(false);
   m_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
@@ -122,16 +133,6 @@ void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
   m_actions.resize(items.size());
   for(size_t i = 0; i < items.size(); i++)
   {
-    if(auto* p = dynamic_cast<Property*>(items[i]->getProperty("use")))
-    {
-      QWidget* w = new QWidget(m_table);
-      QHBoxLayout* l = new QHBoxLayout();
-      l->setAlignment(Qt::AlignCenter);
-      l->addWidget(new PropertyCheckBox(*p, w));
-      w->setLayout(l);
-      m_table->setCellWidget(i, columnUse, w);
-    }
-
     if(auto* p = items[i]->getProperty("key"))
     {
       QString text;
@@ -163,6 +164,21 @@ void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
         text = "?";
       }
       m_table->setItem(i, columnKey, new QTableWidgetItem(text));
+    }
+
+    if(m_hasUseColumn)
+    {
+      const int columnUse = columnKey + 1;
+
+      if(auto* p = dynamic_cast<Property*>(items[i]->getProperty("use")))
+      {
+        QWidget* w = new QWidget(m_table);
+        QHBoxLayout* l = new QHBoxLayout();
+        l->setAlignment(Qt::AlignCenter);
+        l->addWidget(new PropertyCheckBox(*p, w));
+        w->setLayout(l);
+        m_table->setCellWidget(i, columnUse, w);
+      }
     }
 
     if(auto* p = items[i]->getProperty("visible"))
@@ -197,10 +213,10 @@ void OutputMapWidget::updateTableOutputColumns()
   {
     const auto size = m_addresses->size();
 
-    m_table->setColumnCount(columnCountNonOutput + size);
+    m_table->setColumnCount(m_columnCountNonOutput + size);
     for(int i = 0; i < size; i++)
     {
-      const int column = columnCountNonOutput + i;
+      const int column = m_columnCountNonOutput + i;
       const int address = m_addresses->getInt(i);
       auto* item = new QTableWidgetItem(QString("#%1").arg(address));
       item->setToolTip(Locale::tr("output_map:address_x").arg(address));
@@ -209,12 +225,12 @@ void OutputMapWidget::updateTableOutputColumns()
   }
   else if(m_ecosObject && m_ecosObject->getAttributeBool(AttributeName::Visible, true))
   {
-    m_table->setColumnCount(columnCountNonOutput + 1);
-    m_table->setHorizontalHeaderItem(columnCountNonOutput, new QTableWidgetItem(Locale::tr("output.ecos_object:state")));
+    m_table->setColumnCount(m_columnCountNonOutput + 1);
+    m_table->setHorizontalHeaderItem(m_columnCountNonOutput, new QTableWidgetItem(Locale::tr("output.ecos_object:state")));
   }
   else
   {
-    m_table->setColumnCount(columnCountNonOutput);
+    m_table->setColumnCount(m_columnCountNonOutput);
   }
 }
 
@@ -225,14 +241,14 @@ void OutputMapWidget::updateTableOutputActions(ObjectVectorProperty& property, i
     m_dummy = property.getObjects(
       [this, row](const std::vector<ObjectPtr>& objects, std::optional<const Error> /*ec*/)
       {
-        const int columnCount = static_cast<int>(columnCountNonOutput + objects.size());
+        const int columnCount = static_cast<int>(m_columnCountNonOutput + objects.size());
         if(columnCount > m_table->columnCount())
         {
           m_table->setColumnCount(columnCount);
         }
 
         auto& rowActions = m_actions[row];
-        int column = columnCountNonOutput;
+        int column = m_columnCountNonOutput;
         for(auto& object : objects)
         {
           if(column >= static_cast<int>(rowActions.size()) || object.get() != rowActions[column].get())
