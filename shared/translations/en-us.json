@@ -6317,7 +6317,7 @@
         "definition": "Can't remove train, train can only be removed from head or tail block."
     },
     {
-        "term": "board_tile.rail.turnout_singleslip:dual_motor",
+        "term": "board_tile.rail.turnout_slip:dual_motor",
         "definition": "Dual motor/coil"
     },
     {

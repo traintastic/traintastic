@@ -21,6 +21,7 @@
  */
 
 #include "turnoutsliprailtile.hpp"
+#include "../../../../core/attributes.hpp"
 
 TurnoutSlipRailTile::TurnoutSlipRailTile(World& world, std::string_view _id, TileId tileId)
   : TurnoutRailTile(world, _id, tileId, 4)
@@ -30,6 +31,7 @@ TurnoutSlipRailTile::TurnoutSlipRailTile(World& world, std::string_view _id, Til
         dualMotorChanged();
       }}
 {
+  Attributes::addDisplayName(dualMotor, "board_tile.rail.turnout_slip:dual_motor");
   m_interfaceItems.add(dualMotor);
 }
 
