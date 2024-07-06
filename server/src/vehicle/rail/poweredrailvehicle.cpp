@@ -57,6 +57,10 @@ PoweredRailVehicle::~PoweredRailVehicle()
 void PoweredRailVehicle::destroying()
 {
   decoder = nullptr;
+
+  // decoder propertyChanged is not emitted when object is dying
+  // So disconnect manually
+  decoderConnection.disconnect();
   RailVehicle::destroying();
 }
 
