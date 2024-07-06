@@ -124,24 +124,31 @@ class ClientKernel final : public Kernel
 
     struct LocoCache
     {
-      enum class Trend : bool
-      {
-          Ascending = 0,
-          Descending
-      };
-
       uint16_t dccAddress = 0;
       bool isEStop = false;
       uint8_t speedStep = 0;
       uint8_t speedSteps = 0;
       uint8_t lastReceivedSpeedStep = 0; //Always in 126 steps
-      Trend speedTrend = Trend::Ascending;
-      bool speedTrendExplicitlySet = false;
       Direction direction = Direction::Unknown;
       std::chrono::steady_clock::time_point lastSetTime;
     };
 
+    /*!
+     * \brief m_locoCache stores last decoder states
+     *
+     * \note It must be accessed only from kernel thread or from
+     * Z21::ClientKernel::onStart().
+     */
     std::unordered_map<uint16_t, LocoCache> m_locoCache;
+
+    /*!
+     * \brief m_isUpdatingDecoderFromKernel prevents mirroring changes to Z21
+     *
+     * \note It must be accessed only from event loop thread or from
+     * Z21::ClientKernel::onStart().
+     *
+     * \sa EventLoop
+     */
     bool m_isUpdatingDecoderFromKernel = false;
 
     struct PendingRequest
