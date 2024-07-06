@@ -496,7 +496,8 @@ MessageReplyType getReplyType(const Message &message)
                 setLocoDrive.db0 >= 0x10 && setLocoDrive.db0 <= 0x13)
             {
               reply.address = setLocoDrive.address();
-              reply.speedStep = setLocoDrive.speedStep();
+              reply.speedAndDirection = setLocoDrive.speedAndDirection;
+              reply.setSpeedSteps(setLocoDrive.speedSteps());
               reply.setFlag(MessageReplyType::Flags::CheckSpeedStep);
             }
             else if(const auto& setLocoFunction = static_cast<const LanXSetLocoFunction&>(message);

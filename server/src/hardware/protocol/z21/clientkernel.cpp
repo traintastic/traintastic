@@ -1047,9 +1047,10 @@ std::optional<ClientKernel::PendingRequest> ClientKernel::matchPendingReplyAndRe
       if(message.header() == LAN_X
           && static_cast<const LanX&>(message).xheader == LAN_X_LOCO_INFO)
       {
-        // TODO: Do extensive matching
         const LanXLocoInfo& locoInfo = static_cast<const LanXLocoInfo&>(message);
-        if(locoInfo.speedStep() != request->reply.speedStep)
+        if(locoInfo.speedAndDirection != request->reply.speedAndDirection)
+          continue;
+        if(locoInfo.speedSteps() != request->reply.speedSteps())
           continue;
       }
     }

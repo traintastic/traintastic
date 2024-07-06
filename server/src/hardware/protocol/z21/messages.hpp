@@ -1749,6 +1749,30 @@ struct MessageReplyType
     m_flags = uint8_t(flags) << 4 | (uint8_t(priority()) & 0xF);
   }
 
+  inline uint8_t speedSteps() const
+  {
+    switch(speedStepsEncoded & LanXLocoInfo::db2_speed_steps_mask)
+    {
+      case LanXLocoInfo::db2_speed_steps_14:  return 14;
+      case LanXLocoInfo::db2_speed_steps_28:  return 28;
+      case LanXLocoInfo::db2_speed_steps_128: return 126;
+    }
+    return 0;
+  }
+
+  inline void setSpeedSteps(uint8_t value)
+  {
+    speedStepsEncoded &= ~LanXLocoInfo::db2_speed_steps_mask;
+    switch(value)
+    {
+      case 14:  speedStepsEncoded |= LanXLocoInfo::db2_speed_steps_14;  break;
+      case 28:  speedStepsEncoded |= LanXLocoInfo::db2_speed_steps_28;  break;
+      case 126:
+      case 128:
+      default:  speedStepsEncoded |= LanXLocoInfo::db2_speed_steps_128; break;
+    }
+  }
+
   static constexpr Header noReply = Header(0);
 
   Header header = noReply;
@@ -1756,7 +1780,10 @@ struct MessageReplyType
   uint8_t db0 = 0;
   uint16_t address = 0;
   uint8_t m_flags = uint8_t(Priority::Normal);
-  uint8_t speedStep = 0;
+
+  // Encoded as LAN_X_
+  uint8_t speedAndDirection = 0;
+  uint8_t speedStepsEncoded = 0;
 };
 
 MessageReplyType getReplyType(const Message &message);
