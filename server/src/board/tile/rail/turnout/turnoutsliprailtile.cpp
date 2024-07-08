@@ -23,8 +23,8 @@
 #include "turnoutsliprailtile.hpp"
 #include "../../../../core/attributes.hpp"
 
-TurnoutSlipRailTile::TurnoutSlipRailTile(World& world, std::string_view _id, TileId tileId)
-  : TurnoutRailTile(world, _id, tileId, 4)
+TurnoutSlipRailTile::TurnoutSlipRailTile(World& world, std::string_view _id, TileId tileId_)
+  : TurnoutRailTile(world, _id, tileId_, 4)
   , dualMotor{this, "dual_motor", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly,
       [this](bool /*value*/)
       {

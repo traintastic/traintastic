@@ -44,7 +44,7 @@ class SignalRailTile : public StraightRailTile
     std::unique_ptr<AbstractSignalPath> m_signalPath;
     std::weak_ptr<BlockPath> m_blockPath;
 
-    SignalRailTile(World& world, std::string_view _id, TileId tileId);
+    SignalRailTile(World& world, std::string_view _id, TileId tileId_);
 
     void worldEvent(WorldState state, WorldEvent event) override;
 

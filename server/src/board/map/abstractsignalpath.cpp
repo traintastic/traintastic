@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -238,7 +238,7 @@ std::unique_ptr<const AbstractSignalPath::Item> AbstractSignalPath::findBlocks(c
       if(nextNode.getLink(0).get() == &link)
         return findBlocks(nextNode, *nextLink, blocksAhead);
   }
-  else if(isRailBridge(tile->tileId()) || isRailCross(tile->tileId()))
+  else if(isRailBridge(tile->tileId) || isRailCross(tile->tileId))
   {
     //     2      1 2      2 3
     //     |       \|      |/
@@ -257,7 +257,7 @@ std::unique_ptr<const AbstractSignalPath::Item> AbstractSignalPath::findBlocks(c
       if(auto linkNode = linkTile->link->node())
         return findBlocks(linkNode->get(), linkNode->get().getLink(0), blocksAhead);
   }
-  else if(tile->tileId() != TileId::RailBufferStop)
+  else if(tile->tileId != TileId::RailBufferStop)
   {
     if(const auto& nextLink = otherLink(nextNode, link))
     {

@@ -28,7 +28,7 @@
 class TurnoutSlipRailTile : public TurnoutRailTile
 {
 protected:
-  TurnoutSlipRailTile(World& world, std::string_view _id, TileId tileId);
+  TurnoutSlipRailTile(World& world, std::string_view _id, TileId tileId_);
 
   virtual void loaded() override;
 

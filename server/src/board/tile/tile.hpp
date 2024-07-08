@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,9 +39,7 @@ class Tile : public IdObject
   friend class WorldLoader;
 
   protected:
-    const TileId m_tileId;
-
-    Tile(World& world, std::string_view _id, TileId tileId);
+    Tile(World& world, std::string_view _id, TileId tileId_);
 
     Board& getBoard();
 
@@ -57,15 +55,15 @@ class Tile : public IdObject
   public:
     static constexpr std::string_view defaultId = "tile";
 
+    Property<TileId> tileId;
     Property<int16_t> x;
     Property<int16_t> y;
     Property<TileRotate> rotate;
     Property<uint8_t> height;
     Property<uint8_t> width;
 
-    TileId tileId() const { return m_tileId; }
     inline TileLocation location() const { return {x.value(), y.value()}; }
-    inline TileData data() const { return TileData{m_tileId, rotate, width, height, reservedState()}; }
+    inline TileData data() const { return TileData{tileId.value(), rotate, width, height, reservedState()}; }
 
     virtual std::optional<std::reference_wrapper<const Node>> node() const { return {}; }
     virtual std::optional<std::reference_wrapper<Node>> node() { return {}; }

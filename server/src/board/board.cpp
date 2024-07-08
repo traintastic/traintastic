@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,7 +53,7 @@ Board::Board(World& world, std::string_view _id) :
         {
           const TileRotate tileRotate = it->second->rotate;
 
-          if(it->second->tileId() == TileId::RailStraight && tileClassId == StraightRailTile::classId) // merge to bridge
+          if(it->second->tileId == TileId::RailStraight && tileClassId == StraightRailTile::classId) // merge to bridge
           {
             if((tileRotate == rotate + TileRotate::Deg90 || tileRotate == rotate - TileRotate::Deg90) && deleteTile(x, y))
             {
@@ -73,7 +73,7 @@ Board::Board(World& world, std::string_view _id) :
             else
               return false;
           }
-          else if(it->second->tileId() == TileId::RailStraight && // replace straight by a straight with something extra
+          else if(it->second->tileId == TileId::RailStraight && // replace straight by a straight with something extra
                   Tiles::canUpgradeStraightRail(tileClassId) &&
                   (tileRotate == rotate || (tileRotate + TileRotate::Deg180) == rotate) &&
                   deleteTile(x, y))
