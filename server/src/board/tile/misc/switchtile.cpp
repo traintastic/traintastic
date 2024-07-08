@@ -89,6 +89,12 @@ SwitchTile::SwitchTile(World& world, std::string_view _id)
   m_interfaceItems.add(onValueChanged);
 }
 
+void SwitchTile::addToWorld()
+{
+  outputMap->parentObject.setValueInternal(shared_from_this());
+  Tile::addToWorld();
+}
+
 void SwitchTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
 {
   Tile::worldEvent(worldState, worldEvent);

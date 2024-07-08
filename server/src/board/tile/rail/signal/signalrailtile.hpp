@@ -46,6 +46,7 @@ class SignalRailTile : public StraightRailTile
 
     SignalRailTile(World& world, std::string_view _id, TileId tileId_);
 
+    void addToWorld() override;
     void worldEvent(WorldState state, WorldEvent event) override;
 
     void boardModified() override;

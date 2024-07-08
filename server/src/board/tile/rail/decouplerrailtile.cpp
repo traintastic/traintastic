@@ -74,6 +74,12 @@ DecouplerRailTile::DecouplerRailTile(World& world, std::string_view _id)
     });
 }
 
+void DecouplerRailTile::addToWorld()
+{
+  outputMap->parentObject.setValueInternal(shared_from_this());
+  StraightRailTile::addToWorld();
+}
+
 void DecouplerRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
 {
   StraightRailTile::worldEvent(worldState, worldEvent);

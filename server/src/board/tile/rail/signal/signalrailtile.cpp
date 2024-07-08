@@ -133,6 +133,12 @@ bool SignalRailTile::reserve(const std::shared_ptr<BlockPath>& blockPath, bool d
   return true;
 }
 
+void SignalRailTile::addToWorld()
+{
+  outputMap->parentObject.setValueInternal(shared_from_this());
+  StraightRailTile::addToWorld();
+}
+
 void SignalRailTile::worldEvent(WorldState state, WorldEvent event)
 {
   StraightRailTile::worldEvent(state, event);
