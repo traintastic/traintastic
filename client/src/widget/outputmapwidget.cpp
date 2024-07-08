@@ -35,6 +35,8 @@
 #include "objectpropertycombobox.hpp"
 #include "propertyaddresses.hpp"
 #include "outputmapoutputactionwidget.hpp"
+#include "../board/tilepainter.hpp"
+#include "../board/getboardcolorscheme.hpp"
 #include "../dialog/objectselectlistdialog.hpp"
 #include "../network/callmethod.hpp"
 #include "../network/method.hpp"
@@ -67,6 +69,8 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
   , m_ecosObject{dynamic_cast<Property*>(m_object->getProperty("ecos_object"))}
   , m_items{m_object->getObjectVectorProperty("items")}
   , m_table{new QTableWidget(this)}
+  , m_getParentRequestId{Connection::invalidRequestId}
+  , m_getItemsRequestId{Connection::invalidRequestId}
 {
   QVBoxLayout* l = new QVBoxLayout();
 
@@ -97,6 +101,8 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
   }
   l->addLayout(form);
 
+  const int listViewIconSize = m_table->style()->pixelMetric(QStyle::PM_ListViewIconSize);
+  m_table->setIconSize({listViewIconSize, listViewIconSize});
   m_table->setColumnCount(m_columnCountNonOutput);
   m_table->setRowCount(0);
   QStringList labels;
@@ -113,6 +119,20 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
 
   setLayout(l);
 
+  if(auto* parentObject = m_object->getObjectProperty("parent"))
+  {
+    m_getParentRequestId = parentObject->getObject(
+      [this](const ObjectPtr& obj, std::optional<const Error> ec)
+      {
+        if(obj && !ec)
+        {
+          m_getParentRequestId = Connection::invalidRequestId;
+          m_parentObject = obj;
+          updateKeyIcons();
+        }
+      });
+  }
+
   if(m_items) /*[[likely]]*/
   {
     m_getItemsRequestId = m_items->getObjects(
@@ -123,6 +143,20 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
           updateItems(objects);
         }
       });
+
+    connect(&BoardSettings::instance(), &BoardSettings::changed, this, &OutputMapWidget::updateKeyIcons);
+  }
+}
+
+OutputMapWidget::~OutputMapWidget()
+{
+  if(m_getParentRequestId != Connection::invalidRequestId)
+  {
+    m_object->connection()->cancelRequest(m_getParentRequestId);
+  }
+  if(m_getItemsRequestId != Connection::invalidRequestId)
+  {
+    m_object->connection()->cancelRequest(m_getItemsRequestId);
   }
 }
 
@@ -204,7 +238,63 @@ void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
     }
   }
 
+  updateKeyIcons();
   updateTableOutputColumns();
+}
+
+void OutputMapWidget::updateKeyIcons()
+{
+  if(!m_parentObject)
+  {
+    return;
+  }
+
+  if(auto tileIdProperty = m_parentObject->getProperty("tile_id"))
+  {
+    const bool darkBackground = m_table->palette().window().color().lightnessF() < 0.5;
+    const auto tileId = tileIdProperty->toEnum<TileId>();
+
+    const int iconSize = m_table->iconSize().height();
+    QImage image(iconSize, iconSize, QImage::Format_ARGB32);
+    QPainter painter{&image};
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    TilePainter tilePainter{painter, iconSize, *getBoardColorScheme(darkBackground ? BoardSettings::ColorScheme::Dark : BoardSettings::ColorScheme::Light)};
+
+    for(size_t i = 0; i < m_itemObjects.size(); i++)
+    {
+      if(auto* key = m_itemObjects[i]->getProperty("key"))
+      {
+        image.fill(Qt::transparent);
+
+        if(isRailTurnout(tileId))
+        {
+          tilePainter.drawTurnout(tileId, image.rect(), TileRotate::Deg0, TurnoutPosition::Unknown, static_cast<TurnoutPosition>(key->toInt()));
+        }
+        else if(isRailSignal(tileId))
+        {
+          tilePainter.drawSignal(tileId, image.rect(), TileRotate::Deg0, false, static_cast<SignalAspect>(key->toInt()));
+        }
+        else if(tileId == TileId::RailDirectionControl)
+        {
+          tilePainter.drawDirectionControl(tileId, image.rect(), TileRotate::Deg0, false, static_cast<DirectionControlState>(key->toInt()));
+        }
+        else if(tileId == TileId::RailDecoupler)
+        {
+          tilePainter.drawRailDecoupler(image.rect(), TileRotate::Deg90, false, static_cast<DecouplerState>(key->toInt()));
+        }
+        else if(tileId == TileId::Switch)
+        {
+          tilePainter.drawSwitch(image.rect(), key->toBool());
+        }
+        else
+        {
+          break; // tileId not supported (yet)
+        }
+
+        m_table->item(i, columnKey)->setIcon(QPixmap::fromImage(image));
+      }
+    }
+  }
 }
 
 void OutputMapWidget::updateTableOutputColumns()
