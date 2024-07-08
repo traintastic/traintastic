@@ -6323,5 +6323,9 @@
     {
         "term": "turnout_position:diverged",
         "definition": "Diverged"
+    },
+    {
+        "term": "settings:load_last_world_on_startup",
+        "definition": "Load last world on startup"
     }
 ]
