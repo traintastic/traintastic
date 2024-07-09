@@ -40,6 +40,7 @@ class TurnoutRailTile : public RailTile
   protected:
     TurnoutRailTile(World& world, std::string_view _id, TileId tileId_, size_t connectors);
 
+    void destroying() override;
     void addToWorld() override;
     void worldEvent(WorldState state, WorldEvent event) override;
 

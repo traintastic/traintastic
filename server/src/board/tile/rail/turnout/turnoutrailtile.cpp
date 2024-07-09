@@ -83,6 +83,12 @@ bool TurnoutRailTile::release(bool dryRun)
   return true;
 }
 
+void TurnoutRailTile::destroying()
+{
+  outputMap->parentObject.setValueInternal(nullptr);
+  RailTile::addToWorld();
+}
+
 void TurnoutRailTile::addToWorld()
 {
   outputMap->parentObject.setValueInternal(shared_from_this());
