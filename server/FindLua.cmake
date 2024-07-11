@@ -17,6 +17,7 @@
 # Copyright 2007-2009 Kitware, Inc.
 # Modified to support Lua 5.2 by LuaDist 2012
 # Modified to support Lua 5.3 by Reinder Feenstra 2019
+# Modified to support Lua 5.4 by Reinder Feenstra 2024
 #
 # Distributed under the OSI-approved BSD License (the "License");
 # see accompanying file Copyright.txt for details.
@@ -41,7 +42,7 @@ SET(_POSSIBLE_LUA_LIBRARY lua)
 IF(Lua_FIND_VERSION_MAJOR AND Lua_FIND_VERSION_MINOR)
   SET(_POSSIBLE_SUFFIXES "${Lua_FIND_VERSION_MAJOR}${Lua_FIND_VERSION_MINOR}" "${Lua_FIND_VERSION_MAJOR}.${Lua_FIND_VERSION_MINOR}" "-${Lua_FIND_VERSION_MAJOR}.${Lua_FIND_VERSION_MINOR}")
 ELSE(Lua_FIND_VERSION_MAJOR AND Lua_FIND_VERSION_MINOR)
-  SET(_POSSIBLE_SUFFIXES "53" "5.3" "-5.3" "52" "5.2" "-5.2" "51" "5.1" "-5.1")
+  SET(_POSSIBLE_SUFFIXES "54" "5.4" "-5.4" "53" "5.3" "-5.3" "52" "5.2" "-5.2" "51" "5.1" "-5.1")
 ENDIF(Lua_FIND_VERSION_MAJOR AND Lua_FIND_VERSION_MINOR)
 
 # Set up possible search names and locations
