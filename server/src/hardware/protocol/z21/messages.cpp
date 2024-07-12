@@ -361,4 +361,191 @@ bool LanX::isChecksumValid(const LanX &lanX)
   return XpressNet::isChecksumValid(msg, dataSize);
 }
 
+MessageReplyType getReplyType(const Message &message)
+{
+  switch (message.header())
+  {
+    //Messages whose replies have same header
+    case LAN_GET_SERIAL_NUMBER:
+    case LAN_GET_CODE:
+    case LAN_GET_HWINFO:
+    {
+      MessageReplyType reply;
+      reply.header = message.header();
+      reply.setPriority(MessageReplyType::Priority::Low);
+      return reply;
+    }
+
+    case LAN_GET_BROADCASTFLAGS:
+    case LAN_LOCONET_DETECTOR:
+    case LAN_CAN_DETECTOR:
+      return {message.header()};
+
+    case LAN_GET_LOCO_MODE:
+    case LAN_GET_TURNOUTMODE:
+    {
+      MessageReplyType reply;
+      reply.header = message.header();
+      reply.setFlag(MessageReplyType::Flags::CheckAddress);
+
+      if(message.header() == LAN_GET_LOCO_MODE)
+        reply.address = static_cast<const LanGetLocoMode&>(message).address();
+
+      // NOTE: not (yet) supported
+      //else
+      //  reply.address = static_cast<const LanGetTurnoutMode&>(message).address();
+
+      return reply;
+    }
+
+    // NOTE: This message has no reply for Z21 firmware < 1.22
+    // NOTE: not (yet) supported
+    case LAN_LOCONET_DISPATCH_ADDR:
+      return {LAN_LOCONET_DISPATCH_ADDR};
+
+    case LAN_X:
+    {
+      const LanX& lanX = static_cast<const LanX&>(message);
+      switch (lanX.xheader)
+      {
+        case 0x21:
+        {
+          MessageReplyType reply;
+          reply.header = LAN_X;
+          reply.setPriority(MessageReplyType::Priority::Low);
+          reply.setFlag(MessageReplyType::Flags::CheckDb0);
+
+          // Cast to any LanX message with a db0 to check its value
+          const LanXGetStatus& hack = static_cast<const LanXGetStatus&>(lanX);
+          switch (hack.db0)
+          {
+            case 0x21: // LAN_X_GET_VERSION
+            {
+              reply.xHeader = LAN_X_GET_VERSION_REPLY;
+              break;
+            }
+
+            case 0x24: // LAN_X_GET_STATUS
+            {
+              reply.xHeader = LAN_X_STATUS_CHANGED;
+              break;
+            }
+
+            case LAN_X_SET_TRACK_POWER_OFF:
+            {
+              reply.xHeader = LAN_X_BC;
+              reply.db0 = LAN_X_BC_TRACK_POWER_OFF;
+              reply.setPriority(MessageReplyType::Priority::Urgent);
+              break;
+            }
+
+            case LAN_X_SET_TRACK_POWER_ON:
+            {
+              //LAN_X_SET_TRACK_POWER_ON
+              reply.xHeader = LAN_X_BC;
+              reply.db0 = LAN_X_BC_TRACK_POWER_ON;
+              reply.setPriority(MessageReplyType::Priority::Urgent);
+              break;
+            }
+
+            default:
+              return {MessageReplyType::noReply};
+          }
+          return reply;
+        }
+
+        case LAN_X_TURNOUT_INFO:
+        case LAN_X_SET_TURNOUT:
+        {
+          MessageReplyType reply;
+          reply.header = LAN_X;
+          reply.xHeader = LAN_X_TURNOUT_INFO;
+          reply.setFlag(MessageReplyType::Flags::CheckAddress);
+
+          if(lanX.xheader == LAN_X_TURNOUT_INFO)
+            reply.address = static_cast<const LanXGetTurnoutInfo&>(lanX).address();
+          else
+            reply.address = static_cast<const LanXSetTurnout&>(lanX).address();
+
+          return reply;
+        }
+
+        case LAN_X_SET_STOP:
+        {
+          MessageReplyType reply;
+          reply.header = LAN_X;
+          reply.xHeader = LAN_X_BC_STOPPED;
+          reply.setPriority(MessageReplyType::Priority::Urgent);
+          return reply;
+        }
+
+        case LAN_X_GET_LOCO_INFO:
+        case LAN_X_SET_LOCO:
+        {
+          MessageReplyType reply;
+          reply.header = LAN_X;
+          reply.xHeader = LAN_X_LOCO_INFO;
+          reply.setFlag(MessageReplyType::Flags::CheckAddress);
+
+          if(lanX.xheader == LAN_X_GET_LOCO_INFO)
+          {
+            reply.address = static_cast<const LanXGetLocoInfo&>(lanX).address();
+          }
+          else
+          {
+            if(const auto& setLocoDrive = static_cast<const LanXSetLocoDrive&>(message);
+                setLocoDrive.db0 >= 0x10 && setLocoDrive.db0 <= 0x13)
+            {
+              reply.address = setLocoDrive.address();
+              reply.speedAndDirection = setLocoDrive.speedAndDirection;
+              reply.setSpeedSteps(setLocoDrive.speedSteps());
+              reply.setFlag(MessageReplyType::Flags::CheckSpeedStep);
+            }
+            else if(const auto& setLocoFunction = static_cast<const LanXSetLocoFunction&>(message);
+                     setLocoFunction.db0 == 0xF8)
+            {
+              reply.address = setLocoFunction.address();
+            }
+            else
+            {
+              //Other loco function messages do not have standard reply
+              return {MessageReplyType::noReply};
+            }
+          }
+
+          return reply;
+        }
+
+        case LAN_X_GET_FIRMWARE_VERSION:
+        {
+          MessageReplyType reply;
+          reply.header = LAN_X;
+          reply.xHeader = LAN_X_GET_FIRMWARE_VERSION_REPLY;
+          reply.setPriority(MessageReplyType::Priority::Low);
+          return reply;
+        }
+
+        default:
+          break;
+      }
+      break;
+    }
+
+    case LAN_RMBUS_GETDATA:
+      return {LAN_RMBUS_DATACHANGED};
+
+    case LAN_SYSTEMSTATE_GETDATA:
+      return {LAN_SYSTEMSTATE_DATACHANGED};
+
+    case LAN_RAILCOM_GETDATA:
+      return {LAN_RAILCOM_DATACHANGED};
+
+    default:
+      break;
+  }
+
+  //Message has no reply or it's no supported by Traintastic
+  return {MessageReplyType::noReply};
+}
+
 }

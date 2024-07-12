@@ -194,7 +194,7 @@ bool SimulationIOHandler::send(const Message& message)
     case LAN_GET_BROADCASTFLAGS:
       if(message == LanGetBroadcastFlags())
       {
-        reply(LanSetBroadcastFlags(m_broadcastFlags));
+        reply(LanGetBroadcastFlagsReply(m_broadcastFlags));
       }
       break;
 
