@@ -27,15 +27,15 @@
 #include "../../../../world/world.hpp"
 #include "../../../../utils/displayname.hpp"
 
-TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tileId, size_t connectors) :
-  RailTile(world, _id, tileId),
+TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tileId_, size_t connectors) :
+  RailTile(world, _id, tileId_),
   m_node{*this, connectors},
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   position{this, "position", TurnoutPosition::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
   setPosition{*this, "set_position", MethodFlags::ScriptCallable, [this](TurnoutPosition value) { return doSetPosition(value); }}
 {
-  assert(isRailTurnout(tileId));
+  assert(isRailTurnout(tileId_));
 
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
@@ -81,6 +81,18 @@ bool TurnoutRailTile::release(bool dryRun)
     RailTile::release();
   }
   return true;
+}
+
+void TurnoutRailTile::destroying()
+{
+  outputMap->parentObject.setValueInternal(nullptr);
+  RailTile::addToWorld();
+}
+
+void TurnoutRailTile::addToWorld()
+{
+  outputMap->parentObject.setValueInternal(shared_from_this());
+  RailTile::addToWorld();
 }
 
 void TurnoutRailTile::worldEvent(WorldState state, WorldEvent event)

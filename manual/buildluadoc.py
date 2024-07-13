@@ -52,6 +52,7 @@ class LuaDoc:
 
         definition = self._terms[term]
         definition = re.sub(r'`(.+?)`', r'<code>\1</code>', definition)
+        definition = re.sub(r'\[([^\]]+)]\(([^\)]+)\)', r'<a href="\2">\1</a>', definition)
         definition = re.sub(r'{ref:([a-z0-9_\.]+?)(|#[a-z0-9_]+)(|\|.+?)}', self._ref_link, definition)
         return definition
 

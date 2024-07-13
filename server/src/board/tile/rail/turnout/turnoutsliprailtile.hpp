@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/output/map/signaloutputmapitem.cpp
+ * server/src/board/tile/rail/turnout/turnoutsliprailtile.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2024 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,13 +20,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "signaloutputmapitem.hpp"
-#include "outputmapitembase.tpp"
+#ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUT_TURNOUTSLIPRAILTILE_HPP
+#define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUT_TURNOUTSLIPRAILTILE_HPP
 
-SignalOutputMapItem::SignalOutputMapItem(Object& map, SignalAspect aspect) :
-  OutputMapItemBase(map, aspect)
-  , use{this, "use", true, PropertyFlags::ReadWrite | PropertyFlags::Store}
+#include "turnoutrailtile.hpp"
+
+class TurnoutSlipRailTile : public TurnoutRailTile
 {
-  Attributes::addEnabled(use, !isRequiredSignalAspect(aspect));
-  m_interfaceItems.add(use);
-}
+protected:
+  TurnoutSlipRailTile(World& world, std::string_view _id, TileId tileId_);
+
+  virtual void loaded() override;
+
+  virtual void dualMotorChanged() = 0;
+
+public:
+  Property<bool> dualMotor;
+};
+
+#endif

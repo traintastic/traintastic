@@ -386,41 +386,41 @@ if(BUILD_TESTING)
   target_link_libraries(traintastic-server-test PRIVATE ${LibArchive_LIBRARIES})
 endif()
 
-# liblua5.3
+# liblua5.4
 if(WIN32)
   add_definitions(-DLUA_BUILD_AS_DLL)
-  set(LUA_INCLUDE_DIR "thirdparty/lua5.3/include")
+  set(LUA_INCLUDE_DIR "thirdparty/lua5.4/include")
 
   if(MSVC)
-      set(LUA_LIBRARIES lua53)
+      set(LUA_LIBRARIES lua54)
       add_custom_command(TARGET traintastic-server PRE_LINK
-        COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.def" /out:lua53.lib /machine:x64)
+        COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/lua5.4/bin/win64/lua54.def" /out:lua54.lib /machine:x64)
       add_custom_command(TARGET traintastic-server-test PRE_LINK
-        COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.def" /out:lua53.lib /machine:x64)
+        COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/lua5.4/bin/win64/lua54.def" /out:lua54.lib /machine:x64)
   else()
       # MinGW can directly link .dll without import lib
-      set(LUA_LIBRARIES "${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.dll")
+      set(LUA_LIBRARIES "${PROJECT_SOURCE_DIR}/thirdparty/lua5.4/bin/win64/lua54.dll")
   endif()
 
 
-  # copy lua53.dll to build directory, to be able to run the tests:
+  # copy lua54.dll to build directory, to be able to run the tests:
   add_custom_command(TARGET traintastic-server-test POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/lua5.3/bin/win64/lua53.dll" .)
+    COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/lua5.4/bin/win64/lua54.dll" .)
 elseif(APPLE)
   find_path(LUA_INCLUDE_DIR
     NAMES lua.h
     PATHS
-    "/usr/local/opt/lua@5.3/include/lua" # x86_64
-    "/opt/homebrew/opt/lua@5.3/include/lua" # arm64
+    "/usr/local/opt/lua@5.4/include/lua" # x86_64
+    "/opt/homebrew/opt/lua@5.4/include/lua" # arm64
     )
   find_library(LUA_LIBRARIES
-    NAMES lua5.3 liblua5.3
+    NAMES lua5.4 liblua5.4
     PATHS
-    "/usr/local/opt/lua@5.3/lib" # x86_64
-    "/opt/homebrew/opt/lua@5.3/lib" # arm64
+    "/usr/local/opt/lua@5.4/lib" # x86_64
+    "/opt/homebrew/opt/lua@5.4/lib" # arm64
     )
 else()
-  find_package(Lua 5.3 REQUIRED)
+  find_package(Lua 5.4 REQUIRED)
 endif()
 target_include_directories(traintastic-server PRIVATE ${LUA_INCLUDE_DIR})
 target_link_libraries(traintastic-server PRIVATE ${LUA_LIBRARIES})

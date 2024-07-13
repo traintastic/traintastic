@@ -76,8 +76,8 @@ std::optional<OutputActionValue> SignalRailTile::getDefaultActionValue(SignalAsp
   return {};
 }
 
-SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId) :
-  StraightRailTile(world, _id, tileId),
+SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId_) :
+  StraightRailTile(world, _id, tileId_),
   m_node{*this, 2},
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   requireReservation{this, "require_reservation", AutoYesNo::Auto, PropertyFlags::ReadWrite | PropertyFlags::Store},
@@ -131,6 +131,18 @@ bool SignalRailTile::reserve(const std::shared_ptr<BlockPath>& blockPath, bool d
     evaluate();
   }
   return true;
+}
+
+void SignalRailTile::destroying()
+{
+  outputMap->parentObject.setValueInternal(nullptr);
+  StraightRailTile::addToWorld();
+}
+
+void SignalRailTile::addToWorld()
+{
+  outputMap->parentObject.setValueInternal(shared_from_this());
+  StraightRailTile::addToWorld();
 }
 
 void SignalRailTile::worldEvent(WorldState state, WorldEvent event)

@@ -25,10 +25,22 @@
 #include "../../../../core/objectproperty.tpp"
 #include "../../../../hardware/output/outputcontroller.hpp"
 
-static const std::array<TurnoutPosition, 7> positionValues = {TurnoutPosition::Unknown,
-                                                              TurnoutPosition::Left, TurnoutPosition::Right,
-                                                              TurnoutPosition::Crossed, TurnoutPosition::Diverged,
-                                                              TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB};
+namespace PositionValues
+{
+  static const std::array<TurnoutPosition, 3> singleMotor = {
+    TurnoutPosition::Unknown,
+    TurnoutPosition::Crossed, TurnoutPosition::Diverged
+  };
+  static const std::array<TurnoutPosition, 5> dualMotor = {
+    TurnoutPosition::Unknown,
+    TurnoutPosition::Left, TurnoutPosition::Right, TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB
+  };
+}
+
+static constexpr tcb::span<const TurnoutPosition> positionValuesSingleMotor = tcb::make_span(PositionValues::singleMotor);
+static constexpr tcb::span<const TurnoutPosition> positionValuesDualMotor = tcb::make_span(PositionValues::dualMotor);
+static constexpr tcb::span<const TurnoutPosition> setPositionValuesSingleMotor = tcb::make_span(PositionValues::singleMotor).subspan<1>();
+static constexpr tcb::span<const TurnoutPosition> setPositionValuesDualMotor = tcb::make_span(PositionValues::dualMotor).subspan<1>();
 
 static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex)
 {
@@ -40,11 +52,8 @@ static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition tu
 }
 
 TurnoutDoubleSlipRailTile::TurnoutDoubleSlipRailTile(World& world, std::string_view _id)
-  : TurnoutRailTile(world, _id, TileId::RailTurnoutDoubleSlip, 4)
+  : TurnoutSlipRailTile(world, _id, TileId::RailTurnoutDoubleSlip)
 {
-  // Skip Unknown position
-  tcb::span<const TurnoutPosition, 6> setPositionValues = tcb::make_span(positionValues).subspan<1>();
-
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(),
                                                                 std::initializer_list<TurnoutPosition>{
                                                                     TurnoutPosition::Left, TurnoutPosition::Right,
@@ -52,13 +61,14 @@ TurnoutDoubleSlipRailTile::TurnoutDoubleSlipRailTile(World& world, std::string_v
                                                                     TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB},
                                                                 getDefaultActionValue));
 
-  Attributes::addValues(position, positionValues);
+  Attributes::addValues(position, positionValuesSingleMotor);
   m_interfaceItems.add(position);
 
-  Attributes::addValues(setPosition, setPositionValues);
+  Attributes::addValues(setPosition, setPositionValuesSingleMotor);
   m_interfaceItems.add(setPosition);
 
   connectOutputMap();
+  dualMotorChanged();
 }
 
 void TurnoutDoubleSlipRailTile::getConnectors(std::vector<Connector>& connectors) const
@@ -67,4 +77,25 @@ void TurnoutDoubleSlipRailTile::getConnectors(std::vector<Connector>& connectors
   connectors.emplace_back(location(), rotate + TileRotate::Deg135, Connector::Type::Rail);
   connectors.emplace_back(location(), rotate + TileRotate::Deg180, Connector::Type::Rail);
   connectors.emplace_back(location(), rotate + TileRotate::Deg315, Connector::Type::Rail);
+}
+
+void TurnoutDoubleSlipRailTile::dualMotorChanged()
+{
+  (*outputMap)[TurnoutPosition::Diverged]->visible.setValueInternal(!dualMotor);
+  (*outputMap)[TurnoutPosition::Crossed]->visible.setValueInternal(!dualMotor);
+  (*outputMap)[TurnoutPosition::Left]->visible.setValueInternal(dualMotor);
+  (*outputMap)[TurnoutPosition::Right]->visible.setValueInternal(dualMotor);
+  (*outputMap)[TurnoutPosition::DoubleSlipStraightA]->visible.setValueInternal(dualMotor);
+  (*outputMap)[TurnoutPosition::DoubleSlipStraightB]->visible.setValueInternal(dualMotor);
+
+  if(dualMotor)
+  {
+    Attributes::setValues(position, positionValuesDualMotor);
+    Attributes::setValues(setPosition, setPositionValuesDualMotor);
+  }
+  else
+  {
+    Attributes::setValues(position, positionValuesSingleMotor);
+    Attributes::setValues(setPosition, setPositionValuesSingleMotor);
+  }
 }

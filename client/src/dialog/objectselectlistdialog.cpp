@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2023 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,19 +34,20 @@
 #include "../widget/alertwidget.hpp"
 #include <traintastic/locale/locale.hpp>
 
-ObjectSelectListDialog::ObjectSelectListDialog(Method& method, QWidget* parent) :
-  ObjectSelectListDialog(static_cast<InterfaceItem&>(method), parent)
+ObjectSelectListDialog::ObjectSelectListDialog(Method& method, bool multiSelect, QWidget* parent) :
+  ObjectSelectListDialog(static_cast<InterfaceItem&>(method), multiSelect, parent)
 {
 }
 
 ObjectSelectListDialog::ObjectSelectListDialog(ObjectProperty& property, QWidget* parent) :
-  ObjectSelectListDialog(static_cast<InterfaceItem&>(property), parent)
+  ObjectSelectListDialog(static_cast<InterfaceItem&>(property), false, parent)
 {
 }
 
-ObjectSelectListDialog::ObjectSelectListDialog(InterfaceItem& item, QWidget* parent) :
+ObjectSelectListDialog::ObjectSelectListDialog(InterfaceItem& item, bool multiSelect, QWidget* parent) :
   QDialog(parent, Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
   m_item{item},
+  m_multiSelect{multiSelect},
   m_buttons{new QDialogButtonBox(this)},
   m_tableWidget{new TableWidget()}
 {
@@ -58,7 +59,14 @@ ObjectSelectListDialog::ObjectSelectListDialog(InterfaceItem& item, QWidget* par
   connect(m_buttons->button(QDialogButtonBox::Ok), &QPushButton::clicked, this,
     [this]()
     {
-      acceptRow(m_tableWidget->selectionModel()->selectedIndexes().first().row());
+      if(m_multiSelect)
+      {
+        acceptRows(m_tableWidget->selectionModel()->selectedIndexes());
+      }
+      else
+      {
+        acceptRow(m_tableWidget->selectionModel()->selectedIndexes().first().row());
+      }
     });
   m_buttons->button(QDialogButtonBox::Cancel)->setText(Locale::tr("qtapp.object_select_list_dialog:cancel"));
   connect(m_buttons->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &ObjectSelectListDialog::reject);
@@ -91,7 +99,8 @@ ObjectSelectListDialog::ObjectSelectListDialog(InterfaceItem& item, QWidget* par
               connect(m_tableWidget->selectionModel(), &QItemSelectionModel::selectionChanged, this,
                 [this](const QItemSelection&, const QItemSelection&)
                 {
-                  m_buttons->button(QDialogButtonBox::Ok)->setEnabled(m_tableWidget->selectionModel()->selectedRows().count() == 1);
+                  const auto selectionCount = m_tableWidget->selectionModel()->selectedRows().count();
+                  m_buttons->button(QDialogButtonBox::Ok)->setEnabled(m_multiSelect ? selectionCount > 0 : selectionCount == 1);
                 });
               connect(m_tableWidget, &TableWidget::doubleClicked, this,
                 [this](const QModelIndex& index)
@@ -130,6 +139,19 @@ void ObjectSelectListDialog::acceptRow(int row)
     p->setByObjectId(id);
   else if(auto* m = dynamic_cast<Method*>(&m_item))
     callMethod(*m, nullptr, id);
+
+  accept();
+}
+
+void ObjectSelectListDialog::acceptRows(const QModelIndexList& indexes)
+{
+  if(auto* m = dynamic_cast<Method*>(&m_item))
+  {
+    for(const auto& index : indexes)
+    {
+      callMethod(*m, nullptr, m_tableWidget->getRowObjectId(index.row()));
+    }
+  }
 
   accept();
 }

@@ -82,6 +82,7 @@ class OutputMap : public SubObject
     virtual void updateStateFromOutput();
 
   public:
+    ObjectProperty<Object> parentObject; // UI needs access to parent object
     ObjectProperty<OutputController> interface;
     Property<OutputChannel> channel;
     VectorProperty<uint32_t> addresses;

@@ -35,6 +35,8 @@
 #include "objectpropertycombobox.hpp"
 #include "propertyaddresses.hpp"
 #include "outputmapoutputactionwidget.hpp"
+#include "../board/tilepainter.hpp"
+#include "../board/getboardcolorscheme.hpp"
 #include "../dialog/objectselectlistdialog.hpp"
 #include "../network/callmethod.hpp"
 #include "../network/method.hpp"
@@ -46,9 +48,12 @@
 #include "../theme/theme.hpp"
 #include "../misc/methodaction.hpp"
 
-constexpr int columnCountNonOutput = 2;
-constexpr int columnUse = 0;
-constexpr int columnKey = 1;
+constexpr int columnKey = 0;
+
+static bool hasUseColumn(const QString& classId)
+{
+  return classId == "output_map.signal";
+}
 
 static void setComboBoxMinimumWidth(QComboBox* comboBox)
 {
@@ -58,10 +63,14 @@ static void setComboBoxMinimumWidth(QComboBox* comboBox)
 OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
   : QWidget(parent)
   , m_object{std::move(object)}
+  , m_hasUseColumn{hasUseColumn(m_object->classId())}
+  , m_columnCountNonOutput{m_hasUseColumn ? 2 : 1}
   , m_addresses{m_object->getVectorProperty("addresses")}
   , m_ecosObject{dynamic_cast<Property*>(m_object->getProperty("ecos_object"))}
   , m_items{m_object->getObjectVectorProperty("items")}
   , m_table{new QTableWidget(this)}
+  , m_getParentRequestId{Connection::invalidRequestId}
+  , m_getItemsRequestId{Connection::invalidRequestId}
 {
   QVBoxLayout* l = new QVBoxLayout();
 
@@ -92,15 +101,37 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
   }
   l->addLayout(form);
 
-  m_table->setColumnCount(columnCountNonOutput);
+  const int listViewIconSize = m_table->style()->pixelMetric(QStyle::PM_ListViewIconSize);
+  m_table->setIconSize({listViewIconSize, listViewIconSize});
+  m_table->setColumnCount(m_columnCountNonOutput);
   m_table->setRowCount(0);
-  m_table->setHorizontalHeaderLabels({Locale::tr("output_map:use"), Locale::tr(m_object->classId() + ":key")});
+  QStringList labels;
+  labels.append(Locale::tr(m_object->classId() + ":key"));
+  if(m_hasUseColumn)
+  {
+    labels.append(Locale::tr("output_map:use"));
+  }
+  m_table->setHorizontalHeaderLabels(labels);
   m_table->verticalHeader()->setVisible(false);
   m_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
   l->addWidget(m_table);
 
   setLayout(l);
+
+  if(auto* parentObject = m_object->getObjectProperty("parent"))
+  {
+    m_getParentRequestId = parentObject->getObject(
+      [this](const ObjectPtr& obj, std::optional<const Error> ec)
+      {
+        if(obj && !ec)
+        {
+          m_getParentRequestId = Connection::invalidRequestId;
+          m_parentObject = obj;
+          updateKeyIcons();
+        }
+      });
+  }
 
   if(m_items) /*[[likely]]*/
   {
@@ -112,6 +143,20 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
           updateItems(objects);
         }
       });
+
+    connect(&BoardSettings::instance(), &BoardSettings::changed, this, &OutputMapWidget::updateKeyIcons);
+  }
+}
+
+OutputMapWidget::~OutputMapWidget()
+{
+  if(m_getParentRequestId != Connection::invalidRequestId)
+  {
+    m_object->connection()->cancelRequest(m_getParentRequestId);
+  }
+  if(m_getItemsRequestId != Connection::invalidRequestId)
+  {
+    m_object->connection()->cancelRequest(m_getItemsRequestId);
   }
 }
 
@@ -122,16 +167,6 @@ void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
   m_actions.resize(items.size());
   for(size_t i = 0; i < items.size(); i++)
   {
-    if(auto* p = dynamic_cast<Property*>(items[i]->getProperty("use")))
-    {
-      QWidget* w = new QWidget(m_table);
-      QHBoxLayout* l = new QHBoxLayout();
-      l->setAlignment(Qt::AlignCenter);
-      l->addWidget(new PropertyCheckBox(*p, w));
-      w->setLayout(l);
-      m_table->setCellWidget(i, columnUse, w);
-    }
-
     if(auto* p = items[i]->getProperty("key"))
     {
       QString text;
@@ -165,6 +200,32 @@ void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
       m_table->setItem(i, columnKey, new QTableWidgetItem(text));
     }
 
+    if(m_hasUseColumn)
+    {
+      const int columnUse = columnKey + 1;
+
+      if(auto* p = dynamic_cast<Property*>(items[i]->getProperty("use")))
+      {
+        QWidget* w = new QWidget(m_table);
+        QHBoxLayout* l = new QHBoxLayout();
+        l->setAlignment(Qt::AlignCenter);
+        l->addWidget(new PropertyCheckBox(*p, w));
+        w->setLayout(l);
+        m_table->setCellWidget(i, columnUse, w);
+      }
+    }
+
+    if(auto* p = items[i]->getProperty("visible"))
+    {
+      m_table->setRowHidden(i, !p->toBool());
+
+      connect(p, &Property::valueChangedBool, this,
+        [this, row=i](bool value)
+        {
+          m_table->setRowHidden(row, !value);
+        });
+    }
+
     if(auto* outputActions = dynamic_cast<ObjectVectorProperty*>(items[i]->getVectorProperty("output_actions")))
     {
       updateTableOutputActions(*outputActions, i);
@@ -177,7 +238,63 @@ void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
     }
   }
 
+  updateKeyIcons();
   updateTableOutputColumns();
+}
+
+void OutputMapWidget::updateKeyIcons()
+{
+  if(!m_parentObject)
+  {
+    return;
+  }
+
+  if(auto tileIdProperty = m_parentObject->getProperty("tile_id"))
+  {
+    const bool darkBackground = m_table->palette().window().color().lightnessF() < 0.5;
+    const auto tileId = tileIdProperty->toEnum<TileId>();
+
+    const int iconSize = m_table->iconSize().height();
+    QImage image(iconSize, iconSize, QImage::Format_ARGB32);
+    QPainter painter{&image};
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    TilePainter tilePainter{painter, iconSize, *getBoardColorScheme(darkBackground ? BoardSettings::ColorScheme::Dark : BoardSettings::ColorScheme::Light)};
+
+    for(size_t i = 0; i < m_itemObjects.size(); i++)
+    {
+      if(auto* key = m_itemObjects[i]->getProperty("key"))
+      {
+        image.fill(Qt::transparent);
+
+        if(isRailTurnout(tileId))
+        {
+          tilePainter.drawTurnout(tileId, image.rect(), TileRotate::Deg0, TurnoutPosition::Unknown, static_cast<TurnoutPosition>(key->toInt()));
+        }
+        else if(isRailSignal(tileId))
+        {
+          tilePainter.drawSignal(tileId, image.rect(), TileRotate::Deg0, false, static_cast<SignalAspect>(key->toInt()));
+        }
+        else if(tileId == TileId::RailDirectionControl)
+        {
+          tilePainter.drawDirectionControl(tileId, image.rect(), TileRotate::Deg0, false, static_cast<DirectionControlState>(key->toInt()));
+        }
+        else if(tileId == TileId::RailDecoupler)
+        {
+          tilePainter.drawRailDecoupler(image.rect(), TileRotate::Deg90, false, static_cast<DecouplerState>(key->toInt()));
+        }
+        else if(tileId == TileId::Switch)
+        {
+          tilePainter.drawSwitch(image.rect(), key->toBool());
+        }
+        else
+        {
+          break; // tileId not supported (yet)
+        }
+
+        m_table->item(i, columnKey)->setIcon(QPixmap::fromImage(image));
+      }
+    }
+  }
 }
 
 void OutputMapWidget::updateTableOutputColumns()
@@ -186,10 +303,10 @@ void OutputMapWidget::updateTableOutputColumns()
   {
     const auto size = m_addresses->size();
 
-    m_table->setColumnCount(columnCountNonOutput + size);
+    m_table->setColumnCount(m_columnCountNonOutput + size);
     for(int i = 0; i < size; i++)
     {
-      const int column = columnCountNonOutput + i;
+      const int column = m_columnCountNonOutput + i;
       const int address = m_addresses->getInt(i);
       auto* item = new QTableWidgetItem(QString("#%1").arg(address));
       item->setToolTip(Locale::tr("output_map:address_x").arg(address));
@@ -198,12 +315,12 @@ void OutputMapWidget::updateTableOutputColumns()
   }
   else if(m_ecosObject && m_ecosObject->getAttributeBool(AttributeName::Visible, true))
   {
-    m_table->setColumnCount(columnCountNonOutput + 1);
-    m_table->setHorizontalHeaderItem(columnCountNonOutput, new QTableWidgetItem(Locale::tr("output.ecos_object:state")));
+    m_table->setColumnCount(m_columnCountNonOutput + 1);
+    m_table->setHorizontalHeaderItem(m_columnCountNonOutput, new QTableWidgetItem(Locale::tr("output.ecos_object:state")));
   }
   else
   {
-    m_table->setColumnCount(columnCountNonOutput);
+    m_table->setColumnCount(m_columnCountNonOutput);
   }
 }
 
@@ -214,14 +331,14 @@ void OutputMapWidget::updateTableOutputActions(ObjectVectorProperty& property, i
     m_dummy = property.getObjects(
       [this, row](const std::vector<ObjectPtr>& objects, std::optional<const Error> /*ec*/)
       {
-        const int columnCount = static_cast<int>(columnCountNonOutput + objects.size());
+        const int columnCount = static_cast<int>(m_columnCountNonOutput + objects.size());
         if(columnCount > m_table->columnCount())
         {
           m_table->setColumnCount(columnCount);
         }
 
         auto& rowActions = m_actions[row];
-        int column = columnCountNonOutput;
+        int column = m_columnCountNonOutput;
         for(auto& object : objects)
         {
           if(column >= static_cast<int>(rowActions.size()) || object.get() != rowActions[column].get())

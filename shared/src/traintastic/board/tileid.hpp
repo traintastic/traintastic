@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_BOARD_TILEID_HPP
 
 #include <cstdint>
+#include "../enum/enum.hpp"
 
 enum class TileId : uint16_t // 10 bit
 {
@@ -202,5 +203,7 @@ constexpr bool isActive(TileId id)
   }
   return false;
 }
+
+TRAINTASTIC_ENUM(TileId, "tile_id", 0, {}); // no values defined as we don't need them (at the moment).
 
 #endif

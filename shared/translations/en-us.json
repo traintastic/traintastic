@@ -6317,6 +6317,18 @@
         "definition": "Can't remove train, train can only be removed from head or tail block."
     },
     {
+        "term": "board_tile.rail.turnout_slip:dual_motor",
+        "definition": "Dual motor/coil"
+    },
+    {
+        "term": "turnout_position:diverged",
+        "definition": "Diverged"
+    },
+    {
+        "term": "settings:load_last_world_on_startup",
+        "definition": "Load last world on startup"
+    },
+    {
         "term": "world:zones",
         "definition": "Zones"
     },

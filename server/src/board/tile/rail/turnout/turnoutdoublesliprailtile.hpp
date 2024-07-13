@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,12 +23,15 @@
 #ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUT_TURNOUTDOUBLESLIPRAILTILE_HPP
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUT_TURNOUTDOUBLESLIPRAILTILE_HPP
 
-#include "turnoutrailtile.hpp"
+#include "turnoutsliprailtile.hpp"
 
-class TurnoutDoubleSlipRailTile : public TurnoutRailTile
+class TurnoutDoubleSlipRailTile : public TurnoutSlipRailTile
 {
   CLASS_ID("board_tile.rail.turnout_doubleslip")
   CREATE(TurnoutDoubleSlipRailTile)
+
+protected:
+  void dualMotorChanged() final;
 
   public:
     TurnoutDoubleSlipRailTile(World& world, std::string_view _id);

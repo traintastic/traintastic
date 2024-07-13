@@ -39,7 +39,7 @@ std::unique_ptr<QMenu> TileMenu::getBlockRailTileMenu(const ObjectPtr& tile, QWi
     menu->addAction(new MethodAction(*assignTrain,
       [parent, assignTrain]()
       {
-        std::make_unique<ObjectSelectListDialog>(*assignTrain, parent)->exec();
+        std::make_unique<ObjectSelectListDialog>(*assignTrain, false, parent)->exec();
       }));
   if(auto* removeTrain = tile->getMethod("remove_train"))
   {

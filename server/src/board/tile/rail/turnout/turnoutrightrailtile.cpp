@@ -63,8 +63,8 @@ static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition tu
   return {};
 }
 
-TurnoutRightRailTile::TurnoutRightRailTile(World& world, std::string_view _id, TileId tileId)
-  : TurnoutRailTile(world, _id, tileId, 3)
+TurnoutRightRailTile::TurnoutRightRailTile(World& world, std::string_view _id, TileId tileId_)
+  : TurnoutRailTile(world, _id, tileId_, 3)
 {
   // Skip Unknown position
   tcb::span<const TurnoutPosition, 2> setPositionValues = tcb::make_span(positionValues).subspan<1>();

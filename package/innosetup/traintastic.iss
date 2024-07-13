@@ -54,7 +54,7 @@ Name: "firewall_wlanmaus"; Description: "{cm:firewall_allow_wlanmaus_z21}"; Grou
 [Files]
 ; Server
 Source: "..\..\server\build\{#ServerExeName}"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
-Source: "..\..\server\thirdparty\lua5.3\bin\win64\lua53.dll"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
+Source: "..\..\server\thirdparty\lua5.4\bin\win64\lua54.dll"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
 Source: "..\..\server\thirdparty\libarchive\bin\archive.dll"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
 Source: "..\..\server\thirdparty\zlib\bin\zlib1.dll"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
 ; Client

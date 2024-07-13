@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021,2023 Reinder Feenstra
+ * Copyright (C) 2020-2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,15 +27,19 @@
 #include "../boardlist.hpp"
 #include "../../world/world.hpp"
 
-Tile::Tile(World& world, std::string_view _id, TileId tileId)
+Tile::Tile(World& world, std::string_view _id, TileId tileId_)
   : IdObject(world, _id)
-  , m_tileId{tileId}
+  , tileId{this, "tile_id", tileId_, PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::NoScript}
   , x{this, "x", 0, PropertyFlags::ReadOnly | PropertyFlags::Store}
   , y{this, "y", 0, PropertyFlags::ReadOnly | PropertyFlags::Store}
   , rotate{this, "rotate", TileRotate::Deg0, PropertyFlags::ReadOnly | PropertyFlags::Store}
   , height{this, "height", 1, PropertyFlags::ReadOnly | PropertyFlags::Store}
   , width{this, "width", 1, PropertyFlags::ReadOnly | PropertyFlags::Store}
 {
+  Attributes::addObjectEditor(tileId, false);
+  Attributes::addValues(tileId, tcb::span<const TileId, 0>{});
+  m_interfaceItems.add(tileId);
+
   Attributes::addObjectEditor(x, false);
   m_interfaceItems.add(x);
 

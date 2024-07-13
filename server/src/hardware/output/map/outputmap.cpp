@@ -41,6 +41,7 @@
 
 OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
+  , parentObject{this, "parent", nullptr, PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::NoScript}
   , interface{this, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript,
       [this](const std::shared_ptr<OutputController>& /*newValue*/)
       {
@@ -286,6 +287,8 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
 {
   auto& world = getWorld(&_parent);
   const bool editable = contains(world.state.value(), WorldState::Edit);
+
+  m_interfaceItems.add(parentObject);
 
   Attributes::addDisplayName(interface, DisplayName::Hardware::interface);
   Attributes::addEnabled(interface, editable);

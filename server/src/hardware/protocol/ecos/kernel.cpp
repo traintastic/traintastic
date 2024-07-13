@@ -184,7 +184,7 @@ void Kernel::stop(Simulation* simulation)
 
   m_thread.join();
 
-  if(simulation) // get simulation data
+  if(simulation && !m_objects.empty()) // get simulation data
   {
     simulation->clear();
 

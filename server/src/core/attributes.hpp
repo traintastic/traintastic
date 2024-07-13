@@ -332,6 +332,12 @@ struct Attributes
   {
     method.setAttribute(AttributeName::Values, std::move(values));
   }
+
+  template<class R, class T, size_t N>
+  static inline void setValues(Method<R(T)>& method, tcb::span<const T, N> values)
+  {
+    method.setAttribute(AttributeName::Values, values);
+  }
 };
 
 #endif

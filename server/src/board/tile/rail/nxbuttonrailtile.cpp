@@ -38,9 +38,9 @@ static std::shared_ptr<BlockRailTile> findBlock(Node& node, uint8_t linkIndex)
     return {};
   }
   auto* tile = &link->getNext(node).tile();
-  while(tile->tileId() != TileId::RailBlock)
+  while(tile->tileId != TileId::RailBlock)
   {
-    if(isRailBridge(tile->tileId()))
+    if(isRailBridge(tile->tileId))
     {
       auto& bridgeNode = (*tile->node()).get();
       size_t index = bridgeNode.getIndex(*link);
