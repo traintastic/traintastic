@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022-2023 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -98,7 +98,7 @@ void WorldList::buildIndex()
     }
   }
 
-  std::sort(m_items.begin(), m_items.end(), [](const WorldInfo& a, const WorldInfo& b) -> bool { return a > b; });
+  sort();
 
   //for(auto& model : m_models)
   //  model->setRowCount(m_items.size());
@@ -137,4 +137,13 @@ bool WorldList::readInfo(const json& world, WorldInfo& info)
   info.name = *it;
 
   return !info.uuid.is_nil();
+}
+
+void WorldList::sort()
+{
+  std::sort(m_items.begin(), m_items.end(),
+    [](const WorldInfo& a, const WorldInfo& b) -> bool
+    {
+      return a > b;
+    });
 }

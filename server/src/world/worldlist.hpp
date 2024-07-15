@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2023 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,9 +45,12 @@ class WorldList : public Object, public Table
 
       bool operator >(const WorldInfo& that) const
       {
-        return name.compare(that.name) > 0;
+        return strcasecmp(name.c_str(), that.name.c_str()) < 0;
       }
     };
+
+  private:
+    void sort();
 
   protected:
     static bool readInfo(const nlohmann::json& world, WorldInfo& info);
