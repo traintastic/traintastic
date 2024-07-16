@@ -45,7 +45,11 @@ class WorldList : public Object, public Table
 
       bool operator >(const WorldInfo& that) const
       {
+#ifdef WIN32
+        return _stricmp(name.c_str(), that.name.c_str()) < 0;
+#else
         return strcasecmp(name.c_str(), that.name.c_str()) < 0;
+#endif
       }
     };
 
