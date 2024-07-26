@@ -130,6 +130,11 @@ install(TARGETS traintastic-client
     RUNTIME DESTINATION "/opt/traintastic/bin/"
 )
 
+if(LINUX)
+  install(FILES ${CMAKE_SOURCE_DIR}/debian/traintastic-client.desktop DESTINATION share/applications)
+  install(FILES ${CMAKE_SOURCE_DIR}/debian/traintastic_256.png DESTINATION "/opt/traintastic/icons/")
+endif()
+
 ### BUILD TYPE ###
 
 if (CMAKE_BUILD_TYPE EQUAL "Release")
