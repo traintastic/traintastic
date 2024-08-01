@@ -31,6 +31,7 @@
 #include "../core/event.hpp"
 #include <unordered_map>
 #include <boost/uuid/uuid.hpp>
+#include <traintastic/enum/externaloutputchangeaction.hpp>
 #include <traintastic/enum/worldevent.hpp>
 #include "../enum/worldscale.hpp"
 #include "../status/status.hpp"
@@ -102,6 +103,10 @@ class World : public Object
     Property<bool> onlineWhenLoaded;
     Property<bool> powerOnWhenLoaded;
     Property<bool> runWhenLoaded;
+
+    Property<bool> correctOutputPosWhenLocked;
+    Property<ExternalOutputChangeAction> extOutputChangeAction;
+    Property<uint16_t> pathReleaseDelay;
 
     ObjectProperty<ControllerList<DecoderController>> decoderControllers;
     ObjectProperty<ControllerList<InputController>> inputControllers;

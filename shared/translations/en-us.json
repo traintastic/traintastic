@@ -243,6 +243,14 @@
         "fuzzy": 0
     },
     {
+        "term": "category:trains",
+        "definition": "Trains",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "class_id:board_tile.misc.push_button",
         "definition": "Push button",
         "context": "",
@@ -952,6 +960,22 @@
         "reference": "",
         "comment": "",
         "fuzzy": 0
+    },
+    {
+        "term": "ext_output_change_action:do_nothing",
+        "definition": "Do nothing"
+    },
+    {
+        "term": "ext_output_change_action:estop_train",
+        "definition": "Emergency stop trains in block path"
+    },
+    {
+        "term": "ext_output_change_action:estop_world",
+        "definition": "Emergency stop World"
+    },
+    {
+        "term": "ext_output_change_action:poweroff_world",
+        "definition": "Power off World"
     },
     {
         "term": "ecos_channel:ecos_detector",
@@ -2826,6 +2850,14 @@
         "fuzzy": 0
     },
     {
+        "term": "message:N3003",
+        "definition": "Turnout position was reset to reserved one"
+    },
+    {
+        "term": "message:N3004",
+        "definition": "Signal aspect was reset to reserved one"
+    },
+    {
         "term": "message:N9001",
         "definition": "Starting script",
         "context": "",
@@ -4455,6 +4487,30 @@
         "fuzzy": 0
     },
     {
+        "term": "world:correct_output_pos_when_locked",
+        "definition": "Try to correct Ouput state when externally chaged while locked",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:ext_output_change_action",
+        "definition": "External Output Change Action",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:path_release_delay",
+        "definition": "Block Path release delay",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "world_scale:custom",
         "definition": "Custom",
         "context": "",
@@ -4959,6 +5015,30 @@
         "fuzzy": 0
     },
     {
+        "term": "message:E3003",
+        "definition": "Train was emergency stopped due to turnout %1 position externally changed"
+    },
+    {
+        "term": "message:E3004",
+        "definition": "Train was emergency stopped due to signal %1 aspect externally changed"
+    },
+    {
+        "term": "message:E3007",
+        "definition": "World was emergency stopped due to turnout %1 position externally changed"
+    },
+    {
+        "term": "message:E3008",
+        "definition": "World was emergency stopped due to signal %1 aspect externally changed"
+    },
+    {
+        "term": "message:E3009",
+        "definition": "World was emergency powered off due to turnout %1 position externally changed"
+    },
+    {
+        "term": "message:E3010",
+        "definition": "World was emergency powered off due to signal %1 aspect externally changed"
+    },
+    {
         "term": "message:C1014",
         "definition": "Invalid command",
         "context": "",
@@ -5029,6 +5109,14 @@
         "reference": "",
         "comment": "",
         "fuzzy": 0
+    },
+    {
+        "term": "message:W3003",
+        "definition": "Turnout position externally changed while locked in a path"
+    },
+    {
+        "term": "message:W3004",
+        "definition": "Signal aspect externally changed while locked in a path"
     },
     {
         "term": "auto_yes_no:auto",
