@@ -115,7 +115,7 @@ void Kernel::started()
 {
   assert(isKernelThread());
 
-  send(GetVersion());
+  send(GetInfo());
 }
 
 void Kernel::receive(const Message& message)
@@ -131,10 +131,18 @@ void Kernel::receive(const Message& message)
 
   switch(message.command)
   {
-    case Command::Version:
+    case Command::Info:
+    {
+      const auto& info = static_cast<const Info&>(message);
+      m_info.board = info.board;
+      m_info.version.major = info.versionMajor;
+      m_info.version.minor = info.versionMinor;
+      m_info.version.patch = info.versionPatch;
+      m_initialized = true;
       KernelBase::started();
+      restartPingTimeout();
       break;
-
+    }
     case Command::Pong:
     //case Command::InputChanged:
     //case Command::ThrottleSetFunctions:
@@ -143,7 +151,7 @@ void Kernel::receive(const Message& message)
       break;
 
     case Command::Ping:
-    case Command::GetVersion:
+    case Command::GetInfo:
     //case Command::GetInputState:
       assert(false); // we MUST never receive these
       break;
@@ -161,7 +169,10 @@ void Kernel::send(const Message& message)
 {
   if(m_ioHandler->send(message))
   {
-    restartPingTimeout();
+    if(m_initialized)
+    {
+      restartPingTimeout();
+    }
 
     if(m_config.debugLogRXTX && (message != Ping() || m_config.debugLogPing))
     {

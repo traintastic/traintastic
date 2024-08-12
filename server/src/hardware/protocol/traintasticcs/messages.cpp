@@ -33,12 +33,12 @@ constexpr std::string_view toString(Command value)
   {
     case Command::Ping:
       return "Ping";
-    case Command::GetVersion:
-      return "GetVersion";
+    case Command::GetInfo:
+      return "GetInfo";
     case Command::Pong:
       return "Pong";
-    case Command::Version:
-      return "Version";
+    case Command::Info:
+      return "Info";
   }
   return {};
 }
@@ -50,20 +50,22 @@ std::string toString(const Message& message)
   switch(message.command)
   {
     case Command::Ping:
-    case Command::GetVersion:
+    case Command::GetInfo:
     case Command::Pong:
       assert(message.length == 0);
       break;
 
-    case Command::Version:
+    case Command::Info:
     {
-      const auto& version = static_cast<const Version&>(message);
-      s.append(" version=")
-        .append(std::to_string(version.versionMajor))
+      const auto& info = static_cast<const Info&>(message);
+      s.append(" board=")
+        .append(::toString(info.board))
+        .append(" version=")
+        .append(std::to_string(info.versionMajor))
         .append(".")
-        .append(std::to_string(version.versionMinor))
+        .append(std::to_string(info.versionMinor))
         .append(".")
-        .append(std::to_string(version.versionPatch));
+        .append(std::to_string(info.versionPatch));
       break;
     }
   }

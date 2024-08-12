@@ -52,12 +52,12 @@ bool SimulationIOHandler::send(const Message& message)
       reply(Pong());
       break;
 
-    case Command::GetVersion:
-      reply(Version(0, 1, 0));
+    case Command::GetInfo:
+      reply(Info(Board::TraintasticCS, 0, 1, 0));
       break;
 
     case Command::Pong:
-    case Command::Version:
+    case Command::Info:
       assert(false); // only send by device
       break;
   }

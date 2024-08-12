@@ -31,12 +31,24 @@
 namespace TraintasticCS {
 
 struct Message;
+enum class Board : uint8_t;
 
 class Kernel final : public ::KernelBase
 {
   private:
     std::unique_ptr<IOHandler> m_ioHandler;
-    const bool m_simulation;
+    [[maybe_unused]] const bool m_simulation;
+    bool m_initialized = false;
+    struct
+    {
+      Board board;
+      struct
+      {
+        uint8_t major;
+        uint8_t minor;
+        uint8_t patch;
+      } version;
+    } m_info;
     boost::asio::steady_timer m_pingTimeout;
     Config m_config;
 

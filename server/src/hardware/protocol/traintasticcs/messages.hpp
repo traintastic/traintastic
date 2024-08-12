@@ -43,11 +43,11 @@ enum class Command : uint8_t
 {
   // Traintastic -> Traintastic CS
   Ping = 0x00,
-  GetVersion = 0x01,
+  GetInfo = 0x01,
 
   // Traintatic CS -> Traintastic
   Pong = FROM_CS | Ping,
-  Version = FROM_CS | GetVersion,
+  Info = FROM_CS | GetInfo,
 };
 #undef FROM_CS
 
@@ -97,27 +97,34 @@ struct Pong : MessageNoData
   }
 };
 
-struct GetVersion : MessageNoData
+struct GetInfo : MessageNoData
 {
-  constexpr GetVersion()
-    : MessageNoData(Command::GetVersion)
+  constexpr GetInfo()
+    : MessageNoData(Command::GetInfo)
   {
   }
 };
 
-struct Version : Message
+enum class Board : uint8_t
 {
+  TraintasticCS = 1,
+};
+
+struct Info : Message
+{
+  Board board;
   uint8_t versionMajor;
   uint8_t versionMinor;
   uint8_t versionPatch;
   Checksum checksum;
 
-  constexpr Version(uint8_t major, uint8_t minor, uint8_t patch)
-    : Message(Command::Version, sizeof(Version) - sizeof(Message) - sizeof(checksum))
+  constexpr Info(Board board_, uint8_t major, uint8_t minor, uint8_t patch)
+    : Message(Command::Info, sizeof(Info) - sizeof(Message) - sizeof(checksum))
+    , board{board_}
     , versionMajor{major}
     , versionMinor{minor}
     , versionPatch{patch}
-    , checksum{static_cast<Checksum>(static_cast<uint8_t>(command) ^ length ^ versionMajor ^ versionMinor ^ versionPatch)}
+    , checksum{static_cast<Checksum>(static_cast<uint8_t>(command) ^ length ^ static_cast<uint8_t>(board) ^ versionMajor ^ versionMinor ^ versionPatch)}
   {
   }
 };
@@ -138,6 +145,16 @@ inline bool isChecksumValid(const Message& message)
   return calcChecksum(message) == *(reinterpret_cast<const Checksum*>(&message) + message.length + 2);
 }
 
+}
+
+constexpr std::string_view toString(const TraintasticCS::Board value)
+{
+  switch(value)
+  {
+    case TraintasticCS::Board::TraintasticCS:
+      return "TraintasticCS";
+  }
+  return {};
 }
 
 inline bool operator ==(const TraintasticCS::Message& lhs, const TraintasticCS::Message& rhs)
