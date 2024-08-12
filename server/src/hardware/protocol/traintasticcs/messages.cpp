@@ -39,6 +39,10 @@ constexpr std::string_view toString(Command value)
       return "Pong";
     case Command::Info:
       return "Info";
+    case Command::ThrottleSetSpeedDirection:
+      return "ThrottleSetSpeedDirection";
+    case Command::ThrottleSetFunctions:
+      return "ThrottleSetFunctions";
   }
   return {};
 }
@@ -66,6 +70,42 @@ std::string toString(const Message& message)
         .append(std::to_string(info.versionMinor))
         .append(".")
         .append(std::to_string(info.versionPatch));
+      break;
+    }
+    case Command::ThrottleSetSpeedDirection:
+    {
+      const auto& setSpeedDirection = static_cast<const ThrottleSetSpeedDirection&>(message);
+      s.append(" channel=").append(::toString(setSpeedDirection.channel))
+        .append(" throttleId=").append(std::to_string(setSpeedDirection.throttleId()))
+        .append(" protocol=").append(EnumValues<DecoderProtocol>::value.at(setSpeedDirection.protocol()))
+        .append(" address=").append(std::to_string(setSpeedDirection.address()));
+      if(setSpeedDirection.eStop)
+      {
+        s.append(" eStop");
+      }
+      if(setSpeedDirection.setSpeedStep)
+      {
+        s.append(" speedStep=").append(std::to_string(setSpeedDirection.speedStep)).append("/").append(std::to_string(setSpeedDirection.speedSteps));
+      }
+      if(setSpeedDirection.setDirection)
+      {
+        s.append(" direction=").append(setSpeedDirection.direction ? "fwd" : "rev");
+      }
+      break;
+    }
+    case Command::ThrottleSetFunctions:
+    {
+      const auto& setFunctions = static_cast<const ThrottleSetFunctions&>(message);
+      s.append(" channel=").append(::toString(setFunctions.channel))
+        .append(" throttleId=").append(std::to_string(setFunctions.throttleId()))
+        .append(" protocol=").append(EnumValues<DecoderProtocol>::value.at(setFunctions.protocol()))
+        .append(" address=").append(std::to_string(setFunctions.address()));
+
+      for(uint8_t i = 0; i < setFunctions.functionCount(); ++i)
+      {
+        const auto function = setFunctions.function(i);
+        s.append(" f").append(std::to_string(function.first)).append("=").append(function.second ? "on" : "off");
+      }
       break;
     }
   }

@@ -145,8 +145,8 @@ void Kernel::receive(const Message& message)
     }
     case Command::Pong:
     //case Command::InputChanged:
-    //case Command::ThrottleSetFunctions:
-    //case Command::ThrottleSetSpeedDirection:
+    case Command::ThrottleSetFunctions:
+    case Command::ThrottleSetSpeedDirection:
       //assert(false); // todo: impement
       break;
 

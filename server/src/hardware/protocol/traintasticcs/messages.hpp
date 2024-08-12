@@ -27,6 +27,7 @@
 #include <cstring>
 #include <cstddef>
 #include <string>
+#include <traintastic/enum/decoderprotocol.hpp>
 #include "../../../utils/byte.hpp"
 
 namespace TraintasticCS {
@@ -48,6 +49,8 @@ enum class Command : uint8_t
   // Traintatic CS -> Traintastic
   Pong = FROM_CS | Ping,
   Info = FROM_CS | GetInfo,
+  ThrottleSetSpeedDirection = FROM_CS | 0x30,
+  ThrottleSetFunctions = FROM_CS | 0x31,
 };
 #undef FROM_CS
 
@@ -129,6 +132,90 @@ struct Info : Message
   }
 };
 
+enum class ThrottleChannel : uint8_t
+{
+  LocoNet = 1,
+  XpressNet = 2,
+};
+
+struct ThrottleMessage : Message
+{
+  ThrottleChannel channel;
+  uint8_t throttleIdH;
+  uint8_t throttleIdL;
+  uint8_t addressH;
+  uint8_t addressL;
+
+  uint16_t throttleId() const
+  {
+    return to16(throttleIdL, throttleIdH);
+  }
+
+  DecoderProtocol protocol() const
+  {
+    const auto value = to16(addressL, addressH);
+    if((value & 0xFF10) == 0x0000)
+    {
+      return DecoderProtocol::DCCShort;
+    }
+    else if((value & 0xC000) == 0xC000)
+    {
+      return DecoderProtocol::DCCLong;
+    }
+    assert(false);
+    return DecoderProtocol::None;
+  }
+
+  uint16_t address() const
+  {
+    const auto value = to16(addressL, addressH);
+    switch(protocol())
+    {
+      case DecoderProtocol::DCCShort:
+        return value & 0x007F;
+
+      case DecoderProtocol::DCCLong:
+        return value & 0x3FFF;
+
+      case DecoderProtocol::None:
+      case DecoderProtocol::Motorola:
+      case DecoderProtocol::MFX:
+      case DecoderProtocol::Selectrix:
+        break;
+    }
+    assert(false);
+    return 0;
+  }
+};
+
+struct ThrottleSetSpeedDirection : ThrottleMessage
+{
+  uint8_t direction : 1;
+  uint8_t eStop : 1;
+  uint8_t setSpeedStep : 1;
+  uint8_t setDirection : 1;
+  uint8_t : 4;
+  uint8_t speedStep;
+  uint8_t speedSteps;
+  Checksum checksum;
+};
+static_assert(sizeof(ThrottleSetSpeedDirection) == 11);
+
+struct ThrottleSetFunctions : ThrottleMessage
+{
+  uint8_t functions[1];
+
+  uint8_t functionCount() const
+  {
+    return length - (sizeof(ThrottleMessage) - sizeof(Message));
+  }
+
+  std::pair<uint8_t, bool> function(uint8_t index) const
+  {
+    return {functions[index] & 0x7F, (functions[index] & 0x80) != 0};
+  }
+};
+
 inline Checksum calcChecksum(const Message& message)
 {
   uint8_t checksum = static_cast<uint8_t>(message.command) ^ message.length;
@@ -153,6 +240,18 @@ constexpr std::string_view toString(const TraintasticCS::Board value)
   {
     case TraintasticCS::Board::TraintasticCS:
       return "TraintasticCS";
+  }
+  return {};
+}
+
+constexpr std::string_view toString(const TraintasticCS::ThrottleChannel value)
+{
+  switch(value)
+  {
+    case TraintasticCS::ThrottleChannel::LocoNet:
+      return "LocoNet";
+    case TraintasticCS::ThrottleChannel::XpressNet:
+      return "XpressNet";
   }
   return {};
 }

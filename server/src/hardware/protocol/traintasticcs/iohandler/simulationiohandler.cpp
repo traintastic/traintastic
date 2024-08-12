@@ -58,6 +58,8 @@ bool SimulationIOHandler::send(const Message& message)
 
     case Command::Pong:
     case Command::Info:
+    case Command::ThrottleSetSpeedDirection:
+    case Command::ThrottleSetFunctions:
       assert(false); // only send by device
       break;
   }
