@@ -24,20 +24,34 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_TRAINTASTICCS_KERNEL_HPP
 
 #include "../kernelbase.hpp"
+#include <map>
 #include <boost/asio/steady_timer.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
+
+class ThrottleController;
+class HardwareThrottle;
+enum class DecoderProtocol : uint8_t;
 
 namespace TraintasticCS {
 
 struct Message;
 enum class Board : uint8_t;
+enum class ThrottleChannel : uint8_t;
 
 class Kernel final : public ::KernelBase
 {
   private:
+    struct ThrottleInfo
+    {
+      DecoderProtocol protocol;
+      uint16_t address;
+      std::shared_ptr<HardwareThrottle> throttle;
+    };
+    using Throttles = std::map<std::pair<ThrottleChannel, uint16_t>, ThrottleInfo>;
+
     std::unique_ptr<IOHandler> m_ioHandler;
-    [[maybe_unused]] const bool m_simulation;
+    const bool m_simulation;
     bool m_initialized = false;
     struct
     {
@@ -50,6 +64,10 @@ class Kernel final : public ::KernelBase
       } version;
     } m_info;
     boost::asio::steady_timer m_pingTimeout;
+
+    ThrottleController* m_throttleController;
+    Throttles m_throttles;
+
     Config m_config;
 
     Kernel(std::string logId_, const Config& config, bool simulation);
@@ -70,6 +88,8 @@ class Kernel final : public ::KernelBase
     }
 
     void restartPingTimeout();
+
+    const std::shared_ptr<HardwareThrottle>& getThrottle(ThrottleChannel channel, uint16_t throttleId, DecoderProtocol protocol, uint16_t address, bool steal = false);
 
   public:
     Kernel(const Kernel&) = delete;
@@ -118,6 +138,18 @@ class Kernel final : public ::KernelBase
      * \param[in] config The Traintastic CS configuration
      */
     void setConfig(const Config& config);
+
+    /**
+     * \brief Set the throttle controller
+     *
+     * \param[in] throttleController The throttle controller
+     * \note This function may not be called when the kernel is running.
+     */
+    inline void setThrottleController(ThrottleController* throttleController)
+    {
+      //assert(!m_running);
+      m_throttleController = throttleController;
+    }
 
     /**
      * \brief Start the kernel and IO handler

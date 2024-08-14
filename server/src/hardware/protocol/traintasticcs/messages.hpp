@@ -154,7 +154,7 @@ struct ThrottleMessage : Message
   DecoderProtocol protocol() const
   {
     const auto value = to16(addressL, addressH);
-    if((value & 0xFF10) == 0x0000)
+    if((value & 0xFF80) == 0x0000)
     {
       return DecoderProtocol::DCCShort;
     }

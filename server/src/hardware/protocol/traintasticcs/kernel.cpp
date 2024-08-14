@@ -25,8 +25,10 @@
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../decoder/list/decoderlist.hpp"
+#include "../../interface/interface.hpp"
 #include "../../input/inputcontroller.hpp"
 #include "../../output/outputcontroller.hpp"
+#include "../../throttle/hardwarethrottle.hpp"
 #include "../../../utils/inrange.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../core/eventloop.hpp"
@@ -43,6 +45,7 @@ Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   , m_pingTimeout{m_ioContext}
   , m_config{config}
 {
+  (void)m_simulation;
 }
 
 Kernel::~Kernel() = default;
@@ -145,11 +148,58 @@ void Kernel::receive(const Message& message)
     }
     case Command::Pong:
     //case Command::InputChanged:
-    case Command::ThrottleSetFunctions:
-    case Command::ThrottleSetSpeedDirection:
-      //assert(false); // todo: impement
       break;
 
+    case Command::ThrottleSetSpeedDirection:
+    {
+      EventLoop::call(
+        [this, setSpeedDirection=static_cast<const ThrottleSetSpeedDirection&>(message)]()
+        {
+          if(auto throttle = getThrottle(setSpeedDirection.channel, setSpeedDirection.throttleId(), setSpeedDirection.protocol(), setSpeedDirection.address()))
+          {
+            throttle->emergencyStop = (setSpeedDirection.eStop != 0);
+
+            if(setSpeedDirection.setSpeedStep)
+            {
+              if(setSpeedDirection.speedStep <= setSpeedDirection.speedSteps && setSpeedDirection.speedSteps != 0)
+              {
+                throttle->throttle = static_cast<float>(setSpeedDirection.speedStep) / static_cast<float>(setSpeedDirection.speedSteps);
+              }
+              else
+              {
+                throttle->throttle = Throttle::throttleStop;
+              }
+            }
+
+            if(setSpeedDirection.setDirection)
+            {
+              throttle->direction = (setSpeedDirection.direction != 0) ? Direction::Forward : Direction::Reverse;
+            }
+          }
+        });
+      break;
+    }
+    case Command::ThrottleSetFunctions:
+    {
+      const std::vector<std::byte> buffer(reinterpret_cast<const std::byte*>(&message), reinterpret_cast<const std::byte*>(&message) + message.size());
+      EventLoop::call(
+        [this, buffer]()
+        {
+          const auto& setFunctions = *reinterpret_cast<const ThrottleSetFunctions*>(buffer.data());
+          if(auto throttle = getThrottle(setFunctions.channel, setFunctions.throttleId(), setFunctions.protocol(), setFunctions.address()))
+          {
+            for(uint8_t i = 0; i < setFunctions.functionCount(); ++i)
+            {
+              auto [number, value] = setFunctions.function(i);
+              if(auto function = throttle->getFunction(number))
+              {
+                function->value = value;
+              }
+            }
+          }
+        });
+      break;
+    }
     case Command::Ping:
     case Command::GetInfo:
     //case Command::GetInputState:
@@ -203,6 +253,61 @@ void Kernel::restartPingTimeout()
         restartPingTimeout();
       }
     });
+}
+
+const std::shared_ptr<HardwareThrottle>& Kernel::getThrottle(ThrottleChannel channel, uint16_t throttleId, DecoderProtocol protocol, uint16_t address, bool steal)
+{
+  assert(isEventLoopThread());
+
+  static const std::shared_ptr<HardwareThrottle> nullThrottle;
+
+  ThrottleInfo* throttleInfo = nullptr;
+
+  const auto key = std::make_pair(channel, throttleId);
+  auto it = m_throttles.find(key);
+  if(it != m_throttles.end())
+  {
+    throttleInfo = &it->second;
+  }
+  else if(auto* interface = dynamic_cast<Interface*>(m_throttleController))
+  {
+    auto throttle = HardwareThrottle::create(std::dynamic_pointer_cast<ThrottleController>(interface->shared_ptr<Interface>()), interface->world());
+    throttle->name.setValueInternal(std::string(::toString(channel)).append(" #").append(std::to_string(throttleId)));
+    auto [emplaceIt, success] = m_throttles.emplace(key, ThrottleInfo{DecoderProtocol::None, 0, std::move(throttle)});
+    assert(success);
+    throttleInfo = &emplaceIt->second;
+  }
+
+  if(!throttleInfo) /*[[unlikely]]*/
+  {
+    assert(false);
+    return nullThrottle;
+  }
+
+  assert(throttleInfo->throttle);
+
+  if(protocol != throttleInfo->protocol ||
+      address != throttleInfo->address ||
+      !throttleInfo->throttle->acquired())
+  {
+    if(throttleInfo->throttle->acquired())
+    {
+      throttleInfo->throttle->release();
+    }
+    auto result = throttleInfo->throttle->acquire(protocol, address, steal);
+    if(result == Throttle::AcquireResult::Success)
+    {
+      throttleInfo->protocol = protocol;
+      throttleInfo->address = address;
+    }
+    else
+    {
+      LOG_DEBUG("acquire failed: %1", (int)result);
+      return nullThrottle;
+    }
+  }
+
+  return throttleInfo->throttle;
 }
 
 }

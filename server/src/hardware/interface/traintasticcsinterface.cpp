@@ -25,16 +25,20 @@
 #include "../protocol/traintasticcs/settings.hpp"
 #include "../protocol/traintasticcs/iohandler/serialiohandler.hpp"
 #include "../protocol/traintasticcs/iohandler/simulationiohandler.hpp"
+#include "../throttle/list/throttlelistcolumn.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/eventloop.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 
+static constexpr auto throttleListColumns = ThrottleListColumn::Id | ThrottleListColumn::Name;
+
 CREATE_IMPL(TraintasticCSInterface)
 
 TraintasticCSInterface::TraintasticCSInterface(World& world, std::string_view _id)
   : Interface(world, _id)
+  , ThrottleController(*this, throttleListColumns)
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , traintasticCS{this, "traintastic_cs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
@@ -45,6 +49,8 @@ TraintasticCSInterface::TraintasticCSInterface(World& world, std::string_view _i
   m_interfaceItems.insertBefore(device, notes);
 
   m_interfaceItems.insertBefore(traintasticCS, notes);
+
+  m_interfaceItems.insertBefore(throttles, notes);
 }
 
 bool TraintasticCSInterface::setOnline(bool& value, bool simulation)
@@ -81,6 +87,9 @@ bool TraintasticCSInterface::setOnline(bool& value, bool simulation)
           setState(InterfaceState::Error);
           online = false; // communication no longer possible
         });
+
+      m_kernel->setThrottleController(this);
+
       m_kernel->start();
 
       m_traintasticCSPropertyChanged = traintasticCS->propertyChanged.connect(

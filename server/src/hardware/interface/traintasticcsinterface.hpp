@@ -26,6 +26,7 @@
 #include "interface.hpp"
 #include "../../core/serialdeviceproperty.hpp"
 #include "../../core/objectproperty.hpp"
+#include "../throttle/throttlecontroller.hpp"
 
 namespace TraintasticCS
 {
@@ -38,6 +39,7 @@ namespace TraintasticCS
  */
 class TraintasticCSInterface final
   : public Interface
+  , public ThrottleController
 {
   CLASS_ID("interface.traintastic_cs")
   DEFAULT_ID("traintastic_cs")
