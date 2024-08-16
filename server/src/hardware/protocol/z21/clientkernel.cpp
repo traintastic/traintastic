@@ -272,15 +272,16 @@ void ClientKernel::receive(const Message& message)
                       decoder->throttle = throttle;
                     }
 
-                    //Reset flag guard at end
-                    m_isUpdatingDecoderFromKernel = false;
-
                     //Function get always updated because we do not store a copy in cache
                     //so there is no way to tell in advance if they changed
                     for(int i = 0; i <= functionIndexMax; i++)
                     {
+                      m_isUpdatingDecoderFromKernel = true;
                       decoder->setFunctionValue(i, val[i]);
                     }
+
+                    //Reset flag guard at end
+                    m_isUpdatingDecoderFromKernel = false;
                   }
                 }
                 catch(...)
