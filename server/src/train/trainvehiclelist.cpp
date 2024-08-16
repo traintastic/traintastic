@@ -170,8 +170,8 @@ void TrainVehicleList::rowsChanged(uint32_t first, uint32_t last)
 
 void TrainVehicleList::addObject(std::shared_ptr<RailVehicle> vehicle)
 {
-  if(!vehicle)
-    return; //Cannot add null vehicles
+  if(!vehicle || (vehicle->activeTrain.value() && train().active))
+    return; //Cannot add null vehicles or vehicles in other active trains to an active train
 
   std::shared_ptr<TrainVehicleListItem> object = getItemFromVehicle(vehicle);
   if(object)
@@ -180,6 +180,9 @@ void TrainVehicleList::addObject(std::shared_ptr<RailVehicle> vehicle)
   object = std::make_shared<TrainVehicleListItem>(vehicle, *this, getItemId());
   object->vehicle.setValueInternal(vehicle);
   object->vehicle->trains.appendInternal(parent().shared_ptr<Train>());
+
+  if(train().active)
+    object->vehicle->activeTrain.setValueInternal(parent().shared_ptr<Train>());
 
   items.appendInternal(object);
   m_propertyChanged.emplace(object.get(), object->propertyChanged.connect(std::bind(&TrainVehicleList::propertyChanged, this, std::placeholders::_1)));
@@ -196,6 +199,9 @@ void TrainVehicleList::removeObject(const std::shared_ptr<TrainVehicleListItem> 
 
   m_propertyChanged[item.get()].disconnect();
   m_propertyChanged.erase(item.get());
+
+  if(item->vehicle->activeTrain.value() == parent().shared_ptr<Train>())
+    item->vehicle->activeTrain.setValueInternal(nullptr);
 
   item->vehicle->trains.removeInternal(parent().shared_ptr<Train>());
   item->destroy();
