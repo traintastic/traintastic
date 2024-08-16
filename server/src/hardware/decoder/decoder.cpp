@@ -29,6 +29,7 @@
 #include "../protocol/dcc/dcc.hpp"
 #include "../throttle/throttle.hpp"
 #include "../../world/world.hpp"
+#include "../../core/eventloop.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../core/attributes.hpp"
 #include "../../core/method.tpp"
@@ -42,6 +43,8 @@ const std::shared_ptr<Decoder> Decoder::null;
 
 Decoder::Decoder(World& world, std::string_view _id) :
   IdObject(world, _id),
+  m_functionLatchTimer{EventLoop::ioContext},
+  m_currentLatchedFunction(NO_FUNCTION),
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
   interface{this, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](const std::shared_ptr<DecoderController>& value)
@@ -273,7 +276,7 @@ void Decoder::setFunctionValue(uint32_t number, bool value)
 {
   const auto& f = getFunction(number);
   if(f && getFunctionValue(f) != value)
-    f->value.setValueInternal(value);
+    f->value.setValue(value);
 }
 
 bool Decoder::acquire(Throttle& driver, bool steal)
@@ -446,4 +449,79 @@ void Decoder::changed(DecoderChangeFlags changes, uint32_t functionNumber)
   if(interface)
     interface->decoderChanged(*this, changes, functionNumber);
   decoderChanged(*this, changes, functionNumber);
+
+  if(has(changes, DecoderChangeFlags::FunctionValue))
+  {
+    const auto& f = getFunction(functionNumber);
+    if(m_currentLatchedFunction == functionNumber && (!f || f->value == false))
+    {
+      // Stop scheduled unlatch for current function, check other functions
+      rescheduleLatchedFunctionTimer();
+    }
+    else if(f && f->value == true && f->timeoutSeconds.value() > 0)
+    {
+      if(m_currentLatchedFunction == NO_FUNCTION)
+      {
+        // Schedule new timer
+        rescheduleLatchedFunctionTimer();
+      }
+      else if(m_currentLatchedFunction != functionNumber && f->getScheduledTimeout() < m_functionLatchTimer.expiry())
+      {
+        // If we timeout before current scheduled timer to this function
+        rescheduleLatchedFunctionTimer();
+      }
+    }
+  }
+}
+
+void Decoder::rescheduleLatchedFunctionTimer()
+{
+  if(m_currentLatchedFunction != NO_FUNCTION)
+  {
+    // Cancel current active timer before rescheduling
+    m_currentLatchedFunction = NO_FUNCTION;
+    m_functionLatchTimer.cancel();
+  }
+
+  std::chrono::steady_clock::time_point m_firstTimeout;
+
+  for(const auto& f : *functions)
+  {
+    if(f->timeoutSeconds.value() > 0 && f->value == true)
+    {
+      const auto scheduledTimout = f->getScheduledTimeout();
+      if(m_currentLatchedFunction == NO_FUNCTION || scheduledTimout < m_firstTimeout)
+      {
+        // We are the first function to timeout
+        m_firstTimeout = scheduledTimout;
+        m_currentLatchedFunction = f->number;
+      }
+    }
+  }
+
+  // Only start timer if needed
+  if(m_currentLatchedFunction != NO_FUNCTION)
+  {
+    m_functionLatchTimer.expires_at(m_firstTimeout);
+    m_functionLatchTimer.async_wait(std::bind(&Decoder::onLatchFunctionTimeout, this, std::placeholders::_1));
+  }
+}
+
+void Decoder::onLatchFunctionTimeout(const boost::system::error_code& ec)
+{
+  if(ec)
+    return; // Do nothing if we get cancelled
+
+  assert(m_currentLatchedFunction != NO_FUNCTION);
+
+  uint32_t currentLatchedFunction = m_currentLatchedFunction;
+
+  // Reset current latched function to allow rescheduling
+  m_currentLatchedFunction = NO_FUNCTION;
+
+  // We have not been cancelled, turn off latched function
+  const auto& f = getFunction(currentLatchedFunction);
+  f->value.setValue(false);
+
+  rescheduleLatchedFunctionTimer();
 }

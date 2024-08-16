@@ -46,10 +46,15 @@ DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
     }},
   function{this, "function", DecoderFunctionFunction::Generic, PropertyFlags::ReadWrite | PropertyFlags::Store},
   value{this, "value", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
-    [this](bool /*newValue*/)
+    [this](bool newValue)
     {
+      if(timeoutSeconds.value() > 0 && newValue)
+        m_scheduledTimeout = std::chrono::steady_clock::now() + std::chrono::seconds(timeoutSeconds.value());
+      else
+        m_scheduledTimeout = {};
       m_decoder.changed(DecoderChangeFlags::FunctionValue, number);
-    }}
+    }},
+  timeoutSeconds{this, "timeout_seconds", 0, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   const bool editable = contains(decoder.world().state.value(), WorldState::Edit);
 
@@ -67,6 +72,9 @@ DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
   Attributes::addEnabled(value, true);
   Attributes::addObjectEditor(value, false);
   m_interfaceItems.add(value);
+  Attributes::addEnabled(timeoutSeconds, false);
+  Attributes::addMinMax(timeoutSeconds, 0, 60);
+  m_interfaceItems.add(timeoutSeconds);
 }
 
 std::string DecoderFunction::getObjectId() const
@@ -90,6 +98,9 @@ void DecoderFunction::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(name, editable);
   Attributes::setEnabled(type, editable);
   Attributes::setEnabled(function, editable);
+
+  bool momentaryOrHold = (type == DecoderFunctionType::Momentary || type == DecoderFunctionType::Hold);
+  Attributes::setEnabled(timeoutSeconds, editable && momentaryOrHold);
 }
 
 void DecoderFunction::typeChanged()
@@ -110,4 +121,11 @@ void DecoderFunction::typeChanged()
       break;
   }
   Attributes::setEnabled(value, !isAlwaysOffOrOn(type));
+
+  const bool editable = contains(m_decoder.world().state.value(), WorldState::Edit);
+  bool momentaryOrHold = (type == DecoderFunctionType::Momentary || type == DecoderFunctionType::Hold);
+  Attributes::setEnabled(timeoutSeconds, editable && momentaryOrHold);
+
+  if(!momentaryOrHold)
+    timeoutSeconds.setValueInternal(0);
 }
