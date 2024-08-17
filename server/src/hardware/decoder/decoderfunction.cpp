@@ -48,7 +48,7 @@ DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
   value{this, "value", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
     [this](bool newValue)
     {
-      if(timeoutSeconds.value() > 0 && newValue)
+      if(hasTimeout() > 0 && newValue)
         m_scheduledTimeout = std::chrono::steady_clock::now() + std::chrono::seconds(timeoutSeconds.value());
       else
         m_scheduledTimeout = {};

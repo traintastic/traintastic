@@ -74,6 +74,8 @@ class DecoderFunction : public Object
     {
       return m_scheduledTimeout;
     }
+
+    inline bool hasTimeout() const { return timeoutSeconds.value() > 0; }
 };
 
 #endif

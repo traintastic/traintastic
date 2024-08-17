@@ -458,7 +458,7 @@ void Decoder::changed(DecoderChangeFlags changes, uint32_t functionNumber)
       // Stop scheduled unlatch for current function, check other functions
       rescheduleLatchedFunctionTimer();
     }
-    else if(f && f->value == true && f->timeoutSeconds.value() > 0)
+    else if(f && f->value == true && f->hasTimeout() > 0)
     {
       if(m_currentLatchedFunction == NO_FUNCTION)
       {
@@ -487,7 +487,7 @@ void Decoder::rescheduleLatchedFunctionTimer()
 
   for(const auto& f : *functions)
   {
-    if(f->timeoutSeconds.value() > 0 && f->value == true)
+    if(f->hasTimeout() > 0 && f->value == true)
     {
       const auto scheduledTimout = f->getScheduledTimeout();
       if(m_currentLatchedFunction == NO_FUNCTION || scheduledTimout < m_firstTimeout)
