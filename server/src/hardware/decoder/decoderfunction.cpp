@@ -73,7 +73,8 @@ DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
   Attributes::addObjectEditor(value, false);
   m_interfaceItems.add(value);
   Attributes::addEnabled(timeoutSeconds, false);
-  Attributes::addMinMax(timeoutSeconds, 0, 60);
+  Attributes::addVisible(timeoutSeconds, false);
+  Attributes::addMinMax(timeoutSeconds, timeoutSecondsMin, timeoutSecondsMax);
   m_interfaceItems.add(timeoutSeconds);
 }
 
@@ -101,6 +102,7 @@ void DecoderFunction::worldEvent(WorldState state, WorldEvent event)
 
   bool momentaryOrHold = (type == DecoderFunctionType::Momentary || type == DecoderFunctionType::Hold);
   Attributes::setEnabled(timeoutSeconds, editable && momentaryOrHold);
+  Attributes::setVisible(timeoutSeconds, editable && momentaryOrHold);
 }
 
 void DecoderFunction::typeChanged()
@@ -125,6 +127,7 @@ void DecoderFunction::typeChanged()
   const bool editable = contains(m_decoder.world().state.value(), WorldState::Edit);
   bool momentaryOrHold = (type == DecoderFunctionType::Momentary || type == DecoderFunctionType::Hold);
   Attributes::setEnabled(timeoutSeconds, editable && momentaryOrHold);
+  Attributes::setVisible(timeoutSeconds, editable && momentaryOrHold);
 
   if(!momentaryOrHold)
     timeoutSeconds.setValueInternal(0);
