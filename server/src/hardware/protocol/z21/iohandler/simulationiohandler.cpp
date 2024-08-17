@@ -115,6 +115,7 @@ bool SimulationIOHandler::send(const Message& message)
               empty.setAddress(getLocoInfo.address(), getLocoInfo.isLongAddress());
               empty.setSpeedSteps(126);
               empty.setEmergencyStop();
+              empty.updateChecksum();
               reply(empty);
             }
           }
@@ -143,6 +144,9 @@ bool SimulationIOHandler::send(const Message& message)
               info.setEmergencyStop();
             else
               info.setSpeedStep(setLocoDrive.speedStep());
+
+            info.setBusy(true);
+            info.updateChecksum();
 
             reply(info);
           }
@@ -178,6 +182,9 @@ bool SimulationIOHandler::send(const Message& message)
               break;
             }
             info.setFunction(setLocoFunction.functionIndex(), val);
+
+            info.setBusy(true);
+            info.updateChecksum();
 
             reply(info);
           }
