@@ -42,6 +42,15 @@ enum class ThrottleChannel : uint8_t;
 class Kernel final : public ::KernelBase
 {
   private:
+    //! Startup states, executed in order.
+    enum class State
+    {
+      Initial, // must be first
+      Reset,
+      GetInfo,
+      Started // must be last
+    };
+
     struct ThrottleInfo
     {
       DecoderProtocol protocol;
@@ -52,7 +61,7 @@ class Kernel final : public ::KernelBase
 
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
-    bool m_initialized = false;
+    State m_state = State::Initial;
     struct
     {
       Board board;
@@ -90,6 +99,13 @@ class Kernel final : public ::KernelBase
     void restartPingTimeout();
 
     const std::shared_ptr<HardwareThrottle>& getThrottle(ThrottleChannel channel, uint16_t throttleId, DecoderProtocol protocol, uint16_t address, bool steal = false);
+
+    void changeState(State value);
+    inline void nextState()
+    {
+      assert(m_state != State::Started);
+      changeState(static_cast<State>(static_cast<std::underlying_type_t<State>>(m_state) + 1));
+    }
 
   public:
     Kernel(const Kernel&) = delete;

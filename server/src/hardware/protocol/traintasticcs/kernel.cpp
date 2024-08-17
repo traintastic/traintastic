@@ -118,7 +118,7 @@ void Kernel::started()
 {
   assert(isKernelThread());
 
-  send(GetInfo());
+  nextState(); // start initalization sequence
 }
 
 void Kernel::receive(const Message& message)
@@ -134,18 +134,33 @@ void Kernel::receive(const Message& message)
 
   switch(message.command)
   {
-    case Command::Info:
-    {
-      const auto& info = static_cast<const Info&>(message);
-      m_info.board = info.board;
-      m_info.version.major = info.versionMajor;
-      m_info.version.minor = info.versionMinor;
-      m_info.version.patch = info.versionPatch;
-      m_initialized = true;
-      KernelBase::started();
-      restartPingTimeout();
+    case Command::ResetOk:
+      if(m_state == State::Reset)
+      {
+        nextState();
+      }
+      else
+      {
+        assert(false); // may not happen, reset only once at start up
+      }
       break;
-    }
+
+    case Command::Info:
+      if(m_state == State::GetInfo)
+      {
+        const auto& info = static_cast<const Info&>(message);
+        m_info.board = info.board;
+        m_info.version.major = info.versionMajor;
+        m_info.version.minor = info.versionMinor;
+        m_info.version.patch = info.versionPatch;
+        nextState();
+      }
+      else
+      {
+        assert(false); // may not happen, get info only once at start up
+      }
+      break;
+
     case Command::Pong:
     //case Command::InputChanged:
       break;
@@ -200,6 +215,7 @@ void Kernel::receive(const Message& message)
         });
       break;
     }
+    case Command::Reset:
     case Command::Ping:
     case Command::GetInfo:
     //case Command::GetInputState:
@@ -219,7 +235,7 @@ void Kernel::send(const Message& message)
 {
   if(m_ioHandler->send(message))
   {
-    if(m_initialized)
+    if(m_state == State::Started)
     {
       restartPingTimeout();
     }
@@ -308,6 +324,33 @@ const std::shared_ptr<HardwareThrottle>& Kernel::getThrottle(ThrottleChannel cha
   }
 
   return throttleInfo->throttle;
+}
+
+void Kernel::changeState(State value)
+{
+  assert(isKernelThread());
+  assert(m_state != value);
+
+  m_state = value;
+
+  switch(m_state)
+  {
+    case State::Initial:
+      break;
+
+    case State::Reset:
+      send(Reset());
+      break;
+
+    case State::GetInfo:
+      send(GetInfo());
+      break;
+
+    case State::Started:
+      KernelBase::started();
+      restartPingTimeout(); // enable keep alive ping
+      break;
+  }
 }
 
 }

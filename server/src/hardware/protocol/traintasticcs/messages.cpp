@@ -31,10 +31,14 @@ constexpr std::string_view toString(Command value)
 {
   switch(value)
   {
+    case Command::Reset:
+      return "Reset";
     case Command::Ping:
       return "Ping";
     case Command::GetInfo:
       return "GetInfo";
+    case Command::ResetOk:
+      return "ResetOk";
     case Command::Pong:
       return "Pong";
     case Command::Info:
@@ -53,8 +57,10 @@ std::string toString(const Message& message)
 
   switch(message.command)
   {
+    case Command::Reset:
     case Command::Ping:
     case Command::GetInfo:
+    case Command::ResetOk:
     case Command::Pong:
       assert(message.length == 0);
       break;

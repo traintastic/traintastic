@@ -43,10 +43,12 @@ std::string toString(const Message& message);
 enum class Command : uint8_t
 {
   // Traintastic -> Traintastic CS
-  Ping = 0x00,
-  GetInfo = 0x01,
+  Reset = 0x00,
+  Ping = 0x01,
+  GetInfo = 0x02,
 
   // Traintatic CS -> Traintastic
+  ResetOk = FROM_CS | Reset,
   Pong = FROM_CS | Ping,
   Info = FROM_CS | GetInfo,
   ThrottleSetSpeedDirection = FROM_CS | 0x30,
@@ -83,6 +85,22 @@ struct MessageNoData : Message
   }
 };
 static_assert(sizeof(MessageNoData) == 3);
+
+struct Reset : MessageNoData
+{
+  constexpr Reset()
+    : MessageNoData(Command::Reset)
+  {
+  }
+};
+
+struct ResetOk : MessageNoData
+{
+  constexpr ResetOk()
+    : MessageNoData(Command::ResetOk)
+  {
+  }
+};
 
 struct Ping : MessageNoData
 {
