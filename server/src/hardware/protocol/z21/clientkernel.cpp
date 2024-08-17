@@ -55,9 +55,9 @@ void ClientKernel::receive(const Message& message)
 {
   if(m_config.debugLogRXTX)
     EventLoop::call(
-      [logId_=logId, msg=toString(message)]()
+      [this, msg=toString(message)]()
       {
-        Log::log(logId_, LogMessage::D2002_RX_X, msg);
+        Log::log(logId, LogMessage::D2002_RX_X, msg);
       });
 
   switch(message.header())
@@ -807,9 +807,9 @@ void ClientKernel::send(const Message& message)
   {
     if(m_config.debugLogRXTX)
       EventLoop::call(
-        [logId_=logId, msg=toString(message)]()
+        [this, msg=toString(message)]()
         {
-          Log::log(logId_, LogMessage::D2001_TX_X, msg);
+          Log::log(logId, LogMessage::D2001_TX_X, msg);
         });
   }
   else
