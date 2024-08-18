@@ -248,6 +248,41 @@ struct Attributes
     setMinMax(property, range.first, range.second);
   }
 
+  template<typename T>
+  static inline void addStep(Property<T>& property, T value)
+  {
+    static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
+    property.addAttribute(AttributeName::Step, value);
+  }
+
+  template<class T, class Unit>
+  static inline void addStep(UnitProperty<T, Unit>& property, T value, Unit unit)
+  {
+    static_assert(std::is_floating_point_v<T>);
+    property.addAttribute(AttributeName::Step, convertUnit(value, unit, property.unit()));
+  }
+
+  template<typename T>
+  static inline void setStep(Property<T>& property, T value)
+  {
+    static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
+    property.setAttribute(AttributeName::Step, value);
+  }
+
+  template<class T, class Unit>
+  static inline void setStep(UnitProperty<T, Unit>& property, T value, Unit unit)
+  {
+    static_assert(std::is_floating_point_v<T>);
+    property.setAttribute(AttributeName::Step, convertUnit(value, unit, property.unit()));
+  }
+
+  template<typename T>
+  static inline T getStep(const Property<T>& property)
+  {
+    static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
+    return property.template getAttribute<T>(AttributeName::Step);
+  }
+
   static inline void addVisible(InterfaceItem& item, bool value)
   {
     item.addAttribute(AttributeName::Visible, value);
