@@ -100,6 +100,8 @@ void TrainVehicleList::load(WorldLoader& loader, const nlohmann::json& data)
   nlohmann::json objects = state.value("items", nlohmann::json::array());
   if(!objects.empty())
   {
+    m_propertyChanged.clear();
+
     std::vector<std::shared_ptr<TrainVehicleListItem>> values;
     for(const auto& object : objects.items())
     {
@@ -113,8 +115,37 @@ void TrainVehicleList::load(WorldLoader& loader, const nlohmann::json& data)
       }
       else
         break;
-      }
-      items.load(std::move(values));
+    }
+    items.load(std::move(values));
+  }
+  else
+  {
+    //! \todo Remove in v0.4
+    objects = data.value("objects", nlohmann::json::array());
+    std::vector<ObjectPtr> oldItems;
+    oldItems.reserve(objects.size());
+    for(auto& [_, id] : objects.items())
+    {
+      static_cast<void>(_); // silence unused warning
+      if(ObjectPtr item = loader.getObject(id.get<std::string_view>()))
+        oldItems.emplace_back(std::move(item));
+    }
+
+    m_propertyChanged.clear();
+    for(auto& item : oldItems)
+    {
+      std::shared_ptr<RailVehicle> vehicle = std::dynamic_pointer_cast<RailVehicle>(item);
+      if(!vehicle)
+        continue;
+
+      std::shared_ptr<TrainVehicleListItem> object;
+      object = std::make_shared<TrainVehicleListItem>(vehicle, *this, getItemId());
+      object->vehicle.setValueInternal(vehicle);
+      object->vehicle->trains.appendInternal(parent().shared_ptr<Train>());
+
+      items.appendInternal(object);
+      m_propertyChanged.emplace(object.get(), object->propertyChanged.connect(std::bind(&TrainVehicleList::propertyChanged, this, std::placeholders::_1)));
+    }
   }
   SubObject::load(loader, data);
   rowCountChanged();
