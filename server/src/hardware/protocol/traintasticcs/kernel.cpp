@@ -215,6 +215,17 @@ void Kernel::receive(const Message& message)
         });
       break;
     }
+    case Command::Error:
+      EventLoop::call(
+        [this, errMsg=static_cast<const Error&>(message)]()
+        {
+          Log::log(logId, LogMessage::E2025_PROTOCOL_ERROR_X_X_FOR_COMMAND_X_X,
+            static_cast<std::underlying_type_t<ErrorCode>>(errMsg.code), toString(errMsg.code),
+            static_cast<std::underlying_type_t<ErrorCode>>(errMsg.request), toString(errMsg.request));
+          error();
+        });
+      break;
+
     case Command::Reset:
     case Command::Ping:
     case Command::GetInfo:

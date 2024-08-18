@@ -53,8 +53,57 @@ enum class Command : uint8_t
   Info = FROM_CS | GetInfo,
   ThrottleSetSpeedDirection = FROM_CS | 0x30,
   ThrottleSetFunctions = FROM_CS | 0x31,
+  Error = FROM_CS | 0x7F
 };
 #undef FROM_CS
+
+constexpr std::string_view toString(Command value)
+{
+  switch(value)
+  {
+    case Command::Reset:
+      return "Reset";
+    case Command::Ping:
+      return "Ping";
+    case Command::GetInfo:
+      return "GetInfo";
+    case Command::ResetOk:
+      return "ResetOk";
+    case Command::Pong:
+      return "Pong";
+    case Command::Info:
+      return "Info";
+    case Command::ThrottleSetSpeedDirection:
+      return "ThrottleSetSpeedDirection";
+    case Command::ThrottleSetFunctions:
+      return "ThrottleSetFunctions";
+    case Command::Error:
+      return "Error";
+  }
+  return {};
+}
+
+enum class ErrorCode : uint8_t
+{
+  // don't use zero, reserved for no error
+  Unknown = 1,
+  InvalidCommand = 2,
+  InvalidCommandPayload = 3,
+};
+
+constexpr std::string_view toString(ErrorCode value)
+{
+  switch(value)
+  {
+    case ErrorCode::Unknown:
+      return "Unknown";
+    case ErrorCode::InvalidCommand:
+      return "InvalidCommand";
+    case ErrorCode::InvalidCommandPayload:
+      return "InvalidCommandPayload";
+  }
+  return {};
+}
 
 struct Message
 {
@@ -233,6 +282,22 @@ struct ThrottleSetFunctions : ThrottleMessage
     return {functions[index] & 0x7F, (functions[index] & 0x80) != 0};
   }
 };
+
+struct Error : Message
+{
+  Command request;
+  ErrorCode code;
+  Checksum checksum;
+
+  constexpr Error(Command request_, ErrorCode code_)
+    : Message(Command::Error, sizeof(Error) - sizeof(Message) - sizeof(checksum))
+    , request{request_}
+    , code{code_}
+    , checksum{static_cast<Checksum>(static_cast<uint8_t>(command) ^ length ^ static_cast<uint8_t>(request) ^ static_cast<uint8_t>(code))}
+  {
+  }
+};
+static_assert(sizeof(Error) == 5);
 
 inline Checksum calcChecksum(const Message& message)
 {

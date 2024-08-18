@@ -27,30 +27,6 @@
 
 namespace TraintasticCS {
 
-constexpr std::string_view toString(Command value)
-{
-  switch(value)
-  {
-    case Command::Reset:
-      return "Reset";
-    case Command::Ping:
-      return "Ping";
-    case Command::GetInfo:
-      return "GetInfo";
-    case Command::ResetOk:
-      return "ResetOk";
-    case Command::Pong:
-      return "Pong";
-    case Command::Info:
-      return "Info";
-    case Command::ThrottleSetSpeedDirection:
-      return "ThrottleSetSpeedDirection";
-    case Command::ThrottleSetFunctions:
-      return "ThrottleSetFunctions";
-  }
-  return {};
-}
-
 std::string toString(const Message& message)
 {
   std::string s{toString(message.command)};
@@ -112,6 +88,13 @@ std::string toString(const Message& message)
         const auto function = setFunctions.function(i);
         s.append(" f").append(std::to_string(function.first)).append("=").append(function.second ? "on" : "off");
       }
+      break;
+    }
+    case Command::Error:
+    {
+      const auto& error = static_cast<const Error&>(message);
+      s.append(" request=").append(toString(error.request))
+        .append(" code=").append(toString(error.code));
       break;
     }
   }

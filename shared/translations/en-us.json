@@ -6415,5 +6415,9 @@
     {
         "term": "settings:load_last_world_on_startup",
         "definition": "Load last world on startup"
+    },
+    {
+        "term": "message:E2025",
+        "definition": "Protocol error %1 (%2) for command %3 (%4)."
     }
 ]

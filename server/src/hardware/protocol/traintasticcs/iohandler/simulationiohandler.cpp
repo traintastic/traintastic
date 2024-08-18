@@ -48,22 +48,50 @@ bool SimulationIOHandler::send(const Message& message)
 {
   switch(message.command)
   {
+    case Command::Reset:
+      if(message.length == 0)
+      {
+        reply(ResetOk());
+      }
+      else
+      {
+        reply(Error(message.command, ErrorCode::InvalidCommandPayload));
+      }
+      return true;
+
     case Command::Ping:
-      reply(Pong());
-      break;
+      if(message.length == 0)
+      {
+        reply(Pong());
+      }
+      else
+      {
+        reply(Error(message.command, ErrorCode::InvalidCommandPayload));
+      }
+      return true;
 
     case Command::GetInfo:
-      reply(Info(Board::TraintasticCS, 0, 1, 0));
-      break;
+      if(message.length != 0)
+      {
+        reply(Info(Board::TraintasticCS, 0, 1, 0));
+      }
+      else
+      {
+        reply(Error(message.command, ErrorCode::InvalidCommandPayload));
+      }
+      return true;
 
+    case Command::ResetOk:
     case Command::Pong:
     case Command::Info:
     case Command::ThrottleSetSpeedDirection:
     case Command::ThrottleSetFunctions:
+    case Command::Error:
       assert(false); // only send by device
       break;
   }
 
+  reply(Error(message.command, ErrorCode::InvalidCommand));
   return true;
 }
 
