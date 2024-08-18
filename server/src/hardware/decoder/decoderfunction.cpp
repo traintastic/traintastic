@@ -48,7 +48,7 @@ DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
   value{this, "value", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
     [this](bool newValue)
     {
-      if(hasTimeout() > 0 && newValue)
+      if(hasTimeout() && newValue)
         m_scheduledTimeout = std::chrono::steady_clock::now() + std::chrono::seconds(timeoutSeconds.value());
       else
         m_scheduledTimeout = {};
@@ -99,10 +99,10 @@ void DecoderFunction::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(name, editable);
   Attributes::setEnabled(type, editable);
   Attributes::setEnabled(function, editable);
+  Attributes::setEnabled(timeoutSeconds, editable);
 
   bool momentaryOrHold = (type == DecoderFunctionType::Momentary || type == DecoderFunctionType::Hold);
-  Attributes::setEnabled(timeoutSeconds, editable && momentaryOrHold);
-  Attributes::setVisible(timeoutSeconds, editable && momentaryOrHold);
+  Attributes::setVisible(timeoutSeconds, momentaryOrHold);
 }
 
 void DecoderFunction::typeChanged()
@@ -126,9 +126,6 @@ void DecoderFunction::typeChanged()
 
   const bool editable = contains(m_decoder.world().state.value(), WorldState::Edit);
   bool momentaryOrHold = (type == DecoderFunctionType::Momentary || type == DecoderFunctionType::Hold);
-  Attributes::setEnabled(timeoutSeconds, editable && momentaryOrHold);
-  Attributes::setVisible(timeoutSeconds, editable && momentaryOrHold);
-
-  if(!momentaryOrHold)
-    timeoutSeconds.setValueInternal(0);
+  Attributes::setEnabled(timeoutSeconds, editable);
+  Attributes::setVisible(timeoutSeconds, momentaryOrHold);
 }

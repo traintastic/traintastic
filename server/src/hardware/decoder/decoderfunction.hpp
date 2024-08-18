@@ -75,7 +75,11 @@ class DecoderFunction : public Object
       return m_scheduledTimeout;
     }
 
-    inline bool hasTimeout() const { return timeoutSeconds.value() > 0; }
+    inline bool hasTimeout() const
+    {
+      return (type == DecoderFunctionType::Momentary || type == DecoderFunctionType::Hold)
+              && timeoutSeconds.value() > 0;
+    }
 };
 
 #endif
