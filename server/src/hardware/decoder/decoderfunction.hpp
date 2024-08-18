@@ -34,8 +34,9 @@ class Decoder;
 class DecoderFunction : public Object
 {
   private:
-    static constexpr uint16_t timeoutSecondsMin = 0;
-    static constexpr uint16_t timeoutSecondsMax = 60;
+    static constexpr uint16_t timeoutMillisMin = 0;
+    static constexpr uint16_t timeoutMillisMax = 60000; // 1 minute
+    static constexpr uint16_t timeoutMillisStep = 100;
 
     void typeChanged();
 
@@ -61,7 +62,7 @@ class DecoderFunction : public Object
     //! \brief Timeout in seconds to unlatch (turn off) active momentary functions
     //! If set to zero, functions will not be automatically turned off
     //! Active only for \ref DecoderFunctionType::Momentary and \ref DecoderFunctionType::Hold
-    Property<uint16_t> timeoutSeconds;
+    Property<uint16_t> timeoutMillis;
 
     DecoderFunction(Decoder& decoder, uint8_t _number);
 
@@ -78,7 +79,7 @@ class DecoderFunction : public Object
     inline bool hasTimeout() const
     {
       return (type == DecoderFunctionType::Momentary || type == DecoderFunctionType::Hold)
-              && timeoutSeconds.value() > 0;
+              && timeoutMillis.value() > 0;
     }
 };
 

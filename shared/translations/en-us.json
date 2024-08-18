@@ -900,6 +900,15 @@
         "fuzzy": 0
     },
     {
+        "term": "decoder_function_type:timeout_milliseconds",
+        "definition": "Timeout milliseconds",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
         "term": "decoder_protocol:auto",
         "definition": "Auto",
         "context": "",
