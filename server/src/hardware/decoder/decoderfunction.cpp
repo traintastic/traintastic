@@ -46,9 +46,21 @@ DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
     }},
   function{this, "function", DecoderFunctionFunction::Generic, PropertyFlags::ReadWrite | PropertyFlags::Store},
   value{this, "value", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
-    [this](bool /*newValue*/)
+    [this](bool newValue)
     {
+      if(hasTimeout() && newValue)
+        m_scheduledTimeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeoutMillis.value());
+      else
+        m_scheduledTimeout = {};
       m_decoder.changed(DecoderChangeFlags::FunctionValue, number);
+    }},
+  timeoutMillis{this, "timeout_milliseconds", 0, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
+    [](uint16_t &newValue) -> bool
+    {
+      // Round to nearest 100
+      double temp = newValue / 100.0;
+      newValue = uint16_t(std::round(temp) * 100);
+      return true;
     }}
 {
   const bool editable = contains(decoder.world().state.value(), WorldState::Edit);
@@ -67,6 +79,11 @@ DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
   Attributes::addEnabled(value, true);
   Attributes::addObjectEditor(value, false);
   m_interfaceItems.add(value);
+  Attributes::addEnabled(timeoutMillis, false);
+  Attributes::addVisible(timeoutMillis, false);
+  Attributes::addMinMax(timeoutMillis, timeoutMillisMin, timeoutMillisMax);
+  Attributes::addStep(timeoutMillis, timeoutMillisStep);
+  m_interfaceItems.add(timeoutMillis);
 }
 
 std::string DecoderFunction::getObjectId() const
@@ -90,6 +107,10 @@ void DecoderFunction::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(name, editable);
   Attributes::setEnabled(type, editable);
   Attributes::setEnabled(function, editable);
+  Attributes::setEnabled(timeoutMillis, editable);
+
+  bool momentaryOrHold = (type == DecoderFunctionType::Momentary || type == DecoderFunctionType::Hold);
+  Attributes::setVisible(timeoutMillis, momentaryOrHold);
 }
 
 void DecoderFunction::typeChanged()
@@ -110,4 +131,9 @@ void DecoderFunction::typeChanged()
       break;
   }
   Attributes::setEnabled(value, !isAlwaysOffOrOn(type));
+
+  const bool editable = contains(m_decoder.world().state.value(), WorldState::Edit);
+  bool momentaryOrHold = (type == DecoderFunctionType::Momentary || type == DecoderFunctionType::Hold);
+  Attributes::setEnabled(timeoutMillis, editable);
+  Attributes::setVisible(timeoutMillis, momentaryOrHold);
 }

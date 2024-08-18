@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODER_HPP
 
 #include <type_traits>
+#include <boost/asio/steady_timer.hpp>
 #include "../../core/idobject.hpp"
 #include "../../core/objectproperty.hpp"
 #include <traintastic/enum/decoderprotocol.hpp>
@@ -47,6 +48,10 @@ class Decoder : public IdObject
     bool m_worldMute;
     bool m_worldNoSmoke;
     std::shared_ptr<Throttle> m_driver;
+
+    boost::asio::steady_timer m_functionLatchTimer;
+    uint32_t m_currentLatchedFunction;
+    static constexpr uint32_t NO_FUNCTION = std::numeric_limits<uint32_t>::max();
 
   protected:
     void loaded() final;
@@ -74,7 +79,17 @@ class Decoder : public IdObject
     void updateEditable(bool editable);
     void changed(DecoderChangeFlags changes, uint32_t functionNumber = 0);
 
-  public:
+    //! \brief Schedule timer to turn off latched momentary function
+    //! This function cancels current active timer and searches for other active
+    //! momentary functions. If no momentary function is active no timer is scheduled.
+    void rescheduleLatchedFunctionTimer();
+
+    //! \brief Timer handler which actually turns off the function
+    //! If not cancelled then it calls \ref rescheduleLatchedFunctionTimer() to check
+    //! for other active momentary functions.
+    void onLatchFunctionTimeout(const boost::system::error_code &ec);
+
+public:
     CLASS_ID("decoder")
     CREATE_DEF(Decoder)
 

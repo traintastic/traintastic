@@ -37,6 +37,13 @@ PropertySpinBox::PropertySpinBox(Property& property, QWidget* parent) :
   setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
   setRange(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
   setValue(m_property.toInt());
+
+  if(m_property.hasAttribute(AttributeName::Step))
+  {
+      setStepType(QSpinBox::DefaultStepType);
+      setSingleStep(m_property.getAttributeInt(AttributeName::Step, 1));
+  }
+
   connect(&m_property, &AbstractProperty::valueChangedInt, this,
     [this](int value)
     {
