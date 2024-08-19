@@ -237,9 +237,9 @@ void Train::addToWorld()
 void Train::destroying()
 {
   auto self = shared_ptr<Train>();
-  for(const auto& vehicle : *vehicles)
+  for(const auto& item : *vehicles)
   {
-    vehicle->vehicle->trains.removeInternal(self);
+    item->vehicle->trains.removeInternal(self);
   }
   m_world.trains->removeObject(self);
   IdObject::destroying();
@@ -252,7 +252,62 @@ void Train::loaded()
   Attributes::setEnabled(lob, overrideLength);
   Attributes::setEnabled(weight, overrideWeight);
 
+  if(active)
+  {
+    // Try activating all vehicles
+    bool allVehiclesFree = true;
+
+    for(const auto& item : *vehicles)
+    {
+      if(item->vehicle->activeTrain.value())
+      {
+        allVehiclesFree = false;
+        break;
+      }
+    }
+
+    if(allVehiclesFree && !vehicles->empty())
+    {
+      for(const auto& item : *vehicles)
+      {
+        item->vehicle->activeTrain.setValueInternal(shared_ptr<Train>());
+      }
+    }
+    else
+    {
+      // Maybe there was a file corruption, deactivate Train
+      active.setValueInternal(false);
+    }
+  }
+
+  // Update vehicle list state
   vehiclesChanged();
+
+  if(active)
+  {
+    if(!emergencyStop)
+    {
+      // If one vehicle is in Emergency stop, sync all Train
+      bool atLeastOneEmergencyStop = false;
+
+      for(const auto& vehicle : m_poweredVehicles)
+      {
+        if(vehicle->decoder && vehicle->decoder->emergencyStop)
+        {
+          atLeastOneEmergencyStop = true;
+          break;
+        }
+      }
+      if(atLeastOneEmergencyStop)
+        emergencyStop.setValueInternal(atLeastOneEmergencyStop);
+    }
+
+    // Manually sync emergency stop
+    for(const auto& vehicle : m_poweredVehicles)
+    {
+      vehicle->setEmergencyStop(emergencyStop);
+    }
+  }
 }
 
 void Train::worldEvent(WorldState state, WorldEvent event)
