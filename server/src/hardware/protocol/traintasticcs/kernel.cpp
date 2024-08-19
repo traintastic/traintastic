@@ -162,7 +162,17 @@ void Kernel::receive(const Message& message)
       break;
 
     case Command::Pong:
-    //case Command::InputChanged:
+      break;
+
+    case Command::InitXpressNetOk:
+      if(m_state == State::InitXpressNet) /*[[likely]]*/
+      {
+        nextState();
+      }
+      else
+      {
+        assert(false); // may not happen, init xpressnet only once at start up
+      }
       break;
 
     case Command::ThrottleSetSpeedDirection:
@@ -229,7 +239,7 @@ void Kernel::receive(const Message& message)
     case Command::Reset:
     case Command::Ping:
     case Command::GetInfo:
-    //case Command::GetInputState:
+    case Command::InitXpressNet:
       assert(false); // we MUST never receive these
       break;
   }
@@ -355,6 +365,10 @@ void Kernel::changeState(State value)
 
     case State::GetInfo:
       send(GetInfo());
+      break;
+
+    case State::InitXpressNet:
+      send(InitXpressNet());
       break;
 
     case State::Started:

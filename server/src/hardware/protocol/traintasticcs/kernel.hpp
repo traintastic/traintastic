@@ -48,6 +48,7 @@ class Kernel final : public ::KernelBase
       Initial, // must be first
       Reset,
       GetInfo,
+      InitXpressNet,
       Started // must be last
     };
 

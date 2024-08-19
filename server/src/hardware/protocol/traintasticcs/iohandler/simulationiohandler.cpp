@@ -49,41 +49,58 @@ bool SimulationIOHandler::send(const Message& message)
   switch(message.command)
   {
     case Command::Reset:
-      if(message.length == 0)
+      if(message.length != 0)
       {
-        reply(ResetOk());
+        reply(Error(message.command, ErrorCode::InvalidCommandPayload));
       }
       else
       {
-        reply(Error(message.command, ErrorCode::InvalidCommandPayload));
+        m_initXpressNet = false;
+        reply(ResetOk());
       }
       return true;
 
     case Command::Ping:
-      if(message.length == 0)
+      if(message.length != 0)
       {
-        reply(Pong());
+        reply(Error(message.command, ErrorCode::InvalidCommandPayload));
       }
       else
       {
-        reply(Error(message.command, ErrorCode::InvalidCommandPayload));
+        reply(Pong());
       }
       return true;
 
     case Command::GetInfo:
       if(message.length != 0)
       {
-        reply(Info(Board::TraintasticCS, 0, 1, 0));
+        reply(Error(message.command, ErrorCode::InvalidCommandPayload));
       }
       else
       {
-        reply(Error(message.command, ErrorCode::InvalidCommandPayload));
+        reply(Info(Board::TraintasticCS, 0, 1, 0));
       }
       return true;
 
+    case Command::InitXpressNet:
+      if(message.length != 0)
+      {
+        reply(Error(message.command, ErrorCode::InvalidCommandPayload));
+      }
+      else if(m_initXpressNet)
+      {
+        reply(Error(message.command, ErrorCode::AlreadyInitialized));
+      }
+      else
+      {
+        m_initXpressNet = true;
+        reply(InitXpressNetOk());
+      }
+      return true;
     case Command::ResetOk:
     case Command::Pong:
     case Command::Info:
+    case Command::InitXpressNetOk:
     case Command::ThrottleSetSpeedDirection:
     case Command::ThrottleSetFunctions:
     case Command::Error:

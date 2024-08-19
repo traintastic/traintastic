@@ -36,8 +36,10 @@ std::string toString(const Message& message)
     case Command::Reset:
     case Command::Ping:
     case Command::GetInfo:
+    case Command::InitXpressNet:
     case Command::ResetOk:
     case Command::Pong:
+    case Command::InitXpressNetOk:
       assert(message.length == 0);
       break;
 

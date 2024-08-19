@@ -32,6 +32,8 @@ namespace TraintasticCS {
 class SimulationIOHandler final : public IOHandler
 {
   private:
+    bool m_initXpressNet = false;
+
     void reply(const Message& message);
 
   public:
