@@ -25,6 +25,7 @@
 
 #include "../kernelbase.hpp"
 #include <map>
+#include <list>
 #include <boost/asio/steady_timer.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
@@ -36,6 +37,7 @@ enum class DecoderProtocol : uint8_t;
 namespace TraintasticCS {
 
 struct Message;
+enum class Command : uint8_t;
 enum class Board : uint8_t;
 enum class ThrottleChannel : uint8_t;
 
@@ -73,6 +75,8 @@ class Kernel final : public ::KernelBase
         uint8_t patch;
       } version;
     } m_info;
+    boost::asio::steady_timer m_responseTimeout;
+    std::list<std::pair<Command, std::chrono::steady_clock::time_point>> m_waitingForResponse;
     boost::asio::steady_timer m_pingTimeout;
 
     ThrottleController* m_throttleController;
@@ -97,6 +101,8 @@ class Kernel final : public ::KernelBase
         });
     }
 
+    void startResponseTimeout(Command command);
+    void restartResponseTimeoutTimer();
     void restartPingTimeout();
 
     const std::shared_ptr<HardwareThrottle>& getThrottle(ThrottleChannel channel, uint16_t throttleId, DecoderProtocol protocol, uint16_t address, bool steal = false);

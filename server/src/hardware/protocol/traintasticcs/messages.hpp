@@ -59,6 +59,28 @@ enum class Command : uint8_t
 };
 #undef FROM_CS
 
+constexpr bool isResponse(const Command value)
+{
+  switch(value)
+  {
+    case Command::ResetOk:
+    case Command::Info:
+    case Command::Pong:
+    case Command::InitXpressNetOk:
+    case Command::Error:
+      return true;
+
+    case Command::Reset:
+    case Command::Ping:
+    case Command::GetInfo:
+    case Command::InitXpressNet:
+    case Command::ThrottleSetSpeedDirection:
+    case Command::ThrottleSetFunctions:
+      break;
+  }
+  return false;
+}
+
 constexpr std::string_view toString(Command value)
 {
   switch(value)

@@ -29,6 +29,8 @@ namespace TraintasticCS {
 
 struct Config
 {
+  static constexpr auto responseTimeout = std::chrono::milliseconds(100);
+  static constexpr auto resetResponseTimeout = std::chrono::milliseconds(1000);
   static constexpr auto pingTimeout = std::chrono::milliseconds(1000);
 
   bool debugLogRXTX;

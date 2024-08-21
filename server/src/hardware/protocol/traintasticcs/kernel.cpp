@@ -42,6 +42,7 @@ namespace TraintasticCS {
 Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
   , m_simulation{simulation}
+  , m_responseTimeout{m_ioContext}
   , m_pingTimeout{m_ioContext}
   , m_config{config}
 {
@@ -130,6 +131,33 @@ void Kernel::receive(const Message& message)
       {
         Log::log(logId, LogMessage::D2002_RX_X, msg);
       });
+  }
+
+  // remove from response timeout list:
+  if(!m_waitingForResponse.empty() && isResponse(message.command))
+  {
+    const Command command = (message.command == Command::Error)
+      ? static_cast<const Error&>(message).request
+      : static_cast<Command>(static_cast<std::underlying_type_t<Command>>(message.command) & 0x7F);
+
+    auto it = m_waitingForResponse.begin();
+    while(it->first != command && it != m_waitingForResponse.end())
+    {
+      it++;
+    }
+    if(it != m_waitingForResponse.end())
+    {
+      const bool restartTimer = (it == m_waitingForResponse.begin());
+      m_waitingForResponse.erase(it);
+      if(restartTimer && !m_waitingForResponse.empty())
+      {
+        restartResponseTimeoutTimer();
+      }
+      else
+      {
+        m_responseTimeout.cancel();
+      }
+    }
   }
 
   switch(message.command)
@@ -256,6 +284,8 @@ void Kernel::send(const Message& message)
 {
   if(m_ioHandler->send(message))
   {
+    startResponseTimeout(message.command);
+
     if(m_state == State::Started)
     {
       restartPingTimeout();
@@ -275,6 +305,64 @@ void Kernel::send(const Message& message)
     // log message and go to error state
     error();
   }
+}
+
+void Kernel::startResponseTimeout(Command command)
+{
+  assert(isKernelThread());
+
+  // determine expire
+  std::chrono::steady_clock::time_point expire;
+  switch(command)
+  {
+    case Command::Reset:
+      expire = std::chrono::steady_clock::now() + Config::resetResponseTimeout;
+      break;
+
+    case Command::Ping:
+    case Command::GetInfo:
+    case Command::InitXpressNet:
+      expire = std::chrono::steady_clock::now() + Config::responseTimeout;
+      break;
+
+    default: /*[[unlikely]]*/
+      assert(false);
+      return;
+  }
+
+  // insert in sorted list:
+  auto it = m_waitingForResponse.begin();
+  while(it != m_waitingForResponse.end() && it->second <= expire)
+  {
+    it++;
+  }
+  const bool insertedAtFront = (it == m_waitingForResponse.begin());
+  m_waitingForResponse.emplace(it, std::make_pair(command, expire));
+
+  if(insertedAtFront)
+  {
+    restartResponseTimeoutTimer();
+  }
+}
+
+void Kernel::restartResponseTimeoutTimer()
+{
+  assert(!m_waitingForResponse.empty());
+  m_responseTimeout.cancel();
+  m_responseTimeout.expires_at(m_waitingForResponse.front().second);
+  m_responseTimeout.async_wait(
+    [this](const boost::system::error_code& ec)
+    {
+      if(!ec)
+      {
+        EventLoop::call(
+          [this]()
+          {
+            Log::log(logId, LogMessage::E2019_TIMEOUT_NO_RESPONSE_WITHIN_X_MS, Config::responseTimeout.count());
+            error();
+          });
+      }
+    });
 }
 
 void Kernel::restartPingTimeout()
