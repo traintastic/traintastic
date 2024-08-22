@@ -29,9 +29,13 @@ namespace TraintasticCS {
 
 Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
+  , xpressnetEnabled{this, "xpressnet_enabled", true, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogPing{this, "debug_log_ping", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
+  //Attributes::addGroup(xpressnetEnabled, Group::xpressnet);
+  m_interfaceItems.add(xpressnetEnabled);
+
   Attributes::addDisplayName(debugLogRXTX, DisplayName::Hardware::debugLogRXTX);
   //Attributes::addGroup(debugLogRXTX, Group::debug);
   m_interfaceItems.add(debugLogRXTX);
@@ -43,6 +47,8 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
 Config Settings::config() const
 {
   Config config;
+
+  config.xpressnet.enabled = xpressnetEnabled;
 
   config.debugLogRXTX = debugLogRXTX;
   config.debugLogPing = debugLogPing;

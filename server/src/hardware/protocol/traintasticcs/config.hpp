@@ -33,6 +33,11 @@ struct Config
   static constexpr auto resetResponseTimeout = std::chrono::milliseconds(1000);
   static constexpr auto pingTimeout = std::chrono::milliseconds(1000);
 
+  struct XpressNet
+  {
+    bool enabled;
+  } xpressnet;
+
   bool debugLogRXTX;
   bool debugLogPing;
 };

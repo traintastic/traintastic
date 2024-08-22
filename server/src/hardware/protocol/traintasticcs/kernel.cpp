@@ -456,7 +456,14 @@ void Kernel::changeState(State value)
       break;
 
     case State::InitXpressNet:
-      send(InitXpressNet());
+      if(m_config.xpressnet.enabled)
+      {
+        send(InitXpressNet());
+      }
+      else
+      {
+        nextState();
+      }
       break;
 
     case State::Started:
