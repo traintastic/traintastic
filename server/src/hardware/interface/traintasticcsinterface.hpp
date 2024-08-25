@@ -26,6 +26,7 @@
 #include "interface.hpp"
 #include "../../core/serialdeviceproperty.hpp"
 #include "../../core/objectproperty.hpp"
+#include "../input/inputcontroller.hpp"
 #include "../throttle/throttlecontroller.hpp"
 
 namespace TraintasticCS
@@ -39,6 +40,7 @@ namespace TraintasticCS
  */
 class TraintasticCSInterface final
   : public Interface
+  , public InputController
   , public ThrottleController
 {
   CLASS_ID("interface.traintastic_cs")
@@ -60,6 +62,12 @@ class TraintasticCSInterface final
     ObjectProperty<TraintasticCS::Settings> traintasticCS;
 
     TraintasticCSInterface(World& world, std::string_view _id);
+
+    // InputController:
+    const std::vector<uint32_t>* inputChannels() const final;
+    const std::vector<std::string_view>* inputChannelNames() const final;
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t channel) const final;
+    void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
 };
 
 #endif

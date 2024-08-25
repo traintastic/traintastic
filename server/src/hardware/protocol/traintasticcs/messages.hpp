@@ -28,6 +28,7 @@
 #include <cstddef>
 #include <string>
 #include <traintastic/enum/decoderprotocol.hpp>
+#include <traintastic/enum/tristate.hpp>
 #include "../../../utils/byte.hpp"
 
 namespace TraintasticCS {
@@ -47,12 +48,15 @@ enum class Command : uint8_t
   Ping = 0x01,
   GetInfo = 0x02,
   InitXpressNet = 0x03,
+  InitS88 = 0x04,
 
   // Traintatic CS -> Traintastic
   ResetOk = FROM_CS | Reset,
   Pong = FROM_CS | Ping,
   Info = FROM_CS | GetInfo,
   InitXpressNetOk = FROM_CS | InitXpressNet,
+  InitS88Ok = FROM_CS | InitS88,
+  InputStateChanged = FROM_CS | 0x20,
   ThrottleSetSpeedDirection = FROM_CS | 0x30,
   ThrottleSetFunctions = FROM_CS | 0x31,
   Error = FROM_CS | 0x7F
@@ -67,6 +71,7 @@ constexpr bool isResponse(const Command value)
     case Command::Info:
     case Command::Pong:
     case Command::InitXpressNetOk:
+    case Command::InitS88Ok:
     case Command::Error:
       return true;
 
@@ -74,6 +79,8 @@ constexpr bool isResponse(const Command value)
     case Command::Ping:
     case Command::GetInfo:
     case Command::InitXpressNet:
+    case Command::InitS88:
+    case Command::InputStateChanged:
     case Command::ThrottleSetSpeedDirection:
     case Command::ThrottleSetFunctions:
       break;
@@ -93,6 +100,8 @@ constexpr std::string_view toString(Command value)
       return "GetInfo";
     case Command::InitXpressNet:
       return "InitXpressNet";
+    case Command::InitS88:
+      return "InitS88";
     case Command::ResetOk:
       return "ResetOk";
     case Command::Pong:
@@ -101,6 +110,10 @@ constexpr std::string_view toString(Command value)
       return "Info";
     case Command::InitXpressNetOk:
       return "InitXpressNetOk";
+    case Command::InitS88Ok:
+      return "InitS88Ok";
+    case Command::InputStateChanged:
+      return "InputStateChanged";
     case Command::ThrottleSetSpeedDirection:
       return "ThrottleSetSpeedDirection";
     case Command::ThrottleSetFunctions:
@@ -246,6 +259,65 @@ struct InitXpressNetOk : MessageNoData
   }
 };
 
+struct InitS88 : Message
+{
+  uint8_t moduleCount;
+  Checksum checksum;
+
+  constexpr InitS88(uint8_t moduleCount_)
+    : Message(Command::InitS88, sizeof(InitS88) - sizeof(Message) - sizeof(checksum))
+    , moduleCount{moduleCount_}
+    , checksum{static_cast<Checksum>(static_cast<uint8_t>(command) ^ length ^ moduleCount)}
+  {
+  }
+};
+
+struct InitS88Ok : MessageNoData
+{
+  constexpr InitS88Ok()
+    : MessageNoData(Command::InitS88Ok)
+  {
+  }
+};
+
+enum class InputChannel : uint8_t
+{
+  LocoNet = 1,
+  XpressNet = 2,
+  S88 = 3,
+};
+
+enum class InputState : uint8_t
+{
+  Unknown = 0,
+  Low = 1,
+  High = 2,
+};
+
+struct InputStateChanged : Message
+{
+  InputChannel channel;
+  uint8_t addressH;
+  uint8_t addressL;
+  InputState state;
+  Checksum checksum;
+
+  constexpr InputStateChanged(InputChannel channel_, uint16_t address_, InputState state_)
+    : Message(Command::InputStateChanged, sizeof(InputStateChanged) - sizeof(Message) - sizeof(checksum))
+    , channel{channel_}
+    , addressH{high8(address_)}
+    , addressL{low8(address_)}
+    , state{state_}
+    , checksum{static_cast<Checksum>(static_cast<uint8_t>(command) ^ length ^ static_cast<uint8_t>(channel) ^ addressH ^ addressL ^ static_cast<uint8_t>(state))}
+  {
+  }
+
+  uint16_t address() const
+  {
+    return to16(addressL, addressH);
+  }
+};
+
 enum class ThrottleChannel : uint8_t
 {
   LocoNet = 1,
@@ -372,6 +444,39 @@ constexpr std::string_view toString(const TraintasticCS::Board value)
       return "TraintasticCS";
   }
   return {};
+}
+
+constexpr std::string_view toString(const TraintasticCS::InputChannel value)
+{
+  switch(value)
+  {
+    case TraintasticCS::InputChannel::LocoNet:
+      return "LocoNet";
+    case TraintasticCS::InputChannel::XpressNet:
+      return "XpressNet";
+    case TraintasticCS::InputChannel::S88:
+      return "S88";
+  }
+  return {};
+}
+
+constexpr std::string_view toString(const TraintasticCS::InputState value)
+{
+  switch(value)
+  {
+    case TraintasticCS::InputState::Unknown:
+      return "Unknown";
+    case TraintasticCS::InputState::Low:
+      return "Low";
+    case TraintasticCS::InputState::High:
+      return "High";
+  }
+  return {};
+}
+
+constexpr TriState toTriState(const TraintasticCS::InputState value)
+{
+  return static_cast<TriState>(value);
 }
 
 constexpr std::string_view toString(const TraintasticCS::ThrottleChannel value)

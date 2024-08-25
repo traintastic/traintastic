@@ -24,15 +24,29 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_TRAINTASTICCS_IOHANDLER_SIMULATIONIOHANDLER_HPP
 
 #include "iohandler.hpp"
-#include <array>
+#include <vector>
 #include <cstddef>
+#include <cstdint>
+
+enum class SimulateInputAction;
 
 namespace TraintasticCS {
+
+enum class InputChannel : uint8_t;
+enum class InputState : uint8_t;
 
 class SimulationIOHandler final : public IOHandler
 {
   private:
     bool m_initXpressNet = false;
+    struct S88
+    {
+      bool enabled = false;
+      std::vector<InputState> states;
+
+      void init(uint8_t moduleCount);
+      void reset();
+    } m_s88;
 
     void reply(const Message& message);
 
@@ -43,6 +57,8 @@ class SimulationIOHandler final : public IOHandler
     void stop() final {}
 
     bool send(const Message& message) final;
+
+    void inputSimulateChange(InputChannel channel, uint16_t address, SimulateInputAction action);
 };
 
 template<>

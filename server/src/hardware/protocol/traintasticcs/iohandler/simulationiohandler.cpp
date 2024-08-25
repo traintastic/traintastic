@@ -23,7 +23,9 @@
 #include "simulationiohandler.hpp"
 #include "../kernel.hpp"
 #include "../messages.hpp"
-#include <version.hpp>
+#include "../config.hpp"
+#include "../../../../enum/simulateinputaction.hpp"
+#include "../../../../utils/inrange.hpp"
 
 namespace TraintasticCS {
 
@@ -56,6 +58,7 @@ bool SimulationIOHandler::send(const Message& message)
       else
       {
         m_initXpressNet = false;
+        m_s88.reset();
         reply(ResetOk());
       }
       return true;
@@ -97,10 +100,33 @@ bool SimulationIOHandler::send(const Message& message)
         reply(InitXpressNetOk());
       }
       return true;
+
+    case Command::InitS88:
+    {
+      const auto& initS88 = static_cast<const InitS88&>(message);
+      if(message.size() != sizeof(InitS88) ||
+          initS88.moduleCount < Config::S88::moduleCountMin ||
+          initS88.moduleCount > Config::S88::moduleCountMax)
+      {
+        reply(Error(message.command, ErrorCode::InvalidCommandPayload));
+      }
+      else if(m_s88.enabled)
+      {
+        reply(Error(message.command, ErrorCode::AlreadyInitialized));
+      }
+      else
+      {
+        m_s88.init(initS88.moduleCount);
+        reply(InitS88Ok());
+      }
+      return true;
+    }
     case Command::ResetOk:
     case Command::Pong:
     case Command::Info:
     case Command::InitXpressNetOk:
+    case Command::InitS88Ok:
+    case Command::InputStateChanged:
     case Command::ThrottleSetSpeedDirection:
     case Command::ThrottleSetFunctions:
     case Command::Error:
@@ -112,6 +138,45 @@ bool SimulationIOHandler::send(const Message& message)
   return true;
 }
 
+void SimulationIOHandler::inputSimulateChange(InputChannel channel, uint16_t address, SimulateInputAction action)
+{
+  switch(channel)
+  {
+    case InputChannel::LocoNet:
+      break; //! \todo implement
+
+    case InputChannel::XpressNet:
+      break; //! \todo implement
+
+    case InputChannel::S88:
+      if(inRange<uint16_t>(address, 1, m_s88.states.size())) /*[[likely]]*/
+      {
+        InputState newValue = InputState::Unknown;
+        switch(action)
+        {
+          case SimulateInputAction::SetFalse:
+            newValue = InputState::Low;
+            break;
+
+          case SimulateInputAction::SetTrue:
+            newValue = InputState::High;
+            break;
+
+          case SimulateInputAction::Toggle:
+            newValue = (m_s88.states[address - 1] == InputState::High) ? InputState::Low : InputState::High;
+            break;
+        }
+        if(m_s88.states[address - 1] != newValue)
+        {
+          m_s88.states[address - 1] = newValue;
+          reply(InputStateChanged(channel, address, newValue));
+        }
+      }
+      return;
+  }
+  assert(false);
+}
+
 void SimulationIOHandler::reply(const Message& message)
 {
   // post the reply, so it has some delay
@@ -121,6 +186,20 @@ void SimulationIOHandler::reply(const Message& message)
     {
       m_kernel.receive(*reinterpret_cast<const Message*>(data.get()));
     });
+}
+
+
+void SimulationIOHandler::S88::init(uint8_t moduleCount)
+{
+  enabled = true;
+  states.resize(moduleCount * 8);
+  std::fill(states.begin(), states.end(), InputState::Unknown);
+}
+
+void SimulationIOHandler::S88::reset()
+{
+  enabled = false;
+  states.clear();
 }
 
 }

@@ -29,10 +29,19 @@ namespace TraintasticCS {
 
 Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
+  , s88Enabled{this, "s88_enabled", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , s88ModuleCount{this, "s88_module_count", 2, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , xpressnetEnabled{this, "xpressnet_enabled", true, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogPing{this, "debug_log_ping", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
+  //Attributes::addGroup(s88Enabled, Group::s88);
+  m_interfaceItems.add(s88Enabled);
+
+  //Attributes::addGroup(s88ModuleCount, Group::s88);
+  Attributes::addMinMax(s88ModuleCount, Config::S88::moduleCountMin, Config::S88::moduleCountMax);
+  m_interfaceItems.add(s88ModuleCount);
+
   //Attributes::addGroup(xpressnetEnabled, Group::xpressnet);
   m_interfaceItems.add(xpressnetEnabled);
 
@@ -47,6 +56,9 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
 Config Settings::config() const
 {
   Config config;
+
+  config.s88.enabled = s88Enabled;
+  config.s88.moduleCount = s88ModuleCount;
 
   config.xpressnet.enabled = xpressnetEnabled;
 

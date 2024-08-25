@@ -30,9 +30,11 @@
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
 
+class InputController;
 class ThrottleController;
 class HardwareThrottle;
 enum class DecoderProtocol : uint8_t;
+enum class SimulateInputAction;
 
 namespace TraintasticCS {
 
@@ -43,6 +45,29 @@ enum class ThrottleChannel : uint8_t;
 
 class Kernel final : public ::KernelBase
 {
+  public:
+    static constexpr uint32_t s88AddressMin = 1;
+    static constexpr uint32_t s88AddressMax = 8 * Config::S88::moduleCountMax;
+
+    struct InputChannel
+    {
+      //static constexpr uint32_t loconet = 1;
+      //static constexpr uint32_t xpressnet = 2;
+      static constexpr uint32_t s88 = 3;
+    };
+
+    inline static const std::vector<uint32_t> inputChannels = {
+      //InputChannel::loconet,
+      //InputChannel::xpressnet,
+      InputChannel::s88,
+    };
+
+    inline static const std::vector<std::string_view> inputChannelNames = {
+      //"$hardware:loconet$",
+      //"$hardware:xpressnet$",
+      "$hardware:s88$",
+    };
+
   private:
     //! Startup states, executed in order.
     enum class State
@@ -51,6 +76,7 @@ class Kernel final : public ::KernelBase
       Reset,
       GetInfo,
       InitXpressNet,
+      InitS88,
       Started // must be last
     };
 
@@ -79,7 +105,9 @@ class Kernel final : public ::KernelBase
     std::list<std::pair<Command, std::chrono::steady_clock::time_point>> m_waitingForResponse;
     boost::asio::steady_timer m_pingTimeout;
 
-    ThrottleController* m_throttleController;
+    InputController* m_inputController = nullptr;
+
+    ThrottleController* m_throttleController = nullptr;
     Throttles m_throttles;
 
     Config m_config;
@@ -163,6 +191,18 @@ class Kernel final : public ::KernelBase
     void setConfig(const Config& config);
 
     /**
+     * \brief Set the input controller
+     *
+     * \param[in] inputController The input controller
+     * \note This function may not be called when the kernel is running.
+     */
+    inline void setInputController(InputController* inputController)
+    {
+      //assert(!m_running);
+      m_inputController = inputController;
+    }
+
+    /**
      * \brief Set the throttle controller
      *
      * \param[in] throttleController The throttle controller
@@ -202,6 +242,8 @@ class Kernel final : public ::KernelBase
      * \note This function must run in the kernel's IO context
      */
     void receive(const Message& message);
+
+    void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action);
 };
 
 }

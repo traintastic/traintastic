@@ -40,6 +40,7 @@ std::string toString(const Message& message)
     case Command::ResetOk:
     case Command::Pong:
     case Command::InitXpressNetOk:
+    case Command::InitS88Ok:
       assert(message.length == 0);
       break;
 
@@ -54,6 +55,21 @@ std::string toString(const Message& message)
         .append(std::to_string(info.versionMinor))
         .append(".")
         .append(std::to_string(info.versionPatch));
+      break;
+    }
+    case Command::InitS88:
+    {
+      const auto& initS88 = static_cast<const InitS88&>(message);
+      s.append(" moduleCount=")
+        .append(std::to_string(initS88.moduleCount));
+      break;
+    }
+    case Command::InputStateChanged:
+    {
+      const auto& inputStateChanged = static_cast<const InputStateChanged&>(message);
+      s.append(" channel=").append(::toString(inputStateChanged.channel))
+        .append(" address=").append(std::to_string(inputStateChanged.address()))
+        .append(" state=").append(::toString(inputStateChanged.state));
       break;
     }
     case Command::ThrottleSetSpeedDirection:

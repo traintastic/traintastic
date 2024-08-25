@@ -22,6 +22,7 @@
 
 #include "kernel.hpp"
 #include "messages.hpp"
+#include "iohandler/simulationiohandler.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../decoder/list/decoderlist.hpp"
@@ -39,6 +40,8 @@
 
 namespace TraintasticCS {
 
+static_assert(Kernel::InputChannel::s88 == static_cast<uint32_t>(InputChannel::S88));
+
 Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
   , m_simulation{simulation}
@@ -46,7 +49,6 @@ Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   , m_pingTimeout{m_ioContext}
   , m_config{config}
 {
-  (void)m_simulation;
 }
 
 Kernel::~Kernel() = default;
@@ -203,6 +205,28 @@ void Kernel::receive(const Message& message)
       }
       break;
 
+    case Command::InitS88Ok:
+      if(m_state == State::InitS88) /*[[likely]]*/
+      {
+        nextState();
+      }
+      else
+      {
+        assert(false); // may not happen, init S88 only once at start up
+      }
+      break;
+
+    case Command::InputStateChanged:
+      if(m_inputController && message.size() == sizeof(InputStateChanged))
+      {
+        EventLoop::call(
+          [this, inputStateChanged=static_cast<const InputStateChanged&>(message)]()
+          {
+            m_inputController->updateInputValue(static_cast<uint32_t>(inputStateChanged.channel), inputStateChanged.address(), toTriState(inputStateChanged.state));
+          });
+      }
+      break;
+
     case Command::ThrottleSetSpeedDirection:
     {
       EventLoop::call(
@@ -268,8 +292,17 @@ void Kernel::receive(const Message& message)
     case Command::Ping:
     case Command::GetInfo:
     case Command::InitXpressNet:
+    case Command::InitS88:
       assert(false); // we MUST never receive these
       break;
+  }
+}
+
+void Kernel::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+{
+  if(m_simulation)
+  {
+    ioHandler<SimulationIOHandler>().inputSimulateChange(static_cast<TraintasticCS::InputChannel>(channel), address, action);
   }
 }
 
@@ -322,6 +355,7 @@ void Kernel::startResponseTimeout(Command command)
     case Command::Ping:
     case Command::GetInfo:
     case Command::InitXpressNet:
+    case Command::InitS88:
       expire = std::chrono::steady_clock::now() + Config::responseTimeout;
       break;
 
@@ -459,6 +493,17 @@ void Kernel::changeState(State value)
       if(m_config.xpressnet.enabled)
       {
         send(InitXpressNet());
+      }
+      else
+      {
+        nextState();
+      }
+      break;
+
+    case State::InitS88:
+      if(m_config.s88.enabled)
+      {
+        send(InitS88(m_config.s88.moduleCount));
       }
       else
       {

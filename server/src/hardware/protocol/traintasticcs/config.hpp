@@ -33,6 +33,15 @@ struct Config
   static constexpr auto resetResponseTimeout = std::chrono::milliseconds(1000);
   static constexpr auto pingTimeout = std::chrono::milliseconds(1000);
 
+  struct S88
+  {
+    static constexpr uint8_t moduleCountMin = 1;
+    static constexpr uint8_t moduleCountMax = 16;
+
+    bool enabled;
+    uint8_t moduleCount;
+  } s88;
+
   struct XpressNet
   {
     bool enabled;

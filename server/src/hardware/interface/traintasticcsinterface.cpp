@@ -25,19 +25,24 @@
 #include "../protocol/traintasticcs/settings.hpp"
 #include "../protocol/traintasticcs/iohandler/serialiohandler.hpp"
 #include "../protocol/traintasticcs/iohandler/simulationiohandler.hpp"
+#include "../input/list/inputlist.hpp"
+#include "../input/list/inputlistcolumn.hpp"
 #include "../throttle/list/throttlelistcolumn.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/eventloop.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
+#include "../../utils/inrange.hpp"
 
+static constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
 static constexpr auto throttleListColumns = ThrottleListColumn::Id | ThrottleListColumn::Name;
 
 CREATE_IMPL(TraintasticCSInterface)
 
 TraintasticCSInterface::TraintasticCSInterface(World& world, std::string_view _id)
   : Interface(world, _id)
+  , InputController(static_cast<IdObject&>(*this))
   , ThrottleController(*this, throttleListColumns)
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , traintasticCS{this, "traintastic_cs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
@@ -50,7 +55,41 @@ TraintasticCSInterface::TraintasticCSInterface(World& world, std::string_view _i
 
   m_interfaceItems.insertBefore(traintasticCS, notes);
 
+  m_interfaceItems.insertBefore(inputs, notes);
+
   m_interfaceItems.insertBefore(throttles, notes);
+}
+
+const std::vector<uint32_t>* TraintasticCSInterface::inputChannels() const
+{
+  return &TraintasticCS::Kernel::inputChannels;
+}
+
+const std::vector<std::string_view>* TraintasticCSInterface::inputChannelNames() const
+{
+  return &TraintasticCS::Kernel::inputChannelNames;
+}
+
+std::pair<uint32_t, uint32_t> TraintasticCSInterface::inputAddressMinMax(uint32_t channel) const
+{
+  using namespace TraintasticCS;
+
+  switch(channel)
+  {
+    case Kernel::InputChannel::s88:
+      return {Kernel::s88AddressMin, Kernel::s88AddressMax};
+  }
+
+  assert(false);
+  return {0, 0};
+}
+
+void TraintasticCSInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+{
+  if(m_kernel && inRange(address, inputAddressMinMax(channel)))
+  {
+    m_kernel->inputSimulateChange(channel, address, action);
+  }
 }
 
 bool TraintasticCSInterface::setOnline(bool& value, bool simulation)
@@ -88,6 +127,7 @@ bool TraintasticCSInterface::setOnline(bool& value, bool simulation)
           online = false; // communication no longer possible
         });
 
+      m_kernel->setInputController(this);
       m_kernel->setThrottleController(this);
 
       m_kernel->start();
@@ -124,9 +164,11 @@ bool TraintasticCSInterface::setOnline(bool& value, bool simulation)
 void TraintasticCSInterface::addToWorld()
 {
   Interface::addToWorld();
+  InputController::addToWorld(inputListColumns);
 }
 
 void TraintasticCSInterface::destroying()
 {
+  InputController::destroying();
   Interface::destroying();
 }
