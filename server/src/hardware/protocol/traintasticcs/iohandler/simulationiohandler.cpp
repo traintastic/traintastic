@@ -106,7 +106,9 @@ bool SimulationIOHandler::send(const Message& message)
       const auto& initS88 = static_cast<const InitS88&>(message);
       if(message.size() != sizeof(InitS88) ||
           initS88.moduleCount < Config::S88::moduleCountMin ||
-          initS88.moduleCount > Config::S88::moduleCountMax)
+          initS88.moduleCount > Config::S88::moduleCountMax ||
+          initS88.clockFrequency < Config::S88::clockFrequencyMin ||
+          initS88.clockFrequency > Config::S88::clockFrequencyMax)
       {
         reply(Error(message.command, ErrorCode::InvalidCommandPayload));
       }

@@ -31,6 +31,7 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , s88Enabled{this, "s88_enabled", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , s88ModuleCount{this, "s88_module_count", 2, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , s88ClockFrequency{this, "s88_clock_frequency", 10, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , xpressnetEnabled{this, "xpressnet_enabled", true, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogPing{this, "debug_log_ping", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -41,6 +42,11 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   //Attributes::addGroup(s88ModuleCount, Group::s88);
   Attributes::addMinMax(s88ModuleCount, Config::S88::moduleCountMin, Config::S88::moduleCountMax);
   m_interfaceItems.add(s88ModuleCount);
+
+  //Attributes::addGroup(s88ClockFrequency, Group::s88);
+  Attributes::addMinMax(s88ClockFrequency, Config::S88::clockFrequencyMin, Config::S88::clockFrequencyMax);
+  //Attributes::addUnit(s88ClockFrequency, "kHz");
+  m_interfaceItems.add(s88ClockFrequency);
 
   //Attributes::addGroup(xpressnetEnabled, Group::xpressnet);
   m_interfaceItems.add(xpressnetEnabled);
@@ -59,6 +65,7 @@ Config Settings::config() const
 
   config.s88.enabled = s88Enabled;
   config.s88.moduleCount = s88ModuleCount;
+  config.s88.clockFrequency = s88ClockFrequency;
 
   config.xpressnet.enabled = xpressnetEnabled;
 

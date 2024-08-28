@@ -60,8 +60,8 @@ std::string toString(const Message& message)
     case Command::InitS88:
     {
       const auto& initS88 = static_cast<const InitS88&>(message);
-      s.append(" moduleCount=")
-        .append(std::to_string(initS88.moduleCount));
+      s.append(" moduleCount=").append(std::to_string(initS88.moduleCount))
+        .append(" clockFrequency=").append(std::to_string(initS88.clockFrequency));
       break;
     }
     case Command::InputStateChanged:

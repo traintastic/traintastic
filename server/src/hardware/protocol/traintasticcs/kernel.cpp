@@ -503,7 +503,7 @@ void Kernel::changeState(State value)
     case State::InitS88:
       if(m_config.s88.enabled)
       {
-        send(InitS88(m_config.s88.moduleCount));
+        send(InitS88(m_config.s88.moduleCount, m_config.s88.clockFrequency));
       }
       else
       {

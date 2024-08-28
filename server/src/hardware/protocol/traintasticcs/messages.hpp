@@ -262,12 +262,14 @@ struct InitXpressNetOk : MessageNoData
 struct InitS88 : Message
 {
   uint8_t moduleCount;
+  uint8_t clockFrequency;
   Checksum checksum;
 
-  constexpr InitS88(uint8_t moduleCount_)
+  constexpr InitS88(uint8_t moduleCount_, uint8_t clockFrequency_)
     : Message(Command::InitS88, sizeof(InitS88) - sizeof(Message) - sizeof(checksum))
     , moduleCount{moduleCount_}
-    , checksum{static_cast<Checksum>(static_cast<uint8_t>(command) ^ length ^ moduleCount)}
+    , clockFrequency{clockFrequency_}
+    , checksum{static_cast<Checksum>(static_cast<uint8_t>(command) ^ length ^ moduleCount ^ clockFrequency)}
   {
   }
 };

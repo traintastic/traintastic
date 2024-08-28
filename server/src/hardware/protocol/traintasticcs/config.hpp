@@ -37,9 +37,12 @@ struct Config
   {
     static constexpr uint8_t moduleCountMin = 1;
     static constexpr uint8_t moduleCountMax = 16;
+    static constexpr uint8_t clockFrequencyMin = 1; // kHz
+    static constexpr uint8_t clockFrequencyMax = 250; // kHz
 
     bool enabled;
     uint8_t moduleCount;
+    uint8_t clockFrequency;
   } s88;
 
   struct XpressNet
