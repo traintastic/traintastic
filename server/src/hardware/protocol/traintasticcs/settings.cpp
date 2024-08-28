@@ -36,25 +36,31 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogPing{this, "debug_log_ping", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
+  Attributes::addEnabled(s88Enabled, false);
   //Attributes::addGroup(s88Enabled, Group::s88);
   m_interfaceItems.add(s88Enabled);
 
+  Attributes::addEnabled(s88ModuleCount, false);
   //Attributes::addGroup(s88ModuleCount, Group::s88);
   Attributes::addMinMax(s88ModuleCount, Config::S88::moduleCountMin, Config::S88::moduleCountMax);
   m_interfaceItems.add(s88ModuleCount);
 
+  Attributes::addEnabled(s88ClockFrequency, false);
   //Attributes::addGroup(s88ClockFrequency, Group::s88);
   Attributes::addMinMax(s88ClockFrequency, Config::S88::clockFrequencyMin, Config::S88::clockFrequencyMax);
   //Attributes::addUnit(s88ClockFrequency, "kHz");
   m_interfaceItems.add(s88ClockFrequency);
 
+  Attributes::addEnabled(xpressnetEnabled, false);
   //Attributes::addGroup(xpressnetEnabled, Group::xpressnet);
   m_interfaceItems.add(xpressnetEnabled);
 
+  Attributes::addEnabled(debugLogRXTX, false);
   Attributes::addDisplayName(debugLogRXTX, DisplayName::Hardware::debugLogRXTX);
   //Attributes::addGroup(debugLogRXTX, Group::debug);
   m_interfaceItems.add(debugLogRXTX);
 
+  Attributes::addEnabled(debugLogPing, false);
   //Attributes::addGroup(debugLogPing, Group::debug);
   m_interfaceItems.add(debugLogPing);
 }
@@ -73,6 +79,22 @@ Config Settings::config() const
   config.debugLogPing = debugLogPing;
 
   return config;
+}
+
+void Settings::updateEnabled(const bool worldEdit, const bool interfaceOnline)
+{
+  Attributes::setEnabled(
+    {
+      s88Enabled,
+      s88ModuleCount,
+      s88ClockFrequency,
+      xpressnetEnabled
+    }, worldEdit && !interfaceOnline);
+  Attributes::setEnabled(
+    {
+      debugLogRXTX,
+      debugLogPing
+    }, worldEdit);
 }
 
 }

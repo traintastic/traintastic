@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,6 +39,7 @@ class Interface : public IdObject
     void destroying() override;
     void worldEvent(WorldState state, WorldEvent event) override;
 
+    virtual void onlineChanged(bool /*value*/) {}
     virtual bool setOnline(bool& value, bool simulation) = 0;
     void setState(InterfaceState value);
 

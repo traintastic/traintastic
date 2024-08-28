@@ -44,6 +44,8 @@ class Settings final : public SubObject
     Settings(Object& _parent, std::string_view parentPropertyName);
 
     Config config() const;
+
+    void updateEnabled(bool worldEdit, bool interfaceOnline);
 };
 
 }

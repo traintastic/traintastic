@@ -53,8 +53,12 @@ class TraintasticCSInterface final
 
     void addToWorld() final;
     void destroying() final;
+    void worldEvent(WorldState state, WorldEvent event) final;
+
+    void updateEnabled();
 
   protected:
+    void onlineChanged(bool value) final;
     bool setOnline(bool& value, bool simulation) final;
 
   public:

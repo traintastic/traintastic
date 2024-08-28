@@ -34,6 +34,7 @@
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/inrange.hpp"
+#include "../../world/world.hpp"
 
 static constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
 static constexpr auto throttleListColumns = ThrottleListColumn::Id | ThrottleListColumn::Name;
@@ -50,7 +51,7 @@ TraintasticCSInterface::TraintasticCSInterface(World& world, std::string_view _i
   name = "Traintastic CS";
   traintasticCS.setValueInternal(std::make_shared<TraintasticCS::Settings>(*this, traintasticCS.name()));
 
-  Attributes::addEnabled(device, !online);
+  Attributes::addEnabled(device, false);
   m_interfaceItems.insertBefore(device, notes);
 
   m_interfaceItems.insertBefore(traintasticCS, notes);
@@ -58,6 +59,8 @@ TraintasticCSInterface::TraintasticCSInterface(World& world, std::string_view _i
   m_interfaceItems.insertBefore(inputs, notes);
 
   m_interfaceItems.insertBefore(throttles, notes);
+
+  updateEnabled();
 }
 
 const std::vector<uint32_t>* TraintasticCSInterface::inputChannels() const
@@ -90,6 +93,11 @@ void TraintasticCSInterface::inputSimulateChange(uint32_t channel, uint32_t addr
   {
     m_kernel->inputSimulateChange(channel, address, action);
   }
+}
+
+void TraintasticCSInterface::onlineChanged(bool /*value*/)
+{
+  updateEnabled();
 }
 
 bool TraintasticCSInterface::setOnline(bool& value, bool simulation)
@@ -137,8 +145,6 @@ bool TraintasticCSInterface::setOnline(bool& value, bool simulation)
         {
           m_kernel->setConfig(traintasticCS->config());
         });
-
-      Attributes::setEnabled(device, false);
     }
     catch(const LogMessageException& e)
     {
@@ -149,8 +155,6 @@ bool TraintasticCSInterface::setOnline(bool& value, bool simulation)
   }
   else if(m_kernel && !value)
   {
-    Attributes::setEnabled(device, true);
-
     m_traintasticCSPropertyChanged.disconnect();
 
     m_kernel->stop();
@@ -171,4 +175,18 @@ void TraintasticCSInterface::destroying()
 {
   InputController::destroying();
   Interface::destroying();
+}
+
+void TraintasticCSInterface::worldEvent(WorldState state, WorldEvent event)
+{
+  Interface::worldEvent(state, event);
+  updateEnabled();
+}
+
+void TraintasticCSInterface::updateEnabled()
+{
+  const bool editable = contains(m_world.state, WorldState::Edit);
+
+  Attributes::setEnabled(device, editable && !online);
+  traintasticCS->updateEnabled(editable, online);
 }
