@@ -36,6 +36,8 @@ class PropertySpinBox : public QSpinBox
     void cancelRequest();
     void showError(const QString& error);
 
+    void updateRange();
+
   protected:
     void focusOutEvent(QFocusEvent* event) override;
 
