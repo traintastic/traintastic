@@ -255,6 +255,12 @@ struct Attributes
     item.addAttribute(AttributeName::ObjectList, id);
   }
 
+  template<class T>
+  static inline void addUnit(Property<T>& property, std::string_view unit)
+  {
+    property.addAttribute(AttributeName::Unit, unit);
+  }
+
   template<class R, class T, size_t N>
   static inline void addValues(Method<R(T)>& method, const std::array<T, N>& values)
   {

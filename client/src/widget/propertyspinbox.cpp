@@ -36,6 +36,10 @@ PropertySpinBox::PropertySpinBox(Property& property, QWidget* parent) :
   setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
   setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
   updateRange();
+  if(auto unit = m_property.getAttributeString(AttributeName::Unit, ""); !unit.isEmpty())
+  {
+    setSuffix(unit.prepend(" "));
+  }
   setValue(m_property.toInt());
   connect(&m_property, &AbstractProperty::valueChangedInt, this,
     [this](int value)
@@ -61,6 +65,17 @@ PropertySpinBox::PropertySpinBox(Property& property, QWidget* parent) :
         case AttributeName::Min:
         case AttributeName::Max:
           updateRange();
+          break;
+
+        case AttributeName::Unit:
+          if(auto unit = value.toString(); !unit.isEmpty())
+          {
+            setSuffix(unit.prepend(" "));
+          }
+          else
+          {
+            setSuffix("");
+          }
           break;
 
         default:
