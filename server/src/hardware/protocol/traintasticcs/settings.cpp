@@ -48,7 +48,7 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   Attributes::addEnabled(s88ClockFrequency, false);
   //Attributes::addGroup(s88ClockFrequency, Group::s88);
   Attributes::addMinMax(s88ClockFrequency, Config::S88::clockFrequencyMin, Config::S88::clockFrequencyMax);
-  //Attributes::addUnit(s88ClockFrequency, "kHz");
+  Attributes::addUnit(s88ClockFrequency, "kHz");
   m_interfaceItems.add(s88ClockFrequency);
 
   Attributes::addEnabled(xpressnetEnabled, false);
