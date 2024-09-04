@@ -28,6 +28,8 @@
 class TurnoutSlipRailTile : public TurnoutRailTile
 {
 protected:
+  static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex);
+
   TurnoutSlipRailTile(World& world, std::string_view _id, TileId tileId_);
 
   virtual void loaded() override;
