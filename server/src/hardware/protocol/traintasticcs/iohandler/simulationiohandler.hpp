@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_TRAINTASTICCS_IOHANDLER_SIMULATIONIOHANDLER_HPP
 
 #include "iohandler.hpp"
+#include <array>
 #include <vector>
 #include <cstddef>
 #include <cstdint>
@@ -38,6 +39,15 @@ enum class InputState : uint8_t;
 class SimulationIOHandler final : public IOHandler
 {
   private:
+    struct LocoNet
+    {
+      bool enabled = false;
+      std::array<InputState, 4096> inputStates;
+
+      void init();
+      void reset();
+    } m_loconet;
+
     bool m_initXpressNet = false;
     struct S88
     {

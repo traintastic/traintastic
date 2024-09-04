@@ -34,6 +34,7 @@ class Settings final : public SubObject
   CLASS_ID("traintastic_cs_settings")
 
   public:
+    Property<bool> loconetEnabled;
     Property<bool> s88Enabled;
     Property<uint8_t> s88ModuleCount;
     Property<uint8_t> s88ClockFrequency;

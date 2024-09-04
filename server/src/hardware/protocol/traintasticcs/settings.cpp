@@ -29,6 +29,7 @@ namespace TraintasticCS {
 
 Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
+  , loconetEnabled{this, "loconet_enabled", true, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , s88Enabled{this, "s88_enabled", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , s88ModuleCount{this, "s88_module_count", 2, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , s88ClockFrequency{this, "s88_clock_frequency", 10, PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -36,6 +37,10 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogPing{this, "debug_log_ping", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
+  Attributes::addEnabled(loconetEnabled, false);
+  //Attributes::addGroup(loconetEnabled, Group::loconet);
+  m_interfaceItems.add(loconetEnabled);
+
   Attributes::addEnabled(s88Enabled, false);
   //Attributes::addGroup(s88Enabled, Group::s88);
   m_interfaceItems.add(s88Enabled);
@@ -69,6 +74,8 @@ Config Settings::config() const
 {
   Config config;
 
+  config.loconet.enabled = loconetEnabled;
+
   config.s88.enabled = s88Enabled;
   config.s88.moduleCount = s88ModuleCount;
   config.s88.clockFrequency = s88ClockFrequency;
@@ -85,6 +92,7 @@ void Settings::updateEnabled(const bool worldEdit, const bool interfaceOnline)
 {
   Attributes::setEnabled(
     {
+      loconetEnabled,
       s88Enabled,
       s88ModuleCount,
       s88ClockFrequency,

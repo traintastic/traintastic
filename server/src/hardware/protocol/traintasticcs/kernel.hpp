@@ -46,24 +46,26 @@ enum class ThrottleChannel : uint8_t;
 class Kernel final : public ::KernelBase
 {
   public:
+    static constexpr uint32_t loconetInputAddressMin = 1;
+    static constexpr uint32_t loconetInputAddressMax = 4096;
     static constexpr uint32_t s88AddressMin = 1;
     static constexpr uint32_t s88AddressMax = 8 * Config::S88::moduleCountMax;
 
     struct InputChannel
     {
-      //static constexpr uint32_t loconet = 1;
+      static constexpr uint32_t loconet = 1;
       //static constexpr uint32_t xpressnet = 2;
       static constexpr uint32_t s88 = 3;
     };
 
     inline static const std::vector<uint32_t> inputChannels = {
-      //InputChannel::loconet,
+      InputChannel::loconet,
       //InputChannel::xpressnet,
       InputChannel::s88,
     };
 
     inline static const std::vector<std::string_view> inputChannelNames = {
-      //"$hardware:loconet$",
+      "$hardware:loconet$",
       //"$hardware:xpressnet$",
       "$hardware:s88$",
     };
@@ -75,6 +77,7 @@ class Kernel final : public ::KernelBase
       Initial, // must be first
       Reset,
       GetInfo,
+      InitLocoNet,
       InitXpressNet,
       InitS88,
       Started // must be last

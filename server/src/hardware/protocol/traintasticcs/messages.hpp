@@ -49,6 +49,7 @@ enum class Command : uint8_t
   GetInfo = 0x02,
   InitXpressNet = 0x03,
   InitS88 = 0x04,
+  InitLocoNet = 0x05,
 
   // Traintatic CS -> Traintastic
   ResetOk = FROM_CS | Reset,
@@ -56,6 +57,7 @@ enum class Command : uint8_t
   Info = FROM_CS | GetInfo,
   InitXpressNetOk = FROM_CS | InitXpressNet,
   InitS88Ok = FROM_CS | InitS88,
+  InitLocoNetOk = FROM_CS | InitLocoNet,
   InputStateChanged = FROM_CS | 0x20,
   ThrottleSetSpeedDirection = FROM_CS | 0x30,
   ThrottleSetFunctions = FROM_CS | 0x31,
@@ -72,6 +74,7 @@ constexpr bool isResponse(const Command value)
     case Command::Pong:
     case Command::InitXpressNetOk:
     case Command::InitS88Ok:
+    case Command::InitLocoNetOk:
     case Command::Error:
       return true;
 
@@ -80,6 +83,7 @@ constexpr bool isResponse(const Command value)
     case Command::GetInfo:
     case Command::InitXpressNet:
     case Command::InitS88:
+    case Command::InitLocoNet:
     case Command::InputStateChanged:
     case Command::ThrottleSetSpeedDirection:
     case Command::ThrottleSetFunctions:
@@ -102,6 +106,8 @@ constexpr std::string_view toString(Command value)
       return "InitXpressNet";
     case Command::InitS88:
       return "InitS88";
+    case Command::InitLocoNet:
+      return "InitLocoNet";
     case Command::ResetOk:
       return "ResetOk";
     case Command::Pong:
@@ -112,6 +118,8 @@ constexpr std::string_view toString(Command value)
       return "InitXpressNetOk";
     case Command::InitS88Ok:
       return "InitS88Ok";
+    case Command::InitLocoNetOk:
+      return "InitLocoNetOk";
     case Command::InputStateChanged:
       return "InputStateChanged";
     case Command::ThrottleSetSpeedDirection:
@@ -278,6 +286,22 @@ struct InitS88Ok : MessageNoData
 {
   constexpr InitS88Ok()
     : MessageNoData(Command::InitS88Ok)
+  {
+  }
+};
+
+struct InitLocoNet : MessageNoData
+{
+  constexpr InitLocoNet()
+    : MessageNoData(Command::InitLocoNet)
+  {
+  }
+};
+
+struct InitLocoNetOk : MessageNoData
+{
+  constexpr InitLocoNetOk()
+    : MessageNoData(Command::InitLocoNetOk)
   {
   }
 };

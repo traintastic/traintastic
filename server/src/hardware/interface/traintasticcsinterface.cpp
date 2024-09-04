@@ -79,6 +79,9 @@ std::pair<uint32_t, uint32_t> TraintasticCSInterface::inputAddressMinMax(uint32_
 
   switch(channel)
   {
+    case Kernel::InputChannel::loconet:
+      return {Kernel::loconetInputAddressMin, Kernel::loconetInputAddressMax};
+
     case Kernel::InputChannel::s88:
       return {Kernel::s88AddressMin, Kernel::s88AddressMax};
   }

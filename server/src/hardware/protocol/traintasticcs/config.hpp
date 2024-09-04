@@ -33,6 +33,11 @@ struct Config
   static constexpr auto resetResponseTimeout = std::chrono::milliseconds(1000);
   static constexpr auto pingTimeout = std::chrono::milliseconds(1000);
 
+  struct LocoNet
+  {
+    bool enabled;
+  } loconet;
+
   struct S88
   {
     static constexpr uint8_t moduleCountMin = 1;

@@ -216,6 +216,17 @@ void Kernel::receive(const Message& message)
       }
       break;
 
+    case Command::InitLocoNetOk:
+      if(m_state == State::InitLocoNet) /*[[likely]]*/
+      {
+        nextState();
+      }
+      else
+      {
+        assert(false); // may not happen, init LocoNet only once at start up
+      }
+      break;
+
     case Command::InputStateChanged:
       if(m_inputController && message.size() == sizeof(InputStateChanged))
       {
@@ -293,6 +304,7 @@ void Kernel::receive(const Message& message)
     case Command::GetInfo:
     case Command::InitXpressNet:
     case Command::InitS88:
+    case Command::InitLocoNet:
       assert(false); // we MUST never receive these
       break;
   }
@@ -356,6 +368,7 @@ void Kernel::startResponseTimeout(Command command)
     case Command::GetInfo:
     case Command::InitXpressNet:
     case Command::InitS88:
+    case Command::InitLocoNet:
       expire = std::chrono::steady_clock::now() + Config::responseTimeout;
       break;
 
@@ -487,6 +500,17 @@ void Kernel::changeState(State value)
 
     case State::GetInfo:
       send(GetInfo());
+      break;
+
+    case State::InitLocoNet:
+      if(m_config.loconet.enabled)
+      {
+        send(InitLocoNet());
+      }
+      else
+      {
+        nextState();
+      }
       break;
 
     case State::InitXpressNet:

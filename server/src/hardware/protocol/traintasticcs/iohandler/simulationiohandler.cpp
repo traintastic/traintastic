@@ -21,6 +21,7 @@
  */
 
 #include "simulationiohandler.hpp"
+#include <tcb/span.hpp>
 #include "../kernel.hpp"
 #include "../messages.hpp"
 #include "../config.hpp"
@@ -123,11 +124,28 @@ bool SimulationIOHandler::send(const Message& message)
       }
       return true;
     }
+    case Command::InitLocoNet:
+      if(message.size() != sizeof(InitLocoNet))
+      {
+        reply(Error(message.command, ErrorCode::InvalidCommandPayload));
+      }
+      else if(m_loconet.enabled)
+      {
+        reply(Error(message.command, ErrorCode::AlreadyInitialized));
+      }
+      else
+      {
+        m_loconet.init();
+        reply(InitLocoNetOk());
+      }
+      return true;
+
     case Command::ResetOk:
     case Command::Pong:
     case Command::Info:
     case Command::InitXpressNetOk:
     case Command::InitS88Ok:
+    case Command::InitLocoNetOk:
     case Command::InputStateChanged:
     case Command::ThrottleSetSpeedDirection:
     case Command::ThrottleSetFunctions:
@@ -142,41 +160,47 @@ bool SimulationIOHandler::send(const Message& message)
 
 void SimulationIOHandler::inputSimulateChange(InputChannel channel, uint16_t address, SimulateInputAction action)
 {
+  tcb::span<InputState> states;
+
   switch(channel)
   {
     case InputChannel::LocoNet:
-      break; //! \todo implement
+      states = m_loconet.inputStates;
+      break;
 
     case InputChannel::XpressNet:
-      break; //! \todo implement
+      return; //! \todo implement
 
     case InputChannel::S88:
-      if(inRange<uint16_t>(address, 1, m_s88.states.size())) /*[[likely]]*/
-      {
-        InputState newValue = InputState::Unknown;
-        switch(action)
-        {
-          case SimulateInputAction::SetFalse:
-            newValue = InputState::Low;
-            break;
-
-          case SimulateInputAction::SetTrue:
-            newValue = InputState::High;
-            break;
-
-          case SimulateInputAction::Toggle:
-            newValue = (m_s88.states[address - 1] == InputState::High) ? InputState::Low : InputState::High;
-            break;
-        }
-        if(m_s88.states[address - 1] != newValue)
-        {
-          m_s88.states[address - 1] = newValue;
-          reply(InputStateChanged(channel, address, newValue));
-        }
-      }
-      return;
+      states = m_s88.states;
+      break;
   }
-  assert(false);
+  assert(!states.empty());
+
+  if(inRange<uint16_t>(address, 1, states.size())) /*[[likely]]*/
+  {
+    InputState newValue = InputState::Unknown;
+    switch(action)
+    {
+      case SimulateInputAction::SetFalse:
+        newValue = InputState::Low;
+        break;
+
+      case SimulateInputAction::SetTrue:
+        newValue = InputState::High;
+        break;
+
+      case SimulateInputAction::Toggle:
+        newValue = (states[address - 1] == InputState::High) ? InputState::Low : InputState::High;
+        break;
+    }
+    assert(newValue == InputState::Low || newValue == InputState::High);
+    if(states[address - 1] != newValue)
+    {
+      states[address - 1] = newValue;
+      reply(InputStateChanged(channel, address, newValue));
+    }
+  }
 }
 
 void SimulationIOHandler::reply(const Message& message)
@@ -188,6 +212,18 @@ void SimulationIOHandler::reply(const Message& message)
     {
       m_kernel.receive(*reinterpret_cast<const Message*>(data.get()));
     });
+}
+
+
+void SimulationIOHandler::LocoNet::init()
+{
+  enabled = true;
+  std::fill(inputStates.begin(), inputStates.end(), InputState::Unknown);
+}
+
+void SimulationIOHandler::LocoNet::reset()
+{
+  enabled = false;
 }
 
 
