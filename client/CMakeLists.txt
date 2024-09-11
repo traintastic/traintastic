@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.9)
 include(../shared/traintastic.cmake)
 project(traintastic-client VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic client")
 include(GNUInstallDirs)
-include(../shared/translations/traintastic-lang.cmake)
+if(NOT TRAINTASTIC_CS)
+  include(../shared/translations/traintastic-lang.cmake)
+endif()
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -26,7 +28,9 @@ add_executable(traintastic-client
   gfx/light/light.qrc
 )
 
-add_dependencies(traintastic-client traintastic-lang)
+if(NOT TRAINTASTIC_CS)
+  add_dependencies(traintastic-client traintastic-lang)
+endif()
 
 add_definitions(-DQT_DEPRECATED_WARNINGS)
 
@@ -105,6 +109,18 @@ if(QT_VERSION_MAJOR GREATER 5)
   target_link_libraries(traintastic-client PRIVATE Qt${QT_VERSION_MAJOR}::SvgWidgets)
 endif()
 
+### OPTIONS ###
+
+if(TRAINTASTIC_CS)
+  message(STATUS "Enabled Traintastic CS config")
+  add_definitions(-DTRAINTASTIC_CS)
+  set(INSTALL_DOT_DESKTOP_FILE OFF)
+endif()
+
+if(NOT DEFINED INSTALL_DOT_DESKTOP_FILE)
+  set(INSTALL_DOT_DESKTOP_FILE ON)
+endif()
+
 ### PLATFORM ###
 
 if(WIN32)
@@ -130,7 +146,7 @@ install(TARGETS traintastic-client
     RUNTIME DESTINATION "/opt/traintastic/bin/"
 )
 
-if(LINUX)
+if(LINUX AND INSTALL_DOT_DESKTOP_FILE)
   install(FILES ${CMAKE_SOURCE_DIR}/debian/traintastic-client.desktop DESTINATION share/applications)
   install(FILES ${CMAKE_SOURCE_DIR}/debian/traintastic_256.png DESTINATION "/opt/traintastic/icons/")
 endif()

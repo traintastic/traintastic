@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.9)
 include(./traintastic.cmake)
 project(traintastic-data VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic data")
+include(translations/traintastic-lang.cmake)
 
 ### INSTALL ###
 
-file(GLOB TRANSLATION_FILES "translations/*.lang")
 install(FILES ${TRANSLATION_FILES} DESTINATION "/opt/traintastic/translations")
 
 file(GLOB LNCV_XML_FILES "data/lncv/xml/*.xml")

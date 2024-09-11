@@ -3,7 +3,9 @@ include(../shared/traintastic.cmake)
 project(traintastic-server VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic server")
 include(GNUInstallDirs)
 include(CTest)
-include(../shared/translations/traintastic-lang.cmake)
+if(NOT TRAINTASTIC_CS)
+  include(../shared/translations/traintastic-lang.cmake)
+endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
@@ -22,7 +24,9 @@ if(ENABLE_CLANG_TIDY)
 endif()
 
 add_executable(traintastic-server src/main.cpp src/options.hpp)
-add_dependencies(traintastic-server traintastic-lang)
+if(NOT TRAINTASTIC_CS)
+  add_dependencies(traintastic-server traintastic-lang)
+endif()
 set_target_properties(traintastic-server PROPERTIES CXX_STANDARD 17)
 target_include_directories(traintastic-server PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -33,7 +37,9 @@ target_include_directories(traintastic-server SYSTEM PRIVATE
 
 if(BUILD_TESTING)
   add_executable(traintastic-server-test test/main.cpp)
-  add_dependencies(traintastic-server-test traintastic-lang)
+  if(NOT TRAINTASTIC_CS)
+    add_dependencies(traintastic-server-test traintastic-lang)
+  endif()
   target_compile_definitions(traintastic-server-test PRIVATE -DTRAINTASTIC_TEST)
   set_target_properties(traintastic-server-test PROPERTIES CXX_STANDARD 17)
   target_include_directories(traintastic-server-test PRIVATE
@@ -189,6 +195,12 @@ file(GLOB TEST_SOURCES
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DENABLE_LOG_DEBUG")
 
 ### OPTIONS ###
+
+if(TRAINTASTIC_CS)
+  message(STATUS "Enabled Traintastic CS config")
+  add_definitions(-DTRAINTASTIC_CS)
+  set(NO_LOCALHOST_ONLY_SETTING ON)
+endif()
 
 if(NO_LOCALHOST_ONLY_SETTING)
   message(STATUS "Setting localhost only removed")
@@ -448,10 +460,6 @@ install(TARGETS traintastic-server
     COMPONENT traintastic-server
     RUNTIME DESTINATION "/opt/traintastic/bin/"
 )
-
-if(INSTALL_TRANSLATIONS)
-  install(FILES ${TRANSLATION_FILES} DESTINATION "/opt/traintastic/translations")
-endif()
 
 if(INSTALL_SYSTEMD_SERVICE)
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/debian/traintastic-server.service DESTINATION "/lib/systemd/system")

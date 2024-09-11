@@ -428,12 +428,6 @@ jobs:
       with:
         submodules: recursive
 
-    - name: "Download artifact: lang"
-      uses: actions/download-artifact@v2
-      with:
-        name: traintastic-lang
-        path: ${{github.workspace}}/shared/translations
-
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/shared/build
 
