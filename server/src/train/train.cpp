@@ -20,6 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <cmath>
 #include "train.hpp"
 #include "trainblockstatus.hpp"
 #include "trainlist.hpp"
@@ -83,28 +84,18 @@ Train::Train(World& world, std::string_view _id) :
   throttleSpeed{*this, "throttle_speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
     [this](double value, SpeedUnit unit)
     {
-      const double currentSpeed = speed.getValue(unit);
+      double modelSpeed = convertUnit(value, unit, SpeedUnit::MeterPerSecond);
+      modelSpeed /= m_world.scaleRatio;
+
+      SpeedPoint speedPoint;
+      speedPoint.speedMetersPerSecond = modelSpeed;
+
+      // Table match will be calculated later
+      speedPoint.tableIdx = TrainSpeedTable::NULL_TABLE_ENTRY;
 
       emergencyStop.setValueInternal(false);
 
-      if(value > currentSpeed) // Accelerate
-      {
-        if(m_speedState == SpeedState::Accelerate)
-          return;
-
-        m_speedTimer.cancel();
-        m_speedState = SpeedState::Accelerate;
-        updateSpeed();
-      }
-      else if(value < currentSpeed) // brake
-      {
-        if(m_speedState == SpeedState::Braking)
-          return;
-
-        m_speedTimer.cancel();
-        m_speedState = SpeedState::Braking;
-        updateSpeed();
-      }
+      setThrottleSpeed(speedPoint);
     }},
   stop{*this, "stop", MethodFlags::ScriptCallable,
     [this]()
@@ -121,6 +112,10 @@ Train::Train(World& world, std::string_view _id) :
         throttleSpeed.setValueInternal(0);
         speed.setValueInternal(0);
         isStopped.setValueInternal(true);
+
+        // Reset speed point to zero
+        lastSetSpeedPoint = throttleSpeedPoint = SpeedPoint();
+
         updateEnabled();
       }
 
@@ -319,12 +314,155 @@ void Train::worldEvent(WorldState state, WorldEvent event)
   updateEnabled();
 }
 
-void Train::setSpeed(const double kmph)
+void Train::setSpeed(const SpeedPoint& speedPoint)
 {
-  for(const auto& vehicle : m_poweredVehicles)
-    vehicle->setSpeed(kmph);
-  speed.setValueInternal(convertUnit(kmph, SpeedUnit::KiloMeterPerHour, speed.unit()));
+  lastSetSpeedPoint = speedPoint;
+
+  if(m_speedTable)
+  {
+    const auto& entry = m_speedTable->getEntryAt(speedPoint.tableIdx);
+
+    const Direction oppositeDirection = direction == Direction::Forward ? Direction::Reverse : Direction::Forward;
+
+    uint32_t locoIdx = 0;
+    for(const auto& vehicle : m_poweredVehicles)
+    {
+      Direction dir = direction;
+      if(vehicle->invertTrainDirection)
+        dir = oppositeDirection;
+
+      vehicle->lastTrainSetDirection = dir;
+      vehicle->setDirection(dir);
+
+      // TODO: support arbitrary speed step max
+      float throttle = Decoder::speedStepToThrottle(entry.stepForLoco_[locoIdx], uint8_t(126));
+
+      vehicle->lastTrainSpeedStep = throttle;
+      if(vehicle->decoder)
+        vehicle->decoder->throttle = throttle;
+      locoIdx++;
+    }
+  }
+
+  // Update real speed property
+  const double realSpeedMS = lastSetSpeedPoint.speedMetersPerSecond * m_world.scaleRatio.value();
+  speed.setValueInternal(convertUnit(realSpeedMS,
+                                     SpeedUnit::MeterPerSecond,
+                                     speed.unit()));
+
   updateEnabled();
+}
+
+void Train::setThrottleSpeed(const SpeedPoint& targetSpeed)
+{
+  throttleSpeedPoint = targetSpeed;
+
+  if(targetSpeed.tableIdx == TrainSpeedTable::NULL_TABLE_ENTRY)
+  {
+    if(!almostZero(targetSpeed.speedMetersPerSecond))
+    {
+      auto match = m_speedTable->getClosestMatch(targetSpeed.speedMetersPerSecond);
+      throttleSpeedPoint.speedMetersPerSecond = match.tableEntry.avgSpeed;
+      throttleSpeedPoint.tableIdx = match.tableIdx;
+    }
+  }
+
+  if(throttleSpeedPoint.tableIdx > maxSpeedPoint.tableIdx)
+    throttleSpeedPoint = maxSpeedPoint;
+
+  // Update real speed property
+  const double realSpeedMS = throttleSpeedPoint.speedMetersPerSecond * m_world.scaleRatio.value();
+  throttleSpeed.setValueInternal(convertUnit(realSpeedMS,
+                                             SpeedUnit::MeterPerSecond,
+                                             throttleSpeed.unit()));
+
+  auto elapsed = std::chrono::steady_clock::now() - m_speedTimerStart;
+  auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+
+  if(throttleSpeedPoint.tableIdx > lastSetSpeedPoint.tableIdx)
+  {
+    if(m_speedState == SpeedState::Accelerate)
+    {
+      // Keep accelerating
+    }
+    else
+    {
+      double currentSpeed = lastSetSpeedPoint.speedMetersPerSecond;
+      int nextTableIdx = lastSetSpeedPoint.tableIdx + 1;
+
+      if(m_speedState == SpeedState::Braking)
+      {
+        // We start from under last set speed
+        double deltaSpeed = m_brakingRate * double(millis.count()) / 1000.0;
+        currentSpeed += deltaSpeed; // Negative delta
+        nextTableIdx--;
+      }
+
+      scheduleAccelerationFrom(currentSpeed,
+                               nextTableIdx,
+                               SpeedState::Accelerate);
+    }
+  }
+  else if(throttleSpeedPoint.tableIdx < lastSetSpeedPoint.tableIdx)
+  {
+    if(m_speedState == SpeedState::Braking)
+    {
+      // Keep braking
+    }
+    else
+    {
+      double currentSpeed = lastSetSpeedPoint.speedMetersPerSecond;
+      int prevTableIdx = lastSetSpeedPoint.tableIdx - 1;
+
+      if(m_speedState == SpeedState::Accelerate)
+      {
+        // We start from above last set speed
+        double deltaSpeed = m_accelerationRate * double(millis.count()) / 1000.0;
+        currentSpeed += deltaSpeed;
+        prevTableIdx++;
+      }
+
+      scheduleAccelerationFrom(currentSpeed,
+                               prevTableIdx,
+                               SpeedState::Braking);
+    }
+  }
+  else if(m_speedState != SpeedState::Idle)
+  {
+    // Cancel current acceleration
+    m_speedState = SpeedState::Idle;
+    m_speedTimer.cancel();
+
+    // Force setting speed
+    setSpeed(throttleSpeedPoint);
+  }
+}
+
+void Train::scheduleAccelerationFrom(double currentSpeed, uint8_t newTableIdx, SpeedState state)
+{
+  // Calculate seconds to previous table index
+  double newSpeed = m_speedTable->getEntryAt(newTableIdx).avgSpeed;
+
+  const double deltaSpeed = newSpeed - currentSpeed;
+  double accelRate = m_accelerationRate;
+  if(state == SpeedState::Braking)
+  {
+    accelRate = m_brakingRate;
+  }
+
+  const double deltaSeconds = deltaSpeed / accelRate;
+  const int millis = std::ceil(deltaSeconds * 1000.0);
+
+  m_speedState = state;
+
+  m_speedTimerStart = std::chrono::steady_clock::now();
+  m_speedTimer.expires_after(std::chrono::milliseconds(millis));
+  m_speedTimer.async_wait(
+    [this](const boost::system::error_code& ec)
+    {
+      if(!ec)
+        updateSpeed();
+    });
 }
 
 void Train::updateSpeed()
@@ -335,47 +473,58 @@ void Train::updateSpeed()
   if(m_speedState == SpeedState::Accelerate && !active)
     return;
 
-  const double targetSpeed = throttleSpeed.getValue(SpeedUnit::MeterPerSecond);
-  double currentSpeed = speed.getValue(SpeedUnit::MeterPerSecond);
+  // TODO: needed?
+  m_speedTimer.cancel();
 
-  double acceleration = 0;
+  uint8_t newTableIdx = lastSetSpeedPoint.tableIdx;
   if(m_speedState == SpeedState::Accelerate)
   {
-    //! \todo add realistic acceleration
-    acceleration = 1; // m/s^2
+    newTableIdx++;
   }
   else if(m_speedState == SpeedState::Braking)
   {
-    //! \todo add realistic braking
-    acceleration = -0.5; // m/s^2
+    newTableIdx--;
   }
   else
     assert(false);
 
-  currentSpeed += acceleration * 0.1; // x 100ms
+  const auto& entry = m_speedTable->getEntryAt(newTableIdx);
+  SpeedPoint newSpeed;
+  newSpeed.speedMetersPerSecond = entry.avgSpeed;
+  newSpeed.tableIdx = newTableIdx;
 
-  if((m_speedState == SpeedState::Accelerate && currentSpeed >= targetSpeed) ||
-      (m_speedState == SpeedState::Braking && currentSpeed <= targetSpeed))
+  setSpeed(newSpeed);
+
+  if(throttleSpeedPoint.tableIdx > lastSetSpeedPoint.tableIdx)
   {
-    m_speedState = SpeedState::Idle;
-    setSpeed(convertUnit(targetSpeed, SpeedUnit::MeterPerSecond, SpeedUnit::KiloMeterPerHour));
-    currentSpeed = targetSpeed;
+    // Keep accelerating
+    double currentSpeed = lastSetSpeedPoint.speedMetersPerSecond;
+    uint8_t nextTableIdx = lastSetSpeedPoint.tableIdx + 1;
+
+    scheduleAccelerationFrom(currentSpeed,
+                             nextTableIdx,
+                             SpeedState::Accelerate);
+  }
+  else if(throttleSpeedPoint.tableIdx < lastSetSpeedPoint.tableIdx)
+  {
+    // Keep braking
+    double currentSpeed = lastSetSpeedPoint.speedMetersPerSecond;
+    uint8_t prevTableIdx = lastSetSpeedPoint.tableIdx - 1;
+
+    scheduleAccelerationFrom(currentSpeed,
+                             prevTableIdx,
+                             SpeedState::Braking);
   }
   else
   {
-    using namespace std::literals;
-    setSpeed(convertUnit(currentSpeed, SpeedUnit::MeterPerSecond, SpeedUnit::KiloMeterPerHour));
-    m_speedTimer.expires_after(100ms);
-    m_speedTimer.async_wait(
-      [this](const boost::system::error_code& ec)
-      {
-        if(!ec)
-          updateSpeed();
-      });
+    // We reached target speed
+    m_speedState = SpeedState::Idle;
   }
 
   const bool currentValue = isStopped;
-  isStopped.setValueInternal(m_speedState == SpeedState::Idle && almostZero(currentSpeed) && almostZero(targetSpeed));
+  isStopped.setValueInternal(m_speedState == SpeedState::Idle &&
+                             lastSetSpeedPoint.tableIdx == TrainSpeedTable::NULL_TABLE_ENTRY &&
+                             throttleSpeedPoint.tableIdx == TrainSpeedTable::NULL_TABLE_ENTRY);
   if(currentValue != isStopped)
     updateEnabled();
 }
@@ -633,10 +782,25 @@ std::error_code Train::setSpeed(Throttle& throttle, double value)
 
   value = std::clamp(value, Attributes::getMin(speed), Attributes::getMax(speed));
 
-  setSpeed(convertUnit(value, speed.unit(), SpeedUnit::KiloMeterPerHour));
-  throttleSpeed.setValue(convertUnit(value, speed.unit(), throttleSpeed.unit()));
-  m_speedTimer.cancel();
+  // Get speed point
+  auto match = m_speedTable->getClosestMatch(value);
+
+  SpeedPoint speedPoint;
+  speedPoint.speedMetersPerSecond = match.tableEntry.avgSpeed;
+  speedPoint.tableIdx = match.tableIdx;
+
+  // Cancel current acceleration
   m_speedState = SpeedState::Idle;
+  m_speedTimer.cancel();
+
+  // Force setting speed
+  setSpeed(throttleSpeedPoint);
+
+  // Update real speed property
+  const double realSpeedMS = throttleSpeedPoint.speedMetersPerSecond * m_world.scaleRatio.value();
+  throttleSpeed.setValueInternal(convertUnit(realSpeedMS,
+                                             SpeedUnit::MeterPerSecond,
+                                             throttleSpeed.unit()));
 
   const bool currentValue = isStopped;
   isStopped.setValueInternal(m_speedState == SpeedState::Idle && almostZero(speed.value()) && almostZero(throttleSpeed.value()));
