@@ -318,7 +318,7 @@ void Train::setSpeed(const SpeedPoint& speedPoint)
 
       // TODO: support arbitrary speed step max
       driveLocomotive(vehicle,
-                      entry.stepForLoco_[locoIdx]);
+                      entry.getStepForLoco(locoIdx));
 
       locoIdx++;
     }
