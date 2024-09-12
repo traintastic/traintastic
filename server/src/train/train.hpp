@@ -98,6 +98,9 @@ class Train : public IdObject
     void stopDelayedSpeedApply();
     void applyDelayedSpeed();
 
+    void driveLocomotive(const std::shared_ptr<PoweredRailVehicle> &vehicle,
+                         uint8_t step);
+
     void vehiclesChanged();
     void updateLength();
     void updateWeight();

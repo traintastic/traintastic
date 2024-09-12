@@ -139,7 +139,7 @@ Train::Train(World& world, std::string_view _id) :
     [this](bool)
     {
       propagateDirection(direction); //Sync all vehicles direction
-      updateSpeed();
+      updateSpeed(); // TODO: no-op?
     },
     std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
   mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
@@ -316,11 +316,9 @@ void Train::setSpeed(const SpeedPoint& speedPoint)
         continue; // This loco will be set later
 
       // TODO: support arbitrary speed step max
-      float throttle = Decoder::speedStepToThrottle(entry.stepForLoco_[locoIdx], uint8_t(126));
+      driveLocomotive(vehicle,
+                      entry.stepForLoco_[locoIdx]);
 
-      vehicle->lastTrainSpeedStep = throttle;
-      if(vehicle->decoder)
-        vehicle->decoder->throttle = throttle;
       locoIdx++;
     }
   }
@@ -608,8 +606,16 @@ void Train::applyDelayedSpeed()
     const auto& entry = m_speedTable->getEntryAt(lastSetSpeedPoint.tableIdx);
     uint8_t step = entry.getStepForLoco(locoIdx);
 
-    float throttle = Decoder::speedStepToThrottle(step, uint8_t(126));
-    vehicle->lastTrainSpeedStep = throttle;
+    driveLocomotive(vehicle, step);
+}
+
+void Train::driveLocomotive(const std::shared_ptr<PoweredRailVehicle> &vehicle,
+                            uint8_t step)
+{
+  // TODO: support arbitrary speed step max
+  float throttle = Decoder::speedStepToThrottle(step, uint8_t(126));
+  vehicle->lastTrainSpeedStep = throttle;
+  if(vehicle->decoder)
     vehicle->decoder->throttle = throttle;
 }
 
@@ -873,11 +879,8 @@ void Train::handleDecoderThrottle(const std::shared_ptr<PoweredRailVehicle> &veh
   {
     // Locomotive exceeded Train max speed, revert immediately
 
-    // TODO: is it better to revert to lastTrainSpeedStep?
-    float throttle = Decoder::speedStepToThrottle(maxLocoStep, uint8_t(126));
-
-    vehicle->lastTrainSpeedStep = throttle;
-    vehicle->decoder->throttle = throttle;
+    // TODO: is it better to revert to lastSetSpeedPoint?
+    driveLocomotive(vehicle, oldStep);
 
     // Set all locomotives to max train speed
     setThrottleSpeed(maxSpeedPoint);
@@ -959,8 +962,7 @@ void Train::handleDecoderThrottle(const std::shared_ptr<PoweredRailVehicle> &veh
     // and would be out of sync with the others.
     const auto& entry = m_speedTable->getEntryAt(lastSetSpeedPoint.tableIdx);
     step = entry.getStepForLoco(locoIdx);
-    newThrottle = Decoder::speedStepToThrottle(step, uint8_t(126));
-    vehicle->lastTrainSpeedStep = newThrottle;
+    driveLocomotive(vehicle, step);
 
     // Apply previous delay if present
     applyDelayedSpeed();
