@@ -24,6 +24,7 @@
 #include "vehiclespeedcurve.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/objectproperty.tpp"
+#include "../../core/method.tpp"
 #include "../../utils/almostzero.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
@@ -34,12 +35,17 @@
 PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   : RailVehicle(world, id_)
   , power{*this, "power", 0, PowerUnit::KiloWatt, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , speedCurve{this, "speed_curve", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(power, DisplayName::Vehicle::Rail::power);
   Attributes::addEnabled(power, editable);
   m_interfaceItems.add(power);
+
+  speedCurve.setValueInternal(std::make_shared<VehicleSpeedCurve>(*this, speedCurve.name()));
+  Attributes::addEnabled(speedCurve, true);
+  m_interfaceItems.add(speedCurve);
 
   propertyChanged.connect(
     [this](BaseProperty &prop)
@@ -95,10 +101,12 @@ void PoweredRailVehicle::worldEvent(WorldState state, WorldEvent event)
 
 void PoweredRailVehicle::updateMaxSpeed()
 {
-  if(!m_speedCurve)
+  propertyChanged(speedCurve); //TODO: find better way
+
+  if(!speedCurve->isValid())
     return;
 
-  double speedMS = m_speedCurve->getSpeedForStep(126);
+  double speedMS = speedCurve->getSpeedForStep(126);
   speedMS *= m_world.scaleRatio;
 
   speedMax.setValueInternal(convertUnit(speedMS,

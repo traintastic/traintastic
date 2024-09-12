@@ -43,6 +43,8 @@
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
 
+#include <memory>
+
 CREATE_IMPL(Train)
 
 static inline bool isPowered(const RailVehicle& vehicle)
@@ -567,18 +569,18 @@ void Train::updateSpeedTable()
     return;
   }
 
-  std::vector<VehicleSpeedCurve> speedCurves;
+  std::vector<std::shared_ptr<VehicleSpeedCurve>> speedCurves;
   speedCurves.reserve(m_poweredVehicles.size());
-  for(const auto& vehicle : m_poweredVehicles)
+  for(const std::shared_ptr<PoweredRailVehicle>& vehicle : m_poweredVehicles)
   {
-    if(!vehicle->m_speedCurve)
+    if(!vehicle->speedCurve->isValid())
     {
       // All vehicles must have a speed curve loaded
       m_speedTable.reset();
       return;
     }
 
-    speedCurves.push_back(*vehicle->m_speedCurve);
+    speedCurves.push_back(vehicle->speedCurve.value());
   }
 
   if(!m_speedTable)
@@ -721,10 +723,10 @@ void Train::updateSpeedMax()
   {
     for(const auto& item : *vehicles)
     {
-      if(m_speedTable && isPowered(item.vehicle))
+      if(m_speedTable && isPowered(*item->vehicle))
         continue; // Already taken into account by speed table max
 
-      const SpeedProperty& vehicleMax = item.vehicle->speedMax;
+      const SpeedProperty& vehicleMax = item->vehicle->speedMax;
       const double v = vehicleMax.getValue(SpeedUnit::MeterPerSecond);
 
       if((v > 0 && v < realMaxSpeedMS) || !speedWasAdjusted)

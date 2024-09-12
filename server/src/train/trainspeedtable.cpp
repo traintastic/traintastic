@@ -116,7 +116,7 @@ const TrainSpeedTable::Entry& TrainSpeedTable::getEntryAt(uint8_t idx) const
   return mEntries.at(idx - 1);
 }
 
-TrainSpeedTable TrainSpeedTable::buildTable(const std::vector<VehicleSpeedCurve> &locoMappings)
+TrainSpeedTable TrainSpeedTable::buildTable(const std::vector<std::shared_ptr<VehicleSpeedCurve>> &locoMappings)
 {
   // TODO: prefer pushing/pulling
 
@@ -133,7 +133,7 @@ TrainSpeedTable TrainSpeedTable::buildTable(const std::vector<VehicleSpeedCurve>
   {
     // Special case: only 1 locomotive
     // Table is a replica of locomotive speed curve
-    const VehicleSpeedCurve& speedCurve = locoMappings.at(0);
+    const VehicleSpeedCurve& speedCurve = *locoMappings.at(0);
 
     table.mEntries.reserve(126);
     for(int step = 1; step <= 126; step++)
@@ -149,10 +149,10 @@ TrainSpeedTable TrainSpeedTable::buildTable(const std::vector<VehicleSpeedCurve>
     return table;
   }
 
-  double maxTrainSpeed = locoMappings.at(0).getSpeedForStep(126);
+  double maxTrainSpeed = locoMappings.at(0)->getSpeedForStep(126);
   for(uint32_t locoIdx = 1; locoIdx < NUM_LOCOS; locoIdx++)
   {
-    double maxSpeed = locoMappings.at(locoIdx).getSpeedForStep(126);
+    double maxSpeed = locoMappings.at(locoIdx)->getSpeedForStep(126);
     if(maxSpeed < maxTrainSpeed)
       maxTrainSpeed = maxSpeed;
   }
@@ -182,7 +182,7 @@ TrainSpeedTable TrainSpeedTable::buildTable(const std::vector<VehicleSpeedCurve>
   entries.reserve(200);
   diffVector.reserve(200);
 
-  uint8_t firstLocoMaxStep = locoMappings.at(0).stepLowerBound(maxTrainSpeed);
+  uint8_t firstLocoMaxStep = locoMappings.at(0)->stepLowerBound(maxTrainSpeed);
   if(firstLocoMaxStep == 0)
     firstLocoMaxStep = 126;
 
@@ -193,7 +193,7 @@ TrainSpeedTable TrainSpeedTable::buildTable(const std::vector<VehicleSpeedCurve>
 
   while(stepCache[0].currentStep <= firstLocoMaxStep)
   {
-    const VehicleSpeedCurve& mapping = locoMappings.at(currentLocoIdx);
+    const VehicleSpeedCurve& mapping = *locoMappings.at(currentLocoIdx);
     LocoStepCache& item = stepCache[currentLocoIdx];
 
     if(currentLocoIdx == 0)
@@ -207,7 +207,7 @@ TrainSpeedTable TrainSpeedTable::buildTable(const std::vector<VehicleSpeedCurve>
 
       for(uint32_t otherLocoIdx = 1; otherLocoIdx < locoMappings.size(); otherLocoIdx++)
       {
-        const VehicleSpeedCurve& otherMapping = locoMappings.at(otherLocoIdx);
+        const VehicleSpeedCurve& otherMapping = *locoMappings.at(otherLocoIdx);
         LocoStepCache& otherItem = stepCache[otherLocoIdx];
 
         otherItem.minAcceptedStep = otherMapping.stepLowerBound(minAcceptedSpeed);

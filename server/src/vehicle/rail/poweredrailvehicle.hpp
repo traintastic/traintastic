@@ -27,6 +27,8 @@
 #include "railvehicle.hpp"
 #include <traintastic/enum/direction.hpp>
 #include "../../core/powerproperty.hpp"
+#include "../../core/method.hpp"
+#include "../../core/objectproperty.hpp"
 
 class VehicleSpeedCurve;
 
@@ -40,6 +42,7 @@ class PoweredRailVehicle : public RailVehicle
     void loaded() override;
     void worldEvent(WorldState state, WorldEvent event) override;
 
+    friend class VehicleSpeedCurve;
     void updateMaxSpeed();
 
     void registerDecoder();
@@ -49,10 +52,9 @@ class PoweredRailVehicle : public RailVehicle
     float lastTrainSpeedStep = 0;
     Direction lastTrainSetDirection = Direction::Unknown;
 
-    std::unique_ptr<VehicleSpeedCurve> m_speedCurve; //TODO: initialize?
-
   public:
     PowerProperty power;
+    ObjectProperty<VehicleSpeedCurve> speedCurve;
 
     void setDirection(Direction value);
     void setEmergencyStop(bool value);
