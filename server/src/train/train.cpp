@@ -335,6 +335,7 @@ void Train::setSpeed(const SpeedPoint& speedPoint)
 
 void Train::setThrottleSpeed(const SpeedPoint& targetSpeed)
 {
+  SpeedPoint oldThrottle = throttleSpeedPoint;
   throttleSpeedPoint = targetSpeed;
 
   if(targetSpeed.tableIdx == TrainSpeedTable::NULL_TABLE_ENTRY)
@@ -344,6 +345,34 @@ void Train::setThrottleSpeed(const SpeedPoint& targetSpeed)
       auto match = m_speedTable->getClosestMatch(targetSpeed.speedMetersPerSecond);
       throttleSpeedPoint.speedMetersPerSecond = match.tableEntry.avgSpeed;
       throttleSpeedPoint.tableIdx = match.tableIdx;
+
+      // Do smart rounding
+      if(targetSpeed.speedMetersPerSecond > oldThrottle.speedMetersPerSecond)
+      {
+          // User wants to go faster
+          if(throttleSpeedPoint.tableIdx == oldThrottle.tableIdx &&
+             throttleSpeedPoint.tableIdx < maxSpeedPoint.tableIdx)
+          {
+              // But we got rounded back to old value
+              // So give it a +1
+              throttleSpeedPoint.tableIdx++;
+              const auto& next = m_speedTable->getEntryAt(throttleSpeedPoint.tableIdx);
+              throttleSpeedPoint.speedMetersPerSecond = next.avgSpeed;
+          }
+      }
+      else if(targetSpeed.speedMetersPerSecond < oldThrottle.speedMetersPerSecond)
+      {
+          // User wants to go slower
+          if(throttleSpeedPoint.tableIdx == oldThrottle.tableIdx &&
+             throttleSpeedPoint.tableIdx > 0)
+          {
+              // But we got rounded back to old value
+              // So give it a -1
+              throttleSpeedPoint.tableIdx--;
+              const auto& prev = m_speedTable->getEntryAt(throttleSpeedPoint.tableIdx);
+              throttleSpeedPoint.speedMetersPerSecond = prev.avgSpeed;
+          }
+      }
     }
   }
 
