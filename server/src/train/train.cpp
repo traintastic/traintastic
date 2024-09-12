@@ -361,7 +361,7 @@ void Train::setThrottleSpeed(const SpeedPoint& targetSpeed)
 
   if(throttleSpeedPoint.tableIdx > lastSetSpeedPoint.tableIdx)
   {
-    if(m_speedState == SpeedState::Accelerate)
+    if(m_speedState == SpeedState::Accelerating)
     {
       // Keep accelerating
     }
@@ -380,7 +380,7 @@ void Train::setThrottleSpeed(const SpeedPoint& targetSpeed)
 
       scheduleAccelerationFrom(currentSpeed,
                                nextTableIdx,
-                               SpeedState::Accelerate);
+                               SpeedState::Accelerating);
     }
   }
   else if(throttleSpeedPoint.tableIdx < lastSetSpeedPoint.tableIdx)
@@ -394,7 +394,7 @@ void Train::setThrottleSpeed(const SpeedPoint& targetSpeed)
     double currentSpeed = lastSetSpeedPoint.speedMetersPerSecond;
     uint8_t prevTableIdx = lastSetSpeedPoint.tableIdx - 1;
 
-    if(m_speedState == SpeedState::Accelerate)
+    if(m_speedState == SpeedState::Accelerating)
     {
       // We start from above last set speed
       double deltaSpeed = m_accelerationRate * double(millis.count()) / 1000.0;
@@ -450,14 +450,14 @@ void Train::updateSpeed()
   if(m_speedState == SpeedState::Idle)
     return;
 
-  if(m_speedState == SpeedState::Accelerate && !active)
+  if(m_speedState == SpeedState::Accelerating && !active)
     return;
 
   // TODO: needed?
   m_speedTimer.cancel();
 
   uint8_t newTableIdx = lastSetSpeedPoint.tableIdx;
-  if(m_speedState == SpeedState::Accelerate)
+  if(m_speedState == SpeedState::Accelerating)
   {
     newTableIdx++;
   }
@@ -483,7 +483,7 @@ void Train::updateSpeed()
 
     scheduleAccelerationFrom(currentSpeed,
                              nextTableIdx,
-                             SpeedState::Accelerate);
+                             SpeedState::Accelerating);
   }
   else if(throttleSpeedPoint.tableIdx < lastSetSpeedPoint.tableIdx)
   {

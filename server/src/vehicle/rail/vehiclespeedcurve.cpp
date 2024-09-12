@@ -25,7 +25,7 @@
 #include <algorithm>
 
 VehicleSpeedCurve::VehicleSpeedCurve(const std::array<double, 126> &arr)
-  : mSpeedCurve(arr)
+  : m_speedCurve(arr)
 {
 
 }
@@ -36,17 +36,17 @@ double VehicleSpeedCurve::getSpeedForStep(uint8_t step) const
     return 0;
 
   // We do not store zero so index is step - 1
-  return mSpeedCurve.at(step - 1);
+  return m_speedCurve.at(step - 1);
 }
 
 uint8_t VehicleSpeedCurve::stepUpperBound(double speed) const
 {
-  auto it = std::upper_bound(mSpeedCurve.begin(),
-                             mSpeedCurve.end(),
+  auto it = std::upper_bound(m_speedCurve.begin(),
+                             m_speedCurve.end(),
                              speed);
-  if(it != mSpeedCurve.end())
+  if(it != m_speedCurve.end())
   {
-    int idx = std::distance(mSpeedCurve.begin(), it);
+    int idx = std::distance(m_speedCurve.begin(), it);
 
     // We do not store zero so step is index + 1
     int step = idx + 1;
@@ -57,12 +57,12 @@ uint8_t VehicleSpeedCurve::stepUpperBound(double speed) const
 
 uint8_t VehicleSpeedCurve::stepLowerBound(double speed) const
 {
-  auto it = std::lower_bound(mSpeedCurve.begin(),
-                             mSpeedCurve.end(),
+  auto it = std::lower_bound(m_speedCurve.begin(),
+                             m_speedCurve.end(),
                              speed);
-  if(it != mSpeedCurve.end())
+  if(it != m_speedCurve.end())
   {
-    int idx = std::distance(mSpeedCurve.begin(), it);
+    int idx = std::distance(m_speedCurve.begin(), it);
     // We do not store zero so step is index + 1
     int step = idx + 1;
     return step;
