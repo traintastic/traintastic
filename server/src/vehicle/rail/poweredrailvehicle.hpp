@@ -23,9 +23,12 @@
 #ifndef TRAINTASTIC_SERVER_VEHICLE_RAIL_POWEREDRAILVEHICLE_HPP
 #define TRAINTASTIC_SERVER_VEHICLE_RAIL_POWEREDRAILVEHICLE_HPP
 
+#include <memory>
 #include "railvehicle.hpp"
 #include <traintastic/enum/direction.hpp>
 #include "../../core/powerproperty.hpp"
+
+class VehicleSpeedCurve;
 
 class PoweredRailVehicle : public RailVehicle
 {
@@ -43,6 +46,8 @@ class PoweredRailVehicle : public RailVehicle
     friend class Train;
     float lastTrainSpeedStep = 0;
     Direction lastTrainSetDirection = Direction::Unknown;
+
+    std::unique_ptr<VehicleSpeedCurve> m_speedCurve; //TODO: initialize?
 
   public:
     PowerProperty power;
