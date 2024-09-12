@@ -53,6 +53,7 @@ static inline bool isPowered(const RailVehicle& vehicle)
 Train::Train(World& world, std::string_view _id) :
   IdObject(world, _id),
   m_speedTimer{EventLoop::ioContext},
+  m_delayedSpeedApplyTimer{EventLoop::ioContext},
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
   overrideLength{this, "override_length", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
@@ -322,17 +323,11 @@ void Train::setSpeed(const SpeedPoint& speedPoint)
   {
     const auto& entry = m_speedTable->getEntryAt(speedPoint.tableIdx);
 
-    const Direction oppositeDirection = direction == Direction::Forward ? Direction::Reverse : Direction::Forward;
-
     uint32_t locoIdx = 0;
     for(const auto& vehicle : m_poweredVehicles)
     {
-      Direction dir = direction;
-      if(vehicle->invertTrainDirection)
-        dir = oppositeDirection;
-
-      vehicle->lastTrainSetDirection = dir;
-      vehicle->setDirection(dir);
+      if(vehicle == m_delayedApplyLoco)
+        continue; // This loco will be set later
 
       // TODO: support arbitrary speed step max
       float throttle = Decoder::speedStepToThrottle(entry.stepForLoco_[locoIdx], uint8_t(126));
@@ -388,7 +383,7 @@ void Train::setThrottleSpeed(const SpeedPoint& targetSpeed)
     else
     {
       double currentSpeed = lastSetSpeedPoint.speedMetersPerSecond;
-      int nextTableIdx = lastSetSpeedPoint.tableIdx + 1;
+      uint8_t nextTableIdx = lastSetSpeedPoint.tableIdx + 1;
 
       if(m_speedState == SpeedState::Braking)
       {
@@ -412,7 +407,7 @@ void Train::setThrottleSpeed(const SpeedPoint& targetSpeed)
     else
     {
       double currentSpeed = lastSetSpeedPoint.speedMetersPerSecond;
-      int prevTableIdx = lastSetSpeedPoint.tableIdx - 1;
+      uint8_t prevTableIdx = lastSetSpeedPoint.tableIdx - 1;
 
       if(m_speedState == SpeedState::Accelerate)
       {
@@ -451,7 +446,7 @@ void Train::scheduleAccelerationFrom(double currentSpeed, uint8_t newTableIdx, S
   }
 
   const double deltaSeconds = deltaSpeed / accelRate;
-  const int millis = std::ceil(deltaSeconds * 1000.0);
+  const uint32_t millis = std::ceil(deltaSeconds * 1000.0);
 
   m_speedState = state;
 
@@ -578,6 +573,58 @@ void Train::checkSpeedTable()
 {
   if(!m_speedTable || m_speedTableNeedsRecalculation)
     updateSpeedTable();
+}
+
+void Train::startDelayedSpeedApply(const std::shared_ptr<PoweredRailVehicle> &vehicle)
+{
+  using namespace std::chrono_literals;
+  if(m_delayedApplyLoco && m_delayedApplyLoco != vehicle)
+  {
+    // Source loco changed, apply now
+    applyDelayedSpeed();
+  }
+
+  m_delayedSpeedApplyTimer.cancel();
+
+  m_delayedApplyLoco = vehicle;
+  m_delayedSpeedApplyTimer.expires_after(700ms);
+  m_delayedSpeedApplyTimer.async_wait(
+    [this](const boost::system::error_code& ec)
+    {
+      if(!ec)
+        applyDelayedSpeed();
+    });
+}
+
+void Train::stopDelayedSpeedApply()
+{
+  m_delayedSpeedApplyTimer.cancel();
+  m_delayedApplyLoco.reset();
+}
+
+void Train::applyDelayedSpeed()
+{
+    auto vehicle = m_delayedApplyLoco;
+
+    stopDelayedSpeedApply();
+
+    if(!active || !vehicle || !vehicle->decoder)
+      return;
+
+    auto it = std::find(m_poweredVehicles.begin(),
+                        m_poweredVehicles.end(),
+                        vehicle);
+    if(it == m_poweredVehicles.end())
+      return;
+
+    const uint32_t locoIdx = std::distance(m_poweredVehicles.begin(), it);
+
+    const auto& entry = m_speedTable->getEntryAt(lastSetSpeedPoint.tableIdx);
+    uint8_t step = entry.getStepForLoco(locoIdx);
+
+    float throttle = Decoder::speedStepToThrottle(step, uint8_t(126));
+    vehicle->lastTrainSpeedStep = throttle;
+    vehicle->decoder->throttle = throttle;
 }
 
 void Train::vehiclesChanged()
@@ -713,6 +760,8 @@ bool Train::setTrainActive(bool val)
     //To deactivate a Train it must be stopped first
     if(!isStopped)
       return false;
+
+    stopDelayedSpeedApply();
 
     //Deactivate all vehicles
     for(const auto& item : *vehicles)
@@ -929,4 +978,122 @@ void Train::handleDecoderDirection(const std::shared_ptr<PoweredRailVehicle>& ve
     return; //No change
 
   direction = newDirection;
+}
+
+void Train::handleDecoderThrottle(const std::shared_ptr<PoweredRailVehicle> &vehicle, float newThrottle)
+{
+  if(!active || !powered || !vehicle->decoder)
+    return;
+
+  auto it = std::find(m_poweredVehicles.begin(),
+                      m_poweredVehicles.end(),
+                      vehicle);
+  if(it == m_poweredVehicles.end())
+    return;
+
+  const uint32_t locoIdx = std::distance(m_poweredVehicles.begin(), it);
+
+  uint8_t step = Decoder::throttleToSpeedStep(newThrottle, uint8_t(126));
+  uint8_t oldStep = Decoder::throttleToSpeedStep(vehicle->lastTrainSpeedStep, uint8_t(126));
+
+  const TrainSpeedTable::Entry& maxSpeedEntry = m_speedTable->getEntryAt(maxSpeedPoint.tableIdx);
+  uint8_t maxLocoStep = maxSpeedEntry.getStepForLoco(locoIdx);
+  if(step > maxLocoStep)
+  {
+    // Locomotive exceeded Train max speed, revert immediately
+
+    // TODO: is it better to revert to lastTrainSpeedStep?
+    float throttle = Decoder::speedStepToThrottle(maxLocoStep, uint8_t(126));
+
+    vehicle->lastTrainSpeedStep = throttle;
+    vehicle->decoder->throttle = throttle;
+
+    // Set all locomotives to max train speed
+    setThrottleSpeed(maxSpeedPoint);
+
+    return;
+  }
+
+  auto match = m_speedTable->getClosestMatch(locoIdx, step);
+
+  SpeedPoint speedPoint;
+  speedPoint.speedMetersPerSecond = match.tableEntry.avgSpeed;
+  speedPoint.tableIdx = match.tableIdx;
+
+  bool needsDelay = false;
+  const uint8_t newStep = match.tableEntry.getStepForLoco(locoIdx);
+
+  if(newStep != step)
+  {
+    // Requested step was adjusted
+    // This could prevent setting speed going up one by one
+
+    bool invertsTrend = (oldStep < step && step > newStep) ||
+                        (oldStep > step && step < newStep);
+
+    if(lastSetSpeedPoint.tableIdx == match.tableIdx)
+    {
+      // We would get rounded back to previous state
+      if(std::abs(oldStep - step) > 3)
+      {
+        // It takes more than +3 steps to reach next tableIdx
+        // We use 3 as threshold to ignore spurious rotary knob changes
+        // We help user reach next tableIdx before delay timeout triggers
+        // In fact it's hard to go more than 4 steps up before delaied
+        // step apply triggers.
+        uint8_t newTableIdx = lastSetSpeedPoint.tableIdx;
+        if(step > oldStep)
+          newTableIdx++;
+        else
+          newTableIdx--;
+
+        // Update speed point
+        speedPoint.tableIdx = newTableIdx;
+        speedPoint.speedMetersPerSecond = m_speedTable->getEntryAt(newTableIdx).avgSpeed;
+      }
+      else if(invertsTrend)
+      {
+        // We would override user requested speed
+        // with original speed, give user some time
+        // to set higher/lower step
+        needsDelay = true;
+      }
+    }
+    else if(abs(lastSetSpeedPoint.tableIdx - match.tableIdx) == 1)
+    {
+      // User managed to get to next/prev tableIdx but still got
+      // adjusted. Give some extra time if trend got inverted
+      if(invertsTrend)
+      {
+        needsDelay = true;
+      }
+    }
+  }
+
+  if(needsDelay)
+  {
+    // Keep step set by user
+    newThrottle = Decoder::speedStepToThrottle(newStep, uint8_t(126));
+    vehicle->lastTrainSpeedStep = newThrottle;
+
+    startDelayedSpeedApply(vehicle);
+  }
+  else
+  {
+    // We will accelerate/brake up to requested step
+    // But first reset to last set step
+    // This is needed so all locomotives start accelerating/braking
+    // At same speed, otherwise this locomotive would accelerate faster
+    // or brake faster because it's the first one to receive commands
+    // and would be out of sync with the others.
+    const auto& entry = m_speedTable->getEntryAt(lastSetSpeedPoint.tableIdx);
+    step = entry.getStepForLoco(locoIdx);
+    newThrottle = Decoder::speedStepToThrottle(step, uint8_t(126));
+    vehicle->lastTrainSpeedStep = newThrottle;
+
+    // Apply previous delay if present
+    applyDelayedSpeed();
+  }
+
+  setThrottleSpeed(speedPoint);
 }
