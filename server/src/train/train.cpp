@@ -525,14 +525,6 @@ void Train::updateSpeed()
 
 void Train::updateSpeedTable()
 {
-  if(!active)
-  {
-    // Delay recalculation to when active
-    m_speedTable.reset();
-    m_speedTableNeedsRecalculation = true;
-    return;
-  }
-
   // Recalculate speed table
   m_speedTableNeedsRecalculation = false;
 
@@ -562,7 +554,7 @@ void Train::updateSpeedTable()
   *m_speedTable = TrainSpeedTable::buildTable(speedCurves);
 
   // Update max speed TODO: update also speedMax property
-  auto lastEntry = m_speedTable->getEntryAt(m_speedTable->count() - 1);
+  const auto& lastEntry = m_speedTable->getEntryAt(m_speedTable->count() - 1);
   maxSpeedPoint.speedMetersPerSecond = lastEntry.avgSpeed;
   maxSpeedPoint.tableIdx = m_speedTable->count() - 1;
 
@@ -573,10 +565,17 @@ void Train::updateSpeedTable()
   }
 }
 
-void Train::checkSpeedTable()
+void Train::scheduleSpeedTableUpdate()
 {
-  if(!m_speedTable || m_speedTableNeedsRecalculation)
-    updateSpeedTable();
+  if(!active)
+  {
+    // Delay recalculation to when active
+    m_speedTable.reset();
+    m_speedTableNeedsRecalculation = true;
+    return;
+  }
+
+  updateSpeedTable();
 }
 
 void Train::startDelayedSpeedApply(const std::shared_ptr<PoweredRailVehicle> &vehicle)
@@ -678,7 +677,7 @@ void Train::updatePowered()
       m_poweredVehicles.emplace_back(poweredVehicle);
   powered.setValueInternal(!m_poweredVehicles.empty());
 
-  updateSpeedTable();
+  scheduleSpeedTableUpdate();
 }
 
 void Train::updateSpeedMax()
@@ -765,7 +764,8 @@ bool Train::setTrainActive(bool val)
     for(const auto& vehicle : m_poweredVehicles)
       vehicle->setEmergencyStop(stopValue);
 
-    checkSpeedTable();
+    if(!m_speedTable || m_speedTableNeedsRecalculation)
+      updateSpeedTable();
   }
   else
   {

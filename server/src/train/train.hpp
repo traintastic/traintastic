@@ -94,7 +94,7 @@ class Train : public IdObject
                                   SpeedState state);
     void updateSpeed();
     void updateSpeedTable();
-    void checkSpeedTable();
+    void scheduleSpeedTableUpdate();
 
     void startDelayedSpeedApply(const std::shared_ptr<PoweredRailVehicle> &vehicle);
     void stopDelayedSpeedApply();
