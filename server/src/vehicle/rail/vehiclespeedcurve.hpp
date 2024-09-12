@@ -25,6 +25,7 @@
 
 #include <array>
 #include <cstdint>
+#include "../../utils/json.hpp"
 
 class VehicleSpeedCurve
 {
@@ -35,6 +36,11 @@ public:
 
   uint8_t stepUpperBound(double speed) const;
   uint8_t stepLowerBound(double speed) const;
+
+  nlohmann::json toJSON() const;
+  void fromJSON(const nlohmann::json& obj);
+
+  bool loadFromString(const std::string& str);
 
 private:
   std::array<double, 126> m_speedCurve;

@@ -21,6 +21,7 @@
  */
 
 #include "vehiclespeedcurve.hpp"
+#include "../../core/to.hpp"
 
 #include <algorithm>
 
@@ -68,4 +69,40 @@ uint8_t VehicleSpeedCurve::stepLowerBound(double speed) const
     return step;
   }
   return 0;
+}
+
+nlohmann::json VehicleSpeedCurve::toJSON() const
+{
+    nlohmann::json values(nlohmann::json::value_t::array);
+    for(double speed : m_speedCurve)
+      values.push_back(speed);
+
+    nlohmann::json obj;
+    obj["values"] = values;
+
+    return obj;
+}
+
+void VehicleSpeedCurve::fromJSON(const nlohmann::json& obj)
+{
+  nlohmann::json values = obj["values"];
+  if(!values.is_array() || values.size() != 126)
+    throw conversion_error();
+
+  for(size_t i = 0; i < values.size(); i++)
+    m_speedCurve[i] = to<double>(values[i]);
+}
+
+bool VehicleSpeedCurve::loadFromString(const std::string &str)
+{
+    nlohmann::json doc = nlohmann::json::parse(str);
+    try
+    {
+      fromJSON(doc);
+    }
+    catch(...)
+    {
+      return false;
+    }
+    return true;
 }

@@ -27,6 +27,7 @@
 #include "railvehicle.hpp"
 #include <traintastic/enum/direction.hpp>
 #include "../../core/powerproperty.hpp"
+#include "../../core/method.hpp"
 
 class VehicleSpeedCurve;
 
@@ -54,6 +55,8 @@ class PoweredRailVehicle : public RailVehicle
 
     void setDirection(Direction value);
     void setEmergencyStop(bool value);
+
+    Method<void(const std::string&)> importSpeedCurve;
 };
 
 #endif

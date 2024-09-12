@@ -46,6 +46,10 @@
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/locale/locale.hpp>
 
+
+#include <QFileDialog>
+#include <QFile>
+
 ObjectEditWidget::ObjectEditWidget(const ObjectPtr& object, QWidget* parent) :
   AbstractEditWidget(object, parent)
 {
@@ -150,7 +154,29 @@ void ObjectEditWidget::buildForm()
         }
         else if(Method* method = dynamic_cast<Method*>(item))
         {
-          w = new MethodPushButton(*method, this);
+          if(method->name() == "import_speed_curve")
+          {
+            auto p = new QPushButton("Import Speed", this);
+            connect(p, &QPushButton::clicked, method,
+                    [method, this]()
+            {
+                auto f = QFileDialog::getOpenFileName(this);
+                if(f.isEmpty())
+                    return;
+
+                QFile file(f);
+                if(!file.open(QFile::ReadOnly))
+                   return;
+
+                auto b = file.readAll();
+                method->call(QString::fromUtf8(b));
+            });
+            w = p;
+            w->setVisible(true);
+            w->setEnabled(true);
+          }
+          else
+            w = new MethodPushButton(*method, this);
         }
 
         const QString category = item->getAttributeString(AttributeName::Category, "category:general");

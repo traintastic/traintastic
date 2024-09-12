@@ -24,6 +24,7 @@
 #include "vehiclespeedcurve.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/objectproperty.tpp"
+#include "../../core/method.tpp"
 #include "../../utils/almostzero.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
@@ -34,12 +35,26 @@
 PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   : RailVehicle(world, id_)
   , power{*this, "power", 0, PowerUnit::KiloWatt, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , importSpeedCurve{*this, "import_speed_curve", MethodFlags::ScriptCallable,
+    [this](const std::string& str)
+    {
+      if(!m_speedCurve)
+        m_speedCurve.reset(new VehicleSpeedCurve);
+
+      if(!m_speedCurve->loadFromString(str))
+        m_speedCurve.reset();
+    }}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(power, DisplayName::Vehicle::Rail::power);
   Attributes::addEnabled(power, editable);
   m_interfaceItems.add(power);
+
+  Attributes::addDisplayName(importSpeedCurve, "import_speed_curve");
+  Attributes::addEnabled(importSpeedCurve, true);
+  Attributes::addVisible(importSpeedCurve, true);
+  m_interfaceItems.add(importSpeedCurve);
 
   propertyChanged.connect(
     [this](BaseProperty &prop)
