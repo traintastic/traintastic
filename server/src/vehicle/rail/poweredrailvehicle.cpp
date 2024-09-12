@@ -83,35 +83,6 @@ void PoweredRailVehicle::setEmergencyStop(bool value)
     decoder->emergencyStop = value;
 }
 
-void PoweredRailVehicle::setSpeed(double kmph)
-{
-  if(!decoder)
-    return;
-
-  if(almostZero(kmph))
-  {
-    lastTrainSpeedStep = 0;
-    decoder->throttle.setValue(0);
-    return;
-  }
-
-  //! \todo Implement speed profile
-
-  // No speed profile -> linear
-  {
-    const double max = speedMax.getValue(SpeedUnit::KiloMeterPerHour);
-    float val = 0;
-    if(max > 0)
-    {
-      val = kmph / max;
-    }
-
-    //Remember last speed set by train, see lambda in 'PoweredRailVehicle::registerDecoder()'
-    lastTrainSpeedStep = val;
-    decoder->throttle.setValue(val);
-  }
-}
-
 void PoweredRailVehicle::worldEvent(WorldState state, WorldEvent event)
 {
   RailVehicle::worldEvent(state, event);
@@ -137,9 +108,16 @@ void PoweredRailVehicle::registerDecoder()
       if(!activeTrain)
         return;
 
+      if(has(flags, DecoderChangeFlags::Direction))
+      {
+        if(self.direction == lastTrainSetDirection)
+          return; //Direction change was caused by Train itself, no need propagate back
+        activeTrain->handleDecoderDirection(this->shared_ptr<PoweredRailVehicle>(), self.direction);
+      }
+
       if(has(flags, DecoderChangeFlags::EmergencyStop))
       {
-        activeTrain.value()->emergencyStop.setValue(self.emergencyStop);
+        activeTrain->emergencyStop.setValue(self.emergencyStop);
       }
       else if(has(flags, DecoderChangeFlags::Throttle))
       {
@@ -151,36 +129,8 @@ void PoweredRailVehicle::registerDecoder()
           return;
         }
 
-        //! \todo Implement speed profile
-
-        // No speed profile -> linear
-        const double kmph = self.throttle * speedMax.getValue(SpeedUnit::KiloMeterPerHour);
-
-        const double maxTrainSpeed = activeTrain.value()->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
-        if(!almostZero(kmph - maxTrainSpeed) && kmph > maxTrainSpeed)
-        {
-          //Cut at train max speed
-          if(almostZero(activeTrain->throttleSpeed.value() - maxTrainSpeed))
-          {
-            //Train is already at maximum speed, reset our throttle
-            setSpeed(maxTrainSpeed);
-          }
-          else
-          {
-            //Set train to maximum speed
-            activeTrain.value()->throttleSpeed.setValue(maxTrainSpeed);
-          }
-          return;
-        }
-
-        activeTrain.value()->throttleSpeed.setValue(kmph);
-      }
-
-      if(has(flags, DecoderChangeFlags::Direction))
-      {
-        if(self.direction == lastTrainSetDirection)
-          return; //Direction change was caused by Train itself, no need propagate back
-        activeTrain->handleDecoderDirection(this->shared_ptr<PoweredRailVehicle>(), self.direction);
+        activeTrain->handleDecoderThrottle(shared_ptr<PoweredRailVehicle>(),
+                                           self.throttle);
       }
     });
 }

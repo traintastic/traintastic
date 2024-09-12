@@ -115,6 +115,7 @@ Train::Train(World& world, std::string_view _id) :
         isStopped.setValueInternal(true);
 
         // Reset speed point to zero
+        stopDelayedSpeedApply();
         lastSetSpeedPoint = throttleSpeedPoint = SpeedPoint();
 
         updateEnabled();
@@ -990,6 +991,9 @@ void Train::handleDecoderThrottle(const std::shared_ptr<PoweredRailVehicle> &veh
 {
   if(!active || !powered || !vehicle->decoder)
     return;
+
+  // TODO: handle case when no speed table is present
+  // Do it legacy way by setting all locomotives to same throttle?
 
   auto it = std::find(m_poweredVehicles.begin(),
                       m_poweredVehicles.end(),
