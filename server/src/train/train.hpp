@@ -40,6 +40,7 @@ class TrainVehicleList;
 class TrainBlockStatus;
 class BlockRailTile;
 class PoweredRailVehicle;
+class TrainSpeedTable;
 
 class Train : public IdObject
 {
@@ -56,12 +57,16 @@ class Train : public IdObject
     };
 
     std::vector<std::shared_ptr<PoweredRailVehicle>> m_poweredVehicles;
+    std::unique_ptr<TrainSpeedTable> m_speedTable;
+    bool m_speedTableNeedsRecalculation = false;
 
     boost::asio::steady_timer m_speedTimer;
     SpeedState m_speedState = SpeedState::Idle;
 
     void setSpeed(double kmph);
     void updateSpeed();
+    void updateSpeedTable();
+    void checkSpeedTable();
 
     void vehiclesChanged();
     void updateLength();

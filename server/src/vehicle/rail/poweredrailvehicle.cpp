@@ -21,6 +21,7 @@
  */
 
 #include "poweredrailvehicle.hpp"
+#include "vehiclespeedcurve.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../utils/almostzero.hpp"

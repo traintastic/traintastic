@@ -24,6 +24,7 @@
 #include "trainblockstatus.hpp"
 #include "trainlist.hpp"
 #include "trainlisttablemodel.hpp"
+#include "trainspeedtable.hpp"
 #include "trainvehiclelist.hpp"
 #include "trainvehiclelistitem.hpp"
 #include "../world/world.hpp"
@@ -34,6 +35,7 @@
 #include "../core/eventloop.hpp"
 #include "../board/tile/rail/blockrailtile.hpp"
 #include "../vehicle/rail/poweredrailvehicle.hpp"
+#include "../vehicle/rail/vehiclespeedcurve.hpp"
 #include "../hardware/decoder/decoder.hpp"
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
@@ -364,6 +366,57 @@ void Train::updateSpeed()
     updateEnabled();
 }
 
+void Train::updateSpeedTable()
+{
+  if(!active)
+  {
+    // Delay recalculation to when active
+    m_speedTable.reset();
+    m_speedTableNeedsRecalculation = true;
+    return;
+  }
+
+  // Recalculate speed table
+  m_speedTableNeedsRecalculation = false;
+
+  if(m_poweredVehicles.empty())
+  {
+    m_speedTable.reset();
+    return;
+  }
+
+  std::vector<VehicleSpeedCurve> speedCurves;
+  speedCurves.reserve(m_poweredVehicles.size());
+  for(const auto& vehicle : m_poweredVehicles)
+  {
+    if(!vehicle->m_speedCurve)
+    {
+      // All vehicles must have a speed curve loaded
+      m_speedTable.reset();
+      return;
+    }
+
+    speedCurves.push_back(*vehicle->m_speedCurve);
+  }
+
+  if(!m_speedTable)
+      m_speedTable.reset(new TrainSpeedTable);
+
+  *m_speedTable = TrainSpeedTable::buildTable(speedCurves);
+
+  if(m_speedTable->count() == 1)
+  {
+    // No match was found, only null entry
+    m_speedTable.reset();
+  }
+}
+
+void Train::checkSpeedTable()
+{
+  if(!m_speedTable || m_speedTableNeedsRecalculation)
+    updateSpeedTable();
+}
+
 void Train::vehiclesChanged()
 {
   updateLength();
@@ -402,6 +455,8 @@ void Train::updatePowered()
     if(auto poweredVehicle = std::dynamic_pointer_cast<PoweredRailVehicle>(item->vehicle.value()))
       m_poweredVehicles.emplace_back(poweredVehicle);
   powered.setValueInternal(!m_poweredVehicles.empty());
+
+  updateSpeedTable();
 }
 
 void Train::updateSpeedMax()
@@ -487,6 +542,8 @@ bool Train::setTrainActive(bool val)
     const bool stopValue = emergencyStop;
     for(const auto& vehicle : m_poweredVehicles)
       vehicle->setEmergencyStop(stopValue);
+
+    checkSpeedTable();
   }
   else
   {
