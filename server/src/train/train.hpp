@@ -56,14 +56,37 @@ class Train : public IdObject
       Braking,
     };
 
+    struct SpeedPoint
+    {
+        double speedMetersPerSecond;
+        uint8_t tableIdx = 0;
+    };
+
+    SpeedPoint throttleSpeedPoint;
+    SpeedPoint lastSetSpeedPoint;
+    SpeedPoint maxSpeedPoint;
+
     std::vector<std::shared_ptr<PoweredRailVehicle>> m_poweredVehicles;
     std::unique_ptr<TrainSpeedTable> m_speedTable;
     bool m_speedTableNeedsRecalculation = false;
 
+    std::chrono::steady_clock::time_point m_speedTimerStart;
     boost::asio::steady_timer m_speedTimer;
     SpeedState m_speedState = SpeedState::Idle;
 
-    void setSpeed(double kmph);
+    //! \todo add realistic acceleration
+    //! \note m/s^2 in physical model scale
+    double m_accelerationRate = 1.5; // m/s^2
+
+    //! \todo add realistic braking
+    double m_brakingRate = -1.0; // m/s^2
+
+    void setSpeed(const SpeedPoint &speedPoint);
+    void setThrottleSpeed(const SpeedPoint &targetSpeed);
+
+    void scheduleAccelerationFrom(double currentSpeed,
+                                  uint8_t newTableIdx,
+                                  SpeedState state);
     void updateSpeed();
     void updateSpeedTable();
     void checkSpeedTable();
@@ -82,7 +105,7 @@ class Train : public IdObject
     void fireBlockEntered(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
     void fireBlockLeft(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
 
-  protected:
+protected:
     void addToWorld() override;
     void destroying() override;
     void loaded() override;
