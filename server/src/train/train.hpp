@@ -74,6 +74,9 @@ class Train : public IdObject
     boost::asio::steady_timer m_speedTimer;
     SpeedState m_speedState = SpeedState::Idle;
 
+    boost::asio::steady_timer m_delayedSpeedApplyTimer;
+    std::shared_ptr<PoweredRailVehicle> m_delayedApplyLoco;
+
     //! \todo add realistic acceleration
     //! \note m/s^2 in physical model scale
     double m_accelerationRate = 1.5; // m/s^2
@@ -91,6 +94,10 @@ class Train : public IdObject
     void updateSpeedTable();
     void checkSpeedTable();
 
+    void startDelayedSpeedApply(const std::shared_ptr<PoweredRailVehicle> &vehicle);
+    void stopDelayedSpeedApply();
+    void applyDelayedSpeed();
+
     void vehiclesChanged();
     void updateLength();
     void updateWeight();
@@ -100,6 +107,7 @@ class Train : public IdObject
     bool setTrainActive(bool val);
     void propagateDirection(Direction newDirection);
     void handleDecoderDirection(const std::shared_ptr<PoweredRailVehicle>& vehicle, Direction newDirection);
+    void handleDecoderThrottle(const std::shared_ptr<PoweredRailVehicle>& vehicle, float newThrottle);
 
     void fireBlockReserved(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
     void fireBlockEntered(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
