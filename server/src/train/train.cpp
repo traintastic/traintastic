@@ -328,7 +328,10 @@ void Train::setSpeed(const SpeedPoint& speedPoint)
     for(const auto& vehicle : m_poweredVehicles)
     {
       if(vehicle == m_delayedApplyLoco)
+      {
+        locoIdx++;
         continue; // This loco will be set later
+      }
 
       // TODO: support arbitrary speed step max
       driveLocomotive(vehicle,
