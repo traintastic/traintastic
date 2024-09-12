@@ -53,7 +53,7 @@ class Train : public IdObject
     enum class SpeedState
     {
       Idle,
-      Accelerate,
+      Accelerating,
       Braking,
     };
 

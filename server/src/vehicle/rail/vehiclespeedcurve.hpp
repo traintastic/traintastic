@@ -37,7 +37,7 @@ public:
   uint8_t stepLowerBound(double speed) const;
 
 private:
-  std::array<double, 126> mSpeedCurve;
+  std::array<double, 126> m_speedCurve;
 };
 
 #endif // TRAINTASTIC_SERVER_VEHICLE_RAIL_VEHICLESPEEDCURVE_HPP
