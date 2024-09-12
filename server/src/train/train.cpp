@@ -561,6 +561,11 @@ void Train::updateSpeedTable()
 
   *m_speedTable = TrainSpeedTable::buildTable(speedCurves);
 
+  // Update max speed TODO: update also speedMax property
+  auto lastEntry = m_speedTable->getEntryAt(m_speedTable->count() - 1);
+  maxSpeedPoint.speedMetersPerSecond = lastEntry.avgSpeed;
+  maxSpeedPoint.tableIdx = m_speedTable->count() - 1;
+
   if(m_speedTable->count() == 1)
   {
     // No match was found, only null entry
