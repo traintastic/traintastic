@@ -126,6 +126,13 @@ Train::Train(World& world, std::string_view _id) :
         //Propagate to all vehicles in this Train
         for(const auto& vehicle : m_poweredVehicles)
           vehicle->setEmergencyStop(value);
+
+        if(value)
+        {
+          // Also reset Decoder throttle
+          for(const auto& vehicle : m_poweredVehicles)
+            driveLocomotive(vehicle, 0);
+        }
       }
     }},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store},
