@@ -405,7 +405,7 @@ void Train::setThrottleSpeed(const SpeedPoint& targetSpeed)
       if(m_speedState == SpeedState::Braking)
       {
         // We start from under last set speed
-        double deltaSpeed = m_brakingRate * double(millis.count()) / 1000.0;
+        double deltaSpeed = (m_brakingRate / m_world.scaleRatio) * double(millis.count()) / 1000.0;
         currentSpeed += deltaSpeed; // Negative delta
         nextTableIdx--;
       }
@@ -429,7 +429,7 @@ void Train::setThrottleSpeed(const SpeedPoint& targetSpeed)
     if(m_speedState == SpeedState::Accelerating)
     {
       // We start from above last set speed
-      double deltaSpeed = m_accelerationRate * double(millis.count()) / 1000.0;
+      double deltaSpeed = (m_accelerationRate / m_world.scaleRatio) * double(millis.count()) / 1000.0;
       currentSpeed += deltaSpeed;
       prevTableIdx++;
     }
@@ -461,6 +461,7 @@ void Train::scheduleAccelerationFrom(double currentSpeed, uint8_t newTableIdx, S
   {
     accelRate = m_brakingRate;
   }
+  accelRate /= m_world.scaleRatio;
 
   const double deltaSeconds = deltaSpeed / accelRate;
   const uint32_t millis = std::ceil(deltaSeconds * 1000.0);

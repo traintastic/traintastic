@@ -78,11 +78,10 @@ class Train : public IdObject
     std::shared_ptr<PoweredRailVehicle> m_delayedApplyLoco;
 
     //! \todo add realistic acceleration
-    //! \note m/s^2 in physical model scale
-    double m_accelerationRate = 1.5 / 87.0; // m/s^2
+    double m_accelerationRate = 1.5; // m/s^2
 
     //! \todo add realistic braking
-    double m_brakingRate = -1.0 / 87.0; // m/s^2
+    double m_brakingRate = -1.0; // m/s^2
 
     void setSpeed(const SpeedPoint &speedPoint);
     void setThrottleSpeed(const SpeedPoint &targetSpeed);
