@@ -120,14 +120,34 @@ TrainSpeedTable TrainSpeedTable::buildTable(const std::vector<VehicleSpeedCurve>
 {
   // TODO: prefer pushing/pulling
 
-  TrainSpeedTable table;
-
   const uint32_t NUM_LOCOS = locoMappings.size();
+  if(NUM_LOCOS == 0)
+      return {};
+
   const uint32_t LAST_LOCO = NUM_LOCOS - 1;
+
+  TrainSpeedTable table;
   table.locoCount = NUM_LOCOS;
 
-  if(NUM_LOCOS < 2)
-    return table; // Error?
+  if(NUM_LOCOS == 1)
+  {
+    // Special case: only 1 locomotive
+    // Table is a replica of locomotive speed curve
+    const VehicleSpeedCurve& speedCurve = locoMappings.at(0);
+
+    table.mEntries.reserve(126);
+    for(int step = 1; step <= 126; step++)
+    {
+      double speed = speedCurve.getSpeedForStep(step);
+      Entry entry;
+      entry.stepForLoco_.reset(new uint8_t[1]);
+      entry.avgSpeed = speed;
+      entry.stepForLoco_[0] = step;
+      table.mEntries.push_back(std::move(entry));
+    }
+
+    return table;
+  }
 
   double maxTrainSpeed = locoMappings.at(0).getSpeedForStep(126);
   for(uint32_t locoIdx = 1; locoIdx < NUM_LOCOS; locoIdx++)
