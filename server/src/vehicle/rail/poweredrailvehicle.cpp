@@ -35,15 +35,7 @@
 PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   : RailVehicle(world, id_)
   , power{*this, "power", 0, PowerUnit::KiloWatt, PropertyFlags::ReadWrite | PropertyFlags::Store}
-  , importSpeedCurve{*this, "import_speed_curve", MethodFlags::ScriptCallable,
-    [this](const std::string& str)
-    {
-      if(!m_speedCurve)
-        m_speedCurve.reset(new VehicleSpeedCurve);
-
-      if(!m_speedCurve->loadFromString(str))
-        m_speedCurve.reset();
-    }}
+  , speedCurve{this, "speed_curve", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
@@ -51,10 +43,9 @@ PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   Attributes::addEnabled(power, editable);
   m_interfaceItems.add(power);
 
-  Attributes::addDisplayName(importSpeedCurve, "import_speed_curve");
-  Attributes::addEnabled(importSpeedCurve, true);
-  Attributes::addVisible(importSpeedCurve, true);
-  m_interfaceItems.add(importSpeedCurve);
+  speedCurve.setValueInternal(std::make_shared<VehicleSpeedCurve>(*this, speedCurve.name()));
+  Attributes::addEnabled(speedCurve, true);
+  m_interfaceItems.add(speedCurve);
 
   propertyChanged.connect(
     [this](BaseProperty &prop)
@@ -110,10 +101,12 @@ void PoweredRailVehicle::worldEvent(WorldState state, WorldEvent event)
 
 void PoweredRailVehicle::updateMaxSpeed()
 {
-  if(!m_speedCurve)
+  propertyChanged(speedCurve); //TODO: find better way
+
+  if(!speedCurve->isValid())
     return;
 
-  double speedMS = m_speedCurve->getSpeedForStep(126);
+  double speedMS = speedCurve->getSpeedForStep(126);
   speedMS *= m_world.scaleRatio;
 
   speedMax.setValueInternal(convertUnit(speedMS,

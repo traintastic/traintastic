@@ -25,25 +25,41 @@
 
 #include <array>
 #include <cstdint>
-#include "../../utils/json.hpp"
+#include "../../core/subobject.hpp"
+#include "../../core/method.hpp"
 
-class VehicleSpeedCurve
+class PoweredRailVehicle;
+
+class VehicleSpeedCurve : public SubObject
 {
+  CLASS_ID("vehicle_speed_curve")
 public:
-  VehicleSpeedCurve(const std::array<double, 126>& arr = {});
+
+  VehicleSpeedCurve(PoweredRailVehicle& _parent, std::string_view parentPropertyName);
 
   double getSpeedForStep(uint8_t step) const;
 
   uint8_t stepUpperBound(double speed) const;
   uint8_t stepLowerBound(double speed) const;
 
-  nlohmann::json toJSON() const;
-  void fromJSON(const nlohmann::json& obj);
+  Method<void(const std::string&)> importFromString;
+  Method<std::string()> exportToString;
 
-  bool loadFromString(const std::string& str);
+  inline bool isValid() const { return m_valid; }
+
+protected:
+  void load(WorldLoader& loader, const nlohmann::json& data) override;
+  void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
+  void loaded() override;
+
+  nlohmann::json toJSON() const;
+  bool fromJSON(const nlohmann::json& obj);
+
+  void update();
 
 private:
   std::array<double, 126> m_speedCurve;
+  bool m_valid = false;
 };
 
 #endif // TRAINTASTIC_SERVER_VEHICLE_RAIL_VEHICLESPEEDCURVE_HPP

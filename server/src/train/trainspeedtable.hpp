@@ -99,7 +99,7 @@ public:
 
   const Entry& getEntryAt(uint8_t tableIdx) const;
 
-  static TrainSpeedTable buildTable(const std::vector<VehicleSpeedCurve>& locoMappings);
+  static TrainSpeedTable buildTable(const std::vector<std::shared_ptr<VehicleSpeedCurve> > &locoMappings);
 
 private:
   std::vector<Entry> mEntries;
