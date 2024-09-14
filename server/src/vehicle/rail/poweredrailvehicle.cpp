@@ -83,6 +83,7 @@ void PoweredRailVehicle::destroying()
 void PoweredRailVehicle::loaded()
 {
   RailVehicle::loaded();
+  updateMaxSpeed();
   registerDecoder();
 }
 
@@ -105,6 +106,19 @@ void PoweredRailVehicle::worldEvent(WorldState state, WorldEvent event)
   const bool editable = contains(state, WorldState::Edit);
 
   Attributes::setEnabled(power, editable);
+}
+
+void PoweredRailVehicle::updateMaxSpeed()
+{
+  if(!m_speedCurve)
+    return;
+
+  double speedMS = m_speedCurve->getSpeedForStep(126);
+  speedMS *= m_world.scaleRatio;
+
+  speedMax.setValueInternal(convertUnit(speedMS,
+                                        SpeedUnit::MeterPerSecond,
+                                        speedMax.unit()));
 }
 
 void PoweredRailVehicle::registerDecoder()

@@ -41,6 +41,8 @@ class PoweredRailVehicle : public RailVehicle
     void loaded() override;
     void worldEvent(WorldState state, WorldEvent event) override;
 
+    void updateMaxSpeed();
+
     void registerDecoder();
     boost::signals2::connection decoderConnection;
 
