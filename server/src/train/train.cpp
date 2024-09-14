@@ -586,16 +586,13 @@ void Train::updateSpeedTable()
 
   *m_speedTable = TrainSpeedTable::buildTable(speedCurves);
 
-  // Update max speed TODO: update also speedMax property
-  const auto& lastEntry = m_speedTable->getEntryAt(m_speedTable->count() - 1);
-  maxSpeedPoint.speedMetersPerSecond = lastEntry.avgSpeed;
-  maxSpeedPoint.tableIdx = m_speedTable->count() - 1;
-
   if(m_speedTable->count() == 1)
   {
     // No match was found, only null entry
     m_speedTable.reset();
   }
+
+  updateSpeedMax();
 }
 
 void Train::scheduleSpeedTableUpdate()
@@ -715,19 +712,52 @@ void Train::updatePowered()
 
 void Train::updateSpeedMax()
 {
+  maxSpeedPoint = SpeedPoint();
+
+  double realMaxSpeedMS = 0;
+  bool speedWasAdjusted = false;
+
   if(!vehicles->empty() && powered)
   {
-    const auto itEnd = vehicles->end();
-    auto it = vehicles->begin();
-    double kmph = (*it)->vehicle->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
-    for(; it != itEnd; ++it)
+    for(const auto& item : *vehicles)
     {
-      const double v = (*it)->vehicle->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
-      if((v > 0 || isPowered(*(*it)->vehicle)) && v < kmph)
-        kmph = v;
+      if(m_speedTable && isPowered(item.vehicle))
+        continue; // Already taken into account by speed table max
+
+      const SpeedProperty& vehicleMax = item.vehicle->speedMax;
+      const double v = vehicleMax.getValue(SpeedUnit::MeterPerSecond);
+
+      if((v > 0 && v < realMaxSpeedMS) || !speedWasAdjusted)
+      {
+        speedWasAdjusted = true;
+        realMaxSpeedMS = v;
+      }
     }
-    speedMax.setValueInternal(convertUnit(kmph, SpeedUnit::KiloMeterPerHour, speedMax.unit()));
   }
+
+  if(m_speedTable)
+  {
+    if(speedWasAdjusted)
+    {
+      // Round to closest match or set to table max speed
+      auto match = m_speedTable->getClosestMatch(realMaxSpeedMS / m_world.scaleRatio);
+      maxSpeedPoint.speedMetersPerSecond = match.tableEntry.avgSpeed;
+      maxSpeedPoint.tableIdx = match.tableIdx;
+    }
+    else if(!vehicles->empty() && powered)
+    {
+      // Set to table max speed in case all vehicles are powered or with zero max speed
+      const uint32_t lastTableIdx = m_speedTable->count() - 1;
+      maxSpeedPoint.speedMetersPerSecond = m_speedTable->getEntryAt(lastTableIdx).avgSpeed;
+      maxSpeedPoint.tableIdx = lastTableIdx;
+    }
+
+    realMaxSpeedMS = maxSpeedPoint.speedMetersPerSecond * m_world.scaleRatio;
+    speedWasAdjusted = true;
+  }
+
+  if(speedWasAdjusted)
+    speedMax.setValueInternal(convertUnit(realMaxSpeedMS, SpeedUnit::MeterPerSecond, speedMax.unit()));
   else
     speedMax.setValueInternal(0);
 
