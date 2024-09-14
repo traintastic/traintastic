@@ -270,6 +270,18 @@ TrainSpeedTable TrainSpeedTable::buildTable(const std::vector<VehicleSpeedCurve>
       continue;
     }
 
+    if(canCompareToLastInserted)
+    {
+      const double prevEntryDiff = *diffVector.rbegin();
+      if(prevEntryDiff < maxDiff || almostZero(prevEntryDiff - maxDiff))
+      {
+        // Previous entry has lower max difference than current
+        // There is not point on adding current item
+        // It would be removed later by de-duplication code
+        continue;
+      }
+    }
+
     // We are last loco, save speed tuple
     Entry entry;
     entry.stepForLoco_.reset(new uint8_t[NUM_LOCOS]);
@@ -287,26 +299,22 @@ TrainSpeedTable TrainSpeedTable::buildTable(const std::vector<VehicleSpeedCurve>
 
     if(canCompareToLastInserted)
     {
-      if(*diffVector.rbegin() > maxDiff)
-      {
-        // We are better than previous match, replace it
+      // We are better than previous match, replace it
 
-        std::memcpy(entries.rbegin()->stepForLoco_.get(),
-                    entry.stepForLoco_.get(),
-                    NUM_LOCOS * sizeof(uint8_t));
-        entries.rbegin()->avgSpeed = entry.avgSpeed;
+      std::memcpy(entries.rbegin()->stepForLoco_.get(),
+                  entry.stepForLoco_.get(),
+                  NUM_LOCOS * sizeof(uint8_t));
+      entries.rbegin()->avgSpeed = entry.avgSpeed;
 
-        *diffVector.rbegin() = maxDiff;
-      }
-
-      // If not better than previous, no point in addint it
-      continue;
+      *diffVector.rbegin() = maxDiff;
     }
-
-    // First good match of new step combination
-    entries.push_back(std::move(entry));
-    diffVector.push_back(maxDiff);
-    canCompareToLastInserted = true;
+    else
+    {
+      // First good match of new step combination
+      entries.push_back(std::move(entry));
+      diffVector.push_back(maxDiff);
+      canCompareToLastInserted = true;
+    }
   }
 
   if(entries.empty())
