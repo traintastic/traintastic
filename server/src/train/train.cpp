@@ -587,7 +587,7 @@ void Train::updateSpeed()
     else
     {
       using namespace std::literals;
-      speed.setValueInternal(convertUnit(targetSpeed, SpeedUnit::MeterPerSecond, speed.unit()));
+      speed.setValueInternal(convertUnit(currentSpeed, SpeedUnit::MeterPerSecond, speed.unit()));
       setSpeed(SpeedPoint());
 
       m_speedTimer.expires_after(100ms);
