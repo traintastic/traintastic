@@ -348,19 +348,72 @@ void Train::setSpeed(const SpeedPoint& speedPoint)
 
       locoIdx++;
     }
-  }
 
-  // Update real speed property
-  const double realSpeedMS = lastSetSpeedPoint.speedMetersPerSecond * m_world.scaleRatio.value();
-  speed.setValueInternal(convertUnit(realSpeedMS,
-                                     SpeedUnit::MeterPerSecond,
-                                     speed.unit()));
+    // Update real speed property
+    const double realSpeedMS = lastSetSpeedPoint.speedMetersPerSecond * m_world.scaleRatio.value();
+    speed.setValueInternal(convertUnit(realSpeedMS,
+                                       SpeedUnit::MeterPerSecond,
+                                       speed.unit()));
+  }
+  else
+  {
+    // Legacy multiple traction
+
+    double throttle = speed.getValue(speedMax.unit()) / speedMax.value();
+    for(auto& vehicle : m_poweredVehicles)
+    {
+      if(!vehicle->decoder)
+        continue;
+
+      double roundedThrottle = throttle;
+      Decoder& decoder = *vehicle->decoder.value();
+      if(decoder.speedSteps != Decoder::speedStepsAuto)
+      {
+        // Round to nearest speed step value
+        uint8_t step = Decoder::throttleToSpeedStep(roundedThrottle,
+                                                    decoder.speedSteps.value());
+        roundedThrottle = Decoder::speedStepToThrottle(step,
+                                                       decoder.speedSteps.value());
+
+      }
+
+      vehicle->lastTrainSpeedStep = roundedThrottle;
+      decoder.throttle = roundedThrottle;
+    }
+  }
 
   updateEnabled();
 }
 
 void Train::setThrottleSpeed(const SpeedPoint& targetSpeed)
 {
+  if(!m_speedTable)
+  {
+    // Legacy multiple traction
+    const double currentSpeed = speed.getValue(throttleSpeed.unit());
+
+    if(throttleSpeed.value() > currentSpeed) // Accelerate
+    {
+      if(m_speedState == SpeedState::Accelerating)
+        return;
+
+      m_speedTimer.cancel();
+      m_speedState = SpeedState::Accelerating;
+      updateSpeed();
+    }
+    else if(throttleSpeed.value() < currentSpeed) // Brake
+    {
+      if(m_speedState == SpeedState::Braking)
+        return;
+
+      m_speedTimer.cancel();
+      m_speedState = SpeedState::Braking;
+      updateSpeed();
+    }
+
+    return;
+  }
+
   const SpeedPoint oldThrottle = throttleSpeedPoint;
   throttleSpeedPoint = targetSpeed;
 
@@ -508,6 +561,50 @@ void Train::updateSpeed()
 
   if(m_speedState == SpeedState::Accelerating && !active)
     return;
+
+  if(!m_speedTable)
+  {
+    // Legacy multiple traction
+    const double targetSpeed = throttleSpeed.getValue(SpeedUnit::MeterPerSecond);
+    double currentSpeed = speed.getValue(SpeedUnit::MeterPerSecond);
+
+    double acceleration = m_accelerationRate;
+    if(m_speedState == SpeedState::Braking)
+    {
+      acceleration = m_brakingRate;
+    }
+
+    currentSpeed += acceleration * 0.1; // x 100ms
+
+    if((m_speedState == SpeedState::Accelerating && currentSpeed >= targetSpeed) ||
+        (m_speedState == SpeedState::Braking && currentSpeed <= targetSpeed))
+    {
+      m_speedState = SpeedState::Idle;
+      currentSpeed = targetSpeed;
+      speed.setValueInternal(convertUnit(targetSpeed, SpeedUnit::MeterPerSecond, speed.unit()));
+      setSpeed(SpeedPoint());
+    }
+    else
+    {
+      using namespace std::literals;
+      speed.setValueInternal(convertUnit(targetSpeed, SpeedUnit::MeterPerSecond, speed.unit()));
+      setSpeed(SpeedPoint());
+
+      m_speedTimer.expires_after(100ms);
+      m_speedTimer.async_wait(
+        [this](const boost::system::error_code& ec)
+        {
+          if(!ec)
+            updateSpeed();
+        });
+    }
+
+    const bool currentValue = isStopped;
+    isStopped.setValueInternal(m_speedState == SpeedState::Idle && almostZero(currentSpeed) && almostZero(targetSpeed));
+    if(currentValue != isStopped)
+      updateEnabled();
+    return;
+  }
 
   // TODO: needed?
   m_speedTimer.cancel();
@@ -1077,6 +1174,14 @@ void Train::handleDecoderThrottle(const std::shared_ptr<PoweredRailVehicle> &veh
                       vehicle);
   if(it == m_poweredVehicles.end())
     return;
+
+  if(!m_speedTable)
+  {
+    // Legacy multiple traction, set all locomotives to same throttle
+    const double newSpeed = speedMax.value() * newThrottle;
+    throttleSpeed.setValue(convertUnit(newSpeed, speedMax.unit(), throttleSpeed.unit()));
+    return;
+  }
 
   const uint32_t locoIdx = std::distance(m_poweredVehicles.begin(), it);
 
