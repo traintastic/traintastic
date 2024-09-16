@@ -55,6 +55,8 @@ class PoweredRailVehicle : public RailVehicle
   public:
     PowerProperty power;
     ObjectProperty<VehicleSpeedCurve> speedCurve;
+    Property<double> maxAccelerationRate; // m/s^2
+    Property<double> maxBrakingRate; // m/s^2
 
     void setDirection(Direction value);
     void setEmergencyStop(bool value);
