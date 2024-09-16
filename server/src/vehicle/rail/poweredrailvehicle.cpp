@@ -36,6 +36,8 @@ PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   : RailVehicle(world, id_)
   , power{*this, "power", 0, PowerUnit::KiloWatt, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , speedCurve{this, "speed_curve", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
+  , maxAccelerationRate{this, "max_acceleration_rate", 0, PropertyFlags::ReadWrite | PropertyFlags::ScriptReadOnly | PropertyFlags::Store}
+  , maxBrakingRate{this, "max_braking_rate", 0, PropertyFlags::ReadWrite | PropertyFlags::ScriptReadOnly | PropertyFlags::Store}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
@@ -44,8 +46,18 @@ PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   m_interfaceItems.add(power);
 
   speedCurve.setValueInternal(std::make_shared<VehicleSpeedCurve>(*this, speedCurve.name()));
-  Attributes::addEnabled(speedCurve, true);
+  Attributes::addEnabled(speedCurve, editable);
   m_interfaceItems.add(speedCurve);
+
+  Attributes::addDisplayName(maxAccelerationRate, DisplayName::Vehicle::Rail::maxAccelerationRate);
+  Attributes::addEnabled(maxAccelerationRate, editable);
+  Attributes::addMinMax(maxAccelerationRate, 0.0, 10.0); // m/s^2
+  m_interfaceItems.add(maxAccelerationRate);
+
+  Attributes::addDisplayName(maxBrakingRate, DisplayName::Vehicle::Rail::maxBrakingRate);
+  Attributes::addEnabled(maxBrakingRate, editable);
+  Attributes::addMinMax(maxBrakingRate, -10.0, 0.0); // m/s^2
+  m_interfaceItems.add(maxBrakingRate);
 
   propertyChanged.connect(
     [this](BaseProperty &prop)
@@ -97,6 +109,9 @@ void PoweredRailVehicle::worldEvent(WorldState state, WorldEvent event)
   const bool editable = contains(state, WorldState::Edit);
 
   Attributes::setEnabled(power, editable);
+  Attributes::setEnabled(speedCurve, editable);
+  Attributes::setEnabled(maxAccelerationRate, editable);
+  Attributes::setEnabled(maxBrakingRate, editable);
 }
 
 void PoweredRailVehicle::updateMaxSpeed()
