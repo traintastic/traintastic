@@ -41,6 +41,7 @@ class TrainBlockStatus;
 class BlockRailTile;
 class PoweredRailVehicle;
 class TrainSpeedTable;
+class AbstractTrainPositionTracker;
 
 class Train : public IdObject
 {
@@ -82,6 +83,8 @@ class Train : public IdObject
 
     //! \todo add realistic braking
     double m_brakingRate = -1.0; // m/s^2
+
+    std::vector<AbstractTrainPositionTracker *> m_trackers;
 
     void setSpeed(const SpeedPoint &speedPoint);
     void setThrottleSpeed(const SpeedPoint &targetSpeed);
@@ -157,6 +160,9 @@ protected:
 
     void fireBlockAssigned(const std::shared_ptr<BlockRailTile>& block);
     void fireBlockRemoved(const std::shared_ptr<BlockRailTile>& block);
+
+    void addTracker(AbstractTrainPositionTracker *t);
+    void removeTracker(AbstractTrainPositionTracker *t);
 };
 
 #endif

@@ -28,6 +28,7 @@
 #include "trainspeedtable.hpp"
 #include "trainvehiclelist.hpp"
 #include "trainvehiclelistitem.hpp"
+#include "abstracttrainpositiontracker.hpp"
 #include "../world/world.hpp"
 #include "../core/attributes.hpp"
 #include "../core/method.tpp"
@@ -340,6 +341,10 @@ void Train::setSpeed(const SpeedPoint& speedPoint)
     speed.setValueInternal(convertUnit(realSpeedMS,
                                        SpeedUnit::MeterPerSecond,
                                        speed.unit()));
+
+    auto trackersCopy = m_trackers; // Trackers might remove themself inside callback
+    for(auto tracker : trackersCopy)
+      tracker->trainSpeedChanged(lastSetSpeedPoint.speedMetersPerSecond);
   }
   else
   {
@@ -983,6 +988,20 @@ void Train::fireBlockRemoved(const std::shared_ptr<BlockRailTile>& block)
     onBlockRemoved,
     shared_ptr<Train>(),
     block);
+}
+
+void Train::addTracker(AbstractTrainPositionTracker *t)
+{
+  auto it = std::find(m_trackers.begin(), m_trackers.end(), t);
+  if(it != m_trackers.cend())
+    return;
+
+  m_trackers.push_back(t);
+}
+
+void Train::removeTracker(AbstractTrainPositionTracker *t)
+{
+  std::remove(m_trackers.begin(), m_trackers.end(), t);
 }
 
 void Train::propagateDirection(Direction newDirection)
