@@ -388,7 +388,7 @@ bool Kernel::setOutput(uint16_t address, OutputPairValue value)
 {
   assert(isEventLoopThread());
   assert(address >= accessoryOutputAddressMin && address <= accessoryOutputAddressMax);
-  assert(value == OutputPairValue::First || value == OutputPairValue::First);
+  assert(value == OutputPairValue::First || value == OutputPairValue::Second);
   m_ioContext.post(
     [this, address, value]()
     {
