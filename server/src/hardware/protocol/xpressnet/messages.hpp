@@ -48,7 +48,7 @@ void updateChecksum(Message& msg);
 inline bool isChecksumValid(const Message& msg);
 bool isChecksumValid(const Message& msg, const int dataSize);
 
-std::string toString(const Message& message);
+std::string toString(const Message& message, bool raw = false);
 
 struct Message
 {
