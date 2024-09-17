@@ -49,7 +49,7 @@ std::string toString(const Message& message, bool raw)
   std::string s = toHex(message.identification());
 
   // Human readable:
-  switch(message.identification())
+  switch(message.header)
   {
     case 0x21:
     {
