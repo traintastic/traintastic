@@ -3,6 +3,8 @@
 #include "../utils/almostzero.hpp"
 #include "../core/eventloop.hpp"
 
+#include <chrono>
+
 AbstractTrainPositionTracker::AbstractTrainPositionTracker(const std::shared_ptr<Train> &train)
   : m_train(train)
 {
@@ -48,7 +50,6 @@ void DeadlineTrainPositionTracker::trainSpeedChanged(double physicalSpeedMS)
     almostZero(currentTravelledMeters - targetTravelledMeters))
   {
     // We have reached target distance
-
     const double oldTarget = targetTravelledMeters;
 
     // Ask if we need to continue
@@ -71,7 +72,11 @@ void DeadlineTrainPositionTracker::trainSpeedChanged(double physicalSpeedMS)
     double remainingMeters = targetTravelledMeters - currentTravelledMeters;
     double remainingSeconds = remainingMeters / currentTrainSpeed;
     lastSpeedChange = now;
-    expectedArrivalTimer.expires_after(std::chrono::milliseconds(int64_t(remainingSeconds * 1000.0)));
+
+    // Round in excess to prevent early timeout
+    int64_t millis = std::ceil(remainingSeconds * 1000.0);
+
+    expectedArrivalTimer.expires_after(std::chrono::milliseconds(millis));
     expectedArrivalTimer.async_wait(
       [this](const boost::system::error_code& ec)
       {
