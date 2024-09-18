@@ -38,7 +38,7 @@ PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   , power{*this, "power", 0, PowerUnit::KiloWatt, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , speedCurve{this, "speed_curve", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
   , maxAccelerationRate{this, "max_acceleration_rate", 3.0, PropertyFlags::ReadWrite | PropertyFlags::ScriptReadOnly | PropertyFlags::Store}
-  , maxBrakingRate{this, "max_braking_rate", -2.0, PropertyFlags::ReadWrite | PropertyFlags::ScriptReadOnly | PropertyFlags::Store}
+  , maxBrakingRate{this, "max_braking_rate", 2.0, PropertyFlags::ReadWrite | PropertyFlags::ScriptReadOnly | PropertyFlags::Store}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
@@ -58,7 +58,7 @@ PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
 
   Attributes::addDisplayName(maxBrakingRate, DisplayName::Vehicle::Rail::maxBrakingRate);
   Attributes::addEnabled(maxBrakingRate, editable);
-  Attributes::addMinMax(maxBrakingRate, -10.0, -0.01); // m/s^2
+  Attributes::addMinMax(maxBrakingRate, 0.01, 10.0); // m/s^2
   Attributes::addUnit(maxBrakingRate, "m/s" UTF8_SUPERSCRIPT_TWO);
   m_interfaceItems.add(maxBrakingRate);
 
