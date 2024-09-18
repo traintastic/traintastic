@@ -45,7 +45,7 @@ class DeadlineTrainPositionTracker : public AbstractTrainPositionTracker
 public:
     DeadlineTrainPositionTracker(const std::shared_ptr<Train>& train,
                                  double targetTravelledMeters_,
-                                 const std::function<bool(double&)>& callback);
+                                 const std::function<bool(DeadlineTrainPositionTracker*, double&)>& callback);
 
     void trainSpeedChanged(double physicalSpeedMS) override;
 
@@ -56,7 +56,7 @@ private:
     boost::asio::steady_timer expectedArrivalTimer;
     std::chrono::steady_clock::time_point lastSpeedChange;
 
-    std::function<bool(double&)> m_onTargetCallback;
+    std::function<bool(DeadlineTrainPositionTracker*, double&)> m_onTargetCallback;
 };
 
 #endif // TRAINTASTIC_SERVER_TRAIN_ABSTRACTTRAINPOSITIONTRACKER_HPP

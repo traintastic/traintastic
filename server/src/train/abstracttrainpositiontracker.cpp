@@ -1,6 +1,7 @@
 #include "abstracttrainpositiontracker.hpp"
 #include "train.hpp"
 #include "../utils/almostzero.hpp"
+#include "../core/eventloop.hpp"
 
 AbstractTrainPositionTracker::AbstractTrainPositionTracker(const std::shared_ptr<Train> &train)
   : m_train(train)
@@ -18,9 +19,10 @@ AbstractTrainPositionTracker::~AbstractTrainPositionTracker()
 
 DeadlineTrainPositionTracker::DeadlineTrainPositionTracker(const std::shared_ptr<Train>& train,
                                                            double targetTravelledMeters_,
-                                                           const std::function<bool (double &)> &callback)
+                                                           const std::function<bool (DeadlineTrainPositionTracker*, double &)> &callback)
   : AbstractTrainPositionTracker(train)
   , targetTravelledMeters(targetTravelledMeters_)
+  , expectedArrivalTimer(EventLoop::ioContext)
   , m_onTargetCallback(callback)
 {
 
@@ -50,7 +52,7 @@ void DeadlineTrainPositionTracker::trainSpeedChanged(double physicalSpeedMS)
     const double oldTarget = targetTravelledMeters;
 
     // Ask if we need to continue
-    if(m_onTargetCallback(targetTravelledMeters))
+    if(m_onTargetCallback(this, targetTravelledMeters))
     {
       // New target has been set, reset travelled
       currentTravelledMeters -= oldTarget;
@@ -69,7 +71,7 @@ void DeadlineTrainPositionTracker::trainSpeedChanged(double physicalSpeedMS)
     double remainingMeters = targetTravelledMeters - currentTravelledMeters;
     double remainingSeconds = remainingMeters / currentTrainSpeed;
     lastSpeedChange = now;
-    expectedArrivalTimer.expires_after(std::chrono::milliseconds(remainingSeconds * 1000.0));
+    expectedArrivalTimer.expires_after(std::chrono::milliseconds(int64_t(remainingSeconds * 1000.0)));
     expectedArrivalTimer.async_wait(
       [this](const boost::system::error_code& ec)
       {

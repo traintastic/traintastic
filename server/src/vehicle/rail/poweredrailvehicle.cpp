@@ -31,6 +31,7 @@
 #include "../../hardware/decoder/decoder.hpp"
 #include "../../hardware/decoder/decoderchangeflags.hpp"
 #include "../../train/train.hpp"
+#include "../../train/abstracttrainpositiontracker.hpp"
 
 PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   : RailVehicle(world, id_)
@@ -170,4 +171,34 @@ void PoweredRailVehicle::registerDecoder()
                                            self.throttle);
       }
     });
+
+  if(std::shared_ptr<DecoderFunction> f1 = decoderVal->getFunction(1))
+  {
+    f1->propertyChanged.connect([this](BaseProperty &prop)
+    {
+      if(prop.name() != "value" || !activeTrain)
+        return;
+
+      if(static_cast<AbstractProperty&>(prop).toBool())
+      {
+        DeadlineTrainPositionTracker *track = new DeadlineTrainPositionTracker(
+          activeTrain.value(),
+          0.2,
+          [this](DeadlineTrainPositionTracker *trackSelf,
+                        double&) -> bool
+          {
+            // Notify user
+            auto f2 = decoder->getFunction(2);
+            if(f2)
+                f2->value = true;
+
+            delete trackSelf;
+            return false;
+          }
+        );
+
+        activeTrain->addTracker(track);
+      }
+    });
+  }
 }

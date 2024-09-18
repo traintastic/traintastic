@@ -997,11 +997,21 @@ void Train::addTracker(AbstractTrainPositionTracker *t)
     return;
 
   m_trackers.push_back(t);
+
+  t->trainSpeedChanged(lastSetSpeedPoint.speedMetersPerSecond);
 }
 
 void Train::removeTracker(AbstractTrainPositionTracker *t)
 {
-  std::remove(m_trackers.begin(), m_trackers.end(), t);
+  for(auto it = m_trackers.begin(); it != m_trackers.end(); it++)
+  {
+    AbstractTrainPositionTracker *obj = *it;
+    if(t == obj)
+    {
+      m_trackers.erase(it);
+      return;
+    }
+  }
 }
 
 void Train::propagateDirection(Direction newDirection)
