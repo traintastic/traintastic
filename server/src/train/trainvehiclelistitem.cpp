@@ -38,7 +38,7 @@ TrainVehicleListItem::TrainVehicleListItem(const std::shared_ptr<RailVehicle> &v
           return false; //Vehicle already in train
 
         if(vehicle)
-          disconnectVehicle(*vehicle);
+          disconnectVehicle();
 
         if(value)
           connectVehicle(*value);
@@ -68,9 +68,7 @@ std::string TrainVehicleListItem::getObjectId() const
 void TrainVehicleListItem::destroying()
 {
   //NOTE: we cannot normally set vehicle to nullptr (rejected by OnSet callback)
-  //So we mirror cleanup operations and manually reset value at end
-  if(vehicle)
-    disconnectVehicle(*vehicle.value());
+  disconnectVehicle();
   vehicle.setValueInternal(nullptr);
 
   Object::destroying();
@@ -104,11 +102,14 @@ void TrainVehicleListItem::connectVehicle(RailVehicle &object)
     [this]([[maybe_unused]] Object& obj)
     {
       assert(vehicle.value().get() == &obj);
-      vehicle = nullptr;
+      auto self = shared_ptr<TrainVehicleListItem>();
+
+      // Remove ourselves from Train vehicles
+      m_parent.removeObject(self);
     });
 }
 
-void TrainVehicleListItem::disconnectVehicle(RailVehicle &/*object*/)
+void TrainVehicleListItem::disconnectVehicle()
 {
   //Disconnect from previous vehicle
   m_vehiclePropertyChanged.disconnect();

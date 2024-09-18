@@ -258,6 +258,7 @@ void Train::destroying()
   for(const auto& item : *vehicles)
   {
     item->vehicle->trains.removeInternal(self);
+    item->destroy();
   }
   m_world.trains->removeObject(self);
   IdObject::destroying();

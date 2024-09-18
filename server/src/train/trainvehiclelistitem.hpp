@@ -47,7 +47,7 @@ class TrainVehicleListItem final : public Object
     void loaded() final;
 
     void connectVehicle(RailVehicle &object);
-    void disconnectVehicle(RailVehicle &);
+    void disconnectVehicle();
 
   public:
     ObjectProperty<RailVehicle> vehicle;
