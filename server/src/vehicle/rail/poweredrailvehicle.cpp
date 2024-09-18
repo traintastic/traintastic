@@ -27,6 +27,7 @@
 #include "../../core/method.tpp"
 #include "../../utils/almostzero.hpp"
 #include "../../utils/displayname.hpp"
+#include "../../utils/utf8.hpp"
 #include "../../world/world.hpp"
 #include "../../hardware/decoder/decoder.hpp"
 #include "../../hardware/decoder/decoderchangeflags.hpp"
@@ -52,11 +53,13 @@ PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   Attributes::addDisplayName(maxAccelerationRate, DisplayName::Vehicle::Rail::maxAccelerationRate);
   Attributes::addEnabled(maxAccelerationRate, editable);
   Attributes::addMinMax(maxAccelerationRate, 0.01, 10.0); // m/s^2
+  Attributes::addUnit(maxAccelerationRate, "m/s" UTF8_SUPERSCRIPT_TWO);
   m_interfaceItems.add(maxAccelerationRate);
 
   Attributes::addDisplayName(maxBrakingRate, DisplayName::Vehicle::Rail::maxBrakingRate);
   Attributes::addEnabled(maxBrakingRate, editable);
   Attributes::addMinMax(maxBrakingRate, -10.0, -0.01); // m/s^2
+  Attributes::addUnit(maxBrakingRate, "m/s" UTF8_SUPERSCRIPT_TWO);
   m_interfaceItems.add(maxBrakingRate);
 
   propertyChanged.connect(

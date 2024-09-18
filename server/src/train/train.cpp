@@ -42,6 +42,7 @@
 #include "../throttle/throttle.hpp"
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
+#include "../utils/utf8.hpp"
 
 #include <memory>
 
@@ -197,11 +198,11 @@ Train::Train(World& world, std::string_view _id) :
   m_interfaceItems.add(throttleSpeed);
 
   Attributes::addMinMax(accelerationRate, 0.01, 10.0);
-  Attributes::addUnit(accelerationRate, "m/s^2");
+  Attributes::addUnit(accelerationRate, "m/s" UTF8_SUPERSCRIPT_TWO);
   m_interfaceItems.add(accelerationRate);
 
   Attributes::addMinMax(brakingRate, -10.0, -0.01);
-  Attributes::addUnit(brakingRate, "m/s^2");
+  Attributes::addUnit(brakingRate, "m/s" UTF8_SUPERSCRIPT_TWO);
   m_interfaceItems.add(brakingRate);
 
   Attributes::addEnabled(stop, false);
