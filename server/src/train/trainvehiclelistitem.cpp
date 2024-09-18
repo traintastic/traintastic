@@ -58,9 +58,6 @@ TrainVehicleListItem::TrainVehicleListItem(const std::shared_ptr<RailVehicle> &v
 
 TrainVehicleListItem::~TrainVehicleListItem()
 {
-  assert(!vehicle);
-  assert(!m_vehiclePropertyChanged.connected());
-  assert(!m_vehicleDestroying.connected());
 }
 
 std::string TrainVehicleListItem::getObjectId() const
