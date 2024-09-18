@@ -31,9 +31,19 @@ class PropertyDoubleSpinBox : public QDoubleSpinBox
 {
   protected:
     AbstractProperty& m_property;
+    int m_requestId;
+
+    void cancelRequest();
+    void showError(const QString& error);
+
+    void updateRange();
+
+  protected:
+    void focusOutEvent(QFocusEvent* event) override;
 
   public:
     PropertyDoubleSpinBox(AbstractProperty& property, QWidget* parent = nullptr);
+    ~PropertyDoubleSpinBox() override;
 };
 
 #endif
