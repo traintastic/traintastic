@@ -39,7 +39,6 @@ class TrainVehicleListItem final : public Object
     TrainVehicleList &m_parent;
     const uint32_t m_itemId;
     boost::signals2::connection m_vehiclePropertyChanged;
-    boost::signals2::connection m_vehicleDestroying;
 
   protected:
     void destroying() final;

@@ -97,21 +97,10 @@ void TrainVehicleListItem::connectVehicle(RailVehicle &object)
       //Propagate property change
       propertyChanged(prop);
     });
-
-  m_vehicleDestroying = object.onDestroying.connect(
-    [this]([[maybe_unused]] Object& obj)
-    {
-      assert(vehicle.value().get() == &obj);
-      auto self = shared_ptr<TrainVehicleListItem>();
-
-      // Remove ourselves from Train vehicles
-      m_parent.removeObject(self);
-    });
 }
 
 void TrainVehicleListItem::disconnectVehicle()
 {
   //Disconnect from previous vehicle
   m_vehiclePropertyChanged.disconnect();
-  m_vehicleDestroying.disconnect();
 }
