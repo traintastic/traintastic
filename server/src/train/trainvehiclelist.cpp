@@ -161,6 +161,9 @@ void TrainVehicleList::propertyChanged(BaseProperty &property)
     train().updateSpeedMax();
   else if(property.name() == "speed_curve")
     train().updatePowered();
+  else if(property.name() == "max_acceleration_rate" ||
+          property.name() == "max_braking_rate")
+    train().updateAcceleration();
 
   if(!m_models.empty() && TrainVehicleListTableModel::isListedProperty(property.name()))
   {

@@ -79,12 +79,6 @@ class Train : public IdObject
     boost::asio::steady_timer m_delayedSpeedApplyTimer;
     std::shared_ptr<PoweredRailVehicle> m_delayedApplyLoco;
 
-    //! \todo add realistic acceleration
-    double m_accelerationRate = 1.5; // m/s^2
-
-    //! \todo add realistic braking
-    double m_brakingRate = -1.0; // m/s^2
-
     void setSpeed(const SpeedPoint &speedPoint);
     void setThrottleSpeed(const SpeedPoint &targetSpeed);
 
@@ -107,6 +101,7 @@ class Train : public IdObject
     void updateWeight();
     void updatePowered();
     void updateSpeedMax();
+    void updateAcceleration();
     void updateEnabled();
     bool setTrainActive(bool val);
     void propagateDirection(Direction newDirection);
@@ -135,6 +130,13 @@ protected:
     SpeedProperty speed;
     SpeedProperty speedMax;
     SpeedProperty throttleSpeed;
+
+    //! \todo add realistic acceleration
+    Property<double> accelerationRate;
+
+    //! \todo add realistic braking
+    Property<double> brakingRate;
+
     Method<void()> stop;
     Property<bool> emergencyStop;
     WeightProperty weight;
