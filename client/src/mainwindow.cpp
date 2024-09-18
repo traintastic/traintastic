@@ -293,7 +293,14 @@ MainWindow::MainWindow(QWidget* parent) :
         }
       });
     menu->addSeparator();
-    menu->addAction(Locale::tr("qtapp.mainmenu:quit"), this, &MainWindow::close)->setShortcut(QKeySequence::Quit);
+    menu->addAction(
+#ifdef TRAINTASTIC_CS
+      // When the app exits, Traintastic CS will shutdown.
+      Locale::tr("qtapp.mainmenu:shutdown"),
+#else
+      Locale::tr("qtapp.mainmenu:quit"),
+#endif
+      this, &MainWindow::close)->setShortcut(QKeySequence::Quit);
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:view"));
     m_actionFullScreen = menu->addAction(Locale::tr("qtapp.mainmenu:fullscreen"), this, &MainWindow::toggleFullScreen);

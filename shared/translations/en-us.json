@@ -6419,5 +6419,9 @@
     {
         "term": "message:E2025",
         "definition": "Protocol error %1 (%2) for command %3 (%4)."
+    },
+    {
+        "term": "qtapp.mainmenu:shutdown",
+        "definition": "Shutdown"
     }
 ]
