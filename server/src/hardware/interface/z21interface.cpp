@@ -215,35 +215,35 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
         {
           if(powerOn)
           {
-              /* NOTE:
-               * Setting stop and powerOn together is not an atomic operation,
-               * so it would trigger 2 state changes with in the middle state.
-               * Fortunately this does not happen because at least one of the state is already set.
-               * Because if we are in Run state we go to PowerOn,
-               * and if we are on PowerOff then we go to PowerOn.
-               */
+            /* NOTE:
+             * Setting stop and powerOn together is not an atomic operation,
+             * so it would trigger 2 state changes with in the middle state.
+             * Fortunately this does not happen because at least one of the state is already set.
+             * Because if we are in Run state we go to PowerOn,
+             * and if we are on PowerOff then we go to PowerOn.
+             */
 
-              // First of all, stop if we have to, otherwhise we might inappropiately run trains
-              if(isStopped && contains(m_world.state.value(), WorldState::Run))
-              {
-                m_world.stop();
-              }
-              else if(!contains(m_world.state.value(), WorldState::Run) && !isStopped)
-              {
-                m_world.run(); // Run trains yay!
-              }
+            // First of all, stop if we have to, otherwhise we might inappropiately run trains
+            if(isStopped && contains(m_world.state.value(), WorldState::Run))
+            {
+              m_world.stop();
+            }
+            else if(!contains(m_world.state.value(), WorldState::Run) && !isStopped)
+            {
+              m_world.run(); // Run trains yay!
+            }
 
-              // EmergencyStop in Z21 also means power is still on
-              if(!contains(m_world.state.value(), WorldState::PowerOn) && isStopped)
-              {
-                m_world.powerOn(); // Just power on but keep stopped
-              }
+            // EmergencyStop in Z21 also means power is still on
+            if(!contains(m_world.state.value(), WorldState::PowerOn) && isStopped)
+            {
+              m_world.powerOn(); // Just power on but keep stopped
+            }
           }
           else
           {
-              // Power off regardless of stop state
-              if(contains(m_world.state.value(), WorldState::PowerOn))
-                  m_world.powerOff();
+            // Power off regardless of stop state
+            if(contains(m_world.state.value(), WorldState::PowerOn))
+              m_world.powerOff();
           }
         });
 
