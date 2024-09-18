@@ -200,7 +200,7 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addUnit(accelerationRate, "m/s^2");
   m_interfaceItems.add(accelerationRate);
 
-  Attributes::addMinMax(brakingRate, -10.0, 0.01);
+  Attributes::addMinMax(brakingRate, -10.0, -0.01);
   Attributes::addUnit(brakingRate, "m/s^2");
   m_interfaceItems.add(brakingRate);
 
