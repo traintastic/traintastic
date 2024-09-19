@@ -46,6 +46,7 @@ class NewWorldWizard;
 class IntroductionWizard;
 class AddInterfaceWizard;
 class NewBoardWizard;
+class WorldListDialog;
 
 class MainWindow final : public QMainWindow
 {
@@ -55,6 +56,7 @@ class MainWindow final : public QMainWindow
     std::shared_ptr<Connection> m_connection;
     ObjectPtr m_world;
     bool m_newWorldRequested = false;
+    std::unique_ptr<WorldListDialog> m_loadWorldDialog;
     std::unique_ptr<NewWorldWizard> m_newWorldWizard;
     int m_clockRequest;
     ObjectPtr m_clock;
