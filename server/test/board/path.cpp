@@ -107,15 +107,15 @@ TEST_CASE("Board: Bridge path resevation using NX", "[board][board-path]")
   // Create two trains:
   std::weak_ptr<RailVehicle> locomotive1 = world->railVehicles->create(Locomotive::classId);
   std::weak_ptr<Train> train1 = world->trains->create();
-  REQUIRE(train1.lock()->vehicles->length == 0);
+  REQUIRE(train1.lock()->vehicles->size() == 0);
   train1.lock()->vehicles->add(locomotive1.lock());
-  REQUIRE(train1.lock()->vehicles->length == 1);
+  REQUIRE(train1.lock()->vehicles->size() == 1);
 
   std::weak_ptr<RailVehicle> locomotive2 = world->railVehicles->create(Locomotive::classId);
   std::weak_ptr<Train> train2 = world->trains->create();
-  REQUIRE(train2.lock()->vehicles->length == 0);
+  REQUIRE(train2.lock()->vehicles->size() == 0);
   train2.lock()->vehicles->add(locomotive2.lock());
-  REQUIRE(train2.lock()->vehicles->length == 1);
+  REQUIRE(train2.lock()->vehicles->size() == 1);
 
   // Assign train 1 to block 1:
   block1.lock()->assignTrain(train1.lock());
@@ -436,9 +436,9 @@ TEST_CASE("Board: Direction path reservation using NX and change direction state
   // Create train:
   std::weak_ptr<RailVehicle> locomotive = world->railVehicles->create(Locomotive::classId);
   std::weak_ptr<Train> train = world->trains->create();
-  REQUIRE(train.lock()->vehicles->length == 0);
+  REQUIRE(train.lock()->vehicles->size() == 0);
   train.lock()->vehicles->add(locomotive.lock());
-  REQUIRE(train.lock()->vehicles->length == 1);
+  REQUIRE(train.lock()->vehicles->size() == 1);
 
   // Assign train to block 1:
   block1.lock()->assignTrain(train.lock());

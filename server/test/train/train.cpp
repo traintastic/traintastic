@@ -63,9 +63,9 @@ TEST_CASE("Delete active train", "[train]")
   REQUIRE_FALSE(trainWeak.expired());
   REQUIRE(world->trains->length == 1);
 
-  REQUIRE(trainWeak.lock()->vehicles->length == 0);
+  REQUIRE(trainWeak.lock()->vehicles->size() == 0);
   trainWeak.lock()->vehicles->add(locomotiveWeak.lock());
-  REQUIRE(trainWeak.lock()->vehicles->length == 1);
+  REQUIRE(trainWeak.lock()->vehicles->size() == 1);
 
   REQUIRE_FALSE(trainWeak.lock()->active.value());
   trainWeak.lock()->active = true;
@@ -95,10 +95,10 @@ TEST_CASE("Delete inactive train", "[train]")
   REQUIRE_FALSE(trainWeak.expired());
   REQUIRE(world->trains->length == 1);
 
-  REQUIRE(trainWeak.lock()->vehicles->length == 0);
+  REQUIRE(trainWeak.lock()->vehicles->size() == 0);
   REQUIRE(locomotiveWeak.lock()->trains.size() == 0);
   trainWeak.lock()->vehicles->add(locomotiveWeak.lock());
-  REQUIRE(trainWeak.lock()->vehicles->length == 1);
+  REQUIRE(trainWeak.lock()->vehicles->size() == 1);
   REQUIRE(locomotiveWeak.lock()->trains.size() == 1);
 
   CHECK_NOTHROW(world->trains->delete_(trainWeak.lock()));
@@ -126,10 +126,10 @@ TEST_CASE("Delete rail vehicle in active train", "[train]")
   REQUIRE_FALSE(trainWeak.expired());
   REQUIRE(world->trains->length == 1);
 
-  REQUIRE(trainWeak.lock()->vehicles->length == 0);
+  REQUIRE(trainWeak.lock()->vehicles->size() == 0);
   REQUIRE(locomotiveWeak.lock()->trains.size() == 0);
   trainWeak.lock()->vehicles->add(locomotiveWeak.lock());
-  REQUIRE(trainWeak.lock()->vehicles->length == 1);
+  REQUIRE(trainWeak.lock()->vehicles->size() == 1);
   REQUIRE(locomotiveWeak.lock()->trains.size() == 1);
 
   REQUIRE_FALSE(trainWeak.lock()->active.value());
@@ -160,15 +160,15 @@ TEST_CASE("Delete rail vehicle in inactive train", "[train]")
   REQUIRE_FALSE(trainWeak.expired());
   REQUIRE(world->trains->length == 1);
 
-  REQUIRE(trainWeak.lock()->vehicles->length == 0);
+  REQUIRE(trainWeak.lock()->vehicles->size() == 0);
   REQUIRE(locomotiveWeak.lock()->trains.size() == 0);
   trainWeak.lock()->vehicles->add(locomotiveWeak.lock());
-  REQUIRE(trainWeak.lock()->vehicles->length == 1);
+  REQUIRE(trainWeak.lock()->vehicles->size() == 1);
   REQUIRE(locomotiveWeak.lock()->trains.size() == 1);
 
   CHECK_NOTHROW(world->railVehicles->delete_(locomotiveWeak.lock()));
   REQUIRE(world->railVehicles->length == 0);
-  REQUIRE(trainWeak.lock()->vehicles->length == 0);
+  REQUIRE(trainWeak.lock()->vehicles->size() == 0);
 
   world.reset();
   REQUIRE(locomotiveWeak.expired());

@@ -61,6 +61,7 @@ class TrainVehicleList : public SubObject, public Table
 
   public:
     using const_iterator = ObjectVectorProperty<TrainVehicleListItem>::const_iterator;
+    using const_reverse_iterator = ObjectVectorProperty<TrainVehicleListItem>::const_reverse_iterator;
 
     ObjectVectorProperty<TrainVehicleListItem> items;
     Method<void(const std::shared_ptr<RailVehicle>&)> add;
@@ -73,6 +74,30 @@ class TrainVehicleList : public SubObject, public Table
     inline const_iterator begin() const { return items.begin(); }
     inline const_iterator end() const { return items.end(); }
     inline bool empty() const { return items.empty(); }
+    inline size_t size() const { return items.size(); }
+
+    inline const_reverse_iterator rbegin() const { return items.rbegin(); }
+    inline const_reverse_iterator rend() const { return items.rend(); }
+
+    inline const std::shared_ptr<TrainVehicleListItem>& front() const
+    {
+      return items.front();
+    }
+
+    inline const std::shared_ptr<TrainVehicleListItem>& back() const
+    {
+      return items.back();
+    }
+
+    const std::shared_ptr<TrainVehicleListItem>& operator [](size_t index) const
+    {
+      return items[index];
+    }
+
+    const std::vector<std::shared_ptr<TrainVehicleListItem>>& operator *() const
+    {
+      return *items;
+    }
 
     TableModelPtr getModel() final;
 
