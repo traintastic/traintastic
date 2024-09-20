@@ -41,6 +41,10 @@
 #include "../log/log.hpp"
 #include "../log/logmessageexception.hpp"
 #include "../lua/getversion.hpp"
+#ifdef TRAINTASTIC_CS
+  #include "../hardware/interface/interfacelist.hpp"
+  #include "../hardware/interface/traintasticcsinterface.hpp"
+#endif
 
 using nlohmann::json;
 
@@ -94,6 +98,10 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
       Log::log(*this, LogMessage::N1002_CREATED_NEW_WORLD);
       world->edit = true;
       settings->lastWorld = "";
+#ifdef TRAINTASTIC_CS
+      auto interface = std::static_pointer_cast<TraintasticCSInterface>(world->interfaces->create(TraintasticCSInterface::classId));
+      interface->id = "traintastic_cs";
+#endif
     }},
   loadWorld{*this, "load_world",
     [this](const std::string& _uuid)
