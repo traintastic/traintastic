@@ -21,16 +21,23 @@
  */
 
 #include "settings.hpp"
+#include <cassert>
 #include "messages.hpp"
+#include "../../interface/interface.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
+#include "../../../world/getworld.hpp"
 
 namespace TraintasticCS {
 
 Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , loconetEnabled{this, "loconet_enabled", true, PropertyFlags::ReadWrite | PropertyFlags::Store}
-  , s88Enabled{this, "s88_enabled", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , s88Enabled{this, "s88_enabled", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
+      [this](bool /*value*/)
+      {
+        updateEnabled();
+      }}
   , s88ModuleCount{this, "s88_module_count", 2, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , s88ClockFrequency{this, "s88_clock_frequency", 10, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , xpressnetEnabled{this, "xpressnet_enabled", true, PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -94,15 +101,26 @@ void Settings::updateEnabled(const bool worldEdit, const bool interfaceOnline)
     {
       loconetEnabled,
       s88Enabled,
-      s88ModuleCount,
-      s88ClockFrequency,
       xpressnetEnabled
     }, worldEdit && !interfaceOnline);
+  Attributes::setEnabled(
+    {
+      s88ModuleCount,
+      s88ClockFrequency
+    }, worldEdit && !interfaceOnline && s88Enabled);
   Attributes::setEnabled(
     {
       debugLogRXTX,
       debugLogPing
     }, worldEdit);
+}
+
+void Settings::updateEnabled()
+{
+  assert(reinterpret_cast<const Interface*>(&parent()));
+  updateEnabled(
+    contains(getWorld(this).state, WorldState::Edit),
+    static_cast<const Interface&>(parent()).online);
 }
 
 }

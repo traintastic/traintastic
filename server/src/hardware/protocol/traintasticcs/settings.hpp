@@ -33,6 +33,9 @@ class Settings final : public SubObject
 {
   CLASS_ID("traintastic_cs_settings")
 
+  private:
+    void updateEnabled();
+
   public:
     Property<bool> loconetEnabled;
     Property<bool> s88Enabled;
