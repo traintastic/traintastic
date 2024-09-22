@@ -390,5 +390,25 @@
     {
         "term": "loconet_command_station:uhlenbrock_intellibox_2",
         "definition": "Uhlenbrock Intellibox II"
+    },
+    {
+        "term": "class_id:interface.traintastic_cs",
+        "definition": "Traintastic CS"
+    },
+    {
+        "term": "interface.traintastic_cs:traintastic_cs",
+        "definition": "Traintastic CS"
+    },
+    {
+        "term": "traintastic_cs_settings:loconet_enabled",
+        "definition": "LocoNet"
+    },
+    {
+        "term": "traintastic_cs_settings:s88_enabled",
+        "definition": "S88"
+    },
+    {
+        "term": "traintastic_cs_settings:xpressnet_enabled",
+        "definition": "XpressNet"
     }
 ]

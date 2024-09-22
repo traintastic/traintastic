@@ -6423,5 +6423,17 @@
     {
         "term": "qtapp.mainmenu:shutdown",
         "definition": "Shutdown"
+    },
+    {
+        "term": "traintastic_cs_settings:s88_module_count",
+        "definition": "Number of 8 port S88 modules"
+    },
+    {
+        "term": "traintastic_cs_settings:s88_clock_frequency",
+        "definition": "S88 clock frequency"
+    },
+    {
+        "term": "traintastic_cs_settings:debug_log_ping",
+        "definition": "Log ping command"
     }
 ]
