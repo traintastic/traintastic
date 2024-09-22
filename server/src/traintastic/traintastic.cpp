@@ -101,6 +101,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
 #ifdef TRAINTASTIC_CS
       auto interface = std::static_pointer_cast<TraintasticCSInterface>(world->interfaces->create(TraintasticCSInterface::classId));
       interface->id = "traintastic_cs";
+      interface->device.fromString("/dev/ttyS0");
 #endif
     }},
   loadWorld{*this, "load_world",
