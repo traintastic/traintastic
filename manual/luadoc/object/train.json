@@ -6,6 +6,8 @@
   "powered": {},
   "active": {},
   "mode": {},
+  "mute": {},
+  "no_smoke": {},
   "on_block_assigned": {
     "parameters": [
       {

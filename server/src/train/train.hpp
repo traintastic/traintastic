@@ -109,6 +109,8 @@ class Train : public IdObject
     Property<bool> powered;
     Property<bool> active;
     Property<TrainMode> mode;
+    Property<bool> mute;
+    Property<bool> noSmoke;
 
     //! \brief List of block status the train is in
     //! Index 0 is the block where the head of the train is.
@@ -129,6 +131,9 @@ class Train : public IdObject
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onZoneRemoved;
 
     Train(World& world, std::string_view _id);
+
+    void updateMute();
+    void updateNoSmoke();
 
     void fireBlockAssigned(const std::shared_ptr<BlockRailTile>& block);
     void fireBlockRemoved(const std::shared_ptr<BlockRailTile>& block);

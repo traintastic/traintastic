@@ -230,6 +230,8 @@ void TrainTracking::checkZoneEntered(const std::shared_ptr<Train>& train, const 
       zoneStatus->state.setValueInternal(ZoneTrainState::Entered);
     }
 
+    trainEnteredOrLeftZone(*train, *zone);
+
     zone->fireTrainEntered(train);
     train->fireZoneEntered(zone);
   }
@@ -261,6 +263,8 @@ void TrainTracking::checkZoneLeft(const std::shared_ptr<Train>& train, const std
   {
     if(removeTrainIfNotInZone(train, zone))
     {
+      trainEnteredOrLeftZone(*train, *zone);
+
       zone->fireTrainLeft(train);
       train->fireZoneLeft(zone);
     }
@@ -308,4 +312,17 @@ bool TrainTracking::removeTrainIfNotInZone(const std::shared_ptr<Train>& train, 
     return true; // removed
   }
   return false;
+}
+
+void TrainTracking::trainEnteredOrLeftZone(Train& train, Zone& zone)
+{
+  // Re-evaluate zone limitations:
+  if(zone.mute)
+  {
+    train.updateMute();
+  }
+  if(zone.noSmoke)
+  {
+    train.updateNoSmoke();
+  }
 }

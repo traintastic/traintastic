@@ -36,6 +36,22 @@ CREATE_IMPL(Zone)
 Zone::Zone(World& world, std::string_view id_)
   : IdObject(world, id_)
   , name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
+  , mute{this, "mute", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly,
+      [this](bool /*value*/)
+      {
+        for(auto& status : trains)
+        {
+          status->train->updateMute();
+        }
+      }}
+  , noSmoke{this, "no_smoke", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly,
+      [this](bool /*value*/)
+      {
+        for(auto& status : trains)
+        {
+          status->train->updateNoSmoke();
+        }
+      }}
   , blocks{this, "blocks", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , trains{*this, "trains", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
   , onTrainAssigned{*this, "on_train_assigned", EventFlags::Scriptable}
@@ -52,6 +68,12 @@ Zone::Zone(World& world, std::string_view id_)
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
+
+  Attributes::addEnabled(mute, editable);
+  m_interfaceItems.add(mute);
+
+  Attributes::addEnabled(noSmoke, editable);
+  m_interfaceItems.add(noSmoke);
 
   m_interfaceItems.add(blocks);
 
@@ -83,7 +105,7 @@ void Zone::worldEvent(WorldState worldState, WorldEvent worldEvent)
 
   const bool editable = contains(worldState, WorldState::Edit);
 
-  Attributes::setEnabled(name, editable);
+  Attributes::setEnabled({name, mute, noSmoke}, editable);
 }
 
 void Zone::addToWorld()

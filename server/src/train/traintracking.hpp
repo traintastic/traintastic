@@ -47,6 +47,8 @@ private:
 
   static bool removeTrainIfNotInZone(const std::shared_ptr<Train>& train, const std::shared_ptr<Zone>& zone);
 
+  static void trainEnteredOrLeftZone(Train& train, Zone& zone);
+
 public:
   static void assigned(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block);
   static void reserve(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction);

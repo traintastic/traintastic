@@ -57,6 +57,8 @@ public:
   std::shared_ptr<TrainZoneStatus> getTrainZoneStatus(const std::shared_ptr<Train>& train);
 
   Property<std::string> name;
+  Property<bool> mute;
+  Property<bool> noSmoke;
   ObjectProperty<ZoneBlockList> blocks;
   ObjectVectorProperty<TrainZoneStatus> trains;
   Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onTrainAssigned;

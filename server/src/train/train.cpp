@@ -144,8 +144,10 @@ Train::Train(World& world, std::string_view _id) :
       updateSpeed();
     },
     std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
-  mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
-  blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState},
+  mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
+  , mute{this, "mute", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
+  , noSmoke{this, "no_smoke", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
+  , blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState},
   zones{*this, "zones", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , onBlockAssigned{*this, "on_block_assigned", EventFlags::Scriptable}
@@ -204,6 +206,12 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addValues(mode, trainModeValues);
   m_interfaceItems.add(mode);
 
+  Attributes::addObjectEditor(mute, false);
+  m_interfaceItems.add(mute);
+
+  Attributes::addObjectEditor(noSmoke, false);
+  m_interfaceItems.add(noSmoke);
+
   Attributes::addObjectEditor(blocks, false);
   m_interfaceItems.add(blocks);
 
@@ -228,6 +236,48 @@ Train::Train(World& world, std::string_view _id) :
   m_interfaceItems.add(onZoneRemoved);
 
   updateEnabled();
+  updateMute();
+  updateNoSmoke();
+}
+
+void Train::updateMute()
+{
+  bool value = contains(m_world.state, WorldState::Mute);
+  if(!value)
+  {
+    for(const auto& zoneStatus : zones)
+    {
+      if(zoneStatus->zone->mute)
+      {
+        value = true;
+        break;
+      }
+    }
+  }
+  if(value != mute)
+  {
+    mute.setValueInternal(value);
+  }
+}
+
+void Train::updateNoSmoke()
+{
+  bool value = contains(m_world.state, WorldState::Mute);
+  if(!value)
+  {
+    for(const auto& zoneStatus : zones)
+    {
+      if(zoneStatus->zone->noSmoke)
+      {
+        value = true;
+        break;
+      }
+    }
+  }
+  if(value != noSmoke)
+  {
+    noSmoke.setValueInternal(value);
+  }
 }
 
 void Train::addToWorld()
@@ -255,6 +305,8 @@ void Train::loaded()
   Attributes::setEnabled(weight, overrideWeight);
 
   vehiclesChanged();
+  updateMute();
+  updateNoSmoke();
 }
 
 void Train::worldEvent(WorldState state, WorldEvent event)
