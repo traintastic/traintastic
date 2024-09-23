@@ -4,7 +4,7 @@ When Traintastic server is running the Traintastic client can be started.
 
 **Windows:** The Traintastic client can be started using the desktop icon (if installed) or by selecting *Traintastic* -> *Traintastic client* from the Windows start menu.
 
-**Linux:** TODO
+**Linux:** To start Traintastic client, open your desktop environment's application launcher, search for "Traintastic Client," and select it from the list.
 
 ## Connect to the server
 

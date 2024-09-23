@@ -33,6 +33,7 @@
 #include <traintastic/enum/decouplerstate.hpp>
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/directioncontrolstate.hpp>
+#include <traintastic/enum/externaloutputchangeaction.hpp>
 #include <traintastic/enum/lengthunit.hpp>
 #include <traintastic/enum/loconetf9f28.hpp>
 #include <traintastic/enum/loconetfastclock.hpp>
@@ -105,6 +106,7 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(DecouplerState)
   TRANSLATE_ENUM(Direction)
   TRANSLATE_ENUM(DirectionControlState)
+  TRANSLATE_ENUM(ExternalOutputChangeAction)
   TRANSLATE_ENUM(LengthUnit)
   TRANSLATE_ENUM(LocoNetF9F28)
   TRANSLATE_ENUM(LocoNetFastClock)

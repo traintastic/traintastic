@@ -23,6 +23,41 @@
 #include "turnoutsliprailtile.hpp"
 #include "../../../../core/attributes.hpp"
 
+std::optional<OutputActionValue> TurnoutSlipRailTile::getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex)
+{
+  // FIXME: implement more defaults
+  switch(outputType)
+  {
+    case OutputType::Aspect:
+      if(outputIndex == 0)
+      {
+        // There is no official/defacto standard yet, until there is use values used by YaMoRC YD8116.
+        switch(turnoutPosition)
+        {
+          case TurnoutPosition::Left:
+            return static_cast<int16_t>(0);
+
+          case TurnoutPosition::Right:
+            return static_cast<int16_t>(1);
+
+          case TurnoutPosition::DoubleSlipStraightA:
+            return static_cast<int16_t>(17);
+
+          case TurnoutPosition::DoubleSlipStraightB:
+            return static_cast<int16_t>(16);
+
+          default:
+            break;
+        }
+      }
+      break;
+
+    default:
+      break;
+  }
+  return {};
+}
+
 TurnoutSlipRailTile::TurnoutSlipRailTile(World& world, std::string_view _id, TileId tileId_)
   : TurnoutRailTile(world, _id, tileId_, 4)
   , dualMotor{this, "dual_motor", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly,

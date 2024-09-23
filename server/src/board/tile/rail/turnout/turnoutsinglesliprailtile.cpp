@@ -42,15 +42,6 @@ static constexpr tcb::span<const TurnoutPosition> positionValuesDualMotor = tcb:
 static constexpr tcb::span<const TurnoutPosition> setPositionValuesSingleMotor = tcb::make_span(PositionValues::singleMotor).subspan<1>();
 static constexpr tcb::span<const TurnoutPosition> setPositionValuesDualMotor = tcb::make_span(PositionValues::dualMotor).subspan<1>();
 
-static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex)
-{
-  // FIXME: implement defaults
-  (void)turnoutPosition;
-  (void)outputType;
-  (void)outputIndex;
-  return {};
-}
-
 TurnoutSingleSlipRailTile::TurnoutSingleSlipRailTile(World& world, std::string_view _id)
   : TurnoutSlipRailTile(world, _id, TileId::RailTurnoutSingleSlip)
 {

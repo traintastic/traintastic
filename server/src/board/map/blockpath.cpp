@@ -33,6 +33,8 @@
 #include "../tile/rail/turnout/turnoutrailtile.hpp"
 #include "../tile/rail/linkrailtile.hpp"
 #include "../tile/rail/nxbuttonrailtile.hpp"
+#include "../../train/trainblockstatus.hpp"
+#include "../../core/eventloop.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../enum/bridgepath.hpp"
 
@@ -296,7 +298,32 @@ BlockPath::BlockPath(BlockRailTile& block, BlockSide side)
   : m_fromBlock{block}
   , m_fromSide{side}
   , m_toSide{static_cast<BlockSide>(-1)}
+  , m_delayReleaseTimer{EventLoop::ioContext}
+  , m_isReserved(false)
+  , m_delayedReleaseScheduled(false)
 {
+}
+
+BlockPath::BlockPath(const BlockPath &other)
+  : Path(other)
+  , std::enable_shared_from_this<BlockPath>()
+  , m_fromBlock(other.m_fromBlock)
+  , m_fromSide(other.m_fromSide)
+  , m_toBlock(other.m_toBlock)
+  , m_toSide(other.m_toSide)
+  , m_tiles(other.m_tiles)
+  , m_turnouts(other.m_turnouts)
+  , m_directionControls(other.m_directionControls)
+  , m_crossings(other.m_crossings)
+  , m_bridges(other.m_bridges)
+  , m_signals(other.m_signals)
+  , m_nxButtonFrom(other.m_nxButtonFrom)
+  , m_nxButtonTo(other.m_nxButtonTo)
+  , m_delayReleaseTimer{EventLoop::ioContext}
+  , m_isReserved(false)
+  , m_delayedReleaseScheduled(false)
+{
+
 }
 
 bool BlockPath::operator ==(const BlockPath& other) const noexcept
@@ -387,7 +414,7 @@ bool BlockPath::reserve(const std::shared_ptr<Train>& train, bool dryRun)
   {
     if(auto turnout = turnoutWeak.lock())
     {
-      if(!turnout->reserve(position, dryRun))
+      if(!turnout->reserve(shared_from_this(), position, dryRun))
       {
         assert(dryRun);
         return false;
@@ -489,6 +516,9 @@ bool BlockPath::reserve(const std::shared_ptr<Train>& train, bool dryRun)
     }
   }
 
+  if(!dryRun)
+    m_isReserved = true;
+
   return true;
 }
 
@@ -499,22 +529,47 @@ bool BlockPath::release(bool dryRun)
     return false;
   }
 
+  if(!dryRun)
+      m_delayReleaseTimer.cancel();
+
+  auto toBlock = m_toBlock.lock();
+  if(!toBlock) /*[[unlikely]]*/
+    return false;
+
+  BlockState fromState = m_fromBlock.state.value();
+  BlockState toState = toBlock->state.value();
+
+  if((fromState == BlockState::Occupied || fromState == BlockState::Unknown)
+      && (toState == BlockState::Occupied || toState == BlockState::Unknown)
+      && !m_fromBlock.trains.empty() && !toBlock->trains.empty())
+  {
+    // Check if train head is beyond toBlock while its end is still in fromBlock
+    const auto& status1 = fromSide() == BlockSide::A ? m_fromBlock.trains.front() : m_fromBlock.trains.back();
+    const auto& status2 = toSide() == BlockSide::A ? toBlock->trains.front() : toBlock->trains.back();
+
+    if(status1->train.value() == status2->train.value())
+      return false;
+  }
+
   if(!m_fromBlock.release(m_fromSide, dryRun))
   {
     assert(dryRun);
     return false;
   }
 
-  if(auto toBlock = m_toBlock.lock()) /*[[likely]]*/
+  if(!dryRun && toBlock->state.value() == BlockState::Reserved)
   {
-    if(!toBlock->release(m_toSide, dryRun))
+    if(toBlock->trains.size() == 1)
     {
-      assert(dryRun);
-      return false;
+      //TODO: this bypasses some checks
+      toBlock->removeTrainInternal(toBlock->trains[0]);
+      //TODO: dryRun? what if it fails?
     }
   }
-  else
+
+  if(!toBlock->release(m_toSide, dryRun))
   {
+    assert(dryRun);
     return false;
   }
 
@@ -597,5 +652,28 @@ bool BlockPath::release(bool dryRun)
     }
   }
 
+  if(!dryRun)
+    m_isReserved = false;
+
   return true;
+}
+
+bool BlockPath::delayedRelease(uint16_t timeoutMillis)
+{
+    if(m_delayedReleaseScheduled)
+        return false;
+
+    m_delayedReleaseScheduled = true;
+
+    m_delayReleaseTimer.expires_after(boost::asio::chrono::milliseconds(timeoutMillis));
+    m_delayReleaseTimer.async_wait([this](const boost::system::error_code& ec)
+    {
+        m_delayedReleaseScheduled = false;
+
+        if(ec)
+            return;
+
+        release();
+    });
+    return true;
 }

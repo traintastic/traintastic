@@ -77,7 +77,7 @@ DecouplerRailTile::DecouplerRailTile(World& world, std::string_view _id)
 void DecouplerRailTile::destroying()
 {
   outputMap->parentObject.setValueInternal(nullptr);
-  StraightRailTile::addToWorld();
+  StraightRailTile::destroying();
 }
 
 void DecouplerRailTile::addToWorld()

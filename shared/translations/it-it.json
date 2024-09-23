@@ -243,6 +243,14 @@
         "fuzzy": 0
     },
     {
+        "term": "category:trains",
+        "definition": "Treni",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "class_id:board_tile.misc.push_button",
         "definition": "Bottone",
         "context": "",
@@ -952,6 +960,22 @@
         "reference": "",
         "comment": "",
         "fuzzy": 0
+    },
+    {
+        "term": "ext_output_change_action:do_nothing",
+        "definition": "Non fare niente"
+    },
+    {
+        "term": "ext_output_change_action:estop_train",
+        "definition": "Stop di emergenza per i treni nell'itinerario"
+    },
+    {
+        "term": "ext_output_change_action:estop_world",
+        "definition": "Stop di emergenza Mondo"
+    },
+    {
+        "term": "ext_output_change_action:poweroff_world",
+        "definition": "Spegni Mondo"
     },
     {
         "term": "ecos_channel:ecos_detector",
@@ -2826,6 +2850,14 @@
         "fuzzy": 0
     },
     {
+        "term": "message:N3003",
+        "definition": "La posizione del deviatoio è stata riportata a quella riservata"
+    },
+    {
+        "term": "message:N3004",
+        "definition": "L'aspetto del segnale è stato riportato a quello riservato"
+    },
+    {
         "term": "message:N9001",
         "definition": "Avvio script",
         "context": "",
@@ -4455,6 +4487,30 @@
         "fuzzy": 0
     },
     {
+        "term": "world:correct_output_pos_when_locked",
+        "definition": "Prova a correggere lo stato di un output modificato esternamente mentre bloccato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:ext_output_change_action",
+        "definition": "Azione per Modifica Esterna di un Output",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:path_release_delay",
+        "definition": "Ritardo nella liberazione dell'itinerario",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
         "term": "world_scale:custom",
         "definition": "Custom",
         "context": "",
@@ -4959,6 +5015,30 @@
         "fuzzy": 0
     },
     {
+        "term": "message:E3003",
+        "definition": "Il treno \u00e8 stato stoppato d'emergenza per la modifica esterna della posizione del deviatoio %1"
+    },
+    {
+        "term": "message:E3004",
+        "definition": "Il treno \u00e8 stato stoppato d'emergenza per la modifica esterna dell'aspetto del segnale %1"
+    },
+    {
+        "term": "message:E3007",
+        "definition": "Il mondo \u00e8 stato stoppato d'emergenza per la modifica esterna della posizione del deviatoio %1"
+    },
+    {
+        "term": "message:E3008",
+        "definition": "Il mondo \u00e8 stato stoppato d'emergenza per la modifica esterna dell'aspetto del segnale %1"
+    },
+    {
+        "term": "message:E3009",
+        "definition": "Il mondo \u00e8 stato spento per la modifica esterna della posizione del deviatoio %1"
+    },
+    {
+        "term": "message:E3010",
+        "definition": "Il mondo \u00e8 stato spento per la modifica esterna dell'aspetto del segnale %1"
+    },
+    {
         "term": "message:C1014",
         "definition": "Comando non valido",
         "context": "",
@@ -5029,6 +5109,14 @@
         "reference": "",
         "comment": "",
         "fuzzy": 0
+    },
+    {
+        "term": "message:W3003",
+        "definition": "Posizione del deviatoio modificata dall'esterno mentre era bloccato in un itinerario"
+    },
+    {
+        "term": "message:W3004",
+        "definition": "Aspetto del segnale modificato dall'esterno mentre era bloccato in un itinerario"
     },
     {
         "term": "auto_yes_no:auto",

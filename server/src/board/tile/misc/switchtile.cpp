@@ -92,7 +92,7 @@ SwitchTile::SwitchTile(World& world, std::string_view _id)
 void SwitchTile::destroying()
 {
   outputMap->parentObject.setValueInternal(nullptr);
-  Tile::addToWorld();
+  Tile::destroying();
 }
 
 void SwitchTile::addToWorld()

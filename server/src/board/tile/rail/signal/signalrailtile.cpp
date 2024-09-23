@@ -22,11 +22,16 @@
 
 #include "signalrailtile.hpp"
 #include "../../../map/abstractsignalpath.hpp"
+#include "../../../map/blockpath.hpp"
 #include "../../../../core/attributes.hpp"
 #include "../../../../core/method.tpp"
 #include "../../../../core/objectproperty.tpp"
 #include "../../../../world/getworld.hpp"
 #include "../../../../utils/displayname.hpp"
+#include "../blockrailtile.hpp"
+#include "../../../../train/trainblockstatus.hpp"
+#include "../../../../train/train.hpp"
+#include "../../../../log/log.hpp"
 
 std::optional<OutputActionValue> SignalRailTile::getDefaultActionValue(SignalAspect signalAspect, OutputType outputType, size_t outputIndex)
 {
@@ -79,6 +84,7 @@ std::optional<OutputActionValue> SignalRailTile::getDefaultActionValue(SignalAsp
 SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId_) :
   StraightRailTile(world, _id, tileId_),
   m_node{*this, 2},
+  m_retryCount(0),
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   requireReservation{this, "require_reservation", AutoYesNo::Auto, PropertyFlags::ReadWrite | PropertyFlags::Store},
   aspect{this, "aspect", SignalAspect::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
@@ -136,7 +142,7 @@ bool SignalRailTile::reserve(const std::shared_ptr<BlockPath>& blockPath, bool d
 void SignalRailTile::destroying()
 {
   outputMap->parentObject.setValueInternal(nullptr);
-  StraightRailTile::addToWorld();
+  StraightRailTile::destroying();
 }
 
 void SignalRailTile::addToWorld()
@@ -203,14 +209,89 @@ void SignalRailTile::connectOutputMap()
 {
     outputMap->onOutputStateMatchFound.connect([this](SignalAspect value)
       {
-        bool changed = (value == aspect);
-        if(doSetAspect(value, true))
+        bool changed = (value != aspect);
+        if(!doSetAspect(value, true) || !changed)
+          return; // No change
+
+        if(!m_signalPath || !hasReservedPath())
+          return; // Not locked
+
+        // If we are in a signal path, re-evaluate our aspect
+        // This corrects accidental modifications of aspect done
+        // by the user with an handset or command station.
+        Log::log(id, LogMessage::W3004_LOCKED_SIGNAL_CHANGED);
+
+        if(m_world.correctOutputPosWhenLocked)
         {
-          // If we are in a signal path, re-evaluate our aspect
-          // This corrects accidental modifications of aspect done
-          // by the user with an handset or command station.
-          if(changed && m_signalPath)
+          auto now = std::chrono::steady_clock::now();
+          if((now - m_lastRetryStart) >= RETRY_DURATION)
+          {
+            // Reset retry count
+            m_lastRetryStart = now;
+            m_retryCount = 0;
+          }
+
+          if(m_retryCount < MAX_RETRYCOUNT)
+          {
+            // Try to reset output to reseved state
+            m_retryCount++;
             evaluate();
+
+            Log::log(id, LogMessage::N3004_SIGNAL_RESET_TO_RESERVED_ASPECT);
+            return;
+          }
+        }
+
+        // We reached maximum retry count
+        // We cannot lock this signal. Take action.
+        switch (m_world.extOutputChangeAction.value())
+        {
+        default:
+        case ExternalOutputChangeAction::DoNothing:
+        {
+          // Do nothing
+          break;
+        }
+        case ExternalOutputChangeAction::EmergencyStopTrain:
+        {
+          if(auto blockPath = reservedPath())
+          {
+            std::vector<std::shared_ptr<Train>> alreadyStoppedTrains;
+
+            for(auto it : blockPath->fromBlock().trains)
+            {
+              it->train.value()->emergencyStop.setValue(true);
+              alreadyStoppedTrains.push_back(it->train.value());
+              Log::log(it->train->id, LogMessage::E3004_TRAIN_STOPPED_ON_SIGNAL_X_CHANGED, id.value());
+            }
+
+            auto toBlock = blockPath->toBlock();
+            if(toBlock)
+            {
+              for(auto it : blockPath->toBlock()->trains)
+              {
+                if(std::find(alreadyStoppedTrains.cbegin(), alreadyStoppedTrains.cend(), it->train.value()) != alreadyStoppedTrains.cend())
+                  continue; // Do not stop train twice
+
+                it->train.value()->emergencyStop.setValue(true);
+                Log::log(it->train->id, LogMessage::E3004_TRAIN_STOPPED_ON_SIGNAL_X_CHANGED, id.value());
+              }
+            }
+          }
+          break;
+        }
+        case ExternalOutputChangeAction::EmergencyStopWorld:
+        {
+          m_world.stop();
+          Log::log(m_world, LogMessage::E3008_WORLD_STOPPED_ON_SIGNAL_X_CHANGED, id.value());
+          break;
+        }
+        case ExternalOutputChangeAction::PowerOffWorld:
+        {
+          m_world.powerOff();
+          Log::log(m_world, LogMessage::E3010_WORLD_POWER_OFF_ON_SIGNAL_X_CHANGED, id.value());
+          break;
+        }
         }
       });
 
