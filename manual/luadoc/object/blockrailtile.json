@@ -2,6 +2,7 @@
   "name": {
     "since": "0.3"
   },
+  "trains": {},
   "on_train_assigned": {
     "parameters": [
       {
