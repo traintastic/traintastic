@@ -709,7 +709,6 @@ class LuaDoc:
             category['title'] = self._get_term('object.category.' + key + ':title')
             category['items'] = []
             for object in category['objects']:
-                print(object)
                 for item in items:
                     if item['id'] == object:
                         category['items'].append(item)
