@@ -262,7 +262,7 @@ void Train::updateMute()
 
 void Train::updateNoSmoke()
 {
-  bool value = contains(m_world.state, WorldState::Mute);
+  bool value = contains(m_world.state, WorldState::NoSmoke);
   if(!value)
   {
     for(const auto& zoneStatus : zones)
