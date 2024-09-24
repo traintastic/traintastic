@@ -6423,5 +6423,13 @@
     {
         "term": "zone:blocks",
         "definition": "Blocks"
+    },
+    {
+        "term": "zone:mute",
+        "definition": "Mute"
+    },
+    {
+        "term": "zone:no_smoke",
+        "definition": "No smoke"
     }
 ]

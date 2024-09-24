@@ -8,6 +8,7 @@
   "mode": {},
   "mute": {},
   "no_smoke": {},
+  "zones": {},
   "on_block_assigned": {
     "parameters": [
       {

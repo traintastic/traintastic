@@ -2206,5 +2206,17 @@
   {
     "term": "object.train.on_zone_removed.parameter.zone:description",
     "definition": "The {ref:object.zone|zone} that the train is removed from."
+  },
+  {
+    "term": "object.zone.mute:description",
+    "definition": "If `true`, all trains in the zone are muted."
+  },
+  {
+    "term": "object.zone.no_smoke:description",
+    "definition": "If `true`, smoke generaters are disabled of all trains in the zone."
+  },
+  {
+    "term": "object.zone.trains:description",
+    "definition": "List of {ref:object.trainzonestatus|train zone status} objects of all trains that are entering, entered or leaving the zone."
   }
 ]
