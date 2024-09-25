@@ -56,6 +56,8 @@ QIcon Theme::getIconForClassId(const QString& classId)
     return getIcon("clock");
   else if(classId == "train" || classId == "list.train")
     return getIcon("train");
+  else if(classId == "zone" || classId == "list.zone")
+    return getIcon("zone");
   else
     return QIcon();
 }
