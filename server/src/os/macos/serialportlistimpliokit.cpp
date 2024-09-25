@@ -97,7 +97,7 @@ std::vector<std::string> SerialPortListImplIOKit::get() const
   return devices;
 }
 
-void SerialPortListImplIOKit::handleDeviceIterator(io_iterator_t iterator, bool notifyOnAdd, std::vector<std::string>* devices) const
+void SerialPortListImplIOKit::handleDeviceIterator(io_iterator_t iterator, bool notifyOnAdd, std::vector<std::string>* devices)
 {
   io_object_t device;
   while((device = IOIteratorNext(iterator)))

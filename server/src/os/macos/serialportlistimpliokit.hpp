@@ -38,7 +38,7 @@ private:
 
   std::thread m_thread;
 
-  void handleDeviceIterator(io_iterator_t iterator, bool notifyOnAdd, std::vector<std::string>* devices = nullptr) const;
+  void handleDeviceIterator(io_iterator_t iterator, bool notifyOnAdd, std::vector<std::string>* devices = nullptr);
   CFMutableDictionaryRef getMatchingDictionary();
   kern_return_t findSerialPorts(io_iterator_t* portIterator);
 
