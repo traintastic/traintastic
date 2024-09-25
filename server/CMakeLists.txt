@@ -231,6 +231,9 @@ if(LINUX)
     if(BUILD_TESTING)
       target_link_libraries(traintastic-server-test PRIVATE PkgConfig::LIBSYSTEMD)
     endif()
+  else()
+    # Use inotify for monitoring serial ports:
+    list(APPEND SOURCES "src/os/linux/serialportlistimplinotify.hpp" "src/os/linux/serialportlistimplinotify.cpp")
   endif()
 else()
   # socket CAN is only available on linux:
