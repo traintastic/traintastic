@@ -30,6 +30,8 @@
   #include "linux/serialportlistimplinotify.hpp"
 #elif defined(WIN32)
   #include "windows/serialportlistimplwin32.hpp"
+#elif defined(__APPLE__)
+  #include "macos/serialportlistimpliokit.hpp"
 #else
   #include "serialportlistimpl.hpp"
 #endif

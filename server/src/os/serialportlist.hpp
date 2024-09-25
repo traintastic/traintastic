@@ -41,6 +41,10 @@ namespace Linux {
 namespace Windows {
   class SerialPortListImplWin32;
 }
+#elif defined(__APPLE__)
+namespace MacOS {
+  class SerialPortListImplIOKit;
+}
 #endif
 
 class SerialPortList
@@ -54,6 +58,8 @@ class SerialPortList
     using Impl = Linux::SerialPortListImplInotify;
 #elif defined(WIN32)
     using Impl = Windows::SerialPortListImplWin32;
+#elif defined(__APPLE__)
+    using Impl = MacOS::SerialPortListImplIOKit;
 #else
     using Impl = SerialPortListImpl;
 #endif

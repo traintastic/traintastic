@@ -227,6 +227,9 @@ endif()
 
 if(APPLE)
   add_definitions(-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION) # remove once boost is updated
+
+  file(GLOB SOURCES_MACOS "src/os/macos/*.hpp" "src/os/macos/*.cpp")
+  list(APPEND SOURCES ${SOURCES_MACOS})
 endif()
 
 if(WIN32)
