@@ -42,7 +42,7 @@ SerialPortListImplIOKit::SerialPortListImplIOKit(SerialPortList& list)
       {
         setThreadName("serialport-iokit");
 
-        IONotificationPortRef notificationPort = IONotificationPortCreate(kIOMasterPortDefault);
+        IONotificationPortRef notificationPort = IONotificationPortCreate(kIOMainPortDefault);
         CFRunLoopSourceRef runLoopSource = IONotificationPortGetRunLoopSource(notificationPort);
         CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, kCFRunLoopDefaultMode);
 
@@ -167,7 +167,7 @@ kern_return_t SerialPortListImplIOKit::findSerialPorts(io_iterator_t* portIterat
   {
     return KERN_FAILURE;
   }
-  return IOServiceGetMatchingServices(kIOMasterPortDefault, matchingDict, portIterator);
+  return IOServiceGetMatchingServices(kIOMainPortDefault, matchingDict, portIterator);
 }
 
 }
