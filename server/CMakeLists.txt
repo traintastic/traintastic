@@ -230,6 +230,12 @@ if(APPLE)
 
   file(GLOB SOURCES_MACOS "src/os/macos/*.hpp" "src/os/macos/*.cpp")
   list(APPEND SOURCES ${SOURCES_MACOS})
+
+  # Link against IOKit and CoreFoundation frameworks
+  target_link_libraries(traintastic-server "-framework IOKit" "-framework CoreFoundation")
+  if(BUILD_TESTING)
+    target_link_libraries(traintastic-server-test "-framework IOKit" "-framework CoreFoundation")
+  endif()
 endif()
 
 if(WIN32)
