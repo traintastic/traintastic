@@ -232,9 +232,9 @@ if(APPLE)
   list(APPEND SOURCES ${SOURCES_MACOS})
 
   # Link against IOKit and CoreFoundation frameworks
-  target_link_libraries(traintastic-server "-framework IOKit" "-framework CoreFoundation")
+  target_link_libraries(traintastic-server PRIVATE "-framework IOKit" "-framework CoreFoundation")
   if(BUILD_TESTING)
-    target_link_libraries(traintastic-server-test "-framework IOKit" "-framework CoreFoundation")
+    target_link_libraries(traintastic-server-test PRIVATE "-framework IOKit" "-framework CoreFoundation")
   endif()
 endif()
 
