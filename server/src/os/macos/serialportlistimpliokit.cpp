@@ -23,16 +23,34 @@
 #include "serialportlistimpliokit.hpp"
 #include <IOKit/serial/IOSerialKeys.h>
 #include "../../core/eventloop.hpp"
-#include "../../utils/startswith.hpp"
 #include "../../utils/setthreadname.hpp"
 
 namespace MacOS {
 
-static bool isSerialDevice(std::string_view devPath)
+static std::string getDevicePath(io_object_t device)
 {
-  return
-    startsWith(devPath, "/dev/tty.") ||
-    startsWith(devPath, "/dev/cu.");
+  std::string devicePath;
+  CFTypeRef devicePathAsCFString = IORegistryEntryCreateCFProperty(device, CFSTR(kIOCalloutDeviceKey), kCFAllocatorDefault, 0);
+  if(devicePathAsCFString)
+  {
+    devicePath.resize(PATH_MAX);
+    if(CFStringGetCString((CFStringRef)devicePathAsCFString, devicePath.data(), devicePath.size(), kCFStringEncodingUTF8))
+    {
+      devicePath.resize(strnlen(devicePath.data(), PATH_MAX));
+    }
+    CFRelease(devicePathAsCFString);
+  }
+  return devicePath;
+}
+
+static CFMutableDictionaryRef getMatchingDictionary()
+{
+  CFMutableDictionaryRef matchingDict = IOServiceMatching(kIOSerialBSDServiceValue);
+  if(matchingDict)
+  {
+    CFDictionarySetValue(matchingDict, CFSTR(kIOSerialBSDTypeKey), CFSTR(kIOSerialBSDAllTypes));
+  }
+  return matchingDict;
 }
 
 SerialPortListImplIOKit::SerialPortListImplIOKit(SerialPortList& list)
@@ -46,21 +64,14 @@ SerialPortListImplIOKit::SerialPortListImplIOKit(SerialPortList& list)
         CFRunLoopSourceRef runLoopSource = IONotificationPortGetRunLoopSource(notificationPort);
         CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, kCFRunLoopDefaultMode);
 
-        io_iterator_t portIterator;
-        kern_return_t result = findSerialPorts(&portIterator);
-        if(result == KERN_SUCCESS)
-        {
-          handleDeviceIterator(portIterator, true); // add existing ports
-        }
-
-        // register for device add/remove notifications:
+        // Register for device add/remove notifications:
         io_iterator_t notificationIterator;
         IOServiceAddMatchingNotification(notificationPort, kIOFirstMatchNotification, getMatchingDictionary(), deviceAddedCallback, this, &notificationIterator);
         IOServiceAddMatchingNotification(notificationPort, kIOTerminatedNotification, getMatchingDictionary(), deviceRemovedCallback, this, &notificationIterator);
 
         CFRunLoopRun();
 
-        // clean up:
+        // Clean up:
         IOObjectRelease(notificationIterator);
         IONotificationPortDestroy(notificationPort);
       }}
@@ -73,68 +84,44 @@ SerialPortListImplIOKit::~SerialPortListImplIOKit()
   m_thread.join();
 }
 
-CFMutableDictionaryRef SerialPortListImplIOKit::getMatchingDictionary()
-{
-  CFMutableDictionaryRef matchingDict = IOServiceMatching(kIOSerialBSDServiceValue);
-  if(matchingDict)
-  {
-    CFDictionarySetValue(matchingDict, CFSTR(kIOSerialBSDTypeKey), CFSTR(kIOSerialBSDAllTypes));
-  }
-  return matchingDict;
-}
-
 std::vector<std::string> SerialPortListImplIOKit::get() const
 {
-  std::vector<std::string> devices;
-  io_iterator_t portIterator;
-  kern_return_t result = findSerialPorts(&portIterator);
-
-  if(result == KERN_SUCCESS)
+  io_iterator_t iterator;
+  kern_return_t result = IOServiceGetMatchingServices(kIOMainPortDefault, getMatchingDictionary(), &iterator);
+  if(result != KERN_SUCCESS)
   {
-    handleDeviceIterator(portIterator, false, &devices);
+    return {};
+  }
+
+  std::vector<std::string> devices;
+  io_object_t device;
+  while((device = IOIteratorNext(iterator)))
+  {
+    if(auto devPath = getDevicePath(device); !devPath.empty())
+    {
+      devices.push_back(devPath);
+    }
+    IOObjectRelease(device);
   }
 
   return devices;
 }
 
-void SerialPortListImplIOKit::handleDeviceIterator(io_iterator_t iterator, bool notifyOnAdd, std::vector<std::string>* devices)
+void SerialPortListImplIOKit::deviceAddedCallback(void* refCon, io_iterator_t iterator)
 {
   io_object_t device;
   while((device = IOIteratorNext(iterator)))
   {
-    CFTypeRef devicePathAsCFString = IORegistryEntryCreateCFProperty(device, CFSTR(kIOCalloutDeviceKey), kCFAllocatorDefault, 0);
-    if(devicePathAsCFString)
+    if(auto devPath = getDevicePath(device); !devPath.empty())
     {
-      char devicePath[PATH_MAX];
-      if(CFStringGetCString((CFStringRef)devicePathAsCFString, devicePath, PATH_MAX, kCFStringEncodingUTF8))
-      {
-        std::string devPath(devicePath);
-
-        if(isSerialDevice(devPath))
+      EventLoop::call(
+        [refCon, devPath]()
         {
-          if(notifyOnAdd)
-          {
-            EventLoop::call(
-              [this, devPath]()
-              {
-                addToList(devPath);
-              });
-          }
-          else if(devices)
-          {
-            devices->push_back(devPath);
-          }
-        }
-      }
-      CFRelease(devicePathAsCFString);
+          reinterpret_cast<SerialPortListImplIOKit*>(refCon)->addToList(devPath);
+        });
     }
     IOObjectRelease(device);
   }
-}
-
-void SerialPortListImplIOKit::deviceAddedCallback(void* refCon, io_iterator_t iterator)
-{
-  reinterpret_cast<SerialPortListImplIOKit*>(refCon)->handleDeviceIterator(iterator, true);
 }
 
 void SerialPortListImplIOKit::deviceRemovedCallback(void* refCon, io_iterator_t iterator)
@@ -142,32 +129,16 @@ void SerialPortListImplIOKit::deviceRemovedCallback(void* refCon, io_iterator_t 
   io_object_t device;
   while((device = IOIteratorNext(iterator)))
   {
-    CFTypeRef devicePathAsCFString = IORegistryEntryCreateCFProperty(device, CFSTR(kIOCalloutDeviceKey), kCFAllocatorDefault, 0);
-    if(devicePathAsCFString)
+    if(auto devPath = getDevicePath(device); !devPath.empty())
     {
-      char devicePath[PATH_MAX];
-      if(CFStringGetCString((CFStringRef)devicePathAsCFString, devicePath, PATH_MAX, kCFStringEncodingUTF8))
-      {
-        EventLoop::call(
-          [refCon, devPath=std::string(devicePath)]()
-          {
-            reinterpret_cast<SerialPortListImplIOKit*>(refCon)->removeFromList(devPath);
-          });
-      }
-      CFRelease(devicePathAsCFString);
+      EventLoop::call(
+        [refCon, devPath]()
+        {
+          reinterpret_cast<SerialPortListImplIOKit*>(refCon)->removeFromList(devPath);
+        });
     }
     IOObjectRelease(device);
   }
-}
-
-kern_return_t SerialPortListImplIOKit::findSerialPorts(io_iterator_t* portIterator)
-{
-  CFMutableDictionaryRef matchingDict = getMatchingDictionary();
-  if(!matchingDict)
-  {
-    return KERN_FAILURE;
-  }
-  return IOServiceGetMatchingServices(kIOMainPortDefault, matchingDict, portIterator);
 }
 
 }
