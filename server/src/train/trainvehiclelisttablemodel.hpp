@@ -1,9 +1,9 @@
 /**
- * client/src/widget/propertydoublespinbox.hpp
+ * server/src/train/trainvehiclelisttablemodel.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2023 Filippo Gentile
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,30 +20,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_PROPERTYDOUBLESPINBOX_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_PROPERTYDOUBLESPINBOX_HPP
+#ifndef TRAINTASTIC_SERVER_TRAIN_TRAINVEHICLELISTTABLEMODEL_HPP
+#define TRAINTASTIC_SERVER_TRAIN_TRAINVEHICLELISTTABLEMODEL_HPP
 
-#include <QDoubleSpinBox>
+#include "../core/tablemodel.hpp"
 
-class AbstractProperty;
+class TrainVehicleList;
 
-class PropertyDoubleSpinBox : public QDoubleSpinBox
+class TrainVehicleListTableModel : public TableModel
 {
-  protected:
-    AbstractProperty& m_property;
-    int m_requestId;
-
-    void cancelRequest();
-    void showError(const QString& error);
-
-    void updateRange();
+    friend class TrainVehicleList;
+  private:
+    std::shared_ptr<TrainVehicleList> m_list;
 
   protected:
-    void focusOutEvent(QFocusEvent* event) override;
+    void propertyChanged(BaseProperty& property, uint32_t row);
 
   public:
-    PropertyDoubleSpinBox(AbstractProperty& property, QWidget* parent = nullptr);
-    ~PropertyDoubleSpinBox() override;
+    CLASS_ID("train_vehicle_list_table_model")
+
+    static bool isListedProperty(std::string_view name);
+
+    TrainVehicleListTableModel(TrainVehicleList &list);
+    ~TrainVehicleListTableModel() override;
+
+    std::string getText(uint32_t column, uint32_t row) const final;
 };
 
-#endif
+#endif // TRAINVEHICLELISTTABLEMODEL_HPP
