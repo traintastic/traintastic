@@ -60,6 +60,8 @@ SerialPortListImplIOKit::SerialPortListImplIOKit(SerialPortList& list)
       {
         setThreadName("serialport-iokit");
 
+        m_runLoop = CFRunLoopGetCurrent();
+
         IONotificationPortRef notificationPort = IONotificationPortCreate(kIOMainPortDefault);
         CFRunLoopSourceRef runLoopSource = IONotificationPortGetRunLoopSource(notificationPort);
         CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, kCFRunLoopDefaultMode);
@@ -80,7 +82,7 @@ SerialPortListImplIOKit::SerialPortListImplIOKit(SerialPortList& list)
 
 SerialPortListImplIOKit::~SerialPortListImplIOKit()
 {
-  CFRunLoopStop(CFRunLoopGetCurrent());
+  CFRunLoopStop(m_runLoop);
   m_thread.join();
 }
 

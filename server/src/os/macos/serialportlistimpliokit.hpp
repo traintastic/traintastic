@@ -37,6 +37,7 @@ private:
   static void deviceRemovedCallback(void* refCon, io_iterator_t iterator);
 
   std::thread m_thread;
+  CFRunLoopRef m_runLoop;
 
 public:
   explicit SerialPortListImplIOKit(SerialPortList& list);
