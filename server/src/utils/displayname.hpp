@@ -111,6 +111,8 @@ namespace DisplayName
       constexpr std::string_view totalWeight = "vehicle.rail:total_weight";
       constexpr std::string_view train = "vehicle.rail:train";
       constexpr std::string_view weight = "vehicle.rail:weight";
+      constexpr std::string_view maxAccelerationRate = "vehicle.rail:max_acceleration_rate";
+      constexpr std::string_view maxBrakingRate = "vehicle.rail:max_braking_rate";
     }
   }
   namespace World

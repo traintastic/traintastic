@@ -40,27 +40,68 @@ class TrainVehicleList;
 class TrainBlockStatus;
 class BlockRailTile;
 class PoweredRailVehicle;
+class TrainSpeedTable;
+class AbstractTrainPositionTracker;
 
 class Train : public IdObject
 {
   friend class TrainVehicleList;
+  friend class PoweredRailVehicle;
   friend class TrainTracking;
 
   private:
     enum class SpeedState
     {
       Idle,
-      Accelerate,
+      Accelerating,
       Braking,
     };
 
-    std::vector<std::shared_ptr<PoweredRailVehicle>> m_poweredVehicles;
+    struct SpeedPoint
+    {
+        double speedMetersPerSecond;
+        uint8_t tableIdx = 0;
+    };
 
+    SpeedPoint throttleSpeedPoint;
+    SpeedPoint lastSetSpeedPoint;
+    SpeedPoint maxSpeedPoint;
+
+    std::vector<std::shared_ptr<PoweredRailVehicle>> m_poweredVehicles;
+    std::unique_ptr<TrainSpeedTable> m_speedTable;
+    bool m_speedTableNeedsRecalculation = false;
+
+    std::chrono::steady_clock::time_point m_speedTimerStart;
     boost::asio::steady_timer m_speedTimer;
     SpeedState m_speedState = SpeedState::Idle;
 
-    void setSpeed(double kmph);
+    boost::asio::steady_timer m_delayedSpeedApplyTimer;
+    std::shared_ptr<PoweredRailVehicle> m_delayedApplyLoco;
+
+    //! \todo add realistic acceleration
+    double m_accelerationRate = 1.5; // m/s^2
+
+    //! \todo add realistic braking
+    double m_brakingRate = -1.0; // m/s^2
+
+    std::vector<AbstractTrainPositionTracker *> m_trackers;
+
+    void setSpeed(const SpeedPoint &speedPoint);
+    void setThrottleSpeed(const SpeedPoint &targetSpeed);
+
+    void scheduleAccelerationFrom(double currentSpeed,
+                                  uint8_t newTableIdx,
+                                  SpeedState state);
     void updateSpeed();
+    void updateSpeedTable();
+    void scheduleSpeedTableUpdate();
+
+    void startDelayedSpeedApply(const std::shared_ptr<PoweredRailVehicle> &vehicle);
+    void stopDelayedSpeedApply();
+    void applyDelayedSpeed();
+
+    void driveLocomotive(const std::shared_ptr<PoweredRailVehicle> &vehicle,
+                         uint8_t step);
 
     void vehiclesChanged();
     void updateLength();
@@ -69,12 +110,15 @@ class Train : public IdObject
     void updateSpeedMax();
     void updateEnabled();
     bool setTrainActive(bool val);
+    void propagateDirection(Direction newDirection);
+    void handleDecoderDirection(const std::shared_ptr<PoweredRailVehicle>& vehicle, Direction newDirection);
+    void handleDecoderThrottle(const std::shared_ptr<PoweredRailVehicle>& vehicle, float newThrottle);
 
     void fireBlockReserved(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
     void fireBlockEntered(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
     void fireBlockLeft(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
 
-  protected:
+protected:
     void addToWorld() override;
     void destroying() override;
     void loaded() override;
@@ -116,6 +160,9 @@ class Train : public IdObject
 
     void fireBlockAssigned(const std::shared_ptr<BlockRailTile>& block);
     void fireBlockRemoved(const std::shared_ptr<BlockRailTile>& block);
+
+    void addTracker(AbstractTrainPositionTracker *t);
+    void removeTracker(AbstractTrainPositionTracker *t);
 };
 
 #endif
