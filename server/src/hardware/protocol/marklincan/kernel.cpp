@@ -613,6 +613,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
 
     case DecoderProtocol::None:
     case DecoderProtocol::Selectrix:
+    case DecoderProtocol::Analog:
       assert(false);
       break;
   }

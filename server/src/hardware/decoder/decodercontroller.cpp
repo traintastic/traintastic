@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -58,6 +58,7 @@ std::pair<uint16_t, uint16_t> DecoderController::decoderAddressMinMax(DecoderPro
       return {1, 112};
 
     case DecoderProtocol::MFX: // no address -> MFX UID is used
+    case DecoderProtocol::Analog: // no address -> track driver system
     case DecoderProtocol::None:
       return noAddressMinMax;
   }
@@ -88,6 +89,7 @@ tcb::span<const uint8_t> DecoderController::decoderSpeedSteps(DecoderProtocol pr
       return mfxSpeedSteps;
 
     case DecoderProtocol::None:
+    case DecoderProtocol::Analog:
       return {};
   }
   assert(false);
