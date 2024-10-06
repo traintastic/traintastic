@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +28,8 @@
 #include "../core/object.hpp"
 
 namespace Lua {
+
+constexpr char const* vectorPropertiesGlobal = "vector_properties";
 
 struct VectorPropertyData
 {
@@ -63,9 +65,18 @@ AbstractVectorProperty* VectorProperty::test(lua_State* L, int index)
 
 void VectorProperty::push(lua_State* L, AbstractVectorProperty& value)
 {
-  new(lua_newuserdata(L, sizeof(VectorPropertyData))) VectorPropertyData(value);
-  luaL_getmetatable(L, metaTableName);
-  lua_setmetatable(L, -2);
+  lua_getglobal(L, vectorPropertiesGlobal);
+  lua_rawgetp(L, -1, &value);
+  if(lua_isnil(L, -1)) // vector property not in table
+  {
+    lua_pop(L, 1); // remove nil
+    new(lua_newuserdata(L, sizeof(VectorPropertyData))) VectorPropertyData(value);
+    luaL_setmetatable(L, metaTableName);
+    lua_pushvalue(L, -1); // copy userdata on stack
+    lua_rawsetp(L, -3, &value); // add vector property to table
+  }
+  lua_insert(L, lua_gettop(L) - 1); // swap table and userdata
+  lua_pop(L, 1); // remove table
 }
 
 void VectorProperty::registerType(lua_State* L)
@@ -78,6 +89,15 @@ void VectorProperty::registerType(lua_State* L)
   lua_pushcfunction(L, __gc);
   lua_setfield(L, -2, "__gc");
   lua_pop(L, 1);
+
+  // weak table for vector property userdata:
+  lua_newtable(L);
+  lua_newtable(L); // metatable
+  lua_pushliteral(L, "__mode");
+  lua_pushliteral(L, "v");
+  lua_rawset(L, -3);
+  lua_setmetatable(L, -2);
+  lua_setglobal(L, vectorPropertiesGlobal);
 }
 
 int VectorProperty::__index(lua_State* L)
