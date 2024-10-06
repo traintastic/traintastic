@@ -43,6 +43,7 @@ constexpr std::string_view dotLua = ".lua";
 Script::Script(World& world, std::string_view _id) :
   IdObject(world, _id),
   m_sandbox{nullptr, nullptr},
+  m_persistentVariables{nlohmann::json::object()},
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store},
   disabled{this, "disabled", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore | PropertyFlags::NoScript,
     [this](bool value)
@@ -92,6 +93,11 @@ void Script::load(WorldLoader& loader, const nlohmann::json& data)
   std::string s;
   if(loader.readFile(std::filesystem::path(scripts) / m_basename += dotLua, s))
     code.loadJSON(s);
+
+  if(const auto stateData = loader.getState(id); stateData.contains("persistent_variables"))
+  {
+    m_persistentVariables = stateData["persistent_variables"];
+  }
 }
 
 void Script::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& stateData) const
@@ -103,6 +109,15 @@ void Script::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state
 
   m_basename = id;
   saver.writeFile(std::filesystem::path(scripts) / m_basename += dotLua, code);
+
+  if(m_sandbox)
+  {
+    Sandbox::syncPersistentVariables(m_sandbox.get());
+  }
+  if(!m_persistentVariables.empty())
+  {
+    stateData["persistent_variables"] = m_persistentVariables;
+  }
 }
 
 void Script::addToWorld()
