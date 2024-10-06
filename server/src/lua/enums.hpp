@@ -79,6 +79,14 @@ struct Enums
     if constexpr(sizeof...(Ts) != 0)
       registerValues<Ts...>(L);
   }
+
+  template<class... Ts>
+  static constexpr std::array<std::string_view, sizeof...(Ts)> getMetaTableNames()
+  {
+    return std::array<std::string_view, sizeof...(Ts)>{EnumName<Ts>::value...};
+  }
+
+  inline static const auto metaTableNames = getMetaTableNames<LUA_ENUMS>();
 };
 
 }
