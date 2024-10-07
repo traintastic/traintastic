@@ -24,6 +24,8 @@
 #define TRAINTASTIC_SERVER_LUA_SETS_HPP
 
 #include "set.hpp"
+#include <array>
+#include <string_view>
 #include "../../src/set/worldstate.hpp"
 
 #define LUA_SETS \
