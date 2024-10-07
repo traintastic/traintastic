@@ -92,5 +92,6 @@
         <file>board_tile.rail.nx_button.svg</file>
         <file>board_tile.misc.switch.svg</file>
         <file>board_tile.misc.label.svg</file>
+        <file>clear_persistent_variables.svg</file>
     </qresource>
 </RCC>

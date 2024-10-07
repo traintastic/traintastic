@@ -90,6 +90,7 @@ enum class LogMessage : uint32_t
   I2005_X = LogMessageOffset::info + 2005,
   I9001_STOPPED_SCRIPT = LogMessageOffset::info + 9001,
   I9002_X = LogMessageOffset::info + 9002, //!< Lua version
+  I9003_CLEARED_PERSISTENT_VARIABLES = LogMessageOffset::info + 9003,
   I9999_X = LogMessageOffset::info + 9999,
 
   // Notice:

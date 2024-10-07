@@ -68,6 +68,7 @@ class Script : public IdObject
     Property<std::string> error;
     ::Method<void()> start;
     ::Method<void()> stop;
+    ::Method<void()> clearPersistentVariables;
 };
 
 }

@@ -6415,5 +6415,13 @@
     {
         "term": "settings:load_last_world_on_startup",
         "definition": "Load last world on startup"
+    },
+    {
+        "term": "message:I9003",
+        "definition": "Cleared persistent variables"
+    },
+    {
+        "term": "lua.script:clear_persistent_variables",
+        "definition": "Clear persistent variables"
     }
 ]

@@ -66,6 +66,13 @@ Script::Script(World& world, std::string_view _id) :
       if(state == LuaScriptState::Running)
         stopSandbox();
     }}
+  , clearPersistentVariables{*this, "clear_persistent_variables",
+      [this]()
+      {
+        m_persistentVariables = nlohmann::json::object();
+        Log::log(*this, LogMessage::I9003_CLEARED_PERSISTENT_VARIABLES);
+        updateEnabled();
+      }}
 {
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, false);
@@ -81,6 +88,8 @@ Script::Script(World& world, std::string_view _id) :
   m_interfaceItems.add(start);
   Attributes::addEnabled(stop, false);
   m_interfaceItems.add(stop);
+  Attributes::addEnabled(clearPersistentVariables, false);
+  m_interfaceItems.add(clearPersistentVariables);
 
   updateEnabled();
 }
@@ -171,14 +180,16 @@ void Script::worldEvent(WorldState worldState, WorldEvent worldEvent)
 void Script::updateEnabled()
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit) && state != LuaScriptState::Running;
+  const bool stoppedOrError = (state == LuaScriptState::Stopped) || (state == LuaScriptState::Error);
 
   Attributes::setEnabled(id, editable);
   Attributes::setEnabled(name, editable);
   Attributes::setEnabled(disabled, editable);
   Attributes::setEnabled(code, editable);
 
-  Attributes::setEnabled(start, state == LuaScriptState::Stopped || state == LuaScriptState::Error);
+  Attributes::setEnabled(start, stoppedOrError);
   Attributes::setEnabled(stop, state == LuaScriptState::Running);
+  Attributes::setEnabled(clearPersistentVariables, stoppedOrError && !m_persistentVariables.empty());
 }
 
 void Script::setState(LuaScriptState value)
