@@ -81,7 +81,7 @@ struct Enums
   }
 
   template<class... Ts>
-  static constexpr std::array<std::string_view, sizeof...(Ts)> getMetaTableNames()
+  inline static const std::array<std::string_view, sizeof...(Ts)> getMetaTableNames()
   {
     return std::array<std::string_view, sizeof...(Ts)>{EnumName<Ts>::value...};
   }
