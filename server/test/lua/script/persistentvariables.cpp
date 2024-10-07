@@ -21,6 +21,8 @@
  */
 
 #include <catch2/catch.hpp>
+#include "../../../src/core/method.tpp"
+#include "../../../src/core/objectproperty.tpp"
 #include "../../../src/lua/scriptlist.hpp"
 #include "../../../src/train/train.hpp"
 #include "../../../src/train/trainlist.hpp"
