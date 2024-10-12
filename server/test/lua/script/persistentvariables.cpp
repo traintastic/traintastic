@@ -737,3 +737,44 @@ TEST_CASE("Lua script: pv - pairs()", "[lua][lua-script][lua-script-pv]")
 
   script.reset();
 }
+
+TEST_CASE("Lua script: pv - ipairs()", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code =
+    "pv.test = {5, 4, 3, 2, 1}\n"
+    "assert(#pv.test == 5)\n"
+    "local n = 1\n"
+    "for k, v in ipairs(pv.test) do\n"
+    "  assert(k == n)\n"
+    "  assert(v == (#pv.test - n + 1))\n"
+    "  n = n + 1\n"
+    "end";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  // check pv:
+  script->code =
+    "assert(#pv.test == 5)\n"
+    "local n = 1\n"
+    "for k, v in ipairs(pv.test) do\n"
+    "  assert(k == n)\n"
+    "  assert(v == (#pv.test - n + 1))\n"
+    "  n = n + 1\n"
+    "end";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script.reset();
+}
