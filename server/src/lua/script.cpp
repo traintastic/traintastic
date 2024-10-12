@@ -189,6 +189,8 @@ void Script::updateEnabled()
   Attributes::setEnabled(start, stoppedOrError);
   Attributes::setEnabled(stop, state == LuaScriptState::Running);
   Attributes::setEnabled(clearPersistentVariables, stoppedOrError && !m_persistentVariables.empty());
+
+  m_world.luaScripts->updateEnabled();
 }
 
 void Script::setState(LuaScriptState value)
