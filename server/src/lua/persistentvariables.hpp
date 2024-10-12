@@ -33,12 +33,16 @@ class PersistentVariables
 private:
   static int __index(lua_State* L);
   static int __newindex(lua_State* L);
+  static int __len(lua_State* L);
   static int __gc(lua_State* L);
+
+  static void checkValue(lua_State* L, int index);
 
 public:
   static void registerType(lua_State* L);
+  static bool test(lua_State* L, int index);
   static void push(lua_State* L);
-  static void push(lua_State* L, const nlohmann::json& pv);
+  static void push(lua_State* L, const nlohmann::json& value);
   static nlohmann::json toJSON(lua_State* L, int index);
 };
 

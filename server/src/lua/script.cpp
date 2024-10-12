@@ -43,7 +43,6 @@ constexpr std::string_view dotLua = ".lua";
 Script::Script(World& world, std::string_view _id) :
   IdObject(world, _id),
   m_sandbox{nullptr, nullptr},
-  m_persistentVariables{nlohmann::json::object()},
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store},
   disabled{this, "disabled", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore | PropertyFlags::NoScript,
     [this](bool value)
@@ -69,7 +68,7 @@ Script::Script(World& world, std::string_view _id) :
   , clearPersistentVariables{*this, "clear_persistent_variables",
       [this]()
       {
-        m_persistentVariables = nlohmann::json::object();
+        m_persistentVariables = nullptr;
         Log::log(*this, LogMessage::I9003_CLEARED_PERSISTENT_VARIABLES);
         updateEnabled();
       }}

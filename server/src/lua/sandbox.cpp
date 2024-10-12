@@ -231,7 +231,14 @@ SandboxPtr Sandbox::create(Script& script)
   lua_setfield(L, -2, "log");
 
   // add persistent variables:
-  PersistentVariables::push(L, script.m_persistentVariables);
+  if(script.m_persistentVariables.empty())
+  {
+    PersistentVariables::push(L);
+  }
+  else
+  {
+    PersistentVariables::push(L, script.m_persistentVariables);
+  }
   lua_setfield(L, -2, "pv");
 
   // add class types:

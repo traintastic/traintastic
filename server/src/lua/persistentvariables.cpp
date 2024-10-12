@@ -21,6 +21,7 @@
  */
 
 #include "persistentvariables.hpp"
+#include <vector>
 #include "enums.hpp"
 #include "error.hpp"
 #include "event.hpp"
@@ -37,6 +38,43 @@
 
 namespace Lua {
 
+static void checkTableRecursion(lua_State* L, std::vector<int>& indices)
+{
+  const int index = indices.back();
+  assert(lua_istable(L, index));
+
+  lua_pushnil(L);
+  while(lua_next(L, index))
+  {
+    if(lua_istable(L, -1))
+    {
+      if(std::find_if(indices.begin(), indices.end(),
+        [L](int idx)
+        {
+          return lua_rawequal(L, idx, -1);
+        }) != indices.end())
+      {
+        errorTableContainsRecursion(L);
+      }
+
+      indices.push_back(lua_gettop(L));
+      checkTableRecursion(L, indices);
+      indices.pop_back();
+    }
+    lua_pop(L, 1);
+  }
+}
+
+static void checkTableRecursion(lua_State* L, int index)
+{
+  assert(lua_istable(L, index));
+
+  std::vector<int> indices;
+  indices.push_back(lua_gettop(L));
+
+  checkTableRecursion(L, indices);
+}
+
 static const char* metaTableName = "pv";
 
 struct PersistentVariablesData
@@ -51,9 +89,16 @@ void PersistentVariables::registerType(lua_State* L)
   lua_setfield(L, -2, "__index");
   lua_pushcfunction(L, __newindex);
   lua_setfield(L, -2, "__newindex");
+  lua_pushcfunction(L, __len);
+  lua_setfield(L, -2, "__len");
   lua_pushcfunction(L, __gc);
   lua_setfield(L, -2, "__gc");
   lua_pop(L, 1);
+}
+
+bool PersistentVariables::test(lua_State* L, int index)
+{
+  return luaL_testudata(L, index, metaTableName);
 }
 
 void PersistentVariables::push(lua_State* L)
@@ -65,247 +110,246 @@ void PersistentVariables::push(lua_State* L)
   pv->registryIndex = luaL_ref(L, LUA_REGISTRYINDEX);
 }
 
-void PersistentVariables::push(lua_State* L, const nlohmann::json& pv)
+void PersistentVariables::push(lua_State* L, const nlohmann::json& value)
 {
-  push(L);
-
-  if(!pv.is_object())
+  switch(value.type())
   {
-    return;
-  }
+    case nlohmann::json::value_t::null:
+      return lua_pushnil(L);
 
-  for(auto item : pv.items())
-  {
-    switch(item.value().type())
+    case nlohmann::json::value_t::boolean:
+      return lua_pushboolean(L, static_cast<bool>(value));
+
+    case nlohmann::json::value_t::number_integer:
+    case nlohmann::json::value_t::number_unsigned:
+      return lua_pushinteger(L, value);
+
+    case nlohmann::json::value_t::number_float:
+      return lua_pushnumber(L, value);
+
+    case nlohmann::json::value_t::string:
     {
-      case nlohmann::json::value_t::null:
-        continue; // no need to set nil value
-
-      case nlohmann::json::value_t::boolean:
-        lua_pushboolean(L, static_cast<bool>(item.value()));
-        break;
-
-      case nlohmann::json::value_t::number_integer:
-      case nlohmann::json::value_t::number_unsigned:
-        lua_pushinteger(L, item.value());
-        break;
-
-      case nlohmann::json::value_t::number_float:
-        lua_pushnumber(L, item.value());
-        break;
-
-      case nlohmann::json::value_t::string:
+      const std::string s = value;
+      lua_pushlstring(L, s.data(), s.size());
+      return;
+    }
+    case nlohmann::json::value_t::object:
+    {
+      if(value.contains("type"))
       {
-        const std::string s = item.value();
-        lua_pushlstring(L, s.data(), s.size());
-        break;
-      }
-      case nlohmann::json::value_t::object:
-      {
-        const auto& value = item.value();
-        if(value.contains("type"))
+        const std::string type = value["type"];
+        if(type == "object")
         {
-          const std::string type = value["type"];
-          if(type == "object")
+          if(value.contains("id"))
           {
-            if(value.contains("id"))
+            const std::string id = value["id"];
+            if(auto object = Sandbox::getStateData(L).script().world().getObjectByPath(id))
             {
-              const std::string id = value["id"];
-              if(auto object = Sandbox::getStateData(L).script().world().getObjectByPath(id))
+              return Object::push(L, object);
+            }
+            return lua_pushnil(L);
+          }
+        }
+        else if(type == "vector_property")
+        {
+          if(value.contains("object_id") && value.contains("name"))
+          {
+            const std::string id = value["object_id"];
+            if(auto object = Sandbox::getStateData(L).script().world().getObjectByPath(id))
+            {
+              const std::string name = value["name"];
+              if(auto* property = object->getVectorProperty(name); property && property->isScriptReadable())
               {
-                Object::push(L, object);
-                break;
+                return VectorProperty::push(L, *property);
               }
-            }
-          }
-          else if(type == "vector_property")
-          {
-            if(value.contains("object_id") && value.contains("name"))
-            {
-              const std::string id = value["object_id"];
-              if(auto object = Sandbox::getStateData(L).script().world().getObjectByPath(id))
-              {
-                const std::string name = value["name"];
-                if(auto* property = object->getVectorProperty(name); property && property->isScriptReadable())
-                {
-                  VectorProperty::push(L, *property);
-                  break;
-                }
-              }
-            }
-          }
-          else if(type == "method")
-          {
-            if(value.contains("object_id") && value.contains("name"))
-            {
-              const std::string id = value["object_id"];
-              if(auto object = Sandbox::getStateData(L).script().world().getObjectByPath(id))
-              {
-                const std::string name = value["name"];
-                if(auto* method = object->getMethod(name); method && method->isScriptCallable())
-                {
-                  Method::push(L, *method);
-                  break;
-                }
-              }
-            }
-          }
-          else if(type == "event")
-          {
-            if(value.contains("object_id") && value.contains("name"))
-            {
-              const std::string id = value["object_id"];
-              if(auto object = Sandbox::getStateData(L).script().world().getObjectByPath(id))
-              {
-                const std::string name = value["name"];
-                if(auto* event = object->getEvent(name); event && event->isScriptable())
-                {
-                  Event::push(L, *event);
-                  break;
-                }
-              }
-            }
-          }
-          else if(startsWith(type, "enum."))
-          {
-            if(value.contains("value"))
-            {
-              pushEnum(L, type.substr(5).c_str(), value["value"]);
-              break;
-            }
-          }
-          else if(startsWith(type, "set."))
-          {
-            if(value.contains("value"))
-            {
-              pushSet(L, type.substr(4).c_str(), value["value"]);
-              break;
+              return lua_pushnil(L);
             }
           }
         }
-        continue;
+        else if(type == "method")
+        {
+          if(value.contains("object_id") && value.contains("name"))
+          {
+            const std::string id = value["object_id"];
+            if(auto object = Sandbox::getStateData(L).script().world().getObjectByPath(id))
+            {
+              const std::string name = value["name"];
+              if(auto* method = object->getMethod(name); method && method->isScriptCallable())
+              {
+                return Method::push(L, *method);
+              }
+              return lua_pushnil(L);
+            }
+          }
+        }
+        else if(type == "event")
+        {
+          if(value.contains("object_id") && value.contains("name"))
+          {
+            const std::string id = value["object_id"];
+            if(auto object = Sandbox::getStateData(L).script().world().getObjectByPath(id))
+            {
+              const std::string name = value["name"];
+              if(auto* event = object->getEvent(name); event && event->isScriptable())
+              {
+                return Event::push(L, *event);
+              }
+              return lua_pushnil(L);
+            }
+          }
+        }
+        else if(type == "pv")
+        {
+          push(L);
+          if(value.contains("items"))
+          {
+            for(auto item : value["items"])
+            {
+              if(item.is_object()) /*[[likely]]*/
+              {
+                push(L, item["key"]);
+                push(L, item["value"]);
+                lua_settable(L, -3);
+              }
+            }
+          }
+          return;
+        }
+        else if(startsWith(type, "enum."))
+        {
+          if(value.contains("value"))
+          {
+            return pushEnum(L, type.substr(5).c_str(), value["value"]);
+          }
+        }
+        else if(startsWith(type, "set."))
+        {
+          if(value.contains("value"))
+          {
+            return pushSet(L, type.substr(4).c_str(), value["value"]);
+          }
+        }
       }
-      case nlohmann::json::value_t::array:
-      case nlohmann::json::value_t::binary:
-      case nlohmann::json::value_t::discarded:
-        assert(false);
-        continue;
+      break;
     }
-    lua_setfield(L, -2, item.key().c_str());
+    case nlohmann::json::value_t::array:
+    assert(false);
+    case nlohmann::json::value_t::binary:
+    case nlohmann::json::value_t::discarded:
+      break;
   }
+  assert(false);
+  errorInternal(L);
 }
 
 nlohmann::json PersistentVariables::toJSON(lua_State* L, int index)
 {
-  auto result = nlohmann::json::object();
-
-  auto& pv = *static_cast<PersistentVariablesData*>(luaL_checkudata(L, index, metaTableName));
-  lua_rawgeti(L, LUA_REGISTRYINDEX, pv.registryIndex);
-  assert(lua_istable(L, -1));
-
-  lua_pushnil(L);
-  while(lua_next(L, -2))
+  switch(lua_type(L, index))
   {
-    const char* key = lua_tostring(L, -2);
-    switch(lua_type(L, -1))
-    {
-      case LUA_TNIL: /*[[unlikely]]*/
-        result.emplace(key, nullptr);
-        break;
+    case LUA_TNIL: /*[[unlikely]]*/
+      return nullptr;
 
-      case LUA_TBOOLEAN:
-        result.emplace(key, lua_toboolean(L, -1) != 0);
-        break;
+    case LUA_TBOOLEAN:
+      return (lua_toboolean(L, index) != 0);
 
-      case LUA_TNUMBER:
-        if(lua_isinteger(L, -1))
+    case LUA_TNUMBER:
+      if(lua_isinteger(L, index))
+      {
+        return lua_tointeger(L, index);
+      }
+      return lua_tonumber(L, index);
+
+    case LUA_TSTRING:
+      return lua_tostring(L, index);
+
+    case LUA_TUSERDATA:
+      if(auto object = Lua::test<::Object>(L, index))
+      {
+        auto value = nlohmann::json::object();
+        value.emplace("type", "object");
+        value.emplace("id", object->getObjectId());
+        return value;
+      }
+      else if(auto* vectorProperty = VectorProperty::test(L, index))
+      {
+        auto value = nlohmann::json::object();
+        value.emplace("type", "vector_property");
+        value.emplace("object_id", vectorProperty->object().getObjectId());
+        value.emplace("name", vectorProperty->name());
+        return value;
+      }
+      else if(auto* method = Method::test(L, index))
+      {
+        auto value = nlohmann::json::object();
+        value.emplace("type", "method");
+        value.emplace("object_id", method->object().getObjectId());
+        value.emplace("name", method->name());
+        return value;
+      }
+      else if(auto* event = Event::test(L, index))
+      {
+        auto value = nlohmann::json::object();
+        value.emplace("type", "event");
+        value.emplace("object_id", event->object().getObjectId());
+        value.emplace("name", event->name());
+        return value;
+      }
+      else if(test(L, index))
+      {
+        auto items = nlohmann::json::array();
+
+        auto& pv = *static_cast<PersistentVariablesData*>(luaL_checkudata(L, index, metaTableName));
+        lua_rawgeti(L, LUA_REGISTRYINDEX, pv.registryIndex);
+        assert(lua_istable(L, -1));
+
+        lua_pushnil(L);
+        while(lua_next(L, -2))
         {
-          result.emplace(key, lua_tointeger(L, -1));
+          auto item = nlohmann::json::object();
+          item["key"] = toJSON(L, -2);
+          item["value"] = toJSON(L, -1);
+          items.push_back(item);
+          lua_pop(L, 1); // pop value
         }
-        else
-        {
-          result.emplace(key, lua_tonumber(L, -1));
-        }
-        break;
+        lua_pop(L, 1); // pop table
 
-      case LUA_TSTRING:
-        result.emplace(key, std::string(lua_tostring(L, -1)));
-        break;
+        auto value = nlohmann::json::object();
+        value.emplace("type", "pv");
+        value.emplace("items", items);
+        return value;
+      }
+      else if(lua_getmetatable(L, index))
+      {
+        lua_getfield(L, -1, "__name");
+        std::string_view name = lua_tostring(L, -1);
+        lua_pop(L, 2);
 
-      case LUA_TUSERDATA:
-        if(auto object = test<::Object>(L, -1))
+        if(contains(Enums::metaTableNames, name))
         {
           auto value = nlohmann::json::object();
-          value.emplace("type", "object");
-          value.emplace("id", object->getObjectId());
-          result.emplace(key, std::move(value));
-          break;
+          value.emplace("type", std::string("enum.").append(name));
+          value.emplace("value", checkEnum(L, index, name.data()));
+          return value;
         }
-        else if(auto* vectorProperty = VectorProperty::test(L, -1))
+        else if(contains(Sets::metaTableNames, name))
         {
           auto value = nlohmann::json::object();
-          value.emplace("type", "vector_property");
-          value.emplace("object_id", vectorProperty->object().getObjectId());
-          value.emplace("name", vectorProperty->name());
-          result.emplace(key, std::move(value));
-          break;
+          value.emplace("type", std::string("set.").append(name));
+          value.emplace("value", checkSet(L, index, name.data()));
+          return value;
         }
-        else if(auto* method = Method::test(L, -1))
-        {
-          auto value = nlohmann::json::object();
-          value.emplace("type", "method");
-          value.emplace("object_id", method->object().getObjectId());
-          value.emplace("name", method->name());
-          result.emplace(key, std::move(value));
-          break;
-        }
-        else if(auto* event = Event::test(L, -1))
-        {
-          auto value = nlohmann::json::object();
-          value.emplace("type", "event");
-          value.emplace("object_id", event->object().getObjectId());
-          value.emplace("name", event->name());
-          result.emplace(key, std::move(value));
-          break;
-        }
-        else if(lua_getmetatable(L, -1))
-        {
-          lua_getfield(L, -1, "__name");
-          std::string_view name = lua_tostring(L, -1);
-          lua_pop(L, 2);
+      }
+      break;
 
-          if(contains(Enums::metaTableNames, name))
-          {
-            auto value = nlohmann::json::object();
-            value.emplace("type", std::string("enum.").append(name));
-            value.emplace("value", checkEnum(L, -1, name.data()));
-            result.emplace(key, std::move(value));
-            break;
-          }
-          else if(contains(Sets::metaTableNames, name))
-          {
-            auto value = nlohmann::json::object();
-            value.emplace("type", std::string("set.").append(name));
-            value.emplace("value", checkSet(L, -1, name.data()));
-            result.emplace(key, std::move(value));
-            break;
-          }
-        }
-        assert(false);
-        break;
-
-      case LUA_TLIGHTUSERDATA:
-      case LUA_TTABLE:
-      case LUA_TFUNCTION:
-      case LUA_TTHREAD:
-      default:
-        assert(false); // unsupported
-        break;
-    }
-    lua_pop(L, 1); // pop value
+    case LUA_TTABLE:
+    case LUA_TLIGHTUSERDATA:
+    case LUA_TFUNCTION:
+    case LUA_TTHREAD:
+    default:
+      break;
   }
-
-  return result;
+  assert(false);
+  errorInternal(L);
 }
 
 int PersistentVariables::__index(lua_State* L)
@@ -319,38 +363,26 @@ int PersistentVariables::__index(lua_State* L)
 
 int PersistentVariables::__newindex(lua_State* L)
 {
-  switch(lua_type(L, 3))
+  checkValue(L, 2);
+
+  if(lua_istable(L, 3))
   {
-    case LUA_TNIL:
-    case LUA_TBOOLEAN:
-    case LUA_TNUMBER:
-    case LUA_TSTRING:
-      break; // supported
+    checkTableRecursion(L, 3);
 
-    case LUA_TUSERDATA:
-      if(test<::Object>(L, 3) || VectorProperty::test(L, 3) || Method::test(L, 3) || Event::test(L, 3))
-      {
-        break; // supported
-      }
-      else if(lua_getmetatable(L, 3))
-      {
-        lua_getfield(L, -1, "__name");
-        std::string_view name = lua_tostring(L, -1);
-        lua_pop(L, 2);
-
-        if(contains(Enums::metaTableNames, name) || contains(Sets::metaTableNames, name))
-        {
-          break; // supported
-        }
-      }
-      errorCantStoreValueAsPersistentVariableUnsupportedType(L);
-
-    case LUA_TLIGHTUSERDATA:
-    case LUA_TTABLE:
-    case LUA_TFUNCTION:
-    case LUA_TTHREAD:
-    default:
-      errorCantStoreValueAsPersistentVariableUnsupportedType(L);
+    push(L); // push pv userdata
+    lua_insert(L, -2); // swap pv and table
+    lua_pushnil(L);
+    while(lua_next(L, -2))
+    {
+      lua_pushvalue(L, -2); // copy key on stack
+      lua_insert(L, -2); // swap copied key and value
+      lua_settable(L, -5); // pops copied key and value
+    }
+    lua_pop(L, 1); // pop table
+  }
+  else if(!test(L, 3))
+  {
+    checkValue(L, 3);
   }
 
   const auto& pv = *static_cast<const PersistentVariablesData*>(lua_touserdata(L, 1));
@@ -360,12 +392,60 @@ int PersistentVariables::__newindex(lua_State* L)
   return 0;
 }
 
+int PersistentVariables::__len(lua_State* L)
+{
+  const auto& pv = *static_cast<const PersistentVariablesData*>(lua_touserdata(L, 1));
+  lua_rawgeti(L, LUA_REGISTRYINDEX, pv.registryIndex);
+  lua_len(L, -1);
+  lua_insert(L, -2); // swap length and table
+  lua_pop(L, 1); // pop table
+  return 1;
+}
+
 int PersistentVariables::__gc(lua_State* L)
 {
   auto* pv = static_cast<PersistentVariablesData*>(lua_touserdata(L, 1));
   luaL_unref(L, LUA_REGISTRYINDEX, pv->registryIndex);
   pv->~PersistentVariablesData();
   return 0;
+}
+
+void PersistentVariables::checkValue(lua_State* L, int index)
+{
+  switch(lua_type(L, index))
+  {
+    case LUA_TNIL:
+    case LUA_TBOOLEAN:
+    case LUA_TNUMBER:
+    case LUA_TSTRING:
+      return; // supported
+
+    case LUA_TUSERDATA:
+      if(Lua::test<::Object>(L, index) || VectorProperty::test(L, index) || Method::test(L, index) || Event::test(L, index))
+      {
+        return; // supported
+      }
+      else if(lua_getmetatable(L, index))
+      {
+        lua_getfield(L, -1, "__name");
+        std::string_view name = lua_tostring(L, -1);
+        lua_pop(L, 2);
+
+        if(contains(Enums::metaTableNames, name) || contains(Sets::metaTableNames, name))
+        {
+          return; // supported
+        }
+      }
+      break;
+
+    case LUA_TTABLE:
+    case LUA_TLIGHTUSERDATA:
+    case LUA_TFUNCTION:
+    case LUA_TTHREAD:
+    default:
+      break;
+  }
+  errorCantStoreValueAsPersistentVariableUnsupportedType(L);
 }
 
 }

@@ -56,6 +56,12 @@ namespace Lua {
 
 [[noreturn]] inline void errorInternal(lua_State* L) { luaL_error(L, "internal error"); abort(); }
 
+[[noreturn]] inline void errorTableContainsRecursion(lua_State* L)
+{
+  luaL_error(L, "table contains recursion");
+  abort();
+}
+
 [[noreturn]] inline void errorTableIsReadOnly(lua_State* L) { luaL_error(L, "table is readonly"); abort(); }
 
 }

@@ -310,7 +310,7 @@ TEST_CASE("Lua script: pv - unsupported - function", "[lua][lua-script][lua-scri
   script.reset();
 }
 
-TEST_CASE("Lua script: pv - unsupported - table", "[lua][lua-script][lua-script-pv]")
+TEST_CASE("Lua script: pv - save/restore - table, empty", "[lua][lua-script][lua-script-pv]")
 {
   auto world = World::create();
   REQUIRE(world);
@@ -321,8 +321,386 @@ TEST_CASE("Lua script: pv - unsupported - table", "[lua][lua-script][lua-script-
   script->code = "pv.test = {}";
   script->start();
   INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  // check pv:
+  script->code = "assert(pv.test ~= nil)";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script.reset();
+}
+
+TEST_CASE("Lua script: pv - save/restore - table, array like", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code = "pv.test = {1, 2, 3}";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  // check pv:
+  script->code = "assert(pv.test[1] == 1)\nassert(pv.test[2] == 2)\nassert(pv.test[3] == 3)";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script.reset();
+}
+
+TEST_CASE("Lua script: pv - save/restore - table, array length", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code = "pv.test = {1, 2, 3}";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  // check pv:
+  script->code = "assert(#pv.test == 3)";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script.reset();
+}
+
+TEST_CASE("Lua script: pv - save/restore - table, map like", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code = "pv.test = {one=1, two=2}";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  // check pv:
+  script->code = "assert(pv.test.one == 1)\nassert(pv.test.two == 2)";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script.reset();
+}
+
+TEST_CASE("Lua script: pv - save/restore - bool as key", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code = "pv[true] = false";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  // check pv:
+  script->code = "assert(pv[true] == false)";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script.reset();
+}
+
+TEST_CASE("Lua script: pv - save/restore - float as key", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code = "pv[math.pi] = 3";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  // check pv:
+  script->code = "assert(pv[math.pi] == 3)";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script.reset();
+}
+
+TEST_CASE("Lua script: pv - save/restore - enum key as key", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code = "pv[enum.world_event.RUN] = 'y'";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  // check pv:
+  script->code = "assert(pv[enum.world_event.RUN] == 'y')";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script.reset();
+}
+
+TEST_CASE("Lua script: pv - save/restore - set as key", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code = "pv[set.world_state.RUN] = 'test'";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  // check pv:
+  script->code = "assert(pv[set.world_state.RUN] == 'test')";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script.reset();
+}
+
+TEST_CASE("Lua script: pv - save/restore - object as key", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code = "pv[world] = 'world'";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  // check pv:
+  script->code = "assert(pv[world] == 'world')";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script.reset();
+}
+
+TEST_CASE("Lua script: pv - save/restore - vector property as key", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+  auto train = world->trains->create();
+  REQUIRE(train);
+  train->id = "train";
+
+  // set pv:
+  script->code = "pv[world.get_object('train').blocks] = 'test'";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  // check pv:
+  script->code = "assert(pv[world.get_object('train').blocks] == 'test')";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script.reset();
+  train.reset();
+}
+
+TEST_CASE("Lua script: pv - save/restore - method as key", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code = "pv[world.stop] = 'test'";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  // check pv:
+  script->code = "assert(pv[world.stop] == 'test')";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script.reset();
+}
+
+TEST_CASE("Lua script: pv - save/restore - event as key", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code = "pv[world.on_event] = 'test'";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  // check pv:
+  script->code = "assert(pv[world.on_event] == 'test')";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script.reset();
+}
+
+TEST_CASE("Lua script: pv - unsupported - function as key", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code = "pv[function(a, b)\nreturn a+b\nend] = 'test'";
+  script->start();
+  INFO(script->error.value());
   REQUIRE(script->state.value() == LuaScriptState::Error);
   REQUIRE(endsWith(script->error.value(), "can't store value as persistent variable, unsupported type"));
+
+  script.reset();
+}
+
+TEST_CASE("Lua script: pv - unsupported - table as key", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code = "pv[{}] = 'test'";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Error);
+  REQUIRE(endsWith(script->error.value(), "can't store value as persistent variable, unsupported type"));
+
+  script.reset();
+}
+
+TEST_CASE("Lua script: pv - unsupported - table recursion", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code =
+    "t = {}\n"
+    "t['t'] = t\n"
+    "pv['t'] = t";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Error);
+  REQUIRE(endsWith(script->error.value(), "table contains recursion"));
+
+  script.reset();
+}
+
+TEST_CASE("Lua script: pv - unsupported - table recursion 2", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code =
+    "t = {}\n"
+    "a = {}\n"
+    "b = {}\n"
+    "t['a'] = a\n"
+    "t['b'] = b\n"
+    "t['a']['b'] = b\n"
+    "t['b']['a'] = a\n"
+    "pv['t'] = t";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Error);
+  REQUIRE(endsWith(script->error.value(), "table contains recursion"));
 
   script.reset();
 }
