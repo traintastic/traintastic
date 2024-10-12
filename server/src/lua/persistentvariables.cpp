@@ -70,7 +70,7 @@ static void checkTableRecursion(lua_State* L, int index)
   assert(lua_istable(L, index));
 
   std::vector<int> indices;
-  indices.push_back(lua_gettop(L));
+  indices.push_back(lua_absindex(L, index));
 
   checkTableRecursion(L, indices);
 }
