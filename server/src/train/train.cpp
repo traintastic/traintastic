@@ -144,7 +144,7 @@ Train::Train(World& world, std::string_view _id) :
     },
     std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
   mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
-  blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState},
+  blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , onBlockAssigned{*this, "on_block_assigned", EventFlags::Scriptable}
   , onBlockReserved{*this, "on_block_reserved", EventFlags::Scriptable}
