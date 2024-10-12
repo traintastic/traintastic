@@ -33,6 +33,7 @@ class PersistentVariables
 private:
   static int __index(lua_State* L);
   static int __newindex(lua_State* L);
+  static int __pairs(lua_State* L);
   static int __len(lua_State* L);
   static int __gc(lua_State* L);
 

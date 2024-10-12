@@ -89,6 +89,8 @@ void PersistentVariables::registerType(lua_State* L)
   lua_setfield(L, -2, "__index");
   lua_pushcfunction(L, __newindex);
   lua_setfield(L, -2, "__newindex");
+  lua_pushcfunction(L, __pairs);
+  lua_setfield(L, -2, "__pairs");
   lua_pushcfunction(L, __len);
   lua_setfield(L, -2, "__len");
   lua_pushcfunction(L, __gc);
@@ -390,6 +392,16 @@ int PersistentVariables::__newindex(lua_State* L)
   lua_insert(L, 2); // moves key to 3 and value to 4
   lua_rawset(L, 2);
   return 0;
+}
+
+int PersistentVariables::__pairs(lua_State* L)
+{
+  lua_getglobal(L, "next");
+  assert(lua_isfunction(L, -1));
+  const auto& pv = *static_cast<const PersistentVariablesData*>(lua_touserdata(L, 1));
+  lua_rawgeti(L, LUA_REGISTRYINDEX, pv.registryIndex);
+  assert(lua_istable(L, -1));
+  return 2;
 }
 
 int PersistentVariables::__len(lua_State* L)

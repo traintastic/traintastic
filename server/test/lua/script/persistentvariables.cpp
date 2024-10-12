@@ -704,3 +704,36 @@ TEST_CASE("Lua script: pv - unsupported - table recursion 2", "[lua][lua-script]
 
   script.reset();
 }
+
+TEST_CASE("Lua script: pv - pairs()", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code =
+    "pv.test = {a=1, b=2, c=3}\n"
+    "for k, v in pairs(pv.test) do\n"
+    "  assert((k == 'a' and v == 1) or (k == 'b' and v == 2) or (k == 'c' and v == 3))\n"
+    "end";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  // check pv:
+  script->code =
+    "for k, v in pairs(pv.test) do\n"
+    "  assert((k == 'a' and v == 1) or (k == 'b' and v == 2) or (k == 'c' and v == 3))\n"
+    "end";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script.reset();
+}
