@@ -25,5 +25,6 @@
 
 #define UTF8_CHECKMARK "\u2713"
 #define UTF8_BALLOT_X "\u2717"
+#define UTF8_SUPERSCRIPT_TWO "\u00B2"
 
 #endif
