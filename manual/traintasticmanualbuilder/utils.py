@@ -25,7 +25,7 @@ def highlight_replace(code: str, css_class: str, clickable_links: bool = False) 
 
 
 def highlight_lua(code: str) -> str:
-    code = re.sub(r'\b(math|table|string|class|enum|set|log|world)\b', r'<span class="global">\1</span>', code)  # globals
+    code = re.sub(r'\b(math|table|string|class|enum|set|log|world|pv)\b', r'<span class="global">\1</span>', code)  # globals
     code = re.sub(r'\b([A-Z_][A-Z0-9_]*)\b', r'<span class="const">\1</span>', code)  # CONSTANTS
     code = re.sub(r'\b(and|break|do|else|elseif|end|false|for|function|goto|if|in|local|nil|not|or|repeat|return|then|true|until|while)\b', r'<span class="keyword">\1</span>', code)  # keywords
     code = re.sub(r'\b((|-|\+)[0-9]+(\\.[0-9]*|)((e|E)(|-|\+)[0-9]+|))\b', r'<span class="number">\1</span>', code)  # numbers: infloat, decimal
