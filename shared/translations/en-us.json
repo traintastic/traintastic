@@ -6415,5 +6415,13 @@
     {
         "term": "settings:load_last_world_on_startup",
         "definition": "Load last world on startup"
+    },
+    {
+        "term": "message:I2006",
+        "definition": "Protocol version: %1"
+    },
+    {
+        "term": "message:E2025",
+        "definition": "Minimum protocol version is %1, got %2"
     }
 ]
