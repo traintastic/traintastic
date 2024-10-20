@@ -89,6 +89,8 @@ class BoardAreaWidget : public QWidget
     uint8_t m_mouseMoveTileWidthMax;
     uint8_t m_mouseMoveTileHeightMax;
 
+    TileLocation m_dragMoveTileLocation;
+
     inline int boardLeft() const { return Q_LIKELY(m_boardLeft) ? m_boardLeft->toInt() - boardMargin : 0; }
     inline int boardTop() const { return Q_LIKELY(m_boardTop) ? m_boardTop->toInt() - boardMargin: 0; }
     inline int boardRight() const { return Q_LIKELY(m_boardRight) ? m_boardRight->toInt() + boardMargin: 0; }
@@ -115,6 +117,9 @@ class BoardAreaWidget : public QWidget
     void mouseMoveEvent(QMouseEvent* event) final;
     void wheelEvent(QWheelEvent* event) final;
     void paintEvent(QPaintEvent* event) final;
+    void dragEnterEvent(QDragEnterEvent* event) final;
+    void dragMoveEvent(QDragMoveEvent* event) final;
+    void dropEvent(QDropEvent* event) final;
 
   protected slots:
     void settingsChanged();

@@ -1,9 +1,9 @@
 /**
- * client/src/widget/tablewidget.hpp
+ * client/src/misc/mimedata.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2023-2024 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,37 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_TABLEWIDGET_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_TABLEWIDGET_HPP
+#ifndef TRAINTASTIC_CLIENT_MISC_MIMEDATA_HPP
+#define TRAINTASTIC_CLIENT_MISC_MIMEDATA_HPP
 
-#include <QTableView>
-#include "../network/tablemodelptr.hpp"
+#include <QMimeData>
 
-class TableWidget : public QTableView
+class AssignTrainMimeData : public QMimeData
 {
-  Q_OBJECT
+public:
+  static constexpr auto mimeType = QLatin1String("application/vnd.traintastic.assign_train");
 
-  protected:
-    TableModelPtr m_model;
-    int m_selectedRow = -1;
-    QPoint m_dragStartPosition;
+  explicit AssignTrainMimeData(const QString& trainId)
+  {
+    setData(mimeType, trainId.toUtf8());
+  }
 
-    void mouseMoveEvent(QMouseEvent* event) override;
-    void mousePressEvent(QMouseEvent* event) override;
-
-  protected slots:
-    void updateRegion();
-
-  public:
-    TableWidget(QWidget* parent = nullptr);
-    ~TableWidget() override;
-
-    QString getRowObjectId(int row) const;
-
-    void setTableModel(const TableModelPtr& model);
-
-  signals:
-    void rowDragged(int row);
+  inline QString trainId() const
+  {
+    return QString::fromUtf8(data(mimeType));
+  }
 };
 
 #endif

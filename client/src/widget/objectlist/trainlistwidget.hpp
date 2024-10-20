@@ -1,9 +1,9 @@
 /**
- * client/src/widget/tablewidget.hpp
+ * client/src/widget/objectlist/trainlistwidget.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2023-2024 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,37 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_TABLEWIDGET_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_TABLEWIDGET_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_OBJECTLIST_TRAINLISTWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_OBJECTLIST_TRAINLISTWIDGET_HPP
 
-#include <QTableView>
-#include "../network/tablemodelptr.hpp"
+#include "throttleobjectlistwidget.hpp"
 
-class TableWidget : public QTableView
+class TrainListWidget : public ThrottleObjectListWidget
 {
-  Q_OBJECT
-
-  protected:
-    TableModelPtr m_model;
-    int m_selectedRow = -1;
-    QPoint m_dragStartPosition;
-
-    void mouseMoveEvent(QMouseEvent* event) override;
-    void mousePressEvent(QMouseEvent* event) override;
-
-  protected slots:
-    void updateRegion();
-
-  public:
-    TableWidget(QWidget* parent = nullptr);
-    ~TableWidget() override;
-
-    QString getRowObjectId(int row) const;
-
-    void setTableModel(const TableModelPtr& model);
-
-  signals:
-    void rowDragged(int row);
+public:
+  explicit TrainListWidget(const ObjectPtr& object, QWidget* parent = nullptr);
 };
 
 #endif
