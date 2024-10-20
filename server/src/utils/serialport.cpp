@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -51,9 +51,20 @@ void open(boost::asio::serial_port& serialPort, const std::string& device, uint3
   if(ec)
     throw LogMessageException(LogMessage::E2014_SERIAL_PORT_SET_DATA_BITS_FAILED_X, ec);
 
-  static_cast<void>(parity); // silence unused warning if assertions are off
-  assert(parity == SerialParity::None);
-  serialPort.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none), ec);
+  switch(parity)
+  {
+    case SerialParity::None:
+      serialPort.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none), ec);
+      break;
+
+    case SerialParity::Odd:
+      serialPort.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::odd), ec);
+      break;
+
+    case SerialParity::Even:
+      serialPort.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::even), ec);
+      break;
+  }
   if(ec)
     throw LogMessageException(LogMessage::E2016_SERIAL_PORT_SET_PARITY_FAILED_X, ec);
 

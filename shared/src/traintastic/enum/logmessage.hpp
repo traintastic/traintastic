@@ -88,6 +88,7 @@ enum class LogMessage : uint32_t
   I2003_FIRMWARE_VERSION_X = LogMessageOffset::info + 2003,
   I2004_HSI_88_X = LogMessageOffset::info + 2004,
   I2005_X = LogMessageOffset::info + 2005,
+  I2006_PROTOCOL_VERSION_X = LogMessageOffset::info + 2006,
   I9001_STOPPED_SCRIPT = LogMessageOffset::info + 9001,
   I9002_X = LogMessageOffset::info + 9002, //!< Lua version
   I9999_X = LogMessageOffset::info + 9999,
@@ -189,6 +190,7 @@ enum class LogMessage : uint32_t
   E2022_SOCKET_CREATE_FAILED_X = LogMessageOffset::error + 2022,
   E2023_SOCKET_IOCTL_FAILED_X = LogMessageOffset::error + 2023,
   E2024_UNKNOWN_LOCOMOTIVE_MFX_UID_X = LogMessageOffset::error + 2024,
+  E2025_MINIMUM_PROTOCOL_VERSION_IS_X_GOT_X = LogMessageOffset::error + 2025,
   E3001_CANT_DELETE_RAIL_VEHICLE_WHEN_IN_ACTIVE_TRAIN = LogMessageOffset::error + 3001,
   E3002_CANT_DELETE_ACTIVE_TRAIN = LogMessageOffset::error + 3002,
   E3003_TRAIN_STOPPED_ON_TURNOUT_X_CHANGED = LogMessageOffset::error + 3003,

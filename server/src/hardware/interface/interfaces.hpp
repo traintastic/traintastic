@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include "../../utils/makearray.hpp"
 
 #include "dccexinterface.hpp"
+#include "dinamointerface.hpp"
 #include "ecosinterface.hpp"
 #include "hsi88.hpp"
 #include "loconetinterface.hpp"
@@ -43,6 +44,7 @@ struct Interfaces
 
   static constexpr auto classList = makeArray(
     DCCEXInterface::classId,
+    DinamoInterface::classId,
     ECoSInterface::classId,
     HSI88Interface::classId,
     LocoNetInterface::classId,
