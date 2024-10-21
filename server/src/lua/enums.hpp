@@ -37,9 +37,9 @@
 #include <traintastic/enum/outputpairvalue.hpp>
 #include <traintastic/enum/textalign.hpp>
 #include "../../src/enum/tristate.hpp"
-#include "../../src/enum/turnoutposition.hpp"
+#include <traintastic/enum/turnoutposition.hpp>
 #include "../../src/enum/signalaspect.hpp"
-#include "../../src/enum/worldevent.hpp"
+#include <traintastic/enum/worldevent.hpp>
 #include "../../src/enum/worldscale.hpp"
 
 #define LUA_ENUMS \

@@ -26,7 +26,7 @@
 #include "set.hpp"
 #include <array>
 #include <string_view>
-#include "../../src/set/worldstate.hpp"
+#include <traintastic/set/worldstate.hpp>
 
 #define LUA_SETS \
   WorldState

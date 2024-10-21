@@ -25,8 +25,8 @@
 #include "scriptlisttablemodel.hpp"
 #include "push.hpp"
 #include "../world/world.hpp"
-#include "../enum/worldevent.hpp"
-#include "../set/worldstate.hpp"
+#include <traintastic/enum/worldevent.hpp>
+#include <traintastic/set/worldstate.hpp>
 #include "../core/attributes.hpp"
 #include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
