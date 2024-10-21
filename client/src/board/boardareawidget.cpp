@@ -851,7 +851,12 @@ void BoardAreaWidget::dragEnterEvent(QDragEnterEvent *event)
 
 void BoardAreaWidget::dragMoveEvent(QDragMoveEvent* event)
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   const TileLocation l = pointToTileLocation(event->pos());
+#else
+  const TileLocation l = pointToTileLocation(event->position().toPoint());
+#endif
+
   if(m_dragMoveTileLocation != l)
   {
     m_dragMoveTileLocation = l;
@@ -866,7 +871,11 @@ void BoardAreaWidget::dragMoveEvent(QDragMoveEvent* event)
 
 void BoardAreaWidget::dropEvent(QDropEvent* event)
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   const TileLocation l = pointToTileLocation(event->pos());
+#else
+  const TileLocation l = pointToTileLocation(event->position().toPoint());
+#endif
 
   switch(m_board.board().getTileId(l))
   {
