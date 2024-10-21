@@ -28,7 +28,7 @@
 class AssignTrainMimeData : public QMimeData
 {
 public:
-  static constexpr auto mimeType = QLatin1String("application/vnd.traintastic.assign_train");
+  inline static const auto mimeType = QLatin1String("application/vnd.traintastic.assign_train");
 
   explicit AssignTrainMimeData(const QString& trainId)
   {
