@@ -169,7 +169,7 @@ class Message
       std::unique_ptr<Message> message = std::make_unique<Message>(command, Type::Response, requestId);
       message->header().flags.error = 1;
       message->write(code);
-      message->write<Length>(args.size());
+      message->write(static_cast<Length>(args.size()));
       for(const auto& arg : args)
       {
         message->write(arg);
