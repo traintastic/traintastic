@@ -6435,5 +6435,13 @@
     {
         "term": "traintastic_cs_settings:debug_log_ping",
         "definition": "Log ping command"
+    },
+    {
+        "term": "message:I9003",
+        "definition": "Cleared persistent variables"
+    },
+    {
+        "term": "lua.script:clear_persistent_variables",
+        "definition": "Clear persistent variables"
     }
 ]

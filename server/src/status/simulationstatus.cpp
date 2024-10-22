@@ -1,9 +1,9 @@
 /**
- * server/src/enum/worldevent.hpp
+ * server/src/status/simulationstatus.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,9 +20,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_ENUM_WORLDEVENT_HPP
-#define TRAINTASTIC_SERVER_ENUM_WORLDEVENT_HPP
+#include "simulationstatus.hpp"
 
-#include <traintastic/enum/worldevent.hpp>
-
-#endif
+SimulationStatus::SimulationStatus(Object& parent_, std::string_view parentPropertyName_)
+  : Status(parent_, parentPropertyName_)
+  , enabled{this, "enabled", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
+{
+  label.setValueInternal("$world:simulation$");
+}

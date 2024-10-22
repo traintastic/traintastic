@@ -70,7 +70,7 @@ class ServerLogTableModel final : public QAbstractTableModel
     ServerLogTableModel(std::shared_ptr<Connection> connection);
     ~ServerLogTableModel();
 
-    int columnCount(const QModelIndex& parent = QModelIndex()) const final { Q_UNUSED(parent); return m_columnHeaders.size(); }
+    int columnCount(const QModelIndex& parent = QModelIndex()) const final { Q_UNUSED(parent); return static_cast<int>(m_columnHeaders.size()); }
     int rowCount(const QModelIndex& parent = QModelIndex()) const final;
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const final;

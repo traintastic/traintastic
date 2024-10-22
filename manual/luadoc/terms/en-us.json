@@ -2030,5 +2030,53 @@
   {
     "term": "object.turnoutrailtile.set_position:return_values",
     "definition": "`true` if the position is changed, `false` if position value is invalid or turnout is locked e.g. due to a reserved path."
+  },
+  {
+    "term": "globals.pv:description",
+    "definition": "The {ref:pv|persistent variable} table."
+  },
+  {
+    "term": "pv:title",
+    "definition": "Persistent variables"
+  },
+  {
+    "term": "pv:paragraph_1",
+    "definition": "Persistent variables allow you to store and retrieve data that remains available across multiple executions of the Lua script. This can be particularly useful for maintaining state information that needs to be retained beyond the current script's lifetime."
+  },
+  {
+    "term": "pv:paragraph_2",
+    "definition": "The {ref:globals#pv|`pv`} global provides a simple and efficient interface for interacting with persistent data. Any values stored in {ref:globals#pv|`pv`} are saved across script executions and world save and loads. Below is a detailed breakdown of how to use the {ref:globals#pv|`pv`} global."
+  },
+  {
+    "term": "pv.storing:title",
+    "definition": "Storing persistent data"
+  },
+  {
+    "term": "pv.storing:paragraph_1",
+    "definition": "You can store data in {ref:globals#pv|`pv`} just like you would with a regular Lua table. Supported data types are numbers, strings, booleans, tables, {ref:enum|enums}, {ref:set|sets}, {ref:object|objects} and object methods."
+  },
+  {
+    "term": "pv.retrieving:title",
+    "definition": "Retrieving persistent data"
+  },
+  {
+    "term": "pv.retrieving:paragraph_1",
+    "definition": "To retrieve a previously stored value, including tables, access the corresponding key in the {ref:globals#pv|`pv`} global:"
+  },
+  {
+    "term": "pv.deleting:title",
+    "definition": "Deleting persistent data"
+  },
+  {
+    "term": "pv.deleting:paragraph_1",
+    "definition": "To delete a stored persistent value, including tables, simply assign `nil` to the desired key:"
+  },
+  {
+    "term": "pv.checking:title",
+    "definition": "Checking for persistent data"
+  },
+  {
+    "term": "pv.checking:paragraph_1",
+    "definition": "To determine if a persistent variable has been set, use an `if` statement with `nil` checks. Variables in {ref:globals#pv|`pv`} that haven't been initialized or have been deleted will return `nil`. This pattern is useful for initializing default values or handling cases where the persistent variables are cleared."
   }
 ]

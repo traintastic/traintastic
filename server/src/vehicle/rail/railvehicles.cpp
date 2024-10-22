@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2023 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,23 @@
 
 #include "railvehicles.hpp"
 #include "../../utils/ifclassidcreate.hpp"
+#include "../../utils/makearray.hpp"
+
+#include "locomotive.hpp"
+#include "multipleunit.hpp"
+#include "freightwagon.hpp"
+#include "tankwagon.hpp"
+
+tcb::span<const std::string_view> RailVehicles::classList()
+{
+  static constexpr auto classes = makeArray(
+    Locomotive::classId,
+    MultipleUnit::classId,
+    FreightWagon::classId,
+    TankWagon::classId
+  );
+  return classes;
+}
 
 std::shared_ptr<RailVehicle> RailVehicles::create(World& world, std::string_view classId, std::string_view id)
 {

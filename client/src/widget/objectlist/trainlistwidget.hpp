@@ -1,9 +1,9 @@
 /**
- * server/src/enum/turnoutposition.hpp
+ * client/src/widget/objectlist/trainlistwidget.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,9 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_ENUM_TURNOUTPOSITION_HPP
-#define TRAINTASTIC_SERVER_ENUM_TURNOUTPOSITION_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_OBJECTLIST_TRAINLISTWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_OBJECTLIST_TRAINLISTWIDGET_HPP
 
-#include <traintastic/enum/turnoutposition.hpp>
+#include "throttleobjectlistwidget.hpp"
+
+class TrainListWidget : public ThrottleObjectListWidget
+{
+public:
+  explicit TrainListWidget(const ObjectPtr& object, QWidget* parent = nullptr);
+};
 
 #endif

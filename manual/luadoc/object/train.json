@@ -6,6 +6,7 @@
   "powered": {},
   "active": {},
   "mode": {},
+  "blocks": {},
   "on_block_assigned": {
     "parameters": [
       {

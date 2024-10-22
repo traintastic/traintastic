@@ -399,6 +399,16 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
     }
   }
 
+  if(auto* method = object()->getMethod("clear_persistent_variables"))
+  {
+    QWidget* spacer = new QWidget(this);
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    spacer->show();
+    m_toolbar->addWidget(spacer);
+
+    m_toolbar->addAction(new MethodAction(Theme::getIcon("clear_persistent_variables"), *method, this));
+  }
+
   if(!m_toolbar->actions().empty())
   {
     static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, m_toolbar);

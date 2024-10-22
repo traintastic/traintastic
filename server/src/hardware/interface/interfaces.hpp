@@ -24,38 +24,12 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_INTERFACES_HPP
 
 #include "interface.hpp"
-#include "../../utils/makearray.hpp"
-
-#include "dccexinterface.hpp"
-#include "ecosinterface.hpp"
-#include "hsi88.hpp"
-#include "loconetinterface.hpp"
-#include "marklincaninterface.hpp"
-#include "traintasticcsinterface.hpp"
-#include "traintasticdiyinterface.hpp"
-#include "withrottleinterface.hpp"
-#include "wlanmausinterface.hpp"
-#include "xpressnetinterface.hpp"
-#include "z21interface.hpp"
 
 struct Interfaces
 {
   static constexpr std::string_view classIdPrefix = "interface.";
 
-  static constexpr auto classList = makeArray(
-    DCCEXInterface::classId,
-    ECoSInterface::classId,
-    HSI88Interface::classId,
-    LocoNetInterface::classId,
-    MarklinCANInterface::classId,
-    TraintasticCSInterface::classId,
-    TraintasticDIYInterface::classId,
-    WiThrottleInterface::classId,
-    WlanMausInterface::classId,
-    XpressNetInterface::classId,
-    Z21Interface::classId
-  );
-
+  static tcb::span<const std::string_view> classList();
   static std::shared_ptr<Interface> create(World& world, std::string_view classId, std::string_view id = std::string_view{});
 };
 

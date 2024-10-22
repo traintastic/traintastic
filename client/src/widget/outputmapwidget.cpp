@@ -162,7 +162,7 @@ OutputMapWidget::~OutputMapWidget()
 
 void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
 {
-  m_table->setRowCount(items.size());
+  m_table->setRowCount(static_cast<int>(items.size()));
   m_itemObjects = items;
   m_actions.resize(items.size());
   for(size_t i = 0; i < items.size(); i++)
@@ -197,7 +197,7 @@ void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
         assert(false);
         text = "?";
       }
-      m_table->setItem(i, columnKey, new QTableWidgetItem(text));
+      m_table->setItem(static_cast<int>(i), columnKey, new QTableWidgetItem(text));
     }
 
     if(m_hasUseColumn)
@@ -211,16 +211,16 @@ void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
         l->setAlignment(Qt::AlignCenter);
         l->addWidget(new PropertyCheckBox(*p, w));
         w->setLayout(l);
-        m_table->setCellWidget(i, columnUse, w);
+        m_table->setCellWidget(static_cast<int>(i), columnUse, w);
       }
     }
 
     if(auto* p = items[i]->getProperty("visible"))
     {
-      m_table->setRowHidden(i, !p->toBool());
+      m_table->setRowHidden(static_cast<int>(i), !p->toBool());
 
       connect(p, &Property::valueChangedBool, this,
-        [this, row=i](bool value)
+        [this, row=static_cast<int>(i)](bool value)
         {
           m_table->setRowHidden(row, !value);
         });
@@ -228,10 +228,10 @@ void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
 
     if(auto* outputActions = dynamic_cast<ObjectVectorProperty*>(items[i]->getVectorProperty("output_actions")))
     {
-      updateTableOutputActions(*outputActions, i);
+      updateTableOutputActions(*outputActions, static_cast<int>(i));
 
       connect(outputActions, &ObjectVectorProperty::valueChanged, this,
-        [this, row=i]()
+        [this, row=static_cast<int>(i)]()
         {
           updateTableOutputActions(*dynamic_cast<ObjectVectorProperty*>(sender()), row);
         });
@@ -291,7 +291,7 @@ void OutputMapWidget::updateKeyIcons()
           break; // tileId not supported (yet)
         }
 
-        m_table->item(i, columnKey)->setIcon(QPixmap::fromImage(image));
+        m_table->item(static_cast<int>(i), columnKey)->setIcon(QPixmap::fromImage(image));
       }
     }
   }

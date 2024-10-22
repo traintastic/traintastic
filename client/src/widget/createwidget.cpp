@@ -24,6 +24,7 @@
 #include "list/marklincanlocomotivelistwidget.hpp"
 #include "objectlist/boardlistwidget.hpp"
 #include "objectlist/throttleobjectlistwidget.hpp"
+#include "objectlist/trainlistwidget.hpp"
 #include "object/luascripteditwidget.hpp"
 #include "object/objecteditwidget.hpp"
 #include "object/itemseditwidget.hpp"
@@ -47,7 +48,7 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
 
   if(classId == "command_station_list")
     return new ObjectListWidget(object, parent); // todo remove
-  else if(classId == "decoder_list" || classId == "list.train")
+  else if(classId == "decoder_list")
     return new ThrottleObjectListWidget(object, parent); // todo remove
   else if(classId == "controller_list")
     return new ObjectListWidget(object, parent); // todo remove
@@ -60,6 +61,10 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
   if(classId == "list.board")
   {
     return new BoardListWidget(object, parent);
+  }
+  if(classId == "list.train")
+  {
+    return new TrainListWidget(object, parent);
   }
   else if(object->classId().startsWith("list."))
     return new ObjectListWidget(object, parent);

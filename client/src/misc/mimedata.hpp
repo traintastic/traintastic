@@ -1,9 +1,9 @@
 /**
- * server/src/vehicle/rail/railvehicles.hpp
+ * client/src/misc/mimedata.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2023-2024 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,17 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_VEHICLE_RAIL_RAILVEHICLES_HPP
-#define TRAINTASTIC_SERVER_VEHICLE_RAIL_RAILVEHICLES_HPP
+#ifndef TRAINTASTIC_CLIENT_MISC_MIMEDATA_HPP
+#define TRAINTASTIC_CLIENT_MISC_MIMEDATA_HPP
 
-#include "railvehicle.hpp"
+#include <QMimeData>
 
-struct RailVehicles
+class AssignTrainMimeData : public QMimeData
 {
-  static constexpr std::string_view classIdPrefix = "vehicle.rail.";
+public:
+  inline static const auto mimeType = QLatin1String("application/vnd.traintastic.assign_train");
 
-  static tcb::span<const std::string_view> classList();
-  static std::shared_ptr<RailVehicle> create(World& world, std::string_view classId, std::string_view id);
+  explicit AssignTrainMimeData(const QString& trainId)
+  {
+    setData(mimeType, trainId.toUtf8());
+  }
+
+  inline QString trainId() const
+  {
+    return QString::fromUtf8(data(mimeType));
+  }
 };
 
 #endif

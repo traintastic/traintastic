@@ -37,9 +37,9 @@
 #include <traintastic/enum/outputpairvalue.hpp>
 #include <traintastic/enum/textalign.hpp>
 #include "../../src/enum/tristate.hpp"
-#include "../../src/enum/turnoutposition.hpp"
+#include <traintastic/enum/turnoutposition.hpp>
 #include "../../src/enum/signalaspect.hpp"
-#include "../../src/enum/worldevent.hpp"
+#include <traintastic/enum/worldevent.hpp>
 #include "../../src/enum/worldscale.hpp"
 
 #define LUA_ENUMS \
@@ -79,6 +79,14 @@ struct Enums
     if constexpr(sizeof...(Ts) != 0)
       registerValues<Ts...>(L);
   }
+
+  template<class... Ts>
+  inline static const std::array<std::string_view, sizeof...(Ts)> getMetaTableNames()
+  {
+    return std::array<std::string_view, sizeof...(Ts)>{EnumName<Ts>::value...};
+  }
+
+  inline static const auto metaTableNames = getMetaTableNames<LUA_ENUMS>();
 };
 
 }

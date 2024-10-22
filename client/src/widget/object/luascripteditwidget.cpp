@@ -29,6 +29,7 @@
 #include <version.hpp>
 #include <traintastic/locale/locale.hpp>
 #include <traintastic/utils/standardpaths.hpp>
+#include "../../misc/methodaction.hpp"
 #include "../../network/object.hpp"
 #include "../../network/property.hpp"
 #include "../../network/method.hpp"
@@ -107,6 +108,17 @@ void LuaScriptEditWidget::buildForm()
       if(name == AttributeName::Enabled)
         m_stop->setEnabled(value.toBool());
     });
+
+
+  if(auto* method = m_object->getMethod("clear_persistent_variables"))
+  {
+    QWidget* spacer = new QWidget(this);
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    spacer->show();
+    toolbar->addWidget(spacer);
+
+    toolbar->addAction(new MethodAction(Theme::getIcon("clear_persistent_variables"), *method, this));
+  }
 
   QWidget* spacer = new QWidget(this);
   spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);

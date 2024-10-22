@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "object.hpp"
 #include "idobject.hpp"
 #include "subobject.hpp"
+#include "abstractevent.hpp"
 #include "abstractmethod.hpp"
 #include "abstractproperty.hpp"
 #include "abstractobjectproperty.hpp"
@@ -95,6 +96,16 @@ const AbstractVectorProperty* Object::getVectorProperty(std::string_view name) c
 AbstractVectorProperty* Object::getVectorProperty(std::string_view name)
 {
   return dynamic_cast<AbstractVectorProperty*>(getItem(name));
+}
+
+const AbstractEvent* Object::getEvent(std::string_view name) const
+{
+  return dynamic_cast<const AbstractEvent*>(getItem(name));
+}
+
+AbstractEvent* Object::getEvent(std::string_view name)
+{
+  return dynamic_cast<AbstractEvent*>(getItem(name));
 }
 
 void Object::load(WorldLoader& loader, const nlohmann::json& data)
