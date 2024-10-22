@@ -32,6 +32,7 @@ target_include_directories(traintastic-server SYSTEM PRIVATE
   thirdparty)
 
 if(BUILD_TESTING)
+  add_subdirectory(thirdparty/catch2)
   add_executable(traintastic-server-test test/main.cpp)
   add_dependencies(traintastic-server-test traintastic-lang)
   target_compile_definitions(traintastic-server-test PRIVATE -DTRAINTASTIC_TEST)
@@ -42,6 +43,7 @@ if(BUILD_TESTING)
   target_include_directories(traintastic-server-test SYSTEM PRIVATE
     ../shared/thirdparty
     thirdparty)
+  target_link_libraries(traintastic-server-test PRIVATE Catch2::Catch2WithMain)
 endif()
 
 file(GLOB SOURCES
@@ -460,7 +462,6 @@ endif()
 
 if(BUILD_TESTING)
   include(Catch)
-  target_include_directories(traintastic-server-test PRIVATE thirdparty/catch2)
   catch_discover_tests(traintastic-server-test)
 endif()
 

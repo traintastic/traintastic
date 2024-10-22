@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include "../../src/world/world.hpp"
 #include "../../src/core/method.tpp"
 #include "../../src/core/objectproperty.tpp"
