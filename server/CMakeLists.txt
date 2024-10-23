@@ -463,7 +463,7 @@ endif()
 
 if(BUILD_TESTING)
   include(Catch)
-  catch_discover_tests(traintastic-server-test)
+  catch_discover_tests(traintastic-server-test DISCOVERY_MODE PRE_TEST)
 endif()
 
 ### Doxygen ###
