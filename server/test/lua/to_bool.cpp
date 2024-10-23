@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_template_test_macros.hpp>
 #include "../../src/lua/to.hpp"
 #include <string_view>
 
@@ -38,13 +38,13 @@ TEMPLATE_TEST_CASE("Lua::to<>", "[lua][lua-to]", bool)
 {
   lua_State* L = luaL_newstate();
 
-  INFO("nil")
+  INFO("nil");
   lua_pushnil(L);
   REQUIRE_FALSE(Lua::to<TestType>(L, -1));
   REQUIRE_TRY_TO_FAIL();
   lua_pop(L, 1);
 
-  INFO("false")
+  INFO("false");
   lua_pushboolean(L, false);
   REQUIRE_FALSE(Lua::to<TestType>(L, -1));
   {
@@ -54,7 +54,7 @@ TEMPLATE_TEST_CASE("Lua::to<>", "[lua][lua-to]", bool)
   }
   lua_pop(L, 1);
 
-  INFO("true")
+  INFO("true");
   lua_pushboolean(L, true);
   REQUIRE(Lua::to<TestType>(L, -1));
   {
@@ -64,37 +64,37 @@ TEMPLATE_TEST_CASE("Lua::to<>", "[lua][lua-to]", bool)
   }
   lua_pop(L, 1);
 
-  INFO("123")
+  INFO("123");
   lua_pushinteger(L, 123);
   REQUIRE_FALSE(Lua::to<TestType>(L, -1));
   REQUIRE_TRY_TO_FAIL();
   lua_pop(L, 1);
 
-  INFO("0.5")
+  INFO("0.5");
   lua_pushnumber(L, 0.5);
   REQUIRE_FALSE(Lua::to<TestType>(L, -1));
   REQUIRE_TRY_TO_FAIL();
   lua_pop(L, 1);
 
-  INFO("\"test\"")
+  INFO("\"test\"");
   lua_pushliteral(L, "test");
   REQUIRE_FALSE(Lua::to<TestType>(L, -1));
   REQUIRE_TRY_TO_FAIL();
   lua_pop(L, 1);
 
-  INFO("table")
+  INFO("table");
   lua_newtable(L);
   REQUIRE_FALSE(Lua::to<TestType>(L, -1));
   REQUIRE_TRY_TO_FAIL();
   lua_pop(L, 1);
 
-  INFO("userdata")
+  INFO("userdata");
   lua_newuserdata(L, 0);
   REQUIRE_FALSE(Lua::to<TestType>(L, -1));
   REQUIRE_TRY_TO_FAIL();
   lua_pop(L, 1);
 
-  INFO("lightuserdata")
+  INFO("lightuserdata");
   lua_pushlightuserdata(L, nullptr);
   REQUIRE_FALSE(Lua::to<TestType>(L, -1));
   REQUIRE_TRY_TO_FAIL();
