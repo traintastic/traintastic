@@ -778,3 +778,37 @@ TEST_CASE("Lua script: pv - ipairs()", "[lua][lua-script][lua-script-pv]")
 
   script.reset();
 }
+
+TEST_CASE("Lua script: pv - clear", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code =
+    "pv.object = world\n"
+    "pv.table = {a=1, b=2, c=3}\n"
+    "pv.array = {5, 4, 3, 2, 1}\n";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script->clearPersistentVariables();
+
+  // check pv:
+  script->code =
+    "assert(pv.object == nil)\n"
+    "assert(pv.table == nil)\n"
+    "assert(pv.array == nil)\n";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script.reset();
+}
