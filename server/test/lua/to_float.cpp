@@ -27,7 +27,7 @@
 
 #define REQUIRE_TRY_TO(x) \
   { \
-    TestType v; \
+    TestType v = 0.0; \
     REQUIRE(Lua::to<TestType>(L, -1, v)); \
     REQUIRE(v == x); \
   }
