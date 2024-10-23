@@ -33,6 +33,7 @@ target_include_directories(traintastic-server SYSTEM PRIVATE
 
 if(BUILD_TESTING)
   add_subdirectory(thirdparty/catch2)
+  set_target_properties(Catch2 PROPERTIES CXX_STANDARD 17)
   add_executable(traintastic-server-test test/main.cpp)
   add_dependencies(traintastic-server-test traintastic-lang)
   target_compile_definitions(traintastic-server-test PRIVATE -DTRAINTASTIC_TEST)
