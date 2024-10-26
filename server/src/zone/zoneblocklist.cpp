@@ -51,14 +51,15 @@ ZoneBlockList::ZoneBlockList(Zone& zone_, std::string_view parentPropertyName)
       }}
 {
   const auto& world = getWorld(parent());
+  const bool editable = contains(world.state.value(), WorldState::Edit);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
-  Attributes::addEnabled(add, false);
+  Attributes::addEnabled(add, editable);
   Attributes::addObjectList(add, world.blockRailTiles);
   m_interfaceItems.add(add);
 
   Attributes::addDisplayName(remove, DisplayName::List::remove);
-  Attributes::addEnabled(remove, false);
+  Attributes::addEnabled(remove, editable);
   m_interfaceItems.add(remove);
 }
 
