@@ -33,6 +33,7 @@ class ZoneList : public ObjectList<Zone>
   CLASS_ID("list.zone")
 
 protected:
+  void worldEvent(WorldState state, WorldEvent event) final;
   bool isListedProperty(std::string_view name) final;
 
 public:

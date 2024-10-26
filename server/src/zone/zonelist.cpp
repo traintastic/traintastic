@@ -43,16 +43,30 @@ ZoneList::ZoneList(Object& _parent, std::string_view parentPropertyName)
         deleteMethodHandler(zone);
       }}
 {
+  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
+
   Attributes::addDisplayName(create, DisplayName::List::create);
+  Attributes::addEnabled(create, editable);
   m_interfaceItems.add(create);
 
   Attributes::addDisplayName(delete_, DisplayName::List::delete_);
+  Attributes::addEnabled(delete_, editable);
   m_interfaceItems.add(delete_);
 }
 
 TableModelPtr ZoneList::getModel()
 {
   return std::make_shared<ZoneListTableModel>(*this);
+}
+
+void ZoneList::worldEvent(WorldState state, WorldEvent event)
+{
+  ObjectList<Zone>::worldEvent(state, event);
+
+  const bool editable = contains(state, WorldState::Edit);
+
+  Attributes::setEnabled(create, editable);
+  Attributes::setEnabled(delete_, editable);
 }
 
 bool ZoneList::isListedProperty(std::string_view name)
