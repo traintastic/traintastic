@@ -147,7 +147,7 @@ Train::Train(World& world, std::string_view _id) :
   mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
   , mute{this, "mute", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , noSmoke{this, "no_smoke", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
-  , blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState},
+  , blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   zones{*this, "zones", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , onBlockAssigned{*this, "on_block_assigned", EventFlags::Scriptable}

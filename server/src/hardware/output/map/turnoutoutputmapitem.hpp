@@ -24,7 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_TURNOUTOUTPUTMAPITEM_HPP
 
 #include "outputmapitembase.hpp"
-#include "../../../enum/turnoutposition.hpp"
+#include <traintastic/enum/turnoutposition.hpp>
 
 class TurnoutOutputMapItem : public OutputMapItemBase<TurnoutPosition>
 {

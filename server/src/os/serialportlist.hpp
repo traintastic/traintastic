@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,6 +33,10 @@ class SerialPortListImpl;
 namespace Linux {
   class SerialPortListImplSystemD;
 }
+#elif defined(__linux__)
+namespace Linux {
+  class SerialPortListImplInotify;
+}
 #elif defined(WIN32)
 namespace Windows {
   class SerialPortListImplWin32;
@@ -46,6 +50,8 @@ class SerialPortList
   private:
 #ifdef HAS_LIBSYSTEMD
     using Impl = Linux::SerialPortListImplSystemD;
+#elif defined(__linux__)
+    using Impl = Linux::SerialPortListImplInotify;
 #elif defined(WIN32)
     using Impl = Windows::SerialPortListImplWin32;
 #else

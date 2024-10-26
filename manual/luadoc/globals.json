@@ -67,6 +67,10 @@
     "type": "constant",
     "since": "0.1"
   },
+  "pv": {
+    "type": "object",
+    "since": "0.3"
+  },
   "world": {
     "type": "object",
     "since": "0.1"

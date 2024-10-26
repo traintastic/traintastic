@@ -20,7 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_template_test_macros.hpp>
+#include <algorithm>
 #include "protect.hpp"
 #include "run.hpp"
 #include "../../src/lua/sets.hpp"
@@ -49,7 +50,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   const TestType lastKey = set_values_v<TestType>.rbegin()->first;
 
   {
-    INFO("write to set.*")
+    INFO("write to set.*");
 
     lua_State* L = createState<TestType>();
 
@@ -80,7 +81,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   }
 
 {
-    INFO("iterate over enum.*")
+    INFO("iterate over enum.*");
 
     lua_State* L = createState<TestType>();
 
@@ -142,7 +143,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   }
 
   {
-    INFO("single value")
+    INFO("single value");
 
     lua_State* L = createState<TestType>();
 
@@ -161,7 +162,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   }
 
   {
-    INFO("tostring")
+    INFO("tostring");
 
     lua_State* L = createState<TestType>();
 
@@ -205,7 +206,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   }
 
   {
-    INFO("add")
+    INFO("add");
 
     lua_State* L = createState<TestType>();
 
@@ -221,7 +222,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   }
 
   {
-    INFO("subtract")
+    INFO("subtract");
 
     lua_State* L = createState<TestType>();
 
@@ -237,7 +238,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   }
 
   {
-    INFO("multiply")
+    INFO("multiply");
 
     lua_State* L = createState<TestType>();
 
@@ -249,7 +250,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   }
 
   {
-    INFO("modulo")
+    INFO("modulo");
 
     lua_State* L = createState<TestType>();
 
@@ -261,7 +262,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   }
 
   {
-    INFO("power")
+    INFO("power");
 
     lua_State* L = createState<TestType>();
 
@@ -273,7 +274,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   }
 
   {
-    INFO("divide")
+    INFO("divide");
 
     lua_State* L = createState<TestType>();
 
@@ -285,7 +286,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   }
 
   {
-    INFO("divide (integer)")
+    INFO("divide (integer)");
 
     lua_State* L = createState<TestType>();
 
@@ -297,7 +298,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   }
 
   {
-    INFO("binary and")
+    INFO("binary and");
 
     lua_State* L = createState<TestType>();
 
@@ -313,7 +314,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   }
 
   {
-    INFO("binary or")
+    INFO("binary or");
 
     lua_State* L = createState<TestType>();
 
@@ -329,7 +330,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   }
 
   {
-    INFO("binary xor")
+    INFO("binary xor");
 
     lua_State* L = createState<TestType>();
 
@@ -341,7 +342,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   }
 
   {
-    INFO("shift left")
+    INFO("shift left");
 
     lua_State* L = createState<TestType>();
 
@@ -353,7 +354,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   }
 
   {
-    INFO("shift right")
+    INFO("shift right");
 
     lua_State* L = createState<TestType>();
 
@@ -365,7 +366,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   }
 
   {
-    INFO("unary minus")
+    INFO("unary minus");
 
     lua_State* L = createState<TestType>();
 
@@ -376,7 +377,7 @@ TEMPLATE_TEST_CASE("Lua::Set<>", "[lua][lua-set]", LUA_SETS)
   }
 
   {
-    INFO("binary not")
+    INFO("binary not");
 
     lua_State* L = createState<TestType>();
 

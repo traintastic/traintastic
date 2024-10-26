@@ -1,9 +1,9 @@
 /**
- * server/src/utils/attributes.hpp
+ * server/src/os/linux/isserialdevice.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,9 +20,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_UTILS_ATTRIBUTES_HPP
-#define TRAINTASTIC_SERVER_UTILS_ATTRIBUTES_HPP
+#ifndef TRAINTASTIC_SERVER_OS_LINUX_ISSERIALDEVICE_HPP
+#define TRAINTASTIC_SERVER_OS_LINUX_ISSERIALDEVICE_HPP
 
+#include "../../utils/startswith.hpp"
 
+namespace Linux {
 
-#endif // ATTRIBUTES_HPP
+inline bool isSerialDevice(std::string_view devPath)
+{
+    return startsWith(devPath, "/dev/ttyS") ||
+           startsWith(devPath, "/dev/ttyUSB") ||
+           startsWith(devPath, "/dev/ttyACM");
+}
+
+}
+
+#endif

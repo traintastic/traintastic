@@ -1,9 +1,9 @@
 /**
- * server/src/enum/commandstationstatus.hpp
+ * client/src/widget/objectlist/trainlistwidget.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,9 +20,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_ENUM_COMMANDSTATIONSTATUS_HPP
-#define TRAINTASTIC_SERVER_ENUM_COMMANDSTATIONSTATUS_HPP
+#include "trainlistwidget.hpp"
+#include <QDrag>
+#include "../tablewidget.hpp"
+#include "../../misc/mimedata.hpp"
 
-#include <traintastic/enum/commandstationstatus.hpp>
-
-#endif
+TrainListWidget::TrainListWidget(const ObjectPtr& object, QWidget* parent)
+  : ThrottleObjectListWidget(object, parent)
+{
+  connect(m_tableWidget, &TableWidget::rowDragged,
+    [this](int row)
+    {
+      if(auto trainId = m_tableWidget->getRowObjectId(row); !trainId.isEmpty())
+      {
+        QDrag* drag = new QDrag(m_tableWidget);
+        drag->setMimeData(new AssignTrainMimeData(trainId));
+        drag->exec(Qt::CopyAction);
+      }
+    });
+}

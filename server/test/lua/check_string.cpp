@@ -20,14 +20,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_template_test_macros.hpp>
 #include "protect.hpp"
 #include "../../src/lua/check.hpp"
 
 TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", std::string, std::string_view)
 {
   {
-    INFO("nil")
+    INFO("nil");
 
     lua_State* L = newStateWithProtect();
 
@@ -39,7 +39,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", std::string, std::string_
   }
 
   {
-    INFO("false")
+    INFO("false");
 
     lua_State* L = newStateWithProtect();
 
@@ -51,7 +51,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", std::string, std::string_
   }
 
   {
-    INFO("true")
+    INFO("true");
 
     lua_State* L = newStateWithProtect();
 
@@ -63,7 +63,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", std::string, std::string_
   }
 
   {
-    INFO("123")
+    INFO("123");
 
     lua_State* L = newStateWithProtect();
 
@@ -77,7 +77,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", std::string, std::string_
   }
 
   {
-    INFO("0.5")
+    INFO("0.5");
 
     lua_State* L = newStateWithProtect();
 
@@ -91,7 +91,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", std::string, std::string_
   }
 
   {
-    INFO("\"test\"")
+    INFO("\"test\"");
 
     lua_State* L = newStateWithProtect();
 
@@ -104,7 +104,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", std::string, std::string_
   }
 
   {
-    INFO("table")
+    INFO("table");
 
     lua_State* L = newStateWithProtect();
 
@@ -116,7 +116,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", std::string, std::string_
   }
 
   {
-    INFO("userdata")
+    INFO("userdata");
 
     lua_State* L = newStateWithProtect();
 
@@ -128,7 +128,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", std::string, std::string_
   }
 
   {
-    INFO("lightuserdata")
+    INFO("lightuserdata");
 
     lua_State* L = newStateWithProtect();
 

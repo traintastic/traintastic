@@ -57,6 +57,7 @@ class NXManager;
 class Clock;
 class TrainList;
 class RailVehicleList;
+class SimulationStatus;
 
 template <typename T>
 class ControllerList;
@@ -146,6 +147,7 @@ class World : public Object
     Property<bool> mute;
     Property<bool> noSmoke;
     Property<bool> simulation;
+    ObjectProperty<SimulationStatus> simulationStatus;
 
     Method<void()> save;
 

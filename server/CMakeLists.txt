@@ -32,6 +32,8 @@ target_include_directories(traintastic-server SYSTEM PRIVATE
   thirdparty)
 
 if(BUILD_TESTING)
+  add_subdirectory(thirdparty/catch2)
+  set_target_properties(Catch2 PROPERTIES CXX_STANDARD 17)
   add_executable(traintastic-server-test test/main.cpp)
   add_dependencies(traintastic-server-test traintastic-lang)
   target_compile_definitions(traintastic-server-test PRIVATE -DTRAINTASTIC_TEST)
@@ -42,6 +44,7 @@ if(BUILD_TESTING)
   target_include_directories(traintastic-server-test SYSTEM PRIVATE
     ../shared/thirdparty
     thirdparty)
+  target_link_libraries(traintastic-server-test PRIVATE Catch2::Catch2WithMain)
 endif()
 
 file(GLOB SOURCES
@@ -217,6 +220,9 @@ if(LINUX)
     if(BUILD_TESTING)
       target_link_libraries(traintastic-server-test PRIVATE PkgConfig::LIBSYSTEMD)
     endif()
+  else()
+    # Use inotify for monitoring serial ports:
+    list(APPEND SOURCES "src/os/linux/serialportlistimplinotify.hpp" "src/os/linux/serialportlistimplinotify.cpp")
   endif()
 else()
   # socket CAN is only available on linux:
@@ -459,8 +465,7 @@ endif()
 
 if(BUILD_TESTING)
   include(Catch)
-  target_include_directories(traintastic-server-test PRIVATE thirdparty/catch2)
-  catch_discover_tests(traintastic-server-test)
+  catch_discover_tests(traintastic-server-test DISCOVERY_MODE PRE_TEST)
 endif()
 
 ### Doxygen ###

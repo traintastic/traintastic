@@ -20,6 +20,7 @@ class LuaDoc:
     DEFAULT_LANGUAGE = 'en-us'
     FILENAME_INDEX = 'index.html'
     FILENAME_GLOBALS = 'globals.html'
+    FILENAME_PV = 'pv.html'
     FILENAME_ENUM = 'enum.html'
     FILENAME_SET = 'set.html'
     FILENAME_OBJECT = 'object.html'
@@ -30,6 +31,7 @@ class LuaDoc:
     version = None
 
     def __init__(self, project_root: str) -> None:
+        self._project_root = project_root
         self._globals = LuaDoc._find_globals(project_root)
         self._enums = LuaDoc._find_enums(project_root)
         self._sets = LuaDoc._find_sets(project_root)
@@ -101,6 +103,16 @@ class LuaDoc:
             for object in self._objects:
                 if object['lua_name'] == id:
                     return '<a href="' + object['filename'] + fragment + '">' + (self._get_term(object['name']) if title == '' else title) + '</a>'
+        elif id == 'globals':
+            return '<a href="' + self.FILENAME_GLOBALS + fragment + '">' + (self._get_term('globals:title') if title == '' else title) + '</a>'
+        elif id == 'enum':
+            return '<a href="' + self.FILENAME_ENUM + fragment + '">' + (self._get_term('enum:title') if title == '' else title) + '</a>'
+        elif id == 'set':
+            return '<a href="' + self.FILENAME_SET + fragment + '">' + (self._get_term('set:title') if title == '' else title) + '</a>'
+        elif id == 'object':
+            return '<a href="' + self.FILENAME_OBJECT + fragment + '">' + (self._get_term('object:title') if title == '' else title) + '</a>'
+        elif id == 'pv':
+            return '<a href="' + self.FILENAME_PV + fragment + '">' + (self._get_term('pv:title') if title == '' else title) + '</a>'
 
         return '<span style="color:red">' + m.group(0) + '</span>'
 
@@ -447,6 +459,7 @@ class LuaDoc:
 
         self._build_index(output_dir)
         self._build_globals(output_dir, nav)
+        self._build_pv(output_dir, nav)
         self._build_enums(output_dir, nav)
         self._build_sets(output_dir, nav)
         for _, lib in self._libs.items():
@@ -648,6 +661,30 @@ class LuaDoc:
         html += '<p>' + self._get_term('globals:description') + '</p>' + os.linesep
         html += self._build_items_html(self._globals, 'globals.')
         LuaDoc._write_file(os.path.join(output_dir, LuaDoc.FILENAME_GLOBALS), self._add_toc(html))
+
+    def _build_pv(self, output_dir: str, nav: list) -> None:
+        title = self._get_term('pv:title')
+        html = self._get_header(title, nav + [{'title': title, 'href': LuaDoc.FILENAME_PV}])
+        html += '<p>' + self._get_term('pv:paragraph_1') + '</p>' + os.linesep
+        html += '<p>' + self._get_term('pv:paragraph_2') + '</p>' + os.linesep
+
+        html += '<h2 id="storing">' + self._get_term('pv.storing:title') + '</h2>' + os.linesep
+        html += '<p>' + self._get_term('pv.storing:paragraph_1') + '</p>' + os.linesep
+        html += '<pre lang="lua"><code>' + highlight_lua(LuaDoc._read_file(os.path.join(self._project_root, 'manual', 'luadoc', 'example', 'pv', 'storingpersistentdata.lua'))) + '</code></pre>'
+
+        html += '<h2 id="retrieving">' + self._get_term('pv.retrieving:title') + '</h2>' + os.linesep
+        html += '<p>' + self._get_term('pv.retrieving:paragraph_1') + '</p>' + os.linesep
+        html += '<pre lang="lua"><code>' + highlight_lua(LuaDoc._read_file(os.path.join(self._project_root, 'manual', 'luadoc', 'example', 'pv', 'retrievingpersistentdata.lua'))) + '</code></pre>'
+
+        html += '<h2 id="deleting">' + self._get_term('pv.deleting:title') + '</h2>' + os.linesep
+        html += '<p>' + self._get_term('pv.deleting:paragraph_1') + '</p>' + os.linesep
+        html += '<pre lang="lua"><code>' + highlight_lua(LuaDoc._read_file(os.path.join(self._project_root, 'manual', 'luadoc', 'example', 'pv', 'deletingpersistentdata.lua'))) + '</code></pre>'
+
+        html += '<h2 id="checking">' + self._get_term('pv.checking:title') + '</h2>' + os.linesep
+        html += '<p>' + self._get_term('pv.checking:paragraph_1') + '</p>' + os.linesep
+        html += '<pre lang="lua"><code>' + highlight_lua(LuaDoc._read_file(os.path.join(self._project_root, 'manual', 'luadoc', 'example', 'pv', 'checkingforpersistentdata.lua'))) + '</code></pre>'
+
+        LuaDoc._write_file(os.path.join(output_dir, LuaDoc.FILENAME_PV), self._add_toc(html))
 
     def _build_enums(self, output_dir: str, nav: list) -> None:
         title = self._get_term('enum:title')
@@ -854,6 +891,7 @@ class LuaDoc:
 
     def _get_header(self, title: str, nav: list) -> str:
         menu = '  <li><a href="' + LuaDoc.FILENAME_GLOBALS + '">' + self._get_term('globals:title') + '</a></li>' + os.linesep
+        menu += '  <li><a href="' + LuaDoc.FILENAME_PV + '">' + self._get_term('pv:title') + '</a></li>' + os.linesep
         for k in sorted(list(self._libs.keys()) + ['enum', 'set']):
             if k == 'enum':
                 menu += '  <li><a href="' + LuaDoc.FILENAME_ENUM + '">' + self._get_term('enum:title') + '</a></li>' + os.linesep

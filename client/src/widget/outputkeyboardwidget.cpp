@@ -161,7 +161,7 @@ OutputKeyboardWidget::OutputKeyboardWidget(std::shared_ptr<OutputKeyboard> objec
         connect(led, &LEDWidget::clicked, this,
           [this, index=i]()
           {
-            const uint32_t address = static_cast<uint32_t>(m_addressMin->toInt64()) + m_page * m_leds.size() / 2 + index / 2;
+            const uint32_t address = static_cast<uint32_t>(m_addressMin->toInt64()) + m_page * static_cast<uint32_t>(m_leds.size()) / 2 + index / 2;
             const auto value = (index & 0x1) ? OutputPairValue::Second : OutputPairValue::First;
             callMethod(*m_setOutputValue, nullptr, address, value);
           });
@@ -251,7 +251,7 @@ uint32_t OutputKeyboardWidget::pageCount() const
   {
     leds *= 2;
   }
-  return static_cast<uint32_t>(leds + m_leds.size() - 1) / m_leds.size();
+  return static_cast<uint32_t>(leds + m_leds.size() - 1) / static_cast<uint32_t>(m_leds.size());
 }
 
 void OutputKeyboardWidget::setPage(uint32_t value)
@@ -277,7 +277,7 @@ LEDWidget* OutputKeyboardWidget::getLED(uint32_t address)
 {
   assert(m_object->outputType() == OutputType::Single);
 
-  const uint32_t first = static_cast<uint32_t>(m_addressMin->toInt64()) + m_page * m_leds.size();
+  const uint32_t first = static_cast<uint32_t>(m_addressMin->toInt64()) + m_page * static_cast<uint32_t>(m_leds.size());
 
   if(address >= first && (address - first) < m_leds.size())
     return m_leds[address - first];
@@ -289,7 +289,7 @@ std::pair<LEDWidget*, LEDWidget*> OutputKeyboardWidget::getLEDs(uint32_t address
 {
   assert(m_object->outputType() == OutputType::Pair);
 
-  const uint32_t first = static_cast<uint32_t>(m_addressMin->toInt64()) + m_page * m_leds.size() / 2;
+  const uint32_t first = static_cast<uint32_t>(m_addressMin->toInt64()) + m_page * static_cast<uint32_t>(m_leds.size()) / 2;
 
   if(address >= first && (address - first) < m_leds.size())
     return {m_leds[(address - first) * 2], m_leds[(address - first) * 2 + 1]};
@@ -309,7 +309,7 @@ void OutputKeyboardWidget::updateLEDs()
   {
     case OutputType::Single:
     {
-      uint32_t address = addressMin + m_page * m_leds.size();
+      uint32_t address = addressMin + m_page * static_cast<uint32_t>(m_leds.size());
       for(auto* led : m_leds)
       {
         const auto& outputState = m_object->getOutputState(address);
@@ -329,7 +329,7 @@ void OutputKeyboardWidget::updateLEDs()
     }
     case OutputType::Pair:
     {
-      uint32_t address = addressMin + m_page * m_leds.size() / 2;
+      uint32_t address = addressMin + m_page * static_cast<uint32_t>(m_leds.size()) / 2;
       bool second = false;
       for(auto* led : m_leds)
       {

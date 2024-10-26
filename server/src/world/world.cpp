@@ -71,6 +71,7 @@
 #include "../train/trainlist.hpp"
 #include "../vehicle/rail/railvehiclelist.hpp"
 #include "../lua/scriptlist.hpp"
+#include "../status/simulationstatus.hpp"
 #include "../utils/category.hpp"
 
 using nlohmann::json;
@@ -127,6 +128,8 @@ void World::init(World& world)
   world.blockRailTiles.setValueInternal(std::make_shared<BlockRailTileList>(world, world.blockRailTiles.name()));
   world.linkRailTiles.setValueInternal(std::make_shared<LinkRailTileList>(world, world.linkRailTiles.name()));
   world.nxManager.setValueInternal(std::make_shared<NXManager>(world, world.nxManager.name()));
+
+  world.simulationStatus.setValueInternal(std::make_shared<SimulationStatus>(world, world.simulationStatus.name()));
 }
 
 World::World(Private /*unused*/) :
@@ -235,8 +238,18 @@ World::World(Private /*unused*/) :
   simulation{this, "simulation", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore,
     [this](bool value)
     {
+      simulationStatus->enabled.setValueInternal(value);
+      if(value)
+      {
+        statuses.appendInternal(simulationStatus.value());
+      }
+      else
+      {
+        statuses.removeInternal(simulationStatus.value());
+      }
       event(value ? WorldEvent::SimulationEnabled : WorldEvent::SimulationDisabled);
     }},
+  simulationStatus{this, "simulation_status", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
   save{*this, "save", MethodFlags::NoScript,
     [this]()
     {

@@ -6431,5 +6431,13 @@
     {
         "term": "zone:no_smoke",
         "definition": "No smoke"
+    },
+    {
+        "term": "message:I9003",
+        "definition": "Cleared persistent variables"
+    },
+    {
+        "term": "lua.script:clear_persistent_variables",
+        "definition": "Clear persistent variables"
     }
 ]

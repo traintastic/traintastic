@@ -80,7 +80,7 @@ struct Attributes
   }
 
   template<size_t N>
-  static inline void addClassList(InterfaceItem& item, const std::array<std::string_view, N>& classList)
+  static inline void addClassList(InterfaceItem& item, tcb::span<const std::string_view, N> classList)
   {
     item.addAttribute(AttributeName::ClassList, classList);
   }

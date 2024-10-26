@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,35 @@
 #include "interfaces.hpp"
 #include "../../utils/ifclassidcreate.hpp"
 #include "../../world/world.hpp"
+#include "../../utils/makearray.hpp"
+
+#include "dccexinterface.hpp"
+#include "ecosinterface.hpp"
+#include "hsi88.hpp"
+#include "loconetinterface.hpp"
+#include "marklincaninterface.hpp"
+#include "traintasticdiyinterface.hpp"
+#include "withrottleinterface.hpp"
+#include "wlanmausinterface.hpp"
+#include "xpressnetinterface.hpp"
+#include "z21interface.hpp"
+
+tcb::span<const std::string_view> Interfaces::classList()
+{
+  static constexpr auto classes = makeArray(
+    DCCEXInterface::classId,
+    ECoSInterface::classId,
+    HSI88Interface::classId,
+    LocoNetInterface::classId,
+    MarklinCANInterface::classId,
+    TraintasticDIYInterface::classId,
+    WiThrottleInterface::classId,
+    WlanMausInterface::classId,
+    XpressNetInterface::classId,
+    Z21Interface::classId
+  );
+  return classes;
+}
 
 std::shared_ptr<Interface> Interfaces::create(World& world, std::string_view classId, std::string_view id)
 {

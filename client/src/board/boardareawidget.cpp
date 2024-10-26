@@ -32,6 +32,7 @@
 #include "getboardcolorscheme.hpp"
 #include "tilepainter.hpp"
 #include "../network/board.hpp"
+#include "../network/callmethod.hpp"
 #include "../network/object.tpp"
 #include "../network/object/blockrailtile.hpp"
 #include "../network/object/nxbuttonrailtile.hpp"
@@ -39,6 +40,7 @@
 #include "../network/abstractvectorproperty.hpp"
 #include "../utils/enum.hpp"
 #include "../utils/rectf.hpp"
+#include "../misc/mimedata.hpp"
 #include "../settings/boardsettings.hpp"
 
 QRect rectToViewport(const QRect& r, const int gridSize)
@@ -84,6 +86,7 @@ BoardAreaWidget::BoardAreaWidget(BoardWidget& board, QWidget* parent) :
 {
   setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
   setFocusPolicy(Qt::StrongFocus);
+  setAcceptDrops(true);
 
   if(Q_LIKELY(m_boardLeft))
     connect(m_boardLeft, &AbstractProperty::valueChanged, this, &BoardAreaWidget::updateMinimumSize);
@@ -835,6 +838,65 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
     case MouseMoveAction::None:
       break;
   }
+}
+
+void BoardAreaWidget::dragEnterEvent(QDragEnterEvent *event)
+{
+  if(event->mimeData()->hasFormat(AssignTrainMimeData::mimeType))
+  {
+    m_dragMoveTileLocation = TileLocation::invalid;
+    event->acceptProposedAction();
+  }
+}
+
+void BoardAreaWidget::dragMoveEvent(QDragMoveEvent* event)
+{
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+  const TileLocation l = pointToTileLocation(event->pos());
+#else
+  const TileLocation l = pointToTileLocation(event->position().toPoint());
+#endif
+
+  if(m_dragMoveTileLocation != l)
+  {
+    m_dragMoveTileLocation = l;
+    if(event->mimeData()->hasFormat(AssignTrainMimeData::mimeType) &&
+        m_board.board().getTileId(l) == TileId::RailBlock)
+    {
+      return event->accept();
+    }
+    event->ignore();
+  }
+}
+
+void BoardAreaWidget::dropEvent(QDropEvent* event)
+{
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+  const TileLocation l = pointToTileLocation(event->pos());
+#else
+  const TileLocation l = pointToTileLocation(event->position().toPoint());
+#endif
+
+  switch(m_board.board().getTileId(l))
+  {
+    case TileId::RailBlock:
+      if(auto* assignTrain = dynamic_cast<const AssignTrainMimeData*>(event->mimeData()))
+      {
+        if(auto tile = std::dynamic_pointer_cast<BlockRailTile>(m_board.board().getTileObject(l)))
+        {
+          if(auto* method = tile->getMethod("assign_train"))
+          {
+            callMethod(*method, nullptr, assignTrain->trainId());
+            return event->accept();
+          }
+        }
+      }
+      break;
+
+    default:
+      break;
+  }
+  event->ignore();
 }
 
 void BoardAreaWidget::settingsChanged()

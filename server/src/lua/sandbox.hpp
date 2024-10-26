@@ -130,6 +130,7 @@ class Sandbox
     static StateData& getStateData(lua_State* L);
     static int getGlobal(lua_State* L, const char* name);
     static int pcall(lua_State* L, int nargs = 0, int nresults = 0, int errfunc = 0);
+    static void syncPersistentVariables(lua_State* L);
 };
 
 }

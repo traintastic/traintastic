@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,7 +46,7 @@ InterfaceList::InterfaceList(Object& _parent, std::string_view parentPropertyNam
 
   Attributes::addDisplayName(create, DisplayName::List::create);
   Attributes::addEnabled(create, editable);
-  Attributes::addClassList(create, Interfaces::classList);
+  Attributes::addClassList(create, Interfaces::classList());
   m_interfaceItems.add(create);
 
   Attributes::addDisplayName(delete_, DisplayName::List::delete_);

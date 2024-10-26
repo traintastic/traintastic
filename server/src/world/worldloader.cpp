@@ -36,10 +36,12 @@
 #include "../board/board.hpp"
 #include "../board/tile/tiles.hpp"
 #include "../hardware/interface/interfaces.hpp"
+#include "../hardware/interface/dccexinterface.hpp" //! \todo Remove in v0.4
 #include "../hardware/decoder/decoder.hpp"
 #include "../hardware/decoder/decoderfunction.hpp"
 #include "../hardware/identification/identification.hpp"
 #include "../vehicle/rail/railvehicles.hpp"
+#include "../vehicle/rail/freightwagon.hpp" //! \todo Remove in v0.4
 #include "../train/train.hpp"
 #include "../train/trainblockstatus.hpp"
 #include "../lua/script.hpp"

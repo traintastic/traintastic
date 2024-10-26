@@ -171,7 +171,6 @@ MainWindow::MainWindow(QWidget* parent) :
           if(const ObjectPtr& traintastic = m_connection->traintastic())
             traintastic->callMethod("close_world");
       });
-    m_actionCloseWorld->setShortcut(QKeySequence::Close);
     menu->addSeparator();
     m_actionImportWorld = menu->addAction(Theme::getIcon("world_import"), Locale::tr("qtapp.mainmenu:import_world") + "...",
       [this]()

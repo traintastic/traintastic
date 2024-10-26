@@ -28,7 +28,7 @@
 #include "../../../map/node.hpp"
 #include "../../../../core/objectproperty.hpp"
 #include "../../../../core/method.hpp"
-#include "../../../../enum/turnoutposition.hpp"
+#include <traintastic/enum/turnoutposition.hpp>
 #include "../../../../hardware/output/map/turnoutoutputmap.hpp"
 
 class BlockPath;

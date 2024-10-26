@@ -31,6 +31,8 @@
 
 namespace Lua {
 
+constexpr char const* eventsGlobal = "events";
+
 struct EventData
 {
   ObjectPtrWeak object;
@@ -65,9 +67,18 @@ AbstractEvent* Event::test(lua_State* L, int index)
 
 void Event::push(lua_State* L, AbstractEvent& value)
 {
-  new(lua_newuserdata(L, sizeof(EventData))) EventData(value);
-  luaL_getmetatable(L, metaTableName);
-  lua_setmetatable(L, -2);
+  lua_getglobal(L, eventsGlobal);
+  lua_rawgetp(L, -1, &value);
+  if(lua_isnil(L, -1)) // event not in table
+  {
+    lua_pop(L, 1); // remove nil
+    new(lua_newuserdata(L, sizeof(EventData))) EventData(value);
+    luaL_setmetatable(L, metaTableName);
+    lua_pushvalue(L, -1); // copy userdata on stack
+    lua_rawsetp(L, -3, &value); // add event to table
+  }
+  lua_insert(L, lua_gettop(L) - 1); // swap table and userdata
+  lua_pop(L, 1); // remove table
 }
 
 void Event::registerType(lua_State* L)
@@ -80,6 +91,15 @@ void Event::registerType(lua_State* L)
   lua_pushcfunction(L, __gc);
   lua_setfield(L, -2, "__gc");
   lua_pop(L, 1);
+
+  // weak table for event userdata:
+  lua_newtable(L);
+  lua_newtable(L); // metatable
+  lua_pushliteral(L, "__mode");
+  lua_pushliteral(L, "v");
+  lua_rawset(L, -3);
+  lua_setmetatable(L, -2);
+  lua_setglobal(L, eventsGlobal);
 }
 
 int Event::__index(lua_State* L)

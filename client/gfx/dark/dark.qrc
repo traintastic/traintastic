@@ -93,5 +93,6 @@
         <file>board_tile.misc.switch.svg</file>
         <file>board_tile.misc.label.svg</file>
         <file>zone.svg</file>
+        <file>clear_persistent_variables.svg</file>
     </qresource>
 </RCC>

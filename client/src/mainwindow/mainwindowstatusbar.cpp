@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,6 +32,7 @@
 #include "../settings/statusbarsettings.hpp"
 #include "../widget/status/interfacestatuswidget.hpp"
 #include "../widget/status/luastatuswidget.hpp"
+#include "../widget/status/simulationstatuswidget.hpp"
 
 MainWindowStatusBar::MainWindowStatusBar(MainWindow& mainWindow)
   : QStatusBar(&mainWindow)
@@ -148,6 +149,8 @@ void MainWindowStatusBar::updateStatuses()
             m_statuses->layout()->addWidget(new InterfaceStatusWidget(object, this));
           else if(object->classId() == "status.lua")
             m_statuses->layout()->addWidget(new LuaStatusWidget(object, this));
+          else if(object->classId() == "status.simulation")
+            m_statuses->layout()->addWidget(new SimulationStatusWidget(object, this));
         }
       });
   }

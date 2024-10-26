@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,8 @@
 #include <QHeaderView>
 #include <QScrollBar>
 #include <QSettings>
+#include <QMouseEvent>
+#include <QApplication>
 #include "../network/tablemodel.hpp"
 
 TableWidget::TableWidget(QWidget* parent) :
@@ -112,4 +114,24 @@ void TableWidget::updateRegion()
     columnMax = qMin(columnMax + 1, columnCount - 1);
 
   m_model->setRegion(columnMin, columnMax, rowMin, rowMax);
+}
+
+void TableWidget::mouseMoveEvent(QMouseEvent* event)
+{
+  QTableView::mouseMoveEvent(event);
+
+  if(event->button() == Qt::LeftButton)
+  {
+    m_dragStartPosition = event->pos();
+  }
+}
+
+void TableWidget::mousePressEvent(QMouseEvent* event)
+{
+  QTableView::mousePressEvent(event);
+
+  if((event->buttons() & Qt::LeftButton) && (event->pos() - m_dragStartPosition).manhattanLength() >= QApplication::startDragDistance())
+  {
+    emit rowDragged(indexAt(m_dragStartPosition).row());
+  }
 }
