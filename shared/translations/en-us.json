@@ -6433,6 +6433,10 @@
         "definition": "No smoke"
     },
     {
+        "term": "list.zone:highlight_zone",
+        "definition": "Highlight zone"
+    },
+    {
         "term": "message:I9003",
         "definition": "Cleared persistent variables"
     },

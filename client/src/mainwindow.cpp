@@ -39,6 +39,7 @@
 #include <traintastic/utils/standardpaths.hpp>
 #include "mdiarea.hpp"
 #include "mainwindow/mainwindowstatusbar.hpp"
+#include "board/blockhighlight.hpp"
 #include "clock/clock.hpp"
 #include "dialog/connectdialog.hpp"
 #include "settings/settingsdialog.hpp"
@@ -111,6 +112,7 @@ MainWindow::MainWindow(QWidget* parent) :
   m_mdiArea{new MdiArea(m_splitter)},
   m_statusBar{new MainWindowStatusBar(*this)},
   m_serverLog{nullptr},
+  m_blockHighlight{new BlockHighlight(this)},
   m_toolbar{new QToolBar(this)}
 {
   instance = this;

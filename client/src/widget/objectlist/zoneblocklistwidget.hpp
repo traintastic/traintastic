@@ -1,9 +1,9 @@
 /**
- * client/src/widget/list/listwidget.hpp
+ * client/src/widget/objectlist/zoneblocklistwidget.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,33 +20,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_LIST_LISTWIDGET_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_LIST_LISTWIDGET_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_OBJECTLIST_ZONEBLOCKLISTWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_OBJECTLIST_ZONEBLOCKLISTWIDGET_HPP
 
-#include <QWidget>
-#include "../../network/objectptr.hpp"
-#include "../../network/tablemodelptr.hpp"
+#include "objectlistwidget.hpp"
+#include <traintastic/enum/color.hpp>
 
-class TableWidget;
-
-class ListWidget : public QWidget
+class ZoneBlockListWidget : public ObjectListWidget
 {
 private:
-  ObjectPtr m_object;
-  int m_requestId;
+  Color m_highlightColor = Color::None;
+  QStringList m_highlight;
+  QAction* m_actionHighlight;
+
+  void updateHighlight();
 
 protected:
-  TableWidget* m_tableWidget;
-
-  const ObjectPtr& object() const { return m_object; }
-
-  virtual void setTableModel(const TableModelPtr& tableModel);
-  virtual void tableSelectionChanged() {}
-  virtual void tableDoubleClicked(const QModelIndex& /*index*/) {}
+  void setTableModel(const TableModelPtr& tableModel) override;
 
 public:
-  explicit ListWidget(const ObjectPtr& object, QWidget* parent = nullptr);
-  ~ListWidget() override;
+  explicit ZoneBlockListWidget(const ObjectPtr& object, QWidget* parent = nullptr);
+  ~ZoneBlockListWidget() override;
 };
 
 #endif

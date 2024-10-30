@@ -1,9 +1,9 @@
 /**
- * client/src/widget/list/listwidget.hpp
+ * client/src/misc/colorpool.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,33 +20,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_LIST_LISTWIDGET_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_LIST_LISTWIDGET_HPP
+#include "colorpool.hpp"
 
-#include <QWidget>
-#include "../../network/objectptr.hpp"
-#include "../../network/tablemodelptr.hpp"
-
-class TableWidget;
-
-class ListWidget : public QWidget
+ColorPool::ColorPool(std::initializer_list<Color> colors)
 {
-private:
-  ObjectPtr m_object;
-  int m_requestId;
+  m_colors.reserve(colors.size());
+  for(auto color : colors)
+  {
+    m_colors.emplace_back(std::make_pair(color, false));
+  }
+}
 
-protected:
-  TableWidget* m_tableWidget;
+Color ColorPool::aquire()
+{
+  for(auto& item : m_colors)
+  {
+    if(!item.second)
+    {
+      item.second = true;
+      return item.first;
+    }
+  }
+  return Color::None;
+}
 
-  const ObjectPtr& object() const { return m_object; }
-
-  virtual void setTableModel(const TableModelPtr& tableModel);
-  virtual void tableSelectionChanged() {}
-  virtual void tableDoubleClicked(const QModelIndex& /*index*/) {}
-
-public:
-  explicit ListWidget(const ObjectPtr& object, QWidget* parent = nullptr);
-  ~ListWidget() override;
-};
-
-#endif
+void ColorPool::release(Color color)
+{
+  for(auto& item: m_colors)
+  {
+    if(item.first == color)
+    {
+      item.second = false;
+      break;
+    }
+  }
+}

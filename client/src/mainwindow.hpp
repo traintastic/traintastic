@@ -47,6 +47,7 @@ class IntroductionWizard;
 class AddInterfaceWizard;
 class NewBoardWizard;
 class WorldListDialog;
+class BlockHighlight;
 
 class MainWindow final : public QMainWindow
 {
@@ -67,6 +68,7 @@ class MainWindow final : public QMainWindow
     QMdiSubWindow* m_clockWindow = nullptr;
     QMap<QString, SubWindow*> m_subWindows;
     QMdiSubWindow* m_trainAndRailVehiclesSubWindow = nullptr;
+    BlockHighlight* m_blockHighlight;
     // Main menu:
     QAction* m_actionConnectToServer;
     QAction* m_actionDisconnectFromServer;
@@ -132,6 +134,11 @@ class MainWindow final : public QMainWindow
 
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow() final;
+
+    BlockHighlight& blockHighlight()
+    {
+      return *m_blockHighlight;
+    }
 
     const std::shared_ptr<Connection>& connection() { return m_connection; }
 

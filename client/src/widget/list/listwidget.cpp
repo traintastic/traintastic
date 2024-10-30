@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,20 +53,7 @@ ListWidget::ListWidget(const ObjectPtr& object, QWidget* parent)
       if(tableModel)
       {
         m_requestId = Connection::invalidRequestId;
-
-        m_tableWidget->setTableModel(tableModel);
-        connect(m_tableWidget, &TableWidget::doubleClicked, this,
-          [this](const QModelIndex& index)
-          {
-            tableDoubleClicked(index);
-          });
-        connect(m_tableWidget->selectionModel(), &QItemSelectionModel::selectionChanged, this,
-          [this](const QItemSelection&, const QItemSelection&)
-          {
-            tableSelectionChanged();
-          });
-        tableSelectionChanged();
-
+        setTableModel(tableModel);
         delete spinner;
       }
       else if(error)
@@ -83,4 +70,20 @@ ListWidget::ListWidget(const ObjectPtr& object, QWidget* parent)
 ListWidget::~ListWidget()
 {
   object()->connection()->cancelRequest(m_requestId);
+}
+
+void ListWidget::setTableModel(const TableModelPtr& tableModel)
+{
+  m_tableWidget->setTableModel(tableModel);
+  connect(m_tableWidget, &TableWidget::doubleClicked, this,
+    [this](const QModelIndex& index)
+    {
+      tableDoubleClicked(index);
+    });
+  connect(m_tableWidget->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+    [this](const QItemSelection&, const QItemSelection&)
+    {
+      tableSelectionChanged();
+    });
+  tableSelectionChanged();
 }
