@@ -6423,5 +6423,9 @@
     {
         "term": "lua.script:clear_persistent_variables",
         "definition": "Clear persistent variables"
+    },
+    {
+        "term": "speed_limit_property:no_limit",
+        "definition": "No limit"
     }
 ]
