@@ -40,6 +40,7 @@
 #include "../propertydirectioncontrol.hpp"
 #include "../propertyvaluelabel.hpp"
 #include "../methodpushbutton.hpp"
+#include "../unitpropertycombobox.hpp"
 #include "../unitpropertyedit.hpp"
 #include "../createwidget.hpp"
 #include "../../theme/theme.hpp"
@@ -107,7 +108,16 @@ void ObjectEditWidget::buildForm()
           {
             Property* property = static_cast<Property*>(baseProperty);
             if(UnitProperty* unitProperty = dynamic_cast<UnitProperty*>(property))
-              w = new UnitPropertyEdit(*unitProperty, this);
+            {
+              if(unitProperty->hasAttribute(AttributeName::Values))
+              {
+                w = new UnitPropertyComboBox(*unitProperty, this);
+              }
+              else
+              {
+                w = new UnitPropertyEdit(*unitProperty, this);
+              }
+            }
             else if(!property->isWritable())
               w = new PropertyValueLabel(*property, this);
             else if(property->type() == ValueType::Boolean)
