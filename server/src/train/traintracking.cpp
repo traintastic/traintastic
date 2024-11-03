@@ -325,4 +325,8 @@ void TrainTracking::trainEnteredOrLeftZone(Train& train, Zone& zone)
   {
     train.updateNoSmoke();
   }
+  if(zone.speedLimit.hasLimit())
+  {
+    train.updateSpeedLimit();
+  }
 }

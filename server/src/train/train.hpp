@@ -100,6 +100,7 @@ class Train : public IdObject
     Property<bool> isStopped;
     SpeedProperty speed;
     SpeedProperty speedMax;
+    SpeedProperty speedLimit;
     SpeedProperty throttleSpeed;
     Method<void()> stop;
     Property<bool> emergencyStop;
@@ -134,6 +135,7 @@ class Train : public IdObject
 
     void updateMute();
     void updateNoSmoke();
+    void updateSpeedLimit();
 
     void fireBlockAssigned(const std::shared_ptr<BlockRailTile>& block);
     void fireBlockRemoved(const std::shared_ptr<BlockRailTile>& block);

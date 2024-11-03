@@ -27,6 +27,7 @@
 #include "../core/event.hpp"
 #include "../core/objectproperty.hpp"
 #include "../core/objectvectorproperty.hpp"
+#include "../core/speedlimitproperty.hpp"
 #include "../train/trainzonestatus.hpp"
 
 class ZoneBlockList;
@@ -59,6 +60,7 @@ public:
   Property<std::string> name;
   Property<bool> mute;
   Property<bool> noSmoke;
+  SpeedLimitProperty speedLimit;
   ObjectProperty<ZoneBlockList> blocks;
   ObjectVectorProperty<TrainZoneStatus> trains;
   Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onTrainAssigned;

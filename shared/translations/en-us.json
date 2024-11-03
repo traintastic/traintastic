@@ -6437,6 +6437,10 @@
         "definition": "Highlight zone"
     },
     {
+        "term": "zone:speed_limit",
+        "definition": "Speed limit"
+    },
+    {
         "term": "message:I9003",
         "definition": "Cleared persistent variables"
     },

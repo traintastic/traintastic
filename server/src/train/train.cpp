@@ -77,6 +77,7 @@ Train::Train(World& world, std::string_view _id) :
   isStopped{this, "is_stopped", true, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   speed{*this, "speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
   speedMax{*this, "speed_max", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
+  speedLimit{*this, "speed_limit", SpeedLimitProperty::noLimitValue, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   throttleSpeed{*this, "throttle_speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
     [this](double value, SpeedUnit unit)
     {
@@ -182,6 +183,10 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addMinMax(speed, 0., 0., SpeedUnit::KiloMeterPerHour);
   m_interfaceItems.add(speed);
   m_interfaceItems.add(speedMax);
+
+  Attributes::addObjectEditor(speedLimit, false);
+  m_interfaceItems.add(speedLimit);
+
   Attributes::addMinMax(throttleSpeed, 0., 0., SpeedUnit::KiloMeterPerHour);
   Attributes::addEnabled(throttleSpeed, false);
   Attributes::addObjectEditor(throttleSpeed, false);
@@ -257,6 +262,7 @@ void Train::updateMute()
   if(value != mute)
   {
     mute.setValueInternal(value);
+    //! \todo Apply to train
   }
 }
 
@@ -277,6 +283,27 @@ void Train::updateNoSmoke()
   if(value != noSmoke)
   {
     noSmoke.setValueInternal(value);
+    //! \todo Apply to train
+  }
+}
+
+void Train::updateSpeedLimit()
+{
+  double value = SpeedLimitProperty::noLimitValue;
+  SpeedUnit unit = speedLimit.unit();
+  for(const auto& zoneStatus : zones)
+  {
+    const auto& zoneSpeedLimit = zoneStatus->zone->speedLimit;
+    if(zoneSpeedLimit.getValue(unit) < value)
+    {
+      unit = zoneSpeedLimit.unit();
+      value = zoneSpeedLimit.getValue(unit);
+    }
+  }
+  if(value != speedLimit.getValue(unit))
+  {
+    speedLimit.setValueInternal(value, unit);
+    //! \todo Apply to train
   }
 }
 

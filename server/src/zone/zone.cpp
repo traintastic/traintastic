@@ -52,6 +52,14 @@ Zone::Zone(World& world, std::string_view id_)
           status->train->updateNoSmoke();
         }
       }}
+  , speedLimit{*this, "speed_limit", SpeedLimitProperty::noLimitValue, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly,
+      [this](double /*value*/, SpeedUnit /*unit*/)
+      {
+        for(auto& status : trains)
+        {
+          status->train->updateSpeedLimit();
+        }
+      }}
   , blocks{this, "blocks", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , trains{*this, "trains", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
   , onTrainAssigned{*this, "on_train_assigned", EventFlags::Scriptable}
@@ -74,6 +82,9 @@ Zone::Zone(World& world, std::string_view id_)
 
   Attributes::addEnabled(noSmoke, editable);
   m_interfaceItems.add(noSmoke);
+
+  Attributes::addEnabled(speedLimit, editable);
+  m_interfaceItems.add(speedLimit);
 
   m_interfaceItems.add(blocks);
 
@@ -105,7 +116,7 @@ void Zone::worldEvent(WorldState worldState, WorldEvent worldEvent)
 
   const bool editable = contains(worldState, WorldState::Edit);
 
-  Attributes::setEnabled({name, mute, noSmoke}, editable);
+  Attributes::setEnabled({name, mute, noSmoke, speedLimit}, editable);
 }
 
 void Zone::addToWorld()
