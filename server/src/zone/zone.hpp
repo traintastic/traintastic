@@ -44,6 +44,7 @@ class Zone : public IdObject
 protected:
   void worldEvent(WorldState worldState, WorldEvent worldEvent) override;
   void addToWorld() override;
+  void destroying() override;
 
   void fireTrainAssigned(const std::shared_ptr<Train>& train);
   void fireTrainEntering(const std::shared_ptr<Train>& train);

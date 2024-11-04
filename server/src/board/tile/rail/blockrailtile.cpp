@@ -33,6 +33,7 @@
 #include "../../../train/traintracking.hpp"
 #include "../../../utils/displayname.hpp"
 #include "../../../zone/blockzonelist.hpp"
+#include "../../../zone/zoneblocklist.hpp"
 #include "../../list/blockrailtilelist.hpp"
 #include "../../list/blockrailtilelisttablemodel.hpp"
 #include "../../map/blockpath.hpp"
@@ -568,6 +569,10 @@ void BlockRailTile::destroying()
   while(!trains.empty())
   {
     trains.back()->destroy();
+  }
+  for(const auto& zone : *zones)
+  {
+    zone->blocks->remove(self);
   }
   m_world.blockRailTiles->removeObject(self);
   RailTile::destroying();

@@ -24,6 +24,7 @@
 #include "zoneblocklist.hpp"
 #include "zonelist.hpp"
 #include "zonelisttablemodel.hpp"
+#include "blockzonelist.hpp"
 #include "../core/attributes.hpp"
 #include "../core/objectproperty.tpp"
 #include "../core/objectvectorproperty.tpp"
@@ -124,6 +125,17 @@ void Zone::addToWorld()
   IdObject::addToWorld();
 
   m_world.zones->addObject(shared_ptr<Zone>());
+}
+
+void Zone::destroying()
+{
+  auto self = shared_ptr<Zone>();
+  for(const auto& block : *blocks)
+  {
+    block->zones->remove(self);
+  }
+  m_world.zones->removeObject(self);
+  IdObject::destroying();
 }
 
 void Zone::fireTrainAssigned(const std::shared_ptr<Train>& train)
