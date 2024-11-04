@@ -26,6 +26,7 @@
 #include "../src/core/objectproperty.tpp"
 #include "../src/board/board.hpp"
 #include "../src/board/boardlist.hpp"
+#include "../src/board/tile/rail/blockrailtile.hpp"
 #include "../src/hardware/decoder/list/decoderlist.hpp"
 #include "../src/hardware/interface/interfacelist.hpp"
 #include "../src/hardware/input/input.hpp"
@@ -36,6 +37,10 @@
 #include "vehicle/rail/railvehicles.hpp"
 #include "../src/train/trainlist.hpp"
 #include "../src/train/train.hpp"
+#include "../src/zone/zonelist.hpp"
+#include "../src/zone/zone.hpp"
+#include "../src/zone/zoneblocklist.hpp"
+#include "../src/zone/blockzonelist.hpp"
 
 TEST_CASE("Create world => destroy world", "[object-create-destroy]")
 {
@@ -443,5 +448,196 @@ TEST_CASE("Create world and train => destroy train", "[object-create-destroy]")
   REQUIRE(worldWeak.lock()->trains->length == 0);
 
   world.reset();
+  REQUIRE(worldWeak.expired());
+}
+
+TEST_CASE("Create world and zone => destroy world", "[object-create-destroy]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+
+  std::weak_ptr<Zone> zoneWeak = world->zones->create();
+  REQUIRE_FALSE(zoneWeak.expired());
+  REQUIRE(zoneWeak.lock()->getClassId() == Zone::classId);
+
+  world.reset();
+  REQUIRE(zoneWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
+TEST_CASE("Create world and zone => destroy zone", "[object-create-destroy]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(worldWeak.lock()->zones->length == 0);
+
+  std::weak_ptr<Zone> zoneWeak = world->zones->create();
+  REQUIRE_FALSE(zoneWeak.expired());
+  REQUIRE(worldWeak.lock()->zones->length == 1);
+
+  world->zones->delete_(zoneWeak.lock());
+  REQUIRE(zoneWeak.expired());
+  REQUIRE(worldWeak.lock()->zones->length == 0);
+
+  world.reset();
+  REQUIRE(worldWeak.expired());
+}
+
+TEST_CASE("Create world, board, block and zone => destroy world", "[object-create-destroy]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(worldWeak.lock()->boards->length == 0);
+  REQUIRE(worldWeak.lock()->zones->length == 0);
+
+  std::weak_ptr<Board> boardWeak = world->boards->create();
+  REQUIRE_FALSE(boardWeak.expired());
+  REQUIRE(worldWeak.lock()->boards->length == 1);
+
+  REQUIRE(boardWeak.lock()->addTile(0, 0, TileRotate::Deg0, BlockRailTile::classId, false));
+  std::weak_ptr<BlockRailTile> blockWeak = std::dynamic_pointer_cast<BlockRailTile>(boardWeak.lock()->getTile({0, 0}));
+  REQUIRE_FALSE(blockWeak.expired());
+
+  std::weak_ptr<Zone> zoneWeak = world->zones->create();
+  REQUIRE_FALSE(zoneWeak.expired());
+  REQUIRE(worldWeak.lock()->zones->length == 1);
+
+  REQUIRE(blockWeak.lock()->zones->length == 0);
+  REQUIRE(zoneWeak.lock()->blocks->length == 0);
+  zoneWeak.lock()->blocks->add(blockWeak.lock());
+  REQUIRE(blockWeak.lock()->zones->length == 1);
+  REQUIRE(blockWeak.lock()->zones->front() == zoneWeak.lock());
+  REQUIRE(zoneWeak.lock()->blocks->length == 1);
+  REQUIRE(zoneWeak.lock()->blocks->front() == blockWeak.lock());
+
+  world.reset();
+  REQUIRE(blockWeak.expired());
+  REQUIRE(boardWeak.expired());
+  REQUIRE(zoneWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
+TEST_CASE("Create world, board, block and zone => destroy board", "[object-create-destroy]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(worldWeak.lock()->boards->length == 0);
+  REQUIRE(worldWeak.lock()->zones->length == 0);
+
+  std::weak_ptr<Board> boardWeak = world->boards->create();
+  REQUIRE_FALSE(boardWeak.expired());
+  REQUIRE(worldWeak.lock()->boards->length == 1);
+
+  REQUIRE(boardWeak.lock()->addTile(0, 0, TileRotate::Deg0, BlockRailTile::classId, false));
+  std::weak_ptr<BlockRailTile> blockWeak = std::dynamic_pointer_cast<BlockRailTile>(boardWeak.lock()->getTile({0, 0}));
+  REQUIRE_FALSE(blockWeak.expired());
+
+  std::weak_ptr<Zone> zoneWeak = world->zones->create();
+  REQUIRE_FALSE(zoneWeak.expired());
+  REQUIRE(worldWeak.lock()->zones->length == 1);
+
+  REQUIRE(blockWeak.lock()->zones->length == 0);
+  REQUIRE(zoneWeak.lock()->blocks->length == 0);
+  zoneWeak.lock()->blocks->add(blockWeak.lock());
+  REQUIRE(blockWeak.lock()->zones->length == 1);
+  REQUIRE(blockWeak.lock()->zones->front() == zoneWeak.lock());
+  REQUIRE(zoneWeak.lock()->blocks->length == 1);
+  REQUIRE(zoneWeak.lock()->blocks->front() == blockWeak.lock());
+
+  world->boards->delete_(boardWeak.lock());
+  REQUIRE(blockWeak.expired());
+  REQUIRE(boardWeak.expired());
+  REQUIRE_FALSE(zoneWeak.expired());
+  REQUIRE(zoneWeak.lock()->blocks->length == 0);
+  REQUIRE_FALSE(worldWeak.expired());
+
+  world.reset();
+  REQUIRE(zoneWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
+TEST_CASE("Create world, board, block and zone => destroy block", "[object-create-destroy]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(worldWeak.lock()->boards->length == 0);
+  REQUIRE(worldWeak.lock()->zones->length == 0);
+
+  std::weak_ptr<Board> boardWeak = world->boards->create();
+  REQUIRE_FALSE(boardWeak.expired());
+  REQUIRE(worldWeak.lock()->boards->length == 1);
+
+  REQUIRE(boardWeak.lock()->addTile(0, 0, TileRotate::Deg0, BlockRailTile::classId, false));
+  std::weak_ptr<BlockRailTile> blockWeak = std::dynamic_pointer_cast<BlockRailTile>(boardWeak.lock()->getTile({0, 0}));
+  REQUIRE_FALSE(blockWeak.expired());
+
+  std::weak_ptr<Zone> zoneWeak = world->zones->create();
+  REQUIRE_FALSE(zoneWeak.expired());
+  REQUIRE(worldWeak.lock()->zones->length == 1);
+
+  REQUIRE(blockWeak.lock()->zones->length == 0);
+  REQUIRE(zoneWeak.lock()->blocks->length == 0);
+  zoneWeak.lock()->blocks->add(blockWeak.lock());
+  REQUIRE(blockWeak.lock()->zones->length == 1);
+  REQUIRE(blockWeak.lock()->zones->front() == zoneWeak.lock());
+  REQUIRE(zoneWeak.lock()->blocks->length == 1);
+  REQUIRE(zoneWeak.lock()->blocks->front() == blockWeak.lock());
+
+  REQUIRE(boardWeak.lock()->deleteTile(0, 0));
+  REQUIRE(blockWeak.expired());
+  REQUIRE_FALSE(boardWeak.expired());
+  REQUIRE_FALSE(zoneWeak.expired());
+  REQUIRE(zoneWeak.lock()->blocks->length == 0);
+  REQUIRE_FALSE(worldWeak.expired());
+
+  world.reset();
+  REQUIRE(boardWeak.expired());
+  REQUIRE(zoneWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
+TEST_CASE("Create world, board, block and zone => destroy zone", "[object-create-destroy]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(worldWeak.lock()->boards->length == 0);
+  REQUIRE(worldWeak.lock()->zones->length == 0);
+
+  std::weak_ptr<Board> boardWeak = world->boards->create();
+  REQUIRE_FALSE(boardWeak.expired());
+  REQUIRE(worldWeak.lock()->boards->length == 1);
+
+  REQUIRE(boardWeak.lock()->addTile(0, 0, TileRotate::Deg0, BlockRailTile::classId, false));
+  std::weak_ptr<BlockRailTile> blockWeak = std::dynamic_pointer_cast<BlockRailTile>(boardWeak.lock()->getTile({0, 0}));
+  REQUIRE_FALSE(blockWeak.expired());
+
+  std::weak_ptr<Zone> zoneWeak = world->zones->create();
+  REQUIRE_FALSE(zoneWeak.expired());
+  REQUIRE(worldWeak.lock()->zones->length == 1);
+
+  REQUIRE(blockWeak.lock()->zones->length == 0);
+  REQUIRE(zoneWeak.lock()->blocks->length == 0);
+  zoneWeak.lock()->blocks->add(blockWeak.lock());
+  REQUIRE(blockWeak.lock()->zones->length == 1);
+  REQUIRE(blockWeak.lock()->zones->front() == zoneWeak.lock());
+  REQUIRE(zoneWeak.lock()->blocks->length == 1);
+  REQUIRE(zoneWeak.lock()->blocks->front() == blockWeak.lock());
+
+  world->zones->delete_(zoneWeak.lock());
+  REQUIRE(zoneWeak.expired());
+  REQUIRE_FALSE(blockWeak.expired());
+  REQUIRE(blockWeak.lock()->zones->length == 0);
+  REQUIRE_FALSE(boardWeak.expired());
+  REQUIRE_FALSE(worldWeak.expired());
+
+  world.reset();
+  REQUIRE(blockWeak.expired());
+  REQUIRE(boardWeak.expired());
   REQUIRE(worldWeak.expired());
 }
