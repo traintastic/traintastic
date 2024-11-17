@@ -58,6 +58,7 @@ file(GLOB SOURCES
   "src/board/nx/*.cpp"
   "src/board/tile/*.hpp"
   "src/board/tile/*.cpp"
+  "src/board/tile/hidden/*.cpp"
   "src/board/tile/misc/*.hpp"
   "src/board/tile/misc/*.cpp"
   "src/board/tile/rail/*.hpp"

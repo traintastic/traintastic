@@ -177,6 +177,7 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate, bool isRes
       break;
 
     case TileId::None:
+    case TileId::HiddenRailCrossOver:
     case TileId::ReservedForFutureExpension:
       break;
   }

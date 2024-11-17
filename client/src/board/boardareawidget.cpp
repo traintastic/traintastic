@@ -195,6 +195,7 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
     case TileId::RailTunnel:
     case TileId::RailOneWay:
     case TileId::RailLink:
+    case TileId::HiddenRailCrossOver:
     case TileId::ReservedForFutureExpension:
       break;
 

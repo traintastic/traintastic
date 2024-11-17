@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@
 
 class Tile;
 struct TileData;
+class HiddenCrossOverRailTile;
 
 class Board : public IdObject
 {
@@ -41,6 +42,7 @@ class Board : public IdObject
 
   private:
     bool m_modified = false;
+    std::unordered_map<TileLocation, std::shared_ptr<HiddenCrossOverRailTile>, TileLocationHash> m_railCrossOver;
 
     void modified();
     void removeTile(int16_t x, int16_t y);
@@ -101,6 +103,13 @@ class Board : public IdObject
 
       return {};
     }
+
+#ifdef TRAINTASTIC_TEST
+    const auto& railCrossOver() const
+    {
+      return m_railCrossOver;
+    }
+#endif
 };
 
 #endif
