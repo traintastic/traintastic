@@ -107,7 +107,7 @@ class BlockRailTile : public RailTile
     void inputItemValueChanged(BlockInputMapItem& item);
     void identificationEvent(BlockInputMapItem& item, IdentificationEventType eventType, uint16_t identifier, Direction direction, uint8_t category);
 
-    const std::shared_ptr<BlockPath> getReservedPath(BlockSide side) const;
+    std::shared_ptr<BlockPath> getReservedPath(BlockSide side) const;
     bool reserve(const std::shared_ptr<BlockPath>& blockPath, const std::shared_ptr<Train>& train, BlockSide side, bool dryRun = false);
     bool release(BlockSide side, bool dryRun = false);
 

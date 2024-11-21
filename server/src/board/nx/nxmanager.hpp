@@ -37,15 +37,15 @@ class NXManager : public SubObject
   private:
     std::list<std::weak_ptr<NXButtonRailTile>> m_pressedButtons;
 
-    bool selectPath(const NXButtonRailTile& from, const NXButtonRailTile& to);
+    static bool selectPath(const NXButtonRailTile& from, const NXButtonRailTile& to);
 
   public:
     Method<void(const std::shared_ptr<NXButtonRailTile>&, const std::shared_ptr<NXButtonRailTile>&)> select;
 
     NXManager(Object& parent_, std::string_view parentPropertyName);
 
-    void pressed(NXButtonRailTile& tile);
-    void released(NXButtonRailTile& tile);
+    void pressed(NXButtonRailTile& button);
+    void released(NXButtonRailTile& button);
 };
 
 #endif

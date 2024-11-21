@@ -332,7 +332,7 @@ BlockPath::BlockPath(BlockRailTile& block, BlockSide side)
 
 BlockPath::BlockPath(const BlockPath &other)
   : Path(other)
-  , std::enable_shared_from_this<BlockPath>()
+  , std::enable_shared_from_this<BlockPath>() // NOLINT(readability-redundant-member-init) -Wextra requires this
   , m_fromBlock(other.m_fromBlock)
   , m_fromSide(other.m_fromSide)
   , m_toBlock(other.m_toBlock)
@@ -384,7 +384,7 @@ bool BlockPath::isReady() const
     }
   }
 
-  for(const auto& [directionControlWeak, state] : m_directionControls)
+  for(const auto& [directionControlWeak, state] : m_directionControls) // NOLINT(readability-use-anyofallof)
   {
     auto directionControl = directionControlWeak.lock();
     if(!directionControl) /*[[unlikely]]*/

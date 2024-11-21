@@ -333,7 +333,7 @@ nlohmann::json PersistentVariables::toJSON(lua_State* L, int index)
           value.emplace("value", checkEnum(L, index, name.data()));
           return value;
         }
-        else if(contains(Sets::metaTableNames, name))
+        if(contains(Sets::metaTableNames, name))
         {
           auto value = nlohmann::json::object();
           value.emplace("type", std::string("set.").append(name));

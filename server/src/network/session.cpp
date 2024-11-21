@@ -459,11 +459,8 @@ bool Session::processMessage(const Message& message)
               m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), e.message(), e.args()));
               return true;
             }
-            else
-            {
-              // we can't report it back to the caller, so just log it.
-              Log::log(*object, e.message(), e.args());
-            }
+            // we can't report it back to the caller, so just log it.
+            Log::log(*object, e.message(), e.args());
           }
           catch(const std::exception& e)
           {

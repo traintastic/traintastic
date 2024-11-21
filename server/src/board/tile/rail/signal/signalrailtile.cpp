@@ -64,11 +64,11 @@ std::optional<OutputActionValue> SignalRailTile::getDefaultActionValue(SignalAsp
         {
           return static_cast<int16_t>(0);
         }
-        else if(signalAspect == SignalAspect::ProceedReducedSpeed)
+        if(signalAspect == SignalAspect::ProceedReducedSpeed)
         {
           return static_cast<int16_t>(1);
         }
-        else if(signalAspect == SignalAspect::Proceed)
+        if(signalAspect == SignalAspect::Proceed)
         {
           return static_cast<int16_t>(16);
         }

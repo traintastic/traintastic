@@ -42,7 +42,7 @@ class OutputMapPairOutputAction final : public OutputMapOutputAction
   public:
     Property<PairOutputAction> action;
 
-    OutputMapPairOutputAction(OutputMap& _parent, size_t outputIndex);
+    OutputMapPairOutputAction(OutputMap& parent_, size_t outputIndex);
 
     void execute() final;
 

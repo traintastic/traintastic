@@ -72,7 +72,7 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
           {
             // New interface doesn't support channel or channel has different output type.
             const auto channels = newValue->outputChannels();
-            auto it = std::find_if(channels.begin(), channels.end(),
+            const auto* it = std::find_if(channels.begin(), channels.end(),
               [&controller=*newValue, outputType=interface->outputType(channel)](OutputChannel outputChannel)
               {
                 return controller.outputType(outputChannel) == outputType;
@@ -599,7 +599,7 @@ int OutputMap::getMatchingActionOnCurrentState()
     {
       return i; // We got a full match
     }
-    else if(value == OutputMapItem::MatchResult::WildcardMatch)
+    if(value == OutputMapItem::MatchResult::WildcardMatch)
     {
       // We give wildcard matches a lower priority.
       // Save it for later, in the meantime we check for a better full match

@@ -162,7 +162,7 @@ void ClientKernel::receive(const Message& message)
 
           if(matchedRequest)
           {
-            auto msgData = matchedRequest.value().messageBytes.data();
+            auto* msgData = matchedRequest.value().messageBytes.data();
             const LanX& requestMsg = *reinterpret_cast<const LanX *>(msgData);
 
             // If we explicitly requested loco info then we treat it as external change
@@ -610,7 +610,7 @@ bool ClientKernel::setOutput(OutputChannel channel, uint16_t address, OutputValu
       });
     return true;
   }
-  else if(channel == OutputChannel::DCCext)
+  if(channel == OutputChannel::DCCext)
   {
     if(m_firmwareVersionMajor == 1 && m_firmwareVersionMinor < 40)
     {
@@ -1043,7 +1043,7 @@ void ClientKernel::rescheduleTimedoutRequests()
       request->retryCount--;
 
       // Re-schedule request
-      auto msgData = request->messageBytes.data();
+      const auto* msgData = request->messageBytes.data();
       const Message& requestMsg = *reinterpret_cast<const Message *>(msgData);
 
       // Send original request again but without adding it to pending queue

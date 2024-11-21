@@ -41,7 +41,7 @@ class OutputMapAspectOutputAction final : public OutputMapOutputAction
   public:
     Property<int16_t> aspect;
 
-    OutputMapAspectOutputAction(OutputMap& _parent, size_t outputIndex);
+    OutputMapAspectOutputAction(OutputMap& parent_, size_t outputIndex);
 
     void execute() final;
 

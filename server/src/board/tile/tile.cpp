@@ -59,7 +59,7 @@ Tile::Tile(World& world, std::string_view _id, TileId tileId_)
   m_interfaceItems.add(width);
 }
 
-std::optional<Connector> Tile::getConnector(Connector::Direction direction)
+std::optional<Connector> Tile::getConnector(Connector::Direction direction) const
 {
   std::vector<Connector> connectors;
   connectors.reserve(8);

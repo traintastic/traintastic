@@ -42,7 +42,7 @@ class OutputMapSingleOutputAction final : public OutputMapOutputAction
   public:
     Property<SingleOutputAction> action;
 
-    OutputMapSingleOutputAction(OutputMap& _parent, size_t outputIndex);
+    OutputMapSingleOutputAction(OutputMap& parent_, size_t outputIndex);
 
     void execute() final;
 

@@ -7,6 +7,10 @@ Checks: >
   -readability-identifier-length,
   -readability-magic-numbers
 
+WarningsAsErrors: >
+  readability-*,
+  -readability-function-cognitive-complexity
+
 CheckOptions:
   - {key: readability-identifier-naming.NamespaceCase, value: CamelCase}
   - {key: readability-identifier-naming.ClassCase, value: CamelCase}

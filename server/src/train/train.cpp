@@ -60,7 +60,7 @@ Train::Train(World& world, std::string_view _id) :
     [this](Direction value)
     {
       // update train direction from the block perspective:
-      for(auto& status : *blocks)
+      for(const auto& status : *blocks)
         status->direction.setValueInternal(!status->direction.value());
       blocks.reverseInternal(); // index 0 is head of train
 

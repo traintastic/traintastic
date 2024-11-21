@@ -92,7 +92,7 @@ void NXManager::released(NXButtonRailTile& button)
 
 bool NXManager::selectPath(const NXButtonRailTile& from, const NXButtonRailTile& to)
 {
-  for(auto& path : from.block->paths())
+  for(const auto& path : from.block->paths())
   {
     if(path->nxButtonTo().get() == &to && path->nxButtonFrom().get() == &from)
     {
