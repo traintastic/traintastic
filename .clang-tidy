@@ -1,6 +1,12 @@
 ---
 Checks: >
   -*,
+  misc-*,
+  -misc-no-recursion,
+  modernize-*,
+  -modernize-avoid-bind,
+  -modernize-avoid-c-arrays,
+  -modernize-use-trailing-return-type,
   readability-*,
   -readability-braces-around-statements,
   -readability-implicit-bool-conversion,
