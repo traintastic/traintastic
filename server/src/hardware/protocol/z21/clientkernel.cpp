@@ -821,7 +821,7 @@ void ClientKernel::startKeepAliveTimer()
   else
   {
     //Normal keep alive
-    assert(ClientConfig::keepAliveInterval > 0);
+    static_assert(ClientConfig::keepAliveInterval > 0);
     m_keepAliveTimer.expires_after(boost::asio::chrono::seconds(ClientConfig::keepAliveInterval));
   }
 
@@ -851,7 +851,7 @@ void ClientKernel::keepAliveTimerExpired(const boost::system::error_code& ec)
 
 void ClientKernel::startInactiveDecoderPurgeTimer()
 {
-  assert(ClientConfig::purgeInactiveDecoderInternal > 0);
+  static_assert(ClientConfig::purgeInactiveDecoderInternal > 0);
   m_inactiveDecoderPurgeTimer.expires_after(boost::asio::chrono::seconds(ClientConfig::purgeInactiveDecoderInternal));
   m_inactiveDecoderPurgeTimer.async_wait(std::bind(&ClientKernel::inactiveDecoderPurgeTimerExpired, this, std::placeholders::_1));
 }
