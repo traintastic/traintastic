@@ -43,7 +43,7 @@ Settings::PreStart Settings::getPreStartSettings(const std::filesystem::path& pa
     preStart.enableFileLogger = settings.value(Name::enableFileLogger, Default::enableFileLogger);
     return preStart;
   }
-  return PreStart();
+  return {};
 }
 
 Settings::Settings(const std::filesystem::path& path)
