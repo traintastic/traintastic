@@ -243,14 +243,6 @@
         "fuzzy": 0
     },
     {
-        "term": "category:trains",
-        "definition": "Treni",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "class_id:board_tile.misc.push_button",
         "definition": "Bottone",
         "context": "",

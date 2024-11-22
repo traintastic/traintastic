@@ -6139,7 +6139,7 @@
     },
     {
         "term": "output_map_item.switch.key:off",
-        "definition": "",
+        "definition": "Aus",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6175,7 +6175,7 @@
     },
     {
         "term": "sensor_state:free",
-        "definition": "",
+        "definition": "Frei",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6229,7 +6229,7 @@
     },
     {
         "term": "block_state:free",
-        "definition": "",
+        "definition": "Frei",
         "context": "",
         "term_plural": "",
         "reference": "",

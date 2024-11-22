@@ -5149,7 +5149,7 @@
     },
     {
         "term": "language:sv-se",
-        "definition": "",
+        "definition": "Su\u00e9dois",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5158,7 +5158,7 @@
     },
     {
         "term": "dccex_channel:dcc_accessory",
-        "definition": "",
+        "definition": "Accessoire DCC",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5167,7 +5167,7 @@
     },
     {
         "term": "dccex_channel:output",
-        "definition": "",
+        "definition": "Sortie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5320,7 +5320,7 @@
     },
     {
         "term": "output_map:add_address",
-        "definition": "",
+        "definition": "Ajouter adresse",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5329,7 +5329,7 @@
     },
     {
         "term": "output_map:remove_address",
-        "definition": "",
+        "definition": "Supprimer adresse",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5338,7 +5338,7 @@
     },
     {
         "term": "output_map:ecos_object",
-        "definition": "",
+        "definition": "Objet ECoS",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5347,7 +5347,7 @@
     },
     {
         "term": "output.ecos_object:state",
-        "definition": "",
+        "definition": "Etat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5356,7 +5356,7 @@
     },
     {
         "term": "wizard.new_world:title",
-        "definition": "",
+        "definition": "Cr\u00e9er nouveau monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5365,7 +5365,7 @@
     },
     {
         "term": "wizard.new_world.introduction:title",
-        "definition": "",
+        "definition": "Nouveau monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5374,7 +5374,7 @@
     },
     {
         "term": "wizard.new_world.introduction:text",
-        "definition": "",
+        "definition": "Cet assistant vous guidera dans les r\u00e9glages de base du monde.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5383,7 +5383,7 @@
     },
     {
         "term": "wizard.new_world.name:title",
-        "definition": "",
+        "definition": "Nom du monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5392,7 +5392,7 @@
     },
     {
         "term": "wizard.new_world.name:text",
-        "definition": "",
+        "definition": "Donnez un nom au monde, il sera visible lors du chargement.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5401,7 +5401,7 @@
     },
     {
         "term": "wizard.new_world.scale:title",
-        "definition": "",
+        "definition": "Echelle du monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5410,16 +5410,16 @@
     },
     {
         "term": "wizard.new_world.scale:text",
-        "definition": "",
+        "definition": "Choisir l'\u00e9chelle du monde, Traintastic l'utilisera pour les calculs de distance et de vitesse.",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": "",
+        "comment": "Error in english \"calcualtions\" -> calculations",
         "fuzzy": 0
     },
     {
         "term": "wizard.new_world.finalization:title",
-        "definition": "",
+        "definition": "Monde pr\u00eat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5437,7 +5437,7 @@
     },
     {
         "term": "qtapp.mainmenu:wizards",
-        "definition": "",
+        "definition": "Assistants",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5455,7 +5455,7 @@
     },
     {
         "term": "wizard.introduction.welcome:title",
-        "definition": "",
+        "definition": "Bienvenue !",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5473,7 +5473,7 @@
     },
     {
         "term": "wizard.introduction.world:title",
-        "definition": "",
+        "definition": "Le monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5491,7 +5491,7 @@
     },
     {
         "term": "wizard.introduction.edit_mode:title",
-        "definition": "",
+        "definition": "Mode \u00e9dition",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5509,7 +5509,7 @@
     },
     {
         "term": "wizard.introduction.forum:title",
-        "definition": "",
+        "definition": "Forum Traintastic",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5527,7 +5527,7 @@
     },
     {
         "term": "wizard.add_interface.welcome:title",
-        "definition": "",
+        "definition": "Ajouter une interface",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5563,7 +5563,7 @@
     },
     {
         "term": "wizard.add_interface.connection:title",
-        "definition": "",
+        "definition": "Connexion",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5572,7 +5572,7 @@
     },
     {
         "term": "wizard.add_interface.connection:text",
-        "definition": "",
+        "definition": "Comment est connect\u00e9 %command_station% ?",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5581,7 +5581,7 @@
     },
     {
         "term": "wizard.add_interface.connection:command_station_serial_port",
-        "definition": "",
+        "definition": "Port s\u00e9rie %command_station%",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5590,7 +5590,7 @@
     },
     {
         "term": "wizard.add_interface.connection:command_station_usb_port",
-        "definition": "",
+        "definition": "Port USB %command_station%",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5599,7 +5599,7 @@
     },
     {
         "term": "wizard.add_interface.connection:network",
-        "definition": "",
+        "definition": "R\u00e9seau",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5608,7 +5608,7 @@
     },
     {
         "term": "wizard.add_interface.connection:not_yet_supported",
-        "definition": "",
+        "definition": "Pas encore support\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5617,7 +5617,7 @@
     },
     {
         "term": "wizard.add_interface.connection:can_interface",
-        "definition": "",
+        "definition": "Interface CAN bus suppl\u00e9mentaire",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5626,7 +5626,7 @@
     },
     {
         "term": "wizard.add_interface.connection:loconet_interface",
-        "definition": "",
+        "definition": "Interface Loconet suppl\u00e9mentaire",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5635,7 +5635,7 @@
     },
     {
         "term": "wizard.add_interface.connection:xpressnet_interface",
-        "definition": "",
+        "definition": "Interface XpressNet suppl\u00e9mentaire",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5644,7 +5644,7 @@
     },
     {
         "term": "wizard.add_interface.protocol:title",
-        "definition": "",
+        "definition": "Protocole",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5662,7 +5662,7 @@
     },
     {
         "term": "wizard.add_interface.interface_loconet:title",
-        "definition": "",
+        "definition": "Interface Loconet",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5680,7 +5680,7 @@
     },
     {
         "term": "wizard.add_interface.interface_xpressnet:title",
-        "definition": "",
+        "definition": "Interface XpressNet",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5698,7 +5698,7 @@
     },
     {
         "term": "wizard.add_interface.hostname:title",
-        "definition": "",
+        "definition": "Adresse IP",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5716,7 +5716,7 @@
     },
     {
         "term": "wizard.add_interface.hostname_port:title",
-        "definition": "",
+        "definition": "Adresse IP et port",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5734,7 +5734,7 @@
     },
     {
         "term": "wizard.add_interface.serial_port:title",
-        "definition": "",
+        "definition": "Port s\u00e9rie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5761,7 +5761,7 @@
     },
     {
         "term": "wizard.add_interface.name:title",
-        "definition": "",
+        "definition": "Nom",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5779,7 +5779,7 @@
     },
     {
         "term": "wizard.add_interface.finalization:title",
-        "definition": "",
+        "definition": "Pr\u00eat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5797,7 +5797,7 @@
     },
     {
         "term": "wizard.page.list:search",
-        "definition": "",
+        "definition": "Recherche",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5806,7 +5806,7 @@
     },
     {
         "term": "wizard.button:back",
-        "definition": "",
+        "definition": "Pr\u00e9c\u00e9dent",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5815,7 +5815,7 @@
     },
     {
         "term": "wizard.button:next",
-        "definition": "",
+        "definition": "Suivant",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5824,7 +5824,7 @@
     },
     {
         "term": "wizard.button:finish",
-        "definition": "",
+        "definition": "Terminer",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5833,7 +5833,7 @@
     },
     {
         "term": "wizard.button:cancel",
-        "definition": "",
+        "definition": "Annuler",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5860,7 +5860,7 @@
     },
     {
         "term": "class_id:board_tile.misc.label",
-        "definition": "",
+        "definition": "Label",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5896,7 +5896,7 @@
     },
     {
         "term": "color:none",
-        "definition": "",
+        "definition": "Aucune",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6139,7 +6139,7 @@
     },
     {
         "term": "output_map_item.switch.key:off",
-        "definition": "",
+        "definition": "Off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6148,7 +6148,7 @@
     },
     {
         "term": "output_map_item.switch.key:on",
-        "definition": "",
+        "definition": "On",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6175,7 +6175,7 @@
     },
     {
         "term": "sensor_state:free",
-        "definition": "",
+        "definition": "Libre",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6184,7 +6184,7 @@
     },
     {
         "term": "sensor_state:occupied",
-        "definition": "",
+        "definition": "Occup\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6193,7 +6193,7 @@
     },
     {
         "term": "sensor_state:unknown",
-        "definition": "",
+        "definition": "Inconnu",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6202,7 +6202,7 @@
     },
     {
         "term": "board_tile.rail.block:state",
-        "definition": "",
+        "definition": "Etat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6211,7 +6211,7 @@
     },
     {
         "term": "block_state:occupied",
-        "definition": "",
+        "definition": "Occup\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6220,7 +6220,7 @@
     },
     {
         "term": "block_state:reserved",
-        "definition": "",
+        "definition": "Reserv\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6229,7 +6229,7 @@
     },
     {
         "term": "block_state:free",
-        "definition": "",
+        "definition": "Libre",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6238,7 +6238,7 @@
     },
     {
         "term": "board_tile.misc.switch:value",
-        "definition": "",
+        "definition": "Valeur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6256,7 +6256,7 @@
     },
     {
         "term": "language:es-es",
-        "definition": "",
+        "definition": "Espagnol",
         "context": "",
         "term_plural": "",
         "reference": "",
