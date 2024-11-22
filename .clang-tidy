@@ -5,7 +5,8 @@ Checks: >
   -readability-braces-around-statements,
   -readability-implicit-bool-conversion,
   -readability-identifier-length,
-  -readability-magic-numbers
+  -readability-magic-numbers,
+  -readability-suspicious-call-argument
 
 WarningsAsErrors: >
   readability-*,
