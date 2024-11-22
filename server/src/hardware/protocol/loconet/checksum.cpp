@@ -27,7 +27,7 @@ namespace LocoNet {
 
 uint8_t calcChecksum(const Message& message)
 {
-  const uint8_t* p = reinterpret_cast<const uint8_t*>(&message);
+  const auto* p = reinterpret_cast<const uint8_t*>(&message);
   const int size = message.size() - 1;
   uint8_t checksum = 0xFF;
   for(int i = 0; i < size; i++)

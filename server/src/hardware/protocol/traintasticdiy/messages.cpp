@@ -41,7 +41,7 @@ static constexpr std::string_view toString(ThrottleSubUnsub::Action action)
 
 Checksum calcChecksum(const Message& message)
 {
-  const uint8_t* p = reinterpret_cast<const uint8_t*>(&message);
+  const auto* p = reinterpret_cast<const uint8_t*>(&message);
   const size_t dataSize = message.dataSize();
   uint8_t checksum = p[0];
   for(size_t i = 1; i <= dataSize; i++)
@@ -144,7 +144,7 @@ std::string toString(const Message& message)
   }
 
   s.append(" [");
-  const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&message);
+  const auto* bytes = reinterpret_cast<const uint8_t*>(&message);
   for(size_t i = 0; i < message.size(); i++)
   {
     if(i != 0)

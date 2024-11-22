@@ -185,7 +185,7 @@ void ClientKernel::receive(const Message& message)
 
             LocoCache &cache = getLocoCache(reply.address());
 
-            DecoderChangeFlags changes = DecoderChangeFlags(0);
+            auto changes = static_cast<DecoderChangeFlags>(0);
 
             //Rescale everything to 126 steps
             int currentSpeedStep = reply.speedStep();
@@ -928,7 +928,7 @@ std::optional<ClientKernel::PendingRequest> ClientKernel::matchPendingReplyAndRe
       if(request->reply.hasFlag(MessageReplyType::Flags::CheckDb0))
       {
         // Cast to any LanX message with a db0 to check its value
-        const LanXGetStatus& hack = static_cast<const LanXGetStatus&>(lanX);
+        const auto& hack = static_cast<const LanXGetStatus&>(lanX);
         if(hack.db0 != request->reply.db0)
           continue;
       }
@@ -982,7 +982,7 @@ std::optional<ClientKernel::PendingRequest> ClientKernel::matchPendingReplyAndRe
       if(message.header() == LAN_X
           && static_cast<const LanX&>(message).xheader == LAN_X_LOCO_INFO)
       {
-        const LanXLocoInfo& locoInfo = static_cast<const LanXLocoInfo&>(message);
+        const auto& locoInfo = static_cast<const LanXLocoInfo&>(message);
         if(locoInfo.speedAndDirection != request->reply.speedAndDirection)
           continue;
         if(locoInfo.speedSteps() != request->reply.speedSteps())

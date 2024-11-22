@@ -130,7 +130,7 @@ void Kernel::receive(const Message& message)
   {
     case idFeedbackBroadcast:
     {
-      const FeedbackBroadcast* feedback = static_cast<const FeedbackBroadcast*>(&message);
+      const auto* feedback = static_cast<const FeedbackBroadcast*>(&message);
 
       for(uint8_t i = 0; i < feedback->pairCount(); i++)
       {
@@ -412,7 +412,7 @@ void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
           return; // no change
 
         const uint16_t groupAddress = (address - 1) >> 2;
-        const uint8_t index = static_cast<uint8_t>((address - 1) & 0x0003);
+        const auto index = static_cast<uint8_t>((address - 1) & 0x0003);
 
         std::byte message[sizeof(FeedbackBroadcast) + sizeof(FeedbackBroadcast::Pair) + 1];
         memset(message, 0, sizeof(message));

@@ -63,7 +63,7 @@ void TCPBinaryIOHandler::read()
 
         while(bytesTransferred > 1)
         {
-          const Message* message = reinterpret_cast<const Message*>(pos);
+          const auto* message = reinterpret_cast<const Message*>(pos);
 
           size_t drop = 0;
           while((message->size() == 0 || (message->size() <= bytesTransferred && !isValid(*message))) && bytesTransferred > 0)

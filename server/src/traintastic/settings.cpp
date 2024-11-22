@@ -148,7 +148,7 @@ void Settings::saveToFile()
 
   json settings = json::object();
   for(const auto& it : m_interfaceItems)
-    if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&it.second))
+    if(auto* property = dynamic_cast<AbstractProperty*>(&it.second))
       settings[std::string{property->name()}] = property->toJSON();
 
   std::ofstream file(m_filename);
