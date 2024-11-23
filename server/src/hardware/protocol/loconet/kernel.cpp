@@ -1393,7 +1393,7 @@ void Kernel::sendNextMessage()
 
       if(m_ioHandler->send(message))
       {
-        m_sentMessagePriority = static_cast<Priority>(priority);
+        m_sentMessagePriority = priority;
 
         m_waitingForEcho = true;
         m_waitingForEchoTimer.expires_after(boost::asio::chrono::milliseconds(m_config.echoTimeout));
