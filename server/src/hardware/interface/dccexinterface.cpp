@@ -146,7 +146,7 @@ tcb::span<const uint8_t> DCCEXInterface::decoderSpeedSteps(DecoderProtocol proto
   assert(protocol == DecoderProtocol::DCCShort || protocol == DecoderProtocol::DCCLong);
   const auto& speedStepValues = DCCEX::Settings::speedStepValues;
   // find value in array so we can create a span, using a span of a variable won't work due to the compare with prevous value in the attribute setter
-  if(const auto* it = std::find(speedStepValues.begin(), speedStepValues.end(), dccex->speedSteps); it != speedStepValues.end()) /*[[likely]]/*/
+  if(const auto it = std::find(speedStepValues.begin(), speedStepValues.end(), dccex->speedSteps); it != speedStepValues.end()) /*[[likely]]/*/ // NOLINT(readability-qualified-auto) windows requires const auto
     return {&(*it), 1};
   assert(false);
   return {};
