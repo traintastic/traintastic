@@ -49,7 +49,7 @@ class Server : public std::enable_shared_from_this<Server>
     std::list<std::shared_ptr<Connection>> m_connections;
 
     void doReceive();
-    std::unique_ptr<Message> processMessage(const Message& message);
+    static std::unique_ptr<Message> processMessage(const Message& message);
     void doAccept();
 
     void connectionGone(const std::shared_ptr<Connection>& connection);

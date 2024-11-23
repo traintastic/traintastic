@@ -179,8 +179,6 @@ void Server::doReceive()
 
 std::unique_ptr<Message> Server::processMessage(const Message& message)
 {
-  assert(IS_SERVER_THREAD);
-
   if(message.command() == Message::Command::Discover && message.isRequest())
   {
     std::unique_ptr<Message> response = Message::newResponse(message.command(), message.requestId());
