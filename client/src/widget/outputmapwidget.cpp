@@ -28,9 +28,11 @@
 #include <QHeaderView>
 #include <QPushButton>
 #include <traintastic/locale/locale.hpp>
+#include "createwidget.hpp"
 #include "interfaceitemnamelabel.hpp"
 #include "propertycheckbox.hpp"
 #include "propertycombobox.hpp"
+#include "propertypairoutputaction.hpp"
 #include "propertyspinbox.hpp"
 #include "objectpropertycombobox.hpp"
 #include "propertyaddresses.hpp"
@@ -345,7 +347,7 @@ void OutputMapWidget::updateTableOutputActions(ObjectVectorProperty& property, i
           {
             if(auto* action = dynamic_cast<Property*>(object->getProperty("action")))
             {
-              m_table->setCellWidget(row, column, new PropertyComboBox(*action, this));
+              m_table->setCellWidget(row, column, createWidget(*action, this));
             }
             else if(auto* aspect = dynamic_cast<Property*>(object->getProperty("aspect")))
             {

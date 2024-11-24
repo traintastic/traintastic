@@ -35,6 +35,7 @@
 #include "propertydoublespinbox.hpp"
 #include "propertyspinbox.hpp"
 #include "propertylineedit.hpp"
+#include "propertypairoutputaction.hpp"
 #include "../board/boardwidget.hpp"
 #include "../network/object.hpp"
 #include "../network/inputmonitor.hpp"
@@ -122,6 +123,10 @@ QWidget* createWidget(Property& property, QWidget* parent)
       break; // TODO
 
     case ValueType::Enum:
+      if(property.enumName() == "pair_output_action")
+      {
+        return new PropertyPairOutputAction(property, parent);
+      }
       return new PropertyComboBox(property, parent);
 
     case ValueType::Integer:
