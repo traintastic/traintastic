@@ -186,7 +186,7 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: false
-          defines: "-DENABLE_CLANG_TIDY=ON"
+          defines: ""
           ccov: false
 
         - name: "windows_x64_mingw"
@@ -210,7 +210,7 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: true
-          defines: "-DENABLE_CLANG_TIDY=ON -DINSTALL_SYSTEMD_SERVICE=ON"
+          defines: "-DINSTALL_SYSTEMD_SERVICE=ON"
           ccov: false
 
         - name: "ubuntu_24.04"
@@ -222,7 +222,7 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: true
-          defines: "-DENABLE_CLANG_TIDY=ON -DINSTALL_SYSTEMD_SERVICE=ON"
+          defines: "-DINSTALL_SYSTEMD_SERVICE=ON"
           ccov: false
 
         - name: "ubuntu_latest (debug+ccov)"
@@ -234,7 +234,7 @@ jobs:
           jobs: 4
           build_type: Debug
           build_deb: false
-          defines: "-DENABLE_CLANG_TIDY=ON -DCODE_COVERAGE=ON"
+          defines: "-DCODE_COVERAGE=ON"
           ccov: true
 
         - name: "raspberrypios_arm7"
