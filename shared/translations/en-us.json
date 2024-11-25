@@ -6431,5 +6431,29 @@
     {
         "term": "weight_unit:ton",
         "definition": "ton"
+    },
+    {
+        "term": "output_channel:turnout",
+        "definition": "Turnout"
+    },
+    {
+        "term": "output_channel:output",
+        "definition": "Output"
+    },
+    {
+        "term": "single_output_action:none",
+        "definition": "None"
+    },
+    {
+        "term": "single_output_action:off",
+        "definition": "Off"
+    },
+    {
+        "term": "single_output_action:on",
+        "definition": "On"
+    },
+    {
+        "term": "single_output_action:pulse",
+        "definition": "Pulse"
     }
 ]
