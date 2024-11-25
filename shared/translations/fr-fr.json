@@ -559,7 +559,7 @@
     },
     {
         "term": "clock:freeze",
-        "definition": "Geler",
+        "definition": "Figer",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -640,7 +640,7 @@
     },
     {
         "term": "color:fuchsia",
-        "definition": "Fuchia",
+        "definition": "Fuschia",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -856,7 +856,7 @@
     },
     {
         "term": "decoder_function_type:always_off",
-        "definition": "Toujours off",
+        "definition": "Toujours Off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -865,7 +865,7 @@
     },
     {
         "term": "decoder_function_type:always_on",
-        "definition": "Toujours on",
+        "definition": "Toujours On",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3484,7 +3484,7 @@
     },
     {
         "term": "qtapp.object_select_list_dialog:cancel",
-        "definition": "Abandonner",
+        "definition": "Annuler",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3556,7 +3556,7 @@
     },
     {
         "term": "qtapp.settings.developer:log_missing_strings_dir",
-        "definition": "R\u00e9pertoire de journalisation des traductions manquantes non trouv\u00e9",
+        "definition": "R\u00e9pertoire de journalisation des traductions manquantes",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3628,7 +3628,7 @@
     },
     {
         "term": "qtapp.world_list_dialog:cancel",
-        "definition": "Abandonner",
+        "definition": "Annuler",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3691,7 +3691,7 @@
     },
     {
         "term": "qtapp:grid_line",
-        "definition": "Ligne",
+        "definition": "Lignes",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3925,7 +3925,7 @@
     },
     {
         "term": "settings:auto_save_world_on_exit",
-        "definition": "Enregistrer automatique le monde \u00e0 la sortie",
+        "definition": "Enregistrer automatiquement le monde en quittant",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3979,7 +3979,7 @@
     },
     {
         "term": "settings:save_world_uncompressed",
-        "definition": "Sauvegarder non compress\u00e9",
+        "definition": "Sauvegarder le monde non compress\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4213,7 +4213,7 @@
     },
     {
         "term": "vehicle.rail:power",
-        "definition": "Alimentation",
+        "definition": "Puissance",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4366,7 +4366,7 @@
     },
     {
         "term": "world:power_off",
-        "definition": "Alimentation off",
+        "definition": "Alimentation Off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4375,7 +4375,7 @@
     },
     {
         "term": "world:power_on",
-        "definition": "Alimentation on",
+        "definition": "Alimentation On",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6112,7 +6112,7 @@
     },
     {
         "term": "board_tile.misc.switch:color_on",
-        "definition": "Couleur en position ON",
+        "definition": "Couleur en position On",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6121,7 +6121,7 @@
     },
     {
         "term": "board_tile.misc.switch:color_off",
-        "definition": "Couleur en position OFF",
+        "definition": "Couleur en position Off",
         "context": "",
         "term_plural": "",
         "reference": "",
