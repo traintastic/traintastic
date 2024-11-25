@@ -280,10 +280,6 @@
         "definition": "Short tons"
     },
     {
-        "term": "weight_unit:ton",
-        "definition": "ton"
-    },
-    {
         "term": "world_scale:h0",
         "definition": "H0 (1:87)"
     },

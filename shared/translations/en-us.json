@@ -6427,5 +6427,9 @@
     {
         "term": "speed_limit_property:no_limit",
         "definition": "No limit"
+    },
+    {
+        "term": "weight_unit:ton",
+        "definition": "ton"
     }
 ]
