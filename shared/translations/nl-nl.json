@@ -5058,7 +5058,7 @@
         "fuzzy": 0
     },
     {
-        "term": "board_tile.rail.signal_3_aspect:require_reservation",
+        "term": "board_tile.rail.signal:require_reservation",
         "definition": "Reserveren verplicht",
         "context": "",
         "term_plural": "",
