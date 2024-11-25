@@ -179,6 +179,7 @@ begin
   ClientAndServerRadioButton.Checked := (Components = 'ClientAndServer');
   ClientAndServerRadioButton.Font.Style := [fsBold];
   ClientAndServerRadioButton.Height := ScaleY(23);
+  ClientAndServerRadioButton.Width := ComponentsPage.SurfaceWidth;
   ClientAndServerRadioButton.Parent := ComponentsPage.Surface;
   ClientAndServerRadioButton.OnClick := @ComponentRadioButtonClick;
 
@@ -195,6 +196,7 @@ begin
   ClientOnlyRadioButton.Font.Style := [fsBold];
   ClientOnlyRadioButton.Top := Lbl.Top + Lbl.Height + ScaleY(10);
   ClientOnlyRadioButton.Height := ScaleY(23);
+  ClientOnlyRadioButton.Width := ComponentsPage.SurfaceWidth;
   ClientOnlyRadioButton.Parent := ComponentsPage.Surface;
   ClientOnlyRadioButton.OnClick := @ComponentRadioButtonClick;
 
