@@ -5058,7 +5058,7 @@
         "fuzzy": 0
     },
     {
-        "term": "board_tile.rail.signal:require_reservation",
+        "term": "board_tile.rail.signal_3_aspect:require_reservation",
         "definition": "R\u00e9servation requise",
         "context": "",
         "term_plural": "",
@@ -6283,7 +6283,7 @@
     },
     {
         "term": "turnout_position:crossed",
-        "definition": "Position croisement",
+        "definition": "Croisement",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6302,6 +6302,330 @@
     {
         "term": "turnout_position:double_slip_straight_b",
         "definition": "Tout droit B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "luadoc:index:title",
+        "definition": "Script Traintastic Lua",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "luadoc:index:nav",
+        "definition": "Index",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "category:trains",
+        "definition": "Trains",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "ext_output_change_action:do_nothing",
+        "definition": "Ne rien faire",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "ext_output_change_action:estop_train",
+        "definition": "Arr\u00eat d'urgence des trains sur l'itin\u00e9raire",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "ext_output_change_action:estop_world",
+        "definition": "Arr\u00eat d'urgence du monde",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "ext_output_change_action:poweroff_world",
+        "definition": "Eteindre le monde",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:N3003",
+        "definition": "La position de l'aiguillage a \u00e9t\u00e9 r\u00e9initialis\u00e9e \u00e0 une valeur r\u00e9serv\u00e9e",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:N3004",
+        "definition": "Le signal a \u00e9t\u00e9 r\u00e9initialis\u00e9 \u00e0 une valeur r\u00e9serv\u00e9e",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:correct_output_pos_when_locked",
+        "definition": "Essayer de corriger l'\u00e9tat de sortie si modifi\u00e9 externe en \u00e9tat verrouill\u00e9",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:ext_output_change_action",
+        "definition": "Action externe de changement de la sortie",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:path_release_delay",
+        "definition": "D\u00e9lai de lib\u00e9ration de l'itin\u00e9raire",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3003",
+        "definition": "Le train a \u00e9t\u00e9 arr\u00eat\u00e9 d'urgence en raison d'un changement externe de la position de l'aiguillage %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3004",
+        "definition": "Le train a \u00e9t\u00e9 arr\u00eat\u00e9 d'urgence en raison d'un changement externe de l'aspect du signal %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3007",
+        "definition": "Le monde a \u00e9t\u00e9 arr\u00eat\u00e9 d'urgence en raison d'un changement externe de la position de l'aiguillage %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3008",
+        "definition": "Le monde a \u00e9t\u00e9 arr\u00eat\u00e9 d'urgence en raison d'un changement externe de l'aspect du signal %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3009",
+        "definition": "L'alimentation du monde a \u00e9t\u00e9 coup\u00e9e d'urgence en raison d'un changement externe de la position de l'aiguillage %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3010",
+        "definition": "L'alimentation du monde a \u00e9t\u00e9 coup\u00e9e d'urgence en raison d'un changement externe de l'aspect du signal %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W3003",
+        "definition": "La position de l'aiguillage a \u00e9t\u00e9 modifi\u00e9e de fa\u00e7on externe alors qu'il \u00e9tait verrouill\u00e9 dans un itin\u00e9raire",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W3004",
+        "definition": "Le signal a \u00e9t\u00e9 modifi\u00e9 de fa\u00e7on externe alors qu'il \u00e9tait verrouill\u00e9 dans un itin\u00e9raire",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.signal:require_reservation",
+        "definition": "R\u00e9servation requise",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3005",
+        "definition": "Impossible de supprimer le train, il doit \u00eatre \u00e0 l'arr\u00eat.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3006",
+        "definition": "Impossible de supprimer le train, il ne peut \u00eatre supprim\u00e9 que par le wagon de t\u00eate ou de queue.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.turnout_slip:dual_motor",
+        "definition": "Double moteur/bobine",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "turnout_position:diverged",
+        "definition": "D\u00e9vi\u00e9",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "settings:load_last_world_on_startup",
+        "definition": "Charger le dernier monde au d\u00e9marrage",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:I9003",
+        "definition": "Variables persistantes effac\u00e9es",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "lua.script:clear_persistent_variables",
+        "definition": "Effacer les variables persistantes",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "speed_limit_property:no_limit",
+        "definition": "Pas de limite",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "weight_unit:ton",
+        "definition": "tonne",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_channel:turnout",
+        "definition": "Aiguillage",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_channel:output",
+        "definition": "Sortie",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "single_output_action:none",
+        "definition": "Aucune",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "single_output_action:off",
+        "definition": "Off",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "single_output_action:on",
+        "definition": "On",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "single_output_action:pulse",
+        "definition": "Impulsion",
         "context": "",
         "term_plural": "",
         "reference": "",
