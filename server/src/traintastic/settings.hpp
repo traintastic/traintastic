@@ -37,12 +37,14 @@ class Settings : public Object
     {
       static constexpr const char* memoryLoggerSize = "memory_logger_size";
       static constexpr const char* enableFileLogger = "enable_file_logger";
+      static constexpr const char* language = "language";
     };
 
     struct Default
     {
       static constexpr uint32_t memoryLoggerSize = 1000;
       static constexpr bool enableFileLogger = false;
+      static constexpr std::string_view language = "en-us";
     };
 
     const std::filesystem::path m_filename;
@@ -57,6 +59,7 @@ class Settings : public Object
     {
       uint32_t memoryLoggerSize = Default::memoryLoggerSize;
       bool enableFileLogger = Default::enableFileLogger;
+      std::string language{Default::language};
     };
 
     static constexpr std::string_view id = classId;
@@ -68,6 +71,7 @@ class Settings : public Object
 #endif
     Property<uint16_t> port;
     Property<bool> discoverable;
+    Property<std::string> language;
     Property<std::string> lastWorld;
     Property<bool> loadLastWorldOnStartup;
     Property<bool> autoSaveWorldOnExit;
