@@ -6307,5 +6307,61 @@
         "reference": "",
         "comment": "",
         "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:show_hide_console",
+        "definition": "Console weergeven/verbergen"
+    },
+    {
+        "term": "tray_icon.menu:settings",
+        "definition": "Instellingen"
+    },
+    {
+        "term": "tray_icon.menu:language",
+        "definition": "Taal"
+    },
+    {
+        "term": "tray_icon.menu:allow_client_to_restart_server",
+        "definition": "Client toestaan de server opnieuw te starten"
+    },
+    {
+        "term": "tray_icon.menu:allow_client_to_shutdown_server",
+        "definition": "Client toestaan de server af te sluiten"
+    },
+    {
+        "term": "tray_icon.menu:start_automatically_at_logon",
+        "definition": "Automatische starten bij inloggen"
+    },
+    {
+        "term": "tray_icon.menu:advanced",
+        "definition": "Geavanceerd"
+    },
+    {
+        "term": "tray_icon.menu:open_data_directory",
+        "definition": "Open data map"
+    },
+    {
+        "term": "tray_icon.menu:restart",
+        "definition": "Herstart"
+    },
+    {
+        "term": "tray_icon.menu:shutdown",
+        "definition": "Afsluiten"
+    },
+    {
+        "term": "tray_icon.notify:message_running",
+        "definition": "Traintastic server draait op de achtergrond."
+    },
+    {
+        "term": "tray_icon.notify:message_restarting",
+        "definition": "Traintastic server is geherstart"
+    },
+    {
+        "term": "tray_icon.language_changed_message_box:caption",
+        "definition": "Taal gewijzigd"
+    },
+    {
+        "term": "tray_icon.language_changed_message_box:text",
+        "definition": "Traintastic server moet opnieuw worden opgestart voordat de nieuwe taal actief wordt. Nu herstarten?"
     }
 ]

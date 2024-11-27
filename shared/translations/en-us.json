@@ -6631,5 +6631,61 @@
         "reference": "",
         "comment": "",
         "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:show_hide_console",
+        "definition": "Show/hide console"
+    },
+    {
+        "term": "tray_icon.menu:settings",
+        "definition": "Settings"
+    },
+    {
+        "term": "tray_icon.menu:language",
+        "definition": "Language"
+    },
+    {
+        "term": "tray_icon.menu:allow_client_to_restart_server",
+        "definition": "Allow client to restart server"
+    },
+    {
+        "term": "tray_icon.menu:allow_client_to_shutdown_server",
+        "definition": "Allow client to shutdown server"
+    },
+    {
+        "term": "tray_icon.menu:start_automatically_at_logon",
+        "definition": "Start automatically at logon"
+    },
+    {
+        "term": "tray_icon.menu:advanced",
+        "definition": "Advanced"
+    },
+    {
+        "term": "tray_icon.menu:open_data_directory",
+        "definition": "Open data directory"
+    },
+    {
+        "term": "tray_icon.menu:restart",
+        "definition": "Restart"
+    },
+    {
+        "term": "tray_icon.menu:shutdown",
+        "definition": "Shutdown"
+    },
+    {
+        "term": "tray_icon.notify:message_running",
+        "definition": "Traintastic server is running in the background."
+    },
+    {
+        "term": "tray_icon.notify:message_restarting",
+        "definition": "Traintastic server restarted"
+    },
+    {
+        "term": "tray_icon.language_changed_message_box:caption",
+        "definition": "Language changed"
+    },
+    {
+        "term": "tray_icon.language_changed_message_box:text",
+        "definition": "Traintastic server must be restarted for the language change to take effect. Restart now?"
     }
 ]
