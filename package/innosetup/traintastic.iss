@@ -107,7 +107,7 @@ Root: HKLM; Subkey: "{#CompanySubKey}"; Flags: uninsdeletekeyifempty
 Root: HKLM; Subkey: "{#AppSubKey}"; Flags: uninsdeletekey
 
 [INI]
-Filename: {commonappdata}\traintastic\traintastic-client.ini; Section: general_; Key: language; String: {code:GetTraintasticClientLanguage}; Flags: uninsdeleteentry uninsdeletesectionifempty;
+Filename: {commonappdata}\traintastic\traintastic-client.ini; Section: general_; Key: language; String: {code:GetTraintasticLanguage}; Flags: uninsdeleteentry uninsdeletesectionifempty;
 
 [Code]
 const
@@ -208,7 +208,7 @@ begin
   Lbl.Parent := ComponentsPage.Surface;
 end;
 
-function GetTraintasticClientLanguage(Param: String) : String;
+function GetTraintasticLanguage(Param: String) : String;
 begin
   case ActiveLanguage of
     'nl': Result := 'nl-nl';
@@ -219,6 +219,19 @@ begin
   else
     Result := 'en-us';
   end;
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  ServerSettingsFile: String;
+begin
+  if CurStep = ssPostInstall then begin
+    // Server: only write language if there is no setting file yet:
+    ServerSettingsFile := ExpandConstant('{localappdata}\traintastic\server\settings.json');
+    if not FileExists(ServerSettingsFile) then begin
+      SaveStringToFile(ServerSettingsFile, '{"language":"' + GetTraintasticLanguage('') + '"}', False);
+    end;
+  end
 end;
 
 function VC2019RedistNeedsInstall: Boolean;
