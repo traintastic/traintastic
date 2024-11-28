@@ -6686,6 +6686,20 @@
     },
     {
         "term": "tray_icon.language_changed_message_box:text",
-        "definition": "Traintastic server must be restarted for the language change to take effect. Restart now?"
+        "definition": "Traintastic server must be restarted for the language change to take effect. Restart now?",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "language:fy-nl",
+        "definition": "Frisian",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     }
 ]

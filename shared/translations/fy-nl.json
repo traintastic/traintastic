@@ -1,0 +1,1316 @@
+[
+    {
+        "term": "board_settings.color_scheme:dark",
+        "definition": "Tsjuster",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_settings.color_scheme:light",
+        "definition": "Ljocht",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.push_button:color",
+        "definition": "Kleur",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.block:assign_train",
+        "definition": "Trein tawize",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.block:flip_train",
+        "definition": "Trein omdraaie",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.block:remove_train",
+        "definition": "Trein fuorthelle",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.direction_control:state",
+        "definition": "Steat",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_a_to_b",
+        "definition": "Br\u00fbk: A \u2192 B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_b_to_a",
+        "definition": "Br\u00fbk: A \u2190 B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_both",
+        "definition": "Br\u00fbk: A \u21c4 B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_none",
+        "definition": "Br\u00fbk: A \ud83d\udec7 B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.sensor:invert",
+        "definition": "Omkeare",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "category:developer",
+        "definition": "Untwikkelder",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "category:general",
+        "definition": "Algemien",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "category:info",
+        "definition": "Ynfo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "category:network",
+        "definition": "Netwurk",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.misc.push_button",
+        "definition": "Drukknop",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.rail.bridge_45_left",
+        "definition": "Br\u00eage 45\u00b0 (links)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.rail.bridge_45_right",
+        "definition": "Br\u00eage 45\u00b0 (rjochts)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.rail.bridge_90",
+        "definition": "Br\u00eage 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.rail.cross_45",
+        "definition": "Krusing 45\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.rail.cross_90",
+        "definition": "Krusing 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.rail.curve_45",
+        "definition": "Bocht 45\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.rail.curve_90",
+        "definition": "Bocht 90\u00b0",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:vehicle.rail.locomotive",
+        "definition": "Lokomotyf",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "clock:day",
+        "definition": "Dei",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "clock:freeze",
+        "definition": "Frieze",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "clock:hour",
+        "definition": "Oere",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "clock:year",
+        "definition": "Jier",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "decoder_function_type:always_off",
+        "definition": "Altyd \u00fat",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "decoder_function_type:always_on",
+        "definition": "Altyd oan",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "decoder_function_type:on_off",
+        "definition": "Oan/\u00dat",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "direction:forward",
+        "definition": "Foar\u00fat",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "direction:reverse",
+        "definition": "Efter\u00fat",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "loconet_fastclock:off",
+        "definition": "\u00dat",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_action:on",
+        "definition": "Oan",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.connect_dialog:connect",
+        "definition": "Ferbine",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.connect_dialog:connect_to_server",
+        "definition": "Ferbine mei tsjinner",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.connect_dialog:connected",
+        "definition": "Ferb\u00fbn",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.connect_dialog:connecting",
+        "definition": "Ferbine",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.connect_dialog:password",
+        "definition": "Wachtwurd",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.connect_dialog:server",
+        "definition": "Tsjinner",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.connect_dialog:username",
+        "definition": "Br\u00fbkersnamme",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.error:cant_read_from_file_x",
+        "definition": "Kin net l\u00eaze fan triem: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.error:server_error_x",
+        "definition": "Tsjinnerflater %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:about",
+        "definition": "Oer",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:connect_to_server",
+        "definition": "Ferbine mei tsjinner",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:connection",
+        "definition": "Ferbining",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:disconnect_from_server",
+        "definition": "Losmeitsje fan tsjinner",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:export_world",
+        "definition": "Eksportearje wr\u00e2ld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:fullscreen",
+        "definition": "Folslein skerm",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:import_world",
+        "definition": "Ymportearje wr\u00e2ld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.settings.general:language",
+        "definition": "Taal",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "vehicle.rail:train",
+        "definition": "Trein",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:clock",
+        "definition": "Klok",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:edit",
+        "definition": "Wr\u00e2ld bewurkje",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:interfaces",
+        "definition": "Ynterfaces",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:lua_scripts",
+        "definition": "Lua skripts",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:no_smoke",
+        "definition": "Gjin reek",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:offline",
+        "definition": "Losmeitsje",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:online",
+        "definition": "Ferbine",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:scale",
+        "definition": "Skaal",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:scale_ratio",
+        "definition": "Skaalferh\u00e2lding",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:simulation",
+        "definition": "Simulaasje",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:stop",
+        "definition": "Stopje",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:trains",
+        "definition": "Treinen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:uuid",
+        "definition": "UUID",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world_scale:custom",
+        "definition": "Oanpast",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "xpressnet_command_station:custom",
+        "definition": "Oanpast",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "xpressnet_interface_type:network",
+        "definition": "Netwurk",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "xpressnet_serial_interface_type:custom",
+        "definition": "Oanpast",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "z21_settings.server:allow_emergency_stop",
+        "definition": "Needstop tastean",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "auto_yes_no:yes",
+        "definition": "Ja",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "auto_yes_no:no",
+        "definition": "Nee",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world:title",
+        "definition": "Nije wr\u00e2ld ynstelle",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.introduction:title",
+        "definition": "Nije wr\u00e2ld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.introduction:text",
+        "definition": "Dizze wizard sil jo liede by it ynstellen fan de basiseigenskippen fan 'e wr\u00e2ld.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.name:title",
+        "definition": "Wr\u00e2ldnamme",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.name:text",
+        "definition": "Jou de wr\u00e2ld in namme, dizze namme sil sichtber w\u00eaze by it laden fan in wr\u00e2ld.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.scale:title",
+        "definition": "Wr\u00e2ldskaal",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.scale:text",
+        "definition": "Selektearje de wr\u00e2ldskaal, Traintastic sil dit br\u00fbke foar \u00f4fst\u00e2n- en snelheidsberekkeningen.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.finalization:title",
+        "definition": "Wr\u00e2ld klear",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.finalization:text",
+        "definition": "Basis wr\u00e2ldeigenskippen binne no ynsteld, jo kinne se letter altyd feroarje fia it menu: Wr\u00e2ld -> Eigenskippen.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction:title",
+        "definition": "Traintastic yntroduksje",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.welcome:title",
+        "definition": "Wolkom!",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.welcome:text",
+        "definition": "Dizze wizard sil de basis fan Traintastic \u00fatlizze. De folgjende siden sille helpe om jo te begjinnen. As jo \u200b\u200bdizze wizard nochris besjen wolle, kinne jo dizze iepenje fia it haadmenu: Help \u2192 Wizard \u2192 Traintastic ynlieding.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.world:title",
+        "definition": "De wr\u00e2ld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.world:text",
+        "definition": "De wr\u00e2ld befettet alles wat op 'e yndieling stiet, lykas it kommandostasjon, treinen, sinjalen, wissels ensfh. As it nedich is kinne meardere wr\u00e2lden makke wurde, mar ien kin op elk momint yn gebr\u00fbk w\u00eaze.\n\nWr\u00e2lden wurde bewarre op 'e PC mei de Traintastic-tsjinner. By it bewarjen fan in wr\u00e2ld wurdt automatysk in reservekopy makke. Fia it haadmenu: Triem \u2192 Wr\u00e2ld-opsje eksportearje is it mooglik om in kopy fan 'e wr\u00e2ld te krijen as ekstra reservekopy of oer te setten nei in oare Traintastic-tsjinner.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.edit_mode:title",
+        "definition": "Bewurkje modus",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.edit_mode:text",
+        "definition": "Traintastic hat twa wurkwizen:\n\u2022 Bewurkje modus\n\u2022 Operaasje modus\n\nYn operaasjemodus is allinich it operearjen fan it model spoar mooglik om tafallige wizigingen te foarkommen. bgl. om in wissel-adres te feroarjen of it spoar plan te wizigjen moat de bewurkingsmodus aktyf w\u00eaze.\n\nIt wikseljen tusken operaasje- en bewurkingsmodus kin dien wurde mei it potleadpictogram direkt op 'e haadarkbalke of fia it haadmenu: Wr\u00e2ld \u2192 Wr\u00e2ld bewurkje.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.forum:title",
+        "definition": "Traintastic forum",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.forum:text",
+        "definition": "As jo \u200b\u200bfragen of suggestjes hawwe, doch dan mei oan it <a href=\"https://forum.traintastic.org\">Traintastic forum</a>.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.welcome:title",
+        "definition": "Foegje ynterface ta",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.welcome:text",
+        "definition": "Dizze wizard sil jo liede nei it ynstellingsproses fan 'e ynterface.\n\nAs jo \u200b\u200b\u200b\u200bTraintastic-tsjinner en Traintastic-kli\u00efnt op aparte PC's \u00fatfiere, soargje derfoar dat it kommandostasjon ferb\u00fbn is mei de PC mei Traintastic-tsjinner.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.command_station:title",
+        "definition": "Kommandostasjon",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.command_station:text",
+        "definition": "Selektearje asjebleaft jo kommandostasjon:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:title",
+        "definition": "Ferbining",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:text",
+        "definition": "Hoe is de %command_station% ferb\u00fbn?",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:network",
+        "definition": "Netwurk",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:not_yet_supported",
+        "definition": "Noch net stipe",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.protocol:title",
+        "definition": "Protokol",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.protocol:text",
+        "definition": "Selektearje asjebleaft it kommunikaasjeprotokol foar de ferbining:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.interface_loconet:title",
+        "definition": "LocoNet ynterface",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.interface_loconet:text",
+        "definition": "Selektearje asjebleaft de LocoNet-ynterface dy't ferb\u00fbn is mei de %command_station%:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.interface_xpressnet:title",
+        "definition": "XpressNet ynterface",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.interface_xpressnet:text",
+        "definition": "Selektearje asjebleaft de XpressNet-ynterface dy't ferb\u00fbn is mei de %command_station%:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.hostname:title",
+        "definition": "IP-adres",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.hostname:text",
+        "definition": "Fier it IP-adres yn fan it %command_station% om mei te ferbinen:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.hostname_port:title",
+        "definition": "IP-adres en poarte",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.hostname_port:text",
+        "definition": "Fier it IP-adres en poarten\u00fbmer yn fan it %command_station% om mei te ferbinen:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.serial_port:title",
+        "definition": "Seri\u00eble poarte",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.serial_port:text",
+        "definition": "Selektearje de seri\u00eble poarte w\u00earmei de %command_station% mei ferb\u00fbn is:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.serial_port_interface:text",
+        "definition": "Selektearje de seri\u00eble poarte w\u00earmei de %interface% mei ferb\u00fbn is:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.name:title",
+        "definition": "Namme",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.name:text",
+        "definition": "Fier in namme yn foar de ferbining:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.finalization:title",
+        "definition": "Klear",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.finalization:text",
+        "definition": "De %command_station% opset is no klear, jo kinne it online bringe troch de ferbining opsje op de arkbalke te br\u00fbken.\n\nAs jo \u200b\u200b\u200b\u200boanfoljende wizigingen moatte meitsje, kinne jo de ynterface fine fia it menu: Objekt \u2192 Hardware \u2192 Ynterfaces.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.page.list:search",
+        "definition": "Sykje",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.button:back",
+        "definition": "Werom",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.button:next",
+        "definition": "Folgjende",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.button:finish",
+        "definition": "Klear",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.button:cancel",
+        "definition": "Ofbrekke",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.label:text",
+        "definition": "Tekst",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "color:none",
+        "definition": "Gjin",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.label:background_color",
+        "definition": "Eftergr\u00fbn kleur",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.introduction:title",
+        "definition": "Nij boerd",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.introduction.short:text",
+        "definition": "Dizze wizard sil helpe by it ynstellen fan de basis boerd eigenskippen.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.introduction.long:text",
+        "definition": "Dizze wizard sil de basis fan it boerd \u00fatlizze.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.editing:title",
+        "definition": "Bewurkje",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.editing:text",
+        "definition": "It boerd kin allinich wizige wurde as de wr\u00e2ld yn bewurkingsmodus is en stoppe is. De arkbalke mei bewurkingsopsje sil automatysk ferskine as bewurkjen mooglik is.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.adding:text",
+        "definition": "It tafoegjen fan nije eleminten oan it boerd kin dien wurde mei de items beskikber yn ferskate menu's. Br\u00fbk de m\u00fbs lofterklik om in elemint te pleatsen, br\u00fbk de m\u00fbs rjochtsklik om in elemint te rotearjen.\n\nOm in elemint te ferfangen troch in oar elemint, h\u00e2ld ctrl yn wylst jo lofts klikke, oars moat it \u00e2lde elemint earst wiske wurde.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.name:title",
+        "definition": "Boerd namme",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.name:text",
+        "definition": "Jou it boerd in namme, bgl. Traintastic is geweldich as Staginggebiet:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.finalization:title",
+        "definition": "Folt\u00f4ge",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.finalization:text",
+        "definition": "Litte wy it boerd bouwe!",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.switch:color_on",
+        "definition": "Oan kleur",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.switch:color_off",
+        "definition": "\u00dat kleur",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.block:state",
+        "definition": "Steat",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "block_state:occupied",
+        "definition": "Beset",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "block_state:reserved",
+        "definition": "Reservearre",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "block_state:free",
+        "definition": "Frij",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "category:trains",
+        "definition": "Treinen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.signal:require_reservation",
+        "definition": "Fereaskje reservearring",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "weight_unit:ton",
+        "definition": "ton",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:language",
+        "definition": "Taal",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "language:fy-nl",
+        "definition": "Frysk",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    }
+]

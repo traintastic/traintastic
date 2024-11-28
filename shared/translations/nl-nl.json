@@ -6362,6 +6362,20 @@
     },
     {
         "term": "tray_icon.language_changed_message_box:text",
-        "definition": "Traintastic server moet opnieuw worden opgestart voordat de nieuwe taal actief wordt. Nu herstarten?"
+        "definition": "Traintastic server moet opnieuw worden opgestart voordat de nieuwe taal actief wordt. Nu herstarten?",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "language:fy-nl",
+        "definition": "Fries",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     }
 ]
