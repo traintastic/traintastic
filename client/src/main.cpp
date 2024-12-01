@@ -26,6 +26,9 @@
 #endif
 #include <QCommandLineParser>
 #include <QMessageBox>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+  #include <QStyleHints>
+#endif
 #include <version.hpp>
 #include "mainwindow.hpp"
 #include "settings/generalsettings.hpp"
