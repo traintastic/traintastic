@@ -122,6 +122,7 @@ MainWindow::MainWindow(QWidget* parent) :
   QAction* boardsAction;
   QAction* trainsAction;
 
+  m_mdiArea->setBackground(palette().window().color().darker());
   m_mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   m_mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 

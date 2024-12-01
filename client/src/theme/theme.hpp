@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,11 +39,15 @@ class Theme
   private:
     Theme() = delete;
 
+    static bool s_isDark;
     static IconSet s_iconSet;
 
     static const std::array<const QString*, 3>& getIconPaths();
 
   public:
+    static bool isDark();
+    static void setDark(bool value);
+
     static void setIconSet(IconSet value);
 
     static QString getIconFile(const QString& id);
