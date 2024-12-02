@@ -2232,6 +2232,15 @@
         "fuzzy": 0
     },
     {
+        "term": "message:N9001",
+        "definition": "Begjin skript",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
         "term": "message:W1001",
         "definition": "Untdekking \u00fatskeakele, allinnich tastien op poarte %1",
         "context": "",
@@ -2297,6 +2306,24 @@
     {
         "term": "message:W2005",
         "definition": "Utgongsadres %1 is \u00fbnjildich",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W2006",
+        "definition": "Kommandostasjon stipet gjin loko slot %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W2007",
+        "definition": "Kommandostasjon stipet net it snelle klok slot",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2450,6 +2477,15 @@
     {
         "term": "pcap_output:file",
         "definition": "Best\u00e2n",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "pcap_output:pipe",
+        "definition": "Pipe",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2673,6 +2709,15 @@
         "fuzzy": 0
     },
     {
+        "term": "qtapp.mainmenu:quit",
+        "definition": "\u00d4fslute",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
         "term": "qtapp.mainmenu:restart_server",
         "definition": "Tjinner opnij starte",
         "context": "",
@@ -2709,8 +2754,233 @@
         "fuzzy": 0
     },
     {
+        "term": "qtapp.mainmenu:server_log",
+        "definition": "Tsjinner logboek",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:server_settings",
+        "definition": "Tsjinner ynstellings",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:settings",
+        "definition": "Ynstellings",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:shutdown_server",
+        "definition": "Server \u00f4fslute",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:shutdown_server_question",
+        "definition": "Binne jo wis dat jo de tsjinner \u00f4fslute wolle?",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:toolbar",
+        "definition": "Arkbalke",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:tools",
+        "definition": "Ark",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:view",
+        "definition": "Byld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:world",
+        "definition": "Wr\u00e2ld",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:world_properties",
+        "definition": "Wr\u00e2ld eigenskippen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.message_box:no",
+        "definition": "Nee",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.message_box:yes",
+        "definition": "Ja",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.object_select_list_dialog:cancel",
+        "definition": "Annulearje",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.object_select_list_dialog:ok",
+        "definition": "Ok",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.object_select_list_dialog:select_object",
+        "definition": "Selektearje objekt",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.settings.board:color_scheme",
+        "definition": "Kleurskema",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.settings.board:show_block_sensor_states",
+        "definition": "Lit blok sensor steaten sjen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.settings.developer:dont_load_fallback_language",
+        "definition": "Laad gjin fallback-taal",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.settings.developer:log_missing_strings",
+        "definition": "Log \u00fbntbrekkende oersettingen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.settings.developer:log_missing_strings_dir",
+        "definition": "Untbrekkende oersettingslogmap",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
         "term": "qtapp.settings.general:language",
         "definition": "Taal",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.settings.statusbar:show_clock",
+        "definition": "Toan klok",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.settings.statusbar:show_statuses",
+        "definition": "Toan statuses",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.settings:board",
+        "definition": "Board",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.settings:developer",
+        "definition": "Untwikkelder",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.settings:general",
+        "definition": "Algemien",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2754,8 +3024,53 @@
         "fuzzy": 0
     },
     {
+        "term": "qtapp:board_properties",
+        "definition": "Board eigenskippen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp:export_world_failed",
+        "definition": "Wr\u00e2ld eksportearje mislearre",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp:grid_dot",
+        "definition": "Stip",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp:grid_line",
+        "definition": "Rigel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
         "term": "qtapp:grid_none",
         "definition": "Gjin",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp:import_world_failed",
+        "definition": "Wr\u00e2ld ymportearje mislearre",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2774,6 +3089,15 @@
     {
         "term": "qtapp:previous",
         "definition": "Foarige",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp:traintastic_world",
+        "definition": "Traintastic wr\u00e2ld",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2801,6 +3125,15 @@
     {
         "term": "rail_vehicle_list:type",
         "definition": "Type",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "serial_flow_control:hardware",
+        "definition": "Hardware",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2846,6 +3179,42 @@
     {
         "term": "server_log:time",
         "definition": "Tiid",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "settings:allow_client_server_restart",
+        "definition": "Tastean dat client tsjinner opnij starte",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "settings:allow_client_server_shutdown",
+        "definition": "Tastean dat client tsjinner shutdown",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "settings:auto_save_world_on_exit",
+        "definition": "Automatysk bewarje wr\u00e2ld by \u00f4fslute",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "settings:localhost_only",
+        "definition": "Allinich localhost",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -2997,6 +3366,15 @@
         "fuzzy": 0
     },
     {
+        "term": "world:inputs",
+        "definition": "Yngangen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
         "term": "world:interfaces",
         "definition": "Ynterfaces",
         "context": "",
@@ -3035,6 +3413,24 @@
     {
         "term": "world:online",
         "definition": "Ferbine",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:outputs",
+        "definition": "\u00datgongen",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:rail_vehicles",
+        "definition": "Spoarweinen",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3177,6 +3573,42 @@
         "fuzzy": 0
     },
     {
+        "term": "settings:select_folder",
+        "definition": "Selektearje map",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "loconet_settings:listen_only",
+        "definition": "Allinne harkje",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:F1008",
+        "definition": "Eventloop fer\u00fbngelokke (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.settings:restart_required",
+        "definition": "Op 'e nij begjinne nedich",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
         "term": "qtapp.settings.general:language_changed_restart_required",
         "definition": "Traintastic-kli\u00efnt moat op 'e nij opstart wurde foar de taalferoaring om effekt te hawwen.",
         "context": "",
@@ -3195,6 +3627,240 @@
         "fuzzy": 0
     },
     {
+        "term": "decoder_protocol:dcc_short",
+        "definition": "DCC (Koart adres)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "decoder_protocol:dcc_long",
+        "definition": "DCC (Lang adres)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "decoder_protocol:motorola",
+        "definition": "Motorola",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "decoder_protocol:selectrix",
+        "definition": "Selectrix",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklin_can_interface_type:network_tcp",
+        "definition": "Netwurk (TCP)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklin_can_interface_type:network_udp",
+        "definition": "Netwurk (UDP)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:C2005",
+        "definition": "SocketCAN is allinich beskikber op Linux",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklin_can_interface_type:socket_can",
+        "definition": "SocketCAN (allinich op Linux)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "interface.marklin_can:marklin_can_locomotive_list",
+        "definition": "M\u00e4rklin CAN: Lokomotyflist",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklincan_settings:default_switch_time",
+        "definition": "Standert skeakel tiid",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklincan_settings:node_uid",
+        "definition": "Node UID",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklincan_settings:node_serial_number",
+        "definition": "Node searyn\u00fbmer",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklin_can_locomotive_list:reload",
+        "definition": "Opnij laden",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "interface.marklin_can:marklin_can_node_list",
+        "definition": "M\u00e4rklin CAN: Nodelist",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "table_model.marklin_can_node_list:device_name",
+        "definition": "Apparaatnamme",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "table_model.marklin_can_node_list:article_number",
+        "definition": "Artikeln\u00fbmer",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "table_model.marklin_can_node_list:serial_number",
+        "definition": "Searyn\u00fbmer",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "table_model.marklin_can_node_list:software_version",
+        "definition": "Software ferzje",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "table_model.marklin_can_node_list:device_id",
+        "definition": "Apparaat Id",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E2024",
+        "definition": "Unbekende lokomotyf MFX UID: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W9001",
+        "definition": "Utfiering naam %1 us",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3001",
+        "definition": "Kin spoarwein net wiskje as trein aktif is",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "input_map_item.block:identification",
+        "definition": "Identifikaasje",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3002",
+        "definition": "Kin aktive trein net wiskje",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:C1014",
+        "definition": "Unjildich kommando",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:C1015",
+        "definition": "Unjildich objekt",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
         "term": "message:C1018",
         "definition": "\u00dats\u00fbndering: %1",
         "context": "",
@@ -3206,6 +3872,24 @@
     {
         "term": "message:C1019",
         "definition": "Objekt is gjin tabel",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W3001",
+        "definition": "NX knop ferb\u00fbn mei twa blokken",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W3002",
+        "definition": "NX knop net ferb\u00fbn mei in blok",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3240,8 +3924,26 @@
         "fuzzy": 0
     },
     {
+        "term": "board_tile.rail.signal_3_aspect:require_reservation",
+        "definition": "Fereaskje reservearring",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
         "term": "traintastic_diy_settings:startup_delay",
         "definition": "Opstart fertraging",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.settings.general:connect_automatically_to_discovered_server",
+        "definition": "Ferbine automatysk mei \u00fbntdutsen tsjinner",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3294,6 +3996,15 @@
         "fuzzy": 0
     },
     {
+        "term": "message:W2020",
+        "definition": "DCCext (RCN-213) wurdt net stipe",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
         "term": "dccex_interface_type:serial",
         "definition": "Serial",
         "context": "",
@@ -3314,6 +4025,15 @@
     {
         "term": "qtapp.connect_dialog:authenticating",
         "definition": "Autentikaasje",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.connect_dialog:creating_session",
+        "definition": "Sesje oanmeitsje",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3368,6 +4088,24 @@
     {
         "term": "output_channel:ecos_object",
         "definition": "ECoS objeckt",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map:add_address",
+        "definition": "Adres tafoegje",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map:remove_address",
+        "definition": "Adres fuortsmite",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3602,6 +4340,24 @@
     {
         "term": "wizard.add_interface.connection:text",
         "definition": "Hoe is de %command_station% ferb\u00fbn?",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:command_station_serial_port",
+        "definition": "%command_station% seri\u00eble poarte",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:command_station_usb_port",
+        "definition": "%command_station% USB-poarte",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3852,6 +4608,15 @@
         "fuzzy": 0
     },
     {
+        "term": "output_map:address_x",
+        "definition": "Adres %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
         "term": "class_id:board_tile.rail.nx_button",
         "definition": "NX knop",
         "context": "",
@@ -3861,8 +4626,35 @@
         "fuzzy": 0
     },
     {
+        "term": "class_id:board_tile.misc.label",
+        "definition": "Etiket",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
         "term": "board_tile.misc.label:text",
         "definition": "Tekst",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.label:text_align",
+        "definition": "Tekst rjochtsje",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.label:text_color",
+        "definition": "Tekst kleur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3881,6 +4673,96 @@
     {
         "term": "board_tile.misc.label:background_color",
         "definition": "Eftergr\u00fbn kleur",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:top_left",
+        "definition": "Links boppe",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:top_center",
+        "definition": "Sintrum boppe",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:top_right",
+        "definition": "Rjochts boppe",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:center_left",
+        "definition": "Sintrum links",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:center",
+        "definition": "Sintrum",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:center_right",
+        "definition": "Sintrum rjochts",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:bottom_left",
+        "definition": "Links\u00fbnder",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:bottom_center",
+        "definition": "Sintrum\u00fbnder",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:bottom_right",
+        "definition": "Rjochts\u00fbnder",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board:title",
+        "definition": "Nij board",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4176,8 +5058,134 @@
         "fuzzy": 0
     },
     {
+        "term": "single_output_action:none",
+        "definition": "Gjin",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "single_output_action:off",
+        "definition": "\u00dat",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "single_output_action:on",
+        "definition": "Oan",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:show_hide_console",
+        "definition": "Konsole sjen litte/ferbergje",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:settings",
+        "definition": "Ynstellings",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
         "term": "tray_icon.menu:language",
         "definition": "Taal",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:start_automatically_at_logon",
+        "definition": "Start automatysk by oanmelding",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:advanced",
+        "definition": "Avansearre",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:open_data_directory",
+        "definition": "Iepenje gegevensmap",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:restart",
+        "definition": "Op 'e nij begjinne",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:shutdown",
+        "definition": "Ofsl\u00fate",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.notify:message_running",
+        "definition": "Traintastic-tsjinner rint op 'e eftergr\u00fbn.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.notify:message_restarting",
+        "definition": "Traintastic-tsjinner opnij starten",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.language_changed_message_box:caption",
+        "definition": "Taal feroare",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.language_changed_message_box:text",
+        "definition": "Traintastic-tsjinner moat opnij opstarte wurde foar de taalferoaring om effekt te hawwen. No opnij starte?",
         "context": "",
         "term_plural": "",
         "reference": "",
