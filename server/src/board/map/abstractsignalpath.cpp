@@ -238,7 +238,7 @@ std::unique_ptr<const AbstractSignalPath::Item> AbstractSignalPath::findBlocks(c
       if(nextNode.getLink(0).get() == &link)
         return findBlocks(nextNode, *nextLink, blocksAhead);
   }
-  else if(isRailBridge(tile->tileId) || isRailCross(tile->tileId))
+  else if(isRailBridge(tile->tileId) || isRailCross(tile->tileId) || tile->tileId == TileId::HiddenRailCrossOver)
   {
     //     2      1 2      2 3
     //     |       \|      |/
