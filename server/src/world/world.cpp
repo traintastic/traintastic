@@ -241,7 +241,7 @@ World::World(Private /*unused*/) :
       }
       event(value ? WorldEvent::SimulationEnabled : WorldEvent::SimulationDisabled);
     }},
-  simulationStatus{this, "simulation_status", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
+  simulationStatus{this, "simulation_status", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::Internal},
   save{*this, "save", MethodFlags::NoScript,
     [this]()
     {
@@ -405,6 +405,8 @@ World::World(Private /*unused*/) :
   Attributes::addEnabled(simulation, false);
   Attributes::addObjectEditor(simulation, false);
   m_interfaceItems.add(simulation);
+
+  m_interfaceItems.add(simulationStatus);
 
   Attributes::addObjectEditor(save, false);
   m_interfaceItems.add(save);
