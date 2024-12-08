@@ -66,14 +66,14 @@ constexpr QRect updateTileRect(const int x, const int y, const int w, const int 
 }
 
 
-BoardAreaWidget::BoardAreaWidget(BoardWidget& board, QWidget* parent) :
+BoardAreaWidget::BoardAreaWidget(std::shared_ptr<Board> board, QWidget* parent) :
   QWidget(parent),
   m_colorScheme{&BoardColorScheme::dark},
-  m_board{board},
-  m_boardLeft{board.board().getProperty("left")},
-  m_boardTop{board.board().getProperty("top")},
-  m_boardRight{board.board().getProperty("right")},
-  m_boardBottom{board.board().getProperty("bottom")},
+  m_board{std::move(board)},
+  m_boardLeft{m_board->getProperty("left")},
+  m_boardTop{m_board->getProperty("top")},
+  m_boardRight{m_board->getProperty("right")},
+  m_boardBottom{m_board->getProperty("bottom")},
   m_grid{Grid::Dot},
   m_zoomLevel{0},
   m_mouseLeftButtonPressed{false},
@@ -99,7 +99,7 @@ BoardAreaWidget::BoardAreaWidget(BoardWidget& board, QWidget* parent) :
 
   connect(&BoardSettings::instance(), &SettingsBase::changed, this, &BoardAreaWidget::settingsChanged);
 
-  for(const auto& [l, object] : m_board.board().tileObjects())
+  for(const auto& [l, object] : m_board->tileObjects())
     tileObjectAdded(l.x, l.y, object);
 
   settingsChanged();
@@ -115,7 +115,7 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
     {
       try
       {
-        const TileData& tileData = m_board.board().tileData().at(l);
+        const TileData& tileData = m_board->tileData().at(l);
         update(updateTileRect(l.x - boardLeft(), l.y - boardTop(), tileData.width(), tileData.height(), getTileSize()));
       }
       catch(...)
@@ -130,7 +130,7 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
         connect(property, &BaseProperty::valueChanged, this, handler);
     };
 
-  switch(m_board.board().getTileId(l))
+  switch(m_board->getTileId(l))
   {
     case TileId::RailTurnoutLeft45:
     case TileId::RailTurnoutLeft90:
@@ -311,7 +311,7 @@ void BoardAreaWidget::setMouseMoveTileSizeMax(uint8_t width, uint8_t height)
 
 TurnoutPosition BoardAreaWidget::getTurnoutPosition(const TileLocation& l) const
 {
-  if(ObjectPtr object = m_board.board().getTileObject(l))
+  if(ObjectPtr object = m_board->getTileObject(l))
     if(const auto* p = object->getProperty("position"))
       return p->toEnum<TurnoutPosition>();
   return TurnoutPosition::Unknown;
@@ -319,7 +319,7 @@ TurnoutPosition BoardAreaWidget::getTurnoutPosition(const TileLocation& l) const
 
 SensorState BoardAreaWidget::getSensorState(const TileLocation& l) const
 {
-  if(ObjectPtr object = m_board.board().getTileObject(l))
+  if(ObjectPtr object = m_board->getTileObject(l))
     if(const auto* p = object->getProperty("state"))
       return p->toEnum<SensorState>();
   return SensorState::Unknown;
@@ -327,7 +327,7 @@ SensorState BoardAreaWidget::getSensorState(const TileLocation& l) const
 
 DirectionControlState BoardAreaWidget::getDirectionControlState(const TileLocation& l) const
 {
-  if(ObjectPtr object = m_board.board().getTileObject(l))
+  if(ObjectPtr object = m_board->getTileObject(l))
     if(const auto* p = object->getProperty("state"))
       return p->toEnum<DirectionControlState>();
   return DirectionControlState::Both;
@@ -335,7 +335,7 @@ DirectionControlState BoardAreaWidget::getDirectionControlState(const TileLocati
 
 SignalAspect BoardAreaWidget::getSignalAspect(const TileLocation& l) const
 {
-  if(ObjectPtr object = m_board.board().getTileObject(l))
+  if(ObjectPtr object = m_board->getTileObject(l))
     if(const auto* p = object->getProperty("aspect"))
       return p->toEnum<SignalAspect>();
   return SignalAspect::Unknown;
@@ -343,7 +343,7 @@ SignalAspect BoardAreaWidget::getSignalAspect(const TileLocation& l) const
 
 Color BoardAreaWidget::getColor(const TileLocation& l) const
 {
-  if(ObjectPtr object = m_board.board().getTileObject(l))
+  if(ObjectPtr object = m_board->getTileObject(l))
     if(const auto* p = object->getProperty("color"))
       return p->toEnum<Color>();
   return Color::None;
@@ -351,7 +351,7 @@ Color BoardAreaWidget::getColor(const TileLocation& l) const
 
 DecouplerState BoardAreaWidget::getDecouplerState(const TileLocation& l) const
 {
-  if(ObjectPtr object = m_board.board().getTileObject(l))
+  if(ObjectPtr object = m_board->getTileObject(l))
     if(const auto* p = object->getProperty("state"))
       return p->toEnum<DecouplerState>();
   return DecouplerState::Deactivated;
@@ -359,7 +359,7 @@ DecouplerState BoardAreaWidget::getDecouplerState(const TileLocation& l) const
 
 bool BoardAreaWidget::getNXButtonEnabled(const TileLocation& l) const
 {
-  if(auto object = std::dynamic_pointer_cast<NXButtonRailTile>(m_board.board().getTileObject(l)))
+  if(auto object = std::dynamic_pointer_cast<NXButtonRailTile>(m_board->getTileObject(l)))
   {
     return object->getPropertyValueBool("enabled", false);
   }
@@ -368,7 +368,7 @@ bool BoardAreaWidget::getNXButtonEnabled(const TileLocation& l) const
 
 bool BoardAreaWidget::getNXButtonPressed(const TileLocation& l) const
 {
-  if(auto object = std::dynamic_pointer_cast<NXButtonRailTile>(m_board.board().getTileObject(l)))
+  if(auto object = std::dynamic_pointer_cast<NXButtonRailTile>(m_board->getTileObject(l)))
   {
     return object->isPressed();
   }
@@ -383,11 +383,11 @@ TileLocation BoardAreaWidget::pointToTileLocation(const QPoint& p)
 
 QString BoardAreaWidget::getTileToolTip(const TileLocation& l) const
 {
-  const auto tileId = m_board.board().getTileId(l);
+  const auto tileId = m_board->getTileId(l);
 
   if(isRailTurnout(tileId))
   {
-    if(auto turnout = m_board.board().getTileObject(l))
+    if(auto turnout = m_board->getTileObject(l))
     {
       QString text = "<b>" + turnout->getPropertyValueString("name") + "</b>";
       if(auto* position = turnout->getProperty("position")) /*[[likely]]*/
@@ -399,7 +399,7 @@ QString BoardAreaWidget::getTileToolTip(const TileLocation& l) const
   }
   else if(isRailSignal(tileId))
   {
-    if(auto signal = m_board.board().getTileObject(l))
+    if(auto signal = m_board->getTileObject(l))
     {
       QString text = "<b>" + signal->getPropertyValueString("name") + "</b>";
       if(auto* aspect = signal->getProperty("aspect")) /*[[likely]]*/
@@ -411,7 +411,7 @@ QString BoardAreaWidget::getTileToolTip(const TileLocation& l) const
   }
   else if(tileId == TileId::RailSensor)
   {
-    if(auto sensor = m_board.board().getTileObject(l))
+    if(auto sensor = m_board->getTileObject(l))
     {
       QString text = "<b>" + sensor->getPropertyValueString("name") + "</b>";
       if(auto* state = sensor->getProperty("state")) /*[[likely]]*/
@@ -423,7 +423,7 @@ QString BoardAreaWidget::getTileToolTip(const TileLocation& l) const
   }
   else if(tileId == TileId::RailBlock)
   {
-    if(auto block = m_board.board().getTileObject(l))
+    if(auto block = m_board->getTileObject(l))
     {
       QString text = "<b>" + block->getPropertyValueString("name") + "</b>";
       if(auto* state = block->getProperty("state")) /*[[likely]]*/
@@ -435,7 +435,7 @@ QString BoardAreaWidget::getTileToolTip(const TileLocation& l) const
   }
   else if(tileId == TileId::RailDirectionControl)
   {
-    if(auto directionControl = m_board.board().getTileObject(l))
+    if(auto directionControl = m_board->getTileObject(l))
     {
       QString text = "<b>" + directionControl->getPropertyValueString("name") + "</b>";
       if(auto* state = directionControl->getProperty("state")) /*[[likely]]*/
@@ -447,7 +447,7 @@ QString BoardAreaWidget::getTileToolTip(const TileLocation& l) const
   }
   else if(tileId == TileId::RailSensor)
   {
-    if(auto sensor = m_board.board().getTileObject(l))
+    if(auto sensor = m_board->getTileObject(l))
     {
       QString text = "<b>" + sensor->getPropertyValueString("name") + "</b>";
       if(auto* state = sensor->getProperty("state")) /*[[likely]]*/
@@ -459,7 +459,7 @@ QString BoardAreaWidget::getTileToolTip(const TileLocation& l) const
   }
   else if(tileId == TileId::Switch)
   {
-    if(auto switch_ = m_board.board().getTileObject(l))
+    if(auto switch_ = m_board->getTileObject(l))
     {
       QString text = "<b>" + switch_->getPropertyValueString("name") + "</b>";
       if(auto* value = switch_->getProperty("value")) /*[[likely]]*/
@@ -484,7 +484,7 @@ QString BoardAreaWidget::getTileToolTip(const TileLocation& l) const
   else if(tileId == TileId::PushButton ||
           tileId == TileId::RailNXButton)
   {
-    if(auto tile = m_board.board().getTileObject(l))
+    if(auto tile = m_board->getTileObject(l))
     {
       return "<b>" + tile->getPropertyValueString("name") + "</b>";
     }
@@ -671,7 +671,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
   painter.save();
 
-  for(auto it : m_board.board().tileData())
+  for(auto it : m_board->tileData())
     if(it.first.x + it.second.width() - 1 >= tiles.left() && it.first.x <= tiles.right() &&
         it.first.y + it.second.height() - 1 >= tiles.top() && it.first.y <= tiles.bottom())
     {
@@ -731,7 +731,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           break;
 
         case TileId::RailBlock:
-          tilePainter.drawBlock(id, r, a, state & 0x01, state & 0x02, m_board.board().getTileObject(it.first));
+          tilePainter.drawBlock(id, r, a, state & 0x01, state & 0x02, m_board->getTileObject(it.first));
           break;
 
         case TileId::RailDirectionControl:
@@ -752,7 +752,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
         case TileId::Label:
         {
-          if(auto label = m_board.board().getTileObject(it.first)) /*[[likely]]*/
+          if(auto label = m_board->getTileObject(it.first)) /*[[likely]]*/
           {
             tilePainter.drawLabel(r, a,
               label->getPropertyValueString("text"),
@@ -767,7 +767,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           break;
         }
         case TileId::Switch:
-          if(auto sw = m_board.board().getTileObject(it.first)) /*[[likely]]*/
+          if(auto sw = m_board->getTileObject(it.first)) /*[[likely]]*/
           {
             tilePainter.drawSwitch(r,
               sw->getPropertyValueBool("value", false),
@@ -862,7 +862,7 @@ void BoardAreaWidget::dragMoveEvent(QDragMoveEvent* event)
   {
     m_dragMoveTileLocation = l;
     if(event->mimeData()->hasFormat(AssignTrainMimeData::mimeType) &&
-        m_board.board().getTileId(l) == TileId::RailBlock)
+        m_board->getTileId(l) == TileId::RailBlock)
     {
       return event->accept();
     }
@@ -878,12 +878,12 @@ void BoardAreaWidget::dropEvent(QDropEvent* event)
   const TileLocation l = pointToTileLocation(event->position().toPoint());
 #endif
 
-  switch(m_board.board().getTileId(l))
+  switch(m_board->getTileId(l))
   {
     case TileId::RailBlock:
       if(auto* assignTrain = dynamic_cast<const AssignTrainMimeData*>(event->mimeData()))
       {
-        if(auto tile = std::dynamic_pointer_cast<BlockRailTile>(m_board.board().getTileObject(l)))
+        if(auto tile = std::dynamic_pointer_cast<BlockRailTile>(m_board->getTileObject(l)))
         {
           if(auto* method = tile->getMethod("assign_train"))
           {
