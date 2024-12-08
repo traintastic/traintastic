@@ -510,7 +510,7 @@ MainWindow::MainWindow(QWidget* parent) :
       })->setShortcut(QKeySequence::HelpContents);
     auto* subMenu = menu->addMenu(Locale::tr("qtapp.mainmenu:wizards"));
     subMenu->addAction(Locale::tr("wizard.introduction:title"), this, &MainWindow::showIntroductionWizard);
-    subMenu->addAction(Locale::tr("wizard.add_interface.welcome:title"), this, &MainWindow::showAddInterfaceWizard);
+    m_actionAddInterfaceWizard = subMenu->addAction(Locale::tr("wizard.add_interface.welcome:title"), this, &MainWindow::showAddInterfaceWizard);
     //menu->addSeparator();
     //menu->addAction(Locale::tr("qtapp.mainmenu:about_qt") + "...", qApp, &QApplication::aboutQt);
     menu->addAction(Locale::tr("qtapp.mainmenu:about") + "...", this, &MainWindow::showAbout);
@@ -667,7 +667,8 @@ void MainWindow::changeEvent(QEvent* event)
 
 void MainWindow::worldChanged()
 {
-  m_newWorldWizard.reset();
+  m_wizard.newWorld.reset();
+  m_wizard.addInterface.reset();
 
   if(m_world)
     m_mdiArea->closeAllSubWindows();
@@ -738,13 +739,13 @@ void MainWindow::worldChanged()
   if(m_newWorldRequested && m_world)
   {
     m_newWorldRequested = false;
-    m_newWorldWizard = std::make_unique<NewWorldWizard>(m_world, this);
-    connect(m_newWorldWizard.get(), &NewWorldWizard::finished,
+    m_wizard.newWorld = std::make_unique<NewWorldWizard>(m_world, this);
+    connect(m_wizard.newWorld.get(), &NewWorldWizard::finished,
       [this]()
       {
-        m_newWorldWizard.release()->deleteLater();
+        m_wizard.newWorld.release()->deleteLater();
       });
-    m_newWorldWizard->open();
+    m_wizard.newWorld->open();
   }
 }
 
@@ -937,17 +938,18 @@ IntroductionWizard* MainWindow::showIntroductionWizard()
   return introductionWizard;
 }
 
-AddInterfaceWizard* MainWindow::showAddInterfaceWizard()
+void MainWindow::showAddInterfaceWizard()
 {
-  if(!m_world) /*[[unlikely]]*/
+  if(m_world && !m_wizard.addInterface) /*[[likely]]*/
   {
-    return nullptr;
+    m_wizard.addInterface = std::make_unique<AddInterfaceWizard>(m_world, this);
+    connect(m_wizard.addInterface.get(), &AddInterfaceWizard::finished,
+      [this]()
+      {
+        m_wizard.addInterface.release()->deleteLater();
+      });
+    m_wizard.addInterface->open();
   }
-
-  auto* addInterfaceWizard = new AddInterfaceWizard(m_world, this);
-  addInterfaceWizard->setAttribute(Qt::WA_DeleteOnClose);
-  addInterfaceWizard->open();
-  return addInterfaceWizard;
 }
 
 NewBoardWizard* MainWindow::showNewBoardWizard(const ObjectPtr& board)
@@ -1001,7 +1003,6 @@ void MainWindow::updateActions()
   const bool connected = m_connection && m_connection->state() == Connection::State::Connected;
   const bool haveWorld = connected && m_connection->world();
 
-
   m_actionConnectToServer->setEnabled(!m_connection);
   m_actionConnectToServer->setVisible(!connected);
   m_actionDisconnectFromServer->setVisible(connected);
@@ -1025,6 +1026,7 @@ void MainWindow::updateActions()
     m_actionServerShutdown->setEnabled(m && m->getAttributeBool(AttributeName::Enabled, false));
   }
   m_menuProgramming->setEnabled(haveWorld);
+  m_actionAddInterfaceWizard->setEnabled(haveWorld);
 
   setMenuEnabled(m_menuWorld, haveWorld);
   m_worldOnlineOfflineToolButton->setEnabled(haveWorld);
