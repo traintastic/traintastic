@@ -22,6 +22,7 @@
 
 #include "methodicon.hpp"
 #include <QMouseEvent>
+#include <QIcon>
 #include "../network/method.hpp"
 
 MethodIcon::MethodIcon(Method& method, QIcon icon, QWidget* parent) :
