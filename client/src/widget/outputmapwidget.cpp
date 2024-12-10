@@ -27,6 +27,7 @@
 #include <QTableWidget>
 #include <QHeaderView>
 #include <QPushButton>
+#include <QEvent>
 #include <traintastic/locale/locale.hpp>
 #include "createwidget.hpp"
 #include "interfaceitemnamelabel.hpp"
@@ -37,6 +38,7 @@
 #include "objectpropertycombobox.hpp"
 #include "propertyaddresses.hpp"
 #include "outputmapoutputactionwidget.hpp"
+#include "methodicon.hpp"
 #include "../board/tilepainter.hpp"
 #include "../board/getboardcolorscheme.hpp"
 #include "../dialog/objectselectlistdialog.hpp"
@@ -118,6 +120,13 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
   m_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
   l->addWidget(m_table);
+
+  if(auto* swapOutputs = m_object->getMethod("swap_outputs"))
+  {
+    m_swapOutputs = new MethodIcon(*swapOutputs, Theme::getIcon("swap"), m_table);
+    m_swapOutputs->show();
+    m_table->installEventFilter(this);
+  }
 
   setLayout(l);
 
@@ -324,6 +333,17 @@ void OutputMapWidget::updateTableOutputColumns()
   {
     m_table->setColumnCount(m_columnCountNonOutput);
   }
+}
+
+bool OutputMapWidget::eventFilter(QObject* object, QEvent* event)
+{
+  if(m_swapOutputs && object == m_table && event->type() == QEvent::Resize)
+  {
+    auto pnt = m_swapOutputs->rect().bottomRight();
+    pnt = m_table->rect().bottomRight() - pnt - pnt / 4;
+    m_swapOutputs->move(pnt.x(), pnt.y());
+  }
+  return QWidget::eventFilter(object, event);
 }
 
 void OutputMapWidget::updateTableOutputActions(ObjectVectorProperty& property, int row)

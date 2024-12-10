@@ -90,6 +90,7 @@ class OutputMap : public SubObject
     ObjectVectorProperty<OutputMapItem> items;
     Method<void()> addAddress;
     Method<void()> removeAddress;
+    Method<void()> swapOutputs;
 
     OutputMap(Object& _parent, std::string_view parentPropertyName);
     ~OutputMap() override;

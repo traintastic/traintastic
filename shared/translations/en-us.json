@@ -6709,5 +6709,9 @@
     {
         "term":"wizard.add_interface.protocol_dr5000_usb:bottom_text",
         "definition": "The %command_station% supports two different protocols for communication. Although both are supported by Traintastic, using LocoNet is recommended as it is more versatile."
+    },
+    {
+        "term": "output_map:swap_outputs",
+        "definition": "Swap outputs"
     }
 ]

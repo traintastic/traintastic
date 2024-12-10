@@ -6385,5 +6385,9 @@
     {
         "term": "wizard.add_interface.protocol_dr5000_usb:bottom_text",
         "definition": "Hoewel beide worden ondersteund door Traintastic, wordt het aanbevolen om LocoNet te gebruiken, omdat het veelzijdiger is."
+    },
+    {
+        "term": "output_map:swap_outputs",
+        "definition": "Uitgangen omwisselen"
     }
 ]
