@@ -300,6 +300,11 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
   , swapOutputs{*this, "swap_outputs", MethodFlags::NoScript,
       [this]()
       {
+        if(!interface)
+        {
+          return;
+        }
+
         switch(interface->outputType(channel))
         {
           case OutputType::Pair:
