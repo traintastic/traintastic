@@ -124,8 +124,12 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
   if(auto* swapOutputs = m_object->getMethod("swap_outputs"))
   {
     m_swapOutputs = new MethodIcon(*swapOutputs, Theme::getIcon("swap"), m_table);
-    m_swapOutputs->show();
+    if(!swapOutputs->getAttributeBool(AttributeName::Visible, true))
+    {
+      m_swapOutputs->hide();
+    }
     m_table->installEventFilter(this);
+    m_swapOutputs->installEventFilter(this);
   }
 
   setLayout(l);
@@ -337,7 +341,7 @@ void OutputMapWidget::updateTableOutputColumns()
 
 bool OutputMapWidget::eventFilter(QObject* object, QEvent* event)
 {
-  if(m_swapOutputs && object == m_table && event->type() == QEvent::Resize)
+  if(m_swapOutputs && ((object == m_table && event->type() == QEvent::Resize) || (object == m_swapOutputs && event->type() == QEvent::Show)))
   {
     auto pnt = m_swapOutputs->rect().bottomRight();
     pnt = m_table->rect().bottomRight() - pnt - pnt / 4;
