@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,8 @@
 #include <memory>
 #include <queue>
 #include <boost/asio.hpp>
+#include <boost/beast/core/tcp_stream.hpp>
+#include <boost/beast/websocket/stream.hpp>
 #include "../core/objectptr.hpp"
 #include <traintastic/network/message.hpp>
 
@@ -40,19 +42,14 @@ class Connection : public std::enable_shared_from_this<Connection>
     using ObjectHandle = uint32_t;
 
     Server& m_server;
-    boost::asio::ip::tcp::socket m_socket;
-    struct
-    {
-      Message::Header header;
-      std::shared_ptr<Message> message;
-    } m_readBuffer;
+    std::shared_ptr<boost::beast::websocket::stream<boost::beast::tcp_stream>> m_ws;
+    boost::beast::flat_buffer m_readBuffer;
     std::mutex m_writeQueueMutex;
     std::queue<std::unique_ptr<Message>> m_writeQueue;
     bool m_authenticated;
     std::shared_ptr<Session> m_session;
 
-    void doReadHeader();
-    void doReadData();
+    void doRead();
     void doWrite();
 
     void processMessage(const std::shared_ptr<Message> message);
@@ -63,7 +60,7 @@ class Connection : public std::enable_shared_from_this<Connection>
   public:
     const std::string id;
 
-    Connection(Server& server, boost::asio::ip::tcp::socket socket, std::string id_);
+    Connection(Server& server, std::shared_ptr<boost::beast::websocket::stream<boost::beast::tcp_stream>> ws, std::string id_);
     virtual ~Connection();
 
     void start();

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,12 +24,85 @@
 #include <traintastic/network/message.hpp>
 #include <version.hpp>
 #include "connection.hpp"
+#include "httpconnection.hpp"
 #include "../core/eventloop.hpp"
 #include "../log/log.hpp"
 #include "../log/logmessageexception.hpp"
 #include "../utils/setthreadname.hpp"
 
 #define IS_SERVER_THREAD (std::this_thread::get_id() == m_thread.get_id())
+
+namespace beast = boost::beast;
+namespace http = beast::http;
+
+namespace
+{
+
+static constexpr std::string_view serverHeader{"Traintastic-server/" TRAINTASTIC_VERSION_FULL};
+static constexpr std::string_view contentTypeTextPlain{"text/plain"};
+static constexpr std::string_view contentTypeTextHtml{"text/Html"};
+
+http::message_generator notFound(const http::request<http::string_body>& request)
+{
+  http::response<http::string_body> response{http::status::not_found, request.version()};
+  response.set(http::field::server, serverHeader);
+  response.set(http::field::content_type, contentTypeTextPlain);
+  response.keep_alive(request.keep_alive());
+  response.body() = "404 Not Found";
+  response.prepare_payload();
+  return response;
+}
+
+http::message_generator methodNotAllowed(const http::request<http::string_body>& request, std::initializer_list<http::verb> allowedMethods)
+{
+  std::string allow;
+  for(auto method : allowedMethods)
+  {
+    allow.append(http::to_string(method)).append(" ");
+  }
+  http::response<http::string_body> response{http::status::method_not_allowed, request.version()};
+  response.set(http::field::server, serverHeader);
+  response.set(http::field::content_type, contentTypeTextPlain);
+  response.set(http::field::allow, allow);
+  response.keep_alive(request.keep_alive());
+  response.body() = "405 Method Not Allowed";
+  response.prepare_payload();
+  return response;
+}
+
+http::message_generator text(const http::request<http::string_body>& request, std::string_view contentType, std::string_view body)
+{
+  if(request.method() != http::verb::get && request.method() != http::verb::head)
+  {
+    return methodNotAllowed(request, {http::verb::get, http::verb::head});
+  }
+  http::response<http::string_body> response{http::status::ok, request.version()};
+  response.set(http::field::server, serverHeader);
+  response.set(http::field::content_type, contentType);
+  response.keep_alive(request.keep_alive());
+  if(request.method() == http::verb::head)
+  {
+    response.content_length(body.size());
+  }
+  else
+  {
+    response.body() = body;
+  }
+  response.prepare_payload();
+  return response;
+}
+
+http::message_generator textPlain(const http::request<http::string_body>& request, std::string_view body)
+{
+  return text(request, contentTypeTextPlain, body);
+}
+
+http::message_generator textHtml(const http::request<http::string_body>& request, std::string_view body)
+{
+  return text(request, contentTypeTextHtml, body);
+}
+
+}
 
 Server::Server(bool localhostOnly, uint16_t port, bool discoverable)
   : m_ioContext{1}
@@ -202,15 +275,71 @@ void Server::doAccept()
     {
       if(!ec)
       {
-        try
+        std::make_shared<HTTPConnection>(shared_from_this(), std::move(socket))->start();
+
+        doAccept();
+      }
+      else
+      {
+        Log::log(id, LogMessage::E1004_TCP_ACCEPT_ERROR_X, ec.message());
+      }
+    });
+}
+
+http::message_generator Server::handleHTTPRequest(http::request<http::string_body>&& request)
+{
+  if(request.target() == "/")
+  {
+    return textHtml(request,
+      "<!doctype html>"
+      "<html>"
+      "<head>"
+        "<meta charset=\"utf-8\">"
+        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">"
+        "<title>Traintastic v" TRAINTASTIC_VERSION_FULL "</title>"
+      "</head>"
+      "<body>"
+        "<h1>Traintastic v" TRAINTASTIC_VERSION_FULL "</h1>"
+      "</body>"
+      "</html>");
+  }
+  if(request.target() == "/version")
+  {
+    return textPlain(request, TRAINTASTIC_VERSION_FULL);
+  }
+  return notFound(request);
+}
+
+bool Server::handleWebSocketUpgradeRequest(http::request<http::string_body>&& request, beast::tcp_stream& stream)
+{
+  if(request.target() == "/client")
+  {
+    namespace websocket = beast::websocket;
+
+    beast::get_lowest_layer(stream).expires_never(); // disable HTTP timeout
+
+    auto ws = std::make_shared<websocket::stream<beast::tcp_stream>>(std::move(stream));
+    ws->set_option(websocket::stream_base::timeout::suggested(beast::role_type::server));
+    ws->set_option(websocket::stream_base::decorator(
+      [](websocket::response_type& response)
+      {
+        response.set(beast::http::field::server, serverHeader);
+      }));
+
+    ws->async_accept(request,
+      [this, ws](beast::error_code ec)
+      {
+        if(!ec)
         {
+          auto& socket = beast::get_lowest_layer(*ws).socket();
+
           const auto connectionId = std::string("connection[")
             .append(socket.remote_endpoint().address().to_string())
             .append(":")
             .append(std::to_string(socket.remote_endpoint().port()))
             .append("]");
 
-          auto connection = std::make_shared<Connection>(*this, std::move(socket), connectionId);
+          auto connection = std::make_shared<Connection>(*this, ws, connectionId);
           connection->start();
 
           EventLoop::call(
@@ -220,16 +349,12 @@ void Server::doAccept()
               m_connections.push_back(connection);
             });
         }
-        catch(const std::exception& e)
+        else
         {
-          Log::log(id, LogMessage::C1002_CREATING_CONNECTION_FAILED_X, e.what());
+          Log::log(id, LogMessage::E1004_TCP_ACCEPT_ERROR_X, ec.message());
         }
-
-        doAccept();
-      }
-      else
-      {
-        Log::log(id, LogMessage::E1004_TCP_ACCEPT_ERROR_X, ec.message());
-      }
-    });
+      });
+    return true;
+  }
+  return false;
 }

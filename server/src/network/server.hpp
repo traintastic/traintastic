@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,9 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ip/udp.hpp>
+#include <boost/beast/core/tcp_stream.hpp>
+#include <boost/beast/http/message_generator.hpp>
+#include <boost/beast/http/string_body.hpp>
 
 class Connection;
 class Message;
@@ -37,6 +40,7 @@ class Message;
 class Server : public std::enable_shared_from_this<Server>
 {
   friend class Connection;
+  friend class HTTPConnection;
 
   private:
     boost::asio::io_context m_ioContext;
@@ -51,6 +55,9 @@ class Server : public std::enable_shared_from_this<Server>
     void doReceive();
     static std::unique_ptr<Message> processMessage(const Message& message);
     void doAccept();
+
+    boost::beast::http::message_generator handleHTTPRequest(boost::beast::http::request<boost::beast::http::string_body>&& request);
+    bool handleWebSocketUpgradeRequest(boost::beast::http::request<boost::beast::http::string_body>&& request, boost::beast::tcp_stream& stream);
 
     void connectionGone(const std::shared_ptr<Connection>& connection);
 
