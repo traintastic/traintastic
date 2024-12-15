@@ -102,6 +102,7 @@ jobs:
       uses: jurplel/install-qt-action@v4
       with:
         cache: true
+        modules: qtwebsockets
         version: 6.5.*
 
     # Ubuntu only:
