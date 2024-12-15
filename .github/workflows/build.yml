@@ -20,16 +20,6 @@ jobs:
           build_deb: false
           defines: ""
 
-        - name: "ubuntu_22.04"
-          os: ubuntu-22.04
-          generator: "Unix Makefiles"
-          arch: ""
-          target: traintastic-client
-          jobs: 4
-          build_type: Release
-          build_deb: true
-          defines: ""
-
         - name: "ubuntu_24.04"
           os: ubuntu-24.04
           generator: "Unix Makefiles"
@@ -199,18 +189,6 @@ jobs:
           build_type: Release
           build_deb: false
           defines: ""
-          ccov: false
-
-        - name: "ubuntu_22.04"
-          os: ubuntu-22.04
-          generator: "Unix Makefiles"
-          arch: ""
-          toolset: ""
-          target: all
-          jobs: 4
-          build_type: Release
-          build_deb: true
-          defines: "-DINSTALL_SYSTEMD_SERVICE=ON"
           ccov: false
 
         - name: "ubuntu_24.04"
@@ -408,10 +386,6 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - name: "ubuntu_22.04"
-          os: ubuntu-22.04
-          defines: ""
-
         - name: "ubuntu_24.04"
           os: ubuntu-24.04
           defines: ""
