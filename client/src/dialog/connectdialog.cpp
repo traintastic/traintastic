@@ -236,7 +236,7 @@ void ConnectDialog::serverTextChanged(const QString& text)
   m_url.setPath("/client");
   if(m_url.port() == -1)
   {
-    m_url.setPort(url.port(Connection::defaultPort));
+    m_url.setPort(Connection::defaultPort);
   }
   m_connect->setEnabled(m_url.isValid());
 }
