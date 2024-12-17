@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.15)
 include(../shared/traintastic.cmake)
 project(traintastic-server VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic server")
 include(GNUInstallDirs)
@@ -194,6 +194,15 @@ file(GLOB TEST_SOURCES
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DENABLE_LOG_DEBUG")
 
+### VCPKG
+if(DEFINED ENV{VCPKG_ROOT})
+  message(STATUS "Using VCPKG (VCPKG_ROOT=$ENV{VCPKG_ROOT})")
+  if(WIN32)
+    set(VCPKG_TARGET_TRIPLET "x64-windows-static-md")
+  endif()  
+  include($ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+endif()
+
 ### OPTIONS ###
 
 if(NO_LOCALHOST_ONLY_SETTING)
@@ -285,7 +294,7 @@ if(WIN32 AND NOT MSVC)
 endif()
 
 # boost
-if(LINUX)
+if(LINUX OR WIN32)
   find_package(Boost 1.81 REQUIRED COMPONENTS program_options)
 
   target_include_directories(traintastic-server SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
