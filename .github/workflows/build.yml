@@ -295,13 +295,11 @@ jobs:
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
     - name: Set VCPKG_ROOT
+      if: startswith(matrix.config.os, 'windows')
       uses: actions/github-script@v7
       with:
         script: |
-          if(core.isWindows)
-          {
-            core.exportVariable('VCPKG_ROOT', process.env.VCPKG_INSTALLATION_ROOT || '');
-          }
+          core.exportVariable('VCPKG_ROOT', process.env.VCPKG_INSTALLATION_ROOT || '');
 
     # Ubuntu only:
     - name: apt update
