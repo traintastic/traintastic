@@ -206,8 +206,8 @@ jobs:
           defines: "-DINSTALL_SYSTEMD_SERVICE=ON"
           ccov: false
 
-        - name: "ubuntu_latest (debug+ccov)"
-          os: ubuntu-latest
+        - name: "ubuntu_24.04 (debug+ccov)"
+          os: ubuntu-24.04
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
