@@ -199,7 +199,7 @@ if(DEFINED ENV{VCPKG_ROOT})
   message(STATUS "Using VCPKG (VCPKG_ROOT=$ENV{VCPKG_ROOT})")
   if(WIN32)
     set(VCPKG_TARGET_TRIPLET "x64-windows-static-md")
-  endif()  
+  endif()
   include($ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
 endif()
 
@@ -294,47 +294,12 @@ if(WIN32 AND NOT MSVC)
 endif()
 
 # boost
-if(LINUX OR WIN32)
-  find_package(Boost 1.81 REQUIRED COMPONENTS program_options)
-
-  target_include_directories(traintastic-server SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
-  target_link_libraries(traintastic-server PRIVATE ${Boost_LIBRARIES})
-  if(BUILD_TESTING)
-    target_include_directories(traintastic-server-test SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
-    target_link_libraries(traintastic-server-test PRIVATE ${Boost_LIBRARIES})
-  endif()
-else()
-  add_definitions(
-    -DBOOST_ALL_NO_LIB
-    -DBOOST_ERROR_CODE_HEADER_ONLY
-    -DBOOST_CHRONO_HEADER_ONLY
-    -DBOOST_ASIO_HEADER_ONLY
-    -DBOOST_SYSTEM_NO_DEPRECATED)
-
-  if(NOT MSVC)
-    set_source_files_properties(
-        thirdparty/boost/libs/program_options/src/cmdline.cpp
-        thirdparty/boost/libs/program_options/src/config_file.cpp
-        thirdparty/boost/libs/program_options/src/convert.cpp
-        thirdparty/boost/libs/program_options/src/options_description.cpp
-        thirdparty/boost/libs/program_options/src/parsers.cpp
-        thirdparty/boost/libs/program_options/src/positional_options.cpp
-        thirdparty/boost/libs/program_options/src/split.cpp
-        thirdparty/boost/libs/program_options/src/utf8_codecvt_facet.cpp
-        thirdparty/boost/libs/program_options/src/value_semantic.cpp
-        thirdparty/boost/libs/program_options/src/variables_map.cpp
-        thirdparty/boost/libs/program_options/src/winmain.cpp
-      PROPERTIES
-        COMPILE_FLAGS -Wno-shadow)
-  endif()
-
-  target_include_directories(traintastic-server SYSTEM PRIVATE thirdparty/boost)
-  if(BUILD_TESTING)
-    target_include_directories(traintastic-server-test SYSTEM PRIVATE thirdparty/boost)
-  endif()
-
-  file(GLOB SOURCES_BOOST "thirdparty/boost/libs/program_options/src/*.cpp")
-  list(APPEND SOURCES ${SOURCES_BOOST})
+find_package(Boost 1.81 REQUIRED COMPONENTS program_options)
+target_include_directories(traintastic-server SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
+target_link_libraries(traintastic-server PRIVATE ${Boost_LIBRARIES})
+if(BUILD_TESTING)
+  target_include_directories(traintastic-server-test SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
+  target_link_libraries(traintastic-server-test PRIVATE ${Boost_LIBRARIES})
 endif()
 
 # zlib
