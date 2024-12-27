@@ -295,7 +295,7 @@ jobs:
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
     - name: Set VCPKG_ROOT
-      if: startswith(matrix.config.os, 'windows')
+      if: startswith(matrix.config.os, 'windows') || startswith(matrix.config.os, 'macos')
       uses: actions/github-script@v7
       with:
         script: |
