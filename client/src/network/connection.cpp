@@ -138,7 +138,11 @@ Connection::Connection() :
 {
   connect(m_socket, &QWebSocket::connected, this, &Connection::socketConnected);
   connect(m_socket, &QWebSocket::disconnected, this, &Connection::socketDisconnected);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+  connect(m_socket, &QWebSocket::errorOccurred, this, &Connection::socketError);
+#else
   connect(m_socket, static_cast<void(QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error), this, &Connection::socketError);
+#endif
 
   connect(m_socket, &QWebSocket::binaryMessageReceived,
     [this](const QByteArray& data)
