@@ -40,6 +40,8 @@ is_binary = input_file_ext not in ['html', 'css', 'js']
 with open(input_file, 'rb') as f:
     contents = f.read()
 
+os.makedirs(os.path.dirname(sys.argv[3]), exist_ok=True)
+
 if is_binary:
     size = len(contents)
     contents = ', '.join(['std::byte{' + str(by) + '}' for by in contents])
