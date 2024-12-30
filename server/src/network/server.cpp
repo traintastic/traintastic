@@ -21,6 +21,8 @@
  */
 
 #include "server.hpp"
+#include <boost/beast/http/buffer_body.hpp>
+#include <tcb/span.hpp>
 #include <traintastic/network/message.hpp>
 #include <version.hpp>
 #include "connection.hpp"
@@ -29,6 +31,7 @@
 #include "../log/log.hpp"
 #include "../log/logmessageexception.hpp"
 #include "../utils/setthreadname.hpp"
+#include <resource/shared/gfx/appicon.ico.hpp>
 
 #define IS_SERVER_THREAD (std::this_thread::get_id() == m_thread.get_id())
 
@@ -40,7 +43,8 @@ namespace
 
 static constexpr std::string_view serverHeader{"Traintastic-server/" TRAINTASTIC_VERSION_FULL};
 static constexpr std::string_view contentTypeTextPlain{"text/plain"};
-static constexpr std::string_view contentTypeTextHtml{"text/Html"};
+static constexpr std::string_view contentTypeTextHtml{"text/html"};
+static constexpr std::string_view contentTypeImageXIcon{"image/x-icon"};
 
 http::message_generator notFound(const http::request<http::string_body>& request)
 {
@@ -66,6 +70,30 @@ http::message_generator methodNotAllowed(const http::request<http::string_body>&
   response.set(http::field::allow, allow);
   response.keep_alive(request.keep_alive());
   response.body() = "405 Method Not Allowed";
+  response.prepare_payload();
+  return response;
+}
+
+http::message_generator binary(const http::request<http::string_body>& request, std::string_view contentType, tcb::span<const std::byte> body)
+{
+  if(request.method() != http::verb::get && request.method() != http::verb::head)
+  {
+    return methodNotAllowed(request, {http::verb::get, http::verb::head});
+  }
+  http::response<http::buffer_body> response{http::status::ok, request.version()};
+  response.set(http::field::server, serverHeader);
+  response.set(http::field::content_type, contentType);
+  response.keep_alive(request.keep_alive());
+  if(request.method() == http::verb::head)
+  {
+    response.content_length(body.size());
+  }
+  else
+  {
+    response.body().data = const_cast<std::byte*>(body.data());
+    response.body().size = body.size();
+  }
+  response.body().more = false;
   response.prepare_payload();
   return response;
 }
@@ -288,10 +316,11 @@ void Server::doAccept()
 
 http::message_generator Server::handleHTTPRequest(http::request<http::string_body>&& request)
 {
-  if(request.target() == "/")
+  const auto target = request.target();
+  if(target == "/")
   {
     return textHtml(request,
-      "<!doctype html>"
+      "<!DOCTYPE html>"
       "<html>"
       "<head>"
         "<meta charset=\"utf-8\">"
@@ -299,11 +328,15 @@ http::message_generator Server::handleHTTPRequest(http::request<http::string_bod
         "<title>Traintastic v" TRAINTASTIC_VERSION_FULL "</title>"
       "</head>"
       "<body>"
-        "<h1>Traintastic v" TRAINTASTIC_VERSION_FULL "</h1>"
+        "<h1>Traintastic <small>v" TRAINTASTIC_VERSION_FULL "</small></h1>"
       "</body>"
       "</html>");
   }
-  if(request.target() == "/version")
+  if(target == "/favicon.ico")
+  {
+    return binary(request, contentTypeImageXIcon, Resource::shared::gfx::appicon_ico);
+  }
+  if(target == "/version")
   {
     return textPlain(request, TRAINTASTIC_VERSION_FULL);
   }

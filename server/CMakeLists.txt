@@ -203,6 +203,21 @@ if(DEFINED ENV{VCPKG_ROOT})
   include($ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
 endif()
 
+### RESOURCES ###
+
+include(cmake/add-resource.cmake)
+
+add_resource(resource-shared
+  BASE_DIR ../
+  FILES
+    shared/gfx/appicon.ico
+)
+
+add_dependencies(traintastic-server resource-shared)
+if(BUILD_TESTING)
+  add_dependencies(traintastic-server-test resource-shared)
+endif()
+
 ### OPTIONS ###
 
 if(NO_LOCALHOST_ONLY_SETTING)
