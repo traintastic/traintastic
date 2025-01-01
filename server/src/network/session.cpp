@@ -24,7 +24,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include "../traintastic/traintastic.hpp"
-#include "connection.hpp"
+#include "clientconnection.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
 #include <traintastic/enum/attributetype.hpp>
 #ifndef NDEBUG
@@ -45,7 +45,7 @@
   #undef GetObject // GetObject is defined by a winapi header
 #endif
 
-Session::Session(const std::shared_ptr<Connection>& connection) :
+Session::Session(const std::shared_ptr<ClientConnection>& connection) :
   m_connection{connection},
   m_uuid{boost::uuids::random_generator()()}
 {

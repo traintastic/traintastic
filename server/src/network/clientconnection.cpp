@@ -1,5 +1,5 @@
 /**
- * server/src/network/connection.cpp
+ * server/src/network/clientclientconnection.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "connection.hpp"
+#include "clientconnection.hpp"
 #include "server.hpp"
 #include "../traintastic/traintastic.hpp"
 #include "../core/eventloop.hpp"
@@ -31,7 +31,7 @@
   #define IS_SERVER_THREAD (std::this_thread::get_id() == m_server.threadId())
 #endif
 
-Connection::Connection(Server& server, std::shared_ptr<boost::beast::websocket::stream<boost::beast::tcp_stream>> ws, std::string id_)
+ClientConnection::ClientConnection(Server& server, std::shared_ptr<boost::beast::websocket::stream<boost::beast::tcp_stream>> ws, std::string id_)
   : m_server{server}
   , m_ws(std::move(ws))
   , m_authenticated{false}
@@ -43,19 +43,19 @@ Connection::Connection(Server& server, std::shared_ptr<boost::beast::websocket::
   m_ws->binary(true);
 }
 
-Connection::~Connection()
+ClientConnection::~ClientConnection()
 {
   assert(isEventLoopThread());
   assert(!m_session);
   assert(!m_ws->is_open());
 }
 
-void Connection::start()
+void ClientConnection::start()
 {
   doRead();
 }
 
-void Connection::doRead()
+void ClientConnection::doRead()
 {
   assert(IS_SERVER_THREAD);
 
@@ -77,7 +77,7 @@ void Connection::doRead()
             {
               std::memcpy(message->data(), static_cast<const std::byte*>(m_readBuffer.cdata().data()) + sizeof(header), message->dataSize());
             }
-            EventLoop::call(&Connection::processMessage, this, message);
+            EventLoop::call(&ClientConnection::processMessage, this, message);
             m_readBuffer.consume(sizeof(header) + header.dataSize);
           }
           else
@@ -89,17 +89,17 @@ void Connection::doRead()
       }
       else if(ec == boost::asio::error::eof || ec == boost::asio::error::connection_aborted || ec == boost::asio::error::connection_reset)
       {
-        EventLoop::call(std::bind(&Connection::connectionLost, this));
+        EventLoop::call(std::bind(&ClientConnection::connectionLost, this));
       }
       else
       {
         Log::log(id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
-        EventLoop::call(std::bind(&Connection::disconnect, this));
+        EventLoop::call(std::bind(&ClientConnection::disconnect, this));
       }
     });
 }
 
-void Connection::doWrite()
+void ClientConnection::doWrite()
 {
   assert(IS_SERVER_THREAD);
 
@@ -118,12 +118,12 @@ void Connection::doWrite()
       else if(ec != boost::asio::error::operation_aborted)
       {
         Log::log(id, LogMessage::E1006_SOCKET_WRITE_FAILED_X, ec);
-        EventLoop::call(std::bind(&Connection::disconnect, this));
+        EventLoop::call(std::bind(&ClientConnection::disconnect, this));
       }
     });
 }
 
-void Connection::processMessage(const std::shared_ptr<Message> message)
+void ClientConnection::processMessage(const std::shared_ptr<Message> message)
 {
   assert(isEventLoopThread());
 
@@ -161,7 +161,7 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
   }
 }
 
-void Connection::sendMessage(std::unique_ptr<Message> message)
+void ClientConnection::sendMessage(std::unique_ptr<Message> message)
 {
   assert(isEventLoopThread());
 
@@ -175,7 +175,7 @@ void Connection::sendMessage(std::unique_ptr<Message> message)
     });
 }
 
-void Connection::connectionLost()
+void ClientConnection::connectionLost()
 {
   assert(isEventLoopThread());
 
@@ -183,7 +183,7 @@ void Connection::connectionLost()
   disconnect();
 }
 
-void Connection::disconnect()
+void ClientConnection::disconnect()
 {
   assert(isEventLoopThread());
 

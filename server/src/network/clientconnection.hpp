@@ -1,5 +1,5 @@
 /**
- * server/src/network/connection.hpp
+ * server/src/network/clientconnection.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_NETWORK_CONNECTION_HPP
-#define TRAINTASTIC_SERVER_NETWORK_CONNECTION_HPP
+#ifndef TRAINTASTIC_SERVER_NETWORK_CLIENTCONNECTION_HPP
+#define TRAINTASTIC_SERVER_NETWORK_CLIENTCONNECTION_HPP
 
 #include <memory>
 #include <queue>
@@ -34,7 +34,7 @@
 class Server;
 class Session;
 
-class Connection : public std::enable_shared_from_this<Connection>
+class ClientConnection : public std::enable_shared_from_this<ClientConnection>
 {
   friend class Session;
 
@@ -60,8 +60,8 @@ class Connection : public std::enable_shared_from_this<Connection>
   public:
     const std::string id;
 
-    Connection(Server& server, std::shared_ptr<boost::beast::websocket::stream<boost::beast::tcp_stream>> ws, std::string id_);
-    virtual ~Connection();
+    ClientConnection(Server& server, std::shared_ptr<boost::beast::websocket::stream<boost::beast::tcp_stream>> ws, std::string id_);
+    virtual ~ClientConnection();
 
     void start();
 

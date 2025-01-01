@@ -25,7 +25,7 @@
 #include <tcb/span.hpp>
 #include <traintastic/network/message.hpp>
 #include <version.hpp>
-#include "connection.hpp"
+#include "clientconnection.hpp"
 #include "httpconnection.hpp"
 #include "../core/eventloop.hpp"
 #include "../log/log.hpp"
@@ -234,7 +234,7 @@ Server::~Server()
     m_connections.front()->disconnect();
 }
 
-void Server::connectionGone(const std::shared_ptr<Connection>& connection)
+void Server::connectionGone(const std::shared_ptr<ClientConnection>& connection)
 {
   assert(isEventLoopThread());
 
@@ -372,7 +372,7 @@ bool Server::handleWebSocketUpgradeRequest(http::request<http::string_body>&& re
             .append(std::to_string(socket.remote_endpoint().port()))
             .append("]");
 
-          auto connection = std::make_shared<Connection>(*this, ws, connectionId);
+          auto connection = std::make_shared<ClientConnection>(*this, ws, connectionId);
           connection->start();
 
           EventLoop::call(

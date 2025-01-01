@@ -34,12 +34,12 @@
 #include <boost/beast/http/message_generator.hpp>
 #include <boost/beast/http/string_body.hpp>
 
-class Connection;
+class ClientConnection;
 class Message;
 
 class Server : public std::enable_shared_from_this<Server>
 {
-  friend class Connection;
+  friend class ClientConnection;
   friend class HTTPConnection;
 
   private:
@@ -50,7 +50,7 @@ class Server : public std::enable_shared_from_this<Server>
     std::array<char, 8> m_udpBuffer;
     boost::asio::ip::udp::endpoint m_remoteEndpoint;
     const bool m_localhostOnly;
-    std::list<std::shared_ptr<Connection>> m_connections;
+    std::list<std::shared_ptr<ClientConnection>> m_connections;
 
     void doReceive();
     static std::unique_ptr<Message> processMessage(const Message& message);
@@ -59,7 +59,7 @@ class Server : public std::enable_shared_from_this<Server>
     boost::beast::http::message_generator handleHTTPRequest(boost::beast::http::request<boost::beast::http::string_body>&& request);
     bool handleWebSocketUpgradeRequest(boost::beast::http::request<boost::beast::http::string_body>&& request, boost::beast::tcp_stream& stream);
 
-    void connectionGone(const std::shared_ptr<Connection>& connection);
+    void connectionGone(const std::shared_ptr<ClientConnection>& connection);
 
   public:
     static constexpr std::string_view id{"server"};
