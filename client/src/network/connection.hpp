@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,7 +35,7 @@
 #include "objectptr.hpp"
 #include "tablemodelptr.hpp"
 
-class QTcpSocket;
+class QWebSocket;
 class ServerLogTableModel;
 class Property;
 class ObjectProperty;
@@ -73,7 +73,7 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
     using SocketError = QAbstractSocket::SocketError;
 
   protected:
-    QTcpSocket* m_socket;
+    QWebSocket* m_socket;
     State m_state;
     QString m_username;
     QByteArray m_password;
@@ -108,7 +108,6 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
     void socketConnected();
     void socketDisconnected();
     void socketError(QAbstractSocket::SocketError);
-    void socketReadyRead();
 
   public:
     static const quint16 defaultPort = 5740;
