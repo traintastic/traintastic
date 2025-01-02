@@ -85,10 +85,12 @@ void WebSocketConnection::disconnect()
     });
 }
 
+#ifndef NDEBUG
 bool WebSocketConnection::isServerThread() const
 {
   return std::this_thread::get_id() == m_server.threadId();
 }
+#endif
 
 boost::asio::io_context& WebSocketConnection::ioContext()
 {
