@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2024 Reinder Feenstra
+ * Copyright (C) 2022-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include <version.hpp>
 #include "clientconnection.hpp"
 #include "httpconnection.hpp"
+#include "webthrottleconnection.hpp"
 #include "../core/eventloop.hpp"
 #include "../log/log.hpp"
 #include "../log/logmessageexception.hpp"
@@ -234,7 +235,7 @@ Server::~Server()
     m_connections.front()->disconnect();
 }
 
-void Server::connectionGone(const std::shared_ptr<ClientConnection>& connection)
+void Server::connectionGone(const std::shared_ptr<WebSocketConnection>& connection)
 {
   assert(isEventLoopThread());
 
@@ -347,47 +348,50 @@ bool Server::handleWebSocketUpgradeRequest(http::request<http::string_body>&& re
 {
   if(request.target() == "/client")
   {
-    namespace websocket = beast::websocket;
-
-    beast::get_lowest_layer(stream).expires_never(); // disable HTTP timeout
-
-    auto ws = std::make_shared<websocket::stream<beast::tcp_stream>>(std::move(stream));
-    ws->set_option(websocket::stream_base::timeout::suggested(beast::role_type::server));
-    ws->set_option(websocket::stream_base::decorator(
-      [](websocket::response_type& response)
-      {
-        response.set(beast::http::field::server, serverHeader);
-      }));
-
-    ws->async_accept(request,
-      [this, ws](beast::error_code ec)
-      {
-        if(!ec)
-        {
-          auto& socket = beast::get_lowest_layer(*ws).socket();
-
-          const auto connectionId = std::string("connection[")
-            .append(socket.remote_endpoint().address().to_string())
-            .append(":")
-            .append(std::to_string(socket.remote_endpoint().port()))
-            .append("]");
-
-          auto connection = std::make_shared<ClientConnection>(*this, ws, connectionId);
-          connection->start();
-
-          EventLoop::call(
-            [this, connection]()
-            {
-              Log::log(connection->id, LogMessage::I1003_NEW_CONNECTION);
-              m_connections.push_back(connection);
-            });
-        }
-        else
-        {
-          Log::log(id, LogMessage::E1004_TCP_ACCEPT_ERROR_X, ec.message());
-        }
-      });
-    return true;
+    return acceptWebSocketUpgradeRequest<ClientConnection>(std::move(request), stream);
+  }
+  if(request.target() == "/throttle")
+  {
+    return acceptWebSocketUpgradeRequest<WebThrottleConnection>(std::move(request), stream);
   }
   return false;
+}
+
+template<class T>
+bool Server::acceptWebSocketUpgradeRequest(http::request<http::string_body>&& request, beast::tcp_stream& stream)
+{
+  namespace websocket = beast::websocket;
+
+  beast::get_lowest_layer(stream).expires_never(); // disable HTTP timeout
+
+  auto ws = std::make_shared<websocket::stream<beast::tcp_stream>>(std::move(stream));
+  ws->set_option(websocket::stream_base::timeout::suggested(beast::role_type::server));
+  ws->set_option(websocket::stream_base::decorator(
+    [](websocket::response_type& response)
+    {
+      response.set(beast::http::field::server, serverHeader);
+    }));
+
+  ws->async_accept(request,
+    [this, ws](beast::error_code ec)
+    {
+      if(!ec)
+      {
+        auto connection = std::make_shared<T>(*this, ws);
+        connection->start();
+
+        EventLoop::call(
+          [this, connection]()
+          {
+            Log::log(connection->id, LogMessage::I1003_NEW_CONNECTION);
+            m_connections.push_back(connection);
+          });
+      }
+      else
+      {
+        Log::log(id, LogMessage::E1004_TCP_ACCEPT_ERROR_X, ec.message());
+      }
+    });
+
+  return true;
 }

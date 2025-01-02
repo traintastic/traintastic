@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,19 +27,11 @@
 #include "session.hpp"
 #include "../log/log.hpp"
 
-#ifndef NDEBUG
-  #define IS_SERVER_THREAD (std::this_thread::get_id() == m_server.threadId())
-#endif
-
-ClientConnection::ClientConnection(Server& server, std::shared_ptr<boost::beast::websocket::stream<boost::beast::tcp_stream>> ws, std::string id_)
-  : m_server{server}
-  , m_ws(std::move(ws))
+ClientConnection::ClientConnection(Server& server, std::shared_ptr<boost::beast::websocket::stream<boost::beast::tcp_stream>> ws)
+  : WebSocketConnection(server, std::move(ws), "client")
   , m_authenticated{false}
-  , id{std::move(id_)}
 {
-  assert(IS_SERVER_THREAD);
-  assert(m_ws);
-
+  assert(isServerThread());
   m_ws->binary(true);
 }
 
@@ -47,17 +39,11 @@ ClientConnection::~ClientConnection()
 {
   assert(isEventLoopThread());
   assert(!m_session);
-  assert(!m_ws->is_open());
-}
-
-void ClientConnection::start()
-{
-  doRead();
 }
 
 void ClientConnection::doRead()
 {
-  assert(IS_SERVER_THREAD);
+  assert(isServerThread());
 
   m_ws->async_read(m_readBuffer,
     [this, weak=weak_from_this()](const boost::system::error_code& ec, std::size_t /*bytesReceived*/)
@@ -101,7 +87,7 @@ void ClientConnection::doRead()
 
 void ClientConnection::doWrite()
 {
-  assert(IS_SERVER_THREAD);
+  assert(isServerThread());
 
   m_ws->async_write(boost::asio::buffer(**m_writeQueue.front(), m_writeQueue.front()->size()),
     [this, weak=weak_from_this()](const boost::system::error_code& ec, std::size_t /*bytesTransferred*/)
@@ -136,7 +122,7 @@ void ClientConnection::processMessage(const std::shared_ptr<Message> message)
   {
     if(message->command() == Message::Command::NewSession && message->type() == Message::Type::Request)
     {
-      m_session = std::make_shared<Session>(shared_from_this());
+      m_session = std::make_shared<Session>(std::dynamic_pointer_cast<ClientConnection>(shared_from_this()));
       auto response = Message::newResponse(message->command(), message->requestId());
       response->write(m_session->uuid());
       m_session->writeObject(*response, Traintastic::instance);
@@ -165,7 +151,7 @@ void ClientConnection::sendMessage(std::unique_ptr<Message> message)
 {
   assert(isEventLoopThread());
 
-  m_server.m_ioContext.post(
+  ioContext().post(
     [this, msg=std::make_shared<std::unique_ptr<Message>>(std::move(message))]()
     {
       const bool wasEmpty = m_writeQueue.empty();
@@ -175,33 +161,11 @@ void ClientConnection::sendMessage(std::unique_ptr<Message> message)
     });
 }
 
-void ClientConnection::connectionLost()
-{
-  assert(isEventLoopThread());
-
-  Log::log(id, LogMessage::I1004_CONNECTION_LOST);
-  disconnect();
-}
-
 void ClientConnection::disconnect()
 {
   assert(isEventLoopThread());
 
   m_session.reset();
 
-  m_server.m_ioContext.post(
-    [this]()
-    {
-      if(m_ws->is_open())
-      {
-        boost::system::error_code ec;
-        m_ws->close(boost::beast::websocket::close_code::normal, ec);
-      }
-
-      EventLoop::call(
-        [this]()
-        {
-          m_server.connectionGone(shared_from_this());
-        });
-    });
+  WebSocketConnection::disconnect();
 }
