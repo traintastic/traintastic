@@ -60,7 +60,6 @@ WebSocketConnection::~WebSocketConnection()
 void WebSocketConnection::start()
 {
   assert(isServerThread());
-//  m_keepAlive = shared_from_this();
   doRead();
 }
 
