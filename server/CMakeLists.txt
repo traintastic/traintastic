@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.15)
 include(../shared/traintastic.cmake)
 project(traintastic-server VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic server")
 include(GNUInstallDirs)
@@ -36,18 +36,27 @@ target_include_directories(traintastic-server SYSTEM PRIVATE
   thirdparty)
 
 if(BUILD_TESTING)
+  add_subdirectory(thirdparty/catch2)
+  set_target_properties(Catch2 PROPERTIES
+    CXX_STANDARD 17
+    CXX_CLANG_TIDY ""
+  )
   add_executable(traintastic-server-test test/main.cpp)
   if(NOT TRAINTASTIC_CS)
     add_dependencies(traintastic-server-test traintastic-lang)
   endif()
   target_compile_definitions(traintastic-server-test PRIVATE -DTRAINTASTIC_TEST)
-  set_target_properties(traintastic-server-test PROPERTIES CXX_STANDARD 17)
+  set_target_properties(traintastic-server-test PROPERTIES
+    CXX_STANDARD 17
+    CXX_CLANG_TIDY ""
+  )
   target_include_directories(traintastic-server-test PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}
     ../shared/src)
   target_include_directories(traintastic-server-test SYSTEM PRIVATE
     ../shared/thirdparty
     thirdparty)
+  target_link_libraries(traintastic-server-test PRIVATE Catch2::Catch2WithMain)
 endif()
 
 file(GLOB SOURCES
@@ -61,6 +70,7 @@ file(GLOB SOURCES
   "src/board/nx/*.cpp"
   "src/board/tile/*.hpp"
   "src/board/tile/*.cpp"
+  "src/board/tile/hidden/*.cpp"
   "src/board/tile/misc/*.hpp"
   "src/board/tile/misc/*.cpp"
   "src/board/tile/rail/*.hpp"
@@ -194,6 +204,30 @@ file(GLOB TEST_SOURCES
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DENABLE_LOG_DEBUG")
 
+### VCPKG
+if(DEFINED ENV{VCPKG_ROOT})
+  message(STATUS "Using VCPKG (VCPKG_ROOT=$ENV{VCPKG_ROOT})")
+  if(WIN32)
+    set(VCPKG_TARGET_TRIPLET "x64-windows-static-md")
+  endif()
+  include($ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+endif()
+
+### RESOURCES ###
+
+include(cmake/add-resource.cmake)
+
+add_resource(resource-shared
+  BASE_DIR ../
+  FILES
+    shared/gfx/appicon.ico
+)
+
+add_dependencies(traintastic-server resource-shared)
+if(BUILD_TESTING)
+  add_dependencies(traintastic-server-test resource-shared)
+endif()
+
 ### OPTIONS ###
 
 if(TRAINTASTIC_CS)
@@ -291,47 +325,12 @@ if(WIN32 AND NOT MSVC)
 endif()
 
 # boost
-if(LINUX)
-  find_package(Boost 1.71 REQUIRED COMPONENTS program_options)
-
-  target_include_directories(traintastic-server SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
-  target_link_libraries(traintastic-server PRIVATE ${Boost_LIBRARIES})
-  if(BUILD_TESTING)
-    target_include_directories(traintastic-server-test SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
-    target_link_libraries(traintastic-server-test PRIVATE ${Boost_LIBRARIES})
-  endif()
-else()
-  add_definitions(
-    -DBOOST_ALL_NO_LIB
-    -DBOOST_ERROR_CODE_HEADER_ONLY
-    -DBOOST_CHRONO_HEADER_ONLY
-    -DBOOST_ASIO_HEADER_ONLY
-    -DBOOST_SYSTEM_NO_DEPRECATED)
-
-  if(NOT MSVC)
-    set_source_files_properties(
-        thirdparty/boost/libs/program_options/src/cmdline.cpp
-        thirdparty/boost/libs/program_options/src/config_file.cpp
-        thirdparty/boost/libs/program_options/src/convert.cpp
-        thirdparty/boost/libs/program_options/src/options_description.cpp
-        thirdparty/boost/libs/program_options/src/parsers.cpp
-        thirdparty/boost/libs/program_options/src/positional_options.cpp
-        thirdparty/boost/libs/program_options/src/split.cpp
-        thirdparty/boost/libs/program_options/src/utf8_codecvt_facet.cpp
-        thirdparty/boost/libs/program_options/src/value_semantic.cpp
-        thirdparty/boost/libs/program_options/src/variables_map.cpp
-        thirdparty/boost/libs/program_options/src/winmain.cpp
-      PROPERTIES
-        COMPILE_FLAGS -Wno-shadow)
-  endif()
-
-  target_include_directories(traintastic-server SYSTEM PRIVATE thirdparty/boost)
-  if(BUILD_TESTING)
-    target_include_directories(traintastic-server-test SYSTEM PRIVATE thirdparty/boost)
-  endif()
-
-  file(GLOB SOURCES_BOOST "thirdparty/boost/libs/program_options/src/*.cpp")
-  list(APPEND SOURCES ${SOURCES_BOOST})
+find_package(Boost 1.81 REQUIRED COMPONENTS program_options)
+target_include_directories(traintastic-server SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
+target_link_libraries(traintastic-server PRIVATE ${Boost_LIBRARIES})
+if(BUILD_TESTING)
+  target_include_directories(traintastic-server-test SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
+  target_link_libraries(traintastic-server-test PRIVATE ${Boost_LIBRARIES})
 endif()
 
 # zlib
@@ -472,8 +471,7 @@ endif()
 
 if(BUILD_TESTING)
   include(Catch)
-  target_include_directories(traintastic-server-test PRIVATE thirdparty/catch2)
-  catch_discover_tests(traintastic-server-test)
+  catch_discover_tests(traintastic-server-test DISCOVERY_MODE PRE_TEST)
 endif()
 
 ### Doxygen ###

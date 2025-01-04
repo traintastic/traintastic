@@ -27,7 +27,7 @@ namespace XpressNet {
 
 uint8_t calcChecksum(const Message& msg, const int dataSize)
 {
-  const uint8_t* p = reinterpret_cast<const uint8_t*>(&msg);
+  const auto* p = reinterpret_cast<const uint8_t*>(&msg);
   uint8_t checksum = p[0];
   for(int i = 1; i <= dataSize; i++)
     checksum ^= p[i];

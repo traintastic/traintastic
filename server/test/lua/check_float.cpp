@@ -20,7 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_template_test_macros.hpp>
+#include <catch2/catch_approx.hpp>
 #include "protect.hpp"
 #include "../../src/lua/check.hpp"
 #include <string_view>
@@ -28,7 +29,7 @@
 TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", float, double)
 {
   {
-    INFO("nil")
+    INFO("nil");
 
     lua_State* L = newStateWithProtect();
 
@@ -40,7 +41,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", float, double)
   }
 
   {
-    INFO("false")
+    INFO("false");
 
     lua_State* L = newStateWithProtect();
 
@@ -52,7 +53,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", float, double)
   }
 
   {
-    INFO("true")
+    INFO("true");
 
     lua_State* L = newStateWithProtect();
 
@@ -64,59 +65,59 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", float, double)
   }
 
   {
-    INFO("123")
+    INFO("123");
 
     lua_State* L = newStateWithProtect();
 
     lua_pushinteger(L, 123);
     TestType r;
     REQUIRE(protect<Lua::check<TestType>>(r, L, -1));
-    REQUIRE(r == Approx(123));
+    REQUIRE(r == Catch::Approx(123));
 
     closeStateWithProtect(L);
   }
 
   {
-    INFO("0.5")
+    INFO("0.5");
 
     lua_State* L = newStateWithProtect();
 
     lua_pushnumber(L, 0.5);
     TestType r;
     REQUIRE(protect<Lua::check<TestType>>(r, L, -1));
-    REQUIRE(r == Approx(0.5));
+    REQUIRE(r == Catch::Approx(0.5));
 
     closeStateWithProtect(L);
   }
 
   {
-    INFO("\"123\"")
+    INFO("\"123\"");
 
     lua_State* L = newStateWithProtect();
 
     lua_pushliteral(L, "123");
     TestType r;
     REQUIRE(protect<Lua::check<TestType>>(r, L, -1));
-    REQUIRE(r == Approx(123));
+    REQUIRE(r == Catch::Approx(123));
 
     closeStateWithProtect(L);
   }
 
   {
-    INFO("\"0.5\"")
+    INFO("\"0.5\"");
 
     lua_State* L = newStateWithProtect();
 
     lua_pushliteral(L, "0.5");
     TestType r;
     REQUIRE(protect<Lua::check<TestType>>(r, L, -1));
-    REQUIRE(r == Approx(0.5));
+    REQUIRE(r == Catch::Approx(0.5));
 
     closeStateWithProtect(L);
   }
 
   {
-    INFO("\"test\"")
+    INFO("\"test\"");
 
     lua_State* L = newStateWithProtect();
 
@@ -128,7 +129,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", float, double)
   }
 
   {
-    INFO("table")
+    INFO("table");
 
     lua_State* L = newStateWithProtect();
 
@@ -140,7 +141,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", float, double)
   }
 
   {
-    INFO("userdata")
+    INFO("userdata");
 
     lua_State* L = newStateWithProtect();
 
@@ -152,7 +153,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", float, double)
   }
 
   {
-    INFO("lightuserdata")
+    INFO("lightuserdata");
 
     lua_State* L = newStateWithProtect();
 

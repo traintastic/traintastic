@@ -126,7 +126,7 @@ bool SimulationIOHandler::send(const Message& message)
           if(const auto& setLocoDrive = static_cast<const LanXSetLocoDrive&>(message);
               setLocoDrive.db0 >= 0x10 && setLocoDrive.db0 <= 0x13)
           {
-            std::unordered_map<uint16_t, LanXLocoInfo>::iterator it = m_decoderCache.find(setLocoDrive.address());
+            auto it = m_decoderCache.find(setLocoDrive.address());
             if(it == m_decoderCache.cend())
             {
               // Insert in cache
@@ -154,7 +154,7 @@ bool SimulationIOHandler::send(const Message& message)
                   setLocoFunction.db0 == 0xF8 &&
                   setLocoFunction.switchType() != LanXSetLocoFunction::SwitchType::Invalid)
           {
-            std::unordered_map<uint16_t, LanXLocoInfo>::iterator it = m_decoderCache.find(setLocoDrive.address());
+            auto it = m_decoderCache.find(setLocoDrive.address());
             if(it == m_decoderCache.cend())
             {
               // Insert in cache

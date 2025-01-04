@@ -181,13 +181,13 @@ class AbstractSignalPath : public Path
       return m_root.get();
     }
 
-    const BlockItem* nextBlock(const Item* item) const;
+    static const BlockItem* nextBlock(const Item* item);
     inline const BlockItem* nextBlock() const
     {
       return nextBlock(root());
     }
 
-    std::tuple<const BlockItem*, const SignalItem*> nextBlockOrSignal(const Item* item) const;
+    static std::tuple<const BlockItem*, const SignalItem*> nextBlockOrSignal(const Item* item);
     inline std::tuple<const BlockItem*, const SignalItem*> nextBlockOrSignal() const
     {
       return nextBlockOrSignal(root());

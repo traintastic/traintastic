@@ -64,11 +64,11 @@ std::optional<OutputActionValue> SignalRailTile::getDefaultActionValue(SignalAsp
         {
           return static_cast<int16_t>(0);
         }
-        else if(signalAspect == SignalAspect::ProceedReducedSpeed)
+        if(signalAspect == SignalAspect::ProceedReducedSpeed)
         {
           return static_cast<int16_t>(1);
         }
-        else if(signalAspect == SignalAspect::Proceed)
+        if(signalAspect == SignalAspect::Proceed)
         {
           return static_cast<int16_t>(16);
         }
@@ -98,6 +98,7 @@ SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
 
+  Attributes::addDisplayName(requireReservation, "board_tile.rail.signal:require_reservation");
   Attributes::addEnabled(requireReservation, editable);
   Attributes::addValues(requireReservation, autoYesNoValues);
   m_interfaceItems.add(requireReservation);

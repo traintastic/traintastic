@@ -5058,7 +5058,7 @@
         "fuzzy": 0
     },
     {
-        "term": "board_tile.rail.signal_3_aspect:require_reservation",
+        "term": "board_tile.rail.signal:require_reservation",
         "definition": "Reserveren verplicht",
         "context": "",
         "term_plural": "",
@@ -6307,5 +6307,87 @@
         "reference": "",
         "comment": "",
         "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:show_hide_console",
+        "definition": "Console weergeven/verbergen"
+    },
+    {
+        "term": "tray_icon.menu:settings",
+        "definition": "Instellingen"
+    },
+    {
+        "term": "tray_icon.menu:language",
+        "definition": "Taal"
+    },
+    {
+        "term": "tray_icon.menu:allow_client_to_restart_server",
+        "definition": "Client toestaan de server opnieuw te starten"
+    },
+    {
+        "term": "tray_icon.menu:allow_client_to_shutdown_server",
+        "definition": "Client toestaan de server af te sluiten"
+    },
+    {
+        "term": "tray_icon.menu:start_automatically_at_logon",
+        "definition": "Automatische starten bij inloggen"
+    },
+    {
+        "term": "tray_icon.menu:advanced",
+        "definition": "Geavanceerd"
+    },
+    {
+        "term": "tray_icon.menu:open_data_directory",
+        "definition": "Open data map"
+    },
+    {
+        "term": "tray_icon.menu:restart",
+        "definition": "Herstart"
+    },
+    {
+        "term": "tray_icon.menu:shutdown",
+        "definition": "Afsluiten"
+    },
+    {
+        "term": "tray_icon.notify:message_running",
+        "definition": "Traintastic server draait op de achtergrond."
+    },
+    {
+        "term": "tray_icon.notify:message_restarting",
+        "definition": "Traintastic server is geherstart"
+    },
+    {
+        "term": "tray_icon.language_changed_message_box:caption",
+        "definition": "Taal gewijzigd"
+    },
+    {
+        "term": "tray_icon.language_changed_message_box:text",
+        "definition": "Traintastic server moet opnieuw worden opgestart voordat de nieuwe taal actief wordt. Nu herstarten?",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "language:fy-nl",
+        "definition": "Fries",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface:recommended",
+        "definition": "Aanbevolen"
+    },
+    {
+        "term": "wizard.add_interface.protocol_dr5000_usb:bottom_text",
+        "definition": "Hoewel beide worden ondersteund door Traintastic, wordt het aanbevolen om LocoNet te gebruiken, omdat het veelzijdiger is."
+    },
+    {
+        "term": "output_map:swap_outputs",
+        "definition": "Uitgangen omwisselen"
     }
 ]

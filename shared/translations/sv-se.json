@@ -5058,7 +5058,7 @@
         "fuzzy": 0
     },
     {
-        "term": "board_tile.rail.signal_3_aspect:require_reservation",
+        "term": "board_tile.rail.signal:require_reservation",
         "definition": "Kr\u00e4v reservation",
         "context": "",
         "term_plural": "",

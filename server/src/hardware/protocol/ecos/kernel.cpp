@@ -625,7 +625,7 @@ void Kernel::objectChanged(Object& object)
   }
 
   std::string objectName;
-  if(auto* sw = dynamic_cast<const Switch*>(&object))
+  if(const auto* sw = dynamic_cast<const Switch*>(&object))
   {
     objectName = sw->nameUI();
   }

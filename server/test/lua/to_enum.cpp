@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_template_test_macros.hpp>
 #include "../../src/lua/enums.hpp"
 #include "../../src/lua/to.hpp"
 #include <string_view>
@@ -57,25 +57,25 @@ TEMPLATE_TEST_CASE("Lua::to<>", "[lua][lua-to]", LUA_ENUMS)
 
   lua_State* L = luaL_newstate();
 
-  INFO("nil")
+  INFO("nil");
   lua_pushnil(L);
   REQUIRE(Lua::to<TestType>(L, -1) == firstValue);
   REQUIRE_TRY_TO_FAIL();
   lua_pop(L, 1);
 
-  INFO("false")
+  INFO("false");
   lua_pushboolean(L, false);
   REQUIRE(Lua::to<TestType>(L, -1) == firstValue);
   REQUIRE_TRY_TO_FAIL();
   lua_pop(L, 1);
 
-  INFO("true")
+  INFO("true");
   lua_pushboolean(L, true);
   REQUIRE(Lua::to<TestType>(L, -1) == firstValue);
   REQUIRE_TRY_TO_FAIL();
   lua_pop(L, 1);
 
-  INFO("enum")
+  INFO("enum");
   Lua::Enum<TestType>::registerType(L);
   Lua::Enum<TestType>::push(L, lastValue);
   REQUIRE(Lua::to<TestType>(L, -1) == lastValue);
@@ -86,44 +86,44 @@ TEMPLATE_TEST_CASE("Lua::to<>", "[lua][lua-to]", LUA_ENUMS)
   }
   lua_pop(L, 1);
 
-  INFO("other enum")
+  INFO("other enum");
   Lua::Enum<OtherEnumType>::registerType(L);
   Lua::Enum<OtherEnumType>::push(L, EnumValues<OtherEnumType>::value.rbegin()->first);
   REQUIRE(Lua::to<TestType>(L, -1) == firstValue);
   REQUIRE_TRY_TO_FAIL();
   lua_pop(L, 1);
 
-  INFO("123")
+  INFO("123");
   lua_pushinteger(L, 123);
   REQUIRE(Lua::to<TestType>(L, -1) == firstValue);
   REQUIRE_TRY_TO_FAIL();
   lua_pop(L, 1);
 
-  INFO("0.5")
+  INFO("0.5");
   lua_pushnumber(L, 0.5);
   REQUIRE(Lua::to<TestType>(L, -1) == firstValue);
   REQUIRE_TRY_TO_FAIL();
   lua_pop(L, 1);
 
-  INFO("\"test\"")
+  INFO("\"test\"");
   lua_pushliteral(L, "test");
   REQUIRE(Lua::to<TestType>(L, -1) == firstValue);
   REQUIRE_TRY_TO_FAIL();
   lua_pop(L, 1);
 
-  INFO("table")
+  INFO("table");
   lua_newtable(L);
   REQUIRE(Lua::to<TestType>(L, -1) == firstValue);
   REQUIRE_TRY_TO_FAIL();
   lua_pop(L, 1);
 
-  INFO("userdata")
+  INFO("userdata");
   lua_newuserdata(L, 0);
   REQUIRE(Lua::to<TestType>(L, -1) == firstValue);
   REQUIRE_TRY_TO_FAIL();
   lua_pop(L, 1);
 
-  INFO("lightuserdata")
+  INFO("lightuserdata");
   lua_pushlightuserdata(L, nullptr);
   REQUIRE(Lua::to<TestType>(L, -1) == firstValue);
   REQUIRE_TRY_TO_FAIL();

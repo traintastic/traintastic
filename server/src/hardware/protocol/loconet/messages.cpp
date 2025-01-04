@@ -61,7 +61,7 @@ void setSlot(Message& message, uint8_t slot)
 
     case OPC_D4:
     {
-      uint8_t* bytes = reinterpret_cast<uint8_t*>(&message);
+      auto* bytes = reinterpret_cast<uint8_t*>(&message);
       if(bytes[1] == 0x20 && (bytes[3] == 0x08 || bytes[3] == 0x05 || bytes[3] == 0x09)) // LocoF13F19 or LocoF12F20F28 or LocoF21F27
       {
         bytes[2] = slot;
@@ -235,14 +235,14 @@ std::string toString(const Message& message)
 
     case OPC_LOCO_SPD:
     {
-      const LocoSpd& locoSpd = static_cast<const LocoSpd&>(message);
+      const auto& locoSpd = static_cast<const LocoSpd&>(message);
       s.append(" slot=").append(std::to_string(locoSpd.slot));
       s.append(" speed=").append(std::to_string(locoSpd.speed));
       break;
     }
     case OPC_LOCO_DIRF:
     {
-      const LocoDirF& locoDirF = static_cast<const LocoDirF&>(message);
+      const auto& locoDirF = static_cast<const LocoDirF&>(message);
       s.append(" slot=").append(std::to_string(locoDirF.slot));
       s.append(" dir=").append(locoDirF.direction() == Direction::Forward ? "fwd" : "rev");
       s.append(" f0=").append(locoDirF.f0() ? "on" : "off");
@@ -254,7 +254,7 @@ std::string toString(const Message& message)
     }
     case OPC_LOCO_SND:
     {
-      const LocoSnd& locoSnd = static_cast<const LocoSnd&>(message);
+      const auto& locoSnd = static_cast<const LocoSnd&>(message);
       s.append(" slot=").append(std::to_string(locoSnd.slot));
       s.append(" f5=").append(locoSnd.f5() ? "on" : "off");
       s.append(" f6=").append(locoSnd.f6() ? "on" : "off");
@@ -264,7 +264,7 @@ std::string toString(const Message& message)
     }
     case OPC_LOCO_F9F12:
     {
-      const LocoF9F12& locoF9F12 = static_cast<const LocoF9F12&>(message);
+      const auto& locoF9F12 = static_cast<const LocoF9F12&>(message);
       s.append(" slot=").append(std::to_string(locoF9F12.slot));
       s.append(" f9=").append(locoF9F12.f9() ? "on" : "off");
       s.append(" f10=").append(locoF9F12.f10() ? "on" : "off");
@@ -274,7 +274,7 @@ std::string toString(const Message& message)
     }
     case OPC_INPUT_REP:
     {
-      const InputRep& inputRep = static_cast<const InputRep&>(message);
+      const auto& inputRep = static_cast<const InputRep&>(message);
       s.append(" fullAddress=").append(std::to_string(inputRep.fullAddress()));
       s.append(" address=").append(std::to_string(inputRep.address()));
       s.append(" input=").append(inputRep.isAuxInput() ? "aux" : "switch");
@@ -283,7 +283,7 @@ std::string toString(const Message& message)
     }
     case OPC_SW_REQ:
     {
-      const SwitchRequest& switchRequest = static_cast<const SwitchRequest&>(message);
+      const auto& switchRequest = static_cast<const SwitchRequest&>(message);
       s.append(" address=").append(std::to_string(switchRequest.address()));
       s.append(" dir=").append(switchRequest.dir() ? "closed/green" : "thrown/red");
       s.append(" on=").append(switchRequest.on() ? "high" : "low");
@@ -291,16 +291,16 @@ std::string toString(const Message& message)
     }
     case OPC_RQ_SL_DATA:
     {
-      const RequestSlotData& requestSlotData = static_cast<const RequestSlotData&>(message);
+      const auto& requestSlotData = static_cast<const RequestSlotData&>(message);
       s.append(" slot=").append(std::to_string(requestSlotData.slot));
       break;
     }
     case OPC_MULTI_SENSE:
     {
-      const MultiSense& multiSense = static_cast<const MultiSense&>(message);
+      const auto& multiSense = static_cast<const MultiSense&>(message);
       if(multiSense.isTransponder())
       {
-        const MultiSenseTransponder& multiSenseTransponder = static_cast<const MultiSenseTransponder&>(multiSense);
+        const auto& multiSenseTransponder = static_cast<const MultiSenseTransponder&>(multiSense);
         s.append(multiSenseTransponder.isPresent() ? " present" : " absent");
         s.append(" sensorAddress=").append(std::to_string(multiSenseTransponder.sensorAddress()));
         s.append(" transponderAddress=").append(std::to_string(multiSenseTransponder.transponderAddress()));
@@ -309,14 +309,14 @@ std::string toString(const Message& message)
     }
     case OPC_D4:
     {
-      const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&message);
+      const auto* bytes = reinterpret_cast<const uint8_t*>(&message);
       if(bytes[1] == 0x20)
       {
         switch(bytes[3])
         {
           case 0x08:
           {
-            const LocoF13F19& locoF13F19 = static_cast<const LocoF13F19&>(message);
+            const auto& locoF13F19 = static_cast<const LocoF13F19&>(message);
             s.append(" slot=").append(std::to_string(locoF13F19.slot));
             s.append(" f13=").append(locoF13F19.f13() ? "on" : "off");
             s.append(" f14=").append(locoF13F19.f14() ? "on" : "off");
@@ -338,7 +338,7 @@ std::string toString(const Message& message)
           }
           case 0x09:
           {
-            const LocoF21F27& locoF21F27 = static_cast<const LocoF21F27&>(message);
+            const auto& locoF21F27 = static_cast<const LocoF21F27&>(message);
             s.append(" slot=").append(std::to_string(locoF21F27.slot));
             s.append(" f21=").append(locoF21F27.f21() ? "on" : "off");
             s.append(" f22=").append(locoF21F27.f22() ? "on" : "off");
@@ -355,7 +355,7 @@ std::string toString(const Message& message)
     }
     case OPC_MULTI_SENSE_LONG:
     {
-      const MultiSenseLong& multiSense = static_cast<const MultiSenseLong&>(message);
+      const auto& multiSense = static_cast<const MultiSenseLong&>(message);
       s.append(::toString(multiSense.code()));
       s.append(" sensorAddress=").append(std::to_string(multiSense.sensorAddress()));
       s.append(" transponderAddress=").append(std::to_string(multiSense.transponderAddress()));
@@ -558,7 +558,7 @@ std::string toString(const Message& message)
 
   // raw bytes:
   s.append(" [");
-  const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&message);
+  const auto* bytes = reinterpret_cast<const uint8_t*>(&message);
   for(int i = 0; i < message.size(); i++)
   {
     if(i != 0)

@@ -160,7 +160,7 @@ std::string toString(const Message& message, bool raw)
           break;
 
         case LAN_X_STATUS_CHANGED:
-          if(const LanXStatusChanged& statusChanged = static_cast<const LanXStatusChanged&>(message); statusChanged.db0 == 0x22)
+          if(const auto& statusChanged = static_cast<const LanXStatusChanged&>(message); statusChanged.db0 == 0x22)
           {
             s = "LAN_X_STATUS_CHANGED";
             s.append(" emergency_stop=").append(statusChanged.db1 & Z21_CENTRALSTATE_EMERGENCYSTOP ? "yes" : "no");
@@ -315,7 +315,7 @@ std::string toString(const Message& message, bool raw)
   if(raw)
   {
     s.append(" [");
-    const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&message);
+    const auto* bytes = reinterpret_cast<const uint8_t*>(&message);
     for(uint16_t i = sizeof(Message); i < message.dataLen(); i++)
     {
       if(i != sizeof(Message))
@@ -416,7 +416,7 @@ MessageReplyType getReplyType(const Message &message)
           reply.setFlag(MessageReplyType::Flags::CheckDb0);
 
           // Cast to any LanX message with a db0 to check its value
-          const LanXGetStatus& hack = static_cast<const LanXGetStatus&>(lanX);
+          const auto& hack = static_cast<const LanXGetStatus&>(lanX);
           switch (hack.db0)
           {
             case 0x21: // LAN_X_GET_VERSION

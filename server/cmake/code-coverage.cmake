@@ -380,7 +380,7 @@ function(target_code_coverage TARGET_NAME)
           COMMAND ${LCOV_PATH} --directory ${CMAKE_BINARY_DIR} --zerocounters
           COMMAND $<TARGET_FILE:${TARGET_NAME}> ${target_code_coverage_ARGS}
           COMMAND
-            ${LCOV_PATH} --directory ${CMAKE_BINARY_DIR} --base-directory
+            ${LCOV_PATH} --ignore-errors mismatch --directory ${CMAKE_BINARY_DIR} --base-directory
             ${CMAKE_SOURCE_DIR} --capture ${EXTERNAL_OPTION} --output-file
             ${COVERAGE_INFO}
           COMMAND ${EXCLUDE_COMMAND}

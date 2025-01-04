@@ -257,11 +257,9 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
                 //! \todo log something (at least in debug)
                 break;
               }
-              else
-              {
-                train = status->train.value();
-                direction = path->toSide() == BlockSide::A ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA;
-              }
+
+              train = status->train.value();
+              direction = path->toSide() == BlockSide::A ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA;
             }
           }
         }
@@ -284,7 +282,7 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
 
         if(enterA != enterB)
         {
-          auto& blockStatus = enterA ? trains.front() : trains.back();
+          const auto& blockStatus = enterA ? trains.front() : trains.back();
           TrainTracking::enter(blockStatus);
         }
         else
@@ -382,7 +380,7 @@ void BlockRailTile::identificationEvent(BlockInputMapItem& /*item*/, Identificat
   }
 }
 
-const std::shared_ptr<BlockPath> BlockRailTile::getReservedPath(BlockSide side) const
+std::shared_ptr<BlockPath> BlockRailTile::getReservedPath(BlockSide side) const
 {
   assert(side == BlockSide::A || side == BlockSide::B);
   return m_reservedPaths[static_cast<uint8_t>(side)].lock();

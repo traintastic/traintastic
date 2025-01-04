@@ -57,7 +57,11 @@ class MainWindow final : public QMainWindow
     ObjectPtr m_world;
     bool m_newWorldRequested = false;
     std::unique_ptr<WorldListDialog> m_loadWorldDialog;
-    std::unique_ptr<NewWorldWizard> m_newWorldWizard;
+    struct
+    {
+      std::unique_ptr<AddInterfaceWizard> addInterface;
+      std::unique_ptr<NewWorldWizard> newWorld;
+    } m_wizard;
     int m_clockRequest;
     ObjectPtr m_clock;
     QSplitter* m_splitter;
@@ -101,6 +105,7 @@ class MainWindow final : public QMainWindow
     QAction* m_actionServerShutdown;
     QAction* m_actionServerLog;
     QMenu* m_menuProgramming;
+    QAction* m_actionAddInterfaceWizard;
     // Main toolbar:
     QToolBar* m_toolbar;
     QToolButton* m_worldOnlineOfflineToolButton;
@@ -139,7 +144,7 @@ class MainWindow final : public QMainWindow
     const ObjectPtr& worldClock() const { return m_clock; }
 
     IntroductionWizard* showIntroductionWizard();
-    AddInterfaceWizard* showAddInterfaceWizard();
+    void showAddInterfaceWizard();
     NewBoardWizard* showNewBoardWizard(const ObjectPtr& board);
     void showLuaScriptsList();
 

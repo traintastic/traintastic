@@ -25,6 +25,7 @@
 
 #include <array>
 #include <vector>
+#include <tcb/span.hpp>
 
 template<class T, std::size_t N>
 inline bool contains(const std::array<T, N>& array, T value)
@@ -36,6 +37,12 @@ template<class T>
 inline bool contains(const std::vector<T>& vector, T value)
 {
   return std::find(vector.begin(), vector.end(), value) != vector.end();
+}
+
+template<class T>
+inline bool contains(tcb::span<const T> span, T value)
+{
+  return std::find(span.begin(), span.end(), value) != span.end();
 }
 
 #endif

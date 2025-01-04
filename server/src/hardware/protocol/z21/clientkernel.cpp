@@ -162,7 +162,7 @@ void ClientKernel::receive(const Message& message)
 
           if(matchedRequest)
           {
-            auto msgData = matchedRequest.value().messageBytes.data();
+            auto* msgData = matchedRequest.value().messageBytes.data();
             const LanX& requestMsg = *reinterpret_cast<const LanX *>(msgData);
 
             // If we explicitly requested loco info then we treat it as external change
@@ -185,7 +185,7 @@ void ClientKernel::receive(const Message& message)
 
             LocoCache &cache = getLocoCache(reply.address());
 
-            DecoderChangeFlags changes = DecoderChangeFlags(0);
+            auto changes = static_cast<DecoderChangeFlags>(0);
 
             //Rescale everything to 126 steps
             int currentSpeedStep = reply.speedStep();
@@ -610,7 +610,7 @@ bool ClientKernel::setOutput(OutputChannel channel, uint16_t address, OutputValu
       });
     return true;
   }
-  else if(channel == OutputChannel::DCCext)
+  if(channel == OutputChannel::DCCext)
   {
     if(m_firmwareVersionMajor == 1 && m_firmwareVersionMinor < 40)
     {
@@ -821,7 +821,7 @@ void ClientKernel::startKeepAliveTimer()
   else
   {
     //Normal keep alive
-    assert(ClientConfig::keepAliveInterval > 0);
+    static_assert(ClientConfig::keepAliveInterval > 0);
     m_keepAliveTimer.expires_after(boost::asio::chrono::seconds(ClientConfig::keepAliveInterval));
   }
 
@@ -851,7 +851,7 @@ void ClientKernel::keepAliveTimerExpired(const boost::system::error_code& ec)
 
 void ClientKernel::startInactiveDecoderPurgeTimer()
 {
-  assert(ClientConfig::purgeInactiveDecoderInternal > 0);
+  static_assert(ClientConfig::purgeInactiveDecoderInternal > 0);
   m_inactiveDecoderPurgeTimer.expires_after(boost::asio::chrono::seconds(ClientConfig::purgeInactiveDecoderInternal));
   m_inactiveDecoderPurgeTimer.async_wait(std::bind(&ClientKernel::inactiveDecoderPurgeTimerExpired, this, std::placeholders::_1));
 }
@@ -928,7 +928,7 @@ std::optional<ClientKernel::PendingRequest> ClientKernel::matchPendingReplyAndRe
       if(request->reply.hasFlag(MessageReplyType::Flags::CheckDb0))
       {
         // Cast to any LanX message with a db0 to check its value
-        const LanXGetStatus& hack = static_cast<const LanXGetStatus&>(lanX);
+        const auto& hack = static_cast<const LanXGetStatus&>(lanX);
         if(hack.db0 != request->reply.db0)
           continue;
       }
@@ -982,7 +982,7 @@ std::optional<ClientKernel::PendingRequest> ClientKernel::matchPendingReplyAndRe
       if(message.header() == LAN_X
           && static_cast<const LanX&>(message).xheader == LAN_X_LOCO_INFO)
       {
-        const LanXLocoInfo& locoInfo = static_cast<const LanXLocoInfo&>(message);
+        const auto& locoInfo = static_cast<const LanXLocoInfo&>(message);
         if(locoInfo.speedAndDirection != request->reply.speedAndDirection)
           continue;
         if(locoInfo.speedSteps() != request->reply.speedSteps())
@@ -1043,7 +1043,7 @@ void ClientKernel::rescheduleTimedoutRequests()
       request->retryCount--;
 
       // Re-schedule request
-      auto msgData = request->messageBytes.data();
+      const auto* msgData = request->messageBytes.data();
       const Message& requestMsg = *reinterpret_cast<const Message *>(msgData);
 
       // Send original request again but without adding it to pending queue

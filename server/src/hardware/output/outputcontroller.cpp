@@ -34,6 +34,7 @@
 #include "../../core/attributes.hpp"
 #include "../../core/controllerlist.hpp"
 #include "../../core/objectproperty.tpp"
+#include "../../utils/contains.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
 #include "../../world/getworld.hpp"
@@ -100,16 +101,7 @@ std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> OutputControl
 
 bool OutputController::isOutputChannel(OutputChannel channel) const
 {
-  const auto channels = outputChannels();
-  // FIXME: return std::find(channels.begin(), channels.end(), channel) != channels.end();
-  for(auto ch : channels)
-  {
-    if(channel == ch)
-    {
-      return true;
-    }
-  }
-  return false;
+  return contains(outputChannels(), channel);
 }
 
 bool OutputController::isOutputId(OutputChannel channel, uint32_t id) const

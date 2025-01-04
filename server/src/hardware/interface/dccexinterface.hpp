@@ -60,7 +60,7 @@ class DCCEXInterface final
     void worldEvent(WorldState state, WorldEvent event) final;
 
     void check() const;
-    void checkDecoder(const Decoder& decoder) const;
+    static void checkDecoder(const Decoder& decoder);
 
     void updateEnabled();
 

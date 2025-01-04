@@ -1,0 +1,10 @@
+{
+  "dependencies": [
+    "boost-asio",
+    "boost-beast",
+    "boost-program-options",
+    "boost-random",
+    "boost-signals2",
+    "boost-uuid"
+  ]
+}

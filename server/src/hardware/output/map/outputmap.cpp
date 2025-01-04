@@ -39,6 +39,19 @@
 #include "../../../utils/displayname.hpp"
 #include "../../../utils/inrange.hpp"
 
+namespace
+{
+
+template<typename T>
+void swap(Property<T>& a, Property<T>& b)
+{
+  T tmp = a;
+  a = b.value();
+  b = tmp;
+}
+
+}
+
 OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , parentObject{this, "parent", nullptr, PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::NoScript}
@@ -72,7 +85,7 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
           {
             // New interface doesn't support channel or channel has different output type.
             const auto channels = newValue->outputChannels();
-            auto it = std::find_if(channels.begin(), channels.end(),
+            const auto* it = std::find_if(channels.begin(), channels.end(),
               [&controller=*newValue, outputType=interface->outputType(channel)](OutputChannel outputChannel)
               {
                 return controller.outputType(outputChannel) == outputType;
@@ -284,6 +297,27 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
           addressesSizeChanged();
         }
       }}
+  , swapOutputs{*this, "swap_outputs", MethodFlags::NoScript,
+      [this]()
+      {
+        if(!interface)
+        {
+          return;
+        }
+
+        switch(interface->outputType(channel))
+        {
+          case OutputType::Pair:
+            if(m_outputs.size() == 1 && items.size() == 2)
+            {
+              swap(static_cast<OutputMapPairOutputAction&>(*items[0]->outputActions[0]).action, static_cast<OutputMapPairOutputAction&>(*items[1]->outputActions[0]).action);
+            }
+            break;
+
+          default:
+            break;
+        }
+      }}
 {
   auto& world = getWorld(&_parent);
   const bool editable = contains(world.state.value(), WorldState::Edit);
@@ -325,6 +359,10 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
   Attributes::addEnabled(removeAddress, false);
   Attributes::addVisible(removeAddress, false);
   m_interfaceItems.add(removeAddress);
+
+  Attributes::addDisplayName(swapOutputs, "output_map:swap_outputs");
+  Attributes::addVisible(swapOutputs, false);
+  m_interfaceItems.add(swapOutputs);
 
   updateEnabled();
 }
@@ -509,6 +547,17 @@ void OutputMap::updateOutputActions(OutputType outputType)
 
     assert(m_outputs.size() == item->outputActions.size());
   }
+
+  switch(outputType)
+  {
+    case OutputType::Pair:
+      Attributes::setVisible(swapOutputs, m_outputs.size() == 1 && items.size() == 2);
+      break;
+
+    default:
+      Attributes::setVisible(swapOutputs, false);
+      break;
+  }
 }
 
 void OutputMap::updateEnabled()
@@ -599,7 +648,7 @@ int OutputMap::getMatchingActionOnCurrentState()
     {
       return i; // We got a full match
     }
-    else if(value == OutputMapItem::MatchResult::WildcardMatch)
+    if(value == OutputMapItem::MatchResult::WildcardMatch)
     {
       // We give wildcard matches a lower priority.
       // Save it for later, in the meantime we check for a better full match

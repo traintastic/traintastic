@@ -25,6 +25,7 @@
 #include <traintastic/enum/crossstate.hpp>
 #include "node.hpp"
 #include "link.hpp"
+#include "../tile/hidden/hiddencrossoverrailtile.hpp"
 #include "../tile/rail/blockrailtile.hpp"
 #include "../tile/rail/bridgerailtile.hpp"
 #include "../tile/rail/crossrailtile.hpp"
@@ -284,6 +285,31 @@ std::vector<std::shared_ptr<BlockPath>> BlockPath::find(BlockRailTile& startBloc
         current.link = otherLink(nextNode, *current.link).get();
         break;
 
+      case TileId::HiddenRailCrossOver:
+      {
+        // 1 2
+        //  X
+        // 0 3
+        auto crossOver = tile.shared_ptr<HiddenCrossOverRailTile>();
+        if(contains(current.path->m_crossOvers, crossOver))
+        {
+          todo.pop(); // drop it, can't pass crossover twice
+          break;
+        }
+
+        for(size_t i = 0; i < 4; i++)
+        {
+          if(nextNode.getLink(i).get() == current.link)
+          {
+            current.node = &nextNode;
+            current.link = nextNode.getLink((i + 2) % 4).get(); // opposite
+            current.path->m_crossOvers.emplace_back(crossOver, i % 2 == 0 ? CrossState::AC : CrossState::BD);
+            break;
+          }
+        }
+        break;
+      }
+
       default: // passive or non rail tiles
         assert(false); // this should never happen
         todo.pop(); // drop it in case it does, however that is a bug!
@@ -306,7 +332,7 @@ BlockPath::BlockPath(BlockRailTile& block, BlockSide side)
 
 BlockPath::BlockPath(const BlockPath &other)
   : Path(other)
-  , std::enable_shared_from_this<BlockPath>()
+  , std::enable_shared_from_this<BlockPath>() // NOLINT(readability-redundant-member-init) -Wextra requires this
   , m_fromBlock(other.m_fromBlock)
   , m_fromSide(other.m_fromSide)
   , m_toBlock(other.m_toBlock)
@@ -358,7 +384,7 @@ bool BlockPath::isReady() const
     }
   }
 
-  for(const auto& [directionControlWeak, state] : m_directionControls)
+  for(const auto& [directionControlWeak, state] : m_directionControls) // NOLINT(readability-use-anyofallof)
   {
     auto directionControl = directionControlWeak.lock();
     if(!directionControl) /*[[unlikely]]*/
@@ -449,6 +475,23 @@ bool BlockPath::reserve(const std::shared_ptr<Train>& train, bool dryRun)
     if(auto cross = crossWeak.lock())
     {
       if(!cross->reserve(state, dryRun))
+      {
+        assert(dryRun);
+        return false;
+      }
+    }
+    else /*[[unlikely]]*/
+    {
+      assert(dryRun);
+      return false;
+    }
+  }
+
+  for(const auto& [crossOverWeak, state] : m_crossOvers)
+  {
+    if(auto crossOver = crossOverWeak.lock())
+    {
+      if(!crossOver->reserve(state, dryRun))
       {
         assert(dryRun);
         return false;

@@ -55,7 +55,7 @@ static void updateDecoderSpeed(const std::shared_ptr<Decoder>& decoder, uint8_t 
   else
   {
     speed--; // decrement one for ESTOP: 2..127 -> 1..126
-    const uint8_t currentStep = Decoder::throttleToSpeedStep<uint8_t>(decoder->throttle.value(), SPEED_MAX - 1);
+    const auto currentStep = Decoder::throttleToSpeedStep<uint8_t>(decoder->throttle.value(), SPEED_MAX - 1);
     if(currentStep != speed) // only update trottle if it is a different step
       decoder->throttle.setValueInternal(Decoder::speedStepToThrottle<uint8_t>(speed, SPEED_MAX - 1));
   }
@@ -378,7 +378,7 @@ void Kernel::receive(const Message& message)
     case OPC_LOCO_SPD:
       if(m_decoderController)
       {
-        const LocoSpd& locoSpd = static_cast<const LocoSpd&>(message);
+        const auto& locoSpd = static_cast<const LocoSpd&>(message);
         if(LocoSlot* slot = getLocoSlot(locoSpd.slot))
         {
           if(!slot->isAddressValid())
@@ -692,7 +692,7 @@ void Kernel::receive(const Message& message)
     case OPC_D4:
       if(m_decoderController)
       {
-        const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&message);
+        const auto* bytes = reinterpret_cast<const uint8_t*>(&message);
         if(bytes[1] == 0x20)
         {
           switch(bytes[3])
@@ -765,7 +765,7 @@ void Kernel::receive(const Message& message)
 
     case OPC_MULTI_SENSE_LONG:
     {
-      const MultiSenseLong& multiSense = static_cast<const MultiSenseLong&>(message);
+      const auto& multiSense = static_cast<const MultiSenseLong&>(message);
       if(multiSense.code() == MultiSenseLong::Code::ReleaseTransponder || multiSense.code() == MultiSenseLong::Code::DetectTransponder)
       {
         EventLoop::call(
@@ -979,7 +979,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
 
   if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Throttle))
   {
-    const uint8_t speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, SPEED_MAX - 1);
+    const auto speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, SPEED_MAX - 1);
     if(m_emergencyStop == TriState::False || decoder.emergencyStop || speedStep == SPEED_STOP)
     {
       // only send speed updates if bus estop isn't active, except for speed STOP and ESTOP
@@ -1365,7 +1365,7 @@ void Kernel::send(uint16_t address, Message& message, uint8_t& slot)
   }
   else // try get a slot
   {
-    std::byte* ptr = reinterpret_cast<std::byte*>(&message);
+    auto* ptr = reinterpret_cast<std::byte*>(&message);
 
     auto pendingSlotMessage = m_pendingSlotMessages.find(address);
     if(pendingSlotMessage == m_pendingSlotMessages.end())
@@ -1393,7 +1393,7 @@ void Kernel::sendNextMessage()
 
       if(m_ioHandler->send(message))
       {
-        m_sentMessagePriority = static_cast<Priority>(priority);
+        m_sentMessagePriority = priority;
 
         m_waitingForEcho = true;
         m_waitingForEchoTimer.expires_after(boost::asio::chrono::milliseconds(m_config.echoTimeout));

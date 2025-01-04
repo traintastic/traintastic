@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include "../../../src/core/method.tpp"
 #include "../../../src/core/objectproperty.tpp"
 #include "../../../src/lua/scriptlist.hpp"
@@ -28,6 +28,8 @@
 #include "../../../src/train/trainlist.hpp"
 #include "../../../src/utils/endswith.hpp"
 #include "../../../src/world/world.hpp"
+#include "../../../src/world/worldloader.hpp"
+#include "../../../src/world/worldsaver.hpp"
 
 TEST_CASE("Lua script: pv - save/restore - bool", "[lua][lua-script][lua-script-pv]")
 {
@@ -777,4 +779,122 @@ TEST_CASE("Lua script: pv - ipairs()", "[lua][lua-script][lua-script-pv]")
   REQUIRE(script->state.value() == LuaScriptState::Stopped);
 
   script.reset();
+}
+
+TEST_CASE("Lua script: pv - clear", "[lua][lua-script][lua-script-pv]")
+{
+  auto world = World::create();
+  REQUIRE(world);
+  auto script = world->luaScripts->create();
+  REQUIRE(script);
+
+  // set pv:
+  script->code =
+    "pv.object = world\n"
+    "pv.table = {a=1, b=2, c=3}\n"
+    "pv.array = {5, 4, 3, 2, 1}\n";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script->clearPersistentVariables();
+
+  // check pv:
+  script->code =
+    "assert(pv.object == nil)\n"
+    "assert(pv.table == nil)\n"
+    "assert(pv.array == nil)\n";
+  script->start();
+  INFO(script->error.value());
+  REQUIRE(script->state.value() == LuaScriptState::Running);
+  script->stop();
+  REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+  script.reset();
+}
+
+TEST_CASE("Lua script: pv - save/load", "[lua][lua-script][lua-script-pv]")
+{
+  static const std::string code =
+    "pv.bool = true\n"
+    "pv.int = 42\n"
+    "pv.float = 2.5\n"
+    "pv.string = \"Traintastic\"\n"
+    "pv.object = world\n"
+    "pv.method = world.stop\n"
+    "pv.event = world.on_event\n"
+    "pv.table = {a=1, b=2, c=3}\n"
+    "pv.array = {5, 4, 3, 2, 1}\n";
+
+  std::filesystem::path ctw;
+  std::string worldUUID;
+
+  {
+    auto world = World::create();
+    REQUIRE(world);
+    worldUUID = world->uuid;
+
+    auto script = world->luaScripts->create();
+    REQUIRE(script);
+    script->id = "script";
+
+    // set pv:
+    script->code = code;
+    script->start();
+    INFO(script->error.value());
+    REQUIRE(script->state.value() == LuaScriptState::Running);
+    script->stop();
+    REQUIRE(script->state.value() == LuaScriptState::Stopped);
+
+    {
+      ctw = std::filesystem::temp_directory_path() / std::string(world->uuid.value()).append(World::dotCTW);
+      WorldSaver saver(*world, ctw);
+    }
+  }
+
+  {
+    std::shared_ptr<World> world;
+    {
+      WorldLoader loader(ctw);
+      world = loader.world();
+      REQUIRE(world);
+    }
+
+    {
+      REQUIRE(world->uuid.value() == worldUUID);
+      REQUIRE(world->luaScripts->length == 1);
+
+      auto script = world->luaScripts->operator[](0);
+      REQUIRE(script);
+      REQUIRE(script->id.value() == "script");
+      REQUIRE(script->code.value() == code);
+
+      script->code =
+        "assert(pv.bool == true)\n"
+        "assert(pv.int == 42)\n"
+        "assert(pv.float == 2.5)\n"
+        "assert(pv.string == \"Traintastic\")\n"
+        "assert(pv.object == world)\n"
+        "assert(pv.method == world.stop)\n"
+        "assert(pv.event == world.on_event)\n"
+        "assert(pv.table.a == 1)\n"
+        "assert(pv.table.b == 2)\n"
+        "assert(pv.table.c == 3)\n"
+        "assert(#pv.array == 5)\n"
+        "assert(pv.array[1] == 5)\n"
+        "assert(pv.array[2] == 4)\n"
+        "assert(pv.array[3] == 3)\n"
+        "assert(pv.array[4] == 2)\n"
+        "assert(pv.array[5] == 1)\n";
+      script->start();
+      INFO(script->error.value());
+      REQUIRE(script->state.value() == LuaScriptState::Running);
+      script->stop();
+      REQUIRE(script->state.value() == LuaScriptState::Stopped);
+    }
+  }
+
+  REQUIRE(std::filesystem::remove(ctw));
 }

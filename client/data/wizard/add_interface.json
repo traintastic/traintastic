@@ -333,11 +333,13 @@
       "protocol_dr5000_usb": {
         "title": "$wizard.add_interface.protocol:title$",
         "text": "$wizard.add_interface.protocol:text$",
+        "bottom_text": "$wizard.add_interface.protocol_dr5000_usb:bottom_text$",
         "type": "radio",
         "options": [
           {
-            "name": "LocoNet",
+            "name": "LocoNet ($wizard.add_interface:recommended$)",
             "next": "serial_port",
+            "checked": true,
             "actions": {
               "create_interface": {
                 "class_id": "interface.loconet",

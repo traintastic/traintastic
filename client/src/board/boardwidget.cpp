@@ -83,7 +83,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   QWidget(parent),
   m_object{std::move(object)},
   m_nxManagerRequestId{Connection::invalidRequestId},
-  m_boardArea{new BoardAreaWidget(*this, this)},
+  m_boardArea{new BoardAreaWidget(m_object, this)},
   m_statusBar{new QStatusBar(this)},
   m_statusBarMessage{new QLabel(this)},
   m_statusBarCoords{new QLabel(this)},

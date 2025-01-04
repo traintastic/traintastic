@@ -62,6 +62,7 @@ enum class TileId : uint16_t // 10 bit
   Label = 31,
   Switch = 32,
 
+  HiddenRailCrossOver = 1022,
   ReservedForFutureExpension = 1023
 };
 

@@ -243,14 +243,6 @@
         "fuzzy": 0
     },
     {
-        "term": "category:trains",
-        "definition": "Trains",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "class_id:board_tile.misc.push_button",
         "definition": "Push button",
         "context": "",
@@ -960,22 +952,6 @@
         "reference": "",
         "comment": "",
         "fuzzy": 0
-    },
-    {
-        "term": "ext_output_change_action:do_nothing",
-        "definition": "Do nothing"
-    },
-    {
-        "term": "ext_output_change_action:estop_train",
-        "definition": "Emergency stop trains in block path"
-    },
-    {
-        "term": "ext_output_change_action:estop_world",
-        "definition": "Emergency stop World"
-    },
-    {
-        "term": "ext_output_change_action:poweroff_world",
-        "definition": "Power off World"
     },
     {
         "term": "ecos_channel:ecos_detector",
@@ -2850,14 +2826,6 @@
         "fuzzy": 0
     },
     {
-        "term": "message:N3003",
-        "definition": "Turnout position was reset to reserved one"
-    },
-    {
-        "term": "message:N3004",
-        "definition": "Signal aspect was reset to reserved one"
-    },
-    {
         "term": "message:N9001",
         "definition": "Starting script",
         "context": "",
@@ -4487,30 +4455,6 @@
         "fuzzy": 0
     },
     {
-        "term": "world:correct_output_pos_when_locked",
-        "definition": "Try to correct Ouput state when externally chaged while locked",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "world:ext_output_change_action",
-        "definition": "External Output Change Action",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "world:path_release_delay",
-        "definition": "Block Path release delay",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "world_scale:custom",
         "definition": "Custom",
         "context": "",
@@ -5015,30 +4959,6 @@
         "fuzzy": 0
     },
     {
-        "term": "message:E3003",
-        "definition": "Train was emergency stopped due to turnout %1 position externally changed"
-    },
-    {
-        "term": "message:E3004",
-        "definition": "Train was emergency stopped due to signal %1 aspect externally changed"
-    },
-    {
-        "term": "message:E3007",
-        "definition": "World was emergency stopped due to turnout %1 position externally changed"
-    },
-    {
-        "term": "message:E3008",
-        "definition": "World was emergency stopped due to signal %1 aspect externally changed"
-    },
-    {
-        "term": "message:E3009",
-        "definition": "World was emergency powered off due to turnout %1 position externally changed"
-    },
-    {
-        "term": "message:E3010",
-        "definition": "World was emergency powered off due to signal %1 aspect externally changed"
-    },
-    {
         "term": "message:C1014",
         "definition": "Invalid command",
         "context": "",
@@ -5109,14 +5029,6 @@
         "reference": "",
         "comment": "",
         "fuzzy": 0
-    },
-    {
-        "term": "message:W3003",
-        "definition": "Turnout position externally changed while locked in a path"
-    },
-    {
-        "term": "message:W3004",
-        "definition": "Signal aspect externally changed while locked in a path"
     },
     {
         "term": "auto_yes_no:auto",
@@ -6389,7 +6301,196 @@
     },
     {
         "term": "turnout_position:double_slip_straight_b",
-        "definition": "Straght B",
+        "definition": "Straight B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "luadoc:index:title",
+        "definition": "Traintastic Lua scripting",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "luadoc:index:nav",
+        "definition": "Index",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "category:trains",
+        "definition": "Trains",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "ext_output_change_action:do_nothing",
+        "definition": "Do nothing",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "ext_output_change_action:estop_train",
+        "definition": "Emergency stop trains in block path",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "ext_output_change_action:estop_world",
+        "definition": "Emergency stop world",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "ext_output_change_action:poweroff_world",
+        "definition": "Power off world",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:N3003",
+        "definition": "Turnout position was reset to reserved one",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:N3004",
+        "definition": "Signal aspect was reset to reserved one",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:correct_output_pos_when_locked",
+        "definition": "Try to correct ouput state when externally changed while locked",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:ext_output_change_action",
+        "definition": "External output change action",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:path_release_delay",
+        "definition": "Block path release delay",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3003",
+        "definition": "Train was emergency stopped due to turnout %1 position externally changed",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3004",
+        "definition": "Train was emergency stopped due to signal %1 aspect externally changed",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3007",
+        "definition": "World was emergency stopped due to turnout %1 position externally changed",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3008",
+        "definition": "World was emergency stopped due to signal %1 aspect externally changed",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3009",
+        "definition": "World was emergency powered off due to turnout %1 position externally changed",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3010",
+        "definition": "World was emergency powered off due to signal %1 aspect externally changed",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W3003",
+        "definition": "Turnout position externally changed while locked in a path",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W3004",
+        "definition": "Signal aspect externally changed while locked in a path",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.signal:require_reservation",
+        "definition": "Require reservation",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6398,23 +6499,48 @@
     },
     {
         "term": "message:E3005",
-        "definition": "Can't remove train, train must be stopped first."
+        "definition": "Can't remove train, train must be stopped first.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E3006",
-        "definition": "Can't remove train, train can only be removed from head or tail block."
+        "definition": "Can't remove train, train can only be removed from head or tail block.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.turnout_slip:dual_motor",
-        "definition": "Dual motor/coil"
+        "definition": "Dual motor/coil",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "turnout_position:diverged",
-        "definition": "Diverged"
+        "definition": "Diverged",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:load_last_world_on_startup",
-        "definition": "Load last world on startup"
+        "definition": "Load last world on startup",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2025",
@@ -6438,10 +6564,174 @@
     },
     {
         "term": "message:I9003",
-        "definition": "Cleared persistent variables"
+        "definition": "Cleared persistent variables",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua.script:clear_persistent_variables",
-        "definition": "Clear persistent variables"
+        "definition": "Clear persistent variables",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "speed_limit_property:no_limit",
+        "definition": "No limit",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "weight_unit:ton",
+        "definition": "ton",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_channel:turnout",
+        "definition": "Turnout",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_channel:output",
+        "definition": "Output",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "single_output_action:none",
+        "definition": "None",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "single_output_action:off",
+        "definition": "Off",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "single_output_action:on",
+        "definition": "On",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "single_output_action:pulse",
+        "definition": "Pulse",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:show_hide_console",
+        "definition": "Show/hide console"
+    },
+    {
+        "term": "tray_icon.menu:settings",
+        "definition": "Settings"
+    },
+    {
+        "term": "tray_icon.menu:language",
+        "definition": "Language"
+    },
+    {
+        "term": "tray_icon.menu:allow_client_to_restart_server",
+        "definition": "Allow client to restart server"
+    },
+    {
+        "term": "tray_icon.menu:allow_client_to_shutdown_server",
+        "definition": "Allow client to shutdown server"
+    },
+    {
+        "term": "tray_icon.menu:start_automatically_at_logon",
+        "definition": "Start automatically at logon"
+    },
+    {
+        "term": "tray_icon.menu:advanced",
+        "definition": "Advanced"
+    },
+    {
+        "term": "tray_icon.menu:open_data_directory",
+        "definition": "Open data directory"
+    },
+    {
+        "term": "tray_icon.menu:restart",
+        "definition": "Restart"
+    },
+    {
+        "term": "tray_icon.menu:shutdown",
+        "definition": "Shutdown"
+    },
+    {
+        "term": "tray_icon.notify:message_running",
+        "definition": "Traintastic server is running in the background."
+    },
+    {
+        "term": "tray_icon.notify:message_restarting",
+        "definition": "Traintastic server restarted"
+    },
+    {
+        "term": "tray_icon.language_changed_message_box:caption",
+        "definition": "Language changed"
+    },
+    {
+        "term": "tray_icon.language_changed_message_box:text",
+        "definition": "Traintastic server must be restarted for the language change to take effect. Restart now?",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "language:fy-nl",
+        "definition": "Frisian",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface:recommended",
+        "definition": "Recommended"
+    },
+    {
+        "term":"wizard.add_interface.protocol_dr5000_usb:bottom_text",
+        "definition": "The %command_station% supports two different protocols for communication. Although both are supported by Traintastic, using LocoNet is recommended as it is more versatile."
+    },
+    {
+        "term": "output_map:swap_outputs",
+        "definition": "Swap outputs"
     }
 ]

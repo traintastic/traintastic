@@ -1,9 +1,9 @@
 /**
- * server/src/network/connection.cpp
+ * server/src/network/clientclientconnection.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "connection.hpp"
+#include "clientconnection.hpp"
 #include "server.hpp"
 #include "../traintastic/traintastic.hpp"
 #include "../core/eventloop.hpp"
@@ -31,106 +31,79 @@
   #define IS_SERVER_THREAD (std::this_thread::get_id() == m_server.threadId())
 #endif
 
-Connection::Connection(Server& server, boost::asio::ip::tcp::socket socket, std::string id_)
+ClientConnection::ClientConnection(Server& server, std::shared_ptr<boost::beast::websocket::stream<boost::beast::tcp_stream>> ws, std::string id_)
   : m_server{server}
-  , m_socket(std::move(socket))
+  , m_ws(std::move(ws))
   , m_authenticated{false}
   , id{std::move(id_)}
 {
   assert(IS_SERVER_THREAD);
+  assert(m_ws);
 
-  m_socket.set_option(boost::asio::socket_base::linger(true, 0));
-  m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
+  m_ws->binary(true);
 }
 
-Connection::~Connection()
+ClientConnection::~ClientConnection()
 {
   assert(isEventLoopThread());
   assert(!m_session);
-  assert(!m_socket.is_open());
+  assert(!m_ws->is_open());
 }
 
-void Connection::start()
+void ClientConnection::start()
 {
-  doReadHeader();
+  doRead();
 }
 
-void Connection::doReadHeader()
+void ClientConnection::doRead()
 {
   assert(IS_SERVER_THREAD);
 
-  boost::asio::async_read(m_socket,
-    boost::asio::buffer(&m_readBuffer.header, sizeof(m_readBuffer.header)),
-      [this, weak=weak_from_this()](const boost::system::error_code& ec, std::size_t /*bytesReceived*/)
-      {
-        if(weak.expired())
-          return;
+  m_ws->async_read(m_readBuffer,
+    [this, weak=weak_from_this()](const boost::system::error_code& ec, std::size_t /*bytesReceived*/)
+    {
+      if(weak.expired())
+        return;
 
-        if(!ec)
+      if(!ec)
+      {
+        while(m_readBuffer.size() >= sizeof(Message::Header))
         {
-          m_readBuffer.message.reset(new Message(m_readBuffer.header));
-          if(m_readBuffer.message->dataSize() == 0)
+          const Message::Header& header = *reinterpret_cast<const Message::Header*>(m_readBuffer.cdata().data());
+          if(m_readBuffer.size() >= sizeof(Message::Header) + header.dataSize)
           {
-            if(m_readBuffer.message->command() != Message::Command::Ping)
-              EventLoop::call(&Connection::processMessage, this, m_readBuffer.message);
-            else
-              {} // TODO: ping hier replyen
-            m_readBuffer.message.reset();
-            doReadHeader();
+            auto message = std::make_shared<Message>(header);
+            if(header.dataSize != 0)
+            {
+              std::memcpy(message->data(), static_cast<const std::byte*>(m_readBuffer.cdata().data()) + sizeof(header), message->dataSize());
+            }
+            EventLoop::call(&ClientConnection::processMessage, this, message);
+            m_readBuffer.consume(sizeof(header) + header.dataSize);
           }
           else
-            doReadData();
+          {
+            break;
+          }
         }
-        else if(ec == boost::asio::error::eof || ec == boost::asio::error::connection_aborted || ec == boost::asio::error::connection_reset)
-        {
-          EventLoop::call(std::bind(&Connection::connectionLost, this));
-        }
-        else if(ec != boost::asio::error::operation_aborted)
-        {
-          Log::log(id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
-          EventLoop::call(std::bind(&Connection::disconnect, this));
-        }
-      });
+        doRead();
+      }
+      else if(ec == boost::asio::error::eof || ec == boost::asio::error::connection_aborted || ec == boost::asio::error::connection_reset)
+      {
+        EventLoop::call(std::bind(&ClientConnection::connectionLost, this));
+      }
+      else
+      {
+        Log::log(id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
+        EventLoop::call(std::bind(&ClientConnection::disconnect, this));
+      }
+    });
 }
 
-void Connection::doReadData()
+void ClientConnection::doWrite()
 {
   assert(IS_SERVER_THREAD);
 
-  boost::asio::async_read(m_socket,
-    boost::asio::buffer(m_readBuffer.message->data(), m_readBuffer.message->dataSize()),
-      //m_strand.wrap(
-        [this, weak=weak_from_this()](const boost::system::error_code& ec, std::size_t /*bytesReceived*/)
-        {
-          if(weak.expired())
-            return;
-
-          if(!ec)
-          {
-            if(m_readBuffer.message->command() != Message::Command::Ping)
-              EventLoop::call(&Connection::processMessage, this, m_readBuffer.message);
-            else
-            {} // TODO: ping hier replyen
-            m_readBuffer.message.reset();
-            doReadHeader();
-          }
-          else if(ec == boost::asio::error::eof || ec == boost::asio::error::connection_aborted || ec == boost::asio::error::connection_reset)
-          {
-            EventLoop::call(std::bind(&Connection::connectionLost, this));
-          }
-          else if(ec != boost::asio::error::operation_aborted)
-          {
-            Log::log(id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
-            EventLoop::call(std::bind(&Connection::disconnect, this));
-          }
-        });
-}
-
-void Connection::doWrite()
-{
-  assert(IS_SERVER_THREAD);
-
-  boost::asio::async_write(m_socket, boost::asio::buffer(**m_writeQueue.front(), m_writeQueue.front()->size()),
+  m_ws->async_write(boost::asio::buffer(**m_writeQueue.front(), m_writeQueue.front()->size()),
     [this, weak=weak_from_this()](const boost::system::error_code& ec, std::size_t /*bytesTransferred*/)
     {
       if(weak.expired())
@@ -145,12 +118,12 @@ void Connection::doWrite()
       else if(ec != boost::asio::error::operation_aborted)
       {
         Log::log(id, LogMessage::E1006_SOCKET_WRITE_FAILED_X, ec);
-        EventLoop::call(std::bind(&Connection::disconnect, this));
+        EventLoop::call(std::bind(&ClientConnection::disconnect, this));
       }
     });
 }
 
-void Connection::processMessage(const std::shared_ptr<Message> message)
+void ClientConnection::processMessage(const std::shared_ptr<Message> message)
 {
   assert(isEventLoopThread());
 
@@ -188,7 +161,7 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
   }
 }
 
-void Connection::sendMessage(std::unique_ptr<Message> message)
+void ClientConnection::sendMessage(std::unique_ptr<Message> message)
 {
   assert(isEventLoopThread());
 
@@ -202,7 +175,7 @@ void Connection::sendMessage(std::unique_ptr<Message> message)
     });
 }
 
-void Connection::connectionLost()
+void ClientConnection::connectionLost()
 {
   assert(isEventLoopThread());
 
@@ -210,7 +183,7 @@ void Connection::connectionLost()
   disconnect();
 }
 
-void Connection::disconnect()
+void ClientConnection::disconnect()
 {
   assert(isEventLoopThread());
 
@@ -219,13 +192,10 @@ void Connection::disconnect()
   m_server.m_ioContext.post(
     [this]()
     {
-      if(m_socket.is_open())
+      if(m_ws->is_open())
       {
         boost::system::error_code ec;
-        m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-        if(ec && ec != boost::asio::error::not_connected)
-          Log::log(id, LogMessage::E1005_SOCKET_SHUTDOWN_FAILED_X, ec);
-        m_socket.close();
+        m_ws->close(boost::beast::websocket::close_code::normal, ec);
       }
 
       EventLoop::call(
