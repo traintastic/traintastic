@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "kernel.hpp"
 #include <traintastic/enum/decoderprotocol.hpp>
 #include "messages.hpp"
+#include "../../decoder/decoder.hpp" // TODO: remove when migrated to Train control
 #include "../../interface/interface.hpp"
 #include "../../throttle/hardwarethrottle.hpp"
 #include "../../throttle/throttlecontroller.hpp"
@@ -338,7 +339,7 @@ void Kernel::receiveFrom(std::string_view message, IOHandler::ClientId clientId)
                   for(const auto& f : *throttle->functions)
                     postSendTo(throttleFunction(multiThrottleId, address.address, address.isLong, f->number, f->value), clientId);
 
-                  if(throttle->emergencyStop)
+                  if(throttle->decoder()->emergencyStop)
                     postSendTo(throttleEstop(multiThrottleId, address.address, address.isLong), clientId);
                   else
                     postSendTo(throttleSpeed(multiThrottleId, address.address, address.isLong, std::round(throttle->throttle * speedMax)), clientId);
@@ -537,11 +538,11 @@ void Kernel::multiThrottleAction(IOHandler::ClientId clientId, char multiThrottl
             {
               if(value < 0)
               {
-                throttle->emergencyStop = true;
+                throttle->emergencyStop();
               }
               else
               {
-                throttle->emergencyStop = false;
+                throttle->decoder()->emergencyStop = false;
                 throttle->throttle = static_cast<float>(value) / speedMax;
               }
             }
@@ -560,7 +561,7 @@ void Kernel::multiThrottleAction(IOHandler::ClientId clientId, char multiThrottl
           {
             if(const auto& throttle = getThottle(clientId, multiThrottleId); throttle && throttle->acquired())
             {
-              throttle->direction = (value == 0) ? Direction::Reverse : Direction::Forward;
+              throttle->setDirection((value == 0) ? Direction::Reverse : Direction::Forward);
             }
           });
       }
@@ -599,7 +600,7 @@ void Kernel::multiThrottleAction(IOHandler::ClientId clientId, char multiThrottl
         {
           if(const auto& throttle = getThottle(clientId, multiThrottleId); throttle && throttle->acquired())
           {
-            throttle->emergencyStop = false;
+            throttle->decoder()->emergencyStop = false;
             throttle->throttle = Throttle::throttleStop;
           }
         });
@@ -611,7 +612,7 @@ void Kernel::multiThrottleAction(IOHandler::ClientId clientId, char multiThrottl
         {
           if(const auto& throttle = getThottle(clientId, multiThrottleId); throttle && throttle->acquired())
           {
-            throttle->emergencyStop = true;
+            throttle->emergencyStop();
           }
         });
       break;
@@ -627,7 +628,7 @@ void Kernel::multiThrottleAction(IOHandler::ClientId clientId, char multiThrottl
               {
                 if(const auto* multiThrottle = getMultiThrottle(clientId, multiThrottleId))
                 {
-                  if(multiThrottle->throttle->emergencyStop)
+                  if(multiThrottle->throttle->decoder()->emergencyStop)
                     postSendTo(throttleEstop(multiThrottleId, multiThrottle->address, multiThrottle->isLongAddress), clientId);
                   else
                     postSendTo(throttleSpeed(multiThrottleId, multiThrottle->address, multiThrottle->isLongAddress, std::round(multiThrottle->throttle->throttle * speedMax)), clientId);

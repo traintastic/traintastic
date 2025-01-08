@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,6 +34,7 @@
 class Decoder;
 enum class DecoderProtocol : uint8_t;
 class ThrottleFunction;
+class Train;
 
 class Throttle : public IdObject
 {
@@ -67,17 +68,28 @@ class Throttle : public IdObject
     boost::signals2::signal<void()> released;
 
     Property<std::string> name;
-    Property<bool> emergencyStop;
     Property<Direction> direction;
     Property<float> throttle;
     ObjectVectorProperty<ThrottleFunction> functions;
+    ObjectProperty<Train> train;
+    Method<bool()> emergencyStop;
+    Method<bool()> stop;
+    Method<bool()> faster;
+    Method<bool()> slower;
+    Method<bool(Direction)> setDirection;
 
 #ifndef NDEBUG
     ~Throttle() override;
 #endif
 
     bool acquired() const;
-    void release(bool stop = true);
+    std::error_code acquire(const std::shared_ptr<Train>& acquireTrain, bool steal = false);
+    void release(bool stopIt = true);
+
+    const std::shared_ptr<Decoder>& decoder() const // TODO: remove once WiThrottle is migrated to train control
+    {
+      return m_decoder;
+    }
 
     const std::shared_ptr<ThrottleFunction>& getFunction(uint32_t number) const;
 };
