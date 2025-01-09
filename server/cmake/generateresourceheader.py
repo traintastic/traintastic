@@ -2,7 +2,7 @@
 # This file is part of the traintastic source code.
 # See <https://github.com/traintastic/traintastic>.
 #
-# Copyright (C) 2024 Reinder Feenstra
+# Copyright (C) 2024-2025 Reinder Feenstra
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -29,7 +29,7 @@ if len(sys.argv) != 4:
     sys.exit(1)
 
 input_file = os.path.join(sys.argv[1], sys.argv[2])
-input_file_ext = os.path.splitext(input_file)[1]
+input_file_ext = os.path.splitext(input_file)[1].lstrip('.')
 
 namespaces = ['Resource'] + os.path.dirname(sys.argv[2]).replace('../', '').split('/')
 variable = re.sub(r'[\.]+','_', os.path.basename(sys.argv[2]).lower())
