@@ -24,6 +24,7 @@
 #include "server.hpp"
 #include "../traintastic/traintastic.hpp"
 #include "../core/eventloop.hpp"
+#include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
 #include "../hardware/throttle/webthrottle.hpp"
 #include "../log/log.hpp"
