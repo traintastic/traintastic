@@ -37,12 +37,17 @@ class WebThrottleConnection : public WebSocketConnection
 protected:
   boost::beast::flat_buffer m_readBuffer;
   std::queue<std::string> m_writeQueue;
+  std::map<uint32_t, std::shared_ptr<WebThrottle>> m_throttles;
+  std::map<uint32_t, boost::signals2::scoped_connection> m_throttleReleased;
+  std::map<uint32_t, boost::signals2::scoped_connection> m_trainPropertyChanged;
 
   void doRead() final;
   void doWrite() final;
 
   void processMessage(const nlohmann::json& message);
   void sendMessage(const nlohmann::json& message);
+
+  const std::shared_ptr<WebThrottle>& getThrottle(uint32_t throttleId);
 
 public:
   const std::string id;

@@ -32,6 +32,18 @@
 #include "../log/log.hpp"
 #include "../log/logmessageexception.hpp"
 #include "../utils/setthreadname.hpp"
+
+//#define SERVE_FROM_FS // Development option, NOT for production!
+#ifdef SERVE_FROM_FS
+  #include "../utils/readfile.hpp"
+
+  static const auto www = std::filesystem::absolute(std::filesystem::path(__FILE__).parent_path() / ".." / ".." / "www");
+#else
+  #include <resource/www/throttle.html.hpp>
+  #include <resource/www/css/throttle.css.hpp>
+  #include <resource/www/js/throttle.js.hpp>
+#endif
+#include <resource/www/css/normalize.css.hpp>
 #include <resource/shared/gfx/appicon.ico.hpp>
 
 #define IS_SERVER_THREAD (std::this_thread::get_id() == m_thread.get_id())
@@ -45,6 +57,8 @@ namespace
 static constexpr std::string_view serverHeader{"Traintastic-server/" TRAINTASTIC_VERSION_FULL};
 static constexpr std::string_view contentTypeTextPlain{"text/plain"};
 static constexpr std::string_view contentTypeTextHtml{"text/html"};
+static constexpr std::string_view contentTypeTextCss{"text/css"};
+static constexpr std::string_view contentTypeTextJavaScript{"text/javascript"};
 static constexpr std::string_view contentTypeImageXIcon{"image/x-icon"};
 
 http::message_generator notFound(const http::request<http::string_body>& request)
@@ -129,6 +143,16 @@ http::message_generator textPlain(const http::request<http::string_body>& reques
 http::message_generator textHtml(const http::request<http::string_body>& request, std::string_view body)
 {
   return text(request, contentTypeTextHtml, body);
+}
+
+http::message_generator textCss(const http::request<http::string_body>& request, std::string_view body)
+{
+  return text(request, contentTypeTextCss, body);
+}
+
+http::message_generator textJavaScript(const http::request<http::string_body>& request, std::string_view body)
+{
+  return text(request, contentTypeTextJavaScript, body);
 }
 
 }
@@ -330,12 +354,46 @@ http::message_generator Server::handleHTTPRequest(http::request<http::string_bod
       "</head>"
       "<body>"
         "<h1>Traintastic <small>v" TRAINTASTIC_VERSION_FULL "</small></h1>"
+        "<ul>"
+          "<li><a href=\"/throttle\">Web throttle</a></li>"
+        "</ul>"
       "</body>"
       "</html>");
   }
   if(target == "/favicon.ico")
   {
     return binary(request, contentTypeImageXIcon, Resource::shared::gfx::appicon_ico);
+  }
+  if(request.target() == "/css/normalize.css")
+  {
+    return textCss(request, Resource::www::css::normalize_css);
+  }
+  if(request.target() == "/css/throttle.css")
+  {
+#ifdef SERVE_FROM_FS
+    const auto css = readFile(www / "css" / "throttle.css");
+    return css ? textCss(request, *css) : notFound(request);
+#else
+    return textCss(request, Resource::www::css::throttle_css);
+#endif
+  }
+  if(request.target() == "/js/throttle.js")
+  {
+#ifdef SERVE_FROM_FS
+    const auto js = readFile(www / "js" / "throttle.js");
+    return js ? textJavaScript(request, *js) : notFound(request);
+#else
+    return textJavaScript(request, Resource::www::js::throttle_js);
+#endif
+  }
+  if(request.target() == "/throttle")
+  {
+#ifdef SERVE_FROM_FS
+    const auto html = readFile(www / "throttle.html");
+    return html ? textHtml(request, *html) : notFound(request);
+#else
+    return textHtml(request, Resource::www::throttle_html);
+#endif
   }
   if(target == "/version")
   {

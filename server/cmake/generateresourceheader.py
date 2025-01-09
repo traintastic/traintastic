@@ -37,7 +37,7 @@ guard = '_'.join(namespaces).upper() + '_' + re.sub(r'[\.]+','_', os.path.basena
 
 is_binary = input_file_ext not in ['html', 'css', 'js']
 
-with open(input_file, 'rb') as f:
+with open(input_file, 'rb' if is_binary else 'r') as f:
     contents = f.read()
 
 os.makedirs(os.path.dirname(sys.argv[3]), exist_ok=True)
@@ -64,6 +64,7 @@ constexpr std::array<std::byte, {size}> {variable}{{{{
 }}}};
 
 }}
+
 #endif
 ''')
 
@@ -79,8 +80,9 @@ else:  # text
 namespace {'::'.join(namespaces)}
 {{
 
-constexpr std::string_view {variable} = R"({contents})";
+constexpr std::string_view {variable} = R"~#!({contents})~#!";
 
 }}
+
 #endif
 ''')

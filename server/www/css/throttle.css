@@ -1,0 +1,192 @@
+/**
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
+ *
+ * Copyright (C) 2024-2025 Reinder Feenstra
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+.flex-column
+{
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-row
+{
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-resize
+{
+  display: flex;
+  flex: 1 1 auto;
+}
+
+.flex-fixed
+{
+  display: flex;
+  flex: 0 0 auto;
+}
+
+.hide
+{
+  display: none;
+}
+
+.stretch
+{
+  width: 100%;
+}
+
+.text-right
+{
+  text-align: right;
+}
+
+.right
+{
+  float: right;
+}
+
+.p1
+{
+  padding: 0.5rem;
+}
+
+.pr1
+{
+  padding-right: 0.5rem;
+}
+
+html
+{
+  font-family: sans-serif;
+}
+
+body
+{
+  background-color: #121212;
+  color: white;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+}
+
+header
+{
+  padding: 0.5rem;
+}
+
+header h1
+{
+  margin: 0;
+}
+
+#open_settings
+{
+  font-size: 200%;
+  text-align: center;
+  min-width: 2.5rem;
+  cursor: pointer;
+}
+
+#body
+{
+  position: relative;
+}
+
+#settings
+{
+  z-index: 1;
+  position: absolute;
+  background-color: #121212;
+  width: 100%;
+  height: 100%;
+  padding: 0.5rem;
+}
+
+#settings label
+{
+  display: block;
+}
+
+button.control,
+select.control
+{
+  background-color: #bb86fc;
+  border: none;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0.25rem;
+  height: 5rem;
+}
+
+button.control:disabled
+{
+  background-color: gray !important;
+  cursor: auto !important;
+}
+
+button.control.active
+{
+  background-color: #03dac6;
+}
+
+button.red
+{
+  background-color: #cf6679;
+}
+
+button.square
+{
+  width: 5rem;
+}
+
+label
+{
+  font-weight: bold;
+}
+
+input[type=text]
+{
+  background-color: rgba(255, 255, 255, .07);
+  border: solid 2px #bb86fc;
+  border-radius: 1.5rem;
+  font-size: 150%;
+  color: white;
+  padding: 0 0.5rem;
+  margin: 0.5rem 0 1rem 0;
+}
+
+div.message
+{
+  z-index: 2;
+  position: absolute;
+  bottom: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  width: 100%;
+}
+
+div.message.error
+{
+  background-color: #cf6679;
+}
