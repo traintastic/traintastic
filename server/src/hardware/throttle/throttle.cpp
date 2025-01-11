@@ -21,6 +21,8 @@
  */
 
 #include "throttle.hpp"
+#include "list/throttlelist.hpp"
+#include "list/throttlelisttablemodel.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
@@ -256,8 +258,15 @@ void Throttle::release(bool stopIt)
 
 void Throttle::destroying()
 {
+  m_world.throttles->removeObject(shared_ptr<Throttle>());
   release();
   IdObject::destroying();
+}
+
+void Throttle::addToWorld()
+{
+  IdObject::addToWorld();
+  m_world.throttles->addObject(shared_ptr<Throttle>());
 }
 
 Throttle::AcquireResult Throttle::acquire(std::shared_ptr<Decoder> decoder, bool steal)

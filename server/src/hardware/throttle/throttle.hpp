@@ -57,6 +57,7 @@ class Throttle : public IdObject
     Throttle(World& world, std::string_view _id);
 
     void destroying() override;
+    void addToWorld() override;
 
     AcquireResult acquire(std::shared_ptr<Decoder> decoder, bool steal = false);
 
