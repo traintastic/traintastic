@@ -26,7 +26,9 @@
 #include <memory>
 #include <boost/beast/core/tcp_stream.hpp>
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wstringop-overflow" // FIXME: for boost 1.81 using GCC 12 on rasbian armhf
+#ifdef __linux__
+  #pragma GCC diagnostic ignored "-Wstringop-overflow" // FIXME: for boost 1.81 using GCC 12 on rasbian armhf
+#endif
 #include <boost/beast/websocket/stream.hpp>
 #pragma GCC diagnostic pop
 
