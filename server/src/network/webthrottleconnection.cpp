@@ -237,14 +237,7 @@ void WebThrottleConnection::processMessage(const nlohmann::json& message)
       else if(action == "release")
       {
         throttle->release(message.value("stop", true));
-
-        m_trainPropertyChanged.erase(throttleId);
-
-        auto response = nlohmann::json::object();
-        response.emplace("event", "train");
-        response.emplace("throttle_id", throttleId);
-        response.emplace("train", nullptr);
-        sendMessage(response);
+        released(throttleId);
       }
     }
   }
@@ -285,15 +278,22 @@ const std::shared_ptr<WebThrottle>& WebThrottleConnection::getThrottle(uint32_t 
       m_throttleReleased.emplace(throttleId, it->second->released.connect(
         [this, throttleId]()
         {
-          auto response = nlohmann::json::object();
-          response.emplace("event", "train");
-          response.emplace("throttle_id", throttleId);
-          response.emplace("train", nullptr);
-          sendMessage(response);
+          released(throttleId);
         }));
       return it->second;
     }
   }
 
   return noThrottle;
+}
+
+void WebThrottleConnection::released(uint32_t throttleId)
+{
+  m_trainPropertyChanged.erase(throttleId);
+
+  auto response = nlohmann::json::object();
+  response.emplace("event", "train");
+  response.emplace("throttle_id", throttleId);
+  response.emplace("train", nullptr);
+  sendMessage(response);
 }

@@ -49,6 +49,8 @@ protected:
 
   const std::shared_ptr<WebThrottle>& getThrottle(uint32_t throttleId);
 
+  void released(uint32_t throttleId);
+
 public:
   const std::string id;
 
