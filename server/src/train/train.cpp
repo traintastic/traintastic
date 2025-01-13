@@ -140,9 +140,13 @@ Train::Train(World& world, std::string_view _id) :
   vehicles{this, "vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   powered{this, "powered", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   active{this, "active", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly,
-    [this](bool)
+    [this](bool value)
     {
       updateSpeed();
+      if(!value && m_throttle)
+      {
+        m_throttle->release();
+      }
     },
     std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
   mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
@@ -439,11 +443,6 @@ bool Train::setTrainActive(bool val)
     {
       assert(vehicle->activeTrain.value() == self);
       vehicle->activeTrain.setValueInternal(nullptr);
-    }
-
-    if(m_throttle)
-    {
-      m_throttle->release();
     }
   }
 
