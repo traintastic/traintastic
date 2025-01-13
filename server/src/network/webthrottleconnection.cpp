@@ -146,6 +146,19 @@ void WebThrottleConnection::processMessage(const nlohmann::json& message)
   {
     const auto& throttle = getThrottle(throttleId);
 
+    if(!throttle)
+    {
+      if(Traintastic::instance->world.value())
+      {
+        sendError(throttleId, "No world loaded", "no_world_loaded");
+      }
+      else
+      {
+        sendError(throttleId, "Failed to create throttle");
+      }
+      return;
+    }
+
     if(action == "acquire")
     {
       auto train = std::dynamic_pointer_cast<Train>(world->getObjectById(message.value("train_id", "")));
@@ -186,16 +199,7 @@ void WebThrottleConnection::processMessage(const nlohmann::json& message)
         }
         else // error
         {
-          auto error = nlohmann::json::object();
-          error.emplace("event", "message");
-          error.emplace("throttle_id", throttleId);
-          error.emplace("type", "error");
-          if(ec == TrainError::AlreadyAcquired)
-          {
-            error.emplace("tag", "already_acquired");
-          }
-          error.emplace("text", ec.message());
-          sendMessage(error);
+          sendError(throttleId, ec);
         }
         auto response = nlohmann::json::object();
         response.emplace("event", "train");
@@ -257,6 +261,32 @@ void WebThrottleConnection::sendMessage(const nlohmann::json& message)
         doWrite();
       }
     });
+}
+
+void WebThrottleConnection::sendError(uint32_t throttleId, std::string_view text, std::string_view tag)
+{
+  auto error = nlohmann::json::object();
+  error.emplace("event", "message");
+  error.emplace("throttle_id", throttleId);
+  error.emplace("type", "error");
+  if(!tag.empty())
+  {
+    error.emplace("tag", tag);
+  }
+  error.emplace("text", text);
+  sendMessage(error);
+}
+
+void WebThrottleConnection::sendError(uint32_t throttleId, std::error_code ec)
+{
+  if(ec == TrainError::AlreadyAcquired)
+  {
+    sendError(throttleId, ec.message(), "already_acquired");
+  }
+  else
+  {
+    sendError(throttleId, ec.message());
+  }
 }
 
 const std::shared_ptr<WebThrottle>& WebThrottleConnection::getThrottle(uint32_t throttleId)

@@ -46,6 +46,8 @@ protected:
 
   void processMessage(const nlohmann::json& message);
   void sendMessage(const nlohmann::json& message);
+  void sendError(uint32_t throttleId, std::string_view text, std::string_view tag = {});
+  void sendError(uint32_t throttleId, std::error_code ec);
 
   const std::shared_ptr<WebThrottle>& getThrottle(uint32_t throttleId);
 
