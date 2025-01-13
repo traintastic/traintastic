@@ -214,7 +214,7 @@ function Throttle(parent, id)
     var buttons = throttle.querySelectorAll('button.control');
     if(train)
     {
-      this.setDirection(train.direction);
+      this.updateDirectionButtonState(train.direction, train.is_stopped);
       this.setSpeed(train.speed.value, train.speed.unit);
       this.setThrottleSpeed(train.throttle_speed.value, train.throttle_speed.unit);
       buttons.forEach(function (button) { button.disabled = false; });
@@ -229,14 +229,29 @@ function Throttle(parent, id)
 
   this.setDirection = function (direction)
   {
-    addRemoveClass(
-      throttle.querySelector('button[action=forward]'),
-      direction == 'forward',
-      'active');
-    addRemoveClass(
-      throttle.querySelector('button[action=reverse]'),
-      direction == 'reverse',
-      'active');
+    this.updateDirectionButtonState(direction, this.stopped)
+  }
+
+  this.setIsStopped = function (stopped)
+  {
+    this.updateDirectionButtonState(this.direction, stopped)
+  }
+
+  this.updateDirectionButtonState = function (direction, stopped)
+  {
+    this.direction = direction;
+    this.stopped = stopped;
+
+    const fwd = (direction == 'forward');
+    const rev = (direction == 'reverse');
+
+    var btn = throttle.querySelector('button[action=forward]');
+    addRemoveClass(btn, fwd, 'active');
+    btn.disabled = !stopped && !fwd;
+
+    btn = throttle.querySelector('button[action=reverse]');
+    addRemoveClass(btn, rev, 'active');
+    btn.disabled = !stopped && !rev;
   }
 
   this.setSpeed = function (value, unit)
@@ -373,6 +388,10 @@ var tm = new function ()
         else if(msg['event'] == 'direction')
         {
           tm.throttles[msg['throttle_id']].setDirection(msg['value']);
+        }
+        else if(msg['event'] == 'is_stopped')
+        {
+          tm.throttles[msg['throttle_id']].setIsStopped(msg['value']);
         }
         else if(msg['event'] == 'speed')
         {

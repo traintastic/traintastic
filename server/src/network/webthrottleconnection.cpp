@@ -173,7 +173,7 @@ void WebThrottleConnection::processMessage(const nlohmann::json& message)
             [this, throttleId](BaseProperty& property)
             {
               const auto name = property.name();
-              if(name == "direction" || name == "speed" || name == "throttle_speed")
+              if(name == "direction" || name == "speed" || name == "throttle_speed" || name == "is_stopped")
               {
                 auto event = nlohmann::json::object();
                 event.emplace("event", name);
@@ -194,6 +194,7 @@ void WebThrottleConnection::processMessage(const nlohmann::json& message)
           object.emplace("id", train->id.toJSON());
           object.emplace("name", train->name.toJSON());
           object.emplace("direction", train->direction.toJSON());
+          object.emplace("is_stopped", train->isStopped.toJSON());
           object.emplace("speed", train->speed.toJSON());
           object.emplace("throttle_speed", train->throttleSpeed.toJSON());
         }
@@ -230,13 +231,13 @@ void WebThrottleConnection::processMessage(const nlohmann::json& message)
       {
         throttle->slower();
       }
-      else if(action == "reverse")
+      else if(action == "reverse" || action == "forward")
       {
-        throttle->setDirection(Direction::Reverse);
-      }
-      else if(action == "forward")
-      {
-        throttle->setDirection(Direction::Forward);
+        const auto direction = (action == "forward") ? Direction::Forward : Direction::Reverse;
+        if(const auto ec = throttle->train->setDirection(*throttle, direction); ec)
+        {
+          sendError(throttleId, ec);
+        }
       }
       else if(action == "release")
       {
@@ -282,6 +283,10 @@ void WebThrottleConnection::sendError(uint32_t throttleId, std::error_code ec)
   if(ec == TrainError::AlreadyAcquired)
   {
     sendError(throttleId, ec.message(), "already_acquired");
+  }
+  else if(ec == TrainError::TrainMustBeStoppedToChangeDirection)
+  {
+    sendError(throttleId, ec.message(), "train_must_be_stopped_to_change_direction");
   }
   else
   {
