@@ -57,7 +57,7 @@ public:
   WebSocketConnection(Server& server, std::shared_ptr<boost::beast::websocket::stream<boost::beast::tcp_stream>> ws, std::string_view idPrefix);
   virtual ~WebSocketConnection();
 
-  void start();
+  virtual void start();
 
   virtual void disconnect();
 };

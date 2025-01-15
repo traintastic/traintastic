@@ -301,16 +301,13 @@ var tm = new function ()
       localStorage.throttleName = document.getElementById('throttle_name').value;
       localStorage.throttleStopOnRelease = document.getElementById('stop_train_on_release').value == 'on';
       document.getElementById('settings').classList.add('hide');
-      if(tm.throttles.length == 0)
-      {
-        tm.add();
-      }
+      this.connect();
     };
 
     if(localStorage.throttleName && localStorage.throttleStopOnRelease)
     {
       document.getElementById('settings').classList.add('hide');
-      this.add();
+      this.connect();
     }
   }
 
@@ -331,31 +328,60 @@ var tm = new function ()
       this.ws = new WebSocket((window.location.protocol == 'https' ? 'wss' : 'ws') + '://' + window.location.host + window.location.pathname);
       this.ws.onopen = function (ev)
       {
-        tm.send({ 'action': 'get_train_list' });
-        tm.throttles.forEach(function (throttle, _)
-        {
-          tm.send({
-            'throttle_id': throttle.id,
-            'action': 'set_name',
-            'value': localStorage.throttleName + ' #' + throttle.id,
-          });
-          var trainId = localStorage['throttle' + throttle.id + 'TrainId'];
-          if(trainId)
-          {
-            tm.send({
-              'throttle_id': throttle.id,
-              'action': 'acquire',
-              'train_id': trainId,
-              'steal': false,
-            });
-          }
-        });
+        console.log('onopen');
+        document.getElementById('not-connected').classList.add('hide');
       };
       this.ws.onmessage = function (ev)
       {
         var msg = JSON.parse(ev.data);
         console.log('RX', msg);
-        if(msg['event'] == 'train_list')
+        if(msg['event'] == 'world')
+        {
+          if(msg.name === null)
+          {
+            document.getElementById('throttles').replaceChildren();
+            document.getElementById('throttles').classList.add('hide');
+            document.getElementById('no-world').classList.remove('hide');
+          }
+          else
+          {
+            document.getElementById('throttles').classList.remove('hide');
+            document.getElementById('no-world').classList.add('hide');
+            if(!document.getElementById('throttles').hasChildNodes())
+            {
+              tm.add();
+            }
+            else
+            {
+              tm.throttles.forEach(function (throttle, _)
+              {
+                throttle.setTrainList([]); // clear train list
+              });
+            }
+
+            tm.send({ 'action': 'get_train_list' });
+
+            tm.throttles.forEach(function (throttle, _)
+            {
+              tm.send({
+                'throttle_id': throttle.id,
+                'action': 'set_name',
+                'value': localStorage.throttleName + ' #' + throttle.id,
+              });
+              const trainId = localStorage['throttle' + throttle.id + 'TrainId'];
+              if(trainId)
+              {
+                tm.send({
+                  'throttle_id': throttle.id,
+                  'action': 'acquire',
+                  'train_id': trainId,
+                  'steal': false,
+                });
+              }
+            });
+          }
+        }
+        else if(msg['event'] == 'train_list')
         {
           tm.throttles.forEach(function (throttle, _)
           {
@@ -404,12 +430,17 @@ var tm = new function ()
       };
       this.ws.onclose = function ()
       {
+        console.log('onclose');
+        document.getElementById('not-connected').classList.remove('hide');
+        document.getElementById('throttles').classList.add('hide');
+        document.getElementById('no-world').classList.add('hide');
+        tm.ws = null;
         setTimeout(function () { tm.connect(); }, 1000);
       }
       this.ws.onerror = function (err)
       {
         console.error('WebSocket error: ', err.message);
-        this.ws.close();
+        tm.ws.close();
       };
     }
   }

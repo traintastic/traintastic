@@ -92,7 +92,16 @@ inline static void deleteAll(T& objectList)
         objectList.front()->active = false;
       }
     }
-    objectList.delete_(objectList.front());
+    if constexpr(std::is_same_v<T, ThrottleList>)
+    {
+      auto& throttle = objectList[0];
+      throttle->destroy();
+      objectList.removeObject(throttle);
+    }
+    else
+    {
+      objectList.delete_(objectList.front());
+    }
   }
 }
 
@@ -434,6 +443,7 @@ World::~World()
   deleteAll(*inputs);
   deleteAll(*identifications);
   deleteAll(*boards);
+  deleteAll(*throttles);
   deleteAll(*trains);
   deleteAll(*railVehicles);
   deleteAll(*luaScripts);

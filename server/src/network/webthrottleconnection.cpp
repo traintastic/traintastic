@@ -44,11 +44,39 @@ WebThrottleConnection::~WebThrottleConnection()
 {
   assert(isEventLoopThread());
 
+  // disconnect all signals:
+  m_traintasticPropertyChanged.disconnect();
+  m_trainPropertyChanged.clear();
+  m_throttleReleased.clear();
+  m_throttleDestroying.clear();
+
+  // destroy all throttles:
   for(auto& it : m_throttles)
   {
     it.second->destroy();
     it.second.reset();
   }
+}
+
+void WebThrottleConnection::start()
+{
+  WebSocketConnection::start();
+
+  EventLoop::call(
+    [this]()
+    {
+      m_traintasticPropertyChanged = Traintastic::instance->propertyChanged.connect(
+        [this](BaseProperty& property)
+        {
+          if(property.name() == "world")
+          {
+            assert(m_throttles.empty());
+            sendWorld(static_cast<ObjectProperty<World>&>(property).value());
+          }
+        });
+
+      sendWorld(Traintastic::instance->world.value());
+    });
 }
 
 void WebThrottleConnection::doRead()
@@ -294,6 +322,23 @@ void WebThrottleConnection::sendError(uint32_t throttleId, std::error_code ec)
   }
 }
 
+void WebThrottleConnection::sendWorld(const std::shared_ptr<World>& world)
+{
+  assert(isEventLoopThread());
+
+  auto event = nlohmann::json::object();
+  event.emplace("event", "world");
+  if(world)
+  {
+    event.emplace("name", world->name.toJSON());
+  }
+  else
+  {
+    event.emplace("name", nullptr);
+  }
+  sendMessage(event);
+}
+
 const std::shared_ptr<WebThrottle>& WebThrottleConnection::getThrottle(uint32_t throttleId)
 {
   assert(isEventLoopThread());
@@ -310,6 +355,13 @@ const std::shared_ptr<WebThrottle>& WebThrottleConnection::getThrottle(uint32_t 
     auto [it, inserted] = m_throttles.emplace(throttleId, WebThrottle::create(*world));
     if(inserted) /*[[likely]]*/
     {
+      m_throttleDestroying.emplace(throttleId, it->second->onDestroying.connect(
+        [this, throttleId](Object& /*object*/)
+        {
+          released(throttleId);
+          m_throttleDestroying.erase(throttleId);
+          m_throttles.erase(throttleId);
+        }));
       m_throttleReleased.emplace(throttleId, it->second->released.connect(
         [this, throttleId]()
         {

@@ -31,13 +31,16 @@
 #include "websocketconnection.hpp"
 
 class WebThrottle;
+class World;
 
 class WebThrottleConnection : public WebSocketConnection
 {
 protected:
   boost::beast::flat_buffer m_readBuffer;
   std::queue<std::string> m_writeQueue;
+  boost::signals2::scoped_connection m_traintasticPropertyChanged;
   std::map<uint32_t, std::shared_ptr<WebThrottle>> m_throttles;
+  std::map<uint32_t, boost::signals2::scoped_connection> m_throttleDestroying;
   std::map<uint32_t, boost::signals2::scoped_connection> m_throttleReleased;
   std::map<uint32_t, boost::signals2::scoped_connection> m_trainPropertyChanged;
 
@@ -48,6 +51,7 @@ protected:
   void sendMessage(const nlohmann::json& message);
   void sendError(uint32_t throttleId, std::string_view text, std::string_view tag = {});
   void sendError(uint32_t throttleId, std::error_code ec);
+  void sendWorld(const std::shared_ptr<World>& world);
 
   const std::shared_ptr<WebThrottle>& getThrottle(uint32_t throttleId);
 
@@ -58,6 +62,8 @@ public:
 
   WebThrottleConnection(Server& server, std::shared_ptr<boost::beast::websocket::stream<boost::beast::tcp_stream>> ws);
   virtual ~WebThrottleConnection();
+
+  void start() override;
 };
 
 #endif
