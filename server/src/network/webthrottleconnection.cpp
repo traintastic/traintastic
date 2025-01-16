@@ -294,6 +294,8 @@ void WebThrottleConnection::sendMessage(const nlohmann::json& message)
 
 void WebThrottleConnection::sendError(uint32_t throttleId, std::string_view text, std::string_view tag)
 {
+  assert(isEventLoopThread());
+
   auto error = nlohmann::json::object();
   error.emplace("event", "message");
   error.emplace("throttle_id", throttleId);
@@ -308,6 +310,8 @@ void WebThrottleConnection::sendError(uint32_t throttleId, std::string_view text
 
 void WebThrottleConnection::sendError(uint32_t throttleId, std::error_code ec)
 {
+  assert(isEventLoopThread());
+
   if(ec == TrainError::AlreadyAcquired)
   {
     sendError(throttleId, ec.message(), "already_acquired");
@@ -376,6 +380,8 @@ const std::shared_ptr<WebThrottle>& WebThrottleConnection::getThrottle(uint32_t 
 
 void WebThrottleConnection::released(uint32_t throttleId)
 {
+  assert(isEventLoopThread());
+
   m_trainPropertyChanged.erase(throttleId);
 
   auto response = nlohmann::json::object();
