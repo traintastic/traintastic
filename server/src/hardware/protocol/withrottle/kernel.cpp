@@ -29,6 +29,7 @@
 #include "../../throttle/throttlecontroller.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../core/method.tpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../clock/clock.hpp"
 #include "../../../log/log.hpp"
 #include "../../../log/logmessageexception.hpp"
