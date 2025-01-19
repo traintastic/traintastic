@@ -120,6 +120,8 @@ function Throttle(parent, id)
     return value + ' ' + unit;
   }
 
+  var functions = createDiv('flex-column', []);
+
   var throttle = createDiv('p1 stretch', [
     createTrainSelect('control stretch'),
     createDiv('flex-row', [
@@ -134,7 +136,7 @@ function Throttle(parent, id)
     ]),
     createDiv('flex-row', [
       createDiv('flex-resize', [
-        // TODO: function buttons
+        functions
       ]),
       createDiv('flex-resize', [
         createDiv('flex-column stretch', [
@@ -211,6 +213,7 @@ function Throttle(parent, id)
 
   this.setTrain = function (train)
   {
+    functions.replaceChildren();
     var buttons = throttle.querySelectorAll('button.control');
     if(train)
     {
@@ -219,6 +222,37 @@ function Throttle(parent, id)
       this.setThrottleSpeed(train.throttle_speed.value, train.throttle_speed.unit);
       buttons.forEach(function (button) { button.disabled = false; });
       throttle.querySelector('select[name=train_select]').value = train.id;
+      train.functions.forEach(function (group)
+      {
+        var groupbox = document.createElement('fieldset');
+        var legend = document.createElement('legend');
+        legend.innerText = group.name;
+        groupbox.appendChild(legend);
+        group.items.forEach(function (func)
+        {
+          var btn = document.createElement('button');
+          btn.innerText = func.name;
+          btn.className = 'control square';
+          if(func.value)
+          {
+            btn.classList.add('active');
+          }
+          btn.setAttribute('throttle-id', id);
+          btn.setAttribute('vehicle-id', group.id);
+          btn.setAttribute('function-number', func.number);
+          btn.onclick = function ()
+          {
+            tm.send({
+              'throttle_id': parseInt(this.getAttribute('throttle-id')),
+              'vehicle_id': this.getAttribute('vehicle-id'),
+              'function_number': parseInt(this.getAttribute('function-number')),
+              'action': 'toggle_function',
+            });
+          };
+          groupbox.appendChild(btn);
+        });
+        functions.appendChild(groupbox);
+      });
     }
     else
     {
@@ -262,6 +296,12 @@ function Throttle(parent, id)
   this.setThrottleSpeed = function (value, unit)
   {
     document.getElementById('throttle-' + this.id + '-target-speed').innerText = formatSpeed(value, unit);
+  }
+
+  this.setFunctionValue = function (vehicleId, number, value)
+  {
+    var btn = throttle.querySelector('button[vehicle-id="' + vehicleId + '"][function-number="' + number + '"]');
+    addRemoveClass(btn, value, 'active');
   }
 
   this.setTrain(null);
@@ -426,6 +466,10 @@ var tm = new function ()
         else if(msg['event'] == 'throttle_speed')
         {
           tm.throttles[msg['throttle_id']].setThrottleSpeed(msg['value'], msg['unit']);
+        }
+        else if(msg['event'] == 'function_value')
+        {
+          tm.throttles[msg.throttle_id].setFunctionValue(msg.vehicle_id, msg.number, msg.value);
         }
       };
       this.ws.onclose = function ()

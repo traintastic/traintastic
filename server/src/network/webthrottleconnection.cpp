@@ -26,11 +26,13 @@
 #include "../core/eventloop.hpp"
 #include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
+#include "../hardware/decoder/decoder.hpp"
 #include "../hardware/throttle/webthrottle.hpp"
 #include "../log/log.hpp"
 #include "../train/train.hpp"
 #include "../train/trainerror.hpp"
 #include "../train/trainlist.hpp"
+#include "../train/trainvehiclelist.hpp"
 
 WebThrottleConnection::WebThrottleConnection(Server& server, std::shared_ptr<boost::beast::websocket::stream<boost::beast::tcp_stream>> ws)
   : WebSocketConnection(server, std::move(ws), "webthrottle")
@@ -46,9 +48,8 @@ WebThrottleConnection::~WebThrottleConnection()
 
   // disconnect all signals:
   m_traintasticPropertyChanged.disconnect();
-  m_trainPropertyChanged.clear();
-  m_throttleReleased.clear();
-  m_throttleDestroying.clear();
+  m_trainConnections.clear();
+  m_throttleConnections.clear();
 
   // destroy all throttles:
   for(auto& it : m_throttles)
@@ -197,7 +198,9 @@ void WebThrottleConnection::processMessage(const nlohmann::json& message)
         const auto ec = throttle->acquire(train, message.value("steal", false));
         if(!ec)
         {
-          m_trainPropertyChanged.emplace(throttleId, train->propertyChanged.connect(
+          m_trainConnections.erase(throttleId);
+
+          m_trainConnections.emplace(throttleId, train->propertyChanged.connect(
             [this, throttleId](BaseProperty& property)
             {
               const auto name = property.name();
@@ -225,6 +228,47 @@ void WebThrottleConnection::processMessage(const nlohmann::json& message)
           object.emplace("is_stopped", train->isStopped.toJSON());
           object.emplace("speed", train->speed.toJSON());
           object.emplace("throttle_speed", train->throttleSpeed.toJSON());
+
+          auto functions = nlohmann::json::array();
+          for(const auto& vehicle : *train->vehicles)
+          {
+            if(const auto& decoder = vehicle->decoder.value(); decoder && !decoder->functions->empty())
+            {
+              auto group = nlohmann::json::object();
+              group.emplace("id", vehicle->id.toJSON());
+              group.emplace("name", vehicle->name.toJSON());
+              auto items = nlohmann::json::array();
+              for(const auto& function : *decoder->functions)
+              {
+                m_trainConnections.emplace(throttleId, function->propertyChanged.connect(
+                  [this, throttleId, vehicleId=vehicle->id.value()](BaseProperty& property)
+                  {
+                    if(property.name() == "value")
+                    {
+                      const auto& decoderFunction = static_cast<const DecoderFunction&>(property.object());
+                      auto event = nlohmann::json::object();
+                      event.emplace("event", "function_value");
+                      event.emplace("throttle_id", throttleId);
+                      event.emplace("vehicle_id", vehicleId);
+                      event.emplace("number", decoderFunction.number.toJSON());
+                      event.emplace("value", property.toJSON());
+                      sendMessage(event);
+                    }
+                  }));
+
+                auto item = nlohmann::json::object();
+                item.emplace("number", function->number.toJSON());
+                item.emplace("name", function->name.toJSON());
+                item.emplace("type", function->type.toJSON());
+                item.emplace("function", function->function.toJSON());
+                item.emplace("value", function->value.toJSON());
+                items.emplace_back(item);
+              }
+              group.emplace("items", items);
+              functions.emplace_back(group);
+            }
+          }
+          object.emplace("functions", functions);
         }
         else // error
         {
@@ -271,6 +315,22 @@ void WebThrottleConnection::processMessage(const nlohmann::json& message)
       {
         throttle->release(message.value("stop", true));
         released(throttleId);
+      }
+      else if(action == "toggle_function")
+      {
+        const auto vehicleId = message.value<std::string_view>("vehicle_id", {});
+        const auto functionNumber = message.value<uint32_t>("function_number", 0);
+
+        for(const auto& vehicle : *throttle->train->vehicles)
+        {
+          if(vehicle->id.value() == vehicleId && vehicle->decoder)
+          {
+            if(const auto& function = vehicle->decoder->getFunction(functionNumber))
+            {
+              function->value = !function->value;
+            }
+          }
+        }
       }
     }
   }
@@ -359,14 +419,14 @@ const std::shared_ptr<WebThrottle>& WebThrottleConnection::getThrottle(uint32_t 
     auto [it, inserted] = m_throttles.emplace(throttleId, WebThrottle::create(*world));
     if(inserted) /*[[likely]]*/
     {
-      m_throttleDestroying.emplace(throttleId, it->second->onDestroying.connect(
+      m_throttleConnections.emplace(throttleId, it->second->onDestroying.connect(
         [this, throttleId](Object& /*object*/)
         {
           released(throttleId);
-          m_throttleDestroying.erase(throttleId);
+          m_throttleConnections.erase(throttleId);
           m_throttles.erase(throttleId);
         }));
-      m_throttleReleased.emplace(throttleId, it->second->released.connect(
+      m_throttleConnections.emplace(throttleId, it->second->released.connect(
         [this, throttleId]()
         {
           released(throttleId);
@@ -382,7 +442,7 @@ void WebThrottleConnection::released(uint32_t throttleId)
 {
   assert(isEventLoopThread());
 
-  m_trainPropertyChanged.erase(throttleId);
+  m_trainConnections.erase(throttleId);
 
   auto response = nlohmann::json::object();
   response.emplace("event", "train");
