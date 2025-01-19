@@ -85,6 +85,7 @@ html
 {
   font-family: sans-serif;
   height: -webkit-fill-available;
+  touch-action: manipulation; /* disable iOS double tap zoom */
 }
 
 body
@@ -153,6 +154,7 @@ button.control,
 select.control
 {
   background-color: #bb86fc;
+  color: black;
   border: none;
   border-radius: 1.5rem;
   cursor: pointer;
