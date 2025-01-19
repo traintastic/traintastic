@@ -332,11 +332,11 @@ void Kernel::receiveFrom(std::string_view message, IOHandler::ClientId clientId)
                   postSendTo(throttleCommand(multiThrottleId, '+', address.address, address.isLong), clientId);
 
                   std::unordered_map<uint32_t, std::string_view> functionNames;
-                  for(const auto& f : *throttle->functions)
+                  for(const auto& f : *throttle->decoder()->functions)
                     functionNames.emplace(f->number.value(), f->name.value());
                   postSendTo(throttleFuctionNames(multiThrottleId, address.address, address.isLong, functionNames), clientId);
 
-                  for(const auto& f : *throttle->functions)
+                  for(const auto& f : *throttle->decoder()->functions)
                     postSendTo(throttleFunction(multiThrottleId, address.address, address.isLong, f->number, f->value), clientId);
 
                   if(throttle->decoder()->emergencyStop)
@@ -580,14 +580,46 @@ void Kernel::multiThrottleAction(IOHandler::ClientId clientId, char multiThrottl
           {
             if(const auto& throttle = getThottle(clientId, multiThrottleId); throttle && throttle->acquired())
             {
-              if(const auto& function = throttle->getFunction(number))
+              if(const auto& function = throttle->decoder()->getFunction(number))
               {
-                if(force)
+                if(force) // set
+                {
                   function->value = value;
-                else if(value)
-                  function->press();
-                else
-                  function->release();
+                }
+                else if(value) // press
+                {
+                  switch(function->type.value())
+                  {
+                    case DecoderFunctionType::Hold:
+                    case DecoderFunctionType::Momentary:
+                      function->value = false;
+                      break;
+
+                    case DecoderFunctionType::OnOff:
+                      // toggle when button is pushed, do nothing on release
+                      function->value = !function->value;
+                      break;
+
+                    case DecoderFunctionType::AlwaysOff:
+                    case DecoderFunctionType::AlwaysOn:
+                      break; // do nothing
+                  }
+                }
+                else // release
+                {
+                  switch(function->type.value())
+                  {
+                    case DecoderFunctionType::Hold:
+                    case DecoderFunctionType::Momentary:
+                      function->value = false;
+                      break;
+
+                    case DecoderFunctionType::OnOff:
+                    case DecoderFunctionType::AlwaysOff:
+                    case DecoderFunctionType::AlwaysOn:
+                      break; // do nothing
+                  }
+                }
               }
             }
           });

@@ -25,7 +25,6 @@
 
 #include "../../core/idobject.hpp"
 #include <traintastic/enum/direction.hpp>
-#include "throttlefunction.hpp"
 #include "../../core/property.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../core/objectvectorproperty.hpp"
@@ -71,7 +70,6 @@ class Throttle : public IdObject
     Property<std::string> name;
     Property<Direction> direction;
     Property<float> throttle;
-    ObjectVectorProperty<ThrottleFunction> functions;
     ObjectProperty<Train> train;
     Method<bool()> emergencyStop;
     Method<bool()> stop;
@@ -91,8 +89,6 @@ class Throttle : public IdObject
     {
       return m_decoder;
     }
-
-    const std::shared_ptr<ThrottleFunction>& getFunction(uint32_t number) const;
 };
 
 #endif

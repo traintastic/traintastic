@@ -68,7 +68,6 @@ Throttle::Throttle(World& world, std::string_view _id)
       {
         return acquired();
       }}
-  , functions{*this, "functions", {}, PropertyFlags::ReadOnly}
   , train{this, "train", nullptr, PropertyFlags::ReadOnly}
   , emergencyStop{*this, "emergency_stop",
       [this]()
@@ -276,28 +275,7 @@ Throttle::AcquireResult Throttle::acquire(std::shared_ptr<Decoder> decoder, bool
 
   m_decoder = std::move(decoder);
 
-  for(auto function : *m_decoder->functions)
-  {
-    const auto& type = function->type.value();
-    if(type != DecoderFunctionType::AlwaysOff && type != DecoderFunctionType::AlwaysOn)
-    {
-      functions.appendInternal(std::make_shared<ThrottleFunction>(*this, function->number));
-    }
-  }
-
   Attributes::setEnabled({emergencyStop, throttle, stop, setDirection}, true);
 
   return AcquireResult::Success;
 }
-
-const std::shared_ptr<ThrottleFunction>& Throttle::getFunction(uint32_t number) const
-{
-  static const std::shared_ptr<ThrottleFunction> noFunction;
-
-  for(const auto& function : *functions)
-    if(function->number == number)
-      return function;
-
-  return noFunction;
-}
-
