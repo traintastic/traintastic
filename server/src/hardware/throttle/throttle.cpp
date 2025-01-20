@@ -211,6 +211,12 @@ std::error_code Throttle::acquire(const std::shared_ptr<Train>& acquireTrain, bo
     return ec;
   }
 
+  if(acquired())
+  {
+    release();
+  }
+
+  assert(!train);
   train.setValueInternal(acquireTrain);
 
   if(stole)

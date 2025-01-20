@@ -22,6 +22,7 @@
 function Throttle(parent, id)
 {
   this.id = id;
+  this.trainId = '';
   this.message = null;
   this.messageTimeout = null;
 
@@ -192,6 +193,10 @@ function Throttle(parent, id)
       };
       layout.push(e)
     }
+    else if(message.tag == 'can_not_activate_train')
+    {
+      throttle.querySelector('select[name=train_select]').value = this.trainId;
+    }
     text = document.createElement('p');
     text.innerText = message['text'];
     layout.push(text);
@@ -221,7 +226,7 @@ function Throttle(parent, id)
       this.setSpeed(train.speed.value, train.speed.unit);
       this.setThrottleSpeed(train.throttle_speed.value, train.throttle_speed.unit);
       buttons.forEach(function (button) { button.disabled = false; });
-      throttle.querySelector('select[name=train_select]').value = train.id;
+      this.trainId = train.id;
       train.functions.forEach(function (group)
       {
         var groupbox = document.createElement('fieldset');
@@ -257,8 +262,9 @@ function Throttle(parent, id)
     else
     {
       buttons.forEach(function (button) { button.disabled = true; });
-      throttle.querySelector('select[name=train_select]').value = '';
+      this.trainId = '';
     }
+    throttle.querySelector('select[name=train_select]').value = this.trainId;
   }
 
   this.setDirection = function (direction)
@@ -341,7 +347,7 @@ var tm = new function ()
       localStorage.throttleName = document.getElementById('throttle_name').value;
       localStorage.throttleStopOnRelease = document.getElementById('stop_train_on_release').value == 'on';
       document.getElementById('settings').classList.add('hide');
-      this.connect();
+      tm.connect();
     };
 
     if(localStorage.throttleName && localStorage.throttleStopOnRelease)

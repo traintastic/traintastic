@@ -269,16 +269,17 @@ void WebThrottleConnection::processMessage(const nlohmann::json& message)
             }
           }
           object.emplace("functions", functions);
+
+          auto response = nlohmann::json::object();
+          response.emplace("event", "train");
+          response.emplace("throttle_id", throttleId);
+          response.emplace("train", object);
+          sendMessage(response);
         }
         else // error
         {
           sendError(throttleId, ec);
         }
-        auto response = nlohmann::json::object();
-        response.emplace("event", "train");
-        response.emplace("throttle_id", throttleId);
-        response.emplace("train", object);
-        sendMessage(response);
       }
     }
     else if(action == "set_name")
@@ -376,6 +377,10 @@ void WebThrottleConnection::sendError(uint32_t throttleId, std::error_code ec)
   {
     sendError(throttleId, ec.message(), "already_acquired");
   }
+  else if(ec == TrainError::CanNotActivateTrain)
+  {
+    sendError(throttleId, ec.message(), "can_not_activate_train");
+  }
   else if(ec == TrainError::TrainMustBeStoppedToChangeDirection)
   {
     sendError(throttleId, ec.message(), "train_must_be_stopped_to_change_direction");
@@ -441,8 +446,6 @@ const std::shared_ptr<WebThrottle>& WebThrottleConnection::getThrottle(uint32_t 
 void WebThrottleConnection::released(uint32_t throttleId)
 {
   assert(isEventLoopThread());
-
-  m_trainConnections.erase(throttleId);
 
   auto response = nlohmann::json::object();
   response.emplace("event", "train");
