@@ -5,6 +5,12 @@
     "boost-program-options",
     "boost-random",
     "boost-signals2",
-    "boost-uuid"
+    "boost-uuid",
+    {
+      "name": "libarchive",
+      "default-features": false
+    },
+    "lua",
+    "zlib"
   ]
 }
